@@ -1,0 +1,54 @@
+export {
+  type CollectConfigDiagnosticsOptions,
+  collectConfigDiagnostics,
+} from './config/collect-config-diagnostics.ts';
+export {
+  type ConfigPathPresence,
+  type InspectConfigPathsOptions,
+  inspectConfigPaths,
+} from './config/inspect-config-paths.ts';
+export {
+  type ReadConfigSafelyOptions,
+  type ReadConfigSafelyResult,
+  readConfigSafely,
+} from './config/read-config-safely.ts';
+export {
+  DEFAULT_LOGS_MAX_BYTES,
+  DEFAULT_SPANS_MAX_BYTES,
+  DEFAULT_TELEMETRY_ATTRIBUTE_DENYLIST,
+} from './config/schema.ts';
+export {
+  resolveConfigPath,
+  USER_CONFIG_FILENAME,
+  type WriteConfigPatchOptions,
+  type WriteConfigPatchResult,
+  type WriteConfigPatchSuccess,
+  writeConfigPatch,
+} from './config/write-config-patch.ts';
+export { okUserHomeDir } from './constants/ok-user-home.ts';
+export {
+  LOCALE_OVERRIDE_ENV_VAR,
+  type LocaleEnvironment,
+  type NodeLocaleSignal,
+  readNodeLocaleSignal,
+} from './i18n/node-locale-provider.ts';
+export {
+  ATOMIC_TEMP_GLOB,
+  ATOMIC_TEMP_INFIX,
+  ATOMIC_TEMP_PATH_RE,
+  atomicTempPath,
+} from './util/atomic-temp-path.ts';
+export {
+  type AtomicWriteFsAdapter,
+  type AtomicWriteOptions,
+  type AtomicWriteSyncOptions,
+  atomicWriteFile,
+  atomicWriteFileSync,
+} from './util/atomic-yaml-write.ts';
+export {
+  FileLockTimeoutError,
+  type WithFileLockOptions,
+  withFileLock,
+  withFileLockSync,
+} from './util/file-lock.ts';
+export { openSpawnErrorLog } from './util/spawn-error-log-open.ts';

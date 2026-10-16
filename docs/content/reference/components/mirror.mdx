@@ -1,0 +1,75 @@
+---
+title: "Mirror"
+description: "Render a read-only copy of a `<MirrorSource>` block from another doc. Use to keep the same content in sync across multiple docs without copy-paste — edits land at the source, every Mirror reflects the change"
+keywords: "mirror, sync, synced, transclude, embed, reference, shared block"
+---
+
+## Example
+
+<ComponentPreview>
+  <MirrorPreview src="specs/architecture" anchor="overview-diagram">
+    This body renders live from wherever the `<MirrorSource id="overview-diagram">`
+    with a matching id lives — edits there ripple here without a copy step.
+  </MirrorPreview>
+</ComponentPreview>
+
+````text
+```mdx
+<Mirror src="specs/architecture" anchor="overview-diagram" />
+```
+````
+
+## Props
+
+<TypeTable
+  type={{
+  "src": {
+    description: "Path of the source doc, extension-less (e.g. \\`api-spec\\`).",
+    type: "string",
+    required: true,
+  },
+  "anchor": {
+    description: "Id of the \\`<MirrorSource>\\` block within the source doc.",
+    type: "string",
+    required: true,
+  },
+}}
+/>
+
+## Also: `<MirrorSource>`
+
+Mark a block as the source of truth for content that appears in multiple docs. Wrap any block content; `<Mirror src="…" anchor="<id>">` references render this verbatim read-only at every call-site. Edit here, propagate everywhere.
+
+<ComponentPreview>
+  <MirrorSourcePreview id="overview-diagram">
+    The canonical content this block owns. Every `<Mirror>` that references
+    this id anywhere in the project reads from here.
+  </MirrorSourcePreview>
+</ComponentPreview>
+
+```mdx
+<MirrorSource id="demo-1">
+  Authoritative content lives inside this block — edits here propagate to every `<Mirror>` that references this id.
+</MirrorSource>
+```
+
+<TypeTable
+  type={{
+  "id": {
+    description: "Stable id agents and authors use to reference this block from \\`<Mirror>\\` elsewhere.",
+    type: "string",
+    required: true,
+  },
+  "children": {
+    description: "Block content this MirrorSource owns — paragraphs, callouts, code, nested JSX, anything.",
+    type: "ReactNode",
+    required: true,
+  },
+}}
+/>
+
+_Also matches:_ `mirror`, `sync`, `synced`, `transclude`, `embed`, `reference`, `shared block`
+
+## Author it
+
+Type `/mirror` in the editor to insert it from the slash menu, or write the tag directly in source mode. The Properties panel on the right of the editor exposes every prop above as a form field once the block is selected.

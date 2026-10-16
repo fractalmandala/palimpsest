@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src", "scripts/build-skill-assets.ts", "tests/support", "*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

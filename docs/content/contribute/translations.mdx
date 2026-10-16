@@ -1,0 +1,77 @@
+---
+title: Translate the interface
+icon: LuLanguages
+description: Community driven translations
+---
+
+The app is natively written in English and we did our best to provide machine generated translations for some of the most spoken languages in the world.
+
+OpenKnowledge's interface is available in many languages. The language selection can be found at **Settings → Preferences → Language**.
+
+This changes the interface, not the languages used to check your writing. Desktop [spelling settings](/docs/features/editor#right-click-menu-and-spell-check) are separate.
+
+Language is an app appearance setting and can be set directly in the config [configuration reference](/docs/reference/configuration#schema). That table is the source of truth, so this page doesn't repeat it.
+
+## How you can help
+
+- Fix errors, improve existing translations
+- Add new language sets
+
+## Run OpenKnowledge in the language you're checking
+
+Set the language in the UI setting or set it by hand in `~/.ok/global.yml` (`~/.ok-beta/global.yml` in OpenKnowledge Beta):
+
+```yaml
+appearance:
+  language: bn # <-- set to the language you are testing
+```
+
+Use the tag exactly as it appears in the configuration reference (`zh-Hans`, `pt-BR`, and so on). The editor picks the change up without a restart.
+
+Reading the interface in your own language is the best review there is, and the one nobody here can do for you.
+
+On the desktop app, the `OK_LANG` environment variable additionally overrides the **native menus** for a single run, which is the quickest way to check menu translations without touching config. The rest of the window follows `appearance.language`, so set both if you want everything in one language at once.
+
+## Make the change
+
+Translations live in [`inkeep/open-knowledge`](https://github.com/inkeep/open-knowledge), one gettext catalog per language:
+
+```
+packages/app/src/locales/<locale>/messages.po
+```
+
+1. **Edit the `msgstr` values.** Leave every `msgid` alone. It is the key the app uses to look the translation up. For most entries it is the English source string. For a few entries it is a key such as `troubleshooting.claude-desktop.per-tool-approval`, and the English text is that entry's `msgstr` in `en/messages.po`. An empty `msgstr` means "untranslated" and falls back to English, so don't blank one out to flag a problem; open an issue instead.
+
+   The catalog does not say where a string appears or what a placeholder like `{0}` holds. To find out, search `packages/app/src`, for example with GitHub code search:
+
+   - For plain text, search for a distinctive part of the English that sits outside any `{...}` placeholder or `<0>` tag.
+   - For a plural or select message such as `{0, plural, one {# file} other {# files}}`, search for the words inside one branch. `#` is the count.
+   - For a key such as `troubleshooting.claude-desktop.per-tool-approval`, search for the key itself.
+
+   The code around the match shows the screen the string belongs to and the value each placeholder takes.
+
+2. **Follow the glossary.** [`GLOSSARY.md`](https://github.com/inkeep/open-knowledge/blob/main/packages/app/src/locales/GLOSSARY.md), in the same folder, pins one form per language for the words that recur everywhere (*document*, *folder*, *branch*, and so on) and lists what is never translated at all: the product name, format names such as Markdown and YAML, and placeholders like `{count}`. If a glossary entry is wrong for your language, change that row and sweep every message that uses it in the same pull request. A catalog holding two words for one concept is worse than either word on its own.
+
+3. **Normalize the catalog.** CI checks that each `.po` file is exactly what the extractor writes. Run:
+
+   ```bash
+   cd packages/app && pnpm run i18n
+   ```
+
+   Commit every `.po` file that you edited or that the command rewrote. The app compiles a `messages.json` from each `.po` before it builds or runs, and git ignores those files, so there is nothing else to commit.
+
+4. **Open a pull request.** Say which language you read and whether you speak it natively.
+
+[CONTRIBUTING.md](https://github.com/inkeep/open-knowledge/blob/main/CONTRIBUTING.md) covers the rest: toolchain, `pnpm run check`, and the Contributor License Agreement.
+
+## What is and isn't translated
+
+- **The application strings ARE translated.**
+- **User Generated content is NEVER translated:&#x20;**Document bodies, titles, file and folder names, frontmatter values and tags stay exactly as you wrote them, in every language.
+- **The CLI's commands, flags and machine-readable output REMAIN English ONLY** on purpose, so scripts keep working whatever the machine's locale is.
+- **This documentation site is English only** for now.
+- **The embedded Excalidraw board follows the interface language wherever Excalidraw offers a translation for it.** The board's toolbar, menus and settings come from Excalidraw itself rather than from these catalogs, so translating them here is not possible. Hindi, Bengali and Urdu get an English board, because Excalidraw does not offer a translation for them that it considers complete enough to ship; every other supported language gets a translated one.
+
+## A language that isn't on the list
+
+Open an [issue](https://github.com/inkeep/open-knowledge/issues) before starting work on one, and wait for a maintainer to accept it: a new language is larger than a small fix, so it follows the [pull request rules](https://github.com/inkeep/open-knowledge/blob/main/CONTRIBUTING.md#pull-requests). Then follow the instructions above to provide a complete language set. Don't forget to add the language to the list of available UI languages so other users can select your translation set from within the desktop application!

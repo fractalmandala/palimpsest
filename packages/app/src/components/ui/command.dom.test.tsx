@@ -1,0 +1,109 @@
+import * as actualLinguiMacro from '@lingui/react/macro';
+import { cleanup, fireEvent, render } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { afterEach, describe, expect, test, vi } from 'vitest';
+import {
+  expectVisualClassTokens,
+  expectVisualClassTokensAbsent,
+} from '@/test-utils/visual-contract';
+
+vi.doMock('@lingui/react/macro', () => ({
+  ...actualLinguiMacro,
+  Trans: ({ children }: { children: ReactNode }) => <>{children}</>,
+}));
+
+describe('CommandDialog runtime contracts', () => {
+  afterEach(() => cleanup());
+
+  test('exports the full Command API surface', async () => {
+    const mod = await import('./command');
+    for (const name of [
+      'Command',
+      'CommandDialog',
+      'CommandEmpty',
+      'CommandGroup',
+      'CommandInput',
+      'CommandItem',
+      'CommandList',
+      'CommandSeparator',
+      'CommandShortcut',
+    ]) {
+      expect(typeof (mod as Record<string, unknown>)[name]).toBe('function');
+    }
+  });
+
+  test('top-anchors the dialog content at runtime', async () => {
+    const { CommandDialog, CommandInput, CommandList } = await import('./command');
+
+    render(
+      <CommandDialog open={true} showCloseButton={false}>
+        <CommandInput placeholder="Search" />
+        <CommandList />
+      </CommandDialog>,
+    );
+
+    const content = document.querySelector('[data-slot="dialog-content"]');
+    expect(content).toBeTruthy();
+    const className = content?.getAttribute('class') ?? '';
+    expectVisualClassTokens(className, ['top-[12vh]', 'translate-y-0', 'overflow-hidden', 'p-0']);
+    expectVisualClassTokensAbsent(className, ['top-1/2', '-translate-y-1/2']);
+  });
+
+  test('does not expose a returned snappy placement tier on runtime surfaces', async () => {
+    const { CommandDialog, CommandInput, CommandList } = await import('./command');
+
+    render(
+      <CommandDialog open={true} showCloseButton={false}>
+        <CommandInput placeholder="Search" />
+        <CommandList />
+      </CommandDialog>,
+    );
+
+    const surfaces = [
+      ...document.querySelectorAll('[data-slot="dialog-content"], [data-slot="command"]'),
+    ]
+      .map((el) => el.getAttribute('class') ?? '')
+      .join(' ');
+
+    for (const token of ['transition-[opacity,scale]', 'placement-', 'data-placement']) {
+      expect(surfaces).not.toContain(token);
+    }
+  });
+
+  async function renderTwoItemCommand(vimBindings?: boolean) {
+    const { Command, CommandInput, CommandItem, CommandList } = await import('./command');
+    render(
+      <Command {...(vimBindings === undefined ? {} : { vimBindings })}>
+        <CommandInput placeholder="Search" />
+        <CommandList>
+          <CommandItem value="alpha">alpha</CommandItem>
+          <CommandItem value="beta">beta</CommandItem>
+        </CommandList>
+      </Command>,
+    );
+    const input = document.querySelector('[data-slot="command-input"]') as HTMLElement;
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    return input;
+  }
+
+  const selectedValue = () =>
+    document.querySelector('[data-slot="command-item"][data-selected="true"]')?.textContent;
+
+  test('cmdk moves the selection on Ctrl+P when vim bindings are left at their default', async () => {
+    const input = await renderTwoItemCommand();
+    expect(selectedValue()).toBe('beta');
+
+    fireEvent.keyDown(input, { key: 'p', ctrlKey: true });
+
+    expect(selectedValue()).toBe('alpha');
+  });
+
+  test('opting out of vim bindings leaves the selection untouched on Ctrl+P', async () => {
+    const input = await renderTwoItemCommand(false);
+    expect(selectedValue()).toBe('beta');
+
+    fireEvent.keyDown(input, { key: 'p', ctrlKey: true });
+
+    expect(selectedValue()).toBe('beta');
+  });
+});
