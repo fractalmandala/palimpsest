@@ -70,7 +70,6 @@ export interface PersistedTerminalDockState {
 
 export type UpdateChannel = 'latest' | 'beta';
 
-export type { PsUpdateMode };
 
 const DEFAULT_UPDATE_MODE: PsUpdateMode = 'auto';
 

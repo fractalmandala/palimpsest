@@ -18,7 +18,6 @@ const CLOUD_VERSION = '0.84.1-cloud.1596';
 function installDesktopBridge(appVersion: string) {
   (window as unknown as { psDesktop?: unknown }).psDesktop = {
     appVersion,
-    update: { checkNow: async () => {} },
     state: {
       query: async () => ({ channel: 'latest' as const, schemaIncompatibility: null }),
     },
@@ -70,7 +69,7 @@ describe('HelpPopover version footer layout', () => {
       outsideContainer: false,
     });
     expect(clipping(label, content)).toEqual({
-      text: 'About & updates',
+      text: 'About',
       clippedInline: false,
       outsideContainer: false,
     });

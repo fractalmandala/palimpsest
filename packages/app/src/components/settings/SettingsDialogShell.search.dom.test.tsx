@@ -218,12 +218,12 @@ describe('settings dialog search', () => {
       (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
     });
 
-    test('About & updates is findable as "update" and as "about"', async () => {
+    test('About is findable as "about", "version", and "release notes"', async () => {
       const user = userEvent.setup();
       render(<SettingsDialogShell open={true} onOpenChange={() => {}} />);
       const input = screen.getByTestId('settings-search-input');
 
-      for (const query of ['update', 'about', 'version', 'release notes']) {
+      for (const query of ['about', 'version', 'release notes']) {
         await user.clear(input);
         await user.type(input, query);
         expect(await screen.findByTestId('settings-search-result-section:about')).toBeTruthy();
@@ -233,7 +233,7 @@ describe('settings dialog search', () => {
       expect(latestProbe()?.activeId).toBe('about');
     });
 
-    test('About & updates is the last sidebar entry, under App', () => {
+    test('About is the last sidebar entry, under App', () => {
       render(<SettingsDialogShell open={true} onOpenChange={() => {}} />);
 
       const items = screen.getAllByTestId(/^settings-sidebar-item-/);
@@ -241,17 +241,17 @@ describe('settings dialog search', () => {
       expect(screen.getByRole('heading', { name: 'App' })).toBeTruthy();
     });
 
-    test('the sidebar version label opens About & updates in place', async () => {
+    test('the sidebar version label opens About in place', async () => {
       const user = userEvent.setup();
       render(<SettingsDialogShell open={true} onOpenChange={() => {}} />);
 
-      await user.click(screen.getByRole('button', { name: 'v0.81.5-cloud.1343 About & updates' }));
+      await user.click(screen.getByRole('button', { name: 'v0.81.5-cloud.1343 About' }));
 
       expect(latestProbe()?.activeId).toBe('about');
     });
   });
 
-  test('the web host has no About & updates section', async () => {
+  test('the web host has no About section', async () => {
     const user = userEvent.setup();
     render(<SettingsDialogShell open={true} onOpenChange={() => {}} />);
 

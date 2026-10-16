@@ -298,9 +298,6 @@ function createBridge({
         }),
       ),
     },
-    update: {
-      checkNow: vi.fn(() => Promise.resolve()),
-    },
     mcpWiring: {
       reconfigure: vi.fn(() => Promise.resolve(true)),
     },

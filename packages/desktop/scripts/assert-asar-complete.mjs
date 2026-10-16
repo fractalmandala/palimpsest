@@ -4,7 +4,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { readAsarHeader } from './lib/asar-header.mjs';
 
-const REQUIRED_PACKAGES = ['pino', 'electron-updater', 'node-pty'];
+const REQUIRED_PACKAGES = ['pino', 'node-pty'];
 
 function findAsars(root) {
   if (!existsSync(root)) return [];

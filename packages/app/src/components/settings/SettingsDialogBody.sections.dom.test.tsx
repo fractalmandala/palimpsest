@@ -455,12 +455,11 @@ describe('SettingsDialogBody section runtime dispatch', () => {
     expect(screen.getByTestId('settings-scope-badge-user')).not.toBeNull();
   });
 
-  test('the About & updates page shows the installed version', async () => {
+  test('the About page shows the installed version', async () => {
     const w = window as unknown as { psDesktop?: unknown };
     w.psDesktop = {
       appVersion: '1.2.3',
       state: { query: async () => ({ channel: 'latest', schemaIncompatibility: null }) },
-      onUpdateManualCheck: () => () => {},
     };
     try {
       await renderBody({ activeId: 'about' });

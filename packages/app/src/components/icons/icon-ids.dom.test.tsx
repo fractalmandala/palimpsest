@@ -3,7 +3,7 @@ import type { ComponentType, SVGProps } from 'react';
 import { describe, expect, test } from 'vitest';
 import { ClaudeIcon } from './claude';
 import { CodexBrandIcon } from './codex';
-import { PsIcon } from './ok';
+import { PsIcon } from './ps';
 import { OpenClawIcon } from './openclaw';
 
 function idReferences(root: ParentNode): Array<{ element: Element; id: string }> {

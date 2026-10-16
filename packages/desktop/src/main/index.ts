@@ -344,10 +344,6 @@ import { createDesktopKeepaliveFactory, toKeepaliveLogger } from './keepalive.ts
 import { decideAllWindowsClosed, decideRelaunchReveal } from './last-window-policy.ts';
 import { getBootAmbientCapsFacts, logAmbientCapsPosture } from './linux-ambient-caps.ts';
 import { describeLinuxDisplaySession } from './linux-display-session.ts';
-import {
-  detectGraphicalAuthCommand,
-  runManualInstallFallbackDialog,
-} from './linux-install-fallback.ts';
 import { applyDevShmPosture } from './linux-shm-posture.ts';
 import {
   type HostCliInvocation,
@@ -497,7 +493,6 @@ import {
   setNoteWindowBounds,
   setProjectWindowBounds,
   setSpellCheckEnabled as setSpellCheckEnabledState,
-  type UpdateChannel,
   unrecognizedUpdateModeIn,
   windowRestoreKey,
 } from './state-store.ts';
@@ -6140,7 +6135,6 @@ function bootPrimaryInstance(): void {
     'desktop main process starting',
   );
 
-  const bootStateSnapshot = loadAppState();
 
   rendererReadySink = createRendererReadySink(
     ipcMain,
@@ -6553,9 +6547,6 @@ function bootPrimaryInstance(): void {
         app.getVersion(),
       );
       startupWaterfall.mark('bootstrapDone');
-
-      app.on('browser-window-created', (_event, win) => {
-            });
 
       mcpWiringHandle = armMcpWiring();
       void Promise.allSettled([
