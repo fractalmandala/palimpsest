@@ -1,7 +1,7 @@
 <p>
   <a href="https://github.com/fractalmandala/palimpsest"><picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/ps-wordmark-dark.svg">
-    <img src="assets/ps-wordmark.svg" alt="Palimpsest" width="260">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/palimpsest-wordmark-dark.svg">
+    <img src="assets/palimpsest-wordmark.svg" alt="Palimpsest" width="260">
   </picture></a>
 </p>
 

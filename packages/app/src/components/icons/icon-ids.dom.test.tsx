@@ -3,7 +3,6 @@ import type { ComponentType, SVGProps } from 'react';
 import { describe, expect, test } from 'vitest';
 import { ClaudeIcon } from './claude';
 import { CodexBrandIcon } from './codex';
-import { PsIcon } from './ps';
 import { OpenClawIcon } from './openclaw';
 
 function idReferences(root: ParentNode): Array<{ element: Element; id: string }> {
@@ -21,7 +20,6 @@ describe.each<[string, ComponentType<SVGProps<SVGSVGElement>>]>([
   ['ClaudeIcon', ClaudeIcon],
   ['OpenClawIcon', OpenClawIcon],
   ['CodexBrandIcon', CodexBrandIcon],
-  ['PsIcon', PsIcon],
 ])('%s on a page with two copies', (_name, Icon) => {
   test('every id is unique and every id reference resolves inside its own svg', () => {
     const { container } = render(
