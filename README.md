@@ -74,6 +74,37 @@ Git/GitHub based sync and sharing can optionally be enabled.
 
 Docs for general usage: <https://github.com/fractalmandala/palimpsest/tree/main/docs/content>.
 
+## Development
+
+Prerequisites: [Node.js 24](https://nodejs.org), [pnpm 12](https://pnpm.io/installation) (`corepack enable pnpm`), [rustup](https://rustup.rs) (Rust toolchain auto-installs on first build), and git.
+
+```bash
+pnpm install
+```
+
+**Run the web editor** (http://localhost:5173):
+
+```bash
+cd packages/app && pnpm run dev
+```
+
+**Run the desktop app in dev mode** (hot-reload Electron shell):
+
+```bash
+cd packages/desktop && pnpm run dev
+```
+
+**Build the installable macOS .dmg** (Apple Silicon, unsigned):
+
+```bash
+pnpm exec turbo run build --filter='!@palimpsest/docs'   # full workspace build (docs site excluded: unrelated typecheck breakage)
+cd packages/desktop && pnpm run build:mac:unsigned        # → dist-desktop/Palimpsest-arm64.dmg
+```
+
+The unsigned .dmg is not notarized — on first launch, right-click → Open to run it. Signed builds need an Apple Developer identity (see `packages/desktop/electron-builder.yml`).
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full development setup, toolchain pins, and checks (`pnpm run check`).
+
 ## Contributions
 
 The best way to contribute is a detailed [issue](https://github.com/fractalmandala/palimpsest/issues/new/choose): we build and review the change ourselves. Pull requests are welcome for small fixes, and for larger changes once a maintainer has accepted the issue.
