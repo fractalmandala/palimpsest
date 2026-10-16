@@ -64,7 +64,7 @@ async function callRoute(
 
 describe('tag endpoints', () => {
   test('GET /api/tags returns 503 when tag index not configured', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-503-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-503-'));
     try {
       const result = await callRoute(dir, '/api/tags', new Map());
       expect(result.status).toBe(503);
@@ -76,7 +76,7 @@ describe('tag endpoints', () => {
   });
 
   test('GET /api/tags returns the indexed tags with counts and leaf flags', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-list-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-list-'));
     try {
       writeFileSync(join(dir, 'alpha.md'), '#proj/team #standalone\n', 'utf-8');
       writeFileSync(join(dir, 'beta.md'), '#proj\n', 'utf-8');
@@ -102,7 +102,7 @@ describe('tag endpoints', () => {
   });
 
   test('GET /api/tags/:name returns the docs that carry that tag (with rollup)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-name-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-name-'));
     try {
       writeFileSync(join(dir, 'alpha.md'), '#proj/team/2026\n', 'utf-8');
       writeFileSync(join(dir, 'beta.md'), '#proj/team/2027\n', 'utf-8');
@@ -134,7 +134,7 @@ describe('tag endpoints', () => {
   });
 
   test('GET /api/tags/:name URL-decodes hierarchy slashes', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-encoded-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-encoded-'));
     try {
       writeFileSync(join(dir, 'alpha.md'), '#proj/team/2026\n', 'utf-8');
       const idx = new TagIndex({ contentDir: dir });
@@ -151,7 +151,7 @@ describe('tag endpoints', () => {
   });
 
   test('GET /api/tags/:name returns empty docs for unknown tag', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-unknown-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-unknown-'));
     try {
       const idx = new TagIndex({ contentDir: dir });
       await idx.init();
@@ -166,7 +166,7 @@ describe('tag endpoints', () => {
   });
 
   test('frontmatter tags merge with inline tags through the API', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-fm-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-fm-'));
     try {
       writeFileSync(
         join(dir, 'alpha.md'),
@@ -194,7 +194,7 @@ describe('tag endpoints', () => {
   });
 
   test('POST /api/tags is rejected (read-only endpoint)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-post-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-post-'));
     try {
       const idx = new TagIndex({ contentDir: dir });
       const result = await callRoute(dir, '/api/tags', new Map(), idx, 'POST');
@@ -207,7 +207,7 @@ describe('tag endpoints', () => {
 
 describe('tag endpoint independence from fileIndex content', () => {
   test('tag endpoint is self-sufficient post-init', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-tags-fi-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-tags-fi-'));
     try {
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'alpha.md'), '#x\n', 'utf-8');

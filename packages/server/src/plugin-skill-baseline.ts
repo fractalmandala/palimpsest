@@ -9,7 +9,7 @@ interface BaselinePair {
 
 type BaselineFile = Record<string, BaselinePair>;
 
-const REL_PATH = ['.ok', 'local', 'plugin-skill-baselines.json'] as const;
+const REL_PATH = ['.ps', 'local', 'plugin-skill-baselines.json'] as const;
 
 function fileOf(contentDir: string): string {
   return join(contentDir, ...REL_PATH);
@@ -73,7 +73,7 @@ export function openPluginBaselines(contentDir: string): {
       if (!dirty) return;
       dirty = false;
       try {
-        tracedMkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
+        tracedMkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
         tracedWriteFileSync(fileOf(contentDir), `${JSON.stringify(baselines, null, 2)}\n`);
       } catch {}
     },

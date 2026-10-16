@@ -1,8 +1,8 @@
 import { isDeepStrictEqual } from 'node:util';
-import type { OkTerminalDockState } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsTerminalDockState } from '@palimpsest/core/desktop-bridge';
 import { expect } from '@playwright/test';
 
-export type AgentsDockRecord = NonNullable<OkTerminalDockState['agents']>;
+export type AgentsDockRecord = NonNullable<PsTerminalDockState['agents']>;
 
 export interface WaitForAgentsDockPublishOptions {
   timeout: number;
@@ -12,7 +12,7 @@ export interface WaitForAgentsDockPublishOptions {
 const PUBLISHED = 'agents dock record published';
 
 export async function waitForAgentsDockPublish(
-  readDockState: () => Promise<Pick<OkTerminalDockState, 'agents'> | undefined>,
+  readDockState: () => Promise<Pick<PsTerminalDockState, 'agents'> | undefined>,
   priorAgents: AgentsDockRecord | undefined,
   { timeout, interval = 250 }: WaitForAgentsDockPublishOptions,
 ): Promise<void> {
@@ -28,7 +28,7 @@ export async function waitForAgentsDockPublish(
 }
 
 function describeAgentsPublish(
-  state: Pick<OkTerminalDockState, 'agents'> | undefined,
+  state: Pick<PsTerminalDockState, 'agents'> | undefined,
   prior: AgentsDockRecord | undefined,
 ): string {
   if (state === undefined) return 'no dock state read from the desktop bridge';

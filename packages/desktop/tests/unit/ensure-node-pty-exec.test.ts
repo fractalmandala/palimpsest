@@ -24,7 +24,7 @@ function helperPath(resourcesDir: string, arch: string): string {
 }
 
 function makeResourcesFixture(archDirs: string[]): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-nodepty-exec-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-nodepty-exec-'));
   tmpRoots.push(root);
   for (const arch of archDirs) {
     const helper = helperPath(root, arch);
@@ -78,7 +78,7 @@ function nodeModulesHelperPath(nodePtyDir: string, arch: string): string {
 }
 
 function makeNodeModulesFixture(archDirs: string[]): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-nodepty-dev-exec-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-nodepty-dev-exec-'));
   tmpRoots.push(root);
   const nodePtyDir = join(root, 'node_modules', 'node-pty');
   for (const arch of archDirs) {

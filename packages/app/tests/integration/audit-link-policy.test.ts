@@ -1,6 +1,6 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ValidationAuditResponseSchema } from '@inkeep/open-knowledge-core';
+import { ValidationAuditResponseSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { awaitBacklinkIndexed, createTestServer, type TestServer } from './test-harness.ts';
@@ -49,7 +49,7 @@ describe('GET /api/audit under the reserved-log advisory policy', () => {
     'the reserved log is suppressed by default and returns live when the policy is switched off',
     async () => {
       const folder = join(server.contentDir, SCOPE);
-      const configPath = join(server.contentDir, '.ok', 'config.yml');
+      const configPath = join(server.contentDir, '.ps', 'config.yml');
       const wikiLink = `# Doc\n\nSee [[${GHOST_TARGET}]].\n`;
       mkdirSync(join(folder, 'upper'), { recursive: true });
       writeFileSync(join(folder, 'log.md'), wikiLink, 'utf-8');

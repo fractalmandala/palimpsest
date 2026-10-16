@@ -28,11 +28,11 @@ import { waitForShellReady } from './_helpers/terminal-ready';
 import { terminalSmokeShellCommands } from './_helpers/terminal-smoke-shell';
 
 const TARGET = resolveDesktopTarget({ requirePackaged: true });
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
-const APP_NAME = TARGET.appPath ? basename(TARGET.appPath, '.app') : 'OpenKnowledge';
-const LOG_DIR = join(process.env.HOME ?? '', '.ok', 'logs');
+const APP_NAME = TARGET.appPath ? basename(TARGET.appPath, '.app') : 'Palimpsest';
+const LOG_DIR = join(process.env.HOME ?? '', '.ps', 'logs');
 
 function appIsRunning(): boolean {
   try {
@@ -63,16 +63,16 @@ function quitAppCleanly(): void {
 }
 
 function makeProjectFixture(): { dir: string; file: string } {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-cold-launch-project-')));
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-cold-launch-project-')));
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   const file = join(dir, 'note.md');
   writeFileSync(file, '# Project note\n');
   return { dir, file };
 }
 
 function makeLooseFile(): { dir: string; file: string } {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-cold-launch-loose-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-cold-launch-loose-')));
   const file = join(dir, 'standalone.md');
   writeFileSync(file, '# Standalone\n\nOutside every project.\n');
   return { dir, file };
@@ -162,7 +162,7 @@ async function establishRestoreSnapshot(projectFile: string): Promise<void> {
   quitAppCleanly();
   const since = launchViaLaunchServices(projectFile);
   const projectDir = dirname(projectFile);
-  const lockDir = join(projectDir, '.ok', 'local');
+  const lockDir = join(projectDir, '.ps', 'local');
   await waitForBootDecision(since, () => {
     expect(readTestServerRepository(lockDir).projectDir).toBe(projectDir);
   });
@@ -174,7 +174,7 @@ async function establishRestoreSnapshot(projectFile: string): Promise<void> {
 }
 
 test.describe('cold launch with an explicit target owns the initial window set', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Launch Services + Apple Events are macOS-only.');
   test.skip(!TARGET.exists, TARGET.missingReason);
   test.skip(
@@ -219,7 +219,7 @@ test.describe('cold launch with an explicit target owns the initial window set',
     test.setTimeout(180_000);
 
     const project = makeProjectFixture();
-    const share = 'openknowledge://share?url=https://github.com/inkeep/not-cloned-repo/tree/main';
+    const share = 'palimpsest://share?url=https://github.com/inkeep/not-cloned-repo/tree/main';
 
     try {
       await establishRestoreSnapshot(project.file);
@@ -246,7 +246,7 @@ test.describe('cold launch with an explicit target owns the initial window set',
 });
 
 test.describe('packaged single-file shared shell', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'The packaged single-file shell case runs in the macOS packaged lane.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -256,7 +256,7 @@ test.describe('packaged single-file shared shell', () => {
     test.setTimeout(180_000);
     expect(statSync(TARGET.targetPath).isFile()).toBe(true);
     accessSync(TARGET.targetPath, constants.X_OK);
-    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ok-single-file-shell-home-')));
+    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ps-single-file-shell-home-')));
     const loose = makeLooseFile();
     let app: ElectronApplication | null = null;
     let registered = false;
@@ -267,12 +267,12 @@ test.describe('packaged single-file shared shell', () => {
           target: TARGET,
           args: [
             `--user-data-dir=${userDataDirFor(tmpHome)}`,
-            `openknowledge://open?file=${encodeURIComponent(loose.file)}`,
+            `palimpsest://open?file=${encodeURIComponent(loose.file)}`,
           ],
           env: {
             ...process.env,
             ...homeEnv(tmpHome),
-            OK_DESKTOP_E2E_SMOKE: '1',
+            PS_DESKTOP_E2E_SMOKE: '1',
           },
         }),
       );
@@ -284,7 +284,7 @@ test.describe('packaged single-file shared shell', () => {
           async () => {
             for (const page of app?.windows() ?? []) {
               const singleFile = await page
-                .evaluate(() => window.okDesktop?.config.singleFile)
+                .evaluate(() => window.psDesktop?.config.singleFile)
                 .catch(() => false);
               if (singleFile === true) {
                 editor = page;
@@ -379,22 +379,22 @@ test.describe('packaged single-file shared shell', () => {
         () => readVisibleTerminalText(readyEditor),
         (command) => typeInVisibleTerminal(readyEditor, command),
       );
-      const initialSessions = await editor.evaluate(() => window.okDesktop?.terminal.list());
+      const initialSessions = await editor.evaluate(() => window.psDesktop?.terminal.list());
       expect(initialSessions).toHaveLength(1);
       const ptyId = initialSessions?.[0]?.ptyId;
       expect(ptyId).toBeTruthy();
       const shell = terminalSmokeShellCommands();
       await typeInVisibleTerminal(
         readyEditor,
-        shell.setEnvironment('OK_SINGLE_FILE_SHELL', 'OK_SINGLE_FILE_SURVIVED_684'),
+        shell.setEnvironment('PS_SINGLE_FILE_SHELL', 'PS_SINGLE_FILE_SURVIVED_684'),
       );
       await typeInVisibleTerminal(
         readyEditor,
-        shell.readEnvironment('OK_SINGLE_FILE_SHELL', 'before'),
+        shell.readEnvironment('PS_SINGLE_FILE_SHELL', 'before'),
       );
       await expect
         .poll(() => readVisibleTerminalText(readyEditor))
-        .toContain('before=[OK_SINGLE_FILE_SURVIVED_684]');
+        .toContain('before=[PS_SINGLE_FILE_SURVIVED_684]');
       const waitingPath = join(loose.dir, 'single-file-terminal-waiting');
       const releasePath = join(loose.dir, 'single-file-terminal-release');
       const acknowledgementPath = join(loose.dir, 'single-file-terminal-completed');
@@ -404,17 +404,17 @@ test.describe('packaged single-file shared shell', () => {
           releasePath,
           waitingPath,
           acknowledgementPath,
-          'OK_SINGLE_FILE_WAITING_684',
+          'PS_SINGLE_FILE_WAITING_684',
         ),
       );
       await expect.poll(() => existsSync(waitingPath)).toBe(true);
       await chatButton.click();
       await expect(chatCard).toBeVisible();
       await expect(terminalStatus).toBeHidden();
-      writeFileSync(releasePath, 'OK_SINGLE_FILE_COMPLETED_684\n');
+      writeFileSync(releasePath, 'PS_SINGLE_FILE_COMPLETED_684\n');
       await expect.poll(() => existsSync(acknowledgementPath)).toBe(true);
-      expect(readFileSync(acknowledgementPath, 'utf8')).toContain('OK_SINGLE_FILE_COMPLETED_684');
-      expect((await editor.evaluate(() => window.okDesktop?.terminal.list()))?.[0]?.ptyId).toBe(
+      expect(readFileSync(acknowledgementPath, 'utf8')).toContain('PS_SINGLE_FILE_COMPLETED_684');
+      expect((await editor.evaluate(() => window.psDesktop?.terminal.list()))?.[0]?.ptyId).toBe(
         ptyId,
       );
       await editorButton.click();
@@ -422,7 +422,7 @@ test.describe('packaged single-file shared shell', () => {
       await expect(
         editor.locator('[data-slot="pane-card"][data-pane="terminal"]:visible'),
       ).toHaveCount(0);
-      expect((await editor.evaluate(() => window.okDesktop?.terminal.list()))?.[0]?.ptyId).toBe(
+      expect((await editor.evaluate(() => window.psDesktop?.terminal.list()))?.[0]?.ptyId).toBe(
         ptyId,
       );
       expect(await editor.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
@@ -456,19 +456,19 @@ test.describe('packaged single-file shared shell', () => {
       await expect(chatCard).toBeVisible();
       await terminalButton.click();
       await expect(terminalStatus).toHaveAttribute('data-terminal-status', 'running');
-      expect((await editor.evaluate(() => window.okDesktop?.terminal.list()))?.[0]?.ptyId).toBe(
+      expect((await editor.evaluate(() => window.psDesktop?.terminal.list()))?.[0]?.ptyId).toBe(
         ptyId,
       );
       await expect
         .poll(() => readVisibleTerminalText(readyEditor))
-        .toContain('OK_SINGLE_FILE_COMPLETED_684');
+        .toContain('PS_SINGLE_FILE_COMPLETED_684');
       await typeInVisibleTerminal(
         readyEditor,
-        shell.readEnvironment('OK_SINGLE_FILE_SHELL', 'after'),
+        shell.readEnvironment('PS_SINGLE_FILE_SHELL', 'after'),
       );
       await expect
         .poll(() => readVisibleTerminalText(readyEditor))
-        .toContain('after=[OK_SINGLE_FILE_SURVIVED_684]');
+        .toContain('after=[PS_SINGLE_FILE_SURVIVED_684]');
       await expect(globalHeader).toHaveCount(1);
     } finally {
       void app?.close().catch(() => undefined);

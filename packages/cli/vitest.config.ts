@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 
 const serverAuthorityRegistrySetup = fileURLToPath(
   new URL('../../test-support/server-authority-registry.setup.ts', import.meta.url),
@@ -16,10 +16,10 @@ const serverAuthorityRegistrySetup = fileURLToPath(
  * it stays out of this tier; it runs under `vitest.e2e.config.ts`.
  */
 export default defineConfig({
-  ...okVitestBase,
+  ...psVitestBase,
   test: {
-    ...okVitestBase.test,
-    setupFiles: [...okVitestBase.test.setupFiles, serverAuthorityRegistrySetup],
-    exclude: [...okVitestBase.test.exclude, '.ok-skill-publish-*'],
+    ...psVitestBase.test,
+    setupFiles: [...psVitestBase.test.setupFiles, serverAuthorityRegistrySetup],
+    exclude: [...psVitestBase.test.exclude, '.ps-skill-publish-*'],
   },
 });

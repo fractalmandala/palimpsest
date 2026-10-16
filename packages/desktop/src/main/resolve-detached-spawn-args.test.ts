@@ -5,9 +5,9 @@ import {
   TERMINAL_AUTH_ARG,
 } from './resolve-detached-spawn-args.ts';
 
-const PARENT_APP = '/Applications/OpenKnowledge.app';
-const PARENT_EXEC = `${PARENT_APP}/Contents/MacOS/OpenKnowledge`;
-const HELPER_BINARY = `${PARENT_APP}/Contents/Frameworks/OpenKnowledge Server.app/Contents/MacOS/OpenKnowledge Helper`;
+const PARENT_APP = '/Applications/Palimpsest.app';
+const PARENT_EXEC = `${PARENT_APP}/Contents/MacOS/Palimpsest`;
+const HELPER_BINARY = `${PARENT_APP}/Contents/Frameworks/Palimpsest Server.app/Contents/MacOS/Palimpsest Helper`;
 
 function makeInput(
   overrides: Partial<ResolveDetachedSpawnArgsInput> = {},
@@ -46,12 +46,12 @@ describe('resolveDetachedSpawnArgs', () => {
   });
 
   test('darwin packaged Beta → file targets the Beta-named helper bundle the build produces', () => {
-    const betaApp = '/Applications/OpenKnowledge Beta.app';
+    const betaApp = '/Applications/Palimpsest Beta.app';
     const { file } = resolveDetachedSpawnArgs(
-      makeInput({ parentExecPath: `${betaApp}/Contents/MacOS/OpenKnowledge Beta` }),
+      makeInput({ parentExecPath: `${betaApp}/Contents/MacOS/Palimpsest Beta` }),
     );
     expect(file).toBe(
-      `${betaApp}/Contents/Frameworks/OpenKnowledge Beta Server.app/Contents/MacOS/OpenKnowledge Beta Helper`,
+      `${betaApp}/Contents/Frameworks/Palimpsest Beta Server.app/Contents/MacOS/Palimpsest Beta Helper`,
     );
   });
 
@@ -66,10 +66,10 @@ describe('resolveDetachedSpawnArgs', () => {
     expect(file).toBe(PARENT_EXEC);
   });
 
-  test('opts.env injects ELECTRON_RUN_AS_NODE=1 and OK_LOCK_KIND=interactive and preserves the inherited env', () => {
+  test('opts.env injects ELECTRON_RUN_AS_NODE=1 and PS_LOCK_KIND=interactive and preserves the inherited env', () => {
     const { opts } = resolveDetachedSpawnArgs(makeInput({ env: { PATH: '/usr/bin', FOO: 'bar' } }));
     expect(opts.env?.ELECTRON_RUN_AS_NODE).toBe('1');
-    expect(opts.env?.OK_LOCK_KIND).toBe('interactive');
+    expect(opts.env?.PS_LOCK_KIND).toBe('interactive');
     expect(opts.env?.PATH?.split(':')).toContain('/usr/bin');
     expect(opts.env?.FOO).toBe('bar');
   });

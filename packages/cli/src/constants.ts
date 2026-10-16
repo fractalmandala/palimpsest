@@ -1,6 +1,6 @@
 import pkgJson from '../package.json' with { type: 'json' };
 
-export { OK_DIR } from '@inkeep/open-knowledge-core';
+export { PS_DIR } from '@palimpsest/core';
 
 export const CONFIG_FILENAME = 'config.yml';
 

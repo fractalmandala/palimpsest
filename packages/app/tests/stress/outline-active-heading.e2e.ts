@@ -197,7 +197,7 @@ async function seed(api: ApiHelpers, page: Page, baseURL: string): Promise<strin
   await api.createPage(`${docName}.md`);
   await page.addInitScript(() => {
     try {
-      localStorage.setItem('ok-acp-follow-file-v1', '0');
+      localStorage.setItem('ps-acp-follow-file-v1', '0');
     } catch {}
   });
   await page.goto(`/#/${docName}`);

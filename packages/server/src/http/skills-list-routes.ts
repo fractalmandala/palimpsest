@@ -5,15 +5,15 @@ import {
   EmptyRequestSchema,
   type estimateSkillCost,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
-import { resolveProjectIdentity } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { resolveProjectIdentity } from '@palimpsest/core/shadow-repo-layout';
 import {
   parseSkillsLock,
   readRepoMarketplacePlugins,
   repoMarketplacePluginFor,
   SKILLS_LOCK_REL,
   type SkillsLock,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import type { ContentFilter } from '../content-filter.ts';
 import {
   aliasedSourceRoots,

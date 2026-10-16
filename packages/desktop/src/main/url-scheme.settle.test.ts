@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { resolveBootRestoreDecision } from './boot-restore-decision.ts';
 import { registerProtocolHandler } from './url-scheme.ts';
 
-const SHARE_URL = 'openknowledge://share?url=https://github.com/inkeep/not-cloned-repo/tree/main';
-const SINGLE_FILE_URL = 'openknowledge://open?file=/Users/me/notes/scratch.md';
+const SHARE_URL = 'palimpsest://share?url=https://github.com/inkeep/not-cloned-repo/tree/main';
+const SINGLE_FILE_URL = 'palimpsest://open?file=/Users/me/notes/scratch.md';
 
 async function flushMicrotasks(): Promise<void> {
   for (let i = 0; i < 8; i++) await Promise.resolve();

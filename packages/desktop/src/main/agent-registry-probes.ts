@@ -5,7 +5,7 @@ import {
   EMPTY_DETECTION_SNAPSHOT,
   type HostSnapshot,
   type ProbeResolver,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { detectedEditorsFromProbes, type EditorPresenceProbes } from './integrations-settings.ts';
 
 export async function detectAgentsForRegistry(

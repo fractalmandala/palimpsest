@@ -85,7 +85,7 @@ describe('identifyBrowserCall', () => {
     expect(
       identifyBrowserCall(
         claudeCall('mcp__ok-browser__browser_run_code_unsafe', {
-          rawInput: { server: 'ok-browser', tool: 'browser_navigate' },
+          rawInput: { server: 'ps-browser', tool: 'browser_navigate' },
         }),
         claude,
       ),
@@ -131,7 +131,7 @@ describe('identifyBrowserCall', () => {
   });
 
   test("takes Codex's tool from its MCP call title, and distrusts a call whose parts disagree", () => {
-    expect(identifyBrowserCall(codexCall('ok-browser', 'browser_click'), codex)).toEqual({
+    expect(identifyBrowserCall(codexCall('ps-browser', 'browser_click'), codex)).toEqual({
       kind: 'browser',
       tool: 'browser_click',
     });
@@ -141,8 +141,8 @@ describe('identifyBrowserCall', () => {
     expect(
       identifyBrowserCall(
         {
-          ...codexCall('ok-browser', 'browser_click'),
-          rawInput: { server: 'ok-browser', tool: 'browser_navigate' },
+          ...codexCall('ps-browser', 'browser_click'),
+          rawInput: { server: 'ps-browser', tool: 'browser_navigate' },
         },
         codex,
       ),
@@ -157,7 +157,7 @@ describe('identifyBrowserCall', () => {
     expect(identifyBrowserCall({}, approval)).toEqual({ kind: 'unverified' });
     expect(
       identifyBrowserCall(
-        { title: 'MCP tool call approval', rawInput: { serverName: 'ok-browser' } },
+        { title: 'MCP tool call approval', rawInput: { serverName: 'ps-browser' } },
         approval,
       ),
     ).toEqual({ kind: 'unverified' });
@@ -175,7 +175,7 @@ describe('identifyBrowserCall', () => {
       tool: string,
       rawInput: Record<string, unknown> = { server, tool, arguments: {} },
     ): BrowserCallEvidence => ({ title: `Tool: ${server}/${tool}`, rawInput });
-    expect(identifyBrowserCall(toolCall('ok-browser', 'browser_click'), codex)).toEqual({
+    expect(identifyBrowserCall(toolCall('ps-browser', 'browser_click'), codex)).toEqual({
       kind: 'browser',
       tool: 'browser_click',
     });
@@ -184,7 +184,7 @@ describe('identifyBrowserCall', () => {
     });
     expect(
       identifyBrowserCall(
-        toolCall('ok-browser', 'browser_click', { server: 'ok-browser', tool: 'browser_navigate' }),
+        toolCall('ps-browser', 'browser_click', { server: 'ps-browser', tool: 'browser_navigate' }),
         codex,
       ),
     ).toEqual({ kind: 'unverified' });
@@ -192,7 +192,7 @@ describe('identifyBrowserCall', () => {
       title: 'Approve Navigate to a URL',
       rawInput: { server_name: serverName, id: 'mcp_tool_call_approval_c1', request: {} },
     });
-    expect(identifyBrowserCall(approval('ok-browser'), codex)).toEqual({ kind: 'unverified' });
+    expect(identifyBrowserCall(approval('ps-browser'), codex)).toEqual({ kind: 'unverified' });
     expect(identifyBrowserCall(approval('github'), codex)).toEqual({ kind: 'none' });
     expect(
       identifyBrowserCall(
@@ -210,7 +210,7 @@ describe('identifyBrowserCall', () => {
       ),
     ).toEqual({ kind: 'browser', tool: 'browser_snapshot' });
     expect(
-      identifyBrowserCall({ title: 'Run it', rawInput: { server: 'ok-browser' } }, codex),
+      identifyBrowserCall({ title: 'Run it', rawInput: { server: 'ps-browser' } }, codex),
     ).toEqual({ kind: 'unverified' });
     expect(identifyBrowserCall({ title: 'Run it', rawInput: { server: 'github' } }, codex)).toEqual(
       {
@@ -252,7 +252,7 @@ describe('needsReportedToolCall', () => {
     const approval = { is_mcp_tool_approval: true };
     expect(
       waits(
-        { title: 'MCP tool call approval', rawInput: { serverName: 'ok-browser' } },
+        { title: 'MCP tool call approval', rawInput: { serverName: 'ps-browser' } },
         'codex-acp',
         approval,
       ),
@@ -289,8 +289,8 @@ describe('agentGetsBrowser', () => {
 
 describe('agentBrowserMcpServer', () => {
   const FOLDERS = {
-    npm: '/home/me/.ok/agent-browser/chat/npm',
-    files: '/home/me/.ok/agent-browser/chat/files',
+    npm: '/home/me/.ps/agent-browser/chat/npm',
+    files: '/home/me/.ps/agent-browser/chat/files',
   };
 
   test('starts the pinned package through the relay and the npx it resolved, from the chat npm folder', () => {
@@ -302,7 +302,7 @@ describe('agentBrowserMcpServer', () => {
       exists: (path) => path === '/opt/node/bin/node',
     });
     expect(server).toEqual({
-      name: 'ok-browser',
+      name: 'ps-browser',
       command: '/opt/node/bin/node',
       args: [
         '-e',
@@ -740,7 +740,7 @@ describe.skipIf(process.platform === 'win32')('the browser server relay', () => 
 });
 
 describe.skipIf(process.platform === 'win32')('the browser server launch, run for real', () => {
-  const PROBE_PACKAGE = 'ok-browser-probe';
+  const PROBE_PACKAGE = 'ps-browser-probe';
 
   function plantProbe(root: string, identity: string): void {
     const pkg = join(root, 'node_modules', PROBE_PACKAGE);
@@ -752,7 +752,7 @@ describe.skipIf(process.platform === 'win32')('the browser server launch, run fo
     );
     writeFileSync(
       join(pkg, 'cli.js'),
-      `#!/usr/bin/env node\nrequire('node:fs').appendFileSync(process.env.OK_PROBE_OUT, ${JSON.stringify(identity)} + ' ' + process.argv.slice(2).join(' ') + '\\n');\n`,
+      `#!/usr/bin/env node\nrequire('node:fs').appendFileSync(process.env.PS_PROBE_OUT, ${JSON.stringify(identity)} + ' ' + process.argv.slice(2).join(' ') + '\\n');\n`,
       { mode: 0o755 },
     );
     symlinkSync(
@@ -774,7 +774,7 @@ describe.skipIf(process.platform === 'win32')('the browser server launch, run fo
     );
     plantProbe(project, 'project');
     const shell = join(project, 'planted-shell.sh');
-    writeFileSync(shell, '#!/bin/sh\necho npmrc >> "$OK_PROBE_OUT"\nexec /bin/sh "$@"\n', {
+    writeFileSync(shell, '#!/bin/sh\necho npmrc >> "$PS_PROBE_OUT"\nexec /bin/sh "$@"\n', {
       mode: 0o755,
     });
     writeFileSync(join(project, '.npmrc'), `script-shell=${shell}\n`);
@@ -801,7 +801,7 @@ describe.skipIf(process.platform === 'win32')('the browser server launch, run fo
       timeout: 60_000,
       env: {
         ...process.env,
-        OK_PROBE_OUT: out,
+        PS_PROBE_OUT: out,
         npm_config_userconfig: userConfig,
         npm_config_globalconfig: globalConfig,
         npm_config_cache: join(root, 'npm-cache'),
@@ -943,7 +943,7 @@ describe('browser folders', () => {
     await removeAgentBrowserFolders(root, '0b1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f');
   });
 
-  test('refuse chat ids OpenKnowledge did not mint, so nothing outside a chat folder is touched', async () => {
+  test('refuse chat ids Palimpsest did not mint, so nothing outside a chat folder is touched', async () => {
     const parent = tmp();
     const root = join(parent, 'global');
     const other = join(root, 'agent-browser', THREAD, 'files');

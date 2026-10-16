@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { PagesSuccessSchema } from '@inkeep/open-knowledge-core';
+import { PagesSuccessSchema } from '@palimpsest/core';
 import { expect, vi } from 'vitest';
 import * as fileWatcher from '../../../server/src/file-watcher.ts';
 import * as parcelSubscription from '../../../server/src/parcel-subscription.ts';
@@ -28,7 +28,7 @@ interface HeldBatch {
 export async function startAssetAdmissionScenario(
   registerCleanup: (cleanup: () => Promise<void>) => void,
 ) {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-removal-assets-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-removal-assets-')));
   const docName = 'child/note';
   const filePath = join(contentDir, `${docName}.md`);
   const assetPath = 'child/image.png';

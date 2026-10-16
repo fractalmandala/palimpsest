@@ -8,7 +8,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { join } from 'node:path';
-import type { TerminalLaunchCommand } from '@inkeep/open-knowledge-core';
+import type { TerminalLaunchCommand } from '@palimpsest/core';
 import { isPathWithinProject } from '../shared/path-containment.ts';
 
 export const TERMINAL_SUPPORT_FILE_ESCAPE_CODE = 'ERR_TERMINAL_SUPPORT_FILE_ESCAPE';

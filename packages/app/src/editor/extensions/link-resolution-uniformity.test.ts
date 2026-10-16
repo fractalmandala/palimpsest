@@ -1,4 +1,4 @@
-import { toWikiLinkSlug } from '@inkeep/open-knowledge-core';
+import { toWikiLinkSlug } from '@palimpsest/core';
 import { beforeEach, describe, expect, test } from 'vitest';
 import {
   resetLinkValidationPolicyForTest,

@@ -303,13 +303,13 @@ describe('handleUploadAsset', () => {
     expect(existsSync(join(contentDir, 'docs', 'config-error.png'))).toBe(false);
   });
 
-  test('a configured attachmentFolderPath naming .ok is refused at the resolved destination', async () => {
-    attachmentFolderPath = '.ok/skills';
+  test('a configured attachmentFolderPath naming .ps is refused at the resolved destination', async () => {
+    attachmentFolderPath = '.ps/skills';
     const res = await uploadImage(createPngBuffer(), 'planted.png', 'docs/guide.md');
     const body = (await res.json()) as { type: string; status: number };
     expect(res.status).toBe(400);
     expect(body.type).toBe('urn:ok:error:reserved-doc-name');
-    expect(existsSync(join(contentDir, '.ok', 'skills', 'planted.png'))).toBe(false);
+    expect(existsSync(join(contentDir, '.ps', 'skills', 'planted.png'))).toBe(false);
   });
 
   test('parent-dir placement keeps explicit sidebar folder drops in the target folder', async () => {
@@ -622,7 +622,7 @@ describe('indexedSkillContentPath', () => {
   let contentDir: string;
 
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-skill-canonical-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-skill-canonical-'));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });
@@ -667,7 +667,7 @@ describe('indexedSkillContentPath', () => {
   });
 
   test('null when the link escapes contentDir — no canonical content doc exists', () => {
-    const outside = mkdtempSync(join(tmpdir(), 'ok-skill-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-skill-outside-'));
     try {
       mkdirSync(join(outside, 'demo'), { recursive: true });
       writeFileSync(join(outside, 'demo/SKILL.md'), '---\nname: x\ndescription: d\n---\n');

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import type {
   ThreadClientFrame,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import type { WorkerServer } from './_helpers';
 
 interface HiddenChatAgent {
@@ -19,7 +19,7 @@ interface HiddenChatAgent {
 }
 
 export async function startHiddenChatAgent(workerServer: WorkerServer): Promise<HiddenChatAgent> {
-  const localDir = join(workerServer.contentDir, '.ok', 'local');
+  const localDir = join(workerServer.contentDir, '.ps', 'local');
   mkdirSync(localDir, { recursive: true });
   const agentId = `hidden-chat-${randomUUID()}`;
   const scriptPath = join(localDir, `${agentId}.mjs`);

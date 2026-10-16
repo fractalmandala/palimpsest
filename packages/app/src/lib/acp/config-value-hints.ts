@@ -1,4 +1,4 @@
-import type { SessionConfigOption } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { SessionConfigOption } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
 
 type SelectConfigOption = Extract<SessionConfigOption, { type: 'select' }>;

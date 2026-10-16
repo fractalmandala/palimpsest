@@ -12,7 +12,7 @@ import {
   resolveSkillBundleWikiTarget,
   resolveWikiLinkTargetDocName,
   type WikiLinkLookupIndex,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { Nodes as MdastNodes } from 'mdast';
 import {
   createJsxSrcAttrRe,

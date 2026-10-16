@@ -23,7 +23,7 @@ export async function smokeHistoricalUpgrade(argv = process.argv.slice(2)) {
   const outputDir = join(desktopRoot, 'dist-desktop');
   const manifestName = `${channel}-mac.yml`;
   const manifest = parse(readFileSync(join(outputDir, manifestName), 'utf8'));
-  const userData = join(homedir(), 'Library/Application Support/OpenKnowledge');
+  const userData = join(homedir(), 'Library/Application Support/Palimpsest');
   assert.equal(existsSync(userData), false, 'The upgrade test must not touch existing app state.');
   const statePath = join(userData, 'state.json');
   const state = () => JSON.parse(readFileSync(statePath, 'utf8'));
@@ -50,21 +50,21 @@ export async function smokeHistoricalUpgrade(argv = process.argv.slice(2)) {
 
   try {
     await withMountedDmg(oldDmg, async (appPath) => {
-      const executablePath = join(appPath, 'Contents/MacOS/OpenKnowledge');
+      const executablePath = join(appPath, 'Contents/MacOS/Palimpsest');
       const launch = async () => {
         application = await _electron.launch({
           executablePath,
-          env: { ...process.env, OK_UPDATER_FEED_URL: feedUrl },
+          env: { ...process.env, PS_UPDATER_FEED_URL: feedUrl },
           timeout: 90_000,
         });
         const page = await application.firstWindow();
-        await page.waitForFunction(() => Boolean(window.okDesktop?.update?.checkNow));
+        await page.waitForFunction(() => Boolean(window.psDesktop?.update?.checkNow));
         return page;
       };
       const firstPage = await launch();
       const fromVersion = await application.evaluate(({ app }) => app.getVersion());
       assert.notEqual(fromVersion, manifest.version);
-      await firstPage.evaluate(() => window.okDesktop.update.checkNow());
+      await firstPage.evaluate(() => window.psDesktop.update.checkNow());
       await expect.poll(() => manifestRequests, { timeout: 60_000 }).toBeGreaterThan(0);
       await application.close();
       application = undefined;
@@ -72,13 +72,13 @@ export async function smokeHistoricalUpgrade(argv = process.argv.slice(2)) {
 
       available = true;
       const page = await launch();
-      await page.evaluate(() => window.okDesktop.update.checkNow());
+      await page.evaluate(() => window.psDesktop.update.checkNow());
       await expect
         .poll(() => state().versionPendingInstall, { timeout: 240_000 })
         .toBe(manifest.version);
       const closed = application.waitForEvent('close', { timeout: 90_000 });
       await page.evaluate(() => {
-        void window.okDesktop.update.relaunchNow();
+        void window.psDesktop.update.relaunchNow();
       });
       await closed;
       application = undefined;
@@ -117,7 +117,7 @@ export async function smokeHistoricalUpgrade(argv = process.argv.slice(2)) {
       const upgraded = await launch();
       assert.equal(await application.evaluate(({ app }) => app.getVersion()), manifest.version);
       const before = manifestRequests;
-      await upgraded.evaluate(() => window.okDesktop.update.checkNow());
+      await upgraded.evaluate(() => window.psDesktop.update.checkNow());
       await expect.poll(() => manifestRequests, { timeout: 60_000 }).toBeGreaterThan(before);
       await expect.poll(() => state().versionPendingInstall, { timeout: 30_000 }).toBeNull();
       await application.close();

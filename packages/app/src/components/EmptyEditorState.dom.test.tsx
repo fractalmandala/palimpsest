@@ -1,5 +1,5 @@
-import type { TemplatesListEntry, TemplatesListSuccess } from '@inkeep/open-knowledge-core';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import type { TemplatesListEntry, TemplatesListSuccess } from '@palimpsest/core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { type ReactNode, useEffect, useState } from 'react';

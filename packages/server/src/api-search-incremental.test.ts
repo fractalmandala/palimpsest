@@ -8,8 +8,8 @@ import { createApiExtension } from './api-extension.test-helper.ts';
 import type { FileIndexEntry } from './file-watcher.ts';
 
 const corpusCalls = vi.hoisted(() => ({ create: 0, update: 0 }));
-vi.mock('@inkeep/open-knowledge-core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@inkeep/open-knowledge-core')>();
+vi.mock('@palimpsest/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@palimpsest/core')>();
   return {
     ...actual,
     createWorkspaceSearchCorpus: (
@@ -133,7 +133,7 @@ describe('incremental workspace search corpus maintenance', () => {
   let contentDir: string;
 
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-search-incr-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-search-incr-'));
     corpusCalls.create = 0;
     corpusCalls.update = 0;
   });
@@ -214,7 +214,7 @@ describe('incremental workspace search corpus maintenance', () => {
     stamps.set('guides/five', harness.setDoc('guides/five', '# Five\n\nhocus fjord\n'));
     expect(corpusCalls.create).toBe(1);
 
-    const referenceDir = mkdtempSync(join(tmpdir(), 'ok-search-ref-'));
+    const referenceDir = mkdtempSync(join(tmpdir(), 'ps-search-ref-'));
     try {
       const reference = createHarness(referenceDir, { withGeneration: true });
       const finalDocs: Array<[string, string]> = [

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { okCliCommandName, okUserHomeLabel } from './channel-cli-copy';
+import { psCliCommandName, psUserHomeLabel } from './channel-cli-copy';
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -7,18 +7,18 @@ afterEach(() => {
 
 describe('channel CLI copy', () => {
   test('names Stable without a desktop bridge', () => {
-    expect(okCliCommandName()).toBe('ok');
-    expect(okUserHomeLabel('secrets.yml')).toBe('~/.ok/secrets.yml');
+    expect(psCliCommandName()).toBe('ok');
+    expect(psUserHomeLabel('secrets.yml')).toBe('~/.ps/secrets.yml');
   });
 
   test('names Beta when main hands the window the Beta command', () => {
-    vi.stubGlobal('window', { okDesktop: { cliCommandName: 'ok-beta' } });
-    expect(okCliCommandName()).toBe('ok-beta');
-    expect(okUserHomeLabel('secrets.yml')).toBe('~/.ok-beta/secrets.yml');
+    vi.stubGlobal('window', { psDesktop: { cliCommandName: 'ps-beta' } });
+    expect(psCliCommandName()).toBe('ps-beta');
+    expect(psUserHomeLabel('secrets.yml')).toBe('~/.ps-beta/secrets.yml');
   });
 
   test('falls back to Stable for a command no channel owns', () => {
-    vi.stubGlobal('window', { okDesktop: { cliCommandName: 'rm -rf' } });
-    expect(okCliCommandName()).toBe('ok');
+    vi.stubGlobal('window', { psDesktop: { cliCommandName: 'rm -rf' } });
+    expect(psCliCommandName()).toBe('ok');
   });
 });

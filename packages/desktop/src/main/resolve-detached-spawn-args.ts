@@ -1,7 +1,7 @@
 import type { SpawnOptions } from 'node:child_process';
 import { posix as pathPosix, win32 as pathWin32 } from 'node:path';
-import { resolveHelperBundleBinary } from '@inkeep/open-knowledge-core/helper-bundle';
-import { fallbackPaths } from '@inkeep/open-knowledge-server';
+import { resolveHelperBundleBinary } from '@palimpsest/core/helper-bundle';
+import { fallbackPaths } from '@palimpsest/server';
 
 export interface ResolveDetachedSpawnArgsInput {
   readonly platform: NodeJS.Platform;
@@ -112,7 +112,7 @@ export function resolveDetachedSpawnArgs(
       ...envWithoutPath,
       PATH: buildEnrichedPath(platform, inheritedPath),
       ELECTRON_RUN_AS_NODE: '1',
-      OK_LOCK_KIND: 'interactive',
+      PS_LOCK_KIND: 'interactive',
     },
     detached: true,
     stdio: ['ignore', 'ignore', spawnErrorLogFd],

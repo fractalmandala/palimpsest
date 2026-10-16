@@ -25,7 +25,7 @@ describe('createDesktopKeepaliveFactory', () => {
       readServerLock: () => FAKE_LOCK,
       logger: NOOP_LOGGER,
     });
-    const handle = factory({ lockDir: '/tmp/keepalive-test/.ok/local' });
+    const handle = factory({ lockDir: '/tmp/keepalive-test/.ps/local' });
     expect(typeof handle.close).toBe('function');
     expect(typeof handle.isConnected).toBe('function');
     expect(handle.isConnected()).toBe(false);
@@ -37,7 +37,7 @@ describe('createDesktopKeepaliveFactory', () => {
       readServerLock: () => FAKE_LOCK,
       logger: NOOP_LOGGER,
     });
-    const handle = factory({ lockDir: '/tmp/k/.ok/local' });
+    const handle = factory({ lockDir: '/tmp/k/.ps/local' });
     handle.close();
     expect(() => handle.close()).not.toThrow();
   });
@@ -51,7 +51,7 @@ describe('createDesktopKeepaliveFactory', () => {
       },
       logger: NOOP_LOGGER,
     });
-    const handle = factory({ lockDir: '/tmp/nope/.ok/local' });
+    const handle = factory({ lockDir: '/tmp/nope/.ps/local' });
     await new Promise<void>((r) => setImmediate(r));
     expect(nullReads).toBeGreaterThanOrEqual(1);
     expect(handle.isConnected()).toBe(false);
@@ -67,7 +67,7 @@ describe('createDesktopKeepaliveFactory', () => {
       },
       logger: NOOP_LOGGER,
     });
-    const handle = factory({ lockDir: '/tmp/starting/.ok/local' });
+    const handle = factory({ lockDir: '/tmp/starting/.ps/local' });
     await new Promise<void>((r) => setImmediate(r));
     expect(zeroPortReads).toBeGreaterThanOrEqual(1);
     expect(handle.isConnected()).toBe(false);

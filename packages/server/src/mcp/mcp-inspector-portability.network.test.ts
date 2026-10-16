@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { createServer, type Server } from 'node:http';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { OPEN_KNOWLEDGE_MCP_TOOLS } from '@inkeep/open-knowledge-core';
+import { PALIMPSEST_MCP_TOOLS } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { z } from 'zod';
 import { captureChild, isolateNpmHome, npmCli } from '../acp/package-acquisition.test-helper.ts';
@@ -259,10 +259,10 @@ describe('MCP Inspector schema portability lint over the served /mcp tool list',
   const handlerLog: string[] = [];
 
   beforeAll(async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-mcp-inspector-project-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-mcp-inspector-project-'));
     tempDirs.push(projectDir);
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    const stateDir = mkdtempSync(join(tmpdir(), 'ok-mcp-inspector-state-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    const stateDir = mkdtempSync(join(tmpdir(), 'ps-mcp-inspector-state-'));
     tempDirs.push(stateDir);
     let baseUrl = '';
     const mcpHandler = createMcpHttpHandler({
@@ -306,7 +306,7 @@ describe('MCP Inspector schema portability lint over the served /mcp tool list',
     const { toolNames, findings } = parseInspectorRun(run);
     const listed = new Set(toolNames);
     expect(
-      OPEN_KNOWLEDGE_MCP_TOOLS.filter((name) => !listed.has(name)),
+      PALIMPSEST_MCP_TOOLS.filter((name) => !listed.has(name)),
       `tools listed: ${toolNames.join(', ')}`,
     ).toEqual([]);
     const hasErrors = findings.some((f) => f.severity === 'error');

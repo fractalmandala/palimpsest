@@ -40,9 +40,9 @@ import {
   type EditorId,
   type HostSnapshot,
   iconFromClientName,
-  OK_HOSTED_AGENT_ENV,
-  OkCliCommand,
-} from '@inkeep/open-knowledge-core';
+  PS_HOSTED_AGENT_ENV,
+  PsCliCommand,
+} from '@palimpsest/core';
 import type {
   AttachmentPart,
   BrowserUnavailableReason,
@@ -59,9 +59,9 @@ import type {
   ThreadInfo,
   ThreadServerFrame,
   ThreadStatus,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { asRecord } from '@inkeep/open-knowledge-core/acp/tool-call-input';
+} from '@palimpsest/core/acp/thread-protocol';
+import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@palimpsest/core/acp/thread-protocol';
+import { asRecord } from '@palimpsest/core/acp/tool-call-input';
 import { sessionWriterId, toBroadcasterKey } from '../agent-id.ts';
 import type { AgentPresenceBroadcaster } from '../agent-presence.ts';
 import { observeReadiness } from '../agent-registry-gate.ts';
@@ -226,7 +226,7 @@ type NpxLaunchRecovery = 'available' | 'spent';
 const NPX_CACHE_CLEAR_COOLDOWN_MS = 5 * 60 * 1000;
 
 export const ACP_ENVIRONMENT_NOTE =
-  'Note on your environment: you are running inside the OpenKnowledge app, ' +
+  'Note on your environment: you are running inside the Palimpsest app, ' +
   'connected over ACP (Agent Client Protocol) — not inside your own terminal app. ' +
   "Your host CLI's terminal UI is not present, so its built-in slash commands " +
   '(such as /tasks or /bashes) and keyboard shortcuts (such as Ctrl+O) do not ' +
@@ -242,13 +242,13 @@ export function buildEnvironmentNote(skill: ProjectSkillNoteInput | null): strin
   if (skill === null) return ACP_ENVIRONMENT_NOTE;
   const pointer =
     skill.inline === true
-      ? 'This project uses OpenKnowledge. Its agent skill (SKILL.md) is attached to this message. ' +
+      ? 'This project uses Palimpsest. Its agent skill (SKILL.md) is attached to this message. ' +
         'Follow it before editing any markdown here; it overrides generic markdown habits. ' +
-        'If you already have the `open-knowledge` skill loaded, skip it.'
-      : `This project uses OpenKnowledge. Its agent skill is at \`${skill.skillPath}\`. ` +
+        'If you already have the `palimpsest` skill loaded, skip it.'
+      : `This project uses Palimpsest. Its agent skill is at \`${skill.skillPath}\`. ` +
         'Read it before editing any markdown here; it overrides generic markdown habits, ' +
         'and you may read its `references/` files by path when it points to them. ' +
-        'If you already have the `open-knowledge` skill loaded, skip the read.';
+        'If you already have the `palimpsest` skill loaded, skip the read.';
   return `${ACP_ENVIRONMENT_NOTE}\n\n${pointer}`;
 }
 
@@ -274,7 +274,7 @@ export function inlineSkillBlock(
   if (capabilities?.embeddedContext !== true) {
     return {
       type: 'text',
-      text: `\n\n--- OpenKnowledge skill: ${PROJECT_SKILL_ENTRY} ---\n${text}\n--- End skill ---`,
+      text: `\n\n--- Palimpsest skill: ${PROJECT_SKILL_ENTRY} ---\n${text}\n--- End skill ---`,
     };
   }
   return {
@@ -461,7 +461,7 @@ export interface AcpThreadManagerOptions {
   isIgnoredPath: (relPosix: string) => boolean;
   getLoadedDocText?: (docName: string) => string | null;
   getServerUrl?: () => string;
-  getMcpStdioCommand?: () => OkMcpStdioCommand | null | undefined;
+  getMcpStdioCommand?: () => PsMcpStdioCommand | null | undefined;
   probeHarnessManagedMcpEntry?: (
     editorId: EditorId,
     cwd: string,
@@ -494,7 +494,7 @@ export interface AcpThreadManagerOptions {
   browserInstallWaitMs?: number;
 }
 
-export interface OkMcpStdioCommand {
+export interface PsMcpStdioCommand {
   command: string;
   args: string[];
   env?: Record<string, string>;
@@ -508,8 +508,8 @@ export function buildOkMcpStdioCommand(
     log?: PinoLogger;
     env?: Readonly<Record<string, string | undefined>>;
   },
-): OkMcpStdioCommand {
-  const server = OkCliCommand.resolve({
+): PsMcpStdioCommand {
+  const server = PsCliCommand.resolve({
     host: localOpCliArgs === undefined ? undefined : { cliArgs: localOpCliArgs },
     ...(deps?.env === undefined ? {} : { env: deps.env }),
   }).stdioServer(['mcp', '--port', String(port)]);
@@ -529,7 +529,7 @@ export function buildOkMcpStdioCommand(
   return { command: resolved, args, ...channel };
 }
 
-export type OkMcpHostedMarker = 'http-header' | 'stdio-entry-env' | 'unknown' | 'none';
+export type PsMcpHostedMarker = 'http-header' | 'stdio-entry-env' | 'unknown' | 'none';
 
 interface InterpreterProbeFailure {
   kind: 'unhealthy' | 'incompatible';
@@ -1086,7 +1086,7 @@ export class AcpThreadManager {
       Readable.toWeb(child.stdout) as unknown as ReadableStream<Uint8Array>,
     );
 
-    const conn = acpClient({ name: 'open-knowledge' })
+    const conn = acpClient({ name: 'palimpsest' })
       .onRequest(acpMethods.client.session.requestPermission, (ctx) =>
         this.handlePermissionRequest(
           record,
@@ -1190,7 +1190,7 @@ export class AcpThreadManager {
     try {
       init = await conn.agent.request(acpMethods.agent.initialize, {
         protocolVersion: PROTOCOL_VERSION,
-        clientInfo: { name: 'open-knowledge', title: 'Open Knowledge', version: RUNTIME_VERSION },
+        clientInfo: { name: 'palimpsest', title: 'Palimpsest', version: RUNTIME_VERSION },
         clientCapabilities: {
           fs: { readTextFile: true, writeTextFile: true },
           terminal: true,
@@ -1738,14 +1738,14 @@ export class AcpThreadManager {
     consentBudgetMs: number = CONSENT_TIMEOUT_MS,
   ): Promise<{
     servers: McpServer[];
-    hostedMarker: OkMcpHostedMarker;
+    hostedMarker: PsMcpHostedMarker;
     browserUnavailable: BrowserUnavailableReason | null;
     browserInjected: boolean;
   }> {
     const servers: McpServer[] = [];
     let browserUnavailable: BrowserUnavailableReason | null = null;
     let browserInjected = false;
-    let hostedMarker: OkMcpHostedMarker;
+    let hostedMarker: PsMcpHostedMarker;
     if (isPiBridgeAgent(record.agentRef)) {
       const outcome = await this.settlePiBridge(record, ticket, consentBudgetMs);
       hostedMarker = outcome === 'unavailable' ? 'none' : 'unknown';
@@ -1770,7 +1770,7 @@ export class AcpThreadManager {
             command: stdio.command,
             args: [...stdio.args],
             env: [
-              { name: OK_HOSTED_AGENT_ENV, value: '1' },
+              { name: PS_HOSTED_AGENT_ENV, value: '1' },
               ...(entryPath !== undefined && entryPath !== ''
                 ? [{ name: 'PATH', value: entryPath }]
                 : []),
@@ -1836,7 +1836,7 @@ export class AcpThreadManager {
     if (browserRoot === null) {
       this.opts.log.warn(
         context,
-        '[acp-threads] browser tools are on but there is no per-user OpenKnowledge folder to start the browser from — the chat starts without a browser',
+        '[acp-threads] browser tools are on but there is no per-user Palimpsest folder to start the browser from — the chat starts without a browser',
       );
       return 'failed';
     }

@@ -99,7 +99,7 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-summary-passthrough-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-summary-passthrough-'));
   recordedRequest = undefined;
   mockResponse = {};
 });

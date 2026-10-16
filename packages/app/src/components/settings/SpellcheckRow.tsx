@@ -30,7 +30,7 @@ export function SpellcheckRow() {
 
   useEffect(() => {
     if (!isOkDesktopHost()) return;
-    const menu = window.okDesktop?.menu;
+    const menu = window.psDesktop?.menu;
     if (!menu) {
       setState({ status: 'error' });
       return;
@@ -56,7 +56,7 @@ export function SpellcheckRow() {
   if (!isOkDesktopHost()) return null;
 
   async function requestEnabled(enabled: boolean): Promise<void> {
-    const spellcheck = window.okDesktop?.spellcheck;
+    const spellcheck = window.psDesktop?.spellcheck;
     if (!spellcheck) return;
     setSavedTick(false);
     if (savedTickTimerRef.current) clearTimeout(savedTickTimerRef.current);

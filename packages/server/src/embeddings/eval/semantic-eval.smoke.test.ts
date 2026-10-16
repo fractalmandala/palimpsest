@@ -1,13 +1,13 @@
-import { searchWorkspaceCorpus } from '@inkeep/open-knowledge-core';
+import { searchWorkspaceCorpus } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { loadEvalEmbedder, loadEvalSet, prepareEval, runHeldOutEval } from './semantic-eval.ts';
 
-const ENABLED = process.env.OK_EMBED_SMOKE === '1';
+const ENABLED = process.env.PS_EMBED_SMOKE === '1';
 
 describe.skipIf(!ENABLED)('FR2 retrieval-quality eval (real embeddings API)', () => {
   test('candidate-source recall: every zero-overlap target is retrievable', async () => {
     const embedder = await loadEvalEmbedder();
-    expect(embedder, 'set OK_EMBEDDINGS_API_KEY for the gated eval').not.toBeNull();
+    expect(embedder, 'set PS_EMBEDDINGS_API_KEY for the gated eval').not.toBeNull();
     if (!embedder) return;
     const set = loadEvalSet();
     const prep = await prepareEval(embedder, set);

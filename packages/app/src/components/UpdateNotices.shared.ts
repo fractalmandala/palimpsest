@@ -1,6 +1,6 @@
-import { MANUAL_CHECK_NOTICE_EXPIRY_MS } from '@inkeep/open-knowledge-core/constants/manual-update-check';
+import { MANUAL_CHECK_NOTICE_EXPIRY_MS } from '@palimpsest/core/constants/manual-update-check';
 import { t } from '@lingui/core/macro';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 export const TOAST_A_ACTION = 'Relaunch';
 export const TOAST_B_ACTION = 'Release notes';
@@ -70,7 +70,7 @@ type AddNoticeFn = (notice: UpdateNotice) => void;
 type DismissNoticeFn = (id: string) => void;
 
 export function attachUpdateSubscribers(
-  bridge: OkDesktopBridge,
+  bridge: PsDesktopBridge,
   addNotice: AddNoticeFn,
   dismissNotice: DismissNoticeFn = () => {},
   autoDismissMs: number = WHATS_NEW_AUTO_DISMISS_MS,
@@ -330,11 +330,11 @@ export function attachUpdateSubscribers(
 }
 
 type SchemaIncompatibilityDiagnostic = NonNullable<
-  Awaited<ReturnType<OkDesktopBridge['state']['query']>>['schemaIncompatibility']
+  Awaited<ReturnType<PsDesktopBridge['state']['query']>>['schemaIncompatibility']
 >;
 
 export function addSchemaIncompatibilityNotice(
-  bridge: OkDesktopBridge,
+  bridge: PsDesktopBridge,
   diagnostic: SchemaIncompatibilityDiagnostic,
   addNotice: AddNoticeFn,
   dismissNotice: DismissNoticeFn = () => {},

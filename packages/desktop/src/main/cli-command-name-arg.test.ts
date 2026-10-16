@@ -7,15 +7,15 @@ afterEach(() => {
 
 describe('renderer-window CLI command-name argv', () => {
   test('a Beta run hands the window its own command', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(withCliCommandNameArg(['--ok-mode=editor'])).toEqual([
       '--ok-mode=editor',
-      '--ok-cli-command-name=ok-beta',
+      '--ok-cli-command-name=ps-beta',
     ]);
   });
 
   test('a Stable run hands the window the Stable command', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(withCliCommandNameArg(['--ok-mode=editor'])).toEqual([
       '--ok-mode=editor',
       '--ok-cli-command-name=ok',

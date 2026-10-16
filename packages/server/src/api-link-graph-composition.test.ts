@@ -11,7 +11,7 @@ let normal: BootedServer;
 let ephemeral: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-linkgraph-native-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-linkgraph-native-'));
 
   const normalDir = mkdtempSync(resolve(tmpRoot, 'normal-'));
   writeFileSync(resolve(normalDir, 'alpha.md'), '# Alpha\n\nLinks to [[beta]].\n', 'utf-8');

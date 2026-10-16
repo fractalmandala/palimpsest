@@ -47,9 +47,9 @@ const errors: LogEntry[] = [];
 let testDocName = '';
 
 test.beforeEach(async ({ page, api, workerServer }) => {
-  mkdirSync(join(workerServer.contentDir, '.ok'), { recursive: true });
+  mkdirSync(join(workerServer.contentDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(workerServer.contentDir, '.ok', 'config.yml'),
+    join(workerServer.contentDir, '.ps', 'config.yml'),
     'contentRules:\n  markdownlint:\n    enabled: true\n',
     'utf-8',
   );
@@ -64,7 +64,7 @@ test.beforeEach(async ({ page, api, workerServer }) => {
 
   await page.addInitScript(() => {
     try {
-      localStorage.setItem('ok-acp-follow-file-v1', '0');
+      localStorage.setItem('ps-acp-follow-file-v1', '0');
     } catch {}
   });
 
@@ -80,7 +80,7 @@ test.afterEach(() => {
 });
 
 test.afterAll(({ workerServer }) => {
-  writeFileSync(join(workerServer.contentDir, '.ok', 'config.yml'), '', 'utf-8');
+  writeFileSync(join(workerServer.contentDir, '.ps', 'config.yml'), '', 'utf-8');
 });
 
 test.describe('markdown lint — source-mode decorations', () => {
@@ -147,7 +147,7 @@ test.describe('markdown lint — Problems panel composition', () => {
       () =>
         new Promise((resolve) => {
           window.addEventListener(
-            'open-knowledge:lint-nav',
+            'palimpsest:lint-nav',
             (e) => resolve((e as CustomEvent).detail?.line ?? -1),
             { once: true },
           );
@@ -349,20 +349,20 @@ test.describe('markdown lint — WYSIWYG block decorations + navigation', () => 
     api,
   }) => {
     await seed(api, testDocName, MD009_BODY);
-    await expect(page.locator('.ProseMirror .ok-lint-block').first()).toBeVisible({
+    await expect(page.locator('.ProseMirror .ps-lint-block').first()).toBeVisible({
       timeout: 10_000,
     });
     await expect(
-      page.locator('.ProseMirror .ok-lint-block', {
+      page.locator('.ProseMirror .ps-lint-block', {
         hasText: 'Last paragraph with trailing spaces',
       }),
     ).toHaveCount(1);
     await expect(
-      page.locator('.ProseMirror .ok-lint-block', { hasText: 'First paragraph' }),
+      page.locator('.ProseMirror .ps-lint-block', { hasText: 'First paragraph' }),
     ).toHaveCount(0);
 
     await seed(api, testDocName, CLEAN_BODY);
-    await expect(page.locator('.ProseMirror .ok-lint-block')).toHaveCount(0);
+    await expect(page.locator('.ProseMirror .ps-lint-block')).toHaveCount(0);
   });
 
   test('decorations render in a doc that ends with a heading (trailing empty paragraph)', async ({
@@ -372,7 +372,7 @@ test.describe('markdown lint — WYSIWYG block decorations + navigation', () => 
     const headingFinalBody =
       '# Lint demo\n\nTrailing spaces here.   \n\n- dash item\n* star item\n\n### End heading\n';
     await seed(api, testDocName, headingFinalBody);
-    await expect(page.locator('.ProseMirror .ok-lint-block').first()).toBeVisible({
+    await expect(page.locator('.ProseMirror .ps-lint-block').first()).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -382,7 +382,7 @@ test.describe('markdown lint — WYSIWYG block decorations + navigation', () => 
     api,
   }) => {
     await seed(api, testDocName, '# Title\n\n---\n\ntext\n\n***\n\nEnd.\n');
-    const atoms = page.locator('.ProseMirror .ok-lint-block-atom');
+    const atoms = page.locator('.ProseMirror .ps-lint-block-atom');
     await expect(atoms.first()).toBeVisible({ timeout: 10_000 });
     const outlined = await atoms.evaluateAll((els) =>
       els.every((el) => getComputedStyle(el).outlineStyle !== 'none'),
@@ -542,18 +542,18 @@ test.describe('markdown lint — auto-fix', () => {
     await fix.click();
     await expect(page.getByText('MD009')).toHaveCount(0);
     await expect(page.getByText('No problems found')).toBeVisible();
-    await expect(page.locator('.ProseMirror .ok-lint-block')).toHaveCount(0);
+    await expect(page.locator('.ProseMirror .ps-lint-block')).toHaveCount(0);
   });
 
   test('the WYSIWYG tooltip Fix button applies the fix', async ({ page, api }) => {
     await seed(api, testDocName, FIXABLE_BODY);
-    const block = page.locator('.ProseMirror .ok-lint-block').first();
+    const block = page.locator('.ProseMirror .ps-lint-block').first();
     await expect(block).toBeVisible({ timeout: 10_000 });
     await block.hover();
-    const tooltipFix = page.locator('.ok-lint-tooltip-fix');
+    const tooltipFix = page.locator('.ps-lint-tooltip-fix');
     await expect(tooltipFix).toBeVisible();
     await tooltipFix.click();
-    await expect(page.locator('.ProseMirror .ok-lint-block')).toHaveCount(0);
+    await expect(page.locator('.ProseMirror .ps-lint-block')).toHaveCount(0);
   });
 });
 
@@ -586,7 +586,7 @@ test.describe('markdown lint — WYSIWYG hover callout vs the editing region', (
         right: r.right,
       });
       const visible =
-        Array.from(document.querySelectorAll<HTMLElement>('.ok-lint-tooltip')).find(
+        Array.from(document.querySelectorAll<HTMLElement>('.ps-lint-tooltip')).find(
           (el) => !el.hidden,
         ) ?? null;
       const selection = window.getSelection();
@@ -623,10 +623,10 @@ test.describe('markdown lint — WYSIWYG hover callout vs the editing region', (
     });
   }
 
-  const visibleCallouts = (page: Page) => page.locator('.ok-lint-tooltip:visible');
+  const visibleCallouts = (page: Page) => page.locator('.ps-lint-tooltip:visible');
 
   async function lintBlockBox(page: Page) {
-    const block = page.locator('.ProseMirror:not(.composer-prosemirror) .ok-lint-block').first();
+    const block = page.locator('.ProseMirror:not(.composer-prosemirror) .ps-lint-block').first();
     await expect(block).toBeVisible({ timeout: 15_000 });
     const box = await block.boundingBox();
     if (!box) throw new Error('lint block has no layout box');
@@ -728,7 +728,7 @@ test.describe('markdown lint — WYSIWYG hover callout vs the editing region', (
 
   test('the hover callout on a textless block anchors to that block', async ({ page, api }) => {
     await seed(api, testDocName, TEXTLESS_BODY);
-    const atoms = page.locator('.ProseMirror:not(.composer-prosemirror) .ok-lint-block-atom');
+    const atoms = page.locator('.ProseMirror:not(.composer-prosemirror) .ps-lint-block-atom');
     await expect(atoms.first()).toBeVisible({ timeout: 15_000 });
     const count = await atoms.count();
     expect(count, 'expected both textless shapes to be decorated').toBeGreaterThanOrEqual(2);

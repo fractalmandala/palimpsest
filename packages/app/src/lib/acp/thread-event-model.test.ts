@@ -1,4 +1,4 @@
-import type { ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test } from 'vitest';
 import {
   buildThreadRenderModel,
@@ -667,7 +667,7 @@ describe('buildThreadRenderModel', () => {
       kind: 'pi_bridge_consent_request',
       requestId: 'p1',
       agentName: 'Pi',
-      bridgePath: '/proj/.pi/extensions/open-knowledge.ts',
+      bridgePath: '/proj/.pi/extensions/palimpsest.ts',
       cwd: '/proj',
       ts: 1,
     });
@@ -681,7 +681,7 @@ describe('buildThreadRenderModel', () => {
   test('renders a pending pi-bridge card from the request event', () => {
     expect(piCard([piBridgeRequest()])).toMatchObject({
       prompt: { requestId: 'p1', agentName: 'Pi', cwd: '/proj' },
-      bridgePath: '/proj/.pi/extensions/open-knowledge.ts',
+      bridgePath: '/proj/.pi/extensions/palimpsest.ts',
       decision: null,
       outcome: null,
     });
@@ -695,7 +695,7 @@ describe('buildThreadRenderModel', () => {
         kind: 'pi_bridge_status',
         requestId: 'p1',
         state: 'ready',
-        bridgePath: '/proj/.pi/extensions/open-knowledge.ts',
+        bridgePath: '/proj/.pi/extensions/palimpsest.ts',
         bridge: 'written',
         trust: 'added',
         ts: 3,
@@ -731,7 +731,7 @@ describe('buildThreadRenderModel', () => {
         kind: 'pi_bridge_status',
         requestId: 'p1',
         state: 'trust-failed',
-        bridgePath: '/proj/.pi/extensions/open-knowledge.ts',
+        bridgePath: '/proj/.pi/extensions/palimpsest.ts',
         bridge: 'written',
         trust: 'failed',
         detail: 'EACCES',
@@ -747,7 +747,7 @@ describe('buildThreadRenderModel', () => {
         ev({
           kind: 'pi_bridge_status',
           state: 'foreign-file',
-          bridgePath: '/proj/.pi/extensions/open-knowledge.ts',
+          bridgePath: '/proj/.pi/extensions/palimpsest.ts',
           ts: 1,
         }),
       ],

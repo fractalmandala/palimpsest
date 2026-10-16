@@ -69,7 +69,7 @@ vi.doMock('@/components/GraphView', () => ({
   },
 }));
 
-const PREF_KEY = 'ok-graph-fullscreen-skill-nodes-v1';
+const PREF_KEY = 'ps-graph-fullscreen-skill-nodes-v1';
 
 function installMemoryStorage(): Storage {
   const entries = new Map<string, string>();

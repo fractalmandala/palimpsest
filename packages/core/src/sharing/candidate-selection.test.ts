@@ -14,7 +14,7 @@ function recent(overrides: Partial<RecentProjectEntry> & { path: string }): Rece
     path: overrides.path,
     name: overrides.name ?? overrides.path.split('/').filter(Boolean).pop() ?? 'project',
     lastOpenedAt: overrides.lastOpenedAt ?? '2026-05-15T00:00:00.000Z',
-    gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+    gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     ...overrides,
   };
 }
@@ -40,7 +40,7 @@ interface StubOptions {
   readonly worktreesByAnchor?: Record<string, BridgeWorktreeEntry[]>;
   readonly headsByPath?: Record<string, HeadBranchInfo>;
   readonly gitDirKindByPath?: Record<string, ResolvedGitDirKind>;
-  readonly okProjectRoots?: ReadonlySet<string>;
+  readonly psProjectRoots?: ReadonlySet<string>;
   readonly listRecentThrows?: boolean;
   readonly listGitWorktreesThrows?: boolean;
   readonly realpathByPath?: Record<string, string>;
@@ -66,7 +66,7 @@ function makeBridge(opts: StubOptions): CandidateBridgeDeps {
       return opts.gitDirKindByPath?.[projectPath] ?? 'absent';
     },
     async isOkProjectRoot(projectPath) {
-      return opts.okProjectRoots?.has(projectPath) ?? false;
+      return opts.psProjectRoots?.has(projectPath) ?? false;
     },
     async realpath(path) {
       if (opts.realpathThrowsFor?.has(path)) throw new Error('synthetic realpath failure');
@@ -78,7 +78,7 @@ function makeBridge(opts: StubOptions): CandidateBridgeDeps {
 const PAYLOAD: CandidateSelectionPayload = {
   host: 'github.com',
   owner: 'inkeep',
-  repo: 'open-knowledge',
+  repo: 'palimpsest',
   branch: 'feat-bar',
 };
 
@@ -106,7 +106,7 @@ describe('selectCandidate', () => {
         '/main': 'directory',
         '/wt/feat-bar': 'linked',
       },
-      okProjectRoots: new Set(['/main', '/wt/feat-bar']),
+      psProjectRoots: new Set(['/main', '/wt/feat-bar']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -131,7 +131,7 @@ describe('selectCandidate', () => {
         '/main': 'directory',
         '/wt/feat-bar': 'linked',
       },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-non-ok');
@@ -155,7 +155,7 @@ describe('selectCandidate', () => {
         '/main': 'directory',
         '/wt/feat-foo': 'linked',
       },
-      okProjectRoots: new Set(['/main', '/wt/feat-foo']),
+      psProjectRoots: new Set(['/main', '/wt/feat-foo']),
     });
     const result = await selectCandidate({ ...PAYLOAD, branch: 'feat-baz' }, bridge);
     expect(result.kind).toBe('fallback');
@@ -171,7 +171,7 @@ describe('selectCandidate', () => {
       recents: [featFoo],
       headsByPath: { '/wt/feat-foo': head('feat-foo') },
       gitDirKindByPath: { '/wt/feat-foo': 'linked' },
-      okProjectRoots: new Set(['/wt/feat-foo']),
+      psProjectRoots: new Set(['/wt/feat-foo']),
     });
     const result = await selectCandidate({ ...PAYLOAD, branch: 'feat-baz' }, bridge);
     expect(result.kind).toBe('fallback');
@@ -211,7 +211,7 @@ describe('selectCandidate', () => {
         '/main': 'directory',
         '/wt/agent-spawn': 'linked',
       },
-      okProjectRoots: new Set(['/main', '/wt/agent-spawn']),
+      psProjectRoots: new Set(['/main', '/wt/agent-spawn']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -233,7 +233,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory', '/wt/foo-bar': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/foo-bar']),
+      psProjectRoots: new Set(['/main', '/wt/foo-bar']),
     });
     const result = await selectCandidate({ ...PAYLOAD, branch: 'feat/foo/bar' }, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -254,7 +254,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory', '/wt/feat-bar': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/feat-bar']),
+      psProjectRoots: new Set(['/main', '/wt/feat-bar']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -272,7 +272,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('feat-bar') },
       gitDirKindByPath: { '/main': 'directory' },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -292,7 +292,7 @@ describe('selectCandidate', () => {
         '/wt/copy': head('feat-bar'),
       },
       gitDirKindByPath: { '/main': 'directory', '/wt/copy': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/copy']),
+      psProjectRoots: new Set(['/main', '/wt/copy']),
     });
     const warnings: string[] = [];
     const origWarn = console.warn;
@@ -318,7 +318,7 @@ describe('selectCandidate', () => {
       listGitWorktreesThrows: true,
       headsByPath: { '/main': head('feat-bar') },
       gitDirKindByPath: { '/main': 'directory' },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -337,7 +337,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory', '/wt/cli-managed': 'linked' },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-non-ok');
@@ -357,7 +357,7 @@ describe('selectCandidate', () => {
       recents: [main],
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'absent' },
-      okProjectRoots: new Set(),
+      psProjectRoots: new Set(),
     });
     const result = await selectCandidate({ ...PAYLOAD, branch: 'feat-baz' }, bridge);
     expect(result.kind).toBe('miss');
@@ -379,7 +379,7 @@ describe('selectCandidate', () => {
         '/wt/feat': head('feat-bar'),
       },
       gitDirKindByPath: { '/main': 'directory', '/wt/feat': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/feat']),
+      psProjectRoots: new Set(['/main', '/wt/feat']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -394,7 +394,7 @@ describe('selectCandidate', () => {
       recents: [main],
       headsByPath: { '/main': { currentBranch: null, headSha: 'abc1234', detached: true } },
       gitDirKindByPath: { '/main': 'directory' },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('fallback');
@@ -414,7 +414,7 @@ describe('selectCandidate', () => {
         '/wt/feat': head('feat-bar'),
       },
       gitDirKindByPath: { '/main': 'directory', '/wt/feat': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/feat']),
+      psProjectRoots: new Set(['/main', '/wt/feat']),
     });
     const result = await selectCandidate({ ...PAYLOAD, branch: '' }, bridge);
     expect(result.kind).toBe('fallback');
@@ -430,7 +430,7 @@ describe('selectCandidate', () => {
       recents: [main],
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory' },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate({ ...PAYLOAD, branch: '' }, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -445,7 +445,7 @@ describe('selectCandidate', () => {
       recents: [main],
       headsByPath: { '/main': { currentBranch: null, headSha: null, detached: false } },
       gitDirKindByPath: { '/main': 'directory' },
-      okProjectRoots: new Set(['/main']),
+      psProjectRoots: new Set(['/main']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -460,7 +460,7 @@ describe('selectCandidate', () => {
       recents: [wt],
       headsByPath: { '/wt/feat': { currentBranch: null, headSha: null, detached: false } },
       gitDirKindByPath: { '/wt/feat': 'linked' },
-      okProjectRoots: new Set(['/wt/feat']),
+      psProjectRoots: new Set(['/wt/feat']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -469,7 +469,7 @@ describe('selectCandidate', () => {
     }
   });
 
-  test('sole ghost candidate (gitDirKind absent, no .ok/config.yml) is never crowned a branch-match', async () => {
+  test('sole ghost candidate (gitDirKind absent, no .ps/config.yml) is never crowned a branch-match', async () => {
     const ghost = recent({ path: '/moved-away/CollaborationUX' });
     const bridge = makeBridge({
       recents: [ghost],
@@ -507,7 +507,7 @@ describe('selectCandidate', () => {
         '/wt/stale': 'linked',
         '/wt/live': 'linked',
       },
-      okProjectRoots: new Set(['/main', '/wt/stale', '/wt/live']),
+      psProjectRoots: new Set(['/main', '/wt/stale', '/wt/live']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -528,7 +528,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory', '/wt/stale': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/stale']),
+      psProjectRoots: new Set(['/main', '/wt/stale']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('fallback');
@@ -550,7 +550,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory', '/wt/locked': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/locked']),
+      psProjectRoots: new Set(['/main', '/wt/locked']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');
@@ -572,7 +572,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { [privateVarPath]: head('feat-bar') },
       gitDirKindByPath: { [privateVarPath]: 'linked' },
-      okProjectRoots: new Set([privateVarPath]),
+      psProjectRoots: new Set([privateVarPath]),
     });
     const warnings: string[] = [];
     const origWarn = console.warn;
@@ -606,7 +606,7 @@ describe('selectCandidate', () => {
       },
       headsByPath: { '/main': head('main') },
       gitDirKindByPath: { '/main': 'directory', '/wt/a': 'linked', '/wt/b': 'linked' },
-      okProjectRoots: new Set(['/main', '/wt/a', '/wt/b']),
+      psProjectRoots: new Set(['/main', '/wt/a', '/wt/b']),
     });
     const result = await selectCandidate(PAYLOAD, bridge);
     expect(result.kind).toBe('branch-match-ok');

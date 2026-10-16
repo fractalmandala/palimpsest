@@ -1,4 +1,4 @@
-import type { GitHubReferencePreview } from '@inkeep/open-knowledge-core';
+import type { GitHubReferencePreview } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { AgentMarkdown } from './AgentMarkdown';

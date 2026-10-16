@@ -395,7 +395,7 @@ export function EditorWorkspace({
     !singleFile &&
     !tabSessionLoaded &&
     typeof window !== 'undefined' &&
-    window.okDesktop?.config.mode === 'editor';
+    window.psDesktop?.config.mode === 'editor';
   const [drag, setDrag] = useState<EditorTabDragData | null>(null);
   const [dropIndicator, setDropIndicator] = useState<{
     index: number;

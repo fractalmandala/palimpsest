@@ -1,6 +1,6 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   ChevronRight,
@@ -191,7 +191,7 @@ function FileSidebarInner() {
   const [treeCreationCleared, setTreeCreationCleared] = useState(false);
   const initialCreateDir = treeCreationCleared ? '' : baseCreateDir;
 
-  const isElectronHost = typeof window !== 'undefined' && window.okDesktop != null;
+  const isElectronHost = typeof window !== 'undefined' && window.psDesktop != null;
 
   const { state: sidebarState, toggleSidebar, setOpen, dismissCover } = useSidebar();
   const isEmbedded = useIsEmbedded();
@@ -235,7 +235,7 @@ function FileSidebarInner() {
       ? (activeFolderConfig.state.data.folder.templates_available?.length ?? 0) > 0
       : true;
 
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const workspace = useWorkspace();
   const projectName =
     bridge?.config?.projectName ||
@@ -513,7 +513,7 @@ function FileSidebarInner() {
             });
           return;
         }
-        case 'toggle-show-ok-folders': {
+        case 'toggle-show-ps-folders': {
           revealEditorBeforeActing();
           patchSidebarVisibility({ showOkFolders: !showOkFolders });
           return;
@@ -696,7 +696,7 @@ function FileSidebarInner() {
                                     aria-describedby={
                                       pendingSettingsReason ? settingsLoadingReasonId : undefined
                                     }
-                                    data-testid="tree-options-show-ok-folders"
+                                    data-testid="tree-options-show-ps-folders"
                                   >
                                     <Trans>.ok folders</Trans>
                                   </DropdownMenuCheckboxItem>
@@ -928,9 +928,9 @@ function FileSidebarInner() {
                 aria-disabled={pendingSettingsReason ? true : undefined}
                 onSelect={preventPendingSettingsSelection}
                 aria-describedby={pendingSettingsReason ? settingsLoadingReasonId : undefined}
-                data-testid="empty-space-menu-show-ok-folders"
+                data-testid="empty-space-menu-show-ps-folders"
               >
-                <Trans>Show .ok folders</Trans>
+                <Trans>Show .ps folders</Trans>
               </ContextMenuCheckboxItem>
               <ContextMenuCheckboxItem
                 checked={showOnlyMarkdownFiles}

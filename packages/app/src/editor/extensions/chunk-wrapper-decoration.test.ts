@@ -6,7 +6,7 @@ import {
   __resetFirstEmitForTesting,
   chunkWrapperDecorationKey,
   chunkWrapperDecorationPlugin,
-  OK_CHUNK_WRAPPER_CLASS,
+  PS_CHUNK_WRAPPER_CLASS,
 } from './chunk-wrapper-decoration';
 
 const schema = new Schema({
@@ -75,17 +75,17 @@ describe('chunkWrapperDecorationPlugin — decoration emission', () => {
     const state = makeState(doc);
     const specs = decorationSpecs(state);
     expect(specs).toHaveLength(1);
-    expect(specs?.[0].attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+    expect(specs?.[0].attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
   });
 
-  test('single paragraph — one Decoration.node with ok-chunk-wrapper class', () => {
+  test('single paragraph — one Decoration.node with ps-chunk-wrapper class', () => {
     const doc = schema.node('doc', null, [
       schema.node('paragraph', null, [schema.text('Hello world')]),
     ]);
     const state = makeState(doc);
     const specs = decorationSpecs(state);
     expect(specs).toHaveLength(1);
-    expect(specs?.[0].attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+    expect(specs?.[0].attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
     expect(specs?.[0].from).toBe(0);
     expect(specs?.[0].to).toBe(doc.firstChild?.nodeSize);
   });
@@ -101,7 +101,7 @@ describe('chunkWrapperDecorationPlugin — decoration emission', () => {
     const specs = decorationSpecs(state);
     expect(specs).toHaveLength(3);
     for (const s of specs ?? []) {
-      expect(s.attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+      expect(s.attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
     }
     expect(specs?.[0].from).toBe(0);
     expect(specs?.[0].to).toBe(para.nodeSize);
@@ -120,7 +120,7 @@ describe('chunkWrapperDecorationPlugin — decoration emission', () => {
     const specs = decorationSpecs(state);
     expect(specs).toHaveLength(20);
     for (const s of specs ?? []) {
-      expect(s.attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+      expect(s.attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
     }
   });
 
@@ -139,7 +139,7 @@ describe('chunkWrapperDecorationPlugin — decoration emission', () => {
     expect(specs?.[1].from).toBe(para1.nodeSize + callout.nodeSize);
     expect(specs?.[1].to).toBe(para1.nodeSize + callout.nodeSize + para2.nodeSize);
     for (const s of specs ?? []) {
-      expect(s.attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+      expect(s.attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
     }
   });
 
@@ -167,7 +167,7 @@ describe('chunkWrapperDecorationPlugin — decoration emission', () => {
     const state = makeState(doc);
     const specs = decorationSpecs(state);
     expect(specs).toHaveLength(1);
-    expect(specs?.[0].attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+    expect(specs?.[0].attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
     expect(specs?.[0].from).toBe(0);
     expect(specs?.[0].to).toBe(list.nodeSize);
   });
@@ -179,8 +179,8 @@ describe('chunkWrapperDecorationPlugin — plugin identity', () => {
     expect(plugin.spec.key).toBe(chunkWrapperDecorationKey);
   });
 
-  test('OK_CHUNK_WRAPPER_CLASS export matches the CSS contract', () => {
-    expect(OK_CHUNK_WRAPPER_CLASS).toBe('ok-chunk-wrapper');
+  test('PS_CHUNK_WRAPPER_CLASS export matches the CSS contract', () => {
+    expect(PS_CHUNK_WRAPPER_CLASS).toBe('ps-chunk-wrapper');
   });
 
   test('decoration spec is independent across plugin instances', () => {
@@ -198,7 +198,7 @@ describe('chunkWrapperDecorationPlugin — graceful degradation', () => {
     const state = makeState(doc);
     const specs = decorationSpecs(state);
     expect(specs).toHaveLength(1);
-    expect(specs?.[0].attrs.class).toBe(OK_CHUNK_WRAPPER_CLASS);
+    expect(specs?.[0].attrs.class).toBe(PS_CHUNK_WRAPPER_CLASS);
   });
 });
 

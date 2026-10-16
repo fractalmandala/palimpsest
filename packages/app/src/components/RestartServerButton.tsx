@@ -7,7 +7,7 @@ import { restartCollabServer } from '@/lib/restart-collab-server';
 
 export function RestartServerButton({ className }: { className?: string }) {
   const [restarting, setRestarting] = useState(false);
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   if (!bridge) return null;
 
   return (

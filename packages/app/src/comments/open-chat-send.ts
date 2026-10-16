@@ -1,5 +1,5 @@
-const SEND_REQUEST_EVENT = 'open-knowledge:comments-send-to-open-chat';
-const SEND_IN_THREAD_EVENT = 'open-knowledge:comments-send-in-thread';
+const SEND_REQUEST_EVENT = 'palimpsest:comments-send-to-open-chat';
+const SEND_IN_THREAD_EVENT = 'palimpsest:comments-send-in-thread';
 
 const bus: EventTarget = typeof window === 'undefined' ? new EventTarget() : window;
 

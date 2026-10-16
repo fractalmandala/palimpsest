@@ -14,13 +14,13 @@ interface CapturedResponse {
 let home: string;
 let contentDir: string;
 
-const globalSkillDir = (name: string): string => join(home, '.ok', 'skills', name);
+const globalSkillDir = (name: string): string => join(home, '.ps', 'skills', name);
 const globalHostSkillDir = (name: string): string => join(home, '.agents', 'skills', name);
-const projectSkillDir = (name: string): string => join(contentDir, '.ok', 'skills', name);
-const markerPath = (base: string): string => join(base, '.ok', 'local', 'installed-skills.json');
+const projectSkillDir = (name: string): string => join(contentDir, '.ps', 'skills', name);
+const markerPath = (base: string): string => join(base, '.ps', 'local', 'installed-skills.json');
 const retentionPath = (base: string): string =>
-  join(base, '.ok', 'local', 'skill-move-retained.json');
-const lockPath = (base: string): string => join(base, '.ok', 'skills-lock.json');
+  join(base, '.ps', 'local', 'skill-move-retained.json');
+const lockPath = (base: string): string => join(base, '.ps', 'skills-lock.json');
 
 const TRUNCATED_MARKER = '{"schema":1,"skills":{"trip-log":{"hosts":["cla';
 
@@ -116,8 +116,8 @@ const warningText = (body: Record<string, unknown>): string =>
   ((body.warnings as string[] | undefined) ?? []).join(' ');
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-store-refusal-home-'));
-  contentDir = mkdtempSync(join(tmpdir(), 'ok-store-refusal-proj-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-store-refusal-home-'));
+  contentDir = mkdtempSync(join(tmpdir(), 'ps-store-refusal-proj-'));
   mkdirSync(join(home, '.agents'), { recursive: true });
 });
 

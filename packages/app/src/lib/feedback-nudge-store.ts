@@ -1,6 +1,6 @@
 import { hasOkPathSegment } from '@/components/file-tree-utils';
 
-export const FEEDBACK_NUDGE_STORAGE_KEY = 'ok-feedback-nudge-v1';
+export const FEEDBACK_NUDGE_STORAGE_KEY = 'ps-feedback-nudge-v1';
 
 export const FEEDBACK_NUDGE_MIN_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 

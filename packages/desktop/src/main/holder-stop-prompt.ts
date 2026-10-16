@@ -1,4 +1,4 @@
-import { desktopChannelLabel } from '@inkeep/open-knowledge-core';
+import { desktopChannelLabel } from '@palimpsest/core';
 import {
   type ForceStopOutcome,
   isOtherChannelHolderError,
@@ -7,7 +7,7 @@ import {
   type WindowManager,
 } from './window-manager.ts';
 
-const OTHER_CHANNEL_DIALOG_TITLE = 'This project is open in another OpenKnowledge app';
+const OTHER_CHANNEL_DIALOG_TITLE = 'This project is open in another Palimpsest app';
 
 export function failedOpenHolder(
   err: unknown,
@@ -78,12 +78,12 @@ export async function promptHolderStop(
       (offer !== null
         ? offer.detail
         : input.warnsHolderMayBeLive
-          ? `OpenKnowledge can stop that process and retry opening the project. It may still be ` +
+          ? `Palimpsest can stop that process and retry opening the project. It may still be ` +
             `running, so stop it only if you do not need it.`
           : input.holderIsOwnChild
-            ? `OpenKnowledge already asked that server to stop during this open. It can make ` +
+            ? `Palimpsest already asked that server to stop during this open. It can make ` +
               `sure it is gone and try again.`
-            : `OpenKnowledge can stop the conflicting server process and retry opening the project.`),
+            : `Palimpsest can stop the conflicting server process and retry opening the project.`),
     buttons: [offer?.button ?? 'Stop Server & Retry', 'Cancel'],
     defaultId: input.warnsHolderMayBeLive || offer !== null ? 1 : 0,
     cancelId: 1,

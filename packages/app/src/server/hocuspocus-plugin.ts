@@ -1,12 +1,12 @@
 import { existsSync, mkdirSync, readFileSync, realpathSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
-import { isDevChannel } from '@inkeep/open-knowledge-core/constants/product';
+import { isDevChannel } from '@palimpsest/core/constants/product';
 import {
   ASSET_EXTENSIONS,
   EXECUTABLE_BLOCKLIST_EXTENSIONS,
   INLINE_RENDERABLE_EXTENSIONS,
-} from '@inkeep/open-knowledge-core/constants/upload';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/constants/upload';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import {
   AcpThreadManager,
   buildIngressPolicy,
@@ -19,7 +19,7 @@ import {
   readAgentBrowserTools,
   releaseServerLock,
   updateServerLockPort,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import sirv from 'sirv';
 import type { Plugin, ViteDevServer } from 'vite';
 import type { WebSocketServer } from 'ws';
@@ -43,7 +43,7 @@ interface ContentConfig {
 
 export function resolveContentConfig(projectRoot: string): ContentConfig {
   const defaults: ContentConfig = { dir: projectRoot };
-  const configPath = resolve(projectRoot, '.ok/config.yml');
+  const configPath = resolve(projectRoot, '.ps/config.yml');
   if (existsSync(configPath)) {
     try {
       const raw = readFileSync(configPath, 'utf-8');
@@ -60,20 +60,20 @@ export function resolveContentConfig(projectRoot: string): ContentConfig {
 }
 
 const contentConfig = resolveContentConfig(PROJECT_ROOT);
-const CONTENT_DIR = process.env.OK_TEST_CONTENT_DIR
-  ? realpathSync(process.env.OK_TEST_CONTENT_DIR)
+const CONTENT_DIR = process.env.PS_TEST_CONTENT_DIR
+  ? realpathSync(process.env.PS_TEST_CONTENT_DIR)
   : contentConfig.dir;
 const CONTENT_ROOT = relative(PROJECT_ROOT, CONTENT_DIR);
 
 mkdirSync(CONTENT_DIR, { recursive: true });
 
-const isTestIsolated = Boolean(process.env.OK_TEST_CONTENT_DIR);
-const gitEnabledForTest = isTestIsolated && process.env.OK_TEST_GIT_ENABLED === '1';
+const isTestIsolated = Boolean(process.env.PS_TEST_CONTENT_DIR);
+const gitEnabledForTest = isTestIsolated && process.env.PS_TEST_GIT_ENABLED === '1';
 
-const SINGLE_DOC_REL_PATH = process.env.OK_TEST_SINGLE_DOC_REL_PATH || undefined;
+const SINGLE_DOC_REL_PATH = process.env.PS_TEST_SINGLE_DOC_REL_PATH || undefined;
 const isEphemeralTest = isTestIsolated && SINGLE_DOC_REL_PATH !== undefined;
-const TEST_PROJECT_DIR = process.env.OK_TEST_PROJECT_DIR
-  ? realpathSync(process.env.OK_TEST_PROJECT_DIR)
+const TEST_PROJECT_DIR = process.env.PS_TEST_PROJECT_DIR
+  ? realpathSync(process.env.PS_TEST_PROJECT_DIR)
   : undefined;
 
 let exitHandlerRegistered = false;
@@ -125,7 +125,7 @@ function closeWebSocketServer(wss: WebSocketServer): Promise<void> {
   });
 }
 
-type OkServerHost = Pick<ViteDevServer, 'httpServer' | 'middlewares'>;
+type PsServerHost = Pick<ViteDevServer, 'httpServer' | 'middlewares'>;
 
 type RuntimeTeardowns = Set<() => Promise<void>>;
 
@@ -172,7 +172,7 @@ export function prebuiltHocuspocusPlugin(): Plugin {
 }
 
 async function attachOkServer(
-  server: OkServerHost,
+  server: PsServerHost,
   assetRouting: AssetRouting,
   activeRuntimeTeardowns: RuntimeTeardowns,
 ): Promise<() => Promise<void>> {
@@ -181,7 +181,7 @@ async function attachOkServer(
   if (localOpCliArgs === undefined && isDevChannel(process.env)) {
     getLogger('hocuspocus').warn(
       { entry: workspaceCliEntry(PROJECT_ROOT) },
-      'The workspace CLI is not built, so this dev server runs the open-knowledge on PATH as Stable for MCP, git credentials and local operations, and refuses sign-in, sign-out, token storage and clone. Run pnpm build in the checkout, then restart pnpm dev.',
+      'The workspace CLI is not built, so this dev server runs the palimpsest on PATH as Stable for MCP, git credentials and local operations, and refuses sign-in, sign-out, token storage and clone. Run pnpm build in the checkout, then restart pnpm dev.',
     );
   }
   configureServerInvocations += 1;
@@ -237,7 +237,7 @@ async function attachOkServer(
     : new AcpThreadManager({
         contentDir: CONTENT_DIR,
         localDir: currentSrv.lockDir,
-        globalDir: okUserHomeDir(),
+        globalDir: psUserHomeDir(),
         registry: currentSrv.acpRegistry,
         permissions: currentSrv.acpPermissions,
         sessionManager,

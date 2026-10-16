@@ -40,7 +40,7 @@ describe('enumeratePackSkills', () => {
   });
 
   test("members under the spec's skills/ location enumerate like legacy members", () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pack-spec-shape-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pack-spec-shape-'));
     try {
       writeFileSync(join(dir, 'plugin.json'), '{"name":"demo"}');
       mkdirSync(join(dir, 'skills', 'member-a'), { recursive: true });

@@ -8,7 +8,7 @@
       "createConfigWarningEvent-> const text = details ? `${summary}\\n\\n${details}` : summary; createAgentTextMessageChunk(`Config warning: ${text}\\n\\n`)",
       "createTextEvent         -> createAgentTextMessageChunk(event.delta, event.itemId, meta)"
     ],
-    "note": "createAgentMessageChunk omits the messageId key entirely when the argument is falsy, which is why both warning families arrive without one while ordinary answers carry event.itemId. The legacy branches are reached whenever the client has not negotiated the JetBrains-private typed-failure capability, which Open Knowledge never advertises. Only candidates[0] is recorded traffic, from a thread whose meta names the wire-observed version; every Config warning entry is reconstructed from the emission templates above, which were read out of the source-read version. The two agree byte for byte on all three literals."
+    "note": "createAgentMessageChunk omits the messageId key entirely when the argument is falsy, which is why both warning families arrive without one while ordinary answers carry event.itemId. The legacy branches are reached whenever the client has not negotiated the JetBrains-private typed-failure capability, which Palimpsest never advertises. Only candidates[0] is recorded traffic, from a thread whose meta names the wire-observed version; every Config warning entry is reconstructed from the emission templates above, which were read out of the source-read version. The two agree byte for byte on all three literals."
   },
   "agents": {
     "codexRegistry": {

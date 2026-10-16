@@ -2,7 +2,7 @@ import { requestDocPanelTab } from '@/components/doc-panel-events';
 import type { PanelScope } from '@/components/PanelScopeHeader';
 import { routeNoteWindowActionToMain } from '@/lib/note-window-main-actions';
 
-const COMMENT_SCOPE_EVENT = 'open-knowledge:comments-scope';
+const COMMENT_SCOPE_EVENT = 'palimpsest:comments-scope';
 
 const bus: EventTarget = typeof window === 'undefined' ? new EventTarget() : window;
 

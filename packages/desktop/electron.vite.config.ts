@@ -25,7 +25,7 @@ injectAppVersionEnv();
  * Renderer section mirrors `packages/app/vite.config.ts` (React + React Compiler
  * + dedupe list for prosemirror/codemirror/yjs/react) minus its `hocuspocusPlugin`,
  * because Electron's utility process owns Hocuspocus — the renderer just connects
- * to `ws://localhost:<utility-port>/collab` via `window.okDesktop.config.collabUrl`.
+ * to `ws://localhost:<utility-port>/collab` via `window.psDesktop.config.collabUrl`.
  *
  * No `configFile: false` is needed in the renderer block: electron-vite resolves
  * its own config from cwd (the desktop package) and does NOT recurse into
@@ -40,7 +40,7 @@ injectAppVersionEnv();
  */
 
 const appRoot = resolve(__dirname, '../app');
-const desktopVariant = parseDesktopVariantName(process.env.OK_DESKTOP_VARIANT);
+const desktopVariant = parseDesktopVariantName(process.env.PS_DESKTOP_VARIANT);
 
 // The Lingui macro resolves `lingui.config.ts` relative to cwd. electron-vite
 // runs from `packages/desktop`, so without this the renderer Babel pass fails
@@ -107,7 +107,7 @@ export default defineConfig({
         // be a single self-contained file. Rolldown splits any module two
         // entries share into `chunks/` and offers no per-entry inlining knob
         // (`codeSplitting: false` is rejected outright for multi-input builds),
-        // so a second entry here silently kills BOTH preloads: `window.okDesktop`
+        // so a second entry here silently kills BOTH preloads: `window.psDesktop`
         // goes undefined and the editor falls into web mode. The uninstall
         // window's narrow bridge therefore ships inside this entry and is
         // selected at exposure time — see `src/preload/uninstall.ts`.
@@ -117,7 +117,7 @@ export default defineConfig({
         // sandbox: false and are an Electron 28+ feature with different ABI. Emitting
         // `cjs` produces `out/preload/index.js` (matches `preload:` path in main/index.ts)
         // and works under our sandbox. Without this, Electron silently fails to load
-        // the preload script and `window.okDesktop` is never populated — renderer
+        // the preload script and `window.psDesktop` is never populated — renderer
         // falls into the web-mode branch and the Navigator never appears.
         // `entryFileNames: '[name].js'` overrides electron-vite's default `.cjs`/`.mjs`
         // suffixing so main's `join(__dirname, '../preload/index.js')` load path works

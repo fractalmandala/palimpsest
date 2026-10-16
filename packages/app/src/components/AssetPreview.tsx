@@ -1,5 +1,5 @@
-import type { InlineAssetMediaKind } from '@inkeep/open-knowledge-core/constants/upload';
-import { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
+import type { InlineAssetMediaKind } from '@palimpsest/core/constants/upload';
+import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { MermaidFileViewer } from '@/components/MermaidFileViewer';

@@ -84,7 +84,7 @@ function makeEntry(docName: string): FakePoolEntry {
 function signalSyncStatus() {
   act(() => {
     window.dispatchEvent(
-      new CustomEvent('open-knowledge:documents-changed', {
+      new CustomEvent('palimpsest:documents-changed', {
         detail: { channels: ['sync-status'] },
       }),
     );

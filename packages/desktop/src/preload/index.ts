@@ -2,18 +2,18 @@ import type {
   ConfigPatch,
   HandoffHostPlatform,
   LanguagePreference,
-  OkBugReportCrashAckResult,
-  OkBugReportCrashDetectedEvent,
-  OkBugReportCrashDumpAvailability,
-  OkBugReportCreateResult,
-  OkBugReportDeleteResult,
-  OkBugReportListResult,
-  OkBugReportScreenshot,
-  OkBugReportSendResult,
+  PsBugReportCrashAckResult,
+  PsBugReportCrashDetectedEvent,
+  PsBugReportCrashDumpAvailability,
+  PsBugReportCreateResult,
+  PsBugReportDeleteResult,
+  PsBugReportListResult,
+  PsBugReportScreenshot,
+  PsBugReportSendResult,
   WorktreeCreateRequest,
   WorktreeCreateResult,
   WorktreeListResult,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   contextBridge,
   crashReporter,
@@ -22,43 +22,43 @@ import {
   webUtils,
 } from 'electron';
 import type {
-  OkAssetUploadRequest,
-  OkAssetUploadResult,
-  OkChromeColors,
-  OkDeepLinkPayload,
-  OkDesktopBridge,
-  OkDesktopConfig,
-  OkEditorActiveTargetSnapshot,
-  OkEditorViewMenuStateChange,
-  OkLocalOpAuthEvent,
-  OkLocalOpCloneEvent,
-  OkLocalOpStream,
-  OkMcpWiringShowPayload,
-  OkMenuAction,
-  OkMenuActionDispatch,
-  OkMenuActionOrigin,
-  OkMenuUiDispatchRequest,
-  OkNoteWindowMainAction,
-  OkNoteWindowMainActionResult,
-  OkOnboardingShowPayload,
-  OkOnboardingToastPayload,
-  OkPtyData,
-  OkPtyExit,
-  OkPtyNotice,
-  OkRecentRemovedMissingInfo,
-  OkServerRestartedInfo,
-  OkServerVersionDriftInfo,
-  OkShareReceivedPayload,
-  OkThemeSource,
-  OkUpdateDownloadedInfo,
-  OkUpdateFetchingLatestInfo,
-  OkUpdateManualCheckInfo,
-  OkUpdateRelaunchFailedInfo,
-  OkUpdateRelaunchingInfo,
-  OkUpdateStuckHintInfo,
-  OkUserConfigPatchResult,
-  OkUserConfigSnapshot,
-  OkWhatsNewInfo,
+  PsAssetUploadRequest,
+  PsAssetUploadResult,
+  PsChromeColors,
+  PsDeepLinkPayload,
+  PsDesktopBridge,
+  PsDesktopConfig,
+  PsEditorActiveTargetSnapshot,
+  PsEditorViewMenuStateChange,
+  PsLocalOpAuthEvent,
+  PsLocalOpCloneEvent,
+  PsLocalOpStream,
+  PsMcpWiringShowPayload,
+  PsMenuAction,
+  PsMenuActionDispatch,
+  PsMenuActionOrigin,
+  PsMenuUiDispatchRequest,
+  PsNoteWindowMainAction,
+  PsNoteWindowMainActionResult,
+  PsOnboardingShowPayload,
+  PsOnboardingToastPayload,
+  PsPtyData,
+  PsPtyExit,
+  PsPtyNotice,
+  PsRecentRemovedMissingInfo,
+  PsServerRestartedInfo,
+  PsServerVersionDriftInfo,
+  PsShareReceivedPayload,
+  PsThemeSource,
+  PsUpdateDownloadedInfo,
+  PsUpdateFetchingLatestInfo,
+  PsUpdateManualCheckInfo,
+  PsUpdateRelaunchFailedInfo,
+  PsUpdateRelaunchingInfo,
+  PsUpdateStuckHintInfo,
+  PsUserConfigPatchResult,
+  PsUserConfigSnapshot,
+  PsWhatsNewInfo,
 } from '../shared/bridge-contract.ts';
 import {
   DISPLAY_LOCK_CRASH_KEY,
@@ -68,8 +68,8 @@ import type {
   AgentIntegrationsApplyResult,
   IntegrationsSetResult,
   IntegrationsStatus,
-  OkUpdateDispatchRequest,
-  OkUpdateDispatchResult,
+  PsUpdateDispatchRequest,
+  PsUpdateDispatchResult,
   ProjectIntegrationsSetResult,
   ProjectIntegrationsStatus,
 } from '../shared/ipc-channels.ts';
@@ -94,7 +94,7 @@ import { createUninstallBridge } from './uninstall.ts';
 
 const invoke = createInvoker(ipcRenderer);
 
-async function dispatchUpdate(request: OkUpdateDispatchRequest): Promise<OkUpdateDispatchResult> {
+async function dispatchUpdate(request: PsUpdateDispatchRequest): Promise<PsUpdateDispatchResult> {
   const result = await invoke('ok:update:dispatch', request);
   if (result.kind !== request.kind) {
     throw new Error(`ok:update:dispatch: expected ${request.kind}, got ${result.kind}`);
@@ -111,7 +111,7 @@ function createIpcEventStream<E extends { type: string }>(
   startResultPromise: Promise<{ ok: true; streamId: string } | { ok: false; error: string }>,
   eventChannel: 'ok:local-op:auth:event' | 'ok:local-op:clone:event',
   cancelChannel: 'ok:local-op:auth:cancel' | 'ok:local-op:clone:cancel',
-): OkLocalOpStream<E> {
+): PsLocalOpStream<E> {
   const buffer: E[] = [];
   const waiters: ((event: E | null) => void)[] = [];
   let terminated = false;
@@ -201,8 +201,8 @@ function createIpcEventStream<E extends { type: string }>(
   };
 }
 
-function createLocalOpAuthStream(): OkLocalOpStream<OkLocalOpAuthEvent> {
-  return createIpcEventStream<OkLocalOpAuthEvent>(
+function createLocalOpAuthStream(): PsLocalOpStream<PsLocalOpAuthEvent> {
+  return createIpcEventStream<PsLocalOpAuthEvent>(
     invoke('ok:local-op:auth:start'),
     'ok:local-op:auth:event',
     'ok:local-op:auth:cancel',
@@ -213,8 +213,8 @@ function createLocalOpCloneStream(request: {
   url: string;
   dir: string;
   branch?: string | null;
-}): OkLocalOpStream<OkLocalOpCloneEvent> {
-  return createIpcEventStream<OkLocalOpCloneEvent>(
+}): PsLocalOpStream<PsLocalOpCloneEvent> {
+  return createIpcEventStream<PsLocalOpCloneEvent>(
     invoke('ok:local-op:clone:start', request),
     'ok:local-op:clone:event',
     'ok:local-op:clone:cancel',
@@ -227,7 +227,7 @@ function parseArg(name: string): string | undefined {
   return arg?.slice(prefix.length);
 }
 
-function readConfigFromArgv(): OkDesktopConfig {
+function readConfigFromArgv(): PsDesktopConfig {
   const collabUrl = parseArg('collab-url') ?? '';
   const apiOrigin = parseArg('api-origin') ?? '';
   const projectPath = parseArg('project-path') ?? '';
@@ -275,7 +275,7 @@ const MAX_BUFFERED_MENU_ACTIONS = 32;
 
 type MenuActionBufferPolicy = 'never-buffer' | 'parity' | 'additive';
 
-const MENU_ACTION_BUFFER_POLICY: Record<OkMenuAction, MenuActionBufferPolicy> = {
+const MENU_ACTION_BUFFER_POLICY: Record<PsMenuAction, MenuActionBufferPolicy> = {
   delete: 'never-buffer',
   'move-to-trash': 'never-buffer',
   'close-active-tab-or-window': 'never-buffer',
@@ -288,7 +288,7 @@ const MENU_ACTION_BUFFER_POLICY: Record<OkMenuAction, MenuActionBufferPolicy> = 
   'toggle-agent-panel': 'parity',
   'toggle-editor': 'parity',
   'toggle-show-hidden-files': 'parity',
-  'toggle-show-ok-folders': 'parity',
+  'toggle-show-ps-folders': 'parity',
   'toggle-show-only-markdown-files': 'parity',
   'toggle-show-skills-section': 'parity',
   'move-terminal': 'parity',
@@ -318,8 +318,8 @@ const MENU_ACTION_BUFFER_POLICY: Record<OkMenuAction, MenuActionBufferPolicy> = 
   'send-feedback': 'additive',
 };
 
-const menuActionListeners = new Set<(action: OkMenuAction, origin: OkMenuActionOrigin) => void>();
-function deliverMenuAction(dispatch: OkMenuActionDispatch): void {
+const menuActionListeners = new Set<(action: PsMenuAction, origin: PsMenuActionOrigin) => void>();
+function deliverMenuAction(dispatch: PsMenuActionDispatch): void {
   for (const listener of menuActionListeners) {
     try {
       listener(dispatch.action, dispatch.origin);
@@ -329,10 +329,10 @@ function deliverMenuAction(dispatch: OkMenuActionDispatch): void {
   }
 }
 
-const bufferedMenuActions: OkMenuActionDispatch[] = [];
+const bufferedMenuActions: PsMenuActionDispatch[] = [];
 
 // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-ipcRenderer.on('ok:menu-action', (_event, dispatch: OkMenuActionDispatch) => {
+ipcRenderer.on('ok:menu-action', (_event, dispatch: PsMenuActionDispatch) => {
   if (menuActionListeners.size > 0) {
     deliverMenuAction(dispatch);
     return;
@@ -350,21 +350,21 @@ ipcRenderer.on('ok:menu-action', (_event, dispatch: OkMenuActionDispatch) => {
   bufferedMenuActions.push(dispatch);
 });
 
-const bridge: OkDesktopBridge = {
+const bridge: PsDesktopBridge = {
   config: readConfigFromArgv(),
 
-  onProjectSwitched(cb: (next: OkDesktopConfig) => void) {
+  onProjectSwitched(cb: (next: PsDesktopConfig) => void) {
     /*
      * UPSTREAM(electron/electron#33328): `removeListener` matches on the exact
      * function registered, so the wrapper — not `cb` — is what both calls use.
      */
-    const listener = (_event: IpcRendererEvent, next: OkDesktopConfig) => cb(next);
+    const listener = (_event: IpcRendererEvent, next: PsDesktopConfig) => cb(next);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:project:switched', listener);
     return () => ipcRenderer.removeListener('ok:project:switched', listener);
   },
 
-  onMenuAction(cb: (action: OkMenuAction, origin: OkMenuActionOrigin) => void) {
+  onMenuAction(cb: (action: PsMenuAction, origin: PsMenuActionOrigin) => void) {
     const wasUnlistened = menuActionListeners.size === 0;
     menuActionListeners.add(cb);
     if (wasUnlistened && bufferedMenuActions.length > 0) {
@@ -382,36 +382,36 @@ const bridge: OkDesktopBridge = {
     };
   },
 
-  onUpdateDownloaded(cb: (info: OkUpdateDownloadedInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkUpdateDownloadedInfo) => cb(info);
+  onUpdateDownloaded(cb: (info: PsUpdateDownloadedInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsUpdateDownloadedInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:downloaded', listener);
     return () => ipcRenderer.removeListener('ok:update:downloaded', listener);
   },
 
-  onUpdateRelaunching(cb: (info: OkUpdateRelaunchingInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkUpdateRelaunchingInfo) => cb(info);
+  onUpdateRelaunching(cb: (info: PsUpdateRelaunchingInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsUpdateRelaunchingInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:relaunching', listener);
     return () => ipcRenderer.removeListener('ok:update:relaunching', listener);
   },
 
-  onUpdateFetchingLatest(cb: (info: OkUpdateFetchingLatestInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkUpdateFetchingLatestInfo) => cb(info);
+  onUpdateFetchingLatest(cb: (info: PsUpdateFetchingLatestInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsUpdateFetchingLatestInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:fetching-latest', listener);
     return () => ipcRenderer.removeListener('ok:update:fetching-latest', listener);
   },
 
-  onUpdateRelaunchFailed(cb: (info: OkUpdateRelaunchFailedInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkUpdateRelaunchFailedInfo) => cb(info);
+  onUpdateRelaunchFailed(cb: (info: PsUpdateRelaunchFailedInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsUpdateRelaunchFailedInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:relaunch-failed', listener);
     return () => ipcRenderer.removeListener('ok:update:relaunch-failed', listener);
   },
 
-  onWhatsNew(cb: (info: OkWhatsNewInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkWhatsNewInfo) => cb(info);
+  onWhatsNew(cb: (info: PsWhatsNewInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsWhatsNewInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:whats-new', listener);
     return () => ipcRenderer.removeListener('ok:update:whats-new', listener);
@@ -424,50 +424,50 @@ const bridge: OkDesktopBridge = {
     return () => ipcRenderer.removeListener('ok:update:whats-new-dismissed', listener);
   },
 
-  onUpdateStuckHint(cb: (info: OkUpdateStuckHintInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkUpdateStuckHintInfo) => cb(info);
+  onUpdateStuckHint(cb: (info: PsUpdateStuckHintInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsUpdateStuckHintInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:stuck-hint', listener);
     return () => ipcRenderer.removeListener('ok:update:stuck-hint', listener);
   },
 
-  onUpdateManualCheck(cb: (info: OkUpdateManualCheckInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkUpdateManualCheckInfo) => cb(info);
+  onUpdateManualCheck(cb: (info: PsUpdateManualCheckInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsUpdateManualCheckInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:update:manual-check', listener);
     return () => ipcRenderer.removeListener('ok:update:manual-check', listener);
   },
 
-  onDeepLink(cb: (evt: OkDeepLinkPayload) => void) {
-    const listener = (_event: IpcRendererEvent, evt: OkDeepLinkPayload) => cb(evt);
+  onDeepLink(cb: (evt: PsDeepLinkPayload) => void) {
+    const listener = (_event: IpcRendererEvent, evt: PsDeepLinkPayload) => cb(evt);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:deep-link', listener);
     return () => ipcRenderer.removeListener('ok:deep-link', listener);
   },
 
-  onShareReceived(cb: (payload: OkShareReceivedPayload) => void) {
-    const listener = (_event: IpcRendererEvent, payload: OkShareReceivedPayload) => cb(payload);
+  onShareReceived(cb: (payload: PsShareReceivedPayload) => void) {
+    const listener = (_event: IpcRendererEvent, payload: PsShareReceivedPayload) => cb(payload);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:share:received', listener);
     return () => ipcRenderer.removeListener('ok:share:received', listener);
   },
 
-  onServerVersionDrift(cb: (info: OkServerVersionDriftInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkServerVersionDriftInfo) => cb(info);
+  onServerVersionDrift(cb: (info: PsServerVersionDriftInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsServerVersionDriftInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:server-version-drift', listener);
     return () => ipcRenderer.removeListener('ok:server-version-drift', listener);
   },
 
-  onServerRestarted(cb: (info: OkServerRestartedInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkServerRestartedInfo) => cb(info);
+  onServerRestarted(cb: (info: PsServerRestartedInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsServerRestartedInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:server-restarted', listener);
     return () => ipcRenderer.removeListener('ok:server-restarted', listener);
   },
 
-  onRecentRemovedMissing(cb: (info: OkRecentRemovedMissingInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: OkRecentRemovedMissingInfo) => cb(info);
+  onRecentRemovedMissing(cb: (info: PsRecentRemovedMissingInfo) => void) {
+    const listener = (_event: IpcRendererEvent, info: PsRecentRemovedMissingInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ok:project:recent-removed-missing', listener);
     return () => ipcRenderer.removeListener('ok:project:recent-removed-missing', listener);
@@ -475,7 +475,7 @@ const bridge: OkDesktopBridge = {
 
   restartServer: (projectPath: string) => invoke('ok:project:restart-server', projectPath),
 
-  setThemeSource: (source: OkThemeSource) => invoke('ok:theme:set-source', { source }),
+  setThemeSource: (source: PsThemeSource) => invoke('ok:theme:set-source', { source }),
 
   setLanguagePreference: (preference: LanguagePreference) =>
     invoke('ok:user-config:dispatch', { kind: 'set-language-preference', preference }) as Promise<{
@@ -484,14 +484,14 @@ const bridge: OkDesktopBridge = {
 
   userConfig: {
     read: () =>
-      invoke('ok:user-config:dispatch', { kind: 'read' }) as Promise<OkUserConfigSnapshot>,
+      invoke('ok:user-config:dispatch', { kind: 'read' }) as Promise<PsUserConfigSnapshot>,
     patch: (patch: ConfigPatch) =>
       invoke('ok:user-config:dispatch', {
         kind: 'patch',
         patch,
-      }) as Promise<OkUserConfigPatchResult>,
-    onChanged(cb: (snapshot: OkUserConfigSnapshot) => void) {
-      const listener = (_event: IpcRendererEvent, snapshot: OkUserConfigSnapshot) => cb(snapshot);
+      }) as Promise<PsUserConfigPatchResult>,
+    onChanged(cb: (snapshot: PsUserConfigSnapshot) => void) {
+      const listener = (_event: IpcRendererEvent, snapshot: PsUserConfigSnapshot) => cb(snapshot);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:user-config:changed', listener);
       invoke('ok:user-config:dispatch', { kind: 'subscribe' }).catch((err: unknown) => {
@@ -516,7 +516,7 @@ const bridge: OkDesktopBridge = {
     },
   },
 
-  signalThemeApplied: (opts?: { reducedTransparency?: boolean; chrome?: OkChromeColors }) => {
+  signalThemeApplied: (opts?: { reducedTransparency?: boolean; chrome?: PsChromeColors }) => {
     invoke('ok:theme:applied', opts).catch((err: unknown) => {
       console.warn(
         JSON.stringify({
@@ -565,7 +565,7 @@ const bridge: OkDesktopBridge = {
     runCheckout: (request) => invoke('ok:project:run-checkout', request),
     fetchTargetStatus: (request) => invoke('ok:project:fetch-target-status', request),
     awaitBranchSwitched: (request) => invoke('ok:project:await-branch-switched', request),
-    okInit: (request) => invoke('ok:project:ok-init', request),
+    psInit: (request) => invoke('ok:project:ps-init', request),
     close: () => invoke('ok:project:close'),
   },
 
@@ -575,12 +575,12 @@ const bridge: OkDesktopBridge = {
       invoke('ok:worktree:dispatch', {
         kind: 'inventory',
         ...request,
-      }) as ReturnType<OkDesktopBridge['worktree']['inventory']>,
+      }) as ReturnType<PsDesktopBridge['worktree']['inventory']>,
     openInventory: (request) =>
       invoke('ok:worktree:dispatch', {
         kind: 'open-inventory',
         ...request,
-      }) as ReturnType<OkDesktopBridge['worktree']['openInventory']>,
+      }) as ReturnType<PsDesktopBridge['worktree']['openInventory']>,
     create: (request: WorktreeCreateRequest) =>
       invoke('ok:worktree:dispatch', {
         kind: 'create',
@@ -613,7 +613,7 @@ const bridge: OkDesktopBridge = {
   slides: createSlidesBridge(invoke),
 
   bugReport: {
-    create: (request: Parameters<OkDesktopBridge['bugReport']['create']>[0]) =>
+    create: (request: Parameters<PsDesktopBridge['bugReport']['create']>[0]) =>
       invoke('ok:bug-report:dispatch', {
         kind: 'create',
         level: request.level,
@@ -623,31 +623,31 @@ const bridge: OkDesktopBridge = {
         attachments: request.attachments,
         agentChatThreadId: request.agentChatThreadId,
         crashEventId: request.crashEventId,
-      }) as Promise<OkBugReportCreateResult>,
+      }) as Promise<PsBugReportCreateResult>,
     captureScreenshot: () =>
       invoke('ok:bug-report:dispatch', {
         kind: 'capture-screenshot',
-      }) as Promise<OkBugReportScreenshot | null>,
+      }) as Promise<PsBugReportScreenshot | null>,
     crashDumpAvailability: () =>
       invoke('ok:bug-report:dispatch', {
         kind: 'crash-dump-availability',
-      }) as Promise<OkBugReportCrashDumpAvailability>,
-    send: (request: Parameters<OkDesktopBridge['bugReport']['send']>[0]) =>
+      }) as Promise<PsBugReportCrashDumpAvailability>,
+    send: (request: Parameters<PsDesktopBridge['bugReport']['send']>[0]) =>
       invoke('ok:bug-report:dispatch', {
         ...request,
         kind: 'send',
-      }) as Promise<OkBugReportSendResult>,
+      }) as Promise<PsBugReportSendResult>,
     crashAck: (request: { eventId: string }) =>
       invoke('ok:bug-report:dispatch', {
         kind: 'crash-ack',
         eventId: request.eventId,
-      }) as Promise<OkBugReportCrashAckResult>,
+      }) as Promise<PsBugReportCrashAckResult>,
     list: () =>
-      invoke('ok:bug-report:dispatch', { kind: 'list' }) as Promise<OkBugReportListResult>,
+      invoke('ok:bug-report:dispatch', { kind: 'list' }) as Promise<PsBugReportListResult>,
     delete: (id: string) =>
-      invoke('ok:bug-report:dispatch', { kind: 'delete', id }) as Promise<OkBugReportDeleteResult>,
-    onCrashDetected(cb: (event: OkBugReportCrashDetectedEvent) => void) {
-      const listener = (_event: IpcRendererEvent, event: OkBugReportCrashDetectedEvent) =>
+      invoke('ok:bug-report:dispatch', { kind: 'delete', id }) as Promise<PsBugReportDeleteResult>,
+    onCrashDetected(cb: (event: PsBugReportCrashDetectedEvent) => void) {
+      const listener = (_event: IpcRendererEvent, event: PsBugReportCrashDetectedEvent) =>
         cb(event);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:bug-report:crash-detected', listener);
@@ -656,13 +656,13 @@ const bridge: OkDesktopBridge = {
   },
 
   assetUpload: {
-    uploadImage: (request: OkAssetUploadRequest) =>
+    uploadImage: (request: PsAssetUploadRequest) =>
       invoke('ok:bug-report:dispatch', {
         kind: 'upload-image',
         contentType: request.contentType,
         bytes: request.bytes,
         filename: request.filename,
-      }) as Promise<OkAssetUploadResult>,
+      }) as Promise<PsAssetUploadResult>,
   },
 
   fs: {
@@ -683,15 +683,15 @@ const bridge: OkDesktopBridge = {
       if (result.ok && !('outcome' in result)) {
         throw new Error('ok:window:open-note returned a non-open result for an open request');
       }
-      return result as Awaited<ReturnType<OkDesktopBridge['noteWindow']['open']>>;
+      return result as Awaited<ReturnType<PsDesktopBridge['noteWindow']['open']>>;
     },
-    dispatchToMain: (action: OkNoteWindowMainAction) =>
+    dispatchToMain: (action: PsNoteWindowMainAction) =>
       invoke('ok:window:open-note', {
         kind: 'dispatch-to-main',
         action,
-      }) as Promise<OkNoteWindowMainActionResult>,
-    onMainAction(cb: (action: OkNoteWindowMainAction) => void) {
-      const listener = (_event: IpcRendererEvent, action: OkNoteWindowMainAction) => cb(action);
+      }) as Promise<PsNoteWindowMainActionResult>,
+    onMainAction(cb: (action: PsNoteWindowMainAction) => void) {
+      const listener = (_event: IpcRendererEvent, action: PsNoteWindowMainAction) => cb(action);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:note-window:main-action', listener);
       return () => ipcRenderer.removeListener('ok:note-window:main-action', listener);
@@ -736,8 +736,8 @@ const bridge: OkDesktopBridge = {
   },
 
   mcpWiring: {
-    onShow(cb: (payload: OkMcpWiringShowPayload) => void) {
-      const listener = (_event: IpcRendererEvent, payload: OkMcpWiringShowPayload) => cb(payload);
+    onShow(cb: (payload: PsMcpWiringShowPayload) => void) {
+      const listener = (_event: IpcRendererEvent, payload: PsMcpWiringShowPayload) => cb(payload);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:mcp-wiring:show', listener);
       return () => ipcRenderer.removeListener('ok:mcp-wiring:show', listener);
@@ -812,8 +812,8 @@ const bridge: OkDesktopBridge = {
   },
 
   onboarding: {
-    onShow(cb: (payload: OkOnboardingShowPayload) => void) {
-      const listener = (_event: IpcRendererEvent, payload: OkOnboardingShowPayload) => cb(payload);
+    onShow(cb: (payload: PsOnboardingShowPayload) => void) {
+      const listener = (_event: IpcRendererEvent, payload: PsOnboardingShowPayload) => cb(payload);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:onboarding:show', listener);
       return () => ipcRenderer.removeListener('ok:onboarding:show', listener);
@@ -824,8 +824,8 @@ const bridge: OkDesktopBridge = {
     confirm: (request) => invoke('ok:onboarding:confirm', request),
     cancel: () => invoke('ok:onboarding:cancel'),
     probeContent: (request) => invoke('ok:onboarding:probe-content', request),
-    onToast(cb: (payload: OkOnboardingToastPayload) => void) {
-      const listener = (_event: IpcRendererEvent, payload: OkOnboardingToastPayload) => cb(payload);
+    onToast(cb: (payload: PsOnboardingToastPayload) => void) {
+      const listener = (_event: IpcRendererEvent, payload: PsOnboardingToastPayload) => cb(payload);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:onboarding:toast', listener);
       return () => ipcRenderer.removeListener('ok:onboarding:toast', listener);
@@ -848,10 +848,10 @@ const bridge: OkDesktopBridge = {
   },
 
   editor: {
-    notifyActiveTargetChanged: (target: OkEditorActiveTargetSnapshot) => {
+    notifyActiveTargetChanged: (target: PsEditorActiveTargetSnapshot) => {
       invoke('ok:editor:active-target-changed', target).catch(() => {});
     },
-    notifyViewMenuStateChanged: (state: OkEditorViewMenuStateChange) => {
+    notifyViewMenuStateChanged: (state: PsEditorViewMenuStateChange) => {
       invoke('ok:editor:view-menu-state-changed', state).catch(() => {});
     },
     notifyBackgroundThrottle: (signal: { hasPendingWork: boolean; enabled: boolean }) => {
@@ -860,7 +860,7 @@ const bridge: OkDesktopBridge = {
   },
 
   menu: {
-    dispatch: async (request: OkMenuUiDispatchRequest) =>
+    dispatch: async (request: PsMenuUiDispatchRequest) =>
       asMenuRendererSnapshot(await invoke('ok:menu:dispatch', request)),
   },
 
@@ -932,19 +932,19 @@ const bridge: OkDesktopBridge = {
       }
     },
     onData(cb) {
-      const listener = (_event: IpcRendererEvent, msg: OkPtyData) => cb(msg);
+      const listener = (_event: IpcRendererEvent, msg: PsPtyData) => cb(msg);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:pty:data', listener);
       return () => ipcRenderer.removeListener('ok:pty:data', listener);
     },
     onExit(cb) {
-      const listener = (_event: IpcRendererEvent, msg: OkPtyExit) => cb(msg);
+      const listener = (_event: IpcRendererEvent, msg: PsPtyExit) => cb(msg);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:pty:exit', listener);
       return () => ipcRenderer.removeListener('ok:pty:exit', listener);
     },
     onNotice(cb) {
-      const listener = (_event: IpcRendererEvent, msg: OkPtyNotice) => cb(msg);
+      const listener = (_event: IpcRendererEvent, msg: PsPtyNotice) => cb(msg);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ok:pty:notice', listener);
       return () => ipcRenderer.removeListener('ok:pty:notice', listener);
@@ -989,7 +989,7 @@ if (parseArg('debug-keyring-smoke') === '1') {
 }
 
 if (isUninstallPreload(process.argv)) {
-  contextBridge.exposeInMainWorld('okUninstall', createUninstallBridge(invoke));
+  contextBridge.exposeInMainWorld('psUninstall', createUninstallBridge(invoke));
 } else {
-  contextBridge.exposeInMainWorld('okDesktop', bridge);
+  contextBridge.exposeInMainWorld('psDesktop', bridge);
 }

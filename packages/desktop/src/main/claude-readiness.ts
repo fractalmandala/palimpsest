@@ -1,5 +1,5 @@
-import type { McpEntryClassification } from '@inkeep/open-knowledge';
-import { TERMINAL_CLI_IDS, TERMINAL_CLIS, type TerminalCli } from '@inkeep/open-knowledge-core';
+import type { McpEntryClassification } from '@palimpsest/cli';
+import { TERMINAL_CLI_IDS, TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core';
 import type { ClaudeReadiness, CliReadiness } from '../shared/bridge-contract.ts';
 import { interactiveShellArgs } from '../shared/terminal-shell.ts';
 import { windowsWherePathArgs } from '../shared/windows-env.ts';
@@ -198,7 +198,7 @@ export async function resolveClaudeReadiness(
   return {
     claude: interpretClaudeProbe(code),
     mcpPreApprovable,
-    okToolsAutoApprovable: resolveOkToolsAutoApprovable({
+    psToolsAutoApprovable: resolveOkToolsAutoApprovable({
       projectEntryPresent,
       projectEntryIsOwn: mcpPreApprovable,
       globalEntryPresent:
@@ -211,7 +211,7 @@ export async function resolveClaudeReadiness(
 
 export interface ResolveCliOnPathDeps {
   probe(): Promise<number | null>;
-  okServerConfigured?(): boolean;
+  psServerConfigured?(): boolean;
   mcpServerName?: string;
 }
 
@@ -224,19 +224,19 @@ export async function resolveCliOnPath(deps: ResolveCliOnPathDeps): Promise<CliR
     return null;
   });
   const onPath = interpretClaudeProbe(code);
-  if (deps.okServerConfigured === undefined) return { onPath };
-  let okServerConfigured = false;
+  if (deps.psServerConfigured === undefined) return { onPath };
+  let psServerConfigured = false;
   try {
-    okServerConfigured = deps.okServerConfigured();
+    psServerConfigured = deps.psServerConfigured();
   } catch (err) {
     getLogger('cli-readiness').warn(
       { err },
-      'okServerConfigured probe threw; treating the OK server as not configured',
+      'psServerConfigured probe threw; treating the OK server as not configured',
     );
   }
   return {
     onPath,
-    okServerConfigured,
+    psServerConfigured,
     ...(deps.mcpServerName === undefined ? {} : { mcpServerName: deps.mcpServerName }),
   };
 }

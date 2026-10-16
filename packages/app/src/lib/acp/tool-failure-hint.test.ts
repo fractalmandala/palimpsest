@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import type { RenderedPermission, RenderedToolCall } from './thread-event-model';
 import { classifyToolFailure, toolFailureHint } from './tool-failure-hint';
 
-const okTool = (text: string, status: RenderedToolCall['status'] = 'failed') => ({
+const psTool = (text: string, status: RenderedToolCall['status'] = 'failed') => ({
   status,
   title: 'mcp__open-knowledge__write',
   rawInput: {},
@@ -35,7 +35,7 @@ function permission(resolved: RenderedPermission['resolved']): RenderedPermissio
 
 describe('classifyToolFailure', () => {
   test('recognises the failure the report was filed about', () => {
-    expect(classifyToolFailure(okTool('Error: Server unreachable: fetch failed'))).toBe(
+    expect(classifyToolFailure(psTool('Error: Server unreachable: fetch failed'))).toBe(
       'server-unreachable',
     );
   });
@@ -45,7 +45,7 @@ describe('classifyToolFailure', () => {
       'Error: Server timed out: The operation was aborted due to timeout',
       'Error: Server unreachable: The operation was aborted due to timeout',
     ]) {
-      expect({ text, got: classifyToolFailure(okTool(text)) }).toEqual({
+      expect({ text, got: classifyToolFailure(psTool(text)) }).toEqual({
         text,
         got: 'server-timeout',
       });
@@ -54,11 +54,11 @@ describe('classifyToolFailure', () => {
 
   test('does not blame the server for a timeout the tool hit somewhere else', () => {
     expect(
-      classifyToolFailure(okTool('exec failed: The operation was aborted due to timeout')),
+      classifyToolFailure(psTool('exec failed: The operation was aborted due to timeout')),
     ).toBe(null);
   });
 
-  test('gives another tool no OpenKnowledge advice, even for a lookalike error', () => {
+  test('gives another tool no Palimpsest advice, even for a lookalike error', () => {
     for (const text of [
       'Error: Server unreachable: fetch failed',
       'TypeError: fetch failed',
@@ -71,9 +71,9 @@ describe('classifyToolFailure', () => {
     }
   });
 
-  test('says nothing rather than guessing at an OpenKnowledge error it does not know', () => {
+  test('says nothing rather than guessing at an Palimpsest error it does not know', () => {
     for (const text of ['', 'Error: Document not found', 'exit code 2']) {
-      expect({ text, got: classifyToolFailure(okTool(text)) }).toEqual({ text, got: null });
+      expect({ text, got: classifyToolFailure(psTool(text)) }).toEqual({ text, got: null });
     }
   });
 
@@ -113,9 +113,9 @@ describe('classifyToolFailure', () => {
 
 describe('toolFailureHint', () => {
   test('every recognised failure carries a hint, and unknown ones carry none', () => {
-    expect(toolFailureHint(okTool('Error: Server unreachable: fetch failed'))).not.toBe(null);
+    expect(toolFailureHint(psTool('Error: Server unreachable: fetch failed'))).not.toBe(null);
     expect(
-      toolFailureHint(okTool('Error: Server timed out: The operation was aborted due to timeout')),
+      toolFailureHint(psTool('Error: Server timed out: The operation was aborted due to timeout')),
     ).not.toBe(null);
     expect(
       toolFailureHint(otherTool('Error: exit code 1'), permission({ optionId: 'no', auto: false })),
@@ -123,15 +123,15 @@ describe('toolFailureHint', () => {
     expect(toolFailureHint(otherTool('Error: exit code 1'))).toBe(null);
   });
 
-  test('an unreachable server seen from a running chat points at the connection, not ok start', () => {
-    const hint = toolFailureHint(okTool('Error: Server unreachable: fetch failed'));
+  test('an unreachable server seen from a running chat points at the connection, not ps start', () => {
+    const hint = toolFailureHint(psTool('Error: Server unreachable: fetch failed'));
     expect(hint).toContain('start a new chat');
-    expect(hint).not.toContain('ok start');
+    expect(hint).not.toContain('ps start');
   });
 
   test('a timeout warns that the tool may have finished before anyone retries it', () => {
     expect(
-      toolFailureHint(okTool('Error: Server timed out: The operation was aborted due to timeout')),
+      toolFailureHint(psTool('Error: Server timed out: The operation was aborted due to timeout')),
     ).toContain('check before trying again');
   });
 });

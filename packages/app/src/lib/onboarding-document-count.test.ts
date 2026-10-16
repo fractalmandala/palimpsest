@@ -1,4 +1,4 @@
-import type { DocumentListSuccess } from '@inkeep/open-knowledge-core';
+import type { DocumentListSuccess } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { countVisibleEntries } from './onboarding-document-count';
 
@@ -40,8 +40,8 @@ describe('countVisibleEntries', () => {
     expect(countVisibleEntries([doc('welcome'), asset('logo.png'), file('data.csv')])).toBe(1);
   });
 
-  test('excludes hidden entries (dotfiles, .ok config, .git)', () => {
-    expect(countVisibleEntries([doc('welcome'), doc('.ok/config'), folder('.git')])).toBe(1);
+  test('excludes hidden entries (dotfiles, .ps config, .git)', () => {
+    expect(countVisibleEntries([doc('welcome'), doc('.ps/config'), folder('.git')])).toBe(1);
   });
 
   test('excludes entries that ship without a docName or path', () => {
@@ -54,7 +54,7 @@ describe('countVisibleEntries', () => {
         doc('welcome'),
         folder('guides'),
         doc('.scratch/wip'),
-        doc('.ok/skills/research/SKILL'),
+        doc('.ps/skills/research/SKILL'),
         asset('logo.png'),
         file('data.csv'),
       ]),

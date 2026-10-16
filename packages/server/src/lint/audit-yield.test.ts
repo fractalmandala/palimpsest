@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DEFAULT_LINTER_CONFIG, type LinterConfig } from '@inkeep/open-knowledge-core';
+import { DEFAULT_LINTER_CONFIG, type LinterConfig } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { AuditSupersededError, auditProject } from './audit.ts';
 
@@ -34,7 +34,7 @@ function seedCorpus(): void {
 }
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-yield-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-yield-')));
   seedCorpus();
 });
 afterEach(() => {

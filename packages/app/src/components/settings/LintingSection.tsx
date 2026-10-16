@@ -1,7 +1,7 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
-import type { ConfigPatch } from '@inkeep/open-knowledge-core/config/schema';
-import { OPENKNOWLEDGE_SKILLS_REPO } from '@inkeep/open-knowledge-core/constants/skills';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { humanFormat } from '@palimpsest/core/config/errors';
+import type { ConfigPatch } from '@palimpsest/core/config/schema';
+import { PALIMPSEST_SKILLS_REPO } from '@palimpsest/core/constants/skills';
 import {
   type AppliesToPatternSummary,
   assertNeverOkfRuleGroupId,
@@ -11,12 +11,12 @@ import {
   isFrontmatterSchemaAsset,
   isOkfRuleEnabled,
   type LintPluginId,
-  OKF_RULE_GROUPS,
-  OKF_RULE_IDS,
+  PSF_RULE_GROUPS,
+  PSF_RULE_IDS,
   type OkfRuleGroupId,
   type OkfRuleId,
   summarizeAppliesTo,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   ArrowUpRight,
@@ -128,8 +128,8 @@ function PluginManageDescription({ id }: { id: LintPluginId }) {
           Validate document frontmatter against JSON Schema files, scoped to doc sets by glob.
         </Trans>
       );
-    case 'okf':
-      return <Trans>Keeps your knowledge base aligned with the Open Knowledge Format.</Trans>;
+    case 'psf':
+      return <Trans>Keeps your knowledge base aligned with the Palimpsest Format.</Trans>;
   }
 }
 
@@ -267,7 +267,7 @@ export function UserPluginsManageSection({ userBinding }: { userBinding: ConfigB
               className="text-1sm text-muted-foreground"
             >
               <Trans>
-                Present a document as a slide deck in its own window. Works in the OpenKnowledge
+                Present a document as a slide deck in its own window. Works in the Palimpsest
                 desktop app only, and needs the Slidev CLI, which you install separately. When on,
                 it appears under Plugins in the sidebar.
               </Trans>
@@ -468,7 +468,7 @@ function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: strin
       ? skills.data.find((skill) => skill.scope === 'project' && skill.name === name)
       : undefined;
   const status = entry
-    ? entry.origin?.source === OPENKNOWLEDGE_SKILLS_REPO
+    ? entry.origin?.source === PALIMPSEST_SKILLS_REPO
       ? 'installed'
       : 'existing'
     : optimisticStatus;
@@ -494,10 +494,10 @@ function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: strin
 
   return (
     <>
-      <Card size="sm" data-testid="settings-okf-recommended-skill">
+      <Card size="sm" data-testid="settings-psf-recommended-skill">
         <CardHeader>
           <CardTitle>
-            <Trans>Open Knowledge Format guidance</Trans>
+            <Trans>Palimpsest Format guidance</Trans>
           </CardTitle>
           <CardDescription>{description}</CardDescription>
           {status === 'installed' ? (
@@ -544,7 +544,7 @@ function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: strin
             ? { plugin: 'OKF', names: [name], descriptions: { [name]: description } }
             : null
         }
-        source={OPENKNOWLEDGE_SKILLS_REPO}
+        source={PALIMPSEST_SKILLS_REPO}
         defaultScope="project"
         installOverride={{ scope: 'project', installSelected }}
         onOpenChange={setDialogOpen}
@@ -557,15 +557,15 @@ function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: strin
 export function OkfPluginSection() {
   const { t } = useLingui();
   const { contentRules, bindingReady, write } = useLinterConfig();
-  const rules = contentRules?.okf?.rules;
-  const enabledCount = OKF_RULE_IDS.filter((id) => isOkfRuleEnabled(rules, id)).length;
-  const generateIndex = contentRules?.okf?.generate?.index === true;
+  const rules = contentRules?.psf?.rules;
+  const enabledCount = PSF_RULE_IDS.filter((id) => isOkfRuleEnabled(rules, id)).length;
+  const generateIndex = contentRules?.psf?.generate?.index === true;
   const generatedIndexSettings = useGeneratedIndexSettings();
   const generateIndexEnabled = generatedIndexSettings.status?.enabled ?? generateIndex;
   const [confirmingGenerateIndex, setConfirmingGenerateIndex] = useState(false);
   const generateIndexTriggerRef = useRef<HTMLButtonElement>(null);
   const recommendedSkills =
-    LINT_PLUGIN_META.find((plugin) => plugin.id === 'okf')?.recommendedSkills ?? [];
+    LINT_PLUGIN_META.find((plugin) => plugin.id === 'psf')?.recommendedSkills ?? [];
 
   function toggleGenerateIndex(next: boolean): void {
     if (next) {
@@ -583,29 +583,29 @@ export function OkfPluginSection() {
   function toggleRule(id: OkfRuleId, next: boolean): void {
     const rules: Partial<Record<OkfRuleId, boolean | null>> = {};
     rules[id] = next ? null : false;
-    if (write({ okf: { rules } })) {
+    if (write({ psf: { rules } })) {
       emitLintConfigChanged();
     }
   }
 
   return (
     <section
-      aria-labelledby="settings-plugin-okf-title"
+      aria-labelledby="settings-plugin-psf-title"
       className="space-y-4"
-      data-testid="settings-plugin-okf"
+      data-testid="settings-plugin-psf"
     >
       <SettingsSectionHeader
-        titleId="settings-plugin-okf-title"
+        titleId="settings-plugin-psf-title"
         title="OKF"
         scope="project"
-        beta={pluginIsBeta('okf')}
-        docUrl={pluginDocUrl('okf')}
+        beta={pluginIsBeta('psf')}
+        docUrl={pluginDocUrl('psf')}
       >
-        <Trans>Keeps your knowledge base aligned with the Open Knowledge Format.</Trans>
+        <Trans>Keeps your knowledge base aligned with the Palimpsest Format.</Trans>
       </SettingsSectionHeader>
 
       {recommendedSkills.length > 0 ? (
-        <div className="flex flex-col gap-2" data-testid="settings-okf-recommended-skills">
+        <div className="flex flex-col gap-2" data-testid="settings-psf-recommended-skills">
           <h4 className="text-sm font-medium">
             <Trans>Recommended agent skill</Trans>
           </h4>
@@ -615,19 +615,19 @@ export function OkfPluginSection() {
         </div>
       ) : null}
 
-      <div className="space-y-2" data-testid="settings-okf-generated-files">
+      <div className="space-y-2" data-testid="settings-psf-generated-files">
         <h4 className="text-sm font-medium">
           <Trans>Generated files</Trans>
         </h4>
         <div className="flex items-center justify-between gap-3 rounded-md border px-3 py-2">
           <div className="min-w-0">
-            <Label htmlFor="settings-okf-generate-index" className="text-sm font-medium">
+            <Label htmlFor="settings-psf-generate-index" className="text-sm font-medium">
               <Trans>Maintain index.md</Trans>
             </Label>
             {}
             <p className="text-sm text-muted-foreground">
               <Trans>
-                Open Knowledge maintains a navigation file named index.md in every folder that
+                Palimpsest maintains a navigation file named index.md in every folder that
                 contains Markdown, each listing that folder's documents by type and linking to its
                 subfolders. It rewrites these files as your documents change, and anything you edit
                 into them yourself is replaced.
@@ -635,14 +635,14 @@ export function OkfPluginSection() {
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               <Trans>
-                In Git projects, Open Knowledge also adds a scoped .gitattributes rule so concurrent
+                In Git projects, Palimpsest also adds a scoped .gitattributes rule so concurrent
                 index changes combine before the next rebuild.
               </Trans>
             </p>
           </div>
           <Switch
             ref={generateIndexTriggerRef}
-            id="settings-okf-generate-index"
+            id="settings-psf-generate-index"
             checked={generateIndexEnabled}
             disabled={
               !bindingReady ||
@@ -653,7 +653,7 @@ export function OkfPluginSection() {
             aria-label={
               generateIndexEnabled ? t`Stop maintaining index.md` : t`Start maintaining index.md`
             }
-            data-testid="settings-okf-generate-index"
+            data-testid="settings-psf-generate-index"
           />
         </div>
         <GeneratedIndexSettingsNotice
@@ -665,7 +665,7 @@ export function OkfPluginSection() {
         <Dialog open={confirmingGenerateIndex} onOpenChange={setConfirmingGenerateIndex}>
           <DialogContent
             className="sm:max-w-lg"
-            data-testid="settings-okf-generate-index-confirm"
+            data-testid="settings-psf-generate-index-confirm"
             onCloseAutoFocus={(event) => {
               event.preventDefault();
               generateIndexTriggerRef.current?.focus();
@@ -677,7 +677,7 @@ export function OkfPluginSection() {
               </DialogTitle>
               <DialogDescription className="text-inherit">
                 <Trans>
-                  Open Knowledge creates and maintains a navigation file named index.md in every
+                  Palimpsest creates and maintains a navigation file named index.md in every
                   folder that contains Markdown.
                 </Trans>
               </DialogDescription>
@@ -694,7 +694,7 @@ export function OkfPluginSection() {
                   title={<Trans>Generated files</Trans>}
                   body={
                     <Trans>
-                      Open Knowledge rewrites these index.md files as documents change, so manual
+                      Palimpsest rewrites these index.md files as documents change, so manual
                       edits to them are replaced.
                     </Trans>
                   }
@@ -709,7 +709,7 @@ export function OkfPluginSection() {
                   title={<Trans>Git merge rule</Trans>}
                   body={
                     <Trans>
-                      In Git projects, Open Knowledge adds a scoped rule to the repository-root
+                      In Git projects, Palimpsest adds a scoped rule to the repository-root
                       .gitattributes file so concurrent index changes combine.
                     </Trans>
                   }
@@ -724,7 +724,7 @@ export function OkfPluginSection() {
                   title={<Trans>Turning it off</Trans>}
                   body={
                     <Trans>
-                      The index files stay in place. Open Knowledge removes only the Git rule it
+                      The index files stay in place. Palimpsest removes only the Git rule it
                       added.
                     </Trans>
                   }
@@ -740,7 +740,7 @@ export function OkfPluginSection() {
               <Button
                 onClick={() => void confirmGenerateIndex()}
                 disabled={generatedIndexSettings.pending}
-                data-testid="settings-okf-generate-index-confirm-accept"
+                data-testid="settings-psf-generate-index-confirm-accept"
               >
                 {generatedIndexSettings.pending ? (
                   <>
@@ -762,17 +762,17 @@ export function OkfPluginSection() {
         </h4>
         <span className="text-xs text-muted-foreground">
           <Trans>
-            {enabledCount}/{OKF_RULE_IDS.length} on
+            {enabledCount}/{PSF_RULE_IDS.length} on
           </Trans>
         </span>
       </div>
 
-      <div className="space-y-4" data-testid="settings-okf-rules-list">
-        {OKF_RULE_GROUPS.map((group) => (
+      <div className="space-y-4" data-testid="settings-psf-rules-list">
+        {PSF_RULE_GROUPS.map((group) => (
           <div
             key={group.id}
             className="space-y-2"
-            data-testid={`settings-okf-rule-group-${group.id}`}
+            data-testid={`settings-psf-rule-group-${group.id}`}
           >
             <h5 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               <OkfGroupLabel id={group.id} />
@@ -785,7 +785,7 @@ export function OkfPluginSection() {
                   <div key={id} className="flex items-center justify-between gap-3 px-3 py-2">
                     <div className="min-w-0">
                       <Label
-                        htmlFor={`settings-okf-rule-toggle-${id}`}
+                        htmlFor={`settings-psf-rule-toggle-${id}`}
                         className="text-sm font-medium"
                       >
                         {id}
@@ -795,12 +795,12 @@ export function OkfPluginSection() {
                       </p>
                     </div>
                     <Switch
-                      id={`settings-okf-rule-toggle-${id}`}
+                      id={`settings-psf-rule-toggle-${id}`}
                       checked={on}
                       disabled={!bindingReady}
                       onCheckedChange={(next) => toggleRule(id, next)}
                       aria-label={on ? t`Disable ${id}` : t`Enable ${id}`}
-                      data-testid={`settings-okf-rule-toggle-${id}`}
+                      data-testid={`settings-psf-rule-toggle-${id}`}
                     />
                   </div>
                 );
@@ -837,7 +837,7 @@ function GeneratedIndexSettingsNotice({
     <div
       role="status"
       className="flex gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm"
-      data-testid="settings-okf-generate-index-status"
+      data-testid="settings-psf-generate-index-status"
     >
       <CircleAlert
         aria-hidden="true"
@@ -847,7 +847,7 @@ function GeneratedIndexSettingsNotice({
         {issue !== null && requestedEnabled === false ? (
           issue === 'git-conflict' ? (
             <Trans>
-              Turning off index maintenance failed because the Open Knowledge section of
+              Turning off index maintenance failed because the Palimpsest section of
               .gitattributes was edited or is incomplete. Remove that section, then try again.
             </Trans>
           ) : issue === 'config-write' ? (
@@ -857,18 +857,18 @@ function GeneratedIndexSettingsNotice({
             </Trans>
           ) : issue === 'connection' ? (
             <Trans>
-              Turning off index maintenance failed because Open Knowledge could not reach the
+              Turning off index maintenance failed because Palimpsest could not reach the
               project server. Try again when the project reconnects.
             </Trans>
           ) : (
             <Trans>
-              Turning off index maintenance failed because Open Knowledge could not update the Git
+              Turning off index maintenance failed because Palimpsest could not update the Git
               merge rule. Check Git and .gitattributes, then try again.
             </Trans>
           )
         ) : issue === 'connection' && requestedEnabled === null ? (
           <Trans>
-            Open Knowledge could not reach the project server to check index maintenance. The status
+            Palimpsest could not reach the project server to check index maintenance. The status
             updates when the project reconnects.
           </Trans>
         ) : effectiveIssue === 'git-conflict' ? (
@@ -883,12 +883,12 @@ function GeneratedIndexSettingsNotice({
           </Trans>
         ) : effectiveIssue === 'connection' ? (
           <Trans>
-            Index maintenance stayed off because Open Knowledge could not reach the project server.
+            Index maintenance stayed off because Palimpsest could not reach the project server.
             Try again when the project reconnects.
           </Trans>
         ) : (
           <Trans>
-            Index maintenance is paused because Open Knowledge could not confirm the required Git
+            Index maintenance is paused because Palimpsest could not confirm the required Git
             merge rule. Check Git and .gitattributes, then try again.
           </Trans>
         )}
@@ -1204,7 +1204,7 @@ export function FrontmatterPluginSection() {
   async function createSchema(): Promise<void> {
     const name = newSchemaName.trim();
     if (name === '' || name.includes('/') || name.includes('\\')) return;
-    const file = `.ok/schemas/${name.endsWith('.json') ? name : `${name}.schema.json`}`;
+    const file = `.ps/schemas/${name.endsWith('.json') ? name : `${name}.schema.json`}`;
     const result = await createEmptyFrontmatterSchema(file);
     if (!result.ok) {
       toast.error(result.errorDetail ?? t`Failed to create the schema file`);
@@ -1274,7 +1274,7 @@ export function FrontmatterPluginSection() {
           </PopoverTrigger>
           <PopoverContent align="end" className="w-72 space-y-2">
             <Label htmlFor="frontmatter-create-schema-name" className="text-xs">
-              <Trans>File name (created in .ok/schemas/)</Trans>
+              <Trans>File name (created in .ps/schemas/)</Trans>
             </Label>
             <Input
               id="frontmatter-create-schema-name"

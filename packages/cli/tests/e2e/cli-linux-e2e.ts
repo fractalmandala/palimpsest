@@ -13,11 +13,11 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const CLI_PKG_DIR = resolve(HERE, '..', '..');
 const WORKSPACE_DIST_CLI = join(CLI_PKG_DIR, 'dist', 'cli.mjs');
 const NODE = process.execPath.includes('bun') ? 'node' : process.execPath;
-const SUT_MODE = process.env.OK_E2E_SUT === 'workspace' ? 'workspace' : 'packed';
+const SUT_MODE = process.env.PS_E2E_SUT === 'workspace' ? 'workspace' : 'packed';
 const LOCKED_PACKED_INSTALL =
-  SUT_MODE === 'packed' && (process.env.OK_CLI_E2E_INSTALL_MODE ?? 'locked') === 'locked';
-const HERMETIC_ENV = { OK_BUNDLE_PROXY: '0' } as const;
-const START_PORT = Number(process.env.OK_E2E_PORT ?? 13581);
+  SUT_MODE === 'packed' && (process.env.PS_CLI_E2E_INSTALL_MODE ?? 'locked') === 'locked';
+const HERMETIC_ENV = { PS_BUNDLE_PROXY: '0' } as const;
+const START_PORT = Number(process.env.PS_E2E_PORT ?? 13581);
 
 type Acquisition = Awaited<ReturnType<typeof installPackedCli>>['acquisition'];
 
@@ -112,14 +112,14 @@ function readLockPort(): number | null {
 beforeAll(async () => {
   if (!existsSync(WORKSPACE_DIST_CLI)) {
     throw new Error(
-      `Missing ${WORKSPACE_DIST_CLI}. Run \`pnpm exec turbo run build --filter=@inkeep/open-knowledge\` before this smoke.`,
+      `Missing ${WORKSPACE_DIST_CLI}. Run \`pnpm exec turbo run build --filter=@palimpsest/cli\` before this smoke.`,
     );
   }
 
   if (SUT_MODE === 'packed') {
-    const packDest = mkdtempSync(join(tmpdir(), 'ok-e2e-pack-'));
+    const packDest = mkdtempSync(join(tmpdir(), 'ps-e2e-pack-'));
     H.packDest = packDest;
-    H.installPrefix = mkdtempSync(join(tmpdir(), 'ok-e2e-install-'));
+    H.installPrefix = mkdtempSync(join(tmpdir(), 'ps-e2e-install-'));
     const installed = await installPackedCli({
       packageDir: CLI_PKG_DIR,
       packDest,
@@ -132,11 +132,11 @@ beforeAll(async () => {
     H.cliPath = WORKSPACE_DIST_CLI;
   }
 
-  H.contentDir = mkdtempSync(join(tmpdir(), 'ok-e2e-content-'));
+  H.contentDir = mkdtempSync(join(tmpdir(), 'ps-e2e-content-'));
   execFileSync('git', ['init', '-q'], { cwd: H.contentDir });
   execFileSync('git', ['config', 'user.email', 'e2e@ok.test'], { cwd: H.contentDir });
   execFileSync('git', ['config', 'user.name', 'OK E2E'], { cwd: H.contentDir });
-  H.lockPath = join(H.contentDir, '.ok', 'local', 'server.lock');
+  H.lockPath = join(H.contentDir, '.ps', 'local', 'server.lock');
 }, 240_000);
 
 afterAll(async () => {
@@ -165,7 +165,7 @@ describe(`CLI Linux e2e (${SUT_MODE} SUT)`, () => {
   test.skipIf(!LOCKED_PACKED_INSTALL)(
     '1b. a second install of the same packed CLI takes the warm-store path and its bin runs',
     async () => {
-      const installPrefix = mkdtempSync(join(tmpdir(), 'ok-e2e-warm-install-'));
+      const installPrefix = mkdtempSync(join(tmpdir(), 'ps-e2e-warm-install-'));
       try {
         const installation = installPackedCli({
           packageDir: CLI_PKG_DIR,
@@ -199,13 +199,13 @@ describe(`CLI Linux e2e (${SUT_MODE} SUT)`, () => {
     240_000,
   );
 
-  test('2. ok init scaffolds .ok/ in the content dir', () => {
+  test('2. ps init scaffolds .ps/ in the content dir', () => {
     const r = runOk(['init', '--no-mcp'], { timeoutMs: 60_000 });
     expect(r.status).toBe(0);
-    expect(existsSync(join(H.contentDir, '.ok'))).toBe(true);
+    expect(existsSync(join(H.contentDir, '.ps'))).toBe(true);
   });
 
-  test('3. ok start boots, writes server.lock with a port, and serves HTTP', async () => {
+  test('3. ps start boots, writes server.lock with a port, and serves HTTP', async () => {
     H.server = spawn(NODE, [H.cliPath, 'start', '--port', String(START_PORT)], {
       cwd: H.contentDir,
       env: { ...process.env, ...HERMETIC_ENV },
@@ -233,14 +233,14 @@ describe(`CLI Linux e2e (${SUT_MODE} SUT)`, () => {
     expect(reachable, 'server port never accepted a TCP connection').toBe(true);
   }, 70_000);
 
-  test('4. ok mcp answers a stdio round-trip: tools/list + exec + write + read-back', async () => {
+  test('4. ps mcp answers a stdio round-trip: tools/list + exec + write + read-back', async () => {
     const transport = new StdioClientTransport({
       command: NODE,
       args: [H.cliPath, 'mcp'],
       cwd: H.contentDir,
       env: { ...process.env, ...HERMETIC_ENV } as Record<string, string>,
     });
-    const client = new Client({ name: 'ok-e2e', version: '0.0.0' });
+    const client = new Client({ name: 'ps-e2e', version: '0.0.0' });
     try {
       await client.connect(transport);
 
@@ -279,7 +279,7 @@ describe(`CLI Linux e2e (${SUT_MODE} SUT)`, () => {
       cwd: H.contentDir,
       env: { ...process.env, ...HERMETIC_ENV } as Record<string, string>,
     });
-    const client = new Client({ name: 'ok-e2e-mermaid', version: '0.0.0' });
+    const client = new Client({ name: 'ps-e2e-mermaid', version: '0.0.0' });
     try {
       await client.connect(transport);
       const writeRes = (await client.callTool({
@@ -382,7 +382,7 @@ describe(`CLI Linux e2e (${SUT_MODE} SUT)`, () => {
       cwd: H.contentDir,
       env: { ...process.env, ...HERMETIC_ENV } as Record<string, string>,
     });
-    const client = new Client({ name: 'ok-e2e-watch', version: '0.0.0' });
+    const client = new Client({ name: 'ps-e2e-watch', version: '0.0.0' });
     try {
       await client.connect(transport);
       const found = await waitFor(

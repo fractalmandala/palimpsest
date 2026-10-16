@@ -118,7 +118,7 @@ async function runFailedSpawnActor(
     '../../stress/_helpers/teardown-fs.ts'
   );
   const request = createViteStartupRequest('127.0.0.1');
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-w412-spawn-error-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-w412-spawn-error-'));
   const viteCacheDir = prepareViteCacheDir('w412');
   const serverLog = openServerLog('w412-spawn-error');
   const emptyPath = join(contentDir, 'empty-bin');

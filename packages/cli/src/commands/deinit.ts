@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { currentCliCommandName, OK_USER_HOME_AUTH_FILE } from '@inkeep/open-knowledge-core';
-import { isHomeDir } from '@inkeep/open-knowledge-server';
+import { currentCliCommandName, PS_USER_HOME_AUTH_FILE } from '@palimpsest/core';
+import { isHomeDir } from '@palimpsest/server';
 import { Command } from 'commander';
 import { accent, dim, error as errorColor, warning } from '../ui/colors.ts';
 import { confirmDestructive } from '../ui/confirm.ts';
@@ -46,17 +46,17 @@ export async function runDeinit(opts: DeinitOptions = {}): Promise<DeinitResult>
       status: 'failed',
       message:
         `${errorColor('Refusing to deinit your home directory.')}\n` +
-        `  ${projectRoot}/.ok is OpenKnowledge's user-global directory (global.yml, skills/,\n` +
-        `  ${OK_USER_HOME_AUTH_FILE}), not a project. Removing it would delete your global settings and skills.\n` +
-        `  To remove OpenKnowledge everywhere, use '${currentCliCommandName()} uninstall'.`,
+        `  ${projectRoot}/.ps is Palimpsest's user-global directory (global.yml, skills/,\n` +
+        `  ${PS_USER_HOME_AUTH_FILE}), not a project. Removing it would delete your global settings and skills.\n` +
+        `  To remove Palimpsest everywhere, use '${currentCliCommandName()} uninstall'.`,
       exitCode: 64,
     };
   }
 
-  if (!existsSync(join(projectRoot, '.ok'))) {
+  if (!existsSync(join(projectRoot, '.ps'))) {
     return {
       status: 'no-op',
-      message: dim(`No OpenKnowledge project found at ${projectRoot}. Nothing to remove.`),
+      message: dim(`No Palimpsest project found at ${projectRoot}. Nothing to remove.`),
       exitCode: 0,
     };
   }
@@ -86,7 +86,7 @@ export async function runDeinit(opts: DeinitOptions = {}): Promise<DeinitResult>
 
   if (!opts.yes) {
     process.stderr.write(
-      `${accent(`Remove OpenKnowledge from ${projectRoot}:`)}\n\n${formatRemovalPlan(plan)}${attachedBlock}\n\n`,
+      `${accent(`Remove Palimpsest from ${projectRoot}:`)}\n\n${formatRemovalPlan(plan)}${attachedBlock}\n\n`,
     );
     const confirmed = await confirmDestructive(
       `${accent('Remove these?')} ${dim('[y/N] ')}`,
@@ -113,7 +113,7 @@ export async function runDeinit(opts: DeinitOptions = {}): Promise<DeinitResult>
 export function deinitCommand(): Command {
   return new Command('deinit')
     .description(
-      `Remove OpenKnowledge from this project (its .ok/, editor MCP entries, git-exclude lines, shadow repo) while leaving your markdown content untouched. Re-run \`${currentCliCommandName()} start\` to re-scaffold.`,
+      `Remove Palimpsest from this project (its .ps/, editor MCP entries, git-exclude lines, shadow repo) while leaving your markdown content untouched. Re-run \`${currentCliCommandName()} start\` to re-scaffold.`,
     )
     .argument('[path]', 'Project directory (defaults to the current project)')
     .option('-y, --yes', 'Skip the confirmation prompt')

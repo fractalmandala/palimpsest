@@ -10,7 +10,7 @@ import {
   planIntents,
   type SatisfierId,
   type StepExecutor,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger } from './logger.ts';
 import { BUNDLE_SKILL_NAME } from './skill-bundles.ts';
 import { writeBundleDecision } from './skill-state.ts';

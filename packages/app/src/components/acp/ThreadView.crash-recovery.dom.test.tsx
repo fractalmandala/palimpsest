@@ -2,15 +2,15 @@ import { randomUUID } from 'node:crypto';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { SessionUpdate, ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import type { AgentSessionManager } from '@inkeep/open-knowledge-server';
+import type { SessionUpdate, ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
+import type { AgentSessionManager } from '@palimpsest/server';
 import {
   AcpPermissionStore,
   AcpRegistry,
   AcpThreadManager,
   attachAcpThreadSocket,
   getLogger,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { act, cleanup, render as rtlRender, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

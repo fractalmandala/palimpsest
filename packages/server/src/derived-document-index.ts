@@ -3,7 +3,7 @@ import {
   createTargetNamespace,
   type DerivedViewChannel,
   type TargetNamespace,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   type BacklinkEntry,
   BacklinkIndex,

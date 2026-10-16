@@ -4,7 +4,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { emitToleranceFire, OK_DIR, resolveServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import { emitToleranceFire, PS_DIR, resolveServerRuntimeConfig } from '@palimpsest/core';
 import { context, metrics, propagation, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
@@ -23,7 +23,7 @@ import { parseKeepaliveConnectionId } from './mcp-mount.ts';
 import { shutdownTelemetry } from './telemetry.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -31,10 +31,10 @@ afterEach(() => {
 });
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 }
 
 const execFileAsync = promisify(execFile);
@@ -43,7 +43,7 @@ const TEST_CONFIG = ConfigSchema.parse({});
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-boot-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-boot-test-'));
 });
 
 afterEach(async () => {
@@ -51,7 +51,7 @@ afterEach(async () => {
 });
 
 describe('bootServer — MissingOkConfigError pre-listen check', () => {
-  test('rejects with kind=okdir when .ok/ directory is absent (State A)', async () => {
+  test('rejects with kind=okdir when .ps/ directory is absent (State A)', async () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'state-a-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
@@ -75,18 +75,18 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     expect(e.name).toBe('MissingOkConfigError');
     expect(e.kind).toBe('okdir');
     expect(e.projectDir).toBe(contentDir);
-    expect(e.message).toContain('OpenKnowledge config not found at .ok/config.yml');
-    expect(e.message).toContain('Run ok init');
+    expect(e.message).toContain('Palimpsest config not found at .ps/config.yml');
+    expect(e.message).toContain('Run ps init');
     expect(existsSync(resolve(contentDir, '.git/ok'))).toBe(false);
   });
 
-  test('rejects with kind=config when .ok/ exists but config.yml is missing (State B)', async () => {
+  test('rejects with kind=config when .ps/ exists but config.yml is missing (State B)', async () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'state-b-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    const okDir = resolve(contentDir, '.ok');
+    const psDir = resolve(contentDir, '.ps');
     writeFileSync(resolve(contentDir, 'placeholder'), '');
-    await execFileAsync('mkdir', [okDir]);
+    await execFileAsync('mkdir', [psDir]);
 
     let caught: unknown;
     try {
@@ -106,18 +106,18 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     const e = caught as Error & { kind?: string };
     expect(e.name).toBe('MissingOkConfigError');
     expect(e.kind).toBe('config');
-    expect(e.message).toContain('OpenKnowledge config not found at .ok/config.yml');
+    expect(e.message).toContain('Palimpsest config not found at .ps/config.yml');
     expect(existsSync(resolve(contentDir, '.git/ok'))).toBe(false);
   });
 
-  test('preflight checks projectDir/.ok/config.yml when projectDir != contentDir', async () => {
+  test('preflight checks projectDir/.ps/config.yml when projectDir != contentDir', async () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'projectdir-preflight-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
     seedOkScaffold(projectDir);
     const contentDir = resolve(projectDir, 'docs');
     mkdirSync(contentDir, { recursive: true });
-    expect(existsSync(resolve(contentDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(resolve(contentDir, '.ps', 'config.yml'))).toBe(false);
 
     let booted: Awaited<ReturnType<typeof bootServer>> | null = null;
     try {
@@ -137,7 +137,7 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     }
   });
 
-  test('rejects when projectDir/.ok/config.yml is missing even though contentDir/.ok/config.yml exists', async () => {
+  test('rejects when projectDir/.ps/config.yml is missing even though contentDir/.ps/config.yml exists', async () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'projectdir-only-content-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
@@ -167,13 +167,13 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     expect(e.projectDir).toBe(projectDir);
   });
 
-  test('proceeds and emits a one-time stderr warning when only .ok/.gitignore is missing (State C)', async () => {
+  test('proceeds and emits a one-time stderr warning when only .ps/.gitignore is missing (State C)', async () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'state-c-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    const okDir = resolve(contentDir, '.ok');
-    await execFileAsync('mkdir', [okDir]);
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
+    const psDir = resolve(contentDir, '.ps');
+    await execFileAsync('mkdir', [psDir]);
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
 
     const warnSpy = vi.spyOn(getLogger('boot'), 'warn');
     let booted: Awaited<ReturnType<typeof bootServer>> | null = null;
@@ -191,8 +191,8 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
         .map((call) => String(call[1] ?? ''))
         .filter((w) => w.includes('.gitignore is missing'));
       expect(bootWarnings.length).toBe(1);
-      expect(bootWarnings[0]).toContain('.ok/.gitignore');
-      expect(bootWarnings[0]).toContain('Run `ok init` to add the recommended ignore entries.');
+      expect(bootWarnings[0]).toContain('.ps/.gitignore');
+      expect(bootWarnings[0]).toContain('Run `ps init` to add the recommended ignore entries.');
     } finally {
       warnSpy.mockRestore();
       if (booted) await booted.destroy();
@@ -222,10 +222,10 @@ describe('bootServer — runtime state lives at projectDir, not contentDir', () 
     try {
       await booted.ready;
 
-      const contentLocalDir = resolve(contentDir, '.ok');
+      const contentLocalDir = resolve(contentDir, '.ps');
       expect(existsSync(contentLocalDir)).toBe(false);
 
-      const projectLocalDir = resolve(projectDir, '.ok', 'local');
+      const projectLocalDir = resolve(projectDir, '.ps', 'local');
       expect(existsSync(resolve(projectLocalDir, 'server.lock'))).toBe(true);
       expect(existsSync(resolve(projectLocalDir, 'principal.json'))).toBe(true);
       expect(existsSync(resolve(projectLocalDir, 'state.json'))).toBe(true);
@@ -237,8 +237,8 @@ describe('bootServer — runtime state lives at projectDir, not contentDir', () 
 
 describe('bootServer — tolerance-telemetry writer wired through the real boot path', () => {
   test('flag=1 boot produces tolerance-telemetry.jsonl from an emitToleranceFire', async () => {
-    const prevFlag = process.env.OK_BRIDGE_TOLERANCE_TELEMETRY;
-    process.env.OK_BRIDGE_TOLERANCE_TELEMETRY = '1';
+    const prevFlag = process.env.PS_BRIDGE_TOLERANCE_TELEMETRY;
+    process.env.PS_BRIDGE_TOLERANCE_TELEMETRY = '1';
     const projectDir = mkdtempSync(resolve(tmpDir, 'tolerance-telemetry-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
@@ -258,11 +258,11 @@ describe('bootServer — tolerance-telemetry writer wired through the real boot 
       emitToleranceFire(['crlf'], 'a\r\n', 'a\n', 'smoke-doc');
     } finally {
       await booted.destroy();
-      if (prevFlag === undefined) delete process.env.OK_BRIDGE_TOLERANCE_TELEMETRY;
-      else process.env.OK_BRIDGE_TOLERANCE_TELEMETRY = prevFlag;
+      if (prevFlag === undefined) delete process.env.PS_BRIDGE_TOLERANCE_TELEMETRY;
+      else process.env.PS_BRIDGE_TOLERANCE_TELEMETRY = prevFlag;
     }
 
-    const logPath = resolve(projectDir, '.ok', 'local', 'tolerance-telemetry.jsonl');
+    const logPath = resolve(projectDir, '.ps', 'local', 'tolerance-telemetry.jsonl');
     expect(existsSync(logPath)).toBe(true);
     const record = JSON.parse(readFileSync(logPath, 'utf-8').trim().split('\n')[0] ?? '');
     expect(record.event).toBe('bridge-tolerance-fire');
@@ -325,13 +325,13 @@ describe('bootServer — reactShellDistDir + server.lock ui advertisement', () =
     });
     try {
       await booted.ready;
-      const serverLockPath = resolve(projectDir, '.ok', 'local', 'server.lock');
+      const serverLockPath = resolve(projectDir, '.ps', 'local', 'server.lock');
       const raw = await import('node:fs/promises').then((m) => m.readFile(serverLockPath, 'utf-8'));
       const parsed = JSON.parse(raw) as { port: number; pid: number; capabilities?: string[] };
       expect(parsed.capabilities).toContain('ui');
       expect(parsed.port).toBe(booted.port);
       expect(parsed.pid).toBe(process.pid);
-      expect(existsSync(resolve(projectDir, '.ok', 'local', 'ui.lock'))).toBe(false);
+      expect(existsSync(resolve(projectDir, '.ps', 'local', 'ui.lock'))).toBe(false);
     } finally {
       await booted.destroy();
     }
@@ -355,7 +355,7 @@ describe('bootServer — reactShellDistDir + server.lock ui advertisement', () =
     });
     try {
       await booted.ready;
-      const serverLockPath = resolve(projectDir, '.ok', 'local', 'server.lock');
+      const serverLockPath = resolve(projectDir, '.ps', 'local', 'server.lock');
       const raw = await import('node:fs/promises').then((m) => m.readFile(serverLockPath, 'utf-8'));
       const parsed = JSON.parse(raw) as { capabilities?: string[] };
       expect(parsed.capabilities ?? []).not.toContain('ui');
@@ -443,7 +443,7 @@ describe('bootServer — reactShellDistDir end-to-end HTTP shape', () => {
       expect(apiRes.status).toBe(404);
       expect(apiRes.headers.get('content-type')).toBe('application/problem+json');
 
-      const serverLockPath = resolve(projectDir, '.ok', 'local', 'server.lock');
+      const serverLockPath = resolve(projectDir, '.ps', 'local', 'server.lock');
       expect(existsSync(serverLockPath)).toBe(true);
       const lockRaw = await import('node:fs/promises').then((m) =>
         m.readFile(serverLockPath, 'utf-8'),
@@ -559,8 +559,8 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     trace.disable();
     metrics.disable();
     context.disable();
-    savedDisableLocalSink = process.env.OK_DISABLE_LOCAL_SINK;
-    process.env.OK_DISABLE_LOCAL_SINK = '1';
+    savedDisableLocalSink = process.env.PS_DISABLE_LOCAL_SINK;
+    process.env.PS_DISABLE_LOCAL_SINK = '1';
     exporter = new InMemorySpanExporter();
     provider = new BasicTracerProvider({
       spanProcessors: [new SimpleSpanProcessor(exporter)],
@@ -577,9 +577,9 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     exporter = null;
     provider = null;
     if (savedDisableLocalSink === undefined) {
-      delete process.env.OK_DISABLE_LOCAL_SINK;
+      delete process.env.PS_DISABLE_LOCAL_SINK;
     } else {
-      process.env.OK_DISABLE_LOCAL_SINK = savedDisableLocalSink;
+      process.env.PS_DISABLE_LOCAL_SINK = savedDisableLocalSink;
     }
   });
 
@@ -740,10 +740,10 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     );
   });
 
-  test('OK_STARTUP_TRACEPARENT (valid): ok.boot joins the desktop-main launch trace', async () => {
+  test('PS_STARTUP_TRACEPARENT (valid): ok.boot joins the desktop-main launch trace', async () => {
     const parentTraceId = '0af7651916cd43dd8448eb211c80319c';
-    const prev = process.env.OK_STARTUP_TRACEPARENT;
-    process.env.OK_STARTUP_TRACEPARENT = `00-${parentTraceId}-b7ad6b7169203331-01`;
+    const prev = process.env.PS_STARTUP_TRACEPARENT;
+    process.env.PS_STARTUP_TRACEPARENT = `00-${parentTraceId}-b7ad6b7169203331-01`;
     context.setGlobalContextManager(new AsyncLocalStorageContextManager().enable());
     propagation.setGlobalPropagator(new W3CTraceContextPropagator());
     const contentDir = mkdtempSync(resolve(tmpDir, 'traceparent-valid-'));
@@ -767,14 +767,14 @@ describe('bootServer — ok.boot OTel span attributes', () => {
       expect(bootSpan?.spanContext().traceId).toBe(parentTraceId);
     } finally {
       if (booted) await booted.destroy();
-      if (prev === undefined) delete process.env.OK_STARTUP_TRACEPARENT;
-      else process.env.OK_STARTUP_TRACEPARENT = prev;
+      if (prev === undefined) delete process.env.PS_STARTUP_TRACEPARENT;
+      else process.env.PS_STARTUP_TRACEPARENT = prev;
     }
   });
 
-  test('OK_STARTUP_TRACEPARENT (malformed): boot still completes; ok.boot is a fresh root', async () => {
-    const prev = process.env.OK_STARTUP_TRACEPARENT;
-    process.env.OK_STARTUP_TRACEPARENT = 'not-a-valid-traceparent';
+  test('PS_STARTUP_TRACEPARENT (malformed): boot still completes; ok.boot is a fresh root', async () => {
+    const prev = process.env.PS_STARTUP_TRACEPARENT;
+    process.env.PS_STARTUP_TRACEPARENT = 'not-a-valid-traceparent';
     const contentDir = mkdtempSync(resolve(tmpDir, 'traceparent-malformed-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
@@ -797,8 +797,8 @@ describe('bootServer — ok.boot OTel span attributes', () => {
       expect(bootSpan?.spanContext().traceId).toMatch(/^[0-9a-f]{32}$/);
     } finally {
       if (booted) await booted.destroy();
-      if (prev === undefined) delete process.env.OK_STARTUP_TRACEPARENT;
-      else process.env.OK_STARTUP_TRACEPARENT = prev;
+      if (prev === undefined) delete process.env.PS_STARTUP_TRACEPARENT;
+      else process.env.PS_STARTUP_TRACEPARENT = prev;
     }
   });
 });
@@ -928,8 +928,8 @@ describe('bootServer — exposure consent interlock', () => {
     const e = err as Error;
     expect(e.constructor.name).toBe('ExposureConsentError');
     expect(e.message).toContain('would bind a non-loopback address');
-    expect(e.message).toContain('OK_ALLOW_EXTERNAL=1');
-    expect(e.message).toContain('.ok/local/config.yml');
+    expect(e.message).toContain('PS_ALLOW_EXTERNAL=1');
+    expect(e.message).toContain('.ps/local/config.yml');
   });
 
   test('a committed externalUrl under a loopback bind is inert — boots, no lockout (CLI path)', async () => {
@@ -1062,7 +1062,7 @@ describe('bootServer — multi-address bind', () => {
       expect(String(fields.url)).toContain(String(booted.port));
 
       const lock = JSON.parse(
-        readFileSync(resolve(contentDir, OK_DIR, 'local', 'server.lock'), 'utf-8'),
+        readFileSync(resolve(contentDir, PS_DIR, 'local', 'server.lock'), 'utf-8'),
       ) as { port: number };
       expect(fields.port).toBe(lock.port);
     } finally {

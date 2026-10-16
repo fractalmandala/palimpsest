@@ -117,7 +117,7 @@
       "!packages/native-config/index.js",
       "!packages/native-config/index.d.ts",
       "!packages/native-config/target",
-      "!**/.ok-skill-publish-*",
+      "!**/.ps-skill-publish-*",
       "!**/.next",
       "!**/.source",
       // Second generated content build, emitted by the docs app's real-source
@@ -139,7 +139,7 @@
       "!**/.vitest",
       "!**/next-env.d.ts",
       "!.claude",
-      // .agents/skills, .codex/skills under public/open-knowledge/
+      // .agents/skills, .codex/skills under public/palimpsest/
       // are real dirs of per-skill symlinks back to the repo-root canonical
       // at ../../../.agents/skills/<skill>. Without these excludes biome
       // traverses through the symlinks and lints files outside this subtree's

@@ -2,7 +2,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import {
   __resetLocalMenuActionBusForTests,
   emitLocalMenuAction,
@@ -48,7 +48,7 @@ type MenuActionLike =
   | 'send-feedback';
 
 interface NavigatorBridgeStub {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   fire(action: MenuActionLike): void;
 }
 
@@ -105,7 +105,7 @@ function makeNavigatorBridge(): NavigatorBridgeStub {
     fs: {
       defaultProjectsRoot: async (): Promise<string> => '/Users/test/Projects',
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   return {
     bridge,
@@ -241,7 +241,7 @@ describe('NavigatorApp new-project menu-action subscription', () => {
     await waitFor(
       () => {
         expect(
-          screen.queryByRole('dialog', { name: 'How do you like OpenKnowledge?' }),
+          screen.queryByRole('dialog', { name: 'How do you like Palimpsest?' }),
         ).not.toBeNull();
       },
       { timeout: ASYNC_TIMEOUT_MS },

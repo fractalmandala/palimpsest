@@ -8,7 +8,7 @@ import {
   type ValidationDiagnostic,
   type ValidationDocCounts,
   type ValidationSource,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { createReservedLogBrokenLinkSuppression } from '../broken-link-suppression.ts';
 import { isProblemsPlaneExcludedDoc } from '../cc1-broadcast.ts';
 import type { DerivedDocumentIndexApiPort } from '../derived-document-index.ts';
@@ -26,7 +26,7 @@ import { toPosix } from '../path-utils.ts';
 import { AuditSupersededError, auditProject, auditScopeWarning, resolveScope } from './audit.ts';
 import type { AuditCache } from './audit-cache.ts';
 import type { AuditScope } from './audit-scope.ts';
-import { createOkfProjectValidator } from './okf-project-validator.ts';
+import { createOkfProjectValidator } from './psf-project-validator.ts';
 import { physicalScopeLinks } from './physical-scope-links.ts';
 
 type DeadLinksResult = Awaited<ReturnType<DerivedDocumentIndexApiPort['getDeadLinks']>>;
@@ -432,8 +432,8 @@ function localTargetMessage(assessment: LocalTargetAssessment, shown: string): s
   }
   if (assessment.reason === 'excluded') {
     return isImage
-      ? `Image target "${shown}" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.`
-      : `Link target "${shown}" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.`;
+      ? `Image target "${shown}" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.`
+      : `Link target "${shown}" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.`;
   }
   if (assessment.targetKind === 'file') {
     return isImage

@@ -1,5 +1,5 @@
 import { offset } from '@floating-ui/dom';
-import { incrementBlockGripClickSelectFailed } from '@inkeep/open-knowledge-core/metrics/parse-health';
+import { incrementBlockGripClickSelectFailed } from '@palimpsest/core/metrics/parse-health';
 import { t } from '@lingui/core/macro';
 import { type Editor, Extension } from '@tiptap/core';
 import { DragHandlePlugin, normalizeNestedOptions } from '@tiptap/extension-drag-handle';
@@ -43,12 +43,12 @@ function createBlockControlsElement(): {
   grip: HTMLButtonElement;
 } {
   const container = document.createElement('div');
-  container.className = 'ok-block-controls';
+  container.className = 'ps-block-controls';
   container.setAttribute(OPT_OUT_ATTR, 'true');
   container.style.visibility = 'hidden';
 
   const addBtn = document.createElement('button');
-  addBtn.className = 'ok-add-block-btn';
+  addBtn.className = 'ps-add-block-btn';
   addBtn.setAttribute('aria-label', t`Add block below`);
   addBtn.setAttribute('type', 'button');
   addBtn.innerHTML = GUTTER_PLUS_SVG;
@@ -59,7 +59,7 @@ function createBlockControlsElement(): {
   });
 
   const grip = document.createElement('button');
-  grip.className = 'ok-drag-grip';
+  grip.className = 'ps-drag-grip';
   grip.setAttribute('type', 'button');
   grip.setAttribute('aria-label', t`Select block`);
   grip.setAttribute('tabindex', '-1');

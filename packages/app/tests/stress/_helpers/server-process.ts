@@ -14,7 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { SYSTEM_DOC_NAME } from '@inkeep/open-knowledge-core';
+import { SYSTEM_DOC_NAME } from '@palimpsest/core';
 import * as Y from 'yjs';
 import {
   TEST_SERVER_CANDIDATE_PORTS,
@@ -30,7 +30,7 @@ import { removeAllDuringTeardown, removeAllStrictDuringTeardown } from './teardo
 export { APP_PACKAGE_ROOT };
 
 export const VITE_E2E_SEED_DIR =
-  process.env.OK_TEST_VITE_SEED_DIR ?? join(APP_PACKAGE_ROOT, 'node_modules', '.vite-e2e-seed');
+  process.env.PS_TEST_VITE_SEED_DIR ?? join(APP_PACKAGE_ROOT, 'node_modules', '.vite-e2e-seed');
 
 export function viteSeedIsReady(): boolean {
   return existsSync(join(VITE_E2E_SEED_DIR, 'deps', '_metadata.json'));
@@ -74,7 +74,7 @@ export interface ServerLog {
 export function openServerLog(label: string): ServerLog {
   const path = join(
     tmpdir(),
-    `ok-e2e-${label}-${process.pid}-${Math.random().toString(36).slice(2, 8)}.log`,
+    `ps-e2e-${label}-${process.pid}-${Math.random().toString(36).slice(2, 8)}.log`,
   );
   return { path, fd: openSync(path, 'w') };
 }
@@ -170,7 +170,7 @@ export function createViteStartupRequest(
   ) {
     throw new RangeError('automatic Vite startup candidate is outside its supported range');
   }
-  const receiptDir = mkdtempSync(join(tmpdir(), 'ok-vite-start-'));
+  const receiptDir = mkdtempSync(join(tmpdir(), 'ps-vite-start-'));
   const receiptPath = join(receiptDir, 'receipt.json');
   const nonce = randomUUID();
   const startupRequest: TestServerStartupRequest = { nonce, host, candidatePort, receiptPath };

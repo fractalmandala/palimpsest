@@ -89,8 +89,8 @@ const { SettingsDialogShell } = await import('./SettingsDialogShell');
 const { TooltipProvider } = await import('@/components/ui/tooltip');
 
 function setHost(platform: 'darwin' | 'win32' | 'linux' | null) {
-  const w = window as unknown as { okDesktop?: unknown };
-  w.okDesktop = platform === null ? undefined : { platform, config: { ptyAvailable: false } };
+  const w = window as unknown as { psDesktop?: unknown };
+  w.psDesktop = platform === null ? undefined : { platform, config: { ptyAvailable: false } };
 }
 
 const TOGGLE_RESULT_ID = 'settings-search-result-subsection:preferences:spellcheck';
@@ -122,7 +122,7 @@ describe('SettingsDialogShell spelling search entries', () => {
     'Escape follows the language popup state from %s focus',
     async (focusTarget) => {
       showSpellingRow = true;
-      Object.defineProperty(window, 'okDesktop', {
+      Object.defineProperty(window, 'psDesktop', {
         configurable: true,
         value: {
           platform: 'win32',

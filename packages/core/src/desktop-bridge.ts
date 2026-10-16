@@ -5,7 +5,7 @@ import type { ConfigValidationError } from './config/errors.ts';
 import type { ConfigPatch } from './config/schema.ts';
 import type { CreateNewBannerKind } from './constants/create-new-banner.ts';
 import type { EditorId } from './constants/editors.ts';
-import type { OkFolderState } from './constants/folder-state.ts';
+import type { PsFolderState } from './constants/folder-state.ts';
 import type {
   WorktreeInventoryOpenRequest,
   WorktreeInventoryOpenResult,
@@ -26,16 +26,16 @@ import type {
 import type { HandoffFailureReason, HandoffScope } from './handoff/types.ts';
 import type { LanguagePreference } from './i18n/locales.ts';
 import type {
-  OkBugReportCrashAckResult,
-  OkBugReportCrashDetectedEvent,
-  OkBugReportCrashDumpAvailability,
-  OkBugReportCreateResult,
-  OkBugReportDeleteResult,
-  OkBugReportListResult,
-  OkBugReportScreenshot,
-  OkBugReportSendMetadata,
-  OkBugReportSendResult,
-  OkImageAttachmentContentType,
+  PsBugReportCrashAckResult,
+  PsBugReportCrashDetectedEvent,
+  PsBugReportCrashDumpAvailability,
+  PsBugReportCreateResult,
+  PsBugReportDeleteResult,
+  PsBugReportListResult,
+  PsBugReportScreenshot,
+  PsBugReportSendMetadata,
+  PsBugReportSendResult,
+  PsImageAttachmentContentType,
   ReportBundleLevel,
 } from './logger-types.ts';
 import type { LintPluginId } from './markdown/lint/types.ts';
@@ -49,31 +49,31 @@ import type { RecentProjectEntry } from './sharing/index.ts';
 import type { SkillCostTiers } from './skills-catalog/skill-cost.ts';
 import type { TerminalPlacement } from './terminal-layout.ts';
 
-export type { OkFolderState } from './constants/folder-state.ts';
+export type { PsFolderState } from './constants/folder-state.ts';
 export type { BridgeWorktreeEntry } from './git/worktree-list-parser.ts';
 export type { RecentProjectEntry } from './sharing/index.ts';
 export type { TerminalPlacement } from './terminal-layout.ts';
 
-export interface OkTerminalRestartTab {
+export interface PsTerminalRestartTab {
   ordinal: number;
   customLabel: string | null;
 }
 
-export interface OkTerminalRestartSnapshot {
-  tabs: OkTerminalRestartTab[];
+export interface PsTerminalRestartSnapshot {
+  tabs: PsTerminalRestartTab[];
   activeOrdinal: number | null;
 }
 
-export interface OkTerminalDockState {
+export interface PsTerminalDockState {
   terminalVisible: boolean;
   agentPanelVisible: boolean;
   editorVisible?: boolean;
   terminal?: { order: string[]; activeKey: string | null };
-  terminalSnapshot?: OkTerminalRestartSnapshot;
+  terminalSnapshot?: PsTerminalRestartSnapshot;
   agents?: { order: string[]; activeKey: string | null };
 }
 
-export type OkNoteWindowMainAction =
+export type PsNoteWindowMainAction =
   | {
       readonly kind: 'active-input';
       readonly text: string;
@@ -101,19 +101,19 @@ export type OkNoteWindowMainAction =
       readonly scope: 'doc' | 'queue';
     };
 
-export type OkNoteWindowMainActionResult =
+export type PsNoteWindowMainActionResult =
   | { readonly ok: true }
   | {
       readonly ok: false;
       readonly reason: 'invalid-action' | 'not-note-window' | 'project-not-open';
     };
 
-export type OkTerminalDockStateUpdate =
+export type PsTerminalDockStateUpdate =
   | {
       surface: 'terminal';
       order: string[];
       activeKey: string | null;
-      terminalSnapshot: OkTerminalRestartSnapshot;
+      terminalSnapshot: PsTerminalRestartSnapshot;
     }
   | {
       surface: 'agents';
@@ -121,21 +121,21 @@ export type OkTerminalDockStateUpdate =
       activeKey: string | null;
     };
 
-export type OkTerminalDockStateWriteResult =
+export type PsTerminalDockStateWriteResult =
   | { ok: true }
   | {
       ok: false;
       reason: 'invalid-request' | 'no-window-context' | 'persist-failed' | 'ipc-unavailable';
     };
 
-export type OkDesktopMode = 'editor' | 'navigator' | 'terminal' | 'note';
+export type PsDesktopMode = 'editor' | 'navigator' | 'terminal' | 'note';
 
-export interface OkDesktopConfig {
+export interface PsDesktopConfig {
   readonly collabUrl: string;
   readonly apiOrigin: string;
   readonly projectPath: string;
   readonly projectName: string;
-  readonly mode: OkDesktopMode;
+  readonly mode: PsDesktopMode;
   readonly e2eSmoke: boolean;
   readonly singleFile: boolean;
   readonly initialDoc: string | null;
@@ -143,10 +143,10 @@ export interface OkDesktopConfig {
   readonly startupTraceparent?: string;
   readonly ptyAvailable: boolean;
   readonly languagePreference?: LanguagePreference;
-  readonly themePreference?: OkThemeSource;
+  readonly themePreference?: PsThemeSource;
 }
 
-export type OkMenuAction =
+export type PsMenuAction =
   | 'new-doc'
   | 'new-folder'
   | 'new-project'
@@ -169,7 +169,7 @@ export type OkMenuAction =
   | 'copy-full-path'
   | 'copy-relative-path'
   | 'toggle-show-hidden-files'
-  | 'toggle-show-ok-folders'
+  | 'toggle-show-ps-folders'
   | 'toggle-show-only-markdown-files'
   | 'toggle-show-skills-section'
   | 'expand-all-tree'
@@ -186,16 +186,16 @@ export type OkMenuAction =
   | 'report-bug'
   | 'send-feedback';
 
-export interface OkMenuActionOrigin {
+export interface PsMenuActionOrigin {
   readonly launcherBorne: boolean;
 }
 
-export interface OkMenuActionDispatch {
-  readonly action: OkMenuAction;
-  readonly origin: OkMenuActionOrigin;
+export interface PsMenuActionDispatch {
+  readonly action: PsMenuAction;
+  readonly origin: PsMenuActionOrigin;
 }
 
-export type OkUnsubscribe = () => void;
+export type PsUnsubscribe = () => void;
 
 export interface PersistedEditorPane {
   id: string;
@@ -211,7 +211,7 @@ export interface ProjectSessionState {
   focusedPaneId: string;
 }
 
-export type OkProjectEntryPoint =
+export type PsProjectEntryPoint =
   | 'create-new'
   | 'create-new-nested-redirect'
   | 'pick-existing'
@@ -221,10 +221,10 @@ export type OkProjectEntryPoint =
   | 'share-receive'
   | 'worktree';
 
-export interface OkProjectOpenRequest {
+export interface PsProjectOpenRequest {
   path: string;
   target: 'new-window';
-  entryPoint: OkProjectEntryPoint;
+  entryPoint: PsProjectEntryPoint;
   requireExactManagedProject?: boolean;
   pendingDeepLinkTarget?: {
     kind: 'doc' | 'folder';
@@ -234,33 +234,33 @@ export interface OkProjectOpenRequest {
   };
   pendingBranch?: string | null;
   pendingShareBranchSwitch?: {
-    share: OkSharePayloadFields;
+    share: PsSharePayloadFields;
     projectPath: string;
     currentBranch: string | null;
   };
 }
 
-export type OkCheckTargetExistsResult = 'exists' | 'missing' | 'unreadable';
+export type PsCheckTargetExistsResult = 'exists' | 'missing' | 'unreadable';
 
-export interface OkHeadBranchInfo {
+export interface PsHeadBranchInfo {
   readonly currentBranch: string | null;
   readonly headSha: string | null;
   readonly detached: boolean;
 }
 
-export interface OkUpdateDownloadedInfo {
+export interface PsUpdateDownloadedInfo {
   readonly version: string | null;
 }
 
-export interface OkUpdateRelaunchingInfo {
+export interface PsUpdateRelaunchingInfo {
   readonly version: string;
 }
 
-export interface OkUpdateFetchingLatestInfo {
+export interface PsUpdateFetchingLatestInfo {
   readonly version: string;
 }
 
-export interface OkUpdateRelaunchFailedInfo {
+export interface PsUpdateRelaunchFailedInfo {
   readonly version: string;
   readonly message?: string;
   readonly downloadUrl?: string;
@@ -268,20 +268,20 @@ export interface OkUpdateRelaunchFailedInfo {
   readonly reason?: 'no-longer-pending';
 }
 
-export interface OkWhatsNewInfo {
+export interface PsWhatsNewInfo {
   readonly version: string;
   readonly releaseUrl: string;
 }
 
-export interface OkUpdateStuckHintInfo {
+export interface PsUpdateStuckHintInfo {
   readonly downloadUrl: string;
 }
 
-export interface OkUpdateManualCheckInfo {
+export interface PsUpdateManualCheckInfo {
   readonly phase: 'started' | 'settled';
 }
 
-export interface OkAboutInfo {
+export interface PsAboutInfo {
   readonly productName: string;
   readonly version: string;
   readonly releasesUrl: string;
@@ -293,7 +293,7 @@ export type ShareTarget =
   | { readonly kind: 'doc'; readonly docPath: string }
   | { readonly kind: 'folder'; readonly folderPath: string };
 
-export interface OkSharePayloadFields {
+export interface PsSharePayloadFields {
   readonly host: string;
   readonly owner: string;
   readonly repo: string;
@@ -304,24 +304,24 @@ export interface OkSharePayloadFields {
   readonly target: ShareTarget;
 }
 
-export type OkShareReceivedPayload =
+export type PsShareReceivedPayload =
   | { readonly kind: 'unsupported-version' }
   | { readonly kind: 'invalid' }
   | {
       readonly kind: 'project-branch-switch';
-      readonly share: OkSharePayloadFields;
+      readonly share: PsSharePayloadFields;
       readonly projectPath: string;
       readonly currentBranch: string | null;
     }
   | {
       readonly kind: 'launcher-consent';
-      readonly share: OkSharePayloadFields;
+      readonly share: PsSharePayloadFields;
       readonly candidatePath: string;
       readonly parentProjectName: string | null;
     }
   | {
       readonly kind: 'launcher-miss';
-      readonly share: OkSharePayloadFields;
+      readonly share: PsSharePayloadFields;
     };
 
 export type ShareFolderValidationResult =
@@ -333,48 +333,48 @@ export type ShareFolderValidationResult =
   | { readonly kind: 'non-github' }
   | { readonly kind: 'symlink-escape' };
 
-export type OkUpdateChannel = 'latest' | 'beta';
+export type PsUpdateChannel = 'latest' | 'beta';
 
-export type OkUpdateMode = 'auto' | 'off';
+export type PsUpdateMode = 'auto' | 'off';
 
-export type OkThemeSource = 'system' | 'light' | 'dark';
+export type PsThemeSource = 'system' | 'light' | 'dark';
 
-export interface OkUserConfigSnapshot {
+export interface PsUserConfigSnapshot {
   readonly text: string;
 }
 
-export type OkUserConfigPatchResult =
+export type PsUserConfigPatchResult =
   | { readonly ok: true; readonly text: string }
   | { readonly ok: false; readonly error: ConfigValidationError };
 
-export interface OkUserConfigBridge {
-  read(): Promise<OkUserConfigSnapshot>;
-  patch(patch: ConfigPatch): Promise<OkUserConfigPatchResult>;
-  onChanged(cb: (snapshot: OkUserConfigSnapshot) => void): OkUnsubscribe;
+export interface PsUserConfigBridge {
+  read(): Promise<PsUserConfigSnapshot>;
+  patch(patch: ConfigPatch): Promise<PsUserConfigPatchResult>;
+  onChanged(cb: (snapshot: PsUserConfigSnapshot) => void): PsUnsubscribe;
 }
 
-export interface OkChromeColors {
+export interface PsChromeColors {
   bg: string;
   symbol: string;
 }
 
-export interface OkStateSnapshot {
-  readonly channel: OkUpdateChannel;
+export interface PsStateSnapshot {
+  readonly channel: PsUpdateChannel;
   readonly schemaIncompatibility: {
     readonly currentBuild: string;
     readonly persistedSchemaVersion: number;
     readonly maxSupported: number;
   } | null;
-  readonly about?: OkAboutInfo;
-  readonly updateMode?: OkUpdateMode;
+  readonly about?: PsAboutInfo;
+  readonly updateMode?: PsUpdateMode;
 }
 
-export type OkMcpWiringEditorId = EditorId;
+export type PsMcpWiringEditorId = EditorId;
 
-export interface OkMcpWiringShowPayload {
+export interface PsMcpWiringShowPayload {
   readonly origin: 'first-run' | 'reconfigure';
   readonly detectedEditors: readonly {
-    readonly id: OkMcpWiringEditorId;
+    readonly id: PsMcpWiringEditorId;
     readonly label: string;
     readonly detected: boolean;
     readonly willReplace: boolean;
@@ -393,23 +393,23 @@ export interface OkMcpWiringShowPayload {
   }[];
 }
 
-export interface OkMcpWiringConfirmRequest {
-  readonly editorIds: readonly OkMcpWiringEditorId[];
+export interface PsMcpWiringConfirmRequest {
+  readonly editorIds: readonly PsMcpWiringEditorId[];
   readonly pathInstall?: boolean;
   readonly skills?: readonly string[];
 }
 
-export type OkMcpWiringResult = { ok: true } | { ok: false; error: string };
+export type PsMcpWiringResult = { ok: true } | { ok: false; error: string };
 
-export type OkIntegrationsEditorState = 'installed' | 'not-installed' | 'foreign' | 'unmanageable';
+export type PsIntegrationsEditorState = 'installed' | 'not-installed' | 'foreign' | 'unmanageable';
 
-export interface OkIntegrationsStatus {
+export interface PsIntegrationsStatus {
   readonly available: boolean;
   readonly editors: readonly {
-    readonly id: OkMcpWiringEditorId;
+    readonly id: PsMcpWiringEditorId;
     readonly label: string;
     readonly detected: boolean;
-    readonly state: OkIntegrationsEditorState;
+    readonly state: PsIntegrationsEditorState;
     readonly configPath: string | null;
     readonly entryLocator: string;
   }[];
@@ -433,30 +433,30 @@ export interface OkIntegrationsStatus {
       readonly custom: boolean;
     }[];
   }[];
-  readonly detectedEditorIds: readonly OkMcpWiringEditorId[];
+  readonly detectedEditorIds: readonly PsMcpWiringEditorId[];
 }
 
-export interface OkIntegrationsSetRequest {
+export interface PsIntegrationsSetRequest {
   readonly component:
-    | { readonly kind: 'editor'; readonly id: OkMcpWiringEditorId }
+    | { readonly kind: 'editor'; readonly id: PsMcpWiringEditorId }
     | { readonly kind: 'path' }
     | { readonly kind: 'skill'; readonly id: string };
   readonly enabled: boolean;
 }
 
-export type OkIntegrationsSetResult =
-  | { readonly ok: true; readonly status: OkIntegrationsStatus }
-  | { readonly ok: false; readonly error: string; readonly status: OkIntegrationsStatus };
+export type PsIntegrationsSetResult =
+  | { readonly ok: true; readonly status: PsIntegrationsStatus }
+  | { readonly ok: false; readonly error: string; readonly status: PsIntegrationsStatus };
 
-export interface OkProjectIntegrationsStatus {
+export interface PsProjectIntegrationsStatus {
   readonly available: boolean;
   readonly hasProject: boolean;
   readonly projectDir: string | null;
   readonly editors: readonly {
-    readonly id: OkMcpWiringEditorId;
+    readonly id: PsMcpWiringEditorId;
     readonly label: string;
     readonly detected: boolean;
-    readonly state: OkIntegrationsEditorState;
+    readonly state: PsIntegrationsEditorState;
     readonly configPath: string;
     readonly entryLocator: string;
   }[];
@@ -470,27 +470,27 @@ export interface OkProjectIntegrationsStatus {
   } | null;
 }
 
-export interface OkProjectIntegrationsSetRequest {
+export interface PsProjectIntegrationsSetRequest {
   readonly component:
-    | { readonly kind: 'editor'; readonly id: OkMcpWiringEditorId }
+    | { readonly kind: 'editor'; readonly id: PsMcpWiringEditorId }
     | { readonly kind: 'skill' };
   readonly enabled: boolean;
 }
 
-export type OkProjectIntegrationsSetResult =
-  | { readonly ok: true; readonly status: OkProjectIntegrationsStatus }
-  | { readonly ok: false; readonly error: string; readonly status: OkProjectIntegrationsStatus };
+export type PsProjectIntegrationsSetResult =
+  | { readonly ok: true; readonly status: PsProjectIntegrationsStatus }
+  | { readonly ok: false; readonly error: string; readonly status: PsProjectIntegrationsStatus };
 
-export interface OkAgentIntegrationsIntent {
+export interface PsAgentIntegrationsIntent {
   readonly satisfierId: string;
   readonly desired: 'present' | 'absent';
 }
 
-export interface OkAgentIntegrationsApplyRequest {
-  readonly intents: readonly OkAgentIntegrationsIntent[];
+export interface PsAgentIntegrationsApplyRequest {
+  readonly intents: readonly PsAgentIntegrationsIntent[];
 }
 
-export type OkAgentIntegrationsApplyResult =
+export type PsAgentIntegrationsApplyResult =
   | {
       readonly ok: true;
       readonly report: ApplyReport;
@@ -505,24 +505,24 @@ export type OkAgentIntegrationsApplyResult =
       readonly snapshot: HostSnapshot;
     };
 
-export type OkOnboardingWarningKind =
+export type PsOnboardingWarningKind =
   | 'home-documents'
   | 'home-desktop'
   | 'home-downloads'
   | 'volumes-mount';
 
-export type OkOnboardingGitState = 'present' | 'absent' | 'shell-only';
+export type PsOnboardingGitState = 'present' | 'absent' | 'shell-only';
 
-export interface OkOnboardingShowPayload {
+export interface PsOnboardingShowPayload {
   readonly pickedPath: string;
   readonly projectDir: string;
   readonly defaultContentDir: string;
-  readonly gitState: OkOnboardingGitState;
+  readonly gitState: PsOnboardingGitState;
   readonly gitRootPromoted: boolean;
-  readonly warnings: readonly { readonly kind: OkOnboardingWarningKind }[];
+  readonly warnings: readonly { readonly kind: PsOnboardingWarningKind }[];
 }
 
-export interface OkDeepLinkPayload {
+export interface PsDeepLinkPayload {
   doc: string;
   kind: 'doc' | 'folder';
   branch?: string | null;
@@ -532,7 +532,7 @@ export interface OkDeepLinkPayload {
   contentRootDepth?: number;
 }
 
-export type OkOnboardingToastPayload =
+export type PsOnboardingToastPayload =
   | { readonly kind: 'ancestor-promote'; readonly ancestorPath: string }
   | { readonly kind: 'git-root-promote'; readonly gitRoot: string; readonly pickedPath: string }
   | {
@@ -557,22 +557,22 @@ export type OkOnboardingToastPayload =
     }
   | { readonly kind: 'sharing-no-git'; readonly requestedMode: 'local-only' };
 
-export interface OkOnboardingConfirmRequest {
+export interface PsOnboardingConfirmRequest {
   readonly initGit: boolean;
   readonly contentDir: string;
   readonly additionalIgnores: string;
-  readonly editorIds: readonly OkMcpWiringEditorId[];
+  readonly editorIds: readonly PsMcpWiringEditorId[];
   readonly connectEditors: boolean;
   readonly sharing: 'shared' | 'local-only';
 }
 
-export type OkOnboardingResult = { ok: true } | { ok: false; error: string };
+export type PsOnboardingResult = { ok: true } | { ok: false; error: string };
 
-export interface OkOnboardingProbeContentRequest {
+export interface PsOnboardingProbeContentRequest {
   readonly contentDir: string;
 }
 
-export type OkOnboardingProbeContentResult =
+export type PsOnboardingProbeContentResult =
   | {
       readonly ok: true;
       readonly count: number;
@@ -581,7 +581,7 @@ export type OkOnboardingProbeContentResult =
     }
   | { readonly ok: false; readonly error: string };
 
-export interface OkKeyringSmokeResult {
+export interface PsKeyringSmokeResult {
   ok: boolean;
   backend?: 'keyring' | 'file';
   error?: string;
@@ -589,41 +589,41 @@ export interface OkKeyringSmokeResult {
   timestamp: string;
 }
 
-export interface OkScaffoldFileEntry {
+export interface PsScaffoldFileEntry {
   path: string;
   kind: 'folder' | 'file';
   contentPreview?: string;
 }
-export interface OkScaffoldSkipEntry {
+export interface PsScaffoldSkipEntry {
   path: string;
   reason: 'already-exists' | 'user-content' | 'glob-collision';
 }
-export interface OkScaffoldPlan {
-  created: OkScaffoldFileEntry[];
-  skipped: OkScaffoldSkipEntry[];
+export interface PsScaffoldPlan {
+  created: PsScaffoldFileEntry[];
+  skipped: PsScaffoldSkipEntry[];
   warnings: string[];
   packSkills?: { name: string; pending: boolean; conflict?: boolean }[];
   requiredPlugins?: { id: LintPluginId; pending: boolean }[];
 }
-export interface OkScaffoldApplyError {
+export interface PsScaffoldApplyError {
   path: string;
   error: string;
 }
-export interface OkScaffoldApplyResult {
+export interface PsScaffoldApplyResult {
   applied: number;
-  errors: OkScaffoldApplyError[];
+  errors: PsScaffoldApplyError[];
   durationMs: number;
   packSkillsInstalled: string[];
   pluginsEnabled: LintPluginId[];
   packSkillConflicts: { name: string; hosts?: string[] }[];
 }
 
-export interface OkSeedError {
+export interface PsSeedError {
   kind: 'no-project' | 'prerequisite-missing' | 'invalid-root' | 'internal';
   message: string;
 }
 
-export type OkPackId =
+export type PsPackId =
   | 'knowledge-base'
   | 'software-lifecycle'
   | 'codebase-wiki'
@@ -631,58 +631,58 @@ export type OkPackId =
   | 'worldbuilding'
   | 'writing-pipeline'
   | 'entity-vault'
-  | 'okf';
+  | 'psf';
 
-export interface OkSeedPlanOptions {
+export interface PsSeedPlanOptions {
   rootDir?: string;
-  packId?: OkPackId;
+  packId?: PsPackId;
   preview?: { skillsInstallable: boolean };
 }
 
-export interface OkSeedApplyOptions {
-  packId?: OkPackId;
+export interface PsSeedApplyOptions {
+  packId?: PsPackId;
 }
 
-export interface OkSeedPackFolderInfo {
+export interface PsSeedPackFolderInfo {
   path: string;
   summary: string;
 }
 
-export interface OkSeedPackEntryCounts {
+export interface PsSeedPackEntryCounts {
   files: number;
   folders: number;
 }
 
-export interface OkSeedPackInfo {
-  id: OkPackId;
+export interface PsSeedPackInfo {
+  id: PsPackId;
   name: string;
   description: string;
   defaultSubfolder?: string;
-  folders: OkSeedPackFolderInfo[];
-  entryCounts: OkSeedPackEntryCounts;
+  folders: PsSeedPackFolderInfo[];
+  entryCounts: PsSeedPackEntryCounts;
 }
 
-export interface OkFindEnclosingProjectRootResult {
+export interface PsFindEnclosingProjectRootResult {
   readonly rootPath: string;
   readonly distance: number;
 }
-export interface OkFindEnclosingGitRootResult {
+export interface PsFindEnclosingGitRootResult {
   readonly gitRoot: string;
   readonly distance: number;
 }
-export type OkSeedPlanResult =
-  | { ok: true; plan: OkScaffoldPlan }
-  | { ok: false; error: OkSeedError };
-export type OkSeedApplyResult =
-  | { ok: true; result: OkScaffoldApplyResult }
-  | { ok: false; error: OkSeedError };
-export type OkSeedListPacksResult =
-  | { ok: true; packs: OkSeedPackInfo[] }
+export type PsSeedPlanResult =
+  | { ok: true; plan: PsScaffoldPlan }
+  | { ok: false; error: PsSeedError };
+export type PsSeedApplyResult =
+  | { ok: true; result: PsScaffoldApplyResult }
+  | { ok: false; error: PsSeedError };
+export type PsSeedListPacksResult =
+  | { ok: true; packs: PsSeedPackInfo[] }
   | { ok: false; error: { kind: 'internal'; message: string } };
 
-export type OkLocalOpAuthSignoutResponse = { ok: true } | { ok: false; error?: string };
+export type PsLocalOpAuthSignoutResponse = { ok: true } | { ok: false; error?: string };
 
-export type OkLocalOpAuthEvent =
+export type PsLocalOpAuthEvent =
   | {
       type: 'verification';
       user_code: string;
@@ -699,7 +699,7 @@ export type OkLocalOpAuthEvent =
     }
   | { type: 'error'; message: string };
 
-export type OkLocalOpCloneEvent =
+export type PsLocalOpCloneEvent =
   | { type: 'progress'; phase: string; pct: number }
   | { type: 'complete'; dir: string }
   | { type: 'branch-fallback'; branch: string }
@@ -710,12 +710,12 @@ export type OkLocalOpCloneEvent =
       refusedSymlinkPaths?: string[];
     };
 
-export interface OkLocalOpStream<E> {
+export interface PsLocalOpStream<E> {
   readonly events: AsyncIterable<E>;
   cancel(): void;
 }
 
-export type OkLocalOpAuthStatusResponse =
+export type PsLocalOpAuthStatusResponse =
   | {
       authenticated: true;
       host: string;
@@ -727,23 +727,23 @@ export type OkLocalOpAuthStatusResponse =
     }
   | { authenticated: false; host: string; error?: string; ghAvailable?: boolean };
 
-export interface OkLocalOpRepoEntry {
+export interface PsLocalOpRepoEntry {
   full_name: string;
   clone_url: string;
   private: boolean;
 }
 
-export type OkLocalOpAuthReposResponse =
-  | { ok: true; host: string; repos: OkLocalOpRepoEntry[] }
+export type PsLocalOpAuthReposResponse =
+  | { ok: true; host: string; repos: PsLocalOpRepoEntry[] }
   | { ok: false; error: string; authenticated?: false };
 
-export type OkEditorActiveTargetSnapshot =
+export type PsEditorActiveTargetSnapshot =
   | { readonly kind: 'doc'; readonly identifier: string }
   | { readonly kind: 'folder'; readonly identifier: string }
   | { readonly kind: 'asset'; readonly identifier: string }
   | { readonly kind: null };
 
-export interface OkEditorViewMenuStateSnapshot {
+export interface PsEditorViewMenuStateSnapshot {
   readonly showHiddenFiles: boolean;
   readonly showOkFolders: boolean;
   readonly showOnlyMarkdownFiles: boolean;
@@ -761,33 +761,33 @@ export interface OkEditorViewMenuStateSnapshot {
   readonly hasEditorSelection?: boolean;
 }
 
-export interface OkEditorWideVisibility {
+export interface PsEditorWideVisibility {
   readonly editorVisible?: boolean;
   readonly terminalVisible?: boolean;
   readonly agentPanelVisible?: boolean;
 }
 
-type OkEditorDockVisibilityKey = keyof OkEditorWideVisibility;
+type PsEditorDockVisibilityKey = keyof PsEditorWideVisibility;
 
-type OkEditorOnlyPane<K extends OkEditorDockVisibilityKey> = { readonly [P in K]: boolean } & {
-  readonly [P in Exclude<OkEditorDockVisibilityKey, K>]?: never;
+type PsEditorOnlyPane<K extends PsEditorDockVisibilityKey> = { readonly [P in K]: boolean } & {
+  readonly [P in Exclude<PsEditorDockVisibilityKey, K>]?: never;
 };
 
-type OkEditorDockVisibilityChange = {
-  [K in OkEditorDockVisibilityKey]: OkEditorOnlyPane<K> & {
-    readonly wideIntent: OkEditorOnlyPane<K>;
+type PsEditorDockVisibilityChange = {
+  [K in PsEditorDockVisibilityKey]: PsEditorOnlyPane<K> & {
+    readonly wideIntent: PsEditorOnlyPane<K>;
   };
-}[OkEditorDockVisibilityKey];
+}[PsEditorDockVisibilityKey];
 
-export type OkEditorViewMenuStateChange = Partial<
-  Omit<OkEditorViewMenuStateSnapshot, OkEditorDockVisibilityKey>
+export type PsEditorViewMenuStateChange = Partial<
+  Omit<PsEditorViewMenuStateSnapshot, PsEditorDockVisibilityKey>
 > &
   (
-    | OkEditorDockVisibilityChange
-    | ({ readonly [K in OkEditorDockVisibilityKey]?: never } & { readonly wideIntent?: never })
+    | PsEditorDockVisibilityChange
+    | ({ readonly [K in PsEditorDockVisibilityKey]?: never } & { readonly wideIntent?: never })
   );
 
-export type OkMenuDispatchRole =
+export type PsMenuDispatchRole =
   | 'undo'
   | 'redo'
   | 'cut'
@@ -806,7 +806,7 @@ export type OkMenuDispatchRole =
   | 'quit'
   | 'about';
 
-export type OkMenuDispatchCommand =
+export type PsMenuDispatchCommand =
   | 'open-navigator'
   | 'open-folder-dialog'
   | 'clear-recent-projects'
@@ -818,33 +818,33 @@ export type OkMenuDispatchCommand =
   | 'open-discord'
   | 'toggle-spell-check';
 
-export type OkMenuDispatchRequest =
+export type PsMenuDispatchRequest =
   | { readonly kind: 'query' }
-  | { readonly kind: 'menu-action'; readonly action: OkMenuAction }
-  | { readonly kind: 'command'; readonly command: OkMenuDispatchCommand }
+  | { readonly kind: 'menu-action'; readonly action: PsMenuAction }
+  | { readonly kind: 'command'; readonly command: PsMenuDispatchCommand }
   | { readonly kind: 'open-recent-project'; readonly path: string }
-  | { readonly kind: 'role'; readonly role: OkMenuDispatchRole }
+  | { readonly kind: 'role'; readonly role: PsMenuDispatchRole }
   | { readonly kind: 'spelling-languages-query' }
   | { readonly kind: 'spelling-languages-set'; readonly languages: readonly string[] }
   | { readonly kind: 'spellcheck-enabled-set'; readonly enabled: boolean };
 
-export type OkSpellingLanguagesSetReason =
+export type PsSpellingLanguagesSetReason =
   | 'invalid-request'
   | 'empty-selection'
   | 'unsupported-language'
   | 'engine-error';
 
-export interface OkSpellingLanguagesState {
+export interface PsSpellingLanguagesState {
   readonly available: readonly string[];
   readonly selected: readonly string[];
   readonly defaults: readonly string[];
 }
 
-export type OkSpellingLanguagesQueryResult =
+export type PsSpellingLanguagesQueryResult =
   | {
       readonly kind: 'spelling-languages-query';
       readonly ok: true;
-      readonly state: OkSpellingLanguagesState;
+      readonly state: PsSpellingLanguagesState;
     }
   | {
       readonly kind: 'spelling-languages-query';
@@ -852,19 +852,19 @@ export type OkSpellingLanguagesQueryResult =
       readonly reason: 'engine-error';
     };
 
-export type OkSpellingLanguagesSetResult =
+export type PsSpellingLanguagesSetResult =
   | {
       readonly kind: 'spelling-languages-set';
       readonly ok: true;
-      readonly state: OkSpellingLanguagesState;
+      readonly state: PsSpellingLanguagesState;
     }
   | {
       readonly kind: 'spelling-languages-set';
       readonly ok: false;
-      readonly reason: OkSpellingLanguagesSetReason;
+      readonly reason: PsSpellingLanguagesSetReason;
     };
 
-export type OkSpellcheckEnabledSetResult =
+export type PsSpellcheckEnabledSetResult =
   | {
       readonly kind: 'spellcheck-enabled-set';
       readonly ok: true;
@@ -877,59 +877,59 @@ export type OkSpellcheckEnabledSetResult =
       readonly reason: 'engine-error' | 'invalid-request';
     };
 
-export type OkSpellingDispatchResult =
-  | OkSpellingLanguagesQueryResult
-  | OkSpellingLanguagesSetResult
-  | OkSpellcheckEnabledSetResult;
+export type PsSpellingDispatchResult =
+  | PsSpellingLanguagesQueryResult
+  | PsSpellingLanguagesSetResult
+  | PsSpellcheckEnabledSetResult;
 
-export type OkMenuUiDispatchRequest = Exclude<
-  OkMenuDispatchRequest,
-  { readonly kind: OkSpellingDispatchResult['kind'] }
+export type PsMenuUiDispatchRequest = Exclude<
+  PsMenuDispatchRequest,
+  { readonly kind: PsSpellingDispatchResult['kind'] }
 >;
 
-export interface OkMenuRendererSnapshot {
+export interface PsMenuRendererSnapshot {
   readonly recentProjects: ReadonlyArray<{ readonly path: string; readonly name: string }>;
   readonly spellCheckEnabled: boolean;
   readonly showDevToolsMenu: boolean;
   readonly canCheckForUpdates: boolean;
   readonly canReconfigureMcpWiring: boolean;
-  readonly activeTarget: OkEditorActiveTargetSnapshot;
-  readonly viewMenuState: OkEditorViewMenuStateSnapshot;
+  readonly activeTarget: PsEditorActiveTargetSnapshot;
+  readonly viewMenuState: PsEditorViewMenuStateSnapshot;
 }
 
-export type OkMenuDispatchResult = OkMenuRendererSnapshot | OkSpellingDispatchResult | undefined;
+export type PsMenuDispatchResult = PsMenuRendererSnapshot | PsSpellingDispatchResult | undefined;
 
-export interface OkBugReportSendInput {
+export interface PsBugReportSendInput {
   zipPath: string;
-  metadata: OkBugReportSendMetadata;
+  metadata: PsBugReportSendMetadata;
   includeScreenshot?: boolean;
   includeAttachments?: boolean;
   traceparent?: string;
 }
 
-export interface OkBugReportAttachmentInput {
-  contentType: OkImageAttachmentContentType;
+export interface PsBugReportAttachmentInput {
+  contentType: PsImageAttachmentContentType;
   bytes: Uint8Array;
 }
 
-export interface OkAssetUploadRequest {
-  contentType: OkImageAttachmentContentType;
+export interface PsAssetUploadRequest {
+  contentType: PsImageAttachmentContentType;
   bytes: Uint8Array;
   filename: string;
 }
 
-export type OkAssetUploadResult =
+export type PsAssetUploadResult =
   | { assetUrl: string }
   | { error: 'invalid-request' | 'unconfigured' | 'mint' | 'upload' };
 
-export interface OkSharingStatusResult {
+export interface PsSharingStatusResult {
   readonly kind: 'status';
   readonly mode: 'shared' | 'local-only' | 'no-git';
   readonly excluded: readonly string[];
   readonly trackedUpstream: readonly string[];
 }
 
-export type OkSharingSetModeResult =
+export type PsSharingSetModeResult =
   | { readonly kind: 'applied'; readonly mode: 'shared' | 'local-only' | 'no-git' }
   | {
       readonly kind: 'refused-tracked';
@@ -943,7 +943,7 @@ export type OkSharingSetModeResult =
 
 export type SlidevSource = 'project-local' | 'global';
 
-export type OkSlidesStatusResult =
+export type PsSlidesStatusResult =
   | { readonly kind: 'status'; readonly available: true; readonly source: SlidevSource }
   | { readonly kind: 'status'; readonly available: false };
 
@@ -959,46 +959,46 @@ export type SlidevOpenFailureReason =
   | 'timeout'
   | 'unsupported-server';
 
-export type OkSlidesOpenResult =
+export type PsSlidesOpenResult =
   | { readonly kind: 'open'; readonly ok: true }
   | { readonly kind: 'open'; readonly ok: false; readonly reason: SlidevOpenFailureReason };
 
-export interface OkServerVersionDriftInfo {
+export interface PsServerVersionDriftInfo {
   readonly relation: 'older' | 'newer';
   readonly dimension: 'protocol' | 'runtime';
   readonly serverRuntime: string;
   readonly appRuntime: string;
 }
 
-export interface OkServerRestartedInfo {
+export interface PsServerRestartedInfo {
   readonly appRuntime: string;
 }
 
-export interface OkRecentRemovedMissingInfo {
+export interface PsRecentRemovedMissingInfo {
   readonly path: string;
   readonly projectName: string;
 }
 
-export type OkServerRestartFailure =
+export type PsServerRestartFailure =
   | { readonly ok: false; readonly reason: 'eperm' | 'other' }
   | { readonly ok: false; readonly reason: 'other-channel'; readonly holderChannel: string };
 
-export type OkServerRestartOutcome = { readonly ok: true } | OkServerRestartFailure;
+export type PsServerRestartOutcome = { readonly ok: true } | PsServerRestartFailure;
 
-export type OkPtyCreateReason = 'no-project' | 'not-consented';
+export type PsPtyCreateReason = 'no-project' | 'not-consented';
 
-export type OkAssetOpenRefusalReason =
+export type PsAssetOpenRefusalReason =
   | 'extension-blocked'
   | 'not-a-file'
   | 'path-escape'
   | 'not-found'
   | 'resolve-error';
 
-export type OkAssetOpenResult =
+export type PsAssetOpenResult =
   | { readonly ok: true }
-  | { readonly ok: false; readonly reason: OkAssetOpenRefusalReason };
+  | { readonly ok: false; readonly reason: PsAssetOpenRefusalReason };
 
-export function assetOpenRefusalRevealsInstead(reason: OkAssetOpenRefusalReason): boolean {
+export function assetOpenRefusalRevealsInstead(reason: PsAssetOpenRefusalReason): boolean {
   switch (reason) {
     case 'extension-blocked':
     case 'not-a-file':
@@ -1018,17 +1018,17 @@ export function assertNeverPtyCreateReason(value: never): never {
   throw new Error(`unhandled pty create reason: ${String(value)}`);
 }
 
-export type OkPtyCreateResult =
+export type PsPtyCreateResult =
   | { readonly ok: true; readonly ptyId: string }
-  | { readonly ok: false; readonly reason: OkPtyCreateReason };
+  | { readonly ok: false; readonly reason: PsPtyCreateReason };
 
-export interface OkPtyListEntry {
+export interface PsPtyListEntry {
   readonly ptyId: string;
   readonly customLabel: string | null;
   readonly ordinal: number | null;
 }
 
-export type OkPtyAdoptReason =
+export type PsPtyAdoptReason =
   | 'unknown-session'
   | 'not-started'
   | 'not-consented'
@@ -1038,7 +1038,7 @@ export function assertNeverPtyAdoptReason(value: never): never {
   throw new Error(`unhandled pty adopt reason: ${String(value)}`);
 }
 
-export type OkPtyAdoptResult =
+export type PsPtyAdoptResult =
   | {
       readonly ok: true;
       readonly replay: string;
@@ -1047,15 +1047,15 @@ export type OkPtyAdoptResult =
     }
   | {
       readonly ok: false;
-      readonly reason: OkPtyAdoptReason;
+      readonly reason: PsPtyAdoptReason;
     };
 
-export interface OkPtyData {
+export interface PsPtyData {
   readonly ptyId: string;
   readonly data: string;
 }
 
-export type OkPtyExit =
+export type PsPtyExit =
   | {
       readonly ptyId: string;
       readonly neverStarted: true;
@@ -1113,7 +1113,7 @@ export function isTerminalSupportFileNoticeReason(
   );
 }
 
-export type OkPtyNotice =
+export type PsPtyNotice =
   | {
       readonly ptyId: string;
       readonly notice: 'invalid-shell-override';
@@ -1133,13 +1133,13 @@ export type OkPtyNotice =
 export interface ClaudeReadiness {
   readonly claude: 'present' | 'not-found' | 'unknown';
   readonly mcpPreApprovable?: boolean;
-  readonly okToolsAutoApprovable?: boolean;
+  readonly psToolsAutoApprovable?: boolean;
   readonly mcpServerName?: string;
 }
 
 export interface CliReadiness {
   readonly onPath: 'present' | 'not-found' | 'unknown';
-  readonly okServerConfigured?: boolean;
+  readonly psServerConfigured?: boolean;
   readonly mcpServerName?: string;
 }
 
@@ -1158,34 +1158,34 @@ export type CopyImageResult =
   | { ok: true }
   | { ok: false; reason: CopyImageFailureReason; detail?: string };
 
-export interface OkDesktopBridge {
-  readonly config: OkDesktopConfig;
+export interface PsDesktopBridge {
+  readonly config: PsDesktopConfig;
 
-  onProjectSwitched(cb: (next: OkDesktopConfig) => void): OkUnsubscribe;
-  onMenuAction(cb: (action: OkMenuAction, origin: OkMenuActionOrigin) => void): OkUnsubscribe;
-  onUpdateDownloaded(cb: (info: OkUpdateDownloadedInfo) => void): OkUnsubscribe;
-  onUpdateRelaunching(cb: (info: OkUpdateRelaunchingInfo) => void): OkUnsubscribe;
-  onUpdateFetchingLatest(cb: (info: OkUpdateFetchingLatestInfo) => void): OkUnsubscribe;
-  onUpdateRelaunchFailed(cb: (info: OkUpdateRelaunchFailedInfo) => void): OkUnsubscribe;
-  onWhatsNew(cb: (info: OkWhatsNewInfo) => void): OkUnsubscribe;
-  onWhatsNewDismissed(cb: (info: { readonly version: string }) => void): OkUnsubscribe;
-  onUpdateStuckHint(cb: (info: OkUpdateStuckHintInfo) => void): OkUnsubscribe;
-  onUpdateManualCheck(cb: (info: OkUpdateManualCheckInfo) => void): OkUnsubscribe;
-  onDeepLink(cb: (evt: OkDeepLinkPayload) => void): OkUnsubscribe;
-  onShareReceived(cb: (payload: OkShareReceivedPayload) => void): OkUnsubscribe;
+  onProjectSwitched(cb: (next: PsDesktopConfig) => void): PsUnsubscribe;
+  onMenuAction(cb: (action: PsMenuAction, origin: PsMenuActionOrigin) => void): PsUnsubscribe;
+  onUpdateDownloaded(cb: (info: PsUpdateDownloadedInfo) => void): PsUnsubscribe;
+  onUpdateRelaunching(cb: (info: PsUpdateRelaunchingInfo) => void): PsUnsubscribe;
+  onUpdateFetchingLatest(cb: (info: PsUpdateFetchingLatestInfo) => void): PsUnsubscribe;
+  onUpdateRelaunchFailed(cb: (info: PsUpdateRelaunchFailedInfo) => void): PsUnsubscribe;
+  onWhatsNew(cb: (info: PsWhatsNewInfo) => void): PsUnsubscribe;
+  onWhatsNewDismissed(cb: (info: { readonly version: string }) => void): PsUnsubscribe;
+  onUpdateStuckHint(cb: (info: PsUpdateStuckHintInfo) => void): PsUnsubscribe;
+  onUpdateManualCheck(cb: (info: PsUpdateManualCheckInfo) => void): PsUnsubscribe;
+  onDeepLink(cb: (evt: PsDeepLinkPayload) => void): PsUnsubscribe;
+  onShareReceived(cb: (payload: PsShareReceivedPayload) => void): PsUnsubscribe;
 
-  onServerVersionDrift(cb: (info: OkServerVersionDriftInfo) => void): OkUnsubscribe;
-  onServerRestarted(cb: (info: OkServerRestartedInfo) => void): OkUnsubscribe;
-  onRecentRemovedMissing(cb: (info: OkRecentRemovedMissingInfo) => void): OkUnsubscribe;
-  restartServer(projectPath: string): Promise<OkServerRestartOutcome>;
+  onServerVersionDrift(cb: (info: PsServerVersionDriftInfo) => void): PsUnsubscribe;
+  onServerRestarted(cb: (info: PsServerRestartedInfo) => void): PsUnsubscribe;
+  onRecentRemovedMissing(cb: (info: PsRecentRemovedMissingInfo) => void): PsUnsubscribe;
+  restartServer(projectPath: string): Promise<PsServerRestartOutcome>;
 
-  setThemeSource(source: OkThemeSource): Promise<{ ok: true }>;
+  setThemeSource(source: PsThemeSource): Promise<{ ok: true }>;
 
   setLanguagePreference(preference: LanguagePreference): Promise<{ ok: true }>;
 
-  userConfig?: OkUserConfigBridge;
+  userConfig?: PsUserConfigBridge;
 
-  signalThemeApplied(opts?: { reducedTransparency?: boolean; chrome?: OkChromeColors }): void;
+  signalThemeApplied(opts?: { reducedTransparency?: boolean; chrome?: PsChromeColors }): void;
 
   dialog: {
     openFolder(opts?: { defaultPath?: string }): Promise<string | null>;
@@ -1209,7 +1209,7 @@ export interface OkDesktopBridge {
       readonly scope?: HandoffScope;
     }): Promise<void>;
 
-    openAsset(relPath: string): Promise<OkAssetOpenResult>;
+    openAsset(relPath: string): Promise<PsAssetOpenResult>;
 
     revealAsset(
       relPath: string,
@@ -1248,14 +1248,14 @@ export interface OkDesktopBridge {
     removeRecent(path: string): Promise<void>;
     getSessionState(): Promise<ProjectSessionState>;
     setSessionState(state: ProjectSessionState): Promise<void>;
-    open(request: OkProjectOpenRequest): Promise<void>;
+    open(request: PsProjectOpenRequest): Promise<void>;
     openFile(): Promise<void>;
     createNew(args: {
       parent: string;
       name: string;
-      editors: OkMcpWiringEditorId[];
+      editors: PsMcpWiringEditorId[];
       sharing?: 'shared' | 'local-only';
-      packId?: OkPackId;
+      packId?: PsPackId;
       rootDir?: string;
     }): Promise<void>;
     recordCreateNewBannerShown(banner: CreateNewBannerKind): Promise<void>;
@@ -1263,8 +1263,8 @@ export interface OkDesktopBridge {
       projectPath: string;
       kind: 'doc' | 'folder';
       path: string;
-    }): Promise<OkCheckTargetExistsResult>;
-    readHeadBranch(projectPath: string): Promise<OkHeadBranchInfo>;
+    }): Promise<PsCheckTargetExistsResult>;
+    readHeadBranch(projectPath: string): Promise<PsHeadBranchInfo>;
     fetchBranchInfo(request: {
       projectPath: string;
       branch: string;
@@ -1288,7 +1288,7 @@ export interface OkDesktopBridge {
       branch: string;
       timeoutMs: number;
     }): Promise<{ ok: true } | { ok: false; reason: 'timeout' | 'project-not-open' }>;
-    okInit(request: { projectPath: string }): Promise<LocalOpOkInitResponse>;
+    psInit(request: { projectPath: string }): Promise<LocalOpOkInitResponse>;
     close(): Promise<void>;
   };
 
@@ -1301,13 +1301,13 @@ export interface OkDesktopBridge {
   };
 
   sharing: {
-    status(): Promise<OkSharingStatusResult>;
-    setMode(mode: 'shared' | 'local-only'): Promise<OkSharingSetModeResult>;
+    status(): Promise<PsSharingStatusResult>;
+    setMode(mode: 'shared' | 'local-only'): Promise<PsSharingSetModeResult>;
   };
 
   slides: {
-    status(): Promise<OkSlidesStatusResult>;
-    open(docPath: string): Promise<OkSlidesOpenResult>;
+    status(): Promise<PsSlidesStatusResult>;
+    open(docPath: string): Promise<PsSlidesOpenResult>;
   };
 
   bugReport: {
@@ -1316,28 +1316,28 @@ export interface OkDesktopBridge {
       note?: string;
       includeCrashDump?: boolean;
       includeScreenshot?: boolean;
-      attachments?: OkBugReportAttachmentInput[];
+      attachments?: PsBugReportAttachmentInput[];
       agentChatThreadId?: string;
       crashEventId?: string;
-    }): Promise<OkBugReportCreateResult>;
-    captureScreenshot(): Promise<OkBugReportScreenshot | null>;
-    crashDumpAvailability(): Promise<OkBugReportCrashDumpAvailability>;
-    send(request: OkBugReportSendInput): Promise<OkBugReportSendResult>;
-    crashAck(request: { eventId: string }): Promise<OkBugReportCrashAckResult>;
-    list(): Promise<OkBugReportListResult>;
-    delete(id: string): Promise<OkBugReportDeleteResult>;
-    onCrashDetected(cb: (event: OkBugReportCrashDetectedEvent) => void): OkUnsubscribe;
+    }): Promise<PsBugReportCreateResult>;
+    captureScreenshot(): Promise<PsBugReportScreenshot | null>;
+    crashDumpAvailability(): Promise<PsBugReportCrashDumpAvailability>;
+    send(request: PsBugReportSendInput): Promise<PsBugReportSendResult>;
+    crashAck(request: { eventId: string }): Promise<PsBugReportCrashAckResult>;
+    list(): Promise<PsBugReportListResult>;
+    delete(id: string): Promise<PsBugReportDeleteResult>;
+    onCrashDetected(cb: (event: PsBugReportCrashDetectedEvent) => void): PsUnsubscribe;
   };
 
   assetUpload: {
-    uploadImage(request: OkAssetUploadRequest): Promise<OkAssetUploadResult>;
+    uploadImage(request: PsAssetUploadRequest): Promise<PsAssetUploadResult>;
   };
 
   fs: {
     defaultProjectsRoot(): Promise<string>;
-    folderState(path: string): Promise<OkFolderState>;
-    findEnclosingProjectRoot(path: string): Promise<OkFindEnclosingProjectRootResult | null>;
-    findEnclosingGitRoot(path: string): Promise<OkFindEnclosingGitRootResult | null>;
+    folderState(path: string): Promise<PsFolderState>;
+    findEnclosingProjectRoot(path: string): Promise<PsFindEnclosingProjectRootResult | null>;
+    findEnclosingGitRoot(path: string): Promise<PsFindEnclosingGitRootResult | null>;
     removeGitFolder(gitRoot: string): Promise<void>;
   };
 
@@ -1353,14 +1353,14 @@ export interface OkDesktopBridge {
       | { ok: true; outcome: 'created' | 'focused' }
       | { ok: false; reason: 'no-project' | 'invalid-request' }
     >;
-    dispatchToMain(action: OkNoteWindowMainAction): Promise<OkNoteWindowMainActionResult>;
-    onMainAction(cb: (action: OkNoteWindowMainAction) => void): OkUnsubscribe;
+    dispatchToMain(action: PsNoteWindowMainAction): Promise<PsNoteWindowMainActionResult>;
+    onMainAction(cb: (action: PsNoteWindowMainAction) => void): PsUnsubscribe;
   };
 
   seed: {
-    plan(options?: OkSeedPlanOptions): Promise<OkSeedPlanResult>;
-    apply(plan: OkScaffoldPlan, options?: OkSeedApplyOptions): Promise<OkSeedApplyResult>;
-    listPacks(): Promise<OkSeedListPacksResult>;
+    plan(options?: PsSeedPlanOptions): Promise<PsSeedPlanResult>;
+    apply(plan: PsScaffoldPlan, options?: PsSeedApplyOptions): Promise<PsSeedApplyResult>;
+    listPacks(): Promise<PsSeedListPacksResult>;
   };
 
   skill: {
@@ -1387,41 +1387,41 @@ export interface OkDesktopBridge {
     checkNow(): Promise<void>;
     dismissWhatsNew(version: string): Promise<void>;
     dismissDownloaded(version: string): Promise<void>;
-    setMode(mode: OkUpdateMode): Promise<void>;
+    setMode(mode: PsUpdateMode): Promise<void>;
   };
 
   state: {
-    query(): Promise<OkStateSnapshot>;
+    query(): Promise<PsStateSnapshot>;
     resetIncompatible(): Promise<void>;
   };
 
   mcpWiring: {
-    onShow(cb: (payload: OkMcpWiringShowPayload) => void): OkUnsubscribe;
+    onShow(cb: (payload: PsMcpWiringShowPayload) => void): PsUnsubscribe;
     signalReady(): void;
-    confirm(request: OkMcpWiringConfirmRequest): Promise<OkMcpWiringResult>;
-    skip(): Promise<OkMcpWiringResult>;
+    confirm(request: PsMcpWiringConfirmRequest): Promise<PsMcpWiringResult>;
+    skip(): Promise<PsMcpWiringResult>;
     reconfigure(): Promise<boolean>;
   };
 
   spellcheck: {
     toggle(): Promise<boolean>;
-    languages(): Promise<OkSpellingLanguagesQueryResult>;
-    setLanguages(languages: readonly string[]): Promise<OkSpellingLanguagesSetResult>;
-    setEnabled(enabled: boolean): Promise<OkSpellcheckEnabledSetResult>;
+    languages(): Promise<PsSpellingLanguagesQueryResult>;
+    setLanguages(languages: readonly string[]): Promise<PsSpellingLanguagesSetResult>;
+    setEnabled(enabled: boolean): Promise<PsSpellcheckEnabledSetResult>;
   };
 
   integrations: {
-    status(): Promise<OkIntegrationsStatus>;
-    setComponent(request: OkIntegrationsSetRequest): Promise<OkIntegrationsSetResult>;
+    status(): Promise<PsIntegrationsStatus>;
+    setComponent(request: PsIntegrationsSetRequest): Promise<PsIntegrationsSetResult>;
   };
 
   projectIntegrations: {
-    status(): Promise<OkProjectIntegrationsStatus>;
-    setComponent(request: OkProjectIntegrationsSetRequest): Promise<OkProjectIntegrationsSetResult>;
+    status(): Promise<PsProjectIntegrationsStatus>;
+    setComponent(request: PsProjectIntegrationsSetRequest): Promise<PsProjectIntegrationsSetResult>;
   };
 
   agentIntegrations: {
-    apply(request: OkAgentIntegrationsApplyRequest): Promise<OkAgentIntegrationsApplyResult>;
+    apply(request: PsAgentIntegrationsApplyRequest): Promise<PsAgentIntegrationsApplyResult>;
   };
 
   remoteAccess: {
@@ -1429,27 +1429,27 @@ export interface OkDesktopBridge {
   };
 
   onboarding: {
-    onShow(cb: (payload: OkOnboardingShowPayload) => void): OkUnsubscribe;
+    onShow(cb: (payload: PsOnboardingShowPayload) => void): PsUnsubscribe;
     signalReady(): void;
-    confirm(request: OkOnboardingConfirmRequest): Promise<OkOnboardingResult>;
-    cancel(): Promise<OkOnboardingResult>;
-    probeContent(request: OkOnboardingProbeContentRequest): Promise<OkOnboardingProbeContentResult>;
-    onToast(cb: (payload: OkOnboardingToastPayload) => void): OkUnsubscribe;
+    confirm(request: PsOnboardingConfirmRequest): Promise<PsOnboardingResult>;
+    cancel(): Promise<PsOnboardingResult>;
+    probeContent(request: PsOnboardingProbeContentRequest): Promise<PsOnboardingProbeContentResult>;
+    onToast(cb: (payload: PsOnboardingToastPayload) => void): PsUnsubscribe;
   };
 
   localOp: {
     auth: {
-      start(): OkLocalOpStream<OkLocalOpAuthEvent>;
+      start(): PsLocalOpStream<PsLocalOpAuthEvent>;
     };
     clone: {
       start(request: {
         url: string;
         dir: string;
         branch?: string | null;
-      }): OkLocalOpStream<OkLocalOpCloneEvent>;
+      }): PsLocalOpStream<PsLocalOpCloneEvent>;
     };
-    authStatus(request?: { host?: string }): Promise<OkLocalOpAuthStatusResponse>;
-    authRepos(request?: { host?: string }): Promise<OkLocalOpAuthReposResponse>;
+    authStatus(request?: { host?: string }): Promise<PsLocalOpAuthStatusResponse>;
+    authRepos(request?: { host?: string }): Promise<PsLocalOpAuthReposResponse>;
   };
 
   share: {
@@ -1462,13 +1462,13 @@ export interface OkDesktopBridge {
   };
 
   editor: {
-    notifyActiveTargetChanged(target: OkEditorActiveTargetSnapshot): void;
-    notifyViewMenuStateChanged(state: OkEditorViewMenuStateChange): void;
+    notifyActiveTargetChanged(target: PsEditorActiveTargetSnapshot): void;
+    notifyViewMenuStateChanged(state: PsEditorViewMenuStateChange): void;
     notifyBackgroundThrottle(signal: { hasPendingWork: boolean; enabled: boolean }): void;
   };
 
   menu: {
-    dispatch(request: OkMenuUiDispatchRequest): Promise<OkMenuRendererSnapshot | undefined>;
+    dispatch(request: PsMenuUiDispatchRequest): Promise<PsMenuRendererSnapshot | undefined>;
   };
 
   startup: {
@@ -1476,8 +1476,8 @@ export interface OkDesktopBridge {
   };
 
   sidebar: {
-    expandAll(cb: () => void): OkUnsubscribe;
-    collapseAll(cb: () => void): OkUnsubscribe;
+    expandAll(cb: () => void): PsUnsubscribe;
+    collapseAll(cb: () => void): PsUnsubscribe;
   };
 
   terminal: {
@@ -1487,21 +1487,21 @@ export interface OkDesktopBridge {
       rows: number;
       launchCommand?: string | TerminalLaunchCommand;
       launchCli?: TerminalCli;
-    }): Promise<OkPtyCreateResult>;
+    }): Promise<PsPtyCreateResult>;
     input(ptyId: string, data: string): void;
     resize(ptyId: string, cols: number, rows: number): void;
     kill(ptyId: string): Promise<void>;
     drain(ptyId: string, bytes: number): void;
-    list(): Promise<OkPtyListEntry[]>;
-    adopt(ptyId: string, opts?: { start?: boolean }): Promise<OkPtyAdoptResult>;
-    start(ptyId: string): Promise<OkPtyAdoptResult>;
+    list(): Promise<PsPtyListEntry[]>;
+    adopt(ptyId: string, opts?: { start?: boolean }): Promise<PsPtyAdoptResult>;
+    start(ptyId: string): Promise<PsPtyAdoptResult>;
     setMeta(ptyId: string, meta: { customLabel?: string | null; ordinal?: number }): void;
     setOrder(orderedPtyIds: readonly string[]): void;
-    getDockState(): Promise<OkTerminalDockState>;
-    setDockState(state: OkTerminalDockStateUpdate): Promise<OkTerminalDockStateWriteResult>;
-    onData(cb: (msg: OkPtyData) => void): OkUnsubscribe;
-    onExit(cb: (msg: OkPtyExit) => void): OkUnsubscribe;
-    onNotice(cb: (msg: OkPtyNotice) => void): OkUnsubscribe;
+    getDockState(): Promise<PsTerminalDockState>;
+    setDockState(state: PsTerminalDockStateUpdate): Promise<PsTerminalDockStateWriteResult>;
+    onData(cb: (msg: PsPtyData) => void): PsUnsubscribe;
+    onExit(cb: (msg: PsPtyExit) => void): PsUnsubscribe;
+    onNotice(cb: (msg: PsPtyNotice) => void): PsUnsubscribe;
     claudePreflight(): Promise<ClaudeReadiness>;
     cliPreflight(cli: TerminalCli): Promise<CliReadiness>;
     cliInstalledMap(): Promise<Partial<Record<TerminalCli, boolean>>>;
@@ -1509,7 +1509,7 @@ export interface OkDesktopBridge {
 
   accessibility?: {
     isScreenReaderActive(): boolean;
-    onScreenReaderChanged(cb: (active: boolean) => void): OkUnsubscribe;
+    onScreenReaderChanged(cb: (active: boolean) => void): PsUnsubscribe;
   };
 
   readonly platform: HandoffHostPlatform;
@@ -1523,12 +1523,12 @@ export interface OkDesktopBridge {
   setDisplayLockCrashKey(state: string): void;
 
   debug?: {
-    keyringSmoke(): Promise<OkKeyringSmokeResult>;
+    keyringSmoke(): Promise<PsKeyringSmokeResult>;
   };
 }
 
 declare global {
   interface Window {
-    okDesktop?: OkDesktopBridge;
+    psDesktop?: PsDesktopBridge;
   }
 }

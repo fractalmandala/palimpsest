@@ -323,7 +323,7 @@ function appMain(): HTMLElement {
 
 function renderApp({ bridge = null }: { bridge?: ReturnType<typeof createBridge> | null } = {}) {
   if (bridge) {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: bridge,
     });
@@ -339,7 +339,7 @@ describe('App runtime wiring', () => {
   beforeEach(() => {
     cleanup();
     __resetLocalMenuActionBusForTests();
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     setHash('');
     activeTarget = null;
     pages = new Set(['reports/index']);
@@ -549,12 +549,12 @@ describe('App runtime wiring', () => {
       kind: 'missing' as const,
       target: docName.replace(/\/+$/, ''),
     }));
-    setHash('#/articles/.ok/');
+    setHash('#/articles/.ps/');
 
     renderApp();
 
     await waitFor(() => {
-      expect(resolveNavigationTargetMock).toHaveBeenCalledWith('articles/.ok/', expect.anything());
+      expect(resolveNavigationTargetMock).toHaveBeenCalledWith('articles/.ps/', expect.anything());
     });
     expect(openTargetTransitionMock).not.toHaveBeenCalled();
     expect(clearTargetMock).not.toHaveBeenCalled();

@@ -3,14 +3,14 @@ import Link from 'next/link';
 import { DotTexture } from '@/components/dot-texture';
 import { SiteFooter } from '@/components/footer';
 import { GitHubIcon } from '@/components/icons/github';
-import { OkWordmark } from '@/components/ok-wordmark';
+import { PsWordmark } from '@/components/ps-wordmark';
 import { buildCloneCommand, SPLASH_INSTALL_COMMAND, type SplashView } from '@/lib/share-splash';
 import { SplashCtaPanel } from './splash-cta-panel';
 import { SplashFallbackCta } from './splash-fallback-cta';
 
-type OkSplashView = Extract<SplashView, { kind: 'ok' }>;
+type PsSplashView = Extract<SplashView, { kind: 'ok' }>;
 
-export function SplashShareView({ encoded, view }: { encoded: string; view: OkSplashView }) {
+export function SplashShareView({ encoded, view }: { encoded: string; view: PsSplashView }) {
   return (
     <main className="relative flex min-h-screen flex-col overflow-hidden bg-slide-bg font-[family-name:var(--font-dm-sans)]">
       <SplashChrome />
@@ -115,9 +115,9 @@ function SplashChrome() {
       />
       <header className="relative z-10 px-6">
         <div className="container mx-auto flex pt-8 md:pt-10">
-          <Link href="/" aria-label="OpenKnowledge home" className="inline-flex items-center">
+          <Link href="/" aria-label="Palimpsest home" className="inline-flex items-center">
             {}
-            <OkWordmark aria-hidden="true" className="h-8 w-auto text-slide-text" />
+            <PsWordmark aria-hidden="true" className="h-8 w-auto text-slide-text" />
           </Link>
         </div>
       </header>

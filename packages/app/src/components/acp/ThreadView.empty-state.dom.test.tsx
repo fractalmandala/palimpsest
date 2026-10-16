@@ -1,4 +1,4 @@
-import type { ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { act, cleanup, render as rtlRender, screen, waitFor } from '@testing-library/react';
 import { useLayoutEffect } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';

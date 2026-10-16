@@ -40,7 +40,7 @@ function makeRes(): { res: ServerResponse; captured: CapturedResponse } {
 
 describe('onAgentWrite callback', () => {
   test('fires from /api/agent-write-md (write_document path)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-on-agent-write-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-on-agent-write-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -80,7 +80,7 @@ describe('onAgentWrite callback', () => {
   });
 
   test('fires from /api/agent-patch (edit_document path)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-on-agent-write-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-on-agent-write-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -125,7 +125,7 @@ describe('onAgentWrite callback', () => {
   });
 
   test('does not fire when the handler fails (stale-target 409)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-on-agent-write-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-on-agent-write-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 

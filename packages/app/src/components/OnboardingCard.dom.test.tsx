@@ -1,8 +1,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-vi.doMock('@/components/OkBlob', () => ({
-  OkBlob: () => <span data-testid="ok-blob" />,
+vi.doMock('@/components/PsBlob', () => ({
+  PsBlob: () => <span data-testid="ps-blob" />,
 }));
 
 import { formatShortcut } from '@/lib/keyboard-shortcuts';
@@ -84,7 +84,7 @@ describe('OnboardingCard', () => {
     store.markStepComplete('file');
     store.markStepComplete('askedAi');
     render(<OnboardingCard store={store} lingerMs={20} />);
-    expect(screen.getByTestId('ok-blob')).toBeTruthy();
+    expect(screen.getByTestId('ps-blob')).toBeTruthy();
     expect(screen.getAllByText(/all set up/).length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByText('Create your first file')).toBeNull();
     await waitFor(() => expect(store.getSnapshot().completed).toBe(true));

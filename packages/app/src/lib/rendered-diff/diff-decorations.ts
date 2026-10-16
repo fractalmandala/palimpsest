@@ -6,7 +6,7 @@ import type { RenderedJsxBlock } from './diff-jsx-block';
 export type JsxBlockRenderer = (node: PMNode) => RenderedJsxBlock;
 
 export const RENDERED_DIFF_CHANGE_SELECTOR =
-  '.ok-diff-ins, .ok-diff-ins-block, [data-diff-deleted]';
+  '.ps-diff-ins, .ps-diff-ins-block, [data-diff-deleted]';
 
 export function countRenderedDiffAnchors(diff: {
   changes: readonly SpanChange[];
@@ -38,7 +38,7 @@ function buildDeletedWidget(
   isBlock: boolean,
 ): HTMLElement {
   const host = document.createElement(isBlock ? 'div' : 'span');
-  host.className = isBlock ? 'ok-diff-del ok-diff-del-block' : 'ok-diff-del';
+  host.className = isBlock ? 'ps-diff-del ps-diff-del-block' : 'ps-diff-del';
   host.setAttribute('data-diff-deleted', '');
   const rendered = serializer.serializeFragment(content);
   if (isBlock && isAllListItems(content)) {
@@ -117,13 +117,13 @@ export function buildDiffDecorations(
     const slice = beforeDoc.slice(mark.fromA, mark.toA);
     decorations.push(deletedWidget(mark.fromB, slice.content, schema, renderJsxBlock));
     decorations.push(
-      Decoration.inline(mark.fromB, mark.toB, { class: 'ok-diff-ins' }, { inclusiveEnd: true }),
+      Decoration.inline(mark.fromB, mark.toB, { class: 'ps-diff-ins' }, { inclusiveEnd: true }),
     );
   }
 
   for (const change of changes) {
     if (change.toB > change.fromB) {
-      decorations.push(Decoration.node(change.fromB, change.toB, { class: 'ok-diff-ins-block' }));
+      decorations.push(Decoration.node(change.fromB, change.toB, { class: 'ps-diff-ins-block' }));
     }
     if (change.toA > change.fromA) {
       const slice = beforeDoc.slice(change.fromA, change.toA);

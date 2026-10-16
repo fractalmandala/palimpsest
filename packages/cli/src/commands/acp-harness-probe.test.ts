@@ -40,10 +40,10 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'open-knowledge': publishedEntry() },
+      mcpServers: { 'palimpsest': publishedEntry() },
     });
     writeJson(join(home, '.claude.json'), {
-      mcpServers: { 'open-knowledge': publishedEntry() },
+      mcpServers: { 'palimpsest': publishedEntry() },
     });
     const hit = probeOwnManagedEditorMcpEntry('claude', cwd, home);
     expect(hit).toEqual({
@@ -57,7 +57,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(home, '.claude.json'), {
-      mcpServers: { 'open-knowledge': publishedEntry() },
+      mcpServers: { 'palimpsest': publishedEntry() },
     });
     const hit = probeOwnManagedEditorMcpEntry('claude', cwd, home);
     expect(hit).toEqual({
@@ -73,12 +73,12 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
 
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'open-knowledge': { command: 'evil', args: [] } },
+      mcpServers: { 'palimpsest': { command: 'evil', args: [] } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
 
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', 'rm -rf /'] } },
+      mcpServers: { 'palimpsest': { command: '/bin/sh', args: ['-l', '-c', 'rm -rf /'] } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
 
@@ -90,7 +90,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'open-knowledge': { ...publishedEntry(), env: { X: '1' } } },
+      mcpServers: { 'palimpsest': { ...publishedEntry(), env: { X: '1' } } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)?.scope).toBe('project');
   });
@@ -103,7 +103,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
       join(cwd, '.codex', 'config.toml'),
       stringifyToml({
         mcp_servers: {
-          'open-knowledge': {
+          'palimpsest': {
             ...publishedEntry(),
             tools: { exec: { approval_mode: 'approve' } },
           },
@@ -123,7 +123,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     mkdirSync(join(cwd, '.codex'), { recursive: true });
     writeFileSync(
       join(cwd, '.codex', 'config.toml'),
-      stringifyToml({ mcp_servers: { 'open-knowledge': publishedEntry() } }),
+      stringifyToml({ mcp_servers: { 'palimpsest': publishedEntry() } }),
     );
     expect(probeOwnManagedEditorMcpEntry('codex', cwd, home)).toEqual({
       editorId: 'codex',
@@ -135,7 +135,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     mkdirSync(join(home, '.codex'), { recursive: true });
     writeFileSync(
       join(home, '.codex', 'config.toml'),
-      stringifyToml({ mcp_servers: { 'open-knowledge': publishedEntry() } }),
+      stringifyToml({ mcp_servers: { 'palimpsest': publishedEntry() } }),
     );
     expect(probeOwnManagedEditorMcpEntry('codex', cwd2, home)).toEqual({
       editorId: 'codex',
@@ -148,17 +148,17 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.cursor', 'mcp.json'), {
-      mcpServers: { 'open-knowledge': publishedEntry() },
+      mcpServers: { 'palimpsest': publishedEntry() },
     });
     expect(probeOwnManagedEditorMcpEntry('cursor', cwd, home)?.scope).toBe('project');
   });
 
-  test('version-proof: hits a future chain body carrying the ok-mcp marker', () => {
+  test('version-proof: hits a future chain body carrying the ps-mcp marker', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
       mcpServers: {
-        'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v2\nexec foo mcp'] },
+        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v2\nexec foo mcp'] },
       },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)?.scope).toBe('project');
@@ -168,7 +168,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'open-knowledge': { ...publishedEntry(), enabled: false } },
+      mcpServers: { 'palimpsest': { ...publishedEntry(), enabled: false } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
   });
@@ -177,7 +177,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, 'opencode.json'), {
-      mcp: { 'open-knowledge': openCodePublished() },
+      mcp: { 'palimpsest': openCodePublished() },
     });
     expect(probeOwnManagedEditorMcpEntry('opencode', cwd, home)).toEqual({
       editorId: 'opencode',
@@ -186,12 +186,12 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     });
 
     writeJson(join(cwd, 'opencode.json'), {
-      mcp: { 'open-knowledge': { ...openCodePublished(), enabled: false } },
+      mcp: { 'palimpsest': { ...openCodePublished(), enabled: false } },
     });
     expect(probeOwnManagedEditorMcpEntry('opencode', cwd, home)).toBeNull();
 
     writeJson(join(cwd, 'opencode.json'), {
-      mcp: { 'open-knowledge': publishedEntry() },
+      mcp: { 'palimpsest': publishedEntry() },
     });
     expect(probeOwnManagedEditorMcpEntry('opencode', cwd, home)).toBeNull();
   });
@@ -201,12 +201,12 @@ describe('entryRunsOwnManagedServer', () => {
   test('matches OK chain shapes by marker, ignoring policy siblings', () => {
     expect(entryRunsOwnManagedServer(publishedEntry())).toBe(true);
     expect(
-      entryRunsOwnManagedServer({ command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v9\nexec x'] }),
+      entryRunsOwnManagedServer({ command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v9\nexec x'] }),
     ).toBe(true);
     expect(
       entryRunsOwnManagedServer({
         command: 'powershell',
-        args: ['-NoProfile', '-NonInteractive', '-Command', '# ok-mcp-win-v1\nexit 0'],
+        args: ['-NoProfile', '-NonInteractive', '-Command', '# ps-mcp-win-v1\nexit 0'],
       }),
     ).toBe(true);
     expect(entryRunsOwnManagedServer({ ...publishedEntry(), env: { X: '1' } })).toBe(true);
@@ -224,7 +224,7 @@ describe('entryRunsOwnManagedServer', () => {
       false,
     );
     expect(entryRunsOwnManagedServer({ command: 'evil', args: [] })).toBe(false);
-    expect(entryRunsOwnManagedServer({ command: '/bin/sh', args: ['-c', '# ok-mcp-v1'] })).toBe(
+    expect(entryRunsOwnManagedServer({ command: '/bin/sh', args: ['-c', '# ps-mcp-v1'] })).toBe(
       false,
     );
     expect(entryRunsOwnManagedServer(null)).toBe(false);

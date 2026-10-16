@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import type { McpEntryClassification } from '@inkeep/open-knowledge';
+import type { McpEntryClassification } from '@palimpsest/cli';
 import type { IpcMainInvokeEvent } from 'electron';
 import { describe, expect, test, vi } from 'vitest';
 import { EDITOR_TARGETS } from '../../../cli/src/commands/editors.ts';
@@ -70,8 +70,8 @@ function makeCli(overrides: CliOverrides = {}): ProjectIntegrationsCliSurface & 
     codex: '.codex/config.toml',
   };
   const SKILL: Partial<Record<string, string>> = {
-    claude: '.claude/skills/open-knowledge/SKILL.md',
-    codex: '.codex/skills/open-knowledge/SKILL.md',
+    claude: '.claude/skills/palimpsest/SKILL.md',
+    codex: '.codex/skills/palimpsest/SKILL.md',
   };
   return {
     writes,
@@ -88,7 +88,7 @@ function makeCli(overrides: CliOverrides = {}): ProjectIntegrationsCliSurface & 
       size: { alwaysOn: 140, onTrigger: 1495, onDemand: 0 },
     }),
     entryLocator: (id) =>
-      id === 'codex' ? '[mcp_servers.open-knowledge]' : 'mcpServers.open-knowledge',
+      id === 'codex' ? '[mcp_servers.palimpsest]' : 'mcpServers.palimpsest',
     classifyExistingProjectMcpConfig: (id) =>
       overrides.classifications?.[id] ?? ({ kind: 'no-entry' } as McpEntryClassification),
     isOwnEntry: (entry) => entry === OWN_ENTRY,
@@ -213,8 +213,8 @@ describe('registerProjectIntegrationsSettings — status', () => {
     const s = await status();
     expect(s.skill?.installed).toBe(true);
     expect(s.skill?.paths).toEqual([
-      '.claude/skills/open-knowledge/SKILL.md',
-      '.codex/skills/open-knowledge/SKILL.md',
+      '.claude/skills/palimpsest/SKILL.md',
+      '.codex/skills/palimpsest/SKILL.md',
     ]);
   });
 
@@ -254,11 +254,11 @@ describe('registerProjectIntegrationsSettings — set', () => {
   test.each(['kept-shared', 'kept-unowned'] as const)(
     'logs why successful project Pi removal retains %s trust',
     async (trust) => {
-      const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-project-settings-pi-')));
+      const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-project-settings-pi-')));
       const projectDir = join(root, 'project');
       const home = join(root, 'home');
       const trustPath = join(home, '.pi', 'agent', 'trust.json');
-      const bridgePath = join(projectDir, '.pi', 'extensions', 'open-knowledge.ts');
+      const bridgePath = join(projectDir, '.pi', 'extensions', 'palimpsest.ts');
       const prompts = join(projectDir, '.pi', 'prompts');
       try {
         mkdirSync(projectDir);
@@ -292,7 +292,7 @@ describe('registerProjectIntegrationsSettings — set', () => {
           path: bridgePath,
           trust,
           trustDetail: expect.stringContaining(
-            trust === 'kept-shared' ? prompts : 'no OpenKnowledge ownership record',
+            trust === 'kept-shared' ? prompts : 'no Palimpsest ownership record',
           ),
         });
         expect(existsSync(bridgePath)).toBe(false);
@@ -321,14 +321,14 @@ describe('registerProjectIntegrationsSettings — set', () => {
       enabled: false,
     } as const;
     const stable = await set(disable);
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       const beta = await set(disable);
       expect(stable.ok ? null : stable.error).toBe(
-        "The open-knowledge entry in claude's project config isn't one OpenKnowledge wrote — it was left unchanged. Remove it manually if you no longer want it.",
+        "The palimpsest entry in claude's project config isn't one Palimpsest wrote — it was left unchanged. Remove it manually if you no longer want it.",
       );
       expect(beta.ok ? null : beta.error).toBe(
-        "The open-knowledge-beta entry in claude's project config isn't one OpenKnowledge wrote — it was left unchanged. Remove it manually if you no longer want it.",
+        "The palimpsest-beta entry in claude's project config isn't one Palimpsest wrote — it was left unchanged. Remove it manually if you no longer want it.",
       );
     } finally {
       vi.unstubAllEnvs();

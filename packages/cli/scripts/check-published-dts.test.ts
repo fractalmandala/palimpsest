@@ -307,7 +307,7 @@ describe('published surface fences', () => {
 
   it('fails a published file that still references a sibling workspace package', () => {
     const surface = readPublishedSurface(
-      `import type { Doc } from '@inkeep/open-knowledge-core';\n${exportStatement(BASELINE.exportedSymbols)}\n`,
+      `import type { Doc } from '@palimpsest/core';\n${exportStatement(BASELINE.exportedSymbols)}\n`,
     );
 
     expect(surface.inkeepLines).toHaveLength(1);
@@ -362,7 +362,7 @@ describe('triple-slash directives are dependencies, not prose', () => {
 
   it('still drops an ordinary line comment from both views', () => {
     const surface = readPublishedSurface(
-      '// see @inkeep/open-knowledge-core for any of this\ndeclare const a: string;\nexport { A };\n',
+      '// see @palimpsest/core for any of this\ndeclare const a: string;\nexport { A };\n',
     );
 
     expect(surface.inkeepLines).toEqual([]);
@@ -675,9 +675,9 @@ describe('the success line names the tree it checked', () => {
   });
 
   it('prints the root and the variable it came from when a source is declared', () => {
-    const result = evaluate({ ...cleanArgs(), rootSource: 'OK_PUBLISHED_DTS_ROOT' });
+    const result = evaluate({ ...cleanArgs(), rootSource: 'PS_PUBLISHED_DTS_ROOT' });
     expect(result.code).toBe(0);
-    expect(result.out[0]).toMatch(/^check:dts: OK at \/tree \[from OK_PUBLISHED_DTS_ROOT\] — /);
+    expect(result.out[0]).toMatch(/^check:dts: OK at \/tree \[from PS_PUBLISHED_DTS_ROOT\] — /);
   });
 });
 
@@ -689,7 +689,7 @@ describe('the refusals main() reaches before it ever runs tsc', () => {
     spawnSync('node', [join(SCRIPT_DIR, 'check-published-dts.mjs')], {
       cwd: PACKAGE_ROOT,
       encoding: 'utf8',
-      env: { ...process.env, OK_PUBLISHED_DTS_ROOT: root },
+      env: { ...process.env, PS_PUBLISHED_DTS_ROOT: root },
     });
 
   const fixtureRoot = (files: Record<string, string>) => {

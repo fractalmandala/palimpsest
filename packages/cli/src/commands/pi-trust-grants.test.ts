@@ -35,7 +35,7 @@ describe('Pi trust grant receipts', () => {
   let canonical: string;
 
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-grant-')));
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-grant-')));
     home = join(root, 'home');
     cwd = join(root, 'project');
     configured = join(home, '.pi', 'agent', 'trust.json');
@@ -71,7 +71,7 @@ describe('Pi trust grant receipts', () => {
   test('persists a pending receipt before it can prove ownership, then commits it', () => {
     const pending = preparePiTrustGrant(home, cwd, configured, canonical, { present: false });
     const hash = (path: string) => createHash('sha256').update(path).digest('hex');
-    expect(pending.path).toBe(join(home, '.ok', 'pi-trust', hash(cwd), `${hash(canonical)}.json`));
+    expect(pending.path).toBe(join(home, '.ps', 'pi-trust', hash(cwd), `${hash(canonical)}.json`));
     expect(JSON.parse(readFileSync(pending.path, 'utf8'))).toEqual({
       version: 1,
       cwd,
@@ -226,7 +226,7 @@ describe('Pi trust grant receipts', () => {
     if (!receipt) throw new Error('expected committed receipt');
     const temporary = `${receipt.path}.tmp.2c814e13-d940-4e41-9bf7-dc3072e7c0e8`;
     writeFileSync(temporary, 'unfinished receipt write');
-    const bridgePath = join(cwd, '.pi', 'extensions', 'open-knowledge.ts');
+    const bridgePath = join(cwd, '.pi', 'extensions', 'palimpsest.ts');
 
     expect(removeOwnMcpEntry(EDITOR_TARGETS.pi, cwd, home, bridgePath)).toMatchObject({
       kind: 'removed',
@@ -257,7 +257,7 @@ describe('Pi trust grant receipts', () => {
   });
 
   test('reports a regular file in place of the receipt directory', () => {
-    const path = join(home, '.ok', 'pi-trust');
+    const path = join(home, '.ps', 'pi-trust');
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, 'unrelated file');
 
@@ -300,16 +300,16 @@ describe('Pi trust grant receipts', () => {
     },
   );
 
-  test('forgets only the receipt and empty receipt directories, leaving .ok and other state', () => {
+  test('forgets only the receipt and empty receipt directories, leaving .ps and other state', () => {
     const receipt = preparePiTrustGrant(home, cwd, configured, canonical, { present: false });
-    const keep = join(home, '.ok', 'keep.json');
+    const keep = join(home, '.ps', 'keep.json');
     writeFileSync(keep, 'user state');
 
     forgetPiTrustGrant(home, receipt);
 
     expect(existsSync(receipt.path)).toBe(false);
     expect(existsSync(dirname(receipt.path))).toBe(false);
-    expect(existsSync(join(home, '.ok', 'pi-trust'))).toBe(false);
+    expect(existsSync(join(home, '.ps', 'pi-trust'))).toBe(false);
     expect(readFileSync(keep, 'utf8')).toBe('user state');
     expect(listPiTrustGrants(home, cwd)).toEqual([]);
   });
@@ -318,6 +318,6 @@ describe('Pi trust grant receipts', () => {
     expect(() =>
       preparePiTrustGrant(home, cwd, configured, canonical, { present: true, value: undefined }),
     ).toThrow('receipt');
-    expect(existsSync(join(home, '.ok'))).toBe(false);
+    expect(existsSync(join(home, '.ps'))).toBe(false);
   });
 });

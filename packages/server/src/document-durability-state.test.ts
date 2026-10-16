@@ -485,7 +485,7 @@ describe('displaced-version history', () => {
   });
 
   test('restores displaced history, acknowledged content, and unresolved conflicts after restart', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-state-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-state-'));
     const persistencePath = join(dir, 'stale-external-writes.json');
     try {
       const first = new DocumentDurabilityState('main', { persistencePath });
@@ -512,7 +512,7 @@ describe('displaced-version history', () => {
 
   test('keeps unresolved persisted conflicts after their displaced-history window expires', () => {
     vi.useFakeTimers();
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-conflict-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-conflict-'));
     const persistencePath = join(dir, 'stale-external-writes.json');
     try {
       const first = new DocumentDurabilityState('main', { persistencePath });
@@ -534,7 +534,7 @@ describe('displaced-version history', () => {
 
   test('sweeps expired inactive history without expiring unresolved conflicts', () => {
     vi.useFakeTimers();
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-expiry-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-expiry-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -561,7 +561,7 @@ describe('displaced-version history', () => {
 
   test('a branch switch purges expired restored plaintext but retains unresolved recovery data', () => {
     vi.useFakeTimers();
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-restored-expiry-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-restored-expiry-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -585,7 +585,7 @@ describe('displaced-version history', () => {
   });
 
   test('failed durable clearing retains the conflict until a successful retry', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-clear-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-clear-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -615,7 +615,7 @@ describe('displaced-version history', () => {
     [JSON.stringify({ version: 2, branches: {} }), 'incompatible'],
     [JSON.stringify({ version: 1, branches: { main: [{ docName: 'bad' }] } }), 'corrupt'],
   ])('preserves invalid recovery state and fails with actionable %s diagnostics', (raw, kind) => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-invalid-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-invalid-'));
     const persistencePath = join(dir, 'state.json');
     try {
       writeFileSync(persistencePath, raw);
@@ -635,7 +635,7 @@ describe('displaced-version history', () => {
   });
 
   test('reports an unreadable snapshot without replacing it', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-unreadable-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-unreadable-'));
     const persistencePath = join(dir, 'state.json');
     try {
       mkdirSync(persistencePath);
@@ -669,7 +669,7 @@ describe('displaced-version history', () => {
   });
 
   test('a tracked target is re-derived from docName rather than trusted from the snapshot', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-target-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-target-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -703,7 +703,7 @@ describe('displaced-version history', () => {
   });
 
   test('re-recording the same disk hash with a new retained edit does not count a new conflict', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-recount-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-recount-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -724,7 +724,7 @@ describe('displaced-version history', () => {
   });
 
   test('an .mdx document restored before the watcher scan resolves to its .mdx file', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-mdx-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-mdx-'));
     const persistencePath = join(dir, 'state.json');
     const options = {
       persistencePath,
@@ -752,7 +752,7 @@ describe('displaced-version history', () => {
   });
 
   test('a scan that observes .md displaces an .mdx snapshot instead of being outranked by it', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-mdx-renamed-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-mdx-renamed-'));
     const persistencePath = join(dir, 'state.json');
     const options = {
       persistencePath,
@@ -782,7 +782,7 @@ describe('displaced-version history', () => {
   });
 
   test('a restored file naming an extension the registry rejects still opens the project', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-mmd-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-mmd-'));
     const persistencePath = join(dir, 'state.json');
     const options = {
       persistencePath,
@@ -806,7 +806,7 @@ describe('displaced-version history', () => {
   });
 
   test('a conflict file is re-derived from the resolver on every read, never replayed', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-moved-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-moved-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', {
@@ -831,7 +831,7 @@ describe('displaced-version history', () => {
   });
 
   test('an unrelated mutation on a document whose conflict file moved does not re-notify', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-renotify-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-renotify-'));
     const persistencePath = join(dir, 'state.json');
     const changed = vi.fn();
     let prefix = 'sub';
@@ -855,7 +855,7 @@ describe('displaced-version history', () => {
   });
 
   test('ordinary clears and branch switches create no snapshot, and restore does not rewrite one', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-noop-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-noop-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -878,7 +878,7 @@ describe('displaced-version history', () => {
   });
 
   test('all persisted mutators retain their previous state when the atomic replacement fails', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-atomic-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-atomic-'));
     const persistencePath = join(dir, 'state.json');
     const changed = vi.fn();
     try {
@@ -927,7 +927,7 @@ describe('displaced-version history', () => {
   });
 
   test('keeps the original replacement failure when temporary-file cleanup also fails', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-cleanup-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-cleanup-'));
     const persistencePath = join(dir, 'state.json');
     let originalError: unknown;
     const state = new DocumentDurabilityState('main', { persistencePath });
@@ -965,7 +965,7 @@ describe('displaced-version history', () => {
   });
 
   test('a different rejected version preserves the retained candidate across restart', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-durability-retained-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-durability-retained-'));
     const persistencePath = join(dir, 'state.json');
     try {
       const state = new DocumentDurabilityState('main', { persistencePath });
@@ -1456,7 +1456,7 @@ describe('store publish generation primitives', () => {
 
 describe('DocumentDurabilityStateError names the running channel CLI', () => {
   test('Stable keeps its exact message', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     try {
       expect(new DocumentDurabilityStateError('/p/state.json', 'corrupt').message).toBe(
         'Cannot safely open this project: its stale-write recovery snapshot is corrupt (/p/state.json). The snapshot has been preserved because it may contain the only copy of protected edits. Restore this snapshot from a known-good backup, or contact support to recover its protected edits. Run ok bug-report from the project directory to collect diagnostics without starting the server. Do not delete it to bypass recovery.',
@@ -1466,11 +1466,11 @@ describe('DocumentDurabilityStateError names the running channel CLI', () => {
     }
   });
 
-  test('Beta names ok-beta bug-report', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('Beta names ps-beta bug-report', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       expect(new DocumentDurabilityStateError('/p/state.json', 'corrupt').message).toContain(
-        'Run ok-beta bug-report from the project directory',
+        'Run ps-beta bug-report from the project directory',
       );
     } finally {
       vi.unstubAllEnvs();

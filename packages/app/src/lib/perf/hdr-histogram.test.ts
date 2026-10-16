@@ -33,8 +33,8 @@ const distributions: Record<string, DistroFn> = {
 };
 
 describe('Histogram', () => {
-  test('exposes the ok-hdr-histogram-v1 sentinel', () => {
-    expect(HDR_HISTOGRAM_SENTINEL).toBe('ok-hdr-histogram-v1');
+  test('exposes the ps-hdr-histogram-v1 sentinel', () => {
+    expect(HDR_HISTOGRAM_SENTINEL).toBe('ps-hdr-histogram-v1');
   });
 
   test('rejects out-of-range precision', () => {

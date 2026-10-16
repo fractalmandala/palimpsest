@@ -78,7 +78,7 @@ describe('reconcileDiskBeforeAgentWrite — stale external write gate', () => {
   }
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-gate-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-gate-')));
     docName = 'gated-doc';
     document = new Y.Doc();
     durabilityState = new DocumentDurabilityState();

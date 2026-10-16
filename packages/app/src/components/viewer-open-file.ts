@@ -1,5 +1,5 @@
-import { ASSET_EXTENSIONS } from '@inkeep/open-knowledge-core/constants/upload';
-import { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
+import { ASSET_EXTENSIONS } from '@palimpsest/core/constants/upload';
+import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 
 export interface ViewerOpenFileTarget {
   readonly projectRelPath: string;

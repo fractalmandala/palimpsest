@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ReportBugDialog } from '@/components/ReportBugDialog';
-import type { OkMenuActionOrigin } from '@/lib/desktop-bridge-types';
+import type { PsMenuActionOrigin } from '@/lib/desktop-bridge-types';
 import { subscribeLocalMenuAction } from '@/lib/local-menu-action-bus';
 
 interface ReportBugMenuTriggerProps {
@@ -8,7 +8,7 @@ interface ReportBugMenuTriggerProps {
 }
 
 export function ReportBugMenuTrigger({ systemWide }: ReportBugMenuTriggerProps) {
-  const [origin, setOrigin] = useState<OkMenuActionOrigin | null>(null);
+  const [origin, setOrigin] = useState<PsMenuActionOrigin | null>(null);
 
   useEffect(() => {
     return subscribeLocalMenuAction((action, dispatchOrigin) => {

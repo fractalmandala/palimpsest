@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import {
   MetricsReconciliationSuccessSchema,
   PagesSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import * as fileWatcher from '../../../server/src/file-watcher.ts';
 import { resetMetrics } from '../../../server/src/metrics.ts';
@@ -37,7 +37,7 @@ afterEach(async () => {
 
 async function recoveryScenario(recreate: boolean) {
   resetMetrics();
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-recovery-removal-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-recovery-removal-')));
   const docName = `recovery-${randomUUID()}`;
   const filePath = join(contentDir, `${docName}.md`);
   const nativeCaptured = Promise.withResolvers<void>();

@@ -1,5 +1,5 @@
 import type { Document } from '@hocuspocus/server';
-import { sharedExtensions, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { sharedExtensions, stripFrontmatter } from '@palimpsest/core';
 import { metrics } from '@opentelemetry/api';
 import {
   AggregationTemporality,

@@ -12,7 +12,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
-import * as core from '@inkeep/open-knowledge-core';
+import * as core from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { createApiExtension } from './api-extension.test-helper.ts';
@@ -97,7 +97,7 @@ async function renameFolder(
 let contentDir: string;
 
 beforeEach(() => {
-  contentDir = mkdtempSync(join(tmpdir(), 'ok-folder-rename-disk-'));
+  contentDir = mkdtempSync(join(tmpdir(), 'ps-folder-rename-disk-'));
   _resetDocExtensionsForTests();
 });
 

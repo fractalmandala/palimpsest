@@ -1,10 +1,10 @@
-import { assetOpenRefusalRevealsInstead } from '@inkeep/open-knowledge-core/desktop-bridge';
+import { assetOpenRefusalRevealsInstead } from '@palimpsest/core/desktop-bridge';
 import { type AssetViewerRegistry, assetViewerRegistry } from './registry.ts';
 import type { AssetClickContext } from './types.ts';
 
 interface DispatchAssetClickDeps {
   readonly registry?: AssetViewerRegistry;
-  readonly desktopBridge?: typeof window.okDesktop;
+  readonly desktopBridge?: typeof window.psDesktop;
   readonly openUrl?: (url: string) => void;
 }
 
@@ -17,7 +17,7 @@ export async function dispatchAssetClick(
   deps: DispatchAssetClickDeps = {},
 ): Promise<void> {
   const registry = deps.registry ?? assetViewerRegistry;
-  const desktopBridge = 'desktopBridge' in deps ? deps.desktopBridge : globalThis.window?.okDesktop;
+  const desktopBridge = 'desktopBridge' in deps ? deps.desktopBridge : globalThis.window?.psDesktop;
   const openUrl = deps.openUrl ?? defaultOpenAssetTab;
 
   if (!ctx.forceOsDelegation) {

@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import type { SkillCostTiers, SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillCostTiers, SkillsListEntry } from '@palimpsest/core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';

@@ -1,4 +1,4 @@
-import { CreateFolderSuccessSchema, ProblemDetailsSchema } from '@inkeep/open-knowledge-core';
+import { CreateFolderSuccessSchema, ProblemDetailsSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -64,8 +64,8 @@ describe('create-folder envelope (RFC 9457)', () => {
     }
   });
 
-  test('reserved .ok prefix emits urn:ok:error:reserved-doc-name', async () => {
-    const res = await postCreate({ path: '.ok/cache' });
+  test('reserved .ps prefix emits urn:ok:error:reserved-doc-name', async () => {
+    const res = await postCreate({ path: '.ps/cache' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);

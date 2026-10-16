@@ -870,7 +870,7 @@ export function positionSlicePlugin() {
     const source = typeof file.value === 'string' ? file.value : '';
     if (!source) return;
 
-    const debug = typeof process !== 'undefined' && process.env?.OK_DEBUG_POSITION_SLICE === '1';
+    const debug = typeof process !== 'undefined' && process.env?.PS_DEBUG_POSITION_SLICE === '1';
 
     let sawNestedRawSourceMdx = false;
     visit(tree, (node: Nodes, _index, parent) => {

@@ -25,7 +25,7 @@ const RELEASE_FAILURE = 'the server stopped, but its release reported a failure'
 interface Rig {
   readonly supervisor: WorkerServerSupervisor;
   readonly launcher: ReturnType<typeof contractServerLauncher>;
-  readonly okRoot: string;
+  readonly psRoot: string;
   request(overrides: Partial<LeaseRequest>): LeaseRequest;
 }
 
@@ -45,28 +45,28 @@ afterEach(async () => {
     await rig.supervisor.shutdown().catch((error: unknown) => {
       if (!String(error).includes(RELEASE_FAILURE)) throw error;
     });
-    rmSync(rig.okRoot, { recursive: true, force: true });
+    rmSync(rig.psRoot, { recursive: true, force: true });
   }
 });
 
 function makeRig(wrap: (launch: LaunchOwnedServer) => LaunchOwnedServer = (launch) => launch): Rig {
-  const okRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lease-shutdown-root-')));
-  mkdirSync(join(okRoot, 'packages', 'server', 'src'), { recursive: true });
-  mkdirSync(join(okRoot, 'packages', 'app', 'src'), { recursive: true });
-  writeFileSync(join(okRoot, 'packages', 'server', 'src', 'boot.ts'), 'export const boot = 1;\n');
-  writeFileSync(join(okRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 1;\n');
+  const psRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lease-shutdown-root-')));
+  mkdirSync(join(psRoot, 'packages', 'server', 'src'), { recursive: true });
+  mkdirSync(join(psRoot, 'packages', 'app', 'src'), { recursive: true });
+  writeFileSync(join(psRoot, 'packages', 'server', 'src', 'boot.ts'), 'export const boot = 1;\n');
+  writeFileSync(join(psRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 1;\n');
   const launcher = contractServerLauncher();
   const supervisor = new WorkerServerSupervisor({
-    okRoot,
+    psRoot,
     launch: wrap(launcher.launch),
     identityTimeoutMs: 5_000,
   });
   const rig: Rig = {
     supervisor,
     launcher,
-    okRoot,
+    psRoot,
     request: (overrides) => ({
-      worktree: okRoot,
+      worktree: psRoot,
       config: STRESS_CONFIG,
       run: 'run-a',
       slot: 0,
@@ -201,7 +201,7 @@ describe('a supervisor that shuts down', () => {
   test('an endpoint whose owned servers all release closes reporting a clean release', async () => {
     const rig = makeRig();
     const [idle] = await idleSlots(rig, [0]);
-    const endpoint = await serveSupervisor(rig.supervisor, join(rig.okRoot, 'supervisor.sock'));
+    const endpoint = await serveSupervisor(rig.supervisor, join(rig.psRoot, 'supervisor.sock'));
     openEndpoints.push(endpoint);
 
     await endpoint.close();
@@ -214,7 +214,7 @@ describe('a supervisor that shuts down', () => {
     const reports = warnings();
     const rig = makeRig((launch) => releaseFailsAfterReleasing(launch));
     await idleSlots(rig, [0]);
-    const endpoint = await serveSupervisor(rig.supervisor, join(rig.okRoot, 'supervisor.sock'));
+    const endpoint = await serveSupervisor(rig.supervisor, join(rig.psRoot, 'supervisor.sock'));
     openEndpoints.push(endpoint);
     const operator = await connectLeaseClient(endpoint.socketPath, 5_000);
 

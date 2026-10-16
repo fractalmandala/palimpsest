@@ -86,7 +86,7 @@ describe('SkillFileViewer — scope-aware bundle-file read + render dispatch', (
       <SkillFileViewer scope="global" name="trip-log" path="references/guide.md" />,
     );
     await waitFor(() => {
-      expect(container.querySelector('.ok-skill-path-link[data-skill-path]')).not.toBeNull();
+      expect(container.querySelector('.ps-skill-path-link[data-skill-path]')).not.toBeNull();
     });
     expect(container.querySelector('[data-skill-path]')?.getAttribute('data-skill-path')).toBe(
       'references/pressure-testing.md',

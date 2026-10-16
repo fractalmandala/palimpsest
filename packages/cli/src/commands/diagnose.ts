@@ -3,8 +3,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { homedir, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
-import { withHiddenWindowsConsole } from '@inkeep/open-knowledge-server';
+import { currentCliCommandName } from '@palimpsest/core';
+import { withHiddenWindowsConsole } from '@palimpsest/server';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import {
@@ -107,7 +107,7 @@ function getInspectorEndpoints(port: number): unknown[] | null {
 }
 
 function writeCdpScript(wsUrl: string, profileMs: number, outputPath: string): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-cdp-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-cdp-'));
   const path = join(dir, 'profiler.mjs');
   writeFileSync(
     path,
@@ -335,8 +335,8 @@ export async function runDiagnose(
   const outDir = opts.output
     ? opts.output
     : contentDir
-      ? join(contentDir, '.ok', 'local', 'diagnostics', `process-${pid}-${ts}`)
-      : join(process.cwd(), `ok-diagnose-${pid}-${ts}`);
+      ? join(contentDir, '.ps', 'local', 'diagnostics', `process-${pid}-${ts}`)
+      : join(process.cwd(), `ps-diagnose-${pid}-${ts}`);
   try {
     mkdirSync(outDir, { recursive: true });
   } catch (err) {
@@ -465,7 +465,7 @@ async function defaultPrompt(question: string): Promise<string> {
 }
 
 async function defaultRunProcessDiagnose(pid: number): Promise<string> {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-bundle-process-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-bundle-process-'));
   await runDiagnose({ pid, output: dir });
   return dir;
 }
@@ -567,7 +567,7 @@ export async function runDiagnoseBundle(
     }
   } else {
     const ts = now().toISOString().replace(/[:.]/g, '-');
-    const defaultDir = join(opts.contentDir, '.ok', 'local', 'diagnostics');
+    const defaultDir = join(opts.contentDir, '.ps', 'local', 'diagnostics');
     mkdirSync(defaultDir, { recursive: true });
     outputPath = join(defaultDir, `bundle-${ts}.zip`);
   }
@@ -624,7 +624,7 @@ export async function runDiagnoseBundle(
 
 export function diagnoseCommand(): Command {
   const root = new Command('diagnose').description(
-    'Diagnostic utilities for open-knowledge processes',
+    'Diagnostic utilities for palimpsest processes',
   );
 
   root
@@ -684,7 +684,7 @@ export function diagnoseCommand(): Command {
       }
       try {
         const { loadConfig } = await import('../config/loader.ts');
-        const { resolveContentDir } = await import('@inkeep/open-knowledge-server');
+        const { resolveContentDir } = await import('@palimpsest/server');
         const cwd = process.cwd();
         const { config } = loadConfig(cwd);
         const contentDir = resolveContentDir(config, cwd);

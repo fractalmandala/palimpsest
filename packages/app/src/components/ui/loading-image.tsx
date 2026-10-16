@@ -159,14 +159,14 @@ export function LoadingImage({
           role="img"
           aria-label={errorAriaLabel}
           {...{ [OPT_OUT_ATTR]: 'true' }}
-          className="ok-image-error-placeholder box-border inline-grid max-w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 rounded-md border border-dashed px-2 py-1 text-foreground"
+          className="ps-image-error-placeholder box-border inline-grid max-w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 rounded-md border border-dashed px-2 py-1 text-foreground"
         >
           <ImageOff aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
           <span className="min-w-0">
-            <span className="ok-image-error-message block text-xs font-medium">{errorMessage}</span>
+            <span className="ps-image-error-message block text-xs font-medium">{errorMessage}</span>
             {src ? (
               <span
-                className="ok-image-error-target block max-w-[24ch] truncate font-mono text-xs"
+                className="ps-image-error-target block max-w-[24ch] truncate font-mono text-xs"
                 title={src}
               >
                 {src}

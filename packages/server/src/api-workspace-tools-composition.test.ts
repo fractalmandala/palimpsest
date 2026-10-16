@@ -21,7 +21,7 @@ let tmpRoot: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-workspace-tools-native-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-workspace-tools-native-'));
   const contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(resolve(contentDir, 'alpha.md'), '# Alpha\n\nBody.\n', 'utf-8');
   server = await bootCompositionRig(contentDir);

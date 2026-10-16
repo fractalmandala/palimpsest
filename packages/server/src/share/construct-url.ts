@@ -1,7 +1,7 @@
-import type { ShareConstructUrlErrorCode, ShareFreshness } from '@inkeep/open-knowledge-core';
+import type { ShareConstructUrlErrorCode, ShareFreshness } from '@palimpsest/core';
 import { getLogger } from '../logger.ts';
 
-export const SHARE_BASE_URL = 'https://openknowledge.ai/d/';
+export const SHARE_BASE_URL = 'https://github.com/fractalmandala/palimpsest/d/';
 
 export const SHARE_CONSTRUCT_URL_HANDLER_TAG = 'share-construct-url';
 

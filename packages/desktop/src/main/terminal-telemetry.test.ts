@@ -7,7 +7,7 @@ interface CapturedSpanCall {
 
 const capturedCalls: CapturedSpanCall[] = [];
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   withSpanSync: <T>(
     name: string,
     options: { attributes?: Record<string, unknown> } | undefined,

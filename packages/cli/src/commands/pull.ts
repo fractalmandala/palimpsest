@@ -1,4 +1,4 @@
-import type { Config } from '@inkeep/open-knowledge-server';
+import type { Config } from '@palimpsest/server';
 import { Command } from 'commander';
 import { runSync, syncFailureMessage } from './sync.ts';
 

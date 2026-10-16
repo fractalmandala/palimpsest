@@ -1,4 +1,4 @@
-import { rewriteEmbedUrl } from '@inkeep/open-knowledge-core/utils/embed-url-rewrite';
+import { rewriteEmbedUrl } from '@palimpsest/core/utils/embed-url-rewrite';
 import { useEffect, useRef } from 'react';
 import { useJsxComponentHost } from './jsx-host-context.tsx';
 import { ResizeHandles } from './ResizeHandles.tsx';
@@ -55,7 +55,7 @@ export function Embed({ src, title, width, height }: EmbedProps) {
         : 'URL must start with http:// or https://';
     }
     return (
-      <div className="ok-embed ok-embed--placeholder" contentEditable={false}>
+      <div className="ps-embed ps-embed--placeholder" contentEditable={false}>
         <span>{message}</span>
       </div>
     );
@@ -92,14 +92,14 @@ export function Embed({ src, title, width, height }: EmbedProps) {
   const referrerPolicy = iframeSrc !== src ? 'strict-origin-when-cross-origin' : 'no-referrer';
 
   return (
-    <div className="ok-embed" style={initialStyle} ref={wrapperRef} contentEditable={false}>
+    <div className="ps-embed" style={initialStyle} ref={wrapperRef} contentEditable={false}>
       <iframe
         title={title || DEFAULT_TITLE}
         src={iframeSrc}
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
         referrerPolicy={referrerPolicy}
         loading="lazy"
-        className="ok-embed-frame"
+        className="ps-embed-frame"
       />
       {host ? (
         <ResizeHandles

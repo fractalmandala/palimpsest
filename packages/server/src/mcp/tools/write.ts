@@ -16,7 +16,7 @@ import {
   type UploadRequest,
   unwrapFrontmatterFences,
   withFences,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import {
   formatBrokenLinkSuppressionBrief,
@@ -56,7 +56,7 @@ import {
   looseObjectArray,
   nestDocResult,
   normalizeDocName,
-  okReservedPathRedirect,
+  psReservedPathRedirect,
   outputSchemaWithText,
   previewAttachWarningField,
   previewUrlOutputField,
@@ -218,7 +218,7 @@ async function writeOneDoc(
     return {
       docName: spec.path,
       ok: false,
-      error: okReservedPathRedirect(spec.path) ?? normalized.error,
+      error: psReservedPathRedirect(spec.path) ?? normalized.error,
     };
   }
   const docName = normalized.docName;
@@ -426,7 +426,7 @@ async function handleFolder(
         { folder: { ok: true, path: folder.path, frontmatterError: String(fm.error) } },
       );
     }
-    lines.push(`Set folder properties (${folder.path}/.ok/frontmatter.yml).`);
+    lines.push(`Set folder properties (${folder.path}/.ps/frontmatter.yml).`);
   }
   return textPlusStructured(lines.join('\n'), { folder: { ok: true, path: folder.path } });
 }

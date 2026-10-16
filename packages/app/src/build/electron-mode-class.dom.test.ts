@@ -32,7 +32,7 @@ function stubOsDarkPreference(osDark: boolean): void {
 
 describe('desktop pre-paint classes', () => {
   afterEach(() => {
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     window.matchMedia = originalMatchMedia;
     document.documentElement.className = '';
     document.body.className = '';
@@ -43,14 +43,14 @@ describe('desktop pre-paint classes', () => {
     'paints $surface under the $theme theme with a dark OS preference $osDark',
     ({ platform, theme, osDark, dark }) => {
       if (platform)
-        Object.defineProperty(window, 'okDesktop', { value: { platform }, configurable: true });
+        Object.defineProperty(window, 'psDesktop', { value: { platform }, configurable: true });
       stubOsDarkPreference(osDark);
       const page = new DOMParser().parseFromString(html, 'text/html');
       const script = [...page.head.querySelectorAll('script:not([src]):not([type])')].find(
-        (element) => element.textContent?.includes('ok-color-theme-pair-v1'),
+        (element) => element.textContent?.includes('ps-color-theme-pair-v1'),
       );
       expect(script).toBeDefined();
-      localStorage.setItem('ok-theme-v1', theme);
+      localStorage.setItem('ps-theme-v1', theme);
       new Function(script?.textContent ?? '')();
       const expected = [
         ...(dark ? ['dark'] : []),

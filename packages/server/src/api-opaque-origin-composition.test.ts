@@ -31,7 +31,7 @@ let server: BootedServer;
 
 function contentFiles(): string[] {
   return readdirSync(contentDir, { recursive: true, encoding: 'utf-8' })
-    .filter((entry) => !entry.startsWith('.ok') && !entry.startsWith('.git'))
+    .filter((entry) => !entry.startsWith('.ps') && !entry.startsWith('.git'))
     .sort();
 }
 
@@ -72,7 +72,7 @@ function upgradeOutcome(path: string, origin: string | undefined): Promise<'open
 }
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-opaque-origin-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-opaque-origin-'));
   contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(resolve(contentDir, 'alpha.md'), '# Alpha\n\nPrivate body.\n', 'utf-8');
   server = await bootCompositionRig(contentDir);

@@ -12,7 +12,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import simpleGit, { type SimpleGit } from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -63,8 +63,8 @@ beforeEach(async () => {
 
   await simpleGit(tmpDir).clone(bareDir, projectDir);
   configureTestGitRepository(projectDir);
-  mkdirSync(join(projectDir, '.ok', LOCAL_DIR), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', LOCAL_DIR, 'principal.json'), '{"secret":1}\n', 'utf-8');
+  mkdirSync(join(projectDir, '.ps', LOCAL_DIR), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', LOCAL_DIR, 'principal.json'), '{"secret":1}\n', 'utf-8');
   project = simpleGit(projectDir);
   await project.raw('config', 'user.name', 'Project');
   await project.raw('config', 'user.email', 'project@test.com');
@@ -189,7 +189,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
     ['explicit pull (fast-forward)', 'explicit'],
     ['background sync (merge)', 'sync'],
   ] as const)('%s keeps an OK local-state symlink off disk', async (_label, invocation) => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     const before = await headSha();
 
     const engine = makeEngine();
@@ -209,8 +209,8 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   test.each([
     ['the git dir', 'notes/leak-git.md', '../.git/config'],
     ['a case variant of the OK dir', 'notes/leak-upper.md', '../.OK/local/principal.json'],
-    ['the renamed config dir', 'notes/leak-renamed.md', '../.open-knowledge/local/server.lock'],
-    ['the OK dir itself', 'notes/ok-dir', '../.ok'],
+    ['the renamed config dir', 'notes/leak-renamed.md', '../.palimpsest/local/server.lock'],
+    ['the OK dir itself', 'notes/ps-dir', '../.ps'],
     ['a parent directory', 'notes/leak-up.md', '../../outside.md'],
     ['an absolute path', 'notes/leak-abs.md', '/etc/hosts'],
     ['a target cut short by a NUL byte', 'notes/nul.md', '../.git/config\0/../../notes/x'],
@@ -234,13 +234,13 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
       'notes/short-hashed.md',
       '../OPB2C4~5/local/server.lock',
     ],
-    ['the dotless config dir', 'notes/dotless.md', '../.openknowledge/local/state.json'],
+    ['the dotless config dir', 'notes/dotless.md', '../.palimpsest/local/state.json'],
     ['a nested git dir', 'notes/nested.md', 'sub/.git/config'],
     ['an HFS-ignorable spelling of the git dir', 'notes/zw.md', '../.g\u200cit/config'],
-    ["the user home's credential file", 'notes/auth.md', '../.ok/auth.yml'],
-    ["the beta product's credential file", 'notes/auth-beta.md', '../.ok-beta/auth.yml'],
-    ["the user home's secrets file", 'notes/secrets.md', '../.ok/secrets.yml'],
-    ["the beta product's secrets file", 'notes/secrets-beta.md', '../.ok-beta/secrets.yml'],
+    ["the user home's credential file", 'notes/auth.md', '../.ps/auth.yml'],
+    ["the beta product's credential file", 'notes/auth-beta.md', '../.ps-beta/auth.yml'],
+    ["the user home's secrets file", 'notes/secrets.md', '../.ps/secrets.yml'],
+    ["the beta product's secrets file", 'notes/secrets-beta.md', '../.ps-beta/secrets.yml'],
     [
       "an 8.3 short name of the beta product's user-home dir",
       'notes/short-beta.md',
@@ -251,12 +251,12 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
     ['an 8.3 short name of an env file', 'notes/short-env.md', '../ENV~1'],
     ['an 8.3 short name inside a secret folder', 'notes/short-aws.md', '../AWS~1/CREDEN~1'],
     ['an 8.3 short name removed again by ..', 'notes/short-up.md', 'LINK~1/../real.md'],
-    ['an 8.3 short-name folder inside the OK dir', '.ok/WORKTR~1/x', '../../notes/real.md'],
-    ['an NTFS data-stream spelling of a credential file', 'notes/ads.md', '../.ok/auth.yml::$DATA'],
+    ['an 8.3 short-name folder inside the OK dir', '.ps/WORKTR~1/x', '../../notes/real.md'],
+    ['an NTFS data-stream spelling of a credential file', 'notes/ads.md', '../.ps/auth.yml::$DATA'],
     [
       'an NTFS index-stream spelling of a config dir',
       'notes/ads-dir.md',
-      '../.ok-beta::$INDEX_ALLOCATION/secrets.yml',
+      '../.ps-beta::$INDEX_ALLOCATION/secrets.yml',
     ],
     [
       'an NTFS index-stream spelling of the git dir',
@@ -278,7 +278,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   test.each([
     [
       'a link to the OK dir',
-      { x: '.ok', 'notes/leak.md': '../x/local/principal.json' },
+      { x: '.ps', 'notes/leak.md': '../x/local/principal.json' },
       ['notes/leak.md', 'x'],
     ],
     [
@@ -445,7 +445,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   });
 
   test('a refusal pauses sync with its own reason across cycles and clears once the remote removes the link', async () => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
 
     const engine = makeEngine();
     try {
@@ -500,7 +500,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   });
 
   test('the push retry merge refuses the same symlinks', async () => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     writeFileSync(join(projectDir, 'notes', 'local.md'), '# local\n', 'utf-8');
     await project.add('notes/local.md');
     await project.commit('local work');
@@ -626,7 +626,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
     await pullWithEngine();
 
     await sister.raw('rm', '-r', '--cached', '--quiet', 'd');
-    await pushSymlinks({ d: '.ok/skills' });
+    await pushSymlinks({ d: '.ps/skills' });
     expect(await expectRefusedPull([])).toEqual(['l']);
   });
 
@@ -659,7 +659,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
     ],
     [
       'a long-s spelling of a machine-local file',
-      { 'notes/leak.md': '../.ok/principal.j\u017fon' },
+      { 'notes/leak.md': '../.ps/principal.j\u017fon' },
       ['notes/leak.md'],
     ],
   ])('refuses a symlink that escapes through %s', async (_label, links, refused) => {
@@ -735,7 +735,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   });
 
   test('logs a standing refusal once, even after a local commit', async () => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     const logs = captureSyncLogs();
     const engine = makeEngine();
     try {
@@ -753,7 +753,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   });
 
   test('the push leg does not attempt a push while the refusal stands', async () => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     const engine = makeEngine();
     try {
       await engine.start();
@@ -774,7 +774,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   });
 
   test('a Manual one-shot pull keeps the refusal visible', async () => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     const engine = makeEngine({ syncEnabled: false });
     try {
       await engine.start();
@@ -788,7 +788,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   });
 
   test('a refusal is recomputed after a restart rather than restored', async () => {
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     const first = makeEngine();
     try {
       await first.start();
@@ -808,7 +808,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
 
   test('a force-push that removes the incoming commit clears the refusal', async () => {
     const base = (await sister.revparse(['HEAD'])).trim();
-    await pushSymlinks({ 'notes/leak.md': '../.ok/local/principal.json' });
+    await pushSymlinks({ 'notes/leak.md': '../.ps/local/principal.json' });
     const engine = makeEngine();
     try {
       await engine.start();
@@ -827,7 +827,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
   test('in-repository symlinks, including legacy skill links, still pull', async () => {
     await pushSymlinks({
       'notes/alias.md': 'real.md',
-      '.claude/skills/demo': '../../.ok/skills/demo',
+      '.claude/skills/demo': '../../.ps/skills/demo',
     });
 
     const engine = makeEngine();
@@ -836,7 +836,7 @@ describe('SyncEngine refuses incoming symlinks into private state or outside the
       expect(await engine.pullOnce()).toBe('succeeded');
       expect(readlinkSync(join(projectDir, 'notes', 'alias.md'))).toBe('real.md');
       expect(readlinkSync(join(projectDir, '.claude', 'skills', 'demo'))).toBe(
-        '../../.ok/skills/demo',
+        '../../.ps/skills/demo',
       );
     } finally {
       await engine.destroy();
@@ -890,12 +890,12 @@ describe('SyncEngine incoming symlink edge shapes', () => {
   );
 
   test.each([
-    ['the machine-local dir itself', '.ok/local', '../notes'],
-    ['a machine-local file', '.ok/local/principal.json', '../../notes/real.md'],
+    ['the machine-local dir itself', '.ps/local', '../notes'],
+    ['a machine-local file', '.ps/local/principal.json', '../../notes/real.md'],
   ])('refuses a link placed at %s', async (_label, linkPath, target) => {
     await pushSymlinks({ [linkPath]: target });
     expect(await expectRefusedPull([])).toEqual([linkPath]);
-    expect(lstatSync(join(projectDir, '.ok', LOCAL_DIR, 'principal.json')).isFile()).toBe(true);
+    expect(lstatSync(join(projectDir, '.ps', LOCAL_DIR, 'principal.json')).isFile()).toBe(true);
   });
 
   test('refuses a pull that deletes a link an existing link resolves through', async () => {
@@ -1310,9 +1310,9 @@ describe('SyncEngine incoming symlink edge shapes', () => {
     await sister.push('origin', 'HEAD:main');
     await project.pull('origin', 'main');
     const subProject = join(projectDir, 'sub');
-    mkdirSync(join(subProject, '.ok', LOCAL_DIR), { recursive: true });
-    writeFileSync(join(subProject, '.ok', LOCAL_DIR, 'principal.json'), '{"secret":1}\n', 'utf-8');
-    await pushSymlinks({ 'sub/notes/leak.md': '../.ok/local/principal.json' });
+    mkdirSync(join(subProject, '.ps', LOCAL_DIR), { recursive: true });
+    writeFileSync(join(subProject, '.ps', LOCAL_DIR, 'principal.json'), '{"secret":1}\n', 'utf-8');
+    await pushSymlinks({ 'sub/notes/leak.md': '../.ps/local/principal.json' });
 
     const engine = new SyncEngine({
       conflicts: createTestConflictAuthority(subProject),

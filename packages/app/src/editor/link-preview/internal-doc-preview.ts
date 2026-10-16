@@ -1,12 +1,12 @@
 import {
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core/extensions/frontmatter';
-import { extractFrontmatterTags } from '@inkeep/open-knowledge-core/frontmatter/tags';
+} from '@palimpsest/core/extensions/frontmatter';
+import { extractFrontmatterTags } from '@palimpsest/core/frontmatter/tags';
 import {
   BacklinkCountsSuccessSchema,
   DocumentReadSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { extractDocExcerpt } from './doc-excerpt.ts';
 
 export interface InternalDocPreview {

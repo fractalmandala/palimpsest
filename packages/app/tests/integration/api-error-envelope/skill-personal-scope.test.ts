@@ -5,7 +5,7 @@ import {
   ProblemDetailsSchema,
   SkillGetSuccessSchema,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -22,7 +22,7 @@ const putSkill = (body: Record<string, unknown>) =>
   });
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-personal-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-personal-home-'));
   mkdirSync(join(tmpHome, '.agents', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);

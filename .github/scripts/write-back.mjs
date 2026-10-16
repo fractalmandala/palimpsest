@@ -29,7 +29,7 @@ import {
 import writeBackPolicy from './write-back-policy.json' with { type: 'json' };
 
 const LINEAR_GRAPHQL_URL = 'https://api.linear.app/graphql';
-const RELEASES_TAG_BASE = 'https://github.com/inkeep/open-knowledge/releases/tag';
+const RELEASES_TAG_BASE = 'https://github.com/fractalmandala/palimpsest/releases/tag';
 const DEFAULT_PRIVATE_REPO = 'inkeep/agents-private';
 const FULL_SHA_RE = /^[0-9a-f]{40}$/i;
 const PAGE_SIZE = 50;
@@ -950,7 +950,7 @@ export function parseMergeShaOutput(out, { owner, repo, number } = {}) {
 }
 
 export function changesetDirFor(repo) {
-  return repo === 'open-knowledge' ? '.changeset/' : 'public/open-knowledge/.changeset/';
+  return repo === 'palimpsest' ? '.changeset/' : 'public/palimpsest/.changeset/';
 }
 
 export function findChangesetPath(filenames, { repo } = {}) {

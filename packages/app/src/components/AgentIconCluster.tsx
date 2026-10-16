@@ -1,11 +1,11 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core/constants/editors';
+import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { Folder, Sparkles } from 'lucide-react';
 import type { SVGProps } from 'react';
 import { TargetIcon } from '@/components/handoff/OpenInAgentMenuItem';
 import { LmStudioIcon } from '@/components/icons/lmstudio';
-import { OkBlob } from '@/components/OkBlob';
+import { PsBlob } from '@/components/PsBlob';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -31,9 +31,9 @@ export function AgentBrandIcon({
   if (host === 'lm-studio') return <LmStudioIcon {...props} />;
   if (host.includes('/')) {
     if (host === '.agents' || host.startsWith('.agents/')) return <Sparkles {...props} />;
-    if (host === '.ok' || host.startsWith('.ok/')) {
+    if (host === '.ps' || host.startsWith('.ps/')) {
       const { className: _className, ...rest } = props;
-      return <OkBlob size={14} {...(rest as Record<string, unknown>)} />;
+      return <PsBlob size={14} {...(rest as Record<string, unknown>)} />;
     }
     return <Folder {...props} />;
   }

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import type {
   UninstallDispatchRequest,
   UninstallDispatchResult,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { runDesktopUninstallResultWindow } from '../../src/main/desktop-uninstall-result-window.ts';
 
@@ -54,7 +54,7 @@ beforeEach(() => {
   mocks.exit.mockClear();
   mocks.handle.mockClear();
   mocks.events.clear();
-  profile = mkdtempSync(join(tmpdir(), 'ok-result-backstop-owned-'));
+  profile = mkdtempSync(join(tmpdir(), 'ps-result-backstop-owned-'));
 });
 afterEach(() => {
   vi.clearAllTimers();

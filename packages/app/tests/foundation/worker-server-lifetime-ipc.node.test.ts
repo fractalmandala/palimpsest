@@ -16,7 +16,7 @@ afterEach(() => {
 
 describe('a worker server lifetime owner whose caller is gone', () => {
   test('a failed IPC send does not crash the owner, and the disconnect still runs its teardown', async () => {
-    const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lifetime-ipc-')));
+    const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lifetime-ipc-')));
     scratchDirs.push(scratch);
     const contentDir = join(scratch, 'content');
     const viteCacheDir = join(scratch, 'vite-cache');

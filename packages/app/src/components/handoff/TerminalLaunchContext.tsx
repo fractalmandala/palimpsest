@@ -1,4 +1,4 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import type { TerminalCli } from '@palimpsest/core/handoff';
 import { createContext, type ReactNode, use } from 'react';
 import type { HandoffDispatchInput } from './useHandoffDispatch';
 

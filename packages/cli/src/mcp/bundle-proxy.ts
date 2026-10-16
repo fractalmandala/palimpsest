@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
-import { DESKTOP_PRODUCTS } from '@inkeep/open-knowledge-core';
+import { DESKTOP_PRODUCTS } from '@palimpsest/core';
 
 type BundleProxySuppression = 'env' | 'flag' | 'platform' | 'self' | null;
 
@@ -18,9 +18,9 @@ export type BundleProxyMode =
   | 'suppressed-platform'
   | 'suppressed-self';
 
-const BUNDLE_RELATIVE_OK = join('Contents', 'Resources', 'cli', 'bin', 'ok.sh');
+const BUNDLE_RELATIVE_OK = join('Contents', 'Resources', 'cli', 'bin', 'ps.sh');
 const BUNDLE_CLI_RE = /Contents\/Resources\/cli\/dist\/cli\.mjs$/;
-const SUPPRESSION_HINT = 'Suppress with --no-bundle-proxy or OK_BUNDLE_PROXY=0.';
+const SUPPRESSION_HINT = 'Suppress with --no-bundle-proxy or PS_BUNDLE_PROXY=0.';
 const DEFAULT_STARTUP_FAILURE_WINDOW_MS = 1_000;
 
 export function findBundledOkPath(
@@ -44,7 +44,7 @@ export function shouldProxyToBundle(
   platform: NodeJS.Platform,
 ): BundleProxyDecision {
   if (platform !== 'darwin') return { proxy: false, suppressedBy: 'platform' };
-  const envValue = env.OK_BUNDLE_PROXY?.toLowerCase();
+  const envValue = env.PS_BUNDLE_PROXY?.toLowerCase();
   if (envValue === '0' || envValue === 'false') return { proxy: false, suppressedBy: 'env' };
   if (argv.includes('--no-bundle-proxy')) return { proxy: false, suppressedBy: 'flag' };
   if (typeof argv[1] === 'string' && BUNDLE_CLI_RE.test(argv[1])) {
@@ -98,7 +98,7 @@ export function proxyToBundle(params: {
       params.bundlePath,
       params.argv.filter((arg) => arg !== '--no-bundle-proxy'),
       {
-        env: { ...params.env, OK_BUNDLE_PROXY: '0' },
+        env: { ...params.env, PS_BUNDLE_PROXY: '0' },
         stdio: 'inherit',
         windowsHide: true,
       },

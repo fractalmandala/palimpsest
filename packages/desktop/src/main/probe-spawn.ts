@@ -4,11 +4,11 @@ import {
   composeOkChildEnv,
   hasNoResolvableOkHome,
   hasOkManagedBinDirsOnPath,
-  type OkManagedBinDirsOptions,
-  okChildEnvOptionsFromProcess,
-  okChildPathEntries,
-  okManagedBinDirs,
-} from '../shared/ok-child-env.ts';
+  type PsManagedBinDirsOptions,
+  psChildEnvOptionsFromProcess,
+  psChildPathEntries,
+  psManagedBinDirs,
+} from '../shared/ps-child-env.ts';
 import {
   commandWithManagedPath,
   type ShellCommandFamily,
@@ -55,9 +55,9 @@ const REASSERT_WARNINGS: Record<ProbeReassert, string | null> = {
 
 export function probeEnvVerdict(
   parentEnv: Record<string, string | undefined>,
-  options: OkManagedBinDirsOptions,
+  options: PsManagedBinDirsOptions,
 ): ProbeEnvVerdict {
-  if (okManagedBinDirs(options).length === 0) {
+  if (psManagedBinDirs(options).length === 0) {
     return hasNoResolvableOkHome(options) ? 'not-applicable-no-home' : 'not-applicable';
   }
   return hasOkManagedBinDirsOnPath(parentEnv, options) ? 'inherited' : 'injected';
@@ -67,7 +67,7 @@ let probeEnvCompositionLogged = false;
 
 function logProbeEnvComposition(
   parentEnv: Record<string, string | undefined>,
-  options: OkManagedBinDirsOptions,
+  options: PsManagedBinDirsOptions,
   argv: ProbeSpawnArgv | undefined,
 ): void {
   if (probeEnvCompositionLogged) return;
@@ -76,8 +76,8 @@ function logProbeEnvComposition(
   const record = {
     platform: options.platform,
     verdict,
-    okManagedBinDirs: okManagedBinDirs(options),
-    parentPathEntryCount: okChildPathEntries(parentEnv, options).length,
+    psManagedBinDirs: psManagedBinDirs(options),
+    parentPathEntryCount: psChildPathEntries(parentEnv, options).length,
     reassert: argv?.reassert,
     shellCommandFamily: argv?.family,
   };
@@ -85,8 +85,8 @@ function logProbeEnvComposition(
   log[VERDICT_LOG_LEVELS[verdict]](record, VERDICT_MESSAGES[verdict]);
 }
 
-export function okProbeSpawnEnv(
-  options: OkManagedBinDirsOptions = okChildEnvOptionsFromProcess(),
+export function psProbeSpawnEnv(
+  options: PsManagedBinDirsOptions = psChildEnvOptionsFromProcess(),
   argv?: ProbeSpawnArgv,
 ): Record<string, string> {
   logProbeEnvComposition(process.env, options, argv);
@@ -96,7 +96,7 @@ export function okProbeSpawnEnv(
 export function probeSpawnArgs(
   shell: string,
   spawnArgs: readonly string[],
-  options: OkManagedBinDirsOptions,
+  options: PsManagedBinDirsOptions,
 ): ProbeSpawnArgv {
   if (options.platform === 'win32') {
     return { args: spawnArgs, reassert: 'skipped-win32', family: undefined };
@@ -107,7 +107,7 @@ export function probeSpawnArgs(
   return {
     args: [
       ...spawnArgs.slice(0, -1),
-      commandWithManagedPath(shell, command, okManagedBinDirs(options)),
+      commandWithManagedPath(shell, command, psManagedBinDirs(options)),
     ],
     reassert: 'applied',
     family,
@@ -134,7 +134,7 @@ export function killProbeGroup(child: ChildProcess): void {
 }
 
 export function realProbeSpawn(file: string, spawnArgs: readonly string[]): ProbeChild {
-  const options = okChildEnvOptionsFromProcess();
+  const options = psChildEnvOptionsFromProcess();
   const argv = probeSpawnArgs(file, spawnArgs, options);
   const reassertWarning = REASSERT_WARNINGS[argv.reassert];
   if (reassertWarning !== null) {
@@ -153,7 +153,7 @@ export function realProbeSpawn(file: string, spawnArgs: readonly string[]): Prob
     shell: false,
     detached: probeSpawnDetached(options.platform),
     windowsHide: true,
-    env: okProbeSpawnEnv(options, argv),
+    env: psProbeSpawnEnv(options, argv),
   });
   return {
     onExit: (cb) => {

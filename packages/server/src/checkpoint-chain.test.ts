@@ -18,7 +18,7 @@ let projectRoot: string;
 let shadow: ShadowHandle;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-chain-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-chain-'));
   projectRoot = resolve(tmpDir, 'project');
   mkdirSync(resolve(projectRoot, 'content/docs'), { recursive: true });
   const git = simpleGit(projectRoot);

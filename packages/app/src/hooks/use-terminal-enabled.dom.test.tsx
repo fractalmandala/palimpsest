@@ -1,4 +1,4 @@
-import type { Config, ConfigBinding, ConfigPatch } from '@inkeep/open-knowledge-core';
+import type { Config, ConfigBinding, ConfigPatch } from '@palimpsest/core';
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { ConfigContext, type ConfigContextValue } from '@/lib/config-context';

@@ -21,7 +21,7 @@ let removalDir: string;
 
 beforeEach(async () => {
   removalTracker.clear();
-  removalDir = await mkdtemp(resolve(tmpdir(), 'ok-removal-syscall-'));
+  removalDir = await mkdtemp(resolve(tmpdir(), 'ps-removal-syscall-'));
   mockedRealpathSync.mockClear();
 });
 

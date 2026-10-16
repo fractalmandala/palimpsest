@@ -1,6 +1,6 @@
 import { errorCodeOf } from './linux-shm-posture.ts';
 
-export const AMBIENT_CAPS_CLEARED_ENV = 'OK_AMBIENT_CAPS_CLEARED';
+export const AMBIENT_CAPS_CLEARED_ENV = 'PS_AMBIENT_CAPS_CLEARED';
 const SETPRIV_PATHS = ['/usr/bin/setpriv', '/bin/setpriv'] as const;
 
 type AmbientCapsDecision =

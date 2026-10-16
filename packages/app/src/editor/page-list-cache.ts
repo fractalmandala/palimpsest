@@ -7,7 +7,7 @@
 import {
   buildPagesByBasenameIndex,
   buildPagesBySlugIndex,
-} from '@inkeep/open-knowledge-core/utils/wiki-link-resolve';
+} from '@palimpsest/core/utils/wiki-link-resolve';
 
 export { buildPagesByBasenameIndex, buildPagesBySlugIndex };
 

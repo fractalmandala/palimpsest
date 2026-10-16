@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { extractSkillRefs, isOpenKnowledgeSkillsSource, rewriteSkillRefs } from './skills.ts';
+import { extractSkillRefs, isPalimpsestSkillsSource, rewriteSkillRefs } from './skills.ts';
 
 describe('rewriteSkillRefs', () => {
   test('rewrites both forms the extractor reads', () => {
@@ -45,31 +45,31 @@ describe('rewriteSkillRefs', () => {
   });
 });
 
-describe('isOpenKnowledgeSkillsSource', () => {
+describe('isPalimpsestSkillsSource', () => {
   test('matches the bare repo, a skills.sh listing URL, and a git URL', () => {
     for (const source of [
-      'inkeep/open-knowledge-skills',
-      'https://skills.sh/inkeep/open-knowledge-skills/note-taking',
-      'https://github.com/inkeep/open-knowledge-skills.git',
-      'git@github.com:inkeep/open-knowledge-skills.git',
+      'fractalmandala/palimpsest-skills',
+      'https://skills.sh/fractalmandala/palimpsest-skills/note-taking',
+      'https://github.com/fractalmandala/palimpsest-skills.git',
+      'git@github.com:fractalmandala/palimpsest-skills.git',
     ]) {
-      expect(isOpenKnowledgeSkillsSource(source)).toBe(true);
+      expect(isPalimpsestSkillsSource(source)).toBe(true);
     }
   });
 
   test('a lookalike owner is not us', () => {
-    expect(isOpenKnowledgeSkillsSource('notinkeep/open-knowledge-skills')).toBe(false);
-    expect(isOpenKnowledgeSkillsSource('inkeep/open-knowledge-skills-fork')).toBe(false);
+    expect(isPalimpsestSkillsSource('notfractalmandala/palimpsest-skills')).toBe(false);
+    expect(isPalimpsestSkillsSource('fractalmandala/palimpsest-skills-fork')).toBe(false);
   });
 
   test("our repo path on somebody else's host is not us", () => {
     for (const source of [
-      'https://evil.example/inkeep/open-knowledge-skills',
-      'evil.example.com/inkeep/open-knowledge-skills',
-      'https://evil.example/redirect?to=inkeep/open-knowledge-skills',
-      'git@evil.example:inkeep/open-knowledge-skills.git',
+      'https://evil.example/fractalmandala/palimpsest-skills',
+      'evil.example.com/fractalmandala/palimpsest-skills',
+      'https://evil.example/redirect?to=fractalmandala/palimpsest-skills',
+      'git@evil.example:fractalmandala/palimpsest-skills.git',
     ]) {
-      expect(isOpenKnowledgeSkillsSource(source)).toBe(false);
+      expect(isPalimpsestSkillsSource(source)).toBe(false);
     }
   });
 
@@ -81,7 +81,7 @@ describe('isOpenKnowledgeSkillsSource', () => {
       'adopt:claude',
       '',
     ]) {
-      expect(isOpenKnowledgeSkillsSource(source)).toBe(false);
+      expect(isPalimpsestSkillsSource(source)).toBe(false);
     }
   });
 });

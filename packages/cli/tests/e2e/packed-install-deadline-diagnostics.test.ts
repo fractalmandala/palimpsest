@@ -16,7 +16,7 @@ import { expect, test } from 'vitest';
 import { installPackedCli } from './packed-install.test-helper';
 
 test('retains npm debug logs exactly once in a fresh acquisition deadline error chain after cleanup', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-deadline-diagnostics-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-deadline-diagnostics-'));
   const packageDir = join(root, 'package');
   const packDest = join(root, 'pack');
   const installPrefix = join(root, 'install');
@@ -43,9 +43,9 @@ test('retains npm debug logs exactly once in a fresh acquisition deadline error 
     writeFileSync(
       join(packageDir, 'package.json'),
       JSON.stringify({
-        name: '@inkeep/open-knowledge',
+        name: '@palimpsest/cli',
         version: '1.0.0',
-        dependencies: { 'ok-deadline-snapshot-fixture': '1.0.0' },
+        dependencies: { 'ps-deadline-snapshot-fixture': '1.0.0' },
       }),
     );
     writeFileSync(join(root, 'empty.npmrc'), '');

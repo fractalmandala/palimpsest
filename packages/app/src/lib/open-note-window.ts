@@ -8,7 +8,7 @@ export async function openDocInNoteWindow(
   docName: string,
   entryPoint: RendererNoteWindowEntryPoint,
 ): Promise<void> {
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   if (!bridge) return;
 
   try {

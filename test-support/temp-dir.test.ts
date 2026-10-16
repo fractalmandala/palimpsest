@@ -5,7 +5,7 @@ import { runningAsRoot } from './capabilities.test-helper.ts';
 import { createTempDirFactory, withTempDir } from './temp-dir.test-helper.ts';
 
 async function withSystemTempDirAt(fn: (root: string) => Promise<void>): Promise<void> {
-  await withTempDir('ok-temp-owner-', async (root) => {
+  await withTempDir('ps-temp-owner-', async (root) => {
     for (const key of ['TMPDIR', 'TMP', 'TEMP']) vi.stubEnv(key, root);
     try {
       await fn(root);

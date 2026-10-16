@@ -32,7 +32,7 @@ function writeSkill(root: string, rel: string, body: string): void {
 
 let base: string;
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'ok-folder-link-'));
+  base = mkdtempSync(join(tmpdir(), 'ps-folder-link-'));
 });
 afterEach(() => {
   rmSync(base, { recursive: true, force: true });
@@ -125,9 +125,9 @@ describe('linkEditorSkillFolder (merge-then-swap)', () => {
   });
 
   test('preserves a foreign per-skill delivery link when linking its host folder', () => {
-    writeSkill(base, '.ok/skills/foreign', '# Canonical');
+    writeSkill(base, '.ps/skills/foreign', '# Canonical');
     mkdirSync(join(base, '.codex', 'skills'), { recursive: true });
-    symlinkSync(join(base, '.ok/skills/foreign'), join(base, '.codex/skills/foreign'), 'dir');
+    symlinkSync(join(base, '.ps/skills/foreign'), join(base, '.codex/skills/foreign'), 'dir');
 
     const r = linkEditorSkillFolder({
       base,
@@ -141,10 +141,10 @@ describe('linkEditorSkillFolder (merge-then-swap)', () => {
     expect(r.moved).toEqual(['foreign']);
     expect(lstatSync(join(base, '.agents/skills/foreign')).isSymbolicLink()).toBe(true);
     expect(realpathSync(join(base, '.agents/skills/foreign'))).toBe(
-      realpathSync(join(base, '.ok/skills/foreign')),
+      realpathSync(join(base, '.ps/skills/foreign')),
     );
     expect(realpathSync(join(base, '.codex/skills/foreign'))).toBe(
-      realpathSync(join(base, '.ok/skills/foreign')),
+      realpathSync(join(base, '.ps/skills/foreign')),
     );
   });
 
@@ -293,9 +293,9 @@ describe('previewEditorFolderLink (what a LINK would do)', () => {
   });
 
   test('a per-skill delivery link counts as a move, not a silent drop', () => {
-    writeSkill(base, '.ok/skills/foreign', '# Canonical');
+    writeSkill(base, '.ps/skills/foreign', '# Canonical');
     mkdirSync(join(base, '.codex', 'skills'), { recursive: true });
-    symlinkSync(join(base, '.ok/skills/foreign'), join(base, '.codex/skills/foreign'), 'dir');
+    symlinkSync(join(base, '.ps/skills/foreign'), join(base, '.codex/skills/foreign'), 'dir');
 
     const p = previewEditorFolderLink({
       base,
@@ -345,10 +345,10 @@ describe('previewEditorFolderLink (what a LINK would do)', () => {
   });
 
   test('a live delivery link in the TARGET that the merge overwrites is disclosed', () => {
-    writeSkill(base, '.ok/skills/shared', '# Delivered');
+    writeSkill(base, '.ps/skills/shared', '# Delivered');
     writeSkill(base, '.codex/skills/shared', '# Codex own copy');
     mkdirSync(join(base, '.agents', 'skills'), { recursive: true });
-    symlinkSync(join(base, '.ok/skills/shared'), join(base, '.agents/skills/shared'), 'dir');
+    symlinkSync(join(base, '.ps/skills/shared'), join(base, '.agents/skills/shared'), 'dir');
 
     const p = previewEditorFolderLink({
       base,
@@ -371,7 +371,7 @@ describe('previewEditorFolderLink (what a LINK would do)', () => {
     expect(readFileSync(join(base, '.agents/skills/shared/SKILL.md'), 'utf-8')).toContain(
       '# Codex own copy',
     );
-    expect(readFileSync(join(base, '.ok/skills/shared/SKILL.md'), 'utf-8')).toContain(
+    expect(readFileSync(join(base, '.ps/skills/shared/SKILL.md'), 'utf-8')).toContain(
       '# Delivered',
     );
   });
@@ -471,7 +471,7 @@ describe('unlinkEditorSkillFolder (materialize as per-skill links)', () => {
 describe('mayCreate consent gate', () => {
   let base: string;
   beforeEach(() => {
-    base = mkdtempSync(join(tmpdir(), 'ok-maycreate-'));
+    base = mkdtempSync(join(tmpdir(), 'ps-maycreate-'));
   });
   afterEach(() => {
     rmSync(base, { recursive: true, force: true });

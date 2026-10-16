@@ -25,8 +25,8 @@ interface OriginState {
 
 function mockOrigin(overrides: Partial<OriginState> = {}): OriginState {
   const state: OriginState = {
-    origin: { source: 'inkeep/open-knowledge-skills', importedAt: '2026-07-30T00:00:00.000Z' },
-    github: 'https://github.com/inkeep/open-knowledge-skills',
+    origin: { source: 'fractalmandala/palimpsest-skills', importedAt: '2026-07-30T00:00:00.000Z' },
+    github: 'https://github.com/fractalmandala/palimpsest-skills',
     updateAvailable: false,
     reimport: vi.fn().mockResolvedValue(undefined),
     reimporting: false,
@@ -60,7 +60,7 @@ describe('BuiltinHeaderActions', () => {
     mockOrigin({ updateAvailable: false });
     render(<BuiltinHeaderActions scope="global" name="open-knowledge-discovery" />);
     expect(screen.getByRole('link').getAttribute('href')).toBe(
-      'https://github.com/inkeep/open-knowledge-skills',
+      'https://github.com/fractalmandala/palimpsest-skills',
     );
     expect(screen.queryByRole('button', { name: /update/i })).toBeNull();
   });
@@ -90,7 +90,7 @@ describe('BuiltinHeaderActions', () => {
 
   test('addresses the hook by the skill it was given', () => {
     mockOrigin();
-    render(<BuiltinHeaderActions scope="project" name="open-knowledge" />);
-    expect(useSkillOriginMock).toHaveBeenCalledWith({ scope: 'project', name: 'open-knowledge' });
+    render(<BuiltinHeaderActions scope="project" name="palimpsest" />);
+    expect(useSkillOriginMock).toHaveBeenCalledWith({ scope: 'project', name: 'palimpsest' });
   });
 });

@@ -14,7 +14,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
-import { PagesSuccessSchema } from '@inkeep/open-knowledge-core';
+import { PagesSuccessSchema } from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import { hasAdmittedMarkdownFile } from '../../../server/src/file-watcher.ts';
 import { runTeardownPhases } from '../stress/_helpers/teardown-fs.ts';
@@ -173,7 +173,7 @@ test('a recreation after deletion completes admits and saves new content', async
 });
 
 test('an external case-only rename moves the page to its new name', async ({ skip }) => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-case-rename-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-case-rename-')));
   registerCleanup(async () => rmSync(contentDir, { recursive: true, force: true }));
   const probe = join(contentDir, 'Probe.md');
   writeFileSync(probe, '');
@@ -201,9 +201,9 @@ test('an external case-only rename moves the page to its new name', async ({ ski
 });
 
 test('removal currentness treats only an admitted file at the exact name as bound', () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-admitted-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-admitted-')));
   registerCleanup(async () => rmSync(contentDir, { recursive: true, force: true }));
-  const outside = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-admitted-outside-')));
+  const outside = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-admitted-outside-')));
   registerCleanup(async () => rmSync(outside, { recursive: true, force: true }));
   writeFileSync(join(contentDir, 'page.md'), ORIGINAL);
   writeFileSync(join(contentDir, 'excluded.md'), ORIGINAL);

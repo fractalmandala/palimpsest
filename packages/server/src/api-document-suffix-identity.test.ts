@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentReadSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentReadSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { bootCompositionRig } from './composition-rig.test-helper.ts';
@@ -20,7 +20,7 @@ let contentDir: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  contentDir = await mkdtemp(join(tmpdir(), 'ok-document-suffix-identity-'));
+  contentDir = await mkdtemp(join(tmpdir(), 'ps-document-suffix-identity-'));
   await mkdir(join(contentDir, prefix));
   await Promise.all(
     Object.entries(documents).map(([file, content]) =>

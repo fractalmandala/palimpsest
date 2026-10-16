@@ -1,5 +1,5 @@
-import type { HostSnapshot } from '@inkeep/open-knowledge-core';
-import { EMPTY_DETECTION_SNAPSHOT, EMPTY_PROBE_SNAPSHOT } from '@inkeep/open-knowledge-core';
+import type { HostSnapshot } from '@palimpsest/core';
+import { EMPTY_DETECTION_SNAPSHOT, EMPTY_PROBE_SNAPSHOT } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { observeReadiness, type ReadinessObservationLogger } from './agent-registry-gate.ts';
 

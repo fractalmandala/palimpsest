@@ -16,8 +16,8 @@ import {
   TEMPLATE_NAME_RULE,
   type TemplateIdentity,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicTempPath } from '@palimpsest/core/server';
 import { validateSubstitution } from './substitution.ts';
 
 type TemplateWriteResult =
@@ -37,7 +37,7 @@ type TemplateDeleteResult =
       ok: true;
       path: string;
       existed: boolean;
-      cleanedEmpty: { templatesDir: boolean; okDir: boolean };
+      cleanedEmpty: { templatesDir: boolean; psDir: boolean };
     }
   | {
       ok: false;
@@ -177,7 +177,7 @@ export function applyTemplateDelete(input: DeleteTemplateInput): TemplateDeleteR
   const validation = validateInputs(input.projectDir, input.folder, input.name);
   if (!validation.ok) return { ok: false, error: validation.error };
 
-  const { templatesDir, okDir, filePath } = templatePaths(
+  const { templatesDir, psDir, filePath } = templatePaths(
     input.projectDir,
     validation.folderRel,
     input.name,
@@ -202,29 +202,29 @@ export function applyTemplateDelete(input: DeleteTemplateInput): TemplateDeleteR
     ok: true,
     path: relPathOf(input.projectDir, filePath),
     existed,
-    cleanedEmpty: cleanEmptyOkDirs(templatesDir, okDir),
+    cleanedEmpty: cleanEmptyOkDirs(templatesDir, psDir),
   };
 }
 
 function cleanEmptyOkDirs(
   templatesDir: string,
-  okDir: string,
-): { templatesDir: boolean; okDir: boolean } {
+  psDir: string,
+): { templatesDir: boolean; psDir: boolean } {
   let templatesCleaned = false;
-  let okCleaned = false;
+  let psCleaned = false;
   if (existsSync(templatesDir) && isEmpty(templatesDir)) {
     try {
       rmdirSync(templatesDir);
       templatesCleaned = true;
     } catch {}
   }
-  if (existsSync(okDir) && isEmpty(okDir)) {
+  if (existsSync(psDir) && isEmpty(psDir)) {
     try {
-      rmdirSync(okDir);
-      okCleaned = true;
+      rmdirSync(psDir);
+      psCleaned = true;
     } catch {}
   }
-  return { templatesDir: templatesCleaned, okDir: okCleaned };
+  return { templatesDir: templatesCleaned, psDir: psCleaned };
 }
 
 interface MoveTemplateInput {
@@ -242,7 +242,7 @@ type TemplateMoveResult =
       fromPath: string;
       toPath: string;
       committed: boolean;
-      cleanedEmpty: { templatesDir: boolean; okDir: boolean };
+      cleanedEmpty: { templatesDir: boolean; psDir: boolean };
     }
   | {
       ok: false;
@@ -308,7 +308,7 @@ export async function applyTemplateMove(input: MoveTemplateInput): Promise<Templ
     };
   }
 
-  const cleanedEmpty = cleanEmptyOkDirs(from.templatesDir, from.okDir);
+  const cleanedEmpty = cleanEmptyOkDirs(from.templatesDir, from.psDir);
 
   return {
     ok: true,
@@ -403,11 +403,11 @@ function templatePaths(
   projectDir: string,
   folderRel: string,
   name: string,
-): { okDir: string; templatesDir: string; filePath: string } {
-  const okDir = folderRel ? join(projectDir, folderRel, '.ok') : join(projectDir, '.ok');
-  const templatesDir = join(okDir, 'templates');
+): { psDir: string; templatesDir: string; filePath: string } {
+  const psDir = folderRel ? join(projectDir, folderRel, '.ps') : join(projectDir, '.ps');
+  const templatesDir = join(psDir, 'templates');
   const filePath = join(templatesDir, `${name}.md`);
-  return { okDir, templatesDir, filePath };
+  return { psDir, templatesDir, filePath };
 }
 
 function relPathOf(projectDir: string, abs: string): string {

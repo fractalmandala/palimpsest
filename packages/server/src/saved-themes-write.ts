@@ -9,13 +9,13 @@ import {
   deriveSavedThemeName,
   parseSavedThemeId,
   type SavedThemeIdError,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   atomicWriteFile,
   FileLockTimeoutError,
-  okUserHomeDir,
+  psUserHomeDir,
   withFileLock,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import { tracedAtomicFs, tracedMkdir, tracedUnlinkSync } from './fs-traced.ts';
 import {
   readSavedThemeFile,
@@ -41,7 +41,7 @@ async function withSavedThemeWriteLock<T>(
   fn: () => Promise<T>,
   timeoutMs?: number,
 ): Promise<T | SavedThemeLockTimeoutResult> {
-  const lockDir = resolve(okUserHomeDir(home));
+  const lockDir = resolve(psUserHomeDir(home));
   await tracedMkdir(lockDir, { recursive: true });
   const rootKey = createHash('sha256').update(resolve(root)).digest('hex').slice(0, 24);
   try {

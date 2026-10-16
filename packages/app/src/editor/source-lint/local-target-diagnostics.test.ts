@@ -1,6 +1,6 @@
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { EditorState } from '@codemirror/state';
-import type { ValidationDocResult } from '@inkeep/open-knowledge-core';
+import type { ValidationDocResult } from '@palimpsest/core';
 import { GFM } from '@lezer/markdown';
 import { describe, expect, test } from 'vitest';
 import { mapLocalTargetDiagnostics } from './local-target-diagnostics.ts';

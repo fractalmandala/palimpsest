@@ -27,14 +27,14 @@ afterEach(() => {
 test.each([0, 1])(
   'preserves the packaged observation files before cleanup when the driver exits %i',
   (status) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-pty-evidence-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-pty-evidence-'));
     fixtures.push(root);
     const packageDir = join(root, 'package');
     const diagnosticsDir = join(root, 'evidence');
     const logDir = join(root, 'desktop-logs');
     mkdirSync(packageDir);
     mkdirSync(logDir);
-    writeFileSync(join(packageDir, 'OpenKnowledge.exe'), 'fixture');
+    writeFileSync(join(packageDir, 'Palimpsest.exe'), 'fixture');
     let profile;
     const driverOutput = `driver output\n${JSON.stringify({
       event: 'pty-phase',
@@ -108,9 +108,9 @@ test.each([0, 1])(
 test.each([0, 1])(
   'reports driver outcome %i without accepting evidence that could not be saved',
   (status) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-pty-evidence-error-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-pty-evidence-error-'));
     fixtures.push(root);
-    writeFileSync(join(root, 'OpenKnowledge.exe'), 'fixture');
+    writeFileSync(join(root, 'Palimpsest.exe'), 'fixture');
     const diagnosticsDir = join(root, 'file-instead-of-directory');
     writeFileSync(diagnosticsDir, 'occupied');
     child.spawn.mockReturnValue({ pid: undefined });
@@ -134,12 +134,12 @@ test.each([0, 1])(
 );
 
 test('reports verified retained utility phases after a successful packaged echo', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-pty-evidence-complete-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-pty-evidence-complete-'));
   fixtures.push(root);
   const diagnosticsDir = join(root, 'evidence');
   const logDir = join(root, 'logs');
   mkdirSync(logDir);
-  writeFileSync(join(root, 'OpenKnowledge.exe'), 'fixture');
+  writeFileSync(join(root, 'Palimpsest.exe'), 'fixture');
   const ptyId = 'echo-session';
   const startup = [
     ['module-entry', 'point'],
@@ -224,7 +224,7 @@ test('reports verified retained utility phases after a successful packaged echo'
 
 const echoSessionId = 'echo-session';
 const echoObserved =
-  'PTY echo marker observed: OK_PTY_SMOKE; timings={}; endings=null; notices=null\n';
+  'PTY echo marker observed: PS_PTY_SMOKE; timings={}; endings=null; notices=null\n';
 const retainedUtility = [
   ['module-entry', 'point'],
   ['logger-import', 'begin'],
@@ -273,12 +273,12 @@ function collectedRendererTrace(records) {
 }
 
 function stageSuccessfulPackagedEcho({ stdout, stderr, utility = retainedUtility }) {
-  const root = mkdtempSync(join(tmpdir(), 'ok-pty-evidence-renderer-trace-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-pty-evidence-renderer-trace-'));
   fixtures.push(root);
   const diagnosticsDir = join(root, 'evidence');
   const logDir = join(root, 'logs');
   mkdirSync(logDir);
-  writeFileSync(join(root, 'OpenKnowledge.exe'), 'fixture');
+  writeFileSync(join(root, 'Palimpsest.exe'), 'fixture');
   child.spawn.mockImplementation((_file, args, options) => {
     const profile = args
       .find((arg) => arg.startsWith('--user-data-dir='))

@@ -4,7 +4,7 @@ import {
   type ThreadEvent,
   type ThreadExitDiagnosis,
   type ThreadInfo,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { i18n } from '@lingui/core';
 import {
   act,
@@ -222,14 +222,14 @@ function toolCall(overrides?: Partial<Extract<RenderedItem, { kind: 'tool_call' 
 }
 
 describe('ThreadView failed tool rows', () => {
-  const okTool = 'mcp__open-knowledge__write';
+  const psTool = 'mcp__open-knowledge__write';
 
   test('a failure it recognises says what to do about it and offers the error for pasting', () => {
     model = makeModel({
       turnActive: false,
       items: [
         toolCall({
-          title: okTool,
+          title: psTool,
           status: 'failed',
           content: ['Error: Server unreachable: fetch failed'],
         }),
@@ -262,7 +262,7 @@ describe('ThreadView failed tool rows', () => {
     expect(screen.queryByRole('button', { name: 'Copy error' })).toBeNull();
   });
 
-  test('another tool with a lookalike error gets no OpenKnowledge advice', () => {
+  test('another tool with a lookalike error gets no Palimpsest advice', () => {
     model = makeModel({
       turnActive: false,
       items: [toolCall({ status: 'failed', content: ['TypeError: fetch failed'] })],
@@ -326,7 +326,7 @@ describe('ThreadView failed tool rows', () => {
         turnActive: false,
         items: [
           toolCall({
-            title: okTool,
+            title: psTool,
             status: 'failed',
             content: ['Error: Server unreachable: fetch failed'],
           }),
@@ -1707,7 +1707,7 @@ describe('ThreadView tool-call status', () => {
       turnActive: false,
     });
     render(<ThreadView info={makeInfo({ status: 'ready' })} />);
-    await user.hover(screen.getByRole('button', { name: /OpenKnowledge ran ls/ }));
+    await user.hover(screen.getByRole('button', { name: /Palimpsest ran ls/ }));
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip.textContent).toContain('read-only shell commands');
     expect(tooltip.textContent).toContain('mcp__open-knowledge__exec');
@@ -1804,7 +1804,7 @@ describe('ThreadView tool-call status', () => {
     expect(screen.getByTestId('agent-thread-tool-call').textContent).toContain('Run tests');
   });
 
-  test('an Open Knowledge call says what it did, not the name the adapter sent', () => {
+  test('an Palimpsest call says what it did, not the name the adapter sent', () => {
     model = makeModel({
       items: [
         toolCall({
@@ -1818,7 +1818,7 @@ describe('ThreadView tool-call status', () => {
     });
     render(<ThreadView info={makeInfo({ status: 'ready' })} />);
     const row = screen.getByTestId('agent-thread-tool-call').textContent ?? '';
-    expect(row).toContain('OpenKnowledge wrote to meetings/standup');
+    expect(row).toContain('Palimpsest wrote to meetings/standup');
     expect(row).not.toContain('mcp__open-knowledge__write');
   });
 
@@ -4911,9 +4911,9 @@ describe('ThreadView auth-required dead ends', () => {
       const { prompt, cli } = (event as CustomEvent).detail;
       launches.push({ prompt, cli });
     };
-    window.addEventListener('open-knowledge:terminal-launch', onLaunch);
+    window.addEventListener('palimpsest:terminal-launch', onLaunch);
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({ claude: true }) },
       },
@@ -4943,8 +4943,8 @@ describe('ThreadView auth-required dead ends', () => {
       expect(launches).toEqual([{ prompt: '', cli: 'claude' }]);
       expect(retryThread).not.toHaveBeenCalled();
     } finally {
-      window.removeEventListener('open-knowledge:terminal-launch', onLaunch);
-      Reflect.deleteProperty(window, 'okDesktop');
+      window.removeEventListener('palimpsest:terminal-launch', onLaunch);
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -4954,9 +4954,9 @@ describe('ThreadView auth-required dead ends', () => {
       const { prompt, cli } = (event as CustomEvent).detail;
       launches.push({ prompt, cli });
     };
-    window.addEventListener('open-knowledge:terminal-launch', onLaunch);
+    window.addEventListener('palimpsest:terminal-launch', onLaunch);
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({ claude: true }) },
       },
@@ -4988,17 +4988,17 @@ describe('ThreadView auth-required dead ends', () => {
       await userEvent.click(within(surface).getByTestId('agent-thread-auth-action'));
       expect(launches).toEqual([{ prompt: '', cli: 'claude' }]);
     } finally {
-      window.removeEventListener('open-knowledge:terminal-launch', onLaunch);
-      Reflect.deleteProperty(window, 'okDesktop');
+      window.removeEventListener('palimpsest:terminal-launch', onLaunch);
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
   test('an agent whose sign-in is a terminal command runs that command in the terminal', async () => {
     const launches: unknown[] = [];
     const onLaunch = (event: Event) => launches.push((event as CustomEvent).detail);
-    window.addEventListener('open-knowledge:terminal-launch', onLaunch);
+    window.addEventListener('palimpsest:terminal-launch', onLaunch);
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({}) },
       },
@@ -5048,17 +5048,17 @@ describe('ThreadView auth-required dead ends', () => {
       expect(terminalAuthLaunch).toHaveBeenCalledWith('thread-1', 'auggie-login');
       expect(retryThread).not.toHaveBeenCalled();
     } finally {
-      window.removeEventListener('open-knowledge:terminal-launch', onLaunch);
-      Reflect.deleteProperty(window, 'okDesktop');
+      window.removeEventListener('palimpsest:terminal-launch', onLaunch);
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
   test('a sign-in launch the server refuses becomes a toast, never a terminal', async () => {
     const launches: unknown[] = [];
     const onLaunch = (event: Event) => launches.push((event as CustomEvent).detail);
-    window.addEventListener('open-knowledge:terminal-launch', onLaunch);
+    window.addEventListener('palimpsest:terminal-launch', onLaunch);
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({}) },
       },
@@ -5104,17 +5104,17 @@ describe('ThreadView auth-required dead ends', () => {
       expect(launches).toEqual([]);
       expect(retryThread).not.toHaveBeenCalled();
     } finally {
-      window.removeEventListener('open-knowledge:terminal-launch', onLaunch);
-      Reflect.deleteProperty(window, 'okDesktop');
+      window.removeEventListener('palimpsest:terminal-launch', onLaunch);
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
   test('a harness CLI sign-in names the chat that opened the terminal', async () => {
     const launches: unknown[] = [];
     const onLaunch = (event: Event) => launches.push((event as CustomEvent).detail);
-    window.addEventListener('open-knowledge:terminal-launch', onLaunch);
+    window.addEventListener('palimpsest:terminal-launch', onLaunch);
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({ claude: true }) },
       },
@@ -5138,8 +5138,8 @@ describe('ThreadView auth-required dead ends', () => {
         { kind: 'cli', prompt: '', cli: 'claude', stage: false, signInThreadId: 'thread-1' },
       ]);
     } finally {
-      window.removeEventListener('open-knowledge:terminal-launch', onLaunch);
-      Reflect.deleteProperty(window, 'okDesktop');
+      window.removeEventListener('palimpsest:terminal-launch', onLaunch);
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -5246,7 +5246,7 @@ describe('ThreadView auth-required dead ends', () => {
 
   test('a clickable sign-in method still wins over the terminal fallback', async () => {
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({ claude: true }) },
       },
@@ -5270,13 +5270,13 @@ describe('ThreadView auth-required dead ends', () => {
       );
       expect(surface.textContent).toContain('Sign in to Claude to continue.');
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
   test('an agent whose CLI is missing keeps the retry rather than a terminal it cannot open', async () => {
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         config: { ptyAvailable: true },
         terminal: { cliInstalledMap: () => Promise.resolve({ claude: false }) },
       },
@@ -5296,7 +5296,7 @@ describe('ThreadView auth-required dead ends', () => {
       expect(offerButton().getAttribute('data-auth-offer-kind')).toBe('retry');
       await waitFor(() => expect(offerButton().getAttribute('data-auth-offer-kind')).toBe('retry'));
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -6155,7 +6155,7 @@ describe('ThreadView context window', () => {
     modelCandidates = twoWindows;
     model = makeModel({ turnActive: false, items: [] });
     localStorage.setItem(
-      'ok-acp-agent-settings-v1',
+      'ps-acp-agent-settings-v1',
       JSON.stringify({ 'registry:codex-acp': { contextWindow: 872_000 } }),
     );
     render(
@@ -6179,7 +6179,7 @@ describe('ThreadView context window', () => {
     modelCandidates = twoWindows;
     model = makeModel({ turnActive: false, items: [] });
     localStorage.setItem(
-      'ok-acp-agent-settings-v1',
+      'ps-acp-agent-settings-v1',
       JSON.stringify({ 'registry:codex-acp': { contextWindow: 872_000 } }),
     );
     render(
@@ -6374,7 +6374,7 @@ describe('ThreadView reporting a problem with the chat', () => {
     });
   const installReportBridge = () =>
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         bugReport: {
           crashDumpAvailability: () => Promise.resolve({ available: false }),
           captureScreenshot: () => Promise.resolve(null),
@@ -6397,7 +6397,7 @@ describe('ThreadView reporting a problem with the chat', () => {
       }
       expect(trigger.hasAttribute('aria-disabled')).toBe(false);
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -6436,7 +6436,7 @@ describe('ThreadView reporting a problem with the chat', () => {
       const item = await screen.findByTestId('agent-thread-report-problem');
       expect(item.textContent).toBe('Report a problem with this chat…');
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -6454,7 +6454,7 @@ describe('ThreadView reporting a problem with the chat', () => {
       );
       expect(chat.getAttribute('aria-checked')).toBe('true');
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   }, 30_000);
 
@@ -6467,12 +6467,12 @@ describe('ThreadView reporting a problem with the chat', () => {
     let markersAtCapture = -1;
     let menuAtCapture: boolean | null = null;
     Object.assign(window, {
-      okDesktop: {
+      psDesktop: {
         bugReport: {
           crashDumpAvailability: () => Promise.resolve({ available: false }),
           captureScreenshot: () => {
             captures += 1;
-            markersAtCapture = document.querySelectorAll('.ok-pointer-marker').length;
+            markersAtCapture = document.querySelectorAll('.ps-pointer-marker').length;
             menuAtCapture = screen.queryByTestId('agent-thread-settings-popover') !== null;
             return Promise.resolve(null);
           },
@@ -6491,7 +6491,7 @@ describe('ThreadView reporting a problem with the chat', () => {
       expect(menuAtCapture).toBe(false);
     } finally {
       stopPointerTracking();
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   }, 30_000);
 });

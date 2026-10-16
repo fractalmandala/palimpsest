@@ -1,4 +1,4 @@
-import { LINEAGE_EPOCH_KEY } from '@inkeep/open-knowledge-core';
+import { LINEAGE_EPOCH_KEY } from '@palimpsest/core';
 import { z } from 'zod';
 
 export const HocuspocusAuthTokenSchema = z

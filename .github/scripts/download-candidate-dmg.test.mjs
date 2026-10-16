@@ -13,7 +13,7 @@ import {
 test.skipIf(process.platform === 'win32')(
   'the macOS CLI transport projects an oversized GitHub comparison before buffering it',
   () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-candidate-cli-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-candidate-cli-'));
     try {
       writeFileSync(
         join(dir, 'gh'),
@@ -26,7 +26,7 @@ if (args[0] === 'api') {
   const jq = args.indexOf('--jq');
   process.stdout.write(JSON.stringify(jq >= 0 && args[jq + 1] === '{status}' ? { status: response.status } : response));
 } else if (args[1] === 'view') {
-  process.stdout.write(JSON.stringify({ assets: [{ name: 'OpenKnowledge-Beta-arm64.dmg' }] }));
+  process.stdout.write(JSON.stringify({ assets: [{ name: 'Palimpsest-Beta-arm64.dmg' }] }));
 } else if (args[1] === 'download') {
   fs.writeFileSync(path.join(args[args.indexOf('--dir') + 1], args[args.indexOf('--pattern') + 1]), 'fixture DMG');
 } else { process.exit(2); }
@@ -57,12 +57,12 @@ if (args[0] === 'api') {
 );
 
 test.each([
-  { candidate: 'v0.77.9-beta.0', status: 'behind', name: 'OpenKnowledge-arm64.dmg' },
-  { candidate: 'v0.78.0-beta.5', status: 'ahead', name: 'OpenKnowledge-Beta-arm64.dmg' },
+  { candidate: 'v0.77.9-beta.0', status: 'behind', name: 'Palimpsest-arm64.dmg' },
+  { candidate: 'v0.78.0-beta.5', status: 'ahead', name: 'Palimpsest-Beta-arm64.dmg' },
 ])(
   'the download boundary composes GitHub ancestry and inventory for $candidate',
   ({ candidate, status, name }) => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-candidate-download-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-candidate-download-'));
     try {
       const path = downloadCandidateDmg({
         candidate,
@@ -95,8 +95,8 @@ test.each([
 
 describe('candidate DMG inventory', () => {
   test.each([
-    { name: 'OpenKnowledge-arm64.dmg', identity: 'legacy' },
-    { name: 'OpenKnowledge-Beta-arm64.dmg', identity: 'beta' },
+    { name: 'Palimpsest-arm64.dmg', identity: 'legacy' },
+    { name: 'Palimpsest-Beta-arm64.dmg', identity: 'beta' },
   ])('accepts $name only for its historical product identity $identity', ({ name, identity }) => {
     expect(selectDmgAsset([{ name }, { name: `${name}.blockmap` }], identity)).toBe(name);
   });
@@ -105,12 +105,12 @@ describe('candidate DMG inventory', () => {
     [
       [],
       [{ name: 'unrelated.dmg' }],
-      [{ name: '../OpenKnowledge-arm64.dmg' }],
+      [{ name: '../Palimpsest-arm64.dmg' }],
       [
-        { name: 'OpenKnowledge-arm64.dmg' },
-        { name: 'OpenKnowledge-x64.dmg' },
-        { name: 'OpenKnowledge-Beta-arm64.dmg' },
-        { name: 'OpenKnowledge-Beta-x64.dmg' },
+        { name: 'Palimpsest-arm64.dmg' },
+        { name: 'Palimpsest-x64.dmg' },
+        { name: 'Palimpsest-Beta-arm64.dmg' },
+        { name: 'Palimpsest-Beta-x64.dmg' },
       ],
     ].map((assets) => ({ assets })),
   )('refuses missing, unknown or ambiguous installers: $assets', ({ assets }) => {
@@ -119,15 +119,15 @@ describe('candidate DMG inventory', () => {
   });
 
   test('never accepts a Stable artifact for a split-identity Beta tag', () => {
-    expect(selectDmgAsset([{ name: 'OpenKnowledge-arm64.dmg' }], 'beta')).toBeNull();
-    expect(selectDmgAsset([{ name: 'OpenKnowledge-Beta-arm64.dmg' }], 'legacy')).toBeNull();
-    expect(selectDmgAsset([{ name: 'OpenKnowledge-arm64.dmg' }], 'unknown')).toBeNull();
+    expect(selectDmgAsset([{ name: 'Palimpsest-arm64.dmg' }], 'beta')).toBeNull();
+    expect(selectDmgAsset([{ name: 'Palimpsest-Beta-arm64.dmg' }], 'legacy')).toBeNull();
+    expect(selectDmgAsset([{ name: 'Palimpsest-arm64.dmg' }], 'unknown')).toBeNull();
   });
 
   test('selects the intended product from a dual-Beta release without merging their identities', () => {
-    const assets = [{ name: 'OpenKnowledge-arm64.dmg' }, { name: 'OpenKnowledge-Beta-arm64.dmg' }];
-    expect(selectDmgAsset(assets, 'beta')).toBe('OpenKnowledge-Beta-arm64.dmg');
-    expect(selectDmgAsset(assets, 'legacy')).toBe('OpenKnowledge-arm64.dmg');
+    const assets = [{ name: 'Palimpsest-arm64.dmg' }, { name: 'Palimpsest-Beta-arm64.dmg' }];
+    expect(selectDmgAsset(assets, 'beta')).toBe('Palimpsest-Beta-arm64.dmg');
+    expect(selectDmgAsset(assets, 'legacy')).toBe('Palimpsest-arm64.dmg');
   });
 
   test('requires proven ancestry across the product-identity split', () => {

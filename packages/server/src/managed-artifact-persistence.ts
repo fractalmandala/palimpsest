@@ -19,13 +19,13 @@ import {
   parseManagedArtifactName,
   SKILL_NAME_REGEX,
   skillRootActivationPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   atomicWriteFile,
   FileLockTimeoutError,
-  okUserHomeDir,
+  psUserHomeDir,
   withFileLock,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import type * as Y from 'yjs';
 import type { DeriveLossDetectOptions } from './bridge-loss-detector.ts';
 import { applyDiskContentToDoc, FILE_WATCHER_ORIGIN } from './disk-content-intake.ts';
@@ -122,14 +122,14 @@ function managedSkillBundleDir(
   }
   const base = scope === 'global' ? homeFor(ctx) : ctx.projectDir;
   if (scope !== 'global') {
-    return resolve(base, '.ok', 'skills', name);
+    return resolve(base, '.ps', 'skills', name);
   }
   if (host !== null) {
     const root = knownSkillRootsFor(base, 'global').find((r) => r.editor === host);
     return root === undefined ? null : resolve(base, root.root, name);
   }
   const native = resolveGlobalNativeSkillDir(base, name);
-  const storeDir = resolve(base, '.ok', 'skills', name);
+  const storeDir = resolve(base, '.ps', 'skills', name);
   if (native !== null) return native;
   if (existsSync(resolve(storeDir, 'SKILL.md'))) return storeDir;
   const homeRel = resolveDefaultSkillHomeRel(base, 'global');
@@ -289,7 +289,7 @@ async function stashDiscardedEdit(
 ): Promise<void> {
   try {
     const dir = resolve(
-      okUserHomeDir(homeFor(ctx)),
+      psUserHomeDir(homeFor(ctx)),
       'edit-backups',
       'discarded',
       discardedEditStashKey(documentName),
@@ -316,7 +316,7 @@ async function backupExternalSkillOnce(
   if (ext.rel !== null) return;
   try {
     if (!existsSync(filePath)) return;
-    const backupDir = resolve(okUserHomeDir(homeFor(ctx)), 'edit-backups', ext.name);
+    const backupDir = resolve(psUserHomeDir(homeFor(ctx)), 'edit-backups', ext.name);
     const backupPath = resolve(backupDir, 'SKILL.md.bak');
     if (existsSync(backupPath)) return;
     await tracedMkdir(backupDir, { recursive: true });

@@ -4,7 +4,7 @@ import { type ReactNode, useLayoutEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { Toaster } from '@/components/ui/sonner';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { hashFromAssetPath } from '@/lib/doc-hash';
 import { emitLocalMenuAction } from '@/lib/local-menu-action-bus';
 import {
@@ -208,12 +208,12 @@ function seedCloseFallbackPaneSession(leftPinned = false) {
 type MenuActionLike = 'close-active-tab-or-window' | 'new-doc';
 
 interface EditorBridgeStub {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   fire(action: MenuActionLike): void;
 }
 
 interface DeferredSessionBridgeStub {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   resolveSession(): void;
 }
 
@@ -233,7 +233,7 @@ function makeEditorBridgeStub(
       getSessionState: async () => sessionState,
       setSessionState: async () => undefined,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   return {
     bridge,
@@ -263,7 +263,7 @@ function makeDeferredSessionBridgeStub(
       getSessionState: async () => sessionLoaded,
       setSessionState: async () => undefined,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   return {
     bridge,
@@ -381,11 +381,11 @@ function HiddenEditorRevealHarness() {
   );
 }
 
-function BridgeHiddenEditorRevealHarness({ bridge }: { bridge: OkDesktopBridge }) {
+function BridgeHiddenEditorRevealHarness({ bridge }: { bridge: PsDesktopBridge }) {
   useLayoutEffect(() => {
-    window.okDesktop = bridge;
+    window.psDesktop = bridge;
     return () => {
-      delete window.okDesktop;
+      delete window.psDesktop;
     };
   }, [bridge]);
   return <HiddenEditorRevealHarness />;
@@ -402,11 +402,11 @@ function hideEditorAndRecordRequests(): PaneVisibilityRequest[] {
   return requests;
 }
 
-function BridgeCloseActiveHarness({ bridge }: { bridge: OkDesktopBridge }) {
+function BridgeCloseActiveHarness({ bridge }: { bridge: PsDesktopBridge }) {
   useLayoutEffect(() => {
-    window.okDesktop = bridge;
+    window.psDesktop = bridge;
     return () => {
-      delete window.okDesktop;
+      delete window.psDesktop;
     };
   }, [bridge]);
   return <CloseActiveHarness />;
@@ -642,7 +642,7 @@ describe('DocumentContext tab close force contract', () => {
     __resetPaneVisibilityStoreForTests();
     mockCollabUrl = null;
     cleanup();
-    delete window.okDesktop;
+    delete window.psDesktop;
     globalThis.fetch = originalFetch;
     window.localStorage.clear();
     window.location.hash = '';
@@ -947,7 +947,7 @@ describe('DocumentContext tab close force contract', () => {
     expect(screen.getByTestId('open-tabs').textContent).toBe(PINNED_TAB_ID);
 
     cleanup();
-    delete window.okDesktop;
+    delete window.psDesktop;
     window.localStorage.clear();
 
     const emptyStub = makeEditorBridgeStub();
@@ -1252,7 +1252,7 @@ describe('DocumentContext repeat-crash recovery notice', () => {
   afterEach(() => {
     cleanup();
     toast.dismiss();
-    delete window.okDesktop;
+    delete window.psDesktop;
     mockCollabUrl = null;
     globalThis.fetch = originalFetch;
     window.localStorage.clear();
@@ -1282,7 +1282,7 @@ describe('DocumentContext repeat-crash recovery notice', () => {
         new Date('2026-07-28T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     recordAppShellCrashTrip(new Error('same crash'));
     recordAppShellCrashTrip(new Error('same crash'));
 
@@ -1306,7 +1306,7 @@ describe('DocumentContext repeat-crash recovery notice', () => {
         new Date('2026-07-28T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
 
     renderWithToaster();
 
@@ -1321,7 +1321,7 @@ describe('DocumentContext repeat-crash recovery notice', () => {
 describe('DocumentContext tab restore', () => {
   afterEach(() => {
     cleanup();
-    delete window.okDesktop;
+    delete window.psDesktop;
     mockCollabUrl = null;
     globalThis.fetch = originalFetch;
     window.localStorage.clear();
@@ -1363,7 +1363,7 @@ describe('DocumentContext tab restore', () => {
       ),
     );
     stub.bridge.project.setSessionState = setSessionState as never;
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     recordAppShellCrashTrip(new Error('same crash'));
     recordAppShellCrashTrip(new Error('same crash'));
 
@@ -1388,7 +1388,7 @@ describe('DocumentContext tab restore', () => {
       ),
     );
     stub.bridge.project.setSessionState = setSessionState as never;
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     recordAppShellCrashTrip(new Error('same crash'));
     recordAppShellCrashTrip(new Error('same crash'));
 
@@ -1444,7 +1444,7 @@ describe('DocumentContext tab restore', () => {
         new Date('2026-07-28T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
 
     render(<PaneWorkspaceHarness />, { wrapper: ProviderHarness });
 
@@ -1470,7 +1470,7 @@ describe('DocumentContext tab restore', () => {
         new Date('2026-07-28T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     recordAppShellCrashTrip(new Error('same crash'));
     recordAppShellCrashTrip(new Error('same crash'));
 
@@ -1493,7 +1493,7 @@ describe('DocumentContext tab restore', () => {
         new Date('2026-07-28T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     recordAppShellCrashTrip(new Error('same crash'));
     recordAppShellCrashTrip(new Error('same crash'));
 
@@ -1536,7 +1536,7 @@ describe('DocumentContext tab restore', () => {
         new Date('2026-06-07T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     window.location.hash = hashFromAssetPath('LICENSE');
 
     render(<OpenLicenseDuringRestoreHarness />, { wrapper: ProviderHarness });
@@ -1571,7 +1571,7 @@ describe('DocumentContext tab restore', () => {
         new Date('2026-06-07T00:00:00.000Z').toISOString(),
       ),
     );
-    window.okDesktop = stub.bridge;
+    window.psDesktop = stub.bridge;
     window.location.hash = '#/Other';
 
     render(<CloseActiveHarness />, { wrapper: ProviderHarness });
@@ -1594,7 +1594,7 @@ describe('DocumentContext tab restore', () => {
 describe('DocumentContext pane workspace', () => {
   afterEach(() => {
     cleanup();
-    delete window.okDesktop;
+    delete window.psDesktop;
     mockCollabUrl = null;
     globalThis.fetch = originalFetch;
     window.localStorage.clear();

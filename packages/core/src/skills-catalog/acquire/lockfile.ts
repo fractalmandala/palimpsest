@@ -1,14 +1,14 @@
 import { z } from 'zod';
-import { OK_DIR } from '../../constants/ok-dir.ts';
+import { PS_DIR } from '../../constants/ps-dir.ts';
 import {
-  OPENKNOWLEDGE_SKILLS_REPO,
+  PALIMPSEST_SKILLS_REPO,
   PACK_SKILL_PREFIX,
   RENAMED_PACK_SKILLS,
 } from '../../constants/skills.ts';
 
 export const SKILLS_LOCK_FILENAME = 'skills-lock.json';
 
-export const SKILLS_LOCK_REL = [OK_DIR, SKILLS_LOCK_FILENAME] as const;
+export const SKILLS_LOCK_REL = [PS_DIR, SKILLS_LOCK_FILENAME] as const;
 
 export const SKILLS_LOCK_SCHEMA_VERSION = 1;
 
@@ -79,7 +79,7 @@ export function retrofitPackLockEntry(
 
 function packEntry(name: string, contentHash: string, importedAt: string): SkillLockEntry {
   return {
-    source: OPENKNOWLEDGE_SKILLS_REPO,
+    source: PALIMPSEST_SKILLS_REPO,
     skill: name,
     contentHash,
     importedAt,

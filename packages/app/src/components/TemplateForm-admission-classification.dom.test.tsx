@@ -13,7 +13,7 @@ const nativeFetch = globalThis.fetch;
 let root: string;
 let server: BootedServer;
 let sequence = 0;
-const templatePath = (name: string) => join(root, 'templates', '.ok', 'templates', `${name}.md`);
+const templatePath = (name: string) => join(root, 'templates', '.ps', 'templates', `${name}.md`);
 
 async function post(method: 'PUT' | 'POST', input: object) {
   return rawRequest(server.port, '/api/template', {
@@ -34,7 +34,7 @@ async function seed(name: string) {
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-template-admission-classification-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-template-admission-classification-'));
   mkdirSync(join(root, 'templates'));
   server = await bootCompositionRig(root);
   await server.ready;

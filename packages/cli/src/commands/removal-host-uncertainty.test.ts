@@ -19,7 +19,7 @@ import {
 import { hostname, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
-import { isProcessAlive } from '@inkeep/open-knowledge-server';
+import { isProcessAlive } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { hasLsof } from '../../../../test-support/capabilities.test-helper.ts';
 import { startDefunctProcess } from './defunct-process.test-helper.ts';
@@ -71,11 +71,11 @@ describe.skipIf(process.platform === 'win32')(
     const children: ChildProcess[] = [];
 
     beforeEach(() => {
-      root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-removal-host-')));
+      root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-removal-host-')));
       project = join(root, 'project');
       home = join(root, 'home');
       escapedSpawns = [];
-      write(join(project, '.ok', 'local', 'server.lock'), 'not json');
+      write(join(project, '.ps', 'local', 'server.lock'), 'not json');
       write(join(project, 'notes.md'), '# Keep');
       spawnMock.mockReset().mockImplementation(realSpawn);
       spawnSyncMock.mockReset();
@@ -196,7 +196,7 @@ describe.skipIf(process.platform === 'win32')(
 
       try {
         await expect(
-          stopServerForRemoval(join(project, '.ok', 'local'), {
+          stopServerForRemoval(join(project, '.ps', 'local'), {
             probe: () => ({
               onProbeFailure: (failure) => {
                 reportedToCaller.push(failure.pid);
@@ -232,7 +232,7 @@ describe.skipIf(process.platform === 'win32')(
         status: 'skipped',
         detail: expect.stringContaining('No server was stopped'),
       });
-      expect(existsSync(join(project, '.ok'))).toBe(false);
+      expect(existsSync(join(project, '.ps'))).toBe(false);
       expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# Keep');
     });
 
@@ -240,7 +240,7 @@ describe.skipIf(process.platform === 'win32')(
       const defunct = await startDefunctProcess(root, children);
       expect(defunct.state).toMatch(/^Z/);
       expect(isProcessAlive(defunct.pid)).toBe(true);
-      const marker = Buffer.from(join(project, '.ok', 'local')).toString('base64url');
+      const marker = Buffer.from(join(project, '.ps', 'local')).toString('base64url');
       installHost({
         processes: [
           { pid: defunct.pid, command: `open-knowledge-server --ok-lock-dir-b64=${marker}` },
@@ -251,7 +251,7 @@ describe.skipIf(process.platform === 'win32')(
 
       expect(detailOf(outcome.failed)).toBe('');
       expect(outcome.failed).toEqual([]);
-      expect(existsSync(join(project, '.ok'))).toBe(false);
+      expect(existsSync(join(project, '.ps'))).toBe(false);
       expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# Keep');
     });
 
@@ -260,7 +260,7 @@ describe.skipIf(process.platform === 'win32')(
       expect(defunct.state).toMatch(/^Z/);
       expect(isProcessAlive(defunct.pid)).toBe(true);
       write(
-        join(project, '.ok', 'local', 'server.lock'),
+        join(project, '.ps', 'local', 'server.lock'),
         JSON.stringify({
           pid: defunct.pid,
           hostname: hostname(),
@@ -275,7 +275,7 @@ describe.skipIf(process.platform === 'win32')(
 
       expect(detailOf(outcome.failed)).toBe('');
       expect(outcome.failed).toEqual([]);
-      expect(existsSync(join(project, '.ok'))).toBe(false);
+      expect(existsSync(join(project, '.ps'))).toBe(false);
       expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# Keep');
     });
 
@@ -289,8 +289,8 @@ describe.skipIf(process.platform === 'win32')(
 
       expect(detailOf(outcome.failed)).toContain('live process candidates');
       expect(detailOf(outcome.failed)).toContain(String(server));
-      expect(existsSync(join(project, '.ok', 'local', 'server.lock'))).toBe(true);
-      expect(readFileSync(join(project, '.ok', 'local', 'server.lock'), 'utf8')).toBe('not json');
+      expect(existsSync(join(project, '.ps', 'local', 'server.lock'))).toBe(true);
+      expect(readFileSync(join(project, '.ps', 'local', 'server.lock'), 'utf8')).toBe('not json');
       expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# Keep');
     });
 
@@ -335,8 +335,8 @@ describe.skipIf(process.platform === 'win32')(
       const outcome = await runRemoval(buildDeinitPlan(project, home));
 
       expect(detailOf(outcome.failed)).toContain(String(opaque));
-      expect(existsSync(join(project, '.ok', 'local', 'server.lock'))).toBe(true);
-      expect(readFileSync(join(project, '.ok', 'local', 'server.lock'), 'utf8')).toBe('not json');
+      expect(existsSync(join(project, '.ps', 'local', 'server.lock'))).toBe(true);
+      expect(readFileSync(join(project, '.ps', 'local', 'server.lock'), 'utf8')).toBe('not json');
     });
   },
 );

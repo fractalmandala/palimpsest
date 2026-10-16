@@ -15,15 +15,15 @@ const CHAIN_ENTRY = buildManagedServerEntry({ mode: 'published' });
 const WIN_CHAIN_ENTRY = buildManagedServerEntry({ mode: 'published', platformName: 'win32' });
 const CMD_WORKAROUND = {
   command: 'cmd',
-  args: ['/c', 'C:\\Users\\me\\AppData\\Roaming\\npm\\ok.cmd', 'mcp'],
+  args: ['/c', 'C:\\Users\\me\\AppData\\Roaming\\npm\\ps.cmd', 'mcp'],
 };
-const LEGACY_BARE = { command: 'npx', args: ['@inkeep/open-knowledge', 'mcp'] };
+const LEGACY_BARE = { command: 'npx', args: ['@palimpsest/cli', 'mcp'] };
 const LEGACY_NPX_AT_LATEST = {
   command: 'npx',
-  args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'],
+  args: ['-y', '@palimpsest/cli@latest', 'mcp'],
 };
 const BUNDLE_ABSOLUTE = {
-  command: '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh',
+  command: '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh',
   args: ['mcp'],
 };
 const SYMLINK = { command: '/usr/local/bin/ok', args: ['mcp'] };
@@ -55,13 +55,13 @@ describe('repairMcpConfigs', () => {
 
   function writeClaude(entry: Record<string, unknown>): string {
     const path = resolveClaudeCodeConfigPath({ home: fakeHome });
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'open-knowledge': entry } }, null, 2));
+    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }, null, 2));
     return path;
   }
 
   function writeProjectClaude(entry: Record<string, unknown>): string {
     const path = join(projectDir, '.mcp.json');
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'open-knowledge': entry } }, null, 2));
+    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }, null, 2));
     return path;
   }
 
@@ -79,7 +79,7 @@ describe('repairMcpConfigs', () => {
       expect(result.repairedCount).toBe(1);
       expect(result.outcomes.find((o) => o.editorId === 'claude')?.outcome).toBe('repaired');
       const written = JSON.parse(readFileSync(configPath, 'utf-8'));
-      expect(written.mcpServers['open-knowledge']).toEqual(CHAIN_ENTRY);
+      expect(written.mcpServers['palimpsest']).toEqual(CHAIN_ENTRY);
       expect(logEvents).toContainEqual({
         event: 'mcp-config-migrate',
         severity: 'info',
@@ -122,7 +122,7 @@ describe('repairMcpConfigs', () => {
   it('leaves a recognized future launcher byte-unchanged', () => {
     const configPath = writeClaude({
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+      args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',
     });
     const before = readFileSync(configPath, 'utf-8');
@@ -138,7 +138,7 @@ describe('repairMcpConfigs', () => {
     const events: RepairLogEvent[] = [];
     const configPath = writeClaude({
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+      args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',
       env: { NODE_OPTIONS: '--require ./payload.cjs' },
     });
@@ -147,9 +147,9 @@ describe('repairMcpConfigs', () => {
 
     expect(result.outcomes.find((o) => o.editorId === 'claude')?.outcome).toBe('repaired');
     const after = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(after.mcpServers['open-knowledge']).toEqual({
+    expect(after.mcpServers['palimpsest']).toEqual({
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+      args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',
     });
     expect(events).toContainEqual(
@@ -165,7 +165,7 @@ describe('repairMcpConfigs', () => {
   it('keeps a recognized future project launcher byte-unchanged', () => {
     const configPath = writeProjectClaude({
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+      args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       unknown: { keep: true },
     });
     const before = readFileSync(configPath, 'utf-8');
@@ -180,17 +180,17 @@ describe('repairMcpConfigs', () => {
   });
 
   it('reads a recognized project launcher on the dev channel without building a launcher for it', () => {
-    const previous = process.env.OK_CHANNEL;
-    process.env.OK_CHANNEL = 'dev';
+    const previous = process.env.PS_CHANNEL;
+    process.env.PS_CHANNEL = 'dev';
     try {
       const path = join(projectDir, '.mcp.json');
       writeFileSync(
         path,
         JSON.stringify({
           mcpServers: {
-            'open-knowledge-dev': {
+            'palimpsest-dev': {
               command: '/bin/sh',
-              args: ['-l', '-c', '# ok-mcp-dev-v99\nfuture launcher body'],
+              args: ['-l', '-c', '# ps-mcp-dev-v99\nfuture launcher body'],
             },
           },
         }),
@@ -205,8 +205,8 @@ describe('repairMcpConfigs', () => {
       expect(outcome?.outcome).toBe('canonical');
       expect(readFileSync(path, 'utf-8')).toBe(before);
     } finally {
-      if (previous === undefined) delete process.env.OK_CHANNEL;
-      else process.env.OK_CHANNEL = previous;
+      if (previous === undefined) delete process.env.PS_CHANNEL;
+      else process.env.PS_CHANNEL = previous;
     }
   });
 
@@ -230,10 +230,10 @@ describe('repairMcpConfigs', () => {
 
     expect(result.repairedCount).toBe(1);
     const written = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(written.mcpServers['open-knowledge']).toEqual(CHAIN_ENTRY);
+    expect(written.mcpServers['palimpsest']).toEqual(CHAIN_ENTRY);
   });
 
-  it('leaves configs without an open-knowledge entry untouched', () => {
+  it('leaves configs without an palimpsest entry untouched', () => {
     const configPath = resolveClaudeCodeConfigPath({ home: fakeHome });
     writeFileSync(configPath, JSON.stringify({ mcpServers: { other: { command: 'x' } } }));
 
@@ -246,7 +246,7 @@ describe('repairMcpConfigs', () => {
     });
   });
 
-  it('OK_RECLAIM_DISABLE=1 short-circuits with a structured event and no IO', () => {
+  it('PS_RECLAIM_DISABLE=1 short-circuits with a structured event and no IO', () => {
     const configPath = writeClaude(LEGACY_BARE);
     const before = readFileSync(configPath, 'utf-8');
 
@@ -265,7 +265,7 @@ describe('repairMcpConfigs', () => {
     ]);
   });
 
-  it('OK_RECLAIM_DISABLE values other than "1" do NOT disable the sweep', () => {
+  it('PS_RECLAIM_DISABLE values other than "1" do NOT disable the sweep', () => {
     writeClaude(LEGACY_BARE);
 
     for (const env of ['0', 'true', '', null, undefined]) {
@@ -289,7 +289,7 @@ describe('repairMcpConfigs', () => {
 
     expect(result.outcomes.find((o) => o.editorId === 'claude')?.outcome).toBe('repaired');
     const after = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(after.mcpServers['open-knowledge']).toEqual(CHAIN_ENTRY);
+    expect(after.mcpServers['palimpsest']).toEqual(CHAIN_ENTRY);
   });
 
   it('rewrites our current project launcher when an env map was added after we wrote it', () => {
@@ -306,7 +306,7 @@ describe('repairMcpConfigs', () => {
 
     expect(outcome?.outcome).toBe('repaired');
     const after = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(after.mcpServers['open-knowledge']).toEqual({ ...CHAIN_ENTRY, cwd: '/srv/notes' });
+    expect(after.mcpServers['palimpsest']).toEqual({ ...CHAIN_ENTRY, cwd: '/srv/notes' });
   });
   it('does not claim a prune when the write fails, and reports write-failed', () => {
     const events: RepairLogEvent[] = [];
@@ -320,7 +320,7 @@ describe('repairMcpConfigs', () => {
       label: target.label,
       action: 'failed',
       configPath,
-      serverName: 'open-knowledge',
+      serverName: 'palimpsest',
       error: 'EACCES',
     }));
 
@@ -352,7 +352,7 @@ describe('repairMcpConfigs', () => {
       label: target.label,
       action: 'skipped-flag',
       configPath,
-      serverName: 'open-knowledge',
+      serverName: 'palimpsest',
     }));
 
     const result = repairMcpConfigs({ projectDir, home: fakeHome, logger: (e) => events.push(e) });
@@ -381,7 +381,7 @@ describe('repairMcpConfigs', () => {
       label: target.label,
       action: 'declined',
       configPath,
-      serverName: 'open-knowledge',
+      serverName: 'palimpsest',
       declineReason: 'no-native-writer',
     }));
 

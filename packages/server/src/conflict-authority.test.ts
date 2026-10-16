@@ -14,7 +14,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
@@ -38,8 +38,8 @@ let storePath = '';
 beforeEach(() => {
   tmpDir = mkdtempSync(join(tmpdir(), 'conflict-authority-test-'));
   projectDir = join(tmpDir, 'project');
-  storePath = join(projectDir, '.ok', LOCAL_DIR, 'conflicts.json');
-  mkdirSync(join(projectDir, '.ok', LOCAL_DIR), { recursive: true });
+  storePath = join(projectDir, '.ps', LOCAL_DIR, 'conflicts.json');
+  mkdirSync(join(projectDir, '.ps', LOCAL_DIR), { recursive: true });
 });
 
 afterEach(() => {
@@ -120,7 +120,7 @@ function readLedger(): { version: number; branch: string; conflicts: Conflict[] 
 }
 
 function quarantinedLedgers(): string[] {
-  return readdirSync(join(projectDir, '.ok', LOCAL_DIR)).filter((name) =>
+  return readdirSync(join(projectDir, '.ps', LOCAL_DIR)).filter((name) =>
     name.includes('conflicts.json.corrupt-'),
   );
 }

@@ -1,4 +1,4 @@
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 
 export interface CountingManager {
   readonly manager: MarkdownManager;

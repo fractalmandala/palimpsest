@@ -11,7 +11,7 @@ let server: BootedServer;
 let ephemeral: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-metrics-native-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-metrics-native-'));
   const contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(resolve(contentDir, 'alpha.md'), '# Alpha\n\nBody.\n', 'utf-8');
   server = await bootCompositionRig(contentDir);

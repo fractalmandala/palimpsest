@@ -10,7 +10,7 @@ let root: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-agent-write-composition-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-agent-write-composition-'));
   server = await bootCompositionRig(root);
   await server.ready;
 }, 60_000);

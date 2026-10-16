@@ -30,10 +30,10 @@ vi.mock('node:fs', async (importOriginal) => {
 
 const actualFs = await vi.importActual<typeof import('node:fs')>('node:fs');
 
-const OK_TREE: Readonly<Record<string, string>> = {
-  'package.json': '{"name":"open-knowledge"}\n',
+const PS_TREE: Readonly<Record<string, string>> = {
+  'package.json': '{"name":"palimpsest"}\n',
   'pnpm-lock.yaml': "lockfileVersion: '9.0'\n",
-  'packages/app/package.json': '{"name":"@inkeep/open-knowledge-app"}\n',
+  'packages/app/package.json': '{"name":"@palimpsest/app"}\n',
   'packages/app/index.html': '<!doctype html><div id="root"></div>\n',
   'packages/app/src/App.tsx': 'export const App = () => 1;\n',
   'packages/core/src/index.ts': 'export const core = 1;\n',
@@ -53,27 +53,27 @@ function write(root: string, path: string, content: string): void {
   writeFileSync(join(root, path), content);
 }
 
-function okTree(): string {
-  const root = scratch('ok-prebuilt-prune-tree-');
-  for (const [path, content] of Object.entries(OK_TREE)) write(root, path, content);
+function psTree(): string {
+  const root = scratch('ps-prebuilt-prune-tree-');
+  for (const [path, content] of Object.entries(PS_TREE)) write(root, path, content);
   return root;
 }
 
-function bundler(okRoot: string) {
+function bundler(psRoot: string) {
   return async (distDir: string) => {
-    const app = readFileSync(join(okRoot, 'packages/app/src/App.tsx'), 'utf8');
+    const app = readFileSync(join(psRoot, 'packages/app/src/App.tsx'), 'utf8');
     write(distDir, 'index.html', `<!doctype html><script src="/assets/app.js"></script>${app}`);
     write(distDir, 'assets/app.js', app);
     write(distDir, 'assets/vendor.js', 'export {};\n');
   };
 }
 
-function resolveWith(okRoot: string, outRoot: string) {
+function resolveWith(psRoot: string, outRoot: string) {
   return resolvePrebuiltDevApp({
-    okRoot,
+    psRoot,
     outRoot,
     options: PREBUILT_BUILD_OPTIONS,
-    build: bundler(okRoot),
+    build: bundler(psRoot),
   });
 }
 
@@ -119,27 +119,27 @@ afterEach(() => {
 });
 
 async function interruptedPruneThenRevisit(removedBeforeTheStop: readonly string[]) {
-  const okRoot = okTree();
-  const outRoot = scratch('ok-prebuilt-prune-out-');
-  const first = await resolveWith(okRoot, outRoot);
+  const psRoot = psTree();
+  const outRoot = scratch('ps-prebuilt-prune-out-');
+  const first = await resolveWith(psRoot, outRoot);
   first.use.release();
-  write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
-  (await resolveWith(okRoot, outRoot)).use.release();
+  write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
+  (await resolveWith(psRoot, outRoot)).use.release();
 
-  write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
+  write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
   interruptTheDeletionOf(first.manifest.digest, removedBeforeTheStop);
-  await expect(resolveWith(okRoot, outRoot)).rejects.toBeInstanceOf(Interrupted);
+  await expect(resolveWith(psRoot, outRoot)).rejects.toBeInstanceOf(Interrupted);
 
-  write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 1;\n');
-  const again = await resolveWith(okRoot, outRoot);
+  write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 1;\n');
+  const again = await resolveWith(psRoot, outRoot);
   again.use.release();
 
   expect(again.manifest.digest).toBe(first.manifest.digest);
   expect(again.built).toBe(true);
   expect(readFileSync(join(again.distDir, 'index.html'), 'utf8')).toContain('App = () => 1');
   expect(readFileSync(join(again.distDir, 'assets', 'app.js'), 'utf8')).toContain('App = () => 1');
-  expect(prebuiltServerCommand('127.0.0.1', workerServing(again.outputDir), okRoot).env).toEqual({
-    OK_TEST_PREBUILT_OUT_DIR: again.distDir,
+  expect(prebuiltServerCommand('127.0.0.1', workerServing(again.outputDir), psRoot).env).toEqual({
+    PS_TEST_PREBUILT_OUT_DIR: again.distDir,
   });
 }
 
@@ -161,15 +161,15 @@ describe('a prune that stops part-way through deleting a build', () => {
   });
 
   test('a prune that runs to the end leaves nothing of the discarded build in the output root', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-prune-out-');
-    const first = await resolveWith(okRoot, outRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-prune-out-');
+    const first = await resolveWith(psRoot, outRoot);
     first.use.release();
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
-    const second = await resolveWith(okRoot, outRoot);
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
+    const second = await resolveWith(psRoot, outRoot);
     second.use.release();
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
-    const third = await resolveWith(okRoot, outRoot);
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
+    const third = await resolveWith(psRoot, outRoot);
     third.use.release();
 
     expect(existsSync(first.outputDir)).toBe(false);

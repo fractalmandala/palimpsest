@@ -11,13 +11,13 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { defaultScheduler, LOCAL_DIR, OK_DIR } from '@inkeep/open-knowledge-core';
+import { defaultScheduler, LOCAL_DIR, PS_DIR } from '@palimpsest/core';
 import {
   type BootedServer,
   bootServer,
   ConfigSchema,
   ensureProjectGit,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { afterAll, beforeAll, expect, onTestFinished, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -42,7 +42,7 @@ let idleShutdownPromise: Promise<void> | undefined;
 const clientsSynced = Promise.withResolvers<void>();
 
 beforeAll(async () => {
-  fixtureHome.path = realpathSync(mkdtempSync(join(tmpdir(), 'ok-idle-home-')));
+  fixtureHome.path = realpathSync(mkdtempSync(join(tmpdir(), 'ps-idle-home-')));
   const attachIdleShutdown = idleShutdown.attachIdleShutdown;
   const attachSpy = vi.spyOn(idleShutdown, 'attachIdleShutdown').mockImplementation((options) =>
     attachIdleShutdown({
@@ -56,13 +56,13 @@ beforeAll(async () => {
       },
     }),
   );
-  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-idle-multi-')));
+  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-idle-multi-')));
   await ensureProjectGit(contentDir);
   configureTestGitRepository(contentDir);
-  const okDir = join(contentDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(join(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(join(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = join(contentDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(join(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(join(psDir, '.gitignore'), '', 'utf-8');
   booted = await bootServer({
     host: '127.0.0.1',
     config: ConfigSchema.parse({}),
@@ -79,7 +79,7 @@ beforeAll(async () => {
     },
   });
   expect(attachSpy).toHaveBeenCalledOnce();
-  lockPath = resolve(contentDir, OK_DIR, LOCAL_DIR, 'server.lock');
+  lockPath = resolve(contentDir, PS_DIR, LOCAL_DIR, 'server.lock');
 }, HARNESS_BOOT_TIMEOUT_MS);
 
 afterAll(async () => {

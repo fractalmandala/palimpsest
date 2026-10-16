@@ -11,10 +11,10 @@ describe('buildAboutInfo', () => {
         updateChecksAvailable: true,
       }),
     ).toEqual({
-      productName: 'OpenKnowledge Beta',
+      productName: 'Palimpsest Beta',
       version: '0.83.0-beta.8',
-      releasesUrl: 'https://github.com/inkeep/open-knowledge/releases',
-      releaseNotesUrl: 'https://github.com/inkeep/open-knowledge/releases/tag/v0.83.0-beta.8',
+      releasesUrl: 'https://github.com/fractalmandala/palimpsest/releases',
+      releaseNotesUrl: 'https://github.com/fractalmandala/palimpsest/releases/tag/v0.83.0-beta.8',
       updateChecks: 'available',
     });
   });
@@ -25,7 +25,7 @@ describe('buildAboutInfo', () => {
       variant: DESKTOP_VARIANTS.stable,
       updateChecksAvailable: false,
     });
-    expect(info.productName).toBe('OpenKnowledge');
+    expect(info.productName).toBe('Palimpsest');
     expect(info.updateChecks).toBe('unavailable');
   });
 });

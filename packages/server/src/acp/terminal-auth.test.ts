@@ -5,9 +5,9 @@ const PROCESS_ENV = { PATH: '/usr/bin', HOME: '/Users/me', LANG: 'en_US.UTF-8' }
 const NUL = String.fromCharCode(0);
 
 const MANAGED_NPX = {
-  cmd: '/Users/me/.ok/runtimes/cache/node/node-v24/bin/npx',
+  cmd: '/Users/me/.ps/runtimes/cache/node/node-v24/bin/npx',
   args: ['-y', '@augmentcode/auggie@1.2.3', '--acp'],
-  env: { ...PROCESS_ENV, PATH: '/Users/me/.ok/runtimes/cache/node/node-v24/bin:/usr/bin' },
+  env: { ...PROCESS_ENV, PATH: '/Users/me/.ps/runtimes/cache/node/node-v24/bin:/usr/bin' },
   kind: 'npx' as const,
 };
 
@@ -29,7 +29,7 @@ test('a managed-runtime launch puts its bin directory ahead of the terminal PATH
     executable: MANAGED_NPX.cmd,
     args: ['-y', '@augmentcode/auggie@1.2.3', '--acp'],
     env: {},
-    pathPrepend: ['/Users/me/.ok/runtimes/cache/node/node-v24/bin'],
+    pathPrepend: ['/Users/me/.ps/runtimes/cache/node/node-v24/bin'],
   });
 });
 
@@ -77,7 +77,7 @@ test('only the agent overlay survives into the launch env, never the inherited p
         ...PROCESS_ENV,
         PATH: '/opt/agent/bin:/usr/bin',
         AUGGIE_HOME: '/Users/me/.auggie',
-        npm_config_cache: '/Users/me/.ok/runtimes/cache/npm',
+        npm_config_cache: '/Users/me/.ps/runtimes/cache/npm',
         'BAD NAME': 'dropped',
         BAD_VALUE: `x${NUL}y`,
       },
@@ -88,7 +88,7 @@ test('only the agent overlay survives into the launch env, never the inherited p
   expect(base).toEqual({
     executable: 'auggie',
     args: ['--acp'],
-    env: { AUGGIE_HOME: '/Users/me/.auggie', npm_config_cache: '/Users/me/.ok/runtimes/cache/npm' },
+    env: { AUGGIE_HOME: '/Users/me/.auggie', npm_config_cache: '/Users/me/.ps/runtimes/cache/npm' },
     pathPrepend: [],
   });
 });
@@ -143,14 +143,14 @@ test('hostile env names and NUL values from the method are dropped', () => {
         'X; Start-Process calc; $y': '1',
         '--split-string': 'evil',
         'A-B': '1',
-        OK_TERMINAL_LAUNCH_ENV_0: 'reserved for the launch itself',
+        PS_TERMINAL_LAUNCH_ENV_0: 'reserved for the launch itself',
         ok_terminal_launch_env_1: 'the same slot on a case-folding shell',
-        OK_NAME: 'kept',
+        PS_NAME: 'kept',
         WITH_NUL: `a${NUL}b`,
       },
     },
   ] as never;
-  expect(terminalAuthLaunch(methods, base, 'cli')?.env).toEqual({ OK_NAME: 'kept' });
+  expect(terminalAuthLaunch(methods, base, 'cli')?.env).toEqual({ PS_NAME: 'kept' });
 });
 
 test('a terminal method without a known launch stays a description', () => {

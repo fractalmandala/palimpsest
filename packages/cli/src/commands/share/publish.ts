@@ -8,7 +8,7 @@ import {
   isFilesystemRoot,
   isHomeDir,
   withHiddenWindowsConsole,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Octokit } from '@octokit/rest';
 import { Command } from 'commander';
 import simpleGit, { type SimpleGit } from 'simple-git';
@@ -345,9 +345,9 @@ async function runSharePublish(opts: PublishOptions, tokenStore: TokenStore): Pr
       withHiddenWindowsConsole({ cwd: projectDir, stdio: 'ignore' }),
     );
   } catch {
-    process.env.GIT_AUTHOR_NAME ??= 'OpenKnowledge';
+    process.env.GIT_AUTHOR_NAME ??= 'Palimpsest';
     process.env.GIT_AUTHOR_EMAIL ??= 'noreply@inkeep.com';
-    process.env.GIT_COMMITTER_NAME ??= 'OpenKnowledge';
+    process.env.GIT_COMMITTER_NAME ??= 'Palimpsest';
     process.env.GIT_COMMITTER_EMAIL ??= 'noreply@inkeep.com';
   }
 

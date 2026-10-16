@@ -1,16 +1,16 @@
 ---
 name: record-a-decision
 description: "Records an architecture decision as a Nygard/MADR-shaped ADR under decisions/ — capturing the context that forced the choice, the options weighed, the decision itself, and its consequences in both directions, plus the supersedes chain that keeps a decision log honest. Read when asked to record an architecture decision, write an ADR, log the decision we made, document why we chose X over Y, capture this decision for the record, or supersede an old decision with a new one. Do NOT read to frame a proposal or explore an idea not yet decided (frame-a-proposal), to write a spec or implementation plan (write-a-spec), to write an incident postmortem (write-a-postmortem), or to judge whether a design is sound (review-a-design). This skill records a decision already made; it does not make one."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ok-beta` for Beta)."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ps-beta` for Beta)."
 metadata:
   pack: "software-lifecycle"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 
 # Record a decision — write an ADR under `decisions/`
 
-The platform `/open-knowledge` skill still governs every markdown operation here (grounding, linking, the rule that OK's MCP tools own in-scope markdown); this skill layers ADR craft on top.
+The platform `/palimpsest` skill still governs every markdown operation here (grounding, linking, the rule that OK's MCP tools own in-scope markdown); this skill layers ADR craft on top.
 
 An Architecture Decision Record is a small, dated, frozen document that captures **one** decision, the forces that made it necessary, and what the team now has to live with. The value compounds over years: a reader who joins in three years should understand not just what was decided but *why it was even a question*. ADRs are frozen once accepted — you never rewrite one to change your mind, you **supersede** it with a new record and leave the old one standing as history. That supersedes chain is what separates an honest decision log from a pile of stale opinions.
 

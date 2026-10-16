@@ -1,4 +1,4 @@
-import { AGENT_REGISTRY } from '@inkeep/open-knowledge-core';
+import { AGENT_REGISTRY } from '@palimpsest/core';
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './_helpers';
 

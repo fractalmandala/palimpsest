@@ -10,14 +10,14 @@ import type {
   HostSnapshot,
   LanguagePreference,
   LocalOpOkInitResponse,
-  OkBugReportCrashAckResult,
-  OkBugReportCrashDumpAvailability,
-  OkBugReportCreateResult,
-  OkBugReportDeleteResult,
-  OkBugReportListResult,
-  OkBugReportScreenshot,
-  OkBugReportSendResult,
-  OkFolderState,
+  PsBugReportCrashAckResult,
+  PsBugReportCrashDumpAvailability,
+  PsBugReportCreateResult,
+  PsBugReportDeleteResult,
+  PsBugReportListResult,
+  PsBugReportScreenshot,
+  PsBugReportSendResult,
+  PsFolderState,
   ShareTargetStatusResponse,
   SkillCostTiers,
   TerminalCli,
@@ -31,79 +31,79 @@ import type {
   WorktreeInventoryRequest,
   WorktreeInventoryResult,
   WorktreeListResult,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type {
-  OkCheckTargetExistsResult as CheckTargetExistsResult,
+  PsCheckTargetExistsResult as CheckTargetExistsResult,
   ClaudeReadiness,
   CliReadiness,
   CopyImageRequest,
   CopyImageResult,
-  OkHeadBranchInfo as HeadBranchInfo,
-  OkAssetOpenResult,
-  OkAssetUploadResult,
-  OkChromeColors,
-  OkDesktopConfig,
-  OkEditorActiveTargetSnapshot,
-  OkEditorViewMenuStateChange,
-  OkEditorViewMenuStateSnapshot,
-  OkLocalOpAuthReposResponse,
-  OkLocalOpAuthStatusResponse,
-  OkMenuDispatchCommand,
-  OkMenuDispatchRequest,
-  OkMenuDispatchResult,
-  OkMenuDispatchRole,
-  OkMenuRendererSnapshot,
-  OkNoteWindowMainAction,
-  OkNoteWindowMainActionResult,
-  OkPtyAdoptResult,
-  OkPtyCreateResult,
-  OkPtyListEntry,
-  OkServerRestartOutcome,
-  OkSharePayloadFields,
-  OkSharingSetModeResult,
-  OkSharingStatusResult,
-  OkSlidesOpenResult,
-  OkSlidesStatusResult,
-  OkStateSnapshot,
-  OkTerminalDockState,
-  OkTerminalDockStateUpdate,
-  OkTerminalDockStateWriteResult,
-  OkThemeSource,
-  OkUpdateMode,
-  OkUserConfigPatchResult,
-  OkUserConfigSnapshot,
-  OkSeedApplyOptions as SeedApplyOptions,
-  OkSeedPlanOptions as SeedPlanOptions,
+  PsHeadBranchInfo as HeadBranchInfo,
+  PsAssetOpenResult,
+  PsAssetUploadResult,
+  PsChromeColors,
+  PsDesktopConfig,
+  PsEditorActiveTargetSnapshot,
+  PsEditorViewMenuStateChange,
+  PsEditorViewMenuStateSnapshot,
+  PsLocalOpAuthReposResponse,
+  PsLocalOpAuthStatusResponse,
+  PsMenuDispatchCommand,
+  PsMenuDispatchRequest,
+  PsMenuDispatchResult,
+  PsMenuDispatchRole,
+  PsMenuRendererSnapshot,
+  PsNoteWindowMainAction,
+  PsNoteWindowMainActionResult,
+  PsPtyAdoptResult,
+  PsPtyCreateResult,
+  PsPtyListEntry,
+  PsServerRestartOutcome,
+  PsSharePayloadFields,
+  PsSharingSetModeResult,
+  PsSharingStatusResult,
+  PsSlidesOpenResult,
+  PsSlidesStatusResult,
+  PsStateSnapshot,
+  PsTerminalDockState,
+  PsTerminalDockStateUpdate,
+  PsTerminalDockStateWriteResult,
+  PsThemeSource,
+  PsUpdateMode,
+  PsUserConfigPatchResult,
+  PsUserConfigSnapshot,
+  PsSeedApplyOptions as SeedApplyOptions,
+  PsSeedPlanOptions as SeedPlanOptions,
   SlidevOpenFailureReason,
   SlidevSource,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/desktop-bridge';
 import type {
   FindEnclosingGitRootResult,
   FindEnclosingProjectRootResult,
   PackId,
   ScaffoldPlan,
-} from '@inkeep/open-knowledge-server';
-import type { OkBugReportRequest } from '../main/ipc/bug-report.ts';
+} from '@palimpsest/server';
+import type { PsBugReportRequest } from '../main/ipc/bug-report.ts';
 import type { BuildAndOpenResult } from '../main/ipc/install-skill.ts';
 import type { SeedApplyResult, SeedListPacksResult, SeedPlanResult } from '../main/ipc/seed.ts';
 import type { KeyringSmokeResult } from '../utility/keyring-smoke.ts';
 import type { EntryPoint } from './entry-point.ts';
 
-export type EditorActiveTargetSnapshot = OkEditorActiveTargetSnapshot;
-export type EditorViewMenuStateSnapshot = OkEditorViewMenuStateSnapshot;
-export type EditorViewMenuStateChange = OkEditorViewMenuStateChange;
+export type EditorActiveTargetSnapshot = PsEditorActiveTargetSnapshot;
+export type EditorViewMenuStateSnapshot = PsEditorViewMenuStateSnapshot;
+export type EditorViewMenuStateChange = PsEditorViewMenuStateChange;
 export type { SkillCostTiers };
-export type MenuDispatchRole = OkMenuDispatchRole;
-export type MenuDispatchCommand = OkMenuDispatchCommand;
-export type MenuDispatchRequest = OkMenuDispatchRequest;
-export type MenuDispatchResult = OkMenuDispatchResult;
-export type MenuRendererSnapshot = OkMenuRendererSnapshot;
+export type MenuDispatchRole = PsMenuDispatchRole;
+export type MenuDispatchCommand = PsMenuDispatchCommand;
+export type MenuDispatchRequest = PsMenuDispatchRequest;
+export type MenuDispatchResult = PsMenuDispatchResult;
+export type MenuRendererSnapshot = PsMenuRendererSnapshot;
 
-export type { OkSharingSetModeResult, OkSharingStatusResult };
+export type { PsSharingSetModeResult, PsSharingStatusResult };
 
-export type OkSharingResult = OkSharingStatusResult | OkSharingSetModeResult;
+export type PsSharingResult = PsSharingStatusResult | PsSharingSetModeResult;
 
-export type { OkSlidesOpenResult, OkSlidesStatusResult, SlidevOpenFailureReason, SlidevSource };
+export type { PsSlidesOpenResult, PsSlidesStatusResult, SlidevOpenFailureReason, SlidevSource };
 
 export interface RecentProject {
   path: string;
@@ -132,7 +132,7 @@ interface ProjectOpenRequest {
   };
   pendingBranch?: string | null;
   pendingShareBranchSwitch?: {
-    share: OkSharePayloadFields;
+    share: PsSharePayloadFields;
     projectPath: string;
     currentBranch: string | null;
   };
@@ -373,22 +373,22 @@ interface DialogOpenFolderOpts {
   readonly defaultPath?: string;
 }
 
-export type OkUpdateDispatchRequest =
+export type PsUpdateDispatchRequest =
   | { readonly kind: 'relaunch-now' }
   | { readonly kind: 'check-now' }
   | { readonly kind: 'whats-new-dismiss'; readonly version: string }
   | { readonly kind: 'downloaded-dismiss'; readonly version: string }
-  | { readonly kind: 'set-mode'; readonly mode: OkUpdateMode };
+  | { readonly kind: 'set-mode'; readonly mode: PsUpdateMode };
 
-export type OkUpdateSetModeFailure = 'unrecognized-mode' | 'persist-failed';
+export type PsUpdateSetModeFailure = 'unrecognized-mode' | 'persist-failed';
 
-export type OkUpdateDispatchResult =
+export type PsUpdateDispatchResult =
   | { readonly kind: 'relaunch-now' }
   | { readonly kind: 'check-now' }
   | { readonly kind: 'whats-new-dismiss' }
   | { readonly kind: 'downloaded-dismiss' }
-  | { readonly kind: 'set-mode'; readonly ok: true; readonly mode: OkUpdateMode }
-  | { readonly kind: 'set-mode'; readonly ok: false; readonly reason: OkUpdateSetModeFailure }
+  | { readonly kind: 'set-mode'; readonly ok: true; readonly mode: PsUpdateMode }
+  | { readonly kind: 'set-mode'; readonly ok: false; readonly reason: PsUpdateSetModeFailure }
   | { readonly kind: 'unknown'; readonly ok: false; readonly reason: 'unrecognized-kind' };
 
 export type UserConfigDispatchRequest =
@@ -415,7 +415,7 @@ export interface RequestChannels {
   'ok:shell:record-handoff': { args: [line: HandoffStatsLine]; result: undefined };
   'ok:shell:open-asset': {
     args: [relPath: string];
-    result: OkAssetOpenResult;
+    result: PsAssetOpenResult;
   };
   'ok:shell:reveal-asset': {
     args: [relPath: string];
@@ -449,27 +449,27 @@ export interface RequestChannels {
   };
   'ok:clipboard:write-text': { args: [text: string]; result: undefined };
   'ok:clipboard:copy-image': { args: [request: CopyImageRequest]; result: CopyImageResult };
-  'ok:project:get-info': { args: []; result: OkDesktopConfig };
+  'ok:project:get-info': { args: []; result: PsDesktopConfig };
 
   'ok:sharing:dispatch': {
     args: [request: { kind: 'status' } | { kind: 'set-mode'; mode: 'shared' | 'local-only' }];
-    result: OkSharingResult;
+    result: PsSharingResult;
   };
   'ok:slides:dispatch': {
     args: [request: { kind: 'status' } | { kind: 'open'; docPath: string }];
-    result: OkSlidesStatusResult | OkSlidesOpenResult;
+    result: PsSlidesStatusResult | PsSlidesOpenResult;
   };
   'ok:bug-report:dispatch': {
-    args: [request: OkBugReportRequest];
+    args: [request: PsBugReportRequest];
     result:
-      | OkBugReportCreateResult
-      | OkBugReportSendResult
-      | OkBugReportCrashAckResult
-      | OkBugReportCrashDumpAvailability
-      | OkBugReportScreenshot
-      | OkBugReportListResult
-      | OkBugReportDeleteResult
-      | OkAssetUploadResult
+      | PsBugReportCreateResult
+      | PsBugReportSendResult
+      | PsBugReportCrashAckResult
+      | PsBugReportCrashDumpAvailability
+      | PsBugReportScreenshot
+      | PsBugReportListResult
+      | PsBugReportDeleteResult
+      | PsAssetUploadResult
       | null;
   };
   'ok:project:list-recent': { args: []; result: RecentProject[] };
@@ -502,7 +502,7 @@ export interface RequestChannels {
     args: [request: { projectPath: string; branch: string; timeoutMs: number }];
     result: { ok: true } | { ok: false; reason: 'timeout' | 'project-not-open' };
   };
-  'ok:project:ok-init': {
+  'ok:project:ps-init': {
     args: [request: { projectPath: string }];
     result: LocalOpOkInitResponse;
   };
@@ -522,7 +522,7 @@ export interface RequestChannels {
       | WorktreeCreateResult;
   };
   'ok:project:close': { args: []; result: undefined };
-  'ok:project:restart-server': { args: [projectPath: string]; result: OkServerRestartOutcome };
+  'ok:project:restart-server': { args: [projectPath: string]; result: PsServerRestartOutcome };
   'ok:share:validate-folder': {
     args: [request: ShareValidateFolderRequest];
     result: ShareValidateFolderResult;
@@ -543,7 +543,7 @@ export interface RequestChannels {
   'ok:fs:default-projects-root': { args: []; result: string };
   'ok:fs:folder-state': {
     args: [path: string];
-    result: OkFolderState;
+    result: PsFolderState;
   };
   'ok:fs:find-enclosing-project-root': {
     args: [path: string];
@@ -566,26 +566,26 @@ export interface RequestChannels {
     args: [
       request:
         | { kind: 'open'; docName: string; entryPoint: 'tab-menu' | 'palette' }
-        | { kind: 'dispatch-to-main'; action: OkNoteWindowMainAction },
+        | { kind: 'dispatch-to-main'; action: PsNoteWindowMainAction },
     ];
     result:
       | { ok: true; outcome: 'created' | 'focused' }
       | { ok: false; reason: 'no-project' | 'invalid-request' }
-      | OkNoteWindowMainActionResult;
+      | PsNoteWindowMainActionResult;
   };
   'ok:update:dispatch': {
-    args: [request: OkUpdateDispatchRequest];
-    result: OkUpdateDispatchResult;
+    args: [request: PsUpdateDispatchRequest];
+    result: PsUpdateDispatchResult;
   };
-  'ok:state:query': { args: []; result: Required<OkStateSnapshot> };
+  'ok:state:query': { args: []; result: Required<PsStateSnapshot> };
   'ok:state:reset-incompatible': { args: []; result: undefined };
-  'ok:theme:set-source': { args: [params: { source: OkThemeSource }]; result: { ok: true } };
+  'ok:theme:set-source': { args: [params: { source: PsThemeSource }]; result: { ok: true } };
   'ok:user-config:dispatch': {
     args: [request: UserConfigDispatchRequest];
-    result: { ok: true } | OkUserConfigSnapshot | OkUserConfigPatchResult;
+    result: { ok: true } | PsUserConfigSnapshot | PsUserConfigPatchResult;
   };
   'ok:theme:applied': {
-    args: [opts?: { reducedTransparency?: boolean; chrome?: OkChromeColors }];
+    args: [opts?: { reducedTransparency?: boolean; chrome?: PsChromeColors }];
     result: undefined;
   };
   'ok:startup:renderer-marks': {
@@ -657,11 +657,11 @@ export interface RequestChannels {
 
   'ok:local-op:auth:status': {
     args: [request?: { host?: string }];
-    result: OkLocalOpAuthStatusResponse;
+    result: PsLocalOpAuthStatusResponse;
   };
   'ok:local-op:auth:repos': {
     args: [request?: { host?: string }];
-    result: OkLocalOpAuthReposResponse;
+    result: PsLocalOpAuthReposResponse;
   };
 
   'ok:editor:active-target-changed': {
@@ -695,7 +695,7 @@ export interface RequestChannels {
         launchCli?: TerminalCli;
       },
     ];
-    result: OkPtyCreateResult;
+    result: PsPtyCreateResult;
   };
   'ok:pty:input': {
     args: [req: { ptyId: string; data: string }];
@@ -715,11 +715,11 @@ export interface RequestChannels {
   };
   'ok:pty:list': {
     args: [];
-    result: OkPtyListEntry[];
+    result: PsPtyListEntry[];
   };
   'ok:pty:adopt': {
     args: [req: { ptyId: string; start?: boolean }];
-    result: OkPtyAdoptResult;
+    result: PsPtyAdoptResult;
   };
   'ok:pty:set-meta': {
     args: [req: { ptyId: string; customLabel?: string | null; ordinal?: number }];
@@ -743,10 +743,10 @@ export interface RequestChannels {
   };
   'ok:terminal:dock-state': {
     args: [];
-    result: OkTerminalDockState;
+    result: PsTerminalDockState;
   };
   'ok:terminal:set-dock-state': {
-    args: [req: OkTerminalDockStateUpdate];
-    result: OkTerminalDockStateWriteResult;
+    args: [req: PsTerminalDockStateUpdate];
+    result: PsTerminalDockStateWriteResult;
   };
 }

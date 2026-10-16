@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { ForwardLinksSuccessSchema } from '@inkeep/open-knowledge-core';
+import { ForwardLinksSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { bootCompositionRig } from './composition-rig.test-helper.ts';
@@ -30,7 +30,7 @@ let tmpRoot: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-fwdlinks-localtargets-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-fwdlinks-localtargets-'));
   const dir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(resolve(dir, 'notes.md'), NOTES, 'utf-8');
   writeFileSync(resolve(dir, 'peer.md'), '# Peer\n\nBody.\n', 'utf-8');

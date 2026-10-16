@@ -5,13 +5,13 @@ export function wrapperPathInBundle(
   platform: 'darwin' | 'win32' | 'linux' | string = process.platform,
 ): string {
   if (platform === 'win32') {
-    return win32.join(win32.dirname(executablePath), 'resources', 'cli', 'bin', 'ok.cmd');
+    return win32.join(win32.dirname(executablePath), 'resources', 'cli', 'bin', 'ps.cmd');
   }
   if (platform === 'linux') {
-    return join(dirname(executablePath), 'resources', 'cli', 'bin', 'ok.sh');
+    return join(dirname(executablePath), 'resources', 'cli', 'bin', 'ps.sh');
   }
   const bundleRoot = executablePath.replace(/\/Contents\/MacOS\/.*$/, '');
-  return join(bundleRoot, 'Contents', 'Resources', 'cli', 'bin', 'ok.sh');
+  return join(bundleRoot, 'Contents', 'Resources', 'cli', 'bin', 'ps.sh');
 }
 
 export function appBundleRootFromExecutable(

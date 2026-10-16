@@ -1,12 +1,12 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { OkBlob } from '@/components/OkBlob';
+import { PsBlob } from '@/components/PsBlob';
 import { useDocumentContext, useOpenBlobRunner } from '@/editor/DocumentContext';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
 
 const GRACE_PERIOD_MS = 500;
 
@@ -35,7 +35,7 @@ export function describeError(err: CollabError): string {
   if (err === null) return t`no response`;
   if (err.kind === 'null-collab') return t`the server responded but server.lock has no port yet`;
   if (err.code === 'network') {
-    const cliCommand = okCliCommandName();
+    const cliCommand = psCliCommandName();
     return t`network error (is \`${cliCommand} start\` running?)`;
   }
   if (err.code === 'invalid-body') return t`/api/config returned a malformed body`;
@@ -64,7 +64,7 @@ export function ConnectingBanner() {
   if (mode === 'terminal') {
     const isNoCollabServer = isNoCollabServerError(collabLastError);
     const errorDetail = describeError(collabLastError);
-    const cliCommand = okCliCommandName();
+    const cliCommand = psCliCommandName();
     return (
       <div
         role="alert"
@@ -102,7 +102,7 @@ export function ConnectingBanner() {
             title={t`Play Blob Run`}
             className="ml-1 flex items-center rounded bg-red-100/60 px-1.5 py-1 transition-colors hover:bg-red-100/90"
           >
-            <OkBlob size={22} trackMouse={false} variant="sleeping" />
+            <PsBlob size={22} trackMouse={false} variant="sleeping" />
           </button>
         ) : null}
       </div>

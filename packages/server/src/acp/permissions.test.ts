@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { PermissionOption, ToolCallUpdate } from '@agentclientprotocol/sdk';
-import type { ThreadChatGrant } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadChatGrant } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { createTestLogger, getLogger } from '../logger.ts';
 import { type BrowserCallIdentity, NOT_A_BROWSER_CALL } from './browser-mcp.ts';
@@ -82,7 +82,7 @@ describe('AcpPermissionStore', () => {
     expect(rehydrated.hasAllowAlways('gemini', 'edit')).toBe(true);
   });
 
-  test('auto-allows calls to the OpenKnowledge MCP server, whatever the harness names them', () => {
+  test('auto-allows calls to the Palimpsest MCP server, whatever the harness names them', () => {
     const store = new AcpPermissionStore(tmp(), log);
     const claude = {
       toolCallId: 'tc1',
@@ -91,9 +91,9 @@ describe('AcpPermissionStore', () => {
     } as ToolCallUpdate;
     const codex = {
       toolCallId: 'tc2',
-      title: 'mcp.open-knowledge.exec',
+      title: 'mcp.palimpsest.exec',
       kind: 'execute',
-      rawInput: { server: 'open-knowledge', tool: 'exec', arguments: { command: 'ls' } },
+      rawInput: { server: 'palimpsest', tool: 'exec', arguments: { command: 'ls' } },
     } as ToolCallUpdate;
     const pi = { toolCallId: 'tc3', title: 'ok_search', kind: 'search' } as ToolCallUpdate;
     for (const call of [claude, codex, pi]) {
@@ -154,9 +154,9 @@ describe('AcpPermissionStore', () => {
     if (always === undefined) throw new Error('fixture');
     for (const prefix of [
       'mcp__open-knowledge__',
-      'mcp__open-knowledge-beta__',
+      'mcp__palimpsest-beta__',
       'ok_',
-      'ok-beta_',
+      'ps-beta_',
     ]) {
       const store = new AcpPermissionStore(tmp(), log);
       await store.recordChoice('claude', toolCall('other'), always, NOT_A_BROWSER_CALL);
@@ -189,13 +189,13 @@ describe('AcpPermissionStore', () => {
           'execute',
           'other',
           'read',
-          'mcp:ok-browser/browser_navigate',
-          'mcp:ok-browser/browser_snapshot',
+          'mcp:ps-browser/browser_navigate',
+          'mcp:ps-browser/browser_snapshot',
         ].map((toolKind) => ({ agentId: 'claude', toolKind })),
       }),
     );
     const store = new AcpPermissionStore(dir, log);
-    expect(store.hasAllowAlways('claude', 'mcp:ok-browser/browser_snapshot')).toBe(true);
+    expect(store.hasAllowAlways('claude', 'mcp:ps-browser/browser_snapshot')).toBe(true);
     const identities: BrowserCallIdentity[] = [
       browser('browser_run_code_unsafe'),
       browser('browser_navigate'),
@@ -230,8 +230,8 @@ describe('AcpPermissionStore', () => {
     for (const kind of [
       'execute',
       'other',
-      'mcp:ok-browser/browser_snapshot',
-      'mcp:ok-browser/browser_navigate',
+      'mcp:ps-browser/browser_snapshot',
+      'mcp:ps-browser/browser_navigate',
     ]) {
       expect(store.hasAllowAlways('claude', kind)).toBe(false);
     }
@@ -296,19 +296,19 @@ describe('AcpPermissionStore', () => {
     const home = tmp();
     const projectDir = tmp();
     expect(readAutoApproveOkTools(projectDir, home)).toBe(true);
-    mkdirSync(join(home, '.ok'), { recursive: true });
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  autoApproveOkTools: false\n');
+    mkdirSync(join(home, '.ps'), { recursive: true });
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApproveOkTools: false\n');
     expect(readAutoApproveOkTools(projectDir, home)).toBe(false);
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  autoApproveOkTools: true\n');
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApproveOkTools: true\n');
     expect(readAutoApproveOkTools(projectDir, home)).toBe(true);
-    writeFileSync(join(home, '.ok', 'global.yml'), 'telemetry: {}\n');
+    writeFileSync(join(home, '.ps', 'global.yml'), 'telemetry: {}\n');
     expect(readAutoApproveOkTools(projectDir, home)).toBe(true);
   });
 
   test('a user config that cannot be read is logged once, not on every read', () => {
     const home = tmp();
-    mkdirSync(join(home, '.ok'), { recursive: true });
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents: [unclosed\n');
+    mkdirSync(join(home, '.ps'), { recursive: true });
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents: [unclosed\n');
     const configLog = createTestLogger();
     const warn = vi.spyOn(configLog, 'warn');
     expect(readAutoApproveOkTools(tmp(), home, configLog)).toBe(true);
@@ -321,10 +321,10 @@ describe('AcpPermissionStore', () => {
     const home = tmp();
     const projectDir = tmp();
     expect(readAgentBrowserTools(projectDir, home)).toBe(false);
-    mkdirSync(join(home, '.ok'), { recursive: true });
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  browserTools: true\n');
+    mkdirSync(join(home, '.ps'), { recursive: true });
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  browserTools: true\n');
     expect(readAgentBrowserTools(projectDir, home)).toBe(true);
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  browserTools: false\n');
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  browserTools: false\n');
     expect(readAgentBrowserTools(projectDir, home)).toBe(false);
   });
 

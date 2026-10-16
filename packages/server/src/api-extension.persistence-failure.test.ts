@@ -2,8 +2,8 @@ import type { ServerResponse } from 'node:http';
 import { describe, expect, test } from 'vitest';
 import { respondPersistenceFailure } from './api-extension.ts';
 import {
-  OK_STORE_DISCARDED,
-  OK_STORE_REFUSED,
+  PS_STORE_DISCARDED,
+  PS_STORE_REFUSED,
   type StoreFailure,
 } from './document-durability-state.ts';
 
@@ -30,10 +30,10 @@ function makeMockRes() {
 }
 
 describe('respondPersistenceFailure — store-refused', () => {
-  test('an OK_STORE_REFUSED failure renders a 503 with the store-refused URN and retry guidance', () => {
+  test('an PS_STORE_REFUSED failure renders a 503 with the store-refused URN and retry guidance', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const failure: StoreFailure = {
-      code: OK_STORE_REFUSED,
+      code: PS_STORE_REFUSED,
       message: 'duplication tripwire baseline unavailable for notes; store refused (fail-closed)',
     };
 
@@ -66,10 +66,10 @@ describe('respondPersistenceFailure — store-refused', () => {
 });
 
 describe('respondPersistenceFailure: store discarded by a branch switch', () => {
-  test('an OK_STORE_DISCARDED failure renders a 409 telling the agent the edit was not saved', () => {
+  test('an PS_STORE_DISCARDED failure renders a 409 telling the agent the edit was not saved', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const failure: StoreFailure = {
-      code: OK_STORE_DISCARDED,
+      code: PS_STORE_DISCARDED,
       message: 'A Git branch switch discarded the pending save of notes',
     };
 

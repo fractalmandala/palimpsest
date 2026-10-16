@@ -20,10 +20,10 @@ import {
 const AGENTS_PANEL_MOUNT = '[data-agents-panel-mount]';
 const SESSIONS_HOST_SOURCE = 'src/components/SessionsHost.tsx';
 const CONFIG_RESPONSE_GLOB = '**/api/config';
-const AGENTS_ORDER_STORAGE_KEY = 'ok-agent-session-order-v1';
+const AGENTS_ORDER_STORAGE_KEY = 'ps-agent-session-order-v1';
 const SEED_AGENT_ID = 'panel-level-fixture-agent';
 const SEED_AGENT_NAME = 'Panel Level Fixture';
-const REGISTERED_AGENTS_KEY = 'ok-acp-registered-agents-v1';
+const REGISTERED_AGENTS_KEY = 'ps-acp-registered-agents-v1';
 const BOOT_TIMEOUT_MS = 30_000;
 const ROSTER_TIMEOUT_MS = 30_000;
 const AGENTS_HEADER_BUTTON = 'header-pane-button-agents';
@@ -206,7 +206,7 @@ async function purgeLiveThreads(port: number): Promise<void> {
 }
 
 function writeSeedAgentFile(contentDir: string): void {
-  const agentsFile = join(contentDir, '.ok', 'local', 'acp-agents.json');
+  const agentsFile = join(contentDir, '.ps', 'local', 'acp-agents.json');
   mkdirSync(dirname(agentsFile), { recursive: true });
   writeFileSync(
     agentsFile,
@@ -969,7 +969,7 @@ test.describe('chat history navigation', () => {
     page,
   }) => {
     await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
-    await page.addInitScript(() => window.localStorage.setItem('ok-theme-v1', 'dark'));
+    await page.addInitScript(() => window.localStorage.setItem('ps-theme-v1', 'dark'));
     await stubAgentCatalog(page);
 
     const roster = nextRosterDelivery(page);

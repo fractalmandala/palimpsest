@@ -48,8 +48,8 @@ import {
   lintDocument,
   MANAGED_ARTIFACT_PREFIX_SKILL,
   mediaKindForSidebarAssetExtension,
-  OK_DIR,
-  OPENKNOWLEDGE_SKILLS_REPO,
+  PS_DIR,
+  PALIMPSEST_SKILLS_REPO,
   type Principal,
   type ProblemType,
   parseFrontmatterRecord,
@@ -63,13 +63,13 @@ import {
   scanHeadingLine,
   stripFrontmatter,
   type ValidationDiagnostic,
-} from '@inkeep/open-knowledge-core';
-import { formatRenameSubject } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { formatRenameSubject } from '@palimpsest/core/shadow-repo-layout';
 import {
   parseSkillDir,
   pluginRepositoryUrl,
   type SkillsLock,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import {
   type AcpHarnessAvailability,
   createAcpHarnessAvailabilityProbe,
@@ -226,10 +226,10 @@ import {
 import {
   assertNeverDeferredStoreWait,
   type DocumentDurabilityState,
-  OK_DOC_REMOVED,
-  OK_PATH_UNRESOLVABLE,
-  OK_STORE_DISCARDED,
-  OK_STORE_REFUSED,
+  PS_DOC_REMOVED,
+  PS_PATH_UNRESOLVABLE,
+  PS_STORE_DISCARDED,
+  PS_STORE_REFUSED,
   type StoreFailure,
 } from './document-durability-state.ts';
 import {
@@ -539,7 +539,7 @@ function synthesizeShowAllAssetExt(name: string): string {
 
 export const DEFAULT_SHOWALL_MAX_ENTRIES = 50_000;
 export function getShowAllMaxEntries(): number {
-  const raw = process.env.OK_SHOWALL_MAX_ENTRIES;
+  const raw = process.env.PS_SHOWALL_MAX_ENTRIES;
   if (raw === undefined) return DEFAULT_SHOWALL_MAX_ENTRIES;
   const parsed = Number(raw);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : DEFAULT_SHOWALL_MAX_ENTRIES;
@@ -547,7 +547,7 @@ export function getShowAllMaxEntries(): number {
 
 export const DEFAULT_SEARCH_MAX_ENTRIES = 50_000;
 export function getSearchMaxEntries(): number {
-  const raw = process.env.OK_SEARCH_MAX_ENTRIES;
+  const raw = process.env.PS_SEARCH_MAX_ENTRIES;
   if (raw === undefined) return DEFAULT_SEARCH_MAX_ENTRIES;
   const parsed = Number(raw);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : DEFAULT_SEARCH_MAX_ENTRIES;
@@ -1184,7 +1184,7 @@ function isCaseOnlySelfCollision(sourcePath: string, destinationPath: string): b
 function createCaseOnlyRenameTempPath(sourcePath: string): string {
   const parent = dirname(sourcePath);
   for (let attempt = 0; attempt < 10; attempt += 1) {
-    const candidate = resolve(parent, `.ok-case-rename-${randomUUID()}`);
+    const candidate = resolve(parent, `.ps-case-rename-${randomUUID()}`);
     if (!existsSync(candidate)) return candidate;
   }
   throw new Error('Unable to allocate temporary path for case-only rename');
@@ -1423,7 +1423,7 @@ function removedDocProblem(failure: StoreFailure) {
         type: 'urn:ok:error:doc-removed' as const,
         title:
           'Edit applied in memory; disk write refused because the file now at this path is not loaded into the document.',
-        detail: `${failure.message}. Retrying will not help until the server reloads this document from disk, for example after Open Knowledge restarts; tell the user instead of retrying.`,
+        detail: `${failure.message}. Retrying will not help until the server reloads this document from disk, for example after Palimpsest restarts; tell the user instead of retrying.`,
       } satisfies BatchEntryError;
     case 'renamed':
       return {
@@ -1472,22 +1472,22 @@ export function respondPersistenceFailure(
   failure: StoreFailure,
   handler: string,
 ): void {
-  if (failure.code === OK_STORE_REFUSED) {
+  if (failure.code === PS_STORE_REFUSED) {
     const { type, title, detail } = refusedStoreProblem(failure);
     errorResponse(res, 503, type, title, { handler, detail });
     return;
   }
-  if (failure.code === OK_DOC_REMOVED) {
+  if (failure.code === PS_DOC_REMOVED) {
     const { type, title, detail } = removedDocProblem(failure);
     errorResponse(res, 409, type, title, { handler, detail });
     return;
   }
-  if (failure.code === OK_STORE_DISCARDED) {
+  if (failure.code === PS_STORE_DISCARDED) {
     const { type, title, detail } = discardedStoreProblem(failure);
     errorResponse(res, 409, type, title, { handler, detail });
     return;
   }
-  if (failure.code === OK_PATH_UNRESOLVABLE) {
+  if (failure.code === PS_PATH_UNRESOLVABLE) {
     const { type, title, detail } = pathFaultProblem(failure);
     errorResponse(res, 400, type, title, { handler, detail });
     return;
@@ -1738,7 +1738,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
   }
 
   const commentService = new CommentService({
-    store: new CommentThreadStore(resolve(contentDir, OK_DIR, LOCAL_DIR), log),
+    store: new CommentThreadStore(resolve(contentDir, PS_DIR, LOCAL_DIR), log),
     index: new CommentIndex(),
     getDocBody: (docName) => {
       try {
@@ -1937,7 +1937,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
         return {
           kind: 'failure',
           failure: {
-            code: OK_STORE_DISCARDED,
+            code: PS_STORE_DISCARDED,
             message: `A Git branch switch discarded the pending save of ${docName}`,
           },
         };
@@ -1989,7 +1989,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       type: 'urn:ok:error:stale-external-write' as const,
       title: 'Edit retained; disk write blocked by a stale external-write conflict.',
       detail:
-        'An older version was restored on disk. Your edit was applied and is retained in memory and in the recovery snapshot, but its Markdown disk write was skipped. Do not repeat this edit: ask the user to resolve the conflict in the OpenKnowledge app, then re-read the document before making further changes.',
+        'An older version was restored on disk. Your edit was applied and is retained in memory and in the recovery snapshot, but its Markdown disk write was skipped. Do not repeat this edit: ask the user to resolve the conflict in the Palimpsest app, then re-read the document before making further changes.',
       file:
         durabilityState.getStaleExternalWrite(docName)?.file ??
         relative(projectDir ?? contentDir, safeContentPath(docName, contentDir)).replaceAll(
@@ -2077,8 +2077,8 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       for (const scope of ['project', 'global'] as const) {
         const skillsRoot =
           scope === 'global'
-            ? resolve(skillsHome, OK_DIR, SKILLS_STORE_DIRNAME)
-            : resolve(contentDir, OK_DIR, SKILLS_STORE_DIRNAME);
+            ? resolve(skillsHome, PS_DIR, SKILLS_STORE_DIRNAME)
+            : resolve(contentDir, PS_DIR, SKILLS_STORE_DIRNAME);
         for (const skill of resolveSkillsList(skillsRoot, scope).skills) {
           admitted.add(`${MANAGED_ARTIFACT_PREFIX_SKILL}${scope}/${skill.name}`);
         }
@@ -2680,7 +2680,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
             isReservedProjectStatePath(fromPath) ||
             isReservedProjectStatePath(destinationAssetPath)
           ) {
-            throw new ManagedRenameReservedPathError('.ok and .git are reserved directories.');
+            throw new ManagedRenameReservedPathError('.ps and .git are reserved directories.');
           }
           if (contentFilter?.isPathIgnored(destinationAssetPath)) {
             throw new ManagedRenameInvalidRequestError(
@@ -2774,7 +2774,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
             throw new ManagedRenameReservedPathError('Reserved document names cannot be renamed.');
           }
           if (isReservedProjectStatePath(fromPath) || isReservedProjectStatePath(toPath)) {
-            throw new ManagedRenameReservedPathError('.ok and .git are reserved directories.');
+            throw new ManagedRenameReservedPathError('.ps and .git are reserved directories.');
           }
           if (contentFilter?.isPathIgnored(toPath)) {
             throw new ManagedRenameInvalidRequestError(
@@ -3230,9 +3230,9 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
 
             if (
               process.env.NODE_ENV === 'test' &&
-              process.env.OK_TEST_RENAME_FAULT === 'pre-append'
+              process.env.PS_TEST_RENAME_FAULT === 'pre-append'
             ) {
-              throw new Error('OK_TEST_RENAME_FAULT=pre-append');
+              throw new Error('PS_TEST_RENAME_FAULT=pre-append');
             }
 
             if (shadowRef?.current) {
@@ -3362,9 +3362,9 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
 
             if (
               process.env.NODE_ENV === 'test' &&
-              process.env.OK_TEST_RENAME_FAULT === 'pre-journal-clear'
+              process.env.PS_TEST_RENAME_FAULT === 'pre-journal-clear'
             ) {
-              throw new Error('OK_TEST_RENAME_FAULT=pre-journal-clear');
+              throw new Error('PS_TEST_RENAME_FAULT=pre-journal-clear');
             }
           });
 
@@ -3535,7 +3535,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     }
   }
 
-  function okArtifactKey(
+  function psArtifactKey(
     kind: 'template' | 'folder-frontmatter' | 'folder' | 'skill',
     folder: string,
     name?: string,
@@ -3586,17 +3586,17 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     invalidateSkillCatalog();
     signalChannel?.('files');
   }
-  type OkArtifactFlush = 'flushed' | 'unavailable' | 'failed';
-  let okArtifactFlushChain: Promise<void> = Promise.resolve();
+  type PsArtifactFlush = 'flushed' | 'unavailable' | 'failed';
+  let psArtifactFlushChain: Promise<void> = Promise.resolve();
   function scheduleOkArtifactFlush(context: string): void {
     bumpSkillsCatalogGen();
-    okArtifactFlushChain = okArtifactFlushChain
+    psArtifactFlushChain = psArtifactFlushChain
       .then(async () => {
         await commitOkArtifactWrite(context);
       })
       .catch(() => {});
   }
-  async function commitOkArtifactWrite(context: string): Promise<OkArtifactFlush> {
+  async function commitOkArtifactWrite(context: string): Promise<PsArtifactFlush> {
     if (!flushContributors) return 'unavailable';
     try {
       await flushContributors();
@@ -4031,13 +4031,13 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
               if (flushErrors.has(p.docName)) continue;
               const flushOutcome = await flushDiskAndDetectOutcome(p.docName);
               if (flushOutcome?.kind === 'failure') {
-                if (flushOutcome.failure.code === OK_DOC_REMOVED) {
+                if (flushOutcome.failure.code === PS_DOC_REMOVED) {
                   flushErrors.set(p.docName, removedDocProblem(flushOutcome.failure));
-                } else if (flushOutcome.failure.code === OK_PATH_UNRESOLVABLE) {
+                } else if (flushOutcome.failure.code === PS_PATH_UNRESOLVABLE) {
                   flushErrors.set(p.docName, pathFaultProblem(flushOutcome.failure));
-                } else if (flushOutcome.failure.code === OK_STORE_REFUSED) {
+                } else if (flushOutcome.failure.code === PS_STORE_REFUSED) {
                   flushErrors.set(p.docName, refusedStoreProblem(flushOutcome.failure));
-                } else if (flushOutcome.failure.code === OK_STORE_DISCARDED) {
+                } else if (flushOutcome.failure.code === PS_STORE_DISCARDED) {
                   flushErrors.set(p.docName, discardedStoreProblem(flushOutcome.failure));
                 } else {
                   const reason = classifyUploadErrno({
@@ -4200,7 +4200,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ok' | 'ok-and-templates',
+    components: 'ok' | 'ps-and-templates',
   ): { folderRel: string; resolvedContentDir: string } | null {
     const folderRel = raw.replace(/^\.\//, '').replace(/^\/+/, '').replace(/\/+$/, '');
     if (folderRel.split('/').some((seg) => seg === '..') || raw.startsWith('/')) {
@@ -4226,21 +4226,21 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       return null;
     }
     /* STOP: the escape asserts below admit an IN-ROOT symlinked
-       `<folder>/.ok` OR `<folder>/.ok/templates` (their realpaths stay
+       `<folder>/.ps` OR `<folder>/.ps/templates` (their realpaths stay
        inside the content root), which would alias every folder-config and
        template arm — including the WRITE arms (`applyTemplateWrite`'s
        rename lands wherever `templates` points; `applyTemplateDelete`
        unlinks through it) — into another directory. Refuse by identity —
-       same posture as `initContent`'s `assertNotSymlink` on the root `.ok/`
+       same posture as `initContent`'s `assertNotSymlink` on the root `.ps/`
        and the templates resolver's gates. The `templates` component is
-       checked only for the template arms (`components: 'ok-and-templates'`).
-       The folder-config arms DO reach `.ok/templates` — through
+       checked only for the template arms (`components: 'ps-and-templates'`).
+       The folder-config arms DO reach `.ps/templates` — through
        `collectFromFolder` (content/templates-resolver.ts), which gates it by
        identity and degrades, skipping a symlinked templates dir (and
        reporting it via `onRefused`) rather than failing the folder payload.
        Do not hard-fail here for those arms or the per-field degrade contract
        breaks; do not delete the resolver-side gate, which is what makes the
-       degrade safe. The same unconditional `.ok` identity check also gates
+       degrade safe. The same unconditional `.ps` identity check also gates
        the folder-history arm (http/history-routes.ts) for a uniform
        refuse-by-identity posture, even though that arm only uses the path as
        a `git log` pathspec and the aliasing risk above does not apply there.
@@ -4249,32 +4249,32 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
        (`unverifiable`) is left to the `assertNoSymlinkEscape` asserts below,
        which classify it (ELOOP → path-escape, other errnos → 500) rather
        than mislabel a non-symlink path as a symlink. */
-    const okDir = resolve(candidateAbs, '.ok');
-    if (checkSymlinkLeaf(okDir).kind === 'symlink') {
+    const psDir = resolve(candidateAbs, '.ps');
+    if (checkSymlinkLeaf(psDir).kind === 'symlink') {
       errorResponse(
         res,
         400,
         'urn:ok:error:symlink-refused',
-        `${folderRel || '.'}/.ok is a symlink — refusing to operate through it. Replace the symlink with a real file or directory and retry.`,
+        `${folderRel || '.'}/.ps is a symlink — refusing to operate through it. Replace the symlink with a real file or directory and retry.`,
         { handler, detail: folderRel || '.' },
       );
       return null;
     }
-    const okTemplatesDir = resolve(candidateAbs, '.ok', 'templates');
-    if (components === 'ok-and-templates' && checkSymlinkLeaf(okTemplatesDir).kind === 'symlink') {
+    const psTemplatesDir = resolve(candidateAbs, '.ps', 'templates');
+    if (components === 'ps-and-templates' && checkSymlinkLeaf(psTemplatesDir).kind === 'symlink') {
       errorResponse(
         res,
         400,
         'urn:ok:error:symlink-refused',
-        `${folderRel || '.'}/.ok/templates is a symlink — refusing to operate through it. Replace the symlink with a real file or directory and retry.`,
+        `${folderRel || '.'}/.ps/templates is a symlink — refusing to operate through it. Replace the symlink with a real file or directory and retry.`,
         { handler, detail: folderRel || '.' },
       );
       return null;
     }
     try {
-      assertNoSymlinkEscape(okDir, resolvedContentDir);
-      if (components === 'ok-and-templates') {
-        assertNoSymlinkEscape(okTemplatesDir, resolvedContentDir);
+      assertNoSymlinkEscape(psDir, resolvedContentDir);
+      if (components === 'ps-and-templates') {
+        assertNoSymlinkEscape(psTemplatesDir, resolvedContentDir);
       }
     } catch (err) {
       if (isContainmentRejection(err)) {
@@ -4365,8 +4365,8 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
 
   function resolveSkillsRoot(scope: 'project' | 'global'): string {
     return scope === 'global'
-      ? resolve(skillsHome, OK_DIR, SKILLS_STORE_DIRNAME)
-      : resolve(contentDir, OK_DIR, SKILLS_STORE_DIRNAME);
+      ? resolve(skillsHome, PS_DIR, SKILLS_STORE_DIRNAME)
+      : resolve(contentDir, PS_DIR, SKILLS_STORE_DIRNAME);
   }
 
   function resolveSkillDirForRead(
@@ -4494,7 +4494,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       importedAt = new Date(0).toISOString();
     }
     return {
-      source: OPENKNOWLEDGE_SKILLS_REPO,
+      source: PALIMPSEST_SKILLS_REPO,
       skill: name,
       contentHash,
       autoUpdate: false,
@@ -4616,7 +4616,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       res,
       400,
       'urn:ok:error:reserved-doc-name',
-      `"${name}" is one of OpenKnowledge's runtime skills — its content is read-only in-app (updates arrive via reimport). Duplicate it under a new name to make your own version.`,
+      `"${name}" is one of Palimpsest's runtime skills — its content is read-only in-app (updates arrive via reimport). Duplicate it under a new name to make your own version.`,
       { handler },
     );
     return true;
@@ -4760,7 +4760,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     const realDir = resolveSkillDirForRead(scope, name, host);
     const root = realDir !== null ? dirname(realDir) : resolveSkillsRoot(scope);
     const dirRel =
-      realDir !== null ? relative(base, realDir).split(sep).join('/') : `.ok/skills/${name}`;
+      realDir !== null ? relative(base, realDir).split(sep).join('/') : `.ps/skills/${name}`;
     return { root, dirRel, realDir };
   }
   function localSkillHash(skillsRoot: string, name: string): string | undefined {
@@ -4870,7 +4870,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     commitOkArtifactWrite,
     shadowHeadSha,
     artifactWriterId,
-    skillArtifactKey: (name) => okArtifactKey('skill', '', name),
+    skillArtifactKey: (name) => psArtifactKey('skill', '', name),
     captureAndCloseDocuments,
     projectImportedSkillCopy,
     signalFiles: () => signalChannel?.('files'),
@@ -5179,7 +5179,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     respondPersistenceFailure,
     respondDiskDivergence,
     attributeOkArtifactWrite,
-    okArtifactKey,
+    psArtifactKey,
     commitOkArtifactWrite,
     signalChannel,
     extractActorIdentityFromQuery,
@@ -5227,7 +5227,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     respondStaleExternalWrite,
     respondPersistenceFailure,
     respondDiskDivergence,
-    okArtifactKey,
+    psArtifactKey,
     resolveSkillsRoot,
     extractActorIdentityFromQuery,
     captureAndCloseDocuments,
@@ -5404,7 +5404,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     validateFolderRel,
     extractAgentIdentity,
     extractActorIdentityFromQuery,
-    okArtifactKey,
+    psArtifactKey,
     attributeOkArtifactWrite,
     scheduleOkArtifactFlush,
     flushDiskAndDetectOutcome,
@@ -5464,7 +5464,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     skillsHome,
     projectSkillDirRel,
     attributeOkArtifactWrite,
-    okArtifactKey,
+    psArtifactKey,
     commitOkArtifactWrite,
     signalChannel,
     bumpSkillsCatalogGen,
@@ -5548,7 +5548,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     bumpSkillsCatalogGen,
     signalChannel,
     flushGitCommit: async () => {
-      await okArtifactFlushChain;
+      await psArtifactFlushChain;
       await flushGitCommit?.();
     },
     rescanFiles,

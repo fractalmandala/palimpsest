@@ -32,7 +32,7 @@ describe('share publish honours the environment command-scope git config (GIT_CO
   let bareRepo: string;
 
   beforeEach(() => {
-    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ok-publish-envcfg-')));
+    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ps-publish-envcfg-')));
     projectDir = join(workspace, 'project');
     bareRepo = join(workspace, 'remote.git');
     const home = join(workspace, 'home');

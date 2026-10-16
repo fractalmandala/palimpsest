@@ -9,14 +9,14 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { fetchWithHostHeader } from './host-header-request.test-helper';
 import { createTestClient, createTestServer, pollUntil, wait } from './test-harness';
 
 function makeContentDir(files: Record<string, string>): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-single-file-content-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-single-file-content-')));
   for (const [rel, contents] of Object.entries(files)) {
     const abs = join(dir, rel);
     mkdirSync(dirname(abs), { recursive: true });

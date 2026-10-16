@@ -5,7 +5,7 @@ import pino from 'pino';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { createFileLogger, flushFileLogger, MAX_FILE_SIZE } from './file-logger.ts';
 
-const TEST_DIR = join(tmpdir(), `ok-file-logger-test-${process.pid}`);
+const TEST_DIR = join(tmpdir(), `ps-file-logger-test-${process.pid}`);
 
 afterEach(() => {
   try {
@@ -113,8 +113,8 @@ describe('file logger', () => {
   test('flushFileLogger persists a record logged immediately before exit', async () => {
     mkdirSync(TEST_DIR, { recursive: true });
     const filePath = join(TEST_DIR, 'flush.log');
-    const prev = process.env.OK_LOG_LEVEL;
-    process.env.OK_LOG_LEVEL = 'info';
+    const prev = process.env.PS_LOG_LEVEL;
+    process.env.PS_LOG_LEVEL = 'info';
     try {
       const logger = createFileLogger({ name: 'flush', filePath });
       logger.warn({ outcome: 'absent', host: 'github.com' }, '[auth] git-credential get');
@@ -123,8 +123,8 @@ describe('file logger', () => {
       expect(content).toContain('git-credential get');
       expect(content).toContain('"outcome":"absent"');
     } finally {
-      if (prev === undefined) delete process.env.OK_LOG_LEVEL;
-      else process.env.OK_LOG_LEVEL = prev;
+      if (prev === undefined) delete process.env.PS_LOG_LEVEL;
+      else process.env.PS_LOG_LEVEL = prev;
     }
   });
 
@@ -197,18 +197,18 @@ describe('logs dir per channel', () => {
     vi.resetModules();
   });
 
-  test('importing under an unsupported OK_CHANNEL does not throw', async () => {
-    vi.stubEnv('OK_CHANNEL', 'bogus');
+  test('importing under an unsupported PS_CHANNEL does not throw', async () => {
+    vi.stubEnv('PS_CHANNEL', 'bogus');
     vi.resetModules();
     const mod = await import('./file-logger.ts');
-    expect(() => mod.getLogsDir()).toThrow(/OK_CHANNEL/);
+    expect(() => mod.getLogsDir()).toThrow(/PS_CHANNEL/);
   });
 
-  test('Beta resolves logs under ~/.ok-beta/logs', async () => {
+  test('Beta resolves logs under ~/.ps-beta/logs', async () => {
     vi.stubEnv('HOME', '/tmp/ok-logs-home');
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     vi.resetModules();
     const { getLogsDir } = await import('./file-logger.ts');
-    expect(getLogsDir()).toBe(join('/tmp/ok-logs-home', '.ok-beta', 'logs'));
+    expect(getLogsDir()).toBe(join('/tmp/ok-logs-home', '.ps-beta', 'logs'));
   });
 });

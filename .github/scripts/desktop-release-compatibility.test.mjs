@@ -30,7 +30,7 @@ const catalogCompileSteps = [
 );
 
 function runCatalogCompileStep(step, i18nCompile) {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-release-i18n-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-release-i18n-'));
   try {
     const app = join(dir, step['working-directory']);
     const calls = join(dir, 'calls');
@@ -63,7 +63,7 @@ const inventoryStep = workflow.jobs['publish-assets'].steps.find(
 );
 
 function inventory(channel, required) {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-release-inventory-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-release-inventory-'));
   try {
     const envFile = join(dir, 'env');
     const result = spawnSync('bash', ['-c', inventoryStep.run], {
@@ -73,7 +73,7 @@ function inventory(channel, required) {
         GITHUB_ENV: envFile,
         CHANNEL: channel,
         REQUIRED: required,
-        ARTIFACT_NAME: channel === 'beta' ? 'OpenKnowledge-Beta' : 'OpenKnowledge',
+        ARTIFACT_NAME: channel === 'beta' ? 'Palimpsest-Beta' : 'Palimpsest',
         VERSION: channel === 'beta' ? '0.78.0-beta.6' : '0.78.0',
       },
       encoding: 'utf8',
@@ -82,11 +82,11 @@ function inventory(channel, required) {
     const contents = readFileSync(envFile, 'utf8');
     return {
       required: contents
-        .split('EXPECTED_ASSETS<<OK_INVENTORY_EOF\n')[1]
+        .split('EXPECTED_ASSETS<<PS_INVENTORY_EOF\n')[1]
         .split('\nOK_INVENTORY_EOF')[0]
         .split('\n'),
       allowed: contents
-        .split('ALLOWED_ASSETS<<OK_ALLOWED_EOF\n')[1]
+        .split('ALLOWED_ASSETS<<PS_ALLOWED_EOF\n')[1]
         .split('\nOK_ALLOWED_EOF')[0]
         .split('\n'),
     };
@@ -115,7 +115,7 @@ describe('legacy desktop release compatibility', () => {
         expect(required).toContain(`${prefix}${suffix}`);
       }
     }
-    for (const product of ['OpenKnowledge', 'OpenKnowledge-Beta']) {
+    for (const product of ['Palimpsest', 'Palimpsest-Beta']) {
       expect(required).toContain(`${product}-0.78.0-beta.6-arm64-mac.zip`);
       expect(required).toContain(`${product}-Setup-x64.exe`);
       expect(required).toContain(`${product}-arm64.deb`);
@@ -126,7 +126,7 @@ describe('legacy desktop release compatibility', () => {
     const { required } = inventory('latest', 'mac,windows,linux');
     expect(required).toHaveLength(14);
     expect(required).toContain('latest-mac.yml');
-    expect(required).toContain('OpenKnowledge-0.78.0-arm64-mac.zip');
+    expect(required).toContain('Palimpsest-0.78.0-arm64-mac.zip');
     expect(required.some((name) => name.includes('Beta') || name.includes('beta'))).toBe(false);
   });
 

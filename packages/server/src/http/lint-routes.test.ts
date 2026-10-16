@@ -17,7 +17,7 @@ describe('audit routes with a missing content directory', () => {
   test.each(['/api/lint/audit', '/api/audit'])(
     '%s reports missing root and child scopes while rejecting explicit dot paths',
     async (routePath) => {
-      const projectDir = mkdtempSync(join(tmpdir(), 'ok-missing-audit-route-'));
+      const projectDir = mkdtempSync(join(tmpdir(), 'ps-missing-audit-route-'));
       roots.push(projectDir);
       const contentDir = join(projectDir, 'missing-content');
       const group = createLintRoutes({

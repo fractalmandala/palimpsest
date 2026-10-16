@@ -9,7 +9,7 @@ import {
   LAYOUT_DEFERRED_LOCALES,
   PICKER_LOCALES,
   SavedThemesListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { type Attributes, type Tracer, trace } from '@opentelemetry/api';
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -203,7 +203,7 @@ describe('SettingsDialogBody preferences runtime', () => {
   });
 
   test('places the spelling rows after the interface Language row, keeping the CLI row', async () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       value: {
         platform: 'win32',
         menu: { dispatch: async () => ({ spellCheckEnabled: true }) },
@@ -252,10 +252,10 @@ describe('SettingsDialogBody preferences runtime', () => {
       expect(
         languagesRow.compareDocumentPosition(wordWrap as Node) & Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
-      expect(await screen.findByTestId('ok-cli-path-row')).toBeTruthy();
+      expect(await screen.findByTestId('ps-cli-path-row')).toBeTruthy();
     } finally {
       // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-      (window as any).okDesktop = undefined;
+      (window as any).psDesktop = undefined;
     }
   });
 
@@ -596,7 +596,7 @@ async function renderPreferencesWithTheme(binding: ConfigBinding) {
       attribute="class"
       defaultTheme="system"
       enableSystem
-      storageKey={`ok-theme-v1-test-${themeStorageKeySeq}`}
+      storageKey={`ps-theme-v1-test-${themeStorageKeySeq}`}
     >
       <SettingsContextProvider>
         <TooltipProvider>
@@ -684,7 +684,7 @@ async function renderThemePluginWithTheme(binding: ConfigBinding) {
       attribute="class"
       defaultTheme="system"
       enableSystem
-      storageKey={`ok-theme-v1-test-${themeStorageKeySeq}`}
+      storageKey={`ps-theme-v1-test-${themeStorageKeySeq}`}
     >
       <SavedThemesProvider>
         <SettingsContextProvider userBinding={binding}>
@@ -707,7 +707,7 @@ describe('SettingsDialogBody color-palette picker — optimistic mode flip', () 
   afterEach(() => {
     globalThis.fetch = originalFetch;
     document.documentElement.removeAttribute('data-color-theme');
-    document.getElementById('ok-saved-theme')?.remove();
+    document.getElementById('ps-saved-theme')?.remove();
     cleanup();
   });
 
@@ -765,7 +765,7 @@ describe('SettingsDialogBody color-palette picker — optimistic mode flip', () 
     await waitFor(() => {
       expect(document.documentElement.getAttribute('data-color-theme')).toBe('saved-ocean');
     });
-    expect(document.getElementById('ok-saved-theme')?.textContent).toContain(
+    expect(document.getElementById('ps-saved-theme')?.textContent).toContain(
       '--background: #000000;',
     );
     expect(patches).toEqual([

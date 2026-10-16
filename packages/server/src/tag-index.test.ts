@@ -5,7 +5,7 @@ import { describe, expect, test } from 'vitest';
 import { TagIndex } from './tag-index.ts';
 
 function tempContentDir(): { contentDir: string; cleanup: () => void } {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-tag-index-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-tag-index-'));
   return {
     contentDir: dir,
     cleanup: () => rmSync(dir, { recursive: true, force: true }),

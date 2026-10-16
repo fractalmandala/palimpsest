@@ -8,7 +8,7 @@ import { connect as createNetConnection } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { Hocuspocus } from '@hocuspocus/server';
-import { resolveServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import { resolveServerRuntimeConfig } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { ConfigSchema } from './config/schema.ts';
 import { buildIngressPolicy } from './ingress-policy.ts';
@@ -63,8 +63,8 @@ interface RigExtras {
 }
 
 async function bootRemoteRig(externalUrl: string | null, extras: RigExtras = {}): Promise<Rig> {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-remote-mcp-'));
-  const localDir = join(contentDir, '.ok', 'local');
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-remote-mcp-'));
+  const localDir = join(contentDir, '.ps', 'local');
   mkdirSync(localDir, { recursive: true });
   const config = ConfigSchema.parse(
     externalUrl === null ? {} : { server: { externalUrl, allowExternal: true } },
@@ -443,7 +443,7 @@ describe('remote disabled — the forwarding-header tripwire', () => {
       headers: { host: `127.0.0.1:${rig.port}`, 'x-forwarded-for': '203.0.113.7' },
     });
     expect(res.status).toBe(403);
-    expect(res.body).toContain('OK_ALLOW_EXTERNAL');
+    expect(res.body).toContain('PS_ALLOW_EXTERNAL');
   });
 
   test('proxied requests are refused with the exposure-consent hint', async () => {
@@ -453,7 +453,7 @@ describe('remote disabled — the forwarding-header tripwire', () => {
       headers: { host: `127.0.0.1:${rig.port}`, 'x-forwarded-for': '203.0.113.7' },
     });
     expect(res.status).toBe(403);
-    expect(res.body).toContain('OK_ALLOW_EXTERNAL');
+    expect(res.body).toContain('PS_ALLOW_EXTERNAL');
   });
 
   test('vendor proxy headers (X-Real-IP, CF-Connecting-IP, True-Client-IP) also trip the wire', async () => {
@@ -464,7 +464,7 @@ describe('remote disabled — the forwarding-header tripwire', () => {
         headers: { host: `127.0.0.1:${rig.port}`, [header]: '203.0.113.7' },
       });
       expect(res.status, `${header} should trip the wire`).toBe(403);
-      expect(res.body).toContain('OK_ALLOW_EXTERNAL');
+      expect(res.body).toContain('PS_ALLOW_EXTERNAL');
     }
   });
 

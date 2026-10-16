@@ -55,7 +55,7 @@ export function agentConnectionsAvailability(
   executablePath: string,
   env: Record<string, string | undefined>,
 ): { available: boolean; devBuild: boolean } {
-  if (env.OK_RECLAIM_DISABLE === '1') return { available: false, devBuild: false };
-  if (!isPackaged && env.OK_M6B_FORCE !== '1') return { available: false, devBuild: true };
+  if (env.PS_RECLAIM_DISABLE === '1') return { available: false, devBuild: false };
+  if (!isPackaged && env.PS_M6B_FORCE !== '1') return { available: false, devBuild: true };
   return { available: isSupportedInstallShape(platform, executablePath, env), devBuild: false };
 }

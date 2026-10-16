@@ -951,7 +951,7 @@ describe('harness budget override', () => {
   test('an override that is present but cannot bound the run is named instead of ignored', () => {
     for (const raw of ['soon', '0', '-1', 'NaN', 'Infinity']) {
       expect(() => resolveHarnessBudgetMs(raw, 85_000)).toThrow(
-        /the OK_PTY_HARNESS_BUDGET_MS override for the harness budget must be a positive finite duration/u,
+        /the PS_PTY_HARNESS_BUDGET_MS override for the harness budget must be a positive finite duration/u,
       );
     }
   });
@@ -1027,11 +1027,11 @@ describe('harness timeout ladder', () => {
 
 describe('cwd file proof command', () => {
   test('reads a relative sentinel without embedding its random contents', () => {
-    expect(buildCwdFileProofCommand('win32', '.ok-cwd-proof')).toBe(
-      `Write-Output "CWD_PROOF=$(Get-Content -Raw -LiteralPath './.ok-cwd-proof')"`,
+    expect(buildCwdFileProofCommand('win32', '.ps-cwd-proof')).toBe(
+      `Write-Output "CWD_PROOF=$(Get-Content -Raw -LiteralPath './.ps-cwd-proof')"`,
     );
-    expect(buildCwdFileProofCommand('linux', '.ok-cwd-proof')).toBe(
-      `printf 'CWD_PROOF=%s\\n' "$(cat './.ok-cwd-proof')"`,
+    expect(buildCwdFileProofCommand('linux', '.ps-cwd-proof')).toBe(
+      `printf 'CWD_PROOF=%s\\n' "$(cat './.ps-cwd-proof')"`,
     );
   });
 
@@ -1319,9 +1319,9 @@ describe('driving a real host through a shell that starts slowly', () => {
   });
 });
 
-const INPUT_READY_MARKER = 'OK_INPUT_READY_deadbeef_42_READY';
+const INPUT_READY_MARKER = 'PS_INPUT_READY_deadbeef_42_READY';
 const INPUT_READY_PROBE = {
-  input: 'Write-Output "OK_INPUT_READY_deadbeef_$((6*7))_READY"\r',
+  input: 'Write-Output "PS_INPUT_READY_deadbeef_$((6*7))_READY"\r',
   marker: INPUT_READY_MARKER,
 } as const;
 const INPUT_READY_FAST = { roundTripStallMs: 200, intervalMs: 5 } as const;
@@ -1649,7 +1649,7 @@ describe('shell startup is a liveness wait, not a round-trip budget', () => {
 
   test('the first output the gate reports leads with the bytes that opened it', async () => {
     const stream = createFakeStream();
-    const head = 'OK_GATE_OPENED_HERE';
+    const head = 'PS_GATE_OPENED_HERE';
     stream.emit(`${ATTACH_PROLOGUE}${CONPTY_INIT_FRAME}${head}${'x'.repeat(600)}${BOOTED_PROMPT}`);
     const shell = driveEvaluatingShell(stream);
     try {

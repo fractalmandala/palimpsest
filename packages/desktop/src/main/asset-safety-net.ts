@@ -1,4 +1,4 @@
-import { ASSET_EXTENSIONS } from '@inkeep/open-knowledge-core';
+import { ASSET_EXTENSIONS } from '@palimpsest/core';
 import type { AssetOpenResult } from './asset-allowlist.ts';
 
 interface WebContentsLike {

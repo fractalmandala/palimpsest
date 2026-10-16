@@ -1,6 +1,6 @@
 name: Promote stable
 
-# On-demand stable promotion on inkeep/open-knowledge.
+# On-demand stable promotion on fractalmandala/palimpsest.
 #
 # Triggered three equivalent ways (all resolve to a single beta tag):
 #   - workflow_dispatch with an explicit beta_tag (e.g., v0.4.0-beta.3).
@@ -34,7 +34,7 @@ name: Promote stable
 # The dispatch now lives in desktop-release.yml, downstream of the DMG smoke
 # verdict, so a broken stable artifact can never reach npm. A macOS build is
 # deliberately NOT added here: this workflow holds the shared
-# `ok-release-cadence` lock at WORKFLOW level, so a 15-75 min build here
+# `ps-release-cadence` lock at WORKFLOW level, so a 15-75 min build here
 # would block every beta cut for the duration.
 #
 # After a successful cut this dispatches main-reset.yml on
@@ -79,7 +79,7 @@ on:
         required: false
         type: string
   # Codeless external trigger (e.g., a Slack Workflow Builder button) fires
-  # this via POST /repos/inkeep/open-knowledge/dispatches with body
+  # this via POST /repos/fractalmandala/palimpsest/dispatches with body
   # {"event_type": "promote-stable-latest"}. No client_payload is read — the
   # run resolves the newest vX.Y.Z-beta.N tag itself (see "Resolve beta tag
   # to promote"), so "promote the latest beta" is a parameterless action.
@@ -101,7 +101,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: ok-release-cadence
+  group: ps-release-cadence
   cancel-in-progress: false
 
 jobs:
@@ -344,7 +344,7 @@ jobs:
         if: steps.ver.outputs.skip != 'true'
         uses: ./.github/composite-actions/share-contract-reader-gate
         with:
-          origin: https://openknowledge.ai
+          origin: https://github.com/fractalmandala/palimpsest
           evidence-name: share-contract-promote-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Render release notes from the stable's changesets
@@ -501,14 +501,14 @@ jobs:
         # mint + dispatch steps via an output.
         id: bridge-check
         env:
-          OK_RELEASE_BRIDGE_APP_ID: ${{ secrets.OK_RELEASE_BRIDGE_APP_ID }}
+          PS_RELEASE_BRIDGE_APP_ID: ${{ secrets.PS_RELEASE_BRIDGE_APP_ID }}
         run: |
           set -euo pipefail
-          if [[ -n "${OK_RELEASE_BRIDGE_APP_ID:-}" ]]; then
+          if [[ -n "${PS_RELEASE_BRIDGE_APP_ID:-}" ]]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "OK_RELEASE_BRIDGE_APP_ID not set — skipping auto-trigger of main-reset; promotion stays two-button (run main-reset.yml manually on agents-private)."
+            echo "PS_RELEASE_BRIDGE_APP_ID not set — skipping auto-trigger of main-reset; promotion stays two-button (run main-reset.yml manually on agents-private)."
           fi
 
       - name: Mint cross-repo dispatch token (bridge App)
@@ -518,7 +518,7 @@ jobs:
         with:
           # Public client ID for inkeep-ok-release-bridge (non-secret; supersedes the deprecated app-id input).
           client-id: Iv23lii4qS2FAc6tkzfI
-          private-key: ${{ secrets.OK_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
+          private-key: ${{ secrets.PS_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
           # The bridge App is installed on agents-private, not on the public
           # repo (where this workflow runs). owner + repositories scope the minted
           # token to that cross-repo installation.

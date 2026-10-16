@@ -1,4 +1,4 @@
-import { PREVIEW_THEME_TOKENS } from '@inkeep/open-knowledge-core';
+import { PREVIEW_THEME_TOKENS } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   buildPreviewIframeHeader,
@@ -64,8 +64,8 @@ describe('buildPreviewIframeHeader — theme token injection', () => {
 
 describe('buildPreviewThemeMessage', () => {
   test('payload carries the resolved theme under a stable key', () => {
-    expect(buildPreviewThemeMessage('dark')).toEqual({ okPreviewTheme: 'dark' });
-    expect(buildPreviewThemeMessage('light')).toEqual({ okPreviewTheme: 'light' });
+    expect(buildPreviewThemeMessage('dark')).toEqual({ psPreviewTheme: 'dark' });
+    expect(buildPreviewThemeMessage('light')).toEqual({ psPreviewTheme: 'light' });
   });
 });
 
@@ -74,7 +74,7 @@ describe('buildPreviewIframeHeader — auto-height reporting', () => {
     const header = buildPreviewIframeHeader(theme);
 
     test(`[${theme}] the bootstrap script reports content height`, () => {
-      expect(header).toContain('okPreviewHeight');
+      expect(header).toContain('psPreviewHeight');
       expect(header).toContain('getBoundingClientRect');
       expect(header).toContain('ResizeObserver');
     });
@@ -87,19 +87,19 @@ describe('buildPreviewIframeHeader — auto-height reporting', () => {
 
 describe('parsePreviewHeightMessage', () => {
   test('reads a positive height, rounding up', () => {
-    expect(parsePreviewHeightMessage({ okPreviewHeight: 412 })).toBe(412);
-    expect(parsePreviewHeightMessage({ okPreviewHeight: 412.4 })).toBe(413);
+    expect(parsePreviewHeightMessage({ psPreviewHeight: 412 })).toBe(412);
+    expect(parsePreviewHeightMessage({ psPreviewHeight: 412.4 })).toBe(413);
   });
 
   test('rejects non-height payloads', () => {
     expect(parsePreviewHeightMessage(null)).toBeNull();
     expect(parsePreviewHeightMessage('412')).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewTheme: 'dark' })).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewHeight: 0 })).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewHeight: -10 })).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewHeight: 'tall' })).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewHeight: Number.NaN })).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewHeight: Number.POSITIVE_INFINITY })).toBeNull();
-    expect(parsePreviewHeightMessage({ okPreviewHeight: Number.NEGATIVE_INFINITY })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewTheme: 'dark' })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewHeight: 0 })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewHeight: -10 })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewHeight: 'tall' })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewHeight: Number.NaN })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewHeight: Number.POSITIVE_INFINITY })).toBeNull();
+    expect(parsePreviewHeightMessage({ psPreviewHeight: Number.NEGATIVE_INFINITY })).toBeNull();
   });
 });

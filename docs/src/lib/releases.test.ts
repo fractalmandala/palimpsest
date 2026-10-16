@@ -16,7 +16,7 @@ import {
   releaseNotesFrom,
 } from './releases.ts';
 
-const SAMPLE = `# @inkeep/open-knowledge
+const SAMPLE = `# @palimpsest/cli
 
 ## 0.35.0
 
@@ -51,7 +51,7 @@ describe('parseChangelog', () => {
     const [first] = parseChangelog(SAMPLE);
     expect(first.tag).toBe('v0.35.0');
     expect(first.title).toBe('v0.35.0');
-    expect(first.htmlUrl).toBe('https://github.com/inkeep/open-knowledge/releases/tag/v0.35.0');
+    expect(first.htmlUrl).toBe('https://github.com/fractalmandala/palimpsest/releases/tag/v0.35.0');
   });
 
   test('strips the changeset commit-hash prefix and renders GFM to HTML', () => {
@@ -70,7 +70,7 @@ describe('parseChangelog', () => {
 
   test('ignores content before the first version heading', () => {
     const [first] = parseChangelog(SAMPLE);
-    expect(first.bodyHtml).not.toContain('@inkeep/open-knowledge');
+    expect(first.bodyHtml).not.toContain('@palimpsest/cli');
   });
 
   test('does not match prerelease headings or malformed input', () => {
@@ -181,7 +181,7 @@ describe('fetchReleaseFeed dates (best-effort)', () => {
 });
 
 const DOWNLOADS =
-  '<!-- ok-downloads:start -->\n## Downloads\n\n| a | b |\n| --- | --- |\n<!-- ok-downloads:end -->';
+  '<!-- ps-downloads:start -->\n## Downloads\n\n| a | b |\n| --- | --- |\n<!-- ps-downloads:end -->';
 const marked = (notes: string) => `${notes}\n\n${NOTES_SOURCE_MARKER}\n\n${DOWNLOADS}\n`;
 
 describe('markedNotes', () => {
@@ -529,7 +529,7 @@ describe('mergeReleaseNotes', () => {
       title: 'v0.36.0',
       publishedAt: '2026-08-01T00:00:00Z',
       bodyHtml: expect.stringContaining('<li>From the tag.</li>'),
-      htmlUrl: 'https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0',
+      htmlUrl: 'https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0',
     });
     expect(out[2]?.bodyHtml).toContain('Corrected in the Release body.');
     expect(out[2]?.bodyHtml).not.toContain('95380ab');

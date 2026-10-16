@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 import { expect, test } from './_helpers';
 
-const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ok-sweep-home-'));
+const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ps-sweep-home-'));
 
 test.use({ workerServerEnv: { HOME: ISOLATED_HOME } });
 
@@ -13,8 +13,8 @@ const NEVER_TRANSLATED = [
   'Visual Studio Code',
   'GitHub Copilot',
   'Claude Desktop',
-  'Open Knowledge',
-  'OpenKnowledge',
+  'Palimpsest',
+  'Palimpsest',
   'Google Chrome',
   'Claude Agent',
   'Claude Code',

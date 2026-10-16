@@ -15,7 +15,7 @@ import { ensureProjectGit } from './project-git.ts';
 let home: string;
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-home-guard-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-home-guard-'));
 });
 
 afterEach(() => {
@@ -30,7 +30,7 @@ describe('isHomeDir', () => {
   });
 
   test('a symlinked spelling of home still compares equal', () => {
-    const link = join(tmpdir(), `ok-home-guard-link-${process.pid}`);
+    const link = join(tmpdir(), `ps-home-guard-link-${process.pid}`);
     try {
       symlinkSync(home, link);
       expect(isHomeDir(link, home)).toBe(true);
@@ -117,11 +117,11 @@ describe('scaffold writers refuse $HOME', () => {
     expect(existsSync(join(home, '.git'))).toBe(false);
   });
 
-  test('initContent does not scaffold into the user-global ~/.ok', () => {
+  test('initContent does not scaffold into the user-global ~/.ps', () => {
     vi.stubEnv('HOME', home);
     expect(() => initContent(home)).toThrow(HomeProjectRootError);
-    expect(existsSync(join(home, '.ok', 'config.yml'))).toBe(false);
-    expect(existsSync(join(home, '.okignore'))).toBe(false);
+    expect(existsSync(join(home, '.ps', 'config.yml'))).toBe(false);
+    expect(existsSync(join(home, '.psignore'))).toBe(false);
   });
 
   test('a project inside home still scaffolds', () => {
@@ -133,28 +133,28 @@ describe('scaffold writers refuse $HOME', () => {
 });
 
 describe('the remediation names the running channel CLI', () => {
-  test('Stable keeps its exact ok init lines', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+  test('Stable keeps its exact ps init lines', () => {
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(new HomeProjectRootError('/Users/x').message).toBe(
-      `Refusing to set up an OpenKnowledge project in your home directory (/Users/x).\n` +
+      `Refusing to set up an Palimpsest project in your home directory (/Users/x).\n` +
         `  A project here would run 'git init' in your home directory and write project config\n` +
         `  and skills into your editors' user-global directories (~/.cursor, ~/.codex, ~/.claude).\n` +
-        `  Make a folder for this project, then run 'ok init' inside it.`,
+        `  Make a folder for this project, then run 'ps init' inside it.`,
     );
     expect(new FilesystemRootProjectError('/').message).toBe(
-      `Refusing to set up an OpenKnowledge project at the top of a drive (/).\n` +
+      `Refusing to set up an Palimpsest project at the top of a drive (/).\n` +
         `  A project here would scan every file on the drive and run 'git init' at its root.\n` +
-        `  Make a folder for this project, then run 'ok init' inside it.`,
+        `  Make a folder for this project, then run 'ps init' inside it.`,
     );
   });
 
-  test('Beta names ok-beta init', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('Beta names ps-beta init', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(new HomeProjectRootError('/Users/x').message).toContain(
-      "then run 'ok-beta init' inside it.",
+      "then run 'ps-beta init' inside it.",
     );
     expect(new FilesystemRootProjectError('/').message).toContain(
-      "then run 'ok-beta init' inside it.",
+      "then run 'ps-beta init' inside it.",
     );
   });
 });

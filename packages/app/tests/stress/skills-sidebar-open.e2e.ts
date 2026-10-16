@@ -595,7 +595,7 @@ test('shift+arrow walks visible rows through read-only plugin skills; drag moves
     .toContain('aa-nav-a,aa-nav-b');
   expect(moveRequests).not.toContain('plug-one');
   expect(moveRequests).not.toContain('plug-two');
-  expect(moveRequests).not.toContain('open-knowledge');
+  expect(moveRequests).not.toContain('palimpsest');
 });
 
 test('renaming a skill from the Properties name field follows the rename everywhere', async ({

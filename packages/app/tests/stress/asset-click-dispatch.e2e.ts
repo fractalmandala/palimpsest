@@ -133,13 +133,13 @@ test.describe('asset-click dispatcher — P9 E2E scenarios (SPEC 2026-04-23)', (
     await waitForProvider(page);
     await page.waitForSelector('.ProseMirror:not(.composer-prosemirror)');
 
-    const fileRow = page.locator('.ok-file-attachment').first();
+    const fileRow = page.locator('.ps-file-attachment').first();
     await fileRow.waitFor({ state: 'visible', timeout: 5_000 });
 
     const pdfChip = page.locator('span[data-link]').filter({ hasText: 'meeting.pdf' });
     await expect(pdfChip).toHaveCount(0);
 
-    const pdfWrapper = page.locator('.ok-pdf');
+    const pdfWrapper = page.locator('.ps-pdf');
     await expect(pdfWrapper).toHaveCount(0);
   });
 

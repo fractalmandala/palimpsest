@@ -1,3 +1,3 @@
 export function frontmatterYamlPath(folderPath: string): string {
-  return folderPath === '' ? '.ok/frontmatter.yml' : `${folderPath}/.ok/frontmatter.yml`;
+  return folderPath === '' ? '.ps/frontmatter.yml' : `${folderPath}/.ps/frontmatter.yml`;
 }

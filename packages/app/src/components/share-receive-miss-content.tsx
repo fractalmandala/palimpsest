@@ -1,7 +1,7 @@
 import type {
   PullOutcome,
   ShareTargetStatusResponse,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   ArrowDownToLine,
@@ -51,7 +51,7 @@ export function useShareTargetVerdict(nav: PendingReceiveNav): {
   const branch = nav.branch;
   // biome-ignore lint/correctness/useExhaustiveDependencies: epoch is not read in the body — it exists solely to re-run the probe on refetch()
   useEffect(() => {
-    const bridge = window.okDesktop ?? null;
+    const bridge = window.psDesktop ?? null;
     if (!bridge || branch === null) {
       setState({ phase: 'resolved', resolution: { verdict: 'unknown' } });
       return;

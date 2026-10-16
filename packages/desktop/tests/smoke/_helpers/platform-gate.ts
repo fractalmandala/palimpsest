@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { isTerminalPlatform } from '../../../src/shared/terminal-platform.ts';
 
-export const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+export const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 
 export const SUPPORTED_PLATFORMS = new Set<NodeJS.Platform>(['darwin', 'win32', 'linux']);
 
@@ -35,7 +35,7 @@ export const SPEC_PLATFORM_GATES = {
   'navigator-close-on-open.e2e.ts': ['!PLATFORM_SUPPORTED', 'WINDOWS'],
   'navigator-return.e2e.ts': ['!PLATFORM_SUPPORTED', 'DARWIN'],
   'note-window.e2e.ts': ['!PLATFORM_SUPPORTED', '!DARWIN'],
-  'okf-rule-toggle.e2e.ts': ['!DARWIN'],
+  'psf-rule-toggle.e2e.ts': ['!DARWIN'],
   'qa-create-new-extended.e2e.ts': ['!PLATFORM_SUPPORTED'],
   'rename-divergence-probe.e2e.ts': ['!PLATFORM_SUPPORTED'],
   'report-bug.e2e.ts': ['!PLATFORM_SUPPORTED'],

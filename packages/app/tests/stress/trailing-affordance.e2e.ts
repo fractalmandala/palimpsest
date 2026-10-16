@@ -20,7 +20,7 @@ function readSource(page: Page): Promise<string> {
   return page.evaluate(() => window.__activeProvider?.document.getText('source').toString() ?? '');
 }
 
-const TRAILING_WIDGET_CLASSES = ['ok-trailing-affordance', 'ProseMirror-gapcursor'];
+const TRAILING_WIDGET_CLASSES = ['ps-trailing-affordance', 'ProseMirror-gapcursor'];
 
 function lastRealBlockMetrics(
   page: Page,
@@ -167,12 +167,12 @@ test.describe('trailing affordance geometry', () => {
     const point = await zoneClickPoint(page);
     await page.mouse.move(point.x, point.y);
 
-    const plus = page.locator('.ok-trailing-affordance-plus');
+    const plus = page.locator('.ps-trailing-affordance-plus');
     await expect(plus).toBeVisible({ timeout: 10_000 });
 
     const geometry = await page.evaluate((selector) => {
       const editor = document.querySelector(selector);
-      const glyph = document.querySelector('.ok-trailing-affordance-plus');
+      const glyph = document.querySelector('.ps-trailing-affordance-plus');
       if (!editor || !glyph) return null;
       const style = getComputedStyle(editor);
       const editorBox = editor.getBoundingClientRect();
@@ -257,12 +257,12 @@ test.describe('trailing affordance geometry', () => {
     test('the hint is present without a hover and sits inside the editor', async ({ page }) => {
       expect(await page.evaluate(() => window.matchMedia('(pointer: coarse)').matches)).toBe(true);
 
-      const plus = page.locator('.ok-trailing-affordance-plus');
+      const plus = page.locator('.ps-trailing-affordance-plus');
       await expect(plus).toBeVisible({ timeout: 10_000 });
 
       const geometry = await page.evaluate((selector) => {
         const editor = document.querySelector(selector);
-        const glyph = document.querySelector('.ok-trailing-affordance-plus');
+        const glyph = document.querySelector('.ps-trailing-affordance-plus');
         if (!editor || !glyph) return null;
         const editorBox = editor.getBoundingClientRect();
         const glyphBox = glyph.getBoundingClientRect();

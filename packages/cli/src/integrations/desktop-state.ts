@@ -1,16 +1,16 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { currentDesktopProduct } from '@inkeep/open-knowledge-core';
+import { currentDesktopProduct } from '@palimpsest/core';
 import {
   type AppSupportOptions,
   pathApiForPlatform,
   resolveAppSupportPath,
 } from '../commands/editors.ts';
 
-export const DESKTOP_PRODUCT_NAME = 'OpenKnowledge';
-export const DESKTOP_UPDATER_CACHE_DIR_NAME = '@inkeepopen-knowledge-desktop-updater';
-export const DESKTOP_LEGACY_PRODUCT_NAME = 'Open Knowledge';
+export const DESKTOP_PRODUCT_NAME = 'Palimpsest';
+export const DESKTOP_UPDATER_CACHE_DIR_NAME = '@palimpsestdesktop-updater';
+export const DESKTOP_LEGACY_PRODUCT_NAME = 'Palimpsest';
 
 interface DesktopUserDataOptions extends AppSupportOptions {
   productName?: string;

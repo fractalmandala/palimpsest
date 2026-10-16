@@ -646,7 +646,7 @@ describe('TerminalTabStrip', () => {
 describe('TerminalTabStrip as a card top bar', () => {
   afterEach(() => {
     cleanup();
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
   });
 
   test('a docked strip is a 44px top bar with no hairline, matching the tab row', () => {
@@ -668,7 +668,7 @@ describe('TerminalTabStrip as a card top bar', () => {
   });
 
   test('on desktop the docked strip drags the window from its empty space while every control opts out', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: { config: { mode: 'editor' } },
     });

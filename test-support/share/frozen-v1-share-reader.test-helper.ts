@@ -3,7 +3,7 @@ export type FrozenV1TokenOutcome =
   | { readonly kind: 'invalid' }
   | { readonly kind: 'unsupported-version'; readonly version: number };
 
-export type FrozenV1CustomOutcome = 'invalid' | 'ok-v1-url';
+export type FrozenV1CustomOutcome = 'invalid' | 'ps-v1-url';
 
 export function frozenV1DecodeShareToken(encoded: string): FrozenV1TokenOutcome {
   const cleaned = encoded.split(/[?#]/)[0];
@@ -35,7 +35,7 @@ export function frozenV1CustomSchemeOutcome(input: string): FrozenV1CustomOutcom
   } catch {
     return 'invalid';
   }
-  if (parsed.protocol !== 'openknowledge:' || parsed.hostname !== 'share') return 'invalid';
+  if (parsed.protocol !== 'palimpsest:' || parsed.hostname !== 'share') return 'invalid';
 
   const sharedUrl = parsed.searchParams.get('url');
   if (!sharedUrl || sharedUrl.length > 4096 || sharedUrl.includes('\0')) return 'invalid';
@@ -52,7 +52,7 @@ export function frozenV1CustomSchemeOutcome(input: string): FrozenV1CustomOutcom
   const kindIndex = segments.findIndex((segment) => segment === 'blob' || segment === 'tree');
   if (kindIndex !== 2 || segments[kindIndex + 1] === undefined) return 'invalid';
   if (segments[kindIndex] === 'blob' && segments[kindIndex + 2] === undefined) return 'invalid';
-  return 'ok-v1-url';
+  return 'ps-v1-url';
 }
 
 function frozenBase64UrlDecode(input: string): Uint8Array {

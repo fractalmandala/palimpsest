@@ -23,12 +23,12 @@ describe('projectHarnessHomes', () => {
 });
 
 describe('userGlobalSkillRoots', () => {
-  test('covers every harness home plus the `.ok/skills` store', () => {
+  test('covers every harness home plus the `.ps/skills` store', () => {
     const home = '/Users/tester';
     const roots = userGlobalSkillRoots(home);
 
     for (const { dir } of harnessHomes(home)) expect(roots).toContain(dir);
-    expect(roots).toContain(join(home, '.ok', 'skills'));
+    expect(roots).toContain(join(home, '.ps', 'skills'));
     expect(roots).toContain(join(home, '.claude', 'skills'));
     expect(roots).toContain(join(home, '.agents', 'skills'));
     expect(roots).toContain(join(home, '.claude', 'plugins'));

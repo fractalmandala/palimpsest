@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, win32 } from 'node:path';
-import { psQuoteArg } from '@inkeep/open-knowledge-core';
+import { psQuoteArg } from '@palimpsest/core';
 import { getWindowsEnvValue, windowsPathKey } from '../../../src/shared/windows-env.ts';
 
 const POSIX_SYSTEM_PATH = '/usr/bin:/bin:/usr/sbin:/sbin';
@@ -10,7 +10,7 @@ const WINDOWS_PROFILE_DIRECTORIES = ['PowerShell', 'WindowsPowerShell'] as const
 const WINDOWS_PROFILE_FILE = 'Microsoft.PowerShell_profile.ps1';
 const PSREADLINE_PREDICTION_FLOOR = '2.1.0';
 const UTF8_BOM = '\ufeff';
-const WINDOWS_PROFILE_FAILURE_FILE = 'ok-shell-profile-error.log';
+const WINDOWS_PROFILE_FAILURE_FILE = 'ps-shell-profile-error.log';
 
 function quotePosix(value: string): string {
   return `'${value.replaceAll("'", "'\\''")}'`;
@@ -65,7 +65,7 @@ export function terminalSmokeShellCommands(
         return `$env:${name}=${psQuoteArg(value)}`;
       },
       waitForFileThenOutput: (releasePath, waitingPath, acknowledgementPath, waitingMarker) =>
-        `Write-Output ${psQuoteArg(waitingMarker)}; Set-Content -LiteralPath ${psQuoteArg(waitingPath)} -Value ${psQuoteArg(waitingMarker)}; $okWait=0; while (-not (Test-Path -LiteralPath ${psQuoteArg(releasePath)}) -and $okWait -lt 300) { Start-Sleep -Milliseconds 100; $okWait++ }; if (Test-Path -LiteralPath ${psQuoteArg(releasePath)}) { $okResult=Get-Content -LiteralPath ${psQuoteArg(releasePath)}; Write-Output $okResult; Set-Content -LiteralPath ${psQuoteArg(acknowledgementPath)} -Value $okResult }`,
+        `Write-Output ${psQuoteArg(waitingMarker)}; Set-Content -LiteralPath ${psQuoteArg(waitingPath)} -Value ${psQuoteArg(waitingMarker)}; $psWait=0; while (-not (Test-Path -LiteralPath ${psQuoteArg(releasePath)}) -and $psWait -lt 300) { Start-Sleep -Milliseconds 100; $psWait++ }; if (Test-Path -LiteralPath ${psQuoteArg(releasePath)}) { $okResult=Get-Content -LiteralPath ${psQuoteArg(releasePath)}; Write-Output $okResult; Set-Content -LiteralPath ${psQuoteArg(acknowledgementPath)} -Value $okResult }`,
       workingDirectory: (marker) =>
         `Write-Output (${psQuoteArg(marker)} + '=[' + (Get-Location).Path + ']')`,
     };
@@ -103,7 +103,7 @@ export interface InputReadyProbe {
 export function buildInputReadyProbe(
   platform: NodeJS.Platform = process.platform,
 ): InputReadyProbe {
-  const token = `OK_INPUT_READY_${randomUUID().replaceAll('-', '')}`;
+  const token = `PS_INPUT_READY_${randomUUID().replaceAll('-', '')}`;
   return {
     marker: `${token}_42_READY`,
     command: terminalSmokeShellCommands(platform).arithmetic(token, 6, 7, 'READY'),
@@ -221,10 +221,10 @@ function windowsShellProfile(tmpHome: string): string {
     [
       'try {',
       '  Import-Module PSReadLine -ErrorAction SilentlyContinue',
-      '  $okPSReadLine = Get-Module PSReadLine',
-      '  if ($okPSReadLine) {',
+      '  $psPSReadLine = Get-Module PSReadLine',
+      '  if ($psPSReadLine) {',
       `    Set-PSReadLineOption -HistorySavePath ${history}`,
-      `    if ($okPSReadLine.Version -ge [version]'${PSREADLINE_PREDICTION_FLOOR}') {`,
+      `    if ($psPSReadLine.Version -ge [version]'${PSREADLINE_PREDICTION_FLOOR}') {`,
       '      Set-PSReadLineOption -PredictionSource None',
       '    }',
       '  }',
@@ -281,12 +281,12 @@ export function windowsPSReadLineStateCommand(marker: string, tmpHome: string): 
   const home = psQuoteArg(tmpHome);
   const absent = psQuoteArg(WINDOWS_PSREADLINE_STATE_ABSENT);
   return [
-    '$okModule = Get-Module PSReadLine',
-    '$okOptions = if ($okModule) { Get-PSReadLineOption } else { $null }',
-    `$okVersion = if ($okModule) { [string]$okModule.Version } else { ${absent} }`,
-    `$okPrediction = if (-not $okOptions) { ${absent} } elseif ($okOptions.PSObject.Properties['PredictionSource']) { [string]$okOptions.PredictionSource } else { ${psQuoteArg(WINDOWS_PSREADLINE_PREDICTION_UNSUPPORTED)} }`,
-    `$okHistory = if ($okOptions) { [string]$okOptions.HistorySavePath.StartsWith(${home}, [System.StringComparison]::OrdinalIgnoreCase) } else { ${absent} }`,
-    `Write-Output (${psQuoteArg(marker)} + '=' + $okVersion + '|' + $okPrediction + '|' + $okHistory + '|' + ${psQuoteArg(WINDOWS_PSREADLINE_STATE_END)})`,
+    '$psModule = Get-Module PSReadLine',
+    '$psOptions = if ($psModule) { Get-PSReadLineOption } else { $null }',
+    `$psVersion = if ($psModule) { [string]$psModule.Version } else { ${absent} }`,
+    `$psPrediction = if (-not $psOptions) { ${absent} } elseif ($psOptions.PSObject.Properties['PredictionSource']) { [string]$psOptions.PredictionSource } else { ${psQuoteArg(WINDOWS_PSREADLINE_PREDICTION_UNSUPPORTED)} }`,
+    `$psHistory = if ($psOptions) { [string]$psOptions.HistorySavePath.StartsWith(${home}, [System.StringComparison]::OrdinalIgnoreCase) } else { ${absent} }`,
+    `Write-Output (${psQuoteArg(marker)} + '=' + $psVersion + '|' + $psPrediction + '|' + $psHistory + '|' + ${psQuoteArg(WINDOWS_PSREADLINE_STATE_END)})`,
   ].join('; ');
 }
 

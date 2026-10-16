@@ -20,8 +20,8 @@ import {
   PROJECT_SKILL_EDITOR_IDS,
   USER_SKILL_EDITOR_IDS,
   USER_SKILL_HOSTS,
-} from '@inkeep/open-knowledge-core';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   hostSkillsRootEscapes,
@@ -68,14 +68,14 @@ function makeSkill(
   body: string,
   frontmatter = `name: ${name}\ndescription: Use when testing.`,
 ) {
-  const dir = join(root, '.ok', 'skills', name);
+  const dir = join(root, '.ps', 'skills', name);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'SKILL.md'), `---\n${frontmatter}\n---\n${body}`, 'utf-8');
   return dir;
 }
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-projection-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-projection-'));
 });
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });
@@ -97,7 +97,7 @@ describe('validateSkillForInstall', () => {
     expect(v.errors.some((e) => e.includes('conflict markers'))).toBe(true);
   });
 
-  test('rejects reserved open-knowledge* prefix unless allowed', () => {
+  test('rejects reserved palimpsest* prefix unless allowed', () => {
     const dir = makeSkill(
       'open-knowledge-mine',
       '# x',
@@ -124,9 +124,9 @@ describe('validateSkillForInstall', () => {
     ).toBe(false);
     expect(
       validateSkillForInstall(makeSkill('b', 'x', 'name: b\ndescription: Use <folder> here.'), 'b')
-        .ok,
+        .ps,
     ).toBe(false);
-    const noFm = join(root, '.ok', 'skills', 'nofm');
+    const noFm = join(root, '.ps', 'skills', 'nofm');
     mkdirSync(noFm, { recursive: true });
     writeFileSync(join(noFm, 'SKILL.md'), '# no frontmatter', 'utf-8');
     expect(validateSkillForInstall(noFm, 'nofm').ok).toBe(false);
@@ -308,7 +308,7 @@ describe('hostSkillsRootEscapes', () => {
   });
 
   test('true when the host root is a symlink escaping the project', () => {
-    const outside = mkdtempSync(join(tmpdir(), 'ok-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-outside-'));
     try {
       mkdirSync(join(root, '.claude'), { recursive: true });
       symlinkSync(outside, join(root, '.claude', 'skills'));
@@ -368,19 +368,19 @@ describe('projectInPlaceSkill / removeInPlaceSkillCopies (in-place fan-out guard
   });
 
   test("replaces a built-in's DRIFTED projection — it is stale, not a fork", () => {
-    const canonical = makeAt('.agents/skills/open-knowledge', '# Current');
-    makeAt('.cursor/skills/open-knowledge', '# An OLD release of the same skill');
+    const canonical = makeAt('.agents/skills/palimpsest', '# Current');
+    makeAt('.cursor/skills/palimpsest', '# An OLD release of the same skill');
     const r = projectInPlaceSkill({
       canonicalAbs: canonical,
       canonicalHash: hashOf(canonical),
       canonicalRootRel: '.agents/skills',
-      name: 'open-knowledge',
+      name: 'palimpsest',
       cwd: root,
       targets: ['cursor'],
     });
     expect(r.conflicted).toEqual([]);
     expect(r.hosts).toEqual(['cursor']);
-    expect(readFileSync(join(root, '.cursor/skills/open-knowledge/SKILL.md'), 'utf-8')).toContain(
+    expect(readFileSync(join(root, '.cursor/skills/palimpsest/SKILL.md'), 'utf-8')).toContain(
       '# Current',
     );
   });
@@ -403,17 +403,17 @@ describe('projectInPlaceSkill / removeInPlaceSkillCopies (in-place fan-out guard
   });
 
   test("uninstall removes a built-in's drifted projection too", () => {
-    const canonical = makeAt('.agents/skills/open-knowledge', '# Current');
-    makeAt('.cursor/skills/open-knowledge', '# An OLD release');
+    const canonical = makeAt('.agents/skills/palimpsest', '# Current');
+    makeAt('.cursor/skills/palimpsest', '# An OLD release');
     const removed = removeInPlaceSkillCopies({
       canonicalAbs: canonical,
       canonicalHash: hashOf(canonical),
-      name: 'open-knowledge',
+      name: 'palimpsest',
       cwd: root,
       targets: ['cursor'],
     });
     expect(removed).toEqual(['cursor']);
-    expect(existsSync(join(root, '.cursor/skills/open-knowledge'))).toBe(false);
+    expect(existsSync(join(root, '.cursor/skills/palimpsest'))).toBe(false);
   });
 
   test('remove deletes only lossless occurrences; canonical + forks survive', () => {
@@ -530,7 +530,7 @@ describe('resolveSkillTargets finds the Pi bridge the running channel wrote', ()
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-skill-targets-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-skill-targets-'));
   });
 
   afterEach(() => {
@@ -544,20 +544,20 @@ describe('resolveSkillTargets finds the Pi bridge the running channel wrote', ()
   }
 
   test('a Beta server detects Pi from the Beta bridge alone', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    writePiBridge('open-knowledge-beta.ts');
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    writePiBridge('palimpsest-beta.ts');
     expect(resolveSkillTargets(dir)).toEqual(['pi']);
   });
 
   test('a Beta server does not take the Stable bridge as its own', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    writePiBridge('open-knowledge.ts');
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    writePiBridge('palimpsest.ts');
     expect(resolveSkillTargets(dir)).toEqual([]);
   });
 
   test('a Stable server detects Pi from the Stable bridge', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
-    writePiBridge('open-knowledge.ts');
+    vi.stubEnv('PS_CHANNEL', 'stable');
+    writePiBridge('palimpsest.ts');
     expect(resolveSkillTargets(dir)).toEqual(['pi']);
   });
 });

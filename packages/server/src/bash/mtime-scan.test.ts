@@ -16,7 +16,7 @@ import type { Stage } from './parse-command.ts';
 let tmp: string;
 
 beforeEach(async () => {
-  tmp = await mkdtemp(resolve(tmpdir(), 'ok-mtime-test-'));
+  tmp = await mkdtemp(resolve(tmpdir(), 'ps-mtime-test-'));
 });
 
 afterEach(async () => {
@@ -318,7 +318,7 @@ describe('diffMtimes', () => {
   });
 
   test('full round-trip: write → snapshot → touch → snapshot → diff', async () => {
-    const tmp2 = await mkdtemp(resolve(tmpdir(), 'ok-mtime-rt-'));
+    const tmp2 = await mkdtemp(resolve(tmpdir(), 'ps-mtime-rt-'));
     try {
       writeFileSync(resolve(tmp2, 'a.md'), 'v1');
       const before = (await snapshotMtimes(tmp2)).snapshot;

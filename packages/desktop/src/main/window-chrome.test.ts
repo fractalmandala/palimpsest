@@ -1,6 +1,6 @@
-import { APP_HEADER_HEIGHT, REDUCED_CHROME_HEADER_HEIGHT } from '@inkeep/open-knowledge-core';
+import { APP_HEADER_HEIGHT, REDUCED_CHROME_HEADER_HEIGHT } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
-import type { OkChromeColors } from '../shared/bridge-contract.ts';
+import type { PsChromeColors } from '../shared/bridge-contract.ts';
 import { noteWindowNativeChromeOptions } from './note-window.ts';
 import {
   APP_HEADER_TITLEBAR_OVERLAY_HEIGHT,
@@ -28,7 +28,7 @@ function remToPx(rem: string): number {
 
 const REDUCED_CHROME_BAR_PX = remToPx(REDUCED_CHROME_HEADER_HEIGHT);
 
-const LIVE: OkChromeColors = { bg: '#282a36', symbol: '#f8f8f2' };
+const LIVE: PsChromeColors = { bg: '#282a36', symbol: '#f8f8f2' };
 
 describe('computeTitleBarOverlay', () => {
   test('light theme uses light bg + dark symbols', () => {

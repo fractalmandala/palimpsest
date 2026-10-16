@@ -1,10 +1,10 @@
 import { dirname, isAbsolute } from 'node:path';
 import type { InitializeResponse } from '@agentclientprotocol/sdk';
-import { isTerminalLaunchEnvName } from '@inkeep/open-knowledge-core';
+import { isTerminalLaunchEnvName } from '@palimpsest/core';
 import type {
   ThreadAuthMethod,
   ThreadAuthTerminalLaunch,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { allowNpxInstall, type ResolvedLaunch } from './launch.ts';
 
 export type TerminalAuthBase = ThreadAuthTerminalLaunch;

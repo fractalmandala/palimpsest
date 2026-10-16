@@ -2,10 +2,10 @@ import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import {
   currentDesktopProduct,
-  OK_USER_HOME_AUTH_FILE,
-  okUserHomeDisplayPath,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFileSync, okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+  PS_USER_HOME_AUTH_FILE,
+  psUserHomeDisplayPath,
+} from '@palimpsest/core';
+import { atomicWriteFileSync, psUserHomeDir } from '@palimpsest/core/server';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 
 interface TokenEntry {
@@ -29,7 +29,7 @@ export interface TokenStore {
 }
 
 export function authFileDisplayPath(): string {
-  return okUserHomeDisplayPath(OK_USER_HOME_AUTH_FILE);
+  return psUserHomeDisplayPath(PS_USER_HOME_AUTH_FILE);
 }
 
 function keyringService(): string {
@@ -117,7 +117,7 @@ export class FileBackend implements TokenStore {
   private readonly authFile: string;
 
   constructor(authFile?: string) {
-    this.authFile = authFile ?? join(okUserHomeDir(), OK_USER_HOME_AUTH_FILE);
+    this.authFile = authFile ?? join(psUserHomeDir(), PS_USER_HOME_AUTH_FILE);
   }
 
   private read(): Record<string, TokenEntry> {

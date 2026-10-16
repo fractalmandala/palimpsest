@@ -3,7 +3,7 @@ import { basename, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, test } from 'vitest';
 import { createTempDirFactory } from './temp-dir.test-helper';
-import { okVitestBase } from './vitest.base';
+import { psVitestBase } from './vitest.base';
 import {
   isTestConfig,
   type ProjectReading,
@@ -84,11 +84,11 @@ const unresolvedProblem = (project: string, reference: string): string =>
 
 function sharedSetupProblems(reading: ProjectReading<string>): string[] {
   if (reading.kind === 'unresolved') return [unresolvedProblem(reading.project, reading.reference)];
-  const missing = okVitestBase.test.setupFiles.filter((entry) => !reading.values.includes(entry));
+  const missing = psVitestBase.test.setupFiles.filter((entry) => !reading.values.includes(entry));
   if (missing.length === 0) return [];
   return [
     `${reading.project} omits [${missing.join(', ')}], which the shared base installs; it resolves ` +
-      `[${reading.values.join(', ')}]. Build it from okVitestBase.test.setupFiles rather than listing entries by hand.`,
+      `[${reading.values.join(', ')}]. Build it from psVitestBase.test.setupFiles rather than listing entries by hand.`,
   ];
 }
 
@@ -99,7 +99,7 @@ function browserSetupProblems(
   if (reading.kind === 'unresolved') return [unresolvedProblem(reading.project, reading.reference)];
   const names = reading.values.map((entry) => basename(entry));
   const absent = required.filter((name) => !names.includes(name));
-  const nodeOnly = reading.values.filter((entry) => okVitestBase.test.setupFiles.includes(entry));
+  const nodeOnly = reading.values.filter((entry) => psVitestBase.test.setupFiles.includes(entry));
   return [
     ...(absent.length === 0
       ? []
@@ -117,10 +117,10 @@ function browserSetupProblems(
 const makeTempDir = createTempDirFactory(afterAll);
 
 function plantConfig(name: string, body: readonly string[]): string {
-  const root = makeTempDir('ok-setup-files-contract-');
+  const root = makeTempDir('ps-setup-files-contract-');
   writeFileSync(
     join(root, name),
-    [`import { okVitestBase } from ${JSON.stringify(BASE_MODULE)};`, ...body, ''].join('\n'),
+    [`import { psVitestBase } from ${JSON.stringify(BASE_MODULE)};`, ...body, ''].join('\n'),
   );
   return root;
 }
@@ -141,8 +141,8 @@ describe('vitest setupFiles contract', () => {
   test('the shared base itself still installs every required setup file', () => {
     for (const required of REQUIRED_BASE_SETUP_FILES) {
       expect(
-        okVitestBase.test.setupFiles.some((entry) => basename(entry) === required),
-        `okVitestBase.test.setupFiles no longer installs ${required}, so every project ` +
+        psVitestBase.test.setupFiles.some((entry) => basename(entry) === required),
+        `psVitestBase.test.setupFiles no longer installs ${required}, so every project ` +
           'below would agree with a base that stopped installing it.',
       ).toBe(true);
     }
@@ -193,7 +193,7 @@ describe('a projects config is judged by the setup files Vitest gives each proje
     const root = plantConfig(config, [
       'export default {',
       '  test: {',
-      '    setupFiles: okVitestBase.test.setupFiles,',
+      '    setupFiles: psVitestBase.test.setupFiles,',
       '    projects: [',
       "      { test: { name: 'inherits', setupFiles: ['./project-setup.ts'] } },",
       "      { extends: false, test: { name: 'extends-false', setupFiles: ['./project-setup.ts'] } },",
@@ -206,7 +206,7 @@ describe('a projects config is judged by the setup files Vitest gives each proje
       {
         kind: 'resolved',
         project: `${config} project inherits`,
-        values: [...okVitestBase.test.setupFiles, './project-setup.ts'],
+        values: [...psVitestBase.test.setupFiles, './project-setup.ts'],
       },
       {
         kind: 'resolved',
@@ -218,7 +218,7 @@ describe('a projects config is judged by the setup files Vitest gives each proje
       [],
       [
         expect.stringContaining(
-          `${config} project extends-false omits [${okVitestBase.test.setupFiles.join(', ')}]`,
+          `${config} project extends-false omits [${psVitestBase.test.setupFiles.join(', ')}]`,
         ),
       ],
     ]);
@@ -229,7 +229,7 @@ describe('a projects config is judged by the setup files Vitest gives each proje
     const root = plantConfig(config, [
       'export default {',
       '  test: {',
-      '    setupFiles: okVitestBase.test.setupFiles,',
+      '    setupFiles: psVitestBase.test.setupFiles,',
       '    projects: [',
       "      './vitest.other.config.mjs',",
       "      { extends: './vitest.other.config.mjs', test: { name: 'extends-file' } },",
@@ -253,7 +253,7 @@ describe('a projects config is judged by the setup files Vitest gives each proje
     const root = plantConfig(config, [
       'export default {',
       '  test: {',
-      '    setupFiles: okVitestBase.test.setupFiles,',
+      '    setupFiles: psVitestBase.test.setupFiles,',
       '    projects: [',
       "      { extends: false, test: { name: 'browser-only', setupFiles: ['./browser-setup.ts'] } },",
       "      { test: { name: 'inherits-node-only', setupFiles: ['./browser-setup.ts'] } },",
@@ -267,7 +267,7 @@ describe('a projects config is judged by the setup files Vitest gives each proje
       [],
       [
         expect.stringContaining(
-          `${config} project inherits-node-only loads the Node-only shared setup file(s) [${okVitestBase.test.setupFiles.join(', ')}]`,
+          `${config} project inherits-node-only loads the Node-only shared setup file(s) [${psVitestBase.test.setupFiles.join(', ')}]`,
         ),
       ],
       [

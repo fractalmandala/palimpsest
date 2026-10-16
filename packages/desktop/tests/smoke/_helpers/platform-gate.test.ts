@@ -470,7 +470,7 @@ describe('shared predicates — meaning', () => {
 
 describe('listSpecFiles — corpus enumeration', () => {
   test('finds a spec nested one level down, posix-keyed', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-spec-listing-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-spec-listing-'));
     try {
       mkdirSync(join(dir, 'nested'), { recursive: true });
       writeFileSync(join(dir, 'flat.e2e.ts'), '');

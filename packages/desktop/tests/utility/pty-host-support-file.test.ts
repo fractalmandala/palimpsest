@@ -20,8 +20,8 @@ import {
   setupPtyHost,
 } from '../../src/utility/pty-host.ts';
 
-const SUPPORT_RELATIVE_PATH = '.ok/local/terminal/claude-settings-mcp-tools.json';
-const REGISTRY_CONTENTS = '{"enabledMcpjsonServers":["open-knowledge"]}';
+const SUPPORT_RELATIVE_PATH = '.ps/local/terminal/claude-settings-mcp-tools.json';
+const REGISTRY_CONTENTS = '{"enabledMcpjsonServers":["palimpsest"]}';
 
 function makeInertPty(): PtyProcessLike {
   return {
@@ -89,7 +89,7 @@ let project: string;
 let outside: string;
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-support-file-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-support-file-')));
   project = join(root, 'project');
   outside = join(root, 'outside');
   mkdirSync(project, { recursive: true });
@@ -136,7 +136,7 @@ describe('production support-file writer', () => {
   test('creates the settings file when nothing exists yet', () => {
     const h = materialize(project);
 
-    const target = join(project, '.ok', 'local', 'terminal', 'claude-settings-mcp-tools.json');
+    const target = join(project, '.ps', 'local', 'terminal', 'claude-settings-mcp-tools.json');
     expect(readFileSync(target, 'utf8')).toBe(REGISTRY_CONTENTS);
     expect(lstatSync(target).isSymbolicLink()).toBe(false);
     expect(h.spawnArgs).toBe(`/K claude --settings ${SUPPORT_RELATIVE_PATH}`);
@@ -146,7 +146,7 @@ describe('production support-file writer', () => {
   });
 
   test('overwrites an existing regular settings file in place', () => {
-    const dir = join(project, '.ok', 'local', 'terminal');
+    const dir = join(project, '.ps', 'local', 'terminal');
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'claude-settings-mcp-tools.json'), '{"stale":true}');
 
@@ -161,8 +161,8 @@ describe('production support-file writer', () => {
   test('refuses when the terminal settings directory is a symlink out of the project', () => {
     const attackerDir = join(outside, 'attacker-dir');
     mkdirSync(attackerDir, { recursive: true });
-    mkdirSync(join(project, '.ok', 'local'), { recursive: true });
-    symlinkSync(attackerDir, join(project, '.ok', 'local', 'terminal'), 'dir');
+    mkdirSync(join(project, '.ps', 'local'), { recursive: true });
+    symlinkSync(attackerDir, join(project, '.ps', 'local', 'terminal'), 'dir');
 
     const h = materialize(project);
 
@@ -173,7 +173,7 @@ describe('production support-file writer', () => {
   test('refuses when an ancestor segment is a symlink out of the project', () => {
     const attackerDir = join(outside, 'attacker-ok');
     mkdirSync(attackerDir, { recursive: true });
-    symlinkSync(attackerDir, join(project, '.ok'), 'dir');
+    symlinkSync(attackerDir, join(project, '.ps'), 'dir');
 
     const h = materialize(project);
 
@@ -184,7 +184,7 @@ describe('production support-file writer', () => {
   test('refuses to follow a leaf symlink onto an external file', () => {
     const victim = join(outside, 'victim.json');
     writeFileSync(victim, '{"user":"important"}');
-    const dir = join(project, '.ok', 'local', 'terminal');
+    const dir = join(project, '.ps', 'local', 'terminal');
     mkdirSync(dir, { recursive: true });
     symlinkSync(victim, join(dir, 'claude-settings-mcp-tools.json'));
 
@@ -196,7 +196,7 @@ describe('production support-file writer', () => {
 
   test('refuses a dangling leaf symlink rather than creating its target', () => {
     const victim = join(outside, 'not-yet-there.json');
-    const dir = join(project, '.ok', 'local', 'terminal');
+    const dir = join(project, '.ps', 'local', 'terminal');
     mkdirSync(dir, { recursive: true });
     symlinkSync(victim, join(dir, 'claude-settings-mcp-tools.json'));
 
@@ -209,7 +209,7 @@ describe('production support-file writer', () => {
   test('refuses a leaf symlink that stays inside the project', () => {
     const inside = join(project, 'decoy.json');
     writeFileSync(inside, '{"inside":true}');
-    const dir = join(project, '.ok', 'local', 'terminal');
+    const dir = join(project, '.ps', 'local', 'terminal');
     mkdirSync(dir, { recursive: true });
     symlinkSync(inside, join(dir, 'claude-settings-mcp-tools.json'));
 
@@ -220,15 +220,15 @@ describe('production support-file writer', () => {
   });
 
   test('classifies a dangling directory symlink as a containment refusal', () => {
-    mkdirSync(join(project, '.ok', 'local'), { recursive: true });
-    symlinkSync(join(outside, 'missing'), join(project, '.ok', 'local', 'terminal'), 'dir');
+    mkdirSync(join(project, '.ps', 'local'), { recursive: true });
+    symlinkSync(join(outside, 'missing'), join(project, '.ps', 'local', 'terminal'), 'dir');
 
     expectContainmentRefusal(materialize(project));
   });
 
   test('classifies a directory symlink cycle as a containment refusal', () => {
-    mkdirSync(join(project, '.ok', 'local'), { recursive: true });
-    const terminal = join(project, '.ok', 'local', 'terminal');
+    mkdirSync(join(project, '.ps', 'local'), { recursive: true });
+    const terminal = join(project, '.ps', 'local', 'terminal');
     symlinkSync(terminal, terminal, 'dir');
 
     expectContainmentRefusal(materialize(project));
@@ -241,7 +241,7 @@ describe('production support-file writer', () => {
       const locked = join(outside, 'locked');
       const target = join(locked, 'target');
       mkdirSync(target, { recursive: true });
-      symlinkSync(target, join(project, '.ok'), 'dir');
+      symlinkSync(target, join(project, '.ps'), 'dir');
       chmodSync(locked, 0o000);
       try {
         expectWriteFailure(materialize(project));

@@ -87,7 +87,7 @@ const underlineElementHandlers: RehypeRemarkHandlers = {
   ins: underlineWrapperHandler('ins'),
 };
 
-const UNDERLINE_FORM_KEY = 'okUnderlineForm';
+const UNDERLINE_FORM_KEY = 'psUnderlineForm';
 
 function underlineWrapperHandler(tag: 'u' | 'ins'): RehypeRemarkHandler {
   return (state, node) => {

@@ -7,7 +7,7 @@ import {
   type UninstallFeedbackAnswers,
   type UninstallFeedbackResult,
   type UninstallFeedbackSubmission,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { runUninstall } from './uninstall.ts';
 import { collectUninstallFeedbackAnswers, promptUninstallFeedback } from './uninstall-feedback.ts';
@@ -211,8 +211,8 @@ describe('promptUninstallFeedback submission', () => {
 
 describe('ok uninstall feedback step', () => {
   function uninstallFixture(): { home: string; cleanup: () => void } {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-fb-'));
-    write(join(home, '.ok', 'auth.yml'), 'x\n');
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-fb-'));
+    write(join(home, '.ps', 'auth.yml'), 'x\n');
     return { home, cleanup: () => rmSync(home, { recursive: true, force: true }) };
   }
 
@@ -245,7 +245,7 @@ describe('ok uninstall feedback step', () => {
             submit: async (submission) => {
               await new Promise((resolve) => setTimeout(resolve, 0));
               order.push(
-                existsSync(join(home, '.ok', 'auth.yml'))
+                existsSync(join(home, '.ps', 'auth.yml'))
                   ? `posted-before-cleanup:${submission.source}`
                   : 'posted-after-cleanup',
               );
@@ -257,7 +257,7 @@ describe('ok uninstall feedback step', () => {
       await result.runFeedbackAfterReport?.();
       expect(order).toEqual(['asked', 'posted-after-cleanup']);
       expect(result.status).toBe('done');
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
     } finally {
       cleanup();
     }
@@ -282,7 +282,7 @@ describe('ok uninstall feedback step', () => {
         isStdinTTY: true,
         confirmStream: Readable.from(['y\n']),
         deps: {
-          discoverLockDirs: async () => ['/some/proj/.ok/local'],
+          discoverLockDirs: async () => ['/some/proj/.ps/local'],
           detectInstallMethods: () => [],
           runRemovalDeps: {
             ...stubbedRemoval,
@@ -324,7 +324,7 @@ describe('ok uninstall feedback step', () => {
       await result.runFeedbackAfterReport?.();
       expect(result.status).toBe('done');
       expect(result.exitCode).toBe(0);
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
     } finally {
       cleanup();
     }

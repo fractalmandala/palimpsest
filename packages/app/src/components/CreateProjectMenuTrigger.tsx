@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { CreateProjectDialog } from '@/components/CreateProjectDialog';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { subscribeLocalMenuAction } from '@/lib/local-menu-action-bus';
 
-export function CreateProjectMenuTrigger({ bridge }: { bridge: OkDesktopBridge }) {
+export function CreateProjectMenuTrigger({ bridge }: { bridge: PsDesktopBridge }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

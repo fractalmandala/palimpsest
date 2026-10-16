@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
-import type { OkIntegrationsStatus } from '@/lib/desktop-bridge-types';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
+import type { PsIntegrationsStatus } from '@/lib/desktop-bridge-types';
 
-export function OkCliPathRow() {
+export function PsCliPathRow() {
   const { t } = useLingui();
-  const cliCommand = okCliCommandName();
-  const bridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
-  const [status, setStatus] = useState<OkIntegrationsStatus | null>(null);
+  const cliCommand = psCliCommandName();
+  const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
+  const [status, setStatus] = useState<PsIntegrationsStatus | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -54,20 +54,20 @@ export function OkCliPathRow() {
   const files = status.path.rcFilesToTouch;
 
   return (
-    <div className="flex flex-col gap-1.5" data-testid="ok-cli-path-row">
+    <div className="flex flex-col gap-1.5" data-testid="ps-cli-path-row">
       {}
       <div className="flex items-start overflow-hidden rounded-md border border-border bg-card/50 hover:bg-accent">
         <Label
-          htmlFor="ok-cli-path"
+          htmlFor="ps-cli-path"
           className="flex flex-1 cursor-pointer items-start gap-2.5 px-3 py-2.5 font-normal"
         >
           <Checkbox
-            id="ok-cli-path"
+            id="ps-cli-path"
             checked={status.path.installed}
             disabled={busy || !status.available}
             onCheckedChange={() => void toggle(!status.path.installed)}
             className="mt-0.5"
-            data-testid="ok-cli-path-checkbox"
+            data-testid="ps-cli-path-checkbox"
           />
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="font-medium text-foreground text-sm">
@@ -75,7 +75,7 @@ export function OkCliPathRow() {
                 Add the <code className="inline-code">{cliCommand}</code> command to your terminal
               </Trans>
             </span>
-            <span className="text-muted-foreground text-xs" data-testid="ok-cli-path-status">
+            <span className="text-muted-foreground text-xs" data-testid="ps-cli-path-status">
               <Trans>Adds a managed block to</Trans>{' '}
               {files.map((file, index) => (
                 <span key={file}>
@@ -93,7 +93,7 @@ export function OkCliPathRow() {
               size="icon"
               className="mt-1.5 me-1.5 h-6 w-6 shrink-0 text-muted-foreground opacity-60 hover:opacity-100"
               aria-label={t`What this checkbox changes`}
-              data-testid="ok-cli-path-info"
+              data-testid="ps-cli-path-info"
             >
               <Info className="size-3.5" />
             </Button>

@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: SplashPageProps): Promise<Met
 
   if (view.kind !== 'ok') {
     const fallbackDescription = metaDescription(
-      'Open shared documents and folders with OpenKnowledge, the AI-native markdown IDE and LLM wiki.',
+      'Open shared documents and folders with Palimpsest, the AI-native markdown IDE and LLM wiki.',
     );
     return {
       title: { absolute: SITE_NAME },
@@ -68,8 +68,8 @@ export default async function SplashPage({ params }: SplashPageProps) {
   if (view.kind === 'unsupported-version') {
     return (
       <SplashFallback
-        heading="Update OpenKnowledge to open this share."
-        description="This link was made by a newer version than the one you have. Open OpenKnowledge and choose Check for updates, or install the current build below."
+        heading="Update Palimpsest to open this share."
+        description="This link was made by a newer version than the one you have. Open Palimpsest and choose Check for updates, or install the current build below."
       />
     );
   }

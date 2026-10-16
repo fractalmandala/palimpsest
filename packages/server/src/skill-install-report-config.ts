@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { ConfigSchema } from '@inkeep/open-knowledge-core';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { ConfigSchema } from '@palimpsest/core';
+import { resolveConfigPath } from '@palimpsest/core/server';
 import { parse as parseYaml } from 'yaml';
 import { getLogger } from './logger.ts';
 

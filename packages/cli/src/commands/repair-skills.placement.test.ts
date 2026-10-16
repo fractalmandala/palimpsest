@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { USER_SKILL_HOSTS } from '@inkeep/open-knowledge-core';
+import { USER_SKILL_HOSTS } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { repairSkills } from './repair-skills.ts';
 
@@ -34,14 +34,14 @@ afterEach(() => {
 });
 
 function scratch(): { home: string; project: string; bundle: string } {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-placement-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-placement-'));
   cleanup.push(root);
   const home = join(root, 'home');
   const project = join(root, 'project');
   const bundle = join(root, 'bundle');
   for (const [hostDir] of HOSTS) mkdirSync(join(home, hostDir), { recursive: true });
   mkdirSync(join(home, '.agents'), { recursive: true });
-  mkdirSync(join(project, '.ok'), { recursive: true });
+  mkdirSync(join(project, '.ps'), { recursive: true });
   mkdirSync(bundle, { recursive: true });
   writeFileSync(join(bundle, 'SKILL.md'), `---\nname: ${NAME}\n---\n# body\n`);
   return { home, project, bundle };

@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { shellSingleQuote } from '@inkeep/open-knowledge-core';
+import { shellSingleQuote } from '@palimpsest/core';
 
 const CLI_PACKAGE_DIR = resolve(import.meta.dirname, '../..');
 
@@ -76,7 +76,7 @@ export function writeRecordingCredentialHelper(
       "  const at = line.indexOf('=');",
       '  if (at > 0) fields[line.slice(0, at)] = line.slice(at + 1);',
       '}',
-      'const relayToken = process.env.OK_GH_TOKEN ?? null;',
+      'const relayToken = process.env.PS_GH_TOKEN ?? null;',
       "appendFileSync(log, JSON.stringify({ label, operation, fields, relayToken }) + '\\n');",
       '',
     ].join('\n'),
@@ -92,7 +92,7 @@ export function writeCliCredentialStandIn(options: {
   authFile: string;
   phaseLog?: string;
 }): string {
-  const runner = join(options.dir, 'ok-git-credential-get.mts');
+  const runner = join(options.dir, 'ps-git-credential-get.mts');
   const moduleUrl = (path: string) =>
     JSON.stringify(pathToFileURL(join(CLI_PACKAGE_DIR, path)).href);
   writeFileSync(
@@ -116,7 +116,7 @@ export function writeCliCredentialStandIn(options: {
     ].join('\n'),
     'utf-8',
   );
-  const entry = join(options.dir, 'ok-cli.mjs');
+  const entry = join(options.dir, 'ps-cli.mjs');
   writeFileSync(
     entry,
     [
@@ -134,7 +134,7 @@ export function writeCliCredentialStandIn(options: {
 }
 
 export function writeCliEntryLauncher(options: { dir: string; callLog: string }): string {
-  const entry = join(options.dir, 'ok-cli-entry.mjs');
+  const entry = join(options.dir, 'ps-cli-entry.mjs');
   const tsxLoader = pathToFileURL(createRequire(import.meta.url).resolve('tsx')).href;
   const cli = join(CLI_PACKAGE_DIR, 'src', 'cli.ts');
   writeFileSync(

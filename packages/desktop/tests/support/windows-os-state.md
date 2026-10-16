@@ -1,6 +1,6 @@
 # Windows PTY OS observation
 
-Run the standalone collector with Node 24 from the Open Knowledge workspace:
+Run the standalone collector with Node 24 from the Palimpsest workspace:
 
 ```sh
 node packages/desktop/tests/support/windows-os-state-cli.test-helper.ts --pid 12345 --parent-pid 6789 --budget-ms 5000

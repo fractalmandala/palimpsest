@@ -27,7 +27,7 @@ const FRESH = '2026-07-08T17:00:00Z';
 
 function meta({ isDraft = false, publishedAt = SOAKED, dmg = true, manifest = true } = {}) {
   const assets = [];
-  if (dmg) assets.push({ name: 'OpenKnowledge-universal.dmg' });
+  if (dmg) assets.push({ name: 'Palimpsest-universal.dmg' });
   if (manifest) assets.push({ name: 'beta-mac.yml' });
   return { isDraft, publishedAt, assets };
 }
@@ -568,7 +568,7 @@ afterEach(() => {
 });
 
 function makeRepoWithChangesets(commits) {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-fast-tier-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-fast-tier-'));
   tempRepos.push(dir);
   const git = (...args) =>
     execFileSync(
@@ -599,7 +599,7 @@ function makeRepoWithChangesets(commits) {
   for (const { id, subject } of commits) {
     writeFileSync(
       join(dir, '.changeset', `${id}.md`),
-      `---\n'@inkeep/open-knowledge': patch\n---\n\n${id}\n`,
+      `---\n'@palimpsest/cli': patch\n---\n\n${id}\n`,
     );
     git('add', '--all');
     git('commit', '--quiet', '-m', subject);
@@ -689,7 +689,7 @@ describe('screenShippedFixes (no dispatch promote-stable would refuse)', () => {
   });
 
   test('a check that cannot decide fails the 24h selection loudly and declines the fast tier', () => {
-    const broken = new Error('listing the releases of inkeep/open-knowledge failed: HTTP 502');
+    const broken = new Error('listing the releases of fractalmandala/palimpsest failed: HTTP 502');
     expect(() =>
       screenShippedFixes({
         target: 'v1.0.1-beta.0',
@@ -960,7 +960,7 @@ describe('readUnshippedBumps, run by the job that holds no credential', () => {
 
 describe('the selector entry points the two jobs run', () => {
   const SCRIPT = realpathSync(fileURLToPath(new URL('./select-beta-to-promote.mjs', import.meta.url)));
-  const OK_ROOT = join(dirname(SCRIPT), '..', '..');
+  const PS_ROOT = join(dirname(SCRIPT), '..', '..');
   const COPIED = [
     '.github/scripts/select-beta-to-promote.mjs',
     '.github/scripts/shipped-fix-containment.mjs',
@@ -999,7 +999,7 @@ describe('the selector entry points the two jobs run', () => {
     const root = scratch('select-beta-entry-');
     const commit = (id, type, subject, tag) => {
       mkdirSync(join(root, '.changeset'), { recursive: true });
-      writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@inkeep/open-knowledge": ${type}\n---\n\n${id}\n`);
+      writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@palimpsest/cli": ${type}\n---\n\n${id}\n`);
       git(root, 'add', '-A');
       git(root, 'commit', '-q', '-m', subject);
       git(root, 'tag', tag);
@@ -1030,7 +1030,7 @@ describe('the selector entry points the two jobs run', () => {
       JSON.stringify({
         isDraft: false,
         publishedAt: new Date(Date.now() - minutesAgo * 60_000).toISOString(),
-        assets: [{ name: 'OpenKnowledge-Beta-universal.dmg' }, { name: 'beta-mac.yml' }],
+        assets: [{ name: 'Palimpsest-Beta-universal.dmg' }, { name: 'beta-mac.yml' }],
       });
     const listed = listing.map((release) => `'${JSON.stringify(release)}'`).join(' ');
     return ghBin(
@@ -1049,7 +1049,7 @@ describe('the selector entry points the two jobs run', () => {
     const dir = scratch('select-beta-no-node-modules-');
     for (const file of COPIED) {
       mkdirSync(dirname(join(dir, file)), { recursive: true });
-      copyFileSync(join(OK_ROOT, file), join(dir, file));
+      copyFileSync(join(PS_ROOT, file), join(dir, file));
     }
     return join(dir, '.github', 'scripts', 'select-beta-to-promote.mjs');
   };

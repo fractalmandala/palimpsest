@@ -316,7 +316,7 @@ describe('recordEmbedProbe singleton', () => {
 
 describe('onRequest captures into ring buffer + /api/__embed-detect surfaces it', () => {
   function setup() {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-embed-probe-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-embed-probe-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });

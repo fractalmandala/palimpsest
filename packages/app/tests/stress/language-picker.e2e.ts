@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 import { expect, SETTINGS_PANEL_TIMEOUT_MS, test } from './_helpers';
 
-const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ok-language-home-'));
+const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ps-language-home-'));
 
 test.use({ workerServerEnv: { HOME: ISOLATED_HOME } });
 

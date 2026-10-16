@@ -1,5 +1,5 @@
 import { isAbsolute, resolve } from 'node:path';
-import { inspectGitRepository } from '@inkeep/open-knowledge-core/git-repository';
+import { inspectGitRepository } from '@palimpsest/core/git-repository';
 
 export interface HeadBranchInfo {
   readonly currentBranch: string | null;

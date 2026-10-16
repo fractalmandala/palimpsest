@@ -27,7 +27,7 @@ import {
 
 let tmp: string;
 beforeEach(() => {
-  tmp = mkdtempSync(join(tmpdir(), 'ok-file-span-test-'));
+  tmp = mkdtempSync(join(tmpdir(), 'ps-file-span-test-'));
 });
 afterEach(() => {
   if (tmp) rmSync(tmp, { recursive: true, force: true });
@@ -114,7 +114,7 @@ describe('FileSpanExporter', () => {
 
   test('parent directory is created lazily on first export', async () => {
     const exporter = new FileSpanExporter({ projectDir: tmp, maxBytes: 1_000_000 });
-    const telemetryDir = join(tmp, '.ok', 'local', 'telemetry');
+    const telemetryDir = join(tmp, '.ps', 'local', 'telemetry');
     expect(existsSync(telemetryDir)).toBe(false);
 
     const provider = makeProvider(exporter);

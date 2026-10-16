@@ -12,7 +12,7 @@ import { expect, type SmokeFixtures, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 
 function git(cwd: string, ...args: string[]): void {
   execFileSync('git', args, {
@@ -78,7 +78,7 @@ if (
 }
 const MAX_V2_SHARE_TOKEN = maxV2Share.token;
 const MAX_V2_SHARE_TARGET_PATH = maxV2Share.target.docPath;
-const MAX_V2_CUSTOM_URI = `openknowledge://share?token=${MAX_V2_SHARE_TOKEN}`;
+const MAX_V2_CUSTOM_URI = `palimpsest://share?token=${MAX_V2_SHARE_TOKEN}`;
 
 interface MissFixture {
   readonly root: string;
@@ -88,14 +88,14 @@ interface MissFixture {
 
 interface MissFixtureOptions {
   readonly docPath?: string;
-  readonly okConfig?: string;
+  readonly psConfig?: string;
   readonly extraFiles?: Readonly<Record<string, string>>;
 }
 
 function setupDeletedTargetFixture(options: MissFixtureOptions = {}): MissFixture {
   const uniq = randomUUID().slice(0, 8);
   const docPath = options.docPath ?? `docs/moved-${uniq}.md`;
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-share-miss-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-share-miss-')));
   const originDir = join(root, 'origin.git');
   const seedDir = join(root, 'seed');
   const receiverDir = join(root, 'receiver');
@@ -110,8 +110,8 @@ function setupDeletedTargetFixture(options: MissFixtureOptions = {}): MissFixtur
   git(seedDir, 'config', 'user.email', 'test@example.com');
   git(seedDir, 'config', 'user.name', 'Test');
   git(seedDir, 'remote', 'add', 'origin', originDir);
-  mkdirSync(join(seedDir, '.ok'), { recursive: true });
-  writeFileSync(join(seedDir, '.ok', 'config.yml'), options.okConfig ?? ROOT_OK_CONFIG);
+  mkdirSync(join(seedDir, '.ps'), { recursive: true });
+  writeFileSync(join(seedDir, '.ps', 'config.yml'), options.psConfig ?? ROOT_OK_CONFIG);
   mkdirSync(dirname(join(seedDir, docPath)), { recursive: true });
   writeFileSync(join(seedDir, docPath), `# moved ${uniq}\n`);
   for (const [path, content] of Object.entries(options.extraFiles ?? {})) {
@@ -147,7 +147,7 @@ async function expectDeletedTargetMiss(
   shareUrl: string,
   captureStderrFor: SmokeFixtures['captureStderrFor'],
 ): Promise<void> {
-  const tmpHome = mkdtempSync(join(tmpdir(), 'ok-share-miss-home-'));
+  const tmpHome = mkdtempSync(join(tmpdir(), 'ps-share-miss-home-'));
   const userData = join(tmpHome, 'electron-userdata');
   mkdirSync(userData, { recursive: true });
   writeFileSync(
@@ -158,7 +158,7 @@ async function expectDeletedTargetMiss(
           path: fixture.receiver,
           name: 'receiver',
           lastOpenedAt: new Date().toISOString(),
-          gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+          gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
         },
       ],
       projectSessions: {},
@@ -211,7 +211,7 @@ async function expectDeletedTargetMiss(
 }
 
 test.describe('share-receive miss terminal smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -220,10 +220,10 @@ test.describe('share-receive miss terminal smoke', () => {
   }, testInfo) => {
     testInfo.setTimeout(120_000);
     const fixture = setupDeletedTargetFixture();
-    const githubBlobUrl = `https://github.com/inkeep/open-knowledge/blob/main/${fixture.docPath}`;
+    const githubBlobUrl = `https://github.com/fractalmandala/palimpsest/blob/main/${fixture.docPath}`;
     await expectDeletedTargetMiss(
       fixture,
-      `openknowledge://share?url=${encodeURIComponent(githubBlobUrl)}`,
+      `palimpsest://share?url=${encodeURIComponent(githubBlobUrl)}`,
       captureStderrFor,
     );
   });
@@ -234,12 +234,12 @@ test.describe('share-receive miss terminal smoke', () => {
     testInfo.setTimeout(120_000);
     const fixture = setupDeletedTargetFixture({
       docPath: 'wiki/modules/backend-libraries.md',
-      okConfig: NESTED_OK_CONFIG,
+      psConfig: NESTED_OK_CONFIG,
       extraFiles: { 'wiki/keep.md': '# keep content root present\n' },
     });
     await expectDeletedTargetMiss(
       fixture,
-      `openknowledge://share?token=${V2_SHARE_TOKEN}`,
+      `palimpsest://share?token=${V2_SHARE_TOKEN}`,
       captureStderrFor,
     );
   });
@@ -251,7 +251,7 @@ test.describe('share-receive miss terminal smoke', () => {
     expect(MAX_V2_SHARE_TOKEN).toHaveLength(3984);
     expect(MAX_V2_CUSTOM_URI).toHaveLength(4012);
 
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-share-max-argv-home-'));
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-share-max-argv-home-'));
     const userData = join(tmpHome, 'electron-userdata');
     mkdirSync(userData, { recursive: true });
     writeFileSync(

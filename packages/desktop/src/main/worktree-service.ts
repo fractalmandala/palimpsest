@@ -15,12 +15,12 @@ import {
   type WorktreeCreateResult,
   type WorktreeListResult,
   worktreeRelativeDir,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   assertRepoCheckoutSymlinksSafe,
   redactShareSubprocessStderr,
   UnsafeIncomingSymlinkError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { isPathWithinProject } from '../shared/path-containment.ts';
 import { getLogger } from './desktop-logger.ts';
 import { gitSpawnEnv } from './git-spawn-env.ts';

@@ -127,7 +127,7 @@ describe('derive-timing defer exhaustion — checkpoint floor', () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(1_000_000);
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-defer-exhaustion-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-defer-exhaustion-'));
   });
   afterEach(async () => {
     vi.useRealTimers();

@@ -1,10 +1,10 @@
 import { setTimeout as wait } from 'node:timers/promises';
-import type { HandoffOutcome, HandoffPayload, HandoffTarget } from '@inkeep/open-knowledge-core';
+import type { HandoffOutcome, HandoffPayload, HandoffTarget } from '@palimpsest/core';
 import {
   composeTerminalBareLaunchPrompt,
-  OK_TERMINAL_SURFACE_PREAMBLE,
+  PS_TERMINAL_SURFACE_PREAMBLE,
   withSkillPointer,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import type {
   HandoffDispatchDeps,
@@ -16,8 +16,8 @@ import type {
 function sampleInput(overrides: Partial<HandoffDispatchInput> = {}): HandoffDispatchInput {
   return {
     docContext: { relativePath: 'specs/foo/SPEC.md' },
-    projectDir: '/Users/andrew/Documents/code/open-knowledge',
-    docPath: '/Users/andrew/Documents/code/open-knowledge/specs/foo/SPEC.md',
+    projectDir: '/Users/andrew/Documents/code/palimpsest',
+    docPath: '/Users/andrew/Documents/code/palimpsest/specs/foo/SPEC.md',
     ...overrides,
   };
 }
@@ -140,14 +140,14 @@ describe('isElectronHostDefault — host classifier', () => {
     expect(isElectronHostDefault(undefined)).toBe(false);
   });
 
-  test('returns false when okDesktop is absent', async () => {
+  test('returns false when psDesktop is absent', async () => {
     const { isElectronHostDefault } = await import('./useHandoffDispatch');
     expect(isElectronHostDefault({})).toBe(false);
   });
 
-  test('returns true when okDesktop is any non-nullish value', async () => {
+  test('returns true when psDesktop is any non-nullish value', async () => {
     const { isElectronHostDefault } = await import('./useHandoffDispatch');
-    expect(isElectronHostDefault({ okDesktop: { shell: {} } })).toBe(true);
+    expect(isElectronHostDefault({ psDesktop: { shell: {} } })).toBe(true);
   });
 });
 
@@ -193,7 +193,7 @@ describe('runHandoffDispatch — success path', () => {
     );
     expect(payload.prompt).toBe(
       withSkillPointer(
-        "Let's work on `specs/2026-04-21-open-in-agent-desktop/SPEC.md` using OpenKnowledge. Open the OK editor in web view.",
+        "Let's work on `specs/2026-04-21-open-in-agent-desktop/SPEC.md` using Palimpsest. Open the OK editor in web view.",
       ),
     );
   });
@@ -215,7 +215,7 @@ describe('runHandoffDispatch — success path', () => {
 
   test('project-scoped (docContext: null, no folderRelativePath) emits empty-space prompt + empty docPath', async () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
-    const { composeEmptySpacePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeEmptySpacePrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
     const input: HandoffDispatchInput = {
       docContext: null,
@@ -235,14 +235,14 @@ describe('runHandoffDispatch — success path', () => {
     expect(payload.prompt).toBe(withSkillPointer(composeEmptySpacePrompt(true)));
     expect(payload.prompt).toBe(
       withSkillPointer(
-        "Let's work on this project using OpenKnowledge. Open the OK editor in web view.",
+        "Let's work on this project using Palimpsest. Open the OK editor in web view.",
       ),
     );
   });
 
   test('folder-scoped (docContext: null, folderRelativePath set) emits folder prompt with autoOpen=true trailer', async () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
-    const { composeFolderPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFolderPrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
     const input: HandoffDispatchInput = {
       docContext: null,
@@ -264,7 +264,7 @@ describe('runHandoffDispatch — success path', () => {
     );
     expect(payload.prompt).toBe(
       withSkillPointer(
-        "Let's work on the `specs/2026-05-16-sidebar-context-menus` folder using OpenKnowledge. Open the OK editor in web view.",
+        "Let's work on the `specs/2026-05-16-sidebar-context-menus` folder using Palimpsest. Open the OK editor in web view.",
       ),
     );
   });
@@ -279,7 +279,7 @@ describe('runHandoffDispatch — autoOpen=false honors the user preference', () 
       HandoffPayload,
     ];
     expect(payload.prompt).toBe(
-      withSkillPointer("Let's work on `specs/foo/SPEC.md` using OpenKnowledge."),
+      withSkillPointer("Let's work on `specs/foo/SPEC.md` using Palimpsest."),
     );
     expect(payload.prompt).not.toContain('Open the OK editor');
   });
@@ -298,7 +298,7 @@ describe('runHandoffDispatch — autoOpen=false honors the user preference', () 
       HandoffPayload,
     ];
     expect(payload.prompt).toBe(
-      withSkillPointer("Let's work on the `specs/notes` folder using OpenKnowledge."),
+      withSkillPointer("Let's work on the `specs/notes` folder using Palimpsest."),
     );
     expect(payload.prompt).not.toContain('Open the OK editor');
   });
@@ -316,7 +316,7 @@ describe('runHandoffDispatch — autoOpen=false honors the user preference', () 
       HandoffPayload,
     ];
     expect(payload.prompt).toBe(
-      withSkillPointer("Let's work on this project using OpenKnowledge."),
+      withSkillPointer("Let's work on this project using Palimpsest."),
     );
     expect(payload.prompt).not.toContain('Open the OK editor');
   });
@@ -495,7 +495,7 @@ describe('runHandoffDispatch — Cowork install gate', () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
     const deps = buildDeps({
       ensureCoworkSkillInstalled: vi.fn(
-        async () => ({ kind: 'installed-now', path: '/tmp/openknowledge.skill' }) as const,
+        async () => ({ kind: 'installed-now', path: '/tmp/palimpsest.skill' }) as const,
       ),
     });
 
@@ -505,7 +505,7 @@ describe('runHandoffDispatch — Cowork install gate', () => {
     expect(deps.dispatchHandoff).not.toHaveBeenCalled();
     expect(deps.recordHandoff).not.toHaveBeenCalled();
     expect(deps.toast.successCalls).toEqual([
-      'OpenKnowledge skill saved. Upload it in Claude Desktop, then click Cowork again.',
+      'Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again.',
     ]);
   });
 
@@ -531,7 +531,7 @@ describe('runHandoffDispatch — Cowork install gate', () => {
     }
     expect(deps.dispatchHandoff).not.toHaveBeenCalled();
     expect(deps.toast.errorCalls[0]?.message).toBe(
-      "Couldn't install OpenKnowledge skill — Claude Desktop not found",
+      "Couldn't install Palimpsest skill — Claude Desktop not found",
     );
   });
 
@@ -599,7 +599,7 @@ describe('runHandoffDispatch — Cowork install gate', () => {
     }
     expect(deps.dispatchHandoff).not.toHaveBeenCalled();
     expect(deps.toast.errorCalls[0]?.message).toBe(
-      "Couldn't install OpenKnowledge skill — IPC channel closed",
+      "Couldn't install Palimpsest skill — IPC channel closed",
     );
   });
 });
@@ -707,7 +707,7 @@ describe('buildSkillHandoffInput + selectScopedPrompt — skill scope (author-wi
     });
     if (!input) throw new Error('expected a non-null skill input');
     expect(selectScopedPrompt(input, 'claude-code', true, 'url')).toBe(
-      'Use your open-knowledge-write-skill skill to author the project Open Knowledge skill `commit-helper`. Edit it with the Open Knowledge tools. Open the OK editor in web view.',
+      'Use your open-knowledge-write-skill skill to author the project Palimpsest skill `commit-helper`. Edit it with the Palimpsest tools. Open the OK editor in web view.',
     );
   });
 });
@@ -877,7 +877,7 @@ describe('buildFolderHandoffInput — folder-scoped helper (D23 / FR4 / FR14)', 
 describe('selectScopedPrompt — template selection across autoOpen modes', () => {
   test('file scope (docContext set) returns composeFilePrompt(relativePath, autoOpen=true)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeFilePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFilePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: { relativePath: 'notes/today.md' },
@@ -891,7 +891,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
     expect(out).toBe(withSkillPointer(composeFilePrompt('notes/today.md', true)));
     expect(out).toBe(
       withSkillPointer(
-        "Let's work on `notes/today.md` using OpenKnowledge. Open the OK editor in web view.",
+        "Let's work on `notes/today.md` using Palimpsest. Open the OK editor in web view.",
       ),
     );
   });
@@ -908,12 +908,12 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
       false,
       'url',
     );
-    expect(out).toBe(withSkillPointer("Let's work on `notes/today.md` using OpenKnowledge."));
+    expect(out).toBe(withSkillPointer("Let's work on `notes/today.md` using Palimpsest."));
   });
 
   test('folder scope (docContext null + folderRelativePath set) returns composeFolderPrompt with autoOpen=true trailer', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeFolderPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFolderPrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -928,7 +928,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
     expect(out).toBe(withSkillPointer(composeFolderPrompt('notes', true)));
     expect(out).toBe(
       withSkillPointer(
-        "Let's work on the `notes` folder using OpenKnowledge. Open the OK editor in web view.",
+        "Let's work on the `notes` folder using Palimpsest. Open the OK editor in web view.",
       ),
     );
   });
@@ -946,12 +946,12 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
       false,
       'url',
     );
-    expect(out).toBe(withSkillPointer("Let's work on the `notes` folder using OpenKnowledge."));
+    expect(out).toBe(withSkillPointer("Let's work on the `notes` folder using Palimpsest."));
   });
 
   test('empty-space scope (both null/absent) returns composeEmptySpacePrompt(autoOpen=true)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeEmptySpacePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeEmptySpacePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -965,7 +965,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
     expect(out).toBe(withSkillPointer(composeEmptySpacePrompt(true)));
     expect(out).toBe(
       withSkillPointer(
-        "Let's work on this project using OpenKnowledge. Open the OK editor in web view.",
+        "Let's work on this project using Palimpsest. Open the OK editor in web view.",
       ),
     );
   });
@@ -982,12 +982,12 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
       false,
       'url',
     );
-    expect(out).toBe(withSkillPointer("Let's work on this project using OpenKnowledge."));
+    expect(out).toBe(withSkillPointer("Let's work on this project using Palimpsest."));
   });
 
   test('file scope threads the toolbar instruction into the directive prompt', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeFilePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFilePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: { relativePath: 'notes/today.md' },
@@ -1019,7 +1019,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
       true,
       'url',
     );
-    expect(out).toContain("Let's work on the `notes` folder using OpenKnowledge.");
+    expect(out).toContain("Let's work on the `notes` folder using Palimpsest.");
     expect(out).toContain('> Review the structure');
   });
 
@@ -1036,7 +1036,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
       true,
       'url',
     );
-    expect(out).toContain("Let's work on this project using OpenKnowledge.");
+    expect(out).toContain("Let's work on this project using Palimpsest.");
     expect(out).toContain('> Scaffold the wiki');
   });
 
@@ -1100,7 +1100,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
 
   test('create scope (createDescription set) returns composeCreatePrompt with the scenario', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeCreatePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeCreatePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -1122,7 +1122,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
 
   test('create scope threads createMentions into composeCreatePrompt', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeCreatePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeCreatePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -1161,13 +1161,13 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
       true,
       'url',
     );
-    expect(out).not.toContain('new OpenKnowledge project');
+    expect(out).not.toContain('new Palimpsest project');
     expect(out).toContain('> draft a spec for this codebase');
   });
 
   test('create scope defaults to new-project when createScenario is absent', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeCreatePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeCreatePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       { docContext: null, createDescription: 'a wiki', projectDir: '/proj', docPath: '' },
       'claude-code',
@@ -1180,7 +1180,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
   test('create scope with empty createDescription routes to the create composer, NOT empty-space', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
     const { composeCreatePrompt, composeEmptySpacePrompt } = await import(
-      '@inkeep/open-knowledge-core'
+      '@palimpsest/core'
     );
     const out = selectScopedPrompt(
       {
@@ -1200,7 +1200,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
 
   test('precedence: docContext beats folderRelativePath when both are set (defensive ordering)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeFilePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFilePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: { relativePath: 'a.md' },
@@ -1217,7 +1217,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
 
   test('selection scope (selection set) returns composeSelectionPrompt for the target', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeSelectionPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeSelectionPrompt } = await import('@palimpsest/core');
     const selection = {
       relativePath: 'notes/today.md',
       instruction: 'tighten this',
@@ -1239,7 +1239,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
 
   test('the standing skill pointer rides every directive scope but NOT selection', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { OK_PROJECT_SKILL_POINTER } = await import('@inkeep/open-knowledge-core');
+    const { PS_PROJECT_SKILL_POINTER } = await import('@palimpsest/core');
     const base = { projectDir: '/proj', docPath: '' } as const;
 
     const file = selectScopedPrompt(
@@ -1273,14 +1273,14 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
     );
 
     for (const prompt of [file, folder, empty, create]) {
-      expect(prompt.startsWith(OK_PROJECT_SKILL_POINTER)).toBe(true);
+      expect(prompt.startsWith(PS_PROJECT_SKILL_POINTER)).toBe(true);
     }
-    expect(selection).not.toContain(OK_PROJECT_SKILL_POINTER);
+    expect(selection).not.toContain(PS_PROJECT_SKILL_POINTER);
   });
 
   test('precedence: selection beats docContext when both are set (defensive ordering)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeSelectionPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeSelectionPrompt } = await import('@palimpsest/core');
     const selection = {
       relativePath: 'a.md',
       instruction: '',
@@ -1448,7 +1448,7 @@ describe('runHandoffDispatch — selection scope', () => {
 
   test('composes the selection prompt and dispatches it to the picked target', async () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
-    const { composeSelectionPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeSelectionPrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
 
     await runHandoffDispatch('claude-code', selectionInput(), deps);
@@ -1514,8 +1514,8 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
       'claude',
     );
     expect(out).toBe(composeTerminalBareLaunchPrompt('notes/today.md'));
-    expect(out).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
-    expect(out).toContain('Read `notes/today.md` via the OpenKnowledge MCP server, then stop.');
+    expect(out).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
+    expect(out).toContain('Read `notes/today.md` via the Palimpsest MCP server, then stop.');
     expect(out).not.toContain("Let's work on");
     expect(out).not.toContain('Open the OK editor');
   });
@@ -1532,7 +1532,7 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
       'claude',
     );
     expect(out).toBe(composeTerminalBareLaunchPrompt(null));
-    expect(out).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
+    expect(out).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
     expect(out.endsWith('Then stop.')).toBe(true);
     expect(out).not.toContain('Read `');
     expect(out).not.toContain("Let's work on");
@@ -1577,17 +1577,17 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
       instruction: 'summarize the open questions',
     };
     expect(composeTerminalLaunchPrompt(input, 'claude')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
     );
     expect(composeTerminalLaunchPrompt(input, 'codex')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'codex', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'codex', false, 'terminal')}`,
     );
     expect(composeTerminalLaunchPrompt(input, 'cursor')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'cursor', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'cursor', false, 'terminal')}`,
     );
     const claudeOut = composeTerminalLaunchPrompt(input, 'claude');
     expect(claudeOut).toContain('summarize the open questions');
-    expect(claudeOut).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
+    expect(claudeOut).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
     expect(claudeOut).not.toContain('Then stop.');
   });
 
@@ -1607,18 +1607,18 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
       docPath: '/proj/notes/work-log.md',
     };
     expect(composeTerminalLaunchPrompt(input, 'claude')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
     );
     expect(composeTerminalLaunchPrompt(input, 'codex')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'codex', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'codex', false, 'terminal')}`,
     );
     expect(composeTerminalLaunchPrompt(input, 'cursor')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'cursor', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'cursor', false, 'terminal')}`,
     );
     const claudeOut = composeTerminalLaunchPrompt(input, 'claude');
     expect(claudeOut).toContain('What does this file do?');
     expect(claudeOut).not.toBe(composeTerminalBareLaunchPrompt('notes/work-log.md'));
-    expect(claudeOut).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
+    expect(claudeOut).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
   });
 
   test('skill scope threads the author-with-AI directive — NOT a bare launch', async () => {
@@ -1632,7 +1632,7 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
       docPath: '',
     };
     expect(composeTerminalLaunchPrompt(input, 'claude')).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
     );
     const claudeOut = composeTerminalLaunchPrompt(input, 'claude');
     expect(claudeOut).toContain('`my-skill`');
@@ -1652,7 +1652,7 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
       'claude',
     );
     expect(out).toBe(composeTerminalBareLaunchPrompt('notes/today.md'));
-    expect(out).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
+    expect(out).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
     expect(out).not.toContain('Instruction:');
     expect(out).not.toContain("Let's work on");
   });
@@ -1670,10 +1670,10 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
     };
     const out = composeTerminalLaunchPrompt(input, 'claude');
     expect(out).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
     );
     expect(out).toContain('a fishing log');
-    expect(out).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
+    expect(out).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
   });
 
   test('empty create brief still routes to the directive composer (createDescription !== undefined)', async () => {
@@ -1689,10 +1689,10 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
     };
     const out = composeTerminalLaunchPrompt(input, 'claude');
     expect(out).toBe(
-      `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
+      `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`,
     );
     expect(out).not.toBe(composeTerminalBareLaunchPrompt(null));
-    expect(out).toContain(OK_TERMINAL_SURFACE_PREAMBLE);
+    expect(out).toContain(PS_TERMINAL_SURFACE_PREAMBLE);
   });
 
   test('bare terminal launch never carries the web-view preview trailer', async () => {
@@ -1802,7 +1802,7 @@ describe('buildAskHandoffInput — ask-scoped helper', () => {
 describe('selectScopedPrompt — ask scope', () => {
   test('ask set returns composeAskPrompt(relativePath, instruction, autoOpen, target)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeAskPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeAskPrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -1838,7 +1838,7 @@ describe('selectScopedPrompt — ask scope', () => {
 
   test('R10 regression guard: an ask input does NOT fall through to composeFilePrompt', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeFilePrompt, composeAskPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFilePrompt, composeAskPrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -1857,7 +1857,7 @@ describe('selectScopedPrompt — ask scope', () => {
 
   test('precedence: ask beats docContext when both are set (defensive ordering)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeAskPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeAskPrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: { relativePath: 'notes/today.md' },
@@ -1874,7 +1874,7 @@ describe('selectScopedPrompt — ask scope', () => {
 
   test('precedence: selection beats ask when both are set (defensive ordering)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeSelectionPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeSelectionPrompt } = await import('@palimpsest/core');
     const selection = {
       relativePath: 'notes/today.md',
       instruction: 'edit the passage',
@@ -1897,7 +1897,7 @@ describe('selectScopedPrompt — ask scope', () => {
 
   test('empty instruction degrades to the bare doc directive (no dangling blockquote)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeAskPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeAskPrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -1926,7 +1926,7 @@ describe('runHandoffDispatch — ask scope', () => {
 
   test('composes the ask prompt and dispatches it to the picked target', async () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
-    const { composeAskPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeAskPrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
 
     await runHandoffDispatch('claude-code', askInput(), deps);
@@ -1945,7 +1945,7 @@ describe('runHandoffDispatch — ask scope', () => {
 
   test('R10: the typed instruction is present in the dispatched prompt (no composeFilePrompt drop)', async () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
-    const { composeFilePrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeFilePrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
 
     await runHandoffDispatch(
@@ -1991,7 +1991,7 @@ describe('runHandoffDispatch — ask scope', () => {
 
   test('end-to-end: buildAskHandoffInput → dispatch carries the instruction', async () => {
     const { runHandoffDispatch, buildAskHandoffInput } = await import('./useHandoffDispatch');
-    const { composeAskPrompt } = await import('@inkeep/open-knowledge-core');
+    const { composeAskPrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
     const input = buildAskHandoffInput({
       docName: 'guides/style',
@@ -2141,7 +2141,7 @@ describe('buildComposerHandoffInput — compose-scoped helper (US-002)', () => {
 describe('selectScopedPrompt — compose scope (US-002)', () => {
   test('doc scope routes through assembleHandoffPrompt for the target (doc lead + mentions present)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { assembleHandoffPrompt } = await import('@inkeep/open-knowledge-core');
+    const { assembleHandoffPrompt } = await import('@palimpsest/core');
     const input: HandoffDispatchInput = {
       docContext: null,
       compose: {
@@ -2172,7 +2172,7 @@ describe('selectScopedPrompt — compose scope (US-002)', () => {
 
   test('folder scope routes through assembleHandoffPrompt with the folder @-mention lead + mentions', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { assembleHandoffPrompt } = await import('@inkeep/open-knowledge-core');
+    const { assembleHandoffPrompt } = await import('@palimpsest/core');
     const input: HandoffDispatchInput = {
       docContext: null,
       compose: {
@@ -2202,7 +2202,7 @@ describe('selectScopedPrompt — compose scope (US-002)', () => {
 
   test('project scope routes through assembleHandoffPrompt with no doc @-mention', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { assembleHandoffPrompt } = await import('@inkeep/open-knowledge-core');
+    const { assembleHandoffPrompt } = await import('@palimpsest/core');
     const input: HandoffDispatchInput = {
       docContext: null,
       compose: { scope: 'project', instruction: 'plan the migration', mentions: [] },
@@ -2225,7 +2225,7 @@ describe('selectScopedPrompt — compose scope (US-002)', () => {
 
   test('doc scope with a selection threads the passage to the assembler', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { assembleHandoffPrompt } = await import('@inkeep/open-knowledge-core');
+    const { assembleHandoffPrompt } = await import('@palimpsest/core');
     const input: HandoffDispatchInput = {
       docContext: null,
       compose: {
@@ -2255,7 +2255,7 @@ describe('selectScopedPrompt — compose scope (US-002)', () => {
 
   test('precedence: compose beats selection + docContext when several are set (defensive ordering)', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { assembleHandoffPrompt } = await import('@inkeep/open-knowledge-core');
+    const { assembleHandoffPrompt } = await import('@palimpsest/core');
     const input: HandoffDispatchInput = {
       docContext: { relativePath: 'a.md' },
       selection: { relativePath: 'a.md', instruction: 'x', selectionMarkdown: 'p' },
@@ -2300,7 +2300,7 @@ describe('runHandoffDispatch — compose scope (US-002)', () => {
 
   test('project scope: composes via the assembler, prompt has the instruction + no doc mention, empty docPath dispatched (R1 dispatch half)', async () => {
     const { runHandoffDispatch } = await import('./useHandoffDispatch');
-    const { assembleHandoffPrompt } = await import('@inkeep/open-knowledge-core');
+    const { assembleHandoffPrompt } = await import('@palimpsest/core');
     const deps = buildDeps();
 
     await runHandoffDispatch('codex', composeProjectInput(), deps);

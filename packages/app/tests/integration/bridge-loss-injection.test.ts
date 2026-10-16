@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema, type JSONContent } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -48,7 +48,7 @@ function serializeFragment(fragment: Y.XmlFragment): string {
 function readLossEvents(contentDir: string): LossRingEvent[] {
   try {
     const raw = readFileSync(
-      join(contentDir, '.ok', 'local', 'loss-capture', 'loss-current.jsonl'),
+      join(contentDir, '.ps', 'local', 'loss-capture', 'loss-current.jsonl'),
       'utf-8',
     );
     return raw
@@ -100,9 +100,9 @@ function stageUnpropagatedKeystroke(doc: Y.Doc, ytext: Y.Text, fragment: Y.XmlFr
 }
 
 function guardDisabledContentDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-loss-injection-'));
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), 'bridge:\n  deferGuard:\n    enabled: false\n');
+  const dir = mkdtempSync(join(tmpdir(), 'ps-loss-injection-'));
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), 'bridge:\n  deferGuard:\n    enabled: false\n');
   return dir;
 }
 

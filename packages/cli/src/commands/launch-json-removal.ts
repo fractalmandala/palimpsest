@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { atomicWriteFileSync } from '@inkeep/open-knowledge-core/server';
+import { atomicWriteFileSync } from '@palimpsest/core/server';
 import {
   getNodeValue,
   type Node as JsoncNode,
@@ -72,7 +72,7 @@ function isOwnLaunchEntry(value: unknown): boolean {
       args[0] === '-l' &&
       args[1] === '-c' &&
       typeof args[2] === 'string' &&
-      /^# ok-ui-v[1-9]\d*$/.test(args[2].split(/\r?\n/, 1)[0] ?? '')
+      /^# ps-ui-v[1-9]\d*$/.test(args[2].split(/\r?\n/, 1)[0] ?? '')
     );
   }
   if (entry.runtimeExecutable === 'npx') {
@@ -85,14 +85,14 @@ function isOwnLaunchEntry(value: unknown): boolean {
     args[1] === '-NonInteractive' &&
     args[2] === '-Command' &&
     typeof args[3] === 'string' &&
-    /^# ok-ui-win-v[1-9]\d*$/.test(args[3].split(/\r?\n/, 1)[0] ?? '')
+    /^# ps-ui-win-v[1-9]\d*$/.test(args[3].split(/\r?\n/, 1)[0] ?? '')
   );
 }
 
 const LEGACY_NPX_UI_FORMS: ReadonlyArray<readonly string[]> = [
-  ['@inkeep/open-knowledge', 'ui'],
-  ['-y', '@inkeep/open-knowledge', 'ui'],
-  ['-y', '@inkeep/open-knowledge@latest', 'ui'],
+  ['@palimpsest/cli', 'ui'],
+  ['-y', '@palimpsest/cli', 'ui'],
+  ['-y', '@palimpsest/cli@latest', 'ui'],
 ];
 
 function argsExactlyMatch(actual: readonly unknown[], expected: readonly string[]): boolean {

@@ -26,7 +26,7 @@ function notDispatched(): never {
 }
 
 function buildGroup(overrides: Partial<Deps> = {}) {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-lint-write-routes-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-lint-write-routes-'));
   roots.push(contentDir);
   const hocuspocus = new Hocuspocus({ quiet: true });
   const deps = {
@@ -120,11 +120,11 @@ describe('createLintWriteRoutes config handlers', () => {
     });
     try {
       const response = await dispatch(group, '/api/lint/frontmatter-schema', {
-        file: '.ok/schemas/native.schema.json',
+        file: '.ps/schemas/native.schema.json',
       });
       expect(response.status).toBe(200);
       expect(
-        JSON.parse(readFileSync(join(contentDir, '.ok/schemas/native.schema.json'), 'utf8')),
+        JSON.parse(readFileSync(join(contentDir, '.ps/schemas/native.schema.json'), 'utf8')),
       ).toEqual({ $schema: 'http://json-schema.org/draft-07/schema#', type: 'object' });
       expect(signals).toEqual(['files', 'lint-config']);
     } finally {
@@ -136,7 +136,7 @@ describe('createLintWriteRoutes config handlers', () => {
     const { group, sessionManager } = buildGroup();
     try {
       const response = await dispatch(group, '/api/lint/frontmatter-schema', {
-        file: '.ok/schemas/native.schema.json',
+        file: '.ps/schemas/native.schema.json',
         field: '__proto__',
         constraint: { type: 'string' },
       });

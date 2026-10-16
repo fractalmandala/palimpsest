@@ -3,7 +3,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkAboutInfo, OkUpdateManualCheckInfo } from '@/lib/desktop-bridge-types';
+import type { PsAboutInfo, PsUpdateManualCheckInfo } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
 vi.doMock('@lingui/react/macro', () => ({
@@ -14,15 +14,15 @@ vi.doMock('@lingui/react/macro', () => ({
 
 const { AboutSection } = await import('./AboutSection');
 
-const CLOUD_ABOUT: OkAboutInfo = {
-  productName: 'OpenKnowledge Cloud',
+const CLOUD_ABOUT: PsAboutInfo = {
+  productName: 'Palimpsest Cloud',
   version: '0.81.5-cloud.1343',
   releasesUrl: 'https://github.com/inkeep/agents-private/releases',
   releaseNotesUrl: 'https://github.com/inkeep/agents-private/releases/tag/v0.81.5-cloud.1343',
   updateChecks: 'available',
 };
 
-function installBridge(about: OkAboutInfo | null, appVersion = about?.version ?? '0.0.0') {
+function installBridge(about: PsAboutInfo | null, appVersion = about?.version ?? '0.0.0') {
   const openExternal = vi.fn(async (_url: string) => {});
   const checkNow = vi.fn(async () => {});
   const query = vi.fn(async () => ({
@@ -30,14 +30,14 @@ function installBridge(about: OkAboutInfo | null, appVersion = about?.version ??
     schemaIncompatibility: null,
     ...(about ? { about } : {}),
   }));
-  let emitManualCheck: (info: OkUpdateManualCheckInfo) => void = () => {};
-  Object.defineProperty(window, 'okDesktop', {
+  let emitManualCheck: (info: PsUpdateManualCheckInfo) => void = () => {};
+  Object.defineProperty(window, 'psDesktop', {
     value: {
       appVersion,
       shell: { openExternal },
       update: { checkNow },
       state: { query },
-      onUpdateManualCheck: (cb: (info: OkUpdateManualCheckInfo) => void) => {
+      onUpdateManualCheck: (cb: (info: PsUpdateManualCheckInfo) => void) => {
         emitManualCheck = cb;
         return () => {};
       },
@@ -49,13 +49,13 @@ function installBridge(about: OkAboutInfo | null, appVersion = about?.version ??
     openExternal,
     checkNow,
     query,
-    emit: (info: OkUpdateManualCheckInfo) => emitManualCheck(info),
+    emit: (info: PsUpdateManualCheckInfo) => emitManualCheck(info),
   };
 }
 
 afterEach(() => {
   cleanup();
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
 });
 
 describe('AboutSection', () => {
@@ -63,7 +63,7 @@ describe('AboutSection', () => {
     installBridge(CLOUD_ABOUT);
     render(<AboutSection />);
 
-    expect(await screen.findByText('OpenKnowledge Cloud')).not.toBeNull();
+    expect(await screen.findByText('Palimpsest Cloud')).not.toBeNull();
     expect(screen.getByTestId('settings-about-version').textContent).toBe('v0.81.5-cloud.1343');
   });
 
@@ -362,10 +362,10 @@ describe('AboutSection', () => {
 function installModeBridge(
   updateMode: 'auto' | 'off',
   setMode: (mode: 'auto' | 'off') => Promise<void> = async () => {},
-  about: OkAboutInfo = CLOUD_ABOUT,
+  about: PsAboutInfo = CLOUD_ABOUT,
 ) {
   const setModeSpy = vi.fn(setMode);
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: {
       appVersion: about.version,
       shell: { openExternal: vi.fn(async () => {}) },
@@ -434,7 +434,7 @@ describe('AboutSection automatic updates switch', () => {
 
   test('a state read started before the click does not undo the new setting', async () => {
     installModeBridge('auto');
-    const bridge = window.okDesktop as unknown as {
+    const bridge = window.psDesktop as unknown as {
       state: { query: ReturnType<typeof vi.fn> };
     };
     render(<AboutSection />);
@@ -467,7 +467,7 @@ describe('AboutSection automatic updates switch', () => {
     installModeBridge('auto', async () => {}, { ...CLOUD_ABOUT, updateChecks: 'unavailable' });
     render(<AboutSection />);
 
-    expect(await screen.findByText('OpenKnowledge Cloud')).not.toBeNull();
+    expect(await screen.findByText('Palimpsest Cloud')).not.toBeNull();
     expect(screen.queryByRole('switch')).toBeNull();
   });
 });

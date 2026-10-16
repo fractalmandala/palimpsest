@@ -35,25 +35,25 @@ const FIXTURES: DescriptorFixture[] = [
   {
     name: 'img',
     surface: 'canonical',
-    html: '<img class="ok-image" src="https://example.com/x.png" alt="example" />',
+    html: '<img class="ps-image" src="https://example.com/x.png" alt="example" />',
     visibleText: 'example',
   },
   {
     name: 'CommonMarkImage',
     surface: 'compat',
-    html: '<img class="ok-image" src="https://example.com/x.png" alt="example" />',
+    html: '<img class="ps-image" src="https://example.com/x.png" alt="example" />',
     visibleText: 'example',
   },
   {
     name: 'video',
     surface: 'canonical',
-    html: '<video class="ok-video" src="https://example.com/x.mp4" controls></video>',
+    html: '<video class="ps-video" src="https://example.com/x.mp4" controls></video>',
     visibleText: '',
   },
   {
     name: 'audio',
     surface: 'canonical',
-    html: '<audio class="ok-audio" src="https://example.com/x.mp3" controls></audio>',
+    html: '<audio class="ps-audio" src="https://example.com/x.mp3" controls></audio>',
     visibleText: '',
   },
   {

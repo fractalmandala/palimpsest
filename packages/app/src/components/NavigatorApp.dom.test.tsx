@@ -129,7 +129,7 @@ function createBridge(themePreference?: 'system' | 'light' | 'dark') {
 }
 
 async function renderNavigator(bridge: ReturnType<typeof createBridge>) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: bridge,
   });
@@ -146,7 +146,7 @@ const { NavigatorApp } = await import('./NavigatorApp');
 describe('NavigatorApp launcher runtime behavior', () => {
   beforeEach(() => {
     cleanup();
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     themeBridgeCalls = [];
     createDialogProps = [];
     cloneDialogProps = [];
@@ -160,7 +160,7 @@ describe('NavigatorApp launcher runtime behavior', () => {
     const bridge = createBridge();
     await renderNavigator(bridge);
 
-    expect(screen.getByRole('heading', { name: 'OpenKnowledge' })).not.toBeNull();
+    expect(screen.getByRole('heading', { name: 'Palimpsest' })).not.toBeNull();
     expect(screen.getByTestId('beta-badge').textContent).toBe('Beta');
     expect(document.body.textContent).not.toContain('Stable');
 
@@ -262,7 +262,7 @@ describe('NavigatorApp launcher runtime behavior', () => {
     bridge.project.listRecent = vi.fn(() =>
       Promise.resolve([
         {
-          path: '/Users/x/pnw-fishing/.ok/worktrees/dev',
+          path: '/Users/x/pnw-fishing/.ps/worktrees/dev',
           name: 'dev',
           isLinkedWorktree: true,
           mainRoot: '/Users/x/pnw-fishing',
@@ -285,7 +285,7 @@ describe('NavigatorApp launcher runtime behavior', () => {
     bridge.project.listRecent = vi.fn(() =>
       Promise.resolve([
         {
-          path: '/Users/x/pnw-fishing/.ok/worktrees/dev',
+          path: '/Users/x/pnw-fishing/.ps/worktrees/dev',
           name: 'dev',
           isLinkedWorktree: true,
           mainRoot: '/Users/x/pnw-fishing',
@@ -309,7 +309,7 @@ describe('NavigatorApp launcher runtime behavior', () => {
     expect(worktreeRow.textContent).toContain('of pnw-fishing');
     expect(
       worktreeRow.querySelector(
-        '[data-testid="nav-recent-branch-/Users/x/pnw-fishing/.ok/worktrees/dev"]',
+        '[data-testid="nav-recent-branch-/Users/x/pnw-fishing/.ps/worktrees/dev"]',
       ),
     ).not.toBeNull();
 

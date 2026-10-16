@@ -365,10 +365,10 @@ describe('state-store (gitRemoteUrl field on RecentProject)', () => {
       emptyState(),
       '/tmp/p1',
       'p1',
-      'https://github.com/inkeep/open-knowledge.git',
+      'https://github.com/fractalmandala/palimpsest.git',
     );
     expect(next.recentProjects[0]?.gitRemoteUrl).toBe(
-      'https://github.com/inkeep/open-knowledge.git',
+      'https://github.com/fractalmandala/palimpsest.git',
     );
   });
 
@@ -382,10 +382,10 @@ describe('state-store (gitRemoteUrl field on RecentProject)', () => {
       emptyState(),
       '/tmp/p1',
       'p1',
-      'https://github.com/inkeep/open-knowledge.git',
+      'https://github.com/fractalmandala/palimpsest.git',
     );
     s = addRecentProject(s, '/tmp/p1', 'p1');
-    expect(s.recentProjects[0]?.gitRemoteUrl).toBe('https://github.com/inkeep/open-knowledge.git');
+    expect(s.recentProjects[0]?.gitRemoteUrl).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
   test('addRecentProject updates gitRemoteUrl when a fresh value is supplied', () => {
@@ -411,11 +411,11 @@ describe('state-store (gitRemoteUrl field on RecentProject)', () => {
       emptyState(),
       '/tmp/p1',
       'p1',
-      'https://github.com/inkeep/open-knowledge.git',
+      'https://github.com/fractalmandala/palimpsest.git',
     );
     const reparsed = parseAppState(JSON.parse(JSON.stringify(state)));
     expect(reparsed?.recentProjects[0]?.gitRemoteUrl).toBe(
-      'https://github.com/inkeep/open-knowledge.git',
+      'https://github.com/fractalmandala/palimpsest.git',
     );
   });
 
@@ -458,7 +458,7 @@ describe('state-store (gitRemoteUrl field on RecentProject)', () => {
 
 describe('saveAppStateToDir (atomic write via tmp + rename)', () => {
   test('writes tmp first, then renames to canonical — real fs round-trip', () => {
-    const userDataDir = mkdtempSync(join(tmpdir(), 'ok-state-atomic-'));
+    const userDataDir = mkdtempSync(join(tmpdir(), 'ps-state-atomic-'));
     try {
       const state = addRecentProject(emptyState(), '/tmp/example', 'example');
       saveAppStateToDir(userDataDir, state);

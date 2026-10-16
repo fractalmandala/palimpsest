@@ -9,8 +9,8 @@ import { UNCACHED_TEST_GLOBS, UNCACHED_TIER_CONFIG } from './test-support/uncach
 import { uncachedTierFloor } from './test-support/uncached-tier-floor';
 import scriptsConfig from './vitest.scripts.config';
 
-const okRulesFixtureLint = fileURLToPath(
-  new URL('./test-support/ok-rules-fixture-lint.ts', import.meta.url),
+const psRulesFixtureLint = fileURLToPath(
+  new URL('./test-support/ps-rules-fixture-lint.ts', import.meta.url),
 );
 
 const SOURCES = [
@@ -23,7 +23,7 @@ const SOURCES = [
     name: 'vitest.scripts.config.ts',
     dir: '.',
     config: scriptsConfig,
-    tierSetup: [okRulesFixtureLint],
+    tierSetup: [psRulesFixtureLint],
   },
 ];
 
@@ -39,7 +39,7 @@ export default defineConfig({
       const missing = UNCACHED_TEST_GLOBS.filter((glob) => !exclude.includes(glob));
       if (missing.length > 0) {
         throw new Error(
-          `${UNCACHED_TIER_CONFIG}: ${name} does not exclude ${missing.join(', ')}, so its cached tier would run the suffixed files too and could replay a stale pass. Spread okVitestBase.test.exclude into its exclude.`,
+          `${UNCACHED_TIER_CONFIG}: ${name} does not exclude ${missing.join(', ')}, so its cached tier would run the suffixed files too and could replay a stale pass. Spread psVitestBase.test.exclude into its exclude.`,
         );
       }
       const suffixed = include.map((glob) => glob.replace(/\.test\.(?=[^/]*$)/, '.uncached.test.'));

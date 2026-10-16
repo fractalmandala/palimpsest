@@ -1,11 +1,11 @@
-import { createTargetNamespace, DOCUMENT_OPEN_BYTE_LIMIT } from '@inkeep/open-knowledge-core';
+import { createTargetNamespace, DOCUMENT_OPEN_BYTE_LIMIT } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   deriveKnownFolderPaths,
   docNameForNavigationTarget,
   downgradeFolderIndexForHashNav,
   largeFileNavigationTarget,
-  okContentNavigationTarget,
+  psContentNavigationTarget,
   resolveNavigationTarget,
   withLargeFileOpenGuard,
 } from './navigation-targets';
@@ -44,23 +44,23 @@ describe('resolveNavigationTarget', () => {
   test('redirects a stale `__template__/…` deep-link to the content doc', () => {
     expect(resolveNavigationTarget('__template__/notes/daily', { pages: new Set() })).toEqual({
       kind: 'doc',
-      target: 'notes/.ok/templates/daily',
-      docName: 'notes/.ok/templates/daily',
+      target: 'notes/.ps/templates/daily',
+      docName: 'notes/.ps/templates/daily',
     });
     expect(resolveNavigationTarget('__template__/daily', { pages: new Set() })).toEqual({
       kind: 'doc',
-      target: '.ok/templates/daily',
-      docName: '.ok/templates/daily',
+      target: '.ps/templates/daily',
+      docName: '.ps/templates/daily',
     });
     expect(resolveNavigationTarget('__template__/My%20Notes/daily', { pages: new Set() })).toEqual({
       kind: 'doc',
-      target: 'My Notes/.ok/templates/daily',
-      docName: 'My Notes/.ok/templates/daily',
+      target: 'My Notes/.ps/templates/daily',
+      docName: 'My Notes/.ps/templates/daily',
     });
   });
 
   test('resolves a PROJECT skill content doc without page-index membership', () => {
-    const target = '.ok/skills/new-skill/SKILL';
+    const target = '.ps/skills/new-skill/SKILL';
     expect(resolveNavigationTarget(target, { pages: new Set() })).toEqual({
       kind: 'doc',
       target,
@@ -96,36 +96,36 @@ describe('resolveNavigationTarget', () => {
   test('redirects a stale `__skill__/project/<name>` deep-link to the content doc', () => {
     expect(resolveNavigationTarget('__skill__/project/foo', { pages: new Set() })).toEqual({
       kind: 'doc',
-      target: '.ok/skills/foo/SKILL',
-      docName: '.ok/skills/foo/SKILL',
+      target: '.ps/skills/foo/SKILL',
+      docName: '.ps/skills/foo/SKILL',
     });
   });
 
   test('resolves skill and template file-path links as content docs', () => {
-    const skillDoc = '.ok/skills/open-knowledge-pack-knowledge-base/SKILL';
+    const skillDoc = '.ps/skills/open-knowledge-pack-knowledge-base/SKILL';
     expect(resolveNavigationTarget(skillDoc, { pages: new Set([skillDoc]) })).toEqual({
       kind: 'doc',
       target: skillDoc,
       docName: skillDoc,
     });
-    expect(resolveNavigationTarget('notes/.ok/templates/daily', { pages: new Set() })).toEqual({
+    expect(resolveNavigationTarget('notes/.ps/templates/daily', { pages: new Set() })).toEqual({
       kind: 'doc',
-      target: 'notes/.ok/templates/daily',
-      docName: 'notes/.ok/templates/daily',
+      target: 'notes/.ps/templates/daily',
+      docName: 'notes/.ps/templates/daily',
     });
   });
 
   test('resolves a template content doc structurally, normalizing a .md link to ext-less', () => {
-    expect(resolveNavigationTarget('projects/.ok/templates/plan', { pages: new Set() })).toEqual({
+    expect(resolveNavigationTarget('projects/.ps/templates/plan', { pages: new Set() })).toEqual({
       kind: 'doc',
-      target: 'projects/.ok/templates/plan',
-      docName: 'projects/.ok/templates/plan',
+      target: 'projects/.ps/templates/plan',
+      docName: 'projects/.ps/templates/plan',
     });
-    expect(resolveNavigationTarget('projects/.ok/templates/plan.md', { pages: new Set() })).toEqual(
+    expect(resolveNavigationTarget('projects/.ps/templates/plan.md', { pages: new Set() })).toEqual(
       {
         kind: 'doc',
-        target: 'projects/.ok/templates/plan',
-        docName: 'projects/.ok/templates/plan',
+        target: 'projects/.ps/templates/plan',
+        docName: 'projects/.ps/templates/plan',
       },
     );
   });
@@ -393,117 +393,117 @@ describe('resolveNavigationTarget', () => {
   });
 });
 
-describe('okContentNavigationTarget (read-only .ok routing)', () => {
-  const pages = new Set(['notes/real', '.ok/skills/writer/SKILL']);
+describe('psContentNavigationTarget (read-only .ps routing)', () => {
+  const pages = new Set(['notes/real', '.ps/skills/writer/SKILL']);
 
-  test('targets without a .ok path segment are not governed', () => {
-    expect(okContentNavigationTarget('notes/real', { pages })).toBeNull();
-    expect(okContentNavigationTarget('brand-new/idea', { pages })).toBeNull();
-    expect(okContentNavigationTarget('docs/ok/guide', { pages })).toBeNull();
+  test('targets without a .ps path segment are not governed', () => {
+    expect(psContentNavigationTarget('notes/real', { pages })).toBeNull();
+    expect(psContentNavigationTarget('brand-new/idea', { pages })).toBeNull();
+    expect(psContentNavigationTarget('docs/ok/guide', { pages })).toBeNull();
   });
 
   test('a template content doc keeps the normal doc flow even when it lags the page index', () => {
-    expect(okContentNavigationTarget('.ok/templates/meeting', { pages })).toBeNull();
-    expect(okContentNavigationTarget('team/.ok/templates/spec', { pages })).toBeNull();
+    expect(psContentNavigationTarget('.ps/templates/meeting', { pages })).toBeNull();
+    expect(psContentNavigationTarget('team/.ps/templates/spec', { pages })).toBeNull();
   });
 
   test('page-list members stay normal content docs (skills carve-out)', () => {
-    expect(okContentNavigationTarget('.ok/skills/writer/SKILL', { pages })).toBeNull();
+    expect(psContentNavigationTarget('.ps/skills/writer/SKILL', { pages })).toBeNull();
   });
 
-  test('doc-shaped .ok targets resolve to the read-only text viewer on their .md path', () => {
-    expect(okContentNavigationTarget('.ok/raw-probe', { pages })).toEqual({
+  test('doc-shaped .ps targets resolve to the read-only text viewer on their .md path', () => {
+    expect(psContentNavigationTarget('.ps/raw-probe', { pages })).toEqual({
       kind: 'asset',
-      target: '.ok/raw-probe.md',
-      assetPath: '.ok/raw-probe.md',
+      target: '.ps/raw-probe.md',
+      assetPath: '.ps/raw-probe.md',
       mediaKind: 'text',
     });
-    expect(okContentNavigationTarget('notes/.ok/frontmatter', { pages })).toEqual({
+    expect(psContentNavigationTarget('notes/.ps/frontmatter', { pages })).toEqual({
       kind: 'asset',
-      target: 'notes/.ok/frontmatter.md',
-      assetPath: 'notes/.ok/frontmatter.md',
+      target: 'notes/.ps/frontmatter.md',
+      assetPath: 'notes/.ps/frontmatter.md',
       mediaKind: 'text',
     });
   });
 
   test('a known on-disk extension overrides the .md default', () => {
-    expect(okContentNavigationTarget('.ok/templates/a/b', { pages, docExt: '.mdx' })).toEqual({
+    expect(psContentNavigationTarget('.ps/templates/a/b', { pages, docExt: '.mdx' })).toEqual({
       kind: 'asset',
-      target: '.ok/templates/a/b.mdx',
-      assetPath: '.ok/templates/a/b.mdx',
+      target: '.ps/templates/a/b.mdx',
+      assetPath: '.ps/templates/a/b.mdx',
       mediaKind: 'text',
     });
   });
 
   test('nested template paths are not template files — they land on the viewer', () => {
-    expect(okContentNavigationTarget('.ok/templates/a/b', { pages })).toMatchObject({
+    expect(psContentNavigationTarget('.ps/templates/a/b', { pages })).toMatchObject({
       kind: 'asset',
-      assetPath: '.ok/templates/a/b.md',
+      assetPath: '.ps/templates/a/b.md',
     });
   });
 
-  test('extension-carrying .ok leaves resolve as their own asset path', () => {
-    expect(okContentNavigationTarget('.ok/config.yml', { pages })).toEqual({
+  test('extension-carrying .ps leaves resolve as their own asset path', () => {
+    expect(psContentNavigationTarget('.ps/config.yml', { pages })).toEqual({
       kind: 'asset',
-      target: '.ok/config.yml',
-      assetPath: '.ok/config.yml',
+      target: '.ps/config.yml',
+      assetPath: '.ps/config.yml',
       mediaKind: 'text',
     });
-    expect(okContentNavigationTarget('.ok/assets/logo.png', { pages })).toMatchObject({
+    expect(psContentNavigationTarget('.ps/assets/logo.png', { pages })).toMatchObject({
       kind: 'asset',
-      assetPath: '.ok/assets/logo.png',
+      assetPath: '.ps/assets/logo.png',
       mediaKind: 'image',
     });
   });
 
   test('worktrees and local paths land read-only even though listings exclude them', () => {
-    for (const target of ['.ok/worktrees/checkout/README', '.ok/local/config.yml']) {
-      expect(okContentNavigationTarget(target, { pages })?.kind).toBe('asset');
+    for (const target of ['.ps/worktrees/checkout/README', '.ps/local/config.yml']) {
+      expect(psContentNavigationTarget(target, { pages })?.kind).toBe('asset');
     }
   });
 
   test('the docName contract is file-shaped: a leaf still gains its .md extension', () => {
-    expect(okContentNavigationTarget('articles/.ok', { pages })).toMatchObject({
+    expect(psContentNavigationTarget('articles/.ps', { pages })).toMatchObject({
       kind: 'asset',
-      assetPath: 'articles/.ok.md',
+      assetPath: 'articles/.ps.md',
     });
   });
 });
 
-describe('resolveNavigationTarget — folder-shaped .ok targets', () => {
+describe('resolveNavigationTarget — folder-shaped .ps targets', () => {
   const options = {
     pages: new Set(['articles/intro']),
     folderPaths: new Set(['articles']),
   };
 
-  test('a revealed .ok directory does not resolve to a phantom .md asset', () => {
-    for (const target of ['articles/.ok/', 'articles/.ok/templates/', '.ok/']) {
+  test('a revealed .ps directory does not resolve to a phantom .md asset', () => {
+    for (const target of ['articles/.ps/', 'articles/.ps/templates/', '.ps/']) {
       expect(resolveNavigationTarget(target, options).kind).not.toBe('asset');
     }
   });
 
-  test('folder-shaped misses resolve the same inside and outside .ok', () => {
+  test('folder-shaped misses resolve the same inside and outside .ps', () => {
     expect(resolveNavigationTarget('articles/nope/', options)).toEqual({
       kind: 'missing',
       target: 'articles/nope',
     });
-    expect(resolveNavigationTarget('articles/.ok/', options)).toEqual({
+    expect(resolveNavigationTarget('articles/.ps/', options)).toEqual({
       kind: 'missing',
-      target: 'articles/.ok',
+      target: 'articles/.ps',
     });
-    expect(resolveNavigationTarget('articles/.ok/templates/', options)).toEqual({
+    expect(resolveNavigationTarget('articles/.ps/templates/', options)).toEqual({
       kind: 'missing',
-      target: 'articles/.ok/templates',
+      target: 'articles/.ps/templates',
     });
-    expect(resolveNavigationTarget('.ok/', options)).toEqual({
+    expect(resolveNavigationTarget('.ps/', options)).toEqual({
       kind: 'missing',
-      target: '.ok',
+      target: '.ps',
     });
   });
 
-  test('.ok folders backed by indexed skill docs still resolve as folders', () => {
-    const skillOptions = { pages: new Set(['.ok/skills/writer/SKILL']) };
-    for (const folderPath of ['.ok', '.ok/skills', '.ok/skills/writer']) {
+  test('.ps folders backed by indexed skill docs still resolve as folders', () => {
+    const skillOptions = { pages: new Set(['.ps/skills/writer/SKILL']) };
+    for (const folderPath of ['.ps', '.ps/skills', '.ps/skills/writer']) {
       expect(resolveNavigationTarget(`${folderPath}/`, skillOptions)).toEqual({
         kind: 'folder',
         target: folderPath,
@@ -512,72 +512,72 @@ describe('resolveNavigationTarget — folder-shaped .ok targets', () => {
     }
   });
 
-  test('doc-shaped .ok targets keep their read-only routing', () => {
-    expect(resolveNavigationTarget('articles/.ok/templates/meeting', options)).toEqual({
+  test('doc-shaped .ps targets keep their read-only routing', () => {
+    expect(resolveNavigationTarget('articles/.ps/templates/meeting', options)).toEqual({
       kind: 'doc',
-      target: 'articles/.ok/templates/meeting',
-      docName: 'articles/.ok/templates/meeting',
+      target: 'articles/.ps/templates/meeting',
+      docName: 'articles/.ps/templates/meeting',
     });
     expect(
-      resolveNavigationTarget('.ok/skills/writer/SKILL', {
-        pages: new Set(['.ok/skills/writer/SKILL']),
+      resolveNavigationTarget('.ps/skills/writer/SKILL', {
+        pages: new Set(['.ps/skills/writer/SKILL']),
       }),
     ).toEqual({
       kind: 'doc',
-      target: '.ok/skills/writer/SKILL',
-      docName: '.ok/skills/writer/SKILL',
+      target: '.ps/skills/writer/SKILL',
+      docName: '.ps/skills/writer/SKILL',
     });
-    expect(resolveNavigationTarget('articles/.ok', options)).toMatchObject({
+    expect(resolveNavigationTarget('articles/.ps', options)).toMatchObject({
       kind: 'asset',
-      assetPath: 'articles/.ok.md',
+      assetPath: 'articles/.ps.md',
     });
   });
 
   test('a trailing-slash template path returns missing (folder-shaped, not a doc)', () => {
-    expect(resolveNavigationTarget('articles/.ok/templates/meeting/', options)).toEqual({
+    expect(resolveNavigationTarget('articles/.ps/templates/meeting/', options)).toEqual({
       kind: 'missing',
-      target: 'articles/.ok/templates/meeting',
+      target: 'articles/.ps/templates/meeting',
     });
   });
 });
 
-describe('resolveNavigationTarget .ok guard', () => {
-  const options = { pages: new Set(['notes/real', '.ok/skills/writer/SKILL']) };
+describe('resolveNavigationTarget .ps guard', () => {
+  const options = { pages: new Set(['notes/real', '.ps/skills/writer/SKILL']) };
 
-  test('doc-shaped .ok targets never resolve to missing — the viewer replaces create-mode', () => {
-    expect(resolveNavigationTarget('.ok/raw-probe', options)).toEqual({
+  test('doc-shaped .ps targets never resolve to missing — the viewer replaces create-mode', () => {
+    expect(resolveNavigationTarget('.ps/raw-probe', options)).toEqual({
       kind: 'asset',
-      target: '.ok/raw-probe.md',
-      assetPath: '.ok/raw-probe.md',
+      target: '.ps/raw-probe.md',
+      assetPath: '.ps/raw-probe.md',
       mediaKind: 'text',
     });
-    expect(resolveNavigationTarget('notes/.ok/frontmatter', options)).toMatchObject({
+    expect(resolveNavigationTarget('notes/.ps/frontmatter', options)).toMatchObject({
       kind: 'asset',
-      assetPath: 'notes/.ok/frontmatter.md',
+      assetPath: 'notes/.ps/frontmatter.md',
     });
-    expect(resolveNavigationTarget('.ok/worktrees/checkout/README', options)).toMatchObject({
+    expect(resolveNavigationTarget('.ps/worktrees/checkout/README', options)).toMatchObject({
       kind: 'asset',
     });
   });
 
-  test('sanctioned .ok resolutions: skills and templates both stay content docs', () => {
-    expect(resolveNavigationTarget('.ok/skills/writer/SKILL', options)).toEqual({
+  test('sanctioned .ps resolutions: skills and templates both stay content docs', () => {
+    expect(resolveNavigationTarget('.ps/skills/writer/SKILL', options)).toEqual({
       kind: 'doc',
-      target: '.ok/skills/writer/SKILL',
-      docName: '.ok/skills/writer/SKILL',
+      target: '.ps/skills/writer/SKILL',
+      docName: '.ps/skills/writer/SKILL',
     });
-    expect(resolveNavigationTarget('.ok/templates/meeting', options)).toEqual({
+    expect(resolveNavigationTarget('.ps/templates/meeting', options)).toEqual({
       kind: 'doc',
-      target: '.ok/templates/meeting',
-      docName: '.ok/templates/meeting',
+      target: '.ps/templates/meeting',
+      docName: '.ps/templates/meeting',
     });
   });
 
-  test('.ok folder targets keep resolving to the folder overview', () => {
-    expect(resolveNavigationTarget('.ok', options)).toEqual({
+  test('.ps folder targets keep resolving to the folder overview', () => {
+    expect(resolveNavigationTarget('.ps', options)).toEqual({
       kind: 'folder',
-      target: '.ok',
-      folderPath: '.ok',
+      target: '.ps',
+      folderPath: '.ps',
     });
   });
 

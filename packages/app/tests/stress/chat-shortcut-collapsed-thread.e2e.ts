@@ -7,7 +7,7 @@ import { startHiddenChatAgent } from './hidden-chat-transport.test-helper';
 async function registerFixtureAgent(page: Page, agentId: string): Promise<void> {
   await page.addInitScript((id) => {
     localStorage.setItem(
-      'ok-acp-registered-agents-v1',
+      'ps-acp-registered-agents-v1',
       JSON.stringify({
         agents: [{ source: 'custom', id, name: 'Hidden activity fixture' }],
         defaultKey: `custom:${id}`,
@@ -227,14 +227,14 @@ for (const action of [
           if (action === 'send queued comments') {
             let forwardedThreadId: string | null = null;
             window.addEventListener(
-              'open-knowledge:comments-send-in-thread',
+              'palimpsest:comments-send-in-thread',
               (event) => {
                 forwardedThreadId = (event as CustomEvent<{ threadId: string }>).detail.threadId;
               },
               { once: true },
             );
             window.dispatchEvent(
-              new CustomEvent('open-knowledge:comments-send-to-open-chat', {
+              new CustomEvent('palimpsest:comments-send-to-open-chat', {
                 detail: { threadIds: [] },
               }),
             );
@@ -244,7 +244,7 @@ for (const action of [
             action === 'reuse the active thread with Ask AI'
           ) {
             window.dispatchEvent(
-              new CustomEvent('open-knowledge:active-terminal-input', {
+              new CustomEvent('palimpsest:active-terminal-input', {
                 detail: {
                   text: 'Review this document',
                   newTab: action === 'open Ask AI in a new tab',
@@ -255,7 +255,7 @@ for (const action of [
             );
           } else {
             window.dispatchEvent(
-              new CustomEvent('open-knowledge:agent-thread-launch', {
+              new CustomEvent('palimpsest:agent-thread-launch', {
                 detail: {
                   agentSource: 'custom',
                   agentId,

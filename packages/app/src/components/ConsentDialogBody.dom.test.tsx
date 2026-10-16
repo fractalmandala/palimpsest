@@ -1,19 +1,19 @@
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core';
+import { EDITOR_LABELS } from '@palimpsest/core';
 import { i18n } from '@lingui/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { ConsentStore } from '@/lib/consent-store';
 import type {
-  OkDesktopBridge,
-  OkOnboardingConfirmRequest,
-  OkOnboardingShowPayload,
+  PsDesktopBridge,
+  PsOnboardingConfirmRequest,
+  PsOnboardingShowPayload,
 } from '@/lib/desktop-bridge-types';
 import ConsentDialogBody from './ConsentDialogBody';
 
 i18n.loadAndActivate({ locale: 'en', messages: {} });
 
-const payload: OkOnboardingShowPayload = {
+const payload: PsOnboardingShowPayload = {
   pickedPath: '/project',
   projectDir: '/project',
   defaultContentDir: 'docs',
@@ -75,7 +75,7 @@ function deferredStatusBridge(detectedEditorIds: string[]) {
 }
 
 function setBridge(bridge: unknown) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     writable: true,
     value: bridge,
@@ -83,7 +83,7 @@ function setBridge(bridge: unknown) {
 }
 
 function makeStore(opts: { cancelError?: string; confirmError?: string } = {}) {
-  const confirmCalls: OkOnboardingConfirmRequest[] = [];
+  const confirmCalls: PsOnboardingConfirmRequest[] = [];
   const cancelCalls: string[] = [];
   const store: ConsentStore = {
     install: () => undefined,
@@ -708,8 +708,8 @@ describe('ConsentDialogBody runtime form behavior', () => {
         probeContent: async () => ({ ok: true, count: 0, sample: [], truncated: false }),
       },
       ...statusBridge([]),
-    } satisfies Pick<OkDesktopBridge, 'dialog'> & {
-      onboarding: Pick<OkDesktopBridge['onboarding'], 'probeContent'>;
+    } satisfies Pick<PsDesktopBridge, 'dialog'> & {
+      onboarding: Pick<PsDesktopBridge['onboarding'], 'probeContent'>;
     });
     renderConsentDialog();
     await expandAdvanced();

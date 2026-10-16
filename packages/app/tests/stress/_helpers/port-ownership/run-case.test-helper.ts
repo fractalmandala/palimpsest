@@ -196,7 +196,7 @@ export function readOwnershipRecords(path: string): unknown[] {
 }
 
 export async function runOwnershipCase(ownershipCase: OwnershipCase): Promise<OwnershipCaseResult> {
-  const runDir = ownershipCase.runDir ?? mkdtempSync(join(tmpdir(), 'ok-port-ownership-'));
+  const runDir = ownershipCase.runDir ?? mkdtempSync(join(tmpdir(), 'ps-port-ownership-'));
   const runtimeTmp = join(runDir, 'tmp');
   mkdirSync(runtimeTmp);
   const ownerControl = await openOwnerControl().catch((error: unknown) => {
@@ -210,13 +210,13 @@ export async function runOwnershipCase(ownershipCase: OwnershipCase): Promise<Ow
   });
   const env = createNestedPlaywrightEnv({
     NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --require=${PRELOAD}`.trim(),
-    OK_PORT_OWNERSHIP_CALLER: ownershipCase.caller,
-    OK_PORT_OWNERSHIP_RECORDS: join(runDir, 'events.jsonl'),
-    OK_PORT_OWNERSHIP_RUN_DIR: runDir,
-    OK_PORT_OWNERSHIP_LEASE_FD: String(RUNNER_STDIO.length),
-    OK_PORT_OWNERSHIP_CONTROL_PORT: String(ownerControl.port),
+    PS_PORT_OWNERSHIP_CALLER: ownershipCase.caller,
+    PS_PORT_OWNERSHIP_RECORDS: join(runDir, 'events.jsonl'),
+    PS_PORT_OWNERSHIP_RUN_DIR: runDir,
+    PS_PORT_OWNERSHIP_LEASE_FD: String(RUNNER_STDIO.length),
+    PS_PORT_OWNERSHIP_CONTROL_PORT: String(ownerControl.port),
     ...(ownershipCase.caller === 'global-warm-cache.ts'
-      ? { OK_TEST_VITE_SEED_DIR: join(runDir, 'seed') }
+      ? { PS_TEST_VITE_SEED_DIR: join(runDir, 'seed') }
       : {}),
     TMPDIR: runtimeTmp,
     TURBO_CACHE_DIR: join(SUBTREE_ROOT, '.turbo', 'cache'),
@@ -339,7 +339,7 @@ export async function runLeaseInheritanceProbe(): Promise<LeaseInheritanceRun> {
     env: {
       ...process.env,
       NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --require=${PRELOAD}`.trim(),
-      OK_PORT_OWNERSHIP_LEASE_FD: String(LEASE_PROBE_STDIO.length),
+      PS_PORT_OWNERSHIP_LEASE_FD: String(LEASE_PROBE_STDIO.length),
     },
     stdio: [...LEASE_PROBE_STDIO, lease] as const,
   });

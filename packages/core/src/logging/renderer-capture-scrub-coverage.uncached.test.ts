@@ -85,7 +85,7 @@ describe('renderer-console capture sites', () => {
   });
 
   test('names a package with a manifest and no src, and not a manifest-only package or a leftover directory (planted positive)', () => {
-    const packagesDir = mkdtempSync(join(tmpdir(), 'ok-renderer-capture-packages-'));
+    const packagesDir = mkdtempSync(join(tmpdir(), 'ps-renderer-capture-packages-'));
     try {
       mkdirSync(join(packagesDir, 'with-src', 'src'), { recursive: true });
       writeFileSync(join(packagesDir, 'with-src', 'package.json'), '{}\n');

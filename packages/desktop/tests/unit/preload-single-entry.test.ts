@@ -41,7 +41,7 @@ async function preloadConfig(): Promise<PreloadViteConfig> {
 }
 
 async function buildPreloadForProduction(): Promise<string> {
-  const outDir = mkdtempSync(join(tmpdir(), 'ok-preload-bundle-'));
+  const outDir = mkdtempSync(join(tmpdir(), 'ps-preload-bundle-'));
   const environment = { ...process.env };
   process.env.NODE_ENV = 'production';
   process.env.NODE_ENV_ELECTRON_VITE = 'production';
@@ -77,9 +77,9 @@ describe('preload bundle self-containment', () => {
     ).toEqual([]);
     expect(
       unresolvableInSandbox(
-        'require("node:fs"); require("fs"); require("./chunks/shared.js"); require("@inkeep/open-knowledge-core");',
+        'require("node:fs"); require("fs"); require("./chunks/shared.js"); require("@palimpsest/core");',
       ),
-    ).toEqual(['node:fs', 'fs', './chunks/shared.js', '@inkeep/open-knowledge-core']);
+    ).toEqual(['node:fs', 'fs', './chunks/shared.js', '@palimpsest/core']);
   });
 
   test('the production preload bundle requires only modules the sandbox resolves', async () => {

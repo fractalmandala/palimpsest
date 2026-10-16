@@ -3,7 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
 import {
-  isOpenKnowledgeSkillsSource,
+  isPalimpsestSkillsSource,
   type Principal,
   RENAMED_PACK_SKILLS,
   type SkillImportBulkResult,
@@ -11,7 +11,7 @@ import {
   SkillImportSuccessSchema,
   SkillsImportBulkRequestSchema,
   SkillsImportBulkSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   discoverSkillDirs,
   fetchSource,
@@ -23,7 +23,7 @@ import {
   SkillFetchError,
   type SourceSpec,
   type WellKnownIndex,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { type Entry, fromBuffer as yauzlFromBuffer, type ZipFile } from 'yauzl';
 import type { ContentFilter } from '../content-filter.ts';
 import { extractActorIdentity } from '../extract-actor-identity.ts';
@@ -206,7 +206,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         });
         if (
           outcome.ok &&
-          (body.marketplace === true || isOpenKnowledgeSkillsSource(resolvedSourceForReport))
+          (body.marketplace === true || isPalimpsestSkillsSource(resolvedSourceForReport))
         ) {
           void reportSkillInstall(
             { source: resolvedSourceForReport, skills: [outcome.body.name] },
@@ -387,7 +387,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
             perSkill();
           }
         }
-        if (body.marketplace === true || isOpenKnowledgeSkillsSource(resolvedSourceForReport)) {
+        if (body.marketplace === true || isPalimpsestSkillsSource(resolvedSourceForReport)) {
           const importedNames = results
             .filter((r) => r.status === 'imported')
             .map((r) => r.requested);
@@ -569,7 +569,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
   }
 
   async function handleSkillUpload(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const tmp = mkdtempSync(join(tmpdir(), 'ok-skill-upload-'));
+    const tmp = mkdtempSync(join(tmpdir(), 'ps-skill-upload-'));
     const cleanup = () => {
       try {
         tracedRmSync(tmp, { recursive: true, force: true });

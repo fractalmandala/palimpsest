@@ -17,8 +17,8 @@ import {
   parseBase16Scheme,
   SAVED_THEMES_DIRNAME,
   type SavedThemeIdError,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import { errnoCode } from './http/handler-utils.ts';
 import { getLogger } from './logger.ts';
 import {
@@ -78,7 +78,7 @@ export interface ScanSavedThemesOptions {
 }
 
 export function savedThemesDir(homedirOverride?: string): string {
-  return resolve(okUserHomeDir(homedirOverride ?? homedir()), SAVED_THEMES_DIRNAME);
+  return resolve(psUserHomeDir(homedirOverride ?? homedir()), SAVED_THEMES_DIRNAME);
 }
 
 export function scanSavedThemes(options: ScanSavedThemesOptions = {}): SavedThemeScanResult {

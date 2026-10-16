@@ -8,7 +8,7 @@ import { makeTree as populateTree } from './mktree.test-helper.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function makeTree(files: Parameters<typeof populateTree>[1]): string {
-  return populateTree(makeTempDir('ok-migrate-'), files);
+  return populateTree(makeTempDir('ps-migrate-'), files);
 }
 
 describe('walkFiles', () => {
@@ -24,11 +24,11 @@ describe('walkFiles', () => {
     expect(names).toEqual(['a.md', 'b.md', 'c.md']);
   });
 
-  test('skips dotfiles and dot-directories (.ok, .git)', () => {
+  test('skips dotfiles and dot-directories (.ps, .git)', () => {
     const root = makeTree({
       'keep.md': 'K',
-      '.okignore': 'x',
-      '.ok/local/server.lock': 'lock',
+      '.psignore': 'x',
+      '.ps/local/server.lock': 'lock',
       '.git/HEAD': 'ref',
     });
     const names = walkFiles(root).map((f) => basename(f));

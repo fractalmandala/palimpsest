@@ -1,4 +1,4 @@
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core';
+import { EDITOR_LABELS } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -9,13 +9,13 @@ vi.doMock('sonner', () => ({
 }));
 
 import type {
-  OkDesktopBridge,
-  OkFolderState,
-  OkMcpWiringEditorId,
-  OkSeedPackInfo,
+  PsDesktopBridge,
+  PsFolderState,
+  PsMcpWiringEditorId,
+  PsSeedPackInfo,
 } from '@/lib/desktop-bridge-types';
 
-const PACKS: OkSeedPackInfo[] = [
+const PACKS: PsSeedPackInfo[] = [
   {
     id: 'plain-notes',
     name: 'Plain notes',
@@ -60,14 +60,14 @@ const PARENT = '/Users/test/Projects';
 const PROJECT_NAME = 'Runtime Project';
 const SECOND_PARENT = '/Users/test/OtherProjects';
 
-const DETECTED: OkMcpWiringEditorId[] = ['claude', 'cursor'];
-const UNDETECTED: OkMcpWiringEditorId = 'codex';
+const DETECTED: PsMcpWiringEditorId[] = ['claude', 'cursor'];
+const UNDETECTED: PsMcpWiringEditorId = 'codex';
 
 function makeBridge() {
   let pickedParent: string | null = PARENT;
-  let detectedEditorIdsImpl = (): Promise<OkMcpWiringEditorId[]> => Promise.resolve([...DETECTED]);
+  let detectedEditorIdsImpl = (): Promise<PsMcpWiringEditorId[]> => Promise.resolve([...DETECTED]);
   let editorStatesImpl = (): Array<{
-    id: OkMcpWiringEditorId;
+    id: PsMcpWiringEditorId;
     label: string;
     detected: boolean;
     state: 'installed' | 'not-installed' | 'foreign' | 'unmanageable';
@@ -75,7 +75,7 @@ function makeBridge() {
     entryLocator: string;
   }> => [];
   let defaultRootImpl = (): Promise<string> => Promise.resolve(PARENT);
-  let folderStateImpl = async (_path: string): Promise<OkFolderState> => 'free';
+  let folderStateImpl = async (_path: string): Promise<PsFolderState> => 'free';
   let createNewImpl = (): Promise<void> => Promise.resolve();
   const openFolderArgs: unknown[] = [];
   const folderStateCalls: string[] = [];
@@ -83,7 +83,7 @@ function makeBridge() {
   const createNewCalls: Array<{
     parent: string;
     name: string;
-    editors: OkMcpWiringEditorId[];
+    editors: PsMcpWiringEditorId[];
     sharing: 'shared' | 'local-only';
     packId?: string;
   }> = [];
@@ -124,7 +124,7 @@ function makeBridge() {
         (payload: {
           parent: string;
           name: string;
-          editors: OkMcpWiringEditorId[];
+          editors: PsMcpWiringEditorId[];
           sharing: 'shared' | 'local-only';
           packId?: string;
         }) => {
@@ -134,7 +134,7 @@ function makeBridge() {
       ),
       open: vi.fn(() => Promise.resolve()),
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   return {
     bridge,
@@ -145,7 +145,7 @@ function makeBridge() {
     setPickedParent: (next: string | null) => {
       pickedParent = next;
     },
-    setDetectedEditorsImpl: (next: () => Promise<OkMcpWiringEditorId[]>) => {
+    setDetectedEditorsImpl: (next: () => Promise<PsMcpWiringEditorId[]>) => {
       detectedEditorIdsImpl = next;
     },
     setEditorStatesImpl: (next: typeof editorStatesImpl) => {
@@ -154,7 +154,7 @@ function makeBridge() {
     setDefaultProjectsRootImpl: (next: () => Promise<string>) => {
       defaultRootImpl = next;
     },
-    setFolderStateImpl: (next: (path: string) => Promise<OkFolderState>) => {
+    setFolderStateImpl: (next: (path: string) => Promise<PsFolderState>) => {
       folderStateImpl = next;
     },
     setCreateNewImpl: (next: () => Promise<void>) => {
@@ -254,7 +254,7 @@ describe('CreateProjectDialog runtime wiring', () => {
     expect(details.tagName).toBe('UL');
     expect(details.querySelectorAll(':scope > li').length).toBe(DETECTED.length);
     expect(details.textContent).toContain('.mcp.json');
-    expect(details.textContent).toContain('.claude/skills/open-knowledge/');
+    expect(details.textContent).toContain('.claude/skills/palimpsest/');
     expect(details.textContent).toContain('.cursor/mcp.json');
     await userEvent.keyboard('{Escape}');
 
@@ -356,7 +356,7 @@ describe('CreateProjectDialog runtime wiring', () => {
         detected: true,
         state: 'installed',
         configPath: '~/.copilot/mcp-config.json',
-        entryLocator: 'mcpServers.open-knowledge',
+        entryLocator: 'mcpServers.palimpsest',
       },
     ]);
     await renderDialog(withEntry);
@@ -386,7 +386,7 @@ describe('CreateProjectDialog runtime wiring', () => {
         detected: true,
         state: 'foreign',
         configPath: '~/.copilot/mcp-config.json',
-        entryLocator: 'mcpServers.open-knowledge',
+        entryLocator: 'mcpServers.palimpsest',
       },
     ]);
     await renderDialog(stub);
@@ -413,7 +413,7 @@ describe('CreateProjectDialog runtime wiring', () => {
     const stub = makeBridge();
     stub.setDetectedEditorsImpl(
       () =>
-        new Promise<OkMcpWiringEditorId[]>((resolve) => {
+        new Promise<PsMcpWiringEditorId[]>((resolve) => {
           releaseDetection = () => resolve([...DETECTED]);
         }),
     );
@@ -463,7 +463,7 @@ describe('CreateProjectDialog runtime wiring', () => {
     const stub = makeBridge();
     stub.setDetectedEditorsImpl(
       () =>
-        new Promise<OkMcpWiringEditorId[]>((resolve) => {
+        new Promise<PsMcpWiringEditorId[]>((resolve) => {
           releaseDetection = () => resolve([...DETECTED]);
         }),
     );

@@ -19,7 +19,7 @@ test('an event without a thread id is ignored', () => {
   const target = new EventTarget();
   const seen = vi.fn();
   subscribeToSignInTerminalExits(seen, target);
-  target.dispatchEvent(new CustomEvent('open-knowledge:sign-in-terminal-exit', { detail: {} }));
-  target.dispatchEvent(new Event('open-knowledge:sign-in-terminal-exit'));
+  target.dispatchEvent(new CustomEvent('palimpsest:sign-in-terminal-exit', { detail: {} }));
+  target.dispatchEvent(new Event('palimpsest:sign-in-terminal-exit'));
   expect(seen).not.toHaveBeenCalled();
 });

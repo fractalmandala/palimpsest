@@ -8,7 +8,7 @@ import {
   desktopProductForCliCommand,
   envWithoutDevChannel,
   isDevChannel,
-  OkCliCommand,
+  PsCliCommand,
   PACKAGED_DESKTOP_PRODUCT_NAMES,
   resolveDesktopProductName,
   userHomeDisplayPath,
@@ -16,37 +16,37 @@ import {
 
 describe('resolveDesktopProductName', () => {
   it.each([
-    ['/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge', 'stable'],
-    ['/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta', 'beta'],
+    ['/Applications/Palimpsest.app/Contents/MacOS/Palimpsest', 'stable'],
+    ['/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta', 'beta'],
     [
-      '/Applications/OpenKnowledge Beta.app/Contents/Frameworks/OpenKnowledge Beta Server.app/Contents/MacOS/OpenKnowledge Beta Helper',
+      '/Applications/Palimpsest Beta.app/Contents/Frameworks/Palimpsest Beta Server.app/Contents/MacOS/Palimpsest Beta Helper',
       'beta',
     ],
     [
-      '/Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Server.app/Contents/MacOS/OpenKnowledge Helper',
+      '/Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Server.app/Contents/MacOS/Palimpsest Helper',
       'stable',
     ],
-    ['C:\\Users\\me\\AppData\\Local\\Programs\\OpenKnowledge Beta\\OpenKnowledge Beta.exe', 'beta'],
-    ['/opt/OpenKnowledge Beta/openknowledge-beta', 'beta'],
-    ['/opt/OpenKnowledge/openknowledge', 'stable'],
+    ['C:\\Users\\me\\AppData\\Local\\Programs\\Palimpsest Beta\\Palimpsest Beta.exe', 'beta'],
+    ['/opt/Palimpsest Beta/palimpsest-beta', 'beta'],
+    ['/opt/Palimpsest/palimpsest', 'stable'],
     ['/usr/local/bin/node', 'stable'],
     ['/repo/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron', 'stable'],
   ] as const)('%s resolves to %s', (execPath, expected) => {
     expect(resolveDesktopProductName({}, execPath)).toBe(expected);
   });
 
-  it('lets OK_CHANNEL override the executable', () => {
-    expect(resolveDesktopProductName({ OK_CHANNEL: 'Beta' }, '/usr/local/bin/node')).toBe('beta');
+  it('lets PS_CHANNEL override the executable', () => {
+    expect(resolveDesktopProductName({ PS_CHANNEL: 'Beta' }, '/usr/local/bin/node')).toBe('beta');
     expect(
       resolveDesktopProductName(
-        { OK_CHANNEL: 'stable' },
-        '/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta',
+        { PS_CHANNEL: 'stable' },
+        '/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta',
       ),
     ).toBe('stable');
   });
 
-  it('rejects an unknown OK_CHANNEL instead of guessing', () => {
-    expect(() => resolveDesktopProductName({ OK_CHANNEL: 'nightly' }, '')).toThrow(/OK_CHANNEL/);
+  it('rejects an unknown PS_CHANNEL instead of guessing', () => {
+    expect(() => resolveDesktopProductName({ PS_CHANNEL: 'nightly' }, '')).toThrow(/PS_CHANNEL/);
   });
 
   it('gives every channel a distinct MCP server name and chain tag', () => {
@@ -59,8 +59,8 @@ describe('resolveDesktopProductName', () => {
     const products = Object.values(DESKTOP_PRODUCTS);
     expect(new Set(products.map((p) => p.userHomeDirName)).size).toBe(products.length);
     expect(new Set(products.map((p) => p.keyringService)).size).toBe(products.length);
-    expect(DESKTOP_PRODUCTS.stable.userHomeDirName).toBe('.ok');
-    expect(DESKTOP_PRODUCTS.stable.keyringService).toBe('open-knowledge');
+    expect(DESKTOP_PRODUCTS.stable.userHomeDirName).toBe('.ps');
+    expect(DESKTOP_PRODUCTS.stable.keyringService).toBe('palimpsest');
   });
 
   it('names each channel’s deb and rpm after its Linux executable', () => {
@@ -69,9 +69,9 @@ describe('resolveDesktopProductName', () => {
         Object.entries(DESKTOP_PRODUCTS).map(([name, p]) => [name, p.linuxPackageNames]),
       ),
     ).toEqual({
-      stable: { deb: 'openknowledge', rpm: 'openknowledge' },
-      beta: { deb: 'openknowledge-beta', rpm: 'openknowledge-beta' },
-      dev: { deb: 'openknowledge-dev', rpm: 'openknowledge-dev' },
+      stable: { deb: 'palimpsest', rpm: 'palimpsest' },
+      beta: { deb: 'palimpsest-beta', rpm: 'palimpsest-beta' },
+      dev: { deb: 'palimpsest-dev', rpm: 'palimpsest-dev' },
     });
     for (const product of Object.values(DESKTOP_PRODUCTS)) {
       expect(product.linuxPackageNames.deb).toBe(product.linuxExecutableName);
@@ -82,11 +82,11 @@ describe('resolveDesktopProductName', () => {
   it('retires the package names each channel shipped before, and only its own', () => {
     expect(DESKTOP_PRODUCTS.stable.retiredLinuxPackageNames).toEqual({
       deb: [],
-      rpm: ['OpenKnowledge'],
+      rpm: ['Palimpsest'],
     });
     expect(DESKTOP_PRODUCTS.beta.retiredLinuxPackageNames).toEqual({
-      deb: ['openknowledge-beta-desktop'],
-      rpm: ['openknowledge-beta-desktop'],
+      deb: ['palimpsest-beta-desktop'],
+      rpm: ['palimpsest-beta-desktop'],
     });
     const current = Object.values(DESKTOP_PRODUCTS).flatMap((p) => [
       p.linuxPackageNames.deb,
@@ -103,26 +103,26 @@ describe('resolveDesktopProductName', () => {
     }
   });
 
-  it('gives every channel its own deep-link scheme, keeping Stable on openknowledge', () => {
+  it('gives every channel its own deep-link scheme, keeping Stable on palimpsest', () => {
     expect(
       Object.fromEntries(
         Object.entries(DESKTOP_PRODUCTS).map(([name, p]) => [name, p.protocolScheme]),
       ),
     ).toEqual({
-      stable: 'openknowledge',
-      beta: 'openknowledge-beta',
-      dev: 'openknowledge-dev',
+      stable: 'palimpsest',
+      beta: 'palimpsest-beta',
+      dev: 'palimpsest-dev',
     });
   });
 
   it('gives the dev channel its own home, keychain, MCP key and lock channel', () => {
-    const dev = resolveDesktopProductName({ OK_CHANNEL: 'dev' }, '/usr/local/bin/node');
+    const dev = resolveDesktopProductName({ PS_CHANNEL: 'dev' }, '/usr/local/bin/node');
     expect(dev).toBe('dev');
     expect(DESKTOP_PRODUCTS[dev]).toMatchObject({
-      userHomeDirName: '.ok-dev',
-      keyringService: 'open-knowledge-dev',
-      mcpServerName: 'open-knowledge-dev',
-      protocolScheme: 'openknowledge-dev',
+      userHomeDirName: '.ps-dev',
+      keyringService: 'palimpsest-dev',
+      mcpServerName: 'palimpsest-dev',
+      protocolScheme: 'palimpsest-dev',
     });
   });
 
@@ -143,31 +143,31 @@ describe('defaultToDevChannel', () => {
   it('selects dev when no channel is set', () => {
     const env: Record<string, string | undefined> = {};
     defaultToDevChannel(env);
-    expect(env.OK_CHANNEL).toBe('dev');
+    expect(env.PS_CHANNEL).toBe('dev');
     expect(isDevChannel(env)).toBe(true);
     expect(resolveDesktopProductName(env, '/usr/local/bin/node')).toBe('dev');
   });
 
-  it.each(['stable', 'beta', 'Beta'])('keeps an explicit OK_CHANNEL=%s', (channel) => {
-    const env: Record<string, string | undefined> = { OK_CHANNEL: channel };
+  it.each(['stable', 'beta', 'Beta'])('keeps an explicit PS_CHANNEL=%s', (channel) => {
+    const env: Record<string, string | undefined> = { PS_CHANNEL: channel };
     defaultToDevChannel(env);
-    expect(env.OK_CHANNEL).toBe(channel);
+    expect(env.PS_CHANNEL).toBe(channel);
     expect(isDevChannel(env)).toBe(false);
   });
 
-  it('treats a blank OK_CHANNEL as unset', () => {
-    const env: Record<string, string | undefined> = { OK_CHANNEL: '  ' };
+  it('treats a blank PS_CHANNEL as unset', () => {
+    const env: Record<string, string | undefined> = { PS_CHANNEL: '  ' };
     defaultToDevChannel(env);
-    expect(env.OK_CHANNEL).toBe('dev');
+    expect(env.PS_CHANNEL).toBe('dev');
   });
 });
 
 describe('desktopChannelLabel', () => {
   it.each([
-    ['stable', 'OpenKnowledge (Stable)'],
-    ['beta', 'OpenKnowledge Beta'],
-    ['dev', 'OpenKnowledge Dev'],
-    ['cloud', 'OpenKnowledge (cloud)'],
+    ['stable', 'Palimpsest (Stable)'],
+    ['beta', 'Palimpsest Beta'],
+    ['dev', 'Palimpsest Dev'],
+    ['cloud', 'Palimpsest (cloud)'],
   ])('%s is named %s', (channel, expected) => {
     expect(desktopChannelLabel(channel)).toBe(expected);
   });
@@ -179,39 +179,39 @@ describe('channel CLI command name', () => {
   });
 
   it('names ok on Stable', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(currentCliCommandName()).toBe('ok');
   });
 
-  it('names ok-beta on Beta', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    expect(currentCliCommandName()).toBe('ok-beta');
+  it('names ps-beta on Beta', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    expect(currentCliCommandName()).toBe('ps-beta');
   });
 
-  it('names ok-dev on the dev channel, a bare command name like every other channel', () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
-    expect(currentCliCommandName()).toBe('ok-dev');
-    expect(desktopProductForCliCommand('ok-dev')).toBe(DESKTOP_PRODUCTS.dev);
+  it('names ps-dev on the dev channel, a bare command name like every other channel', () => {
+    vi.stubEnv('PS_CHANNEL', 'dev');
+    expect(currentCliCommandName()).toBe('ps-dev');
+    expect(desktopProductForCliCommand('ps-dev')).toBe(DESKTOP_PRODUCTS.dev);
   });
 
   it('maps a command name back to its product, and anything else to Stable', () => {
-    expect(desktopProductForCliCommand('ok-beta')).toBe(DESKTOP_PRODUCTS.beta);
+    expect(desktopProductForCliCommand('ps-beta')).toBe(DESKTOP_PRODUCTS.beta);
     expect(desktopProductForCliCommand('ok')).toBe(DESKTOP_PRODUCTS.stable);
     expect(desktopProductForCliCommand(null)).toBe(DESKTOP_PRODUCTS.stable);
-    expect(desktopProductForCliCommand('open-knowledge-beta')).toBe(DESKTOP_PRODUCTS.stable);
+    expect(desktopProductForCliCommand('palimpsest-beta')).toBe(DESKTOP_PRODUCTS.stable);
   });
 
   it('names each product home folder for display', () => {
-    expect(userHomeDisplayPath(DESKTOP_PRODUCTS.stable, 'secrets.yml')).toBe('~/.ok/secrets.yml');
+    expect(userHomeDisplayPath(DESKTOP_PRODUCTS.stable, 'secrets.yml')).toBe('~/.ps/secrets.yml');
     expect(userHomeDisplayPath(DESKTOP_PRODUCTS.beta, 'secrets.yml')).toBe(
-      '~/.ok-beta/secrets.yml',
+      '~/.ps-beta/secrets.yml',
     );
   });
 });
 
 describe('envWithoutDevChannel', () => {
   it('drops the dev channel and keeps everything else', () => {
-    expect(envWithoutDevChannel({ PATH: '/usr/bin', OK_CHANNEL: 'dev', EMPTY: undefined })).toEqual(
+    expect(envWithoutDevChannel({ PATH: '/usr/bin', PS_CHANNEL: 'dev', EMPTY: undefined })).toEqual(
       {
         PATH: '/usr/bin',
       },
@@ -225,33 +225,33 @@ describe('envWithoutDevChannel', () => {
   });
 
   it('keeps a shipped channel, which every released CLI knows', () => {
-    expect(envWithoutDevChannel({ OK_CHANNEL: 'beta' })).toEqual({ OK_CHANNEL: 'beta' });
+    expect(envWithoutDevChannel({ PS_CHANNEL: 'beta' })).toEqual({ PS_CHANNEL: 'beta' });
   });
 });
 
-describe('OkCliCommand', () => {
+describe('PsCliCommand', () => {
   const checkoutCli = ['node', '/src/cli.mjs'];
 
   it('pins dev only on a CLI the host supplies', () => {
-    const cli = OkCliCommand.resolve({
+    const cli = PsCliCommand.resolve({
       host: { cliArgs: checkoutCli },
-      env: { OK_CHANNEL: 'dev' },
+      env: { PS_CHANNEL: 'dev' },
     });
     expect(cli.runnerInvocation(['auth', 'login'])).toEqual({
       cliArgs: [...checkoutCli, 'auth', 'login'],
-      cliEnv: { OK_CHANNEL: 'dev' },
+      cliEnv: { PS_CHANNEL: 'dev' },
     });
     expect(cli.refusalFor(['auth', 'login'])).toBeUndefined();
   });
 
   it('never hands dev to the CLI on PATH, which a released build may be', () => {
-    const cli = OkCliCommand.resolve({ env: { OK_CHANNEL: 'dev' } });
+    const cli = PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } });
     expect(cli.runnerInvocation(['auth', 'status'])).toEqual({
-      cliArgs: ['open-knowledge', 'auth', 'status'],
+      cliArgs: ['palimpsest', 'auth', 'status'],
       cliEnv: {},
     });
-    expect(cli.spawn(['status'], { PATH: '/usr/bin', OK_CHANNEL: 'dev' })).toEqual({
-      command: 'open-knowledge',
+    expect(cli.spawn(['status'], { PATH: '/usr/bin', PS_CHANNEL: 'dev' })).toEqual({
+      command: 'palimpsest',
       args: ['status'],
       env: { PATH: '/usr/bin' },
     });
@@ -265,7 +265,7 @@ describe('OkCliCommand', () => {
     [['clone', '--json', 'https://github.com/o/r.git', '/tmp/r']],
     [['start', '--port', '0']],
   ])('refuses %j on every path when a dev build falls back to the CLI on PATH', (args) => {
-    const cli = OkCliCommand.resolve({ env: { OK_CHANNEL: 'dev' } });
+    const cli = PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } });
     expect(cli.refusalFor(args)).toBe(DEV_FALLBACK_CLI_REFUSAL);
     expect(cli.runnerInvocation(args)).toEqual({ refused: DEV_FALLBACK_CLI_REFUSAL });
     expect(cli.spawn(args, {})).toEqual({ refused: DEV_FALLBACK_CLI_REFUSAL });
@@ -280,7 +280,7 @@ describe('OkCliCommand', () => {
   });
 
   it('lets a fallback dev build read through the CLI on PATH', () => {
-    const cli = OkCliCommand.resolve({ env: { OK_CHANNEL: 'dev' } });
+    const cli = PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } });
     expect(cli.refusalFor(['auth', 'status'])).toBeUndefined();
     expect(cli.refusalFor(['auth', 'git-credential'])).toBeUndefined();
     expect(cli.refusalFor(['share', 'owners', '--json'])).toBeUndefined();
@@ -288,48 +288,48 @@ describe('OkCliCommand', () => {
 
   it('pins a shipped non-Stable channel on any CLI', () => {
     expect(
-      OkCliCommand.resolve({ host: { cliArgs: [] }, env: { OK_CHANNEL: 'beta' } }).runnerInvocation(
+      PsCliCommand.resolve({ host: { cliArgs: [] }, env: { PS_CHANNEL: 'beta' } }).runnerInvocation(
         [],
       ),
     ).toEqual({
-      cliArgs: ['open-knowledge'],
-      cliEnv: { OK_CHANNEL: 'beta' },
+      cliArgs: ['palimpsest'],
+      cliEnv: { PS_CHANNEL: 'beta' },
     });
   });
 
   it('pins nothing on Stable and refuses nothing', () => {
-    const cli = OkCliCommand.resolve({ host: { cliArgs: ['ok'] }, env: { OK_CHANNEL: 'stable' } });
+    const cli = PsCliCommand.resolve({ host: { cliArgs: ['ok'] }, env: { PS_CHANNEL: 'stable' } });
     expect(cli.runnerInvocation(['start'])).toEqual({ cliArgs: ['ok', 'start'], cliEnv: {} });
     expect(cli.refusalFor(['auth', 'login'])).toBeUndefined();
   });
 
   it('carries the channel with the argv into every form a caller can take', () => {
-    const cli = OkCliCommand.resolve({
+    const cli = PsCliCommand.resolve({
       host: { cliArgs: checkoutCli },
-      env: { OK_CHANNEL: 'dev' },
+      env: { PS_CHANNEL: 'dev' },
     });
-    expect(cli.spawn(['mcp'], { OK_CHANNEL: 'dev', HOME: '/h' })).toEqual({
+    expect(cli.spawn(['mcp'], { PS_CHANNEL: 'dev', HOME: '/h' })).toEqual({
       command: 'node',
       args: ['/src/cli.mjs', 'mcp'],
-      env: { HOME: '/h', OK_CHANNEL: 'dev' },
+      env: { HOME: '/h', PS_CHANNEL: 'dev' },
     });
     expect(cli.stdioServer(['mcp'])).toEqual({
       command: 'node',
       args: ['/src/cli.mjs', 'mcp'],
-      env: { OK_CHANNEL: 'dev' },
+      env: { PS_CHANNEL: 'dev' },
     });
     expect(cli.shellCommand(['auth', 'git-credential'], (part) => part)).toBe(
-      'OK_CHANNEL=dev node /src/cli.mjs auth git-credential',
+      'PS_CHANNEL=dev node /src/cli.mjs auth git-credential',
     );
   });
 
   it('applies a host overlay, where undefined removes an inherited key', () => {
-    const cli = OkCliCommand.resolve({
+    const cli = PsCliCommand.resolve({
       host: {
-        cliArgs: ['/app/OpenKnowledge.exe', 'cli.mjs'],
+        cliArgs: ['/app/Palimpsest.exe', 'cli.mjs'],
         cliEnv: { ELECTRON_RUN_AS_NODE: '1', NODE_OPTIONS: undefined },
       },
-      env: { OK_CHANNEL: 'stable' },
+      env: { PS_CHANNEL: 'stable' },
     });
     const spawn = cli.spawn([], { NODE_OPTIONS: '--inspect', PATH: 'C:\\Windows' });
     expect('env' in spawn && spawn.env).toEqual({

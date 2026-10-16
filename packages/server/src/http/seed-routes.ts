@@ -6,7 +6,7 @@ import {
   SeedInstallPackSkillSuccessSchema,
   SeedListPacksSuccessSchema,
   SeedPlanSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   applySeed,
   coercePackId,

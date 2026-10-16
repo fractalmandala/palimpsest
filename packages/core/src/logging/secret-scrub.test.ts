@@ -4,10 +4,10 @@ import { redactSecrets, SECRET_PATTERN_NAMES, scrubSecrets } from './secret-scru
 describe('scrubbing a serialized JSON payload', () => {
   it('every replacement leaves the payload parseable with its other fields intact', () => {
     const payloads: Record<string, unknown>[] = [
-      { event: 'ok-fs-error', reason: 'EACCES on /Users/alice', docName: 'notes/a' },
+      { event: 'ps-fs-error', reason: 'EACCES on /Users/alice', docName: 'notes/a' },
       { home: '/Users/bob', db: 'postgres://u:p@h/x' },
-      { event: 'ok-x', detail: 'authorization: Bearer abc123', docName: 'notes/b' },
-      { event: 'ok-x', authorization: 'Bearer abc123', docName: 'notes/c' },
+      { event: 'ps-x', detail: 'authorization: Bearer abc123', docName: 'notes/b' },
+      { event: 'ps-x', authorization: 'Bearer abc123', docName: 'notes/c' },
       { a: '/home/alice', b: { c: 'x/y' } },
       { msg: 'content dir /Users/alice missing entry "plan"' },
       { token: 'ghp_0123456789abcdefghijklmnopqrstuvwxyz', docName: 'notes/d' },
@@ -285,7 +285,7 @@ describe('redactSecrets', () => {
   });
 
   it('leaves a scrubbed Windows path in a JSON log line still parseable', () => {
-    const winPath = String.raw`C:\Users\alice\AppData\Roaming\OpenKnowledge\state.json`;
+    const winPath = String.raw`C:\Users\alice\AppData\Roaming\Palimpsest\state.json`;
     const line = JSON.stringify({ err: { code: 'EACCES', path: winPath } });
 
     const result = redactSecrets(line);
@@ -293,7 +293,7 @@ describe('redactSecrets', () => {
     expect(result.redacted).not.toContain('alice');
     expect(() => JSON.parse(result.redacted) as unknown).not.toThrow();
     expect((JSON.parse(result.redacted) as { err: { path: string } }).err.path).toBe(
-      String.raw`~\AppData\Roaming\OpenKnowledge\state.json`,
+      String.raw`~\AppData\Roaming\Palimpsest\state.json`,
     );
 
     const raw = redactSecrets(`could not read ${winPath}`);

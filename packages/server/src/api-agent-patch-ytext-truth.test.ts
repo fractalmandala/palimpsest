@@ -73,7 +73,7 @@ interface TestEnv {
 }
 
 function setup(): TestEnv {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-agent-patch-ytext-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-agent-patch-ytext-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
 

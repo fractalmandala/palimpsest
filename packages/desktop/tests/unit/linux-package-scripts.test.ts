@@ -20,7 +20,7 @@ import { DESKTOP_VARIANTS } from '../../src/shared/desktop-variant.ts';
 import { removeTempDirBestEffort } from '../support/temp-dir-cleanup.test-helper';
 
 const desktopRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const PROFILE = 'profile openknowledge-beta flags=(unconfined) { userns, }\n';
+const PROFILE = 'profile palimpsest-beta flags=(unconfined) { userns, }\n';
 const roots: string[] = [];
 
 afterEach(() => {
@@ -28,17 +28,17 @@ afterEach(() => {
 });
 
 function installRoot() {
-  const root = mkdtempSync(join(tmpdir(), 'ok-linux-scripts-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-linux-scripts-'));
   roots.push(root);
-  const app = join(root, 'opt/OpenKnowledge Beta');
+  const app = join(root, 'opt/Palimpsest Beta');
   mkdirSync(join(app, 'resources/cli/bin'), { recursive: true });
   for (const dir of ['etc/apparmor.d', 'usr/bin', 'usr/share/mime', 'usr/share/applications']) {
     mkdirSync(join(root, dir), { recursive: true });
   }
-  writeFileSync(join(app, 'openknowledge-beta'), '');
+  writeFileSync(join(app, 'palimpsest-beta'), '');
   writeFileSync(join(app, 'chrome-sandbox'), '');
   writeFileSync(join(app, 'resources/apparmor-profile'), PROFILE);
-  writeFileSync(join(app, 'resources/cli/bin/ok.sh'), '');
+  writeFileSync(join(app, 'resources/cli/bin/ps.sh'), '');
   const stubs = join(root, 'stubs');
   mkdirSync(stubs);
   for (const [name, status] of [
@@ -108,11 +108,11 @@ describe.skipIf(process.platform === 'win32')('Beta deb maintainer scripts', () 
     const root = installRoot();
     run(root, postInstall(), 'configure');
     run(root, retiredPostRemove(), 'purge');
-    expect(existsSync(join(root, 'usr/bin/ok-beta'))).toBe(false);
+    expect(existsSync(join(root, 'usr/bin/ps-beta'))).toBe(false);
 
     run(root, postInstall(), 'configure');
 
-    for (const link of ['ok-beta', 'open-knowledge-beta']) {
+    for (const link of ['ps-beta', 'palimpsest-beta']) {
       expect(existsSync(join(root, 'usr/bin', link))).toBe(true);
     }
     expect(installedProfiles(root)).toHaveLength(1);
@@ -120,7 +120,7 @@ describe.skipIf(process.platform === 'win32')('Beta deb maintainer scripts', () 
 
   test('moves a profile an earlier package installed so only one copy loads', () => {
     const root = installRoot();
-    writeFileSync(join(root, 'etc/apparmor.d/openknowledge-beta'), PROFILE);
+    writeFileSync(join(root, 'etc/apparmor.d/palimpsest-beta'), PROFILE);
 
     run(root, postInstall(), 'configure');
 
@@ -134,7 +134,7 @@ describe.skipIf(process.platform === 'win32')('Beta deb maintainer scripts', () 
     run(root, postRemove(), 'remove');
 
     expect(installedProfiles(root)).toEqual([]);
-    for (const link of ['ok-beta', 'open-knowledge-beta']) {
+    for (const link of ['ps-beta', 'palimpsest-beta']) {
       expect(existsSync(join(root, 'usr/bin', link))).toBe(false);
     }
   });

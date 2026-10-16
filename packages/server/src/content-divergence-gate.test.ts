@@ -1,4 +1,4 @@
-import { ContentDivergenceWarningSchema } from '@inkeep/open-knowledge-core';
+import { ContentDivergenceWarningSchema } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   CONTENT_DIVERGENCE_CAP_BYTES,

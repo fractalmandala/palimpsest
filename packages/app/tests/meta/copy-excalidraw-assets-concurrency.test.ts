@@ -64,7 +64,7 @@ interface Run {
 let fixtureEntries: string[] = [];
 
 function stageAppRoot(): string {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-excalidraw-assets-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-excalidraw-assets-')));
   mkdirSync(join(root, 'scripts'));
   cpSync(join(APP_ROOT, 'scripts', SCRIPT_NAME), join(root, 'scripts', SCRIPT_NAME));
   symlinkSync(join(APP_ROOT, 'node_modules'), join(root, 'node_modules'), 'dir');
@@ -106,7 +106,7 @@ function writeRenameFaultHooks(
     file,
     `import { registerHooks } from 'node:module';
 
-const SYNTHETIC_URL = 'ok-test:fs-rename-fault';
+const SYNTHETIC_URL = 'ps-test:fs-rename-fault';
 const SYNTHETIC_SOURCE = \`export * from 'node:fs';
 const fs = process.getBuiltinModule('fs');
 const FAILING_CALL = ${failingCall};

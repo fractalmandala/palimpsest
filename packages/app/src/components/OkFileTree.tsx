@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { applyExtensionBadges } from '@/components/file-tree-extension-badge';
 
-export interface OkFileTreeProps {
+export interface PsFileTreeProps {
   readonly model: PierreFileTreeModel;
   readonly hostRef: RefObject<HTMLDivElement | null>;
   readonly ready: boolean;
@@ -27,7 +27,7 @@ export interface OkFileTreeProps {
   readonly titleForPath?: (treePath: string) => string | null;
 }
 
-export function OkFileTree({
+export function PsFileTree({
   model,
   hostRef,
   ready,
@@ -42,7 +42,7 @@ export function OkFileTree({
   onContentHeightChange,
   sizeToContent,
   titleForPath,
-}: OkFileTreeProps) {
+}: PsFileTreeProps) {
   const titleForPathRef = useRef(titleForPath);
   useEffect(() => {
     titleForPathRef.current = titleForPath;

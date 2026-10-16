@@ -2,8 +2,8 @@ import type {
   SkillMoveStateCode,
   SkillRetentionLedgerCode,
   SkillSourceStateCode,
-} from '@inkeep/open-knowledge-core';
-import { interpretSkillMoveFailure } from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
+import { interpretSkillMoveFailure } from '@palimpsest/core';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 
@@ -50,7 +50,7 @@ describe('useMoveSkillScope retarget source', () => {
     expect(retarget).toHaveBeenCalledTimes(1);
     const [fromDoc, toDoc] = retarget.mock.calls[0] as [string, string];
     expect(fromDoc).toBe('.claude/skills/improve-codebase-architecture/SKILL');
-    expect(fromDoc).not.toContain('.ok/skills');
+    expect(fromDoc).not.toContain('.ps/skills');
     expect(toDoc).toBe('__skill__/global/improve-codebase-architecture');
   });
 

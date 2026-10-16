@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -68,15 +68,15 @@ function resultText(result: ToolResult): string {
 }
 
 beforeAll(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-lint-http-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-lint-http-'));
   contentDir = resolve(tmpDir, 'project');
-  const okDir = resolve(contentDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
+  const psDir = resolve(contentDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
   writeFileSync(
-    resolve(okDir, 'config.yml'),
+    resolve(psDir, 'config.yml'),
     'contentRules:\n  markdownlint:\n    enabled: true\n',
   );
-  writeFileSync(resolve(okDir, '.gitignore'), '');
+  writeFileSync(resolve(psDir, '.gitignore'), '');
 
   booted = await bootServer({
     host: '127.0.0.1',

@@ -7,19 +7,19 @@ import {
   DEFAULT_EMBEDDINGS_MODEL,
   humanFormat,
   isSemanticSearchOffered,
-  OK_USER_HOME_SECRETS_FILE,
-  okUserHomeDisplayPath,
+  PS_USER_HOME_SECRETS_FILE,
+  psUserHomeDisplayPath,
   type SemanticIndexStatus,
   SemanticIndexStatusSchema,
-} from '@inkeep/open-knowledge-core';
-import { writeConfigPatch } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { writeConfigPatch } from '@palimpsest/core/server';
 import {
   EMBEDDINGS_API_KEY_ENV,
   isProcessAlive,
   readProjectLocalSemanticConfig,
   readServerLock,
   resolveLockDir,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import password from '@inquirer/password';
 import { Command } from 'commander';
 import {
@@ -121,7 +121,7 @@ function setKeyCommand(): Command {
       }
       process.stderr.write(
         `✓ Embeddings API key stored for ${baseUrl}\n` +
-          `  (kept in ${okUserHomeDisplayPath(OK_USER_HOME_SECRETS_FILE)}, 0600, this machine only — never in the project).\n` +
+          `  (kept in ${psUserHomeDisplayPath(PS_USER_HOME_SECRETS_FILE)}, 0600, this machine only — never in the project).\n` +
           `  Enable semantic search with \`${currentCliCommandName()} embeddings enable\`, or in\n` +
           '  OK Desktop → Settings → This project → Search.\n',
       );
@@ -368,7 +368,7 @@ function statusCommand(): Command {
       }
 
       const keyLabel = hasKey
-        ? `set for this endpoint — ${keySource === 'env' ? `environment (${EMBEDDINGS_API_KEY_ENV})` : okUserHomeDisplayPath(OK_USER_HOME_SECRETS_FILE)}`
+        ? `set for this endpoint — ${keySource === 'env' ? `environment (${EMBEDDINGS_API_KEY_ENV})` : psUserHomeDisplayPath(PS_USER_HOME_SECRETS_FILE)}`
         : keyNotRequired
           ? 'not required (loopback endpoint)'
           : 'not set';

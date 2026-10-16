@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import {
   createWorkspaceSearchDocument,
   type WorkspaceSearchDocument,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { getLogger } from '../logger.ts';
 import { createOpenAiEmbedder } from './embedder.ts';
@@ -27,7 +27,7 @@ const corpus = [
 
 let cacheDir: string;
 beforeEach(() => {
-  cacheDir = mkdtempSync(join(tmpdir(), 'ok-autodims-'));
+  cacheDir = mkdtempSync(join(tmpdir(), 'ps-autodims-'));
 });
 afterEach(() => {
   rmSync(cacheDir, { recursive: true, force: true });

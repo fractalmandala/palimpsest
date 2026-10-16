@@ -93,7 +93,7 @@ export const USER_SKILL_EDITOR_IDS = ALL_EDITOR_IDS.filter(
   (id) => EDITOR_USER_SKILL_ROOT[id] !== null,
 );
 
-export const RESERVED_PROJECT_SKILL_NAME = 'open-knowledge';
+export const RESERVED_PROJECT_SKILL_NAME = 'palimpsest';
 
 export const PROJECT_SKILL_PROJECTION_PATHS: readonly string[] = ALL_EDITOR_IDS.flatMap((id) => {
   const root = EDITOR_PROJECT_SKILL_ROOT[id];

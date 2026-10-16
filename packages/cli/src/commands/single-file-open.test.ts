@@ -4,7 +4,7 @@ import {
   SingleFileNotMarkdownError,
   type SingleFileOpenPlan,
   SingleFileProjectOverrideError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import type { OpenTargetOptions } from '../utils/open-target.ts';
 import { type DesktopAppTarget, detectDesktop } from './desktop-dispatch.ts';
@@ -15,8 +15,8 @@ import {
 } from './single-file-open.ts';
 
 const STABLE_APP: DesktopAppTarget = {
-  bundlePath: '/Applications/OpenKnowledge.app',
-  protocolScheme: 'openknowledge',
+  bundlePath: '/Applications/Palimpsest.app',
+  protocolScheme: 'palimpsest',
 };
 
 interface Recorder {
@@ -88,7 +88,7 @@ const ephemeralPlan: Extract<SingleFileOpenPlan, { mode: 'ephemeral' }> = {
 };
 
 describe('runSingleFileOpen', () => {
-  test('project mode reuses the `ok open` project path', async () => {
+  test('project mode reuses the `ps open` project path', async () => {
     const { deps, rec } = makeDeps({ plan: projectPlan });
     const code = await runSingleFileOpen('/proj/sub/spec.md', deps);
     expect(code).toBe(0);
@@ -105,16 +105,16 @@ describe('runSingleFileOpen', () => {
     const code = await runSingleFileOpen('/Users/me/notes/todo.md', deps);
     expect(code).toBe(0);
     expect(rec.openTargets).toEqual([
-      `openknowledge://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
+      `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
     ]);
     expect(rec.openTargetOptions).toEqual([
-      { desktopBundlePath: '/Applications/OpenKnowledge.app' },
+      { desktopBundlePath: '/Applications/Palimpsest.app' },
     ]);
     expect(rec.browserOpens).toHaveLength(0);
   });
 
   test('ephemeral mode with the bundled Beta CLI on Linux deep-links into the Beta app', async () => {
-    const execPath = '/opt/OpenKnowledge Beta/openknowledge-beta';
+    const execPath = '/opt/Palimpsest Beta/palimpsest-beta';
     const real = createRealSingleFileOpenDeps(() =>
       detectDesktop({
         platform: 'linux',
@@ -131,7 +131,7 @@ describe('runSingleFileOpen', () => {
     const code = await runSingleFileOpen('/Users/me/notes/todo.md', deps);
     expect(code).toBe(0);
     expect(rec.openTargets).toEqual([
-      `openknowledge-beta://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
+      `palimpsest-beta://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
     ]);
     expect(rec.openTargetOptions).toEqual([{ desktopBundlePath: execPath }]);
     expect(rec.browserOpens).toHaveLength(0);
@@ -191,12 +191,12 @@ describe('runSingleFileOpen with an explicit --project override', () => {
 
   test('an override that cannot be honored exits non-zero with the reason', async () => {
     const { deps, rec } = makeDeps({
-      planThrows: new SingleFileProjectOverrideError('/named', 'no .ok/config.yml there'),
+      planThrows: new SingleFileProjectOverrideError('/named', 'no .ps/config.yml there'),
     });
     const code = await runSingleFileOpen('/x/notes.md', deps, { projectRoot: '/named' });
     expect(code).toBe(1);
     expect(rec.errors[0]).toContain('/named');
-    expect(rec.errors[0]).toContain('no .ok/config.yml there');
+    expect(rec.errors[0]).toContain('no .ps/config.yml there');
     expect(rec.projectOpens).toEqual([]);
     expect(rec.openTargets).toEqual([]);
   });

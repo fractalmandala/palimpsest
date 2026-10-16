@@ -18,7 +18,7 @@ import {
   type SemanticProviderErrorReason,
   ServerInfoSuccessSchema,
   WorkspaceSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import {
   ACP_AGENT_HARNESS_CLIS,

@@ -2,7 +2,7 @@ import {
   HistorySuccessSchema,
   SkillGetSuccessSchema,
   SkillRestoreSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 const SKILL_DOC_NAME = '.claude/skills/trip-log/SKILL';
@@ -81,7 +81,7 @@ describe('skill restore (R6)', () => {
 
   test('history for an unknown skill → 200 empty', async () => {
     const res = await fetch(
-      `${base()}/api/history?docName=${encodeURIComponent('.ok/skills/ghost/SKILL')}`,
+      `${base()}/api/history?docName=${encodeURIComponent('.ps/skills/ghost/SKILL')}`,
     );
     expect(res.status).toBe(200);
     const parsed = HistorySuccessSchema.safeParse(await res.json());

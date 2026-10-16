@@ -14,7 +14,7 @@ function StatusFrame(props: { tone: 'placeholder' | 'error'; children: React.Rea
       : 'border-border text-muted-foreground';
   return (
     <div
-      className={`ok-mirror-state flex items-start gap-2 rounded-md border border-dashed px-3 py-2 text-sm ${toneClass}`}
+      className={`ps-mirror-state flex items-start gap-2 rounded-md border border-dashed px-3 py-2 text-sm ${toneClass}`}
     >
       {props.tone === 'error' ? (
         <Link2Off className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
@@ -90,13 +90,13 @@ export function Mirror(props: MirrorProps) {
 
   return (
     <div
-      className='ok-mirror-resolved relative -mx-3 prose-no-margin rounded-md border border-dashed border-transparent px-3 py-2 transition-colors [.jsx-component-wrapper:hover_&]:border-border/40 [.jsx-component-wrapper[data-selected="true"]_&]:border-border/40'
+      className='ps-mirror-resolved relative -mx-3 prose-no-margin rounded-md border border-dashed border-transparent px-3 py-2 transition-colors [.jsx-component-wrapper:hover_&]:border-border/40 [.jsx-component-wrapper[data-selected="true"]_&]:border-border/40'
       data-mirror-src={src}
       data-mirror-anchor={anchor}
     >
       {}
       <div
-        className='ok-mirror-badge pointer-events-none absolute -top-2.5 left-2 flex items-center gap-1 rounded-md bg-background px-1.5 text-xs text-muted-foreground opacity-0 transition-opacity [.jsx-component-wrapper:hover_&]:opacity-100 [.jsx-component-wrapper[data-selected="true"]_&]:opacity-100'
+        className='ps-mirror-badge pointer-events-none absolute -top-2.5 left-2 flex items-center gap-1 rounded-md bg-background px-1.5 text-xs text-muted-foreground opacity-0 transition-opacity [.jsx-component-wrapper:hover_&]:opacity-100 [.jsx-component-wrapper[data-selected="true"]_&]:opacity-100'
         aria-hidden="true"
       >
         <Copy className="size-3" aria-hidden="true" />

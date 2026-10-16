@@ -58,7 +58,7 @@ vi.doMock('@/components/GraphView', () => ({
 const EXTERNAL_URL = 'https://www.youtube.com/watch?v=abc123';
 
 function setDesktopBridge(openExternal: (url: string) => Promise<void>) {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = { shell: { openExternal } };
+  (window as unknown as { psDesktop?: unknown }).psDesktop = { shell: { openExternal } };
 }
 
 describe('GraphPanel — external "Open link" routes to the OS browser', () => {
@@ -71,7 +71,7 @@ describe('GraphPanel — external "Open link" routes to the OS browser', () => {
   afterEach(() => {
     cleanup();
     window.open = originalOpen;
-    delete (window as unknown as { okDesktop?: unknown }).okDesktop;
+    delete (window as unknown as { psDesktop?: unknown }).psDesktop;
     graphHarness.select = undefined;
   });
 
@@ -93,7 +93,7 @@ describe('GraphPanel — external "Open link" routes to the OS browser', () => {
     });
   }
 
-  test('Electron host: "Open link" calls okDesktop.shell.openExternal and never window.open', async () => {
+  test('Electron host: "Open link" calls psDesktop.shell.openExternal and never window.open', async () => {
     const openExternal = vi.fn(async () => {});
     setDesktopBridge(openExternal);
     const openSpy = vi.fn(() => null);

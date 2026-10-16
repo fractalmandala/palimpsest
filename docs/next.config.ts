@@ -189,13 +189,13 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/docs/advanced/content-rules/okf',
-        destination: '/docs/plugins/okf',
+        source: '/docs/advanced/content-rules/psf',
+        destination: '/docs/plugins/psf',
         permanent: true,
       },
       {
-        source: '/docs/advanced/content-rules/okf/',
-        destination: '/docs/plugins/okf',
+        source: '/docs/advanced/content-rules/psf/',
+        destination: '/docs/plugins/psf',
         permanent: true,
       },
       {

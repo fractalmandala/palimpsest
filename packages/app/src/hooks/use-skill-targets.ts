@@ -3,7 +3,7 @@ import {
   type SkillScope,
   type SkillTargetsGetSuccess,
   SkillTargetsGetSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { emitSkillsChanged } from '@/lib/documents-events';
@@ -45,7 +45,7 @@ export function useSkillTargets(): SkillTargetsHandle {
         const parsed = SkillTargetsGetSuccessSchema.safeParse(payload);
         if (!parsed.success) {
           console.error(
-            '[ok-skills] /api/skill-targets response failed schema validation:',
+            '[ps-skills] /api/skill-targets response failed schema validation:',
             parsed.error.issues,
           );
           setState({

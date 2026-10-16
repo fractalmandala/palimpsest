@@ -1,4 +1,4 @@
-import { type DocumentListEntry, DocumentListEntrySchema } from '@inkeep/open-knowledge-core';
+import { type DocumentListEntry, DocumentListEntrySchema } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   attributeTreeHiddenAxes,
@@ -11,10 +11,10 @@ import {
 } from './file-tree-utils';
 
 describe('hasOkPathSegment', () => {
-  test('matches a .ok segment at root and nested depth', () => {
-    expect(hasOkPathSegment('.ok')).toBe(true);
-    expect(hasOkPathSegment('.ok/config.yml')).toBe(true);
-    expect(hasOkPathSegment('notes/.ok/templates/starter')).toBe(true);
+  test('matches a .ps segment at root and nested depth', () => {
+    expect(hasOkPathSegment('.ps')).toBe(true);
+    expect(hasOkPathSegment('.ps/config.yml')).toBe(true);
+    expect(hasOkPathSegment('notes/.ps/templates/starter')).toBe(true);
   });
 
   test('matches case variants, mirroring the server reserved-path guard', () => {
@@ -308,41 +308,41 @@ describe('filterVisibleEntries — axis composition', () => {
     expect(shows(dotAsset, both)).toBe(false);
   });
 
-  const okRootFolder = { kind: 'folder' as const, path: '.ok' };
-  const okTemplateDoc = { kind: 'document' as const, docName: '.ok/templates/meeting-notes' };
-  const okConfigAsset = { kind: 'asset' as const, path: '.ok/config.yml' };
-  const nestedOkDoc = { kind: 'document' as const, docName: 'docs/.ok/templates/spec' };
-  const dotAncestorOkDoc = { kind: 'document' as const, docName: '.scratch/.ok/wip' };
+  const psRootFolder = { kind: 'folder' as const, path: '.ps' };
+  const psTemplateDoc = { kind: 'document' as const, docName: '.ps/templates/meeting-notes' };
+  const psConfigAsset = { kind: 'asset' as const, path: '.ps/config.yml' };
+  const nestedOkDoc = { kind: 'document' as const, docName: 'docs/.ps/templates/spec' };
+  const dotAncestorOkDoc = { kind: 'document' as const, docName: '.scratch/.ps/wip' };
 
-  test('hidden-files on never reveals .ok entries — show-ok alone governs them', () => {
-    for (const entry of [okRootFolder, okTemplateDoc, okConfigAsset, nestedOkDoc]) {
+  test('hidden-files on never reveals .ps entries — show-ok alone governs them', () => {
+    for (const entry of [psRootFolder, psTemplateDoc, psConfigAsset, nestedOkDoc]) {
       expect(shows(entry, { showHiddenFiles: true })).toBe(false);
     }
   });
 
-  test('show-ok reveals root and per-folder .ok entries without hidden-files', () => {
-    const okOn = { showOkFolders: true };
-    expect(shows(okRootFolder, okOn)).toBe(true);
-    expect(shows(okTemplateDoc, okOn)).toBe(true);
-    expect(shows(okConfigAsset, okOn)).toBe(true);
-    expect(shows(nestedOkDoc, okOn)).toBe(true);
-    expect(shows(dotDoc, okOn)).toBe(false);
+  test('show-ok reveals root and per-folder .ps entries without hidden-files', () => {
+    const psOn = { showOkFolders: true };
+    expect(shows(psRootFolder, psOn)).toBe(true);
+    expect(shows(psTemplateDoc, psOn)).toBe(true);
+    expect(shows(psConfigAsset, psOn)).toBe(true);
+    expect(shows(nestedOkDoc, psOn)).toBe(true);
+    expect(shows(dotDoc, psOn)).toBe(false);
   });
 
-  test('only-markdown composes inside a revealed .ok', () => {
-    const okMd = { showOkFolders: true, showOnlyMarkdownFiles: true };
-    expect(shows(okTemplateDoc, okMd)).toBe(true);
-    expect(shows(okConfigAsset, okMd)).toBe(false);
-    expect(shows(okRootFolder, okMd)).toBe(true);
+  test('only-markdown composes inside a revealed .ps', () => {
+    const psMd = { showOkFolders: true, showOnlyMarkdownFiles: true };
+    expect(shows(psTemplateDoc, psMd)).toBe(true);
+    expect(shows(psConfigAsset, psMd)).toBe(false);
+    expect(shows(psRootFolder, psMd)).toBe(true);
   });
 
-  test('a dot-segment ancestor above the .ok segment still follows hidden-files', () => {
+  test('a dot-segment ancestor above the .ps segment still follows hidden-files', () => {
     expect(shows(dotAncestorOkDoc, { showOkFolders: true })).toBe(false);
     expect(shows(dotAncestorOkDoc, { showOkFolders: true, showHiddenFiles: true })).toBe(true);
   });
 
-  test('.ok entries never appear under default axes', () => {
-    expect(filterVisibleEntries([okRootFolder, okTemplateDoc, nestedOkDoc])).toEqual([]);
+  test('.ps entries never appear under default axes', () => {
+    expect(filterVisibleEntries([psRootFolder, psTemplateDoc, nestedOkDoc])).toEqual([]);
   });
 
   test('empty refs stay rejected with every axis on', () => {
@@ -364,7 +364,7 @@ describe('filterVisibleEntries — axis composition', () => {
       dotDoc,
       dotFolder,
       { kind: 'asset' as const, path: 'opencode.json' },
-      okTemplateDoc,
+      psTemplateDoc,
       { kind: 'document' as const, docName: '' },
     ];
     expect(filterVisibleEntries(entries)).toEqual([
@@ -444,8 +444,8 @@ describe('attributeTreeHiddenAxes', () => {
     }
   });
 
-  test('.ok paths attribute nothing — the O axis alone governs them', () => {
-    for (const ref of ['.ok/skills/writer/SKILL', '.ok/templates/meeting', 'docs/.ok/config.yml']) {
+  test('.ps paths attribute nothing — the O axis alone governs them', () => {
+    for (const ref of ['.ps/skills/writer/SKILL', '.ps/templates/meeting', 'docs/.ps/config.yml']) {
       expect(attributeTreeHiddenAxes({ kind: 'document', docName: ref })).toEqual(none);
       expect(
         attributeTreeHiddenAxes(

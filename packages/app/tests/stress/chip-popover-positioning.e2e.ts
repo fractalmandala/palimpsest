@@ -30,7 +30,7 @@ async function rectOf(_page: Page, locator: ReturnType<Page['locator']>) {
 async function disableFollowFile(page: Page) {
   await page.addInitScript(() => {
     try {
-      localStorage.setItem('ok-acp-follow-file-v1', '0');
+      localStorage.setItem('ps-acp-follow-file-v1', '0');
     } catch {}
   });
 }

@@ -27,7 +27,7 @@ const DESKTOP_DIR = resolve(SCRIPT_DIR, '..', '..', 'packages', 'desktop');
 const PACKAGED_CONFIG = 'playwright.packaged.config.ts';
 export const PACKAGED_REPORT = join('test-results', 'desktop-smoke-packaged-results.json');
 
-export const PROGRESS_FILE_ENV = 'OK_SMOKE_PROGRESS_FILE';
+export const PROGRESS_FILE_ENV = 'PS_SMOKE_PROGRESS_FILE';
 export const PLAYWRIGHT_REPORTER_ENV = 'PW_TEST_REPORTER';
 
 export const WATCHDOG = {
@@ -466,7 +466,7 @@ export async function runWatchedPlaywright({
   signalSource = process,
 }) {
   const settings = { ...WATCHDOG, ...watchdog };
-  const progressDir = await mkdtemp(join(tmpdir(), 'ok-smoke-progress-'));
+  const progressDir = await mkdtemp(join(tmpdir(), 'ps-smoke-progress-'));
   const progress = {
     file: join(progressDir, 'progress.jsonl'),
     offset: 0,
@@ -643,8 +643,8 @@ async function defaultRunPlaywright(appPath, deps = {}) {
     cwd: DESKTOP_DIR,
     env: {
       ...process.env,
-      OK_DESKTOP_PACKAGED_APP: appPath,
-      OK_DESKTOP_E2E_SMOKE: '1',
+      PS_DESKTOP_PACKAGED_APP: appPath,
+      PS_DESKTOP_E2E_SMOKE: '1',
     },
     spawnImpl: deps.spawn ?? spawn,
   });

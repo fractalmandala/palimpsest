@@ -1,4 +1,4 @@
-import { bindConfigDoc, type ConfigBinding } from '@inkeep/open-knowledge-core';
+import { bindConfigDoc, type ConfigBinding } from '@palimpsest/core';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
@@ -72,7 +72,7 @@ describe('EnterpriseHostsSection', () => {
     const list = screen.getByTestId('settings-enterprise-hosts-list');
     expect(within(list).getByText('ghes.example.com')).toBeTruthy();
     expect((screen.getByLabelText('Add a host') as HTMLInputElement).value).toBe('');
-    expect(screen.getByRole('status').textContent).toContain('Restart OpenKnowledge');
+    expect(screen.getByRole('status').textContent).toContain('Restart Palimpsest');
   });
 
   test('removing a host deletes only that declaration', async () => {

@@ -23,7 +23,7 @@ const { GET } = await import('./route.ts');
 describe('GET /download/stable', () => {
   test('keeps the bare legacy URL on the stable Apple Silicon DMG', () => {
     _lastCapture = null;
-    const res = GET(new Request('https://openknowledge.ai/download/stable'));
+    const res = GET(new Request('https://github.com/fractalmandala/palimpsest/download/stable'));
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(STABLE_DMG_URL);
     expect(res.headers.get('cache-control')).toBe('no-store');
@@ -38,7 +38,7 @@ describe('GET /download/stable', () => {
     for (const target of DOWNLOAD_TARGETS) {
       _lastCapture = null;
       const res = GET(
-        new Request(`https://openknowledge.ai/download/stable?${targetQuery(target)}`),
+        new Request(`https://github.com/fractalmandala/palimpsest/download/stable?${targetQuery(target)}`),
       );
       expect(res.status).toBe(302);
       expect(res.headers.get('location')).toBe(target.assetUrl);
@@ -53,7 +53,7 @@ describe('GET /download/stable', () => {
   test('an unknown platform triple falls back to the DMG rather than 404ing', () => {
     _lastCapture = null;
     const res = GET(
-      new Request('https://openknowledge.ai/download/stable?os=solaris&arch=sparc&format=pkg'),
+      new Request('https://github.com/fractalmandala/palimpsest/download/stable?os=solaris&arch=sparc&format=pkg'),
     );
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(STABLE_DMG_URL);
@@ -62,7 +62,7 @@ describe('GET /download/stable', () => {
   test('a prefetch still redirects but is NOT counted', () => {
     _lastCapture = null;
     const res = GET(
-      new Request('https://openknowledge.ai/download/stable', {
+      new Request('https://github.com/fractalmandala/palimpsest/download/stable', {
         headers: { 'sec-purpose': 'prefetch' },
       }),
     );

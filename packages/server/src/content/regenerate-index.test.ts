@@ -36,8 +36,8 @@ describe('collectIndexDirectories', () => {
 
   test('infrastructure under dot-directories contributes no directories', () => {
     const directories = collectIndexDirectories([
-      '.ok/templates/note',
-      'concepts/.ok/templates/card',
+      '.ps/templates/note',
+      'concepts/.ps/templates/card',
       'real/doc',
     ]);
     expect(sorted(directories)).toEqual(['', 'real']);

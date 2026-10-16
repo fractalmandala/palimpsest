@@ -185,8 +185,8 @@ export function findReplacePlugin(): Plugin {
             Decoration.inline(match.from, match.to, {
               class:
                 index === pluginState.activeIndex
-                  ? 'ok-find-match ok-find-match-active'
-                  : 'ok-find-match',
+                  ? 'ps-find-match ps-find-match-active'
+                  : 'ps-find-match',
             }),
           ),
         );

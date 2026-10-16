@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { shellSingleQuote } from '@inkeep/open-knowledge-core';
+import { shellSingleQuote } from '@palimpsest/core';
 import type { Octokit } from '@octokit/rest';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -42,14 +42,14 @@ async function runPublishFlow(...args: Parameters<typeof runPublishFlowProduct>)
 }
 
 const CLONE_URL = `https://${GITHUB_HOST}/alice/demo.git`;
-const PUBLISH_TOKEN = 'ok-test-publish-token-the-stand-in-accepts';
-const STALE_TOKEN = 'ok-test-publish-token-the-stand-in-rejects';
+const PUBLISH_TOKEN = 'ps-test-publish-token-the-stand-in-accepts';
+const STALE_TOKEN = 'ps-test-publish-token-the-stand-in-rejects';
 const AMBIENT_HELPERS = ['env-count', 'env-parameters', 'github-scoped', 'global'];
 const ENTERPRISE_HOST = 'ghe.example.com';
 const ENTERPRISE_CLONE_URL = `https://${ENTERPRISE_HOST}/alice/demo.git`;
-const ENTERPRISE_PUBLISH_TOKEN = 'ok-test-publish-token-for-the-enterprise-host';
-const ENTERPRISE_USER_PASSWORD = 'ok-test-enterprise-password-in-the-users-own-helper';
-const INHERITED_RELAY_TOKEN = 'ok-test-relay-token-inherited-from-the-environment';
+const ENTERPRISE_PUBLISH_TOKEN = 'ps-test-publish-token-for-the-enterprise-host';
+const ENTERPRISE_USER_PASSWORD = 'ps-test-enterprise-password-in-the-users-own-helper';
+const INHERITED_RELAY_TOKEN = 'ps-test-relay-token-inherited-from-the-environment';
 
 function octokitCreatingRepoAt(cloneUrl: string): Octokit {
   return {
@@ -80,7 +80,7 @@ describe("share publish authenticates its github.com push only through the CLI's
   });
 
   beforeEach(async () => {
-    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ok-publish-credential-')));
+    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ps-publish-credential-')));
     const home = join(workspace, 'home');
     projectDir = join(workspace, 'project');
     credentialStore = join(workspace, 'git-credentials');
@@ -96,9 +96,9 @@ describe("share publish authenticates its github.com push only through the CLI's
       'no_proxy',
       'GIT_SSL_CAINFO',
       'GIT_SSL_NO_VERIFY',
-      'OK_GH_TOKEN',
-      'OK_GH_TOKEN_HOST',
-      'OK_GH_TOKEN_LOGIN',
+      'PS_GH_TOKEN',
+      'PS_GH_TOKEN_HOST',
+      'PS_GH_TOKEN_LOGIN',
     ]) {
       vi.stubEnv(variable, undefined);
     }
@@ -114,7 +114,7 @@ describe("share publish authenticates its github.com push only through the CLI's
     cliStandIn = writeCliCredentialStandIn({
       dir: workspace,
       callLog: cliHelperLog,
-      authFile: join(workspace, 'ok-auth.yml'),
+      authFile: join(workspace, 'ps-auth.yml'),
     });
     const recordingHelper = writeRecordingCredentialHelper(workspace, helperLog);
 
@@ -333,9 +333,9 @@ describe("share publish authenticates its github.com push only through the CLI's
     expectTokenConfinedToCliHelper(STALE_TOKEN);
   });
 
-  test('a publish presents its own token when its environment already carries an OK_GH_TOKEN relay for github.com', async () => {
-    vi.stubEnv('OK_GH_TOKEN', INHERITED_RELAY_TOKEN);
-    vi.stubEnv('OK_GH_TOKEN_HOST', GITHUB_HOST);
+  test('a publish presents its own token when its environment already carries an PS_GH_TOKEN relay for github.com', async () => {
+    vi.stubEnv('PS_GH_TOKEN', INHERITED_RELAY_TOKEN);
+    vi.stubEnv('PS_GH_TOKEN_HOST', GITHUB_HOST);
 
     const result = await publishWith(PUBLISH_TOKEN);
 
@@ -432,7 +432,7 @@ describe("share publish authenticates its github.com push only through the CLI's
     expect
       .soft(
         ambientCalls.filter((call) => call.relayToken !== null),
-        'ambient helper calls that inherited an OK_GH_TOKEN relay',
+        'ambient helper calls that inherited an PS_GH_TOKEN relay',
       )
       .toEqual([]);
     expect

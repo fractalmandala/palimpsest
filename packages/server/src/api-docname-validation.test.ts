@@ -53,7 +53,7 @@ const MALFORMED = ['   ', '.', '..', '../escape', 'a/', '/abs', '.foo', 'x\ty'];
 
 describe('malformed docName rejection (/api/agent-write-md)', () => {
   test('rejects every malformed docName with 400 and writes nothing', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-docname-validation-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-docname-validation-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -81,7 +81,7 @@ describe('malformed docName rejection (/api/agent-write-md)', () => {
   });
 
   test('still accepts a well-formed nested docName', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-docname-validation-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-docname-validation-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 

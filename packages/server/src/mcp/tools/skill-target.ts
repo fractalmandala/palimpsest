@@ -10,7 +10,7 @@ import {
   SKILL_AUTHORING_WARNING_CODES,
   type SkillMoveFailureOutcome,
   type SkillScope,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { AgentIdentity } from '../agent-identity.ts';
 import { resolveSkillPreviewUrl } from './preview-url.ts';
 import {
@@ -280,7 +280,7 @@ export async function moveSkill(
   const to = typeof result.to === 'string' ? result.to : input.toName;
   return textPlusStructured(
     `${committed ? 'Renamed' : 'Moved'} skill ${from} → ${to}.${
-      committed ? '' : ' (Untracked `.ok/` — moved on disk without git history.)'
+      committed ? '' : ' (Untracked `.ps/` — moved on disk without git history.)'
     } Every location it occupied now holds the new name.`,
     { ok: true, kind: 'skill', committed },
   );

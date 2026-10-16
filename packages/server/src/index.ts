@@ -1,9 +1,9 @@
-export type { Principal } from '@inkeep/open-knowledge-core';
-export { TEST_LOOP_CORE_MARKER } from '@inkeep/open-knowledge-core';
+export type { Principal } from '@palimpsest/core';
+export { TEST_LOOP_CORE_MARKER } from '@palimpsest/core';
 export {
   GitDirAccessError,
   MalformedGitPointerError,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 export { type StreamedChunk, streamedChunkOf } from './acp/event-log-bounds.ts';
 export { AcpPermissionStore, readAgentBrowserTools } from './acp/permissions.ts';
 export { AcpRegistry, FEATURED_AGENT_IDS, loadCustomAgents } from './acp/registry.ts';
@@ -310,7 +310,7 @@ export {
   type InitContentOptions,
   type InitContentResult,
   initContent,
-  OK_OKIGNORE_TEMPLATE,
+  PS_OKIGNORE_TEMPLATE,
   packageVersionMajorMinor,
   ROOT_GITIGNORE_TEMPLATE,
   removeProjectSkillGitignoreBlock,

@@ -1,4 +1,4 @@
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import {
   type AssembleHandoffPromptInput,
   assembleHandoffPrompt,
@@ -19,15 +19,15 @@ import {
   type HandoffScope,
   type HandoffTarget,
   type InstallState,
-  OK_TERMINAL_SURFACE_PREAMBLE,
-  OK_THREAD_SURFACE_PREAMBLE,
+  PS_TERMINAL_SURFACE_PREAMBLE,
+  PS_THREAD_SURFACE_PREAMBLE,
   type PromptTransport,
   type TargetData,
   TERMINAL_CLIS,
   type TerminalCli,
   withSkillPointer,
-} from '@inkeep/open-knowledge-core/handoff';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/handoff';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { toast as sonnerToast } from 'sonner';
 import { useConfigContext } from '@/lib/config-context';
@@ -431,7 +431,7 @@ export function composeTerminalLaunchPrompt(input: HandoffDispatchInput, cli: Te
     input.skill !== undefined ||
     hasInstruction
   ) {
-    return `${OK_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, TERMINAL_CLIS[cli].handoffTarget, false, 'terminal')}`;
+    return `${PS_TERMINAL_SURFACE_PREAMBLE} ${selectScopedPrompt(input, TERMINAL_CLIS[cli].handoffTarget, false, 'terminal')}`;
   }
   return composeTerminalBareLaunchPrompt(input.docContext?.relativePath ?? null);
 }
@@ -444,7 +444,7 @@ function composeThreadLaunchPrompt(input: HandoffDispatchInput): string {
     input.skill !== undefined ||
     hasInstruction
   ) {
-    return `${OK_THREAD_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`;
+    return `${PS_THREAD_SURFACE_PREAMBLE} ${selectScopedPrompt(input, 'claude-code', false, 'terminal')}`;
   }
   return composeThreadBareLaunchPrompt(input.docContext?.relativePath ?? null);
 }
@@ -498,18 +498,18 @@ export async function runHandoffDispatch(
       installOutcome = await deps.ensureCoworkSkillInstalled();
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      deps.toast.error(t`Couldn't install OpenKnowledge skill — ${message}`);
+      deps.toast.error(t`Couldn't install Palimpsest skill — ${message}`);
       return { ok: false, reason: 'dispatch-error', detail: `install-error: ${message}` };
     }
     if (installOutcome.kind === 'installed-now') {
       deps.toast.success(
-        t`OpenKnowledge skill saved. Upload it in Claude Desktop, then click Cowork again.`,
+        t`Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again.`,
       );
       return { ok: true };
     }
     if (installOutcome.kind === 'install-failed') {
       const message = installOutcome.message ?? installOutcome.reason;
-      deps.toast.error(t`Couldn't install OpenKnowledge skill — ${message}`);
+      deps.toast.error(t`Couldn't install Palimpsest skill — ${message}`);
       return { ok: false, reason: 'dispatch-error', detail: `install-failed: ${message}` };
     }
   }
@@ -566,11 +566,11 @@ export function getDisplayNameDefault(target: HandoffTarget): string {
 }
 
 export function isElectronHostDefault(
-  windowLike: { okDesktop?: unknown } | undefined = typeof window !== 'undefined'
+  windowLike: { psDesktop?: unknown } | undefined = typeof window !== 'undefined'
     ? window
     : undefined,
 ): boolean {
-  return windowLike?.okDesktop != null;
+  return windowLike?.psDesktop != null;
 }
 
 export function defaultHandoffDispatchDeps(): HandoffDispatchDeps {

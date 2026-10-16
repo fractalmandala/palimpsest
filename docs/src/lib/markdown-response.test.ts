@@ -17,11 +17,11 @@ describe('markdownResponse', () => {
 
   test('points agents at the human page with a canonical Link header', () => {
     const res = markdownResponse('# Hi', {
-      canonicalUrl: 'https://openknowledge.ai/docs/get-started/overview',
+      canonicalUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx',
     });
 
     expect(res.headers.get('link')).toBe(
-      '<https://openknowledge.ai/docs/get-started/overview>; rel="canonical"',
+      '<https://github.com/fractalmandala/palimpsest/tree/main/docs/content rel="canonical"',
     );
   });
 

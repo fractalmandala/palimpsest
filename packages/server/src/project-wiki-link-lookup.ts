@@ -5,7 +5,7 @@ import {
   parseGlobalSkillBundleDoc,
   toWikiLinkSlug,
   type WikiLinkLookupIndex,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export function buildProjectWikiLinkLookup(docNames: Iterable<string>): WikiLinkLookupIndex {
   const pages = asTargetNamespace('document', docNames);

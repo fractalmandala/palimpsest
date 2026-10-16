@@ -1,4 +1,4 @@
-import type { LintDiagnostic } from '@inkeep/open-knowledge-core/markdown/lint';
+import type { LintDiagnostic } from '@palimpsest/core/markdown/lint';
 
 export const SKILL_RESERVED_KEYS = ['name'] as const;
 

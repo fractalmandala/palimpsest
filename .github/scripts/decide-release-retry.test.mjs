@@ -290,7 +290,7 @@ describe('finalize refuses to promote a superseded stable on a re-run', () => {
   const step = finalize.steps.find(
     (candidate) => candidate.name === 'Refuse to promote a superseded stable on a re-run',
   );
-  const dir = mkdtempSync(join(tmpdir(), 'ok-supersede-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-supersede-'));
   afterAll(() => rmSync(dir, { recursive: true, force: true }));
   writeFileSync(
     join(dir, 'gh'),
@@ -302,7 +302,7 @@ describe('finalize refuses to promote a superseded stable on a re-run', () => {
       env: {
         PATH: `${dir}:${process.env.PATH}`,
         RUNNER_TEMP: dir,
-        GITHUB_REPOSITORY: 'inkeep/open-knowledge',
+        GITHUB_REPOSITORY: 'fractalmandala/palimpsest',
         GITHUB_RUN_ATTEMPT: '2',
         RELEASE_TAG: 'v0.83.0',
         STUB_LATEST: '',

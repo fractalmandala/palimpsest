@@ -2,8 +2,8 @@ import {
   type AgentId,
   agentIdForHandoffTarget,
   KNOWN_HANDOFF_TARGETS,
-} from '@inkeep/open-knowledge-core/agent-registry';
-import type { HandoffOutcome, HandoffTarget } from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/agent-registry';
+import type { HandoffOutcome, HandoffTarget } from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
 import { createContext, type ReactNode, use, useEffect, useRef, useState } from 'react';
 import {
@@ -69,7 +69,7 @@ interface ExternalHandoffGateValue {
 }
 
 const ExternalHandoffGateContext = createContext<ExternalHandoffGateValue | null>(null);
-const DISMISSED_SETUP_KEY = 'ok-external-handoff-setup-dismissed-v1';
+const DISMISSED_SETUP_KEY = 'ps-external-handoff-setup-dismissed-v1';
 const CHECK_STATUS_DELAY_MS = 250;
 const CHECK_DEADLINE_MS = 10_000;
 
@@ -137,7 +137,7 @@ function recordWithoutDispatch(
 ): void {
   void recordHandoff({
     target,
-    host: typeof window !== 'undefined' && window.okDesktop != null ? 'electron' : 'web',
+    host: typeof window !== 'undefined' && window.psDesktop != null ? 'electron' : 'web',
     outcome: 'error',
     reason,
     ts: new Date().toISOString(),
@@ -429,13 +429,13 @@ export function ExternalHandoffGateProvider({
               warnReadinessBypass(setupState.pending.target, 'derivation-threw', error);
               return {
                 kind: 'saved-not-ready',
-                message: t`Changes were saved, but OpenKnowledge could not confirm a connection to ${handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again.`,
+                message: t`Changes were saved, but Palimpsest could not confirm a connection to ${handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again.`,
               };
             }
             if (readiness.kind !== 'ready') {
               return {
                 kind: 'saved-not-ready',
-                message: t`Changes were saved, but OpenKnowledge could not confirm a connection to ${handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again.`,
+                message: t`Changes were saved, but Palimpsest could not confirm a connection to ${handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again.`,
               };
             }
             runReady(setupState.pending);

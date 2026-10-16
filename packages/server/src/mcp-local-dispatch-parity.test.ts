@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
@@ -21,10 +21,10 @@ type ToolResult = {
 };
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 }
 
 function maskVolatile(result: ToolResult): unknown {
@@ -46,7 +46,7 @@ async function callBoth(name: string, args: Record<string, unknown>): Promise<[u
 
 beforeAll(async () => {
   rig = await startDualTransportMcpRig({
-    tmpPrefix: 'ok-mcp-parity-',
+    tmpPrefix: 'ps-mcp-parity-',
     clientName: 'parity-suite',
     seed: (contentDir) => {
       seedOkScaffold(contentDir);

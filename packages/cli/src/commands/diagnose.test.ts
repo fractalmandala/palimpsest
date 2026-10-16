@@ -6,13 +6,13 @@ import { runDiagnose } from './diagnose.ts';
 import type { LockState } from './lock-state.ts';
 
 function makeTmpDir(): string {
-  return mkdtempSync(resolve(tmpdir(), 'ok-diagnose-test-'));
+  return mkdtempSync(resolve(tmpdir(), 'ps-diagnose-test-'));
 }
 
 function makeServerLock(pid: number, worktreeRoot: string, port = 5173): LockState {
   return {
     status: 'alive',
-    lockPath: `${worktreeRoot}/.ok/local/server.lock`,
+    lockPath: `${worktreeRoot}/.ps/local/server.lock`,
     lock: {
       pid,
       hostname: 'test-host',
@@ -120,7 +120,7 @@ describe('runDiagnose', () => {
       { pid, noInspector: true, output: out },
       {
         ...makeBaseDeps(out),
-        discover: async () => [`${worktreeRoot}/.ok/local`],
+        discover: async () => [`${worktreeRoot}/.ps/local`],
         inspect: () => makeServerLock(pid, worktreeRoot),
       },
     );
@@ -131,7 +131,7 @@ describe('runDiagnose', () => {
     expect(meta.lockInfo.lock.worktreeRoot).toBe(worktreeRoot);
   });
 
-  test('output dir defaults to contentDir/.ok/local/diagnostics when lock found', async () => {
+  test('output dir defaults to contentDir/.ps/local/diagnostics when lock found', async () => {
     const contentDir = makeTmpDir();
     tmpDirs.push(contentDir);
     const pid = process.pid;
@@ -141,14 +141,14 @@ describe('runDiagnose', () => {
       { pid, noInspector: true },
       {
         ...makeBaseDeps(contentDir),
-        discover: async () => [`${contentDir}/.ok/local`],
+        discover: async () => [`${contentDir}/.ps/local`],
         inspect: () => makeServerLock(pid, contentDir),
         log: (m) => logs.push(m),
       },
     );
 
     const outputLine = logs.find((l) => l.startsWith('Output:')) ?? '';
-    expect(outputLine).toContain(join(contentDir, '.ok', 'local', 'diagnostics'));
+    expect(outputLine).toContain(join(contentDir, '.ps', 'local', 'diagnostics'));
   });
 
   test('writes inspector-endpoints.json, cpu.cpuprofile, and stacks.txt when endpoints available', async () => {

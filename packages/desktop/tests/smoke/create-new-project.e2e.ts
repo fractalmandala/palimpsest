@@ -30,10 +30,10 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const DESKTOP_PRODUCT_NAME = '@inkeep/open-knowledge-desktop';
+const DESKTOP_PRODUCT_NAME = '@palimpsest/desktop';
 
 function seedTmpHome(prefix: string): string {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-create-new-${prefix}-`)));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-create-new-${prefix}-`)));
   const userDataDir = join(tmpHome, 'Library', 'Application Support', DESKTOP_PRODUCT_NAME);
   mkdirSync(userDataDir, { recursive: true });
   writeFileSync(
@@ -64,9 +64,9 @@ async function launchApp(tmpHome: string, opts: LaunchOpts = {}): Promise<Electr
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
         ...(opts.pickedParent !== undefined
-          ? { OK_DESKTOP_TEST_PICKED_PATH: opts.pickedParent }
+          ? { PS_DESKTOP_TEST_PICKED_PATH: opts.pickedParent }
           : {}),
       },
     }),
@@ -83,7 +83,7 @@ async function findWindowByMode(
       async () => {
         for (const page of app.windows()) {
           const m = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (m === mode) return true;
         }
@@ -93,7 +93,7 @@ async function findWindowByMode(
     )
     .toBe(true);
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) return page;
   }
   throw new Error(`${mode} window vanished between poll resolution and read`);
@@ -105,7 +105,7 @@ async function countWindowsByMode(
 ): Promise<number> {
   let n = 0;
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) n += 1;
   }
   return n;
@@ -117,7 +117,7 @@ function trackForCleanup(...paths: string[]): void {
 }
 
 test.describe('Create-new-project smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -176,19 +176,19 @@ test.describe('Create-new-project smoke', () => {
       })
       .toBeGreaterThanOrEqual(1);
     await expect
-      .poll(() => existsSync(join(expectedTarget, '.ok', 'config.yml')), { timeout: 15_000 })
+      .poll(() => existsSync(join(expectedTarget, '.ps', 'config.yml')), { timeout: 15_000 })
       .toBe(true);
 
     let editor: Page | undefined;
     for (const page of app.windows()) {
-      const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+      const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
       if (m === 'editor') {
         editor = page;
         break;
       }
     }
     if (!editor) throw new Error('editor window not found after create-new submit');
-    const freshlyCreated = await editor.evaluate(() => window.okDesktop?.config?.freshlyCreated);
+    const freshlyCreated = await editor.evaluate(() => window.psDesktop?.config?.freshlyCreated);
     expect(freshlyCreated).toBe(true);
     await configureDesktopGitRepositories(editor, expectedTarget);
   });
@@ -198,8 +198,8 @@ test.describe('Create-new-project smoke', () => {
   }) => {
     const tmpHome = seedTmpHome('nested');
     const rootPath = join(tmpHome, 'existing-project');
-    mkdirSync(join(rootPath, '.ok'), { recursive: true });
-    writeFileSync(join(rootPath, '.ok', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
+    mkdirSync(join(rootPath, '.ps'), { recursive: true });
+    writeFileSync(join(rootPath, '.ps', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
     const subFolder = join(rootPath, 'sub');
     mkdirSync(subFolder, { recursive: true });
     const projectName = 'Nested';
@@ -276,11 +276,11 @@ test.describe('Create-new-project smoke', () => {
       })
       .toBeGreaterThanOrEqual(1);
     await expect
-      .poll(() => existsSync(join(repoRoot, '.ok', 'config.yml')), { timeout: 15_000 })
+      .poll(() => existsSync(join(repoRoot, '.ps', 'config.yml')), { timeout: 15_000 })
       .toBe(true);
-    expect(existsSync(join(target, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(target, '.ps', 'config.yml'))).toBe(false);
     await expect.poll(() => existsSync(target), { timeout: 15_000 }).toBe(true);
-    const cfg = readFileSync(join(repoRoot, '.ok', 'config.yml'), 'utf8');
+    const cfg = readFileSync(join(repoRoot, '.ps', 'config.yml'), 'utf8');
     expect(cfg).not.toMatch(/^\s*dir:\s*notes\/MyProj/m);
     expect(cfg).toMatch(/^# content:/m);
     const editor = await findProjectEditorWindow(app, repoRoot);
@@ -294,14 +294,14 @@ test.describe('Create-new-project smoke', () => {
     const tmpHome = seedTmpHome('prd6649-noflicker');
 
     const proj1Root = join(tmpHome, 'existing-project-1');
-    mkdirSync(join(proj1Root, '.ok'), { recursive: true });
-    writeFileSync(join(proj1Root, '.ok', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
+    mkdirSync(join(proj1Root, '.ps'), { recursive: true });
+    writeFileSync(join(proj1Root, '.ps', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
     const sub1 = join(proj1Root, 'sub');
     mkdirSync(sub1, { recursive: true });
 
     const proj2Root = join(tmpHome, 'existing-project-2');
-    mkdirSync(join(proj2Root, '.ok'), { recursive: true });
-    writeFileSync(join(proj2Root, '.ok', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
+    mkdirSync(join(proj2Root, '.ps'), { recursive: true });
+    writeFileSync(join(proj2Root, '.ps', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
     const sub2 = join(proj2Root, 'sub');
     mkdirSync(sub2, { recursive: true });
 

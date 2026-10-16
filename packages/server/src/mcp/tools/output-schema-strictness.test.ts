@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import {
   AUDIT_EMPTY_SCOPE_WARNING,
   RE_LINT_FAILED_WARNING_PREFIX,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { normalizeObjectSchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import { toJsonSchemaCompat } from '@modelcontextprotocol/sdk/server/zod-json-schema-compat.js';
 import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
@@ -61,8 +61,8 @@ function captureRegistration<TDeps>(
 }
 
 function newProject(): string {
-  const cwd = makeTempDir('ok-output-strict-');
-  mkdirSync(join(cwd, '.ok'), { recursive: true });
+  const cwd = makeTempDir('ps-output-strict-');
+  mkdirSync(join(cwd, '.ps'), { recursive: true });
   return cwd;
 }
 
@@ -343,7 +343,7 @@ describe('audit and lint emitted coverage validates against the client schema', 
         resolveCwd: async () => cwd,
         serverUrl: 'http://127.0.0.1:31337',
       });
-      const refused = 'refusing audit scope under a hidden path segment: .ok';
+      const refused = 'refusing audit scope under a hidden path segment: .ps';
       vi.stubGlobal(
         'fetch',
         vi.fn(async () =>
@@ -1089,7 +1089,7 @@ describe('share_link outputSchema admits emitted success and error payloads', ()
 
   const base = {
     ok: true,
-    shareUrl: 'https://openknowledge.ai/d/enc',
+    shareUrl: 'https://github.com/fractalmandala/palimpsest/d/enc',
     sharedUrl: 'https://github.com/o/r/blob/main/notes.md',
     branch: 'main',
     resolvedKind: 'doc',
@@ -1098,18 +1098,18 @@ describe('share_link outputSchema admits emitted success and error payloads', ()
   const withFreshness = {
     ...base,
     freshness: 'stale',
-    text: 'This doc has unpushed changes. Recipients will see the last pushed version.\n\nShare link for doc `notes` on branch `main`:\nhttps://openknowledge.ai/d/enc',
+    text: 'This doc has unpushed changes. Recipients will see the last pushed version.\n\nShare link for doc `notes` on branch `main`:\nhttps://palimpsest.ai/d/enc',
   };
   const withoutFreshness = {
     ...base,
-    text: 'Share link for doc `notes` on branch `main`:\nhttps://openknowledge.ai/d/enc',
+    text: 'Share link for doc `notes` on branch `main`:\nhttps://palimpsest.ai/d/enc',
   };
   const withEmptyFreshness = {
     ...base,
     sharedUrl: 'https://github.com/o/r/tree/main/hollow',
     resolvedKind: 'folder',
     freshness: 'empty',
-    text: "Git can't track this folder — it's empty or contains only ignored files. The link won't work until you add a tracked document.\n\nShare link for folder `hollow` on branch `main`:\nhttps://openknowledge.ai/d/enc",
+    text: "Git can't track this folder — it's empty or contains only ignored files. The link won't work until you add a tracked document.\n\nShare link for folder `hollow` on branch `main`:\nhttps://palimpsest.ai/d/enc",
   };
   const withUnsupportedUrlError = {
     ok: false,

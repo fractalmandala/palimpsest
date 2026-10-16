@@ -5,7 +5,7 @@ const [runDir, systemTempRoot] = process.argv.slice(2);
 const resolved = fs.realpathSync(runDir);
 if (
   path.dirname(resolved) !== fs.realpathSync(systemTempRoot) ||
-  !path.basename(resolved).startsWith('ok-port-ownership-') ||
+  !path.basename(resolved).startsWith('ps-port-ownership-') ||
   fs.lstatSync(runDir).isSymbolicLink()
 ) {
   throw new Error('invalid owner scratch directory');

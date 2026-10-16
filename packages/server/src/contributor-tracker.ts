@@ -123,7 +123,7 @@ export function formatContributorsFrom(snapshot: Map<string, ContributorEntry>):
       docs: [...entry.docs],
     };
     if (entry.summaries.length > 0) payload.summaries = [...entry.summaries];
-    lines.push(`ok-contributors: ${JSON.stringify(payload)}`);
+    lines.push(`ps-contributors: ${JSON.stringify(payload)}`);
   }
   return lines.join('\n');
 }

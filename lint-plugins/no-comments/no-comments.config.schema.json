@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openknowledge.ai/schemas/no-comments.config.schema.json",
+  "$id": "https://github.com/fractalmandala/palimpsest/schemas/no-comments.config.schema.json",
   "title": "no-comments scope configuration",
   "description": "Declares which files the comment-policy predicate governs at this repository root. Membership is derived from units[].roots crossed with the extensions of each unit's family, plus any explicit units[].files; it is never restated as a list of globs.",
   "type": "object",

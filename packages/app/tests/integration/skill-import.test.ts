@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { EDITOR_USER_SKILL_ROOT } from '@inkeep/open-knowledge-core';
+import { EDITOR_USER_SKILL_ROOT } from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { withFsCopyCompletionObserver } from '../../../server/src/fs-copy-observer.test-helper.ts';
 import {
@@ -30,7 +30,7 @@ function writeSkillDir(dir: string, name: string, description: string, body = 'B
 }
 
 beforeAll(() => {
-  srcRoot = mkdtempSync(join(tmpdir(), 'ok-import-src-'));
+  srcRoot = mkdtempSync(join(tmpdir(), 'ps-import-src-'));
 }, HARNESS_BOOT_TIMEOUT_MS);
 afterAll(() => {
   rmSync(srcRoot, { recursive: true, force: true });
@@ -111,7 +111,7 @@ describe('POST /api/skill/import', () => {
     expect(existsSync(marker)).toBe(false);
 
     const lock = JSON.parse(
-      readFileSync(resolve(server.contentDir, '.ok', 'skills-lock.json'), 'utf-8'),
+      readFileSync(resolve(server.contentDir, '.ps', 'skills-lock.json'), 'utf-8'),
     );
     expect(lock.skills['cool-skill'].contentHash).toBe(out.provenance.contentHash);
     expect(lock.skills['cool-skill'].source).toBe(dir);
@@ -317,8 +317,8 @@ describe('POST /api/skill/import at global scope', () => {
   let sourceDir: string;
 
   beforeEach(async () => {
-    homeDir = mkdtempSync(join(tmpdir(), 'ok-global-import-home-'));
-    sourceDir = mkdtempSync(join(tmpdir(), 'ok-global-import-source-'));
+    homeDir = mkdtempSync(join(tmpdir(), 'ps-global-import-home-'));
+    sourceDir = mkdtempSync(join(tmpdir(), 'ps-global-import-source-'));
     writeSkillDir(sourceDir, 'global-copy', 'Global plugin copy');
     mkdirSync(join(homeDir, '.claude'), { recursive: true });
     server = await createTestServer({ configHomedirOverride: homeDir });
@@ -342,13 +342,13 @@ describe('POST /api/skill/import at global scope', () => {
     });
     expect(importResponse.status).toBe(200);
 
-    const globalLockPath = join(homeDir, '.ok', 'skills-lock.json');
+    const globalLockPath = join(homeDir, '.ps', 'skills-lock.json');
     const globalLock = JSON.parse(readFileSync(globalLockPath, 'utf-8')) as {
       skills: Record<string, { source: string }>;
     };
     expect(globalLock.skills['global-copy']?.source).toBe(sourceDir);
 
-    const projectLockPath = join(server.contentDir, '.ok', 'skills-lock.json');
+    const projectLockPath = join(server.contentDir, '.ps', 'skills-lock.json');
     const projectLock = existsSync(projectLockPath)
       ? (JSON.parse(readFileSync(projectLockPath, 'utf-8')) as {
           skills: Record<string, { source: string }>;
@@ -472,7 +472,7 @@ describe('POST /api/skill/reimport', () => {
     };
     expect(second.updated).toBe(false);
 
-    const lockPath = resolve(server.contentDir, '.ok', 'skills-lock.json');
+    const lockPath = resolve(server.contentDir, '.ps', 'skills-lock.json');
     const lock = JSON.parse(readFileSync(lockPath, 'utf-8'));
     delete lock.skills.shrinking.files;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
@@ -493,7 +493,7 @@ describe('POST /api/skill/reimport', () => {
     writeSkillDir(dir, 'auto-toggled', 'v1', '# One\n');
     expect((await importSkill({ source: dir })).status).toBe(200);
 
-    const lockPath = resolve(server.contentDir, '.ok', 'skills-lock.json');
+    const lockPath = resolve(server.contentDir, '.ps', 'skills-lock.json');
     expect(JSON.parse(readFileSync(lockPath, 'utf-8')).skills['auto-toggled'].autoUpdate).toBe(
       undefined,
     );

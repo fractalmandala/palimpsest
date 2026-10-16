@@ -6,7 +6,7 @@ import { getLeafFieldMeta } from './schema-leaf.ts';
 
 describe('fieldRegistry singleton', () => {
   test('is reachable via the public globalThis Symbol key', () => {
-    const SINGLETON_KEY = Symbol.for('@inkeep/open-knowledge/field-registry');
+    const SINGLETON_KEY = Symbol.for('@palimpsest/cli/field-registry');
     const fromGlobal = (globalThis as Record<symbol, unknown>)[SINGLETON_KEY];
     expect(fromGlobal).toBe(fieldRegistry as unknown as typeof fromGlobal);
   });
@@ -210,9 +210,9 @@ describe('ConfigSchema coverage (NR3 — every leaf has fieldRegistry metadata)'
       'contentRules.frontmatter.enabled',
       'contentRules.frontmatter.schemas',
       'contentRules.markdownlint.enabled',
-      'contentRules.okf.enabled',
-      'contentRules.okf.generate.index',
-      'contentRules.okf.rules',
+      'contentRules.psf.enabled',
+      'contentRules.psf.generate.index',
+      'contentRules.psf.rules',
       'lossCapture.enabled',
       'lossCapture.maxBytes',
       'server.externalUrl',

@@ -30,7 +30,7 @@ import {
   isOwnManagedEntry,
   loadConfig,
   type McpInstallOptions,
-  okBugReportsDir,
+  psBugReportsDir,
   type ProjectAiIntegrationsResult,
   previewContent,
   readExistingMcpEntry,
@@ -47,15 +47,15 @@ import {
   writeProjectSkill,
   writeUserMcpConfigs,
   writeUserSkill,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 import {
   AGENTS_SKILLS_ROOT,
   CLIENT_VERSION_HEADER,
   estimateSkillCost,
   hasUninstallFeedbackContent,
   type LanguagePreference,
-  type OkCliCommand,
-  OPENKNOWLEDGE_SKILLS_REPO,
+  type PsCliCommand,
+  PALIMPSEST_SKILLS_REPO,
   PROTOCOL_VERSION,
   projectWorktreeCreateResult,
   resolveDesktopProductName,
@@ -67,13 +67,13 @@ import {
   type UninstallIntent,
   type UninstallScreenSpec,
   USER_SKILL_HOSTS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type {
-  OkTerminalDockStateWriteResult,
-  OkTerminalRestartSnapshot,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
-import { openSpawnErrorLog } from '@inkeep/open-knowledge-core/server';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+  PsTerminalDockStateWriteResult,
+  PsTerminalRestartSnapshot,
+} from '@palimpsest/core/desktop-bridge';
+import { openSpawnErrorLog } from '@palimpsest/core/server';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import {
   assertGitAvailable,
   BUNDLE_SKILL_NAME,
@@ -108,7 +108,7 @@ import {
   withSpan,
   writeBundleDecision,
   writeTargetVersion,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type {
   BrowserWindowConstructorOptions,
   IpcMainInvokeEvent,
@@ -143,9 +143,9 @@ import {
 import type {
   ClaudeReadiness,
   CliReadiness,
-  OkChromeColors,
-  OkMenuAction,
-  OkMenuActionOrigin,
+  PsChromeColors,
+  PsMenuAction,
+  PsMenuActionOrigin,
 } from '../shared/bridge-contract.ts';
 import { DESKTOP_VARIANT } from '../shared/desktop-variant.ts';
 import { type EntryPoint, isEntryPoint } from '../shared/entry-point.ts';
@@ -175,7 +175,7 @@ import {
   type ProjectWriterSurface,
 } from './agent-registry-apply.ts';
 import { collectDesktopHostSnapshot, withoutProjectScope } from './agent-registry-probes.ts';
-import { appendOkIgnoreSync } from './append-okignore.ts';
+import { appendOkIgnoreSync } from './append-psignore.ts';
 import { registerAppImageDeepLinks } from './appimage-integration.ts';
 import { openAssetOrReveal, openAssetSafely, revealAssetSafely } from './asset-allowlist.ts';
 import { popAssetMenu, revealMenuLabel } from './asset-menu.ts';
@@ -642,7 +642,7 @@ function computeBuiltinSkillDisclosure(home: string, id: (typeof USER_GLOBAL_BUN
   };
 }
 
-let lastChromeColors: OkChromeColors | undefined;
+let lastChromeColors: PsChromeColors | undefined;
 
 function fanOutChromeColors(): void {
   if (process.platform === 'darwin') return;
@@ -1058,7 +1058,7 @@ const dockOrderForWindow = new Map<
   number,
   Partial<Record<'terminal' | 'agents', DockOrderRecord>>
 >();
-const terminalSnapshotForWindow = new Map<number, OkTerminalRestartSnapshot>();
+const terminalSnapshotForWindow = new Map<number, PsTerminalRestartSnapshot>();
 
 function terminalStateKey(win: BrowserWindow): string | null {
   const context = wm?.getContextForBrowserWindow(win as unknown as BrowserWindowLike) ?? null;
@@ -1069,11 +1069,11 @@ function persistTerminalDockForWindow(
   win: BrowserWindow,
   update: Partial<{
     terminalVisible: boolean;
-    terminalSnapshot: OkTerminalRestartSnapshot;
+    terminalSnapshot: PsTerminalRestartSnapshot;
     agentPanelVisible: boolean;
     editorVisible: boolean;
   }>,
-): OkTerminalDockStateWriteResult {
+): PsTerminalDockStateWriteResult {
   const stateKey = terminalStateKey(win);
   if (stateKey === null) return { ok: false, reason: 'no-window-context' };
   const committed = commitTerminalDockState({
@@ -1210,7 +1210,7 @@ const reducedTransparencyDeps: ReducedTransparencyDeps = {
 };
 let autoUpdaterHandle: StartAutoUpdaterHandle | null = null;
 const updateNoticeSource = (): StartAutoUpdaterHandle | null =>
-  app.isPackaged || process.env.OK_UPDATER_FORCE_DEV === '1' ? autoUpdaterHandle : null;
+  app.isPackaged || process.env.PS_UPDATER_FORCE_DEV === '1' ? autoUpdaterHandle : null;
 let bundleReplaceWatcherHandle: BundleReplaceWatcherHandle | null = null;
 let debugIpc: DebugIpcHandle | null = null;
 let mcpWiringHandle: RunMcpWiringHandle | null = null;
@@ -1249,7 +1249,7 @@ const bugReportSendScreenshotReapers = new Set<number>();
 const BUG_REPORT_SCREENSHOT_PREVIEW_WIDTH = 720;
 
 const bugReportSidecar = createBugReportSidecarStore({
-  dir: okBugReportsDir(),
+  dir: psBugReportsDir(),
   logger: {
     warn: (data, message) => getLogger('bug-report').warn(data as Record<string, unknown>, message),
   },
@@ -1266,7 +1266,7 @@ const editorViewMenuStates = new EditorViewMenuStateRegistry();
 const rendererDevUrl = process.env.ELECTRON_RENDERER_URL ?? null;
 
 function isDebugKeyringSmokeAllowed(): boolean {
-  return !app.isPackaged || process.env.OK_DEBUG_KEYRING_SMOKE === '1';
+  return !app.isPackaged || process.env.PS_DEBUG_KEYRING_SMOKE === '1';
 }
 
 let warnedUnbuiltWorkspaceCli = false;
@@ -1286,13 +1286,13 @@ function resolveLocalOpCli(): HostCliInvocation | undefined {
     warnedUnbuiltWorkspaceCli = true;
     getLogger('lifecycle').warn(
       { workspaceCliEntry },
-      'The workspace CLI is not built, so this dev build runs the open-knowledge on PATH as Stable and refuses sign-in, sign-out, token storage and clone. Run pnpm build in the checkout, then restart this dev build.',
+      'The workspace CLI is not built, so this dev build runs the palimpsest on PATH as Stable and refuses sign-in, sign-out, token storage and clone. Run pnpm build in the checkout, then restart this dev build.',
     );
   }
   return invocation;
 }
 
-function resolveMainProcessLocalOpCli(): OkCliCommand {
+function resolveMainProcessLocalOpCli(): PsCliCommand {
   return mainProcessOkCli(resolveLocalOpCli(), process.env);
 }
 
@@ -1300,7 +1300,7 @@ function runDriverBootSmokeInProduction(): void {
   runDriverBootSmoke({
     fork: (entry) =>
       utilityProcess.fork(entry, [], {
-        serviceName: 'OpenKnowledge Driver Boot',
+        serviceName: 'Palimpsest Driver Boot',
       }) as unknown as DriverUtilityLike,
     quit: () => {
       try {
@@ -1321,7 +1321,7 @@ function withWindowRuntimeArgs(args: readonly string[]): string[] {
     : withServerName;
   const withTerminalCapability = withTerminalCapabilityArg(withDebug, isTerminalAvailable());
   const withSmoke =
-    process.env.OK_DESKTOP_E2E_SMOKE === '1'
+    process.env.PS_DESKTOP_E2E_SMOKE === '1'
       ? [...withTerminalCapability, '--ok-e2e-smoke=1']
       : withTerminalCapability;
   return app.isAccessibilitySupportEnabled()
@@ -1370,7 +1370,7 @@ function ensureWindowManager() {
         'app.asar.unpacked',
         'node_modules',
         '@inkeep',
-        'open-knowledge',
+        'palimpsest',
         'dist',
         'cli.mjs',
       )
@@ -1584,8 +1584,8 @@ function ensureWindowManager() {
     selfProtocolVersion: PROTOCOL_VERSION,
     selfRuntimeVersion: RUNTIME_VERSION,
     selfChannel: resolveDesktopProductName(),
-    spawnLockPollDeadlineMs: readPositiveIntEnv('OK_SPAWN_STARTUP_TIMEOUT_MS'),
-    spawnLockProgressDeadlineMs: readPositiveIntEnv('OK_SPAWN_BIND_TIMEOUT_MS'),
+    spawnLockPollDeadlineMs: readPositiveIntEnv('PS_SPAWN_STARTUP_TIMEOUT_MS'),
+    spawnLockProgressDeadlineMs: readPositiveIntEnv('PS_SPAWN_BIND_TIMEOUT_MS'),
     reclaimForeignServerInDev: !app.isPackaged,
     isFirstLaunchAfterUpgrade: () => firstLaunchAfterUpgrade,
     setTimeout: (cb, ms) => setTimeout(cb, ms),
@@ -1835,7 +1835,7 @@ async function openProject(
   }
 
   if (options.requireExactManagedProject === true && !isExactManagedProject(discovery)) {
-    throw new Error('This worktree no longer contains the expected OpenKnowledge project.');
+    throw new Error('This worktree no longer contains the expected Palimpsest project.');
   }
 
   const warningsCount = validation.warnings.length;
@@ -1847,8 +1847,8 @@ async function openProject(
     isPackaged: app.isPackaged,
     platform: process.platform,
     cli: createProjectMcpReclaimCliSurface(),
-    forceEnv: process.env.OK_M6B_FORCE ?? null,
-    reclaimDisableEnv: process.env.OK_RECLAIM_DISABLE ?? null,
+    forceEnv: process.env.PS_M6B_FORCE ?? null,
+    reclaimDisableEnv: process.env.PS_RECLAIM_DISABLE ?? null,
     logger: {
       event: (payload) =>
         payload.severity === 'warn'
@@ -1899,7 +1899,7 @@ async function openProject(
       cancelId: 0,
       defaultId: 0,
       title: 'Open existing project?',
-      message: `OpenKnowledge wants to open the existing project at ${discovery.projectDir} (because it contains an .ok/ config). The folder you picked, ${resolvedPickedName}, is inside that project. Open ${projectName}?`,
+      message: `Palimpsest wants to open the existing project at ${discovery.projectDir} (because it contains an .ps/ config). The folder you picked, ${resolvedPickedName}, is inside that project. Open ${projectName}?`,
     });
     getLogger('project').info(
       { projectName, confirmed: response !== 0 },
@@ -2225,18 +2225,18 @@ async function openProjectOrFallbackToNavigator(
         `${projectPath}\n\n` +
         `Another process${typeof holderPid === 'number' ? ` (pid ${holderPid})` : ''} ` +
         `is holding the server lock and didn't release it after a SIGTERM. ` +
-        `Quit it manually and try again, or restart OpenKnowledge.`;
+        `Quit it manually and try again, or restart Palimpsest.`;
     } else if (kind === 'lock-collision') {
-      dialogTitle = 'OpenKnowledge is already running for this project';
+      dialogTitle = 'Palimpsest is already running for this project';
       dialogBody = `${projectPath}\n\n${errorMessage}`;
     } else if (kind === 'content-ownership') {
       dialogTitle = 'This content is already open';
       dialogBody = `${projectPath}\n\n${errorMessage}`;
     } else if (kind === 'content-ownership-unverified') {
-      dialogTitle = 'OpenKnowledge cannot safely open this content';
+      dialogTitle = 'Palimpsest cannot safely open this content';
       dialogBody = `${projectPath}\n\n${errorMessage}`;
     } else if (kind === 'authority-registry') {
-      dialogTitle = 'OpenKnowledge cannot safely open this folder';
+      dialogTitle = 'Palimpsest cannot safely open this folder';
       dialogBody = `${projectPath}\n\n${errorMessage}`;
     } else if (kind === 'stale-lock-holder') {
       dialogTitle =
@@ -2334,7 +2334,7 @@ async function openProjectOrFallbackToNavigator(
             dialogTitle,
             `${dialogBody}\n\n` +
               (holderIsOwnChild
-                ? `OpenKnowledge has signalled that server to stop. Open the project again. If ` +
+                ? `Palimpsest has signalled that server to stop. Open the project again. If ` +
                   `this keeps happening, the server is advertising a port it cannot serve on — ` +
                   `there is no way around that from here, so please send a report from ` +
                   `Help > Report a bug.`
@@ -2344,7 +2344,7 @@ async function openProjectOrFallbackToNavigator(
                     `open the project again, or reopen and choose Stop Server & Retry.`
                   : `Nothing was stopped. Run \`${stopCommand}\` and open the ` +
                     `project again, or reopen and choose Stop Server & Retry to have ` +
-                    `OpenKnowledge do it.`),
+                    `Palimpsest do it.`),
           );
         }
       }
@@ -2776,7 +2776,7 @@ async function openDesktopUninstallRendererWindow(options: {
     height: options.height ?? 420,
     minWidth: options.minWidth,
     minHeight: options.minHeight,
-    title: options.title ?? 'Uninstall OpenKnowledge',
+    title: options.title ?? 'Uninstall Palimpsest',
     resizable: options.resizable,
     uninstallBridge: true,
   });
@@ -2931,7 +2931,7 @@ async function withDesktopUninstallProgress<T>(work: () => Promise<T>): Promise<
     height: 220,
     resizable: false,
     preventClose: true,
-    title: 'Uninstalling OpenKnowledge',
+    title: 'Uninstalling Palimpsest',
     onIntent: () => undefined,
   }).catch((err) => {
     getLogger('lifecycle').warn({ err }, 'desktop uninstall progress window failed to load');
@@ -2950,9 +2950,9 @@ async function startDesktopSelfUninstallFlow(): Promise<void> {
   if (appBundlePath === null || !isSupportedApplicationsBundle(appBundlePath, osHomedir())) {
     await showMessageBoxAttached({
       type: 'error',
-      message: 'OpenKnowledge cannot uninstall itself from this location.',
+      message: 'Palimpsest cannot uninstall itself from this location.',
       detail:
-        'Self-uninstall only works when OpenKnowledge.app is in Applications. Move this copy to the Trash manually.',
+        'Self-uninstall only works when Palimpsest.app is in Applications. Move this copy to the Trash manually.',
     });
     return;
   }
@@ -3036,7 +3036,7 @@ async function startDesktopSelfUninstallFlow(): Promise<void> {
 
 function maybeRunDesktopUninstallUiPreview(): void {
   const mode = resolveDesktopUninstallUiPreviewMode(
-    process.env.OK_UNINSTALL_UI_PREVIEW,
+    process.env.PS_UNINSTALL_UI_PREVIEW,
     app.isPackaged,
   );
   if (mode === null) return;
@@ -3167,9 +3167,9 @@ function desktopUninstallPreviewCandidates(home: string): DesktopUninstallProjec
 }
 
 async function collectDesktopUninstallFeedbackPreview(): Promise<void> {
-  const origin = process.env.OK_FEEDBACK_INTAKE_ORIGIN;
+  const origin = process.env.PS_FEEDBACK_INTAKE_ORIGIN;
   const hasLocalIntake =
-    typeof origin === 'string' && origin.length > 0 && !/openknowledge\.ai/i.test(origin);
+    typeof origin === 'string' && origin.length > 0 && !/palimpsest\.ai/i.test(origin);
   if (hasLocalIntake) {
     await collectDesktopUninstallFeedback();
     return;
@@ -3177,7 +3177,7 @@ async function collectDesktopUninstallFeedbackPreview(): Promise<void> {
   await showDesktopUninstallFeedbackWindow();
   getLogger('lifecycle').warn(
     { submitted: false },
-    'uninstall UI preview: feedback survey shown but not submitted — set OK_FEEDBACK_INTAKE_ORIGIN to a local ok-marketing origin to exercise delivery',
+    'uninstall UI preview: feedback survey shown but not submitted — set PS_FEEDBACK_INTAKE_ORIGIN to a local ps-marketing origin to exercise delivery',
   );
 }
 
@@ -3206,7 +3206,7 @@ async function runDesktopUninstallUiPreview(mode: DesktopUninstallFlowPreviewMod
   try {
     writeFileSync(
       logPath,
-      'OpenKnowledge uninstall UI preview — this is a simulated log. Nothing was removed.\n',
+      'Palimpsest uninstall UI preview — this is a simulated log. Nothing was removed.\n',
     );
   } catch (err) {
     log.warn({ err, logPath }, 'uninstall UI preview: could not write placeholder log');
@@ -3246,13 +3246,13 @@ async function runDesktopUninstallUiPreview(mode: DesktopUninstallFlowPreviewMod
       ),
   });
 
-  log.warn({ mode }, 'desktop uninstall UI preview finished — OpenKnowledge is still installed');
+  log.warn({ mode }, 'desktop uninstall UI preview finished — Palimpsest is still installed');
 }
 
 function sendMenuAction(
-  action: OkMenuAction,
+  action: PsMenuAction,
   sender: WebContents | null = null,
-  origin: OkMenuActionOrigin = LAUNCHER_FREE_ORIGIN,
+  origin: PsMenuActionOrigin = LAUNCHER_FREE_ORIGIN,
 ): void {
   const target = resolveMenuActionTarget(sender, {
     fromWebContents: (contents) => BrowserWindow.fromWebContents(contents),
@@ -3530,8 +3530,8 @@ function buildEnsureCliOnPathOpts() {
     executablePath: app.getPath('exe'),
     isPackaged: app.isPackaged,
     platform: process.platform,
-    forceEnv: process.env.OK_M6B_FORCE ?? null,
-    reclaimDisableEnv: process.env.OK_RECLAIM_DISABLE ?? null,
+    forceEnv: process.env.PS_M6B_FORCE ?? null,
+    reclaimDisableEnv: process.env.PS_RECLAIM_DISABLE ?? null,
     home: osHomedir(),
     bundleVersion: app.getVersion(),
     logger: pathInstallLogger,
@@ -3544,8 +3544,8 @@ function buildUserGlobalSkillInstallOpts(): Parameters<typeof reconcileUserGloba
     isPackaged: app.isPackaged,
     platform: process.platform,
     executablePath: app.getPath('exe'),
-    forceEnv: process.env.OK_M6B_FORCE ?? null,
-    reclaimDisableEnv: process.env.OK_RECLAIM_DISABLE ?? null,
+    forceEnv: process.env.PS_M6B_FORCE ?? null,
+    reclaimDisableEnv: process.env.PS_RECLAIM_DISABLE ?? null,
     deps: {
       userGlobalBundles: USER_GLOBAL_BUNDLE_IDS.map((id) => ({ id, name: BUNDLE_SKILL_NAME[id] })),
       resolveBundledSkillDir: (bundle) =>
@@ -3561,7 +3561,7 @@ function buildUserGlobalSkillInstallOpts(): Parameters<typeof reconcileUserGloba
         const home = osHomedir();
         void reportSkillInstall(
           {
-            source: OPENKNOWLEDGE_SKILLS_REPO,
+            source: PALIMPSEST_SKILLS_REPO,
             skills: skillNames,
             global: true,
             ...(scope === undefined ? {} : { scope }),
@@ -3644,8 +3644,8 @@ function createMcpWiringOpts(opts: ArmMcpWiringOpts = {}) {
         return { ok: true as const };
       },
     },
-    forceEnv: process.env.OK_M6B_FORCE ?? null,
-    reclaimDisableEnv: process.env.OK_RECLAIM_DISABLE ?? null,
+    forceEnv: process.env.PS_M6B_FORCE ?? null,
+    reclaimDisableEnv: process.env.PS_RECLAIM_DISABLE ?? null,
     forceShow: opts.forceShow ?? false,
     immediateDispatchTarget: opts.immediateDispatchTarget,
     logger: {
@@ -3740,8 +3740,8 @@ function reconfigureMcpWiringNow(target: McpWiringDispatchTarget | undefined): b
     const message = err instanceof Error ? err.message : String(err);
     console.error('[main] reconfigureMcpWiring failed', { err: message });
     showErrorOnFocusedWindow(
-      'Set up OpenKnowledge integrations failed',
-      `OpenKnowledge couldn't re-arm the MCP consent dialog:\n\n${message}`,
+      'Set up Palimpsest integrations failed',
+      `Palimpsest couldn't re-arm the MCP consent dialog:\n\n${message}`,
     );
     return false;
   }
@@ -3800,7 +3800,7 @@ function resolveTerminalCliOnPath(cli: TerminalCli): Promise<CliReadiness> {
       }),
     ...(cli === 'codex'
       ? {
-          okServerConfigured: () =>
+          psServerConfigured: () =>
             classifyExistingMcpEntry(EDITOR_TARGETS.codex, '', osHomedir()).kind === 'present',
           mcpServerName: EDITOR_TARGETS.codex.serverName(''),
         }
@@ -3927,7 +3927,7 @@ function registerIpcHandlers() {
     forkPtyHost: (windowId) =>
       observePtyFork(phaseTrace, windowId, phaseTrace ? ++nextTraceFork : 0, () =>
         utilityProcess.fork(join(__dirname, 'utility/pty-host.js'), [], {
-          serviceName: `OpenKnowledge Terminal Host ${windowId}`,
+          serviceName: `Palimpsest Terminal Host ${windowId}`,
           ...(phaseTrace ? { stdio: ['ignore', 'inherit', 'pipe'] } : {}),
         }),
       ) as unknown as PtyUtilityLike,
@@ -4702,7 +4702,7 @@ function registerIpcHandlers() {
       projectPath: ctx.projectPath,
       projectName: ctx.projectName,
       mode: 'editor' as const,
-      e2eSmoke: process.env.OK_DESKTOP_E2E_SMOKE === '1',
+      e2eSmoke: process.env.PS_DESKTOP_E2E_SMOKE === '1',
       singleFile: ctx.ephemeral !== undefined,
       ptyAvailable: isTerminalAvailable(),
       initialDoc: null,
@@ -4847,7 +4847,7 @@ function registerIpcHandlers() {
       return handleBugReportSend(
         {
           intakeBaseUrl: resolveBugReportIntakeUrl({
-            envUrl: process.env.OK_BUG_REPORT_INTAKE_URL,
+            envUrl: process.env.PS_BUG_REPORT_INTAKE_URL,
           }),
           appVersion: app.getVersion(),
           platform: `${process.platform} ${osRelease()}`,
@@ -4872,7 +4872,7 @@ function registerIpcHandlers() {
       return handleAssetUpload(
         {
           intakeBaseUrl: resolveBugReportIntakeUrl({
-            envUrl: process.env.OK_BUG_REPORT_INTAKE_URL,
+            envUrl: process.env.PS_BUG_REPORT_INTAKE_URL,
           }),
         },
         request,
@@ -5295,7 +5295,7 @@ function registerIpcHandlers() {
     return proxyAwaitBranchSwitched(request, branchInfoProxyDeps);
   });
 
-  handle('ok:project:ok-init', async (_event, request) => {
+  handle('ok:project:ps-init', async (_event, request) => {
     return runOkInit(request.projectPath);
   });
 
@@ -5943,7 +5943,7 @@ function registerProjectIntegrationsSettingsIpc(): void {
     },
     entryLocator: (id) => {
       const target = EDITOR_TARGETS[id];
-      if (target.format === 'file') return 'open-knowledge (managed extension file)';
+      if (target.format === 'file') return 'palimpsest (managed extension file)';
       const server = target.serverName('');
       return target.format === 'toml'
         ? `[${target.topLevelKey}.${server}]`
@@ -5960,7 +5960,7 @@ function registerProjectIntegrationsSettingsIpc(): void {
       const home = osHomedir();
       void reportSkillInstall(
         {
-          source: OPENKNOWLEDGE_SKILLS_REPO,
+          source: PALIMPSEST_SKILLS_REPO,
           skills: [BUNDLE_SKILL_NAME.project],
           scope: projectDir,
         },
@@ -6096,7 +6096,7 @@ if (bootAmbientCapsFacts) {
 
 if (!app.isPackaged) {
   const resolved = resolveEffectiveInstanceName(process.env, app.getAppPath(), {
-    autoDeriveEnabled: process.env.OK_DESKTOP_E2E_SMOKE !== '1',
+    autoDeriveEnabled: process.env.PS_DESKTOP_E2E_SMOKE !== '1',
   });
   if (resolved) {
     const relocatedUserData = deriveInstanceUserDataDir(app.getPath('userData'), resolved.name);
@@ -6125,7 +6125,7 @@ if (instanceLabel) {
   setWindowInstanceLabel(instanceLabel);
 }
 
-const A11Y_FORCED_BY_ENV = process.env.OK_FORCE_A11Y === '1';
+const A11Y_FORCED_BY_ENV = process.env.PS_FORCE_A11Y === '1';
 if (A11Y_FORCED_BY_ENV) {
   app.commandLine.appendSwitch('force-renderer-accessibility');
 }
@@ -6271,7 +6271,7 @@ function bootPrimaryInstance(): void {
         title: 'This window stopped responding',
         message: 'This window stopped responding',
         detail:
-          'OpenKnowledge reloaded it once and it stopped again. Your documents and any running agents live in the OpenKnowledge server rather than in this window, so reloading restores the view without interrupting them.',
+          'Palimpsest reloaded it once and it stopped again. Your documents and any running agents live in the Palimpsest server rather than in this window, so reloading restores the view without interrupting them.',
         buttons: ['Reload', 'Not Now'],
         defaultId: 0,
         cancelId: 1,
@@ -6411,7 +6411,7 @@ function bootPrimaryInstance(): void {
       setAsDefaultProtocolClient: (scheme) => app.setAsDefaultProtocolClient(scheme),
       removeAsDefaultProtocolClient: (scheme) => app.removeAsDefaultProtocolClient(scheme),
     },
-    registerDevProtocol: process.env.OK_DEV_PROTOCOL === '1',
+    registerDevProtocol: process.env.PS_DEV_PROTOCOL === '1',
     focusWindowForProject: (projectPath) => {
       if (!wm) return null;
       yieldRestoreToDeepLink();
@@ -6470,7 +6470,7 @@ function bootPrimaryInstance(): void {
         cancelId: 2,
         message: `This share points at ${host}`,
         detail:
-          `You aren't connected to this GitHub Enterprise Server in OpenKnowledge. ` +
+          `You aren't connected to this GitHub Enterprise Server in Palimpsest. ` +
           `After connecting, open the share link again to receive it.`,
       };
       const { response } = parentWindow
@@ -6842,10 +6842,10 @@ function bootPrimaryInstance(): void {
         getAppVersion: () => app.getVersion(),
         buildChannel: DESKTOP_VARIANT.updateChannel,
         isPackaged: app.isPackaged,
-        forceDevBypass: process.env.OK_UPDATER_FORCE_DEV === '1',
-        feedUrl: process.env.OK_UPDATER_FEED_URL || undefined,
+        forceDevBypass: process.env.PS_UPDATER_FORCE_DEV === '1',
+        feedUrl: process.env.PS_UPDATER_FEED_URL || undefined,
         proxyFeed: {
-          base: 'https://openknowledge.ai/updates',
+          base: 'https://github.com/fractalmandala/palimpsest/updates',
           channels: new Set<UpdateChannel>(['beta', 'latest']),
           betaChannel: DESKTOP_VARIANT.name === 'beta' ? 'beta-product' : 'beta',
         },
@@ -6937,8 +6937,8 @@ function bootPrimaryInstance(): void {
               buttons: ['OK'],
               defaultId: 0,
               title: 'Up to Date',
-              message: "You're on the latest version of OpenKnowledge.",
-              detail: `OpenKnowledge ${result.currentVersion} is the most current version available.`,
+              message: "You're on the latest version of Palimpsest.",
+              detail: `Palimpsest ${result.currentVersion} is the most current version available.`,
             });
           } else if (result.kind === 'ready-to-install') {
             switch (result.relaunch) {
@@ -6950,9 +6950,9 @@ function bootPrimaryInstance(): void {
                     defaultId: 0,
                     cancelId: 1,
                     title: 'Update Ready',
-                    message: `OpenKnowledge ${result.stagedVersion} is downloaded and ready.`,
+                    message: `Palimpsest ${result.stagedVersion} is downloaded and ready.`,
                     detail:
-                      'Quit and restart now to install it, or it installs the next time you quit OpenKnowledge.',
+                      'Quit and restart now to install it, or it installs the next time you quit Palimpsest.',
                   })
                   .then(({ response }) => (response === 0 ? 'relaunch' : 'dismiss'));
               case 'installing':
@@ -6961,8 +6961,8 @@ function bootPrimaryInstance(): void {
                   buttons: ['OK'],
                   defaultId: 0,
                   title: 'Update Ready',
-                  message: `OpenKnowledge ${result.stagedVersion} is downloaded and ready.`,
-                  detail: 'OpenKnowledge is already restarting to install it.',
+                  message: `Palimpsest ${result.stagedVersion} is downloaded and ready.`,
+                  detail: 'Palimpsest is already restarting to install it.',
                 });
                 return undefined;
               case 'not-pending':
@@ -6971,8 +6971,8 @@ function bootPrimaryInstance(): void {
                   buttons: ['OK'],
                   defaultId: 0,
                   title: 'Update Downloaded',
-                  message: `OpenKnowledge ${result.stagedVersion} was downloaded.`,
-                  detail: `It may install the next time you quit OpenKnowledge. If it doesn't, download the latest build from ${STUCK_HINT_DOWNLOAD_URL}.`,
+                  message: `Palimpsest ${result.stagedVersion} was downloaded.`,
+                  detail: `It may install the next time you quit Palimpsest. If it doesn't, download the latest build from ${STUCK_HINT_DOWNLOAD_URL}.`,
                 });
                 return undefined;
               default: {
@@ -6990,9 +6990,9 @@ function bootPrimaryInstance(): void {
                   defaultId: 0,
                   cancelId: 1,
                   title: 'Update Available',
-                  message: `OpenKnowledge ${result.latestVersion} is available.`,
+                  message: `Palimpsest ${result.latestVersion} is available.`,
                   detail:
-                    'Automatic updates are turned off, so OpenKnowledge will not download it. Download it from the releases page, or turn on "Download and install updates automatically" in Settings > About & updates.',
+                    'Automatic updates are turned off, so Palimpsest will not download it. Download it from the releases page, or turn on "Download and install updates automatically" in Settings > About & updates.',
                 })
                 .then(async ({ response }) => {
                   if (response === 0) await shell.openExternal(releasesUrl);
@@ -7004,7 +7004,7 @@ function bootPrimaryInstance(): void {
               buttons: ['OK'],
               defaultId: 0,
               title: 'Update Available',
-              message: `OpenKnowledge ${result.latestVersion} is available.`,
+              message: `Palimpsest ${result.latestVersion} is available.`,
               detail: `It's downloading in the background. You'll be prompted to relaunch when the install is ready.`,
             });
           } else if (result.kind === 'updater-inactive') {
@@ -7013,7 +7013,7 @@ function bootPrimaryInstance(): void {
               buttons: ['OK'],
               defaultId: 0,
               title: "Updates Aren't Available",
-              message: "This copy of OpenKnowledge can't update itself.",
+              message: "This copy of Palimpsest can't update itself.",
               detail: `Development builds don't receive automatic updates. To update, pull the latest source or download the newest release from ${STUCK_HINT_DOWNLOAD_URL}.`,
             });
           } else if (result.kind === 'download-failed') {
@@ -7022,7 +7022,7 @@ function bootPrimaryInstance(): void {
               buttons: ['OK'],
               defaultId: 0,
               title: "Couldn't Download the Update",
-              message: `OpenKnowledge ${result.latestVersion} couldn't be downloaded.`,
+              message: `Palimpsest ${result.latestVersion} couldn't be downloaded.`,
               detail: result.message,
             });
           } else if (result.kind === 'error') {
@@ -7031,7 +7031,7 @@ function bootPrimaryInstance(): void {
               buttons: ['OK'],
               defaultId: 0,
               title: "Couldn't Check for Updates",
-              message: "OpenKnowledge couldn't check for updates right now.",
+              message: "Palimpsest couldn't check for updates right now.",
               detail: result.message,
             });
           } else {

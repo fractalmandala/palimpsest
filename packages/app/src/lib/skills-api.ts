@@ -8,14 +8,14 @@ import type {
   SkillsImportBulkSuccess,
   SkillsListEntry,
   SkillsReimportBulkSuccess,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import {
   interpretSkillMoveFailure,
   isSkillMoveRetainedDestinationCode,
   normalizeApiWarnings,
   SkillFolderLinkPreviewSchema,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import type {
   SkillDetail,
   SkillDiscover,
@@ -23,7 +23,7 @@ import type {
   SkillRefResolution,
   SkillsInstalledSuccess,
   SkillsSearchSuccess,
-} from '@inkeep/open-knowledge-core/skills-catalog/schema';
+} from '@palimpsest/core/skills-catalog/schema';
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 import { emitSkillScopeMoved, emitSkillsChanged } from '@/lib/documents-events';

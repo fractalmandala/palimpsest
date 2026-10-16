@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import { OkBlobRunnerEasterEgg } from '@/components/OkBlobRunnerEasterEgg';
+import { PsBlobRunnerEasterEgg } from '@/components/PsBlobRunnerEasterEgg';
 import { ReportBugDialog } from '@/components/ReportBugDialog';
 import { Button } from '@/components/ui/button';
 import { recallComponentStack, rememberComponentStack } from '@/lib/component-stack-registry';
@@ -11,7 +11,7 @@ function AppErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   const { t } = useLingui();
   const [reportOpen, setReportOpen] = useState(false);
   const retryRef = useRef<HTMLButtonElement>(null);
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const message =
     error instanceof Error && error.message ? error.message : t`An unexpected error occurred.`;
 
@@ -27,7 +27,7 @@ function AppErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
       className="flex h-screen flex-col items-center justify-center gap-8 p-8 text-center"
     >
       {}
-      <OkBlobRunnerEasterEgg keyboard={false} />
+      <PsBlobRunnerEasterEgg keyboard={false} />
       <div className="flex flex-col items-center gap-1">
         <h1 id="app-error-title" className="text-2xl font-light tracking-tighter text-balance">
           <Trans>Something went wrong</Trans>

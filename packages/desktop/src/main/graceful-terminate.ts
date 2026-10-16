@@ -1,4 +1,4 @@
-import { DEFAULT_SIGTERM_GRACE_MS, DEFAULT_SIGTERM_POLL_MS } from '@inkeep/open-knowledge-core';
+import { DEFAULT_SIGTERM_GRACE_MS, DEFAULT_SIGTERM_POLL_MS } from '@palimpsest/core';
 
 export interface GracefulTerminateDeps {
   sendSignal(signal: 'SIGTERM' | 'SIGKILL'): void | Promise<void>;

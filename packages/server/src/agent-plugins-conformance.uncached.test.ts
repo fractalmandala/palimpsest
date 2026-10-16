@@ -30,14 +30,14 @@ describe('shipped Agent Plugins conformance', () => {
       mcpServers?: Record<string, { type?: unknown; command?: unknown }>;
     };
     expect(mcp.$schema).toBe('https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
-    const server = mcp.mcpServers?.['open-knowledge'];
+    const server = mcp.mcpServers?.['palimpsest'];
     expect(server?.type).toBe('stdio');
     expect(server?.command).toBe('npx');
     expect(existsSync(join(dir, '.claude-plugin', 'plugin.json'))).toBe(true);
   });
 
   test('the composed built-ins artifact is a conformant plugin with real skill names', () => {
-    const scratch = mkdtempSync(join(tmpdir(), 'ok-agent-plugin-artifact-'));
+    const scratch = mkdtempSync(join(tmpdir(), 'ps-agent-plugin-artifact-'));
     try {
       const paths = {
         skillsDir: join(PKG_ROOT, 'assets', 'skills'),

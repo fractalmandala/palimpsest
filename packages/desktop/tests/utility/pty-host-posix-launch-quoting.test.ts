@@ -4,14 +4,14 @@ import { join } from 'node:path';
 import {
   buildPosixCliLaunch,
   type TerminalLaunchCommand,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import { afterEach, describe, expect, test } from 'vitest';
 import { buildShellArgs } from '../../src/utility/pty-host.ts';
 import { capturedTails, spawnSyncBounded } from '../support/bounded-sync-spawn.test-helper.ts';
 import { removeTempDirBestEffort } from '../support/temp-dir-cleanup.test-helper.ts';
 
 const PRINTF = '/usr/bin/printf';
-const ARGV_START = 'ok-launch-argv-start';
+const ARGV_START = 'ps-launch-argv-start';
 
 const HOSTILE_PROMPT = [
   "fish: x\\'(touch pwned-fish)\\'",
@@ -52,8 +52,8 @@ function writeProbeAliases(home: string): void {
 }
 
 function runLaunch(shell: string, launch: TerminalLaunchCommand) {
-  const cwd = tempDir('ok-posix-launch-cwd-');
-  const home = tempDir('ok-posix-launch-home-');
+  const cwd = tempDir('ps-posix-launch-cwd-');
+  const home = tempDir('ps-posix-launch-home-');
   writeProbeAliases(home);
   const run = spawnSyncBounded(shell, buildShellArgs(process.platform, shell, launch, []), {
     cwd,
@@ -90,7 +90,7 @@ describe.skipIf(process.platform === 'win32' || !existsSync(PRINTF))(
         const launch = buildPosixCliLaunch('claude', HOSTILE_PROMPT, {
           mcpPreApprove: true,
           autoApproveOkTools: true,
-          mcpServerName: 'open-knowledge',
+          mcpServerName: 'palimpsest',
         });
         const { cwd, run } = runLaunch(shell, {
           executable: PRINTF,

@@ -84,8 +84,8 @@ function environmentFor(value) {
 
 function pendingFences() {
   return readdirSync(workDir, { withFileTypes: true }).flatMap((entry) => {
-    if (!entry.isDirectory() || !entry.name.startsWith('ok-shadow-settle-fence-')) return [];
-    const dir = join(workDir, entry.name, '.ok');
+    if (!entry.isDirectory() || !entry.name.startsWith('ps-shadow-settle-fence-')) return [];
+    const dir = join(workDir, entry.name, '.ps');
     return existsSync(dir)
       ? readdirSync(dir)
           .filter((name) => name.startsWith('watcher-settle-fence-'))
@@ -284,7 +284,7 @@ function start(value) {
   if (config) throw new Error('fixture owner already started');
   config = { runId: randomUUID(), autoCleanup: true, maxLifetimeMs: 540_000, ...value };
   mkdirSync(config.resultDir, { recursive: true });
-  workDir = realpathSync(mkdtempSync(join(config.scratchRoot ?? tmpdir(), 'ok-shadow-owned-')));
+  workDir = realpathSync(mkdtempSync(join(config.scratchRoot ?? tmpdir(), 'ps-shadow-owned-')));
   transport = join(workDir, 'transport');
   mkdirSync(transport);
   write(join(config.resultDir, 'started.json'), {
@@ -308,8 +308,8 @@ function start(value) {
         TMPDIR: workDir,
         TMP: workDir,
         TEMP: workDir,
-        OK_SHADOW_OWNER_TRANSPORT: transport,
-        OK_SHADOW_OWNER_RUN_ID: config.runId,
+        PS_SHADOW_OWNER_TRANSPORT: transport,
+        PS_SHADOW_OWNER_RUN_ID: config.runId,
       },
       stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
     },

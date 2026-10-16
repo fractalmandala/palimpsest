@@ -5,7 +5,7 @@ import {
   SkillMoveSuccessSchema,
   SkillPutSuccessSchema,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -42,7 +42,7 @@ describe('skill envelope (RFC 9457) + CRUD lifecycle', () => {
     if (parsed.success) {
       expect(parsed.data.created).toBe(true);
       expect(parsed.data.path).toMatch(/\/trip-log\/SKILL\.md$/);
-      expect(parsed.data.path).not.toContain('.ok/skills');
+      expect(parsed.data.path).not.toContain('.ps/skills');
     }
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
@@ -91,7 +91,7 @@ describe('skill envelope (RFC 9457) + CRUD lifecycle', () => {
     expect(parsed.success && parsed.data.type).toBe('urn:ok:error:invalid-request');
   });
 
-  test('PUT with global scope → 200 (global store at <home>/.ok/skills)', async () => {
+  test('PUT with global scope → 200 (global store at <home>/.ps/skills)', async () => {
     const res = await putSkill({
       scope: 'global',
       name: 'mine',

@@ -7,7 +7,7 @@ import { redactStagedBundle } from './bundle-redact.ts';
 const tmpDirs: string[] = [];
 
 function makeStagingDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-redact-test-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-redact-test-'));
   tmpDirs.push(dir);
   mkdirSync(join(dir, 'telemetry'));
   mkdirSync(join(dir, 'logs'));
@@ -143,23 +143,23 @@ describe('redactStagedBundle — contentDir masking', () => {
     const stagingDir = makeStagingDir();
     const contentDir = '/Users/test/notes';
     mkdirSync(join(stagingDir, 'diagnostic-reports'));
-    const header = JSON.stringify({ app_name: 'OpenKnowledge', name: 'OpenKnowledge' });
+    const header = JSON.stringify({ app_name: 'Palimpsest', name: 'Palimpsest' });
     const body = [
       '{',
-      `  "procPath" : "${contentDir}/OpenKnowledge.app/Contents/MacOS/OpenKnowledge",`,
-      `  "asi" : {"OpenKnowledge":["loaded from ${contentDir}/plugins"]},`,
+      `  "procPath" : "${contentDir}/Palimpsest.app/Contents/MacOS/Palimpsest",`,
+      `  "asi" : {"Palimpsest":["loaded from ${contentDir}/plugins"]},`,
       '  "threads" : [{"threadState":{"x":[{"value":18446744072631617535}]}}],',
       '  "termination" : {"namespace":"SIGNAL","indicator":"Abort trap: 6"}',
       '}',
     ].join('\n');
     const raw = `${header}\n${body}\n`;
-    writeStaged(stagingDir, 'diagnostic-reports/OpenKnowledge-2026-08-27.ips', raw);
+    writeStaged(stagingDir, 'diagnostic-reports/Palimpsest-2026-08-27.ips', raw);
 
     redactStagedBundle({ stagingDir, contentDir });
 
-    const after = readStaged(stagingDir, 'diagnostic-reports/OpenKnowledge-2026-08-27.ips');
+    const after = readStaged(stagingDir, 'diagnostic-reports/Palimpsest-2026-08-27.ips');
     expect(after).not.toContain(contentDir);
-    expect(after).toContain('<CONTENT_DIR>/OpenKnowledge.app/Contents/MacOS/OpenKnowledge');
+    expect(after).toContain('<CONTENT_DIR>/Palimpsest.app/Contents/MacOS/Palimpsest');
     expect(after).toContain('loaded from <CONTENT_DIR>/plugins');
     expect(after).toContain('"value":18446744072631617535');
     expect(after).toContain('"termination" : {');
@@ -168,12 +168,12 @@ describe('redactStagedBundle — contentDir masking', () => {
   test('leaves an .ips alone when the content dir does not appear in it', () => {
     const stagingDir = makeStagingDir();
     mkdirSync(join(stagingDir, 'diagnostic-reports'));
-    const raw = `{"name":"OpenKnowledge"}\n{"threads":[{"x":[{"value":18446744072631617535}]}]}\n`;
-    writeStaged(stagingDir, 'diagnostic-reports/OpenKnowledge-clean.ips', raw);
+    const raw = `{"name":"Palimpsest"}\n{"threads":[{"x":[{"value":18446744072631617535}]}]}\n`;
+    writeStaged(stagingDir, 'diagnostic-reports/Palimpsest-clean.ips', raw);
 
     redactStagedBundle({ stagingDir, contentDir: '/Users/nobody/no-such-dir' });
 
-    expect(readStaged(stagingDir, 'diagnostic-reports/OpenKnowledge-clean.ips')).toBe(raw);
+    expect(readStaged(stagingDir, 'diagnostic-reports/Palimpsest-clean.ips')).toBe(raw);
   });
 
   test('masks a truncated .ips that will not parse', () => {
@@ -182,13 +182,13 @@ describe('redactStagedBundle — contentDir masking', () => {
     mkdirSync(join(stagingDir, 'diagnostic-reports'));
     writeStaged(
       stagingDir,
-      'diagnostic-reports/OpenKnowledge-truncated.ips',
-      `{"name":"OpenKnowledge"}\n{"procPath":"${contentDir}/bin`,
+      'diagnostic-reports/Palimpsest-truncated.ips',
+      `{"name":"Palimpsest"}\n{"procPath":"${contentDir}/bin`,
     );
 
     redactStagedBundle({ stagingDir, contentDir });
 
-    const after = readStaged(stagingDir, 'diagnostic-reports/OpenKnowledge-truncated.ips');
+    const after = readStaged(stagingDir, 'diagnostic-reports/Palimpsest-truncated.ips');
     expect(after).not.toContain(contentDir);
     expect(after).toContain('<CONTENT_DIR>/bin');
   });

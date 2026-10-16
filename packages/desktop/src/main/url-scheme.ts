@@ -1,5 +1,5 @@
 /**
- * `openknowledge://` deep-link scheme. The parsers keep no Electron import at module top, so unit
+ * `palimpsest://` deep-link scheme. The parsers keep no Electron import at module top, so unit
  * tests exercise them without a real runtime (precedent #4, shared computation with per-surface
  * rendering); `registerProtocolHandler` adds the cold-start queue-then-flush path.
  */
@@ -11,17 +11,17 @@
  */
 
 import { extname, isAbsolute, resolve } from 'node:path';
-import { parseGitHubShareUrl } from '@inkeep/open-knowledge';
+import { parseGitHubShareUrl } from '@palimpsest/cli';
 import {
   type CandidateSelection,
   decodeShareUrl,
   InvalidShareUrlError,
   SUPPORTED_DOC_EXTENSIONS,
   UnsupportedShareVersionError,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type {
-  OkSharePayloadFields,
-  OkShareReceivedPayload,
+  PsSharePayloadFields,
+  PsShareReceivedPayload,
   ShareTarget,
 } from '../shared/bridge-contract.ts';
 import type { CheckTargetExistsResult } from './check-target-exists.ts';
@@ -30,14 +30,14 @@ function shareTargetPath(target: ShareTarget): string {
   return target.kind === 'doc' ? target.docPath : target.folderPath;
 }
 
-interface ParsedOpenKnowledgeUrl {
+interface ParsedPalimpsestUrl {
   readonly host: 'open';
   readonly project: string;
   readonly kind: 'doc' | 'folder';
   readonly doc: string;
 }
 
-const SHARE_UNIVERSAL_LINK_HOSTS = new Set(['openknowledge.ai', 'www.openknowledge.ai']);
+const SHARE_UNIVERSAL_LINK_HOSTS = new Set(['palimpsest.ai', 'www.palimpsest.ai']);
 
 const SHARE_UNIVERSAL_LINK_PATH_PREFIX = '/d/';
 
@@ -47,7 +47,7 @@ function readWebpageURL(source: unknown): string | null {
   return typeof candidate === 'string' && candidate.length > 0 ? candidate : null;
 }
 
-export type ShareUrlPayload = OkSharePayloadFields;
+export type ShareUrlPayload = PsSharePayloadFields;
 
 export type ShareUrlSource = 'universal-link' | 'custom-scheme';
 
@@ -82,13 +82,13 @@ function classifyRawShareUrlSource(input: string, protocolScheme: string): Share
   if (new RegExp(`^${escapedScheme}:\\/\\/share(?::[^/?#@]*)?(?:[/?#]|$)`, 'i').test(input)) {
     return 'custom-scheme';
   }
-  if (/^https?:\/\/(?:www\.)?openknowledge\.ai(?::[^/?#@]*)?\/d\//i.test(input)) {
+  if (/^https?:\/\/(?:www\.)?palimpsest\.ai(?::[^/?#@]*)?\/d\//i.test(input)) {
     return 'universal-link';
   }
   return null;
 }
 
-export type ShareDeepLinkFields = OkSharePayloadFields;
+export type ShareDeepLinkFields = PsSharePayloadFields;
 
 export interface ShareDeepLinkBranchSwitchPayload {
   readonly share: ShareDeepLinkFields;
@@ -96,7 +96,7 @@ export interface ShareDeepLinkBranchSwitchPayload {
   readonly currentBranch: string | null;
 }
 
-export type ShareDeepLinkPayload = OkShareReceivedPayload;
+export type ShareDeepLinkPayload = PsShareReceivedPayload;
 
 export type ShareNavigatorPayload = Extract<
   ShareDeepLinkPayload,
@@ -105,7 +105,7 @@ export type ShareNavigatorPayload = Extract<
 
 export function parseShareUrl(
   input: string,
-  protocolScheme: string = 'openknowledge',
+  protocolScheme: string = 'palimpsest',
 ): ShareParseResult | null {
   if (typeof input !== 'string' || input.length === 0) return null;
   const rawSource = classifyRawShareUrlSource(input, protocolScheme);
@@ -249,10 +249,10 @@ function finalizeV1ShareResult(sharedUrl: string, source: ShareUrlSource): Share
   };
 }
 
-export function parseOpenKnowledgeUrl(
+export function parsePalimpsestUrl(
   input: string,
-  protocolScheme: string = 'openknowledge',
-): ParsedOpenKnowledgeUrl | null {
+  protocolScheme: string = 'palimpsest',
+): ParsedPalimpsestUrl | null {
   if (typeof input !== 'string' || input.length === 0) return null;
   if (input.includes('\x00') || /%00/i.test(input)) return null;
 
@@ -292,15 +292,15 @@ export function parseOpenKnowledgeUrl(
   };
 }
 
-interface ParsedOpenKnowledgeFileUrl {
+interface ParsedPalimpsestFileUrl {
   readonly host: 'open';
   readonly file: string;
 }
 
-export function parseOpenKnowledgeFileUrl(
+export function parsePalimpsestFileUrl(
   input: string,
-  protocolScheme: string = 'openknowledge',
-): ParsedOpenKnowledgeFileUrl | null {
+  protocolScheme: string = 'palimpsest',
+): ParsedPalimpsestFileUrl | null {
   if (typeof input !== 'string' || input.length === 0) return null;
   if (input.includes('\x00') || /%00/i.test(input)) return null;
 
@@ -338,7 +338,7 @@ function isScreenTarget(value: string): value is ScreenTarget {
 
 export function parseScreenUrl(
   input: string,
-  protocolScheme: string = 'openknowledge',
+  protocolScheme: string = 'palimpsest',
 ): ParsedScreenUrl | null {
   if (typeof input !== 'string' || input.length === 0) return null;
   if (input.includes('\x00') || /%00/i.test(input)) return null;
@@ -457,7 +457,7 @@ const URL_LAUNCH_SETTLE_GRACE_MS = 250;
 export function registerProtocolHandler(deps: ProtocolHandlerDeps): ProtocolHandlerControl {
   const schedule = deps.setTimeout ?? ((cb, ms) => setTimeout(cb, ms));
   const platform = deps.platform ?? process.platform;
-  const protocolScheme = deps.protocolScheme ?? 'openknowledge';
+  const protocolScheme = deps.protocolScheme ?? 'palimpsest';
   const urlQueue: string[] = [];
   const shareDedup = new Map<string, number>();
   let flushed = false;
@@ -482,7 +482,7 @@ export function registerProtocolHandler(deps: ProtocolHandlerDeps): ProtocolHand
       if (!ok) {
         deps.log?.error(
           {},
-          '[url-scheme] packaged setAsDefaultProtocolClient returned false — openknowledge:// links may not reach this install',
+          '[url-scheme] packaged setAsDefaultProtocolClient returned false — palimpsest:// links may not reach this install',
         );
       }
     } catch (err) {
@@ -491,7 +491,7 @@ export function registerProtocolHandler(deps: ProtocolHandlerDeps): ProtocolHand
   } else if (deps.registerDevProtocol !== true) {
     deps.log?.info?.(
       { protocolScheme },
-      '[url-scheme] this dev build is not registered for the protocol, so its links go to whichever app owns the scheme, or nowhere; set OK_DEV_PROTOCOL=1 to claim it',
+      '[url-scheme] this dev build is not registered for the protocol, so its links go to whichever app owns the scheme, or nowhere; set PS_DEV_PROTOCOL=1 to claim it',
     );
   } else {
     try {
@@ -805,7 +805,7 @@ export function registerProtocolHandler(deps: ProtocolHandlerDeps): ProtocolHand
       routeScreen(url, screen.name);
       return;
     }
-    const fileOpen = parseOpenKnowledgeFileUrl(url, protocolScheme);
+    const fileOpen = parsePalimpsestFileUrl(url, protocolScheme);
     if (fileOpen !== null) {
       const open = deps.openEphemeralFile;
       if (!open) {
@@ -820,7 +820,7 @@ export function registerProtocolHandler(deps: ProtocolHandlerDeps): ProtocolHand
       });
       return;
     }
-    const parsed = parseOpenKnowledgeUrl(url, protocolScheme);
+    const parsed = parsePalimpsestUrl(url, protocolScheme);
     if (!parsed) {
       deps.log?.warn({}, '[url-scheme] dropped malformed URL');
       return;
@@ -848,7 +848,7 @@ export function registerProtocolHandler(deps: ProtocolHandlerDeps): ProtocolHand
   };
 
   const enqueueOrRoute = (url: string): void => {
-    const isSingleFile = parseOpenKnowledgeFileUrl(url, protocolScheme) !== null;
+    const isSingleFile = parsePalimpsestFileUrl(url, protocolScheme) !== null;
     if (isSingleFile) {
       singleFileLaunch = true;
     }

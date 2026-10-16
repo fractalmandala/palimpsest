@@ -13,8 +13,8 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import { addOkPathsToGitExclude, getOkArtifactPaths } from '@inkeep/open-knowledge';
-import { initContent } from '@inkeep/open-knowledge-server';
+import { addOkPathsToGitExclude, getOkArtifactPaths } from '@palimpsest/cli';
+import { initContent } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { discoverProject } from './folder-admission.ts';
@@ -49,8 +49,8 @@ async function makeRepo(extraBranches: string[] = []): Promise<Handle> {
   configureTestGitRepository(mainRepo);
   await git(mainRepo, 'config', 'user.email', 'test@example.com');
   await git(mainRepo, 'config', 'user.name', 'Test');
-  mkdirSync(join(mainRepo, '.ok'));
-  writeFileSync(join(mainRepo, '.ok', 'config.yml'), 'version: 1\n');
+  mkdirSync(join(mainRepo, '.ps'));
+  writeFileSync(join(mainRepo, '.ps', 'config.yml'), 'version: 1\n');
   writeFileSync(join(mainRepo, 'README.md'), '# main\n');
   await git(mainRepo, 'add', '-A');
   await git(mainRepo, 'commit', '-m', 'initial');
@@ -103,7 +103,7 @@ describe('worktree-service', () => {
     expect(byBranch.get('feature-x')?.worktreePath).toBeNull();
   });
 
-  test('createWorktree (existing branch) checks it out under .ok/worktrees/ and carries the OK config', async () => {
+  test('createWorktree (existing branch) checks it out under .ps/worktrees/ and carries the OK config', async () => {
     handle = await makeRepo(['dev']);
     const res = await createWorktree({
       anchorPath: handle.mainRepo,
@@ -113,11 +113,11 @@ describe('worktree-service', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.created).toBe(true);
-    expect(res.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'dev'));
+    expect(res.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'dev'));
     expect(existsSync(join(res.path, 'README.md'))).toBe(true);
-    expect(existsSync(join(res.path, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(res.path, '.ps', 'config.yml'))).toBe(true);
     const status = await git(handle.mainRepo, 'status', '--porcelain');
-    expect(status).not.toContain('.ok/worktrees');
+    expect(status).not.toContain('.ps/worktrees');
   });
 
   test('createWorktree (-b) creates a new branch + worktree from HEAD', async () => {
@@ -169,7 +169,7 @@ describe('worktree-service', () => {
     });
     expect(other.ok).toBe(true);
     if (!other.ok) return;
-    expect(other.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'other'));
+    expect(other.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'other'));
   });
 
   test('createWorktree rejects a path-escaping branch name', async () => {
@@ -194,7 +194,7 @@ describe('worktree-service', () => {
       sourceProjectPath: handle.mainRepo,
     });
     expect(res).toEqual({ ok: false, reason: 'error', message: 'Invalid project scope' });
-    expect(existsSync(join(handle.mainRepo, '.ok', 'worktrees', 'dev'))).toBe(false);
+    expect(existsSync(join(handle.mainRepo, '.ps', 'worktrees', 'dev'))).toBe(false);
   });
 
   test('createWorktree reports empty-repo (not the generic arm) on a repo with no commits', async () => {
@@ -313,7 +313,7 @@ describe('worktree-service', () => {
     expect(res.reason).toBe('error');
     const list = await git(handle.mainRepo, 'worktree', 'list', '--porcelain');
     expect(list).not.toContain('detached');
-    expect(list).not.toContain('.ok/worktrees/--detach');
+    expect(list).not.toContain('.ps/worktrees/--detach');
   });
 
   test('createWorktree guards a dash-prefixed baseBranch in the create arm', async () => {
@@ -345,7 +345,7 @@ describe('worktree-service', () => {
 
   test('createWorktree classifies a pre-existing target dir as path-exists', async () => {
     handle = await makeRepo(['dev']);
-    const target = join(handle.mainRepo, '.ok', 'worktrees', 'dev');
+    const target = join(handle.mainRepo, '.ps', 'worktrees', 'dev');
     mkdirSync(target, { recursive: true });
     writeFileSync(join(target, 'squatter.txt'), 'in the way\n');
     const res = await createWorktree({
@@ -360,7 +360,7 @@ describe('worktree-service', () => {
 
   test('createWorktree classifies a missing required filter as helper-not-found', async () => {
     handle = await makeRepo();
-    const missing = 'ok-test-missing-helper-cmd';
+    const missing = 'ps-test-missing-helper-cmd';
     await git(handle.mainRepo, 'config', 'filter.okbogus.clean', `${missing} clean`);
     await git(handle.mainRepo, 'config', 'filter.okbogus.smudge', `${missing} smudge`);
     await git(handle.mainRepo, 'config', 'filter.okbogus.required', 'true');
@@ -479,7 +479,7 @@ describe('worktree-service', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.created).toBe(true);
-    expect(res.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'feature-x'));
+    expect(res.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'feature-x'));
     expect(existsSync(join(res.path, 'remote-only.txt'))).toBe(true);
     const upstream = await git(
       res.path,
@@ -561,7 +561,7 @@ describe('worktree-service — share-branch checkout', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.created).toBe(true);
-    expect(res.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'share-me'));
+    expect(res.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'share-me'));
     const wtBranch = await git(res.path, 'rev-parse', '--abbrev-ref', 'HEAD');
     expect(wtBranch.trim()).toBe('share-me');
 
@@ -589,7 +589,7 @@ describe('worktree-service — share-branch checkout', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.created).toBe(true);
-    expect(res.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'remote-only'));
+    expect(res.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'remote-only'));
     expect((await git(res.path, 'rev-parse', '--abbrev-ref', 'HEAD')).trim()).toBe('remote-only');
     const upstream = await git(
       res.path,
@@ -629,7 +629,7 @@ describe('worktree-service — share-branch checkout', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.created).toBe(true);
-    expect(res.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'never-fetched'));
+    expect(res.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'never-fetched'));
     expect(existsSync(join(res.path, 'remote-only.txt'))).toBe(true);
     expect(
       (await git(handle.mainRepo, 'branch', '-r', '--list', 'origin/never-fetched')).trim(),
@@ -706,7 +706,7 @@ describe('worktree-service — share-branch checkout', () => {
       reason: 'unsafe-symlinks',
       refusedSymlinkPaths: ['notes/leak.md'],
     });
-    expect(existsSync(join(handle.mainRepo, '.ok', 'worktrees', 'unsafe-share'))).toBe(false);
+    expect(existsSync(join(handle.mainRepo, '.ps', 'worktrees', 'unsafe-share'))).toBe(false);
     expect((await git(handle.mainRepo, 'branch', '--list', 'unsafe-share')).trim()).toBe('');
     expect(await repoSnapshot(handle.mainRepo)).toEqual(before);
   });
@@ -727,7 +727,7 @@ describe('worktree-service — share-branch checkout', () => {
       reason: 'unsafe-symlinks',
       refusedSymlinkPaths: ['notes/root'],
     });
-    expect(existsSync(join(handle.mainRepo, '.ok', 'worktrees', 'local-unsafe'))).toBe(false);
+    expect(existsSync(join(handle.mainRepo, '.ps', 'worktrees', 'local-unsafe'))).toBe(false);
   });
 
   test('checkoutShareBranchWorktree checks out the remote branch, not a tag that shadows its short name', async () => {
@@ -775,7 +775,7 @@ describe('worktree-service — share-branch checkout', () => {
     expect(res.ok).toBe(false);
     if (res.ok) return;
     expect(res.reason).toBe('branch-not-found');
-    expect(existsSync(join(handle.mainRepo, '.ok', 'worktrees', 'ghost'))).toBe(false);
+    expect(existsSync(join(handle.mainRepo, '.ps', 'worktrees', 'ghost'))).toBe(false);
     expect((await git(handle.mainRepo, 'branch', '--list', 'ghost')).trim()).toBe('');
     expect(await repoSnapshot(handle.mainRepo)).toEqual(before);
   });
@@ -796,7 +796,7 @@ describe('worktree-service — share-branch checkout', () => {
     expect(typeof res.message).toBe('string');
     expect((res.message ?? '').length).toBeGreaterThan(0);
     expect(res.authFailed).toBeUndefined();
-    expect(existsSync(join(handle.mainRepo, '.ok', 'worktrees', 'any-branch'))).toBe(false);
+    expect(existsSync(join(handle.mainRepo, '.ps', 'worktrees', 'any-branch'))).toBe(false);
     expect(await repoSnapshot(handle.mainRepo)).toEqual(before);
   });
 
@@ -820,7 +820,7 @@ describe('worktree-service — share-branch checkout', () => {
     if (res.ok) return;
     expect(res.reason).toBe('fetch-failed');
     expect(res.authFailed).toBe(true);
-    expect(existsSync(join(handle.mainRepo, '.ok', 'worktrees', 'any-branch'))).toBe(false);
+    expect(existsSync(join(handle.mainRepo, '.ps', 'worktrees', 'any-branch'))).toBe(false);
     expect(await repoSnapshot(handle.mainRepo)).toEqual(before);
   });
 
@@ -891,12 +891,12 @@ async function makeLocalOnlyRepo(): Promise<Handle> {
   await git(mainRepo, 'add', '-A');
   await git(mainRepo, 'commit', '-m', 'initial');
   initContent(mainRepo, { contentDir: 'docs' });
-  mkdirSync(join(mainRepo, '.ok'), { recursive: true });
+  mkdirSync(join(mainRepo, '.ps'), { recursive: true });
   writeFileSync(
     join(mainRepo, '.mcp.json'),
     JSON.stringify({
       mcpServers: {
-        'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v1\nexec ok mcp'] },
+        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexec ps mcp'] },
       },
     }),
   );
@@ -921,14 +921,14 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
       env: GIT_ENV,
     });
     configureTestGitRepository(wtPath);
-    expect(existsSync(join(wtPath, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(wtPath, '.ps', 'config.yml'))).toBe(false);
 
     const before = await discoverProject(wtPath, { homeDir: handle.root, dirSizeProbe: null });
     expect(before.kind).toBe('fresh');
 
     seedWorktreeProjectSetup(wtPath, handle.mainRepo);
 
-    expect(existsSync(join(wtPath, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(wtPath, '.ps', 'config.yml'))).toBe(true);
     const after = await discoverProject(wtPath, { homeDir: handle.root, dirSizeProbe: null });
     expect(after.kind).toBe('managed');
     if (after.kind !== 'managed') return;
@@ -948,12 +948,12 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
     seedWorktreeProjectSetup(wtPath, handle.mainRepo);
 
     expect(existsSync(join(wtPath, '.mcp.json'))).toBe(true);
-    expect(readFileSync(join(wtPath, '.ok', 'config.yml'), 'utf-8')).toContain('dir: docs');
+    expect(readFileSync(join(wtPath, '.ps', 'config.yml'), 'utf-8')).toContain('dir: docs');
 
-    expect(await isIgnored(wtPath, '.ok/config.yml')).toBe(true);
+    expect(await isIgnored(wtPath, '.ps/config.yml')).toBe(true);
     expect(await isIgnored(wtPath, '.mcp.json')).toBe(true);
     const status = await git(wtPath, 'status', '--porcelain');
-    expect(status).not.toContain('.ok/config.yml');
+    expect(status).not.toContain('.ps/config.yml');
     expect(status).not.toContain('.mcp.json');
   });
 
@@ -969,7 +969,7 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
     const gitDir = (await git(handle.mainRepo, 'rev-parse', '--git-common-dir')).trim();
     const excludePath = join(handle.mainRepo, gitDir, 'info', 'exclude');
     writeFileSync(excludePath, `${readFileSync(excludePath, 'utf-8')}\n.ok/\n`);
-    expect(await isIgnored(handle.mainRepo, 'packages/docs/.ok/config.yml')).toBe(true);
+    expect(await isIgnored(handle.mainRepo, 'packages/docs/.ps/config.yml')).toBe(true);
 
     const result = await createWorktree({
       anchorPath: sourceProject,
@@ -981,7 +981,7 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     const projectedProject = join(result.path, 'packages', 'docs');
-    expect(existsSync(join(projectedProject, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(projectedProject, '.ps', 'config.yml'))).toBe(true);
     const discovery = await discoverProject(projectedProject, {
       homeDir: handle.root,
       dirSizeProbe: null,
@@ -1043,21 +1043,21 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
       created: true,
     });
     if (result.ok || result.reason !== 'project-scope-unavailable') return;
-    expect(result.path).toBe(join(handle.mainRepo, '.ok', 'worktrees', 'before-nested-project'));
+    expect(result.path).toBe(join(handle.mainRepo, '.ps', 'worktrees', 'before-nested-project'));
   });
 
-  test('auto-sync setup never writes through a committed .ok symlink', async () => {
+  test('auto-sync setup never writes through a committed .ps symlink', async () => {
     handle = await makeRepo();
     const outside = join(handle.root, 'outside-ok');
     mkdirSync(outside);
     await git(handle.mainRepo, 'checkout', '-b', 'unsafe-ok');
-    rmSync(join(handle.mainRepo, '.ok'), { recursive: true });
-    symlinkSync(outside, join(handle.mainRepo, '.ok'));
+    rmSync(join(handle.mainRepo, '.ps'), { recursive: true });
+    symlinkSync(outside, join(handle.mainRepo, '.ps'));
     await git(handle.mainRepo, 'add', '-A');
     await git(handle.mainRepo, 'commit', '-m', 'redirect project setup');
     await git(handle.mainRepo, 'checkout', 'main');
-    mkdirSync(join(handle.mainRepo, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(handle.mainRepo, '.ok', 'local', 'config.yml'), 'autoSync:\n  mode: pull\n');
+    mkdirSync(join(handle.mainRepo, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(handle.mainRepo, '.ps', 'local', 'config.yml'), 'autoSync:\n  mode: pull\n');
 
     const result = await createWorktree({
       anchorPath: handle.mainRepo,
@@ -1090,7 +1090,7 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
     mkdirSync(join(handle.mainRepo, '.cursor'), { recursive: true });
     writeFileSync(
       join(handle.mainRepo, '.cursor', 'mcp.json'),
-      JSON.stringify({ mcpServers: { 'open-knowledge': { command: '# ok-mcp-v1' } } }),
+      JSON.stringify({ mcpServers: { 'palimpsest': { command: '# ps-mcp-v1' } } }),
     );
 
     const result = await createWorktree({
@@ -1112,13 +1112,13 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
   test('a non-symlink setup failure is not reported as a branch redirect', async () => {
     handle = await makeRepo();
     await git(handle.mainRepo, 'checkout', '-b', 'blocked-local-config');
-    mkdirSync(join(handle.mainRepo, '.ok'), { recursive: true });
-    writeFileSync(join(handle.mainRepo, '.ok', 'local'), 'not a directory\n');
-    await git(handle.mainRepo, 'add', '.ok/local');
+    mkdirSync(join(handle.mainRepo, '.ps'), { recursive: true });
+    writeFileSync(join(handle.mainRepo, '.ps', 'local'), 'not a directory\n');
+    await git(handle.mainRepo, 'add', '.ps/local');
     await git(handle.mainRepo, 'commit', '-m', 'block local config directory');
     await git(handle.mainRepo, 'checkout', 'main');
-    mkdirSync(join(handle.mainRepo, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(handle.mainRepo, '.ok', 'local', 'config.yml'), 'autoSync:\n  mode: pull\n');
+    mkdirSync(join(handle.mainRepo, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(handle.mainRepo, '.ps', 'local', 'config.yml'), 'autoSync:\n  mode: pull\n');
 
     const result = await createWorktree({
       anchorPath: handle.mainRepo,
@@ -1145,7 +1145,7 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
 
-    expect(readFileSync(join(res.path, '.ok', 'config.yml'), 'utf-8')).toBe('version: 1\n');
+    expect(readFileSync(join(res.path, '.ps', 'config.yml'), 'utf-8')).toBe('version: 1\n');
 
     const disc = await discoverProject(res.path, { homeDir: handle.root, dirSizeProbe: null });
     expect(disc.kind).toBe('managed');

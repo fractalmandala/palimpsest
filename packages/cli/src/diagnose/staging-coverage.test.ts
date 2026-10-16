@@ -65,23 +65,23 @@ describe('staged-content coverage', () => {
   });
 
   test('collectBundle produces no top-level directory this file does not declare', async () => {
-    const contentDir = mkdtempSync(resolve(tmpdir(), 'ok-staging-coverage-'));
+    const contentDir = mkdtempSync(resolve(tmpdir(), 'ps-staging-coverage-'));
     tmpDirs.push(contentDir);
     writeFileSync(join(contentDir, 'note.md'), '# note\n');
 
-    const reportsDir = mkdtempSync(resolve(tmpdir(), 'ok-staging-coverage-reports-'));
+    const reportsDir = mkdtempSync(resolve(tmpdir(), 'ps-staging-coverage-reports-'));
     tmpDirs.push(reportsDir);
-    const reportPath = join(reportsDir, 'OpenKnowledge-2026-05-28-142201.ips');
+    const reportPath = join(reportsDir, 'Palimpsest-2026-05-28-142201.ips');
     writeFileSync(
       reportPath,
-      `${JSON.stringify({ name: 'OpenKnowledge', timestamp: '2026-05-28 14:22:01.00 +0000' })}\n{"procName":"OpenKnowledge"}\n`,
+      `${JSON.stringify({ name: 'Palimpsest', timestamp: '2026-05-28 14:22:01.00 +0000' })}\n{"procName":"Palimpsest"}\n`,
     );
 
-    const processDir = mkdtempSync(resolve(tmpdir(), 'ok-staging-coverage-process-'));
+    const processDir = mkdtempSync(resolve(tmpdir(), 'ps-staging-coverage-process-'));
     tmpDirs.push(processDir);
     writeFileSync(join(processDir, 'sample.txt'), 'process sample\n');
 
-    const extraDir = mkdtempSync(resolve(tmpdir(), 'ok-staging-coverage-extra-'));
+    const extraDir = mkdtempSync(resolve(tmpdir(), 'ps-staging-coverage-extra-'));
     tmpDirs.push(extraDir);
     const extraPath = join(extraDir, 'minidump.dmp');
     writeFileSync(extraPath, Buffer.from([0x4d, 0x44, 0x4d, 0x50, 0x00, 0x01]));
@@ -105,7 +105,7 @@ describe('staged-content coverage', () => {
         readShadowHead: () => null,
         readCheckpointRefs: () => null,
         now: () => new Date('2026-05-28T14:22:01.000Z'),
-        okVersion: () => '0.7.99',
+        psVersion: () => '0.7.99',
         readDesktopEnv: () => null,
         readRuntime: () => ({ nodeVersion: 'v24.18.0', platform: 'darwin', arch: 'arm64' }),
         isOtlpPushEnabled: () => false,

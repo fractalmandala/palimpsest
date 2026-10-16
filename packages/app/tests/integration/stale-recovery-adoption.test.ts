@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { MetricsReconciliationSuccessSchema } from '@inkeep/open-knowledge-core';
+import { MetricsReconciliationSuccessSchema } from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import * as fileWatcher from '../../../server/src/file-watcher.ts';
 import * as headWatcher from '../../../server/src/head-watcher.ts';
@@ -33,7 +33,7 @@ afterEach(async () => {
 
 async function scenario(mode: 'connection' | 'writer' | 'buffer') {
   resetMetrics();
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-recovery-adoption-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-recovery-adoption-')));
   const docName = `adoption-${randomUUID()}`;
   const filePath = join(contentDir, `${docName}.md`);
   const nativeCaptured = Promise.withResolvers<void>();

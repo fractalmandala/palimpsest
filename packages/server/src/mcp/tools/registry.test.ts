@@ -1,4 +1,4 @@
-import { OK_GATED_TOOL_NAMES, OPEN_KNOWLEDGE_MCP_TOOLS } from '@inkeep/open-knowledge-core';
+import { PS_GATED_TOOL_NAMES, PALIMPSEST_MCP_TOOLS } from '@palimpsest/core';
 import { afterAll, describe, expect, test } from 'vitest';
 import { createTempDirFactory } from '../../../../../test-support/temp-dir.test-helper.ts';
 import { type Config, ConfigSchema } from '../../config/schema.ts';
@@ -9,7 +9,7 @@ const makeTempDir = createTempDirFactory(afterAll);
 
 const BASE_CONFIG: Config = ConfigSchema.parse({});
 
-const EXPECTED_TOOLS = OPEN_KNOWLEDGE_MCP_TOOLS;
+const EXPECTED_TOOLS = PALIMPSEST_MCP_TOOLS;
 
 const RETIRED_TOOL_NAMES = [
   'conflicts',
@@ -53,7 +53,7 @@ const RETIRED_TOOL_NAMES = [
 
 function captureRegistered(): string[] {
   const names: string[] = [];
-  const cwd = makeTempDir('ok-registry-assertion-');
+  const cwd = makeTempDir('ps-registry-assertion-');
   const server = {
     registerTool(name: string, _cfg: unknown, _handler: unknown) {
       names.push(name);
@@ -101,7 +101,7 @@ describe('registerAllTools — full tool surface (SPEC.md §9.1 / AC8 + install 
   });
 });
 
-const OK_AUTO_APPROVED_TOOLS = [
+const PS_AUTO_APPROVED_TOOLS = [
   'exec',
   'search',
   'history',
@@ -120,19 +120,19 @@ const OK_AUTO_APPROVED_TOOLS = [
 
 describe('docked-terminal auto-approve classification', () => {
   test('every registered tool is classified as gated or auto-approved', () => {
-    expect(new Set([...OK_AUTO_APPROVED_TOOLS, ...OK_GATED_TOOL_NAMES])).toEqual(
+    expect(new Set([...PS_AUTO_APPROVED_TOOLS, ...PS_GATED_TOOL_NAMES])).toEqual(
       new Set(captureRegistered()),
     );
   });
 
   test('no tool is both gated and auto-approved', () => {
-    const gated = new Set<string>(OK_GATED_TOOL_NAMES);
-    expect(OK_AUTO_APPROVED_TOOLS.filter((name) => gated.has(name))).toEqual([]);
+    const gated = new Set<string>(PS_GATED_TOOL_NAMES);
+    expect(PS_AUTO_APPROVED_TOOLS.filter((name) => gated.has(name))).toEqual([]);
   });
 
   test('the ask-list only names tools that actually exist', () => {
     const registered = new Set(captureRegistered());
-    for (const gated of OK_GATED_TOOL_NAMES) {
+    for (const gated of PS_GATED_TOOL_NAMES) {
       expect(registered).toContain(gated);
     }
   });

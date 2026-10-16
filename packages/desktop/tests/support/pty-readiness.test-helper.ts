@@ -577,7 +577,7 @@ export function resolveHarnessBudgetMs(raw: string | undefined, defaultMs: numbe
   if (raw === undefined || raw === '') return defaultMs;
   const override = requireDuration(
     Number(raw),
-    'the OK_PTY_HARNESS_BUDGET_MS override',
+    'the PS_PTY_HARNESS_BUDGET_MS override',
     'the harness budget',
   );
   return Math.min(override, defaultMs);

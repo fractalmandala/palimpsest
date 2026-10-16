@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createBasenameIndex } from '@inkeep/open-knowledge-core';
+import { createBasenameIndex } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { seedBasenameIndex } from './asset-walk.ts';
 import { createContentFilter } from './content-filter.ts';
@@ -82,11 +82,11 @@ describe('seedBasenameIndex — initial walk (with ContentFilter)', () => {
     expect(idx.resolveEmbed('nested.gif', 'docs/meeting.md')).toBe('no-md-here/deeper/nested.gif');
   });
 
-  test('respects .okignore exclusion patterns', async () => {
+  test('respects .psignore exclusion patterns', async () => {
     write('docs/meeting.md');
     write('docs/photo.png');
     write('secret/hidden.png');
-    writeFileSync(join(contentDir, '.okignore'), 'secret/\n', 'utf-8');
+    writeFileSync(join(contentDir, '.psignore'), 'secret/\n', 'utf-8');
 
     const idx = createBasenameIndex();
     const contentFilter = createContentFilter({

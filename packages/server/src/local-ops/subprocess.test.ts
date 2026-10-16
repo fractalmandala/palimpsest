@@ -212,17 +212,17 @@ describe('runSubprocess', () => {
 
 describe('runSubprocess — cliEnv overlay', () => {
   const printEnvCli = fixtureCli(
-    `process.stdout.write(JSON.stringify({ a: process.env.OK_TEST_A ?? null, b: process.env.OK_TEST_B ?? null }))`,
+    `process.stdout.write(JSON.stringify({ a: process.env.PS_TEST_A ?? null, b: process.env.PS_TEST_B ?? null }))`,
   );
 
   const withInheritedB = async (run: () => Promise<void>): Promise<void> => {
-    const previous = process.env.OK_TEST_B;
-    process.env.OK_TEST_B = 'inherited';
+    const previous = process.env.PS_TEST_B;
+    process.env.PS_TEST_B = 'inherited';
     try {
       await run();
     } finally {
-      if (previous === undefined) delete process.env.OK_TEST_B;
-      else process.env.OK_TEST_B = previous;
+      if (previous === undefined) delete process.env.PS_TEST_B;
+      else process.env.PS_TEST_B = previous;
     }
   };
 
@@ -231,7 +231,7 @@ describe('runSubprocess — cliEnv overlay', () => {
       const lines: { parsed: Record<string, unknown> | null }[] = [];
       const proc = runSubprocess({
         cliArgs: printEnvCli,
-        cliEnv: { OK_TEST_A: 'overlay', OK_TEST_B: undefined },
+        cliEnv: { PS_TEST_A: 'overlay', PS_TEST_B: undefined },
         trailingArgs: [],
         timeoutMs: 5000,
         onLine: (line) => lines.push(line),
@@ -243,10 +243,10 @@ describe('runSubprocess — cliEnv overlay', () => {
   });
 
   test('an inherited dev channel reaches the child only through the overlay', async () => {
-    const previous = process.env.OK_CHANNEL;
-    process.env.OK_CHANNEL = 'dev';
+    const previous = process.env.PS_CHANNEL;
+    process.env.PS_CHANNEL = 'dev';
     const channelCli = fixtureCli(
-      `process.stdout.write(JSON.stringify({ channel: process.env.OK_CHANNEL ?? null }))`,
+      `process.stdout.write(JSON.stringify({ channel: process.env.PS_CHANNEL ?? null }))`,
     );
     const channelOf = async (cliEnv?: Record<string, string>): Promise<unknown> => {
       const lines: { parsed: Record<string, unknown> | null }[] = [];
@@ -262,10 +262,10 @@ describe('runSubprocess — cliEnv overlay', () => {
     };
     try {
       expect(await channelOf()).toBeNull();
-      expect(await channelOf({ OK_CHANNEL: 'dev' })).toBe('dev');
+      expect(await channelOf({ PS_CHANNEL: 'dev' })).toBe('dev');
     } finally {
-      if (previous === undefined) delete process.env.OK_CHANNEL;
-      else process.env.OK_CHANNEL = previous;
+      if (previous === undefined) delete process.env.PS_CHANNEL;
+      else process.env.PS_CHANNEL = previous;
     }
   });
 
@@ -311,14 +311,14 @@ describe('buildOverlaidEnv — case handling across the overlay and the PATH com
 
   test('win32 assignment replaces a differently-cased inherited key instead of leaving a stale twin', () => {
     expect(
-      buildOverlaidEnv({ Ok_Marker: 'inherited' }, { OK_MARKER: 'overlay' }, undefined, 'win32'),
-    ).toEqual({ OK_MARKER: 'overlay' });
+      buildOverlaidEnv({ Ok_Marker: 'inherited' }, { PS_MARKER: 'overlay' }, undefined, 'win32'),
+    ).toEqual({ PS_MARKER: 'overlay' });
   });
 
   test('non-win32 assignment keeps a differently-cased POSIX variable as a distinct entry', () => {
     expect(
-      buildOverlaidEnv({ Ok_Marker: 'inherited' }, { OK_MARKER: 'overlay' }, undefined, 'linux'),
-    ).toEqual({ Ok_Marker: 'inherited', OK_MARKER: 'overlay' });
+      buildOverlaidEnv({ Ok_Marker: 'inherited' }, { PS_MARKER: 'overlay' }, undefined, 'linux'),
+    ).toEqual({ Ok_Marker: 'inherited', PS_MARKER: 'overlay' });
   });
 
   test('win32 extraPathDirs folds an inherited Path into one PATH entry and keeps its value', () => {
@@ -353,7 +353,7 @@ describe('buildOverlaidEnv — case handling across the overlay and the PATH com
 
   test('the base environment is copied, not mutated', () => {
     const base = { PATH: '/base', Ok_Marker: 'inherited' };
-    buildOverlaidEnv(base, { OK_MARKER: 'overlay' }, ['/opt/one'], 'win32');
+    buildOverlaidEnv(base, { PS_MARKER: 'overlay' }, ['/opt/one'], 'win32');
     expect(base).toEqual({ PATH: '/base', Ok_Marker: 'inherited' });
   });
 });
@@ -370,14 +370,14 @@ describe('runSubprocess — the win32-folded environment reaches the child', () 
       const lines: { parsed: Record<string, unknown> | null }[] = [];
       const proc = runSubprocess({
         cliArgs: caseVariantsCli,
-        cliEnv: { OK_TEST_CASE_MARKER: 'overlay' },
+        cliEnv: { PS_TEST_CASE_MARKER: 'overlay' },
         platform: 'win32',
         trailingArgs: [],
         timeoutMs: 5000,
         onLine: (line) => lines.push(line),
       });
       await proc.done;
-      expect(lines[0]?.parsed).toEqual({ OK_TEST_CASE_MARKER: 'overlay' });
+      expect(lines[0]?.parsed).toEqual({ PS_TEST_CASE_MARKER: 'overlay' });
     } finally {
       if (previous === undefined) delete process.env.Ok_Test_Case_Marker;
       else process.env.Ok_Test_Case_Marker = previous;
@@ -393,7 +393,7 @@ describe('runSubprocess — the win32-folded environment reaches the child', () 
         const lines: { parsed: Record<string, unknown> | null }[] = [];
         const proc = runSubprocess({
           cliArgs: caseVariantsCli,
-          cliEnv: { OK_TEST_CASE_MARKER: 'overlay' },
+          cliEnv: { PS_TEST_CASE_MARKER: 'overlay' },
           trailingArgs: [],
           timeoutMs: 5000,
           onLine: (line) => lines.push(line),
@@ -401,7 +401,7 @@ describe('runSubprocess — the win32-folded environment reaches the child', () 
         await proc.done;
         expect(lines[0]?.parsed).toEqual({
           Ok_Test_Case_Marker: 'inherited',
-          OK_TEST_CASE_MARKER: 'overlay',
+          PS_TEST_CASE_MARKER: 'overlay',
         });
       } finally {
         if (previous === undefined) delete process.env.Ok_Test_Case_Marker;
@@ -462,7 +462,7 @@ describe('runSubprocess — synchronous spawn failure', () => {
 
   test('an asynchronous spawn failure reports the same shape with the structured facts', async () => {
     const proc = runSubprocess({
-      cliArgs: ['ok-local-op-no-such-binary'],
+      cliArgs: ['ps-local-op-no-such-binary'],
       trailingArgs: [],
       timeoutMs: 5000,
       onLine: () => {},

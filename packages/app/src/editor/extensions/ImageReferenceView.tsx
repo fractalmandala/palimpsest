@@ -1,5 +1,5 @@
-import { normalizeReferenceLabel } from '@inkeep/open-knowledge-core/markdown/reference-label';
-import { normalizeDocRelativeAssetUrl } from '@inkeep/open-knowledge-core/markdown/resolve-image-url';
+import { normalizeReferenceLabel } from '@palimpsest/core/markdown/reference-label';
+import { normalizeDocRelativeAssetUrl } from '@palimpsest/core/markdown/resolve-image-url';
 import type { NodeViewProps } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { NodeViewWrapper, useEditorState } from '@tiptap/react';

@@ -17,7 +17,7 @@ vi.mock('../diagnose/os-termination-evidence.ts', async (importOriginal) => {
 
 const tmpDirs: string[] = [];
 
-function makeTmpDir(prefix = 'ok-bundle-runner-test-'): string {
+function makeTmpDir(prefix = 'ps-bundle-runner-test-'): string {
   const dir = mkdtempSync(resolve(tmpdir(), prefix));
   tmpDirs.push(dir);
   return dir;
@@ -46,7 +46,7 @@ function deterministicCollectDeps(): RunDiagnoseBundleDeps['collectDeps'] {
     fetchAgentPresence: async () => null,
     readShadowHead: () => null,
     now: () => new Date('2026-05-28T14:22:01.000Z'),
-    okVersion: () => '0.7.99',
+    psVersion: () => '0.7.99',
     readDesktopEnv: () => null,
     readRuntime: () => ({ nodeVersion: 'v22.18.0', platform: 'darwin', arch: 'arm64' }),
     isOtlpPushEnabled: () => false,
@@ -65,7 +65,7 @@ function makeRunnerDeps(over: Partial<RunDiagnoseBundleDeps> = {}): {
       return 'y';
     },
     collectDeps: deterministicCollectDeps(),
-    diagnosticReportsDir: makeTmpDir('ok-bundle-runner-reports-'),
+    diagnosticReportsDir: makeTmpDir('ps-bundle-runner-reports-'),
     ...over,
   };
   return { captured, deps };
@@ -100,15 +100,15 @@ describe('runDiagnoseBundle — macOS crash reports', () => {
 
   test('collects into the zip, and the summary says what it found', async () => {
     const contentDir = makeTmpDir();
-    const reportsDir = makeTmpDir('ok-bundle-runner-reports-');
-    writeReport(reportsDir, 'OpenKnowledge-2026-05-28-140000.ips', 'OpenKnowledge');
+    const reportsDir = makeTmpDir('ps-bundle-runner-reports-');
+    writeReport(reportsDir, 'Palimpsest-2026-05-28-140000.ips', 'Palimpsest');
     writeReport(reportsDir, 'Slack-2026-05-28-140000.ips', 'Slack');
     const { deps, captured } = makeRunnerDeps({ diagnosticReportsDir: reportsDir });
 
     const result = await runDiagnoseBundle({ contentDir, yes: true }, deps);
 
     const entries = readZipEntries(result.outputPath ?? '');
-    expect(entries).toContain('diagnostic-reports/OpenKnowledge-2026-05-28-140000.ips');
+    expect(entries).toContain('diagnostic-reports/Palimpsest-2026-05-28-140000.ips');
     expect(entries).not.toContain('diagnostic-reports/Slack-2026-05-28-140000.ips');
     expect(entries).toContain('state/diagnostic-reports-status.txt');
     const summaryLine = captured.logs.find((l) => l.includes('macOS crash reports:'));
@@ -137,7 +137,7 @@ describe('runDiagnoseBundle — macOS crash reports', () => {
           : {
               status: 0,
               stdout:
-                '2026-10-04T18:49:10.000000+00:00 host kernel: Out of memory: Killed process 12 (openknowledge) total-vm:1kB\n',
+                '2026-10-04T18:49:10.000000+00:00 host kernel: Out of memory: Killed process 12 (palimpsest) total-vm:1kB\n',
               stderr: '',
             },
     };
@@ -166,8 +166,8 @@ describe('runDiagnoseBundle — macOS crash reports', () => {
 
   test('--no-redact names the crash-report rewrite as the exception', async () => {
     const contentDir = makeTmpDir();
-    const reportsDir = makeTmpDir('ok-bundle-runner-reports-');
-    writeReport(reportsDir, 'OpenKnowledge-2026-05-28-140000.ips', 'OpenKnowledge');
+    const reportsDir = makeTmpDir('ps-bundle-runner-reports-');
+    writeReport(reportsDir, 'Palimpsest-2026-05-28-140000.ips', 'Palimpsest');
     const { deps, captured } = makeRunnerDeps({ diagnosticReportsDir: reportsDir });
 
     await runDiagnoseBundle({ contentDir, yes: true, redact: false }, deps);
@@ -208,7 +208,7 @@ describe('runDiagnoseBundle — tracer bullet', () => {
     const result = await runDiagnoseBundle({ contentDir, yes: true }, deps);
 
     expect(result.outputPath).not.toBeNull();
-    expect(result.outputPath).toContain(join(contentDir, '.ok', 'local', 'diagnostics'));
+    expect(result.outputPath).toContain(join(contentDir, '.ps', 'local', 'diagnostics'));
     expect(result.outputPath?.endsWith('.zip')).toBe(true);
     expect(existsSync(result.outputPath ?? '')).toBe(true);
 
@@ -229,7 +229,7 @@ describe('runDiagnoseBundle — no running server', () => {
     const result = await runDiagnoseBundle({ contentDir, yes: true }, deps);
     expect(result.outputPath).not.toBeNull();
 
-    const extractDir = makeTmpDir('ok-bundle-extract-');
+    const extractDir = makeTmpDir('ps-bundle-extract-');
     execSync(
       `unzip -q ${JSON.stringify(result.outputPath ?? '')} -d ${JSON.stringify(extractDir)}`,
     );
@@ -251,7 +251,7 @@ describe('runDiagnoseBundle — --pid integration', () => {
     const { deps } = makeRunnerDeps({
       runProcessDiagnose: async (pid) => {
         pidSeen = pid;
-        const dir = mkdtempSync(join(tmpdir(), 'ok-bundle-test-proc-'));
+        const dir = mkdtempSync(join(tmpdir(), 'ps-bundle-test-proc-'));
         tmpDirs.push(dir);
         writeFileSync(join(dir, 'metadata.json'), '{"pid":42,"command":"node"}');
         writeFileSync(join(dir, 'lsof.txt'), 'COMMAND PID\n');
@@ -277,7 +277,7 @@ describe('runDiagnoseBundle — prompt + summary', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/telemetry/spans-current.jsonl',
+      '.ps/local/telemetry/spans-current.jsonl',
       '{"resourceSpans":[{"attributes":[{"key":"doc.name","value":"a"}]}]}\n',
     );
     const { deps, captured } = makeRunnerDeps();
@@ -311,7 +311,7 @@ describe('runDiagnoseBundle — prompt + summary', () => {
     const result = await runDiagnoseBundle({ contentDir }, deps);
     expect(result.declined).toBe(true);
     expect(result.outputPath).toBeNull();
-    const defaultDir = join(contentDir, '.ok', 'local', 'diagnostics');
+    const defaultDir = join(contentDir, '.ps', 'local', 'diagnostics');
     if (existsSync(defaultDir)) {
       const files = (await import('node:fs')).readdirSync(defaultDir);
       expect(files.filter((f) => f.endsWith('.zip'))).toEqual([]);
@@ -341,7 +341,7 @@ describe('runDiagnoseBundle — consent summary', () => {
   function seedSpans(contentDir: string): void {
     writeAt(
       contentDir,
-      '.ok/local/telemetry/spans-current.jsonl',
+      '.ps/local/telemetry/spans-current.jsonl',
       `${JSON.stringify({
         resourceSpans: [
           {
@@ -408,7 +408,7 @@ describe('runDiagnoseBundle — consent summary', () => {
     const result = await runDiagnoseBundle({ contentDir, yes: true }, deps);
     const allLogs = captured.logs.join('\n');
 
-    const extractDir = makeTmpDir('ok-bundle-extract-');
+    const extractDir = makeTmpDir('ps-bundle-extract-');
     execSync(
       `unzip -q ${JSON.stringify(result.outputPath ?? '')} -d ${JSON.stringify(extractDir)}`,
     );
@@ -426,7 +426,7 @@ describe('runDiagnoseBundle — consent summary', () => {
 describe('runDiagnoseBundle — --out flag', () => {
   test('--out with existing parent directory writes the zip there', async () => {
     const contentDir = makeTmpDir();
-    const outDir = makeTmpDir('ok-bundle-out-');
+    const outDir = makeTmpDir('ps-bundle-out-');
     const targetPath = join(outDir, 'my-bundle.zip');
     const { deps } = makeRunnerDeps();
 
@@ -469,14 +469,14 @@ describe('runDiagnoseBundle — redaction', () => {
         },
       ],
     });
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', `${otlpLine}\n`);
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', `${otlpLine}\n`);
 
     const { deps } = makeRunnerDeps();
-    const out = join(makeTmpDir('ok-bundle-out-'), 'redacted.zip');
+    const out = join(makeTmpDir('ps-bundle-out-'), 'redacted.zip');
     const result = await runDiagnoseBundle({ contentDir, out, yes: true }, deps);
     expect(result.outputPath).toBe(out);
 
-    const extractDir = makeTmpDir('ok-bundle-extract-');
+    const extractDir = makeTmpDir('ps-bundle-extract-');
     execSync(`unzip -q ${JSON.stringify(out)} -d ${JSON.stringify(extractDir)}`);
     const zippedSpans = readFileSync(join(extractDir, 'telemetry', 'spans-current.jsonl'), 'utf-8');
 
@@ -498,7 +498,7 @@ describe('runDiagnoseBundle — redaction', () => {
     expect(existsSync(join(dirname(out), 'redacted.docnames.json'))).toBe(false);
   });
 
-  test('original on-disk JSONL files under .ok/local/ are NOT modified by --redact', async () => {
+  test('original on-disk JSONL files under .ps/local/ are NOT modified by --redact', async () => {
     const contentDir = makeTmpDir();
     const originalSpansBody = `${JSON.stringify({
       resourceSpans: [
@@ -519,18 +519,18 @@ describe('runDiagnoseBundle — redaction', () => {
       level: 30,
       'doc.name': 'original-log-doc',
     })}\n`;
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', originalSpansBody);
-    writeAt(contentDir, '.ok/local/logs/server-current.jsonl', originalLogsBody);
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', originalSpansBody);
+    writeAt(contentDir, '.ps/local/logs/server-current.jsonl', originalLogsBody);
 
     const { deps } = makeRunnerDeps();
     await runDiagnoseBundle({ contentDir, yes: true, redact: true }, deps);
 
     const spansOnDisk = readFileSync(
-      join(contentDir, '.ok/local/telemetry/spans-current.jsonl'),
+      join(contentDir, '.ps/local/telemetry/spans-current.jsonl'),
       'utf-8',
     );
     const logsOnDisk = readFileSync(
-      join(contentDir, '.ok/local/logs/server-current.jsonl'),
+      join(contentDir, '.ps/local/logs/server-current.jsonl'),
       'utf-8',
     );
     expect(spansOnDisk).toBe(originalSpansBody);
@@ -561,13 +561,13 @@ describe('runDiagnoseBundle — redaction', () => {
         },
       ],
     });
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', `${otlpLine}\n`);
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', `${otlpLine}\n`);
 
     const { deps } = makeRunnerDeps();
-    const out = join(makeTmpDir('ok-bundle-out-'), 'plain.zip');
+    const out = join(makeTmpDir('ps-bundle-out-'), 'plain.zip');
     await runDiagnoseBundle({ contentDir, out, yes: true, redact: false }, deps);
 
-    const extractDir = makeTmpDir('ok-bundle-extract-');
+    const extractDir = makeTmpDir('ps-bundle-extract-');
     execSync(`unzip -q ${JSON.stringify(out)} -d ${JSON.stringify(extractDir)}`);
     const zippedSpans = readFileSync(join(extractDir, 'telemetry', 'spans-current.jsonl'), 'utf-8');
     expect(zippedSpans).toContain('visible');

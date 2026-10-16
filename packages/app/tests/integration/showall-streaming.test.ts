@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { consumeShowAllStream, isNdjsonResponse } from '../../src/lib/show-all-stream';
 import { createTestServer, type TestServer } from './test-harness';
@@ -15,7 +15,7 @@ function showAllUrl(dir?: string): string {
 }
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-showall-stream-it-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-showall-stream-it-')));
   for (let i = 0; i < ROOT_FILE_COUNT; i++) {
     writeFileSync(join(contentDir, `file-${String(i).padStart(3, '0')}.md`), `# File ${i}\n`);
   }
@@ -71,16 +71,16 @@ describe('showAll NDJSON streaming (PRD-6856)', () => {
   }, 30_000);
 
   test('the entry cap propagates as truncated on the terminal line', async () => {
-    const prev = process.env.OK_SHOWALL_MAX_ENTRIES;
-    process.env.OK_SHOWALL_MAX_ENTRIES = '5';
+    const prev = process.env.PS_SHOWALL_MAX_ENTRIES;
+    process.env.PS_SHOWALL_MAX_ENTRIES = '5';
     try {
       const streamRes = await fetch(showAllUrl(), { headers: { Accept: 'application/x-ndjson' } });
       const { entries, truncated } = await consumeShowAllStream(streamRes);
       expect(truncated).toBe(true);
       expect(entries.length).toBeLessThanOrEqual(5);
     } finally {
-      if (prev === undefined) delete process.env.OK_SHOWALL_MAX_ENTRIES;
-      else process.env.OK_SHOWALL_MAX_ENTRIES = prev;
+      if (prev === undefined) delete process.env.PS_SHOWALL_MAX_ENTRIES;
+      else process.env.PS_SHOWALL_MAX_ENTRIES = prev;
     }
   }, 30_000);
 });

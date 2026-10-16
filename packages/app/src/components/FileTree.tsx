@@ -1,12 +1,12 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { OkignoreBinding } from '@inkeep/open-knowledge-core/config/bind-okignore-doc';
-import { isDocumentOverOpenByteLimit } from '@inkeep/open-knowledge-core/constants/document-open';
+import type { OkignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
+import { isDocumentOverOpenByteLimit } from '@palimpsest/core/constants/document-open';
 import type {
   HandoffOutcome,
   HandoffTarget,
   InstallState,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import {
   CreateFolderSuccessSchema,
   CreatePageSuccessSchema,
@@ -16,7 +16,7 @@ import {
   TrashCleanupSuccessSchema,
   UploadAssetSuccessSchema,
   WorkspaceSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { plural, t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
@@ -90,7 +90,7 @@ import {
   LINK_DECORATION_ICON_ID,
   MARKDOWN_FILE_ICON_ID,
 } from '@/components/file-tree-icon-sprite';
-import { buildOkignorePatternFromTarget } from '@/components/file-tree-okignore';
+import { buildOkignorePatternFromTarget } from '@/components/file-tree-psignore';
 import {
   applyDeleteToDocuments,
   applyDuplicateToDocuments,
@@ -122,8 +122,8 @@ import {
 import {
   applyProblemIndicators,
   FILE_TREE_PROBLEM_CSS,
-  OK_PROBLEM_BADGE_ATTR,
-  OK_PROBLEM_ROW_ATTR,
+  PS_PROBLEM_BADGE_ATTR,
+  PS_PROBLEM_ROW_ATTR,
 } from '@/components/file-tree-problem-indicators';
 import {
   applyRenameInputAffordance,
@@ -139,7 +139,7 @@ import {
   resolveFileTreeSelection,
   resolveFileTreeSelectionAction,
 } from '@/components/file-tree-selection';
-import { OK_FILE_TREE_READONLY_UNSAFE_CSS } from '@/components/file-tree-shared';
+import { PS_FILE_TREE_READONLY_UNSAFE_CSS } from '@/components/file-tree-shared';
 import { selectTrashConfirmCopy, trashTargetDisplayName } from '@/components/file-tree-trash-copy';
 import {
   classifyEmptyTree,
@@ -153,7 +153,7 @@ import {
 import { NewItemDialog } from '@/components/NewItemDialog';
 import {
   largeFileNavigationTarget,
-  okContentNavigationTarget,
+  psContentNavigationTarget,
   type ResolvedNavigationTarget,
 } from '@/components/navigation-targets';
 import { usePageList } from '@/components/PageListContext';
@@ -162,7 +162,7 @@ import {
   appendPattern,
   parseOkignoreDoc,
   serializeOkignoreDoc,
-} from '@/components/settings/okignore-doc';
+} from '@/components/settings/psignore-doc';
 import { sidebarDragPayloadForTreePath } from '@/components/sidebar-drag-payload';
 import {
   coerceTrashFailureReason,
@@ -221,7 +221,7 @@ import {
 } from '@/lib/share/run-share-action';
 import {
   hasSidebarDragType,
-  OK_SIDEBAR_DRAG_MIME,
+  PS_SIDEBAR_DRAG_MIME,
   serializeSidebarDragPayload,
 } from '@/lib/sidebar-drag';
 import { cn } from '@/lib/utils';
@@ -410,13 +410,13 @@ const FILE_TREE_CREATION_CLEARED_CSS = `
 `;
 
 const FILE_TREE_NAME_FOREGROUND_CSS = `
-  [data-type="item"]:not([data-item-selected="true"]):not([data-item-git-status]):not([${OK_PROBLEM_ROW_ATTR}]) > [data-item-section="content"] {
+  [data-type="item"]:not([data-item-selected="true"]):not([data-item-git-status]):not([${PS_PROBLEM_ROW_ATTR}]) > [data-item-section="content"] {
     color: var(--file-tree-foreground, var(--trees-fg));
   }
 `;
 
 const FILE_TREE_UNSAFE_CSS = [
-  OK_FILE_TREE_READONLY_UNSAFE_CSS,
+  PS_FILE_TREE_READONLY_UNSAFE_CSS,
   FILE_TREE_NAME_FOREGROUND_CSS,
   FILE_TREE_PROBLEM_CSS,
   FILE_TREE_RENAME_INPUT_CSS,
@@ -596,7 +596,7 @@ function FileTreeMenu({
   }
   const showSubtreeExpandAll = isFolder && subtreeExpandedCount < subtreeFolderCount;
   const showSubtreeCollapseAll = isFolder && subtreeExpandedCount > 0;
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const revealHint = !workspace ? t`No workspace` : null;
   const revealLabel = bridge ? revealInFileManagerLabel(bridge.platform) : null;
   const revealAriaLabel = revealLabel && revealHint ? `${revealLabel}, ${revealHint}` : revealLabel;
@@ -939,18 +939,18 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
     const docEntry = entries.find(
       (item): item is DocumentEntry => isDocumentEntry(item) && item.docName === action.path,
     );
-    const okTarget = okContentNavigationTarget(action.path, {
+    const psTarget = psContentNavigationTarget(action.path, {
       pages,
       docExt: docEntry?.docExt,
     });
-    if (okTarget?.kind === 'asset') {
-      openTarget(okTarget, previewOpenOptions);
-      pushHashWithoutNavigation(hashFromAssetPath(okTarget.assetPath));
+    if (psTarget?.kind === 'asset') {
+      openTarget(psTarget, previewOpenOptions);
+      pushHashWithoutNavigation(hashFromAssetPath(psTarget.assetPath));
       notifySidebarFileSelected();
       return 'non-doc';
     }
-    if (okTarget?.kind === 'doc') {
-      navigateWithPulse({ kind: 'doc', docName: okTarget.docName });
+    if (psTarget?.kind === 'doc') {
+      navigateWithPulse({ kind: 'doc', docName: psTarget.docName });
       return 'doc';
     }
     navigateWithPulse({
@@ -1033,7 +1033,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
         sidebarDragClearTimerRef.current = null;
       }
       sidebarDragInProgressRef.current = true;
-      event.dataTransfer?.setData(OK_SIDEBAR_DRAG_MIME, serializeSidebarDragPayload(payload));
+      event.dataTransfer?.setData(PS_SIDEBAR_DRAG_MIME, serializeSidebarDragPayload(payload));
     }
 
     function finalizeSidebarDragStart(event: Event) {
@@ -1136,7 +1136,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
   const { dispatch: dispatchHandoff } = useHandoffDispatch();
   const handoff = {
     installStates: handoffInstallStates,
-    isElectronHost: typeof window !== 'undefined' && window.okDesktop != null,
+    isElectronHost: typeof window !== 'undefined' && window.psDesktop != null,
     dispatch: dispatchHandoff,
   };
   const isAvailable = () => busyPathRef.current === null;
@@ -2707,7 +2707,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
 
   async function trashTargetsViaShell(
     targets: readonly FileTreeTarget[],
-    bridge: NonNullable<typeof window.okDesktop>,
+    bridge: NonNullable<typeof window.psDesktop>,
     workspaceInfo: WorkspaceInfo,
   ): Promise<{
     trashed: FileTreeTarget[];
@@ -2778,7 +2778,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
     if (failedCleanups.length > 0) {
       const failedCount = failedCleanups.length;
       const trashNoun = trashNounLabel(
-        typeof window !== 'undefined' ? window.okDesktop?.platform : undefined,
+        typeof window !== 'undefined' ? window.psDesktop?.platform : undefined,
       );
       toast.error(
         t`Server-side cleanup failed for ${plural(failedCount, { one: '# item', other: '# items' })}`,
@@ -2824,7 +2824,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
     setBusyPath(firstTarget.path);
     setDeleteRequest(null);
 
-    const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+    const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
     try {
       if (bridge && workspace) {
         const { trashed, failed } = await trashTargetsViaShell(deleteTargets, bridge, workspace);
@@ -3211,11 +3211,11 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
           <DeleteConfirmationDialog
             {...(() => {
               const variant: 'electron' | 'web' =
-                typeof window !== 'undefined' && window.okDesktop != null ? 'electron' : 'web';
+                typeof window !== 'undefined' && window.psDesktop != null ? 'electron' : 'web';
               const copy = selectTrashConfirmCopy(
                 variant,
                 deleteRequest.targets,
-                typeof window !== 'undefined' ? window.okDesktop?.platform : undefined,
+                typeof window !== 'undefined' ? window.psDesktop?.platform : undefined,
               );
               if (copy) {
                 return {
@@ -3368,7 +3368,7 @@ function findTreeItemElement(event: MouseEvent): HTMLElement | null {
 
 function eventPathHasProblemBadge(event: MouseEvent): boolean {
   for (const entry of event.composedPath()) {
-    if (entry instanceof HTMLElement && entry.hasAttribute(OK_PROBLEM_BADGE_ATTR)) {
+    if (entry instanceof HTMLElement && entry.hasAttribute(PS_PROBLEM_BADGE_ATTR)) {
       return true;
     }
   }

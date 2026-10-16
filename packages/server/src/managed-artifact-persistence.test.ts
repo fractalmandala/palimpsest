@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
-import { LINEAGE_EPOCH_KEY } from '@inkeep/open-knowledge-core';
+import { LINEAGE_EPOCH_KEY } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { FILE_WATCHER_ORIGIN } from './external-change.ts';
@@ -45,8 +45,8 @@ function adoptClaudeHost(): void {
 }
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-ma-proj-'));
-  home = mkdtempSync(join(tmpdir(), 'ok-ma-home-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-ma-proj-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-ma-home-'));
   reconciled = new Map();
 });
 afterEach(() => {
@@ -60,7 +60,7 @@ describe('managedArtifactAbsPath', () => {
   test('global with no native/store resolves to the IN-PLACE default home, never the store', () => {
     const ctx = makeCtx();
     expect(managedArtifactAbsPath('__skill__/project/my-skill', ctx)).toBe(
-      resolve(projectDir, '.ok', 'skills', 'my-skill', 'SKILL.md'),
+      resolve(projectDir, '.ps', 'skills', 'my-skill', 'SKILL.md'),
     );
     expect(managedArtifactAbsPath('__skill__/global/my-skill', ctx)).toBe(
       resolve(home, '.claude', 'skills', 'my-skill', 'SKILL.md'),
@@ -78,14 +78,14 @@ describe('managedArtifactAbsPath', () => {
     expect(managedArtifactAbsPath('__skill__/global/native-one/references/x', ctx)).toBe(
       resolve(nativeDir, 'references', 'x.md'),
     );
-    const storeDir = resolve(home, '.ok', 'skills', 'native-one');
+    const storeDir = resolve(home, '.ps', 'skills', 'native-one');
     mkdirSync(storeDir, { recursive: true });
     writeFileSync(join(storeDir, 'SKILL.md'), '---\nname: native-one\ndescription: d\n---\n# S');
     expect(managedArtifactAbsPath('__skill__/global/native-one', ctx)).toBe(
       resolve(nativeDir, 'SKILL.md'),
     );
     expect(managedArtifactAbsPath('__skill__/project/native-one', ctx)).toBe(
-      resolve(projectDir, '.ok', 'skills', 'native-one', 'SKILL.md'),
+      resolve(projectDir, '.ps', 'skills', 'native-one', 'SKILL.md'),
     );
   });
 
@@ -121,7 +121,7 @@ describe('managedArtifactAbsPath', () => {
 
   test('store retirement: a legacy store resident with NO native is still read (drain-pending)', () => {
     const ctx = makeCtx();
-    const storeDir = resolve(home, '.ok', 'skills', 'legacy-only');
+    const storeDir = resolve(home, '.ps', 'skills', 'legacy-only');
     mkdirSync(storeDir, { recursive: true });
     writeFileSync(join(storeDir, 'SKILL.md'), '---\nname: legacy-only\ndescription: d\n---\n# L');
     expect(managedArtifactAbsPath('__skill__/global/legacy-only', ctx)).toBe(
@@ -207,7 +207,7 @@ describe('store/load round-trip', () => {
     mkdirSync(dirname(managedArtifactAbsPath(docName, makeCtx())), { recursive: true });
   });
 
-  test('store serializes Y.Text("source") verbatim to .ok/skills/<n>/SKILL.md', async () => {
+  test('store serializes Y.Text("source") verbatim to .ps/skills/<n>/SKILL.md', async () => {
     const ctx = makeCtx();
     const doc = new Y.Doc();
     doc.transact(() => doc.getText('source').insert(0, SRC), 'agent');
@@ -269,7 +269,7 @@ describe('store/load round-trip', () => {
     expect(fresh.getMap('lifecycle').get(LINEAGE_EPOCH_KEY)).toBeUndefined();
 
     expect(existsSync(join(projectDir, '__template__', 'notes', 'daily.md'))).toBe(false);
-    expect(existsSync(join(projectDir, 'notes', '.ok', 'templates', 'daily.md'))).toBe(false);
+    expect(existsSync(join(projectDir, 'notes', '.ps', 'templates', 'daily.md'))).toBe(false);
   });
 
   test('store is a no-op when content equals LKG', async () => {
@@ -347,11 +347,11 @@ describe('discarded-edit backups', () => {
   }
 
   function backupDirs(): string[] {
-    return readdirSync(resolve(home, '.ok', 'edit-backups', 'discarded')).sort();
+    return readdirSync(resolve(home, '.ps', 'edit-backups', 'discarded')).sort();
   }
 
   function backupsIn(dir: string): string[] {
-    const abs = resolve(home, '.ok', 'edit-backups', 'discarded', dir);
+    const abs = resolve(home, '.ps', 'edit-backups', 'discarded', dir);
     return readdirSync(abs).map((f) => readFileSync(resolve(abs, f), 'utf-8'));
   }
 
@@ -422,7 +422,7 @@ describe('concurrent-writer reconcile', () => {
     expect(reconciled.get(docName)).toBe(otherWriter);
 
     const safe = docName.replace(/[^A-Za-z0-9._-]+/g, '__');
-    const stashDir = resolve(home, '.ok', 'edit-backups', 'discarded', safe);
+    const stashDir = resolve(home, '.ps', 'edit-backups', 'discarded', safe);
     const stashed = readdirSync(stashDir);
     expect(stashed).toHaveLength(1);
     expect(readFileSync(resolve(stashDir, stashed[0] as string), 'utf-8')).toContain('local edit');
@@ -508,19 +508,19 @@ describe('managedArtifactDocNameForPath (reverse resolver)', () => {
   test('maps a global SKILL.md leaf back to its doc name; project paths are content', () => {
     const ctx = makeCtx();
     expect(
-      managedArtifactDocNameForPath(resolve(projectDir, '.ok/skills/my-skill/SKILL.md'), ctx),
+      managedArtifactDocNameForPath(resolve(projectDir, '.ps/skills/my-skill/SKILL.md'), ctx),
     ).toBeNull();
     expect(
-      managedArtifactDocNameForPath(resolve(home, '.ok/skills/notes-helper/SKILL.md'), ctx),
+      managedArtifactDocNameForPath(resolve(home, '.ps/skills/notes-helper/SKILL.md'), ctx),
     ).toBe('__skill__/global/notes-helper');
     expect(
-      managedArtifactDocNameForPath(resolve(home, '.ok/skills/nh/references/patterns.md'), ctx),
+      managedArtifactDocNameForPath(resolve(home, '.ps/skills/nh/references/patterns.md'), ctx),
     ).toBe('__skill__/global/nh/references/patterns');
     expect(
-      managedArtifactDocNameForPath(resolve(home, '.ok/skills/nh/references/guide.mdx'), ctx),
+      managedArtifactDocNameForPath(resolve(home, '.ps/skills/nh/references/guide.mdx'), ctx),
     ).toBe('__skill__/global/nh/references/guide');
     expect(
-      managedArtifactDocNameForPath(resolve(home, '.ok/skills/nh/scripts/run.sh'), ctx),
+      managedArtifactDocNameForPath(resolve(home, '.ps/skills/nh/scripts/run.sh'), ctx),
     ).toBeNull();
   });
 
@@ -547,9 +547,9 @@ describe('managedArtifactDocNameForPath (reverse resolver)', () => {
   test('template disk paths never reverse-map to a managed doc name (content docs now)', () => {
     const ctx = makeCtx();
     for (const path of [
-      resolve(projectDir, '.ok/templates/daily.md'),
-      resolve(projectDir, 'notes/sub/.ok/templates/meeting.md'),
-      resolve(projectDir, '.ok/templates/a/b.md'),
+      resolve(projectDir, '.ps/templates/daily.md'),
+      resolve(projectDir, 'notes/sub/.ps/templates/meeting.md'),
+      resolve(projectDir, '.ps/templates/a/b.md'),
     ]) {
       expect(managedArtifactDocNameForPath(path, ctx)).toBeNull();
     }
@@ -558,11 +558,11 @@ describe('managedArtifactDocNameForPath (reverse resolver)', () => {
   test('returns null for non-leaf / malformed / out-of-root paths', () => {
     const ctx = makeCtx();
     for (const bad of [
-      resolve(projectDir, '.ok/skills/SKILL.md'),
-      resolve(projectDir, '.ok/skills/a/b/SKILL.md'),
-      resolve(projectDir, '.ok/skills/my-skill/OTHER.md'),
-      resolve(projectDir, '.ok/skills/Bad/SKILL.md'),
-      resolve(projectDir, '.ok/templates/t/SKILL.md'),
+      resolve(projectDir, '.ps/skills/SKILL.md'),
+      resolve(projectDir, '.ps/skills/a/b/SKILL.md'),
+      resolve(projectDir, '.ps/skills/my-skill/OTHER.md'),
+      resolve(projectDir, '.ps/skills/Bad/SKILL.md'),
+      resolve(projectDir, '.ps/templates/t/SKILL.md'),
       resolve(projectDir, 'notes/SKILL.md'),
       '/etc/passwd',
     ]) {
@@ -572,9 +572,9 @@ describe('managedArtifactDocNameForPath (reverse resolver)', () => {
 });
 
 describe('managedArtifactContributorAttribution (editor-edit versioning)', () => {
-  test('project skill → .ok/skills key + skill- subject', () => {
+  test('project skill → .ps/skills key + skill- subject', () => {
     expect(managedArtifactContributorAttribution('__skill__/project/trip-log')).toEqual({
-      docKey: '.ok/skills/trip-log',
+      docKey: '.ps/skills/trip-log',
       subject: 'skill-edit: trip-log/SKILL.md',
     });
   });
@@ -595,13 +595,13 @@ describe('managedArtifactContributorAttribution (editor-edit versioning)', () =>
 
 describe('managedArtifactSkillsRoots', () => {
   test('covers every native user root, with the legacy store included but not privileged', () => {
-    for (const d of ['.claude', '.agents', '.ok']) mkdirSync(join(home, d), { recursive: true });
+    for (const d of ['.claude', '.agents', '.ps']) mkdirSync(join(home, d), { recursive: true });
     const ctx = makeCtx();
     const roots = managedArtifactSkillsRoots(ctx);
     expect(roots).toContain(resolve(home, '.claude', 'skills'));
     expect(roots).toContain(resolve(home, '.agents', 'skills'));
-    expect(roots).toContain(resolve(home, '.ok', 'skills'));
-    expect(roots[0]).not.toBe(resolve(home, '.ok', 'skills'));
+    expect(roots).toContain(resolve(home, '.ps', 'skills'));
+    expect(roots[0]).not.toBe(resolve(home, '.ps', 'skills'));
     expect(roots.every((r) => r.startsWith(home))).toBe(true);
   });
 
@@ -620,12 +620,12 @@ describe('managedArtifactSkillsRoots', () => {
 });
 
 describe('managedArtifactTimelinePaths', () => {
-  test('project skill → versioned, with the .ok/skills key + SKILL.md leaf', () => {
+  test('project skill → versioned, with the .ps/skills key + SKILL.md leaf', () => {
     expect(managedArtifactTimelinePaths('__skill__/project/my-skill')).toEqual({
       managed: true,
       versioned: true,
-      docKey: '.ok/skills/my-skill',
-      filePath: '.ok/skills/my-skill/SKILL.md',
+      docKey: '.ps/skills/my-skill',
+      filePath: '.ps/skills/my-skill/SKILL.md',
     });
   });
 
@@ -646,7 +646,7 @@ describe('__extskill__ editable-unmanaged skill — guarded external write-back'
   let skillDir: string;
 
   beforeEach(() => {
-    skillDir = mkdtempSync(join(tmpdir(), 'ok-extskill-'));
+    skillDir = mkdtempSync(join(tmpdir(), 'ps-extskill-'));
     writeFileSync(join(skillDir, 'SKILL.md'), '---\nname: borrowed\n---\n\n# Original\n');
   });
   afterEach(() => {
@@ -712,7 +712,7 @@ describe('__extskill__ editable-unmanaged skill — guarded external write-back'
       src.insert(0, 'clobbered\n');
     }, 'agent');
     await storeManagedArtifactDoc(doc, docName, 'agent', ctx);
-    const backup = join(home, '.ok', 'edit-backups', 'borrowed', 'SKILL.md.bak');
+    const backup = join(home, '.ps', 'edit-backups', 'borrowed', 'SKILL.md.bak');
     expect(existsSync(backup)).toBe(true);
     expect(readFileSync(backup, 'utf-8')).toBe('---\nname: borrowed\n---\n\n# Original\n');
   });

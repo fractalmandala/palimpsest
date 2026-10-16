@@ -1,4 +1,4 @@
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 import { useDocumentContext } from '@/editor/DocumentContext';

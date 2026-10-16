@@ -4,8 +4,8 @@ import { dirname, join, resolve } from 'node:path';
 import type {
   ReportBundleLevel as CoreReportBundleLevel,
   ReportBundleSummary as CoreReportBundleSummary,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import { parse as parseYaml } from 'yaml';
 import {
   type BundleExtraFile,
@@ -14,7 +14,7 @@ import {
   collectShipItLogFiles,
   collectStandardBundle,
   collectUserLogFiles,
-  okBugReportsDir,
+  psBugReportsDir,
   resolveProjectSlug,
 } from './commands/bug-report-bundle.ts';
 import {
@@ -61,7 +61,7 @@ export interface ReportBundleResult {
 }
 
 function resolveContentDir(projectDir: string, logger?: BundleLogger): string {
-  const configPath = join(projectDir, '.ok', 'config.yml');
+  const configPath = join(projectDir, '.ps', 'config.yml');
   if (existsSync(configPath)) {
     try {
       const parsed: unknown = parseYaml(readFileSync(configPath, 'utf-8'));
@@ -73,7 +73,7 @@ function resolveContentDir(projectDir: string, logger?: BundleLogger): string {
     } catch (err) {
       logger?.warn(
         { configPath, err },
-        'bug-report: failed to read .ok/config.yml; falling back to project root as content dir',
+        'bug-report: failed to read .ps/config.yml; falling back to project root as content dir',
       );
     }
   }
@@ -97,10 +97,10 @@ async function collectFullBundle(
     note: opts.note,
     extraFiles: opts.extraFiles,
     userLogFiles: [
-      ...collectUserLogFiles(projectSlug, opts.userLogsDir ?? join(okUserHomeDir(), 'logs')),
+      ...collectUserLogFiles(projectSlug, opts.userLogsDir ?? join(psUserHomeDir(), 'logs')),
       ...collectShipItLogFiles(opts.cachesDir ?? join(homedir(), 'Library', 'Caches')),
     ],
-    userStateFiles: collectBugReportLedgerFiles(opts.bugReportsDir ?? okBugReportsDir()),
+    userStateFiles: collectBugReportLedgerFiles(opts.bugReportsDir ?? psBugReportsDir()),
     diagnosticReports,
     osTerminationEvidence,
     deps: { readDesktopEnv, readLanguage, logger: opts.logger },
@@ -154,7 +154,7 @@ export async function collectReportBundle(
     outputPath: opts.outputPath,
     userLogsDir: opts.userLogsDir,
     shipItLogFiles: collectShipItLogFiles(opts.cachesDir ?? join(homedir(), 'Library', 'Caches')),
-    bugReportLedgerFiles: collectBugReportLedgerFiles(opts.bugReportsDir ?? okBugReportsDir()),
+    bugReportLedgerFiles: collectBugReportLedgerFiles(opts.bugReportsDir ?? psBugReportsDir()),
     diagnosticReports: opts.level === 'full' ? resolveDiagnosticReports() : undefined,
     osTerminationEvidence:
       opts.level === 'full'

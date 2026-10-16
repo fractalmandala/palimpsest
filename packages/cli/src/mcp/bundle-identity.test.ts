@@ -9,8 +9,8 @@ import {
 } from './bundle-identity.ts';
 
 const DARWIN: NodeJS.Platform = 'darwin';
-const ANCHOR_PATH = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
-const REAL_ANCHOR_PATH = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+const ANCHOR_PATH = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
+const REAL_ANCHOR_PATH = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
 
 function input(overrides: Partial<BundleIdentityCheckInput> = {}): BundleIdentityCheckInput {
   return {
@@ -442,15 +442,15 @@ describe('captureBootIdentity', () => {
   test('returns { resolvedPath, inode } when both fs probes succeed', () => {
     const logs: string[] = [];
     const result = captureBootIdentity(
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       {
-        realpathSync: () => '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        realpathSync: () => '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         statInoSync: () => 299_520_753,
         log: (m) => logs.push(m),
       },
     );
     expect(result).toEqual({
-      resolvedPath: '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+      resolvedPath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       inode: 299_520_753,
     });
     expect(logs).toEqual([]);
@@ -477,9 +477,9 @@ describe('captureBootIdentity', () => {
   test('returns undefined and logs underlying error when statInoSync throws', () => {
     const logs: string[] = [];
     const result = captureBootIdentity(
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       {
-        realpathSync: () => '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        realpathSync: () => '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         statInoSync: () => {
           throw new Error("EACCES: permission denied, stat '/path/to/bundle'");
         },

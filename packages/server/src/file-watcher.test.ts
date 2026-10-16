@@ -203,7 +203,7 @@ describe('isSelfRemoval', () => {
 
   beforeEach(async () => {
     removalTracker.clear();
-    removalDir = await mkdtemp(resolve(tmpdir(), 'ok-removal-test-'));
+    removalDir = await mkdtemp(resolve(tmpdir(), 'ps-removal-test-'));
   });
 
   afterEach(async () => {
@@ -451,7 +451,7 @@ describe('classifyEvents', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-watcher-test-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-watcher-test-'));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();
@@ -634,7 +634,7 @@ describe('startWatcher file index', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-watcher-index-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-watcher-index-'));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();
@@ -733,11 +733,11 @@ describe('startWatcher file index', () => {
     }
   });
 
-  test('file index excludes files matching .okignore patterns', async () => {
+  test('file index excludes files matching .psignore patterns', async () => {
     mkdirSync(resolve(contentDir, 'archive'), { recursive: true });
     writeFileSync(resolve(contentDir, 'readme.md'), '# README\n');
     writeFileSync(resolve(contentDir, 'archive', 'old.md'), '# Old\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), 'content/archive/\n');
+    writeFileSync(resolve(tmpDir, '.psignore'), 'content/archive/\n');
 
     const filter = createContentFilter({
       projectDir: tmpDir,
@@ -878,7 +878,7 @@ describe('startWatcher file index', () => {
   test('pruneFileIndexNowExcluded removes entries that became excluded after rebuild', async () => {
     writeFileSync(resolve(contentDir, 'keep.md'), '# Keep\n');
     writeFileSync(resolve(contentDir, 'hide-me.md'), '# Hide me\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), '');
+    writeFileSync(resolve(tmpDir, '.psignore'), '');
 
     const filter = createContentFilter({
       projectDir: tmpDir,
@@ -890,7 +890,7 @@ describe('startWatcher file index', () => {
       expect(handle.getFileIndex().has('keep')).toBe(true);
       expect(handle.getFileIndex().has('hide-me')).toBe(true);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), 'hide-me.md\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'hide-me.md\n');
       await filter.rebuildIgnorePatterns();
 
       const pruned = handle.pruneFileIndexNowExcluded();
@@ -905,7 +905,7 @@ describe('startWatcher file index', () => {
   test('pruneFolderIndexNowExcluded removes folders that became excluded after rebuild', async () => {
     mkdirSync(resolve(contentDir, 'archive', 'sub'), { recursive: true });
     writeFileSync(resolve(contentDir, 'archive', 'sub', 'old.md'), '# Old\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), '');
+    writeFileSync(resolve(tmpDir, '.psignore'), '');
 
     const filter = createContentFilter({
       projectDir: tmpDir,
@@ -917,7 +917,7 @@ describe('startWatcher file index', () => {
       expect(handle.getFolderIndex().has('archive')).toBe(true);
       expect(handle.getFolderIndex().has('archive/sub')).toBe(true);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), 'content/archive/\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'content/archive/\n');
       await filter.rebuildIgnorePatterns();
 
       const pruned = handle.pruneFolderIndexNowExcluded();
@@ -931,7 +931,7 @@ describe('startWatcher file index', () => {
 
   test('pruneFileIndexNowExcluded is a no-op when nothing is now-excluded', async () => {
     writeFileSync(resolve(contentDir, 'keep.md'), '# Keep\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), '');
+    writeFileSync(resolve(tmpDir, '.psignore'), '');
 
     const filter = createContentFilter({
       projectDir: tmpDir,
@@ -942,7 +942,7 @@ describe('startWatcher file index', () => {
     try {
       expect(handle.getFileIndex().has('keep')).toBe(true);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), 'something-else.md\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'something-else.md\n');
       await filter.rebuildIgnorePatterns();
 
       expect(handle.pruneFileIndexNowExcluded()).toBe(0);
@@ -954,7 +954,7 @@ describe('startWatcher file index', () => {
 
   test('pruneFolderIndexNowExcluded is a no-op when nothing is now-excluded', async () => {
     mkdirSync(resolve(contentDir, 'keep'), { recursive: true });
-    writeFileSync(resolve(tmpDir, '.okignore'), '');
+    writeFileSync(resolve(tmpDir, '.psignore'), '');
 
     const filter = createContentFilter({
       projectDir: tmpDir,
@@ -965,7 +965,7 @@ describe('startWatcher file index', () => {
     try {
       expect(handle.getFolderIndex().has('keep')).toBe(true);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), 'content/something-else/\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'content/something-else/\n');
       await filter.rebuildIgnorePatterns();
 
       expect(handle.pruneFolderIndexNowExcluded()).toBe(0);
@@ -1041,7 +1041,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-reconcile-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-reconcile-'));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();
@@ -1054,7 +1054,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
   test('re-includes files previously excluded after pattern removal (start-with-pattern → remove)', async () => {
     writeFileSync(resolve(contentDir, 'keep.md'), '# Keep\n');
     writeFileSync(resolve(contentDir, 'hide-me.md'), '# Hide me\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), 'hide-me.md\n');
+    writeFileSync(resolve(tmpDir, '.psignore'), 'hide-me.md\n');
 
     const filter = createContentFilter({ projectDir: tmpDir, contentDir });
     const handle = await startWatcher(contentDir, async () => {}, filter);
@@ -1062,7 +1062,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
       expect(handle.getFileIndex().has('keep')).toBe(true);
       expect(handle.getFileIndex().has('hide-me')).toBe(false);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), '');
+      writeFileSync(resolve(tmpDir, '.psignore'), '');
       const result = await filter.rebuildIgnorePatterns();
       expect(result.ok).toBe(true);
 
@@ -1079,7 +1079,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
   test('still prunes now-excluded files after pattern addition (other direction)', async () => {
     writeFileSync(resolve(contentDir, 'keep.md'), '# Keep\n');
     writeFileSync(resolve(contentDir, 'will-hide.md'), '# Will hide\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), '');
+    writeFileSync(resolve(tmpDir, '.psignore'), '');
 
     const filter = createContentFilter({ projectDir: tmpDir, contentDir });
     const handle = await startWatcher(contentDir, async () => {}, filter);
@@ -1087,7 +1087,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
       expect(handle.getFileIndex().has('keep')).toBe(true);
       expect(handle.getFileIndex().has('will-hide')).toBe(true);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), 'will-hide.md\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'will-hide.md\n');
       const result = await filter.rebuildIgnorePatterns();
       expect(result.ok).toBe(true);
 
@@ -1105,7 +1105,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
     mkdirSync(resolve(contentDir, 'archive', 'sub'), { recursive: true });
     writeFileSync(resolve(contentDir, 'archive', 'sub', 'old.md'), '# Old\n');
     writeFileSync(resolve(contentDir, 'keep.md'), '# Keep\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), 'archive/\n');
+    writeFileSync(resolve(tmpDir, '.psignore'), 'archive/\n');
 
     const filter = createContentFilter({ projectDir: tmpDir, contentDir });
     const handle = await startWatcher(contentDir, async () => {}, filter);
@@ -1115,7 +1115,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
       expect(handle.getFileIndex().has('archive/sub/old')).toBe(false);
       expect(handle.getFileIndex().has('keep')).toBe(true);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), '');
+      writeFileSync(resolve(tmpDir, '.psignore'), '');
       const result = await filter.rebuildIgnorePatterns();
       expect(result.ok).toBe(true);
 
@@ -1130,12 +1130,12 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
 
   test('returns zero counts when no pattern matches existing entries', async () => {
     writeFileSync(resolve(contentDir, 'keep.md'), '# Keep\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), '');
+    writeFileSync(resolve(tmpDir, '.psignore'), '');
 
     const filter = createContentFilter({ projectDir: tmpDir, contentDir });
     const handle = await startWatcher(contentDir, async () => {}, filter);
     try {
-      writeFileSync(resolve(tmpDir, '.okignore'), 'unrelated.md\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'unrelated.md\n');
       await filter.rebuildIgnorePatterns();
       const { prunedFiles, prunedFolders } = await reconcileFileIndexAfterFilterRebuild(handle);
       expect(prunedFiles).toBe(0);
@@ -1149,7 +1149,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
   test('prunes one file while re-including another in the same reconcile (pattern swap)', async () => {
     writeFileSync(resolve(contentDir, 'will-hide.md'), '# Will hide\n');
     writeFileSync(resolve(contentDir, 'was-hidden.md'), '# Was hidden\n');
-    writeFileSync(resolve(tmpDir, '.okignore'), 'was-hidden.md\n');
+    writeFileSync(resolve(tmpDir, '.psignore'), 'was-hidden.md\n');
 
     const filter = createContentFilter({ projectDir: tmpDir, contentDir });
     const handle = await startWatcher(contentDir, async () => {}, filter);
@@ -1157,7 +1157,7 @@ describe('reconcileFileIndexAfterFilterRebuild', () => {
       expect(handle.getFileIndex().has('will-hide')).toBe(true);
       expect(handle.getFileIndex().has('was-hidden')).toBe(false);
 
-      writeFileSync(resolve(tmpDir, '.okignore'), 'will-hide.md\n');
+      writeFileSync(resolve(tmpDir, '.psignore'), 'will-hide.md\n');
       const result = await filter.rebuildIgnorePatterns();
       expect(result.ok).toBe(true);
 
@@ -1182,7 +1182,7 @@ describe('file-watcher ContentFilter refcount hooks', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-watcher-refcount-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-watcher-refcount-'));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();
@@ -1688,7 +1688,7 @@ describe('startWatcher symlink handling', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ok-watcher-symlink-')));
+    tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ps-watcher-symlink-')));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();
@@ -1841,11 +1841,11 @@ describe('startWatcher symlink handling', () => {
     const SECRET = '# machine-local-secret\n';
 
     beforeEach(() => {
-      mkdirSync(resolve(contentDir, '.ok', 'local'), { recursive: true });
-      writeFileSync(resolve(contentDir, '.ok', 'local', 'secret.md'), SECRET);
+      mkdirSync(resolve(contentDir, '.ps', 'local'), { recursive: true });
+      writeFileSync(resolve(contentDir, '.ps', 'local', 'secret.md'), SECRET);
       mkdirSync(resolve(contentDir, '.git'), { recursive: true });
       writeFileSync(resolve(contentDir, '.git', 'config'), '[core]\n');
-      writeFileSync(resolve(contentDir, '.ok', 'config.yml'), '');
+      writeFileSync(resolve(contentDir, '.ps', 'config.yml'), '');
     });
 
     const filterFor = () => createContentFilter({ projectDir: contentDir, contentDir });
@@ -1867,7 +1867,7 @@ describe('startWatcher symlink handling', () => {
 
     test('runtime events for a doc linked into machine-local state are dropped', async () => {
       const linkPath = resolve(contentDir, 'leak.md');
-      symlinkSync('.ok/local/secret.md', linkPath);
+      symlinkSync('.ps/local/secret.md', linkPath);
 
       const collected: DiskEvent[] = [];
       await handleRawEvents(
@@ -2086,7 +2086,7 @@ describe('toParcelIgnorePaths', () => {
   let projectDir: string;
 
   beforeEach(async () => {
-    projectDir = await mkdtemp(resolve(tmpdir(), 'ok-parcel-ignore-'));
+    projectDir = await mkdtemp(resolve(tmpdir(), 'ps-parcel-ignore-'));
   });
 
   afterEach(async () => {
@@ -2098,8 +2098,8 @@ describe('toParcelIgnorePaths', () => {
 
     expect(toParcelIgnorePaths(filter.getWatcherIgnoreGlobs()).sort()).toEqual([
       '.git',
-      '.ok/local',
-      '.ok/worktrees',
+      '.ps/local',
+      '.ps/worktrees',
       'node_modules',
     ]);
   });
@@ -2121,7 +2121,7 @@ describe('toParcelIgnorePaths', () => {
 
   test('drops ordinary user exclusions, whose subtrees can still admit content', () => {
     writeFileSync(resolve(projectDir, '.gitignore'), 'dist/\ntmp/\n');
-    writeFileSync(resolve(projectDir, '.okignore'), 'drafts/\n');
+    writeFileSync(resolve(projectDir, '.psignore'), 'drafts/\n');
 
     const filter = createContentFilter({ projectDir, contentDir: projectDir });
     const ignorePaths = toParcelIgnorePaths(filter.getWatcherIgnoreGlobs());
@@ -2154,7 +2154,7 @@ describe('structural-ignore discovery feeds the parcel prefix list', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    contentDir = await mkdtemp(resolve(tmpdir(), 'ok-structural-discovery-'));
+    contentDir = await mkdtemp(resolve(tmpdir(), 'ps-structural-discovery-'));
   });
 
   afterEach(async () => {
@@ -2163,8 +2163,8 @@ describe('structural-ignore discovery feeds the parcel prefix list', () => {
 
   test('merges discovered nested occurrences with the structural roots', () => {
     const merged = toParcelIgnorePaths(
-      ['.git', 'node_modules', '.ok/local', '.ok/worktrees', '**/node_modules/**', 'dist/'],
-      ['packages/app/node_modules', 'vendor/lib/.git', 'sub/.ok/local'],
+      ['.git', 'node_modules', '.ps/local', '.ps/worktrees', '**/node_modules/**', 'dist/'],
+      ['packages/app/node_modules', 'vendor/lib/.git', 'sub/.ps/local'],
     );
 
     expect(merged).toEqual(
@@ -2173,7 +2173,7 @@ describe('structural-ignore discovery feeds the parcel prefix list', () => {
         'node_modules',
         'packages/app/node_modules',
         'vendor/lib/.git',
-        'sub/.ok/local',
+        'sub/.ps/local',
       ]),
     );
     expect(merged).not.toContain('**/node_modules/**');
@@ -2183,10 +2183,10 @@ describe('structural-ignore discovery feeds the parcel prefix list', () => {
   test('drops a discovered directory whose real name contains a glob metacharacter', () => {
     const merged = toParcelIgnorePaths(
       ['.git', 'node_modules'],
-      ['a[0-9]/node_modules', 'ok-dir/node_modules'],
+      ['a[0-9]/node_modules', 'ps-dir/node_modules'],
     );
 
-    expect(merged).toContain('ok-dir/node_modules');
+    expect(merged).toContain('ps-dir/node_modules');
     expect(merged).not.toContain('a[0-9]/node_modules');
   });
 
@@ -2216,9 +2216,9 @@ describe('structural-ignore discovery feeds the parcel prefix list', () => {
   });
 
   test('records a nested two-segment root, whose match is a suffix not a segment', async () => {
-    mkdirSync(resolve(contentDir, 'packages/sub/.ok/local/logs'), { recursive: true });
-    mkdirSync(resolve(contentDir, 'packages/sub/.ok/templates'), { recursive: true });
-    writeFileSync(resolve(contentDir, 'packages/sub/.ok/templates/note.md'), '# tmpl\n');
+    mkdirSync(resolve(contentDir, 'packages/sub/.ps/local/logs'), { recursive: true });
+    mkdirSync(resolve(contentDir, 'packages/sub/.ps/templates'), { recursive: true });
+    writeFileSync(resolve(contentDir, 'packages/sub/.ps/templates/note.md'), '# tmpl\n');
 
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     const watcher = await startWatcher(contentDir, async () => {}, filter, {
@@ -2226,8 +2226,8 @@ describe('structural-ignore discovery feeds the parcel prefix list', () => {
     });
     try {
       const discovered = [...watcher.getStructuralIgnoreDirs()];
-      expect(discovered).toContain('packages/sub/.ok/local');
-      expect(discovered).not.toContain('packages/sub/.ok');
+      expect(discovered).toContain('packages/sub/.ps/local');
+      expect(discovered).not.toContain('packages/sub/.ps');
     } finally {
       await watcher.unsubscribe();
     }
@@ -2254,7 +2254,7 @@ describe('file index canonical path after a real rename', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ok-watcher-rename-')));
+    tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ps-watcher-rename-')));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();

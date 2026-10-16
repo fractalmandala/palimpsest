@@ -1,21 +1,21 @@
 import type {
-  OkMenuDispatchResult,
-  OkMenuRendererSnapshot,
-  OkSpellcheckEnabledSetResult,
-  OkSpellingLanguagesQueryResult,
-  OkSpellingLanguagesSetResult,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsMenuDispatchResult,
+  PsMenuRendererSnapshot,
+  PsSpellcheckEnabledSetResult,
+  PsSpellingLanguagesQueryResult,
+  PsSpellingLanguagesSetResult,
+} from '@palimpsest/core/desktop-bridge';
 
 export function asMenuRendererSnapshot(
-  result: OkMenuDispatchResult,
-): OkMenuRendererSnapshot | undefined {
+  result: PsMenuDispatchResult,
+): PsMenuRendererSnapshot | undefined {
   if (result == null || 'kind' in result) return undefined;
   return result;
 }
 
 export function asSpellingLanguagesQueryResult(
-  result: OkMenuDispatchResult,
-): OkSpellingLanguagesQueryResult {
+  result: PsMenuDispatchResult,
+): PsSpellingLanguagesQueryResult {
   if (result != null && 'kind' in result && result.kind === 'spelling-languages-query') {
     return result;
   }
@@ -25,8 +25,8 @@ export function asSpellingLanguagesQueryResult(
 }
 
 export function asSpellingLanguagesSetResult(
-  result: OkMenuDispatchResult,
-): OkSpellingLanguagesSetResult {
+  result: PsMenuDispatchResult,
+): PsSpellingLanguagesSetResult {
   if (result != null && 'kind' in result && result.kind === 'spelling-languages-set') {
     return result;
   }
@@ -36,8 +36,8 @@ export function asSpellingLanguagesSetResult(
 }
 
 export function asSpellcheckEnabledSetResult(
-  result: OkMenuDispatchResult,
-): OkSpellcheckEnabledSetResult {
+  result: PsMenuDispatchResult,
+): PsSpellcheckEnabledSetResult {
   if (result != null && 'kind' in result && result.kind === 'spellcheck-enabled-set') {
     return result;
   }

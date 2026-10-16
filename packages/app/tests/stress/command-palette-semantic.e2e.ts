@@ -1,4 +1,4 @@
-import type { SemanticIndexStatus } from '@inkeep/open-knowledge-core';
+import type { SemanticIndexStatus } from '@palimpsest/core';
 import type { Page } from '@playwright/test';
 import { expect, test } from './_helpers';
 
@@ -490,7 +490,7 @@ test.describe('command-palette semantic mode — gate, pill, submit, sticky, esc
     await semanticPill(page).click();
 
     await expect(page.getByTestId('command-palette-semantic-restart-required')).toContainText(
-      "The provider's vector size kept changing. Restart OpenKnowledge",
+      "The provider's vector size kept changing. Restart Palimpsest",
     );
     await expect(submitRow(page)).toHaveCount(0);
     await expect(coverageBanner(page)).toBeHidden();

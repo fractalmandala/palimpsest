@@ -13,8 +13,8 @@ describe('assertRealpathWithinDir', () => {
     root = mkdtempSync(join(tmpdir(), 'symlink-guard-'));
     mkdirSync(join(root, '.git', 'hooks'), { recursive: true });
     writeFileSync(join(root, '.git', 'config'), '[core]\n');
-    mkdirSync(join(root, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(root, '.ok', 'local', 'config.yml'), 'autoSync:\n  mode: full\n');
+    mkdirSync(join(root, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(root, '.ps', 'local', 'config.yml'), 'autoSync:\n  mode: full\n');
     mkdirSync(join(root, 'notes'), { recursive: true });
   });
 
@@ -46,8 +46,8 @@ describe('assertRealpathWithinDir', () => {
     );
   });
 
-  it('refuses a symlink pointing into the .ok state dir (config hijack)', () => {
-    symlinkSync('../.ok/local/config.yml', join(root, 'notes', 'okcfg.md'));
+  it('refuses a symlink pointing into the .ps state dir (config hijack)', () => {
+    symlinkSync('../.ps/local/config.yml', join(root, 'notes', 'okcfg.md'));
     expect(() => assertRealpathWithinDir(join(root, 'notes', 'okcfg.md'), root)).toThrow(
       SymlinkEscapeError,
     );
@@ -74,7 +74,7 @@ describe('assertRealpathWithinDir', () => {
   });
 });
 
-describe('assertRealpathWithinDir — shareable .ok exemption', () => {
+describe('assertRealpathWithinDir — shareable .ps exemption', () => {
   let root: string;
   const opts = { allowShareableOkArtifact: isShareableOkArtifact };
 
@@ -82,9 +82,9 @@ describe('assertRealpathWithinDir — shareable .ok exemption', () => {
     root = mkdtempSync(join(tmpdir(), 'symlink-guard-ok-'));
     mkdirSync(join(root, '.git', 'hooks'), { recursive: true });
     writeFileSync(join(root, '.git', 'config'), '[core]\n');
-    mkdirSync(join(root, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(root, '.ok', 'local', 'config.yml'), 'autoSync:\n  mode: full\n');
-    mkdirSync(join(root, '.ok', 'templates'), { recursive: true });
+    mkdirSync(join(root, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(root, '.ps', 'local', 'config.yml'), 'autoSync:\n  mode: full\n');
+    mkdirSync(join(root, '.ps', 'templates'), { recursive: true });
     mkdirSync(join(root, 'notes'), { recursive: true });
   });
 
@@ -93,59 +93,59 @@ describe('assertRealpathWithinDir — shareable .ok exemption', () => {
   });
 
   it('allows an existing shareable artifact', () => {
-    writeFileSync(join(root, '.ok', 'config.yml'), 'shared: base\n');
+    writeFileSync(join(root, '.ps', 'config.yml'), 'shared: base\n');
     expect(() =>
-      assertRealpathWithinDir(join(root, '.ok', 'config.yml'), root, opts),
+      assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, opts),
     ).not.toThrow();
   });
 
   it('allows a shareable artifact that does not exist yet', () => {
     expect(() =>
-      assertRealpathWithinDir(join(root, '.ok', 'templates', 'project.md'), root, opts),
+      assertRealpathWithinDir(join(root, '.ps', 'templates', 'project.md'), root, opts),
     ).not.toThrow();
   });
 
-  it('refuses a symlink NAMED like a shareable artifact that resolves to private .ok state', () => {
-    symlinkSync('./local/config.yml', join(root, '.ok', 'config.yml'));
-    expect(() => assertRealpathWithinDir(join(root, '.ok', 'config.yml'), root, opts)).toThrow(
+  it('refuses a symlink NAMED like a shareable artifact that resolves to private .ps state', () => {
+    symlinkSync('./local/config.yml', join(root, '.ps', 'config.yml'));
+    expect(() => assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, opts)).toThrow(
       SymlinkEscapeError,
     );
   });
 
-  it('refuses a DANGLING shareable-named symlink into private .ok state', () => {
-    symlinkSync('./local/not-yet-created.yml', join(root, '.ok', 'config.yml'));
-    expect(() => assertRealpathWithinDir(join(root, '.ok', 'config.yml'), root, opts)).toThrow(
+  it('refuses a DANGLING shareable-named symlink into private .ps state', () => {
+    symlinkSync('./local/not-yet-created.yml', join(root, '.ps', 'config.yml'));
+    expect(() => assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, opts)).toThrow(
       SymlinkEscapeError,
     );
   });
 
   it('refuses a shareable-named symlink into .git even with a permissive predicate', () => {
-    symlinkSync('../.git/hooks/post-checkout', join(root, '.ok', 'config.yml'));
+    symlinkSync('../.git/hooks/post-checkout', join(root, '.ps', 'config.yml'));
     expect(() =>
-      assertRealpathWithinDir(join(root, '.ok', 'config.yml'), root, {
+      assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, {
         allowShareableOkArtifact: () => true,
       }),
     ).toThrow(SymlinkEscapeError);
   });
 
-  it('refuses a content-named symlink resolving to private .ok state', () => {
-    symlinkSync('../.ok/local/config.yml', join(root, 'notes', 'innocent.md'));
+  it('refuses a content-named symlink resolving to private .ps state', () => {
+    symlinkSync('../.ps/local/config.yml', join(root, 'notes', 'innocent.md'));
     expect(() => assertRealpathWithinDir(join(root, 'notes', 'innocent.md'), root, opts)).toThrow(
       SymlinkEscapeError,
     );
   });
 
-  it('still refuses every .ok path when no predicate is passed', () => {
-    writeFileSync(join(root, '.ok', 'config.yml'), 'shared: base\n');
-    expect(() => assertRealpathWithinDir(join(root, '.ok', 'config.yml'), root)).toThrow(
+  it('still refuses every .ps path when no predicate is passed', () => {
+    writeFileSync(join(root, '.ps', 'config.yml'), 'shared: base\n');
+    expect(() => assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root)).toThrow(
       SymlinkEscapeError,
     );
   });
 
   it('still refuses escapes outside the root regardless of the predicate', () => {
-    symlinkSync(join(tmpdir(), 'outside.yml'), join(root, '.ok', 'config.yml'));
+    symlinkSync(join(tmpdir(), 'outside.yml'), join(root, '.ps', 'config.yml'));
     expect(() =>
-      assertRealpathWithinDir(join(root, '.ok', 'config.yml'), root, {
+      assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, {
         allowShareableOkArtifact: () => true,
       }),
     ).toThrow(SymlinkEscapeError);

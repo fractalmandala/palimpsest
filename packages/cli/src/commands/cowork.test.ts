@@ -139,11 +139,11 @@ describe('coworkCommand help names the running channel CLI', () => {
 
   it.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: the description says %s init already wires Claude', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     expect(coworkCommand().description()).toBe(
-      `Build openknowledge.skill and open the Claude Desktop App so you can upload it for Claude Chat & Cowork. (Advanced/rarely needed — \`${command} init\` already wires Claude.)`,
+      `Build palimpsest.skill and open the Claude Desktop App so you can upload it for Claude Chat & Cowork. (Advanced/rarely needed — \`${command} init\` already wires Claude.)`,
     );
   });
 });

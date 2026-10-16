@@ -1,5 +1,5 @@
 import { join, relative, resolve } from 'node:path';
-import { ProblemTypeSchema } from '@inkeep/open-knowledge-core';
+import { ProblemTypeSchema } from '@palimpsest/core';
 import {
   type Expression,
   type Node,

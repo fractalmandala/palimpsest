@@ -1,14 +1,14 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- matches sibling OutlinePanel — positional list of <button> rows awaiting a shared shadcn list primitive; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-raw-html-interactive-element -- matches sibling OutlinePanel — positional list of <button> rows awaiting a shared shadcn list primitive; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import {
   type FrontmatterScope,
   isAuditEmptyScopeWarning,
   type ValidationAuditResponse,
   type ValidationDocResult,
-} from '@inkeep/open-knowledge-core/markdown/lint';
-import type { BrokenLinkSuppression } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/markdown/lint';
+import type { BrokenLinkSuppression } from '@palimpsest/core/schemas/api';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   AlertCircle,
@@ -89,7 +89,7 @@ export interface LintNavDetail {
   onNavigated?: (target: HTMLElement) => void;
 }
 
-export const LINT_NAV_EVENT = 'open-knowledge:lint-nav';
+export const LINT_NAV_EVENT = 'palimpsest:lint-nav';
 
 export type DiagnosticLike = ValidationDocResult['diagnostics'][number];
 

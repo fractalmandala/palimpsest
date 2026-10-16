@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 test('the retained artifact attributes a controlled host delay without inferring missing phases', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-phase-artifact-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-phase-artifact-'));
   fixtures.push(root);
   const logDir = join(root, 'logs');
   mkdirSync(logDir);
@@ -44,7 +44,7 @@ test('the retained artifact attributes a controlled host delay without inferring
     resume() {},
   };
   setupPtyHost({
-    phaseTrace: createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
+    phaseTrace: createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
       appendFileSync(logPath, `${JSON.stringify(record)}\n`),
     ),
     env: {},
@@ -104,7 +104,7 @@ test('the retained artifact attributes a controlled host delay without inferring
 });
 
 test('the retained summary measures the wait from native spawn to first output and on to first forward', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-phase-interval-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-phase-interval-'));
   fixtures.push(root);
   const logDir = join(root, 'logs');
   mkdirSync(logDir);
@@ -128,7 +128,7 @@ test('the retained summary measures the wait from native spawn to first output a
     resume() {},
   };
   setupPtyHost({
-    phaseTrace: createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
+    phaseTrace: createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
       appendFileSync(logPath, `${JSON.stringify(record)}\n`),
     ),
     env: {},
@@ -324,7 +324,7 @@ function collectForcedStopEvidence({
   omit?: string;
   unreadable?: string;
 } = {}) {
-  const root = mkdtempSync(join(tmpdir(), 'ok-phase-collection-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-phase-collection-'));
   fixtures.push(root);
   const logDir = join(root, 'logs');
   const userDataDir = join(root, 'profile');

@@ -13,7 +13,7 @@ const copilotUserSkill = (name: string) => join(tmpHome, '.copilot', 'skills', n
 const copilotProjectRootAtHome = (name: string) => join(tmpHome, '.github', 'skills', name);
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-copilot-root-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-copilot-root-home-'));
   mkdirSync(join(tmpHome, '.copilot', 'skills'), { recursive: true });
   mkdirSync(join(tmpHome, '.agents', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });

@@ -1,11 +1,11 @@
-import type { LintPluginId } from '@inkeep/open-knowledge-core/markdown/lint';
+import type { LintPluginId } from '@palimpsest/core/markdown/lint';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { File, Folder, Hexagon, type LucideIcon, Puzzle } from 'lucide-react';
 import { Fragment } from 'react';
 import { LINT_PLUGIN_META } from '@/components/settings/lint-plugin-meta';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { OkScaffoldPlan, OkSeedPackInfo } from '@/lib/desktop-bridge-types';
+import type { PsScaffoldPlan, PsSeedPackInfo } from '@/lib/desktop-bridge-types';
 import { skillDisplayName } from '@/lib/skill-scope';
 
 function basename(path: string): string {
@@ -39,12 +39,12 @@ interface FolderCard {
 }
 
 function describeFolderCards(
-  plan: OkScaffoldPlan,
-  selectedPack: OkSeedPackInfo | undefined,
+  plan: PsScaffoldPlan,
+  selectedPack: PsSeedPackInfo | undefined,
 ): FolderCard[] {
   const folders: FolderCard[] = [];
   for (const folder of selectedPack?.folders ?? []) {
-    const templatesNeedle = `${folder.path}/.ok/templates/`;
+    const templatesNeedle = `${folder.path}/.ps/templates/`;
     const templates = plan.created
       .filter(
         (e) =>
@@ -63,9 +63,9 @@ function describeFolderCards(
   return folders;
 }
 
-function describeFileCards(plan: OkScaffoldPlan): Array<{ path: string; name: string }> {
+function describeFileCards(plan: PsScaffoldPlan): Array<{ path: string; name: string }> {
   return plan.created
-    .filter((e) => e.kind === 'file' && !e.path.split('/').includes('.ok'))
+    .filter((e) => e.kind === 'file' && !e.path.split('/').includes('.ps'))
     .map((e) => ({ path: e.path, name: basename(e.path) }));
 }
 
@@ -83,8 +83,8 @@ export function CreatedItemsList({
   plan,
   selectedPack,
 }: {
-  plan: OkScaffoldPlan;
-  selectedPack: OkSeedPackInfo | undefined;
+  plan: PsScaffoldPlan;
+  selectedPack: PsSeedPackInfo | undefined;
 }) {
   const { t } = useLingui();
   const folders = describeFolderCards(plan, selectedPack);
@@ -172,7 +172,7 @@ export function CreatedItemsList({
     description: t`Guides your AI agents on how to work here.`,
   }));
   const pluginDescriptions: Partial<Record<LintPluginId, string>> = {
-    okf: t`Checks your project against the Open Knowledge Format. Turn it off any time in Settings.`,
+    psf: t`Checks your project against the Palimpsest Format. Turn it off any time in Settings.`,
   };
   const pluginRows: PreviewRow[] = pendingPlugins.map((plugin) => ({
     key: `plugin:${plugin.id}`,

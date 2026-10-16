@@ -7,8 +7,8 @@ import type {
   ThreadEvent,
   ThreadInfo,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
+import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
 import { useSyncExternalStore } from 'react';
 import { toast } from 'sonner';

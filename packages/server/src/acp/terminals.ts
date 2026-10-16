@@ -1,6 +1,6 @@
 import { type ChildProcess, spawn } from 'node:child_process';
 import { isAbsolute, resolve } from 'node:path';
-import type { ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 import type { PinoLogger } from '../logger.ts';
 import {
   envPath,

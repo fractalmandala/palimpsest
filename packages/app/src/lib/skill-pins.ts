@@ -1,5 +1,5 @@
-import type { Config } from '@inkeep/open-knowledge-core/config/schema';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+import type { Config } from '@palimpsest/core/config/schema';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 
 export const PIN_FIELD = { project: 'pinnedProjectSkills', global: 'pinnedGlobalSkills' } as const;
 

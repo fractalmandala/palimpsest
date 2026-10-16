@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { BridgeMergeContentLossError } from '@inkeep/open-knowledge-core';
+import { BridgeMergeContentLossError } from '@palimpsest/core';
 import { errorResponse } from './error-response.ts';
 
 export interface CatchErrorsOptions {

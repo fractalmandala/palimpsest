@@ -1,12 +1,12 @@
-import { readBrowserLanguages } from '@inkeep/open-knowledge-core/i18n/browser-locale-provider';
-import { localeDirection } from '@inkeep/open-knowledge-core/i18n/direction';
+import { readBrowserLanguages } from '@palimpsest/core/i18n/browser-locale-provider';
+import { localeDirection } from '@palimpsest/core/i18n/direction';
 import {
   AUTO_DETECTABLE_LOCALES,
   type LanguagePreference,
   SUPPORTED_LOCALES,
   type SupportedLocale,
-} from '@inkeep/open-knowledge-core/i18n/locales';
-import { resolveLocale } from '@inkeep/open-knowledge-core/i18n/resolve-locale';
+} from '@palimpsest/core/i18n/locales';
+import { resolveLocale } from '@palimpsest/core/i18n/resolve-locale';
 import { useEffect } from 'react';
 import { dynamicActivate } from './activate-locale';
 import { activatePseudoLocale, isPseudoLocaleRequested } from './dev-pseudo-locale';
@@ -15,7 +15,7 @@ import {
   showLocaleLoadFailureNotice,
 } from './locale-load-failure-notice';
 
-export const LANGUAGE_CACHE_STORAGE_KEY = 'ok-language-v1';
+export const LANGUAGE_CACHE_STORAGE_KEY = 'ps-language-v1';
 
 export interface ApplyLanguageInput {
   preference: LanguagePreference;
@@ -67,7 +67,7 @@ export function useApplyConfigLanguage({
     if (isPseudoLocaleRequested()) {
       void activatePseudoLocale().catch((error: unknown) => {
         console.warn(
-          JSON.stringify({ event: 'ok-pseudo-locale-activate-failed', error: String(error) }),
+          JSON.stringify({ event: 'ps-pseudo-locale-activate-failed', error: String(error) }),
         );
       });
       return;
@@ -93,7 +93,7 @@ export function useApplyConfigLanguage({
       })
       .catch((error: unknown) => {
         console.warn(
-          JSON.stringify({ event: 'ok-locale-activate-failed', locale, error: String(error) }),
+          JSON.stringify({ event: 'ps-locale-activate-failed', locale, error: String(error) }),
         );
         if (superseded) return;
         showLocaleLoadFailureNotice({ locale });

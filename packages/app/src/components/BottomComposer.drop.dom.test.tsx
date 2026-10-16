@@ -33,7 +33,7 @@ import {
 } from '@/editor/composer-drop.test-helper';
 import { reloadEnabledAgentsFromStorage } from '@/lib/acp/enabled-agents';
 import { registerAgent, reloadRegisteredAgentsFromStorage } from '@/lib/acp/registered-agents';
-import { OK_SIDEBAR_DRAG_MIME } from '@/lib/sidebar-drag';
+import { PS_SIDEBAR_DRAG_MIME } from '@/lib/sidebar-drag';
 import { saveStickyAgent, terminalCliId } from '@/lib/unified-agent-store';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
@@ -216,7 +216,7 @@ afterEach(() => {
   cleanup();
   unsubscribeLaunches?.();
   consoleErrorSpy.mockRestore();
-  delete (window as { okDesktop?: unknown }).okDesktop;
+  delete (window as { psDesktop?: unknown }).psDesktop;
 });
 
 describe('image drop on the bottom Ask AI composer with the in-app thread target', () => {
@@ -629,7 +629,7 @@ describe('the drag highlight on the composer card', () => {
     const card = screen.getByTestId('ask-ai-composer-card');
     const dataTransfer = {
       ...makeFilesDataTransfer([makeImageFile()]),
-      types: ['Files', OK_SIDEBAR_DRAG_MIME],
+      types: ['Files', PS_SIDEBAR_DRAG_MIME],
     };
 
     act(() => {

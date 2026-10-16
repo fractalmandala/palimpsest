@@ -1,4 +1,4 @@
-import type { OkBugReportListRow } from '@inkeep/open-knowledge-core/logger-types';
+import type { PsBugReportListRow } from '@palimpsest/core/logger-types';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ChevronDownIcon, FolderOpenIcon, MailIcon, RotateCwIcon, Trash2Icon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -24,14 +24,14 @@ function settledSends(): Map<string, number> {
 function useReportHistory() {
   const { t } = useLingui();
   const [status, setStatus] = useState<HistoryStatus>('loading');
-  const [reports, setReports] = useState<OkBugReportListRow[]>([]);
+  const [reports, setReports] = useState<PsBugReportListRow[]>([]);
   const [pending, setPending] = useState<Record<string, PendingAction>>({});
   const loadToken = useRef(0);
 
   async function load() {
     loadToken.current += 1;
     const token = loadToken.current;
-    const bugReport = window.okDesktop?.bugReport;
+    const bugReport = window.psDesktop?.bugReport;
     if (!bugReport) {
       setStatus('error');
       return;
@@ -79,14 +79,14 @@ function useReportHistory() {
     };
   }, []);
 
-  function retry(row: OkBugReportListRow) {
+  function retry(row: PsBugReportListRow) {
     if (!row.retryable) return;
     bugReportSendManager.startBugReportSend({ kind: 'history-row', row });
     setPending((prev) => ({ ...prev, [row.id]: 'retrying' }));
   }
 
-  async function remove(row: OkBugReportListRow) {
-    const bugReport = window.okDesktop?.bugReport;
+  async function remove(row: PsBugReportListRow) {
+    const bugReport = window.psDesktop?.bugReport;
     if (!bugReport) return;
     setPending((prev) => ({ ...prev, [row.id]: 'deleting' }));
     await bugReport.delete(row.id).catch(() => undefined);
@@ -94,19 +94,19 @@ function useReportHistory() {
     clearPending([row.id]);
   }
 
-  function reveal(row: OkBugReportListRow) {
-    void window.okDesktop?.shell.showItemInFolder(row.zipPath);
+  function reveal(row: PsBugReportListRow) {
+    void window.psDesktop?.shell.showItemInFolder(row.zipPath);
   }
 
-  function contactSupport(row: OkBugReportListRow) {
+  function contactSupport(row: PsBugReportListRow) {
     if (row.reference === undefined) return;
-    void window.okDesktop?.shell.openExternal(supportMailtoUrl(t`Bug report ${row.reference}`));
+    void window.psDesktop?.shell.openExternal(supportMailtoUrl(t`Bug report ${row.reference}`));
   }
 
   return { status, reports, pending, retry, remove, reveal, contactSupport };
 }
 
-function StateBadge({ state }: { state: OkBugReportListRow['state'] }) {
+function StateBadge({ state }: { state: PsBugReportListRow['state'] }) {
   switch (state) {
     case 'sent':
       return (
@@ -155,12 +155,12 @@ function ReportRow({
   onReveal,
   onDelete,
 }: {
-  row: OkBugReportListRow;
+  row: PsBugReportListRow;
   pending: PendingAction | undefined;
-  onRetry: (row: OkBugReportListRow) => void;
-  onContactSupport: (row: OkBugReportListRow) => void;
-  onReveal: (row: OkBugReportListRow) => void;
-  onDelete: (row: OkBugReportListRow) => void;
+  onRetry: (row: PsBugReportListRow) => void;
+  onContactSupport: (row: PsBugReportListRow) => void;
+  onReveal: (row: PsBugReportListRow) => void;
+  onDelete: (row: PsBugReportListRow) => void;
 }) {
   const { t, i18n } = useLingui();
   const busy = pending !== undefined;
@@ -240,7 +240,7 @@ function ReportRow({
             size="icon-xs"
             disabled={busy}
             aria-label={revealInFileManagerLabel(
-              typeof window !== 'undefined' ? window.okDesktop?.platform : undefined,
+              typeof window !== 'undefined' ? window.psDesktop?.platform : undefined,
             )}
             onClick={() => onReveal(row)}
           >

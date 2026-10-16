@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { ACP_AGENT_HARNESS_CLI_MAP, type TerminalCli } from '@inkeep/open-knowledge-core';
+import { ACP_AGENT_HARNESS_CLI_MAP, type TerminalCli } from '@palimpsest/core';
 import { getLogger } from '../logger.ts';
 import { AgentLaunchError, mergedEnv, preflightLaunch, withLoginShellPath } from './launch.ts';
 import { getSharedLoginShellPathProvider } from './login-shell-path.ts';

@@ -24,7 +24,7 @@ function userDataDirFor(tmpHome: string): string {
 }
 
 function seedEmptyHome(prefix: string): string {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-navempty-${prefix}-`));
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-navempty-${prefix}-`));
   const userDataDir = userDataDirFor(tmpHome);
   mkdirSync(userDataDir, { recursive: true });
   writeFileSync(
@@ -47,7 +47,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
       target: TARGET,
       args: [`--user-data-dir=${userDataDirFor(tmpHome)}`],
       timeout: 30_000,
-      env: { ...process.env, ...homeEnv(tmpHome), OK_DESKTOP_E2E_SMOKE: '1' },
+      env: { ...process.env, ...homeEnv(tmpHome), PS_DESKTOP_E2E_SMOKE: '1' },
     }),
   );
 }
@@ -58,7 +58,7 @@ async function findNavigator(app: ElectronApplication, timeoutMs = 20_000): Prom
       async () => {
         for (const page of app.windows()) {
           const m = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (m === 'navigator') return true;
         }
@@ -68,7 +68,7 @@ async function findNavigator(app: ElectronApplication, timeoutMs = 20_000): Prom
     )
     .toBe(true);
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === 'navigator') return page;
   }
   throw new Error('navigator window vanished');
@@ -81,7 +81,7 @@ function rmSafe(p: string): void {
 }
 
 test.describe('Navigator empty-state screenshot (dev-only)', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 

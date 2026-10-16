@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type {
-  OkTerminalRestartSnapshot,
-  OkUpdateMode,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsTerminalRestartSnapshot,
+  PsUpdateMode,
+} from '@palimpsest/core/desktop-bridge';
 import { canonicalizeGitHubRemoteUrl } from './git-remote.ts';
 
 interface RecentProject {
@@ -66,19 +66,19 @@ export interface ProjectSessionState {
 
 export interface PersistedTerminalDockState {
   terminalVisible: boolean;
-  terminalSnapshot: OkTerminalRestartSnapshot;
+  terminalSnapshot: PsTerminalRestartSnapshot;
   agentPanelVisible: boolean;
   editorVisible: boolean;
 }
 
 export type UpdateChannel = 'latest' | 'beta';
 
-export type { OkUpdateMode };
+export type { PsUpdateMode };
 
-const DEFAULT_UPDATE_MODE: OkUpdateMode = 'auto';
+const DEFAULT_UPDATE_MODE: PsUpdateMode = 'auto';
 
 export interface UpdateModeResolution {
-  mode: OkUpdateMode;
+  mode: PsUpdateMode;
   source: 'user' | 'default';
 }
 
@@ -124,7 +124,7 @@ export interface AppState {
   lastUsedProjectParent: string | null;
   pendingWindowRestore: RestoredWindow[] | null;
   spellCheckEnabled: boolean;
-  updateMode: OkUpdateMode | null;
+  updateMode: PsUpdateMode | null;
   gaveUpOnVersion: string | null;
   dismissedUpdateVersion: string | null;
 }
@@ -477,7 +477,7 @@ function emptyTerminalDockState(): PersistedTerminalDockState {
   };
 }
 
-export function normalizeTerminalRestartSnapshot(raw: unknown): OkTerminalRestartSnapshot {
+export function normalizeTerminalRestartSnapshot(raw: unknown): PsTerminalRestartSnapshot {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
     return { tabs: [], activeOrdinal: null };
   }

@@ -23,13 +23,13 @@
     if (!warned) {
       warned = true;
       console.warn(
-        '[ok-dev] Vite module-runner transport disconnected — suppressing rejection feedback loop. Reload the page to reconnect.',
+        '[ps-dev] Vite module-runner transport disconnected — suppressing rejection feedback loop. Reload the page to reconnect.',
       );
     }
   });
   setInterval(() => {
     if (suppressed > 0) {
-      console.warn(`[ok-dev] suppressed ${suppressed} Vite transport rejections in the last 5s`);
+      console.warn(`[ps-dev] suppressed ${suppressed} Vite transport rejections in the last 5s`);
       suppressed = 0;
     }
   }, 5000);

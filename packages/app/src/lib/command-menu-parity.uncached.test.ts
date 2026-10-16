@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { COMMAND_IDENTITIES, type MenuPlatform } from '@inkeep/open-knowledge-core';
+import { COMMAND_IDENTITIES, type MenuPlatform } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { PALETTE_COMMANDS } from '@/components/command-palette-commands';
 import { APP_RESERVED_IDS, PALETTE_COMMAND_IDS } from '@/lib/command-menu-parity.test-helper';
@@ -10,7 +10,7 @@ import {
   type KeyboardShortcutId,
   type ShortcutPlatform,
 } from '@/lib/keyboard-shortcuts';
-import { OK_MENU_ACTIONS } from '@/lib/ok-menu-actions';
+import { PS_MENU_ACTIONS } from '@/lib/ok-menu-actions';
 import {
   buildMenuTemplate,
   MENU_BINDING_IDS,
@@ -67,7 +67,7 @@ const PALETTE_COMMAND_LABELS = new Set<string>([
   'Open with AI',
   'Full path',
   'Relative path',
-  'Set up OpenKnowledge integrations',
+  'Set up Palimpsest integrations',
   'Close tab',
   'Check for updates',
   'Settings',
@@ -85,14 +85,14 @@ const PALETTE_COMMAND_LABELS = new Set<string>([
   'Show Editor',
   'Hide Editor',
   'Show hidden files',
-  'Show .ok folders',
+  'Show .ps folders',
   'Show only markdown files',
   'Skills section',
   'Expand all',
   'Collapse all',
   'New Terminal',
   'Kill Terminal',
-  'OpenKnowledge on GitHub',
+  'Palimpsest on GitHub',
   'Documentation',
   'Join us on Discord',
   'Report a bug',
@@ -101,14 +101,14 @@ const PALETTE_COMMAND_LABELS = new Set<string>([
 ]);
 
 const APP_RESERVED_LABELS = new Map<string, string>([
-  ['Uninstall OpenKnowledge', 'rare + destructive; deliberately not a quick-launch row'],
+  ['Uninstall Palimpsest', 'rare + destructive; deliberately not a quick-launch row'],
   ['New Terminal Window', 'opens directly in main with no renderer handler; window management'],
 ]);
 
 function makeFullDeps(): MenuDeps {
   const noop = () => {};
   return {
-    appName: 'OpenKnowledge',
+    appName: 'Palimpsest',
     showDevToolsMenu: true,
     dialog: {} as MenuDeps['dialog'],
     errorDialogParent: () => null,
@@ -232,15 +232,15 @@ function collectLeavesForPlatform(
 }
 
 describe('command-menu parity ratchet', () => {
-  test('Ratchet A: every OkMenuAction id is classified palette-command or app-reserved', () => {
-    const untracked = OK_MENU_ACTIONS.filter(
+  test('Ratchet A: every PsMenuAction id is classified palette-command or app-reserved', () => {
+    const untracked = PS_MENU_ACTIONS.filter(
       (id) => !PALETTE_COMMAND_IDS.has(id) && !APP_RESERVED_IDS.has(id),
     );
     expect(untracked).toEqual([]);
   });
 
-  test('Ratchet A: every classified id is a real OkMenuAction (no stale entries)', () => {
-    const known = new Set<string>(OK_MENU_ACTIONS);
+  test('Ratchet A: every classified id is a real PsMenuAction (no stale entries)', () => {
+    const known = new Set<string>(PS_MENU_ACTIONS);
     const stale = [...PALETTE_COMMAND_IDS, ...APP_RESERVED_IDS.keys()].filter(
       (id) => !known.has(id),
     );
@@ -444,7 +444,7 @@ describe('command-menu parity ratchet', () => {
 });
 
 describe('command identity registry (Phase 2b)', () => {
-  const OK_MENU_ACTION_SET = new Set<string>(OK_MENU_ACTIONS);
+  const PS_MENU_ACTION_SET = new Set<string>(PS_MENU_ACTIONS);
 
   test('navigation-history commands pair actions with ordered platform placements', () => {
     const historyCommands = COMMAND_IDENTITIES.filter((command) =>
@@ -499,9 +499,9 @@ describe('command identity registry (Phase 2b)', () => {
     expect(chordShownOnWeb).toEqual([]);
   });
 
-  test('every registry menuActionId is a real OkMenuAction', () => {
+  test('every registry menuActionId is a real PsMenuAction', () => {
     const bad = COMMAND_IDENTITIES.flatMap((cmd) =>
-      cmd.menuActionId && !OK_MENU_ACTION_SET.has(cmd.menuActionId) ? [cmd.id] : [],
+      cmd.menuActionId && !PS_MENU_ACTION_SET.has(cmd.menuActionId) ? [cmd.id] : [],
     );
     expect(bad).toEqual([]);
   });
@@ -664,13 +664,13 @@ describe('menu state-dependent rendering', () => {
     expect(
       findLeaf(
         collectLeavesForPlatform('darwin', makeFullDeps()),
-        'Set up OpenKnowledge integrations',
+        'Set up Palimpsest integrations',
       ),
     ).toBeDefined();
     expect(
       findLeaf(
         collectLeavesForPlatform('darwin', { ...makeFullDeps(), reconfigureMcpWiring: undefined }),
-        'Set up OpenKnowledge integrations',
+        'Set up Palimpsest integrations',
       ),
     ).toBeUndefined();
   });

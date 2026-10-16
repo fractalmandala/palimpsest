@@ -14,7 +14,7 @@ import {
   LINT_PLUGINS,
   LintFixResultSchema,
   PrincipalSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   __formatContributorsForTests,
@@ -48,8 +48,8 @@ let clients: TestClient[] = [];
 
 afterEach(async () => {
   vi.restoreAllMocks();
-  delete process.env.OK_TEST_STORE_DIVERGENCE;
-  delete process.env.OK_TEST_STORE_FAULT;
+  delete process.env.PS_TEST_STORE_DIVERGENCE;
+  delete process.env.PS_TEST_STORE_FAULT;
   await Promise.all(clients.map((client) => client.cleanup()));
   clients = [];
   await server?.cleanup();
@@ -69,8 +69,8 @@ function postFix(body: Record<string, unknown>): Promise<Response> {
 function contributors(): ContributorPayload[] {
   return __formatContributorsForTests()
     .split('\n')
-    .filter((line) => line.startsWith('ok-contributors: '))
-    .map((line) => JSON.parse(line.slice('ok-contributors: '.length)) as ContributorPayload);
+    .filter((line) => line.startsWith('ps-contributors: '))
+    .map((line) => JSON.parse(line.slice('ps-contributors: '.length)) as ContributorPayload);
 }
 
 function markdownlintPlugin() {
@@ -226,10 +226,10 @@ describe('lint fix live-write preservation', () => {
   });
 
   test('records the current anonymous direct and persistence attribution split', async () => {
-    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lint-anonymous-')));
-    mkdirSync(join(root, '.ok', 'local', 'principal.json'), { recursive: true });
+    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lint-anonymous-')));
+    mkdirSync(join(root, '.ps', 'local', 'principal.json'), { recursive: true });
     writeFileSync(
-      join(root, '.ok', 'config.yml'),
+      join(root, '.ps', 'config.yml'),
       'contentRules:\n  markdownlint:\n    enabled: true\n',
       'utf-8',
     );
@@ -274,7 +274,7 @@ describe('lint fix live-write preservation', () => {
     };
     session.dc.document.getText('source').observe(observeOrigin);
     const lint = vi.spyOn(markdownlintPlugin(), 'lint');
-    process.env.OK_TEST_STORE_FAULT = docName;
+    process.env.PS_TEST_STORE_FAULT = docName;
     __resetContributorsForTests();
 
     try {
@@ -316,7 +316,7 @@ describe('lint fix live-write preservation', () => {
     };
     session.dc.document.getText('source').observe(observeOrigin);
     const lint = vi.spyOn(markdownlintPlugin(), 'lint');
-    process.env.OK_TEST_STORE_FAULT = docName;
+    process.env.PS_TEST_STORE_FAULT = docName;
     __resetContributorsForTests();
 
     try {
@@ -439,7 +439,7 @@ describe('lint fix live-write preservation', () => {
     const docName = `lint-divergence-${randomUUID()}`;
     const file = join(server.contentDir, `${docName}.md`);
     writeFileSync(file, TABBED_BODY, 'utf-8');
-    process.env.OK_TEST_STORE_DIVERGENCE = docName;
+    process.env.PS_TEST_STORE_DIVERGENCE = docName;
     __resetContributorsForTests();
 
     const response = await postFix({
@@ -676,10 +676,10 @@ describe('lint fix live-write preservation', () => {
   });
 
   test('an indexed in-root alias fixes the canonical document and reports its canonical path', async () => {
-    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lint-alias-')));
-    mkdirSync(join(root, '.ok'), { recursive: true });
+    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lint-alias-')));
+    mkdirSync(join(root, '.ps'), { recursive: true });
     writeFileSync(
-      join(root, '.ok', 'config.yml'),
+      join(root, '.ps', 'config.yml'),
       'contentRules:\n  markdownlint:\n    enabled: true\n',
       'utf-8',
     );

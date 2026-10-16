@@ -813,13 +813,13 @@ describe('runPointRelease cascade', () => {
         fixRefs: ['fix1'],
         dryRun: false,
         dispatchedBy: 'https://run/1',
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
       },
       io,
     );
     expect(io.dispatches).toEqual([
       {
-        repo: 'inkeep/open-knowledge',
+        repo: 'fractalmandala/palimpsest',
         eventType: 'desktop-release',
         clientPayload: { release_tag: 'v0.32.1', ref: 'v0.32.1', dispatched_by: 'https://run/1' },
       },
@@ -856,7 +856,7 @@ describe('runPointRelease cascade', () => {
       },
       changesetContents: {
         'shiny-fix':
-          '---\n"@inkeep/open-knowledge": patch\n---\n\nChips no longer balloon into ovals.\nSecond line of the note.\n',
+          '---\n"@palimpsest/cli": patch\n---\n\nChips no longer balloon into ovals.\nSecond line of the note.\n',
       },
     });
     runPointRelease({ mode: 'cherry-pick', fixRefs: ['fix1'], dryRun: false }, io);
@@ -903,7 +903,7 @@ describe('runPointRelease cascade', () => {
       },
       changesetContents: {
         'shiny-fix':
-          '---\n"@inkeep/open-knowledge": patch\n---\n\nChips no longer balloon into ovals.\n',
+          '---\n"@palimpsest/cli": patch\n---\n\nChips no longer balloon into ovals.\n',
       },
     });
     const plan = runPointRelease({ mode: 'cherry-pick', fixRefs: ['fix1'], dryRun: true }, io);
@@ -922,7 +922,7 @@ describe('runPointRelease cascade', () => {
       },
       changesetContents: {
         'shiny-fix':
-          '---\n"@inkeep/open-knowledge": patch\n---\n\nChips no longer balloon into ovals.\n',
+          '---\n"@palimpsest/cli": patch\n---\n\nChips no longer balloon into ovals.\n',
       },
       ...overrides,
     });
@@ -976,7 +976,7 @@ describe('runPointRelease cascade', () => {
   test('a revert body carries no notes-source marker, so the docs keep CHANGELOG.md for it', () => {
     const io = makeIo();
     runPointRelease({ mode: 'revert', fixRefs: ['bad1'], dryRun: false }, io);
-    expect(io.releases[0].notes).not.toContain('ok-notes-source');
+    expect(io.releases[0].notes).not.toContain('ps-notes-source');
   });
 
   test('notes that cannot render fall back to the unmarked quoted form with a warning, never a refusal', () => {
@@ -991,7 +991,7 @@ describe('runPointRelease cascade', () => {
     );
     const plan = runPointRelease({ mode: 'cherry-pick', fixRefs: ['fix1'], dryRun: false }, io);
     expect(io.calls.createRelease).toBe(1);
-    expect(io.releases[0].notes).not.toContain('ok-notes-source');
+    expect(io.releases[0].notes).not.toContain('ps-notes-source');
     expect(io.releases[0].notes).toContain('- Chips no longer balloon into ovals.');
     expect(plan.warnings.some((w) => /no note level for \.changeset\/shiny-fix\.md/.test(w))).toBe(
       true,
@@ -1322,7 +1322,7 @@ describe('runPointRelease keeps every fix a published stable shipped', () => {
   test('an unreadable release listing is an infra failure, never a pass', () => {
     const io = makeIo({
       publishedTags: () => {
-        throw new Error('listing the releases of inkeep/open-knowledge failed: HTTP 502');
+        throw new Error('listing the releases of fractalmandala/palimpsest failed: HTTP 502');
       },
     });
     let thrown;
@@ -1857,7 +1857,7 @@ describe('runPointRelease in the release job, which has no Changesets reader', (
     io.git = withBumpVerdicts(git, new Map(Object.entries(verdicts)));
     return io;
   };
-  const ship = { mode: 'cherry-pick', fixRefs: ['fix1'], dryRun: false, selfRepo: 'inkeep/open-knowledge' };
+  const ship = { mode: 'cherry-pick', fixRefs: ['fix1'], dryRun: false, selfRepo: 'fractalmandala/palimpsest' };
 
   test('ships from the verdicts alone, never calling the reader', () => {
     const io = releaseJobIo({ 'blob-shiny-fix': 'patch' });
@@ -1947,7 +1947,7 @@ describe('a bump read in one job is found by blob in the other', () => {
   };
   const changeset = (root, id, type) => {
     mkdirSync(join(root, '.changeset'), { recursive: true });
-    writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@inkeep/open-knowledge": ${type}\n---\n\nA change.\n`);
+    writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@palimpsest/cli": ${type}\n---\n\nA change.\n`);
   };
 
   test('a cherry-picked changeset keeps the blob its fix commit wrote', () => {
@@ -2018,7 +2018,7 @@ describe('the production entry points the release workflows run', () => {
     const root = scratch('point-release-read-bumps-');
     const changeset = (id, type) => {
       mkdirSync(join(root, '.changeset'), { recursive: true });
-      writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@inkeep/open-knowledge": ${type}\n---\n\nA change.\n`);
+      writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@palimpsest/cli": ${type}\n---\n\nA change.\n`);
     };
     git(root, 'init', '-q', '-b', 'main');
     configureTestGitRepository(root, (args) => git(root, ...args));
@@ -2026,7 +2026,7 @@ describe('the production entry points the release workflows run', () => {
     if (config) {
       writeFileSync(
         join(root, '.changeset', 'config.json'),
-        JSON.stringify({ fixed: [['@inkeep/open-knowledge']] }),
+        JSON.stringify({ fixed: [['@palimpsest/cli']] }),
       );
     }
     git(root, 'add', '-A');

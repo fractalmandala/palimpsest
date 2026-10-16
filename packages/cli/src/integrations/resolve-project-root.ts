@@ -7,7 +7,7 @@ import {
   isHomeDir,
   isProjectRoot,
   withHiddenWindowsConsole,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 
 export { canonicalizeForCompare, isHomeDir };
 

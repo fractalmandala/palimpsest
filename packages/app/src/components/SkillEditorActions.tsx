@@ -1,4 +1,4 @@
-import type { SkillScope, SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ChevronDown, FilePlus } from 'lucide-react';
 import { useState } from 'react';

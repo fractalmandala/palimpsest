@@ -1,14 +1,14 @@
 import { realpathSync, statSync } from 'node:fs';
 import * as pathPosix from 'node:path/posix';
 import * as pathWin32 from 'node:path/win32';
-import { EXECUTABLE_BLOCKLIST_EXTENSIONS } from '@inkeep/open-knowledge-core';
+import { EXECUTABLE_BLOCKLIST_EXTENSIONS } from '@palimpsest/core';
 import {
   assetOpenRefusalRevealsInstead,
-  type OkAssetOpenResult,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  type PsAssetOpenResult,
+} from '@palimpsest/core/desktop-bridge';
 import { isPathWithinProject } from './ipc-handlers.ts';
 
-export type AssetOpenResult = OkAssetOpenResult;
+export type AssetOpenResult = PsAssetOpenResult;
 
 type AssetRevealResult =
   | { ok: true }

@@ -6,7 +6,7 @@ import {
   DEFAULT_EMBEDDINGS_MAX_BATCH_CHARS,
   DEFAULT_EMBEDDINGS_MAX_BATCH_SIZE,
   type SemanticIndexStatus,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { i18n } from '@lingui/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -274,12 +274,12 @@ describe('SearchSection', () => {
   });
 
   test.each([
-    [null, '~/.ok/secrets.yml'],
-    ['ok-beta', '~/.ok-beta/secrets.yml'],
+    [null, '~/.ps/secrets.yml'],
+    ['ps-beta', '~/.ps-beta/secrets.yml'],
   ])(
     'names the key file in the home of the channel main named (%s)',
     async (cliCommandName, path) => {
-      (window as unknown as { okDesktop?: unknown }).okDesktop =
+      (window as unknown as { psDesktop?: unknown }).psDesktop =
         cliCommandName === null ? undefined : { cliCommandName };
       try {
         mockProjectLocalConfig = configWithSemantic({ enabled: true });
@@ -303,7 +303,7 @@ describe('SearchSection', () => {
         );
         expect(stored.textContent).toContain(`(in ${path})`);
       } finally {
-        (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+        (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
       }
     },
   );
@@ -352,7 +352,7 @@ describe('SearchSection', () => {
     render(<SearchSection />);
 
     const alert = await screen.findByTestId('settings-search-restart-required');
-    expect(alert.textContent).toContain('OpenKnowledge restarts');
+    expect(alert.textContent).toContain('Palimpsest restarts');
     expect(screen.queryByTestId('settings-search-provider-error')).toBeNull();
   });
 
@@ -550,7 +550,7 @@ describe('SearchSection', () => {
     expect(screen.getByLabelText('Indexing request timeout (seconds)')).toBeDefined();
     expect(
       screen.getByText(
-        'How long OpenKnowledge waits for each embedding request while indexing. Search requests use a fixed 8-second timeout per attempt, unchanged by this setting.',
+        'How long Palimpsest waits for each embedding request while indexing. Search requests use a fixed 8-second timeout per attempt, unchanged by this setting.',
       ),
     ).toBeDefined();
   });
@@ -741,7 +741,7 @@ describe('SearchSection', () => {
   test.each([
     ['settings-search-max-batch-size', 'Lower this'],
     ['settings-search-max-batch-chars', 'Limits the combined text'],
-    ['settings-search-doc-timeout-seconds', 'How long OpenKnowledge waits'],
+    ['settings-search-doc-timeout-seconds', 'How long Palimpsest waits'],
   ])('associates %s with stable help, status, and reset instructions', async (id, help) => {
     const user = userEvent.setup();
     const { binding } = makeBinding();
@@ -761,7 +761,7 @@ describe('SearchSection', () => {
     expect(status.textContent).toBe('');
   });
 
-  test('clearing tuning fields resets them to the OpenKnowledge defaults', async () => {
+  test('clearing tuning fields resets them to the Palimpsest defaults', async () => {
     const user = userEvent.setup();
     const { binding, calls } = makeBinding();
     mockProjectLocalBinding = binding;

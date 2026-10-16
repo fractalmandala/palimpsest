@@ -62,7 +62,7 @@ function walkFileIndex(contentDir: string, dir: string, index: Map<string, FileI
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rename-race-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rename-race-'));
   swapContributors();
   resetMetrics();
   _resetDocExtensionsForTests();

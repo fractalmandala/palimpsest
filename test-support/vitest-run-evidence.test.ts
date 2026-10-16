@@ -64,10 +64,10 @@ afterEach(() => {
 });
 
 const BASE_CONFIG = [
-  `import { okVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
+  `import { psVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
   'export default {',
-  '  ...okVitestBase,',
-  "  test: { ...okVitestBase.test, globals: true, include: ['*.fixture.test.mjs'] },",
+  '  ...psVitestBase,',
+  "  test: { ...psVitestBase.test, globals: true, include: ['*.fixture.test.mjs'] },",
   '};',
   '',
 ].join('\n');
@@ -91,7 +91,7 @@ function fixturePackage(
   files: Record<string, string>,
   config: string = BASE_CONFIG,
 ): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-vitest-run-evidence-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-vitest-run-evidence-'));
   roots.push(root);
   writePackage(root, name, files, config);
   return root;
@@ -145,7 +145,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a package whose every test skips fails with one error annotation naming the package, the script and the counts',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/all-skip', ALL_SKIP);
+      const root = fixturePackage('@ps-fixture/all-skip', ALL_SKIP);
       const run = await runVitest(signal, root, ['run'], {
         GITHUB_ACTIONS: 'true',
         npm_lifecycle_event: 'test:unit',
@@ -154,7 +154,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
       expect(run.status, run.output).toBe(1);
       const annotations = errorAnnotations(run);
       expect(annotations, run.output).toHaveLength(1);
-      expect(annotations[0]).toContain('@ok-fixture/all-skip');
+      expect(annotations[0]).toContain('@ps-fixture/all-skip');
       expect(annotations[0]).toContain('script test:unit');
       expect(annotations[0]).toContain(
         'the run executed no test (collected 3: 2 skipped, 1 todo, 0 unfinished; 1 file)',
@@ -166,7 +166,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a name filter that matches no test fails the same way and names the filter',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/filtered', ONE_EXECUTED);
+      const root = fixturePackage('@ps-fixture/filtered', ONE_EXECUTED);
       const run = await runVitest(signal, root, ['run', '-t', NO_TEST_NAMED], {
         GITHUB_ACTIONS: 'true',
         npm_lifecycle_event: 'test:unit',
@@ -175,7 +175,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
       expect(run.status, run.output).toBe(1);
       const annotations = errorAnnotations(run);
       expect(annotations, run.output).toHaveLength(1);
-      expect(annotations[0]).toContain('@ok-fixture/filtered');
+      expect(annotations[0]).toContain('@ps-fixture/filtered');
       expect(annotations[0]).toContain('script test:unit');
       expect(annotations[0]).toContain(
         `the run executed no test (collected 1: 1 skipped, 0 todo, 0 unfinished; 1 file; name filter /${NO_TEST_NAMED}/)`,
@@ -187,7 +187,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a file filter that selects no file fails even when the caller passes --passWithNoTests',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/no-file', ONE_EXECUTED);
+      const root = fixturePackage('@ps-fixture/no-file', ONE_EXECUTED);
       const run = await runVitest(
         signal,
         root,
@@ -212,7 +212,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a package with one executed test passes without an annotation',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/executed', ONE_EXECUTED);
+      const root = fixturePackage('@ps-fixture/executed', ONE_EXECUTED);
       const run = await runVitest(signal, root, ['run'], {
         GITHUB_ACTIONS: 'true',
         npm_lifecycle_event: 'test:unit',
@@ -228,7 +228,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a run whose one executed test fails counts it as executed, so only the failure is annotated',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/failing', {
+      const root = fixturePackage('@ps-fixture/failing', {
         'failing.fixture.test.mjs':
           "test('asserts something false', () => { expect(1).toBe(2); });\n",
       });
@@ -250,7 +250,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a run whose every file fails to import is red from the import failure alone, with no executed-no-test annotation',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/import-fails', IMPORT_FAILS);
+      const root = fixturePackage('@ps-fixture/import-fails', IMPORT_FAILS);
       const run = await runVitest(signal, root, ['run'], {
         GITHUB_ACTIONS: 'true',
         npm_lifecycle_event: 'test:unit',
@@ -269,7 +269,7 @@ describe('on GitHub Actions, a Vitest run that executed no test fails', () => {
   test(
     'a run where one file fails to import and another skips every test still names the skips',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/import-fails-beside-skips', {
+      const root = fixturePackage('@ps-fixture/import-fails-beside-skips', {
         ...IMPORT_FAILS,
         ...ALL_SKIP,
       });
@@ -295,9 +295,9 @@ describe('off GitHub Actions, the same runs end as before and each writes its re
   test(
     'the all-skip, the filtered and the executed runs exit 0 and leave a Vitest JSON report of what ran',
     async ({ signal }) => {
-      const allSkip = fixturePackage('@ok-fixture/all-skip', ALL_SKIP);
-      const filtered = fixturePackage('@ok-fixture/filtered', ONE_EXECUTED);
-      const ran = fixturePackage('@ok-fixture/executed', ONE_EXECUTED);
+      const allSkip = fixturePackage('@ps-fixture/all-skip', ALL_SKIP);
+      const filtered = fixturePackage('@ps-fixture/filtered', ONE_EXECUTED);
+      const ran = fixturePackage('@ps-fixture/executed', ONE_EXECUTED);
       const script = { npm_lifecycle_event: 'test:unit' };
       const runs = await Promise.all([
         runVitest(signal, allSkip, ['run'], script),
@@ -333,7 +333,7 @@ describe('each run names its report after the script that ran it and records whe
   test(
     'a script run writes vitest-<script>.json with its colons mapped to hyphens, and its provenance beside it',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/provenance', ONE_EXECUTED);
+      const root = fixturePackage('@ps-fixture/provenance', ONE_EXECUTED);
       const run = await runVitest(signal, root, ['run'], {
         npm_lifecycle_event: 'test:integration:shard1',
         TURBO_HASH: 'f00dfeedcafe0123',
@@ -350,7 +350,7 @@ describe('each run names its report after the script that ran it and records whe
         readJson(join(root, 'test-results', 'vitest-test-integration-shard1.provenance.json')),
       ).toEqual({
         report: 'vitest-test-integration-shard1.json',
-        package: '@ok-fixture/provenance',
+        package: '@ps-fixture/provenance',
         script: 'test:integration:shard1',
         config: 'vitest.config.mjs',
         turboHash: 'f00dfeedcafe0123',
@@ -371,7 +371,7 @@ describe('each run names its report after the script that ran it and records whe
   test(
     'on GitHub Actions, two direct calls with no package script in one package write two distinct reports, each with its own provenance',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/direct', ONE_EXECUTED);
+      const root = fixturePackage('@ps-fixture/direct', ONE_EXECUTED);
       const first = await runVitest(signal, root, ['run'], { GITHUB_ACTIONS: 'true' });
       const second = await runVitest(signal, root, ['run'], { GITHUB_ACTIONS: 'true' });
       expect(first.status, first.output).toBe(0);
@@ -388,7 +388,7 @@ describe('each run names its report after the script that ran it and records whe
           readJson(join(root, 'test-results', report.replace(/\.json$/, '.provenance.json'))),
         ).toEqual({
           report,
-          package: '@ok-fixture/direct',
+          package: '@ps-fixture/direct',
           script: null,
           config: 'vitest.config.mjs',
           turboHash: null,
@@ -404,7 +404,7 @@ describe('each run names its report after the script that ran it and records whe
   test(
     'off GitHub Actions, a direct call with no package script writes no report, while a script run in the same package still does',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/direct-local', ONE_EXECUTED);
+      const root = fixturePackage('@ps-fixture/direct-local', ONE_EXECUTED);
       const direct = await runVitest(signal, root, ['run'], {});
       expect(direct.status, direct.output).toBe(0);
       expect(direct.output).toContain('1 passed (1)');
@@ -435,10 +435,10 @@ function nestedRunFixture(innerRoot: string): string {
 
 function projectsConfig(names: string[]): string {
   return [
-    `import { okVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
+    `import { psVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
     'const project = (name) => ({',
-    '  ...okVitestBase,',
-    "  test: { ...okVitestBase.test, globals: true, name, include: [name + '/*.fixture.test.mjs'] },",
+    '  ...psVitestBase,',
+    "  test: { ...psVitestBase.test, globals: true, name, include: [name + '/*.fixture.test.mjs'] },",
     '});',
     `export default { test: { projects: ${JSON.stringify(names)}.map(project) } };`,
     '',
@@ -446,11 +446,11 @@ function projectsConfig(names: string[]): string {
 }
 
 const OWN_JSON_REPORTER_CONFIG = [
-  `import { okVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
+  `import { psVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
   'export default {',
-  '  ...okVitestBase,',
+  '  ...psVitestBase,',
   '  test: {',
-  '    ...okVitestBase.test,',
+  '    ...psVitestBase.test,',
   '    globals: true,',
   "    include: ['*.fixture.test.mjs'],",
   "    reporters: ['default', 'json'],",
@@ -464,10 +464,10 @@ describe('only the outermost Vitest run applies the floor and writes a report', 
   test(
     'a Vitest run a test starts inherits the outer run, so it applies no floor and writes no report while the outer run keeps both',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/outer', {});
+      const root = fixturePackage('@ps-fixture/outer', {});
       const inner = join(root, 'inner');
       mkdirSync(inner);
-      writePackage(inner, '@ok-fixture/inner', ALL_SKIP, BASE_CONFIG);
+      writePackage(inner, '@ps-fixture/inner', ALL_SKIP, BASE_CONFIG);
       writeFileSync(join(root, 'nested.fixture.test.mjs'), nestedRunFixture(inner));
       const run = await runVitest(signal, root, ['run'], {
         GITHUB_ACTIONS: 'true',
@@ -489,7 +489,7 @@ describe('only the outermost Vitest run applies the floor and writes a report', 
     'a run whose projects each carry the plugin, as the uncached tier does, writes one report and applies the floor once',
     async ({ signal }) => {
       const root = fixturePackage(
-        '@ok-fixture/projects',
+        '@ps-fixture/projects',
         {
           'first/all-skip.fixture.test.mjs': ALL_SKIP['all-skip.fixture.test.mjs'],
           'second/all-skip.fixture.test.mjs': ALL_SKIP['all-skip.fixture.test.mjs'],
@@ -522,7 +522,7 @@ describe('only the outermost Vitest run applies the floor and writes a report', 
   test(
     'vitest list executes nothing by design, so on GitHub Actions it stays green and writes no report',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/list', ALL_SKIP);
+      const root = fixturePackage('@ps-fixture/list', ALL_SKIP);
       const run = await runVitest(signal, root, ['list'], {
         GITHUB_ACTIONS: 'true',
         npm_lifecycle_event: 'test:unit',
@@ -541,7 +541,7 @@ describe('the report and the floor sit beside the configured reporters', () => {
   test(
     'a config that writes its own JSON report still writes it, and the run report lands beside it',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/own-report', ONE_EXECUTED, OWN_JSON_REPORTER_CONFIG);
+      const root = fixturePackage('@ps-fixture/own-report', ONE_EXECUTED, OWN_JSON_REPORTER_CONFIG);
       const run = await runVitest(signal, root, ['run'], { npm_lifecycle_event: 'test:node' });
       expect(run.status, run.output).toBe(0);
       expect(reportDirectory(root)).toEqual([
@@ -563,7 +563,7 @@ describe('the report and the floor sit beside the configured reporters', () => {
   test(
     'a --reporter flag replaces the configured reporters but drops neither the report nor the floor',
     async ({ signal }) => {
-      const root = fixturePackage('@ok-fixture/reporter-flag', ALL_SKIP);
+      const root = fixturePackage('@ps-fixture/reporter-flag', ALL_SKIP);
       const run = await runVitest(signal, root, ['run', '--reporter=dot'], {
         GITHUB_ACTIONS: 'true',
         npm_lifecycle_event: 'test:unit',

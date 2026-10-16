@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { instantiateDoc, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { instantiateDoc, stripFrontmatter } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
@@ -32,7 +32,7 @@ const unsafe = (code: number) => `private-prefix😀${String.fromCharCode(code)}
 
 function artifactPath(kind: ArtifactKind, name: string): string {
   return kind === 'template'
-    ? join(root, 'templates', '.ok', 'templates', `${name}.md`)
+    ? join(root, 'templates', '.ps', 'templates', `${name}.md`)
     : join(root, '.agents', 'skills', name, 'SKILL.md');
 }
 
@@ -95,7 +95,7 @@ function expectActionableRefusal(result: { isError?: boolean; content?: unknown 
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-artifact-body-admission-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-artifact-body-admission-'));
   mkdirSync(join(root, 'templates'));
   for (const kind of ['template', 'skill'] as const) {
     for (const metadata of [false, true]) {
@@ -110,11 +110,11 @@ beforeAll(async () => {
       );
     }
   }
-  const builtin = artifactPath('skill', 'open-knowledge');
+  const builtin = artifactPath('skill', 'palimpsest');
   mkdirSync(dirname(builtin), { recursive: true });
   writeFileSync(
     builtin,
-    '---\nname: open-knowledge\ndescription: Project instructions\n---\nProject.\n',
+    '---\nname: palimpsest\ndescription: Project instructions\n---\nProject.\n',
   );
   const template = artifactPath('template', 'historical-generated');
   writeFileSync(

@@ -1,6 +1,6 @@
-import { AGENTS_SKILLS_ROOT } from '@inkeep/open-knowledge-core/constants/skills';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
-import { isSkillInstallTarget } from '@inkeep/open-knowledge-core/skill-targets/schema';
+import { AGENTS_SKILLS_ROOT } from '@palimpsest/core/constants/skills';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
+import { isSkillInstallTarget } from '@palimpsest/core/skill-targets/schema';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';

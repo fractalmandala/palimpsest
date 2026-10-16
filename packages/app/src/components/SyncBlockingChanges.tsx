@@ -7,7 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { resolveBlockingChanges } from '@/lib/resolve-blocking';
 
 function terminalAvailable(): boolean {
-  return typeof window !== 'undefined' && window.okDesktop != null;
+  return typeof window !== 'undefined' && window.psDesktop != null;
 }
 
 export function SyncBlockingChanges({ paths }: { paths: readonly string[] }) {

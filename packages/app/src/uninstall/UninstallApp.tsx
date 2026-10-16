@@ -1,7 +1,7 @@
 import {
   UNINSTALL_RESULT_WAIT_TIMEOUT_MS,
   type UninstallScreenSpec,
-} from '@inkeep/open-knowledge-core/uninstall-bridge';
+} from '@palimpsest/core/uninstall-bridge';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import {
@@ -169,7 +169,7 @@ export function UninstallApp() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background p-8 text-foreground">
       <p className="text-center text-muted-foreground text-sm">
-        <Trans>Preparing to uninstall OpenKnowledge</Trans>
+        <Trans>Preparing to uninstall Palimpsest</Trans>
       </p>
     </main>
   );

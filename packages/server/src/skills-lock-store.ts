@@ -1,11 +1,11 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import {
   emptySkillsLock,
   parseSkillsLock,
   type SkillsLock,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { tracedAtomicFs, tracedMkdir } from './fs-traced.ts';
 import { createKeyedSerializer } from './keyed-serializer.ts';
 import { getLogger } from './logger.ts';

@@ -38,8 +38,8 @@ describe('worker entry ships in every bundle shape', () => {
   });
 
   test.each([
-    ['@inkeep/open-knowledge-server', '../package.json'],
-    ['@inkeep/open-knowledge-core', '../../core/package.json'],
+    ['@palimpsest/server', '../package.json'],
+    ['@palimpsest/core', '../../core/package.json'],
   ])(
     '%s keeps every export subpath on the same four conditions in the same order',
     (_name, rel) => {

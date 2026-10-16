@@ -1,4 +1,4 @@
-import type { OkBugReportCreateResult } from '@inkeep/open-knowledge-core';
+import type { PsBugReportCreateResult } from '@palimpsest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -47,7 +47,7 @@ function installBugReportBridge(mode: 'editor' | 'navigator' = 'editor'): Create
     bugReport: {
       create: (request: CreateRequest) => {
         createCalls.push(request);
-        const result: OkBugReportCreateResult = {
+        const result: PsBugReportCreateResult = {
           ok: true,
           zipPath: '/tmp/report.zip',
           zipSizeBytes: 1024,
@@ -71,14 +71,14 @@ function installBugReportBridge(mode: 'editor' | 'navigator' = 'editor'): Create
     },
   };
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', { configurable: true, writable: true, value: bridge });
+    Object.defineProperty(host, 'psDesktop', { configurable: true, writable: true, value: bridge });
   }
   return createCalls;
 }
 
 function clearBugReportBridge() {
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', {
+    Object.defineProperty(host, 'psDesktop', {
       configurable: true,
       writable: true,
       value: undefined,
@@ -203,7 +203,7 @@ describe('AppErrorBoundary', () => {
     expect(checkbox.getAttribute('aria-checked')).toBe('true');
     expect(
       screen.getByText(
-        'OpenKnowledge logs across projects. No project is open, so project server logs are not included.',
+        'Palimpsest logs across projects. No project is open, so project server logs are not included.',
       ),
     ).not.toBeNull();
 

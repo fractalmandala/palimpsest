@@ -1,16 +1,16 @@
 ---
 name: consolidate-notes
 description: "Promote existing research into a stable-status canonical article under `articles/` in a Knowledge Base project (the `knowledge-base` starter pack). Read when a decision has actually been made and the team wants the source-of-truth written down, or when asked to consolidate, canonicalize, promote research, or supersede an older article. Carries the decision-confirmation gate, the `supersedes:` chain that keeps the evidence trail intact, and the canonical voice. Does not conduct new research — that is the sibling `research-with-sources` skill."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack knowledge-base` (`ok-beta` for Beta)."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack knowledge-base` (`ps-beta` for Beta)."
 type: Document
 metadata:
   pack: "knowledge-base"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Consolidate — promote research into a canonical article
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the procedure on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the procedure on top.
 
 Promote existing research on a topic into a canonical article under `articles/`. **Canonical, not provisional** — the output is the source of truth for future agents, not a snapshot of uncertainty.
 

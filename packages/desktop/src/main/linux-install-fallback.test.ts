@@ -48,7 +48,7 @@ describe('manualInstallPlanFor', () => {
   });
 
   test('unknown format and missing path return null', () => {
-    expect(manualInstallPlanFor('/x/OpenKnowledge.AppImage')).toBeNull();
+    expect(manualInstallPlanFor('/x/Palimpsest.AppImage')).toBeNull();
     expect(manualInstallPlanFor(null)).toBeNull();
     expect(manualInstallPlanFor('')).toBeNull();
   });
@@ -288,7 +288,7 @@ describe('runManualInstallFallbackDialog', () => {
       cancelId: number;
     };
     expect(request.detail).toContain(ctx.command);
-    expect(request.buttons).toEqual(['Copy Command', 'Relaunch OpenKnowledge', 'Not Now']);
+    expect(request.buttons).toEqual(['Copy Command', 'Relaunch Palimpsest', 'Not Now']);
     expect(request.cancelId).toBe(2);
   });
 });

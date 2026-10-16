@@ -107,7 +107,7 @@ async function readScrollportGeometry(page: Page): Promise<ScrollportGeometry> {
         }
       }
 
-      const controls = scroller.querySelector('.ok-block-controls');
+      const controls = scroller.querySelector('.ps-block-controls');
       const controlsRect =
         controls instanceof HTMLElement ? controls.getBoundingClientRect() : null;
       const controlsVisibility =
@@ -252,7 +252,7 @@ async function hoverDeepBlock(page: Page): Promise<void> {
             (element): element is HTMLElement =>
               element instanceof HTMLElement && element.getClientRects().length > 0,
           );
-          const element = scroller?.querySelector('.ok-block-controls');
+          const element = scroller?.querySelector('.ps-block-controls');
           if (!(element instanceof HTMLElement)) return 'absent';
           return getComputedStyle(element).visibility;
         }),

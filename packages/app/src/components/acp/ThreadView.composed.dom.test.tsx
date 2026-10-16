@@ -3,7 +3,7 @@ import type {
   ThreadEvent,
   ThreadInfo,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { act, cleanup, render as rtlRender, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -166,7 +166,7 @@ function transcriptRows(): [string, string][] {
 const noticeCards = (): HTMLElement[] => screen.queryAllByTestId('agent-thread-agent-notice');
 
 describe('composed Pi bridge status and consent', () => {
-  const bridgePath = '/opened-project/.pi/extensions/open-knowledge.ts';
+  const bridgePath = '/opened-project/.pi/extensions/palimpsest.ts';
   const canonicalCwd = '/real-project';
   const request: ThreadEvent = {
     kind: 'pi_bridge_consent_request',
@@ -206,7 +206,7 @@ describe('composed Pi bridge status and consent', () => {
       const cards = screen.getAllByTestId('agent-thread-pi-bridge');
       expect(cards).toHaveLength(1);
       expect(cards[0].textContent).toContain(
-        'Open Knowledge tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry.',
+        'Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry.',
       );
       expect(cards[0].textContent).toContain(detail);
       expect(cards[0].textContent).not.toContain('something is already at');

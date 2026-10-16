@@ -1,14 +1,14 @@
 import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { awaitFileWatcherIndexed, createTestServer, type TestServer } from './test-harness';
 
 let server: TestServer;
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-depth1-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-depth1-')));
   writeFileSync(join(contentDir, 'README.md'), '# Readme\n');
   mkdirSync(join(contentDir, 'with-kids', 'grandchild'), { recursive: true });
   writeFileSync(join(contentDir, 'with-kids', 'child.md'), '# Child\n');

@@ -1,4 +1,4 @@
-import type { OkThemeSource } from '../shared/bridge-contract.ts';
+import type { PsThemeSource } from '../shared/bridge-contract.ts';
 import type { AppState, SchemaIncompatibilityDiagnostic } from './state-store.ts';
 
 type SchemaCompatibilityResult =
@@ -15,7 +15,7 @@ interface BootstrapDeps {
   installLocalhostCorsInjector: () => void;
   installEmbedRefererRewriter: () => void;
   registerIpcHandlers: () => void;
-  setNativeThemeSource: (source: OkThemeSource) => void;
+  setNativeThemeSource: (source: PsThemeSource) => void;
   refreshApplicationMenu: () => void;
   installDockIcon: () => void;
   log: { warn: (msg: string, obj?: unknown) => void };

@@ -7,7 +7,7 @@ import {
   isMermaidDocFile,
   resolveAssetProjectPath,
   SUPPORTED_DOC_EXTENSIONS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export { SUPPORTED_DOC_EXTENSIONS };
 

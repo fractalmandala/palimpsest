@@ -49,13 +49,13 @@ let server: BootedServer;
 let ephemeral: BootedServer;
 
 beforeAll(async () => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-skills-native-preservation-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-skills-native-preservation-')));
   const contentDir = join(root, 'normal');
-  const builtin = join(contentDir, '.agents/skills/open-knowledge');
+  const builtin = join(contentDir, '.agents/skills/palimpsest');
   mkdirSync(builtin, { recursive: true });
   writeFileSync(
     join(builtin, 'SKILL.md'),
-    '---\nname: open-knowledge\ndescription: Fixture\n---\nBody.\n',
+    '---\nname: palimpsest\ndescription: Fixture\n---\nBody.\n',
   );
   server = await bootCompositionRig(contentDir, { projectDir: contentDir });
   await server.ready;
@@ -183,7 +183,7 @@ test('ephemeral admission still rejects hostile Hosts and retains the existing m
   });
   expect(restricted.status, restricted.body).toBe(403);
   expect(parseProblem(restricted.body).type).toBe('urn:ok:error:single-file-mode');
-  expect(existsSync(join(root, 'ephemeral/.ok/frontmatter.yml'))).toBe(false);
+  expect(existsSync(join(root, 'ephemeral/.ps/frontmatter.yml'))).toBe(false);
 });
 
 test.each(['timeout', 'disconnect'] as const)(
@@ -220,7 +220,7 @@ test.each(['timeout', 'disconnect'] as const)(
       title: kind === 'timeout' ? 'Request body read timed out.' : 'Failed to read request body.',
     });
     expect(existsSync(join(root, 'normal/.agents/skills/interrupted/SKILL.md'))).toBe(false);
-    expect(existsSync(join(root, 'normal/.ok/skills/interrupted/SKILL.md'))).toBe(false);
+    expect(existsSync(join(root, 'normal/.ps/skills/interrupted/SKILL.md'))).toBe(false);
     req.destroy();
   },
 );

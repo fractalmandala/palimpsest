@@ -2,9 +2,9 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import {
   applyExtensionBadges,
-  OK_EXT_BADGE_ATTR,
-  OK_EXT_ROW_ATTR,
-  OK_FULLNAME_ROW_ATTR,
+  PS_EXT_BADGE_ATTR,
+  PS_EXT_ROW_ATTR,
+  PS_FULLNAME_ROW_ATTR,
 } from './file-tree-extension-badge';
 
 interface PierreRowInit {
@@ -95,7 +95,7 @@ function extensionTextOf(row: HTMLElement): string {
 }
 
 function badgeOf(row: HTMLElement): HTMLElement | null {
-  return row.querySelector<HTMLElement>(`[${OK_EXT_BADGE_ATTR}]`);
+  return row.querySelector<HTMLElement>(`[${PS_EXT_BADGE_ATTR}]`);
 }
 
 describe('applyExtensionBadges — extension badge injection', () => {
@@ -112,7 +112,7 @@ describe('applyExtensionBadges — extension badge injection', () => {
     applyExtensionBadges(root);
 
     const row = root.firstElementChild as HTMLElement;
-    expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(true);
+    expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(true);
     expect(basenameTextOf(row)).toBe('AGENTS');
     expect(badgeOf(row)).toBeNull();
   });
@@ -126,7 +126,7 @@ describe('applyExtensionBadges — extension badge injection', () => {
     applyExtensionBadges(root);
 
     const row = root.firstElementChild as HTMLElement;
-    expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(true);
+    expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(true);
     expect(basenameTextOf(row)).toBe('ideas');
     const badge = badgeOf(row);
     expect(badge).not.toBeNull();
@@ -210,7 +210,7 @@ describe('applyExtensionBadges — extension badge injection', () => {
     applyExtensionBadges(root);
 
     const row = root.firstElementChild as HTMLElement;
-    expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(false);
+    expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(false);
     expect(badgeOf(row)).toBeNull();
     expect(basenameTextOf(row)).toBe('notes');
   });
@@ -222,20 +222,20 @@ describe('applyExtensionBadges — extension badge injection', () => {
     applyExtensionBadges(root);
 
     const row = root.firstElementChild as HTMLElement;
-    expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(false);
+    expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(false);
     expect(badgeOf(row)).toBeNull();
     expect(basenameTextOf(row)).toBe('LICENSE');
   });
 
   test('dotfiles remain readable when the sidebar shows all files', () => {
-    for (const filename of ['.gitignore', '.DS_Store', '.okignore']) {
+    for (const filename of ['.gitignore', '.DS_Store', '.psignore']) {
       const root = document.createElement('div');
       root.appendChild(buildPierreRow({ path: filename, filename, includeAction: true }));
 
       applyExtensionBadges(root);
 
       const row = root.firstElementChild as HTMLElement;
-      expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(false);
+      expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(false);
       expect(badgeOf(row)).toBeNull();
       expect(basenameTextOf(row)).toBe('.');
       expect(`${basenameTextOf(row)}${extensionTextOf(row)}`).toBe(filename);
@@ -312,8 +312,8 @@ describe('applyExtensionBadges — extension badge injection', () => {
     const root = document.createElement('div');
     root.appendChild(
       buildPierreRow({
-        path: 'projects/open-knowledge/',
-        filename: 'open-knowledge',
+        path: 'projects/palimpsest/',
+        filename: 'palimpsest',
         centerSplit: ['open-kn', 'owledge'],
         includeAction: true,
       }),
@@ -322,18 +322,18 @@ describe('applyExtensionBadges — extension badge injection', () => {
     applyExtensionBadges(root);
 
     const row = root.firstElementChild as HTMLElement;
-    expect(row.hasAttribute(OK_FULLNAME_ROW_ATTR)).toBe(true);
-    expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(false);
+    expect(row.hasAttribute(PS_FULLNAME_ROW_ATTR)).toBe(true);
+    expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(false);
     expect(badgeOf(row)).toBeNull();
-    expect(basenameTextOf(row)).toBe('open-knowledge');
+    expect(basenameTextOf(row)).toBe('palimpsest');
   });
 
   test('folder recompose is idempotent (repeat call leaves the same text node)', () => {
     const root = document.createElement('div');
     root.appendChild(
       buildPierreRow({
-        path: 'projects/open-knowledge/',
-        filename: 'open-knowledge',
+        path: 'projects/palimpsest/',
+        filename: 'palimpsest',
         centerSplit: ['open-kn', 'owledge'],
         includeAction: true,
       }),
@@ -344,20 +344,20 @@ describe('applyExtensionBadges — extension badge injection', () => {
     applyExtensionBadges(root);
     const second = basenameTextOf(root.firstElementChild as HTMLElement);
 
-    expect(first).toBe('open-knowledge');
-    expect(second).toBe('open-knowledge');
+    expect(first).toBe('palimpsest');
+    expect(second).toBe('palimpsest');
   });
 
   test('flattened breadcrumb row (no middle truncate group) is left untouched', () => {
     const root = document.createElement('div');
     const row = document.createElement('div');
     row.setAttribute('data-type', 'item');
-    row.setAttribute('data-item-path', 'public/open-knowledge/docs/');
+    row.setAttribute('data-item-path', 'public/palimpsest/docs/');
     const content = document.createElement('div');
     content.setAttribute('data-item-section', 'content');
     const flattened = document.createElement('div');
     flattened.setAttribute('data-item-flattened-subitems', '');
-    for (const seg of ['public', 'open-knowledge', 'docs']) {
+    for (const seg of ['public', 'palimpsest', 'docs']) {
       const sub = document.createElement('span');
       sub.setAttribute('data-item-flattened-subitem', seg);
       sub.textContent = seg;
@@ -369,8 +369,8 @@ describe('applyExtensionBadges — extension badge injection', () => {
 
     applyExtensionBadges(root);
 
-    expect(row.hasAttribute(OK_FULLNAME_ROW_ATTR)).toBe(false);
-    expect(row.hasAttribute(OK_EXT_ROW_ATTR)).toBe(false);
+    expect(row.hasAttribute(PS_FULLNAME_ROW_ATTR)).toBe(false);
+    expect(row.hasAttribute(PS_EXT_ROW_ATTR)).toBe(false);
     expect(badgeOf(row)).toBeNull();
   });
 });

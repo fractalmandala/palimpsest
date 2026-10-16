@@ -3,7 +3,7 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkSharingStatusResult } from '@/lib/desktop-bridge-types';
+import type { PsSharingStatusResult } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
 vi.doMock('@lingui/react/macro', () => ({
@@ -19,14 +19,14 @@ vi.doMock('sonner', () => ({
 const { SharingSection } = await import('./SharingSection');
 const { TooltipProvider } = await import('@/components/ui/tooltip');
 
-const SHARED_STATUS: OkSharingStatusResult = {
+const SHARED_STATUS: PsSharingStatusResult = {
   kind: 'status',
   mode: 'shared',
   excluded: [],
   trackedUpstream: [],
 };
 
-function renderSection(status: OkSharingStatusResult = SHARED_STATUS) {
+function renderSection(status: PsSharingStatusResult = SHARED_STATUS) {
   const setModeCalls: string[] = [];
   const sharing = {
     status: vi.fn(() => Promise.resolve(status)),
@@ -35,7 +35,7 @@ function renderSection(status: OkSharingStatusResult = SHARED_STATUS) {
       return Promise.resolve({ kind: 'applied', mode });
     }),
   };
-  (window as unknown as { okDesktop?: unknown }).okDesktop = { sharing };
+  (window as unknown as { psDesktop?: unknown }).psDesktop = { sharing };
   render(
     <TooltipProvider>
       <SharingSection />
@@ -47,7 +47,7 @@ function renderSection(status: OkSharingStatusResult = SHARED_STATUS) {
 describe('SharingSection', () => {
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('"Only me" is the first option and its label matches its value', async () => {
@@ -94,17 +94,17 @@ describe('SharingSection', () => {
 describe('SharingSection without the sharing bridge', () => {
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
-  test('Stable and plain browsers name ok config-sharing', () => {
+  test('Stable and plain browsers name ps config-sharing', () => {
     render(<SharingSection />);
-    expect(screen.getByText('ok config-sharing status', { exact: false })).toBeTruthy();
+    expect(screen.getByText('ps config-sharing status', { exact: false })).toBeTruthy();
   });
 
-  test('Beta names ok-beta config-sharing', () => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = { cliCommandName: 'ok-beta' };
+  test('Beta names ps-beta config-sharing', () => {
+    (window as unknown as { psDesktop?: unknown }).psDesktop = { cliCommandName: 'ps-beta' };
     render(<SharingSection />);
-    expect(screen.getByText('ok-beta config-sharing status', { exact: false })).toBeTruthy();
+    expect(screen.getByText('ps-beta config-sharing status', { exact: false })).toBeTruthy();
   });
 });

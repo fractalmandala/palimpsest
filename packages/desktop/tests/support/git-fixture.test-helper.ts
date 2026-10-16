@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { existsSync, lstatSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join } from 'node:path';
-import { inspectGitRepository } from '@inkeep/open-knowledge-core/git-repository';
-import { EPHEMERAL_PROJECT_DIR_PREFIX } from '@inkeep/open-knowledge-server';
+import { inspectGitRepository } from '@palimpsest/core/git-repository';
+import { EPHEMERAL_PROJECT_DIR_PREFIX } from '@palimpsest/server';
 import type { Page } from '@playwright/test';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 
@@ -41,7 +41,7 @@ export async function configureDesktopGitRepositories(
   page: Page,
   projectDir: string,
 ): Promise<void> {
-  const apiOrigin = await page.evaluate(() => window.okDesktop?.config.apiOrigin);
+  const apiOrigin = await page.evaluate(() => window.psDesktop?.config.apiOrigin);
   if (!apiOrigin) throw new Error(`Desktop fixture has no server origin for ${projectDir}`);
   await configureProjectGitRepositories(projectDir, apiOrigin);
 }
@@ -71,7 +71,7 @@ export function readTestServerRepository(lockDir: string): {
     `Invalid fixture port at ${lockPath}`,
   );
   const projectDir = realpathSync(lock.worktreeRoot);
-  if (realpathSync(lockDir) !== join(projectDir, '.ok', 'local')) {
+  if (realpathSync(lockDir) !== join(projectDir, '.ps', 'local')) {
     throw new Error(`Fixture server root does not own ${lockPath}`);
   }
   const url = new URL(lock.url);
@@ -88,7 +88,7 @@ export function findEphemeralTestProject(ownedTempDir: string, apiOrigin: string
   for (const entry of readdirSync(tempDir, { withFileTypes: true })) {
     if (!entry.isDirectory() || !entry.name.startsWith(EPHEMERAL_PROJECT_DIR_PREFIX)) continue;
     const projectDir = join(tempDir, entry.name);
-    const lockDir = join(projectDir, '.ok', 'local');
+    const lockDir = join(projectDir, '.ps', 'local');
     if (!existsSync(join(lockDir, 'server.lock'))) continue;
     const server = readTestServerRepository(lockDir);
     if (server.projectDir !== projectDir) {

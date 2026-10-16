@@ -28,8 +28,8 @@ let root: string;
 let server: BootedServer | undefined;
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-boot-skill-ownership-')));
-  isolated.home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-boot-skill-home-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-boot-skill-ownership-')));
+  isolated.home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-boot-skill-home-')));
 });
 
 afterEach(async () => {
@@ -57,7 +57,7 @@ function git(...args: string[]): string {
 test('startup preserves tracked dangling skill links without a legacy store', async () => {
   git('init', '--quiet', '--initial-branch=main');
   configureTestGitRepository(root);
-  writeFileSync(join(root, '.gitignore'), '.ok/\n');
+  writeFileSync(join(root, '.gitignore'), '.ps/\n');
   const target = '../../shared-skills/retired';
   const links = ['.agents/skills/retired', '.codex/skills/retired'];
   for (const host of ['.agents', '.codex']) {
@@ -81,7 +81,7 @@ test('startup preserves tracked dangling skill links without a legacy store', as
   );
   expect(git('status', '--porcelain')).toBe('');
   expect(git('ls-files', '--stage')).toContain('120000');
-  expect(existsSync(join(root, '.ok', 'skills'))).toBe(false);
+  expect(existsSync(join(root, '.ps', 'skills'))).toBe(false);
 
   server = await bootCompositionRig(root, { configHomedirOverride: isolated.home });
   await server.ready;
@@ -101,7 +101,7 @@ test.each([false, true])(
     mkdirSync(join(root, '.agents', 'skills'), { recursive: true });
     symlinkSync(target, link, 'dir');
     if (legacySkillExists) {
-      const source = join(root, '.ok', 'skills', 'retired');
+      const source = join(root, '.ps', 'skills', 'retired');
       mkdirSync(source, { recursive: true });
       writeFileSync(join(source, 'SKILL.md'), '---\nname: retired\n---\n# Legacy skill\n');
     }
@@ -112,7 +112,7 @@ test.each([false, true])(
     expect(lstatSync(link).isSymbolicLink()).toBe(true);
     expect(readlinkSync(link)).toBe(target);
     if (legacySkillExists) {
-      expect(readFileSync(join(root, '.ok', 'skills', 'retired', 'SKILL.md'), 'utf8')).toBe(
+      expect(readFileSync(join(root, '.ps', 'skills', 'retired', 'SKILL.md'), 'utf8')).toBe(
         '---\nname: retired\n---\n# Legacy skill\n',
       );
     }
@@ -121,13 +121,13 @@ test.each([false, true])(
 );
 
 test('startup still migrates known legacy store installations into editor directories', async () => {
-  const source = join(root, '.ok', 'skills', 'legacy');
+  const source = join(root, '.ps', 'skills', 'legacy');
   const host = join(root, '.codex', 'skills');
   const content = '---\nname: legacy\n---\n# Legacy skill\n';
   mkdirSync(source, { recursive: true });
   mkdirSync(host, { recursive: true });
   writeFileSync(join(source, 'SKILL.md'), content);
-  symlinkSync('../../.ok/skills/legacy', join(host, 'legacy'), 'dir');
+  symlinkSync('../../.ps/skills/legacy', join(host, 'legacy'), 'dir');
 
   server = await bootCompositionRig(root, { configHomedirOverride: isolated.home });
   await server.ready;

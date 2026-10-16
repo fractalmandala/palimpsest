@@ -1,7 +1,7 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { type ReactNode, useEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 type ConsentState = { enabled: boolean | null; synced: boolean };
 type Writer = ((enabled: boolean) => { ok: true } | { ok: false; error: string }) | null;
@@ -54,7 +54,7 @@ vi.doMock('./TerminalPanel', mockPanelModule);
 
 const { TerminalGate } = await import('./TerminalGate');
 
-const bridge = {} as OkDesktopBridge;
+const bridge = {} as PsDesktopBridge;
 
 function renderGate() {
   return render(<TerminalGate bridge={bridge} />);

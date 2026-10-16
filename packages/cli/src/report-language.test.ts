@@ -1,14 +1,14 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { resolveConfigPath } from '@palimpsest/core/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { defaultReadLanguage } from './report-language.ts';
 
 const tmpDirs: string[] = [];
 
 function makeHome(configBody?: string): string {
-  const home = mkdtempSync(resolve(tmpdir(), 'ok-report-language-'));
+  const home = mkdtempSync(resolve(tmpdir(), 'ps-report-language-'));
   tmpDirs.push(home);
   if (configBody !== undefined) {
     const absPath = resolveConfigPath('user', home, home);
@@ -58,10 +58,10 @@ describe('defaultReadLanguage', () => {
     expect(language.systemLanguages).toEqual(['pt-BR', 'es-ES', 'en-US']);
   });
 
-  test('an OK_LANG override is reported as the tier that decided', () => {
+  test('an PS_LANG override is reported as the tier that decided', () => {
     const home = makeHome('appearance:\n  language: es\n');
 
-    const language = defaultReadLanguage({ home, env: { OK_LANG: 'fr', LANG: 'en_US.UTF-8' } });
+    const language = defaultReadLanguage({ home, env: { PS_LANG: 'fr', LANG: 'en_US.UTF-8' } });
 
     expect(language.locale).toBe('fr');
     expect(language.source).toBe('override');

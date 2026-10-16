@@ -1,6 +1,6 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { WorktreeCreateResult } from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+import type { WorktreeCreateResult } from '@palimpsest/core/git/worktree-selector-model';
 import { i18n } from '@lingui/core';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -22,8 +22,8 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { authPromptStore } from '@/lib/auth-prompt-store';
 import {
-  type OkDesktopBridge,
-  type OkShareReceivedPayload,
+  type PsDesktopBridge,
+  type PsShareReceivedPayload,
   shareTargetPath,
 } from '@/lib/desktop-bridge-types';
 import {
@@ -51,12 +51,12 @@ import { worktreeCreateErrorCopy } from '@/lib/worktree-create-error';
 import { refreshWorktrees } from '@/lib/worktree-store';
 
 export interface ShareBranchSwitchDialogProps {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   store?: ShareReceiveStore;
 }
 
 type ProjectBranchSwitchPayload = Extract<
-  OkShareReceivedPayload,
+  PsShareReceivedPayload,
   { kind: 'project-branch-switch' }
 >;
 
@@ -84,7 +84,7 @@ function pendingTarget(
 }
 
 function isBranchSwitchPayload(
-  payload: OkShareReceivedPayload | null,
+  payload: PsShareReceivedPayload | null,
 ): payload is ProjectBranchSwitchPayload {
   return payload !== null && payload.kind === 'project-branch-switch';
 }

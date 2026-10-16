@@ -4,8 +4,8 @@ import { join } from 'node:path';
 import {
   AgentIntegrationsApplySuccessSchema,
   ProblemDetailsSchema,
-} from '@inkeep/open-knowledge-core';
-import { buildIngressPolicy } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { buildIngressPolicy } from '@palimpsest/server';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { fetchWithHostHeader } from '../host-header-request.test-helper';
@@ -269,7 +269,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
       `127.0.0.1`,
       { 'X-Forwarded-For': '203.0.113.8' },
       'urn:ok:error:host-not-allowed',
-      'Proxied request refused: this server has not consented to external exposure. Set OK_EXTERNAL_URL to the public origin and OK_ALLOW_EXTERNAL=1 (or server.externalUrl + server.allowExternal in config), then restart the server.',
+      'Proxied request refused: this server has not consented to external exposure. Set PS_EXTERNAL_URL to the public origin and PS_ALLOW_EXTERNAL=1 (or server.externalUrl + server.allowExternal in config), then restart the server.',
     ],
   ])('refuses %s before malformed-body parsing', async (_label, host, headers, type, title) => {
     const res = await fetchWithHostHeader(`${base()}/api/agent-integrations/apply`, host, {
@@ -339,7 +339,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
 
 describe('agent-integrations apply — ephemeral admission', () => {
   test('retains apply without adding a single-file-mode prohibition', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-apply-ephemeral-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-apply-ephemeral-'));
     writeFileSync(join(contentDir, 'note.md'), '# Note\n', 'utf8');
     let ephemeral: TestServer | undefined;
     try {

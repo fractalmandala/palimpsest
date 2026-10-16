@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { okUserHomeDisplayPath } from '../constants/ok-dir.ts';
+import { psUserHomeDisplayPath } from '../constants/ps-dir.ts';
 
 export const ConfigIssueSourceSchema = z.object({
   file: z.string(),
@@ -187,13 +187,13 @@ export function isKnownConfigError(
 function scopeConfigFile(scope: FieldScope): string {
   switch (scope) {
     case 'user':
-      return okUserHomeDisplayPath('global.yml');
+      return psUserHomeDisplayPath('global.yml');
     case 'project':
-      return '.ok/config.yml';
+      return '.ps/config.yml';
     case 'project-local':
-      return '.ok/local/config.yml';
+      return '.ps/local/config.yml';
     case 'either':
-      return `.ok/config.yml or ${okUserHomeDisplayPath('global.yml')}`;
+      return `.ps/config.yml or ${psUserHomeDisplayPath('global.yml')}`;
   }
 }
 
@@ -308,8 +308,8 @@ export function humanFormat(error: ConfigValidationError): string {
       return `Failed to write config file: ${error.detail}`;
     case 'OKIGNORE_INVALID':
       return error.lineNumber !== undefined
-        ? `.okignore line ${error.lineNumber}: ${error.detail}`
-        : `.okignore: ${error.detail}`;
+        ? `.psignore line ${error.lineNumber}: ${error.detail}`
+        : `.psignore: ${error.detail}`;
     case 'UNKNOWN':
       return error.message ?? 'Unknown error.';
   }

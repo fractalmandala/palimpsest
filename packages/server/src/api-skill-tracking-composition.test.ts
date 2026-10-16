@@ -49,11 +49,11 @@ function gitIgnored(base: string, path: string): boolean {
 }
 
 beforeAll(async () => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-skill-tracking-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-skill-tracking-')));
   const result = spawnSync('git', ['init', '-q', root]);
   configureTestGitRepository(root);
   expect(result.status).toBe(0);
-  writeSkill(root, '.agents/skills/open-knowledge', 'open-knowledge');
+  writeSkill(root, '.agents/skills/palimpsest', 'palimpsest');
   writeSkill(root, '.claude/skills/hidden', 'hidden');
   writeFileSync(join(root, '.gitignore'), '.claude/*');
   server = await bootCompositionRig(root, { projectDir: root });
@@ -110,16 +110,16 @@ afterEach(() => vi.restoreAllMocks());
 function isolatedFixture(rule: string | null, withSignal: boolean) {
   const contentDir = mkdtempSync(join(root, 'isolated-'));
   const home = mkdtempSync(join(root, 'home-'));
-  writeSkill(contentDir, '.agents/skills/open-knowledge', 'open-knowledge');
+  writeSkill(contentDir, '.agents/skills/palimpsest', 'palimpsest');
   writeSkill(contentDir, '.claude/skills/hidden', 'hidden');
-  writeSkill(contentDir, '.ok/skills/probe', 'probe');
+  writeSkill(contentDir, '.ps/skills/probe', 'probe');
   if (rule !== null) writeFileSync(join(contentDir, '.gitignore'), rule);
   const rebuildBytes: Array<string | null> = [];
   const signals: string[] = [];
   const contentFilter = createContentFilter({
     contentDir,
     projectDir: contentDir,
-    inPlaceSkillDirs: new Set(['.agents/skills/open-knowledge', '.claude/skills/hidden']),
+    inPlaceSkillDirs: new Set(['.agents/skills/palimpsest', '.claude/skills/hidden']),
     onAfterRebuild: () => {
       const path = join(contentDir, '.gitignore');
       rebuildBytes.push(existsSync(path) ? readFileSync(path, 'utf8') : null);
@@ -179,7 +179,7 @@ test.each([false, true])(
     expect(await probeDescription(r.extension)).toBe('before');
     r.rebuildBytes.length = 0;
     r.signals.length = 0;
-    writeSkill(r.contentDir, '.ok/skills/probe', 'probe', 'after');
+    writeSkill(r.contentDir, '.ps/skills/probe', 'probe', 'after');
     expect(await probeDescription(r.extension)).toBe('before');
     const preview = await request(r.extension, '/api/skill/track-in-git', {
       name: 'hidden',
@@ -198,7 +198,7 @@ test.each([false, true])(
     expect(r.rebuildBytes).toEqual(['.claude/*\n!/.claude/skills/\n']);
     expect(r.signals).toEqual(withSignal ? ['files'] : []);
     expect(await probeDescription(r.extension)).toBe('after');
-    writeSkill(r.contentDir, '.ok/skills/probe', 'probe', 'later');
+    writeSkill(r.contentDir, '.ps/skills/probe', 'probe', 'later');
     const repeated = await request(r.extension, '/api/skill/track-in-git', {
       name: 'hidden',
       scope: 'project',
@@ -220,7 +220,7 @@ test.each([false, true])(
     expect(await probeDescription(r.extension)).toBe('before');
     r.rebuildBytes.length = 0;
     r.signals.length = 0;
-    writeSkill(r.contentDir, '.ok/skills/probe', 'probe', 'after');
+    writeSkill(r.contentDir, '.ps/skills/probe', 'probe', 'after');
     expect(await probeDescription(r.extension)).toBe('before');
     const failed = await request(r.extension, '/api/skill/track-in-git', {
       name: 'hidden',
@@ -246,7 +246,7 @@ test('an existing ineffective negation refuses without writes, rebuilds or cache
   expect(await probeDescription(r.extension)).toBe('before');
   r.rebuildBytes.length = 0;
   r.signals.length = 0;
-  writeSkill(r.contentDir, '.ok/skills/probe', 'probe', 'after');
+  writeSkill(r.contentDir, '.ps/skills/probe', 'probe', 'after');
   const failed = await request(r.extension, '/api/skill/track-in-git', {
     name: 'hidden',
     scope: 'project',
@@ -262,7 +262,7 @@ test('an existing ineffective negation refuses without writes, rebuilds or cache
 
 test('rollback removes a newly created ignore file when an OK ignore rule still excludes the skill', async () => {
   const r = isolatedFixture(null, true);
-  writeFileSync(join(r.contentDir, '.okignore'), '.claude/\n');
+  writeFileSync(join(r.contentDir, '.psignore'), '.claude/\n');
   await r.contentFilter.rebuildIgnorePatterns();
   expect(r.contentFilter.isPathIgnored('.claude/skills/hidden/SKILL.md')).toBe(true);
   r.rebuildBytes.length = 0;

@@ -25,10 +25,10 @@ const TARGET = resolveDesktopTarget();
 async function bootEditorWindow(
   captureStderrFor: SmokeFixtures['captureStderrFor'],
 ): Promise<{ app: ElectronApplication; page: Page; tmpHome: string }> {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ok-report-bug-home-')));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-report-bug-project-')));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ps-report-bug-home-')));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-report-bug-project-')));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
 
   const userDataDir = join(tmpHome, 'electron-userdata');
@@ -55,7 +55,7 @@ async function bootEditorWindow(
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
       },
     }),
   );
@@ -64,7 +64,7 @@ async function bootEditorWindow(
   let editorPage: Page | undefined;
   await expect(async () => {
     for (const page of app.windows()) {
-      const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+      const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
       if (mode === 'editor') {
         editorPage = page;
         return;
@@ -125,7 +125,7 @@ function skipWhenHostCannotCapture(preview: string | null): asserts preview is s
 }
 
 test.describe('Report-a-bug entry points', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -157,7 +157,7 @@ test.describe('Report-a-bug entry points', () => {
     await expect(reviewDialog.getByText(/secrets redacted/)).toBeVisible();
     await expect(reviewDialog.getByRole('button', { name: 'Send report' })).toBeVisible();
 
-    const reportsDir = join(tmpHome, '.ok', 'bug-reports');
+    const reportsDir = join(tmpHome, '.ps', 'bug-reports');
     const zips = readdirSync(reportsDir).filter((name) => name.endsWith('.zip'));
     expect(zips).toHaveLength(1);
     const zipName = zips[0];

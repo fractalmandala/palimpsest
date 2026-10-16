@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema, type JSONContent } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -38,7 +38,7 @@ function serializeFragment(fragment: Y.XmlFragment): string {
 function readLossEvents(contentDir: string): Array<{ event: string; docName: string }> {
   try {
     const raw = readFileSync(
-      join(contentDir, '.ok', 'local', 'loss-capture', 'loss-current.jsonl'),
+      join(contentDir, '.ps', 'local', 'loss-capture', 'loss-current.jsonl'),
       'utf-8',
     );
     return raw
@@ -63,7 +63,7 @@ const RING_POLL_INTERVAL_MS = 50;
 const RING_WAIT_BUDGET_MS = RING_POLL_ATTEMPTS * RING_POLL_INTERVAL_MS;
 
 function ringPath(contentDir: string): string {
-  return join(contentDir, '.ok', 'local', 'loss-capture', 'loss-current.jsonl');
+  return join(contentDir, '.ps', 'local', 'loss-capture', 'loss-current.jsonl');
 }
 
 async function stageGuardDefer(server: TestServer, docName: string): Promise<void> {
@@ -147,10 +147,10 @@ describe('loss-capture ring — kill-switch behavioral pair', () => {
   test(
     'OFF (lossCapture.enabled: false): the guard still defers but the ring records nothing',
     async () => {
-      const contentDir = mkdtempSync(join(tmpdir(), 'ok-ring-off-'));
-      mkdirSync(join(contentDir, '.ok'), { recursive: true });
+      const contentDir = mkdtempSync(join(tmpdir(), 'ps-ring-off-'));
+      mkdirSync(join(contentDir, '.ps'), { recursive: true });
       writeFileSync(
-        join(contentDir, '.ok', 'config.yml'),
+        join(contentDir, '.ps', 'config.yml'),
         'lossCapture:\n  enabled: false\n',
         'utf-8',
       );

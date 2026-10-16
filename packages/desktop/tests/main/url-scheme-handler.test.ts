@@ -1,5 +1,5 @@
-import type { Candidate, CandidateSelection } from '@inkeep/open-knowledge-core';
-import { encodeShareUrl } from '@inkeep/open-knowledge-core';
+import type { Candidate, CandidateSelection } from '@palimpsest/core';
+import { encodeShareUrl } from '@palimpsest/core';
 import type { Mock } from 'vitest';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import shareFixture from '../../../../test-support/fixtures/share-url-v1-v2.json';
@@ -10,7 +10,7 @@ import type {
   ShareNavigatorPayload,
   ShareUrlPayload,
 } from '../../src/main/url-scheme.ts';
-import { parseOpenKnowledgeFileUrl, registerProtocolHandler } from '../../src/main/url-scheme.ts';
+import { parsePalimpsestFileUrl, registerProtocolHandler } from '../../src/main/url-scheme.ts';
 
 // biome-ignore lint/suspicious/noExplicitAny: bun's `mock()` default was any-callable; the fakes below are assigned to precisely-typed SUT deps, which is where the checking happens.
 type AnyMock = Mock<(...args: any[]) => any>;
@@ -180,7 +180,7 @@ function tickTimer(env: TestEnv): void {
 }
 
 describe('registerProtocolHandler — setAsDefaultProtocolClient', () => {
-  test('a dev build leaves the scheme unclaimed unless OK_DEV_PROTOCOL opts in', () => {
+  test('a dev build leaves the scheme unclaimed unless PS_DEV_PROTOCOL opts in', () => {
     const env = makeEnv({ isPackaged: false });
     registerProtocolHandler({
       log: env.log,
@@ -193,13 +193,13 @@ describe('registerProtocolHandler — setAsDefaultProtocolClient', () => {
     });
     expect(env.app.setAsDefaultProtocolClient).not.toHaveBeenCalled();
     expect(env.app.on).not.toHaveBeenCalledWith('before-quit', expect.anything());
-    const skip = env.infoLog.find((e) => e.msg.includes('OK_DEV_PROTOCOL=1'))?.msg ?? '';
+    const skip = env.infoLog.find((e) => e.msg.includes('PS_DEV_PROTOCOL=1'))?.msg ?? '';
     expect(skip).toContain('not registered');
     expect(skip).toContain('or nowhere');
     expect(skip).not.toContain('installed app');
   });
 
-  test('calls setAsDefaultProtocolClient in dev mode when OK_DEV_PROTOCOL opts in', () => {
+  test('calls setAsDefaultProtocolClient in dev mode when PS_DEV_PROTOCOL opts in', () => {
     const env = makeEnv({ isPackaged: false });
     registerProtocolHandler({
       registerDevProtocol: true,
@@ -210,7 +210,7 @@ describe('registerProtocolHandler — setAsDefaultProtocolClient', () => {
       getAnyReadyWindow: env.getAnyReadyWindow,
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
     });
-    expect(env.app.setAsDefaultProtocolClient).toHaveBeenCalledWith('openknowledge');
+    expect(env.app.setAsDefaultProtocolClient).toHaveBeenCalledWith('palimpsest');
   });
 
   test('registers and routes file opens through the Beta scheme', async () => {
@@ -223,10 +223,10 @@ describe('registerProtocolHandler — setAsDefaultProtocolClient', () => {
       sendDeepLink: env.sendDeepLink,
       getAnyReadyWindow: env.getAnyReadyWindow,
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
-      protocolScheme: 'openknowledge-beta',
+      protocolScheme: 'palimpsest-beta',
     });
 
-    expect(env.app.setAsDefaultProtocolClient).toHaveBeenCalledWith('openknowledge-beta');
+    expect(env.app.setAsDefaultProtocolClient).toHaveBeenCalledWith('palimpsest-beta');
     env.app.fireOpenFile('/Users/me/notes/beta.md');
     env.app.resolveReady();
     await flushPromises();
@@ -247,7 +247,7 @@ describe('registerProtocolHandler — setAsDefaultProtocolClient', () => {
         setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
         platform,
       });
-      expect(env.app.setAsDefaultProtocolClient).toHaveBeenCalledWith('openknowledge');
+      expect(env.app.setAsDefaultProtocolClient).toHaveBeenCalledWith('palimpsest');
       expect(env.app.on).not.toHaveBeenCalledWith('before-quit', expect.anything());
     });
   }
@@ -321,7 +321,7 @@ describe('registerProtocolHandler — before-quit Launch Services cleanup', () =
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
     });
     env.app.fireBeforeQuit();
-    expect(env.app.removeAsDefaultProtocolClient).toHaveBeenCalledWith('openknowledge');
+    expect(env.app.removeAsDefaultProtocolClient).toHaveBeenCalledWith('palimpsest');
   });
 
   test('does NOT register before-quit handler in packaged builds', () => {
@@ -406,7 +406,7 @@ describe('registerProtocolHandler — deferred-share routeUrl + dedup', () => {
     await flushPromises();
 
     const token = encodeShareUrl('https://github.com/inkeep/tech-ipos/blob/main/README.md');
-    const url = `https://openknowledge.ai/d/${token}`;
+    const url = `https://github.com/fractalmandala/palimpsest/d/${token}`;
 
     control.routeUrl(url);
     await flushPromises();
@@ -446,8 +446,8 @@ describe('registerProtocolHandler — deferred-share routeUrl + dedup', () => {
     await flushPromises();
 
     const sharedUrl = 'https://github.com/o/r/blob/main/wiki/x.md';
-    control.routeUrl(`https://openknowledge.ai/d/${encodeShareUrl(sharedUrl)}`);
-    control.routeUrl(`https://openknowledge.ai/d/${encodeShareUrl(sharedUrl, 1)}`);
+    control.routeUrl(`https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl)}`);
+    control.routeUrl(`https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl, 1)}`);
     await flushPromises();
     await flushPromises();
 
@@ -470,7 +470,7 @@ describe('registerProtocolHandler — foreign-host trust gate', () => {
 
   function ghesShareUrl(): string {
     const token = encodeShareUrl('https://ghes.acme.test/acme/kb/blob/main/README.md');
-    return `https://openknowledge.ai/d/${token}`;
+    return `https://github.com/fractalmandala/palimpsest/d/${token}`;
   }
 
   async function driveGhesShare(overrides: {
@@ -538,7 +538,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
     });
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     expect(env.openProject).not.toHaveBeenCalled();
     expect(env.sendDeepLink).not.toHaveBeenCalled();
   });
@@ -553,7 +553,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
       getAnyReadyWindow: env.getAnyReadyWindow,
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
     });
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     env.app.resolveReady();
     await flushPromises();
 
@@ -574,8 +574,8 @@ describe('registerProtocolHandler — queue-then-flush', () => {
       getAnyReadyWindow: env.getAnyReadyWindow,
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
     });
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p1&doc=a.md');
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p2&doc=b.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p1&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p2&doc=b.md');
 
     expect(env.openProject).not.toHaveBeenCalled();
 
@@ -604,7 +604,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
       platform: 'linux',
     });
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     env.app.resolveReady();
     await flushPromises();
 
@@ -639,7 +639,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
       log: env.log,
     });
-    env.app.fireOpenUrl('openknowledge://open?doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?doc=a.md');
     env.app.resolveReady();
     await flushPromises();
 
@@ -665,7 +665,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=b.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=b.md');
     await flushPromises();
 
     expect(env.focusWindowForProject).toHaveBeenCalledWith('/tmp/p');
@@ -688,7 +688,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/B&doc=x.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/B&doc=x.md');
     await flushPromises();
     await flushPromises();
 
@@ -718,7 +718,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/broken&doc=x.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/broken&doc=x.md');
     await flushPromises();
     await flushPromises();
 
@@ -731,7 +731,7 @@ describe('registerProtocolHandler — queue-then-flush', () => {
 
 describe('registerProtocolHandler — single-file launch control', () => {
   let env: TestEnv;
-  const FILE_URL = `openknowledge://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`;
+  const FILE_URL = `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`;
 
   beforeEach(() => {
     env = makeEnv();
@@ -748,7 +748,7 @@ describe('registerProtocolHandler — single-file launch control', () => {
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
     });
     expect(control.singleFileLaunch()).toBe(false);
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     expect(control.singleFileLaunch()).toBe(false);
   });
 
@@ -797,10 +797,10 @@ describe('registerProtocolHandler — single-file launch control', () => {
 
 describe('registerProtocolHandler — urlLaunchOwnsWindow (boot-restore suppression)', () => {
   let env: TestEnv;
-  const SHARE_URL = `https://openknowledge.ai/d/${encodeShareUrl(
+  const SHARE_URL = `https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(
     'https://github.com/inkeep/notes/blob/main/welcome.md',
   )}`;
-  const FILE_URL = `openknowledge://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`;
+  const FILE_URL = `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`;
 
   beforeEach(() => {
     env = makeEnv();
@@ -828,7 +828,7 @@ describe('registerProtocolHandler — urlLaunchOwnsWindow (boot-restore suppress
   test('becomes true after a valid custom-scheme share URL', () => {
     const control = makeControl();
     const blobUrl = 'https://github.com/inkeep/notes/blob/main/welcome.md';
-    env.app.fireOpenUrl(`openknowledge://share?url=${encodeURIComponent(blobUrl)}`);
+    env.app.fireOpenUrl(`palimpsest://share?url=${encodeURIComponent(blobUrl)}`);
     expect(control.urlLaunchOwnsWindow()).toBe(true);
   });
 
@@ -840,25 +840,25 @@ describe('registerProtocolHandler — urlLaunchOwnsWindow (boot-restore suppress
 
   test('stays false for an invalid share URL — its toast needs an existing window', () => {
     const control = makeControl();
-    env.app.fireOpenUrl('https://openknowledge.ai/d/!!!not-base64!!!');
+    env.app.fireOpenUrl('https://github.com/fractalmandala/palimpsest/d/!!!not-base64!!!');
     expect(control.urlLaunchOwnsWindow()).toBe(false);
   });
 
   test('stays false after a screen deep-link — it targets an existing window', () => {
     const control = makeControl();
-    env.app.fireOpenUrl('openknowledge://screen?name=settings');
+    env.app.fireOpenUrl('palimpsest://screen?name=settings');
     expect(control.urlLaunchOwnsWindow()).toBe(false);
   });
 
   test('stays false after a legacy project deep-link (unchanged scope)', () => {
     const control = makeControl();
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     expect(control.urlLaunchOwnsWindow()).toBe(false);
   });
 });
 
 describe('registerProtocolHandler — second-instance argv parsing', () => {
-  test('extracts openknowledge:// entries from second-instance argv', async () => {
+  test('extracts palimpsest:// entries from second-instance argv', async () => {
     const env = makeEnv();
     env.readyWindow = { id: 'primary' };
     registerProtocolHandler({
@@ -873,8 +873,8 @@ describe('registerProtocolHandler — second-instance argv parsing', () => {
     await flushPromises();
 
     env.app.fireSecondInstance([
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
-      'openknowledge://open?project=/tmp/si&doc=readme.md',
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+      'palimpsest://open?project=/tmp/si&doc=readme.md',
     ]);
     await flushPromises();
     await flushPromises();
@@ -884,7 +884,7 @@ describe('registerProtocolHandler — second-instance argv parsing', () => {
     });
   });
 
-  test('ignores argv entries that are not openknowledge:// URLs', async () => {
+  test('ignores argv entries that are not palimpsest:// URLs', async () => {
     const env = makeEnv();
     env.readyWindow = { id: 'primary' };
     registerProtocolHandler({
@@ -907,7 +907,7 @@ describe('registerProtocolHandler — second-instance argv parsing', () => {
 });
 
 describe('registerProtocolHandler — cold-start process.argv scan', () => {
-  test('queues openknowledge:// URL from process.argv on cold-start CLI launch', async () => {
+  test('queues palimpsest:// URL from process.argv on cold-start CLI launch', async () => {
     const env = makeEnv();
     env.readyWindow = { id: 'pre-existing' };
     registerProtocolHandler({
@@ -918,8 +918,8 @@ describe('registerProtocolHandler — cold-start process.argv scan', () => {
       getAnyReadyWindow: env.getAnyReadyWindow,
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
       getInitialArgv: () => [
-        '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
-        'openknowledge://open?project=/tmp/cs&doc=a.md',
+        '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+        'palimpsest://open?project=/tmp/cs&doc=a.md',
       ],
     });
     env.app.resolveReady();
@@ -931,7 +931,7 @@ describe('registerProtocolHandler — cold-start process.argv scan', () => {
     });
   });
 
-  test('no-op when no openknowledge:// URLs in initial argv', async () => {
+  test('no-op when no palimpsest:// URLs in initial argv', async () => {
     const env = makeEnv();
     registerProtocolHandler({
       app: env.app,
@@ -967,7 +967,7 @@ describe('registerProtocolHandler — cold-start process.argv scan', () => {
 });
 
 describe('registerProtocolHandler — share-flow routing', () => {
-  test('routes custom-scheme share URLs (openknowledge://share?url=...) through resolution', async () => {
+  test('routes custom-scheme share URLs (palimpsest://share?url=...) through resolution', async () => {
     const env = makeEnv();
     const focusedWin: FakeWindowHandle = { id: 'focused' };
     env.readyWindow = focusedWin;
@@ -987,7 +987,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     await flushPromises();
 
     const blobUrl = 'https://github.com/inkeep/playbooks/blob/main/x.md';
-    env.app.fireOpenUrl(`openknowledge://share?url=${encodeURIComponent(blobUrl)}`);
+    env.app.fireOpenUrl(`palimpsest://share?url=${encodeURIComponent(blobUrl)}`);
     await flushPromises();
 
     expect(resolveShareTarget).toHaveBeenCalledTimes(1);
@@ -1024,7 +1024,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('https://openknowledge.ai/d/AwABAg');
+    env.app.fireOpenUrl('https://github.com/fractalmandala/palimpsest/d/AwABAg');
     await flushPromises();
 
     expect(sendShareDeepLink).toHaveBeenCalledWith(focusedWin, { kind: 'unsupported-version' });
@@ -1061,7 +1061,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('https://openknowledge.ai/d/!!!not-base64!!!');
+    env.app.fireOpenUrl('https://github.com/fractalmandala/palimpsest/d/!!!not-base64!!!');
     await flushPromises();
 
     expect(sendShareDeepLink).toHaveBeenCalledWith(focusedWin, { kind: 'invalid' });
@@ -1099,13 +1099,13 @@ describe('registerProtocolHandler — share-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl(`https://openknowledge.ai/d/${secret}%00PATH`);
-    env.app.fireOpenUrl(`openknowledge://share?token=${secret}%00`);
-    env.app.fireOpenUrl(`https://openknowledge.ai:bad/d/${secret}`);
-    env.app.fireOpenUrl(`https://www.openknowledge.ai:99999/d/${secret}`);
-    env.app.fireOpenUrl(`openknowledge://share:bad?token=${secret}`);
-    env.app.fireOpenUrl(`https://openknowledge.ai%00/d/${secret}`);
-    env.app.fireOpenUrl(`https://openknowledge.ai./d/${secret}`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest/d/${secret}%00PATH`);
+    env.app.fireOpenUrl(`palimpsest://share?token=${secret}%00`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest:bad/d/${secret}`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest:99999/d/${secret}`);
+    env.app.fireOpenUrl(`palimpsest://share:bad?token=${secret}`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest%00/d/${secret}`);
+    env.app.fireOpenUrl(`https://palimpsest.ai./d/${secret}`);
     await flushPromises();
 
     expect(sendShareDeepLink).toHaveBeenCalledTimes(5);
@@ -1163,7 +1163,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl(`https://openknowledge.ai/d/${fixtureEntry.token}`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest/d/${fixtureEntry.token}`);
     await flushPromises();
 
     expect(env.infoLog).toContainEqual({
@@ -1182,7 +1182,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     expect(serialized).not.toContain(fixtureEntry.target.docPath);
   });
 
-  test('ok share with no resolveShareTarget dep surfaces warn + no dispatch', async () => {
+  test('ps share with no resolveShareTarget dep surfaces warn + no dispatch', async () => {
     const env = makeEnv();
     env.readyWindow = { id: 'ready' };
     const sendShareDeepLink = vi.fn((_win: FakeWindowHandle, _payload: ShareDeepLinkPayload) => {});
@@ -1202,7 +1202,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     await flushPromises();
 
     const encoded = encodeShareUrl('https://github.com/o/r/blob/main/x.md');
-    env.app.fireOpenUrl(`https://openknowledge.ai/d/${encoded}`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest/d/${encoded}`);
     await flushPromises();
 
     expect(sendShareDeepLink).not.toHaveBeenCalled();
@@ -1230,7 +1230,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     await flushPromises();
 
     expect(env.sendDeepLink).toHaveBeenCalledWith(focusedWin, { doc: 'a.md', kind: 'doc' });
@@ -1240,7 +1240,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
 
 describe('registerProtocolHandler — resolved share routing (US-003)', () => {
   function makeShareUrl(blobUrl: string): string {
-    return `openknowledge://share?url=${encodeURIComponent(blobUrl)}`;
+    return `palimpsest://share?url=${encodeURIComponent(blobUrl)}`;
   }
 
   function expectedSharePayload(): ShareUrlPayload {
@@ -1345,7 +1345,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
     });
     env.app.resolveReady();
     await flushPromises();
-    env.app.fireOpenUrl(`https://openknowledge.ai/d/${encodeShareUrl(sharedUrl, 1)}`);
+    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl, 1)}`);
     await flushPromises();
     await flushPromises();
 
@@ -1924,7 +1924,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
     await flushPromises();
 
     env.app.fireSecondInstance([
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       makeShareUrl(sharedBlobUrl),
     ]);
     await flushPromises();
@@ -1948,7 +1948,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
       resolveShareTarget,
       setTimeout: (cb, ms) => env.timers.push({ cb, ms }),
       getInitialArgv: () => [
-        '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         makeShareUrl(sharedBlobUrl),
       ],
     });
@@ -2044,7 +2044,7 @@ describe('registerProtocolHandler — screen-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://screen?name=settings');
+    env.app.fireOpenUrl('palimpsest://screen?name=settings');
     await flushPromises();
 
     expect(openScreen).toHaveBeenCalledTimes(1);
@@ -2072,7 +2072,7 @@ describe('registerProtocolHandler — screen-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://screen?name=install-claude');
+    env.app.fireOpenUrl('palimpsest://screen?name=install-claude');
     await flushPromises();
 
     expect(openScreen).toHaveBeenCalledWith(focusedWin, 'install-claude');
@@ -2099,7 +2099,7 @@ describe('registerProtocolHandler — screen-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://screen?name=settings');
+    env.app.fireOpenUrl('palimpsest://screen?name=settings');
     await flushPromises();
 
     expect(openScreen).toHaveBeenCalledTimes(1);
@@ -2123,7 +2123,7 @@ describe('registerProtocolHandler — screen-flow routing', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://screen?name=settings');
+    env.app.fireOpenUrl('palimpsest://screen?name=settings');
     await flushPromises();
 
     expect(env.warnLog.some((e) => e.msg.includes('openScreen dep missing'))).toBe(true);
@@ -2152,7 +2152,7 @@ describe('registerProtocolHandler — screen-flow routing', () => {
       env.app.resolveReady();
       await flushPromises();
 
-      env.app.fireOpenUrl(`openknowledge://screen?name=${screen}`);
+      env.app.fireOpenUrl(`palimpsest://screen?name=${screen}`);
       await flushPromises();
 
       if (screen === 'settings') {
@@ -2187,7 +2187,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
     await flushPromises();
 
     const encoded = encodeShareUrl('https://github.com/inkeep/playbooks/blob/main/x.md');
-    const url = `https://openknowledge.ai/d/${encoded}`;
+    const url = `https://github.com/fractalmandala/palimpsest/d/${encoded}`;
     const event = env.app.fireContinueActivity('NSUserActivityTypeBrowsingWeb', null, {
       webpageURL: url,
     });
@@ -2207,7 +2207,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
     });
   });
 
-  test('accepts www.openknowledge.ai host (dual-host AASA discipline)', async () => {
+  test('accepts www.palimpsest.ai host (dual-host AASA discipline)', async () => {
     const env = makeEnv();
     const focusedWin: FakeWindowHandle = { id: 'focused' };
     env.readyWindow = focusedWin;
@@ -2228,7 +2228,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
 
     const encoded = encodeShareUrl('https://github.com/o/r/blob/main/x.md');
     env.app.fireContinueActivity('NSUserActivityTypeBrowsingWeb', null, {
-      webpageURL: `https://www.openknowledge.ai/d/${encoded}`,
+      webpageURL: `https://github.com/fractalmandala/palimpsest/d/${encoded}`,
     });
     await flushPromises();
 
@@ -2257,7 +2257,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
     const encoded = encodeShareUrl('https://github.com/o/r/blob/main/x.md');
     env.app.fireContinueActivity(
       'NSUserActivityTypeBrowsingWeb',
-      { webpageURL: `https://openknowledge.ai/d/${encoded}` },
+      { webpageURL: `https://github.com/fractalmandala/palimpsest/d/${encoded}` },
       undefined,
     );
     await flushPromises();
@@ -2287,8 +2287,8 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
 
     const event = env.app.fireContinueActivity(
       'com.example.unrelated.activity',
-      { webpageURL: 'https://openknowledge.ai/d/x' },
-      { webpageURL: 'https://openknowledge.ai/d/x' },
+      { webpageURL: 'https://github.com/fractalmandala/palimpsest/d/x' },
+      { webpageURL: 'https://github.com/fractalmandala/palimpsest/d/x' },
     );
     await flushPromises();
 
@@ -2403,7 +2403,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
 
     const encoded = encodeShareUrl('https://github.com/o/r/blob/main/x.md');
     env.app.fireContinueActivity('NSUserActivityTypeBrowsingWeb', null, {
-      webpageURL: `https://openknowledge.ai/d/${encoded}`,
+      webpageURL: `https://github.com/fractalmandala/palimpsest/d/${encoded}`,
     });
     await flushPromises();
 
@@ -2411,7 +2411,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
     expect(entry).toBeDefined();
     expect(entry?.obj).toMatchObject({
       type: 'NSUserActivityTypeBrowsingWeb',
-      urlHost: 'openknowledge.ai',
+      urlHost: 'palimpsest.ai',
     });
   });
 
@@ -2434,7 +2434,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
 
     const encoded = encodeShareUrl('https://github.com/o/r/blob/main/x.md');
     env.app.fireContinueActivity('NSUserActivityTypeBrowsingWeb', null, {
-      webpageURL: `https://openknowledge.ai/d/${encoded}`,
+      webpageURL: `https://github.com/fractalmandala/palimpsest/d/${encoded}`,
     });
     expect(resolveShareTarget).not.toHaveBeenCalled();
 
@@ -2464,40 +2464,40 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     await flushPromises();
     expect(env.sendDeepLink).toHaveBeenCalledWith(focusedWin, { doc: 'a.md', kind: 'doc' });
 
     const blobUrl = 'https://github.com/o/r/blob/main/x.md';
-    env.app.fireOpenUrl(`openknowledge://share?url=${encodeURIComponent(blobUrl)}`);
+    env.app.fireOpenUrl(`palimpsest://share?url=${encodeURIComponent(blobUrl)}`);
     await flushPromises();
     expect(resolveShareTarget).toHaveBeenCalledTimes(1);
   });
 });
 
-describe('parseOpenKnowledgeFileUrl', () => {
+describe('parsePalimpsestFileUrl', () => {
   test('parses a well-formed file= URL to an absolute resolved path', () => {
-    const parsed = parseOpenKnowledgeFileUrl(
-      `openknowledge://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
+    const parsed = parsePalimpsestFileUrl(
+      `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
     );
     expect(parsed).toEqual({ host: 'open', file: '/Users/me/notes/todo.md' });
   });
 
   test('rejects a relative path, `..` traversal, null bytes, and a missing param', () => {
-    expect(parseOpenKnowledgeFileUrl('openknowledge://open?file=notes/todo.md')).toBeNull();
+    expect(parsePalimpsestFileUrl('palimpsest://open?file=notes/todo.md')).toBeNull();
     expect(
-      parseOpenKnowledgeFileUrl(
-        `openknowledge://open?file=${encodeURIComponent('/Users/me/../etc/passwd')}`,
+      parsePalimpsestFileUrl(
+        `palimpsest://open?file=${encodeURIComponent('/Users/me/../etc/passwd')}`,
       ),
     ).toBeNull();
-    expect(parseOpenKnowledgeFileUrl('openknowledge://open?file=%00/x.md')).toBeNull();
-    expect(parseOpenKnowledgeFileUrl('openknowledge://open?project=/tmp/p&doc=a.md')).toBeNull();
+    expect(parsePalimpsestFileUrl('palimpsest://open?file=%00/x.md')).toBeNull();
+    expect(parsePalimpsestFileUrl('palimpsest://open?project=/tmp/p&doc=a.md')).toBeNull();
   });
 
   test('rejects a foreign protocol / host', () => {
-    expect(parseOpenKnowledgeFileUrl('https://open/?file=/x.md')).toBeNull();
+    expect(parsePalimpsestFileUrl('https://open/?file=/x.md')).toBeNull();
     expect(
-      parseOpenKnowledgeFileUrl(`openknowledge://share?file=${encodeURIComponent('/x.md')}`),
+      parsePalimpsestFileUrl(`palimpsest://share?file=${encodeURIComponent('/x.md')}`),
     ).toBeNull();
   });
 });
@@ -2524,7 +2524,7 @@ describe('registerProtocolHandler — single-file open (file=)', () => {
     await flushPromises();
 
     env.app.fireOpenUrl(
-      `openknowledge://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
+      `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
     );
     await flushPromises();
 
@@ -2546,7 +2546,7 @@ describe('registerProtocolHandler — single-file open (file=)', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl('openknowledge://open?project=/tmp/p&doc=a.md');
+    env.app.fireOpenUrl('palimpsest://open?project=/tmp/p&doc=a.md');
     await flushPromises();
 
     expect(env.openProject).toHaveBeenCalledWith('/tmp/p', {
@@ -2569,7 +2569,7 @@ describe('registerProtocolHandler — single-file open (file=)', () => {
     await flushPromises();
 
     expect(() =>
-      env.app.fireOpenUrl(`openknowledge://open?file=${encodeURIComponent('/Users/me/x.md')}`),
+      env.app.fireOpenUrl(`palimpsest://open?file=${encodeURIComponent('/Users/me/x.md')}`),
     ).not.toThrow();
     await flushPromises();
     expect(env.openProject).not.toHaveBeenCalled();

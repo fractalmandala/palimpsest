@@ -14,11 +14,11 @@ import {
   type DesktopProduct,
   isDevChannel,
   mcpChainMarkerPrefix,
-  OK_CHANNEL_ENV,
+  PS_CHANNEL_ENV,
   type PackagedDesktopProductName,
   piExtensionProjectPath,
   resolveDesktopProductName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getTomlConfigEngine } from '../native/toml-config-engine.ts';
 
 export type EditorId = CoreEditorId;
@@ -29,20 +29,20 @@ export const HOSTS_WITH_USER_SKILL_DIR = CORE_HOSTS_WITH_USER_SKILL_DIR;
 const DEV_MCP_SERVER_COMMAND = 'node';
 const DEV_MCP_ENV = {
   MCP_DEBUG: '1',
-  OK_LOG_FILE: '/tmp/ok-mcp.log',
+  PS_LOG_FILE: '/tmp/ok-mcp.log',
 } as const;
 
 function devMcpEnv(): Record<string, string> {
   const channel = resolveDesktopProductName();
-  return channel === 'stable' ? { ...DEV_MCP_ENV } : { ...DEV_MCP_ENV, [OK_CHANNEL_ENV]: channel };
+  return channel === 'stable' ? { ...DEV_MCP_ENV } : { ...DEV_MCP_ENV, [PS_CHANNEL_ENV]: channel };
 }
 
 const UNIX_CHAIN_REVISION = 2;
 const WIN_CHAIN_REVISION = 1;
 
-const OK_MCP_CHAIN_MARKER = '# ok-mcp';
+const PS_MCP_CHAIN_MARKER = '# ps-mcp';
 
-const OK_PACKAGE_SPEC = '@inkeep/open-knowledge';
+const PS_PACKAGE_SPEC = '@palimpsest/cli';
 
 function unixChainSentinel(product: DesktopProduct): string {
   return `${mcpChainMarkerPrefix('unix-chain', product.mcpChainTag)}${UNIX_CHAIN_REVISION}`;
@@ -54,29 +54,29 @@ function winChainSentinel(product: DesktopProduct): string {
 
 function buildUnixChain(name: PackagedDesktopProductName): string {
   const product = DESKTOP_PRODUCTS[name];
-  const npxSpec = `${OK_PACKAGE_SPEC}@${product.npmDistTag}`;
-  const channelLine = name === 'stable' ? '' : `\nexport ${OK_CHANNEL_ENV}=${name}`;
+  const npxSpec = `${PS_PACKAGE_SPEC}@${product.npmDistTag}`;
+  const channelLine = name === 'stable' ? '' : `\nexport ${PS_CHANNEL_ENV}=${name}`;
   return `${unixChainSentinel(product)}${channelLine}
-USER_BUNDLE="$HOME/Applications/${product.productName}.app/Contents/Resources/cli/bin/ok.sh"
+USER_BUNDLE="$HOME/Applications/${product.productName}.app/Contents/Resources/cli/bin/ps.sh"
 [ -f "$USER_BUNDLE" ] && [ -x "$USER_BUNDLE" ] && exec "$USER_BUNDLE" mcp
-BUNDLE="/Applications/${product.productName}.app/Contents/Resources/cli/bin/ok.sh"
+BUNDLE="/Applications/${product.productName}.app/Contents/Resources/cli/bin/ps.sh"
 [ -f "$BUNDLE" ] && [ -x "$BUNDLE" ] && exec "$BUNDLE" mcp
-DEB_BUNDLE="/opt/${product.productName}/resources/cli/bin/ok.sh"
+DEB_BUNDLE="/opt/${product.productName}/resources/cli/bin/ps.sh"
 [ -f "$DEB_BUNDLE" ] && [ -x "$DEB_BUNDLE" ] && exec "$DEB_BUNDLE" mcp
 command -v npx >/dev/null 2>&1 && exec npx -y ${npxSpec} mcp
 for d in "$HOME/.nvm/versions/node"/*/bin "$HOME/.fnm/node-versions"/*/installation/bin "$HOME/.asdf/installs/nodejs"/*/bin /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/.volta/bin"; do
   [ -f "$d/npx" ] && [ -x "$d/npx" ] && exec "$d/npx" -y ${npxSpec} mcp
 done
-echo "OpenKnowledge: install OK Desktop or Node.js 24+, then restart your editor" >&2
+echo "Palimpsest: install OK Desktop or Node.js 24+, then restart your editor" >&2
 exit 127`;
 }
 
 function buildWinChain(name: PackagedDesktopProductName): string {
   const product = DESKTOP_PRODUCTS[name];
-  const npxSpec = `${OK_PACKAGE_SPEC}@${product.npmDistTag}`;
+  const npxSpec = `${PS_PACKAGE_SPEC}@${product.npmDistTag}`;
   const cmd = `${product.cliCommandNames[0]}.cmd`;
-  const installSpec = product.npmDistTag === 'latest' ? OK_PACKAGE_SPEC : npxSpec;
-  const channelLine = name === 'stable' ? '' : `\n$env:${OK_CHANNEL_ENV} = '${name}'`;
+  const installSpec = product.npmDistTag === 'latest' ? PS_PACKAGE_SPEC : npxSpec;
+  const channelLine = name === 'stable' ? '' : `\n$env:${PS_CHANNEL_ENV} = '${name}'`;
   return `${winChainSentinel(product)}${channelLine}
 if ($env:PATHEXT -notmatch 'CMD') { $env:PATHEXT = '.COM;.EXE;.BAT;.CMD;' + $env:PATHEXT }
 if ($env:APPDATA) {
@@ -100,11 +100,11 @@ foreach ($d in $dirs) {
   $probe = Join-Path $d 'npx.cmd'
   if (Test-Path -LiteralPath $probe -PathType Leaf) { & $probe -y '${npxSpec}' mcp; exit $LASTEXITCODE }
 }
-[Console]::Error.WriteLine('OpenKnowledge: install Node.js 24+ (npm i -g ${installSpec}), then restart your editor')
+[Console]::Error.WriteLine('Palimpsest: install Node.js 24+ (npm i -g ${installSpec}), then restart your editor')
 exit 127`;
 }
 
-export const DEV_CHANNEL_LAUNCHER_REFUSAL = `A dev build writes no MCP launcher for an installed OpenKnowledge channel, because that launcher runs a released CLI. Register this checkout by running \`${CHECKOUT_CLI_COMMAND} init --dev-mcp\` in the project, or set OK_CHANNEL=stable.`;
+export const DEV_CHANNEL_LAUNCHER_REFUSAL = `A dev build writes no MCP launcher for an installed Palimpsest channel, because that launcher runs a released CLI. Register this checkout by running \`${CHECKOUT_CLI_COMMAND} init --dev-mcp\` in the project, or set PS_CHANNEL=stable.`;
 
 function launcherChannel(): PackagedDesktopProductName {
   const channel = resolveDesktopProductName();
@@ -121,7 +121,7 @@ export const CHAIN_WIN_VERSION_SENTINEL = winChainSentinel(DESKTOP_PRODUCTS.stab
 export const CHAIN_WIN_V1 = buildWinChain('stable');
 
 export function piExtensionOwnershipMarker(product: DesktopProduct): string {
-  return `// ok-pi-bridge${product.mcpChainTag}`;
+  return `// ps-pi-bridge${product.mcpChainTag}`;
 }
 
 export function piExtensionVersionSentinel(product: DesktopProduct): string {
@@ -136,7 +136,7 @@ export const PI_EXTENSION_OWNERSHIP_MARKER = piExtensionOwnershipMarker(DESKTOP_
 
 export const PI_EXTENSION_VERSION_SENTINEL = piExtensionVersionSentinel(DESKTOP_PRODUCTS.stable);
 
-export const PI_MANAGED_FILE_ENTRY_COMMAND = 'ok-pi-managed-extension';
+export const PI_MANAGED_FILE_ENTRY_COMMAND = 'ps-pi-managed-extension';
 
 type McpInstallMode = 'published' | 'dev';
 
@@ -342,13 +342,13 @@ function scriptBodyOpensWith(value: unknown, sentinel: string): boolean {
 }
 
 function scriptBodyOpensWithMarker(value: unknown): boolean {
-  return scriptBodyOpensWith(value, OK_MCP_CHAIN_MARKER);
+  return scriptBodyOpensWith(value, PS_MCP_CHAIN_MARKER);
 }
 
 function isOwnPackageSpec(value: unknown): boolean {
   return (
     typeof value === 'string' &&
-    (value === OK_PACKAGE_SPEC || value.startsWith(`${OK_PACKAGE_SPEC}@`))
+    (value === PS_PACKAGE_SPEC || value.startsWith(`${PS_PACKAGE_SPEC}@`))
   );
 }
 
@@ -640,7 +640,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     scope: 'global',
     detectPath: (_cwd, home) => join(home ?? homedir(), '.claude'),
     projectConfigPath: (cwd) => join(cwd, '.mcp.json'),
-    projectSkillPath: (cwd) => join(cwd, '.claude', 'skills', 'open-knowledge', 'SKILL.md'),
+    projectSkillPath: (cwd) => join(cwd, '.claude', 'skills', 'palimpsest', 'SKILL.md'),
   },
   'claude-desktop': {
     id: 'claude-desktop',
@@ -664,7 +664,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     scope: 'global',
     detectPath: (_cwd, home) => dirname(resolveCursorConfigPath({ home })),
     projectConfigPath: (cwd) => join(cwd, '.cursor', 'mcp.json'),
-    projectSkillPath: (cwd) => join(cwd, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'),
+    projectSkillPath: (cwd) => join(cwd, '.cursor', 'skills', 'palimpsest', 'SKILL.md'),
   },
   codex: {
     id: 'codex',
@@ -677,7 +677,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     scope: 'global',
     detectPath: (_cwd, home) => dirname(resolveCodexConfigPath({ home })),
     projectConfigPath: (cwd) => join(cwd, '.codex', 'config.toml'),
-    projectSkillPath: (cwd) => join(cwd, '.codex', 'skills', 'open-knowledge', 'SKILL.md'),
+    projectSkillPath: (cwd) => join(cwd, '.codex', 'skills', 'palimpsest', 'SKILL.md'),
   },
   copilot: {
     id: 'copilot',
@@ -689,7 +689,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     buildEntry: (_cwd, options) => buildManagedServerEntry(options),
     scope: 'global',
     detectPath: (_cwd, home) => dirname(resolveCopilotConfigPath({ home })),
-    projectSkillPath: (cwd) => join(cwd, '.github', 'skills', 'open-knowledge', 'SKILL.md'),
+    projectSkillPath: (cwd) => join(cwd, '.github', 'skills', 'palimpsest', 'SKILL.md'),
   },
   opencode: {
     id: 'opencode',
@@ -702,7 +702,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     scope: 'global',
     detectPath: (_cwd, home) => dirname(resolveOpenCodeConfigPath({ home })),
     projectConfigPath: (cwd) => join(cwd, 'opencode.json'),
-    projectSkillPath: (cwd) => join(cwd, '.opencode', 'skills', 'open-knowledge', 'SKILL.md'),
+    projectSkillPath: (cwd) => join(cwd, '.opencode', 'skills', 'palimpsest', 'SKILL.md'),
   },
   openclaw: {
     id: 'openclaw',
@@ -731,7 +731,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     scope: 'project',
     detectPath: (_cwd, home) => resolvePiAgentDirPath({ home }),
     projectConfigPath: (cwd) => join(cwd, piExtensionProjectPath(currentDesktopProduct())),
-    projectSkillPath: (cwd) => join(cwd, '.pi', 'skills', 'open-knowledge', 'SKILL.md'),
+    projectSkillPath: (cwd) => join(cwd, '.pi', 'skills', 'palimpsest', 'SKILL.md'),
   },
   antigravity: {
     id: 'antigravity',

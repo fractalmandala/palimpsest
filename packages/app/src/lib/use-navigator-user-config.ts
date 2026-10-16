@@ -1,14 +1,14 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import type { Config } from '@inkeep/open-knowledge-core/config/schema';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import type { Config } from '@palimpsest/core/config/schema';
 import {
   CC1_CONTRACT_VERSION,
   CONFIG_DOC_NAME_USER,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import { CC1_CHANNEL_CONFIG_VALIDATION_REJECTED } from '@inkeep/open-knowledge-core/schemas/cc1';
+} from '@palimpsest/core/constants/cc1';
+import { CC1_CHANNEL_CONFIG_VALIDATION_REJECTED } from '@palimpsest/core/schemas/cc1';
 import { useEffect, useState } from 'react';
 import type { ConfigContextValue } from './config-context';
 import { emitConfigValidationRejected } from './config-validation-events';
-import type { OkDesktopBridge } from './desktop-bridge-types';
+import type { PsDesktopBridge } from './desktop-bridge-types';
 import { createIpcUserConfigBinding } from './ipc-user-config-binding';
 
 interface NavigatorUserConfigState {
@@ -25,7 +25,7 @@ export interface NavigatorUserConfig {
   loadFailed: boolean;
 }
 
-export function useNavigatorUserConfig(bridge: OkDesktopBridge): NavigatorUserConfig {
+export function useNavigatorUserConfig(bridge: PsDesktopBridge): NavigatorUserConfig {
   const [state, setState] = useState<NavigatorUserConfigState | null>(null);
 
   useEffect(() => {

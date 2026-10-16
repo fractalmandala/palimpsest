@@ -11,7 +11,7 @@ import {
   type FrontmatterSnapshot,
   readFmKeys,
   readFmRegionWithError,
-} from '@inkeep/open-knowledge-core/bridge';
+} from '@palimpsest/core/bridge';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import {

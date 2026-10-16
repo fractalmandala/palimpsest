@@ -2,9 +2,9 @@ import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const FIXED_GROUP_ANCHOR = '@inkeep/open-knowledge';
+export const FIXED_GROUP_ANCHOR = '@palimpsest/cli';
 const BUMP_RANK = { patch: 1, minor: 2, major: 3 };
-const OK_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const PS_ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 export function bumpSemver(version, type) {
   const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
@@ -29,7 +29,7 @@ export function fixedGroupOf(config) {
   return group ?? [FIXED_GROUP_ANCHOR];
 }
 
-export function loadChangesets(root = OK_ROOT) {
+export function loadChangesets(root = PS_ROOT) {
   const cliRequire = createRequire(
     createRequire(join(root, 'package.json')).resolve('@changesets/cli/package.json'),
   );

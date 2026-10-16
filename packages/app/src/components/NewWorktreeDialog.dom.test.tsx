@@ -24,7 +24,7 @@ describe('NewWorktreeDialog', () => {
   test('creates a new branch worktree and opens it (entryPoint worktree)', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/my-feature',
+      path: '/repo/.ps/worktrees/my-feature',
       created: true,
     });
     render(
@@ -47,7 +47,7 @@ describe('NewWorktreeDialog', () => {
     });
     await waitFor(() =>
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/my-feature',
+        path: '/repo/.ps/worktrees/my-feature',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -58,7 +58,7 @@ describe('NewWorktreeDialog', () => {
   test('pre-fills the branch field from initialBranchName on open (create mode) and submits it', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/pre-seeded',
+      path: '/repo/.ps/worktrees/pre-seeded',
       created: true,
     });
     render(
@@ -85,7 +85,7 @@ describe('NewWorktreeDialog', () => {
   });
 
   test('a seeded name matching an existing branch opens straight into checkout mode', async () => {
-    const bridge = createBridge({ ok: true, path: '/repo/.ok/worktrees/dev', created: false });
+    const bridge = createBridge({ ok: true, path: '/repo/.ps/worktrees/dev', created: false });
     render(
       <NewWorktreeDialog
         open={true}
@@ -204,7 +204,7 @@ describe('NewWorktreeDialog', () => {
       ok: false,
       reason: 'project-scope-unavailable',
       issue: 'missing',
-      path: '/repo/.ok/worktrees/dev',
+      path: '/repo/.ps/worktrees/dev',
       created: true,
     });
     render(
@@ -220,7 +220,7 @@ describe('NewWorktreeDialog', () => {
     });
     fireEvent.click(screen.getByTestId('new-worktree-create'));
     const error = await screen.findByTestId('new-worktree-error');
-    expect(error.textContent).toContain('does not contain this OpenKnowledge project');
+    expect(error.textContent).toContain('does not contain this Palimpsest project');
     expect(error.textContent).toContain('created but not opened');
     expect(refreshWorktrees).toHaveBeenCalledTimes(1);
     expect(bridge.project.open).not.toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe('NewWorktreeDialog', () => {
   test('checks out an existing branch (createBranch false, no base) and refreshes the cache', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/dev',
+      path: '/repo/.ps/worktrees/dev',
       created: false,
     });
     render(
@@ -255,7 +255,7 @@ describe('NewWorktreeDialog', () => {
     });
     await waitFor(() =>
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/dev',
+        path: '/repo/.ps/worktrees/dev',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -351,7 +351,7 @@ describe('NewWorktreeDialog', () => {
   test('the base-branch selector defaults to currentBranch and creating passes it as the base', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/my-feature',
+      path: '/repo/.ps/worktrees/my-feature',
       created: true,
     });
     render(
@@ -381,7 +381,7 @@ describe('NewWorktreeDialog', () => {
   test('selecting a different base branch passes the chosen base to create', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/my-feature',
+      path: '/repo/.ps/worktrees/my-feature',
       created: true,
     });
     render(
@@ -470,7 +470,7 @@ describe('NewWorktreeDialog', () => {
   });
 
   test('a branch that already has a worktree shows the existing-worktree indicator and "Open worktree" button (not plain checkout)', async () => {
-    const bridge = createBridge({ ok: true, path: '/repo/.ok/worktrees/dev', created: false });
+    const bridge = createBridge({ ok: true, path: '/repo/.ps/worktrees/dev', created: false });
     render(
       <NewWorktreeDialog
         open={true}
@@ -495,7 +495,7 @@ describe('NewWorktreeDialog', () => {
   });
 
   test('a branch WITHOUT a worktree still shows plain checkout even when other branches have one', async () => {
-    const bridge = createBridge({ ok: true, path: '/repo/.ok/worktrees/release', created: false });
+    const bridge = createBridge({ ok: true, path: '/repo/.ps/worktrees/release', created: false });
     render(
       <NewWorktreeDialog
         open={true}
@@ -538,7 +538,7 @@ describe('NewWorktreeDialog', () => {
 
   test('opening an existing-worktree branch still calls create (createBranch false, no base) and opens its path', async () => {
     const onOpenChange = vi.fn(() => {});
-    const bridge = createBridge({ ok: true, path: '/repo/.ok/worktrees/dev', created: false });
+    const bridge = createBridge({ ok: true, path: '/repo/.ps/worktrees/dev', created: false });
     render(
       <NewWorktreeDialog
         open={true}
@@ -563,7 +563,7 @@ describe('NewWorktreeDialog', () => {
     });
     await waitFor(() =>
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/dev',
+        path: '/repo/.ps/worktrees/dev',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -573,7 +573,7 @@ describe('NewWorktreeDialog', () => {
   });
 
   test('checkout mode hides the base selector and sends an undefined base', async () => {
-    const bridge = createBridge({ ok: true, path: '/repo/.ok/worktrees/dev', created: false });
+    const bridge = createBridge({ ok: true, path: '/repo/.ps/worktrees/dev', created: false });
     render(
       <NewWorktreeDialog
         open={true}
@@ -601,7 +601,7 @@ describe('NewWorktreeDialog', () => {
   test('a remote-only branch name shows the remote-checkout indicator and sends remoteRef', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/feature-x',
+      path: '/repo/.ps/worktrees/feature-x',
       created: true,
     });
     render(
@@ -637,7 +637,7 @@ describe('NewWorktreeDialog', () => {
     });
     await waitFor(() =>
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/feature-x',
+        path: '/repo/.ps/worktrees/feature-x',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -646,7 +646,7 @@ describe('NewWorktreeDialog', () => {
   });
 
   test('a name that is a local branch takes local checkout even when a remote ref matches', async () => {
-    const bridge = createBridge({ ok: true, path: '/repo/.ok/worktrees/dev', created: false });
+    const bridge = createBridge({ ok: true, path: '/repo/.ps/worktrees/dev', created: false });
     render(
       <NewWorktreeDialog
         open={true}
@@ -671,7 +671,7 @@ describe('NewWorktreeDialog', () => {
   test('selecting a remote base option sends baseRef (no-track) instead of baseBranch', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/my-feature',
+      path: '/repo/.ps/worktrees/my-feature',
       created: true,
     });
     render(
@@ -787,7 +787,7 @@ describe('NewWorktreeDialog', () => {
   test('selecting a filtered base option applies the base and resets the query', async () => {
     const bridge = createBridge({
       ok: true,
-      path: '/repo/.ok/worktrees/my-feature',
+      path: '/repo/.ps/worktrees/my-feature',
       created: true,
     });
     render(

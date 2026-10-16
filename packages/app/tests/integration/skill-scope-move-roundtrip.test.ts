@@ -10,7 +10,7 @@ let tmpHome: string;
 const base = () => `http://127.0.0.1:${server.port}`;
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-scope-roundtrip-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-scope-roundtrip-home-'));
   mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);

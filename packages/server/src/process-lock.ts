@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { hostname } from 'node:os';
 import { resolve } from 'node:path';
-import { resolveDesktopProductName } from '@inkeep/open-knowledge-core';
+import { resolveDesktopProductName } from '@palimpsest/core';
 import { errnoCode } from './http/handler-utils.ts';
 import { getLogger } from './logger.ts';
 import { getMachineId } from './machine-id.ts';
@@ -52,7 +52,7 @@ export class ProcessLockCollisionError extends Error {
   readonly lockName: LockName;
   constructor(existing: ProcessLockMetadata, lockPath: string, lockName: LockName) {
     super(
-      `OpenKnowledge ${lockName} already running at ${existing.url ?? `port ${existing.port}`} ` +
+      `Palimpsest ${lockName} already running at ${existing.url ?? `port ${existing.port}`} ` +
         `(pid ${existing.pid}, started ${existing.startedAt}). ` +
         `Stop it first or use a different directory. Lock: ${lockPath}`,
     );

@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { LEGACY_SKILL_STORE_ROOT } from '@inkeep/open-knowledge-core';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { LEGACY_SKILL_STORE_ROOT } from '@palimpsest/core';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { tracedCpSync, tracedRmSync } from './fs-traced.ts';
 import { type InPlaceSkill, scanInPlaceSkills } from './in-place-skills.ts';
 import {
@@ -19,7 +19,7 @@ export {
 } from './skill-placements-store.ts';
 
 export function isRefusedOkPlacementRoot(rootRel: string): boolean {
-  const underOk = rootRel === '.ok' || rootRel.startsWith('.ok/');
+  const underOk = rootRel === '.ps' || rootRel.startsWith('.ps/');
   return underOk && rootRel !== LEGACY_SKILL_STORE_ROOT;
 }
 

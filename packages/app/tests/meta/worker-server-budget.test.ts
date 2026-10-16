@@ -537,7 +537,7 @@ async function lateBindingServer(bindAfterMs: number): Promise<string> {
 }
 
 function makeFixtureDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-meta-budget-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-meta-budget-'));
   createdDirs.push(dir);
   return dir;
 }

@@ -8,7 +8,7 @@ let testDir: string;
 let lockPath: string;
 
 beforeEach(() => {
-  testDir = mkdtempSync(join(tmpdir(), 'ok-file-lock-'));
+  testDir = mkdtempSync(join(tmpdir(), 'ps-file-lock-'));
   lockPath = join(testDir, 'target.lock');
 });
 

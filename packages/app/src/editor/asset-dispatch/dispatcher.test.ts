@@ -64,7 +64,7 @@ describe('dispatchAssetClick', () => {
     const openUrl = vi.fn((_: string) => {});
     const desktopBridge = {
       shell: { openAsset },
-    } as unknown as NonNullable<typeof window.okDesktop>;
+    } as unknown as NonNullable<typeof window.psDesktop>;
 
     await dispatchAssetClick(ctx({ projectRelPath: 'notes/meeting.pdf' }), {
       desktopBridge,
@@ -83,7 +83,7 @@ describe('dispatchAssetClick', () => {
     r.register(viewer);
     const desktopBridge = {
       shell: { openAsset },
-    } as unknown as NonNullable<typeof window.okDesktop>;
+    } as unknown as NonNullable<typeof window.psDesktop>;
 
     await dispatchAssetClick(ctx({ forceOsDelegation: true }), {
       registry: r,
@@ -102,7 +102,7 @@ describe('dispatchAssetClick', () => {
     const openUrl = vi.fn((_: string) => {});
     const desktopBridge = {
       shell: { openAsset, revealAsset },
-    } as unknown as NonNullable<typeof window.okDesktop>;
+    } as unknown as NonNullable<typeof window.psDesktop>;
 
     await dispatchAssetClick(ctx({ ext: 'html', projectRelPath: 'fishing-log/trip-viewer.html' }), {
       desktopBridge,
@@ -121,7 +121,7 @@ describe('dispatchAssetClick', () => {
     const openUrl = vi.fn((_: string) => {});
     const desktopBridge = {
       shell: { openAsset, revealAsset },
-    } as unknown as NonNullable<typeof window.okDesktop>;
+    } as unknown as NonNullable<typeof window.psDesktop>;
 
     await dispatchAssetClick(ctx({ ext: 'app', projectRelPath: 'tools/Calculator.app' }), {
       desktopBridge,
@@ -137,7 +137,7 @@ describe('dispatchAssetClick', () => {
     const revealAsset = vi.fn(async (_: string) => ({ ok: true }) as const);
     const desktopBridge = {
       shell: { openAsset, revealAsset },
-    } as unknown as NonNullable<typeof window.okDesktop>;
+    } as unknown as NonNullable<typeof window.psDesktop>;
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     try {
       await dispatchAssetClick(ctx(), { desktopBridge });
@@ -158,7 +158,7 @@ describe('dispatchAssetClick', () => {
     const openUrl = vi.fn((_: string) => {});
     const desktopBridge = {
       shell: { openAsset, revealAsset },
-    } as unknown as NonNullable<typeof window.okDesktop>;
+    } as unknown as NonNullable<typeof window.psDesktop>;
 
     const consoleWarn = vi.fn((..._args: unknown[]) => {});
     const origWarn = console.warn;

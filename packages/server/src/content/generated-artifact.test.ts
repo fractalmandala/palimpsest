@@ -5,9 +5,9 @@ import type { WriterIdentity } from '../shadow-repo.ts';
 import { type GeneratedArtifactEnv, writeGeneratedArtifact } from './generated-artifact.ts';
 
 const WRITER: WriterIdentity = {
-  id: 'ok-generator',
-  name: 'OpenKnowledge (generated)',
-  email: 'ok-generator@openknowledge.local',
+  id: 'ps-generator',
+  name: 'Palimpsest (generated)',
+  email: 'ps-generator@palimpsest.local',
 };
 
 const ORIGIN = Object.freeze({
@@ -123,7 +123,7 @@ describe('writeGeneratedArtifact', () => {
     const loaded = harness(new Y.Doc());
     await writeGeneratedArtifact({ ...WRITE, currentMarkdown: '# Stale\n' }, loaded.env);
 
-    const expected = [{ docName: 'index', writer: 'ok-generator' }];
+    const expected = [{ docName: 'index', writer: 'ps-generator' }];
     expect(unloaded.rec.attributed).toEqual(expected);
     expect(loaded.rec.attributed).toEqual(expected);
   });
@@ -151,7 +151,7 @@ describe('writeGeneratedArtifact', () => {
 
     expect(outcome).toBe('document');
     expect(doc.getText('source').toString()).toBe(WRITE.markdown);
-    expect(rec.attributed).toEqual([{ docName: 'index', writer: 'ok-generator' }]);
+    expect(rec.attributed).toEqual([{ docName: 'index', writer: 'ps-generator' }]);
   });
 
   test('resident matching bytes settle even when the disk snapshot is stale', async () => {
@@ -186,6 +186,6 @@ describe('writeGeneratedArtifact', () => {
     release();
     await expect(pending).resolves.toBe('disk');
     expect(rec.registered).toEqual([WRITE.absPath]);
-    expect(rec.attributed).toEqual([{ docName: 'index', writer: 'ok-generator' }]);
+    expect(rec.attributed).toEqual([{ docName: 'index', writer: 'ps-generator' }]);
   });
 });

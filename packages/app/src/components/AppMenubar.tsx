@@ -15,9 +15,9 @@ import {
   MenubarTrigger,
 } from '@/components/ui/menubar';
 import type {
-  OkDesktopBridge,
-  OkMenuRendererSnapshot,
-  OkMenuUiDispatchRequest,
+  PsDesktopBridge,
+  PsMenuRendererSnapshot,
+  PsMenuUiDispatchRequest,
 } from '@/lib/desktop-bridge-types';
 import { aboutAppLabel, moveToTrashLabel, revealInFileManagerLabel } from '@/lib/platform-labels';
 import { useSingleFileMode } from '@/lib/single-file-mode';
@@ -29,14 +29,14 @@ interface AppMenubarProps {
 
 export function AppMenubar({ className }: AppMenubarProps) {
   const { t } = useLingui();
-  const bridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
-  const [snapshot, setSnapshot] = useState<OkMenuRendererSnapshot | null>(null);
+  const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
+  const [snapshot, setSnapshot] = useState<PsMenuRendererSnapshot | null>(null);
   const singleFile = useSingleFileMode();
 
   if (!shouldShowAppMenubar() || bridge == null || bridge.menu == null) return null;
-  const menu: NonNullable<OkDesktopBridge['menu']> = bridge.menu;
+  const menu: NonNullable<PsDesktopBridge['menu']> = bridge.menu;
 
-  const dispatch = (request: OkMenuUiDispatchRequest): void => {
+  const dispatch = (request: PsMenuUiDispatchRequest): void => {
     void menu.dispatch(request).catch(() => {});
   };
 
@@ -180,7 +180,7 @@ export function AppMenubar({ className }: AppMenubarProps) {
               <MenubarItem
                 onSelect={() => dispatch({ kind: 'command', command: 'reconfigure-mcp-wiring' })}
               >
-                {t`Set up OpenKnowledge integrations…`}
+                {t`Set up Palimpsest integrations…`}
               </MenubarItem>
               <MenubarSeparator />
             </>
@@ -295,9 +295,9 @@ export function AppMenubar({ className }: AppMenubarProps) {
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
             checked={view?.showOkFolders ?? false}
-            onSelect={() => dispatch({ kind: 'menu-action', action: 'toggle-show-ok-folders' })}
+            onSelect={() => dispatch({ kind: 'menu-action', action: 'toggle-show-ps-folders' })}
           >
-            {t`Show .ok folders`}
+            {t`Show .ps folders`}
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
             checked={view?.showOnlyMarkdownFiles ?? false}
@@ -362,7 +362,7 @@ export function AppMenubar({ className }: AppMenubarProps) {
         <MenubarTrigger className="px-2 py-1 text-xs font-normal">{t`Help`}</MenubarTrigger>
         <MenubarContent>
           <MenubarItem onSelect={() => dispatch({ kind: 'command', command: 'open-github' })}>
-            {t`OpenKnowledge on GitHub`}
+            {t`Palimpsest on GitHub`}
           </MenubarItem>
           <MenubarItem onSelect={() => dispatch({ kind: 'command', command: 'open-docs' })}>
             {t`Documentation`}

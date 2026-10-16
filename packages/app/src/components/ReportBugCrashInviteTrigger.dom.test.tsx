@@ -1,13 +1,13 @@
 import type {
-  OkBugReportCrashDetectedEvent,
-  OkBugReportCreateResult,
+  PsBugReportCrashDetectedEvent,
+  PsBugReportCreateResult,
   ReportBundleSummary,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test } from 'vitest';
 import { crashInviteStore } from '@/lib/crash-invite-store';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { ReportBugCrashInviteTrigger } from './ReportBugCrashInviteTrigger';
 
 type WindowGlobals = { NodeFilter?: typeof NodeFilter };
@@ -31,14 +31,14 @@ if (globalWithDomShims.ResizeObserver === undefined) {
 
 const ASYNC_TIMEOUT_MS = 10_000;
 
-const INVITE: OkBugReportCrashDetectedEvent = {
+const INVITE: PsBugReportCrashDetectedEvent = {
   eventId: 'boot:1751871600000',
   kind: 'boot',
   context: { dirtyShutdown: true, newMinidumps: 0 },
   minidumpAvailable: false,
 };
 
-const ZIP_PATH = '/Users/tester/.ok/bug-reports/2026-07-10T00-00-00-bugreport.zip';
+const ZIP_PATH = '/Users/tester/.ps/bug-reports/2026-07-10T00-00-00-bugreport.zip';
 const SUMMARY: ReportBundleSummary = {
   level: 'full',
   systemWide: false,
@@ -48,7 +48,7 @@ const SUMMARY: ReportBundleSummary = {
   redactedLineCount: 0,
   generatedAt: '2026-07-10T00:00:00.000Z',
 };
-const CREATE_OK: OkBugReportCreateResult = {
+const CREATE_OK: PsBugReportCreateResult = {
   ok: true,
   zipPath: ZIP_PATH,
   zipSizeBytes: 7130316,
@@ -56,21 +56,21 @@ const CREATE_OK: OkBugReportCreateResult = {
 };
 
 interface CrashBridgeStub {
-  bridge: OkDesktopBridge;
-  fire(event: OkBugReportCrashDetectedEvent): void;
+  bridge: PsDesktopBridge;
+  fire(event: PsBugReportCrashDetectedEvent): void;
   readonly acked: string[];
   readonly sent: string[];
 }
 
 function makeCrashBridge(): CrashBridgeStub {
-  let captured: ((event: OkBugReportCrashDetectedEvent) => void) | null = null;
+  let captured: ((event: PsBugReportCrashDetectedEvent) => void) | null = null;
   const acked: string[] = [];
   const sent: string[] = [];
 
   const bridge = {
     config: { mode: 'editor' },
     bugReport: {
-      onCrashDetected: (cb: (event: OkBugReportCrashDetectedEvent) => void) => {
+      onCrashDetected: (cb: (event: PsBugReportCrashDetectedEvent) => void) => {
         captured = cb;
         return () => {
           captured = null;
@@ -86,7 +86,7 @@ function makeCrashBridge(): CrashBridgeStub {
         return Promise.resolve({ ok: true as const, reference: 'OK-CRASH1' });
       },
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   return {
     bridge,
@@ -98,15 +98,15 @@ function makeCrashBridge(): CrashBridgeStub {
   };
 }
 
-function installGlobalBridge(bridge: OkDesktopBridge) {
+function installGlobalBridge(bridge: PsDesktopBridge) {
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', { configurable: true, writable: true, value: bridge });
+    Object.defineProperty(host, 'psDesktop', { configurable: true, writable: true, value: bridge });
   }
 }
 
 function clearGlobalBridge() {
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', {
+    Object.defineProperty(host, 'psDesktop', {
       configurable: true,
       writable: true,
       value: undefined,
@@ -143,7 +143,7 @@ describe('ReportBugCrashInviteTrigger', () => {
       },
       { timeout: ASYNC_TIMEOUT_MS },
     );
-    expect(screen.getByText('OpenKnowledge quit unexpectedly last time.')).not.toBeNull();
+    expect(screen.getByText('Palimpsest quit unexpectedly last time.')).not.toBeNull();
   });
 
   test('an invitation delivered before the component mounts is buffered, not dropped', async () => {

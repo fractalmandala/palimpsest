@@ -38,7 +38,7 @@ const moveScope = (name: string, fromScope: string, toScope: string) =>
   });
 
 beforeEach(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-move-symlink-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-move-symlink-home-'));
   mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);

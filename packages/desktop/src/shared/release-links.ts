@@ -1,4 +1,4 @@
-export const PUBLIC_RELEASES_URL = 'https://github.com/inkeep/open-knowledge/releases';
+export const PUBLIC_RELEASES_URL = 'https://github.com/fractalmandala/palimpsest/releases';
 
 export function releasesPageUrl(_variant: { readonly name: string }): string {
   return PUBLIC_RELEASES_URL;

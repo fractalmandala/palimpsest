@@ -9,10 +9,10 @@ const sampleLine: HandoffStatsLine = {
 };
 
 describe('recordHandoff (renderer-side telemetry)', () => {
-  test('Electron host: forwards line verbatim to okDesktop.shell.recordHandoff', async () => {
+  test('Electron host: forwards line verbatim to psDesktop.shell.recordHandoff', async () => {
     const calls: HandoffStatsLine[] = [];
     await recordHandoff(sampleLine, {
-      okDesktop: {
+      psDesktop: {
         shell: {
           recordHandoff: async (line) => {
             calls.push(line);
@@ -24,7 +24,7 @@ describe('recordHandoff (renderer-side telemetry)', () => {
     expect(calls[0]).toEqual(sampleLine);
   });
 
-  test('Web host (no okDesktop dep, no global): no-op without warning', async () => {
+  test('Web host (no psDesktop dep, no global): no-op without warning', async () => {
     const warnings: string[] = [];
     await expect(
       recordHandoff(sampleLine, {
@@ -43,7 +43,7 @@ describe('recordHandoff (renderer-side telemetry)', () => {
         warn: (m) => {
           warnings.push(m);
         },
-        okDesktop: {
+        psDesktop: {
           shell: {
             recordHandoff: async () => {
               throw Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' });
@@ -63,7 +63,7 @@ describe('recordHandoff (renderer-side telemetry)', () => {
       warn: (m) => {
         warnings.push(m);
       },
-      okDesktop: {
+      psDesktop: {
         shell: {
           recordHandoff: async () => {
             throw 'string-rejection';
@@ -85,7 +85,7 @@ describe('recordHandoff (renderer-side telemetry)', () => {
       reason: 'not-installed',
     };
     await recordHandoff(errorLine, {
-      okDesktop: {
+      psDesktop: {
         shell: {
           recordHandoff: async (line) => {
             calls.push(line);
@@ -107,7 +107,7 @@ describe('recordHandoff (renderer-side telemetry)', () => {
       scope: 'selection',
     };
     await recordHandoff(selectionLine, {
-      okDesktop: {
+      psDesktop: {
         shell: {
           recordHandoff: async (line) => {
             calls.push(line);
@@ -122,7 +122,7 @@ describe('recordHandoff (renderer-side telemetry)', () => {
   test('Three sequential calls (matching SPEC §13.1 acceptance) all forward independently', async () => {
     const calls: HandoffStatsLine[] = [];
     const deps = {
-      okDesktop: {
+      psDesktop: {
         shell: {
           recordHandoff: async (line: HandoffStatsLine) => {
             calls.push(line);

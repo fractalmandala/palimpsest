@@ -113,7 +113,7 @@ describe('HTTP auth-login cancel→reopen concurrency-slot contract', () => {
   });
 
   test("a cancelled login's late child-exit does not release the successor's slot (ownership-guarded release)", async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-auth-ownership-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-auth-ownership-'));
     tmpDirs.push(dir);
     const exitMarker = join(dir, 'child-exits.log');
     const goSignal = join(dir, 'go');

@@ -1,11 +1,11 @@
 import {
   composeFixAllProblemsPrompt,
   composeLintFixPrompt,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import {
   type LintDiagnostic,
   MARKDOWNLINT_RULE_CATALOG,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 import { docNameToRelativePath } from '@/lib/workspace-paths';
 
 const ALIAS_BY_CODE = new Map(MARKDOWNLINT_RULE_CATALOG.map((rule) => [rule.id, rule.alias]));

@@ -158,7 +158,7 @@ describe('readRemovalProcessStart', () => {
       'readProcessStart returned an invalid value: object keys=[startedAt]',
     ],
   ] as const)('reports %s with native debugging enabled', (_name, requireModule, message) => {
-    vi.stubEnv('OK_DEBUG_NATIVE', '1');
+    vi.stubEnv('PS_DEBUG_NATIVE', '1');
     const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
     const onNativeFailure = vi.fn();
     try {
@@ -233,7 +233,7 @@ describe('readRemovalProcessStart', () => {
       { code: 'ERR_DLOPEN_FAILED' },
     );
     const missingPackage = Object.assign(
-      new Error("Cannot find module '@inkeep/open-knowledge-native-config-win32-x64-msvc'"),
+      new Error("Cannot find module '@palimpsest/native-config-win32-x64-msvc'"),
       { code: 'MODULE_NOT_FOUND', cause: dlopen },
     );
     const requireModule = () => {

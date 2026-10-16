@@ -8,7 +8,7 @@ const SAMPLE_PAYLOAD = {
   v: 1 as const,
   ch: 'config-ignore-nested-error' as const,
   seq: 1,
-  path: 'subdir/.okignore',
+  path: 'subdir/.psignore',
   error: 'unparseable line',
 };
 
@@ -64,7 +64,7 @@ describe('config-ignore-nested-error-events pubsub', () => {
     const withExtras = {
       ...SAMPLE_PAYLOAD,
       seq: 7,
-      path: 'a/b/c/.okignore',
+      path: 'a/b/c/.psignore',
       error: 'syntax',
       extra: 'whatever',
     } as unknown as typeof SAMPLE_PAYLOAD;

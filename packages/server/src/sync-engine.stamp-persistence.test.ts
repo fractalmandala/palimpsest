@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR, type SyncMode } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR, type SyncMode } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -33,14 +33,14 @@ function captureSyncWarnings(): { entries: CapturedLog[]; restore: () => void } 
 
 let tmpDir = '';
 let projectDir = '';
-let okDir = '';
+let psDir = '';
 
 beforeEach(() => {
   tmpDir = mkdtempSync(join(tmpdir(), 'sync-engine-stamps-'));
   projectDir = join(tmpDir, 'project');
-  okDir = join(projectDir, '.ok', LOCAL_DIR);
+  psDir = join(projectDir, '.ps', LOCAL_DIR);
   mkdirSync(projectDir, { recursive: true });
-  mkdirSync(okDir, { recursive: true });
+  mkdirSync(psDir, { recursive: true });
 });
 
 afterEach(() => {
@@ -48,7 +48,7 @@ afterEach(() => {
 });
 
 function statePath(): string {
-  return join(okDir, 'sync-state.json');
+  return join(psDir, 'sync-state.json');
 }
 
 async function projectWithBareOrigin() {

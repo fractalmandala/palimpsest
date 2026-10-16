@@ -32,7 +32,7 @@ afterEach(async () => {
 });
 
 function contentDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shell-ready-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shell-ready-')));
   dirs.push(dir);
   return dir;
 }

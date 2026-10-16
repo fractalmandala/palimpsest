@@ -22,8 +22,8 @@ let root: string;
 let skillsRoot: string;
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-skills-'));
-  skillsRoot = join(root, '.ok', 'skills');
+  root = mkdtempSync(join(tmpdir(), 'ps-skills-'));
+  skillsRoot = join(root, '.ps', 'skills');
 });
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });
@@ -163,11 +163,11 @@ describe('applySkillDelete', () => {
     if (result.ok) expect(result.existed).toBe(false);
   });
 
-  test('cleans an emptied .ok/skills then .ok', () => {
+  test('cleans an emptied .ps/skills then .ps', () => {
     applySkillWrite({ skillsRoot, name: 'only', body: 'a', frontmatter: fm('only') });
     applySkillDelete({ skillsRoot, name: 'only' });
     expect(existsSync(skillsRoot)).toBe(false);
-    expect(existsSync(join(root, '.ok'))).toBe(false);
+    expect(existsSync(join(root, '.ps'))).toBe(false);
   });
 });
 

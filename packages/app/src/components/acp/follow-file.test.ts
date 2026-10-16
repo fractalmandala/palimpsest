@@ -52,7 +52,7 @@ describe('followTargetFromToolCall', () => {
       call({
         toolKind: 'execute',
         rawInput: {
-          server: 'open-knowledge',
+          server: 'palimpsest',
           tool: 'write',
           arguments: {
             cwd: '/somewhere',
@@ -69,7 +69,7 @@ describe('followTargetFromToolCall', () => {
     const target = followTargetFromToolCall(
       call({
         rawInput: {
-          server: 'open-knowledge',
+          server: 'palimpsest',
           tool: 'edit',
           arguments: { document: { path: 'orbit/plan.md', find: 'a', replace: 'b' } },
         },
@@ -84,7 +84,7 @@ describe('followTargetFromToolCall', () => {
       call({
         toolKind: 'execute',
         rawInput: {
-          server: 'open-knowledge',
+          server: 'palimpsest',
           tool: 'write',
           arguments: {
             cwd: '/somewhere',
@@ -106,7 +106,7 @@ describe('followTargetFromToolCall', () => {
       followTargetFromToolCall(
         call({
           rawInput: {
-            server: 'open-knowledge',
+            server: 'palimpsest',
             tool: 'write',
             arguments: {
               documents: [{ path: 'articles/coffee/beans.md' }, 'junk'],
@@ -120,7 +120,7 @@ describe('followTargetFromToolCall', () => {
       followTargetFromToolCall(
         call({
           rawInput: {
-            server: 'open-knowledge',
+            server: 'palimpsest',
             tool: 'write',
             arguments: { documents: [] },
           },
@@ -135,7 +135,7 @@ describe('followTargetFromToolCall', () => {
       followTargetFromToolCall(
         call({
           rawInput: {
-            server: 'open-knowledge',
+            server: 'palimpsest',
             tool: 'write',
             arguments: {
               cwd: '/somewhere',
@@ -156,7 +156,7 @@ describe('followTargetFromToolCall', () => {
           call({
             toolKind: kind,
             rawInput: {
-              server: 'open-knowledge',
+              server: 'palimpsest',
               tool: 'history',
               arguments: { docName: 'notes/today' },
             },
@@ -178,7 +178,7 @@ describe('followTargetFromToolCall', () => {
       call({
         toolKind: 'other',
         rawInput: {
-          server: 'open-knowledge',
+          server: 'palimpsest',
           tool: 'write',
           arguments: { docName: 'demo/plan', content: '# hi' },
         },
@@ -240,18 +240,18 @@ describe('followTargetFromToolCall', () => {
     expect(followTargetFromToolCall(call({ rawInput: { docName: '' } }), posix)).toBeNull();
   });
 
-  test('skips dot-segment plumbing docs (agent skills, .ok config)', () => {
+  test('skips dot-segment plumbing docs (agent skills, .ps config)', () => {
     expect(
       followTargetFromToolCall(
         call({
           toolKind: 'read',
-          locations: [{ path: '/home/me/notes/.codex/skills/open-knowledge/SKILL.md' }],
+          locations: [{ path: '/home/me/notes/.codex/skills/palimpsest/SKILL.md' }],
         }),
         posix,
       ),
     ).toBeNull();
     expect(
-      followTargetFromToolCall(call({ rawInput: { docName: '.ok/config' } }), posix),
+      followTargetFromToolCall(call({ rawInput: { docName: '.ps/config' } }), posix),
     ).toBeNull();
   });
 
@@ -281,7 +281,7 @@ describe('followTargetFromToolCall', () => {
     expect(
       followTargetFromToolCall(
         call({
-          title: 'open-knowledge - delete',
+          title: 'palimpsest - delete',
           rawInput: { document: { path: 'wiki/tea' } },
         }),
         posix,

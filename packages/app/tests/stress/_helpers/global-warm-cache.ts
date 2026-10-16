@@ -49,7 +49,7 @@ function depsDirSignature(depsDir: string): string {
 }
 
 async function buildSeedOnce(key: string): Promise<void> {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-warm-cache-content-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-warm-cache-content-'));
   const seedParent = dirname(VITE_E2E_SEED_DIR);
   mkdirSync(seedParent, { recursive: true });
   const buildDir = mkdtempSync(join(seedParent, '.vite-e2e-seed-building-'));
@@ -61,9 +61,9 @@ async function buildSeedOnce(key: string): Promise<void> {
     env: {
       ...process.env,
       ...request.environment,
-      OK_TEST_CONTENT_DIR: contentDir,
-      OK_TEST_VITE_CACHE_DIR: buildDir,
-      OK_TEST_SKIP_I18N_COMPILE: '1',
+      PS_TEST_CONTENT_DIR: contentDir,
+      PS_TEST_VITE_CACHE_DIR: buildDir,
+      PS_TEST_SKIP_I18N_COMPILE: '1',
       NO_COLOR: process.env.NO_COLOR ?? '1',
     },
     stdio: ['ignore', log.fd, log.fd],

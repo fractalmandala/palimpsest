@@ -1,4 +1,4 @@
-import type { OkBugReportListRow, OkBugReportSendResult } from '@inkeep/open-knowledge-core';
+import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import { propagation, trace } from '@opentelemetry/api';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import {
@@ -17,23 +17,23 @@ import {
 } from '@/lib/bug-report-send-manager';
 
 const ZIP_PATH = '/Users/x/Library/ok/reports/ok-report-2026-08-18-120000.zip';
-const OPERATION_ID = 'ok-report-2026-08-18-120000.zip';
+const OPERATION_ID = 'ps-report-2026-08-18-120000.zip';
 const OTHER_ZIP_PATH = '/Users/x/Library/ok/reports/ok-report-2026-08-18-130000.zip';
-const OTHER_OPERATION_ID = 'ok-report-2026-08-18-130000.zip';
+const OTHER_OPERATION_ID = 'ps-report-2026-08-18-130000.zip';
 
-const FAILED_RESULT: OkBugReportSendResult = {
+const FAILED_RESULT: PsBugReportSendResult = {
   ok: false,
   reason: 'send-failed',
-  fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=failed' },
+  fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
 };
 
 function createDeferredBridge() {
   const calls: Parameters<BugReportSendBridge['send']>[0][] = [];
-  const resolvers: ((result: OkBugReportSendResult) => void)[] = [];
+  const resolvers: ((result: PsBugReportSendResult) => void)[] = [];
   const bridge: BugReportSendBridge = {
     send(request) {
       calls.push(request);
-      return new Promise<OkBugReportSendResult>((resolve) => {
+      return new Promise<PsBugReportSendResult>((resolve) => {
         resolvers.push(resolve);
       });
     },
@@ -41,7 +41,7 @@ function createDeferredBridge() {
   return {
     bridge,
     calls,
-    async settle(result: OkBugReportSendResult, index = calls.length - 1) {
+    async settle(result: PsBugReportSendResult, index = calls.length - 1) {
       resolvers[index]?.(result);
       await vi.advanceTimersByTimeAsync(0);
     },
@@ -55,7 +55,7 @@ function createdReport(zipPath = ZIP_PATH): CreatedBugReport {
     summary: {
       level: 'full',
       systemWide: false,
-      projectSlug: 'open-knowledge',
+      projectSlug: 'palimpsest',
       files: ['logs/app.log'],
       redactions: [],
       redactedLineCount: 0,
@@ -73,7 +73,7 @@ function createdReportRequest(zipPath = ZIP_PATH): BugReportSendRequest {
   };
 }
 
-function historyRow(overrides?: Partial<OkBugReportListRow>): OkBugReportListRow {
+function historyRow(overrides?: Partial<PsBugReportListRow>): PsBugReportListRow {
   return {
     id: OPERATION_ID,
     createdAt: '2026-08-18T12:00:00.000Z',
@@ -136,7 +136,7 @@ describe('bug-report send manager', () => {
         metadata: {
           level: 'full',
           systemWide: false,
-          projectSlug: 'open-knowledge',
+          projectSlug: 'palimpsest',
           note: 'the editor froze',
         },
         includeScreenshot: true,
@@ -189,13 +189,13 @@ describe('bug-report send manager', () => {
     await stub.settle({
       ok: false,
       reason: 'email-draft',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=draft' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft' },
     });
 
     expect(manager.get(OPERATION_ID)).toEqual(
       expect.objectContaining({
         status: 'email-draft',
-        mailtoUrl: 'mailto:support@inkeep.com?subject=draft',
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft',
       }),
     );
   });
@@ -210,7 +210,7 @@ describe('bug-report send manager', () => {
     expect(manager.get(OPERATION_ID)).toEqual(
       expect.objectContaining({
         status: 'failed',
-        mailtoUrl: 'mailto:support@inkeep.com?subject=failed',
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
       }),
     );
   });
@@ -223,7 +223,7 @@ describe('bug-report send manager', () => {
     await stub.settle({
       ok: false,
       reason: 'send-in-flight',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=inflight' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=inflight' },
     });
 
     expect(manager.get(OPERATION_ID)?.status).toBe('already-sending');

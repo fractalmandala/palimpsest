@@ -21,21 +21,21 @@ afterEach(() => {
 });
 
 function makeDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-minidump-ownership-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-minidump-ownership-'));
   tmpDirs.push(dir);
   return dir;
 }
 
 function classifyBytes(bytes: (bundleRoot: string) => Buffer): string {
   const dir = makeDir();
-  const bundleRoot = join(dir, 'Applications', 'OpenKnowledge.app');
+  const bundleRoot = join(dir, 'Applications', 'Palimpsest.app');
   const dumpPath = join(dir, 'crash.dmp');
   writeFileSync(dumpPath, bytes(bundleRoot));
   return classifyMinidumpOwnership(dumpPath, bundleRoot);
 }
 
 function ownModule(bundleRoot: string): string {
-  return join(bundleRoot, 'Contents', 'MacOS', 'OpenKnowledge');
+  return join(bundleRoot, 'Contents', 'MacOS', 'Palimpsest');
 }
 
 function ownHelperModule(bundleRoot: string): string {
@@ -43,10 +43,10 @@ function ownHelperModule(bundleRoot: string): string {
     bundleRoot,
     'Contents',
     'Frameworks',
-    'OpenKnowledge Helper (Renderer).app',
+    'Palimpsest Helper (Renderer).app',
     'Contents',
     'MacOS',
-    'OpenKnowledge Helper (Renderer)',
+    'Palimpsest Helper (Renderer)',
   );
 }
 
@@ -74,12 +74,12 @@ describe('well-formed dumps', () => {
 
   test('a sibling path sharing the bundle-root prefix is foreign', () => {
     expect(
-      classifyBytes((root) => buildMinidump([`${root}.malicious/Contents/MacOS/OpenKnowledge`])),
+      classifyBytes((root) => buildMinidump([`${root}.malicious/Contents/MacOS/Palimpsest`])),
     ).toBe('foreign');
   });
 
   test('a relative module name cannot resolve into the bundle', () => {
-    expect(classifyBytes(() => buildMinidump(['Contents/MacOS/OpenKnowledge']))).toBe('foreign');
+    expect(classifyBytes(() => buildMinidump(['Contents/MacOS/Palimpsest']))).toBe('foreign');
   });
 
   test('the ModuleList is found behind the streams a real dump puts first', () => {
@@ -95,9 +95,9 @@ describe('well-formed dumps', () => {
 describe('symlinked launch paths', () => {
   function makeLinkedBundle(): { realRoot: string; linkedExecutable: string; dir: string } {
     const dir = makeDir();
-    const realRoot = join(dir, 'real', 'OpenKnowledge.app');
+    const realRoot = join(dir, 'real', 'Palimpsest.app');
     mkdirSync(join(realRoot, 'Contents', 'MacOS'), { recursive: true });
-    writeFileSync(join(realRoot, 'Contents', 'MacOS', 'OpenKnowledge'), '');
+    writeFileSync(join(realRoot, 'Contents', 'MacOS', 'Palimpsest'), '');
     symlinkSync(join(dir, 'real'), join(dir, 'link'));
     return {
       dir,
@@ -105,10 +105,10 @@ describe('symlinked launch paths', () => {
       linkedExecutable: join(
         dir,
         'link',
-        'OpenKnowledge.app',
+        'Palimpsest.app',
         'Contents',
         'MacOS',
-        'OpenKnowledge',
+        'Palimpsest',
       ),
     };
   }
@@ -210,14 +210,14 @@ describe('malformed dumps are unreadable, never ours', () => {
 
   test('a dump that vanished before the scan reads as unknown', () => {
     const dir = makeDir();
-    expect(classifyMinidumpOwnership(join(dir, 'gone.dmp'), join(dir, 'OpenKnowledge.app'))).toBe(
+    expect(classifyMinidumpOwnership(join(dir, 'gone.dmp'), join(dir, 'Palimpsest.app'))).toBe(
       'unknown',
     );
   });
 
   test('a directory where a dump should be reads as unknown', () => {
     const dir = makeDir();
-    expect(classifyMinidumpOwnership(dir, join(dir, 'OpenKnowledge.app'))).toBe('unknown');
+    expect(classifyMinidumpOwnership(dir, join(dir, 'Palimpsest.app'))).toBe('unknown');
   });
 });
 
@@ -225,7 +225,7 @@ describe('crashpad app-version annotations', () => {
   function versionOf(patch: MinidumpPatch): string | null {
     const dir = makeDir();
     const dumpPath = join(dir, 'crash.dmp');
-    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], patch));
+    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], patch));
     const read = readMinidumpAppVersion(dumpPath);
     expect(read.parseFailed).toBe(false);
     return read.version;
@@ -235,7 +235,7 @@ describe('crashpad app-version annotations', () => {
     expect(
       versionOf({
         annotations: {
-          _productName: 'OpenKnowledge',
+          _productName: 'Palimpsest',
           _version: '0.41.0',
           plat: 'OS X',
           prod: 'Electron',
@@ -254,7 +254,7 @@ describe('crashpad app-version annotations', () => {
   });
 
   test('annotations that name no version have no version', () => {
-    expect(versionOf({ annotations: { _productName: 'OpenKnowledge', prod: 'Electron' } })).toBe(
+    expect(versionOf({ annotations: { _productName: 'Palimpsest', prod: 'Electron' } })).toBe(
       null,
     );
   });
@@ -317,7 +317,7 @@ describe('crashpad app-version annotations', () => {
 
   test('a malformed annotation block leaves ownership intact', () => {
     const dir = makeDir();
-    const bundleRoot = join(dir, 'Applications', 'OpenKnowledge.app');
+    const bundleRoot = join(dir, 'Applications', 'Palimpsest.app');
     const dumpPath = join(dir, 'crash.dmp');
     writeFileSync(
       dumpPath,
@@ -333,7 +333,7 @@ describe('crashpad app-version annotations', () => {
 
   test('a version never launders a foreign dump into ours', () => {
     const dir = makeDir();
-    const bundleRoot = join(dir, 'Applications', 'OpenKnowledge.app');
+    const bundleRoot = join(dir, 'Applications', 'Palimpsest.app');
     const dumpPath = join(dir, 'crash.dmp');
     writeFileSync(
       dumpPath,
@@ -352,7 +352,7 @@ describe('crashpad app-version annotations', () => {
       const dumpPath = join(dir, 'crash.dmp');
       writeFileSync(
         dumpPath,
-        buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], {
+        buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], {
           annotations: { _version: '0.41.0' },
           ...patch,
         }),
@@ -371,7 +371,7 @@ describe('crashpad app-version annotations', () => {
   test('a parse that throws is reported as broken, not as an absent version', async () => {
     const CRASHPAD_INFO_PREFIX_BYTES = 44;
     const dir = makeDir();
-    const bundleRoot = join(dir, 'OpenKnowledge.app');
+    const bundleRoot = join(dir, 'Palimpsest.app');
     const dumpPath = join(dir, 'crash.dmp');
     writeFileSync(
       dumpPath,
@@ -514,7 +514,7 @@ describe('readMinidumpProcessType', () => {
   function processTypeOf(patch: MinidumpPatch): string | null {
     const dir = makeDir();
     const dumpPath = join(dir, 'crash.dmp');
-    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], patch));
+    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], patch));
     const read = readMinidumpProcessType(dumpPath);
     expect(read.parseFailed).toBe(false);
     return read.processType;
@@ -552,7 +552,7 @@ describe('readMinidumpAccessibilityMode', () => {
   function modeOf(patch: MinidumpPatch): string | null {
     const dir = makeDir();
     const dumpPath = join(dir, 'crash.dmp');
-    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], patch));
+    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], patch));
     const read = readMinidumpAccessibilityMode(dumpPath);
     expect(read.parseFailed).toBe(false);
     return read.mode;
@@ -575,8 +575,8 @@ describe('readMinidumpAccessibilityMode', () => {
     const dumpPath = join(dir, 'crash.dmp');
     writeFileSync(
       dumpPath,
-      buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], {
-        annotations: { _productName: 'OpenKnowledge', _version: '0.58.9', ver: '41.9.1' },
+      buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], {
+        annotations: { _productName: 'Palimpsest', _version: '0.58.9', ver: '41.9.1' },
         annotationObjects: [REAL_NEIGHBOURS],
       }),
     );
@@ -752,7 +752,7 @@ describe('readMinidumpAccessibilityMode', () => {
 
   test('reading the mode leaves the ownership verdict untouched', () => {
     const dir = makeDir();
-    const bundleRoot = join(dir, 'OpenKnowledge.app');
+    const bundleRoot = join(dir, 'Palimpsest.app');
     const dumpPath = join(dir, 'crash.dmp');
     mkdirSync(join(bundleRoot, 'Contents', 'MacOS'), { recursive: true });
     writeFileSync(
@@ -776,7 +776,7 @@ describe('readMinidumpDisplayLockState', () => {
   function stateOf(patch: MinidumpPatch): string | null {
     const dir = makeDir();
     const dumpPath = join(dir, 'crash.dmp');
-    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], patch));
+    writeFileSync(dumpPath, buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], patch));
     const read = readMinidumpDisplayLockState(dumpPath);
     expect(read.parseFailed).toBe(false);
     return read.state;
@@ -807,8 +807,8 @@ describe('readMinidumpDisplayLockState', () => {
     const axMode = 'kNativeAPIs | kWebContents';
     writeFileSync(
       dumpPath,
-      buildMinidump([ownModule(join(dir, 'OpenKnowledge.app'))], {
-        annotations: { _productName: 'OpenKnowledge', _version: '0.62.1' },
+      buildMinidump([ownModule(join(dir, 'Palimpsest.app'))], {
+        annotations: { _productName: 'Palimpsest', _version: '0.62.1' },
         annotationObjects: [{ ax_mode: axMode, ok_display_lock: REAL_STATE }],
       }),
     );

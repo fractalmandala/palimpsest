@@ -7,8 +7,8 @@ import {
   type InstalledSkills,
   InstalledSkillsSchema,
   parseInstalledSkills,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import { tracedAtomicFs, tracedMkdir } from './fs-traced.ts';
 import { createKeyedSerializer } from './keyed-serializer.ts';
 import { getLogger } from './logger.ts';

@@ -3,7 +3,7 @@ import {
   HUMAN_COLORS,
   type Identity,
   type Principal,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { buildAwarenessUser } from './awareness-user';
 
@@ -25,7 +25,7 @@ const gitConfigPrincipal: Principal = {
 const synthesizedPrincipal: Principal = {
   id: 'principal-synth-1',
   display_name: 'Local User',
-  display_email: 'principal-synth-1@local.openknowledge',
+  display_email: 'principal-synth-1@local.palimpsest',
   source: 'synthesized',
   created_at: '2026-04-27T00:00:00.000Z',
 };

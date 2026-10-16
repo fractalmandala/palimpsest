@@ -6,7 +6,7 @@ import {
   subscribePropertiesCollapsed,
 } from './properties-collapsed-store';
 
-const STORAGE_KEY = 'ok-properties-collapsed-v1';
+const STORAGE_KEY = 'ps-properties-collapsed-v1';
 
 function makeLocalStorage(): Storage {
   const store = new Map<string, string>();

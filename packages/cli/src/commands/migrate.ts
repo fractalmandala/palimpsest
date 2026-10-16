@@ -36,7 +36,7 @@ interface NotionOptions {
 
 export function migrateCommand(): Command {
   const migrate = new Command('migrate').description(
-    'Migrate content from other tools into Open Knowledge',
+    'Migrate content from other tools into Palimpsest',
   );
 
   migrate

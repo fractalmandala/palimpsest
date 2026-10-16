@@ -1,10 +1,10 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import {
   type LintDiagnostic,
   type LinterConfig,
   lintDocument,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 import { useEffect, useState } from 'react';
 
 const RELINT_DEBOUNCE_MS = 300;

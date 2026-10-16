@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { InstallSkillSuccessSchema, SkillInstallSuccessSchema } from '@inkeep/open-knowledge-core';
+import { InstallSkillSuccessSchema, SkillInstallSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import { type Entry, fromBuffer } from 'yauzl';
 import type { BootedServer } from './boot.ts';
@@ -25,8 +25,8 @@ vi.mock('node:os', async (original) => ({
 let root: string;
 let server: BootedServer;
 beforeAll(async () => {
-  isolated.home = mkdtempSync(join(tmpdir(), 'ok-install-home-'));
-  root = mkdtempSync(join(tmpdir(), 'ok-install-contract-'));
+  isolated.home = mkdtempSync(join(tmpdir(), 'ps-install-home-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-install-contract-'));
   mkdirSync(join(root, '.claude'));
   mkdirSync(join(root, '.cursor'));
   server = await bootCompositionRig(root, { configHomedirOverride: isolated.home });
@@ -56,9 +56,9 @@ test('handoff builds a real archive without opening and ignores force on a curre
     sha256: createHash('sha256').update(bytes).digest('hex'),
   });
   const entries = await readArchive(bytes);
-  const skill = entries.get('open-knowledge/SKILL.md');
-  expect(skill).toMatch(/^name: open-knowledge$/m);
-  expect(skill).toContain('OpenKnowledge');
+  const skill = entries.get('palimpsest/SKILL.md');
+  expect(skill).toMatch(/^name: palimpsest$/m);
+  expect(skill).toContain('Palimpsest');
   expect((await readSkillStateFile(isolated.home)).targets['claude-cowork']?.version).toBe(
     built.skillVersion,
   );

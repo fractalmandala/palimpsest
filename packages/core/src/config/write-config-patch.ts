@@ -3,8 +3,8 @@ import { mkdir } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { isMap, isSeq, type ParsedNode, parseDocument } from 'yaml';
-import { LOCAL_DIR, OK_DIR } from '../constants/ok-dir.ts';
-import { okUserHomeDir } from '../constants/ok-user-home.ts';
+import { LOCAL_DIR, PS_DIR } from '../constants/ps-dir.ts';
+import { psUserHomeDir } from '../constants/ps-user-home.ts';
 import { atomicWriteFile } from '../util/atomic-yaml-write.ts';
 import { FileLockTimeoutError, withFileLock } from '../util/file-lock.ts';
 import type { ConfigValidationError, WriteScope } from './errors.ts';
@@ -27,7 +27,7 @@ function schemaUrl(scope: WriteScope): string {
       : scope === 'project-local'
         ? 'config.project-local.schema.json'
         : 'config.project.schema.json';
-  return `https://unpkg.com/@inkeep/open-knowledge@latest/dist/schemas/${CONFIG_SCHEMA_MAJOR_PATH}/${filename}`;
+  return `https://unpkg.com/@palimpsest/cli@latest/dist/schemas/${CONFIG_SCHEMA_MAJOR_PATH}/${filename}`;
 }
 
 function defaultFirstWriteHeader(scope: WriteScope): string {
@@ -57,13 +57,13 @@ export function resolveConfigPath(
   homedirOverride?: string,
 ): string {
   if (scope === 'user') {
-    return resolve(okUserHomeDir(homedirOverride ?? homedir()), USER_CONFIG_FILENAME);
+    return resolve(psUserHomeDir(homedirOverride ?? homedir()), USER_CONFIG_FILENAME);
   }
   const absCwd = isAbsolute(cwd) ? cwd : resolve(cwd);
   if (scope === 'project-local') {
-    return resolve(absCwd, OK_DIR, LOCAL_DIR, CONFIG_FILENAME);
+    return resolve(absCwd, PS_DIR, LOCAL_DIR, CONFIG_FILENAME);
   }
-  return resolve(absCwd, OK_DIR, CONFIG_FILENAME);
+  return resolve(absCwd, PS_DIR, CONFIG_FILENAME);
 }
 
 function err(error: ConfigValidationError): Err<ConfigValidationError> {

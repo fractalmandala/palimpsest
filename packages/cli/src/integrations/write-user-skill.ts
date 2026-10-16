@@ -4,12 +4,12 @@ import {
   AGENTS_SKILLS_ROOT,
   ALL_EDITOR_IDS,
   EDITOR_USER_SKILL_ROOT,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   BUNDLE_SKILL_NAME,
   detectUserSkillHosts,
   resolveBundledSkillDir,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { EditorId } from '../commands/editors.ts';
 import {
   assertAncestorsContainedIn,

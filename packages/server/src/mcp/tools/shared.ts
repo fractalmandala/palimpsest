@@ -11,7 +11,7 @@ import {
   SERVER_UNREACHABLE_ERROR_PREFIX,
   UNREADABLE_WARNINGS_TEXT,
   validateDocName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import type { Config } from '../../config/schema.ts';
@@ -95,7 +95,7 @@ export const previewAttachWarningField = z
 const brokenLinksOutputField = z
   .array(BrokenLinkSchema)
   .describe(
-    'Outbound internal links in the just-written doc that do not resolve. Always present — `[]` means every link resolves UNLESS `brokenLinkSuppression` is also present, in which case a project policy withheld findings, or `warnings` carries `link-check-deferred`, in which case the links were not checked because the server is still starting or busy with other writes. A withholding that arrives in a shape this build cannot validate is dropped rather than relayed, so `brokenLinkSuppression` stays absent even though findings were withheld. The `audit` tool is the surface that discloses that case, through its `warnings`. Each: `{ href (as written), resolvedTo (the docName or content-root file path it pointed at, or null), reason: "no-such-doc" | "no-such-file" | "unresolvable" | "excluded" }`. `excluded` means the file exists on disk but a .gitignore or .okignore rule keeps it out of the project; a `!` rule in .okignore re-includes it or its folder. Report-only — the write landed regardless; fix in a follow-up edit.',
+    'Outbound internal links in the just-written doc that do not resolve. Always present — `[]` means every link resolves UNLESS `brokenLinkSuppression` is also present, in which case a project policy withheld findings, or `warnings` carries `link-check-deferred`, in which case the links were not checked because the server is still starting or busy with other writes. A withholding that arrives in a shape this build cannot validate is dropped rather than relayed, so `brokenLinkSuppression` stays absent even though findings were withheld. The `audit` tool is the surface that discloses that case, through its `warnings`. Each: `{ href (as written), resolvedTo (the docName or content-root file path it pointed at, or null), reason: "no-such-doc" | "no-such-file" | "unresolvable" | "excluded" }`. `excluded` means the file exists on disk but a .gitignore or .psignore rule keeps it out of the project; a `!` rule in .psignore re-includes it or its folder. Report-only — the write landed regardless; fix in a follow-up edit.',
   );
 
 const brokenLinkSuppressionOutputField = BrokenLinkSuppressionSchema.optional().describe(
@@ -208,7 +208,7 @@ export function textPlusStructured<T>(text: string, structured: T, isError?: boo
 }
 
 export function hocuspocusNotRunningError(): string {
-  return `Error: Hocuspocus server is not running. Start it with \`${currentCliCommandName()} start\`, then retry.\nDo not fall back to native file edits for in-scope markdown; route writes through OpenKnowledge so attribution and live sync stay intact.`;
+  return `Error: Hocuspocus server is not running. Start it with \`${currentCliCommandName()} start\`, then retry.\nDo not fall back to native file edits for in-scope markdown; route writes through Palimpsest so attribution and live sync stay intact.`;
 }
 
 export type ServerUrlOrResolver =
@@ -292,16 +292,16 @@ export async function resolveProjectServerContext(
   }
 }
 
-export function okReservedPathRedirect(path: string): string | null {
+export function psReservedPathRedirect(path: string): string | null {
   const p = path.replace(/^\/+/, '');
-  if (p !== '.ok' && !p.startsWith('.ok/')) return null;
-  if (p.startsWith('.ok/skills/')) {
+  if (p !== '.ps' && !p.startsWith('.ps/')) return null;
+  if (p.startsWith('.ps/skills/')) {
     return 'Skills are authored with the `skill` target, not a raw document path: `write({ skill: { name, description, body?, scope? } })` writes the SKILL.md wherever the skill lives (a NEW skill lands at the project default skill home, e.g. `.agents/skills/<name>/`). To author or improve a skill, use the `open-knowledge-write-skill` skill.';
   }
-  if (p.startsWith('.ok/templates/')) {
+  if (p.startsWith('.ps/templates/')) {
     return 'Templates are authored with the `template` target (`write({ template: { … } })`), not a raw document path.';
   }
-  return 'Paths under `.ok/` are not addressable as documents. Edit folder config/frontmatter via the `folder` target, skills via the `skill` target, and templates via the `template` target.';
+  return 'Paths under `.ps/` are not addressable as documents. Edit folder config/frontmatter via the `folder` target, skills via the `skill` target, and templates via the `template` target.';
 }
 
 export function normalizeDocName(

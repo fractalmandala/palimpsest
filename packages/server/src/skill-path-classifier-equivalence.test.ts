@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { classifyHostEntry } from './skill-migrate.ts';
 import { classifyInPlaceDest } from './skill-projection.ts';
@@ -20,7 +20,7 @@ function writeSkill(dir: string, body: string): void {
 }
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-classifier-eq-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-classifier-eq-'));
   canonical = join(root, 'canonical');
   writeSkill(canonical, 'canonical body');
   canonicalHash = parseSkillDir(canonical)?.contentHash ?? '';

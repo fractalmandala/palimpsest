@@ -5,7 +5,7 @@ const overviewPage = {
   url: '/docs/get-started/overview',
   data: {
     title: 'Overview',
-    description: 'What OpenKnowledge is.',
+    description: 'What Palimpsest is.',
     getText: async () => '<Callout type="info">\n\nEarly days.\n\n</Callout>\n',
   },
 };
@@ -25,7 +25,7 @@ function props(slug: string[]) {
 }
 
 function get(slug: string[]) {
-  return GET(new Request(`https://openknowledge.ai/docs/${slug.join('/')}.md`), {
+  return GET(new Request(`https://github.com/fractalmandala/palimpsest/tree/main/docs/content'/')}.md`), {
     ...props(slug),
   });
 }
@@ -37,7 +37,7 @@ describe('GET /docs/<slug>.md (markdown route handler)', () => {
     expect(res.headers.get('content-type')).toBe('text/markdown; charset=utf-8');
 
     const body = await res.text();
-    expect(body).toContain('# Overview (https://openknowledge.ai/docs/get-started/overview)');
+    expect(body).toContain('# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)');
     expect(body).toContain('> Early days.');
     expect(body).not.toContain('<Callout');
   });
@@ -45,7 +45,7 @@ describe('GET /docs/<slug>.md (markdown route handler)', () => {
   test('points at the human page with a canonical Link header', async () => {
     const res = await get(['get-started', 'overview']);
     expect(res.headers.get('link')).toBe(
-      '<https://openknowledge.ai/docs/get-started/overview>; rel="canonical"',
+      '<https://github.com/fractalmandala/palimpsest/tree/main/docs/content rel="canonical"',
     );
   });
 
@@ -61,7 +61,7 @@ describe('GET /docs/<slug>.md (markdown route handler)', () => {
 
     const body = await res.text();
     expect(body).toContain('# 404 Not Found');
-    expect(body).toContain('https://openknowledge.ai/llms.txt');
+    expect(body).toContain('https://github.com/fractalmandala/palimpsest/llms.txt');
   });
 
   test('the 404 body is not mistakable for a real page rendition', async () => {
@@ -82,8 +82,8 @@ describe('GET /docs/<slug>.md (markdown route handler)', () => {
       ]);
 
       expect(subtree).not.toBe(missing);
-      expect(subtree).not.toContain('No OpenKnowledge documentation page exists');
-      expect(subtree).toContain(`https://openknowledge.ai${prefix}`);
+      expect(subtree).not.toContain('No Palimpsest documentation page exists');
+      expect(subtree).toContain(`https://github.com/fractalmandala/palimpsest${prefix}`);
     },
   );
 

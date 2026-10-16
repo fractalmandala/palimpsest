@@ -110,7 +110,7 @@ describe('copyImageToClipboard — same-origin path handling', () => {
         clipboard: { write },
         readFile,
       }),
-      { src: 'http://localhost:5173/.ok/config.yml' },
+      { src: 'http://localhost:5173/.ps/config.yml' },
     );
     expect(result).toEqual({
       ok: false,

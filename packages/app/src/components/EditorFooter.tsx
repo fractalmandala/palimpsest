@@ -23,7 +23,7 @@ export function EditorFooter({
   const { t } = useLingui();
   const branch = useCurrentBranch();
   const worktreeModel = useWorktrees();
-  const desktopConfig = typeof window !== 'undefined' ? window.okDesktop?.config : undefined;
+  const desktopConfig = typeof window !== 'undefined' ? window.psDesktop?.config : undefined;
   const { checkoutDetail } = checkoutIdentity({
     projectName: desktopConfig?.projectName ?? null,
     branch,

@@ -1,4 +1,4 @@
-import type { AttachmentPart, ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart, ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 import { agentDisplayName } from '@/lib/acp/agent-display';
@@ -86,7 +86,7 @@ export function launchAgentThread(
       console.error('[agent-threads] launch failed:', err);
       toast.error(
         err instanceof ThreadChannelUnavailableError
-          ? t`Couldn't connect to the agent service. Make sure the OpenKnowledge server is running and up to date (restart it if it was already running), then try again.`
+          ? t`Couldn't connect to the agent service. Make sure the Palimpsest server is running and up to date (restart it if it was already running), then try again.`
           : t`Couldn't start the agent thread — please try again.`,
       );
       return 'failed' as const;

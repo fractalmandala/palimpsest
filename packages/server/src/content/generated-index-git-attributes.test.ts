@@ -22,7 +22,7 @@ const makeTempDir = createTempDirFactory(afterAll);
 afterEach(() => vi.restoreAllMocks());
 
 function makeProject(contentSubdir = '.'): { projectDir: string; contentDir: string } {
-  const projectDir = makeTempDir('ok-generated-index-attrs-');
+  const projectDir = makeTempDir('ps-generated-index-attrs-');
   execFileSync('git', ['init', '-q'], { cwd: projectDir });
   configureTestGitRepository(projectDir);
   if (contentSubdir !== '.') mkdirSync(join(projectDir, contentSubdir), { recursive: true });
@@ -36,7 +36,7 @@ const generatedDocNames = ['index', 'guides/index'];
 
 describe('generated-index git attributes', () => {
   test('is not applicable outside a Git working tree', async () => {
-    const projectDir = makeTempDir('ok-generated-index-no-git-');
+    const projectDir = makeTempDir('ps-generated-index-no-git-');
     const result = await updateGeneratedIndexGitAttributes({
       projectDir,
       contentDir: projectDir,
@@ -59,7 +59,7 @@ describe('generated-index git attributes', () => {
     });
 
     expect(result.ok).toBe(true);
-    expect(result.status).toEqual({ state: 'ready', ownership: 'open-knowledge' });
+    expect(result.status).toEqual({ state: 'ready', ownership: 'palimpsest' });
     const attributes = readFileSync(join(projectDir, '.gitattributes'), 'utf-8');
     expect(attributes).toContain('"/knowledge base/index.md" merge=union');
     expect(attributes).toContain('"/knowledge base/**/index.md" merge=union');
@@ -94,7 +94,7 @@ describe('generated-index git attributes', () => {
         'git',
         [
           '-c',
-          'user.name=Open Knowledge Test',
+          'user.name=Palimpsest Test',
           '-c',
           'user.email=test@example.invalid',
           'commit',
@@ -129,7 +129,7 @@ describe('generated-index git attributes', () => {
       'git',
       [
         '-c',
-        'user.name=Open Knowledge Test',
+        'user.name=Palimpsest Test',
         '-c',
         'user.email=test@example.invalid',
         'merge',
@@ -187,7 +187,7 @@ describe('generated-index git attributes', () => {
     });
 
     expect(result.ok).toBe(true);
-    expect(result.status).toEqual({ state: 'ready', ownership: 'open-knowledge' });
+    expect(result.status).toEqual({ state: 'ready', ownership: 'palimpsest' });
     expect(result.changed).toBe(true);
     expect(readFileSync(attributesPath, 'utf-8')).toContain('/**/index.md merge=union');
   });
@@ -266,7 +266,7 @@ describe('generated-index git attributes', () => {
     expect(existsSync(join(projectDir, '.gitattributes'))).toBe(false);
   });
 
-  test('disable removes only the Open Knowledge block and rollback restores it', async () => {
+  test('disable removes only the Palimpsest block and rollback restores it', async () => {
     const { projectDir, contentDir } = makeProject();
     writeFileSync(join(projectDir, '.gitattributes'), '*.png binary\n', 'utf-8');
     await updateGeneratedIndexGitAttributes({
@@ -290,10 +290,10 @@ describe('generated-index git attributes', () => {
     await disabled.rollback();
     expect(
       inspectGeneratedIndexGitAttributes({ projectDir, contentDir, generatedDocNames }),
-    ).toEqual({ state: 'ready', ownership: 'open-knowledge' });
+    ).toEqual({ state: 'ready', ownership: 'palimpsest' });
   });
 
-  test('accepts and removes an Open Knowledge block checked out with CRLF endings', async () => {
+  test('accepts and removes an Palimpsest block checked out with CRLF endings', async () => {
     const { projectDir, contentDir } = makeProject();
     const attributesPath = join(projectDir, '.gitattributes');
     const enabled = await updateGeneratedIndexGitAttributes({
@@ -311,7 +311,7 @@ describe('generated-index git attributes', () => {
 
     expect(
       inspectGeneratedIndexGitAttributes({ projectDir, contentDir, generatedDocNames }),
-    ).toEqual({ state: 'ready', ownership: 'open-knowledge' });
+    ).toEqual({ state: 'ready', ownership: 'palimpsest' });
 
     const disabled = await updateGeneratedIndexGitAttributes({
       projectDir,
@@ -337,7 +337,7 @@ describe('generated-index git attributes', () => {
     const userEdit = `${readFileSync(attributesPath, 'utf-8')}*.png binary\n`;
     writeFileSync(attributesPath, userEdit, 'utf-8');
 
-    await expect(enabled.rollback()).rejects.toThrow('changed after Open Knowledge updated it');
+    await expect(enabled.rollback()).rejects.toThrow('changed after Palimpsest updated it');
     expect(readFileSync(attributesPath, 'utf-8')).toBe(userEdit);
   });
 

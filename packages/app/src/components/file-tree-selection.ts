@@ -1,9 +1,9 @@
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import {
   isDocumentOverOpenByteLimit,
   TEXT_DOC_OPEN_BYTE_LIMIT,
-} from '@inkeep/open-knowledge-core/constants/document-open';
-import type { InlineAssetMediaKind } from '@inkeep/open-knowledge-core/constants/upload';
+} from '@palimpsest/core/constants/document-open';
+import type { InlineAssetMediaKind } from '@palimpsest/core/constants/upload';
 import { assetTabId, docTabId } from '@/editor/editor-tabs';
 import { hashFromAssetPath } from '@/lib/doc-hash';
 import {
@@ -15,7 +15,7 @@ import type { DocumentEntry, FileEntry } from './file-tree-utils';
 import { isAssetEntry, isDocumentEntry, isFolderEntry } from './file-tree-utils';
 import {
   docNameForNavigationTarget,
-  okContentNavigationTarget,
+  psContentNavigationTarget,
   type ResolvedNavigationTarget,
 } from './navigation-targets';
 
@@ -154,8 +154,8 @@ export function previewTabIdForTreePath(
   const docEntry = entries.find(
     (item): item is DocumentEntry => isDocumentEntry(item) && item.docName === action.path,
   );
-  const okTarget = okContentNavigationTarget(action.path, { pages, docExt: docEntry?.docExt });
-  if (okTarget?.kind === 'asset') return assetTabId(okTarget.assetPath);
-  if (okTarget?.kind === 'doc') return docTabId(okTarget.docName);
+  const psTarget = psContentNavigationTarget(action.path, { pages, docExt: docEntry?.docExt });
+  if (psTarget?.kind === 'asset') return assetTabId(psTarget.assetPath);
+  if (psTarget?.kind === 'doc') return docTabId(psTarget.docName);
   return docTabId(action.path);
 }

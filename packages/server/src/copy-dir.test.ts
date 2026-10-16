@@ -7,7 +7,7 @@ import { copyDirSync } from './copy-dir.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function tmpDir(): string {
-  return makeTempDir('ok-copy-dir-');
+  return makeTempDir('ps-copy-dir-');
 }
 
 function seedSource(): string {

@@ -24,9 +24,9 @@ import {
   stagingVerdict,
 } from './assert-native-set.mjs';
 
-const OK_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const PS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SCRIPT = fileURLToPath(new URL('./assert-native-set.mjs', import.meta.url));
-const REAL_NATIVE_CONFIG = join(OK_ROOT, NATIVE_CONFIG_DIR);
+const REAL_NATIVE_CONFIG = join(PS_ROOT, NATIVE_CONFIG_DIR);
 const napi = JSON.parse(readFileSync(join(REAL_NATIVE_CONFIG, 'package.json'), 'utf8')).napi;
 const requireFromNativeConfig = createRequire(join(REAL_NATIVE_CONFIG, 'package.json'));
 const { parseTriple } = await import(
@@ -61,7 +61,7 @@ function scratch(prefix) {
 }
 
 function tree(binaries, { declared = napi, shipped = binaries } = {}) {
-  const root = scratch('ok-native-set-');
+  const root = scratch('ps-native-set-');
   mkdirSync(join(root, NATIVE_CONFIG_DIR), { recursive: true });
   mkdirSync(join(root, CLI_NATIVE_DIR), { recursive: true });
   writeFileSync(join(root, NATIVE_CONFIG_DIR, 'package.json'), JSON.stringify({ napi: declared }));
@@ -428,7 +428,7 @@ describe('as the workflow runs it', () => {
   });
 
   test('still asserts when it is run through a symlinked path', () => {
-    const linked = join(scratch('ok-native-set-link-'), 'scripts');
+    const linked = join(scratch('ps-native-set-link-'), 'scripts');
     symlinkSync(dirname(SCRIPT), linked, 'dir');
     const short = run(
       withParser(tree(ALL, { shipped: ALL.slice(1) })),

@@ -48,10 +48,10 @@ export async function runAssertionTimeoutCases(
 ): Promise<AssertionTimeoutRun> {
   const { exitCode, transcript, report } = await runNestedPlaywright({
     args: ['--config', RUN_CONFIG],
-    runDirPrefix: 'ok-assertion-timeout-',
+    runDirPrefix: 'ps-assertion-timeout-',
     env: (runDir) => {
       const env = createNestedPlaywrightEnv({
-        OK_ASSERTION_TIMEOUT_RUN_DIR: runDir,
+        PS_ASSERTION_TIMEOUT_RUN_DIR: runDir,
         PLAYWRIGHT_HTML_OPEN: 'never',
       });
       if (mode === 'ci') env.CI = '1';

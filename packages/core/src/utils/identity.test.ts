@@ -148,7 +148,7 @@ describe('iconFromClientName', () => {
     expect(iconFromClientName('pi-acp')).toBe('bot');
   });
   test('maps Claude Cowork local-agent-mode-* to claude', () => {
-    expect(iconFromClientName('local-agent-mode-open-knowledge')).toBe('claude');
+    expect(iconFromClientName('local-agent-mode-palimpsest')).toBe('claude');
     expect(iconFromClientName('local-agent-mode-some-other-server')).toBe('claude');
   });
   test('unknown or absent → bot', () => {
@@ -162,7 +162,7 @@ describe('iconFromClientName', () => {
 describe('displayNameFromClientName', () => {
   test('known clients → brand name', () => {
     expect(displayNameFromClientName('claude-code')).toBe('Claude');
-    expect(displayNameFromClientName('local-agent-mode-open-knowledge')).toBe('Claude');
+    expect(displayNameFromClientName('local-agent-mode-palimpsest')).toBe('Claude');
     expect(displayNameFromClientName('cursor')).toBe('Cursor');
     expect(displayNameFromClientName('codex-mcp-client')).toBe('Codex');
   });
@@ -203,22 +203,22 @@ describe('getIdentity', () => {
 
   test('persists name to localStorage (v3 key)', () => {
     const identity = getIdentity();
-    expect(localStorage.getItem('ok-user-name-v3')).toBe(identity.name);
+    expect(localStorage.getItem('ps-user-name-v3')).toBe(identity.name);
   });
 
   test('persists color to localStorage (v3 key)', () => {
     const identity = getIdentity();
-    expect(localStorage.getItem('ok-user-color-v3')).toBe(identity.color);
+    expect(localStorage.getItem('ps-user-color-v3')).toBe(identity.color);
   });
 
   test('reads persisted name from localStorage (v3 key)', () => {
-    localStorage.setItem('ok-user-name-v3', 'Test User');
+    localStorage.setItem('ps-user-name-v3', 'Test User');
     const identity = getIdentity();
     expect(identity.name).toBe('Test User');
   });
 
   test('reads persisted color from localStorage (v3 key)', () => {
-    localStorage.setItem('ok-user-color-v3', '#FF0000');
+    localStorage.setItem('ps-user-color-v3', '#FF0000');
     const identity = getIdentity();
     expect(identity.color).toBe('#FF0000');
   });

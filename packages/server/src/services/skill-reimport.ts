@@ -4,7 +4,7 @@ import {
   pathspecArgs,
   RENAMED_PACK_SKILLS,
   type SkillReimportSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   acquiredBundleTooLarge,
   packMarkerOf,
@@ -12,7 +12,7 @@ import {
   type SkillLockEntry,
   type SkillsLock,
   upsertLockEntry,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import simpleGit from 'simple-git';
 import type { z } from 'zod';
 import {

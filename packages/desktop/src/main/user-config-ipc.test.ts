@@ -9,14 +9,14 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { resolveConfigPath } from '@palimpsest/core/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 import { createUserConfigDispatch, createUserConfigStore } from './user-config-ipc.ts';
 
 const dirs: string[] = [];
 function tmpHome(): string {
-  const d = realpathSync(mkdtempSync(join(tmpdir(), 'ok-user-config-ipc-')));
+  const d = realpathSync(mkdtempSync(join(tmpdir(), 'ps-user-config-ipc-')));
   dirs.push(d);
   return d;
 }

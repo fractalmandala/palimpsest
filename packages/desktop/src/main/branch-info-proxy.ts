@@ -4,15 +4,15 @@ import type {
   BranchInfoResponse,
   CheckoutResponse,
   ShareTargetStatusResponse,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   BranchInfoResponseSchema,
   CheckoutResponseSchema,
   clientVersionHeaders,
   ServerInfoSuccessSchema,
   ShareTargetStatusResponseSchema,
-} from '@inkeep/open-knowledge-core';
-import { RUNTIME_VERSION } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { RUNTIME_VERSION } from '@palimpsest/server';
 import { lockApiOrigin } from './window-manager.ts';
 
 const DESKTOP_MAIN_VERSION_HEADERS = clientVersionHeaders({
@@ -43,7 +43,7 @@ export async function resolveProjectServerOrigin(
   deps: BranchInfoProxyDeps,
   signal?: AbortSignal,
 ): Promise<string | null> {
-  const lockDir = joinPath(projectPath, '.ok', 'local');
+  const lockDir = joinPath(projectPath, '.ps', 'local');
   const pollIntervalMs = deps.pollIntervalMs ?? 50;
   const pollTimeoutMs = deps.pollTimeoutMs ?? 5_000;
   const deadline = Date.now() + pollTimeoutMs;

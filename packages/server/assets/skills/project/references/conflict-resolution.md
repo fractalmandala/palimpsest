@@ -7,7 +7,7 @@ A doc can land in conflict through a Git merge, a pull that collides with a loca
   "type": "urn:ok:error:doc-in-conflict",
   "title": "Document is in conflict.",
   "status": 409,
-  "detail": "The document is in a conflict state. Ask the user to resolve it in the OpenKnowledge app, then retry.",
+  "detail": "The document is in a conflict state. Ask the user to resolve it in the Palimpsest app, then retry.",
   "file": "notes/sso.md",
   "conflict": { "kind": "reconcile", "reason": "disk-markers" },
   "resolutionOptions": ["mine", "content", "delete"]
@@ -18,7 +18,7 @@ The gate covers `write`, `edit`, `delete`, `move`, `restore_version`, and agent 
 
 A write that first detects a stale file during its final disk flush returns `urn:ok:error:stale-external-write` (409). The edit reached collaborative state and the recovery snapshot, but the disk write did not happen. Ask the user to resolve it in the app, then re-read. Do not repeat the operation: a retried append can duplicate content already retained in the current version.
 
-**You cannot resolve a conflict over MCP.** There is no conflict tool, and `exec` is read-only. On either 409, stop writing to that file, tell the user which file is in conflict, and ask them to resolve it in the OpenKnowledge app. After they confirm, re-read the document. For `doc-in-conflict`, the operation was refused; retry only if it is still needed. For `stale-external-write`, the operation already reached collaborative state; do not repeat it. Compare the resolved document with the intended result and make only any remaining edit.
+**You cannot resolve a conflict over MCP.** There is no conflict tool, and `exec` is read-only. On either 409, stop writing to that file, tell the user which file is in conflict, and ask them to resolve it in the Palimpsest app. After they confirm, re-read the document. For `doc-in-conflict`, the operation was refused; retry only if it is still needed. For `stale-external-write`, the operation already reached collaborative state; do not repeat it. Compare the resolved document with the intended result and make only any remaining edit.
 
 ## The three kinds
 
@@ -41,10 +41,10 @@ The controls depend on the conflict's shape:
 | Deleted locally, modified upstream | A preview of the upstream version | **Keep file deleted**, plus **Restore with remote changes** when offered |
 | Modified locally, deleted upstream | A preview of the user's version | **Keep my version** or **Accept their deletion** |
 
-For a stale external write, Current is the version OpenKnowledge protected and Incoming is the restored older version. `resolutionOptions` lists the strategies the app offers for that file; no MCP tool accepts them, so never try to apply one yourself. Explain what each choice would keep, but leave the choice and application to the user.
+For a stale external write, Current is the version Palimpsest protected and Incoming is the restored older version. `resolutionOptions` lists the strategies the app offers for that file; no MCP tool accepts them, so never try to apply one yourself. Explain what each choice would keep, but leave the choice and application to the user.
 
-If applying a resolution fails, ask the user to inspect the remaining conflict in the app. OpenKnowledge retains unresolved conflict and recovery state. Wait for the user to finish, then re-read the document before deciding what work remains.
+If applying a resolution fails, ask the user to inspect the remaining conflict in the app. Palimpsest retains unresolved conflict and recovery state. Wait for the user to finish, then re-read the document before deciding what work remains.
 
 A conflict can also close without you. Resolving a merge with raw git outside the app prunes the `merge-native` entry on the next disk change or HEAD move, and a `reconcile` conflict whose file comes back clean on disk dissolves on the next watcher pass.
 
-Stale-save recovery data lives in `.ok/local/stale-external-writes.json`, with owner-only permissions. Do not delete that file or restart with empty state when it is corrupt or unreadable; it may hold the only copy of protected edits. Preserve it, restore a known-good backup, and run `ok bug-report` from the project directory for diagnostics. An unresolved conflict does not expire with the displaced-hash window.
+Stale-save recovery data lives in `.ps/local/stale-external-writes.json`, with owner-only permissions. Do not delete that file or restart with empty state when it is corrupt or unreadable; it may hold the only copy of protected edits. Preserve it, restore a known-good backup, and run `ok bug-report` from the project directory for diagnostics. An unresolved conflict does not expire with the displaced-hash window.

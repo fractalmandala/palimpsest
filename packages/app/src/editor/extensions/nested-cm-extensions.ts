@@ -7,10 +7,10 @@ import { codeLanguages } from '../markdown-code-languages';
 import { createAgentFlashSourceExtension } from '../plugins/agent-flash-source';
 import { createMdLinkSourceExtension } from '../plugins/md-link-source';
 import { createWikiLinkSourceExtension } from '../plugins/wiki-link-source';
-import { okCmTheme } from './cm-theme';
+import { psCmTheme } from './cm-theme';
 
-export const darkTheme: Extension = okCmTheme({ dark: true });
-export const lightTheme: Extension = okCmTheme({ dark: false });
+export const darkTheme: Extension = psCmTheme({ dark: true });
+export const lightTheme: Extension = psCmTheme({ dark: false });
 
 interface NestedCMOptions {
   themeCompartment: Compartment;

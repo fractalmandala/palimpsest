@@ -1,7 +1,7 @@
-import type { HandoffOutcome } from '@inkeep/open-knowledge-core/handoff';
+import type { HandoffOutcome } from '@palimpsest/core/handoff';
 
 interface OpenExternalDeps {
-  readonly okDesktop?: { shell: { openExternal(url: string): Promise<void> } };
+  readonly psDesktop?: { shell: { openExternal(url: string): Promise<void> } };
   readonly doc?: Document;
 }
 
@@ -9,12 +9,12 @@ export async function openExternal(
   url: string,
   deps: OpenExternalDeps = {},
 ): Promise<HandoffOutcome> {
-  const okDesktop =
-    deps.okDesktop ?? (typeof window !== 'undefined' ? window.okDesktop : undefined);
+  const psDesktop =
+    deps.psDesktop ?? (typeof window !== 'undefined' ? window.psDesktop : undefined);
 
-  if (okDesktop?.shell?.openExternal) {
+  if (psDesktop?.shell?.openExternal) {
     try {
-      await okDesktop.shell.openExternal(url);
+      await psDesktop.shell.openExternal(url);
       return { ok: true };
     } catch (err) {
       return { ok: false, reason: 'dispatch-error', detail: errorDetail(err) };

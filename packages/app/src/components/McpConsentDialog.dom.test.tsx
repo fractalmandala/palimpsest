@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkMcpWiringResult, OkMcpWiringShowPayload } from '@/lib/desktop-bridge-types';
+import type { PsMcpWiringResult, PsMcpWiringShowPayload } from '@/lib/desktop-bridge-types';
 import type { McpConsentStore } from '@/lib/mcp-consent-store';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 import type { ToastImpl } from './McpConsentDialogBody';
@@ -34,7 +34,7 @@ const DISCOVERY_SKILL = {
   paths: ['~/.agents/skills/open-knowledge-discovery', '~/.claude/skills/open-knowledge-discovery'],
 };
 
-const payload: OkMcpWiringShowPayload = {
+const payload: PsMcpWiringShowPayload = {
   origin: 'first-run',
   detectedEditors: [
     {
@@ -43,7 +43,7 @@ const payload: OkMcpWiringShowPayload = {
       detected: true,
       willReplace: true,
       configPath: '~/.claude.json',
-      entryLocator: 'mcpServers.open-knowledge',
+      entryLocator: 'mcpServers.palimpsest',
     },
     {
       id: 'cursor',
@@ -51,7 +51,7 @@ const payload: OkMcpWiringShowPayload = {
       detected: true,
       willReplace: false,
       configPath: '~/.cursor/mcp.json',
-      entryLocator: 'mcpServers.open-knowledge',
+      entryLocator: 'mcpServers.palimpsest',
     },
     {
       id: 'codex',
@@ -59,18 +59,18 @@ const payload: OkMcpWiringShowPayload = {
       detected: false,
       willReplace: false,
       configPath: '~/.codex/config.toml',
-      entryLocator: '[mcp_servers.open-knowledge]',
+      entryLocator: '[mcp_servers.palimpsest]',
     },
   ],
   pathInstall: {
     shellDetected: true,
-    rcFilesToTouch: ['~/.zshrc', '~/.config/fish/conf.d/open-knowledge.fish'],
+    rcFilesToTouch: ['~/.zshrc', '~/.config/fish/conf.d/palimpsest.fish'],
     alreadyInstalled: false,
   },
   globalSkills: [DISCOVERY_SKILL],
 };
 
-const noneDetectedPayload: OkMcpWiringShowPayload = {
+const noneDetectedPayload: PsMcpWiringShowPayload = {
   origin: 'first-run',
   detectedEditors: [
     {
@@ -79,7 +79,7 @@ const noneDetectedPayload: OkMcpWiringShowPayload = {
       detected: false,
       willReplace: false,
       configPath: '~/.codex/config.toml',
-      entryLocator: '[mcp_servers.open-knowledge]',
+      entryLocator: '[mcp_servers.palimpsest]',
     },
   ],
   pathInstall: payload.pathInstall,
@@ -87,8 +87,8 @@ const noneDetectedPayload: OkMcpWiringShowPayload = {
 };
 
 function deferredResult() {
-  let resolve!: (result: OkMcpWiringResult) => void;
-  const promise = new Promise<OkMcpWiringResult>((nextResolve) => {
+  let resolve!: (result: PsMcpWiringResult) => void;
+  const promise = new Promise<PsMcpWiringResult>((nextResolve) => {
     resolve = nextResolve;
   });
   return { promise, resolve };
@@ -107,9 +107,9 @@ function makeHarness({
   userBinding,
   userSynced,
 }: {
-  confirmResult?: (editorIds: readonly string[]) => Promise<OkMcpWiringResult>;
-  skipResult?: () => Promise<OkMcpWiringResult>;
-  snapshot?: OkMcpWiringShowPayload;
+  confirmResult?: (editorIds: readonly string[]) => Promise<PsMcpWiringResult>;
+  skipResult?: () => Promise<PsMcpWiringResult>;
+  snapshot?: PsMcpWiringShowPayload;
   userBinding?: { patch: (patch: unknown) => unknown } | null;
   userSynced?: boolean;
 } = {}) {
@@ -264,7 +264,7 @@ describe('McpConsentDialog AI-tools decision', () => {
     const subtextOf = (el: Element | null | undefined) =>
       [...(el?.querySelectorAll('span') ?? [])]
         .map((n) => n.textContent ?? '')
-        .find((text) => text.startsWith('Adds an OpenKnowledge MCP entry to'));
+        .find((text) => text.startsWith('Adds an Palimpsest MCP entry to'));
 
     const before = subtextOf(row());
     expect(before).toBeTruthy();
@@ -346,7 +346,7 @@ describe('McpConsentDialog AI-tools decision', () => {
               detected: true,
               willReplace: false,
               configPath: null,
-              entryLocator: 'mcpServers.open-knowledge',
+              entryLocator: 'mcpServers.palimpsest',
             },
           ],
           pathInstall: { shellDetected: false, rcFilesToTouch: [], alreadyInstalled: false },
@@ -441,7 +441,7 @@ describe('McpConsentDialog AI-tools decision', () => {
     await renderDialog(makeHarness({ snapshot: noneDetectedPayload }));
 
     const body = document.body.textContent ?? '';
-    expect(body).not.toContain('Globally install the OpenKnowledge skills and MCP');
+    expect(body).not.toContain('Globally install the Palimpsest skills and MCP');
   });
 
   test('a destination but no detected tool: the skill row and the note both show', async () => {
@@ -541,7 +541,7 @@ describe('McpConsentDialog AI-tools decision', () => {
 describe('McpConsentDialog PATH consent row', () => {
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('starts unchecked with no warning; the warning appears only after the user unchecks it', async () => {
@@ -555,7 +555,7 @@ describe('McpConsentDialog PATH consent row', () => {
     const status = await screen.findByTestId('mcp-consent-path-status');
     const text = status.textContent ?? '';
     expect(text).toContain('~/.zshrc');
-    expect(text).toContain('~/.config/fish/conf.d/open-knowledge.fish');
+    expect(text).toContain('~/.config/fish/conf.d/palimpsest.fish');
     expect(screen.queryByTestId('mcp-consent-path-warning')).toBeNull();
 
     await userEvent.click(checkbox);
@@ -573,27 +573,27 @@ describe('McpConsentDialog PATH consent row', () => {
   });
 
   test('names the Beta command throughout the row in a Beta window', async () => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {
       config: { ptyAvailable: true },
-      cliCommandName: 'ok-beta',
+      cliCommandName: 'ps-beta',
     };
     await renderDialog();
 
     const checkbox = screen.getByTestId('mcp-consent-path-checkbox');
     const row = checkbox.closest('label')?.textContent ?? '';
-    expect(row).toContain('Add the ok-beta command to your terminal');
-    expect(row).toContain('ok-beta opens a project, ok-beta init connects your agents.');
+    expect(row).toContain('Add the ps-beta command to your terminal');
+    expect(row).toContain('ps-beta opens a project, ps-beta init connects your agents.');
     expect(row).not.toMatch(/\bok\b(?!-beta)/);
 
     await userEvent.click(checkbox);
     await userEvent.click(checkbox);
     expect(screen.getByTestId('mcp-consent-path-warning').textContent).toMatch(
-      /^ok-beta won't run in external terminals/,
+      /^ps-beta won't run in external terminals/,
     );
   });
 
   test('mentions the built-in terminal only when the desktop bridge reports PTY support', async () => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {
       config: { ptyAvailable: true },
     };
     await renderDialog();
@@ -619,9 +619,9 @@ describe('McpConsentDialog PATH consent row', () => {
   });
 
   test('alreadyInstalled names the Beta command in a Beta window', async () => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {
       config: { ptyAvailable: false },
-      cliCommandName: 'ok-beta',
+      cliCommandName: 'ps-beta',
     };
     await renderDialog(
       makeHarness({
@@ -633,7 +633,7 @@ describe('McpConsentDialog PATH consent row', () => {
     );
 
     expect(screen.getByTestId('mcp-consent-path-status').textContent).toBe(
-      'Already set up — ok-beta is available in your terminal',
+      'Already set up — ps-beta is available in your terminal',
     );
   });
 
@@ -905,9 +905,9 @@ describe('McpConsentDialog surface by origin', () => {
     await renderDialog(reconfigureHarness());
 
     expect(
-      screen.getByRole('dialog', { name: /Customize your OpenKnowledge experience/ }),
+      screen.getByRole('dialog', { name: /Customize your Palimpsest experience/ }),
     ).toBeTruthy();
-    expect(screen.queryByText(/Welcome to OpenKnowledge/)).toBeNull();
+    expect(screen.queryByText(/Welcome to Palimpsest/)).toBeNull();
     expect(screen.queryByText(/Let's get set up/)).toBeNull();
     expect(screen.getByRole('dialog').getAttribute('aria-describedby')).toBeNull();
   });
@@ -916,10 +916,10 @@ describe('McpConsentDialog surface by origin', () => {
     await renderDialog();
 
     expect(screen.getByRole('alertdialog', { name: /Let's get set up/ })).toBeTruthy();
-    expect(screen.getByText(/Welcome to OpenKnowledge/)).toBeTruthy();
+    expect(screen.getByText(/Welcome to Palimpsest/)).toBeTruthy();
     const descriptionId = screen.getByRole('alertdialog').getAttribute('aria-describedby');
     expect(document.getElementById(descriptionId ?? '')?.textContent).toBe(
-      'Customize your OpenKnowledge experience.',
+      'Customize your Palimpsest experience.',
     );
   });
 
@@ -973,11 +973,11 @@ describe('McpConsentDialog payload replacement', () => {
   afterEach(() => cleanup());
 
   function makeStoreBridge() {
-    let handler: ((next: OkMcpWiringShowPayload) => void) | null = null;
+    let handler: ((next: PsMcpWiringShowPayload) => void) | null = null;
     const confirm = vi.fn(() => Promise.resolve({ ok: true as const }));
     const bridge = {
       mcpWiring: {
-        onShow: (cb: (next: OkMcpWiringShowPayload) => void) => {
+        onShow: (cb: (next: PsMcpWiringShowPayload) => void) => {
           handler = cb;
           return () => {
             handler = null;
@@ -991,7 +991,7 @@ describe('McpConsentDialog payload replacement', () => {
     return {
       bridge,
       confirm,
-      fireShow: (next: OkMcpWiringShowPayload) => handler?.(next),
+      fireShow: (next: PsMcpWiringShowPayload) => handler?.(next),
     };
   }
 

@@ -151,7 +151,7 @@ const baseStatus: GitSyncStatus = {
   conflictCount: 0,
   hasRemote: true,
   syncEnabled: true,
-  remote: { label: 'inkeep/open-knowledge', webUrl: 'https://github.com/inkeep/open-knowledge' },
+  remote: { label: 'fractalmandala/palimpsest', webUrl: 'https://github.com/fractalmandala/palimpsest' },
 };
 
 async function renderBadge(props: { onSignIn?: () => void } = {}) {
@@ -408,8 +408,8 @@ describe('SyncStatusBadge helper behavior', () => {
     expect(isGitHubRemote({ label: 'git.example.com/team/wiki', webUrl: null })).toBe(false);
     expect(
       isGitHubRemote({
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       }),
     ).toBe(true);
   });
@@ -421,8 +421,8 @@ describe('SyncStatusBadge helper behavior', () => {
     expect(hasNonGitHubRemote(null)).toBe(false);
     expect(
       hasNonGitHubRemote({
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       }),
     ).toBe(false);
     expect(hasNonGitHubRemote({ label: 'git.example.com/team/wiki', webUrl: null })).toBe(true);
@@ -482,8 +482,8 @@ describe('SyncStatusBadge helper behavior', () => {
       computeSyncErrorLines({
         pushErrorCode: 'auth-401',
         remote: {
-          label: 'inkeep/open-knowledge',
-          webUrl: 'https://github.com/inkeep/open-knowledge',
+          label: 'fractalmandala/palimpsest',
+          webUrl: 'https://github.com/fractalmandala/palimpsest',
         },
       }),
     ).toEqual([
@@ -1529,7 +1529,7 @@ describe('SyncStatusBadge working-tree listing', () => {
       listing.getByText('notes/cadence-draft.md', { selector: 'span:not(.sr-only)' }),
     ).toBeTruthy();
     expect(listing.getByText('src/git/status.ts', { selector: 'span:not(.sr-only)' })).toBeTruthy();
-    expect(screen.getByText(/Outside what Open Knowledge commits/)).toBeTruthy();
+    expect(screen.getByText(/Outside what Palimpsest commits/)).toBeTruthy();
 
     expect(screen.getByText('2 behind')).toBeTruthy();
     expect(screen.getByText('1 ahead')).toBeTruthy();
@@ -1701,7 +1701,7 @@ describe('SyncStatusBadge working-tree listing', () => {
 
     expect(screen.getByText('Push includes')).toBeTruthy();
     expect(screen.queryByText('Push skips')).toBeNull();
-    expect(screen.queryByText(/Outside what Open Knowledge commits/)).toBeNull();
+    expect(screen.queryByText(/Outside what Palimpsest commits/)).toBeNull();
   });
 
   test('a path dirty in both columns renders once, keeping the index letter', async () => {

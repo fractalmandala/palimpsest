@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 export type EnabledOverrides = Readonly<Record<string, boolean>>;
 
-const STORAGE_KEY = 'ok-acp-enabled-agents-v1';
+const STORAGE_KEY = 'ps-acp-enabled-agents-v1';
 const EMPTY_STATE: EnabledOverrides = {};
 
 export function inAppEnabledKey(source: string, id: string): string {

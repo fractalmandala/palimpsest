@@ -1,4 +1,4 @@
-import type { TimelineEntry } from '@inkeep/open-knowledge-core';
+import type { TimelineEntry } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { allSummariesFor, contributorIconKind } from './TimelinePanel.tsx';
 
@@ -6,8 +6,8 @@ function baseEntry(overrides: Partial<TimelineEntry>): TimelineEntry {
   return {
     sha: '0'.repeat(40),
     timestamp: '2026-04-17T00:00:00Z',
-    author: 'openknowledge',
-    authorEmail: 'noreply@openknowledge.local',
+    author: 'palimpsest',
+    authorEmail: 'noreply@palimpsest.local',
     type: 'wip',
     message: 'wip: edits',
     contributors: [],
@@ -79,8 +79,8 @@ describe('contributorIconKind', () => {
   const SYSTEM_WRITER_NAMES = [
     'File System',
     'Git (upstream)',
-    'OpenKnowledge (service)',
-    'OpenKnowledge (generated)',
+    'Palimpsest (service)',
+    'Palimpsest (generated)',
   ];
 
   test('no system writer renders as a person', () => {
@@ -90,8 +90,8 @@ describe('contributorIconKind', () => {
   });
 
   test('the generated writer gets its own icon family, distinct from the service writer', () => {
-    expect(contributorIconKind('OpenKnowledge (generated)')).toBe('generated');
-    expect(contributorIconKind('OpenKnowledge (service)')).toBe('upstream');
+    expect(contributorIconKind('Palimpsest (generated)')).toBe('generated');
+    expect(contributorIconKind('Palimpsest (service)')).toBe('upstream');
   });
 
   test('a human or unknown contributor still falls back to a person', () => {

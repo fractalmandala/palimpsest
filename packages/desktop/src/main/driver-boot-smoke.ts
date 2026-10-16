@@ -23,5 +23,5 @@ export function runDriverBootSmoke(deps: DriverBootSmokeDeps): void {
 }
 
 export function isDriverBootSmokeMode(env: NodeJS.ProcessEnv): boolean {
-  return env.OK_DEBUG_KEYRING_SMOKE === '1' && env.OK_DEBUG_KEYRING_SMOKE_EXIT === '1';
+  return env.PS_DEBUG_KEYRING_SMOKE === '1' && env.PS_DEBUG_KEYRING_SMOKE_EXIT === '1';
 }

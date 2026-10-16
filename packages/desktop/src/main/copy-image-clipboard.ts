@@ -7,7 +7,7 @@ import type {
   CopyImageFailureReason,
   CopyImageRequest,
   CopyImageResult,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/desktop-bridge';
 import type { Clipboard, ClipboardItem, NativeImage } from 'electron';
 import { isPathWithinProject } from './ipc-handlers.ts';
 

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { BridgeInvariantViolationError } from '@inkeep/open-knowledge-core';
+import { BridgeInvariantViolationError } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { composeAndWriteRawBody } from './bridge-intake.ts';
@@ -86,7 +86,7 @@ describe('batch-gated L1 persistence', () => {
   beforeEach(() => {
     durabilityState = new DocumentDurabilityState();
     durabilityState.holdWriteAdmission();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-deferred-store-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-deferred-store-'));
     mkdirSync(tmpDir, { recursive: true });
     setBatchInProgress(false);
     switchReconciledBaseScope('main');
@@ -387,7 +387,7 @@ describe('quiescence gate — deferCount cleanup on disk-write error', () => {
 
   beforeEach(() => {
     durabilityState = new DocumentDurabilityState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-defer-disk-error-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-defer-disk-error-'));
     mkdirSync(tmpDir, { recursive: true });
     setBatchInProgress(false);
     switchReconciledBaseScope('main');
@@ -497,7 +497,7 @@ describe('Y.Text-is-truth wiring (FR-33 / FR-35)', () => {
 
   beforeEach(() => {
     durabilityState = new DocumentDurabilityState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-fr33-wiring-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-fr33-wiring-'));
     mkdirSync(tmpDir, { recursive: true });
     setBatchInProgress(false);
     switchReconciledBaseScope('main');
@@ -569,7 +569,7 @@ describe('FR-9 — deferred-store-failed event + counter', () => {
 
   beforeEach(() => {
     durabilityState = new DocumentDurabilityState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-fr9-deferred-drain-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-fr9-deferred-drain-'));
     mkdirSync(tmpDir, { recursive: true });
     setBatchInProgress(false);
     switchReconciledBaseScope('main');
@@ -582,7 +582,7 @@ describe('FR-9 — deferred-store-failed event + counter', () => {
 
   afterEach(() => {
     warnSpy.mockRestore();
-    delete process.env.OK_TELEMETRY_VERBOSE;
+    delete process.env.PS_TELEMETRY_VERBOSE;
     rmSync(tmpDir, { recursive: true, force: true });
   });
 
@@ -626,8 +626,8 @@ describe('FR-9 — deferred-store-failed event + counter', () => {
     document.destroy();
   });
 
-  test('OK_TELEMETRY_VERBOSE=1 surfaces raw errorMessage on the event', async () => {
-    process.env.OK_TELEMETRY_VERBOSE = '1';
+  test('PS_TELEMETRY_VERBOSE=1 surfaces raw errorMessage on the event', async () => {
+    process.env.PS_TELEMETRY_VERBOSE = '1';
     const docName = 'fr9-disk-write-verbose';
     const docPath = join(tmpDir, `${docName}.md`);
     writeFileSync(docPath, 'initial\n', 'utf-8');
@@ -764,8 +764,8 @@ describe('FR-9 — deferred-store-failed event + counter', () => {
     }
   });
 
-  test('classifier failure with OK_TELEMETRY_VERBOSE=1 surfaces raw classifyErrorMessage', async () => {
-    process.env.OK_TELEMETRY_VERBOSE = '1';
+  test('classifier failure with PS_TELEMETRY_VERBOSE=1 surfaces raw classifyErrorMessage', async () => {
+    process.env.PS_TELEMETRY_VERBOSE = '1';
     const docName = 'fr9-classifier-fail-verbose';
     const docPath = join(tmpDir, `${docName}.md`);
     writeFileSync(docPath, 'initial\n', 'utf-8');
@@ -871,7 +871,7 @@ describe('forceStore dispatch (staleness watchdog entry point)', () => {
 
   beforeEach(() => {
     durabilityState = new DocumentDurabilityState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-force-store-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-force-store-'));
     mkdirSync(tmpDir, { recursive: true });
   });
 

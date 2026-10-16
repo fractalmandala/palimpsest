@@ -1,4 +1,4 @@
-import type { OkBugReportListRow, OkBugReportSendResult } from '@inkeep/open-knowledge-core';
+import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -11,11 +11,11 @@ import {
   createBugReportSendManager,
 } from '@/lib/bug-report-send-manager';
 
-const ZIP_PATH = '/Users/tester/.ok/bug-reports/2026-07-10T00-00-00-bugreport.zip';
+const ZIP_PATH = '/Users/tester/.ps/bug-reports/2026-07-10T00-00-00-bugreport.zip';
 const OPERATION_ID = '2026-07-10T00-00-00-bugreport.zip';
-const MAILTO = 'mailto:support@inkeep.com?subject=Bug%20report';
+const MAILTO = 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report';
 
-const ROW: OkBugReportListRow = {
+const ROW: PsBugReportListRow = {
   id: OPERATION_ID,
   createdAt: '2026-07-10T00:00:00.000Z',
   bundleLevel: 'standard',
@@ -31,18 +31,18 @@ const ROW: OkBugReportListRow = {
   degraded: false,
 };
 
-const FAILED_RESULT: OkBugReportSendResult = {
+const FAILED_RESULT: PsBugReportSendResult = {
   ok: false,
   reason: 'send-failed',
   fallback: { mailtoUrl: MAILTO, zipPath: ZIP_PATH },
 };
 
-let pendingSends: Array<(result: OkBugReportSendResult) => void> = [];
+let pendingSends: Array<(result: PsBugReportSendResult) => void> = [];
 
 function startOperation(): BugReportSendManager {
   const manager = createBugReportSendManager(() => ({
     send: () =>
-      new Promise<OkBugReportSendResult>((resolve) => {
+      new Promise<PsBugReportSendResult>((resolve) => {
         pendingSends.push(resolve);
       }),
   }));
@@ -50,7 +50,7 @@ function startOperation(): BugReportSendManager {
   return manager;
 }
 
-async function settleWith(result: OkBugReportSendResult): Promise<void> {
+async function settleWith(result: PsBugReportSendResult): Promise<void> {
   const resolve = pendingSends.shift();
   if (resolve === undefined) throw new Error('no send is in flight');
   await act(async () => {

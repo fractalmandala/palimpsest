@@ -11,7 +11,7 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { resolveConfigPath } from '@palimpsest/core/server';
 import { afterEach, describe, expect, test } from 'vitest';
 
 const FIXTURE = fileURLToPath(
@@ -56,13 +56,13 @@ function seedSavedSettings(
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, SAVED_SETTINGS, 'utf-8');
   }
-  writeFileSync(join(contentDir, '.ok', '.gitignore'), '', 'utf-8');
+  writeFileSync(join(contentDir, '.ps', '.gitignore'), '', 'utf-8');
   return { settingsFiles, userSettingsFile };
 }
 
 async function startResetServer(homeMode: HomeMode): Promise<ResetServer> {
-  const contentDir = scratchDir('ok-reset-home-content-');
-  const home = scratchDir('ok-reset-home-');
+  const contentDir = scratchDir('ps-reset-home-content-');
+  const home = scratchDir('ps-reset-home-');
   const seeded = seedSavedSettings(contentDir, home);
   const child = fork(FIXTURE, [contentDir, home, homeMode], {
     execArgv: ['--import', 'tsx', '--conditions=@inkeep/source'],

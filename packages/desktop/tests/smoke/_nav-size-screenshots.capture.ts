@@ -31,11 +31,11 @@ function userDataDirFor(tmpHome: string): string {
 }
 
 function seedHome(prefix: string): { tmpHome: string; projectDir: string } {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-navshot-${prefix}-`));
-  const projectDir = mkdtempSync(join(tmpdir(), `ok-navshot-${prefix}-project-`));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-navshot-${prefix}-`));
+  const projectDir = mkdtempSync(join(tmpdir(), `ps-navshot-${prefix}-project-`));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   const userDataDir = userDataDirFor(tmpHome);
@@ -43,7 +43,7 @@ function seedHome(prefix: string): { tmpHome: string; projectDir: string } {
   const now = Date.now();
   const recentProjects = [
     'agents-private',
-    'open-knowledge',
+    'palimpsest',
     'dragon-wiki',
     'claude-config',
     'ship-loop-rewrite',
@@ -79,7 +79,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
       target: TARGET,
       args: [`--user-data-dir=${userDataDirFor(tmpHome)}`],
       timeout: 30_000,
-      env: { ...process.env, ...homeEnv(tmpHome), OK_DESKTOP_E2E_SMOKE: '1' },
+      env: { ...process.env, ...homeEnv(tmpHome), PS_DESKTOP_E2E_SMOKE: '1' },
     }),
   );
 }
@@ -94,7 +94,7 @@ async function findWindow(
       async () => {
         for (const page of app.windows()) {
           const m = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (m === mode) return true;
         }
@@ -104,7 +104,7 @@ async function findWindow(
     )
     .toBe(true);
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) return page;
   }
   throw new Error(`${mode} window vanished`);
@@ -117,7 +117,7 @@ function rmSafe(p: string): void {
 }
 
 test.describe('Navigator size screenshots (dev-only)', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -132,7 +132,7 @@ test.describe('Navigator size screenshots (dev-only)', () => {
       const editor = await findWindow(app, 'editor');
       await configureDesktopGitRepositories(editor, projectDir);
       await editor.evaluate(async () => {
-        await window.okDesktop?.navigator.open();
+        await window.psDesktop?.navigator.open();
       });
       const nav = await findWindow(app, 'navigator');
       const winHandle: JSHandle = await app.browserWindow(nav);

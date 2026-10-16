@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { MENU_LABELS, NATIVE_MENU_LABELS } from '@inkeep/open-knowledge-core';
+import { MENU_LABELS, NATIVE_MENU_LABELS } from '@palimpsest/core';
 import { generateMessageId } from '@lingui/message-utils/generateMessageId';
 import { describe, expect, test } from 'vitest';
 import {
@@ -42,9 +42,9 @@ describe('createMenuTranslator', () => {
 
   test('fills placeholders from the translated form, not the English one', () => {
     const translate = createMenuTranslator(REAL_CATALOG_DIR, 'es');
-    const rendered = translate('Quit {appName}', { appName: 'OpenKnowledge' });
-    expect(rendered).toContain('OpenKnowledge');
-    expect(rendered).not.toBe('Quit OpenKnowledge');
+    const rendered = translate('Quit {appName}', { appName: 'Palimpsest' });
+    expect(rendered).toContain('Palimpsest');
+    expect(rendered).not.toBe('Quit Palimpsest');
   });
 
   test('renders the English source for a message the catalog does not carry', () => {
@@ -55,7 +55,7 @@ describe('createMenuTranslator', () => {
   test('renders English throughout when the catalog cannot be read', () => {
     const translate = createMenuTranslator(join(REAL_CATALOG_DIR, 'nope'), 'es');
     expect(translate('Reveal in Finder')).toBe('Reveal in Finder');
-    expect(translate('Quit {appName}', { appName: 'OpenKnowledge' })).toBe('Quit OpenKnowledge');
+    expect(translate('Quit {appName}', { appName: 'Palimpsest' })).toBe('Quit Palimpsest');
   });
 
   test('en resolves to the same strings the English fallback produces', () => {
@@ -63,7 +63,7 @@ describe('createMenuTranslator', () => {
     for (const source of ['Reveal in Finder', 'Select All', 'Actual Size', 'Recent project']) {
       expect(translate(source)).toBe(translateEnglish(source));
     }
-    expect(translate('Hide {appName}', { appName: 'OpenKnowledge' })).toBe('Hide OpenKnowledge');
+    expect(translate('Hide {appName}', { appName: 'Palimpsest' })).toBe('Hide Palimpsest');
   });
 });
 
@@ -86,10 +86,10 @@ describe('resolveMenuCatalogDir', () => {
     expect(
       resolveMenuCatalogDir({
         isPackaged: true,
-        resourcesPath: '/Apps/OpenKnowledge.app/Contents/Resources',
-        mainDir: '/Apps/OpenKnowledge.app/Contents/Resources/app.asar/out/main',
+        resourcesPath: '/Apps/Palimpsest.app/Contents/Resources',
+        mainDir: '/Apps/Palimpsest.app/Contents/Resources/app.asar/out/main',
       }),
-    ).toBe('/Apps/OpenKnowledge.app/Contents/Resources/locales');
+    ).toBe('/Apps/Palimpsest.app/Contents/Resources/locales');
   });
 
   test('dev builds read the app package catalogs the i18n script rewrites', () => {
@@ -119,8 +119,8 @@ describe('translateEnglish', () => {
   });
 
   test('substitutes named placeholders and leaves unknown ones alone', () => {
-    expect(translateEnglish('Quit {appName}', { appName: 'OpenKnowledge' })).toBe(
-      'Quit OpenKnowledge',
+    expect(translateEnglish('Quit {appName}', { appName: 'Palimpsest' })).toBe(
+      'Quit Palimpsest',
     );
     expect(translateEnglish('Look Up "{word}"', { other: 'x' })).toBe('Look Up "{word}"');
   });

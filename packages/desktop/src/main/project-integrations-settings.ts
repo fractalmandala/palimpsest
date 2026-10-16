@@ -3,8 +3,8 @@ import type {
   McpDeclineReason,
   McpEntryClassification,
   McpRemoveOutcome,
-} from '@inkeep/open-knowledge';
-import { currentMcpServerName } from '@inkeep/open-knowledge-core';
+} from '@palimpsest/cli';
+import { currentMcpServerName } from '@palimpsest/core';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 import type {
   IntegrationsEditorState,
@@ -226,7 +226,7 @@ export function registerProjectIntegrationsSettings(
         default:
           return {
             ok: false,
-            error: `Couldn't add OpenKnowledge to ${label}${result.error ? ` (${result.error})` : ''}.`,
+            error: `Couldn't add Palimpsest to ${label}${result.error ? ` (${result.error})` : ''}.`,
           };
       }
     }
@@ -251,7 +251,7 @@ export function registerProjectIntegrationsSettings(
       case 'left-foreign':
         return {
           ok: false,
-          error: `The ${currentMcpServerName()} entry in ${label}'s project config isn't one OpenKnowledge wrote — it was left unchanged. Remove it manually if you no longer want it.`,
+          error: `The ${currentMcpServerName()} entry in ${label}'s project config isn't one Palimpsest wrote — it was left unchanged. Remove it manually if you no longer want it.`,
         };
       case 'declined':
         return {

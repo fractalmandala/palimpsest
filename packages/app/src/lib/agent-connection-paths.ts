@@ -1,11 +1,11 @@
-import { parsePathId } from '@inkeep/open-knowledge-core/agent-registry';
+import { parsePathId } from '@palimpsest/core/agent-registry';
 import {
   EDITOR_PROJECT_SKILL_ROOT,
   EDITOR_USER_SKILL_ROOT,
   RESERVED_PROJECT_SKILL_NAME,
   STABLE_EDITOR_PROJECT_CONFIG_PATH,
-} from '@inkeep/open-knowledge-core/constants/editors';
-import { AGENTS_SKILLS_ROOT } from '@inkeep/open-knowledge-core/constants/skills';
+} from '@palimpsest/core/constants/editors';
+import { AGENTS_SKILLS_ROOT } from '@palimpsest/core/constants/skills';
 
 export function connectionPathDisplay(pathId: string | undefined): string | null {
   if (pathId === undefined) return null;

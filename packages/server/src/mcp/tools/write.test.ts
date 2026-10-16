@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { stripFrontmatter } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   CONCURRENT_OVERWRITE_REFUSED_DETAIL_WITH_POSITIONS,
@@ -181,8 +181,8 @@ describe('write({ skill }) with bundle files — the per-file report reaches bot
         return Response.json({ error: 'Bundle file rejected by the server.' }, { status: 500 });
       },
     });
-    cwd = mkdtempSync(join(tmpdir(), 'ok-write-skill-files-'));
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
+    cwd = mkdtempSync(join(tmpdir(), 'ps-write-skill-files-'));
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
 
     let captured: Handler | null = null;
     const server = {
@@ -257,8 +257,8 @@ describe('write({ document }) relaying a concurrent-overwrite refusal', () => {
         return Response.json({ error: `unexpected route ${pathname}` }, { status: 500 });
       },
     });
-    cwd = mkdtempSync(join(tmpdir(), 'ok-write-concurrent-refusal-'));
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
+    cwd = mkdtempSync(join(tmpdir(), 'ps-write-concurrent-refusal-'));
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
 
     let captured: Handler | null = null;
     const server = {
@@ -325,8 +325,8 @@ describe('write({ document }) appending or prepending to a path with no document
         return Response.json({ error: `unexpected route ${pathname}` }, { status: 500 });
       },
     });
-    cwd = mkdtempSync(join(tmpdir(), 'ok-write-created-by-position-'));
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
+    cwd = mkdtempSync(join(tmpdir(), 'ps-write-created-by-position-'));
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
     mkdirSync(join(cwd, 'notes'), { recursive: true });
     writeFileSync(join(cwd, 'notes', 'existing.md'), '# Existing\n');
 
@@ -393,8 +393,8 @@ describe('write — an asset upload whose request to the server fails', () => {
   let cwd: string;
 
   beforeAll(() => {
-    cwd = mkdtempSync(join(tmpdir(), 'ok-write-asset-transport-'));
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
+    cwd = mkdtempSync(join(tmpdir(), 'ps-write-asset-transport-'));
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
   });
 
   afterAll(() => {
@@ -445,8 +445,8 @@ describe('write — the reply to an asset upload the server accepted', () => {
   let cwd: string;
 
   beforeAll(() => {
-    cwd = mkdtempSync(join(tmpdir(), 'ok-write-asset-reply-'));
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
+    cwd = mkdtempSync(join(tmpdir(), 'ps-write-asset-reply-'));
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
   });
 
   afterAll(() => {

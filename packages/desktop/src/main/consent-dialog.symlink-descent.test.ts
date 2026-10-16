@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { previewContent } from '@inkeep/open-knowledge';
+import { previewContent } from '@palimpsest/cli';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { runProbe } from './consent-dialog.ts';
 
@@ -9,7 +9,7 @@ let tmpRoot: string;
 let fixtureRoot: string;
 
 beforeEach(() => {
-  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-probe-descent-'));
+  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-probe-descent-'));
   fixtureRoot = realpathSync(tmpRoot);
 });
 

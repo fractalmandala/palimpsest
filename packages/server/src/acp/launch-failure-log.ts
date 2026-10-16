@@ -1,7 +1,7 @@
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { ACP_LAUNCH_FAILURE_LOG, spawnErrorLogOpenMode } from '@inkeep/open-knowledge-core';
-import type { ThreadFailureDetail } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import { ACP_LAUNCH_FAILURE_LOG, spawnErrorLogOpenMode } from '@palimpsest/core';
+import type { ThreadFailureDetail } from '@palimpsest/core/acp/thread-protocol';
 import { tracedAppendFile, tracedWriteFile } from '../fs-traced.ts';
 import { redactDiagnostic } from './diagnostics.ts';
 

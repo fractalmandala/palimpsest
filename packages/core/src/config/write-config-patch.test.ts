@@ -16,7 +16,7 @@ import { resolveConfigPath, writeConfigPatch } from './write-config-patch.ts';
 let testDir: string;
 
 beforeEach(() => {
-  testDir = mkdtempSync(join(tmpdir(), 'ok-write-config-patch-'));
+  testDir = mkdtempSync(join(tmpdir(), 'ps-write-config-patch-'));
 });
 
 afterEach(() => {
@@ -24,16 +24,16 @@ afterEach(() => {
 });
 
 function projectConfigPath(): string {
-  return join(testDir, '.ok', 'config.yml');
+  return join(testDir, '.ps', 'config.yml');
 }
 
 function userConfigPath(homeOverride: string): string {
-  return join(homeOverride, '.ok', 'global.yml');
+  return join(homeOverride, '.ps', 'global.yml');
 }
 
 describe('writeConfigPatch — project scope', () => {
   test('writes a fresh project config when none exists (lazy first-write)', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
 
     const result = await writeConfigPatch({
       cwd: testDir,
@@ -48,14 +48,14 @@ describe('writeConfigPatch — project scope', () => {
     expect(existsSync(projectConfigPath())).toBe(true);
     const onDisk = readFileSync(projectConfigPath(), 'utf-8');
     expect(onDisk).toMatch(
-      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/open-knowledge@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json/,
+      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/palimpsest@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json/,
     );
     expect(onDisk).toContain('content:');
     expect(onDisk).toContain('dir: docs');
   });
 
   test('mode 0o644 on lazy first-write (config is not secret)', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     await writeConfigPatch({
       cwd: testDir,
       scope: 'project',
@@ -67,7 +67,7 @@ describe('writeConfigPatch — project scope', () => {
   });
 
   test('updates an existing project config and preserves comments', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     const original = `# user-written comment at top
 content:
   # inline comment about dir
@@ -96,7 +96,7 @@ mcp:
   });
 
   test('null in patch deletes the field (RFC 7396 spirit)', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     writeFileSync(
       projectConfigPath(),
       `mcp:\n  autoStart: false\n  tools:\n    search:\n      maxResults: 100\n`,
@@ -119,11 +119,11 @@ mcp:
 
 describe('writeConfigPatch — project-local scope', () => {
   function projectLocalConfigPath(): string {
-    return join(testDir, '.ok', 'local', 'config.yml');
+    return join(testDir, '.ps', 'local', 'config.yml');
   }
 
-  test('writes a fresh project-local config when none exists; lazily creates .ok/local/', async () => {
-    expect(existsSync(join(testDir, '.ok'))).toBe(false);
+  test('writes a fresh project-local config when none exists; lazily creates .ps/local/', async () => {
+    expect(existsSync(join(testDir, '.ps'))).toBe(false);
 
     const result = await writeConfigPatch({
       cwd: testDir,
@@ -140,7 +140,7 @@ describe('writeConfigPatch — project-local scope', () => {
     expect(existsSync(projectLocalConfigPath())).toBe(true);
     const onDisk = readFileSync(projectLocalConfigPath(), 'utf-8');
     expect(onDisk).toMatch(
-      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/open-knowledge@latest\/dist\/schemas\/v\d+\/config\.project-local\.schema\.json/,
+      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/palimpsest@latest\/dist\/schemas\/v\d+\/config\.project-local\.schema\.json/,
     );
     expect(onDisk).toContain('autoSync:');
     expect(onDisk).toContain('enabled: true');
@@ -173,7 +173,7 @@ describe('writeConfigPatch — project-local scope', () => {
   });
 
   test('preserves unknown autoSync sub-keys on a mode write-back (looseObject round-trip)', async () => {
-    mkdirSync(join(testDir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(testDir, '.ps', 'local'), { recursive: true });
     writeFileSync(
       projectLocalConfigPath(),
       'autoSync:\n  mode: pull\n  inheritedFrom: root\n  inheritedNoticePending: true\n',
@@ -196,16 +196,16 @@ describe('writeConfigPatch — project-local scope', () => {
     expect(onDisk).toContain('inheritedNoticePending: true');
   });
 
-  test('does NOT touch the project file at <cwd>/.ok/config.yml', async () => {
+  test('does NOT touch the project file at <cwd>/.ps/config.yml', async () => {
     await writeConfigPatch({
       cwd: testDir,
       scope: 'project-local',
       patch: { autoSync: { enabled: true } },
     });
-    expect(existsSync(join(testDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(testDir, '.ps', 'config.yml'))).toBe(false);
   });
 
-  test('persists terminal.enabled to .ok/local/config.yml and round-trips across reads', async () => {
+  test('persists terminal.enabled to .ps/local/config.yml and round-trips across reads', async () => {
     const granted = await writeConfigPatch({
       cwd: testDir,
       scope: 'project-local',
@@ -233,7 +233,7 @@ describe('writeConfigPatch — project-local scope', () => {
     expect(after).not.toContain('enabled: true');
   });
 
-  test('persists terminal.shell only to .ok/local/config.yml', async () => {
+  test('persists terminal.shell only to .ps/local/config.yml', async () => {
     const result = await writeConfigPatch({
       cwd: testDir,
       scope: 'project-local',
@@ -247,14 +247,14 @@ describe('writeConfigPatch — project-local scope', () => {
     expect(existsSync(projectConfigPath())).toBe(false);
   });
 
-  test('terminal.enabled grant lands ONLY in the gitignored .ok/local/ file, never the committed project file', async () => {
+  test('terminal.enabled grant lands ONLY in the gitignored .ps/local/ file, never the committed project file', async () => {
     await writeConfigPatch({
       cwd: testDir,
       scope: 'project-local',
       patch: { terminal: { enabled: true } },
     });
     expect(existsSync(projectLocalConfigPath())).toBe(true);
-    expect(existsSync(join(testDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(testDir, '.ps', 'config.yml'))).toBe(false);
   });
 });
 
@@ -262,7 +262,7 @@ describe('writeConfigPatch — user scope', () => {
   test.each([{ h: { provider: 'gitlab' } }, { h: 'invalid' }, 'invalid'])(
     'rejects invalid host patch %j without writing',
     async (hosts) => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-write-config-patch-home-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-write-config-patch-home-'));
       try {
         const result = await writeConfigPatch({
           cwd: testDir,
@@ -279,7 +279,7 @@ describe('writeConfigPatch — user scope', () => {
   );
 
   test('accepts host provider declarations and deletions', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-write-config-patch-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-write-config-patch-home-'));
     try {
       const first = await writeConfigPatch({
         cwd: testDir,
@@ -314,10 +314,10 @@ describe('writeConfigPatch — user scope', () => {
     expect(existsSync(projectConfigPath())).toBe(false);
   });
 
-  test('lazy first-write of ~/.ok/global.yml creates parent dir', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-write-config-patch-home-'));
+  test('lazy first-write of ~/.ps/global.yml creates parent dir', async () => {
+    const home = mkdtempSync(join(tmpdir(), 'ps-write-config-patch-home-'));
     try {
-      expect(existsSync(join(home, '.ok'))).toBe(false);
+      expect(existsSync(join(home, '.ps'))).toBe(false);
 
       const result = await writeConfigPatch({
         cwd: testDir,
@@ -344,7 +344,7 @@ describe('writeConfigPatch — user scope', () => {
   });
 
   test('writes editor.wordWrap to user config', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-write-config-patch-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-write-config-patch-home-'));
     try {
       const result = await writeConfigPatch({
         cwd: testDir,
@@ -369,7 +369,7 @@ describe('writeConfigPatch — user scope', () => {
 
 describe('writeConfigPatch — validation failures', () => {
   test('invalid scalar type → SCHEMA_INVALID with structured issues; no fs write', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     const result = await writeConfigPatch({
       cwd: testDir,
       scope: 'user',
@@ -389,7 +389,7 @@ describe('writeConfigPatch — validation failures', () => {
   });
 
   test('invalid enum value → SCHEMA_INVALID; no fs write', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     const result = await writeConfigPatch({
       cwd: testDir,
       scope: 'user',
@@ -405,7 +405,7 @@ describe('writeConfigPatch — validation failures', () => {
   });
 
   test('YAML with malformed syntax → YAML_PARSE; no fs write', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     writeFileSync(
       projectConfigPath(),
       '\tnot: valid\n: : :\n  - broken\n - "unterminated',
@@ -426,7 +426,7 @@ describe('writeConfigPatch — validation failures', () => {
 
 describe('writeConfigPatch — defaults preserved on round-trip with stale fields', () => {
   test('config with dropped sync.* field loads via loose-mode and preserves the line on round-trip', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     const original = `sync:
   pushIntervalSeconds: 30
   enabled: true
@@ -452,7 +452,7 @@ mcp:
 
 describe('writeConfigPatch — Result type narrowing', () => {
   test('result.appliedPaths only typechecks inside the result.ok=true branch', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
     const result = await writeConfigPatch({
       cwd: testDir,
       scope: 'project',
@@ -468,28 +468,28 @@ describe('writeConfigPatch — Result type narrowing', () => {
 });
 
 describe('resolveConfigPath', () => {
-  test('project scope resolves to <cwd>/.ok/config.yml', () => {
-    expect(resolveConfigPath('project', '/abs/proj')).toBe('/abs/proj/.ok/config.yml');
+  test('project scope resolves to <cwd>/.ps/config.yml', () => {
+    expect(resolveConfigPath('project', '/abs/proj')).toBe('/abs/proj/.ps/config.yml');
   });
 
   test('user scope ignores cwd, uses homedirOverride', () => {
     expect(resolveConfigPath('user', '/abs/proj', '/home/alice')).toBe(
-      '/home/alice/.ok/global.yml',
+      '/home/alice/.ps/global.yml',
     );
   });
 
-  test('project-local scope resolves to <cwd>/.ok/local/config.yml', () => {
-    expect(resolveConfigPath('project-local', '/abs/proj')).toBe('/abs/proj/.ok/local/config.yml');
+  test('project-local scope resolves to <cwd>/.ps/local/config.yml', () => {
+    expect(resolveConfigPath('project-local', '/abs/proj')).toBe('/abs/proj/.ps/local/config.yml');
   });
 
   test('project-local scope resolves a relative cwd against process.cwd()', () => {
     const out = resolveConfigPath('project-local', 'relative/proj');
-    expect(out.endsWith('/relative/proj/.ok/local/config.yml')).toBe(true);
+    expect(out.endsWith('/relative/proj/.ps/local/config.yml')).toBe(true);
   });
 
   test('project-local scope ignores homedirOverride (project-scoped path)', () => {
     expect(resolveConfigPath('project-local', '/abs/proj', '/home/alice')).toBe(
-      '/abs/proj/.ok/local/config.yml',
+      '/abs/proj/.ps/local/config.yml',
     );
   });
 });
@@ -616,7 +616,7 @@ describe('writeConfigPatch — scope-violation gate', () => {
 
 describe('writeConfigPatch — concurrent writes (file lock)', () => {
   test('concurrent patches to distinct keys all land — no clobber', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
 
     await writeConfigPatch({
       cwd: testDir,
@@ -658,7 +658,7 @@ describe('writeConfigPatch — concurrent writes (file lock)', () => {
   });
 
   test('preserves keys touched only by writer A when writer B patches a different key concurrently', async () => {
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
 
     await writeConfigPatch({
       cwd: testDir,

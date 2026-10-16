@@ -1,11 +1,11 @@
-import { ProblemDetailsSchema } from '@inkeep/open-knowledge-core/schemas/api';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { consumeAuthEventStream } from '@/components/auth-event-stream';
-import type { OkDesktopBridge, OkLocalOpAuthEvent } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsLocalOpAuthEvent } from '@/lib/desktop-bridge-types';
 import { httpAuthQueryTransport } from './auth-query-transport';
 import { createBufferedAsyncStream } from './buffered-async-stream';
 
-type AuthEvent = OkLocalOpAuthEvent;
+type AuthEvent = PsLocalOpAuthEvent;
 
 type AuthStreamChannel = 'login' | 'gh-login';
 
@@ -238,7 +238,7 @@ export function httpAuthTransport(): AuthTransport {
   };
 }
 
-export function ipcAuthTransport(bridge: OkDesktopBridge): AuthTransport {
+export function ipcAuthTransport(bridge: PsDesktopBridge): AuthTransport {
   return {
     start(): AuthTransportHandle {
       return bridge.localOp.auth.start();

@@ -27,24 +27,24 @@ import {
 
 const POWERSHELL_BANNER = 'PowerShell 7.6.6';
 const POWERSHELL_PROMPT =
-  'PS C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ok-term-exit-proj-reVwTh> ';
+  'PS C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ps-term-exit-proj-reVwTh> ';
 const POWERSHELL_CONTINUATION_PROMPT = '>> ';
 const POWERSHELL_PROFILE_LOAD_TIME = 'Loading personal and system profiles took 2840ms.';
-const PROBE_TOKEN = 'OK_INPUT_READY_ad4dc50852f747a1bbfdb530ad50b962';
+const PROBE_TOKEN = 'PS_INPUT_READY_ad4dc50852f747a1bbfdb530ad50b962';
 const PROBE_ECHO = `Write-Output "${PROBE_TOKEN}_$((6*7))_READY"`;
 const PROBE_ECHO_IN_FLIGHT = `Write-Output "${PROBE_TOKEN}_$(`;
 const PROBE_MARKER = `${PROBE_TOKEN}_42_READY`;
-const EARLIER_PROBE_TOKEN = 'OK_INPUT_READY_49ddbe43af6c4863836fdea9d02fa945';
+const EARLIER_PROBE_TOKEN = 'PS_INPUT_READY_49ddbe43af6c4863836fdea9d02fa945';
 const EARLIER_PROBE_ECHO = `Write-Output "${EARLIER_PROBE_TOKEN}_$((6*7))_READY"`;
 const EARLIER_PROBE_MARKER = `${EARLIER_PROBE_TOKEN}_42_READY`;
 const SHARD_3_STRAY_TAIL = '852f747a1bbfdb530ad50b962_$((6*7))_READY"';
 const WINDOW_PROJECT_DIR =
-  'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ok-termwin-open-close-proj-AbC123';
+  'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ps-termwin-open-close-proj-AbC123';
 const WINDOW_PROMPT = `PS ${WINDOW_PROJECT_DIR}> `;
 const WINDOW_CWD_ECHO = `${WINDOW_PROMPT}${terminalSmokeShellCommands('win32').workingDirectory('WINDOW_CWD')}`;
 const WINDOW_CWD_REPORT = `WINDOW_CWD=[${WINDOW_PROJECT_DIR}]`;
 const WINDOW_CWD_REPORT_UNCLOSED =
-  'WINDOW_CWD=[C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ok-termwin-open-cl';
+  'WINDOW_CWD=[C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ps-termwin-open-cl';
 const WINDOW_CWD_REPORT_STARTED = 'WINDOW_CWD=[C:\\Users\\runneradmin\\AppData\\Loc';
 const XTERM_VIEWPORT_ROWS = 12;
 const XTERM_EMPTY_ACCESSIBILITY_ROW = '\u00a0';
@@ -129,9 +129,9 @@ describe('terminal smoke shell commands', () => {
       'Write-Output "HARNESS_$((6*7))_DONE"',
     );
     expect(commands.columns('COLS')).toBe('Write-Output "COLS=$($Host.UI.RawUI.WindowSize.Width)"');
-    expect(commands.setEnvironment('OK_MARK', 'survived')).toBe("$env:OK_MARK='survived'");
-    expect(commands.readEnvironment('OK_MARK', 'marker')).toBe(
-      'Write-Output "marker=[$env:OK_MARK]"',
+    expect(commands.setEnvironment('PS_MARK', 'survived')).toBe("$env:PS_MARK='survived'");
+    expect(commands.readEnvironment('PS_MARK', 'marker')).toBe(
+      'Write-Output "marker=[$env:PS_MARK]"',
     );
     expect(commands.processId('SHELLPID')).toBe('Write-Output "SHELLPID=$PID"');
     expect(commands.output('MARK_ONE')).toBe("Write-Output 'MARK_ONE'");
@@ -152,8 +152,8 @@ describe('terminal smoke shell commands', () => {
       );
       expect(commands.arithmetic('HARNESS', 6, 7, 'DONE')).toBe('echo HARNESS_$((6*7))_DONE');
       expect(commands.columns('COLS')).toBe('echo COLS=$(tput cols)');
-      expect(commands.setEnvironment('OK_MARK', 'survived')).toBe("export OK_MARK='survived'");
-      expect(commands.readEnvironment('OK_MARK', 'marker')).toBe('echo "marker=[$OK_MARK]"');
+      expect(commands.setEnvironment('PS_MARK', 'survived')).toBe("export PS_MARK='survived'");
+      expect(commands.readEnvironment('PS_MARK', 'marker')).toBe('echo "marker=[$PS_MARK]"');
       expect(commands.processId('SHELLPID')).toBe('printf \'SHELLPID=%s\\n\' "$$"');
       expect(commands.output('MARK_ONE')).toBe("printf '%s\\n' 'MARK_ONE'");
     }
@@ -199,8 +199,8 @@ describe('terminal smoke shell fixtures', () => {
   });
 
   test('writes executable shims for POSIX and PATHEXT-visible shims for Windows', () => {
-    const posixBin = temporaryDirectory('ok-terminal-posix-shim-');
-    const windowsBin = temporaryDirectory('ok-terminal-windows-shim-');
+    const posixBin = temporaryDirectory('ps-terminal-posix-shim-');
+    const windowsBin = temporaryDirectory('ps-terminal-windows-shim-');
 
     const posixPath = writeFakeClaudeShim(posixBin, 'interactive', 'darwin');
     const windowsPath = writeFakeClaudeShim(windowsBin, 'interactive', 'win32');
@@ -213,8 +213,8 @@ describe('terminal smoke shell fixtures', () => {
   });
 
   test('writes a zsh login profile for POSIX and no zsh profile for Windows', () => {
-    const posixHome = temporaryDirectory('ok-terminal-posix-home-');
-    const windowsHome = temporaryDirectory('ok-terminal-windows-home-');
+    const posixHome = temporaryDirectory('ps-terminal-posix-home-');
+    const windowsHome = temporaryDirectory('ps-terminal-windows-home-');
 
     seedTerminalShellProfiles(
       posixHome,
@@ -238,9 +238,9 @@ describe('terminal smoke shell fixtures', () => {
   });
 
   test('leaves the POSIX login PATH alone when no PATH option asks for it, and still seeds Windows', () => {
-    const posixHome = temporaryDirectory('ok-terminal-posix-unpinned-');
-    const posixFalse = temporaryDirectory('ok-terminal-posix-restrict-false-');
-    const windowsHome = temporaryDirectory('ok-terminal-windows-unpinned-');
+    const posixHome = temporaryDirectory('ps-terminal-posix-unpinned-');
+    const posixFalse = temporaryDirectory('ps-terminal-posix-restrict-false-');
+    const windowsHome = temporaryDirectory('ps-terminal-windows-unpinned-');
 
     seedTerminalShellProfiles(posixHome, {}, 'linux');
     seedTerminalShellProfiles(posixFalse, { posixRestrictPath: false }, 'linux');
@@ -256,7 +256,7 @@ describe('terminal smoke shell fixtures', () => {
   });
 
   test('seeds a PowerShell profile that pins history per run, turns prediction off, and cannot write to the terminal, for both Windows shell rungs', () => {
-    const windowsHome = temporaryDirectory('ok-terminal-windows-profile-');
+    const windowsHome = temporaryDirectory('ps-terminal-windows-profile-');
 
     seedTerminalShellProfiles(windowsHome, {}, 'win32');
 
@@ -275,7 +275,7 @@ describe('terminal smoke shell fixtures', () => {
   });
 
   test('records a profile failure where the harness reads it back, never on the terminal', () => {
-    const windowsHome = temporaryDirectory('ok-terminal-profile-failure-');
+    const windowsHome = temporaryDirectory('ps-terminal-profile-failure-');
     const failurePath = windowsShellProfileFailurePath(windowsHome);
     cleanup.push(failurePath);
 
@@ -305,7 +305,7 @@ describe('terminal smoke shell fixtures', () => {
   });
 
   test('reports an unreadable failure record as unreadable, not as no record', () => {
-    const windowsHome = temporaryDirectory('ok-terminal-profile-unreadable-');
+    const windowsHome = temporaryDirectory('ps-terminal-profile-unreadable-');
     const failurePath = windowsShellProfileFailurePath(windowsHome);
     mkdirSync(failurePath, { recursive: true });
     cleanup.push(failurePath);
@@ -318,7 +318,7 @@ describe('terminal smoke shell fixtures', () => {
   test('keeps the profile failure record strictly inside the run home', () => {
     const relative = win32.relative('C:\\run-home', windowsShellProfileFailurePath('C:\\run-home'));
 
-    expect(relative).toBe('ok-shell-profile-error.log');
+    expect(relative).toBe('ps-shell-profile-error.log');
   });
 
   test('keeps the PSReadLine history file strictly inside the run home', () => {
@@ -334,10 +334,10 @@ describe('terminal smoke shell fixtures', () => {
 
     expect(command).not.toContain('PSRL_FIXED=');
     expect(command).toContain(
-      "$okOptions.HistorySavePath.StartsWith('C:\\run home', [System.StringComparison]::OrdinalIgnoreCase)",
+      "$psOptions.HistorySavePath.StartsWith('C:\\run home', [System.StringComparison]::OrdinalIgnoreCase)",
     );
     expect(command).toContain(
-      "Write-Output ('PSRL_FIXED' + '=' + $okVersion + '|' + $okPrediction + '|' + $okHistory + '|' + 'END')",
+      "Write-Output ('PSRL_FIXED' + '=' + $psVersion + '|' + $psPrediction + '|' + $psHistory + '|' + 'END')",
     );
   });
 
@@ -397,7 +397,7 @@ describe('PowerShell primary prompt at the end of the terminal text', () => {
         rows: [POWERSHELL_BANNER, `${POWERSHELL_PROMPT}${PROBE_ECHO_IN_FLIGHT}`],
         accessibilityRows: [
           POWERSHELL_BANNER,
-          `${POWERSHELL_PROMPT}Write-Output "OK_INPUT_READY_ad4dc50852f747a1bbfdb530ad5`,
+          `${POWERSHELL_PROMPT}Write-Output "PS_INPUT_READY_ad4dc50852f747a1bbfdb530ad5`,
         ],
       }),
     },

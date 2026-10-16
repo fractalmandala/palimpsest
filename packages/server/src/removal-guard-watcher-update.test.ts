@@ -52,8 +52,8 @@ async function guardOutcome(
 
 describe('removal guard and watcher updates', () => {
   test('a watcher update at a renamed-away name stops redirecting that name', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-removal-update-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-removal-update-home-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-removal-update-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-removal-update-home-'));
     fixtures.push(contentDir, home);
     const server = createServer({
       contentDir,

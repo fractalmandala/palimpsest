@@ -119,7 +119,7 @@ export function isolateNpmHome(
 
 async function acquisitionHome<T>(run: (home: string) => Promise<T>, network: boolean): Promise<T> {
   const prior = { ...process.env };
-  using home = mkdtempDisposableSync(join(realpathSync(tmpdir()), 'ok-acquisition-'));
+  using home = mkdtempDisposableSync(join(realpathSync(tmpdir()), 'ps-acquisition-'));
   const env = {
     ...isolateNpmHome(
       home.path,

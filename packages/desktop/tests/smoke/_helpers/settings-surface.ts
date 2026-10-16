@@ -59,8 +59,8 @@ export function seedProjectProfile(
 ): SeededProjectProfile {
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-${prefix}-home-`)));
   const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-${prefix}-project-`)));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'note.md'), '# Note\n\nProse for the checker to look at.\n');
   const userDataDir = userDataDirFor(tmpHome);
   mkdirSync(userDataDir, { recursive: true });
@@ -85,7 +85,7 @@ export async function launchOnSeededProfile(
       env: {
         ...process.env,
         ...homeEnv(profile.tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
       },
     }),
   );
@@ -98,7 +98,7 @@ export async function findEditorWindow(
   timeoutMs = 45_000,
 ): Promise<Page> {
   const readMode = (page: Page): Promise<string | undefined> =>
-    page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
   await expect
     .poll(
       async () => {
@@ -182,7 +182,7 @@ export async function seedSessionSpellingLanguages(
 }
 
 function userConfigPath(profile: SeededProjectProfile): string {
-  return join(profile.tmpHome, '.ok', 'global.yml');
+  return join(profile.tmpHome, '.ps', 'global.yml');
 }
 
 function readUserConfig(profile: SeededProjectProfile): string {
@@ -204,14 +204,14 @@ export async function awaitUserInterfaceLanguage(
 
 export function seedExtraProject(prefix: string): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), `ok-${prefix}-project2-`)));
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(dir, 'note.md'), '# Second\n\nMore prose for the checker.\n');
   return dir;
 }
 
 export function projectConfigBytes(profile: SeededProjectProfile): string {
-  return readFileSync(join(profile.projectDir, '.ok', 'config.yml'), 'utf8');
+  return readFileSync(join(profile.projectDir, '.ps', 'config.yml'), 'utf8');
 }
 
 export function readAppStateFile(profile: SeededProjectProfile): Record<string, unknown> {
@@ -258,7 +258,7 @@ export async function findEditorWindowForProject(
 
 export async function openProjectFromRecents(editor: Page, projectPath: string): Promise<void> {
   await editor.evaluate(
-    (path) => window.okDesktop?.menu.dispatch({ kind: 'open-recent-project', path }),
+    (path) => window.psDesktop?.menu.dispatch({ kind: 'open-recent-project', path }),
     projectPath,
   );
 }
@@ -302,7 +302,7 @@ export async function setLanguagesFromRenderer(
 ): Promise<RendererSpellingResult> {
   return editor.evaluate(
     async (codes): Promise<RendererSpellingResult> => {
-      const spellcheck = window.okDesktop?.spellcheck;
+      const spellcheck = window.psDesktop?.spellcheck;
       if (!spellcheck) return { outcome: 'no-bridge' };
       const result = await spellcheck.setLanguages(codes);
       if (!result.ok) return { outcome: 'failed', reason: result.reason };
@@ -318,7 +318,7 @@ export async function setLanguagesFromRenderer(
 
 export async function readLanguagesFromRenderer(editor: Page): Promise<RendererSpellingResult> {
   return editor.evaluate(async (): Promise<RendererSpellingResult> => {
-    const spellcheck = window.okDesktop?.spellcheck;
+    const spellcheck = window.psDesktop?.spellcheck;
     if (!spellcheck) return { outcome: 'no-bridge' };
     const result = await spellcheck.languages();
     if (!result.ok) return { outcome: 'failed', reason: result.reason };
@@ -344,7 +344,7 @@ export function pickNonDefaultSelection(truth: SessionSpellingTruth): string[] |
 
 export async function readMenuSnapshotSpellcheck(editor: Page): Promise<boolean | undefined> {
   return editor.evaluate(async () => {
-    const snapshot = await window.okDesktop?.menu.dispatch({ kind: 'query' });
+    const snapshot = await window.psDesktop?.menu.dispatch({ kind: 'query' });
     return snapshot?.spellCheckEnabled;
   });
 }
@@ -356,8 +356,8 @@ interface EditorSelectionSnapshot {
 
 async function readEditorSelectionSnapshot(editor: Page): Promise<EditorSelectionSnapshot> {
   return editorBody(editor).evaluate(async (element) => {
-    const menu = window.okDesktop?.menu;
-    if (!menu) throw new Error('the editor window exposes no okDesktop.menu bridge');
+    const menu = window.psDesktop?.menu;
+    if (!menu) throw new Error('the editor window exposes no psDesktop.menu bridge');
     const snapshot = await menu.dispatch({ kind: 'query' });
     if (!snapshot) {
       throw new Error('menu.dispatch({ kind: "query" }) returned no renderer snapshot');

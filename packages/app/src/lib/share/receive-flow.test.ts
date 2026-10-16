@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 import type {
-  OkShareReceivedPayload,
+  PsShareReceivedPayload,
   ShareFolderValidationResult,
 } from '@/lib/desktop-bridge-types';
 
@@ -68,21 +68,21 @@ describe('formatCloneErrorMessage', () => {
 
 describe('buildCloneUrl', () => {
   test('matches the canonical .git form (the clone wizard accepts both forms equally)', () => {
-    expect(buildCloneUrl({ host: 'github.com', owner: 'inkeep', repo: 'open-knowledge' })).toBe(
-      'https://github.com/inkeep/open-knowledge.git',
+    expect(buildCloneUrl({ host: 'github.com', owner: 'inkeep', repo: 'palimpsest' })).toBe(
+      'https://github.com/fractalmandala/palimpsest.git',
     );
   });
 });
 
 describe('mapValidationToToast', () => {
-  const expected = { host: 'github.com', owner: 'inkeep', repo: 'open-knowledge' };
+  const expected = { host: 'github.com', owner: 'inkeep', repo: 'palimpsest' };
 
   function withKind<K extends ShareFolderValidationResult['kind']>(
     kind: K,
     extras: Partial<ShareFolderValidationResult> = {},
   ): ShareFolderValidationResult {
     if (kind === 'ok') {
-      return { kind: 'ok', gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git' };
+      return { kind: 'ok', gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git' };
     }
     if (kind === 'wrong-repo') {
       return {
@@ -114,33 +114,33 @@ describe('mapValidationToToast', () => {
   test('wrong-repo surfaces the actual vs expected owner/repo per the spec AC', () => {
     const result = withKind('wrong-repo', { actualOwner: 'forky', actualRepo: 'spoon' });
     expect(mapValidationToToast(result, expected)).toBe(
-      'This folder is a clone of forky/spoon, not inkeep/open-knowledge. Pick a different folder?',
+      'This folder is a clone of forky/spoon, not fractalmandala/palimpsest. Pick a different folder?',
     );
   });
 
   test('wrong-host names the server so the user sees "right repo, wrong host"', () => {
     const result = withKind('wrong-host', { actualHost: 'ghes.acme.test' });
     expect(mapValidationToToast(result, expected)).toBe(
-      'This folder is a clone of inkeep/open-knowledge on ghes.acme.test, not github.com. Pick a folder cloned from github.com?',
+      'This folder is a clone of fractalmandala/palimpsest on ghes.acme.test, not github.com. Pick a folder cloned from github.com?',
     );
   });
 
   test('non-github + symlink-escape + no-origin all surface the wrong-repo generic prompt (Q-A9 v1 simplification)', () => {
     expect(mapValidationToToast(withKind('non-github'), expected)).toBe(
-      "This folder isn't a clone of inkeep/open-knowledge. Pick a different folder?",
+      "This folder isn't a clone of fractalmandala/palimpsest. Pick a different folder?",
     );
     expect(mapValidationToToast(withKind('symlink-escape'), expected)).toBe(
-      "This folder isn't a clone of inkeep/open-knowledge. Pick a different folder?",
+      "This folder isn't a clone of fractalmandala/palimpsest. Pick a different folder?",
     );
     expect(mapValidationToToast(withKind('no-origin'), expected)).toBe(
-      "This folder isn't a clone of inkeep/open-knowledge. Pick a different folder?",
+      "This folder isn't a clone of fractalmandala/palimpsest. Pick a different folder?",
     );
   });
 });
 
 describe('presentReceiveError', () => {
   test('launcher-miss payload returns null (caller proceeds to the Q2 surface)', () => {
-    const payload: OkShareReceivedPayload = {
+    const payload: PsShareReceivedPayload = {
       kind: 'launcher-miss',
       share: {
         owner: 'a',
@@ -154,7 +154,7 @@ describe('presentReceiveError', () => {
   });
 
   test('launcher-consent payload returns null (caller proceeds to the consent surface)', () => {
-    const payload: OkShareReceivedPayload = {
+    const payload: PsShareReceivedPayload = {
       kind: 'launcher-consent',
       share: {
         owner: 'a',
@@ -172,7 +172,7 @@ describe('presentReceiveError', () => {
   test('unsupported-version payload returns the update prompt', () => {
     expect(presentReceiveError({ kind: 'unsupported-version' })).toEqual({
       kind: 'unsupported-version',
-      message: 'Update OpenKnowledge to open this share.',
+      message: 'Update Palimpsest to open this share.',
     });
   });
 

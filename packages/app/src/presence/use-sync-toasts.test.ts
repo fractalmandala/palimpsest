@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { restartServerFailureMessage } from '@/lib/restart-collab-server';
 import { runDisconnectRestart } from './use-sync-toasts';
 
@@ -10,8 +10,8 @@ afterEach(() => {
   errorSpy.mockClear();
 });
 
-function makeBridge(outcome: Awaited<ReturnType<OkDesktopBridge['restartServer']>>): {
-  bridge: Pick<OkDesktopBridge, 'restartServer' | 'config'>;
+function makeBridge(outcome: Awaited<ReturnType<PsDesktopBridge['restartServer']>>): {
+  bridge: Pick<PsDesktopBridge, 'restartServer' | 'config'>;
   restartServer: ReturnType<typeof vi.fn>;
 } {
   const restartServer = vi.fn(async () => outcome);
@@ -19,7 +19,7 @@ function makeBridge(outcome: Awaited<ReturnType<OkDesktopBridge['restartServer']
     bridge: {
       restartServer,
       config: { projectPath: '/tmp/proj' },
-    } as unknown as Pick<OkDesktopBridge, 'restartServer' | 'config'>,
+    } as unknown as Pick<PsDesktopBridge, 'restartServer' | 'config'>,
     restartServer,
   };
 }
@@ -57,7 +57,7 @@ describe('runDisconnectRestart', () => {
     const bridge = {
       restartServer,
       config: { projectPath: '/tmp/proj' },
-    } as unknown as Pick<OkDesktopBridge, 'restartServer' | 'config'>;
+    } as unknown as Pick<PsDesktopBridge, 'restartServer' | 'config'>;
     await runDisconnectRestart(bridge);
     expect(errorSpy).not.toHaveBeenCalled();
   });

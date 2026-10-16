@@ -13,17 +13,17 @@ describe('MissingOkConfigError', () => {
     expect(b.message).toBe(missingOkConfigMessage());
   });
 
-  test('tells a Stable user to run ok init', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+  test('tells a Stable user to run ps init', () => {
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(new MissingOkConfigError('okdir', '/tmp/proj').message).toBe(
-      'OpenKnowledge config not found at .ok/config.yml. Run ok init to scaffold OK in this directory.',
+      'Palimpsest config not found at .ps/config.yml. Run ps init to scaffold OK in this directory.',
     );
   });
 
-  test('tells a Beta user to run ok-beta init', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('tells a Beta user to run ps-beta init', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(new MissingOkConfigError('okdir', '/tmp/proj').message).toBe(
-      'OpenKnowledge config not found at .ok/config.yml. Run ok-beta init to scaffold OK in this directory.',
+      'Palimpsest config not found at .ps/config.yml. Run ps-beta init to scaffold OK in this directory.',
     );
   });
 

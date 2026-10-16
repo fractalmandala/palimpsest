@@ -5,8 +5,8 @@ import { createServedBindingLog } from '@/test-utils/served-binding.test-helper'
 
 const servedCore = createServedBindingLog();
 
-vi.doMock('@inkeep/open-knowledge-core/constants/feature-flags', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/constants/feature-flags', {
+vi.doMock('@palimpsest/core/constants/feature-flags', () =>
+  servedCore.serve('@palimpsest/core/constants/feature-flags', {
     SHOW_INSTALL_SKILL: false,
   }),
 );
@@ -72,7 +72,7 @@ describe('SettingsDialogShell install-skill feature gate', () => {
     expect(screen.queryByTestId('settings-sidebar-item-claude-desktop')).toBeNull();
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/constants/feature-flags',
+        '@palimpsest/core/constants/feature-flags',
         'SHOW_INSTALL_SKILL',
         since,
       ),

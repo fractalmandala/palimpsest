@@ -42,7 +42,7 @@ describe('RenderedDiffView', () => {
     const pane = await mountDiff('Kept paragraph.', 'Kept paragraph.\n\nA newly added paragraph.');
     const anchor = pane.querySelector(RENDERED_DIFF_CHANGE_SELECTOR);
     expect(anchor).toBeTruthy();
-    expect(pane.querySelector('.ok-diff-ins-block')?.textContent).toContain('newly added');
+    expect(pane.querySelector('.ps-diff-ins-block')?.textContent).toContain('newly added');
   });
 
   test('a deletion produces a struck [data-diff-deleted] widget', async () => {
@@ -109,7 +109,7 @@ describe('RenderedDiffView', () => {
     await waitFor(() =>
       expect(
         pane
-          .querySelector('.ok-diff-ins-block [data-component-name="CommonMarkImage"] img')
+          .querySelector('.ps-diff-ins-block [data-component-name="CommonMarkImage"] img')
           ?.getAttribute('src'),
       ).toBe('/projects/ok-cloud/diagram.png'),
     );
@@ -136,7 +136,7 @@ describe('RenderedDiffView', () => {
     );
 
     const callout = await waitFor(() => {
-      const el = pane.querySelector('.ok-diff-ins-block .callout');
+      const el = pane.querySelector('.ps-diff-ins-block .callout');
       if (!el) throw new Error('callout not rendered');
       return el;
     });
@@ -165,7 +165,7 @@ describe('RenderedDiffView', () => {
     );
 
     const reference = await waitFor(() => {
-      const el = pane.querySelector('.ok-diff-ins-block [data-diff-jsx-reference]');
+      const el = pane.querySelector('.ps-diff-ins-block [data-diff-jsx-reference]');
       if (!el) throw new Error('reference not rendered');
       return el;
     });
@@ -176,7 +176,7 @@ describe('RenderedDiffView', () => {
     const pane = await mountDiff('Intro.', 'Intro.\n\n<Widget size="2" />');
 
     const source = await waitFor(() => {
-      const el = pane.querySelector('.ok-diff-ins-block [data-diff-jsx-source]');
+      const el = pane.querySelector('.ps-diff-ins-block [data-diff-jsx-source]');
       if (!el) throw new Error('source not rendered');
       return el;
     });
@@ -190,7 +190,7 @@ describe('RenderedDiffView', () => {
     const pane = await mountDiff(before, after);
 
     await waitFor(() =>
-      expect(pane.querySelector('.ok-diff-ins-block [data-diff-jsx-source] p')?.textContent).toBe(
+      expect(pane.querySelector('.ps-diff-ins-block [data-diff-jsx-source] p')?.textContent).toBe(
         'New wrapped text.',
       ),
     );
@@ -199,7 +199,7 @@ describe('RenderedDiffView', () => {
         'Old wrapped text.',
       ),
     );
-    expect(pane.querySelector('.ok-diff-ins-block [data-diff-jsx-source] code')?.textContent).toBe(
+    expect(pane.querySelector('.ps-diff-ins-block [data-diff-jsx-source] code')?.textContent).toBe(
       '<Widget tone="loud">',
     );
     expect(pane.querySelector('[data-diff-deleted] [data-diff-jsx-source] code')?.textContent).toBe(
@@ -234,7 +234,7 @@ describe('RenderedDiffView', () => {
     );
 
     const details = await waitFor(() => {
-      const el = pane.querySelector<HTMLDetailsElement>('.ok-diff-ins-block details.accordion');
+      const el = pane.querySelector<HTMLDetailsElement>('.ps-diff-ins-block details.accordion');
       if (!el) throw new Error('accordion not rendered');
       return el;
     });
@@ -248,7 +248,7 @@ describe('RenderedDiffView', () => {
     );
 
     const video = await waitFor(() => {
-      const el = pane.querySelector<HTMLVideoElement>('.ok-diff-ins-block video');
+      const el = pane.querySelector<HTMLVideoElement>('.ps-diff-ins-block video');
       if (!el) throw new Error('video not rendered');
       return el;
     });
@@ -270,7 +270,7 @@ describe('RenderedDiffView', () => {
   test('a formatting-only change (bold removed) renders without content churn', async () => {
     const pane = await mountDiff('one **two three** four', 'one two three four');
     expect(pane.querySelector('.ProseMirror')).toBeTruthy();
-    expect(pane.querySelector('.ok-diff-ins-block')).toBeNull();
+    expect(pane.querySelector('.ps-diff-ins-block')).toBeNull();
   });
 
   test('countRenderedDiffAnchors matches the real DOM anchor count (incl. mark changes)', async () => {

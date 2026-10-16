@@ -1,4 +1,4 @@
-import type { HeadingEntry } from '@inkeep/open-knowledge-core';
+import type { HeadingEntry } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { __resetDocumentListInflightForTests } from '@/lib/documents-fetch';
 import {
@@ -418,8 +418,8 @@ describe('fetchPages', () => {
       {
         documents: [
           { kind: 'file', path: 'assets/.DS_Store' },
-          { kind: 'file', path: '.okignore' },
-          { kind: 'file', path: '.ok/skills/x.md' },
+          { kind: 'file', path: '.psignore' },
+          { kind: 'file', path: '.ps/skills/x.md' },
           { kind: 'file', path: '.vscode/mcp.json' },
           { kind: 'file', path: 'opencode.json' },
         ],
@@ -470,7 +470,7 @@ describe('isSkillFolderDoc', () => {
     expect(isSkillFolderDoc('.claude/skills/foo/SKILL')).toBe(true);
     expect(isSkillFolderDoc('.agents/rules/bar')).toBe(true);
     expect(isSkillFolderDoc('.cursor/rules/baz')).toBe(true);
-    expect(isSkillFolderDoc('public/open-knowledge/.claude/skills/x')).toBe(true);
+    expect(isSkillFolderDoc('public/palimpsest/.claude/skills/x')).toBe(true);
   });
 
   test('does not match ordinary docs or look-alike folder names', () => {

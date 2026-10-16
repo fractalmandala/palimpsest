@@ -17,7 +17,7 @@ import { LAUNCH_CONFIG_NAME } from './init.ts';
 import { removeOwnLaunchEntry } from './launch-json-removal.ts';
 
 function project(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-launch-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-launch-'));
   mkdirSync(join(dir, '.claude'), { recursive: true });
   return dir;
 }
@@ -39,7 +39,7 @@ describe('removeOwnLaunchEntry', () => {
           {
             name: LAUNCH_CONFIG_NAME,
             runtimeExecutable: '/bin/sh',
-            runtimeArgs: ['-l', '-c', '# ok-ui-v1\nexec ok start'],
+            runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexec ps start'],
           },
         ],
       });
@@ -63,7 +63,7 @@ describe('removeOwnLaunchEntry', () => {
           {
             name: LAUNCH_CONFIG_NAME,
             runtimeExecutable: '/bin/sh',
-            runtimeArgs: ['-l', '-c', '# ok-ui-v1\nexec ok start'],
+            runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexec ps start'],
           },
         ],
       });
@@ -80,9 +80,9 @@ describe('removeOwnLaunchEntry', () => {
   });
 
   test.each([
-    ['@inkeep/open-knowledge', 'ui'],
-    ['-y', '@inkeep/open-knowledge', 'ui'],
-    ['-y', '@inkeep/open-knowledge@latest', 'ui'],
+    ['@palimpsest/cli', 'ui'],
+    ['-y', '@palimpsest/cli', 'ui'],
+    ['-y', '@palimpsest/cli@latest', 'ui'],
   ])('removes the historical generated npx form %j', (...runtimeArgs) => {
     const dir = project();
     try {
@@ -130,7 +130,7 @@ describe('removeOwnLaunchEntry', () => {
             {
               name: LAUNCH_CONFIG_NAME,
               runtimeExecutable: '/bin/sh',
-              runtimeArgs: ['-l', '-c', '# ok-ui-v1\nexec ok start'],
+              runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexec ps start'],
             },
           ],
         },
@@ -195,7 +195,7 @@ describe('removeOwnLaunchEntry — symlinks', () => {
             {
               name: LAUNCH_CONFIG_NAME,
               runtimeExecutable: 'npx',
-              runtimeArgs: ['-y', '@inkeep/open-knowledge', 'ui'],
+              runtimeArgs: ['-y', '@palimpsest/cli', 'ui'],
             },
           ],
         });

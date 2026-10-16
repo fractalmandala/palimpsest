@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
-import { USER_SKILL_HOSTS } from '@inkeep/open-knowledge-core';
-import { BUNDLE_SKILL_NAME, USER_GLOBAL_BUNDLE_IDS } from '@inkeep/open-knowledge-server';
+import { USER_SKILL_HOSTS } from '@palimpsest/core';
+import { BUNDLE_SKILL_NAME, USER_GLOBAL_BUNDLE_IDS } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import { HOSTS_WITH_USER_SKILL_DIR } from '../commands/editors.ts';
 import {
@@ -61,7 +61,7 @@ describe('userGlobalSkillBundleTargets', () => {
 
 describe('legacy fan-out sweep', () => {
   function tmpHome(): string {
-    return mkdtempSync(join(tmpdir(), 'ok-legacy-sweep-'));
+    return mkdtempSync(join(tmpdir(), 'ps-legacy-sweep-'));
   }
   function plantSkill(home: string, relDir: string, name: string): string {
     const dir = join(home, relDir, 'skills', name);
@@ -78,7 +78,7 @@ describe('legacy fan-out sweep', () => {
     const zencoder = plantSkill(home, '.zencoder', 'open-knowledge-discovery');
     const terramind = plantSkill(home, '.terramind', 'open-knowledge-write-skill');
     const tabnine = plantSkill(home, join('.tabnine', 'agent'), 'open-knowledge-discovery');
-    const rovodev = plantSkill(home, '.rovodev', 'open-knowledge');
+    const rovodev = plantSkill(home, '.rovodev', 'palimpsest');
 
     const removed = sweep(home);
 
@@ -235,7 +235,7 @@ describe('legacy fan-out sweep', () => {
 
 describe('legacy fan-out sweep — refuses unsafe inputs', () => {
   function tmpHome(): string {
-    return mkdtempSync(join(tmpdir(), 'ok-legacy-guard-'));
+    return mkdtempSync(join(tmpdir(), 'ps-legacy-guard-'));
   }
   function plantSkill(home: string, relDir: string): string {
     const dir = join(home, relDir, 'skills', 'open-knowledge-discovery');
@@ -376,7 +376,7 @@ describe('legacy fan-out host table — static integrity', () => {
   const HOME = sep === '/' ? '/home/tester' : 'C:\\Users\\tester';
 
   test('every planned path is inside home and never home itself', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-legacy-table-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-legacy-table-'));
     for (const rel of ['.zencoder', '.tabnine/agent', '.config/goose', '.config/kimchi/harness']) {
       const dir = join(home, rel, 'skills', 'open-knowledge-discovery');
       mkdirSync(dir, { recursive: true });
@@ -391,7 +391,7 @@ describe('legacy fan-out host table — static integrity', () => {
   });
 
   test('shared XDG roots are never planned for removal', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-legacy-xdg-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-legacy-xdg-'));
     for (const rel of ['.config/goose', '.config/crush', '.config/kimchi/harness']) {
       const dir = join(home, rel, 'skills', 'open-knowledge-discovery');
       mkdirSync(dir, { recursive: true });
@@ -406,7 +406,7 @@ describe('legacy fan-out host table — static integrity', () => {
   });
 
   test('no legacy host escapes home via .. and every pruneRoot is an ancestor', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-legacy-esc-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-legacy-esc-'));
     const dir = join(home, '.zencoder', 'skills', 'open-knowledge-discovery');
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'SKILL.md'), '# x\n', 'utf-8');
@@ -426,7 +426,7 @@ describe('userGlobalSkillBundleTargets / removeUserGlobalSkillBundle — home gu
   });
 
   test('a relative home cannot delete a matching tree in the cwd', () => {
-    const box = mkdtempSync(join(tmpdir(), 'ok-teardown-cwd-'));
+    const box = mkdtempSync(join(tmpdir(), 'ps-teardown-cwd-'));
     const victim = join(box, '.agents', 'skills', 'open-knowledge-discovery');
     mkdirSync(victim, { recursive: true });
     writeFileSync(join(victim, 'SKILL.md'), '# x\n', 'utf-8');

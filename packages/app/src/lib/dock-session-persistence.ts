@@ -1,4 +1,4 @@
-import type { OkDesktopBridge, OkTerminalRestartSnapshot } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsTerminalRestartSnapshot } from '@/lib/desktop-bridge-types';
 
 export type DockSurface = 'terminal' | 'agents';
 
@@ -13,13 +13,13 @@ export interface WebAgentsDockSessionOrder extends DockSessionOrder {
 
 export interface DockRestoreState {
   readonly sessionOrder: DockSessionOrder | null;
-  readonly terminalSnapshot: OkTerminalRestartSnapshot | undefined;
+  readonly terminalSnapshot: PsTerminalRestartSnapshot | undefined;
   readonly failed: boolean;
 }
 
 const WEB_STORAGE_KEYS: Record<DockSurface, string> = {
-  terminal: 'ok-dock-session-order-v1',
-  agents: 'ok-agent-session-order-v1',
+  terminal: 'ps-dock-session-order-v1',
+  agents: 'ps-agent-session-order-v1',
 };
 
 function coerceOrder(raw: {
@@ -113,7 +113,7 @@ function writeWeb(surface: DockSurface, state: WebAgentsDockSessionOrder): void 
 }
 
 export function writeAgentsPanelLevel(
-  bridge: OkDesktopBridge | null | undefined,
+  bridge: PsDesktopBridge | null | undefined,
   level: boolean,
 ): void {
   if (bridge?.terminal != null) return;
@@ -123,7 +123,7 @@ export function writeAgentsPanelLevel(
 }
 
 export async function readDockRestoreState(
-  bridge: OkDesktopBridge | null | undefined,
+  bridge: PsDesktopBridge | null | undefined,
   surface: DockSurface,
 ): Promise<DockRestoreState> {
   if (typeof bridge?.terminal?.getDockState === 'function') {
@@ -150,22 +150,22 @@ export async function readDockRestoreState(
 }
 
 export function writeDockSessionOrder(
-  bridge: OkDesktopBridge | null | undefined,
+  bridge: PsDesktopBridge | null | undefined,
   surface: 'terminal',
   state: DockSessionOrder,
-  terminalSnapshot?: OkTerminalRestartSnapshot,
+  terminalSnapshot?: PsTerminalRestartSnapshot,
 ): void;
 export function writeDockSessionOrder(
-  bridge: OkDesktopBridge | null | undefined,
+  bridge: PsDesktopBridge | null | undefined,
   surface: 'agents',
   state: DockSessionOrder & { readonly agentPanelVisible?: never },
-  terminalSnapshot?: OkTerminalRestartSnapshot,
+  terminalSnapshot?: PsTerminalRestartSnapshot,
 ): void;
 export function writeDockSessionOrder(
-  bridge: OkDesktopBridge | null | undefined,
+  bridge: PsDesktopBridge | null | undefined,
   surface: DockSurface,
   state: DockSessionOrder,
-  terminalSnapshot: OkTerminalRestartSnapshot = { tabs: [], activeOrdinal: null },
+  terminalSnapshot: PsTerminalRestartSnapshot = { tabs: [], activeOrdinal: null },
 ): void {
   if (typeof bridge?.terminal?.setDockState === 'function') {
     const sessionState = {

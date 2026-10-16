@@ -9,13 +9,13 @@ import {
 import { createRealOpenDeps, type OpenDeps, runOpen } from './open.ts';
 
 const STABLE_APP: DesktopAppTarget = {
-  bundlePath: '/Applications/OpenKnowledge.app',
-  protocolScheme: 'openknowledge',
+  bundlePath: '/Applications/Palimpsest.app',
+  protocolScheme: 'palimpsest',
 };
 
 const BETA_APP: DesktopAppTarget = {
-  bundlePath: '/Applications/OpenKnowledge Beta.app',
-  protocolScheme: 'openknowledge-beta',
+  bundlePath: '/Applications/Palimpsest Beta.app',
+  protocolScheme: 'palimpsest-beta',
 };
 
 function makeDeps(overrides: Partial<OpenDeps> = {}): {
@@ -49,13 +49,13 @@ function makeDeps(overrides: Partial<OpenDeps> = {}): {
 }
 
 describe('runOpen', () => {
-  test('doc with a desktop bundle → openknowledge:// deep link, exit 0', async () => {
+  test('doc with a desktop bundle → palimpsest:// deep link, exit 0', async () => {
     const { deps, opened } = makeDeps({
       detectDesktopApp: () => STABLE_APP,
     });
     const code = await runOpen('bim-brain/log', { project: '/abs/proj' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual(['openknowledge://open?project=%2Fabs%2Fproj&doc=bim-brain%2Flog']);
+    expect(opened).toEqual(['palimpsest://open?project=%2Fabs%2Fproj&doc=bim-brain%2Flog']);
   });
 
   test('doc with a desktop bundle threads the verified bundle path to openTarget', async () => {
@@ -63,7 +63,7 @@ describe('runOpen', () => {
       detectDesktopApp: () => STABLE_APP,
     });
     await runOpen('bim-brain/log', { project: '/abs/proj' }, deps);
-    expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/OpenKnowledge.app' }]);
+    expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/Palimpsest.app' }]);
   });
 
   test('doc, no bundle but UI running → browser route, exit 0', async () => {
@@ -98,7 +98,7 @@ describe('runOpen', () => {
     expect(code).toBe(1);
     expect(opened).toEqual([]);
     expect(errors).toHaveLength(1);
-    expect(errors[0]).toContain('https://openknowledge.ai/download');
+    expect(errors[0]).toContain('https://github.com/fractalmandala/palimpsest/download');
   });
 
   test('folder with a desktop bundle → folder= deep link, exit 0', async () => {
@@ -107,8 +107,8 @@ describe('runOpen', () => {
     });
     const code = await runOpen('specs/foo/', { project: '/p' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual(['openknowledge://open?project=%2Fp&folder=specs%2Ffoo']);
-    expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/OpenKnowledge.app' }]);
+    expect(opened).toEqual(['palimpsest://open?project=%2Fp&folder=specs%2Ffoo']);
+    expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/Palimpsest.app' }]);
   });
 
   test('folder, no bundle but UI running → browser folder route, exit 0', async () => {
@@ -128,7 +128,7 @@ describe('runOpen', () => {
     });
     const code = await runOpen('specs/foo', { project: '/p' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual(['openknowledge://open?project=%2Fp&folder=specs%2Ffoo']);
+    expect(opened).toEqual(['palimpsest://open?project=%2Fp&folder=specs%2Ffoo']);
   });
 
   test('trailing slash infers folder intent even when disk classify says doc', async () => {
@@ -148,9 +148,9 @@ describe('runOpen', () => {
     const code = await runOpen('trip-log', { skill: true, project: '/p' }, deps);
     expect(code).toBe(0);
     expect(opened).toEqual([
-      'openknowledge://open?project=%2Fp&doc=__skill__%2Fproject%2Ftrip-log',
+      'palimpsest://open?project=%2Fp&doc=__skill__%2Fproject%2Ftrip-log',
     ]);
-    expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/OpenKnowledge.app' }]);
+    expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/Palimpsest.app' }]);
   });
 
   test('skill --scope global, no bundle but UI running → browser skill route', async () => {
@@ -235,7 +235,7 @@ describe('runOpen', () => {
     });
     const code = await runOpen('notes/My Doc#1', { project: '/p' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual(['openknowledge://open?project=%2Fp&doc=notes%2FMy%20Doc%231']);
+    expect(opened).toEqual(['palimpsest://open?project=%2Fp&doc=notes%2FMy%20Doc%231']);
   });
 
   test('browser route encodes per-segment, preserving the slash', async () => {
@@ -260,7 +260,7 @@ describe('createRealOpenDeps wiring', () => {
     const deps = createRealOpenDeps(() => ({
       available: true,
       reason: 'available',
-      bundlePath: '/Applications/OpenKnowledge.app',
+      bundlePath: '/Applications/Palimpsest.app',
       product: 'stable',
       cliProduct: 'stable',
     }));
@@ -271,7 +271,7 @@ describe('createRealOpenDeps wiring', () => {
     const deps = createRealOpenDeps(() => ({
       available: false,
       reason: 'headless',
-      bundlePath: '/Applications/OpenKnowledge.app',
+      bundlePath: '/Applications/Palimpsest.app',
       product: 'stable',
       cliProduct: 'stable',
     }));
@@ -282,7 +282,7 @@ describe('createRealOpenDeps wiring', () => {
     const deps = createRealOpenDeps(() => ({
       available: true,
       reason: 'available',
-      bundlePath: '/Applications/OpenKnowledge Beta.app',
+      bundlePath: '/Applications/Palimpsest Beta.app',
       product: 'beta',
       cliProduct: 'beta',
     }));
@@ -294,7 +294,7 @@ describe('Beta desktop app', () => {
   const macBetaCli: DetectDeps = {
     platform: 'darwin',
     env: { ELECTRON_RUN_AS_NODE: '1' },
-    execPath: '/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta',
+    execPath: '/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta',
     isTTY: true,
     statSync: () => null,
   };
@@ -309,7 +309,7 @@ describe('Beta desktop app', () => {
     const { deps, opened, openedOptions } = makeDeps({ detectDesktopApp: () => BETA_APP });
     const code = await runOpen('notes/plan', { project: '/p' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual(['openknowledge-beta://open?project=%2Fp&doc=notes%2Fplan']);
+    expect(opened).toEqual(['palimpsest-beta://open?project=%2Fp&doc=notes%2Fplan']);
     expect(openedOptions).toEqual([{ desktopBundlePath: BETA_APP.bundlePath }]);
   });
 
@@ -321,8 +321,8 @@ describe('Beta desktop app', () => {
     await runOpen('specs', { project: '/p' }, deps);
     await runOpen('trip-log', { project: '/p', skill: true }, deps);
     expect(opened).toEqual([
-      'openknowledge-beta://open?project=%2Fp&folder=specs',
-      'openknowledge-beta://open?project=%2Fp&doc=__skill__%2Fproject%2Ftrip-log',
+      'palimpsest-beta://open?project=%2Fp&folder=specs',
+      'palimpsest-beta://open?project=%2Fp&doc=__skill__%2Fproject%2Ftrip-log',
     ]);
   });
 
@@ -330,7 +330,7 @@ describe('Beta desktop app', () => {
     const { deps, opened, openedOptions } = withRealDetection(() => detectDesktop(macBetaCli));
     const code = await runOpen('notes/plan', { project: '/p' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual(['openknowledge-beta://open?project=%2Fp&doc=notes%2Fplan']);
+    expect(opened).toEqual(['palimpsest-beta://open?project=%2Fp&doc=notes%2Fplan']);
     expect(openedOptions).toEqual([{ desktopBundlePath: BETA_APP.bundlePath }]);
   });
 
@@ -338,11 +338,11 @@ describe('Beta desktop app', () => {
     const { deps, opened } = withRealDetection(() =>
       detectDesktop({
         ...macBetaCli,
-        execPath: '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        execPath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       }),
     );
     await runOpen('notes/plan', { project: '/p' }, deps);
-    expect(opened).toEqual(['openknowledge://open?project=%2Fp&doc=notes%2Fplan']);
+    expect(opened).toEqual(['palimpsest://open?project=%2Fp&doc=notes%2Fplan']);
   });
 });
 
@@ -418,7 +418,7 @@ describe('explicit --project validation', () => {
     const code = await runOpen('README', { project: '/tmp/not-a-project' }, deps);
     expect(code).toBe(1);
     expect(opened).toEqual([]);
-    expect(errors.join('\n')).toContain('not an OpenKnowledge project');
+    expect(errors.join('\n')).toContain('not an Palimpsest project');
   });
 
   test('honors an override that does name a project', async () => {
@@ -444,7 +444,7 @@ describe('explicit --project validation', () => {
     expect(code).toBe(0);
     expect(consulted).toBe(false);
     expect(logs.filter((l) => l.startsWith('Project:'))).toHaveLength(0);
-    expect(logs.join('\n')).toContain('not an OpenKnowledge project');
+    expect(logs.join('\n')).toContain('not an Palimpsest project');
   });
 });
 
@@ -517,9 +517,9 @@ describe('runOpen hints name the running channel command', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const missing = makeDeps();
     expect(await runOpen('', { project: '/abs/proj' }, missing.deps)).toBe(1);
     expect(missing.errors).toEqual([

@@ -34,7 +34,7 @@ function scratch(prefix: string): string {
 }
 
 function app(files: Readonly<Record<string, string>> = APP): string {
-  const root = scratch('ok-served-modules-app-');
+  const root = scratch('ps-served-modules-app-');
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), content);
@@ -47,7 +47,7 @@ let outputDir: string;
 
 beforeAll(async () => {
   appRoot = app();
-  outputDir = scratch('ok-served-modules-output-');
+  outputDir = scratch('ps-served-modules-output-');
   await build({
     configFile: false,
     root: appRoot,

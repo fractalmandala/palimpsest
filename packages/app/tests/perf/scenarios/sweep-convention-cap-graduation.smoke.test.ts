@@ -419,7 +419,7 @@ describe('buildFullCellResults — JSON assembly', () => {
 describe('isTempoRunning', () => {
   test('returns true when the Tempo container row is present and running', () => {
     const ndjson = `{"Name":"${LGTM_TEMPO_CONTAINER_NAME}","State":"running","Status":"Up 5 minutes"}
-{"Name":"ok-otel-grafana","State":"running","Status":"Up 5 minutes"}`;
+{"Name":"ps-otel-grafana","State":"running","Status":"Up 5 minutes"}`;
     expect(isTempoRunning(ndjson)).toBe(true);
   });
 
@@ -1192,13 +1192,13 @@ describe('detectHostFingerprint', () => {
     expect(fp.fixtureDocSizeBytes).toBeNull();
   });
 
-  test('reads OK_HOST_* env vars when present', () => {
+  test('reads PS_HOST_* env vars when present', () => {
     const fp = detectHostFingerprint({
-      OK_HOST_CPU: 'Apple M3 Pro',
-      OK_HOST_RAM_GB: '36',
-      OK_HOST_DEV_SERVER_LOAD: 'idle',
-      OK_HOST_DEV_SERVER_UPTIME_MINUTES: '45',
-      OK_HOST_FIXTURE_DOC_SIZE_BYTES: '12345',
+      PS_HOST_CPU: 'Apple M3 Pro',
+      PS_HOST_RAM_GB: '36',
+      PS_HOST_DEV_SERVER_LOAD: 'idle',
+      PS_HOST_DEV_SERVER_UPTIME_MINUTES: '45',
+      PS_HOST_FIXTURE_DOC_SIZE_BYTES: '12345',
     });
     expect(fp.cpu).toBe('Apple M3 Pro');
     expect(fp.ramGb).toBe(36);
@@ -1233,8 +1233,8 @@ describe('buildFullCellResults — full end-to-end shape (US-011)', () => {
       cycleResult,
       {
         hostFingerprintEnv: {
-          OK_HOST_CPU: 'Apple M3 Pro',
-          OK_HOST_RAM_GB: '36',
+          PS_HOST_CPU: 'Apple M3 Pro',
+          PS_HOST_RAM_GB: '36',
         },
       },
     );

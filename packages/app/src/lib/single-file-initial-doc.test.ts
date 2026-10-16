@@ -61,9 +61,9 @@ describe('seedInitialDocHashFromWindow', () => {
     (globalThis as { window?: unknown }).window = original;
   });
 
-  function seedWith(okDesktop: unknown, startHash = ''): string {
+  function seedWith(psDesktop: unknown, startHash = ''): string {
     const location = { hash: startHash };
-    (globalThis as { window?: unknown }).window = { okDesktop, location };
+    (globalThis as { window?: unknown }).window = { psDesktop, location };
     seedInitialDocHashFromWindow();
     return location.hash;
   }

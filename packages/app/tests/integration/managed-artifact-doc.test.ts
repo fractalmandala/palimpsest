@@ -23,14 +23,14 @@ describe('skill + template CRDT docs — end to end', () => {
     return existsSync(path);
   }
 
-  test('editing a project skill content doc persists Y.Text verbatim to .ok/skills/<n>/SKILL.md', async () => {
-    const docName = '.ok/skills/demo-skill/SKILL';
+  test('editing a project skill content doc persists Y.Text verbatim to .ps/skills/<n>/SKILL.md', async () => {
+    const docName = '.ps/skills/demo-skill/SKILL';
     const client = await createTestClient(server.port, docName, { skipInvariantWatcher: true });
 
     const src = '---\nname: demo-skill\ndescription: a demo\n---\n\n# Demo\n\nBody.\n';
     client.doc.transact(() => client.ytext.insert(0, src));
 
-    const skillFile = resolve(server.contentDir, '.ok', 'skills', 'demo-skill', 'SKILL.md');
+    const skillFile = resolve(server.contentDir, '.ps', 'skills', 'demo-skill', 'SKILL.md');
     expect(await pollFor(skillFile)).toBe(true);
     expect(readFileSync(skillFile, 'utf-8')).toBe(src);
 
@@ -38,10 +38,10 @@ describe('skill + template CRDT docs — end to end', () => {
   });
 
   test('a project skill on disk loads its content into a fresh client', async () => {
-    const docName = '.ok/skills/roundtrip/SKILL';
+    const docName = '.ps/skills/roundtrip/SKILL';
     const src = '---\nname: roundtrip\ndescription: rt\n---\n\nHello.\n';
 
-    const skillFile = resolve(server.contentDir, '.ok', 'skills', 'roundtrip', 'SKILL.md');
+    const skillFile = resolve(server.contentDir, '.ps', 'skills', 'roundtrip', 'SKILL.md');
     mkdirSync(resolve(skillFile, '..'), { recursive: true });
     writeFileSync(skillFile, src, 'utf-8');
 
@@ -56,16 +56,16 @@ describe('skill + template CRDT docs — end to end', () => {
 
   test('an external SKILL.md disk edit reconciles into the open project skill doc', async () => {
     await server.cleanup();
-    const seedDir = mkdtempSync(join(tmpdir(), 'ok-skill-reconcile-'));
-    mkdirSync(resolve(seedDir, '.ok'), { recursive: true });
-    writeFileSync(resolve(seedDir, '.ok', 'config.yml'), '', 'utf-8');
-    const skillFile = resolve(seedDir, '.ok', 'skills', 'watched', 'SKILL.md');
+    const seedDir = mkdtempSync(join(tmpdir(), 'ps-skill-reconcile-'));
+    mkdirSync(resolve(seedDir, '.ps'), { recursive: true });
+    writeFileSync(resolve(seedDir, '.ps', 'config.yml'), '', 'utf-8');
+    const skillFile = resolve(seedDir, '.ps', 'skills', 'watched', 'SKILL.md');
     const src = '---\nname: watched\ndescription: initial\n---\n\n# Watched\n\nv1.\n';
     mkdirSync(resolve(skillFile, '..'), { recursive: true });
     writeFileSync(skillFile, src, 'utf-8');
     server = await createTestServer({ contentDir: seedDir });
 
-    const docName = '.ok/skills/watched/SKILL';
+    const docName = '.ps/skills/watched/SKILL';
     const client = await createTestClient(server.port, docName, { skipInvariantWatcher: true });
     const loadStart = Date.now();
     while (Date.now() - loadStart < 5000 && client.ytext.toString() !== src) {
@@ -97,7 +97,7 @@ describe('skill + template CRDT docs — end to end', () => {
     expect(createRes.status).toBe(200);
     const createBody = (await createRes.json()) as { path: string; created: boolean };
     expect(createBody.created).toBe(true);
-    expect(createBody.path.startsWith('.ok/skills/')).toBe(false);
+    expect(createBody.path.startsWith('.ps/skills/')).toBe(false);
     const skillFile = resolve(server.contentDir, createBody.path);
     expect(await pollFor(skillFile)).toBe(true);
 
@@ -126,14 +126,14 @@ describe('skill + template CRDT docs — end to end', () => {
     await client.cleanup();
   });
 
-  test('a template content doc persists to <folder>/.ok/templates/<name>.md', async () => {
-    const docName = '.ok/templates/daily-note';
+  test('a template content doc persists to <folder>/.ps/templates/<name>.md', async () => {
+    const docName = '.ps/templates/daily-note';
     const client = await createTestClient(server.port, docName, { skipInvariantWatcher: true });
 
     const src = '---\ntitle: Daily Note\ndescription: a daily note\n---\n\n# {{date}}\n\nNotes.\n';
     client.doc.transact(() => client.ytext.insert(0, src));
 
-    const tplFile = resolve(server.contentDir, '.ok', 'templates', 'daily-note.md');
+    const tplFile = resolve(server.contentDir, '.ps', 'templates', 'daily-note.md');
     expect(await pollFor(tplFile)).toBe(true);
     expect(readFileSync(tplFile, 'utf-8')).toBe(src);
 
@@ -141,7 +141,7 @@ describe('skill + template CRDT docs — end to end', () => {
   });
 
   test('PUT /api/template routes the body through the open CRDT doc (Slice E)', async () => {
-    const docName = 'notes/.ok/templates/meeting';
+    const docName = 'notes/.ps/templates/meeting';
     const client = await createTestClient(server.port, docName, { skipInvariantWatcher: true });
 
     const res = await fetch(`http://127.0.0.1:${server.port}/api/template`, {
@@ -164,7 +164,7 @@ describe('skill + template CRDT docs — end to end', () => {
     }
     expect(client.ytext.toString()).toBe(expected);
 
-    const tplFile = resolve(server.contentDir, 'notes', '.ok', 'templates', 'meeting.md');
+    const tplFile = resolve(server.contentDir, 'notes', '.ps', 'templates', 'meeting.md');
     expect(await pollFor(tplFile)).toBe(true);
     expect(readFileSync(tplFile, 'utf-8')).toBe(expected);
 
@@ -173,16 +173,16 @@ describe('skill + template CRDT docs — end to end', () => {
 
   test('an external template .md disk edit reconciles into the open doc', async () => {
     await server.cleanup();
-    const seedDir = mkdtempSync(join(tmpdir(), 'ok-template-reconcile-'));
-    mkdirSync(resolve(seedDir, '.ok'), { recursive: true });
-    writeFileSync(resolve(seedDir, '.ok', 'config.yml'), '', 'utf-8');
-    const tplFile = resolve(seedDir, '.ok', 'templates', 'daily.md');
+    const seedDir = mkdtempSync(join(tmpdir(), 'ps-template-reconcile-'));
+    mkdirSync(resolve(seedDir, '.ps'), { recursive: true });
+    writeFileSync(resolve(seedDir, '.ps', 'config.yml'), '', 'utf-8');
+    const tplFile = resolve(seedDir, '.ps', 'templates', 'daily.md');
     const src = '---\ntitle: Daily\ndescription: initial\n---\n\n# {{date}}\n';
     mkdirSync(resolve(tplFile, '..'), { recursive: true });
     writeFileSync(tplFile, src, 'utf-8');
     server = await createTestServer({ contentDir: seedDir });
 
-    const docName = '.ok/templates/daily';
+    const docName = '.ps/templates/daily';
     const client = await createTestClient(server.port, docName, { skipInvariantWatcher: true });
     const loadStart = Date.now();
     while (Date.now() - loadStart < 5000 && client.ytext.toString() !== src) {

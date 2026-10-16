@@ -27,8 +27,8 @@ import {
   SaveVersionRequestSchema,
   SaveVersionSuccessSchema,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
-import { formatRollbackSubject } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { formatRollbackSubject } from '@palimpsest/core/shadow-repo-layout';
 import { captureEffect } from '../activity-log.ts';
 import { listAgentActivity, synthesizeVersionDiff } from '../agent-activity.ts';
 import type { AgentFocusBroadcaster } from '../agent-focus.ts';
@@ -604,7 +604,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           );
           const fmPatchPrecomputed = await prepareFrontmatterPatchParse(session.dc.document, patch);
           const timestamp = new Date().toISOString();
-          let editError: import('@inkeep/open-knowledge-core').FmEditError | undefined;
+          let editError: import('@palimpsest/core').FmEditError | undefined;
           let applied = false;
           let bodyMutated = false;
           const appliedKeys: string[] = [];
@@ -1429,7 +1429,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
               return {
                 id,
                 name: (w.name ?? 'unknown').replace(/[\r\n]/g, ''),
-                email: (w.email ?? 'noreply@openknowledge.local').replace(/[\r\n]/g, ''),
+                email: (w.email ?? 'noreply@palimpsest.local').replace(/[\r\n]/g, ''),
               };
             });
           } catch (e) {
@@ -1448,7 +1448,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             ? {
                 id: svAgentId,
                 name: svClientName ? `${svAgentName} (${svClientName})` : svAgentName,
-                email: `${svAgentId}@openknowledge.local`,
+                email: `${svAgentId}@palimpsest.local`,
               }
             : undefined;
         const checkpointSummary = normalizeSummary(

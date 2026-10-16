@@ -7,7 +7,7 @@ import {
   type LinterConfig,
   lintDocument,
   MarkdownManager,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { Editor } from '@tiptap/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { LINT_NAV_EVENT, type LintNavDetail } from '@/components/ProblemsPanel';
@@ -16,14 +16,14 @@ import { MarkdownLintDecorations, mapDiagnosticsToBlocks } from './markdown-lint
 
 const md = new MarkdownManager({ extensions: coreExtensions });
 
-const DOC = 'notes/lint-nav-okf';
+const DOC = 'notes/lint-nav-psf';
 
-const okfConfig: LinterConfig = {
+const psfConfig: LinterConfig = {
   enabled: true,
   plugins: {
     markdownlint: { enabled: false, rules: {} },
     frontmatter: { enabled: true, schemas: [] },
-    okf: { enabled: true },
+    psf: { enabled: true },
   },
 };
 
@@ -33,11 +33,11 @@ async function realOkfDiagnostics(): Promise<{
   frontmatterRequired: LintDiagnostic;
   noWikiLinks: LintDiagnostic;
 }> {
-  const diagnostics = await lintDocument(BODY, okfConfig, DOC);
+  const diagnostics = await lintDocument(BODY, psfConfig, DOC);
   const frontmatterRequired = diagnostics.find(
-    (d) => d.source === 'okf' && d.code === 'frontmatter-required',
+    (d) => d.source === 'psf' && d.code === 'frontmatter-required',
   );
-  const noWikiLinks = diagnostics.find((d) => d.source === 'okf' && d.code === 'no-wiki-links');
+  const noWikiLinks = diagnostics.find((d) => d.source === 'psf' && d.code === 'no-wiki-links');
   if (!frontmatterRequired || !noWikiLinks) {
     throw new Error('expected the real OKF pass to produce both diagnostics');
   }

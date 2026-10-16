@@ -1,10 +1,10 @@
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import {
   isExcalidrawDocFile,
   isMermaidDocFile,
   mediaKindForSidebarAssetExtension,
-} from '@inkeep/open-knowledge-core/constants/upload';
-import type { UploadAssetSuccess } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/constants/upload';
+import type { UploadAssetSuccess } from '@palimpsest/core/schemas/api';
 import type { ContextMenuItem, FileTreeDropTarget } from '@pierre/trees';
 import { getFileExtension } from '@/components/file-tree-rename-validation';
 import {
@@ -14,7 +14,7 @@ import {
   isDocumentEntry,
   isFolderEntry,
 } from '@/components/file-tree-utils';
-import { OK_SIDEBAR_DRAG_MIME } from '@/lib/sidebar-drag';
+import { PS_SIDEBAR_DRAG_MIME } from '@/lib/sidebar-drag';
 
 const DEFAULT_TREE_EXTENSION = '.md';
 const TREE_EXTENSION_PATTERN = /\.(md|mdx)$/i;
@@ -162,7 +162,7 @@ export function collectTreeFolderPathsFromDocuments(
         ? entry.path
         : entry.docName;
     const segments = path.split('/').filter(Boolean);
-    if (!options.includeOkFolders && segments.includes('.ok')) continue;
+    if (!options.includeOkFolders && segments.includes('.ps')) continue;
     if (isFolderEntry(entry)) {
       const folderPath = folderPathToTreeDirectoryPath(entry.path);
       if (folderPath) folderPaths.add(folderPath);
@@ -382,7 +382,7 @@ export function isExternalFileDrag(event: ExternalFileDragLike): boolean {
   const types = event.dataTransfer?.types;
   if (!types) return false;
   const list = Array.from(types);
-  return list.includes('Files') && !list.includes(OK_SIDEBAR_DRAG_MIME);
+  return list.includes('Files') && !list.includes(PS_SIDEBAR_DRAG_MIME);
 }
 
 export function filesFromExternalDrop(event: ExternalFileDropLike): File[] {

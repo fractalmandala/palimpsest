@@ -1,4 +1,4 @@
-import { parseWriterId } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { parseWriterId } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { getLogger } from './logger.ts';
 import { gcRenameLog, getOrLoadRenameLogIndex } from './rename-log.ts';
@@ -243,7 +243,7 @@ export async function gcShadowBranches(
           aged.push({
             id: c.writerId,
             name: c.writerId,
-            email: `${c.writerId}@openknowledge.local`,
+            email: `${c.writerId}@palimpsest.local`,
           });
         }
       }

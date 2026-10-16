@@ -8,7 +8,7 @@ import {
   SingleFileNotMarkdownError,
   type SingleFileOpenPlan,
   SingleFileProjectOverrideError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { SpawnDetachedScrubbedOutcome } from '../utils/detached-spawn.ts';
 import {
   type OpenTargetOptions,
@@ -89,14 +89,14 @@ export async function runSingleFileOpen(
     const outcome = await deps.openTarget(deepLink, { desktopBundlePath: desktopApp.bundlePath });
     if (!outcome.ok) {
       deps.error(
-        `Could not open the OpenKnowledge desktop app: ${openTargetFailureMessage(
+        `Could not open the Palimpsest desktop app: ${openTargetFailureMessage(
           outcome.reason,
           deepLink,
         )}.`,
       );
       return 1;
     }
-    deps.log(`Opening ${plan.singleDocRelPath} in the OpenKnowledge desktop app.`);
+    deps.log(`Opening ${plan.singleDocRelPath} in the Palimpsest desktop app.`);
     return 0;
   }
 
@@ -107,7 +107,7 @@ export async function runSingleFileOpen(
 async function runSingleFileBrowserOpen(
   plan: Extract<SingleFileOpenPlan, { mode: 'ephemeral' }>,
 ): Promise<void> {
-  const { createEphemeralProjectDir } = await import('@inkeep/open-knowledge-server');
+  const { createEphemeralProjectDir } = await import('@palimpsest/server');
   const { loadConfig } = await import('../index.ts');
   const { bootStartServer, resolveBundledReactShellDir, resolveHost } = await import('./start.ts');
   const { openBrowser } = await import('../utils/open-browser.ts');
@@ -115,7 +115,7 @@ async function runSingleFileBrowserOpen(
   const reactShellDistDir = resolveBundledReactShellDir();
   if (!reactShellDistDir) {
     process.stderr.write(
-      'OpenKnowledge UI assets were not found. Reinstall @inkeep/open-knowledge, or build the app (`bun run build`) in a monorepo checkout.\n',
+      'Palimpsest UI assets were not found. Reinstall @palimpsest/cli, or build the app (`bun run build`) in a monorepo checkout.\n',
     );
     process.exit(1);
   }
@@ -165,7 +165,7 @@ async function runSingleFileBrowserOpen(
   }
 
   const url = `http://${host}:${booted.port}/#/${encodeDocName(plan.docName)}`;
-  const headless = process.env.OK_SINGLE_FILE_NO_OPEN === '1';
+  const headless = process.env.PS_SINGLE_FILE_NO_OPEN === '1';
   if (headless) {
     process.stdout.write(`Serving ${plan.singleDocRelPath} (headless) at: ${url}\n`);
   } else {

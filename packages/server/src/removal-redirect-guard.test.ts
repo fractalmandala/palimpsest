@@ -17,7 +17,7 @@ interface Harness {
 }
 
 function makeHarness(opts: { fileExists?: (filePath: string) => boolean } = {}): Harness {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-removal-guard-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-removal-guard-'));
   const cache = new RecentlyRemovedDocs();
   const warns: string[] = [];
   const originalWarn = console.warn;

@@ -233,7 +233,7 @@ afterEach(() => {
 });
 
 function makeReleaseRepo() {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-release-stamp-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-release-stamp-'));
   tempRepos.push(dir);
   const env = gitCleanEnv();
   const git = (...args) =>
@@ -263,7 +263,7 @@ function makeReleaseRepo() {
 const {execFileSync} = require('node:child_process');
 const drafts = JSON.parse(process.env.TEST_DRAFT_TAGS || '[]');
 for (const tag_name of execFileSync('git', ['tag', '--list'], {encoding:'utf8'}).trim().split('\\n').filter(Boolean)) {
-  console.log(JSON.stringify({tag_name, draft:drafts.includes(tag_name), published_at: drafts.includes(tag_name) ? null : '2026-09-24T22:00:00Z', assets:[{name:'OpenKnowledge-arm64.dmg'},{name:'beta-mac.yml'}]}));
+  console.log(JSON.stringify({tag_name, draft:drafts.includes(tag_name), published_at: drafts.includes(tag_name) ? null : '2026-09-24T22:00:00Z', assets:[{name:'Palimpsest-arm64.dmg'},{name:'beta-mac.yml'}]}));
 }
 `,
   );

@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../../vitest.base';
+import { psVitestBase } from '../../vitest.base';
 
 export default defineConfig({
-  ...okVitestBase,
+  ...psVitestBase,
   test: {
-    ...okVitestBase.test,
+    ...psVitestBase.test,
     include: ['test-support/fixtures/no-net-connect/no-net-connect.fixture.ts'],
     maxWorkers: 1,
   },

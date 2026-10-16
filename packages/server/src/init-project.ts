@@ -3,12 +3,12 @@ import { join, resolve } from 'node:path';
 import {
   CONFIG_SCHEMA_MAJOR_PATH,
   LOCAL_DIR,
-  OK_DIR,
-  OK_LEGACY_MACHINE_LOCAL_ROOT_DIRS,
-  OK_MACHINE_LOCAL_ROOT_FILES,
+  PS_DIR,
+  PS_LEGACY_MACHINE_LOCAL_ROOT_DIRS,
+  PS_MACHINE_LOCAL_ROOT_FILES,
   WORKTREES_DIRNAME,
-} from '@inkeep/open-knowledge-core';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicTempPath } from '@palimpsest/core/server';
 import {
   tracedMkdirSync,
   tracedRenameSync,
@@ -59,8 +59,8 @@ export interface BuildConfigYmlOptions {
 }
 
 export function buildConfigYmlContent(_version: string, options?: BuildConfigYmlOptions): string {
-  const template = `# yaml-language-server: $schema=https://unpkg.com/@inkeep/open-knowledge@latest/dist/schemas/${CONFIG_SCHEMA_MAJOR_PATH}/config.project.schema.json
-# OpenKnowledge — project configuration
+  const template = `# yaml-language-server: $schema=https://unpkg.com/@palimpsest/cli@latest/dist/schemas/${CONFIG_SCHEMA_MAJOR_PATH}/config.project.schema.json
+# Palimpsest — project configuration
 #
 # This file overrides built-in defaults for this project. Every key below
 # is commented out and shows its current default value. Uncomment any key
@@ -68,18 +68,18 @@ export function buildConfigYmlContent(_version: string, options?: BuildConfigYml
 #
 # Precedence (lowest -> highest):
 #   Built-in defaults
-#     -> ~/${OK_DIR}/global.yml         (user defaults)
-#     -> ./${OK_DIR}/config.yml         (this file)
+#     -> ~/${PS_DIR}/global.yml         (user defaults)
+#     -> ./${PS_DIR}/config.yml         (this file)
 #
 # Schema reference: packages/core/src/config/schema.ts
 
 
 # --- Content ---------------------------------------------------------------
 # dir: where the CRDT editor reads/writes documents. Relative to the project
-# root (the directory containing ${OK_DIR}/), NOT to this file.
+# root (the directory containing ${PS_DIR}/), NOT to this file.
 #
-# Path exclusions live in .okignore (gitignore syntax) at the project root,
-# with nested .okignore files honored at any folder depth.
+# Path exclusions live in .psignore (gitignore syntax) at the project root,
+# with nested .psignore files honored at any folder depth.
 #
 # content:
 #   dir: .
@@ -113,7 +113,7 @@ export function buildConfigYmlContent(_version: string, options?: BuildConfigYml
 
 # --- Appearance ------------------------------------------------------------
 # Theme for the chrome. Defaults UNSET so the existing localStorage cache
-# (\`ok-theme-v1\`) keeps powering FOUC-free first paint until you
+# (\`ps-theme-v1\`) keeps powering FOUC-free first paint until you
 # explicitly write here.
 #
 # appearance:
@@ -137,7 +137,7 @@ function writeIfMissing(filePath: string, content: string, label: string): boole
 export function ensureGitignoreEntries(
   filePath: string,
   scaffoldContent: string,
-  label = '.ok/.gitignore',
+  label = '.ps/.gitignore',
 ): 'created' | 'updated' | 'unchanged' {
   assertNotSymlink(filePath, label);
   if (!existsSync(filePath)) {
@@ -158,16 +158,16 @@ export function ensureGitignoreEntries(
 }
 
 const RETIRED_PROJECT_SKILL_GITIGNORE_PATHS = [
-  '.claude/skills/open-knowledge/',
-  '.cursor/skills/open-knowledge/',
-  '.codex/skills/open-knowledge/',
-  '.github/skills/open-knowledge/',
-  '.opencode/skills/open-knowledge/',
-  '.pi/skills/open-knowledge/',
+  '.claude/skills/palimpsest/',
+  '.cursor/skills/palimpsest/',
+  '.codex/skills/palimpsest/',
+  '.github/skills/palimpsest/',
+  '.opencode/skills/palimpsest/',
+  '.pi/skills/palimpsest/',
 ];
 
 const RETIRED_PROJECT_SKILL_GITIGNORE_HEADER = [
-  '# OpenKnowledge regenerates its built-in project skill on every open, and',
+  '# Palimpsest regenerates its built-in project skill on every open, and',
   '# different app builds version-stamp it differently. It is a per-machine',
   "# artifact — keep it out of git so teammates don't collide under auto-sync.",
 ];
@@ -213,36 +213,36 @@ export function removeProjectSkillGitignoreBlock(projectDir: string): 'removed' 
   return 'removed';
 }
 
-const OK_GITIGNORE_CONTENT = `# .ok/local/ holds per-machine runtime state. Anything inside is
+const PS_GITIGNORE_CONTENT = `# .ps/local/ holds per-machine runtime state. Anything inside is
 # machine-local and never committed. New runtime files (caches, locks,
 # manifests, telemetry, error logs) are auto-ignored — no edit needed here.
 ${LOCAL_DIR}/
 
-# .ok/worktrees/ holds git worktrees created from the desktop worktree
+# .ps/worktrees/ holds git worktrees created from the desktop worktree
 # selector — per-machine checkouts, never committed (WORKTREES_PARENT_DIR in
-# @inkeep/open-knowledge-core). Worktree creation also appends this path to
+# @palimpsest/core). Worktree creation also appends this path to
 # .git/info/exclude so projects whose committed rule predates it stay clean.
 ${WORKTREES_DIRNAME}/
 
-# Machine-local directories left behind by projects that predate .ok/local/.
+# Machine-local directories left behind by projects that predate .ps/local/.
 # Nothing writes them anymore, but a project that has them keeps them until
 # someone deletes them, so they stay ignored.
-${OK_LEGACY_MACHINE_LOCAL_ROOT_DIRS.map((name) => `${name}/`).join('\n')}
+${PS_LEGACY_MACHINE_LOCAL_ROOT_DIRS.map((name) => `${name}/`).join('\n')}
 
-# Per-machine runtime state at the .ok/ root. Contains PII (principal email,
+# Per-machine runtime state at the .ps/ root. Contains PII (principal email,
 # UUID), hostnames, and absolute filesystem paths — never commit. The only
-# file at .ok/ root that SHOULD be committed is \`config.yml\` (project
+# file at .ps/ root that SHOULD be committed is \`config.yml\` (project
 # configuration), which is explicitly NOT in this ignore list.
-${OK_MACHINE_LOCAL_ROOT_FILES.join('\n')}
+${PS_MACHINE_LOCAL_ROOT_FILES.join('\n')}
 `;
 
-export const OK_OKIGNORE_TEMPLATE = `# .okignore — paths to exclude from the OpenKnowledge document index.
+export const PS_OKIGNORE_TEMPLATE = `# .psignore — paths to exclude from the Palimpsest document index.
 # Uses gitignore syntax (parsed by the \`ignore\` npm library), evaluated
 # alongside .gitignore in a single ignore-lib instance.
 #
 # Patterns combine with .gitignore: an entry here adds to exclusions, and
 # a leading \`!\` re-includes a file that .gitignore excluded.
-# Nested .okignore files at any folder depth are honored (mirrors .gitignore).
+# Nested .psignore files at any folder depth are honored (mirrors .gitignore).
 #
 # Examples:
 #   drafts/        # exclude a directory
@@ -250,7 +250,7 @@ export const OK_OKIGNORE_TEMPLATE = `# .okignore — paths to exclude from the O
 #   !keep.md       # re-include a file .gitignore excluded
 `;
 
-export const ROOT_GITIGNORE_TEMPLATE = `# Seeded by OpenKnowledge when this project was created. Edit freely.
+export const ROOT_GITIGNORE_TEMPLATE = `# Seeded by Palimpsest when this project was created. Edit freely.
 .DS_Store
 .localized
 Thumbs.db
@@ -273,15 +273,15 @@ export interface InitContentResult {
 
 export function initContent(projectDir: string, options?: InitContentOptions): InitContentResult {
   assertSafeProjectRoot(projectDir);
-  const okDir = resolve(projectDir, OK_DIR);
+  const psDir = resolve(projectDir, PS_DIR);
   const created: string[] = [];
   const updated: string[] = [];
   const skipped: string[] = [];
 
-  assertNotSymlink(okDir, '.ok/');
-  tracedMkdirSync(okDir, { recursive: true });
+  assertNotSymlink(psDir, '.ps/');
+  tracedMkdirSync(psDir, { recursive: true });
 
-  const gitignoreAction = ensureGitignoreEntries(join(okDir, '.gitignore'), OK_GITIGNORE_CONTENT);
+  const gitignoreAction = ensureGitignoreEntries(join(psDir, '.gitignore'), PS_GITIGNORE_CONTENT);
   if (gitignoreAction === 'created') {
     created.push('.gitignore');
   } else if (gitignoreAction === 'updated') {
@@ -292,11 +292,11 @@ export function initContent(projectDir: string, options?: InitContentOptions): I
 
   if (
     writeIfMissing(
-      join(okDir, CONFIG_FILENAME),
+      join(psDir, CONFIG_FILENAME),
       buildConfigYmlContent(options?.packageVersion ?? '0.0.0', {
         contentDir: options?.contentDir,
       }),
-      `.ok/${CONFIG_FILENAME}`,
+      `.ps/${CONFIG_FILENAME}`,
     )
   ) {
     created.push(CONFIG_FILENAME);
@@ -304,10 +304,10 @@ export function initContent(projectDir: string, options?: InitContentOptions): I
     skipped.push(CONFIG_FILENAME);
   }
 
-  if (writeIfMissing(join(projectDir, '.okignore'), OK_OKIGNORE_TEMPLATE, '.okignore')) {
-    created.push('.okignore');
+  if (writeIfMissing(join(projectDir, '.psignore'), PS_OKIGNORE_TEMPLATE, '.psignore')) {
+    created.push('.psignore');
   } else {
-    skipped.push('.okignore');
+    skipped.push('.psignore');
   }
 
   return { created, updated, skipped };

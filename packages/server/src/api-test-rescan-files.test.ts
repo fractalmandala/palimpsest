@@ -65,7 +65,7 @@ async function callRoute(
 
 describe('POST /api/test-rescan-files', () => {
   test('invokes rescanFiles callback and returns 200 when enableTestRoutes=true', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-files-api-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-files-api-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -91,7 +91,7 @@ describe('POST /api/test-rescan-files', () => {
   });
 
   test('returns 503 when rescanFiles capability is not configured', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-files-noop-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-files-noop-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -112,7 +112,7 @@ describe('POST /api/test-rescan-files', () => {
   });
 
   test('returns 404 when enableTestRoutes is not set (default)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-files-gate-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-files-gate-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -134,7 +134,7 @@ describe('POST /api/test-rescan-files', () => {
   });
 
   test('405s on non-POST methods', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-files-method-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-files-method-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 

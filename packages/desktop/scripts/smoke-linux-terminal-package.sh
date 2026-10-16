@@ -61,9 +61,9 @@ wait_for_debugger() {
 }
 
 stop_app() {
-  pkill -TERM -u ok-smoke >/dev/null 2>&1 || true
+  pkill -TERM -u ps-smoke >/dev/null 2>&1 || true
   sleep 1
-  pkill -KILL -u ok-smoke >/dev/null 2>&1 || true
+  pkill -KILL -u ps-smoke >/dev/null 2>&1 || true
 }
 
 launch_app() {
@@ -80,13 +80,13 @@ launch_app() {
     flags+=(--no-sandbox)
   fi
 
-  runuser -u ok-smoke -- env \
+  runuser -u ps-smoke -- env \
     HOME=/home/ok-smoke \
     DISPLAY=:99 \
-    OK_DESKTOP_E2E_SMOKE=1 \
+    PS_DESKTOP_E2E_SMOKE=1 \
     "$executable" \
     "${flags[@]}" \
-    'openknowledge://open?project=%2Ftmp%2Fok-smoke-project&doc=start' \
+    'palimpsest://open?project=%2Ftmp%2Fok-smoke-project&doc=start' \
     >/tmp/openknowledge-smoke.log 2>&1 &
 }
 
@@ -128,11 +128,11 @@ inside_container() {
   local image=$1
   local requested_arch=$2
   local artifact=$3
-  local sandbox_mode=${OK_CONTAINER_SANDBOX:-auto}
+  local sandbox_mode=${PS_CONTAINER_SANDBOX:-auto}
 
   case "$sandbox_mode" in
     auto | require | disable) ;;
-    *) fail "OK_CONTAINER_SANDBOX must be auto, require, or disable" ;;
+    *) fail "PS_CONTAINER_SANDBOX must be auto, require, or disable" ;;
   esac
 
   local actual_arch
@@ -141,17 +141,17 @@ inside_container() {
     fail "container architecture is $actual_arch, expected $requested_arch"
 
   install_container_dependencies "$image" "$artifact"
-  command -v openknowledge >/dev/null 2>&1 ||
-    fail "installed package did not provide the openknowledge executable"
+  command -v palimpsest >/dev/null 2>&1 ||
+    fail "installed package did not provide the palimpsest executable"
 
-  useradd --create-home --shell /bin/bash ok-smoke
-  install -d -o ok-smoke -g ok-smoke \
-    /tmp/ok-smoke-project/.ok/local \
+  useradd --create-home --shell /bin/bash ps-smoke
+  install -d -o ps-smoke -g ps-smoke \
+    /tmp/ok-smoke-project/.ps/local \
     /tmp/ok-smoke-user-data
-  printf "content:\n  dir: '.'\n" >/tmp/ok-smoke-project/.ok/config.yml
-  printf 'terminal:\n  enabled: true\n' >/tmp/ok-smoke-project/.ok/local/config.yml
+  printf "content:\n  dir: '.'\n" >/tmp/ok-smoke-project/.ps/config.yml
+  printf 'terminal:\n  enabled: true\n' >/tmp/ok-smoke-project/.ps/local/config.yml
   printf '# Container terminal smoke\n' >/tmp/ok-smoke-project/start.md
-  chown -R ok-smoke:ok-smoke /tmp/ok-smoke-project /tmp/ok-smoke-user-data
+  chown -R ps-smoke:ps-smoke /tmp/ok-smoke-project /tmp/ok-smoke-user-data
 
   Xvfb :99 -screen 0 1280x800x24 >/tmp/xvfb.log 2>&1 &
   local xvfb_pid=$!
@@ -162,7 +162,7 @@ inside_container() {
     launch_mode=require
   fi
   printf 'Launching installed app with sandbox mode: %s\n' "$launch_mode"
-  launch_app "$(command -v openknowledge)" "$launch_mode"
+  launch_app "$(command -v palimpsest)" "$launch_mode"
 
   if ! wait_for_debugger; then
     if [[ "$sandbox_mode" != auto ]]; then
@@ -171,14 +171,14 @@ inside_container() {
     fi
     printf '%s\n' 'Sandboxed launch did not start; retrying once with --no-sandbox.'
     stop_app
-    launch_app "$(command -v openknowledge)" disable
+    launch_app "$(command -v palimpsest)" disable
     if ! wait_for_debugger; then
       tail -80 /tmp/openknowledge-smoke.log >&2 || true
       fail "installed app did not start even with --no-sandbox"
     fi
   fi
 
-  runuser -u ok-smoke -- python3 /tmp/smoke-terminal-package-cdp.py
+  runuser -u ps-smoke -- python3 /tmp/smoke-terminal-package-cdp.py
   printf 'PASS: installed %s package launched and completed a packaged PTY echo round-trip\n' "$requested_arch"
 }
 
@@ -223,7 +223,7 @@ host_main() {
   [[ -f "$DRIVER_PATH" ]] || fail "PTY smoke driver not found: $DRIVER_PATH"
 
   local extension=${absolute_package##*.}
-  local container_artifact="/tmp/OpenKnowledge.$extension"
+  local container_artifact="/tmp/Palimpsest.$extension"
 
   if ! docker pull --platform "$(docker_platform "$normalized_arch")" "$image"; then
     fail "container image unavailable: $image ($(docker_platform "$normalized_arch"))"
@@ -234,7 +234,7 @@ host_main() {
     --mount "type=bind,src=$absolute_package,dst=$container_artifact,readonly" \
     --mount "type=bind,src=$SCRIPT_DIR/smoke-linux-terminal-package.sh,dst=/tmp/smoke-linux-terminal-package.sh,readonly" \
     --mount "type=bind,src=$DRIVER_PATH,dst=/tmp/smoke-terminal-package-cdp.py,readonly" \
-    --env "OK_CONTAINER_SANDBOX=${OK_CONTAINER_SANDBOX:-auto}" \
+    --env "PS_CONTAINER_SANDBOX=${PS_CONTAINER_SANDBOX:-auto}" \
     "$image" \
     bash /tmp/smoke-linux-terminal-package.sh \
       --inside "$image" "$normalized_arch" "$container_artifact"

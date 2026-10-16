@@ -25,7 +25,7 @@ import {
 
 const tmpDirs: string[] = [];
 
-function makeTmpDir(prefix = 'ok-bundle-test-'): string {
+function makeTmpDir(prefix = 'ps-bundle-test-'): string {
   const dir = mkdtempSync(resolve(tmpdir(), prefix));
   tmpDirs.push(dir);
   return dir;
@@ -53,7 +53,7 @@ function makeDeterministicDeps(over: Partial<CollectBundleDeps> = {}): CollectBu
     readShadowHead: () => null,
     readCheckpointRefs: () => null,
     now: () => new Date('2026-05-28T14:22:01.000Z'),
-    okVersion: () => '0.7.99',
+    psVersion: () => '0.7.99',
     readDesktopEnv: () => null,
     readLanguage: () => DETERMINISTIC_LANGUAGE,
     readRuntime: () => ({
@@ -76,17 +76,17 @@ describe('collectBundle — diagnostic-report staging count', () => {
   test('counts what was staged, not what the sweep selected', async () => {
     const contentDir = makeTmpDir();
     const reportsDir = makeTmpDir();
-    const present = join(reportsDir, 'OpenKnowledge-present.ips');
+    const present = join(reportsDir, 'Palimpsest-present.ips');
     writeFileSync(
       present,
-      `${JSON.stringify({ name: 'OpenKnowledge' })}\n{"procName":"OpenKnowledge"}\n`,
+      `${JSON.stringify({ name: 'Palimpsest' })}\n{"procName":"Palimpsest"}\n`,
     );
 
     const collected = await collectBundle({
       contentDir,
       deps: makeDeterministicDeps(),
       diagnosticReports: {
-        files: [present, join(reportsDir, 'OpenKnowledge-vanished.ips')],
+        files: [present, join(reportsDir, 'Palimpsest-vanished.ips')],
         outcome: 'collected',
         foreignIgnored: 0,
         unparseable: 0,
@@ -138,7 +138,7 @@ describe('collectBundle — file inventory', () => {
   test('lists staged spans-current.jsonl with correct bytes + lines', async () => {
     const contentDir = makeTmpDir();
     const spansBody = `{"resourceSpans":[]}\n{"resourceSpans":[{"x":1}]}\n`;
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', spansBody);
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', spansBody);
 
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
 
@@ -155,15 +155,15 @@ describe('collectBundle — file inventory', () => {
     mkdirSync(contentDir, { recursive: true });
 
     const realSpans = '{"resourceSpans":[]}\n';
-    writeAt(projectDir, '.ok/local/telemetry/spans-current.jsonl', realSpans);
-    writeAt(projectDir, '.ok/local/logs/server-current.jsonl', '{"level":30,"msg":"x"}\n');
-    writeAt(projectDir, '.ok/local/server.lock', JSON.stringify({ port: 6111 }));
+    writeAt(projectDir, '.ps/local/telemetry/spans-current.jsonl', realSpans);
+    writeAt(projectDir, '.ps/local/logs/server-current.jsonl', '{"level":30,"msg":"x"}\n');
+    writeAt(projectDir, '.ps/local/server.lock', JSON.stringify({ port: 6111 }));
     writeAt(
       projectDir,
-      '.ok/local/acp-launch-failures.log',
+      '.ps/local/acp-launch-failures.log',
       '=== acp launch failure 2026-09-23T12:00:00.000Z thread=t agent=codex-acp source=registry reason=connect ===\n',
     );
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', '{"resourceSpans":["DECOY"]}\n');
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', '{"resourceSpans":["DECOY"]}\n');
 
     const collected = await collectBundle({
       contentDir,
@@ -187,8 +187,8 @@ describe('collectBundle — file inventory', () => {
 
   test('defaults to contentDir as the project root when projectDir is omitted', async () => {
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', '{"resourceSpans":[]}\n');
-    writeAt(contentDir, '.ok/local/server.lock', JSON.stringify({ port: 6222 }));
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', '{"resourceSpans":[]}\n');
+    writeAt(contentDir, '.ps/local/server.lock', JSON.stringify({ port: 6222 }));
 
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
 
@@ -200,8 +200,8 @@ describe('collectBundle — file inventory', () => {
 
   test('lists both spans-current.jsonl and spans-prev.jsonl when both exist', async () => {
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', '{"resourceSpans":[]}\n');
-    writeAt(contentDir, '.ok/local/telemetry/spans-prev.jsonl', '{"resourceSpans":[1]}\n');
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', '{"resourceSpans":[]}\n');
+    writeAt(contentDir, '.ps/local/telemetry/spans-prev.jsonl', '{"resourceSpans":[1]}\n');
 
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
 
@@ -227,7 +227,7 @@ describe('collectBundle — file inventory', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/logs/server-current.jsonl',
+      '.ps/local/logs/server-current.jsonl',
       '{"level":30,"msg":"hi"}\n{"level":30,"msg":"there"}\n',
     );
 
@@ -242,7 +242,7 @@ describe('collectBundle — file inventory', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/telemetry/spans-current.jsonl',
+      '.ps/local/telemetry/spans-current.jsonl',
       `{"resourceSpans":[]}\n{"resourceSpans":[1]}\n{"resourceSpans"`,
     );
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
@@ -271,7 +271,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     let queriedPort = -1;
@@ -295,7 +295,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     const collected = await collectBundle({
@@ -333,7 +333,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     let queriedPort = -1;
@@ -357,7 +357,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     let queriedPort = -1;
@@ -402,7 +402,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     const emptyDeps = makeDeterministicDeps({
@@ -430,7 +430,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     const deps = makeDeterministicDeps({
@@ -448,7 +448,7 @@ describe('collectBundle — server status', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/server.lock',
+      '.ps/local/server.lock',
       JSON.stringify({ pid: 1, port: 4711, hostname: 'h', startedAt: 't', worktreeRoot: '/' }),
     );
     const deps = makeDeterministicDeps({
@@ -464,7 +464,7 @@ describe('collectBundle — server status', () => {
 
   test('corrupt lock → not-running, lock still staged for forensics', async () => {
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/local/server.lock', 'not json {');
+    writeAt(contentDir, '.ps/local/server.lock', 'not json {');
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
 
     expect(collected.manifest.serverStatus).toBe('not-running');
@@ -522,7 +522,7 @@ describe('collectBundle — state files', () => {
       null,
       2,
     )}\n`;
-    writeAt(contentDir, '.ok/local/last-server-exit.json', body);
+    writeAt(contentDir, '.ps/local/last-server-exit.json', body);
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
     expect(
       readFileSync(join(collected.stagingDir, 'state', 'last-server-exit.json'), 'utf-8'),
@@ -550,7 +550,7 @@ describe('collectBundle — state files', () => {
       null,
       2,
     )}\n`;
-    writeAt(contentDir, '.ok/local/last-server-crash.json', body);
+    writeAt(contentDir, '.ps/local/last-server-crash.json', body);
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
     expect(
       readFileSync(join(collected.stagingDir, 'state', 'last-server-crash.json'), 'utf-8'),
@@ -581,7 +581,7 @@ describe('collectBundle — state files', () => {
     collected.cleanup();
   });
 
-  test('runtime.json + manifest.host.desktop reflect OK_DESKTOP_* env block', async () => {
+  test('runtime.json + manifest.host.desktop reflect PS_DESKTOP_* env block', async () => {
     const contentDir = makeTmpDir();
     const deps = makeDeterministicDeps({
       readDesktopEnv: () => ({ electronVersion: '38.0.0', packaged: true, channel: 'beta' }),
@@ -607,7 +607,7 @@ describe('collectBundle — state files', () => {
 describe('collectBundle — process/ subdir', () => {
   test('copies processDir contents under process/ when supplied', async () => {
     const contentDir = makeTmpDir();
-    const processSource = makeTmpDir('ok-bundle-procsrc-');
+    const processSource = makeTmpDir('ps-bundle-procsrc-');
     writeFileSync(join(processSource, 'metadata.json'), '{"pid":42}');
     writeFileSync(join(processSource, 'lsof.txt'), 'COMMAND PID ...\n');
 
@@ -639,13 +639,13 @@ describe('collectBundle — summary', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/telemetry/spans-current.jsonl',
+      '.ps/local/telemetry/spans-current.jsonl',
       '{"resourceSpans":[{"attributes":[{"key":"doc.name","value":"a"}]}]}\n' +
         '{"resourceSpans":[{"attributes":[{"key":"doc.name","value":"b"}]}]}\n',
     );
     writeAt(
       contentDir,
-      '.ok/local/telemetry/spans-prev.jsonl',
+      '.ps/local/telemetry/spans-prev.jsonl',
       '{"resourceSpans":[{"attributes":[{"key":"doc.name","value":"c"}]}]}\n',
     );
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
@@ -657,8 +657,8 @@ describe('collectBundle — summary', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/logs/server-current.jsonl',
-      '{"source":"renderer-console","event":"ok-outline-nav","docName":"notes/a"}\n' +
+      '.ps/local/logs/server-current.jsonl',
+      '{"source":"renderer-console","event":"ps-outline-nav","docName":"notes/a"}\n' +
         '{"source":"renderer-console","event":"ok/scroll-restore/abandoned","docName":"notes/b"}\n',
     );
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
@@ -672,8 +672,8 @@ describe('collectBundle — summary', () => {
     writeAt(
       userLogsDir,
       'desktop.2026-08-25.log',
-      '{"subsystem":"renderer","event":"ok-outline-nav","docName":"notes/a"}\n' +
-        '{"subsystem":"renderer","event":"ok-outline-nav-settled","docName":"notes/a"}\n',
+      '{"subsystem":"renderer","event":"ps-outline-nav","docName":"notes/a"}\n' +
+        '{"subsystem":"renderer","event":"ps-outline-nav-settled","docName":"notes/a"}\n',
     );
     const collected = await collectBundle({
       contentDir,
@@ -688,7 +688,7 @@ describe('collectBundle — summary', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/local/logs/server-current.jsonl',
+      '.ps/local/logs/server-current.jsonl',
       `{"level":30,"msg":"opened ${contentDir}/notes.md"}\n`,
     );
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
@@ -719,7 +719,7 @@ function makeAliasedRoot(
   link: string,
   target: string,
 ): { projectDir: string; typed: string; native: string } {
-  const projectDir = realpathSync.native(makeTmpDir('ok-bundle-alias-'));
+  const projectDir = realpathSync.native(makeTmpDir('ps-bundle-alias-'));
   const real = join(projectDir, target);
   mkdirSync(real);
   const typed = join(projectDir, link);
@@ -760,7 +760,7 @@ describe('collectBundle — a content root typed through a directory alias', () 
       expect(spellingRelation(typed, native)).toBe(relation);
       writeAt(
         projectDir,
-        '.ok/local/logs/server-current.jsonl',
+        '.ps/local/logs/server-current.jsonl',
         jsonl([
           {
             level: 30,
@@ -777,7 +777,7 @@ describe('collectBundle — a content root typed through a directory alias', () 
           { level: 30, path: join(typed, 'note.md'), msg: 'opened' },
         ]),
       );
-      const processDir = makeTmpDir('ok-bundle-procsrc-');
+      const processDir = makeTmpDir('ps-bundle-procsrc-');
       writeFileSync(
         join(processDir, 'lsof.txt'),
         `node 4242 jane cwd DIR ${native}\nnode 4242 jane 21r REG ${join(typed, 'note.md')}\n`,
@@ -820,7 +820,7 @@ describe('collectBundle — a content root typed through a directory alias', () 
   test('contentDirVisible reports a root that appears only in its native spelling', async () => {
     const { projectDir, typed, native } = makeAliasedRoot('notes-link', 'vault');
     expect(spellingRelation(typed, native)).toBe('disjoint');
-    const processDir = makeTmpDir('ok-bundle-procsrc-');
+    const processDir = makeTmpDir('ps-bundle-procsrc-');
     writeFileSync(join(processDir, 'lsof.txt'), `node 4242 jane cwd DIR ${native}\n`);
 
     const collected = await collectBundle({
@@ -843,7 +843,7 @@ describe('collectBundle — a content root typed through a directory alias', () 
     expect(existsSync(contentDir)).toBe(false);
     writeAt(
       projectDir,
-      '.ok/local/logs/server-current.jsonl',
+      '.ps/local/logs/server-current.jsonl',
       jsonl([{ level: 30, path: join(contentDir, 'note.md'), msg: 'opened' }]),
     );
 
@@ -867,7 +867,7 @@ describe('collectBundle — a content root typed through a directory alias', () 
     expect(statSync(dirname(contentDir)).isFile()).toBe(true);
     writeAt(
       projectDir,
-      '.ok/local/logs/server-current.jsonl',
+      '.ps/local/logs/server-current.jsonl',
       jsonl([{ level: 30, path: join(contentDir, 'note.md'), msg: 'opened' }]),
     );
 
@@ -899,8 +899,8 @@ describe('collectBundle — loss-capture ring', () => {
       lostLen: 12,
       digest: 'abc12345',
     });
-    writeAt(contentDir, '.ok/local/loss-capture/loss-current.jsonl', `${lossEvent}\n`);
-    writeAt(contentDir, '.ok/local/loss-capture/loss-prev.jsonl', `${lossEvent}\n`);
+    writeAt(contentDir, '.ps/local/loss-capture/loss-current.jsonl', `${lossEvent}\n`);
+    writeAt(contentDir, '.ps/local/loss-capture/loss-prev.jsonl', `${lossEvent}\n`);
 
     const collected = await collectBundle({
       contentDir,
@@ -938,10 +938,10 @@ async function readZipEntries(zipPath: string): Promise<string[]> {
 describe('writeBundle', () => {
   test('produces a zip whose entries match collected.manifest.files[] + manifest.json', async () => {
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/local/telemetry/spans-current.jsonl', '{"resourceSpans":[]}\n');
+    writeAt(contentDir, '.ps/local/telemetry/spans-current.jsonl', '{"resourceSpans":[]}\n');
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
 
-    const outDir = makeTmpDir('ok-bundle-out-');
+    const outDir = makeTmpDir('ps-bundle-out-');
     const outputPath = join(outDir, 'bundle.zip');
     const written = await writeBundle({ collected, outputPath });
     expect(written).toBe(outputPath);
@@ -966,12 +966,12 @@ describe('writeBundle', () => {
   test('zip contents survive a round-trip — manifest.json parses to the same data', async () => {
     const contentDir = makeTmpDir();
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
-    const outDir = makeTmpDir('ok-bundle-out-');
+    const outDir = makeTmpDir('ps-bundle-out-');
     const outputPath = join(outDir, 'bundle.zip');
     await writeBundle({ collected, outputPath });
 
     const { execSync } = await import('node:child_process');
-    const extractDir = makeTmpDir('ok-bundle-extract-');
+    const extractDir = makeTmpDir('ps-bundle-extract-');
     execSync(
       `unzip -q ${JSON.stringify(outputPath)} manifest.json -d ${JSON.stringify(extractDir)}`,
     );
@@ -983,7 +983,7 @@ describe('writeBundle', () => {
   });
 
   test('yazl ZipFile end-state — explicit smoke that the underlying lib is wired', async () => {
-    const outDir = makeTmpDir('ok-bundle-yazl-');
+    const outDir = makeTmpDir('ps-bundle-yazl-');
     const outputPath = join(outDir, 'tiny.zip');
     const zip = new ZipFile();
     zip.addBuffer(Buffer.from('hello', 'utf-8'), 'a.txt');
@@ -1001,8 +1001,8 @@ describe('writeBundle', () => {
 describe('collectBundle — manifest.telemetry.localSink cascade', () => {
   test("project's explicit `enabled: false` survives schema defaults in an empty project-local config", async () => {
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/config.yml', 'telemetry:\n  localSink:\n    enabled: false\n');
-    writeAt(contentDir, '.ok/local/config.yml', '');
+    writeAt(contentDir, '.ps/config.yml', 'telemetry:\n  localSink:\n    enabled: false\n');
+    writeAt(contentDir, '.ps/local/config.yml', '');
 
     const collected = await collectBundle({
       contentDir,
@@ -1014,8 +1014,8 @@ describe('collectBundle — manifest.telemetry.localSink cascade', () => {
 
   test('project-local explicit `enabled: false` wins over project `true`', async () => {
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/config.yml', 'telemetry:\n  localSink:\n    enabled: true\n');
-    writeAt(contentDir, '.ok/local/config.yml', 'telemetry:\n  localSink:\n    enabled: false\n');
+    writeAt(contentDir, '.ps/config.yml', 'telemetry:\n  localSink:\n    enabled: true\n');
+    writeAt(contentDir, '.ps/local/config.yml', 'telemetry:\n  localSink:\n    enabled: false\n');
     const collected = await collectBundle({
       contentDir,
       deps: makeDeterministicDeps(),
@@ -1028,12 +1028,12 @@ describe('collectBundle — manifest.telemetry.localSink cascade', () => {
     const contentDir = makeTmpDir();
     writeAt(
       contentDir,
-      '.ok/config.yml',
+      '.ps/config.yml',
       'telemetry:\n  localSink:\n    spans:\n      maxBytes: 999\n',
     );
     writeAt(
       contentDir,
-      '.ok/local/config.yml',
+      '.ps/local/config.yml',
       'telemetry:\n  localSink:\n    spans:\n      maxBytes: 7\n',
     );
     const collected = await collectBundle({
@@ -1061,7 +1061,7 @@ describe('collectBundle — staging cleanup on throw', () => {
   test('a mid-staging throw removes the staging dir instead of stranding staged copies', async () => {
     const marker = `staging-leak-${randomUUID()}`;
     const contentDir = makeTmpDir();
-    writeAt(contentDir, '.ok/local/logs/server-current.jsonl', `{"msg":"${marker}"}\n`);
+    writeAt(contentDir, '.ps/local/logs/server-current.jsonl', `{"msg":"${marker}"}\n`);
 
     await expect(
       collectBundle({
@@ -1074,7 +1074,7 @@ describe('collectBundle — staging cleanup on throw', () => {
       }),
     ).rejects.toThrow('runtime probe failed');
 
-    const candidates = readdirSync(tmpdir()).filter((d) => d.startsWith('ok-bundle-'));
+    const candidates = readdirSync(tmpdir()).filter((d) => d.startsWith('ps-bundle-'));
     for (const dir of candidates) {
       let staged = '';
       try {

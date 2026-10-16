@@ -1,19 +1,19 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import type { OkDesktopBridge, OkShareReceivedPayload } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsShareReceivedPayload } from '@/lib/desktop-bridge-types';
 
 import { createShareReceiveStore } from './receive-store';
 
 function fakeBridge(): {
-  bridge: OkDesktopBridge;
-  emit: (payload: OkShareReceivedPayload) => void;
+  bridge: PsDesktopBridge;
+  emit: (payload: PsShareReceivedPayload) => void;
   unsubscribed: () => boolean;
   subscribers: () => number;
 } {
-  const subs: ((p: OkShareReceivedPayload) => void)[] = [];
+  const subs: ((p: PsShareReceivedPayload) => void)[] = [];
   let isUnsubscribed = false;
   const bridge = {
-    onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+    onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
       subs.push(cb);
       return () => {
         isUnsubscribed = true;
@@ -21,7 +21,7 @@ function fakeBridge(): {
         if (idx >= 0) subs.splice(idx, 1);
       };
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return {
     bridge,
     emit: (payload) => {
@@ -32,7 +32,7 @@ function fakeBridge(): {
   };
 }
 
-const sharePayload: OkShareReceivedPayload = {
+const sharePayload: PsShareReceivedPayload = {
   kind: 'launcher-miss',
   share: {
     owner: 'a',

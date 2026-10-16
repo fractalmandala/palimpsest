@@ -11,7 +11,7 @@ import { readProjectHeadState, startHeadWatcher, watchedGitFile } from './head-w
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-headwatch-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-headwatch-test-'));
 });
 
 afterEach(async () => {

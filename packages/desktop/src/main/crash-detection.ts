@@ -8,11 +8,11 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import type { ProcessTerminationLookup, ProcessTerminationQuery } from '@inkeep/open-knowledge';
+import type { ProcessTerminationLookup, ProcessTerminationQuery } from '@palimpsest/cli';
 import {
   MINIDUMP_FILE_EXTENSION,
-  type OkBugReportCrashDetectedEvent,
-} from '@inkeep/open-knowledge-core';
+  type PsBugReportCrashDetectedEvent,
+} from '@palimpsest/core';
 import { asReportableAppVersion } from './crashed-app-version.ts';
 import type { DesktopCrashProcessSnapshot } from './desktop-process-observability.ts';
 import {
@@ -190,7 +190,7 @@ export interface CrashDetectionDeps {
   appVersion: string;
   processId: number;
   platform?: NodeJS.Platform;
-  emit(event: OkBugReportCrashDetectedEvent): boolean;
+  emit(event: PsBugReportCrashDetectedEvent): boolean;
   now(): Date;
   currentBootSessionUuid(): string | null;
   currentBootStartedAtMs?(): number | null;
@@ -208,7 +208,7 @@ export interface InstallInFlight {
 }
 
 export interface CrashDetection {
-  detectBootCrash(): OkBugReportCrashDetectedEvent | null;
+  detectBootCrash(): PsBugReportCrashDetectedEvent | null;
   markCleanQuit(): void;
   noteProcessExit(code: number): void;
   noteAlive(): void;
@@ -263,7 +263,7 @@ interface BoundMinidump {
 type WithoutMinidumpAvailable<E> = E extends unknown ? Omit<E, 'minidumpAvailable'> : never;
 
 type RuntimeCrashEventDraft = WithoutMinidumpAvailable<
-  Exclude<OkBugReportCrashDetectedEvent, { kind: 'boot' }>
+  Exclude<PsBugReportCrashDetectedEvent, { kind: 'boot' }>
 >;
 
 type SettledFrom = 'scan' | 'held' | 'held-missing' | 'none';
@@ -377,7 +377,7 @@ function collectMinidumpEntries(dir: string, depth: number, out: MinidumpEntry[]
 
 export function createCrashDetection(deps: CrashDetectionDeps): CrashDetection {
   let active: {
-    event: OkBugReportCrashDetectedEvent;
+    event: PsBugReportCrashDetectedEvent;
     delivered: boolean;
     armedAtMs: number;
   } | null = null;
@@ -670,7 +670,7 @@ export function createCrashDetection(deps: CrashDetectionDeps): CrashDetection {
     );
   }
 
-  function armInvite(event: OkBugReportCrashDetectedEvent, binding: InvitationBinding): boolean {
+  function armInvite(event: PsBugReportCrashDetectedEvent, binding: InvitationBinding): boolean {
     const nowMs = deps.now().getTime();
     if (active !== null) {
       const pendingAgeMs = nowMs - active.armedAtMs;
@@ -750,7 +750,7 @@ export function createCrashDetection(deps: CrashDetectionDeps): CrashDetection {
   }
 
   return {
-    detectBootCrash(): OkBugReportCrashDetectedEvent | null {
+    detectBootCrash(): PsBugReportCrashDetectedEvent | null {
       const detectedAt = deps.now();
       const bootSessionUuid = deps.currentBootSessionUuid();
       if (
@@ -1017,7 +1017,7 @@ export function createCrashDetection(deps: CrashDetectionDeps): CrashDetection {
 
       const machineSuppressed = suppressibleDeath && newDumps.length === 0;
 
-      let armed: OkBugReportCrashDetectedEvent | null = null;
+      let armed: PsBugReportCrashDetectedEvent | null = null;
       if (machineSuppressed || crashTooOld) {
         const reason = machineSuppressed ? (machineCause ?? 'update-install') : 'stale-crash';
         const breadcrumb = {
@@ -1088,7 +1088,7 @@ export function createCrashDetection(deps: CrashDetectionDeps): CrashDetection {
             eventDump === undefined ? null : readMinidumpAccessibilityMode(eventDump.entry.path);
           const crashedAppVersion = dumpDriven ? (dumpVersion?.version ?? null) : prevAppVersion;
           const crashedAtMs = dumpDriven ? (eventDump?.entry.mtimeMs ?? null) : datableLastAliveMs;
-          const event: OkBugReportCrashDetectedEvent = {
+          const event: PsBugReportCrashDetectedEvent = {
             eventId,
             kind: 'boot',
             context: { dirtyShutdown: !dumpDriven, newMinidumps: newDumps.length },

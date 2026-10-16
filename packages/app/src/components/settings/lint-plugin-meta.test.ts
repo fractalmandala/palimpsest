@@ -1,4 +1,4 @@
-import { LINT_PLUGINS } from '@inkeep/open-knowledge-core';
+import { LINT_PLUGINS } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { LINT_PLUGIN_META } from './lint-plugin-meta.ts';
 
@@ -16,11 +16,11 @@ describe('LINT_PLUGIN_META ⟷ plugin registry', () => {
   });
 
   test('OKF declares its companion agent skill without making it a plugin dependency', () => {
-    expect(LINT_PLUGIN_META.find((plugin) => plugin.id === 'okf')?.recommendedSkills).toEqual([
-      { packId: 'okf', name: 'okf-knowledge-base' },
+    expect(LINT_PLUGIN_META.find((plugin) => plugin.id === 'psf')?.recommendedSkills).toEqual([
+      { packId: 'psf', name: 'psf-knowledge-base' },
     ]);
     expect(
-      LINT_PLUGIN_META.filter((plugin) => plugin.id !== 'okf').every(
+      LINT_PLUGIN_META.filter((plugin) => plugin.id !== 'psf').every(
         (plugin) => plugin.recommendedSkills === undefined,
       ),
     ).toBe(true);

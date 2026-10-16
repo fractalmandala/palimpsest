@@ -45,7 +45,7 @@ function makeDeckProvider(): FakeProvider {
 }
 
 function installSlidesBridge() {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = {
+  (window as unknown as { psDesktop?: unknown }).psDesktop = {
     config: { projectPath: '/proj' },
     platform: 'darwin',
     slides: {
@@ -77,7 +77,7 @@ async function renderToolbar(provider: FakeProvider | null, docName: string | nu
 afterEach(() => {
   cleanup();
   mockMergedConfig = null;
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   vi.restoreAllMocks();
 });
 

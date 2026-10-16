@@ -14,7 +14,7 @@ describe('resolveUiRedirectPort — clone-redirect server.lock chain', () => {
   const dirs: string[] = [];
 
   function makeLockDir(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-ui-redirect-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-ui-redirect-'));
     dirs.push(dir);
     return dir;
   }

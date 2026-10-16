@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { promisify } from 'node:util';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
 import { bootServer } from './boot.ts';
@@ -31,7 +31,7 @@ const MARKERED_BODY = [
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-conflict-ledger-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-conflict-ledger-'));
 });
 
 afterEach(async () => {
@@ -39,14 +39,14 @@ afterEach(async () => {
 });
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), 'local/\n', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), 'local/\n', 'utf-8');
 }
 
 function seedMergeNativeConflictsJson(projectDir: string, file: string): void {
-  const localDir = resolve(projectDir, OK_DIR, 'local');
+  const localDir = resolve(projectDir, PS_DIR, 'local');
   mkdirSync(localDir, { recursive: true });
   writeFileSync(
     resolve(localDir, 'conflicts.json'),
@@ -100,7 +100,7 @@ async function pollUntil(
 }
 
 function seedReconcileConflictsJson(projectDir: string, file: string): void {
-  const localDir = resolve(projectDir, OK_DIR, 'local');
+  const localDir = resolve(projectDir, PS_DIR, 'local');
   mkdirSync(localDir, { recursive: true });
   writeFileSync(
     resolve(localDir, 'conflicts.json'),
@@ -185,7 +185,7 @@ describe('conflict ledger boot prune runs independently of the sync engine', () 
     ).stdout.trim();
     expect(theirsSha).toMatch(/^[0-9a-f]{40}$/);
 
-    const localDir = resolve(tmpDir, OK_DIR, 'local');
+    const localDir = resolve(tmpDir, PS_DIR, 'local');
     mkdirSync(localDir, { recursive: true });
     writeFileSync(
       resolve(localDir, 'conflicts.json'),
@@ -243,7 +243,7 @@ describe('a reconcile entry scoped to another branch does not survive a boot her
     const booted = await bootPlainProject((contentDir) => {
       mkdirSync(resolve(contentDir, 'notes'), { recursive: true });
       writeFileSync(resolve(contentDir, DOC_FILE), MARKERED_BODY, 'utf-8');
-      const localDir = resolve(contentDir, OK_DIR, 'local');
+      const localDir = resolve(contentDir, PS_DIR, 'local');
       mkdirSync(localDir, { recursive: true });
       writeFileSync(
         resolve(localDir, 'conflicts.json'),

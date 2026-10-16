@@ -23,7 +23,7 @@ import { SYNC_CATCHUP_GRACE_MS, useSyncToasts } from './use-sync-toasts';
 const messages = (spy: typeof warning): string[] => spy.mock.calls.map((c) => String(c[0]));
 
 function setBridge(singleFile: boolean) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: {
       config: { singleFile, projectPath: '/tmp/p' },
@@ -57,7 +57,7 @@ describe('useSyncToasts — disconnect grace downgrade', () => {
     success.mockClear();
     dismiss.mockClear();
     relaunchInFlightFlag = false;
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: undefined });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: undefined });
   });
   afterEach(() => {
     vi.useRealTimers();
@@ -98,8 +98,8 @@ describe('useSyncToasts — disconnect grace downgrade', () => {
 
   test('ephemeral single-file: honest toast offers the working Restart button (sender-routed to the ephemeral respawn)', () => {
     setBridge(true);
-    const restartSpy = (window as { okDesktop?: { restartServer: ReturnType<typeof vi.fn> } })
-      .okDesktop?.restartServer as ReturnType<typeof vi.fn>;
+    const restartSpy = (window as { psDesktop?: { restartServer: ReturnType<typeof vi.fn> } })
+      .psDesktop?.restartServer as ReturnType<typeof vi.fn>;
     const { rerender } = renderHook(
       ({ s }: { s: 'synced' | 'disconnected' }) => useSyncToasts(s, 'doc.md'),
       { initialProps: { s: 'synced' as const } },
@@ -118,8 +118,8 @@ describe('useSyncToasts — disconnect grace downgrade', () => {
 
   test('project server: honest toast offers the working Restart button', () => {
     setBridge(false);
-    const restartSpy = (window as { okDesktop?: { restartServer: ReturnType<typeof vi.fn> } })
-      .okDesktop?.restartServer as ReturnType<typeof vi.fn>;
+    const restartSpy = (window as { psDesktop?: { restartServer: ReturnType<typeof vi.fn> } })
+      .psDesktop?.restartServer as ReturnType<typeof vi.fn>;
     const { rerender } = renderHook(
       ({ s }: { s: 'synced' | 'disconnected' }) => useSyncToasts(s, 'doc.md'),
       { initialProps: { s: 'synced' as const } },
@@ -229,7 +229,7 @@ describe('useSyncToasts — disconnect grace downgrade', () => {
   });
 
   test('browser mode (no bridge): honest toast is message-only, no Restart control', () => {
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: undefined });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: undefined });
     const { rerender } = renderHook(
       ({ s }: { s: 'synced' | 'disconnected' }) => useSyncToasts(s, 'doc.md'),
       { initialProps: { s: 'synced' as const } },
@@ -685,7 +685,7 @@ describe('useSyncToasts — the transport-up, document-unsynced claim', () => {
     success.mockClear();
     dismiss.mockClear();
     relaunchInFlightFlag = false;
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: undefined });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: undefined });
   });
   afterEach(() => {
     vi.useRealTimers();

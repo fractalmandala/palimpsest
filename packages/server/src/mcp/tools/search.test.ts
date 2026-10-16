@@ -604,7 +604,7 @@ describe('search MCP tool — happy path', () => {
     });
 
     const text = result.content?.find((c) => c.type === 'text')?.text ?? '';
-    expect(text).toContain('restart OpenKnowledge before retrying');
+    expect(text).toContain('restart Palimpsest before retrying');
   });
 
   test("kind:'file' rows survive into structured results (PRD-7117 all-files MCP)", async () => {
@@ -681,7 +681,7 @@ describe('search MCP tool — happy path', () => {
 
 describe('search MCP tool — route-only previewUrl + no ui block (PRD-6735)', () => {
   test('result rows carry route-only previewUrl; structured output has no ui block', async () => {
-    const cwd = makeTempDir('ok-search-preview-');
+    const cwd = makeTempDir('ps-search-preview-');
     bindTestUiServerLock(cwd);
     mockFetchOk({
       ok: true,
@@ -729,7 +729,7 @@ describe('search MCP tool — error paths', () => {
     expect(result.isError).toBe(true);
     const text = result.content?.find((c) => c.type === 'text')?.text ?? '';
     expect(text).toContain('Hocuspocus server is not running');
-    expect(text).toContain('ok start');
+    expect(text).toContain('ps start');
     expect(text).toContain('grep');
   });
 

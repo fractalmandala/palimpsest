@@ -1,16 +1,16 @@
 ---
 title: From Notion
-description: How to export a Notion workspace to Markdown and open it in OpenKnowledge, what carries over, and where the two differ.
+description: How to export a Notion workspace to Markdown and open it in Palimpsest, what carries over, and where the two differ.
 icon: LuFileInput
 ---
 
-This guide will cover exporting your Notion workspace to markdown files so that you can access them from OpenKnowledge. OpenKnowledge and Notion differ in a few key ways, so a Notion export needs some cleanup — this guide covers what carries over and what to fix.
+This guide will cover exporting your Notion workspace to markdown files so that you can access them from Palimpsest. Palimpsest and Notion differ in a few key ways, so a Notion export needs some cleanup — this guide covers what carries over and what to fix.
 
-## Install OpenKnowledge
+## Install Palimpsest
 
 ### Desktop app (macOS 13+, Windows, Linux)
 
-Download the latest version of the OpenKnowledge desktop app. The button picks your platform automatically; its dropdown carries every other build, and the [downloads page](https://openknowledge.ai/download) lists them all.
+Download the latest version of the Palimpsest desktop app. The button picks your platform automatically; its dropdown carries every other build, and the [downloads page](https://github.com/fractalmandala/palimpsest/download) lists them all.
 
 <DownloadButton />
 
@@ -19,7 +19,7 @@ Download the latest version of the OpenKnowledge desktop app. The button picks y
 Install the [ok CLI](/docs/reference/cli) with npm:
 
 ```bash
-npm install -g @inkeep/open-knowledge
+npm install -g @palimpsest/cli
 ```
 
 ## Export your workspace from Notion
@@ -43,15 +43,15 @@ ok migrate notion /path/to/unzipped-export --apply
 
 <Callout type="info">
   The desktop app ships the `ok` CLI. The Windows installer puts it on your
-  `PATH` on its own. On macOS and Linux it installs to `$HOME/.ok/bin`, and a
+  `PATH` on its own. On macOS and Linux it installs to `$HOME/.ps/bin`, and a
   toggle in the first-launch dialog puts it on your `PATH` when you tick it (on
   Linux the package's install script also links `/usr/bin/ok` either way). If
-  `ok` isn't found, add it from **File → Set up OpenKnowledge
+  `ok` isn't found, add it from **File → Set up Palimpsest
   integrations…**, then open a new terminal window. If it's still missing,
-  add `$HOME/.ok/bin` to your `PATH` manually.
+  add `$HOME/.ps/bin` to your `PATH` manually.
 </Callout>
 
-Every transform is **idempotent**, so re-running is safe. See the tables below for a full list of differences between the Notion export and what OpenKnowledge supports.
+Every transform is **idempotent**, so re-running is safe. See the tables below for a full list of differences between the Notion export and what Palimpsest supports.
 
 **Options:**
 
@@ -68,19 +68,19 @@ Every transform is **idempotent**, so re-running is safe. See the tables below f
   The command refuses to touch a folder that doesn't look like a Notion export unless you pass `--force`.
 </Callout>
 
-## Open the export in OpenKnowledge
+## Open the export in Palimpsest
 
 ### Desktop app
 
-Open OpenKnowledge, choose **Open folder on disk**, select the unzipped export folder, and proceed through the **Setup** screen with defaults selected.
+Open Palimpsest, choose **Open folder on disk**, select the unzipped export folder, and proceed through the **Setup** screen with defaults selected.
 
 ### Web app
 
-`cd` into the unzipped folder and run `ok init && ok start`.
+`cd` into the unzipped folder and run `ps init && ps start`.
 
 ## What exports cleanly
 
-| Notion content | In OpenKnowledge |
+| Notion content | In Palimpsest |
 | --- | --- |
 | Headings, paragraphs, bold / italic, quotes, and dividers | Render natively and are preserved in the exported markdown. |
 | Bulleted, numbered, and to-do lists | Render natively, including nesting and `- [ ]` checkboxes. |
@@ -96,7 +96,7 @@ A number of Notion features don't survive the Markdown & CSV export, or land as 
 | --- | --- | --- |
 | **Databases** (tables, boards, calendars, galleries, timelines) | Each database exports as a `<name>_all.csv` file and a folder holding one markdown file per row. Full-page databases also get a stub page. | ✅ Creates a Markdown table page for every CSV. The `.csv` files are not deleted unless you pass `--remove-csv`. |
 | **Database row properties** | Exported as plain `Key: Value` lines under the page title, not YAML frontmatter. | ✅ Lifted into YAML frontmatter so they show in the [Properties panel](/docs/features/editor#properties). |
-| **Callouts** | Exported as raw `<aside>` HTML, so they don't pick up OpenKnowledge's callout styling. | ✅ Converted to native `> [!note]` callouts. |
+| **Callouts** | Exported as raw `<aside>` HTML, so they don't pick up Palimpsest's callout styling. | ✅ Converted to native `> [!note]` callouts. |
 | **Links between pages** | Link targets are percent-encoded, and once decoded contain spaces. | ✅ Decoded and angle-wrapped so they render and resolve. |
 | **Pasted or inline images** | Some images export inline as un-rendered base64 `data:` URIs instead of files. | ✅ Extracted to image files (or dropped with `--strip-base64`). |
 | **Relations, rollups, formulas** | Not represented in the Markdown & CSV export. | — |

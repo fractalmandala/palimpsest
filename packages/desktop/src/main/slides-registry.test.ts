@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { OkSlidesOpenResult } from '../shared/ipc-channels.ts';
+import type { PsSlidesOpenResult } from '../shared/ipc-channels.ts';
 import {
   createSlidesDeckRegistry,
   type RunningSlidesDeck,
@@ -84,7 +84,7 @@ describe('createSlidesDeckRegistry', () => {
     const registry = createSlidesDeckRegistry();
     expect(registry.getOpenInFlight('/decks/a.md')).toBeUndefined();
 
-    const attempt: Promise<OkSlidesOpenResult> = Promise.resolve({ kind: 'open', ok: true });
+    const attempt: Promise<PsSlidesOpenResult> = Promise.resolve({ kind: 'open', ok: true });
     registry.setOpenInFlight('/decks/a.md', attempt);
     expect(registry.getOpenInFlight('/decks/a.md')).toBe(attempt);
     expect(registry.get('/decks/a.md')).toBeUndefined();
@@ -97,7 +97,7 @@ describe('createSlidesDeckRegistry', () => {
     const registry = createSlidesDeckRegistry();
     const a = fakeDeck('/decks/a.md', 3001);
     registry.register(a.deck);
-    const attempt: Promise<OkSlidesOpenResult> = Promise.resolve({ kind: 'open', ok: true });
+    const attempt: Promise<PsSlidesOpenResult> = Promise.resolve({ kind: 'open', ok: true });
     registry.setOpenInFlight('/decks/b.md', attempt);
 
     registry.reapAll();

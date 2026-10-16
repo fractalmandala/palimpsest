@@ -10,25 +10,25 @@ import type { HocuspocusProvider } from '@hocuspocus/provider';
 import {
   codeLanguageForExtension,
   EDITABLE_TEXT_EXTRA_LANGUAGE,
-} from '@inkeep/open-knowledge-core/constants/code-languages';
-import { extensionOf } from '@inkeep/open-knowledge-core/utils/extension';
+} from '@palimpsest/core/constants/code-languages';
+import { extensionOf } from '@palimpsest/core/utils/extension';
 import { useLingui } from '@lingui/react/macro';
 import { basicSetup } from 'codemirror';
 import { useTheme } from 'next-themes';
 import { useEffect, useRef } from 'react';
 import { yCollab } from 'y-codemirror.next';
 import { propEditorHighlight } from '@/editor/components/CodeMirrorPropInput';
-import { okCmTheme } from '@/editor/extensions/cm-theme';
+import { psCmTheme } from '@/editor/extensions/cm-theme';
 import { registerFullPageCmView, unregisterFullPageCmView } from '@/editor/full-page-cm-views';
 import { acquireDocUndoManager } from './doc-undo-manager';
 import { loadCodeMirrorLanguageForExtension } from './text-viewer-languages';
 
-const darkTheme = okCmTheme({
+const darkTheme = psCmTheme({
   dark: true,
   background: 'var(--background)',
   gutterBackground: 'var(--muted)',
 });
-const lightTheme = okCmTheme({
+const lightTheme = psCmTheme({
   dark: false,
   background: 'var(--background)',
   gutterBackground: 'var(--muted)',

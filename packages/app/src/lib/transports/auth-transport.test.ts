@@ -1,4 +1,4 @@
-import { DEV_FALLBACK_CLI_REFUSAL } from '@inkeep/open-knowledge-core';
+import { DEV_FALLBACK_CLI_REFUSAL } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { httpAuthTransport } from './auth-transport';
 
@@ -146,7 +146,7 @@ describe('httpAuthTransport().start / ghLogin (streamAuthEndpoint)', () => {
             title: 'GitHub sign-in is unavailable for this remote.',
             status: 409,
             detail:
-              'Declare ghes.example.test in ~/.ok/global.yml to use GitHub Enterprise sign-in.',
+              'Declare ghes.example.test in ~/.ps/global.yml to use GitHub Enterprise sign-in.',
           }),
           { status: 409 },
         ),
@@ -154,7 +154,7 @@ describe('httpAuthTransport().start / ghLogin (streamAuthEndpoint)', () => {
     expect(await collectEvents(httpAuthTransport().start())).toEqual([
       {
         type: 'error',
-        message: 'Declare ghes.example.test in ~/.ok/global.yml to use GitHub Enterprise sign-in.',
+        message: 'Declare ghes.example.test in ~/.ps/global.yml to use GitHub Enterprise sign-in.',
       },
     ]);
   });

@@ -79,7 +79,7 @@ describe('WYSIWYG &#x20; literal — pure cold load of a doc already stored with
   });
 
   test('cold load shows a real space, not literal &#x20;, and bytes are byte-stable', async () => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-x20-coldload-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-x20-coldload-'));
     const docName = `x20-${crypto.randomUUID()}`;
     writeFileSync(join(dir, `${docName}.md`), 'alpha&#x20;\n', 'utf-8');
 
@@ -110,7 +110,7 @@ describe('WYSIWYG &#x20; literal — pure cold load of a doc already stored with
   }, 30_000);
 
   test('cold load of ADJACENT refs shows multiple spaces and keeps bytes byte-stable', async () => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-x20-adjacent-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-x20-adjacent-'));
     const docName = `x20adj-${crypto.randomUUID()}`;
     writeFileSync(join(dir, `${docName}.md`), 'gamma&#x20;&#x20;delta\n', 'utf-8');
 

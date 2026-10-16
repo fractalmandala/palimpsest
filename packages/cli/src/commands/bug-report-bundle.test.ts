@@ -12,12 +12,12 @@ import {
   DESKTOP_BUNDLE_ID,
   defaultBugReportZipPath,
   MAX_BUNDLED_LEDGER_REPORTS,
-  okBugReportsDir,
+  psBugReportsDir,
 } from './bug-report-bundle.ts';
 
 const tmpDirs: string[] = [];
 
-function makeTmpDir(prefix = 'ok-bugreport-test-'): string {
+function makeTmpDir(prefix = 'ps-bugreport-test-'): string {
   const dir = mkdtempSync(resolve(tmpdir(), prefix));
   tmpDirs.push(dir);
   return dir;
@@ -42,7 +42,7 @@ function listZipEntries(zipPath: string): string[] {
 }
 
 function readZipEntry(zipPath: string, entry: string): string {
-  const extractDir = makeTmpDir('ok-bugreport-extract-');
+  const extractDir = makeTmpDir('ps-bugreport-extract-');
   execSync(
     `unzip -q -o ${JSON.stringify(zipPath)} ${JSON.stringify(entry)} -d ${JSON.stringify(extractDir)}`,
   );
@@ -51,7 +51,7 @@ function readZipEntry(zipPath: string, entry: string): string {
 
 function makeProjectDir(slug = 'bundle-proj'): string {
   const projectDir = makeTmpDir();
-  writeAt(projectDir, '.ok/config.yml', `name: ${slug}\n`);
+  writeAt(projectDir, '.ps/config.yml', `name: ${slug}\n`);
   return projectDir;
 }
 
@@ -59,10 +59,10 @@ describe('collectStandardBundle — diagnostic-report staging count', () => {
   test('counts what reached the zip, not what the sweep selected', async () => {
     const projectDir = makeProjectDir();
     const reportsDir = makeTmpDir();
-    const present = join(reportsDir, 'OpenKnowledge-present.ips');
+    const present = join(reportsDir, 'Palimpsest-present.ips');
     writeFileSync(
       present,
-      `${JSON.stringify({ name: 'OpenKnowledge' })}\n{"procName":"OpenKnowledge"}\n`,
+      `${JSON.stringify({ name: 'Palimpsest' })}\n{"procName":"Palimpsest"}\n`,
     );
     const outputPath = join(makeTmpDir(), 'report.zip');
 
@@ -71,7 +71,7 @@ describe('collectStandardBundle — diagnostic-report staging count', () => {
       redact: true,
       outputPath,
       diagnosticReports: {
-        files: [present, join(reportsDir, 'OpenKnowledge-vanished.ips')],
+        files: [present, join(reportsDir, 'Palimpsest-vanished.ips')],
         outcome: 'collected',
         foreignIgnored: 0,
         unparseable: 0,
@@ -80,7 +80,7 @@ describe('collectStandardBundle — diagnostic-report staging count', () => {
       },
     });
 
-    expect(listZipEntries(zipPath)).toContain('diagnostic-reports/OpenKnowledge-present.ips');
+    expect(listZipEntries(zipPath)).toContain('diagnostic-reports/Palimpsest-present.ips');
     expect(readZipEntry(zipPath, 'state/diagnostic-reports-status.txt')).toBe(
       '1 collected (7d; 0 other-process report(s) ignored; 0 unparseable; 1 vanished before staging)\n',
     );
@@ -90,14 +90,14 @@ describe('collectStandardBundle — diagnostic-report staging count', () => {
 describe('collectStandardBundle — project bundle', () => {
   test('packages lock/spawn-error, local sink logs, and sysinfo into the zip', async () => {
     const projectDir = makeProjectDir();
-    writeAt(projectDir, '.ok/local/server.lock', '{"pid":1234}\n');
-    writeAt(projectDir, '.ok/local/last-spawn-error.log', 'spawn failed\n');
+    writeAt(projectDir, '.ps/local/server.lock', '{"pid":1234}\n');
+    writeAt(projectDir, '.ps/local/last-spawn-error.log', 'spawn failed\n');
     writeAt(
       projectDir,
-      '.ok/local/acp-launch-failures.log',
+      '.ps/local/acp-launch-failures.log',
       '=== acp launch failure 2026-09-23T12:00:00.000Z thread=t agent=codex-acp source=registry reason=connect ===\n',
     );
-    writeAt(projectDir, '.ok/local/logs/server-current.jsonl', '{"level":30}\n');
+    writeAt(projectDir, '.ps/local/logs/server-current.jsonl', '{"level":30}\n');
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath, summary } = await collectStandardBundle({
@@ -127,7 +127,7 @@ describe('collectStandardBundle — project bundle', () => {
   test('last-server-crash.json is packaged from the lock dir when the server recorded a crash', async () => {
     const projectDir = makeProjectDir();
     const body = '{"origin":"uncaughtException","error":{"name":"Error","message":"boom"}}\n';
-    writeAt(projectDir, '.ok/local/last-server-crash.json', body);
+    writeAt(projectDir, '.ps/local/last-server-crash.json', body);
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath } = await collectStandardBundle({
@@ -143,7 +143,7 @@ describe('collectStandardBundle — project bundle', () => {
 
   test('MANIFEST.json mirrors the returned summary', async () => {
     const projectDir = makeProjectDir();
-    writeAt(projectDir, '.ok/local/server.lock', '{"pid":1}\n');
+    writeAt(projectDir, '.ps/local/server.lock', '{"pid":1}\n');
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath, summary } = await collectStandardBundle({
@@ -161,9 +161,9 @@ describe('collectStandardBundle — project bundle', () => {
     expect(summary.files).toContain('sysinfo.json');
   });
 
-  test('falls back to a hashed slug when .ok exists without a config name', async () => {
+  test('falls back to a hashed slug when .ps exists without a config name', async () => {
     const projectDir = makeTmpDir();
-    writeAt(projectDir, '.ok/local/server.lock', '{}\n');
+    writeAt(projectDir, '.ps/local/server.lock', '{}\n');
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { summary } = await collectStandardBundle({ projectDir, redact: true, outputPath });
@@ -177,7 +177,7 @@ describe('collectStandardBundle — redaction', () => {
 
   test('scrubs a seeded secret and records the audit', async () => {
     const projectDir = makeProjectDir();
-    writeAt(projectDir, '.ok/local/last-spawn-error.log', `token ${secret} leaked\n`);
+    writeAt(projectDir, '.ps/local/last-spawn-error.log', `token ${secret} leaked\n`);
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath, summary } = await collectStandardBundle({
@@ -200,7 +200,7 @@ describe('collectStandardBundle — redaction', () => {
 
   test('redact: false leaves content unmodified and the audit empty', async () => {
     const projectDir = makeProjectDir();
-    writeAt(projectDir, '.ok/local/last-spawn-error.log', `token ${secret} leaked\n`);
+    writeAt(projectDir, '.ps/local/last-spawn-error.log', `token ${secret} leaked\n`);
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath, summary } = await collectStandardBundle({
@@ -704,7 +704,7 @@ describe('collectStandardBundle — bundle scope disclosure', () => {
   });
 
   test('discloses the send ledger as machine-wide, naming its entries', async () => {
-    const reportsDir = makeTmpDir('ok-bugreport-ledger-');
+    const reportsDir = makeTmpDir('ps-bugreport-ledger-');
     writeFileSync(
       join(reportsDir, '2026-08-19T16-42-03-547Z-bugreport.yaml'),
       'id: 2026-08-19T16-42-03-547Z-bugreport.zip\nprojectSlug: someotherproject\n',
@@ -729,7 +729,7 @@ describe('collectStandardBundle — bundle scope disclosure', () => {
   });
 
   test('discloses the send ledger in an unscoped bundle too', async () => {
-    const reportsDir = makeTmpDir('ok-bugreport-ledger-');
+    const reportsDir = makeTmpDir('ps-bugreport-ledger-');
     writeFileSync(
       join(reportsDir, '2026-08-19T16-42-03-547Z-bugreport.yaml'),
       'id: 2026-08-19T16-42-03-547Z-bugreport.zip\nprojectSlug: null\n',
@@ -750,7 +750,7 @@ describe('collectStandardBundle — bundle scope disclosure', () => {
   });
 
   test('does not disclose a sidecar that failed to stage', async () => {
-    const reportsDir = makeTmpDir('ok-bugreport-ledger-');
+    const reportsDir = makeTmpDir('ps-bugreport-ledger-');
     const ghost = join(reportsDir, '2026-08-19T16-42-03-547Z-bugreport.yaml');
     writeFileSync(ghost, 'id: x\n');
     const listed = collectBugReportLedgerFiles(reportsDir);
@@ -771,7 +771,7 @@ describe('collectStandardBundle — bundle scope disclosure', () => {
   });
 
   test('stages a sent marker alongside the sidecar it stands in for', async () => {
-    const reportsDir = makeTmpDir('ok-bugreport-ledger-');
+    const reportsDir = makeTmpDir('ps-bugreport-ledger-');
     const base = '2026-08-19T16-42-03-547Z-bugreport';
     writeFileSync(join(reportsDir, `${base}.yaml`), 'id: [unreadable\n  : :');
     writeFileSync(
@@ -795,7 +795,7 @@ describe('collectStandardBundle — bundle scope disclosure', () => {
   });
 
   test('the ledger cap evicts whole reports, never half of a marker pair', () => {
-    const reportsDir = makeTmpDir('ok-bugreport-ledger-');
+    const reportsDir = makeTmpDir('ps-bugreport-ledger-');
     const bases: string[] = [];
     for (let i = 1; i <= MAX_BUNDLED_LEDGER_REPORTS + 2; i += 1) {
       const base = `2026-08-19T16-42-${String(i).padStart(2, '0')}-000Z-bugreport`;
@@ -849,20 +849,20 @@ describe('collectStandardBundle — system-wide (no projectDir)', () => {
 });
 
 describe('defaultBugReportZipPath', () => {
-  test('derives ~/.ok/bug-reports/<timestamp>-bugreport.zip with : and . replaced', () => {
+  test('derives ~/.ps/bug-reports/<timestamp>-bugreport.zip with : and . replaced', () => {
     const path = defaultBugReportZipPath(new Date('2026-07-10T01:02:03.456Z'));
     expect(path).toBe(
-      join(homedir(), '.ok', 'bug-reports', '2026-07-10T01-02-03-456Z-bugreport.zip'),
+      join(homedir(), '.ps', 'bug-reports', '2026-07-10T01-02-03-456Z-bugreport.zip'),
     );
-    expect(okBugReportsDir()).toBe(join(homedir(), '.ok', 'bug-reports'));
+    expect(psBugReportsDir()).toBe(join(homedir(), '.ps', 'bug-reports'));
   });
 });
 
 describe('collectStandardBundle — document names are a Detailed-diagnostics field', () => {
   const scrollLog = [
-    '{"level":30,"msg":"ok-outline-nav-dispatch","docName":"notes/salary-negotiation.md","index":3}',
-    '{"level":30,"msg":"ok-scroll-restore","docName":"notes/salary-negotiation.md","top":120}',
-    '{"level":30,"msg":"ok-outline-nav","docName":"private/board-deck.md","index":0}',
+    '{"level":30,"msg":"ps-outline-nav-dispatch","docName":"notes/salary-negotiation.md","index":3}',
+    '{"level":30,"msg":"ps-scroll-restore","docName":"notes/salary-negotiation.md","top":120}',
+    '{"level":30,"msg":"ps-outline-nav","docName":"private/board-deck.md","index":0}',
   ].join('\n');
 
   test('replaces every docName with a digest that still groups one document', async () => {
@@ -913,7 +913,7 @@ describe('collectStandardBundle — document names are a Detailed-diagnostics fi
     writeAt(
       userLogsDir,
       'desktop.2026-08-27.log',
-      '{"level":30,"msg":"ok-scroll-restore","docName":"notes/she said \\"hi\\".md","top":9}\n',
+      '{"level":30,"msg":"ps-scroll-restore","docName":"notes/she said \\"hi\\".md","top":9}\n',
     );
     const outputPath = join(makeTmpDir(), 'report.zip');
 
@@ -942,7 +942,7 @@ describe('collectStandardBundle — document names are a Detailed-diagnostics fi
       userLogsDir,
       'desktop.2026-08-27.log',
       `${[
-        '{"level":30,"msg":"ok-scroll-restore","docName":"notes/salary-negotiation.md","top":1}',
+        '{"level":30,"msg":"ps-scroll-restore","docName":"notes/salary-negotiation.md","top":1}',
         '{"level":30,"msg":"[syncPromise] notes/salary-negotiation.md resolved synchronously (warm provider)"}',
       ].join('\n')}\n`,
     );

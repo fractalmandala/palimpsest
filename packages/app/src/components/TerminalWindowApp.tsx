@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { ReportBugMenuTrigger } from '@/components/ReportBugMenuTrigger';
 import { useInstalledClis } from '@/hooks/use-installed-clis';
 import { ConfigProvider } from '@/lib/config-provider';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { SessionsHost } from './SessionsHost';
 import { useLiveXtermTheme } from './use-live-xterm-theme';
 
 interface TerminalWindowAppProps {
-  readonly bridge: OkDesktopBridge;
+  readonly bridge: PsDesktopBridge;
 }
 
 export function TerminalWindowApp({ bridge }: TerminalWindowAppProps) {

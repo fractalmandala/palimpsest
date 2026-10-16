@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type {
   ThreadClientFrame,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import type { WebSocketRoute } from '@playwright/test';
 import { expect, test, waitForActiveProviderSynced } from './_helpers';
 import { startHiddenChatAgent } from './hidden-chat-transport.test-helper';
@@ -26,7 +26,7 @@ test('a hidden Chat stays hidden through late thread restoration until its short
 
   await page.addInitScript((agentId) => {
     localStorage.setItem(
-      'ok-acp-registered-agents-v1',
+      'ps-acp-registered-agents-v1',
       JSON.stringify({
         agents: [{ source: 'custom', id: agentId, name: 'Hidden activity fixture' }],
         defaultKey: `custom:${agentId}`,
@@ -113,7 +113,7 @@ test('a hidden Chat stays hidden through late thread restoration until its short
       .poll(() =>
         page.evaluate(
           () =>
-            JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}').agentPanelVisible,
+            JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}').agentPanelVisible,
         ),
       )
       .toBe(false);

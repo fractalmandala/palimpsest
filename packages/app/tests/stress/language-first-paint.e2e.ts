@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, servedEntryScriptRoute, test } from './_helpers';
 
-const STORAGE_KEY = 'ok-language-v1';
+const STORAGE_KEY = 'ps-language-v1';
 
 interface CachedLanguage {
   pref: string;

@@ -3,7 +3,7 @@ import {
   type KeepaliveHandle,
   type KeepaliveLogger,
   startKeepalive,
-} from '@inkeep/open-knowledge-core/keepalive';
+} from '@palimpsest/core/keepalive';
 import type { DesktopLogger } from './desktop-logger.ts';
 import { lockWsOrigin, type ServerLockMetadataLike } from './window-manager.ts';
 

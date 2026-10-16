@@ -1,4 +1,4 @@
-import * as viaPackageName from '@inkeep/open-knowledge-core';
+import * as viaPackageName from '@palimpsest/core';
 import { expect, test } from 'vitest';
 import * as viaSource from '../../src/index.ts';
 

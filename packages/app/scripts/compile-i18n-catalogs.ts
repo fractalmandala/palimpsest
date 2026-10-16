@@ -35,7 +35,7 @@ type CompileOutcome = Pick<SpawnSyncReturns<string>, 'status' | 'signal' | 'erro
 
 export const APP_ROOT = fileURLToPath(new URL('..', import.meta.url));
 export const COMPILE_TIMEOUT_MS = 120_000;
-const SCRATCH_PREFIX = '.ok-i18n-compile-';
+const SCRATCH_PREFIX = '.ps-i18n-compile-';
 const CATALOG_SOURCE_FILENAME = 'messages.po';
 const CATALOG_COMPILED_FILENAME = 'messages.json';
 const LINGUI_CONFIG_FILENAME = 'lingui.config.ts';
@@ -95,7 +95,7 @@ function compiledPathOf(appRoot: string, locale: string): string {
 }
 
 function stampPathOf(appRoot: string): string {
-  return join(appRoot, 'node_modules', '.cache', 'ok-i18n-catalogs.json');
+  return join(appRoot, 'node_modules', '.cache', 'ps-i18n-catalogs.json');
 }
 
 function localesHolding(localesDir: string, filename: string): string[] {

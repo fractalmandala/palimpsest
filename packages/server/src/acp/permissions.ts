@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { PermissionOption, ToolCallUpdate } from '@agentclientprotocol/sdk';
-import { OK_GATED_TOOL_NAMES } from '@inkeep/open-knowledge-core';
-import type { ThreadChatGrant } from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { identifyOpenKnowledgeToolCall } from '@inkeep/open-knowledge-core/acp/tool-call-input';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { PS_GATED_TOOL_NAMES } from '@palimpsest/core';
+import type { ThreadChatGrant } from '@palimpsest/core/acp/thread-protocol';
+import { identifyPalimpsestToolCall } from '@palimpsest/core/acp/tool-call-input';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import type { PinoLogger } from '../logger.ts';
 import type { BrowserCallIdentity } from './browser-mcp.ts';
 import { readOnlyShellCommand } from './read-only-shell.ts';
@@ -13,10 +13,10 @@ const PERMISSIONS_FILE = 'acp-permissions.json';
 
 const NO_CHAT_GRANTS: ReadonlySet<ThreadChatGrant> = new Set();
 
-const GATED_OK_TOOLS: ReadonlySet<string> = new Set(OK_GATED_TOOL_NAMES);
+const GATED_OK_TOOLS: ReadonlySet<string> = new Set(PS_GATED_TOOL_NAMES);
 
 function gatedOkTool(toolCall: ToolCallUpdate): boolean {
-  const tool = identifyOpenKnowledgeToolCall(toolCall, 'known')?.tool;
+  const tool = identifyPalimpsestToolCall(toolCall, 'known')?.tool;
   return tool !== undefined && GATED_OK_TOOLS.has(tool);
 }
 
@@ -117,9 +117,9 @@ export class AcpPermissionStore {
     if (allow === undefined) return { auto: null };
     const auto: PolicyDecision = { auto: { optionId: allow.optionId } };
     if (browser.kind !== 'none') return { auto: null };
-    const okTool = identifyOpenKnowledgeToolCall(toolCall, 'known')?.tool;
-    if (okTool !== undefined) {
-      if (GATED_OK_TOOLS.has(okTool)) return { auto: null };
+    const psTool = identifyPalimpsestToolCall(toolCall, 'known')?.tool;
+    if (psTool !== undefined) {
+      if (GATED_OK_TOOLS.has(psTool)) return { auto: null };
       if (autoApproveOkTools) return auto;
     }
     const kind = toolKindOf(toolCall);

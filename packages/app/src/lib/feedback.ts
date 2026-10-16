@@ -9,7 +9,7 @@ const importMetaEnv = (import.meta as unknown as { env?: Record<string, string |
 
 const FEEDBACK_ENDPOINT = new URL(
   '/api/feedback',
-  importMetaEnv?.VITE_OK_FEEDBACK_INTAKE_ORIGIN || 'https://openknowledge.ai',
+  importMetaEnv?.VITE_OK_FEEDBACK_INTAKE_ORIGIN || 'https://github.com/fractalmandala/palimpsest',
 ).href;
 
 type FeedbackKind = 'general' | 'uninstall';
@@ -68,7 +68,7 @@ async function toBase64Transport(files: readonly File[]): Promise<FeedbackAttach
 }
 
 async function uploadThroughDesktop(files: readonly File[]): Promise<string[] | null> {
-  const bridge = typeof window === 'undefined' ? undefined : window.okDesktop;
+  const bridge = typeof window === 'undefined' ? undefined : window.psDesktop;
   if (bridge === undefined) return null;
   const assetUrls: string[] = [];
   for (const [index, file] of files.entries()) {
@@ -102,7 +102,7 @@ export async function toFeedbackAttachmentPayloads(
 }
 
 function resolvePlatform(): string {
-  return (typeof window !== 'undefined' && window.okDesktop?.platform) || 'web';
+  return (typeof window !== 'undefined' && window.psDesktop?.platform) || 'web';
 }
 
 export async function submitFeedback(payload: FeedbackPayload): Promise<FeedbackResult> {
@@ -120,7 +120,7 @@ export async function submitFeedback(payload: FeedbackPayload): Promise<Feedback
     if (response.ok) {
       const data = (await response.json().catch((err) => {
         console.warn(
-          `[feedback] action=submit result=ok-parse-error message=${err instanceof Error ? err.message : String(err)}`,
+          `[feedback] action=submit result=ps-parse-error message=${err instanceof Error ? err.message : String(err)}`,
         );
         return null;
       })) as { reference?: unknown } | null;

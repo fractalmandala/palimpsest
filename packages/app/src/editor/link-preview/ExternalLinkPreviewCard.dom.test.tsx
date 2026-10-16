@@ -1,4 +1,4 @@
-import type { LinkPreviewMetadata } from '@inkeep/open-knowledge-core';
+import type { LinkPreviewMetadata } from '@palimpsest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import { ExternalLinkPreviewCard } from './ExternalLinkPreviewCard';

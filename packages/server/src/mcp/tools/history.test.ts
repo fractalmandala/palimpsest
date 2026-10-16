@@ -75,7 +75,7 @@ afterAll(() => {
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-get-history-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-get-history-'));
 });
 
 afterEach(async () => {

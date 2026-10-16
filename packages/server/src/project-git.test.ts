@@ -17,7 +17,7 @@ const execFileAsync = promisify(execFile);
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-project-git-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-project-git-test-'));
 });
 
 afterEach(async () => {
@@ -181,7 +181,7 @@ describe('ensureProjectGit — initial commit', () => {
     await ensureProjectGit(projectRoot);
     configureTestGitRepository(projectRoot);
 
-    const worktreePath = resolve(projectRoot, '.ok/worktrees/wt-1');
+    const worktreePath = resolve(projectRoot, '.ps/worktrees/wt-1');
     await expect(
       execFileAsync('git', ['worktree', 'add', '-b', 'wt-1', worktreePath, '--', 'main'], {
         cwd: projectRoot,
@@ -260,7 +260,7 @@ describe('ensureProjectGit — initial commit', () => {
       const author = await execFileAsync('git', ['log', '-1', '--format=%an <%ae>'], {
         cwd: projectRoot,
       });
-      expect(author.stdout.trim()).toBe('Open Knowledge <noreply@openknowledge.local>');
+      expect(author.stdout.trim()).toBe('Palimpsest <noreply@palimpsest.local>');
     } finally {
       for (const key of Object.keys(process.env)) {
         if (!(key in saved)) delete process.env[key];

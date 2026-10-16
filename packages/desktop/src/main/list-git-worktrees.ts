@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { realpathSync } from 'node:fs';
 import { isAbsolute } from 'node:path';
 import { promisify } from 'node:util';
-import { type BridgeWorktreeEntry, parseWorktreeListPorcelain } from '@inkeep/open-knowledge-core';
+import { type BridgeWorktreeEntry, parseWorktreeListPorcelain } from '@palimpsest/core';
 import { gitSpawnEnv } from './git-spawn-env.ts';
 
 const execFileAsync = promisify(execFile);

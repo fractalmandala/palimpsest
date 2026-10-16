@@ -7,18 +7,18 @@ afterEach(() => {
 
 describe('renderer-window MCP server-name argv', () => {
   test('a Beta run hands the window its own server key', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(withMcpServerNameArg(['--ok-mode=editor'])).toEqual([
       '--ok-mode=editor',
-      '--ok-mcp-server-name=open-knowledge-beta',
+      '--ok-mcp-server-name=palimpsest-beta',
     ]);
   });
 
   test('a Stable run hands the window the Stable server key', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(withMcpServerNameArg(['--ok-mode=editor'])).toEqual([
       '--ok-mode=editor',
-      '--ok-mcp-server-name=open-knowledge',
+      '--ok-mcp-server-name=palimpsest',
     ]);
   });
 });

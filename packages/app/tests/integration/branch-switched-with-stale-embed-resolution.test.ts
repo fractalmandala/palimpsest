@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -57,7 +57,7 @@ afterEach(async () => {
 
 describe('T17: branch switch with `![[photo.png]]` doc — reseed-before-reset', () => {
   test('post-switch PM image src reflects NEW branch resolved path, not pre-switch', async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-t17-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-t17-')));
     cleanups.push(() => {
       try {
         rmSync(contentDir, { recursive: true, force: true });

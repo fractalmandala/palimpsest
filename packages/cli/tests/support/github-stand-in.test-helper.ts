@@ -155,7 +155,7 @@ function throwawayGitHubCertificates(hosts: string[]): {
 } {
   const authority = generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
   const server = generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
-  const authorityName = 'Open Knowledge publish test authority';
+  const authorityName = 'Palimpsest publish test authority';
   const authorityCertificate = issueCertificate({
     serial: 1,
     issuer: authorityName,

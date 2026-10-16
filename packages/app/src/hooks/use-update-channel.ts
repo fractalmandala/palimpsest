@@ -11,7 +11,7 @@ export function useUpdateChannel(): UseUpdateChannelResult {
   const [channel, setChannelState] = useState<UpdateChannel | null>(null);
 
   useEffect(() => {
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (!bridge) return;
 
     let cancelled = false;

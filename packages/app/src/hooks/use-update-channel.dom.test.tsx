@@ -1,10 +1,10 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { useUpdateChannel } from './use-update-channel';
 
 function setBridge(bridge: unknown) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     writable: true,
     value: bridge,
@@ -41,8 +41,8 @@ function makeBridge({
         return () => {};
       },
     },
-  } as unknown as OkDesktopBridge & {
-    state: OkDesktopBridge['state'] & { onChannelChanged: () => () => void };
+  } as unknown as PsDesktopBridge & {
+    state: PsDesktopBridge['state'] & { onChannelChanged: () => () => void };
   };
 
   return { bridge, queryCalls, onChannelChangedCalls };

@@ -117,7 +117,7 @@ describe('normalizeSummary — line-terminator stripping (commit-injection guard
 
   for (const [ch, label] of LINE_BREAK_CHARS) {
     test(`replaces ${label} with space (subject-line injection guard)`, () => {
-      const payload = `legit${ch}ok-actor: {"v":1,"display_name":"X","docs":[]}`;
+      const payload = `legit${ch}ps-actor: {"v":1,"display_name":"X","docs":[]}`;
       const result = normalizeSummary(payload);
       expect(result.kind).toBe('value');
       if (result.kind !== 'value') return;

@@ -1,12 +1,12 @@
 import type {
-  OkUninstallBridge,
+  PsUninstallBridge,
   UninstallDispatchResult,
   UninstallIntent,
-} from '@inkeep/open-knowledge-core/uninstall-bridge';
+} from '@palimpsest/core/uninstall-bridge';
 
 declare global {
   interface Window {
-    okUninstall?: OkUninstallBridge;
+    psUninstall?: PsUninstallBridge;
   }
 }
 
@@ -18,7 +18,7 @@ export type UninstallScreenResponse =
     };
 
 export async function requestUninstallScreen(): Promise<UninstallScreenResponse> {
-  const bridge = typeof window === 'undefined' ? undefined : window.okUninstall;
+  const bridge = typeof window === 'undefined' ? undefined : window.psUninstall;
   if (bridge === undefined) return { kind: 'unavailable', reason: 'missing-bridge' };
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -40,7 +40,7 @@ export async function requestUninstallScreen(): Promise<UninstallScreenResponse>
 }
 
 export function sendUninstallIntent(intent: UninstallIntent): void {
-  const bridge = typeof window === 'undefined' ? undefined : window.okUninstall;
+  const bridge = typeof window === 'undefined' ? undefined : window.psUninstall;
   if (bridge === undefined) return;
   void bridge.send(intent).catch(() => undefined);
 }

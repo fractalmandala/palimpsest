@@ -7,13 +7,13 @@ import { killGroup } from '../server-process.ts';
 import { type PrebuiltDevApp, resolvePrebuiltDevApp } from './prebuilt-dev-app.ts';
 import { PREBUILT_BUILD_OPTIONS } from './prebuilt-serving.ts';
 
-export const OK_ROOT = join(APP_PACKAGE_ROOT, '..', '..');
+export const PS_ROOT = join(APP_PACKAGE_ROOT, '..', '..');
 
 export const PREBUILT_OUT_ROOT = join(
   APP_PACKAGE_ROOT,
   'node_modules',
   '.cache',
-  'ok-prebuilt-dev',
+  'ps-prebuilt-dev',
 );
 
 const OUTPUT_TAIL_CHARS = 8_000;
@@ -116,10 +116,10 @@ export function buildPrebuiltDist(distDir: string): Promise<void> {
 
 export async function preparePrebuiltDevApp(): Promise<PrebuiltDevApp> {
   await runPnpm('predev for the prebuilt DEV app', ['run', 'predev'], {
-    OK_TEST_SKIP_I18N_COMPILE: '1',
+    PS_TEST_SKIP_I18N_COMPILE: '1',
   });
   return resolvePrebuiltDevApp({
-    okRoot: OK_ROOT,
+    psRoot: PS_ROOT,
     outRoot: PREBUILT_OUT_ROOT,
     options: PREBUILT_BUILD_OPTIONS,
     build: buildPrebuiltDist,

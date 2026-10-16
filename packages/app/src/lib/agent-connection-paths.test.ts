@@ -1,4 +1,4 @@
-import { buildConnectionsView, editorPathId } from '@inkeep/open-knowledge-core';
+import { buildConnectionsView, editorPathId } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { connectionPathDisplay } from './agent-connection-paths.ts';
 
@@ -17,7 +17,7 @@ describe('connectionPathDisplay', () => {
 
   test('names the installed folder for a project skill, not just its root', () => {
     expect(connectionPathDisplay(editorPathId('editor-project-skill-root', 'codex'))).toBe(
-      '.codex/skills/open-knowledge/',
+      '.codex/skills/palimpsest/',
     );
   });
 

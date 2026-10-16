@@ -1,4 +1,4 @@
-import { createBasenameIndex, createTargetNamespace } from '@inkeep/open-knowledge-core';
+import { createBasenameIndex, createTargetNamespace } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   assessLocalTargetOccurrences,

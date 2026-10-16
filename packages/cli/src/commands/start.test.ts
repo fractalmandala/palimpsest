@@ -15,8 +15,8 @@ import { request as httpRequest } from 'node:http';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { idleShutdownToMs } from '@inkeep/open-knowledge-core';
-import { type Config, ConfigSchema } from '@inkeep/open-knowledge-server';
+import { idleShutdownToMs } from '@palimpsest/core';
+import { type Config, ConfigSchema } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   type BootedStartServer,
@@ -28,7 +28,7 @@ import {
   isLoopbackHost,
   isReapableEphemeralProjectDir,
   isServerLockCollision,
-  OkDirMissingError,
+  PsDirMissingError,
   parseExternalUrlFlag,
   parseIdleShutdownFlag,
   parseOnlyModule,
@@ -47,7 +47,7 @@ import {
 } from './start.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -83,14 +83,14 @@ describe('parseExternalUrlFlag', () => {
 describe('formatShutdownNotice', () => {
   test('SIGINT includes the headline, the wait notice, and the force-quit hint', () => {
     const lines = formatShutdownNotice('SIGINT');
-    expect(lines[0]).toContain('Stopping OpenKnowledge');
+    expect(lines[0]).toContain('Stopping Palimpsest');
     expect(lines.some((l) => l.includes('few seconds'))).toBe(true);
     expect(lines.some((l) => l.includes('force quit'))).toBe(true);
   });
 
   test('SIGTERM omits the force-quit hint (no interactive second-press path)', () => {
     const lines = formatShutdownNotice('SIGTERM');
-    expect(lines[0]).toContain('Stopping OpenKnowledge');
+    expect(lines[0]).toContain('Stopping Palimpsest');
     expect(lines.some((l) => l.includes('few seconds'))).toBe(true);
     expect(lines.some((l) => l.includes('force quit'))).toBe(false);
   });
@@ -106,8 +106,8 @@ describe('resolveStartConsoleLevel', () => {
     expect(resolveStartConsoleLevel({ LOG_LEVEL: 'debug' })).toBeNull();
   });
 
-  test('returns null when OK_CONSOLE_LEVEL is already set', () => {
-    expect(resolveStartConsoleLevel({ OK_CONSOLE_LEVEL: 'info' })).toBeNull();
+  test('returns null when PS_CONSOLE_LEVEL is already set', () => {
+    expect(resolveStartConsoleLevel({ PS_CONSOLE_LEVEL: 'info' })).toBeNull();
   });
 });
 
@@ -290,8 +290,8 @@ describe('withIdleShutdownProcessExit (idle-path zombie prevention)', () => {
 
 describe('isServerLockCollision (D1/C3 gate)', () => {
   test('same-project authority refusal is reusable before its discovery record appears', async () => {
-    const mod = await import('@inkeep/open-knowledge-server');
-    const fixture = mkdtempSync(join(tmpdir(), 'ok-reuse-authority-'));
+    const mod = await import('@palimpsest/server');
+    const fixture = mkdtempSync(join(tmpdir(), 'ps-reuse-authority-'));
     const cwd = join(fixture, 'project');
     const other = join(fixture, 'other-project');
     const alias = join(fixture, 'alias');
@@ -320,7 +320,7 @@ describe('isServerLockCollision (D1/C3 gate)', () => {
   class FakeServerLockErr extends Error {}
   const fakeModule = {
     ServerLockCollisionError: FakeServerLockErr,
-  } as unknown as typeof import('@inkeep/open-knowledge-server');
+  } as unknown as typeof import('@palimpsest/server');
 
   test('true for a ServerLockCollisionError instance', () => {
     expect(isServerLockCollision(new FakeServerLockErr('held'), fakeModule, tmpdir())).toBe(true);
@@ -330,7 +330,7 @@ describe('isServerLockCollision (D1/C3 gate)', () => {
     expect(isServerLockCollision('not-an-error', fakeModule, tmpdir())).toBe(false);
   });
   test('false (never throws) when the module lacks the class export', () => {
-    const empty = {} as unknown as typeof import('@inkeep/open-knowledge-server');
+    const empty = {} as unknown as typeof import('@palimpsest/server');
     expect(isServerLockCollision(new Error('boom'), empty, tmpdir())).toBe(false);
   });
 });
@@ -341,11 +341,11 @@ describe('bootStartServer (integration)', () => {
   let originalHome: string | undefined;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-start-boot-'));
-    const okDir = resolve(tmpDir, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-start-boot-'));
+    const psDir = resolve(tmpDir, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
     originalHome = process.env.HOME;
     process.env.HOME = tmpDir;
     booted = null;
@@ -680,7 +680,7 @@ describe('bootStartServer (integration)', () => {
             {
               name: 'open-knowledge-ui',
               runtimeExecutable: '/bin/sh',
-              runtimeArgs: ['-l', '-c', '# ok-ui-v1\nexit 0'],
+              runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexit 0'],
             },
           ],
         },
@@ -721,7 +721,7 @@ describe('bootStartServer (integration)', () => {
   });
 
   test('writes no SKILL.md anywhere on boot', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-start-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-start-home-'));
     const prevHome = process.env.HOME;
     process.env.HOME = home;
     try {
@@ -743,7 +743,7 @@ describe('bootStartServer (integration)', () => {
       };
       walk(home);
       expect(wrote).toEqual([]);
-      expect(existsSync(join(tmpDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(tmpDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         false,
       );
     } finally {
@@ -753,9 +753,9 @@ describe('bootStartServer (integration)', () => {
     }
   });
 
-  test('AC-C4: OK_RECLAIM_DISABLE=1 forwards reclaimDisableEnv to both sweep fns', async () => {
-    const prevEnv = process.env.OK_RECLAIM_DISABLE;
-    process.env.OK_RECLAIM_DISABLE = '1';
+  test('AC-C4: PS_RECLAIM_DISABLE=1 forwards reclaimDisableEnv to both sweep fns', async () => {
+    const prevEnv = process.env.PS_RECLAIM_DISABLE;
+    process.env.PS_RECLAIM_DISABLE = '1';
     const mcpCaptures: Array<{ reclaimDisableEnv: string | null }> = [];
     const launchCaptures: Array<{ reclaimDisableEnv: string | null }> = [];
     try {
@@ -772,17 +772,17 @@ describe('bootStartServer (integration)', () => {
         },
       });
     } finally {
-      if (prevEnv === undefined) delete process.env.OK_RECLAIM_DISABLE;
-      else process.env.OK_RECLAIM_DISABLE = prevEnv;
+      if (prevEnv === undefined) delete process.env.PS_RECLAIM_DISABLE;
+      else process.env.PS_RECLAIM_DISABLE = prevEnv;
     }
 
     expect(mcpCaptures[0]?.reclaimDisableEnv).toBe('1');
     expect(launchCaptures[0]?.reclaimDisableEnv).toBe('1');
   });
 
-  test('default (no OK_RECLAIM_DISABLE) forwards reclaimDisableEnv=null to both sweeps', async () => {
-    const prevEnv = process.env.OK_RECLAIM_DISABLE;
-    delete process.env.OK_RECLAIM_DISABLE;
+  test('default (no PS_RECLAIM_DISABLE) forwards reclaimDisableEnv=null to both sweeps', async () => {
+    const prevEnv = process.env.PS_RECLAIM_DISABLE;
+    delete process.env.PS_RECLAIM_DISABLE;
     const captured: Array<{ reclaimDisableEnv: string | null }> = [];
     try {
       booted = await bootStartServer({
@@ -798,7 +798,7 @@ describe('bootStartServer (integration)', () => {
         },
       });
     } finally {
-      if (prevEnv !== undefined) process.env.OK_RECLAIM_DISABLE = prevEnv;
+      if (prevEnv !== undefined) process.env.PS_RECLAIM_DISABLE = prevEnv;
     }
     expect(captured).toHaveLength(2);
     for (const c of captured) expect(c.reclaimDisableEnv).toBeNull();
@@ -841,7 +841,7 @@ describe('bootStartServer (integration)', () => {
   });
 
   test('reactShellDistDir — server serves the shell on /', async () => {
-    const shellDir = await mkdtemp(resolve(tmpdir(), 'ok-start-shell-'));
+    const shellDir = await mkdtemp(resolve(tmpdir(), 'ps-start-shell-'));
     const shellHtml = '<!doctype html><html><body>react-shell-test-sentinel</body></html>';
     writeFileSync(join(shellDir, 'index.html'), shellHtml, 'utf-8');
 
@@ -886,7 +886,7 @@ describe('bootStartServer (integration)', () => {
 
   test('--serve-content-assets and --react-shell-dist-dir compose additively', async () => {
     writeFileSync(join(tmpDir, 'fixture-image.png'), 'fake-png-bytes', 'utf-8');
-    const shellDir = await mkdtemp(resolve(tmpdir(), 'ok-start-shell-both-'));
+    const shellDir = await mkdtemp(resolve(tmpdir(), 'ps-start-shell-both-'));
     writeFileSync(
       join(shellDir, 'index.html'),
       '<!doctype html><html><body>compose-test-sentinel</body></html>',
@@ -916,7 +916,7 @@ describe('bootStartServer (integration)', () => {
   });
 
   test('--single-file with no projectDir self-provisions a throwaway root — cwd is never consumed', async () => {
-    const looseDir = await mkdtemp(resolve(tmpdir(), 'ok-start-loose-'));
+    const looseDir = await mkdtemp(resolve(tmpdir(), 'ps-start-loose-'));
     const sentinel = join(tmpDir, 'IMPORTANT.md');
     writeFileSync(sentinel, 'keep me', 'utf-8');
     try {
@@ -933,22 +933,22 @@ describe('bootStartServer (integration)', () => {
       const ephemeralRoot = dirname(dirname(booted.lockDir));
       expect(ephemeralRoot).not.toBe(tmpDir);
       expect(booted.lockDir.startsWith(tmpDir)).toBe(false);
-      expect(basename(ephemeralRoot).startsWith('ok-ephemeral-')).toBe(true);
-      expect(existsSync(join(ephemeralRoot, '.ok', 'config.yml'))).toBe(true);
+      expect(basename(ephemeralRoot).startsWith('ps-ephemeral-')).toBe(true);
+      expect(existsSync(join(ephemeralRoot, '.ps', 'config.yml'))).toBe(true);
 
       await booted.destroy();
       booted = null;
       expect(existsSync(ephemeralRoot)).toBe(false);
       expect(existsSync(sentinel)).toBe(true);
-      expect(existsSync(join(tmpDir, '.ok', 'config.yml'))).toBe(true);
+      expect(existsSync(join(tmpDir, '.ps', 'config.yml'))).toBe(true);
     } finally {
       await rm(looseDir, { recursive: true, force: true });
     }
   });
 
   test('--single-file with a provided empty --project-dir seeds the synthesized config and boots', async () => {
-    const looseDir = await mkdtemp(resolve(tmpdir(), 'ok-start-loose-'));
-    const providedDir = await mkdtemp(resolve(tmpdir(), 'ok-ephemeral-'));
+    const looseDir = await mkdtemp(resolve(tmpdir(), 'ps-start-loose-'));
+    const providedDir = await mkdtemp(resolve(tmpdir(), 'ps-ephemeral-'));
     try {
       writeFileSync(join(looseDir, 'note.md'), '# loose note\n', 'utf-8');
       booted = await bootStartServer({
@@ -960,8 +960,8 @@ describe('bootStartServer (integration)', () => {
         projectDir: providedDir,
       });
       await booted.ready;
-      expect(existsSync(join(providedDir, '.ok', 'config.yml'))).toBe(true);
-      expect(existsSync(join(providedDir, '.ok', '.gitignore'))).toBe(true);
+      expect(existsSync(join(providedDir, '.ps', 'config.yml'))).toBe(true);
+      expect(existsSync(join(providedDir, '.ps', '.gitignore'))).toBe(true);
 
       await booted.destroy();
       booted = null;
@@ -973,8 +973,8 @@ describe('bootStartServer (integration)', () => {
   });
 
   test('--single-file with an ordinary bare --project-dir is refused, not seeded', async () => {
-    const looseDir = await mkdtemp(resolve(tmpdir(), 'ok-start-loose-'));
-    const ordinaryDir = await mkdtemp(resolve(tmpdir(), 'ok-start-ordinary-'));
+    const looseDir = await mkdtemp(resolve(tmpdir(), 'ps-start-loose-'));
+    const ordinaryDir = await mkdtemp(resolve(tmpdir(), 'ps-start-ordinary-'));
     try {
       writeFileSync(join(looseDir, 'note.md'), '# loose note\n', 'utf-8');
       await expect(
@@ -987,7 +987,7 @@ describe('bootStartServer (integration)', () => {
           projectDir: ordinaryDir,
         }),
       ).rejects.toThrow(EphemeralProjectDirNotThrowawayError);
-      expect(existsSync(join(ordinaryDir, '.ok'))).toBe(false);
+      expect(existsSync(join(ordinaryDir, '.ps'))).toBe(false);
     } finally {
       await rm(looseDir, { recursive: true, force: true });
       await rm(ordinaryDir, { recursive: true, force: true });
@@ -995,12 +995,12 @@ describe('bootStartServer (integration)', () => {
   });
 
   test('--single-file with an initialized real project as --project-dir is refused untouched', async () => {
-    const looseDir = await mkdtemp(resolve(tmpdir(), 'ok-start-loose-'));
-    const realProject = await mkdtemp(resolve(tmpdir(), 'ok-start-realproj-'));
+    const looseDir = await mkdtemp(resolve(tmpdir(), 'ps-start-loose-'));
+    const realProject = await mkdtemp(resolve(tmpdir(), 'ps-start-realproj-'));
     try {
       writeFileSync(join(looseDir, 'note.md'), '# loose note\n', 'utf-8');
-      mkdirSync(join(realProject, '.ok'), { recursive: true });
-      writeFileSync(join(realProject, '.ok', 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
+      mkdirSync(join(realProject, '.ps'), { recursive: true });
+      writeFileSync(join(realProject, '.ps', 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
       writeFileSync(join(realProject, 'KEEP.md'), 'keep me', 'utf-8');
       await expect(
         bootStartServer({
@@ -1013,7 +1013,7 @@ describe('bootStartServer (integration)', () => {
         }),
       ).rejects.toThrow(EphemeralProjectDirNotThrowawayError);
       expect(existsSync(join(realProject, 'KEEP.md'))).toBe(true);
-      expect(existsSync(join(realProject, '.ok', 'local'))).toBe(false);
+      expect(existsSync(join(realProject, '.ps', 'local'))).toBe(false);
     } finally {
       await rm(looseDir, { recursive: true, force: true });
       await rm(realProject, { recursive: true, force: true });
@@ -1021,8 +1021,8 @@ describe('bootStartServer (integration)', () => {
   });
 
   test('boot failure after self-provisioning reaps the freshly created ephemeral dir', async () => {
-    const looseDir = await mkdtemp(resolve(tmpdir(), 'ok-start-loose-'));
-    const privateTmp = await mkdtemp(resolve(tmpdir(), 'ok-start-privtmp-'));
+    const looseDir = await mkdtemp(resolve(tmpdir(), 'ps-start-loose-'));
+    const privateTmp = await mkdtemp(resolve(tmpdir(), 'ps-start-privtmp-'));
     const prevTmpdirEnv = process.env.TMPDIR;
     const { createServer } = await import('node:http');
     const blocker = createServer(() => {});
@@ -1042,7 +1042,7 @@ describe('bootStartServer (integration)', () => {
           port: blockedPort,
         }),
       ).rejects.toThrow();
-      expect(readdirSync(privateTmp).filter((n) => n.startsWith('ok-ephemeral-'))).toEqual([]);
+      expect(readdirSync(privateTmp).filter((n) => n.startsWith('ps-ephemeral-'))).toEqual([]);
     } finally {
       if (prevTmpdirEnv === undefined) delete process.env.TMPDIR;
       else process.env.TMPDIR = prevTmpdirEnv;
@@ -1053,17 +1053,17 @@ describe('bootStartServer (integration)', () => {
   });
 });
 
-describe('bootStartServer — no auto git-init from ok start (US-004)', () => {
+describe('bootStartServer — no auto git-init from ps start (US-004)', () => {
   let tmpDir: string;
   let booted: BootedStartServer | null = null;
   let originalHome: string | undefined;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-start-git-'));
-    const okDir = resolve(tmpDir, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-start-git-'));
+    const psDir = resolve(tmpDir, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
     originalHome = process.env.HOME;
     process.env.HOME = tmpDir;
     booted = null;
@@ -1084,7 +1084,7 @@ describe('bootStartServer — no auto git-init from ok start (US-004)', () => {
     await rm(tmpDir, { recursive: true, force: true });
   });
 
-  test('fresh tmpdir (no .git/) → ok start does NOT create .git/HEAD', async () => {
+  test('fresh tmpdir (no .git/) → ps start does NOT create .git/HEAD', async () => {
     booted = await bootStartServer({
       config: makeTestConfig(),
       cwd: tmpDir,
@@ -1095,7 +1095,7 @@ describe('bootStartServer — no auto git-init from ok start (US-004)', () => {
     expect(existsSync(join(tmpDir, '.git/HEAD'))).toBe(false);
   });
 
-  test('missing git binary does not prevent ok start from booting', async () => {
+  test('missing git binary does not prevent ps start from booting', async () => {
     const originalPath = process.env.PATH;
     process.env.PATH = '/nonexistent-path';
     try {
@@ -1113,12 +1113,12 @@ describe('bootStartServer — no auto git-init from ok start (US-004)', () => {
   });
 });
 
-describe('bootStartServer — rejects with init-required when .ok/config.yml is absent', () => {
+describe('bootStartServer — rejects with init-required when .ps/config.yml is absent', () => {
   let tmpDir: string;
   let originalHome: string | undefined;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-start-no-scaffold-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-start-no-scaffold-'));
     originalHome = process.env.HOME;
     process.env.HOME = tmpDir;
   });
@@ -1132,7 +1132,7 @@ describe('bootStartServer — rejects with init-required when .ok/config.yml is 
     await rm(tmpDir, { recursive: true, force: true });
   });
 
-  test('fresh dir (no .ok/) → bootStartServer throws OkDirMissingError', async () => {
+  test('fresh dir (no .ps/) → bootStartServer throws PsDirMissingError', async () => {
     await expect(
       bootStartServer({
         config: makeTestConfig(),
@@ -1140,10 +1140,10 @@ describe('bootStartServer — rejects with init-required when .ok/config.yml is 
         host: TEST_HOST,
         skipAutoInit: false,
       }),
-    ).rejects.toBeInstanceOf(OkDirMissingError);
+    ).rejects.toBeInstanceOf(PsDirMissingError);
   });
 
-  test('fresh dir (no .ok/) → OkDirMissingError message contains "ok init"', async () => {
+  test('fresh dir (no .ps/) → PsDirMissingError message contains "ps init"', async () => {
     await expect(
       bootStartServer({
         config: makeTestConfig(),
@@ -1151,12 +1151,12 @@ describe('bootStartServer — rejects with init-required when .ok/config.yml is 
         host: TEST_HOST,
         skipAutoInit: false,
       }),
-    ).rejects.toThrow('ok init');
+    ).rejects.toThrow('ps init');
 
-    expect(existsSync(join(tmpDir, '.ok'))).toBe(false);
+    expect(existsSync(join(tmpDir, '.ps'))).toBe(false);
   });
 
-  test('fresh dir (no .ok/) → bootStartServer does not create config.yml', async () => {
+  test('fresh dir (no .ps/) → bootStartServer does not create config.yml', async () => {
     await expect(
       bootStartServer({
         config: makeTestConfig(),
@@ -1164,12 +1164,12 @@ describe('bootStartServer — rejects with init-required when .ok/config.yml is 
         host: TEST_HOST,
         skipAutoInit: false,
       }),
-    ).rejects.toBeInstanceOf(OkDirMissingError);
-    expect(existsSync(join(tmpDir, '.ok', 'config.yml'))).toBe(false);
+    ).rejects.toBeInstanceOf(PsDirMissingError);
+    expect(existsSync(join(tmpDir, '.ps', 'config.yml'))).toBe(false);
   });
 
-  test('bare .ok/ without config.yml is NOT a project root — bootStartServer still throws', async () => {
-    mkdirSync(join(tmpDir, '.ok'), { recursive: true });
+  test('bare .ps/ without config.yml is NOT a project root — bootStartServer still throws', async () => {
+    mkdirSync(join(tmpDir, '.ps'), { recursive: true });
     await expect(
       bootStartServer({
         config: makeTestConfig(),
@@ -1177,15 +1177,15 @@ describe('bootStartServer — rejects with init-required when .ok/config.yml is 
         host: TEST_HOST,
         skipAutoInit: false,
       }),
-    ).rejects.toBeInstanceOf(OkDirMissingError);
-    expect(existsSync(join(tmpDir, '.ok', 'config.yml'))).toBe(false);
+    ).rejects.toBeInstanceOf(PsDirMissingError);
+    expect(existsSync(join(tmpDir, '.ps', 'config.yml'))).toBe(false);
   });
 
   test('skipAutoInit: true bypasses the CLI guard — server requires config.yml to be pre-seeded', async () => {
-    const okDir = join(tmpDir, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(join(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(join(okDir, '.gitignore'), '', 'utf-8');
+    const psDir = join(tmpDir, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(join(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(join(psDir, '.gitignore'), '', 'utf-8');
 
     let booted: BootedStartServer | null = null;
     try {
@@ -1215,10 +1215,10 @@ describe('startCommand — --mode flag wiring', () => {
   }
 
   test('reports a preserved corrupt recovery snapshot without an unhandled startup stack', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-start-corrupt-snapshot-'));
-    const snapshot = join(dir, '.ok', 'local', 'stale-external-writes.json');
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(dir, '.ok', 'config.yml'), '');
+    const dir = mkdtempSync(join(tmpdir(), 'ps-start-corrupt-snapshot-'));
+    const snapshot = join(dir, '.ps', 'local', 'stale-external-writes.json');
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(dir, '.ps', 'config.yml'), '');
     writeFileSync(snapshot, '{protected edits, truncated');
     const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(dir);
     const stderrSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -1267,8 +1267,8 @@ describe('startCommand — --mode flag wiring', () => {
   });
 
   test('--mode=app with detection unavailable exits 1 + emits a contextual notFoundMessage (FR5)', async () => {
-    const previousForceBrowser = process.env.OK_FORCE_BROWSER;
-    process.env.OK_FORCE_BROWSER = '1';
+    const previousForceBrowser = process.env.PS_FORCE_BROWSER;
+    process.env.PS_FORCE_BROWSER = '1';
 
     const cmd = quietCommand();
 
@@ -1292,14 +1292,14 @@ describe('startCommand — --mode flag wiring', () => {
       process.exit = originalExit;
       console.error = originalConsoleError;
       if (previousForceBrowser === undefined) {
-        delete process.env.OK_FORCE_BROWSER;
+        delete process.env.PS_FORCE_BROWSER;
       } else {
-        process.env.OK_FORCE_BROWSER = previousForceBrowser;
+        process.env.PS_FORCE_BROWSER = previousForceBrowser;
       }
     }
 
     expect(capturedExitCode).toBe(1);
-    expect(capturedStderr).toContain('OK_FORCE_BROWSER');
+    expect(capturedStderr).toContain('PS_FORCE_BROWSER');
     expect(capturedStderr).toMatch(/disabled|unset/i);
     expect(capturedStderr).not.toContain('not found');
   });
@@ -1307,7 +1307,7 @@ describe('startCommand — --mode flag wiring', () => {
 
 describe('tryDescribeLockCollision', () => {
   test('overlapping content ownership has an actionable message without a stack', async () => {
-    const serverModule = await import('@inkeep/open-knowledge-server');
+    const serverModule = await import('@palimpsest/server');
     const err = new serverModule.ServerAuthorityCollisionError({
       projectDir: '/holder',
       scope: { kind: 'tree', path: '/content', excluded: [] },
@@ -1324,12 +1324,12 @@ describe('tryDescribeLockCollision', () => {
     class ServerLockCollisionError extends Error {}
     return {
       ServerLockCollisionError,
-      resolveLockDir: (projectDir: string) => join(projectDir, '.ok', 'local'),
+      resolveLockDir: (projectDir: string) => join(projectDir, '.ps', 'local'),
       readServerLock: () => {
         if (opts.throwOnRead) throw new Error('synthetic read failure');
         return opts.meta;
       },
-    } as unknown as typeof import('@inkeep/open-knowledge-server');
+    } as unknown as typeof import('@palimpsest/server');
   }
 
   test('non-lock-collision error → null (caller falls back to generic)', () => {
@@ -1359,7 +1359,7 @@ describe('tryDescribeLockCollision', () => {
     const err = new fm.ServerLockCollisionError();
     const result = tryDescribeLockCollision(err, '/tmp/proj', fm);
     expect(result).toContain('already running');
-    expect(result).toContain('ok status');
+    expect(result).toContain('ps status');
   });
 
   test('meta=null → generic already-running message', () => {
@@ -1379,7 +1379,7 @@ describe('tryDescribeLockCollision', () => {
   test('serverModule.ServerLockCollisionError missing → null (back-compat)', () => {
     const fm = {
       readServerLock: () => null,
-    } as unknown as typeof import('@inkeep/open-knowledge-server');
+    } as unknown as typeof import('@palimpsest/server');
     const err = new Error('any');
     const result = tryDescribeLockCollision(err, '/tmp/proj', fm);
     expect(result).toBeNull();
@@ -1395,7 +1395,7 @@ describe('resolveStartConfig (ephemeral config isolation)', () => {
     expect(resolved).not.toBe(projectConfig);
   });
 
-  test('plain ok start keeps the loaded project config untouched', () => {
+  test('plain ps start keeps the loaded project config untouched', () => {
     const projectConfig = ConfigSchema.parse({ server: { port: 4242 } });
     let userReads = 0;
     const resolved = resolveStartConfig(projectConfig, undefined, () => {
@@ -1408,20 +1408,20 @@ describe('resolveStartConfig (ephemeral config isolation)', () => {
 });
 
 describe('isReapableEphemeralProjectDir', () => {
-  test('accepts a direct ok-ephemeral-* child of os.tmpdir()', () => {
-    expect(isReapableEphemeralProjectDir(join(tmpdir(), 'ok-ephemeral-abc123'))).toBe(true);
+  test('accepts a direct ps-ephemeral-* child of os.tmpdir()', () => {
+    expect(isReapableEphemeralProjectDir(join(tmpdir(), 'ps-ephemeral-abc123'))).toBe(true);
   });
 
   test('rejects a dir outside the temp root, whatever its name', () => {
     expect(isReapableEphemeralProjectDir('/Users/someone/my-project')).toBe(false);
   });
 
-  test('rejects a temp-root child without the ok-ephemeral- prefix', () => {
+  test('rejects a temp-root child without the ps-ephemeral- prefix', () => {
     expect(isReapableEphemeralProjectDir(join(tmpdir(), 'my-scratch-project'))).toBe(false);
   });
 
-  test('rejects an ok-ephemeral-* dir nested deeper than the temp root', () => {
-    expect(isReapableEphemeralProjectDir(join(tmpdir(), 'nested', 'ok-ephemeral-x'))).toBe(false);
+  test('rejects an ps-ephemeral-* dir nested deeper than the temp root', () => {
+    expect(isReapableEphemeralProjectDir(join(tmpdir(), 'nested', 'ps-ephemeral-x'))).toBe(false);
   });
 
   test('pierces temp-root symlinks via the injected realpath (macOS /tmp → /private/tmp)', () => {
@@ -1435,9 +1435,9 @@ describe('isReapableEphemeralProjectDir', () => {
     ).toBe(true);
   });
 
-  test('resolves a symlink leaf: an ok-ephemeral-* link pointing elsewhere is refused', () => {
-    const targetDir = mkdtempSync(join(tmpdir(), 'ok-start-symtarget-'));
-    const link = join(tmpdir(), `ok-ephemeral-link-${basename(targetDir)}`);
+  test('resolves a symlink leaf: an ps-ephemeral-* link pointing elsewhere is refused', () => {
+    const targetDir = mkdtempSync(join(tmpdir(), 'ps-start-symtarget-'));
+    const link = join(tmpdir(), `ps-ephemeral-link-${basename(targetDir)}`);
     symlinkSync(targetDir, link);
     try {
       expect(isReapableEphemeralProjectDir(link)).toBe(false);
@@ -1447,8 +1447,8 @@ describe('isReapableEphemeralProjectDir', () => {
     }
   });
 
-  test('accepts a real mkdtemp ok-ephemeral-* dir on this OS (symlinked temp prefix and all)', () => {
-    const real = mkdtempSync(join(tmpdir(), 'ok-ephemeral-'));
+  test('accepts a real mkdtemp ps-ephemeral-* dir on this OS (symlinked temp prefix and all)', () => {
+    const real = mkdtempSync(join(tmpdir(), 'ps-ephemeral-'));
     try {
       expect(isReapableEphemeralProjectDir(real)).toBe(true);
     } finally {
@@ -1458,7 +1458,7 @@ describe('isReapableEphemeralProjectDir', () => {
 });
 
 describe('withEphemeralTempDirReap', () => {
-  const reapable = join(tmpdir(), 'ok-ephemeral-x');
+  const reapable = join(tmpdir(), 'ps-ephemeral-x');
 
   test('runs the inner handler, then removes the temp projectDir', async () => {
     const order: string[] = [];
@@ -1806,7 +1806,7 @@ describe('formatServerReuseNotice', () => {
 });
 
 describe('shouldWarnHostOverridesMultiBind', () => {
-  const base = { flagBindSet: false, okBindSet: false, hostEnvSet: true, fileBindCount: 2 };
+  const base = { flagBindSet: false, psBindSet: false, hostEnvSet: true, fileBindCount: 2 };
   test('warns when HOST alone drives the bind over a multi-element file list', () => {
     expect(shouldWarnHostOverridesMultiBind(base)).toBe(true);
   });
@@ -1814,9 +1814,9 @@ describe('shouldWarnHostOverridesMultiBind', () => {
     expect(shouldWarnHostOverridesMultiBind({ ...base, fileBindCount: 1 })).toBe(false);
     expect(shouldWarnHostOverridesMultiBind({ ...base, fileBindCount: 0 })).toBe(false);
   });
-  test('does not warn when a flag or OK_BIND is the bind source (HOST is not)', () => {
+  test('does not warn when a flag or PS_BIND is the bind source (HOST is not)', () => {
     expect(shouldWarnHostOverridesMultiBind({ ...base, flagBindSet: true })).toBe(false);
-    expect(shouldWarnHostOverridesMultiBind({ ...base, okBindSet: true })).toBe(false);
+    expect(shouldWarnHostOverridesMultiBind({ ...base, psBindSet: true })).toBe(false);
   });
   test('does not warn when HOST is unset', () => {
     expect(shouldWarnHostOverridesMultiBind({ ...base, hostEnvSet: false })).toBe(false);
@@ -1929,22 +1929,22 @@ describe('start messages name the running channel command', () => {
   });
 
   test('Stable keeps ok in the missing-setup error and the reuse notice', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
-    expect(new OkDirMissingError('/p').message).toBe(
-      "This directory isn't set up yet. Run `ok init` first, then `ok start` again.",
+    vi.stubEnv('PS_CHANNEL', 'stable');
+    expect(new PsDirMissingError('/p').message).toBe(
+      "This directory isn't set up yet. Run `ps init` first, then `ps start` again.",
     );
     expect(formatServerReuseNotice({ url: 'u', pid: 7, servesUi: true })[2]).toBe(
-      'Leaving it running — run `ok stop` first if you want a fresh server.',
+      'Leaving it running — run `ps stop` first if you want a fresh server.',
     );
   });
 
-  test('Beta names ok-beta in the missing-setup error and the reuse notice', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    expect(new OkDirMissingError('/p').message).toBe(
-      "This directory isn't set up yet. Run `ok-beta init` first, then `ok-beta start` again.",
+  test('Beta names ps-beta in the missing-setup error and the reuse notice', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    expect(new PsDirMissingError('/p').message).toBe(
+      "This directory isn't set up yet. Run `ps-beta init` first, then `ps-beta start` again.",
     );
     expect(formatServerReuseNotice({ url: 'u', pid: 7, servesUi: true })[2]).toBe(
-      'Leaving it running — run `ok-beta stop` first if you want a fresh server.',
+      'Leaving it running — run `ps-beta stop` first if you want a fresh server.',
     );
   });
 });

@@ -49,7 +49,7 @@ import { expectNoticeFromTrigger, transientNoticeObservation } from './_helpers/
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const PRIMARY_MODIFIER = process.platform === 'darwin' ? 'Meta' : 'Control';
 const SHELL_COMMANDS = terminalSmokeShellCommands();
 const TERMINAL_DOCK_PANEL_ID = 'terminal-dock-panel';
@@ -74,17 +74,17 @@ interface Seed {
 }
 
 function seed(prefix: string, opts: SeedOpts = {}): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-term-${prefix}-home-`)));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-term-${prefix}-proj-`)));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-term-${prefix}-home-`)));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-term-${prefix}-proj-`)));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
 
   if (opts.consent || opts.optOut) {
-    mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
     const enabled = opts.optOut ? 'false' : 'true';
     writeFileSync(
-      join(projectDir, '.ok', 'local', 'config.yml'),
+      join(projectDir, '.ps', 'local', 'config.yml'),
       `terminal:\n  enabled: ${enabled}\n`,
     );
   }
@@ -134,13 +134,13 @@ interface LaunchOpts {
 
 async function launchApp(s: Seed, opts: LaunchOpts = {}): Promise<ElectronApplication> {
   if (opts.connectionsAvailable) {
-    mkdirSync(join(s.tmpHome, '.ok'), { recursive: true });
+    mkdirSync(join(s.tmpHome, '.ps'), { recursive: true });
     writeFileSync(
-      join(s.tmpHome, '.ok', 'mcp-status.json'),
+      join(s.tmpHome, '.ps', 'mcp-status.json'),
       JSON.stringify({ configured: false, skippedAt: new Date().toISOString() }),
     );
   }
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
   return launchDesktopApp(
     electron,
     desktopLaunchOptions({
@@ -153,10 +153,10 @@ async function launchApp(s: Seed, opts: LaunchOpts = {}): Promise<ElectronApplic
           ...(s.pathPrefix ? { pathPrefix: s.pathPrefix } : {}),
           restrictPath: opts.restrictPath,
         }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_PTY_PHASE_TRACE: opts.phaseTrace ? '1' : '',
-        OK_RECLAIM_DISABLE: opts.connectionsAvailable ? '0' : '1',
-        OK_M6B_FORCE: opts.connectionsAvailable ? '1' : '0',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_PTY_PHASE_TRACE: opts.phaseTrace ? '1' : '',
+        PS_RECLAIM_DISABLE: opts.connectionsAvailable ? '0' : '1',
+        PS_M6B_FORCE: opts.connectionsAvailable ? '1' : '0',
       },
     }),
     { home: s.tmpHome },
@@ -178,7 +178,7 @@ async function dispatchRendererMenuAction(
   editorPage: Page,
 ): Promise<void> {
   await editorPage.evaluate(async (menuAction) => {
-    const menu = window.okDesktop?.menu;
+    const menu = window.psDesktop?.menu;
     if (!menu) throw new Error('renderer menu bridge is unavailable');
     await menu.dispatch({ kind: 'menu-action', action: menuAction });
   }, action);
@@ -219,7 +219,7 @@ async function waitForMenuSelectionState(page: Page, expected: boolean): Promise
   await expect
     .poll(() =>
       page.evaluate(async () => {
-        const menu = window.okDesktop?.menu;
+        const menu = window.psDesktop?.menu;
         if (!menu) return undefined;
         const snapshot = await menu.dispatch({ kind: 'query' });
         return snapshot?.viewMenuState.hasEditorSelection;
@@ -298,7 +298,7 @@ async function viewMenuEditorLabel(app: ElectronApplication): Promise<string | u
 }
 
 function restoredDockState(page: Page) {
-  return page.evaluate(() => window.okDesktop?.terminal.getDockState());
+  return page.evaluate(() => window.psDesktop?.terminal.getDockState());
 }
 
 const editorPaneButton = (page: Page) =>
@@ -608,7 +608,7 @@ function track(...paths: string[]): void {
 }
 
 test.describe('Docked terminal — live Electron', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
   test.afterEach(() => {
@@ -649,7 +649,7 @@ test.describe('Docked terminal — live Electron', () => {
     await openTerminal(app, page);
     await waitForStatus(page, 'running', 25_000);
 
-    const localCfg = join(s.projectDir, '.ok', 'local', 'config.yml');
+    const localCfg = join(s.projectDir, '.ps', 'local', 'config.yml');
     const persisted = existsSync(localCfg) ? readFileSync(localCfg, 'utf8') : '';
     expect(persisted).not.toMatch(/enabled:\s*true/);
   });
@@ -1192,7 +1192,7 @@ test.describe('Docked terminal — live Electron', () => {
     const heightAfter = await panel.evaluate((el) => el.getBoundingClientRect().height);
 
     await pollSettledReading(
-      () => page.evaluate(() => Number(localStorage.getItem('ok-terminal-height-v1') ?? 0)),
+      () => page.evaluate(() => Number(localStorage.getItem('ps-terminal-height-v1') ?? 0)),
       {
         reading: 'persisted height',
         of: 'bottom terminal',
@@ -1263,7 +1263,7 @@ test.describe('Docked terminal — live Electron', () => {
 
     await page.evaluate(() => {
       window.dispatchEvent(
-        new CustomEvent('open-knowledge:terminal-launch', {
+        new CustomEvent('palimpsest:terminal-launch', {
           detail: { kind: 'cli', prompt: '', cli: 'claude', stage: false },
         }),
       );
@@ -1293,12 +1293,12 @@ test.describe('Docked terminal — live Electron', () => {
     await waitForStatus(page, 'running', 25_000);
 
     await expect(readinessBanner(page)).toHaveCount(0);
-    const initialSessions = await page.evaluate(() => window.okDesktop?.terminal.list());
+    const initialSessions = await page.evaluate(() => window.psDesktop?.terminal.list());
     expect(initialSessions).toHaveLength(1);
 
     await page.evaluate(() => {
       window.dispatchEvent(
-        new CustomEvent('open-knowledge:terminal-launch', {
+        new CustomEvent('palimpsest:terminal-launch', {
           detail: { kind: 'cli', prompt: '', cli: 'claude', stage: false },
         }),
       );
@@ -1306,27 +1306,27 @@ test.describe('Docked terminal — live Electron', () => {
 
     const banner = readinessBanner(page);
     await expect(banner).toBeVisible({ timeout: 15_000 });
-    await expect(banner).toContainText('OpenKnowledge tools');
+    await expect(banner).toContainText('Palimpsest tools');
     await page.getByRole('button', { name: 'Connect tools' }).click();
     const setup = page.getByRole('dialog', { name: 'Claude', exact: true });
-    await expect(setup).toContainText('Choose what OpenKnowledge sets up for Claude.');
-    await expect(page.getByText('Welcome to OpenKnowledge', { exact: true })).toHaveCount(0);
+    await expect(setup).toContainText('Choose what Palimpsest sets up for Claude.');
+    await expect(page.getByText('Welcome to Palimpsest', { exact: true })).toHaveCount(0);
     await setup.getByRole('button', { name: 'Cancel', exact: true }).click();
     await expect(banner).toBeVisible();
 
     await page.getByRole('button', { name: 'Connect tools' }).click();
     await setup.getByRole('checkbox', { name: 'Global MCP server', exact: true }).uncheck();
     await setup
-      .getByRole('checkbox', { name: 'OpenKnowledge discovery skill', exact: true })
+      .getByRole('checkbox', { name: 'Palimpsest discovery skill', exact: true })
       .uncheck();
     await setup.getByRole('button', { name: 'Save changes', exact: true }).click();
     await expect(setup).toHaveCount(0);
     await expect(banner).toHaveCount(0);
     const restartNotice = page.getByTestId('terminal-restart-banner');
     await expect(restartNotice).toContainText(
-      'Restart this terminal session to use the newly installed OpenKnowledge tools.',
+      'Restart this terminal session to use the newly installed Palimpsest tools.',
     );
-    const beforeRestart = await page.evaluate(() => window.okDesktop?.terminal.list());
+    const beforeRestart = await page.evaluate(() => window.psDesktop?.terminal.list());
     expect(beforeRestart).toHaveLength(2);
     const terminalOutput = activeTerminalOutput(page);
     await expect(terminalOutput).toContainText('FAKE_CLAUDE_TUI_READY');
@@ -1334,23 +1334,23 @@ test.describe('Docked terminal — live Electron', () => {
     await expect(restartNotice).toHaveCount(0);
     await expect
       .poll(async () => {
-        const sessions = await page.evaluate(() => window.okDesktop?.terminal.list());
+        const sessions = await page.evaluate(() => window.psDesktop?.terminal.list());
         return sessions?.filter(
           (session) => !beforeRestart?.some((old) => old.ptyId === session.ptyId),
         ).length;
       })
       .toBe(1);
-    const afterRestart = await page.evaluate(() => window.okDesktop?.terminal.list());
+    const afterRestart = await page.evaluate(() => window.psDesktop?.terminal.list());
     expect(afterRestart).toHaveLength(2);
     expect(afterRestart).toEqual(expect.arrayContaining(initialSessions ?? []));
     await expect(terminalOutput).toContainText('FAKE_CLAUDE_TUI_READY');
     await expect(banner).toHaveCount(0);
     expect(
       JSON.parse(readFileSync(join(s.projectDir, '.mcp.json'), 'utf8')).mcpServers[
-        'open-knowledge'
+        'palimpsest'
       ],
     ).toBeDefined();
-    expect(existsSync(join(s.projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(s.projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
   });
@@ -1374,7 +1374,7 @@ test.describe('Docked terminal — live Electron', () => {
     for (let index = 0; index < 2; index += 1) {
       await page.evaluate(() => {
         window.dispatchEvent(
-          new CustomEvent('open-knowledge:terminal-launch', {
+          new CustomEvent('palimpsest:terminal-launch', {
             detail: { kind: 'cli', prompt: '', cli: 'claude', stage: false },
           }),
         );
@@ -1387,7 +1387,7 @@ test.describe('Docked terminal — live Electron', () => {
         timeout: 15_000,
       });
     }
-    const sessionsBefore = await page.evaluate(() => window.okDesktop?.terminal.list());
+    const sessionsBefore = await page.evaluate(() => window.psDesktop?.terminal.list());
     expect(sessionsBefore).toHaveLength(3);
     await page.evaluate(() => {
       window.location.hash = '#settings/agent-connections';
@@ -1397,12 +1397,12 @@ test.describe('Docked terminal — live Electron', () => {
       .getByRole('button', { name: 'Add MCP & skill for Claude CLI', exact: true })
       .click();
     const setup = page.getByRole('dialog', { name: 'Claude', exact: true });
-    await expect(setup).toContainText('Choose what OpenKnowledge sets up for Claude.');
+    await expect(setup).toContainText('Choose what Palimpsest sets up for Claude.');
     await setup.getByRole('checkbox', { name: 'Project MCP server', exact: true }).check();
     await setup.getByRole('checkbox', { name: 'Project skill', exact: true }).check();
     await setup.getByRole('checkbox', { name: 'Global MCP server', exact: true }).uncheck();
     await setup
-      .getByRole('checkbox', { name: 'OpenKnowledge discovery skill', exact: true })
+      .getByRole('checkbox', { name: 'Palimpsest discovery skill', exact: true })
       .uncheck();
     await setup.getByRole('button', { name: 'Save changes', exact: true }).click();
     await expect(setup).toHaveCount(0);
@@ -1415,12 +1415,12 @@ test.describe('Docked terminal — live Electron', () => {
     await tabs.nth(1).click();
     await expect(restart).toBeVisible();
     await expect(readinessBanner(page)).toHaveCount(0);
-    expect(await page.evaluate(() => window.okDesktop?.terminal.list())).toEqual(sessionsBefore);
+    expect(await page.evaluate(() => window.psDesktop?.terminal.list())).toEqual(sessionsBefore);
     await restart.getByRole('button', { name: 'Restart terminal', exact: true }).click();
     await expect(restart).toHaveCount(0);
     await expect
       .poll(async () => {
-        const sessions = await page.evaluate(() => window.okDesktop?.terminal.list());
+        const sessions = await page.evaluate(() => window.psDesktop?.terminal.list());
         return sessions?.filter(
           (session) => !sessionsBefore?.some((old) => old.ptyId === session.ptyId),
         ).length;
@@ -1430,12 +1430,12 @@ test.describe('Docked terminal — live Electron', () => {
     await tabs.nth(2).click();
     await expect(restart).toBeVisible();
     await expect(readinessBanner(page)).toHaveCount(0);
-    expect(existsSync(join(s.projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(s.projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
     expect(
       JSON.parse(readFileSync(join(s.projectDir, '.mcp.json'), 'utf8')).mcpServers[
-        'open-knowledge'
+        'palimpsest'
       ],
     ).toBeDefined();
   });
@@ -1455,9 +1455,9 @@ test.describe('Docked terminal — live Electron', () => {
 
     await typeInTerminal(
       page,
-      `${SHELL_COMMANDS.setEnvironment('OK_RELOAD_MARKER', 'OKRELOAD_SURVIVED_351')}\r`,
+      `${SHELL_COMMANDS.setEnvironment('PS_RELOAD_MARKER', 'OKRELOAD_SURVIVED_351')}\r`,
     );
-    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('OK_RELOAD_MARKER', 'before')}\r`);
+    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('PS_RELOAD_MARKER', 'before')}\r`);
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
       .toContain('before=[OKRELOAD_SURVIVED_351]');
@@ -1467,7 +1467,7 @@ test.describe('Docked terminal — live Electron', () => {
     await expect(terminalSection(page)).toBeVisible({ timeout: 20_000 });
     await waitForStatus(page, 'running', 25_000);
 
-    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('OK_RELOAD_MARKER', 'marker')}\r`);
+    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('PS_RELOAD_MARKER', 'marker')}\r`);
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
       .toContain('marker=[OKRELOAD_SURVIVED_351]');
@@ -1485,8 +1485,8 @@ test.describe('Docked terminal — live Electron', () => {
     await configureDesktopGitRepositories(page, s.realProjectDir);
 
     await page.evaluate(() => {
-      localStorage.setItem('ok-ask-ai-agent-v2', 'terminal-cli:claude');
-      window.dispatchEvent(new StorageEvent('storage', { key: 'ok-ask-ai-agent-v2' }));
+      localStorage.setItem('ps-ask-ai-agent-v2', 'terminal-cli:claude');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'ps-ask-ai-agent-v2' }));
     });
 
     const editor = page.locator('.ProseMirror[contenteditable="true"]:not(.composer-prosemirror)');
@@ -1550,9 +1550,9 @@ test.describe('Docked terminal — live Electron', () => {
 
     await typeInTerminal(
       page,
-      `${SHELL_COMMANDS.setEnvironment('OK_HEADER_MARKER', 'OKHEADER_KEPT_418')}\r`,
+      `${SHELL_COMMANDS.setEnvironment('PS_HEADER_MARKER', 'OKHEADER_KEPT_418')}\r`,
     );
-    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('OK_HEADER_MARKER', 'before')}\r`);
+    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('PS_HEADER_MARKER', 'before')}\r`);
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
       .toContain('before=[OKHEADER_KEPT_418]');
@@ -1572,7 +1572,7 @@ test.describe('Docked terminal — live Electron', () => {
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
       .toContain('before=[OKHEADER_KEPT_418]');
-    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('OK_HEADER_MARKER', 'after')}\r`);
+    await typeInTerminal(page, `${SHELL_COMMANDS.readEnvironment('PS_HEADER_MARKER', 'after')}\r`);
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
       .toContain('after=[OKHEADER_KEPT_418]');
@@ -1593,21 +1593,21 @@ test.describe('Docked terminal — live Electron', () => {
     await expect(terminalSection(page)).toBeVisible();
     await waitForStatus(page, 'running', 25_000);
 
-    const initialSessions = await page.evaluate(() => window.okDesktop?.terminal.list());
+    const initialSessions = await page.evaluate(() => window.psDesktop?.terminal.list());
     expect(initialSessions).toHaveLength(1);
     const ptyId = initialSessions?.[0]?.ptyId;
     expect(ptyId).toBeTruthy();
     await typeInTerminal(
       page,
-      `${SHELL_COMMANDS.setEnvironment('OK_RESPONSIVE_SHELL', 'OK_SHELL_SURVIVED_628')}\r`,
+      `${SHELL_COMMANDS.setEnvironment('PS_RESPONSIVE_SHELL', 'PS_SHELL_SURVIVED_628')}\r`,
     );
     await typeInTerminal(
       page,
-      `${SHELL_COMMANDS.readEnvironment('OK_RESPONSIVE_SHELL', 'before')}\r`,
+      `${SHELL_COMMANDS.readEnvironment('PS_RESPONSIVE_SHELL', 'before')}\r`,
     );
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
-      .toContain('before=[OK_SHELL_SURVIVED_628]');
+      .toContain('before=[PS_SHELL_SURVIVED_628]');
 
     await widenEditorWindow(app, page, 720, 480);
     await expect.poll(() => page.evaluate(() => window.innerWidth)).toBeLessThan(768);
@@ -1626,42 +1626,42 @@ test.describe('Docked terminal — live Electron', () => {
     const acknowledgementPath = join(s.projectDir, 'terminal-completed');
     await typeInTerminal(
       page,
-      `${SHELL_COMMANDS.waitForFileThenOutput(releasePath, waitingPath, acknowledgementPath, 'OK_TERMINAL_WAITING_628')}\r`,
+      `${SHELL_COMMANDS.waitForFileThenOutput(releasePath, waitingPath, acknowledgementPath, 'PS_TERMINAL_WAITING_628')}\r`,
     );
     await expect.poll(() => existsSync(waitingPath), { timeout: 15_000 }).toBe(true);
 
     await editorPaneButton(page).click();
     await expect(terminalSection(page)).toBeHidden();
     await expect(editorPaneButton(page)).toHaveAttribute('aria-pressed', 'true');
-    writeFileSync(releasePath, 'OK_TERMINAL_COMPLETED_628\n');
+    writeFileSync(releasePath, 'PS_TERMINAL_COMPLETED_628\n');
     await expect.poll(() => existsSync(acknowledgementPath), { timeout: 15_000 }).toBe(true);
-    expect(readFileSync(acknowledgementPath, 'utf8')).toContain('OK_TERMINAL_COMPLETED_628');
-    expect((await page.evaluate(() => window.okDesktop?.terminal.list()))?.[0]?.ptyId).toBe(ptyId);
+    expect(readFileSync(acknowledgementPath, 'utf8')).toContain('PS_TERMINAL_COMPLETED_628');
+    expect((await page.evaluate(() => window.psDesktop?.terminal.list()))?.[0]?.ptyId).toBe(ptyId);
 
     await headerPaneButton(page, 'Terminal').click();
     await expect(terminalSection(page)).toBeVisible();
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
-      .toContain('OK_TERMINAL_COMPLETED_628');
-    expect((await readTerminalRows(page)).split('OK_TERMINAL_COMPLETED_628')).toHaveLength(2);
+      .toContain('PS_TERMINAL_COMPLETED_628');
+    expect((await readTerminalRows(page)).split('PS_TERMINAL_COMPLETED_628')).toHaveLength(2);
     await typeInTerminal(
       page,
-      `${SHELL_COMMANDS.readEnvironment('OK_RESPONSIVE_SHELL', 'after')}\r`,
+      `${SHELL_COMMANDS.readEnvironment('PS_RESPONSIVE_SHELL', 'after')}\r`,
     );
     await expect
       .poll(() => readTerminalText(page), { timeout: 15_000 })
-      .toContain('after=[OK_SHELL_SURVIVED_628]');
+      .toContain('after=[PS_SHELL_SURVIVED_628]');
 
     expect(await clickViewTerminalItem(app, page)).toBe('Hide Terminal');
     await expect(terminalSection(page)).toBeHidden();
-    expect((await page.evaluate(() => window.okDesktop?.terminal.list()))?.[0]?.ptyId).toBe(ptyId);
+    expect((await page.evaluate(() => window.psDesktop?.terminal.list()))?.[0]?.ptyId).toBe(ptyId);
     await headerPaneButton(page, 'Terminal').click();
     await expect(terminalSection(page)).toBeVisible();
     await widenEditorWindow(app, page, 1000, 700);
     await expect(terminalSection(page)).toBeVisible();
     await expect.poll(() => restoredDockState(page)).toMatchObject({ terminalVisible: true });
-    expect((await page.evaluate(() => window.okDesktop?.terminal.list()))?.[0]?.ptyId).toBe(ptyId);
-    expect((await readTerminalRows(page)).split('OK_TERMINAL_COMPLETED_628')).toHaveLength(2);
+    expect((await page.evaluate(() => window.psDesktop?.terminal.list()))?.[0]?.ptyId).toBe(ptyId);
+    expect((await readTerminalRows(page)).split('PS_TERMINAL_COMPLETED_628')).toHaveLength(2);
     await typeInTerminal(page, `${SHELL_COMMANDS.columns('WIDE_COLS')}\r`);
     await expect.poll(() => readTerminalText(page), { timeout: 15_000 }).toMatch(/WIDE_COLS=\d+/);
     const wideColumns = Number((await readTerminalText(page)).match(/WIDE_COLS=(\d+)/)?.[1]);

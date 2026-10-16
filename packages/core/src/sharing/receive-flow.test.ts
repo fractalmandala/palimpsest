@@ -11,14 +11,14 @@ import {
 describe('canonicalGitHubRemoteUrl', () => {
   test('emits https github.git form for plain owner/repo', () => {
     expect(
-      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'inkeep', repo: 'open-knowledge' }),
-    ).toBe('https://github.com/inkeep/open-knowledge.git');
+      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'inkeep', repo: 'palimpsest' }),
+    ).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
   test('preserves casing in the canonical form', () => {
     expect(
-      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'Inkeep', repo: 'Open-Knowledge' }),
-    ).toBe('https://github.com/Inkeep/Open-Knowledge.git');
+      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'Inkeep', repo: 'Palimpsest' }),
+    ).toBe('https://github.com/Inkeep/Palimpsest.git');
   });
 
   test('carries an enterprise host into the canonical form', () => {
@@ -29,7 +29,7 @@ describe('canonicalGitHubRemoteUrl', () => {
 });
 
 describe('findRecentProjectsForRepo', () => {
-  const expected = { host: 'github.com', owner: 'inkeep', repo: 'open-knowledge' };
+  const expected = { host: 'github.com', owner: 'inkeep', repo: 'palimpsest' };
 
   function recent(overrides: Partial<RecentProjectEntry> = {}): RecentProjectEntry {
     return {
@@ -48,11 +48,11 @@ describe('findRecentProjectsForRepo', () => {
     const a = recent({ path: '/a', gitRemoteUrl: 'https://github.com/other/repo.git' });
     const b = recent({
       path: '/b',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
     const c = recent({
       path: '/c',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
     const result = findRecentProjectsForRepo([a, b, c], expected);
     expect(result.map((r) => r.path)).toEqual(['/b', '/c']);
@@ -61,18 +61,18 @@ describe('findRecentProjectsForRepo', () => {
   test('matches case-insensitively on owner and repo segments', () => {
     const r = recent({
       path: '/x',
-      gitRemoteUrl: 'https://github.com/Inkeep/Open-Knowledge.git',
+      gitRemoteUrl: 'https://github.com/Inkeep/Palimpsest.git',
     });
     expect(findRecentProjectsForRepo([r], expected).map((m) => m.path)).toEqual(['/x']);
   });
 
   test('matches when the stored URL omits the .git suffix', () => {
-    const r = recent({ path: '/x', gitRemoteUrl: 'https://github.com/inkeep/open-knowledge' });
+    const r = recent({ path: '/x', gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest' });
     expect(findRecentProjectsForRepo([r], expected).map((m) => m.path)).toEqual(['/x']);
   });
 
   test('matches when the stored URL has a trailing slash', () => {
-    const r = recent({ path: '/x', gitRemoteUrl: 'https://github.com/inkeep/open-knowledge/' });
+    const r = recent({ path: '/x', gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest/' });
     expect(findRecentProjectsForRepo([r], expected).map((m) => m.path)).toEqual(['/x']);
   });
 
@@ -84,7 +84,7 @@ describe('findRecentProjectsForRepo', () => {
   test('skips entries marked missing even when the URL matches', () => {
     const r = recent({
       path: '/x',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
       missing: true,
     });
     expect(findRecentProjectsForRepo([r], expected)).toEqual([]);
@@ -112,12 +112,12 @@ describe('findRecentProjectsForRepo', () => {
   test('all matching entries marked missing yields [] (graceful degradation anchor)', () => {
     const a = recent({
       path: '/a',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
       missing: true,
     });
     const b = recent({
       path: '/b',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
       missing: true,
     });
     expect(findRecentProjectsForRepo([a, b], expected)).toEqual([]);
@@ -126,12 +126,12 @@ describe('findRecentProjectsForRepo', () => {
   test('mixed missing + present matches returns only the present matches', () => {
     const missing = recent({
       path: '/missing',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
       missing: true,
     });
     const present = recent({
       path: '/present',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
     expect(findRecentProjectsForRepo([missing, present], expected).map((m) => m.path)).toEqual([
       '/present',
@@ -141,7 +141,7 @@ describe('findRecentProjectsForRepo', () => {
   test('SSH-form stored URL misses match — falls through to clone / locate', () => {
     const r = recent({
       path: '/x',
-      gitRemoteUrl: 'git@github.com:inkeep/open-knowledge.git',
+      gitRemoteUrl: 'git@github.com:fractalmandala/palimpsest.git',
     });
     expect(findRecentProjectsForRepo([r], expected)).toEqual([]);
   });

@@ -56,8 +56,8 @@ vi.mock('node:fs/promises', async (importOriginal) => {
 });
 
 test('a slow-to-read global skill bundle stalls neither boot nor a skills request made while it is read', async () => {
-  const home = await mkdtemp(join(tmpdir(), 'ok-boot-skill-home-'));
-  const projectDir = await mkdtemp(join(tmpdir(), 'ok-boot-skill-project-'));
+  const home = await mkdtemp(join(tmpdir(), 'ps-boot-skill-home-'));
+  const projectDir = await mkdtemp(join(tmpdir(), 'ps-boot-skill-project-'));
   const skillDir = join(home, '.codex', 'skills', 'heavy-skill');
   await mkdir(join(skillDir, 'assets'), { recursive: true });
   await writeFile(
@@ -68,8 +68,8 @@ test('a slow-to-read global skill bundle stalls neither boot nor a skills reques
   await writeFile(slowFile, Buffer.from([0, 1, 2, 3]));
   await mkdir(join(skillDir, 'node_modules', 'dep'), { recursive: true });
   await writeFile(join(skillDir, 'node_modules', 'dep', 'index.js'), 'export {};\n');
-  await mkdir(join(projectDir, '.ok'), { recursive: true });
-  await writeFile(join(projectDir, '.ok', 'config.yml'), '');
+  await mkdir(join(projectDir, '.ps'), { recursive: true });
+  await writeFile(join(projectDir, '.ps', 'config.yml'), '');
   await writeFile(join(projectDir, 'a.md'), '# a\n');
   fixture.home = home;
   fixture.slowFile = slowFile;
@@ -113,7 +113,7 @@ test('a slow-to-read global skill bundle stalls neither boot nor a skills reques
 });
 
 test('a folder that becomes a skill after its first read-ahead is still read off the event loop', async () => {
-  const home = await mkdtemp(join(tmpdir(), 'ok-late-skill-home-'));
+  const home = await mkdtemp(join(tmpdir(), 'ps-late-skill-home-'));
   const skillDir = join(home, '.codex', 'skills', 'late-skill');
   await mkdir(join(skillDir, 'assets'), { recursive: true });
   fixture.slowReads = 0;
@@ -149,7 +149,7 @@ test('a folder that becomes a skill after its first read-ahead is still read off
 });
 
 test('a skill whose bundle cannot be read is read ahead once, not on every scan', async () => {
-  const home = await mkdtemp(join(tmpdir(), 'ok-locked-skill-home-'));
+  const home = await mkdtemp(join(tmpdir(), 'ps-locked-skill-home-'));
   const skillDir = join(home, '.codex', 'skills', 'locked-skill');
   await mkdir(join(skillDir, 'assets'), { recursive: true });
   await writeFile(

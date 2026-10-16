@@ -1,15 +1,15 @@
 ---
 name: write-a-spec
-description: "Scope a feature end to end and write an implementation spec under specs/ from an accepted proposal — current-system mapping, goals/non-goals, a Decision Log for one-way-door choices, a live Open Questions backlog, and a real migration + test plan. Read when asked to write a spec, scope this feature, turn this proposal into a spec, plan the implementation, or break this into tasks. Do NOT fire on frame a proposal or write the PRD (sibling frame-a-proposal — a PRD frames a change before it is accepted; this skill starts once one is), record a decision or write the ADR (record-a-decision), write a postmortem (write-a-postmortem), or review this design (review-a-design) — those are separate skills. Complements the platform open-knowledge skill; does not replace it."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ok-beta` for Beta)."
+description: "Scope a feature end to end and write an implementation spec under specs/ from an accepted proposal — current-system mapping, goals/non-goals, a Decision Log for one-way-door choices, a live Open Questions backlog, and a real migration + test plan. Read when asked to write a spec, scope this feature, turn this proposal into a spec, plan the implementation, or break this into tasks. Do NOT fire on frame a proposal or write the PRD (sibling frame-a-proposal — a PRD frames a change before it is accepted; this skill starts once one is), record a decision or write the ADR (record-a-decision), write a postmortem (write-a-postmortem), or review this design (review-a-design) — those are separate skills. Complements the platform palimpsest skill; does not replace it."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ps-beta` for Beta)."
 metadata:
   pack: "software-lifecycle"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Write a spec — scope a feature and commit an implementation spec
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers spec-writing craft on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers spec-writing craft on top.
 
 A spec is the contract between "we decided to build this" and "here is how it gets built." It is derived from an ACCEPTED proposal, maps the system that exists TODAY before proposing a change, and records its one-way-door choices in a Decision Log so the reasoning survives the author leaving. A spec that skips the current-system mapping, or resolves its open questions silently, is a liability — it reads authoritative while being unfounded.
 
@@ -68,9 +68,9 @@ A spec implements a decision that was already made. Before scoping anything, fin
 
 The most common spec failure is designing against an imagined system. You cannot write a sound `## Design` or a real `## Migration` without knowing what the running system does today.
 
-**Read the code that exists — with native host tools.** Source code (`.ts`, `.py`, config, schema) lives OUTSIDE the knowledge base, so read it with the host's native file tools (Read / Grep / Glob), not OpenKnowledge verbs. Trace the actual flow end to end: the entry points, the modules the change will touch, the data shapes, the call chain across boundaries.
+**Read the code that exists — with native host tools.** Source code (`.ts`, `.py`, config, schema) lives OUTSIDE the knowledge base, so read it with the host's native file tools (Read / Grep / Glob), not Palimpsest verbs. Trace the actual flow end to end: the entry points, the modules the change will touch, the data shapes, the call chain across boundaries.
 
-**Read the knowledge base with OpenKnowledge verbs.** Prior specs and guides ARE in-scope markdown:
+**Read the knowledge base with Palimpsest verbs.** Prior specs and guides ARE in-scope markdown:
 
 - `exec("ls -A specs/")` — see what's been specced before; a sibling spec may already map the same subsystem.
 - `exec("cat specs/003-x/spec.md")` — read the closest prior spec's Design + Migration for the shape and the pointers.

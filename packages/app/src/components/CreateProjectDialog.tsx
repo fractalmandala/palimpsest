@@ -1,10 +1,10 @@
-import type { CreateNewBannerKind } from '@inkeep/open-knowledge-core/constants/create-new-banner';
+import type { CreateNewBannerKind } from '@palimpsest/core/constants/create-new-banner';
 import {
   CREATE_NEW_PROJECT_FAILURE_REASONS,
   type CreateNewProjectFailureReason,
-} from '@inkeep/open-knowledge-core/constants/create-new-project-reason';
-import { receivesProjectIntegrationWrite } from '@inkeep/open-knowledge-core/constants/editors';
-import { sanitizeFolderName } from '@inkeep/open-knowledge-core/utils/sanitize-folder-name';
+} from '@palimpsest/core/constants/create-new-project-reason';
+import { receivesProjectIntegrationWrite } from '@palimpsest/core/constants/editors';
+import { sanitizeFolderName } from '@palimpsest/core/utils/sanitize-folder-name';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
@@ -33,14 +33,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type {
-  OkDesktopBridge,
-  OkFindEnclosingGitRootResult,
-  OkFindEnclosingProjectRootResult,
-  OkFolderState,
-  OkMcpWiringEditorId,
-  OkPackId,
-  OkScaffoldPlan,
-  OkSeedPackInfo,
+  PsDesktopBridge,
+  PsFindEnclosingGitRootResult,
+  PsFindEnclosingProjectRootResult,
+  PsFolderState,
+  PsMcpWiringEditorId,
+  PsPackId,
+  PsScaffoldPlan,
+  PsSeedPackInfo,
 } from '@/lib/desktop-bridge-types';
 import { PACK_BLURBS } from '@/lib/pack-copy';
 import { seedClient } from '@/lib/seed-client';
@@ -63,7 +63,7 @@ type ProbeLifecycle = 'idle' | 'in-flight';
 
 type PackPreview =
   | { kind: 'loading' }
-  | { kind: 'plan'; plan: OkScaffoldPlan }
+  | { kind: 'plan'; plan: PsScaffoldPlan }
   | { kind: 'error'; message: string; blocking: boolean };
 
 type RemoveGitState =
@@ -113,9 +113,9 @@ function focusStepPrimary(
 interface CreateProjectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  bridge: OkDesktopBridge;
-  initialPackId?: OkPackId;
-  packs?: OkSeedPackInfo[];
+  bridge: PsDesktopBridge;
+  initialPackId?: PsPackId;
+  packs?: PsSeedPackInfo[];
 }
 
 export function joinPathPreview(parent: string, basename: string): string {
@@ -134,9 +134,9 @@ export function basenamePreview(path: string): string {
 export function computeCascade(input: {
   parent: string;
   sanitizedName: string;
-  enclosingProject: OkFindEnclosingProjectRootResult | null;
-  enclosingGit: OkFindEnclosingGitRootResult | null;
-  targetState: OkFolderState | null;
+  enclosingProject: PsFindEnclosingProjectRootResult | null;
+  enclosingGit: PsFindEnclosingGitRootResult | null;
+  targetState: PsFolderState | null;
 }): SettledCascade {
   const { parent, sanitizedName, enclosingProject, enclosingGit, targetState } = input;
   if (parent === '' || sanitizedName === '') return { kind: 'idle' };
@@ -199,12 +199,12 @@ export function CreateProjectDialog({
   const [location, setLocation] = useState('');
   const [locationResolving, setLocationResolving] = useState(false);
   const [name, setName] = useState('');
-  const [detectedEditors, setDetectedEditors] = useState<readonly OkMcpWiringEditorId[] | null>(
+  const [detectedEditors, setDetectedEditors] = useState<readonly PsMcpWiringEditorId[] | null>(
     null,
   );
   const [connectEditors, setConnectEditors] = useState(true);
   const [sharing, setSharing] = useState<SharingMode>(DEFAULT_SHARING_MODE);
-  const [packId, setPackId] = useState<OkPackId | undefined>(initialPackId);
+  const [packId, setPackId] = useState<PsPackId | undefined>(initialPackId);
   const [step, setStep] = useState<CreateStep>('configure');
   const [rootChoice, setRootChoice] = useState<SeedRootChoice>('project-root');
   const [subfolder, setSubfolder] = useState('');
@@ -600,7 +600,7 @@ export function CreateProjectDialog({
       : t`Create new project`;
   const description =
     selectedPack === undefined
-      ? t`Create a new OpenKnowledge project in the folder of your choice.`
+      ? t`Create a new Palimpsest project in the folder of your choice.`
       : selectedPackBlurb
         ? t(selectedPackBlurb)
         : selectedPack.description;
@@ -792,7 +792,7 @@ export function CreateProjectDialog({
                       data-testid="create-pack-promoted-note"
                     >
                       <Trans>
-                        OpenKnowledge is set up at the repository root here, so the pack goes inside{' '}
+                        Palimpsest is set up at the repository root here, so the pack goes inside{' '}
                         <code className="font-mono break-all">{sanitized}</code> rather than at the
                         top of the repository.
                       </Trans>
@@ -944,7 +944,7 @@ function CascadeBanner({
       >
         <p className="mb-2">
           <Trans>
-            Can't nest projects. An OpenKnowledge project already exists at{' '}
+            Can't nest projects. An Palimpsest project already exists at{' '}
             <code className="font-mono break-all">{rootPath}</code>. Choose a location outside it,
             or open that project instead.
           </Trans>
@@ -974,7 +974,7 @@ function CascadeBanner({
       >
         <p>
           <Trans>
-            OpenKnowledge will be initialized at <code>{gitRoot}</code> — the parent of your new
+            Palimpsest will be initialized at <code>{gitRoot}</code> — the parent of your new
             folder, because it contains a <code>.git</code> folder (one project per git repo).
           </Trans>
         </p>

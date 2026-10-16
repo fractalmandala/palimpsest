@@ -78,7 +78,7 @@ async function callRoute(
 
 describe('GET /api/suggest-links', () => {
   test('returns the shared suggest-links payload for a valid target page', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-suggest-links-'));
     const contentDir = join(projectDir, 'content');
 
     try {
@@ -118,7 +118,7 @@ describe('GET /api/suggest-links', () => {
   });
 
   test('returns ok with an empty mentions array when no candidates are found', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-suggest-links-'));
     const contentDir = join(projectDir, 'content');
 
     try {
@@ -148,7 +148,7 @@ describe('GET /api/suggest-links', () => {
   });
 
   test('returns RFC 9457 problem details for missing, invalid, reserved, and unknown docName inputs', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-suggest-links-'));
     const contentDir = join(projectDir, 'content');
 
     try {

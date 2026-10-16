@@ -49,7 +49,7 @@ const siteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE_NAME,
-  alternateName: 'OpenKnowledge Docs',
+  alternateName: 'Palimpsest Docs',
   url: SITE_URL,
   description: SITE_DESCRIPTION,
 } satisfies WithContext<WebSite>;
@@ -60,13 +60,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE_NAME} — ${SITE_HEADLINE}`,
-    template: '%s · OpenKnowledge',
+    template: '%s · Palimpsest',
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   icons: {
-    icon: '/ok-logo.png',
-    apple: '/ok-logo.png',
+    icon: '/ps-logo.png',
+    apple: '/ps-logo.png',
   },
   openGraph: {
     type: 'website',

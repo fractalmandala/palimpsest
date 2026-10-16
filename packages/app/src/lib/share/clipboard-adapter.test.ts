@@ -8,23 +8,23 @@ interface MockableGlobals {
 
 function captureGlobals(): MockableGlobals {
   const win = globalThis as unknown as {
-    okDesktop?: MockableGlobals['windowOkDesktop'];
+    psDesktop?: MockableGlobals['windowOkDesktop'];
   };
   const nav = globalThis as unknown as {
     navigator?: { clipboard?: { writeText?: (text: string) => Promise<void> } };
   };
   return {
-    windowOkDesktop: win.okDesktop,
+    windowOkDesktop: win.psDesktop,
     navigatorClipboardWriteText: nav.navigator?.clipboard?.writeText,
   };
 }
 
 function setGlobals(g: MockableGlobals): void {
   const win = globalThis as unknown as {
-    okDesktop?: MockableGlobals['windowOkDesktop'];
+    psDesktop?: MockableGlobals['windowOkDesktop'];
   };
-  if (g.windowOkDesktop) win.okDesktop = g.windowOkDesktop;
-  else delete win.okDesktop;
+  if (g.windowOkDesktop) win.psDesktop = g.windowOkDesktop;
+  else delete win.psDesktop;
 
   const navHolder = globalThis as unknown as {
     navigator?: { clipboard?: { writeText?: (text: string) => Promise<void> } };
@@ -49,7 +49,7 @@ afterEach(() => {
 });
 
 describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when available)', () => {
-  test('routes the URL through window.okDesktop.clipboard.writeText', async () => {
+  test('routes the URL through window.psDesktop.clipboard.writeText', async () => {
     const calls: string[] = [];
     setGlobals({
       windowOkDesktop: {
@@ -62,11 +62,11 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
       navigatorClipboardWriteText: undefined,
     });
 
-    await scheduleClipboardWrite('https://openknowledge.ai/d/AAA');
-    expect(calls).toEqual(['https://openknowledge.ai/d/AAA']);
+    await scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/AAA');
+    expect(calls).toEqual(['https://github.com/fractalmandala/palimpsest/d/AAA']);
   });
 
-  test('does NOT touch navigator.clipboard when okDesktop bridge is available', async () => {
+  test('does NOT touch navigator.clipboard when psDesktop bridge is available', async () => {
     const navWriteText = vi.fn(async () => undefined);
     setGlobals({
       windowOkDesktop: {
@@ -75,7 +75,7 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
       navigatorClipboardWriteText: navWriteText,
     });
 
-    await scheduleClipboardWrite('https://openknowledge.ai/d/AAA');
+    await scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/AAA');
     expect(navWriteText).not.toHaveBeenCalled();
   });
 
@@ -91,7 +91,7 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
       navigatorClipboardWriteText: undefined,
     });
 
-    await expect(scheduleClipboardWrite('https://openknowledge.ai/d/AAA')).rejects.toThrow(
+    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/AAA')).rejects.toThrow(
       /ipc-channel-closed/,
     );
   });
@@ -107,8 +107,8 @@ describe('scheduleClipboardWrite — navigator.clipboard.writeText fallback', ()
       },
     });
 
-    await scheduleClipboardWrite('https://openknowledge.ai/d/BBB');
-    expect(calls).toEqual(['https://openknowledge.ai/d/BBB']);
+    await scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/BBB');
+    expect(calls).toEqual(['https://github.com/fractalmandala/palimpsest/d/BBB']);
   });
 
   test('propagates the writeText rejection (e.g. NotAllowedError)', async () => {
@@ -119,7 +119,7 @@ describe('scheduleClipboardWrite — navigator.clipboard.writeText fallback', ()
       },
     });
 
-    await expect(scheduleClipboardWrite('https://openknowledge.ai/d/BBB')).rejects.toThrow(
+    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/BBB')).rejects.toThrow(
       /NotAllowedError|clipboard denied/,
     );
   });
@@ -169,7 +169,7 @@ describe('scheduleClipboardWrite — no clipboard API available', () => {
       navigatorClipboardWriteText: undefined,
     });
 
-    await expect(scheduleClipboardWrite('https://openknowledge.ai/d/ZZZ')).rejects.toThrow(
+    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/ZZZ')).rejects.toThrow(
       /clipboard API unavailable/,
     );
   });
@@ -273,11 +273,11 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await scheduleClipboardWrite('https://openknowledge.ai/d/CCC');
+    await scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/CCC');
 
     expect(execCalls).toEqual(['copy']);
     expect(created).toHaveLength(1);
-    expect(created[0]?.value).toBe('https://openknowledge.ai/d/CCC');
+    expect(created[0]?.value).toBe('https://github.com/fractalmandala/palimpsest/d/CCC');
     expect(created[0]?.selected).toBe(true);
     expect(created[0]?.removed).toBe(true);
   });
@@ -290,7 +290,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       navigatorClipboardWriteText: undefined,
     });
 
-    await scheduleClipboardWrite('https://openknowledge.ai/d/DDD');
+    await scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/DDD');
     expect(execCalls).toEqual(['copy']);
   });
 
@@ -304,7 +304,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await expect(scheduleClipboardWrite('https://openknowledge.ai/d/EEE')).rejects.toThrow(
+    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/EEE')).rejects.toThrow(
       /permissions policy/,
     );
   });
@@ -319,7 +319,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await expect(scheduleClipboardWrite('https://openknowledge.ai/d/FFF')).rejects.toThrow(
+    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/FFF')).rejects.toThrow(
       /permissions policy/,
     );
     expect(created[0]?.removed).toBe(true);
@@ -334,12 +334,12 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await expect(scheduleClipboardWrite('https://openknowledge.ai/d/GGG')).rejects.toThrow(
+    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/GGG')).rejects.toThrow(
       /permissions policy/,
     );
   });
 
-  test('okDesktop bridge path never touches execCommand', async () => {
+  test('psDesktop bridge path never touches execCommand', async () => {
     const { doc, execCalls } = makeFakeDocument({ execResult: true });
     docHolder.document = doc;
     setGlobals({
@@ -347,7 +347,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       navigatorClipboardWriteText: undefined,
     });
 
-    await scheduleClipboardWrite('https://openknowledge.ai/d/HHH');
+    await scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/HHH');
     expect(execCalls).toEqual([]);
   });
 });

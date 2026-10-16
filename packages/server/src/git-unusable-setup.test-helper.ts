@@ -69,8 +69,8 @@ export function isRecoverableGitSignal(value: unknown): boolean {
   return (
     msg.includes('GIT_NOT_AVAILABLE') ||
     msg.includes('GIT_TOO_OLD') ||
-    msg.includes('OpenKnowledge needs Git') ||
-    msg.includes('OpenKnowledge requires Git') ||
+    msg.includes('Palimpsest needs Git') ||
+    msg.includes('Palimpsest requires Git') ||
     msg.includes('ok diagnose health')
   );
 }

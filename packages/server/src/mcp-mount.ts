@@ -111,7 +111,7 @@ export function mountMcpAndApi(opts: MountMcpAndApiOptions): MountMcpAndApiHandl
     if (tripsForwardedHeaderTripwire(req, ingressPolicy)) {
       log.warn(
         { url: req.url, host: req.headers.host },
-        '[remote] refused proxied WS upgrade; consent with OK_ALLOW_EXTERNAL=1 + OK_EXTERNAL_URL (or server.allowExternal + server.externalUrl in config)',
+        '[remote] refused proxied WS upgrade; consent with PS_ALLOW_EXTERNAL=1 + PS_EXTERNAL_URL (or server.allowExternal + server.externalUrl in config)',
       );
       warnForwardedHeaderRefusalOnce(log, 'ws-upgrade');
     }

@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { gitCleanEnv } from '../../scripts/git-clean-env.mjs';
 
 export function expectNoAutomaticGitMaintenance(repository, env = gitCleanEnv()) {
-  const traceDir = mkdtempSync(join(tmpdir(), 'ok-script-git-trace-'));
+  const traceDir = mkdtempSync(join(tmpdir(), 'ps-script-git-trace-'));
   const tracePath = join(traceDir, 'events.jsonl');
   try {
     const operation = spawnSync(

@@ -11,7 +11,7 @@ let normal: BootedServer;
 let ephemeral: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-admission-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-admission-'));
 
   const normalDir = mkdtempSync(resolve(tmpRoot, 'normal-'));
   normal = await bootCompositionRig(normalDir);

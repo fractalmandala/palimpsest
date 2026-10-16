@@ -67,7 +67,7 @@ beforeAll(async () => {
 });
 afterAll(() => testServer.stop());
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-checkpoint-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-checkpoint-test-'));
   seenBodies.length = 0;
 });
 afterEach(async () => {

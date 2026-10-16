@@ -110,7 +110,7 @@ export async function fetchSource(
   if (hasTransportScheme && !ALLOWED_GIT_TRANSPORTS.some((p) => p.test(spec.url))) {
     throw new SkillFetchError(`Unsupported git transport: ${spec.url}`);
   }
-  const tmp = mkdtempSync(join(tmpdir(), 'ok-skill-import-'));
+  const tmp = mkdtempSync(join(tmpdir(), 'ps-skill-import-'));
   try {
     await execFileAsync(
       'git',

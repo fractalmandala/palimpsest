@@ -9,8 +9,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ACP_LAUNCH_FAILURE_LOG } from '@inkeep/open-knowledge-core';
-import type { ThreadEvent, ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import { ACP_LAUNCH_FAILURE_LOG } from '@palimpsest/core';
+import type { ThreadEvent, ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger } from '../logger.ts';
@@ -348,7 +348,7 @@ const PI_PROJECT = {
   project: 'ready',
   cwd: '/tmp/pi-project',
   canonicalCwd: '/tmp/pi-project',
-  bridgePath: '/tmp/pi-project/.pi/extensions/open-knowledge.ts',
+  bridgePath: '/tmp/pi-project/.pi/extensions/palimpsest.ts',
   trustPath: '/tmp/pi-home/.pi/agent/trust.json',
   otherExtensions: [],
 } as const;

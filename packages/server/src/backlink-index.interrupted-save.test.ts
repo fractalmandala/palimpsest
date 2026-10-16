@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { BacklinkIndex } from './backlink-index.ts';
 
@@ -29,9 +29,9 @@ afterEach(() => {
 
 describe('BacklinkIndex cache save interrupted mid-write', () => {
   test('leaves the previous good snapshot intact and loadable', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-interrupted-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-interrupted-'));
     const contentDir = join(projectDir, 'content');
-    const cachePath = join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main', 'backlinks.json');
+    const cachePath = join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main', 'backlinks.json');
     mkdirSync(contentDir, { recursive: true });
     try {
       writeFileSync(join(contentDir, 'alpha.md'), 'See [[beta]].\n');

@@ -301,7 +301,7 @@ export function TableCellHandles({ editor }: { editor: Editor }) {
   if (!active) return null;
 
   return (
-    <div className="ok-table-cell-handle-layer">
+    <div className="ps-table-cell-handle-layer">
       <CellHandle
         editor={editor}
         anchor={active.columnAnchor}

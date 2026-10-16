@@ -1,8 +1,8 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
-import { normalizeAttachmentFolderPath } from '@inkeep/open-knowledge-core/config/schema';
-import { CONFIG_DOC_NAME_PROJECT } from '@inkeep/open-knowledge-core/constants/cc1';
-import { DEFAULT_ATTACHMENT_FOLDER_PATH } from '@inkeep/open-knowledge-core/constants/upload';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { humanFormat } from '@palimpsest/core/config/errors';
+import { normalizeAttachmentFolderPath } from '@palimpsest/core/config/schema';
+import { CONFIG_DOC_NAME_PROJECT } from '@palimpsest/core/constants/cc1';
+import { DEFAULT_ATTACHMENT_FOLDER_PATH } from '@palimpsest/core/constants/upload';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';

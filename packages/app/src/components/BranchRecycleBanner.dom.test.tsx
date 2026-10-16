@@ -81,7 +81,7 @@ test('with the desktop bridge, Restart server disables in flight and re-enables 
         resolveRestart = resolve;
       }),
   );
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: { restart: true },
     configurable: true,
     writable: true,
@@ -104,7 +104,7 @@ test('with the desktop bridge, Restart server disables in flight and re-enables 
       (screen.getByRole('button', { name: 'Restart server' }) as HTMLButtonElement).disabled,
     ).toBe(false);
   } finally {
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
   }
 });
 

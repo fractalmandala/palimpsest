@@ -23,7 +23,7 @@ import {
   setDetectedRegisteredAgentSuggestions,
 } from './registered-agents';
 
-const STORAGE_KEY = 'ok-acp-registered-agents-v1';
+const STORAGE_KEY = 'ps-acp-registered-agents-v1';
 
 function storedAgents(): RegisteredAgent[] {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').agents ?? [];

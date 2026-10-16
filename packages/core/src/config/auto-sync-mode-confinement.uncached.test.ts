@@ -76,7 +76,7 @@ describe('autoSync.enabled read confinement', () => {
   });
 
   test('names a package with a manifest and no src, and not a manifest-only package or a leftover directory (planted positive)', () => {
-    const packagesDir = mkdtempSync(join(tmpdir(), 'ok-auto-sync-packages-'));
+    const packagesDir = mkdtempSync(join(tmpdir(), 'ps-auto-sync-packages-'));
     try {
       mkdirSync(join(packagesDir, 'with-src', 'src'), { recursive: true });
       writeFileSync(join(packagesDir, 'with-src', 'package.json'), '{}\n');

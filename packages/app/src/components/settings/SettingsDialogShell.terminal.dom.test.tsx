@@ -81,11 +81,11 @@ vi.doMock('@/lib/handoff/use-claude-desktop-integration', () => ({
 const { SettingsDialogShell } = await import('./SettingsDialogShell');
 
 function setDesktopHost(present: boolean, opts: { ptyAvailable?: boolean } = {}) {
-  const w = window as unknown as { okDesktop?: unknown };
+  const w = window as unknown as { psDesktop?: unknown };
   if (present) {
-    w.okDesktop = { config: { ptyAvailable: opts.ptyAvailable ?? true } };
+    w.psDesktop = { config: { ptyAvailable: opts.ptyAvailable ?? true } };
   } else {
-    w.okDesktop = undefined;
+    w.psDesktop = undefined;
   }
 }
 
@@ -144,7 +144,7 @@ describe('SettingsDialogShell terminal subsection (desktop-only)', () => {
     });
   });
 
-  test('drops the Terminal search entry on the web host (no okDesktop bridge)', async () => {
+  test('drops the Terminal search entry on the web host (no psDesktop bridge)', async () => {
     setDesktopHost(false);
     const user = userEvent.setup();
     render(<SettingsDialogShell open={true} onOpenChange={() => {}} />);

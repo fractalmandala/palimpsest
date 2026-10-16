@@ -1,4 +1,4 @@
-export const DOC_PANEL_WIDTH_KEY = 'ok-doc-panel-width-v1';
+export const DOC_PANEL_WIDTH_KEY = 'ps-doc-panel-width-v1';
 
 export const DEFAULT_DOC_PANEL_WIDTH = 320;
 export const MIN_DOC_PANEL_WIDTH = 300;

@@ -65,12 +65,12 @@ describe('assertNoSymlinkEscape refuses links into private repository state', ()
   function withRepo(run: (contentDir: string) => void): void {
     const contentDir = mkdtempSync(join(tmpdir(), 'fs-safety-private-'));
     try {
-      for (const dir of ['.ok/local', '.ok/templates', '.git', 'notes', 'shared', 'docs/.ok']) {
+      for (const dir of ['.ps/local', '.ps/templates', '.git', 'notes', 'shared', 'docs/.ps']) {
         mkdirSync(join(contentDir, dir), { recursive: true });
       }
-      writeFileSync(join(contentDir, '.ok/local/principal.json'), '{"secret":true}');
-      writeFileSync(join(contentDir, '.ok/config.yml'), '');
-      writeFileSync(join(contentDir, '.ok/templates/t.md'), '# T');
+      writeFileSync(join(contentDir, '.ps/local/principal.json'), '{"secret":true}');
+      writeFileSync(join(contentDir, '.ps/config.yml'), '');
+      writeFileSync(join(contentDir, '.ps/templates/t.md'), '# T');
       writeFileSync(join(contentDir, '.git/config'), '[core]');
       writeFileSync(join(contentDir, 'shared/a.md'), '# A');
       run(contentDir);
@@ -92,11 +92,11 @@ describe('assertNoSymlinkEscape refuses links into private repository state', ()
     [
       'a file link to machine-local state',
       'notes/leak.md',
-      '../.ok/local/principal.json',
+      '../.ps/local/principal.json',
       'notes/leak.md',
     ],
     ['a file link to the git config', 'notes/cfg.md', '../.git/config', 'notes/cfg.md'],
-    ['a link to the config dir itself', 'notes/ok', '../.ok', 'notes/ok'],
+    ['a link to the config dir itself', 'notes/ok', '../.ps', 'notes/ok'],
     [
       'a descent into .git through a link to the root',
       'notes/root',
@@ -114,10 +114,10 @@ describe('assertNoSymlinkEscape refuses links into private repository state', ()
   });
 
   test.each([
-    ['the config file', '.ok/config.yml'],
-    ['the templates dir', '.ok/templates'],
-    ['a nested folder config dir', 'docs/.ok'],
-    ['a missing nested folder config dir', 'notes/.ok'],
+    ['the config file', '.ps/config.yml'],
+    ['the templates dir', '.ps/templates'],
+    ['a nested folder config dir', 'docs/.ps'],
+    ['a missing nested folder config dir', 'notes/.ps'],
   ])('direct access to %s still passes', (_label, requested) => {
     withRepo((contentDir) => {
       expect(refusal(join(contentDir, requested), contentDir)).toBeNull();
@@ -136,16 +136,16 @@ describe('assertNoSymlinkEscape refuses links into private repository state', ()
   test("a symlinked folder's own config dir classifies like the folder it links to", () => {
     withRepo((contentDir) => {
       symlinkSync('../docs', join(contentDir, 'notes/docs-link'));
-      expect(refusal(join(contentDir, 'notes/docs-link/.ok'), contentDir)).toBeNull();
+      expect(refusal(join(contentDir, 'notes/docs-link/.ps'), contentDir)).toBeNull();
       expect(
-        refusal(join(contentDir, 'notes/docs-link/.ok/frontmatter.yml'), contentDir),
+        refusal(join(contentDir, 'notes/docs-link/.ps/frontmatter.yml'), contentDir),
       ).toBeNull();
     });
   });
 
   test('a link whose own target is a config dir stays refused', () => {
     withRepo((contentDir) => {
-      symlinkSync('../docs/.ok', join(contentDir, 'notes/cfg'));
+      symlinkSync('../docs/.ps', join(contentDir, 'notes/cfg'));
       expect(refusal(join(contentDir, 'notes/cfg'), contentDir)).toBeInstanceOf(SymlinkEscapeError);
     });
   });
@@ -162,11 +162,11 @@ describe('canonicalRelPathForNewTarget', () => {
   test('ascends past a missing leaf and canonicalizes through a symlinked ancestor', () => {
     const realpath = ((p: string): string => {
       if (p === '/c') return '/c';
-      if (p === '/c/sneaky') return '/c/.ok';
+      if (p === '/c/sneaky') return '/c/.ps';
       throw errno('ENOENT');
     }) as unknown as typeof import('node:fs').realpathSync;
     expect(canonicalRelPathForNewTarget('/c/sneaky/phantom.md', '/c', log, realpath)).toBe(
-      '.ok/phantom.md',
+      '.ps/phantom.md',
     );
   });
 
@@ -187,7 +187,7 @@ describe('canonicalRelPathForNewTarget', () => {
   test('win32: a symlinked-ancestor result still satisfies the /-split consumer', () => {
     const realpath = ((p: string): string => {
       if (p === 'C:\\c') return 'C:\\c';
-      if (p === 'C:\\c\\sneaky') return 'C:\\c\\.ok';
+      if (p === 'C:\\c\\sneaky') return 'C:\\c\\.ps';
       throw errno('ENOENT');
     }) as unknown as typeof import('node:fs').realpathSync;
     const out = canonicalRelPathForNewTarget('C:\\c\\sneaky\\phantom.md', 'C:\\c', log, realpath, {
@@ -196,7 +196,7 @@ describe('canonicalRelPathForNewTarget', () => {
       dirname: win32.dirname,
       sep: win32.sep,
     });
-    expect(out).toBe('.ok/phantom.md');
+    expect(out).toBe('.ps/phantom.md');
     expect(isReservedProjectStatePath(out)).toBe(true);
   });
 
@@ -204,13 +204,13 @@ describe('canonicalRelPathForNewTarget', () => {
     const realpath = ((): string => {
       throw errno('EACCES');
     }) as unknown as typeof import('node:fs').realpathSync;
-    const out = canonicalRelPathForNewTarget('C:\\c\\.ok\\x.md', 'C:\\c', log, realpath, {
+    const out = canonicalRelPathForNewTarget('C:\\c\\.ps\\x.md', 'C:\\c', log, realpath, {
       join: win32.join,
       relative: win32.relative,
       dirname: win32.dirname,
       sep: win32.sep,
     });
-    expect(out).toBe('.ok/x.md');
+    expect(out).toBe('.ps/x.md');
     expect(isReservedProjectStatePath(out)).toBe(true);
   });
 
@@ -218,13 +218,13 @@ describe('canonicalRelPathForNewTarget', () => {
     const realpath = ((): string => {
       throw errno('ENOENT');
     }) as unknown as typeof import('node:fs').realpathSync;
-    const out = canonicalRelPathForNewTarget('C:\\c\\.ok\\deep\\x.md', 'C:\\c', log, realpath, {
+    const out = canonicalRelPathForNewTarget('C:\\c\\.ps\\deep\\x.md', 'C:\\c', log, realpath, {
       join: win32.join,
       relative: win32.relative,
       dirname: win32.dirname,
       sep: win32.sep,
     });
-    expect(out).toBe('.ok/deep/x.md');
+    expect(out).toBe('.ps/deep/x.md');
     expect(isReservedProjectStatePath(out)).toBe(true);
   });
 });

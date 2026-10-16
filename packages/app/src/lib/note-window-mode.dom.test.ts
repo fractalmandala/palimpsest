@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, test } from 'vitest';
 import { isNoteWindow } from './note-window-mode.ts';
 
-type OkDesktopStub = { config: { mode: string } };
+type PsDesktopStub = { config: { mode: string } };
 
 function stubMode(mode: string | null): void {
   if (mode === null) {
-    (window as unknown as { okDesktop?: OkDesktopStub }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: PsDesktopStub }).psDesktop = undefined;
     return;
   }
-  (window as unknown as { okDesktop?: OkDesktopStub }).okDesktop = { config: { mode } };
+  (window as unknown as { psDesktop?: PsDesktopStub }).psDesktop = { config: { mode } };
 }
 
 afterEach(() => {
@@ -32,7 +32,7 @@ describe('isNoteWindow', () => {
   });
 
   test('a partial bridge with no config resolves false instead of throwing', () => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {};
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {};
     expect(isNoteWindow()).toBe(false);
   });
 });

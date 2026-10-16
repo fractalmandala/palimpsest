@@ -6,7 +6,7 @@ import { createContentFilter, createContentFilterAsync } from './content-filter.
 
 describe('skill-root admission', () => {
   function withFixture<T>(fn: (contentDir: string) => T): T {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-skill-roots-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-skill-roots-'));
     try {
       mkdirSync(join(projectDir, '.github'), { recursive: true });
       writeFileSync(join(projectDir, '.github', 'CI_RUNBOOK.md'), '# Runbook\n');
@@ -65,17 +65,17 @@ describe.each([
   ['sync', createContentFilter],
   ['async', createContentFilterAsync],
 ] as const)('always-skip bound under skill roots (%s factory)', (_name, factory) => {
-  const skillRoots = ['.ok/skills/demo', '.claude/skills/demo'];
+  const skillRoots = ['.ps/skills/demo', '.claude/skills/demo'];
   const skippedBelow = [
     '.git',
     '.GIT',
     '.Git',
     'node_modules',
     'NODE_MODULES',
-    '.ok',
+    '.ps',
     '.OK',
-    '.open-knowledge',
-    '.openknowledge',
+    '.palimpsest',
+    '.palimpsest',
     '.claude',
     '.cursor',
     '.codex',
@@ -95,7 +95,7 @@ describe.each([
   test.each(skillRoots)(
     '%s: skill files are admitted, VCS and package dirs are not',
     async (root) => {
-      const contentDir = mkdtempSync(join(tmpdir(), 'ok-skill-bound-'));
+      const contentDir = mkdtempSync(join(tmpdir(), 'ps-skill-bound-'));
       try {
         const filter = await build(contentDir);
         expect(filter.isExcluded(`${root}/SKILL.md`)).toBe(false);
@@ -118,7 +118,7 @@ describe.each([
   );
 
   test('case variants of always-skip dirs are withheld at the content root too', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-skill-bound-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-skill-bound-'));
     try {
       const filter = await build(contentDir);
       for (const path of ['.GIT/config.md', 'NODE_MODULES/p/README.md', '.CLAUDE/notes.md']) {
@@ -135,18 +135,18 @@ describe.each([
     }
   });
 
-  test('.ok artifacts under any case of an always-skip dir are withheld', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-skill-bound-'));
+  test('.ps artifacts under any case of an always-skip dir are withheld', async () => {
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-skill-bound-'));
     try {
       const filter = await build(contentDir);
       for (const skip of ['node_modules', 'NODE_MODULES']) {
-        const template = `${skip}/p/.ok/templates/x.md`;
-        const frontmatter = `${skip}/p/.ok/frontmatter.yml`;
+        const template = `${skip}/p/.ps/templates/x.md`;
+        const frontmatter = `${skip}/p/.ps/frontmatter.yml`;
         const synced = filter.isExcluded(frontmatter, { syncScope: { pathBase: 'content' } });
         expect(`${template}=${filter.isExcluded(template)}`).toBe(`${template}=true`);
         expect(`${template}=${filter.isPathIgnored(template)}`).toBe(`${template}=true`);
         expect(`${frontmatter}=${synced}`).toBe(`${frontmatter}=true`);
-        for (const dir of [`${skip}/p/.ok`, `${skip}/p/.ok/templates`]) {
+        for (const dir of [`${skip}/p/.ps`, `${skip}/p/.ps/templates`]) {
           expect(`${dir}=${filter.isDirExcluded(dir)}`).toBe(`${dir}=true`);
         }
       }

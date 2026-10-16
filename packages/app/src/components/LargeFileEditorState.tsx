@@ -1,4 +1,4 @@
-import { formatFileSize } from '@inkeep/open-knowledge-core/utils/file-size';
+import { formatFileSize } from '@palimpsest/core/utils/file-size';
 import { Trans } from '@lingui/react/macro';
 import { ArrowLeft, FileWarning } from 'lucide-react';
 import { useEffect, useId, useRef } from 'react';
@@ -58,7 +58,7 @@ export function LargeFileEditorState({ docName, size, limit, backNav }: LargeFil
         </EmptyTitle>
         <EmptyDescription>
           <Trans>
-            {docName} is {formatFileSize(size)}. OpenKnowledge currently opens files up to{' '}
+            {docName} is {formatFileSize(size)}. Palimpsest currently opens files up to{' '}
             {formatFileSize(limit)}.
           </Trans>
         </EmptyDescription>

@@ -1,4 +1,4 @@
-import { RENDERER_LOG_MAX_MESSAGE_BYTES } from '@inkeep/open-knowledge-core';
+import { RENDERER_LOG_MAX_MESSAGE_BYTES } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { emitDiagnosticBreadcrumb, MAX_BREADCRUMB_CHARS } from './diagnostic-breadcrumb';
 
@@ -21,9 +21,9 @@ afterEach(() => {
 describe('emitDiagnosticBreadcrumb', () => {
   test('emits one console.info carrying a single JSON object argument', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', { docName: 'notes/a', index: 3, claimed: true });
+    emitDiagnosticBreadcrumb('ps-test-event', { docName: 'notes/a', index: 3, claimed: true });
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       docName: 'notes/a',
       index: 3,
       claimed: true,
@@ -35,7 +35,7 @@ describe('emitDiagnosticBreadcrumb', () => {
     const debug = vi.spyOn(console, 'debug').mockImplementation(() => undefined);
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    emitDiagnosticBreadcrumb('ok-test-event');
+    emitDiagnosticBreadcrumb('ps-test-event');
     expect(info).toHaveBeenCalledTimes(1);
     expect(debug).not.toHaveBeenCalled();
     expect(warn).not.toHaveBeenCalled();
@@ -44,17 +44,17 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('omits undefined fields rather than serializing them', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', { present: 0, absent: undefined });
+    emitDiagnosticBreadcrumb('ps-test-event', { present: 0, absent: undefined });
     const parsed = soleParsedCall(spy);
-    expect(parsed).toEqual({ event: 'ok-test-event', present: 0 });
+    expect(parsed).toEqual({ event: 'ps-test-event', present: 0 });
     expect('absent' in parsed).toBe(false);
   });
 
   test('keeps a false or zero field, which an undefined check must not swallow', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', { claimed: false, scrollTop: 0, found: -1 });
+    emitDiagnosticBreadcrumb('ps-test-event', { claimed: false, scrollTop: 0, found: -1 });
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       claimed: false,
       scrollTop: 0,
       found: -1,
@@ -63,8 +63,8 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('a payload cannot rename its own event and hide from a grep', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-real-event', { event: 'ok-impostor', docName: 'notes/a' });
-    expect(soleParsedCall(spy)).toEqual({ event: 'ok-real-event', docName: 'notes/a' });
+    emitDiagnosticBreadcrumb('ps-real-event', { event: 'ps-impostor', docName: 'notes/a' });
+    expect(soleParsedCall(spy)).toEqual({ event: 'ps-real-event', docName: 'notes/a' });
   });
 
   test('drops a nested field and counts it rather than shipping unredactable depth', () => {
@@ -72,10 +72,10 @@ describe('emitDiagnosticBreadcrumb', () => {
     const cyclic: Record<string, unknown> = {};
     cyclic.self = cyclic;
     expect(() =>
-      emitDiagnosticBreadcrumb('ok-test-event', { cyclic, nested: { a: 1 }, index: 2 }),
+      emitDiagnosticBreadcrumb('ps-test-event', { cyclic, nested: { a: 1 }, index: 2 }),
     ).not.toThrow();
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       index: 2,
       droppedNonScalarFields: 2,
     });
@@ -83,7 +83,7 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('a field named after a pino key is dropped, not left to corrupt the record', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', {
+    emitDiagnosticBreadcrumb('ps-test-event', {
       level: 2,
       time: 1,
       pid: 2,
@@ -98,7 +98,7 @@ describe('emitDiagnosticBreadcrumb', () => {
       headingLevel: 2,
     });
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       headingLevel: 2,
       droppedReservedFields: 11,
     });
@@ -106,9 +106,9 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('a BigInt costs one field, not the whole line', () => {
     const spy = captureInfo();
-    expect(() => emitDiagnosticBreadcrumb('ok-test-event', { big: 10n, index: 3 })).not.toThrow();
+    expect(() => emitDiagnosticBreadcrumb('ps-test-event', { big: 10n, index: 3 })).not.toThrow();
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       index: 3,
       droppedNonScalarFields: 1,
     });
@@ -116,13 +116,13 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('a symbol or function is dropped the same way', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', {
+    emitDiagnosticBreadcrumb('ps-test-event', {
       sym: Symbol('x'),
       fn: () => undefined,
       index: 1,
     });
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       index: 1,
       droppedNonScalarFields: 2,
     });
@@ -130,9 +130,9 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('a dropped field is counted, so the gap is visible rather than silent', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', { level: 2, nested: { a: 1 }, index: 7 });
+    emitDiagnosticBreadcrumb('ps-test-event', { level: 2, nested: { a: 1 }, index: 7 });
     expect(soleParsedCall(spy)).toEqual({
-      event: 'ok-test-event',
+      event: 'ps-test-event',
       index: 7,
       droppedNonScalarFields: 1,
       droppedReservedFields: 1,
@@ -141,18 +141,18 @@ describe('emitDiagnosticBreadcrumb', () => {
 
   test('null survives — it is a value, not a missing field', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', { resolved: null });
-    expect(soleParsedCall(spy)).toEqual({ event: 'ok-test-event', resolved: null });
+    emitDiagnosticBreadcrumb('ps-test-event', { resolved: null });
+    expect(soleParsedCall(spy)).toEqual({ event: 'ps-test-event', resolved: null });
   });
 
   test('an oversized payload degrades to a parseable line instead of an unparseable one', () => {
     const spy = captureInfo();
-    emitDiagnosticBreadcrumb('ok-test-event', {
+    emitDiagnosticBreadcrumb('ps-test-event', {
       docName: 'x'.repeat(MAX_BREADCRUMB_CHARS),
       index: 4,
     });
     const parsed = soleParsedCall(spy);
-    expect(parsed).toEqual({ event: 'ok-test-event', oversized: true, fieldCount: 2 });
+    expect(parsed).toEqual({ event: 'ps-test-event', oversized: true, fieldCount: 2 });
     expect(JSON.stringify(parsed).length).toBeLessThan(MAX_BREADCRUMB_CHARS);
   });
 
@@ -164,8 +164,8 @@ describe('emitDiagnosticBreadcrumb', () => {
     const spy = captureInfo();
     const room =
       MAX_BREADCRUMB_CHARS -
-      JSON.stringify({ event: 'ok-test-event', docName: '', index: 4 }).length;
-    emitDiagnosticBreadcrumb('ok-test-event', { docName: 'x'.repeat(room), index: 4 });
+      JSON.stringify({ event: 'ps-test-event', docName: '', index: 4 }).length;
+    emitDiagnosticBreadcrumb('ps-test-event', { docName: 'x'.repeat(room), index: 4 });
     const parsed = soleParsedCall(spy);
     expect(parsed.index).toBe(4);
     expect(parsed.oversized).toBeUndefined();

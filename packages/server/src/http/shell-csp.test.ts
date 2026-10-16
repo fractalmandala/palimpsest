@@ -36,7 +36,7 @@ describe('createShellHeaderSetter', () => {
   let dist: string;
 
   beforeEach(() => {
-    dist = mkdtempSync(join(tmpdir(), 'ok-shell-csp-'));
+    dist = mkdtempSync(join(tmpdir(), 'ps-shell-csp-'));
     mkdirSync(join(dist, 'assets'));
     writeFileSync(
       join(dist, 'index.html'),

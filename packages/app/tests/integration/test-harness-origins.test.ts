@@ -1,5 +1,5 @@
 import type { LocalTransactionOrigin } from '@hocuspocus/server';
-import { isPairedWriteOrigin } from '@inkeep/open-knowledge-server';
+import { isPairedWriteOrigin } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 

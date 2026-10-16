@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DEFAULT_LINTER_CONFIG, type LinterConfig } from '@inkeep/open-knowledge-core';
+import { DEFAULT_LINTER_CONFIG, type LinterConfig } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { auditProject, lintDoc } from './audit.ts';
 
@@ -20,8 +20,8 @@ const base: LinterConfig = {
 };
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-symlink-')));
-  outside = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-outside-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-symlink-')));
+  outside = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-outside-')));
   writeFileSync(join(outside, 'secret.md'), `# Secret\n\n\t${SECRET}\n`, 'utf-8');
 });
 afterEach(() => {

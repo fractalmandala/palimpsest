@@ -168,7 +168,7 @@ function ghJson(args) {
 }
 
 function main() {
-  const repo = process.env.GITHUB_REPOSITORY || 'inkeep/open-knowledge';
+  const repo = process.env.GITHUB_REPOSITORY || 'fractalmandala/palimpsest';
   let history = [];
   try {
     const listed = ghJson(RUN_LIST_ARGS);

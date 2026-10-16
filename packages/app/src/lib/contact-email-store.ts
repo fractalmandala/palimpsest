@@ -1,4 +1,4 @@
-export const CONTACT_EMAIL_STORAGE_KEY = 'ok-contact-email-v1';
+export const CONTACT_EMAIL_STORAGE_KEY = 'ps-contact-email-v1';
 
 export const CONTACT_EMAIL_MAX_LENGTH = 320;
 

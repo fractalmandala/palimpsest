@@ -53,7 +53,7 @@ describe('storage helpers', () => {
 
   test('returns an empty list for invalid stored payloads', () => {
     const storage = makeStorage();
-    storage.setItem('ok-omnibar-recents-v1', '{"bad":true}');
+    storage.setItem('ps-omnibar-recents-v1', '{"bad":true}');
     expect(loadOmnibarRecents(storage)).toEqual([]);
   });
 });

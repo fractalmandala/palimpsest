@@ -13,8 +13,8 @@ import {
   SkillRevertSuccessSchema,
   SkillsReimportBulkRequestSchema,
   SkillsReimportBulkSuccessSchema,
-} from '@inkeep/open-knowledge-core';
-import { resolveProjectIdentity } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { resolveProjectIdentity } from '@palimpsest/core/shadow-repo-layout';
 import {
   discoverSkillDirs,
   fetchSource,
@@ -27,7 +27,7 @@ import {
   SkillFetchError,
   type SkillsLock,
   upsertLockEntry,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import type { ContentFilter } from '../content-filter.ts';
 import { extractActorIdentity } from '../extract-actor-identity.ts';
 import { scanGlobalInPlaceSkills, scanInPlaceSkills } from '../in-place-skills.ts';
@@ -83,7 +83,7 @@ export interface SkillsRecoveryRouteDeps {
   skillsHome: string;
   projectSkillDirRel: (name: string) => string;
   attributeOkArtifactWrite: SkillReimportDeps['attributeOkArtifactWrite'];
-  okArtifactKey: (
+  psArtifactKey: (
     kind: 'template' | 'folder-frontmatter' | 'folder' | 'skill',
     folder: string,
     name?: string,
@@ -114,7 +114,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
     skillsHome,
     projectSkillDirRel,
     attributeOkArtifactWrite,
-    okArtifactKey,
+    psArtifactKey,
     commitOkArtifactWrite,
     signalChannel,
     bumpSkillsCatalogGen,
@@ -253,7 +253,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
 
         attributeOkArtifactWrite(
           actor,
-          okArtifactKey('skill', '', body.name),
+          psArtifactKey('skill', '', body.name),
           `skill-restore: ${body.name} @ ${body.version.slice(0, 8)}`,
         );
         await commitOkArtifactWrite('skill-restore');
@@ -765,7 +765,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
 
         attributeOkArtifactWrite(
           actor,
-          okArtifactKey('skill', '', body.name),
+          psArtifactKey('skill', '', body.name),
           `skill-revert: ${body.name} @ ${entry.baselineRef.slice(0, 8)}`,
         );
         await commitOkArtifactWrite('skill-revert');

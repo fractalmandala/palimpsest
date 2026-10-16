@@ -13,7 +13,7 @@ let root: string;
 let cleanup: ManagedArtifactWatcherUnsubscribe | null = null;
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-ma-watch-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-ma-watch-'));
 });
 afterEach(async () => {
   if (cleanup) await cleanup();
@@ -23,7 +23,7 @@ afterEach(async () => {
 
 describe('startManagedArtifactWatcher', () => {
   test('fires onChange for a SKILL.md created after start', async () => {
-    const skillsRoot = resolve(root, '.ok', 'skills');
+    const skillsRoot = resolve(root, '.ps', 'skills');
     const seen: Array<[string, string]> = [];
     cleanup = await startManagedArtifactWatcher([skillsRoot], (p, c) => seen.push([p, c]));
 
@@ -41,7 +41,7 @@ describe('startManagedArtifactWatcher', () => {
   }, 25_000);
 
   test('fires onUnlink (not onChange) when a SKILL.md is deleted', async () => {
-    const skillsRoot = resolve(root, '.ok', 'skills');
+    const skillsRoot = resolve(root, '.ps', 'skills');
     const skillDir = resolve(skillsRoot, 'demo');
     mkdirSync(skillDir, { recursive: true });
     const leaf = resolve(skillDir, 'SKILL.md');
@@ -66,7 +66,7 @@ describe('startManagedArtifactWatcher', () => {
   }, 25_000);
 
   test('fires onChange on edit; ignores non-SKILL.md siblings', async () => {
-    const skillsRoot = resolve(root, '.ok', 'skills');
+    const skillsRoot = resolve(root, '.ps', 'skills');
     const skillDir = resolve(skillsRoot, 'demo');
     mkdirSync(skillDir, { recursive: true });
     const leaf = resolve(skillDir, 'SKILL.md');
@@ -87,7 +87,7 @@ describe('startManagedArtifactWatcher', () => {
   }, 25_000);
 
   test('fires onChange for a SKILL.md present at start only once it is edited', async () => {
-    const skillsRoot = resolve(root, '.ok', 'skills');
+    const skillsRoot = resolve(root, '.ps', 'skills');
     const skillDir = resolve(skillsRoot, 'demo');
     mkdirSync(skillDir, { recursive: true });
     const leaf = resolve(skillDir, 'SKILL.md');

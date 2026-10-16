@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } fr
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import { ProblemDetailsSchema } from '@inkeep/open-knowledge-core';
+import { ProblemDetailsSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
@@ -66,23 +66,23 @@ async function setupUDConflict(
 }
 
 async function registerConflict(contentDir: string, file: string): Promise<void> {
-  const { LOCAL_DIR } = await import('@inkeep/open-knowledge-core');
+  const { LOCAL_DIR } = await import('@palimpsest/core');
   const { mkdirSync } = await import('node:fs');
-  const okLocal = join(contentDir, '.ok', LOCAL_DIR);
-  mkdirSync(okLocal, { recursive: true });
+  const psLocal = join(contentDir, '.ps', LOCAL_DIR);
+  mkdirSync(psLocal, { recursive: true });
   const conflictsJson = {
     version: 1,
     branch: 'main',
     conflicts: [{ file, detectedAt: new Date().toISOString() }],
   };
-  writeFileSync(join(okLocal, 'conflicts.json'), JSON.stringify(conflictsJson), 'utf-8');
+  writeFileSync(join(psLocal, 'conflicts.json'), JSON.stringify(conflictsJson), 'utf-8');
 }
 
 async function createDUTestServer(): Promise<TestServer> {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-du-test-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-du-test-')));
   const { mkdirSync } = await import('node:fs');
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), '', 'utf-8');
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), '', 'utf-8');
   await execFileAsync('git', ['init', '--initial-branch=main', dir]);
   configureTestGitRepository(dir);
   await setupDUConflict(dir);
@@ -91,10 +91,10 @@ async function createDUTestServer(): Promise<TestServer> {
 }
 
 async function createUDTestServer(): Promise<TestServer> {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-ud-test-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-ud-test-')));
   const { mkdirSync } = await import('node:fs');
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), '', 'utf-8');
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), '', 'utf-8');
   await execFileAsync('git', ['init', '--initial-branch=main', dir]);
   configureTestGitRepository(dir);
   await setupUDConflict(dir);
@@ -253,10 +253,10 @@ describe('both-modified conflict — backward compatibility', () => {
   let contentDir: string;
 
   beforeAll(async () => {
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-mm-test-')));
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-mm-test-')));
     const { mkdirSync } = await import('node:fs');
-    mkdirSync(join(contentDir, '.ok'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'config.yml'), '', 'utf-8');
+    mkdirSync(join(contentDir, '.ps'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'config.yml'), '', 'utf-8');
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
     const opts = { cwd: contentDir };

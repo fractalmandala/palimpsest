@@ -1,18 +1,18 @@
 ---
 name: knowledge-base
-description: "How to work in a Knowledge Base project (the `knowledge-base` starter pack). Read when the project has the three-layer source-grounded layout — `external-sources/` → `research/` → `articles/` — or when asked how this project is organized. Carries the layer model, per-folder rules, status flows, and log discipline so this guidance does NOT live inside template bodies or log.md. The three procedures live elsewhere: ingest in the platform `open-knowledge` skill, research and consolidate as their own sibling skills in this pack. Complements the platform `open-knowledge` skill; does not replace it."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack knowledge-base` (`ok-beta` for Beta)."
+description: "How to work in a Knowledge Base project (the `knowledge-base` starter pack). Read when the project has the three-layer source-grounded layout — `external-sources/` → `research/` → `articles/` — or when asked how this project is organized. Carries the layer model, per-folder rules, status flows, and log discipline so this guidance does NOT live inside template bodies or log.md. The three procedures live elsewhere: ingest in the platform `palimpsest` skill, research and consolidate as their own sibling skills in this pack. Complements the platform `palimpsest` skill; does not replace it."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack knowledge-base` (`ps-beta` for Beta)."
 type: Document
 metadata:
   pack: "knowledge-base"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Knowledge Base pack — how to work here
 
 This project uses the **source-grounded knowledge-base** layout. The whole point is a closed evidence loop: nothing canonical exists without a traceable chain back to a preserved source. This skill holds the workflow so the templates and `log.md` can stay clean — when you create a doc from a template you get structure, and the *how* lives here.
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the KB workflow on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the KB workflow on top.
 
 ## Link at creation
 
@@ -38,7 +38,7 @@ Each layer has a full, STOP-gated procedure, and each ships as its own skill so 
 
 | Procedure | Where it lives | When |
 | --- | --- | --- |
-| ingest | Platform `/open-knowledge` skill (`references/ingest-and-sources.md`) — its Grounding rule depends on it everywhere, so it ships with every project, not just this pack. | Preserve a shared URL / PDF / file verbatim, OR you fetched a URL to ground a KB claim (binary sources preserved, not scraped). |
+| ingest | Platform `/palimpsest` skill (`references/ingest-and-sources.md`) — its Grounding rule depends on it everywhere, so it ships with every project, not just this pack. | Preserve a shared URL / PDF / file verbatim, OR you fetched a URL to ground a KB claim (binary sources preserved, not scraped). |
 | research | Sibling skill `/research-with-sources` | Investigate / compare / synthesize multiple sources → provisional article with `status: draft` + `sources:`. |
 | consolidate | Sibling skill `/consolidate-notes` | A decision was actually made → commit canonical source-of-truth with `status: stable` + a `supersedes:` chain. |
 
@@ -73,7 +73,7 @@ Older projects may use `status: provisional` / `canonical` and string entries un
 
 There is a `log.md` at the project root. **Append one dated entry after any turn that creates, edits, or restructures content** — one entry per turn, not per file. Silent edits break the audit trail.
 
-Log: `ingest` runs (new sources), `research` / `consolidate` runs (provisional or canonical articles), direct `write` / `edit` / `move` / `delete` outside the three procedures, project-onboarding runs, folder restructures, and `.ok/config.yml` changes.
+Log: `ingest` runs (new sources), `research` / `consolidate` runs (provisional or canonical articles), direct `write` / `edit` / `move` / `delete` outside the three procedures, project-onboarding runs, folder restructures, and `.ps/config.yml` changes.
 
 **Reference docs as markdown links, not bare paths** — `[path/to/doc](./path/to/doc.md)`, so the entry shows up in `links({ kind: "backlinks" })` for those docs. A bare path string does not register in the graph.
 

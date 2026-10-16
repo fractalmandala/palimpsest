@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export { PROTOCOL_VERSION } from '@inkeep/open-knowledge-core';
+export { PROTOCOL_VERSION } from '@palimpsest/core';
 
 function readRuntimeVersion(): string {
   try {

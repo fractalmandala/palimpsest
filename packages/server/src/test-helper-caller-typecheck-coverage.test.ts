@@ -11,8 +11,8 @@ import {
   CALLERS_TSCONFIG as TSCONFIG,
 } from './test-helper-caller-typecheck-coverage.reads.ts';
 
-const OK_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-const PACKAGE_ROOT = resolve(OK_ROOT, SERVER_DIR);
+const PS_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+const PACKAGE_ROOT = resolve(PS_ROOT, SERVER_DIR);
 const TYPECHECK_SCRIPT = 'typecheck:test-helper-callers';
 
 const HELPERS = [
@@ -23,7 +23,7 @@ const HELPERS = [
 ];
 
 const UNSCANNED_DIRS = new Set(['node_modules', 'dist', '.turbo']);
-const UNSCANNED_DIR_PREFIXES = ['.ok-skill-publish-'];
+const UNSCANNED_DIR_PREFIXES = ['.ps-skill-publish-'];
 
 const isUnscanned = (name: string): boolean =>
   UNSCANNED_DIRS.has(name) || UNSCANNED_DIR_PREFIXES.some((prefix) => name.startsWith(prefix));
@@ -169,8 +169,8 @@ describe('every caller of a shared test-only helper sits inside a typecheck prog
       writeFileSync(join(root, path), '');
     };
     plant('src/source.test.ts');
-    plant('.ok-skill-publish-a1b2c3/assets/staged.test.ts');
-    plant('.ok-skill-publish-kept-a1b2c3/staged.test.ts');
+    plant('.ps-skill-publish-a1b2c3/assets/staged.test.ts');
+    plant('.ps-skill-publish-kept-a1b2c3/staged.test.ts');
 
     expect(
       filesUnder(root, CALLER_SUFFIX).map((path) => relative(root, path).replaceAll('\\', '/')),

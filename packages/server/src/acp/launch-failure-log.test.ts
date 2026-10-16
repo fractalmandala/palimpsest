@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SPAWN_ERROR_LOG_MAX_BYTES } from '@inkeep/open-knowledge-core';
+import { SPAWN_ERROR_LOG_MAX_BYTES } from '@palimpsest/core';
 import { afterEach, expect, test } from 'vitest';
 import {
   type AcpLaunchFailureEntry,

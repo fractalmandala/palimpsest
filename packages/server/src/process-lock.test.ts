@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { hostname, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { getMachineId } from './machine-id';
 import {
@@ -42,8 +42,8 @@ let lockDir: string;
 let lockPath: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-process-lock-test-'));
-  lockDir = resolve(tmpDir, '.ok', LOCAL_DIR);
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-process-lock-test-'));
+  lockDir = resolve(tmpDir, '.ps', LOCAL_DIR);
   lockPath = lockFilePath(lockDir, LOCK_NAME);
 });
 
@@ -717,7 +717,7 @@ describe('channel metadata (one writer per project across channels)', () => {
   });
 
   test('the lock names the channel that wrote it, and both readers return it', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     acquireProcessLock({
       lockName: LOCK_NAME,
       lockDir,
@@ -731,7 +731,7 @@ describe('channel metadata (one writer per project across channels)', () => {
   });
 
   test('a dev build records the dev channel, not Stable', () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
     acquireProcessLock({
       lockName: LOCK_NAME,
       lockDir,
@@ -790,8 +790,8 @@ describe('channel metadata (one writer per project across channels)', () => {
     }
   });
 
-  test('an unsupported OK_CHANNEL still acquires the lock, without a channel', () => {
-    vi.stubEnv('OK_CHANNEL', 'cloud');
+  test('an unsupported PS_CHANNEL still acquires the lock, without a channel', () => {
+    vi.stubEnv('PS_CHANNEL', 'cloud');
     acquireProcessLock({
       lockName: LOCK_NAME,
       lockDir,

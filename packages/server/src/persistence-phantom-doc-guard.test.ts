@@ -14,7 +14,7 @@ interface Fixture {
 }
 
 async function setupFixture(): Promise<Fixture> {
-  const tmpDir = mkdtempSync(join(tmpdir(), 'ok-phantom-doc-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'ps-phantom-doc-'));
   const contentDir = tmpDir;
   const git = simpleGit({ baseDir: tmpDir });
   await git.init();

@@ -25,7 +25,7 @@ const seedMarker = (contents: string): void => {
 };
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-marker-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-marker-'));
 });
 afterEach(() => {
   rmSync(projectDir, { recursive: true, force: true });
@@ -38,9 +38,9 @@ describe('installed-skills marker', () => {
     expect(state.skills).toEqual({});
   });
 
-  test('record then read round-trips an entry under .ok/local/', async () => {
+  test('record then read round-trips an entry under .ps/local/', async () => {
     await recordSkillInstall(projectDir, 'trip-log', entry(['claude', 'cursor']));
-    expect(installedSkillsPath(projectDir)).toContain('/.ok/local/installed-skills.json');
+    expect(installedSkillsPath(projectDir)).toContain('/.ps/local/installed-skills.json');
     const state = readInstalledSkills(projectDir);
     expect(state.skills['trip-log']?.hosts).toEqual(['claude', 'cursor']);
     expect(state.skills['trip-log']?.scope).toBe('project');

@@ -26,14 +26,14 @@ function launchIsolated(tmpHome: string): Promise<ElectronApplication> {
 }
 
 test.describe('Electron utilityProcess keeps the pre-spawn behaviour the forked project server wait relies on', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Verified in the macOS desktop-smoke job.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('a utility is not killed before it spawns, receives a message posted before it spawned, and is killed once it has spawned', async ({
     captureStderrFor,
   }) => {
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-utility-pre-spawn-'));
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-utility-pre-spawn-'));
     const echoUtilityEntry = join(tmpHome, 'echo-utility.mjs');
     writeFileSync(echoUtilityEntry, ECHO_UTILITY_SOURCE);
     const app = await launchIsolated(tmpHome);
@@ -43,7 +43,7 @@ test.describe('Electron utilityProcess keeps the pre-spawn behaviour the forked 
       async ({ app: electronApp, utilityProcess }, { entry, message, boundMs }) => {
         await electronApp.whenReady();
         const child = utilityProcess.fork(entry, [], {
-          serviceName: 'OpenKnowledge pre-spawn probe',
+          serviceName: 'Palimpsest pre-spawn probe',
         });
         const spawned = new Promise<number | undefined>((resolve) => {
           child.once('spawn', () => resolve(child.pid));

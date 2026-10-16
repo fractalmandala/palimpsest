@@ -17,6 +17,6 @@ describe('buildAboutPanelOptions', () => {
   });
 
   test('names the installed product rather than the Stable app', () => {
-    expect(buildAboutPanelOptions('9.9.9').applicationName).toBe('OpenKnowledge Beta');
+    expect(buildAboutPanelOptions('9.9.9').applicationName).toBe('Palimpsest Beta');
   });
 });

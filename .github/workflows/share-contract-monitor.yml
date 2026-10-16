@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           node .github/scripts/probe-share-contract.mjs \
-            --origin https://openknowledge.ai \
+            --origin https://github.com/fractalmandala/palimpsest \
             --corpus test-support/fixtures/share-url-v1-v2.json \
             --evidence "$RUNNER_TEMP/share-contract-evidence.json"
 
@@ -85,7 +85,7 @@ jobs:
         run: |
           set -uo pipefail
           RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-          TEXT="Open Knowledge share-contract v2 production probe failed. Last compatible deployment: ${LAST_COMPATIBLE_SHA:-unavailable}. Repair forward or select that compatible deployment; do not roll back below epoch 2. ${RUN_URL}"
+          TEXT="Palimpsest share-contract v2 production probe failed. Last compatible deployment: ${LAST_COMPATIBLE_SHA:-unavailable}. Repair forward or select that compatible deployment; do not roll back below epoch 2. ${RUN_URL}"
           echo "## Share-contract v2 regression" >> "$GITHUB_STEP_SUMMARY"
           echo "Last compatible deployment: \`${LAST_COMPATIBLE_SHA:-unavailable}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "Run: ${RUN_URL}" >> "$GITHUB_STEP_SUMMARY"

@@ -286,7 +286,7 @@ describe('findFloorViolations', () => {
 
   it('reads a workspace member devDependency, which is installed unlike a third party one', () => {
     const member = {
-      name: '@inkeep/open-knowledge-app',
+      name: '@palimpsest/app',
       version: '0.67.0',
       devDependencies: { '@tiptap/starter-kit': '^3.23.0' },
     };
@@ -318,10 +318,10 @@ describe('findFloorViolations', () => {
   it('names a versionless manifest without an undefined in it', () => {
     const [violation] = findFloorViolations(
       new Map([['pinned', '1.0.0']]),
-      [{ name: 'open-knowledge', devDependencies: { pinned: '^2.0.0' } }],
+      [{ name: 'palimpsest', devDependencies: { pinned: '^2.0.0' } }],
       WORKSPACE_DEPENDENCY_FIELDS,
     );
-    expect(violation.dependant).toBe('open-knowledge');
+    expect(violation.dependant).toBe('palimpsest');
   });
 
   it('tolerates manifests with no dependency fields', () => {
@@ -358,8 +358,8 @@ describe('workspaceManifests', () => {
   it('reads the workspace root alongside the members', () => {
     const yamlText = fs.readFileSync(path.join(root, 'pnpm-workspace.yaml'), 'utf8');
     const names = [...workspaceManifests(root, yamlText, refuse, refuse)].map((m) => m.name);
-    expect(names).toContain('open-knowledge');
-    expect(names).toContain('@inkeep/open-knowledge-app');
+    expect(names).toContain('palimpsest');
+    expect(names).toContain('@palimpsest/app');
   });
 
   it('reports an empty corpus even though the root always parses', () => {
@@ -369,7 +369,7 @@ describe('workspaceManifests', () => {
         empty.push(p),
       ),
     ];
-    expect(yielded.map((m) => m.name)).toEqual(['open-knowledge']);
+    expect(yielded.map((m) => m.name)).toEqual(['palimpsest']);
     expect(empty).toEqual(['the packages: block itself']);
   });
 
@@ -395,7 +395,7 @@ describe('workspaceManifests', () => {
       (m) => m.name,
     );
     expect(empty).toEqual(['workspaces/*']);
-    expect(names).toContain('@inkeep/open-knowledge-docs');
+    expect(names).toContain('@palimpsest/docs');
   });
 });
 

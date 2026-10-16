@@ -4,11 +4,11 @@ import { readGlobalsCssWithoutComments } from './globals-css.test-helper';
 const CSS = readGlobalsCssWithoutComments();
 
 function markerDeclarations(): string {
-  const block = CSS.match(/(?:^|[}\s])\.ok-pointer-marker\s*\{([^{}]*)\}/);
+  const block = CSS.match(/(?:^|[}\s])\.ps-pointer-marker\s*\{([^{}]*)\}/);
   return block?.[1] ?? '';
 }
 
-describe('globals.css — .ok-pointer-marker', () => {
+describe('globals.css — .ps-pointer-marker', () => {
   test('the rule exists (guard is not vacuous)', () => {
     expect(markerDeclarations().trim().length).toBeGreaterThan(0);
   });

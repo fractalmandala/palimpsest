@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable, Writable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { UploadWriteError } from './upload-errors.ts';
 import {
@@ -113,8 +113,8 @@ describe('tmpUploadDir / mintTempUploadPath', () => {
     rmSync(tmpBase, { recursive: true, force: true });
   });
 
-  test('tmpUploadDir resolves to <projectDir>/.ok/local/tmp', () => {
-    expect(tmpUploadDir(tmpBase)).toBe(resolve(tmpBase, '.ok', LOCAL_DIR, 'tmp'));
+  test('tmpUploadDir resolves to <projectDir>/.ps/local/tmp', () => {
+    expect(tmpUploadDir(tmpBase)).toBe(resolve(tmpBase, '.ps', LOCAL_DIR, 'tmp'));
   });
 
   test('mintTempUploadPath lazily creates the tmp dir', () => {

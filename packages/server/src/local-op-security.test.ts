@@ -209,8 +209,8 @@ describe('isPathWithinHome — symlink containment', () => {
 
   beforeAll(() => {
     const root = realpathSync(tmpdir());
-    fakeHome = mkdtempSync(join(root, 'ok-local-op-home-'));
-    outsideDir = mkdtempSync(join(root, 'ok-local-op-outside-'));
+    fakeHome = mkdtempSync(join(root, 'ps-local-op-home-'));
+    outsideDir = mkdtempSync(join(root, 'ps-local-op-outside-'));
   });
 
   afterAll(() => {
@@ -271,7 +271,7 @@ describe('isPathWithinHome — realpath syscall failure on non-symlink', () => {
 
   beforeAll(() => {
     const root = realpathSync(tmpdir());
-    fakeHome = mkdtempSync(join(root, 'ok-local-op-realpath-fail-'));
+    fakeHome = mkdtempSync(join(root, 'ps-local-op-realpath-fail-'));
   });
 
   afterAll(() => {
@@ -379,7 +379,7 @@ describe('isPathWithinHome — realpath syscall failure on non-symlink', () => {
   });
 
   test('lstat-confirmed non-symlink under symlinked ancestor + realpath EPERM → still reject (security boundary)', () => {
-    const tmpOutside = mkdtempSync(join(realpathSync(tmpdir()), 'ok-symlinked-ancestor-'));
+    const tmpOutside = mkdtempSync(join(realpathSync(tmpdir()), 'ps-symlinked-ancestor-'));
     try {
       const escapeLink = join(fakeHome, 'escape-symlink-ancestor');
       symlinkSync(tmpOutside, escapeLink);
@@ -399,7 +399,7 @@ describe('isPathWithinHome — realpath syscall failure on non-symlink', () => {
   });
 
   test('lstat-confirmed non-symlink under symlinked ancestor + realpath EACCES → still reject (security boundary, EACCES arm)', () => {
-    const tmpOutside = mkdtempSync(join(realpathSync(tmpdir()), 'ok-symlinked-ancestor-eacces-'));
+    const tmpOutside = mkdtempSync(join(realpathSync(tmpdir()), 'ps-symlinked-ancestor-eacces-'));
     try {
       const escapeLink = join(fakeHome, 'escape-symlink-ancestor-eacces');
       symlinkSync(tmpOutside, escapeLink);
@@ -437,7 +437,7 @@ describe('isPathWithinHome — fail-closed defensive guards', () => {
 
   beforeAll(() => {
     const root = realpathSync(tmpdir());
-    fakeHome = mkdtempSync(join(root, 'ok-local-op-failclosed-'));
+    fakeHome = mkdtempSync(join(root, 'ps-local-op-failclosed-'));
   });
 
   afterAll(() => {

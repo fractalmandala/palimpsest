@@ -1,10 +1,10 @@
-import type { ConfigPatch } from '@inkeep/open-knowledge-core/config/schema';
+import type { ConfigPatch } from '@palimpsest/core/config/schema';
 import type {
-  OkAboutInfo,
-  OkMenuRendererSnapshot,
-  OkUserConfigPatchResult,
-  OkUserConfigSnapshot,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsAboutInfo,
+  PsMenuRendererSnapshot,
+  PsUserConfigPatchResult,
+  PsUserConfigSnapshot,
+} from '@palimpsest/core/desktop-bridge';
 import { I18nProvider } from '@lingui/react';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +13,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { dynamicActivate } from '@/lib/activate-locale';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { i18n } from '@/lib/i18n';
 
 const { NavigatorApp } = await import('./NavigatorApp');
@@ -45,11 +45,11 @@ if (globalWithDomShims.ResizeObserver === undefined) {
 
 const ASYNC_TIMEOUT_MS = 4000;
 
-const NAVIGATOR_ABOUT: OkAboutInfo = {
-  productName: 'OpenKnowledge',
+const NAVIGATOR_ABOUT: PsAboutInfo = {
+  productName: 'Palimpsest',
   version: '1.2.3',
-  releasesUrl: 'https://github.com/inkeep/open-knowledge/releases',
-  releaseNotesUrl: 'https://github.com/inkeep/open-knowledge/releases/tag/v1.2.3',
+  releasesUrl: 'https://github.com/fractalmandala/palimpsest/releases',
+  releaseNotesUrl: 'https://github.com/fractalmandala/palimpsest/releases/tag/v1.2.3',
   updateChecks: 'available',
 };
 
@@ -81,7 +81,7 @@ function makeNavigatorBridge(
   initialText: string,
   options: { readError?: Error; integrationsMenuItem?: boolean } = {},
 ) {
-  const changeListeners = new Set<(snapshot: OkUserConfigSnapshot) => void>();
+  const changeListeners = new Set<(snapshot: PsUserConfigSnapshot) => void>();
   const patches: ConfigPatch[] = [];
   let diskText = initialText;
   const setThemeSource = vi.fn(async () => ({ ok: true as const }));
@@ -96,7 +96,7 @@ function makeNavigatorBridge(
           showDevToolsMenu: false,
           canCheckForUpdates: false,
           canReconfigureMcpWiring: options.integrationsMenuItem === true,
-        } as unknown as OkMenuRendererSnapshot)
+        } as unknown as PsMenuRendererSnapshot)
       : undefined,
   );
   const bridge = {
@@ -133,21 +133,21 @@ function makeNavigatorBridge(
     },
     dialog: { openFolder: async (): Promise<string | null> => null },
     userConfig: {
-      read: async (): Promise<OkUserConfigSnapshot> => {
+      read: async (): Promise<PsUserConfigSnapshot> => {
         if (options.readError) throw options.readError;
         return { text: diskText };
       },
-      patch: async (patch: ConfigPatch): Promise<OkUserConfigPatchResult> => {
+      patch: async (patch: ConfigPatch): Promise<PsUserConfigPatchResult> => {
         patches.push(patch);
         diskText = applyPatchToText(diskText, patch);
         return { ok: true, text: diskText };
       },
-      onChanged: (cb: (snapshot: OkUserConfigSnapshot) => void) => {
+      onChanged: (cb: (snapshot: PsUserConfigSnapshot) => void) => {
         changeListeners.add(cb);
         return () => changeListeners.delete(cb);
       },
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return {
     bridge,
     patches,
@@ -165,13 +165,13 @@ function makeNavigatorBridge(
   };
 }
 
-function renderNavigator(bridge: OkDesktopBridge, options: { asWindowBridge?: boolean } = {}) {
+function renderNavigator(bridge: PsDesktopBridge, options: { asWindowBridge?: boolean } = {}) {
   if (options.asWindowBridge) {
-    (window as unknown as { okDesktop?: OkDesktopBridge }).okDesktop = bridge;
+    (window as unknown as { psDesktop?: PsDesktopBridge }).psDesktop = bridge;
   }
   return render(
     <I18nProvider i18n={i18n}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="ok-theme-v1">
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="ps-theme-v1">
         <TooltipProvider>
           <NavigatorApp bridge={bridge} />
         </TooltipProvider>
@@ -206,7 +206,7 @@ describe('NavigatorApp settings', () => {
 
   afterEach(() => {
     cleanup();
-    delete (window as unknown as { okDesktop?: OkDesktopBridge }).okDesktop;
+    delete (window as unknown as { psDesktop?: PsDesktopBridge }).psDesktop;
     window.history.replaceState(null, '', '#');
     consoleWarnSpy.mockRestore();
     consoleErrorSpy.mockRestore();
@@ -217,7 +217,7 @@ describe('NavigatorApp settings', () => {
     renderNavigator(stub.bridge, { asWindowBridge: true });
 
     const dialog = await screen.findByTestId('settings-dialog', {}, { timeout: ASYNC_TIMEOUT_MS });
-    expect(within(dialog).queryByText('Customize your OpenKnowledge experience.')).toBeNull();
+    expect(within(dialog).queryByText('Customize your Palimpsest experience.')).toBeNull();
 
     for (const id of ['preferences', 'hotkeys', 'about']) {
       expect(sidebarItem(id).disabled).toBe(false);
@@ -225,7 +225,7 @@ describe('NavigatorApp settings', () => {
     await waitFor(
       () =>
         expect(describedBy(sidebarItem('agent-connections'))).toBe(
-          'Open a project to edit. To connect AI tools without a project, use File > Set up OpenKnowledge integrations…',
+          'Open a project to edit. To connect AI tools without a project, use File > Set up Palimpsest integrations…',
         ),
       { timeout: ASYNC_TIMEOUT_MS },
     );
@@ -259,7 +259,7 @@ describe('NavigatorApp settings', () => {
 
     expect(sidebarItem('agent-connections').disabled).toBe(true);
     expect(describedBy(sidebarItem('agent-connections'))).toBe('Open a project to edit.');
-    expect(screen.queryByText(/Set up OpenKnowledge integrations/)).toBeNull();
+    expect(screen.queryByText(/Set up Palimpsest integrations/)).toBeNull();
   });
 
   test('an unreadable user config shows a notice instead of loading forever, then recovers', async () => {

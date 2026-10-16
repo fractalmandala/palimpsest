@@ -18,7 +18,7 @@ import {
 } from '../stress/_helpers/reuse/supervisor-socket.ts';
 import { APP_PACKAGE_ROOT } from '../stress/_helpers/seed-key.ts';
 
-const OK_ROOT = realpathSync(join(APP_PACKAGE_ROOT, '..', '..'));
+const PS_ROOT = realpathSync(join(APP_PACKAGE_ROOT, '..', '..'));
 const scratchDirs: string[] = [];
 const endpoints: SupervisorEndpoint[] = [];
 
@@ -28,14 +28,14 @@ afterEach(async () => {
 });
 
 function scratch(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-sockdir-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-sockdir-')));
   scratchDirs.push(dir);
   return dir;
 }
 
 function supervisor(): WorkerServerSupervisor {
   return new WorkerServerSupervisor({
-    okRoot: OK_ROOT,
+    psRoot: PS_ROOT,
     launch: () => Promise.reject(new Error('no server is launched by these cases')),
     identityTimeoutMs: 2_000,
   });

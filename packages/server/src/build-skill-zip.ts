@@ -30,7 +30,7 @@ export interface ResolveBundledSkillDirOptions {
   checkDesktop?: boolean;
 }
 
-const DESKTOP_SKILLS_REL = 'OpenKnowledge.app/Contents/Resources/cli/dist/assets/skills';
+const DESKTOP_SKILLS_REL = 'Palimpsest.app/Contents/Resources/cli/dist/assets/skills';
 
 function runsFromSource(moduleUrl: string): boolean {
   return new URL(moduleUrl).pathname.endsWith('.ts');
@@ -97,7 +97,7 @@ function computeWrapperFolderName(
   sourceDir: string,
   pathBasename: (p: string) => string = basename,
 ): string {
-  return pathBasename(sourceDir) || 'open-knowledge';
+  return pathBasename(sourceDir) || 'palimpsest';
 }
 
 function toPosixZipPath(rel: string, pathSep: string = sep): string {
@@ -173,7 +173,7 @@ export async function buildSkillZip(opts: BuildSkillZipOptions = {}): Promise<Bu
   const bundle: BundleId = opts.bundle ?? 'project';
   const sourceDir =
     opts.sourceDir ?? resolveBundledSkillDir(bundle, { checkDesktop: opts.checkDesktop ?? false });
-  const outputPath = opts.outputPath ?? join(process.cwd(), 'openknowledge.skill');
+  const outputPath = opts.outputPath ?? join(process.cwd(), 'palimpsest.skill');
 
   await zipDirectory(sourceDir, outputPath, BUNDLE_SKILL_NAME[bundle]);
   const { size, sha256 } = await validateSkillZip(outputPath, { bundle, sourceDir });

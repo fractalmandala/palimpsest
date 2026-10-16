@@ -1,4 +1,4 @@
-import { CLIENT_RUNTIME_VERSION_FALLBACK } from '@inkeep/open-knowledge-core';
+import { CLIENT_RUNTIME_VERSION_FALLBACK } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   classifyServerVersion,

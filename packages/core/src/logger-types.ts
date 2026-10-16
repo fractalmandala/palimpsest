@@ -80,9 +80,9 @@ export const BUG_REPORT_ATTACHMENT_CONTENT_TYPES = [
   'image/webp',
 ] as const;
 
-export type OkImageAttachmentContentType = (typeof BUG_REPORT_ATTACHMENT_CONTENT_TYPES)[number];
+export type PsImageAttachmentContentType = (typeof BUG_REPORT_ATTACHMENT_CONTENT_TYPES)[number];
 
-export const BUG_REPORT_ATTACHMENT_EXTENSIONS: Record<OkImageAttachmentContentType, string> = {
+export const BUG_REPORT_ATTACHMENT_EXTENSIONS: Record<PsImageAttachmentContentType, string> = {
   'image/png': 'png',
   'image/jpeg': 'jpg',
   'image/webp': 'webp',
@@ -110,13 +110,13 @@ export function isBugReportCrashDumpEntry(name: string): boolean {
   return !name.slice(BUG_REPORT_EXTRA_ZIP_PREFIX.length).includes('/');
 }
 
-export interface OkBugReportScreenshot {
+export interface PsBugReportScreenshot {
   dataUrl: string;
   width: number;
   height: number;
 }
 
-export type OkBugReportCreateResult =
+export type PsBugReportCreateResult =
   | {
       ok: true;
       zipPath: string;
@@ -127,7 +127,7 @@ export type OkBugReportCreateResult =
 
 export const BUG_REPORT_CONTACT_EMAIL_MAX_LENGTH = 320;
 
-export interface OkBugReportSendMetadata {
+export interface PsBugReportSendMetadata {
   level: ReportBundleLevel;
   systemWide: boolean;
   projectSlug: string | null;
@@ -135,13 +135,13 @@ export interface OkBugReportSendMetadata {
   email?: string;
 }
 
-export type OkBugReportSendFallbackReason = 'email-draft' | 'send-failed' | 'send-in-flight';
+export type PsBugReportSendFallbackReason = 'email-draft' | 'send-failed' | 'send-in-flight';
 
-export type OkBugReportSendResult =
+export type PsBugReportSendResult =
   | { ok: true; reference: string }
-  | { ok: false; reason: OkBugReportSendFallbackReason; fallback: { mailtoUrl: string } };
+  | { ok: false; reason: PsBugReportSendFallbackReason; fallback: { mailtoUrl: string } };
 
-export type OkBugReportCrashDetectedEvent =
+export type PsBugReportCrashDetectedEvent =
   | {
       eventId: string;
       kind: 'render-process-gone';
@@ -163,13 +163,13 @@ export type OkBugReportCrashDetectedEvent =
       crashedAt?: string;
     };
 
-export type OkBugReportCrashAckResult = { ok: true } | { ok: false; error: string };
+export type PsBugReportCrashAckResult = { ok: true } | { ok: false; error: string };
 
-export interface OkBugReportCrashDumpAvailability {
+export interface PsBugReportCrashDumpAvailability {
   available: boolean;
 }
 
-export interface OkBugReportListRow {
+export interface PsBugReportListRow {
   id: string;
   createdAt: string;
   bundleLevel: ReportBundleLevel | 'unknown';
@@ -188,10 +188,10 @@ export interface OkBugReportListRow {
   degraded: boolean;
 }
 
-export type OkBugReportListResult =
-  | { ok: true; reports: OkBugReportListRow[] }
+export type PsBugReportListResult =
+  | { ok: true; reports: PsBugReportListRow[] }
   | { ok: false; reason: string };
 
-export type OkBugReportDeleteResult =
+export type PsBugReportDeleteResult =
   | { ok: true }
   | { ok: false; reason: 'id-invalid' | 'in-flight' | 'not-found' | 'io-error' };

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { BASE16_SLOTS, type Base16Scheme } from '@inkeep/open-knowledge-core';
+import { BASE16_SLOTS, type Base16Scheme } from '@palimpsest/core';
 import { metrics } from '@opentelemetry/api';
 import {
   AggregationTemporality,
@@ -54,7 +54,7 @@ describe('saved-theme telemetry', () => {
   });
 
   test('real save, delete, and parse-failure outcomes emit attribute-free counters', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-saved-theme-telemetry-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-saved-theme-telemetry-'));
     try {
       const save = await saveSavedTheme({
         name: 'private-metric-filename',

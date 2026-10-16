@@ -12,7 +12,7 @@ import {
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { resolveShadowDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { resolveShadowDir } from '@palimpsest/core/shadow-repo-layout';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
 import type { BootedServer } from './boot.ts';
@@ -150,7 +150,7 @@ const acpRegistryFetchImpl = (async (input: Parameters<typeof fetch>[0]) => {
 }) as typeof fetch;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-config-system-native-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-config-system-native-'));
   const contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(resolve(contentDir, 'alpha.md'), '# Alpha\n\nBody.\n', 'utf-8');
   server = await bootCompositionRig(contentDir, { acpRegistryFetchImpl });
@@ -316,7 +316,7 @@ describe('flat rescue-buffer listing — nested documents', () => {
   }
 
   beforeAll(() => {
-    rescueRoot = mkdtempSync(resolve(tmpdir(), 'ok-rescue-nested-'));
+    rescueRoot = mkdtempSync(resolve(tmpdir(), 'ps-rescue-nested-'));
   });
 
   afterAll(async () => {
@@ -531,7 +531,7 @@ describe('server-info branch reporting over the composed listener', () => {
   }
 
   beforeAll(async () => {
-    branchTmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-config-system-branch-'));
+    branchTmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-config-system-branch-'));
   }, 60_000);
 
   afterAll(async () => {

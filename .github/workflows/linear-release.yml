@@ -1,11 +1,11 @@
 name: Linear Release
 
-# Stamp Linear issues with the Open Knowledge release they ship in.
+# Stamp Linear issues with the Palimpsest release they ship in.
 #
 # WHAT THIS DOES
 #   On every OK release cut (beta cadence + stable promotion) this attaches the
 #   Linear issues referenced in the release's commits to a release in the Linear
-#   "OpenKnowledge" scheduled pipeline. A beta cut advances ITS OWN release to
+#   "Palimpsest" scheduled pipeline. A beta cut advances ITS OWN release to
 #   the `Beta` stage; a stable promotion completes ITS OWN release into
 #   `Released`. They are two different release objects, not one advanced then
 #   completed — see RELEASE IDENTITY below. Each attached issue then shows both
@@ -45,11 +45,11 @@ name: Linear Release
 #   variable is set to `live`.
 #
 # ONE-TIME SETUP
-#   1. A Linear SCHEDULED pipeline "OpenKnowledge" (team Product) with exactly
+#   1. A Linear SCHEDULED pipeline "Palimpsest" (team Product) with exactly
 #      one custom started stage named `Beta`. Shipped-to-production maps to the
 #      built-in completed stage `Released`. [done]
 #   2. The pipeline access key (Linear -> Settings -> Releases -> pipeline)
-#      added as the repo secret LINEAR_ACCESS_KEY on inkeep/open-knowledge.
+#      added as the repo secret LINEAR_ACCESS_KEY on fractalmandala/palimpsest.
 #      A pipeline access key is REQUIRED — a personal Linear API key will not
 #      work. Until the secret exists this workflow no-ops (see the guard).
 #   3. Optional: a Linear status automation — on release completion (stage
@@ -99,7 +99,7 @@ jobs:
       - name: Skip when access key is not configured
         if: env.HAS_KEY != 'true'
         run: |
-          echo "::notice::LINEAR_ACCESS_KEY is not set on this repo — skipping Linear release stamping. Add the OpenKnowledge pipeline access key as a repo secret to enable."
+          echo "::notice::LINEAR_ACCESS_KEY is not set on this repo — skipping Linear release stamping. Add the Palimpsest pipeline access key as a repo secret to enable."
 
       - name: Checkout at the release tag
         if: env.HAS_KEY == 'true'
@@ -184,14 +184,14 @@ jobs:
         if: steps.derive.outputs.channel == 'stable'
         id: bridge-check
         env:
-          OK_RELEASE_BRIDGE_APP_ID: ${{ secrets.OK_RELEASE_BRIDGE_APP_ID }}
+          PS_RELEASE_BRIDGE_APP_ID: ${{ secrets.PS_RELEASE_BRIDGE_APP_ID }}
         run: |
           set -euo pipefail
-          if [[ -n "${OK_RELEASE_BRIDGE_APP_ID:-}" ]]; then
+          if [[ -n "${PS_RELEASE_BRIDGE_APP_ID:-}" ]]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::OK_RELEASE_BRIDGE_APP_ID not set — private-monorepo fix commits cannot be resolved, so the containment pass fails rather than mis-stamping."
+            echo "::warning::PS_RELEASE_BRIDGE_APP_ID not set — private-monorepo fix commits cannot be resolved, so the containment pass fails rather than mis-stamping."
           fi
 
       - name: Mint cross-repo read token (bridge App)
@@ -201,7 +201,7 @@ jobs:
         with:
           # Public client ID for inkeep-ok-release-bridge (non-secret).
           client-id: Iv23lii4qS2FAc6tkzfI
-          private-key: ${{ secrets.OK_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
+          private-key: ${{ secrets.PS_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
           owner: inkeep
           repositories: agents-private
           permission-contents: read

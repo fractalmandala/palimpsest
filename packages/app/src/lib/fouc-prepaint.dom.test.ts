@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ConfigSchema } from '@inkeep/open-knowledge-core';
+import { ConfigSchema } from '@palimpsest/core';
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import {
   COLOR_THEMES,
@@ -193,7 +193,7 @@ describe('pre-paint FOUC script', () => {
 
   test('falls back to the pre-pair single-palette cache exactly once', () => {
     localStorage.setItem(COLOR_THEME_STORAGE_KEY, 'monokai');
-    localStorage.setItem('ok-theme-v1', 'dark');
+    localStorage.setItem('ps-theme-v1', 'dark');
     runPrePaint(false);
     expect(state()).toEqual({ attr: 'monokai', dark: true });
   });

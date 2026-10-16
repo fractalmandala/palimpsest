@@ -3,7 +3,7 @@ title: Symlink skills
 description: Point one AI tool's skills folder at another so both read the same skills.
 ---
 
-Every AI tool reads skills from its own folder: `.claude/skills`, `.cursor/skills`, `.codex/skills`, and so on. OpenKnowledge keeps one real folder per skill and links the others to it, so a change reaches every tool without a second copy to keep in sync.
+Every AI tool reads skills from its own folder: `.claude/skills`, `.cursor/skills`, `.codex/skills`, and so on. Palimpsest keeps one real folder per skill and links the others to it, so a change reaches every tool without a second copy to keep in sync.
 
 Link at whichever level matches what you want.
 
@@ -23,9 +23,9 @@ The panel appears at both scopes: **Settings → User → Skills Studio** links 
 <Image src="/images/skills-studio/settings-share-folders.png" alt="Share skills between AI tools lists each tool's folder with a Link button, showing Claude and Cursor already sharing one folder." width={1600} height={785} />
 
 1. **Link** points one tool's folder at another. Both tools then see the same skills, including ones you add later.
-2. **Add custom path** includes a folder OpenKnowledge has not detected, such as `~/.myteam/skills`.
+2. **Add custom path** includes a folder Palimpsest has not detected, such as `~/.myteam/skills`.
 3. **Unlink** turns a linked folder back into a real directory that keeps the skills it has today.
 
 Linking refuses when the two folders hold different versions of the same skill. Resolve that first, then link.
 
-For copies, relocating the source folder, and what OpenKnowledge writes where, see the [developer reference](./reference.mdx#file-layout).
+For copies, relocating the source folder, and what Palimpsest writes where, see the [developer reference](./reference.mdx#file-layout).

@@ -18,9 +18,9 @@ holds three bits of information:
 
 Follow the [changelog authoring and review policy](../AGENTS.md) when writing release notes.
 
-## Open Knowledge convention — pre-1.0 bump types
+## Palimpsest convention — pre-1.0 bump types
 
-**While Open Knowledge is pre-1.0, NEVER declare a `major` bump in a changeset.** OK uses a modified semver where the bump types map differently:
+**While Palimpsest is pre-1.0, NEVER declare a `major` bump in a changeset.** OK uses a modified semver where the bump types map differently:
 
 | What you want to communicate                            | OK pre-1.0 bump type |
 | ------------------------------------------------------- | -------------------- |
@@ -30,10 +30,10 @@ Follow the [changelog authoring and review policy](../AGENTS.md) when writing re
 
 **Why:** under standard semver, going from `0.X.Y` to `1.0.0` is a once-in-a-product-lifetime decision. Until OK explicitly takes a major (decided by the team, not by an individual changeset), every change is either `minor` (new behavior or breaking change) or `patch` (bug fix / refinement). This lets us ship breaking changes without prematurely advertising a 1.0 stability promise.
 
-**Mechanic:** the OK fixed-group (`@inkeep/open-knowledge`, `-core`, `-server`, `-app`, `-desktop`) bumps in lock-step on the highest declared bump type across all queued changesets. A single `major` declaration on any one package pulls the entire group to `1.0.0` — once. Don't be that changeset.
+**Mechanic:** the OK fixed-group (`@palimpsest/cli`, `-core`, `-server`, `-app`, `-desktop`) bumps in lock-step on the highest declared bump type across all queued changesets. A single `major` declaration on any one package pulls the entire group to `1.0.0` — once. Don't be that changeset.
 
 When `1.0.0` does eventually ship, this convention will be retired and standard semver resumes.
 
-> Authoring tip: run `pnpm changeset` from anywhere under `public/open-knowledge/` — the CLI walks up to find this folder. Don't hand-create files; the tool's interactive flow asks for bump types in order and writes a well-formed frontmatter block. Per the convention above, only pick `minor` or `patch`.
+> Authoring tip: run `pnpm changeset` from anywhere under `public/palimpsest/` — the CLI walks up to find this folder. Don't hand-create files; the tool's interactive flow asks for bump types in order and writes a well-formed frontmatter block. Per the convention above, only pick `minor` or `patch`.
 
-> SKILL.md metadata is synced automatically by the VP workflow via [`scripts/sync-skill-version.sh`](../scripts/sync-skill-version.sh). You don't need to bump the bundled SKILL.md files' `metadata.version:` by hand — `pnpm exec changeset version` (in CI) bumps the package.json files, then the sync script propagates the new version into SKILL.md. The same script can be run manually from `public/open-knowledge/` if you ever need to re-sync after a hand edit.
+> SKILL.md metadata is synced automatically by the VP workflow via [`scripts/sync-skill-version.sh`](../scripts/sync-skill-version.sh). You don't need to bump the bundled SKILL.md files' `metadata.version:` by hand — `pnpm exec changeset version` (in CI) bumps the package.json files, then the sync script propagates the new version into SKILL.md. The same script can be run manually from `public/palimpsest/` if you ever need to re-sync after a hand edit.

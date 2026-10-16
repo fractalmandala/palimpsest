@@ -93,7 +93,7 @@ function globVerdicts(paths: readonly string[], ignoreCase: boolean): Map<string
 }
 
 beforeAll(() => {
-  repoDir = mkdtempSync(join(tmpdir(), 'ok-atomic-temp-glob-'));
+  repoDir = mkdtempSync(join(tmpdir(), 'ps-atomic-temp-glob-'));
   execFileSync('git', ['init', '-q'], { cwd: repoDir, stdio: 'pipe', env: gitEnv() });
   configureTestGitRepository(repoDir);
   writeFileSync(join(repoDir, '.git', 'info', 'exclude'), `${ATOMIC_TEMP_GLOB}\n`);

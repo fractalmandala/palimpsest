@@ -15,9 +15,9 @@ export function seedInitialDocHash(opts: SeedInitialDocHashOptions): void {
 }
 
 export function seedInitialDocHashFromWindow(): void {
-  if (typeof window === 'undefined' || !window.okDesktop) return;
+  if (typeof window === 'undefined' || !window.psDesktop) return;
   seedInitialDocHash({
-    initialDoc: window.okDesktop.config.initialDoc,
+    initialDoc: window.psDesktop.config.initialDoc,
     getHash: () => window.location.hash,
     setHash: (hash) => {
       window.location.hash = hash;

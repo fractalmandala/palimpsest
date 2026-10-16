@@ -4,7 +4,7 @@ import {
   FileTargetMenuItems,
   type FileTargetMenuPrimitives,
 } from '@/components/FileTargetMenuItems';
-import { buildOkignorePatternFromTarget } from '@/components/file-tree-okignore';
+import { buildOkignorePatternFromTarget } from '@/components/file-tree-psignore';
 import { hasOkPathSegment } from '@/components/file-tree-utils';
 import { OpenInAgentEmptySpaceSubmenu } from '@/components/handoff/OpenInAgentEmptySpaceSubmenu';
 import { useHandoffDispatch } from '@/components/handoff/useHandoffDispatch';
@@ -14,7 +14,7 @@ import {
   appendPattern,
   parseOkignoreDoc,
   serializeOkignoreDoc,
-} from '@/components/settings/okignore-doc';
+} from '@/components/settings/psignore-doc';
 import { TemplateMenuRows } from '@/components/template-menu-rows';
 import {
   ContextMenuGroup,
@@ -104,7 +104,7 @@ export function EditorTabTargetMenuItems({
   const isManaged = hasOkPathSegment(relativePath);
   const isAsset = target.kind === 'asset';
   const isFolder = target.kind === 'folder';
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const handoffInput = isAsset ? null : buildSendToAiInputForActiveTarget(target, workspace);
   const shareInput = shareInputForTarget(target);
   const canShare = gitSyncStatus?.hasRemote === true && shareInput !== null;

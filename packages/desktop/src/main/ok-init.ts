@@ -1,9 +1,9 @@
 import { realpathSync } from 'node:fs';
 import { basename, isAbsolute } from 'node:path';
 
-import type { LocalOpOkInitResponse } from '@inkeep/open-knowledge-core';
-import { resolveGitDirDetailed } from '@inkeep/open-knowledge-core/shadow-repo-layout';
-import { initContent, isProjectRoot } from '@inkeep/open-knowledge-server';
+import type { LocalOpOkInitResponse } from '@palimpsest/core';
+import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
+import { initContent, isProjectRoot } from '@palimpsest/server';
 
 const inFlight = new Map<string, Promise<LocalOpOkInitResponse>>();
 
@@ -38,7 +38,7 @@ export async function runOkInit(projectPath: string): Promise<LocalOpOkInitRespo
   const gitDirKind = resolveGitDirDetailed(canonicalPath).kind;
   if (gitDirKind !== 'directory' && gitDirKind !== 'linked') {
     console.warn(
-      `[ok-init] action=init project=${basename(canonicalPath)} result=not-a-git-worktree kind=${gitDirKind}`,
+      `[ps-init] action=init project=${basename(canonicalPath)} result=not-a-git-worktree kind=${gitDirKind}`,
     );
     return {
       ok: false,
@@ -49,7 +49,7 @@ export async function runOkInit(projectPath: string): Promise<LocalOpOkInitRespo
 
   if (isProjectRoot(canonicalPath)) {
     console.warn(
-      `[ok-init] action=init project=${basename(canonicalPath)} result=already-initialized`,
+      `[ps-init] action=init project=${basename(canonicalPath)} result=already-initialized`,
     );
     return { ok: true, projectPath: canonicalPath };
   }
@@ -62,12 +62,12 @@ export async function runOkInit(projectPath: string): Promise<LocalOpOkInitRespo
   const task = (async (): Promise<LocalOpOkInitResponse> => {
     try {
       initContent(canonicalPath);
-      console.warn(`[ok-init] action=init project=${basename(canonicalPath)} result=success`);
+      console.warn(`[ps-init] action=init project=${basename(canonicalPath)} result=success`);
       return { ok: true, projectPath: canonicalPath };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.warn(
-        `[ok-init] action=init project=${basename(canonicalPath)} result=failed reason=${message}`,
+        `[ps-init] action=init project=${basename(canonicalPath)} result=failed reason=${message}`,
       );
       return { ok: false, reason: 'init-failed', message };
     }

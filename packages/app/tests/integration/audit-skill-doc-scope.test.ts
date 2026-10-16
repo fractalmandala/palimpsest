@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import {
   type ValidationAuditResponse,
   ValidationAuditResponseSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { awaitBacklinkIndexed, createTestServer, type TestServer } from './test-harness.ts';
@@ -27,7 +27,7 @@ Also see [[control]].
 `;
 
 beforeAll(async () => {
-  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-skill-scope-')));
+  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-skill-scope-')));
   const skillDir = join(contentDir, '.claude', 'skills', 'record-a-decision');
   mkdirSync(skillDir, { recursive: true });
   writeFileSync(join(skillDir, 'SKILL.md'), SKILL_MD, 'utf-8');
@@ -36,9 +36,9 @@ beforeAll(async () => {
     '# Control\n\n\ttabbed line for MD010\n\nSee [[audit-skill-scope-ghost]].\n',
     'utf-8',
   );
-  mkdirSync(join(contentDir, '.ok'), { recursive: true });
+  mkdirSync(join(contentDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(contentDir, '.ok', 'config.yml'),
+    join(contentDir, '.ps', 'config.yml'),
     'contentRules:\n  markdownlint:\n    enabled: true\n',
     'utf-8',
   );

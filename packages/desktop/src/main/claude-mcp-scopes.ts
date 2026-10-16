@@ -3,7 +3,7 @@ import {
   EDITOR_TARGETS,
   isEntryUpToDate,
   isOwnManagedEntry,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 
 import type { McpEntryKind } from './claude-readiness.ts';
 

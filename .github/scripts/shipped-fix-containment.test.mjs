@@ -33,7 +33,7 @@ afterAll(() => {
 });
 
 function makeRepo() {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-')));
   scratch.push(dir);
   const fixtureEnv = gitCleanEnv();
   const git = (args, { env = {}, input } = {}) =>
@@ -363,7 +363,7 @@ describe('evaluating a candidate against the published stables', () => {
     expect(() => gitRepo(fixture.dir).resolveCommit(`${fixture.shas.head}^{tree}`)).toThrow(
       /^\S+ does not resolve to a commit in this checkout: \S/,
     );
-    const broken = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-broken-')));
+    const broken = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-broken-')));
     scratch.push(broken);
     writeFileSync(join(broken, '.git'), `gitdir: ${join(broken, 'missing')}\n`);
     let failure;
@@ -412,7 +412,7 @@ describe('the reusable check', () => {
 
 describe('the Release listing', () => {
   test('reads every page, so a stable listed past the first still refuses a candidate that lacks its fixes', () => {
-    const bin = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-gh-')));
+    const bin = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-gh-')));
     scratch.push(bin);
     const byTag = new Map(releases().map((release) => [release.tag_name, release]));
     const page = (name, tags) => {
@@ -467,7 +467,7 @@ describe('the Release listing', () => {
 
 describe('the command line', () => {
   const listingFile = (listing) => {
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-cli-')));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-cli-')));
     scratch.push(dir);
     const path = join(dir, 'releases.json');
     writeFileSync(path, JSON.stringify(listing));
@@ -559,7 +559,7 @@ describe('the command line', () => {
 
 describe('an asset repair of a stable that is already published', () => {
   const listingFile = (listing) => {
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-repair-')));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-repair-')));
     scratch.push(dir);
     const path = join(dir, 'releases.json');
     writeFileSync(path, JSON.stringify(listing));

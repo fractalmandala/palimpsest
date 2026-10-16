@@ -11,18 +11,18 @@ interface ReportedMarks {
   firstContentMs: number;
 }
 
-const globalRef = globalThis as unknown as { window?: { okDesktop?: unknown } };
+const globalRef = globalThis as unknown as { window?: { psDesktop?: unknown } };
 const HAD_WINDOW = 'window' in globalRef;
 const ORIGINAL_WINDOW = globalRef.window;
 
-function win(): { okDesktop?: unknown } {
+function win(): { psDesktop?: unknown } {
   globalRef.window ??= {};
   return globalRef.window;
 }
 
 function installBridge(): ReportedMarks[] {
   const calls: ReportedMarks[] = [];
-  win().okDesktop = {
+  win().psDesktop = {
     startup: {
       reportMarks: (marks: ReportedMarks) => {
         calls.push(marks);
@@ -33,7 +33,7 @@ function installBridge(): ReportedMarks[] {
 }
 
 function clearBridge(): void {
-  delete win().okDesktop;
+  delete win().psDesktop;
 }
 
 beforeEach(() => {
@@ -86,7 +86,7 @@ describe('startup-marks', () => {
   });
 
   test('is a no-op when the bridge lacks the startup surface (older host)', () => {
-    win().okDesktop = {};
+    win().psDesktop = {};
     expect(() => {
       pageListReady();
       firstContent();

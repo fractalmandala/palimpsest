@@ -8,7 +8,7 @@ import {
   writeTerminalRightWidth,
 } from './terminal-right-width-store.ts';
 
-const LEGACY_AGENTS_WIDTH_KEY = 'ok-terminal-width-v1';
+const LEGACY_AGENTS_WIDTH_KEY = 'ps-terminal-width-v1';
 
 function memoryStorage(initial: Record<string, string> = {}): TerminalRightWidthStorage {
   const data = new Map(Object.entries(initial));

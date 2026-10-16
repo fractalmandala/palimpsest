@@ -8,7 +8,7 @@ describe('validateLocalFolderForShare', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(resolve(tmpdir(), 'ok-folder-validator-'));
+    tmpDir = mkdtempSync(resolve(tmpdir(), 'ps-folder-validator-'));
   });
 
   afterEach(() => {
@@ -27,48 +27,48 @@ describe('validateLocalFolderForShare', () => {
   test('returns ok with canonical https URL when origin matches expected (https clone)', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'https://github.com/inkeep/open-knowledge.git');
+    seedRepo(folder, 'https://github.com/fractalmandala/palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
   });
 
   test('a userinfo origin validates ok, and the canonical URL carries no credential', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'https://alice:s3cretpw@github.com/inkeep/open-knowledge.git');
+    seedRepo(folder, 'https://alice:s3cretpw@github.com/fractalmandala/palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
   });
 
   test('returns ok and normalizes to https for ssh clones', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'git@github.com:inkeep/open-knowledge.git');
+    seedRepo(folder, 'git@github.com:fractalmandala/palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
   });
 
@@ -117,16 +117,16 @@ describe('validateLocalFolderForShare', () => {
   test('owner / repo comparison is case-insensitive', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'https://github.com/Inkeep/Open-Knowledge.git');
+    seedRepo(folder, 'https://github.com/Inkeep/Palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result.kind).toBe('ok');
     if (result.kind === 'ok') {
-      expect(result.gitRemoteUrl).toBe('https://github.com/Inkeep/Open-Knowledge.git');
+      expect(result.gitRemoteUrl).toBe('https://github.com/Inkeep/Palimpsest.git');
     }
   });
 
@@ -137,7 +137,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
   });
@@ -148,7 +148,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
   });
@@ -160,7 +160,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
   });
@@ -173,7 +173,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'no-origin' });
   });
@@ -185,7 +185,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'no-origin' });
   });
@@ -196,7 +196,7 @@ describe('validateLocalFolderForShare', () => {
     mkdirSync(primaryGitDir, { recursive: true });
     writeFileSync(
       resolve(primaryGitDir, 'config'),
-      '[core]\n\trepositoryformatversion = 0\n[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+      '[core]\n\trepositoryformatversion = 0\n[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
       'utf-8',
     );
     const worktreeFolder = resolve(tmpDir, 'feature-branch');
@@ -206,11 +206,11 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(worktreeFolder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
   });
 
@@ -219,7 +219,7 @@ describe('validateLocalFolderForShare', () => {
     mkdirSync(primaryGitDir, { recursive: true });
     writeFileSync(
       resolve(primaryGitDir, 'config'),
-      '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+      '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
       'utf-8',
     );
     const worktreeGitDir = resolve(primaryGitDir, 'worktrees', 'feature');
@@ -232,11 +232,11 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(worktreeFolder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
   });
 
@@ -248,7 +248,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
   });
@@ -261,7 +261,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
   });
@@ -269,12 +269,12 @@ describe('validateLocalFolderForShare', () => {
   test('returns non-github when origin points at gitlab', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'git@gitlab.com:inkeep/open-knowledge.git');
+    seedRepo(folder, 'git@gitlab.com:fractalmandala/palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'non-github' });
   });
@@ -287,7 +287,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'non-github' });
   });
@@ -295,17 +295,17 @@ describe('validateLocalFolderForShare', () => {
   test('returns wrong-repo with the actual owner when only owner differs', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'https://github.com/someone-else/open-knowledge.git');
+    seedRepo(folder, 'https://github.com/someone-else/palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'wrong-repo',
       actualOwner: 'someone-else',
-      actualRepo: 'open-knowledge',
+      actualRepo: 'palimpsest',
     });
   });
 
@@ -317,7 +317,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'wrong-repo',
@@ -339,7 +339,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(picked, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'symlink-escape' });
   });
@@ -349,7 +349,7 @@ describe('validateLocalFolderForShare', () => {
     mkdirSync(elsewhere);
     writeFileSync(
       resolve(elsewhere, 'config'),
-      '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+      '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
       'utf-8',
     );
 
@@ -360,7 +360,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'symlink-escape' });
   });
@@ -368,7 +368,7 @@ describe('validateLocalFolderForShare', () => {
   test('legitimate symlinked folder under its own parent still validates ok', async () => {
     const realFolder = resolve(tmpDir, 'real-folder');
     mkdirSync(realFolder);
-    seedRepo(realFolder, 'https://github.com/inkeep/open-knowledge.git');
+    seedRepo(realFolder, 'https://github.com/fractalmandala/palimpsest.git');
 
     const linkFolder = resolve(tmpDir, 'link-folder');
     symlinkSync(realFolder, linkFolder);
@@ -376,7 +376,7 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(linkFolder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result.kind).toBe('ok');
   });
@@ -390,7 +390,7 @@ describe('validateLocalFolderForShare', () => {
       '; comment line with semicolon',
       '\trepositoryformatversion = 0',
       '[remote "origin"]',
-      '\turl = https://github.com/inkeep/open-knowledge.git # trailing comment',
+      '\turl = https://github.com/fractalmandala/palimpsest.git # trailing comment',
       '\tfetch = +refs/heads/*:refs/remotes/origin/*',
     ].join('\r\n');
     writeFileSync(resolve(folder, '.git', 'config'), config, 'utf-8');
@@ -398,11 +398,11 @@ describe('validateLocalFolderForShare', () => {
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(result).toEqual({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
   });
 });

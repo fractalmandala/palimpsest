@@ -17,7 +17,7 @@ const NATIVE_RELEASES_PER_RELEASE = [
   ['linux', 1],
   ['darwin', 1],
 ] as const satisfies readonly (readonly [NodeJS.Platform, number])[];
-const WATCHED_DIR = join(tmpdir(), 'ok-parcel-subscription');
+const WATCHED_DIR = join(tmpdir(), 'ps-parcel-subscription');
 
 beforeEach(() => {
   forgetNativeSubscriptions();

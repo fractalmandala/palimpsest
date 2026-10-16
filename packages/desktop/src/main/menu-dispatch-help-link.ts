@@ -1,8 +1,8 @@
 import {
-  OPEN_KNOWLEDGE_DISCORD_URL,
-  OPEN_KNOWLEDGE_DOCS_URL,
-  OPEN_KNOWLEDGE_GITHUB_URL,
-} from '@inkeep/open-knowledge-core';
+  PALIMPSEST_DISCORD_URL,
+  PALIMPSEST_DOCS_URL,
+  PALIMPSEST_GITHUB_URL,
+} from '@palimpsest/core';
 import type { MenuDispatchCommand } from '../shared/ipc-channels.ts';
 
 export type MenuDispatchHelpLinkCommand = Extract<
@@ -11,9 +11,9 @@ export type MenuDispatchHelpLinkCommand = Extract<
 >;
 
 const HELP_LINK_URLS: Readonly<Record<MenuDispatchHelpLinkCommand, string>> = {
-  'open-github': OPEN_KNOWLEDGE_GITHUB_URL,
-  'open-docs': OPEN_KNOWLEDGE_DOCS_URL,
-  'open-discord': OPEN_KNOWLEDGE_DISCORD_URL,
+  'open-github': PALIMPSEST_GITHUB_URL,
+  'open-docs': PALIMPSEST_DOCS_URL,
+  'open-discord': PALIMPSEST_DISCORD_URL,
 };
 
 export function menuDispatchHelpLinkUrl(command: MenuDispatchHelpLinkCommand): string {

@@ -13,7 +13,7 @@ import {
   SkillFileRenameRequestSchema,
   SkillFileRenameSuccessSchema,
   skillFilePathSegments,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { composeAndWriteRawBody } from '../bridge-intake.ts';
 import type { RemovalLifecycleStatus } from '../conflict-kinds.ts';
@@ -102,7 +102,7 @@ export interface SkillsFileRouteDeps {
   >;
   respondPersistenceFailure: (res: ServerResponse, failure: StoreFailure, handler: string) => void;
   respondDiskDivergence: (res: ServerResponse, handler: string) => void;
-  okArtifactKey: (
+  psArtifactKey: (
     kind: 'template' | 'folder-frontmatter' | 'folder' | 'skill',
     folder: string,
     name?: string,
@@ -172,7 +172,7 @@ function rejectUnadmittedBundleTarget(
     400,
     'urn:ok:error:invalid-request',
     verdict === 'withheld'
-      ? 'Skill file path falls under an entry Open Knowledge withholds from skill bundles (.git, node_modules, OK and editor host dirs, OS artifact files).'
+      ? 'Skill file path falls under an entry Palimpsest withholds from skill bundles (.git, node_modules, OK and editor host dirs, OS artifact files).'
       : escapeTitle,
     { handler, detail: rel },
   );
@@ -199,7 +199,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
     respondPersistenceFailure,
     respondDiskDivergence,
     attributeOkArtifactWrite,
-    okArtifactKey,
+    psArtifactKey,
     commitOkArtifactWrite,
     signalChannel,
     extractActorIdentityFromQuery,
@@ -494,7 +494,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         if (body.scope === 'project') {
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('skill', '', body.name),
+            psArtifactKey('skill', '', body.name),
             `${created ? 'skill-file-create' : 'skill-file-edit'}: ${skillDirRel}/${rel}`,
           );
           void commitOkArtifactWrite('skill-file-put');
@@ -604,7 +604,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         if (result.existed && scope === 'project') {
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('skill', '', name),
+            psArtifactKey('skill', '', name),
             `skill-file-delete: ${
               realDir !== null
                 ? `${relative(contentDir, realDir).split(sep).join('/')}/${rel}`
@@ -761,7 +761,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         if (body.scope === 'project') {
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('skill', '', body.name),
+            psArtifactKey('skill', '', body.name),
             `skill-file-rename: ${body.name}/${from} -> ${to}`,
           );
           void commitOkArtifactWrite('skill-file-rename');

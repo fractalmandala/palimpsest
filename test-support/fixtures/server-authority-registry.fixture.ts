@@ -7,7 +7,7 @@ import { testAuthorityRegistryPath } from '../server-authority-registry.test-hel
 import { withTempDir } from '../temp-dir.test-helper.ts';
 
 test('composition rig uses the shared authority registry', async () => {
-  await withTempDir('ok-registry-composition-', async (content) => {
+  await withTempDir('ps-registry-composition-', async (content) => {
     const server = await bootCompositionRig(content);
     try {
       await server.ready;

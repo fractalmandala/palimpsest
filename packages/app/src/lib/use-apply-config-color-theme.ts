@@ -1,4 +1,4 @@
-import { renderThemeBlock } from '@inkeep/open-knowledge-core/theme/theme-plugins';
+import { renderThemeBlock } from '@palimpsest/core/theme/theme-plugins';
 import { useEffect } from 'react';
 import {
   base16ToTokens,
@@ -13,17 +13,17 @@ import {
 } from './color-themes';
 import { narrowThemePreference } from './use-apply-config-theme';
 
-export const COLOR_THEME_PAIR_STORAGE_KEY = 'ok-color-theme-pair-v1';
+export const COLOR_THEME_PAIR_STORAGE_KEY = 'ps-color-theme-pair-v1';
 
-export const COLOR_THEME_STORAGE_KEY = 'ok-color-theme-v1';
+export const COLOR_THEME_STORAGE_KEY = 'ps-color-theme-v1';
 
-export const CUSTOM_THEME_STORAGE_KEY = 'ok-custom-theme-v1';
+export const CUSTOM_THEME_STORAGE_KEY = 'ps-custom-theme-v1';
 
 export const COLOR_THEME_ATTRIBUTE = 'data-color-theme';
 
-export const CUSTOM_THEME_STYLE_ID = 'ok-custom-theme';
+export const CUSTOM_THEME_STYLE_ID = 'ps-custom-theme';
 
-export const SAVED_THEME_STYLE_ID = 'ok-saved-theme';
+export const SAVED_THEME_STYLE_ID = 'ps-saved-theme';
 
 type SeedInput = Record<string, unknown> | undefined;
 

@@ -22,7 +22,7 @@ describe('file operations while derived-index projections are queued', () => {
 
   beforeEach(() => {
     _resetDocExtensionsForTests();
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-file-ops-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-file-ops-'));
   });
 
   afterEach(() => {

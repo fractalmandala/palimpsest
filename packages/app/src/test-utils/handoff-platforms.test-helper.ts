@@ -1,5 +1,5 @@
-import type * as AgentRegistry from '@inkeep/open-knowledge-core/agent-registry';
-import type { HandoffTarget, TargetData } from '@inkeep/open-knowledge-core/handoff';
+import type * as AgentRegistry from '@palimpsest/core/agent-registry';
+import type { HandoffTarget, TargetData } from '@palimpsest/core/handoff';
 
 type HostPlatforms = ReadonlyArray<AgentRegistry.HandoffHostPlatform>;
 

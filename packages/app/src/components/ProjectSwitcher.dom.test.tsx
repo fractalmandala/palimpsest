@@ -161,7 +161,7 @@ vi.doMock('@/hooks/use-worktrees', () => ({
       },
       {
         branch: 'has-worktree',
-        worktreePath: '/projects/current/.ok/worktrees/has-worktree',
+        worktreePath: '/projects/current/.ps/worktrees/has-worktree',
         isCurrent: false,
         isMain: false,
         locked: false,
@@ -236,7 +236,7 @@ describe('ProjectSwitcher dropdown behavior', () => {
     createDialogProps = [];
     newWorktreeProps = [];
     __resetLocalMenuActionBusForTests();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('renders footer actions in order and routes each action through the expected bridge entry point', async () => {
@@ -392,10 +392,10 @@ describe('ProjectSwitcher dropdown behavior', () => {
         },
         {
           name: 'has-worktree',
-          path: '/projects/current/.ok/worktrees/has-worktree',
+          path: '/projects/current/.ps/worktrees/has-worktree',
           gitCommonDir: '/projects/current/.git',
           mainRoot: '/projects/current',
-          checkoutRoot: '/projects/current/.ok/worktrees/has-worktree',
+          checkoutRoot: '/projects/current/.ps/worktrees/has-worktree',
           projectSubPath: '',
           isLinkedWorktree: true,
           branch: 'has-worktree',
@@ -441,10 +441,10 @@ describe('ProjectSwitcher dropdown behavior', () => {
         },
         {
           name: 'has-worktree',
-          path: '/projects/current/.ok/worktrees/has-worktree',
+          path: '/projects/current/.ps/worktrees/has-worktree',
           gitCommonDir: '/projects/current/.git',
           mainRoot: '/projects/current',
-          checkoutRoot: '/projects/current/.ok/worktrees/has-worktree',
+          checkoutRoot: '/projects/current/.ps/worktrees/has-worktree',
           projectSubPath: '',
           isLinkedWorktree: true,
           branch: 'has-worktree',
@@ -504,7 +504,7 @@ describe('ProjectSwitcher dropdown behavior', () => {
   });
 
   test('on the Electron host, a row selection within the open-click guard window is swallowed, then works after it', async () => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {};
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {};
     const bridge = createBridge();
     render(<ProjectSwitcher bridge={bridge as never} />);
     await openMenu();

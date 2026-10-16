@@ -1,4 +1,4 @@
-import { isPathWithinDir } from '@inkeep/open-knowledge-server';
+import { isPathWithinDir } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import { isPathWithinProject, validateSpawnPath } from './path-containment.ts';
 
@@ -61,8 +61,8 @@ describe('isPathWithinProject — win32', () => {
   });
 
   test('does not apply cmd.exe grammar to a lexical containment check', () => {
-    expect(isPathWithinProject('C:\\proj%20\\.ok', 'C:\\proj%20', 'win32')).toBe(true);
-    expect(validateSpawnPath('C:\\proj%20\\.ok', 'win32')).toBe(false);
+    expect(isPathWithinProject('C:\\proj%20\\.ps', 'C:\\proj%20', 'win32')).toBe(true);
+    expect(validateSpawnPath('C:\\proj%20\\.ps', 'win32')).toBe(false);
   });
 
   test('rejects dot-dot escapes and the sibling-prefix collision', () => {
@@ -92,7 +92,7 @@ describe('isPathWithinProject — win32', () => {
 
   test('rejects device-namespace paths against a drive-letter root', () => {
     expect(isPathWithinProject('\\\\?\\C:\\proj\\file.zip', 'C:\\proj', 'win32')).toBe(false);
-    expect(isPathWithinProject('\\\\.\\pipe\\ok-pipe', 'C:\\proj', 'win32')).toBe(false);
+    expect(isPathWithinProject('\\\\.\\pipe\\ps-pipe', 'C:\\proj', 'win32')).toBe(false);
   });
 });
 
@@ -120,7 +120,7 @@ describe('isPathWithinProject — parity with the server isPathWithinDir', () =>
     ['\\\\server2\\share\\file.zip', '\\\\server\\share\\dir', 'win32'],
     ['\\\\server\\share\\file.zip', 'C:\\proj', 'win32'],
     ['\\\\?\\C:\\proj\\file.zip', 'C:\\proj', 'win32'],
-    ['\\\\.\\pipe\\ok-pipe', 'C:\\proj', 'win32'],
+    ['\\\\.\\pipe\\ps-pipe', 'C:\\proj', 'win32'],
     ['/proj/file.zip', 'C:\\proj', 'win32'],
   ];
 

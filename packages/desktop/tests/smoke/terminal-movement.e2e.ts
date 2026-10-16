@@ -43,7 +43,7 @@ import {
 import { expectNoticeFromTrigger, transientNoticeObservation } from './_helpers/transient-notice';
 
 const TARGET = resolveDesktopTarget();
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const PRIMARY_MODIFIER = process.platform === 'darwin' ? 'Meta' : 'Control';
 const SHELL_COMMANDS = terminalSmokeShellCommands();
 const SCROLLBACK_PAGE_LIMIT = 40;
@@ -58,11 +58,11 @@ interface Seed {
 }
 
 function seed({ skipRestoreState = false }: { skipRestoreState?: boolean } = {}): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ok-terminal-movement-home-')));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-terminal-movement-project-')));
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
-  writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ps-terminal-movement-home-')));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-terminal-movement-project-')));
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
+  writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nTerminal movement smoke.\n');
   seedTerminalShellProfiles(tmpHome, { posixRestrictPath: true });
 
@@ -92,7 +92,7 @@ function seed({ skipRestoreState = false }: { skipRestoreState?: boolean } = {})
 }
 
 async function launchApp(s: Seed): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
   return electron.launch(
     desktopLaunchOptions({
       target: TARGET,
@@ -104,8 +104,8 @@ async function launchApp(s: Seed): Promise<ElectronApplication> {
           restrictPath: true,
           pinPosixZsh: true,
         }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
       },
     }),
   );
@@ -120,7 +120,7 @@ async function dispatchRendererMenuAction(
   editorPage: Page,
 ): Promise<void> {
   await editorPage.evaluate(async (menuAction) => {
-    const menu = window.okDesktop?.menu;
+    const menu = window.psDesktop?.menu;
     if (!menu) throw new Error('renderer menu bridge is unavailable');
     await menu.dispatch({ kind: 'menu-action', action: menuAction });
   }, action);
@@ -412,7 +412,7 @@ function tallyMenuActionDeliveries(
   action: 'move-terminal',
 ): Promise<JSHandle<MenuActionTally>> {
   return page.evaluateHandle((counted) => {
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (!bridge) throw new Error('renderer desktop bridge is unavailable');
     const tally: MenuActionTally = { count: 0, stop: () => {} };
     tally.stop = bridge.onMenuAction((delivered) => {
@@ -492,7 +492,7 @@ async function expectStillScrolledBack(page: Page, newestLine: string): Promise<
 }
 
 test.describe('Terminal placement continuity — live Electron', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -680,14 +680,14 @@ test.describe('Terminal placement continuity — live Electron', () => {
     const { width: restoredWidth, settle: railResize } = await growRightTerminal(page, 120);
 
     await expectSettledReading(
-      () => page.evaluate(() => localStorage.getItem('ok-terminal-placement-v1')),
+      () => page.evaluate(() => localStorage.getItem('ps-terminal-placement-v1')),
       (placement) => expect(placement).toBe('right'),
-      { reading: 'placement', of: 'localStorage ok-terminal-placement-v1', budget: railResize },
+      { reading: 'placement', of: 'localStorage ps-terminal-placement-v1', budget: railResize },
     );
     await expectSettledReading(
-      () => page.evaluate(() => Number(localStorage.getItem('ok-terminal-right-width-v1'))),
+      () => page.evaluate(() => Number(localStorage.getItem('ps-terminal-right-width-v1'))),
       (retainedWidth) => expect(Math.abs(retainedWidth - restoredWidth)).toBeLessThan(20),
-      { reading: 'width', of: 'localStorage ok-terminal-right-width-v1', budget: railResize },
+      { reading: 'width', of: 'localStorage ps-terminal-right-width-v1', budget: railResize },
     );
     await page.reload({ waitUntil: 'domcontentloaded' });
 
@@ -733,7 +733,7 @@ test.describe('Terminal placement continuity — live Electron', () => {
     );
     await expectCollapsedRailColumn(page, '#agents-column', { budget: shrink });
     await page.evaluate(() => {
-      window.okDesktop?.editor.notifyViewMenuStateChanged({
+      window.psDesktop?.editor.notifyViewMenuStateChanged({
         agentPanelVisible: true,
         wideIntent: { agentPanelVisible: true },
       });
@@ -742,7 +742,7 @@ test.describe('Terminal placement continuity — live Electron', () => {
       .poll(
         async () =>
           page.evaluate(() =>
-            window.okDesktop?.terminal?.getDockState()?.then((state) => state.agentPanelVisible),
+            window.psDesktop?.terminal?.getDockState()?.then((state) => state.agentPanelVisible),
           ),
         { timeout: 10_000 },
       )
@@ -787,9 +787,9 @@ test.describe('Terminal placement continuity — live Electron', () => {
     const processId = await readShellPid(page, processMarker);
 
     await page.evaluate(() => {
-      localStorage.setItem('ok-terminal-placement-v1', 'future-home');
-      localStorage.setItem('ok-terminal-right-width-v1', 'not-a-width');
-      localStorage.setItem('ok-terminal-width-v1', 'agents-width-sentinel');
+      localStorage.setItem('ps-terminal-placement-v1', 'future-home');
+      localStorage.setItem('ps-terminal-right-width-v1', 'not-a-width');
+      localStorage.setItem('ps-terminal-width-v1', 'agents-width-sentinel');
     });
 
     await page.reload({ waitUntil: 'domcontentloaded' });
@@ -797,9 +797,9 @@ test.describe('Terminal placement continuity — live Electron', () => {
     await expectCollapsedRailColumn(page, '#terminal-column');
     expect(
       await page.evaluate(() => ({
-        placement: localStorage.getItem('ok-terminal-placement-v1'),
-        rightWidth: localStorage.getItem('ok-terminal-right-width-v1'),
-        agentsWidth: localStorage.getItem('ok-terminal-width-v1'),
+        placement: localStorage.getItem('ps-terminal-placement-v1'),
+        rightWidth: localStorage.getItem('ps-terminal-right-width-v1'),
+        agentsWidth: localStorage.getItem('ps-terminal-width-v1'),
       })),
     ).toEqual({
       placement: 'bottom',

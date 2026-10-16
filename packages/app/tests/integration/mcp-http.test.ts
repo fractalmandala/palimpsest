@@ -20,7 +20,7 @@ test('POST /mcp serves MCP JSON-RPC over Streamable HTTP', async () => {
         params: {
           protocolVersion: MCP_PROTOCOL_VERSION,
           capabilities: {},
-          clientInfo: { name: 'ok-integration-test', version: '0.0.0' },
+          clientInfo: { name: 'ps-integration-test', version: '0.0.0' },
         },
       }),
     });
@@ -33,7 +33,7 @@ test('POST /mcp serves MCP JSON-RPC over Streamable HTTP', async () => {
       id: number;
       result?: { serverInfo?: { name?: string }; protocolVersion?: string };
     };
-    expect(initBody.result?.serverInfo?.name).toBe('open-knowledge');
+    expect(initBody.result?.serverInfo?.name).toBe('palimpsest');
     expect(initBody.result?.protocolVersion).toBeTruthy();
 
     const initialized = await fetch(`http://127.0.0.1:${server.port}/mcp`, {

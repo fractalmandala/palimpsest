@@ -148,7 +148,7 @@ describe('handleBranchSwitched', () => {
     const firstLog: string | undefined = logSpy.mock.calls[0]?.[0];
     if (firstLog === undefined) throw new Error('expected warn call');
     const parsed = BranchSwitchedClearFailedLogSchema.parse(JSON.parse(firstLog));
-    expect(parsed.event).toBe('ok-branch-switched-clear-failed');
+    expect(parsed.event).toBe('ps-branch-switched-clear-failed');
     expect(parsed.branch).toBe('feature');
   });
 
@@ -202,7 +202,7 @@ describe('handleBranchSwitched', () => {
         try {
           return (
             (JSON.parse(first) as { event?: string }).event ===
-            'ok-branch-switched-deferred-to-mismatch-recycle'
+            'ps-branch-switched-deferred-to-mismatch-recycle'
           );
         } catch {
           return false;
@@ -215,7 +215,7 @@ describe('handleBranchSwitched', () => {
       const recycleAlls = infoSpy.mock.calls.filter(([first]) => {
         if (typeof first !== 'string') return false;
         try {
-          return (JSON.parse(first) as { event?: string }).event === 'ok-pool-recycle-all';
+          return (JSON.parse(first) as { event?: string }).event === 'ps-pool-recycle-all';
         } catch {
           return false;
         }
@@ -258,7 +258,7 @@ describe('handleBranchSwitched', () => {
         if (typeof first !== 'string') return false;
         try {
           return (
-            (JSON.parse(first) as { event?: string }).event === 'ok-buffer-replay-branch-mismatch'
+            (JSON.parse(first) as { event?: string }).event === 'ps-buffer-replay-branch-mismatch'
           );
         } catch {
           return false;

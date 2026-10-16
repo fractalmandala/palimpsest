@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event';
 import type { ComponentProps, ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkPackId, OkSeedListPacksResult, OkSeedPackInfo } from '@/lib/desktop-bridge-types';
+import type { PsPackId, PsSeedListPacksResult, PsSeedPackInfo } from '@/lib/desktop-bridge-types';
 
-let listPacksImpl: () => Promise<OkSeedListPacksResult> = async () => ({
+let listPacksImpl: () => Promise<PsSeedListPacksResult> = async () => ({
   ok: true,
   packs: [],
 });
@@ -39,7 +39,7 @@ vi.doMock('@/lib/seed-client', () => ({
   }),
 }));
 
-const packIds: OkPackId[] = [
+const packIds: PsPackId[] = [
   'knowledge-base',
   'software-lifecycle',
   'plain-notes',
@@ -48,7 +48,7 @@ const packIds: OkPackId[] = [
   'gbrain',
 ];
 
-function makePack(id: OkPackId, index: number): OkSeedPackInfo {
+function makePack(id: PsPackId, index: number): PsSeedPackInfo {
   return {
     id,
     name: `Pack ${index + 1}`,
@@ -64,7 +64,7 @@ async function renderPackCardGrid(
   props: Partial<ComponentProps<typeof import('./PackCardGrid')['PackCardGrid']>> = {},
 ) {
   const { PackCardGrid } = await import('./PackCardGrid');
-  const selected: OkPackId[] = [];
+  const selected: PsPackId[] = [];
   render(
     <TooltipProvider>
       <PackCardGrid onPackSelect={(packId) => selected.push(packId)} {...props} />

@@ -28,9 +28,9 @@ function packFixture() {
   }));
 }
 
-const okPacks = () => Promise.resolve({ ok: true, packs: packFixture() });
+const psPacks = () => Promise.resolve({ ok: true, packs: packFixture() });
 
-let listPacksImpl: () => Promise<unknown> = okPacks;
+let listPacksImpl: () => Promise<unknown> = psPacks;
 
 vi.doMock('next-themes', () => ({
   useTheme: () => ({ theme: undefined }),
@@ -160,7 +160,7 @@ function createBridge(recents: unknown[]) {
 }
 
 async function renderNavigator(bridge: ReturnType<typeof createBridge>) {
-  Object.defineProperty(window, 'okDesktop', { configurable: true, value: bridge });
+  Object.defineProperty(window, 'psDesktop', { configurable: true, value: bridge });
   render(
     <TooltipProvider>
       <NavigatorApp bridge={bridge as never} />
@@ -174,9 +174,9 @@ const { NavigatorApp } = await import('./NavigatorApp');
 describe('NavigatorApp launcher — starter-pack line', () => {
   beforeEach(() => {
     cleanup();
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     createDialogProps = [];
-    listPacksImpl = okPacks;
+    listPacksImpl = psPacks;
   });
 
   afterEach(() => cleanup());

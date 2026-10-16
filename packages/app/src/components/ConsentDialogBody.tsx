@@ -1,8 +1,8 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { receivesProjectIntegrationWrite } from '@inkeep/open-knowledge-core/constants/editors';
+import { receivesProjectIntegrationWrite } from '@palimpsest/core/constants/editors';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg, plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -32,10 +32,10 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { type ConsentStore, consentStore as defaultConsentStore } from '@/lib/consent-store';
 import type {
-  OkMcpWiringEditorId,
-  OkOnboardingProbeContentResult,
-  OkOnboardingShowPayload,
-  OkOnboardingWarningKind,
+  PsMcpWiringEditorId,
+  PsOnboardingProbeContentResult,
+  PsOnboardingShowPayload,
+  PsOnboardingWarningKind,
 } from '@/lib/desktop-bridge-types';
 import { isContentDirSafe, relativeToProject } from '@/lib/project-paths';
 
@@ -55,17 +55,17 @@ const PROBE_THROTTLE_MS = 750;
    above). */
 const DETECTION_GRACE_MS = 8_000;
 
-const WARNING_COPY: Record<OkOnboardingWarningKind, MessageDescriptor> = {
-  'home-documents': msg`You picked ~/Documents. OpenKnowledge will index every markdown file under it. If you only want to manage a sub-folder, choose a smaller scope.`,
-  'home-desktop': msg`You picked ~/Desktop. OpenKnowledge will index everything on your desktop.`,
+const WARNING_COPY: Record<PsOnboardingWarningKind, MessageDescriptor> = {
+  'home-documents': msg`You picked ~/Documents. Palimpsest will index every markdown file under it. If you only want to manage a sub-folder, choose a smaller scope.`,
+  'home-desktop': msg`You picked ~/Desktop. Palimpsest will index everything on your desktop.`,
   'home-downloads': msg`You picked ~/Downloads. Files there are usually transient — consider a stable folder instead.`,
-  'volumes-mount': msg`This path is on an external volume (/Volumes/...). OpenKnowledge will lose track of files when the drive ejects.`,
+  'volumes-mount': msg`This path is on an external volume (/Volumes/...). Palimpsest will lose track of files when the drive ejects.`,
 };
 
 interface ConsentDialogBodyProps {
   store?: ConsentStore;
   toast?: ToastImpl;
-  payload?: OkOnboardingShowPayload;
+  payload?: PsOnboardingShowPayload;
   detectionGraceMs?: number;
 }
 
@@ -96,7 +96,7 @@ function ConsentDialogBody({
 }
 
 interface ConsentDialogFormProps {
-  payload: OkOnboardingShowPayload;
+  payload: PsOnboardingShowPayload;
   store: ConsentStore;
   toast: ToastImpl;
   detectionGraceMs: number;
@@ -108,17 +108,17 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
   const formId = useId();
   const [contentDir, setContentDir] = useState(payload.defaultContentDir);
   const [additionalIgnores, setAdditionalIgnores] = useState('');
-  const [detectedEditors, setDetectedEditors] = useState<readonly OkMcpWiringEditorId[] | null>(
+  const [detectedEditors, setDetectedEditors] = useState<readonly PsMcpWiringEditorId[] | null>(
     null,
   );
   const [connectEditors, setConnectEditors] = useState(true);
   const [sharing, setSharing] = useState<SharingMode>(DEFAULT_SHARING_MODE);
-  const [probe, setProbe] = useState<OkOnboardingProbeContentResult | null>(null);
+  const [probe, setProbe] = useState<PsOnboardingProbeContentResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [browseError, setBrowseError] = useState<string | null>(null);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [awaitingDetection, setAwaitingDetection] = useState(false);
-  const detectionRef = useRef<Promise<readonly OkMcpWiringEditorId[]> | null>(null);
+  const detectionRef = useRef<Promise<readonly PsMcpWiringEditorId[]> | null>(null);
   const cancelInFlightRef = useRef(false);
   const confirmEpochRef = useRef(0);
 
@@ -129,7 +129,7 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
     }
     let cancelled = false;
     const handle = setTimeout(() => {
-      const bridge = window.okDesktop;
+      const bridge = window.psDesktop;
       if (!bridge) return;
       bridge.onboarding
         .probeContent({ contentDir })
@@ -150,13 +150,13 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
   }, [contentDir, t]);
 
   useEffect(() => {
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (!bridge) {
       setDetectedEditors([]);
       return;
     }
     let cancelled = false;
-    const detection: Promise<readonly OkMcpWiringEditorId[]> = bridge.integrations
+    const detection: Promise<readonly PsMcpWiringEditorId[]> = bridge.integrations
       .status()
       .then((status) => {
         const userMcpInstalled = new Set(
@@ -175,7 +175,7 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
     let graceTimer: ReturnType<typeof setTimeout> | undefined;
     detectionRef.current = Promise.race([
       detection,
-      new Promise<readonly OkMcpWiringEditorId[]>((resolve) => {
+      new Promise<readonly PsMcpWiringEditorId[]>((resolve) => {
         graceTimer = setTimeout(() => {
           console.warn(
             `[ConsentDialog] editor detection did not settle within ${detectionGraceMs}ms`,
@@ -205,7 +205,7 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
     relativeToProject(payload.projectDir, payload.pickedPath) ?? payload.pickedPath;
 
   async function onBrowseContentDir() {
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (!bridge) return;
     let picked: string | null;
     try {
@@ -224,7 +224,7 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
     setContentDir(relative);
   }
 
-  async function resolveDetectedEditors(): Promise<readonly OkMcpWiringEditorId[]> {
+  async function resolveDetectedEditors(): Promise<readonly PsMcpWiringEditorId[]> {
     if (!connectEditors) return [];
     if (detectedEditors !== null) return detectedEditors;
     const pending = detectionRef.current;
@@ -290,11 +290,11 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
       >
         <DialogHeader>
           <DialogTitle>
-            <Trans>Setup OpenKnowledge in this folder?</Trans>
+            <Trans>Setup Palimpsest in this folder?</Trans>
           </DialogTitle>
           <DialogDescription>
             <Trans>
-              OpenKnowledge stores its configuration and internal files inside a newly created{' '}
+              Palimpsest stores its configuration and internal files inside a newly created{' '}
               <code>.ok</code> directory in your project root folder.
             </Trans>
           </DialogDescription>
@@ -304,9 +304,9 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
           {payload.gitRootPromoted ? (
             <p className="text-1sm text-muted-foreground">
               <Trans>
-                OpenKnowledge initializes at <code dir="ltr">{projectDir}</code> — the parent of{' '}
+                Palimpsest initializes at <code dir="ltr">{projectDir}</code> — the parent of{' '}
                 <code dir="ltr">{pickedRelative}</code> because it contains a <code>.git</code>{' '}
-                folder (one .ok/ per git repo). <code>Content directory</code> defaults to{' '}
+                folder (one .ps/ per git repo). <code>Content directory</code> defaults to{' '}
                 <code>.</code> (the whole repo); type a sub-folder to narrow it.
               </Trans>
             </p>
@@ -440,7 +440,7 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
                   />
                   <p className="text-1sm text-muted-foreground">
                     <Trans>
-                      One pattern per line — appended to <code>.okignore</code>.
+                      One pattern per line — appended to <code>.psignore</code>.
                     </Trans>
                   </p>
                 </div>
@@ -475,7 +475,7 @@ function ConsentDialogForm({ payload, store, toast, detectionGraceMs }: ConsentD
   );
 }
 
-function ProbePreview({ probe }: { probe: OkOnboardingProbeContentResult | null }) {
+function ProbePreview({ probe }: { probe: PsOnboardingProbeContentResult | null }) {
   const { t, i18n } = useLingui();
   if (probe === null) {
     return (

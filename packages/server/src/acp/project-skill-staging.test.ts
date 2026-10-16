@@ -11,7 +11,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import * as coreServer from '@inkeep/open-knowledge-core/server';
+import * as coreServer from '@palimpsest/core/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { resolveBundledSkillDir } from '../build-skill-zip.ts';
 import { getLogger } from '../logger.ts';
@@ -63,7 +63,7 @@ const SMALL_BUNDLE = {
 };
 
 describe('stageProjectSkill', () => {
-  test('stages the bundle byte-for-byte under <localDir>/agent-skill/open-knowledge', async () => {
+  test('stages the bundle byte-for-byte under <localDir>/agent-skill/palimpsest', async () => {
     const localDir = tmp();
     const source = writeBundle(tmp(), SMALL_BUNDLE);
     const staged = await stageProjectSkill({ localDir, sourceDir: source, log });

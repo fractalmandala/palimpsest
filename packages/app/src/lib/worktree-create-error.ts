@@ -1,4 +1,4 @@
-import type { WorktreeCreateResult } from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+import type { WorktreeCreateResult } from '@palimpsest/core/git/worktree-selector-model';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
@@ -34,15 +34,15 @@ export function worktreeCreateErrorCopy(result: WorktreeCreateErrorInput): Messa
     case 'project-scope-unavailable':
       switch (result.issue) {
         case 'missing':
-          return msg`This branch does not contain this OpenKnowledge project. The worktree was created but not opened.`;
+          return msg`This branch does not contain this Palimpsest project. The worktree was created but not opened.`;
         case 'unreadable':
-          return msg`The OpenKnowledge project path on this branch cannot be read. The worktree was created but not opened.`;
+          return msg`The Palimpsest project path on this branch cannot be read. The worktree was created but not opened.`;
         case 'outside-worktree':
-          return msg`The OpenKnowledge project path on this branch leaves the worktree. The worktree was created but not opened.`;
+          return msg`The Palimpsest project path on this branch leaves the worktree. The worktree was created but not opened.`;
         case 'unsafe-setup-path':
-          return msg`This branch redirects an OpenKnowledge setup path outside the worktree. The worktree was created but not opened.`;
+          return msg`This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened.`;
         case 'setup-failed':
-          return msg`OpenKnowledge couldn't finish setting up this project. The worktree was created but not opened.`;
+          return msg`Palimpsest couldn't finish setting up this project. The worktree was created but not opened.`;
         default: {
           const exhaustive: never = result.issue;
           throw new Error(`Unhandled project scope issue: ${String(exhaustive)}`);

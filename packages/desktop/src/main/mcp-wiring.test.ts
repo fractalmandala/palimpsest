@@ -16,7 +16,7 @@ import {
   classifyExistingMcpEntry,
   type EditorMcpTarget,
   type McpEntryClassification,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   classifyExistingMcpEntry as classifyWithOverridableEngine,
@@ -64,7 +64,7 @@ function memoryFs(
   };
 }
 
-const PACKAGED_EXE = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+const PACKAGED_EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
 
 function fakeTarget(id: McpWiringEditorId): EditorMcpTarget {
   return {
@@ -72,7 +72,7 @@ function fakeTarget(id: McpWiringEditorId): EditorMcpTarget {
     label: id,
     format: 'json',
     topLevelKey: 'mcpServers',
-    serverName: () => 'open-knowledge',
+    serverName: () => 'palimpsest',
     configPath: (_cwd, home) => `${home}/.config-for-${id}.json`,
     buildEntry: () => buildManagedServerEntry({ mode: 'published' }),
     scope: 'global',
@@ -106,7 +106,7 @@ function buildStartupCli(opts: BuildStartupCliOptions): {
         label: editorId,
         action: opts.writeOutcome ?? 'overwritten',
         configPath: target.configPath('', '/home'),
-        serverName: 'open-knowledge',
+        serverName: 'palimpsest',
         ...(opts.writeError ? { error: opts.writeError } : {}),
       }));
     },
@@ -119,7 +119,7 @@ describe('checkAndRepairMcpWiringOnStartup — migrate event ordering', () => {
     const { cli, events, order } = buildStartupCli({
       classify: {
         kind: 'present',
-        entry: { command: 'npx', args: ['-y', '@inkeep/open-knowledge', 'mcp'] },
+        entry: { command: 'npx', args: ['-y', '@palimpsest/cli', 'mcp'] },
       },
     });
     const result = await checkAndRepairMcpWiringOnStartup({
@@ -151,14 +151,14 @@ describe('checkAndRepairMcpWiringOnStartup — migrate event ordering', () => {
       editorId: 'claude',
       configPath: '/home/.config-for-claude.json',
       priorCommand: 'npx',
-      priorArgs: ['-y', '@inkeep/open-knowledge', 'mcp'],
+      priorArgs: ['-y', '@palimpsest/cli', 'mcp'],
     });
   });
 
   test('an editor OK does not manage is left out of the sweep entirely', async () => {
     const legacy: McpEntryClassification = {
       kind: 'present',
-      entry: { command: 'npx', args: ['-y', '@inkeep/open-knowledge', 'mcp'] },
+      entry: { command: 'npx', args: ['-y', '@palimpsest/cli', 'mcp'] },
     };
     const writes: McpWiringEditorId[][] = [];
     const events: Array<Record<string, unknown>> = [];
@@ -177,7 +177,7 @@ describe('checkAndRepairMcpWiringOnStartup — migrate event ordering', () => {
           label: editorId,
           action: 'overwritten' as const,
           configPath: '/home/x.json',
-          serverName: 'open-knowledge',
+          serverName: 'palimpsest',
         }));
       },
     };
@@ -233,7 +233,7 @@ describe('checkAndRepairMcpWiringOnStartup — migrate event ordering', () => {
   test('recognized future chain entry → no downgrade and no write', async () => {
     const futureEntry = {
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nexit 127'],
+      args: ['-l', '-c', '# ps-mcp-v99\nexit 127'],
     };
     const { cli, events, order } = buildStartupCli({
       classify: { kind: 'present', entry: futureEntry },
@@ -272,7 +272,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
     typeof checkAndRepairMcpWiringOnStartup
   >[0]['ipcMain'];
 
-  test('declined config → no write, no rename, ok status, bounded decline signal', async () => {
+  test('declined config → no write, no rename, ps status, bounded decline signal', async () => {
     const { cli, order } = buildStartupCli({
       classify: { kind: 'decline', reason: 'unparseable' },
     });
@@ -307,7 +307,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
     const { cli } = buildStartupCli({
       classify: {
         kind: 'present',
-        entry: { command: 'npx', args: ['-y', '@inkeep/open-knowledge', 'mcp'] },
+        entry: { command: 'npx', args: ['-y', '@palimpsest/cli', 'mcp'] },
       },
       writeOutcome: 'declined',
     });
@@ -334,7 +334,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
     test.skipIf(!NATIVE_TOML_AVAILABLE)(
       'real classify on a 2^53+ integer TOML → byte-unchanged, no .broken, no-op',
       async () => {
-        dir = mkdtempSync(join(tmpdir(), 'ok-reset-repro-'));
+        dir = mkdtempSync(join(tmpdir(), 'ps-reset-repro-'));
         const tomlPath = join(dir, 'config.toml');
         const original = [
           '# my codex config — keep my comments!',
@@ -352,7 +352,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
           label: 'Codex',
           format: 'toml',
           topLevelKey: 'mcp_servers',
-          serverName: () => 'open-knowledge',
+          serverName: () => 'palimpsest',
           configPath: () => tomlPath,
           buildEntry: () => buildManagedServerEntry({ mode: 'published' }),
           scope: 'global',
@@ -381,13 +381,13 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
           editorTargets: { codex: target } as Record<McpWiringEditorId, EditorMcpTarget>,
           writeUserMcpConfigs: async ({ editors }) => {
             writes.push([...editors]);
-            fsWriteFileSync(tomlPath, '{"mcp_servers":{"open-knowledge":{}}}');
+            fsWriteFileSync(tomlPath, '{"mcp_servers":{"palimpsest":{}}}');
             return editors.map((editorId) => ({
               editorId,
               label: editorId,
               action: 'written' as const,
               configPath: tomlPath,
-              serverName: 'open-knowledge',
+              serverName: 'palimpsest',
             }));
           },
         };
@@ -413,7 +413,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
     );
 
     test('real classify on a genuinely-malformed TOML → decline, byte-unchanged, no write, bounded signal', async () => {
-      dir = mkdtempSync(join(tmpdir(), 'ok-decline-sweep-'));
+      dir = mkdtempSync(join(tmpdir(), 'ps-decline-sweep-'));
       const tomlPath = join(dir, 'config.toml');
       const original = ['# keep my comments', 'model = "gpt-5"', 'broken = "unterminated', ''].join(
         '\n',
@@ -425,7 +425,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
         label: 'Codex',
         format: 'toml',
         topLevelKey: 'mcp_servers',
-        serverName: () => 'open-knowledge',
+        serverName: () => 'palimpsest',
         configPath: () => tomlPath,
         buildEntry: () => buildManagedServerEntry({ mode: 'published' }),
         scope: 'global',
@@ -455,13 +455,13 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
         editorTargets: { codex: target } as Record<McpWiringEditorId, EditorMcpTarget>,
         writeUserMcpConfigs: async ({ editors }) => {
           writes.push([...editors]);
-          fsWriteFileSync(tomlPath, '{"mcp_servers":{"open-knowledge":{}}}');
+          fsWriteFileSync(tomlPath, '{"mcp_servers":{"palimpsest":{}}}');
           return editors.map((editorId) => ({
             editorId,
             label: editorId,
             action: 'written' as const,
             configPath: tomlPath,
-            serverName: 'open-knowledge',
+            serverName: 'palimpsest',
           }));
         },
       };
@@ -494,7 +494,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
     });
 
     test('fallback engine: the same valid i64 config is declined, never reset (off-macOS / no-prebuilt-binary host)', async () => {
-      dir = mkdtempSync(join(tmpdir(), 'ok-fallback-i64-'));
+      dir = mkdtempSync(join(tmpdir(), 'ps-fallback-i64-'));
       const tomlPath = join(dir, 'config.toml');
       const original = [
         '# my codex config — keep my comments!',
@@ -512,7 +512,7 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
         label: 'Codex',
         format: 'toml',
         topLevelKey: 'mcp_servers',
-        serverName: () => 'open-knowledge',
+        serverName: () => 'palimpsest',
         configPath: () => tomlPath,
         buildEntry: () => buildManagedServerEntry({ mode: 'published' }),
         scope: 'global',
@@ -538,13 +538,13 @@ describe('checkAndRepairMcpWiringOnStartup — non-destructive decline', () => {
         editorTargets: { codex: target } as Record<McpWiringEditorId, EditorMcpTarget>,
         writeUserMcpConfigs: async ({ editors }) => {
           writes.push([...editors]);
-          fsWriteFileSync(tomlPath, '{"mcp_servers":{"open-knowledge":{}}}');
+          fsWriteFileSync(tomlPath, '{"mcp_servers":{"palimpsest":{}}}');
           return editors.map((editorId) => ({
             editorId,
             label: editorId,
             action: 'written' as const,
             configPath: tomlPath,
-            serverName: 'open-knowledge',
+            serverName: 'palimpsest',
           }));
         },
       };
@@ -599,14 +599,14 @@ describe('MCP status marker', () => {
       editors: ['claude'],
     };
     writeMcpStatusMarker('/home/alice', marker, fs);
-    expect(JSON.parse(fs.files['/home/alice/.ok/mcp-status.json'])).toEqual(marker);
+    expect(JSON.parse(fs.files['/home/alice/.ps/mcp-status.json'])).toEqual(marker);
   });
 
-  test("Beta keeps its own marker under ~/.ok-beta and never reads Stable's", () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test("Beta keeps its own marker under ~/.ps-beta and never reads Stable's", () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       const fs = memoryFs({
-        '/home/alice/.ok/mcp-status.json': JSON.stringify({
+        '/home/alice/.ps/mcp-status.json': JSON.stringify({
           configured: true,
           configuredAt: '2026-05-26T00:00:00.000Z',
           editors: ['claude'],
@@ -615,7 +615,7 @@ describe('MCP status marker', () => {
       expect(readMcpStatusMarker('/home/alice', fs)).toBeNull();
       const marker: McpStatusMarker = { configured: false, skippedAt: '2026-09-30T00:00:00.000Z' };
       writeMcpStatusMarker('/home/alice', marker, fs);
-      expect(JSON.parse(fs.files['/home/alice/.ok-beta/mcp-status.json'])).toEqual(marker);
+      expect(JSON.parse(fs.files['/home/alice/.ps-beta/mcp-status.json'])).toEqual(marker);
     } finally {
       vi.unstubAllEnvs();
     }
@@ -623,7 +623,7 @@ describe('MCP status marker', () => {
 
   test('reader accepts legacy confirmed marker carrying cliPath', () => {
     const fs = memoryFs({
-      '/home/alice/.ok/mcp-status.json': JSON.stringify({
+      '/home/alice/.ps/mcp-status.json': JSON.stringify({
         configured: true,
         configuredAt: '2026-05-26T00:00:00.000Z',
         editors: [],
@@ -689,7 +689,7 @@ function buildFirstLaunchCli(): { cli: McpWiringCliSurface; writes: McpWiringEdi
         label: editorId,
         action: 'written' as const,
         configPath: target.configPath('', '/home/u'),
-        serverName: 'open-knowledge',
+        serverName: 'palimpsest',
       }));
     },
   };
@@ -754,7 +754,7 @@ function buildWiringOpts(overrides: Partial<WiringOpts> = {}): WiringOpts {
 
 describe('runMcpWiringOnFirstLaunch — dev channel', () => {
   test('a dev build reports why it wrote no user-level config and leaves the marker unwritten', async () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
     try {
       const ipcMain = stubIpcMain();
       const wc = fakeWebContents(11);
@@ -773,7 +773,7 @@ describe('runMcpWiringOnFirstLaunch — dev channel', () => {
       const result = await confirm?.({ sender: { id: 11 } }, { editorIds: ['claude'] });
       expect(result).toMatchObject({ ok: false });
       expect((result as { error: string }).error).toContain(
-        'A dev build registers OpenKnowledge MCP in project config only',
+        'A dev build registers Palimpsest MCP in project config only',
       );
       expect(readMcpStatusMarker('/home/u', fs)).toBeNull();
     } finally {
@@ -921,7 +921,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
               detected: true,
               willReplace: false,
               configPath: '~/.config-for-claude.json',
-              entryLocator: 'mcpServers.open-knowledge',
+              entryLocator: 'mcpServers.palimpsest',
             },
           ],
           pathInstall: {
@@ -967,7 +967,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
                 label: editorId,
                 action: 'declined' as const,
                 configPath: '/home/u/.cursor/mcp.json',
-                serverName: 'open-knowledge',
+                serverName: 'palimpsest',
                 declineReason: 'unparseable' as const,
               }
             : {
@@ -975,7 +975,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
                 label: editorId,
                 action: 'written' as const,
                 configPath: '/home/u/.claude.json',
-                serverName: 'open-knowledge',
+                serverName: 'palimpsest',
               },
         ),
     };
@@ -1065,7 +1065,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
     const ipcMain = stubIpcMain();
     const wc = fakeWebContents(7);
     const fs = memoryFs({
-      '/home/u/.ok/mcp-status.json': JSON.stringify({
+      '/home/u/.ps/mcp-status.json': JSON.stringify({
         configured: false,
         skippedAt: '2026-05-26T00:00:00.000Z',
       }),
@@ -1358,7 +1358,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
         kind: 'present',
         entry: {
           command: '/bin/sh',
-          args: ['-l', '-c', '# ok-mcp-v2\nexit 127'],
+          args: ['-l', '-c', '# ps-mcp-v2\nexit 127'],
           env: { NODE_OPTIONS: '--require ./payload.cjs' },
         },
       },
@@ -1443,7 +1443,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
             label: editorId,
             action: spec?.writeAction ?? 'overwritten',
             configPath: editorTargets[editorId]?.configPath('', '/home') ?? '',
-            serverName: 'open-knowledge',
+            serverName: 'palimpsest',
             ...(spec?.writeError ? { error: spec.writeError } : {}),
             ...(spec?.declineReason ? { declineReason: spec.declineReason } : {}),
           };
@@ -1455,10 +1455,10 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
 
   const CURRENT_WITH_ENV = {
     command: '/bin/sh',
-    args: ['-l', '-c', '# ok-mcp-v2\nexit 127'],
+    args: ['-l', '-c', '# ps-mcp-v2\nexit 127'],
     env: { NODE_OPTIONS: '--require ./payload.cjs' },
   };
-  const OLDER_LAUNCHER = { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v1\nexit 127'] };
+  const OLDER_LAUNCHER = { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexit 127'] };
 
   async function runStartup(cli: McpWiringCliSurface, events: Array<Record<string, unknown>>) {
     return checkAndRepairMcpWiringOnStartup({

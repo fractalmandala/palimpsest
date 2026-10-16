@@ -1041,7 +1041,7 @@ test.describe('OK→OK round-trip through Branch C (data-pm-slice)', () => {
     });
     await page.evaluate(async (name) => {
       const dbs = await indexedDB.databases();
-      const target = new RegExp(`^ok-ydoc:.*:${name}$`);
+      const target = new RegExp(`^ps-ydoc:.*:${name}$`);
       await Promise.all(
         dbs
           .filter((d) => d.name !== undefined && target.test(d.name))
@@ -1100,7 +1100,7 @@ test.describe('OK→OK round-trip through Branch C (data-pm-slice)', () => {
     });
     await page.evaluate(async (name) => {
       const dbs = await indexedDB.databases();
-      const target = new RegExp(`^ok-ydoc:.*:${name}$`);
+      const target = new RegExp(`^ps-ydoc:.*:${name}$`);
       await Promise.all(
         dbs
           .filter((d) => d.name !== undefined && target.test(d.name))

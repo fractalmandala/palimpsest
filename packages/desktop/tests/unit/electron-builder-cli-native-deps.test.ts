@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = resolve(__dirname, '../..');
 const builderYml = resolve(desktopRoot, 'electron-builder.yml');
 const tsdownConfig = resolve(desktopRoot, '..', 'cli', 'tsdown.config.ts');
-const okRoot = resolve(desktopRoot, '..', '..');
+const psRoot = resolve(desktopRoot, '..', '..');
 
 const KNOWN_UNCOVERED: Record<string, string> = {
   yjs: 'library-entry-only external; cli.mjs inlines yjs and is the only entry resources/cli runs',
@@ -24,7 +24,7 @@ function shippedViaParcelStaging(pkg: string): boolean {
 const EXPECTED_NEVER_BUNDLE = [
   '@parcel/watcher',
   '@napi-rs/keyring',
-  '@inkeep/open-knowledge-native-config',
+  '@palimpsest/native-config',
 ] as const;
 
 function readNeverBundle(): string[] {
@@ -138,9 +138,9 @@ describe('bundled CLI can resolve tsdown neverBundle native addons', () => {
   });
 
   test('keyring copy sources exist at the hoisted root node_modules', () => {
-    expect(existsSync(resolve(okRoot, 'node_modules', '@napi-rs', 'keyring'))).toBe(true);
+    expect(existsSync(resolve(psRoot, 'node_modules', '@napi-rs', 'keyring'))).toBe(true);
     if (process.platform === 'darwin' && process.arch === 'arm64') {
-      expect(existsSync(resolve(okRoot, 'node_modules', '@napi-rs', 'keyring-darwin-arm64'))).toBe(
+      expect(existsSync(resolve(psRoot, 'node_modules', '@napi-rs', 'keyring-darwin-arm64'))).toBe(
         true,
       );
     }
@@ -148,27 +148,27 @@ describe('bundled CLI can resolve tsdown neverBundle native addons', () => {
 });
 
 describe('per-platform ok CLI wrapper ships to cli/bin', () => {
-  test('mac + linux ship a cli/bin/ok.sh; win ships ok.cmd + ok.ps1', () => {
-    expect(readExtraResourceTargets('mac')).toContain('cli/bin/ok.sh');
-    expect(readExtraResourceTargets('linux')).toContain('cli/bin/ok.sh');
+  test('mac + linux ship a cli/bin/ps.sh; win ships ps.cmd + ps.ps1', () => {
+    expect(readExtraResourceTargets('mac')).toContain('cli/bin/ps.sh');
+    expect(readExtraResourceTargets('linux')).toContain('cli/bin/ps.sh');
     const win = readExtraResourceTargets('win');
-    expect(win).toContain('cli/bin/ok.cmd');
-    expect(win).toContain('cli/bin/ok.ps1');
+    expect(win).toContain('cli/bin/ps.cmd');
+    expect(win).toContain('cli/bin/ps.ps1');
   });
 
-  test('the linux cli/bin/ok.sh sources the linux-layout wrapper, not the .app one', () => {
-    const rule = readExtraResources('linux').find((r) => r.to === 'cli/bin/ok.sh');
+  test('the linux cli/bin/ps.sh sources the linux-layout wrapper, not the .app one', () => {
+    const rule = readExtraResources('linux').find((r) => r.to === 'cli/bin/ps.sh');
     expect(
       rule?.from,
-      'linux must ship resources/cli/bin/ok-linux.sh as cli/bin/ok.sh — the darwin ' +
-        'ok.sh derives its paths from the .app bundle shape and self-diagnoses exit 69 ' +
+      'linux must ship resources/cli/bin/ps-linux.sh as cli/bin/ps.sh — the darwin ' +
+        'ps.sh derives its paths from the .app bundle shape and self-diagnoses exit 69 ' +
         'on the flat Linux layout.',
-    ).toBe('resources/cli/bin/ok-linux.sh');
+    ).toBe('resources/cli/bin/ps-linux.sh');
   });
 });
 
-describe('@inkeep/open-knowledge-native-config ships its napi loader + platform binary', () => {
-  const NATIVE_CONFIG = '@inkeep/open-knowledge-native-config';
+describe('@palimpsest/native-config ships its napi loader + platform binary', () => {
+  const NATIVE_CONFIG = '@palimpsest/native-config';
   const nativeConfigDir = resolve(desktopRoot, '..', 'native-config');
 
   test('an extraResources rule copies the addon into cli/node_modules shipping loader AND binary', () => {
@@ -210,7 +210,7 @@ describe('@inkeep/open-knowledge-native-config ships its napi loader + platform 
   });
 });
 
-describe('@inkeep/open-knowledge-native-config ships bundled in cli/dist/native', () => {
+describe('@palimpsest/native-config ships bundled in cli/dist/native', () => {
   const cliDist = resolve(desktopRoot, '..', 'cli', 'dist');
 
   test('the cli/dist extraResources rule does not filter out the native bundle', () => {

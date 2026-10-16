@@ -3,8 +3,8 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
-import { templateContentDocName } from '@inkeep/open-knowledge-core';
-import { formatOkActor, type OkActorEntry } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { templateContentDocName } from '@palimpsest/core';
+import { formatOkActor, type PsActorEntry } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -97,7 +97,7 @@ async function sampleChainWalkCost(
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-timeline-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-timeline-test-'));
 });
 
 afterEach(async () => {
@@ -132,7 +132,7 @@ const human: WriterIdentity = {
 const agent: WriterIdentity = {
   id: 'agent-cursor',
   name: 'cursor-agent',
-  email: 'cursor@openknowledge.local',
+  email: 'cursor@palimpsest.local',
 };
 
 function datedCommits(shadow: ShadowHandle) {
@@ -378,17 +378,17 @@ describe('getDocumentHistory', () => {
     const writerA: WriterIdentity = {
       id: 'agent-aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
       name: 'codex-mcp-client',
-      email: 'agent-aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa@openknowledge.local',
+      email: 'agent-aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa@palimpsest.local',
     };
     const writerB: WriterIdentity = {
       id: 'agent-bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb',
       name: 'claude-code',
-      email: 'agent-bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb@openknowledge.local',
+      email: 'agent-bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb@palimpsest.local',
     };
 
     const commitWriter = async (writer: WriterIdentity, docs: string[], subject: string) => {
       const treeSha = await buildWipTree(shadow, 'content/docs');
-      const actor: OkActorEntry = {
+      const actor: PsActorEntry = {
         v: 1,
         writer_id: writer.id,
         principal: null,
@@ -433,15 +433,15 @@ describe('getDocumentHistory', () => {
     const writer: WriterIdentity = {
       id: 'agent-cccccccc-cccc-4ccc-cccc-cccccccccccc',
       name: 'claude-code',
-      email: 'agent-cccccccc-cccc-4ccc-cccc-cccccccccccc@openknowledge.local',
+      email: 'agent-cccccccc-cccc-4ccc-cccc-cccccccccccc@palimpsest.local',
     };
 
-    const skillDir = resolve(contentDir, '.ok', 'skills', 'my-skill');
+    const skillDir = resolve(contentDir, '.ps', 'skills', 'my-skill');
     mkdirSync(skillDir, { recursive: true });
     writeFileSync(resolve(skillDir, 'SKILL.md'), '# My Skill v1\n');
 
     const treeSha = await buildWipTree(shadow, 'content/docs');
-    const actor: OkActorEntry = {
+    const actor: PsActorEntry = {
       v: 1,
       writer_id: writer.id,
       principal: null,
@@ -452,7 +452,7 @@ describe('getDocumentHistory', () => {
       label: null,
       display_name: writer.name,
       color_seed: writer.id,
-      docs: ['.ok/skills/my-skill'],
+      docs: ['.ps/skills/my-skill'],
     };
     const sha = await commitWipFromTree(
       shadow,
@@ -1040,7 +1040,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
   const httpWriter: WriterIdentity = {
     id: 'agent-11111111-1111-4111-1111-111111111111',
     name: 'template-http',
-    email: 'agent-11111111-1111-4111-1111-111111111111@openknowledge.local',
+    email: 'agent-11111111-1111-4111-1111-111111111111@palimpsest.local',
   };
 
   function increasingDates() {
@@ -1065,7 +1065,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
     const abs = resolve(contentDir, `${docKey}.md`);
     mkdirSync(dirname(abs), { recursive: true });
     writeFileSync(abs, body);
-    const actor: OkActorEntry = {
+    const actor: PsActorEntry = {
       v: 1,
       writer_id: writer.id,
       principal: null,
@@ -1092,7 +1092,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-create: notes/.ok/templates/standup',
+      'template-create: notes/.ps/templates/standup',
       '---\ntemplate:\n  title: Standup\n---\n# v1\n',
       next(),
     );
@@ -1101,7 +1101,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-edit: notes/.ok/templates/standup',
+      'template-edit: notes/.ps/templates/standup',
       '---\ntemplate:\n  title: Standup\n---\n# v2\n',
       next(),
     );
@@ -1111,7 +1111,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'wip: notes/.ok/templates/standup',
+      'wip: notes/.ps/templates/standup',
       '---\ntemplate:\n  title: Standup\n---\n# v3 edited in the editor\n',
       next(),
       human,
@@ -1136,7 +1136,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-create: notes/.ok/templates/standup',
+      'template-create: notes/.ps/templates/standup',
       '# create\n',
       next(),
     );
@@ -1145,7 +1145,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-edit: notes/.ok/templates/standup',
+      'template-edit: notes/.ps/templates/standup',
       '# edit\n',
       next(),
     );
@@ -1154,7 +1154,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-rename: notes/.ok/templates/scrum -> notes/.ok/templates/standup',
+      'template-rename: notes/.ps/templates/scrum -> notes/.ps/templates/standup',
       '# rename\n',
       next(),
     );
@@ -1163,7 +1163,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-delete: notes/.ok/templates/standup',
+      'template-delete: notes/.ps/templates/standup',
       '# delete\n',
       next(),
     );
@@ -1172,7 +1172,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'template-import: notes/.ok/templates/standup',
+      'template-import: notes/.ps/templates/standup',
       '# import\n',
       next(),
     );
@@ -1181,7 +1181,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       contentDir,
       'notes',
       'standup',
-      'wip: notes/.ok/templates/standup',
+      'wip: notes/.ps/templates/standup',
       '# editor edit\n',
       next(),
       human,

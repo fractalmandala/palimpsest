@@ -1,9 +1,9 @@
 import * as actualSonner from 'sonner';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import type {
-  OkDesktopBridge,
-  OkServerRestartOutcome,
-  OkServerVersionDriftInfo,
+  PsDesktopBridge,
+  PsServerRestartOutcome,
+  PsServerVersionDriftInfo,
 } from '@/lib/desktop-bridge-types';
 
 const toastWarning = vi.fn((_msg: string, _opts?: unknown) => 'warn-id');
@@ -43,22 +43,22 @@ beforeAll(async () => {
   } = await import('@/lib/install-server-drift-listener'));
 });
 
-const olderInfo: OkServerVersionDriftInfo = {
+const olderInfo: PsServerVersionDriftInfo = {
   relation: 'older',
   dimension: 'runtime',
   serverRuntime: '0.8.0',
   appRuntime: '0.8.2',
 };
 
-function makeBridge(opts?: { restartOutcome?: OkServerRestartOutcome; restartReject?: boolean }): {
-  bridge: OkDesktopBridge;
-  fireDrift: (info: OkServerVersionDriftInfo) => void;
+function makeBridge(opts?: { restartOutcome?: PsServerRestartOutcome; restartReject?: boolean }): {
+  bridge: PsDesktopBridge;
+  fireDrift: (info: PsServerVersionDriftInfo) => void;
   fireRestarted: (appRuntime: string) => void;
   restartServer: ReturnType<typeof vi.fn>;
   unsubDrift: ReturnType<typeof vi.fn>;
   unsubRestarted: ReturnType<typeof vi.fn>;
 } {
-  let driftCb: ((info: OkServerVersionDriftInfo) => void) | null = null;
+  let driftCb: ((info: PsServerVersionDriftInfo) => void) | null = null;
   let restartedCb: ((info: { appRuntime: string }) => void) | null = null;
   const unsubDrift = vi.fn(() => {});
   const unsubRestarted = vi.fn(() => {});
@@ -68,7 +68,7 @@ function makeBridge(opts?: { restartOutcome?: OkServerRestartOutcome; restartRej
   });
   const bridge = {
     config: { projectPath: '/tmp/proj' },
-    onServerVersionDrift: (cb: (info: OkServerVersionDriftInfo) => void) => {
+    onServerVersionDrift: (cb: (info: PsServerVersionDriftInfo) => void) => {
       driftCb = cb;
       return unsubDrift;
     },
@@ -77,7 +77,7 @@ function makeBridge(opts?: { restartOutcome?: OkServerRestartOutcome; restartRej
       return unsubRestarted;
     },
     restartServer,
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return {
     bridge,
     fireDrift: (info) => driftCb?.(info),
@@ -125,35 +125,35 @@ describe('drift copy', () => {
     expect(restartSuccessMessage('0.8.2')).toContain('0.8.2');
   });
 
-  test('eperm failure points at a different account + reboot, never `ok stop all`', () => {
+  test('eperm failure points at a different account + reboot, never `ps stop all`', () => {
     const msg = restartFailureMessage({ ok: false, reason: 'eperm' });
     expect(msg.toLowerCase()).toContain('different account');
     expect(msg.toLowerCase()).toContain('restart your computer');
-    expect(msg).not.toContain('ok stop all');
+    expect(msg).not.toContain('ps stop all');
   });
 
-  test('other failure suggests `ok stop all`', () => {
+  test('other failure suggests `ps stop all`', () => {
     expect(restartFailureMessage({ ok: false, reason: 'other' })).toBe(
-      "Couldn't restart the server automatically. Try running `ok stop all` in a terminal, then reopen this project — or restart your computer if it persists.",
+      "Couldn't restart the server automatically. Try running `ps stop all` in a terminal, then reopen this project — or restart your computer if it persists.",
     );
   });
 
-  test('other failure in a Beta window suggests `ok-beta stop all`', () => {
-    vi.stubGlobal('window', { okDesktop: { cliCommandName: 'ok-beta' } });
+  test('other failure in a Beta window suggests `ps-beta stop all`', () => {
+    vi.stubGlobal('window', { psDesktop: { cliCommandName: 'ps-beta' } });
     try {
       expect(restartFailureMessage({ ok: false, reason: 'other' })).toContain(
-        'Try running `ok-beta stop all` in a terminal',
+        'Try running `ps-beta stop all` in a terminal',
       );
     } finally {
       vi.unstubAllGlobals();
     }
   });
 
-  test("another channel's server is left running and never offered `ok stop all`", () => {
+  test("another channel's server is left running and never offered `ps stop all`", () => {
     expect(
       restartFailureMessage({ ok: false, reason: 'other-channel', holderChannel: 'stable' }),
     ).toBe(
-      "OpenKnowledge (Stable) is serving this project, so this app won't stop it. Close this window and open the project again to stop OpenKnowledge (Stable)'s server and open the project here.",
+      "Palimpsest (Stable) is serving this project, so this app won't stop it. Close this window and open the project again to stop Palimpsest (Stable)'s server and open the project here.",
     );
   });
 });

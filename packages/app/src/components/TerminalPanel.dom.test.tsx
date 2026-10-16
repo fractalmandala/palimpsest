@@ -1,16 +1,16 @@
-import { AGENT_REGISTRY, type HostSnapshot, TERMINAL_CLI_IDS } from '@inkeep/open-knowledge-core';
+import { AGENT_REGISTRY, type HostSnapshot, TERMINAL_CLI_IDS } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { ApplyAgentConnectionsResult } from '@/lib/agent-connections';
 import type {
   ClaudeReadiness,
-  OkDesktopBridge,
-  OkPtyAdoptResult,
-  OkPtyCreateResult,
-  OkPtyData,
-  OkPtyExit,
-  OkPtyNotice,
+  PsDesktopBridge,
+  PsPtyAdoptResult,
+  PsPtyCreateResult,
+  PsPtyData,
+  PsPtyExit,
+  PsPtyNotice,
 } from '@/lib/desktop-bridge-types';
 import {
   __resetPaneVisibilityStoreForTests,
@@ -240,17 +240,17 @@ vi.doMock('next-themes', () => ({
 const WIRED: ClaudeReadiness = { claude: 'present' };
 
 function makeBridge(
-  createResult: OkPtyCreateResult,
+  createResult: PsPtyCreateResult,
   preflight: ClaudeReadiness = WIRED,
-  adopt: (id: string, opts?: { start?: boolean }) => Promise<OkPtyAdoptResult> = async () => ({
+  adopt: (id: string, opts?: { start?: boolean }) => Promise<PsPtyAdoptResult> = async () => ({
     ok: true,
     replay: '',
   }),
-  platform: OkDesktopBridge['platform'] = 'darwin',
+  platform: PsDesktopBridge['platform'] = 'darwin',
 ) {
-  const dataSubs: Array<(m: OkPtyData) => void> = [];
-  const exitSubs: Array<(m: OkPtyExit) => void> = [];
-  const noticeSubs: Array<(m: OkPtyNotice) => void> = [];
+  const dataSubs: Array<(m: PsPtyData) => void> = [];
+  const exitSubs: Array<(m: PsPtyExit) => void> = [];
+  const noticeSubs: Array<(m: PsPtyNotice) => void> = [];
   const unsubData = vi.fn(() => {});
   const unsubExit = vi.fn(() => {});
   const unsubNotice = vi.fn(() => {});
@@ -278,15 +278,15 @@ function makeBridge(
     resize: vi.fn((_id: string, _c: number, _r: number) => {}),
     kill: vi.fn(async (_id: string) => {}),
     drain: vi.fn((_id: string, _bytes: number) => {}),
-    onData: vi.fn((cb: (m: OkPtyData) => void) => {
+    onData: vi.fn((cb: (m: PsPtyData) => void) => {
       dataSubs.push(cb);
       return unsubData;
     }),
-    onExit: vi.fn((cb: (m: OkPtyExit) => void) => {
+    onExit: vi.fn((cb: (m: PsPtyExit) => void) => {
       exitSubs.push(cb);
       return unsubExit;
     }),
-    onNotice: vi.fn((cb: (m: OkPtyNotice) => void) => {
+    onNotice: vi.fn((cb: (m: PsPtyNotice) => void) => {
       noticeSubs.push(cb);
       return unsubNotice;
     }),
@@ -301,7 +301,7 @@ function makeBridge(
       config: { e2eSmoke: false, projectPath: '/Users/me/project' },
       platform,
       getPathForFile: (file: File) => `/dropped/${file.name}`,
-    } as unknown as OkDesktopBridge,
+    } as unknown as PsDesktopBridge,
     terminal,
     openExternal,
     openAsset,
@@ -311,13 +311,13 @@ function makeBridge(
     unsubData,
     unsubExit,
     unsubNotice,
-    pushData: (m: OkPtyData) => {
+    pushData: (m: PsPtyData) => {
       for (const f of dataSubs) f(m);
     },
-    pushExit: (m: OkPtyExit) => {
+    pushExit: (m: PsPtyExit) => {
       for (const f of exitSubs) f(m);
     },
-    pushNotice: (m: OkPtyNotice) => {
+    pushNotice: (m: PsPtyNotice) => {
       for (const f of noticeSubs) f(m);
     },
   };
@@ -395,7 +395,7 @@ describe('TerminalPanel', () => {
           return a11yUnsub;
         },
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     const { unmount } = render(<TerminalPanel bridge={withA11y} />);
     await waitFor(() => expect(terminal.create).toHaveBeenCalledTimes(1));
 
@@ -423,7 +423,7 @@ describe('TerminalPanel', () => {
         isScreenReaderActive: () => false,
         onScreenReaderChanged: () => () => {},
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     render(<TerminalPanel bridge={smokeBridge} />);
     await waitFor(() => expect(terminal.create).toHaveBeenCalledTimes(1));
     expect(lastTerm?.options.screenReaderMode).toBe(true);
@@ -488,7 +488,7 @@ describe('TerminalPanel', () => {
     let releaseStart = (): void => {};
     h.terminal.adopt.mockImplementationOnce(
       async () =>
-        await new Promise<OkPtyAdoptResult>((resolve) => {
+        await new Promise<PsPtyAdoptResult>((resolve) => {
           releaseStart = () => resolve({ ok: true, replay: '' });
         }),
     );
@@ -682,7 +682,7 @@ describe('TerminalPanel', () => {
 
     await waitFor(() => expect(terminal.adopt).toHaveBeenCalledWith('pty-survivor'));
     expect(screen.getByTestId('terminal-shell-notice-banner').textContent).toMatch(
-      /\.ok\/local\/config\.yml.*PowerShell.*cmd\.exe.*Git Bash.*plain terminal only.*agent and command launches do not run/i,
+      /\.ps\/local\/config\.yml.*PowerShell.*cmd\.exe.*Git Bash.*plain terminal only.*agent and command launches do not run/i,
     );
   });
 
@@ -942,7 +942,7 @@ describe('TerminalPanel', () => {
     let releaseStart = (): void => {};
     terminal.adopt.mockImplementationOnce(
       async () =>
-        await new Promise<OkPtyAdoptResult>((resolve) => {
+        await new Promise<PsPtyAdoptResult>((resolve) => {
           releaseStart = () => resolve({ ok: true, replay: '' });
         }),
     );
@@ -1082,7 +1082,7 @@ describe('TerminalPanel', () => {
     ];
     const DROP_TERMINALS: ReadonlyArray<{
       readonly label: string;
-      readonly platform: OkDesktopBridge['platform'];
+      readonly platform: PsDesktopBridge['platform'];
       readonly shellFamily: 'powershell' | 'cmd' | 'bash' | null;
       readonly root: string;
       readonly quote: string;
@@ -2044,7 +2044,7 @@ describe('TerminalPanel', () => {
     );
 
     expect(screen.getByTestId('terminal-shell-notice-banner').textContent).toMatch(
-      /\.ok\/local\/config\.yml.*PowerShell.*cmd\.exe.*Git Bash.*plain terminal only.*agent and command launches do not run/i,
+      /\.ps\/local\/config\.yml.*PowerShell.*cmd\.exe.*Git Bash.*plain terminal only.*agent and command launches do not run/i,
     );
   });
 
@@ -2067,8 +2067,8 @@ describe('TerminalPanel', () => {
   });
 
   test.each([
-    ['containment-refused', /not safely contained.*not a link.*approve OpenKnowledge/i],
-    ['write-failed', /\.ok\/local\/terminal.*folder is writable.*approve OpenKnowledge/i],
+    ['containment-refused', /not safely contained.*not a link.*approve Palimpsest/i],
+    ['write-failed', /\.ps\/local\/terminal.*folder is writable.*approve Palimpsest/i],
   ] as const)('shows the support-file degradation notice for %s', async (reason, copy) => {
     const { bridge, terminal, pushNotice } = makeBridge(
       { ok: true, ptyId: 'pty-1' },
@@ -2227,8 +2227,8 @@ describe('TerminalPanel', () => {
   });
 
   test('reaps a PTY that finishes spawning after the panel has already unmounted', async () => {
-    let resolveCreate: ((r: OkPtyCreateResult) => void) | undefined;
-    const createPromise = new Promise<OkPtyCreateResult>((res) => {
+    let resolveCreate: ((r: PsPtyCreateResult) => void) | undefined;
+    const createPromise = new Promise<PsPtyCreateResult>((res) => {
       resolveCreate = res;
     });
     const kill = vi.fn(async (_id: string) => {});
@@ -2244,7 +2244,7 @@ describe('TerminalPanel', () => {
       onExit: vi.fn(() => vi.fn(() => {})),
       onNotice: vi.fn(() => vi.fn(() => {})),
     };
-    const bridge = { terminal, config: { e2eSmoke: false } } as unknown as OkDesktopBridge;
+    const bridge = { terminal, config: { e2eSmoke: false } } as unknown as PsDesktopBridge;
 
     const { unmount } = render(<TerminalPanel bridge={bridge} />);
     await waitFor(() => expect(terminal.create).toHaveBeenCalledTimes(1));
@@ -2260,8 +2260,8 @@ describe('TerminalPanel', () => {
   });
 
   test('reaps a PTY that is mid-start when the panel unmounts', async () => {
-    let resolveAdopt: ((r: OkPtyAdoptResult) => void) | undefined;
-    const adoptPromise = new Promise<OkPtyAdoptResult>((res) => {
+    let resolveAdopt: ((r: PsPtyAdoptResult) => void) | undefined;
+    const adoptPromise = new Promise<PsPtyAdoptResult>((res) => {
       resolveAdopt = res;
     });
     const { bridge, terminal } = makeBridge(
@@ -2312,7 +2312,7 @@ describe('TerminalPanel', () => {
       expect(await screen.findByText(/aren't connected to it yet/)).toBeTruthy();
       fireEvent.click(screen.getByRole('button', { name: 'Connect tools' }));
       expect(screen.getByRole('dialog').textContent).toContain(
-        'Choose what OpenKnowledge sets up for',
+        'Choose what Palimpsest sets up for',
       );
       fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
       expect(screen.getByRole('button', { name: 'Connect tools' })).toBeTruthy();
@@ -2439,7 +2439,7 @@ describe('TerminalPanel', () => {
       terminal,
       shell: { openExternal: vi.fn(async () => {}) },
       config: { e2eSmoke: false },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     render(<TerminalPanel bridge={bridge} />);
 
@@ -2513,12 +2513,12 @@ describe('TerminalPanel', () => {
   });
 
   test('a throw after the adopted shell is live keeps the session running instead of reporting never-started', async () => {
-    let releaseAdopt: ((r: OkPtyAdoptResult) => void) | undefined;
+    let releaseAdopt: ((r: PsPtyAdoptResult) => void) | undefined;
     const h = makeBridge(
       { ok: true, ptyId: 'unused' },
       WIRED,
       async () =>
-        await new Promise<OkPtyAdoptResult>((resolve) => {
+        await new Promise<PsPtyAdoptResult>((resolve) => {
           releaseAdopt = resolve;
         }),
     );
@@ -2748,7 +2748,7 @@ describe('TerminalPanel', () => {
   });
 
   test('restarting one session spawns a fresh PTY for it without disturbing a sibling', async () => {
-    const exitSubs: Array<(m: OkPtyExit) => void> = [];
+    const exitSubs: Array<(m: PsPtyExit) => void> = [];
     let created = 0;
     const create = vi.fn(async () => {
       created += 1;
@@ -2764,7 +2764,7 @@ describe('TerminalPanel', () => {
       kill,
       drain: vi.fn(() => {}),
       onData: vi.fn(() => vi.fn(() => {})),
-      onExit: vi.fn((cb: (m: OkPtyExit) => void) => {
+      onExit: vi.fn((cb: (m: PsPtyExit) => void) => {
         exitSubs.push(cb);
         return vi.fn(() => {});
       }),
@@ -2775,8 +2775,8 @@ describe('TerminalPanel', () => {
       terminal,
       shell: { openExternal: vi.fn(async () => {}) },
       config: { e2eSmoke: false },
-    } as unknown as OkDesktopBridge;
-    const pushExit = (m: OkPtyExit) => {
+    } as unknown as PsDesktopBridge;
+    const pushExit = (m: PsPtyExit) => {
       for (const f of exitSubs) f(m);
     };
 

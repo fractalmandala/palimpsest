@@ -77,7 +77,7 @@ function expectReservedRejection(result: CapturedResponse): void {
 let tmpDir: string;
 
 function setupTmpDir(): string {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-reserved-guard-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-reserved-guard-'));
   return tmpDir;
 }
 
@@ -89,26 +89,26 @@ afterEach(() => {
 });
 
 describe('reserved-path guard — create-page', () => {
-  test('rejects a root .ok target and writes nothing', async () => {
+  test('rejects a root .ps target and writes nothing', async () => {
     const dir = setupTmpDir();
 
-    const result = await callApi(dir, '/api/create-page', { path: '.ok/probe.md' });
+    const result = await callApi(dir, '/api/create-page', { path: '.ps/probe.md' });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, '.ok/probe.md'))).toBe(false);
-    expect(existsSync(join(dir, '.ok'))).toBe(false);
+    expect(existsSync(join(dir, '.ps/probe.md'))).toBe(false);
+    expect(existsSync(join(dir, '.ps'))).toBe(false);
   });
 
-  test('rejects a nested .ok target at any depth and writes nothing', async () => {
+  test('rejects a nested .ps target at any depth and writes nothing', async () => {
     const dir = setupTmpDir();
     mkdirSync(join(dir, 'notes'), { recursive: true });
 
     const result = await callApi(dir, '/api/create-page', {
-      path: 'notes/.ok/probe.md',
+      path: 'notes/.ps/probe.md',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok'))).toBe(false);
+    expect(existsSync(join(dir, 'notes/.ps'))).toBe(false);
   });
 
   test('rejects a case-variant .OK target and writes nothing', async () => {
@@ -122,23 +122,23 @@ describe('reserved-path guard — create-page', () => {
 });
 
 describe('reserved-path guard — create-folder', () => {
-  test('rejects a root .ok destination and creates nothing', async () => {
+  test('rejects a root .ps destination and creates nothing', async () => {
     const dir = setupTmpDir();
 
-    const result = await callApi(dir, '/api/create-folder', { path: '.ok/cache' });
+    const result = await callApi(dir, '/api/create-folder', { path: '.ps/cache' });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, '.ok/cache'))).toBe(false);
+    expect(existsSync(join(dir, '.ps/cache'))).toBe(false);
   });
 
-  test('rejects a nested .ok destination and creates nothing', async () => {
+  test('rejects a nested .ps destination and creates nothing', async () => {
     const dir = setupTmpDir();
     mkdirSync(join(dir, 'notes'), { recursive: true });
 
-    const result = await callApi(dir, '/api/create-folder', { path: 'notes/.ok/cache' });
+    const result = await callApi(dir, '/api/create-folder', { path: 'notes/.ps/cache' });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok'))).toBe(false);
+    expect(existsSync(join(dir, 'notes/.ps'))).toBe(false);
   });
 
   test('rejects a case-variant .OK destination and creates nothing', async () => {
@@ -152,31 +152,31 @@ describe('reserved-path guard — create-folder', () => {
 });
 
 describe('reserved-path guard — duplicate-path', () => {
-  test('rejects a root .ok folder source', async () => {
+  test('rejects a root .ps folder source', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, '.ok/templates'), { recursive: true });
+    mkdirSync(join(dir, '.ps/templates'), { recursive: true });
 
     const result = await callApi(dir, '/api/duplicate-path', {
       kind: 'folder',
-      path: '.ok/templates',
+      path: '.ps/templates',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, '.ok/templates copy'))).toBe(false);
+    expect(existsSync(join(dir, '.ps/templates copy'))).toBe(false);
   });
 
-  test('rejects a nested .ok file source and copies nothing', async () => {
+  test('rejects a nested .ps file source and copies nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, 'notes/.ok/templates'), { recursive: true });
-    writeFileSync(join(dir, 'notes/.ok/templates/starter.md'), '# Starter\n', 'utf-8');
+    mkdirSync(join(dir, 'notes/.ps/templates'), { recursive: true });
+    writeFileSync(join(dir, 'notes/.ps/templates/starter.md'), '# Starter\n', 'utf-8');
 
     const result = await callApi(dir, '/api/duplicate-path', {
       kind: 'file',
-      path: 'notes/.ok/templates/starter',
+      path: 'notes/.ps/templates/starter',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok/templates/starter copy.md'))).toBe(false);
+    expect(existsSync(join(dir, 'notes/.ps/templates/starter copy.md'))).toBe(false);
   });
 
   test('rejects a case-variant .OK folder source', async () => {
@@ -189,38 +189,38 @@ describe('reserved-path guard — duplicate-path', () => {
 });
 
 describe('reserved-path guard — rename-path', () => {
-  test('rejects a root .ok source path', async () => {
+  test('rejects a root .ps source path', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, '.ok/templates'), { recursive: true });
+    mkdirSync(join(dir, '.ps/templates'), { recursive: true });
 
     const result = await callApi(dir, '/api/rename-path', {
       kind: 'folder',
-      fromPath: '.ok/templates',
+      fromPath: '.ps/templates',
       toPath: 'liberated-templates',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, '.ok/templates'))).toBe(true);
+    expect(existsSync(join(dir, '.ps/templates'))).toBe(true);
     expect(existsSync(join(dir, 'liberated-templates'))).toBe(false);
   });
 
-  test('rejects a nested .ok source path and moves nothing', async () => {
+  test('rejects a nested .ps source path and moves nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, 'notes/.ok/templates'), { recursive: true });
-    writeFileSync(join(dir, 'notes/.ok/templates/starter.md'), '# Starter\n', 'utf-8');
+    mkdirSync(join(dir, 'notes/.ps/templates'), { recursive: true });
+    writeFileSync(join(dir, 'notes/.ps/templates/starter.md'), '# Starter\n', 'utf-8');
 
     const result = await callApi(dir, '/api/rename-path', {
       kind: 'file',
-      fromPath: 'notes/.ok/templates/starter',
+      fromPath: 'notes/.ps/templates/starter',
       toPath: 'liberated',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok/templates/starter.md'))).toBe(true);
+    expect(existsSync(join(dir, 'notes/.ps/templates/starter.md'))).toBe(true);
     expect(existsSync(join(dir, 'liberated.md'))).toBe(false);
   });
 
-  test('rejects a nested .ok destination path and moves nothing', async () => {
+  test('rejects a nested .ps destination path and moves nothing', async () => {
     const dir = setupTmpDir();
     writeFileSync(join(dir, 'real.md'), '# Real\n', 'utf-8');
     mkdirSync(join(dir, 'notes'), { recursive: true });
@@ -228,12 +228,12 @@ describe('reserved-path guard — rename-path', () => {
     const result = await callApi(dir, '/api/rename-path', {
       kind: 'file',
       fromPath: 'real',
-      toPath: 'notes/.ok/sneak',
+      toPath: 'notes/.ps/sneak',
     });
 
     expectReservedRejection(result);
     expect(existsSync(join(dir, 'real.md'))).toBe(true);
-    expect(existsSync(join(dir, 'notes/.ok'))).toBe(false);
+    expect(existsSync(join(dir, 'notes/.ps'))).toBe(false);
   });
 
   test('rejects a case-variant .OK destination path and moves nothing', async () => {
@@ -252,54 +252,54 @@ describe('reserved-path guard — rename-path', () => {
 });
 
 describe('reserved-path guard — delete-path', () => {
-  test('rejects a root .ok folder delete and removes nothing', async () => {
+  test('rejects a root .ps folder delete and removes nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, '.ok/templates'), { recursive: true });
-    writeFileSync(join(dir, '.ok/templates/starter.md'), '# Starter\n', 'utf-8');
+    mkdirSync(join(dir, '.ps/templates'), { recursive: true });
+    writeFileSync(join(dir, '.ps/templates/starter.md'), '# Starter\n', 'utf-8');
 
-    const result = await callApi(dir, '/api/delete-path', { kind: 'folder', path: '.ok' });
+    const result = await callApi(dir, '/api/delete-path', { kind: 'folder', path: '.ps' });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, '.ok/templates/starter.md'))).toBe(true);
+    expect(existsSync(join(dir, '.ps/templates/starter.md'))).toBe(true);
   });
 
-  test('rejects a nested .ok folder delete and removes nothing', async () => {
+  test('rejects a nested .ps folder delete and removes nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, 'notes/.ok/templates'), { recursive: true });
-    writeFileSync(join(dir, 'notes/.ok/templates/starter.md'), '# Starter\n', 'utf-8');
+    mkdirSync(join(dir, 'notes/.ps/templates'), { recursive: true });
+    writeFileSync(join(dir, 'notes/.ps/templates/starter.md'), '# Starter\n', 'utf-8');
 
-    const result = await callApi(dir, '/api/delete-path', { kind: 'folder', path: 'notes/.ok' });
+    const result = await callApi(dir, '/api/delete-path', { kind: 'folder', path: 'notes/.ps' });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok/templates/starter.md'))).toBe(true);
+    expect(existsSync(join(dir, 'notes/.ps/templates/starter.md'))).toBe(true);
   });
 
-  test('rejects a root .ok file delete and removes nothing', async () => {
+  test('rejects a root .ps file delete and removes nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, '.ok/templates'), { recursive: true });
-    writeFileSync(join(dir, '.ok/templates/starter.md'), '# Starter\n', 'utf-8');
+    mkdirSync(join(dir, '.ps/templates'), { recursive: true });
+    writeFileSync(join(dir, '.ps/templates/starter.md'), '# Starter\n', 'utf-8');
 
     const result = await callApi(dir, '/api/delete-path', {
       kind: 'file',
-      path: '.ok/templates/starter',
+      path: '.ps/templates/starter',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, '.ok/templates/starter.md'))).toBe(true);
+    expect(existsSync(join(dir, '.ps/templates/starter.md'))).toBe(true);
   });
 
-  test('rejects a nested .ok file delete and removes nothing', async () => {
+  test('rejects a nested .ps file delete and removes nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, 'notes/.ok/templates'), { recursive: true });
-    writeFileSync(join(dir, 'notes/.ok/templates/starter.md'), '# Starter\n', 'utf-8');
+    mkdirSync(join(dir, 'notes/.ps/templates'), { recursive: true });
+    writeFileSync(join(dir, 'notes/.ps/templates/starter.md'), '# Starter\n', 'utf-8');
 
     const result = await callApi(dir, '/api/delete-path', {
       kind: 'file',
-      path: 'notes/.ok/templates/starter',
+      path: 'notes/.ps/templates/starter',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok/templates/starter.md'))).toBe(true);
+    expect(existsSync(join(dir, 'notes/.ps/templates/starter.md'))).toBe(true);
   });
 
   test('rejects a case-variant .OK file delete', async () => {
@@ -313,39 +313,39 @@ describe('reserved-path guard — delete-path', () => {
     expectReservedRejection(result);
   });
 
-  test('rejects a nested .ok asset delete and removes nothing', async () => {
+  test('rejects a nested .ps asset delete and removes nothing', async () => {
     const dir = setupTmpDir();
-    mkdirSync(join(dir, 'notes/.ok'), { recursive: true });
-    writeFileSync(join(dir, 'notes/.ok/logo.png'), 'fake image bytes', 'utf-8');
+    mkdirSync(join(dir, 'notes/.ps'), { recursive: true });
+    writeFileSync(join(dir, 'notes/.ps/logo.png'), 'fake image bytes', 'utf-8');
 
     const result = await callApi(dir, '/api/delete-path', {
       kind: 'asset',
-      path: 'notes/.ok/logo.png',
+      path: 'notes/.ps/logo.png',
     });
 
     expectReservedRejection(result);
-    expect(existsSync(join(dir, 'notes/.ok/logo.png'))).toBe(true);
+    expect(existsSync(join(dir, 'notes/.ps/logo.png'))).toBe(true);
   });
 });
 
 describe('reserved-path guard — trash-cleanup', () => {
-  test('rejects a nested .ok folder cleanup', async () => {
+  test('rejects a nested .ps folder cleanup', async () => {
     const dir = setupTmpDir();
 
     const result = await callApi(dir, '/api/trash/cleanup', {
       kind: 'folder',
-      path: 'notes/.ok',
+      path: 'notes/.ps',
     });
 
     expectReservedRejection(result);
   });
 
-  test('rejects a root .ok file cleanup', async () => {
+  test('rejects a root .ps file cleanup', async () => {
     const dir = setupTmpDir();
 
     const result = await callApi(dir, '/api/trash/cleanup', {
       kind: 'file',
-      path: '.ok/templates/starter',
+      path: '.ps/templates/starter',
     });
 
     expectReservedRejection(result);

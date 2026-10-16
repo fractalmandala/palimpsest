@@ -1,6 +1,6 @@
 import { type Dirent, existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { rewriteSkillRefs } from '@inkeep/open-knowledge-core';
+import { rewriteSkillRefs } from '@palimpsest/core';
 import { tracedWriteFileSync } from './fs-traced.ts';
 import {
   type InPlaceSkill,

@@ -11,7 +11,7 @@ import {
 
 let root: string;
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-plugin-provider-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-plugin-provider-'));
 });
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });

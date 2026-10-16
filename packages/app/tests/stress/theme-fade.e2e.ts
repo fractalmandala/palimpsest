@@ -361,7 +361,7 @@ test('default light and dark modes fade surfaces without losing selection', asyn
     void getComputedStyle(flashProbe).boxShadow;
     lightPicker.click();
     colorProbe.style.color = 'rgb(1, 1, 1)';
-    flashProbe.className = 'ok-landing-flash';
+    flashProbe.className = 'ps-landing-flash';
     opacityProbe.style.opacity = '0.5';
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
@@ -390,15 +390,15 @@ test('default light and dark modes fade surfaces without losing selection', asyn
 });
 
 interface RootFadeWitnessWindow {
-  okRootFadeWitness?: { startedRootTransitions: number };
-  okRootFadeHold?: AbortController;
+  psRootFadeWitness?: { startedRootTransitions: number };
+  psRootFadeHold?: AbortController;
 }
 
 async function installRootFadeWitness(page: Page): Promise<void> {
   await page.evaluate(() => {
     const root = document.documentElement;
     const witness = { startedRootTransitions: 0 };
-    (window as typeof window & RootFadeWitnessWindow).okRootFadeWitness = witness;
+    (window as typeof window & RootFadeWitnessWindow).psRootFadeWitness = witness;
     root.addEventListener('transitionrun', (event) => {
       if (event.target !== root || !event.propertyName.startsWith('--')) return;
       witness.startedRootTransitions += 1;
@@ -410,13 +410,13 @@ async function holdRootFadeOpen(page: Page): Promise<void> {
   await page.evaluate(() => {
     const root = document.documentElement;
     const scope = window as typeof window & RootFadeWitnessWindow;
-    if (scope.okRootFadeHold && !scope.okRootFadeHold.signal.aborted) {
+    if (scope.psRootFadeHold && !scope.psRootFadeHold.signal.aborted) {
       throw new Error(
         'holdRootFadeOpen(page) was called while a hold is still open; releaseRootFade(page) must run first, or the earlier hold can never be revoked',
       );
     }
     const controller = new AbortController();
-    scope.okRootFadeHold = controller;
+    scope.psRootFadeHold = controller;
     root.addEventListener(
       'transitionrun',
       (event) => {
@@ -430,18 +430,18 @@ async function holdRootFadeOpen(page: Page): Promise<void> {
 
 async function releaseRootFade(page: Page): Promise<void> {
   await page.evaluate(() => {
-    const { okRootFadeHold } = window as typeof window & RootFadeWitnessWindow;
-    if (!okRootFadeHold) {
+    const { psRootFadeHold } = window as typeof window & RootFadeWitnessWindow;
+    if (!psRootFadeHold) {
       throw new Error(
-        'window.okRootFadeHold is absent; holdRootFadeOpen(page) must run before releaseRootFade(page)',
+        'window.psRootFadeHold is absent; holdRootFadeOpen(page) must run before releaseRootFade(page)',
       );
     }
-    if (okRootFadeHold.signal.aborted) {
+    if (psRootFadeHold.signal.aborted) {
       throw new Error(
         'releaseRootFade(page) was called on an already-released hold, so it would resume whatever happens to be running rather than the fade a hold was keeping open',
       );
     }
-    okRootFadeHold.abort();
+    psRootFadeHold.abort();
     for (const animation of document.documentElement.getAnimations({ subtree: false })) {
       animation.play();
     }
@@ -450,13 +450,13 @@ async function releaseRootFade(page: Page): Promise<void> {
 
 function readStartedRootTransitions(page: Page): Promise<number> {
   return page.evaluate(() => {
-    const { okRootFadeWitness } = window as typeof window & RootFadeWitnessWindow;
-    if (!okRootFadeWitness) {
+    const { psRootFadeWitness } = window as typeof window & RootFadeWitnessWindow;
+    if (!psRootFadeWitness) {
       throw new Error(
-        'window.okRootFadeWitness is absent; installRootFadeWitness(page) must run after the last navigation',
+        'window.psRootFadeWitness is absent; installRootFadeWitness(page) must run after the last navigation',
       );
     }
-    return okRootFadeWitness.startedRootTransitions;
+    return psRootFadeWitness.startedRootTransitions;
   });
 }
 

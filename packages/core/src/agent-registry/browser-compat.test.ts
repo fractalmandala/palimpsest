@@ -18,7 +18,7 @@
 import { builtinModules } from 'node:module';
 import { expect, it, vi } from 'vitest';
 
-const POISONED_PACKAGES = ['@inkeep/open-knowledge-server'];
+const POISONED_PACKAGES = ['@palimpsest/server'];
 
 function poisonNodeAndServerModules(): void {
   for (const name of builtinModules) {

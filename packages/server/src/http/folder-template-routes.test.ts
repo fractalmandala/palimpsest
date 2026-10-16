@@ -27,7 +27,7 @@ function buildGroup() {
       clientName: undefined,
     }),
     extractActorIdentityFromQuery: () => ({ kind: 'invalid-summary' as const }),
-    okArtifactKey: () => '',
+    psArtifactKey: () => '',
     attributeOkArtifactWrite: () => {},
     scheduleOkArtifactFlush: () => {},
     flushDiskAndDetectOutcome: () => Promise.resolve(null),

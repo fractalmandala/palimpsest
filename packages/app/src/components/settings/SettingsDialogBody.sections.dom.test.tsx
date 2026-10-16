@@ -53,15 +53,15 @@ let publishDialogProps: Array<{ open: boolean }> = [];
 let claudeRefreshCalls = 0;
 let claudeSkillInstalled = false;
 
-const actualFeatureFlags = await import('@inkeep/open-knowledge-core/constants/feature-flags');
+const actualFeatureFlags = await import('@palimpsest/core/constants/feature-flags');
 
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { createServedBindingLog } from '@/test-utils/served-binding.test-helper';
 
 const servedCore = createServedBindingLog();
 
-vi.doMock('@inkeep/open-knowledge-core/constants/feature-flags', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/constants/feature-flags', {
+vi.doMock('@palimpsest/core/constants/feature-flags', () =>
+  servedCore.serve('@palimpsest/core/constants/feature-flags', {
     ...actualFeatureFlags,
     SHOW_INSTALL_SKILL: true,
   }),
@@ -259,7 +259,7 @@ vi.doMock('@/components/InstallInClaudeDesktopDialog', () => ({
 vi.doMock('./OkignoreSection', () => ({
   OkignoreSection: (props: { binding: unknown; synced: boolean }) => {
     okignoreProps.push(props);
-    return <div data-testid="okignore-section">okignore synced: {String(props.synced)}</div>;
+    return <div data-testid="psignore-section">psignore synced: {String(props.synced)}</div>;
   },
 }));
 
@@ -390,11 +390,11 @@ describe('SettingsDialogBody section runtime dispatch', () => {
   });
 
   test('body dispatches heavy project sections without owning a Dialog frame', async () => {
-    const okignoreBinding = { id: 'okignore-binding' };
+    const okignoreBinding = { id: 'psignore-binding' };
 
-    await renderBody({ activeId: 'okignore', okignoreBinding, okignoreSynced: true });
+    await renderBody({ activeId: 'psignore', okignoreBinding, okignoreSynced: true });
 
-    expect(screen.getByTestId('okignore-section').textContent).toContain('true');
+    expect(screen.getByTestId('psignore-section').textContent).toContain('true');
     expect(okignoreProps.at(-1)).toEqual({ binding: okignoreBinding, synced: true });
     expect(screen.queryByRole('dialog')).toBeNull();
 
@@ -405,8 +405,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
   });
 
   test('project preferences stacks the Terminal block only on a pty-capable Electron host', async () => {
-    const w = window as unknown as { okDesktop?: unknown };
-    w.okDesktop = {
+    const w = window as unknown as { psDesktop?: unknown };
+    w.psDesktop = {
       config: { ptyAvailable: true },
       terminal: { cliPreflight: () => Promise.resolve({ onPath: 'absent' }) },
     };
@@ -415,11 +415,11 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       expect(screen.getByTestId('settings-terminal-body')).not.toBeNull();
 
       cleanup();
-      w.okDesktop = undefined;
+      w.psDesktop = undefined;
       await renderBody({ activeId: 'project-preferences' });
       expect(screen.queryByTestId('settings-terminal-body')).toBeNull();
     } finally {
-      w.okDesktop = undefined;
+      w.psDesktop = undefined;
     }
   });
 
@@ -456,8 +456,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
   });
 
   test('the About & updates page shows the installed version', async () => {
-    const w = window as unknown as { okDesktop?: unknown };
-    w.okDesktop = {
+    const w = window as unknown as { psDesktop?: unknown };
+    w.psDesktop = {
       appVersion: '1.2.3',
       state: { query: async () => ({ channel: 'latest', schemaIncompatibility: null }) },
       onUpdateManualCheck: () => () => {},
@@ -466,12 +466,12 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       await renderBody({ activeId: 'about' });
       expect((await screen.findByTestId('settings-about-version')).textContent).toBe('v1.2.3');
     } finally {
-      w.okDesktop = undefined;
+      w.psDesktop = undefined;
     }
   });
 
   test('the Account page mounts the Enterprise hosts card from the user binding', async () => {
-    const { bindConfigDoc } = await import('@inkeep/open-knowledge-core');
+    const { bindConfigDoc } = await import('@palimpsest/core');
     const { Doc } = await import('yjs');
     const listeners = new Set<() => void>();
     const binding = bindConfigDoc(
@@ -520,7 +520,7 @@ describe('SettingsDialogBody section runtime dispatch', () => {
   });
 
   test('the ok CLI row is wired into the user Preferences page', async () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       value: {
         integrations: {
           status: async () => ({
@@ -540,10 +540,10 @@ describe('SettingsDialogBody section runtime dispatch', () => {
         activeId: 'preferences',
         userBinding: { current: () => ({}), subscribe: () => () => {} },
       });
-      expect(await screen.findByTestId('ok-cli-path-row')).not.toBeNull();
+      expect(await screen.findByTestId('ps-cli-path-row')).not.toBeNull();
     } finally {
       // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-      (window as any).okDesktop = undefined;
+      (window as any).psDesktop = undefined;
     }
   });
 
@@ -576,8 +576,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       hasRemote: true,
       syncEnabled: false,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
 
@@ -728,8 +728,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       syncEnabled: true,
       syncMode: 'full',
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { enabled: true } };
@@ -739,7 +739,7 @@ describe('SettingsDialogBody section runtime dispatch', () => {
     const modeToggle = screen.getByTestId('settings-sync-mode-toggle');
     expect(modeToggle.getAttribute('data-value')).toBe('full');
     expect(screen.getByTestId('settings-sync-remote-link').getAttribute('href')).toBe(
-      'https://github.com/inkeep/open-knowledge',
+      'https://github.com/fractalmandala/palimpsest',
     );
     expect(screen.getByTestId('settings-sync-remote-link').getAttribute('rel')).toBe(
       'noopener noreferrer',
@@ -779,8 +779,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       hasRemote: true,
       syncEnabled: false,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectConfig = { autoSync: { default: false } };
@@ -811,8 +811,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       hasRemote: true,
       syncEnabled: false,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectConfig = { autoSync: { default: null } };
@@ -833,8 +833,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       syncMode: 'off',
       pushPermission: { checkStatus: 'denied', deniedReason: 'no-collaborator' },
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'off' } };
@@ -860,8 +860,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       pausedReason: 'no-push-permission',
       ahead: 2,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'full' } };
@@ -883,8 +883,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       pausedReason: 'protected-branch',
       syncEnabled: false,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { enabled: false } };
@@ -904,8 +904,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       pushErrorCode: 'auth-not-found-as-identity',
       syncEnabled: true,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { enabled: true } };
@@ -931,8 +931,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       },
       syncEnabled: true,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'full' } };
@@ -966,8 +966,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       },
       syncEnabled: true,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'full' } };
@@ -990,8 +990,8 @@ describe('SettingsDialogBody section runtime dispatch', () => {
       pushPermission: { checkStatus: 'denied', deniedReason: 'private-no-access' },
       syncEnabled: true,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'full' } };
@@ -1059,7 +1059,7 @@ describe('SettingsDialogBody section runtime dispatch', () => {
     expect(screen.getByText('Install in Claude Desktop')).not.toBeNull();
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/constants/feature-flags',
+        '@palimpsest/core/constants/feature-flags',
         'SHOW_INSTALL_SKILL',
         since,
       ),

@@ -2,12 +2,12 @@ import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OK_DIR } from '../constants.ts';
+import { PS_DIR } from '../constants.ts';
 
 const rootLike = vi.hoisted(() => ({ dir: '' }));
 
-vi.mock('@inkeep/open-knowledge-server', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@inkeep/open-knowledge-server')>();
+vi.mock('@palimpsest/server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@palimpsest/server')>();
   return {
     ...actual,
     isFilesystemRoot: (dir: string, platform?: NodeJS.Platform) =>
@@ -17,7 +17,7 @@ vi.mock('@inkeep/open-knowledge-server', async (importOriginal) => {
 
 const { FilesystemRootProjectError, initCommand, runInit } = await import('./init.ts');
 
-describe('ok init refuses the top of a drive', () => {
+describe('ps init refuses the top of a drive', () => {
   let testDir: string;
   let fakeHome: string;
   let driveRoot: string;
@@ -52,8 +52,8 @@ describe('ok init refuses the top of a drive', () => {
     ).rejects.toBeInstanceOf(FilesystemRootProjectError);
 
     expect(existsSync(join(driveRoot, '.git'))).toBe(false);
-    expect(existsSync(join(driveRoot, OK_DIR))).toBe(false);
-    expect(existsSync(join(driveRoot, '.okignore'))).toBe(false);
+    expect(existsSync(join(driveRoot, PS_DIR))).toBe(false);
+    expect(existsSync(join(driveRoot, '.psignore'))).toBe(false);
   });
 
   it('the command action prints the refusal and exits 64', async () => {
@@ -68,9 +68,9 @@ describe('ok init refuses the top of a drive', () => {
       expect(process.exitCode).toBe(64);
       const printed = stderrSpy.mock.calls.map((call) => String(call[0])).join('');
       expect(printed).toContain(
-        'Refusing to set up an OpenKnowledge project at the top of a drive',
+        'Refusing to set up an Palimpsest project at the top of a drive',
       );
-      expect(existsSync(join(driveRoot, OK_DIR))).toBe(false);
+      expect(existsSync(join(driveRoot, PS_DIR))).toBe(false);
     } finally {
       process.chdir(savedCwd);
       process.exitCode = savedExitCode;

@@ -22,7 +22,7 @@ if (globalWithDomShims.ResizeObserver === undefined) {
   globalWithDomShims.ResizeObserver = NoopResizeObserver;
 }
 
-const VIEW_MODE_KEY = 'ok-lint-config-view-mode-v1';
+const VIEW_MODE_KEY = 'ps-lint-config-view-mode-v1';
 const ROOT_CONFIG = '.markdownlint.json';
 const NESTED_CONFIG = 'docs/.markdownlint.json';
 

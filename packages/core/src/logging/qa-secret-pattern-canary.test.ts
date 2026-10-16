@@ -13,7 +13,7 @@ const PLANTED: Record<string, { input: string; secret: string; marker: string }>
     marker: '~/',
   },
   'windows-home-path': {
-    input: String.raw`{"path":"C:\\Users\\alice\\AppData\\Roaming\\OpenKnowledge\\state.json"}`,
+    input: String.raw`{"path":"C:\\Users\\alice\\AppData\\Roaming\\Palimpsest\\state.json"}`,
     secret: String.raw`C:\\Users\\alice`,
     marker: '~',
   },
@@ -136,7 +136,7 @@ describe('secret-pattern canary', () => {
     if (isSerializedPayload(input)) continue;
 
     it(`scrubs a planted ${name} inside serialized JSON without breaking the record`, () => {
-      const payload = JSON.stringify({ event: 'ok-canary', detail: input, docName: 'notes/a' });
+      const payload = JSON.stringify({ event: 'ps-canary', detail: input, docName: 'notes/a' });
       expect(payload).toContain(secret);
       const scrubbed = scrubSecrets(payload);
       expect(scrubbed).not.toContain(secret);

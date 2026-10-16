@@ -4,10 +4,10 @@ import { basename, relative, resolve } from 'node:path';
 import {
   compileAppliesTo,
   type FrontmatterSchemaMapping,
-  OK_DIR,
+  PS_DIR,
   parseFrontmatterRecord,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger } from '../logger.ts';
 import { resolveWithinRoot } from '../mcp/tools/path-safety.ts';
 import { httpGet } from '../mcp/tools/shared.ts';
@@ -25,7 +25,7 @@ const DIRECTORY_SCAN_CAP = 1000;
 
 const DIR_SKIP: ReadonlySet<string> = new Set([
   '.git',
-  OK_DIR,
+  PS_DIR,
   'node_modules',
   '.changeset',
   '.claude',
@@ -648,7 +648,7 @@ export async function enrichDirectoryRecursive(
 
 const RECURSIVE_LISTING_SKIP_DIRS = new Set<string>([
   '.git',
-  '.ok',
+  '.ps',
   'node_modules',
   '.venv',
   'venv',

@@ -1,6 +1,6 @@
 import * as actualSonner from 'sonner';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge, OkOnboardingToastPayload } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsOnboardingToastPayload } from '@/lib/desktop-bridge-types';
 
 const toastError = vi.fn((_msg: string, _opts?: unknown) => 'error-id');
 const toastSuccess = vi.fn((_msg: string, _opts?: unknown) => 'success-id');
@@ -19,18 +19,18 @@ beforeAll(async () => {
 });
 
 function makeBridge(): {
-  bridge: OkDesktopBridge;
-  fire: (payload: OkOnboardingToastPayload) => void;
+  bridge: PsDesktopBridge;
+  fire: (payload: PsOnboardingToastPayload) => void;
 } {
-  let cb: ((payload: OkOnboardingToastPayload) => void) | null = null;
+  let cb: ((payload: PsOnboardingToastPayload) => void) | null = null;
   const bridge = {
     onboarding: {
-      onToast: (next: (payload: OkOnboardingToastPayload) => void) => {
+      onToast: (next: (payload: PsOnboardingToastPayload) => void) => {
         cb = next;
         return () => {};
       },
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return { bridge, fire: (payload) => cb?.(payload) };
 }
 
@@ -142,7 +142,7 @@ describe('the other onboarding toasts', () => {
     installOnboardingToastListener({ bridge });
     fire({ kind: 'ancestor-promote', ancestorPath: '/srv/notes' });
     expect(toastSuccess.mock.calls.at(-1)?.[0]).toBe(
-      'Opened existing OpenKnowledge project at /srv/notes',
+      'Opened existing Palimpsest project at /srv/notes',
     );
   });
 
@@ -150,7 +150,7 @@ describe('the other onboarding toasts', () => {
     const { bridge, fire } = makeBridge();
     installOnboardingToastListener({ bridge });
     fire({ kind: 'git-root-promote', gitRoot: '/srv/repo', pickedPath: '/srv/repo/docs' });
-    expect(toastSuccess.mock.calls.at(-1)?.[0]).toContain('Initialized OpenKnowledge at /srv/repo');
+    expect(toastSuccess.mock.calls.at(-1)?.[0]).toContain('Initialized Palimpsest at /srv/repo');
     expect(toastSuccess.mock.calls.at(-1)?.[0]).toContain('opened parent of docs');
   });
 
@@ -159,7 +159,7 @@ describe('the other onboarding toasts', () => {
     installOnboardingToastListener({ bridge });
     fire({
       kind: 'sharing-refused-tracked',
-      tracked: ['.ok/config.yml'],
+      tracked: ['.ps/config.yml'],
       remediation: 'Untrack the file first.',
     });
     const [message, opts] = lastError() as [string, { duration?: number; description?: string }];

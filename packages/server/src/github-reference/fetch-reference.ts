@@ -1,7 +1,7 @@
 import {
   type GitHubReferencePreview,
   GitHubReferencePreviewSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { isGitHubRateLimited } from '../github-permissions.ts';
 import { getLogger } from '../logger.ts';
 import type { GitHubReferenceTarget } from './reference-target.ts';

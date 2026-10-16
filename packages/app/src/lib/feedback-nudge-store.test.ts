@@ -116,18 +116,18 @@ describe('countUserDocuments', () => {
     expect(countUserDocuments(new Set(['notes', 'brain/ideas', 'a/b/c/deep']))).toBe(3);
   });
 
-  test('excludes the .ok substrate that /api/pages serves alongside real docs', () => {
+  test('excludes the .ps substrate that /api/pages serves alongside real docs', () => {
     const pages = new Set([
       'notes',
-      '.ok/skills/project/SKILL',
-      '.ok/skills/project/references/linking',
-      'brain/.ok/templates/article',
-      'brain/.ok/frontmatter',
+      '.ps/skills/project/SKILL',
+      '.ps/skills/project/references/linking',
+      'brain/.ps/templates/article',
+      'brain/.ps/frontmatter',
     ]);
     expect(countUserDocuments(pages)).toBe(1);
   });
 
-  test('case-insensitive on the .ok segment, matching the file-tree predicate', () => {
+  test('case-insensitive on the .ps segment, matching the file-tree predicate', () => {
     expect(countUserDocuments(new Set(['.OK/skills/project/SKILL', 'notes']))).toBe(1);
   });
 
@@ -256,13 +256,13 @@ describe('createFeedbackNudgeStore', () => {
 });
 
 describe('feedback state saved by earlier releases', () => {
-  test('the storage key is still ok-feedback-nudge-v1', () => {
-    expect(FEEDBACK_NUDGE_STORAGE_KEY).toBe('ok-feedback-nudge-v1');
+  test('the storage key is still ps-feedback-nudge-v1', () => {
+    expect(FEEDBACK_NUDGE_STORAGE_KEY).toBe('ps-feedback-nudge-v1');
   });
 
   test('a prompt already shown and dismissed reads back unchanged and stays ineligible', () => {
     const stored = { firstSeenAt: 1_790_000_000_000, shownAt: 1_791_500_000_000, dismissed: true };
-    const s = memoryStorage({ 'ok-feedback-nudge-v1': JSON.stringify(stored) });
+    const s = memoryStorage({ 'ps-feedback-nudge-v1': JSON.stringify(stored) });
     const read = readPersistedState(s);
     expect(read).toEqual(stored);
     expect(isFeedbackNudgeEligible(read, NOW, 400)).toBe(false);

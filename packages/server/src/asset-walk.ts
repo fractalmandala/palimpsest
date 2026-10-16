@@ -6,7 +6,7 @@ import {
   ASSET_EXTENSIONS,
   type BasenameIndex,
   LINKABLE_ASSET_EXTENSIONS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { ContentFilter } from './content-filter.ts';
 import { resolveDirectoryRoot } from './directory-root.ts';
 import { isSupportedAssetFile } from './doc-extensions.ts';

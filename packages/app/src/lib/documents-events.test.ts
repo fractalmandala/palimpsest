@@ -56,7 +56,7 @@ describe('documents changed event bridge', () => {
     const received: unknown[] = [];
     subscribeToDocumentsChanged((channels) => received.push(channels));
 
-    fakeWindow.dispatchEvent(new CustomEvent('open-knowledge:documents-changed'));
+    fakeWindow.dispatchEvent(new CustomEvent('palimpsest:documents-changed'));
 
     expect(received).toEqual([['files']]);
   });
@@ -67,7 +67,7 @@ describe('documents changed event bridge', () => {
     subscribeToDocumentsChanged((channels) => received.push(channels));
 
     fakeWindow.dispatchEvent(
-      new CustomEvent('open-knowledge:documents-changed', {
+      new CustomEvent('palimpsest:documents-changed', {
         detail: { channels: ['files', 'bogus', 1, 'backlinks'] },
       }),
     );

@@ -1,4 +1,4 @@
-import { encodeShareUrl, isValidBranchName } from '@inkeep/open-knowledge-core';
+import { encodeShareUrl, isValidBranchName } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import fixture from '../../../test-support/fixtures/share-url-v1-v2.json';
 import { STABLE_DMG_URL } from './download-links.ts';
@@ -48,7 +48,7 @@ describe('buildSplashViewModel', () => {
         kind: 'ok',
         sharedUrl: entry.sharedUrl,
         githubUrl: entry.sharedUrl,
-        customSchemeUrl: `openknowledge://share?token=${entry.token}`,
+        customSchemeUrl: `palimpsest://share?token=${entry.token}`,
         target: entry.target.kind,
         filename: expectedContentFilename(entry),
       });
@@ -95,7 +95,7 @@ describe('buildSplashViewModel', () => {
       branch: 'main',
       isDefaultBranch: true,
       sharedUrl: blobUrl,
-      customSchemeUrl: `openknowledge://share?url=${encodeURIComponent(blobUrl)}`,
+      customSchemeUrl: `palimpsest://share?url=${encodeURIComponent(blobUrl)}`,
       githubUrl: blobUrl,
     });
   });
@@ -118,7 +118,7 @@ describe('buildSplashViewModel', () => {
       branch: 'main',
       isDefaultBranch: true,
       sharedUrl: treeUrl,
-      customSchemeUrl: `openknowledge://share?url=${encodeURIComponent(treeUrl)}`,
+      customSchemeUrl: `palimpsest://share?url=${encodeURIComponent(treeUrl)}`,
       githubUrl: treeUrl,
     });
   });
@@ -437,23 +437,23 @@ describe('buildSplashViewModel — shell-injection guard', () => {
 });
 
 describe('buildCustomSchemeUrl', () => {
-  test('produces the openknowledge://share?url=... custom-scheme handoff URL', () => {
+  test('produces the palimpsest://share?url=... custom-scheme handoff URL', () => {
     const blobUrl = 'https://github.com/o/r/blob/main/file with space.md';
     expect(buildCustomSchemeUrl(blobUrl)).toBe(
-      `openknowledge://share?url=${encodeURIComponent(blobUrl)}`,
+      `palimpsest://share?url=${encodeURIComponent(blobUrl)}`,
     );
   });
 });
 
 describe('SPLASH_DOWNLOAD_URL', () => {
-  test('points at the open-knowledge releases latest DMG asset', () => {
+  test('points at the palimpsest releases latest DMG asset', () => {
     expect(SPLASH_DOWNLOAD_URL).toBe(STABLE_DMG_URL);
   });
 });
 
 describe('SPLASH_INSTALL_COMMAND', () => {
   test('is the published CLI install command (global npm install)', () => {
-    expect(SPLASH_INSTALL_COMMAND).toBe('npm install -g @inkeep/open-knowledge');
+    expect(SPLASH_INSTALL_COMMAND).toBe('npm install -g @palimpsest/cli');
   });
 });
 
@@ -630,7 +630,7 @@ describe('clipboardCopyOutcome', () => {
 });
 
 describe('buildShareDescription', () => {
-  function okView(sharedUrl: string) {
+  function psView(sharedUrl: string) {
     const view = buildSplashViewModel(encodeV1(sharedUrl));
     if (view.kind !== 'ok') throw new Error(`expected ok view, got ${view.kind}`);
     return view;
@@ -638,14 +638,14 @@ describe('buildShareDescription', () => {
 
   test('doc on the default branch — names the document + repo, no branch suffix', () => {
     const d = buildShareDescription(
-      okView('https://github.com/inkeep/tech-ipos/blob/main/README.md'),
+      psView('https://github.com/inkeep/tech-ipos/blob/main/README.md'),
     );
     expect(d).toBe(`Open README.md with ${SITE_NAME} — a shared document from inkeep/tech-ipos.`);
   });
 
   test('doc on a non-default branch — appends "(on <branch>)"', () => {
     const d = buildShareDescription(
-      okView('https://github.com/inkeep/tech-ipos/blob/draft-q4/README.md'),
+      psView('https://github.com/inkeep/tech-ipos/blob/draft-q4/README.md'),
     );
     expect(d).toBe(
       `Open README.md with ${SITE_NAME} — a shared document from inkeep/tech-ipos (on draft-q4).`,
@@ -654,23 +654,23 @@ describe('buildShareDescription', () => {
 
   test('folder on the default branch — uses "folder" noun', () => {
     const d = buildShareDescription(
-      okView('https://github.com/inkeep/open-knowledge/tree/main/docs'),
+      psView('https://github.com/fractalmandala/palimpsest/tree/main/docs'),
     );
-    expect(d).toBe(`Open docs with ${SITE_NAME} — a shared folder from inkeep/open-knowledge.`);
+    expect(d).toBe(`Open docs with ${SITE_NAME} — a shared folder from fractalmandala/palimpsest.`);
   });
 
   test('folder on a non-default branch — folder noun + branch suffix', () => {
     const d = buildShareDescription(
-      okView('https://github.com/inkeep/open-knowledge/tree/feature/docs'),
+      psView('https://github.com/fractalmandala/palimpsest/tree/feature/docs'),
     );
     expect(d).toBe(
-      `Open docs with ${SITE_NAME} — a shared folder from inkeep/open-knowledge (on feature).`,
+      `Open docs with ${SITE_NAME} — a shared folder from fractalmandala/palimpsest (on feature).`,
     );
   });
 
   test('always carries the action phrase and the product name', () => {
     const d = buildShareDescription(
-      okView('https://github.com/inkeep/tech-ipos/blob/main/README.md'),
+      psView('https://github.com/inkeep/tech-ipos/blob/main/README.md'),
     );
     expect(d).toContain(`with ${SITE_NAME}`);
     expect(d.startsWith('Open ')).toBe(true);

@@ -11,7 +11,7 @@ function renderAvatar(status = 'Sharpening a sentence') {
     container,
     svg: container.querySelector('svg') as SVGSVGElement,
     skin: container.querySelector('path') as SVGPathElement,
-    eyes: container.querySelectorAll('.ok-working-eye'),
+    eyes: container.querySelectorAll('.ps-working-eye'),
     label: screen.getByText(status),
   };
 }
@@ -29,16 +29,16 @@ describe('WorkingAvatar', () => {
 
   test('remounts the status line when the text changes so the swap animates', () => {
     const { container, rerender } = render(<WorkingAvatar status="Reading…" testId="working" />);
-    const first = container.querySelector('.ok-working-status');
+    const first = container.querySelector('.ps-working-status');
     rerender(<WorkingAvatar status="Drafting…" testId="working" />);
-    const second = container.querySelector('.ok-working-status');
+    const second = container.querySelector('.ps-working-status');
     expect(second?.textContent).toBe('Drafting…');
     expect(second).not.toBe(first);
   });
 
   test('keeps the swap fade and the shimmer on separate elements', () => {
     const { container } = renderAvatar('Reading…');
-    const swap = container.querySelector('.ok-working-status');
+    const swap = container.querySelector('.ps-working-status');
     expect(swap?.className).not.toContain('shimmer');
     expect(swap?.querySelector('.shimmer')?.textContent).toBe('Reading…');
   });
@@ -68,7 +68,7 @@ describe('WorkingAvatar', () => {
     const region = container.querySelector('[role="status"]') as HTMLElement;
     await waitFor(() => expect(region.textContent?.trim()).not.toBe(''));
     expect(region.textContent).not.toContain('Thinking…');
-    expect(container.querySelector('.ok-working-status')?.closest('[role="status"]')).toBeNull();
+    expect(container.querySelector('.ps-working-status')?.closest('[role="status"]')).toBeNull();
   });
 
   test('reduced motion pins the mascot to its resting pose', () => {

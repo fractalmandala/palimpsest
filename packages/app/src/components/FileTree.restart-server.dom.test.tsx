@@ -50,7 +50,7 @@ function makeFetchMock() {
 const restartServer = vi.fn(async () => ({ ok: true as const }));
 
 function installBridge() {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = {
+  (window as unknown as { psDesktop?: unknown }).psDesktop = {
     platform: 'darwin',
     config: { projectPath: '/tmp/ok', collabUrl: 'ws://127.0.0.1:5200/collab' },
     restartServer,
@@ -209,7 +209,7 @@ vi.doMock('@/components/use-selection-mirror', () => ({
   useSelectionMirror: () => {},
 }));
 vi.doMock('@pierre/trees', () => ({
-  FILE_TREE_TAG_NAME: 'ok-file-tree',
+  FILE_TREE_TAG_NAME: 'ps-file-tree',
   themeToTreeStyles: () => ({}),
 }));
 vi.doMock('@pierre/trees/react', () => ({
@@ -240,7 +240,7 @@ describe('FileTree unreachable-server restart action', () => {
   afterEach(() => {
     cleanup();
     consoleWarnSpy.mockRestore();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('offers the restart action on the unreachable-server empty state', async () => {

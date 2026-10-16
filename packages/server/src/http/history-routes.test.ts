@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { isValidBranchName } from '@inkeep/open-knowledge-core';
+import { isValidBranchName } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { makeCaptureRes, makeSyntheticReq } from '../composition-rig.test-helper.ts';
 import { loggerFactory } from '../logger.ts';
@@ -210,7 +210,7 @@ describe('GET /api/history/:sha settles pending history only for a pending renam
     { log: 'only a committed rename', commitSha: 'b'.repeat(40), settles: 0 },
     { log: 'a rename awaiting its commit', commitSha: '', settles: 1 },
   ])('with $log, the read settles $settles time(s)', async ({ commitSha, settles }) => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-history-version-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-history-version-'));
     tmpDirs.push(projectDir);
     resetRenameLogIndexCache();
     const shadow = await initShadowRepo(projectDir);

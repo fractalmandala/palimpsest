@@ -1,4 +1,4 @@
-import type { SessionUpdate, ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { SessionUpdate, ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 import * as fc from 'fast-check';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import fixture from '../../../../../test-support/fixtures/codex-legacy-warning-envelopes.json' with {

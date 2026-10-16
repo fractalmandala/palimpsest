@@ -5,12 +5,12 @@
 > new package from the GitHub release feed and install it via `pkexec` (see
 > `RELEASES.md` § "Linux updates (no package repository)"). This repo
 > machinery is kept for a possible future repo-based channel; none of its
-> operator setup (GPG key, R2 bucket, `packages.openknowledge.ai`) was
+> operator setup (GPG key, R2 bucket, `__PALIMPSEST_PACKAGES_HOST__`) was
 > provisioned.
 
-Self-hosted apt/dnf repository for the OpenKnowledge Linux desktop packages,
+Self-hosted apt/dnf repository for the Palimpsest Linux desktop packages,
 served as **static files** from an R2 bucket behind
-`packages.openknowledge.ai`. There is no server component: `apt` and `dnf` do
+`__PALIMPSEST_PACKAGES_HOST__`. There is no server component: `apt` and `dnf` do
 all the work client-side; our job is generating correctly-signed metadata and
 uploading it.
 
@@ -24,7 +24,7 @@ is revisited.
   emits metadata for exactly the packages it is given (latest-only per
   channel). Older versions stay downloadable from their GitHub Releases.
 - Publisher: [`.github/workflows/publish-linux-repo.yml`](../../.github/workflows/publish-linux-repo.yml)
-  — `workflow_dispatch` **on the mirror** (`inkeep/open-knowledge`): give it a
+  — `workflow_dispatch` **on the mirror** (`fractalmandala/palimpsest`): give it a
   release tag + channel; it downloads the release's `.deb`/`.rpm` assets,
   generates, signs, syncs.
 
@@ -38,12 +38,12 @@ is revisited.
    Key-Type: RSA
    Key-Length: 4096
    Key-Usage: sign
-   Name-Real: OpenKnowledge Package Signing
-   Name-Email: support@inkeep.com
+   Name-Real: Palimpsest Package Signing
+   Name-Email: https://github.com/fractalmandala/palimpsest/issues
    Expire-Date: 0
    %commit
    EOF
-   gpg --armor --export-secret-keys support@inkeep.com > ok-packages-signing.key
+   gpg --armor --export-secret-keys https://github.com/fractalmandala/palimpsest/issues > ps-packages-signing.key
    ```
 
    `%no-protection` (no passphrase) is deliberate: the key's only home is the
@@ -51,22 +51,22 @@ is revisited.
    offline copy somewhere durable (losing it means every user must re-run the
    install one-liner against a new key).
 
-2. **Bucket + domain**: create an R2 bucket (suggested name `ok-packages`),
-   connect the custom domain `packages.openknowledge.ai` (R2 → bucket →
+2. **Bucket + domain**: create an R2 bucket (suggested name `ps-packages`),
+   connect the custom domain `__PALIMPSEST_PACKAGES_HOST__` (R2 → bucket →
    Settings → Custom Domains; this also fronts it with Cloudflare's CDN), and
    create an R2 API token scoped to that bucket (Object Read & Write).
 
-3. **Secrets + variable on the mirror** (`inkeep/open-knowledge`):
+3. **Secrets + variable on the mirror** (`fractalmandala/palimpsest`):
 
    ```bash
-   gh secret set LINUX_REPO_GPG_PRIVATE_KEY  --repo inkeep/open-knowledge < ok-packages-signing.key
-   gh secret set LINUX_REPO_R2_ACCESS_KEY_ID --repo inkeep/open-knowledge
-   gh secret set LINUX_REPO_R2_SECRET_ACCESS_KEY --repo inkeep/open-knowledge
-   gh secret set LINUX_REPO_R2_ENDPOINT      --repo inkeep/open-knowledge   # https://<account-id>.r2.cloudflarestorage.com
-   gh variable set LINUX_REPO_BUCKET         --repo inkeep/open-knowledge --body ok-packages
+   gh secret set LINUX_REPO_GPG_PRIVATE_KEY  --repo fractalmandala/palimpsest < ps-packages-signing.key
+   gh secret set LINUX_REPO_R2_ACCESS_KEY_ID --repo fractalmandala/palimpsest
+   gh secret set LINUX_REPO_R2_SECRET_ACCESS_KEY --repo fractalmandala/palimpsest
+   gh secret set LINUX_REPO_R2_ENDPOINT      --repo fractalmandala/palimpsest   # https://<account-id>.r2.cloudflarestorage.com
+   gh variable set LINUX_REPO_BUCKET         --repo fractalmandala/palimpsest --body ps-packages
    ```
 
-4. Shred the local `ok-packages-signing.key` copy once the offline backup +
+4. Shred the local `ps-packages-signing.key` copy once the offline backup +
    secret exist.
 
 ## Publishing
@@ -76,7 +76,7 @@ standard desktop release flow attaches the Windows and Linux installers at
 release-cut time; this repository publisher consumes those release assets.
 
 ```bash
-gh workflow run publish-linux-repo.yml --repo inkeep/open-knowledge \
+gh workflow run publish-linux-repo.yml --repo fractalmandala/palimpsest \
   -f tag=v0.46.0 -f channel=stable            # add -f dry_run=true to rehearse
 ```
 
@@ -88,24 +88,24 @@ never touch each other's prefixes.
 Debian/Ubuntu:
 
 ```bash
-sudo curl -fsSLo /usr/share/keyrings/openknowledge.gpg https://packages.openknowledge.ai/apt/openknowledge.gpg
-echo "deb [signed-by=/usr/share/keyrings/openknowledge.gpg] https://packages.openknowledge.ai/apt stable main" | sudo tee /etc/apt/sources.list.d/openknowledge.list
-sudo apt update && sudo apt install openknowledge
+sudo curl -fsSLo /usr/share/keyrings/palimpsest.gpg https://__PALIMPSEST_PACKAGES_HOST__/apt/palimpsest.gpg
+echo "deb [signed-by=/usr/share/keyrings/palimpsest.gpg] https://__PALIMPSEST_PACKAGES_HOST__/apt stable main" | sudo tee /etc/apt/sources.list.d/palimpsest.list
+sudo apt update && sudo apt install palimpsest
 ```
 
 Fedora/RHEL:
 
 ```bash
-sudo tee /etc/yum.repos.d/openknowledge.repo <<'EOF'
-[openknowledge]
-name=OpenKnowledge
-baseurl=https://packages.openknowledge.ai/rpm/stable/$basearch/
+sudo tee /etc/yum.repos.d/palimpsest.repo <<'EOF'
+[palimpsest]
+name=Palimpsest
+baseurl=https://__PALIMPSEST_PACKAGES_HOST__/rpm/stable/$basearch/
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey=https://packages.openknowledge.ai/rpm/key.asc
+gpgkey=https://__PALIMPSEST_PACKAGES_HOST__/rpm/key.asc
 EOF
-sudo dnf install openknowledge
+sudo dnf install palimpsest
 ```
 
 Beta channel: replace `stable` with `beta` in either snippet.
@@ -136,5 +136,5 @@ Beta channel: replace `stable` with `beta` in either snippet.
 
 - Chain `publish-linux-repo` into the release cadence (beta on every cut,
   stable on promote) instead of manual dispatch.
-- Docs-site install page + `openknowledge.ai/download/linux` pointing at the
+- Docs-site install page + `palimpsest.ai/download/linux` pointing at the
   one-liners above.

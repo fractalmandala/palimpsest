@@ -1098,7 +1098,7 @@ test.describe('the pane buttons for keyboard, screen-reader and high-contrast us
       api,
     }) => {
       await page.emulateMedia({ colorScheme: theme });
-      await page.addInitScript((value) => window.localStorage.setItem('ok-theme-v1', value), theme);
+      await page.addInitScript((value) => window.localStorage.setItem('ps-theme-v1', value), theme);
       await openWeb(page, api, `look-${theme}`);
       await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${theme}\\b`));
       const agents = headerPaneButton(page, 'agents');
@@ -1123,7 +1123,7 @@ test.describe('the pane buttons for keyboard, screen-reader and high-contrast us
       api,
     }) => {
       await page.emulateMedia({ colorScheme: theme });
-      await page.addInitScript((value) => window.localStorage.setItem('ok-theme-v1', value), theme);
+      await page.addInitScript((value) => window.localStorage.setItem('ps-theme-v1', value), theme);
       await openWeb(page, api, `hover-${theme}`);
       await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${theme}\\b`));
       const buttons = page.locator(

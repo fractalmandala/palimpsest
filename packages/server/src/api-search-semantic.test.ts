@@ -16,7 +16,7 @@ import {
   createWorkspaceSearchDocument,
   type SemanticProviderErrorReason,
   type SemanticQueryOutcome,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { createApiExtension } from './api-extension.test-helper.ts';
 import { createConceptEmbedder, type Embedder, SemanticSearchService } from './embeddings/index.ts';
@@ -96,7 +96,7 @@ function buildFileIndex(dir: string, base = ''): ReadonlyMap<string, FileIndexEn
 }
 
 function seed(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-sem-search-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-sem-search-'));
   for (const [rel, content] of Object.entries(FILES)) {
     const abs = join(dir, rel);
     mkdirSync(join(abs, '..'), { recursive: true });

@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import {
   deriveSkillInstallRows,
@@ -86,8 +86,8 @@ describe('source disclosure', () => {
   });
 
   it('gives a non-standard folder its own source row and NO host badge', () => {
-    const r = derive({ ...base, path: '.ok/skills/trip-log/SKILL.md' });
-    expect(r.sourceRow).toBe('.ok/skills/trip-log');
+    const r = derive({ ...base, path: '.ps/skills/trip-log/SKILL.md' });
+    expect(r.sourceRow).toBe('.ps/skills/trip-log');
     expect(r.sourceHost).toBeUndefined();
   });
 
@@ -100,8 +100,8 @@ describe('source disclosure', () => {
   });
 
   it('prefixes global-scope paths with ~/', () => {
-    const r = derive({ ...base, scope: 'global', path: '.ok/skills/trip-log/SKILL.md' });
-    expect(r.sourceRow).toBe('~/.ok/skills/trip-log');
+    const r = derive({ ...base, scope: 'global', path: '.ps/skills/trip-log/SKILL.md' });
+    expect(r.sourceRow).toBe('~/.ps/skills/trip-log');
   });
 });
 

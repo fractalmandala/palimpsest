@@ -1,4 +1,4 @@
-import { getTracer } from '@inkeep/open-knowledge-server';
+import { getTracer } from '@palimpsest/server';
 import {
   type Context,
   propagation,

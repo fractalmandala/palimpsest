@@ -1,4 +1,4 @@
-import { ChunkedInsertError, HtmlPayloadTooLargeError } from '@inkeep/open-knowledge-core';
+import { ChunkedInsertError, HtmlPayloadTooLargeError } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import {

@@ -1,9 +1,9 @@
 import { useEffect, useSyncExternalStore } from 'react';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { type OnboardingCardStore, onboardingCardStore } from '@/lib/onboarding-card-store';
 import { fetchDocumentEntryCount } from '@/lib/onboarding-document-count';
 
-export async function evaluateFreshProject(bridge: OkDesktopBridge): Promise<number | null> {
+export async function evaluateFreshProject(bridge: PsDesktopBridge): Promise<number | null> {
   try {
     const recents = await bridge.project.listRecent();
     const currentPath = bridge.config.projectPath;
@@ -31,7 +31,7 @@ export function useOnboardingCardVisible(
 
   useEffect(() => {
     if (!shouldEvaluate) return;
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (bridge == null) return;
     let cancelled = false;
     void evaluateFreshProject(bridge).then((baseline) => {

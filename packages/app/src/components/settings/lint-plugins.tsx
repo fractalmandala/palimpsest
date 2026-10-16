@@ -11,7 +11,7 @@ type PluginSection = () => ReactNode;
 const SECTIONS: Record<LintPluginMeta['id'], PluginSection> = {
   markdownlint: MarkdownlintPluginSection,
   frontmatter: FrontmatterPluginSection,
-  okf: OkfPluginSection,
+  psf: OkfPluginSection,
 };
 
 export interface LintPluginUi extends LintPluginMeta {

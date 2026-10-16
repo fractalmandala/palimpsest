@@ -143,11 +143,11 @@ describe('readPersistedViewMode — localStorage read with validation', () => {
     expect(storage.getItem).toHaveBeenCalledTimes(1);
   });
 
-  test("reads from 'ok-lint-config-view-mode-v1', never the doc editor's key", () => {
+  test("reads from 'ps-lint-config-view-mode-v1', never the doc editor's key", () => {
     const storage = storageWith(null);
     readPersistedViewMode(storage);
-    expect(storage.getItem).toHaveBeenCalledWith('ok-lint-config-view-mode-v1');
-    expect(storage.getItem).not.toHaveBeenCalledWith('ok-editor-mode-v1');
+    expect(storage.getItem).toHaveBeenCalledWith('ps-lint-config-view-mode-v1');
+    expect(storage.getItem).not.toHaveBeenCalledWith('ps-editor-mode-v1');
   });
 });
 
@@ -168,16 +168,16 @@ describe('persistViewMode — localStorage write with error swallow', () => {
     const ok = persistViewMode('rules', storage);
     expect(ok).toBe(true);
     expect(storage.setItem).toHaveBeenCalledTimes(1);
-    expect(storage.setItem).toHaveBeenCalledWith('ok-lint-config-view-mode-v1', 'rules');
+    expect(storage.setItem).toHaveBeenCalledWith('ps-lint-config-view-mode-v1', 'rules');
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
-  test("writes 'source' under 'ok-lint-config-view-mode-v1', never the doc editor's key", () => {
+  test("writes 'source' under 'ps-lint-config-view-mode-v1', never the doc editor's key", () => {
     const storage = storageWith(null);
     const ok = persistViewMode('source', storage);
     expect(ok).toBe(true);
-    expect(storage.setItem).toHaveBeenCalledWith('ok-lint-config-view-mode-v1', 'source');
-    expect(storage.setItem).not.toHaveBeenCalledWith('ok-editor-mode-v1', 'source');
+    expect(storage.setItem).toHaveBeenCalledWith('ps-lint-config-view-mode-v1', 'source');
+    expect(storage.setItem).not.toHaveBeenCalledWith('ps-editor-mode-v1', 'source');
   });
 
   test('returns false and logs warn when setItem throws (quota / privacy mode)', () => {

@@ -9,7 +9,7 @@ import { tightFixture } from './tight.ts';
 import type { DocSpec, WorkloadFixture, WorkloadFixtureRef } from './types.ts';
 import { SIZE_ENVELOPES } from './types.ts';
 
-const DEFAULT_TRACE_SUBPATH = '.ok/perf-traces';
+const DEFAULT_TRACE_SUBPATH = '.ps/perf-traces';
 const SIZE_DRIFT_PCT_THRESHOLD = 15;
 const DISTANCE_DRIFT_RATIO_THRESHOLD = 0.3;
 
@@ -242,7 +242,7 @@ function parseCliArgs(argv: ReadonlyArray<string>): CliArgs {
       fixtureFilter = parseFixtureFilter(argv[++i]);
     }
   }
-  const envDir = process.env.OK_DOGFOOD_TRACE_DIR;
+  const envDir = process.env.PS_DOGFOOD_TRACE_DIR;
   const resolvedTraceDir = resolve(traceDir ?? envDir ?? join(homedir(), DEFAULT_TRACE_SUBPATH));
   return { traceDir: resolvedTraceDir, fixtureFilter };
 }

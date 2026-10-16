@@ -42,8 +42,8 @@ const routingRules = [
     anchor: '3. **Preview / open a doc',
     required: [
       'Stop at first match',
-      '`OK_DESKTOP_TERMINAL` or `OK_HOSTED_AGENT`',
-      '`ok open <name>`',
+      '`PS_DESKTOP_TERMINAL` or `PS_HOSTED_AGENT`',
+      '`ps open <name>`',
       'in-app browser',
       '`preview_url`, then open/navigate',
       "Don't `preview_screenshot` to confirm edits",
@@ -101,7 +101,7 @@ const routingRules = [
     anchor: '**Not seeing `exec` is NOT the escape hatch.**',
     required: [
       'Registration is the test, not top-level-symbol visibility',
-      'run tool discovery for `open-knowledge` first',
+      'run tool discovery for `palimpsest` first',
     ],
   },
   {
@@ -109,9 +109,9 @@ const routingRules = [
     anchor: '**Escape hatch.**',
     required: [
       'allowed **only** when, after running tool discovery',
-      'no OpenKnowledge MCP server is registered',
+      'no Palimpsest MCP server is registered',
       'immediately after you actually invoked an MCP call and it failed',
-      'begin a user-visible sentence with `OpenKnowledge MCP unavailable:`',
+      'begin a user-visible sentence with `Palimpsest MCP unavailable:`',
     ],
   },
   {
@@ -193,8 +193,8 @@ const routingRules = [
     anchor: 'OK looks for documents under',
     required: [
       'resolved `content.dir`',
-      '`.gitignore` and `.okignore`',
-      'not excluded is an OpenKnowledge document',
+      '`.gitignore` and `.psignore`',
+      'not excluded is an Palimpsest document',
       "Pass the worktree's absolute path as `cwd`",
     ],
   },

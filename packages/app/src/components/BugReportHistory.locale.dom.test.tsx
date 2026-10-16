@@ -1,4 +1,4 @@
-import type { OkBugReportListRow } from '@inkeep/open-knowledge-core';
+import type { PsBugReportListRow } from '@palimpsest/core';
 import { i18n } from '@lingui/core';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
@@ -7,7 +7,7 @@ import { BugReportHistoryList } from './BugReportHistory';
 const CREATED_AT = '2026-07-15T18:30:00.000Z';
 const DATE_FORMAT = { dateStyle: 'medium', timeStyle: 'short' } as const;
 
-const ROW: OkBugReportListRow = {
+const ROW: PsBugReportListRow = {
   id: 'report-1',
   createdAt: CREATED_AT,
   bundleLevel: 'standard',
@@ -18,7 +18,7 @@ const ROW: OkBugReportListRow = {
   systemWide: false,
   projectSlug: 'demo',
   attemptsCount: 0,
-  zipPath: '/Users/tester/.ok/bug-reports/report-1',
+  zipPath: '/Users/tester/.ps/bug-reports/report-1',
   retryable: true,
   degraded: false,
 };
@@ -30,7 +30,7 @@ function installBridge(): void {
     },
   };
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', { configurable: true, writable: true, value: bridge });
+    Object.defineProperty(host, 'psDesktop', { configurable: true, writable: true, value: bridge });
   }
 }
 
@@ -49,7 +49,7 @@ async function renderTimestampUnder(locale: string): Promise<string> {
 afterEach(() => {
   cleanup();
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', {
+    Object.defineProperty(host, 'psDesktop', {
       configurable: true,
       writable: true,
       value: undefined,

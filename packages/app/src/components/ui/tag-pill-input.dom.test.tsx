@@ -454,9 +454,9 @@ describe('TagPillInput — per-entry problems', () => {
     );
     const buttons = [...container.querySelectorAll('[data-slot="tag-pill-input"] button')];
     const flaggedEdit = buttons.find((el) => el.textContent === 'specs/**') as HTMLElement;
-    const okEdit = buttons.find((el) => el.textContent === 'docs/**') as HTMLElement;
+    const psEdit = buttons.find((el) => el.textContent === 'docs/**') as HTMLElement;
     expect(flaggedEdit.getAttribute('title')).toBeNull();
-    expect(okEdit.getAttribute('title')).toBe('Double-click to edit');
+    expect(psEdit.getAttribute('title')).toBe('Double-click to edit');
   });
 });
 

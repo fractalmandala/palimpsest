@@ -24,7 +24,7 @@ const SELECTOR_RENDERS = process.platform !== 'darwin';
 const LANGUAGE_ITEM_PREFIX = 'settings-spellcheck-language-item-';
 
 test.describe('Spelling settings — real Electron surface', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 

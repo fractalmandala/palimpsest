@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CLIENT_RUNTIME_VERSION_FALLBACK } from '@inkeep/open-knowledge-core';
+import { CLIENT_RUNTIME_VERSION_FALLBACK } from '@palimpsest/core';
 import { loadConfigFromFile } from 'vite';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {

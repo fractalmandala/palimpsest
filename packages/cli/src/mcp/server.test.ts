@@ -2,7 +2,7 @@ import { mkdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { sanitizeClientName } from '@inkeep/open-knowledge-server';
+import { sanitizeClientName } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   countWorktrees,
@@ -16,7 +16,7 @@ describe('findProjectDir', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-resolve-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-resolve-'));
   });
 
   afterEach(async () => {
@@ -24,11 +24,11 @@ describe('findProjectDir', () => {
   });
 
   function seedProjectMarker(dir: string): void {
-    mkdirSync(resolve(dir, '.ok'), { recursive: true });
-    writeFileSync(resolve(dir, '.ok', 'config.yml'), '', 'utf-8');
+    mkdirSync(resolve(dir, '.ps'), { recursive: true });
+    writeFileSync(resolve(dir, '.ps', 'config.yml'), '', 'utf-8');
   }
 
-  test('returns the dir itself when `.ok/config.yml` is at the start', () => {
+  test('returns the dir itself when `.ps/config.yml` is at the start', () => {
     seedProjectMarker(tmpDir);
     expect(findProjectDir(tmpDir)).toBe(resolve(tmpDir));
   });
@@ -40,49 +40,49 @@ describe('findProjectDir', () => {
     expect(findProjectDir(sub)).toBe(resolve(tmpDir));
   });
 
-  test('throws with a clear message when no `.ok/config.yml` ancestor exists', () => {
-    expect(() => findProjectDir(tmpDir)).toThrow(/No OpenKnowledge project found/);
+  test('throws with a clear message when no `.ps/config.yml` ancestor exists', () => {
+    expect(() => findProjectDir(tmpDir)).toThrow(/No Palimpsest project found/);
   });
 
-  test('rejects a regular file named `.ok` and keeps walking up', () => {
-    writeFileSync(resolve(tmpDir, '.ok'), 'oops');
-    expect(() => findProjectDir(tmpDir)).toThrow(/No OpenKnowledge project found/);
+  test('rejects a regular file named `.ps` and keeps walking up', () => {
+    writeFileSync(resolve(tmpDir, '.ps'), 'oops');
+    expect(() => findProjectDir(tmpDir)).toThrow(/No Palimpsest project found/);
   });
 
-  test('rejects a dangling symlink at `.ok` and keeps walking up', () => {
-    symlinkSync(resolve(tmpDir, 'does-not-exist'), resolve(tmpDir, '.ok'));
-    expect(() => findProjectDir(tmpDir)).toThrow(/No OpenKnowledge project found/);
+  test('rejects a dangling symlink at `.ps` and keeps walking up', () => {
+    symlinkSync(resolve(tmpDir, 'does-not-exist'), resolve(tmpDir, '.ps'));
+    expect(() => findProjectDir(tmpDir)).toThrow(/No Palimpsest project found/);
   });
 
-  test('rejects an empty `.ok/` directory with no config.yml and keeps walking up', () => {
-    mkdirSync(resolve(tmpDir, '.ok'), { recursive: true });
-    expect(() => findProjectDir(tmpDir)).toThrow(/No OpenKnowledge project found/);
+  test('rejects an empty `.ps/` directory with no config.yml and keeps walking up', () => {
+    mkdirSync(resolve(tmpDir, '.ps'), { recursive: true });
+    expect(() => findProjectDir(tmpDir)).toThrow(/No Palimpsest project found/);
   });
 
-  test('rejects a folder-rule-style `.ok/frontmatter.yml` without config.yml', () => {
-    mkdirSync(resolve(tmpDir, '.ok'), { recursive: true });
-    writeFileSync(resolve(tmpDir, '.ok', 'frontmatter.yml'), 'title: oops\n', 'utf-8');
-    expect(() => findProjectDir(tmpDir)).toThrow(/No OpenKnowledge project found/);
+  test('rejects a folder-rule-style `.ps/frontmatter.yml` without config.yml', () => {
+    mkdirSync(resolve(tmpDir, '.ps'), { recursive: true });
+    writeFileSync(resolve(tmpDir, '.ps', 'frontmatter.yml'), 'title: oops\n', 'utf-8');
+    expect(() => findProjectDir(tmpDir)).toThrow(/No Palimpsest project found/);
   });
 
-  test('rejects a directory at `.ok/config.yml` (not a file) and keeps walking up', () => {
-    mkdirSync(resolve(tmpDir, '.ok', 'config.yml'), { recursive: true });
-    expect(() => findProjectDir(tmpDir)).toThrow(/No OpenKnowledge project found/);
+  test('rejects a directory at `.ps/config.yml` (not a file) and keeps walking up', () => {
+    mkdirSync(resolve(tmpDir, '.ps', 'config.yml'), { recursive: true });
+    expect(() => findProjectDir(tmpDir)).toThrow(/No Palimpsest project found/);
   });
 
-  test('walks past a folder-rule `.ok/` sidecar to the real project root above', () => {
+  test('walks past a folder-rule `.ps/` sidecar to the real project root above', () => {
     seedProjectMarker(tmpDir);
     const inner = resolve(tmpDir, 'specs', 'foo');
-    mkdirSync(resolve(inner, '.ok'), { recursive: true });
-    writeFileSync(resolve(inner, '.ok', 'frontmatter.yml'), 'title: x\n', 'utf-8');
+    mkdirSync(resolve(inner, '.ps'), { recursive: true });
+    writeFileSync(resolve(inner, '.ps', 'frontmatter.yml'), 'title: x\n', 'utf-8');
     expect(findProjectDir(inner)).toBe(resolve(tmpDir));
   });
 
-  test('prefers the nearest project root over a deeper stray `.ok` file', () => {
+  test('prefers the nearest project root over a deeper stray `.ps` file', () => {
     seedProjectMarker(tmpDir);
     const inner = resolve(tmpDir, 'inner');
     mkdirSync(inner, { recursive: true });
-    writeFileSync(resolve(inner, '.ok'), 'oops');
+    writeFileSync(resolve(inner, '.ps'), 'oops');
     expect(findProjectDir(inner)).toBe(resolve(tmpDir));
   });
 });
@@ -248,9 +248,9 @@ describe('resolveStickyProjectDir', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-resolve-cwd-'));
-    mkdirSync(resolve(tmpDir, '.ok'), { recursive: true });
-    writeFileSync(resolve(tmpDir, '.ok', 'config.yml'), '', 'utf-8');
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-resolve-cwd-'));
+    mkdirSync(resolve(tmpDir, '.ps'), { recursive: true });
+    writeFileSync(resolve(tmpDir, '.ps', 'config.yml'), '', 'utf-8');
   });
 
   afterEach(async () => {
@@ -295,40 +295,40 @@ describe('resolveStickyProjectDir', () => {
     expect(r.nextSticky).toBeUndefined();
   });
 
-  test('throws (via findProjectDir) when explicit cwd has no .ok ancestor', async () => {
-    const noOkDir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-no-project-'));
+  test('throws (via findProjectDir) when explicit cwd has no .ps ancestor', async () => {
+    const noOkDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-no-project-'));
     try {
       await expect(
         resolveStickyProjectDir(noOkDir, undefined, async () => undefined),
-      ).rejects.toThrow(/No OpenKnowledge project found/);
+      ).rejects.toThrow(/No Palimpsest project found/);
     } finally {
       await rm(noOkDir, { recursive: true, force: true });
     }
   });
 
   test('throws (via findProjectDir) when the root guess returns a non-OK path', async () => {
-    const noOkDir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-fallback-no-project-'));
+    const noOkDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-fallback-no-project-'));
     try {
       await expect(
         resolveStickyProjectDir(undefined, undefined, async () => noOkDir),
-      ).rejects.toThrow(/No OpenKnowledge project found/);
+      ).rejects.toThrow(/No Palimpsest project found/);
     } finally {
       await rm(noOkDir, { recursive: true, force: true });
     }
   });
 
   test('re-validates the sticky anchor on reuse: a deleted sticky path throws instead of resolving silently', async () => {
-    const goneDir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-sticky-gone-'));
+    const goneDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-sticky-gone-'));
     await rm(goneDir, { recursive: true, force: true });
     await expect(
       resolveStickyProjectDir(undefined, goneDir, async () => undefined),
-    ).rejects.toThrow(/No OpenKnowledge project found/);
+    ).rejects.toThrow(/No Palimpsest project found/);
   });
 });
 
 describe('countWorktrees', () => {
   test('returns 0 for a non-git directory (no ambiguity → no nudge)', async () => {
-    const dir = await mkdtemp(resolve(tmpdir(), 'ok-mcp-no-git-'));
+    const dir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-no-git-'));
     try {
       expect(await countWorktrees(dir)).toBe(0);
     } finally {

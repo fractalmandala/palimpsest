@@ -46,7 +46,7 @@ describe('openPluginBaselines', () => {
   });
 
   it('persists anchors across passes, so an edit flags on the NEXT scan too', () => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-baseline-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-baseline-'));
     const pass1 = openPluginBaselines(dir);
     expect(pass1.isModified('project', 'analyze', 'local-1', 'plugin-1')).toBe(false);
     pass1.flush();
@@ -60,7 +60,7 @@ describe('openPluginBaselines', () => {
   });
 
   it('scopes do not collide over one name', () => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-baseline-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-baseline-'));
     const b = openPluginBaselines(dir);
     expect(b.isModified('project', 'x', 'p-local', 'up')).toBe(false);
     expect(b.isModified('global', 'x', 'g-local', 'up')).toBe(false);
@@ -69,22 +69,22 @@ describe('openPluginBaselines', () => {
   });
 
   it('a corrupt cache file is an empty cache, not a crash', () => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-baseline-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-baseline-'));
     const b1 = openPluginBaselines(dir);
     b1.isModified('project', 'x', 'l1', 'u1');
     b1.flush();
-    writeFileSync(join(dir, '.ok', 'local', 'plugin-skill-baselines.json'), '{not json');
+    writeFileSync(join(dir, '.ps', 'local', 'plugin-skill-baselines.json'), '{not json');
 
     const b2 = openPluginBaselines(dir);
     expect(b2.isModified('project', 'x', 'l2', 'u1')).toBe(false);
   });
 
   it('a clean pass writes nothing', () => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-baseline-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-baseline-'));
     const b1 = openPluginBaselines(dir);
     b1.isModified('project', 'x', 'l1', 'u1');
     b1.flush();
-    const file = join(dir, '.ok', 'local', 'plugin-skill-baselines.json');
+    const file = join(dir, '.ps', 'local', 'plugin-skill-baselines.json');
     const before = readFileSync(file, 'utf-8');
 
     const b2 = openPluginBaselines(dir);

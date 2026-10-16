@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { MarkdownManager, OK_DIR, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, PS_DIR, sharedExtensions } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { withTempDir } from '../../temp-dir.test-helper.ts';
 import { generateFixture } from './generate-view-count-fixtures.ts';
@@ -64,12 +64,12 @@ describe('generateFixture — convergence', () => {
     });
   });
 
-  test('writes both FIXTURE.md and .ok/config.yml', async () => {
+  test('writes both FIXTURE.md and .ps/config.yml', async () => {
     await withTempDir('gen-fixtures-shape-', (tmp) => {
       const outDir = resolve(tmp, 'shape-bucket');
       generateFixture(50, outDir);
       expect(existsSync(resolve(outDir, 'FIXTURE.md'))).toBe(true);
-      expect(existsSync(resolve(outDir, OK_DIR, 'config.yml'))).toBe(true);
+      expect(existsSync(resolve(outDir, PS_DIR, 'config.yml'))).toBe(true);
     });
   });
 

@@ -8,7 +8,7 @@ export function initStartupTrace(): void {
   if (startupSpan) return;
   try {
     const traceparent =
-      typeof window !== 'undefined' ? window.okDesktop?.config.startupTraceparent : undefined;
+      typeof window !== 'undefined' ? window.psDesktop?.config.startupTraceparent : undefined;
     if (!traceparent) return;
 
     const parentCtx = propagation.extract(context.active(), { traceparent });

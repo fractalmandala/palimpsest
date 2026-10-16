@@ -22,7 +22,7 @@ const RESTART_SETTLE_MS = 10_000;
 interface Rig {
   readonly supervisor: WorkerServerSupervisor;
   readonly launcher: ReturnType<typeof contractServerLauncher>;
-  readonly okRoot: string;
+  readonly psRoot: string;
   request(run: string): LeaseRequest;
 }
 
@@ -36,7 +36,7 @@ const openRigs: Rig[] = [];
 const openDirs: string[] = [];
 
 function importingConfig(): ImportingConfig {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-restart-config-')));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-restart-config-')));
   openDirs.push(dir);
   const importedModule = join(dir, 'imported-input.ts');
   const configFile = join(dir, 'vite.config.mts');
@@ -63,20 +63,20 @@ function makeRig({
   readonly configFile?: string;
   readonly workerServerEnv?: WorkerServerEnv;
 } = {}): Rig {
-  const okRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-restart-root-')));
-  mkdirSync(join(okRoot, 'packages', 'app', 'src'), { recursive: true });
-  writeFileSync(join(okRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 1;\n');
+  const psRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-restart-root-')));
+  mkdirSync(join(psRoot, 'packages', 'app', 'src'), { recursive: true });
+  writeFileSync(join(psRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 1;\n');
   const launcher = contractServerLauncher({ configFile });
   const rig: Rig = {
     supervisor: new WorkerServerSupervisor({
-      okRoot,
+      psRoot,
       launch: launcher.launch,
       identityTimeoutMs: 2_000,
     }),
     launcher,
-    okRoot,
+    psRoot,
     request: (run) => ({
-      worktree: okRoot,
+      worktree: psRoot,
       config: '/worktree/packages/app/playwright.config.ts#chromium',
       run,
       slot: 0,
@@ -91,7 +91,7 @@ function makeRig({
 afterEach(async () => {
   for (const rig of openRigs.splice(0)) {
     await rig.supervisor.shutdown();
-    rmSync(rig.okRoot, { recursive: true, force: true });
+    rmSync(rig.psRoot, { recursive: true, force: true });
   }
   for (const dir of openDirs.splice(0)) rmSync(dir, { recursive: true, force: true });
 });

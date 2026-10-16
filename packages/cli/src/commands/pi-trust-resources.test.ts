@@ -20,10 +20,10 @@ describe('Pi trust dependent resources', () => {
   let bridgePath: string;
 
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-resources-')));
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-resources-')));
     home = join(root, 'home');
     cwd = join(root, 'project');
-    bridgePath = join(cwd, '.pi', 'extensions', 'open-knowledge.ts');
+    bridgePath = join(cwd, '.pi', 'extensions', 'palimpsest.ts');
     mkdirSync(home);
     mkdirSync(dirname(bridgePath), { recursive: true });
     writeFileSync(bridgePath, 'owned bridge');
@@ -35,7 +35,7 @@ describe('Pi trust dependent resources', () => {
 
   test('ignores only the bridge and owned skill namespaces in the current project', () => {
     for (const skillRoot of [join(cwd, '.pi', 'skills'), join(cwd, '.agents', 'skills')]) {
-      for (const name of ['open-knowledge', 'open-knowledge-discovery', 'open-knowledge-custom']) {
+      for (const name of ['palimpsest', 'open-knowledge-discovery', 'open-knowledge-custom']) {
         mkdirSync(join(skillRoot, name), { recursive: true });
         writeFileSync(join(skillRoot, name, 'keep.txt'), 'owned namespace');
       }
@@ -88,7 +88,7 @@ describe('Pi trust dependent resources', () => {
     },
   );
 
-  test('ancestor skill roots remain shared even when empty or entirely OpenKnowledge-named', () => {
+  test('ancestor skill roots remain shared even when empty or entirely Palimpsest-named', () => {
     const shared = join(root, '.agents', 'skills');
     mkdirSync(shared, { recursive: true });
     expect(inspectPiTrustResources(cwd, home, bridgePath)).toEqual({
@@ -107,10 +107,10 @@ describe('Pi trust dependent resources', () => {
     const nested = join(home, 'project');
     mkdirSync(nested);
     expect(
-      inspectPiTrustResources(nested, home, join(nested, '.pi', 'extensions', 'open-knowledge.ts')),
+      inspectPiTrustResources(nested, home, join(nested, '.pi', 'extensions', 'palimpsest.ts')),
     ).toEqual({ kind: 'none' });
     expect(
-      inspectPiTrustResources(home, home, join(home, '.pi', 'extensions', 'open-knowledge.ts')),
+      inspectPiTrustResources(home, home, join(home, '.pi', 'extensions', 'palimpsest.ts')),
     ).toEqual({ kind: 'none' });
   });
 
@@ -149,7 +149,7 @@ describe('Pi trust dependent resources', () => {
       const outcome = inspectPiTrustResources(
         project,
         home,
-        join(project, '.pi', 'extensions', 'open-knowledge.ts'),
+        join(project, '.pi', 'extensions', 'palimpsest.ts'),
       );
       expect(outcome).toMatchObject({ kind: 'unreadable' });
       if (outcome.kind === 'unreadable') {

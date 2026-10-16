@@ -37,18 +37,18 @@ setTimeout(() => process.exit(0), 120_000);
 }
 
 function seedProject(rendered = false): { tmpHome: string; projectDir: string; deckPath: string } {
-  const tmpHome = mkdtempSync(join(tmpdir(), 'ok-slidev-readiness-home-'));
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-slidev-readiness-project-'));
+  const tmpHome = mkdtempSync(join(tmpdir(), 'ps-slidev-readiness-home-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-slidev-readiness-project-'));
   const deckPath = join(projectDir, 'slides.md');
   const binDir = join(projectDir, 'node_modules', '.bin');
   const fakeServerPath = join(projectDir, 'fake-slidev.cjs');
   const userDataDir = userDataDirFor(tmpHome);
 
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   mkdirSync(binDir, { recursive: true });
   mkdirSync(userDataDir, { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   const serverSource = fakeSlidevServer(rendered);
@@ -83,7 +83,7 @@ function seedProject(rendered = false): { tmpHome: string; projectDir: string; d
 
 async function findEditor(app: ElectronApplication): Promise<Page | undefined> {
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'editor') return page;
   }
   return undefined;
@@ -110,7 +110,7 @@ async function closeElectronAppBounded(app: ElectronApplication): Promise<void> 
 }
 
 test.describe('Slidev renderer readiness smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -125,7 +125,7 @@ test.describe('Slidev renderer readiness smoke', () => {
         env: {
           ...process.env,
           ...homeEnv(tmpHome),
-          OK_DESKTOP_E2E_SMOKE: '1',
+          PS_DESKTOP_E2E_SMOKE: '1',
         },
       }),
     );
@@ -139,7 +139,7 @@ test.describe('Slidev renderer readiness smoke', () => {
       await configureDesktopGitRepositories(editor, projectDir);
 
       const openResult = editor.evaluate(async (path) => {
-        const slides = window.okDesktop?.slides;
+        const slides = window.psDesktop?.slides;
         if (slides === undefined) throw new Error('slides bridge unavailable');
         return slides.open(path);
       }, deckPath);
@@ -203,7 +203,7 @@ test.describe('Slidev renderer readiness smoke', () => {
         env: {
           ...process.env,
           ...homeEnv(tmpHome),
-          OK_DESKTOP_E2E_SMOKE: '1',
+          PS_DESKTOP_E2E_SMOKE: '1',
         },
       }),
     );
@@ -217,7 +217,7 @@ test.describe('Slidev renderer readiness smoke', () => {
       await configureDesktopGitRepositories(editor, projectDir);
 
       const openResult = editor.evaluate(async (path) => {
-        const slides = window.okDesktop?.slides;
+        const slides = window.psDesktop?.slides;
         if (slides === undefined) throw new Error('slides bridge unavailable');
         return slides.open(path);
       }, deckPath);

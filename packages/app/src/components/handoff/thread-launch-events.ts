@@ -1,8 +1,8 @@
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import type { OkNoteWindowMainAction } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
+import type { PsNoteWindowMainAction } from '@palimpsest/core/desktop-bridge';
 import { routeNoteWindowActionToMain } from '@/lib/note-window-main-actions';
 
-const THREAD_LAUNCH_EVENT = 'open-knowledge:agent-thread-launch';
+const THREAD_LAUNCH_EVENT = 'palimpsest:agent-thread-launch';
 
 export interface AgentThreadLaunchDetail {
   readonly agentSource: 'registry' | 'custom';
@@ -13,7 +13,7 @@ export interface AgentThreadLaunchDetail {
   readonly attachments: readonly AttachmentPart[] | null;
 }
 
-type NoteWindowAgentThreadAction = Extract<OkNoteWindowMainAction, { kind: 'agent-thread' }>;
+type NoteWindowAgentThreadAction = Extract<PsNoteWindowMainAction, { kind: 'agent-thread' }>;
 
 function toNoteWindowAgentThreadAction(
   detail: AgentThreadLaunchDetail,

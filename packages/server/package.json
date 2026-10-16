@@ -1,5 +1,5 @@
 {
-  "name": "@inkeep/open-knowledge-server",
+  "name": "@palimpsest/server",
   "version": "0.86.18",
   "license": "GPL-3.0-or-later",
   "private": true,
@@ -26,7 +26,7 @@
     "@agentclientprotocol/sdk": "^1.1.0",
     "@hocuspocus/server": "4.0.0-rc.1",
     "@hono/node-server": "^2.0.12",
-    "@inkeep/open-knowledge-core": "workspace:*",
+    "@palimpsest/core": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.28.0",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/context-async-hooks": "^2.0.0",

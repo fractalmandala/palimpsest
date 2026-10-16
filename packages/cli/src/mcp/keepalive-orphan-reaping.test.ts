@@ -53,7 +53,7 @@ async function pollUntil(
   return predicate();
 }
 
-describe('ok mcp orphan reaping (PRD-6917)', () => {
+describe('ps mcp orphan reaping (PRD-6917)', () => {
   const cleanups: Array<() => void> = [];
 
   afterEach(() => {
@@ -64,9 +64,9 @@ describe('ok mcp orphan reaping (PRD-6917)', () => {
     }
   });
 
-  test('ok mcp exits when its launching parent dies even if stdin never EOFs (no orphan to launchd)', async (ctx) => {
+  test('ps mcp exits when its launching parent dies even if stdin never EOFs (no orphan to launchd)', async (ctx) => {
     ctx.skip(!pid1Reaps, 'PID 1 must reap the orphans this test waits on');
-    const dir = mkdtempSync(join(tmpdir(), 'ok-orphan-reaping-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-orphan-reaping-'));
     cleanups.push(() => rmSync(dir, { recursive: true, force: true }));
 
     const fifo = join(dir, 'mcp.stdin');
@@ -103,7 +103,7 @@ describe('ok mcp orphan reaping (PRD-6917)', () => {
         'const child = spawn("node", [cliEntry, "mcp"], {',
         '  cwd: process.cwd(),',
         '  stdio: [rfd, "ignore", efd],',
-        '  env: { ...process.env, OK_BUNDLE_PROXY: "0" },',
+        '  env: { ...process.env, PS_BUNDLE_PROXY: "0" },',
         '});',
         // biome-ignore lint/suspicious/noTemplateCurlyInString: literal source emitted into the spawned child script, not a template string in this file
         'process.stdout.write(`CHILDPID:${child.pid}\\n`);',

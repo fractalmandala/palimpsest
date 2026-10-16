@@ -1,10 +1,10 @@
-import { OkCliCommand } from '@inkeep/open-knowledge-core';
+import { PsCliCommand } from '@palimpsest/core';
 import type {
   AuthEvent,
   AuthReposResponse,
   AuthStatusResponse,
   CloneEvent,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 interface StreamEntry<E> {
@@ -30,7 +30,7 @@ function pushController<E>(
   return { done, cancel: () => {} };
 }
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   runAuthStatusSubprocess: () => Promise.resolve(statusResponse),
   runAuthReposSubprocess: () => Promise.resolve(reposResponse),
   runDeviceFlowSubprocess: ({ onEvent }: { onEvent: (event: AuthEvent) => void }) =>
@@ -59,7 +59,7 @@ function makeSender() {
 
 function makeDeps() {
   return {
-    resolveOkCli: () => OkCliCommand.resolve({ host: { cliArgs: ['open-knowledge'] }, env: {} }),
+    resolveOkCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
     logFailure: vi.fn(),
     state: createLocalOpState(),
   };

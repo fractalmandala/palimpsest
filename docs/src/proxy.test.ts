@@ -7,8 +7,8 @@ function run(host: string, pathAndQuery: string) {
   return proxy(req);
 }
 
-const APEX = 'openknowledge.ai';
-const WWW = 'www.openknowledge.ai';
+const APEX = 'palimpsest.ai';
+const WWW = 'www.palimpsest.ai';
 const AASA = '/.well-known/apple-app-site-association';
 
 describe('proxy: www -> apex canonicalization', () => {

@@ -21,13 +21,13 @@ describe('findLocalSkillPreviewTabId', () => {
     const open = [
       skillPreviewTabId({
         flavor: 'builtin',
-        source: '/old/path/skills/open-knowledge',
-        name: 'open-knowledge',
+        source: '/old/path/skills/palimpsest',
+        name: 'palimpsest',
         subtitle: '',
         level: 'global',
       }),
     ];
-    expect(findLocalSkillPreviewTabId(open, 'builtin', 'open-knowledge', '', 'global')).toBe(
+    expect(findLocalSkillPreviewTabId(open, 'builtin', 'palimpsest', '', 'global')).toBe(
       open[0],
     );
   });

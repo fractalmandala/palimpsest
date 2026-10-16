@@ -156,7 +156,7 @@ describe('path-listing wrappers (real git)', () => {
   });
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-git-paths-test-'));
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-git-paths-test-'));
     run('git init -q -b main');
     configureTestGitRepository(projectDir);
     run('git config user.email "test@example.com"');

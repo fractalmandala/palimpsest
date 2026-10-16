@@ -1,4 +1,4 @@
-import type { ConfigBinding, OkignoreBinding, WriteScope } from '@inkeep/open-knowledge-core';
+import type { ConfigBinding, OkignoreBinding, WriteScope } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createServedBindingLog } from '@/test-utils/served-binding.test-helper';
@@ -155,30 +155,30 @@ vi.doMock('@/lib/auth-token', () => ({
 
 const servedCore = createServedBindingLog();
 
-vi.doMock('@inkeep/open-knowledge-core/config/bind-config-doc', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/config/bind-config-doc', {
+vi.doMock('@palimpsest/core/config/bind-config-doc', () =>
+  servedCore.serve('@palimpsest/core/config/bind-config-doc', {
     bindConfigDoc: (_provider: unknown, scope: WriteScope) =>
       makeFakeConfigBinding(scope, scope === 'user' ? userHasSyncedSeed : false),
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/config/bind-okignore-doc', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/config/bind-okignore-doc', {
+vi.doMock('@palimpsest/core/config/bind-psignore-doc', () =>
+  servedCore.serve('@palimpsest/core/config/bind-psignore-doc', {
     bindOkignoreDoc: () => makeFakeOkignoreBinding(),
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/constants/cc1', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/constants/cc1', {
+vi.doMock('@palimpsest/core/constants/cc1', () =>
+  servedCore.serve('@palimpsest/core/constants/cc1', {
     CONFIG_DOC_NAME_USER: '__user__/config.yml',
     CONFIG_DOC_NAME_PROJECT: '__config__/project',
     CONFIG_DOC_NAME_PROJECT_LOCAL: '__local__/project',
-    CONFIG_DOC_NAME_OKIGNORE: '__config__/okignore',
+    CONFIG_DOC_NAME_OKIGNORE: '__config__/psignore',
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/config/merge-layered', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/config/merge-layered', {
+vi.doMock('@palimpsest/core/config/merge-layered', () =>
+  servedCore.serve('@palimpsest/core/config/merge-layered', {
     mergeLayered: (user: unknown, project: unknown, projectLocal: unknown) => {
       mergeLayeredCalls.push([user, project, projectLocal]);
       return mergedConfig;
@@ -186,27 +186,27 @@ vi.doMock('@inkeep/open-knowledge-core/config/merge-layered', () =>
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/i18n/browser-locale-provider', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/i18n/browser-locale-provider', {
+vi.doMock('@palimpsest/core/i18n/browser-locale-provider', () =>
+  servedCore.serve('@palimpsest/core/i18n/browser-locale-provider', {
     readBrowserLanguages: () => browserLanguages,
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/i18n/direction', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/i18n/direction', {
+vi.doMock('@palimpsest/core/i18n/direction', () =>
+  servedCore.serve('@palimpsest/core/i18n/direction', {
     localeDirection: (locale: string) => (locale === 'ar' || locale === 'ur' ? 'rtl' : 'ltr'),
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/i18n/locales', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/i18n/locales', {
+vi.doMock('@palimpsest/core/i18n/locales', () =>
+  servedCore.serve('@palimpsest/core/i18n/locales', {
     SUPPORTED_LOCALES: ['en', 'es'],
     AUTO_DETECTABLE_LOCALES: ['en', 'es'],
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/theme/theme-plugins', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/theme/theme-plugins', {
+vi.doMock('@palimpsest/core/theme/theme-plugins', () =>
+  servedCore.serve('@palimpsest/core/theme/theme-plugins', {
     resolveColorThemeSelection: (
       appearance?: { colorTheme?: string; colorThemeLight?: string; colorThemeDark?: string },
       themes: readonly { id: string }[] = [],
@@ -238,16 +238,16 @@ vi.doMock('@inkeep/open-knowledge-core/theme/theme-plugins', () =>
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/schemas/api', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/schemas/api', {
+vi.doMock('@palimpsest/core/schemas/api', () =>
+  servedCore.serve('@palimpsest/core/schemas/api', {
     SavedThemesListSuccessSchema: {
       safeParse: (value: unknown) => ({ success: true, data: value }),
     },
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/theme/base16', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/theme/base16', {
+vi.doMock('@palimpsest/core/theme/base16', () =>
+  servedCore.serve('@palimpsest/core/theme/base16', {
     base16ToTokens: (scheme: { palette: Record<string, string> }) => ({
       background: scheme.palette.base00,
       foreground: scheme.palette.base05,
@@ -326,7 +326,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     cleanup();
     consoleErrorSpy.mockRestore();
     globalThis.fetch = originalFetch;
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     await dynamicActivate('en');
   });
 
@@ -395,7 +395,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
       '__user__/config.yml',
       '__config__/project',
       '__local__/project',
-      '__config__/okignore',
+      '__config__/psignore',
     ]);
     expect([...captures.keys()]).toEqual(['user', 'project', 'project-local']);
 
@@ -446,7 +446,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
 
   test('withholds the Electron show-gate signal until config is authoritative', async () => {
     const bridge = { nativeTheme: {} };
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: bridge,
     });
@@ -496,7 +496,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     async ({ preference, system, slot, paletteMode }) => {
       systemTheme = system;
       const bridge = { nativeTheme: {} };
-      Object.defineProperty(window, 'okDesktop', { configurable: true, value: bridge });
+      Object.defineProperty(window, 'psDesktop', { configurable: true, value: bridge });
       const palette = Object.fromEntries(
         Array.from({ length: 16 }, (_, index) => [
           `base${index.toString(16).toUpperCase().padStart(2, '0')}`,
@@ -572,7 +572,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
 
   test('the same unresolved preference is handed to the native-menu bridge', async () => {
     const bridge = { nativeTheme: {} };
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: bridge });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: bridge });
     mergedConfig = { appearance: { language: 'system' } };
 
     render(
@@ -596,7 +596,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
 
   test('releases the Electron show gate with the authored preference while preserving cross-variant prepaint after a saved-theme list failure', async () => {
     const bridge = { nativeTheme: {} };
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: bridge,
     });
@@ -641,7 +641,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
 
   test('a live same-id saved-theme edit invalidates the native chrome bridge', async () => {
     const bridge = { nativeTheme: {} };
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: bridge,
     });
@@ -735,19 +735,19 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
       .find((record) => record.name === '__user__/config.yml')
       ?.options.onDisconnect?.({ event: { code: 4001, reason: 'network down' } });
     providerRecords
-      .find((record) => record.name === '__config__/okignore')
+      .find((record) => record.name === '__config__/psignore')
       ?.options.onClose?.({ event: { code: 1006, reason: 'socket closed' } });
 
     const payloads = consoleWarnSpy.mock.calls.map(([line]) => JSON.parse(String(line)));
     expect(payloads).toContainEqual({
-      event: 'ok-config-provider-disconnect',
+      event: 'ps-config-provider-disconnect',
       docName: '__user__/config.yml',
       code: 4001,
       reason: 'network down',
     });
     expect(payloads).toContainEqual({
-      event: 'ok-okignore-provider-close',
-      docName: '__config__/okignore',
+      event: 'ps-psignore-provider-close',
+      docName: '__config__/psignore',
       code: 1006,
       reason: 'socket closed',
     });
@@ -770,7 +770,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
       '__user__/config.yml',
       '__config__/project',
       '__local__/project',
-      '__config__/okignore',
+      '__config__/psignore',
     ]);
     expect([...captures.keys()]).toEqual(['user', 'project', 'project-local']);
     expect(lastContext?.merged).toBe(mergedConfig);
@@ -778,13 +778,13 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     expect(okignoreDisposed).toBe(true);
 
     for (const [specifier, member] of [
-      ['@inkeep/open-knowledge-core/config/bind-config-doc', 'bindConfigDoc'],
-      ['@inkeep/open-knowledge-core/config/bind-okignore-doc', 'bindOkignoreDoc'],
-      ['@inkeep/open-knowledge-core/config/merge-layered', 'mergeLayered'],
-      ['@inkeep/open-knowledge-core/constants/cc1', 'CONFIG_DOC_NAME_USER'],
-      ['@inkeep/open-knowledge-core/constants/cc1', 'CONFIG_DOC_NAME_PROJECT'],
-      ['@inkeep/open-knowledge-core/constants/cc1', 'CONFIG_DOC_NAME_PROJECT_LOCAL'],
-      ['@inkeep/open-knowledge-core/constants/cc1', 'CONFIG_DOC_NAME_OKIGNORE'],
+      ['@palimpsest/core/config/bind-config-doc', 'bindConfigDoc'],
+      ['@palimpsest/core/config/bind-psignore-doc', 'bindOkignoreDoc'],
+      ['@palimpsest/core/config/merge-layered', 'mergeLayered'],
+      ['@palimpsest/core/constants/cc1', 'CONFIG_DOC_NAME_USER'],
+      ['@palimpsest/core/constants/cc1', 'CONFIG_DOC_NAME_PROJECT'],
+      ['@palimpsest/core/constants/cc1', 'CONFIG_DOC_NAME_PROJECT_LOCAL'],
+      ['@palimpsest/core/constants/cc1', 'CONFIG_DOC_NAME_OKIGNORE'],
     ] as const) {
       expect(servedCore.readersOf(specifier, member, since)).toEqual(['lib/config-provider.tsx']);
     }
@@ -814,10 +814,10 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     });
     expect(document.documentElement.dir).toBe('ltr');
     for (const [specifier, member] of [
-      ['@inkeep/open-knowledge-core/i18n/direction', 'localeDirection'],
-      ['@inkeep/open-knowledge-core/i18n/browser-locale-provider', 'readBrowserLanguages'],
-      ['@inkeep/open-knowledge-core/i18n/locales', 'SUPPORTED_LOCALES'],
-      ['@inkeep/open-knowledge-core/i18n/locales', 'AUTO_DETECTABLE_LOCALES'],
+      ['@palimpsest/core/i18n/direction', 'localeDirection'],
+      ['@palimpsest/core/i18n/browser-locale-provider', 'readBrowserLanguages'],
+      ['@palimpsest/core/i18n/locales', 'SUPPORTED_LOCALES'],
+      ['@palimpsest/core/i18n/locales', 'AUTO_DETECTABLE_LOCALES'],
     ] as const) {
       expect(servedCore.readersOf(specifier, member, since)).toEqual([
         'lib/use-apply-config-language.ts',
@@ -828,7 +828,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
   test('a saved color theme is listed, selected and painted through the core theme replacements', async () => {
     systemTheme = 'dark';
     const bridge = { nativeTheme: {} };
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: bridge });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: bridge });
     const palette = Object.fromEntries(
       Array.from({ length: 16 }, (_, index) => [
         `base${index.toString(16).toUpperCase().padStart(2, '0')}`,
@@ -876,7 +876,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     const readers = (specifier: string, member: string) =>
       servedCore.readersOf(specifier, member, since);
     expect(
-      readers('@inkeep/open-knowledge-core/schemas/api', 'SavedThemesListSuccessSchema'),
+      readers('@palimpsest/core/schemas/api', 'SavedThemesListSuccessSchema'),
     ).toEqual(['lib/saved-themes-client.ts']);
     for (const member of [
       'THEME_PLUGINS',
@@ -884,14 +884,14 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
       'resolveModePreference',
       'resolveThemePlugin',
     ]) {
-      expect(readers('@inkeep/open-knowledge-core/theme/theme-plugins', member)).toEqual([
+      expect(readers('@palimpsest/core/theme/theme-plugins', member)).toEqual([
         'lib/color-themes.ts',
       ]);
     }
-    expect(readers('@inkeep/open-knowledge-core/theme/theme-plugins', 'renderThemeBlock')).toEqual([
+    expect(readers('@palimpsest/core/theme/theme-plugins', 'renderThemeBlock')).toEqual([
       'lib/use-apply-config-color-theme.ts',
     ]);
-    expect(readers('@inkeep/open-knowledge-core/theme/base16', 'base16ToTokens')).toEqual([
+    expect(readers('@palimpsest/core/theme/base16', 'base16ToTokens')).toEqual([
       'lib/color-themes.ts',
     ]);
   });
@@ -919,8 +919,8 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
       expect(document.documentElement.lang).toBe('es');
     });
     for (const [specifier, member] of [
-      ['@inkeep/open-knowledge-core/i18n/browser-locale-provider', 'readBrowserLanguages'],
-      ['@inkeep/open-knowledge-core/i18n/locales', 'AUTO_DETECTABLE_LOCALES'],
+      ['@palimpsest/core/i18n/browser-locale-provider', 'readBrowserLanguages'],
+      ['@palimpsest/core/i18n/locales', 'AUTO_DETECTABLE_LOCALES'],
     ] as const) {
       expect(servedCore.readersOf(specifier, member, since)).toEqual([
         'lib/use-apply-config-language.ts',
@@ -952,7 +952,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     expect(document.getElementById(SAVED_THEME_STYLE_ID)).toBeNull();
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/theme/theme-plugins',
+        '@palimpsest/core/theme/theme-plugins',
         'THEME_PLUGINS',
         since,
       ),

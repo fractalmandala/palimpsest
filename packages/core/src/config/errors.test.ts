@@ -153,7 +153,7 @@ describe('humanFormat', () => {
           path: ['search', 'semantic', 'maxBatchSize'],
           message: 'Expected an integer between 1 and 2048; using default 96.',
           source: {
-            file: '/project/.ok/local/config.yml',
+            file: '/project/.ps/local/config.yml',
             line: 3,
             column: 19,
             snippet: 'maxBatchSize: PRIVATE_INVALID_VALUE',
@@ -168,7 +168,7 @@ describe('humanFormat', () => {
     expect(JSON.stringify(parsed)).not.toContain('PRIVATE_INVALID_VALUE');
     const output = humanFormat(diagnostic);
     expect(output).toContain('Configuration loaded with defaults for invalid settings:');
-    expect(output).toContain('/project/.ok/local/config.yml:3:19');
+    expect(output).toContain('/project/.ps/local/config.yml:3:19');
     expect(output).toContain('search.semantic.maxBatchSize: Expected an integer');
     expect(output).toContain('using default 96.');
     expect(output).not.toContain('Invalid configuration');
@@ -193,7 +193,7 @@ describe('humanFormat', () => {
         {
           code: 'VALUE_FALLBACK',
           scope: 'project-local',
-          file: '/project/.ok/local/config.yml',
+          file: '/project/.ps/local/config.yml',
           issues: [
             {
               path: ['search', 'semantic', 'maxBatchSize'],
@@ -269,13 +269,13 @@ describe('humanFormat', () => {
     expect(out).toContain('appearance.theme');
     expect(out).toContain('project');
     expect(out).toContain('user');
-    expect(out).toContain('~/.ok/global.yml');
-    expect(out).toContain('.ok/config.yml');
-    expect(out).toContain('Move it to ~/.ok/global.yml');
+    expect(out).toContain('~/.ps/global.yml');
+    expect(out).toContain('.ps/config.yml');
+    expect(out).toContain('Move it to ~/.ps/global.yml');
   });
 
   test('SCOPE_VIOLATION names the Beta user config when the running channel is Beta', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       const out = humanFormat({
         code: 'SCOPE_VIOLATION',
@@ -283,9 +283,9 @@ describe('humanFormat', () => {
         expectedScope: 'user',
         actualScope: 'either',
       });
-      expect(out).toContain('Move it to ~/.ok-beta/global.yml');
-      expect(out).toContain('(.ok/config.yml or ~/.ok-beta/global.yml)');
-      expect(out).not.toContain('~/.ok/');
+      expect(out).toContain('Move it to ~/.ps-beta/global.yml');
+      expect(out).toContain('(.ps/config.yml or ~/.ps-beta/global.yml)');
+      expect(out).not.toContain('~/.ps/');
     } finally {
       vi.unstubAllEnvs();
     }
@@ -299,8 +299,8 @@ describe('humanFormat', () => {
         { path: ['mcp', 'tools', 'grep', 'maxResults'], scope: 'user' },
       ],
     });
-    expect(out).toContain('content.dir → .ok/config.yml (project)');
-    expect(out).toContain('mcp.tools.grep.maxResults → ~/.ok/global.yml (user)');
+    expect(out).toContain('content.dir → .ps/config.yml (project)');
+    expect(out).toContain('mcp.tools.grep.maxResults → ~/.ps/global.yml (user)');
     expect(out).toContain('one file at a time');
   });
 

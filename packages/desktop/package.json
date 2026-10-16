@@ -1,12 +1,12 @@
 {
-  "name": "@inkeep/open-knowledge-desktop",
-  "productName": "OpenKnowledge",
+  "name": "@palimpsest/desktop",
+  "productName": "Palimpsest",
   "version": "0.86.18",
   "license": "GPL-3.0-or-later",
-  "homepage": "https://openknowledge.ai",
+  "homepage": "https://github.com/fractalmandala/palimpsest",
   "author": {
     "name": "Inkeep",
-    "email": "support@inkeep.com"
+    "email": "https://github.com/fractalmandala/palimpsest/issues"
   },
   "private": true,
   "type": "module",
@@ -16,7 +16,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "turbo run dev:electron --filter=@inkeep/open-knowledge-desktop",
+    "dev": "turbo run dev:electron --filter=@palimpsest/desktop",
     "dev:electron": "node ../app/scripts/compile-i18n-catalogs.ts && electron-vite dev --watch",
     "build:desktop": "node ../core/scripts/build-output.mjs verify && node ../app/scripts/compile-i18n-catalogs.ts && electron-vite build",
     "build:dir": "pnpm run build:desktop && node scripts/run-electron-builder.mjs --dir --publish never",
@@ -28,17 +28,17 @@
     "prepare:platform-natives": "node scripts/prepare-platform-natives.mjs",
     "postinstall": "node scripts/postinstall.mjs",
     "rebuild:native": "electron-builder install-app-deps",
-    "smoke:mock-update": "OK_UPDATER_FORCE_DEV=1 node scripts/smoke-mock-update.mjs",
+    "smoke:mock-update": "PS_UPDATER_FORCE_DEV=1 node scripts/smoke-mock-update.mjs",
     "instances": "node scripts/launch-instances.mjs",
     "lint": "biome check . && oxlint --max-warnings 0 .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@inkeep/open-knowledge": "workspace:*",
-    "@inkeep/open-knowledge-core": "workspace:*",
-    "@inkeep/open-knowledge-native-config": "workspace:*",
-    "@inkeep/open-knowledge-server": "workspace:*",
+    "@palimpsest/cli": "workspace:*",
+    "@palimpsest/core": "workspace:*",
+    "@palimpsest/native-config": "workspace:*",
+    "@palimpsest/server": "workspace:*",
     "@lingui/core": "^6.0.1",
     "@lingui/message-utils": "^6.0.1",
     "@napi-rs/keyring": "^1.3.0",

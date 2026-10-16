@@ -146,7 +146,7 @@ describe('settings body loading on render and on intent', () => {
 
     await renderSettingsBody(
       <SettingsDialogBodyLazy
-        activeId="okignore"
+        activeId="psignore"
         userBinding={null}
         okignoreBinding={null}
         okignoreSynced={false}

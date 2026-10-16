@@ -191,8 +191,8 @@ async function installDelayedDesktopSessionBridge(
         return raw ? JSON.parse(raw) : { ...initialSession, updatedAt: '2026-05-08T00:00:00.000Z' };
       };
       const unsubscribe = () => {};
-      // STOP: this fixture must implement every OkDesktopBridge member main.tsx invokes at boot; it is outside packages/app/tsconfig.json include, so nothing typechecks it.
-      const okDesktop = {
+      // STOP: this fixture must implement every PsDesktopBridge member main.tsx invokes at boot; it is outside packages/app/tsconfig.json include, so nothing typechecks it.
+      const psDesktop = {
         appVersion: 'test',
         platform: 'darwin',
         config: {
@@ -296,7 +296,7 @@ async function installDelayedDesktopSessionBridge(
         setThemeSource: async () => ({ ok: true as const }),
         signalThemeApplied: () => {},
       };
-      (window as unknown as { okDesktop: typeof okDesktop }).okDesktop = okDesktop;
+      (window as unknown as { psDesktop: typeof psDesktop }).psDesktop = psDesktop;
     },
     { ...workerServer, initialSession },
   );
@@ -942,7 +942,7 @@ test.describe('FileTree bulk delete with a partial failure', () => {
         await gotoRootAndAwaitSidebar(page);
         if (scenario.trashFallback) {
           await page.evaluate(() => {
-            const bridge = window.okDesktop;
+            const bridge = window.psDesktop;
             if (!bridge) throw new Error('Desktop session bridge was not installed');
             bridge.shell.trashItem = async () => ({ ok: false, reason: 'system-error' });
           });

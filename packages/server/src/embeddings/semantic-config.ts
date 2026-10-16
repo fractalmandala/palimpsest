@@ -4,8 +4,8 @@ import {
   DEFAULT_EMBEDDINGS_MAX_BATCH_CHARS,
   DEFAULT_EMBEDDINGS_MAX_BATCH_SIZE,
   DEFAULT_EMBEDDINGS_MODEL,
-} from '@inkeep/open-knowledge-core';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 
 export interface ResolvedSemanticConfig {
   enabled: boolean;

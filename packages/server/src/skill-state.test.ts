@@ -23,7 +23,7 @@ import {
 const makeTempDir = createTempDirFactory(afterAll);
 
 function freshHome(): string {
-  return makeTempDir('ok-skill-state-');
+  return makeTempDir('ps-skill-state-');
 }
 
 describe('per-bundle opt-in decisions', () => {
@@ -57,7 +57,7 @@ describe('per-bundle opt-in decisions', () => {
 });
 
 describe('readServerPackageVersion', () => {
-  test('reads the version field from `@inkeep/open-knowledge-server`/package.json', async () => {
+  test('reads the version field from `@palimpsest/server`/package.json', async () => {
     const version = await readServerPackageVersion();
     expect(typeof version).toBe('string');
     expect(version).toMatch(/^\d+\.\d+\.\d+(?:[-+][\w.-]+)?$/);
@@ -307,17 +307,17 @@ describe('skill-state file per channel', () => {
     vi.unstubAllEnvs();
   });
 
-  test('Stable keeps ~/.ok/skill-state.yml and Beta writes ~/.ok-beta/skill-state.yml', async () => {
+  test('Stable keeps ~/.ps/skill-state.yml and Beta writes ~/.ps-beta/skill-state.yml', async () => {
     const home = freshHome();
-    vi.stubEnv('OK_CHANNEL', 'stable');
-    expect(skillStateYamlPath(home)).toBe(join(home, '.ok', 'skill-state.yml'));
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    expect(skillStateYamlPath(home)).toBe(join(home, '.ok-beta', 'skill-state.yml'));
+    vi.stubEnv('PS_CHANNEL', 'stable');
+    expect(skillStateYamlPath(home)).toBe(join(home, '.ps', 'skill-state.yml'));
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    expect(skillStateYamlPath(home)).toBe(join(home, '.ps-beta', 'skill-state.yml'));
     await writeBundleDecision(home, 'discovery', true);
-    expect(await readFile(join(home, '.ok-beta', 'skill-state.yml'), 'utf8')).toContain(
+    expect(await readFile(join(home, '.ps-beta', 'skill-state.yml'), 'utf8')).toContain(
       'discovery',
     );
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(await readBundleDecision(home, 'discovery')).toBeNull();
   });
 });

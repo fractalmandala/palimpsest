@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { useEffect, useRef } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkDesktopBridge, OkMenuAction } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsMenuAction } from '@/lib/desktop-bridge-types';
 import {
   __resetLocalMenuActionBusForTests,
   emitLocalMenuAction,
@@ -44,7 +44,7 @@ vi.doMock('@/components/NavigatorApp', () => ({
 const { TerminalWindowApp } = await import('./TerminalWindowApp');
 const { selectDesktopRootApp } = await import('./desktop-root-app');
 
-function makeBridge(platform: OkDesktopBridge['platform'] = 'darwin') {
+function makeBridge(platform: PsDesktopBridge['platform'] = 'darwin') {
   const viewMenuPushes: Array<{ terminalLive?: boolean }> = [];
   let ptyCounter = 0;
   const create = vi.fn(async () => {
@@ -62,20 +62,20 @@ function makeBridge(platform: OkDesktopBridge['platform'] = 'darwin') {
       },
     },
     terminal: { create, kill },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return {
     bridge,
     create,
     kill,
     viewMenuPushes,
-    dispatchMenuAction(action: OkMenuAction) {
+    dispatchMenuAction(action: PsMenuAction) {
       emitLocalMenuAction(action);
     },
   };
 }
 
-function bridgeWithMode(mode: string): OkDesktopBridge {
-  return { config: { mode } } as unknown as OkDesktopBridge;
+function bridgeWithMode(mode: string): PsDesktopBridge {
+  return { config: { mode } } as unknown as PsDesktopBridge;
 }
 
 async function addTerminalTab(user: ReturnType<typeof userEvent.setup>) {

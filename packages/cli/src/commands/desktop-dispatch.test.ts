@@ -1,5 +1,5 @@
 import type { SpawnOptions } from 'node:child_process';
-import { OK_CHANNEL_ENV } from '@inkeep/open-knowledge-core';
+import { PS_CHANNEL_ENV } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import {
   DESKTOP_BUNDLE_ID,
@@ -25,11 +25,11 @@ function statForFile(path: string): DetectDeps['statSync'] {
   return (p) => (p === path ? { isFile: () => true, isDirectory: () => false } : null);
 }
 
-const APP_EXEC = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
-const HOME_EXEC = '/Users/andrew/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
-const BETA_APP_EXEC = '/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta';
+const APP_EXEC = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
+const HOME_EXEC = '/Users/andrew/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
+const BETA_APP_EXEC = '/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta';
 const HOME_BETA_APP_EXEC =
-  '/Users/andrew/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta';
+  '/Users/andrew/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta';
 
 describe('detectDesktop — platform gate (FR10)', () => {
   test('unknown platform → unsupported-platform', () => {
@@ -56,11 +56,11 @@ describe('detectDesktop — platform gate (FR10)', () => {
 
 describe('detectDesktop — Windows/Linux install resolution', () => {
   const WIN_EXE =
-    'C:\\Users\\u\\AppData\\Local\\Programs\\@inkeepopen-knowledge-desktop\\OpenKnowledge.exe';
+    'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
   const BETA_WIN_EXE =
-    'C:\\Users\\u\\AppData\\Local\\Programs\\openknowledge-beta-desktop\\OpenKnowledge Beta.exe';
-  const DEB_EXE = '/opt/OpenKnowledge/openknowledge';
-  const BETA_DEB_EXE = '/opt/OpenKnowledge Beta/openknowledge-beta';
+    'C:\\Users\\u\\AppData\\Local\\Programs\\palimpsest-beta-desktop\\Palimpsest Beta.exe';
+  const DEB_EXE = '/opt/Palimpsest/palimpsest';
+  const BETA_DEB_EXE = '/opt/Palimpsest Beta/palimpsest-beta';
 
   test('win32: %LOCALAPPDATA% per-user install → available', () => {
     const result = detectDesktop(
@@ -79,7 +79,7 @@ describe('detectDesktop — Windows/Linux install resolution', () => {
     });
   });
 
-  test('win32: bundled-CLI introspection (ok.cmd wrapper) → the running exe', () => {
+  test('win32: bundled-CLI introspection (ps.cmd wrapper) → the running exe', () => {
     const result = detectDesktop(
       baseDeps({
         platform: 'win32',
@@ -185,13 +185,13 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
     const result = detectDesktop(baseDeps({ statSync: statForFile(APP_EXEC) }));
     expect(result.available).toBe(true);
     expect(result.reason).toBe('available');
-    expect(result.bundlePath).toBe('/Applications/OpenKnowledge.app');
+    expect(result.bundlePath).toBe('/Applications/Palimpsest.app');
   });
 
   test('darwin + bundle only in ~/Applications → available, home path', () => {
     const result = detectDesktop(baseDeps({ statSync: statForFile(HOME_EXEC) }));
     expect(result.available).toBe(true);
-    expect(result.bundlePath).toBe('/Users/andrew/Applications/OpenKnowledge.app');
+    expect(result.bundlePath).toBe('/Users/andrew/Applications/Palimpsest.app');
   });
 
   test('darwin + only Beta in /Applications → available', () => {
@@ -199,7 +199,7 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
     expect(result).toEqual({
       available: true,
       reason: 'available',
-      bundlePath: '/Applications/OpenKnowledge Beta.app',
+      bundlePath: '/Applications/Palimpsest Beta.app',
       product: 'beta',
       cliProduct: 'stable',
     });
@@ -210,7 +210,7 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
     const result = detectDesktop(
       baseDeps({ statSync: (path) => (installed.has(path) ? { isFile: () => true } : null) }),
     );
-    expect(result.bundlePath).toBe('/Applications/OpenKnowledge.app');
+    expect(result.bundlePath).toBe('/Applications/Palimpsest.app');
   });
 
   test('darwin + no bundle → no-bundle', () => {
@@ -222,12 +222,12 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
     const result = detectDesktop(
       baseDeps({
         env: { ELECTRON_RUN_AS_NODE: '1' },
-        execPath: '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        execPath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         statSync: () => null,
       }),
     );
     expect(result.available).toBe(true);
-    expect(result.bundlePath).toBe('/Applications/OpenKnowledge.app');
+    expect(result.bundlePath).toBe('/Applications/Palimpsest.app');
   });
 
   test('bundled-CLI introspection reports the Beta product for the Beta bundle', () => {
@@ -238,7 +238,7 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
         statSync: () => null,
       }),
     );
-    expect(result.bundlePath).toBe('/Applications/OpenKnowledge Beta.app');
+    expect(result.bundlePath).toBe('/Applications/Palimpsest Beta.app');
     expect(result.product).toBe('beta');
   });
 
@@ -251,7 +251,7 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
       }),
     );
     expect(result.available).toBe(true);
-    expect(result.bundlePath).toBe('/Applications/OpenKnowledge.app');
+    expect(result.bundlePath).toBe('/Applications/Palimpsest.app');
   });
 
   test('stat throws unexpectedly → no-bundle (probeBundle catches before reason can bubble)', () => {
@@ -267,20 +267,20 @@ describe('detectDesktop — bundle resolution (FR10 D2 a/b/c)', () => {
 });
 
 describe('detectDesktop — env overrides (FR8)', () => {
-  test('OK_FORCE_BROWSER=1 wins over everything', () => {
+  test('PS_FORCE_BROWSER=1 wins over everything', () => {
     const result = detectDesktop(
       baseDeps({
-        env: { OK_FORCE_BROWSER: '1', OK_FORCE_DESKTOP: '1' },
+        env: { PS_FORCE_BROWSER: '1', PS_FORCE_DESKTOP: '1' },
         statSync: statForFile(APP_EXEC),
       }),
     );
     expect(result).toEqual({ available: false, reason: 'force-browser', cliProduct: 'stable' });
   });
 
-  test('OK_FORCE_BROWSER=1 with darwin + bundle still returns false', () => {
+  test('PS_FORCE_BROWSER=1 with darwin + bundle still returns false', () => {
     const result = detectDesktop(
       baseDeps({
-        env: { OK_FORCE_BROWSER: '1' },
+        env: { PS_FORCE_BROWSER: '1' },
         statSync: statForFile(APP_EXEC),
       }),
     );
@@ -288,10 +288,10 @@ describe('detectDesktop — env overrides (FR8)', () => {
     expect(result.reason).toBe('force-browser');
   });
 
-  test('OK_FORCE_DESKTOP=1 skips headless gate when bundle present (FR10 ordering)', () => {
+  test('PS_FORCE_DESKTOP=1 skips headless gate when bundle present (FR10 ordering)', () => {
     const result = detectDesktop(
       baseDeps({
-        env: { OK_FORCE_DESKTOP: '1', SSH_CONNECTION: '10.0.0.1 22' },
+        env: { PS_FORCE_DESKTOP: '1', SSH_CONNECTION: '10.0.0.1 22' },
         isTTY: false,
         statSync: statForFile(APP_EXEC),
       }),
@@ -300,10 +300,10 @@ describe('detectDesktop — env overrides (FR8)', () => {
     expect(result.reason).toBe('available');
   });
 
-  test('OK_FORCE_DESKTOP=1 still requires a bundle to exist', () => {
+  test('PS_FORCE_DESKTOP=1 still requires a bundle to exist', () => {
     const result = detectDesktop(
       baseDeps({
-        env: { OK_FORCE_DESKTOP: '1' },
+        env: { PS_FORCE_DESKTOP: '1' },
         statSync: () => null,
       }),
     );
@@ -316,18 +316,18 @@ describe('detectDesktop — unsupported channel override', () => {
   test('an unsupported channel falls back to the npm CLI product and warns once', () => {
     const warn = vi.fn();
     const result = detectDesktop(
-      baseDeps({ env: { [OK_CHANNEL_ENV]: 'nightly' }, statSync: statForFile(APP_EXEC), warn }),
+      baseDeps({ env: { [PS_CHANNEL_ENV]: 'nightly' }, statSync: statForFile(APP_EXEC), warn }),
     );
     expect(result).toEqual({
       available: true,
       reason: 'available',
-      bundlePath: '/Applications/OpenKnowledge.app',
+      bundlePath: '/Applications/Palimpsest.app',
       product: 'stable',
       cliProduct: 'stable',
     });
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith(
-      `Treating this CLI as OpenKnowledge (Stable) for this command: Unsupported ${OK_CHANNEL_ENV}="nightly". Expected stable or beta or dev.`,
+      `Treating this CLI as Palimpsest (Stable) for this command: Unsupported ${PS_CHANNEL_ENV}="nightly". Expected stable or beta or dev.`,
     );
   });
 
@@ -336,26 +336,26 @@ describe('detectDesktop — unsupported channel override', () => {
     const result = detectDesktop(
       baseDeps({
         platform: 'linux',
-        env: { [OK_CHANNEL_ENV]: 'nightly', ELECTRON_RUN_AS_NODE: '1', DISPLAY: ':0' },
-        execPath: '/opt/OpenKnowledge Beta/openknowledge-beta',
+        env: { [PS_CHANNEL_ENV]: 'nightly', ELECTRON_RUN_AS_NODE: '1', DISPLAY: ':0' },
+        execPath: '/opt/Palimpsest Beta/palimpsest-beta',
         warn,
       }),
     );
     expect(result).toEqual({
       available: true,
       reason: 'available',
-      bundlePath: '/opt/OpenKnowledge Beta/openknowledge-beta',
+      bundlePath: '/opt/Palimpsest Beta/palimpsest-beta',
       product: 'beta',
       cliProduct: 'beta',
     });
     expect(warn).toHaveBeenCalledWith(
-      `Treating this CLI as OpenKnowledge Beta for this command: Unsupported ${OK_CHANNEL_ENV}="nightly". Expected stable or beta or dev.`,
+      `Treating this CLI as Palimpsest Beta for this command: Unsupported ${PS_CHANNEL_ENV}="nightly". Expected stable or beta or dev.`,
     );
   });
 
   test('a supported channel override does not warn', () => {
     const warn = vi.fn();
-    const result = detectDesktop(baseDeps({ env: { [OK_CHANNEL_ENV]: 'beta' }, warn }));
+    const result = detectDesktop(baseDeps({ env: { [PS_CHANNEL_ENV]: 'beta' }, warn }));
     expect(result.cliProduct).toBe('beta');
     expect(warn).not.toHaveBeenCalled();
   });
@@ -366,7 +366,7 @@ describe('detectDesktop — dev channel', () => {
     const probed: string[] = [];
     const result = detectDesktop(
       baseDeps({
-        env: { [OK_CHANNEL_ENV]: 'dev' },
+        env: { [PS_CHANNEL_ENV]: 'dev' },
         statSync: (p) => {
           probed.push(p);
           return p === APP_EXEC ? { isFile: () => true, isDirectory: () => false } : null;
@@ -374,19 +374,19 @@ describe('detectDesktop — dev channel', () => {
       }),
     );
     expect(result).toMatchObject({ available: true, product: 'stable', cliProduct: 'dev' });
-    expect(probed.filter((p) => p.includes('OpenKnowledge Dev'))).toEqual([]);
+    expect(probed.filter((p) => p.includes('Palimpsest Dev'))).toEqual([]);
   });
 });
 
 describe('detectDesktop — headless gate (FR9 — CI is intentionally NOT a trigger)', () => {
   const WIN_EXE =
-    'C:\\Users\\u\\AppData\\Local\\Programs\\@inkeepopen-knowledge-desktop\\OpenKnowledge.exe';
+    'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
 
   test('isTTY=false → headless', () => {
     const result = detectDesktop(baseDeps({ isTTY: false, statSync: statForFile(APP_EXEC) }));
     expect(result.available).toBe(false);
     expect(result.reason).toBe('headless');
-    expect(result.bundlePath).toBe('/Applications/OpenKnowledge.app');
+    expect(result.bundlePath).toBe('/Applications/Palimpsest.app');
   });
 
   test('isTTY=undefined → headless (treated as false)', () => {
@@ -513,20 +513,20 @@ describe('launchDesktop — spawn shape (FR11)', () => {
       {
         available: true,
         reason: 'available',
-        bundlePath: '/Applications/OpenKnowledge.app',
+        bundlePath: '/Applications/Palimpsest.app',
         product: 'stable',
         cliProduct: 'stable',
       },
     );
 
     expect(captured.command).toBe('open');
-    expect(captured.args).toEqual(['-a', '/Applications/OpenKnowledge.app']);
+    expect(captured.args).toEqual(['-a', '/Applications/Palimpsest.app']);
     expect(captured.opts?.detached).toBe(true);
     expect(captured.opts?.stdio).toBe('ignore');
     expect(unrefCalled).toBe(true);
-    expect(logged).toContain('Launching OpenKnowledge desktop');
-    expect(logged).toContain('OK_FORCE_BROWSER=1');
-    expect(logged).toContain('ok start');
+    expect(logged).toContain('Launching Palimpsest desktop');
+    expect(logged).toContain('PS_FORCE_BROWSER=1');
+    expect(logged).toContain('ps start');
   });
 
   test('a Stable CLI opening a Beta-only install names the Beta app but its own start command', () => {
@@ -539,10 +539,10 @@ describe('launchDesktop — spawn shape (FR11)', () => {
     let logged = '';
     launchDesktop({ spawn: fakeSpawn, log: (m) => (logged = m), platform: 'darwin' }, detection);
 
-    expect(spawnedArgs).toEqual(['-a', '/Applications/OpenKnowledge Beta.app']);
-    expect(logged).toContain('Launching OpenKnowledge Beta desktop');
-    expect(logged).toContain('`ok start`');
-    expect(logged).not.toContain('ok-beta');
+    expect(spawnedArgs).toEqual(['-a', '/Applications/Palimpsest Beta.app']);
+    expect(logged).toContain('Launching Palimpsest Beta desktop');
+    expect(logged).toContain('`ps start`');
+    expect(logged).not.toContain('ps-beta');
   });
 
   test('a Beta CLI that falls back to the Stable app still names its own start command', () => {
@@ -550,14 +550,14 @@ describe('launchDesktop — spawn shape (FR11)', () => {
       typeof launchDesktop
     >[0]['spawn'];
     const detection = detectDesktop(
-      baseDeps({ env: { OK_CHANNEL: 'beta' }, statSync: statForFile(APP_EXEC) }),
+      baseDeps({ env: { PS_CHANNEL: 'beta' }, statSync: statForFile(APP_EXEC) }),
     );
     let logged = '';
     launchDesktop({ spawn: fakeSpawn, log: (m) => (logged = m), platform: 'darwin' }, detection);
 
     expect(detection).toMatchObject({ product: 'stable', cliProduct: 'beta' });
-    expect(logged).toContain('Launching OpenKnowledge desktop');
-    expect(logged).toContain('`ok-beta start`');
+    expect(logged).toContain('Launching Palimpsest desktop');
+    expect(logged).toContain('`ps-beta start`');
   });
 
   test('skips the spawn when the detection carries no executable', () => {
@@ -590,8 +590,8 @@ describe('launchDesktop — spawn shape (FR11)', () => {
 
       const exe =
         platform === 'win32'
-          ? 'C:\\Users\\u\\AppData\\Local\\Programs\\@inkeepopen-knowledge-desktop\\OpenKnowledge.exe'
-          : '/opt/OpenKnowledge/openknowledge';
+          ? 'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe'
+          : '/opt/Palimpsest/palimpsest';
       launchDesktop(
         { spawn: fakeSpawn, log: () => {}, platform },
         {
@@ -626,7 +626,7 @@ describe('launchDesktop — spawn shape (FR11)', () => {
         {
           available: true,
           reason: 'available',
-          bundlePath: '/Applications/OpenKnowledge.app',
+          bundlePath: '/Applications/Palimpsest.app',
           product: 'stable',
           cliProduct: 'stable',
         },
@@ -640,8 +640,8 @@ describe('launchDesktop — spawn shape (FR11)', () => {
     }
   });
 
-  test('uses bundle ID com.inkeep.open-knowledge (matches electron-builder appId)', () => {
-    expect(DESKTOP_BUNDLE_ID).toBe('com.inkeep.open-knowledge');
+  test('uses bundle ID com.fractalmandala.palimpsest (matches electron-builder appId)', () => {
+    expect(DESKTOP_BUNDLE_ID).toBe('com.fractalmandala.palimpsest');
   });
 });
 
@@ -649,14 +649,14 @@ describe('UX message helpers — FR5 contextual notFoundMessage(reason)', () => 
   test('default (no-bundle) explains the miss + omit-mode hint', () => {
     const msg = notFoundMessage();
     expect(msg).toContain('not found');
-    expect(msg).toContain('https://openknowledge.ai/download');
+    expect(msg).toContain('https://github.com/fractalmandala/palimpsest/download');
     expect(msg).toContain('--mode');
   });
 
-  test('headless reason explains the gate + names OK_FORCE_DESKTOP override', () => {
+  test('headless reason explains the gate + names PS_FORCE_DESKTOP override', () => {
     const msg = notFoundMessage('headless');
     expect(msg).toContain('headless');
-    expect(msg).toContain('OK_FORCE_DESKTOP');
+    expect(msg).toContain('PS_FORCE_DESKTOP');
     expect(msg).not.toContain('not found');
   });
 
@@ -670,7 +670,7 @@ describe('UX message helpers — FR5 contextual notFoundMessage(reason)', () => 
 
   test('force-browser reason names the env override', () => {
     const msg = notFoundMessage('force-browser');
-    expect(msg).toContain('OK_FORCE_BROWSER');
+    expect(msg).toContain('PS_FORCE_BROWSER');
   });
 
   test('stat-error reason names the filesystem failure, platform-agnostically', () => {

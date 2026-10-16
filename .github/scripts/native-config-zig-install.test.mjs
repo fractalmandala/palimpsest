@@ -65,7 +65,7 @@ const CURL_STUB = [
   '',
 ].join('\n');
 
-const fixtureRoot = mkdtempSync(join(tmpdir(), 'ok-zig-fixture-'));
+const fixtureRoot = mkdtempSync(join(tmpdir(), 'ps-zig-fixture-'));
 afterAll(() => rmSync(fixtureRoot, { recursive: true, force: true }));
 const fixture = (() => {
   const tree = join(fixtureRoot, 'tree', 'zig-fixture');
@@ -82,7 +82,7 @@ const fixture = (() => {
 })();
 
 const runStep = ({ mirrors, sources, env = {} }) => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-zig-install-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-zig-install-'));
   try {
     const bin = join(dir, 'bin');
     mkdirSync(bin);

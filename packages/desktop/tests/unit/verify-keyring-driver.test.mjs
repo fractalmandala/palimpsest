@@ -10,8 +10,8 @@ import {
 
 describe('parseArgs', () => {
   test('accepts a single positional', () => {
-    const args = parseArgs(['node', 'script', '/Applications/OpenKnowledge.app']);
-    expect(args.inputPath).toBe('/Applications/OpenKnowledge.app');
+    const args = parseArgs(['node', 'script', '/Applications/Palimpsest.app']);
+    expect(args.inputPath).toBe('/Applications/Palimpsest.app');
   });
 
   test('rejects zero positionals', () => {
@@ -90,7 +90,7 @@ describe('runDriver (full orchestration)', () => {
       runCommand: vi.fn(async () => {}),
       cp: vi.fn(async () => {}),
       stat: vi.fn(async () => ({})),
-      listAppsInMount: vi.fn(async () => ['OpenKnowledge.app']),
+      listAppsInMount: vi.fn(async () => ['Palimpsest.app']),
       readFile: vi.fn(() =>
         Promise.resolve('{"ok":true,"backend":"keyring","durationMs":5,"timestamp":"t"}'),
       ),
@@ -167,7 +167,7 @@ describe('runDriver (full orchestration)', () => {
     const deps = fakeDeps({
       runCommand,
       cp,
-      listAppsInMount: vi.fn(async () => ['OpenKnowledge.app']),
+      listAppsInMount: vi.fn(async () => ['Palimpsest.app']),
     });
     const code = await runDriver(['node', 'script', '/tmp/foo.dmg'], deps);
     expect(code).toBe(0);

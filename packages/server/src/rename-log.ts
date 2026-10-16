@@ -2,8 +2,8 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { pathspecArgs } from '@inkeep/open-knowledge-core';
-import { parseOkActors } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { pathspecArgs } from '@palimpsest/core';
+import { parseOkActors } from '@palimpsest/core/shadow-repo-layout';
 import { withHiddenWindowsConsole } from './child-process-windows-hide.ts';
 import {
   tracedAppendFileSync,
@@ -249,7 +249,7 @@ export function serializeIndexToString(index: RenameLogIndex): string {
 }
 
 function parseGitTimeoutMs(): number {
-  const raw = process.env.OK_GIT_TIMEOUT_MS;
+  const raw = process.env.PS_GIT_TIMEOUT_MS;
   if (!raw) return 30_000;
   const parsed = Number.parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 30_000;

@@ -27,11 +27,11 @@ function userDataDirFor(tmpHome: string): string {
 }
 
 function seedHomeWithLastOpenedProject(prefix: string): SeededHome {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-navigator-return-${prefix}-`));
-  const projectDir = mkdtempSync(join(tmpdir(), `ok-navigator-return-${prefix}-project-`));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-navigator-return-${prefix}-`));
+  const projectDir = mkdtempSync(join(tmpdir(), `ps-navigator-return-${prefix}-project-`));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   const userDataDir = userDataDirFor(tmpHome);
@@ -65,7 +65,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
       },
     }),
   );
@@ -77,7 +77,7 @@ async function findEditorWindow(app: ElectronApplication, timeoutMs = 20_000): P
       async () => {
         for (const page of app.windows()) {
           const mode = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (mode === 'editor') return page;
         }
@@ -92,7 +92,7 @@ async function findEditorWindow(app: ElectronApplication, timeoutMs = 20_000): P
     .then(async () => {
       for (const page of app.windows()) {
         const mode = await page
-          .evaluate(() => window.okDesktop?.config?.mode)
+          .evaluate(() => window.psDesktop?.config?.mode)
           .catch(() => undefined);
         if (mode === 'editor') return page;
       }
@@ -103,7 +103,7 @@ async function findEditorWindow(app: ElectronApplication, timeoutMs = 20_000): P
 async function countNavigatorWindows(app: ElectronApplication): Promise<number> {
   let count = 0;
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'navigator') count++;
   }
   return count;
@@ -112,7 +112,7 @@ async function countNavigatorWindows(app: ElectronApplication): Promise<number> 
 async function countEditorWindows(app: ElectronApplication): Promise<number> {
   let count = 0;
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'editor') count++;
   }
   return count;
@@ -126,14 +126,14 @@ async function findNavigatorWindow(app: ElectronApplication, timeoutMs = 15_000)
     })
     .toBe(1);
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'navigator') return page;
   }
   throw new Error('navigator window vanished between poll resolution and read');
 }
 
 test.describe('Project Navigator return-affordance smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -149,7 +149,7 @@ test.describe('Project Navigator return-affordance smoke', () => {
     await configureDesktopGitRepositories(editor, projectDir);
 
     await editor.evaluate(async () => {
-      await window.okDesktop?.navigator.open();
+      await window.psDesktop?.navigator.open();
     });
 
     await expect
@@ -160,10 +160,10 @@ test.describe('Project Navigator return-affordance smoke', () => {
       .toBe(1);
 
     await editor.evaluate(async () => {
-      await window.okDesktop?.navigator.open();
+      await window.psDesktop?.navigator.open();
     });
     await editor.evaluate(async () => {
-      await window.okDesktop?.navigator.open();
+      await window.psDesktop?.navigator.open();
     });
     await expect
       .poll(() => countNavigatorWindows(app), {
@@ -186,7 +186,7 @@ test.describe('Project Navigator return-affordance smoke', () => {
     await configureDesktopGitRepositories(editor, projectDir);
 
     await editor.evaluate(async () => {
-      await window.okDesktop?.navigator.open();
+      await window.psDesktop?.navigator.open();
     });
     const navigatorPage = await findNavigatorWindow(app);
 
@@ -206,7 +206,7 @@ test.describe('Project Navigator return-affordance smoke', () => {
       })
       .toBe(1);
     const stillEditorMode = await editor
-      .evaluate(() => window.okDesktop?.config?.mode)
+      .evaluate(() => window.psDesktop?.config?.mode)
       .catch(() => null);
     expect(stillEditorMode).toBe('editor');
   });

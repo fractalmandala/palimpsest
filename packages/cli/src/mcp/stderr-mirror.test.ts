@@ -17,7 +17,7 @@ import { createMcpStderrMirror, pruneMirrorLogs } from './stderr-mirror.ts';
 let dir: string;
 
 beforeEach(async () => {
-  dir = await mkdtemp(join(tmpdir(), 'ok-mcp-mirror-'));
+  dir = await mkdtemp(join(tmpdir(), 'ps-mcp-mirror-'));
 });
 
 afterEach(async () => {

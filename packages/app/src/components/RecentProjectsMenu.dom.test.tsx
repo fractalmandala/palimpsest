@@ -1,4 +1,4 @@
-import type { WorktreeSelectorModel } from '@inkeep/open-knowledge-core';
+import type { WorktreeSelectorModel } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createContext, type ReactNode, use, useState } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -155,7 +155,7 @@ function createBridge() {
       create: vi.fn(() =>
         Promise.resolve({
           ok: true as const,
-          path: '/repo/.ok/worktrees/feature-x',
+          path: '/repo/.ps/worktrees/feature-x',
           created: true,
         }),
       ),
@@ -242,7 +242,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
 
@@ -262,7 +262,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     const groupRow = screen.getByTestId('project-switcher-group-/repo');
@@ -286,7 +286,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     expect(screen.queryByTestId('project-switcher-flyout-/repo')).toBeNull();
@@ -301,7 +301,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     fireEvent.mouseEnter(screen.getByTestId('project-switcher-group-/repo'));
@@ -313,7 +313,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     fireEvent.mouseEnter(screen.getByTestId('project-switcher-group-/repo'));
@@ -328,7 +328,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     const row = screen.getByTestId('project-switcher-group-/repo');
@@ -365,7 +365,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     const row = screen.getByTestId('project-switcher-group-/repo');
@@ -389,7 +389,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     fireEvent.mouseEnter(screen.getByTestId('project-switcher-group-/repo'));
@@ -397,7 +397,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const mainEntry = await screen.findByTestId('project-switcher-flyout-entry-/repo');
     expect(mainEntry.textContent).toContain('main');
     expect(mainEntry.textContent).toContain('primary');
-    const devEntry = screen.getByTestId('project-switcher-flyout-entry-/repo/.ok/worktrees/dev');
+    const devEntry = screen.getByTestId('project-switcher-flyout-entry-/repo/.ps/worktrees/dev');
     expect(devEntry.textContent).toContain('dev');
     expect(devEntry.textContent).toContain('worktree');
 
@@ -409,7 +409,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     fireEvent.click(devEntry);
     await waitFor(() => {
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/dev',
+        path: '/repo/.ps/worktrees/dev',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -421,7 +421,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git', 'theming-as-plugin'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       worktreeModel: model([
         {
@@ -451,8 +451,8 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/older', '/repo/.git', '/repo', 'older', '2026-06-01'),
-        worktree('/repo/.ok/worktrees/newer', '/repo/.git', '/repo', 'newer', '2026-06-30'),
+        worktree('/repo/.ps/worktrees/older', '/repo/.git', '/repo', 'older', '2026-06-01'),
+        worktree('/repo/.ps/worktrees/newer', '/repo/.git', '/repo', 'newer', '2026-06-30'),
       ],
     });
     expect(screen.queryByTestId('project-switcher-toggle-/repo')).toBeNull();
@@ -464,8 +464,8 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     );
     expect(ids).toEqual([
       'project-switcher-flyout-entry-/repo',
-      'project-switcher-flyout-entry-/repo/.ok/worktrees/newer',
-      'project-switcher-flyout-entry-/repo/.ok/worktrees/older',
+      'project-switcher-flyout-entry-/repo/.ps/worktrees/newer',
+      'project-switcher-flyout-entry-/repo/.ps/worktrees/older',
     ]);
   });
 
@@ -489,8 +489,8 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
             prunable: false,
           },
           {
-            checkoutRoot: '/repo/.ok/worktrees/ghost',
-            projectPath: '/repo/.ok/worktrees/ghost',
+            checkoutRoot: '/repo/.ps/worktrees/ghost',
+            projectPath: '/repo/.ps/worktrees/ghost',
             branch: 'ghost',
             headSha: '2',
             location: 'internal',
@@ -509,7 +509,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
         { branch: 'main', worktreePath: '/repo', isCurrent: true, isMain: true, locked: false },
         {
           branch: 'ghost',
-          worktreePath: '/repo/.ok/worktrees/ghost',
+          worktreePath: '/repo/.ps/worktrees/ghost',
           isCurrent: false,
           isMain: false,
           locked: false,
@@ -527,7 +527,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
       );
     });
     expect(
-      screen.getByTestId('project-switcher-flyout-entry-/repo/.ok/worktrees/ghost'),
+      screen.getByTestId('project-switcher-flyout-entry-/repo/.ps/worktrees/ghost'),
     ).not.toBeNull();
     fireEvent.mouseLeave(screen.getByTestId('project-switcher-flyout-/repo'));
     fireEvent.mouseEnter(screen.getByTestId('project-switcher-group-/repo'));
@@ -556,14 +556,14 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       currentPath: '/repo',
       worktreeModel: model([
         { branch: 'main', worktreePath: '/repo', isCurrent: true, isMain: true, locked: false },
         {
           branch: 'dev',
-          worktreePath: '/repo/.ok/worktrees/dev',
+          worktreePath: '/repo/.ps/worktrees/dev',
           isCurrent: false,
           isMain: false,
           locked: false,
@@ -585,7 +585,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     fireEvent.change(searchBox, { target: { value: 'feature' } });
     await waitFor(() => {
       expect(
-        screen.queryByTestId('project-switcher-flyout-entry-/repo/.ok/worktrees/dev'),
+        screen.queryByTestId('project-switcher-flyout-entry-/repo/.ps/worktrees/dev'),
       ).toBeNull();
     });
     expect(screen.getByTestId('project-switcher-flyout-entry-branch:feature-x')).not.toBeNull();
@@ -599,7 +599,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     });
     await waitFor(() => {
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/feature-x',
+        path: '/repo/.ps/worktrees/feature-x',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -613,14 +613,14 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       currentPath: '/repo',
       worktreeModel: model([
         { branch: 'main', worktreePath: '/repo', isCurrent: true, isMain: true, locked: false },
         {
           branch: 'dev',
-          worktreePath: '/repo/.ok/worktrees/dev',
+          worktreePath: '/repo/.ps/worktrees/dev',
           isCurrent: false,
           isMain: false,
           locked: false,
@@ -650,14 +650,14 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       currentPath: '/repo',
       worktreeModel: model([
         { branch: 'main', worktreePath: '/repo', isCurrent: true, isMain: true, locked: false },
         {
           branch: 'dev',
-          worktreePath: '/repo/.ok/worktrees/dev',
+          worktreePath: '/repo/.ps/worktrees/dev',
           isCurrent: false,
           isMain: false,
           locked: false,
@@ -677,7 +677,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       currentPath: '/elsewhere',
       worktreeModel: model(
@@ -709,7 +709,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       currentPath: '/elsewhere',
       worktreeModel: model(
@@ -730,7 +730,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     expect(flyout.textContent).not.toContain('other-branch');
     expect(screen.getByTestId('project-switcher-flyout-entry-/repo')).not.toBeNull();
     expect(
-      screen.getByTestId('project-switcher-flyout-entry-/repo/.ok/worktrees/dev'),
+      screen.getByTestId('project-switcher-flyout-entry-/repo/.ps/worktrees/dev'),
     ).not.toBeNull();
   });
 
@@ -738,7 +738,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
     });
     fireEvent.mouseEnter(screen.getByTestId('project-switcher-group-/repo'));
@@ -780,13 +780,13 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
 
   test('a repo present only via a worktree synthesizes the project row', async () => {
     renderMenu({
-      recents: [worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev')],
+      recents: [worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev')],
     });
-    const groupRow = screen.getByTestId('project-switcher-group-/repo/.ok/worktrees/dev');
-    expect(groupRow.textContent).toContain('/repo/.ok/worktrees/dev');
+    const groupRow = screen.getByTestId('project-switcher-group-/repo/.ps/worktrees/dev');
+    expect(groupRow.textContent).toContain('/repo/.ps/worktrees/dev');
     fireEvent.mouseEnter(groupRow);
-    await screen.findByTestId('project-switcher-flyout-/repo/.ok/worktrees/dev');
-    const devEntry = screen.getByTestId('project-switcher-flyout-entry-/repo/.ok/worktrees/dev');
+    await screen.findByTestId('project-switcher-flyout-/repo/.ps/worktrees/dev');
+    const devEntry = screen.getByTestId('project-switcher-flyout-entry-/repo/.ps/worktrees/dev');
     expect(devEntry).not.toBeNull();
     expect(screen.queryByTestId('project-switcher-flyout-entry-/repo')).toBeNull();
     expect(devEntry.textContent).toContain('worktree');
@@ -960,7 +960,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
 
   test('Enter never opens a disabled recent-only worktree row', async () => {
     const missing = {
-      ...worktree('/repo/.ok/worktrees/missing', '/repo/.git', '/repo', 'missing'),
+      ...worktree('/repo/.ps/worktrees/missing', '/repo/.git', '/repo', 'missing'),
       missing: true,
     };
     const { bridge } = renderMenu({
@@ -969,7 +969,7 @@ describe('RecentProjectsMenu — grouped browse (no query)', () => {
     });
     fireEvent.mouseEnter(screen.getByTestId('project-switcher-group-/repo'));
     const row = await screen.findByTestId(
-      'project-switcher-flyout-entry-/repo/.ok/worktrees/missing',
+      'project-switcher-flyout-entry-/repo/.ps/worktrees/missing',
     );
     expect(row.getAttribute('aria-disabled')).toBe('true');
     expect(row.textContent).toContain('project missing');
@@ -991,8 +991,8 @@ describe('RecentProjectsMenu — flyout keyboard navigation (item 29)', () => {
     const utils = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/older', '/repo/.git', '/repo', 'older', '2026-06-01'),
-        worktree('/repo/.ok/worktrees/newer', '/repo/.git', '/repo', 'newer', '2026-06-30'),
+        worktree('/repo/.ps/worktrees/older', '/repo/.git', '/repo', 'older', '2026-06-01'),
+        worktree('/repo/.ps/worktrees/newer', '/repo/.git', '/repo', 'newer', '2026-06-30'),
       ],
     });
     fireEvent.keyDown(screen.getByTestId('project-switcher-group-/repo'), { key: 'ArrowRight' });
@@ -1019,16 +1019,16 @@ describe('RecentProjectsMenu — flyout keyboard navigation (item 29)', () => {
     expect(document.activeElement).toBe(row('/repo'));
 
     fireEvent.keyDown(row('/repo'), { key: 'ArrowDown' });
-    expect(document.activeElement).toBe(row('/repo/.ok/worktrees/newer'));
-    fireEvent.keyDown(row('/repo/.ok/worktrees/newer'), { key: 'ArrowDown' });
-    expect(document.activeElement).toBe(row('/repo/.ok/worktrees/older'));
+    expect(document.activeElement).toBe(row('/repo/.ps/worktrees/newer'));
+    fireEvent.keyDown(row('/repo/.ps/worktrees/newer'), { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(row('/repo/.ps/worktrees/older'));
 
-    fireEvent.keyDown(row('/repo/.ok/worktrees/older'), { key: 'ArrowDown' });
-    expect(document.activeElement).toBe(row('/repo/.ok/worktrees/older'));
+    fireEvent.keyDown(row('/repo/.ps/worktrees/older'), { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(row('/repo/.ps/worktrees/older'));
 
-    fireEvent.keyDown(row('/repo/.ok/worktrees/older'), { key: 'ArrowUp' });
-    expect(document.activeElement).toBe(row('/repo/.ok/worktrees/newer'));
-    fireEvent.keyDown(row('/repo/.ok/worktrees/newer'), { key: 'ArrowUp' });
+    fireEvent.keyDown(row('/repo/.ps/worktrees/older'), { key: 'ArrowUp' });
+    expect(document.activeElement).toBe(row('/repo/.ps/worktrees/newer'));
+    fireEvent.keyDown(row('/repo/.ps/worktrees/newer'), { key: 'ArrowUp' });
     expect(document.activeElement).toBe(row('/repo'));
   });
 
@@ -1051,12 +1051,12 @@ describe('RecentProjectsMenu — flyout keyboard navigation (item 29)', () => {
 
     fireEvent.keyDown(search, { key: 'ArrowDown' });
     fireEvent.keyDown(row('/repo'), { key: 'ArrowDown' });
-    expect(document.activeElement).toBe(row('/repo/.ok/worktrees/newer'));
+    expect(document.activeElement).toBe(row('/repo/.ps/worktrees/newer'));
 
-    fireEvent.keyDown(row('/repo/.ok/worktrees/newer'), { key: 'Enter' });
+    fireEvent.keyDown(row('/repo/.ps/worktrees/newer'), { key: 'Enter' });
     await waitFor(() => {
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/newer',
+        path: '/repo/.ps/worktrees/newer',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -1074,11 +1074,11 @@ describe('RecentProjectsMenu — flyout keyboard navigation (item 29)', () => {
     fireEvent.change(search, { target: { value: 'newer' } });
     await waitFor(() => {
       expect(
-        screen.queryByTestId('project-switcher-flyout-entry-/repo/.ok/worktrees/older'),
+        screen.queryByTestId('project-switcher-flyout-entry-/repo/.ps/worktrees/older'),
       ).toBeNull();
     });
     fireEvent.keyDown(search, { key: 'ArrowDown' });
-    expect(document.activeElement).toBe(row('/repo/.ok/worktrees/newer'));
+    expect(document.activeElement).toBe(row('/repo/.ps/worktrees/newer'));
   });
 });
 
@@ -1095,17 +1095,17 @@ describe('RecentProjectsMenu — search (cross-project)', () => {
     const { bridge } = renderMenu({
       recents: [
         main('/repo', '/repo/.git'),
-        worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev'),
+        worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev'),
       ],
       query: 'dev',
     });
-    const row = screen.getByTestId('project-switcher-worktree-/repo/.ok/worktrees/dev');
+    const row = screen.getByTestId('project-switcher-worktree-/repo/.ps/worktrees/dev');
     expect(row.textContent).toContain('dev');
     expect(row.textContent).toContain('repo');
     fireEvent.click(row);
     await waitFor(() => {
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/dev',
+        path: '/repo/.ps/worktrees/dev',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -1130,7 +1130,7 @@ describe('RecentProjectsMenu — search (cross-project)', () => {
     });
     await waitFor(() => {
       expect(bridge.project.open).toHaveBeenCalledWith({
-        path: '/repo/.ok/worktrees/feature-x',
+        path: '/repo/.ps/worktrees/feature-x',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -1141,19 +1141,19 @@ describe('RecentProjectsMenu — search (cross-project)', () => {
 
   test('does not double-list a branch already shown as an opened worktree', () => {
     renderMenu({
-      recents: [worktree('/repo/.ok/worktrees/dev', '/repo/.git', '/repo', 'dev')],
+      recents: [worktree('/repo/.ps/worktrees/dev', '/repo/.git', '/repo', 'dev')],
       query: 'dev',
       worktreeModel: model([
         {
           branch: 'dev',
-          worktreePath: '/repo/.ok/worktrees/dev',
+          worktreePath: '/repo/.ps/worktrees/dev',
           isCurrent: false,
           isMain: false,
           locked: false,
         },
       ]),
     });
-    expect(screen.getByTestId('project-switcher-worktree-/repo/.ok/worktrees/dev')).not.toBeNull();
+    expect(screen.getByTestId('project-switcher-worktree-/repo/.ps/worktrees/dev')).not.toBeNull();
     expect(screen.queryByTestId('project-switcher-branch-dev')).toBeNull();
   });
 
@@ -1190,7 +1190,7 @@ describe('RecentProjectsMenu — search (cross-project)', () => {
         ok: false as const,
         reason: 'project-scope-unavailable' as const,
         issue: 'outside-worktree' as const,
-        path: '/repo/.ok/worktrees/feature-x',
+        path: '/repo/.ps/worktrees/feature-x',
         created: true as const,
       }),
     );
@@ -1204,7 +1204,7 @@ describe('RecentProjectsMenu — search (cross-project)', () => {
     fireEvent.click(screen.getByTestId('project-switcher-branch-feature-x'));
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        'The OpenKnowledge project path on this branch leaves the worktree. The worktree was created but not opened.',
+        'The Palimpsest project path on this branch leaves the worktree. The worktree was created but not opened.',
       ),
     );
     expect(refreshWorktrees).toHaveBeenCalledTimes(1);

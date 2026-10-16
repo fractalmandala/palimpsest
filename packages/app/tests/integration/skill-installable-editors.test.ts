@@ -5,7 +5,7 @@ import {
   SkillInstallSuccessSchema,
   SkillsListSuccessSchema,
   USER_SKILL_EDITOR_IDS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestServer, type TestServer } from './test-harness';
@@ -15,7 +15,7 @@ let tmpHome: string;
 const base = () => `http://127.0.0.1:${server.port}`;
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-installable-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-installable-home-'));
   mkdirSync(join(tmpHome, '.agents', 'skills'), { recursive: true });
   mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
   mkdirSync(join(tmpHome, '.gemini'), { recursive: true });

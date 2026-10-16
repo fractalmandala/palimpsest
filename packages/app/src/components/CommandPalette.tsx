@@ -1,14 +1,14 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { WorktreeSelectorEntry } from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+import type { WorktreeSelectorEntry } from '@palimpsest/core/git/worktree-selector-model';
 import {
   assertNeverSemanticQueryOutcome,
   classifySemanticProviderError,
   isSemanticSearchOffered,
   semanticProviderErrorBlocks,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Check, FileText, Folder, GitBranch, Hash, Sparkles } from 'lucide-react';
 import {
@@ -88,9 +88,9 @@ import { useIsEmbedded } from '@/hooks/use-is-embedded';
 import { useSemanticSearchStatus } from '@/hooks/use-semantic-search-status';
 import { useWorktrees } from '@/hooks/use-worktrees';
 import type {
-  OkDesktopBridge,
-  OkMenuAction,
-  OkMenuActionOrigin,
+  PsDesktopBridge,
+  PsMenuAction,
+  PsMenuActionOrigin,
   RecentProjectEntry,
 } from '@/lib/desktop-bridge-types';
 import { hashFromDocName } from '@/lib/doc-hash';
@@ -128,7 +128,7 @@ export const runWithToast = (
 ): Promise<void> => runWithToastBase(fn, fallback, toastApi, 'CommandPalette');
 
 interface CommandPaletteProps {
-  bridge?: OkDesktopBridge | null;
+  bridge?: PsDesktopBridge | null;
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
@@ -285,7 +285,7 @@ export function CommandPalette({ bridge = null, open, onOpenChange }: CommandPal
   const [createDialogKind, setCreateDialogKind] = useState<'file' | 'folder' | null>(null);
   const [seedDialogOpen, setSeedDialogOpen] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
-  const [reportBugOrigin, setReportBugOrigin] = useState<OkMenuActionOrigin | null>(null);
+  const [reportBugOrigin, setReportBugOrigin] = useState<PsMenuActionOrigin | null>(null);
 
   const [reportBugHistoryOpen, setReportBugHistoryOpen] = useState(false);
   const [historyEverOpened, setHistoryEverOpened] = useState(false);
@@ -695,7 +695,7 @@ export function CommandPalette({ bridge = null, open, onOpenChange }: CommandPal
     paletteMode.kind === 'tag-docs' && tagDocsStatus === 'success' && tagDocs.length === 0;
 
   const viewMenuState = useViewMenuState();
-  const runMenuAction = (action: OkMenuAction) => {
+  const runMenuAction = (action: PsMenuAction) => {
     onOpenChange(false);
     emitLocalMenuAction(action, { launcherBorne: true });
   };
@@ -703,7 +703,7 @@ export function CommandPalette({ bridge = null, open, onOpenChange }: CommandPal
     onOpenChange(false);
     openExternalUrlViaHost(
       url,
-      bridge ? { okDesktop: { shell: bridge.shell } } : { okDesktop: undefined },
+      bridge ? { psDesktop: { shell: bridge.shell } } : { psDesktop: undefined },
     );
   };
   const paletteCtx: PaletteCommandContext = {
@@ -1095,7 +1095,7 @@ export function CommandPalette({ bridge = null, open, onOpenChange }: CommandPal
                 {semanticView.notice === 'restart-required' ? (
                   <CommandEmpty data-testid="command-palette-semantic-restart-required">
                     <Trans>
-                      The provider's vector size kept changing. Restart OpenKnowledge before
+                      The provider's vector size kept changing. Restart Palimpsest before
                       searching by meaning again.
                     </Trans>
                   </CommandEmpty>

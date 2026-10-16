@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs';
 import { createServer, type Server as HttpServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DEV_FALLBACK_CLI_REFUSAL } from '@inkeep/open-knowledge-core';
+import { DEV_FALLBACK_CLI_REFUSAL } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { createConcurrencyGuard } from '../local-op-security.ts';
@@ -40,7 +40,7 @@ function buildGroup(overrides: Partial<LocalOpRouteDeps> = {}) {
     contentDir: tmpdir(),
     log: loggerFactory.getLogger('test'),
     checkLocalOpSecurity: () => true,
-    localOpCliArgs: ['open-knowledge'],
+    localOpCliArgs: ['palimpsest'],
     localOpGuard: createConcurrencyGuard(),
     getSyncEngine: undefined,
     authStreamHeartbeatMs: undefined,
@@ -229,7 +229,7 @@ const postJson = (baseUrl: string, path: string, body: unknown): Promise<Respons
 
 describe('auth-login stream displacement (a second start orphans the first client)', () => {
   test('a project whose origin is not a GitHub host refuses GitHub auth routes that name no host', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-local-op-non-github-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-local-op-non-github-'));
     try {
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
@@ -268,9 +268,9 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('the undeclared-host refusal names the Beta user config when the running channel is Beta', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-local-op-beta-home-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-local-op-beta-user-'));
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-local-op-beta-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-local-op-beta-user-'));
+    vi.stubEnv('PS_CHANNEL', 'beta');
     vi.stubEnv('HOME', home);
     vi.stubEnv('USERPROFILE', home);
     try {
@@ -283,8 +283,8 @@ describe('auth-login stream displacement (a second start orphans the first clien
       const res = await postJson(baseUrl, '/api/local-op/auth/status', {});
       expect(res.status).toBe(409);
       const body = (await res.json()) as { detail: string };
-      expect(body.detail).toContain('as github in ~/.ok-beta/global.yml and restart');
-      expect(body.detail).not.toContain('~/.ok/');
+      expect(body.detail).toContain('as github in ~/.ps-beta/global.yml and restart');
+      expect(body.detail).not.toContain('~/.ps/');
     } finally {
       vi.unstubAllEnvs();
       rmSync(projectDir, { recursive: true, force: true });
@@ -293,7 +293,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('gh-login rejects an explicit undeclared host before looking up gh and accepts a declaration', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-gh-login-host-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-gh-login-host-'));
     const probe = vi.fn(async () => null);
     vi.spyOn(ghLogin, 'createGhBinaryPathResolver').mockReturnValue(probe);
     try {
@@ -325,7 +325,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('normalizes rejected explicit hosts without changing accepted network ports', async () => {
-    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-auth-normalized-host-')));
+    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-auth-normalized-host-')));
     try {
       const localOpCliArgs = [
         process.execPath,
@@ -357,7 +357,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('explicit undeclared hosts are refused except for local credential deletion', async () => {
-    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-auth-explicit-host-')));
+    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-auth-explicit-host-')));
     try {
       const localOpCliArgs = [process.execPath, '-e', 'process.exit(0)'];
       const baseUrl = await serveLocalOpGroup({ projectDir, localOpCliArgs });
@@ -379,9 +379,9 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('a dev build without its workspace CLI answers every Stable-changing route with the same refusal', async () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
-    vi.stubEnv('PATH', join(tmpdir(), 'ok-no-cli-on-path'));
-    const homeDir = mkdtempSync(join(tmpdir(), 'ok-dev-fallback-clone-'));
+    vi.stubEnv('PS_CHANNEL', 'dev');
+    vi.stubEnv('PATH', join(tmpdir(), 'ps-no-cli-on-path'));
+    const homeDir = mkdtempSync(join(tmpdir(), 'ps-dev-fallback-clone-'));
     try {
       const baseUrl = await serveLocalOpGroup({ localOpCliArgs: undefined });
       const requests: Array<[string, Record<string, unknown>]> = [
@@ -406,7 +406,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('an unparseable origin reports an unknown host without a false provider classification', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-unparseable-origin-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-unparseable-origin-'));
     try {
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
@@ -424,7 +424,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
   });
 
   test('auth subprocesses run in the project directory instead of the server cwd', async () => {
-    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-auth-cwd-')));
+    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-auth-cwd-')));
     vi.spyOn(ghLogin, 'createGhBinaryPathResolver').mockReturnValue(async () => null);
     try {
       const localOpCliArgs = [
@@ -517,7 +517,7 @@ describe('POST /api/local-op/auth/token', () => {
   });
 
   test('stays open on a project whose origin is not a GitHub host', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-local-op-token-non-github-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-local-op-token-non-github-'));
     try {
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       execFileSync('git', ['remote', 'add', 'origin', 'https://gitlab.example.com/team/kb.git'], {

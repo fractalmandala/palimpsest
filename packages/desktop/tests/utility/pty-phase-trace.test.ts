@@ -51,7 +51,7 @@ function createSession(options: { traced: boolean; platform: 'win32' | 'linux'; 
   setupPtyHost({
     ...(options.traced
       ? {
-          phaseTrace: createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'utility', (record) => {
+          phaseTrace: createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'utility', (record) => {
             records.push(record);
             timeline.push(`${record.phase}:${record.edge}`);
           }),
@@ -102,7 +102,7 @@ test('attributes a controlled slow shell lookup to the shell-resolution phase', 
     resume() {},
   };
   setupPtyHost({
-    phaseTrace: createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
+    phaseTrace: createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
       phases.push(record),
     ),
     env: { SystemRoot: 'C:\\Windows' },
@@ -161,7 +161,7 @@ test('reports an exceptional shell lookup without changing the thrown value', ()
   let original: unknown;
   let caught: unknown;
   setupPtyHost({
-    phaseTrace: createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
+    phaseTrace: createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
       records.push(record),
     ),
     env: {},

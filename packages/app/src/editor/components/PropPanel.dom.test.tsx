@@ -1,4 +1,4 @@
-import { ALLOWED_IMAGE_MIME_TYPES, type PropDef } from '@inkeep/open-knowledge-core';
+import { ALLOWED_IMAGE_MIME_TYPES, type PropDef } from '@palimpsest/core';
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import { toast } from 'sonner';
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -72,7 +72,7 @@ function makeDescriptor(props: PropDef[]): JsxComponentDescriptor {
 test.each(['cover', 'property'] as const)(
   'the %s picker uses preview mode from the shared provider before uploading',
   async (surface) => {
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     const hash = window.location.hash;
     const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
@@ -87,7 +87,7 @@ test.each(['cover', 'property'] as const)(
     );
     const error = vi.spyOn(toast, 'error');
     const onChange = vi.fn();
-    (window as { okDesktop?: unknown }).okDesktop = { config: { singleFile: true } };
+    (window as { psDesktop?: unknown }).psDesktop = { config: { singleFile: true } };
     window.location.hash = '#/preview';
     try {
       const view = render(
@@ -119,7 +119,7 @@ test.each(['cover', 'property'] as const)(
       expect(onChange).not.toHaveBeenCalled();
     } finally {
       cleanup();
-      window.okDesktop = bridge;
+      window.psDesktop = bridge;
       window.location.hash = hash;
       fetch.mockRestore();
       error.mockRestore();

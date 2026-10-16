@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ProblemDetailsSchema, TemplateImportSuccessSchema } from '@inkeep/open-knowledge-core';
+import { ProblemDetailsSchema, TemplateImportSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer, wait } from '../test-harness';
@@ -52,10 +52,10 @@ describe('template import (POST /api/template/import)', () => {
     expect(parsed.success).toBe(true);
     if (parsed.success) {
       expect(parsed.data.created).toBe(true);
-      expect(parsed.data.path).toContain('.ok/templates/src-keep.md');
+      expect(parsed.data.path).toContain('.ps/templates/src-keep.md');
     }
 
-    expect(existsSync(join(server.contentDir, '.ok', 'templates', 'src-keep.md'))).toBe(true);
+    expect(existsSync(join(server.contentDir, '.ps', 'templates', 'src-keep.md'))).toBe(true);
     expect(existsSync(join(server.contentDir, 'src-keep.md'))).toBe(true);
   });
 
@@ -65,7 +65,7 @@ describe('template import (POST /api/template/import)', () => {
     const res = await importTemplate({ sourcePath: 'src-title', targetFolder: '' });
     expect(res.status).toBe(200);
 
-    const tmpl = readFileSync(join(server.contentDir, '.ok', 'templates', 'src-title.md'), 'utf-8');
+    const tmpl = readFileSync(join(server.contentDir, '.ps', 'templates', 'src-title.md'), 'utf-8');
     const occurrences = tmpl.split('UniqueImportTitleXYZ').length - 1;
     expect(occurrences).toBe(1);
   });
@@ -83,7 +83,7 @@ describe('template import (POST /api/template/import)', () => {
     const parsed = TemplateImportSuccessSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
 
-    expect(existsSync(join(server.contentDir, '.ok', 'templates', 'src-convert.md'))).toBe(true);
+    expect(existsSync(join(server.contentDir, '.ps', 'templates', 'src-convert.md'))).toBe(true);
     for (let i = 0; i < 100; i++) {
       if (!existsSync(join(server.contentDir, 'src-convert.md'))) break;
       await wait(50);

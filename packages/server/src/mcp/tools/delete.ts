@@ -29,7 +29,7 @@ import {
 
 const BASE_DESCRIPTION = [
   "Delete exactly one document, folder, template, skill or asset. Requires the Hocuspocus server. Irreversible; deleting a doc leaves inbound redlinks. Call links({kind:'backlinks',document}) BEFORE deleting.",
-  "document: path or paths array; folder: recursive folder path; template: {path:'<folder>/<name>'}; asset: {path:'<folder>/<file.ext>'}. skill: {name} deletes the whole bundle, or {name,files:['references/x.md']} deletes selected files. Template/skill deletion is attributed and cleans empty .ok/ directories.",
+  "document: path or paths array; folder: recursive folder path; template: {path:'<folder>/<name>'}; asset: {path:'<folder>/<file.ext>'}. skill: {name} deletes the whole bundle, or {name,files:['references/x.md']} deletes selected files. Template/skill deletion is attributed and cleans empty .ps/ directories.",
 ].join('\n');
 
 const DESCRIPTION = BASE_DESCRIPTION;

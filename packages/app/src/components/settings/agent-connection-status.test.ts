@@ -5,7 +5,7 @@ import {
   type HostSnapshot,
   type SatisfierId,
   type SurfaceState,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { connectionsFromSnapshot } from './AgentConnectionDialogs';
 import {

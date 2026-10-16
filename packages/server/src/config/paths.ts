@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { LOCAL_DIR, OK_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR, PS_DIR } from '@palimpsest/core';
 import type { Config } from './schema.ts';
 
 export function resolveContentDir(config: Config, cwd: string): string {
@@ -7,7 +7,7 @@ export function resolveContentDir(config: Config, cwd: string): string {
 }
 
 export function getLocalDir(projectDir: string): string {
-  return resolve(projectDir, OK_DIR, LOCAL_DIR);
+  return resolve(projectDir, PS_DIR, LOCAL_DIR);
 }
 
 export function resolveLockDir(projectDir: string): string {

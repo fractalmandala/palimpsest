@@ -13,8 +13,8 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { shellSingleQuote } from '@inkeep/open-knowledge-core';
-import { type Config, readServerLock, resolveLockDir } from '@inkeep/open-knowledge-server';
+import { shellSingleQuote } from '@palimpsest/core';
+import { type Config, readServerLock, resolveLockDir } from '@palimpsest/server';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import {
@@ -38,20 +38,20 @@ import {
 import { runSync } from './sync.ts';
 
 const ORIGIN_URL = `https://${GITHUB_HOST}/alice/demo.git`;
-const OK_TOKEN = 'ok-test-sync-token-in-openknowledges-own-store';
-const GH_TOKEN = 'ok-test-sync-token-the-gh-cli-supplies';
-const STALE_PASSWORD = 'ok-test-sync-stale-password-in-an-ambient-helper';
-const REVOKED_OK_TOKEN = 'ok-test-sync-revoked-token-in-openknowledges-own-store';
-const REVOKED_GH_TOKEN = 'ok-test-sync-revoked-token-the-gh-cli-supplies';
-const DENIED_OK_TOKEN = 'ok-test-sync-token-github-denies-access-to-the-repository';
-const USER_PASSWORD = 'ok-test-sync-users-own-password-in-an-ambient-helper';
-const INHERITED_RELAY_TOKEN = 'ok-test-sync-relay-token-inherited-from-the-environment';
+const PS_TOKEN = 'ps-test-sync-token-in-openknowledges-own-store';
+const GH_TOKEN = 'ps-test-sync-token-the-gh-cli-supplies';
+const STALE_PASSWORD = 'ps-test-sync-stale-password-in-an-ambient-helper';
+const REVOKED_OK_TOKEN = 'ps-test-sync-revoked-token-in-openknowledges-own-store';
+const REVOKED_GH_TOKEN = 'ps-test-sync-revoked-token-the-gh-cli-supplies';
+const DENIED_OK_TOKEN = 'ps-test-sync-token-github-denies-access-to-the-repository';
+const USER_PASSWORD = 'ps-test-sync-users-own-password-in-an-ambient-helper';
+const INHERITED_RELAY_TOKEN = 'ps-test-sync-relay-token-inherited-from-the-environment';
 const AMBIENT_HELPERS = ['env-count', 'env-parameters', 'github-scoped', 'global'];
 const ENTERPRISE_HOST = 'ghe.example.com';
 const ENTERPRISE_URL = `https://${ENTERPRISE_HOST}/alice/demo.git`;
 const ENTERPRISE_USER = {
   username: 'enterprise-user',
-  password: 'ok-test-sync-users-own-enterprise-password',
+  password: 'ps-test-sync-users-own-enterprise-password',
 };
 
 type SyncEvent = { type: string } & Record<string, unknown>;
@@ -71,7 +71,7 @@ type GitRunner = (...args: string[]) => void;
 interface Scenario {
   gitHubAccepts: string;
   gitHubDenies?: string;
-  okStoreToken?: string;
+  psStoreToken?: string;
   ambientCredential?: AmbientCredential;
   enterpriseAccepts?: string;
   enterpriseAmbientCredential?: AmbientCredential;
@@ -133,7 +133,7 @@ function authenticatedRequest(
     : { method: 'POST', path: '/alice/demo.git/git-receive-pack', credential, status: 200 };
 }
 
-describe("ok sync without a running server authenticates through OpenKnowledge's own credential helper", () => {
+describe("ps sync without a running server authenticates through Palimpsest's own credential helper", () => {
   let workspace: string;
   let home: string;
   let projectDir: string;
@@ -156,14 +156,14 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
   });
 
   beforeEach(() => {
-    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ok-sync-credential-')));
+    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ps-sync-credential-')));
     home = join(workspace, 'home');
     projectDir = join(workspace, 'project');
     credentialStore = join(workspace, 'git-credentials');
     helperLog = join(workspace, 'ambient-helper-calls.jsonl');
     cliHelperLog = join(workspace, 'cli-helper-calls.jsonl');
     traceFile = join(workspace, 'git-trace.log');
-    authFile = join(workspace, 'ok-auth.yml');
+    authFile = join(workspace, 'ps-auth.yml');
     helperPhases = join(workspace, 'helper-phases.jsonl');
     phases = [{ stage: 'setup:start', at: Date.now() }];
     vi.stubEnv('HOME', home);
@@ -175,9 +175,9 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       'no_proxy',
       'GIT_SSL_CAINFO',
       'GIT_SSL_NO_VERIFY',
-      'OK_GH_TOKEN',
-      'OK_GH_TOKEN_HOST',
-      'OK_GH_TOKEN_LOGIN',
+      'PS_GH_TOKEN',
+      'PS_GH_TOKEN_HOST',
+      'PS_GH_TOKEN_LOGIN',
     ]) {
       vi.stubEnv(variable, undefined);
     }
@@ -282,8 +282,8 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       'GIT_CONFIG_PARAMETERS',
       gitConfigParameter('credential.helper', recordingHelper('env-parameters')),
     );
-    if (scenario.okStoreToken !== undefined) {
-      await new FileBackend(authFile).set(GITHUB_HOST, 'alice', scenario.okStoreToken, {
+    if (scenario.psStoreToken !== undefined) {
+      await new FileBackend(authFile).set(GITHUB_HOST, 'alice', scenario.psStoreToken, {
         gitProtocol: 'https',
       });
     }
@@ -299,7 +299,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     currentPhases.push({ stage: 'arrange:repository-ready', at: Date.now() });
     const liveness = scenario.ambientCredential ?? {
       username: 'liveness-probe',
-      password: 'ok-test-sync-liveness-probe-password',
+      password: 'ps-test-sync-liveness-probe-password',
     };
     gitCredential('approve', liveness);
     expect(
@@ -479,23 +479,23 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       });
   }
 
-  test("with OpenKnowledge signed in and no ambient credential, ok sync pulls and pushes with OpenKnowledge's token", async () => {
-    const server = await arrange({ gitHubAccepts: OK_TOKEN, okStoreToken: OK_TOKEN });
+  test("with Palimpsest signed in and no ambient credential, ps sync pulls and pushes with Palimpsest's token", async () => {
+    const server = await arrange({ gitHubAccepts: PS_TOKEN, psStoreToken: PS_TOKEN });
 
     const outcome = await syncWith({
       tokenStore: new FileBackend(authFile),
       _detectGhFn: ghUnavailable,
     });
 
-    expectSyncCompletedWith(outcome, server, OK_TOKEN);
-    expectCredentialConfinedToCliHelper(OK_TOKEN);
+    expectSyncCompletedWith(outcome, server, PS_TOKEN);
+    expectCredentialConfinedToCliHelper(PS_TOKEN);
   });
 
-  test("with a stale credential in an ambient helper, OpenKnowledge's helper wins and the ambient helpers are never asked or told", async () => {
+  test("with a stale credential in an ambient helper, Palimpsest's helper wins and the ambient helpers are never asked or told", async () => {
     const stale = { username: 'x-access-token', password: STALE_PASSWORD };
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       ambientCredential: stale,
     });
 
@@ -504,7 +504,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       _detectGhFn: ghUnavailable,
     });
 
-    expectSyncCompletedWith(outcome, server, OK_TOKEN);
+    expectSyncCompletedWith(outcome, server, PS_TOKEN);
     expect
       .soft(
         server.requests.filter((request) => request.credential?.password === STALE_PASSWORD),
@@ -517,10 +517,10 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
         "the stale entry still in the user's credential store",
       )
       .toHaveLength(1);
-    expectCredentialConfinedToCliHelper(OK_TOKEN);
+    expectCredentialConfinedToCliHelper(PS_TOKEN);
   });
 
-  test("with only the gh CLI's token available, ok sync pulls and pushes with it through OpenKnowledge's helper", async () => {
+  test("with only the gh CLI's token available, ps sync pulls and pushes with it through Palimpsest's helper", async () => {
     const server = await arrange({ gitHubAccepts: GH_TOKEN });
 
     const outcome = await syncWith({
@@ -532,7 +532,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expectCredentialConfinedToCliHelper(GH_TOKEN);
   });
 
-  test("signed out of OpenKnowledge with gh unavailable, ok sync keeps using the user's own ambient credential", async () => {
+  test("signed out of Palimpsest with gh unavailable, ps sync keeps using the user's own ambient credential", async () => {
     const own = { username: 'ambient-user', password: USER_PASSWORD };
     const server = await arrange({ gitHubAccepts: USER_PASSWORD, ambientCredential: own });
 
@@ -554,7 +554,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(
         ambientCalls.filter((call) => call.relayToken !== null),
-        'ambient helper calls that inherited an OK_GH_TOKEN relay',
+        'ambient helper calls that inherited an PS_GH_TOKEN relay',
       )
       .toEqual([]);
     expect
@@ -571,9 +571,9 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
   test.each([
     {
       variable: 'GIT_CONFIG_GLOBAL',
-      signIn: "OpenKnowledge's own store",
-      token: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      signIn: "Palimpsest's own store",
+      token: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       detectGh: ghUnavailable,
       stubEnvironment: () => {
         const homeConfig = join(home, '.gitconfig');
@@ -587,7 +587,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       variable: 'GIT_TEMPLATE_DIR',
       signIn: 'the gh CLI',
       token: GH_TOKEN,
-      okStoreToken: undefined,
+      psStoreToken: undefined,
       detectGh: (): GhDetectResult => ({ available: true, token: GH_TOKEN }),
       stubEnvironment: () => {
         const templates = join(workspace, 'empty-templates');
@@ -597,9 +597,9 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     },
     {
       variable: 'GIT_CONFIG_KEY_3=protocol.file.allow',
-      signIn: "OpenKnowledge's own store",
-      token: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      signIn: "Palimpsest's own store",
+      token: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       detectGh: ghUnavailable,
       stubEnvironment: () => {
         vi.stubEnv('GIT_CONFIG_COUNT', '4');
@@ -608,9 +608,9 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       },
     },
   ])(
-    "with $variable in the environment, ok sync signed in through $signIn still pulls and pushes through OpenKnowledge's helper, as the signed-out fallback accepts that environment",
+    "with $variable in the environment, ps sync signed in through $signIn still pulls and pushes through Palimpsest's helper, as the signed-out fallback accepts that environment",
     async (row) => {
-      const server = await arrange({ gitHubAccepts: row.token, okStoreToken: row.okStoreToken });
+      const server = await arrange({ gitHubAccepts: row.token, psStoreToken: row.psStoreToken });
       row.stubEnvironment();
 
       const outcome = await syncWith({
@@ -623,25 +623,25 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     },
   );
 
-  test("with an OK_GH_TOKEN relay for github.com already in its environment, ok sync signed in to OpenKnowledge pulls and pushes with OpenKnowledge's token and never presents the relay's", async () => {
-    const server = await arrange({ gitHubAccepts: OK_TOKEN, okStoreToken: OK_TOKEN });
-    vi.stubEnv('OK_GH_TOKEN', INHERITED_RELAY_TOKEN);
-    vi.stubEnv('OK_GH_TOKEN_HOST', GITHUB_HOST);
-    vi.stubEnv('OK_GH_TOKEN_LOGIN', 'inherited-relay-login');
+  test("with an PS_GH_TOKEN relay for github.com already in its environment, ps sync signed in to Palimpsest pulls and pushes with Palimpsest's token and never presents the relay's", async () => {
+    const server = await arrange({ gitHubAccepts: PS_TOKEN, psStoreToken: PS_TOKEN });
+    vi.stubEnv('PS_GH_TOKEN', INHERITED_RELAY_TOKEN);
+    vi.stubEnv('PS_GH_TOKEN_HOST', GITHUB_HOST);
+    vi.stubEnv('PS_GH_TOKEN_LOGIN', 'inherited-relay-login');
 
     const outcome = await syncWith({
       tokenStore: new FileBackend(authFile),
       _detectGhFn: ghUnavailable,
     });
 
-    expectSyncCompletedWith(outcome, server, OK_TOKEN);
+    expectSyncCompletedWith(outcome, server, PS_TOKEN);
     expect
       .soft(
         server.requests.filter((request) => request.credential?.password === INHERITED_RELAY_TOKEN),
         "requests presenting the inherited relay's token",
       )
       .toEqual([]);
-    expectCredentialConfinedToCliHelper(OK_TOKEN);
+    expectCredentialConfinedToCliHelper(PS_TOKEN);
   });
 
   function signedInSeam(): SyncCredentialSeam {
@@ -666,7 +666,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(server.requests, "the pull's fetch from github.com")
       .toContainEqual(
-        authenticatedRequest('fetch', { username: expect.any(String), password: OK_TOKEN }),
+        authenticatedRequest('fetch', { username: expect.any(String), password: PS_TOKEN }),
       );
     expect
       .soft(enterpriseRequests, "the push's receive-pack on the Enterprise host")
@@ -686,34 +686,34 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       .toEqual([]);
     expect
       .soft(
-        enterpriseRequests.filter((request) => request.credential?.password === OK_TOKEN),
-        "Enterprise requests presenting OpenKnowledge's token",
+        enterpriseRequests.filter((request) => request.credential?.password === PS_TOKEN),
+        "Enterprise requests presenting Palimpsest's token",
       )
       .toEqual([]);
     expect
       .soft(
-        linesCarrying(readFileSync(helperLog, 'utf-8'), OK_TOKEN),
-        "ambient helper calls carrying OpenKnowledge's token",
+        linesCarrying(readFileSync(helperLog, 'utf-8'), PS_TOKEN),
+        "ambient helper calls carrying Palimpsest's token",
       )
       .toEqual([]);
     expect
       .soft(
-        linesCarrying(readFileSync(credentialStore, 'utf-8'), OK_TOKEN),
+        linesCarrying(readFileSync(credentialStore, 'utf-8'), PS_TOKEN),
         'the ambient git-credential-store file',
       )
       .toEqual([]);
     expect
       .soft(
-        linesCarrying(trace, OK_TOKEN),
+        linesCarrying(trace, PS_TOKEN),
         'argv of git pull, git push and their children (GIT_TRACE)',
       )
       .toEqual([]);
   }
 
-  test("with the branch's push remote on an Enterprise host, the pull presents OpenKnowledge's token to github.com and the push the user's own Enterprise credential", async () => {
+  test("with the branch's push remote on an Enterprise host, the pull presents Palimpsest's token to github.com and the push the user's own Enterprise credential", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: (git, github) => {
@@ -731,8 +731,8 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
 
   test("with origin's pushurl on an Enterprise host, the push's credential follows the push URL", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: (git, github) => {
@@ -747,10 +747,10 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expectPullToGitHubAndPushToEnterprise(outcome, server);
   });
 
-  test("with an insteadOf rewrite of github.com to an Enterprise host, ok sync keeps the user's own Enterprise credential and never asks OpenKnowledge's helper", async () => {
+  test("with an insteadOf rewrite of github.com to an Enterprise host, ps sync keeps the user's own Enterprise credential and never asks Palimpsest's helper", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: (git, github) => {
@@ -785,28 +785,28 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       .toEqual([]);
     expect
       .soft(
-        enterpriseRequests.filter((request) => request.credential?.password === OK_TOKEN),
-        "Enterprise requests presenting OpenKnowledge's token",
+        enterpriseRequests.filter((request) => request.credential?.password === PS_TOKEN),
+        "Enterprise requests presenting Palimpsest's token",
       )
       .toEqual([]);
     expect
       .soft(
-        linesCarrying(readFileSync(helperLog, 'utf-8'), OK_TOKEN),
-        "ambient helper calls carrying OpenKnowledge's token",
+        linesCarrying(readFileSync(helperLog, 'utf-8'), PS_TOKEN),
+        "ambient helper calls carrying Palimpsest's token",
       )
       .toEqual([]);
     expect
       .soft(
-        linesCarrying(trace, OK_TOKEN),
+        linesCarrying(trace, PS_TOKEN),
         'argv of git pull, git push and their children (GIT_TRACE)',
       )
       .toEqual([]);
   });
 
-  test("with a single remote not named origin and no upstream, ok push presents OpenKnowledge's token to that remote", async () => {
+  test("with a single remote not named origin and no upstream, ok push presents Palimpsest's token to that remote", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       repository: (git, github) => {
         git('remote', 'add', 'upstream', ORIGIN_URL);
         git('push', github.repositoryDir('alice/demo.git'), 'main:main');
@@ -824,20 +824,20 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(server.requests, "the push's authenticated receive-pack")
       .toContainEqual(
-        authenticatedRequest('push', { username: expect.any(String), password: OK_TOKEN }),
+        authenticatedRequest('push', { username: expect.any(String), password: PS_TOKEN }),
       );
     const main = localAndRemoteMain(server.repositoryDir('alice/demo.git'));
     expect.soft(main.remote, "the remote's main after the push").toBe(main.local);
-    expectCredentialConfinedToCliHelper(OK_TOKEN, {
+    expectCredentialConfinedToCliHelper(PS_TOKEN, {
       tracedCommand: 'push',
       remoteName: 'upstream',
     });
   });
 
-  test("with origin and another remote and no upstream, ok push presents OpenKnowledge's token to origin", async () => {
+  test("with origin and another remote and no upstream, ok push presents Palimpsest's token to origin", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: (git, github) => {
@@ -859,26 +859,26 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(server.requests, "the push's authenticated receive-pack on github.com")
       .toContainEqual(
-        authenticatedRequest('push', { username: expect.any(String), password: OK_TOKEN }),
+        authenticatedRequest('push', { username: expect.any(String), password: PS_TOKEN }),
       );
     const main = localAndRemoteMain(server.repositoryDir('alice/demo.git'));
     expect.soft(main.remote, "github.com's main after the push").toBe(main.local);
     expect
       .soft(server.requestsTo(ENTERPRISE_HOST), 'requests reaching the Enterprise host')
       .toEqual([]);
-    expectCredentialConfinedToCliHelper(OK_TOKEN, { tracedCommand: 'push' });
+    expectCredentialConfinedToCliHelper(PS_TOKEN, { tracedCommand: 'push' });
   });
 
   test.each([
     { form: 'a local path', urlOf: (repository: string) => repository },
     { form: 'a file:// URL', urlOf: (repository: string) => pathToFileURL(repository).href },
   ])(
-    "with origin at $form, ok sync completes as it does today and never asks OpenKnowledge's helper",
+    "with origin at $form, ps sync completes as it does today and never asks Palimpsest's helper",
     async ({ urlOf }) => {
       const localRemote = join(workspace, 'local-remote.git');
       const server = await arrange({
-        gitHubAccepts: OK_TOKEN,
-        okStoreToken: OK_TOKEN,
+        gitHubAccepts: PS_TOKEN,
+        psStoreToken: PS_TOKEN,
         repository: (git) => {
           execFileSync('git', ['init', '--quiet', '--bare', '--initial-branch=main', localRemote]);
           configureTestGitRepository(localRemote);
@@ -906,12 +906,12 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     },
   );
 
-  test("with origin at a plain http:// GitHub URL, ok sync never releases OpenKnowledge's token to a request that would carry it over plain http", async () => {
+  test("with origin at a plain http:// GitHub URL, ps sync never releases Palimpsest's token to a request that would carry it over plain http", async () => {
     const onPath = await startPlainHttpInterceptor();
     interceptor = onPath;
     await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       repository: (git, github) => {
         originUpstreamOnGitHub(git, github);
         git('remote', 'set-url', 'origin', `http://${GITHUB_HOST}/alice/demo.git`);
@@ -927,8 +927,8 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect.soft(outcome.error, 'the error runSync threw').not.toBeNull();
     expect
       .soft(
-        onPath.requests.filter((request) => request.basicCredential?.includes(OK_TOKEN)),
-        "plain-http requests carrying OpenKnowledge's token",
+        onPath.requests.filter((request) => request.basicCredential?.includes(PS_TOKEN)),
+        "plain-http requests carrying Palimpsest's token",
       )
       .toEqual([]);
     expect
@@ -952,9 +952,9 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     _detectGhFn: () => ({ available: true, token: GH_TOKEN }),
   });
 
-  test("with origin on an Enterprise host that is not declared, ok sync keeps the user's own credential even when the gh CLI holds a token for that host", async () => {
+  test("with origin on an Enterprise host that is not declared, ps sync keeps the user's own credential even when the gh CLI holds a token for that host", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: originUpstreamOnEnterprise,
@@ -995,19 +995,19 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(
         ambientCalls.filter((call) => call.relayToken !== null),
-        'ambient helper calls that inherited an OK_GH_TOKEN relay',
+        'ambient helper calls that inherited an PS_GH_TOKEN relay',
       )
       .toEqual([]);
   });
 
-  test("with origin on an Enterprise host declared in ~/.ok/global.yml, ok sync presents the gh CLI's token through OpenKnowledge's helper and never asks the user's own helpers", async () => {
-    mkdirSync(join(home, '.ok'), { recursive: true });
+  test("with origin on an Enterprise host declared in ~/.ps/global.yml, ps sync presents the gh CLI's token through Palimpsest's helper and never asks the user's own helpers", async () => {
+    mkdirSync(join(home, '.ps'), { recursive: true });
     writeFileSync(
-      join(home, '.ok', 'global.yml'),
+      join(home, '.ps', 'global.yml'),
       `git:\n  hosts:\n    ${ENTERPRISE_HOST}:\n      provider: github\n`,
     );
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
       enterpriseAccepts: GH_TOKEN,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: originUpstreamOnEnterprise,
@@ -1034,15 +1034,15 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       .toEqual([]);
   });
 
-  test("with origin on a declared Enterprise host at a non-default port, ok sync keeps the user's own credential and hands no relay to their helpers", async () => {
+  test("with origin on a declared Enterprise host at a non-default port, ps sync keeps the user's own credential and hands no relay to their helpers", async () => {
     const portedHost = `${ENTERPRISE_HOST}:8443`;
-    mkdirSync(join(home, '.ok'), { recursive: true });
+    mkdirSync(join(home, '.ps'), { recursive: true });
     writeFileSync(
-      join(home, '.ok', 'global.yml'),
+      join(home, '.ps', 'global.yml'),
       `git:\n  hosts:\n    ${ENTERPRISE_HOST}:\n      provider: github\n`,
     );
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       repository: (git, github) => {
         git('remote', 'add', 'origin', `https://${portedHost}/alice/demo.git`);
@@ -1077,7 +1077,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(
         ambientCalls.filter((call) => call.relayToken !== null),
-        'ambient helper calls that inherited an OK_GH_TOKEN relay',
+        'ambient helper calls that inherited an PS_GH_TOKEN relay',
       )
       .toEqual([]);
   });
@@ -1087,7 +1087,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     { form: 'a mixed-case host', writtenHost: 'GitHub.com', servedBy: GITHUB_HOST },
     { form: 'the www.github.com alias', writtenHost: 'www.github.com', servedBy: 'www.github.com' },
   ])(
-    "with origin's host written as $form, ok sync keeps the user's own credential, never asks OpenKnowledge's helper and hands no relay to the user's helpers",
+    "with origin's host written as $form, ps sync keeps the user's own credential, never asks Palimpsest's helper and hands no relay to the user's helpers",
     async ({ writtenHost, servedBy }) => {
       const own = { username: 'ambient-user', password: USER_PASSWORD };
       const server = await arrange({
@@ -1125,14 +1125,14 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       expect
         .soft(
           ambientCalls.filter((call) => call.relayToken !== null),
-          'ambient helper calls that inherited an OK_GH_TOKEN relay',
+          'ambient helper calls that inherited an PS_GH_TOKEN relay',
         )
         .toEqual([]);
     },
   );
 
   test.each(['json', 'text'] as const)(
-    "when the remote URL names an account the gh CLI cannot confirm, ok sync's %s output says it used the gh CLI's active account",
+    "when the remote URL names an account the gh CLI cannot confirm, ps sync's %s output says it used the gh CLI's active account",
     async (output) => {
       const server = await arrange({
         gitHubAccepts: GH_TOKEN,
@@ -1168,46 +1168,46 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
               .map((event) => String(event.message))
               .join('\n')
           : outcome.stderr;
-      expect(warned, 'the warning ok sync printed').toContain(
-        "The remote URL names alice, but the GitHub CLI couldn't confirm that account — ok sync used its active account.",
+      expect(warned, 'the warning ps sync printed').toContain(
+        "The remote URL names alice, but the GitHub CLI couldn't confirm that account — ps sync used its active account.",
       );
-      expect(warned, 'the warning ok sync printed').toContain('gh auth status');
+      expect(warned, 'the warning ps sync printed').toContain('gh auth status');
     },
   );
 
   test.each([
     {
-      source: "OpenKnowledge's own stored sign-in",
-      okStoreToken: REVOKED_OK_TOKEN,
+      source: "Palimpsest's own stored sign-in",
+      psStoreToken: REVOKED_OK_TOKEN,
       detectGh: ghUnavailable,
       rejected: REVOKED_OK_TOKEN,
-      named: `OpenKnowledge's GitHub sign-in for ${GITHUB_HOST}`,
+      named: `Palimpsest's GitHub sign-in for ${GITHUB_HOST}`,
       remedy: `ok auth login --host ${GITHUB_HOST}`,
     },
     {
-      source: "OpenKnowledge Beta's own stored sign-in",
+      source: "Palimpsest Beta's own stored sign-in",
       channel: 'beta',
-      okStoreToken: REVOKED_OK_TOKEN,
+      psStoreToken: REVOKED_OK_TOKEN,
       detectGh: ghUnavailable,
       rejected: REVOKED_OK_TOKEN,
-      named: `OpenKnowledge's GitHub sign-in for ${GITHUB_HOST}`,
-      remedy: `ok-beta auth login --host ${GITHUB_HOST}`,
+      named: `Palimpsest's GitHub sign-in for ${GITHUB_HOST}`,
+      remedy: `ps-beta auth login --host ${GITHUB_HOST}`,
     },
     {
       source: "the gh CLI's sign-in",
-      okStoreToken: undefined,
+      psStoreToken: undefined,
       detectGh: (): GhDetectResult => ({ available: true, token: REVOKED_GH_TOKEN }),
       rejected: REVOKED_GH_TOKEN,
       named: `the GitHub CLI's sign-in for ${GITHUB_HOST}`,
       remedy: `gh auth login --hostname ${GITHUB_HOST}`,
     },
   ])(
-    "when GitHub rejects $source while the user's own helper holds a working credential, ok sync's error names the credential it used and how to renew it",
+    "when GitHub rejects $source while the user's own helper holds a working credential, ps sync's error names the credential it used and how to renew it",
     async (row) => {
-      vi.stubEnv('OK_CHANNEL', 'channel' in row ? row.channel : 'stable');
+      vi.stubEnv('PS_CHANNEL', 'channel' in row ? row.channel : 'stable');
       const server = await arrange({
         gitHubAccepts: USER_PASSWORD,
-        okStoreToken: row.okStoreToken,
+        psStoreToken: row.psStoreToken,
         ambientCredential: { username: 'ambient-user', password: USER_PASSWORD },
       });
 
@@ -1225,18 +1225,18 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       const message =
         outcome.error instanceof Error ? outcome.error.message : String(outcome.error);
       expect
-        .soft(message, 'the reason git gave, as ok sync reports it')
+        .soft(message, 'the reason git gave, as ps sync reports it')
         .toContain('Authentication failed');
-      expect.soft(message, 'the credential ok sync reports it used').toContain(row.named);
-      expect.soft(message, 'the renewal command ok sync reports').toContain(`run: ${row.remedy}`);
+      expect.soft(message, 'the credential ps sync reports it used').toContain(row.named);
+      expect.soft(message, 'the renewal command ps sync reports').toContain(`run: ${row.remedy}`);
     },
   );
 
-  test("when github.com denies OpenKnowledge's sign-in access to the repository, ok sync's error names that sign-in and gives no renewal command", async () => {
+  test("when github.com denies Palimpsest's sign-in access to the repository, ps sync's error names that sign-in and gives no renewal command", async () => {
     const server = await arrange({
       gitHubAccepts: USER_PASSWORD,
       gitHubDenies: DENIED_OK_TOKEN,
-      okStoreToken: DENIED_OK_TOKEN,
+      psStoreToken: DENIED_OK_TOKEN,
     });
 
     const outcome = await syncWith(signedInSeam());
@@ -1248,17 +1248,17 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       status: 403,
     });
     const message = outcome.error instanceof Error ? outcome.error.message : String(outcome.error);
-    expect.soft(message, 'the reason git gave, as ok sync reports it').toContain('403');
+    expect.soft(message, 'the reason git gave, as ps sync reports it').toContain('403');
     expect
-      .soft(message, 'the credential ok sync reports it used')
-      .toContain(`OpenKnowledge's GitHub sign-in for ${GITHUB_HOST}`);
+      .soft(message, 'the credential ps sync reports it used')
+      .toContain(`Palimpsest's GitHub sign-in for ${GITHUB_HOST}`);
     expect
-      .soft(message, 'the guidance ok sync gives for a denied account')
+      .soft(message, 'the guidance ps sync gives for a denied account')
       .toContain('check that it has access to the repository');
     expect.soft(message, 'a renewal command in the message').not.toContain('auth login');
   });
 
-  test("when the pull advances a populated submodule on a plain http:// GitHub URL, ok sync never releases OpenKnowledge's credential to the submodule's plain-http request", async () => {
+  test("when the pull advances a populated submodule on a plain http:// GitHub URL, ps sync never releases Palimpsest's credential to the submodule's plain-http request", async () => {
     const onPath = await startPlainHttpInterceptor();
     interceptor = onPath;
     const submoduleSource = join(workspace, 'submodule-source');
@@ -1370,12 +1370,12 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       );
   });
 
-  test("with a second plain http:// push URL on origin, ok push presents OpenKnowledge's token to the https push URL and never to the plain-http one", async () => {
+  test("with a second plain http:// push URL on origin, ok push presents Palimpsest's token to the https push URL and never to the plain-http one", async () => {
     const onPath = await startPlainHttpInterceptor();
     interceptor = onPath;
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       repository: (git, github) => {
         originUpstreamOnGitHub(git, github);
         git('config', '--add', 'remote.origin.pushurl', ORIGIN_URL);
@@ -1387,7 +1387,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     const outcome = await syncWith(signedInSeam(), 'push');
 
     expect(server.requests, "the https push URL's receive-pack").toContainEqual(
-      authenticatedRequest('push', { username: expect.any(String), password: OK_TOKEN }),
+      authenticatedRequest('push', { username: expect.any(String), password: PS_TOKEN }),
     );
     expect(
       onPath.requests.map((request) => request.url),
@@ -1397,12 +1397,12 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     const message = outcome.error instanceof Error ? outcome.error.message : String(outcome.error);
     expect
       .soft(message, 'the failure ok push reports for the plain-http push URL')
-      .not.toContain("OpenKnowledge's GitHub sign-in");
+      .not.toContain("Palimpsest's GitHub sign-in");
     expect.soft(message, 'a renewal command in the message').not.toContain('auth login');
     expect
       .soft(
-        onPath.requests.filter((request) => request.basicCredential?.includes(OK_TOKEN)),
-        "plain-http requests carrying OpenKnowledge's token",
+        onPath.requests.filter((request) => request.basicCredential?.includes(PS_TOKEN)),
+        "plain-http requests carrying Palimpsest's token",
       )
       .toEqual([]);
     expect
@@ -1430,12 +1430,12 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     { spelling: 'in different letter case', writtenHost: 'GitHub.com', source: 'gh' },
     { spelling: 'with an explicit :443', writtenHost: `${GITHUB_HOST}:443`, source: 'gh' },
   ] as const)(
-    "with a second push URL that writes the signed-in host $spelling, ok push answers it from OpenKnowledge's helper with the $source token and never asks the user's own helpers",
+    "with a second push URL that writes the signed-in host $spelling, ok push answers it from Palimpsest's helper with the $source token and never asks the user's own helpers",
     async ({ writtenHost, source }) => {
-      const token = source === 'stored' ? OK_TOKEN : GH_TOKEN;
+      const token = source === 'stored' ? PS_TOKEN : GH_TOKEN;
       const server = await arrange({
         gitHubAccepts: token,
-        ...(source === 'stored' ? { okStoreToken: OK_TOKEN } : {}),
+        ...(source === 'stored' ? { psStoreToken: PS_TOKEN } : {}),
         repository: (git, github) => {
           originUpstreamOnGitHub(git, github);
           git('config', '--add', 'remote.origin.pushurl', ORIGIN_URL);
@@ -1466,7 +1466,7 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
       expect
         .soft(
           readJsonLines<CliHelperCall>(cliHelperLog),
-          "OpenKnowledge's helper asked for the second URL",
+          "Palimpsest's helper asked for the second URL",
         )
         .toContainEqual({
           args: ['auth', 'git-credential', 'get'],
@@ -1479,8 +1479,8 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     },
   );
 
-  test("with OpenKnowledge signed in and no ambient credential, ok pull authenticates its fetch with OpenKnowledge's token", async () => {
-    const server = await arrange({ gitHubAccepts: OK_TOKEN, okStoreToken: OK_TOKEN });
+  test("with Palimpsest signed in and no ambient credential, ok pull authenticates its fetch with Palimpsest's token", async () => {
+    const server = await arrange({ gitHubAccepts: PS_TOKEN, psStoreToken: PS_TOKEN });
 
     const outcome = await syncWith(signedInSeam(), 'pull');
 
@@ -1492,13 +1492,13 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(server.requests, "the pull's authenticated fetch")
       .toContainEqual(
-        authenticatedRequest('fetch', { username: expect.any(String), password: OK_TOKEN }),
+        authenticatedRequest('fetch', { username: expect.any(String), password: PS_TOKEN }),
       );
-    expectCredentialConfinedToCliHelper(OK_TOKEN, { tracedCommand: 'pull' });
+    expectCredentialConfinedToCliHelper(PS_TOKEN, { tracedCommand: 'pull' });
   });
 
-  test("with OpenKnowledge signed in and no ambient credential, ok push authenticates with OpenKnowledge's token", async () => {
-    const server = await arrange({ gitHubAccepts: OK_TOKEN, okStoreToken: OK_TOKEN });
+  test("with Palimpsest signed in and no ambient credential, ok push authenticates with Palimpsest's token", async () => {
+    const server = await arrange({ gitHubAccepts: PS_TOKEN, psStoreToken: PS_TOKEN });
 
     const outcome = await syncWith(signedInSeam(), 'push');
 
@@ -1510,18 +1510,18 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(server.requests, "the push's authenticated receive-pack")
       .toContainEqual(
-        authenticatedRequest('push', { username: expect.any(String), password: OK_TOKEN }),
+        authenticatedRequest('push', { username: expect.any(String), password: PS_TOKEN }),
       );
     const main = localAndRemoteMain(server.repositoryDir('alice/demo.git'));
     expect.soft(main.remote, "the remote's main after the push").toBe(main.local);
-    expectCredentialConfinedToCliHelper(OK_TOKEN, { tracedCommand: 'push' });
+    expectCredentialConfinedToCliHelper(PS_TOKEN, { tracedCommand: 'push' });
   });
 
-  test("with origin at an https URL whose path OpenKnowledge's credential chain cannot read, ok sync keeps the user's own credential and never asks OpenKnowledge's helper", async () => {
+  test("with origin at an https URL whose path Palimpsest's credential chain cannot read, ps sync keeps the user's own credential and never asks Palimpsest's helper", async () => {
     const nestedRepository = 'team/alice/demo.git';
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       enterpriseAccepts: ENTERPRISE_USER.password,
       enterpriseAmbientCredential: ENTERPRISE_USER,
       repository: (git, github) => {
@@ -1566,10 +1566,10 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect.soft(server.requests, 'requests reaching github.com').toEqual([]);
   });
 
-  test("with no remote configured, ok sync still runs git's own pull and reports its failure", async () => {
+  test("with no remote configured, ps sync still runs git's own pull and reports its failure", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       repository: () => {},
     });
 
@@ -1585,10 +1585,10 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect.soft(server.requests, 'requests reaching github.com').toEqual([]);
   });
 
-  test("on a detached HEAD, ok sync's fetch presents OpenKnowledge's token to the only remote", async () => {
+  test("on a detached HEAD, ps sync's fetch presents Palimpsest's token to the only remote", async () => {
     const server = await arrange({
-      gitHubAccepts: OK_TOKEN,
-      okStoreToken: OK_TOKEN,
+      gitHubAccepts: PS_TOKEN,
+      psStoreToken: PS_TOKEN,
       repository: (git, github) => {
         originUpstreamOnGitHub(git, github);
         git('checkout', '--quiet', '--detach');
@@ -1600,8 +1600,8 @@ describe("ok sync without a running server authenticates through OpenKnowledge's
     expect
       .soft(server.requests, "the pull's authenticated fetch")
       .toContainEqual(
-        authenticatedRequest('fetch', { username: expect.any(String), password: OK_TOKEN }),
+        authenticatedRequest('fetch', { username: expect.any(String), password: PS_TOKEN }),
       );
-    expectCredentialConfinedToCliHelper(OK_TOKEN, { tracedCommand: 'fetch' });
+    expectCredentialConfinedToCliHelper(PS_TOKEN, { tracedCommand: 'fetch' });
   });
 });

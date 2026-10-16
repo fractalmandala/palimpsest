@@ -86,7 +86,7 @@ export interface FileSpanExporterOpts {
   maxBytes: number;
 }
 
-const TELEMETRY_SUBDIR = ['.ok', 'local', 'telemetry'] as const;
+const TELEMETRY_SUBDIR = ['.ps', 'local', 'telemetry'] as const;
 const CURRENT_FILENAME = 'spans-current.jsonl';
 const PREVIOUS_FILENAME = 'spans-prev.jsonl';
 
@@ -235,7 +235,7 @@ export class ScrubbingSpanProcessor implements SpanProcessor {
   async shutdown(): Promise<void> {}
 }
 
-const LOGS_SUBDIR = ['.ok', 'local', 'logs'] as const;
+const LOGS_SUBDIR = ['.ps', 'local', 'logs'] as const;
 const LOGS_CURRENT_FILENAME = 'server-current.jsonl';
 const LOGS_PREVIOUS_FILENAME = 'server-prev.jsonl';
 

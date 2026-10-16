@@ -23,8 +23,8 @@ import {
   type WorkspaceSearchIntent,
   type WorkspaceSearchRanking,
   type WorkspaceSearchScope,
-} from '@inkeep/open-knowledge-core';
-import { skillFolderStateForWire } from '@inkeep/open-knowledge-core/skill-folder-state';
+} from '@palimpsest/core';
+import { skillFolderStateForWire } from '@palimpsest/core/skill-folder-state';
 import { z } from 'zod';
 import { fetchGitHubReference, GitHubRateLimitHolds } from '../github-reference/fetch-reference.ts';
 import { GitHubReferenceCache } from '../github-reference/reference-cache.ts';
@@ -67,7 +67,7 @@ const GeneratedIndexSettingsStatusSchema = z.object({
   active: z.boolean(),
   git: z.object({
     state: z.enum(['not-applicable', 'ready', 'missing', 'conflict', 'unavailable']),
-    ownership: z.enum(['open-knowledge', 'existing']).optional(),
+    ownership: z.enum(['palimpsest', 'existing']).optional(),
   }),
   applied: z.boolean().optional(),
   reason: z.enum(['git-conflict', 'git-unavailable', 'config-write']).optional(),
@@ -495,7 +495,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
               res,
               400,
               'urn:ok:error:invalid-request',
-              `That link would create a folder OpenKnowledge may not create on this machine: ${roots.join(', ')}.`,
+              `That link would create a folder Palimpsest may not create on this machine: ${roots.join(', ')}.`,
               { handler: 'skill-targets-put', detail: roots.join(', ') },
             );
           };
@@ -730,7 +730,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
   const LINK_PREVIEW_HANDLER = 'link-preview';
   const linkPreviewCacheDir = ephemeral
     ? null
-    : resolve(projectDir ?? contentDir, '.ok', 'local', 'link-previews');
+    : resolve(projectDir ?? contentDir, '.ps', 'local', 'link-previews');
   const linkPreviewCache = new LinkPreviewCache({ cacheDir: linkPreviewCacheDir });
   let linkPreviewCacheInit: Promise<void> | null = null;
   const ensureLinkPreviewCacheReady = (): Promise<void> => {

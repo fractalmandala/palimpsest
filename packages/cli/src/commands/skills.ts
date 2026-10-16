@@ -1,15 +1,15 @@
 import { resolve as resolvePath } from 'node:path';
-import { currentCliCommandName, isDetectedSkillInProject } from '@inkeep/open-knowledge-core';
-import { resolveProjectIdentity } from '@inkeep/open-knowledge-core/shadow-repo-layout';
-import { enumerateInstalledSkills } from '@inkeep/open-knowledge-core/skills-catalog';
-import { findEnclosingProjectRoot, resolveLockDir } from '@inkeep/open-knowledge-server';
+import { currentCliCommandName, isDetectedSkillInProject } from '@palimpsest/core';
+import { resolveProjectIdentity } from '@palimpsest/core/shadow-repo-layout';
+import { enumerateInstalledSkills } from '@palimpsest/core/skills-catalog';
+import { findEnclosingProjectRoot, resolveLockDir } from '@palimpsest/server';
 import { Command } from 'commander';
 import { accent, dim, error as errorColor, info, success } from '../ui/colors.ts';
 import { inspectLock } from './lock-state.ts';
 
 export function skillsCommand(): Command {
   const skills = new Command('skills').description(
-    'Manage Open Knowledge skills for this project.',
+    'Manage Palimpsest skills for this project.',
   );
 
   skills
@@ -65,7 +65,7 @@ export function skillsCommand(): Command {
       const state = inspectLock(lockDir, 'server');
       if (state.status !== 'alive') {
         process.stderr.write(
-          `${errorColor('Error:')} no running Open Knowledge server for this project. Start it with ${accent(`${currentCliCommandName()} start`)} and retry.\n`,
+          `${errorColor('Error:')} no running Palimpsest server for this project. Start it with ${accent(`${currentCliCommandName()} start`)} and retry.\n`,
         );
         process.exitCode = 1;
         return;

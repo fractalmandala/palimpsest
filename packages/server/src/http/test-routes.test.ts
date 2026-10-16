@@ -103,10 +103,10 @@ describe('POST /api/test-reset scope', () => {
   });
 
   test.each(['false', 'true', ''])(
-    'a server-scope reset naming reset-okignore=%s is refused before anything is reset',
+    'a server-scope reset naming reset-psignore=%s is refused before anything is reset',
     async (value) => {
       const contentDir = contentDirWithTestDoc('kept\n');
-      writeFileSync(join(contentDir, '.okignore'), 'kept-by-request/\n', 'utf-8');
+      writeFileSync(join(contentDir, '.psignore'), 'kept-by-request/\n', 'utf-8');
       const closedSessions: Array<string | undefined> = [];
       const group = buildGroup({
         contentDir,
@@ -118,17 +118,17 @@ describe('POST /api/test-reset scope', () => {
         } as AgentSessionManager,
       });
 
-      const captured = await postTestReset(group, `?scope=server&reset-okignore=${value}`);
+      const captured = await postTestReset(group, `?scope=server&reset-psignore=${value}`);
 
       expect(captured.status).toBe(400);
       expect(JSON.parse(captured.body)).toMatchObject({
         type: 'urn:ok:error:invalid-request',
         title:
-          'reset-okignore cannot be combined with scope=server: a server-scope reset always restores .okignore.',
+          'reset-psignore cannot be combined with scope=server: a server-scope reset always restores .psignore.',
       });
       expect(closedSessions).toEqual([]);
       expect(readFileSync(join(contentDir, 'test-doc.md'), 'utf-8')).toBe('kept\n');
-      expect(readFileSync(join(contentDir, '.okignore'), 'utf-8')).toBe('kept-by-request/\n');
+      expect(readFileSync(join(contentDir, '.psignore'), 'utf-8')).toBe('kept-by-request/\n');
     },
   );
 

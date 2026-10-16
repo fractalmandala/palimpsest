@@ -18,7 +18,7 @@ import {
   rememberAgentMode,
 } from './agent-settings-store';
 
-const STORAGE_KEY = 'ok-acp-agent-settings-v1';
+const STORAGE_KEY = 'ps-acp-agent-settings-v1';
 
 beforeEach(() => localStorage.clear());
 

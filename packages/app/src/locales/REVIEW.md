@@ -1,6 +1,6 @@
 # Locale review and promotion
 
-OpenKnowledge enumerates thirteen interface locales and offers eleven of them in the language
+Palimpsest enumerates thirteen interface locales and offers eleven of them in the language
 picker. The two it withholds are withheld for a layout reason, not a translation one. This file
 records which of the eleven a reader of the language has actually read, which is a different
 question from which ones are offered, and it is the file to update when that changes.
@@ -13,7 +13,7 @@ have not had is a reader — someone who reads the language telling us the words
 backwards: the people who could tell us a translation was wrong were the same people who could
 never encounter it, because it was not offered to them. So the eleven ship, they ship labelled as
 machine-translated where that is what they are, and corrections come back through
-[the translation page](https://openknowledge.ai/docs/contribute/translations) as ordinary pull
+[the translation page](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/contribute/translations.mdx) as ordinary pull
 requests.
 
 What that does not do is let us claim they are reviewed. The table below is the whole of that
@@ -97,7 +97,7 @@ rule is a ratchet on new code, not a statement about the code already there.
 
 None of that is a reason not to review the words. It is a reason not to offer the language while
 the layout renders them wrongly, and it is why the packet below is a file rather than an
-instruction to run the app: a contributor who opened OpenKnowledge in Arabic today would spend
+instruction to run the app: a contributor who opened Palimpsest in Arabic today would spend
 the hour on defects that are not theirs.
 
 This table is parsed, not just read: `scripts/generate-locale-review-packet.mjs` refuses to build
@@ -124,12 +124,12 @@ everything is worth less than a real review of the part that matters. The script
 the rule; so does the packet, so the reviewer knows what they are being handed.
 
 A contributor who *can* run the app should also run it in their language — the picker offers
-eleven of them directly, and `OK_LANG=ar ok start` activates the other two. That is a better
+eleven of them directly, and `PS_LANG=ar ps start` activates the other two. That is a better
 review than the packet. The packet exists so that not being able to do it is not a blocker.
 
 ### 2. Send it out
 
-Community translation runs through public pull requests against `inkeep/open-knowledge`. Attach
+Community translation runs through public pull requests against `fractalmandala/palimpsest`. Attach
 the packet, or paste it into the issue or PR thread. Ask for what the packet asks for: a list of
 numbered strings to change, and what they should say.
 

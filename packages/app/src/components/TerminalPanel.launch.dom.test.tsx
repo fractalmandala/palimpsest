@@ -2,7 +2,7 @@ import {
   buildStartupInjectionBytes,
   type TerminalCli,
   type TerminalLaunchCommand,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -10,9 +10,9 @@ import { ConfigContext, type ConfigContextValue } from '@/lib/config-context';
 import type {
   ClaudeReadiness,
   CliReadiness,
-  OkDesktopBridge,
-  OkPtyData,
-  OkPtyNotice,
+  PsDesktopBridge,
+  PsPtyData,
+  PsPtyNotice,
 } from '@/lib/desktop-bridge-types';
 
 class MockFitAddon {
@@ -81,35 +81,35 @@ vi.doMock('@xterm/xterm/css/xterm.css', () => ({}));
 const WIRED: ClaudeReadiness = {
   claude: 'present',
   mcpPreApprovable: true,
-  okToolsAutoApprovable: true,
-  mcpServerName: 'open-knowledge',
+  psToolsAutoApprovable: true,
+  mcpServerName: 'palimpsest',
 };
 const WIRED_FOREIGN_PROJECT: ClaudeReadiness = {
   claude: 'present',
   mcpPreApprovable: false,
-  okToolsAutoApprovable: false,
+  psToolsAutoApprovable: false,
 };
 const WIRED_GLOBAL_ONLY: ClaudeReadiness = {
   claude: 'present',
   mcpPreApprovable: false,
-  okToolsAutoApprovable: true,
-  mcpServerName: 'open-knowledge',
+  psToolsAutoApprovable: true,
+  mcpServerName: 'palimpsest',
 };
 const ON_PATH: CliReadiness = { onPath: 'present' };
 const CODEX_OK_CONFIGURED: CliReadiness = {
   onPath: 'present',
-  okServerConfigured: true,
-  mcpServerName: 'open-knowledge',
+  psServerConfigured: true,
+  mcpServerName: 'palimpsest',
 };
 
 function makeBridge(
   preflight: ClaudeReadiness = WIRED,
   cliReadiness: CliReadiness = ON_PATH,
-  platform: OkDesktopBridge['platform'] = 'darwin',
+  platform: PsDesktopBridge['platform'] = 'darwin',
   cliCommandName: string | null = 'ok',
 ) {
-  const dataSubs: Array<(m: OkPtyData) => void> = [];
-  const noticeSubs: Array<(m: OkPtyNotice) => void> = [];
+  const dataSubs: Array<(m: PsPtyData) => void> = [];
+  const noticeSubs: Array<(m: PsPtyNotice) => void> = [];
   const terminal = {
     create: vi.fn(
       async (_opts: {
@@ -138,12 +138,12 @@ function makeBridge(
         replay: '',
       }),
     ),
-    onData: vi.fn((cb: (m: OkPtyData) => void) => {
+    onData: vi.fn((cb: (m: PsPtyData) => void) => {
       dataSubs.push(cb);
       return vi.fn(() => {});
     }),
     onExit: vi.fn(() => vi.fn(() => {})),
-    onNotice: vi.fn((cb: (m: OkPtyNotice) => void) => {
+    onNotice: vi.fn((cb: (m: PsPtyNotice) => void) => {
       noticeSubs.push(cb);
       return vi.fn(() => {});
     }),
@@ -157,12 +157,12 @@ function makeBridge(
       config: { e2eSmoke: false },
       platform,
       cliCommandName,
-    } as unknown as OkDesktopBridge,
+    } as unknown as PsDesktopBridge,
     terminal,
-    pushData: (m: OkPtyData) => {
+    pushData: (m: PsPtyData) => {
       for (const f of dataSubs) f(m);
     },
-    pushNotice: (m: OkPtyNotice) => {
+    pushNotice: (m: PsPtyNotice) => {
       for (const f of noticeSubs) f(m);
     },
   };
@@ -209,14 +209,14 @@ function launchInputWrites(inputMock: ReturnType<typeof vi.fn>): string[] {
 
 const CLAUDE_PRE = [
   '--settings',
-  '{"enabledMcpjsonServers":["open-knowledge"],"permissions":{"allow":["mcp__open-knowledge","Bash(ok open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}}',
+  '{"enabledMcpjsonServers":["palimpsest"],"permissions":{"allow":["mcp__palimpsest","Bash(ps open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}}',
 ];
 
-const CLAUDE_TRUST_ONLY = ['--settings', '{"enabledMcpjsonServers":["open-knowledge"]}'];
+const CLAUDE_TRUST_ONLY = ['--settings', '{"enabledMcpjsonServers":["palimpsest"]}'];
 
 const CLAUDE_AUTO_ONLY = [
   '--settings',
-  '{"permissions":{"allow":["mcp__open-knowledge","Bash(ok open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}}',
+  '{"permissions":{"allow":["mcp__palimpsest","Bash(ps open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}}',
 ];
 
 function renderWithAutoApproveOff(ui: ReactElement) {
@@ -255,7 +255,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
 
   test("bakes `claude --settings '<json>' '<escaped prompt>'` into create — no `\\r`, never via input", async () => {
     const { bridge, terminal } = makeBridge(WIRED);
-    const prompt = "Let's work on `foo.md` using OpenKnowledge.";
+    const prompt = "Let's work on `foo.md` using Palimpsest.";
     render(<TerminalPanel bridge={bridge} launch={{ prompt, cli: 'claude', nonce: 1 }} />);
 
     await waitFor(() => expect(terminal.create).toHaveBeenCalledTimes(1));
@@ -296,19 +296,19 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     const launch = bakedLaunch(terminal.create);
     expect(launch).toMatchObject({
       executable: 'claude',
-      args: ['--settings', '.ok/local/terminal/claude-settings-mcp-tools.json'],
+      args: ['--settings', '.ps/local/terminal/claude-settings-mcp-tools.json'],
       supportFile: {
         kind: 'claude-settings',
-        relativePath: '.ok/local/terminal/claude-settings-mcp-tools.json',
+        relativePath: '.ps/local/terminal/claude-settings-mcp-tools.json',
       },
     });
     if (typeof launch !== 'object' || launch === null || launch.supportFile === undefined) {
       throw new Error('expected a structured Claude launch with settings support file');
     }
     expect(JSON.parse(launch.supportFile.contents)).toEqual({
-      enabledMcpjsonServers: ['open-knowledge'],
+      enabledMcpjsonServers: ['palimpsest'],
       permissions: {
-        allow: ['mcp__open-knowledge', 'Bash(ok open:*)'],
+        allow: ['mcp__palimpsest', 'Bash(ps open:*)'],
         ask: [
           'mcp__open-knowledge__delete',
           'mcp__open-knowledge__move',
@@ -419,7 +419,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     await waitFor(() => expect(terminal.create).toHaveBeenCalledTimes(1));
     expect(bakedLaunch(terminal.create)).toEqual({
       executable: 'codex',
-      args: ['-c', 'mcp_servers.open-knowledge.default_tools_approval_mode=approve'],
+      args: ['-c', 'mcp_servers.palimpsest.default_tools_approval_mode=approve'],
     });
     pushData({ ptyId: 'pty-1', data: '\x1b[?2004h' });
     const submittedBytes = buildStartupInjectionBytes('codex', 'review this', 'win32');
@@ -698,17 +698,17 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(bakedArgv(terminal.create)).toEqual([
       'codex',
       '-c',
-      'mcp_servers.open-knowledge.default_tools_approval_mode="approve"',
+      'mcp_servers.palimpsest.default_tools_approval_mode="approve"',
       'hi',
     ]);
   });
 
   test('claude pre-approves the open command of the channel main named', async () => {
     const beta = makeBridge(
-      { ...WIRED, mcpServerName: 'open-knowledge-beta' },
+      { ...WIRED, mcpServerName: 'palimpsest-beta' },
       ON_PATH,
       'darwin',
-      'ok-beta',
+      'ps-beta',
     );
     render(
       <TerminalPanel bridge={beta.bridge} launch={{ prompt: 'hi', cli: 'claude', nonce: 1 }} />,
@@ -718,8 +718,8 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
       permissions: { allow: string[] };
     };
     expect(settings.permissions.allow).toEqual([
-      'mcp__open-knowledge-beta',
-      'Bash(ok-beta open:*)',
+      'mcp__palimpsest-beta',
+      'Bash(ps-beta open:*)',
     ]);
     cleanup();
 
@@ -734,7 +734,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
   test('codex auto-approves only the server name main checked, and nothing without one', async () => {
     const beta = makeBridge(WIRED, {
       ...CODEX_OK_CONFIGURED,
-      mcpServerName: 'open-knowledge-beta',
+      mcpServerName: 'palimpsest-beta',
     });
     render(
       <TerminalPanel bridge={beta.bridge} launch={{ prompt: 'hi', cli: 'codex', nonce: 1 }} />,
@@ -743,12 +743,12 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(bakedArgv(beta.terminal.create)).toEqual([
       'codex',
       '-c',
-      'mcp_servers.open-knowledge-beta.default_tools_approval_mode="approve"',
+      'mcp_servers.palimpsest-beta.default_tools_approval_mode="approve"',
       'hi',
     ]);
     cleanup();
 
-    const unnamed = makeBridge(WIRED, { onPath: 'present', okServerConfigured: true });
+    const unnamed = makeBridge(WIRED, { onPath: 'present', psServerConfigured: true });
     render(
       <TerminalPanel bridge={unnamed.bridge} launch={{ prompt: 'hi', cli: 'codex', nonce: 1 }} />,
     );
@@ -759,7 +759,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
   test('codex stays BARE (no -c) when OK is not configured in codex — the launch never breaks', async () => {
     const { bridge, terminal } = makeBridge(WIRED, {
       onPath: 'present',
-      okServerConfigured: false,
+      psServerConfigured: false,
     });
     render(<TerminalPanel bridge={bridge} launch={{ prompt: 'hi', cli: 'codex', nonce: 1 }} />);
 
@@ -900,19 +900,19 @@ describe('the two --settings halves are gated independently, across all four MCP
   const PROJECT_ONLY: ClaudeReadiness = {
     claude: 'present',
     mcpPreApprovable: true,
-    okToolsAutoApprovable: true,
-    mcpServerName: 'open-knowledge',
+    psToolsAutoApprovable: true,
+    mcpServerName: 'palimpsest',
   };
   const BOTH_SCOPES: ClaudeReadiness = {
     claude: 'present',
     mcpPreApprovable: true,
-    okToolsAutoApprovable: true,
-    mcpServerName: 'open-knowledge',
+    psToolsAutoApprovable: true,
+    mcpServerName: 'palimpsest',
   };
   const NEITHER_SCOPE: ClaudeReadiness = {
     claude: 'present',
     mcpPreApprovable: false,
-    okToolsAutoApprovable: false,
+    psToolsAutoApprovable: false,
   };
 
   beforeEach(() => {
@@ -950,22 +950,22 @@ describe('the two --settings halves are gated independently, across all four MCP
     expect(baked).not.toContain('--settings');
   });
 
-  test('a foreign project entry named open-knowledge bakes NOTHING, even alongside a legit global entry', async () => {
+  test('a foreign project entry named palimpsest bakes NOTHING, even alongside a legit global entry', async () => {
     const baked = await bakeClaudeLaunch({
       claude: 'present',
       mcpPreApprovable: false,
-      okToolsAutoApprovable: false,
+      psToolsAutoApprovable: false,
     });
     expect(baked).toEqual(['claude', 'hi']);
     expect(baked).not.toContain('--settings');
   });
 
-  test('names only the server main checked: a Beta verdict never approves open-knowledge', async () => {
-    const baked = await bakeClaudeLaunch({ ...BOTH_SCOPES, mcpServerName: 'open-knowledge-beta' });
+  test('names only the server main checked: a Beta verdict never approves palimpsest', async () => {
+    const baked = await bakeClaudeLaunch({ ...BOTH_SCOPES, mcpServerName: 'palimpsest-beta' });
     const bakedText = String(baked);
-    expect(bakedText).toContain('"enabledMcpjsonServers":["open-knowledge-beta"]');
-    expect(bakedText).toContain('"mcp__open-knowledge-beta__delete"');
-    expect(bakedText.replaceAll('open-knowledge-beta', '')).not.toContain('open-knowledge');
+    expect(bakedText).toContain('"enabledMcpjsonServers":["palimpsest-beta"]');
+    expect(bakedText).toContain('"mcp__palimpsest-beta__delete"');
+    expect(bakedText.replaceAll('palimpsest-beta', '')).not.toContain('palimpsest');
   });
 
   test('a verdict that carries no server name bakes a bare launch, never a guessed name', async () => {

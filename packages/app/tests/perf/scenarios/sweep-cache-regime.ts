@@ -41,27 +41,27 @@ export interface SweepRunOptions {
 export type SweepRunOptionsEnv = Readonly<Record<string, string | undefined>>;
 
 export function parseSweepRunOptions(env: SweepRunOptionsEnv = process.env): SweepRunOptions {
-  const rawFixture = (env.OK_SWEEP_FIXTURE ?? 'all').trim().toLowerCase();
+  const rawFixture = (env.PS_SWEEP_FIXTURE ?? 'all').trim().toLowerCase();
   const fixtures: WorkloadFixtureRef[] =
     rawFixture === 'all' ? [...ALL_FIXTURES] : ALL_FIXTURES.filter((f) => f === rawFixture);
   if (fixtures.length === 0) {
     throw new Error(
-      `OK_SWEEP_FIXTURE="${env.OK_SWEEP_FIXTURE}" — expected one of: tight, broad, asymmetric, all`,
+      `PS_SWEEP_FIXTURE="${env.PS_SWEEP_FIXTURE}" — expected one of: tight, broad, asymmetric, all`,
     );
   }
 
-  const rawStage = (env.OK_SWEEP_STAGE ?? 'all').trim().toLowerCase();
+  const rawStage = (env.PS_SWEEP_STAGE ?? 'all').trim().toLowerCase();
   const stages: SweepStage[] =
     rawStage === 'all' ? [...ALL_STAGES] : ALL_STAGES.filter((s) => String(s) === rawStage);
   if (stages.length === 0) {
-    throw new Error(`OK_SWEEP_STAGE="${env.OK_SWEEP_STAGE}" — expected one of: 1, 2, 3, 4, all`);
+    throw new Error(`PS_SWEEP_STAGE="${env.PS_SWEEP_STAGE}" — expected one of: 1, 2, 3, 4, all`);
   }
 
   return {
     fixtures,
     stages,
-    resume: env.OK_SWEEP_RESUME === '1',
-    prodValidation: env.OK_SWEEP_PROD_VALIDATION === '1',
+    resume: env.PS_SWEEP_RESUME === '1',
+    prodValidation: env.PS_SWEEP_PROD_VALIDATION === '1',
   };
 }
 
@@ -77,8 +77,8 @@ export function getFixtureByRef(ref: WorkloadFixtureRef): WorkloadFixture {
 }
 
 function detectHostClass(): HostClassFingerprint {
-  const cpu = process.env.OK_HOST_CPU ?? 'unknown';
-  const totalRamGb = Number(process.env.OK_HOST_RAM_GB ?? 16);
+  const cpu = process.env.PS_HOST_CPU ?? 'unknown';
+  const totalRamGb = Number(process.env.PS_HOST_RAM_GB ?? 16);
   const osVersion = process.platform === 'darwin' ? 'darwin' : process.platform;
   return {
     cpuModel: cpu,

@@ -19,7 +19,7 @@ function release(
     draft = false,
     prerelease = true,
     assetNames = [BETA_DMG_ASSET_NAME],
-    assetHost = 'https://github.com/inkeep/open-knowledge/releases/download',
+    assetHost = 'https://github.com/fractalmandala/palimpsest/releases/download',
   } = opts;
   return {
     tag_name: tag,
@@ -33,7 +33,7 @@ function release(
 }
 
 function dmgUrl(tag: string, assetName = BETA_DMG_ASSET_NAME) {
-  return `https://github.com/inkeep/open-knowledge/releases/download/${tag}/${assetName}`;
+  return `https://github.com/fractalmandala/palimpsest/releases/download/${tag}/${assetName}`;
 }
 
 function jsonResponse(payload: unknown, status = 200) {
@@ -300,7 +300,7 @@ describe('toRedirectResponse', () => {
 describe('STABLE_DMG_URL', () => {
   test('targets the GitHub latest alias with the shared asset name', () => {
     expect(STABLE_DMG_URL).toBe(
-      `https://github.com/inkeep/open-knowledge/releases/latest/download/${DMG_ASSET_NAME}`,
+      `https://github.com/fractalmandala/palimpsest/releases/latest/download/${DMG_ASSET_NAME}`,
     );
   });
 });

@@ -12,7 +12,7 @@ let witness: string;
 const at = (...segments: string[]): string => join(root, ...segments);
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-fs-copy-observer-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-fs-copy-observer-'));
   source = join(root, 'source');
   mkdirSync(source, { recursive: true });
   writeFileSync(join(source, 'file.txt'), 'source bytes');

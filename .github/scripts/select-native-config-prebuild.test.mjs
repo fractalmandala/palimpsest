@@ -75,7 +75,7 @@ const JUDGE = join(REPO_ROOT, '.github', 'scripts', 'assert-native-set.mjs');
 const { NODE_PATH: _pnpmShimPath, ...judgeEnv } = process.env;
 
 const runJudge = (yaml, { staged, env }) => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-native-staging-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-native-staging-'));
   try {
     const nativeConfig = join(dir, 'packages', 'native-config');
     mkdirSync(nativeConfig, { recursive: true });
@@ -111,7 +111,7 @@ const runJudge = (yaml, { staged, env }) => {
 };
 
 const runDownloadBindings = (yaml, { failures }) => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-native-download-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-native-download-'));
   try {
     const bin = join(dir, 'bin');
     mkdirSync(bin, { recursive: true });
@@ -149,7 +149,7 @@ const runDownloadBindings = (yaml, { failures }) => {
 };
 
 const runQaStaging = ({ gh, platforms }) => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-qa-staging-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-qa-staging-'));
   try {
     const nativeConfig = join(dir, 'packages', 'native-config');
     mkdirSync(nativeConfig, { recursive: true });
@@ -409,8 +409,8 @@ describe('git boundary', () => {
   });
 
   test('against real git: absent commits and paths are answers, and a missing repository throws', () => {
-    const repo = mkdtempSync(join(tmpdir(), 'ok-select-prebuild-git-'));
-    const outside = mkdtempSync(join(tmpdir(), 'ok-select-prebuild-nogit-'));
+    const repo = mkdtempSync(join(tmpdir(), 'ps-select-prebuild-git-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-select-prebuild-nogit-'));
     const env = { ...gitCleanEnv(), GIT_CEILING_DIRECTORIES: dirname(outside) };
     try {
       const git = (...args) =>

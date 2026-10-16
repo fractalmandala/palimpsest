@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SERVER_CRASH_LOG } from '@inkeep/open-knowledge-core';
+import { SERVER_CRASH_LOG } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   buildCrashRecord,
@@ -15,7 +15,7 @@ let projectDir: string;
 const handles: CrashCaptureHandle[] = [];
 
 beforeEach(async () => {
-  projectDir = await mkdtemp(join(tmpdir(), 'ok-crash-capture-'));
+  projectDir = await mkdtemp(join(tmpdir(), 'ps-crash-capture-'));
 });
 
 afterEach(async () => {
@@ -27,8 +27,8 @@ function emitMonitor(err: unknown, origin: string): void {
   (process as unknown as NodeJS.EventEmitter).emit('uncaughtExceptionMonitor', err, origin);
 }
 
-const crashJsonPath = () => join(projectDir, '.ok', 'local', SERVER_CRASH_LOG);
-const logsPath = () => join(projectDir, '.ok', 'local', 'logs', 'server-current.jsonl');
+const crashJsonPath = () => join(projectDir, '.ps', 'local', SERVER_CRASH_LOG);
+const logsPath = () => join(projectDir, '.ps', 'local', 'logs', 'server-current.jsonl');
 
 describe('buildCrashRecord', () => {
   test('captures name, message, stack, pid, uptime from an Error', () => {
@@ -70,7 +70,7 @@ describe('writeCrashArtifacts', () => {
   });
 
   test('appends to an existing log sink file instead of truncating it', () => {
-    mkdirSync(join(projectDir, '.ok', 'local', 'logs'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', 'local', 'logs'), { recursive: true });
     writeFileSync(logsPath(), '{"level":30,"msg":"earlier"}\n');
     writeCrashArtifacts(projectDir, buildCrashRecord(new Error('later'), 'uncaughtException'));
     const lines = readFileSync(logsPath(), 'utf-8').trim().split('\n');
@@ -97,8 +97,8 @@ describe('writeCrashArtifacts', () => {
   });
 
   test('swallows write failures instead of throwing', () => {
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'local'), 'not a directory');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'local'), 'not a directory');
     expect(() =>
       writeCrashArtifacts(projectDir, buildCrashRecord(new Error('x'), 'uncaughtException')),
     ).not.toThrow();

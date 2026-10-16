@@ -9,10 +9,10 @@ import {
   desktopChannelLabel,
   desktopWindowsExecutableName,
   desktopWindowsInstallDirNames,
-  OK_CHANNEL_ENV,
+  PS_CHANNEL_ENV,
   PACKAGED_DESKTOP_PRODUCT_NAMES,
   resolveDesktopProductName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { spawnDetachedScrubbed } from '../utils/detached-spawn.ts';
 
 export const DESKTOP_BUNDLE_ID = DESKTOP_PRODUCTS.stable.appId;
@@ -34,7 +34,7 @@ export function runningDesktopProduct(
   try {
     return resolveDesktopProductName(env, execPath);
   } catch (err) {
-    const product = resolveDesktopProductName({ ...env, [OK_CHANNEL_ENV]: undefined }, execPath);
+    const product = resolveDesktopProductName({ ...env, [PS_CHANNEL_ENV]: undefined }, execPath);
     warn(
       `Treating this CLI as ${desktopChannelLabel(product)} for this command: ${err instanceof Error ? err.message : String(err)}`,
     );
@@ -201,7 +201,7 @@ function resolveLinuxExecutable(
 export function detectDesktop(deps: DetectDeps): DetectResult {
   const cliProduct = runningDesktopProduct(deps.env, deps.execPath, deps.warn);
 
-  if (deps.env.OK_FORCE_BROWSER === '1') {
+  if (deps.env.PS_FORCE_BROWSER === '1') {
     return { available: false, reason: 'force-browser', cliProduct };
   }
 
@@ -226,7 +226,7 @@ export function detectDesktop(deps: DetectDeps): DetectResult {
   }
   const app = { bundlePath: resolved.path, product: resolved.product, cliProduct };
 
-  if (deps.env.OK_FORCE_DESKTOP === '1') {
+  if (deps.env.PS_FORCE_DESKTOP === '1') {
     return { available: true, reason: 'available', ...app };
   }
 
@@ -259,7 +259,7 @@ export function launchDesktop(deps: LaunchDeps, detection: DetectResult): void {
   const { productName } = DESKTOP_PRODUCTS[detection.product];
   const [cliCommandName] = DESKTOP_PRODUCTS[detection.cliProduct].cliCommandNames;
   log(
-    `Launching ${productName} desktop (use \`${cliCommandName} start\` for the browser server, or \`OK_FORCE_BROWSER=1\` to always skip)`,
+    `Launching ${productName} desktop (use \`${cliCommandName} start\` for the browser server, or \`PS_FORCE_BROWSER=1\` to always skip)`,
   );
   const target = detection.bundlePath;
   if (platform === 'darwin') {
@@ -272,14 +272,14 @@ export function launchDesktop(deps: LaunchDeps, detection: DetectResult): void {
 export function notFoundMessage(reason: DetectReason = 'no-bundle'): string {
   switch (reason) {
     case 'no-bundle':
-      return 'Desktop app not found (checked the standard install locations for this OS). Install it from https://openknowledge.ai/download, or omit --mode for browser mode.';
+      return 'Desktop app not found (checked the standard install locations for this OS). Install it from https://github.com/fractalmandala/palimpsest/download, or omit --mode for browser mode.';
     case 'darwin-only':
     case 'unsupported-platform':
       return 'Desktop app is not available on this platform. Use --mode=browser, or omit --mode for the server fallback.';
     case 'headless':
-      return 'Desktop launch is gated in headless contexts (CI, SSH, non-TTY stdout). Set OK_FORCE_DESKTOP=1 to override, or use --mode=browser.';
+      return 'Desktop launch is gated in headless contexts (CI, SSH, non-TTY stdout). Set PS_FORCE_DESKTOP=1 to override, or use --mode=browser.';
     case 'force-browser':
-      return 'OK_FORCE_BROWSER=1 is set — desktop dispatch is disabled. Unset it to use --mode=app.';
+      return 'PS_FORCE_BROWSER=1 is set — desktop dispatch is disabled. Unset it to use --mode=app.';
     case 'stat-error':
       return 'Failed to inspect the desktop install (filesystem error). Check permissions or use --mode=browser.';
     case 'available':

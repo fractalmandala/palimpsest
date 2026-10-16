@@ -22,20 +22,20 @@ function write(root: string, path: string, text = ''): void {
 }
 
 function freshSlot(): string {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-fresh-slot-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-fresh-slot-')));
   roots.push(root);
   write(root, 'test-doc.md');
   write(root, 'sidebar-folder/nested-doc.md');
   mkdirSync(join(root, '.claude', 'skills'), { recursive: true });
-  mkdirSync(join(root, '.ok', 'skills'), { recursive: true });
-  write(root, '.ok/local/cache/main/backlinks.json', '{}');
-  write(root, '.ok/local/cache/tags.json', '{}');
-  write(root, '.ok/local/principal.json', '{}');
-  write(root, '.ok/local/server.lock', '{}');
-  write(root, '.ok/local/state.json', '{}');
-  write(root, '.ok/local/acp-registry-cache.json', '{}');
-  write(root, '.ok/local/stale-external-writes.json', '{}');
-  write(root, '.ok/local/removed-docs.json', '{}');
+  mkdirSync(join(root, '.ps', 'skills'), { recursive: true });
+  write(root, '.ps/local/cache/main/backlinks.json', '{}');
+  write(root, '.ps/local/cache/tags.json', '{}');
+  write(root, '.ps/local/principal.json', '{}');
+  write(root, '.ps/local/server.lock', '{}');
+  write(root, '.ps/local/state.json', '{}');
+  write(root, '.ps/local/acp-registry-cache.json', '{}');
+  write(root, '.ps/local/stale-external-writes.json', '{}');
+  write(root, '.ps/local/removed-docs.json', '{}');
   write(root, '.git/HEAD', 'ref: refs/heads/main\n');
   return root;
 }
@@ -47,16 +47,16 @@ describe('a reset slot is compared with what a freshly booted server holds', () 
 
   test('saved settings of every scope are residue', () => {
     const root = freshSlot();
-    write(root, '.ok/config.yml', 'content: {}\n');
-    write(root, '.ok/local/config.yml', 'search: {}\n');
-    write(root, '.ok/global.yml', 'appearance:\n  theme: dark\n');
-    write(root, '.ok/themes/mine.yaml', 'scheme: mine\n');
+    write(root, '.ps/config.yml', 'content: {}\n');
+    write(root, '.ps/local/config.yml', 'search: {}\n');
+    write(root, '.ps/global.yml', 'appearance:\n  theme: dark\n');
+    write(root, '.ps/themes/mine.yaml', 'scheme: mine\n');
 
     expect(freshSlotResidue(root, FIXTURE_DOCS)).toEqual([
-      '.ok/config.yml is not in a freshly booted slot',
-      '.ok/global.yml is not in a freshly booted slot',
-      '.ok/local/config.yml is not in a freshly booted slot',
-      '.ok/themes is not in a freshly booted slot',
+      '.ps/config.yml is not in a freshly booted slot',
+      '.ps/global.yml is not in a freshly booted slot',
+      '.ps/local/config.yml is not in a freshly booted slot',
+      '.ps/themes is not in a freshly booted slot',
     ]);
   });
 
@@ -79,20 +79,20 @@ describe('a reset slot is compared with what a freshly booted server holds', () 
 
   test('an installed skill and a non-empty ignore file are residue while an empty ignore file is not', () => {
     const root = freshSlot();
-    write(root, '.okignore', '');
+    write(root, '.psignore', '');
     expect(freshSlotResidue(root, FIXTURE_DOCS)).toEqual([]);
 
-    write(root, '.okignore', 'drafts/\n');
+    write(root, '.psignore', 'drafts/\n');
     write(root, '.claude/skills/helper/SKILL.md', '---\nname: helper\n---\n');
     expect(freshSlotResidue(root, FIXTURE_DOCS)).toEqual([
       '.claude/skills/helper is not in a freshly booted slot',
-      '.okignore is not empty',
+      '.psignore is not empty',
     ]);
   });
 
   test('a symlink where the slot expects a directory or file is residue', () => {
     const root = freshSlot();
-    const elsewhere = realpathSync(mkdtempSync(join(tmpdir(), 'ok-fresh-slot-elsewhere-')));
+    const elsewhere = realpathSync(mkdtempSync(join(tmpdir(), 'ps-fresh-slot-elsewhere-')));
     roots.push(elsewhere);
     rmSync(join(root, 'sidebar-folder'), { recursive: true });
     symlinkSync(elsewhere, join(root, 'sidebar-folder'));

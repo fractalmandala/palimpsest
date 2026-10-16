@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   assertCompatibleStateManifest,
@@ -15,7 +15,7 @@ import {
 
 function makeTmp(): { lockDir: string; shadowRepoDir: string; cleanup: () => void } {
   const root = mkdtempSync(join(tmpdir(), 'state-manifest-test-'));
-  const lockDir = join(root, '.ok', LOCAL_DIR);
+  const lockDir = join(root, '.ps', LOCAL_DIR);
   const shadowRepoDir = join(root, '.git', 'ok');
   return {
     lockDir,
@@ -68,7 +68,7 @@ describe('detectProjectShape', () => {
   test('only the configured shadowRepoDir triggers adopt — unrelated dirs nearby do not leak', () => {
     const root = mkdtempSync(join(tmpdir(), 'state-manifest-shadow-only-'));
     try {
-      const lockDir = join(root, '.ok', LOCAL_DIR);
+      const lockDir = join(root, '.ps', LOCAL_DIR);
       const shadowRepoDir = join(root, '.git', 'ok');
       const unrelatedSiblingDir = join(root, '.git', 'some-other-tooling-dir');
 
@@ -185,7 +185,7 @@ describe('assertCompatibleStateManifest', () => {
     }
   });
 
-  test('writes fresh manifest when only .ok dir exists (no shadow repo)', () => {
+  test('writes fresh manifest when only .ps dir exists (no shadow repo)', () => {
     const { lockDir, shadowRepoDir, cleanup } = makeTmp();
     try {
       mkdirSync(lockDir, { recursive: true });

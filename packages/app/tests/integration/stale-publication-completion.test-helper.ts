@@ -40,7 +40,7 @@ type DeletionPlan = {
 export async function startStalePublicationScenario(
   registerCleanup: (cleanup: () => Promise<void>) => void,
 ) {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-publication-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-publication-')));
   const docName = `publication-${randomUUID()}`;
   const filePath = join(contentDir, `${docName}.md`);
   const clients = new Set<TestClient>();
@@ -219,9 +219,9 @@ export async function startStalePublicationScenario(
   restore.push(() => renameSpy.mockRestore());
 
   writeFileSync(filePath, ORIGINAL_PUBLICATION, { flag: 'wx' });
-  mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
+  mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
   writeFileSync(
-    join(contentDir, '.ok', 'templates', 'pending-publication.md'),
+    join(contentDir, '.ps', 'templates', 'pending-publication.md'),
     PENDING_PUBLICATION,
     { flag: 'wx' },
   );

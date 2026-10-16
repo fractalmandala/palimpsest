@@ -1,7 +1,7 @@
 import {
   classifyMarkdownHref,
   resolveAssetProjectPath,
-} from '@inkeep/open-knowledge-core/utils/link-targets';
+} from '@palimpsest/core/utils/link-targets';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 
@@ -91,7 +91,7 @@ export function createAssetContextMenuPlugin(opts: AssetContextMenuPluginOpts): 
       const showAssetMenu =
         opts.showAssetMenu ??
         ((params) => {
-          const bridge = globalThis.window?.okDesktop;
+          const bridge = globalThis.window?.psDesktop;
           if (!bridge) {
             return Promise.resolve();
           }

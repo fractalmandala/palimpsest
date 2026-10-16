@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { resolveConfigPath } from '@palimpsest/core/server';
 import { describe, expect, test } from 'vitest';
 import {
   isTerminalConsented,
@@ -13,7 +13,7 @@ import {
 const STORE_DEBOUNCE_MS = 2000;
 
 function makeProjectDir(): string {
-  return mkdtempSync(join(tmpdir(), 'ok-terminal-consent-'));
+  return mkdtempSync(join(tmpdir(), 'ps-terminal-consent-'));
 }
 
 function writeConsent(projectDir: string, value: unknown): void {

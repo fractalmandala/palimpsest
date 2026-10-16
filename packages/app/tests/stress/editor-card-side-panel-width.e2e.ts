@@ -8,8 +8,8 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { resolveShadowDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
-import { saveInMemoryCheckpoint } from '@inkeep/open-knowledge-server';
+import { resolveShadowDir } from '@palimpsest/core/shadow-repo-layout';
+import { saveInMemoryCheckpoint } from '@palimpsest/server';
 import { chromium, type Locator, type Page } from '@playwright/test';
 import { acpCatalogBody, expect, test, waitForActiveProviderSynced } from './_helpers';
 
@@ -46,9 +46,9 @@ test('narrow document panes reclaim gutters while properties keep their gutter a
   await api.seedDocs([{ name: docName, markdown: DOC_MARKDOWN }]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '600');
+    localStorage.setItem('ps-doc-panel-width-v1', '600');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -201,8 +201,8 @@ test('narrow document panes reclaim gutters while properties keep their gutter a
     }
     const paragraph = editor.locator(':scope > p').first();
     await paragraph.hover();
-    const add = column.locator('.ok-add-block-btn:visible');
-    const grip = column.locator('.ok-drag-grip:visible');
+    const add = column.locator('.ps-add-block-btn:visible');
+    const grip = column.locator('.ps-drag-grip:visible');
     for (const control of [add, grip]) {
       await expect(control).toBeVisible();
       expect(
@@ -242,7 +242,7 @@ test.describe('touch document gutters', () => {
     await page.context().addCookies([{ name: 'sidebar_state', value: 'false', url: baseURL }]);
     await page.addInitScript(() => {
       localStorage.setItem(
-        'ok-sidebar-pins-v2',
+        'ps-sidebar-pins-v2',
         JSON.stringify({
           left: { above: 'closed', below: 'closed', embedded: 'closed' },
           right: { above: 'closed', below: 'closed', embedded: 'closed' },
@@ -408,9 +408,9 @@ test('restored wide sidebars never squeeze the document or cover its information
   await api.seedDocs([{ name: docName, markdown: DOC_MARKDOWN }]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '600');
+    localStorage.setItem('ps-doc-panel-width-v1', '600');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -456,7 +456,7 @@ for (const input of ['pointer', 'keyboard']) {
     const docName = `editor-min-width-${input}-${test.info().workerIndex}`;
     await page.addInitScript(() => {
       localStorage.setItem(
-        'ok-sidebar-pins-v2',
+        'ps-sidebar-pins-v2',
         JSON.stringify({
           left: { above: 'open', below: 'open', embedded: 'open' },
           right: { above: 'open', below: 'open', embedded: 'open' },
@@ -513,9 +513,9 @@ test('constrained docking swaps sidebars, restores both, and preserves explicit 
   await api.seedDocs([{ name: docName, markdown: DOC_MARKDOWN }]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '600');
+    localStorage.setItem('ps-doc-panel-width-v1', '600');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -571,7 +571,7 @@ test('constrained docking swaps sidebars, restores both, and preserves explicit 
   await page.setViewportSize({ width: 1000, height: 800 });
   await page.setViewportSize({ width: 1600, height: 800 });
   await expect(informationToggle).toHaveAttribute('aria-expanded', 'false');
-  expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe('600');
+  expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe('600');
   expect(
     (await page.context().cookies()).find((cookie) => cookie.name === 'sidebar_width')?.value,
   ).toBe('288px');
@@ -586,9 +586,9 @@ test('asymmetric remembered sidebar widths use one cover regime without replacin
   await api.seedDocs([{ name: docName, markdown: DOC_MARKDOWN }]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '600');
+    localStorage.setItem('ps-doc-panel-width-v1', '600');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -631,7 +631,7 @@ test('asymmetric remembered sidebar widths use one cover regime without replacin
   await expect(filesTrigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#doc-panel')).toBeVisible();
   await expect.poll(() => widthOf(page.locator('#doc-panel'))).toBeGreaterThanOrEqual(599);
-  expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe('600');
+  expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe('600');
   expect(
     (await page.context().cookies()).find((cookie) => cookie.name === 'sidebar_width')?.value,
   ).toBe('288px');
@@ -694,7 +694,7 @@ test('resized Files and information widths survive reload and shared cover bound
   expect(Math.abs(persistedFilesWidthPx - rememberedFilesWidth)).toBeLessThanOrEqual(1);
   await expect
     .poll(async () => {
-      const storedWidth = await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'));
+      const storedWidth = await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'));
       return storedWidth == null
         ? Number.POSITIVE_INFINITY
         : Math.abs(Number.parseFloat(storedWidth) - rememberedInformationWidth);
@@ -1412,7 +1412,7 @@ for (const rememberedFilesWidth of [234, 288, 512]) {
       .addCookies([{ name: 'sidebar_width', value: `${rememberedFilesWidth}px`, url: baseURL }]);
     await page.addInitScript(() => {
       localStorage.setItem(
-        'ok-sidebar-pins-v2',
+        'ps-sidebar-pins-v2',
         JSON.stringify({ left: { above: 'open', below: 'open', embedded: 'open' } }),
       );
     });
@@ -1480,7 +1480,7 @@ test('information cover Back restores docking while Hide keeps it closed', async
   const toggle = page.locator('[data-doc-panel-toggle]');
   const constrainedEditorWidth = await widthOf(editorCard);
   expect(constrainedEditorWidth).toBeLessThan(620);
-  const savedWidthBefore = await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'));
+  const savedWidthBefore = await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'));
   await toggle.click();
   const cover = page.locator('[data-doc-panel-cover]');
   await expect(cover).toBeVisible();
@@ -1511,7 +1511,7 @@ test('information cover Back restores docking while Hide keeps it closed', async
   await expect
     .poll(async () => Math.abs((await widthOf(information)) - dockedInformationWidth))
     .toBeLessThanOrEqual(1);
-  expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe(
+  expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe(
     savedWidthBefore,
   );
 
@@ -1533,7 +1533,7 @@ test('information cover Back restores docking while Hide keeps it closed', async
     path: hiddenScreenshot,
     contentType: 'image/png',
   });
-  expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe(
+  expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe(
     savedWidthBefore,
   );
   expect(pageErrors).toEqual([]);
@@ -1547,7 +1547,7 @@ test('information cover Back restores docking while Hide keeps it closed', async
       backRestoredInformation: true,
       hideKeptInformationClosed: true,
       savedWidthBefore,
-      savedWidthAfter: await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1')),
+      savedWidthAfter: await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1')),
       pageErrors,
       consoleErrors,
     }),
@@ -1664,7 +1664,7 @@ test.describe('information cover on a short touch viewport', () => {
     await page.goto(`/#/${docName}`);
     await waitForActiveProviderSynced(page);
     await expect
-      .poll(() => page.evaluate(() => localStorage.getItem('ok-language-v1')))
+      .poll(() => page.evaluate(() => localStorage.getItem('ps-language-v1')))
       .not.toBeNull();
     await page.evaluate(() => {
       document.documentElement.dir = 'rtl';
@@ -1842,7 +1842,7 @@ test('browser zoom keeps the information cover and editor controls usable', asyn
     join(extensionDir, 'manifest.json'),
     JSON.stringify({
       manifest_version: 3,
-      name: 'Open Knowledge browser zoom test',
+      name: 'Palimpsest browser zoom test',
       version: '1.0.0',
       permissions: ['tabs'],
       background: { service_worker: 'background.js' },
@@ -2719,9 +2719,9 @@ test('failed Comments passage keeps the information cover and error context', as
 
 test('Problems Fix keeps information work in the cover', async ({ page, api, workerServer }) => {
   const docName = `editor-card-problem-fix-${test.info().workerIndex}`;
-  const configPath = join(workerServer.contentDir, '.ok', 'config.yml');
+  const configPath = join(workerServer.contentDir, '.ps', 'config.yml');
   const originalConfig = existsSync(configPath) ? readFileSync(configPath) : null;
-  mkdirSync(join(workerServer.contentDir, '.ok'), { recursive: true });
+  mkdirSync(join(workerServer.contentDir, '.ps'), { recursive: true });
   writeFileSync(configPath, 'contentRules:\n  markdownlint:\n    enabled: true\n', 'utf-8');
   try {
     await api.seedDocs([
@@ -3251,9 +3251,9 @@ for (const rememberedWidth of [300, 600]) {
     const docName = `editor-card-info-remembered-${rememberedWidth}-${test.info().workerIndex}`;
     await api.seedDocs([{ name: docName, markdown: DOC_MARKDOWN }]);
     await page.addInitScript((width) => {
-      localStorage.setItem('ok-doc-panel-width-v1', String(width));
+      localStorage.setItem('ps-doc-panel-width-v1', String(width));
       localStorage.setItem(
-        'ok-sidebar-pins-v2',
+        'ps-sidebar-pins-v2',
         JSON.stringify({ right: { above: 'open', below: 'open', embedded: 'open' } }),
       );
     }, rememberedWidth);
@@ -3272,7 +3272,7 @@ for (const rememberedWidth of [300, 600]) {
     await page.setViewportSize({ width: 1000, height: 700 });
     await expect(panel).toBeVisible();
     expect(Math.abs((await widthOf(panel)) - rememberedWidth)).toBeLessThanOrEqual(1);
-    expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe(
+    expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe(
       String(rememberedWidth),
     );
   });
@@ -3318,9 +3318,9 @@ test('closed wide information reopens as a cover after editor and window resizin
   ]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '320');
+    localStorage.setItem('ps-doc-panel-width-v1', '320');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -3380,7 +3380,7 @@ test('closed wide information reopens as a cover after editor and window resizin
         page.locator('[data-editor-workspace]').evaluate((e) => e.scrollWidth - e.clientWidth),
       )
       .toBeLessThanOrEqual(1);
-    expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe('600');
+    expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe('600');
   }
   await dragChatDivider(page, 0, 1400 - (await widthOf(card)), async () => {});
   await expect(info).toBeVisible();
@@ -3401,7 +3401,7 @@ test('closed wide information reopens as a cover after editor and window resizin
     expect(Math.abs(bounds.width - cardBounds.width)).toBeLessThanOrEqual(1);
     expect(Math.abs(bounds.x - cardBounds.x)).toBeLessThanOrEqual(1);
     await page.locator('[data-doc-panel-back]').click();
-    expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe('600');
+    expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe('600');
     await expect
       .poll(() =>
         page.locator('[data-editor-workspace]').evaluate((e) => e.scrollWidth - e.clientWidth),
@@ -3442,9 +3442,9 @@ test('information yields after resizing the editor beside Chat below its docking
   ]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '320');
+    localStorage.setItem('ps-doc-panel-width-v1', '320');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -3524,7 +3524,7 @@ test('information yields after resizing the editor beside Chat below its docking
     .toBeLessThanOrEqual(1);
   const toggle = page.locator('[data-doc-panel-toggle]');
   await expect(toggle).toBeVisible();
-  expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe('600');
+  expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe('600');
   expect(
     await toggle.evaluate((e) => {
       const r = e.getBoundingClientRect();

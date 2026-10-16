@@ -3,22 +3,22 @@ import { revealComments, revealQueue } from '@/comments/reveal-queue';
 import { requestActiveTerminalInput } from '@/components/handoff/terminal-input-events';
 import { requestTerminalLaunch } from '@/components/handoff/terminal-launch-events';
 import { requestAgentThreadLaunch } from '@/components/handoff/thread-launch-events';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 function installNoteBridge() {
   const dispatchToMain = vi.fn(async () => ({ ok: true as const }));
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: {
       config: { mode: 'note' },
       noteWindow: { dispatchToMain },
-    } as unknown as OkDesktopBridge,
+    } as unknown as PsDesktopBridge,
   });
   return dispatchToMain;
 }
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'okDesktop');
+  Reflect.deleteProperty(window, 'psDesktop');
 });
 
 describe('note-window main action routing', () => {
@@ -96,12 +96,12 @@ describe('note-window main action routing', () => {
       ok: false as const,
       reason: 'project-not-open' as const,
     }));
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: {
         config: { mode: 'note' },
         noteWindow: { dispatchToMain },
-      } as unknown as OkDesktopBridge,
+      } as unknown as PsDesktopBridge,
     });
 
     requestActiveTerminalInput('Review this passage', { newTab: true, submit: true });

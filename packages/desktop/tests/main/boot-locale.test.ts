@@ -14,12 +14,12 @@ import {
 let home = '';
 
 function writeUserConfig(body: string): void {
-  mkdirSync(join(home, '.ok'), { recursive: true });
-  writeFileSync(join(home, '.ok', 'global.yml'), body, 'utf8');
+  mkdirSync(join(home, '.ps'), { recursive: true });
+  writeFileSync(join(home, '.ps', 'global.yml'), body, 'utf8');
 }
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-boot-locale-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-boot-locale-'));
 });
 
 describe('readStoredUserPreferences', () => {
@@ -58,8 +58,8 @@ describe('readStoredLanguagePreference', () => {
     const body = ':::not yaml at all\n  - [\n';
     writeUserConfig(body);
     expect(readStoredLanguagePreference(home)).toBe('system');
-    expect(readFileSync(join(home, '.ok', 'global.yml'), 'utf8')).toBe(body);
-    expect(readdirSync(join(home, '.ok'))).toEqual(['global.yml']);
+    expect(readFileSync(join(home, '.ps', 'global.yml'), 'utf8')).toBe(body);
+    expect(readdirSync(join(home, '.ps'))).toEqual(['global.yml']);
   });
 
   test('says so when the config is unreadable', () => {
@@ -67,7 +67,7 @@ describe('readStoredLanguagePreference', () => {
     writeUserConfig(':::not yaml at all\n  - [\n');
     expect(readStoredLanguagePreference(home, (message) => said.push(message))).toBe('system');
     expect(said).not.toEqual([]);
-    expect(said.join('\n')).toContain(join(home, '.ok', 'global.yml'));
+    expect(said.join('\n')).toContain(join(home, '.ps', 'global.yml'));
   });
 
   test('stays quiet when the config is fine', () => {
@@ -111,34 +111,34 @@ describe('resolveDesktopLocale', () => {
     ).toBe('es');
   });
 
-  test('OK_LANG outranks both the stored choice and the OS', () => {
+  test('PS_LANG outranks both the stored choice and the OS', () => {
     writeUserConfig('appearance:\n  language: es\n');
     expect(
       resolveDesktopLocale({
         homedir: home,
         preferredSystemLanguages: () => ['fr-FR'],
-        env: { OK_LANG: 'zh-Hant' },
+        env: { PS_LANG: 'zh-Hant' },
       }),
     ).toBe('zh-Hant');
   });
 
-  test('OK_LANG reaches an enumerated locale the picker does not offer', () => {
+  test('PS_LANG reaches an enumerated locale the picker does not offer', () => {
     expect(
       resolveDesktopLocale({
         homedir: home,
         preferredSystemLanguages: () => [],
-        env: { OK_LANG: 'bn' },
+        env: { PS_LANG: 'bn' },
       }),
     ).toBe('bn');
   });
 
-  test('a garbage OK_LANG falls through instead of throwing', () => {
+  test('a garbage PS_LANG falls through instead of throwing', () => {
     writeUserConfig('appearance:\n  language: es\n');
     expect(
       resolveDesktopLocale({
         homedir: home,
         preferredSystemLanguages: () => ['fr-FR'],
-        env: { OK_LANG: 'zh_TW.UTF-8' },
+        env: { PS_LANG: 'zh_TW.UTF-8' },
       }),
     ).toBe('es');
   });
@@ -176,7 +176,7 @@ describe('resolveDesktopLocale', () => {
       resolveDesktopLocale({
         homedir: home,
         preferredSystemLanguages: () => ['en-US'],
-        env: { OK_LANG: 'ur' },
+        env: { PS_LANG: 'ur' },
       }),
     ).toBe('ur');
   });
@@ -251,7 +251,7 @@ describe('resolveDesktopLocaleForPushed', () => {
     expect(
       resolveDesktopLocaleForPushed('es', {
         preferredSystemLanguages: () => ['en-US'],
-        env: { OK_LANG: 'fr' } as NodeJS.ProcessEnv,
+        env: { PS_LANG: 'fr' } as NodeJS.ProcessEnv,
       }),
     ).toBe('fr');
   });
@@ -309,7 +309,7 @@ describe('describeDesktopLanguage', () => {
       homedir: home,
       pushedPreference: null,
       preferredSystemLanguages: () => OS_LIST,
-      env: { OK_LANG: 'fr' } as NodeJS.ProcessEnv,
+      env: { PS_LANG: 'fr' } as NodeJS.ProcessEnv,
     });
 
     expect(language.locale).toBe('fr');

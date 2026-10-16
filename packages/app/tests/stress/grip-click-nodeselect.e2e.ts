@@ -44,11 +44,11 @@ async function hoverBlockAndGetGripBox(
   }
   await page.mouse.move(box.x + box.width / 2, hoverY);
 
-  const grip = page.locator('.ok-drag-grip');
+  const grip = page.locator('.ps-drag-grip');
   await expect(grip).toBeVisible({ timeout: 5_000 });
 
   const gripBox = await grip.boundingBox();
-  if (!gripBox) throw new Error('no boundingBox for .ok-drag-grip');
+  if (!gripBox) throw new Error('no boundingBox for .ps-drag-grip');
   return gripBox;
 }
 
@@ -229,7 +229,7 @@ test('AC23: grip drag still moves block (drag past dragstart threshold)', async 
   if (!firstBox) throw new Error('first paragraph not measurable');
   await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
 
-  const grip = page.locator('.ok-drag-grip');
+  const grip = page.locator('.ps-drag-grip');
   await expect(grip).toBeVisible({ timeout: 5_000 });
   const gripBox = await grip.boundingBox();
   if (!gripBox) throw new Error('grip not measurable');
@@ -284,7 +284,7 @@ test('AC29: sub-threshold pointer movement still fires click → NodeSelect (no 
   if (!firstBox) throw new Error('first paragraph not measurable');
   await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
 
-  const grip = page.locator('.ok-drag-grip');
+  const grip = page.locator('.ps-drag-grip');
   await expect(grip).toBeVisible({ timeout: 5_000 });
   const gripBox = await grip.boundingBox();
   if (!gripBox) throw new Error('grip not measurable');

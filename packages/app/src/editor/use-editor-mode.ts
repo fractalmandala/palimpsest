@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const STORAGE_KEY = 'ok-editor-mode-v1';
+const STORAGE_KEY = 'ps-editor-mode-v1';
 
 export const EDITOR_MODE_VALUES = ['wysiwyg', 'source'] as const;
 

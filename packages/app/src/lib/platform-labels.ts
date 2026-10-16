@@ -1,4 +1,4 @@
-import { PRODUCT_NAME } from '@inkeep/open-knowledge-core/constants/product';
+import { PRODUCT_NAME } from '@palimpsest/core/constants/product';
 import { t } from '@lingui/core/macro';
 
 export function revealInFileManagerLabel(platform: string | null | undefined): string {

@@ -8,7 +8,7 @@ export const PlainTextClipboard = Extension.create({
   addProseMirrorPlugins() {
     return [
       new Plugin({
-        key: new PluginKey('okPlainTextClipboard'),
+        key: new PluginKey('psPlainTextClipboard'),
         props: {
           clipboardTextSerializer: (slice) =>
             slice.content.textBetween(0, slice.content.size, '\n\n'),

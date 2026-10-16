@@ -24,7 +24,7 @@ describe('PRD-7117 US-001 — kind discriminator + all-files admission', () => {
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ok-allfiles-')));
+    tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ps-allfiles-')));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();

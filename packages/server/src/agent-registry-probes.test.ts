@@ -5,7 +5,7 @@ import {
   type ProbeResolver,
   type ProbeWorkItem,
   planProbes,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import { collectServerHostSnapshot, createServerProbeResolver } from './agent-registry-probes.ts';
 

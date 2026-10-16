@@ -56,7 +56,7 @@ describe('persistence publish ordering — a store must not publish bytes older 
   }
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-store-publish-order-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-store-publish-order-')));
     docName = 'publish-order';
     docPath = join(tmpDir, `${docName}.md`);
     document = new Y.Doc();

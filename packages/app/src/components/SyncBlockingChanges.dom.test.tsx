@@ -49,7 +49,7 @@ describe('SyncBlockingChanges', () => {
 
   afterEach(() => {
     cleanup();
-    delete (window as { okDesktop?: unknown }).okDesktop;
+    delete (window as { psDesktop?: unknown }).psDesktop;
   });
 
   test('lists every blocking path rather than naming a few in a sentence', async () => {
@@ -97,7 +97,7 @@ describe('SyncBlockingChanges', () => {
     expect(screen.queryByTestId('sync-blocking-terminal')).toBeNull();
     cleanup();
 
-    (window as { okDesktop?: unknown }).okDesktop = {};
+    (window as { psDesktop?: unknown }).psDesktop = {};
     await renderPanel();
 
     await userEvent.click(screen.getByTestId('sync-blocking-terminal'));

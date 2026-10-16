@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-export const TERMINAL_NEW_TAB_BARE_KEY = 'ok-terminal-new-tab-bare-v1';
+export const TERMINAL_NEW_TAB_BARE_KEY = 'ps-terminal-new-tab-bare-v1';
 
 export interface NewTabStorage {
   getItem(key: string): string | null;

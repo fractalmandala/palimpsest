@@ -1,9 +1,9 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
-import { externalSkillLiveDocName } from '@inkeep/open-knowledge-core/constants/cc1';
-import type { SkillScope, SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
-import type { CatalogSkill } from '@inkeep/open-knowledge-core/skills-catalog/schema';
-import { catalogRawScopeToOkScope } from '@inkeep/open-knowledge-core/skills-catalog/scope';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { humanFormat } from '@palimpsest/core/config/errors';
+import { externalSkillLiveDocName } from '@palimpsest/core/constants/cc1';
+import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
+import type { CatalogSkill } from '@palimpsest/core/skills-catalog/schema';
+import { catalogRawScopeToOkScope } from '@palimpsest/core/skills-catalog/scope';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';

@@ -1,4 +1,4 @@
-import type { OpenKnowledgeMcpTool } from '../constants/mcp.ts';
+import type { PalimpsestMcpTool } from '../constants/mcp.ts';
 import type { HandoffTarget } from './types.ts';
 
 export function shellSingleQuote(s: string): string {
@@ -56,7 +56,7 @@ function encodeUtf8Base64(value: string): string {
   return btoa(binary);
 }
 
-const TERMINAL_LAUNCH_ENV_SLOT_PREFIX = 'OK_TERMINAL_LAUNCH_ENV_';
+const TERMINAL_LAUNCH_ENV_SLOT_PREFIX = 'PS_TERMINAL_LAUNCH_ENV_';
 
 interface TerminalLaunchEnvSlot {
   readonly name: string;
@@ -270,13 +270,13 @@ export interface TerminalCliInfo {
   };
 }
 
-export const OK_GATED_TOOL_NAMES = [
+export const PS_GATED_TOOL_NAMES = [
   'delete',
   'move',
   'share_link',
   'install',
   'import',
-] as const satisfies ReadonlyArray<OpenKnowledgeMcpTool>;
+] as const satisfies ReadonlyArray<PalimpsestMcpTool>;
 
 function approvedServerName(opts: BuildCliLaunchOptions): string | null {
   return opts.mcpServerName ? opts.mcpServerName : null;
@@ -301,7 +301,7 @@ function buildClaudeSettingsJson(opts: BuildCliLaunchOptions): string | null {
       allow: opts.cliCommandName
         ? [`mcp__${server}`, `Bash(${opts.cliCommandName} open:*)`]
         : [`mcp__${server}`],
-      ask: OK_GATED_TOOL_NAMES.map((tool) => `mcp__${server}__${tool}`),
+      ask: PS_GATED_TOOL_NAMES.map((tool) => `mcp__${server}__${tool}`),
     };
   }
   if (settings.enabledMcpjsonServers === undefined && settings.permissions === undefined) {
@@ -463,7 +463,7 @@ export function buildWindowsCliLaunch(
       ]
         .filter((part): part is string => part !== null)
         .join('-');
-      const relativePath = `.ok/local/terminal/claude-settings-${variant}.json`;
+      const relativePath = `.ps/local/terminal/claude-settings-${variant}.json`;
       return {
         executable: info.bin,
         args: [...claudeSettingsFileArgs(relativePath)],

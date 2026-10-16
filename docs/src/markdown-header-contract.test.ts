@@ -20,13 +20,13 @@ const markdownRouteFilesOnDisk = () =>
     return MARKDOWN_SOURCE_MARKERS.some((marker) => source.includes(marker));
   });
 
-const OVERVIEW_URL = 'https://openknowledge.ai/docs/get-started/overview';
+const OVERVIEW_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx';
 
 const overviewPage = {
   url: '/docs/get-started/overview',
   data: {
     title: 'Overview',
-    description: 'What OpenKnowledge is.',
+    description: 'What Palimpsest is.',
     getText: async () => 'Early days.\n',
   },
 };
@@ -45,7 +45,7 @@ vi.stubGlobal(
   async () =>
     new Response(
       '<rss version="2.0"><channel><item><title>markdownlint</title>' +
-        '<link>https://openknowledge.ai/blog/markdownlint-support</link></item></channel></rss>',
+        '<link>https://github.com/fractalmandala/palimpsest/blog/markdownlint-support</link></item></channel></rss>',
     ),
 );
 
@@ -88,7 +88,7 @@ const ROUTES: MarkdownRoute[] = [
     canonicalUrl: null,
     status: 404,
     module: perPageRoute,
-    call: slugCall('https://openknowledge.ai/docs/nope.md', ['nope']),
+    call: slugCall('https://github.com/fractalmandala/palimpsest/tree/main/docs/content', ['nope']),
   },
   {
     name: 'llms.txt',

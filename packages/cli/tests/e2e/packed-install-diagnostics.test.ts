@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { installPackedCli } from './packed-install.test-helper';
 
 function createDiagnosticFixture() {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-npm-diagnostics-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-npm-diagnostics-'));
   const packageDir = join(root, 'package');
   const packDest = join(root, 'pack');
   const installPrefix = join(root, 'install');
@@ -45,7 +45,7 @@ function writeLocalPackage(packageDir: string, failingInstall = false) {
   writeFileSync(
     join(packageDir, 'package.json'),
     JSON.stringify({
-      name: '@inkeep/open-knowledge',
+      name: '@palimpsest/cli',
       version: '1.0.0',
       bin: { ok: 'dist/cli.mjs' },
       ...(failingInstall ? { scripts: { postinstall: 'node install-failure.cjs' } } : {}),

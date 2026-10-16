@@ -1,4 +1,4 @@
-import { lockBaseUrl } from '@inkeep/open-knowledge-server';
+import { lockBaseUrl } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import {
   collabUrlFromApiOrigin,

@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { bindFrontmatterDoc } from '@inkeep/open-knowledge-core';
+import { bindFrontmatterDoc } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { type Tracer, trace } from '@opentelemetry/api';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
@@ -8,7 +8,7 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkSlidesOpenResult, OkSlidesStatusResult } from '@/lib/desktop-bridge-types';
+import type { PsSlidesOpenResult, PsSlidesStatusResult } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
 const { toastDismissSpy, toastErrorSpy, toastLoadingSpy } = vi.hoisted(() => ({
@@ -61,16 +61,16 @@ function patchSlides(provider: FakeProvider, value: boolean | string | null): vo
 }
 
 function installBridge(opts: {
-  status: () => Promise<OkSlidesStatusResult>;
-  open?: (docPath: string) => Promise<OkSlidesOpenResult>;
+  status: () => Promise<PsSlidesStatusResult>;
+  open?: (docPath: string) => Promise<PsSlidesOpenResult>;
   projectPath?: string;
   platform?: string;
 }) {
   const statusSpy = vi.fn(opts.status);
   const openSpy = vi.fn(
-    opts.open ?? (() => Promise.resolve({ kind: 'open', ok: true }) as Promise<OkSlidesOpenResult>),
+    opts.open ?? (() => Promise.resolve({ kind: 'open', ok: true }) as Promise<PsSlidesOpenResult>),
   );
-  (window as unknown as { okDesktop?: unknown }).okDesktop = {
+  (window as unknown as { psDesktop?: unknown }).psDesktop = {
     config: { projectPath: opts.projectPath ?? '/proj' },
     platform: opts.platform ?? 'darwin',
     slides: { status: statusSpy, open: openSpy },
@@ -92,7 +92,7 @@ async function renderControls(provider: FakeProvider, docName = 'talks/Deck') {
 
 afterEach(() => {
   cleanup();
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   vi.clearAllMocks();
 });
 
@@ -163,8 +163,8 @@ describe('SlidesToolbarControls — visibility', () => {
       status: () =>
         Promise.resolve(
           available
-            ? ({ kind: 'status', available: true, source: 'global' } as OkSlidesStatusResult)
-            : ({ kind: 'status', available: false } as OkSlidesStatusResult),
+            ? ({ kind: 'status', available: true, source: 'global' } as PsSlidesStatusResult)
+            : ({ kind: 'status', available: false } as PsSlidesStatusResult),
         ),
     });
     await renderControls(makeProvider('---\nslides: true\n---\nbody\n'));
@@ -230,8 +230,8 @@ describe('SlidesToolbarControls — activation', () => {
     );
     try {
       const user = userEvent.setup();
-      let resolveOpen: ((result: OkSlidesOpenResult) => void) | undefined;
-      const pendingOpen = new Promise<OkSlidesOpenResult>((resolve) => {
+      let resolveOpen: ((result: PsSlidesOpenResult) => void) | undefined;
+      const pendingOpen = new Promise<PsSlidesOpenResult>((resolve) => {
         resolveOpen = resolve;
       });
       const { openSpy } = installBridge({
@@ -313,8 +313,8 @@ describe('SlidesToolbarControls — activation', () => {
       const user = userEvent.setup();
       const providerA = makeProvider('---\nslides: true\n---\nA\n');
       const providerB = makeProvider('---\nslides: true\n---\nB\n');
-      let resolveRetry: ((result: OkSlidesOpenResult) => void) | undefined;
-      let resolveDeckB: ((result: OkSlidesOpenResult) => void) | undefined;
+      let resolveRetry: ((result: PsSlidesOpenResult) => void) | undefined;
+      let resolveDeckB: ((result: PsSlidesOpenResult) => void) | undefined;
       let attempts = 0;
       const { openSpy } = installBridge({
         status: () => Promise.resolve({ kind: 'status', available: true, source: 'global' }),
@@ -323,7 +323,7 @@ describe('SlidesToolbarControls — activation', () => {
           if (attempts === 1) {
             return Promise.resolve({ kind: 'open', ok: false, reason: 'renderer-failed' });
           }
-          return new Promise<OkSlidesOpenResult>((resolve) => {
+          return new Promise<PsSlidesOpenResult>((resolve) => {
             if (docPath.endsWith('/A.md')) resolveRetry = resolve;
             else resolveDeckB = resolve;
           });

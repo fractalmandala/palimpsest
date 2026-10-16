@@ -133,7 +133,7 @@ describe.skipIf(process.platform === 'win32')(
               expect(
                 npmDebugLogs(held.home),
                 'npm wrote its deprecation warning after the server ended',
-              ).toMatch(/warn deprecated \S*ok-held-install-dependency/);
+              ).toMatch(/warn deprecated \S*ps-held-install-dependency/);
               const outcome = entryOutcome(entry, agentName);
               expect(['complete', 'rolled-back'], JSON.stringify(outcome)).toContain(outcome.state);
             } finally {

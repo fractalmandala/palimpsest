@@ -93,7 +93,7 @@ describe('agent writes while the derived document index is not answering (PRD-73
 
   beforeEach(async () => {
     _resetDocExtensionsForTests();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-write-advisory-deadline-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-write-advisory-deadline-'));
     const git = simpleGit({ baseDir: tmpDir });
     await git.init();
     await git.addConfig('user.name', 'Test User');

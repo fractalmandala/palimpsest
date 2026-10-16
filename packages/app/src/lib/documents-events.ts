@@ -1,8 +1,8 @@
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
-import { DerivedViewChannelSchema } from '@inkeep/open-knowledge-core/schemas/cc1';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
+import { DerivedViewChannelSchema } from '@palimpsest/core/schemas/cc1';
 import type { DerivedViewChannel } from '@/lib/cc1';
 
-const DOCUMENTS_CHANGED_EVENT = 'open-knowledge:documents-changed';
+const DOCUMENTS_CHANGED_EVENT = 'palimpsest:documents-changed';
 const DERIVED_VIEW_CHANNELS = new Set(DerivedViewChannelSchema.options);
 
 interface DocumentsChangedDetail {
@@ -46,7 +46,7 @@ export function invalidatesLocalTargetAudit(channels: readonly DerivedViewChanne
   return channels.includes('local-targets') || channels.includes('files');
 }
 
-const DOC_PERSISTED_EVENT = 'open-knowledge:doc-persisted';
+const DOC_PERSISTED_EVENT = 'palimpsest:doc-persisted';
 
 interface DocPersistedDetail {
   docName: string;
@@ -68,7 +68,7 @@ export function subscribeToDocPersisted(onPersisted: (docName: string) => void):
   return () => window.removeEventListener(DOC_PERSISTED_EVENT, listener);
 }
 
-const BRANCH_CHANGED_EVENT = 'open-knowledge:branch-changed';
+const BRANCH_CHANGED_EVENT = 'palimpsest:branch-changed';
 
 interface BranchChangedDetail {
   branch: string | null;
@@ -92,7 +92,7 @@ export function subscribeToBranchChanged(onChange: (branch: string | null) => vo
   return () => window.removeEventListener(BRANCH_CHANGED_EVENT, listener);
 }
 
-const TEMPLATES_CHANGED_EVENT = 'open-knowledge:templates-changed';
+const TEMPLATES_CHANGED_EVENT = 'palimpsest:templates-changed';
 
 export function emitTemplatesChanged(): void {
   window.dispatchEvent(new CustomEvent(TEMPLATES_CHANGED_EVENT));
@@ -104,7 +104,7 @@ export function subscribeToTemplatesChanged(onChange: () => void): () => void {
   return () => window.removeEventListener(TEMPLATES_CHANGED_EVENT, listener);
 }
 
-const SKILLS_CHANGED_EVENT = 'open-knowledge:skills-changed';
+const SKILLS_CHANGED_EVENT = 'palimpsest:skills-changed';
 
 export function emitSkillsChanged(): void {
   window.dispatchEvent(new CustomEvent(SKILLS_CHANGED_EVENT));
@@ -116,7 +116,7 @@ export function subscribeToSkillsChanged(onChange: () => void): () => void {
   return () => window.removeEventListener(SKILLS_CHANGED_EVENT, listener);
 }
 
-const SKILL_SCOPE_MOVED_EVENT = 'open-knowledge:skill-scope-moved';
+const SKILL_SCOPE_MOVED_EVENT = 'palimpsest:skill-scope-moved';
 
 export interface SkillScopeMovedDetail {
   name: string;

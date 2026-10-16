@@ -311,7 +311,7 @@ describe('ProviderPool durable replay outbox project scoping', () => {
     }
 
     const events = warned
-      .filter((line) => line.includes('ok-buffer-replay-skipped'))
+      .filter((line) => line.includes('ps-buffer-replay-skipped'))
       .map((line) => JSON.parse(line) as Record<string, string>);
     expect(events.length).toBeGreaterThan(0);
 
@@ -319,8 +319,8 @@ describe('ProviderPool durable replay outbox project scoping', () => {
     expect(event.project).toBe(projectDigest(PROJECT_A));
     expect(event.project).not.toContain('/');
     expect(event.project).not.toBe(PROJECT_A);
-    expect(scopedStorageKey('ok-replay-outbox', PROJECT_A)).toBe(
-      `ok-replay-outbox:${event.project}`,
+    expect(scopedStorageKey('ps-replay-outbox', PROJECT_A)).toBe(
+      `ps-replay-outbox:${event.project}`,
     );
   });
 });

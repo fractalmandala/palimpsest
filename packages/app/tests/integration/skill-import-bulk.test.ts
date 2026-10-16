@@ -25,7 +25,7 @@ function writeSkillDir(dir: string, name: string, description: string): void {
 }
 
 beforeAll(() => {
-  srcRoot = mkdtempSync(join(tmpdir(), 'ok-bulk-src-'));
+  srcRoot = mkdtempSync(join(tmpdir(), 'ps-bulk-src-'));
   for (const name of ['alpha-skill', 'beta-skill', 'gamma-skill']) {
     writeSkillDir(join(srcRoot, 'bundle', name), name, `Does ${name} things`);
   }
@@ -54,7 +54,7 @@ describe('POST /api/skills/import-bulk', () => {
       });
       expect(res.status).toBe(200);
 
-      const candidates = ['.agents/skills', '.ok/skills', '.claude/skills'].map((root) =>
+      const candidates = ['.agents/skills', '.ps/skills', '.claude/skills'].map((root) =>
         join(server.contentDir, ...root.split('/'), 'note-taking', 'SKILL.md'),
       );
       const found = candidates.find((c) => existsSync(c));

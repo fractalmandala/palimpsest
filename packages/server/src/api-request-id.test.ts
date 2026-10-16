@@ -65,7 +65,7 @@ describe('onRequest request identity + access log', () => {
   let contentDir: string;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-request-id-'));
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-request-id-'));
     contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
   });

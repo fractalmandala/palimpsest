@@ -90,7 +90,7 @@ function scrollActiveFindMatchIntoView(editor: Editor | null): void {
     const view = getEditorView(editor);
     if (!view) return;
 
-    const activeMatch = view.dom.querySelector('.ok-find-match-active');
+    const activeMatch = view.dom.querySelector('.ps-find-match-active');
     if (activeMatch instanceof HTMLElement) {
       activeMatch.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
     }

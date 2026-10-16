@@ -1,4 +1,4 @@
-import { fishSingleQuote, shellSingleQuote } from '@inkeep/open-knowledge-core';
+import { fishSingleQuote, shellSingleQuote } from '@palimpsest/core';
 
 export function interactiveShellArgs(platform: NodeJS.Platform): readonly string[] {
   return platform === 'linux' ? ['-i'] : ['-l', '-i'];

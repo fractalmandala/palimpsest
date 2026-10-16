@@ -2,7 +2,7 @@ import {
   type FolderConfigWarningCode,
   type TemplatesListSuccess,
   TemplatesListSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { subscribeToTemplatesChanged } from '@/lib/documents-events';
@@ -140,7 +140,7 @@ export function useAllTemplates(): AsyncState<TemplatesListSuccess> {
         const parsed = TemplatesListSuccessSchema.safeParse(payload);
         if (!parsed.success) {
           console.error(
-            '[ok-templates] /api/templates response failed schema validation:',
+            '[ps-templates] /api/templates response failed schema validation:',
             parsed.error.issues,
           );
           setState({

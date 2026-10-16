@@ -243,7 +243,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
 
   return (
     <NodeViewWrapper
-      className="ok-codeblock relative my-3"
+      className="ps-codeblock relative my-3"
       data-language={rawLanguage ?? undefined}
       data-cursor-inside={cursorInside ? 'true' : undefined}
       data-selected={selected ? 'true' : undefined}
@@ -258,8 +258,8 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
         <div
           ref={previewWrapperRef}
           className={cn(
-            'ok-codeblock-preview',
-            codeVisible ? 'ok-codeblock-preview--with-code' : 'ok-codeblock-preview--solo',
+            'ps-codeblock-preview',
+            codeVisible ? 'ps-codeblock-preview--with-code' : 'ps-codeblock-preview--solo',
           )}
           contentEditable={false}
           style={{
@@ -272,7 +272,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
             title={t`HTML preview`}
             frameRef={previewFrameRef}
             html={buildPreviewIframeHeader(bakedTheme) + node.textContent}
-            className="ok-codeblock-preview-frame"
+            className="ps-codeblock-preview-frame"
             onLoad={() => {
               setBlockedRequests(null);
               previewFrameRef.current?.contentWindow?.postMessage(
@@ -311,19 +311,19 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
       {}
       {title ? (
         <div
-          className="ok-codeblock-title"
+          className="ps-codeblock-title"
           contentEditable={false}
-          data-testid="ok-codeblock-title"
+          data-testid="ps-codeblock-title"
           title={title}
         >
-          <span className="ok-codeblock-title-text">{title}</span>
+          <span className="ps-codeblock-title-text">{title}</span>
         </div>
       ) : null}
 
       {}
       <pre
         className={cn(
-          'ok-codeblock-pre m-0 overflow-x-auto px-5 py-4 font-mono text-sm leading-relaxed',
+          'ps-codeblock-pre m-0 overflow-x-auto px-5 py-4 font-mono text-sm leading-relaxed',
           previewActive && codeVisible ? 'rounded-b-lg' : null,
           !previewActive ? 'rounded-lg' : null,
         )}
@@ -340,7 +340,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
 
       {/* biome-ignore lint/a11y/noStaticElementInteractions: stopPropagation required inside PM NodeView */}
       <div
-        className="ok-codeblock-chrome"
+        className="ps-codeblock-chrome"
         contentEditable={false}
         onMouseDown={(e) => e.stopPropagation()}
         {...{ [OPT_OUT_ATTR]: 'true' }}
@@ -350,7 +350,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
             <button
               type="button"
               disabled={!editable}
-              className="ok-codeblock-chrome-btn ok-codeblock-chrome-lang"
+              className="ps-codeblock-chrome-btn ps-codeblock-chrome-lang"
               aria-label={t`Code block language: ${currentLabel}. Click to change.`}
             >
               <span>{currentLabel}</span>
@@ -398,9 +398,9 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
         {editable && previewActive ? (
           <button
             type="button"
-            className="ok-codeblock-chrome-btn"
+            className="ps-codeblock-chrome-btn"
             aria-label={t`Edit source`}
-            data-testid="ok-codeblock-edit-btn"
+            data-testid="ps-codeblock-edit-btn"
             onClick={() => setEditOpen(true)}
           >
             <Pencil className="size-3.5" aria-hidden="true" />
@@ -410,7 +410,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
         {editable && previewRenderable ? (
           <button
             type="button"
-            className="ok-codeblock-chrome-btn"
+            className="ps-codeblock-chrome-btn"
             data-active={previewToggled ? 'true' : undefined}
             aria-pressed={previewToggled}
             aria-label={previewToggled ? t`Hide HTML preview` : t`Show HTML preview`}
@@ -425,7 +425,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="ok-codeblock-chrome-btn"
+                className="ps-codeblock-chrome-btn"
                 data-active={title ? 'true' : undefined}
                 aria-label={t`Code block settings`}
               >
@@ -445,7 +445,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
                   type="text"
                   value={title ?? ''}
                   placeholder={t`e.g. server.ts`}
-                  data-testid="ok-codeblock-title-input"
+                  data-testid="ps-codeblock-title-input"
                   aria-describedby={titleHelpId}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   onKeyDown={(e) => {
@@ -469,9 +469,9 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
         {isEmbedded ? null : (
           <button
             type="button"
-            className="ok-codeblock-chrome-btn"
+            className="ps-codeblock-chrome-btn"
             aria-label={t`Comment or ask AI about this code block`}
-            data-testid="ok-codeblock-ask-ai-btn"
+            data-testid="ps-codeblock-ask-ai-btn"
             onClick={() => {
               if (!selectionIsInsideThisBlock()) {
                 const pos = typeof getPos === 'function' ? getPos() : undefined;
@@ -493,7 +493,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
 
         <button
           type="button"
-          className="ok-codeblock-chrome-btn"
+          className="ps-codeblock-chrome-btn"
           aria-label={copied ? t`Copied` : t`Copy code`}
           onClick={handleCopy}
         >
@@ -507,7 +507,7 @@ export function CodeBlockView({ node, updateAttributes, editor, getPos, selected
         {editable ? (
           <button
             type="button"
-            className="ok-codeblock-chrome-btn ok-codeblock-chrome-btn--delete"
+            className="ps-codeblock-chrome-btn ps-codeblock-chrome-btn--delete"
             aria-label={t`Delete code block`}
             onClick={handleDelete}
           >

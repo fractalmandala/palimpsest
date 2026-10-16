@@ -10,7 +10,7 @@ afterEach(() => {
 });
 
 function freshLockDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-lock-state-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-lock-state-'));
   fixtures.push(dir);
   mkdirSync(dir, { recursive: true });
   return dir;

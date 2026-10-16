@@ -4,8 +4,8 @@ import langTsx from '@shikijs/langs/tsx';
 import { createHighlighterCore } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import { beforeAll, describe, expect, test } from 'vitest';
-import { okSyntaxHighlight } from '@/editor/extensions/cm-theme';
-import { OK_SYNTAX_THEME_NAME, okSyntaxTheme } from './ok-syntax-theme';
+import { psSyntaxHighlight } from '@/editor/extensions/cm-theme';
+import { PS_SYNTAX_THEME_NAME, psSyntaxTheme } from './ps-syntax-theme';
 
 function slotOf(color: string | undefined): string | null {
   const match = color?.match(/^var\(--([a-z0-9-]+)\)$/);
@@ -13,7 +13,7 @@ function slotOf(color: string | undefined): string | null {
 }
 
 function cmClassToSlot(): Map<string, string> {
-  const rules = okSyntaxHighlight.module?.getRules() ?? '';
+  const rules = psSyntaxHighlight.module?.getRules() ?? '';
   const map = new Map<string, string>();
   for (const rule of rules.matchAll(/\.(\S+?)\s*\{([^}]*)\}/g)) {
     const slot = slotOf(rule[2].match(/color:\s*(var\([^)]*\))/)?.[1]);
@@ -26,7 +26,7 @@ function cmSlots(source: string): Array<string | null> {
   const classToSlot = cmClassToSlot();
   const tree = javascript({ jsx: true, typescript: true }).language.parser.parse(source);
   const out: Array<string | null> = new Array(source.length).fill(null);
-  highlightTree(tree, okSyntaxHighlight, (from, to, classes) => {
+  highlightTree(tree, psSyntaxHighlight, (from, to, classes) => {
     for (const cls of classes.split(' ')) {
       const slot = classToSlot.get(cls);
       if (!slot) continue;
@@ -40,7 +40,7 @@ let highlighter: Awaited<ReturnType<typeof createHighlighterCore>>;
 
 beforeAll(async () => {
   highlighter = await createHighlighterCore({
-    themes: [okSyntaxTheme],
+    themes: [psSyntaxTheme],
     langs: [langTsx],
     engine: createJavaScriptRegexEngine({ forgiving: true }),
   });
@@ -50,7 +50,7 @@ function compare(source: string): Array<{ text: string; shiki: string | null; cm
   const cm = cmSlots(source);
   const { tokens } = highlighter.codeToTokens(source, {
     lang: 'tsx',
-    theme: OK_SYNTAX_THEME_NAME,
+    theme: PS_SYNTAX_THEME_NAME,
   });
   const rows: Array<{ text: string; shiki: string | null; cm: string | null }> = [];
   for (const line of tokens) {

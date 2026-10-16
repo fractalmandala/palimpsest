@@ -1,4 +1,4 @@
-import { SYSTEM_DOC_NAME } from '@inkeep/open-knowledge-core';
+import { SYSTEM_DOC_NAME } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   ACTIVITY_MOUNT_LIMIT,
@@ -511,18 +511,18 @@ describe('computeIsNewDoc — create-mode affordance gate', () => {
 
   test('a freshly created template is not flagged as a new doc during the index-lag window', () => {
     expect(
-      computeIsNewDoc({ docName: '.ok/templates/daily', pages: new Set(), loading: false }),
+      computeIsNewDoc({ docName: '.ps/templates/daily', pages: new Set(), loading: false }),
     ).toBe(false);
     expect(
-      computeIsNewDoc({ docName: 'docs/.ok/templates/note', pages: new Set(), loading: false }),
+      computeIsNewDoc({ docName: 'docs/.ps/templates/note', pages: new Set(), loading: false }),
     ).toBe(false);
   });
 
   test('a template already indexed in pages is likewise not new', () => {
     expect(
       computeIsNewDoc({
-        docName: 'docs/.ok/templates/note',
-        pages: new Set(['docs/.ok/templates/note']),
+        docName: 'docs/.ps/templates/note',
+        pages: new Set(['docs/.ps/templates/note']),
         loading: false,
       }),
     ).toBe(false);

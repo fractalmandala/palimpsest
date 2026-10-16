@@ -6,7 +6,7 @@ import { SkillsStudioIntroDialog } from '@/components/settings/SkillsStudioIntro
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSkills } from '@/hooks/use-skills';
-import type { OkIntegrationsStatus } from '@/lib/desktop-bridge-types';
+import type { PsIntegrationsStatus } from '@/lib/desktop-bridge-types';
 import { openSkillPreviewTab } from '@/lib/open-managed-artifact-tab';
 import { mark } from '@/lib/perf';
 import { skillClusterHosts } from '@/lib/skill-scope';
@@ -20,8 +20,8 @@ export function BuiltInSkillsSection() {
   const { t } = useLingui();
   const blurbFor = useBuiltinSkillBlurb();
   const skills = useSkills();
-  const bridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
-  const [introStatus, setIntroStatus] = useState<OkIntegrationsStatus | null>(null);
+  const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
+  const [introStatus, setIntroStatus] = useState<PsIntegrationsStatus | null>(null);
   const [pending, setPending] = useState(false);
   const [introSeen] = useState(() => hasSeenSkillsStudioIntro());
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -70,13 +70,13 @@ export function BuiltInSkillsSection() {
   const heading = (
     <div>
       <h4 className="text-sm font-medium">
-        <Trans comment="Heading above the rows for the skills OpenKnowledge ships, in Settings → Skills Studio">
-          Skills from OpenKnowledge
+        <Trans comment="Heading above the rows for the skills Palimpsest ships, in Settings → Skills Studio">
+          Skills from Palimpsest
         </Trans>
       </h4>
       <p className="text-1sm text-muted-foreground">
-        <Trans comment="Says what the OpenKnowledge-authored skills are for, and where installing one puts it">
-          These teach your AI tools how to work with OpenKnowledge. Installing one adds it to every
+        <Trans comment="Says what the Palimpsest-authored skills are for, and where installing one puts it">
+          These teach your AI tools how to work with Palimpsest. Installing one adds it to every
           AI tool on this machine.
         </Trans>
       </p>

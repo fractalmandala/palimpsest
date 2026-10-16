@@ -10,7 +10,7 @@ export const SERVER_UNREACHABLE_ERROR_PREFIX = 'Server unreachable:';
 
 export const SERVER_TIMEOUT_ERROR_PREFIX = 'Server timed out:';
 
-export const OPEN_KNOWLEDGE_MCP_TOOLS = [
+export const PALIMPSEST_MCP_TOOLS = [
   'exec',
   'search',
   'history',
@@ -32,9 +32,9 @@ export const OPEN_KNOWLEDGE_MCP_TOOLS = [
   'restore_version',
 ] as const;
 
-export type OpenKnowledgeMcpTool = (typeof OPEN_KNOWLEDGE_MCP_TOOLS)[number];
+export type PalimpsestMcpTool = (typeof PALIMPSEST_MCP_TOOLS)[number];
 
-export const OPEN_KNOWLEDGE_MCP_WRITE_TOOLS = [
+export const PALIMPSEST_MCP_WRITE_TOOLS = [
   'write',
   'edit',
   'delete',
@@ -43,12 +43,12 @@ export const OPEN_KNOWLEDGE_MCP_WRITE_TOOLS = [
   'import',
   'checkpoint',
   'restore_version',
-] as const satisfies ReadonlyArray<OpenKnowledgeMcpTool>;
+] as const satisfies ReadonlyArray<PalimpsestMcpTool>;
 
-export const OK_HOSTED_AGENT_ENV = 'OK_HOSTED_AGENT';
+export const PS_HOSTED_AGENT_ENV = 'PS_HOSTED_AGENT';
 
-export const OK_DESKTOP_TERMINAL_ENV = 'OK_DESKTOP_TERMINAL';
+export const PS_DESKTOP_TERMINAL_ENV = 'PS_DESKTOP_TERMINAL';
 
 export function resolveIsHostedAgent(env: Record<string, string | undefined>): boolean {
-  return env[OK_DESKTOP_TERMINAL_ENV] === '1' || env[OK_HOSTED_AGENT_ENV] === '1';
+  return env[PS_DESKTOP_TERMINAL_ENV] === '1' || env[PS_HOSTED_AGENT_ENV] === '1';
 }

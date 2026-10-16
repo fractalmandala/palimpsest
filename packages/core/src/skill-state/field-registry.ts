@@ -4,7 +4,7 @@ interface SkillStateFieldMeta {
   description?: string;
 }
 
-const SINGLETON_KEY = Symbol.for('@inkeep/open-knowledge/skill-state-field-registry');
+const SINGLETON_KEY = Symbol.for('@palimpsest/cli/skill-state-field-registry');
 
 interface SingletonGlobal {
   [SINGLETON_KEY]?: z.core.$ZodRegistry<SkillStateFieldMeta>;

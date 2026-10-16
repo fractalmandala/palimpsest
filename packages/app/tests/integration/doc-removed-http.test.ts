@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { AgentWriteBatchSuccessSchema, ProblemDetailsSchema } from '@inkeep/open-knowledge-core';
+import { AgentWriteBatchSuccessSchema, ProblemDetailsSchema } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { agentWriteMd, createTestServer, type TestServer } from './test-harness';
 
@@ -29,7 +29,7 @@ afterEach(async () => {
 });
 
 async function prepareRemovedDoc() {
-  projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-doc-removed-http-')));
+  projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-doc-removed-http-')));
   const contentDir = join(projectDir, 'notes');
   mkdirSync(contentDir);
   const docName = `removed-${randomUUID()}`;
@@ -106,7 +106,7 @@ describe('a write to a document whose file was deleted', () => {
 
 describe('a write to a document whose path cannot be resolved', () => {
   test('a symlink cycle at the document path is refused as a 400 path-escape', async () => {
-    projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-path-fault-http-')));
+    projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-path-fault-http-')));
     const contentDir = join(projectDir, 'notes');
     mkdirSync(contentDir);
     const docName = `cycle-${randomUUID()}`;

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { marked } from 'marked';
 
-const REPO = 'inkeep/open-knowledge';
+const REPO = 'fractalmandala/palimpsest';
 const REPO_URL = `https://github.com/${REPO}`;
 const RELEASES_API = `https://api.github.com/repos/${REPO}/releases`;
 
@@ -18,9 +18,9 @@ const RELEASE_NOTES_REQUIRED = false;
 
 const NOTES_LAG_MS = 14 * 24 * 60 * 60 * 1000;
 
-export const NOTES_SOURCE_MARKER = '<!-- ok-notes-source: stable-tag-tree -->';
+export const NOTES_SOURCE_MARKER = '<!-- ps-notes-source: stable-tag-tree -->';
 
-const DOWNLOADS_BLOCK = /<!-- ok-downloads:start -->[\s\S]*?<!-- ok-downloads:end -->/g;
+const DOWNLOADS_BLOCK = /<!-- ps-downloads:start -->[\s\S]*?<!-- ps-downloads:end -->/g;
 
 const STABLE_TAG = /^v(\d+)\.(\d+)\.(\d+)$/;
 
@@ -200,7 +200,7 @@ export async function fetchReleaseFeed({
   const token = process.env.GITHUB_TOKEN;
   const headers = {
     accept: 'application/vnd.github+json',
-    'user-agent': 'openknowledge.ai changelog',
+    'user-agent': 'palimpsest.ai changelog',
     ...(token ? { authorization: `Bearer ${token}` } : {}),
   };
   try {

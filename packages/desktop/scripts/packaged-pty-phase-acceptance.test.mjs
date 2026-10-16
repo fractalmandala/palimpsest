@@ -10,7 +10,7 @@ afterEach(() => {
 });
 
 function evidence(utilityRecords) {
-  const directory = mkdtempSync(join(tmpdir(), 'ok-pty-acceptance-'));
+  const directory = mkdtempSync(join(tmpdir(), 'ps-pty-acceptance-'));
   fixtures.push(directory);
   const records = [
     {
@@ -106,7 +106,7 @@ test('rejects a session whose first output was never forwarded', () => {
 });
 
 test('rejects an evidence directory without a retained phase trace', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-pty-acceptance-missing-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-pty-acceptance-missing-'));
   fixtures.push(root);
   const directory = join(root, 'evidence');
   mkdirSync(directory);

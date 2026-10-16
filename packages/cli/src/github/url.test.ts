@@ -297,13 +297,13 @@ describe('parseGitUrl', () => {
       });
     });
 
-    test('inkeep/open-knowledge shorthand', () => {
-      const result = parseGitUrl('inkeep/open-knowledge');
+    test('fractalmandala/palimpsest shorthand', () => {
+      const result = parseGitUrl('fractalmandala/palimpsest');
       expect(result).toEqual({
         protocol: 'https',
         hostname: 'github.com',
         owner: 'inkeep',
-        name: 'open-knowledge',
+        name: 'palimpsest',
       });
     });
   });
@@ -346,12 +346,12 @@ describe('parseGitUrl', () => {
 describe('parseGitHubBlobUrl', () => {
   test('happy path: simple branch + top-level file', () => {
     const result = parseGitHubBlobUrl(
-      'https://github.com/inkeep/open-knowledge/blob/main/README.md',
+      'https://github.com/fractalmandala/palimpsest/blob/main/README.md',
     );
     expect(result).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'main',
       path: 'README.md',
     });
@@ -359,12 +359,12 @@ describe('parseGitHubBlobUrl', () => {
 
   test('happy path: nested doc path', () => {
     const result = parseGitHubBlobUrl(
-      'https://github.com/inkeep/open-knowledge/blob/feat-x/docs/sub/page.md',
+      'https://github.com/fractalmandala/palimpsest/blob/feat-x/docs/sub/page.md',
     );
     expect(result).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'feat-x',
       path: 'docs/sub/page.md',
     });
@@ -372,12 +372,12 @@ describe('parseGitHubBlobUrl', () => {
 
   test('happy path: branch containing slash (percent-encoded)', () => {
     const result = parseGitHubBlobUrl(
-      'https://github.com/inkeep/open-knowledge/blob/feat%2Ffoo/docs/page.md',
+      'https://github.com/fractalmandala/palimpsest/blob/feat%2Ffoo/docs/page.md',
     );
     expect(result).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'feat/foo',
       path: 'docs/page.md',
     });
@@ -517,12 +517,12 @@ describe('parser scheme guard (https-only)', () => {
 describe('parseGitHubTreeUrl', () => {
   test('happy path: tree URL with a folder path', () => {
     const result = parseGitHubTreeUrl(
-      'https://github.com/inkeep/open-knowledge/tree/main/docs/sub',
+      'https://github.com/fractalmandala/palimpsest/tree/main/docs/sub',
     );
     expect(result).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'main',
       path: 'docs/sub',
     });
@@ -552,12 +552,12 @@ describe('parseGitHubTreeUrl', () => {
 
   test('branch containing slash (percent-encoded) round-trips', () => {
     const result = parseGitHubTreeUrl(
-      'https://github.com/inkeep/open-knowledge/tree/feat%2Ffoo/docs',
+      'https://github.com/fractalmandala/palimpsest/tree/feat%2Ffoo/docs',
     );
     expect(result).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'feat/foo',
       path: 'docs',
     });
@@ -653,13 +653,13 @@ describe('parseGitHubTreeUrl', () => {
 describe('parseGitHubShareUrl (dispatcher)', () => {
   test('blob URL dispatches to kind:"doc"', () => {
     const result = parseGitHubShareUrl(
-      'https://github.com/inkeep/open-knowledge/blob/main/README.md',
+      'https://github.com/fractalmandala/palimpsest/blob/main/README.md',
     );
     expect(result).toEqual({
       kind: 'doc',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'main',
       path: 'README.md',
     });

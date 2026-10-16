@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestServer, type TestServer, wait } from './test-harness';
@@ -39,7 +39,7 @@ describe('/api/documents empty folder — boot-time', () => {
   let server: TestServer;
 
   beforeAll(async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-empty-folder-boot-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-empty-folder-boot-')));
     writeFileSync(join(contentDir, 'readme.md'), '# Root\n', 'utf-8');
     mkdirSync(join(contentDir, 'empty-folder'), { recursive: true });
     mkdirSync(join(contentDir, 'nested', 'empty-child'), { recursive: true });
@@ -73,7 +73,7 @@ describe('/api/documents empty folder — live creation', () => {
   let server: TestServer;
 
   beforeAll(async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-empty-folder-live-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-empty-folder-live-')));
     writeFileSync(join(contentDir, 'readme.md'), '# Root\n', 'utf-8');
     server = await createTestServer({ contentDir, keepContentDir: false });
   }, HARNESS_BOOT_TIMEOUT_MS);

@@ -13,7 +13,7 @@ export const MENU_LABELS = {
   fullPath: 'Full path',
   relativePath: 'Relative path',
   showHiddenFiles: 'Show hidden files',
-  showOkFolders: 'Show .ok folders',
+  showOkFolders: 'Show .ps folders',
   showOnlyMarkdownFiles: 'Show only markdown files',
   showSkillsSection: 'Skills section',
   expandAll: 'Expand all',
@@ -22,14 +22,14 @@ export const MENU_LABELS = {
   copyFullPath: 'Copy full path',
   copyRelativePath: 'Copy relative path',
   checkForUpdates: 'Check for updates',
-  setUpIntegrations: 'Set up OpenKnowledge integrations',
+  setUpIntegrations: 'Set up Palimpsest integrations',
   closeTab: 'Close tab',
   newWorktree: 'New worktree',
   switchWorktree: 'Switch worktree',
   newTerminal: 'New Terminal',
   killTerminal: 'Kill Terminal',
   checkSpelling: 'Check spelling while typing',
-  openOnGithub: 'OpenKnowledge on GitHub',
+  openOnGithub: 'Palimpsest on GitHub',
   openDocs: 'Documentation',
   joinDiscord: 'Join us on Discord',
   reportBug: 'Report a bug',
@@ -81,6 +81,6 @@ export function menuLabelForPlatform(key: MenuLabelKey, platform: string): strin
   return MENU_LABELS[key];
 }
 
-export const OPEN_KNOWLEDGE_GITHUB_URL = 'https://github.com/inkeep/open-knowledge';
-export const OPEN_KNOWLEDGE_DOCS_URL = 'https://openknowledge.ai/docs';
-export const OPEN_KNOWLEDGE_DISCORD_URL = 'https://discord.gg/VRKk2EaGHN';
+export const PALIMPSEST_GITHUB_URL = 'https://github.com/fractalmandala/palimpsest';
+export const PALIMPSEST_DOCS_URL = 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content';
+export const PALIMPSEST_DISCORD_URL = 'https://discord.gg/VRKk2EaGHN';

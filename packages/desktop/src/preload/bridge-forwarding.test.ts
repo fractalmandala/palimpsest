@@ -73,8 +73,8 @@ async function loadBridge(): Promise<BridgeProbe> {
   exposed.clear();
   vi.resetModules();
   await import('./index.ts');
-  const bridge = exposed.get('okDesktop');
-  if (bridge === undefined) throw new Error('preload did not expose okDesktop');
+  const bridge = exposed.get('psDesktop');
+  if (bridge === undefined) throw new Error('preload did not expose psDesktop');
   return bridge as unknown as BridgeProbe;
 }
 
@@ -120,21 +120,21 @@ describe('preload argv config', () => {
   });
 
   it('exposes the server key main hands a Beta window', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     process.argv = withMcpServerNameArg(originalArgv);
 
     const bridge = await loadBridge();
 
-    expect(bridge.mcpServerName).toBe('open-knowledge-beta');
+    expect(bridge.mcpServerName).toBe('palimpsest-beta');
   });
 
   it('exposes the CLI command main hands a Beta window', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     process.argv = withCliCommandNameArg(originalArgv);
 
     const bridge = await loadBridge();
 
-    expect(bridge.cliCommandName).toBe('ok-beta');
+    expect(bridge.cliCommandName).toBe('ps-beta');
   });
 
   it('exposes no CLI command when main sent none', async () => {
@@ -149,7 +149,7 @@ describe('preload argv config', () => {
 describe('preload state query marshalling', () => {
   it('state.query forwards to ok:state:query and passes the snapshot through', async () => {
     const about = {
-      productName: 'OpenKnowledge',
+      productName: 'Palimpsest',
       version: '0.82.3',
       releasesUrl: 'https://example.test/releases',
       releaseNotesUrl: 'https://example.test/releases/tag/v0.82.3',

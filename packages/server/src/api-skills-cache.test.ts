@@ -17,15 +17,15 @@ let root: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-skills-cache-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-skills-cache-'));
   const contentDir = join(root, 'server');
-  const builtin = join(contentDir, '.agents/skills/open-knowledge');
+  const builtin = join(contentDir, '.agents/skills/palimpsest');
   mkdirSync(builtin, { recursive: true });
   writeFileSync(
     join(builtin, 'SKILL.md'),
-    '---\nname: open-knowledge\ndescription: Project instructions\n---\n\nProject.\n',
+    '---\nname: palimpsest\ndescription: Project instructions\n---\n\nProject.\n',
   );
-  writeSkill(contentDir, '.ok/skills/alpha', 'listener');
+  writeSkill(contentDir, '.ps/skills/alpha', 'listener');
   server = await bootCompositionRig(contentDir);
   await server.ready;
 }, 60_000);
@@ -48,13 +48,13 @@ function writeSkill(base: string, path: string, description: string): void {
 function rig(signal?: (channel: string) => void, withFilter = false) {
   const contentDir = mkdtempSync(join(root, 'project-'));
   const home = mkdtempSync(join(root, 'home-'));
-  writeSkill(contentDir, '.ok/skills/alpha', 'before');
+  writeSkill(contentDir, '.ps/skills/alpha', 'before');
   if (withFilter) {
-    const builtin = join(contentDir, '.agents/skills/open-knowledge');
+    const builtin = join(contentDir, '.agents/skills/palimpsest');
     mkdirSync(builtin, { recursive: true });
     writeFileSync(
       join(builtin, 'SKILL.md'),
-      '---\nname: open-knowledge\ndescription: Fixture\n---\nBody.\n',
+      '---\nname: palimpsest\ndescription: Fixture\n---\nBody.\n',
     );
   }
   const contentFilter = withFilter
@@ -105,7 +105,7 @@ test('list hits retain disk content until the exact five second expiry', async (
   const r = rig();
   const now = vi.spyOn(Date, 'now').mockReturnValue(100_000);
   expect(await description(r.extension)).toBe('before');
-  writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+  writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
   now.mockReturnValue(104_999);
   expect(await description(r.extension)).toBe('before');
   now.mockReturnValue(105_000);
@@ -119,7 +119,7 @@ test.each([false, true])(
     const r = rig(withSignal ? (channel) => signals.push(channel) : undefined);
     vi.spyOn(Date, 'now').mockReturnValue(100_000);
     expect(await description(r.extension)).toBe('before');
-    writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+    writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
     await request(r.extension, '/api/skill/uninstall', 'POST', { name: 'alpha', scope: 'project' });
     expect(await description(r.extension)).toBe(withSignal ? 'after' : 'before');
     expect(signals).toEqual(withSignal ? ['files'] : []);
@@ -131,11 +131,11 @@ test('a frontmatter schema creation refreshes the skills cache and schedules fil
   const r = rig((channel) => signals.push(channel));
   vi.spyOn(Date, 'now').mockReturnValue(100_000);
   expect(await description(r.extension)).toBe('before');
-  writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+  writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
   expect(await description(r.extension)).toBe('before');
 
   await request(r.extension, '/api/lint/frontmatter-schema', 'POST', {
-    file: '.ok/schemas/cache-refresh.schema.json',
+    file: '.ps/schemas/cache-refresh.schema.json',
   });
 
   expect(await description(r.extension)).toBe('after');
@@ -146,7 +146,7 @@ test('a detected editor fingerprint change refreshes list content before expiry'
   const r = rig();
   vi.spyOn(Date, 'now').mockReturnValue(100_000);
   expect(await description(r.extension)).toBe('before');
-  writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+  writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
   mkdirSync(join(r.contentDir, '.cursor'), { recursive: true });
   expect(await description(r.extension)).toBe('after');
 });
@@ -157,8 +157,8 @@ test('one extension invalidates without changing another extension cache', async
   vi.spyOn(Date, 'now').mockReturnValue(100_000);
   expect(await description(a.extension)).toBe('before');
   expect(await description(b.extension)).toBe('before');
-  writeSkill(a.contentDir, '.ok/skills/alpha', 'after');
-  writeSkill(b.contentDir, '.ok/skills/alpha', 'after');
+  writeSkill(a.contentDir, '.ps/skills/alpha', 'after');
+  writeSkill(b.contentDir, '.ps/skills/alpha', 'after');
   await request(a.extension, '/api/skill/uninstall', 'POST', { name: 'alpha', scope: 'project' });
   expect(await description(a.extension)).toBe('after');
   expect(await description(b.extension)).toBe('before');
@@ -208,7 +208,7 @@ test('the composed listener serves the list and admitted documents from shared s
   const docs = await fetch(`http://127.0.0.1:${server.port}/api/documents`);
   expect(docs.status).toBe(200);
   const indexed = (await docs.json()) as { documents: Array<{ docName?: string }> };
-  expect(indexed.documents.some((d) => d.docName === '.agents/skills/open-knowledge/SKILL')).toBe(
+  expect(indexed.documents.some((d) => d.docName === '.agents/skills/palimpsest/SKILL')).toBe(
     true,
   );
 });
@@ -217,13 +217,13 @@ test('folder artifact writes invalidate the shared list without an optional file
   const r = rig();
   vi.spyOn(Date, 'now').mockReturnValue(100_000);
   expect(await description(r.extension)).toBe('before');
-  writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+  writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
   await request(r.extension, '/api/folder-config', 'PUT', {
     path: '',
     frontmatter: { category: 'artifact' },
   });
   expect(await description(r.extension)).toBe('after');
-  writeSkill(r.contentDir, '.ok/skills/alpha', 'later');
+  writeSkill(r.contentDir, '.ps/skills/alpha', 'later');
   await request(r.extension, '/api/folder-config', 'PUT', { path: '' });
   expect(await description(r.extension)).toBe('after');
 });
@@ -234,10 +234,10 @@ test.each([false, true])(
     const r = rig(undefined, true);
     vi.spyOn(Date, 'now').mockReturnValue(100_000);
     expect(await description(r.extension)).toBe('before');
-    writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+    writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
     await request(
       r.extension,
-      `/api/test-reset?docName=cache-reset&reset-okignore=${resetIgnores}`,
+      `/api/test-reset?docName=cache-reset&reset-psignore=${resetIgnores}`,
       'POST',
     );
     expect(await description(r.extension)).toBe(resetIgnores ? 'after' : 'before');
@@ -259,7 +259,7 @@ test('a list populated across a real rebuild uses completion time and the genera
     frontmatter: { category: 'during-list' },
   });
   expect(completed).toBe(false);
-  writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+  writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
   clock.mockReturnValue(104_000);
   expect(await listing).toBe('before');
   clock.mockReturnValue(108_999);
@@ -296,7 +296,7 @@ test.each([false, true])(
     vi.spyOn(Date, 'now').mockReturnValue(100_000);
     expect(await description(r.extension)).toBe('before');
     expect((await request(r.extension, '/api/skills/installed')).skills).toEqual([]);
-    writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+    writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
     addPlugin(r.home);
     expect((await request(r.extension, '/api/skills/installed')).skills).toEqual([]);
     const outcome = await request(r.extension, '/api/skills/import-bulk', 'POST', {
@@ -320,7 +320,7 @@ test.each([false, true])(
     vi.spyOn(Date, 'now').mockReturnValue(100_000);
     expect(await description(r.extension)).toBe('before');
     expect((await request(r.extension, '/api/skills/installed')).skills).toEqual([]);
-    writeSkill(r.contentDir, '.ok/skills/alpha', 'after');
+    writeSkill(r.contentDir, '.ps/skills/alpha', 'after');
     addPlugin(r.home);
     await request(
       r.extension,

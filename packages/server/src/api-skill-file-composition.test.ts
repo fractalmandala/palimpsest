@@ -19,14 +19,14 @@ let server: BootedServer;
 let home: string;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-skill-file-contract-'));
-  const builtin = join(root, '.agents/skills/open-knowledge');
+  root = mkdtempSync(join(tmpdir(), 'ps-skill-file-contract-'));
+  const builtin = join(root, '.agents/skills/palimpsest');
   mkdirSync(builtin, { recursive: true });
   writeFileSync(
     join(builtin, 'SKILL.md'),
-    '---\nname: open-knowledge\ndescription: Project instructions\n---\n\nProject.\n',
+    '---\nname: palimpsest\ndescription: Project instructions\n---\n\nProject.\n',
   );
-  home = mkdtempSync(join(tmpdir(), 'ok-skill-file-home-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-skill-file-home-'));
   mkdirSync(join(home, '.claude'));
   server = await bootCompositionRig(root, { configHomedirOverride: home });
   await server.ready;
@@ -265,7 +265,7 @@ test('bundle writes refuse withheld entries below the skill root', async () => {
     }),
   };
   const withheldTitle =
-    'Skill file path falls under an entry Open Knowledge withholds from skill bundles (.git, node_modules, OK and editor host dirs, OS artifact files).';
+    'Skill file path falls under an entry Palimpsest withholds from skill bundles (.git, node_modules, OK and editor host dirs, OS artifact files).';
   for (const [verb, response] of Object.entries(attempts)) {
     expect(`${verb}=${response.status} ${JSON.parse(response.body).title}`).toBe(
       `${verb}=400 ${withheldTitle}`,
@@ -284,7 +284,7 @@ test('bundle reads and writes refuse paths a symlink resolves into a withheld en
     body: 'Body.\n',
   });
   const dir = join(root, (skill.path as string).slice(0, -9));
-  const outside = mkdtempSync(join(tmpdir(), 'ok-skill-file-outside-'));
+  const outside = mkdtempSync(join(tmpdir(), 'ps-skill-file-outside-'));
   writeFileSync(join(outside, 'secret.txt'), 'Outside.\n');
   mkdirSync(join(dir, '.git'));
   writeFileSync(join(dir, '.git/config'), 'Original.\n');

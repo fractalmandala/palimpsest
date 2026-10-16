@@ -27,13 +27,13 @@ describe('mapConsoleLevel', () => {
 describe('parseStructuredConsoleMessage', () => {
   test('lifts a JSON object message into event + fields', () => {
     const msg = JSON.stringify({
-      event: 'ok-provider-server-driven-close-reauth',
+      event: 'ps-provider-server-driven-close-reauth',
       docName: 'notes',
       reason: 'Failed to connect',
     });
     const out = parseStructuredConsoleMessage(msg);
     expect(out).not.toBeNull();
-    expect(out?.event).toBe('ok-provider-server-driven-close-reauth');
+    expect(out?.event).toBe('ps-provider-server-driven-close-reauth');
     expect(out?.fields.reason).toBe('Failed to connect');
     expect(out?.fields.docName).toBe('notes');
   });
@@ -56,7 +56,7 @@ describe('parseStructuredConsoleMessage', () => {
   test('strips the fields the log record producer owns', () => {
     const out = parseStructuredConsoleMessage(
       JSON.stringify({
-        event: 'ok-outline-nav',
+        event: 'ps-outline-nav',
         level: 2,
         time: 1,
         pid: 3,
@@ -72,15 +72,15 @@ describe('parseStructuredConsoleMessage', () => {
         index: 4,
       }),
     );
-    expect(out?.event).toBe('ok-outline-nav');
-    expect(out?.fields).toEqual({ event: 'ok-outline-nav', docName: 'notes/a', index: 4 });
+    expect(out?.event).toBe('ps-outline-nav');
+    expect(out?.fields).toEqual({ event: 'ps-outline-nav', docName: 'notes/a', index: 4 });
   });
 
   test('masks the JSON wire form of an authorization header, key and value apart', () => {
     const out = parseStructuredConsoleMessage(
-      JSON.stringify({ event: 'ok-provider-auth-failed', authorization: 'Bearer s3cret' }),
+      JSON.stringify({ event: 'ps-provider-auth-failed', authorization: 'Bearer s3cret' }),
     );
-    expect(out?.event).toBe('ok-provider-auth-failed');
+    expect(out?.event).toBe('ps-provider-auth-failed');
     expect(JSON.stringify(out?.fields)).not.toContain('s3cret');
   });
 
@@ -95,7 +95,7 @@ describe('parseStructuredConsoleMessage', () => {
     const secret = 'ghp_0123456789abcdefghijklmnopqrstuvwxyz';
     const out = parseStructuredConsoleMessage(
       JSON.stringify({
-        event: 'ok-pool-recycle-all',
+        event: 'ps-pool-recycle-all',
         nested: { inner: `token ${secret}` },
         list: [`token ${secret}`],
       }),
@@ -109,7 +109,7 @@ describe('parseStructuredConsoleMessage', () => {
   test('scrubs each string leaf, so a credential in a field is masked', () => {
     const out = parseStructuredConsoleMessage(
       JSON.stringify({
-        event: 'ok-provider-token-refresh',
+        event: 'ps-provider-token-refresh',
         token: 'ghp_0123456789abcdefghijklmnopqrstuvwxyz',
         index: 4,
       }),
@@ -122,12 +122,12 @@ describe('parseStructuredConsoleMessage', () => {
   test('scrubbing per leaf keeps a payload that a whole-line scrub would destroy', () => {
     const out = parseStructuredConsoleMessage(
       JSON.stringify({
-        event: 'ok-pool-recycle-all',
+        event: 'ps-pool-recycle-all',
         detail: 'authorization: Bearer abc123',
         docName: 'notes/a',
       }),
     );
-    expect(out?.event).toBe('ok-pool-recycle-all');
+    expect(out?.event).toBe('ps-pool-recycle-all');
     expect(out?.fields.docName).toBe('notes/a');
     expect(out?.fields.detail).not.toContain('abc123');
   });

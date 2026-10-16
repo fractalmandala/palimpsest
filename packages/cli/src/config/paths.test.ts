@@ -1,4 +1,4 @@
-import { getLocalDir } from '@inkeep/open-knowledge-server';
+import { getLocalDir } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import { resolveContentDir, resolveLockDir } from './paths.ts';
 import type { Config } from './schema.ts';
@@ -21,7 +21,7 @@ describe('resolveContentDir', () => {
 });
 
 describe('resolveLockDir', () => {
-  test('returns <contentDir>/.ok/local', () => {
+  test('returns <contentDir>/.ps/local', () => {
     expect(resolveLockDir('/tmp/project')).toBe(getLocalDir('/tmp/project'));
   });
 });

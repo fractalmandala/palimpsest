@@ -1,4 +1,4 @@
-import { toWikiLinkSlug } from '@inkeep/open-knowledge-core/utils/slug';
+import { toWikiLinkSlug } from '@palimpsest/core/utils/slug';
 
 function findById(root: ParentNode, id: string): HTMLElement | null {
   return root.querySelector<HTMLElement>(`#${CSS.escape(id)}`);

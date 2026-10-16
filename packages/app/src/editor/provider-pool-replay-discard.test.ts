@@ -149,7 +149,7 @@ describe('ProviderPool replay-buffer discard reaches the durable mirror', () => 
     await vi.waitFor(() => {
       const events = warn.mock.calls
         .map(([first]) => (typeof first === 'string' ? first : ''))
-        .filter((line) => line.includes('ok-buffer-replay-abandoned'));
+        .filter((line) => line.includes('ps-buffer-replay-abandoned'));
       expect(events).not.toHaveLength(0);
     });
   });

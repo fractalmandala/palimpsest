@@ -1,4 +1,4 @@
-import { builtInComponents } from '@inkeep/open-knowledge-core';
+import { builtInComponents } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { hasIconMapping } from './icons.ts';
 

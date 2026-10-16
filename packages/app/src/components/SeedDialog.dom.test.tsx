@@ -5,10 +5,10 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type {
-  OkPackId,
-  OkScaffoldPlan,
-  OkSeedPackInfo,
-  OkSeedPlanResult,
+  PsPackId,
+  PsScaffoldPlan,
+  PsSeedPackInfo,
+  PsSeedPlanResult,
 } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
@@ -31,8 +31,8 @@ vi.doMock('@/components/PackCardGrid', () => ({
     packs,
     onPackSelect,
   }: {
-    packs: OkSeedPackInfo[] | null;
-    onPackSelect: (packId: OkPackId) => void;
+    packs: PsSeedPackInfo[] | null;
+    onPackSelect: (packId: PsPackId) => void;
   }) => (
     <div data-testid="pack-card-grid">
       {packs === null ? (
@@ -52,33 +52,33 @@ const toastSuccesses: string[] = [];
 const toastErrors: string[] = [];
 const toastWarnings: string[] = [];
 const listPacksCalls: string[] = [];
-const planCalls: Array<{ packId?: OkPackId; rootDir?: string }> = [];
-const applyCalls: Array<{ plan: OkScaffoldPlan; packId?: OkPackId }> = [];
+const planCalls: Array<{ packId?: PsPackId; rootDir?: string }> = [];
+const applyCalls: Array<{ plan: PsScaffoldPlan; packId?: PsPackId }> = [];
 
-const knowledgeBasePlan: OkScaffoldPlan = {
+const knowledgeBasePlan: PsScaffoldPlan = {
   created: [
     { kind: 'folder', path: 'notes' },
-    { kind: 'folder', path: 'notes/.ok' },
-    { kind: 'folder', path: 'notes/.ok/templates' },
-    { kind: 'file', path: 'notes/.ok/templates/note.md' },
+    { kind: 'folder', path: 'notes/.ps' },
+    { kind: 'folder', path: 'notes/.ps/templates' },
+    { kind: 'file', path: 'notes/.ps/templates/note.md' },
     { kind: 'file', path: 'log.md' },
   ],
   skipped: [],
   warnings: [],
 };
 
-const plainNotesPlan: OkScaffoldPlan = {
+const plainNotesPlan: PsScaffoldPlan = {
   created: [
     { kind: 'folder', path: 'daily' },
-    { kind: 'folder', path: 'daily/.ok' },
-    { kind: 'folder', path: 'daily/.ok/templates' },
-    { kind: 'file', path: 'daily/.ok/templates/daily.md' },
+    { kind: 'folder', path: 'daily/.ps' },
+    { kind: 'folder', path: 'daily/.ps/templates' },
+    { kind: 'file', path: 'daily/.ps/templates/daily.md' },
   ],
   skipped: [],
   warnings: [],
 };
 
-const packs: OkSeedPackInfo[] = [
+const packs: PsSeedPackInfo[] = [
   {
     id: 'knowledge-base',
     name: 'Knowledge Base',
@@ -95,7 +95,7 @@ const packs: OkSeedPackInfo[] = [
   },
 ];
 
-let planImpl: (options: { packId?: OkPackId; rootDir?: string }) => Promise<OkSeedPlanResult> =
+let planImpl: (options: { packId?: PsPackId; rootDir?: string }) => Promise<PsSeedPlanResult> =
   async (options) => ({
     ok: true,
     plan: options.packId === 'plain-notes' ? plainNotesPlan : knowledgeBasePlan,
@@ -107,11 +107,11 @@ vi.doMock('@/lib/seed-client', () => ({
       listPacksCalls.push('list');
       return { ok: true as const, packs };
     },
-    plan: async (options: { packId?: OkPackId; rootDir?: string }) => {
+    plan: async (options: { packId?: PsPackId; rootDir?: string }) => {
       planCalls.push(options);
       return planImpl(options);
     },
-    apply: async (plan: OkScaffoldPlan, options: { packId?: OkPackId }) => {
+    apply: async (plan: PsScaffoldPlan, options: { packId?: PsPackId }) => {
       applyCalls.push({ plan, packId: options.packId });
       return {
         ok: true as const,
@@ -194,7 +194,7 @@ describe('SeedDialog runtime behavior', () => {
   });
 
   test('Back returns to the picker and clears the previous pack plan before the next plan resolves', async () => {
-    let resolveKnowledgeBasePlan: ((result: OkSeedPlanResult) => void) | null = null;
+    let resolveKnowledgeBasePlan: ((result: PsSeedPlanResult) => void) | null = null;
     planImpl = (options) => {
       if (options.packId === 'knowledge-base') {
         return new Promise((resolve) => {

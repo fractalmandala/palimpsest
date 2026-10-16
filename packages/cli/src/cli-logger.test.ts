@@ -11,8 +11,8 @@ function tmp(prefix: string): string {
   return dir;
 }
 function makeProject(root: string): void {
-  mkdirSync(join(root, '.ok'), { recursive: true });
-  writeFileSync(join(root, '.ok', 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
+  mkdirSync(join(root, '.ps'), { recursive: true });
+  writeFileSync(join(root, '.ps', 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
 }
 
 afterEach(() => {
@@ -21,13 +21,13 @@ afterEach(() => {
 
 describe('resolveLogProject', () => {
   test('a configured project name wins', () => {
-    const root = tmp('ok-log-named-');
+    const root = tmp('ps-log-named-');
     makeProject(root);
     expect(resolveLogProject(root, 'my-kb')).toBe('my-kb');
   });
 
   test('inside a project with no name → the resolved project root, not a placeholder', () => {
-    const root = tmp('ok-log-root-');
+    const root = tmp('ps-log-root-');
     makeProject(root);
     const sub = join(root, 'a', 'b');
     mkdirSync(sub, { recursive: true });
@@ -35,11 +35,11 @@ describe('resolveLogProject', () => {
   });
 
   test('outside any project → undefined (the record carries no false project)', () => {
-    expect(resolveLogProject(tmp('ok-log-bare-'))).toBeUndefined();
+    expect(resolveLogProject(tmp('ps-log-bare-'))).toBeUndefined();
   });
 
   test('an empty configured name falls through to the resolved root', () => {
-    const root = tmp('ok-log-empty-');
+    const root = tmp('ps-log-empty-');
     makeProject(root);
     expect(resolveLogProject(root, '')).toBe(root);
   });

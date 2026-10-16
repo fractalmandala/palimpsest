@@ -13,13 +13,13 @@ interface Rig {
 }
 
 function tempRig(): Rig {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-tag-persist-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-tag-persist-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   return {
     projectDir,
     contentDir,
-    snapshotPath: join(projectDir, '.ok', 'local', 'cache', 'tags.json'),
+    snapshotPath: join(projectDir, '.ps', 'local', 'cache', 'tags.json'),
     cleanup: () => rmSync(projectDir, { recursive: true, force: true }),
   };
 }
@@ -181,7 +181,7 @@ describe('TagIndex persistence', () => {
     const rig = tempRig();
     try {
       writeDoc(rig.contentDir, 'alpha.md', 'Tag #real.\n', 1_000);
-      mkdirSync(join(rig.projectDir, '.ok', 'local', 'cache'), { recursive: true });
+      mkdirSync(join(rig.projectDir, '.ps', 'local', 'cache'), { recursive: true });
       writeFileSync(rig.snapshotPath, '{ not json');
 
       const idx = newIndex(rig);
@@ -237,7 +237,7 @@ describe('TagIndex persistence', () => {
   ])('off-shape snapshot $snapshot reports a miss (kept: $kept)', async ({ snapshot, kept }) => {
     const rig = tempRig();
     try {
-      mkdirSync(join(rig.projectDir, '.ok', 'local', 'cache'), { recursive: true });
+      mkdirSync(join(rig.projectDir, '.ps', 'local', 'cache'), { recursive: true });
       writeFileSync(rig.snapshotPath, snapshot);
       const idx = newIndex(rig);
       expect(await idx.loadFromDisk()).toBe(false);
@@ -250,7 +250,7 @@ describe('TagIndex persistence', () => {
   test('snapshot restore refuses synthetic doc names', async () => {
     const rig = tempRig();
     try {
-      mkdirSync(join(rig.projectDir, '.ok', 'local', 'cache'), { recursive: true });
+      mkdirSync(join(rig.projectDir, '.ps', 'local', 'cache'), { recursive: true });
       writeFileSync(
         rig.snapshotPath,
         JSON.stringify({

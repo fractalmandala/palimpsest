@@ -6,9 +6,9 @@ import { STEP_SLICER_SCAN_ROOTS } from './step-slicer-shape.reads.mjs';
 
 const SELF_PATH = fileURLToPath(import.meta.url);
 const HERE = dirname(SELF_PATH);
-const OK_ROOT = join(HERE, '..', '..');
+const PS_ROOT = join(HERE, '..', '..');
 
-const ROOTS = STEP_SLICER_SCAN_ROOTS.map((root) => join(OK_ROOT, root));
+const ROOTS = STEP_SLICER_SCAN_ROOTS.map((root) => join(PS_ROOT, root));
 
 const NESTED_SLICE = /\.slice\(\s*[A-Za-z_$][\w$]*(?:\.[\w$]+)*\.(?:indexOf|lastIndexOf)\(/g;
 

@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from '
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import {
@@ -48,7 +48,7 @@ async function bootOnMainWithFeatureBranch(): Promise<{
   contentDir: string;
   server: InspectableServer;
 }> {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-branch-switch-agent-write-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-branch-switch-agent-write-')));
   cleanups.push(() => rmSync(contentDir, { recursive: true, force: true }));
   await ensureProjectGit(contentDir);
   configureTestGitRepository(contentDir);

@@ -45,7 +45,7 @@ describe('suggestLinks', () => {
   });
 
   test('canonical wiki spellings suppress linked labels while unrelated prose remains suggestible', async () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-suggest-resolved-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-suggest-resolved-'));
     const hocuspocus = new Hocuspocus({ quiet: true });
     try {
       mkdirSync(join(root, 'notes'));
@@ -83,7 +83,7 @@ describe('suggestLinks', () => {
   });
 
   test('bundle-relative wiki links suppress only mentions of the target in their own bundle', async () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-suggest-bundle-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-suggest-bundle-'));
     const hocuspocus = new Hocuspocus({ quiet: true });
     const bundle = '.agents/skills/demo';
     const pages = {
@@ -117,7 +117,7 @@ describe('suggestLinks', () => {
   });
 
   test('returns a plain unlinked mention from the admitted disk corpus', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -152,7 +152,7 @@ describe('suggestLinks', () => {
   });
 
   test('matches title and aliases case-insensitively without substring false positives', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -188,7 +188,7 @@ describe('suggestLinks', () => {
   });
 
   test('ignores frontmatter, fenced code, inline code, and existing links', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -231,7 +231,7 @@ describe('suggestLinks', () => {
   });
 
   test('ignores HTML and JSX tag markup but keeps text between tags matchable', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -275,7 +275,7 @@ describe('suggestLinks', () => {
   });
 
   test('keeps prose around a stray angle bracket matchable', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -300,7 +300,7 @@ describe('suggestLinks', () => {
   });
 
   test('keeps labels linked to other pages matchable', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -341,7 +341,7 @@ describe('suggestLinks', () => {
   });
 
   test('prefers live open-doc content over stale disk content', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -377,7 +377,7 @@ describe('suggestLinks', () => {
   });
 
   test('FR-43: doc-start `---` thematic-break form survives via ytext (discriminating)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -416,7 +416,7 @@ describe('suggestLinks', () => {
   });
 
   test('FR-43: angle-bracket autolink survives in mention excerpt (live doc body via ytext)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -449,7 +449,7 @@ describe('suggestLinks', () => {
   });
 
   test('orders results by mention density then source name', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -488,7 +488,7 @@ describe('suggestLinks', () => {
   });
 
   test('returns partial ordered results and scan observations when budget is exceeded', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -533,7 +533,7 @@ describe('suggestLinks', () => {
     targetMarkdown: string,
     sourceMarkdown: string,
   ): Promise<Array<{ source: string; excerpt: string; offset: number }>> {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-unicode-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-unicode-'));
     const hocuspocus = new Hocuspocus({ quiet: true });
     try {
       writeFileSync(join(contentDir, 'target.md'), targetMarkdown, 'utf-8');
@@ -620,7 +620,7 @@ describe('suggestLinks', () => {
   });
 
   test('returns an empty success result when no candidates exist', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-suggest-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-suggest-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });

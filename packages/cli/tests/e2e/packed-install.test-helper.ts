@@ -370,7 +370,7 @@ export async function installPackedCli(
   const installPrefix = realpathSync(options.installPrefix);
   const env = { ...(options.env ?? process.env) };
   const mode =
-    options.mode ?? z.enum(['locked', 'fresh']).parse(env.OK_CLI_E2E_INSTALL_MODE ?? 'locked');
+    options.mode ?? z.enum(['locked', 'fresh']).parse(env.PS_CLI_E2E_INSTALL_MODE ?? 'locked');
   const graphDir = join(options.packageDir, 'test-results');
   const graphPath = join(graphDir, 'cli-e2e-fresh-graph.json');
   if (mode === 'fresh') rmSync(graphPath, { force: true });
@@ -548,7 +548,7 @@ export async function installPackedCli(
     mkdirSync(graphDir, { recursive: true });
     cpSync(join(installPrefix, 'package-lock.json'), graphPath);
   }
-  const installed = join(installPrefix, 'node_modules', '@inkeep', 'open-knowledge');
+  const installed = join(installPrefix, 'node_modules', '@inkeep', 'palimpsest');
   for (const asset of ['dist/cli.mjs', 'dist/public/index.html', 'dist/assets/skills']) {
     if (!existsSync(join(installed, asset))) {
       throw new Error(`Packed CLI is missing required asset: ${asset}`);

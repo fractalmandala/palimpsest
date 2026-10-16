@@ -1,10 +1,10 @@
 import {
   type Config,
   type ConfigBinding,
-  OKF_RULE_GROUPS,
-  OKF_RULE_IDS,
+  PSF_RULE_GROUPS,
+  PSF_RULE_IDS,
   type SkillsListEntry,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -60,12 +60,12 @@ let installPackSkillResult:
   | { ok: true; skills: Array<{ name: string; created: boolean }>; installedHosts: string[] }
   | { ok: false; error: string } = {
   ok: true,
-  skills: [{ name: 'okf-knowledge-base', created: true }],
+  skills: [{ name: 'psf-knowledge-base', created: true }],
   installedHosts: ['Claude Code'],
 };
 
 function configuredGeneratedIndexEnabled(): boolean {
-  return mockProjectConfig?.contentRules?.okf?.generate?.index === true;
+  return mockProjectConfig?.contentRules?.psf?.generate?.index === true;
 }
 
 async function generatedIndexFetch(input: string | URL | Request, init?: RequestInit) {
@@ -189,14 +189,14 @@ const {
 
 interface SliceOverrides {
   markdownlint?: Record<string, unknown>;
-  okf?: Record<string, unknown>;
+  psf?: Record<string, unknown>;
 }
 
 function configWith(linter: SliceOverrides): Config {
   return {
     contentRules: {
       markdownlint: { enabled: true, ...linter.markdownlint },
-      ...(linter.okf === undefined ? {} : { okf: { enabled: true, ...linter.okf } }),
+      ...(linter.psf === undefined ? {} : { psf: { enabled: true, ...linter.psf } }),
     },
   } as unknown as Config;
 }
@@ -243,7 +243,7 @@ beforeEach(() => {
   mockSkillsState = { status: 'ready', data: [] };
   installPackSkillResult = {
     ok: true,
-    skills: [{ name: 'okf-knowledge-base', created: true }],
+    skills: [{ name: 'psf-knowledge-base', created: true }],
     installedHosts: ['Claude Code'],
   };
   vi.stubGlobal('fetch', generatedIndexFetch);
@@ -288,8 +288,8 @@ describe('ProjectPluginsManageSection', () => {
     expect(describedTextOf('settings-plugin-toggle-frontmatter')).toContain(
       'Validate document frontmatter',
     );
-    expect(describedTextOf('settings-plugin-toggle-okf')).toBe(
-      'Keeps your knowledge base aligned with the Open Knowledge Format.',
+    expect(describedTextOf('settings-plugin-toggle-psf')).toBe(
+      'Keeps your knowledge base aligned with the Palimpsest Format.',
     );
   });
 
@@ -303,25 +303,25 @@ describe('ProjectPluginsManageSection', () => {
     });
   });
 
-  test('renders the okf plugin row with an off toggle and a concise description', () => {
+  test('renders the psf plugin row with an off toggle and a concise description', () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
     render(<ProjectPluginsManageSection />);
-    const toggle = screen.getByTestId('settings-plugin-toggle-okf');
+    const toggle = screen.getByTestId('settings-plugin-toggle-psf');
     expect(toggle.getAttribute('aria-checked')).toBe('false');
     const row = toggle.closest('div');
     expect(row?.textContent).toContain(
-      'Keeps your knowledge base aligned with the Open Knowledge Format.',
+      'Keeps your knowledge base aligned with the Palimpsest Format.',
     );
   });
 
-  test('toggling the okf plugin writes its enabled patch', async () => {
+  test('toggling the psf plugin writes its enabled patch', async () => {
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
     render(<ProjectPluginsManageSection />);
-    await userEvent.click(screen.getByTestId('settings-plugin-toggle-okf'));
+    await userEvent.click(screen.getByTestId('settings-plugin-toggle-psf'));
     expect(calls).toContainEqual({
-      contentRules: { okf: { enabled: true } },
+      contentRules: { psf: { enabled: true } },
     });
   });
 
@@ -487,7 +487,7 @@ describe('MarkdownlintPluginSection', () => {
       'settings-plugin-markdownlint-title-docs-link',
     ) as HTMLAnchorElement;
     expect(docs.getAttribute('href')).toBe(
-      'https://openknowledge.ai/docs/advanced/content-rules/markdownlint',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/advanced/content-rules/markdownlint.mdx',
     );
     expect(docs.getAttribute('aria-label')).toBe('Learn more about markdownlint');
   });
@@ -515,17 +515,17 @@ describe('OkfPluginSection', () => {
   }
 
   async function generatedIndexToggle(): Promise<HTMLButtonElement> {
-    const toggle = screen.getByTestId('settings-okf-generate-index') as HTMLButtonElement;
+    const toggle = screen.getByTestId('settings-psf-generate-index') as HTMLButtonElement;
     await waitFor(() => expect(toggle.disabled).toBe(false));
     return toggle;
   }
 
   function generatedIndexNoticeText(): string {
-    return screen.getByTestId('settings-okf-generate-index-status').textContent ?? '';
+    return screen.getByTestId('settings-psf-generate-index-status').textContent ?? '';
   }
 
   function generatedIndexSwitchState(): string | null {
-    return screen.getByTestId('settings-okf-generate-index').getAttribute('aria-checked');
+    return screen.getByTestId('settings-psf-generate-index').getAttribute('aria-checked');
   }
 
   const generatedIndexRefusals = [
@@ -549,17 +549,17 @@ describe('OkfPluginSection', () => {
     },
   ] as const;
 
-  test('renders the okf plugin panel with its identity header and concise description', () => {
+  test('renders the psf plugin panel with its identity header and concise description', () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
     renderPanel();
-    const panel = screen.getByTestId('settings-plugin-okf');
+    const panel = screen.getByTestId('settings-plugin-psf');
     expect(panel).toBeDefined();
     expect(within(panel).getByText('OKF')).toBeDefined();
     expect(screen.getByTestId('settings-scope-badge-project')).toBeDefined();
     expect(screen.queryByTestId('settings-scope-badge-user')).toBeNull();
     expect(panel.textContent).toContain(
-      'Keeps your knowledge base aligned with the Open Knowledge Format.',
+      'Keeps your knowledge base aligned with the Palimpsest Format.',
     );
   });
 
@@ -567,11 +567,11 @@ describe('OkfPluginSection', () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
     renderPanel();
-    const panel = screen.getByTestId('settings-plugin-okf');
+    const panel = screen.getByTestId('settings-plugin-psf');
     expect(within(panel).getByText('Beta')).toBeDefined();
-    const docsLink = screen.getByTestId('settings-plugin-okf-title-docs-link');
+    const docsLink = screen.getByTestId('settings-plugin-psf-title-docs-link');
     expect(docsLink.getAttribute('href')).toBe(
-      LINT_PLUGIN_META.find((plugin) => plugin.id === 'okf')?.docUrl,
+      LINT_PLUGIN_META.find((plugin) => plugin.id === 'psf')?.docUrl,
     );
   });
 
@@ -580,9 +580,9 @@ describe('OkfPluginSection', () => {
     mockProjectBinding = binding;
     renderPanel();
 
-    const card = screen.getByTestId('settings-okf-recommended-skill');
+    const card = screen.getByTestId('settings-psf-recommended-skill');
     expect(screen.getByRole('heading', { name: 'Recommended agent skill' })).toBeDefined();
-    expect(card.textContent).toContain('Open Knowledge Format guidance');
+    expect(card.textContent).toContain('Palimpsest Format guidance');
     expect(within(card).getByRole('button', { name: 'Install skill' })).toBeDefined();
   });
 
@@ -597,14 +597,14 @@ describe('OkfPluginSection', () => {
     expect(within(dialog).getByTestId('plugin-bundle-install')).toBeDefined();
     expect(within(dialog).getByText('Installs into this project')).toBeDefined();
     expect(dialog.textContent).not.toContain('Install into');
-    expect(dialog.textContent).toContain('okf-knowledge-base');
+    expect(dialog.textContent).toContain('psf-knowledge-base');
     expect(installPackSkillCalls).toEqual([]);
 
     await user.click(within(dialog).getByRole('button', { name: 'Install 1 skill' }));
 
-    await waitFor(() => expect(installPackSkillCalls).toEqual(['okf']));
+    await waitFor(() => expect(installPackSkillCalls).toEqual(['psf']));
     expect(successToasts.at(-1)?.message).toContain('OKF agent skill installed');
-    expect(screen.getByTestId('settings-okf-recommended-skill').textContent).toContain('Installed');
+    expect(screen.getByTestId('settings-psf-recommended-skill').textContent).toContain('Installed');
   });
 
   test('recognizes a same-name project skill without claiming or overwriting it', async () => {
@@ -615,10 +615,10 @@ describe('OkfPluginSection', () => {
       status: 'ready',
       data: [
         {
-          name: 'okf-knowledge-base',
+          name: 'psf-knowledge-base',
           description: 'Team-authored OKF conventions',
           scope: 'project',
-          path: '.agents/skills/okf-knowledge-base/SKILL.md',
+          path: '.agents/skills/psf-knowledge-base/SKILL.md',
           installed: true,
           hosts: ['agents'],
         },
@@ -626,11 +626,11 @@ describe('OkfPluginSection', () => {
     };
     renderPanel();
 
-    const card = screen.getByTestId('settings-okf-recommended-skill');
+    const card = screen.getByTestId('settings-psf-recommended-skill');
     expect(card.textContent).toContain('Already in project');
     expect(within(card).queryByRole('button', { name: 'Install skill' })).toBeNull();
     await user.click(within(card).getByRole('button', { name: 'Open skill' }));
-    expect(openSkillCalls).toEqual([['project', 'okf-knowledge-base']]);
+    expect(openSkillCalls).toEqual([['project', 'psf-knowledge-base']]);
     expect(installPackSkillCalls).toEqual([]);
   });
 
@@ -647,7 +647,7 @@ describe('OkfPluginSection', () => {
     );
 
     await waitFor(() => expect(errorToasts).toContain('Skill source could not be authored.'));
-    expect(screen.getByTestId('settings-okf-recommended-skill').textContent).not.toContain(
+    expect(screen.getByTestId('settings-psf-recommended-skill').textContent).not.toContain(
       'Installed',
     );
 
@@ -662,13 +662,13 @@ describe('OkfPluginSection', () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
     renderPanel();
-    const list = screen.getByTestId('settings-okf-rules-list');
-    for (const id of OKF_RULE_IDS) {
-      const toggle = within(list).getByTestId(`settings-okf-rule-toggle-${id}`);
+    const list = screen.getByTestId('settings-psf-rules-list');
+    for (const id of PSF_RULE_IDS) {
+      const toggle = within(list).getByTestId(`settings-psf-rule-toggle-${id}`);
       expect(toggle.getAttribute('aria-checked')).toBe('true');
     }
-    expect(screen.getByTestId('settings-plugin-okf').textContent).toContain(
-      `${OKF_RULE_IDS.length}/${OKF_RULE_IDS.length} on`,
+    expect(screen.getByTestId('settings-plugin-psf').textContent).toContain(
+      `${PSF_RULE_IDS.length}/${PSF_RULE_IDS.length} on`,
     );
   });
 
@@ -678,53 +678,53 @@ describe('OkfPluginSection', () => {
     renderPanel();
 
     const seen: string[] = [];
-    for (const group of OKF_RULE_GROUPS) {
-      const block = screen.getByTestId(`settings-okf-rule-group-${group.id}`);
+    for (const group of PSF_RULE_GROUPS) {
+      const block = screen.getByTestId(`settings-psf-rule-group-${group.id}`);
       for (const id of group.ids) {
-        expect(within(block).getByTestId(`settings-okf-rule-toggle-${id}`)).toBeDefined();
+        expect(within(block).getByTestId(`settings-psf-rule-toggle-${id}`)).toBeDefined();
         seen.push(id);
       }
       expect(block.textContent?.length ?? 0).toBeGreaterThan(group.ids.join('').length);
     }
-    expect([...seen].sort()).toEqual([...OKF_RULE_IDS].sort());
+    expect([...seen].sort()).toEqual([...PSF_RULE_IDS].sort());
     expect(new Set(seen).size).toBe(seen.length);
   });
 
   test('a rule set to false in config renders off, its siblings stay on', () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { rules: { 'no-wiki-links': false } } });
+    mockProjectConfig = configWith({ psf: { rules: { 'no-wiki-links': false } } });
     renderPanel();
     expect(
-      screen.getByTestId('settings-okf-rule-toggle-no-wiki-links').getAttribute('aria-checked'),
+      screen.getByTestId('settings-psf-rule-toggle-no-wiki-links').getAttribute('aria-checked'),
     ).toBe('false');
     expect(
-      screen.getByTestId('settings-okf-rule-toggle-index-shape').getAttribute('aria-checked'),
+      screen.getByTestId('settings-psf-rule-toggle-index-shape').getAttribute('aria-checked'),
     ).toBe('true');
-    expect(screen.getByTestId('settings-plugin-okf').textContent).toContain(
-      `${OKF_RULE_IDS.length - 1}/${OKF_RULE_IDS.length} on`,
+    expect(screen.getByTestId('settings-plugin-psf').textContent).toContain(
+      `${PSF_RULE_IDS.length - 1}/${PSF_RULE_IDS.length} on`,
     );
   });
 
   test('turning a rule off sends that rule as false', async () => {
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { rules: { 'log-shape': false } } });
+    mockProjectConfig = configWith({ psf: { rules: { 'log-shape': false } } });
     renderPanel();
-    await userEvent.click(screen.getByTestId('settings-okf-rule-toggle-index-shape'));
+    await userEvent.click(screen.getByTestId('settings-psf-rule-toggle-index-shape'));
     expect(calls).toContainEqual({
-      contentRules: { okf: { rules: { 'index-shape': false } } },
+      contentRules: { psf: { rules: { 'index-shape': false } } },
     });
   });
 
   test('turning a rule back on sends null, which deletes the key', async () => {
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { rules: { 'index-shape': false } } });
+    mockProjectConfig = configWith({ psf: { rules: { 'index-shape': false } } });
     renderPanel();
-    await userEvent.click(screen.getByTestId('settings-okf-rule-toggle-index-shape'));
+    await userEvent.click(screen.getByTestId('settings-psf-rule-toggle-index-shape'));
     expect(calls).toContainEqual({
-      contentRules: { okf: { rules: { 'index-shape': null } } },
+      contentRules: { psf: { rules: { 'index-shape': null } } },
     });
   });
 
@@ -732,7 +732,7 @@ describe('OkfPluginSection', () => {
     mockProjectBinding = null;
     mockProjectSynced = false;
     renderPanel();
-    const toggle = screen.getByTestId('settings-okf-rule-toggle-index-shape') as HTMLButtonElement;
+    const toggle = screen.getByTestId('settings-psf-rule-toggle-index-shape') as HTMLButtonElement;
     expect(toggle.disabled).toBe(true);
   });
 
@@ -740,7 +740,7 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: {} });
+    mockProjectConfig = configWith({ psf: {} });
     renderPanel();
 
     await user.click(await generatedIndexToggle());
@@ -761,7 +761,7 @@ describe('OkfPluginSection', () => {
     expect(within(dialog).getByRole('button', { name: 'Enable indexes' })).toBeDefined();
     expect(calls).toEqual([]);
     expect(generatedIndexApiCalls).toEqual([]);
-    expect(screen.getByTestId('settings-okf-generate-index').getAttribute('aria-checked')).toBe(
+    expect(screen.getByTestId('settings-psf-generate-index').getAttribute('aria-checked')).toBe(
       'false',
     );
   });
@@ -770,7 +770,7 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: {} });
+    mockProjectConfig = configWith({ psf: {} });
     renderPanel();
 
     await user.click(await generatedIndexToggle());
@@ -779,7 +779,7 @@ describe('OkfPluginSection', () => {
     });
 
     const cancel = within(dialog).getByRole('button', { name: 'Cancel' });
-    const confirm = within(dialog).getByTestId('settings-okf-generate-index-confirm-accept');
+    const confirm = within(dialog).getByTestId('settings-psf-generate-index-confirm-accept');
 
     expect(cancel.getAttribute('data-variant')).toBe('outline');
     expect(confirm.getAttribute('data-variant')).toBe('default');
@@ -795,7 +795,7 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: {} });
+    mockProjectConfig = configWith({ psf: {} });
     renderPanel();
 
     await user.click(await generatedIndexToggle());
@@ -804,7 +804,7 @@ describe('OkfPluginSection', () => {
 
     expect(calls).toEqual([]);
     expect(generatedIndexApiCalls).toEqual([]);
-    expect(screen.getByTestId('settings-okf-generate-index').getAttribute('aria-checked')).toBe(
+    expect(screen.getByTestId('settings-psf-generate-index').getAttribute('aria-checked')).toBe(
       'false',
     );
   });
@@ -813,12 +813,12 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: {} });
+    mockProjectConfig = configWith({ psf: {} });
     renderPanel();
 
     await user.click(await generatedIndexToggle());
     await screen.findByRole('dialog');
-    await user.click(screen.getByTestId('settings-okf-generate-index-confirm-accept'));
+    await user.click(screen.getByTestId('settings-psf-generate-index-confirm-accept'));
 
     await waitFor(() => expect(generatedIndexApiCalls).toEqual([true]));
     expect(calls).toEqual([]);
@@ -828,7 +828,7 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding, calls } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { generate: { index: true } } });
+    mockProjectConfig = configWith({ psf: { generate: { index: true } } });
     renderPanel();
 
     await user.click(await generatedIndexToggle());
@@ -842,7 +842,7 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { generate: { index: true } } });
+    mockProjectConfig = configWith({ psf: { generate: { index: true } } });
     mockGeneratedIndexActive = false;
     renderPanel();
 
@@ -858,17 +858,17 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: {} });
+    mockProjectConfig = configWith({ psf: {} });
     mockGeneratedIndexApplyResult = { applied: false, reason: 'config-write' };
     renderPanel();
 
     await user.click(await generatedIndexToggle());
     await screen.findByRole('dialog');
-    await user.click(screen.getByTestId('settings-okf-generate-index-confirm-accept'));
+    await user.click(screen.getByTestId('settings-psf-generate-index-confirm-accept'));
 
-    const notice = await screen.findByTestId('settings-okf-generate-index-status');
+    const notice = await screen.findByTestId('settings-psf-generate-index-status');
     expect(notice.textContent).toContain('the project setting could not be saved');
-    expect(screen.getByTestId('settings-okf-generate-index').getAttribute('aria-checked')).toBe(
+    expect(screen.getByTestId('settings-psf-generate-index').getAttribute('aria-checked')).toBe(
       'false',
     );
   });
@@ -876,23 +876,23 @@ describe('OkfPluginSection', () => {
   test('an unreachable project server reads as a connection problem, not a silent no-op', async () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: {} });
+    mockProjectConfig = configWith({ psf: {} });
     mockGeneratedIndexFetchRejects = true;
     renderPanel();
 
-    const notice = await screen.findByTestId('settings-okf-generate-index-status');
+    const notice = await screen.findByTestId('settings-psf-generate-index-status');
     expect(notice.textContent).toContain('could not reach the project server');
   });
 
   test('an unconfirmable Git merge rule pauses generation and names Git as the cause', async () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { generate: { index: true } } });
+    mockProjectConfig = configWith({ psf: { generate: { index: true } } });
     mockGeneratedIndexGitState = 'unavailable';
     mockGeneratedIndexActive = false;
     renderPanel();
 
-    const notice = await screen.findByTestId('settings-okf-generate-index-status');
+    const notice = await screen.findByTestId('settings-psf-generate-index-status');
     expect(notice.textContent).toContain('could not confirm the required Git merge rule');
     expect(notice.textContent).not.toContain('another Git attribute');
   });
@@ -903,7 +903,7 @@ describe('OkfPluginSection', () => {
       const user = userEvent.setup();
       const { binding } = makeBinding();
       mockProjectBinding = binding;
-      mockProjectConfig = configWith({ okf: { generate: { index: true } } });
+      mockProjectConfig = configWith({ psf: { generate: { index: true } } });
       mockGeneratedIndexGitState = gitState;
       mockGeneratedIndexActive = activeWhenEnabled;
       mockGeneratedIndexApplyResult = { applied: false, reason };
@@ -927,11 +927,11 @@ describe('OkfPluginSection', () => {
     const user = userEvent.setup();
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { generate: { index: true } } });
+    mockProjectConfig = configWith({ psf: { generate: { index: true } } });
     renderPanel();
 
     const toggle = await generatedIndexToggle();
-    expect(screen.queryByTestId('settings-okf-generate-index-status')).toBeNull();
+    expect(screen.queryByTestId('settings-psf-generate-index-status')).toBeNull();
     mockGeneratedIndexFetchRejects = true;
     await user.click(toggle);
 
@@ -948,11 +948,11 @@ describe('OkfPluginSection', () => {
   test('an unreachable status check while generation is on does not claim index maintenance stayed off', async () => {
     const { binding } = makeBinding();
     mockProjectBinding = binding;
-    mockProjectConfig = configWith({ okf: { generate: { index: true } } });
+    mockProjectConfig = configWith({ psf: { generate: { index: true } } });
     mockGeneratedIndexFetchRejects = true;
     renderPanel();
 
-    const notice = await screen.findByTestId('settings-okf-generate-index-status');
+    const notice = await screen.findByTestId('settings-psf-generate-index-status');
     expect(notice.textContent).toContain('could not reach the project server');
     expect(notice.textContent).not.toContain('stayed off');
     expect(notice.textContent).not.toContain('Turning off index maintenance failed');
@@ -965,16 +965,16 @@ describe('OkfPluginSection', () => {
       const user = userEvent.setup();
       const { binding } = makeBinding();
       mockProjectBinding = binding;
-      mockProjectConfig = configWith({ okf: {} });
+      mockProjectConfig = configWith({ psf: {} });
       mockGeneratedIndexGitState = gitState;
       mockGeneratedIndexApplyResult = { applied: false, reason };
       renderPanel();
 
       await user.click(await generatedIndexToggle());
       await screen.findByRole('dialog');
-      await user.click(screen.getByTestId('settings-okf-generate-index-confirm-accept'));
+      await user.click(screen.getByTestId('settings-psf-generate-index-confirm-accept'));
 
-      const notice = await screen.findByTestId('settings-okf-generate-index-status');
+      const notice = await screen.findByTestId('settings-psf-generate-index-status');
       expect(notice.textContent).toContain(remedy);
       expect(notice.textContent).not.toContain('Turning off index maintenance failed');
       expect(generatedIndexApiCalls).toEqual([true]);

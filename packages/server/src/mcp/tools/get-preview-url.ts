@@ -3,8 +3,8 @@ import {
   currentCliCommandName,
   MANAGED_ARTIFACT_SCOPES,
   SKILL_NAME_REGEX,
-} from '@inkeep/open-knowledge-core';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { z } from 'zod';
 import { AutoStartDisabledError } from '../../autostart.ts';
 import { resolveLockDir } from '../../config/paths.ts';
@@ -33,10 +33,10 @@ import {
 } from './shared.ts';
 
 const DESCRIPTION = [
-  "Get the full browser URL for this project or a document/folder/skill, or an absolute markdown file outside the project. Opening is demand: auto-starts OK under the normal OK_MCP_AUTOSTART gate and waits briefly for UI; cold calls can take seconds. Other tools return route-only previewUrl paths; use this tool for an openable URL, never guess ports or hunt via the OpenKnowledge CLI's ps/status.",
+  "Get the full browser URL for this project or a document/folder/skill, or an absolute markdown file outside the project. Opening is demand: auto-starts OK under the normal PS_MCP_AUTOSTART gate and waits briefly for UI; cold calls can take seconds. Other tools return route-only previewUrl paths; use this tool for an openable URL, never guess ports or hunt via the Palimpsest CLI's ps/status.",
   'Choose one: document (extension-less), folder (trailing-slash route), skill:{name,scope?} (project default), or file (absolute .md/.mdx in a loose-file/worktree session). file ignores cwd; other targets use current project. Omit targets for UI root.',
-  "When YOUR host opens URLs, navigate its embedded browser to url; Claude Code Desktop uses preview_start({url}) then navigate({url}). Only a stdio host without a browser tool should open the URL in the system browser. A CLI without a browser can use the OpenKnowledge CLI's open <doc> for OK Desktop. This tool forces browser access even when Desktop is installed.",
-  "INSIDE OK's terminal/agent panel, use returned okOpenCommand instead; never paste url in the answer. If no UI is reachable, returns url:null, baseUrl:null, running:false, autoOpen plus state-specific recovery text (autostart disabled, no spawn authority or UI timeout). Follow it.",
+  "When YOUR host opens URLs, navigate its embedded browser to url; Claude Code Desktop uses preview_start({url}) then navigate({url}). Only a stdio host without a browser tool should open the URL in the system browser. A CLI without a browser can use the Palimpsest CLI's open <doc> for OK Desktop. This tool forces browser access even when Desktop is installed.",
+  "INSIDE OK's terminal/agent panel, use returned psOpenCommand instead; never paste url in the answer. If no UI is reachable, returns url:null, baseUrl:null, running:false, autoOpen plus state-specific recovery text (autostart disabled, no spawn authority or UI timeout). Follow it.",
 ].join('\n');
 
 interface GetPreviewUrlDeps {
@@ -87,7 +87,7 @@ const InputSchema = {
     .string()
     .optional()
     .describe(
-      'Absolute path to a single markdown file to open, including one OUTSIDE any Open Knowledge project. Resolves to the running single-file (or worktree) session whose content directory contains it and returns that session’s `url`. Mutually exclusive with `document` / `folder` / `skill`. When `file` is set, `cwd` is ignored.',
+      'Absolute path to a single markdown file to open, including one OUTSIDE any Palimpsest project. Resolves to the running single-file (or worktree) session whose content directory contains it and returns that session’s `url`. Mutually exclusive with `document` / `folder` / `skill`. When `file` is set, `cwd` is ignored.',
     ),
   cwd: z.string().optional().describe(ROUTED_CWD_DESCRIPTION),
 } as const;
@@ -111,12 +111,12 @@ const OutputSchema = outputSchemaWithText({
     .describe(
       'User-scoped preview-auto-open preference (`appearance.preview.autoOpen`). When `true`, the agent should route the preview using capability-based routing (in-app browser if available, system browser as fallback). When `false`, the user is managing their own preview view (OK Desktop window, a browser tab they opened, etc.) — the agent must NOT open or refresh any preview UI, and should surface this URL only on direct user ask. Resolved fresh on every call; defaults to `true`.',
     ),
-  okOpenCommand: z
+  psOpenCommand: z
     .string()
     .nullable()
     .optional()
     .describe(
-      'Machine-readable form of the hosted-agent steer: when the calling agent runs inside an OpenKnowledge surface (the desktop app’s built-in terminal, or its in-app agent panel) AND a doc/folder/skill target was given, the exact OpenKnowledge CLI `open` command to run to bring it up for the user. Run it INSTEAD of navigating `url`, and do not paste `url` into your reply — the user is already in the app it points at. `null`/absent in every other context (navigate `url` per your host instead).',
+      'Machine-readable form of the hosted-agent steer: when the calling agent runs inside an Palimpsest surface (the desktop app’s built-in terminal, or its in-app agent panel) AND a doc/folder/skill target was given, the exact Palimpsest CLI `open` command to run to bring it up for the user. Run it INSTEAD of navigating `url`, and do not paste `url` into your reply — the user is already in the app it points at. `null`/absent in every other context (navigate `url` per your host instead).',
     ),
 });
 
@@ -126,9 +126,9 @@ function noUiNoneMountedMessage(): string {
   return `The OK server is running but no preview UI is mounted (e.g. it was started with \`--only server\`). Restart it with plain \`${currentCliCommandName()} start\` to serve the editor, or open the project in OK Electron.`;
 }
 function noServerMessage(): string {
-  return `No OpenKnowledge server is running for this project. Start it with \`${currentCliCommandName()} start\` (also starts the preview UI), or open the project in OK Electron.`;
+  return `No Palimpsest server is running for this project. Start it with \`${currentCliCommandName()} start\` (also starts the preview UI), or open the project in OK Electron.`;
 }
-const AUTOSTART_DISABLED_NOTE = ' Auto-start is disabled (OK_MCP_AUTOSTART=0).';
+const AUTOSTART_DISABLED_NOTE = ' Auto-start is disabled (PS_MCP_AUTOSTART=0).';
 function readUserAutoOpen(): boolean {
   try {
     const cfg = readConfigSafely({
@@ -146,7 +146,7 @@ function readUserAutoOpen(): boolean {
 }
 
 function noSingleFileSessionMessage(file: string): string {
-  return `No Open Knowledge session is serving ${file} yet. On a host with a terminal, \`${currentCliCommandName()} open ${file}\` starts one; otherwise open ${file} in the OK Desktop app. Then retry.`;
+  return `No Palimpsest session is serving ${file} yet. On a host with a terminal, \`${currentCliCommandName()} open ${file}\` starts one; otherwise open ${file} in the OK Desktop app. Then retry.`;
 }
 
 function serverExplicitlyLacksUi(lockDir: string): boolean {
@@ -271,7 +271,7 @@ export function register(server: ServerInstance, deps: GetPreviewUrlDeps): void 
             : null;
 
       const cliCommand = currentCliCommandName();
-      const okOpenCommand = args.document
+      const psOpenCommand = args.document
         ? `${cliCommand} open ${shellQuoteArg(args.document)}`
         : args.folder
           ? `${cliCommand} open ${shellQuoteArg(args.folder)}`
@@ -279,8 +279,8 @@ export function register(server: ServerInstance, deps: GetPreviewUrlDeps): void 
             ? `${cliCommand} open ${args.skill.name} --skill${args.skill.scope === 'global' ? ' --scope global' : ''}`
             : null;
       const hostedAgentSteer =
-        deps.isHostedAgent && okOpenCommand
-          ? `You're running inside OpenKnowledge — run \`${okOpenCommand}\` to bring this up for the user. Don't navigate the URL below, open a browser, or paste the URL into your reply; it's for reference only.\n\n`
+        deps.isHostedAgent && psOpenCommand
+          ? `You're running inside Palimpsest — run \`${psOpenCommand}\` to bring this up for the user. Don't navigate the URL below, open a browser, or paste the URL into your reply; it's for reference only.\n\n`
           : '';
 
       const serverWasLive = isServerLive(lockDir);
@@ -324,7 +324,7 @@ export function register(server: ServerInstance, deps: GetPreviewUrlDeps): void 
           baseUrl: null,
           running: false,
           autoOpen,
-          okOpenCommand: deps.isHostedAgent ? okOpenCommand : null,
+          psOpenCommand: deps.isHostedAgent ? psOpenCommand : null,
         });
       }
 
@@ -335,7 +335,7 @@ export function register(server: ServerInstance, deps: GetPreviewUrlDeps): void 
         baseUrl,
         running: true,
         autoOpen,
-        okOpenCommand: deps.isHostedAgent ? okOpenCommand : null,
+        psOpenCommand: deps.isHostedAgent ? psOpenCommand : null,
       });
     },
   );

@@ -10,11 +10,11 @@ import {
 } from './skill-install-events.ts';
 
 function freshHome(): string {
-  return mkdtempSync(join(tmpdir(), 'ok-skill-install-events-'));
+  return mkdtempSync(join(tmpdir(), 'ps-skill-install-events-'));
 }
 
 function eventsFilePath(home: string): string {
-  return join(home, '.ok', SKILL_INSTALL_EVENTS_FILENAME);
+  return join(home, '.ps', SKILL_INSTALL_EVENTS_FILENAME);
 }
 
 function makeEvent(overrides: Partial<SkillInstallEvent> = {}): SkillInstallEvent {
@@ -29,7 +29,7 @@ function makeEvent(overrides: Partial<SkillInstallEvent> = {}): SkillInstallEven
 }
 
 describe('recordSkillInstallEvent — happy path', () => {
-  test('appends one JSONL line per call to ~/.ok/skill-install-events.jsonl', async () => {
+  test('appends one JSONL line per call to ~/.ps/skill-install-events.jsonl', async () => {
     const home = freshHome();
     try {
       await recordSkillInstallEvent(makeEvent({ outcome: 'installed', version: '1.0.0' }), {
@@ -56,7 +56,7 @@ describe('recordSkillInstallEvent — happy path', () => {
   test('appends to a pre-existing file without truncating', async () => {
     const home = freshHome();
     try {
-      await mkdir(join(home, '.ok'), { recursive: true });
+      await mkdir(join(home, '.ps'), { recursive: true });
       await writeFile(eventsFilePath(home), '{"existing":"line"}\n', 'utf-8');
 
       await recordSkillInstallEvent(makeEvent(), { homedir: () => home });

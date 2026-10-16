@@ -25,7 +25,7 @@ describe('surgical JSON write through the bundled CLI', () => {
   it.skipIf(!built)('loads the bundled jsonc-parser and edits only our entry', async () => {
     const mod = (await import(pathToFileURL(distIndex).href)) as unknown as BundledCli;
 
-    const dir = mkdtempSync(join(tmpdir(), 'ok-bundled-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-bundled-'));
     const configPath = join(dir, 'mcp.json');
     const original = `\uFEFF{
   // user comment
@@ -48,7 +48,7 @@ describe('surgical JSON write through the bundled CLI', () => {
       expect(after.charCodeAt(0)).toBe(0xfeff);
       expect(after).toContain('// user comment');
       expect(after).toContain('"existing"');
-      expect(after).toContain('open-knowledge');
+      expect(after).toContain('palimpsest');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

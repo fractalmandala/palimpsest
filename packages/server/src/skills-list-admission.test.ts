@@ -59,7 +59,7 @@ function liveDocName(entry: SkillRow): string {
 }
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-skills-admission-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-skills-admission-'));
   contentDir = mkdtempSync(resolve(tmpRoot, 'proj-'));
   writeSkill(contentDir, 'plugins/ok/skills/linked', '# Linked');
   mkdirSync(join(contentDir, '.agents/skills'), { recursive: true });

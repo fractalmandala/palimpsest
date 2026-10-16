@@ -8,8 +8,8 @@ import {
 
 describe('quoteExecArg', () => {
   test('plain absolute path passes through unquoted', () => {
-    expect(quoteExecArg('/home/u/Apps/OpenKnowledge-x86_64.AppImage')).toBe(
-      '/home/u/Apps/OpenKnowledge-x86_64.AppImage',
+    expect(quoteExecArg('/home/u/Apps/Palimpsest-x86_64.AppImage')).toBe(
+      '/home/u/Apps/Palimpsest-x86_64.AppImage',
     );
   });
 
@@ -23,14 +23,14 @@ describe('quoteExecArg', () => {
 });
 
 describe('buildAppImageHandlerDesktopEntry', () => {
-  const entry = buildAppImageHandlerDesktopEntry('/home/u/OpenKnowledge.AppImage');
+  const entry = buildAppImageHandlerDesktopEntry('/home/u/Palimpsest.AppImage');
 
   test('declares the x-scheme-handler MimeType with trailing semicolon', () => {
-    expect(entry).toContain('MimeType=x-scheme-handler/openknowledge;');
+    expect(entry).toContain('MimeType=x-scheme-handler/palimpsest;');
   });
 
   test('Exec points at the running AppImage with %U for the clicked URL', () => {
-    expect(entry).toContain('Exec=/home/u/OpenKnowledge.AppImage %U');
+    expect(entry).toContain('Exec=/home/u/Palimpsest.AppImage %U');
   });
 
   test('hidden from launchers (NoDisplay) — it exists only as the handler target', () => {

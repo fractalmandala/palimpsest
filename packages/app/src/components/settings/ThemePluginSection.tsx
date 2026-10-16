@@ -1,4 +1,4 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useSavedThemes } from '@/lib/saved-themes-client';

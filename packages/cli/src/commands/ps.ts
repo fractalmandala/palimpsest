@@ -3,10 +3,10 @@ import {
   currentCliCommandName,
   formatRelativeAge,
   LOCAL_DIR,
-  OK_DIR,
+  PS_DIR,
   RELATIVE_TIME_UNKNOWN,
-} from '@inkeep/open-knowledge-core';
-import { lockAdvertisesUi } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { lockAdvertisesUi } from '@palimpsest/server';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import {
@@ -57,8 +57,8 @@ export function startedCell(isoString: string | null, now = Date.now()): string 
 
 function projectDirectoryForLockDir(lockDir: string): string | null {
   const parent = dirname(lockDir);
-  if (basename(lockDir) === LOCAL_DIR && basename(parent) === OK_DIR) return dirname(parent);
-  if (basename(lockDir) === OK_DIR) return parent;
+  if (basename(lockDir) === LOCAL_DIR && basename(parent) === PS_DIR) return dirname(parent);
+  if (basename(lockDir) === PS_DIR) return parent;
   return null;
 }
 
@@ -188,7 +188,7 @@ function formatPorts(entry: PsEntry): string {
 
 export function renderTable(entries: PsEntry[]): string {
   if (entries.length === 0) {
-    return 'No open-knowledge servers found.';
+    return 'No palimpsest servers found.';
   }
 
   const headers = [
@@ -302,7 +302,7 @@ export async function runPs(deps: RunPsDeps = {}): Promise<void> {
 
 export function psCommand(): Command {
   return new Command('ps')
-    .description('List all running open-knowledge servers')
+    .description('List all running palimpsest servers')
     .argument('[modifier]', '"all" to include stale (dead-pid) entries')
     .option('--all', 'Include stale entries (foreign and unverified entries already show)')
     .option('--json', 'Emit structured JSON (always includes all statuses)')

@@ -1,4 +1,4 @@
-import type { Config } from '@inkeep/open-knowledge-core';
+import type { Config } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import { PIN_FIELD, readPins, togglePin } from './skill-pins';
 

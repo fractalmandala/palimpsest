@@ -1,4 +1,4 @@
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';

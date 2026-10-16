@@ -1,7 +1,7 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { mediaKindForSidebarAssetExtension } from '@inkeep/open-knowledge-core/constants/upload';
-import { PrincipalSuccessSchema } from '@inkeep/open-knowledge-core/schemas/api';
-import type { Principal } from '@inkeep/open-knowledge-core/types/principal';
+import { mediaKindForSidebarAssetExtension } from '@palimpsest/core/constants/upload';
+import { PrincipalSuccessSchema } from '@palimpsest/core/schemas/api';
+import type { Principal } from '@palimpsest/core/types/principal';
 import { createContext, type ReactNode, use, useEffect, useRef, useState } from 'react';
 import { isDocPanelOnScreen } from '@/components/doc-panel-visibility';
 import type { ResolvedNavigationTarget } from '@/components/navigation-targets';
@@ -263,14 +263,14 @@ const EMPTY_SNAPSHOT: Snapshot = {
 
 function getDesktopBridge() {
   if (typeof window === 'undefined') return null;
-  const bridge = window.okDesktop;
+  const bridge = window.psDesktop;
   if (bridge?.config.mode !== 'editor') return null;
   return bridge;
 }
 
 function getLocalTabSessionKey(): string | null {
   if (typeof window === 'undefined') return null;
-  return localTabSessionKeyForMode(window.okDesktop?.config.mode, window.location.origin);
+  return localTabSessionKeyForMode(window.psDesktop?.config.mode, window.location.origin);
 }
 
 function readInitialLocalTabSession() {

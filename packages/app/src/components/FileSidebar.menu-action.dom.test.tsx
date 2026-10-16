@@ -12,7 +12,7 @@ import {
 import type { ResolvedNavigationTarget } from './navigation-targets';
 
 type MenuAction =
-  NonNullable<typeof window.okDesktop> extends { onMenuAction: (cb: infer C) => unknown }
+  NonNullable<typeof window.psDesktop> extends { onMenuAction: (cb: infer C) => unknown }
     ? C extends (action: infer A) => unknown
       ? A
       : never
@@ -144,12 +144,12 @@ vi.doMock('@/components/handoff/useHandoffDispatch', () => ({
   buildHandoffInput: () => ({
     docContext: { docName: 'notes/source' },
     docPath: 'notes/source.md',
-    projectDir: '/tmp/open-knowledge',
+    projectDir: '/tmp/palimpsest',
   }),
   buildProjectScopedHandoffInput: () => ({
     docContext: null,
     docPath: '',
-    projectDir: '/tmp/open-knowledge',
+    projectDir: '/tmp/palimpsest',
   }),
   openInstallUrl: openInstallUrlMock,
   startAgentThreadForInput: threadLaunchMock,
@@ -194,7 +194,7 @@ vi.doMock('@/lib/config-provider', () => ({
 }));
 
 const workspaceStub = {
-  contentDir: '/tmp/open-knowledge',
+  contentDir: '/tmp/palimpsest',
   pathSeparator: '/',
 };
 vi.doMock('@/lib/use-workspace', () => ({
@@ -287,7 +287,7 @@ describe('FileSidebar menu-action runtime routing', () => {
         writeText: vi.fn(() => Promise.resolve()),
       },
     });
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: {
         platform: 'darwin',
@@ -310,7 +310,7 @@ describe('FileSidebar menu-action runtime routing', () => {
   afterEach(() => {
     cleanup();
     __resetPaneVisibilityStoreForTests();
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: undefined,
     });
@@ -402,11 +402,11 @@ describe('FileSidebar menu-action runtime routing', () => {
     }
   });
 
-  test('mutating menu actions quietly no-op on a revealed .ok folder while create falls back to root', async () => {
+  test('mutating menu actions quietly no-op on a revealed .ps folder while create falls back to root', async () => {
     activeTarget = {
       kind: 'folder',
-      target: 'notes/.ok/templates',
-      folderPath: 'notes/.ok/templates',
+      target: 'notes/.ps/templates',
+      folderPath: 'notes/.ps/templates',
     };
     const renamed: ResolvedNavigationTarget[] = [];
     const duplicated: ResolvedNavigationTarget[] = [];
@@ -434,7 +434,7 @@ describe('FileSidebar menu-action runtime routing', () => {
 
       menuActionCallback?.('copy-relative-path' as MenuAction);
       await waitFor(() =>
-        expect(navigator.clipboard.writeText).toHaveBeenCalledWith('notes/.ok/templates'),
+        expect(navigator.clipboard.writeText).toHaveBeenCalledWith('notes/.ps/templates'),
       );
     } finally {
       unsubscribeRename();
@@ -443,11 +443,11 @@ describe('FileSidebar menu-action runtime routing', () => {
     }
   });
 
-  test('mutating menu actions no-op on an opened .ok asset but stay live for other assets', async () => {
+  test('mutating menu actions no-op on an opened .ps asset but stay live for other assets', async () => {
     activeTarget = {
       kind: 'asset',
-      target: '.ok/raw-probe.md',
-      assetPath: '.ok/raw-probe.md',
+      target: '.ps/raw-probe.md',
+      assetPath: '.ps/raw-probe.md',
       mediaKind: null,
     };
     const renamed: ResolvedNavigationTarget[] = [];
@@ -546,7 +546,7 @@ describe('FileSidebar menu-action runtime routing', () => {
     await waitFor(() => expect(menuActionCallback).not.toBeNull());
 
     menuActionCallback?.('reveal-in-finder' as MenuAction);
-    expect(showItemInFolderMock).toHaveBeenCalledWith('/tmp/open-knowledge/notes/source.md');
+    expect(showItemInFolderMock).toHaveBeenCalledWith('/tmp/palimpsest/notes/source.md');
 
     menuActionCallback?.('send-to-ai' as MenuAction);
     expect(handoffDispatchMock).toHaveBeenCalledWith(
@@ -558,7 +558,7 @@ describe('FileSidebar menu-action runtime routing', () => {
     menuActionCallback?.('copy-full-path' as MenuAction);
     await waitFor(() =>
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        '/tmp/open-knowledge/notes/source.md',
+        '/tmp/palimpsest/notes/source.md',
       ),
     );
 
@@ -572,7 +572,7 @@ describe('FileSidebar menu-action runtime routing', () => {
       appearance: { sidebar: { showHiddenFiles: true } },
     });
 
-    menuActionCallback?.('toggle-show-ok-folders' as MenuAction);
+    menuActionCallback?.('toggle-show-ps-folders' as MenuAction);
     expect(projectLocalPatch).toHaveBeenCalledWith({
       appearance: { sidebar: { showOkFolders: true } },
     });
@@ -689,7 +689,7 @@ describe('FileSidebar menu-action runtime routing', () => {
   test('visibility toggles read the latest merged config across a flip round-trip', async () => {
     const toggleRoundTrips = [
       { action: 'toggle-show-hidden-files', key: 'showHiddenFiles', defaultValue: false },
-      { action: 'toggle-show-ok-folders', key: 'showOkFolders', defaultValue: false },
+      { action: 'toggle-show-ps-folders', key: 'showOkFolders', defaultValue: false },
       {
         action: 'toggle-show-only-markdown-files',
         key: 'showOnlyMarkdownFiles',

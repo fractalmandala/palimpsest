@@ -2,8 +2,8 @@ import { win32 } from 'node:path';
 import {
   type HostCliInvocation,
   isDevChannel,
-  OkCliCommand,
-} from '@inkeep/open-knowledge-core/constants/product';
+  PsCliCommand,
+} from '@palimpsest/core/constants/product';
 import { wrapperPathInBundle } from './bundle-paths.ts';
 
 export type { HostCliInvocation };
@@ -26,7 +26,7 @@ export function resolveLocalOpCliInvocation(
   input: ResolveLocalOpCliInvocationInput,
 ): HostCliInvocation | undefined {
   if (!input.isPackaged) {
-    if (!isDevChannel(input.parentEnv)) return { cliArgs: ['open-knowledge'] };
+    if (!isDevChannel(input.parentEnv)) return { cliArgs: ['palimpsest'] };
     return input.workspaceCliBuilt ? { cliArgs: ['node', input.workspaceCliEntry] } : undefined;
   }
   if (input.platform === 'win32') {
@@ -36,7 +36,7 @@ export function resolveLocalOpCliInvocation(
       cliEnv: {
         ELECTRON_RUN_AS_NODE: '1',
         NODE_OPTIONS: undefined,
-        ...(nodeOptions ? { OK_NODE_OPTIONS: nodeOptions } : {}),
+        ...(nodeOptions ? { PS_NODE_OPTIONS: nodeOptions } : {}),
       },
     };
   }
@@ -55,6 +55,6 @@ export function resolveLocalOpCliArgsForUtilityFork(invocation: HostCliInvocatio
 export function mainProcessOkCli(
   invocation: HostCliInvocation | undefined,
   env: Readonly<Record<string, string | undefined>>,
-): OkCliCommand {
-  return OkCliCommand.resolve({ host: invocation, env });
+): PsCliCommand {
+  return PsCliCommand.resolve({ host: invocation, env });
 }

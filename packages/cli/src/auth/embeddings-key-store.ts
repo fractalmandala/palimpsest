@@ -3,4 +3,4 @@ export {
   createEmbeddingsSecretStore,
   makeLazyEmbeddingsKeyStore,
   resolveEmbeddingsCredential,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';

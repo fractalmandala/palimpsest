@@ -37,7 +37,7 @@ describe('share-link branch switch when the symlink check cannot run', () => {
   let projectDir = '';
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-checkout-guard-failure-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-checkout-guard-failure-')));
     const bareDir = join(tmpDir, 'bare.git');
     const seedDir = join(tmpDir, 'seed');
     projectDir = join(tmpDir, 'project');

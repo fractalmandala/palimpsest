@@ -9,13 +9,13 @@ import {
   type HandoffHostPlatform,
   type HostSnapshot,
   isHandoffTargetSupportedOn,
-} from '@inkeep/open-knowledge-core/agent-registry';
+} from '@palimpsest/core/agent-registry';
 import {
   type HandoffTarget,
   TERMINAL_CLI_IDS,
   TERMINAL_CLIS,
   type TerminalCli,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Check, Search, TriangleAlert, WifiOff } from 'lucide-react';
@@ -329,7 +329,7 @@ function RowActionButton({
           asChild
         >
           <a
-            href={`https://openknowledge.ai/docs/integrations/${action.slug}`}
+            href={`https://github.com/fractalmandala/palimpsest/tree/main/docs/content
             target="_blank"
             rel="noreferrer"
             aria-label={t`How to set up ${rowLabel}`}
@@ -372,7 +372,7 @@ function RowActionButton({
           size="sm"
           className="shrink-0 font-mono uppercase"
           onClick={onRemove}
-          aria-label={t`Remove OpenKnowledge from ${rowLabel}`}
+          aria-label={t`Remove Palimpsest from ${rowLabel}`}
           aria-describedby={describedById}
         >
           {t`Remove`}
@@ -395,7 +395,7 @@ function InlineRemoveButton({
       variant="link-muted"
       className="h-auto p-0 text-1sm underline underline-offset-4 hover:text-destructive"
       onClick={onRemove}
-      aria-label={t`Remove OpenKnowledge from ${rowLabel}`}
+      aria-label={t`Remove Palimpsest from ${rowLabel}`}
     >
       {t`Remove`}
     </Button>
@@ -718,10 +718,10 @@ export function AgentConnectionsSection({
 
   function presenceHint(kind: 'not-installed' | 'not-detected', residualFiles: boolean): string {
     if (kind === 'not-installed') {
-      return residualFiles ? t`Not installed · OpenKnowledge files present` : t`Not installed`;
+      return residualFiles ? t`Not installed · Palimpsest files present` : t`Not installed`;
     }
     return residualFiles
-      ? t`Not detected on this machine · OpenKnowledge files present`
+      ? t`Not detected on this machine · Palimpsest files present`
       : t`Not detected on this machine`;
   }
 
@@ -774,7 +774,7 @@ export function AgentConnectionsSection({
   );
   const desktopPresence = (id: HandoffTarget) =>
     rowPresence(agentIdForHandoffTarget(id), states[id]?.installed ?? null);
-  const hostPlatform = typeof window === 'undefined' ? undefined : window.okDesktop?.platform;
+  const hostPlatform = typeof window === 'undefined' ? undefined : window.psDesktop?.platform;
   const desktopTargets = VISIBLE_TARGETS.filter((target) => {
     const { displayName } = target;
     return (
@@ -1145,7 +1145,7 @@ export function AgentConnectionsSection({
           <TriangleAlert aria-hidden className="size-4 shrink-0" />
           <span>
             {devBuild
-              ? t`This development build can't connect agents, so it won't change the agent setup of your installed OpenKnowledge app.`
+              ? t`This development build can't connect agents, so it won't change the agent setup of your installed Palimpsest app.`
               : t`Managing agent connections is unavailable in this build.`}
           </span>
         </div>

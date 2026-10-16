@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { bindFrontmatterDoc } from '@inkeep/open-knowledge-core';
+import { bindFrontmatterDoc } from '@palimpsest/core';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';

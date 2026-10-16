@@ -25,12 +25,12 @@ describe('dev-boot mechanism — predev hook + dist exports', () => {
   test('packages/app has predev hook that builds core + server workspace deps', () => {
     const { scripts } = readPkg('app');
     expect(scripts.predev, 'packages/app/package.json missing `predev` script').toBeDefined();
-    expect(scripts.predev).toContain('@inkeep/open-knowledge-core');
-    expect(scripts.predev).toContain('@inkeep/open-knowledge-server');
+    expect(scripts.predev).toContain('@palimpsest/core');
+    expect(scripts.predev).toContain('@palimpsest/server');
   });
 
   for (const pkgName of ['core', 'server']) {
-    describe(`@inkeep/open-knowledge-${pkgName}`, () => {
+    describe(`@fractalmandala/palimpsest-${pkgName}`, () => {
       test('"." exports has default → ./dist/*.mjs', () => {
         const pkgExports = readPkg(pkgName).exports;
         const dot = pkgExports['.'];

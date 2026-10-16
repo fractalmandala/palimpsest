@@ -20,7 +20,7 @@ function baseInput(overrides: Partial<HolderStopPromptInput> = {}): HolderStopPr
     projectPath: '/tmp/dragon',
     kind: 'other-channel-holder',
     errorMessage: 'held',
-    dialogTitle: 'This project is open in another OpenKnowledge app',
+    dialogTitle: 'This project is open in another Palimpsest app',
     dialogBody: '/tmp/dragon\n\nheld',
     otherChannelHolder: stableHolder,
     warnsHolderMayBeLive: false,
@@ -76,10 +76,10 @@ describe('promptHolderStop', () => {
       result: { kind: 'declined' },
       calls: ['dialog'],
       stopTarget: 'not-called',
-      title: 'This project is open in another OpenKnowledge app',
+      title: 'This project is open in another Palimpsest app',
       detail:
-        '/tmp/dragon\n\nheld\n\nThis OpenKnowledge (Stable) server keeps running after any window showing the project closes, so the project stays busy until the server stops. OpenKnowledge Beta can stop it now and open the project here. Every window, editor, or agent connected to it loses its connection to this project.',
-      buttons: ['Stop OpenKnowledge (Stable) Server & Open Here', 'Cancel'],
+        '/tmp/dragon\n\nheld\n\nThis Palimpsest (Stable) server keeps running after any window showing the project closes, so the project stays busy until the server stops. Palimpsest Beta can stop it now and open the project here. Every window, editor, or agent connected to it loses its connection to this project.',
+      buttons: ['Stop Palimpsest (Stable) Server & Open Here', 'Cancel'],
       defaultId: 1,
       cancelId: 1,
     });
@@ -117,7 +117,7 @@ describe('promptHolderStop', () => {
         await run(
           baseInput({
             kind,
-            errorMessage: 'OpenKnowledge server already running at port 0',
+            errorMessage: 'Palimpsest server already running at port 0',
             dialogTitle: 'A stopped server is still holding this project',
             dialogBody: '/tmp/dragon\n\nheld (pid 65792)',
             otherChannelHolder: {
@@ -132,10 +132,10 @@ describe('promptHolderStop', () => {
       ).toMatchObject({
         result: { kind: 'retried', opened: true },
         stopTarget: { pid: 65792, channel: 'stable' },
-        title: 'This project is open in another OpenKnowledge app',
+        title: 'This project is open in another Palimpsest app',
         detail:
-          "/tmp/dragon\n\nOpenKnowledge (Stable) holds this project's server lock (pid 65792) and may still be serving it.\n\nThis OpenKnowledge (Stable) server keeps running after any window showing the project closes, so the project stays busy until the server stops. OpenKnowledge Beta can stop it now and open the project here. Every window, editor, or agent connected to it loses its connection to this project.",
-        buttons: ['Stop OpenKnowledge (Stable) Server & Open Here', 'Cancel'],
+          "/tmp/dragon\n\nPalimpsest (Stable) holds this project's server lock (pid 65792) and may still be serving it.\n\nThis Palimpsest (Stable) server keeps running after any window showing the project closes, so the project stays busy until the server stops. Palimpsest Beta can stop it now and open the project here. Every window, editor, or agent connected to it loses its connection to this project.",
+        buttons: ['Stop Palimpsest (Stable) Server & Open Here', 'Cancel'],
         defaultId: 1,
       });
     });

@@ -1,4 +1,4 @@
-import { stripFrontmatter } from '@inkeep/open-knowledge-core/extensions/frontmatter';
+import { stripFrontmatter } from '@palimpsest/core/extensions/frontmatter';
 import { getSharedMarkdownManager } from '@/editor/utils/md-singleton';
 
 export interface DocumentStats {

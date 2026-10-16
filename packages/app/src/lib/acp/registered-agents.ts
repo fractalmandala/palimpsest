@@ -15,7 +15,7 @@ interface RegisteredAgentsState {
   readonly defaultKey: string | null;
 }
 
-const STORAGE_KEY = 'ok-acp-registered-agents-v1';
+const STORAGE_KEY = 'ps-acp-registered-agents-v1';
 const EMPTY_STATE: RegisteredAgentsState = { agents: [], defaultKey: null };
 
 function agentKey(agent: Pick<RegisteredAgent, 'source' | 'id'>): string {

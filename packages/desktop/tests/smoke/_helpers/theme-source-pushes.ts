@@ -140,7 +140,7 @@ export const probeLiveWindowsInMain = (
             limits.abandonProbeAfterMs,
           );
           win.webContents
-            .executeJavaScript('typeof window.okDesktop?.setThemeSource === "function"')
+            .executeJavaScript('typeof window.psDesktop?.setThemeSource === "function"')
             .then((exposed: unknown) => {
               clearTimeout(abandonProbe);
               settle({ id, url, loading, bridge: exposed === true ? 'present' : 'absent' });

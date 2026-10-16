@@ -1,5 +1,5 @@
 import { resolve, sep } from 'node:path';
-import { SKILL_NAME_REGEX } from '@inkeep/open-knowledge-core';
+import { SKILL_NAME_REGEX } from '@palimpsest/core';
 
 const registry = new Map<string, string>();
 

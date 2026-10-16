@@ -18,8 +18,8 @@ export async function findProjectEditorWindow(
   for (const page of app.windows()) {
     const editorProjectPath = await page
       .evaluate(() =>
-        window.okDesktop?.config?.mode === 'editor'
-          ? window.okDesktop.config.projectPath
+        window.psDesktop?.config?.mode === 'editor'
+          ? window.psDesktop.config.projectPath
           : undefined,
       )
       .catch(() => undefined);

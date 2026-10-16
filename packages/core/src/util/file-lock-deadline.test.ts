@@ -13,7 +13,7 @@ vi.mock('node:fs', async (importOriginal) => {
 let directory: string;
 
 beforeEach(() => {
-  directory = mkdtempSync(join(tmpdir(), 'ok-file-lock-deadline-'));
+  directory = mkdtempSync(join(tmpdir(), 'ps-file-lock-deadline-'));
 });
 
 afterEach(() => {

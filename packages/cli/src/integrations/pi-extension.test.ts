@@ -23,7 +23,7 @@ describe('buildPiExtensionSource', () => {
     expect(source.split('\n')[0]).toBe(PI_EXTENSION_VERSION_SENTINEL);
   });
 
-  it('is byte-deterministic (idempotent ok init re-runs skip the write on equality)', () => {
+  it('is byte-deterministic (idempotent ps init re-runs skip the write on equality)', () => {
     expect(buildPiExtensionSource()).toBe(buildPiExtensionSource());
     expect(buildPiExtensionSource({ mode: 'published' })).toBe(buildPiExtensionSource());
   });
@@ -147,7 +147,7 @@ rl.on("line", (line) => {
 `;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-pi-bridge-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-pi-bridge-'));
     mkdirSync(join(dir, 'packages', 'cli', 'dist'), { recursive: true });
     writeFileSync(join(dir, 'packages', 'cli', 'dist', 'cli.mjs'), STUB_SERVER, 'utf-8');
     process.argv[1] = join(dir, 'packages', 'cli', 'src', 'cli.ts');
@@ -171,7 +171,7 @@ rl.on("line", (line) => {
   }
 
   it('handshakes, registers prefixed tools, forwards calls, maps isError to a throw', async () => {
-    const extensionPath = join(dir, 'open-knowledge.ts');
+    const extensionPath = join(dir, 'palimpsest.ts');
     writeFileSync(extensionPath, buildPiExtensionSource({ mode: 'dev' }), 'utf-8');
 
     const handlers = new Map<string, (event: unknown, ctx: unknown) => unknown>();
@@ -222,12 +222,12 @@ describe('buildPiExtensionSource header names the running channel CLI', () => {
 
   it.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: the managed-file note names %s init and deinit', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const source = buildPiExtensionSource();
     expect(source).toContain(
-      ` * Open Knowledge bridge for Pi — MANAGED FILE, written by \`${command} init\`.\n`,
+      ` * Palimpsest bridge for Pi — MANAGED FILE, written by \`${command} init\`.\n`,
     );
     expect(source).toContain(
       ` * with \`${command} deinit\` (or delete the file) to disconnect Pi from OK.\n`,

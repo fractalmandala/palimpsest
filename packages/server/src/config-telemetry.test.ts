@@ -6,8 +6,8 @@ import {
   CONFIG_DOC_NAME_PROJECT,
   type ConfigDocProvider,
   type ConfigPatch,
-} from '@inkeep/open-knowledge-core';
-import { writeConfigPatch } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { writeConfigPatch } from '@palimpsest/core/server';
 import { context, metrics, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import {
@@ -81,7 +81,7 @@ describe('config-edit OTel spans', () => {
   beforeEach(() => {
     setupExporter();
     testDir = mkdtempSync(join(tmpdir(), 'config-otel-'));
-    mkdirSync(join(testDir, '.ok'), { recursive: true });
+    mkdirSync(join(testDir, '.ps'), { recursive: true });
   });
 
   afterEach(async () => {

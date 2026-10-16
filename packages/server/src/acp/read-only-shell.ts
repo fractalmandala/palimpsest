@@ -1,5 +1,5 @@
 import type { ToolCallUpdate } from '@agentclientprotocol/sdk';
-import { shellCommandFromRawInput } from '@inkeep/open-knowledge-core/acp/tool-call-input';
+import { shellCommandFromRawInput } from '@palimpsest/core/acp/tool-call-input';
 
 interface Word {
   readonly text: string;

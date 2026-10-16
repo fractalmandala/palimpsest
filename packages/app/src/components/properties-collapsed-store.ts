@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-const STORAGE_KEY = 'ok-properties-collapsed-v1';
+const STORAGE_KEY = 'ps-properties-collapsed-v1';
 const DEFAULT_COLLAPSED = false;
 
 function getStorage(): Pick<Storage, 'getItem' | 'setItem'> | null {

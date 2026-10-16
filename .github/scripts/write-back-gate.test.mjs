@@ -10,7 +10,7 @@ import {
   planIssueClose,
 } from './write-back-gate.mjs';
 
-const GH_ISSUE = 'https://github.com/inkeep/open-knowledge/issues/769';
+const GH_ISSUE = 'https://github.com/fractalmandala/palimpsest/issues/769';
 const GH_PULL = 'https://github.com/inkeep/agents-private/pull/2844';
 const GH_COMMIT =
   'https://github.com/inkeep/agents-private/commit/da71f0c698ccaac11da915169ca6c7d585d5eb97';
@@ -23,7 +23,7 @@ describe('attachment classification', () => {
     const c = classifyAttachment(GH_ISSUE);
     expect(c.kind).toBe('repliable-origin');
     expect(c.channel).toBe('github-issue');
-    expect(c).toMatchObject({ owner: 'inkeep', repo: 'open-knowledge', number: 769 });
+    expect(c).toMatchObject({ owner: 'inkeep', repo: 'palimpsest', number: 769 });
   });
 
   test('a Discord thread permalink is a repliable origin carrying the thread id', () => {
@@ -360,7 +360,7 @@ describe('reply composition', () => {
     expect(text).not.toContain('Messages you send now carry their own actions:');
     expect(text).not.toContain('Resend to a different agent.');
     expect(text).toContain(
-      '[the release page](https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0)',
+      '[the release page](https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0)',
     );
   });
 
@@ -391,9 +391,9 @@ describe('reply composition', () => {
     const gh = compose({ originChannel: 'github-issue' });
     const discord = compose({ originChannel: 'discord-thread' });
     expect(gh).toContain(
-      '[the release page](https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0)',
+      '[the release page](https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0)',
     );
-    expect(discord).toContain('<https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0>');
+    expect(discord).toContain('<https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0>');
   });
 
   test('the update instruction names the desktop app and nothing else', () => {
@@ -479,23 +479,23 @@ describe('origin remit', () => {
   const issue = (owner, repo) => ({ channel: 'github-issue', owner, repo });
 
   test('an issue in this repo is repliable and one anywhere else is not', () => {
-    expect(isOriginRepliableFrom(issue('inkeep', 'open-knowledge'), 'inkeep/open-knowledge')).toBe(
+    expect(isOriginRepliableFrom(issue('inkeep', 'palimpsest'), 'fractalmandala/palimpsest')).toBe(
       true,
     );
-    expect(isOriginRepliableFrom(issue('inkeep', 'agents'), 'inkeep/open-knowledge')).toBe(false);
-    expect(isOriginRepliableFrom(issue('someone', 'fork'), 'inkeep/open-knowledge')).toBe(false);
+    expect(isOriginRepliableFrom(issue('inkeep', 'agents'), 'fractalmandala/palimpsest')).toBe(false);
+    expect(isOriginRepliableFrom(issue('someone', 'fork'), 'fractalmandala/palimpsest')).toBe(false);
   });
 
   test('the comparison ignores case, because GitHub slugs are not case sensitive', () => {
-    expect(isOriginRepliableFrom(issue('Inkeep', 'Open-Knowledge'), 'inkeep/open-knowledge')).toBe(
+    expect(isOriginRepliableFrom(issue('Inkeep', 'Palimpsest'), 'fractalmandala/palimpsest')).toBe(
       true,
     );
   });
 
   test('a Discord thread is repliable regardless of repo, and an unknown repo makes nothing repliable', () => {
     expect(isOriginRepliableFrom({ channel: 'discord-thread', threadId: '1' }, '')).toBe(true);
-    expect(isOriginRepliableFrom(issue('inkeep', 'open-knowledge'), '')).toBe(false);
-    expect(isOriginRepliableFrom(undefined, 'inkeep/open-knowledge')).toBe(false);
+    expect(isOriginRepliableFrom(issue('inkeep', 'palimpsest'), '')).toBe(false);
+    expect(isOriginRepliableFrom(undefined, 'fractalmandala/palimpsest')).toBe(false);
   });
 });
 
@@ -522,7 +522,7 @@ describe('the two channels say different things', () => {
 
   test('a stable reply claims the fix is out and points at the current app', () => {
     const text = composeReply({ changeset, version: '0.59.1', originChannel: 'github-issue' });
-    expect(text).toContain('This shipped in Open Knowledge v0.59.1.');
+    expect(text).toContain('This shipped in Palimpsest v0.59.1.');
     expect(text).toContain('update to the latest desktop app');
     expect(text).not.toMatch(/beta/i);
   });
@@ -535,7 +535,7 @@ describe('the two channels say different things', () => {
       channel: 'beta',
     });
     expect(text).toContain('v0.59.0-beta.2');
-    expect(text).toContain('available in Open Knowledge beta');
+    expect(text).toContain('available in Palimpsest beta');
     expect(text).toContain('follow up here');
     expect(text).not.toContain('update to the latest');
     expect(text).toContain('download the beta');
@@ -551,7 +551,7 @@ describe('the two channels say different things', () => {
       channel: 'beta',
     });
     expect(text).toContain(
-      '<https://github.com/inkeep/open-knowledge/releases/tag/v0.59.0-beta.2>',
+      '<https://github.com/fractalmandala/palimpsest/releases/tag/v0.59.0-beta.2>',
     );
   });
 

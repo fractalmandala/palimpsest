@@ -14,7 +14,7 @@ import { afterEach, describe, expect, test } from 'vitest';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = resolve(__dirname, '../..');
-const packageDirInput = process.env.OK_LINUX_PACKAGE_DIR?.trim() ?? '';
+const packageDirInput = process.env.PS_LINUX_PACKAGE_DIR?.trim() ?? '';
 const packageDir = packageDirInput === '' ? null : resolve(desktopRoot, packageDirInput);
 
 const MAX_NATIVE_VERSIONS = {
@@ -100,7 +100,7 @@ describe('Linux package native-version guard helpers', () => {
   });
 
   test('walks nested package resources without treating non-.node files as addons', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-linux-native-guard-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-linux-native-guard-'));
     fixtureDirs.push(root);
     const nested = join(root, 'resources', 'app.asar.unpacked');
     const addon = join(nested, 'pty.node');
@@ -137,7 +137,7 @@ describe('Linux package native-version guard helpers', () => {
       ],
     ],
   ])('%s', (_label, addons, expected) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-linux-native-floor-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-linux-native-floor-'));
     fixtureDirs.push(root);
     const dir = join(root, 'resources', 'app.asar.unpacked', 'node_modules', 'fixture');
     mkdirSync(dir, { recursive: true });
@@ -166,10 +166,10 @@ describe('Linux package native-version guard helpers', () => {
 });
 
 describe('Linux package native guard lane visibility', () => {
-  test('reports whether OK_LINUX_PACKAGE_DIR enabled the assertive lane', (ctx) => {
+  test('reports whether PS_LINUX_PACKAGE_DIR enabled the assertive lane', (ctx) => {
     ctx.skip(
       packageDir === null,
-      'OK_LINUX_PACKAGE_DIR is unset, so the packaged-artifact assertions are skipped',
+      'PS_LINUX_PACKAGE_DIR is unset, so the packaged-artifact assertions are skipped',
     );
     console.log(`[linux-package-native-guards] checking ${packageDir}`);
     expect(packageDirInput).not.toBe('');
@@ -180,7 +180,7 @@ describe.skipIf(packageDir === null)('packaged Linux native modules', () => {
   test('carries node-pty for the packaged architecture', () => {
     expect(
       process.platform,
-      'OK_LINUX_PACKAGE_DIR must only be set in a Linux packaging lane',
+      'PS_LINUX_PACKAGE_DIR must only be set in a Linux packaging lane',
     ).toBe('linux');
     const ptyNode = join(
       packageDir as string,

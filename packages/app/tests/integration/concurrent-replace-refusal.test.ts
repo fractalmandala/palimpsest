@@ -347,10 +347,10 @@ describe('concurrent whole-document replace refusal', () => {
   });
 
   test('an anonymous lint fix does not arm the refusal against an anonymous replace', async () => {
-    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-anonymous-lint-')));
-    mkdirSync(join(root, '.ok', 'local', 'principal.json'), { recursive: true });
+    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-anonymous-lint-')));
+    mkdirSync(join(root, '.ps', 'local', 'principal.json'), { recursive: true });
     writeFileSync(
-      join(root, '.ok', 'config.yml'),
+      join(root, '.ps', 'config.yml'),
       'contentRules:\n  markdownlint:\n    enabled: true\n',
       'utf-8',
     );
@@ -389,10 +389,10 @@ describe('concurrent whole-document replace refusal', () => {
   });
 
   test('an identified lint fix arms the refusal against an unattributed replace', async () => {
-    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-identified-lint-')));
-    mkdirSync(join(root, '.ok'), { recursive: true });
+    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-identified-lint-')));
+    mkdirSync(join(root, '.ps'), { recursive: true });
     writeFileSync(
-      join(root, '.ok', 'config.yml'),
+      join(root, '.ps', 'config.yml'),
       'contentRules:\n  markdownlint:\n    enabled: true\n',
       'utf-8',
     );

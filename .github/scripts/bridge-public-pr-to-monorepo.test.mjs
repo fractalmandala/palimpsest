@@ -67,21 +67,21 @@ describe('buildCommitAttribution', () => {
           message: 'Fix empty query\r\n\r\nCo-authored-by: A <a@example.com>',
         },
       ],
-      publicRepo: 'inkeep/open-knowledge',
+      publicRepo: 'fractalmandala/palimpsest',
     });
 
     expect(attribution.originalCommitMessages).toBe(
       [
         'Commits:',
         '',
-        '[1234567](https://github.com/inkeep/open-knowledge/commit/1234567890abcdef)',
+        '[1234567](https://github.com/fractalmandala/palimpsest/commit/1234567890abcdef)',
         'Author: Sarah Inkeep <sarah@inkeep.com>',
         '',
         'Add search',
         '',
         'Explain the indexing path.',
         '',
-        '[fedcba9](https://github.com/inkeep/open-knowledge/commit/fedcba9876543210)',
+        '[fedcba9](https://github.com/fractalmandala/palimpsest/commit/fedcba9876543210)',
         'Author: Robert Inkeep <robert@inkeep.com>',
         '',
         'Fix empty query',
@@ -112,22 +112,22 @@ describe('bridgeCommitSubject', () => {
   test('includes the original public PR title while keeping the sync prefix', () => {
     expect(
       bridgeCommitSubject({
-        publicRepo: 'inkeep/open-knowledge',
+        publicRepo: 'fractalmandala/palimpsest',
         publicPr: { number: 361, title: 'Preserve contributor commit messages' },
         hasConflicts: false,
       }),
-    ).toBe('sync(oss): mirror inkeep/open-knowledge#361: Preserve contributor commit messages');
+    ).toBe('sync(oss): mirror fractalmandala/palimpsest#361: Preserve contributor commit messages');
   });
 
   test('normalizes multiline titles and preserves the conflict marker', () => {
     expect(
       bridgeCommitSubject({
-        publicRepo: 'inkeep/open-knowledge',
+        publicRepo: 'fractalmandala/palimpsest',
         publicPr: { number: 361, title: 'Fix bridge\n\nsubject' },
         hasConflicts: true,
       }),
     ).toBe(
-      'sync(oss): mirror inkeep/open-knowledge#361: Fix bridge subject (with conflicts; needs manual resolution)',
+      'sync(oss): mirror fractalmandala/palimpsest#361: Fix bridge subject (with conflicts; needs manual resolution)',
     );
   });
 });
@@ -315,7 +315,7 @@ describe('checkOrgMembership', () => {
 describe('createClaGateGh', () => {
   const deps = {
     publicToken: 'public-token',
-    publicRepo: 'inkeep/open-knowledge',
+    publicRepo: 'fractalmandala/palimpsest',
     internalToken: 'internal-token',
     internalRepo: 'inkeep/agents-private',
   };
@@ -329,7 +329,7 @@ describe('createClaGateGh', () => {
     expect(state).toBe('pending');
     expect(calls[0].token).toBe('public-token');
     expect(calls[0].path).toBe(
-      '/repos/inkeep/open-knowledge/commits/public-head/status?per_page=100',
+      '/repos/fractalmandala/palimpsest/commits/public-head/status?per_page=100',
     );
   });
 
@@ -490,13 +490,13 @@ describe('commitIndicatesConflicts (metadata-re-sync conflict-hold guard)', () =
   test('true for a conflict-marker mirror commit message', () => {
     expect(
       commitIndicatesConflicts(
-        'sync(oss): mirror inkeep/open-knowledge#310 (with conflicts; needs manual resolution)',
+        'sync(oss): mirror fractalmandala/palimpsest#310 (with conflicts; needs manual resolution)',
       ),
     ).toBe(true);
   });
 
   test('false for a clean mirror commit message', () => {
-    expect(commitIndicatesConflicts('sync(oss): mirror inkeep/open-knowledge#310')).toBe(false);
+    expect(commitIndicatesConflicts('sync(oss): mirror fractalmandala/palimpsest#310')).toBe(false);
   });
 
   test('false for absent / non-string input', () => {
@@ -507,8 +507,8 @@ describe('commitIndicatesConflicts (metadata-re-sync conflict-hold guard)', () =
 });
 
 const CONFLICT_HEAD =
-  'sync(oss): mirror inkeep/open-knowledge#310 (with conflicts; needs manual resolution)';
-const CLEAN_HEAD = 'sync(oss): mirror inkeep/open-knowledge#310';
+  'sync(oss): mirror fractalmandala/palimpsest#310 (with conflicts; needs manual resolution)';
+const CLEAN_HEAD = 'sync(oss): mirror fractalmandala/palimpsest#310';
 
 async function runBridgeSync({
   headCommitMessage = CLEAN_HEAD,
@@ -526,7 +526,7 @@ async function runBridgeSync({
   changedPublicHeadAfterCommit = false,
   changedInternalHeadAfterCommit = false,
   importedPublicHead = 'public-head-sha',
-  importedRepo = 'inkeep/open-knowledge',
+  importedRepo = 'fractalmandala/palimpsest',
   importedPrNumber = 310,
   importedInternalHead = readHead(),
   eventSha = 'public-head-sha',
@@ -538,7 +538,7 @@ async function runBridgeSync({
   markerHeadFields = 'current',
   earlierMarker = '',
   headRef = 'contribution',
-  headRepo = 'octocat/open-knowledge',
+  headRepo = 'octocat/palimpsest',
   internalHeadRef = 'public-pr/open-knowledge-310',
   associations = [{ number: 310 }],
   publicCandidates,
@@ -576,9 +576,9 @@ async function runBridgeSync({
     number: 310,
     title: 'Fix something',
     body: 'body',
-    html_url: 'https://github.com/inkeep/open-knowledge/pull/310',
+    html_url: 'https://github.com/fractalmandala/palimpsest/pull/310',
     user: { login: 'octocat', id: 99 },
-    base: { ref: 'main', sha: publicBase, repo: { full_name: 'inkeep/open-knowledge' } },
+    base: { ref: 'main', sha: publicBase, repo: { full_name: 'fractalmandala/palimpsest' } },
     head: { label: 'octocat:branch', sha: publicHead, ref: headRef, repo: { full_name: headRepo } },
     state: publicState,
     draft: false,
@@ -603,9 +603,9 @@ async function runBridgeSync({
     }
     if (method === 'GET' && url.includes('/repos/inkeep/agents-private/pulls/42'))
       return json({ ...internalPr, head: { ...internalPr.head, sha: apiHead() } });
-    if (method === 'GET' && url.includes('/repos/inkeep/open-knowledge/pulls/311'))
+    if (method === 'GET' && url.includes('/repos/fractalmandala/palimpsest/pulls/311'))
       return json({ ...publicPr, number: 311, head: { ...publicPr.head, sha: 'another-head' } });
-    if (method === 'GET' && url.includes('/repos/inkeep/open-knowledge/pulls/310')) {
+    if (method === 'GET' && url.includes('/repos/fractalmandala/palimpsest/pulls/310')) {
       publicReads += 1;
       return json({
         ...publicPr,
@@ -620,7 +620,7 @@ async function runBridgeSync({
         },
       });
     }
-    if (method === 'GET' && url.includes('/repos/inkeep/open-knowledge/pulls?state=open')) {
+    if (method === 'GET' && url.includes('/repos/fractalmandala/palimpsest/pulls?state=open')) {
       const page = Number(new URL(url).searchParams.get('page') ?? 1);
       return json(candidatePrs.slice((page - 1) * 100, page * 100));
     }
@@ -706,12 +706,12 @@ async function runBridgeSync({
   const setKeys = {
     PUBLIC_TOKEN: 'pub',
     INTERNAL_TOKEN: 'int',
-    PUBLIC_REPO: 'inkeep/open-knowledge',
+    PUBLIC_REPO: 'fractalmandala/palimpsest',
     INTERNAL_REPO: 'inkeep/agents-private',
     INTERNAL_REPO_DIR: internalRepoDir,
-    MONOREPO_PATH_PREFIX: 'public/open-knowledge',
+    MONOREPO_PATH_PREFIX: 'public/palimpsest',
     INTERNAL_BASE_REF: 'main',
-    INTERNAL_BRANCH_PREFIX: 'public-pr/open-knowledge',
+    INTERNAL_BRANCH_PREFIX: 'public-pr/palimpsest',
     PUBLIC_PR_NUMBER: '310',
     PUBLIC_PR_ACTION: action,
     PUBLIC_STATUS_SHA: eventSha,
@@ -804,7 +804,7 @@ describe('bridge CLA status refresh', () => {
     ['closed internal PR', { internalState: 'closed' }],
     ['missing internal PR', { existingPr: false }],
     ['other internal branch', { internalHeadRef: 'fix/ordinary' }],
-    ['mirror sync PR', { headRepo: 'inkeep/open-knowledge', headRef: 'copybara/sync' }],
+    ['mirror sync PR', { headRepo: 'fractalmandala/palimpsest', headRef: 'copybara/sync' }],
   ])('leaves %s unchanged', async (_name, overrides) => {
     const result = await runBridgeSync({
       mode: 'refresh-cla',
@@ -885,10 +885,10 @@ function setupSyncRepo({ sourceContent = 'updated\n', mapForkToSource = true } =
   configureTestGitRepository(internal, (args) => git(root, ...args));
   git(internal, 'config', 'user.name', 'Fixture');
   git(internal, 'config', 'user.email', 'fixture@example.test');
-  mkdirSync(path.join(internal, 'public/open-knowledge'), { recursive: true });
-  const file = path.join(internal, 'public/open-knowledge/fixture.txt');
+  mkdirSync(path.join(internal, 'public/palimpsest'), { recursive: true });
+  const file = path.join(internal, 'public/palimpsest/fixture.txt');
   writeFileSync(file, 'base\n');
-  git(internal, 'add', 'public/open-knowledge/fixture.txt');
+  git(internal, 'add', 'public/palimpsest/fixture.txt');
   git(internal, 'commit', '-m', 'Base');
   git(internal, 'remote', 'add', 'origin', remote);
   git(internal, 'push', '-u', 'origin', 'main');
@@ -923,7 +923,7 @@ function setupSyncRepo({ sourceContent = 'updated\n', mapForkToSource = true } =
     'config',
     '--add',
     rewriteKey,
-    'https://x-access-token:pub@github.com/inkeep/open-knowledge.git',
+    'https://x-access-token:pub@github.com/fractalmandala/palimpsest.git',
   );
   if (mapForkToSource) {
     git(
@@ -931,7 +931,7 @@ function setupSyncRepo({ sourceContent = 'updated\n', mapForkToSource = true } =
       'config',
       '--add',
       rewriteKey,
-      'https://x-access-token:pub@github.com/octocat/open-knowledge.git',
+      'https://x-access-token:pub@github.com/octocat/palimpsest.git',
     );
   }
   return {
@@ -977,7 +977,7 @@ function setupForkOnlySyncRepo() {
     'config',
     '--add',
     `url.${forkRepoDir}.insteadOf`,
-    'https://x-access-token:pub@github.com/octocat/open-knowledge.git',
+    'https://x-access-token:pub@github.com/octocat/palimpsest.git',
   );
   return { ...fixture, forkHead };
 }
@@ -1025,7 +1025,7 @@ describe('syncPublicPr legacy metadata import', () => {
       const publishedHead = fixture.publishedHead();
       expect(publishedHead).not.toBe(fixture.oldHead);
       expect(
-        git(fixture.remote, 'show', `${fixture.branch}:public/open-knowledge/fixture.txt`),
+        git(fixture.remote, 'show', `${fixture.branch}:public/palimpsest/fixture.txt`),
       ).toBe('updated');
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${fixture.approvedHead}`);
       expect(recorded.internalBodies.at(-1)).toContain(`internal_head_sha=${publishedHead}`);
@@ -1107,7 +1107,7 @@ describe('syncPublicPr legacy metadata import', () => {
   test('an already present change leaves a legacy head without a receipt or status and explains why', async () => {
     const fixture = setupSyncRepo();
     try {
-      writeFileSync(path.join(fixture.internal, 'public/open-knowledge/fixture.txt'), 'updated\n');
+      writeFileSync(path.join(fixture.internal, 'public/palimpsest/fixture.txt'), 'updated\n');
       git(fixture.internal, 'commit', '-am', 'Already present');
       git(fixture.internal, 'push', 'origin', 'main');
       const { result, logs } = await captureBridgeLogs(() =>
@@ -1150,7 +1150,7 @@ describe('syncPublicPr published-head status', () => {
         readHead: fixture.publishedHead,
       });
       expect(
-        git(fixture.remote, 'show', `${fixture.branch}:public/open-knowledge/fixture.txt`),
+        git(fixture.remote, 'show', `${fixture.branch}:public/palimpsest/fixture.txt`),
       ).toBe('fork-only');
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${fixture.forkHead}`);
       expect(recorded.statuses).toContainEqual(
@@ -1177,7 +1177,7 @@ describe('syncPublicPr published-head status', () => {
       });
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${fixture.approvedHead}`);
       expect(
-        git(fixture.remote, 'show', `${fixture.branch}:public/open-knowledge/fixture.txt`),
+        git(fixture.remote, 'show', `${fixture.branch}:public/palimpsest/fixture.txt`),
       ).toBe('approved');
     } finally {
       fixture.cleanup();
@@ -1200,7 +1200,7 @@ describe('syncPublicPr published-head status', () => {
         readHead: fixture.publishedHead,
       });
       expect(
-        git(fixture.remote, 'show', `${fixture.branch}:public/open-knowledge/fixture.txt`),
+        git(fixture.remote, 'show', `${fixture.branch}:public/palimpsest/fixture.txt`),
       ).toBe('approved');
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${fixture.approvedHead}`);
     } finally {
@@ -1222,7 +1222,7 @@ describe('syncPublicPr published-head status', () => {
         readHead: fixture.publishedHead,
       });
       expect(
-        git(fixture.remote, 'show', `${fixture.branch}:public/open-knowledge/fixture.txt`),
+        git(fixture.remote, 'show', `${fixture.branch}:public/palimpsest/fixture.txt`),
       ).toBe('updated');
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${fixture.approvedHead}`);
     } finally {
@@ -1265,7 +1265,7 @@ describe('syncPublicPr published-head status', () => {
       });
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${largeHead}`);
       expect(
-        readFileSync(path.join(fixture.internal, 'public/open-knowledge/fixture.txt'), 'utf8'),
+        readFileSync(path.join(fixture.internal, 'public/palimpsest/fixture.txt'), 'utf8'),
       ).toBe(largeContent);
     } finally {
       fixture.cleanup();
@@ -1289,7 +1289,7 @@ describe('syncPublicPr published-head status', () => {
         readHead: fixture.publishedHead,
       });
       expect(recorded.internalBodies.at(-1)).toContain(`public_head_sha=${binaryHead}`);
-      expect(readFileSync(path.join(fixture.internal, 'public/open-knowledge/asset.bin'))).toEqual(
+      expect(readFileSync(path.join(fixture.internal, 'public/palimpsest/asset.bin'))).toEqual(
         binaryContent,
       );
     } finally {
@@ -1348,7 +1348,7 @@ describe('syncPublicPr published-head status', () => {
       expect(recorded.internalBodies.at(-1)).toContain(`internal_head_sha=${head}`);
       expect(head).not.toBe(fixture.oldHead);
       expect(
-        git(fixture.remote, 'show', `${fixture.branch}:public/open-knowledge/fixture.txt`),
+        git(fixture.remote, 'show', `${fixture.branch}:public/palimpsest/fixture.txt`),
       ).toBe('updated');
       expect(recorded.statuses).toContainEqual(
         expect.objectContaining({

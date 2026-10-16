@@ -3,11 +3,11 @@ import { dirname, join } from 'node:path';
 import {
   EDITOR_PROJECT_SKILL_ROOT,
   type EditorId,
-  isOpenKnowledgeSkillsSource,
-  OPENKNOWLEDGE_SKILLS_REPO,
+  isPalimpsestSkillsSource,
+  PALIMPSEST_SKILLS_REPO,
   PROJECT_SKILL_EDITOR_IDS,
   RENAMED_PACK_SKILLS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   emptySkillsLock,
   parseSkillDir,
@@ -15,7 +15,7 @@ import {
   SKILLS_LOCK_REL,
   type SkillsLock,
   upsertLockEntry,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { copyDirSync } from '../copy-dir.ts';
 import { tracedMkdirSync, tracedRmSync, tracedWriteFileSync } from '../fs-traced.ts';
 import { resolveDefaultSkillHomeRel, scanInPlaceSkills } from '../in-place-skills.ts';
@@ -51,7 +51,7 @@ function recordPackSkillProvenance(projectDir: string, name: string, skillDir: s
     if (lock.skills[name]) return;
     tracedMkdirSync(dirname(lockPath), { recursive: true });
     const updated = upsertLockEntry(lock, name, {
-      source: OPENKNOWLEDGE_SKILLS_REPO,
+      source: PALIMPSEST_SKILLS_REPO,
       skill: name,
       contentHash: acquired.contentHash,
       importedAt: new Date().toISOString(),
@@ -78,7 +78,7 @@ export function classifyPresentPackSkill(
   lock: SkillsLock,
 ): 'ours' | 'ours-retrofit' | 'foreign' {
   const entry = lock.skills[name];
-  if (entry) return isOpenKnowledgeSkillsSource(entry.source) ? 'ours' : 'foreign';
+  if (entry) return isPalimpsestSkillsSource(entry.source) ? 'ours' : 'foreign';
   if (presentDir) {
     try {
       const md = readFileSync(join(presentDir, 'SKILL.md'), 'utf-8');
@@ -132,7 +132,7 @@ export async function installPackSkill(
         ([, oldName]) =>
           oldName !== undefined &&
           (existingNames.has(oldName) ||
-            existsSync(join(projectDir, '.ok', 'skills', oldName, 'SKILL.md'))),
+            existsSync(join(projectDir, '.ps', 'skills', oldName, 'SKILL.md'))),
       ) as Iterable<readonly [string, string]>,
   );
   const scanDirByName = new Map(scan.map((sk) => [sk.name, join(projectDir, sk.dir)]));
@@ -160,7 +160,7 @@ export async function installPackSkill(
   for (const { name: shippedName, sourceDir, excludePaths } of sources) {
     const name = legacyNamed.get(shippedName) ?? shippedName;
     const skillDir = join(projectDir, homeRel, name);
-    const legacyStoreDir = join(projectDir, '.ok', 'skills', name);
+    const legacyStoreDir = join(projectDir, '.ps', 'skills', name);
     const alreadyPresent =
       existingNames.has(name) ||
       existsSync(join(skillDir, 'SKILL.md')) ||
@@ -203,7 +203,7 @@ export async function installPackSkill(
 
       recordPackSkillProvenance(projectDir, name, skillDir);
       void reportSkillInstall(
-        { source: OPENKNOWLEDGE_SKILLS_REPO, skills: [name], scope: projectDir },
+        { source: PALIMPSEST_SKILLS_REPO, skills: [name], scope: projectDir },
         { home: reportSettings.home, enabled: reportSettings.enabled },
       );
     }

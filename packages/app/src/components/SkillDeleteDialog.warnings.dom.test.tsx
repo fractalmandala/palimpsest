@@ -31,9 +31,9 @@ function skill(name: string) {
 }
 
 const ALPHA_WARNING =
-  'Also removed a copy at .ok/skills/alpha that an earlier failed move had kept.';
+  'Also removed a copy at .ps/skills/alpha that an earlier failed move had kept.';
 const GAMMA_WARNING =
-  'Also removed a copy at .ok/skills/gamma that an earlier failed move had kept.';
+  'Also removed a copy at .ps/skills/gamma that an earlier failed move had kept.';
 
 async function confirmDelete() {
   await userEvent.click(screen.getByRole('button', { name: /^Delete$/ }));

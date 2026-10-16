@@ -1,4 +1,4 @@
-import { posixOkManagedBinDir } from './ok-dir.ts';
+import { posixOkManagedBinDir } from './ps-dir.ts';
 import { DESKTOP_PRODUCTS, type DesktopProductName } from './product.ts';
 
 function posixHome(home: string): string {
@@ -15,15 +15,15 @@ export function pathShimBinDir(channel: DesktopProductName, home: string): strin
 
 export function pathShimMarkerPath(channel: DesktopProductName, home: string): string {
   if (channel === 'stable') {
-    return `${posixHome(home)}/Library/Application Support/OpenKnowledge/path-install.json`;
+    return `${posixHome(home)}/Library/Application Support/Palimpsest/path-install.json`;
   }
   return `${posixHome(home)}/${pathShimHomeDirName(channel)}/path-install.json`;
 }
 
 export function pathShimBlockLabel(channel: DesktopProductName): string {
-  return channel === 'stable' ? 'open-knowledge cli' : `open-knowledge ${channel} cli`;
+  return channel === 'stable' ? 'palimpsest cli' : `palimpsest ${channel} cli`;
 }
 
 export function pathShimFishConfFileName(channel: DesktopProductName): string {
-  return channel === 'stable' ? 'open-knowledge.fish' : `open-knowledge-${channel}.fish`;
+  return channel === 'stable' ? 'palimpsest.fish' : `open-knowledge-${channel}.fish`;
 }

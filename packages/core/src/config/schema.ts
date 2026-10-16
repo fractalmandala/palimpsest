@@ -131,7 +131,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'boot',
           defaultScope: 'project',
           description:
-            'Folder OpenKnowledge reads and writes documents under, relative to the project root (the folder that contains .ok/). Defaults to the project root. Exclude paths with .okignore. Read at server start; changing it requires a restart.',
+            'Folder Palimpsest reads and writes documents under, relative to the project root (the folder that contains .ps/). Defaults to the project root. Exclude paths with .psignore. Read at server start; changing it requires a restart.',
         })
         .default('.'),
       attachmentFolderPath: z
@@ -294,7 +294,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project-local',
               description:
-                'Show dot-prefixed entries (e.g. .ok/, .okignore) in the file tree. Per-machine (project-local) — not shared with collaborators.',
+                'Show dot-prefixed entries (e.g. .ps/, .psignore) in the file tree. Per-machine (project-local) — not shared with collaborators.',
             })
             .default(false),
           showOnlyMarkdownFiles: z
@@ -327,7 +327,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project-local',
               description:
-                'Show .ok folders (skills, templates, and other OpenKnowledge-managed state) in the file tree as read-only entries. .ok/worktrees and .ok/local never appear. Per-machine (project-local) — not shared with collaborators.',
+                'Show .ps folders (skills, templates, and other Palimpsest-managed state) in the file tree as read-only entries. .ps/worktrees and .ps/local never appear. Per-machine (project-local) — not shared with collaborators.',
             })
             .default(false),
           showSkillGroups: z
@@ -403,7 +403,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'live',
           defaultScope: 'user',
           description:
-            "Auto-approve OpenKnowledge's own tools for agents launched from the built-in terminal (plus `ok open` on Claude) and for in-app Agents-panel chats with any ACP agent. Destructive tools (delete/move/share/install/import) still prompt. Per-machine personal preference (user scope).",
+            "Auto-approve Palimpsest's own tools for agents launched from the built-in terminal (plus `ps open` on Claude) and for in-app Agents-panel chats with any ACP agent. Destructive tools (delete/move/share/install/import) still prompt. Per-machine personal preference (user scope).",
         })
         .default(true),
       browserTools: z
@@ -414,7 +414,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'live',
           defaultScope: 'user',
           description:
-            "Give in-app Claude Code and Codex chats a browser they can drive (Playwright MCP, started through npx from OpenKnowledge's own folder with a fresh in-memory profile), so an agent can open pages, click, and take screenshots. Every browser action asks for approval, with no option to always allow it, unless the agent's own mode or permission settings skip approvals. Needs Google Chrome and Node.js. Off by default; takes effect for chats started after the change. Per-machine personal preference (user scope).",
+            "Give in-app Claude Code and Codex chats a browser they can drive (Playwright MCP, started through npx from Palimpsest's own folder with a fresh in-memory profile), so an agent can open pages, click, and take screenshots. Every browser action asks for approval, with no option to always allow it, unless the agent's own mode or permission settings skip approvals. Needs Google Chrome and Node.js. Off by default; takes effect for chats started after the change. Per-machine personal preference (user scope).",
         })
         .default(false),
     })
@@ -510,7 +510,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'boot',
           defaultScope: 'user',
           description:
-            "Per-git-host declarations, keyed by hostname (for example ghes.example.com). Each entry says how OpenKnowledge should treat remotes on that host; today the only key an entry carries is `provider`. Hosts absent from this map are treated as generic git remotes. Per-machine (user scope, global.yml in the OpenKnowledge home folder); a value in a project's `.ok/config.yml` is ignored. Declarations take effect when OpenKnowledge next starts.",
+            "Per-git-host declarations, keyed by hostname (for example ghes.example.com). Each entry says how Palimpsest should treat remotes on that host; today the only key an entry carries is `provider`. Hosts absent from this map are treated as generic git remotes. Per-machine (user scope, global.yml in the Palimpsest home folder); a value in a project's `.ps/config.yml` is ignored. Declarations take effect when Palimpsest next starts.",
         })
         .default({})
         .catch({}),
@@ -538,7 +538,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'live',
           defaultScope: 'project-local',
           description:
-            'Absolute Windows shell executable override for the in-app terminal. PowerShell, cmd.exe, and Git Bash support OpenKnowledge-managed launches (agent chat tabs and fixed commands such as Resolve in terminal or Install Slidev) and dropped-file path insertion. A different existing executable remains usable for plain terminal tabs and shows a capability notice; requested agent and command launches open only the plain shell without running the agent or command, and dropped-file paths are refused. Empty values use automatic shell discovery. Per-machine (project-local), human-managed, and never shared via git, clone, or sync.',
+            'Absolute Windows shell executable override for the in-app terminal. PowerShell, cmd.exe, and Git Bash support Palimpsest-managed launches (agent chat tabs and fixed commands such as Resolve in terminal or Install Slidev) and dropped-file path insertion. A different existing executable remains usable for plain terminal tabs and shows a capability notice; requested agent and command launches open only the plain shell without running the agent or command, and dropped-file paths are refused. Empty values use automatic shell discovery. Per-machine (project-local), human-managed, and never shared via git, clone, or sync.',
         })
         .optional(),
     })
@@ -570,7 +570,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project',
               description:
-                'Write local diagnostic spans + logs under .ok/local/ for `ok diagnose bundle`. Local-only — never leaves the machine until you run bundle. Set false for sensitive workspaces. Shared across collaborators.',
+                'Write local diagnostic spans + logs under .ps/local/ for `ok diagnose bundle`. Local-only — never leaves the machine until you run bundle. Set false for sensitive workspaces. Shared across collaborators.',
             })
             .default(true),
           spans: z
@@ -656,7 +656,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'live',
           defaultScope: 'project',
           description:
-            'Record bridge loss-class events (content-free) under .ok/local/loss-capture/ for `ok diagnose bundle`. Local-only — never leaves the machine until you run bundle. Set false for sensitive workspaces. Shared across collaborators.',
+            'Record bridge loss-class events (content-free) under .ps/local/loss-capture/ for `ok diagnose bundle`. Local-only — never leaves the machine until you run bundle. Set false for sensitive workspaces. Shared across collaborators.',
         })
         .default(true),
       maxBytes: z
@@ -799,7 +799,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project-local',
               description:
-                'Base URL of the OpenAI-compatible embeddings API (default https://api.openai.com/v1). Override to point at a self-hosted server (Ollama / vLLM / LM Studio) or another provider. The API key is NOT stored here — set it with `ok embeddings set-key` (stored in secrets.yml in the OpenKnowledge home folder); it is sent to whichever endpoint this names.',
+                'Base URL of the OpenAI-compatible embeddings API (default https://api.openai.com/v1). Override to point at a self-hosted server (Ollama / vLLM / LM Studio) or another provider. The API key is NOT stored here — set it with `ok embeddings set-key` (stored in secrets.yml in the Palimpsest home folder); it is sent to whichever endpoint this names.',
             })
             .default(DEFAULT_EMBEDDINGS_BASE_URL),
           model: z
@@ -850,7 +850,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project-local',
               description:
-                "Maximum number of text chunks sent in one indexing request (1–2048, default 96). The ceiling follows OpenAI's input-array limit; other providers may impose different limits. Larger requests may still be split by the character budget. Changing it preserves cached vectors and document chunking; it applies to the next indexing pass. Invalid values use the default and are reported by ok config validate and server logs.",
+                "Maximum number of text chunks sent in one indexing request (1–2048, default 96). The ceiling follows OpenAI's input-array limit; other providers may impose different limits. Larger requests may still be split by the character budget. Changing it preserves cached vectors and document chunking; it applies to the next indexing pass. Invalid values use the default and are reported by ps config validate and server logs.",
             })
             .default(DEFAULT_EMBEDDINGS_MAX_BATCH_SIZE)
             .catch(DEFAULT_EMBEDDINGS_MAX_BATCH_SIZE),
@@ -865,7 +865,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project-local',
               description:
-                'Approximate cumulative character budget per indexing request (1–16384000, default 96000). A single chunk can exceed this budget. OpenAI separately caps total input at 300000 tokens per request; this character budget does not enforce that limit, and high values can produce rejected requests. Other providers have their own limits. Changing it preserves cached vectors and document chunking; it applies to the next indexing pass. Invalid values use the default and are reported by ok config validate and server logs.',
+                'Approximate cumulative character budget per indexing request (1–16384000, default 96000). A single chunk can exceed this budget. OpenAI separately caps total input at 300000 tokens per request; this character budget does not enforce that limit, and high values can produce rejected requests. Other providers have their own limits. Changing it preserves cached vectors and document chunking; it applies to the next indexing pass. Invalid values use the default and are reported by ps config validate and server logs.',
             })
             .default(DEFAULT_EMBEDDINGS_MAX_BATCH_CHARS)
             .catch(DEFAULT_EMBEDDINGS_MAX_BATCH_CHARS),
@@ -880,7 +880,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project-local',
               description:
-                'Timeout in milliseconds for each indexing request attempt (1–600000, default 30000). A request can retry four times, and a failed grouped request can trigger individual-document requests. There is no total indexing-pass deadline: large timeouts can delay newly queued work for hours. The query timeout remains 8 seconds per attempt. Changing it preserves cached vectors and applies to the next indexing pass; an in-progress pass keeps its current timeout. Invalid values use the default and are reported by ok config validate and server logs.',
+                'Timeout in milliseconds for each indexing request attempt (1–600000, default 30000). A request can retry four times, and a failed grouped request can trigger individual-document requests. There is no total indexing-pass deadline: large timeouts can delay newly queued work for hours. The query timeout remains 8 seconds per attempt. Changing it preserves cached vectors and applies to the next indexing pass; an in-progress pass keeps its current timeout. Invalid values use the default and are reported by ps config validate and server logs.',
             })
             .default(DEFAULT_EMBEDDINGS_DOC_TIMEOUT_MS)
             .catch(DEFAULT_EMBEDDINGS_DOC_TIMEOUT_MS),
@@ -952,7 +952,7 @@ export const ConfigSchema = z.looseObject({
             .default([]),
         })
         .default({ enabled: false, schemas: [] }),
-      okf: z
+      psf: z
         .object({
           enabled: z
             .boolean()
@@ -962,7 +962,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project',
               description:
-                'Whether the OKF plugin (Open Knowledge Format portability + conformance rules) contributes diagnostics. Advisory warnings; never blocks a write.',
+                'Whether the OKF plugin (Palimpsest Format portability + conformance rules) contributes diagnostics. Advisory warnings; never blocks a write.',
             })
             .default(false),
           rules: z
@@ -997,7 +997,7 @@ export const ConfigSchema = z.looseObject({
     .default({
       markdownlint: { enabled: false },
       frontmatter: { enabled: false, schemas: [] },
-      okf: { enabled: false, generate: { index: false } },
+      psf: { enabled: false, generate: { index: false } },
     }),
   validation: z
     .looseObject({
@@ -1048,7 +1048,7 @@ export const ConfigSchema = z.looseObject({
       reload: 'live',
       defaultScope: 'project',
       description:
-        'Turn ticket references into links; today they apply to Agents-panel chat messages. Each entry pairs a `prefix` (for example `PRD-`) with a `url` template containing `<num>` (for example `https://linear.app/inkeep/issue/PRD-<num>`); the prefix followed by digits links to that URL with the digits in place of `<num>`. Matching is case-sensitive. An invalid entry is skipped with a warning and the others still apply. Shared with collaborators (project scope, `.ok/config.yml`).',
+        'Turn ticket references into links; today they apply to Agents-panel chat messages. Each entry pairs a `prefix` (for example `PRD-`) with a `url` template containing `<num>` (for example `https://linear.app/inkeep/issue/PRD-<num>`); the prefix followed by digits links to that URL with the digits in place of `<num>`. Matching is case-sensitive. An invalid entry is skipped with a warning and the others still apply. Shared with collaborators (project scope, `.ps/config.yml`).',
     })
     .default([])
     .catch([]),
@@ -1092,7 +1092,7 @@ export const ConfigSchema = z.looseObject({
           reload: 'boot',
           defaultScope: 'project-local',
           description:
-            'Addresses the server binds, e.g. [127.0.0.1] or [0.0.0.0]. Default loopback-only ([127.0.0.1]): nothing off this machine can connect. A non-loopback bind additionally requires the server.allowExternal consent interlock. Per-machine (project-local): a value committed to .ok/config.yml is ignored, so one machine exposing the server can never break local clones for the rest of the team — the exposing host sets it via OK_BIND, --bind, or .ok/local/config.yml. Lists replace, never merge. Read at server start; changing it requires a restart.',
+            'Addresses the server binds, e.g. [127.0.0.1] or [0.0.0.0]. Default loopback-only ([127.0.0.1]): nothing off this machine can connect. A non-loopback bind additionally requires the server.allowExternal consent interlock. Per-machine (project-local): a value committed to .ps/config.yml is ignored, so one machine exposing the server can never break local clones for the rest of the team — the exposing host sets it via PS_BIND, --bind, or .ps/local/config.yml. Lists replace, never merge. Read at server start; changing it requires a restart.',
         })
         .default([...DEFAULT_SERVER_BIND]),
       externalUrl: z

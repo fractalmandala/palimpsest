@@ -87,8 +87,8 @@ let failure: { status: number; type: string; title: string; detail: string } = f
 let putCount = 0;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-error-formatter-wiring-'));
-  const templates = join(root, 'templates', '.ok', 'templates');
+  root = mkdtempSync(join(tmpdir(), 'ps-error-formatter-wiring-'));
+  const templates = join(root, 'templates', '.ps', 'templates');
   mkdirSync(templates, { recursive: true });
   writeFileSync(join(templates, 'existing.md'), '---\ntitle: Existing\n---\nExisting target.\n');
   listener = createServer((req, res) => {

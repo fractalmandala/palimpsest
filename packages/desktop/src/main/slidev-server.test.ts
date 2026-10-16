@@ -23,10 +23,10 @@ function slidevWarnRecords(): Record<string, unknown>[] {
 }
 
 import {
-  okChildEnvOptionsFromProcess,
-  okChildPathEntries,
-  okManagedBinDirs,
-} from '../shared/ok-child-env.ts';
+  psChildEnvOptionsFromProcess,
+  psChildPathEntries,
+  psManagedBinDirs,
+} from '../shared/ps-child-env.ts';
 import { cliProbeArgs } from './claude-readiness.ts';
 import { validateSpawnPath } from './path-containment.ts';
 import {
@@ -410,7 +410,7 @@ describe('buildSlidevInvocation — platform matrix', () => {
       { source: 'global', projectRoot: '/proj', docPath: deck, shell: '/bin/zsh' },
       4300,
       'linux',
-      ["/home/o'brien/.ok/bin"],
+      ["/home/o'brien/.ps/bin"],
     );
     expect(inv.mode).toBe('interactive-shell');
     expect(inv.file).toBe('/bin/zsh');
@@ -418,7 +418,7 @@ describe('buildSlidevInvocation — platform matrix', () => {
       '-i',
       '-c',
       // biome-ignore lint/suspicious/noTemplateCurlyInString: shell parameter expansion in an expected command string, not a JS template placeholder
-      "case \":$PATH:\" in *:'/home/o'\\''brien/.ok/bin':*) ;; *) PATH='/home/o'\\''brien/.ok/bin'\"${PATH:+:$PATH}\" ;; esac; export PATH; set +m; slidev '/proj/decks/talk.md' --port 4300",
+      "case \":$PATH:\" in *:'/home/o'\\''brien/.ps/bin':*) ;; *) PATH='/home/o'\\''brien/.ps/bin'\"${PATH:+:$PATH}\" ;; esac; export PATH; set +m; slidev '/proj/decks/talk.md' --port 4300",
     ]);
   });
 
@@ -671,8 +671,8 @@ describe('composeSlidevSpawnEnv', () => {
       {
         PATH: '/usr/bin',
         HOME: '/home/alice',
-        OK_ELECTRON_PROTOCOL_HOST: '1',
-        OK_LOCK_KIND: 'interactive',
+        PS_ELECTRON_PROTOCOL_HOST: '1',
+        PS_LOCK_KIND: 'interactive',
         ELECTRON_RUN_AS_NODE: '1',
         GDK_PIXBUF_MODULEDIR: '/app/lib/gdk-pixbuf',
         GDK_PIXBUF_MODULE_FILE: '/app/lib/loaders.cache',
@@ -681,8 +681,8 @@ describe('composeSlidevSpawnEnv', () => {
       { platform: 'linux', home: '/home/alice' },
       () => false,
     );
-    expect(env.OK_ELECTRON_PROTOCOL_HOST).toBeUndefined();
-    expect(env.OK_LOCK_KIND).toBeUndefined();
+    expect(env.PS_ELECTRON_PROTOCOL_HOST).toBeUndefined();
+    expect(env.PS_LOCK_KIND).toBeUndefined();
     expect(env.ELECTRON_RUN_AS_NODE).toBeUndefined();
     expect(env.GDK_PIXBUF_MODULEDIR).toBeUndefined();
     expect(env.GDK_PIXBUF_MODULE_FILE).toBeUndefined();
@@ -695,7 +695,7 @@ describe('composeSlidevSpawnEnv', () => {
       { platform: 'linux', home: '/home/alice' },
       () => false,
     );
-    expect(env.OK_DESKTOP_TERMINAL).toBeUndefined();
+    expect(env.PS_DESKTOP_TERMINAL).toBeUndefined();
   });
 
   it('leads PATH with the OK-managed bin dir, ahead of the appended tool dirs', () => {
@@ -705,7 +705,7 @@ describe('composeSlidevSpawnEnv', () => {
       alwaysDir,
     );
     const entries = (env.PATH ?? '').split(':');
-    expect(entries[0]).toBe('/Users/alice/.ok/bin');
+    expect(entries[0]).toBe('/Users/alice/.ps/bin');
     expect(entries).toContain('/opt/homebrew/bin');
     expect(entries.indexOf('/usr/bin')).toBeLessThan(entries.indexOf('/opt/homebrew/bin'));
   });
@@ -752,16 +752,16 @@ describe('slidevSpawnEnv', () => {
   it('runs the launch through the shared composer, so the markers the terminal strips are stripped here too', () => {
     withParentEnv(
       {
-        OK_LOCK_KIND: 'interactive',
+        PS_LOCK_KIND: 'interactive',
         ELECTRON_RUN_AS_NODE: '1',
-        OK_ELECTRON_PROTOCOL_HOST: '1',
+        PS_ELECTRON_PROTOCOL_HOST: '1',
         GDK_PIXBUF_MODULEDIR: '/app/lib/gdk-pixbuf',
       },
       () => {
         const env = slidevSpawnEnv();
-        expect(env.OK_LOCK_KIND).toBeUndefined();
+        expect(env.PS_LOCK_KIND).toBeUndefined();
         expect(env.ELECTRON_RUN_AS_NODE).toBeUndefined();
-        expect(env.OK_ELECTRON_PROTOCOL_HOST).toBeUndefined();
+        expect(env.PS_ELECTRON_PROTOCOL_HOST).toBeUndefined();
         expect(env.GDK_PIXBUF_MODULEDIR).toBeUndefined();
       },
     );
@@ -770,10 +770,10 @@ describe('slidevSpawnEnv', () => {
   it.skipIf(process.platform === 'win32')(
     'puts the OK-managed bin dir its own options resolve onto the launch PATH',
     () => {
-      const options = okChildEnvOptionsFromProcess();
-      const dirs = okManagedBinDirs(options);
+      const options = psChildEnvOptionsFromProcess();
+      const dirs = psManagedBinDirs(options);
       expect(dirs).toHaveLength(1);
-      expect(okChildPathEntries(slidevSpawnEnv(), options)).toContain(dirs[0]);
+      expect(psChildPathEntries(slidevSpawnEnv(), options)).toContain(dirs[0]);
     },
   );
 });

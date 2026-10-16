@@ -21,9 +21,9 @@ import { writeSyntheticAsar } from '../support/synthetic-asar.test-helper.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = resolve(__dirname, '../..');
-const packageDirInput = process.env.OK_WIN_PACKAGE_DIR?.trim() ?? '';
+const packageDirInput = process.env.PS_WIN_PACKAGE_DIR?.trim() ?? '';
 const packageDir = packageDirInput === '' ? null : resolve(desktopRoot, packageDirInput);
-const packageDirRequired = process.env.OK_WIN_PACKAGE_REQUIRED === '1';
+const packageDirRequired = process.env.PS_WIN_PACKAGE_REQUIRED === '1';
 
 const WIN32_ARCHES = ['win32-x64', 'win32-arm64'] as const;
 
@@ -93,7 +93,7 @@ describe('Windows package native guard helpers', () => {
   });
 
   test('walks nested package trees and reports files only, as relative paths', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-win-native-guard-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-win-native-guard-'));
     fixtureDirs.push(root);
     const nested = join(root, 'prebuilds', 'win32-x64', 'conpty');
     mkdirSync(nested, { recursive: true });
@@ -103,7 +103,7 @@ describe('Windows package native guard helpers', () => {
   });
 
   test('lists every entry of an asar header, including directories', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-win-native-guard-asar-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-win-native-guard-asar-'));
     fixtureDirs.push(root);
     const asar = join(root, 'app.asar');
     writeSyntheticAsar(asar, {
@@ -130,7 +130,7 @@ describe('Windows package native guard helpers', () => {
   });
 
   test('rejects an asar header length above the shared allocation bound', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-win-native-guard-asar-bound-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-win-native-guard-asar-bound-'));
     fixtureDirs.push(root);
     const asar = join(root, 'app.asar');
     const prefix = Buffer.alloc(16);
@@ -142,13 +142,13 @@ describe('Windows package native guard helpers', () => {
 });
 
 describe('Windows package native guard lane visibility', () => {
-  test('reports whether OK_WIN_PACKAGE_DIR enabled the assertive lane', () => {
+  test('reports whether PS_WIN_PACKAGE_DIR enabled the assertive lane', () => {
     if (packageDir === null) {
-      expect(packageDirRequired, 'OK_WIN_PACKAGE_DIR is required for this package lane').toBe(
+      expect(packageDirRequired, 'PS_WIN_PACKAGE_DIR is required for this package lane').toBe(
         false,
       );
       console.log(
-        '[windows-package-native-guards] OK_WIN_PACKAGE_DIR is unset — packaged-artifact assertions skipped',
+        '[windows-package-native-guards] PS_WIN_PACKAGE_DIR is unset — packaged-artifact assertions skipped',
       );
       return;
     }

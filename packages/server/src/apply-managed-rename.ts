@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { prependFrontmatter, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { prependFrontmatter, stripFrontmatter } from '@palimpsest/core';
 import {
   type CanonicalDocName,
   canonicalDocNameBeforeRename,

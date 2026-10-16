@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../test-support/configure-git-fixture.test-helper.ts';
-import { okVitestBase } from '../test-support/vitest.base.ts';
+import { psVitestBase } from '../test-support/vitest.base.ts';
 import { ISSUE_URL_RULE } from './deviations/contract.mjs';
 import { gitCleanEnv } from './git-clean-env.mjs';
 import {
@@ -20,7 +20,7 @@ import {
   loadAllowlist,
   MAX_HORIZON_DAYS,
   MIN_SIGNATURE_LITERAL,
-  OK_ROOT,
+  PS_ROOT,
   OWNERS,
   QUARANTINE_TAG,
   render,
@@ -372,9 +372,9 @@ describe('known-reds scanner: CI-keyed skips', () => {
     "test.skipIf(process.env.CIRCLE)('x', () => {});",
     "test.skipIf({ CI: true }.CI_FLAG)('x', () => {});",
     "test.skipIf(process.platform === 'win32')('x', () => {});",
-    "const e = process.env;\ntest.skipIf(e.OK_LIVE_API)('x', () => {});",
+    "const e = process.env;\ntest.skipIf(e.PS_LIVE_API)('x', () => {});",
     "const { HOME } = process.env;\ntest.skipIf(HOME)('x', () => {});",
-    "const key = 'OK_LIVE_API';\ntest.skipIf(process.env[key])('x', () => {});",
+    "const key = 'PS_LIVE_API';\ntest.skipIf(process.env[key])('x', () => {});",
     "const hasDocker = () => process.env.DOCKER_HOST !== undefined;\ntest.skipIf(hasDocker())('x', () => {});",
     "import ci from 'ci-info';\ntest.skipIf(ci.isPR)('x', () => {});",
     "import { isCI } from './ci';\ntest.skipIf(isCI)('x', () => {});",
@@ -386,7 +386,7 @@ describe('known-reds scanner: CI-keyed skips', () => {
     "import * as ci from './ci';\ntest.skipIf(ci.isCI)('x', () => {});",
     "const onCi = (flag) => Boolean(process.env.CI);\ntest.skipIf(onCi())('x', () => {});",
     "function onCi() { return Boolean(process.env.CI); console.log('after'); }\ntest.skipIf(onCi())('x', () => {});",
-    "test.skipIf('OK_LIVE_API' in process.env)('x', () => {});",
+    "test.skipIf('PS_LIVE_API' in process.env)('x', () => {});",
     "test.skipIf('CI' in flags)('x', () => {});",
   ])('lists %s as an environment gate', (source) => {
     const gates = scanSource('packages/server/src/a.test.ts', source).gates;
@@ -408,12 +408,12 @@ describe('known-reds feed: gate atoms and title chains', () => {
       [{ kind: 'arch', name: 'process.arch', text: "process.arch !== 'arm64'" }],
     ],
     [
-      "test.runIf(process.env.OK_LIVE_API === '1')('x', () => {});",
-      [{ kind: 'env', name: 'OK_LIVE_API', text: "process.env.OK_LIVE_API === '1'" }],
+      "test.runIf(process.env.PS_LIVE_API === '1')('x', () => {});",
+      [{ kind: 'env', name: 'PS_LIVE_API', text: "process.env.PS_LIVE_API === '1'" }],
     ],
     [
-      "test.runIf('OK_LIVE_API' in process.env)('x', () => {});",
-      [{ kind: 'env', name: 'OK_LIVE_API', text: "'OK_LIVE_API' in process.env" }],
+      "test.runIf('PS_LIVE_API' in process.env)('x', () => {});",
+      [{ kind: 'env', name: 'PS_LIVE_API', text: "'PS_LIVE_API' in process.env" }],
     ],
     [
       "test.skipIf(process.env.GITHUB_ACTIONS)('x', () => {});",
@@ -498,23 +498,23 @@ describe('known-reds feed: gate atoms and title chains', () => {
       [{ kind: 'import', name: 'legacy-dep', text: 'hasLegacy' }],
     ],
     [
-      "test.skipIf(process.env.OK_MODE ?? process.env.CI)('x', () => {});",
+      "test.skipIf(process.env.PS_MODE ?? process.env.CI)('x', () => {});",
       [
-        { kind: 'env', name: 'OK_MODE', text: 'process.env.OK_MODE' },
+        { kind: 'env', name: 'PS_MODE', text: 'process.env.PS_MODE' },
         { kind: 'ci', name: 'CI', text: 'process.env.CI' },
       ],
     ],
     [
-      "test.skipIf(process.platform === 'win32' ? process.env.OK_WIN : process.env.OK_POSIX)('x', () => {});",
+      "test.skipIf(process.platform === 'win32' ? process.env.PS_WIN : process.env.PS_POSIX)('x', () => {});",
       [
         { kind: 'platform', name: 'process.platform', text: "process.platform === 'win32'" },
-        { kind: 'env', name: 'OK_WIN', text: 'process.env.OK_WIN' },
-        { kind: 'env', name: 'OK_POSIX', text: 'process.env.OK_POSIX' },
+        { kind: 'env', name: 'PS_WIN', text: 'process.env.PS_WIN' },
+        { kind: 'env', name: 'PS_POSIX', text: 'process.env.PS_POSIX' },
       ],
     ],
     [
-      "import { env } from 'node:process';\ntest.skipIf(env.OK_FLAG === '1')('x', () => {});",
-      [{ kind: 'env', name: 'OK_FLAG', text: "env.OK_FLAG === '1'" }],
+      "import { env } from 'node:process';\ntest.skipIf(env.PS_FLAG === '1')('x', () => {});",
+      [{ kind: 'env', name: 'PS_FLAG', text: "env.PS_FLAG === '1'" }],
     ],
     ["test.skipIf(IS_CI)('x', () => {});", [{ kind: 'ci', name: 'IS_CI', text: 'IS_CI' }]],
     [
@@ -537,8 +537,8 @@ describe('known-reds feed: gate atoms and title chains', () => {
       [{ kind: 'ci', name: 'CI', text: 'CI' }],
     ],
     [
-      "const e = process.env;\ntest.skipIf(e.OK_LIVE_API)('x', () => {});",
-      [{ kind: 'env', name: 'OK_LIVE_API', text: 'e.OK_LIVE_API' }],
+      "const e = process.env;\ntest.skipIf(e.PS_LIVE_API)('x', () => {});",
+      [{ kind: 'env', name: 'PS_LIVE_API', text: 'e.PS_LIVE_API' }],
     ],
     [
       "const { platform } = process;\ntest.skipIf(platform === 'win32')('x', () => {});",
@@ -561,14 +561,14 @@ describe('known-reds feed: gate atoms and title chains', () => {
       [{ kind: 'unknown', name: "onCi('CI')", text: "onCi('CI')" }],
     ],
     [
-      "test.skipIf(!process.env.OK_PACKAGE_DIR?.trim())('x', () => {});",
+      "test.skipIf(!process.env.PS_PACKAGE_DIR?.trim())('x', () => {});",
       [
         {
           kind: 'unknown',
-          name: 'process.env.OK_PACKAGE_DIR?.trim()',
-          text: 'process.env.OK_PACKAGE_DIR?.trim()',
+          name: 'process.env.PS_PACKAGE_DIR?.trim()',
+          text: 'process.env.PS_PACKAGE_DIR?.trim()',
         },
-        { kind: 'env', name: 'OK_PACKAGE_DIR', text: 'process.env.OK_PACKAGE_DIR' },
+        { kind: 'env', name: 'PS_PACKAGE_DIR', text: 'process.env.PS_PACKAGE_DIR' },
       ],
     ],
     [
@@ -576,8 +576,8 @@ describe('known-reds feed: gate atoms and title chains', () => {
       [{ kind: 'uid', name: 'process.getegid', text: 'process.getegid?.() === 0' }],
     ],
     [
-      "const key = 'OK_LIVE_API';\ntest.skipIf(process.env[key] === '1')('x', () => {});",
-      [{ kind: 'env', name: 'OK_LIVE_API', text: "process.env[key] === '1'" }],
+      "const key = 'PS_LIVE_API';\ntest.skipIf(process.env[key] === '1')('x', () => {});",
+      [{ kind: 'env', name: 'PS_LIVE_API', text: "process.env[key] === '1'" }],
     ],
     [
       "import { isCI } from 'ci-info';\ntest.skipIf(isCI)('x', () => {});",
@@ -638,13 +638,13 @@ describe('known-reds feed: gate atoms and title chains', () => {
   test('follows aliases to the facts they read', () => {
     const source = [
       "const ON_WINDOWS = process.platform === 'win32';",
-      'const SLOW_HOST = ON_WINDOWS || process.env.OK_SLOW === "1";',
+      'const SLOW_HOST = ON_WINDOWS || process.env.PS_SLOW === "1";',
       "test.skipIf(SLOW_HOST && !process.env.CI)('x', () => {});",
     ].join('\n');
     expect(atomsOf(source)).toEqual([
       [
         { kind: 'platform', name: 'process.platform', text: "process.platform === 'win32'" },
-        { kind: 'env', name: 'OK_SLOW', text: 'process.env.OK_SLOW === "1"' },
+        { kind: 'env', name: 'PS_SLOW', text: 'process.env.PS_SLOW === "1"' },
         { kind: 'ci', name: 'CI', text: 'process.env.CI' },
       ],
     ]);
@@ -653,7 +653,7 @@ describe('known-reds feed: gate atoms and title chains', () => {
   test('resolves an alias to the declaration visible where the gate sits', () => {
     const source = [
       "test('an earlier test', () => {",
-      "  const FLAG = process.env.OK_OTHER === '1';",
+      "  const FLAG = process.env.PS_OTHER === '1';",
       '  expect(FLAG).toBe(FLAG);',
       '});',
       "const FLAG = process.platform === 'win32';",
@@ -904,9 +904,9 @@ describe('known-reds scanner: early returns and not-run tests', () => {
     "const IS_WIN = process.platform === 'win32';\ntest('x', () => { if (IS_WIN) { console.log('skip'); return; } expect(1).toBe(1); });",
     "import { existsSync } from 'node:fs';\ntest('x', () => { if (!existsSync(built)) return; expect(1).toBe(1); });",
     "import os from 'node:os';\ntest('x', () => { if (os.platform() !== 'darwin') return; expect(1).toBe(1); });",
-    "test('x', () => { if (process.env.OK_AUDIT === '1') { report(); return; } expect(1).toBe(1); });",
+    "test('x', () => { if (process.env.PS_AUDIT === '1') { report(); return; } expect(1).toBe(1); });",
     "describe('x', () => { const isWin = process.platform === 'win32'; test('y', () => { if (isWin) return; expect(1).toBe(1); }); });",
-    "const { OK_LIVE_API } = process.env;\ntest('x', () => { if (!OK_LIVE_API) return; expect(1).toBe(1); });",
+    "const { PS_LIVE_API } = process.env;\ntest('x', () => { if (!PS_LIVE_API) return; expect(1).toBe(1); });",
     "const { platform } = process;\ntest('x', () => { if (platform === 'win32') return; expect(1).toBe(1); });",
   ])('flags the environment early return in %s', (source) => {
     expect(scanSource('packages/server/src/a.test.ts', source).earlyReturns).toHaveLength(1);
@@ -1336,7 +1336,7 @@ describe('known-reds validation', () => {
 });
 
 describe('known-reds through its real invocation', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-known-reds-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-known-reds-'));
   afterAll(() => rmSync(root, { recursive: true, force: true }));
   const write = (path, source) => {
     mkdirSync(dirname(join(root, path)), { recursive: true });
@@ -1480,7 +1480,7 @@ describe('known-reds through its real invocation', () => {
       windowsHide: true,
     });
     expect(run.status).toBe(1);
-    expect(run.stdout).toContain('Known reds in open-knowledge on ');
+    expect(run.stdout).toContain('Known reds in palimpsest on ');
     expect(run.stdout).toContain(': 4 test files scanned.');
     expect(run.stdout).toContain(
       'packages/server/src/planted-boot.test.ts:2  file  process.env.CI',
@@ -1489,7 +1489,7 @@ describe('known-reds through its real invocation', () => {
   });
 
   test('the command exits 2, not 0, when it cannot scan', () => {
-    const notARepo = mkdtempSync(join(tmpdir(), 'ok-known-reds-bare-'));
+    const notARepo = mkdtempSync(join(tmpdir(), 'ps-known-reds-bare-'));
     try {
       const run = spawnSync(process.execPath, [SCRIPT, '--root', notARepo], {
         encoding: 'utf8',
@@ -1509,7 +1509,7 @@ describe('an expired date through the real invocation', () => {
     .toISOString()
     .slice(0, 10);
   const treeWith = (until) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-known-reds-expiry-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-known-reds-expiry-'));
     const file = join(root, 'packages/server/src/lapsed.test.ts');
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(
@@ -1574,10 +1574,10 @@ describe('an expired date through the real invocation', () => {
 });
 
 describe('known-reds on this tree', () => {
-  const files = listTestFiles(OK_ROOT);
+  const files = listTestFiles(PS_ROOT);
   let scanned;
   const tree = () => {
-    scanned ??= scanTree(OK_ROOT);
+    scanned ??= scanTree(PS_ROOT);
     return scanned;
   };
 
@@ -1622,11 +1622,11 @@ describe('known-reds on this tree', () => {
   });
 
   test('every Vitest tier declares the known-bug and quarantine tags', () => {
-    expect(okVitestBase.test.tags.map((tag) => tag.name)).toEqual([KNOWN_BUG_TAG, QUARANTINE_TAG]);
+    expect(psVitestBase.test.tags.map((tag) => tag.name)).toEqual([KNOWN_BUG_TAG, QUARANTINE_TAG]);
   });
 
   test('the convention doc and the guard cite each other', () => {
-    const doc = readFileSync(join(OK_ROOT, CONVENTION_DOC), 'utf8');
+    const doc = readFileSync(join(PS_ROOT, CONVENTION_DOC), 'utf8');
     for (const cited of [
       'scripts/check-known-reds.uncached.test.mjs',
       'scripts/known-reds.mjs',
@@ -1643,7 +1643,7 @@ describe('known-reds on this tree', () => {
   });
 
   test('pnpm known-reds runs this command', () => {
-    const manifest = JSON.parse(readFileSync(join(OK_ROOT, 'package.json'), 'utf8'));
+    const manifest = JSON.parse(readFileSync(join(PS_ROOT, 'package.json'), 'utf8'));
     expect(manifest.scripts['known-reds']).toBe('node scripts/known-reds.mjs');
   });
 });

@@ -4,7 +4,7 @@ import {
   isReLintFailedWarning,
   type LintFixResult,
   LintFixResultSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestServer, type TestServer } from './test-harness.ts';
@@ -14,8 +14,8 @@ const postFixSourceFault = vi.hoisted(() => ({ active: false, calls: 0 }));
 const postFixEmptyMessageFault = vi.hoisted(() => ({ active: false, calls: 0 }));
 const preFixSourceFault = vi.hoisted(() => ({ active: false, calls: 0 }));
 
-vi.mock('@inkeep/open-knowledge-core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@inkeep/open-knowledge-core')>();
+vi.mock('@palimpsest/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@palimpsest/core')>();
   return {
     ...actual,
     lintDocument: (...args: Parameters<typeof actual.lintDocument>) => {
@@ -39,8 +39,8 @@ vi.mock('@inkeep/open-knowledge-core', async (importOriginal) => {
             message: 'source exploded on the pre-fix text',
           });
           return [
-            { range: at, severity: 'warning', source: 'okf', code: 'OKF001', message: 'one' },
-            { range: at, severity: 'warning', source: 'okf', code: 'OKF002', message: 'two' },
+            { range: at, severity: 'warning', source: 'psf', code: 'OKF001', message: 'one' },
+            { range: at, severity: 'warning', source: 'psf', code: 'OKF002', message: 'two' },
           ];
         }
         return [

@@ -80,7 +80,7 @@ export function TrashFailureModal({
   const count = failedTargets.length;
   const targetName = only ? displayTargetName(only) : '';
   const trashNoun = trashNounLabel(
-    typeof window !== 'undefined' ? window.okDesktop?.platform : undefined,
+    typeof window !== 'undefined' ? window.psDesktop?.platform : undefined,
   );
   const headerDescription = isMulti
     ? plural(count, {

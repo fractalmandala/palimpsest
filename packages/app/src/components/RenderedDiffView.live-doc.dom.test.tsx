@@ -43,7 +43,7 @@ describe('RenderedDiffView live documents', () => {
     const inserted = await mountDiff('Intro.', `Intro.\n\n${block}`);
     await waitFor(() =>
       expect(
-        inserted.querySelector(`.ok-diff-ins-block [data-component-name="${name}"] > *`),
+        inserted.querySelector(`.ps-diff-ins-block [data-component-name="${name}"] > *`),
       ).toBeTruthy(),
     );
     cleanup();

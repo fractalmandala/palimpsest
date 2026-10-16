@@ -60,7 +60,7 @@ const endFixture = () => {
 };
 
 describe('captureElectronStderr: attachment materializes a file', () => {
-  beforeEach(() => startFixture('ok-stderr-attach-'));
+  beforeEach(() => startFixture('ps-stderr-attach-'));
   afterEach(endFixture);
 
   test('attaches a path under the output directory, not a body', async () => {
@@ -110,7 +110,7 @@ describe('captureElectronStderr: attachment materializes a file', () => {
 });
 
 describe('attachCapturedStderr: the registration walk a fixture calls', () => {
-  beforeEach(() => startFixture('ok-stderr-walk-'));
+  beforeEach(() => startFixture('ps-stderr-walk-'));
   afterEach(endFixture);
 
   test('two registered apps get distinct files AND distinct attachment names', async () => {

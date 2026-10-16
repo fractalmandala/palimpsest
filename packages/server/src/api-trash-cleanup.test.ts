@@ -11,7 +11,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { createApiExtension } from './api-extension.test-helper.ts';
 import { BacklinkIndex } from './backlink-index.ts';
@@ -166,7 +166,7 @@ async function callApi(
 let tmpDir: string;
 
 function setupTmpDir(): string {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-trash-cleanup-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-trash-cleanup-'));
   return tmpDir;
 }
 

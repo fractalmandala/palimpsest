@@ -12,9 +12,9 @@ import { gitAt, releasedChangesetIds } from './compute-stable-version.mjs';
 const PRE_PATH = '.changeset/pre.json';
 const CONFIG_PATH = '.changeset/config.json';
 const STABLE_TAG_RE = /^v\d+\.\d+\.\d+$/;
-const PUBLIC_REPO = process.env.GITHUB_REPOSITORY || 'inkeep/open-knowledge';
+const PUBLIC_REPO = process.env.GITHUB_REPOSITORY || 'fractalmandala/palimpsest';
 const CHANGELOG_PKGS = ['cli', 'core', 'server', 'app', 'desktop'];
-const CONSUMED_MARKER_RE = /<!--\s*ok-consumed-set:\s*(\[[^\]]*\])\s*-->/;
+const CONSUMED_MARKER_RE = /<!--\s*ps-consumed-set:\s*(\[[^\]]*\])\s*-->/;
 
 function log(...args) {
   process.stderr.write(`${args.join(' ')}\n`);
@@ -95,7 +95,7 @@ function recoverConsumedSet(tag, gh) {
   }
   const m = CONSUMED_MARKER_RE.exec(res.stdout);
   if (!m) {
-    log(`[warn] ${tag} body has no ok-consumed-set marker; treating as bootstrap.`);
+    log(`[warn] ${tag} body has no ps-consumed-set marker; treating as bootstrap.`);
     return null;
   }
   try {
@@ -271,7 +271,7 @@ export function renderNotes({ packageDeltas, newConsumedSet, prevBetaTag, newCou
     }
   }
 
-  lines.push(`<!-- ok-consumed-set: ${JSON.stringify(newConsumedSet)} -->`);
+  lines.push(`<!-- ps-consumed-set: ${JSON.stringify(newConsumedSet)} -->`);
   return lines.join('\n');
 }
 

@@ -30,7 +30,7 @@ const base = {
   tag: 'v1.2.3',
   verdict: 'fail',
   reason: '2 of 16 executed smoke tests failed against the packaged app',
-  runUrl: 'https://github.com/inkeep/open-knowledge/actions/runs/999',
+  runUrl: 'https://github.com/fractalmandala/palimpsest/actions/runs/999',
 };
 
 describe('alert content', () => {
@@ -215,7 +215,7 @@ describe('parseArgs', () => {
       verdict: 'error',
       reason: 'mount failed',
       runUrl: 'https://example.test/run',
-      repo: 'inkeep/open-knowledge',
+      repo: 'fractalmandala/palimpsest',
       blockedBy: '',
     });
   });

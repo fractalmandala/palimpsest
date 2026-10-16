@@ -81,7 +81,7 @@ type FolderState = { folderCount: number; expandedCount: number };
 
 let sidebarState: 'expanded' | 'collapsed' = 'expanded';
 let workspace: { contentDir: string; pathSeparator: string } | null = {
-  contentDir: '/tmp/open-knowledge',
+  contentDir: '/tmp/palimpsest',
   pathSeparator: '/',
 };
 let activeDocName: string | null = 'docs/current';
@@ -130,7 +130,7 @@ function setFolderState(next: FolderState) {
 }
 
 function installBridge() {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: {
       platform: 'darwin',
@@ -224,7 +224,7 @@ vi.doMock('@/components/handoff/useHandoffDispatch', () => ({
     docPath: 'docs/current.md',
   }),
   buildProjectScopedHandoffInput: ({ workspace: inputWorkspace }: { workspace: unknown }) =>
-    inputWorkspace ? { docContext: null, docPath: '', projectDir: '/tmp/open-knowledge' } : null,
+    inputWorkspace ? { docContext: null, docPath: '', projectDir: '/tmp/palimpsest' } : null,
   useHandoffDispatch: () => ({ dispatch: vi.fn(() => Promise.resolve({ ok: true })) }),
 }));
 
@@ -394,7 +394,7 @@ function templateEntries(folderPath: string | null) {
     return [
       {
         name: 'root-daily',
-        path: '.ok/templates/root-daily.md',
+        path: '.ps/templates/root-daily.md',
         scope: 'local',
         source_folder: '',
         title: 'Root daily',
@@ -404,7 +404,7 @@ function templateEntries(folderPath: string | null) {
   return [
     {
       name: 'daily',
-      path: `${folderPath ?? ''}/.ok/templates/daily.md`,
+      path: `${folderPath ?? ''}/.ps/templates/daily.md`,
       scope: 'local',
       source_folder: folderPath ?? '',
       title: 'Daily',
@@ -460,7 +460,7 @@ describe('FileSidebar runtime behavior', () => {
     } catch {}
     __resetSkillsSectionVisibleCacheForTests();
     sidebarState = 'expanded';
-    workspace = { contentDir: '/tmp/open-knowledge', pathSeparator: '/' };
+    workspace = { contentDir: '/tmp/palimpsest', pathSeparator: '/' };
     activeDocName = 'docs/current';
     activeTarget = { kind: 'folder', folderPath: 'docs' };
     folderState = { folderCount: 2, expandedCount: 1 };
@@ -486,7 +486,7 @@ describe('FileSidebar runtime behavior', () => {
     ]) {
       fn.mockClear();
     }
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: undefined,
     });
@@ -500,7 +500,7 @@ describe('FileSidebar runtime behavior', () => {
 
   afterEach(() => {
     cleanup();
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: undefined,
     });
@@ -528,7 +528,7 @@ describe('FileSidebar runtime behavior', () => {
           (element.compareDocumentPosition(projectRow) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
       );
       expect(rowsAbove, 'only the sync-conflicts slot may sit above the project row').toEqual([]);
-      expect(projectRow.textContent).toContain('open-knowledge');
+      expect(projectRow.textContent).toContain('palimpsest');
       expect(projectRow.contains(screen.getByTestId('sidebar-toolbar'))).toBe(true);
       expectVisualClassTokens(projectRow.className, ['h-11']);
       expect(screen.queryByRole('button', { name: /^Search/ })).toBeNull();
@@ -622,8 +622,8 @@ describe('FileSidebar runtime behavior', () => {
     expect(screen.queryByRole('button', { name: 'Collapse all' })).toBeNull();
   });
 
-  test('toolbar create actions fall back to the workspace root for a revealed .ok folder', async () => {
-    activeTarget = { kind: 'folder', folderPath: 'notes/.ok/templates' };
+  test('toolbar create actions fall back to the workspace root for a revealed .ps folder', async () => {
+    activeTarget = { kind: 'folder', folderPath: 'notes/.ps/templates' };
     await renderSidebar();
     await waitFor(() => expect(treeListeners.size).toBe(1));
 
@@ -660,7 +660,7 @@ describe('FileSidebar runtime behavior', () => {
     const checkboxes = within(group).getAllByRole('menuitemcheckbox');
     expect(checkboxes.map((el) => el.textContent)).toEqual([
       'Hidden files',
-      '.ok folders',
+      '.ps folders',
       'Only markdown files',
       'Skills Studio',
     ]);
@@ -700,7 +700,7 @@ describe('FileSidebar runtime behavior', () => {
       within(menu).getByTestId('tree-options-show-hidden-files').getAttribute('aria-checked'),
     ).toBe('true');
     expect(
-      within(menu).getByTestId('tree-options-show-ok-folders').getAttribute('aria-checked'),
+      within(menu).getByTestId('tree-options-show-ps-folders').getAttribute('aria-checked'),
     ).toBe('false');
     expect(
       within(menu)
@@ -715,7 +715,7 @@ describe('FileSidebar runtime behavior', () => {
     expect(projectLocalPatch).toHaveBeenCalledWith({
       appearance: { sidebar: { showHiddenFiles: false } },
     });
-    fireEvent.click(within(menu).getByTestId('tree-options-show-ok-folders'));
+    fireEvent.click(within(menu).getByTestId('tree-options-show-ps-folders'));
     expect(projectLocalPatch).toHaveBeenCalledWith({
       appearance: { sidebar: { showOkFolders: true } },
     });
@@ -737,14 +737,14 @@ describe('FileSidebar runtime behavior', () => {
 
     const treeCheckboxes = [
       'tree-options-show-hidden-files',
-      'tree-options-show-ok-folders',
+      'tree-options-show-ps-folders',
       'tree-options-show-only-markdown-files',
       'tree-options-show-skills',
       'tree-options-group-skills',
     ].map((id) => within(menu).getByTestId(id) as HTMLButtonElement);
     const contextCheckboxes = [
       'empty-space-menu-show-hidden-files',
-      'empty-space-menu-show-ok-folders',
+      'empty-space-menu-show-ps-folders',
       'empty-space-menu-show-only-markdown-files',
       'empty-space-menu-show-skills-section',
     ].map((id) => screen.getByTestId(id) as HTMLButtonElement);
@@ -831,7 +831,7 @@ describe('FileSidebar runtime behavior', () => {
       'open-in-agent-empty-space-submenu',
       'empty-space-menu-copy-full-path',
       'empty-space-menu-show-hidden-files',
-      'empty-space-menu-show-ok-folders',
+      'empty-space-menu-show-ps-folders',
       'empty-space-menu-show-only-markdown-files',
       'empty-space-menu-show-skills-section',
       'empty-space-menu-expand-all',
@@ -854,11 +854,11 @@ describe('FileSidebar runtime behavior', () => {
     expect(treeCalls.startCreating).toHaveBeenCalledWith('folder', '');
 
     fireEvent.click(screen.getByTestId('empty-space-menu-reveal-in-finder'));
-    expect(showItemInFolderMock).toHaveBeenCalledWith('/tmp/open-knowledge');
+    expect(showItemInFolderMock).toHaveBeenCalledWith('/tmp/palimpsest');
 
     fireEvent.click(screen.getByTestId('empty-space-menu-copy-full-path'));
     await waitFor(() =>
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('/tmp/open-knowledge'),
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('/tmp/palimpsest'),
     );
     expect(toastSuccesses[0]?.[0]).toBe('Copied full path');
 
@@ -870,7 +870,7 @@ describe('FileSidebar runtime behavior', () => {
     expect(openInAgentSubmenuProps.at(-1)?.input).toEqual({
       docContext: null,
       docPath: '',
-      projectDir: '/tmp/open-knowledge',
+      projectDir: '/tmp/palimpsest',
     });
   });
 
@@ -879,16 +879,16 @@ describe('FileSidebar runtime behavior', () => {
     await renderSidebar();
 
     const hidden = screen.getByTestId('empty-space-menu-show-hidden-files');
-    const okFolders = screen.getByTestId('empty-space-menu-show-ok-folders');
+    const psFolders = screen.getByTestId('empty-space-menu-show-ps-folders');
     const onlyMarkdown = screen.getByTestId('empty-space-menu-show-only-markdown-files');
     const skills = screen.getByTestId('empty-space-menu-show-skills-section');
     expect(hidden.textContent).toBe('Show hidden files');
-    expect(okFolders.textContent).toBe('Show .ok folders');
+    expect(psFolders.textContent).toBe('Show .ps folders');
     expect(onlyMarkdown.textContent).toBe('Show only markdown files');
     expect(skills.textContent).toBe('Skills section');
 
     expect(hidden.getAttribute('aria-checked')).toBe('false');
-    expect(okFolders.getAttribute('aria-checked')).toBe('false');
+    expect(psFolders.getAttribute('aria-checked')).toBe('false');
     expect(onlyMarkdown.getAttribute('aria-checked')).toBe('true');
     expect(skills.getAttribute('aria-checked')).toBe('true');
 
@@ -896,7 +896,7 @@ describe('FileSidebar runtime behavior', () => {
     expect(projectLocalPatch).toHaveBeenCalledWith({
       appearance: { sidebar: { showHiddenFiles: true } },
     });
-    fireEvent.click(okFolders);
+    fireEvent.click(psFolders);
     expect(projectLocalPatch).toHaveBeenCalledWith({
       appearance: { sidebar: { showOkFolders: true } },
     });
@@ -985,7 +985,7 @@ describe('FileSidebar runtime behavior', () => {
 
   test('hiding the Skills dock leaves the file tree untouched, even on a skill doc', async () => {
     mergedConfig = { appearance: { sidebar: { showSkillsSection: false } } };
-    activeDocName = '.ok/skills/test-skill/SKILL';
+    activeDocName = '.ps/skills/test-skill/SKILL';
     activeTarget = null;
     await renderSidebar();
 

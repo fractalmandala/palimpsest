@@ -15,9 +15,9 @@ export function candidateIdentity(comparisonStatus) {
 export function selectDmgAsset(assets, identity) {
   const pattern =
     identity === 'beta'
-      ? /^OpenKnowledge-Beta-(?:arm64|x64|universal)\.dmg$/
+      ? /^Palimpsest-Beta-(?:arm64|x64|universal)\.dmg$/
       : identity === 'legacy'
-        ? /^OpenKnowledge-(?:arm64|x64|universal)\.dmg$/
+        ? /^Palimpsest-(?:arm64|x64|universal)\.dmg$/
         : null;
   if (pattern === null) return null;
   const names = assets.map((asset) => asset.name).filter((name) => pattern.test(name));

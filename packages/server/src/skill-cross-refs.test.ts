@@ -1,11 +1,11 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { extractSkillRefs } from '@inkeep/open-knowledge-core';
+import { extractSkillRefs } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 
 const SKILLS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'skills');
-const PLATFORM_SKILL = 'open-knowledge';
+const PLATFORM_SKILL = 'palimpsest';
 
 function walkMarkdown(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
@@ -51,7 +51,7 @@ describe('shipped skills — cross-skill reference graph', () => {
   });
 
   test.each(packSkills.map((f) => [f.slice(SKILLS_ROOT.length + 1), f] as const))(
-    'pack skill %s routes to the platform skill with /open-knowledge',
+    'pack skill %s routes to the platform skill with /palimpsest',
     (_label, file) => {
       expect(extractSkillRefs(body(file))).toContain(PLATFORM_SKILL);
     },

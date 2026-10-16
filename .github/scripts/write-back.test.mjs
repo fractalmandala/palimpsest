@@ -34,7 +34,7 @@ import {
 } from './write-back.mjs';
 import { composeReply, planIssueClose } from './write-back-gate.mjs';
 
-const GH_ISSUE = 'https://github.com/inkeep/open-knowledge/issues/769';
+const GH_ISSUE = 'https://github.com/fractalmandala/palimpsest/issues/769';
 const GH_PULL = 'https://github.com/inkeep/agents-private/pull/2844';
 const SLACK_ARCHIVE = 'https://inkeep.slack.com/archives/C016VCYCL74/p1727122965001469';
 const LINEAR_UPLOAD = 'https://uploads.linear.app/abc/def/diagnostics.zip';
@@ -71,7 +71,7 @@ function harness(overrides = {}) {
     readIssueClosure: async () => planIssueClose({ issueState: 'closed' }),
     closeIssue: async (origin) => writes.push({ kind: 'close', origin: origin.url }),
     classifyRelease: makeReleaseWindow({ releaseTag: 'v0.36.0', minimumVersion: '0.35.0' }),
-    selfRepo: 'inkeep/open-knowledge',
+    selfRepo: 'fractalmandala/palimpsest',
     log: (m) => logs.push(m),
     ...overrides,
   };
@@ -315,10 +315,10 @@ describe('version derivation', () => {
     expect(
       deriveVersionForFixRefs({
         fixReferences: [
-          { channel: 'pull-request', url: 'https://github.com/inkeep/open-knowledge/pull/928' },
+          { channel: 'pull-request', url: 'https://github.com/fractalmandala/palimpsest/pull/928' },
         ],
         stableTags: [...STABLE_TAGS, 'v0.37.0-beta.0'],
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: () => mirrorMain,
         readCommitMessage: () => 'subject carrying no trailer at all',
         findMirroredCommits: () => [],
@@ -334,10 +334,10 @@ describe('version derivation', () => {
     expect(
       deriveVersionForFixRefs({
         fixReferences: [
-          { channel: 'pull-request', url: 'https://github.com/inkeep/open-knowledge/pull/928' },
+          { channel: 'pull-request', url: 'https://github.com/fractalmandala/palimpsest/pull/928' },
         ],
         stableTags: STABLE_TAGS,
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: () => mirrorMain,
         readCommitMessage: (sha) =>
           sha === mirrorMain ? `subject\n\nGitOrigin-RevId: ${PRIVATE_SHA}\n` : null,
@@ -359,10 +359,10 @@ describe('version derivation', () => {
       deriveVersionForFixRefs({
         fixReferences: [
           { channel: 'pull-request', url: GH_PULL },
-          { channel: 'pull-request', url: 'https://github.com/inkeep/open-knowledge/pull/928' },
+          { channel: 'pull-request', url: 'https://github.com/fractalmandala/palimpsest/pull/928' },
         ],
         stableTags: STABLE_TAGS,
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: ({ repo }) => (repo === 'agents-private' ? PRIVATE_SHA : mirrorEcho),
         readCommitMessage: (sha) =>
           sha === mirrorEcho ? `subject\n\nGitOrigin-RevId: ${PRIVATE_SHA}\n` : null,
@@ -380,10 +380,10 @@ describe('version derivation', () => {
     expect(
       deriveVersionForFixRefs({
         fixReferences: [
-          { channel: 'pull-request', url: 'https://github.com/inkeep/open-knowledge/pull/500' },
+          { channel: 'pull-request', url: 'https://github.com/fractalmandala/palimpsest/pull/500' },
         ],
         stableTags: STABLE_TAGS,
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: () => directSha,
         readCommitMessage: () => 'subject with no trailer\n',
         findMirroredCommits: () => {
@@ -401,10 +401,10 @@ describe('version derivation', () => {
     expect(
       deriveVersionForFixRefs({
         fixReferences: [
-          { channel: 'pull-request', url: 'https://github.com/inkeep/open-knowledge/pull/502' },
+          { channel: 'pull-request', url: 'https://github.com/fractalmandala/palimpsest/pull/502' },
         ],
         stableTags: STABLE_TAGS,
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: () => mergeSha,
         readCommitMessage: () => `GitOrigin-RevId: ${PRIVATE_SHA}\nGitOrigin-RevId: ${otherSha}\n`,
         findMirroredCommits: () => {
@@ -419,11 +419,11 @@ describe('version derivation', () => {
 
   test('isSelfRepoPr is repo-identity plus a not-the-origin guard', () => {
     const pr = (owner, repo) => ({ kind: 'pr', owner, repo, number: 1 });
-    expect(isSelfRepoPr(pr('inkeep', 'open-knowledge'), 'inkeep/open-knowledge')).toBe(true);
-    expect(isSelfRepoPr(pr('inkeep', 'Open-Knowledge'), 'inkeep/open-knowledge')).toBe(true);
-    expect(isSelfRepoPr(pr('inkeep', 'agents-private'), 'inkeep/open-knowledge')).toBe(false);
-    expect(isSelfRepoPr({ kind: 'sha', sha: 'a'.repeat(40) }, 'inkeep/open-knowledge')).toBe(false);
-    expect(isSelfRepoPr(pr('inkeep', 'open-knowledge'), undefined)).toBe(false);
+    expect(isSelfRepoPr(pr('inkeep', 'palimpsest'), 'fractalmandala/palimpsest')).toBe(true);
+    expect(isSelfRepoPr(pr('inkeep', 'Palimpsest'), 'fractalmandala/palimpsest')).toBe(true);
+    expect(isSelfRepoPr(pr('inkeep', 'agents-private'), 'fractalmandala/palimpsest')).toBe(false);
+    expect(isSelfRepoPr({ kind: 'sha', sha: 'a'.repeat(40) }, 'fractalmandala/palimpsest')).toBe(false);
+    expect(isSelfRepoPr(pr('inkeep', 'palimpsest'), undefined)).toBe(false);
     expect(isSelfRepoPr(pr('inkeep', 'agents-private'), 'inkeep/agents-private')).toBe(false);
     expect(isSelfRepoPr(pr('inkeep', 'some-fork'), 'inkeep/some-fork', 'inkeep/some-fork')).toBe(
       false,
@@ -435,10 +435,10 @@ describe('version derivation', () => {
     expect(
       deriveVersionForFixRefs({
         fixReferences: [
-          { channel: 'pull-request', url: 'https://github.com/inkeep/open-knowledge/pull/501' },
+          { channel: 'pull-request', url: 'https://github.com/fractalmandala/palimpsest/pull/501' },
         ],
         stableTags: STABLE_TAGS,
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: () => 'b2'.repeat(20),
         readCommitMessage: () => 'subject with no trailer\n',
         findMirroredCommits: () => [],
@@ -482,7 +482,7 @@ describe('version derivation', () => {
         fixReferences: [
           { channel: 'pull-request', url: 'https://github.com/inkeep/management/pull/272' },
         ],
-        selfRepo: 'inkeep/open-knowledge',
+        selfRepo: 'fractalmandala/palimpsest',
         resolvePrMergeSha: () => {
           throw new Error('must not be attempted: this repo is out of remit');
         },
@@ -495,13 +495,13 @@ describe('version derivation', () => {
   test('the two repos it CAN read are still attempted, so the 404 bug cannot come back', () => {
     for (const url of [
       'https://github.com/inkeep/agents-private/pull/2864',
-      'https://github.com/inkeep/open-knowledge/pull/12',
+      'https://github.com/fractalmandala/palimpsest/pull/12',
     ]) {
       let attempted = false;
       expect(
         derive({
           fixReferences: [{ channel: 'pull-request', url }],
-          selfRepo: 'inkeep/open-knowledge',
+          selfRepo: 'fractalmandala/palimpsest',
           resolvePrMergeSha: () => {
             attempted = true;
             return PRIVATE_SHA;
@@ -515,14 +515,14 @@ describe('version derivation', () => {
   });
 
   test('remit is decided by repo identity, and a bare commit SHA needs no repo at all', () => {
-    const at = { defaultRepo: 'inkeep/agents-private', selfRepo: 'inkeep/open-knowledge' };
+    const at = { defaultRepo: 'inkeep/agents-private', selfRepo: 'fractalmandala/palimpsest' };
     expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'agents-private' }, at)).toBe(
       true,
     );
     expect(isFixRepoInRemit({ kind: 'pr', owner: 'InKeep', repo: 'Agents-Private' }, at)).toBe(
       true,
     );
-    expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'open-knowledge' }, at)).toBe(
+    expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'palimpsest' }, at)).toBe(
       true,
     );
     expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'management' }, at)).toBe(false);
@@ -676,7 +676,7 @@ describe('write-back run', () => {
     expect(post.origin).toBe(GH_ISSUE);
     expect(post.text).toContain('v0.36.0');
     expect(post.text).not.toContain(CHANGESET.body);
-    expect(post.text).toContain('https://github.com/inkeep/open-knowledge/releases');
+    expect(post.text).toContain('https://github.com/fractalmandala/palimpsest/releases');
     expect(mark.url).toBe(notificationMarkerUrl({ version: '0.36.0', originUrl: GH_ISSUE }));
   });
 
@@ -688,7 +688,7 @@ describe('write-back run', () => {
     await h.run();
     const post = h.writes.find((w) => w.kind === 'post');
     expect(post.origin).toBe(DISCORD_THREAD);
-    expect(post.text).toContain('<https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0>');
+    expect(post.text).toContain('<https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0>');
   });
 
   test('a failure while recording the marker leaves the reporter unmessaged', async () => {
@@ -821,7 +821,7 @@ describe('changeset parsing', () => {
     const parsed = parseChangeset(
       [
         '---',
-        "'@inkeep/open-knowledge': patch",
+        "'@palimpsest/cli': patch",
         '---',
         '',
         'Honor backslash escapes in the promoters.',
@@ -865,7 +865,7 @@ describe('changeset parsing', () => {
       expect(text).not.toContain(changeset.title);
       expect(text).not.toContain(changeset.body);
       expect(text).toContain(
-        '[the release page](https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0)',
+        '[the release page](https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0)',
       );
     }
   });
@@ -873,23 +873,23 @@ describe('changeset parsing', () => {
 
 describe('locating the changeset a fix shipped with', () => {
   const MONOREPO_FILES = [
-    'public/open-knowledge/.changeset/default-theme-tile-own-colors.md',
-    'public/open-knowledge/packages/app/src/components/ThemeTile.tsx',
+    'public/palimpsest/.changeset/default-theme-tile-own-colors.md',
+    'public/palimpsest/packages/app/src/components/ThemeTile.tsx',
   ];
 
   test('a monorepo pull request keeps its changeset under the subtree, not at the root', () => {
     expect(findChangesetPath(MONOREPO_FILES, { repo: 'agents-private' })).toBe(
-      'public/open-knowledge/.changeset/default-theme-tile-own-colors.md',
+      'public/palimpsest/.changeset/default-theme-tile-own-colors.md',
     );
   });
 
   test('a pull request against the public mirror keeps it at the root, where that repo puts it', () => {
-    expect(findChangesetPath(['.changeset/some-fix.md'], { repo: 'open-knowledge' })).toBe(
+    expect(findChangesetPath(['.changeset/some-fix.md'], { repo: 'palimpsest' })).toBe(
       '.changeset/some-fix.md',
     );
   });
 
-  test("another product's changeset is never picked for an Open Knowledge reporter", () => {
+  test("another product's changeset is never picked for an Palimpsest reporter", () => {
     const foreign = [
       'public/agents/.changeset/some-agents-fix.md',
       '.changeset/a-stray-root-changeset.md',
@@ -899,13 +899,13 @@ describe('locating the changeset a fix shipped with', () => {
 
   test('the changeset README is never mistaken for a changeset', () => {
     expect(
-      findChangesetPath(['public/open-knowledge/.changeset/README.md'], { repo: 'agents-private' }),
+      findChangesetPath(['public/palimpsest/.changeset/README.md'], { repo: 'agents-private' }),
     ).toBeNull();
   });
 
   test('a pull request that added no changeset yields nothing rather than a wrong file', () => {
     expect(
-      findChangesetPath(['public/open-knowledge/packages/app/src/x.ts'], {
+      findChangesetPath(['public/palimpsest/packages/app/src/x.ts'], {
         repo: 'agents-private',
       }),
     ).toBeNull();
@@ -913,25 +913,25 @@ describe('locating the changeset a fix shipped with', () => {
   });
 
   test('the directory is chosen by repo, since only the mirror has it at the root', () => {
-    expect(changesetDirFor('open-knowledge')).toBe('.changeset/');
-    expect(changesetDirFor('agents-private')).toBe('public/open-knowledge/.changeset/');
+    expect(changesetDirFor('palimpsest')).toBe('.changeset/');
+    expect(changesetDirFor('agents-private')).toBe('public/palimpsest/.changeset/');
   });
 });
 
 describe('cross-repo token selection', () => {
-  const env = { CROSS_REPO_TOKEN: 'bridge-token', GITHUB_REPOSITORY: 'inkeep/open-knowledge' };
+  const env = { CROSS_REPO_TOKEN: 'bridge-token', GITHUB_REPOSITORY: 'fractalmandala/palimpsest' };
 
   test('a read against the private monorepo uses the bridge token', () => {
     expect(selectGhToken({ owner: 'inkeep', repo: 'agents-private', env })).toBe('bridge-token');
   });
 
   test('a read against this repo keeps the ambient token, which the bridge token cannot replace', () => {
-    expect(selectGhToken({ owner: 'inkeep', repo: 'open-knowledge', env })).toBeNull();
-    expect(selectGhToken({ owner: 'InKeep', repo: 'Open-Knowledge', env })).toBeNull();
+    expect(selectGhToken({ owner: 'inkeep', repo: 'palimpsest', env })).toBeNull();
+    expect(selectGhToken({ owner: 'InKeep', repo: 'Palimpsest', env })).toBeNull();
   });
 
   test('with no bridge token configured every call falls back to the ambient one', () => {
-    const bare = { GITHUB_REPOSITORY: 'inkeep/open-knowledge' };
+    const bare = { GITHUB_REPOSITORY: 'fractalmandala/palimpsest' };
     expect(selectGhToken({ owner: 'inkeep', repo: 'agents-private', env: bare })).toBeNull();
     expect(
       selectGhToken({
@@ -1714,11 +1714,11 @@ describe('the beta leg', () => {
     await h.run();
     const post = h.writes.find((w) => w.kind === 'post');
     expect(post.text).toContain('v0.37.0-beta.0');
-    expect(post.text).toContain('available in Open Knowledge beta');
+    expect(post.text).toContain('available in Palimpsest beta');
     expect(post.text).toContain('follow up here');
     expect(post.text).not.toContain('This shipped in');
     expect(post.text).not.toContain(CHANGESET.body);
-    expect(post.text).toContain('https://github.com/inkeep/open-knowledge/releases');
+    expect(post.text).toContain('https://github.com/fractalmandala/palimpsest/releases');
   });
 
   test('the beta marker is not the stable one, so each channel is told at most once', async () => {
@@ -1757,7 +1757,7 @@ describe('the beta leg', () => {
     const h = harness({ live: true });
     await h.run();
     const post = h.writes.find((w) => w.kind === 'post');
-    expect(post.text).toContain('This shipped in Open Knowledge v0.36.0');
+    expect(post.text).toContain('This shipped in Palimpsest v0.36.0');
     expect(post.text).not.toContain('beta');
   });
 
@@ -1765,9 +1765,9 @@ describe('the beta leg', () => {
     const h = harness({ live: true });
     const result = await h.run();
     const post = h.writes.find((w) => w.kind === 'post');
-    expect(post.text).toContain('This shipped in Open Knowledge v0.36.0');
+    expect(post.text).toContain('This shipped in Palimpsest v0.36.0');
     expect(post.text).not.toContain(CHANGESET.body);
-    expect(post.text).toContain('https://github.com/inkeep/open-knowledge/releases');
+    expect(post.text).toContain('https://github.com/fractalmandala/palimpsest/releases');
     expect(result.posted.map((p) => p.identifier)).toEqual(['PRD-7539']);
   });
 
@@ -1784,11 +1784,11 @@ describe('the beta leg', () => {
     const forDiscord = posts.find((p) => p.origin === DISCORD_THREAD);
     expect(forIssue.text).not.toContain(CHANGESET.body);
     expect(forIssue.text).toContain(
-      '[the release page](https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0)',
+      '[the release page](https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0)',
     );
     expect(forDiscord.text).not.toContain(CHANGESET.body);
     expect(forDiscord.text).toContain(
-      '<https://github.com/inkeep/open-knowledge/releases/tag/v0.36.0>',
+      '<https://github.com/fractalmandala/palimpsest/releases/tag/v0.36.0>',
     );
   });
 });
@@ -2014,7 +2014,7 @@ describe('reading whether an answered issue may close', () => {
     channel: 'github-issue',
     url: GH_ISSUE,
     owner: 'inkeep',
-    repo: 'open-knowledge',
+    repo: 'palimpsest',
     number: 769,
   };
   const carriers = (nodes, hasNextPage = false) => ({
@@ -2077,7 +2077,7 @@ describe('reading whether an answered issue may close', () => {
       {
         args: [
           'api',
-          'repos/inkeep/open-knowledge/issues/769',
+          'repos/fractalmandala/palimpsest/issues/769',
           '--jq',
           'if .pull_request then "pull-request" else .state end',
         ],

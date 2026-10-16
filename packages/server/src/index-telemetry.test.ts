@@ -75,7 +75,7 @@ describe('instrumentIndexRebuild', () => {
   });
 
   test('warm backlink reconciliation reports source-link reuse', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlink-rehydrate-span-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlink-rehydrate-span-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir);
     try {

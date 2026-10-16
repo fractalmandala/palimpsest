@@ -156,11 +156,11 @@ describe('ProviderPool background flush-on-hide', () => {
 
     pool.flushOnHide();
     await waitFor(() =>
-      warnSpy.mock.calls.some((c) => String(c[0]).includes('ok-pool-flush-on-hide-failed')),
+      warnSpy.mock.calls.some((c) => String(c[0]).includes('ps-pool-flush-on-hide-failed')),
     );
     const emitted = warnSpy.mock.calls
       .map((c) => String(c[0]))
-      .find((s) => s.includes('ok-pool-flush-on-hide-failed'));
+      .find((s) => s.includes('ps-pool-flush-on-hide-failed'));
     warnSpy.mockRestore();
 
     expect(emitted).toBeDefined();
@@ -217,7 +217,7 @@ describe('ProviderPool background flush-on-hide', () => {
       expect(reachedSecond).toBe(1);
       expect(
         warn.mock.calls.some(([arg]) =>
-          String(arg).includes('ok-pool-unsynced-work-listener-threw'),
+          String(arg).includes('ps-pool-unsynced-work-listener-threw'),
         ),
       ).toBe(true);
     } finally {

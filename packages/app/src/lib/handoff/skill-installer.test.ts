@@ -16,7 +16,7 @@ describe('electronSkillInstaller', () => {
     expect(bridge.buildAndOpen).toHaveBeenCalledTimes(1);
   });
 
-  test('bridge fails: returns ok-false with reason + message', async () => {
+  test('bridge fails: returns ps-false with reason + message', async () => {
     const bridge: ElectronSkillBridge = {
       buildAndOpen: vi.fn(async () => ({
         ok: false,
@@ -33,7 +33,7 @@ describe('electronSkillInstaller', () => {
     });
   });
 
-  test('bridge throws: ok-false with bridge-error reason (IPC channel broken)', async () => {
+  test('bridge throws: ps-false with bridge-error reason (IPC channel broken)', async () => {
     const bridge: ElectronSkillBridge = {
       buildAndOpen: vi.fn(async () => {
         throw new Error('IPC channel closed');
@@ -92,7 +92,7 @@ describe('httpSkillInstaller', () => {
     expect(url).toBe('http://localhost:5173/api/install-skill');
   });
 
-  test("status 'installed': ok-true with path, no warning", async () => {
+  test("status 'installed': ps-true with path, no warning", async () => {
     const installer = httpSkillInstaller({
       fetch: fakeFetch({ body: { status: 'installed', outputPath: '/tmp/skill' } }),
     });
@@ -104,7 +104,7 @@ describe('httpSkillInstaller', () => {
     });
   });
 
-  test("status 'built' with handoffError: ok-true with warning (file is on disk)", async () => {
+  test("status 'built' with handoffError: ps-true with warning (file is on disk)", async () => {
     const installer = httpSkillInstaller({
       fetch: fakeFetch({
         body: {
@@ -122,7 +122,7 @@ describe('httpSkillInstaller', () => {
     });
   });
 
-  test("status 'failed': ok-false with build-failed reason", async () => {
+  test("status 'failed': ps-false with build-failed reason", async () => {
     const installer = httpSkillInstaller({
       fetch: fakeFetch({ body: { status: 'failed', buildError: 'no SKILL.md' } }),
     });
@@ -134,7 +134,7 @@ describe('httpSkillInstaller', () => {
     });
   });
 
-  test('non-2xx HTTP response with no body: ok-false falls back to HTTP <status>', async () => {
+  test('non-2xx HTTP response with no body: ps-false falls back to HTTP <status>', async () => {
     const installer = httpSkillInstaller({
       fetch: vi.fn(
         async () =>
@@ -213,7 +213,7 @@ describe('httpSkillInstaller', () => {
     });
   });
 
-  test('fetch throws: ok-false with network-error reason', async () => {
+  test('fetch throws: ps-false with network-error reason', async () => {
     const installer = httpSkillInstaller({
       fetch: fakeFetch({ throwError: new Error('NetworkError: failed to connect') }),
     });
@@ -225,7 +225,7 @@ describe('httpSkillInstaller', () => {
     });
   });
 
-  test('response.json() throws: ok-false with parse-error (malformed body)', async () => {
+  test('response.json() throws: ps-false with parse-error (malformed body)', async () => {
     const installer = httpSkillInstaller({
       fetch: vi.fn(
         async () =>
@@ -246,7 +246,7 @@ describe('httpSkillInstaller', () => {
     }
   });
 
-  test('response.json() returns null/missing status: ok-false with parse-error', async () => {
+  test('response.json() returns null/missing status: ps-false with parse-error', async () => {
     const installer = httpSkillInstaller({
       fetch: fakeFetch({ body: { unexpected: 'shape' } }),
     });

@@ -2,11 +2,11 @@ import type {
   BranchInfoResponse,
   CheckoutResponse,
   WorktreeCreateResult,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge, OkShareReceivedPayload } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsShareReceivedPayload } from '@/lib/desktop-bridge-types';
 
 type WindowGlobals = { NodeFilter?: typeof NodeFilter };
 type GlobalWithDomShims = typeof globalThis &
@@ -74,7 +74,7 @@ interface BridgeMock {
 }
 
 function makeBridge(overrides: Partial<BridgeMock> = {}): {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   calls: BridgeMock;
 } {
   const calls: BridgeMock = {
@@ -98,7 +98,7 @@ function makeBridge(overrides: Partial<BridgeMock> = {}): {
     open: overrides.open ?? vi.fn(async () => undefined),
     checkout:
       overrides.checkout ??
-      vi.fn(async () => ({ ok: true as const, path: '/repo/.ok/worktrees/branch', created: true })),
+      vi.fn(async () => ({ ok: true as const, path: '/repo/.ps/worktrees/branch', created: true })),
   };
   const bridge = {
     project: {
@@ -111,7 +111,7 @@ function makeBridge(overrides: Partial<BridgeMock> = {}): {
     worktree: {
       checkout: calls.checkout,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return { bridge, calls };
 }
 
@@ -131,7 +131,7 @@ function missWithFalseOriginHint(): BranchInfoResponse {
 function pivotBridge(
   targetStatus: ReturnType<typeof vi.fn>,
   extra: Partial<BridgeMock> = {},
-): { bridge: OkDesktopBridge; calls: BridgeMock } {
+): { bridge: PsDesktopBridge; calls: BridgeMock } {
   return makeBridge({
     fetchBranchInfo: vi.fn(async () => missWithFalseOriginHint()),
     fetchTargetStatus: targetStatus,
@@ -140,7 +140,7 @@ function pivotBridge(
 }
 
 function projectBranchSwitchPayload(): Extract<
-  OkShareReceivedPayload,
+  PsShareReceivedPayload,
   { kind: 'project-branch-switch' }
 > {
   return {
@@ -148,13 +148,13 @@ function projectBranchSwitchPayload(): Extract<
     share: {
       contentRootDepth: null,
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'feat/branch-x',
-      sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/feat/branch-x/docs/notes.md',
+      sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/feat/branch-x/docs/notes.md',
       repositoryTarget: { kind: 'doc', docPath: 'docs/notes.md' },
       target: { kind: 'doc', docPath: 'docs/notes.md' },
     },
-    projectPath: '/Users/alice/projects/open-knowledge',
+    projectPath: '/Users/alice/projects/palimpsest',
     currentBranch: 'main',
   };
 }
@@ -192,22 +192,22 @@ describe('ShareBranchSwitchDialog — payload gating', () => {
     const store = createShareReceiveStore();
     const { bridge } = makeBridge();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb({
           kind: 'launcher-miss',
           share: {
             contentRootDepth: null,
             owner: 'inkeep',
-            repo: 'open-knowledge',
+            repo: 'palimpsest',
             branch: 'main',
-            sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/docs/x.md',
+            sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/x.md',
             repositoryTarget: { kind: 'doc', docPath: 'docs/x.md' },
             target: { kind: 'doc', docPath: 'docs/x.md' },
           },
         });
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
     expect(screen.queryByTestId('share-branch-switch-dialog')).toBeNull();
@@ -220,11 +220,11 @@ describe('ShareBranchSwitchDialog — payload gating', () => {
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
     expect(screen.getByTestId('share-branch-switch-dialog')).toBeDefined();
@@ -255,11 +255,11 @@ describe('ShareBranchSwitchDialog — Cancel discipline (OQ2)', () => {
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
     expect(screen.getByTestId('share-branch-switch-dialog')).toBeDefined();
@@ -281,11 +281,11 @@ describe('ShareBranchSwitchDialog — Open-in-current dispatch', () => {
     const { bridge, calls } = makeBridge();
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -317,11 +317,11 @@ describe('ShareBranchSwitchDialog — Open-in-current dispatch', () => {
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -364,11 +364,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -389,11 +389,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     const { bridge, calls } = makeBridge();
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -442,11 +442,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     window.location.hash = '#before-switch';
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
@@ -476,11 +476,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     const payload = projectBranchSwitchPayload();
     payload.share.branch = '';
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -510,11 +510,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -546,11 +546,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -576,11 +576,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -651,11 +651,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
       });
       const payload = projectBranchSwitchPayload();
       const fakeBridgeForStore = {
-        onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+        onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
           cb(payload);
           return () => {};
         },
-      } as unknown as OkDesktopBridge;
+      } as unknown as PsDesktopBridge;
       store.install({ bridge: fakeBridgeForStore });
       render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -704,11 +704,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
       const { bridge } = makeBridge({ runCheckout });
       const payload = projectBranchSwitchPayload();
       const fakeBridgeForStore = {
-        onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+        onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
           cb(payload);
           return () => {};
         },
-      } as unknown as OkDesktopBridge;
+      } as unknown as PsDesktopBridge;
       store.install({ bridge: fakeBridgeForStore });
       render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -743,11 +743,11 @@ describe('ShareBranchSwitchDialog — Switch path (runCheckout + CC1 gate)', () 
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -776,16 +776,16 @@ describe('ShareBranchSwitchDialog — verdict pivot (FR9)', () => {
   });
 
   function installAndRender(
-    bridge: OkDesktopBridge,
+    bridge: PsDesktopBridge,
     store: ReturnType<typeof createShareReceiveStore>,
   ) {
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
     return payload;
@@ -1012,21 +1012,21 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
   }
 
   function renderDialog(
-    bridge: OkDesktopBridge,
+    bridge: PsDesktopBridge,
     store: ReturnType<typeof createShareReceiveStore>,
     payload = projectBranchSwitchPayload(),
   ) {
-    let emitShare: (p: OkShareReceivedPayload) => void = () => {};
+    let emitShare: (p: PsShareReceivedPayload) => void = () => {};
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         emitShare = cb;
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
-    return { payload, emit: (p: OkShareReceivedPayload) => emitShare(p) };
+    return { payload, emit: (p: PsShareReceivedPayload) => emitShare(p) };
   }
 
   const variantFixtures = [
@@ -1088,7 +1088,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
 
   test('a checkout that locates an existing worktree (created:false) still opens that window', async () => {
     const store = createShareReceiveStore();
-    const existingPath = '/Users/alice/projects/open-knowledge/.ok/worktrees/feat-branch-x';
+    const existingPath = '/Users/alice/projects/palimpsest/.ps/worktrees/feat-branch-x';
     const { bridge, calls } = makeBridge({
       checkout: vi.fn(async () => ({ ok: true as const, path: existingPath, created: false })),
     });
@@ -1111,7 +1111,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
 
   test('an open() rejection after a successful create surfaces the toast; the worktree persists in the switcher', async () => {
     const store = createShareReceiveStore();
-    const worktreePath = '/Users/alice/projects/open-knowledge/.ok/worktrees/feat-branch-x';
+    const worktreePath = '/Users/alice/projects/palimpsest/.ps/worktrees/feat-branch-x';
     const { bridge, calls } = makeBridge({
       checkout: vi.fn(async () => ({ ok: true as const, path: worktreePath, created: true })),
       open: vi.fn(async () => {
@@ -1172,17 +1172,17 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
 
   test('Open in worktree checks out the share branch and opens its window at the shared target — no CC1 wait', async () => {
     const store = createShareReceiveStore();
-    const worktreePath = '/Users/alice/projects/open-knowledge/.ok/worktrees/feat-branch-x';
+    const worktreePath = '/Users/alice/projects/palimpsest/.ps/worktrees/feat-branch-x';
     const { bridge, calls } = makeBridge({
       checkout: vi.fn(async () => ({ ok: true as const, path: worktreePath, created: true })),
     });
     const payload = projectBranchSwitchPayload();
     const fakeBridgeForStore = {
-      onShareReceived: (cb: (p: OkShareReceivedPayload) => void) => {
+      onShareReceived: (cb: (p: PsShareReceivedPayload) => void) => {
         cb(payload);
         return () => {};
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     store.install({ bridge: fakeBridgeForStore });
     render(<ShareBranchSwitchDialog bridge={bridge} store={store} />);
 
@@ -1256,7 +1256,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
     expect(store.getSnapshot()).toBeNull();
 
     await act(async () => {
-      resolveCheckout({ ok: true, path: '/repo/.ok/worktrees/feat-branch-x', created: true });
+      resolveCheckout({ ok: true, path: '/repo/.ps/worktrees/feat-branch-x', created: true });
       await Promise.resolve();
     });
     expect(calls.open).not.toHaveBeenCalled();
@@ -1297,7 +1297,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
         ok: false as const,
         reason: 'project-scope-unavailable' as const,
         issue: 'unsafe-setup-path' as const,
-        path: '/repo/.ok/worktrees/feat-branch-x',
+        path: '/repo/.ps/worktrees/feat-branch-x',
         created: true as const,
       })),
     });
@@ -1311,7 +1311,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
 
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        'This branch redirects an OpenKnowledge setup path outside the worktree. The worktree was created but not opened.',
+        'This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened.',
       ),
     );
     expect(refreshWorktrees).toHaveBeenCalledTimes(1);
@@ -1361,7 +1361,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
       })
       .mockResolvedValue({
         ok: true as const,
-        path: '/repo/.ok/worktrees/feat-branch-x',
+        path: '/repo/.ps/worktrees/feat-branch-x',
         created: true as const,
       });
     const { bridge } = makeBridge({ checkout });
@@ -1472,7 +1472,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
     );
 
     await act(async () => {
-      resolveCheckout({ ok: true, path: '/repo/.ok/worktrees/feat-branch-x', created: true });
+      resolveCheckout({ ok: true, path: '/repo/.ps/worktrees/feat-branch-x', created: true });
       await Promise.resolve();
     });
     expect(calls.open).not.toHaveBeenCalled();

@@ -1,4 +1,4 @@
-import type { Config } from '@inkeep/open-knowledge-core';
+import type { Config } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import type { NodeViewProps } from '@tiptap/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -61,9 +61,9 @@ function renderPostedPreviewDocument(): string {
   expect(iframe.hasAttribute('srcdoc')).toBe(false);
   const postMessage = vi.spyOn(iframe.contentWindow, 'postMessage');
   fireEvent.load(iframe);
-  const posted = postMessage.mock.calls[0]?.[0] as { okPreviewDocument?: unknown } | undefined;
-  expect(typeof posted?.okPreviewDocument).toBe('string');
-  return posted?.okPreviewDocument as string;
+  const posted = postMessage.mock.calls[0]?.[0] as { psPreviewDocument?: unknown } | undefined;
+  expect(typeof posted?.psPreviewDocument).toBe('string');
+  return posted?.psPreviewDocument as string;
 }
 
 describe('CodeBlockView preview-CSP wiring', () => {
@@ -98,7 +98,7 @@ describe('CodeBlockView edit-source modal language wiring', () => {
     ) as HTMLButtonElement | null;
     expect(editBtn).toBeTruthy();
     fireEvent.click(editBtn as HTMLButtonElement);
-    const sourceHost = document.querySelector('[data-testid="ok-code-preview-edit-modal-source"]');
+    const sourceHost = document.querySelector('[data-testid="ps-code-preview-edit-modal-source"]');
     expect(sourceHost).toBeTruthy();
     expect(sourceHost?.getAttribute('data-language')).toBe('html');
   });
@@ -125,7 +125,7 @@ describe('CodeBlockView CSP-violation notice wiring', () => {
     Object.defineProperty(evt, 'source', { value: source, configurable: true });
     Object.defineProperty(evt, 'data', {
       value: {
-        okPreviewCspViolation: {
+        psPreviewCspViolation: {
           blocked: [{ directive: 'img-src', uri: 'http://insecure.example/tile.png' }],
           truncated: false,
         },
@@ -257,7 +257,7 @@ describe('CodeBlockView Ask AI composer', () => {
       </ConfigContext>,
     );
     const askBtn = document.querySelector(
-      '[data-testid="ok-codeblock-ask-ai-btn"]',
+      '[data-testid="ps-codeblock-ask-ai-btn"]',
     ) as HTMLButtonElement | null;
     expect(askBtn).toBeTruthy();
     return askBtn as HTMLButtonElement;

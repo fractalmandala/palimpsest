@@ -57,7 +57,7 @@ function buildFileIndex(contentDir: string): ReadonlyMap<string, FileIndexEntry>
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       const fullPath = resolve(dir, entry.name);
       if (entry.isDirectory()) {
-        if (entry.name === '.ok' || entry.name === '.git') continue;
+        if (entry.name === '.ps' || entry.name === '.git') continue;
         walk(fullPath);
         continue;
       }
@@ -77,7 +77,7 @@ let contentDir: string;
 let shadowRef: ShadowRef;
 
 beforeEach(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rename-emit-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rename-emit-'));
   projectDir = tmpDir;
   contentDir = resolve(tmpDir, 'content');
   mkdirSync(contentDir, { recursive: true });
@@ -200,7 +200,7 @@ describe('rename log emission inside withManagedRenameRecovery (US-006)', () => 
     const entries = loadEntries();
     expect(entries).toHaveLength(1);
     expect(entries[0].actor.writerId).toBe('openknowledge-service');
-    expect(entries[0].actor.displayName).toBe('OpenKnowledge (service)');
+    expect(entries[0].actor.displayName).toBe('Palimpsest (service)');
   });
 
   test('folder rename of 3 docs produces 3 entries with shared groupId (FR5)', async () => {

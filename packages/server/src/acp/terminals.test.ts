@@ -1,5 +1,5 @@
-import { OK_HOSTED_AGENT_ENV } from '@inkeep/open-knowledge-core';
-import type { ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import { PS_HOSTED_AGENT_ENV } from '@palimpsest/core';
+import type { ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test } from 'vitest';
 import { getLogger } from '../logger.ts';
 import { AcpTerminalSet } from './terminals.ts';
@@ -53,7 +53,7 @@ describe('AcpTerminalSet', () => {
     const events: ThreadEvent[] = [];
     const set = makeSet(events);
     const { terminalId } = set.create(
-      node(`process.stdout.write(String(process.env.${OK_HOSTED_AGENT_ENV} ?? 'ABSENT'))`),
+      node(`process.stdout.write(String(process.env.${PS_HOSTED_AGENT_ENV} ?? 'ABSENT'))`),
     );
     await set.waitForExit(terminalId);
     expect(set.output(terminalId).output).toBe('1');
@@ -64,7 +64,7 @@ describe('AcpTerminalSet', () => {
     const set = makeSet(events);
     const { terminalId } = set.create({
       ...node(
-        `process.stdout.write(String(process.env.${OK_HOSTED_AGENT_ENV} ?? 'ABSENT') + ':' + String(process.env.MY_VAR))`,
+        `process.stdout.write(String(process.env.${PS_HOSTED_AGENT_ENV} ?? 'ABSENT') + ':' + String(process.env.MY_VAR))`,
       ),
       env: [{ name: 'MY_VAR', value: 'kept' }],
     });

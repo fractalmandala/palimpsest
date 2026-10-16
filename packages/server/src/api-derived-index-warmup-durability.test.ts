@@ -67,7 +67,7 @@ describe('agent writes while the derived index is still starting (PRD-8839)', ()
 
   beforeEach(async () => {
     _resetDocExtensionsForTests();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-warmup-durability-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-warmup-durability-'));
     const git = simpleGit({ baseDir: tmpDir });
     await git.init();
     await git.addConfig('user.name', 'Test User');

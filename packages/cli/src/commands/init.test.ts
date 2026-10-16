@@ -16,13 +16,13 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { resolveBundleEnabled, SKILL_STATE_FILENAME } from '@inkeep/open-knowledge-core';
-import { okUserHomeDir, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
-import { readBundleDecision, writeBundleDecision } from '@inkeep/open-knowledge-server';
+import { resolveBundleEnabled, SKILL_STATE_FILENAME } from '@palimpsest/core';
+import { psUserHomeDir, resolveConfigPath } from '@palimpsest/core/server';
+import { readBundleDecision, writeBundleDecision } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 import { loadConfig } from '../config/loader.ts';
-import { OK_DIR } from '../constants.ts';
+import { PS_DIR } from '../constants.ts';
 import { previewContent } from '../content/preview.ts';
 import { buildPiExtensionSource } from '../integrations/pi-extension.ts';
 import {
@@ -68,8 +68,8 @@ import {
   writeUserMcpConfigs,
 } from './init.ts';
 
-vi.mock('@inkeep/open-knowledge-server', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@inkeep/open-knowledge-server')>();
+vi.mock('@palimpsest/server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@palimpsest/server')>();
   return { ...actual, readBundleDecision: vi.fn(actual.readBundleDecision) };
 });
 
@@ -96,7 +96,7 @@ describe('runInit', () => {
   const codexConfigPath = () => resolveCodexConfigPath({ home: fakeHome, env: {} });
   const opencodeConfigPath = () => resolveOpenCodeConfigPath({ home: fakeHome, env: {} });
   const lmStudioConfigPath = () => resolveLmStudioConfigPath({ home: fakeHome });
-  const devRepoRoot = () => join(testDir, 'local-open-knowledge');
+  const devRepoRoot = () => join(testDir, 'local-palimpsest');
   const devCliEntryPath = () => join(devRepoRoot(), 'packages', 'cli', 'src', 'cli.ts');
   const enableDevMcp = () => {
     process.argv[1] = devCliEntryPath();
@@ -106,13 +106,13 @@ describe('runInit', () => {
     args: [join(devRepoRoot(), 'packages', 'cli', 'dist', 'cli.mjs'), 'mcp'],
     env: {
       MCP_DEBUG: '1',
-      OK_LOG_FILE: '/tmp/ok-mcp.log',
-      OK_CHANNEL: 'dev',
+      PS_LOG_FILE: '/tmp/ok-mcp.log',
+      PS_CHANNEL: 'dev',
     },
   });
   const enableDevChannelMcp = () => {
     enableDevMcp();
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
   };
   const defaultInstallUserSkill = async () => 'installed' as const;
   const runInitForTest = async (options: Parameters<typeof runInit>[0] = {}) =>
@@ -162,7 +162,7 @@ describe('runInit', () => {
   it('drains the retired project-skill block from an existing .gitignore, keeping user lines', async () => {
     writeFileSync(
       join(testDir, '.gitignore'),
-      'node_modules/\n.claude/skills/open-knowledge/\n.cursor/skills/open-knowledge/\n',
+      'node_modules/\n.claude/skills/palimpsest/\n.cursor/skills/palimpsest/\n',
       'utf-8',
     );
 
@@ -171,17 +171,17 @@ describe('runInit', () => {
     expect(readFileSync(join(testDir, '.gitignore'), 'utf-8')).toBe('node_modules/\n');
   });
 
-  it('scaffolds .ok/ and writes a fresh global Claude config', async () => {
+  it('scaffolds .ps/ and writes a fresh global Claude config', async () => {
     const result = await runInitForTest();
 
     expect(result.contentCreated.length).toBeGreaterThan(0);
-    expect(existsSync(join(testDir, OK_DIR, 'cache'))).toBe(false);
-    expect(existsSync(join(testDir, OK_DIR, 'local'))).toBe(false);
-    expect(existsSync(join(testDir, OK_DIR, 'AGENTS.md'))).toBe(false);
-    expect(existsSync(join(testDir, OK_DIR, 'config.yml'))).toBe(true);
-    expect(existsSync(join(testDir, OK_DIR, 'articles'))).toBe(false);
-    expect(existsSync(join(testDir, OK_DIR, 'external-sources'))).toBe(false);
-    expect(existsSync(join(testDir, OK_DIR, 'research'))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, 'cache'))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, 'local'))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, 'AGENTS.md'))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, 'config.yml'))).toBe(true);
+    expect(existsSync(join(testDir, PS_DIR, 'articles'))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, 'external-sources'))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, 'research'))).toBe(false);
     expect(existsSync(join(fakeHome, '.codeium'))).toBe(false);
 
     expect(result.mcpAction).toBe('written');
@@ -197,7 +197,7 @@ describe('runInit', () => {
     expect(result.editors[0].action).toBe('written');
   });
 
-  it('preserves other mcpServers entries when adding open-knowledge', async () => {
+  it('preserves other mcpServers entries when adding palimpsest', async () => {
     writeFileSync(
       claudeConfigPath(),
       JSON.stringify(
@@ -225,7 +225,7 @@ describe('runInit', () => {
     expect(config.mcpServers[result.editors[0].serverName]).toBeDefined();
   });
 
-  it('writes the dev MCP entry under the open-knowledge-dev key in project config only', async () => {
+  it('writes the dev MCP entry under the palimpsest-dev key in project config only', async () => {
     enableDevChannelMcp();
     const result = await runInitForTest({ devMcp: true, scope: undefined });
 
@@ -233,15 +233,15 @@ describe('runInit', () => {
       expect.objectContaining({
         editorId: 'claude',
         action: 'written',
-        serverName: 'open-knowledge-dev',
+        serverName: 'palimpsest-dev',
         configScope: 'project',
       }),
     ]);
     const config = JSON.parse(readFileSync(join(testDir, '.mcp.json'), 'utf-8'));
-    expect(config.mcpServers).toEqual({ 'open-knowledge-dev': expectedDevMcpEntry() });
+    expect(config.mcpServers).toEqual({ 'palimpsest-dev': expectedDevMcpEntry() });
     expect(existsSync(claudeConfigPath())).toBe(false);
     expect(formatInitResult(result, testDir)).toContain(
-      'The open-knowledge-dev entry runs this checkout on this machine only; keep it out of commits.',
+      'The palimpsest-dev entry runs this checkout on this machine only; keep it out of commits.',
     );
   });
 
@@ -253,7 +253,7 @@ describe('runInit', () => {
   });
 
   it('the command action selects the dev channel for --dev-mcp and exits 64 on a user scope', async () => {
-    vi.stubEnv('OK_CHANNEL', undefined);
+    vi.stubEnv('PS_CHANNEL', undefined);
     const savedCwd = process.cwd();
     const savedExitCode = process.exitCode;
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
@@ -263,7 +263,7 @@ describe('runInit', () => {
         from: 'user',
       });
 
-      expect(process.env.OK_CHANNEL).toBe('dev');
+      expect(process.env.PS_CHANNEL).toBe('dev');
       expect(process.exitCode).toBe(64);
       const printed = stderrSpy.mock.calls.map((call) => String(call[0])).join('');
       expect(printed).toContain('A dev MCP entry is written to project config only');
@@ -276,28 +276,28 @@ describe('runInit', () => {
   });
 
   it('refuses a launcher for an installed channel on a dev-channel run without --dev-mcp', async () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
     const result = await runInitForTest({ scope: undefined });
 
     expect(result.editors.map((e) => [e.serverName, e.configScope, e.action, e.error])).toEqual([
       [
-        'open-knowledge-dev',
+        'palimpsest-dev',
         'project',
         'failed',
-        'A dev build writes no MCP launcher for an installed OpenKnowledge channel, because that launcher runs a released CLI. Register this checkout by running `node <checkout>/packages/cli/dist/cli.mjs init --dev-mcp` in the project, or set OK_CHANNEL=stable.',
+        'A dev build writes no MCP launcher for an installed Palimpsest channel, because that launcher runs a released CLI. Register this checkout by running `node <checkout>/packages/cli/dist/cli.mjs init --dev-mcp` in the project, or set PS_CHANNEL=stable.',
       ],
     ]);
     expect(existsSync(join(testDir, '.mcp.json'))).toBe(false);
     expect(existsSync(claudeConfigPath())).toBe(false);
   });
 
-  it('overwrites a differing open-knowledge entry by default', async () => {
+  it('overwrites a differing palimpsest entry by default', async () => {
     writeFileSync(
       claudeConfigPath(),
       JSON.stringify(
         {
           mcpServers: {
-            'open-knowledge': {
+            'palimpsest': {
               command: 'node',
               args: ['./packages/cli/dist/cli.mjs', 'mcp'],
             },
@@ -313,7 +313,7 @@ describe('runInit', () => {
     expect(result.editors[0].action).toBe('overwritten');
 
     const config = JSON.parse(readFileSync(claudeConfigPath(), 'utf-8'));
-    expect(config.mcpServers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(config.mcpServers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('keeps user-added fields but drops env while updating the managed launcher', async () => {
@@ -322,11 +322,11 @@ describe('runInit', () => {
       JSON.stringify(
         {
           mcpServers: {
-            'open-knowledge': {
+            'palimpsest': {
               command: 'npx',
-              args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'],
+              args: ['-y', '@palimpsest/cli@latest', 'mcp'],
               cwd: testDir,
-              env: { OK_MODE: 'local' },
+              env: { PS_MODE: 'local' },
             },
           },
         },
@@ -340,7 +340,7 @@ describe('runInit', () => {
     expect(result.editors[0].action).toBe('overwritten');
 
     const config = JSON.parse(readFileSync(claudeConfigPath(), 'utf-8'));
-    expect(config.mcpServers['open-knowledge']).toEqual({
+    expect(config.mcpServers['palimpsest']).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       cwd: testDir,
     });
@@ -348,14 +348,14 @@ describe('runInit', () => {
 
   it('leaves the installed Stable entry alone when registering dev MCP', async () => {
     const stableUserConfig = `${JSON.stringify(
-      { mcpServers: { 'open-knowledge': PUBLISHED_CHAIN_ENTRY } },
+      { mcpServers: { 'palimpsest': PUBLISHED_CHAIN_ENTRY } },
       null,
       2,
     )}\n`;
     writeFileSync(claudeConfigPath(), stableUserConfig);
     writeFileSync(
       join(testDir, '.mcp.json'),
-      JSON.stringify({ mcpServers: { 'open-knowledge': PUBLISHED_CHAIN_ENTRY } }, null, 2),
+      JSON.stringify({ mcpServers: { 'palimpsest': PUBLISHED_CHAIN_ENTRY } }, null, 2),
     );
 
     enableDevChannelMcp();
@@ -364,8 +364,8 @@ describe('runInit', () => {
     expect(readFileSync(claudeConfigPath(), 'utf-8')).toBe(stableUserConfig);
     const project = JSON.parse(readFileSync(join(testDir, '.mcp.json'), 'utf-8'));
     expect(project.mcpServers).toEqual({
-      'open-knowledge': PUBLISHED_CHAIN_ENTRY,
-      'open-knowledge-dev': expectedDevMcpEntry(),
+      'palimpsest': PUBLISHED_CHAIN_ENTRY,
+      'palimpsest-dev': expectedDevMcpEntry(),
     });
   });
 
@@ -375,7 +375,7 @@ describe('runInit', () => {
     expect(result.mcpAction).toBe('skipped-flag');
     expect(existsSync(claudeConfigPath())).toBe(false);
 
-    expect(existsSync(join(testDir, OK_DIR, 'config.yml'))).toBe(true);
+    expect(existsSync(join(testDir, PS_DIR, 'config.yml'))).toBe(true);
   });
 
   it('is idempotent — running twice produces the same end state', async () => {
@@ -407,7 +407,7 @@ describe('runInit', () => {
     const output = formatInitResult(result, testDir);
     expect(output).toContain('left unchanged (config could not be parsed)');
 
-    expect(existsSync(join(testDir, OK_DIR, 'config.yml'))).toBe(true);
+    expect(existsSync(join(testDir, PS_DIR, 'config.yml'))).toBe(true);
   });
 
   it.each(['claude', 'codex', 'hermes'] as const)(
@@ -520,7 +520,7 @@ describe('runInit', () => {
       expect(result.editors[0].action).toBe('written');
 
       const config = Bun.TOML.parse(readFileSync(join(testDir, '.codex', 'config.toml'), 'utf-8'));
-      expect(config.mcp_servers['open-knowledge-dev']).toEqual(expectedDevMcpEntry());
+      expect(config.mcp_servers['palimpsest-dev']).toEqual(expectedDevMcpEntry());
       expect(existsSync(codexConfigPath())).toBe(false);
     });
 
@@ -569,7 +569,7 @@ describe('runInit', () => {
       expect(existsSync(projectConfigPath)).toBe(true);
 
       const config = JSON.parse(readFileSync(projectConfigPath, 'utf-8'));
-      expect(config.mcp['open-knowledge']).toEqual(PUBLISHED_OPENCODE_ENTRY);
+      expect(config.mcp['palimpsest']).toEqual(PUBLISHED_OPENCODE_ENTRY);
     });
 
     it('writes the dev MCP entry with an environment block to project opencode.json', async () => {
@@ -585,11 +585,11 @@ describe('runInit', () => {
       expect(result.editors[0].action).toBe('written');
 
       const config = JSON.parse(readFileSync(join(testDir, 'opencode.json'), 'utf-8'));
-      expect(config.mcp['open-knowledge-dev']).toEqual({
+      expect(config.mcp['palimpsest-dev']).toEqual({
         type: 'local',
         enabled: true,
         command: ['node', join(devRepoRoot(), 'packages', 'cli', 'dist', 'cli.mjs'), 'mcp'],
-        environment: { MCP_DEBUG: '1', OK_LOG_FILE: '/tmp/ok-mcp.log', OK_CHANNEL: 'dev' },
+        environment: { MCP_DEBUG: '1', PS_LOG_FILE: '/tmp/ok-mcp.log', PS_CHANNEL: 'dev' },
       });
       expect(existsSync(opencodeConfigPath())).toBe(false);
     });
@@ -611,22 +611,22 @@ describe('runInit', () => {
 
     it('writes a distinct project skill for Codex and OpenCode in their own dirs', async () => {
       const result = await runInitForTest({ editors: ['codex', 'opencode'], scope: 'project' });
-      const codexSkill = join(testDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md');
-      const opencodeSkill = join(testDir, '.opencode', 'skills', 'open-knowledge', 'SKILL.md');
+      const codexSkill = join(testDir, '.codex', 'skills', 'palimpsest', 'SKILL.md');
+      const opencodeSkill = join(testDir, '.opencode', 'skills', 'palimpsest', 'SKILL.md');
       expect(result.projectSkills.some((s) => s.path === codexSkill)).toBe(true);
       expect(result.projectSkills.some((s) => s.path === opencodeSkill)).toBe(true);
       expect(existsSync(codexSkill)).toBe(true);
       expect(existsSync(opencodeSkill)).toBe(true);
-      expect(existsSync(join(testDir, '.agents', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.agents', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         false,
       );
     });
   });
 
   describe('Pi (project-scope file drop)', () => {
-    const piBridgePath = () => join(testDir, '.pi', 'extensions', 'open-knowledge.ts');
+    const piBridgePath = () => join(testDir, '.pi', 'extensions', 'palimpsest.ts');
 
-    it('drops the managed bridge extension at .pi/extensions/open-knowledge.ts', async () => {
+    it('drops the managed bridge extension at .pi/extensions/palimpsest.ts', async () => {
       const result = await runInitForTest({ editors: ['pi'], scope: 'project' });
 
       const projResult = result.editors.find(
@@ -653,7 +653,7 @@ describe('runInit', () => {
 
     it('writes the Pi project skill into .pi/skills/', async () => {
       const result = await runInitForTest({ editors: ['pi'], scope: 'project' });
-      const piSkill = join(testDir, '.pi', 'skills', 'open-knowledge', 'SKILL.md');
+      const piSkill = join(testDir, '.pi', 'skills', 'palimpsest', 'SKILL.md');
       expect(result.projectSkills.some((s) => s.path === piSkill)).toBe(true);
       expect(existsSync(piSkill)).toBe(true);
     });
@@ -684,7 +684,7 @@ describe('runInit', () => {
   });
 
   describe('Claude Desktop', () => {
-    it('writes the same simple global open-knowledge entry as the local editors', async () => {
+    it('writes the same simple global palimpsest entry as the local editors', async () => {
       const fakeHome = join(testDir, 'fakehome');
       mkdirSync(fakeHome, { recursive: true });
       mkdirSync(dirname(resolveClaudeDesktopConfigPath({ home: fakeHome })), { recursive: true });
@@ -694,7 +694,7 @@ describe('runInit', () => {
       expect(result.editors).toHaveLength(1);
       expect(result.editors[0].editorId).toBe('claude-desktop');
       expect(result.editors[0].action).toBe('written');
-      expect(result.editors[0].serverName).toBe('open-knowledge');
+      expect(result.editors[0].serverName).toBe('palimpsest');
 
       const configPath = resolveClaudeDesktopConfigPath({ home: fakeHome });
       expect(existsSync(configPath)).toBe(true);
@@ -717,7 +717,7 @@ describe('runInit', () => {
         JSON.stringify(
           {
             mcpServers: {
-              'open-knowledge': {
+              'palimpsest': {
                 command: 'npx',
                 args: ['some-old-package', 'mcp'],
               },
@@ -766,9 +766,9 @@ describe('runInit', () => {
       const result = await runInitForTest();
       const output = formatInitResult(result, testDir);
 
-      expect(output).not.toContain('ok cowork');
+      expect(output).not.toContain('ps cowork');
       expect(output).not.toContain('Claude Chat & Cowork');
-      expect(output).not.toContain('openknowledge.skill');
+      expect(output).not.toContain('palimpsest.skill');
     });
   });
 
@@ -785,7 +785,7 @@ describe('runInit', () => {
       mkdirSync(join(fakeHome, '.claude'), { recursive: true });
       const claudeDetected = await runInitForTest({ mcp: false });
       expect(claudeDetected.projectSkills.map((skill) => skill.editorId)).toEqual(['claude']);
-      expect(existsSync(join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
       expect(existsSync(join(testDir, '.cursor'))).toBe(false);
@@ -798,7 +798,7 @@ describe('runInit', () => {
       const result = await runInitForTest({ editors: ['cursor'], mcp: false });
 
       expect(result.projectSkills.map((skill) => skill.editorId)).toEqual(['cursor']);
-      expect(existsSync(join(testDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
       expect(existsSync(join(testDir, '.claude'))).toBe(false);
@@ -851,29 +851,29 @@ describe('runInit', () => {
       const openclawConfig = JSON.parse(
         readFileSync(join(fakeHome, '.openclaw', 'openclaw.json'), 'utf-8'),
       );
-      expect(openclawConfig.mcp.servers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(openclawConfig.mcp.servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
       const antigravityConfig = JSON.parse(
         readFileSync(join(fakeHome, '.gemini', 'config', 'mcp_config.json'), 'utf-8'),
       );
-      expect(antigravityConfig.mcpServers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(antigravityConfig.mcpServers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
       const hermesConfig = parseYaml(
         readFileSync(join(fakeHome, '.hermes', 'config.yaml'), 'utf-8'),
       );
-      expect(hermesConfig.mcp_servers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(hermesConfig.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
     });
 
     it('overwrites across all targeted editors', async () => {
       writeFileSync(
         claudeConfigPath(),
         JSON.stringify({
-          mcpServers: { 'open-knowledge': { command: 'old', args: [] } },
+          mcpServers: { 'palimpsest': { command: 'old', args: [] } },
         }),
       );
       mkdirSync(dirname(cursorConfigPath()), { recursive: true });
       writeFileSync(
         cursorConfigPath(),
         JSON.stringify({
-          mcpServers: { 'open-knowledge': { command: 'old', args: [] } },
+          mcpServers: { 'palimpsest': { command: 'old', args: [] } },
         }),
       );
 
@@ -967,7 +967,7 @@ describe('runInit', () => {
 
       expect(existsSync(join(testDir, 'AGENTS.md'))).toBe(false);
       expect(existsSync(join(testDir, '.cursorrules'))).toBe(false);
-      expect(existsSync(join(testDir, '.cursor', 'rules', 'open-knowledge.mdc'))).toBe(false);
+      expect(existsSync(join(testDir, '.cursor', 'rules', 'palimpsest.mdc'))).toBe(false);
     });
 
     it('does not create any root-level agent files for claude + cursor combined', async () => {
@@ -978,30 +978,30 @@ describe('runInit', () => {
 
       expect(existsSync(join(testDir, 'AGENTS.md'))).toBe(false);
       expect(existsSync(join(testDir, 'CLAUDE.md'))).toBe(false);
-      expect(existsSync(join(testDir, '.cursor', 'rules', 'open-knowledge.mdc'))).toBe(false);
+      expect(existsSync(join(testDir, '.cursor', 'rules', 'palimpsest.mdc'))).toBe(false);
       expect(existsSync(join(testDir, '.cursorrules'))).toBe(false);
     });
   });
 
   describe('legacy-injection non-interference', () => {
-    it('leaves pre-existing open-knowledge marker blocks byte-identical in CLAUDE.md and AGENTS.md', async () => {
+    it('leaves pre-existing palimpsest marker blocks byte-identical in CLAUDE.md and AGENTS.md', async () => {
       const legacyClaudeBody = [
         '# My Project',
         '',
         'Some pre-existing content the user wrote themselves.',
         '',
-        '<!-- open-knowledge:begin -->',
-        '## Legacy OpenKnowledge section',
-        'Pretend this was injected by an older ok init version.',
-        '<!-- open-knowledge:end -->',
+        '<!-- palimpsest:begin -->',
+        '## Legacy Palimpsest section',
+        'Pretend this was injected by an older ps init version.',
+        '<!-- palimpsest:end -->',
         '',
         'Post-section notes.',
         '',
       ].join('\n');
       const legacyAgentsBody = [
-        '<!-- open-knowledge:begin -->',
+        '<!-- palimpsest:begin -->',
         '## Legacy section in AGENTS.md',
-        '<!-- open-knowledge:end -->',
+        '<!-- palimpsest:end -->',
         '',
         '# Project agents notes',
         '',
@@ -1213,12 +1213,12 @@ describe('runInit', () => {
       const section = userGlobalSection(formatInitResult(result, testDir));
       expect(section).toContain('open-knowledge-discovery');
       expect(section).toContain('turned off on this machine');
-      expect(section).toContain('ok init --skills discovery');
+      expect(section).toContain('ps init --skills discovery');
       expect(section).not.toContain('--no-skills');
     });
 
     it('a default run that cannot read the recorded decision installs nothing and reports the failed read', async () => {
-      const statePath = join(okUserHomeDir(fakeHome), SKILL_STATE_FILENAME);
+      const statePath = join(psUserHomeDir(fakeHome), SKILL_STATE_FILENAME);
       mkdirSync(statePath, { recursive: true });
       const installed: (string | undefined)[] = [];
       const result = await runInitForTest({
@@ -1322,10 +1322,10 @@ describe('runInit', () => {
         installUserSkill: async () => 'installed',
       });
       const output = formatInitResult(result, testDir);
-      expect(output).toContain('.cursor/skills/open-knowledge/SKILL.md');
+      expect(output).toContain('.cursor/skills/palimpsest/SKILL.md');
       const section = userGlobalSection(output);
       expect(section).toContain('--no-skills');
-      expect(section).not.toMatch(/\bopen-knowledge\b(?!-)/);
+      expect(section).not.toMatch(/\bpalimpsest\b(?!-)/);
       expect(section).toContain('project-local');
     });
 
@@ -1355,7 +1355,7 @@ describe('runInit', () => {
       expect(discovery).not.toContain('installed for');
       expect(writeSkill).toContain('installed for');
       expect(discovery?.indexOf('already installed')).toBe(writeSkill?.indexOf('installed for'));
-      expect(section).not.toMatch(/\bopen-knowledge\b(?!-)/);
+      expect(section).not.toMatch(/\bpalimpsest\b(?!-)/);
     });
 
     it('names only the failing bundle as failed', async () => {
@@ -1389,7 +1389,7 @@ describe('runInit', () => {
       const output = formatInitResult(result, testDir);
       expect(output).toContain('Content:');
       expect(output).toContain(`Found ${preview.totalCount} markdown files`);
-      expect(output).toContain('Re-check anytime: open-knowledge preview');
+      expect(output).toContain('Re-check anytime: palimpsest preview');
     });
 
     it('renders warning line when preview is undefined with previewWarning', async () => {
@@ -1422,7 +1422,7 @@ describe('runInit', () => {
         JSON.stringify(
           {
             mcpServers: {
-              'open-knowledge': {
+              'palimpsest': {
                 command: 'node',
                 args: ['./packages/cli/dist/cli.mjs', 'mcp'],
               },
@@ -1537,7 +1537,7 @@ describe('runInit', () => {
 
       expect(result.didGitInit).toBe(true);
       expect(result.rootGitignoreCreated).toBe(false);
-      expect(existsSync(join(testDir, OK_DIR, 'config.yml'))).toBe(true);
+      expect(existsSync(join(testDir, PS_DIR, 'config.yml'))).toBe(true);
       expect(readFileSync(sentinel, 'utf-8')).toBe('do-not-clobber');
     });
 
@@ -1550,7 +1550,7 @@ describe('runInit', () => {
         configurable: true,
       });
       try {
-        const { GitNotAvailableError } = await import('@inkeep/open-knowledge-server');
+        const { GitNotAvailableError } = await import('@palimpsest/server');
         await expect(runInitForTest({ editors: ['claude'] })).rejects.toBeInstanceOf(
           GitNotAvailableError,
         );
@@ -1562,7 +1562,7 @@ describe('runInit', () => {
         process.env.PATH = originalPath;
       }
 
-      expect(existsSync(join(testDir, OK_DIR))).toBe(false);
+      expect(existsSync(join(testDir, PS_DIR))).toBe(false);
       expect(existsSync(join(testDir, '.git'))).toBe(false);
     });
   });
@@ -1583,7 +1583,7 @@ describe('runInit', () => {
       expect(existsSync(join(testDir, '.mcp.json'))).toBe(false);
       const claudeSkill = result.projectSkills.find((s) => s.editorId === 'claude');
       expect(claudeSkill?.action).toBe('written');
-      expect(existsSync(join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
     });
@@ -1605,7 +1605,7 @@ describe('runInit', () => {
         expect.objectContaining({
           editorId: 'copilot',
           action: 'written',
-          path: join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'),
+          path: join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'),
         }),
       );
     });
@@ -1618,7 +1618,7 @@ describe('runInit', () => {
         expect.objectContaining({
           editorId: 'copilot',
           action: 'written',
-          path: join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'),
+          path: join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'),
         }),
       );
     });
@@ -1636,7 +1636,7 @@ describe('runInit', () => {
           action: 'skipped-prerequisite',
         }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         false,
       );
     });
@@ -1647,7 +1647,7 @@ describe('runInit', () => {
         join(fakeHome, '.copilot', 'mcp-config.json'),
         JSON.stringify({
           mcpServers: {
-            'open-knowledge': { ...PUBLISHED_CHAIN_ENTRY, cwd: testDir },
+            'palimpsest': { ...PUBLISHED_CHAIN_ENTRY, cwd: testDir },
           },
         }),
       );
@@ -1657,7 +1657,7 @@ describe('runInit', () => {
       expect(result.projectSkills).toContainEqual(
         expect.objectContaining({ editorId: 'copilot', action: 'written' }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
     });
@@ -1678,7 +1678,7 @@ describe('runInit', () => {
           action: 'skipped-prerequisite',
         }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         false,
       );
     });
@@ -1696,9 +1696,9 @@ describe('runInit', () => {
       expect(result.projectSkills[0]).toMatchObject({
         editorId: 'claude',
         action: 'written',
-        path: join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'),
+        path: join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'),
       });
-      expect(existsSync(join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
     });
@@ -1721,24 +1721,24 @@ describe('runInit', () => {
           expect.objectContaining({
             editorId: 'claude',
             action: 'written',
-            path: join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'),
+            path: join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'),
           }),
           expect.objectContaining({
             editorId: 'cursor',
             action: 'written',
-            path: join(testDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'),
+            path: join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'),
           }),
           expect.objectContaining({
             editorId: 'codex',
             action: 'written',
-            path: join(testDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md'),
+            path: join(testDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'),
           }),
         ]),
       );
-      expect(existsSync(join(testDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
-      expect(existsSync(join(testDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
     });
@@ -1759,10 +1759,10 @@ describe('runInit', () => {
         expect.objectContaining({
           editorId: 'copilot',
           action: 'skipped-prerequisite',
-          path: join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'),
+          path: join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'),
         }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         false,
       );
       expect(formatInitResult(result, testDir)).not.toContain(
@@ -1781,7 +1781,7 @@ describe('runInit', () => {
       expect(projResult?.action).toBe('written');
       expect(existsSync(claudeConfigPath())).toBe(true);
       expect(existsSync(join(testDir, '.mcp.json'))).toBe(true);
-      expect(existsSync(join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
     });
@@ -1798,7 +1798,7 @@ describe('runInit', () => {
       const output = formatInitResult(result, testDir);
       expect(output).toContain('Claude (project)');
       expect(output).toContain('Project-local skills:');
-      expect(output).toContain('.claude/skills/open-knowledge/SKILL.md');
+      expect(output).toContain('.claude/skills/palimpsest/SKILL.md');
     });
 
     it('--no-mcp skips all MCP writes regardless of scope', async () => {
@@ -1815,7 +1815,7 @@ describe('runInit', () => {
       expect(existsSync(join(testDir, '.mcp.json'))).toBe(false);
       const claudeSkill = result.projectSkills.find((s) => s.editorId === 'claude');
       expect(claudeSkill?.action).toBe('written');
-      expect(existsSync(join(testDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
         true,
       );
     });
@@ -1839,7 +1839,7 @@ describe('runInit', () => {
     });
 
     it('does not suggest ok seed when content scaffolding failed', async () => {
-      writeFileSync(join(testDir, '.ok'), 'not a directory\n', 'utf-8');
+      writeFileSync(join(testDir, '.ps'), 'not a directory\n', 'utf-8');
       const result = await runInitForTest({ editors: ['claude'] });
       expect(result.contentScaffoldFailed).toBe(true);
       const output = formatInitResult(result, testDir);
@@ -1981,8 +1981,8 @@ describe('runInit — projectRoot threading', () => {
     });
 
     expect(result.projectRoot).toBe(repo);
-    expect(existsSync(join(repo, OK_DIR))).toBe(true);
-    expect(existsSync(join(sub, OK_DIR))).toBe(false);
+    expect(existsSync(join(repo, PS_DIR))).toBe(true);
+    expect(existsSync(join(sub, PS_DIR))).toBe(false);
     expect(result.gitRootPromoted).toBe(true);
     expect(result.promotedFromDir).toBe('sub');
     const output = formatInitResult(result, result.projectRoot);
@@ -2004,7 +2004,7 @@ describe('runInit — projectRoot threading', () => {
     });
 
     expect(result.projectRoot).toBe(repo);
-    expect(existsSync(join(repo, OK_DIR))).toBe(true);
+    expect(existsSync(join(repo, PS_DIR))).toBe(true);
     expect(result.gitRootPromoted).toBe(false);
     expect(result.promotedFromDir).toBeUndefined();
     const output = formatInitResult(result, result.projectRoot);
@@ -2026,7 +2026,7 @@ describe('runInit — projectRoot threading', () => {
     });
 
     expect(result.projectRoot).toBe(repo);
-    expect(existsSync(join(repo, OK_DIR, 'config.yml'))).toBe(true);
+    expect(existsSync(join(repo, PS_DIR, 'config.yml'))).toBe(true);
     const { config: rootConfig } = loadConfig(result.projectRoot);
     expect(rootConfig).toBeDefined();
     expect(rootConfig.content.dir).toBe('.');
@@ -2094,7 +2094,7 @@ describe('runInit — projectRoot threading', () => {
         contentDir: '..',
       }),
     ).rejects.toBeInstanceOf(ContentDirError);
-    expect(existsSync(join(repo, OK_DIR))).toBe(false);
+    expect(existsSync(join(repo, PS_DIR))).toBe(false);
   });
 
   it('--content-dir on re-init is ignored (config.yml already exists) and warns', async () => {
@@ -2266,14 +2266,14 @@ describe('runInit — refuses the home directory as a project root', () => {
     await expect(runAtHome(fakeHome)).rejects.toBeInstanceOf(HomeProjectRootError);
   });
 
-  it('writes nothing at all — no git repo, no .ok/, no project skills', async () => {
+  it('writes nothing at all — no git repo, no .ps/, no project skills', async () => {
     await expect(runAtHome(fakeHome)).rejects.toThrow();
 
     expect(existsSync(join(fakeHome, '.git'))).toBe(false);
-    expect(existsSync(join(fakeHome, OK_DIR))).toBe(false);
-    expect(existsSync(join(fakeHome, '.okignore'))).toBe(false);
+    expect(existsSync(join(fakeHome, PS_DIR))).toBe(false);
+    expect(existsSync(join(fakeHome, '.psignore'))).toBe(false);
     for (const hostDir of ['.claude', '.cursor', '.codex']) {
-      expect(existsSync(join(fakeHome, hostDir, 'skills', 'open-knowledge'))).toBe(false);
+      expect(existsSync(join(fakeHome, hostDir, 'skills', 'palimpsest'))).toBe(false);
     }
     expect(existsSync(join(fakeHome, '.cursor', 'mcp.json'))).toBe(false);
     expect(existsSync(join(fakeHome, '.codex', 'config.toml'))).toBe(false);
@@ -2299,7 +2299,7 @@ describe('runInit — refuses the home directory as a project root', () => {
       expect(process.exitCode).toBe(64);
       const printed = stderrSpy.mock.calls.map((call) => String(call[0])).join('');
       expect(printed).toContain(
-        'Refusing to set up an OpenKnowledge project in your home directory',
+        'Refusing to set up an Palimpsest project in your home directory',
       );
       expect(printed).not.toContain('at runInit');
     } finally {
@@ -2322,7 +2322,7 @@ describe('runInit — refuses the home directory as a project root', () => {
     });
 
     expect(result.projectRoot).toBe(project);
-    expect(existsSync(join(project, OK_DIR, 'config.yml'))).toBe(true);
+    expect(existsSync(join(project, PS_DIR, 'config.yml'))).toBe(true);
   });
 });
 
@@ -2645,12 +2645,12 @@ describe('writeUserMcpConfigs', () => {
     const claudeConfig = JSON.parse(
       readFileSync(resolveClaudeCodeConfigPath({ home: fakeHome }), 'utf-8'),
     );
-    expect(claudeConfig.mcpServers['open-knowledge']).toEqual(CANONICAL);
+    expect(claudeConfig.mcpServers['palimpsest']).toEqual(CANONICAL);
 
     const cursorConfig = JSON.parse(
       readFileSync(resolveCursorConfigPath({ home: fakeHome }), 'utf-8'),
     );
-    expect(cursorConfig.mcpServers['open-knowledge']).toEqual(CANONICAL);
+    expect(cursorConfig.mcpServers['palimpsest']).toEqual(CANONICAL);
   });
 
   it('creates OK entry into a blank config with no .broken sidecar', async () => {
@@ -2665,7 +2665,7 @@ describe('writeUserMcpConfigs', () => {
     expect(results[0]?.action).toBe('written');
 
     const config = JSON.parse(readFileSync(claudePath, 'utf-8'));
-    expect(config.mcpServers['open-knowledge']).toEqual(CANONICAL);
+    expect(config.mcpServers['palimpsest']).toEqual(CANONICAL);
 
     expect(readdirSync(dirname(claudePath)).some((name) => name.includes('.broken-'))).toBe(false);
   });
@@ -2677,7 +2677,7 @@ describe('writeUserMcpConfigs', () => {
     expect(existsSync(join(fakeHome, 'AGENTS.md'))).toBe(false);
     expect(existsSync(join(fakeHome, 'CLAUDE.md'))).toBe(false);
     expect(existsSync(join(fakeHome, '.claude', 'launch.json'))).toBe(false);
-    expect(existsSync(join(fakeHome, OK_DIR))).toBe(false);
+    expect(existsSync(join(fakeHome, PS_DIR))).toBe(false);
     expect(existsSync(join(fakeHome, '.mcp.json'))).toBe(false);
   });
 
@@ -2687,7 +2687,7 @@ describe('writeUserMcpConfigs', () => {
     writeFileSync(
       claudePath,
       JSON.stringify(
-        { mcpServers: { 'open-knowledge': { command: 'custom', args: ['old'] } } },
+        { mcpServers: { 'palimpsest': { command: 'custom', args: ['old'] } } },
         null,
         2,
       ),
@@ -2697,7 +2697,7 @@ describe('writeUserMcpConfigs', () => {
 
     expect(results[0].action).toBe('overwritten');
     const config = JSON.parse(readFileSync(claudePath, 'utf-8'));
-    expect(config.mcpServers['open-knowledge']).toEqual(CANONICAL);
+    expect(config.mcpServers['palimpsest']).toEqual(CANONICAL);
   });
 
   it('caller controls which editors get overwritten by omitting them from the editors array', async () => {
@@ -2707,21 +2707,21 @@ describe('writeUserMcpConfigs', () => {
     mkdirSync(dirname(cursorPath), { recursive: true });
     writeFileSync(
       claudePath,
-      JSON.stringify({ mcpServers: { 'open-knowledge': { command: 'custom', args: ['a'] } } }),
+      JSON.stringify({ mcpServers: { 'palimpsest': { command: 'custom', args: ['a'] } } }),
     );
     writeFileSync(
       cursorPath,
-      JSON.stringify({ mcpServers: { 'open-knowledge': { command: 'custom', args: ['b'] } } }),
+      JSON.stringify({ mcpServers: { 'palimpsest': { command: 'custom', args: ['b'] } } }),
     );
 
     const results = await writeUserMcpConfigs({ editors: ['claude'], home: fakeHome });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.action).toBe('overwritten');
-    expect(JSON.parse(readFileSync(claudePath, 'utf-8')).mcpServers['open-knowledge']).toEqual(
+    expect(JSON.parse(readFileSync(claudePath, 'utf-8')).mcpServers['palimpsest']).toEqual(
       CANONICAL,
     );
-    expect(JSON.parse(readFileSync(cursorPath, 'utf-8')).mcpServers['open-knowledge']).toEqual({
+    expect(JSON.parse(readFileSync(cursorPath, 'utf-8')).mcpServers['palimpsest']).toEqual({
       command: 'custom',
       args: ['b'],
     });
@@ -2739,7 +2739,7 @@ describe('writeUserMcpConfigs', () => {
 
     const config = JSON.parse(readFileSync(claudePath, 'utf-8'));
     expect(config.mcpServers.other).toEqual({ command: 'node', args: ['x.js'] });
-    expect(config.mcpServers['open-knowledge']).toEqual(CANONICAL);
+    expect(config.mcpServers['palimpsest']).toEqual(CANONICAL);
   });
 
   it('reports action:failed for unsupported editors without throwing', async () => {
@@ -2807,7 +2807,7 @@ describe('writeEditorMcpConfig — TOML fallback declines a present config', () 
     expect(result.action).toBe('written');
     const written = readFileSync(path, 'utf-8');
     expect(written).toContain('mcp_servers');
-    expect(written).toContain('open-knowledge');
+    expect(written).toContain('palimpsest');
   });
 });
 
@@ -2877,7 +2877,7 @@ describe('readExistingMcpEntry (Pass 0 Major #13)', () => {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(
       path,
-      JSON.stringify({ mcpServers: { 'open-knowledge': 'not-an-object' } }),
+      JSON.stringify({ mcpServers: { 'palimpsest': 'not-an-object' } }),
       'utf-8',
     );
     expect(readExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toBeNull();
@@ -2886,8 +2886,8 @@ describe('readExistingMcpEntry (Pass 0 Major #13)', () => {
   it('returns the parsed entry when JSON config is well-formed', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
-    const entry = { command: 'npx', args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'] };
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'open-knowledge': entry } }), 'utf-8');
+    const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
+    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }), 'utf-8');
     expect(readExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toEqual(entry);
   });
 
@@ -2896,13 +2896,13 @@ describe('readExistingMcpEntry (Pass 0 Major #13)', () => {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(
       path,
-      '[mcp_servers."open-knowledge"]\ncommand = "npx"\nargs = ["-y", "@inkeep/open-knowledge@latest", "mcp"]\n',
+      '[mcp_servers."palimpsest"]\ncommand = "npx"\nargs = ["-y", "@palimpsest/cli@latest", "mcp"]\n',
       'utf-8',
     );
     const result = readExistingMcpEntry(EDITOR_TARGETS.codex, '', fakeHome);
     expect(result).toEqual({
       command: 'npx',
-      args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'],
+      args: ['-y', '@palimpsest/cli@latest', 'mcp'],
     });
   });
 
@@ -3048,7 +3048,7 @@ describe('classifyExistingMcpEntry', () => {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(
       path,
-      'last_seen = 2026-06-26T12:34:56.123456Z\n[mcp_servers."open-knowledge"]\ncommand = "npx"\nargs = ["-y", "@inkeep/open-knowledge@latest", "mcp"]\n',
+      'last_seen = 2026-06-26T12:34:56.123456Z\n[mcp_servers."palimpsest"]\ncommand = "npx"\nargs = ["-y", "@palimpsest/cli@latest", "mcp"]\n',
       'utf-8',
     );
     const result = classifyExistingMcpEntry(EDITOR_TARGETS.codex, '', fakeHome);
@@ -3080,8 +3080,8 @@ describe('classifyExistingMcpEntry', () => {
   it('present with the parsed entry when our server entry exists', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
-    const entry = { command: 'npx', args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'] };
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'open-knowledge': entry } }), 'utf-8');
+    const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
+    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }), 'utf-8');
     const result = classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome);
     expect(result).toEqual({ kind: 'present', entry });
   });
@@ -3091,7 +3091,7 @@ describe('classifyExistingMcpEntry', () => {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(
       path,
-      '{\n  "mcpServers": {\n    "open-knowledge": {\n      "command": "np',
+      '{\n  "mcpServers": {\n    "palimpsest": {\n      "command": "np',
       'utf-8',
     );
     expect(classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome).kind).toBe('decline');
@@ -3100,7 +3100,7 @@ describe('classifyExistingMcpEntry', () => {
   it('decline (not creatable-blank) on a half-written / truncated TOML config', () => {
     const path = resolveCodexConfigPath({ home: fakeHome, env: {} });
     mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, '[mcp_servers."open-knowledge"]\ncommand = "np', 'utf-8');
+    writeFileSync(path, '[mcp_servers."palimpsest"]\ncommand = "np', 'utf-8');
     expect(classifyExistingMcpEntry(EDITOR_TARGETS.codex, '', fakeHome).kind).toBe('decline');
   });
 
@@ -3130,10 +3130,10 @@ describe('classifyExistingMcpEntry', () => {
   it('present on a JSONC config whose comments and trailing commas surround our entry', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
-    const entry = { command: 'npx', args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'] };
+    const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
     writeFileSync(
       path,
-      `{\n  // managed by ok\n  "mcpServers": {\n    "open-knowledge": ${JSON.stringify(entry)}, // ours\n  },\n}`,
+      `{\n  // managed by ok\n  "mcpServers": {\n    "palimpsest": ${JSON.stringify(entry)}, // ours\n  },\n}`,
       'utf-8',
     );
     expect(classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toEqual({
@@ -3145,10 +3145,10 @@ describe('classifyExistingMcpEntry', () => {
   it('present on a config with a leading UTF-8 BOM (InvalidSymbol@0 is not corruption)', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
-    const entry = { command: 'npx', args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'] };
+    const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
     writeFileSync(
       path,
-      `\uFEFF${JSON.stringify({ mcpServers: { 'open-knowledge': entry } })}`,
+      `\uFEFF${JSON.stringify({ mcpServers: { 'palimpsest': entry } })}`,
       'utf-8',
     );
     expect(classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toEqual({
@@ -3240,14 +3240,14 @@ describe('runInit — sharing mode', () => {
     rmSync(testDir, { recursive: true, force: true });
   });
 
-  it('AC1: fresh `ok init --local-only` writes the OK artifact set to .git/info/exclude', async () => {
+  it('AC1: fresh `ps init --local-only` writes the OK artifact set to .git/info/exclude', async () => {
     const result = await runInitForTest({ sharing: 'local-only' });
     expect(result.sharing.kind).toBe('applied');
     if (result.sharing.kind !== 'applied') throw new Error('expected applied');
     expect(result.sharing.mode).toBe('local-only');
     expect(result.sharing.appended.length).toBeGreaterThan(0);
     const exclude = readFileSync(join(testDir, '.git', 'info', 'exclude'), 'utf-8');
-    expect(exclude).toContain('.ok/');
+    expect(exclude).toContain('.ps/');
     expect(exclude).toContain('.mcp.json');
     expect(exclude).toContain('.claude/launch.json');
   });
@@ -3282,7 +3282,7 @@ describe('runInit — sharing mode', () => {
         mode: 'local-only',
         action: 'added',
         appended: ['.mcp.json', '.cursor/mcp.json'],
-        alreadyPresent: ['.ok/'],
+        alreadyPresent: ['.ps/'],
         removed: ['.claude/skills/trip-log/'],
       },
       '/tmp/project',
@@ -3300,7 +3300,7 @@ describe('runInit — sharing mode', () => {
         mode: 'local-only',
         action: 'cleaned',
         appended: [],
-        alreadyPresent: ['.ok/', '.okignore'],
+        alreadyPresent: ['.ps/', '.psignore'],
         removed: ['.claude/skills/trip-log/'],
       },
       '/tmp/project',
@@ -3317,7 +3317,7 @@ describe('runInit — sharing mode', () => {
     const text = lines.join('\n');
     expect(text).toMatch(/--local-only requested but no git repo/);
     expect(text).toMatch(/git init/);
-    expect(text).toMatch(/ok config-sharing unshare/);
+    expect(text).toMatch(/ps config-sharing unshare/);
   });
 
   it('formatSharingOutcome is silent on no-git when no explicit flag was set', () => {
@@ -3328,17 +3328,17 @@ describe('runInit — sharing mode', () => {
     expect(lines).toEqual([]);
   });
 
-  it('`ok init` (no flag, non-TTY) on a fresh repo defaults to local-only, matching the desktop dialogs', async () => {
+  it('`ps init` (no flag, non-TTY) on a fresh repo defaults to local-only, matching the desktop dialogs', async () => {
     const result = await runInitForTest();
     expect(result.sharing.kind).toBe('applied');
     if (result.sharing.kind !== 'applied') throw new Error('expected applied');
     expect(result.sharing.mode).toBe('local-only');
     const exclude = readFileSync(join(testDir, '.git', 'info', 'exclude'), 'utf-8');
-    expect(exclude).toContain('.ok/');
+    expect(exclude).toContain('.ps/');
     expect(exclude).toContain('.mcp.json');
   });
 
-  it('re-running `ok init` (no flag) on an initialized shared repo stays shared', async () => {
+  it('re-running `ps init` (no flag) on an initialized shared repo stays shared', async () => {
     await runInitForTest({ sharing: 'shared' });
     const result = await runInitForTest();
     expect(result.sharing.kind).toBe('applied');
@@ -3348,7 +3348,7 @@ describe('runInit — sharing mode', () => {
     expect(exclude).not.toContain('.mcp.json');
   });
 
-  it('FR5 / D12: re-running `ok init` (no flag) on a local-only repo preserves the prior posture', async () => {
+  it('FR5 / D12: re-running `ps init` (no flag) on a local-only repo preserves the prior posture', async () => {
     await runInitForTest({ sharing: 'local-only' });
     const result = await runInitForTest();
     expect(result.sharing.kind).toBe('applied');
@@ -3379,7 +3379,7 @@ describe('runInit — sharing mode', () => {
     const after = readFileSync(excludePath, 'utf-8');
     expect(after).toContain('# user header');
     expect(after).toContain('*.tmp');
-    expect(after).not.toContain('.ok/');
+    expect(after).not.toContain('.ps/');
     expect(after).not.toContain('.mcp.json');
   });
 

@@ -25,11 +25,11 @@ import {
   LocalOpEmbeddingsTestResponseSchema,
   LocalOpOkInitRequestSchema,
   LocalOpOkInitResponseSchema,
-  OkCliCommand,
-  okUserHomeDisplayPath,
+  PsCliCommand,
+  psUserHomeDisplayPath,
   type ProblemType,
-} from '@inkeep/open-knowledge-core';
-import { resolveGitDirDetailed } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
 import {
   LOCAL_OP_PIPE_STDIO_OPTIONS,
   withHiddenWindowsConsole,
@@ -124,7 +124,7 @@ export function createLocalOpRoutes(
     readSemanticProviderConfig,
     semanticSearch,
   } = deps;
-  const okCli = OkCliCommand.resolve({
+  const psCli = PsCliCommand.resolve({
     host: localOpCliArgs === undefined ? undefined : { cliArgs: localOpCliArgs },
   });
 
@@ -134,7 +134,7 @@ export function createLocalOpRoutes(
     type: ProblemType,
     command: readonly string[],
   ): boolean {
-    const refused = okCli.refusalFor(command);
+    const refused = psCli.refusalFor(command);
     if (refused === undefined) return false;
     errorResponse(res, 409, type, 'This dev build has no built CLI.', { handler, detail: refused });
     return true;
@@ -213,7 +213,7 @@ export function createLocalOpRoutes(
     let cloneCompleteDir: string | null = null;
 
     const flow = runCloneSubprocess({
-      cli: okCli,
+      cli: psCli,
       url,
       dir,
       branch,
@@ -301,7 +301,7 @@ export function createLocalOpRoutes(
   }
 
   const SERVER_WITHOUT_UI_ERROR =
-    'A server is already running for this directory without a web UI (started with `--only server`, or from a build without the bundled editor). Restart it with plain `ok start` from an install that includes the web UI.';
+    'A server is already running for this directory without a web UI (started with `--only server`, or from a build without the bundled editor). Restart it with plain `ps start` from an install that includes the web UI.';
 
   async function startServerAtDirAndGetPort(
     dir: string,
@@ -313,7 +313,7 @@ export function createLocalOpRoutes(
     if (existing === 'no-ui') return { error: SERVER_WITHOUT_UI_ERROR };
     if (existing !== null) return { port: existing };
 
-    const startInvocation = okCli.spawn(['start'], { ...process.env, OK_LOCK_KIND: 'interactive' });
+    const startInvocation = psCli.spawn(['start'], { ...process.env, PS_LOCK_KIND: 'interactive' });
     if ('refused' in startInvocation) return { error: startInvocation.refused };
 
     const spawnAndAwaitServer = async (): Promise<{ port: number } | { error: string }> => {
@@ -369,7 +369,7 @@ export function createLocalOpRoutes(
           if (winner === 'no-ui') return { error: SERVER_WITHOUT_UI_ERROR };
           if (winner !== null) return { port: winner };
           return {
-            error: `\`ok start\` exited (${cause})${stderr ? ` — ${stderr}` : ''}`,
+            error: `\`ps start\` exited (${cause})${stderr ? ` — ${stderr}` : ''}`,
           };
         }
       }
@@ -438,7 +438,7 @@ export function createLocalOpRoutes(
       if (gitDirKind !== 'directory' && gitDirKind !== 'linked') {
         log.warn(
           { project: basename(canonicalPath), result: 'not-a-git-worktree', kind: gitDirKind },
-          `[ok-init] action=init project=${basename(canonicalPath)} result=not-a-git-worktree kind=${gitDirKind}`,
+          `[ps-init] action=init project=${basename(canonicalPath)} result=not-a-git-worktree kind=${gitDirKind}`,
         );
         successResponse(
           res,
@@ -457,7 +457,7 @@ export function createLocalOpRoutes(
       if (isProjectRoot(canonicalPath)) {
         log.warn(
           { project: basename(canonicalPath), result: 'already-initialized' },
-          `[ok-init] action=init project=${basename(canonicalPath)} result=already-initialized`,
+          `[ps-init] action=init project=${basename(canonicalPath)} result=already-initialized`,
         );
         successResponse(
           res,
@@ -474,7 +474,7 @@ export function createLocalOpRoutes(
           res,
           429,
           'urn:ok:error:concurrent-operation',
-          'An ok-init operation is already in progress.',
+          'An ps-init operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_OK_INIT, extraHeaders: { 'Retry-After': '2' } },
         );
         return;
@@ -486,7 +486,7 @@ export function createLocalOpRoutes(
         });
         log.warn(
           { project: basename(canonicalPath), result: 'success' },
-          `[ok-init] action=init project=${basename(canonicalPath)} result=success`,
+          `[ps-init] action=init project=${basename(canonicalPath)} result=success`,
         );
         successResponse(
           res,
@@ -499,7 +499,7 @@ export function createLocalOpRoutes(
         const message = err instanceof Error ? err.message : String(err);
         log.warn(
           { project: basename(canonicalPath), result: 'failed', reason: message },
-          `[ok-init] action=init project=${basename(canonicalPath)} result=failed reason=${message}`,
+          `[ps-init] action=init project=${basename(canonicalPath)} result=failed reason=${message}`,
         );
         successResponse(
           res,
@@ -547,7 +547,7 @@ export function createLocalOpRoutes(
     const detail =
       rejectedHost === null
         ? "The project's origin URL could not be parsed to determine its host. Set a supported origin URL or explicitly select a GitHub host."
-        : `${rejectedHost} is not a declared GitHub host. If it runs GitHub Enterprise Server, declare git.hosts.${rejectedHost}.provider as github in ${okUserHomeDisplayPath('global.yml')} and restart OpenKnowledge.`;
+        : `${rejectedHost} is not a declared GitHub host. If it runs GitHub Enterprise Server, declare git.hosts.${rejectedHost}.provider as github in ${psUserHomeDisplayPath('global.yml')} and restart Palimpsest.`;
     errorResponse(
       res,
       409,
@@ -601,7 +601,7 @@ export function createLocalOpRoutes(
       if (!stale) {
         console.error(
           JSON.stringify({
-            event: 'ok-local-op:auth-flow-slot-no-controller',
+            event: 'ps-local-op:auth-flow-slot-no-controller',
             channel: 'auth',
             transport: 'http',
             handler,
@@ -618,7 +618,7 @@ export function createLocalOpRoutes(
       inFlight.current = null;
       console.warn(
         JSON.stringify({
-          event: 'ok-local-op:idempotent-start-replaced-stale-slot',
+          event: 'ps-local-op:idempotent-start-replaced-stale-slot',
           channel: 'auth',
           transport: 'http',
           handler,
@@ -679,7 +679,7 @@ export function createLocalOpRoutes(
       if (inFlight.current !== slot) return;
       console.warn(
         JSON.stringify({
-          event: 'ok-local-op:auth-stream-detached',
+          event: 'ps-local-op:auth-stream-detached',
           channel: 'auth',
           transport: 'http',
           handler,
@@ -741,7 +741,7 @@ export function createLocalOpRoutes(
       makeFlow: (onEvent) =>
         runDeviceFlowSubprocess({
           lifetime: subprocessLifetime,
-          cli: okCli,
+          cli: psCli,
           cwd: authProjectDir,
           host,
           timeoutMs: AUTH_DEVICE_FLOW_TIMEOUT_MS,
@@ -855,7 +855,7 @@ export function createLocalOpRoutes(
 
       const finish = subprocessLifetime.begin();
       try {
-        const invocation = okCli.spawn(['auth', 'status', '--json', '--host', host], process.env);
+        const invocation = psCli.spawn(['auth', 'status', '--json', '--host', host], process.env);
         if ('refused' in invocation) throw new Error(invocation.refused);
 
         const output = await new Promise<string>((resolve, reject) => {
@@ -983,7 +983,7 @@ export function createLocalOpRoutes(
       try {
         const result = await runPatSubprocess({
           lifetime: subprocessLifetime,
-          cli: okCli,
+          cli: psCli,
           cwd: authProjectDir,
           host,
           token: body.token,
@@ -1050,7 +1050,7 @@ export function createLocalOpRoutes(
       try {
         const result = await runAuthTokenSubprocess({
           lifetime: subprocessLifetime,
-          cli: okCli,
+          cli: psCli,
           host: body.host,
           username: body.username,
           token: body.token,
@@ -1129,7 +1129,7 @@ export function createLocalOpRoutes(
 
     const writeStreamError = createStreamingErrorWriter(res, HANDLE_LOCAL_OP_AUTH_REPOS);
 
-    const invocation = okCli.spawn(['auth', 'repos', '--json', '--host', host], process.env);
+    const invocation = psCli.spawn(['auth', 'repos', '--json', '--host', host], process.env);
     if ('refused' in invocation) throw new Error(invocation.refused);
 
     let settled = false;
@@ -1281,7 +1281,7 @@ export function createLocalOpRoutes(
 
       const finish = subprocessLifetime.begin();
       try {
-        const invocation = okCli.spawn(['auth', 'signout', '--host', host], process.env);
+        const invocation = psCli.spawn(['auth', 'signout', '--host', host], process.env);
         if ('refused' in invocation) throw new Error(invocation.refused);
 
         await new Promise<void>((resolve, reject) => {

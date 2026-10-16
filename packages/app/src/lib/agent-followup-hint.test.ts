@@ -1,4 +1,4 @@
-import { AGENT_REGISTRY, type GuidanceRef, guidanceId } from '@inkeep/open-knowledge-core';
+import { AGENT_REGISTRY, type GuidanceRef, guidanceId } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { followupHintText } from '@/lib/agent-followup-hint';
 
@@ -9,9 +9,9 @@ function projectMcpFollowup(agent: keyof typeof AGENT_REGISTRY): GuidanceRef | u
 }
 
 describe('followupHintText', () => {
-  test("Cursor's enable-manually hint names the agent and the setting OpenKnowledge cannot see", () => {
+  test("Cursor's enable-manually hint names the agent and the setting Palimpsest cannot see", () => {
     expect(followupHintText(projectMcpFollowup('cursor'))).toBe(
-      "Cursor keeps project MCP servers off until you turn them on under Customize → MCPs. OpenKnowledge can't see that setting.",
+      "Cursor keeps project MCP servers off until you turn them on under Customize → MCPs. Palimpsest can't see that setting.",
     );
   });
 

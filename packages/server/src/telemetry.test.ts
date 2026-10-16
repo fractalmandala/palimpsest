@@ -36,7 +36,7 @@ describe('Telemetry', () => {
     context.disable();
     delete process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
     delete process.env.OTEL_EXPORTER_OTLP_TIMEOUT;
-    tmp = mkdtempSync(join(tmpdir(), 'ok-telemetry-test-'));
+    tmp = mkdtempSync(join(tmpdir(), 'ps-telemetry-test-'));
   });
 
   afterEach(async () => {

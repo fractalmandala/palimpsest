@@ -1,4 +1,4 @@
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import { createCommentApi } from '../comments/comment-api.ts';
 import type { CommentService } from '../comments/comment-service.ts';
 import { type ApiRouteGroup, type ApiRouteRecord, createApiRouteGroup } from './api-pipeline.ts';

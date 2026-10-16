@@ -68,8 +68,8 @@ describe('buildPreviewIframeHeader — CSP-violation reporting (wiring)', () => 
     expect(header).toContain('securitypolicyviolation');
   });
 
-  test('reports blocked requests under the okPreviewCspViolation key', () => {
-    expect(header).toContain('okPreviewCspViolation');
+  test('reports blocked requests under the psPreviewCspViolation key', () => {
+    expect(header).toContain('psPreviewCspViolation');
   });
 
   test('reads the blocked URI and the violated directive off the event', () => {
@@ -140,7 +140,7 @@ describe('buildPreviewIframeHeader — CSP-violation reporting (behavior)', () =
 describe('parsePreviewCspViolationMessage', () => {
   test('reads a well-formed report', () => {
     const msg = {
-      okPreviewCspViolation: {
+      psPreviewCspViolation: {
         blocked: [{ directive: 'img-src', uri: 'http://x/y.png' }],
         truncated: false,
       },
@@ -153,7 +153,7 @@ describe('parsePreviewCspViolationMessage', () => {
 
   test('passes the truncated flag through', () => {
     const msg = {
-      okPreviewCspViolation: {
+      psPreviewCspViolation: {
         blocked: [{ directive: 'img-src', uri: 'http://x' }],
         truncated: true,
       },
@@ -163,7 +163,7 @@ describe('parsePreviewCspViolationMessage', () => {
 
   test('filters entries that are not {directive,uri} string pairs', () => {
     const msg = {
-      okPreviewCspViolation: {
+      psPreviewCspViolation: {
         blocked: [
           { directive: 'img-src', uri: 'http://ok' },
           { directive: 42, uri: 'http://bad' },
@@ -182,10 +182,10 @@ describe('parsePreviewCspViolationMessage', () => {
   test('rejects non-violation payloads', () => {
     expect(parsePreviewCspViolationMessage(null)).toBeNull();
     expect(parsePreviewCspViolationMessage('blocked')).toBeNull();
-    expect(parsePreviewCspViolationMessage({ okPreviewHeight: 400 })).toBeNull();
-    expect(parsePreviewCspViolationMessage({ okPreviewCspViolation: null })).toBeNull();
-    expect(parsePreviewCspViolationMessage({ okPreviewCspViolation: {} })).toBeNull();
-    expect(parsePreviewCspViolationMessage({ okPreviewCspViolation: { blocked: 'x' } })).toBeNull();
-    expect(parsePreviewCspViolationMessage({ okPreviewCspViolation: { blocked: [] } })).toBeNull();
+    expect(parsePreviewCspViolationMessage({ psPreviewHeight: 400 })).toBeNull();
+    expect(parsePreviewCspViolationMessage({ psPreviewCspViolation: null })).toBeNull();
+    expect(parsePreviewCspViolationMessage({ psPreviewCspViolation: {} })).toBeNull();
+    expect(parsePreviewCspViolationMessage({ psPreviewCspViolation: { blocked: 'x' } })).toBeNull();
+    expect(parsePreviewCspViolationMessage({ psPreviewCspViolation: { blocked: [] } })).toBeNull();
   });
 });

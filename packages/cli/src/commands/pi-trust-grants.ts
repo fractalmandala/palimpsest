@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { lstatSync, mkdirSync, readdirSync, readFileSync, rmdirSync, unlinkSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { atomicWriteFileSync, okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import { atomicWriteFileSync, psUserHomeDir } from '@palimpsest/core/server';
 import { escapeDisplayPath } from '../utils/escape-display-path.ts';
 import { isObject } from '../utils/is-object.ts';
 
@@ -27,7 +27,7 @@ function digest(path: string): string {
 }
 
 function receiptsRoot(home: string): string {
-  return join(okUserHomeDir(resolve(home)), 'pi-trust');
+  return join(psUserHomeDir(resolve(home)), 'pi-trust');
 }
 
 function receiptsDirectory(home: string, cwd: string): string {

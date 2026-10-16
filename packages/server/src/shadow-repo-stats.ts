@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { parseWriterId } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { parseWriterId } from '@palimpsest/core/shadow-repo-layout';
 import type { ShadowHandle } from './shadow-repo.ts';
 import { shadowGit } from './shadow-repo.ts';
 

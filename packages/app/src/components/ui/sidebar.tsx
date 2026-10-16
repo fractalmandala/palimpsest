@@ -1,4 +1,4 @@
-import { detectEmbeddedHostFromBrowser } from '@inkeep/open-knowledge-core/constants/embedded-host';
+import { detectEmbeddedHostFromBrowser } from '@palimpsest/core/constants/embedded-host';
 import { useLingui } from '@lingui/react/macro';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeft, PanelLeftOpen } from 'lucide-react';
@@ -247,7 +247,7 @@ function SidebarProvider({
   }, [partition, open, canDock, cover, setOpen]);
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && window.okDesktop != null) return;
+    if (typeof window !== 'undefined' && window.psDesktop != null) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!matchesKeyboardShortcut(event, 'toggle-files-sidebar')) return;
       if (isOverlayLayerOpen()) return;

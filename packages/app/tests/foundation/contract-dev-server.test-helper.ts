@@ -52,7 +52,7 @@ export function contractServerLauncher({
   const launch: LaunchOwnedServer = async (slot, workerServerEnv) => {
     environments.push(workerServerEnv);
     const request = createViteStartupRequest('127.0.0.1');
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-contract-s${slot}-`)));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-contract-s${slot}-`)));
     let stderr = '';
     const proc = spawn(
       process.execPath,

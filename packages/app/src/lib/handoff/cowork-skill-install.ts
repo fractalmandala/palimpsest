@@ -125,7 +125,7 @@ function resolveStorage(
 
 function defaultFallbackSkillVersion(): string {
   if (typeof window === 'undefined') return 'unknown';
-  return window.okDesktop?.appVersion ?? 'unknown';
+  return window.psDesktop?.appVersion ?? 'unknown';
 }
 
 async function defaultFetchSnapshot(): Promise<SkillInstallStateSnapshotShape | null> {

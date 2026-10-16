@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
-import type { OkEditorViewMenuStateSnapshot } from './desktop-bridge-types';
+import type { PsEditorViewMenuStateSnapshot } from './desktop-bridge-types';
 
-export type ViewMenuState = Partial<OkEditorViewMenuStateSnapshot>;
+export type ViewMenuState = Partial<PsEditorViewMenuStateSnapshot>;
 
 let state: ViewMenuState = {};
 const listeners = new Set<() => void>();

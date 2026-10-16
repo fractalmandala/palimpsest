@@ -14,7 +14,7 @@ export async function createControlledGh(options: {
   lookup: 'park' | 'complete';
   status?: 'park' | 'complete';
 }) {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-gh-lifecycle-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-gh-lifecycle-'));
   const sockets = new Map<Socket, GhPhase>();
   const released = new Set<GhPhase>();
   let cleaningUp = false;

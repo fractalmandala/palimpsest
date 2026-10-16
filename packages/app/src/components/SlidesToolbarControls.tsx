@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { OkSlidesOpenResult } from '@/lib/desktop-bridge-types';
+import type { PsSlidesOpenResult } from '@/lib/desktop-bridge-types';
 import { recordSlidesOpened } from '@/lib/slides-telemetry';
 import { useBooleanFrontmatterField } from '@/lib/use-boolean-frontmatter-field';
 import { useWorkspace } from '@/lib/use-workspace';
@@ -24,7 +24,7 @@ interface SlidesOpenCopy {
 }
 
 async function openSlidesDeck(
-  slides: { open(docPath: string): Promise<OkSlidesOpenResult> },
+  slides: { open(docPath: string): Promise<PsSlidesOpenResult> },
   docPath: string,
   copy: SlidesOpenCopy,
   retry: () => void,
@@ -87,7 +87,7 @@ async function openSlidesDeck(
 }
 
 async function runOpenAttempt(
-  slides: { open(docPath: string): Promise<OkSlidesOpenResult> },
+  slides: { open(docPath: string): Promise<PsSlidesOpenResult> },
   docPath: string,
   copy: SlidesOpenCopy,
   openingPathsRef: { current: Set<string> },
@@ -118,7 +118,7 @@ function useSlidevAvailability(isDeck: boolean): SlidevAvailability {
     let resolved = false;
     const probe = () => {
       lastProbeAt = Date.now();
-      const slides = window.okDesktop?.slides;
+      const slides = window.psDesktop?.slides;
       if (slides == null) {
         setAvailability('unavailable');
         return;
@@ -179,7 +179,7 @@ export function SlidesToolbarControls({
         );
 
   async function openAsSlides() {
-    const slides = window.okDesktop?.slides;
+    const slides = window.psDesktop?.slides;
     if (slides == null || docPath == null) return;
     await runOpenAttempt(
       slides,

@@ -3,7 +3,7 @@ import {
   type ThreadExitCause,
   type ThreadExitDiagnosis,
   type ThreadFailureDetail,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 
 interface AgentExit {
   exitCode: number | null;

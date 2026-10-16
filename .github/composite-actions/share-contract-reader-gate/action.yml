@@ -1,5 +1,5 @@
 name: Share contract reader gate
-description: Attest that a deployed Open Knowledge reader accepts the fixed v2 share corpus.
+description: Attest that a deployed Palimpsest reader accepts the fixed v2 share corpus.
 
 inputs:
   origin:

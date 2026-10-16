@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 

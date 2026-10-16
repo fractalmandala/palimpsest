@@ -1,4 +1,4 @@
-import { ServerInfoSuccessSchema } from '@inkeep/open-knowledge-core/schemas/api';
+import { ServerInfoSuccessSchema } from '@palimpsest/core/schemas/api';
 import { handleBranchSwitched } from '../editor/branch-invalidation';
 import type { ProviderPool } from '../editor/provider-pool';
 import { emitBranchChanged } from './documents-events';
@@ -44,7 +44,7 @@ export async function refreshServerInfo(pool: ProviderPool, baseUrl = ''): Promi
   const result = ServerInfoSuccessSchema.safeParse(info);
   if (!result.success) {
     console.warn(
-      JSON.stringify({ event: 'ok-server-info-schema-mismatch', issues: result.error.issues }),
+      JSON.stringify({ event: 'ps-server-info-schema-mismatch', issues: result.error.issues }),
     );
     return;
   }

@@ -84,7 +84,7 @@ async function installLocalTabSession(
 ) {
   await page.addInitScript((sessionState) => {
     window.localStorage.setItem(
-      `ok-editor-tabs-v1:${window.location.origin}`,
+      `ps-editor-tabs-v1:${window.location.origin}`,
       JSON.stringify({
         updatedAt: '2026-05-12T00:00:00.000Z',
         panes: [
@@ -157,7 +157,7 @@ async function expectPersistedTabSession(
   await expect
     .poll(async () =>
       page.evaluate(() => {
-        const raw = window.localStorage.getItem(`ok-editor-tabs-v1:${window.location.origin}`);
+        const raw = window.localStorage.getItem(`ps-editor-tabs-v1:${window.location.origin}`);
         if (!raw) return null;
         const parsed = JSON.parse(raw) as {
           panes?: Array<{ openTabs?: unknown; activeTabId?: unknown }>;
@@ -176,7 +176,7 @@ async function expectPersistedPinnedTabs(page: Page, expected: string[]) {
   await expect
     .poll(async () =>
       page.evaluate(() => {
-        const raw = window.localStorage.getItem(`ok-editor-tabs-v1:${window.location.origin}`);
+        const raw = window.localStorage.getItem(`ps-editor-tabs-v1:${window.location.origin}`);
         if (!raw) return null;
         const parsed = JSON.parse(raw) as { panes?: Array<{ pinnedTabIds?: unknown }> };
         const pinnedTabIds = parsed.panes?.[0]?.pinnedTabIds;

@@ -1,4 +1,4 @@
-import type { WorktreeSelectorModel } from '@inkeep/open-knowledge-core';
+import type { WorktreeSelectorModel } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { checkoutIdentity } from './checkout-identity';
 

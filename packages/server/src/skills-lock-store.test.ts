@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import type { SkillLockEntry } from '@inkeep/open-knowledge-core/skills-catalog';
+import type { SkillLockEntry } from '@palimpsest/core/skills-catalog';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { mutateSkillsLock, readSkillsLockFile } from './skills-lock-store.ts';
 
@@ -23,8 +23,8 @@ const record = (name: string, value: SkillLockEntry) =>
   mutateSkillsLock(lockPath, (lock) => ({ ...lock, skills: { ...lock.skills, [name]: value } }));
 
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'ok-skills-lock-'));
-  lockPath = join(base, '.ok', 'skills-lock.json');
+  base = mkdtempSync(join(tmpdir(), 'ps-skills-lock-'));
+  lockPath = join(base, '.ps', 'skills-lock.json');
 });
 
 afterEach(() => {

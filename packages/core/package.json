@@ -1,5 +1,5 @@
 {
-  "name": "@inkeep/open-knowledge-core",
+  "name": "@palimpsest/core",
   "version": "0.86.18",
   "license": "GPL-3.0-or-later",
   "private": true,
@@ -149,11 +149,11 @@
       "types": "./dist/config-bind-config-doc.d.mts",
       "default": "./dist/config-bind-config-doc.mjs"
     },
-    "./config/bind-okignore-doc": {
-      "@inkeep/source": "./src/config/bind-okignore-doc.ts",
-      "development": "./src/config/bind-okignore-doc.ts",
-      "types": "./dist/config-bind-okignore-doc.d.mts",
-      "default": "./dist/config-bind-okignore-doc.mjs"
+    "./config/bind-psignore-doc": {
+      "@inkeep/source": "./src/config/bind-psignore-doc.ts",
+      "development": "./src/config/bind-psignore-doc.ts",
+      "types": "./dist/config-bind-psignore-doc.d.mts",
+      "default": "./dist/config-bind-psignore-doc.mjs"
     },
     "./config/errors": {
       "@inkeep/source": "./src/config/errors.ts",

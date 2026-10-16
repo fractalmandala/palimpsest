@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { join, resolve } from 'node:path';
 import type { Hocuspocus } from '@hocuspocus/server';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import {
   type ConflictEntryWire,
   SyncConflictContentSuccessSchema,
@@ -14,7 +14,7 @@ import {
   SyncStatusSchema,
   SyncTriggerRequestSchema,
   SyncTriggerSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import type { ConflictAuthority } from '../conflict-authority.ts';
 import {
@@ -312,7 +312,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
             {
               handler: 'sync-resolve-conflict',
               detail:
-                'This file has no tracked conflict — it may have been resolved by another session, or the path may be stale. Refresh the conflict list in the OpenKnowledge app before retrying.',
+                'This file has no tracked conflict — it may have been resolved by another session, or the path may be stale. Refresh the conflict list in the Palimpsest app before retrying.',
               extensions: { file: e.file },
             },
           );

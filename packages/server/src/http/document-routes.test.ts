@@ -14,7 +14,7 @@ import { ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Hocuspocus } from '@hocuspocus/server';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { makeCaptureRes, makeSyntheticReq } from '../composition-rig.test-helper.ts';
 import { createTestConflictAuthority } from '../conflict-authority.test-helper.ts';
@@ -47,7 +47,7 @@ let projectDir = '';
 
 beforeEach(() => {
   projectDir = mkdtempSync(join(tmpdir(), 'document-routes-test-'));
-  mkdirSync(join(projectDir, '.ok', LOCAL_DIR), { recursive: true });
+  mkdirSync(join(projectDir, '.ps', LOCAL_DIR), { recursive: true });
 });
 
 afterEach(() => {

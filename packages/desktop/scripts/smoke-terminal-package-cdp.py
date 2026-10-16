@@ -16,7 +16,7 @@ DEFAULT_DEBUG_TARGETS_URL = "http://127.0.0.1:9222/json/list"
 DEFAULT_DISCOVERY_DEADLINE_MS = 20_000
 DEFAULT_ECHO_DEADLINE_MS = 30_000
 ECHO_REPORT_MARGIN_MS = 10_000
-MARKER = "OK_PACKAGED_PTY_ECHO"
+MARKER = "PS_PACKAGED_PTY_ECHO"
 MAX_OBSERVED_TARGETS = 8
 MAX_TARGET_FIELD_LENGTH = 160
 
@@ -96,11 +96,11 @@ def evaluate_value(socket_url: str, expression: str, timeout: float = 5) -> obje
 
 
 def discovery_deadline_ms() -> int:
-    return int(os.environ.get("OK_SMOKE_DISCOVERY_DEADLINE_MS") or DEFAULT_DISCOVERY_DEADLINE_MS)
+    return int(os.environ.get("PS_SMOKE_DISCOVERY_DEADLINE_MS") or DEFAULT_DISCOVERY_DEADLINE_MS)
 
 
 def echo_deadline_ms() -> int:
-    return int(os.environ.get("OK_SMOKE_ECHO_DEADLINE_MS") or DEFAULT_ECHO_DEADLINE_MS)
+    return int(os.environ.get("PS_SMOKE_ECHO_DEADLINE_MS") or DEFAULT_ECHO_DEADLINE_MS)
 
 
 def renderer_echo_timeout_ms() -> int:
@@ -108,7 +108,7 @@ def renderer_echo_timeout_ms() -> int:
     remaining = budget - ECHO_REPORT_MARGIN_MS
     if remaining <= 0:
         raise ValueError(
-            f"OK_SMOKE_ECHO_DEADLINE_MS={budget} leaves no room for the renderer's own timer, "
+            f"PS_SMOKE_ECHO_DEADLINE_MS={budget} leaves no room for the renderer's own timer, "
             f"which must fire {ECHO_REPORT_MARGIN_MS}ms earlier so its partial-output message wins "
             f"the race against the socket bound; set it above {ECHO_REPORT_MARGIN_MS}"
         )
@@ -116,7 +116,7 @@ def renderer_echo_timeout_ms() -> int:
 
 
 def debug_targets_url() -> str:
-    return os.environ.get("OK_SMOKE_CDP_LIST_URL") or DEFAULT_DEBUG_TARGETS_URL
+    return os.environ.get("PS_SMOKE_CDP_LIST_URL") or DEFAULT_DEBUG_TARGETS_URL
 
 
 def describe_discovery_phase(
@@ -180,8 +180,8 @@ def find_editor_websocket() -> str:
                 try:
                     is_project_editor = evaluate_value(
                         str(socket_url),
-                        "window.okDesktop?.config?.mode === 'editor'"
-                        " && window.okDesktop.config.projectPath.length > 0",
+                        "window.psDesktop?.config?.mode === 'editor'"
+                        " && window.psDesktop.config.projectPath.length > 0",
                         timeout=2,
                     )
                     record_observed_target(
@@ -222,7 +222,7 @@ def find_editor_websocket() -> str:
 def evaluate_pty_echo(socket_url: str) -> Dict[str, object]:
     expression = f"""
       (async () => {{
-        const bridge = window.okDesktop;
+        const bridge = window.psDesktop;
         if (!bridge?.config?.ptyAvailable) {{
           throw new Error('packaged renderer did not expose PTY capability');
         }}
@@ -231,7 +231,7 @@ def evaluate_pty_echo(socket_url: str) -> Dict[str, object]:
         }}
         const marker = {json.dumps(MARKER)};
         const startedAt = performance.now();
-        const phaseRecords = {json.dumps(os.environ.get("OK_PTY_PHASE_TRACE") == "1")} ? [] : null;
+        const phaseRecords = {json.dumps(os.environ.get("PS_PTY_PHASE_TRACE") == "1")} ? [] : null;
         if (phaseRecords) window.__okPtyPhaseTrace = phaseRecords;
         const markPhase = phaseRecords ? (phase, edge, ptyId = null) => {{
           if (phaseRecords.length >= 256) return;
@@ -382,7 +382,7 @@ def evaluate_pty_echo(socket_url: str) -> Dict[str, object]:
             f"error={type(error).__name__}: {error}"
         ) from error
     finally:
-        if os.environ.get("OK_PTY_PHASE_TRACE") == "1":
+        if os.environ.get("PS_PTY_PHASE_TRACE") == "1":
             try:
                 remaining = budget_ms / 1000 - (time.monotonic() - started)
                 if remaining <= 0:
@@ -419,7 +419,7 @@ def main() -> int:
         return 1
     # A driver tunneled to a packaged app on another OS pins the target via the
     # environment; a local driver defaults to its own platform.
-    expected_platform = os.environ.get("OK_SMOKE_EXPECT_PLATFORM") or sys.platform
+    expected_platform = os.environ.get("PS_SMOKE_EXPECT_PLATFORM") or sys.platform
     if result.get("platform") != expected_platform:
         print(
             "ERROR: packaged PTY driver exercised "

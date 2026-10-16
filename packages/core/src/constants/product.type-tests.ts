@@ -1,5 +1,5 @@
 import type { DesktopProduct } from './product.ts';
 
 declare const serverName: DesktopProduct['mcpServerName'];
-const _sharesOpenKnowledgePrefix: `open-knowledge${string}` = serverName;
-void _sharesOpenKnowledgePrefix;
+const _sharesPalimpsestPrefix: `palimpsest${string}` = serverName;
+void _sharesPalimpsestPrefix;

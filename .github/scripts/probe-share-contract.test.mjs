@@ -41,7 +41,7 @@ afterEach(async () => {
 function htmlFor(fixture, overrides = {}) {
   const sourceHref = overrides.sourceHref ?? fixture.sharedUrl;
   const customSchemeHref =
-    overrides.customSchemeHref ?? `openknowledge://share?token=${fixture.token}`;
+    overrides.customSchemeHref ?? `palimpsest://share?token=${fixture.token}`;
   const expectedName =
     fixture.target.kind === 'folder' && fixture.target.folderPath === ''
       ? new URL(fixture.sharedUrl).pathname.split('/')[2]
@@ -55,7 +55,7 @@ function htmlFor(fixture, overrides = {}) {
 
 async function startReader({ manifest, pages = new Map(), malformedManifest = false } = {}) {
   const server = createServer((request, response) => {
-    if (request.url === '/.well-known/openknowledge-share-contract.json') {
+    if (request.url === '/.well-known/palimpsest-share-contract.json') {
       if (manifest === undefined) {
         response.writeHead(404).end('missing');
         return;
@@ -138,7 +138,7 @@ describe('share-contract reader probe', () => {
     const fetchImpl = async (input) => {
       const url = new URL(String(input));
       requestedUrls.push(url.href);
-      if (url.pathname === '/.well-known/openknowledge-share-contract.json') {
+      if (url.pathname === '/.well-known/palimpsest-share-contract.json') {
         return new Response(JSON.stringify(reader.manifest), {
           headers: { 'content-type': 'application/json' },
         });
@@ -231,7 +231,7 @@ describe('share-contract reader probe', () => {
       `/d/${documentFixture.token}`,
       htmlFor(documentFixture, {
         sourceHref:
-          'https://github.com/inkeep/open-knowledge/blob/main/modules/backend-libraries.md',
+          'https://github.com/fractalmandala/palimpsest/blob/main/modules/backend-libraries.md',
       }),
     );
     await expectProbeFailure(compatibleReader({ pages }), /source href/);
@@ -243,7 +243,7 @@ describe('share-contract reader probe', () => {
     pages.set(
       `/d/${contentRootFixture.token}`,
       htmlFor(contentRootFixture, {
-        customSchemeHref: `openknowledge://share?url=${encodeURIComponent(contentRootFixture.sharedUrl)}`,
+        customSchemeHref: `palimpsest://share?url=${encodeURIComponent(contentRootFixture.sharedUrl)}`,
       }),
     );
     await expectProbeFailure(compatibleReader({ pages }), /custom URI/);

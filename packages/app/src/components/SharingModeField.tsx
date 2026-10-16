@@ -6,7 +6,7 @@ import { dispatchExternalLinkClick } from '@/lib/external-link';
 import { cn } from '@/lib/utils';
 
 const CONFIG_SHARING_DOCS_URL =
-  'https://openknowledge.ai/docs/reference/what-open-knowledge-writes';
+  'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/what-palimpsest-writes.mdx';
 
 export type SharingMode = 'shared' | 'local-only';
 

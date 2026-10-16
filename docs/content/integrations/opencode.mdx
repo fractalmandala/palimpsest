@@ -1,6 +1,6 @@
 ---
 title: OpenCode
-description: Use OpenKnowledge with OpenCode.
+description: Use Palimpsest with OpenCode.
 icon: custom/OpenCode
 ---
 
@@ -10,20 +10,20 @@ icon: custom/OpenCode
 
 <McpInstall editor="OpenCode" />
 
-OpenCode reads MCP servers from `opencode.json` in the project root, or `~/.config/opencode/opencode.json` for a global install. `ok init` writes the `open-knowledge` server under the top-level `mcp` key in both, using the same resilient launcher every other editor gets. It also installs the OpenKnowledge skill to `.opencode/skills/open-knowledge/`, which OpenCode scans automatically.
+OpenCode reads MCP servers from `opencode.json` in the project root, or `~/.config/opencode/opencode.json` for a global install. `ps init` writes the `palimpsest` server under the top-level `mcp` key in both, using the same resilient launcher every other editor gets. It also installs the Palimpsest skill to `.opencode/skills/palimpsest/`, which OpenCode scans automatically.
 
-OpenKnowledge Beta registers as `open-knowledge-beta` instead; see [Beta uses its own entry](/docs/reference/what-open-knowledge-writes#beta-uses-its-own-entry).
+Palimpsest Beta registers as `palimpsest-beta` instead; see [Beta uses its own entry](/docs/reference/what-palimpsest-writes#beta-uses-its-own-entry).
 
 ## Use a local model
 
-OpenCode is model-agnostic and talks to any OpenAI-compatible endpoint, so you can pair OpenKnowledge with a model running entirely on your machine — no cloud round-trip. Point OpenCode at [Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai), or a self-hosted server in the same `opencode.json` that holds the OpenKnowledge MCP entry:
+OpenCode is model-agnostic and talks to any OpenAI-compatible endpoint, so you can pair Palimpsest with a model running entirely on your machine — no cloud round-trip. Point OpenCode at [Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai), or a self-hosted server in the same `opencode.json` that holds the Palimpsest MCP entry:
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
-  // Added by `ok init` — connects OpenCode to your knowledge base.
+  // Added by `ps init` — connects OpenCode to your knowledge base.
   "mcp": {
-    "open-knowledge": { "type": "local", "enabled": true, "command": ["..."] }
+    "palimpsest": { "type": "local", "enabled": true, "command": ["..."] }
   },
   // Your local model, via any OpenAI-compatible endpoint (Ollama shown).
   "provider": {
@@ -36,7 +36,7 @@ OpenCode is model-agnostic and talks to any OpenAI-compatible endpoint, so you c
 }
 ```
 
-Pick the model in OpenCode with `/models`. **The model must support tool/function calling** — that's how it drives OpenKnowledge's `exec` / `write` / `edit` tools; a chat-only model will connect but never call them. See OpenCode's [models](https://opencode.ai/docs/models/), [providers](https://opencode.ai/docs/providers/), and [MCP servers](https://opencode.ai/docs/mcp-servers/) docs for the authoritative provider schema.
+Pick the model in OpenCode with `/models`. **The model must support tool/function calling** — that's how it drives Palimpsest's `exec` / `write` / `edit` tools; a chat-only model will connect but never call them. See OpenCode's [models](https://opencode.ai/docs/models/), [providers](https://opencode.ai/docs/providers/), and [MCP servers](https://opencode.ai/docs/mcp-servers/) docs for the authoritative provider schema.
 
 ## Verify
 
@@ -44,4 +44,4 @@ Open the project in OpenCode and ask:
 
 <VerifyExec subject="OpenCode" />
 
-If OpenCode doesn't use the OpenKnowledge `exec` tool, restart it so it picks up the new MCP entry, and make sure the model you selected supports tool calling. If it's still missing and `ok init` reported your config was `left unchanged`, OpenKnowledge declined to edit your `opencode.json` for the reason shown in parentheses — an unreadable file, a duplicate `mcp` block, or a config too large to edit safely. Fix that and re-run `ok init`.
+If OpenCode doesn't use the Palimpsest `exec` tool, restart it so it picks up the new MCP entry, and make sure the model you selected supports tool calling. If it's still missing and `ps init` reported your config was `left unchanged`, Palimpsest declined to edit your `opencode.json` for the reason shown in parentheses — an unreadable file, a duplicate `mcp` block, or a config too large to edit safely. Fix that and re-run `ps init`.

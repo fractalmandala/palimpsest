@@ -201,7 +201,7 @@ describe('makeIsInStable', () => {
   const inRepo = (args) => spawnSync('git', args, { cwd: dir, encoding: 'utf8', env: gitCleanEnv() });
 
   beforeAll(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-bug-lane-containment-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-bug-lane-containment-'));
     git('init', '--initial-branch=main', '--quiet');
     configureTestGitRepository(dir, (args) => git(...args));
     git('config', 'user.email', 't@t');
@@ -297,7 +297,7 @@ describe('readPendingBumps, run by the job that holds no credential', () => {
 
 describe('the bug-lane entry points the two jobs run', () => {
   const SCRIPT = realpathSync(fileURLToPath(new URL('./bug-lane.mjs', import.meta.url)));
-  const OK_ROOT = join(dirname(SCRIPT), '..', '..');
+  const PS_ROOT = join(dirname(SCRIPT), '..', '..');
   const COPIED = [
     '.github/scripts/bug-lane.mjs',
     '.github/scripts/select-beta-to-promote.mjs',
@@ -330,7 +330,7 @@ describe('the bug-lane entry points the two jobs run', () => {
     const root = scratch('bug-lane-entry-');
     const commit = (id, type, subject) => {
       mkdirSync(join(root, '.changeset'), { recursive: true });
-      writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@inkeep/open-knowledge": ${type}\n---\n\n${id}\n`);
+      writeFileSync(join(root, '.changeset', `${id}.md`), `---\n"@palimpsest/cli": ${type}\n---\n\n${id}\n`);
       git(root, 'add', '-A');
       git(root, 'commit', '-q', '-m', subject);
       return git(root, 'rev-parse', 'HEAD');
@@ -357,7 +357,7 @@ describe('the bug-lane entry points the two jobs run', () => {
     const dir = scratch('bug-lane-no-node-modules-');
     for (const file of COPIED) {
       mkdirSync(dirname(join(dir, file)), { recursive: true });
-      copyFileSync(join(OK_ROOT, file), join(dir, file));
+      copyFileSync(join(PS_ROOT, file), join(dir, file));
     }
     return join(dir, '.github', 'scripts', 'bug-lane.mjs');
   };

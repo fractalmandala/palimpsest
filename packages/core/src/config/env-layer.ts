@@ -30,11 +30,11 @@ export class EnvVarError extends Error {
 
 export const RECOGNIZED_ENV_VARS: ReadonlyMap<string, readonly string[]> = new Map([
   ['PORT', ['server', 'port']],
-  ['OK_BIND', ['server', 'bind']],
-  ['OK_EXTERNAL_URL', ['server', 'externalUrl']],
-  ['OK_ALLOW_EXTERNAL', ['server', 'allowExternal']],
-  ['OK_OPEN_BROWSER', ['server', 'openBrowser']],
-  ['OK_IDLE_SHUTDOWN', ['server', 'idleShutdown']],
+  ['PS_BIND', ['server', 'bind']],
+  ['PS_EXTERNAL_URL', ['server', 'externalUrl']],
+  ['PS_ALLOW_EXTERNAL', ['server', 'allowExternal']],
+  ['PS_OPEN_BROWSER', ['server', 'openBrowser']],
+  ['PS_IDLE_SHUTDOWN', ['server', 'idleShutdown']],
 ]);
 
 function camelToScreamingSnake(segment: string): string {
@@ -132,8 +132,8 @@ function diagnoseUnknownOkVar(
   envVar: string,
   mechanicalTable: ReadonlyMap<string, readonly string[]>,
 ): EnvDiagnostic | null {
-  if (envVar === 'OK_PORT') {
-    return { envVar, message: 'OK_PORT is not read — the port variable is unprefixed PORT.' };
+  if (envVar === 'PS_PORT') {
+    return { envVar, message: 'PS_PORT is not read — the port variable is unprefixed PORT.' };
   }
   const mapped = mechanicalTable.get(envVar);
   if (mapped !== undefined) {

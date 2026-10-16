@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import type {
   ThreadEvent,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger } from '../logger.ts';
@@ -86,7 +86,7 @@ function makeManager(seams: {
     isExcludedPath: () => false,
     isIgnoredPath: () => false,
     getServerUrl: () => 'http://127.0.0.1:4242',
-    getMcpStdioCommand: () => ({ command: 'open-knowledge', args: ['mcp', '--port', '4242'] }),
+    getMcpStdioCommand: () => ({ command: 'palimpsest', args: ['mcp', '--port', '4242'] }),
     resolveLoginShellPath: async () => null,
     log,
     ...seams,
@@ -131,7 +131,7 @@ function findStatus(
   );
 }
 
-const BRIDGE_PATH = '/tmp/pi-project/.pi/extensions/open-knowledge.ts';
+const BRIDGE_PATH = '/tmp/pi-project/.pi/extensions/palimpsest.ts';
 
 const unprovisioned: PiAcpBridgeProbe = {
   project: 'ready',

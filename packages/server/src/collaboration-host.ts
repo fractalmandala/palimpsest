@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'node:http';
 import type { Duplex } from 'node:stream';
 import type { Hocuspocus } from '@hocuspocus/server';
-import { AGENT_ICON_COLORS, colorFromSeed, iconFromClientName } from '@inkeep/open-knowledge-core';
+import { AGENT_ICON_COLORS, colorFromSeed, iconFromClientName } from '@palimpsest/core';
 import { WebSocketServer } from 'ws';
 import type { AcpThreadManager } from './acp/thread-manager.ts';
 import { attachAcpThreadSocket } from './acp/thread-socket.ts';
@@ -252,7 +252,7 @@ export function createCollaborationHost(options: CollaborationHostOptions): Coll
     if (tripsForwardedHeaderTripwire(req, ingressPolicy)) {
       log.warn(
         { url: req.url, host: req.headers.host },
-        '[remote] refused proxied WS upgrade; consent with OK_ALLOW_EXTERNAL=1 + OK_EXTERNAL_URL (or server.allowExternal + server.externalUrl in config)',
+        '[remote] refused proxied WS upgrade; consent with PS_ALLOW_EXTERNAL=1 + PS_EXTERNAL_URL (or server.allowExternal + server.externalUrl in config)',
       );
       warnForwardedHeaderRefusalOnce(log, 'collab-upgrade');
       socket.destroy();

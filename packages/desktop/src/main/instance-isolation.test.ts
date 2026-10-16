@@ -36,23 +36,23 @@ describe('sanitizeInstanceName', () => {
 describe('deriveInstanceUserDataDir', () => {
   test('appends the sanitized name as a sibling directory suffix', () => {
     expect(
-      deriveInstanceUserDataDir('/Users/me/Library/Application Support/OpenKnowledge', 'b'),
-    ).toBe('/Users/me/Library/Application Support/OpenKnowledge (b)');
+      deriveInstanceUserDataDir('/Users/me/Library/Application Support/Palimpsest', 'b'),
+    ).toBe('/Users/me/Library/Application Support/Palimpsest (b)');
   });
 
   test('uses the sanitized form of the name', () => {
-    expect(deriveInstanceUserDataDir('/data/OpenKnowledge', 'my work/2')).toBe(
-      '/data/OpenKnowledge (my-work-2)',
+    expect(deriveInstanceUserDataDir('/data/Palimpsest', 'my work/2')).toBe(
+      '/data/Palimpsest (my-work-2)',
     );
   });
 
   test('returns null when the name sanitizes to empty (leave userData untouched)', () => {
-    expect(deriveInstanceUserDataDir('/data/OpenKnowledge', '..')).toBeNull();
-    expect(deriveInstanceUserDataDir('/data/OpenKnowledge', '   ')).toBeNull();
+    expect(deriveInstanceUserDataDir('/data/Palimpsest', '..')).toBeNull();
+    expect(deriveInstanceUserDataDir('/data/Palimpsest', '   ')).toBeNull();
   });
 
   test('keeps the relocated dir a sibling of the base (no escape above its parent)', () => {
-    const out = deriveInstanceUserDataDir('/data/OpenKnowledge', '../../etc');
-    expect(out).toBe('/data/OpenKnowledge (etc)');
+    const out = deriveInstanceUserDataDir('/data/Palimpsest', '../../etc');
+    expect(out).toBe('/data/Palimpsest (etc)');
   });
 });

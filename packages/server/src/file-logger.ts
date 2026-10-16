@@ -1,11 +1,11 @@
 import { mkdirSync, readdirSync, renameSync, statSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import type { LoggerOptions, Logger as PinoLoggerInstance } from 'pino';
 import pino from 'pino';
 
-function okLogsDir(): string {
-  return join(okUserHomeDir(), 'logs');
+function psLogsDir(): string {
+  return join(psUserHomeDir(), 'logs');
 }
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_ROTATED_FILES = 2;
@@ -26,7 +26,7 @@ const REDACT_PATHS = [
 ];
 
 function resolveLogLevel(): string {
-  const envLevel = process.env.OK_LOG_LEVEL ?? process.env.LOG_LEVEL;
+  const envLevel = process.env.PS_LOG_LEVEL ?? process.env.LOG_LEVEL;
   if (envLevel) {
     const allowed = ['fatal', 'error', 'warn', 'info', 'debug'];
     const normalized = envLevel.toLowerCase();
@@ -114,14 +114,14 @@ export interface FileLoggerOptions {
 }
 
 export function createFileLogger(opts: FileLoggerOptions): PinoLoggerInstance {
-  ensureDir(okLogsDir());
+  ensureDir(psLogsDir());
 
   const date = todayDateString();
-  const filePath = opts.filePath ?? join(okLogsDir(), `${opts.name}.${date}.log`);
+  const filePath = opts.filePath ?? join(psLogsDir(), `${opts.name}.${date}.log`);
 
   rotateIfNeeded(filePath);
   const scheduleTimer = opts._setTimeout ?? setTimeout;
-  scheduleTimer(() => pruneLogsDir(okLogsDir()), 5000).unref();
+  scheduleTimer(() => pruneLogsDir(psLogsDir()), 5000).unref();
 
   const dest = pino.destination({ dest: filePath, append: true, sync: true });
 
@@ -199,11 +199,11 @@ export function flushFileLogger(
 }
 
 export function getLogFilePath(name: string): string {
-  return join(okLogsDir(), `${name}.${todayDateString()}.log`);
+  return join(psLogsDir(), `${name}.${todayDateString()}.log`);
 }
 
 export function getLogsDir(): string {
-  return okLogsDir();
+  return psLogsDir();
 }
 
 export { MAX_FILE_SIZE };

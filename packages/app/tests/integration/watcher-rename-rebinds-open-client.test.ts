@@ -1,6 +1,6 @@
 import { renameSync } from 'node:fs';
 import { join } from 'node:path';
-import { getMetrics } from '@inkeep/open-knowledge-server';
+import { getMetrics } from '@palimpsest/server';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   BODY,
@@ -47,7 +47,7 @@ describe('an external (git-sync/watcher) move rebinds the open tab (PRD-8486)', 
 
   beforeAll(async () => {
     server = await createTestServer({
-      contentDir: seedRenameFixtureContentDir('ok-watcher-rename-'),
+      contentDir: seedRenameFixtureContentDir('ps-watcher-rename-'),
     });
     await awaitFileWatcherIndexed(server, OLD_DOC);
     await pollUntil(async () => (await getHeadings(server.port, OLD_DOC)).status === 200, 15_000);
@@ -138,7 +138,7 @@ describe('an external move of a document with unflushed edits rescues them (PRD-
 
   beforeAll(async () => {
     server = await createTestServer({
-      contentDir: seedRenameFixtureContentDir('ok-watcher-rename-rescue-'),
+      contentDir: seedRenameFixtureContentDir('ps-watcher-rename-rescue-'),
       gitEnabled: true,
       debounce: 60_000,
       maxDebounce: 120_000,

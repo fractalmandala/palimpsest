@@ -28,11 +28,11 @@ function userDataDirFor(tmpHome: string): string {
 }
 
 function seedHomeWithLastOpenedProject(prefix: string): SeededHome {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-bg-throttle-${prefix}-`));
-  const projectDir = mkdtempSync(join(tmpdir(), `ok-bg-throttle-${prefix}-project-`));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-bg-throttle-${prefix}-`));
+  const projectDir = mkdtempSync(join(tmpdir(), `ps-bg-throttle-${prefix}-project-`));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   const userDataDir = userDataDirFor(tmpHome);
@@ -64,7 +64,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
     env: {
       ...process.env,
       ...homeEnv(tmpHome),
-      OK_DESKTOP_E2E_SMOKE: '1',
+      PS_DESKTOP_E2E_SMOKE: '1',
     },
   });
 }
@@ -79,7 +79,7 @@ async function findWindow(
       async () => {
         for (const page of app.windows()) {
           const m = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (m === mode) return true;
         }
@@ -92,7 +92,7 @@ async function findWindow(
     )
     .toBe(true);
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) return page;
   }
   throw new Error(`${mode} window vanished between poll resolution and read`);
@@ -113,7 +113,7 @@ interface ThrottleSignal {
 
 async function pushSignal(page: Page, signal: ThrottleSignal): Promise<void> {
   await page.evaluate((s) => {
-    window.okDesktop?.editor.notifyBackgroundThrottle(s);
+    window.psDesktop?.editor.notifyBackgroundThrottle(s);
   }, signal);
 }
 
@@ -139,7 +139,7 @@ async function pushAndExpectThrottling(
 }
 
 test.describe('background-throttle smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(
     !BUILD_EXISTS,

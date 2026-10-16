@@ -1,4 +1,4 @@
-import { sharedExtensions } from '@inkeep/open-knowledge-core';
+import { sharedExtensions } from '@palimpsest/core';
 import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { getSchema } from '@tiptap/core';
 import type { NodeViewProps } from '@tiptap/react';

@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { useEffect, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { emitLocalMenuAction } from '@/lib/local-menu-action-bus';
 import type { TerminalLaunchIntent } from './EditorPane';
 import { subscribeToSignInTerminalExits } from './handoff/sign-in-terminal-events';
@@ -80,7 +80,7 @@ const { SessionsHost } = await import('./SessionsHost');
 
 const NEVER = () => new Promise<never>(() => {});
 
-function makeBridge(overrides: Record<string, unknown>): OkDesktopBridge {
+function makeBridge(overrides: Record<string, unknown>): PsDesktopBridge {
   return {
     platform: 'darwin',
     terminal: {
@@ -91,7 +91,7 @@ function makeBridge(overrides: Record<string, unknown>): OkDesktopBridge {
       ...overrides,
     },
     editor: { notifyViewMenuStateChanged: vi.fn() },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 function Harness({
@@ -101,7 +101,7 @@ function Harness({
   bumpRestoreAfterMount = false,
   launch = null,
 }: {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   restoreNonce?: number;
   startVisible?: boolean;
   bumpRestoreAfterMount?: boolean;

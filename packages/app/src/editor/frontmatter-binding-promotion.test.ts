@@ -1,4 +1,4 @@
-import { bindFrontmatterDoc, type FrontmatterBinding } from '@inkeep/open-knowledge-core';
+import { bindFrontmatterDoc, type FrontmatterBinding } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import {

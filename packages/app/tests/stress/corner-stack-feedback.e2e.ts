@@ -84,7 +84,7 @@ test.describe('feedback card in the corner stack, web host', () => {
     const card = await openWithEligibleFeedback(page, api, 'corner-feedback-nobridge', WIDE);
     const stack = cornerStack(page);
 
-    expect(await page.evaluate(() => 'okDesktop' in window)).toBe(false);
+    expect(await page.evaluate(() => 'psDesktop' in window)).toBe(false);
     await expect(stack.getByTestId('update-notices-list')).toHaveCount(0);
     expect(
       await cornerStackColumn(page).evaluate((el) =>

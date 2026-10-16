@@ -24,7 +24,7 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 
 async function main(): Promise<void> {
   ensureSpawnHelperExecutable();
-  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pty-reap-')));
+  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pty-reap-')));
   process.on('exit', () => removeTempDirBestEffort(tmp));
 
   let data = '';

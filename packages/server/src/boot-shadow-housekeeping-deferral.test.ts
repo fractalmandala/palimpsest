@@ -86,7 +86,7 @@ describe('createServer() — boot shadow housekeeping is deferred past ready', (
     gates.gcConfig = makeGate();
     gates.renameGc = makeGate();
     gates.maintenance = makeGate();
-    projectDir = await mkdtemp(join(tmpdir(), 'ok-boot-housekeeping-'));
+    projectDir = await mkdtemp(join(tmpdir(), 'ps-boot-housekeeping-'));
     const git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(projectDir);
@@ -176,8 +176,8 @@ describe('createServer() — boot shadow housekeeping is deferred past ready', (
   }, 30_000);
 
   test('an exhausted rebuild retry budget logs, gives up, and the chain continues', async () => {
-    const prevInterval = process.env.OK_BOOT_RENAME_GC_RETRY_INTERVAL_MS;
-    process.env.OK_BOOT_RENAME_GC_RETRY_INTERVAL_MS = '10';
+    const prevInterval = process.env.PS_BOOT_RENAME_GC_RETRY_INTERVAL_MS;
+    process.env.PS_BOOT_RENAME_GC_RETRY_INTERVAL_MS = '10';
     try {
       gates.renameGcSkipFirst = Number.MAX_SAFE_INTEGER;
       gates.gcConfig.release();
@@ -200,8 +200,8 @@ describe('createServer() — boot shadow housekeeping is deferred past ready', (
       expect(gates.renameGc.calls).toBe(30);
       gates.maintenance.release();
     } finally {
-      if (prevInterval === undefined) delete process.env.OK_BOOT_RENAME_GC_RETRY_INTERVAL_MS;
-      else process.env.OK_BOOT_RENAME_GC_RETRY_INTERVAL_MS = prevInterval;
+      if (prevInterval === undefined) delete process.env.PS_BOOT_RENAME_GC_RETRY_INTERVAL_MS;
+      else process.env.PS_BOOT_RENAME_GC_RETRY_INTERVAL_MS = prevInterval;
     }
   }, 30_000);
 

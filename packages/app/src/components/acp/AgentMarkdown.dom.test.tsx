@@ -176,7 +176,7 @@ describe('single newlines', () => {
 });
 
 const workspace: Workspace = {
-  contentDir: '/Users/abraham/repo/public/open-knowledge',
+  contentDir: '/Users/abraham/repo/public/palimpsest',
   pathSeparator: '/',
 };
 const pages = new Set(['reports/foo/REPORT', 'notes/haiku', 'notes/@team']);
@@ -199,7 +199,7 @@ describe('AgentMarkdown doc-path links', () => {
 
   test('a markdown link the agent wrote to a doc opens in-app instead of being blocked', () => {
     const { container } = renderWithResolver(
-      'See [REPORT.md](public/open-knowledge/reports/foo/REPORT.md) for the findings.',
+      'See [REPORT.md](public/palimpsest/reports/foo/REPORT.md) for the findings.',
     );
 
     const anchor = container.querySelector('[data-testid="agent-thread-doc-link"]');
@@ -231,7 +231,7 @@ describe('AgentMarkdown doc-path links', () => {
 
   test('a markdown link to a file: URL of a workspace doc opens in-app too', () => {
     const { container } = renderWithResolver(
-      '[the report](file:///Users/abraham/repo/public/open-knowledge/reports/foo/REPORT.md)',
+      '[the report](file:///Users/abraham/repo/public/palimpsest/reports/foo/REPORT.md)',
     );
 
     const anchor = container.querySelector('[data-testid="agent-thread-doc-link"]');
@@ -241,13 +241,13 @@ describe('AgentMarkdown doc-path links', () => {
 
   test('a repo-root-relative .md path in prose renders as an in-app hash link', () => {
     const { container } = renderWithResolver(
-      'Written to public/open-knowledge/reports/foo/REPORT.md (458 lines)',
+      'Written to public/palimpsest/reports/foo/REPORT.md (458 lines)',
     );
     const link = container.querySelector('a[data-testid="agent-thread-doc-link"]');
     expect(link).not.toBeNull();
     expect(link?.getAttribute('href')).toBe('#/reports/foo/REPORT');
     expect(link?.getAttribute('target')).toBeNull();
-    expect(link?.textContent).toContain('public/open-knowledge/reports/foo/REPORT.md');
+    expect(link?.textContent).toContain('public/palimpsest/reports/foo/REPORT.md');
   });
 
   test('a backticked path resolves too — the mono styling survives the wrap', () => {
@@ -327,7 +327,7 @@ describe('AgentMarkdown doc-path links', () => {
 
   test('a reference-style link stays literal text — the renderer never joins a definition to its reference', () => {
     const { container } = renderWithResolver(
-      'see [the report][r]\n\n[r]: public/open-knowledge/reports/foo/REPORT.md',
+      'see [the report][r]\n\n[r]: public/palimpsest/reports/foo/REPORT.md',
     );
     expect(container.querySelector('a')).toBeNull();
     expect(container.textContent).toContain('[the report][r]');
@@ -335,7 +335,7 @@ describe('AgentMarkdown doc-path links', () => {
 
   test('a heading fragment on a doc link survives onto the in-app route', () => {
     const { container } = renderWithResolver(
-      '[findings](public/open-knowledge/reports/foo/REPORT.md#findings)',
+      '[findings](public/palimpsest/reports/foo/REPORT.md#findings)',
     );
     const anchor = container.querySelector('[data-testid="agent-thread-doc-link"]');
     expect(anchor?.getAttribute('href')).toBe('#/reports/foo/REPORT#findings');
@@ -343,7 +343,7 @@ describe('AgentMarkdown doc-path links', () => {
 
   test('a fragment on a prose or backticked path lands on the in-app route as well', () => {
     const { container } = renderWithResolver(
-      'see public/open-knowledge/reports/foo/REPORT.md#findings and `reports/foo/REPORT.md#root-cause`',
+      'see public/palimpsest/reports/foo/REPORT.md#findings and `reports/foo/REPORT.md#root-cause`',
     );
     const hrefs = Array.from(
       container.querySelectorAll('[data-testid="agent-thread-doc-link"]'),

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { awaitFileWatcherIndexed, createTestServer, type TestServer } from './test-harness';
@@ -9,7 +9,7 @@ import { awaitFileWatcherIndexed, createTestServer, type TestServer } from './te
 let server: TestServer;
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-sidebar-assets-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-sidebar-assets-')));
   mkdirSync(join(contentDir, 'docs', 'media'), { recursive: true });
   writeFileSync(
     join(contentDir, 'docs', 'guide.md'),

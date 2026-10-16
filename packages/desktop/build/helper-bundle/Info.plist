@@ -24,13 +24,13 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleIdentifier</key>
-    <string>com.inkeep.open-knowledge.server</string>
+    <string>com.fractalmandala.palimpsest.server</string>
     <key>CFBundleName</key>
-    <string>OpenKnowledge Server</string>
+    <string>Palimpsest Server</string>
     <key>CFBundleDisplayName</key>
-    <string>OpenKnowledge Server</string>
+    <string>Palimpsest Server</string>
     <key>CFBundleExecutable</key>
-    <string>OpenKnowledge Helper</string>
+    <string>Palimpsest Helper</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleVersion</key>

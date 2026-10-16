@@ -4,7 +4,7 @@ import { describe, expect, onTestFinished, test, vi } from 'vitest';
 import { APP_PACKAGE_ROOT, computeSeedKey, seedKeyInputs } from '../stress/_helpers/seed-key.ts';
 import { withTempDir } from '../temp-dir.test-helper.ts';
 
-const TEMP_DIR_PREFIX = 'ok-warm-cache-seed-key-';
+const TEMP_DIR_PREFIX = 'ps-warm-cache-seed-key-';
 const WORKSPACE_ROOT_FILE_NAMES = ['pnpm-lock.yaml'];
 const APP_PACKAGE_FILE_NAMES = [
   'vite.config.ts',

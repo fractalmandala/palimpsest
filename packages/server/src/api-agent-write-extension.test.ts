@@ -94,7 +94,7 @@ describe('agent-write-md explicit extension → disk (PRD-6836)', () => {
 
   beforeEach(async () => {
     _resetDocExtensionsForTests();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-write-ext-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-write-ext-'));
     contentDir = tmpDir;
     const git = simpleGit({ baseDir: tmpDir });
     await git.init();

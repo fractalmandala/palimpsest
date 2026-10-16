@@ -1,4 +1,4 @@
-import { type LinterConfig, lintDocument } from '@inkeep/open-knowledge-core';
+import { type LinterConfig, lintDocument } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { partitionFrontmatterProblems } from './useFrontmatterDiagnostics.ts';
 
@@ -9,7 +9,7 @@ const config: LinterConfig = {
   plugins: {
     markdownlint: { enabled: true, rules: {} },
     frontmatter: { enabled: true, schemas: [] },
-    okf: { enabled: true },
+    psf: { enabled: true },
   },
 };
 
@@ -21,7 +21,7 @@ describe('partitionFrontmatterProblems over real OKF diagnostics', () => {
     const diagnostics = await lintDocument(text, config, DOC_NAME);
 
     const produced = diagnostics.find(
-      (d) => d.source === 'okf' && d.code === 'frontmatter-required',
+      (d) => d.source === 'psf' && d.code === 'frontmatter-required',
     );
     expect(produced?.frontmatterScope).toBe('missing');
     expect(produced?.frontmatterProperty).toBe('type');
@@ -36,13 +36,13 @@ describe('partitionFrontmatterProblems over real OKF diagnostics', () => {
     const diagnostics = await lintDocument(text, config, DOC_NAME);
 
     const produced = diagnostics.find(
-      (d) => d.source === 'okf' && d.frontmatterScope === 'invalid',
+      (d) => d.source === 'psf' && d.frontmatterScope === 'invalid',
     );
     expect(produced?.message).toContain('tags');
 
     const { missing, invalid } = partitionFrontmatterProblems(diagnostics);
     expect(missing).toHaveLength(0);
-    expect(invalid.some((d) => d.source === 'okf' && d.message.includes('tags'))).toBe(true);
+    expect(invalid.some((d) => d.source === 'psf' && d.message.includes('tags'))).toBe(true);
   });
 
   test('two producers requiring `type` count as one property to add', async () => {
@@ -72,7 +72,7 @@ describe('partitionFrontmatterProblems over real OKF diagnostics', () => {
     const producers = diagnostics
       .filter((d) => d.frontmatterScope === 'missing' && d.frontmatterProperty === 'type')
       .map((d) => d.source);
-    expect(new Set(producers)).toEqual(new Set(['okf', 'frontmatter']));
+    expect(new Set(producers)).toEqual(new Set(['psf', 'frontmatter']));
 
     const { missing } = partitionFrontmatterProblems(diagnostics);
     expect(missing.map((d) => d.frontmatterProperty)).toEqual(['type']);
@@ -104,7 +104,7 @@ describe('partitionFrontmatterProblems over real OKF diagnostics', () => {
     const tagsFault = diagnostics.filter(
       (d) => d.frontmatterScope === 'invalid' && d.message === TAGS_MUST_BE_ARRAY,
     );
-    expect(new Set(tagsFault.map((d) => d.source))).toEqual(new Set(['okf', 'frontmatter']));
+    expect(new Set(tagsFault.map((d) => d.source))).toEqual(new Set(['psf', 'frontmatter']));
 
     const { invalid } = partitionFrontmatterProblems(diagnostics);
     expect(invalid.filter((d) => d.message === TAGS_MUST_BE_ARRAY)).toHaveLength(1);
@@ -114,7 +114,7 @@ describe('partitionFrontmatterProblems over real OKF diagnostics', () => {
     const text = '---\ntype: Note\n---\n\nSee [[Wiki Target]]\there.\n';
     const diagnostics = await lintDocument(text, config, DOC_NAME);
 
-    expect(diagnostics.some((d) => d.source === 'okf' && d.code === 'no-wiki-links')).toBe(true);
+    expect(diagnostics.some((d) => d.source === 'psf' && d.code === 'no-wiki-links')).toBe(true);
     expect(diagnostics.every((d) => d.code !== 'frontmatter-required')).toBe(true);
 
     const { missing, invalid } = partitionFrontmatterProblems(diagnostics);

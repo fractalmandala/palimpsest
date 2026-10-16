@@ -522,7 +522,7 @@ describe('openAssetSafely against the real filesystem', () => {
   let project: string;
 
   beforeEach(() => {
-    project = realpathSync(mkdtempSync(join(tmpdir(), 'ok-asset-open-')));
+    project = realpathSync(mkdtempSync(join(tmpdir(), 'ps-asset-open-')));
     mkdirSync(join(project, 'Calculator.app', 'Contents'), { recursive: true });
     writeFileSync(join(project, 'meeting.pdf'), '%PDF-1.4');
     writeFileSync(join(project, 'run-me'), '#!/bin/sh\n', { mode: 0o755 });

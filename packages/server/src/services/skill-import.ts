@@ -5,7 +5,7 @@ import {
   SKILL_IMPORT_MAX_FILE_BYTES,
   SKILL_IMPORT_MAX_TOTAL_BYTES,
   type SkillImportSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   acquiredBundleTooLarge,
   findByContentHash,
@@ -14,7 +14,7 @@ import {
   parseSkillDir,
   SKILLS_LOCK_REL,
   upsertLockEntry,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import type { z } from 'zod';
 import {
   applySkillBundleFileWrite,
@@ -162,7 +162,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
           ok: false,
           status: 400,
           urn: 'urn:ok:error:invalid-request',
-          title: `Open Knowledge only writes skills into an agent folder that already exists (${skillHomeCandidateFolders(scope).join(', ')}) and never creates one for you. Create the folder your agent uses, then import again.`,
+          title: `Palimpsest only writes skills into an agent folder that already exists (${skillHomeCandidateFolders(scope).join(', ')}) and never creates one for you. Create the folder your agent uses, then import again.`,
           detail: 'NO_USABLE_SKILL_HOME',
         };
       }

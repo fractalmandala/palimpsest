@@ -28,7 +28,7 @@ interface CreateTerminalWindowDeps {
   project: TerminalWindowProject | null;
 }
 
-const GENERIC_TITLE = 'Open Knowledge Terminal';
+const GENERIC_TITLE = 'Palimpsest Terminal';
 
 export function createTerminalWindow(deps: CreateTerminalWindowDeps): TerminalBrowserWindow {
   const { project } = deps;

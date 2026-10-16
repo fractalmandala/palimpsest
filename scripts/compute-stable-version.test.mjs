@@ -341,7 +341,7 @@ function committedChangesets(files, { subtree = '' } = {}) {
   return root;
 }
 
-const OK = '@inkeep/open-knowledge';
+const OK = '@palimpsest/cli';
 const bump = (body) => `---\n${body}\n---\n\nA change.\n`;
 
 const disagreementsWithTheOldRawReader = {
@@ -389,8 +389,8 @@ describe('gitAt reads a commit\'s changesets the way Changesets reads the same t
   });
 
   test('from a subtree checkout it reads the subtree\'s .changeset, as in the monorepo', () => {
-    const root = committedChangesets({ 'quoted.md': bump(`"${OK}": "minor"`) }, { subtree: 'public/open-knowledge' });
-    const reader = gitAt(join(root, 'public/open-knowledge'));
+    const root = committedChangesets({ 'quoted.md': bump(`"${OK}": "minor"`) }, { subtree: 'public/palimpsest' });
+    const reader = gitAt(join(root, 'public/palimpsest'));
     expect(reader.changesetIds('HEAD')).toEqual(['quoted']);
     expect(reader.bumpTypeOf('HEAD', 'quoted')).toBe('minor');
   });

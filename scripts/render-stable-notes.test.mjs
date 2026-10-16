@@ -36,15 +36,15 @@ import {
 } from './render-stable-notes.mjs';
 
 const SCRIPTS = dirname(fileURLToPath(import.meta.url));
-const OK_ROOT = dirname(SCRIPTS);
-const OK = '@inkeep/open-knowledge';
-const CORE = '@inkeep/open-knowledge-core';
+const PS_ROOT = dirname(SCRIPTS);
+const OK = '@palimpsest/cli';
+const CORE = '@palimpsest/core';
 const FIXED = [
   OK,
   CORE,
-  '@inkeep/open-knowledge-server',
-  '@inkeep/open-knowledge-app',
-  '@inkeep/open-knowledge-desktop',
+  '@palimpsest/server',
+  '@palimpsest/app',
+  '@palimpsest/desktop',
 ];
 const CONFIG = JSON.stringify({ changelog: '@changesets/cli/changelog', fixed: [FIXED] });
 
@@ -145,7 +145,7 @@ describe('renderStableNotes', () => {
     const rendered = renderStableNotes([{ id: 'a-fix', level: 'patch', summary: 'A fix.' }], {
       marked: true,
     });
-    const body = `${rendered}\n<!-- ok-downloads:start -->\n| a |\n<!-- ok-downloads:end -->\n`;
+    const body = `${rendered}\n<!-- ps-downloads:start -->\n| a |\n<!-- ps-downloads:end -->\n`;
     expect(markedNotes(body)).toBe('### Patch Changes\n\n- A fix.');
     expect(markedNotes(renderStableNotes([], { marked: true }))).toBeNull();
   });
@@ -202,7 +202,7 @@ describe('renderStableNotes matches what `changeset version` writes to the CLI c
       'changesets',
     ]);
 
-    const bin = createRequire(join(OK_ROOT, 'package.json')).resolve('@changesets/cli/bin.js');
+    const bin = createRequire(join(PS_ROOT, 'package.json')).resolve('@changesets/cli/bin.js');
     const res = spawnSync(process.execPath, [bin, 'version'], {
       cwd: root,
       env: gitCleanEnv(),
@@ -266,7 +266,7 @@ describe('section levels match the CLI changelog `changeset version` writes for 
       'changesets',
     ]);
 
-    const bin = createRequire(join(OK_ROOT, 'package.json')).resolve('@changesets/cli/bin.js');
+    const bin = createRequire(join(PS_ROOT, 'package.json')).resolve('@changesets/cli/bin.js');
     const res = spawnSync(process.execPath, [bin, 'version'], {
       cwd: root,
       env: gitCleanEnv(),
@@ -313,16 +313,16 @@ describe('noteLevel', () => {
     const releases = [
       { name: OK, type: 'patch' },
       { name: CORE, type: 'minor' },
-      { name: '@inkeep/open-knowledge-docs', type: 'major' },
+      { name: '@palimpsest/docs', type: 'major' },
     ];
     expect(noteLevel(releases, FIXED)).toBe('patch');
   });
 
   test('is the highest fixed-group bump when the changeset does not name the CLI', () => {
     const releases = [
-      { name: '@inkeep/open-knowledge-desktop', type: 'patch' },
+      { name: '@palimpsest/desktop', type: 'patch' },
       { name: CORE, type: 'minor' },
-      { name: '@inkeep/open-knowledge-docs', type: 'major' },
+      { name: '@palimpsest/docs', type: 'major' },
     ];
     expect(noteLevel(releases, FIXED)).toBe('minor');
   });
@@ -330,13 +330,13 @@ describe('noteLevel', () => {
   test('falls back to the fixed group when the changeset declares `none` for the CLI', () => {
     const releases = [
       { name: OK, type: 'none' },
-      { name: '@inkeep/open-knowledge-desktop', type: 'patch' },
+      { name: '@palimpsest/desktop', type: 'patch' },
     ];
     expect(noteLevel(releases, FIXED)).toBe('patch');
   });
 
   test('is null for a changeset that names no fixed-group package or only `none`', () => {
-    expect(noteLevel([{ name: '@inkeep/open-knowledge-docs', type: 'patch' }], FIXED)).toBeNull();
+    expect(noteLevel([{ name: '@palimpsest/docs', type: 'patch' }], FIXED)).toBeNull();
     expect(noteLevel([{ name: OK, type: 'none' }], FIXED)).toBeNull();
   });
 
@@ -356,7 +356,7 @@ describe('collectStableNotes over a release history', () => {
     const c = h.commit('C', {
       'y-fix.md': changeset(`"${OK}": patch`, 'Y as it ships.'),
       'z-feature.md': changeset(`"${CORE}": minor`, 'Z.'),
-      'docs-only.md': changeset('"@inkeep/open-knowledge-docs": patch', 'Docs only.'),
+      'docs-only.md': changeset('"@palimpsest/docs": patch', 'Docs only.'),
     });
 
     const notes = collectStableNotes({ commit: c, excludeTags: ['v1.1.0'] }, noteReaderAt(h.base));
@@ -405,7 +405,7 @@ describe('collectStableNotes over a release history', () => {
   });
 
   test('from a monorepo subtree it reads the subtree .changeset', () => {
-    const h = releaseHistory({ subtree: 'public/open-knowledge' });
+    const h = releaseHistory({ subtree: 'public/palimpsest' });
     const a = h.commit('A', { 'x-fix.md': changeset(`"${OK}": minor`, 'X.') });
     expect(collectStableNotes({ commit: a }, noteReaderAt(h.base))).toEqual([
       { id: 'x-fix', level: 'minor', summary: 'X.' },
@@ -532,7 +532,7 @@ describe('the release job renders the notes with no node_modules at all', () => 
     for (const file of SCRIPT_FILES) copyFileSync(join(SCRIPTS, file), join(dir, 'scripts', file));
     mkdirSync(join(dir, '.github', 'scripts'), { recursive: true });
     copyFileSync(
-      join(OK_ROOT, '.github', 'scripts', 'shipped-fix-containment.mjs'),
+      join(PS_ROOT, '.github', 'scripts', 'shipped-fix-containment.mjs'),
       join(dir, '.github', 'scripts', 'shipped-fix-containment.mjs'),
     );
     return join(dir, 'scripts', 'render-stable-notes.mjs');

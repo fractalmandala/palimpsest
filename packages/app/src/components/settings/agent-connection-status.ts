@@ -8,7 +8,7 @@ import {
   type HostSnapshot,
   isAgentDetected,
   type RequirementAssessment,
-} from '@inkeep/open-knowledge-core/agent-registry';
+} from '@palimpsest/core/agent-registry';
 
 export type RowConnectionStatus = 'not-installed' | 'no-status' | 'not-connected' | 'connected';
 

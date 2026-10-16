@@ -1,16 +1,16 @@
 ---
 name: research-with-sources
 description: "Investigate a topic against preserved sources and write a draft-status research article under `research/` in a Knowledge Base project (the `knowledge-base` starter pack). Read when asked to research a topic, compare options, synthesize sources, gather evidence, or extend an existing research doc. Carries the full procedure: scan existing coverage, agree a research rubric, capture every source verbatim before analyzing, write the article incrementally so a crash never loses work, cite every claim, and link it back into the graph. Does not promote findings to canonical knowledge — that is the sibling `consolidate-notes` skill, after a decision lands."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack knowledge-base` (`ok-beta` for Beta)."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack knowledge-base` (`ps-beta` for Beta)."
 type: Document
 metadata:
   pack: "knowledge-base"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Research — gather sources and write provisional findings
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the procedure on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the procedure on top.
 
 Conduct **evidence-driven research** on a topic and produce a provisional research article under `research/`. Provisional, not canonical: research articles capture findings, trade-offs, and open questions at a point in time. They are promoted to canonical articles via the `/consolidate-notes` skill only when decisions solidify.
 
@@ -192,7 +192,7 @@ Return this structure to the user:
 
 ## Step 3: Capture raw sources via ingest
 
-For each relevant URL, paper, or document in the confirmed rubric, follow the **ingest** procedure — it lives in the platform `/open-knowledge` skill at `references/ingest-and-sources.md`, not in this pack. **Typical research pulls 3-8 sources.** Too few → thin synthesis. Too many → you'll be reading for the rest of the session.
+For each relevant URL, paper, or document in the confirmed rubric, follow the **ingest** procedure — it lives in the platform `/palimpsest` skill at `references/ingest-and-sources.md`, not in this pack. **Typical research pulls 3-8 sources.** Too few → thin synthesis. Too many → you'll be reading for the rest of the session.
 
 - **Don't skip ingest.** Raw preservation separates capture from interpretation and makes research reproducible. An article without preserved sources is just opinion; an article with preserved sources is a trail someone else can follow.
 - If a fetch fails for a source you specifically need, **stop and ask the user to paste it** — don't silently drop it. Write-time fabrication of missing evidence is the biggest failure mode.
@@ -205,7 +205,7 @@ For each relevant URL, paper, or document in the confirmed rubric, follow the **
 Read each ingested source carefully. Also load:
 
 - **Existing canonical articles** on the topic — `exec("cat <path>")` (returns frontmatter + backlinks + shadow-repo activity).
-- **Prior research** on adjacent topics — same: `exec("cat <path>")` for OpenKnowledge markdown.
+- **Prior research** on adjacent topics — same: `exec("cat <path>")` for Palimpsest markdown.
 - **Relevant source code** — ONLY if the user asked for first-party analysis. Use native `Read` for `.ts` / `.js` / etc.; `exec` for in-scope `.md` / `.mdx`.
 - **Project context** — wherever the project keeps design material.
 

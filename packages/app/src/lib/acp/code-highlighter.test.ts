@@ -20,7 +20,7 @@ describe('codeHighlighter facade', () => {
   test('canonicalizes fence aliases onto the loaded grammars', async () => {
     const callback = vi.fn();
     codeHighlighter.highlight(
-      { code: 'const a = 1;', language: 'ts', themes: ['ok-syntax', 'ok-syntax'] },
+      { code: 'const a = 1;', language: 'ts', themes: ['ps-syntax', 'ps-syntax'] },
       callback,
     );
     await flush();
@@ -30,7 +30,7 @@ describe('codeHighlighter facade', () => {
 
   test('an unknown language tokenizes as plain text', async () => {
     codeHighlighter.highlight(
-      { code: 'hello', language: 'brainfuck', themes: ['ok-syntax', 'ok-syntax'] },
+      { code: 'hello', language: 'brainfuck', themes: ['ps-syntax', 'ps-syntax'] },
       vi.fn(),
     );
     await flush();
@@ -42,7 +42,7 @@ describe('codeHighlighter facade', () => {
     const options = {
       code: 'print("hi")',
       language: 'python',
-      themes: ['ok-syntax', 'ok-syntax'],
+      themes: ['ps-syntax', 'ps-syntax'],
     } as Parameters<typeof codeHighlighter.highlight>[0];
     expect(codeHighlighter.highlight(options, callback)).toBeNull();
     await flush();
@@ -59,7 +59,7 @@ describe('codeHighlighter facade', () => {
     const options = {
       code: 'SELECT 1;',
       language: 'sql',
-      themes: ['ok-syntax', 'ok-syntax'],
+      themes: ['ps-syntax', 'ps-syntax'],
     } as Parameters<typeof codeHighlighter.highlight>[0];
     expect(codeHighlighter.highlight(options, failed)).toBeNull();
     await flush();
@@ -78,7 +78,7 @@ describe('codeHighlighter facade', () => {
     const options = {
       code: 'SELECT 2;',
       language: 'sql',
-      themes: ['ok-syntax', 'ok-syntax'],
+      themes: ['ps-syntax', 'ps-syntax'],
     } as Parameters<typeof codeHighlighter.highlight>[0];
     expect(codeHighlighter.highlight(options, first)).toBeNull();
     expect(codeHighlighter.highlight(options, second)).toBeNull();
@@ -90,7 +90,7 @@ describe('codeHighlighter facade', () => {
   });
 
   test('cache eviction drops the oldest entries, not the whole cache', async () => {
-    const themes = ['ok-syntax', 'ok-syntax'] as Parameters<
+    const themes = ['ps-syntax', 'ps-syntax'] as Parameters<
       typeof codeHighlighter.highlight
     >[0]['themes'];
     const opts = (i: number) =>

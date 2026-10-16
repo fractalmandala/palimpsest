@@ -90,7 +90,7 @@ describe('skillBundlePathNavHash (PRD-7607)', () => {
     );
   });
 
-  test('a built-in (open-knowledge*) skill stays read-only even for a .md reference', () => {
+  test('a built-in (palimpsest*) skill stays read-only even for a .md reference', () => {
     const target = { scope: 'project' as const, name: 'open-knowledge-write-skill' };
     expect(
       skillBundlePathNavHash(

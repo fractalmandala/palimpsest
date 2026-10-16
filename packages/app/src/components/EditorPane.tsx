@@ -1,8 +1,8 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
-import type { TerminalCli, TerminalLaunchCommand } from '@inkeep/open-knowledge-core/handoff';
-import type { TerminalPlacement } from '@inkeep/open-knowledge-core/terminal-layout';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
+import type { TerminalCli, TerminalLaunchCommand } from '@palimpsest/core/handoff';
+import type { TerminalPlacement } from '@palimpsest/core/terminal-layout';
 import {
   lazy,
   type ReactNode,
@@ -463,7 +463,7 @@ interface RestoreVisibilityGate {
 }
 
 const RESTORE_UNESTABLISHED_LEVEL = false;
-const WEB_EDITOR_VISIBLE_KEY = 'ok-editor-visible-v1';
+const WEB_EDITOR_VISIBLE_KEY = 'ps-editor-visible-v1';
 const NARROW_WORKSPACE_QUERY = '(width < 48rem)';
 
 function subscribeNarrowWorkspace(listener: () => void): () => void {
@@ -516,7 +516,7 @@ export function EditorPane() {
   });
   const [activeTab, setActiveTab] = useState<PanelTab>(TABS[0].id);
   const [autoSyncOnboardingDismissed, setAutoSyncOnboardingDismissed] = useState(false);
-  const desktopBridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
+  const desktopBridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
   const noteWindow = isNoteWindow();
   const singleFile = useSingleFileMode();
   const workspace = useWorkspace();
@@ -912,7 +912,7 @@ export function EditorPane() {
   }, [noteWindow, sendSelectionToAgents]);
 
   useEffect(() => {
-    const hasNativeMenu = window.okDesktop != null;
+    const hasNativeMenu = window.psDesktop != null;
     function handleKeyDown(event: KeyboardEvent) {
       if (!matchesRendererShortcut(event, 'toggle-terminal-panel', hasNativeMenu)) return;
       if (isOverlayLayerOpen()) return;
@@ -925,7 +925,7 @@ export function EditorPane() {
   }, [terminalAvailable]);
 
   useEffect(() => {
-    if (window.okDesktop != null) return;
+    if (window.psDesktop != null) return;
     function handleKeyDown(event: KeyboardEvent) {
       if (!matchesKeyboardShortcut(event, 'toggle-agent-panel')) return;
       if (isOverlayLayerOpen()) return;
@@ -1013,29 +1013,29 @@ export function EditorPane() {
   }, [terminalVisible]);
 
   useEffect(() => {
-    if (window.okDesktop == null) return;
+    if (window.psDesktop == null) return;
     noteRestoreVisibilityLevel(terminalRestoreGateRef, terminalVisible);
     if (!dockRestoreSettled) return;
     if (!consumeRestoreVisibilityGate(terminalRestoreGateRef)) return;
-    window.okDesktop.editor.notifyViewMenuStateChanged({
+    window.psDesktop.editor.notifyViewMenuStateChanged({
       terminalVisible: effectiveTerminalVisible,
       wideIntent: { terminalVisible },
     });
   }, [terminalVisible, effectiveTerminalVisible, dockRestoreSettled]);
 
   useEffect(() => {
-    if (window.okDesktop == null) return;
+    if (window.psDesktop == null) return;
     if (!dockRestoreSettled) return;
     setViewMenuState({ terminalPlacement });
-    window.okDesktop.editor.notifyViewMenuStateChanged({ terminalPlacement });
+    window.psDesktop.editor.notifyViewMenuStateChanged({ terminalPlacement });
   }, [terminalPlacement, dockRestoreSettled]);
 
   useEffect(() => {
-    if (window.okDesktop == null) return;
+    if (window.psDesktop == null) return;
     noteRestoreVisibilityLevel(agentsRestoreGateRef, agentsVisible);
     if (!dockRestoreSettled) return;
     if (!consumeRestoreVisibilityGate(agentsRestoreGateRef)) return;
-    window.okDesktop.editor.notifyViewMenuStateChanged({
+    window.psDesktop.editor.notifyViewMenuStateChanged({
       agentPanelVisible: effectiveAgentsVisible,
       wideIntent: { agentPanelVisible: agentsVisible },
     });
@@ -1047,11 +1047,11 @@ export function EditorPane() {
   }, [desktopBridge, editorToggleable, editorShown]);
 
   useEffect(() => {
-    if (window.okDesktop == null || !editorToggleable) return;
+    if (window.psDesktop == null || !editorToggleable) return;
     noteRestoreVisibilityLevel(editorRestoreGateRef, editorShown);
     if (!dockRestoreSettled) return;
     if (!consumeRestoreVisibilityGate(editorRestoreGateRef)) return;
-    window.okDesktop.editor.notifyViewMenuStateChanged({
+    window.psDesktop.editor.notifyViewMenuStateChanged({
       editorVisible: effectiveEditorVisible,
       wideIntent: { editorVisible: editorShown },
     });
@@ -1074,7 +1074,7 @@ export function EditorPane() {
       if (hasEditorSelection === last) return;
       last = hasEditorSelection;
       setViewMenuState({ hasEditorSelection });
-      window.okDesktop?.editor.notifyViewMenuStateChanged({ hasEditorSelection });
+      window.psDesktop?.editor.notifyViewMenuStateChanged({ hasEditorSelection });
     };
     publish();
     return subscribeSelectionContext(publish);
@@ -1085,7 +1085,7 @@ export function EditorPane() {
       setDockRestoreSettled(true);
       return;
     }
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (bridge == null) return;
     if (typeof bridge.terminal?.getDockState !== 'function') {
       setDockRestoreSettled(true);
@@ -1149,7 +1149,7 @@ export function EditorPane() {
   }, [noteWindow]);
 
   useEffect(() => {
-    if (window.okDesktop == null) return;
+    if (window.psDesktop == null) return;
     if (restoreRevealRef.current) {
       restoreRevealRef.current = false;
       return;
@@ -1188,7 +1188,7 @@ export function EditorPane() {
   });
 
   useEffect(() => {
-    window.okDesktop?.editor.notifyViewMenuStateChanged({ canViewInSource });
+    window.psDesktop?.editor.notifyViewMenuStateChanged({ canViewInSource });
   }, [canViewInSource]);
 
   useEffect(() => {

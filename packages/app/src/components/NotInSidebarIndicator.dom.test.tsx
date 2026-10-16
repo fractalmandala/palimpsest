@@ -1,6 +1,6 @@
 /** Runs under the jsdom substrate (precedent #43). */
 
-import type { Config } from '@inkeep/open-knowledge-core';
+import type { Config } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -131,10 +131,10 @@ describe('NotInSidebarIndicator', () => {
     expect(indicator()).toBeNull();
   });
 
-  test('renders nothing for docs structurally outside the tree (skills, templates, .ok)', () => {
+  test('renders nothing for docs structurally outside the tree (skills, templates, .ps)', () => {
     mergedConfig = { appearance: { sidebar: { showOnlyMarkdownFiles: true } } };
     for (const docName of [
-      '.ok/skills/writer/SKILL',
+      '.ps/skills/writer/SKILL',
       '__skill__/global/writer',
       '__template__/.private/meeting-notes',
     ]) {

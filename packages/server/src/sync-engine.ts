@@ -12,7 +12,7 @@ import { join, relative, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { promisify } from 'node:util';
 import {
-  OK_DIR,
+  PS_DIR,
   type PullOutcome,
   pathspecArgs,
   REFUSED_SYMLINK_PATHS_CAP,
@@ -21,10 +21,10 @@ import {
   type SyncModeChangeSource,
   type SyncPausedReason,
   tryLineLevelCombine,
-} from '@inkeep/open-knowledge-core';
-import { inspectGitRepository } from '@inkeep/open-knowledge-core/git-repository';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
-import { resolveGitDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { inspectGitRepository } from '@palimpsest/core/git-repository';
+import { resolveConfigPath } from '@palimpsest/core/server';
+import { resolveGitDir } from '@palimpsest/core/shadow-repo-layout';
 import type { CC1Broadcaster } from './cc1-broadcast.ts';
 import { getLocalDir } from './config/paths.ts';
 import type { ConflictAuthority, RaiseInput } from './conflict-authority.ts';
@@ -112,7 +112,7 @@ class GitOperationInProgressError extends Error {
 
 class ShareableOkEnumerationError extends Error {
   constructor(relDir: string, cause: unknown) {
-    super(`Shareable .ok subtree "${relDir}" could not be fully enumerated; sync staging aborted`, {
+    super(`Shareable .ps subtree "${relDir}" could not be fully enumerated; sync staging aborted`, {
       cause,
     });
     this.name = 'ShareableOkEnumerationError';
@@ -242,7 +242,7 @@ interface MergePreparation {
 }
 
 /**
- * ContentFilter read-opts for the two staging-path consultations, admitting the shareable `.ok`
+ * ContentFilter read-opts for the two staging-path consultations, admitting the shareable `.ps`
  * artifact allow-list. Both must consult the identical predicate (precedent #55): a HEAD path the
  * listing admits but the gather walk refuses commits as a spurious deletion on every push.
  */
@@ -393,7 +393,7 @@ export class SyncEngine {
   private contentFilter: ContentFilter;
   private contentRoot: string;
   /**
-   * The push cycle then runs a second enumeration rooted at the project root so shareable `.ok`
+   * The push cycle then runs a second enumeration rooted at the project root so shareable `.ps`
    * artifacts still stage and deletion-track; gather and head listing consult this flag in
    * lock-step (precedent #55).
    */
@@ -487,7 +487,7 @@ export class SyncEngine {
     this.contentFilter = options.contentFilter;
     this.contentRoot = options.contentRoot ?? '';
     this.rootOkOutsideContentWalk = toPosix(
-      relative(this.contentDir, join(this.projectDir, OK_DIR)),
+      relative(this.contentDir, join(this.projectDir, PS_DIR)),
     ).startsWith('..');
     this.pullIntervalSeconds = options.pullIntervalSeconds ?? 30;
     this.pushIntervalSeconds = options.pushIntervalSeconds ?? 60;
@@ -1220,8 +1220,8 @@ export class SyncEngine {
       this.identityUnresolved = nextUnresolved;
       this.cc1Broadcaster?.signal('sync-status');
     }
-    const name = identity?.name ?? 'OpenKnowledge';
-    const email = identity?.email ?? 'sync@open-knowledge.local';
+    const name = identity?.name ?? 'Palimpsest';
+    const email = identity?.email ?? 'sync@palimpsest.local';
     applyGitEnv(handle, {
       GIT_AUTHOR_NAME: name,
       GIT_AUTHOR_EMAIL: email,
@@ -1932,7 +1932,7 @@ export class SyncEngine {
           }
           log.info(
             { event: 'mcp-config-reconcile', target: p, outcome: 'auto-resolved' },
-            '[sync] pull-only: auto-resolved OpenKnowledge MCP entry overlap',
+            '[sync] pull-only: auto-resolved Palimpsest MCP entry overlap',
           );
           continue;
         }
@@ -1944,7 +1944,7 @@ export class SyncEngine {
               outcome: 'declined',
               reason: mcpPlan.reason,
             },
-            '[sync] pull-only: declined OpenKnowledge MCP entry reconciliation',
+            '[sync] pull-only: declined Palimpsest MCP entry reconciliation',
           );
         }
       }
@@ -2091,7 +2091,7 @@ export class SyncEngine {
   private async doPushCycle(retriesLeft = 0): Promise<void> {
     this.pushCycleLanded = false;
     await this.refreshCredentialConfig();
-    const tmpIndexPath = join(tmpdir(), `ok-sync-idx-${process.pid}-${Date.now()}.idx`);
+    const tmpIndexPath = join(tmpdir(), `ps-sync-idx-${process.pid}-${Date.now()}.idx`);
     let commitSha: string | null = null;
 
     try {
@@ -2405,7 +2405,7 @@ export class SyncEngine {
     const headContentSet = await this.listHeadContentPaths(handle, headSha);
     if (contentFiles.length === 0 && headContentSet.size === 0) return null;
 
-    const tmpIndex = join(tmpdir(), `ok-sync-retry-idx-${process.pid}-${Date.now()}.idx`);
+    const tmpIndex = join(tmpdir(), `ps-sync-retry-idx-${process.pid}-${Date.now()}.idx`);
     const isoHandle = this.gitHandle(tmpIndex);
     try {
       await isoHandle.git.raw(['read-tree', headSha]);
@@ -2548,7 +2548,7 @@ export class SyncEngine {
           reconciled.push({ path, raw: plan.raw, winnerEntry: plan.winnerEntry });
           log.info(
             { event: 'mcp-config-reconcile', target: path, outcome: 'auto-resolved' },
-            '[sync] auto-resolved OpenKnowledge MCP entry overlap',
+            '[sync] auto-resolved Palimpsest MCP entry overlap',
           );
         }
         blocking = blocking.filter((path) => !trackedTargets.has(path));
@@ -2560,7 +2560,7 @@ export class SyncEngine {
             outcome: 'declined',
             reason: declined.plan.kind === 'declined' ? declined.plan.reason : undefined,
           },
-          '[sync] declined OpenKnowledge MCP entry reconciliation',
+          '[sync] declined Palimpsest MCP entry reconciliation',
         );
       } else if (hasOtherBlockingPath) {
         log.info(
@@ -2601,7 +2601,7 @@ export class SyncEngine {
       } catch (err) {
         log.warn({ err }, '[sync] could not isolate reconciled MCP paths from pre-merge stash');
         this.pullError =
-          'Sync paused — OpenKnowledge could not safely isolate local MCP launcher changes before merging.';
+          'Sync paused — Palimpsest could not safely isolate local MCP launcher changes before merging.';
         this.pausedReason = 'external-changes-pending';
         this.blockingPaths = [];
         this.transitionTo('idle');
@@ -2615,7 +2615,7 @@ export class SyncEngine {
       return { proceed: true, needsStashPop: false, reconciled };
     }
 
-    const stashMessage = `ok-sync: pre-merge stash @ ${new Date().toISOString()}`;
+    const stashMessage = `ps-sync: pre-merge stash @ ${new Date().toISOString()}`;
     try {
       await handle.git.raw(['stash', 'push', '-m', stashMessage]);
     } catch (err) {
@@ -2794,7 +2794,7 @@ export class SyncEngine {
     }
 
     await withParentLock(async () => {
-      const tmpIndex = join(tmpdir(), `ok-mcp-sync-idx-${process.pid}-${Date.now()}.idx`);
+      const tmpIndex = join(tmpdir(), `ps-mcp-sync-idx-${process.pid}-${Date.now()}.idx`);
       const tempBlobs: string[] = [];
       try {
         const realHandle = this.gitHandle();
@@ -2873,7 +2873,7 @@ export class SyncEngine {
             '-p',
             headSha,
             '-m',
-            'Update OpenKnowledge MCP launcher',
+            'Update Palimpsest MCP launcher',
           ])
         ).trim();
         if (!SHA_HEX_40.test(commitSha)) throw new Error('commit-tree returned an invalid SHA');
@@ -2914,7 +2914,7 @@ export class SyncEngine {
         }
         log.info(
           { event: 'mcp-config-reconcile', outcome: 'persisted-entry-commit' },
-          '[sync] persisted OpenKnowledge MCP launcher entry commit',
+          '[sync] persisted Palimpsest MCP launcher entry commit',
         );
       } finally {
         for (const path of tempBlobs) {
@@ -2966,7 +2966,7 @@ export class SyncEngine {
     const refusedDirs = [...refused].filter((p) => p.endsWith('/'));
     const isRefused = (p: string) => refused.has(p) || refusedDirs.some((d) => p.startsWith(d));
     const stageable = probeOk ? files.filter((f) => !isRefused(f.projectRelPath)) : files;
-    const hasOkSegment = (p: string) => p.startsWith(`${OK_DIR}/`) || p.includes(`/${OK_DIR}/`);
+    const hasOkSegment = (p: string) => p.startsWith(`${PS_DIR}/`) || p.includes(`/${PS_DIR}/`);
     const forced = probeOk ? stageable.filter((f) => hasOkSegment(f.projectRelPath)) : [];
     const plain = probeOk ? stageable.filter((f) => !hasOkSegment(f.projectRelPath)) : stageable;
     for (const [addArgs, group] of [
@@ -3012,7 +3012,7 @@ export class SyncEngine {
             continue;
           const entersOkSubtree = dirRelPath
             .split('/')
-            .some((segment) => segment.toLowerCase() === OK_DIR);
+            .some((segment) => segment.toLowerCase() === PS_DIR);
           walk(
             fullPath,
             filterBase,
@@ -3037,10 +3037,10 @@ export class SyncEngine {
       walk(this.contentDir, this.contentDir, CONTENT_SYNC_STAGING_SCOPE);
     }
     if (this.rootOkOutsideContentWalk) {
-      const rootOkDir = join(this.projectDir, OK_DIR);
+      const rootOkDir = join(this.projectDir, PS_DIR);
       if (
         existsSync(rootOkDir) &&
-        !this.contentFilter.isDirExcluded(OK_DIR, PROJECT_SYNC_STAGING_SCOPE)
+        !this.contentFilter.isDirExcluded(PS_DIR, PROJECT_SYNC_STAGING_SCOPE)
       ) {
         walk(rootOkDir, this.projectDir, PROJECT_SYNC_STAGING_SCOPE, failUnreadableOkSubtree);
       }
@@ -3061,7 +3061,7 @@ export class SyncEngine {
       !this.contentFilter.isExcluded(contentRelPath, CONTENT_SYNC_STAGING_SCOPE);
     const inRootOkWalk =
       this.rootOkOutsideContentWalk &&
-      projRelPath.startsWith(`${OK_DIR}/`) &&
+      projRelPath.startsWith(`${PS_DIR}/`) &&
       !this.contentFilter.isExcluded(projRelPath, PROJECT_SYNC_STAGING_SCOPE);
     return inContentWalk || inRootOkWalk;
   }
@@ -3304,7 +3304,7 @@ export class SyncEngine {
         if (file.toLowerCase() === projectConfigRelPath.toLowerCase()) {
           log.warn(
             { file },
-            '[sync] auto-resolved .ok/config.yml conflict with theirs: local project config edits were overwritten by the remote version',
+            '[sync] auto-resolved .ps/config.yml conflict with theirs: local project config edits were overwritten by the remote version',
           );
         } else {
           log.info({ file }, '[sync] auto-resolved non-content conflict with theirs');

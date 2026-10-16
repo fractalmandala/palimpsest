@@ -1,4 +1,4 @@
-const SUBSCRIBE_ENDPOINT = 'https://openknowledge.ai/api/subscribe';
+const SUBSCRIBE_ENDPOINT = 'https://github.com/fractalmandala/palimpsest/api/subscribe';
 
 export type SubscribeSource = 'resources_menu' | 'post_update_card';
 

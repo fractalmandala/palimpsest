@@ -1,4 +1,4 @@
-import type { WorktreeSelectorModel } from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+import type { WorktreeSelectorModel } from '@palimpsest/core/git/worktree-selector-model';
 
 export interface WorktreeStore {
   getSnapshot(): WorktreeSelectorModel | null;
@@ -84,7 +84,7 @@ export function createWorktreeStore(deps: WorktreeStoreDeps): WorktreeStore {
 }
 
 async function fetchWorktreeModel(): Promise<WorktreeSelectorModel | null> {
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   if (!bridge) return null;
   const result = await bridge.worktree.list();
   return result.ok ? result.model : null;

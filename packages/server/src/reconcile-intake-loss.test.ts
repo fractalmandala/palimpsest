@@ -2,7 +2,7 @@ import { mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Hocuspocus } from '@hocuspocus/server';
-import { sharedExtensions } from '@inkeep/open-knowledge-core';
+import { sharedExtensions } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { updateYFragment } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
@@ -39,7 +39,7 @@ describe('reconcileDiskBeforeAgentWrite paired-intake instrumentation', () => {
   beforeEach(() => {
     hp = new Hocuspocus({ quiet: true });
     durabilityState = new DocumentDurabilityState();
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-reconcile-intake-')));
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-reconcile-intake-')));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });

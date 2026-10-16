@@ -1,23 +1,23 @@
 <p>
-  <a  href="https://openknowledge.ai"><picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/ok-wordmark-dark.svg">
-    <img src="assets/ok-wordmark.svg" alt="OpenKnowledge" width="260">
+  <a  href="https://github.com/fractalmandala/palimpsest"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/ps-wordmark-dark.svg">
+    <img src="assets/ps-wordmark.svg" alt="Palimpsest" width="260">
   </picture></a>
 </p>
 
 <p>
-<b>OpenKnowledge</b> is a beautiful markdown editor with integrations with Claude, Codex, and other harnesses. For knowledge bases, LLM wikis, specs, and notes. Private, local, and free.
+<b>Palimpsest</b> is a beautiful markdown editor with integrations with Claude, Codex, and other harnesses. For knowledge bases, LLM wikis, specs, and notes. Private, local, and free.
 
 </p>
 
 <div >
-  <a href="https://openknowledge.ai">website</a>
+  <a href="https://github.com/fractalmandala/palimpsest">website</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://openknowledge.ai/download">desktop app</a>
+  <a href="https://github.com/fractalmandala/palimpsest/download">desktop app</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://openknowledge.ai/docs/get-started/quickstart#ok-install-web-app">web UI + cli</a>
+  <a href="https://github.com/fractalmandala/palimpsest/tree/main/docs/content">web UI + cli</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://x.com/OpenKnowledge">𝕏</a>
+  <a href="https://x.com/Palimpsest">𝕏</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://discord.gg/VRKk2EaGHN">discord</a>
 </div>
@@ -26,7 +26,7 @@
 
 <img
   src="assets/hero.webp"
-  alt="OpenKnowledge editor with an AI agent drafting a launch recap"
+  alt="Palimpsest editor with an AI agent drafting a launch recap"
   width="100%"
   style="border-radius: 10px"
 />
@@ -43,24 +43,24 @@ Highlights:
 
 ## Install
 
-**Desktop app** — download it from [openknowledge.ai/download](https://openknowledge.ai/download) (or grab an installer from the [latest release](https://github.com/inkeep/open-knowledge/releases/latest)):
+**Desktop app** — download it from [palimpsest.ai/download](https://github.com/fractalmandala/palimpsest/download) (or grab an installer from the [latest release](https://github.com/fractalmandala/palimpsest/releases/latest)):
 
-- **macOS** (Apple Silicon): open the DMG and drag **OpenKnowledge** to **Applications**.
+- **macOS** (Apple Silicon): open the DMG and drag **Palimpsest** to **Applications**.
 - **Windows 10+** (x64 / Arm64): run the Setup installer — per-user, no admin prompt.
 - **Linux** (x64 / arm64): install the deb (Debian/Ubuntu) or rpm (Fedora/RHEL) package.
 
 **Web app** — on any platform (including Intel Macs and servers), run the same editor as a local web app via the CLI ([Node.js 24+](https://nodejs.org) and git required):
 
 ```bash
-npm install -g @inkeep/open-knowledge
+npm install -g @palimpsest/cli
 cd your-project
-ok init          # scaffold the project + wire up your AI editors (Claude Code, Claude Desktop, Cursor, Codex, OpenCode, OpenClaw)
-ok start --open  # serve the web editor and open it in your browser
+ps init          # scaffold the project + wire up your AI editors (Claude Code, Claude Desktop, Cursor, Codex, OpenCode, OpenClaw)
+ps start --open  # serve the web editor and open it in your browser
 ```
 
 ## Usage
 
-Use OpenKnowledge by opening any existing folder on your computer that contains markdown or mdx files. The app can be used with existing codebases, wikis, Obsidian vaults, etc. 
+Use Palimpsest by opening any existing folder on your computer that contains markdown or mdx files. The app can be used with existing codebases, wikis, Obsidian vaults, etc. 
 
 Think of it as Notion meets VS Code. 
 
@@ -72,26 +72,26 @@ Either way, the app will walk you through installing the MCP and skills for agen
 
 Git/GitHub based sync and sharing can optionally be enabled. 
 
-Docs for general usage: <https://openknowledge.ai/docs>.
+Docs for general usage: <https://github.com/fractalmandala/palimpsest/docs>.
 
 ## Contributions
 
-The best way to contribute is a detailed [issue](https://github.com/inkeep/open-knowledge/issues/new/choose): we build and review the change ourselves. Pull requests are welcome for small fixes, and for larger changes once a maintainer has accepted the issue.
+The best way to contribute is a detailed [issue](https://github.com/fractalmandala/palimpsest/issues/new/choose): we build and review the change ourselves. Pull requests are welcome for small fixes, and for larger changes once a maintainer has accepted the issue.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ## License
 
-OpenKnowledge is licensed under [GNU General Public License v3.0 or later](./LICENSE), an OSI-Approved open source license.
+Palimpsest is licensed under [GNU General Public License v3.0 or later](./LICENSE), an OSI-Approved open source license.
 
 ## Community & Support
 
-Feel free to <a href="https://github.com/inkeep/open-knowledge/issues/new/choose">file an issue</a> or ask questions on the <a href="https://discord.gg/VRKk2EaGHN">Discord</a> community. We're always looking for ideas and requests.
+Feel free to <a href="https://github.com/fractalmandala/palimpsest/issues/new/choose">file an issue</a> or ask questions on the <a href="https://discord.gg/VRKk2EaGHN">Discord</a> community. We're always looking for ideas and requests.
 
 <p>
-  ⭐️ If you'd like to support this project, consider <a href="https://github.com/inkeep/open-knowledge">starring the repo</a> ⭐️
+  ⭐️ If you'd like to support this project, consider <a href="https://github.com/fractalmandala/palimpsest">starring the repo</a> ⭐️
 </p>
 
 <p>
-  🔔 Follow us on <a href="https://x.com/OpenKnowledge">𝕏</a> for product updates. 🔔
+  🔔 Follow us on <a href="https://x.com/Palimpsest">𝕏</a> for product updates. 🔔
 </p>

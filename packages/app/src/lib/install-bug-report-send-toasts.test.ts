@@ -1,4 +1,4 @@
-import type { OkBugReportSendResult } from '@inkeep/open-knowledge-core';
+import type { PsBugReportSendResult } from '@palimpsest/core';
 import * as actualSonner from 'sonner';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { BugReportSendToastActions } from '@/components/BugReportSendToast';
@@ -9,9 +9,9 @@ import {
 } from '@/lib/bug-report-send-manager';
 
 const ZIP_PATH = '/Users/x/Library/ok/reports/ok-report-2026-08-18-120000.zip';
-const OPERATION_ID = 'ok-report-2026-08-18-120000.zip';
+const OPERATION_ID = 'ps-report-2026-08-18-120000.zip';
 const OTHER_ZIP_PATH = '/Users/x/Library/ok/reports/ok-report-2026-08-18-130000.zip';
-const OTHER_OPERATION_ID = 'ok-report-2026-08-18-130000.zip';
+const OTHER_OPERATION_ID = 'ps-report-2026-08-18-130000.zip';
 
 const toast = {
   custom: vi.fn((_render: (id: string | number) => unknown, _opts?: unknown) => 'toast-id'),
@@ -36,12 +36,12 @@ function actionsOf(index: number): BugReportSendToastActions {
 }
 
 function createDeferredBridge() {
-  const resolvers: ((result: OkBugReportSendResult) => void)[] = [];
+  const resolvers: ((result: PsBugReportSendResult) => void)[] = [];
   const calls: unknown[] = [];
   const bridge: BugReportSendBridge = {
     send(sendRequest) {
       calls.push(sendRequest);
-      return new Promise<OkBugReportSendResult>((resolve) => {
+      return new Promise<PsBugReportSendResult>((resolve) => {
         resolvers.push(resolve);
       });
     },
@@ -49,7 +49,7 @@ function createDeferredBridge() {
   return {
     bridge,
     calls,
-    async settle(result: OkBugReportSendResult, index = resolvers.length - 1) {
+    async settle(result: PsBugReportSendResult, index = resolvers.length - 1) {
       resolvers[index]?.(result);
       await vi.advanceTimersByTimeAsync(0);
     },
@@ -65,7 +65,7 @@ function request(zipPath = ZIP_PATH): BugReportSendRequest {
       summary: {
         level: 'full',
         systemWide: false,
-        projectSlug: 'open-knowledge',
+        projectSlug: 'palimpsest',
         files: ['logs/app.log'],
         redactions: [],
         redactedLineCount: 0,
@@ -162,7 +162,7 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-failed',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=failed' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
     });
 
     expect(mintedIds()).toEqual([
@@ -195,13 +195,13 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-failed',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=failed' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
     });
 
-    actionsOf(1).openExternal('mailto:support@inkeep.com?subject=failed');
+    actionsOf(1).openExternal('mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed');
     actionsOf(1).revealInFileManager(ZIP_PATH);
 
-    expect(shell.openedExternal).toEqual(['mailto:support@inkeep.com?subject=failed']);
+    expect(shell.openedExternal).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed']);
     expect(shell.revealed).toEqual([ZIP_PATH]);
     uninstall();
   });
@@ -231,7 +231,7 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-in-flight',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=inflight' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=inflight' },
     });
 
     const duration = durationOf(1);
@@ -246,7 +246,7 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'email-draft',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=draft' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft' },
     });
 
     expect(durationOf(1)).toBe(Number.POSITIVE_INFINITY);
@@ -259,7 +259,7 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-failed',
-      fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=failed' },
+      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
     });
 
     actionsOf(1).retry();

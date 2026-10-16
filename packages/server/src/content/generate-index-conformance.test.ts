@@ -2,15 +2,15 @@ import {
   DEFAULT_LINTER_CONFIG,
   type LinterConfig,
   lintDocument,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { computeBrokenOutboundLinks } from '../backlink-index.ts';
 import { buildIndexMarkdown, type IndexEntry } from './generate-index.ts';
 
-const OKF_LINT_CONFIG: LinterConfig = {
+const PSF_LINT_CONFIG: LinterConfig = {
   ...DEFAULT_LINTER_CONFIG,
   enabled: true,
-  plugins: { ...DEFAULT_LINTER_CONFIG.plugins, okf: { enabled: true } },
+  plugins: { ...DEFAULT_LINTER_CONFIG.plugins, psf: { enabled: true } },
 };
 
 const ENTRIES: IndexEntry[] = [
@@ -38,27 +38,27 @@ const ENTRIES: IndexEntry[] = [
 const ADMITTED = ['index', ...ENTRIES.map((e) => e.path.replace(/\.md$/, ''))];
 
 describe('generated index — OKF conformance', () => {
-  test('the generated root index produces zero okf findings', async () => {
+  test('the generated root index produces zero psf findings', async () => {
     const markdown = buildIndexMarkdown(ENTRIES, { warningScope: false, isRoot: true });
 
-    const findings = await lintDocument(markdown, OKF_LINT_CONFIG, 'index.md');
+    const findings = await lintDocument(markdown, PSF_LINT_CONFIG, 'index.md');
     const detail = findings
       .map((f) => `${f.code} @ ${f.range.start.line + 1} — ${f.message}`)
       .join('; ');
 
-    expect(findings, `generated root index produced okf findings: ${detail}`).toEqual([]);
+    expect(findings, `generated root index produced psf findings: ${detail}`).toEqual([]);
   });
 
-  test('a generated non-root index produces zero okf findings', async () => {
+  test('a generated non-root index produces zero psf findings', async () => {
     const markdown = buildIndexMarkdown(ENTRIES, { warningScope: false, isRoot: false });
-    const findings = await lintDocument(markdown, OKF_LINT_CONFIG, 'concepts/index.md');
+    const findings = await lintDocument(markdown, PSF_LINT_CONFIG, 'concepts/index.md');
 
     expect(findings.map((f) => f.code)).toEqual([]);
   });
 
   test('an empty bundle still yields a conformant root index', async () => {
     const markdown = buildIndexMarkdown([], { warningScope: false, isRoot: true });
-    const findings = await lintDocument(markdown, OKF_LINT_CONFIG, 'index.md');
+    const findings = await lintDocument(markdown, PSF_LINT_CONFIG, 'index.md');
     expect(findings.map((f) => f.code)).toEqual([]);
   });
 
@@ -88,7 +88,7 @@ const DEFAULT_PROFILE_LINT_CONFIG: LinterConfig = {
   plugins: {
     ...DEFAULT_LINTER_CONFIG.plugins,
     markdownlint: { ...DEFAULT_LINTER_CONFIG.plugins.markdownlint, enabled: true },
-    okf: { enabled: true },
+    psf: { enabled: true },
   },
 };
 

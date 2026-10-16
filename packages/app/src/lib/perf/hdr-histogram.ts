@@ -1,6 +1,6 @@
 import { readNumericOverride } from './env-override';
 
-export const HDR_HISTOGRAM_SENTINEL = 'ok-hdr-histogram-v1' as const;
+export const HDR_HISTOGRAM_SENTINEL = 'ps-hdr-histogram-v1' as const;
 
 const MAX_VALUE = 1_000_000_000;
 

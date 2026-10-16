@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'ok-acp-agent-settings-v1';
+const STORAGE_KEY = 'ps-acp-agent-settings-v1';
 
 type ConfigValue = string | boolean;
 type StoredAgentSettings = {

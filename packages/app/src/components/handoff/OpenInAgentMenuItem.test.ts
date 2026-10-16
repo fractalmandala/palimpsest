@@ -1,4 +1,4 @@
-import type { InstallState, TargetData } from '@inkeep/open-knowledge-core';
+import type { InstallState, TargetData } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { KNOWN_TARGETS } from '@/lib/handoff/targets';
 

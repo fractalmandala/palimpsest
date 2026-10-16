@@ -12,7 +12,7 @@ import {
 const makeTempDir = createTempDirFactory(afterAll);
 
 function makeProjectDir(): string {
-  return makeTempDir('ok-removed-docs-journal-');
+  return makeTempDir('ps-removed-docs-journal-');
 }
 
 describe('removed-docs journal — round trip', () => {
@@ -70,7 +70,7 @@ describe('removed-docs journal — round trip', () => {
       JSON.stringify({
         version: 1,
         entries: [
-          { docName: 'ok-entry', kind: 'deleted', addedAt: 5 },
+          { docName: 'ps-entry', kind: 'deleted', addedAt: 5 },
           { docName: '', kind: 'deleted', addedAt: 5 },
           { docName: 'no-kind', addedAt: 5 },
           { docName: 'renamed-no-target', kind: 'renamed', addedAt: 5 },
@@ -80,7 +80,7 @@ describe('removed-docs journal — round trip', () => {
       'utf-8',
     );
     expect(loadRemovedDocsJournal(projectDir)).toEqual([
-      ['ok-entry', { kind: 'deleted', addedAt: 5 }],
+      ['ps-entry', { kind: 'deleted', addedAt: 5 }],
     ]);
   });
 });

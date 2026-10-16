@@ -1,4 +1,4 @@
-import type { LinterConfig } from '@inkeep/open-knowledge-core';
+import type { LinterConfig } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { schemaFieldsForDoc } from './frontmatter-schema-fields.ts';
 

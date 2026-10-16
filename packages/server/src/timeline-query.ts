@@ -1,11 +1,11 @@
 import { existsSync } from 'node:fs';
-import { type EntryType, pathspecArgs, type TimelineEntry } from '@inkeep/open-knowledge-core';
+import { type EntryType, pathspecArgs, type TimelineEntry } from '@palimpsest/core';
 import {
   isSurfacedCheckpointKind,
   parseCheckpoint,
   parseOkActors,
   readContributors,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 import { extensionlessDocTreePath, getDocExtension } from './doc-extensions.ts';
 import { getLogger } from './logger.ts';
 import { managedArtifactTimelinePaths } from './managed-artifact-persistence.ts';
@@ -675,7 +675,7 @@ export async function getFolderTimeline(
 
   const normalizedRoot = contentRoot === '.' ? '' : contentRoot.replace(/^\.\//, '');
   const base = folderRel.replace(/^\.?\/+/, '').replace(/\/+$/, '');
-  const okPath = [normalizedRoot, base, '.ok'].filter(Boolean).join('/');
+  const okPath = [normalizedRoot, base, '.ps'].filter(Boolean).join('/');
 
   const sg = shadowGit(shadow);
   try {
@@ -704,14 +704,14 @@ export async function getFolderTimeline(
     );
     const parsedFolderEntries = parseGitLogOutput(raw);
     const windowSaturated = parsedFolderEntries.length >= walkCap;
-    const okDocPrefix = base ? `${base}/.ok/` : '.ok/';
+    const psDocPrefix = base ? `${base}/.ps/` : '.ps/';
     const seen = new Set<string>();
     const entries: TimelineEntry[] = [];
     for (const parsed of parsedFolderEntries) {
       if (seen.has(parsed.sha)) continue;
       if (!isFolderArtifactSubject(parsed.message)) continue;
       const touchesFolderArtifact = parsed.contributors.some((c) =>
-        c.docs.some((doc) => doc.startsWith(okDocPrefix)),
+        c.docs.some((doc) => doc.startsWith(psDocPrefix)),
       );
       if (!touchesFolderArtifact) continue;
       seen.add(parsed.sha);

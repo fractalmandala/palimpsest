@@ -1,6 +1,6 @@
 import type { ResolveConfidence } from '../mode-switch-position-resolver';
 
-export const OK_LANDING_FLASH_CLASS = 'ok-landing-flash';
+export const PS_LANDING_FLASH_CLASS = 'ps-landing-flash';
 
 export function clampFlashRange(
   length: number,

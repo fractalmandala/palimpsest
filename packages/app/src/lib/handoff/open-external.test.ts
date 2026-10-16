@@ -8,19 +8,19 @@ function makeElectron(openImpl: (url: string) => Promise<void>) {
 }
 
 describe('openExternal — Electron host', () => {
-  test('forwards URL to okDesktop.shell.openExternal and resolves ok:true', async () => {
-    const okDesktop = makeElectron(async () => {});
-    const result = await openExternal('claude://cowork/new?q=x', { okDesktop });
+  test('forwards URL to psDesktop.shell.openExternal and resolves ok:true', async () => {
+    const psDesktop = makeElectron(async () => {});
+    const result = await openExternal('claude://cowork/new?q=x', { psDesktop });
     expect(result).toEqual({ ok: true });
-    expect(okDesktop.shell.openExternal).toHaveBeenCalledTimes(1);
-    expect(okDesktop.shell.openExternal).toHaveBeenCalledWith('claude://cowork/new?q=x');
+    expect(psDesktop.shell.openExternal).toHaveBeenCalledTimes(1);
+    expect(psDesktop.shell.openExternal).toHaveBeenCalledWith('claude://cowork/new?q=x');
   });
 
   test('maps a rejected Electron promise to dispatch-error with error.message', async () => {
-    const okDesktop = makeElectron(async () => {
+    const psDesktop = makeElectron(async () => {
       throw new Error('scheme-not-allowed');
     });
-    const result = await openExternal('file:///etc/passwd', { okDesktop });
+    const result = await openExternal('file:///etc/passwd', { psDesktop });
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.reason).toBe('dispatch-error');
@@ -28,10 +28,10 @@ describe('openExternal — Electron host', () => {
   });
 
   test('serializes non-Error throws into detail', async () => {
-    const okDesktop = makeElectron(async () => {
+    const psDesktop = makeElectron(async () => {
       throw 'plain-string-rejection';
     });
-    const result = await openExternal('claude://cowork/new', { okDesktop });
+    const result = await openExternal('claude://cowork/new', { psDesktop });
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.detail).toBe('plain-string-rejection');
@@ -89,17 +89,17 @@ describe('openExternal — web host (anchor-click)', () => {
 });
 
 describe('openExternal — host selection', () => {
-  test('Electron path takes precedence when okDesktop is provided (doc is ignored)', async () => {
-    const okDesktop = makeElectron(async () => {});
+  test('Electron path takes precedence when psDesktop is provided (doc is ignored)', async () => {
+    const psDesktop = makeElectron(async () => {});
     const doc = {
       createElement: vi.fn(() => {
         throw new Error('should-not-be-called');
       }),
       body: { appendChild: () => {} },
     } as unknown as Document;
-    const result = await openExternal('claude://cowork/new', { okDesktop, doc });
+    const result = await openExternal('claude://cowork/new', { psDesktop, doc });
     expect(result).toEqual({ ok: true });
-    expect(okDesktop.shell.openExternal).toHaveBeenCalledTimes(1);
+    expect(psDesktop.shell.openExternal).toHaveBeenCalledTimes(1);
     // biome-ignore lint/suspicious/noExplicitAny: test harness introspection
     expect((doc as any).createElement).not.toHaveBeenCalled();
   });

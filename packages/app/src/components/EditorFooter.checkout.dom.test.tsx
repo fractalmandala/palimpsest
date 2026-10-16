@@ -1,4 +1,4 @@
-import type { WorktreeSelectorModel } from '@inkeep/open-knowledge-core';
+import type { WorktreeSelectorModel } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -58,7 +58,7 @@ function model(currentWorktreePath: string): WorktreeSelectorModel {
 }
 
 function installDesktopProject(projectName: string, projectPath: string) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: { config: { projectName, projectPath } },
   });
@@ -77,7 +77,7 @@ afterEach(() => {
   cleanup();
   branch = null;
   worktreeModel = null;
-  Object.defineProperty(window, 'okDesktop', { configurable: true, value: undefined });
+  Object.defineProperty(window, 'psDesktop', { configurable: true, value: undefined });
 });
 
 describe('EditorFooter checkout detail', () => {

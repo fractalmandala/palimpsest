@@ -7,7 +7,7 @@ vi.mock('../../../src/main/desktop-logger.ts', () => ({
 }));
 
 import { applyThemeSource, emitThemeSourceRecord } from '../../../src/main/theme-handler.ts';
-import type { OkThemeSource } from '../../../src/shared/bridge-contract.ts';
+import type { PsThemeSource } from '../../../src/shared/bridge-contract.ts';
 import { observeThemeSourcePushes } from './theme-source-pushes.ts';
 
 let restoreConsoleWarn = () => {};
@@ -17,7 +17,7 @@ afterEach(() => {
   restoreConsoleWarn = () => {};
 });
 
-function wiredMainProcess(initialThemeSource: OkThemeSource = 'system') {
+function wiredMainProcess(initialThemeSource: PsThemeSource = 'system') {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
   const mainProcessConsole = new Console({ stdout, stderr });
@@ -32,7 +32,7 @@ function wiredMainProcess(initialThemeSource: OkThemeSource = 'system') {
     app: { process: () => ({ stdout, stderr }) },
     deps: {
       getThemeSource: () => themeSource,
-      setThemeSource: (source: OkThemeSource) => {
+      setThemeSource: (source: PsThemeSource) => {
         themeSource = source;
       },
       emit: emitThemeSourceRecord,
@@ -65,7 +65,7 @@ describe('theme source push producer/observer contract', () => {
     const pushedBy = observeThemeSourcePushes(app);
 
     applyThemeSource(deps, 'dark', 11);
-    applyThemeSource(deps, 'rainbow' as unknown as OkThemeSource, 12);
+    applyThemeSource(deps, 'rainbow' as unknown as PsThemeSource, 12);
 
     expect([...pushedBy]).toEqual([11]);
   });

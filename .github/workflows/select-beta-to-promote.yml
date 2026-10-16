@@ -1,6 +1,6 @@
 name: Select beta to promote
 
-# Scheduled gatekeeper on inkeep/open-knowledge that SELECTS the most-recently
+# Scheduled gatekeeper on fractalmandala/palimpsest that SELECTS the most-recently
 # soak-proven beta to promote to stable and dispatches promote-stable.yml with
 # it, but only inside the US business-hours window (9am ET .. 4pm PT, Mon-Fri).
 # It does SELECTION ONLY — it computes no version. promote-stable.yml owns
@@ -74,7 +74,7 @@ name: Select beta to promote
 # window is 09:00 (inclusive) .. 19:00 (exclusive).
 #
 # Concurrency + de-dupe: this evaluator carries its own group (distinct from the
-# ok-release-cadence lock that release.yml / promote-stable.yml share) so it
+# ps-release-cadence lock that release.yml / promote-stable.yml share) so it
 # never blocks a real cut. Double-promotion is prevented three ways:
 # (1) the concurrency group serializes ticks (one running, newest pending —
 # see the concurrency block for why in-flight runs are never cancelled),
@@ -121,7 +121,7 @@ permissions:
   actions: write
 
 concurrency:
-  # Deliberately NOT the shared ok-release-cadence group — a read-only evaluator
+  # Deliberately NOT the shared ps-release-cadence group — a read-only evaluator
   # must never queue behind (or delay) a real beta cut / stable promotion.
   #
   # cancel-in-progress is FALSE, and the reason is the smoke leg. "A cancelled
@@ -134,7 +134,7 @@ concurrency:
   # then paged about it for hours. Queueing gives at most one pending tick
   # behind a bounded run (all jobs carry timeout-minutes), which GitHub
   # collapses to the newest — freshness without killing gates mid-answer.
-  group: ok-auto-promote-stable
+  group: ps-auto-promote-stable
   cancel-in-progress: false
 
 env:
@@ -403,7 +403,7 @@ jobs:
 
       - name: Build the workspace packages the smoke harness imports
         run: |
-          pnpm exec turbo run build --filter=@inkeep/open-knowledge-server --cache=local:,remote:
+          pnpm exec turbo run build --filter=@palimpsest/server --cache=local:,remote:
 
       - name: Download the candidate's DMG
         id: download
@@ -443,7 +443,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-select-beta-to-promote-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-select-beta-to-promote-attempt${{ github.run_attempt }}
           path: packages/desktop/test-results/desktop-smoke-packaged-results.json
           retention-days: 14
           if-no-files-found: warn

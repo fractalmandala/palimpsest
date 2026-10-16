@@ -1,7 +1,7 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { LOCAL_DIR, OK_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR, PS_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   acquireServerLock,
@@ -20,8 +20,8 @@ let tmpDir: string;
 let lockDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-preview-url-'));
-  lockDir = resolve(tmpDir, OK_DIR, LOCAL_DIR);
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-preview-url-'));
+  lockDir = resolve(tmpDir, PS_DIR, LOCAL_DIR);
 });
 
 afterEach(async () => {
@@ -65,18 +65,18 @@ describe('resolvePreviewUrl — lock edges', () => {
     expect(result).toBeNull();
   });
 
-  test('never emits openknowledge:// scheme — the url is a bare route', () => {
-    const prior = process.env.OK_ELECTRON_PROTOCOL_HOST;
+  test('never emits palimpsest:// scheme — the url is a bare route', () => {
+    const prior = process.env.PS_ELECTRON_PROTOCOL_HOST;
     try {
-      process.env.OK_ELECTRON_PROTOCOL_HOST = '1';
+      process.env.PS_ELECTRON_PROTOCOL_HOST = '1';
       seedUiServer(5173);
       const result = resolvePreviewUrl('docs/a', { lockDir });
       expect(result?.source).toBe('lock');
       expect(result?.url.startsWith('/#/')).toBe(true);
-      expect(result?.url.startsWith('openknowledge://')).toBe(false);
+      expect(result?.url.startsWith('palimpsest://')).toBe(false);
     } finally {
-      if (prior === undefined) delete process.env.OK_ELECTRON_PROTOCOL_HOST;
-      else process.env.OK_ELECTRON_PROTOCOL_HOST = prior;
+      if (prior === undefined) delete process.env.PS_ELECTRON_PROTOCOL_HOST;
+      else process.env.PS_ELECTRON_PROTOCOL_HOST = prior;
     }
   });
 });
@@ -230,20 +230,20 @@ describe('buildPreviewAttachWarning — names the running channel command', () =
   });
 
   test('Stable text is byte-identical', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(buildPreviewAttachWarning(null, true).message).toBe(
-      'No UI is running for this project. Start one to see the preview: `ok start` (terminal), or open the project in OK Electron.',
+      'No UI is running for this project. Start one to see the preview: `ps start` (terminal), or open the project in OK Electron.',
     );
     expect(buildPreviewAttachWarning({ url: '/#/a' }, true).message).toMatch(
-      /on a stdio CLI with no browser, `ok open <doc>`\.$/,
+      /on a stdio CLI with no browser, `ps open <doc>`\.$/,
     );
   });
 
-  test('Beta names ok-beta', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    expect(buildPreviewAttachWarning(null, true).message).toContain('`ok-beta start` (terminal)');
+  test('Beta names ps-beta', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    expect(buildPreviewAttachWarning(null, true).message).toContain('`ps-beta start` (terminal)');
     expect(buildPreviewAttachWarning({ url: '/#/a' }, true).message).toMatch(
-      /on a stdio CLI with no browser, `ok-beta open <doc>`\.$/,
+      /on a stdio CLI with no browser, `ps-beta open <doc>`\.$/,
     );
   });
 });

@@ -46,7 +46,7 @@ export function loadAndRoundTrip(nativeDir, deps = {}) {
     const parsed = JSON.parse(mod.parseTomlToJson('probe = 1'));
     if (parsed.probe !== 1) throw new Error('parseTomlToJson did not round-trip a scalar');
 
-    const upsert = mod.upsertMcpServer('', 'open-knowledge', JSON.stringify({ command: 'probe' }));
+    const upsert = mod.upsertMcpServer('', 'palimpsest', JSON.stringify({ command: 'probe' }));
     if (typeof upsert.text !== 'string') throw new Error('upsertMcpServer returned no text');
 
     const symlink = mod.resolveSymlinkWritePath(join(nativeDir, 'index.js'));
@@ -80,8 +80,8 @@ async function resolveNativeDir(inputPath, kind, deps = {}) {
   const listAppsInMount = deps.listAppsInMount ?? defaultListAppsInMount;
 
   const abs = resolve(inputPath);
-  const mountRoot = await mkdtempImpl(join(tmpdir(), 'ok-nc-mount-'));
-  const appCopyRoot = await mkdtempImpl(join(tmpdir(), 'ok-nc-app-'));
+  const mountRoot = await mkdtempImpl(join(tmpdir(), 'ps-nc-mount-'));
+  const appCopyRoot = await mkdtempImpl(join(tmpdir(), 'ps-nc-app-'));
   let detached = false;
   const detach = async () => {
     if (detached) return;

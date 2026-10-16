@@ -110,7 +110,7 @@ function docTarget(docName: string): EditorTabFileTarget {
   return { kind: 'doc', target: docName, docName };
 }
 
-const OK_GATED_ACTIONS = ['Import as template', 'Duplicate', 'Rename', 'Hide this file', 'Delete'];
+const PS_GATED_ACTIONS = ['Import as template', 'Duplicate', 'Rename', 'Hide this file', 'Delete'];
 
 afterEach(() => {
   cleanup();
@@ -118,28 +118,28 @@ afterEach(() => {
 });
 
 describe('EditorTabTargetMenuItems — template doc tab', () => {
-  test('the five .ok-gated mutation actions are withheld', () => {
-    renderMenu(docTarget('docs/.ok/templates/note'));
-    for (const label of OK_GATED_ACTIONS) {
+  test('the five .ps-gated mutation actions are withheld', () => {
+    renderMenu(docTarget('docs/.ps/templates/note'));
+    for (const label of PS_GATED_ACTIONS) {
       expect(screen.queryByRole('menuitem', { name: label })).toBeNull();
     }
   });
 
   test('Copy relative path stays enabled and copies the real on-disk path', () => {
-    renderMenu(docTarget('docs/.ok/templates/note'));
+    renderMenu(docTarget('docs/.ps/templates/note'));
     const relativePath = screen.getByRole('menuitem', { name: 'Relative path' });
     fireEvent.click(relativePath);
-    expect(scheduleClipboardWrite).toHaveBeenCalledWith('docs/.ok/templates/note.md');
+    expect(scheduleClipboardWrite).toHaveBeenCalledWith('docs/.ps/templates/note.md');
   });
 
   test('Share stays available (a template content doc has a real shareable path)', () => {
-    renderMenu(docTarget('docs/.ok/templates/note'));
+    renderMenu(docTarget('docs/.ps/templates/note'));
     expect(screen.getByRole('menuitem', { name: 'Share' })).toBeTruthy();
   });
 
   test('a project-root template tab is gated identically', () => {
-    renderMenu(docTarget('.ok/templates/daily'));
-    for (const label of OK_GATED_ACTIONS) {
+    renderMenu(docTarget('.ps/templates/daily'));
+    for (const label of PS_GATED_ACTIONS) {
       expect(screen.queryByRole('menuitem', { name: label })).toBeNull();
     }
     expect(screen.getByRole('menuitem', { name: 'Relative path' })).toBeTruthy();
@@ -147,9 +147,9 @@ describe('EditorTabTargetMenuItems — template doc tab', () => {
 });
 
 describe('EditorTabTargetMenuItems — ordinary doc control', () => {
-  test('the same actions DO appear for a non-.ok doc, proving the gate is the .ok shape', () => {
+  test('the same actions DO appear for a non-.ok doc, proving the gate is the .ps shape', () => {
     renderMenu(docTarget('docs/note'));
-    for (const label of OK_GATED_ACTIONS) {
+    for (const label of PS_GATED_ACTIONS) {
       expect(screen.getByRole('menuitem', { name: label })).toBeTruthy();
     }
   });

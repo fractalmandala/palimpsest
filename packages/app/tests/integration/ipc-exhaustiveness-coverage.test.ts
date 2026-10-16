@@ -36,13 +36,13 @@ const REGISTRY: readonly DuRegistration[] = [
     uniqueLabels: new Set(['spawn-error', 'not-installed']),
   },
   {
-    name: 'OkPtyAdoptReason',
+    name: 'PsPtyAdoptReason',
     helper: 'assertNeverPtyAdoptReason',
     variantLabels: new Set(['unknown-session', 'not-started', 'not-consented', 'host-unavailable']),
     uniqueLabels: new Set(['unknown-session', 'not-started', 'host-unavailable']),
   },
   {
-    name: 'OkPtyCreateReason',
+    name: 'PsPtyCreateReason',
     helper: 'assertNeverPtyCreateReason',
     variantLabels: new Set(['no-project', 'not-consented']),
     uniqueLabels: new Set(['no-project']),

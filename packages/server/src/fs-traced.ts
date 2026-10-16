@@ -15,7 +15,7 @@ import {
 } from 'node:fs';
 import { appendFile, mkdir, rename, rm, writeFile } from 'node:fs/promises';
 import { basename, sep } from 'node:path';
-import type { AtomicWriteFsAdapter } from '@inkeep/open-knowledge-core/server';
+import type { AtomicWriteFsAdapter } from '@palimpsest/core/server';
 import type { Attributes } from '@opentelemetry/api';
 import { withSpan, withSpanSync } from './telemetry.ts';
 
@@ -38,7 +38,7 @@ export function classifyFsPath(p: string): string {
   ) {
     return 'conflict';
   }
-  if (p.includes(`${sep}.ok${sep}`)) return 'ok-internal';
+  if (p.includes(`${sep}.ok${sep}`)) return 'ps-internal';
   if (p.endsWith('.md') || p.endsWith('.mdx')) return 'content-md';
   return 'other';
 }

@@ -1,6 +1,6 @@
 import { statSync } from 'node:fs';
 import { isAbsolute, join } from 'node:path';
-import { resolveGitDirDetailed } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
 
 export type ResolvedGitDirKind =
   | 'directory'

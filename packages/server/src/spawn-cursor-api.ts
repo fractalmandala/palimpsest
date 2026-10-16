@@ -9,7 +9,7 @@ import { access, constants as fsConstants } from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { homedir } from 'node:os';
 import { posix as pathPosix, win32 as pathWin32 } from 'node:path';
-import { SpawnCursorSuccessSchema } from '@inkeep/open-knowledge-core';
+import { SpawnCursorSuccessSchema } from '@palimpsest/core';
 import { withHiddenWindowsConsole } from './child-process-windows-hide.ts';
 import { errorResponse } from './http/error-response.ts';
 import {

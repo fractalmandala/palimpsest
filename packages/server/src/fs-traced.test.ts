@@ -24,12 +24,12 @@ describe('classifyFsPath', () => {
     );
   });
 
-  test('.ok/local/server.lock buckets as "lock" (lock check fires before ok-internal)', () => {
+  test('.ps/local/server.lock buckets as "lock" (lock check fires before ps-internal)', () => {
     expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}server.lock`)).toBe('lock');
     expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}ui.lock`)).toBe('lock');
   });
 
-  test('.ok/local/principal.json buckets as "principal"', () => {
+  test('.ps/local/principal.json buckets as "principal"', () => {
     expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}principal.json`)).toBe('principal');
   });
 
@@ -40,19 +40,19 @@ describe('classifyFsPath', () => {
     );
   });
 
-  test('.ok/local/* general writes bucket as "ok-internal"', () => {
-    expect(classifyFsPath(`${root}${sep}.ok${sep}config.yml`)).toBe('ok-internal');
+  test('.ps/local/* general writes bucket as "ps-internal"', () => {
+    expect(classifyFsPath(`${root}${sep}.ok${sep}config.yml`)).toBe('ps-internal');
     expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}cache${sep}foo.json`)).toBe(
-      'ok-internal',
+      'ps-internal',
     );
-    expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}state.json`)).toBe('ok-internal');
-    expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}sync-state.json`)).toBe('ok-internal');
+    expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}state.json`)).toBe('ps-internal');
+    expect(classifyFsPath(`${root}${sep}.ok${sep}local${sep}sync-state.json`)).toBe('ps-internal');
   });
 
-  test('.md/.mdx writes UNDER .ok/ bucket as "ok-internal" (not content-md)', () => {
-    expect(classifyFsPath(`${root}${sep}.ok${sep}AGENTS.md`)).toBe('ok-internal');
-    expect(classifyFsPath(`${root}${sep}.ok${sep}cache${sep}foo.md`)).toBe('ok-internal');
-    expect(classifyFsPath(`${root}${sep}.ok${sep}notes.mdx`)).toBe('ok-internal');
+  test('.md/.mdx writes UNDER .ps/ bucket as "ps-internal" (not content-md)', () => {
+    expect(classifyFsPath(`${root}${sep}.ok${sep}AGENTS.md`)).toBe('ps-internal');
+    expect(classifyFsPath(`${root}${sep}.ok${sep}cache${sep}foo.md`)).toBe('ps-internal');
+    expect(classifyFsPath(`${root}${sep}.ok${sep}notes.mdx`)).toBe('ps-internal');
   });
 
   test('content-md and content-mdx writes bucket as "content-md"', () => {

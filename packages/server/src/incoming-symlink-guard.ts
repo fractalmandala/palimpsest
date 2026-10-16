@@ -3,11 +3,11 @@ import { lstat, readlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   DESKTOP_PRODUCTS,
-  OK_MACHINE_LOCAL_ROOT_DIRS,
-  OK_MACHINE_LOCAL_ROOT_FILES,
-  OK_USER_HOME_CREDENTIAL_FILES,
+  PS_MACHINE_LOCAL_ROOT_DIRS,
+  PS_MACHINE_LOCAL_ROOT_FILES,
+  PS_USER_HOME_CREDENTIAL_FILES,
   REFUSED_SYMLINK_PATHS_CAP,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { SimpleGit } from 'simple-git';
 import { isSecretBearingFile, pathHasSecretBearingDirSegment } from './content-filter.ts';
 import { createGitInstance } from './git-handle.ts';
@@ -63,17 +63,17 @@ function foldPath(path: string): string {
 
 const CONFIG_DIR_NAMES: ReadonlySet<string> = new Set(
   [
-    '.ok',
-    '.open-knowledge',
-    '.openknowledge',
+    '.ps',
+    '.palimpsest',
+    '.palimpsest',
     ...Object.values(DESKTOP_PRODUCTS).map(({ userHomeDirName }) => userHomeDirName),
   ].map(foldName),
 );
 const MACHINE_LOCAL_NAMES: ReadonlySet<string> = new Set(
   [
-    ...OK_MACHINE_LOCAL_ROOT_DIRS,
-    ...OK_MACHINE_LOCAL_ROOT_FILES,
-    ...OK_USER_HOME_CREDENTIAL_FILES,
+    ...PS_MACHINE_LOCAL_ROOT_DIRS,
+    ...PS_MACHINE_LOCAL_ROOT_FILES,
+    ...PS_USER_HOME_CREDENTIAL_FILES,
   ].map(foldName),
 );
 
@@ -688,11 +688,11 @@ function describeSymlinkReason(reason: UnsafeSymlinkReason): string {
     case 'repository-root':
       return 'points at the repository root';
     case 'private-state':
-      return 'points into private .git or OpenKnowledge state';
+      return 'points into private .git or Palimpsest state';
     case 'secret-file':
       return 'points at a file that may hold secrets, such as .env or a key';
     case 'inside-private-state':
-      return 'is placed inside private .git or OpenKnowledge state';
+      return 'is placed inside private .git or Palimpsest state';
     case 'requires-newer-git':
       return `needs Git ${SYMLINK_MERGE_MIN_GIT_LABEL} or newer to check during a merge`;
     case 'unverifiable-target':

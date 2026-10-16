@@ -9,7 +9,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { isAbsolute, join, resolve, sep } from 'node:path';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+import { atomicTempPath } from '@palimpsest/core/server';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { checkSymlinkLeaf } from '../fs-safety.ts';
 import { type FrontmatterRecord, mergePatch } from './frontmatter-merge.ts';
@@ -64,8 +64,8 @@ export function applyFolderFrontmatterPatch(
     };
   }
 
-  const okDir = join(targetAbs, '.ok');
-  const fmPath = join(okDir, 'frontmatter.yml');
+  const psDir = join(targetAbs, '.ps');
+  const fmPath = join(psDir, 'frontmatter.yml');
 
   if (checkSymlinkLeaf(fmPath).kind === 'symlink') {
     return {
@@ -85,13 +85,13 @@ export function applyFolderFrontmatterPatch(
     if (Object.keys(merged).length === 0) {
       if (existsSync(fmPath)) {
         unlinkSync(fmPath);
-        autoCleanOkDir(okDir);
+        autoCleanOkDir(psDir);
         return { ok: true, path: relPathOf(contentAbs, fmPath), action: 'deleted' };
       }
       return { ok: true, path: relPathOf(contentAbs, fmPath), action: 'noop' };
     }
 
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const yaml = stringifyYaml(merged);
     const tmpPath = atomicTempPath(fmPath);
     writeFileSync(tmpPath, yaml, 'utf-8');
@@ -116,17 +116,17 @@ function readExistingFrontmatter(absPath: string): FrontmatterRecord {
   return { ...(parsed as FrontmatterRecord) };
 }
 
-function autoCleanOkDir(okAbsDir: string): void {
-  if (!existsSync(okAbsDir)) return;
+function autoCleanOkDir(psAbsDir: string): void {
+  if (!existsSync(psAbsDir)) return;
   let entries: string[];
   try {
-    entries = readdirSync(okAbsDir);
+    entries = readdirSync(psAbsDir);
   } catch {
     return;
   }
   if (entries.length === 0) {
     try {
-      rmdirSync(okAbsDir);
+      rmdirSync(psAbsDir);
     } catch {}
   }
 }

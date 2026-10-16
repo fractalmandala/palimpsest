@@ -26,7 +26,7 @@ import {
 
 const report = (stats) => ({ stats });
 
-const mountOk = async (_dmg, cb) => cb('/tmp/copy/OpenKnowledge.app');
+const mountOk = async (_dmg, cb) => cb('/tmp/copy/Palimpsest.app');
 const mountThrows = (err) => async () => {
   throw err;
 };
@@ -149,7 +149,7 @@ describe('smokePackagedDmg', () => {
   test('passes the copied app path to the runner', async () => {
     let seen = null;
     const v = await smokePackagedDmg(
-      '/tmp/OpenKnowledge.dmg',
+      '/tmp/Palimpsest.dmg',
       deps({
         run: async (appPath) => {
           seen = appPath;
@@ -157,7 +157,7 @@ describe('smokePackagedDmg', () => {
         },
       }),
     );
-    expect(seen).toBe('/tmp/copy/OpenKnowledge.app');
+    expect(seen).toBe('/tmp/copy/Palimpsest.app');
     expect(v.verdict).toBe(VERDICT.pass);
   });
 
@@ -202,13 +202,13 @@ describe('smokePackagedDmg', () => {
   });
 
   test('a missing report is an error', async () => {
-    const v = await smokePackagedDmg('/tmp/OpenKnowledge.dmg', deps({ read: async () => null }));
+    const v = await smokePackagedDmg('/tmp/Palimpsest.dmg', deps({ read: async () => null }));
     expect(v.verdict).toBe(VERDICT.error);
   });
 
   test('a runner ended by a signal and leaving no report is an error that names the signal', async () => {
     const v = await smokePackagedDmg(
-      '/tmp/OpenKnowledge.dmg',
+      '/tmp/Palimpsest.dmg',
       deps({
         run: async () => ({ exitCode: 1, signal: 'SIGKILL', stall: null }),
         read: async () => null,
@@ -221,7 +221,7 @@ describe('smokePackagedDmg', () => {
 
   test('a runner ended by a signal with no failing test is an error that names the signal, not an exit code', async () => {
     const v = await smokePackagedDmg(
-      '/tmp/OpenKnowledge.dmg',
+      '/tmp/Palimpsest.dmg',
       deps({ run: async () => ({ exitCode: 1, signal: 'SIGTERM', stall: null }) }),
     );
     expect(v.verdict).toBe(VERDICT.error);
@@ -250,7 +250,7 @@ describe('runDriver', () => {
 
   test('exits 0 and annotates on pass', async () => {
     const { lines, outputs, deps: d } = driverDeps();
-    const code = await runDriver(['node', 'x', '/tmp/OpenKnowledge.dmg'], d);
+    const code = await runDriver(['node', 'x', '/tmp/Palimpsest.dmg'], d);
     expect(code).toBe(0);
     expect(lines[0]).toContain('::notice::');
     expect(outputs[0]).toContain('verdict=pass');
@@ -261,7 +261,7 @@ describe('runDriver', () => {
       run: async () => ({ exitCode: 1 }),
       read: async () => report({ expected: 14, unexpected: 2, flaky: 0, skipped: 0 }),
     });
-    const code = await runDriver(['node', 'x', '/tmp/OpenKnowledge.dmg'], d);
+    const code = await runDriver(['node', 'x', '/tmp/Palimpsest.dmg'], d);
     expect(code).not.toBe(0);
     expect(code).toBe(EXIT_CODES[VERDICT.fail]);
     expect(outputs[0]).toContain('verdict=fail');
@@ -269,7 +269,7 @@ describe('runDriver', () => {
 
   test('exits non-zero on error, with a code distinct from fail', async () => {
     const { deps: d } = driverDeps({ read: async () => null });
-    const code = await runDriver(['node', 'x', '/tmp/OpenKnowledge.dmg'], d);
+    const code = await runDriver(['node', 'x', '/tmp/Palimpsest.dmg'], d);
     expect(code).toBe(EXIT_CODES[VERDICT.error]);
     expect(EXIT_CODES[VERDICT.error]).not.toBe(EXIT_CODES[VERDICT.fail]);
   });
@@ -362,7 +362,7 @@ const SCALED_WATCHDOG = {
 let fixtures;
 
 beforeAll(async () => {
-  const dir = await mkdtemp(join(tmpdir(), 'ok-smoke-watchdog-'));
+  const dir = await mkdtemp(join(tmpdir(), 'ps-smoke-watchdog-'));
   fixtures = {
     dir,
     runner: join(dir, 'fake-runner.mjs'),
@@ -543,7 +543,7 @@ describe('the no-progress watchdog over real child processes', () => {
     const outputs = [];
     const lines = [];
     let reportRead = false;
-    const code = await runDriver(['node', 'x', '/tmp/OpenKnowledge.dmg'], {
+    const code = await runDriver(['node', 'x', '/tmp/Palimpsest.dmg'], {
       withMountedDmg: mountOk,
       runPlaywright: () => watchFake({ tests: 1, testMs: 20, finish: 'stall' }).promise,
       readReport: async () => {
@@ -571,7 +571,7 @@ describe('the no-progress watchdog over real child processes', () => {
       fetchReleaseMeta: () => ({
         isDraft: false,
         publishedAt: '2026-07-08T19:00:00Z',
-        assets: [{ name: 'OpenKnowledge-universal.dmg' }, { name: 'beta-mac.yml' }],
+        assets: [{ name: 'Palimpsest-universal.dmg' }, { name: 'beta-mac.yml' }],
       }),
       soakSeconds: 86400,
       nowMs: Date.parse('2026-07-08T20:00:00Z'),
@@ -653,7 +653,7 @@ describe('the progress reporter against the installed Playwright', () => {
   test('a real run reports progress through PW_TEST_REPORTER, and a hung test is stopped once the window passes', async () => {
     const desktopRequire = createRequire(join(DESKTOP_DIR, 'package.json'));
     const cli = desktopRequire.resolve('@playwright/test/cli');
-    const dir = await mkdtemp(join(tmpdir(), 'ok-smoke-real-playwright-'));
+    const dir = await mkdtemp(join(tmpdir(), 'ps-smoke-real-playwright-'));
     try {
       const config = join(dir, 'playwright.config.mjs');
       await writeFile(

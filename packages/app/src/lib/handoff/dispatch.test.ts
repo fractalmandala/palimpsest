@@ -1,11 +1,11 @@
-import type { HandoffPayload, HandoffTarget } from '@inkeep/open-knowledge-core';
+import type { HandoffPayload, HandoffTarget } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { dispatchHandoff } from './dispatch.ts';
 
 const BASE_PAYLOAD = {
-  projectDir: '/Users/andrew/Documents/code/open-knowledge',
-  docPath: '/Users/andrew/Documents/code/open-knowledge/specs/foo/SPEC.md',
-  prompt: 'OpenKnowledge doc: specs/foo/SPEC.md.',
+  projectDir: '/Users/andrew/Documents/code/palimpsest',
+  docPath: '/Users/andrew/Documents/code/palimpsest/specs/foo/SPEC.md',
+  prompt: 'Palimpsest doc: specs/foo/SPEC.md.',
 } as const;
 
 function makeFetch(status: number, bodyJson?: unknown) {

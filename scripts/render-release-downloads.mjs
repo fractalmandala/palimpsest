@@ -1,22 +1,22 @@
 #!/usr/bin/env node
 import { pathToFileURL } from 'node:url';
 
-export const DOWNLOADS_START = '<!-- ok-downloads:start -->';
-export const DOWNLOADS_END = '<!-- ok-downloads:end -->';
+export const DOWNLOADS_START = '<!-- ps-downloads:start -->';
+export const DOWNLOADS_END = '<!-- ps-downloads:end -->';
 
 const ROWS = [
-  { platform: 'macOS', arch: 'Apple Silicon', match: (n) => n === 'OpenKnowledge-arm64.dmg' },
-  { platform: 'Windows', arch: 'x64', match: (n) => n === 'OpenKnowledge-Setup-x64.exe' },
-  { platform: 'Windows', arch: 'arm64', match: (n) => n === 'OpenKnowledge-Setup-arm64.exe' },
-  { platform: 'Debian / Ubuntu', arch: 'x64', match: (n) => n === 'OpenKnowledge-amd64.deb' },
-  { platform: 'Debian / Ubuntu', arch: 'arm64', match: (n) => n === 'OpenKnowledge-arm64.deb' },
-  { platform: 'Fedora / RHEL', arch: 'x64', match: (n) => n === 'OpenKnowledge-x86_64.rpm' },
-  { platform: 'Fedora / RHEL', arch: 'arm64', match: (n) => n === 'OpenKnowledge-aarch64.rpm' },
+  { platform: 'macOS', arch: 'Apple Silicon', match: (n) => n === 'Palimpsest-arm64.dmg' },
+  { platform: 'Windows', arch: 'x64', match: (n) => n === 'Palimpsest-Setup-x64.exe' },
+  { platform: 'Windows', arch: 'arm64', match: (n) => n === 'Palimpsest-Setup-arm64.exe' },
+  { platform: 'Debian / Ubuntu', arch: 'x64', match: (n) => n === 'Palimpsest-amd64.deb' },
+  { platform: 'Debian / Ubuntu', arch: 'arm64', match: (n) => n === 'Palimpsest-arm64.deb' },
+  { platform: 'Fedora / RHEL', arch: 'x64', match: (n) => n === 'Palimpsest-x86_64.rpm' },
+  { platform: 'Fedora / RHEL', arch: 'arm64', match: (n) => n === 'Palimpsest-aarch64.rpm' },
 ];
 
 export function stripDownloadsBlock(body) {
   return body.replace(
-    /\n?<!-- ok-downloads:start -->[\s\S]*?<!-- ok-downloads:end -->\n?/g,
+    /\n?<!-- ps-downloads:start -->[\s\S]*?<!-- ps-downloads:end -->\n?/g,
     '\n',
   );
 }

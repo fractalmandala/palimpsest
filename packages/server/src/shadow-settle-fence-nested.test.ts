@@ -39,7 +39,7 @@ function diskFiles(root: string, prefix = ''): string[] {
 }
 
 test('checkpoints omit a pending settle fence in a nested content directory', async (context) => {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shadow-settle-fence-nested-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shadow-settle-fence-nested-')));
   const content = join(root, 'docs');
   const release = Promise.withResolvers<void>();
   let shadow: ShadowHandle | undefined;
@@ -64,18 +64,18 @@ test('checkpoints omit a pending settle fence in a nested content directory', as
   context.onTestFinished(() => {
     vi.unstubAllEnvs();
   });
-  vi.stubEnv('OK_FILE_WATCHER_BACKEND', 'parcel');
-  mkdirSync(join(content, '.ok/templates'), { recursive: true });
-  mkdirSync(join(content, '.ok/local'), { recursive: true });
+  vi.stubEnv('PS_FILE_WATCHER_BACKEND', 'parcel');
+  mkdirSync(join(content, '.ps/templates'), { recursive: true });
+  mkdirSync(join(content, '.ps/local'), { recursive: true });
   const expected = (document: string) => [
     ['docs/note.md', document],
-    ['docs/.ok/config.yml', CONFIGURATION],
-    ['docs/.ok/templates/note.md', TEMPLATE],
+    ['docs/.ps/config.yml', CONFIGURATION],
+    ['docs/.ps/templates/note.md', TEMPLATE],
     ['docs/watcher-settle-fence-note.md', ORDINARY_NEIGHBOR],
-    ['docs/.ok/templates/watcher-settle-fence-note.md', TEMPLATE_NEIGHBOR],
+    ['docs/.ps/templates/watcher-settle-fence-note.md', TEMPLATE_NEIGHBOR],
   ];
   for (const [path, bytes] of expected(INITIAL_DOCUMENT)) writeFileSync(join(root, path), bytes);
-  writeFileSync(join(content, '.ok/local/fixture-state.json'), '{}\n');
+  writeFileSync(join(content, '.ps/local/fixture-state.json'), '{}\n');
   execFileSync('git', ['init', '--initial-branch=main', root], {
     env: Object.fromEntries(
       Object.entries(process.env).filter(([name]) => !name.startsWith('GIT_')),
@@ -120,7 +120,7 @@ test('checkpoints omit a pending settle fence in a nested content directory', as
         expect(paths).toContain(path);
         expect(await git.raw('show', `${object}:${path}`)).toBe(bytes);
       }
-      expect(paths).not.toContain('docs/.ok/local/fixture-state.json');
+      expect(paths).not.toContain('docs/.ps/local/fixture-state.json');
       snapshots.push({ object, paths });
     }
     return snapshots;
@@ -150,7 +150,7 @@ test('checkpoints omit a pending settle fence in a nested content directory', as
   await expect.poll(minted, { timeout: 10_000 }).toHaveLength(1);
   const fences = minted();
   for (const fence of fences) {
-    expect(dirname(join(root, fence))).toBe(join(content, '.ok'));
+    expect(dirname(join(root, fence))).toBe(join(content, '.ps'));
     expect(readFileSync(join(root, fence)).length).toBe(0);
   }
   expect(settleState).toBe('pending');

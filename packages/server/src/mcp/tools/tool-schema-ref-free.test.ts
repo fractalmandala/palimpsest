@@ -54,8 +54,8 @@ function refOffenders(rawShape: unknown, pipeStrategy: 'input' | 'output'): stri
 describe('MCP tool schema portability — no intra-schema $ref (LM Studio / Gemini compat)', () => {
   let cwd: string;
   beforeAll(() => {
-    cwd = makeTempDir('ok-reffree-');
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
+    cwd = makeTempDir('ps-reffree-');
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
   });
   const registrations = captureAllRegistrations(() => cwd);
 

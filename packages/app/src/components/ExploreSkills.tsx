@@ -1,5 +1,5 @@
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
-import type { SkillSearchResult } from '@inkeep/open-knowledge-core/skills-catalog/schema';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
+import type { SkillSearchResult } from '@palimpsest/core/skills-catalog/schema';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Search } from 'lucide-react';
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useOpenKnowledgeSkills } from '@/hooks/use-openknowledge-skills';
+import { usePalimpsestSkills } from '@/hooks/use-palimpsest-skills';
 import { usePopularSkills } from '@/hooks/use-popular-skills';
 import { searchSkills } from '@/lib/skills-api';
 
@@ -52,7 +52,7 @@ export function ExploreSkills({
     skills: ours,
     isPending: oursPending,
     failed: oursFailed,
-  } = useOpenKnowledgeSkills(showOurs);
+  } = usePalimpsestSkills(showOurs);
 
   useEffect(() => {
     const q = query.trim();
@@ -147,7 +147,7 @@ export function ExploreSkills({
             setQuery('');
           }}
         >
-          <Trans>OpenKnowledge</Trans>
+          <Trans>Palimpsest</Trans>
         </Button>
         {TOPICS.map((topic) => {
           const tokens = query.trim().split(/\s+/).filter(Boolean);
@@ -184,15 +184,15 @@ export function ExploreSkills({
         {showOurs ? (
           oursFailed ? (
             <p className="text-sm text-muted-foreground">
-              <Trans>Couldn't load the OpenKnowledge skills. Try again.</Trans>
+              <Trans>Couldn't load the Palimpsest skills. Try again.</Trans>
             </p>
           ) : (
             grid({
               results: ours,
               pending: oursPending,
-              label: <Trans>OpenKnowledge</Trans>,
-              loadingLabel: t`Loading OpenKnowledge skills`,
-              testId: 'skills-openknowledge',
+              label: <Trans>Palimpsest</Trans>,
+              loadingLabel: t`Loading Palimpsest skills`,
+              testId: 'skills-palimpsest',
             })
           )
         ) : q.length < 2 ? (

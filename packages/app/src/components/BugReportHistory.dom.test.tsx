@@ -1,4 +1,4 @@
-import type { OkBugReportListRow, OkBugReportSendResult } from '@inkeep/open-knowledge-core';
+import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -61,8 +61,8 @@ interface BridgeLog {
 }
 
 function installBridge(handlers: {
-  reports: OkBugReportListRow[] | (() => OkBugReportListRow[] | Promise<OkBugReportListRow[]>);
-  send?: () => Promise<OkBugReportSendResult>;
+  reports: PsBugReportListRow[] | (() => PsBugReportListRow[] | Promise<PsBugReportListRow[]>);
+  send?: () => Promise<PsBugReportSendResult>;
 }): BridgeLog {
   const log: BridgeLog = {
     listCalls: 0,
@@ -102,14 +102,14 @@ function installBridge(handlers: {
     },
   };
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', { configurable: true, writable: true, value: bridge });
+    Object.defineProperty(host, 'psDesktop', { configurable: true, writable: true, value: bridge });
   }
   return log;
 }
 
 function clearBridge() {
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', {
+    Object.defineProperty(host, 'psDesktop', {
       configurable: true,
       writable: true,
       value: undefined,
@@ -117,7 +117,7 @@ function clearBridge() {
   }
 }
 
-function makeRow(overrides: Partial<OkBugReportListRow> & { id: string }): OkBugReportListRow {
+function makeRow(overrides: Partial<PsBugReportListRow> & { id: string }): PsBugReportListRow {
   return {
     createdAt: '2026-07-15T18:30:00.000Z',
     bundleLevel: 'standard',
@@ -128,7 +128,7 @@ function makeRow(overrides: Partial<OkBugReportListRow> & { id: string }): OkBug
     systemWide: false,
     projectSlug: 'demo',
     attemptsCount: 0,
-    zipPath: `/Users/tester/.ok/bug-reports/${overrides.id}`,
+    zipPath: `/Users/tester/.ps/bug-reports/${overrides.id}`,
     retryable: true,
     degraded: false,
     ...overrides,
@@ -136,13 +136,13 @@ function makeRow(overrides: Partial<OkBugReportListRow> & { id: string }): OkBug
 }
 
 function deferredSend() {
-  let resolve: (result: OkBugReportSendResult) => void = () => {};
+  let resolve: (result: PsBugReportSendResult) => void = () => {};
   return {
     send: () =>
-      new Promise<OkBugReportSendResult>((r) => {
+      new Promise<PsBugReportSendResult>((r) => {
         resolve = r;
       }),
-    finish: (result: OkBugReportSendResult) => resolve(result),
+    finish: (result: PsBugReportSendResult) => resolve(result),
   };
 }
 
@@ -229,7 +229,7 @@ describe('BugReportHistoryList', () => {
 
     expect(log.sendCalls).toHaveLength(1);
     expect(log.sendCalls[0]).toEqual({
-      zipPath: '/Users/tester/.ok/bug-reports/d-bugreport.zip',
+      zipPath: '/Users/tester/.ps/bug-reports/d-bugreport.zip',
       metadata: { level: 'full', systemWide: true, projectSlug: null },
     });
   });
@@ -240,7 +240,7 @@ describe('BugReportHistoryList', () => {
       send: async () => ({
         ok: false as const,
         reason: 'email-draft' as const,
-        fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=x' },
+        fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=x' },
       }),
     });
 
@@ -260,7 +260,7 @@ describe('BugReportHistoryList', () => {
 
     render(<BugReportHistoryList />);
     await userEvent.click(await screen.findByLabelText('Reveal in Finder'));
-    expect(log.revealed).toEqual(['/Users/tester/.ok/bug-reports/f-bugreport.zip']);
+    expect(log.revealed).toEqual(['/Users/tester/.ps/bug-reports/f-bugreport.zip']);
 
     await userEvent.click(screen.getByLabelText('Delete report'));
     expect(log.deleteCalls).toEqual(['f-bugreport.zip']);
@@ -323,11 +323,11 @@ describe('BugReportHistoryList', () => {
   });
 
   test('a list reply that lost the race cannot overwrite the newer one', async () => {
-    const replies: Array<(rows: OkBugReportListRow[]) => void> = [];
+    const replies: Array<(rows: PsBugReportListRow[]) => void> = [];
     const pending = deferredSend();
     installBridge({
       reports: () =>
-        new Promise<OkBugReportListRow[]>((resolve) => {
+        new Promise<PsBugReportListRow[]>((resolve) => {
           replies.push(resolve);
         }),
       send: pending.send,
@@ -426,7 +426,7 @@ describe('BugReportHistoryList', () => {
     expect(followUps).toHaveLength(1);
 
     await userEvent.click(followUps[0]);
-    expect(log.opened).toEqual(['mailto:support@inkeep.com?subject=Bug%20report%20OK-77']);
+    expect(log.opened).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-77']);
   });
 
   test('renders an error state when the bridge is absent', async () => {
@@ -473,7 +473,7 @@ describe('report row titles', () => {
 
     await userEvent.click(await screen.findByLabelText('Email support about this report'));
 
-    expect(log.opened).toEqual(['mailto:support@inkeep.com?subject=Bug%20report%20OK-54']);
+    expect(log.opened).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-54']);
   });
 });
 
@@ -687,7 +687,7 @@ describe('BugReportPreviousReports', () => {
     await userEvent.click(await screen.findByRole('button', { name: /Previous reports/ }));
     await userEvent.click(await screen.findByLabelText('Email support about this report'));
 
-    expect(log.opened).toEqual(['mailto:support@inkeep.com?subject=Bug%20report%20OK-31']);
+    expect(log.opened).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-31']);
   });
 
   test('the disclosure renders the same titled list rows as the standalone pane', async () => {

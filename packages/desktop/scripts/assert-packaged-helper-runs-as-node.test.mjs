@@ -19,7 +19,7 @@ const DYLD_FAILING_HELPER =
 const passingProbe = () => ({
   status: 0,
   signal: null,
-  stdout: 'ok-helper-node-mode 24.18.0\n',
+  stdout: 'ps-helper-node-mode 24.18.0\n',
   stderr: '',
 });
 
@@ -39,7 +39,7 @@ function plist(executable) {
 
 function plantApp({
   arch = 'mac-arm64',
-  product = 'OpenKnowledge',
+  product = 'Palimpsest',
   servers = [product],
   helperName = `${product} Helper`,
   helper = NODE_MODE_HELPER,
@@ -83,8 +83,8 @@ function runCli(...args) {
 describe('findPackagedApps', () => {
   test('finds every mac-*/*.app and nothing else', () => {
     const stable = plantApp();
-    const beta = plantApp({ arch: 'mac-universal', product: 'OpenKnowledge Beta' });
-    mkdirSync(pathPosix.join(root, 'linux-unpacked', 'OpenKnowledge.app'), { recursive: true });
+    const beta = plantApp({ arch: 'mac-universal', product: 'Palimpsest Beta' });
+    mkdirSync(pathPosix.join(root, 'linux-unpacked', 'Palimpsest.app'), { recursive: true });
     expect(findPackagedApps(root)).toEqual([stable, beta].sort());
   });
 
@@ -99,15 +99,15 @@ describe('checkPackagedApp', () => {
   });
 
   test('passes a Beta app whose helper carries the Beta product name', () => {
-    const app = plantApp({ product: 'OpenKnowledge Beta' });
+    const app = plantApp({ product: 'Palimpsest Beta' });
     expect(checkPackagedApp(app, passingProbe).problems).toEqual([]);
   });
 
   test('refuses a Beta app whose helper carries the Stable names', () => {
     const app = plantApp({
-      product: 'OpenKnowledge Beta',
-      servers: ['OpenKnowledge'],
-      helperName: 'OpenKnowledge Helper',
+      product: 'Palimpsest Beta',
+      servers: ['Palimpsest'],
+      helperName: 'Palimpsest Helper',
     });
     expect(checkPackagedApp(app, passingProbe).problems).toEqual([
       expect.stringContaining("the spawn site's resolver maps"),
@@ -122,7 +122,7 @@ describe('checkPackagedApp', () => {
   });
 
   test('refuses an app with two Server.app helper bundles', () => {
-    const app = plantApp({ servers: ['OpenKnowledge', 'OpenKnowledge Extra'] });
+    const app = plantApp({ servers: ['Palimpsest', 'Palimpsest Extra'] });
     expect(checkPackagedApp(app, passingProbe).problems).toEqual([
       expect.stringContaining('holds 2 "* Server.app" helper bundles'),
     ]);
@@ -132,7 +132,7 @@ describe('checkPackagedApp', () => {
     const app = plantApp({ helper: null });
     expect(checkPackagedApp(app, passingProbe).problems).toEqual([
       expect.stringContaining(
-        `${helperOf(app, 'OpenKnowledge', 'OpenKnowledge Helper')}, which does not exist`,
+        `${helperOf(app, 'Palimpsest', 'Palimpsest Helper')}, which does not exist`,
       ),
     ]);
   });
@@ -158,7 +158,7 @@ describe('helperProbeProblems', () => {
     });
     expect(problems).toEqual([
       'it exited 1',
-      expect.stringContaining('lacks the "ok-helper-node-mode <version>" line'),
+      expect.stringContaining('lacks the "ps-helper-node-mode <version>" line'),
       expect.stringContaining('Library not loaded'),
     ]);
   });
@@ -168,7 +168,7 @@ describe('helperProbeProblems', () => {
       helperProbeProblems({
         status: 0,
         signal: null,
-        stdout: 'ok-helper-node-mode 24.18.0\n',
+        stdout: 'ps-helper-node-mode 24.18.0\n',
         stderr: 'unexpected diagnostic\n',
       }),
     ).toEqual(['it wrote to stderr: "unexpected diagnostic\\n"']);
@@ -177,7 +177,7 @@ describe('helperProbeProblems', () => {
   test('refuses a zero exit without the Node-mode line', () => {
     expect(
       helperProbeProblems({ status: 0, signal: null, stdout: 'renderer\n', stderr: '' }),
-    ).toEqual([expect.stringContaining('lacks the "ok-helper-node-mode <version>" line')]);
+    ).toEqual([expect.stringContaining('lacks the "ps-helper-node-mode <version>" line')]);
   });
 
   test('refuses a helper that could not be spawned', () => {
@@ -199,7 +199,7 @@ describe('helperProbeProblems', () => {
       }),
     ).toEqual([
       `it did not exit within ${HELPER_PROBE_TIMEOUT_MS} ms`,
-      'its stdout lacks the "ok-helper-node-mode <version>" line: "partial\\n"',
+      'its stdout lacks the "ps-helper-node-mode <version>" line: "partial\\n"',
       'it wrote to stderr: "boot log\\n"',
     ]);
   });
@@ -221,7 +221,7 @@ describe('the CLI', () => {
     const result = runCli(root, 'self-test');
     expect(result.status).toBe(1);
     expect(result.stderr).toContain(
-      `${helperOf(app, 'OpenKnowledge', 'OpenKnowledge Helper')} under ELECTRON_RUN_AS_NODE=1: it could not be run`,
+      `${helperOf(app, 'Palimpsest', 'Palimpsest Helper')} under ELECTRON_RUN_AS_NODE=1: it could not be run`,
     );
   });
 
@@ -241,10 +241,10 @@ describe('the CLI', () => {
     const result = runCli(root, 'self-test');
     expect(result.status).toBe(1);
     expect(result.stdout).toContain(
-      `packaged helper OK (self-test): ${helperOf(good, 'OpenKnowledge', 'OpenKnowledge Helper')}`,
+      `packaged helper OK (self-test): ${helperOf(good, 'Palimpsest', 'Palimpsest Helper')}`,
     );
     expect(result.stderr).toContain(
-      `${helperOf(bad, 'OpenKnowledge', 'OpenKnowledge Helper')} under ELECTRON_RUN_AS_NODE=1: it exited 1`,
+      `${helperOf(bad, 'Palimpsest', 'Palimpsest Helper')} under ELECTRON_RUN_AS_NODE=1: it exited 1`,
     );
   });
 
@@ -253,7 +253,7 @@ describe('the CLI', () => {
       process.platform === 'win32' || process.getuid?.() === 0,
       'a mode-000 directory keeps out only a non-root POSIX reader',
     );
-    plantApp({ arch: 'mac-universal', product: 'OpenKnowledge Beta' });
+    plantApp({ arch: 'mac-universal', product: 'Palimpsest Beta' });
     const unreadable = pathPosix.dirname(plantApp());
     chmodSync(unreadable, 0o000);
     const result = runCli(root, 'self-test');
@@ -265,7 +265,7 @@ describe('the CLI', () => {
   test('exits 0 when every app carries a helper that runs as Node', (ctx) => {
     ctx.skip(process.platform === 'win32', 'a POSIX shell script plays the macOS helper binary');
     plantApp();
-    plantApp({ arch: 'mac-universal', product: 'OpenKnowledge Beta' });
+    plantApp({ arch: 'mac-universal', product: 'Palimpsest Beta' });
     const result = runCli(root, 'self-test');
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);

@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { pathspecArgs, type ShadowContributor } from '@inkeep/open-knowledge-core';
+import { pathspecArgs, type ShadowContributor } from '@palimpsest/core';
 import {
   getShadowRepoPath,
   getWipRefPattern,
@@ -7,7 +7,7 @@ import {
   parseWriterId,
   readContributors,
   type WriterClassification,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 import simpleGit, { type SimpleGit } from 'simple-git';
 import { resolveCheckpointChainAnchors } from '../checkpoint-chain.ts';
 import { getLogger } from '../logger.ts';

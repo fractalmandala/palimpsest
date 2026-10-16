@@ -2,7 +2,7 @@ import { mkdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { OK_DIR } from '../constants.ts';
+import { PS_DIR } from '../constants.ts';
 import { formatPreviewBlock, previewContent } from './preview.ts';
 
 describe('previewContent', () => {
@@ -33,9 +33,9 @@ describe('previewContent', () => {
     expect(result.warnings).toEqual([]);
   });
 
-  it('respects .okignore patterns', () => {
+  it('respects .psignore patterns', () => {
     writeFileSync(join(testDir, 'keep.md'), '# Keep');
-    writeFileSync(join(testDir, '.okignore'), 'vendored/\n');
+    writeFileSync(join(testDir, '.psignore'), 'vendored/\n');
     mkdirSync(join(testDir, 'vendored'));
     writeFileSync(join(testDir, 'vendored', 'drop.md'), '# Drop');
 
@@ -94,12 +94,12 @@ describe('previewContent', () => {
     expect(result.sample.length).toBe(5);
   });
 
-  it('skips .ok/ entirely (BUILTIN_SKIP_DIRS coverage)', () => {
-    const okDir = join(testDir, OK_DIR);
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(join(okDir, 'AGENTS.md'), '# Agents');
-    mkdirSync(join(okDir, 'cache'));
-    writeFileSync(join(okDir, 'cache', 'cached.md'), '# Cached');
+  it('skips .ps/ entirely (BUILTIN_SKIP_DIRS coverage)', () => {
+    const psDir = join(testDir, PS_DIR);
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(join(psDir, 'AGENTS.md'), '# Agents');
+    mkdirSync(join(psDir, 'cache'));
+    writeFileSync(join(psDir, 'cache', 'cached.md'), '# Cached');
     writeFileSync(join(testDir, 'real.md'), '# Real');
 
     const result = previewContent({ projectDir: testDir, contentDir: testDir });
@@ -170,10 +170,10 @@ describe('formatPreviewBlock names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   it.each([
-    ['stable', 'open-knowledge'],
-    ['beta', 'open-knowledge-beta'],
+    ['stable', 'palimpsest'],
+    ['beta', 'palimpsest-beta'],
   ])('%s: the init and re-check hints name %s', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const cwd = resolve(
       tmpdir(),
       `preview-hint-${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -187,7 +187,7 @@ describe('formatPreviewBlock names the running channel CLI', () => {
         'Content:',
         '  Found 0 markdown files in ./',
         '',
-        `  Run \`${command} init\` to scaffold config + .okignore.`,
+        `  Run \`${command} init\` to scaffold config + .psignore.`,
         '',
         `  Re-check anytime: ${command} preview`,
       ].join('\n'),

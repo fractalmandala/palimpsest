@@ -200,7 +200,7 @@ function readPosts(xml: string): LlmsTxtLink[] {
   return posts;
 }
 
-const ALLOW_BLOGLESS = 'OK_ALLOW_BLOGLESS_LLMS_TXT';
+const ALLOW_BLOGLESS = 'PS_ALLOW_BLOGLESS_LLMS_TXT';
 
 function isOffVercelCi(): boolean {
   return Boolean(process.env.CI) && !process.env.VERCEL;

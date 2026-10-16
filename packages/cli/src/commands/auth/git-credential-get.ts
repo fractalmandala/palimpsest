@@ -1,5 +1,5 @@
 import type { Readable, Writable } from 'node:stream';
-import { gitCredentialHostKey } from '@inkeep/open-knowledge-core';
+import { gitCredentialHostKey } from '@palimpsest/core';
 import type { Logger as PinoLoggerInstance } from 'pino';
 import type { TokenStore, TokenStoreDiagnostics } from '../../auth/token-store.ts';
 
@@ -39,15 +39,15 @@ export async function handleCredentialGet(
   }
 
   const key = gitCredentialHostKey(host, attrs.protocol);
-  const relayToken = process.env.OK_GH_TOKEN;
-  const relayTokenHost = process.env.OK_GH_TOKEN_HOST;
+  const relayToken = process.env.PS_GH_TOKEN;
+  const relayTokenHost = process.env.PS_GH_TOKEN_HOST;
   if (relayToken && relayTokenHost && gitCredentialHostKey(relayTokenHost) === key) {
     ctx?.log?.debug(
       {
         host,
         outcome: 'gh-env-token',
         backend: tokenStore.backend,
-        relayLogin: process.env.OK_GH_TOKEN_LOGIN,
+        relayLogin: process.env.PS_GH_TOKEN_LOGIN,
       },
       '[auth] git-credential get',
     );

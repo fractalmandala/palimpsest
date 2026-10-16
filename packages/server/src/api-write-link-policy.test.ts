@@ -51,7 +51,7 @@ let hocuspocus: Hocuspocus;
 let sessionManager: AgentSessionManager;
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-write-link-policy-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-write-link-policy-'));
   contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   hocuspocus = new Hocuspocus({ quiet: true });

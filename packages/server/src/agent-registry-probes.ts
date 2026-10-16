@@ -4,7 +4,7 @@ import {
   type EnvTier,
   type HostSnapshot,
   type ProbeResolver,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export interface ServerProbeOptions {
   readonly env: EnvTier;

@@ -6,11 +6,11 @@ import { dirname, isAbsolute, join, resolve as resolvePath } from 'node:path';
 import {
   EDITOR_PROJECT_SKILL_ROOT,
   type EditorId,
-  OPENKNOWLEDGE_SKILLS_REPO,
+  PALIMPSEST_SKILLS_REPO,
   PROJECT_SKILL_EDITOR_IDS,
   skillRootActivationPath,
   USER_SKILL_HOSTS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   type BuildSkillZipResult,
   buildSkillZip,
@@ -52,7 +52,7 @@ export interface InstallUserSkillOptions {
 
 export type InstallUserSkillResult = 'installed' | 'skip-current' | 'failed' | 'no-hosts';
 
-const LEGACY_USER_SKILL_NAME = 'open-knowledge';
+const LEGACY_USER_SKILL_NAME = 'palimpsest';
 
 const CENTRAL_HOST_DIR = '.agents';
 
@@ -125,12 +125,12 @@ function removeLegacyUserSkillDirs(
       tracedRmSync(legacyDir, { recursive: true, force: true });
       logger.info?.(
         { event: 'skill-install.legacy-removed', path: legacyDir },
-        'Removed pre-split `open-knowledge` user-global skill dir.',
+        'Removed pre-split `palimpsest` user-global skill dir.',
       );
     } catch (err) {
       logger.warn(
         { event: 'skill-install.legacy-remove-failed', path: legacyDir, err },
-        'Legacy `open-knowledge` skill removal failed; continuing with install.',
+        'Legacy `palimpsest` skill removal failed; continuing with install.',
       );
     }
   }
@@ -244,7 +244,7 @@ export async function installUserSkill(
   } catch (err) {
     logger.warn(
       { event: 'skill-install.failed', reason: 'version-read-failed', err },
-      'Skill install aborted — could not read @inkeep/open-knowledge-server version.',
+      'Skill install aborted — could not read @palimpsest/server version.',
     );
     await report('failed', undefined, 'version-read-failed');
     return 'failed';
@@ -261,7 +261,7 @@ export async function installUserSkill(
     if (await installedUserSkillExists(home, bundleName)) {
       logger.info?.(
         { event: 'skill-install.skip-current', version: currentVersion },
-        'OpenKnowledge skill already installed at current version; skipping.',
+        'Palimpsest skill already installed at current version; skipping.',
       );
       await report('skip-current', currentVersion);
       return 'skip-current';
@@ -340,14 +340,14 @@ export async function installUserSkill(
       hosts: hosts.map((h) => h.editorId),
       paths: written.map((e) => e.path),
     },
-    `OpenKnowledge skill installed to ${written.length} location(s): ${written
+    `Palimpsest skill installed to ${written.length} location(s): ${written
       .map((e) => e.path)
       .join(', ')}`,
   );
   await report('installed', currentVersion);
   void reportSkillInstall(
     {
-      source: OPENKNOWLEDGE_SKILLS_REPO,
+      source: PALIMPSEST_SKILLS_REPO,
       skills: [bundleName],
       agents: hosts.map((h) => h.editorId),
       global: true,
@@ -359,7 +359,7 @@ export async function installUserSkill(
 }
 
 const DOWNLOADS_DIR = 'Downloads';
-const SKILL_FILENAME = 'openknowledge.skill';
+const SKILL_FILENAME = 'palimpsest.skill';
 
 export interface BuildAndOpenSkillOptions {
   out?: string;
@@ -459,7 +459,7 @@ export async function buildAndOpenSkill(
     } catch (err) {
       logger?.warn?.(
         { event: 'skill-install.gate.version-read-failed', err },
-        'Could not read @inkeep/open-knowledge-server version for gate check; rebuilding.',
+        'Could not read @palimpsest/server version for gate check; rebuilding.',
       );
     }
 
@@ -485,7 +485,7 @@ export async function buildAndOpenSkill(
             target: 'claude-cowork',
             version: currentVersion,
           },
-          'OpenKnowledge skill already delivered at current version; skipping rebuild.',
+          'Palimpsest skill already delivered at current version; skipping rebuild.',
         );
         await report('skip-current', currentVersion);
         return {
@@ -574,7 +574,7 @@ export async function buildAndOpenSkill(
   await report('installed', installedVersion);
   void reportSkillInstall(
     {
-      source: OPENKNOWLEDGE_SKILLS_REPO,
+      source: PALIMPSEST_SKILLS_REPO,
       skills: [BUNDLE_SKILL_NAME.project],
       agents: ['claude-desktop'],
       global: true,

@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { OkBlob } from '@/components/OkBlob';
+import { PsBlob } from '@/components/PsBlob';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Kbd } from '@/components/ui/kbd';
@@ -105,7 +105,7 @@ export function OnboardingCard({
           )}
         >
           {}
-          <OkBlob size={36} celebrateSignal={celebrateSignal} />
+          <PsBlob size={36} celebrateSignal={celebrateSignal} />
           <span className="font-medium text-sm">
             <Trans>You're all set up!</Trans>
           </span>

@@ -18,7 +18,7 @@ let projectRoot: string;
 let shadow: ShadowHandle;
 
 beforeEach(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-checkpoint-tie-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-checkpoint-tie-'));
   projectRoot = resolve(tmpDir, 'project');
   mkdirSync(resolve(projectRoot, 'content/docs'), { recursive: true });
   const git = simpleGit(projectRoot);

@@ -1,4 +1,4 @@
-import type { ThreadExitDiagnosis } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadExitDiagnosis } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
 
 export function exitSummary(exit: ThreadExitDiagnosis): string {

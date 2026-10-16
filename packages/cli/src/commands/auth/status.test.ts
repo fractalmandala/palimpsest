@@ -26,7 +26,7 @@ function ghUnavailable(): (host?: string) => GhDetectResult {
 describe('resolveStatusSource', () => {
   let tmpDir: string;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-resolve-status-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-resolve-status-'));
   });
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });
@@ -141,7 +141,7 @@ describe('buildStatusPayload', () => {
 describe('resolveStoredEntryStatus', () => {
   let tmpDir: string;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-stored-entry-status-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-stored-entry-status-'));
   });
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });

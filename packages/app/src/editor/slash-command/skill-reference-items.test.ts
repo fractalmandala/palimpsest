@@ -2,7 +2,7 @@ import type { Editor } from '@tiptap/core';
 import { describe, expect, test, vi } from 'vitest';
 
 const LONG =
-  'Use when triaging an Open Knowledge ticket in Linear, whatever its shape or origin. ' +
+  'Use when triaging an Palimpsest ticket in Linear, whatever its shape or origin. ' +
   'Owns every kind of ticket: defect, feature request, question, sentiment.';
 
 const SHORT_FIRST =
@@ -10,7 +10,7 @@ const SHORT_FIRST =
   'Then help build AI-powered features across the whole application surface and beyond.';
 
 const ABBREVIATED =
-  'Use the CLI (e.g. ok start) before anything else. Then open the editor and begin.';
+  'Use the CLI (e.g. ps start) before anything else. Then open the editor and begin.';
 
 const STRADDLING =
   'Use when triaging a ticket in Linear that arrives as a linear.app/inkeep/issue/PRD-8017 URL. ' +
@@ -26,7 +26,7 @@ const SINGLE_LETTER =
   'First do A. Then do the rest of the work described further down in this paragraph.';
 
 const UNBROKEN =
-  'Read when the user asks what OpenKnowledge is and wants to install it on a repository ' +
+  'Read when the user asks what Palimpsest is and wants to install it on a repository ' +
   'they already have checked out somewhere on disk';
 
 const skills = new Map<string, { scope: 'project'; path: string; description?: string }>([
@@ -82,7 +82,7 @@ describe('getSkillReferenceItems', () => {
   });
 
   test('an abbreviation period does not end the sentence', () => {
-    expect(blurbOf('abbreviated')).toBe('Use the CLI (e.g. ok start) before anything else…');
+    expect(blurbOf('abbreviated')).toBe('Use the CLI (e.g. ps start) before anything else…');
   });
 
   test('a sentence with no terminator is cut on a word boundary', () => {
@@ -120,7 +120,7 @@ describe('getSkillReferenceItems', () => {
 
     expect(wordy?.description?.length).toBeLessThanOrEqual(105);
     expect(wordy?.description).not.toContain('Owns every kind of ticket');
-    expect(wordy?.description?.startsWith('Use when triaging an Open Knowledge ticket')).toBe(true);
+    expect(wordy?.description?.startsWith('Use when triaging an Palimpsest ticket')).toBe(true);
   });
 
   test('a doc that is not a skill bundle offers no skill references', () => {

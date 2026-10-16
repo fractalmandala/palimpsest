@@ -40,14 +40,14 @@ describe('maxBumpType', () => {
 describe('maxReleaseType', () => {
   test('returns the max bump across the releases Changesets read from one changeset', () => {
     const releases = [
-      { name: '@inkeep/open-knowledge', type: 'minor' },
-      { name: '@inkeep/open-knowledge-app', type: 'patch' },
+      { name: '@palimpsest/cli', type: 'minor' },
+      { name: '@palimpsest/app', type: 'patch' },
     ];
     expect(maxReleaseType(releases)).toBe('minor');
   });
 
   test('returns major when any release is major', () => {
-    expect(maxReleaseType([{ name: '@inkeep/open-knowledge', type: 'major' }])).toBe('major');
+    expect(maxReleaseType([{ name: '@palimpsest/cli', type: 'major' }])).toBe('major');
   });
 
   test('returns null for a changeset that declares no release', () => {
@@ -55,11 +55,11 @@ describe('maxReleaseType', () => {
   });
 
   test('ignores a none release, which bumps nothing', () => {
-    expect(maxReleaseType([{ name: '@inkeep/open-knowledge', type: 'none' }])).toBeNull();
+    expect(maxReleaseType([{ name: '@palimpsest/cli', type: 'none' }])).toBeNull();
     expect(
       maxReleaseType([
-        { name: '@inkeep/open-knowledge', type: 'none' },
-        { name: '@inkeep/open-knowledge-app', type: 'patch' },
+        { name: '@palimpsest/cli', type: 'none' },
+        { name: '@palimpsest/app', type: 'patch' },
       ]),
     ).toBe('patch');
   });

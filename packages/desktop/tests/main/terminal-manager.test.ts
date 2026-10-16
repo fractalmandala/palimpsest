@@ -1,8 +1,8 @@
-import { WINDOWS_SHELL_FAMILIES } from '@inkeep/open-knowledge-core';
+import { WINDOWS_SHELL_FAMILIES } from '@palimpsest/core';
 import {
   TERMINAL_SHELL_NOTICE_REASONS,
   TERMINAL_SUPPORT_FILE_NOTICE_REASONS,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/desktop-bridge';
 import { describe, expect, test, vi } from 'vitest';
 import {
   clampPtyDimension,

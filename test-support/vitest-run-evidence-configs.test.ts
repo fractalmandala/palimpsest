@@ -37,7 +37,7 @@ const omitsRunEvidence = (reading: ProjectReading<string>): boolean =>
 function describeFinding(reading: ProjectReading<string>): string {
   switch (reading.kind) {
     case 'resolved':
-      return `${reading.project} resolves plugins [${reading.values.join(', ')}] without ${RUN_EVIDENCE_PLUGIN}; spread okVitestBase.plugins into its plugins.`;
+      return `${reading.project} resolves plugins [${reading.values.join(', ')}] without ${RUN_EVIDENCE_PLUGIN}; spread psVitestBase.plugins into its plugins.`;
     case 'unresolved':
       return `${reading.project} is resolved from ${reading.reference}, which this check does not follow; declare the project inline.`;
   }
@@ -64,13 +64,13 @@ async function readRunEvidenceContract(
 const makeTempDir = createTempDirFactory(afterAll);
 
 function plantConfigs(configs: Record<string, string>): string {
-  const root = makeTempDir('ok-vitest-run-evidence-configs-');
+  const root = makeTempDir('ps-vitest-run-evidence-configs-');
   for (const [name, body] of Object.entries(configs)) {
     writeFileSync(
       join(root, name),
       [
-        `import { importMetaDirPlugin, okVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
-        "const extra = { name: 'ok-fixture:extra' };",
+        `import { importMetaDirPlugin, psVitestBase } from ${JSON.stringify(BASE_MODULE)};`,
+        "const extra = { name: 'ps-fixture:extra' };",
         body,
         '',
       ].join('\n'),
@@ -82,12 +82,12 @@ function plantConfigs(configs: Record<string, string>): string {
 describe('every Vitest config hands each of its projects the run-evidence plugin', () => {
   test('a config that sets its plugins without spreading the base plugins is named, and configs that spread them pass', async () => {
     const root = plantConfigs({
-      'vitest.keeps-base.config.mjs': 'export default { ...okVitestBase };',
+      'vitest.keeps-base.config.mjs': 'export default { ...psVitestBase };',
       'vitest.adds-plugin.config.mjs':
-        'export default { ...okVitestBase, plugins: [...okVitestBase.plugins, extra] };',
-      'vitest.drops-base.config.mjs': 'export default { ...okVitestBase, plugins: [extra] };',
+        'export default { ...psVitestBase, plugins: [...psVitestBase.plugins, extra] };',
+      'vitest.drops-base.config.mjs': 'export default { ...psVitestBase, plugins: [extra] };',
       'vitest.lists-by-hand.config.mjs':
-        'export default { ...okVitestBase, plugins: [importMetaDirPlugin, extra] };',
+        'export default { ...psVitestBase, plugins: [importMetaDirPlugin, extra] };',
     });
     expect(
       await readRunEvidenceContract(root, [
@@ -100,11 +100,11 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
       configs: 4,
       projects: 4,
       findings: [
-        { kind: 'resolved', project: 'vitest.drops-base.config.mjs', values: ['ok-fixture:extra'] },
+        { kind: 'resolved', project: 'vitest.drops-base.config.mjs', values: ['ps-fixture:extra'] },
         {
           kind: 'resolved',
           project: 'vitest.lists-by-hand.config.mjs',
-          values: ['ok-bun-import-meta-dir', 'ok-fixture:extra'],
+          values: ['ps-bun-import-meta-dir', 'ps-fixture:extra'],
         },
       ],
     });
@@ -113,9 +113,9 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
   test("plugins are read the way Vite resolves them, through a factory's nested, awaited and empty entries", async () => {
     const root = plantConfigs({
       'vitest.nested-keeps.config.mjs':
-        'export default async () => ({ ...okVitestBase, plugins: [false, [Promise.resolve(okVitestBase.plugins)], null] });',
+        'export default async () => ({ ...psVitestBase, plugins: [false, [Promise.resolve(psVitestBase.plugins)], null] });',
       'vitest.nested-drops.config.mjs':
-        'export default async () => ({ ...okVitestBase, plugins: [false, [Promise.resolve([extra])], null] });',
+        'export default async () => ({ ...psVitestBase, plugins: [false, [Promise.resolve([extra])], null] });',
     });
     expect(
       await readRunEvidenceContract(root, [
@@ -129,7 +129,7 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
         {
           kind: 'resolved',
           project: 'vitest.nested-drops.config.mjs',
-          values: ['ok-fixture:extra'],
+          values: ['ps-fixture:extra'],
         },
       ],
     });
@@ -139,13 +139,13 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
     const root = plantConfigs({
       'vitest.projects.config.mjs': [
         'export default {',
-        '  plugins: okVitestBase.plugins,',
+        '  plugins: psVitestBase.plugins,',
         '  test: {',
         '    projects: [',
         "      { test: { name: 'inherits' } },",
         "      { extends: true, test: { name: 'extends-true' } },",
         "      { extends: false, test: { name: 'extends-false' } },",
-        "      { extends: false, plugins: okVitestBase.plugins, test: { name: 'extends-false-own' } },",
+        "      { extends: false, plugins: psVitestBase.plugins, test: { name: 'extends-false-own' } },",
         "      () => ({ extends: false, plugins: [extra], test: { name: 'factory' } }),",
         '    ],',
         '  },',
@@ -155,7 +155,7 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
         'export default {',
         '  test: {',
         '    projects: [',
-        "      { plugins: [...okVitestBase.plugins, extra], test: { name: 'own' } },",
+        "      { plugins: [...psVitestBase.plugins, extra], test: { name: 'own' } },",
         "      { test: { name: 'none' } },",
         '    ],',
         '  },',
@@ -179,7 +179,7 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
         {
           kind: 'resolved',
           project: 'vitest.projects.config.mjs project factory',
-          values: ['ok-fixture:extra'],
+          values: ['ps-fixture:extra'],
         },
         { kind: 'resolved', project: 'vitest.root-without.config.mjs project none', values: [] },
       ],
@@ -188,10 +188,10 @@ describe('every Vitest config hands each of its projects the run-evidence plugin
 
   test('a project named by a path, or one that extends another config file, is reported as unresolved rather than passed', async () => {
     const root = plantConfigs({
-      'vitest.keeps-base.config.mjs': 'export default { ...okVitestBase };',
+      'vitest.keeps-base.config.mjs': 'export default { ...psVitestBase };',
       'vitest.by-reference.config.mjs': [
         'export default {',
-        '  plugins: okVitestBase.plugins,',
+        '  plugins: psVitestBase.plugins,',
         '  test: {',
         '    projects: [',
         "      './vitest.keeps-base.config.mjs',",

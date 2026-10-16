@@ -13,20 +13,20 @@ describe('installPackSkill', () => {
       new Response(
         JSON.stringify({
           installedHosts: ['Claude Code'],
-          skills: [{ name: 'okf-knowledge-base', created: true }],
+          skills: [{ name: 'psf-knowledge-base', created: true }],
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       ),
     );
     globalThis.fetch = fetchMock;
 
-    await expect(installPackSkill('okf')).resolves.toEqual({
+    await expect(installPackSkill('psf')).resolves.toEqual({
       ok: true,
       installedHosts: ['Claude Code'],
-      skills: [{ name: 'okf-knowledge-base', created: true }],
+      skills: [{ name: 'psf-knowledge-base', created: true }],
     });
     expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/seed/install-pack-skill');
     expect(fetchMock.mock.calls[0]?.[1]?.method).toBe('POST');
-    expect(JSON.parse(fetchMock.mock.calls[0]?.[1]?.body as string)).toEqual({ packId: 'okf' });
+    expect(JSON.parse(fetchMock.mock.calls[0]?.[1]?.body as string)).toEqual({ packId: 'psf' });
   });
 });

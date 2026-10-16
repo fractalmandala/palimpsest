@@ -6,19 +6,19 @@ import { useEffect, useRef, useState } from 'react';
 import { type FetchApiConfigResult, fetchApiConfig } from '@/lib/api-config';
 import { defaultCollabWsUrl } from '@/lib/cc1';
 import '@/lib/desktop-bridge-types';
-import type { OkDesktopBridge, OkDesktopConfig } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsDesktopConfig } from '@/lib/desktop-bridge-types';
 
 export function tryElectronBridge(
-  windowLike: { okDesktop?: OkDesktopBridge } | undefined,
-): OkDesktopBridge | null {
+  windowLike: { psDesktop?: PsDesktopBridge } | undefined,
+): PsDesktopBridge | null {
   if (typeof windowLike === 'undefined') return null;
-  const bridge = windowLike.okDesktop;
+  const bridge = windowLike.psDesktop;
   if (!bridge) return null;
   if (!bridge.config.collabUrl || bridge.config.collabUrl.length === 0) return null;
   return bridge;
 }
 
-export function electronStateFromConfig(config: OkDesktopConfig): {
+export function electronStateFromConfig(config: PsDesktopConfig): {
   collabUrl: string;
   attempts: number;
   terminal: boolean;
@@ -55,7 +55,7 @@ interface CollabPollState {
   lastError: CollabUrlError | null;
 }
 
-export function initialCollabUrlState(config: OkDesktopConfig | undefined): CollabPollState {
+export function initialCollabUrlState(config: PsDesktopConfig | undefined): CollabPollState {
   return config
     ? electronStateFromConfig(config)
     : {

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { isThemeColorProperty, THEME_COLOR_PROPERTIES } from './theme-color-properties';
 
 export const TRANSITION_ATTRIBUTE = 'data-theme-color-transitions';
-export const TRANSITION_STYLE_ID = 'ok-theme-color-transitions';
+export const TRANSITION_STYLE_ID = 'ps-theme-color-transitions';
 export const TRANSITION_FADING_ATTRIBUTE = 'data-theme-color-fading';
 const TRANSITION_DURATION_MS = 200;
 

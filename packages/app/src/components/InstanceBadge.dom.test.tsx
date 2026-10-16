@@ -11,7 +11,7 @@ vi.doMock('@lingui/react/macro', () => ({
 function setOkDesktop(
   value: { instanceLabel: string | null; appVersion?: string } | undefined,
 ): void {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = value;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = value;
 }
 
 function expectAnnouncedInPlaceOfLabel(badge: HTMLElement, label: string, announced: string) {
@@ -77,7 +77,7 @@ describe('InstanceBadge runtime behavior', () => {
     await userEvent.hover(screen.getByTestId('instance-badge'));
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip.textContent).toContain('Cloud build, v0.81.5.');
-    expect(tooltip.textContent).toContain('kept separate from other OpenKnowledge apps');
+    expect(tooltip.textContent).toContain('kept separate from other Palimpsest apps');
   });
 
   test('announces the build and its version to assistive tech', async () => {

@@ -57,14 +57,14 @@ describe('CodePreviewEditModal', () => {
     const cancel = await screen.findByRole('button', { name: /cancel/i });
     fireEvent.click(cancel);
     await waitFor(() => {
-      expect(screen.queryByTestId('ok-code-preview-edit-modal-body')).toBeNull();
+      expect(screen.queryByTestId('ps-code-preview-edit-modal-body')).toBeNull();
     });
     expect(saveCount).toBe(0);
   });
 
   test('default helper copy renders shortcut keys as shared kbd chips', async () => {
     render(<Harness onSave={() => {}} />);
-    await screen.findByTestId('ok-code-preview-edit-modal-source');
+    await screen.findByTestId('ps-code-preview-edit-modal-source');
 
     const shortcutKeys = Array.from(document.querySelectorAll('[data-slot="kbd"]')).map(
       (node) => node.textContent,
@@ -81,7 +81,7 @@ describe('CodePreviewEditModal', () => {
         }}
       />,
     );
-    await screen.findByTestId('ok-code-preview-edit-modal-source');
+    await screen.findByTestId('ps-code-preview-edit-modal-source');
     const saveBtn = await screen.findByRole('button', { name: /save/i });
     fireEvent.click(saveBtn);
     await waitFor(() => {
@@ -98,7 +98,7 @@ describe('CodePreviewEditModal', () => {
         }}
       />,
     );
-    expect(screen.queryByTestId('ok-code-preview-edit-modal-preview')).toBeNull();
+    expect(screen.queryByTestId('ps-code-preview-edit-modal-preview')).toBeNull();
     unmount();
 
     render(
@@ -109,7 +109,7 @@ describe('CodePreviewEditModal', () => {
         renderPreview={(value) => <div data-testid="preview-marker">{value}</div>}
       />,
     );
-    const preview = await screen.findByTestId('ok-code-preview-edit-modal-preview');
+    const preview = await screen.findByTestId('ps-code-preview-edit-modal-preview');
     expect(preview.textContent ?? '').toContain('<p>hello</p>');
     expect(saved).toBeNull();
   });
@@ -121,7 +121,7 @@ describe('CodePreviewEditModal', () => {
         renderPreview={(value) => <div data-testid="preview-marker">{value}</div>}
       />,
     );
-    const body = await screen.findByTestId('ok-code-preview-edit-modal-body');
+    const body = await screen.findByTestId('ps-code-preview-edit-modal-body');
     expect(body.className).toContain('md:flex-row-reverse');
     expect(body.className).toContain('overflow-y-auto');
     expect(body.className).toContain('overscroll-contain');
@@ -129,7 +129,7 @@ describe('CodePreviewEditModal', () => {
 
   test('body drops the row-reverse token when the preview pane is absent', async () => {
     render(<Harness onSave={() => {}} />);
-    const body = await screen.findByTestId('ok-code-preview-edit-modal-body');
+    const body = await screen.findByTestId('ps-code-preview-edit-modal-body');
     expect(body.className).not.toContain('md:flex-row-reverse');
     expect(body.className).not.toContain('md:flex-row');
   });
@@ -185,7 +185,7 @@ describe('CodePreviewEditModal', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
     await waitFor(() => {
-      expect(screen.queryByTestId('ok-code-preview-edit-modal-body')).toBeNull();
+      expect(screen.queryByTestId('ps-code-preview-edit-modal-body')).toBeNull();
     });
     expect(saved).toBeNull();
   });
@@ -222,13 +222,13 @@ describe('CodePreviewEditModal', () => {
       );
     }
     render(<ReSeedHarness />);
-    await screen.findByTestId('ok-code-preview-edit-modal-source');
+    await screen.findByTestId('ps-code-preview-edit-modal-source');
     fireEvent.click(screen.getByRole('button', { name: /save/i }));
     await waitFor(() => {
       expect(saved).toEqual(['<h1>first</h1>']);
     });
     fireEvent.click(screen.getByTestId('bump'));
-    await screen.findByTestId('ok-code-preview-edit-modal-source');
+    await screen.findByTestId('ps-code-preview-edit-modal-source');
     fireEvent.click(screen.getByRole('button', { name: /save/i }));
     await waitFor(() => {
       expect(saved).toEqual(['<h1>first</h1>', '<h1>second</h1>']);
@@ -245,7 +245,7 @@ describe('CodePreviewEditModal', () => {
         }}
       />,
     );
-    const host = await screen.findByTestId('ok-code-preview-edit-modal-source');
+    const host = await screen.findByTestId('ps-code-preview-edit-modal-source');
     await waitFor(() => {
       expect(host.querySelector('.cm-content')).toBeTruthy();
     });
@@ -270,7 +270,7 @@ describe('CodePreviewEditModal', () => {
       expect(saved).toBe('graph TD; A-->B');
     });
     await waitFor(() => {
-      expect(screen.queryByTestId('ok-code-preview-edit-modal-body')).toBeNull();
+      expect(screen.queryByTestId('ps-code-preview-edit-modal-body')).toBeNull();
     });
   });
 });

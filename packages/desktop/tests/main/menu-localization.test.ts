@@ -7,7 +7,7 @@ import { buildSpellcheckMenuTemplate } from '../../src/main/spellcheck-menu.ts';
 
 function makeDeps(overrides: Partial<MenuDeps> = {}): MenuDeps {
   return {
-    appName: 'OpenKnowledge',
+    appName: 'Palimpsest',
     showDevToolsMenu: true,
     terminalCapable: true,
     dialog: {} as Dialog,
@@ -103,7 +103,7 @@ describe('builders render English when no translator is injected', () => {
       expect(labels).toContain(expected);
     }
     if (process.platform === 'darwin') {
-      expect(labels).toContain('Quit OpenKnowledge');
+      expect(labels).toContain('Quit Palimpsest');
     }
   });
 
@@ -156,7 +156,7 @@ describe('an injected translator reaches every label', () => {
         onCopyFullPath: vi.fn(),
       }),
     );
-    const userAuthored = new Set(['OpenKnowledge', 'Notes', 'a.md']);
+    const userAuthored = new Set(['Palimpsest', 'Notes', 'a.md']);
     const untranslated = walk(template)
       .map((item) => item.label)
       .filter((label): label is string => label !== undefined)
@@ -175,9 +175,9 @@ describe('an injected translator reaches every label', () => {
     expect(byRole.get('selectAll')).toBe('«Select All»');
     expect(byRole.get('resetZoom')).toBe('«Actual Size»');
     if (process.platform === 'darwin') {
-      expect(byRole.get('quit')).toBe('«Quit OpenKnowledge»');
-      expect(byRole.get('hide')).toBe('«Hide OpenKnowledge»');
-      expect(byRole.get('about')).toBe('«About OpenKnowledge»');
+      expect(byRole.get('quit')).toBe('«Quit Palimpsest»');
+      expect(byRole.get('hide')).toBe('«Hide Palimpsest»');
+      expect(byRole.get('about')).toBe('«About Palimpsest»');
     }
   });
 

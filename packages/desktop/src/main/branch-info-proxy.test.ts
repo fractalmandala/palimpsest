@@ -2,8 +2,8 @@ import type {
   BranchInfoResponse,
   CheckoutResponse,
   ShareTargetStatusResponse,
-} from '@inkeep/open-knowledge-core';
-import { RUNTIME_VERSION } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { RUNTIME_VERSION } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 
 import {

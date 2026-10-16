@@ -16,7 +16,7 @@ import {
   withVerdicts,
 } from './compute-stable-version.mjs';
 
-export const NOTES_SOURCE_MARKER = '<!-- ok-notes-source: stable-tag-tree -->';
+export const NOTES_SOURCE_MARKER = '<!-- ps-notes-source: stable-tag-tree -->';
 
 export const EMPTY_NOTES = 'No changelog entries.';
 

@@ -3,9 +3,9 @@ import { basename, dirname, join } from 'node:path';
 import {
   isReportIdShape,
   normalizeReportSidecarState,
-  type OkBugReportDeleteResult,
-  type OkBugReportListResult,
-  type OkBugReportListRow,
+  type PsBugReportDeleteResult,
+  type PsBugReportListResult,
+  type PsBugReportListRow,
   REPORT_SENT_MARKER_SCHEMA_VERSION,
   REPORT_SENT_MARKER_SUFFIX,
   REPORT_SIDECAR_SCHEMA_VERSION,
@@ -15,8 +15,8 @@ import {
   type ReportSidecar,
   ReportSidecarSchema,
   type ReportSidecarState,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import { type ParsedNode, parseDocument } from 'yaml';
 import {
   type BugReportSendSidecarHooks,
@@ -258,7 +258,7 @@ function projectBundleLevel(raw: string | undefined): ReportBundleLevel | 'unkno
   return raw === 'standard' || raw === 'full' ? raw : 'unknown';
 }
 
-function toListRow(dir: string, scanned: ScannedReport): OkBugReportListRow {
+function toListRow(dir: string, scanned: ScannedReport): PsBugReportListRow {
   const s = scanned.sidecar;
   const state: ReportSidecarState = scanned.sentMarkerPresent
     ? 'sent'
@@ -296,7 +296,7 @@ export async function listReports(
   dir: string,
   logger?: SidecarLogger,
   warned?: SidecarScanWarnRegistry,
-): Promise<OkBugReportListResult> {
+): Promise<PsBugReportListResult> {
   try {
     const scanned = await scanReports(dir, logger, warned);
     const reports = scanned
@@ -340,7 +340,7 @@ export async function deleteReport(
   dir: string,
   id: string,
   inFlight: InFlightRegistry,
-): Promise<OkBugReportDeleteResult> {
+): Promise<PsBugReportDeleteResult> {
   const zipPath = await resolveContainedId(dir, id);
   if (zipPath === null) return { ok: false, reason: 'id-invalid' };
   if (inFlight.has(id)) return { ok: false, reason: 'in-flight' };
@@ -605,8 +605,8 @@ export async function runRetentionSweep(
 export interface BugReportSidecarStore {
   recordGenerated(meta: GeneratedReportMeta): Promise<void>;
   sendHooks: BugReportSendSidecarHooks;
-  list(): Promise<OkBugReportListResult>;
-  remove(id: string): Promise<OkBugReportDeleteResult>;
+  list(): Promise<PsBugReportListResult>;
+  remove(id: string): Promise<PsBugReportDeleteResult>;
   reconcileStaleUploading(): Promise<number>;
 }
 

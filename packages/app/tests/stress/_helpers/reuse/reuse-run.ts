@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { REUSE_RUN_ENV, REUSE_SOCKET_ENV } from './lease-protocol.ts';
 
 function runDirectory(run: string): string {
-  return join(tmpdir(), `ok-e2e-reuse-run-${run}`);
+  return join(tmpdir(), `ps-e2e-reuse-run-${run}`);
 }
 
 function runAbortRecord(run: string): string {

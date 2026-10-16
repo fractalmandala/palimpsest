@@ -78,7 +78,7 @@ export async function runControlledHarness(
   const spawn: SpawnPty = (file, args, spawnOptions): PtyProcessLike => {
     if (file.includes('no-such-shell-xyz')) throw new Error('file not found');
     const shell = ++shellCount;
-    const launch = spawnOptions.env.OK_HARNESS_LAUNCH_TOKEN !== undefined;
+    const launch = spawnOptions.env.PS_HARNESS_LAUNCH_TOKEN !== undefined;
     const spawnedAt = performance.now();
     let dataListener: (data: string) => void = () => undefined;
     let exitListener: Parameters<PtyProcessLike['onExit']>[0] = () => undefined;
@@ -162,7 +162,7 @@ export async function runControlledHarness(
         if (options.silentAt !== 'launch-token') {
           at(options.phase === 'launch-after-grant' ? 26_000 : launchAt, () => {
             record(shell, 'launch-token');
-            emit(`${spawnOptions.env.OK_HARNESS_LAUNCH_TOKEN}\r\nPS C:\\project> `);
+            emit(`${spawnOptions.env.PS_HARNESS_LAUNCH_TOKEN}\r\nPS C:\\project> `);
           });
         }
       }
@@ -207,7 +207,7 @@ export async function runControlledHarness(
             record(shell, 'command-input');
             if (options.silentAt === 'command-output') return;
           }
-          if (launch && arithmetic[1]?.startsWith('OK_INPUT_READY_')) {
+          if (launch && arithmetic[1]?.startsWith('PS_INPUT_READY_')) {
             const readiness = options.launchReadiness ?? 'advancing';
             if (readiness === 'dead') {
               later(500, () => exit(1));
@@ -236,7 +236,7 @@ export async function runControlledHarness(
           } else if (
             shell === 1 &&
             options.firstScenario === 'slow' &&
-            arithmetic[1]?.startsWith('OK_INPUT_READY_')
+            arithmetic[1]?.startsWith('PS_INPUT_READY_')
           ) {
             const readyAt = 31_000;
             for (const at of [6_000, 12_000, 18_000, 24_000, 30_000]) {
@@ -246,7 +246,7 @@ export async function runControlledHarness(
           } else if (
             shell === 1 &&
             options.phase === 'first-input-after-grant' &&
-            arithmetic[1]?.startsWith('OK_INPUT_READY_')
+            arithmetic[1]?.startsWith('PS_INPUT_READY_')
           ) {
             progressingUntil(43_000, 7_000, 'loading profile\r\n');
             at(44_000, () => {
@@ -256,7 +256,7 @@ export async function runControlledHarness(
           } else if (
             shell === 1 &&
             options.phase === 'silent-contained' &&
-            arithmetic[1]?.startsWith('OK_INPUT_READY_')
+            arithmetic[1]?.startsWith('PS_INPUT_READY_')
           ) {
             later(18_000, () => {
               record(shell, 'evaluated-reply');
@@ -299,7 +299,7 @@ export async function runControlledHarness(
           command.startsWith('Write-Output "CWD_PROOF=') ||
           command.startsWith("printf 'CWD_PROOF=%s\\n'")
         ) {
-          const proof = readFileSync(join(spawnOptions.cwd, '.ok-pty-cwd-proof'), 'utf8');
+          const proof = readFileSync(join(spawnOptions.cwd, '.ps-pty-cwd-proof'), 'utf8');
           if (shell === 1 && options.phase === 'cwd-after-grant') {
             progressingUntil(43_000, 7_000, 'reading project\r\n');
             at(44_000, () => {
@@ -340,7 +340,7 @@ export async function runControlledHarness(
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'performance'] });
   vi.stubEnv('SystemRoot', systemRoot);
   if (platform === 'linux') vi.stubEnv('SHELL', '/bin/sh');
-  vi.stubEnv('OK_PTY_HARNESS_BUDGET_MS', options.budgetOverride);
+  vi.stubEnv('PS_PTY_HARNESS_BUDGET_MS', options.budgetOverride);
   vi.doMock('node:module', async (importOriginal) => {
     const original = await importOriginal<typeof import('node:module')>();
     return {

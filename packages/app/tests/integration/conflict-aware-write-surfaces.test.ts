@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { promisify } from 'node:util';
-import { bootServer, ConfigSchema, getLocalDir } from '@inkeep/open-knowledge-server';
+import { bootServer, ConfigSchema, getLocalDir } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { createTestClient, createTestServer, pollUntil, type TestServer } from './test-harness';
@@ -228,13 +228,13 @@ describe('FR12: /api/sync/conflicts + /api/sync/status count parity', () => {
     try {
       const { mkdtempSync, realpathSync } = await import('node:fs');
       const { tmpdir } = await import('node:os');
-      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-fr12-')));
+      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-fr12-')));
       cleanups.push(() => {
         rmSync(tmpDir, { recursive: true, force: true });
       });
 
-      mkdirSync(join(tmpDir, '.ok'), { recursive: true });
-      writeFileSync(join(tmpDir, '.ok', 'config.yml'), '', 'utf-8');
+      mkdirSync(join(tmpDir, '.ps'), { recursive: true });
+      writeFileSync(join(tmpDir, '.ps', 'config.yml'), '', 'utf-8');
       await execFileAsync('git', ['init', '--initial-branch=main', tmpDir]);
       configureTestGitRepository(tmpDir);
 
@@ -291,11 +291,11 @@ describe('FR14: a conflicts.json present at construction gates writes (in-proces
     try {
       const { mkdtempSync, realpathSync } = await import('node:fs');
       const { tmpdir } = await import('node:os');
-      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-fr14-fn-')));
+      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-fr14-fn-')));
       cleanups.push(() => rmSync(tmpDir, { recursive: true, force: true }));
 
-      mkdirSync(join(tmpDir, '.ok'), { recursive: true });
-      writeFileSync(join(tmpDir, '.ok', 'config.yml'), '', 'utf-8');
+      mkdirSync(join(tmpDir, '.ps'), { recursive: true });
+      writeFileSync(join(tmpDir, '.ps', 'config.yml'), '', 'utf-8');
       await execFileAsync('git', ['init', '--initial-branch=main', tmpDir]);
       configureTestGitRepository(tmpDir);
 
@@ -341,14 +341,14 @@ describe('a conflict raised while the doc was unloaded still gates its first loa
     try {
       const { mkdtempSync, realpathSync, rmSync } = await import('node:fs');
       const { tmpdir } = await import('node:os');
-      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-onload-seed-')));
+      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-onload-seed-')));
       cleanups.push(() => rmSync(tmpDir, { recursive: true, force: true }));
 
       await execFileAsync('git', ['init', '--initial-branch=main', tmpDir]);
       configureTestGitRepository(tmpDir);
-      mkdirSync(join(tmpDir, '.ok'), { recursive: true });
-      writeFileSync(join(tmpDir, '.ok', 'config.yml'), '', 'utf-8');
-      writeFileSync(join(tmpDir, '.ok', '.gitignore'), '', 'utf-8');
+      mkdirSync(join(tmpDir, '.ps'), { recursive: true });
+      writeFileSync(join(tmpDir, '.ps', 'config.yml'), '', 'utf-8');
+      writeFileSync(join(tmpDir, '.ps', '.gitignore'), '', 'utf-8');
 
       const docName = `onload-${crypto.randomUUID()}`;
       const fileName = `${docName}${extension}`;
@@ -403,14 +403,14 @@ describe('FR14: boot-time conflict admission from conflicts.json', () => {
     try {
       const { mkdtempSync, realpathSync, rmSync } = await import('node:fs');
       const { tmpdir } = await import('node:os');
-      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-fr14-')));
+      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-fr14-')));
       cleanups.push(() => rmSync(tmpDir, { recursive: true, force: true }));
 
       await execFileAsync('git', ['init', '--initial-branch=main', tmpDir]);
       configureTestGitRepository(tmpDir);
-      mkdirSync(join(tmpDir, '.ok'), { recursive: true });
-      writeFileSync(join(tmpDir, '.ok', 'config.yml'), '', 'utf-8');
-      writeFileSync(join(tmpDir, '.ok', '.gitignore'), '', 'utf-8');
+      mkdirSync(join(tmpDir, '.ps'), { recursive: true });
+      writeFileSync(join(tmpDir, '.ps', 'config.yml'), '', 'utf-8');
+      writeFileSync(join(tmpDir, '.ps', '.gitignore'), '', 'utf-8');
       const fileName = `fr14-${crypto.randomUUID()}.md`;
       await seedRealMergeConflict(tmpDir, [fileName]);
       seedConflictsJson(tmpDir, [{ file: fileName }]);
@@ -517,11 +517,11 @@ describe('FR17: Conflicts list HTTP shape (data feed the sidebar section consume
     try {
       const { mkdtempSync, realpathSync, rmSync } = await import('node:fs');
       const { tmpdir } = await import('node:os');
-      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-fr17-')));
+      const tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-fr17-')));
       cleanups.push(() => rmSync(tmpDir, { recursive: true, force: true }));
 
-      mkdirSync(join(tmpDir, '.ok'), { recursive: true });
-      writeFileSync(join(tmpDir, '.ok', 'config.yml'), '', 'utf-8');
+      mkdirSync(join(tmpDir, '.ps'), { recursive: true });
+      writeFileSync(join(tmpDir, '.ps', 'config.yml'), '', 'utf-8');
       await execFileAsync('git', ['init', '--initial-branch=main', tmpDir]);
       configureTestGitRepository(tmpDir);
 
@@ -561,10 +561,10 @@ describe('FR17: Conflicts list HTTP shape (data feed the sidebar section consume
       expect(afterBody.conflicts[0]?.file).toBe(fileB);
 
       const { mkdtempSync: mkdtempSync2, realpathSync: realpathSync2 } = await import('node:fs');
-      const tmpDir2 = realpathSync2(mkdtempSync2(join(tmpdir(), 'ok-fr17-empty-')));
+      const tmpDir2 = realpathSync2(mkdtempSync2(join(tmpdir(), 'ps-fr17-empty-')));
       cleanups.push(() => rmSync(tmpDir2, { recursive: true, force: true }));
-      mkdirSync(join(tmpDir2, '.ok'), { recursive: true });
-      writeFileSync(join(tmpDir2, '.ok', 'config.yml'), '', 'utf-8');
+      mkdirSync(join(tmpDir2, '.ps'), { recursive: true });
+      writeFileSync(join(tmpDir2, '.ps', 'config.yml'), '', 'utf-8');
       await execFileAsync('git', ['init', '--initial-branch=main', tmpDir2]);
       configureTestGitRepository(tmpDir2);
       const server2 = await createTestServer({ contentDir: tmpDir2, keepContentDir: true });
@@ -596,14 +596,14 @@ describe('a conflicted doc under a content.dir subdirectory reports its ledger f
   async function bootSubdirProject(cleanups: Array<() => Promise<void> | void>) {
     const { mkdtempSync, realpathSync } = await import('node:fs');
     const { tmpdir } = await import('node:os');
-    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-subdir-conflict-')));
+    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-subdir-conflict-')));
     cleanups.push(() => rmSync(projectDir, { recursive: true, force: true }));
 
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
-    writeFileSync(join(projectDir, '.ok', '.gitignore'), '', 'utf-8');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
+    writeFileSync(join(projectDir, '.ps', '.gitignore'), '', 'utf-8');
 
     const contentDir = join(projectDir, 'docs');
     mkdirSync(contentDir, { recursive: true });

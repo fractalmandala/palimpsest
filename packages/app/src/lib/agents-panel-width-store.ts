@@ -1,4 +1,4 @@
-export const AGENTS_PANEL_WIDTH_KEY = 'ok-terminal-width-v1';
+export const AGENTS_PANEL_WIDTH_KEY = 'ps-terminal-width-v1';
 
 export const DEFAULT_AGENTS_PANEL_WIDTH = 480;
 export const MIN_AGENTS_PANEL_WIDTH = 320;

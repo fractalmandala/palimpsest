@@ -9,7 +9,7 @@ import { expectNoAutomaticGitMaintenance } from './git-fixture-maintenance.test-
 import { createTagContainment } from './tag-containment.mjs';
 
 test('batched containment agrees with Git across divergent and annotated tags, using one scan per fix', () => {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-tag-containment-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-tag-containment-'));
   const env = gitCleanEnv();
   const git = (...args) =>
     execFileSync(
@@ -79,7 +79,7 @@ test('batched containment agrees with Git across divergent and annotated tags, u
 });
 
 test('the maintenance oracle reports a repository that keeps automatic maintenance enabled', () => {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-unconfigured-maintenance-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-unconfigured-maintenance-'));
   const env = { ...gitCleanEnv(), GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1' };
   try {
     execFileSync('git', ['init', '--quiet', '--initial-branch=main'], { cwd, env, stdio: 'pipe' });

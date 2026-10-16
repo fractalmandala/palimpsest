@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { parseCheckpoint } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { parseCheckpoint } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -12,7 +12,7 @@ import { commitWip, initShadowRepo, shadowGit, type WriterIdentity } from './sha
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-gc-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-gc-test-'));
 });
 
 afterEach(async () => {
@@ -83,8 +83,8 @@ describe('gcShadowBranches', () => {
           GIT_AUTHOR_NAME: writer.name,
           GIT_AUTHOR_EMAIL: writer.email,
           GIT_AUTHOR_DATE: twoDaysAgo,
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
           GIT_COMMITTER_DATE: twoDaysAgo,
         })
         .raw('commit-tree', treeSha, '-m', 'WIP: old feature')

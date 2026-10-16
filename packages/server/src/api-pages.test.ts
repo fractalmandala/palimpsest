@@ -261,7 +261,7 @@ async function callPages(contentDir: string, method = 'GET'): Promise<CapturedRe
 
 describe('GET /api/pages', () => {
   test('returns flat { pages } success body and lists markdown files recursively', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pages-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pages-'));
     try {
       writeFileSync(join(dir, 'root.md'), '# Root\n', 'utf-8');
       mkdirSync(join(dir, 'nested/deeper'), { recursive: true });
@@ -291,7 +291,7 @@ describe('GET /api/pages', () => {
   });
 
   test('surfaces the frontmatter icon scalar on each page entry', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pages-icon-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pages-icon-'));
     try {
       writeFileSync(join(dir, 'with-icon.md'), '---\nicon: 📝\n---\n# With Icon\n', 'utf-8');
       writeFileSync(join(dir, 'no-icon.md'), '# No Icon\n', 'utf-8');
@@ -312,7 +312,7 @@ describe('GET /api/pages', () => {
   });
 
   test('serves cached title/icon from the index without reading disk', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pages-cache-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pages-cache-'));
     try {
       const index = new Map<string, FileIndexEntry>([
         [
@@ -344,7 +344,7 @@ describe('GET /api/pages', () => {
   });
 
   test('bare entry whose file is missing falls back to the docName title (ENOENT path)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pages-bare-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pages-bare-'));
     try {
       const index = new Map<string, FileIndexEntry>([
         [
@@ -374,7 +374,7 @@ describe('GET /api/pages', () => {
   });
 
   test('returns RFC 9457 problem+json 405 envelope for unsupported methods', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pages-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pages-'));
     try {
       const result = await callPages(dir, 'POST');
 

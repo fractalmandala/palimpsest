@@ -1,5 +1,5 @@
-import type { SkillScope, SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
-import type { SkillSearchResult } from '@inkeep/open-knowledge-core/skills-catalog/schema';
+import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
+import type { SkillSearchResult } from '@palimpsest/core/skills-catalog/schema';
 import { useOpenSkill } from '@/hooks/use-open-skill';
 import { useSkills } from '@/hooks/use-skills';
 import { openSkillPreviewTab } from '@/lib/open-managed-artifact-tab';

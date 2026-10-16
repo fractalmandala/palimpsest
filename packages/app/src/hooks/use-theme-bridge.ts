@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { subscribeColorThemeEpoch } from '@/lib/color-theme-epoch';
 import { cssColorToHex } from '@/lib/css-color-to-hex';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { themeColorTransitionsActive } from '@/lib/theme-color-transitions';
 import type { ThemePreference } from '@/lib/use-apply-config-theme';
 
@@ -32,13 +32,13 @@ function readChromeColors(): { bg: string; symbol: string } | undefined {
 }
 
 type PushedSource = {
-  readonly bridge: OkDesktopBridge;
+  readonly bridge: PsDesktopBridge;
   readonly source: ThemePreference;
   readonly settled: Promise<unknown>;
 };
 
 export function useThemeBridge(
-  bridge: OkDesktopBridge | undefined,
+  bridge: PsDesktopBridge | undefined,
   themeValue: ThemePreference | undefined,
   colorThemeKey?: string,
 ): void {

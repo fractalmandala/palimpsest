@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { createServer } from 'node:http';
 import { join } from 'node:path';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import { describe, expect, test } from 'vitest';
 import {
   executableFacts,
@@ -434,7 +434,7 @@ describe('hermetic package acquisition and native dispatch', () => {
           machineDetail: 'npm error fixture install output',
         });
         expect(JSON.parse(readFileSync(listing, 'utf8'))).toEqual(['package.json']);
-        expect(readdirSync(join(okUserHomeDir(home), 'acp-npx-cwd'))).toEqual(['package.json']);
+        expect(readdirSync(join(psUserHomeDir(home), 'acp-npx-cwd'))).toEqual(['package.json']);
       });
     },
   );
@@ -451,7 +451,7 @@ describe('hermetic package acquisition and native dispatch', () => {
           join(bin, 'npm'),
           `process.stdout.write(${JSON.stringify(JSON.stringify([{ name: 'is-number', version: '7.0.0' }]))});`,
         );
-        const npxCwd = join(okUserHomeDir(home), 'acp-npx-cwd');
+        const npxCwd = join(psUserHomeDir(home), 'acp-npx-cwd');
         mkdirSync(npxCwd, { recursive: true });
         writeFileSync(join(npxCwd, 'package.json'), '{}\n');
         chmodSync(npxCwd, 0o500);
@@ -510,7 +510,7 @@ describe('hermetic package acquisition and native dispatch', () => {
         expect(result).toBeInstanceOf(AgentLaunchError);
         expect(result).toMatchObject({ code: 'install-failed' });
         const probe = JSON.parse(readFileSync(observed, 'utf8'));
-        expect(probe.cwd).toBe(join(home, '.ok', 'acp-npx-cwd'));
+        expect(probe.cwd).toBe(join(home, '.ps', 'acp-npx-cwd'));
         expect(probe.args).toContain('--ignore-scripts');
         if (pid === undefined) throw new Error('the npm fixture recorded no pid');
         expect(() => process.kill(pid, 0)).toThrow();

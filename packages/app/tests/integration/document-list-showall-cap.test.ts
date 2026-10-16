@@ -1,7 +1,7 @@
 import { mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { awaitFileWatcherIndexed, createTestServer, type TestServer } from './test-harness';
@@ -10,7 +10,7 @@ const FIXTURE_FILE_COUNT = 25;
 let server: TestServer;
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-showall-cap-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-showall-cap-')));
   for (let i = 0; i < FIXTURE_FILE_COUNT; i++) {
     const name = `file-${String(i).padStart(2, '0')}.md`;
     writeFileSync(join(contentDir, name), `# File ${i}\n`);
@@ -36,24 +36,24 @@ async function fetchDefaultRaw(): Promise<Record<string, unknown>> {
 }
 
 describe('GET /api/documents?showAll=true entry cap', () => {
-  test('a low OK_SHOWALL_MAX_ENTRIES truncates the walk and reports truncated:true', async () => {
+  test('a low PS_SHOWALL_MAX_ENTRIES truncates the walk and reports truncated:true', async () => {
     const cap = 5;
-    const prev = process.env.OK_SHOWALL_MAX_ENTRIES;
-    process.env.OK_SHOWALL_MAX_ENTRIES = String(cap);
+    const prev = process.env.PS_SHOWALL_MAX_ENTRIES;
+    process.env.PS_SHOWALL_MAX_ENTRIES = String(cap);
     try {
       const body = await fetchShowAll();
       expect(body.truncated).toBe(true);
       expect(body.documents.length).toBeLessThanOrEqual(cap);
       expect(body.documents.length).toBeGreaterThan(0);
     } finally {
-      if (prev === undefined) delete process.env.OK_SHOWALL_MAX_ENTRIES;
-      else process.env.OK_SHOWALL_MAX_ENTRIES = prev;
+      if (prev === undefined) delete process.env.PS_SHOWALL_MAX_ENTRIES;
+      else process.env.PS_SHOWALL_MAX_ENTRIES = prev;
     }
   });
 
   test('the default cap leaves a small fixture untruncated', async () => {
-    const prev = process.env.OK_SHOWALL_MAX_ENTRIES;
-    delete process.env.OK_SHOWALL_MAX_ENTRIES;
+    const prev = process.env.PS_SHOWALL_MAX_ENTRIES;
+    delete process.env.PS_SHOWALL_MAX_ENTRIES;
     try {
       const body = await fetchShowAll();
       expect(body.truncated).toBeUndefined();
@@ -61,8 +61,8 @@ describe('GET /api/documents?showAll=true entry cap', () => {
       expect(docNames).toContain('file-00');
       expect(docNames).toContain('file-24');
     } finally {
-      if (prev === undefined) delete process.env.OK_SHOWALL_MAX_ENTRIES;
-      else process.env.OK_SHOWALL_MAX_ENTRIES = prev;
+      if (prev === undefined) delete process.env.PS_SHOWALL_MAX_ENTRIES;
+      else process.env.PS_SHOWALL_MAX_ENTRIES = prev;
     }
   });
 

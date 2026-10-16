@@ -18,8 +18,8 @@ name: Desktop build (manual, Windows/Linux)
 # the arch it targets.
 #
 # Artifacts are one-per-installer, each named for the file it holds
-# (OpenKnowledge-Setup-x64 / -arm64, OpenKnowledge-amd64-deb / -arm64-deb,
-# OpenKnowledge-x86_64-rpm / -aarch64-rpm) so an operator can grab just
+# (Palimpsest-Setup-x64 / -arm64, Palimpsest-amd64-deb / -arm64-deb,
+# Palimpsest-x86_64-rpm / -aarch64-rpm) so an operator can grab just
 # the one they're about to QA. GitHub zips artifacts on download either
 # way.
 #
@@ -65,8 +65,8 @@ defaults:
 
 env:
   TURBO_TELEMETRY_DISABLED: 1
-  OK_DESKTOP_VARIANT: ${{ inputs.variant }}
-  OK_DESKTOP_PRODUCT_NAME: ${{ inputs.variant == 'stable' && 'OpenKnowledge' || 'OpenKnowledge Beta' }}
+  PS_DESKTOP_VARIANT: ${{ inputs.variant }}
+  PS_DESKTOP_PRODUCT_NAME: ${{ inputs.variant == 'stable' && 'Palimpsest' || 'Palimpsest Beta' }}
 
 jobs:
   prepare:
@@ -135,7 +135,7 @@ jobs:
 
       - name: Build workspace (produces packages/cli/dist for extraResources)
         run: |
-          pnpm exec turbo run build --filter=@inkeep/open-knowledge --cache=local:,remote:
+          pnpm exec turbo run build --filter=@palimpsest/cli --cache=local:,remote:
 
       - name: Assert the native-config binary set
         env:
@@ -153,10 +153,10 @@ jobs:
       #
       # core/server dist are load-bearing: `build:desktop` (electron-vite) in
       # the packaging jobs bundles the desktop main process + app renderer
-      # source, which import `@inkeep/open-knowledge-core` and
-      # `@inkeep/open-knowledge-server`. Those resolve via `exports` to
+      # source, which import `@palimpsest/core` and
+      # `@palimpsest/server`. Those resolve via `exports` to
       # `./dist/index.mjs`; without the built dist here, electron-vite fails
-      # with "Rolldown failed to resolve import @inkeep/open-knowledge-core".
+      # with "Rolldown failed to resolve import @palimpsest/core".
       # The packaging jobs can't rebuild them (the Windows job's default shell
       # can't run the CLI build chain's `cp -r` bash-isms), so prepare builds
       # everything once and ships the dist forward.
@@ -276,10 +276,10 @@ jobs:
         shell: pwsh
         working-directory: packages/desktop
         env:
-          OK_SIGNING_REQUESTED: ${{ steps.package-windows.outputs.signing_requested }}
+          PS_SIGNING_REQUESTED: ${{ steps.package-windows.outputs.signing_requested }}
         run: |
           $ErrorActionPreference = 'Stop'
-          if ($env:OK_SIGNING_REQUESTED -ne 'true') {
+          if ($env:PS_SIGNING_REQUESTED -ne 'true') {
             throw 'Signature rider ran without a signing-enabled package step.'
           }
 
@@ -292,9 +292,9 @@ jobs:
               throw "Signing-enabled build produced no $($package.Arch) outer package at $($package.Path)."
             }
 
-            $appExecutable = Join-Path $package.Path "$env:OK_DESKTOP_PRODUCT_NAME.exe"
+            $appExecutable = Join-Path $package.Path "$env:PS_DESKTOP_PRODUCT_NAME.exe"
             if (-not (Test-Path -LiteralPath $appExecutable -PathType Leaf)) {
-              throw "Signing-enabled $($package.Arch) package has no $env:OK_DESKTOP_PRODUCT_NAME.exe."
+              throw "Signing-enabled $($package.Arch) package has no $env:PS_DESKTOP_PRODUCT_NAME.exe."
             }
             $signature = Get-AuthenticodeSignature $appExecutable
             if ($signature.Status -ne 'Valid') {
@@ -330,9 +330,9 @@ jobs:
         if: ${{ !cancelled() && steps.package-windows.outputs.signing_requested == 'true' }}
         shell: pwsh
         env:
-          OK_SIGNING_RAN: ${{ steps.attest-windows-signing.outputs.signing_ran }}
+          PS_SIGNING_RAN: ${{ steps.attest-windows-signing.outputs.signing_ran }}
         run: |
-          if ($env:OK_SIGNING_RAN -ne 'true') {
+          if ($env:PS_SIGNING_RAN -ne 'true') {
             throw 'Azure signing was requested, but both signed outer packages were not attested.'
           }
 
@@ -346,15 +346,15 @@ jobs:
       - name: Assert Windows x64 terminal native package compatibility
         working-directory: packages/desktop
         env:
-          OK_WIN_PACKAGE_DIR: dist-desktop/win-unpacked
-          OK_WIN_PACKAGE_REQUIRED: "1"
+          PS_WIN_PACKAGE_DIR: dist-desktop/win-unpacked
+          PS_WIN_PACKAGE_REQUIRED: "1"
         run: pnpm exec vitest run tests/unit/windows-package-native-guards.test.ts
 
       - name: Assert Windows arm64 terminal native package compatibility
         working-directory: packages/desktop
         env:
-          OK_WIN_PACKAGE_DIR: dist-desktop/win-arm64-unpacked
-          OK_WIN_PACKAGE_REQUIRED: "1"
+          PS_WIN_PACKAGE_DIR: dist-desktop/win-arm64-unpacked
+          PS_WIN_PACKAGE_REQUIRED: "1"
         run: pnpm exec vitest run tests/unit/windows-package-native-guards.test.ts
 
       # Fail before uploading an installer that cannot start. An asar packed
@@ -376,7 +376,7 @@ jobs:
       - name: Upload Windows x64 installer
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-Setup-x64
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-Setup-x64
           path: packages/desktop/dist-desktop/*Setup-x64.exe*
           retention-days: 14
           if-no-files-found: error
@@ -384,7 +384,7 @@ jobs:
       - name: Upload Windows arm64 installer
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-Setup-arm64
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-Setup-arm64
           path: packages/desktop/dist-desktop/*Setup-arm64.exe*
           retention-days: 14
           if-no-files-found: error
@@ -395,7 +395,7 @@ jobs:
       - name: Upload Windows update metadata
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-windows-update-metadata
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-windows-update-metadata
           path: packages/desktop/dist-desktop/*.yml
           retention-days: 14
           if-no-files-found: error
@@ -405,7 +405,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-desktop-build-windows-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-desktop-build-windows-attempt${{ github.run_attempt }}
           path: packages/desktop/test-results/vitest-*.json
           retention-days: 14
           if-no-files-found: warn
@@ -529,7 +529,7 @@ jobs:
       - name: Assert Linux terminal native package compatibility
         working-directory: packages/desktop
         env:
-          OK_LINUX_PACKAGE_DIR: dist-desktop/${{ matrix.unpacked_dir }}
+          PS_LINUX_PACKAGE_DIR: dist-desktop/${{ matrix.unpacked_dir }}
         run: pnpm exec vitest run tests/unit/linux-package-native-guards.test.ts tests/unit/linux-package-terminal-spawn.test.ts
 
       # Fail before uploading an installer that cannot start (see the Windows
@@ -547,7 +547,7 @@ jobs:
         if: matrix.arch == 'x64'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-amd64-deb
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-amd64-deb
           path: packages/desktop/dist-desktop/*amd64.deb
           retention-days: 14
           if-no-files-found: error
@@ -556,20 +556,20 @@ jobs:
         if: matrix.arch == 'arm64'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-arm64-deb
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-arm64-deb
           path: packages/desktop/dist-desktop/*arm64.deb
           retention-days: 14
           if-no-files-found: error
 
       # rpm artifacts carry the Fedora/RHEL arch words, not the Debian ones —
       # electron-builder rewrites `${arch}` per extension, so the same
-      # `${productName}-${arch}.${ext}` pattern yields OpenKnowledge-x86_64.rpm
-      # here where it yields OpenKnowledge-amd64.deb above.
+      # `${productName}-${arch}.${ext}` pattern yields Palimpsest-x86_64.rpm
+      # here where it yields Palimpsest-amd64.deb above.
       - name: Upload Linux rpm (x86_64)
         if: matrix.arch == 'x64'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-x86_64-rpm
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-x86_64-rpm
           path: packages/desktop/dist-desktop/*x86_64.rpm
           retention-days: 14
           if-no-files-found: error
@@ -578,7 +578,7 @@ jobs:
         if: matrix.arch == 'arm64'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: OpenKnowledge-${{ env.OK_DESKTOP_VARIANT }}-aarch64-rpm
+          name: Palimpsest-${{ env.PS_DESKTOP_VARIANT }}-aarch64-rpm
           path: packages/desktop/dist-desktop/*aarch64.rpm
           retention-days: 14
           if-no-files-found: error
@@ -588,7 +588,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-desktop-build-linux-${{ matrix.arch }}-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-desktop-build-linux-${{ matrix.arch }}-attempt${{ github.run_attempt }}
           path: packages/desktop/test-results/vitest-*.json
           retention-days: 14
           if-no-files-found: warn

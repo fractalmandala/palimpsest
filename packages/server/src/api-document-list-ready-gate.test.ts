@@ -38,7 +38,7 @@ function makeRes(): { res: ServerResponse; captured: CapturedResponse } {
 
 describe('handleDocumentList ready gating', () => {
   test('parks the response until the ready promise resolves', async () => {
-    const tmp = mkdtempSync(join(tmpdir(), 'ok-ready-gate-'));
+    const tmp = mkdtempSync(join(tmpdir(), 'ps-ready-gate-'));
     try {
       mkdirSync(tmp, { recursive: true });
       writeFileSync(join(tmp, 'log.md'), '# Log\n', 'utf-8');
@@ -111,7 +111,7 @@ describe('handleDocumentList ready gating', () => {
   });
 
   test('emits kind:file rows for non-markdown index entries via getAllFilesIndex', async () => {
-    const tmp = mkdtempSync(join(tmpdir(), 'ok-document-list-file-kind-'));
+    const tmp = mkdtempSync(join(tmpdir(), 'ps-document-list-file-kind-'));
     try {
       mkdirSync(tmp, { recursive: true });
       const now = new Date().toISOString();
@@ -194,7 +194,7 @@ describe('handleDocumentList ready gating', () => {
   });
 
   test('responds normally when ready is omitted (test-construction path)', async () => {
-    const tmp = mkdtempSync(join(tmpdir(), 'ok-ready-gate-'));
+    const tmp = mkdtempSync(join(tmpdir(), 'ps-ready-gate-'));
     try {
       mkdirSync(tmp, { recursive: true });
       const fileIndex = new Map<string, FileIndexEntry>([

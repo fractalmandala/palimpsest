@@ -6,7 +6,7 @@ import {
   type LintDiagnostic,
   type LinterConfig,
   MarkdownManager,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { Editor } from '@tiptap/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { LINT_NAV_EVENT, type LintNavDetail } from '@/components/ProblemsPanel';
@@ -418,11 +418,11 @@ describe('hover callout — keyboard dismissal unwinds the pointer grace', () =>
     const ed = editor;
     const mount = host;
     if (!ed || !mount) throw new Error('editor not mounted');
-    await vi.waitFor(() => expect(mount.querySelectorAll('.ok-lint-block').length).toBe(1), {
+    await vi.waitFor(() => expect(mount.querySelectorAll('.ps-lint-block').length).toBe(1), {
       timeout: 5_000,
     });
-    const block = mount.querySelector('.ok-lint-block') as HTMLElement;
-    const callouts = document.querySelectorAll<HTMLElement>('.ok-lint-tooltip');
+    const block = mount.querySelector('.ps-lint-block') as HTMLElement;
+    const callouts = document.querySelectorAll<HTMLElement>('.ps-lint-tooltip');
     expect(callouts).toHaveLength(1);
     const tooltip = callouts[0] as HTMLElement;
 
@@ -479,7 +479,7 @@ describe('decoration recovery after a content-equal rebuild', () => {
     globalThis.fetch = originalFetch;
   });
 
-  const decoratedBlocks = () => host?.querySelectorAll('.ok-lint-block').length ?? 0;
+  const decoratedBlocks = () => host?.querySelectorAll('.ps-lint-block').length ?? 0;
 
   test('a content-equal full replace reschedules the pass instead of orphaning the squiggle', async () => {
     const ed = editor;

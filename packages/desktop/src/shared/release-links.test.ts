@@ -5,7 +5,7 @@ import { PUBLIC_RELEASES_URL, releasesPageUrl, releaseUrlFor } from './release-l
 describe('release links', () => {
   test('stable and beta builds publish their release pages on the public repository', () => {
     expect(releasesPageUrl(DESKTOP_VARIANTS.stable)).toBe(
-      'https://github.com/inkeep/open-knowledge/releases',
+      'https://github.com/fractalmandala/palimpsest/releases',
     );
     expect(releasesPageUrl(DESKTOP_VARIANTS.beta)).toBe(PUBLIC_RELEASES_URL);
     expect(releasesPageUrl(DESKTOP_VARIANTS['legacy-beta'])).toBe(PUBLIC_RELEASES_URL);
@@ -13,7 +13,7 @@ describe('release links', () => {
 
   test('a release tag URL defaults to the public releases page', () => {
     expect(releaseUrlFor('0.83.0-beta.8')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/tag/v0.83.0-beta.8',
+      'https://github.com/fractalmandala/palimpsest/releases/tag/v0.83.0-beta.8',
     );
   });
 
@@ -25,7 +25,7 @@ describe('release links', () => {
 
   test('a release tag URL percent-encodes the version', () => {
     expect(releaseUrlFor('1.2.3/../x')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/tag/v1.2.3%2F..%2Fx',
+      'https://github.com/fractalmandala/palimpsest/releases/tag/v1.2.3%2F..%2Fx',
     );
   });
 });

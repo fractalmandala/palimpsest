@@ -14,7 +14,7 @@ import {
   summarizeLintPluginFailures,
   ValidationAuditCountsResponseSchema,
   ValidationAuditResponseSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { ContentFilter } from '../content-filter.ts';
 import type { DerivedDocumentIndexApiPort } from '../derived-document-index.ts';
 import { isContainmentRejection } from '../fs-safety.ts';

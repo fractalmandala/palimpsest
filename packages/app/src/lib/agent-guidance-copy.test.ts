@@ -3,7 +3,7 @@ import {
   EDITOR_LABELS,
   GUIDANCE_KEYS,
   guidanceId,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { Messages } from '@lingui/core';
 import { describe, expect, test, vi } from 'vitest';
 import { followupHintText } from '@/lib/agent-followup-hint';
@@ -80,12 +80,12 @@ describe('guidance and troubleshooting copy', () => {
       id: guidanceId('troubleshooting.cursor.project-entry-not-loaded'),
       params: { agent: 'cursor' },
     });
-    expect(text).toContain('pick open-knowledge and');
+    expect(text).toContain('pick palimpsest and');
     expect(text).toContain('Customize → MCPs');
   });
 
   test("Cursor's note names the server key its reference carries", () => {
-    vi.stubGlobal('window', { okDesktop: { mcpServerName: 'open-knowledge-beta' } });
+    vi.stubGlobal('window', { psDesktop: { mcpServerName: 'palimpsest-beta' } });
     try {
       const text = troubleshootingText({
         id: guidanceId('troubleshooting.cursor.project-entry-not-loaded'),
@@ -98,13 +98,13 @@ describe('guidance and troubleshooting copy', () => {
   });
 
   test("Cursor's note names the desktop channel's own server key", () => {
-    vi.stubGlobal('window', { okDesktop: { mcpServerName: 'open-knowledge-beta' } });
+    vi.stubGlobal('window', { psDesktop: { mcpServerName: 'palimpsest-beta' } });
     try {
       const text = troubleshootingText({
         id: guidanceId('troubleshooting.cursor.project-entry-not-loaded'),
         params: { agent: 'cursor' },
       });
-      expect(text).toContain('pick open-knowledge-beta and');
+      expect(text).toContain('pick palimpsest-beta and');
     } finally {
       vi.unstubAllGlobals();
     }
@@ -114,7 +114,7 @@ describe('guidance and troubleshooting copy', () => {
     const previousLocale = i18n.locale;
     i18n.load('pl', plCatalog.messages as unknown as Messages);
     i18n.activate('pl');
-    vi.stubGlobal('window', { okDesktop: { mcpServerName: 'open-knowledge-beta' } });
+    vi.stubGlobal('window', { psDesktop: { mcpServerName: 'palimpsest-beta' } });
     try {
       const troubleshooting = troubleshootingText({
         id: guidanceId('troubleshooting.cursor.project-entry-not-loaded'),
@@ -129,7 +129,7 @@ describe('guidance and troubleshooting copy', () => {
         params: { agent: 'pi' },
       });
       expect(troubleshooting).toContain('team-knowledge');
-      expect(betaTroubleshooting).toContain('open-knowledge-beta');
+      expect(betaTroubleshooting).toContain('palimpsest-beta');
       expect(guidance).toContain('Pi');
     } finally {
       vi.unstubAllGlobals();

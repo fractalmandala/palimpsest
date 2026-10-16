@@ -7,7 +7,7 @@ import {
   MIN_GIT_VERSION,
   SYMLINK_MERGE_MIN_GIT_LABEL,
   SYMLINK_MERGE_MIN_GIT_VERSION,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { CheckDefinition, CheckResult } from './types.ts';
 
 interface GitCheckDeps {

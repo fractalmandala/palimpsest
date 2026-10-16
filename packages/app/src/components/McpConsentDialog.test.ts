@@ -1,12 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { OkMcpWiringShowPayload } from '@/lib/desktop-bridge-types';
+import type { PsMcpWiringShowPayload } from '@/lib/desktop-bridge-types';
 import { McpConsentDialog } from './McpConsentDialog';
 import { connectableEditors, isPathRowActionable, type ToastImpl } from './McpConsentDialogBody';
 
-type EditorDetection = OkMcpWiringShowPayload['detectedEditors'][number];
+type EditorDetection = PsMcpWiringShowPayload['detectedEditors'][number];
 
 function ed(o: Omit<EditorDetection, 'configPath' | 'entryLocator'>): EditorDetection {
-  return { configPath: null, entryLocator: 'mcpServers.open-knowledge', ...o };
+  return { configPath: null, entryLocator: 'mcpServers.palimpsest', ...o };
 }
 
 const sampleDetection: readonly EditorDetection[] = [

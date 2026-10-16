@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { File as PierreFile } from '@pierre/diffs';
 import { useEffect, useRef } from 'react';
-import { okPierreTheme } from '@/lib/pierre-theme';
+import { psPierreTheme } from '@/lib/pierre-theme';
 
 interface ConflictFilePreviewProps {
   filename: string;
@@ -16,7 +16,7 @@ export function ConflictFilePreview({ filename, content }: ConflictFilePreviewPr
     const container = containerRef.current;
     if (!container) return;
 
-    const inst = new PierreFile({ overflow: 'wrap', theme: okPierreTheme() });
+    const inst = new PierreFile({ overflow: 'wrap', theme: psPierreTheme() });
     inst.render({
       file: { name: filename, contents: content },
       containerWrapper: container,

@@ -7,7 +7,7 @@ import { createSkillsCatalogCache } from './skills-catalog-cache.ts';
 
 let home: string;
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-catalog-owner-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-catalog-owner-'));
 });
 afterEach(() => {
   vi.restoreAllMocks();

@@ -12,7 +12,7 @@ let server: BootedServer;
 let ephemeral: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-document-native-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-document-native-'));
   contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(
     resolve(contentDir, 'alpha.md'),
@@ -75,15 +75,15 @@ describe('document/pages group over the composed listener — served natively', 
     expect(((await missing.json()) as { type?: string }).type).toBe('urn:ok:error:doc-not-found');
   });
 
-  test('document read refuses a doc linked into machine-local OpenKnowledge state', async () => {
-    mkdirSync(resolve(contentDir, '.ok', 'local'), { recursive: true });
+  test('document read refuses a doc linked into machine-local Palimpsest state', async () => {
+    mkdirSync(resolve(contentDir, '.ps', 'local'), { recursive: true });
     writeFileSync(
-      resolve(contentDir, '.ok', 'local', 'leak-fixture.json'),
+      resolve(contentDir, '.ps', 'local', 'leak-fixture.json'),
       '{"token":"machine-local-secret"}',
       'utf-8',
     );
     mkdirSync(resolve(contentDir, 'linked'), { recursive: true });
-    symlinkSync('../.ok/local/leak-fixture.json', resolve(contentDir, 'linked', 'leak.md'));
+    symlinkSync('../.ps/local/leak-fixture.json', resolve(contentDir, 'linked', 'leak.md'));
 
     const res = await fetch(`http://127.0.0.1:${server.port}/api/document?docName=linked/leak`);
     expect(res.status).toBe(500);

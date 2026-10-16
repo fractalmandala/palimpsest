@@ -1,7 +1,7 @@
-import type { OkUpdateRelaunchFailedInfo } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsUpdateRelaunchFailedInfo } from '@palimpsest/core/desktop-bridge';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { NoticeCard } from './UpdateNotices';
 import {
   attachUpdateSubscribers,
@@ -67,14 +67,14 @@ describe('NoticeCard — update no longer pending', () => {
   });
 
   test('renders the not-ready copy with a Check for updates button that starts a check', () => {
-    let relaunchFailed: ((info: OkUpdateRelaunchFailedInfo) => void) | undefined;
+    let relaunchFailed: ((info: PsUpdateRelaunchFailedInfo) => void) | undefined;
     const checkNow = vi.fn(() => Promise.resolve());
     const noop = () => () => {};
     const bridge = {
       onUpdateDownloaded: noop,
       onUpdateRelaunching: noop,
       onUpdateFetchingLatest: noop,
-      onUpdateRelaunchFailed: (cb: (info: OkUpdateRelaunchFailedInfo) => void) => {
+      onUpdateRelaunchFailed: (cb: (info: PsUpdateRelaunchFailedInfo) => void) => {
         relaunchFailed = cb;
         return () => {};
       },
@@ -83,7 +83,7 @@ describe('NoticeCard — update no longer pending', () => {
       onUpdateStuckHint: noop,
       onUpdateManualCheck: noop,
       update: { relaunchNow: vi.fn(), checkNow, dismissWhatsNew: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     const notices: UpdateNotice[] = [];
     attachUpdateSubscribers(bridge, (n) => notices.push(n));
 

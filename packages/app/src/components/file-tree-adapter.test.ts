@@ -1,6 +1,6 @@
 import type { ContextMenuItem, FileTreeDropTarget } from '@pierre/trees';
 import { describe, expect, test } from 'vitest';
-import { OK_SIDEBAR_DRAG_MIME } from '@/lib/sidebar-drag';
+import { PS_SIDEBAR_DRAG_MIME } from '@/lib/sidebar-drag';
 import {
   appendSidebarUploadFields,
   collectTreeFolderPathsFromDocuments,
@@ -222,32 +222,32 @@ describe('file-tree-adapter', () => {
     ).toEqual(['docs/', 'docs/nested/', 'empty/', 'empty/child/']);
   });
 
-  test('excludes .ok/** from collected folder paths (skills are not tree folders)', () => {
+  test('excludes .ps/** from collected folder paths (skills are not tree folders)', () => {
     expect(
       collectTreeFolderPathsFromDocuments([
         doc('docs/guide'),
-        doc('.ok/skills/my-skill/SKILL'),
-        { kind: 'folder', path: '.ok/skills/my-skill', size: 0, modified: '' },
-        doc('notes/.ok/templates/daily'),
+        doc('.ps/skills/my-skill/SKILL'),
+        { kind: 'folder', path: '.ps/skills/my-skill', size: 0, modified: '' },
+        doc('notes/.ps/templates/daily'),
       ]),
     ).toEqual(['docs/']);
   });
 
-  test('includeOkFolders admits .ok folder paths for the revealed tree', () => {
+  test('includeOkFolders admits .ps folder paths for the revealed tree', () => {
     const entries = [
       doc('docs/guide'),
-      doc('.ok/skills/my-skill/SKILL'),
-      { kind: 'folder' as const, path: '.ok/skills/my-skill', size: 0, modified: '' },
-      doc('notes/.ok/templates/daily'),
+      doc('.ps/skills/my-skill/SKILL'),
+      { kind: 'folder' as const, path: '.ps/skills/my-skill', size: 0, modified: '' },
+      doc('notes/.ps/templates/daily'),
     ];
     expect(collectTreeFolderPathsFromDocuments(entries, { includeOkFolders: true })).toEqual([
-      '.ok/',
-      '.ok/skills/',
-      '.ok/skills/my-skill/',
+      '.ps/',
+      '.ps/skills/',
+      '.ps/skills/my-skill/',
       'docs/',
       'notes/',
-      'notes/.ok/',
-      'notes/.ok/templates/',
+      'notes/.ps/',
+      'notes/.ps/templates/',
     ]);
     expect(collectTreeFolderPathsFromDocuments(entries)).toEqual(['docs/']);
   });
@@ -358,10 +358,10 @@ describe('file-tree-adapter', () => {
 
   test('detects external file drags without swallowing sidebar drags', () => {
     expect(isExternalFileDrag({ dataTransfer: { types: ['Files'] } })).toBe(true);
-    expect(isExternalFileDrag({ dataTransfer: { types: ['Files', OK_SIDEBAR_DRAG_MIME] } })).toBe(
+    expect(isExternalFileDrag({ dataTransfer: { types: ['Files', PS_SIDEBAR_DRAG_MIME] } })).toBe(
       false,
     );
-    expect(isExternalFileDrag({ dataTransfer: { types: [OK_SIDEBAR_DRAG_MIME] } })).toBe(false);
+    expect(isExternalFileDrag({ dataTransfer: { types: [PS_SIDEBAR_DRAG_MIME] } })).toBe(false);
     expect(isExternalFileDrag({ dataTransfer: null })).toBe(false);
   });
 

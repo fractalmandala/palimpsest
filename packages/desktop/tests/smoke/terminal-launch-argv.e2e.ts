@@ -28,7 +28,7 @@ import { waitForShellReady } from './_helpers/terminal-ready';
 const TARGET = resolveDesktopTarget();
 const WINDOWS = process.platform === 'win32';
 
-const OK_SERVER_NAME = 'open-knowledge';
+const PS_SERVER_NAME = 'palimpsest';
 
 interface Seed {
   tmpHome: string;
@@ -50,13 +50,13 @@ function argvRecorderScript(capturePath: string): string {
 }
 
 function seed(): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ok-argv-home-')));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-argv-proj-')));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ps-argv-home-')));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-argv-proj-')));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
 
   seedMcpConsentComplete(tmpHome);
 
@@ -99,7 +99,7 @@ function seed(): Seed {
 }
 
 async function launchApp(s: Seed): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
   const PATH = `${s.binDir}:/usr/bin:/bin:/usr/sbin:/sbin`;
   return electron.launch(
     desktopLaunchOptions({
@@ -110,8 +110,8 @@ async function launchApp(s: Seed): Promise<ElectronApplication> {
         ...process.env,
         HOME: s.tmpHome,
         PATH,
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_M6B_FORCE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_M6B_FORCE: '1',
       },
     }),
   );
@@ -152,7 +152,7 @@ async function clickViewTerminalItem(app: ElectronApplication, editorPage: Page)
   });
   if (process.platform !== 'darwin') {
     await editorPage.evaluate(async () => {
-      const menu = window.okDesktop?.menu;
+      const menu = window.psDesktop?.menu;
       if (!menu) throw new Error('renderer menu bridge is unavailable');
       await menu.dispatch({ kind: 'menu-action', action: 'toggle-terminal' });
     });
@@ -202,7 +202,7 @@ function readRecordedArgv(capturePath: string): string[] | null {
 }
 
 test.describe('Docked terminal launch — composed argv', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
   test.skip(
@@ -222,8 +222,8 @@ test.describe('Docked terminal launch — composed argv', () => {
     await openTerminal(app, page);
 
     const written = await page.evaluate(async () => {
-      const bridge = window.okDesktop;
-      if (!bridge) throw new Error('okDesktop bridge is unavailable');
+      const bridge = window.psDesktop;
+      if (!bridge) throw new Error('psDesktop bridge is unavailable');
       return bridge.projectIntegrations.setComponent({
         component: { kind: 'editor', id: 'claude' },
         enabled: true,
@@ -234,7 +234,7 @@ test.describe('Docked terminal launch — composed argv', () => {
 
     await page.evaluate((prompt) => {
       window.dispatchEvent(
-        new CustomEvent('open-knowledge:terminal-launch', {
+        new CustomEvent('palimpsest:terminal-launch', {
           detail: { kind: 'cli', prompt, cli: 'claude', stage: false },
         }),
       );
@@ -257,14 +257,14 @@ test.describe('Docked terminal launch — composed argv', () => {
       enabledMcpjsonServers?: string[];
       permissions?: { allow: string[]; ask: string[] };
     };
-    expect(settings.enabledMcpjsonServers).toEqual([OK_SERVER_NAME]);
+    expect(settings.enabledMcpjsonServers).toEqual([PS_SERVER_NAME]);
     expect(settings.permissions?.allow).toEqual(
-      expect.arrayContaining([`mcp__${OK_SERVER_NAME}`, 'Bash(ok open:*)']),
+      expect.arrayContaining([`mcp__${PS_SERVER_NAME}`, 'Bash(ps open:*)']),
     );
     const ask = settings.permissions?.ask ?? [];
     expect(ask.length).toBeGreaterThan(0);
-    expect(ask).toContain(`mcp__${OK_SERVER_NAME}__delete`);
-    for (const rule of ask) expect(rule.startsWith(`mcp__${OK_SERVER_NAME}__`)).toBe(true);
+    expect(ask).toContain(`mcp__${PS_SERVER_NAME}__delete`);
+    for (const rule of ask) expect(rule.startsWith(`mcp__${PS_SERVER_NAME}__`)).toBe(true);
   });
 
   test('a narrow file action selects Terminal and delivers its prompt to the real PTY', async ({
@@ -280,7 +280,7 @@ test.describe('Docked terminal launch — composed argv', () => {
       page.locator('header[data-app-header]').getByRole('button', { name: 'Editor' }),
     ).toHaveAttribute('aria-pressed', 'true');
     await expect
-      .poll(() => page.evaluate(() => window.okDesktop?.terminal.getDockState()))
+      .poll(() => page.evaluate(() => window.psDesktop?.terminal.getDockState()))
       .toMatchObject({
         terminalVisible: false,
       });
@@ -308,7 +308,7 @@ test.describe('Docked terminal launch — composed argv', () => {
     expect(recorded.at(-1)).toContain('start.md');
     expect(existsSync(s.injectedPath)).toBe(false);
     await expect
-      .poll(() => page.evaluate(() => window.okDesktop?.terminal.getDockState()))
+      .poll(() => page.evaluate(() => window.psDesktop?.terminal.getDockState()))
       .toMatchObject({
         terminalVisible: false,
       });

@@ -1,4 +1,4 @@
-import type { ShareTargetStatusResponse } from '@inkeep/open-knowledge-core';
+import type { ShareTargetStatusResponse } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { useSyncExternalStore } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -79,7 +79,7 @@ type FetchTargetStatus = (req: {
 }) => Promise<ShareTargetStatusResponse | null>;
 
 function installBridge(fetchTargetStatus: FetchTargetStatus): void {
-  (window as { okDesktop?: unknown }).okDesktop = {
+  (window as { psDesktop?: unknown }).psDesktop = {
     config: { projectPath: '/project' },
     project: { fetchTargetStatus },
   };
@@ -106,7 +106,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
-  Reflect.deleteProperty(window, 'okDesktop');
+  Reflect.deleteProperty(window, 'psDesktop');
   window.location.hash = '';
   pendingReceiveNavStore.clear();
   autoSyncWrites = [];
@@ -230,7 +230,7 @@ describe('ShareReceiveMissPanel verdict surfaces', () => {
   });
 
   test('no desktop bridge (web host) falls back to pull guidance without fetching', async () => {
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     const panel = await renderResolved();
 
     expect(panel.getAttribute('data-verdict')).toBe('unknown');

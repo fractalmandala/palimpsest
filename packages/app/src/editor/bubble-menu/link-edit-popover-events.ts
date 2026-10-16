@@ -1,4 +1,4 @@
-const OPEN_LINK_EDIT_POPOVER_EVENT = 'open-knowledge:open-link-edit-popover';
+const OPEN_LINK_EDIT_POPOVER_EVENT = 'palimpsest:open-link-edit-popover';
 
 export function emitOpenLinkEditPopover(
   target: Pick<Window, 'dispatchEvent'> | EventTarget = typeof window === 'undefined'

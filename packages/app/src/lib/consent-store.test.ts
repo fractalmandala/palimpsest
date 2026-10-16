@@ -1,9 +1,9 @@
 import { describe, expect, test, vi } from 'vitest';
 import { createConsentStore } from './consent-store';
 import type {
-  OkDesktopBridge,
-  OkOnboardingConfirmRequest,
-  OkOnboardingShowPayload,
+  PsDesktopBridge,
+  PsOnboardingConfirmRequest,
+  PsOnboardingShowPayload,
 } from './desktop-bridge-types';
 
 interface MockBridgeShape {
@@ -14,7 +14,7 @@ interface MockBridgeShape {
     cancel: ReturnType<typeof vi.fn>;
     probeContent: ReturnType<typeof vi.fn>;
   };
-  fireShow: (payload: OkOnboardingShowPayload) => void;
+  fireShow: (payload: PsOnboardingShowPayload) => void;
   unsubscribeCalls: number;
 }
 
@@ -25,12 +25,12 @@ function makeBridge(
     confirmThrows?: boolean;
     cancelThrows?: boolean;
   } = {},
-): OkDesktopBridge & MockBridgeShape {
+): PsDesktopBridge & MockBridgeShape {
   const state = {
-    handler: null as ((payload: OkOnboardingShowPayload) => void) | null,
+    handler: null as ((payload: PsOnboardingShowPayload) => void) | null,
     unsubscribeCalls: 0,
   };
-  const onShow = vi.fn((cb: (payload: OkOnboardingShowPayload) => void) => {
+  const onShow = vi.fn((cb: (payload: PsOnboardingShowPayload) => void) => {
     state.handler = cb;
     return vi.fn(() => {
       state.handler = null;
@@ -52,10 +52,10 @@ function makeBridge(
 
   const bridge = {
     onboarding: { onShow, signalReady, confirm, cancel, probeContent },
-  } as unknown as OkDesktopBridge & MockBridgeShape;
+  } as unknown as PsDesktopBridge & MockBridgeShape;
 
   Object.defineProperty(bridge, 'fireShow', {
-    value: (payload: OkOnboardingShowPayload) => state.handler?.(payload),
+    value: (payload: PsOnboardingShowPayload) => state.handler?.(payload),
   });
   Object.defineProperty(bridge, 'unsubscribeCalls', {
     get: () => state.unsubscribeCalls,
@@ -63,7 +63,7 @@ function makeBridge(
   return bridge;
 }
 
-const samplePayload: OkOnboardingShowPayload = {
+const samplePayload: PsOnboardingShowPayload = {
   pickedPath: '/Users/me/proj',
   projectDir: '/Users/me/proj',
   defaultContentDir: '.',
@@ -72,7 +72,7 @@ const samplePayload: OkOnboardingShowPayload = {
   warnings: [],
 };
 
-const sampleConfirm: OkOnboardingConfirmRequest = {
+const sampleConfirm: PsOnboardingConfirmRequest = {
   initGit: true,
   contentDir: '.',
   additionalIgnores: '',

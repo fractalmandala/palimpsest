@@ -40,7 +40,7 @@ describe('latestAgentWrite', () => {
 
   test('dot-segment plumbing targets never become follow targets', () => {
     const awareness = awarenessWith({
-      'agent-a': { currentDoc: '.ok/skills/foo/SKILL', ts: NOW - 10, docTs: NOW - 10 },
+      'agent-a': { currentDoc: '.ps/skills/foo/SKILL', ts: NOW - 10, docTs: NOW - 10 },
     });
     expect(latestAgentWrite(awareness, NOW)).toBeNull();
   });

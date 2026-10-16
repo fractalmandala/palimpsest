@@ -10,7 +10,7 @@ export function runBrowserRelay(
 ): void {
   const [cwd, filesDir, command, ...args] = process.argv.slice(1);
   if (cwd === undefined || filesDir === undefined || command === undefined) {
-    process.stderr.write('ok-browser relay: missing the folder, files or command argument\n');
+    process.stderr.write('ps-browser relay: missing the folder, files or command argument\n');
     process.exit(2);
   }
   const allowed = new Set(allowedToolNames);
@@ -23,7 +23,7 @@ export function runBrowserRelay(
   const input = child.stdin;
   const output = child.stdout;
   if (input === null || output === null) {
-    process.stderr.write('ok-browser relay: the browser server has no pipes\n');
+    process.stderr.write('ps-browser relay: the browser server has no pipes\n');
     process.exit(1);
   }
   const record = (value: unknown): Json | null =>
@@ -35,7 +35,7 @@ export function runBrowserRelay(
     process.stdout.write(`${JSON.stringify(message)}\n`);
   };
   const drop = (side: string, reason: string): void => {
-    process.stderr.write(`ok-browser relay: dropped a ${side} line that ${reason}\n`);
+    process.stderr.write(`ps-browser relay: dropped a ${side} line that ${reason}\n`);
   };
   const single = (line: string, side: string, answer: (message: unknown) => void): Json | null => {
     if (line.trim() === '') return null;

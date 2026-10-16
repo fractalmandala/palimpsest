@@ -6,8 +6,8 @@ import { enumerateSkillDir } from './adapters/skill-dir.ts';
 import { harnessHomes, projectHarnessHomes } from './harness-homes.ts';
 import { enumerateAgentPluginsRoot } from './plugin-providers/manifest-providers.ts';
 import { enumeratePluginProvider } from './plugin-providers/registry.ts';
-import type { CatalogSkill, OkPack } from './schema.ts';
-import { OK_PACK_SCHEMA_VERSION } from './schema.ts';
+import type { CatalogSkill, PsPack } from './schema.ts';
+import { PS_PACK_SCHEMA_VERSION } from './schema.ts';
 import { catalogRawScopeToOkScope, isDetectedSkillInProject } from './scope.ts';
 
 export interface EnumerateOptions {
@@ -16,11 +16,11 @@ export interface EnumerateOptions {
   hashOf?: (skillDir: string) => string | undefined;
 }
 
-const OK_OWNED_SKILL_PREFIX = 'open-knowledge';
+const PS_OWNED_SKILL_PREFIX = 'palimpsest';
 
 export interface InstalledSkillsResult {
   skills: CatalogSkill[];
-  packs: OkPack[];
+  packs: PsPack[];
 }
 
 function hasProvenance(s: RawSkill): boolean {
@@ -93,7 +93,7 @@ function dedupeSkills(
     );
 }
 
-function toPacks(bundles: SkillBundle[]): OkPack[] {
+function toPacks(bundles: SkillBundle[]): PsPack[] {
   const byName = new Map<
     string,
     {
@@ -116,7 +116,7 @@ function toPacks(bundles: SkillBundle[]): OkPack[] {
   }
   return [...byName.entries()]
     .map(([name, acc]) => ({
-      schema: OK_PACK_SCHEMA_VERSION as typeof OK_PACK_SCHEMA_VERSION,
+      schema: PS_PACK_SCHEMA_VERSION as typeof PS_PACK_SCHEMA_VERSION,
       name,
       version: acc.version,
       ...(acc.description ? { description: acc.description } : {}),
@@ -179,12 +179,12 @@ export function enumerateInstalledSkills(opts: EnumerateOptions = {}): Installed
 }
 
 function enumerateProjectHarnessSkills(projectDir: string): SkillBundle[] {
-  const okSkillsRoot = realOrSelf(resolve(projectDir, '.ok', 'skills'));
+  const psSkillsRoot = realOrSelf(resolve(projectDir, '.ps', 'skills'));
   const out: SkillBundle[] = [];
   for (const h of projectHarnessHomes(projectDir)) {
     try {
       for (const bundle of enumerateSkillDir(h.dir, h.harness)) {
-        const skills = bundle.skills.filter((s) => !isOkOwnedProjection(s, okSkillsRoot));
+        const skills = bundle.skills.filter((s) => !isOkOwnedProjection(s, psSkillsRoot));
         if (skills.length === 0) continue;
         out.push({ ...bundle, skills: skills.map((s) => stampProjectScope(s, projectDir)) });
       }
@@ -203,10 +203,10 @@ function stampProjectScope(s: RawSkill, projectDir: string): RawSkill {
   return { ...s, provenance: { ...s.provenance, scope: 'project', projectPath: projectDir } };
 }
 
-function isOkOwnedProjection(s: RawSkill, okSkillsRoot: string): boolean {
-  if (s.name.startsWith(OK_OWNED_SKILL_PREFIX)) return true;
+function isOkOwnedProjection(s: RawSkill, psSkillsRoot: string): boolean {
+  if (s.name.startsWith(PS_OWNED_SKILL_PREFIX)) return true;
   const real = realOrSelf(s.home);
-  return real === okSkillsRoot || real.startsWith(okSkillsRoot + sep);
+  return real === psSkillsRoot || real.startsWith(psSkillsRoot + sep);
 }
 
 function realOrSelf(p: string): string {

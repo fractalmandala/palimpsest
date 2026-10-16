@@ -2,14 +2,14 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { ConfigSchema } from '@inkeep/open-knowledge-server';
+import { ConfigSchema } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { type BootedStartServer, bootStartServer, runStartCommand, startCommand } from './start.ts';
 
 const bootServerCalls = vi.hoisted(() => [] as Array<Record<string, unknown>>);
 
-vi.mock('@inkeep/open-knowledge-server', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@inkeep/open-knowledge-server')>();
+vi.mock('@palimpsest/server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@palimpsest/server')>();
   return {
     ...actual,
     bootServer: (opts: Parameters<typeof actual.bootServer>[0]) => {
@@ -25,11 +25,11 @@ describe('--terminal-auth reaches bootServer', () => {
   let originalHome: string | undefined;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-start-terminal-auth-'));
-    const okDir = resolve(tmpDir, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-start-terminal-auth-'));
+    const psDir = resolve(tmpDir, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
     originalHome = process.env.HOME;
     process.env.HOME = tmpDir;
     bootServerCalls.length = 0;

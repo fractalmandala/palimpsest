@@ -15,7 +15,7 @@ import {
   encodeHrefPath,
   LOCAL_DIR,
   skillLiveDocName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   BacklinkIndex,
@@ -222,7 +222,7 @@ describe('extractWikiLinksFromMarkdown', () => {
 
 describe('BacklinkIndex', () => {
   test('indexes full, collapsed, and shortcut reference links across graph queries', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-reference-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-reference-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -250,7 +250,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('deleteDocument removes outbound links and incoming backlinks', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-del-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-del-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -268,19 +268,19 @@ describe('BacklinkIndex', () => {
   });
 
   test('skill and template file links resolve to their content docs, not synthetic names', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-artifact-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-artifact-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
       const index = new BacklinkIndex({ projectDir, contentDir });
       index.updateDocumentFromMarkdown(
         'work-log',
-        'Touched [the skill](.ok/skills/my-skill/SKILL.md) and [the tpl](notes/.ok/templates/daily.md).\n',
+        'Touched [the skill](.ps/skills/my-skill/SKILL.md) and [the tpl](notes/.ps/templates/daily.md).\n',
       );
-      expect(index.getBacklinks('.ok/skills/my-skill/SKILL')).toEqual([
+      expect(index.getBacklinks('.ps/skills/my-skill/SKILL')).toEqual([
         expect.objectContaining({ source: 'work-log' }),
       ]);
-      expect(index.getBacklinks('notes/.ok/templates/daily')).toEqual([
+      expect(index.getBacklinks('notes/.ps/templates/daily')).toEqual([
         expect.objectContaining({ source: 'work-log' }),
       ]);
       expect(index.getBacklinks('__skill__/project/my-skill')).toEqual([]);
@@ -291,7 +291,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('indexes a managed-artifact doc (skill) own outgoing links', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -307,7 +307,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('renameDocument moves edges from old doc name to new', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-rename-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-rename-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -327,7 +327,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('switchBranch isolates graph state per branch', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-branch-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-branch-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -355,7 +355,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('updateDocument replaces forward links when content changes', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-update-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-update-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -378,7 +378,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks returns missing targets ordered by source count then target', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-links-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-links-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -412,7 +412,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks never reports a link to an existing folder (PRD-7956)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-links-folder-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-links-folder-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'guides', 'deep'), { recursive: true });
     try {
@@ -438,7 +438,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks accepts a watcher folder inventory for folders with no doc descendants', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-links-watcher-folder-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-links-watcher-folder-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -455,7 +455,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks returns an empty array when every target exists', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-links-empty-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-links-empty-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -472,7 +472,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks does not flag a freshly-indexed target missing from the admitted set', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-links-fresh-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-links-fresh-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -498,7 +498,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a wikilink to a dotted-filename document is recorded and is not reported dead', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dotted-doc-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dotted-doc-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'notes'), { recursive: true });
     try {
@@ -516,7 +516,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('an undecided raw target stays undecided across a cache save/load', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-raw-roundtrip-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-raw-roundtrip-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'notes'), { recursive: true });
     try {
@@ -540,7 +540,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a bare wikilink the editor reaches by basename is not reported dead', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-bare-basename-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-bare-basename-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'research'), { recursive: true });
     try {
@@ -557,7 +557,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a bare wikilink naming no document is still reported dead', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-bare-missing-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-bare-missing-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'research'), { recursive: true });
     try {
@@ -576,7 +576,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('the neighborhood view admits the same documents as the whole graph', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-neighborhood-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-neighborhood-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'notes'), { recursive: true });
     try {
@@ -603,7 +603,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a markdown href is not basename-resolved by the dead-link audit', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-md-exact-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-md-exact-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'research'), { recursive: true });
     try {
@@ -622,7 +622,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a wiki asset embed is neither reported dead nor minted as a graph node', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-asset-embed-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-asset-embed-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -646,7 +646,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a dotted target becomes a graph node once its document is indexed', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dotted-late-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dotted-late-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -666,7 +666,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getIndexedDocNames returns one entry per indexed doc and never a referenced-but-missing target', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-indexed-names-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-indexed-names-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -690,7 +690,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks reports a target as dead again after deleteDocument removes its forward node', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-after-delete-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-after-delete-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -711,7 +711,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getDeadLinks positions each broken link at its 0-based full-doc source line', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-link-lines-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-link-lines-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -747,7 +747,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a target broken from multiple source docs carries a per-source position', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-link-multi-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-link-multi-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -767,7 +767,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('dead-link positions survive a cache save/load round-trip', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-link-cache-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-link-cache-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -786,11 +786,11 @@ describe('BacklinkIndex', () => {
   });
 
   test('a current-version cache with corrupt positions degrades them to "position unknown"', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dead-link-legacy-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dead-link-legacy-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
-      const cacheDir = join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main');
+      const cacheDir = join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main');
       mkdirSync(cacheDir, { recursive: true });
       writeFileSync(
         join(cacheDir, 'backlinks.json'),
@@ -859,7 +859,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('a v1 cache is rejected so skill refs are recorded instead of silently missing', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skillrefs-guard-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skillrefs-guard-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -873,7 +873,7 @@ describe('BacklinkIndex', () => {
       );
       writeFileSync(join(contentDir, '.agents', 'skills', 'research', 'SKILL.md'), '# Research\n');
 
-      const cacheDir = join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main');
+      const cacheDir = join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main');
       mkdirSync(cacheDir, { recursive: true });
       writeFileSync(
         join(cacheDir, 'backlinks.json'),
@@ -919,13 +919,13 @@ describe('BacklinkIndex', () => {
       kept: false,
     },
   ])('rejects incomplete source-link snapshots and rebuilds from disk: $version', async (cache) => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-source-links-guard-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-source-links-guard-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
       writeFileSync(join(contentDir, 'alpha.md'), '[[beta]]');
       writeFileSync(join(contentDir, 'beta.md'), '# Beta');
-      const cacheDir = join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main');
+      const cacheDir = join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main');
       mkdirSync(cacheDir, { recursive: true });
       writeFileSync(
         join(cacheDir, 'backlinks.json'),
@@ -965,9 +965,9 @@ describe('BacklinkIndex', () => {
   ])(
     'a torn cache snapshot ($label) is discarded once and replaced on the next save',
     async ({ corrupt }) => {
-      const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-torn-cache-'));
+      const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-torn-cache-'));
       const contentDir = join(projectDir, 'content');
-      const cachePath = join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main', 'backlinks.json');
+      const cachePath = join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main', 'backlinks.json');
       mkdirSync(contentDir, { recursive: true });
       try {
         writeFileSync(join(contentDir, 'alpha.md'), 'See [[beta]].\n');
@@ -994,19 +994,19 @@ describe('BacklinkIndex', () => {
   );
 
   test('a versionless pre-upgrade cache is rejected so boot cold-rebuilds instead of serving stale keys', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-version-guard-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-version-guard-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
-      const templateDoc = 'notes/.ok/templates/daily';
-      mkdirSync(join(contentDir, 'notes', '.ok', 'templates'), { recursive: true });
+      const templateDoc = 'notes/.ps/templates/daily';
+      mkdirSync(join(contentDir, 'notes', '.ps', 'templates'), { recursive: true });
       writeFileSync(
         join(contentDir, 'alpha.md'),
-        '# Alpha\n\nSee [[notes/.ok/templates/daily]].\n',
+        '# Alpha\n\nSee [[notes/.ps/templates/daily]].\n',
       );
-      writeFileSync(join(contentDir, 'notes', '.ok', 'templates', 'daily.md'), '# Daily\n');
+      writeFileSync(join(contentDir, 'notes', '.ps', 'templates', 'daily.md'), '# Daily\n');
 
-      const cacheDir = join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main');
+      const cacheDir = join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main');
       mkdirSync(cacheDir, { recursive: true });
       writeFileSync(
         join(cacheDir, 'backlinks.json'),
@@ -1036,7 +1036,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('rebuilds from disk and persists cache per branch', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-project-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-project-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -1067,7 +1067,7 @@ describe('BacklinkIndex', () => {
 
       await index.saveToDisk();
       const cacheRaw = readFileSync(
-        join(projectDir, '.ok', LOCAL_DIR, 'cache', 'main', 'backlinks.json'),
+        join(projectDir, '.ps', LOCAL_DIR, 'cache', 'main', 'backlinks.json'),
         'utf-8',
       );
       expect(cacheRaw).toContain('"beta"');
@@ -1087,7 +1087,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('rebuildFromDisk uses raw markdown scanning instead of the full parser', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-rebuild-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-rebuild-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -1115,7 +1115,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('rebuildFromDisk indexes .mdx files at cold-start (empty extension registry)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-rebuild-mdx-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-rebuild-mdx-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -1137,7 +1137,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('rebuildFromDisk first-wins dedup when both .md and .mdx exist for the same docName', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-dedup-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-dedup-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -1159,7 +1159,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getOrphans supports incoming, outgoing, and both modes', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-orphan-modes-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-orphan-modes-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1180,7 +1180,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getLinkGraph returns sorted nodes and directed edges', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-linkgraph-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-linkgraph-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1205,7 +1205,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getLinkGraphNeighborhood returns an undirected degree-limited neighborhood', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-linkgraph-neighborhood-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-linkgraph-neighborhood-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1244,7 +1244,7 @@ describe('BacklinkIndex', () => {
   });
 
   test('getLinkGraphNeighborhood includes external neighbors with labels', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-linkgraph-neighborhood-external-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-linkgraph-neighborhood-external-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1275,11 +1275,11 @@ describe('BacklinkIndex', () => {
 });
 
 describe('BacklinkIndex structural skill-bundle edges', () => {
-  const SKILL = '.ok/skills/demo/SKILL';
-  const REF = '.ok/skills/demo/references/notes';
+  const SKILL = '.ps/skills/demo/SKILL';
+  const REF = '.ps/skills/demo/references/notes';
 
   test('IN-PLACE bundles (editor-dir shapes) draw the same structural edges', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-inplace-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-inplace-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1300,7 +1300,7 @@ describe('BacklinkIndex structural skill-bundle edges', () => {
   });
 
   test('/skill-name refs draw same-scope edges to the referenced SKILL doc, both directions', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-refs-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-refs-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1329,7 +1329,7 @@ describe('BacklinkIndex structural skill-bundle edges', () => {
   });
 
   test('connects a SKILL doc and its reference with NO authored link between them', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-struct-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-struct-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1355,7 +1355,7 @@ describe('BacklinkIndex structural skill-bundle edges', () => {
   });
 
   test('a wiki-link reference still works (no regression, no duplicate edge)', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-wiki-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-wiki-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1377,7 +1377,7 @@ describe('BacklinkIndex structural skill-bundle edges', () => {
   });
 
   test('NON-skill docs sharing a normal folder are NOT auto-connected (scope control)', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-nonskill-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-nonskill-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1402,25 +1402,25 @@ describe('BacklinkIndex structural skill-bundle edges', () => {
   });
 
   test('scripts/** and cross-skill refs do not draw structural edges', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-scope2-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-scope2-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
       const index = new BacklinkIndex({ projectDir, contentDir });
       index.updateDocumentFromMarkdown(SKILL, '# Demo\n');
-      index.updateDocumentFromMarkdown('.ok/skills/demo/scripts/run', '# run\n');
-      index.updateDocumentFromMarkdown('.ok/skills/other/references/notes', '# other\n');
+      index.updateDocumentFromMarkdown('.ps/skills/demo/scripts/run', '# run\n');
+      index.updateDocumentFromMarkdown('.ps/skills/other/references/notes', '# other\n');
 
       expect(index.getForwardLinks(SKILL)).toEqual([]);
       expect(index.getBacklinks(SKILL)).toEqual([]);
-      expect(index.getBacklinks('.ok/skills/other/references/notes')).toEqual([]);
+      expect(index.getBacklinks('.ps/skills/other/references/notes')).toEqual([]);
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
   });
 
   test('deleting a reference removes the structural edge', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-del-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-del-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1438,10 +1438,10 @@ describe('BacklinkIndex structural skill-bundle edges', () => {
   });
 
   test('renaming a reference moves the structural edge to the new name', () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-skill-ren-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-skill-ren-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
-    const REF2 = '.ok/skills/demo/references/renamed';
+    const REF2 = '.ps/skills/demo/references/renamed';
     try {
       const index = new BacklinkIndex({ projectDir, contentDir });
       index.updateDocumentFromMarkdown(SKILL, '# Demo\n');
@@ -1463,7 +1463,7 @@ describe('BacklinkIndex GLOBAL structural skill-bundle edges', () => {
   const G_REF = '__skill__/global/demo/references/notes';
 
   function makeIndex(): { index: BacklinkIndex; projectDir: string } {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-gskill-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-gskill-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     return { index: new BacklinkIndex({ projectDir, contentDir }), projectDir };
@@ -1535,13 +1535,13 @@ describe('BacklinkIndex GLOBAL structural skill-bundle edges', () => {
   test('global and project bundles of the same name never cross-connect', () => {
     const { index, projectDir } = makeIndex();
     try {
-      index.updateDocumentFromMarkdown('.ok/skills/demo/SKILL', '# Project demo\n');
-      index.updateDocumentFromMarkdown('.ok/skills/demo/references/notes', '# Project notes\n');
+      index.updateDocumentFromMarkdown('.ps/skills/demo/SKILL', '# Project demo\n');
+      index.updateDocumentFromMarkdown('.ps/skills/demo/references/notes', '# Project notes\n');
       index.registerGlobalSkillBundleNode(G_SKILL);
       index.registerGlobalSkillBundleNode(G_REF);
 
-      expect(index.getForwardLinks('.ok/skills/demo/SKILL')).toEqual([
-        '.ok/skills/demo/references/notes',
+      expect(index.getForwardLinks('.ps/skills/demo/SKILL')).toEqual([
+        '.ps/skills/demo/references/notes',
       ]);
       expect(index.getForwardLinks(G_SKILL)).toEqual([G_REF]);
       expect(index.getBacklinks(G_REF)).toEqual([{ source: G_SKILL, anchor: null, snippet: null }]);
@@ -1552,7 +1552,7 @@ describe('BacklinkIndex GLOBAL structural skill-bundle edges', () => {
 
   test('ingestGlobalSkillBundles registers SKILL + references from disk (idempotent)', async () => {
     const { index, projectDir } = makeIndex();
-    const homeSkills = join(projectDir, 'home', '.ok', 'skills');
+    const homeSkills = join(projectDir, 'home', '.ps', 'skills');
     const demoDir = join(homeSkills, 'demo');
     mkdirSync(join(demoDir, 'references', 'sub'), { recursive: true });
     writeFileSync(join(demoDir, 'SKILL.md'), '---\nname: demo\n---\n# Demo\n');
@@ -1581,10 +1581,10 @@ describe('BacklinkIndex GLOBAL structural skill-bundle edges', () => {
   });
 
   test('global nodes survive a content rebuild/reconcile (re-ingest restores them)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-gskill-rebuild-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-gskill-rebuild-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
-    const homeSkills = join(projectDir, 'home', '.ok', 'skills');
+    const homeSkills = join(projectDir, 'home', '.ps', 'skills');
     const demoDir = join(homeSkills, 'demo');
     mkdirSync(join(demoDir, 'references'), { recursive: true });
     writeFileSync(join(demoDir, 'SKILL.md'), '# Demo\n');
@@ -1928,7 +1928,7 @@ describe('BacklinkIndex with markdown links', () => {
 
 describe('reconcileWithDisk', () => {
   test('unchanged snapshot files reuse persisted source links without rereading', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-reconcile-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-reconcile-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1962,7 +1962,7 @@ describe('reconcileWithDisk', () => {
   });
 
   test('changed file is re-parsed on reconcile', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-reconcile-changed-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-reconcile-changed-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -1994,7 +1994,7 @@ describe('reconcileWithDisk', () => {
   });
 
   test('new file is added and deleted file is removed on reconcile', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-reconcile-newdel-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-reconcile-newdel-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -2025,7 +2025,7 @@ describe('reconcileWithDisk', () => {
   });
 
   test('cold start (no cache) falls back to full rebuild', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-backlinks-coldstart-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-backlinks-coldstart-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {

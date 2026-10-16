@@ -1,8 +1,8 @@
-import type { SkillSearchResult } from '@inkeep/open-knowledge-core';
+import type { SkillSearchResult } from '@palimpsest/core';
 import {
   parseSkillsShLeaderboard,
   parseSkillsShPublisherPage,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { getLogger } from './logger.ts';
 
 const log = getLogger('skills-leaderboard');
@@ -21,7 +21,7 @@ export async function getPopularSkills(
   if (cache && now - cache.at < TTL_MS) return cache.data.slice(0, limit);
   try {
     const res = await doFetch(FRONT_PAGE, {
-      headers: { 'user-agent': 'open-knowledge (+skills discovery)', RSC: '1' },
+      headers: { 'user-agent': 'palimpsest (+skills discovery)', RSC: '1' },
       signal: AbortSignal.timeout(8000),
       redirect: 'manual',
     });
@@ -52,7 +52,7 @@ export async function getPublisherSkills(
   if (hit && now - hit.at < TTL_MS) return hit.data;
   try {
     const res = await doFetch(`https://www.skills.sh/${source}`, {
-      headers: { 'user-agent': 'open-knowledge (+skills discovery)' },
+      headers: { 'user-agent': 'palimpsest (+skills discovery)' },
       signal: AbortSignal.timeout(8000),
       redirect: 'manual',
     });

@@ -1,6 +1,6 @@
 import * as actualSonner from 'sonner';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
+import type { PsLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
 
 const toast = {
   loading: vi.fn((_message: string, _opts?: unknown) => 'toast-id'),
@@ -12,7 +12,7 @@ const toast = {
 
 vi.doMock('sonner', () => ({ ...actualSonner, toast }));
 
-type CloneEvent = OkLocalOpCloneEvent | { type: 'complete'; port: number; dir: string };
+type CloneEvent = PsLocalOpCloneEvent | { type: 'complete'; port: number; dir: string };
 
 function makeDeps(events: CloneEvent[]) {
   return {

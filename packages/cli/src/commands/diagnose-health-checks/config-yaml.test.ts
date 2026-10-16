@@ -14,30 +14,30 @@ afterEach(() => {
 });
 
 function makeProject(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-health-config-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-health-config-'));
   tmpDirs.push(dir);
   return dir;
 }
 
 describe('config-yaml check', () => {
-  test('emits warn when .ok/config.yml is missing (project not initialized)', async () => {
+  test('emits warn when .ps/config.yml is missing (project not initialized)', async () => {
     const cwd = makeProject();
     const def = makeConfigYamlCheck();
     const result = await def.run({ cwd });
     expect(result.status).toBe('warn');
     expect(result.summary).toContain('not found');
     expect(result.summary).toContain('not initialized');
-    expect(result.remediation).toContain('ok init');
+    expect(result.remediation).toContain('ps init');
   });
 
   test('passes when config parses; summary surfaces content.dir', async () => {
     const cwd = makeProject();
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
-    writeFileSync(join(cwd, '.ok', 'config.yml'), 'content:\n  dir: ./content\n');
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
+    writeFileSync(join(cwd, '.ps', 'config.yml'), 'content:\n  dir: ./content\n');
 
     const def = makeConfigYamlCheck({
       loader: () => ({
-        sources: [join(cwd, '.ok/config.yml')],
+        sources: [join(cwd, '.ps/config.yml')],
         config: { content: { dir: './content' } },
       }),
     });
@@ -49,8 +49,8 @@ describe('config-yaml check', () => {
 
   test('fails when loader throws (schema invalid)', async () => {
     const cwd = makeProject();
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
-    writeFileSync(join(cwd, '.ok', 'config.yml'), 'content:\n  dir: 42\n');
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
+    writeFileSync(join(cwd, '.ps', 'config.yml'), 'content:\n  dir: 42\n');
 
     const def = makeConfigYamlCheck({
       loader: () => {
@@ -69,9 +69,9 @@ describe('config-yaml remediation names the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: an uninitialized project names %s init', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const result = await makeConfigYamlCheck().run({ cwd: makeProject() });
     expect(result.remediation).toBe(`Run \`${command} init\` to scaffold the project.`);
   });

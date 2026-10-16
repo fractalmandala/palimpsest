@@ -12,14 +12,14 @@ let server: BootedServer;
 let home: string;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-skill-document-contract-'));
-  const builtin = join(root, '.agents/skills/open-knowledge');
+  root = mkdtempSync(join(tmpdir(), 'ps-skill-document-contract-'));
+  const builtin = join(root, '.agents/skills/palimpsest');
   mkdirSync(builtin, { recursive: true });
   writeFileSync(
     join(builtin, 'SKILL.md'),
-    '---\nname: open-knowledge\ndescription: Project instructions\n---\n\nProject.\n',
+    '---\nname: palimpsest\ndescription: Project instructions\n---\n\nProject.\n',
   );
-  home = mkdtempSync(join(tmpdir(), 'ok-skill-document-home-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-skill-document-home-'));
   mkdirSync(join(home, '.claude'));
   server = await bootCompositionRig(root, { configHomedirOverride: home });
   await server.ready;

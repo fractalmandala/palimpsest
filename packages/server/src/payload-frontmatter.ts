@@ -2,7 +2,7 @@ import {
   parseFrontmatterYaml,
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export function splitPayloadFrontmatter(markdown: string): {
   frontmatter: string;

@@ -1,4 +1,4 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core';
+import type { TerminalCli } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   requestTerminalCommandLaunch,
@@ -16,13 +16,13 @@ describe('terminal-launch-events', () => {
     }, target);
 
     requestTerminalLaunch(
-      "Let's work on `foo.md` using OpenKnowledge.",
+      "Let's work on `foo.md` using Palimpsest.",
       'codex',
       undefined,
       target,
     );
     expect(received).toEqual([
-      { prompt: "Let's work on `foo.md` using OpenKnowledge.", cli: 'codex' },
+      { prompt: "Let's work on `foo.md` using Palimpsest.", cli: 'codex' },
     ]);
 
     unsub();
@@ -83,12 +83,12 @@ describe('terminal-launch-events', () => {
     const received: TerminalLaunchRequest[] = [];
     subscribeToTerminalLaunchRequests((request) => received.push(request), target);
     target.dispatchEvent(
-      new CustomEvent('open-knowledge:terminal-launch', {
+      new CustomEvent('palimpsest:terminal-launch', {
         detail: { prompt: '', cli: 'claude', stage: false },
       }),
     );
     target.dispatchEvent(
-      new CustomEvent('open-knowledge:terminal-launch', {
+      new CustomEvent('palimpsest:terminal-launch', {
         detail: { prompt: 'fix this', cli: 'codex', stage: true },
       }),
     );
@@ -103,7 +103,7 @@ describe('terminal-launch-events', () => {
     const received: TerminalLaunchRequest[] = [];
     subscribeToTerminalLaunchRequests((request) => received.push(request), target);
     target.dispatchEvent(
-      new CustomEvent('open-knowledge:terminal-launch', {
+      new CustomEvent('palimpsest:terminal-launch', {
         detail: { kind: 'script', prompt: 'p', cli: 'claude', stage: false },
       }),
     );
@@ -122,7 +122,7 @@ describe('terminal-launch-events', () => {
       { prompt: 'p', stage: false },
       { prompt: 7, cli: 'claude' },
     ]) {
-      target.dispatchEvent(new CustomEvent('open-knowledge:terminal-launch', { detail }));
+      target.dispatchEvent(new CustomEvent('palimpsest:terminal-launch', { detail }));
     }
     expect(received).toEqual([]);
   });
@@ -132,9 +132,9 @@ describe('terminal-launch-events', () => {
     const received: TerminalLaunchRequest[] = [];
     subscribeToTerminalLaunchRequests((request) => received.push(request), target);
     target.dispatchEvent(
-      new CustomEvent('open-knowledge:terminal-launch', { detail: { kind: 'command' } }),
+      new CustomEvent('palimpsest:terminal-launch', { detail: { kind: 'command' } }),
     );
-    target.dispatchEvent(new Event('open-knowledge:terminal-launch'));
+    target.dispatchEvent(new Event('palimpsest:terminal-launch'));
     expect(received).toEqual([]);
   });
 });

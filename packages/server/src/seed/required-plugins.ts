@@ -1,12 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { LintPluginId } from '@inkeep/open-knowledge-core';
+import type { LintPluginId } from '@palimpsest/core';
 import { parseDocument } from 'yaml';
 import { tracedWriteFileSync } from '../fs-traced.ts';
 import { CONFIG_FILENAME } from '../init-project.ts';
 
 function configPath(projectDir: string): string {
-  return join(projectDir, '.ok', CONFIG_FILENAME);
+  return join(projectDir, '.ps', CONFIG_FILENAME);
 }
 
 export function isPluginEnabled(projectDir: string, id: LintPluginId): boolean {

@@ -18,7 +18,7 @@ async function runFixture(
   scenario: 'registry' | 'assets' | 'mixed',
   options: { outsideGit?: boolean; env?: NodeJS.ProcessEnv; event?: unknown } = {},
 ) {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-outcome-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-outcome-'));
   const config = join(root, 'vitest.config.mts');
   const env = { ...process.env };
   delete env.GITHUB_SHA;

@@ -5,7 +5,7 @@ import type {
   HighlightOptions,
   ThemeInput,
 } from 'streamdown';
-import { okSyntaxTheme } from '@/lib/ok-syntax-theme';
+import { psSyntaxTheme } from '@/lib/ps-syntax-theme';
 
 const LANGUAGES: ReadonlyArray<{ id: string; aliases: readonly string[] }> = [
   { id: 'shellscript', aliases: ['bash', 'sh', 'shell', 'zsh'] },
@@ -32,7 +32,7 @@ const CANONICAL = new Map<string, string>(
   ]),
 );
 
-const THEMES: [ThemeInput, ThemeInput] = [okSyntaxTheme, okSyntaxTheme];
+const THEMES: [ThemeInput, ThemeInput] = [psSyntaxTheme, psSyntaxTheme];
 
 const CACHE_LIMIT = 400;
 const cache = new Map<string, TokensResult>();

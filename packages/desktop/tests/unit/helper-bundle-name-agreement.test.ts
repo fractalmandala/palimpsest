@@ -5,12 +5,12 @@ import {
   DESKTOP_PRODUCTS,
   desktopWindowsExecutableName,
   PACKAGED_DESKTOP_PRODUCT_NAMES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   HELPER_BUNDLE_NAME,
   HELPER_EXECUTABLE_NAME,
   resolveHelperBundleBinary,
-} from '@inkeep/open-knowledge-core/helper-bundle';
+} from '@palimpsest/core/helper-bundle';
 import { describe, expect, test } from 'vitest';
 import {
   createVariantBuilderConfig,
@@ -24,20 +24,20 @@ const desktopRoot = resolve(__dirname, '../..');
 const helperPlistPath = resolve(desktopRoot, 'build/helper-bundle/Info.plist');
 const afterPackPath = resolve(desktopRoot, 'scripts/afterPack.mjs');
 const electronBuilderYmlPath = resolve(desktopRoot, 'electron-builder.yml');
-const okShPath = resolve(desktopRoot, 'resources/cli/bin/ok.sh');
-const okCmdPath = resolve(desktopRoot, 'resources/cli/bin/ok.cmd');
-const okPs1Path = resolve(desktopRoot, 'resources/cli/bin/ok.ps1');
-const okLinuxPath = resolve(desktopRoot, 'resources/cli/bin/ok-linux.sh');
+const psShPath = resolve(desktopRoot, 'resources/cli/bin/ps.sh');
+const psCmdPath = resolve(desktopRoot, 'resources/cli/bin/ps.cmd');
+const psPs1Path = resolve(desktopRoot, 'resources/cli/bin/ps.ps1');
+const psLinuxPath = resolve(desktopRoot, 'resources/cli/bin/ps-linux.sh');
 
 function extractPlistString(content: string, key: string): string | null {
   const re = new RegExp(`<key>${key}</key>\\s*<string>([^<]*)</string>`);
   return content.match(re)?.[1] ?? null;
 }
 
-const ELECTRON_BUILDER_PRODUCT_NAME = 'OpenKnowledge';
+const ELECTRON_BUILDER_PRODUCT_NAME = 'Palimpsest';
 
 describe('helper-bundle name agreement across spawn site / Info.plist / afterPack', () => {
-  test('CFBundleExecutable in Info.plist matches HELPER_EXECUTABLE_NAME in @inkeep/open-knowledge-core', () => {
+  test('CFBundleExecutable in Info.plist matches HELPER_EXECUTABLE_NAME in @palimpsest/core', () => {
     const plist = readFileSync(helperPlistPath, 'utf8');
     const cfBundleExecutable = extractPlistString(plist, 'CFBundleExecutable');
     expect(cfBundleExecutable).toBe(HELPER_EXECUTABLE_NAME);
@@ -109,22 +109,22 @@ describe('helper-bundle name agreement across spawn site / Info.plist / afterPac
     );
   });
 
-  test('ok.sh derives the helper path from its enclosing app bundle', () => {
-    const okSh = readFileSync(okShPath, 'utf8');
-    expect(okSh).toContain('APP_NAME="$(basename "$APP_PATH" .app)"');
-    expect(okSh).toContain('Frameworks/$APP_NAME Server.app/Contents/MacOS/$APP_NAME Helper');
+  test('ps.sh derives the helper path from its enclosing app bundle', () => {
+    const psSh = readFileSync(psShPath, 'utf8');
+    expect(psSh).toContain('APP_NAME="$(basename "$APP_PATH" .app)"');
+    expect(psSh).toContain('Frameworks/$APP_NAME Server.app/Contents/MacOS/$APP_NAME Helper');
   });
 
-  test('ok.sh gates the helper redirect to the mcp + start subcommands only', () => {
-    const okSh = readFileSync(okShPath, 'utf8');
-    expect(okSh).toMatch(/case\s+"\$1"\s+in/);
-    expect(okSh).toMatch(/mcp\|start\)/);
+  test('ps.sh gates the helper redirect to the mcp + start subcommands only', () => {
+    const psSh = readFileSync(psShPath, 'utf8');
+    expect(psSh).toMatch(/case\s+"\$1"\s+in/);
+    expect(psSh).toMatch(/mcp\|start\)/);
   });
 
   test('platform wrappers recognize every packaged desktop executable', () => {
-    const cmd = readFileSync(okCmdPath, 'utf8');
-    const ps1 = readFileSync(okPs1Path, 'utf8');
-    const linux = readFileSync(okLinuxPath, 'utf8');
+    const cmd = readFileSync(psCmdPath, 'utf8');
+    const ps1 = readFileSync(psPs1Path, 'utf8');
+    const linux = readFileSync(psLinuxPath, 'utf8');
     for (const product of PACKAGED_DESKTOP_PRODUCT_NAMES.map((name) => DESKTOP_PRODUCTS[name])) {
       expect(cmd).toContain(`"${desktopWindowsExecutableName(product)}"`);
       expect(ps1).toContain(`'${desktopWindowsExecutableName(product)}'`);
@@ -136,7 +136,7 @@ describe('helper-bundle name agreement across spawn site / Info.plist / afterPac
     const plist = readFileSync(helperPlistPath, 'utf8');
     const afterPack = readFileSync(afterPackPath, 'utf8');
     const yml = readFileSync(electronBuilderYmlPath, 'utf8');
-    const okSh = readFileSync(okShPath, 'utf8');
+    const psSh = readFileSync(psShPath, 'utf8');
     const plistName = extractPlistString(plist, 'CFBundleExecutable');
 
     expect(plistName).toBe(HELPER_EXECUTABLE_NAME);
@@ -148,6 +148,6 @@ describe('helper-bundle name agreement across spawn site / Info.plist / afterPac
         'm',
       ),
     );
-    expect(okSh).toContain('Frameworks/$APP_NAME Server.app/Contents/MacOS/$APP_NAME Helper');
+    expect(psSh).toContain('Frameworks/$APP_NAME Server.app/Contents/MacOS/$APP_NAME Helper');
   });
 });

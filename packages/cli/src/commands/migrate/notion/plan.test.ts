@@ -8,7 +8,7 @@ import { applyPlan, buildPlan } from './plan.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function makeTree(files: Parameters<typeof populateTree>[1]): string {
-  return populateTree(makeTempDir('ok-migrate-'), files);
+  return populateTree(makeTempDir('ps-migrate-'), files);
 }
 
 const PNG =

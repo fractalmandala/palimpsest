@@ -16,7 +16,7 @@ const INSTALL_COMMAND = terminalCommandFor('install-slidev') ?? '';
 
 const SLIDEV_INSTALL_DOCS = 'https://sli.dev/guide/install';
 
-const SLIDEV_DOCS = 'https://openknowledge.ai/docs/plugins/slidev';
+const SLIDEV_DOCS = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/plugins/slidev.mdx';
 
 type Availability =
   | { kind: 'checking' }
@@ -31,7 +31,7 @@ function useSlidevStatus(): Availability {
   useEffect(() => {
     let active = true;
     const probe = () => {
-      const slides = window.okDesktop?.slides;
+      const slides = window.psDesktop?.slides;
       if (slides == null) {
         setAvailability({ kind: 'unsupported' });
         return;
@@ -61,7 +61,7 @@ function useSlidevStatus(): Availability {
 }
 
 function canRunInTerminal(): boolean {
-  const bridge = window.okDesktop;
+  const bridge = window.psDesktop;
   return bridge?.terminal != null && bridge.config?.ptyAvailable === true;
 }
 
@@ -89,7 +89,7 @@ function StatusRow({ availability }: { availability: Availability }) {
   if (availability.kind === 'unsupported') {
     return (
       <p className="text-sm text-muted-foreground" data-testid="slides-status-unsupported">
-        <Trans>Slidev decks open in the OpenKnowledge desktop app only.</Trans>
+        <Trans>Slidev decks open in the Palimpsest desktop app only.</Trans>
       </p>
     );
   }
@@ -184,7 +184,7 @@ export function SlidesPluginSection() {
           Present a document as a slide deck in its own window. Add{' '}
           <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">slides: true</code> to a
           document's frontmatter, then open it with the Slidev action. Rendering is handled by the
-          Slidev CLI, which OpenKnowledge does not bundle.
+          Slidev CLI, which Palimpsest does not bundle.
         </Trans>
       </SettingsSectionHeader>
       {}

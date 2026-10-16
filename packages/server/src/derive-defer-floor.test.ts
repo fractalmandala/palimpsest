@@ -72,7 +72,7 @@ async function createFloorHarness(
   docName: string,
   cleanupSignals: FloorCleanupSignals = {},
 ): Promise<FloorHarness> {
-  const tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-defer-floor-'));
+  const tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-defer-floor-'));
   const projectRoot = resolve(tmpDir, 'project');
   const shadow = await initShadowRepo(projectRoot);
   const ring = new LossCaptureRing({ projectDir: projectRoot, maxBytes: 1_000_000 });

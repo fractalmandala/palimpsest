@@ -20,7 +20,7 @@ function step(file, job, name) {
 }
 
 function fixture() {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-release-alert-state-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-release-alert-state-'));
   scratch.push(dir);
   return {
     dir,

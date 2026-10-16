@@ -93,7 +93,7 @@ function runCurrentDockWait(label: string, panelHeight: number, persistedHeight:
       return runInNewContext(`(${callback.toString()})()`, {
         localStorage: {
           getItem: (key: string) =>
-            key === 'ok-terminal-height-v1' ? String(persistedHeight) : null,
+            key === 'ps-terminal-height-v1' ? String(persistedHeight) : null,
         },
       }) as number;
     },

@@ -8,7 +8,7 @@ import {
   TestRescanBacklinksSuccessSchema,
   TestRescanFilesSuccessSchema,
   TestResetSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { AgentPresenceBroadcaster } from '../agent-presence.ts';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { isConfigDoc, isSystemDoc } from '../cc1-broadcast.ts';
@@ -148,12 +148,12 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           );
           return;
         }
-        if (scope === 'server' && url.searchParams.has('reset-okignore')) {
+        if (scope === 'server' && url.searchParams.has('reset-psignore')) {
           errorResponse(
             res,
             400,
             'urn:ok:error:invalid-request',
-            'reset-okignore cannot be combined with scope=server: a server-scope reset always restores .okignore.',
+            'reset-psignore cannot be combined with scope=server: a server-scope reset always restores .psignore.',
             { handler: 'test-reset' },
           );
           return;
@@ -209,11 +209,11 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           await resetLoadedState(docName);
           resetSettingsForTest?.();
         }
-        const resetOkignoreParam = url.searchParams.get('reset-okignore');
+        const resetOkignoreParam = url.searchParams.get('reset-psignore');
         const resetOkignore = resetOkignoreParam !== 'false';
         if (resetOkignore) {
           try {
-            const okignorePath = resolve(contentDir, '.okignore');
+            const okignorePath = resolve(contentDir, '.psignore');
             const okignoreDoc = hocuspocus.documents.get(CONFIG_DOC_NAME_OKIGNORE);
             if (okignoreDoc) {
               const ytext = okignoreDoc.getText('source');
@@ -231,7 +231,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
               await contentFilter.rebuildIgnorePatterns();
             }
           } catch (err) {
-            log.warn({ err }, '[test-reset] okignore reset partial failure');
+            log.warn({ err }, '[test-reset] psignore reset partial failure');
           }
         }
         signalChannel?.('files');

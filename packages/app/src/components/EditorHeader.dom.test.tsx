@@ -1,4 +1,4 @@
-import { REDUCED_CHROME_HEADER_HEIGHT } from '@inkeep/open-knowledge-core';
+import { REDUCED_CHROME_HEADER_HEIGHT } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { type ComponentProps, type ReactNode, useEffect } from 'react';
@@ -107,21 +107,21 @@ vi.doMock('./InstanceBadge', () => ({
 }));
 
 function setElectronHost(enabled: boolean) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: enabled ? {} : undefined,
   });
 }
 
 function setWindowsHost() {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: { menu: {}, platform: 'win32' },
   });
 }
 
 function setNoteHost() {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: { config: { mode: 'note' }, menu: {}, platform: 'win32' },
   });

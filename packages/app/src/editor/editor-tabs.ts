@@ -5,10 +5,10 @@ import {
   parseManagedArtifactName,
   parseProjectSkillBundleDoc,
   parseTemplateContentDocName,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import { isExcalidrawDocFile } from '@inkeep/open-knowledge-core/constants/upload';
-import type { RenamedAssetMapping, SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
-import { resolveName } from '@inkeep/open-knowledge-core/utils/target-namespace';
+} from '@palimpsest/core/constants/cc1';
+import { isExcalidrawDocFile } from '@palimpsest/core/constants/upload';
+import type { RenamedAssetMapping, SkillScope } from '@palimpsest/core/schemas/api';
+import { resolveName } from '@palimpsest/core/utils/target-namespace';
 import {
   decodeSkillPreviewSegments,
   encodeSkillPreviewSegments,
@@ -55,7 +55,7 @@ interface KnownTabTargets {
 }
 
 const EMPTY_FOLDER_PATHS: ReadonlySet<string> = new Set<string>();
-const LOCAL_TAB_SESSION_PREFIX = 'ok-editor-tabs-v1:';
+const LOCAL_TAB_SESSION_PREFIX = 'ps-editor-tabs-v1:';
 const FOLDER_TAB_PREFIX = '\u0000folder:';
 const ASSET_TAB_PREFIX = '\u0000asset:';
 const SKILL_FILE_TAB_PREFIX = '\u0000skill-file:';

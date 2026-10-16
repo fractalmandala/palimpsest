@@ -1,6 +1,6 @@
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 let pendingListener: (() => void) | null = null;
 let poolPending = false;
@@ -28,9 +28,9 @@ const { BackgroundThrottleReporter } = await import('./BackgroundThrottleReporte
 
 function installFakeBridge(): ReturnType<typeof vi.fn> {
   const notifyBackgroundThrottle = vi.fn();
-  (window as unknown as { okDesktop?: OkDesktopBridge }).okDesktop = {
+  (window as unknown as { psDesktop?: PsDesktopBridge }).psDesktop = {
     editor: { notifyBackgroundThrottle },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return notifyBackgroundThrottle;
 }
 
@@ -40,7 +40,7 @@ describe('BackgroundThrottleReporter', () => {
     pendingListener = null;
     poolPending = false;
     projectConfig = { bridge: { backgroundThrottle: { enabled: true } } };
-    (window as unknown as { okDesktop?: OkDesktopBridge }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: PsDesktopBridge }).psDesktop = undefined;
   });
 
   test('seeds main with the current state and reports the pending-work edge', () => {
@@ -61,15 +61,15 @@ describe('BackgroundThrottleReporter', () => {
     expect(notify).toHaveBeenLastCalledWith({ hasPendingWork: false, enabled: false });
   });
 
-  test('is inert outside the Electron host (no window.okDesktop)', () => {
+  test('is inert outside the Electron host (no window.psDesktop)', () => {
     expect(() => render(<BackgroundThrottleReporter />)).not.toThrow();
     expect(pendingListener).toBeNull();
   });
 
   test('is inert on a bridge whose editor lacks notifyBackgroundThrottle (older shell)', () => {
-    (window as unknown as { okDesktop?: OkDesktopBridge }).okDesktop = {
+    (window as unknown as { psDesktop?: PsDesktopBridge }).psDesktop = {
       editor: { notifyActiveTargetChanged: () => {} },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     expect(() => render(<BackgroundThrottleReporter />)).not.toThrow();
     expect(pendingListener).toBeNull();
   });

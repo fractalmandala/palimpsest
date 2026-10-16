@@ -1,4 +1,4 @@
-import { menuLabelForPlatform } from '@inkeep/open-knowledge-core';
+import { menuLabelForPlatform } from '@palimpsest/core';
 import type { MenuItemConstructorOptions } from 'electron';
 import { describe, expect, test, vi } from 'vitest';
 import { buildMenuTemplate, type MenuDeps } from '../../src/main/menu.ts';
@@ -9,7 +9,7 @@ type RecentRow = { path: string; name: string };
 
 function makeDeps(overrides: Partial<MenuDeps> = {}): MenuDeps {
   return {
-    appName: 'OpenKnowledge',
+    appName: 'Palimpsest',
     showDevToolsMenu: true,
     terminalCapable: true,
     dialog: {} as MenuDeps['dialog'],
@@ -432,7 +432,7 @@ describe('buildMenuTemplate', () => {
         .map((item) => item.label)
         .filter((label) => label !== undefined);
       expect(labels.slice(0, 5)).toEqual([
-        'OpenKnowledge on GitHub',
+        'Palimpsest on GitHub',
         'Documentation',
         'Join us on Discord',
         'Report a bug…',
@@ -441,7 +441,7 @@ describe('buildMenuTemplate', () => {
     });
 
     test.each([
-      ['Documentation', 'https://openknowledge.ai/docs'],
+      ['Documentation', 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content'],
       ['Join us on Discord', 'https://discord.gg/VRKk2EaGHN'],
     ])('%s opens %s externally', (label, url) => {
       const openExternalUrl = vi.fn(() => {});
@@ -454,7 +454,7 @@ describe('buildMenuTemplate', () => {
     });
 
     test.each([
-      ['win32', 'About OpenKnowledge'],
+      ['win32', 'About Palimpsest'],
       ['linux', 'About'],
     ] as const)('%s ends the Help menu with a separated About entry', (platform, label) => {
       const sub = helpSubmenu(platform, makeDeps({ onCheckForUpdates: vi.fn(() => {}) }));
@@ -473,10 +473,10 @@ describe('buildMenuTemplate', () => {
     });
   });
 
-  describe('Uninstall OpenKnowledge… menu item', () => {
+  describe('Uninstall Palimpsest… menu item', () => {
     test('omitted entirely when onUninstall dep is undefined', () => {
       const template = buildMenuTemplate(makeDeps());
-      expect(findByLabel(template, 'Uninstall OpenKnowledge…')).toBeUndefined();
+      expect(findByLabel(template, 'Uninstall Palimpsest…')).toBeUndefined();
     });
 
     if (process.platform === 'darwin') {
@@ -487,7 +487,7 @@ describe('buildMenuTemplate', () => {
         const appMenu = template.find((t) => t.label === deps.appName);
         const sub = appMenu?.submenu as MenuItemConstructorOptions[] | undefined;
         if (!sub) throw new Error('App submenu missing');
-        const uninstallIdx = sub.findIndex((i) => i.label === 'Uninstall OpenKnowledge…');
+        const uninstallIdx = sub.findIndex((i) => i.label === 'Uninstall Palimpsest…');
         const quitIdx = sub.findIndex((i) => i.role === 'quit');
         expect(uninstallIdx).toBeGreaterThanOrEqual(0);
         expect(uninstallIdx).toBeLessThan(quitIdx);
@@ -498,7 +498,7 @@ describe('buildMenuTemplate', () => {
       const onUninstall = vi.fn(() => {});
       const item = findByLabel(
         buildMenuTemplate(makeDeps({ onUninstall })),
-        'Uninstall OpenKnowledge…',
+        'Uninstall Palimpsest…',
       );
       if (process.platform !== 'darwin') {
         expect(item).toBeUndefined();
@@ -884,10 +884,10 @@ describe('buildMenuTemplate — View menu visibility toggles + tree-scoped expan
   });
 });
 
-describe('buildMenuTemplate — View → Show .ok folders', () => {
+describe('buildMenuTemplate — View → Show .ps folders', () => {
   test('renders as a checkbox, unchecked by default', () => {
     const template = buildMenuTemplate(makeDeps({ onToggleShowOkFolders: vi.fn(() => {}) }));
-    const item = findByLabel(template, 'Show .ok folders');
+    const item = findByLabel(template, 'Show .ps folders');
     expect(item).toBeDefined();
     expect(item?.type).toBe('checkbox');
     expect(item?.checked).toBe(false);
@@ -898,12 +898,12 @@ describe('buildMenuTemplate — View → Show .ok folders', () => {
     const template = buildMenuTemplate(
       makeDeps({ onToggleShowOkFolders: vi.fn(() => {}), showOkFoldersChecked: true }),
     );
-    expect(findByLabel(template, 'Show .ok folders')?.checked).toBe(true);
+    expect(findByLabel(template, 'Show .ps folders')?.checked).toBe(true);
   });
 
   test('DISABLED when the toggle handler is missing (unit-test default)', () => {
     const template = buildMenuTemplate(makeDeps());
-    expect(findByLabel(template, 'Show .ok folders')?.enabled).toBe(false);
+    expect(findByLabel(template, 'Show .ps folders')?.enabled).toBe(false);
   });
 
   test('sits directly after Show hidden files (menu order across every surface)', () => {
@@ -912,17 +912,17 @@ describe('buildMenuTemplate — View → Show .ok folders', () => {
     const sub = view?.submenu as MenuItemConstructorOptions[] | undefined;
     const labels = sub?.map((i) => i.label).filter(Boolean) ?? [];
     const hiddenIdx = labels.indexOf('Show hidden files');
-    const okIdx = labels.indexOf('Show .ok folders');
+    const psIdx = labels.indexOf('Show .ps folders');
     const onlyMdIdx = labels.indexOf('Show only markdown files');
     expect(hiddenIdx).toBeGreaterThan(-1);
-    expect(okIdx).toBe(hiddenIdx + 1);
-    expect(onlyMdIdx).toBe(okIdx + 1);
+    expect(psIdx).toBe(hiddenIdx + 1);
+    expect(onlyMdIdx).toBe(psIdx + 1);
   });
 
   test('binds no keyboard accelerator and click dispatches the toggle dep', () => {
     const onToggleShowOkFolders = vi.fn(() => {});
     const template = buildMenuTemplate(makeDeps({ onToggleShowOkFolders }));
-    const item = findByLabel(template, 'Show .ok folders');
+    const item = findByLabel(template, 'Show .ps folders');
     expect(item?.accelerator).toBeUndefined();
     (item?.click as (() => void) | undefined)?.();
     expect(onToggleShowOkFolders).toHaveBeenCalledTimes(1);
@@ -931,7 +931,7 @@ describe('buildMenuTemplate — View → Show .ok folders', () => {
   test('click is a safe no-op when the dep is omitted', () => {
     const template = buildMenuTemplate(makeDeps());
     expect(() =>
-      (findByLabel(template, 'Show .ok folders')?.click as (() => void) | undefined)?.(),
+      (findByLabel(template, 'Show .ps folders')?.click as (() => void) | undefined)?.(),
     ).not.toThrow();
   });
 });
@@ -1013,7 +1013,7 @@ describe('buildMenuTemplate — View → Show only markdown files / Skills secti
     ).not.toThrow();
   });
 
-  test('order: Show hidden files → Show .ok folders → Show only markdown files → Skills section → expand/collapse', () => {
+  test('order: Show hidden files → Show .ps folders → Show only markdown files → Skills section → expand/collapse', () => {
     const template = buildMenuTemplate(
       makeDeps({
         onToggleShowHiddenFiles: vi.fn(() => {}),
@@ -1027,13 +1027,13 @@ describe('buildMenuTemplate — View → Show only markdown files / Skills secti
     const sub = view?.submenu as MenuItemConstructorOptions[] | undefined;
     const labels = sub?.map((i) => (i.role ? `[role:${i.role}]` : (i.label ?? '[sep]'))) ?? [];
     const hiddenIdx = labels.indexOf('Show hidden files');
-    const okIdx = labels.indexOf('Show .ok folders');
+    const psIdx = labels.indexOf('Show .ps folders');
     const onlyMdIdx = labels.indexOf('Show only markdown files');
     const skillsIdx = labels.indexOf('Skills section');
     const expandIdx = labels.indexOf('Expand all');
     expect(hiddenIdx).toBeGreaterThan(-1);
-    expect(okIdx).toBe(hiddenIdx + 1);
-    expect(onlyMdIdx).toBe(okIdx + 1);
+    expect(psIdx).toBe(hiddenIdx + 1);
+    expect(onlyMdIdx).toBe(psIdx + 1);
     expect(skillsIdx).toBe(onlyMdIdx + 1);
     expect(expandIdx).toBeGreaterThan(skillsIdx);
   });

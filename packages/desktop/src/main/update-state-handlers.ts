@@ -1,4 +1,4 @@
-import type { OkStateSnapshot } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsStateSnapshot } from '@palimpsest/core/desktop-bridge';
 import { buildAboutInfo } from './about-info.ts';
 import {
   type AppState,
@@ -34,7 +34,7 @@ export async function applyResetIncompatible(deps: UpdateStateHandlerDeps): Prom
 
 export async function applyStateQuery(
   deps: UpdateStateHandlerDeps,
-): Promise<Required<OkStateSnapshot>> {
+): Promise<Required<PsStateSnapshot>> {
   const compat = deps.getPendingSchemaIncompatibility();
   return {
     channel: deps.getBuildChannel(),

@@ -1,11 +1,11 @@
 import type { Point } from 'unist';
 import { visit } from 'unist-util-visit';
-import { defineOkfRule } from '../okf-runner.ts';
+import { defineOkfRule } from '../psf-runner.ts';
 
 const WIKI_LINK = /\[\[[^[\]\n]+\]\]/g;
 
 function describe(matched: string): string {
-  const base = `Wiki-link ${matched} won't resolve for an external Open Knowledge Format consumer — it renders as literal text and its graph edge is lost.`;
+  const base = `Wiki-link ${matched} won't resolve for an external Palimpsest Format consumer — it renders as literal text and its graph edge is lost.`;
   return matched.includes('|') ? `${base} The alias "|" also splits a GFM table cell.` : base;
 }
 

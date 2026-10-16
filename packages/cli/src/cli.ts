@@ -17,8 +17,8 @@ import {
   currentDesktopProduct,
   formatIgnoredCommittedKey,
   humanFormat,
-} from '@inkeep/open-knowledge-core';
-import { type Config, ConfigSchema, trustSystemCertificates } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { type Config, ConfigSchema, trustSystemCertificates } from '@palimpsest/server';
 import { Command } from 'commander';
 import { getCliLogger, initCliLogger } from './cli-logger.ts';
 import { auditCommand } from './commands/audit.ts';
@@ -85,7 +85,7 @@ program
     if (program.getOptionValueSource('logLevel') === 'cli') {
       const level = String(program.opts().logLevel);
       process.env.LOG_LEVEL = level;
-      process.env.OK_CONSOLE_LEVEL = level;
+      process.env.PS_CONSOLE_LEVEL = level;
     }
 
     const subcommandName = thisCommand.args?.[0];
@@ -93,7 +93,7 @@ program
     if (anchorRoot !== null) {
       recordInvocationCwd(process.cwd());
       process.chdir(anchorRoot);
-      console.error(`[ok] Using OpenKnowledge project at ${anchorRoot}`);
+      console.error(`[ok] Using Palimpsest project at ${anchorRoot}`);
     }
 
     let config: Config;

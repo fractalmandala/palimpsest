@@ -17,9 +17,9 @@ import {
   editorEntryLocator,
   type McpDeclineReason,
   type McpEntryClassification,
-} from '@inkeep/open-knowledge';
-import { CONNECTION_ROW_AGENT_IDS, classifyMcpLauncherEntry } from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/cli';
+import { CONNECTION_ROW_AGENT_IDS, classifyMcpLauncherEntry } from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 import type {
   McpWiringConfirmRequest,
@@ -75,7 +75,7 @@ const defaultFsOps: McpWiringFsOps = {
 };
 
 function mcpStatusMarkerPath(home: string): string {
-  return join(okUserHomeDir(home), MCP_STATUS_FILE_NAME);
+  return join(psUserHomeDir(home), MCP_STATUS_FILE_NAME);
 }
 
 export function readMcpStatusMarker(
@@ -510,12 +510,12 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
   const inertHandle: RunMcpWiringHandle = { destroy() {}, armed: false };
 
   if (reclaimDisableEnv === '1') {
-    logger.info('skip — OK_RECLAIM_DISABLE is set');
+    logger.info('skip — PS_RECLAIM_DISABLE is set');
     return inertHandle;
   }
 
   if (!isPackaged && forceEnv !== '1') {
-    logger.info('skip — app not packaged and OK_M6B_FORCE not set');
+    logger.info('skip — app not packaged and PS_M6B_FORCE not set');
     return inertHandle;
   }
 

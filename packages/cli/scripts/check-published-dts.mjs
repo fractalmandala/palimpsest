@@ -4,10 +4,10 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readJsoncOrError } from '../../../scripts/read-jsonc.mjs';
 
-const PACKAGE_ROOT = process.env.OK_PUBLISHED_DTS_ROOT
-  ? resolve(process.env.OK_PUBLISHED_DTS_ROOT)
+const PACKAGE_ROOT = process.env.PS_PUBLISHED_DTS_ROOT
+  ? resolve(process.env.PS_PUBLISHED_DTS_ROOT)
   : resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PACKAGE_ROOT_SOURCE = process.env.OK_PUBLISHED_DTS_ROOT ? 'OK_PUBLISHED_DTS_ROOT' : null;
+const PACKAGE_ROOT_SOURCE = process.env.PS_PUBLISHED_DTS_ROOT ? 'PS_PUBLISHED_DTS_ROOT' : null;
 const PUBLISHED_DECLARATION_NAME = 'dist/index.d.mts';
 const PUBLISHED_DECLARATION = join(PACKAGE_ROOT, PUBLISHED_DECLARATION_NAME);
 const CHECK_PROJECT = 'tsconfig.check.json';
@@ -121,7 +121,7 @@ export const PUBLISHED_SURFACE_BASELINE = {
     'isOwnManagedEntry',
     'loadConfig',
     'makeLazyProbeTokenStore',
-    'okBugReportsDir',
+    'psBugReportsDir',
     'parseGitHubBlobUrl',
     'parseGitHubShareUrl',
     'parseGitHubTreeUrl',
@@ -483,7 +483,7 @@ function main() {
 
   if (!existsSync(TSC_BIN)) {
     console.error(
-      `check:dts: no tsc at ${TSC_BIN}. Run \`pnpm install\` from public/open-knowledge. This check resolves the compiler by absolute path on purpose: falling through to a machine-global tsc would reconcile its diagnostics as if they came from the version this package declares.`,
+      `check:dts: no tsc at ${TSC_BIN}. Run \`pnpm install\` from public/palimpsest. This check resolves the compiler by absolute path on purpose: falling through to a machine-global tsc would reconcile its diagnostics as if they came from the version this package declares.`,
     );
     process.exit(1);
   }

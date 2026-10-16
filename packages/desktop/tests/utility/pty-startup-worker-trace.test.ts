@@ -51,10 +51,10 @@ async function openWorkerFixture(
   withPreload: boolean,
   socketErrorSeam = false,
 ): Promise<WorkerFixture> {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-pty-worker-trace-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-pty-worker-trace-'));
   const pipe =
     process.platform === 'win32'
-      ? `\\\\.\\pipe\\ok-pty-worker-trace-${randomUUID()}`
+      ? `\\\\.\\pipe\\ps-pty-worker-trace-${randomUUID()}`
       : join(dir, 'native');
   const server = createServer();
   let worker: Worker | undefined;
@@ -190,10 +190,10 @@ describe('startup trace on the installed ConPTY output worker', () => {
   test.each([false, true])(
     'preserves pre-READY native connection failure with preload %s',
     async (withPreload) => {
-      const dir = mkdtempSync(join(tmpdir(), 'ok-pty-worker-missing-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-pty-worker-missing-'));
       const pipe =
         process.platform === 'win32'
-          ? `\\\\.\\pipe\\ok-pty-worker-missing-${randomUUID()}`
+          ? `\\\\.\\pipe\\ps-pty-worker-missing-${randomUUID()}`
           : join(dir, 'missing');
       const context = traceContext();
       let worker: Worker | undefined;
@@ -258,7 +258,7 @@ describe('startup trace on the installed ConPTY output worker', () => {
   );
 
   test('counts raw native bytes and submitted worker bytes across split multibyte input', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pty-worker-log-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pty-worker-log-'));
     const output = join(dir, 'trace.log');
     const fd = openSync(output, 'w');
     const context = traceContext(fd);
@@ -370,7 +370,7 @@ describe('startup trace on the installed ConPTY output worker', () => {
   });
 
   test('persists a worker milestone to a regular file while the main event loop is blocked', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pty-worker-blocked-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pty-worker-blocked-'));
     const output = join(dir, 'trace.log');
     const fd = openSync(output, 'w');
     const context = traceContext(fd);
@@ -395,7 +395,7 @@ describe('startup trace on the installed ConPTY output worker', () => {
   });
 
   test('marks direct-file failure without changing worker transport', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-pty-worker-readonly-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-pty-worker-readonly-'));
     const output = join(dir, 'trace.log');
     const fd = openSync(output, 'w');
     closeSync(fd);
@@ -423,7 +423,7 @@ describe('startup trace on the installed ConPTY output worker', () => {
 
 describe('startup trace wrapper', () => {
   test('launches the harness with its worker preload and retains diagnostic records on failure', async () => {
-    const outputDir = mkdtempSync(join(tmpdir(), 'ok-pty-trace-wrapper-'));
+    const outputDir = mkdtempSync(join(tmpdir(), 'ps-pty-trace-wrapper-'));
     const emitter = new EventEmitter();
     const child = Object.assign(emitter, {
       kill: vi.fn(() => emitter.emit('exit', 0, null)),

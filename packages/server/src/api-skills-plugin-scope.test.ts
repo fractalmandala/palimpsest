@@ -5,7 +5,7 @@ import { syncBuiltinESMExports } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, relative, sep } from 'node:path';
 import { Readable } from 'node:stream';
-import { resolveProjectIdentity } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { resolveProjectIdentity } from '@palimpsest/core/shadow-repo-layout';
 import { afterAll, afterEach, beforeAll, expect, test, vi } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { createSkillsRecoveryRoutes } from './http/skills-recovery-routes.ts';
@@ -94,7 +94,7 @@ function restoreObservers(): void {
 }
 
 beforeAll(async () => {
-  root = fs.mkdtempSync(join(tmpdir(), 'ok-skills-plugin-scope-'));
+  root = fs.mkdtempSync(join(tmpdir(), 'ps-skills-plugin-scope-'));
   installObservers();
   ({ createApiExtension } = await import('./api-extension.test-helper.ts'));
   ({ createSkillsCatalogCache } = await import('./skills-catalog-cache.ts'));
@@ -684,7 +684,7 @@ test('skill recovery resolves plugin origin from the canonical parent project re
     skillsHome: join(fixture.home, '.claude', 'skills'),
     projectSkillDirRel: (skillName) => `.claude/skills/${skillName}`,
     attributeOkArtifactWrite: () => {},
-    okArtifactKey: () => '',
+    psArtifactKey: () => '',
     commitOkArtifactWrite: () => Promise.resolve(),
     signalChannel: undefined,
     bumpSkillsCatalogGen: () => {},

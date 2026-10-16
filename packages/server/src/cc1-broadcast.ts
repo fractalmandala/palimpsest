@@ -21,7 +21,7 @@ import {
   isMermaidDocFile,
   isProjectSkillBundlePath,
   SYSTEM_DOC_NAME,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { isRegisteredMarkdownDocName } from './doc-extensions.ts';
 import { getLogger } from './logger.ts';
 import {

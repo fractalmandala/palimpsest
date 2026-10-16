@@ -1,9 +1,9 @@
 import type {
-  OkBugReportListRow,
-  OkBugReportSendMetadata,
-  OkBugReportSendResult,
+  PsBugReportListRow,
+  PsBugReportSendMetadata,
+  PsBugReportSendResult,
   ReportBundleSummary,
-} from '@inkeep/open-knowledge-core/logger-types';
+} from '@palimpsest/core/logger-types';
 import {
   type BugReportSendSpan,
   beginBugReportSendSpan,
@@ -11,9 +11,9 @@ import {
 } from '@/lib/bug-report-send-otel';
 import { zipBasename } from '@/lib/bug-report-support';
 import { type ContactEmailStore, contactEmailStore } from '@/lib/contact-email-store';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
-export type BugReportSendBridge = Pick<OkDesktopBridge['bugReport'], 'send'>;
+export type BugReportSendBridge = Pick<PsDesktopBridge['bugReport'], 'send'>;
 
 const FILL_STEP_MS = 200;
 const FILL_TIME_CONSTANT_SECONDS = 3;
@@ -54,7 +54,7 @@ export type BugReportSendRequest =
       readonly includeAttachments?: boolean;
       readonly email?: string;
     }
-  | { readonly kind: 'history-row'; readonly row: OkBugReportListRow };
+  | { readonly kind: 'history-row'; readonly row: PsBugReportListRow };
 
 export interface BugReportSendManager {
   startBugReportSend(request: BugReportSendRequest): BugReportSendOperation;
@@ -67,7 +67,7 @@ export interface BugReportSendManager {
 interface SendInput {
   readonly zipPath: string;
   readonly zipSizeBytes: number;
-  readonly metadata: OkBugReportSendMetadata;
+  readonly metadata: PsBugReportSendMetadata;
   readonly includeScreenshot?: boolean;
   readonly includeAttachments?: boolean;
 }
@@ -196,7 +196,7 @@ export function createBugReportSendManager(
     publish(record, { ...base(record), ...outcome });
   }
 
-  function settleFromResult(record: OperationRecord, result: OkBugReportSendResult): void {
+  function settleFromResult(record: OperationRecord, result: PsBugReportSendResult): void {
     if (result.ok) {
       settle(record, { status: 'sent', reference: result.reference });
       return;
@@ -318,5 +318,5 @@ export function createBugReportSendManager(
 }
 
 export const bugReportSendManager: BugReportSendManager = createBugReportSendManager(
-  () => window.okDesktop?.bugReport,
+  () => window.psDesktop?.bugReport,
 );

@@ -5,7 +5,7 @@ name: Bug lane verify
 # armed) dispatch the point release. Split out of bug-lane.yml on 2026-08-21.
 #
 # WHY THE SPLIT. Both halves used to share one job under a single global
-# `ok-bug-lane` concurrency group with `cancel-in-progress: true`, while the
+# `ps-bug-lane` concurrency group with `cancel-in-progress: true`, while the
 # lane fired on a 20-minute cron AND every push to main. A tick that found
 # candidates spent ~15 minutes here, so the next tick killed it mid-verify.
 # That was harmless by design — the evaluation is idempotent and the next tick
@@ -73,7 +73,7 @@ permissions:
 
 concurrency:
   # Queue, never cancel — see SERIALIZATION above.
-  group: ok-bug-lane-verify
+  group: ps-bug-lane-verify
   cancel-in-progress: false
 
 env:
@@ -477,7 +477,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-bug-lane-verify-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-bug-lane-verify-attempt${{ github.run_attempt }}
           path: |
             test-results/vitest-*.json
             docs/test-results/vitest-*.json

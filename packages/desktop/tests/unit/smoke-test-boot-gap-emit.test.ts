@@ -44,7 +44,7 @@ function recorder(over: Partial<TestInfo> = {}): {
 }
 
 function seedHome(narration: readonly string[]): string {
-  const home = mkdtempSync(join(tmpdir(), 'ok-bootgap-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-bootgap-'));
   seededHomes.push(home);
   if (narration.length > 0) {
     const dir = bootLogDirFor(home);
@@ -85,7 +85,7 @@ describe('the fixture emits one boot-gap line per launch it registered', () => {
     const app = {};
     rememberLaunchHome(app, home);
     rememberBootLog(app, narration);
-    rmSync(join(home, '.ok'), { recursive: true, force: true });
+    rmSync(join(home, '.ps'), { recursive: true, force: true });
     const { info, attachments, lines } = recorder();
 
     await emitBootGapLines([app], info, (l) => lines.push(l));

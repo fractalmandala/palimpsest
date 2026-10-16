@@ -7,7 +7,7 @@ import { bootCompositionRig } from '../packages/server/src/composition-rig.test-
 import { withTempDir } from './temp-dir.test-helper.ts';
 
 async function withIsolatedTemp(fn: (root: string) => Promise<void>): Promise<void> {
-  await withTempDir('ok-acquisition-cleanup-', async (root) => {
+  await withTempDir('ps-acquisition-cleanup-', async (root) => {
     for (const key of ['TMPDIR', 'TMP', 'TEMP']) vi.stubEnv(key, root);
     try {
       await fn(root);
@@ -31,8 +31,8 @@ test.each([false, true])(
       const content = join(root, 'content');
       mkdirSync(content);
       writeFileSync(join(content, 'one.md'), '# One\n');
-      mkdirSync(join(root, 'preview', '.ok'), { recursive: true });
-      writeFileSync(join(root, 'preview', '.ok', 'config.yml'), '');
+      mkdirSync(join(root, 'preview', '.ps'), { recursive: true });
+      writeFileSync(join(root, 'preview', '.ps', 'config.yml'), '');
       const configHomedirOverride = callerHome(root, provided);
       const owner = await bootCompositionRig(content, {
         projectDir: join(root, 'preview'),
@@ -42,7 +42,7 @@ test.each([false, true])(
       try {
         await owner.ready;
         const before = readdirSync(root).sort();
-        expect(before.some((name) => name.startsWith('ok-rig-home-'))).toBe(true);
+        expect(before.some((name) => name.startsWith('ps-rig-home-'))).toBe(true);
         const failure: unknown = await bootCompositionRig(content, {
           configHomedirOverride,
         }).then(
@@ -72,7 +72,7 @@ test.each([false, true])(
       const owner = await createTestServer();
       try {
         const before = readdirSync(root).sort();
-        expect(before.some((name) => name.startsWith('ok-test-home-'))).toBe(true);
+        expect(before.some((name) => name.startsWith('ps-test-home-'))).toBe(true);
         const failure: unknown = await createTestServer({
           contentDir: owner.contentDir,
           keepContentDir: true,
@@ -128,7 +128,7 @@ test.each([false, true])(
     await withIsolatedTemp(async (root) => {
       const content = join(root, 'content');
       mkdirSync(content);
-      writeFileSync(join(content, '.ok'), 'caller-owned file');
+      writeFileSync(join(content, '.ps'), 'caller-owned file');
       const configHomedirOverride = callerHome(root, provided);
       const before = readdirSync(root).sort();
       const failure: unknown = await createRestartableServer({
@@ -143,7 +143,7 @@ test.each([false, true])(
       );
       expect(failure).toMatchObject({ code: 'EEXIST' });
       expect.soft(readdirSync(root).sort()).toEqual(before);
-      expect(readFileSync(join(content, '.ok'), 'utf8')).toBe('caller-owned file');
+      expect(readFileSync(join(content, '.ps'), 'utf8')).toBe('caller-owned file');
       expect(readFileSync(join(root, 'caller-home', 'keep.txt'), 'utf8')).toBe('caller-owned');
     });
   },

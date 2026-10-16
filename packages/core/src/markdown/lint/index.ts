@@ -149,32 +149,32 @@ export {
 } from './frontmatter-validate.ts';
 export { fixMarkdownText, runMarkdownlint } from './markdownlint-runner.ts';
 export {
-  OKF_SCHEMA_DIR,
+  PSF_SCHEMA_DIR,
   type OkfSchemaFile,
-  okfSchemaPathFor,
+  psfSchemaPathFor,
   renderOkfSchemaFiles,
-} from './okf-frontmatter/materialize.ts';
+} from './psf-frontmatter/materialize.ts';
 export {
-  OKF_FRONTMATTER_REGISTRY,
-  okfAdvertisedSchemaMappings,
+  PSF_FRONTMATTER_REGISTRY,
+  psfAdvertisedSchemaMappings,
   runOkfFrontmatterRules,
   selectOkfFrontmatterSchemas,
-} from './okf-frontmatter/registry.ts';
+} from './psf-frontmatter/registry.ts';
 export {
-  OKF_PROJECT_REGISTRY,
+  PSF_PROJECT_REGISTRY,
   type OkfProjectFinding,
   runOkfProjectRules,
-} from './okf-project/rules.ts';
+} from './psf-project/rules.ts';
 export {
   assertNeverOkfRuleGroupId,
   assertNeverOkfRuleId,
   isOkfRuleEnabled,
-  OKF_RULE_GROUPS,
-  OKF_RULE_IDS,
+  PSF_RULE_GROUPS,
+  PSF_RULE_IDS,
   type OkfRuleGroupId,
   type OkfRuleId,
   type OkfRuleToggles,
-} from './okf-rule-meta.ts';
+} from './psf-rule-meta.ts';
 export {
   type LintPluginFailure,
   type LintPluginFailureReporter,

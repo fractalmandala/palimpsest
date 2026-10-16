@@ -1,4 +1,4 @@
-import { getLocalDir } from '@inkeep/open-knowledge-server';
+import { getLocalDir } from '@palimpsest/server';
 import { describe, expect, test, vi } from 'vitest';
 import type { AssetOpenResult } from '../../src/main/asset-allowlist.ts';
 import type { ShowGateRegistry } from '../../src/main/show-gate.ts';

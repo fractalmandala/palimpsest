@@ -9,10 +9,10 @@ import {
   serverFingerprint,
 } from './test-server-inputs';
 
-const OK_TREE: Readonly<Record<string, string>> = {
-  'package.json': '{"name":"open-knowledge"}\n',
+const PS_TREE: Readonly<Record<string, string>> = {
+  'package.json': '{"name":"palimpsest"}\n',
   'pnpm-lock.yaml': "lockfileVersion: '9.0'\n",
-  'packages/app/package.json': '{"name":"@inkeep/open-knowledge-app"}\n',
+  'packages/app/package.json': '{"name":"@palimpsest/app"}\n',
   'packages/app/vite.config.ts': 'export default {};\n',
   'packages/app/src/App.tsx': 'export const App = () => null;\n',
   'packages/app/src/server/hocuspocus-plugin.ts': 'export const hocuspocusPlugin = () => ({});\n',
@@ -20,14 +20,14 @@ const OK_TREE: Readonly<Record<string, string>> = {
   'packages/server/src/index.ts': 'export const server = 1;\n',
 };
 
-const WORKER_ENV = { OK_TEST_GIT_ENABLED: '1' };
+const WORKER_ENV = { PS_TEST_GIT_ENABLED: '1' };
 
 const roots: string[] = [];
 
-function okTree(): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-server-inputs-'));
+function psTree(): string {
+  const root = mkdtempSync(join(tmpdir(), 'ps-server-inputs-'));
   roots.push(root);
-  for (const [path, content] of Object.entries(OK_TREE)) write(root, path, content);
+  for (const [path, content] of Object.entries(PS_TREE)) write(root, path, content);
   return root;
 }
 
@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe('server reuse eligibility', () => {
   test('an edit to the server source makes the admitted server ineligible and names the file', () => {
-    const root = okTree();
+    const root = psTree();
     const admitted = serverFingerprint(root, WORKER_ENV);
 
     write(root, 'packages/server/src/index.ts', 'export const server = 2;\n');
@@ -55,7 +55,7 @@ describe('server reuse eligibility', () => {
   });
 
   test('edits to app source the dev server transforms on request leave the admitted server reusable', () => {
-    const root = okTree();
+    const root = psTree();
     const admitted = serverFingerprint(root, WORKER_ENV);
 
     write(root, 'packages/app/src/App.tsx', 'export const App = () => "edited";\n');
@@ -73,7 +73,7 @@ describe('server reuse eligibility', () => {
     const edits = [
       ['packages/core/src/index.ts', 'export const core = 2;\n'],
       ['pnpm-lock.yaml', "lockfileVersion: '9.0'\nimporters: {}\n"],
-      ['package.json', '{"name":"open-knowledge","private":true}\n'],
+      ['package.json', '{"name":"palimpsest","private":true}\n'],
       ['packages/app/vite.config.ts', 'export default { server: {} };\n'],
       [
         'packages/app/src/server/hocuspocus-plugin.ts',
@@ -82,7 +82,7 @@ describe('server reuse eligibility', () => {
     ] as const;
 
     const decisions = edits.map(([path, content]) => {
-      const root = okTree();
+      const root = psTree();
       const admitted = serverFingerprint(root, WORKER_ENV);
       write(root, path, content);
       return reuseDecision(admitted, serverFingerprint(root, WORKER_ENV));
@@ -94,7 +94,7 @@ describe('server reuse eligibility', () => {
   });
 
   test('a server source file added or removed after admission makes the server ineligible', () => {
-    const root = okTree();
+    const root = psTree();
     const admitted = serverFingerprint(root, WORKER_ENV);
 
     write(root, 'packages/server/src/routes/new-route.ts', 'export const route = 1;\n');
@@ -108,7 +108,7 @@ describe('server reuse eligibility', () => {
   });
 
   test('the core and server build output the dev server writes at startup leaves the admitted server reusable', () => {
-    const root = okTree();
+    const root = psTree();
     const admitted = serverFingerprint(root, WORKER_ENV);
 
     write(root, 'packages/core/dist/index.mjs', 'export const core = 1;\n');
@@ -120,17 +120,17 @@ describe('server reuse eligibility', () => {
   });
 
   test('a changed worker environment makes the admitted server ineligible without recording the values', () => {
-    const root = okTree();
-    const admitted = serverFingerprint(root, { ...WORKER_ENV, OK_TEST_TOKEN: 'secret-before' });
+    const root = psTree();
+    const admitted = serverFingerprint(root, { ...WORKER_ENV, PS_TEST_TOKEN: 'secret-before' });
     const current = serverFingerprint(root, {
-      OK_TEST_TOKEN: 'secret-after',
-      OK_TEST_EXTRA: 'on',
+      PS_TEST_TOKEN: 'secret-after',
+      PS_TEST_EXTRA: 'on',
     });
 
     expect(reuseDecision(admitted, current)).toEqual({
       reuse: false,
       changedInputs: [],
-      changedEnv: ['OK_TEST_EXTRA', 'OK_TEST_GIT_ENABLED', 'OK_TEST_TOKEN'],
+      changedEnv: ['PS_TEST_EXTRA', 'PS_TEST_GIT_ENABLED', 'PS_TEST_TOKEN'],
     });
     expect(JSON.stringify([admitted, current])).not.toMatch(/secret-(?:before|after)/);
   });
@@ -140,7 +140,7 @@ const BUILD_OPTIONS = { mode: 'development', devHooks: true };
 
 describe('prebuilt DEV output freshness', () => {
   test('an app source edit after the build refuses the recorded output and names the file', () => {
-    const root = okTree();
+    const root = psTree();
     const recorded = prebuiltManifest(root, BUILD_OPTIONS);
 
     write(root, 'packages/app/src/App.tsx', 'export const App = () => "edited";\n');
@@ -163,7 +163,7 @@ describe('prebuilt DEV output freshness', () => {
     ] as const;
 
     const decisions = edits.map(([path, content]) => {
-      const root = okTree();
+      const root = psTree();
       const recorded = prebuiltManifest(root, BUILD_OPTIONS);
       write(root, path, content);
       return prebuiltServingDecision(recorded, prebuiltManifest(root, BUILD_OPTIONS));
@@ -180,7 +180,7 @@ describe('prebuilt DEV output freshness', () => {
   });
 
   test('an edited env file Vite reads at build time refuses the recorded output and names the file', () => {
-    const root = okTree();
+    const root = psTree();
     write(root, 'packages/app/.env.local', 'VITE_OTEL_ENABLED=false\n');
     const recorded = prebuiltManifest(root, BUILD_OPTIONS);
 
@@ -195,7 +195,7 @@ describe('prebuilt DEV output freshness', () => {
   });
 
   test('a changed build option refuses the recorded output and names the option', () => {
-    const root = okTree();
+    const root = psTree();
     const recorded = prebuiltManifest(root, BUILD_OPTIONS);
 
     expect(
@@ -207,7 +207,7 @@ describe('prebuilt DEV output freshness', () => {
   });
 
   test('the output the build itself writes leaves the recorded manifest fresh', () => {
-    const root = okTree();
+    const root = psTree();
     const recorded = prebuiltManifest(root, BUILD_OPTIONS);
 
     write(root, 'packages/app/dist/index.html', '<!doctype html>\n');
@@ -220,7 +220,7 @@ describe('prebuilt DEV output freshness', () => {
   });
 
   test('without a recorded manifest the prebuilt output is refused as missing', () => {
-    const root = okTree();
+    const root = psTree();
 
     expect(prebuiltServingDecision(undefined, prebuiltManifest(root, BUILD_OPTIONS))).toEqual({
       serve: false,

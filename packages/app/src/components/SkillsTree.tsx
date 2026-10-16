@@ -2,8 +2,8 @@ import type {
   SkillMoveFailureOutcome,
   SkillScope,
   SkillsListEntry,
-} from '@inkeep/open-knowledge-core/schemas/api';
-import type { CatalogSkill } from '@inkeep/open-knowledge-core/skills-catalog/schema';
+} from '@palimpsest/core/schemas/api';
+import type { CatalogSkill } from '@palimpsest/core/skills-catalog/schema';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FILE_TREE_TAG_NAME, type FileTreeSortComparator } from '@pierre/trees';
 import { useFileTree } from '@pierre/trees/react';
@@ -33,10 +33,10 @@ import { revealActiveRow } from '@/components/file-tree-reveal';
 import {
   buildOkFileTreeOptions,
   createLucideSpriteSymbol,
-  OK_FILE_TREE_READONLY_UNSAFE_CSS,
+  PS_FILE_TREE_READONLY_UNSAFE_CSS,
 } from '@/components/file-tree-shared';
 import type { AddSkillTab } from '@/components/ImportSkillDialog';
-import { OkFileTree } from '@/components/OkFileTree';
+import { PsFileTree } from '@/components/PsFileTree';
 import { SkillBulkDeleteDialog } from '@/components/SkillBulkDeleteDialog';
 import {
   GLOBAL_INSTALL_EDITORS,
@@ -103,7 +103,7 @@ import { SKILL_MD_PATH } from '@/lib/skill-sort';
 import { importSkill, moveSkillScope, skillMoveRetainedBatchToast } from '@/lib/skills-api';
 import { EMPTY_SCOPE_SENTINEL } from '@/lib/skills-tree-paths';
 
-const PLUGIN_PACKAGE_ICON_ID = 'ok-skills-plugin-package-decoration';
+const PLUGIN_PACKAGE_ICON_ID = 'ps-skills-plugin-package-decoration';
 const SKILLS_DECORATION_EXTRA_SYMBOLS = createLucideSpriteSymbol(
   PLUGIN_PACKAGE_ICON_ID,
   packageIcon,
@@ -546,7 +546,7 @@ export function SkillsTree({
       initialSelectedPaths: activePath ? [activePath] : undefined,
       stickyFolders: false,
       enableContextMenu: true,
-      unsafeCSS: `${OK_FILE_TREE_READONLY_UNSAFE_CSS}\n${skillsTreeCss}\n${SKILL_INSTALL_CLUSTER_CSS}\n${SKILL_PROVENANCE_MARK_CSS}`,
+      unsafeCSS: `${PS_FILE_TREE_READONLY_UNSAFE_CSS}\n${skillsTreeCss}\n${SKILL_INSTALL_CLUSTER_CSS}\n${SKILL_PROVENANCE_MARK_CSS}`,
       extraSpriteSymbols: SKILLS_DECORATION_EXTRA_SYMBOLS,
       renderRowDecoration: ({ item }) => {
         const node = parseTreePath(item.path, groupByPrefix);
@@ -1202,7 +1202,7 @@ export function SkillsTree({
           clearMultiSelection();
         }}
       />
-      <OkFileTree
+      <PsFileTree
         model={model}
         hostRef={hostRef}
         ready={ready}

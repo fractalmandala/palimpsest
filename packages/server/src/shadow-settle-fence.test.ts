@@ -49,7 +49,7 @@ function diskFiles(root: string, prefix = ''): string[] {
 }
 
 async function createFixture(context: TestContext, holdConsumer: boolean) {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shadow-settle-fence-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shadow-settle-fence-')));
   const entered = { value: false };
   const release = Promise.withResolvers<void>();
   let shadow: ShadowHandle | undefined;
@@ -73,13 +73,13 @@ async function createFixture(context: TestContext, holdConsumer: boolean) {
   context.onTestFinished(() => {
     vi.unstubAllEnvs();
   });
-  vi.stubEnv('OK_FILE_WATCHER_BACKEND', 'parcel');
-  mkdirSync(join(root, '.ok/templates'), { recursive: true });
-  mkdirSync(join(root, '.ok/local'), { recursive: true });
+  vi.stubEnv('PS_FILE_WATCHER_BACKEND', 'parcel');
+  mkdirSync(join(root, '.ps/templates'), { recursive: true });
+  mkdirSync(join(root, '.ps/local'), { recursive: true });
   writeFileSync(join(root, 'doc.md'), INITIAL_DOCUMENT);
-  writeFileSync(join(root, '.ok/config.yml'), CONFIGURATION);
-  writeFileSync(join(root, '.ok/templates/note.md'), TEMPLATE);
-  writeFileSync(join(root, '.ok/local/fixture-state.json'), '{}\n');
+  writeFileSync(join(root, '.ps/config.yml'), CONFIGURATION);
+  writeFileSync(join(root, '.ps/templates/note.md'), TEMPLATE);
+  writeFileSync(join(root, '.ps/local/fixture-state.json'), '{}\n');
   execFileSync('git', ['init', '--initial-branch=main', root], {
     env: Object.fromEntries(
       Object.entries(process.env).filter(([name]) => !name.startsWith('GIT_')),
@@ -166,13 +166,13 @@ async function inspectCapture(fixture: Fixture, objects: readonly string[], docu
       .filter(Boolean);
     for (const [path, content] of [
       ['doc.md', document],
-      ['.ok/config.yml', CONFIGURATION],
-      ['.ok/templates/note.md', TEMPLATE],
+      ['.ps/config.yml', CONFIGURATION],
+      ['.ps/templates/note.md', TEMPLATE],
     ]) {
       expect(paths).toContain(path);
       expect(await git.raw('show', `${object}:${path}`)).toBe(content);
     }
-    expect(paths).not.toContain('.ok/local/fixture-state.json');
+    expect(paths).not.toContain('.ps/local/fixture-state.json');
     snapshots.push({ object, paths });
   }
   return snapshots;
@@ -233,7 +233,7 @@ async function assertNoPendingContentPreserved(context: TestContext, producer: P
     CHANGED_DOCUMENT,
   );
   for (const { paths } of snapshots) {
-    expect(paths.sort()).toEqual(['.ok/config.yml', '.ok/templates/note.md', 'doc.md']);
+    expect(paths.sort()).toEqual(['.ps/config.yml', '.ps/templates/note.md', 'doc.md']);
   }
   expect(diskFiles(fixture.root).sort()).toEqual(before);
   expect(fixture.settleState()).toBe('not-started');

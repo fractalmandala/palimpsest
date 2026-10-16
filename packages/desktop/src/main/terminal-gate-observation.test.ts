@@ -1,5 +1,5 @@
-import type { HostSnapshot, ProbeWorkItem } from '@inkeep/open-knowledge-core';
-import { buildProbeSnapshot, EMPTY_DETECTION_SNAPSHOT } from '@inkeep/open-knowledge-core';
+import type { HostSnapshot, ProbeWorkItem } from '@palimpsest/core';
+import { buildProbeSnapshot, EMPTY_DETECTION_SNAPSHOT } from '@palimpsest/core';
 import { describe, expect, it, vi } from 'vitest';
 import { observeTerminalLaunch } from './terminal-gate-observation.ts';
 

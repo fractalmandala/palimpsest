@@ -79,7 +79,7 @@ describe('persistence publish guard — a removed document is never republished'
   }
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-removed-publish-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-removed-publish-')));
     docName = 'removed-doc';
     docPath = join(tmpDir, `${docName}.md`);
     document = new Y.Doc();
@@ -165,7 +165,7 @@ describe('persistence publish guard — a removed document is never republished'
 
     await store(persistence);
 
-    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('OK_DOC_REMOVED');
+    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('PS_DOC_REMOVED');
   });
 
   test('records no flush outcome when nobody was awaiting the refused store', async () => {
@@ -270,7 +270,7 @@ describe('persistence publish guard — a removed document is never republished'
 
     expect(readFileSync(dirname(docPath), 'utf-8')).toBe('reoccupied\n');
     expect(refusalEvents(warn).at(-1)?.reason).toBe('file-absent');
-    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('OK_DOC_REMOVED');
+    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('PS_DOC_REMOVED');
   });
 
   test('records a probe error the caller cannot read as a clean flush', async () => {
@@ -289,7 +289,7 @@ describe('persistence publish guard — a removed document is never republished'
 
     await expect(store(persistence)).rejects.toThrow(/ELOOP/);
 
-    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('OK_PATH_UNRESOLVABLE');
+    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('PS_PATH_UNRESOLVABLE');
   });
 
   test('records a probe error when the document path itself is a symlink cycle', async () => {
@@ -305,7 +305,7 @@ describe('persistence publish guard — a removed document is never republished'
 
     await expect(store(persistence)).rejects.toThrow(/ELOOP/);
 
-    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('OK_PATH_UNRESOLVABLE');
+    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('PS_PATH_UNRESOLVABLE');
     expect(lstatSync(docPath).isSymbolicLink()).toBe(true);
   });
 
@@ -325,7 +325,7 @@ describe('persistence publish guard — a removed document is never republished'
     await store(persistence);
 
     expect(refusalEvents(warn).at(-1)?.reason).toBe('file-absent');
-    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('OK_DOC_REMOVED');
+    expect(durabilityState.takeStoreFailure(docName)?.code).toBe('PS_DOC_REMOVED');
     expect(lstatSync(docPath).isSymbolicLink()).toBe(true);
     expect(readFileSync(regularPath, 'utf-8')).toBe('x');
   });
@@ -342,7 +342,7 @@ describe('persistence publish guard — a removed document is never republished'
     await expect(store(persistence)).rejects.toThrow(/Symlink cycle detected/);
 
     const failure = durabilityState.takeStoreFailure(docName);
-    expect(failure?.code).toBe('OK_PATH_UNRESOLVABLE');
+    expect(failure?.code).toBe('PS_PATH_UNRESOLVABLE');
     expect(failure?.message).not.toContain(tmpDir);
   });
 
@@ -379,7 +379,7 @@ describe('persistence publish guard — a removed document is never republished'
     await expect(store(persistence)).rejects.toThrow();
 
     const failure = durabilityState.takeStoreFailure(docName);
-    expect(failure?.code).toBe('OK_PATH_UNRESOLVABLE');
+    expect(failure?.code).toBe('PS_PATH_UNRESOLVABLE');
     expect(failure?.message).not.toContain(tmpDir);
   });
 
@@ -499,7 +499,7 @@ describe('persistence publish guard — a removed document is never republished'
       await store(persistence);
 
       const failure = durabilityState.takeStoreFailure(docName);
-      expect(failure?.code).toBe('OK_DOC_REMOVED');
+      expect(failure?.code).toBe('PS_DOC_REMOVED');
       expect(failure?.message).toContain('is no longer on disk');
       expect(failure?.removal).toBeUndefined();
     });
@@ -517,7 +517,7 @@ describe('persistence publish guard — a removed document is never republished'
       await store(persistence);
 
       const failure = durabilityState.takeStoreFailure(docName);
-      expect(failure?.code).toBe('OK_DOC_REMOVED');
+      expect(failure?.code).toBe('PS_DOC_REMOVED');
       expect(failure?.removal).toEqual({ kind: 'renamed', renamedTo: 'renamed-doc' });
     });
 
@@ -535,7 +535,7 @@ describe('persistence publish guard — a removed document is never republished'
       await store(persistence);
 
       const failure = durabilityState.takeStoreFailure(docName);
-      expect(failure?.code).toBe('OK_DOC_REMOVED');
+      expect(failure?.code).toBe('PS_DOC_REMOVED');
       expect(failure?.removal).toEqual({ kind: 'path-occupied' });
       expect(readFileSync(docPath, 'utf-8')).toBe('a new file\n');
     });

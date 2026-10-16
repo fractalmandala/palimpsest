@@ -62,11 +62,11 @@ beforeEach(() => {
   const stamp = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   projectDir = resolve(
     tmpdir(),
-    `ok-diag-project-${FIXTURE_PATH_DELIBERATELY_CARRIES_EVERY_FORBIDDEN_VALUE}-${stamp}`,
+    `ps-diag-project-${FIXTURE_PATH_DELIBERATELY_CARRIES_EVERY_FORBIDDEN_VALUE}-${stamp}`,
   );
   homeDir = resolve(
     tmpdir(),
-    `ok-diag-home-${FIXTURE_PATH_DELIBERATELY_CARRIES_EVERY_FORBIDDEN_VALUE}-${stamp}`,
+    `ps-diag-home-${FIXTURE_PATH_DELIBERATELY_CARRIES_EVERY_FORBIDDEN_VALUE}-${stamp}`,
   );
   mkdirSync(projectDir, { recursive: true });
   mkdirSync(homeDir, { recursive: true });

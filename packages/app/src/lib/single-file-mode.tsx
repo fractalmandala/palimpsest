@@ -6,11 +6,11 @@ const SingleFileModeContext = createContext<boolean>(false);
 
 export function SingleFileModeProvider({ children }: { children: ReactNode }) {
   const [singleFile, setSingleFile] = useState<boolean>(() =>
-    typeof window !== 'undefined' ? (window.okDesktop?.config.singleFile ?? false) : false,
+    typeof window !== 'undefined' ? (window.psDesktop?.config.singleFile ?? false) : false,
   );
 
   useEffect(() => {
-    if (window.okDesktop) return;
+    if (window.psDesktop) return;
 
     const controller = new AbortController();
     void fetchApiConfig(controller.signal)

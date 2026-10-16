@@ -16,7 +16,7 @@ function editorTab(page: Page, label: string): Locator {
 
 async function openTabIds(page: Page): Promise<string[] | null> {
   return page.evaluate(() => {
-    const raw = window.localStorage.getItem(`ok-editor-tabs-v1:${window.location.origin}`);
+    const raw = window.localStorage.getItem(`ps-editor-tabs-v1:${window.location.origin}`);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { panes?: Array<{ openTabs?: unknown }> };
     const openTabs = parsed.panes?.[0]?.openTabs;

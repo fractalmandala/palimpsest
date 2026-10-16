@@ -18,7 +18,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
-import { SKILL_NAME_REGEX } from '@inkeep/open-knowledge-core';
+import { SKILL_NAME_REGEX } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { BUNDLE_SKILL_NAME } from '../src/skill-bundles.ts';
 import { enumeratePackSkills } from '../src/skill-pack-sources.ts';
@@ -58,7 +58,7 @@ function fixture(opts: {
   shared?: Record<string, string>;
   references?: Record<string, string>;
 }): SkillBundlePaths {
-  const root = mkdtempSync(join(tmpdir(), 'ok-skill-compose-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-skill-compose-'));
   cleanup.push(root);
   const skillsDir = join(root, 'skills');
   for (const bundle of BUNDLE_IDS) mkdirSync(join(skillsDir, bundle), { recursive: true });
@@ -302,7 +302,7 @@ describe('buildPackSkills', () => {
       'codebase-wiki',
       'entity-vault',
       'knowledge-base',
-      'okf',
+      'psf',
       'plain-notes',
       'software-lifecycle',
       'worldbuilding',
@@ -366,7 +366,7 @@ describe('repo assets — production guard', () => {
     const { skillsDir } = defaultPaths();
     const expected: Record<(typeof BUNDLE_IDS)[number], string> = {
       discovery: 'open-knowledge-discovery',
-      project: 'open-knowledge',
+      project: 'palimpsest',
       'write-skill': 'open-knowledge-write-skill',
     };
     const names = new Set<string>();
@@ -380,7 +380,7 @@ describe('repo assets — production guard', () => {
   });
 });
 
-// The in-subtree half of the mirror contract: every skill OpenKnowledge ships
+// The in-subtree half of the mirror contract: every skill Palimpsest ships
 // reaches the public mirror as a directory named by its frontmatter `name`.
 // Uniqueness must hold across ALL shipped skills (the nested mirror layout puts
 // packs in separate folders, so the derive-time duplicate-destination throw no
@@ -423,7 +423,7 @@ describe('repo assets — shipped skill names (mirror gate)', () => {
       const md = readFileSync(join(dir, 'SKILL.md'), 'utf-8');
       expect(md, `${dir} missing author`).toContain('author: "Inkeep"');
       expect(md, `${dir} missing repository`).toContain(
-        'repository: "https://github.com/inkeep/open-knowledge-skills"',
+        'repository: "https://github.com/fractalmandala/palimpsest-skills"',
       );
     }
   });

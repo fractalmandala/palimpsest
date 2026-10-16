@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FileText, Folder, FolderOpenIcon, GitBranch, PlusIcon, XIcon } from 'lucide-react';
@@ -10,12 +10,12 @@ import { useLanguageBridge } from '@/hooks/use-language-bridge';
 import { useThemeBridge } from '@/hooks/use-theme-bridge';
 import { ConfigContext } from '@/lib/config-context';
 import type {
-  OkDesktopBridge,
-  OkLocalOpAuthStatusResponse,
-  OkMenuActionOrigin,
-  OkPackId,
-  OkProjectEntryPoint,
-  OkSeedPackInfo,
+  PsDesktopBridge,
+  PsLocalOpAuthStatusResponse,
+  PsMenuActionOrigin,
+  PsPackId,
+  PsProjectEntryPoint,
+  PsSeedPackInfo,
   RecentProjectEntry,
 } from '@/lib/desktop-bridge-types';
 import {
@@ -47,7 +47,7 @@ import { ConsentDialog } from './ConsentDialog';
 import { CreateProjectDialog } from './CreateProjectDialog';
 import { FeedbackFormDialog } from './FeedbackFormDialog';
 import { GithubIcon } from './icons/github';
-import { OkIcon } from './icons/ok';
+import { PsIcon } from './icons/ps';
 import { McpConsentDialog } from './McpConsentDialog';
 import { iconForPack } from './PackCardGrid';
 import { basenameOf } from './project-switcher-recents';
@@ -93,7 +93,7 @@ export function removeRecentFromList(
   return recents.filter((recent) => recent.path !== path);
 }
 
-export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
+export function NavigatorApp({ bridge }: { bridge: PsDesktopBridge }) {
   const [recents, setRecents] = useState<RecentProject[]>([]);
   const [recentBranches, setRecentBranches] = useState<Map<string, string | null>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -102,16 +102,16 @@ export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
   const [openingLabel, setOpeningLabel] = useState<string | null>(null);
   const [cloneDialogOpen, setCloneDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [reportBugOrigin, setReportBugOrigin] = useState<OkMenuActionOrigin | null>(null);
+  const [reportBugOrigin, setReportBugOrigin] = useState<PsMenuActionOrigin | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [createPackId, setCreatePackId] = useState<OkPackId | undefined>(undefined);
-  const [createPacks, setCreatePacks] = useState<OkSeedPackInfo[] | undefined>(undefined);
+  const [createPackId, setCreatePackId] = useState<PsPackId | undefined>(undefined);
+  const [createPacks, setCreatePacks] = useState<PsSeedPackInfo[] | undefined>(undefined);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [returnToCloneAfterAuth, setReturnToCloneAfterAuth] = useState(false);
   const [shareSignInResolver, setShareSignInResolver] = useState<
-    ((status: OkLocalOpAuthStatusResponse | null) => void) | null
+    ((status: PsLocalOpAuthStatusResponse | null) => void) | null
   >(null);
-  const isElectronHost = typeof window !== 'undefined' && window.okDesktop != null;
+  const isElectronHost = typeof window !== 'undefined' && window.psDesktop != null;
   const [authInitialStep, setAuthInitialStep] = useState<'auth' | 'identity'>('auth');
   const { t } = useLingui();
 
@@ -200,7 +200,7 @@ export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
   const runWithErrorState = (fn: () => Promise<void>, fallback: string) =>
     runWithErrorStatePure(fn, fallback, setError);
 
-  const openWithIndicator = (path: string, entryPoint: OkProjectEntryPoint, label: string) =>
+  const openWithIndicator = (path: string, entryPoint: PsProjectEntryPoint, label: string) =>
     runWithErrorState(() => {
       setOpeningLabel(label);
       return openProject(bridge, path, entryPoint).finally(() => setOpeningLabel(null));
@@ -221,7 +221,7 @@ export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
   const onOpenFile = () =>
     runWithErrorState(() => bridge.project.openFile(), t`Failed to open file.`);
 
-  const onPackSelect = (packId: OkPackId | undefined, packs: OkSeedPackInfo[]) => {
+  const onPackSelect = (packId: PsPackId | undefined, packs: PsSeedPackInfo[]) => {
     setCreatePackId(packId);
     setCreatePacks(packs);
     setCreateDialogOpen(true);
@@ -283,10 +283,10 @@ export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
       <div className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden px-12 py-12">
         <div className="my-auto flex min-h-0 flex-col space-y-10">
           <header className="shrink-0 flex-wrap flex items-center gap-2.5">
-            <OkIcon className="size-12 shrink-0" />
+            <PsIcon className="size-12 shrink-0" />
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <h1 className="font-medium text-xl tracking-tight">OpenKnowledge</h1>
+                <h1 className="font-medium text-xl tracking-tight">Palimpsest</h1>
                 <BetaBadge />
               </div>
               <p className="text-muted-foreground text-xs font-mono">v{bridge.appVersion}</p>
@@ -298,7 +298,7 @@ export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
             <section className="grid sm:grid-cols-2 gap-3">
               <NavigatorCard
                 title={t`Create new project`}
-                description={t`Start a new OpenKnowledge project.`}
+                description={t`Start a new Palimpsest project.`}
                 onClick={onCreate}
                 dataTestId="nav-create-new"
                 Icon={PlusIcon}
@@ -469,7 +469,7 @@ export function NavigatorApp({ bridge }: { bridge: OkDesktopBridge }) {
             authQueryTransport: ipcAuthQueryTransport(bridge),
             cloneTransport: ipcCloneTransport(bridge),
             openSignIn: () =>
-              new Promise<OkLocalOpAuthStatusResponse | null>((resolve) => {
+              new Promise<PsLocalOpAuthStatusResponse | null>((resolve) => {
                 setShareSignInResolver(() => resolve);
                 setAuthModalOpen(true);
               }),
@@ -511,10 +511,10 @@ const PILL_PACK_COUNT = 3;
 function StarterPackRow({
   onPackSelect,
 }: {
-  onPackSelect: (packId: OkPackId | undefined, packs: OkSeedPackInfo[]) => void;
+  onPackSelect: (packId: PsPackId | undefined, packs: PsSeedPackInfo[]) => void;
 }) {
   const { t } = useLingui();
-  const [packs, setPacks] = useState<OkSeedPackInfo[] | null>(null);
+  const [packs, setPacks] = useState<PsSeedPackInfo[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -544,7 +544,7 @@ function StarterPackRow({
   const pillPacks = packs.slice(0, PILL_PACK_COUNT);
   const overflowCount = packs.length - pillPacks.length;
 
-  const selectPack = (packId: OkPackId) => onPackSelect(packId, packs);
+  const selectPack = (packId: PsPackId) => onPackSelect(packId, packs);
 
   return (
     <section
@@ -672,9 +672,9 @@ function RecentRow({
 }
 
 async function openProject(
-  bridge: OkDesktopBridge,
+  bridge: PsDesktopBridge,
   path: string,
-  entryPoint: OkProjectEntryPoint,
+  entryPoint: PsProjectEntryPoint,
 ): Promise<void> {
   await bridge.project.open({ path, target: 'new-window', entryPoint });
 }

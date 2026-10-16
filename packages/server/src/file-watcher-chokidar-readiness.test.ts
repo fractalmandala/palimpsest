@@ -121,12 +121,12 @@ interface ExposedCreation {
 const EXPOSED_CREATIONS: readonly ExposedCreation[] = [
   {
     creation: 'a conflicted file created in an already-watched directory',
-    expected: "a conflict DiskEvent for '.ok/templates/daily'",
+    expected: "a conflict DiskEvent for '.ps/templates/daily'",
     fixture: (contentDir) =>
-      mkdirSync(resolve(contentDir, '.ok', 'templates'), { recursive: true }),
+      mkdirSync(resolve(contentDir, '.ps', 'templates'), { recursive: true }),
     create: (contentDir) =>
-      writeFileSync(resolve(contentDir, '.ok', 'templates', 'daily.md'), CONFLICTED),
-    matches: (e) => e.kind === 'conflict' && e.docName === '.ok/templates/daily',
+      writeFileSync(resolve(contentDir, '.ps', 'templates', 'daily.md'), CONFLICTED),
+    matches: (e) => e.kind === 'conflict' && e.docName === '.ps/templates/daily',
   },
   {
     creation: 'a directory created in the content root',
@@ -141,14 +141,14 @@ const EXPOSED_CREATIONS: readonly ExposedCreation[] = [
   },
   {
     creation: 'a template created under a brand-new nested folder',
-    expected: "a create or update DiskEvent for 'notes/.ok/templates/standup'",
+    expected: "a create or update DiskEvent for 'notes/.ps/templates/standup'",
     create: (contentDir) => {
-      const target = resolve(contentDir, 'notes', '.ok', 'templates', 'standup.md');
+      const target = resolve(contentDir, 'notes', '.ps', 'templates', 'standup.md');
       mkdirSync(resolve(target, '..'), { recursive: true });
       writeFileSync(target, STANDUP_TEMPLATE);
     },
     matches: (e) =>
-      (e.kind === 'create' || e.kind === 'update') && e.docName === 'notes/.ok/templates/standup',
+      (e.kind === 'create' || e.kind === 'update') && e.docName === 'notes/.ps/templates/standup',
   },
 ];
 
@@ -200,7 +200,7 @@ describe('chokidar backend: creations made right after startWatcher resolves, wi
   let contentDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-chokidar-readiness-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-chokidar-readiness-'));
     contentDir = resolve(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     lastKnownHash.clear();

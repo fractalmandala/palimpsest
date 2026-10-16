@@ -75,7 +75,7 @@ function unvalidatedRegistryFor(repoRoot, notify) {
   notify(
     `no-comments: ${repoRoot} carries no PRECEDENTS.md and is not the tree the shipped ` +
       'precedent manifest describes, so `precedent #N` citations there are admitted unvalidated. ' +
-      "Open Knowledge's numbering has no authority over another repository.",
+      "Palimpsest's numbering has no authority over another repository.",
   );
   return new UnvalidatedPrecedentRegistry();
 }

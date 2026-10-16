@@ -1,15 +1,15 @@
 import type {
-  OkBugReportCrashDetectedEvent,
-  OkBugReportScreenshot,
+  PsBugReportCrashDetectedEvent,
+  PsBugReportScreenshot,
   ReportBundleSummary,
-} from '@inkeep/open-knowledge-core/logger-types';
+} from '@palimpsest/core/logger-types';
 import {
   BUG_REPORT_SCREENSHOT_ZIP_ENTRY,
   isBugReportAgentChatEntry,
   isBugReportAttachmentEntry,
   isBugReportCrashDumpEntry,
-} from '@inkeep/open-knowledge-core/logger-types';
-import { formatRelativeAge } from '@inkeep/open-knowledge-core/utils/relative-time';
+} from '@palimpsest/core/logger-types';
+import { formatRelativeAge } from '@palimpsest/core/utils/relative-time';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   AlertCircleIcon,
@@ -41,7 +41,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useContactEmail } from '@/hooks/use-contact-email';
 import { bugReportSendManager } from '@/lib/bug-report-send-manager';
 import { formatBundleSize, zipBasename } from '@/lib/bug-report-support';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
 import { commitContactEmail } from '@/lib/contact-email-store';
 import { isImageAttachmentType } from '@/lib/image-attachments';
 import { revealInFileManagerLabel } from '@/lib/platform-labels';
@@ -101,7 +101,7 @@ function crashContextLines(crashContext: ReportBugCrashContext): string[] {
   return lines;
 }
 
-function crashInviteLines(invite: OkBugReportCrashDetectedEvent): string[] {
+function crashInviteLines(invite: PsBugReportCrashDetectedEvent): string[] {
   const source =
     invite.kind === 'render-process-gone'
       ? `renderer process crash (reason: ${invite.context.reason})`
@@ -153,8 +153,8 @@ export interface ReportBugDialogProps {
   onOpenChange: (open: boolean) => void;
   systemWide?: boolean;
   crashContext?: ReportBugCrashContext;
-  crashInvite?: OkBugReportCrashDetectedEvent;
-  screenshot?: OkBugReportScreenshot | null;
+  crashInvite?: PsBugReportCrashDetectedEvent;
+  screenshot?: PsBugReportScreenshot | null;
   pointerMarked?: boolean;
   crashDumpAvailable?: boolean;
   agentChat?: { readonly threadId: string };
@@ -172,8 +172,8 @@ function ReportBugDialog({
   agentChat,
 }: ReportBugDialogProps) {
   const { t } = useLingui();
-  const cliCommand = okCliCommandName();
-  const desktopPlatform = typeof window !== 'undefined' ? window.okDesktop?.platform : undefined;
+  const cliCommand = psCliCommandName();
+  const desktopPlatform = typeof window !== 'undefined' ? window.psDesktop?.platform : undefined;
   const isMacOS = desktopPlatform === 'darwin';
   const [phase, setPhase] = useState<Phase>(COMPOSE_IDLE);
   const [note, setNote] = useState('');
@@ -233,12 +233,12 @@ function ReportBugDialog({
   }
 
   async function handleCreate() {
-    const bugReport = window.okDesktop?.bugReport;
+    const bugReport = window.psDesktop?.bugReport;
     if (!bugReport) {
       setPhase({
         step: 'compose',
         creating: false,
-        createError: t`Bug reporting needs the OpenKnowledge desktop app.`,
+        createError: t`Bug reporting needs the Palimpsest desktop app.`,
       });
       return;
     }
@@ -305,7 +305,7 @@ function ReportBugDialog({
   }
 
   function revealZip(zipPath: string) {
-    void window.okDesktop?.shell.showItemInFolder(zipPath);
+    void window.psDesktop?.shell.showItemInFolder(zipPath);
   }
 
   return (
@@ -336,7 +336,7 @@ function ReportBugDialog({
                   />
                   <div>
                     <p className="font-medium">
-                      <Trans>OpenKnowledge quit unexpectedly last time.</Trans>
+                      <Trans>Palimpsest quit unexpectedly last time.</Trans>
                     </p>
                     {}
                     <DialogDescription className="mt-0.5 text-xs">
@@ -492,11 +492,11 @@ function ReportBugDialog({
                     <p id={logsHintId} className="text-1sm text-muted-foreground">
                       {systemWide ? (
                         <Trans>
-                          OpenKnowledge logs across projects. No project is open, so project server
+                          Palimpsest logs across projects. No project is open, so project server
                           logs are not included.
                         </Trans>
                       ) : (
-                        <Trans>OpenKnowledge logs, including activity across projects.</Trans>
+                        <Trans>Palimpsest logs, including activity across projects.</Trans>
                       )}
                     </p>
                   </div>
@@ -549,34 +549,34 @@ function ReportBugDialog({
                           {isMacOS && (
                             <Trans>
                               It also adds the low-memory reports macOS wrote in the past week that
-                              list OpenKnowledge's processes, with each one's memory use and whether
+                              list Palimpsest's processes, with each one's memory use and whether
                               macOS ended it.
                             </Trans>
                           )}
                           {desktopPlatform === 'linux' && (
                             <Trans>
-                              It also adds the out-of-memory kills of OpenKnowledge that the system
+                              It also adds the out-of-memory kills of Palimpsest that the system
                               journal recorded in the past week, without the machine name, account
                               id, or folder paths.
                             </Trans>
                           )}{' '}
                           {desktopPlatform === 'linux' && (
                             <Trans>
-                              It also adds any display-connection errors OpenKnowledge wrote to your
+                              It also adds any display-connection errors Palimpsest wrote to your
                               user journal in the past week, each message cut to 200 characters.
                             </Trans>
                           )}
                           {desktopPlatform === 'win32' && (
                             <Trans>
                               It also adds the crash and hang records Windows logged for
-                              OpenKnowledge in the past week, without file paths, and the times of
+                              Palimpsest in the past week, without file paths, and the times of
                               every shutdown, restart, power loss, and low-memory warning on this
                               computer in that week, whatever caused them.
                             </Trans>
                           )}{' '}
                           {isMacOS && (
                             <Trans>
-                              It also adds the crash reports macOS recorded for OpenKnowledge and
+                              It also adds the crash reports macOS recorded for Palimpsest and
                               its helper processes, never another app's report, though ours do name
                               the processes they were running alongside. Each one carries machine
                               details macOS puts in every report: your account uid, the Mac model,
@@ -741,7 +741,7 @@ function ReportBugDialog({
                 />
                 <span>
                   <Trans>
-                    Sent privately to the OpenKnowledge team, along with your note and app version.
+                    Sent privately to the Palimpsest team, along with your note and app version.
                     Never posted publicly.
                   </Trans>
                 </span>
@@ -802,7 +802,7 @@ function ZipCard({ zipPath, zipSizeBytes, fileCount, rawDumpIncluded, onReveal }
         onClick={() => onReveal(zipPath)}
       >
         {revealInFileManagerLabel(
-          typeof window !== 'undefined' ? window.okDesktop?.platform : undefined,
+          typeof window !== 'undefined' ? window.psDesktop?.platform : undefined,
         )}
       </Button>
     </div>

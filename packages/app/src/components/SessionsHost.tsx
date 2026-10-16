@@ -1,12 +1,12 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { AttachmentPart, ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart, ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import {
   buildTerminalInputBytes,
   TERMINAL_CLIS,
   type TerminalCli,
-} from '@inkeep/open-knowledge-core/handoff';
-import type { TerminalPlacement } from '@inkeep/open-knowledge-core/terminal-layout';
+} from '@palimpsest/core/handoff';
+import type { TerminalPlacement } from '@palimpsest/core/terminal-layout';
 import { useLingui } from '@lingui/react/macro';
 import { SquareTerminalIcon } from 'lucide-react';
 import {
@@ -73,7 +73,7 @@ import {
 } from '@/lib/acp/thread-draft-staging';
 import { threadHasUserMessage } from '@/lib/acp/thread-event-model';
 import { usePreferredSessionSelection } from '@/lib/acp/use-preferred-session-selection';
-import type { OkDesktopBridge, OkTerminalRestartSnapshot } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsTerminalRestartSnapshot } from '@/lib/desktop-bridge-types';
 import { emitDiagnosticBreadcrumb } from '@/lib/diagnostic-breadcrumb';
 import {
   type DockSessionOrder,
@@ -418,7 +418,7 @@ function ThreadTabIcon({
 }
 
 interface SessionsHostSharedProps {
-  readonly bridge: OkDesktopBridge | null;
+  readonly bridge: PsDesktopBridge | null;
   readonly terminalCapable?: boolean;
   readonly terminalPlacement?: TerminalPlacement;
   readonly onTerminalPlacementChange?: (placement: TerminalPlacement) => void;
@@ -2062,7 +2062,7 @@ export function SessionsHost({
     if (!hostTerminals) return;
     if (hostStateReportsRef.current >= MAX_HOST_STATE_REPORTS) return;
     hostStateReportsRef.current += 1;
-    emitDiagnosticBreadcrumb('ok-terminal-sessions-host-state', {
+    emitDiagnosticBreadcrumb('ps-terminal-sessions-host-state', {
       surface,
       sessions: sessions.length,
       hostConnected: hostEl?.isConnected === true,
@@ -2468,7 +2468,7 @@ function computePersistKey(
 function buildTerminalRestartSnapshot(
   sessions: readonly SessionDescriptor[],
   activeSessionId: string,
-): OkTerminalRestartSnapshot {
+): PsTerminalRestartSnapshot {
   const terminals = sessions.filter(
     (session): session is TerminalSessionDescriptor => session.kind === 'terminal',
   );

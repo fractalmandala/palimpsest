@@ -45,7 +45,7 @@ after('print-again', () => {
 const roots: string[] = [];
 
 function scratch(): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-prebuilt-silence-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-prebuilt-silence-'));
   roots.push(root);
   return root;
 }

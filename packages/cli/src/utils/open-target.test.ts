@@ -30,8 +30,8 @@ function makeSpawn(
 describe('openTarget', () => {
   test('macOS with a verified bundle path names it directly, not scheme resolution', async () => {
     const capture: SpawnCapture = {};
-    const target = 'openknowledge://open?project=%2FUsers%2Fme%2Fnotes&doc=specs%2Flaunch';
-    const desktopBundlePath = '/Applications/OpenKnowledge.app';
+    const target = 'palimpsest://open?project=%2FUsers%2Fme%2Fnotes&doc=specs%2Flaunch';
+    const desktopBundlePath = '/Applications/Palimpsest.app';
 
     const outcome = await openTarget(target, {
       platform: 'darwin',
@@ -46,8 +46,8 @@ describe('openTarget', () => {
 
   test('macOS hands a Beta deep link to the verified Beta bundle', async () => {
     const capture: SpawnCapture = {};
-    const target = 'openknowledge-beta://open?file=%2FUsers%2Fme%2Fnotes%2Ftodo.md';
-    const desktopBundlePath = '/Applications/OpenKnowledge Beta.app';
+    const target = 'palimpsest-beta://open?file=%2FUsers%2Fme%2Fnotes%2Ftodo.md';
+    const desktopBundlePath = '/Applications/Palimpsest Beta.app';
 
     const outcome = await openTarget(target, {
       platform: 'darwin',
@@ -62,7 +62,7 @@ describe('openTarget', () => {
 
   test('macOS falls back to plain scheme resolution when no bundle path is given', async () => {
     const capture: SpawnCapture = {};
-    const target = 'openknowledge://open?project=%2FUsers%2Fme%2Fnotes&doc=specs%2Flaunch';
+    const target = 'palimpsest://open?project=%2FUsers%2Fme%2Fnotes&doc=specs%2Flaunch';
 
     const outcome = await openTarget(target, {
       platform: 'darwin',
@@ -74,13 +74,13 @@ describe('openTarget', () => {
     expect(capture.args).toEqual([target]);
   });
 
-  test('macOS dispatches non-openknowledge URLs (browser fallback) through plain LaunchServices even with a bundle path', async () => {
+  test('macOS dispatches non-palimpsest URLs (browser fallback) through plain LaunchServices even with a bundle path', async () => {
     const capture: SpawnCapture = {};
     const target = 'http://localhost:5173/#/specs/launch';
 
     const outcome = await openTarget(target, {
       platform: 'darwin',
-      desktopBundlePath: '/Applications/OpenKnowledge.app',
+      desktopBundlePath: '/Applications/Palimpsest.app',
       spawn: makeSpawn(capture, { type: 'spawn' }),
     });
 
@@ -91,11 +91,11 @@ describe('openTarget', () => {
 
   test('Windows ignores a desktopBundlePath — the option is darwin-only', async () => {
     const capture: SpawnCapture = {};
-    const target = 'openknowledge://open?project=C%3A%5CUsers%5Cme%5Cnotes&doc=specs%2Flaunch';
+    const target = 'palimpsest://open?project=C%3A%5CUsers%5Cme%5Cnotes&doc=specs%2Flaunch';
 
     const outcome = await openTarget(target, {
       platform: 'win32',
-      desktopBundlePath: '/Applications/OpenKnowledge.app',
+      desktopBundlePath: '/Applications/Palimpsest.app',
       spawn: makeSpawn(capture, { type: 'spawn' }),
     });
 
@@ -106,7 +106,7 @@ describe('openTarget', () => {
 
   test('Windows opens the complete URL without cmd.exe parsing ampersands', async () => {
     const capture: SpawnCapture = {};
-    const target = 'openknowledge://open?project=C%3A%5CUsers%5Cme%5Cnotes&doc=specs%2Flaunch';
+    const target = 'palimpsest://open?project=C%3A%5CUsers%5Cme%5Cnotes&doc=specs%2Flaunch';
 
     const outcome = await openTarget(target, {
       platform: 'win32',
@@ -136,11 +136,11 @@ describe('openTarget', () => {
 
   test('Linux ignores a desktopBundlePath — the option is darwin-only', async () => {
     const capture: SpawnCapture = {};
-    const target = 'openknowledge://open?project=%2FUsers%2Fme%2Fnotes&doc=specs%2Flaunch';
+    const target = 'palimpsest://open?project=%2FUsers%2Fme%2Fnotes&doc=specs%2Flaunch';
 
     const outcome = await openTarget(target, {
       platform: 'linux',
-      desktopBundlePath: '/Applications/OpenKnowledge.app',
+      desktopBundlePath: '/Applications/Palimpsest.app',
       spawn: makeSpawn(capture, { type: 'spawn' }),
     });
 

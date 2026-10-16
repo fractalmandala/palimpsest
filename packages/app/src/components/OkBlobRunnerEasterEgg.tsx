@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { OkBlob } from '@/components/OkBlob';
-import { OkBlobRunner } from '@/components/OkBlobRunner';
+import { PsBlob } from '@/components/PsBlob';
+import { PsBlobRunner } from '@/components/PsBlobRunner';
 import { focusIsOnAControl, gameMayHandleKey } from '@/lib/blob-run-keyboard';
 import { MASCOT_VIEW_TRANSITION_NAME, withViewTransition } from '@/lib/view-transition';
 
 const RESTING_BLOB_SIZE = 80;
 
-interface OkBlobRunnerEasterEggProps {
+interface PsBlobRunnerEasterEggProps {
   keyboard?: boolean;
 }
 
-export function OkBlobRunnerEasterEgg({ keyboard = true }: OkBlobRunnerEasterEggProps = {}) {
+export function PsBlobRunnerEasterEgg({ keyboard = true }: PsBlobRunnerEasterEggProps = {}) {
   const [awake, setAwake] = useState(false);
   const awakeRef = useRef(false);
 
@@ -37,14 +37,14 @@ export function OkBlobRunnerEasterEgg({ keyboard = true }: OkBlobRunnerEasterEgg
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [reduceMotion, keyboard]);
 
-  if (awake) return <OkBlobRunner autoStart />;
+  if (awake) return <PsBlobRunner autoStart />;
 
-  if (reduceMotion) return <OkBlob size={RESTING_BLOB_SIZE} variant="sleeping" />;
+  if (reduceMotion) return <PsBlob size={RESTING_BLOB_SIZE} variant="sleeping" />;
 
   return (
     <div
       aria-hidden="true"
-      data-slot="ok-blob-runner-easter-egg"
+      data-slot="ps-blob-runner-easter-egg"
       className="cursor-pointer select-none transition-opacity duration-200"
       style={{ viewTransitionName: MASCOT_VIEW_TRANSITION_NAME }}
       onPointerDown={() => {
@@ -53,7 +53,7 @@ export function OkBlobRunnerEasterEgg({ keyboard = true }: OkBlobRunnerEasterEgg
         withViewTransition(() => setAwake(true));
       }}
     >
-      <OkBlob size={RESTING_BLOB_SIZE} variant="sleeping" />
+      <PsBlob size={RESTING_BLOB_SIZE} variant="sleeping" />
     </div>
   );
 }

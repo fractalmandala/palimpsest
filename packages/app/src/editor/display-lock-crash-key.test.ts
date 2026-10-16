@@ -4,7 +4,7 @@ import {
   encodeDisplayLockState,
   startDisplayLockCrashKeyReporter,
 } from './display-lock-crash-key.ts';
-import { OK_CHUNK_WRAPPER_CLASS } from './extensions/chunk-wrapper-decoration.ts';
+import { PS_CHUNK_WRAPPER_CLASS } from './extensions/chunk-wrapper-decoration.ts';
 
 const BRIDGE_BYTE_CEILING = 127;
 
@@ -12,7 +12,7 @@ function elementWithClass(className: string): { classList: { contains(t: string)
   return { classList: { contains: (token: string) => token === className } };
 }
 
-const chunkWrapper = () => elementWithClass(OK_CHUNK_WRAPPER_CLASS);
+const chunkWrapper = () => elementWithClass(PS_CHUNK_WRAPPER_CLASS);
 
 function fakeRoot() {
   let handler: ((event: Event) => void) | null = null;
@@ -158,7 +158,7 @@ describe('startDisplayLockCrashKeyReporter', () => {
 
   test('ignores elements that are not chunk wrappers, including the pane site', () => {
     const h = harness();
-    h.fire(elementWithClass('ok-mode-hidden'), true);
+    h.fire(elementWithClass('ps-mode-hidden'), true);
     h.fire(elementWithClass('some-other-class'), true);
     h.fire(null, true);
     expect(h.frames, 'a non-chunk-wrapper target must not even schedule a frame').toHaveLength(0);

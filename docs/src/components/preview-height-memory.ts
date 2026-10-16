@@ -4,7 +4,7 @@ export const MAX_PREVIEW_HEIGHT_PX = 5000;
 
 const WIDTH_BUCKET_PX = 40;
 
-const STORAGE_KEY = 'ok-docs:preview-heights:v1';
+const STORAGE_KEY = 'ps-docs:preview-heights:v1';
 
 const memory = new Map<string, number>();
 let restored = false;

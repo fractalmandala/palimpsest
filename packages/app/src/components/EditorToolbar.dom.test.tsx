@@ -1,4 +1,4 @@
-import { isEditableTextDocFile, type LintDiagnostic } from '@inkeep/open-knowledge-core';
+import { isEditableTextDocFile, type LintDiagnostic } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -71,7 +71,7 @@ function missing(property: string): LintDiagnostic {
 describe('EditorToolbar runtime layout', () => {
   afterEach(() => {
     cleanup();
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
   });
 
   async function renderToolbar(
@@ -196,7 +196,7 @@ describe('EditorToolbar runtime layout', () => {
     const { partitionFrontmatterProblems } = await import('@/editor/useFrontmatterDiagnostics');
     const user = userEvent.setup();
     const bothRequireType = [
-      { ...missing('type'), source: 'okf' as const, code: 'frontmatter-required' },
+      { ...missing('type'), source: 'psf' as const, code: 'frontmatter-required' },
       missing('type'),
     ];
     await renderToolbar('docs/Page.md', partitionFrontmatterProblems(bothRequireType).missing);

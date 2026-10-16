@@ -7,7 +7,7 @@ import {
   waitForActiveProviderSynced,
 } from './_helpers';
 
-const SIDEBAR_PINS_KEY = 'ok-sidebar-pins-v2';
+const SIDEBAR_PINS_KEY = 'ps-sidebar-pins-v2';
 const SIDEBAR_STATE_COOKIE_NAME = 'sidebar_state';
 
 const CHROME_VANILLA =
@@ -638,7 +638,7 @@ test.describe('non-embedded UA', () => {
     api,
   }) => {
     await page.addInitScript((value: string) => {
-      localStorage.setItem('ok-doc-panel-width-v1', value);
+      localStorage.setItem('ps-doc-panel-width-v1', value);
     }, '340');
     await seedDoc(api, 'qa-041');
     await page.setViewportSize({ width: 1400, height: 800 });
@@ -727,7 +727,7 @@ test.describe('non-embedded UA', () => {
       .poll(
         () =>
           page.evaluate(() =>
-            Number.parseInt(localStorage.getItem('ok-doc-panel-width-v1') ?? '0', 10),
+            Number.parseInt(localStorage.getItem('ps-doc-panel-width-v1') ?? '0', 10),
           ),
         {
           timeout: 3000,

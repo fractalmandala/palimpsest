@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { projectSkillBundleDirs } from '@/lib/known-skill-dirs';
 
@@ -30,11 +30,11 @@ describe('projectSkillBundleDirs', () => {
     const dirs = projectSkillBundleDirs([
       entry({
         managed: true,
-        name: 'open-knowledge',
-        path: '.claude/skills/open-knowledge/SKILL.md',
+        name: 'palimpsest',
+        path: '.claude/skills/palimpsest/SKILL.md',
       }),
     ]);
-    expect(dirs.has('.claude/skills/open-knowledge')).toBe(false);
+    expect(dirs.has('.claude/skills/palimpsest')).toBe(false);
   });
 
   test('includes both the alias and the canonical location of a symlinked bundle', () => {

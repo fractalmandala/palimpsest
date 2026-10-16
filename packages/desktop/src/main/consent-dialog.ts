@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { ALL_EDITOR_IDS } from '@inkeep/open-knowledge-core';
+import { ALL_EDITOR_IDS } from '@palimpsest/core';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 import type {
   McpWiringEditorId,

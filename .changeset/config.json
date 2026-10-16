@@ -5,11 +5,11 @@
   "commit": false,
   "fixed": [
     [
-      "@inkeep/open-knowledge",
-      "@inkeep/open-knowledge-core",
-      "@inkeep/open-knowledge-server",
-      "@inkeep/open-knowledge-app",
-      "@inkeep/open-knowledge-desktop"
+      "@palimpsest/cli",
+      "@palimpsest/core",
+      "@palimpsest/server",
+      "@palimpsest/app",
+      "@palimpsest/desktop"
     ]
   ],
   "linked": [],

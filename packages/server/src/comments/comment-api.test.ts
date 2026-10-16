@@ -4,7 +4,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { getLogger } from '../logger.ts';
 import { createCommentApi } from './comment-api.ts';

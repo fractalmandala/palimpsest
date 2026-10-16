@@ -1,4 +1,4 @@
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core';
+import { isEditableTextDocFile } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { hashFromSkillPreview, skillPreviewFromHash } from '@/lib/doc-hash';
 import {
@@ -305,23 +305,23 @@ describe('editor tab state', () => {
 
   test('filterOpenTabsForKnownTargets keeps a managed skill tab and a template content tab', () => {
     expect(
-      filterOpenTabsForKnownTargets(['__skill__/global/foo', 'notes/.ok/templates/daily', 'gone'], {
+      filterOpenTabsForKnownTargets(['__skill__/global/foo', 'notes/.ps/templates/daily', 'gone'], {
         pages: new Set(),
         folderPaths: new Set(),
         assetPaths: new Set(),
         keepHashDocName: 'some-other-doc',
       }),
-    ).toEqual(['__skill__/global/foo', 'notes/.ok/templates/daily']);
+    ).toEqual(['__skill__/global/foo', 'notes/.ps/templates/daily']);
   });
 
   test('filterOpenTabsForKnownTargets keeps a template content tab once it lands in pages', () => {
     expect(
-      filterOpenTabsForKnownTargets(['docs/.ok/templates/spec'], {
-        pages: new Set(['docs/.ok/templates/spec']),
+      filterOpenTabsForKnownTargets(['docs/.ps/templates/spec'], {
+        pages: new Set(['docs/.ps/templates/spec']),
         folderPaths: new Set(),
         assetPaths: new Set(),
       }),
-    ).toEqual(['docs/.ok/templates/spec']);
+    ).toEqual(['docs/.ps/templates/spec']);
   });
 
   test('filterOpenTabsForKnownTargets drops stale asset tabs', () => {
@@ -699,14 +699,14 @@ describe('preview-tab integration', () => {
   test('local skill previews deduplicate across source-path drift', () => {
     const first = skillPreviewTabId({
       flavor: 'builtin',
-      source: '/a/.ok/skills/write-skill',
+      source: '/a/.ps/skills/write-skill',
       name: 'write-skill',
       subtitle: '',
       level: 'global',
     });
     const second = skillPreviewTabId({
       flavor: 'builtin',
-      source: '/b/.ok/skills/write-skill',
+      source: '/b/.ps/skills/write-skill',
       name: 'write-skill',
       subtitle: '',
       level: 'global',
@@ -824,14 +824,14 @@ describe('tabParts — non-`.md` call-site shapes (folder + asset)', () => {
     });
   });
 
-  test('template content doc labels name-only, hiding the `.ok/templates/` prefix', () => {
-    expect(tabParts('docs/.ok/templates/note', '.md')).toEqual({
+  test('template content doc labels name-only, hiding the `.ps/templates/` prefix', () => {
+    expect(tabParts('docs/.ps/templates/note', '.md')).toEqual({
       baseName: 'note',
       extension: '',
       label: 'note',
       prefix: '',
     });
-    expect(tabParts('.ok/templates/daily', '.md')).toEqual({
+    expect(tabParts('.ps/templates/daily', '.md')).toEqual({
       baseName: 'daily',
       extension: '',
       label: 'daily',
@@ -841,7 +841,7 @@ describe('tabParts — non-`.md` call-site shapes (folder + asset)', () => {
 });
 
 describe('skill discriminators reject template content shapes', () => {
-  const templateDocs = ['.ok/templates/daily', 'docs/.ok/templates/note', 'a/b/.ok/templates/x'];
+  const templateDocs = ['.ps/templates/daily', 'docs/.ps/templates/note', 'a/b/.ps/templates/x'];
 
   test('isSkillDocName is false for every template content doc', () => {
     for (const doc of templateDocs) expect(isSkillDocName(doc)).toBe(false);
@@ -981,7 +981,7 @@ describe('persisted tab ids are repaired on read', () => {
   });
 
   test('folder and asset tab ids keep their path verbatim', () => {
-    const ids = [folderTabId('specs/demo'), assetTabId('.ok/local/notes.md')];
+    const ids = [folderTabId('specs/demo'), assetTabId('.ps/local/notes.md')];
     expect(parseEditorTabSessionState(session(ids)).panes[0].openTabs).toEqual(ids);
   });
 
@@ -989,7 +989,7 @@ describe('persisted tab ids are repaired on read', () => {
     const storage = {
       getItem: () => JSON.stringify(session(['specs/demo/SPEC.md'])),
     };
-    expect(readLocalTabSessionState(storage, 'ok-editor-tabs-v1:test').panes[0].openTabs).toEqual([
+    expect(readLocalTabSessionState(storage, 'ps-editor-tabs-v1:test').panes[0].openTabs).toEqual([
       'specs/demo/SPEC',
     ]);
   });

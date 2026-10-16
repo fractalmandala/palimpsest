@@ -3,8 +3,8 @@
 //! whole table and prunes any server not in its input), this engine touches
 //! only the named entry: it inserts a fresh explicit table when absent and
 //! reconciles per key in place when present, so sibling servers, surrounding
-//! comments, value types, and any keys a user hand-added to OpenKnowledge's own
-//! entry are all preserved. The whole document is the user's; OpenKnowledge owns
+//! comments, value types, and any keys a user hand-added to Palimpsest's own
+//! entry are all preserved. The whole document is the user's; Palimpsest owns
 //! only its one entry's managed keys.
 //!
 //! N-API-free so it stays unit-testable under a plain `cargo test`; `lib.rs`
@@ -17,7 +17,7 @@ use toml_writer::ToTomlValue as _;
 use crate::document_helpers::{ensure_table_for_write, new_implicit_table, preserve_decor};
 
 /// Result of an edit: the serialized document, whether it actually changed, and
-/// whether OpenKnowledge's entry already existed before the edit. `changed` is
+/// whether Palimpsest's entry already existed before the edit. `changed` is
 /// computed by comparing the serialized document before and after, so an entry
 /// that already matches (or a remove of an absent entry) reports `false` and the
 /// caller can skip the write. `existed` lets the write spine label the result
@@ -234,7 +234,7 @@ fn json_object_to_table(entry_json: &str) -> Result<Table, String> {
 
 fn json_to_toml_value(value: &JsonValue) -> TomlValue {
     match value {
-        // TOML has no null; OpenKnowledge's entry never carries one, so the
+        // TOML has no null; Palimpsest's entry never carries one, so the
         // empty-string projection is a safe last resort, not a real path.
         JsonValue::Null => TomlValue::from(""),
         JsonValue::Bool(b) => TomlValue::from(*b),
@@ -261,7 +261,7 @@ fn json_to_toml_value(value: &JsonValue) -> TomlValue {
 ///
 /// toml_edit's default serializes a string that contains newlines as a
 /// multi-line basic string (`"""…"""`) with real newlines in the output.
-/// OpenKnowledge's own entry carries a multi-line resolver chain; rendering it
+/// Palimpsest's own entry carries a multi-line resolver chain; rendering it
 /// single-line-escaped (matching the prior smol-toml writer) keeps every newline
 /// in the serialized document *structural*, so the JS write wrapper can re-apply
 /// a file's CRLF convention without rewriting the line endings inside the chain
@@ -305,41 +305,41 @@ mod tests {
 
     #[test]
     fn remove_key_drops_a_sub_table_and_keeps_every_other_key_and_comment() {
-        let input = "[mcp_servers.github]\ncommand = \"npx\"  # keep\n\n[mcp_servers.open-knowledge]\n# interior note\ncommand = \"/bin/sh\"\ncwd = \"/srv/notes\"\n\n[mcp_servers.open-knowledge.tools.shell]\napproval_mode = \"approve\"\n\n[mcp_servers.open-knowledge.env]\nNODE_OPTIONS = \"--require ./payload.cjs\"\n";
-        let out = remove_mcp_server_key(input, "open-knowledge", "env").unwrap();
+        let input = "[mcp_servers.github]\ncommand = \"npx\"  # keep\n\n[mcp_servers.palimpsest]\n# interior note\ncommand = \"/bin/sh\"\ncwd = \"/srv/notes\"\n\n[mcp_servers.palimpsest.tools.shell]\napproval_mode = \"approve\"\n\n[mcp_servers.palimpsest.env]\nNODE_OPTIONS = \"--require ./payload.cjs\"\n";
+        let out = remove_mcp_server_key(input, "palimpsest", "env").unwrap();
         assert!(out.changed);
         assert!(out.existed);
         assert!(!out.text.contains("NODE_OPTIONS"));
-        assert!(!out.text.contains("[mcp_servers.open-knowledge.env]"));
+        assert!(!out.text.contains("[mcp_servers.palimpsest.env]"));
         assert!(out.text.contains("command = \"npx\"  # keep"));
         assert!(out.text.contains("# interior note"));
-        assert!(out.text.contains("[mcp_servers.open-knowledge.tools.shell]"));
+        assert!(out.text.contains("[mcp_servers.palimpsest.tools.shell]"));
         let doc = parse(&out.text);
         assert_eq!(
-            doc["mcp_servers"]["open-knowledge"]["cwd"].as_str(),
+            doc["mcp_servers"]["palimpsest"]["cwd"].as_str(),
             Some("/srv/notes")
         );
         assert_eq!(
-            doc["mcp_servers"]["open-knowledge"]["tools"]["shell"]["approval_mode"].as_str(),
+            doc["mcp_servers"]["palimpsest"]["tools"]["shell"]["approval_mode"].as_str(),
             Some("approve")
         );
     }
 
     #[test]
     fn remove_key_works_on_an_inline_entry() {
-        let input = "mcp_servers = { open-knowledge = { command = \"/bin/sh\", env = { A = \"1\" }, cwd = \"/x\" } }\n";
-        let out = remove_mcp_server_key(input, "open-knowledge", "env").unwrap();
+        let input = "mcp_servers = { palimpsest = { command = \"/bin/sh\", env = { A = \"1\" }, cwd = \"/x\" } }\n";
+        let out = remove_mcp_server_key(input, "palimpsest", "env").unwrap();
         assert!(out.changed);
         assert!(out.existed);
         assert!(!out.text.contains("A = \"1\""));
         let doc = parse(&out.text);
-        assert_eq!(doc["mcp_servers"]["open-knowledge"]["cwd"].as_str(), Some("/x"));
+        assert_eq!(doc["mcp_servers"]["palimpsest"]["cwd"].as_str(), Some("/x"));
     }
 
     #[test]
     fn remove_key_is_a_no_op_for_an_absent_key_or_entry() {
-        let input = "[mcp_servers.open-knowledge]\ncommand = \"/bin/sh\"\n";
-        let out = remove_mcp_server_key(input, "open-knowledge", "env").unwrap();
+        let input = "[mcp_servers.palimpsest]\ncommand = \"/bin/sh\"\n";
+        let out = remove_mcp_server_key(input, "palimpsest", "env").unwrap();
         assert!(!out.changed);
         assert!(!out.existed);
         assert_eq!(out.text, input);
@@ -351,18 +351,18 @@ mod tests {
 
     #[test]
     fn remove_key_rejects_invalid_toml() {
-        assert!(remove_mcp_server_key("[broken", "open-knowledge", "env").is_err());
+        assert!(remove_mcp_server_key("[broken", "palimpsest", "env").is_err());
     }
 
     #[test]
     fn inserts_fresh_entry_into_empty_document() {
-        let out = upsert_mcp_server("", "open-knowledge", ENTRY).unwrap();
+        let out = upsert_mcp_server("", "palimpsest", ENTRY).unwrap();
         assert!(out.changed);
         assert!(!out.existed);
-        assert!(out.text.contains("[mcp_servers.open-knowledge]"));
+        assert!(out.text.contains("[mcp_servers.palimpsest]"));
         let doc = parse(&out.text);
         assert_eq!(
-            doc["mcp_servers"]["open-knowledge"]["command"].as_str(),
+            doc["mcp_servers"]["palimpsest"]["command"].as_str(),
             Some("/bin/sh")
         );
     }
@@ -370,12 +370,12 @@ mod tests {
     #[test]
     fn fresh_insert_preserves_existing_content_and_comments() {
         let input = "# my config\nmodel = \"gpt-5\"\n\n[mcp_servers.other]\ncommand = \"other\"  # keep\n";
-        let out = upsert_mcp_server(input, "open-knowledge", ENTRY).unwrap();
+        let out = upsert_mcp_server(input, "palimpsest", ENTRY).unwrap();
         assert!(out.changed);
         assert!(out.text.starts_with("# my config\nmodel = \"gpt-5\"\n"));
         assert!(out.text.contains("[mcp_servers.other]"));
         assert!(out.text.contains("command = \"other\"  # keep"));
-        assert!(out.text.contains("[mcp_servers.open-knowledge]"));
+        assert!(out.text.contains("[mcp_servers.palimpsest]"));
     }
 
     #[test]
@@ -383,13 +383,13 @@ mod tests {
         let input = r#"[mcp_servers.other]
 command = "other-cmd"
 
-[mcp_servers.open-knowledge]
+[mcp_servers.palimpsest]
 # interior note
 command = "/bin/sh"
 args = ["-l", "-c", "OLD"]
 enabled = false
 "#;
-        let out = upsert_mcp_server(input, "open-knowledge", ENTRY).unwrap();
+        let out = upsert_mcp_server(input, "palimpsest", ENTRY).unwrap();
         assert!(out.changed);
         assert!(out.existed);
         assert!(out.text.contains("[mcp_servers.other]"));
@@ -402,10 +402,10 @@ enabled = false
 
     #[test]
     fn reupsert_of_canonical_entry_is_byte_identical_noop() {
-        let first = upsert_mcp_server("[other]\nx = 1\n", "open-knowledge", ENTRY)
+        let first = upsert_mcp_server("[other]\nx = 1\n", "palimpsest", ENTRY)
             .unwrap()
             .text;
-        let second = upsert_mcp_server(&first, "open-knowledge", ENTRY).unwrap();
+        let second = upsert_mcp_server(&first, "palimpsest", ENTRY).unwrap();
         assert!(!second.changed);
         assert_eq!(second.text, first);
     }
@@ -418,11 +418,11 @@ ratio = 1.0
 server.host = "localhost"
 inline = { a = 1, b = 2 }
 
-[mcp_servers.open-knowledge]
+[mcp_servers.palimpsest]
 command = "/old/sh"
 args = ["-l", "-c", "run-ok"]
 "#;
-        let out = upsert_mcp_server(input, "open-knowledge", ENTRY).unwrap();
+        let out = upsert_mcp_server(input, "palimpsest", ENTRY).unwrap();
         let expected = input.replace("/old/sh", "/bin/sh");
         assert_eq!(out.text, expected);
         assert!(out.changed);
@@ -435,14 +435,14 @@ args = ["-l", "-c", "run-ok"]
         let input = r#"[mcp_servers.other]
 command = "other-cmd"  # sibling
 
-[mcp_servers.open-knowledge]
+[mcp_servers.palimpsest]
 command = "/bin/sh"
 args = ["-l", "-c", "run-ok"]
 "#;
-        let out = remove_mcp_server(input, "open-knowledge").unwrap();
+        let out = remove_mcp_server(input, "palimpsest").unwrap();
         assert!(out.changed);
         assert!(out.existed);
-        assert!(!out.text.contains("[mcp_servers.open-knowledge]"));
+        assert!(!out.text.contains("[mcp_servers.palimpsest]"));
         assert!(out.text.contains("[mcp_servers.other]"));
         assert!(out.text.contains("command = \"other-cmd\"  # sibling"));
     }
@@ -450,7 +450,7 @@ args = ["-l", "-c", "run-ok"]
     #[test]
     fn remove_absent_entry_is_byte_identical_noop() {
         let input = "[mcp_servers.other]\ncommand = \"other\"\n";
-        let out = remove_mcp_server(input, "open-knowledge").unwrap();
+        let out = remove_mcp_server(input, "palimpsest").unwrap();
         assert!(!out.changed);
         assert!(!out.existed);
         assert_eq!(out.text, input);
@@ -459,15 +459,15 @@ args = ["-l", "-c", "run-ok"]
     #[test]
     fn migrates_inline_ok_entry_to_explicit_table_preserving_siblings() {
         let input = r#"mcp_servers.other = { command = "other-cmd" }
-mcp_servers.open-knowledge = { command = "/old/sh" }
+mcp_servers.palimpsest = { command = "/old/sh" }
 "#;
-        let out = upsert_mcp_server(input, "open-knowledge", ENTRY).unwrap();
+        let out = upsert_mcp_server(input, "palimpsest", ENTRY).unwrap();
         assert!(out.changed);
-        assert!(out.text.contains("[mcp_servers.open-knowledge]"));
+        assert!(out.text.contains("[mcp_servers.palimpsest]"));
         assert!(out.text.contains("mcp_servers.other = { command = \"other-cmd\" }"));
         let doc = parse(&out.text);
         assert_eq!(
-            doc["mcp_servers"]["open-knowledge"]["command"].as_str(),
+            doc["mcp_servers"]["palimpsest"]["command"].as_str(),
             Some("/bin/sh")
         );
         assert!(out.text.contains("run-ok"));
@@ -476,7 +476,7 @@ mcp_servers.open-knowledge = { command = "/old/sh" }
     #[test]
     fn upsert_into_whole_inline_mcp_servers_preserves_siblings_inline() {
         let input = "mcp_servers = { other = { command = \"other-cmd\" } }\n";
-        let out = upsert_mcp_server(input, "open-knowledge", ENTRY).unwrap();
+        let out = upsert_mcp_server(input, "palimpsest", ENTRY).unwrap();
         assert!(out.changed);
         let doc = parse(&out.text);
         assert_eq!(
@@ -484,7 +484,7 @@ mcp_servers.open-knowledge = { command = "/old/sh" }
             Some("other-cmd")
         );
         assert_eq!(
-            doc["mcp_servers"]["open-knowledge"]["command"].as_str(),
+            doc["mcp_servers"]["palimpsest"]["command"].as_str(),
             Some("/bin/sh")
         );
         assert!(out.text.contains("mcp_servers = {"));
@@ -497,28 +497,28 @@ mcp_servers.open-knowledge = { command = "/old/sh" }
         // EOL wrapper re-applies CRLF to structural lines only). A `"""` form
         // with real interior newlines would be corrupted by that conversion.
         let entry =
-            r##"{"command":"/bin/sh","args":["-l","-c","# ok-mcp-v1\nexec npx mcp\nexit 127"]}"##;
-        let out = upsert_mcp_server("", "open-knowledge", entry).unwrap();
+            r##"{"command":"/bin/sh","args":["-l","-c","# ps-mcp-v1\nexec npx mcp\nexit 127"]}"##;
+        let out = upsert_mcp_server("", "palimpsest", entry).unwrap();
         assert!(!out.text.contains("\"\"\""));
-        assert!(out.text.contains(r##""# ok-mcp-v1\nexec npx mcp\nexit 127""##));
+        assert!(out.text.contains(r##""# ps-mcp-v1\nexec npx mcp\nexit 127""##));
         // The decoded value still round-trips with its real newlines intact.
         let doc = parse(&out.text);
-        let body = doc["mcp_servers"]["open-knowledge"]["args"][2]
+        let body = doc["mcp_servers"]["palimpsest"]["args"][2]
             .as_str()
             .expect("third arg is a string");
-        assert_eq!(body, "# ok-mcp-v1\nexec npx mcp\nexit 127");
+        assert_eq!(body, "# ps-mcp-v1\nexec npx mcp\nexit 127");
     }
 
     #[test]
     fn rejects_non_object_entry_json() {
-        assert!(upsert_mcp_server("", "open-knowledge", "[1,2,3]").is_err());
-        assert!(upsert_mcp_server("", "open-knowledge", "not json").is_err());
+        assert!(upsert_mcp_server("", "palimpsest", "[1,2,3]").is_err());
+        assert!(upsert_mcp_server("", "palimpsest", "not json").is_err());
     }
 
     #[test]
     fn rejects_malformed_toml() {
-        assert!(upsert_mcp_server("not = valid = toml", "open-knowledge", ENTRY).is_err());
-        assert!(remove_mcp_server("not = valid = toml", "open-knowledge").is_err());
+        assert!(upsert_mcp_server("not = valid = toml", "palimpsest", ENTRY).is_err());
+        assert!(remove_mcp_server("not = valid = toml", "palimpsest").is_err());
     }
 }
 

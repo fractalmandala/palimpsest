@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { OkBlob } from '@/components/OkBlob';
+import { PsBlob } from '@/components/PsBlob';
 import { Kbd } from '@/components/ui/kbd';
 import { focusIsOnAControl, gameMayHandleKey } from '@/lib/blob-run-keyboard';
 import { MASCOT_VIEW_TRANSITION_NAME } from '@/lib/view-transition';
@@ -33,7 +33,7 @@ const SCORE_DIGITS = 4;
 
 const DUCK_BAND_FRACTION = 0.45;
 
-interface OkBlobRunnerProps {
+interface PsBlobRunnerProps {
   autoStart?: boolean;
 }
 
@@ -41,7 +41,7 @@ function HintKey({ children }: { children: ReactNode }) {
   return <Kbd className="h-4 min-w-4 px-1.5 align-middle text-[10px]">{children}</Kbd>;
 }
 
-export function OkBlobRunner({ autoStart = false }: OkBlobRunnerProps = {}) {
+export function PsBlobRunner({ autoStart = false }: PsBlobRunnerProps = {}) {
   const stateRef = useRef(createRunnerState());
   const trackRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
@@ -187,19 +187,19 @@ export function OkBlobRunner({ autoStart = false }: OkBlobRunnerProps = {}) {
     setDucking(stateRef.current, false);
   }
 
-  if (reduceMotion) return <OkBlob size={PLAYER_SIZE} variant="sleeping" />;
+  if (reduceMotion) return <PsBlob size={PLAYER_SIZE} variant="sleeping" />;
 
   const asleep = phase !== 'running' && !beatBest;
 
   return (
     <div
       aria-hidden="true"
-      data-slot="ok-blob-runner"
+      data-slot="ps-blob-runner"
       className="w-full select-none animate-in fade-in-0 slide-in-from-bottom-2 duration-300 motion-reduce:animate-none"
     >
       <div
         ref={trackRef}
-        data-slot="ok-blob-runner-track"
+        data-slot="ps-blob-runner-track"
         className="relative w-full cursor-pointer overflow-hidden border-b border-dashed border-border"
         style={{ height: TRACK_HEIGHT }}
         onPointerDown={handlePointerDown}
@@ -216,7 +216,7 @@ export function OkBlobRunner({ autoStart = false }: OkBlobRunnerProps = {}) {
             ...(autoStart ? { viewTransitionName: MASCOT_VIEW_TRANSITION_NAME } : {}),
           }}
         >
-          <OkBlob
+          <PsBlob
             size={PLAYER_SIZE}
             trackMouse={false}
             variant={asleep ? 'sleeping' : 'default'}
@@ -227,7 +227,7 @@ export function OkBlobRunner({ autoStart = false }: OkBlobRunnerProps = {}) {
         {OBSTACLE_SLOTS.map((slot, i) => (
           <div
             key={slot}
-            data-slot="ok-blob-runner-obstacle"
+            data-slot="ps-blob-runner-obstacle"
             ref={(node) => {
               obstacleRefs.current[i] = node;
             }}
@@ -241,7 +241,7 @@ export function OkBlobRunner({ autoStart = false }: OkBlobRunnerProps = {}) {
       {}
       <div className="relative mt-1.5 h-5">
         <div
-          data-slot="ok-blob-runner-score"
+          data-slot="ps-blob-runner-score"
           className="absolute top-0 flex gap-3 font-mono text-xs tabular-nums text-muted-foreground/60"
           style={{ left: PLAYER_X }}
         >
@@ -255,7 +255,7 @@ export function OkBlobRunner({ autoStart = false }: OkBlobRunnerProps = {}) {
       </div>
 
       <p
-        data-slot="ok-blob-runner-hint"
+        data-slot="ps-blob-runner-hint"
         className="mt-2 text-center font-mono text-[11px] uppercase tracking-wide text-muted-foreground/60"
       >
         {phase === 'over' ? (

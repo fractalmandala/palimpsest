@@ -1,10 +1,10 @@
 import {
   parseManagedArtifactName,
   parseProjectSkillBundleDoc,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import { RESERVED_PROJECT_SKILL_NAME } from '@inkeep/open-knowledge-core/constants/editors';
-import { isSkillRefCandidate, SKILL_REF_RE } from '@inkeep/open-knowledge-core/constants/skills';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/constants/cc1';
+import { RESERVED_PROJECT_SKILL_NAME } from '@palimpsest/core/constants/editors';
+import { isSkillRefCandidate, SKILL_REF_RE } from '@palimpsest/core/constants/skills';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { Extension } from '@tiptap/core';
 import type { Node as PMNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
@@ -57,7 +57,7 @@ function buildDecorations(doc: PMNode): DecorationSet {
     if (path !== null) {
       decos.push(
         Decoration.inline(pos, pos + node.nodeSize, {
-          class: 'ok-skill-path-link',
+          class: 'ps-skill-path-link',
           'data-skill-path': path,
         }),
       );
@@ -70,7 +70,7 @@ function buildDecorations(doc: PMNode): DecorationSet {
         if (slug !== undefined && isSkillRefCandidate(slug)) {
           decos.push(
             Decoration.inline(pos, pos + node.nodeSize, {
-              class: known.has(slug) ? 'ok-skill-ref' : 'ok-skill-ref ok-skill-ref-missing',
+              class: known.has(slug) ? 'ps-skill-ref' : 'ps-skill-ref ps-skill-ref-missing',
               'data-skill-ref': slug,
             }),
           );
@@ -85,7 +85,7 @@ function buildDecorations(doc: PMNode): DecorationSet {
         const installed = known.has(slug);
         decos.push(
           Decoration.inline(start, start + slug.length + 1, {
-            class: installed ? 'ok-skill-ref' : 'ok-skill-ref ok-skill-ref-missing',
+            class: installed ? 'ps-skill-ref' : 'ps-skill-ref ps-skill-ref-missing',
             'data-skill-ref': slug,
           }),
         );
@@ -96,7 +96,7 @@ function buildDecorations(doc: PMNode): DecorationSet {
   return DecorationSet.create(doc, decos);
 }
 
-const key = new PluginKey<DecorationSet>('okSkillPathLinks');
+const key = new PluginKey<DecorationSet>('psSkillPathLinks');
 
 export const SkillPathLinks = Extension.create<{
   docName: string;

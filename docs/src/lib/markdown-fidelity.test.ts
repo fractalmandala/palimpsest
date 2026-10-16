@@ -19,7 +19,7 @@ vi.doMock('@/lib/source', () => ({
 
 vi.doMock('@/lib/marketing-blog-index', () => ({
   blogPostLinks: async () => [
-    { url: 'https://openknowledge.ai/blog/some-post.md', name: 'Some post' },
+    { url: 'https://github.com/fractalmandala/palimpsest/blog/some-post.md', name: 'Some post' },
   ],
 }));
 
@@ -32,7 +32,7 @@ function slugOf(page: CorpusSourcePage): string[] {
 }
 
 async function serve(slug: string[]): Promise<string> {
-  const response = await GET(new Request(`https://openknowledge.ai/docs/${slug.join('/')}.md`), {
+  const response = await GET(new Request(`https://github.com/fractalmandala/palimpsest/tree/main/docs/content'/')}.md`), {
     params: Promise.resolve({ slug }),
   });
   return response.text();

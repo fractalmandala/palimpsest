@@ -22,18 +22,18 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "!.next/dev/**"]
     },
-    "@inkeep/open-knowledge-core#build:output": {
+    "@palimpsest/core#build:output": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"],
       "command": ["node", "scripts/build-output.mjs", "produce"]
     },
-    "@inkeep/open-knowledge-core#build": {
+    "@palimpsest/core#build": {
       "dependsOn": ["build:output"],
       "cache": false,
       "command": ["node", "scripts/build-output.mjs", "complete"]
     },
     "build:desktop": {
-      "dependsOn": ["^build", "@inkeep/open-knowledge#build"],
+      "dependsOn": ["^build", "@palimpsest/cli#build"],
       "outputs": ["out/**"]
     },
     "dev:electron": {
@@ -41,14 +41,14 @@
       "cache": false,
       "persistent": true,
       "passThroughEnv": [
-        "OK_CHANNEL",
-        "OK_INSTANCE",
-        "OK_AUTO_INSTANCE",
-        "OK_DEV_PROTOCOL",
-        "OK_M6B_FORCE",
-        "OK_RECLAIM_DISABLE",
-        "OK_UNINSTALL_UI_PREVIEW",
-        "OK_FEEDBACK_INTAKE_ORIGIN"
+        "PS_CHANNEL",
+        "PS_INSTANCE",
+        "PS_AUTO_INSTANCE",
+        "PS_DEV_PROTOCOL",
+        "PS_M6B_FORCE",
+        "PS_RECLAIM_DISABLE",
+        "PS_UNINSTALL_UI_PREVIEW",
+        "PS_FEEDBACK_INTAKE_ORIGIN"
       ]
     },
     "build:desktop:dir": {
@@ -74,11 +74,11 @@
       ]
     },
     "//#test:uncached": {
-      "dependsOn": ["@inkeep/open-knowledge-core#build"],
+      "dependsOn": ["@palimpsest/core#build"],
       "cache": false,
       "inputs": []
     },
-    "@inkeep/open-knowledge#check:dts": {
+    "@palimpsest/cli#check:dts": {
       "dependsOn": ["build"],
       "inputs": [
         "tsconfig.check.json",
@@ -86,11 +86,11 @@
         "$TURBO_ROOT$/scripts/read-jsonc.mjs"
       ]
     },
-    "@inkeep/open-knowledge-core#check:dts": {
+    "@palimpsest/core#check:dts": {
       "dependsOn": ["build"],
       "inputs": ["tsconfig.json", "tsconfig.check.json", "tests/contract/subpath-types/consumer.ts"]
     },
-    "@inkeep/open-knowledge-docs#build": {
+    "@palimpsest/docs#build": {
       "dependsOn": ["^build", "typecheck"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "!.next/dev/**"],
       "inputs": [
@@ -105,7 +105,7 @@
         "VERCEL_GIT_COMMIT_SHA",
         "GITHUB_SHA",
         "VERCEL_ENV",
-        "OK_ALLOW_BLOGLESS_LLMS_TXT",
+        "PS_ALLOW_BLOGLESS_LLMS_TXT",
         "CI",
         "VERCEL"
       ]
@@ -116,7 +116,7 @@
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/test-support/**"],
       "outputs": ["test-results/vitest-test.json", "test-results/vitest-test.provenance.json"]
     },
-    "@inkeep/open-knowledge-docs#test": {
+    "@palimpsest/docs#test": {
       "dependsOn": ["^build", "build"],
       "cache": true,
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/test-support/**"],
@@ -127,7 +127,7 @@
         "test-results/vitest-test-real-source.provenance.json"
       ]
     },
-    "@inkeep/open-knowledge-server#test": {
+    "@palimpsest/server#test": {
       "dependsOn": ["^build"],
       "cache": true,
       "inputs": [
@@ -140,7 +140,7 @@
       ],
       "outputs": ["test-results/vitest-test.json", "test-results/vitest-test.provenance.json"]
     },
-    "@inkeep/open-knowledge#test": {
+    "@palimpsest/cli#test": {
       "dependsOn": ["^build", "build"],
       "cache": true,
       "inputs": [
@@ -150,7 +150,7 @@
       ],
       "outputs": ["test-results/vitest-test.json", "test-results/vitest-test.provenance.json"]
     },
-    "@inkeep/open-knowledge-desktop#test": {
+    "@palimpsest/desktop#test": {
       "dependsOn": ["^build"],
       "cache": true,
       "inputs": [
@@ -180,7 +180,7 @@
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/test-support/**", "../server/src/**/*.ts"],
       "outputs": ["test-results/vitest-test.json", "test-results/vitest-test.provenance.json"]
     },
-    "@inkeep/open-knowledge-core#test": {
+    "@palimpsest/core#test": {
       "dependsOn": ["^build"],
       "cache": true,
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/test-support/**"],
@@ -301,12 +301,12 @@
     "test:e2e": {
       "dependsOn": ["^build", "build"],
       "cache": false,
-      "passThroughEnv": ["OK_TEST_E2E_SERVING"]
+      "passThroughEnv": ["PS_TEST_E2E_SERVING"]
     },
-    "@inkeep/open-knowledge-app#test:e2e": {
-      "dependsOn": ["^build", "build", "@inkeep/open-knowledge#build"],
+    "@palimpsest/app#test:e2e": {
+      "dependsOn": ["^build", "build", "@palimpsest/cli#build"],
       "cache": false,
-      "passThroughEnv": ["OK_TEST_E2E_SERVING"]
+      "passThroughEnv": ["PS_TEST_E2E_SERVING"]
     },
     "test:perf": {
       "dependsOn": [],
@@ -326,12 +326,12 @@
     "test:a11y": {
       "dependsOn": ["^build"],
       "cache": false,
-      "passThroughEnv": ["OK_TEST_E2E_SERVING"]
+      "passThroughEnv": ["PS_TEST_E2E_SERVING"]
     },
-    "@inkeep/open-knowledge-app#test:a11y": {
+    "@palimpsest/app#test:a11y": {
       "dependsOn": ["^build", "build"],
       "cache": false,
-      "passThroughEnv": ["OK_TEST_E2E_SERVING"]
+      "passThroughEnv": ["PS_TEST_E2E_SERVING"]
     },
     "test:perf:bench": {
       "dependsOn": [],
@@ -392,7 +392,7 @@
       "dependsOn": [],
       "cache": false,
       "inputs": ["src/lib/perf/**/*.ts", "src/lib/perf/**/*.tsx", "tests/perf/**/*.ts"],
-      "passThroughEnv": ["DISPLAY", "OK_PERF_TARGET"]
+      "passThroughEnv": ["DISPLAY", "PS_PERF_TARGET"]
     }
   }
 }

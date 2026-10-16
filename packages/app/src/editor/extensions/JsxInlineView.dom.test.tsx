@@ -77,9 +77,9 @@ afterEach(cleanup);
 describe('JsxInlineView', () => {
   test('normalizes a local inline img src against its document before rendering', async () => {
     const desktopWindow = window as typeof window & {
-      okDesktop?: { config: { apiOrigin: string } };
+      psDesktop?: { config: { apiOrigin: string } };
     };
-    desktopWindow.okDesktop = { config: { apiOrigin: 'http://localhost:53351' } };
+    desktopWindow.psDesktop = { config: { apiOrigin: 'http://localhost:53351' } };
 
     try {
       mountEditor(
@@ -101,7 +101,7 @@ describe('JsxInlineView', () => {
         ).toBe('http://localhost:53351/assets/space image.png');
       });
     } finally {
-      delete desktopWindow.okDesktop;
+      delete desktopWindow.psDesktop;
     }
   });
 

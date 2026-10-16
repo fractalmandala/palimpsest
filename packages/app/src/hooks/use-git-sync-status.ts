@@ -1,10 +1,10 @@
-import type { SyncMode } from '@inkeep/open-knowledge-core/config/auto-sync-mode';
+import type { SyncMode } from '@palimpsest/core/config/auto-sync-mode';
 import type {
   PushPermissionWire as GitPushPermission,
   PullOutcome,
   SyncErrorCode,
   SyncStatusSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { useEffect, useState } from 'react';
 import { subscribeToDocumentsChanged } from '@/lib/documents-events';
 

@@ -1,7 +1,7 @@
 import type {
   ContentDivergenceCurrentState,
   ContentDivergenceWarning,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export const CONTENT_DIVERGENCE_CAP_BYTES = 50 * 1024;
 

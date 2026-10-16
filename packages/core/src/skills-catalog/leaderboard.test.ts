@@ -34,8 +34,8 @@ describe('parseSkillsShLeaderboard', () => {
 
   test('drops our retired pack-prefixed listings', () => {
     const flight =
-      '{"skillId":"open-knowledge-pack-knowledge-base","source":"inkeep/open-knowledge-skills","installs":900}' +
-      '{"skillId":"knowledge-base","source":"inkeep/open-knowledge-skills","installs":21}';
+      '{"skillId":"open-knowledge-pack-knowledge-base","source":"fractalmandala/palimpsest-skills","installs":900}' +
+      '{"skillId":"knowledge-base","source":"fractalmandala/palimpsest-skills","installs":21}';
     expect(parseSkillsShLeaderboard(flight).map((r) => r.name)).toEqual(['knowledge-base']);
   });
 

@@ -9,7 +9,7 @@ import {
   recordContributor,
   shadowGit,
   swapContributors,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 
@@ -17,7 +17,7 @@ describe('persistence L2 fan-out integration (US-014, FR-7)', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-fanout-int-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-fanout-int-'));
     swapContributors();
   });
 

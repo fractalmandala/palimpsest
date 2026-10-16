@@ -38,7 +38,7 @@ import {
 let shadowDir: string;
 
 beforeEach(async () => {
-  shadowDir = await mkdtemp(resolve(tmpdir(), 'ok-rename-log-test-'));
+  shadowDir = await mkdtemp(resolve(tmpdir(), 'ps-rename-log-test-'));
 });
 
 afterEach(async () => {
@@ -233,7 +233,7 @@ describe('appendRenameLogEntry', () => {
   test('survives anonymous-actor entry (FR13 service-writer)', () => {
     const index = createEmptyIndex();
     const e = entry({
-      actor: { writerId: 'openknowledge-service', displayName: 'OpenKnowledge (service)' },
+      actor: { writerId: 'openknowledge-service', displayName: 'Palimpsest (service)' },
     });
     appendRenameLogEntry(shadowDir, e, index);
     const reloaded = loadRenameLogIndex(shadowDir);
@@ -783,9 +783,9 @@ describe('batchCheckExistence timeout fallback (FR16 / D-T7)', () => {
 
   test('git binary hang → timeout fires, returns all-false, warns', async () => {
     const origPath = process.env.PATH ?? '';
-    const origTimeout = process.env.OK_GIT_TIMEOUT_MS;
+    const origTimeout = process.env.PS_GIT_TIMEOUT_MS;
     process.env.PATH = `${fakeBinDir}:${origPath}`;
-    process.env.OK_GIT_TIMEOUT_MS = '200';
+    process.env.PS_GIT_TIMEOUT_MS = '200';
 
     let warnedTimeout = false;
     let warnMsg: string | null = null;
@@ -815,8 +815,8 @@ describe('batchCheckExistence timeout fallback (FR16 / D-T7)', () => {
     } finally {
       warnSpy.mockRestore();
       process.env.PATH = origPath;
-      if (origTimeout !== undefined) process.env.OK_GIT_TIMEOUT_MS = origTimeout;
-      else process.env.OK_GIT_TIMEOUT_MS = undefined;
+      if (origTimeout !== undefined) process.env.PS_GIT_TIMEOUT_MS = origTimeout;
+      else process.env.PS_GIT_TIMEOUT_MS = undefined;
     }
   }, 5000);
 });
@@ -1250,14 +1250,14 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
     expect(index.byTo.get('b')?.commitSha).toBe(realSha);
   });
 
-  test('rebuild=true reconstructs entries from OkActorEntry.previous_paths body fields (D2)', async () => {
+  test('rebuild=true reconstructs entries from PsActorEntry.previous_paths body fields (D2)', async () => {
     writeFileSync(resolve(contentRoot, 'b.md'), '# B\n');
     const sg = simpleGit({ baseDir: shadow.workTree }).env({
       GIT_DIR: shadow.gitDir,
       GIT_WORK_TREE: shadow.workTree,
     });
-    const okActor =
-      'ok-actor: ' +
+    const psActor =
+      'ps-actor: ' +
       JSON.stringify({
         v: 1,
         writer_id: 'agent-rebuild',
@@ -1272,7 +1272,7 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
         docs: ['b'],
         previous_paths: [{ from: 'a', to: 'b' }],
       });
-    const message = `rename: a -> b\n\n${okActor}`;
+    const message = `rename: a -> b\n\n${psActor}`;
     await sg.raw('add', 'content/b.md');
     const builtTree = (await sg.raw('write-tree')).trim();
     const builtSha = (
@@ -1281,8 +1281,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
           GIT_DIR: shadow.gitDir,
           GIT_AUTHOR_NAME: 'Rebuilder',
           GIT_AUTHOR_EMAIL: 'r@example.com',
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'service@openknowledge.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'service@palimpsest.local',
         })
         .raw('commit-tree', builtTree, '-m', message)
     ).trim();
@@ -1302,8 +1302,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
       GIT_DIR: shadow.gitDir,
       GIT_WORK_TREE: shadow.workTree,
     });
-    const okActor =
-      'ok-actor: ' +
+    const psActor =
+      'ps-actor: ' +
       JSON.stringify({
         v: 1,
         writer_id: 'agent-feat',
@@ -1318,7 +1318,7 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
         docs: ['b'],
         previous_paths: [{ from: 'a', to: 'b' }],
       });
-    const message = `rename: a -> b\n\n${okActor}`;
+    const message = `rename: a -> b\n\n${psActor}`;
     await sg.raw('add', 'content/b.md');
     const builtTree = (await sg.raw('write-tree')).trim();
     const builtSha = (
@@ -1327,8 +1327,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
           GIT_DIR: shadow.gitDir,
           GIT_AUTHOR_NAME: 'Featured',
           GIT_AUTHOR_EMAIL: 'f@example.com',
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'service@openknowledge.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'service@palimpsest.local',
         })
         .raw('commit-tree', builtTree, '-m', message)
     ).trim();
@@ -1346,8 +1346,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
       GIT_DIR: shadow.gitDir,
       GIT_WORK_TREE: shadow.workTree,
     });
-    const okActor =
-      'ok-actor: ' +
+    const psActor =
+      'ps-actor: ' +
       JSON.stringify({
         v: 1,
         writer_id: 'agent-fallback',
@@ -1362,7 +1362,7 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
         docs: ['b'],
         previous_paths: [{ from: 'a', to: 'b' }],
       });
-    const message = `rename: a -> b\n\n${okActor}`;
+    const message = `rename: a -> b\n\n${psActor}`;
     await sg.raw('add', 'content/b.md');
     const builtTree = (await sg.raw('write-tree')).trim();
     const builtSha = (
@@ -1371,8 +1371,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
           GIT_DIR: shadow.gitDir,
           GIT_AUTHOR_NAME: 'Fallback',
           GIT_AUTHOR_EMAIL: 'fb@example.com',
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'service@openknowledge.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'service@palimpsest.local',
         })
         .raw('commit-tree', builtTree, '-m', message)
     ).trim();
@@ -1390,8 +1390,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
       GIT_DIR: shadow.gitDir,
       GIT_WORK_TREE: shadow.workTree,
     });
-    const okActor =
-      'ok-actor: ' +
+    const psActor =
+      'ps-actor: ' +
       JSON.stringify({
         v: 1,
         writer_id: 'agent-rebuild',
@@ -1406,7 +1406,7 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
         docs: ['b'],
         previous_paths: [{ from: 'a', to: 'b' }],
       });
-    const message = `rename: a -> b\n\n${okActor}`;
+    const message = `rename: a -> b\n\n${psActor}`;
     await sg.raw('add', 'content/b.md');
     const builtTree = (await sg.raw('write-tree')).trim();
     const builtSha = (
@@ -1415,8 +1415,8 @@ describe('gcRenameLog (US-008 reachability + rebuild)', () => {
           GIT_DIR: shadow.gitDir,
           GIT_AUTHOR_NAME: 'Rebuilder',
           GIT_AUTHOR_EMAIL: 'r@example.com',
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'service@openknowledge.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'service@palimpsest.local',
         })
         .raw('commit-tree', builtTree, '-m', message)
     ).trim();

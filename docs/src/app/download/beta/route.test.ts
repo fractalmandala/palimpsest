@@ -7,7 +7,7 @@ import {
   SUCCESS_CACHE_CONTROL,
 } from '../../../lib/download-links.ts';
 
-const TEST_DMG_URL = `https://github.com/inkeep/open-knowledge/releases/download/v0.1.0-beta.1/${BETA_DMG_ASSET_NAME}`;
+const TEST_DMG_URL = `https://github.com/fractalmandala/palimpsest/releases/download/v0.1.0-beta.1/${BETA_DMG_ASSET_NAME}`;
 
 let _redirect: PrereleaseRedirect = { kind: 'fresh', url: TEST_DMG_URL };
 
@@ -41,7 +41,7 @@ vi.doMock('../../../lib/track.ts', () => ({
 const { GET } = await import('./route.ts');
 
 function call(): Promise<Response> {
-  return GET(new Request('https://openknowledge.ai/download/beta'));
+  return GET(new Request('https://github.com/fractalmandala/palimpsest/download/beta'));
 }
 
 describe('GET /download/beta', () => {
@@ -85,7 +85,7 @@ describe('GET /download/beta', () => {
     _redirect = { kind: 'fresh', url: TEST_DMG_URL };
     _lastCapture = null;
     const res = await GET(
-      new Request('https://openknowledge.ai/download/beta', {
+      new Request('https://github.com/fractalmandala/palimpsest/download/beta', {
         headers: { 'sec-purpose': 'prefetch' },
       }),
     );

@@ -1,7 +1,7 @@
 import {
   type ConflictEntryWire,
   SyncConflictsSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { createContext, type ReactNode, use, useEffect, useRef, useState } from 'react';
 import { subscribeToDocumentsChanged } from '@/lib/documents-events';
 

@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
 import { setImmediate } from 'node:timers/promises';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createApiExtension } from './api-extension.test-helper.ts';
 import { BacklinkIndex } from './backlink-index.ts';
@@ -135,7 +135,7 @@ async function callApi(
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rename-rollback-summary-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rename-rollback-summary-'));
   resetContributorsForTest();
   resetMetrics();
   _resetDocExtensionsForTests();
@@ -177,7 +177,7 @@ describe('handleRenamePath (kind: file) — agentId-guarded attribution', () => 
 
     expect(response.status).toBe(200);
     const body = formatContributorsForTest();
-    const lines = body.split('\n').filter((l) => l.startsWith('ok-contributors:'));
+    const lines = body.split('\n').filter((l) => l.startsWith('ps-contributors:'));
     expect(lines).toHaveLength(1);
     expect(lines[0]).toContain('"docs":["renamed-notes"]');
     expect(lines[0]).toContain('"summaries":["Renamed notes → renamed-notes"]');
@@ -465,7 +465,7 @@ describe('handleRenamePath — actor identity routing', () => {
 
     expect(response.status).toBe(200);
     const body = formatContributorsForTest();
-    const lines = body.split('\n').filter((l) => l.startsWith('ok-contributors:'));
+    const lines = body.split('\n').filter((l) => l.startsWith('ps-contributors:'));
     expect(lines).toHaveLength(1);
     expect(lines[0]).toContain(`"id":"${fixturePrincipal.id}"`);
     expect(lines[0]).toContain('"docs":["renamed-notes"]');
@@ -504,7 +504,7 @@ describe('handleRenamePath — actor identity routing', () => {
 
     expect(response.status).toBe(200);
     const body = formatContributorsForTest();
-    const lines = body.split('\n').filter((l) => l.startsWith('ok-contributors:'));
+    const lines = body.split('\n').filter((l) => l.startsWith('ps-contributors:'));
     expect(lines).toHaveLength(1);
     expect(lines[0]).toContain('"id":"agent-claude-1"');
   });
@@ -590,7 +590,7 @@ describe('handleRenamePath — actor identity routing', () => {
 
     expect(response.status).toBe(200);
     const body = formatContributorsForTest();
-    const lines = body.split('\n').filter((l) => l.startsWith('ok-contributors:'));
+    const lines = body.split('\n').filter((l) => l.startsWith('ps-contributors:'));
     expect(lines).toHaveLength(1);
     expect(lines[0]).toContain('"docs":["renamed-notes"]');
     expect(lines[0]).not.toContain('journal');
@@ -599,7 +599,7 @@ describe('handleRenamePath — actor identity routing', () => {
 
 describe('handleRenamePath — folder rename via consolidated endpoint', () => {
   test('folder rename rewrites inbound wiki-links across affected docs (FR3)', async () => {
-    const setupDir = mkdtempSync(join(tmpdir(), 'ok-folder-rename-'));
+    const setupDir = mkdtempSync(join(tmpdir(), 'ps-folder-rename-'));
     try {
       const { mkdirSync } = await import('node:fs');
       mkdirSync(join(setupDir, 'articles'), { recursive: true });
@@ -628,7 +628,7 @@ describe('handleRenamePath — folder rename via consolidated endpoint', () => {
   });
 
   test('folder rename to nested non-existent destination parent succeeds (auto-create)', async () => {
-    const setupDir = mkdtempSync(join(tmpdir(), 'ok-folder-rename-'));
+    const setupDir = mkdtempSync(join(tmpdir(), 'ps-folder-rename-'));
     try {
       const { mkdirSync } = await import('node:fs');
       mkdirSync(join(setupDir, 'articles'), { recursive: true });
@@ -648,7 +648,7 @@ describe('handleRenamePath — folder rename via consolidated endpoint', () => {
   });
 
   test('UI folder rename (no agentId) with principal records principal contributor per affected doc', async () => {
-    const setupDir = mkdtempSync(join(tmpdir(), 'ok-folder-rename-'));
+    const setupDir = mkdtempSync(join(tmpdir(), 'ps-folder-rename-'));
     try {
       const { mkdirSync } = await import('node:fs');
       mkdirSync(join(setupDir, 'articles'), { recursive: true });

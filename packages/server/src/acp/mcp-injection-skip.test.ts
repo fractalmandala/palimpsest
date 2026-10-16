@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
-import { OK_HOSTED_AGENT_ENV } from '@inkeep/open-knowledge-core';
+import { PS_HOSTED_AGENT_ENV } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { resolveOnPath } from '../git-preflight.ts';
@@ -15,7 +15,7 @@ import {
   AcpThreadManager,
   type AcpThreadManagerOptions,
   type HarnessManagedMcpEntryHit,
-  type OkMcpHostedMarker,
+  type PsMcpHostedMarker,
 } from './thread-manager.ts';
 
 const log = getLogger('acp-injection-skip-test');
@@ -62,7 +62,7 @@ type BuildMcpServersSeam = {
       env?: Array<{ name: string; value: string }>;
       headers?: Array<{ name: string; value: string }>;
     }>;
-    hostedMarker: OkMcpHostedMarker;
+    hostedMarker: PsMcpHostedMarker;
     browserUnavailable: 'no-node' | 'failed' | null;
     browserInjected: boolean;
   }>;
@@ -71,7 +71,7 @@ type BuildMcpServersSeam = {
 function makeManager(
   probe?: AcpThreadManagerOptions['probeHarnessManagedMcpEntry'],
   stdio: AcpThreadManagerOptions['getMcpStdioCommand'] = () => ({
-    command: 'open-knowledge',
+    command: 'palimpsest',
     args: ['mcp', '--port', '4242'],
   }),
   pi?: {
@@ -156,17 +156,17 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
     const m = makeManager(() => null);
     const { servers } = await m.buildMcpServers(record('registry', 'codex-acp'), LAUNCH, HTTP_INIT);
     expect(servers).toHaveLength(1);
-    expect(servers[0]).toMatchObject({ name: 'open-knowledge', type: 'http' });
+    expect(servers[0]).toMatchObject({ name: 'palimpsest', type: 'http' });
   });
 
   test('a Beta server injects its own server name on both transports', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       const m = makeManager(() => null);
       const http = await m.buildMcpServers(record('registry', 'codex-acp'), LAUNCH, HTTP_INIT);
       const stdio = await m.buildMcpServers(record('registry', 'claude-acp'), LAUNCH, {});
-      expect(http.servers[0]).toMatchObject({ name: 'open-knowledge-beta', type: 'http' });
-      expect(stdio.servers[0]).toMatchObject({ name: 'open-knowledge-beta' });
+      expect(http.servers[0]).toMatchObject({ name: 'palimpsest-beta', type: 'http' });
+      expect(stdio.servers[0]).toMatchObject({ name: 'palimpsest-beta' });
     } finally {
       vi.unstubAllEnvs();
     }
@@ -194,9 +194,9 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
       {},
     );
     expect(servers).toHaveLength(1);
-    expect(servers[0]).toMatchObject({ name: 'open-knowledge' });
+    expect(servers[0]).toMatchObject({ name: 'palimpsest' });
     const env = (servers[0] as { env: Array<{ name: string; value: string }> }).env;
-    expect(env).toContainEqual({ name: OK_HOSTED_AGENT_ENV, value: '1' });
+    expect(env).toContainEqual({ name: PS_HOSTED_AGENT_ENV, value: '1' });
     expect(hostedMarker).toBe('stdio-entry-env');
   });
 
@@ -206,13 +206,13 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
       () => ({
         command: 'node',
         args: ['/src/cli.mjs', 'mcp', '--port', '4242'],
-        env: { OK_CHANNEL: 'dev' },
+        env: { PS_CHANNEL: 'dev' },
       }),
     );
     const { servers } = await m.buildMcpServers(record('registry', 'claude-acp'), LAUNCH, {});
     const env = (servers[0] as { env: Array<{ name: string; value: string }> }).env;
-    expect(env).toContainEqual({ name: 'OK_CHANNEL', value: 'dev' });
-    expect(env).toContainEqual({ name: OK_HOSTED_AGENT_ENV, value: '1' });
+    expect(env).toContainEqual({ name: 'PS_CHANNEL', value: 'dev' });
+    expect(env).toContainEqual({ name: PS_HOSTED_AGENT_ENV, value: '1' });
   });
 
   test('the injected stdio PATH is the agent spawn PATH, not the server process PATH', async () => {
@@ -256,7 +256,7 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
       },
     );
     expect(servers).toHaveLength(1);
-    expect(servers[0]).toMatchObject({ name: 'open-knowledge', type: 'http' });
+    expect(servers[0]).toMatchObject({ name: 'palimpsest', type: 'http' });
     expect(hostedMarker).toBe('http-header');
     expect(calls).toBe(0);
   });
@@ -267,14 +267,14 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
     });
     const { servers } = await m.buildMcpServers(record('registry', 'claude-acp'), LAUNCH, {});
     expect(servers).toHaveLength(1);
-    expect(servers[0]).toMatchObject({ name: 'open-knowledge', command: 'open-knowledge' });
+    expect(servers[0]).toMatchObject({ name: 'palimpsest', command: 'palimpsest' });
   });
 
   test('unwired seam keeps unconditional injection', async () => {
     const m = makeManager(undefined);
     expect(
       (await m.buildMcpServers(record('registry', 'codex-acp'), LAUNCH, HTTP_INIT)).servers,
-    ).toEqual([expect.objectContaining({ name: 'open-knowledge' })]);
+    ).toEqual([expect.objectContaining({ name: 'palimpsest' })]);
   });
 });
 
@@ -331,7 +331,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       globalDir,
     });
     const { servers } = await m.buildMcpServers(record('registry', 'claude-acp'), LAUNCH, {});
-    expect(servers.map((s) => s.name)).toEqual(['open-knowledge', 'ok-browser']);
+    expect(servers.map((s) => s.name)).toEqual(['palimpsest', 'ps-browser']);
     const browser = servers[1] as { command?: string; args?: string[]; env?: unknown };
     expect(browser.command).toBe(join(npx.path, 'node'));
     const chat = join(globalDir, 'agent-browser', THREAD_ID);
@@ -361,7 +361,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       LAUNCH,
       HTTP_INIT,
     );
-    const browser = servers.find((s) => s.name === 'ok-browser') as
+    const browser = servers.find((s) => s.name === 'ps-browser') as
       | { args: string[]; env: Array<{ name: string; value: string }> }
       | undefined;
     const path = browser?.env.find((e) => e.name === 'PATH')?.value;
@@ -374,7 +374,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       enabled: () => true,
       resolveNpx: () => npx,
     });
-    expect(await names(m, 'codex-acp')).toEqual(['ok-browser']);
+    expect(await names(m, 'codex-acp')).toEqual(['ps-browser']);
   });
 
   test('leaves the browser out when it is off, unset, npx is missing, or there is no per-user folder', async () => {
@@ -392,10 +392,10 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       resolveNpx: () => npx,
       globalDir: null,
     });
-    expect(await names(off, 'claude-acp')).toEqual(['open-knowledge']);
-    expect(await names(makeManager(), 'claude-acp')).toEqual(['open-knowledge']);
-    expect(await names(noNpx, 'claude-acp')).toEqual(['open-knowledge']);
-    expect(await names(noGlobalDir, 'claude-acp')).toEqual(['open-knowledge']);
+    expect(await names(off, 'claude-acp')).toEqual(['palimpsest']);
+    expect(await names(makeManager(), 'claude-acp')).toEqual(['palimpsest']);
+    expect(await names(noNpx, 'claude-acp')).toEqual(['palimpsest']);
+    expect(await names(noGlobalDir, 'claude-acp')).toEqual(['palimpsest']);
     expect(await unavailable(off)).toBeNull();
     expect(await unavailable(makeManager())).toBeNull();
     expect(await unavailable(noNpx)).toBe('no-node');
@@ -430,7 +430,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       LAUNCH,
       HTTP_INIT,
     );
-    expect(servers.map((s) => s.name)).toEqual(['open-knowledge']);
+    expect(servers.map((s) => s.name)).toEqual(['palimpsest']);
     expect(browserUnavailable).toBe('failed');
     expect(installs).toEqual(
       ['true', 'false'].map((preferOffline) => ({
@@ -458,7 +458,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       LAUNCH,
       HTTP_INIT,
     );
-    const browser = servers.find((s) => s.name === 'ok-browser');
+    const browser = servers.find((s) => s.name === 'ps-browser');
     expect(browser?.env).toContainEqual({ name: 'npm_config_cache', value: '/runtime/npm-cache' });
     expect(installCaches).toEqual(['/runtime/npm-cache']);
   });
@@ -476,7 +476,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       LAUNCH,
       HTTP_INIT,
     );
-    expect(servers.map((s) => s.name)).toEqual(['open-knowledge']);
+    expect(servers.map((s) => s.name)).toEqual(['palimpsest']);
     expect(browserUnavailable).toBe('failed');
   });
 
@@ -502,14 +502,14 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       enabled: () => true,
       resolveNpx: () => npx,
     });
-    expect(await names(on, 'claude-acp')).toEqual(['open-knowledge', 'ok-browser']);
-    expect(await names(on, 'codex-acp')).toEqual(['open-knowledge', 'ok-browser']);
+    expect(await names(on, 'claude-acp')).toEqual(['palimpsest', 'ps-browser']);
+    expect(await names(on, 'codex-acp')).toEqual(['palimpsest', 'ps-browser']);
     for (const id of ['gemini', 'cursor', 'opencode', 'github-copilot-cli']) {
-      expect(await names(on, id)).toEqual(['open-knowledge']);
+      expect(await names(on, id)).toEqual(['palimpsest']);
     }
     expect(await names(on, 'pi-acp')).toEqual([]);
     const custom = await on.buildMcpServers(record('custom', 'claude-acp'), LAUNCH, HTTP_INIT);
-    expect(custom.servers.map((s) => s.name)).toEqual(['open-knowledge']);
+    expect(custom.servers.map((s) => s.name)).toEqual(['palimpsest']);
   });
 
   test('refuses an npx inside the project, or one with no node beside it, and tries the next PATH', async () => {
@@ -533,7 +533,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       LAUNCH,
       HTTP_INIT,
     );
-    const browser = servers.find((s) => s.name === 'ok-browser') as { args?: string[] } | undefined;
+    const browser = servers.find((s) => s.name === 'ps-browser') as { args?: string[] } | undefined;
     expect(browser?.args?.[4]).toBe(safe.npx);
     expect(tried).toEqual([join(PROJECT, 'node_modules', '.bin'), bare, safe.path]);
 
@@ -542,7 +542,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       resolveNpx: (_candidates, _resolveCommand, accept) =>
         resolveBrowserNpx([join(PROJECT, 'bin')], (name, path) => join(path, name), accept),
     });
-    expect(await names(onlyProject, 'claude-acp')).toEqual(['open-knowledge']);
+    expect(await names(onlyProject, 'claude-acp')).toEqual(['palimpsest']);
     expect(await unavailable(onlyProject)).toBe('no-node');
     expect(await unavailable(m)).toBeNull();
   });
@@ -556,7 +556,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       resolveNpx: () => npx,
       globalDir,
     });
-    expect(await names(m, 'claude-acp')).toEqual(['open-knowledge']);
+    expect(await names(m, 'claude-acp')).toEqual(['palimpsest']);
     expect(await unavailable(m)).toBe('failed');
   });
 
@@ -568,12 +568,12 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
       enabled: () => readAgentBrowserTools(projectDir, home),
       resolveNpx: () => npx,
     });
-    expect(await names(m, 'claude-acp')).toEqual(['open-knowledge']);
-    mkdirSync(join(home, '.ok'), { recursive: true });
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  browserTools: true\n');
-    expect(await names(m, 'claude-acp')).toEqual(['open-knowledge', 'ok-browser']);
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  browserTools: false\n');
-    expect(await names(m, 'claude-acp')).toEqual(['open-knowledge']);
+    expect(await names(m, 'claude-acp')).toEqual(['palimpsest']);
+    mkdirSync(join(home, '.ps'), { recursive: true });
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  browserTools: true\n');
+    expect(await names(m, 'claude-acp')).toEqual(['palimpsest', 'ps-browser']);
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  browserTools: false\n');
+    expect(await names(m, 'claude-acp')).toEqual(['palimpsest']);
   });
 });
 
@@ -582,7 +582,7 @@ describe('buildMcpServers × pi-acp', () => {
     project: 'ready' as const,
     cwd: '/tmp/acp-injection-skip-project',
     canonicalCwd: '/tmp/acp-injection-skip-project',
-    bridgePath: '/tmp/acp-injection-skip-project/.pi/extensions/open-knowledge.ts',
+    bridgePath: '/tmp/acp-injection-skip-project/.pi/extensions/palimpsest.ts',
     trustPath: '/tmp/acp-injection-skip-home/.pi/agent/trust.json',
     bridge: 'own-current' as const,
     trust: 'trusted' as const,

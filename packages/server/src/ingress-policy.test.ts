@@ -1,4 +1,4 @@
-import type { ServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import type { ServerRuntimeConfig } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   admitRequestOrigin,

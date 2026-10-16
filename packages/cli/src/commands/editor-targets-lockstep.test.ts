@@ -1,4 +1,4 @@
-import { ALL_EDITOR_IDS, EDITOR_PROJECT_SKILL_ROOT } from '@inkeep/open-knowledge-core';
+import { ALL_EDITOR_IDS, EDITOR_PROJECT_SKILL_ROOT } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { EDITOR_TARGETS } from './editors.ts';
 

@@ -144,7 +144,7 @@ export function SlashCommandMenu({
         <aside
           aria-hidden="true"
           onMouseDown={preventFocusSteal}
-          className={`ok-suggestion-preview w-64 rounded-lg border bg-popover p-2 shadow-md ${
+          className={`ps-suggestion-preview w-64 rounded-lg border bg-popover p-2 shadow-md ${
             selectedItem?.preview ? '' : 'invisible'
           }`}
         >

@@ -1,4 +1,4 @@
-import { SKILL_NAME_REGEX, type SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+import { SKILL_NAME_REGEX, type SkillScope } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';

@@ -1,8 +1,8 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — Q2 card grid uses raw <button> awaiting shadcn migration; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — Q2 card grid uses raw <button> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { classifyBranchMatch } from '@inkeep/open-knowledge-core/sharing';
+import { classifyBranchMatch } from '@palimpsest/core/sharing';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
@@ -21,9 +21,9 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import {
   type HeadBranchInfo,
-  type OkDesktopBridge,
-  type OkLocalOpAuthStatusResponse,
-  type OkShareReceivedPayload,
+  type PsDesktopBridge,
+  type PsLocalOpAuthStatusResponse,
+  type PsShareReceivedPayload,
   shareTargetPath,
 } from '@/lib/desktop-bridge-types';
 import {
@@ -50,19 +50,19 @@ export type ShareReceiveCloneResult =
   | { readonly kind: 'error'; readonly detail?: string };
 
 export interface ShareReceiveCloneController {
-  getAuthStatus(host?: string): Promise<OkLocalOpAuthStatusResponse>;
-  startSignIn(): Promise<OkLocalOpAuthStatusResponse | null>;
+  getAuthStatus(host?: string): Promise<PsLocalOpAuthStatusResponse>;
+  startSignIn(): Promise<PsLocalOpAuthStatusResponse | null>;
   runClone(args: { url: string; branch?: string | null }): Promise<ShareReceiveCloneResult>;
 }
 
 export interface ShareReceiveDialogProps {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   cloneController?: ShareReceiveCloneController;
   store?: ShareReceiveStore;
 }
 
-type LauncherConsentPayload = Extract<OkShareReceivedPayload, { kind: 'launcher-consent' }>;
-type LauncherMissPayload = Extract<OkShareReceivedPayload, { kind: 'launcher-miss' }>;
+type LauncherConsentPayload = Extract<PsShareReceivedPayload, { kind: 'launcher-consent' }>;
+type LauncherMissPayload = Extract<PsShareReceivedPayload, { kind: 'launcher-miss' }>;
 
 function pendingTarget(share: LauncherMissPayload['share'] | LauncherConsentPayload['share']) {
   return {
@@ -74,13 +74,13 @@ function pendingTarget(share: LauncherMissPayload['share'] | LauncherConsentPayl
 }
 
 function isLauncherConsentPayload(
-  payload: OkShareReceivedPayload | null,
+  payload: PsShareReceivedPayload | null,
 ): payload is LauncherConsentPayload {
   return payload !== null && payload.kind === 'launcher-consent';
 }
 
 function isLauncherMissPayload(
-  payload: OkShareReceivedPayload | null,
+  payload: PsShareReceivedPayload | null,
 ): payload is LauncherMissPayload {
   return payload !== null && payload.kind === 'launcher-miss';
 }
@@ -93,7 +93,7 @@ export function ShareReceiveDialog({
   const payload = useSyncExternalStore(store.subscribe, store.getSnapshot, () => null);
 
   const [remountKey, setRemountKey] = useState(0);
-  const [seenPayload, setSeenPayload] = useState<OkShareReceivedPayload | null>(payload);
+  const [seenPayload, setSeenPayload] = useState<PsShareReceivedPayload | null>(payload);
   if (payload !== seenPayload) {
     setSeenPayload(payload);
     setRemountKey((k) => k + 1);
@@ -126,7 +126,7 @@ export function ShareReceiveDialog({
 
 interface ShareReceiveDialogInnerProps {
   payload: LauncherConsentPayload | LauncherMissPayload;
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   cloneController?: ShareReceiveCloneController;
   store: ShareReceiveStore;
 }
@@ -139,7 +139,7 @@ function ShareReceiveDialogInner({
 }: ShareReceiveDialogInnerProps) {
   const { t } = useLingui();
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [authStatus, setAuthStatus] = useState<OkLocalOpAuthStatusResponse | null>(null);
+  const [authStatus, setAuthStatus] = useState<PsLocalOpAuthStatusResponse | null>(null);
   const [authChecking, setAuthChecking] = useState(false);
   const [cloneRunning, setCloneRunning] = useState(false);
   const [cloneError, setCloneError] = useState<{ detail: string | null } | null>(null);
@@ -345,7 +345,7 @@ function ShareReceiveDialogInner({
     console.warn(`[receive] consent_dialog action=initialize worktree=${seed.candidatePath}`);
     setConsentState((prev) => (prev === null ? prev : markInitializing(prev)));
     void bridge.project
-      .okInit({ projectPath: seed.candidatePath })
+      .psInit({ projectPath: seed.candidatePath })
       .then(async (outcome) => {
         if (outcome.ok === true) {
           setConsentState((prev) =>
@@ -469,7 +469,7 @@ function ShareReceiveDialogInner({
               </p>
             ) : null}
             <p className="mt-3 text-sm text-muted-foreground">
-              <Trans>That folder isn't an OpenKnowledge project yet. Initialize it and open?</Trans>
+              <Trans>That folder isn't an Palimpsest project yet. Initialize it and open?</Trans>
             </p>
             {consentState.phase === 'error' ? (
               <p

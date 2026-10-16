@@ -28,7 +28,7 @@ let contentDir: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-folder-template-native-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-folder-template-native-'));
   contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   writeFileSync(resolve(contentDir, 'alpha.md'), '# Alpha\n\nBody.\n', 'utf-8');
   server = await bootCompositionRig(contentDir);
@@ -95,13 +95,13 @@ describe('folder-template group over the composed listener — served natively',
     });
     expect(res.status).toBe(400);
     expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
-    expect(existsSync(resolve(outside, 'sub', '.ok', 'templates', 'planted.md'))).toBe(false);
+    expect(existsSync(resolve(outside, 'sub', '.ps', 'templates', 'planted.md'))).toBe(false);
   });
 
-  test('PUT /api/template refuses a real .ok whose templates dir symlinks out', async () => {
+  test('PUT /api/template refuses a real .ps whose templates dir symlinks out', async () => {
     const outside = await mkdtemp(resolve(tmpRoot, 'tpl-outside-deep-'));
-    mkdirSync(resolve(contentDir, 'tpl-real', '.ok'), { recursive: true });
-    symlinkSync(outside, resolve(contentDir, 'tpl-real', '.ok', 'templates'), 'dir');
+    mkdirSync(resolve(contentDir, 'tpl-real', '.ps'), { recursive: true });
+    symlinkSync(outside, resolve(contentDir, 'tpl-real', '.ps', 'templates'), 'dir');
     const res = await fetch(`http://127.0.0.1:${server.port}/api/template`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -119,10 +119,10 @@ describe('folder-template group over the composed listener — served natively',
 
   test('PUT /api/template refuses an IN-ROOT symlinked templates dir and writes nothing through it', async () => {
     mkdirSync(resolve(contentDir, 'inroot-target'), { recursive: true });
-    mkdirSync(resolve(contentDir, 'tpl-inroot', '.ok'), { recursive: true });
+    mkdirSync(resolve(contentDir, 'tpl-inroot', '.ps'), { recursive: true });
     symlinkSync(
       '../../inroot-target',
-      resolve(contentDir, 'tpl-inroot', '.ok', 'templates'),
+      resolve(contentDir, 'tpl-inroot', '.ps', 'templates'),
       'dir',
     );
     const res = await fetch(`http://127.0.0.1:${server.port}/api/template`, {
@@ -143,8 +143,8 @@ describe('folder-template group over the composed listener — served natively',
   test('PUT /api/template refuses an IN-ROOT symlinked template LEAF and leaves the target intact', async () => {
     mkdirSync(resolve(contentDir, '.claude'), { recursive: true });
     writeFileSync(resolve(contentDir, '.claude', 'CLAUDE.md'), '# victim\n', 'utf-8');
-    mkdirSync(resolve(contentDir, 'tpl-leaf', '.ok', 'templates'), { recursive: true });
-    const leaf = resolve(contentDir, 'tpl-leaf', '.ok', 'templates', 'meeting.md');
+    mkdirSync(resolve(contentDir, 'tpl-leaf', '.ps', 'templates'), { recursive: true });
+    const leaf = resolve(contentDir, 'tpl-leaf', '.ps', 'templates', 'meeting.md');
     symlinkSync('../../../.claude/CLAUDE.md', leaf);
     const res = await fetch(`http://127.0.0.1:${server.port}/api/template`, {
       method: 'PUT',
@@ -166,8 +166,8 @@ describe('folder-template group over the composed listener — served natively',
     mkdirSync(resolve(contentDir, 'del-target'), { recursive: true });
     const victim = resolve(contentDir, 'del-target', 'keep.md');
     writeFileSync(victim, '# keep me\n', 'utf-8');
-    mkdirSync(resolve(contentDir, 'tpl-del', '.ok'), { recursive: true });
-    symlinkSync('../../del-target', resolve(contentDir, 'tpl-del', '.ok', 'templates'), 'dir');
+    mkdirSync(resolve(contentDir, 'tpl-del', '.ps'), { recursive: true });
+    symlinkSync('../../del-target', resolve(contentDir, 'tpl-del', '.ps', 'templates'), 'dir');
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/template?folder=tpl-del&name=keep`,
       { method: 'DELETE' },
@@ -181,8 +181,8 @@ describe('folder-template group over the composed listener — served natively',
     mkdirSync(resolve(contentDir, '.agents'), { recursive: true });
     const victim = resolve(contentDir, '.agents', 'AGENTS.md');
     writeFileSync(victim, '# victim agent definition\n', 'utf-8');
-    mkdirSync(resolve(contentDir, 'tpl-import', '.ok', 'templates'), { recursive: true });
-    const leaf = resolve(contentDir, 'tpl-import', '.ok', 'templates', 'alpha.md');
+    mkdirSync(resolve(contentDir, 'tpl-import', '.ps', 'templates'), { recursive: true });
+    const leaf = resolve(contentDir, 'tpl-import', '.ps', 'templates', 'alpha.md');
     symlinkSync('../../../.agents/AGENTS.md', leaf);
     const res = await fetch(`http://127.0.0.1:${server.port}/api/template/import`, {
       method: 'POST',
@@ -196,9 +196,9 @@ describe('folder-template group over the composed listener — served natively',
   });
 
   test.runIf(process.getuid?.() !== 0)(
-    'POST /api/template (move) surfaces an uninspectable ANCESTOR .ok/templates as 500, not 404',
+    'POST /api/template (move) surfaces an uninspectable ANCESTOR .ps/templates as 500, not 404',
     async () => {
-      const ancestorOk = resolve(contentDir, 'mv-root', '.ok');
+      const ancestorOk = resolve(contentDir, 'mv-root', '.ps');
       mkdirSync(ancestorOk, { recursive: true });
       mkdirSync(resolve(contentDir, 'mv-root', 'child'), { recursive: true });
       chmodSync(ancestorOk, 0o000);

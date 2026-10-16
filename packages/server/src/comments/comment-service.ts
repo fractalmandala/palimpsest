@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { findAllPassages } from '@inkeep/open-knowledge-core';
+import { findAllPassages } from '@palimpsest/core';
 import { bestByContext, createAnchor, literalSpans, refind } from './anchor.ts';
 import type { CommentIndex } from './comment-index.ts';
 import type { CommentThreadStore } from './thread-store.ts';

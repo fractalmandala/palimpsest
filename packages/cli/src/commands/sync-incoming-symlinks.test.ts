@@ -15,7 +15,7 @@ import {
   assertMergeNameResolvesTo,
   type Config,
   UnsafeIncomingSymlinkError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import simpleGit, { type SimpleGit } from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -30,7 +30,7 @@ let sister: SimpleGit;
 let project: SimpleGit;
 
 beforeEach(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-pull-incoming-symlinks-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-pull-incoming-symlinks-'));
   const bareDir = join(tmpDir, 'bare.git');
   const sisterDir = join(tmpDir, 'sister');
   projectDir = join(tmpDir, 'project');
@@ -135,7 +135,7 @@ describe('ok pull without a running server', () => {
     expect(error).toBeInstanceOf(UnsafeIncomingSymlinkError);
     expect((error as Error).message).not.toContain('leak');
     expect(syncFailureMessage(error)).toBe(
-      'incoming symlinks are unsafe to check out: "notes/leak.md" (points into private .git or OpenKnowledge state). Remove or fix these links on the remote, or fix your own local change to them, then pull again.',
+      'incoming symlinks are unsafe to check out: "notes/leak.md" (points into private .git or Palimpsest state). Remove or fix these links on the remote, or fix your own local change to them, then pull again.',
     );
     expect(existsAsEntry('notes/leak.md')).toBe(false);
   });
@@ -245,7 +245,7 @@ describe('ok pull without a running server', () => {
   test('ok pull --json keeps stdout to JSON lines and reports the refused path in its error record', async () => {
     await pushSymlink('notes/leak.md', '../.git/config');
     const env = { ...process.env };
-    for (const variable of ['NODE_ENV', 'LOG_LEVEL', 'OK_CONSOLE_LEVEL', 'OK_FILE_LEVEL']) {
+    for (const variable of ['NODE_ENV', 'LOG_LEVEL', 'PS_CONSOLE_LEVEL', 'PS_FILE_LEVEL']) {
       delete env[variable];
     }
 

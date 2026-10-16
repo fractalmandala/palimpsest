@@ -1,4 +1,4 @@
-import type { LintPluginId } from '@inkeep/open-knowledge-core/markdown/lint';
+import type { LintPluginId } from '@palimpsest/core/markdown/lint';
 
 export interface LintPluginMeta {
   id: LintPluginId;
@@ -8,7 +8,7 @@ export interface LintPluginMeta {
   recommendedSkills?: readonly { packId: string; name: string }[];
 }
 
-const DOCS_BASE = 'https://openknowledge.ai/docs/advanced/content-rules';
+const DOCS_BASE = 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content';
 
 export const LINT_PLUGIN_META: LintPluginMeta[] = [
   { id: 'markdownlint', label: 'markdownlint', docUrl: `${DOCS_BASE}/markdownlint` },
@@ -19,10 +19,10 @@ export const LINT_PLUGIN_META: LintPluginMeta[] = [
     docUrl: `${DOCS_BASE}/frontmatter`,
   },
   {
-    id: 'okf',
+    id: 'psf',
     label: 'OKF',
-    docUrl: 'https://openknowledge.ai/docs/plugins/okf',
+    docUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/plugins/psf.mdx',
     beta: true,
-    recommendedSkills: [{ packId: 'okf', name: 'okf-knowledge-base' }],
+    recommendedSkills: [{ packId: 'psf', name: 'psf-knowledge-base' }],
   },
 ];

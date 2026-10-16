@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { PassThrough } from 'node:stream';
-import type { SkillInstallEvent } from '@inkeep/open-knowledge-server';
+import type { SkillInstallEvent } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EDITOR_TARGETS } from './editors.ts';
 import {
@@ -42,7 +42,7 @@ function writeBundledSkill(dir: string, version: string): void {
   mkdirSync(dir, { recursive: true });
   writeFileSync(
     join(dir, 'SKILL.md'),
-    `---\nname: open-knowledge\nmetadata:\n  version: "${version}"\n---\nbundled-${version}-content\n`,
+    `---\nname: palimpsest\nmetadata:\n  version: "${version}"\n---\nbundled-${version}-content\n`,
   );
   writeFileSync(join(dir, 'references.md'), `bundled-${version}-references`);
 }
@@ -53,9 +53,9 @@ function writeStaleSkillFiles(destDir: string, marker: string): void {
   writeFileSync(join(destDir, 'leftover.md'), `to-be-orphaned-${marker}`);
 }
 
-const OK_WIRED_MCP_JSON = JSON.stringify({
+const PS_WIRED_MCP_JSON = JSON.stringify({
   mcpServers: {
-    'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v1\nexec ok mcp'] },
+    'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexec ps mcp'] },
   },
 });
 
@@ -169,9 +169,9 @@ describe('repairSkills — project sweep (AC-A1, AC-A2, AC-A3)', () => {
   it('AC-A3: per-host write failure does not stop the other hosts', async () => {
     const claudeDest = join(scratch.project, '.claude', 'skills', PROJECT_SKILL_DIR_NAME);
     const cursorDest = join(scratch.project, '.cursor', 'skills', PROJECT_SKILL_DIR_NAME);
-    writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON);
     mkdirSync(join(scratch.project, '.cursor'), { recursive: true });
-    writeFileSync(join(scratch.project, '.cursor', 'mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.cursor', 'mcp.json'), PS_WIRED_MCP_JSON);
 
     const realFs = await import('node:fs');
     const customFs: RepairSkillsFsOps = {
@@ -230,11 +230,11 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
   let logEvents: RepairSkillsLogEvent[];
 
   const UNWIRED_MCP_JSON = JSON.stringify({ mcpServers: { other: { command: 'node' } } });
-  const OK_WIRED_MCP_JSON_WIN = JSON.stringify({
+  const PS_WIRED_MCP_JSON_WIN = JSON.stringify({
     mcpServers: {
-      'open-knowledge': {
+      'palimpsest': {
         command: 'powershell',
-        args: ['-NoProfile', '-NonInteractive', '-Command', '# ok-mcp-win-v1\nexit 127'],
+        args: ['-NoProfile', '-NonInteractive', '-Command', '# ps-mcp-win-v1\nexit 127'],
       },
     },
   });
@@ -252,7 +252,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
   });
 
   it('creates a project SKILL.md for a host wired for OK MCP but missing the skill', async () => {
-    writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON);
 
     const written: Array<{ home: string; version: string }> = [];
     const result = await repairSkills({
@@ -290,7 +290,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
   });
 
   it('creates a project SKILL.md for a host wired with the Windows chain sentinel', async () => {
-    writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON_WIN);
+    writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON_WIN);
 
     const written: Array<{ home: string; version: string }> = [];
     const result = await repairSkills({
@@ -316,7 +316,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
 
   it('creates a project SKILL.md for cursor wired via .cursor/mcp.json', async () => {
     mkdirSync(join(scratch.project, '.cursor'), { recursive: true });
-    writeFileSync(join(scratch.project, '.cursor', 'mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.cursor', 'mcp.json'), PS_WIRED_MCP_JSON);
 
     const written: Array<{ home: string; version: string }> = [];
     const result = await repairSkills({
@@ -344,7 +344,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
     mkdirSync(join(scratch.project, '.codex'), { recursive: true });
     writeFileSync(
       join(scratch.project, '.codex', 'config.toml'),
-      '[mcp_servers.open-knowledge]\ncommand = "/bin/sh"\nargs = ["-l", "-c", "# ok-mcp-v1\\nexec ok mcp"]\n',
+      '[mcp_servers.palimpsest]\ncommand = "/bin/sh"\nargs = ["-l", "-c", "# ps-mcp-v1\\nexec ps mcp"]\n',
     );
 
     const written: Array<{ home: string; version: string }> = [];
@@ -397,7 +397,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
   it('leaves an existing SKILL.md present, not re-created, even when wired', async () => {
     const claudeDest = join(scratch.project, '.claude', 'skills', PROJECT_SKILL_DIR_NAME);
     writeStaleSkillFiles(claudeDest, 'wired-refresh');
-    writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON);
 
     const written: Array<{ home: string; version: string }> = [];
     const result = await repairSkills({
@@ -432,7 +432,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
     writeFileSync(witness, 'do-not-touch');
     try {
       realFs.symlinkSync(escapeTarget, join(scratch.project, '.claude'));
-      writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON);
+      writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON);
 
       const written: Array<{ home: string; version: string }> = [];
       const result = await repairSkills({
@@ -723,7 +723,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
           writtenVersions: written,
         }),
         readRecordedVersion: async () => {
-          throw new Error('EACCES: permission denied, open ~/.ok/skill-state.yml');
+          throw new Error('EACCES: permission denied, open ~/.ps/skill-state.yml');
         },
       },
     });
@@ -893,7 +893,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 });
 
-describe('repairSkills — OK_RECLAIM_DISABLE env gate (AC-C1)', () => {
+describe('repairSkills — PS_RECLAIM_DISABLE env gate (AC-C1)', () => {
   let scratch: ReturnType<typeof mkScratch>;
 
   beforeEach(() => {
@@ -1315,13 +1315,13 @@ describe('formatRepairSkillsResult — done-branch stdout formatting', () => {
           {
             editorId: 'cursor',
             hostDir: '.cursor',
-            path: '/h/.cursor/skills/open-knowledge',
+            path: '/h/.cursor/skills/palimpsest',
             outcome: 'skipped-global-collision',
           },
           {
             editorId: 'codex',
             hostDir: '.codex',
-            path: '/h/.codex/skills/open-knowledge',
+            path: '/h/.codex/skills/palimpsest',
             outcome: 'skipped-global-collision',
           },
         ],
@@ -1527,7 +1527,7 @@ describe('repairSkillsResultExitCode (PR feedback: standalone exit code mapping)
             {
               editorId: 'cursor',
               hostDir: '.cursor',
-              path: '/h/.cursor/skills/open-knowledge',
+              path: '/h/.cursor/skills/palimpsest',
               outcome: 'skipped-global-collision',
             },
           ],
@@ -1548,13 +1548,13 @@ describe('repairSkillsCommand — Commander action wiring (AC-D1, AC-D3)', () =>
 
   beforeEach(() => {
     scratch = mkScratch('cmd');
-    prevReclaim = process.env.OK_RECLAIM_DISABLE;
+    prevReclaim = process.env.PS_RECLAIM_DISABLE;
     prevExitCode = process.exitCode;
   });
   afterEach(() => {
     rmSync(scratch.root, { recursive: true, force: true });
-    if (prevReclaim === undefined) delete process.env.OK_RECLAIM_DISABLE;
-    else process.env.OK_RECLAIM_DISABLE = prevReclaim;
+    if (prevReclaim === undefined) delete process.env.PS_RECLAIM_DISABLE;
+    else process.env.PS_RECLAIM_DISABLE = prevReclaim;
     process.exitCode = prevExitCode as number | undefined;
   });
 
@@ -1569,7 +1569,7 @@ describe('repairSkillsCommand — Commander action wiring (AC-D1, AC-D3)', () =>
     const origCwd = process.cwd();
     try {
       process.chdir(scratch.project);
-      process.env.OK_RECLAIM_DISABLE = '1';
+      process.env.PS_RECLAIM_DISABLE = '1';
       const cmd = repairSkillsCommand();
       await cmd.parseAsync(['node', 'repair-skills']);
     } finally {
@@ -1583,7 +1583,7 @@ describe('repairSkillsCommand — Commander action wiring (AC-D1, AC-D3)', () =>
   });
 
   it('AC-D3: command honors program-level chdir (program `--cwd` is the canonical surface)', async () => {
-    process.env.OK_RECLAIM_DISABLE = '1';
+    process.env.PS_RECLAIM_DISABLE = '1';
     const origCwd = process.cwd();
     try {
       process.chdir(scratch.project);
@@ -1601,9 +1601,9 @@ describe('repairSkillsCommand help names the running channel CLI', () => {
 
   it.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: the description points at %s init', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     expect(repairSkillsCommand().description()).toBe(
       `Restore missing project skill copies and repair user-global bundles for installed AI editors. Existing project skills are preserved; run \`${command} init\` to refresh them.`,
     );
@@ -1638,7 +1638,7 @@ describe('repairSkills — symlink-escape guard (parity with writeProjectSkill)'
     const escapeTarget = join(escapeRoot, 'evil-claude');
     mkdirSync(escapeTarget, { recursive: true });
     realFs.symlinkSync(escapeTarget, join(scratch.project, '.claude'));
-    writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON);
 
     const witnessFile = join(escapeTarget, 'witness.txt');
     writeFileSync(witnessFile, 'should-not-be-touched');
@@ -1793,9 +1793,9 @@ describe('confirmLegacyCleanup — prompt behaviour', () => {
 
   it.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: the non-TTY decline names %s repair-skills --yes', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     let stdout = '';
     const write = vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
       stdout += String(chunk);
@@ -1866,16 +1866,16 @@ describe('repairSkills — project config that IS the global config is never swe
   let discoveryBundleDir: string;
   let logEvents: RepairSkillsLogEvent[];
 
-  const OK_WIRED_MCP_JSON = JSON.stringify({
+  const PS_WIRED_MCP_JSON = JSON.stringify({
     mcpServers: {
-      'open-knowledge': {
+      'palimpsest': {
         command: '/bin/sh',
-        args: ['-l', '-c', '# ok-mcp-v2\nexit 127'],
+        args: ['-l', '-c', '# ps-mcp-v2\nexit 127'],
       },
     },
   });
-  const OK_WIRED_TOML =
-    '[mcp_servers.open-knowledge]\ncommand = "/bin/sh"\nargs = ["-l", "-c", "# ok-mcp-v2\\nexit 127"]\n';
+  const PS_WIRED_TOML =
+    '[mcp_servers.palimpsest]\ncommand = "/bin/sh"\nargs = ["-l", "-c", "# ps-mcp-v2\\nexit 127"]\n';
 
   beforeEach(() => {
     scratch = mkScratch('global-collision');
@@ -1908,8 +1908,8 @@ describe('repairSkills — project config that IS the global config is never swe
     const codexGlobal = EDITOR_TARGETS.codex.configPath('', home);
     mkdirSync(dirname(cursorGlobal), { recursive: true });
     mkdirSync(dirname(codexGlobal), { recursive: true });
-    writeFileSync(cursorGlobal, OK_WIRED_MCP_JSON);
-    writeFileSync(codexGlobal, OK_WIRED_TOML);
+    writeFileSync(cursorGlobal, PS_WIRED_MCP_JSON);
+    writeFileSync(codexGlobal, PS_WIRED_TOML);
     expect(EDITOR_TARGETS.cursor.projectConfigPath?.(home)).toBe(cursorGlobal);
     expect(EDITOR_TARGETS.codex.projectConfigPath?.(home)).toBe(codexGlobal);
   }
@@ -1964,9 +1964,9 @@ describe('repairSkills — project config that IS the global config is never swe
       openCodeGlobal,
       JSON.stringify({
         mcp: {
-          'open-knowledge': {
+          'palimpsest': {
             type: 'local',
-            command: ['/bin/sh', '-l', '-c', '# ok-mcp-v2\nexit 127'],
+            command: ['/bin/sh', '-l', '-c', '# ps-mcp-v2\nexit 127'],
           },
         },
       }),
@@ -1987,7 +1987,7 @@ describe('repairSkills — project config that IS the global config is never swe
   });
 
   it('still sweeps a real project directory beside the same home', async () => {
-    writeFileSync(join(scratch.project, '.mcp.json'), OK_WIRED_MCP_JSON);
+    writeFileSync(join(scratch.project, '.mcp.json'), PS_WIRED_MCP_JSON);
 
     const result = await run(scratch.project);
 

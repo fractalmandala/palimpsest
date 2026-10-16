@@ -20,7 +20,7 @@ let tmpDir: string;
 let contentDir: string;
 
 beforeEach(async () => {
-  tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ok-watcher-ring-')));
+  tmpDir = realpathSync(await mkdtemp(resolve(tmpdir(), 'ps-watcher-ring-')));
   contentDir = resolve(tmpDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   resetWatcherDecisionDiagnostics();

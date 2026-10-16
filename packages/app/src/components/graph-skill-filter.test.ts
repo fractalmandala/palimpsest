@@ -137,7 +137,7 @@ describe('filterGraphSkillNodes', () => {
       graph(
         [
           builtinDoc('g', '__skill__/global/open-knowledge-discovery'),
-          builtinDoc('p', '.claude/skills/open-knowledge/SKILL'),
+          builtinDoc('p', '.claude/skills/palimpsest/SKILL'),
         ],
         [],
       ),

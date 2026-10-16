@@ -6,7 +6,7 @@ import {
   discoverSkillDirs,
   parseSkillDir,
   type SourceSpec,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
 import { clearSourceCache, fetchCachedSource } from './skill-source-cache.ts';
@@ -31,7 +31,7 @@ function skillMd(f: SkillFixture): string {
 }
 
 function makeGitRepo(skills: SkillFixture[]): string {
-  const repo = mkdtempSync(join(tmpdir(), 'ok-source-cache-repo-'));
+  const repo = mkdtempSync(join(tmpdir(), 'ps-source-cache-repo-'));
   for (const s of skills) {
     const d = join(repo, s.dir);
     mkdirSync(d, { recursive: true });
@@ -139,7 +139,7 @@ describe('fetchCachedSource', () => {
   });
 
   test('local sources bypass the cache and read in place', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-source-cache-local-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-source-cache-local-'));
     cleanupDirs.push(dir);
     mkdirSync(join(dir, 'x'), { recursive: true });
     writeFileSync(join(dir, 'x', 'SKILL.md'), skillMd({ dir: 'x', name: 'x', description: 'X' }));
@@ -149,7 +149,7 @@ describe('fetchCachedSource', () => {
   });
 
   test('a failed clone rejects without wedging the cache for other sources', async () => {
-    const missing = join(tmpdir(), 'ok-source-cache-nonexistent-xyz');
+    const missing = join(tmpdir(), 'ps-source-cache-nonexistent-xyz');
     await expect(fetchCachedSource(gitSpec(missing))).rejects.toThrow();
     const src = repo([{ dir: 'alpha', name: 'alpha', description: 'A' }]);
     const ok = await fetchCachedSource(gitSpec(src));

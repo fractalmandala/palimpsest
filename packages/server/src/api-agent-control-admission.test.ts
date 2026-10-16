@@ -66,7 +66,7 @@ function expectRefusal(status: number, body: string) {
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-control-admission-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-control-admission-'));
   writeFileSync(join(root, 'historical.md'), polluted);
   writeFileSync(join(root, 'historical-append.md'), polluted);
   server = await bootCompositionRig(root);

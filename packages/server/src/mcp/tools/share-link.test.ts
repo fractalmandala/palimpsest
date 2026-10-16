@@ -59,7 +59,7 @@ function createFakeServer() {
 function successBody() {
   return {
     ok: true,
-    shareUrl: 'https://openknowledge.ai/d/encoded',
+    shareUrl: 'https://github.com/fractalmandala/palimpsest/d/encoded',
     sharedUrl: 'https://github.com/o/r/blob/main/notes.md',
     branch: 'main',
   };
@@ -101,8 +101,8 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-share-link-test-'));
-  await mkdir(resolve(tmpDir, '.ok'), { recursive: true });
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-share-link-test-'));
+  await mkdir(resolve(tmpDir, '.ps'), { recursive: true });
   seenRequests.length = 0;
   mockResponse = { status: 200, body: {} };
   mockRawResponse = null;
@@ -121,7 +121,7 @@ function makeDeps(serverUrl: string | undefined, config: Config = BASE_CONFIG): 
 }
 
 async function seedUiServer(): Promise<void> {
-  const lockDir = resolve(tmpDir, '.ok', 'local');
+  const lockDir = resolve(tmpDir, '.ps', 'local');
   await mkdir(lockDir, { recursive: true });
   acquireServerLock(lockDir, {
     port: 0,
@@ -211,7 +211,7 @@ describe('share_link — target resolution (FR9 matrix)', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/root',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/root',
         sharedUrl: 'https://github.com/o/r/tree/main',
         branch: 'main',
       },
@@ -351,7 +351,7 @@ describe('share_link — happy path', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/encoded',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/encoded',
         sharedUrl: 'https://github.com/inkeep/wiki/blob/main/meeting.md',
         branch: 'main',
       },
@@ -362,12 +362,12 @@ describe('share_link — happy path', () => {
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent).toMatchObject({
       ok: true,
-      shareUrl: 'https://openknowledge.ai/d/encoded',
+      shareUrl: 'https://github.com/fractalmandala/palimpsest/d/encoded',
       sharedUrl: 'https://github.com/inkeep/wiki/blob/main/meeting.md',
       branch: 'main',
       resolvedKind: 'doc',
     });
-    expect(result.content[0]?.text).toContain('https://openknowledge.ai/d/encoded');
+    expect(result.content[0]?.text).toContain('https://github.com/fractalmandala/palimpsest/d/encoded');
     expect(result.content[0]?.text).toContain('main');
     expect(result.content[0]?.text).toContain('doc');
     expect(result.content[0]?.text).toContain('meeting');
@@ -379,7 +379,7 @@ describe('share_link — happy path', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/folder',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/folder',
         sharedUrl: 'https://github.com/o/r/tree/main/guides',
         branch: 'main',
       },
@@ -414,7 +414,7 @@ describe('share_link — happy path', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/folder',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/folder',
         sharedUrl: 'https://github.com/o/r/tree/main/guides',
         branch: 'main',
       },
@@ -436,7 +436,7 @@ describe('share_link — happy path', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/root',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/root',
         sharedUrl: 'https://github.com/o/r/tree/main',
         branch: 'main',
       },
@@ -459,7 +459,7 @@ describe('share_link — happy path', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/nested',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/nested',
         sharedUrl: 'https://github.com/o/r/tree/main/docs/api%20guide',
         branch: 'main',
       },
@@ -481,7 +481,7 @@ describe('share_link — happy path', () => {
       status: 200,
       body: {
         ok: true,
-        shareUrl: 'https://openknowledge.ai/d/folder',
+        shareUrl: 'https://github.com/fractalmandala/palimpsest/d/folder',
         sharedUrl: 'https://github.com/o/r/tree/main/guides',
         branch: 'main',
       },

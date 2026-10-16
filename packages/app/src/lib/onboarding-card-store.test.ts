@@ -309,8 +309,8 @@ describe('createOnboardingCardStore — install', () => {
 });
 
 describe('onboarding state saved by earlier releases', () => {
-  test('the storage key is still ok-onboarding-card-v1', () => {
-    expect(ONBOARDING_CARD_STORAGE_KEY).toBe('ok-onboarding-card-v1');
+  test('the storage key is still ps-onboarding-card-v1', () => {
+    expect(ONBOARDING_CARD_STORAGE_KEY).toBe('ps-onboarding-card-v1');
   });
 
   test('a saved checklist reads back unchanged', () => {
@@ -321,7 +321,7 @@ describe('onboarding state saved by earlier releases', () => {
       dismissed: true,
       completed: false,
     };
-    const s = memoryStorage({ 'ok-onboarding-card-v1': JSON.stringify(stored) });
+    const s = memoryStorage({ 'ps-onboarding-card-v1': JSON.stringify(stored) });
     expect(readPersistedState(s)).toEqual(stored);
   });
 
@@ -333,7 +333,7 @@ describe('onboarding state saved by earlier releases', () => {
       dismissed: true,
       completed: true,
     };
-    const s = memoryStorage({ 'ok-onboarding-card-v1': JSON.stringify(stored) });
+    const s = memoryStorage({ 'ps-onboarding-card-v1': JSON.stringify(stored) });
     const read = readPersistedState(s);
     expect(read).toEqual(stored);
     expect(read.initialized).toBe(true);

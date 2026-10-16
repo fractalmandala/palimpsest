@@ -69,7 +69,7 @@ interface LaunchDesktopUninstallHandoffDeps {
   readParentStartedAt?: () => string;
 }
 
-const HANDOFF_READY = 'OK_UNINSTALL_READY';
+const HANDOFF_READY = 'PS_UNINSTALL_READY';
 const PROCESS_QUERY_POLL_SECONDS = 0.01;
 const RESULT_WINDOW_WATCH_SECONDS = 0.2;
 const PROGRESS_READY_POLL_SECONDS = 0.1;
@@ -211,14 +211,14 @@ show_failure() {
   printf '%s\\n' 'Cleanup result: failed' "$1" >> "$LOG"
   show_result 'Cleanup didn’t finish' "Some files may not have been removed. $1
 
-Open the cleanup log for details. You can reopen OpenKnowledge to try again." 'Close'
+Open the cleanup log for details. You can reopen Palimpsest to try again." 'Close'
 }
 
 show_success() {
   printf '%s\\n' 'Cleanup result: succeeded' >> "$LOG"
-  show_result 'OpenKnowledge files were removed' 'OpenKnowledge’s settings and integrations were removed. Your markdown content and authored skills were kept.
+  show_result 'Palimpsest files were removed' 'Palimpsest’s settings and integrations were removed. Your markdown content and authored skills were kept.
 
-Move OpenKnowledge.app to the Trash to remove the app itself.' 'Reveal in Finder'
+Move Palimpsest.app to the Trash to remove the app itself.' 'Reveal in Finder'
 }
 `;
 }
@@ -333,10 +333,10 @@ while :; do
     break
   fi
   if [ "$status" -ne 0 ]; then
-    fail "Could not verify that OpenKnowledge stopped (process query exit $status); no cleanup was started."
+    fail "Could not verify that Palimpsest stopped (process query exit $status); no cleanup was started."
   fi
   if [ -z "$current_start" ]; then
-    fail "Could not verify that OpenKnowledge stopped (process query returned no start time); no cleanup was started."
+    fail "Could not verify that Palimpsest stopped (process query returned no start time); no cleanup was started."
   fi
   current_start=$(printf '%s' "$current_start" | /usr/bin/sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
   if [ "$current_start" != "$PARENT_STARTED_AT" ]; then
@@ -344,9 +344,9 @@ while :; do
   fi
   attempts=$((attempts + 1))
   if [ "$attempts" -ge 120 ]; then
-    fail 'OpenKnowledge did not stop; no cleanup was started.'
+    fail 'Palimpsest did not stop; no cleanup was started.'
   fi
-  "$SLEEP" 0.5 || fail 'Could not wait for OpenKnowledge to stop; no cleanup was started.'
+  "$SLEEP" 0.5 || fail 'Could not wait for Palimpsest to stop; no cleanup was started.'
 done
 
 /bin/sh -c ${shellQuote(buildDesktopUninstallCleanupScript(input))}

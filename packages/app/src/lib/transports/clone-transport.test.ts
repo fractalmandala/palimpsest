@@ -1,6 +1,6 @@
-import { DEV_FALLBACK_CLI_REFUSAL } from '@inkeep/open-knowledge-core';
+import { DEV_FALLBACK_CLI_REFUSAL } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge, OkLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
 import { httpCloneTransport, ipcCloneTransport } from './clone-transport';
 
 interface CapturedStart {
@@ -9,7 +9,7 @@ interface CapturedStart {
   branch: string | null | undefined;
 }
 
-function makeBridge(captured: CapturedStart[], events: OkLocalOpCloneEvent[]): OkDesktopBridge {
+function makeBridge(captured: CapturedStart[], events: PsLocalOpCloneEvent[]): PsDesktopBridge {
   const bridge = {
     localOp: {
       clone: {
@@ -25,7 +25,7 @@ function makeBridge(captured: CapturedStart[], events: OkLocalOpCloneEvent[]): O
       },
     },
   };
-  return bridge as unknown as OkDesktopBridge;
+  return bridge as unknown as PsDesktopBridge;
 }
 
 describe('ipcCloneTransport — branch threading symmetry with HTTP transport', () => {

@@ -7,7 +7,7 @@ import { readHeadBranch } from './read-head-branch.ts';
 
 describe('readHeadBranch (filesystem)', () => {
   function makeProject(): string {
-    return mkdtempSync(join(tmpdir(), 'ok-read-head-branch-'));
+    return mkdtempSync(join(tmpdir(), 'ps-read-head-branch-'));
   }
 
   function cleanup(path: string): void {
@@ -100,7 +100,7 @@ describe('readHeadBranch (filesystem)', () => {
   test('follows the worktree gitdir pointer when .git is a file', () => {
     const project = makeProject();
     try {
-      const realGitDir = mkdtempSync(join(tmpdir(), 'ok-read-head-branch-gitdir-'));
+      const realGitDir = mkdtempSync(join(tmpdir(), 'ps-read-head-branch-gitdir-'));
       try {
         writeFileSync(join(realGitDir, 'HEAD'), 'ref: refs/heads/wt-branch\n');
         writeFileSync(join(project, '.git'), `gitdir: ${realGitDir}\n`);

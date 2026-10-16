@@ -1,9 +1,9 @@
-import { currentCliCommandName, okUserHomeDisplayPath } from '@inkeep/open-knowledge-core';
+import { currentCliCommandName, psUserHomeDisplayPath } from '@palimpsest/core';
 import {
   type BuildAndOpenSkillResult,
   buildAndOpenSkill,
   type SpawnLike,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import { accent, dim, error as errorColor, info, success, warning } from '../ui/colors.ts';
 
@@ -26,7 +26,7 @@ const UPLOAD_STEPS = [
   `    2. Click the ${accent('+')} button`,
   `    3. Click ${accent('Create skill')}`,
   `    4. Click ${accent('Upload skill')}`,
-  `    5. Pick ${accent('openknowledge.skill')} from Downloads`,
+  `    5. Pick ${accent('palimpsest.skill')} from Downloads`,
 ];
 
 const MANUAL_UPLOAD_HINT = info(
@@ -49,8 +49,8 @@ function formatSkipCurrentMessage(result: BuildAndOpenSkillResult): string {
   const version = result.skillVersion ?? 'unknown';
   const recordedAt = result.recordedAt ?? 'unknown';
   return [
-    info(`OpenKnowledge skill ${accent(`v${version}`)} already delivered to Claude Desktop.`),
-    dim(`  Recorded at ${recordedAt} in ${okUserHomeDisplayPath('skill-state.yml')}`),
+    info(`Palimpsest skill ${accent(`v${version}`)} already delivered to Claude Desktop.`),
+    dim(`  Recorded at ${recordedAt} in ${psUserHomeDisplayPath('skill-state.yml')}`),
     dim(`  Use ${accent('--force')} to rebuild and re-open the install dialog.`),
   ].join('\n');
 }
@@ -92,9 +92,9 @@ export async function runCoworkSkill(
 export function coworkCommand(): Command {
   return new Command('cowork')
     .description(
-      `Build openknowledge.skill and open the Claude Desktop App so you can upload it for Claude Chat & Cowork. (Advanced/rarely needed — \`${currentCliCommandName()} init\` already wires Claude.)`,
+      `Build palimpsest.skill and open the Claude Desktop App so you can upload it for Claude Chat & Cowork. (Advanced/rarely needed — \`${currentCliCommandName()} init\` already wires Claude.)`,
     )
-    .option('--out <path>', 'Custom output path (default: ~/Downloads/openknowledge.skill)')
+    .option('--out <path>', 'Custom output path (default: ~/Downloads/palimpsest.skill)')
     .option('--no-open', 'Build the file but skip the OS file-association handoff')
     .option('--force', 'Bypass the install-state gate and rebuild unconditionally')
     .action(async (cliOpts: { out?: string; open: boolean; force?: boolean }) => {

@@ -1,9 +1,9 @@
-import { stringField, unwrapMcpInput } from '@inkeep/open-knowledge-core/acp/tool-call-input';
-import { OPEN_KNOWLEDGE_MCP_WRITE_TOOLS } from '@inkeep/open-knowledge-core/constants/mcp';
+import { stringField, unwrapMcpInput } from '@palimpsest/core/acp/tool-call-input';
+import { PALIMPSEST_MCP_WRITE_TOOLS } from '@palimpsest/core/constants/mcp';
 import type { RenderedToolCall } from '@/lib/acp/thread-event-model';
 import type { Workspace } from '@/lib/workspace-paths';
 
-const FOLLOW_PREF_KEY = 'ok-acp-follow-file-v1';
+const FOLLOW_PREF_KEY = 'ps-acp-follow-file-v1';
 
 export function loadFollowFilePref(): boolean {
   try {
@@ -38,7 +38,7 @@ export function docNameFromAbsolutePath(path: string, workspace: Workspace): str
   return sanitizeDocName(relative.slice(0, -match[0].length));
 }
 
-const OK_MCP_WRITE_TOOLS: ReadonlySet<string> = new Set(OPEN_KNOWLEDGE_MCP_WRITE_TOOLS);
+const PS_MCP_WRITE_TOOLS: ReadonlySet<string> = new Set(PALIMPSEST_MCP_WRITE_TOOLS);
 
 function mcpDocTarget(
   rawInput: unknown,
@@ -72,7 +72,7 @@ function mcpDocTarget(
   }
   const flat = stringField(args, 'docName');
   if (flat === null) return null;
-  const isKnownWrite = tool !== null && OK_MCP_WRITE_TOOLS.has(tool);
+  const isKnownWrite = tool !== null && PS_MCP_WRITE_TOOLS.has(tool);
   const isWriteToolKind = toolKind === 'edit' || toolKind === 'move';
   if (!isKnownWrite && !isWriteToolKind) return null;
   return sanitizeDocName(flat.replace(/\.(md|mdx)$/, ''));

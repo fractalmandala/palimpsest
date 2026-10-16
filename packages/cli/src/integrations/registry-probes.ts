@@ -14,13 +14,13 @@ import {
   type ProbeResolver,
   type ProbeStrictness,
   parsePathId,
-} from '@inkeep/open-knowledge-core';
-import { scanSkillFolderStates } from '@inkeep/open-knowledge-core/skill-folder-state';
+} from '@palimpsest/core';
+import { scanSkillFolderStates } from '@palimpsest/core/skill-folder-state';
 import {
   BUNDLE_SKILL_NAME,
   type BundleId,
   detectUserSkillHosts,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { ownServerMatcherFor } from '../commands/acp-harness-probe.ts';
 import {
   ALL_EDITOR_IDS,

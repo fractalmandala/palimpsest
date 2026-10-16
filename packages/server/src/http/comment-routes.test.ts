@@ -11,7 +11,7 @@ function buildGroup() {
   const log = loggerFactory.getLogger('test');
   return createCommentRoutes({
     commentService: new CommentService({
-      store: new CommentThreadStore(join(tmpdir(), 'ok-comment-routes-test-none'), log),
+      store: new CommentThreadStore(join(tmpdir(), 'ps-comment-routes-test-none'), log),
       index: new CommentIndex(),
       getDocBody: () => null,
       getDocFrontmatter: () => null,

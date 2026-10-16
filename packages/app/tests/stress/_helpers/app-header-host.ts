@@ -88,14 +88,14 @@ export async function openDesktopHeader(
     }) => {
       const bridge = (
         window as unknown as {
-          okDesktop: {
+          psDesktop: {
             config: { projectName: string };
             instanceLabel: string | null;
             platform: string;
             state: { query: () => Promise<unknown> };
           };
         }
-      ).okDesktop;
+      ).psDesktop;
       if (overrides.platform !== undefined) bridge.platform = overrides.platform;
       if (overrides.projectName !== undefined) bridge.config.projectName = overrides.projectName;
       if (overrides.instanceLabel !== undefined) bridge.instanceLabel = overrides.instanceLabel;

@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
@@ -6,8 +6,8 @@ import { type RefObject, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const HIGHLIGHT_ALL = 'ok-find';
-const HIGHLIGHT_ACTIVE = 'ok-find-active';
+const HIGHLIGHT_ALL = 'ps-find';
+const HIGHLIGHT_ACTIVE = 'ps-find-active';
 
 function collectMatchRanges(root: HTMLElement, query: string): Range[] {
   const needle = query.toLowerCase();

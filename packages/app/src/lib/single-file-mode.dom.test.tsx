@@ -7,19 +7,19 @@ function Probe() {
   return <div data-testid="probe">{singleFile ? 'single-file' : 'project'}</div>;
 }
 
-const originalDesktop = (globalThis as { window?: { okDesktop?: unknown } }).window?.okDesktop;
+const originalDesktop = (globalThis as { window?: { psDesktop?: unknown } }).window?.psDesktop;
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
   if (typeof window !== 'undefined') {
-    (window as { okDesktop?: unknown }).okDesktop = originalDesktop;
+    (window as { psDesktop?: unknown }).psDesktop = originalDesktop;
   }
 });
 
 describe('SingleFileModeProvider — desktop bridge channel', () => {
   beforeEach(() => {
-    (window as { okDesktop?: unknown }).okDesktop = {
+    (window as { psDesktop?: unknown }).psDesktop = {
       config: {
         singleFile: true,
         initialDoc: 'todo',
@@ -45,7 +45,7 @@ describe('SingleFileModeProvider — desktop bridge channel', () => {
 
 describe('SingleFileModeProvider — browser /api/config channel', () => {
   beforeEach(() => {
-    (window as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('resolves singleFile:true from /api/config', async () => {

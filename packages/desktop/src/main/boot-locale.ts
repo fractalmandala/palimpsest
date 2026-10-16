@@ -1,4 +1,4 @@
-import type { LanguageMetadata } from '@inkeep/open-knowledge';
+import type { LanguageMetadata } from '@palimpsest/cli';
 import {
   AUTO_DETECTABLE_LOCALES,
   asBcp47Tag,
@@ -8,13 +8,13 @@ import {
   SUPPORTED_LOCALES,
   type SupportedLocale,
   toBcp47Tags,
-} from '@inkeep/open-knowledge-core';
-import type { OkThemeSource } from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core';
+import type { PsThemeSource } from '@palimpsest/core/desktop-bridge';
 import {
   LOCALE_OVERRIDE_ENV_VAR,
   readConfigSafely,
   resolveConfigPath,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import { getLogger } from './desktop-logger.ts';
 
 export interface DesktopLocaleDeps {
@@ -25,7 +25,7 @@ export interface DesktopLocaleDeps {
 
 export interface StoredUserPreferences {
   readonly language: LanguagePreference;
-  readonly theme: OkThemeSource;
+  readonly theme: PsThemeSource;
 }
 
 export function readStoredUserPreferences(

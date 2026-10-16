@@ -1,66 +1,66 @@
 export const DESKTOP_PRODUCTS = {
   stable: {
-    appId: 'com.inkeep.open-knowledge',
-    productName: 'OpenKnowledge',
-    packageName: '@inkeep/open-knowledge-desktop',
-    linuxExecutableName: 'openknowledge',
-    protocolScheme: 'openknowledge',
+    appId: 'com.fractalmandala.palimpsest',
+    productName: 'Palimpsest',
+    packageName: '@palimpsest/desktop',
+    linuxExecutableName: 'palimpsest',
+    protocolScheme: 'palimpsest',
     linuxPackageNames: {
-      deb: 'openknowledge',
-      rpm: 'openknowledge',
+      deb: 'palimpsest',
+      rpm: 'palimpsest',
     },
     retiredLinuxPackageNames: {
       deb: [],
-      rpm: ['OpenKnowledge'],
+      rpm: ['Palimpsest'],
     },
-    cliCommandNames: ['ok', 'open-knowledge'],
-    mcpServerName: 'open-knowledge',
+    cliCommandNames: ['ok', 'palimpsest'],
+    mcpServerName: 'palimpsest',
     mcpChainTag: '',
     npmDistTag: 'latest',
-    userHomeDirName: '.ok',
-    keyringService: 'open-knowledge',
+    userHomeDirName: '.ps',
+    keyringService: 'palimpsest',
   },
   beta: {
-    appId: 'com.inkeep.open-knowledge.beta',
-    productName: 'OpenKnowledge Beta',
-    packageName: 'openknowledge-beta-desktop',
-    linuxExecutableName: 'openknowledge-beta',
-    protocolScheme: 'openknowledge-beta',
+    appId: 'com.fractalmandala.palimpsest.beta',
+    productName: 'Palimpsest Beta',
+    packageName: 'palimpsest-beta-desktop',
+    linuxExecutableName: 'palimpsest-beta',
+    protocolScheme: 'palimpsest-beta',
     linuxPackageNames: {
-      deb: 'openknowledge-beta',
-      rpm: 'openknowledge-beta',
+      deb: 'palimpsest-beta',
+      rpm: 'palimpsest-beta',
     },
     retiredLinuxPackageNames: {
-      deb: ['openknowledge-beta-desktop'],
-      rpm: ['openknowledge-beta-desktop'],
+      deb: ['palimpsest-beta-desktop'],
+      rpm: ['palimpsest-beta-desktop'],
     },
-    cliCommandNames: ['ok-beta', 'open-knowledge-beta'],
-    mcpServerName: 'open-knowledge-beta',
+    cliCommandNames: ['ps-beta', 'palimpsest-beta'],
+    mcpServerName: 'palimpsest-beta',
     mcpChainTag: '-beta',
     npmDistTag: 'beta',
-    userHomeDirName: '.ok-beta',
-    keyringService: 'open-knowledge-beta',
+    userHomeDirName: '.ps-beta',
+    keyringService: 'palimpsest-beta',
   },
   dev: {
-    appId: 'com.inkeep.open-knowledge.dev',
-    productName: 'OpenKnowledge Dev',
-    packageName: 'openknowledge-dev-desktop',
-    linuxExecutableName: 'openknowledge-dev',
-    protocolScheme: 'openknowledge-dev',
+    appId: 'com.fractalmandala.palimpsest.dev',
+    productName: 'Palimpsest Dev',
+    packageName: 'palimpsest-dev-desktop',
+    linuxExecutableName: 'palimpsest-dev',
+    protocolScheme: 'palimpsest-dev',
     linuxPackageNames: {
-      deb: 'openknowledge-dev',
-      rpm: 'openknowledge-dev',
+      deb: 'palimpsest-dev',
+      rpm: 'palimpsest-dev',
     },
     retiredLinuxPackageNames: {
       deb: [],
       rpm: [],
     },
-    cliCommandNames: ['ok-dev', 'open-knowledge-dev'],
-    mcpServerName: 'open-knowledge-dev',
+    cliCommandNames: ['ps-dev', 'palimpsest-dev'],
+    mcpServerName: 'palimpsest-dev',
     mcpChainTag: '-dev',
     npmDistTag: 'latest',
-    userHomeDirName: '.ok-dev',
-    keyringService: 'open-knowledge-dev',
+    userHomeDirName: '.ps-dev',
+    keyringService: 'palimpsest-dev',
   },
 } as const;
 
@@ -86,14 +86,14 @@ export function desktopWindowsInstallDirNames(product: DesktopProduct): readonly
 
 export const PRODUCT_NAME = DESKTOP_PRODUCTS.stable.productName;
 
-export const OK_CHANNEL_ENV = 'OK_CHANNEL';
+export const PS_CHANNEL_ENV = 'PS_CHANNEL';
 
 function isDesktopProductName(value: string): value is DesktopProductName {
   return Object.hasOwn(DESKTOP_PRODUCTS, value);
 }
 
 function channelOverride(env: Record<string, string | undefined>): string | undefined {
-  return env[OK_CHANNEL_ENV]?.trim().toLowerCase() || undefined;
+  return env[PS_CHANNEL_ENV]?.trim().toLowerCase() || undefined;
 }
 
 export function isDevChannel(
@@ -103,7 +103,7 @@ export function isDevChannel(
 }
 
 export function defaultToDevChannel(env: Record<string, string | undefined>): void {
-  if (channelOverride(env) === undefined) env[OK_CHANNEL_ENV] = DEV_CHANNEL;
+  if (channelOverride(env) === undefined) env[PS_CHANNEL_ENV] = DEV_CHANNEL;
 }
 
 export function desktopChannelLabel(channel: string): string {
@@ -125,7 +125,7 @@ export function resolveDesktopProductName(
   if (override) {
     if (isDesktopProductName(override)) return override;
     throw new Error(
-      `Unsupported ${OK_CHANNEL_ENV}=${JSON.stringify(override)}. Expected ${Object.keys(DESKTOP_PRODUCTS).join(' or ')}.`,
+      `Unsupported ${PS_CHANNEL_ENV}=${JSON.stringify(override)}. Expected ${Object.keys(DESKTOP_PRODUCTS).join(' or ')}.`,
     );
   }
   const exe = executableBaseName(execPath);
@@ -164,10 +164,10 @@ export function desktopProductForCliCommand(command: string | null | undefined):
 
 export const CHECKOUT_CLI_COMMAND = 'node <checkout>/packages/cli/dist/cli.mjs';
 
-export const DEV_FALLBACK_CLI_REFUSAL = `This dev build has no built CLI, so it will not sign in, sign out, store a token, clone a project or start a project server through the installed OpenKnowledge (Stable) CLI. Run pnpm build in the checkout, then restart this dev build.`;
+export const DEV_FALLBACK_CLI_REFUSAL = `This dev build has no built CLI, so it will not sign in, sign out, store a token, clone a project or start a project server through the installed Palimpsest (Stable) CLI. Run pnpm build in the checkout, then restart this dev build.`;
 
 function isChannelKey(key: string): boolean {
-  return key.toUpperCase() === OK_CHANNEL_ENV;
+  return key.toUpperCase() === PS_CHANNEL_ENV;
 }
 
 function carriesDevChannel(env: Readonly<Record<string, string | undefined>>): boolean {
@@ -204,18 +204,18 @@ export interface HostCliInvocation {
   readonly cliEnv?: EnvOverlay | undefined;
 }
 
-export interface OkCliSpawn {
+export interface PsCliSpawn {
   readonly command: string;
   readonly args: string[];
   readonly env: Record<string, string>;
 }
 
-export interface OkCliRunnerInvocation {
+export interface PsCliRunnerInvocation {
   readonly cliArgs: readonly string[];
   readonly cliEnv: EnvOverlay;
 }
 
-export interface OkCliRefusal {
+export interface PsCliRefusal {
   readonly refused: string;
 }
 
@@ -224,7 +224,7 @@ export interface ResolveOkCliCommandInput {
   readonly env?: Readonly<Record<string, string | undefined>>;
 }
 
-export class OkCliCommand {
+export class PsCliCommand {
   readonly #argv: readonly [string, ...string[]];
   readonly #overlay: EnvOverlay;
   readonly #fallsBackToStable: boolean;
@@ -239,7 +239,7 @@ export class OkCliCommand {
     this.#fallsBackToStable = fallsBackToStable;
   }
 
-  static resolve(input: ResolveOkCliCommandInput = {}): OkCliCommand {
+  static resolve(input: ResolveOkCliCommandInput = {}): PsCliCommand {
     const env = input.env ?? globalThis.process?.env ?? {};
     const [first, ...rest] = input.host?.cliArgs ?? [];
     const channel = resolveDesktopProductName(env);
@@ -248,9 +248,9 @@ export class OkCliCommand {
     );
     const hostCli = first !== undefined;
     const pinned = channel !== 'stable' && (hostCli || released);
-    return new OkCliCommand(
-      hostCli ? [first, ...rest] : ['open-knowledge'],
-      { ...input.host?.cliEnv, ...(pinned ? { [OK_CHANNEL_ENV]: channel } : {}) },
+    return new PsCliCommand(
+      hostCli ? [first, ...rest] : ['palimpsest'],
+      { ...input.host?.cliEnv, ...(pinned ? { [PS_CHANNEL_ENV]: channel } : {}) },
       channel === DEV_CHANNEL && !hostCli,
     );
   }
@@ -263,13 +263,13 @@ export class OkCliCommand {
     return refused ? DEV_FALLBACK_CLI_REFUSAL : undefined;
   }
 
-  runnerInvocation(trailingArgs: readonly string[]): OkCliRunnerInvocation | OkCliRefusal {
+  runnerInvocation(trailingArgs: readonly string[]): PsCliRunnerInvocation | PsCliRefusal {
     const refused = this.refusalFor(trailingArgs);
     if (refused !== undefined) return { refused };
     return { cliArgs: [...this.#argv, ...trailingArgs], cliEnv: { ...this.#overlay } };
   }
 
-  spawn(trailingArgs: readonly string[], baseEnv: EnvOverlay): OkCliSpawn | OkCliRefusal {
+  spawn(trailingArgs: readonly string[], baseEnv: EnvOverlay): PsCliSpawn | PsCliRefusal {
     const refused = this.refusalFor(trailingArgs);
     if (refused !== undefined) return { refused };
     const [command, ...args] = this.#argv;
@@ -281,7 +281,7 @@ export class OkCliCommand {
     return { command, args: [...args, ...trailingArgs], env };
   }
 
-  stdioServer(trailingArgs: readonly string[]): OkCliSpawn {
+  stdioServer(trailingArgs: readonly string[]): PsCliSpawn {
     this.#assertNotRefused(trailingArgs);
     const [command, ...args] = this.#argv;
     return { command, args: [...args, ...trailingArgs], env: definedEntries(this.#overlay) };

@@ -10,7 +10,7 @@ import {
   SOURCE_LOCALE,
 } from './check-i18n-new-string-translations.mjs';
 
-const OK_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const PS_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const LOCALES_TS = 'packages/core/src/i18n/locales.ts';
 const GLOSSARY_MD = 'packages/app/src/locales/GLOSSARY.md';
 const REVIEW_MD = 'packages/app/src/locales/REVIEW.md';
@@ -257,17 +257,17 @@ export function buildPacket({
   let number = 0;
 
   const name = endonym(locale);
-  push(`# Reviewing OpenKnowledge in ${name} (\`${locale}\`)`);
+  push(`# Reviewing Palimpsest in ${name} (\`${locale}\`)`);
   push(
     offered
       ? [
-          `OpenKnowledge's interface has been translated into ${name} by a coding agent working against`,
+          `Palimpsest's interface has been translated into ${name} by a coding agent working against`,
           'a locked vocabulary, and the app already offers the language. What it has never had is a',
           'reader: nobody who reads it has checked whether the words are right. You are being asked to',
           'read a sample and say whether it is good enough to keep offering.',
         ].join('\n')
       : [
-          `OpenKnowledge's interface has been translated into ${name} by a coding agent working against`,
+          `Palimpsest's interface has been translated into ${name} by a coding agent working against`,
           'a locked vocabulary. Nobody who reads the language has read it yet, which is why the language',
           "is not offered in the app's language picker. You are being asked to read a sample of it and",
           'say whether it is fit to offer.',
@@ -380,7 +380,7 @@ export function buildPacket({
     .trim()}\n`;
 }
 
-export function collectSourceReferences(root = OK_ROOT) {
+export function collectSourceReferences(root = PS_ROOT) {
   return messageOrigins(
     join(root, 'packages/app'),
     CHROME_SURFACES.flatMap((surface) => surface.files),
@@ -391,7 +391,7 @@ export function withSourceReferences(entries, references) {
   return entries.map((entry) => ({ ...entry, references: [...(references.get(entry.id) ?? [])] }));
 }
 
-export function generate({ locale, root = OK_ROOT, references }) {
+export function generate({ locale, root = PS_ROOT, references }) {
   if (!(references instanceof Map)) {
     throw new Error(
       'generate() needs the source references from collectSourceReferences(), because the .po catalogs no longer carry them',

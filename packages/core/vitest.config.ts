@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 
 /**
  * Vitest config for packages/core.
@@ -9,4 +9,4 @@ import { okVitestBase } from '../../test-support/vitest.base';
  * timeout). The base `include` matches every `*.test.ts` under the package; each
  * `test*` npm script narrows to its tier with path positionals.
  */
-export default defineConfig({ ...okVitestBase });
+export default defineConfig({ ...psVitestBase });

@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { InstallSkillRequestSchema, InstallSkillSuccessSchema } from '@inkeep/open-knowledge-core';
+import { InstallSkillRequestSchema, InstallSkillSuccessSchema } from '@palimpsest/core';
 import { isSafeLocalPath } from '../local-op-security.ts';
 import { buildAndOpenSkill } from '../skill-install.ts';
 import { type ApiRouteGroup, createApiRouteGroup } from './api-pipeline.ts';

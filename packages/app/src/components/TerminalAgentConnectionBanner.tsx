@@ -2,8 +2,8 @@ import {
   agentIdForTerminalCli,
   getAgentRecord,
   type HostSnapshot,
-} from '@inkeep/open-knowledge-core/agent-registry';
-import { TERMINAL_CLIS, type TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/agent-registry';
+import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
 import { TriangleAlert } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
@@ -142,7 +142,7 @@ export function TerminalAgentConnectionBanner({
             </Button>
           }
         >
-          {t`${displayName} is installed, but OpenKnowledge tools aren't connected to it yet.`}
+          {t`${displayName} is installed, but Palimpsest tools aren't connected to it yet.`}
         </TerminalNoticeBanner>
       ) : null}
       {restartRequired ? (
@@ -161,7 +161,7 @@ export function TerminalAgentConnectionBanner({
             </Button>
           }
         >
-          {t`Restart this terminal session to use the newly installed OpenKnowledge tools.`}
+          {t`Restart this terminal session to use the newly installed Palimpsest tools.`}
         </TerminalNoticeBanner>
       ) : null}
       {open && connection !== undefined ? (

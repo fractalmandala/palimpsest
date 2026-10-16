@@ -9,11 +9,11 @@ import {
   planAmbientCapsReexec,
 } from '../../src/main/linux-ambient-caps.ts';
 
-const EXEC_PATH = '/opt/OpenKnowledge/openknowledge';
+const EXEC_PATH = '/opt/Palimpsest/palimpsest';
 
 function procStatus(capAmb: string): string {
   return [
-    'Name:\topenknowledge',
+    'Name:\tpalimpsest',
     'Uid:\t1000\t1000\t1000\t1000',
     'CapInh:\t0000000000000001',
     'CapPrm:\t0000000000000001',

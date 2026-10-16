@@ -5,7 +5,7 @@ import {
   LEGACY_SKILL_STORE_ROOT,
   SkillTrackInGitRequestSchema,
   SkillTrackInGitSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { ContentFilter } from '../content-filter.ts';
 import { scanInPlaceSkills } from '../in-place-skills.ts';
 import { type ApiRouteGroup, createApiRouteGroup } from './api-pipeline.ts';

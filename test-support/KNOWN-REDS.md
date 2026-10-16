@@ -1,6 +1,6 @@
 # Known reds, quarantines and skips
 
-How Open Knowledge marks a test that is expected to fail or that deliberately does not run.
+How Palimpsest marks a test that is expected to fail or that deliberately does not run.
 
 - **The listing command:** `pnpm known-reds` lists every such test.
 - **The checks:** `pnpm known-reds` exits 1 when a test breaks a rule below, and the guard test `scripts/check-known-reds.uncached.test.mjs` runs the same checks in the uncached test tier.

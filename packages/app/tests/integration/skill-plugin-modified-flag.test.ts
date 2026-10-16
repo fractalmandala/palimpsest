@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SkillsListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { SkillsListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestServer, type TestServer } from './test-harness';
@@ -13,7 +13,7 @@ const base = () => `http://127.0.0.1:${server.port}`;
 const skillMd = (body: string) => `---\nname: probe\ndescription: d.\n---\n\n${body}\n`;
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-plugin-modified-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-plugin-modified-home-'));
   const installPath = join(tmpHome, '.claude', 'plugins', 'cache', 'market', 'toolkit', '1.0.0');
   mkdirSync(join(installPath, 'skills', 'probe'), { recursive: true });
   writeFileSync(join(installPath, 'skills', 'probe', 'SKILL.md'), skillMd('# Upstream'));

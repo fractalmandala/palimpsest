@@ -288,7 +288,7 @@ describe('the optional Windows signing lane proves what it reports', () => {
   test('attests and package-checks both Windows outer architectures', () => {
     for (const dir of ['dist-desktop/win-unpacked', 'dist-desktop/win-arm64-unpacked']) {
       expect(desktopBuildWinLinux).toContain(`Path = '${dir}'`);
-      expect(desktopBuildWinLinux).toContain(`OK_WIN_PACKAGE_DIR: ${dir}`);
+      expect(desktopBuildWinLinux).toContain(`PS_WIN_PACKAGE_DIR: ${dir}`);
     }
   });
 });
@@ -322,7 +322,7 @@ describe('the publishing Windows lane attests its signed native payload', () => 
     const attestationSteps = desktopRelease.slice(attest, asar);
     expect(attestationSteps).toContain('Get-AuthenticodeSignature');
     expect(attestationSteps).toContain("-notmatch 'Microsoft'");
-    expect(attestationSteps.match(/OK_WIN_PACKAGE_REQUIRED: "1"/gu) ?? []).toHaveLength(2);
+    expect(attestationSteps.match(/PS_WIN_PACKAGE_REQUIRED: "1"/gu) ?? []).toHaveLength(2);
     expect(attestationSteps).not.toContain('continue-on-error:');
     const conditions = stepLevelIfConditions(attestationSteps);
     expect(conditions).toHaveLength(3);
@@ -331,7 +331,7 @@ describe('the publishing Windows lane attests its signed native payload', () => 
     }
     for (const dir of ['dist-desktop/win-unpacked', 'dist-desktop/win-arm64-unpacked']) {
       expect(attestationSteps).toContain(`Path = '${dir}'`);
-      expect(attestationSteps).toContain(`OK_WIN_PACKAGE_DIR: ${dir}`);
+      expect(attestationSteps).toContain(`PS_WIN_PACKAGE_DIR: ${dir}`);
     }
   });
 
@@ -397,7 +397,7 @@ describe('the fan-in publication DAG gates every platform', () => {
       const job = parse(desktopRelease).jobs['release-consumers'];
       const alert = job.steps.find((step) => step.name === 'Alert on failed publication dispatch');
       expect(alert.if).toBe('failure() || cancelled()');
-      const dir = mkdtempSync(join(tmpdir(), 'ok-dispatch-alert-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-dispatch-alert-'));
       try {
         const capture = join(dir, 'post');
         const output = execFileSync(
@@ -409,7 +409,7 @@ describe('the fan-in publication DAG gates every platform', () => {
               ...process.env,
               RELEASE_TAG: 'v0.78.0-beta.6',
               GITHUB_SERVER_URL: 'https://github.com',
-              GITHUB_REPOSITORY: 'inkeep/open-knowledge',
+              GITHUB_REPOSITORY: 'fractalmandala/palimpsest',
               GITHUB_RUN_ID: '123',
               GITHUB_STEP_SUMMARY: join(dir, 'summary'),
               SLACK_RELEASES_WEBHOOK_URL: 'https://example.test/slack',
@@ -604,11 +604,11 @@ describe('a non-pass verdict keeps a beta off the fast tier', () => {
 });
 
 describe('a deliberately broken DMG never reads as a pass', () => {
-  const scratch = mkdtempSync(join(tmpdir(), 'ok-broken-dmg-'));
+  const scratch = mkdtempSync(join(tmpdir(), 'ps-broken-dmg-'));
   afterAll(() => rmSync(scratch, { recursive: true, force: true }));
 
   test('a file that is named .dmg but is not one yields a non-pass verdict', async () => {
-    const fake = join(scratch, 'NotReallyOpenKnowledge.dmg');
+    const fake = join(scratch, 'NotReallyPalimpsest.dmg');
     writeFileSync(fake, 'this is not a disk image\n');
     const commands = [];
 
@@ -871,7 +871,7 @@ describe('the bug lane verifies the synthetic tree at the same bar as main', () 
   });
 
   test('a missing grouping helper still emits a usable batch-based paging key', () => {
-    const scratch = mkdtempSync(join(tmpdir(), 'ok-refusal-key-'));
+    const scratch = mkdtempSync(join(tmpdir(), 'ps-refusal-key-'));
     try {
       const output = join(scratch, 'output');
       const script = bugLaneVerifyStep('Refusal signature')
@@ -979,8 +979,8 @@ describe('the bug lane verifies the synthetic tree at the same bar as main', () 
 
 describe('the fast-tier DMG smoke builds the workspace packages its harness loads', () => {
   test('its build covers every workspace package the packaged specs load at runtime', () => {
-    const okRoot = join(WORKFLOWS, '..', '..');
-    const desktop = join(okRoot, 'packages', 'desktop');
+    const psRoot = join(WORKFLOWS, '..', '..');
+    const desktop = join(psRoot, 'packages', 'desktop');
     const config = readFileSync(join(desktop, 'playwright.packaged.config.ts'), 'utf8');
     const subset = [
       ...config.match(/PACKAGED_SMOKE_SUBSET = \[([^\]]*)\]/)[1].matchAll(/'([^']+)'/g),
@@ -1020,13 +1020,13 @@ describe('the fast-tier DMG smoke builds the workspace packages its harness load
         }
       }
     }
-    expect(imported).toContain('@inkeep/open-knowledge-core');
+    expect(imported).toContain('@palimpsest/core');
 
     const workspaceDeps = new Map(
-      readdirSync(join(okRoot, 'packages'))
-        .filter((dir) => existsSync(join(okRoot, 'packages', dir, 'package.json')))
+      readdirSync(join(psRoot, 'packages'))
+        .filter((dir) => existsSync(join(psRoot, 'packages', dir, 'package.json')))
         .map((dir) => {
-          const pkg = JSON.parse(readFileSync(join(okRoot, 'packages', dir, 'package.json'), 'utf8'));
+          const pkg = JSON.parse(readFileSync(join(psRoot, 'packages', dir, 'package.json'), 'utf8'));
           const deps = { ...pkg.dependencies, ...pkg.devDependencies };
           return [pkg.name, Object.keys(deps).filter((name) => deps[name].startsWith('workspace:'))];
         }),
@@ -1127,7 +1127,7 @@ describe('every release-pipeline post prefers the releases webhook', () => {
       request.resume();
       response.end('ok');
     });
-    const dir = mkdtempSync(join(tmpdir(), 'ok-webhook-precedence-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-webhook-precedence-'));
     try {
       await new Promise((resolve, reject) => {
         server.once('error', reject);
@@ -1241,7 +1241,7 @@ describe('every release-pipeline post prefers the releases webhook', () => {
     const nominate = step('evaluate', 'Nominate the fast-tier candidate for smoking');
     expect(nominate.env.ALREADY_FAILED).toBe('${{ steps.prior-failure.outputs.cache-hit }}');
     const nominated = (candidate, alreadyFailed) => {
-      const dir = mkdtempSync(join(tmpdir(), 'ok-nominate-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-nominate-'));
       try {
         const out = join(dir, 'out');
         writeFileSync(out, '');
@@ -1443,7 +1443,7 @@ describe('public desktop product variants stay independently buildable', () => {
   test('manual public packaging workflows expose Stable and Beta only', () => {
     for (const workflow of [desktopBuild, desktopBuildWinLinux]) {
       expect(workflow).toContain('options: [stable, beta]');
-      expect(workflow).toContain('OK_DESKTOP_VARIANT:');
+      expect(workflow).toContain('PS_DESKTOP_VARIANT:');
     }
   });
 
@@ -1465,8 +1465,8 @@ describe('public desktop product variants stay independently buildable', () => {
 
   test('the release workflow maps public product tags to disjoint updater channels', () => {
     for (const pair of [
-      ['*-beta.*', 'artifact_name=OpenKnowledge-Beta'],
-      ['channel=latest', 'artifact_name=OpenKnowledge'],
+      ['*-beta.*', 'artifact_name=Palimpsest-Beta'],
+      ['channel=latest', 'artifact_name=Palimpsest'],
     ]) {
       expect(desktopRelease).toContain(pair[0]);
       expect(desktopRelease).toContain(pair[1]);
@@ -1477,7 +1477,7 @@ describe('public desktop product variants stay independently buildable', () => {
 
   test('signed Beta builds require their own provisioning profile', () => {
     for (const workflow of [desktopBuild, desktopRelease]) {
-      expect(workflow).toContain('embedded.${OK_DESKTOP_VARIANT}.provisionprofile');
+      expect(workflow).toContain('embedded.${PS_DESKTOP_VARIANT}.provisionprofile');
       expect(workflow).toContain('security cms -D -i "$PROFILE_PATH"');
     }
   });
@@ -1485,7 +1485,7 @@ describe('public desktop product variants stay independently buildable', () => {
   test('the fast-tier smoke resolves the candidate inventory, including legacy Beta artifacts', () => {
     expect(selectBeta).toContain('node .github/scripts/download-candidate-dmg.mjs');
     expect(selectBeta).toContain('DMG: ${{ steps.download.outputs.dmg_path }}');
-    expect(selectBeta).not.toContain("--pattern 'OpenKnowledge-Beta-*.dmg'");
+    expect(selectBeta).not.toContain("--pattern 'Palimpsest-Beta-*.dmg'");
   });
 });
 
@@ -1638,8 +1638,8 @@ describe('the macOS artifact is attested signed before it can ship', () => {
 });
 
 describe('every job that reads changesets installs the Changesets reader first', () => {
-  const OK_ROOT = join(WORKFLOWS, '..', '..');
-  const READER = join(OK_ROOT, 'scripts', 'changeset-versions.mjs');
+  const PS_ROOT = join(WORKFLOWS, '..', '..');
+  const READER = join(PS_ROOT, 'scripts', 'changeset-versions.mjs');
   const importsReader = (file, seen = new Set()) => {
     if (file === READER) return true;
     if (seen.has(file) || !existsSync(file)) return false;
@@ -1649,18 +1649,18 @@ describe('every job that reads changesets installs the Changesets reader first',
     );
   };
   const VERDICT_MODE_SCRIPTS = new Map([
-    [join(OK_ROOT, 'scripts', 'compute-stable-version.mjs'), ['BUMP_VERDICTS']],
-    [join(OK_ROOT, 'scripts', 'render-stable-notes.mjs'), ['NOTE_LEVELS']],
+    [join(PS_ROOT, 'scripts', 'compute-stable-version.mjs'), ['BUMP_VERDICTS']],
+    [join(PS_ROOT, 'scripts', 'render-stable-notes.mjs'), ['NOTE_LEVELS']],
     [
-      join(OK_ROOT, '.github', 'scripts', 'point-release-plan.mjs'),
+      join(PS_ROOT, '.github', 'scripts', 'point-release-plan.mjs'),
       ['BUMP_VERDICTS', 'NOTE_LEVELS'],
     ],
-    [join(OK_ROOT, '.github', 'scripts', 'bug-lane.mjs'), ['BUMP_VERDICTS']],
-    [join(OK_ROOT, '.github', 'scripts', 'select-beta-to-promote.mjs'), ['BUMP_VERDICTS']],
+    [join(PS_ROOT, '.github', 'scripts', 'bug-lane.mjs'), ['BUMP_VERDICTS']],
+    [join(PS_ROOT, '.github', 'scripts', 'select-beta-to-promote.mjs'), ['BUMP_VERDICTS']],
   ]);
   const readsChangesets = (step) => {
     const readers = [...(step.run ?? '').matchAll(/[\w./-]+\.mjs\b/g)]
-      .map(([path]) => resolve(OK_ROOT, path))
+      .map(([path]) => resolve(PS_ROOT, path))
       .filter((file) => importsReader(file));
     if (readers.length === 0) return false;
     return readers.some(
@@ -1712,7 +1712,7 @@ describe('every job that reads changesets installs the Changesets reader first',
 });
 
 describe('the release App credential never shares a job with installed packages', () => {
-  const OK_ROOT = join(WORKFLOWS, '..', '..');
+  const PS_ROOT = join(WORKFLOWS, '..', '..');
   const credentialWorkflows = ['point-release.yml', 'promote-stable.yml'];
   const jobs = credentialWorkflows.flatMap((file) =>
     Object.entries(parse(read(file)).jobs).map(([id, job]) => ({ name: `${file}#${id}`, job })),
@@ -1741,7 +1741,7 @@ describe('the release App credential never shares a job with installed packages'
     const action = parse(readFileSync(file, 'utf8'));
     return action.runs?.using === 'composite' ? action.runs.steps : null;
   };
-  const packageRoutes = (stepList, root = OK_ROOT, seen = new Set()) =>
+  const packageRoutes = (stepList, root = PS_ROOT, seen = new Set()) =>
     stepList.flatMap((step) => {
       const routes = PACKAGE_COMMAND.test(commands(step)) ? [step.name ?? step.run] : [];
       if (step.uses?.startsWith('./')) {
@@ -2517,7 +2517,7 @@ describe('the release App credential never shares a job with installed packages'
       };
       const turboBuilds = steps(build).filter((step) => /\bturbo\s+run\s+build\b/.test(commands(step)));
       expect(turboBuilds.map((step) => commands(step).trim())).toEqual([
-        'pnpm exec turbo run build --filter=@inkeep/open-knowledge --cache=local:,remote:',
+        'pnpm exec turbo run build --filter=@palimpsest/cli --cache=local:,remote:',
       ]);
       const built = at(turboBuilds[0].name);
       expect(at('Override fixed-group versions to X.Y.Z-beta.N')).toBeLessThan(built);
@@ -2799,7 +2799,7 @@ describe('the release App credential never shares a job with installed packages'
         const calls = existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n') : [];
         return { ...result, calls, publishes: calls.filter((call) => call.startsWith('publish ')), packageDir };
       };
-      const cli = (version, extra = {}) => ({ name: '@inkeep/open-knowledge', version, publishConfig: { access: 'public' }, ...extra });
+      const cli = (version, extra = {}) => ({ name: '@palimpsest/cli', version, publishConfig: { access: 'public' }, ...extra });
 
       test('the stub npm hands the step a real pacote, the one bundled with the npm on PATH', () => {
         expect(existsSync(join(nodeGlobalRoot, 'npm', 'node_modules', 'pacote', 'package.json'))).toBe(true);
@@ -2841,7 +2841,7 @@ describe('the release App credential never shares a job with installed packages'
       test('the step passes provenance and the registry as CLI flags, which publishConfig cannot override, and names the package it checks', () => {
         expect(commands(publishStep()).split('\n').map((line) => line.trim()).filter((line) => /\bnpm\s+publish\b/.test(line))).toEqual([TARBALL_PUBLISH]);
         expect(publishStep().env).not.toHaveProperty('NPM_CONFIG_PROVENANCE');
-        expect(publishStep().env.PACKAGE_NAME).toBe('@inkeep/open-knowledge');
+        expect(publishStep().env.PACKAGE_NAME).toBe('@palimpsest/cli');
       });
 
       test('a well-formed tarball built byte by byte publishes, so the zero-block row is refused for its hidden manifest alone', () => {
@@ -2869,7 +2869,7 @@ describe('the release App credential never shares a job with installed packages'
       test.each([
         ['a v-prefixed version', cli('v0.82.0-beta.9')],
         ['build metadata on the version', cli('0.82.0-beta.9+build.1')],
-        ['a padded name', { ...cli('0.82.0-beta.9'), name: ' @inkeep/open-knowledge ' }],
+        ['a padded name', { ...cli('0.82.0-beta.9'), name: ' @palimpsest/cli ' }],
       ])('the step checks %s as the cleaned manifest npm publishes, not the raw bytes', (_, manifest) => {
         const result = publishWith({ tarballs: [manifest] });
         expect(result.status, result.stdout).toBe(0);
@@ -2879,13 +2879,13 @@ describe('the release App credential never shares a job with installed packages'
       test('a version already on npm is skipped, as changeset publish skipped it', () => {
         const result = publishWith({ tarballs: [cli('0.82.0-beta.9')], view: '0.82.0-beta.9' });
         expect(result.status).toBe(0);
-        expect(result.stdout).toContain('::notice::@inkeep/open-knowledge@0.82.0-beta.9 is already on npm');
+        expect(result.stdout).toContain('::notice::@palimpsest/cli@0.82.0-beta.9 is already on npm');
         expect(result.publishes).toEqual([]);
       });
 
       test.each([
         ['a different version', { tarballs: [cli('0.82.0-beta.8')] }, '"version":"0.82.0-beta.8"'],
-        ['a different package', { tarballs: [{ ...cli('0.82.0-beta.9'), name: '@inkeep/open-knowledge-core' }] }, '"name":"@inkeep/open-knowledge-core"'],
+        ['a different package', { tarballs: [{ ...cli('0.82.0-beta.9'), name: '@palimpsest/core' }] }, '"name":"@palimpsest/core"'],
         ['a publishConfig that redirects the registry', { tarballs: [cli('0.82.0-beta.9', { publishConfig: { access: 'public', '@inkeep:registry': 'https://registry.example.test/' } })] }, 'whose publishConfig may set access and nothing else'],
         ['a publishConfig that turns provenance off', { tarballs: [cli('0.82.0-beta.9', { publishConfig: { access: 'public', provenance: false } })] }, 'whose publishConfig may set access and nothing else'],
         [
@@ -3071,7 +3071,7 @@ describe('the release App credential never shares a job with installed packages'
           return { status: error.status, stdout: error.stdout, stderr: error.stderr };
         }
       };
-      const marker = (ids) => `Notes for the beta.\n\n<!-- ok-consumed-set: ${JSON.stringify(ids)} -->\n\n`;
+      const marker = (ids) => `Notes for the beta.\n\n<!-- ps-consumed-set: ${JSON.stringify(ids)} -->\n\n`;
       const beta = (tagName, body, isDraft = false) => ({ tagName, isDraft, isPrerelease: true, body });
       const stable = (tagName, isDraft = false) => ({ tagName, isDraft, isPrerelease: false, body: 'Stable.' });
       const draftNewest = {
@@ -3088,8 +3088,8 @@ describe('the release App credential never shares a job with installed packages'
         'there is no beta Release': { releases: [{ tagName: 'v0.81.4', isDraft: false, isPrerelease: false, body: 'Stable.' }] },
         'the view fails': { releases: draftNewest.releases, fail: { view: { status: 1, stderr: 'HTTP 404\n' } } },
         'the body has no marker': { releases: [beta('v0.82.0-beta.9', 'Notes without a marker.\n')] },
-        'the marker is not JSON': { releases: [beta('v0.82.0-beta.9', 'Notes.\n<!-- ok-consumed-set: [a, b] -->')] },
-        'the marker is not a string array': { releases: [beta('v0.82.0-beta.9', 'Notes.\n<!-- ok-consumed-set: [1, 2] -->')] },
+        'the marker is not JSON': { releases: [beta('v0.82.0-beta.9', 'Notes.\n<!-- ps-consumed-set: [a, b] -->')] },
+        'the marker is not a string array': { releases: [beta('v0.82.0-beta.9', 'Notes.\n<!-- ps-consumed-set: [1, 2] -->')] },
         'the stable listing fails': { releases: draftNewest.releases, fail: { api: { status: 1, stderr: 'HTTP 502: Bad Gateway\n' } } },
       };
 
@@ -3132,11 +3132,11 @@ describe('the release App credential never shares a job with installed packages'
     });
 
     test('the build job packs the only public workspace package and runs the only publish-time script it declares', () => {
-      const patterns = parse(readFileSync(join(OK_ROOT, 'pnpm-workspace.yaml'), 'utf8')).packages;
+      const patterns = parse(readFileSync(join(PS_ROOT, 'pnpm-workspace.yaml'), 'utf8')).packages;
       const dirs = patterns.flatMap((pattern) => {
         if (pattern.endsWith('/*') && !/[*?{}[\]!]/.test(pattern.slice(0, -2))) {
           const parent = pattern.slice(0, -2);
-          return readdirSync(join(OK_ROOT, parent), { withFileTypes: true })
+          return readdirSync(join(PS_ROOT, parent), { withFileTypes: true })
             .filter((entry) => entry.isDirectory())
             .map((entry) => `${parent}/${entry.name}`);
         }
@@ -3144,10 +3144,10 @@ describe('the release App credential never shares a job with installed packages'
         return [pattern];
       });
       const manifests = dirs
-        .filter((dir) => existsSync(join(OK_ROOT, dir, 'package.json')))
-        .map((dir) => ({ dir, manifest: JSON.parse(readFileSync(join(OK_ROOT, dir, 'package.json'), 'utf8')) }));
+        .filter((dir) => existsSync(join(PS_ROOT, dir, 'package.json')))
+        .map((dir) => ({ dir, manifest: JSON.parse(readFileSync(join(PS_ROOT, dir, 'package.json'), 'utf8')) }));
       expect(manifests.filter(({ manifest }) => !manifest.private).map(({ dir, manifest }) => `${dir} ${manifest.name}`)).toEqual([
-        'packages/cli @inkeep/open-knowledge',
+        'packages/cli @palimpsest/cli',
       ]);
       const cli = manifests.find(({ dir }) => dir === 'packages/cli').manifest;
       expect(Object.keys(cli.scripts).filter((name) => ['prepublishOnly', 'prepublish', 'publish', 'postpublish'].includes(name))).toEqual([
@@ -3196,7 +3196,7 @@ describe('Linux packaging ships the native prebuilds and checks them before uplo
       const guard = job.steps[guarded];
       expect(guard['working-directory']).toBe('packages/desktop');
       expect(guard.env).toEqual({
-        OK_LINUX_PACKAGE_DIR: 'dist-desktop/${{ matrix.unpacked_dir }}',
+        PS_LINUX_PACKAGE_DIR: 'dist-desktop/${{ matrix.unpacked_dir }}',
       });
       expect(guard).not.toHaveProperty('if');
       expect(guard).not.toHaveProperty('continue-on-error');
@@ -3273,20 +3273,20 @@ describe('Linux packaging ships the native prebuilds and checks them before uplo
 describe('the Discord stable announcement and the notes renderer agree on the notes-source marker', () => {
   test('the announcement strips the marker line the renderer writes and keeps the notes', () => {
     const step = workflowStep(desktopRelease, 'desktop-release.yml', 'Announce stable release to Discord');
-    const stripLine = step.split('\n').find((line) => line.includes('ok-notes-source'));
+    const stripLine = step.split('\n').find((line) => line.includes('ps-notes-source'));
     expect(stripLine, 'the Discord step no longer strips the notes-source marker').toBeDefined();
     const programs = [...(stripLine ?? '').matchAll(/-e '([^']*)'/g)].map((match) => match[1]);
     const rendered = renderStableNotes([{ id: 'a-fix', level: 'patch', summary: 'A fix.' }], {
       marked: true,
     });
     expect(rendered).toContain(NOTES_SOURCE_MARKER);
-    const body = `${rendered}\n<!-- ok-downloads:start -->\n| a | b |\n<!-- ok-downloads:end -->\n`;
+    const body = `${rendered}\n<!-- ps-downloads:start -->\n| a | b |\n<!-- ps-downloads:end -->\n`;
     const stripped = execFileSync('sed', programs.flatMap((program) => ['-e', program]), {
       input: body,
       encoding: 'utf8',
     });
-    expect(stripped).not.toContain('ok-notes-source');
-    expect(stripped).not.toContain('ok-downloads');
+    expect(stripped).not.toContain('ps-notes-source');
+    expect(stripped).not.toContain('ps-downloads');
     expect(stripped).toContain('- A fix.');
   });
 });

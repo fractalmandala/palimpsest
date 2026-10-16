@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { APP_PACKAGE_ROOT } from './seed-key.ts';
 
-export const PRODUCTION_SHELL_ENV = 'OK_TEST_PRODUCTION_SHELL';
+export const PRODUCTION_SHELL_ENV = 'PS_TEST_PRODUCTION_SHELL';
 
 const CLI_ENTRY = join(APP_PACKAGE_ROOT, '../cli/dist/cli.mjs');
 
@@ -41,6 +41,6 @@ export function initProductionShellContent(contentDir: string): void {
     { cwd: contentDir, encoding: 'utf8' },
   );
   if (initialized.status !== 0) {
-    throw new Error(`production-shell ok init failed: ${initialized.stderr}`);
+    throw new Error(`production-shell ps init failed: ${initialized.stderr}`);
   }
 }

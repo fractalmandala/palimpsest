@@ -1,6 +1,6 @@
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { pathspecArgs } from '@inkeep/open-knowledge-core';
+import { pathspecArgs } from '@palimpsest/core';
 import simpleGit, { type SimpleGit } from 'simple-git';
 
 export interface GitCommit {

@@ -6,13 +6,13 @@ import {
   getOkArtifactPaths,
   type ProjectAiIntegrationsResult,
   writeProjectAiIntegrations,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 import {
   ALL_EDITOR_IDS,
   type EditorId,
-  type OkFolderState,
+  type PsFolderState,
   sanitizeFolderName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   applySeed,
   coercePackId,
@@ -23,14 +23,14 @@ import {
   planSeed,
   tracedMkdirSync,
   writeRootGitignoreForNewRepo,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import {
   type DiscoverProjectOptions,
   type DiscoverProjectResult,
   discoverProject as defaultDiscoverProject,
 } from './folder-admission.ts';
 
-export function folderState(path: string): OkFolderState {
+export function folderState(path: string): PsFolderState {
   try {
     if (!existsSync(path)) return 'free';
     const st = statSync(path);
@@ -52,7 +52,7 @@ export function folderState(path: string): OkFolderState {
 
 export { sanitizeFolderName };
 
-import type { CreateNewProjectFailureReason } from '@inkeep/open-knowledge-core';
+import type { CreateNewProjectFailureReason } from '@palimpsest/core';
 
 export class CreateNewProjectError extends Error {
   readonly reason: CreateNewProjectFailureReason;
@@ -332,5 +332,5 @@ export function resolveDefaultProjectsRoot(
       console.warn('[create-new-project] persisted lastUsedProjectParent existsCheck failed:', err);
     }
   }
-  return resolve(documentsDir, 'OpenKnowledge');
+  return resolve(documentsDir, 'Palimpsest');
 }

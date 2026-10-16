@@ -115,11 +115,11 @@ describe('applyProvenanceMarks', () => {
       kind: 'publisher',
       login: 'inkeep',
       title: 'View inkeep on skills.sh',
-      href: 'https://www.skills.sh/inkeep/open-knowledge-skills',
+      href: 'https://www.skills.sh/fractalmandala/palimpsest-skills',
     }));
     const mark = marks(root)[0];
     expect(mark?.tagName).toBe('A');
-    expect(mark?.getAttribute('href')).toBe('https://www.skills.sh/inkeep/open-knowledge-skills');
+    expect(mark?.getAttribute('href')).toBe('https://www.skills.sh/fractalmandala/palimpsest-skills');
     expect(mark?.getAttribute('rel')).toContain('noreferrer');
     expect(mark?.hasAttribute('aria-hidden')).toBe(false);
     expect(mark?.getAttribute('aria-label')).toBe('View inkeep on skills.sh (opens in a new tab)');

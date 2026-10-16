@@ -1,5 +1,5 @@
-import type { Fetched, SourceSpec } from '@inkeep/open-knowledge-core/skills-catalog';
-import { fetchSource } from '@inkeep/open-knowledge-core/skills-catalog';
+import type { Fetched, SourceSpec } from '@palimpsest/core/skills-catalog';
+import { fetchSource } from '@palimpsest/core/skills-catalog';
 
 const TTL_MS = 30_000;
 

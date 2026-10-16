@@ -2,7 +2,7 @@ import { defineConfig } from '@lingui/cli';
 import { formatter } from '@lingui/format-po';
 
 /**
- * Lingui i18n configuration for the OpenKnowledge editor frontend.
+ * Lingui i18n configuration for the Palimpsest editor frontend.
  *
  * `pseudo` is a generated pseudolocalization locale — `lingui compile` derives
  * it from `en` with no translation step, and `i18n:extract` writes no catalog
@@ -13,7 +13,7 @@ import { formatter } from '@lingui/format-po';
  * reaches the config enum or the picker, and a shipped build neither answers to
  * the parameter nor carries the catalog.
  *
- * `locales` is `SUPPORTED_LOCALES` from `@inkeep/open-knowledge-core` plus the
+ * `locales` is `SUPPORTED_LOCALES` from `@palimpsest/core` plus the
  * generated `pseudo`. It is spelled out literally rather than imported: the
  * Lingui CLI loads this file through its own TS loader, before any workspace
  * build, so a cross-package import would make catalog extraction depend on

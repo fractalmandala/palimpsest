@@ -58,8 +58,8 @@ test('TipTap find/replace highlights, navigates, replaces current, and replaces 
   await findInput.fill('needle');
 
   await expect(bar).toContainText('1 / 3');
-  await expect(page.locator('.ok-find-match')).toHaveCount(3);
-  await expect(page.locator('.ok-find-match-active')).toHaveCount(1);
+  await expect(page.locator('.ps-find-match')).toHaveCount(3);
+  await expect(page.locator('.ps-find-match-active')).toHaveCount(1);
 
   await page.keyboard.press('Enter');
   await expect(bar).toContainText('2 / 3');
@@ -135,7 +135,7 @@ test('TipTap find navigation scrolls an off-screen active match into view', asyn
     )
     .toBeGreaterThan(0);
   await expect
-    .poll(() => matchIsWithinReadableScrollport(page, '.ok-find-match-active'))
+    .poll(() => matchIsWithinReadableScrollport(page, '.ps-find-match-active'))
     .toBe(true);
 });
 
@@ -152,9 +152,9 @@ test('TipTap find navigation does not show table controls inside table matches',
         '',
         '| Project | Command |',
         '| --- | --- |',
-        '| open-knowledge clean | ok clean |',
-        '| open-knowledge stop | ok stop |',
-        '| open-knowledge ui | ok ui |',
+        '| palimpsest clean | ok clean |',
+        '| palimpsest stop | ps stop |',
+        '| palimpsest ui | ok ui |',
       ].join('\n'),
     },
   ]);
@@ -168,7 +168,7 @@ test('TipTap find navigation does not show table controls inside table matches',
   await expect(bar).toBeVisible();
 
   const findInput = bar.getByRole('textbox', { name: 'Find' });
-  await findInput.fill('open-knowledge');
+  await findInput.fill('palimpsest');
   await expect(bar).toContainText('1 / 3');
 
   await page.keyboard.press('Enter');

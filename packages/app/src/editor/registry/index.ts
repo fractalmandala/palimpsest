@@ -2,8 +2,8 @@
  * Either path is greenfield-compatible with the precedent #9 schema-add-only contract; the choice
  * depends on whether the extension surface lands as a host-API (b) or in-product (a).
  */
-import { createRegistry } from '@inkeep/open-knowledge-core/registry';
-import type { JsxComponentMeta, PropDef } from '@inkeep/open-knowledge-core/registry/types';
+import { createRegistry } from '@palimpsest/core/registry';
+import type { JsxComponentMeta, PropDef } from '@palimpsest/core/registry/types';
 import { componentMap } from '../components/componentMap.tsx';
 import type { JsxComponentDescriptor } from './types.ts';
 

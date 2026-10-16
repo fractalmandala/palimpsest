@@ -2,8 +2,8 @@ import type {
   ApplyIntent,
   ApplyReport,
   HostSnapshot,
-} from '@inkeep/open-knowledge-core/agent-registry';
-import { AgentIntegrationsApplySuccessSchema } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/agent-registry';
+import { AgentIntegrationsApplySuccessSchema } from '@palimpsest/core/schemas/api';
 
 export interface ApplyAgentConnectionsResult {
   readonly ok: boolean;
@@ -30,7 +30,7 @@ async function requestAgentConnectionIntents(
   intents: readonly ApplyIntent[],
   options?: { readonly webSignal?: AbortSignal },
 ): Promise<ApplyAgentConnectionsResult> {
-  const bridge = globalThis.window?.okDesktop;
+  const bridge = globalThis.window?.psDesktop;
   if (bridge !== undefined) {
     try {
       const result = await bridge.agentIntegrations.apply({ intents });

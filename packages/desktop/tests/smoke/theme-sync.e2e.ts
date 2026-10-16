@@ -15,7 +15,7 @@ import {
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
 function createTestDirs(prefix: string): { tmpHome: string; projectDir: string } {
@@ -26,7 +26,7 @@ function createTestDirs(prefix: string): { tmpHome: string; projectDir: string }
 }
 
 test.describe('chrome-modernization theme-sync smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Driver uses macOS open(1) and chrome stack is darwin-only in v0.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -34,10 +34,10 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     captureStderrFor,
   }) => {
     const docName = `theme-sync-${randomUUID()}`;
-    const { tmpHome, projectDir } = createTestDirs('ok-theme-sync');
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const { tmpHome, projectDir } = createTestDirs('ps-theme-sync');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
     writeFileSync(
@@ -58,7 +58,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     const firstWindow = await app.firstWindow({ timeout: 15_000 });
     expect(firstWindow).toBeDefined();
 
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=${encodeURIComponent(docName)}`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=${encodeURIComponent(docName)}`;
     execSync(`open -g "${deepLink}"`, { stdio: 'pipe' });
 
     let editorPage: import('@playwright/test').Page | undefined;
@@ -78,10 +78,10 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     const resolvedEditorPage = editorPage;
 
     const bridgeShape = await editorPage.evaluate(() => ({
-      hasBridge: typeof window.okDesktop !== 'undefined',
-      hasSetThemeSource: typeof window.okDesktop?.setThemeSource === 'function',
-      hasSignalThemeApplied: typeof window.okDesktop?.signalThemeApplied === 'function',
-      mode: window.okDesktop?.config.mode,
+      hasBridge: typeof window.psDesktop !== 'undefined',
+      hasSetThemeSource: typeof window.psDesktop?.setThemeSource === 'function',
+      hasSignalThemeApplied: typeof window.psDesktop?.signalThemeApplied === 'function',
+      mode: window.psDesktop?.config.mode,
     }));
     expect(bridgeShape.hasBridge).toBe(true);
     expect(bridgeShape.hasSetThemeSource).toBe(true);
@@ -99,7 +99,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     for (const target of ['dark', 'light', 'system'] as const) {
       await expect(async () => {
         await resolvedEditorPage.evaluate(async (t) => {
-          await window.okDesktop?.setThemeSource?.(t);
+          await window.psDesktop?.setThemeSource?.(t);
         }, target);
         expect(await app.evaluate(({ nativeTheme }) => nativeTheme.themeSource)).toBe(target);
       }).toPass({ timeout: 5_000 });
@@ -110,10 +110,10 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     captureStderrFor,
   }) => {
     const docName = `theme-sync-rapid-${randomUUID()}`;
-    const { tmpHome, projectDir } = createTestDirs('ok-theme-sync-rapid');
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const { tmpHome, projectDir } = createTestDirs('ps-theme-sync-rapid');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
     writeFileSync(
@@ -132,7 +132,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     captureStderrFor(app, { home: tmpHome, cleanupDirs: [tmpHome, projectDir] });
 
     await app.firstWindow({ timeout: 15_000 });
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=${encodeURIComponent(docName)}`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=${encodeURIComponent(docName)}`;
     execSync(`open -g "${deepLink}"`, { stdio: 'pipe' });
 
     let editorPage: import('@playwright/test').Page | undefined;
@@ -151,7 +151,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     await configureDesktopGitRepositories(editorPage, projectDir);
 
     await editorPage.evaluate(async () => {
-      const bridge = window.okDesktop;
+      const bridge = window.psDesktop;
       if (!bridge?.setThemeSource) return;
       const p1 = bridge.setThemeSource('dark');
       const p2 = bridge.setThemeSource('light');
@@ -192,7 +192,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     });
 
     const renderObserved = await editorPage.evaluate(async () => {
-      const bridge = window.okDesktop;
+      const bridge = window.psDesktop;
       if (!bridge?.setThemeSource || !bridge.signalThemeApplied) {
         return { drove: false, rejected: false };
       }
@@ -222,7 +222,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     }).toPass({ timeout: 2_000 });
 
     await editorPage.evaluate(async () => {
-      await window.okDesktop?.setThemeSource?.('light');
+      await window.psDesktop?.setThemeSource?.('light');
     });
   });
 
@@ -230,10 +230,10 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     captureStderrFor,
   }) => {
     const docName = `theme-sync-rt-${randomUUID()}`;
-    const { tmpHome, projectDir } = createTestDirs('ok-theme-sync-rt');
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const { tmpHome, projectDir } = createTestDirs('ps-theme-sync-rt');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
     writeFileSync(
@@ -253,7 +253,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     const pushedBy = observeThemeSourcePushes(app);
 
     await app.firstWindow({ timeout: 15_000 });
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=${encodeURIComponent(docName)}`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=${encodeURIComponent(docName)}`;
     execSync(`open -g "${deepLink}"`, { stdio: 'pipe' });
 
     let editorPage: import('@playwright/test').Page | undefined;
@@ -291,9 +291,9 @@ test.describe('chrome-modernization theme-sync smoke', () => {
     });
 
     await editorPage.evaluate(() => {
-      window.okDesktop?.signalThemeApplied?.({ reducedTransparency: false });
-      window.okDesktop?.signalThemeApplied?.({ reducedTransparency: true });
-      window.okDesktop?.signalThemeApplied?.({ reducedTransparency: false });
+      window.psDesktop?.signalThemeApplied?.({ reducedTransparency: false });
+      window.psDesktop?.signalThemeApplied?.({ reducedTransparency: true });
+      window.psDesktop?.signalThemeApplied?.({ reducedTransparency: false });
     });
 
     await expect(async () => {
@@ -323,7 +323,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
 
     await waitForEveryWindowToPushItsThemeSource(app, pushedBy);
     await editorPage.evaluate(async () => {
-      await window.okDesktop?.setThemeSource?.('light');
+      await window.psDesktop?.setThemeSource?.('light');
     });
     expect(await app.evaluate(({ nativeTheme }) => nativeTheme.themeSource)).toBe('light');
   });

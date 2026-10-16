@@ -1,6 +1,6 @@
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 
-const PROD_BASE = 'https://openknowledge.ai';
+const PROD_BASE = 'https://github.com/fractalmandala/palimpsest';
 const REDEEM_PATH = '/redeem';
 const REDEEM_TOKEN_PARAM = 'token';
 const REDEEM_NONCE_PARAM = 'nonce';
@@ -8,7 +8,7 @@ const REDEEM_NONCE_PARAM = 'nonce';
 const SHARE_LINK_PREFIX = `${PROD_BASE}/d/`;
 
 export function resolveContinueBase(env: Record<string, string | undefined> = process.env): string {
-  const override = env.OK_CONTINUE_URL_BASE?.trim();
+  const override = env.PS_CONTINUE_URL_BASE?.trim();
   if (override && isLoopbackHttpUrl(override)) return override.replace(/\/+$/, '');
   return PROD_BASE;
 }

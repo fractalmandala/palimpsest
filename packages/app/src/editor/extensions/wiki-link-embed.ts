@@ -1,9 +1,9 @@
-import { IMAGE_EXTENSIONS } from '@inkeep/open-knowledge-core/constants/upload';
-import { WikiLinkEmbed as BaseWikiLinkEmbed } from '@inkeep/open-knowledge-core/extensions/wiki-link-embed';
+import { IMAGE_EXTENSIONS } from '@palimpsest/core/constants/upload';
+import { WikiLinkEmbed as BaseWikiLinkEmbed } from '@palimpsest/core/extensions/wiki-link-embed';
 import {
   extractAssetExtension,
   resolveAssetProjectPath,
-} from '@inkeep/open-knowledge-core/utils/link-targets';
+} from '@palimpsest/core/utils/link-targets';
 import { ReactRenderer } from '@tiptap/react';
 import { getInteractionLayer } from '../interaction-layer-host';
 import { activateAssetLink } from '../internal-link-helpers';

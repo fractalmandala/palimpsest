@@ -14,7 +14,7 @@ import {
 } from '@/components/file-tree-density';
 import { FILE_TREE_EXT_BADGE_CSS } from '@/components/file-tree-extension-badge';
 
-export const MARKDOWN_FILE_ICON_ID = 'ok-file-tree-markdown';
+export const MARKDOWN_FILE_ICON_ID = 'ps-file-tree-markdown';
 
 export const MARKDOWN_FILE_ICON_SYMBOL = `<symbol id="${MARKDOWN_FILE_ICON_ID}" viewBox="${MARKDOWN_FILE_ICON_VIEWBOX}" fill="currentColor"><path d="${MARKDOWN_FILE_ICON_PATH_D}"/></symbol>`;
 
@@ -57,7 +57,7 @@ export const FILE_TREE_FRACTIONAL_ZOOM_TRUNCATION_GUARD_CSS = `
   }
 `;
 
-export const OK_FILE_TREE_READONLY_UNSAFE_CSS = [
+export const PS_FILE_TREE_READONLY_UNSAFE_CSS = [
   FILE_TREE_EXT_BADGE_CSS,
   FILE_TREE_INDENT_GUIDE_CSS,
   FILE_TREE_STICKY_HEADER_CSS,
@@ -65,7 +65,7 @@ export const OK_FILE_TREE_READONLY_UNSAFE_CSS = [
   FILE_TREE_FRACTIONAL_ZOOM_TRUNCATION_GUARD_CSS,
 ].join('\n');
 
-export interface OkFileTreeOptionsInput {
+export interface PsFileTreeOptionsInput {
   readonly paths: readonly string[];
   readonly initialExpansion?: FileTreeInitialExpansion;
   readonly initialVisibleRowCount?: number;
@@ -79,7 +79,7 @@ export interface OkFileTreeOptionsInput {
   readonly unsafeCSS?: string;
 }
 
-export function buildOkFileTreeOptions(input: OkFileTreeOptionsInput): FileTreeOptions {
+export function buildOkFileTreeOptions(input: PsFileTreeOptionsInput): FileTreeOptions {
   const spriteSheet = `<svg data-icon-sprite aria-hidden="true" width="0" height="0">${input.extraSpriteSymbols ?? ''}${MARKDOWN_FILE_ICON_SYMBOL}</svg>`;
   const markdownIcon = { name: MARKDOWN_FILE_ICON_ID, viewBox: MARKDOWN_FILE_ICON_VIEWBOX };
   return {
@@ -94,7 +94,7 @@ export function buildOkFileTreeOptions(input: OkFileTreeOptionsInput): FileTreeO
       spriteSheet,
       byFileExtension: { md: markdownIcon, mdx: markdownIcon },
     },
-    unsafeCSS: input.unsafeCSS ?? OK_FILE_TREE_READONLY_UNSAFE_CSS,
+    unsafeCSS: input.unsafeCSS ?? PS_FILE_TREE_READONLY_UNSAFE_CSS,
     composition: input.enableContextMenu
       ? { contextMenu: { enabled: true, triggerMode: 'both', buttonVisibility: 'when-needed' } }
       : undefined,

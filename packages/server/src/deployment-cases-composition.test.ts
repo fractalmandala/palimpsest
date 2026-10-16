@@ -2,7 +2,7 @@ import { mkdtempSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { resolveEnvConfigLayer, resolveServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import { resolveEnvConfigLayer, resolveServerRuntimeConfig } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { bootCompositionRig, parseProblem, rawRequest } from './composition-rig.test-helper.ts';
@@ -13,19 +13,19 @@ let case2: BootedServer;
 let case3: BootedServer;
 
 const CASE2_ENV = {
-  OK_BIND: '127.0.0.1 100.64.0.7',
-  OK_ALLOW_EXTERNAL: '1',
-  OK_EXTERNAL_URL: 'http://laptop.tail:55222',
+  PS_BIND: '127.0.0.1 100.64.0.7',
+  PS_ALLOW_EXTERNAL: '1',
+  PS_EXTERNAL_URL: 'http://laptop.tail:55222',
 };
 
 const CASE3_ENV = {
   PORT: '8080',
-  OK_EXTERNAL_URL: 'https://notes.example.com',
-  OK_ALLOW_EXTERNAL: '1',
+  PS_EXTERNAL_URL: 'https://notes.example.com',
+  PS_ALLOW_EXTERNAL: '1',
 };
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-deploy-cases-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-deploy-cases-'));
 
   const case2Config = ConfigSchema.parse({ server: resolveEnvConfigLayer(CASE2_ENV).layer.server });
   case2 = await bootCompositionRig(mkdtempSync(resolve(tmpRoot, 'case2-')), {
@@ -54,7 +54,7 @@ afterAll(async () => {
 });
 
 describe('deck env spellings resolve to the booted config', () => {
-  test('Case 2: OK_BIND (space-separated) + OK_ALLOW_EXTERNAL=1 + OK_EXTERNAL_URL', () => {
+  test('Case 2: PS_BIND (space-separated) + PS_ALLOW_EXTERNAL=1 + PS_EXTERNAL_URL', () => {
     expect(resolveEnvConfigLayer(CASE2_ENV).layer).toEqual({
       server: {
         bind: ['127.0.0.1', '100.64.0.7'],
@@ -64,7 +64,7 @@ describe('deck env spellings resolve to the booted config', () => {
     });
   });
 
-  test('Case 3: platform PORT + OK_EXTERNAL_URL + OK_ALLOW_EXTERNAL=1', () => {
+  test('Case 3: platform PORT + PS_EXTERNAL_URL + PS_ALLOW_EXTERNAL=1', () => {
     expect(resolveEnvConfigLayer(CASE3_ENV).layer).toEqual({
       server: {
         port: 8080,

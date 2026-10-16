@@ -4,12 +4,12 @@ import type { Workspace } from '@/lib/workspace-paths';
 import { buildDocPathResolver, remarkDocPathLinks, setDocPathResolver } from './doc-path-links';
 
 const workspace: Workspace = {
-  contentDir: '/Users/abraham/repo/public/open-knowledge',
+  contentDir: '/Users/abraham/repo/public/palimpsest',
   pathSeparator: '/',
 };
 
 const windowsWorkspace: Workspace = {
-  contentDir: 'C:\\Users\\abraham\\repo\\public\\open-knowledge',
+  contentDir: 'C:\\Users\\abraham\\repo\\public\\palimpsest',
   pathSeparator: '\\',
 };
 
@@ -30,7 +30,7 @@ describe('buildDocPathResolver', () => {
       pages: new Set(['reports/foo/REPORT']),
     });
     expect(resolve).not.toBeNull();
-    expect(resolve?.('/Users/abraham/repo/public/open-knowledge/reports/foo/REPORT.md')).toBe(
+    expect(resolve?.('/Users/abraham/repo/public/palimpsest/reports/foo/REPORT.md')).toBe(
       'reports/foo/REPORT',
     );
   });
@@ -40,7 +40,7 @@ describe('buildDocPathResolver', () => {
       workspace,
       pages: new Set(['reports/foo/REPORT']),
     });
-    expect(resolve?.('public/open-knowledge/reports/foo/REPORT.md')).toBe('reports/foo/REPORT');
+    expect(resolve?.('public/palimpsest/reports/foo/REPORT.md')).toBe('reports/foo/REPORT');
   });
 
   test('try 3a: bare-tail path resolves via exact match against the page set', () => {
@@ -83,7 +83,7 @@ describe('buildDocPathResolver', () => {
     });
     expect(resolve?.('reports/foo/DOES-NOT-EXIST.md')).toBeNull();
     expect(
-      resolve?.('/Users/abraham/repo/public/open-knowledge/reports/foo/DOES-NOT-EXIST.md'),
+      resolve?.('/Users/abraham/repo/public/palimpsest/reports/foo/DOES-NOT-EXIST.md'),
     ).toBeNull();
   });
 
@@ -174,7 +174,7 @@ describe('buildDocPathResolver', () => {
       workspace: windowsWorkspace,
       pages: new Set(['reports/foo/REPORT']),
     });
-    expect(resolve?.('.\\public\\open-knowledge\\reports\\foo\\REPORT.md')).toBe(
+    expect(resolve?.('.\\public\\palimpsest\\reports\\foo\\REPORT.md')).toBe(
       'reports/foo/REPORT',
     );
   });
@@ -195,7 +195,7 @@ describe('buildDocPathResolver', () => {
       pages: new Set(['reports/foo/REPORT']),
     });
     expect(
-      resolve?.('C:\\Users\\abraham\\repo\\public\\open-knowledge\\reports\\foo\\REPORT.md'),
+      resolve?.('C:\\Users\\abraham\\repo\\public\\palimpsest\\reports\\foo\\REPORT.md'),
     ).toBe('reports/foo/REPORT');
   });
 });
@@ -405,10 +405,10 @@ describe('remarkDocPathLinks', () => {
 
   test('a link the agent wrote to a doc path becomes an in-app link, text untouched', () => {
     for (const href of [
-      'public/open-knowledge/reports/foo/REPORT.md',
-      '/Users/abraham/repo/public/open-knowledge/reports/foo/REPORT.md',
-      'file:///Users/abraham/repo/public/open-knowledge/reports/foo/REPORT.md',
-      'public/open-knowledge/reports/foo/REPORT%2Emd',
+      'public/palimpsest/reports/foo/REPORT.md',
+      '/Users/abraham/repo/public/palimpsest/reports/foo/REPORT.md',
+      'file:///Users/abraham/repo/public/palimpsest/reports/foo/REPORT.md',
+      'public/palimpsest/reports/foo/REPORT%2Emd',
     ]) {
       const tree = makeTree([
         {
@@ -426,7 +426,7 @@ describe('remarkDocPathLinks', () => {
 
   test('a link to a doc that is not in the workspace is left exactly as written', () => {
     for (const href of [
-      'public/open-knowledge/reports/nope/REPORT.md',
+      'public/palimpsest/reports/nope/REPORT.md',
       'mailto:someone@example.com',
       'javascript:alert(1)',
       'javascript%3Aalert(1)',
@@ -466,7 +466,7 @@ describe('remarkDocPathLinks', () => {
   test('a link fragment rides along onto the in-app route', () => {
     const cases: ReadonlyArray<readonly [string, string]> = [
       ['reports/foo/REPORT.md#findings', '#/reports/foo/REPORT#findings'],
-      ['public/open-knowledge/reports/foo/REPORT.md#root-cause', '#/reports/foo/REPORT#root-cause'],
+      ['public/palimpsest/reports/foo/REPORT.md#root-cause', '#/reports/foo/REPORT#root-cause'],
       ['reports/foo/REPORT.md#', '#/reports/foo/REPORT'],
     ];
     for (const [href, expected] of cases) {
@@ -577,8 +577,8 @@ describe('remarkDocPathLinks', () => {
       pages: new Set(['reports/foo/REPORT']),
     });
     for (const href of [
-      'C:\\Users\\abraham\\repo\\public\\open-knowledge\\reports\\foo\\REPORT.md',
-      'file:///C:/Users/abraham/repo/public/open-knowledge/reports/foo/REPORT.md',
+      'C:\\Users\\abraham\\repo\\public\\palimpsest\\reports\\foo\\REPORT.md',
+      'file:///C:/Users/abraham/repo/public/palimpsest/reports/foo/REPORT.md',
     ]) {
       const tree = makeTree([
         {
@@ -598,7 +598,7 @@ describe('remarkDocPathLinks', () => {
         type: 'paragraph',
         children: [{ type: 'linkReference', children: [{ type: 'text', value: 'the report' }] }],
       },
-      { type: 'definition', url: 'public/open-knowledge/reports/foo/REPORT.md', title: null },
+      { type: 'definition', url: 'public/palimpsest/reports/foo/REPORT.md', title: null },
     ]);
     setDocPathResolver(resolve);
     remarkDocPathLinks()()(tree);

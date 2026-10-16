@@ -1,6 +1,6 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { getGitHubStars } from '@inkeep/open-knowledge-core/utils/github-stars';
+import { getGitHubStars } from '@palimpsest/core/utils/github-stars';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -22,7 +22,7 @@ import { SubscribeForm } from '@/components/SubscribeForm';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { OkAboutInfo } from '@/lib/desktop-bridge-types';
+import type { PsAboutInfo } from '@/lib/desktop-bridge-types';
 import { dispatchExternalLinkClick } from '@/lib/external-link';
 import { feedbackNudgeStore } from '@/lib/feedback-nudge-store';
 import { DISCORD_INVITE_URL, DOCS_URL, GITHUB_REPO_URL, X_PROFILE_URL } from '@/lib/social-links';
@@ -52,7 +52,7 @@ const sections: ResourceSection[] = [
     heading: msg`Resources`,
     links: [
       { label: msg`Docs`, href: DOCS_URL, icon: BookOpen },
-      { label: msg`Download app`, href: 'https://openknowledge.ai/download', icon: Download },
+      { label: msg`Download app`, href: 'https://github.com/fractalmandala/palimpsest/download', icon: Download },
     ],
   },
   {
@@ -141,9 +141,9 @@ export const HelpPopover: FC = () => {
   const [reportBugOpen, setReportBugOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [starCount, setStarCount] = useState<number | null>(null);
-  const [about, setAbout] = useState<OkAboutInfo | null>(null);
+  const [about, setAbout] = useState<PsAboutInfo | null>(null);
 
-  const bridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
+  const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
   const hasDesktopBridge = bridge != null;
   const appVersion = bridge?.appVersion;
   const whatsNewHref = about?.releasesUrl ?? WHATS_NEW_HREF;

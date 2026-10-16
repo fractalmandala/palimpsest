@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { parseCheckpoint } from '@inkeep/open-knowledge-core';
+import { parseCheckpoint } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestClient, createTestServer, type TestServer } from './test-harness.ts';
@@ -31,7 +31,7 @@ afterEach(async () => {
 });
 
 function readLossEvents(contentDir: string): LossRingEvent[] {
-  const path = join(contentDir, '.ok', 'local', 'loss-capture', 'loss-current.jsonl');
+  const path = join(contentDir, '.ps', 'local', 'loss-capture', 'loss-current.jsonl');
   if (!existsSync(path)) return [];
   return readFileSync(path, 'utf-8')
     .split('\n')
@@ -96,8 +96,8 @@ describe('template concurrent-write reconcile on the content branch', () => {
     async () => {
       server = await createTestServer({ gitEnabled: true, debounce: 150, maxDebounce: 600 });
       const name = `tpl-${randomUUID().slice(0, 8)}`;
-      const docName = `.ok/templates/${name}`;
-      const tplFile = resolve(server.contentDir, '.ok', 'templates', `${name}.md`);
+      const docName = `.ps/templates/${name}`;
+      const tplFile = resolve(server.contentDir, '.ps', 'templates', `${name}.md`);
 
       const client = await createTestClient(server.port, docName, { skipInvariantWatcher: true });
 

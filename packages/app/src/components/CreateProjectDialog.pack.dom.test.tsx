@@ -3,25 +3,25 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type {
-  OkDesktopBridge,
-  OkPackId,
-  OkScaffoldPlan,
-  OkSeedPackInfo,
+  PsDesktopBridge,
+  PsPackId,
+  PsScaffoldPlan,
+  PsSeedPackInfo,
 } from '@/lib/desktop-bridge-types';
 
 interface PlanCall {
-  packId?: OkPackId;
+  packId?: PsPackId;
   rootDir?: string;
   preview?: { skillsInstallable: boolean };
 }
 
 const planCalls: PlanCall[] = [];
 
-const plans: Record<string, OkScaffoldPlan> = {
+const plans: Record<string, PsScaffoldPlan> = {
   'knowledge-base': {
     created: [
       { kind: 'folder', path: 'external-sources' },
-      { kind: 'file', path: 'external-sources/.ok/templates/clip.md' },
+      { kind: 'file', path: 'external-sources/.ps/templates/clip.md' },
       { kind: 'file', path: 'log.md' },
     ],
     skipped: [],
@@ -31,7 +31,7 @@ const plans: Record<string, OkScaffoldPlan> = {
   'plain-notes': {
     created: [
       { kind: 'folder', path: 'daily' },
-      { kind: 'file', path: 'daily/.ok/templates/daily.md' },
+      { kind: 'file', path: 'daily/.ps/templates/daily.md' },
     ],
     skipped: [],
     warnings: [],
@@ -70,7 +70,7 @@ vi.doMock('sonner', () => ({
   toast: { error: () => {}, success: () => {}, warning: () => {}, message: () => {} },
 }));
 
-const PACKS: OkSeedPackInfo[] = [
+const PACKS: PsSeedPackInfo[] = [
   {
     id: 'knowledge-base',
     name: 'Knowledge base',
@@ -122,11 +122,11 @@ function makeBridge(detectedEditorIds: string[] = ['claude']) {
       recordCreateNewBannerShown: vi.fn(() => Promise.resolve()),
       open: vi.fn(() => Promise.resolve()),
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return { bridge, createNewCalls };
 }
 
-async function renderDialog(bridge: OkDesktopBridge, initialPackId?: OkPackId) {
+async function renderDialog(bridge: PsDesktopBridge, initialPackId?: PsPackId) {
   const { CreateProjectDialog } = await import('./CreateProjectDialog');
   render(
     <TooltipProvider>
@@ -151,7 +151,7 @@ async function renderDialog(bridge: OkDesktopBridge, initialPackId?: OkPackId) {
   }
 }
 
-async function renderDialogAtReview(bridge: OkDesktopBridge, initialPackId: OkPackId) {
+async function renderDialogAtReview(bridge: PsDesktopBridge, initialPackId: PsPackId) {
   const { CreateProjectDialog } = await import('./CreateProjectDialog');
   render(
     <TooltipProvider>
@@ -463,7 +463,7 @@ describe('CreateProjectDialog starter-pack configurator', () => {
           open
           onOpenChange={() => {}}
           bridge={bridge}
-          initialPackId={'no-such-pack' as OkPackId}
+          initialPackId={'no-such-pack' as PsPackId}
           packs={PACKS}
         />
       </TooltipProvider>,

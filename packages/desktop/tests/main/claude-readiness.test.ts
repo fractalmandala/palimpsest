@@ -1,4 +1,4 @@
-import { assessReadiness, TERMINAL_CLI_IDS, type TerminalCli } from '@inkeep/open-knowledge-core';
+import { assessReadiness, TERMINAL_CLI_IDS, type TerminalCli } from '@palimpsest/core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   CLAUDE_PROBE_ARGS,
@@ -427,7 +427,7 @@ describe('resolveClaudeReadiness', () => {
     expect(r).toEqual({
       claude: 'present',
       mcpPreApprovable: true,
-      okToolsAutoApprovable: true,
+      psToolsAutoApprovable: true,
     });
   });
 
@@ -440,7 +440,7 @@ describe('resolveClaudeReadiness', () => {
     expect(r).toEqual({
       claude: 'not-found',
       mcpPreApprovable: false,
-      okToolsAutoApprovable: false,
+      psToolsAutoApprovable: false,
     });
   });
 
@@ -453,7 +453,7 @@ describe('resolveClaudeReadiness', () => {
     expect(r).toEqual({
       claude: 'present',
       mcpPreApprovable: false,
-      okToolsAutoApprovable: false,
+      psToolsAutoApprovable: false,
     });
   });
 
@@ -466,7 +466,7 @@ describe('resolveClaudeReadiness', () => {
     expect(r).toEqual({
       claude: 'unknown',
       mcpPreApprovable: true,
-      okToolsAutoApprovable: true,
+      psToolsAutoApprovable: true,
     });
   });
 
@@ -490,7 +490,7 @@ describe('resolveClaudeReadiness', () => {
     expect(r).toEqual({
       claude: 'present',
       mcpPreApprovable: false,
-      okToolsAutoApprovable: false,
+      psToolsAutoApprovable: false,
     });
   });
 
@@ -505,7 +505,7 @@ describe('resolveClaudeReadiness', () => {
     expect(r).toEqual({
       claude: 'present',
       mcpPreApprovable: false,
-      okToolsAutoApprovable: false,
+      psToolsAutoApprovable: false,
     });
   });
 });
@@ -516,27 +516,27 @@ describe('readiness carries the MCP server name main checked', () => {
       probeClaude: () => Promise.resolve(0),
       classifyMcpEntry: () => 'present',
       isProjectMcpPreApprovable: () => true,
-      mcpServerName: 'open-knowledge-beta',
+      mcpServerName: 'palimpsest-beta',
     });
     expect(r).toEqual({
       claude: 'present',
       mcpPreApprovable: true,
-      okToolsAutoApprovable: true,
-      mcpServerName: 'open-knowledge-beta',
+      psToolsAutoApprovable: true,
+      mcpServerName: 'palimpsest-beta',
     });
   });
 
-  test('codex readiness returns the checked name beside okServerConfigured', async () => {
+  test('codex readiness returns the checked name beside psServerConfigured', async () => {
     expect(
       await resolveCliOnPath({
         probe: () => Promise.resolve(0),
-        okServerConfigured: () => true,
-        mcpServerName: 'open-knowledge-beta',
+        psServerConfigured: () => true,
+        mcpServerName: 'palimpsest-beta',
       }),
     ).toEqual({
       onPath: 'present',
-      okServerConfigured: true,
-      mcpServerName: 'open-knowledge-beta',
+      psServerConfigured: true,
+      mcpServerName: 'palimpsest-beta',
     });
   });
 });
@@ -562,7 +562,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       projectEntryIsOwn: false,
       globalEntryIsOwn: true,
     });
-    expect(r.okToolsAutoApprovable).toBe(true);
+    expect(r.psToolsAutoApprovable).toBe(true);
   });
 
   test('a project-only OK entry earns both, exactly as before', async () => {
@@ -571,7 +571,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       projectEntryIsOwn: true,
       globalEntryIsOwn: false,
     });
-    expect(r.okToolsAutoApprovable).toBe(true);
+    expect(r.psToolsAutoApprovable).toBe(true);
   });
 
   test('both scopes OK-owned earns both', async () => {
@@ -580,7 +580,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       projectEntryIsOwn: true,
       globalEntryIsOwn: true,
     });
-    expect(r.okToolsAutoApprovable).toBe(true);
+    expect(r.psToolsAutoApprovable).toBe(true);
   });
 
   test('neither scope earns auto-approve', async () => {
@@ -589,16 +589,16 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       projectEntryIsOwn: false,
       globalEntryIsOwn: false,
     });
-    expect(r.okToolsAutoApprovable).toBe(false);
+    expect(r.psToolsAutoApprovable).toBe(false);
   });
 
-  test('a FOREIGN project entry named open-knowledge disables auto-approve even with a legit global entry', async () => {
+  test('a FOREIGN project entry named palimpsest disables auto-approve even with a legit global entry', async () => {
     const r = await readiness({
       projectEntryPresent: true,
       projectEntryIsOwn: false,
       globalEntryIsOwn: true,
     });
-    expect(r.okToolsAutoApprovable).toBe(false);
+    expect(r.psToolsAutoApprovable).toBe(false);
   });
 
   test('a global entry that is present but NOT OK-owned earns no auto-approve', async () => {
@@ -609,7 +609,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       hasProjectMcpEntry: () => false,
       isGlobalMcpOwnManaged: () => false,
     });
-    expect(r.okToolsAutoApprovable).toBe(false);
+    expect(r.psToolsAutoApprovable).toBe(false);
   });
 
   test('a throwing project-presence read fails CLOSED, routing the decision through project ownership', async () => {
@@ -622,7 +622,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       },
       isGlobalMcpOwnManaged: () => true,
     });
-    expect(r.okToolsAutoApprovable).toBe(false);
+    expect(r.psToolsAutoApprovable).toBe(false);
   });
 
   test('a throwing global-ownership read degrades to not-own, never crashes', async () => {
@@ -635,7 +635,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
         throw new Error('claude.json read blew up');
       },
     });
-    expect(r.okToolsAutoApprovable).toBe(false);
+    expect(r.psToolsAutoApprovable).toBe(false);
   });
 
   test('a throwing global classification fails CLOSED on the grant, not open', async () => {
@@ -648,7 +648,7 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       hasProjectMcpEntry: () => true,
       isGlobalMcpOwnManaged: () => false,
     });
-    expect(r.okToolsAutoApprovable).toBe(false);
+    expect(r.psToolsAutoApprovable).toBe(false);
   });
 
   test('omitting both scope reads falls back to the stricter project-only gate', async () => {
@@ -657,14 +657,14 @@ describe('OK-tool auto-approve is gated separately from project server trust', (
       classifyMcpEntry: () => 'present',
       isProjectMcpPreApprovable: () => true,
     });
-    expect(own.okToolsAutoApprovable).toBe(true);
+    expect(own.psToolsAutoApprovable).toBe(true);
 
     const notOwn = await resolveClaudeReadiness({
       probeClaude: () => Promise.resolve(0),
       classifyMcpEntry: () => 'present',
       isProjectMcpPreApprovable: () => false,
     });
-    expect(notOwn.okToolsAutoApprovable).toBe(false);
+    expect(notOwn.psToolsAutoApprovable).toBe(false);
   });
 });
 
@@ -693,24 +693,24 @@ describe('resolveCliOnPath', () => {
     });
   });
 
-  test('folds okServerConfigured when the codex-only dep is supplied', async () => {
+  test('folds psServerConfigured when the codex-only dep is supplied', async () => {
     expect(
-      await resolveCliOnPath({ probe: () => Promise.resolve(0), okServerConfigured: () => true }),
-    ).toEqual({ onPath: 'present', okServerConfigured: true });
+      await resolveCliOnPath({ probe: () => Promise.resolve(0), psServerConfigured: () => true }),
+    ).toEqual({ onPath: 'present', psServerConfigured: true });
     expect(
-      await resolveCliOnPath({ probe: () => Promise.resolve(0), okServerConfigured: () => false }),
-    ).toEqual({ onPath: 'present', okServerConfigured: false });
+      await resolveCliOnPath({ probe: () => Promise.resolve(0), psServerConfigured: () => false }),
+    ).toEqual({ onPath: 'present', psServerConfigured: false });
   });
 
-  test('a throwing okServerConfigured dep degrades to false (never fails the probe)', async () => {
+  test('a throwing psServerConfigured dep degrades to false (never fails the probe)', async () => {
     expect(
       await resolveCliOnPath({
         probe: () => Promise.resolve(0),
-        okServerConfigured: () => {
+        psServerConfigured: () => {
           throw new Error('codex config read blew up');
         },
       }),
-    ).toEqual({ onPath: 'present', okServerConfigured: false });
+    ).toEqual({ onPath: 'present', psServerConfigured: false });
   });
 });
 
@@ -986,7 +986,7 @@ describe('tool-autoapprove: the registry grant and the launcher rule agree', () 
           isGlobalMcpOwnManaged: () => global === 'own-exact',
         });
 
-        expect(readiness.okToolsAutoApprovable).toBe(granted);
+        expect(readiness.psToolsAutoApprovable).toBe(granted);
         expect(registryGrants).toBe(granted);
       });
     }

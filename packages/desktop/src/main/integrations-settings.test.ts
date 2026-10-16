@@ -1,4 +1,4 @@
-import { EMPTY_DETECTION_SNAPSHOT, EMPTY_PROBE_SNAPSHOT } from '@inkeep/open-knowledge-core';
+import { EMPTY_DETECTION_SNAPSHOT, EMPTY_PROBE_SNAPSHOT } from '@palimpsest/core';
 import type { IpcMainInvokeEvent } from 'electron';
 import { describe, expect, test, vi } from 'vitest';
 import { writeUserMcpConfigs } from '../../../cli/src/commands/init.ts';
@@ -23,7 +23,7 @@ import {
 import type { McpStatusMarker, McpWiringFsOps } from './mcp-wiring.ts';
 
 const HOME = '/test-home';
-const MARKER_PATH = `${HOME}/.ok/mcp-status.json`;
+const MARKER_PATH = `${HOME}/.ps/mcp-status.json`;
 
 function memFs(initial: Record<string, string> = {}): McpWiringFsOps & {
   files: Map<string, string>;
@@ -98,7 +98,7 @@ function makeCli(overrides: CliOverrides = {}): IntegrationsCliSurface & {
       overrides.classifications?.[id] ?? { kind: 'no-entry' as const },
     isOwnEntry: (entry) => entry === OWN_ENTRY,
     editorConfigPath: (id) => `~/.${id}.json`,
-    editorEntryLocator: () => 'mcpServers.open-knowledge',
+    editorEntryLocator: () => 'mcpServers.palimpsest',
     writeUserMcpConfigs: async (opts) => {
       writes.push([...opts.editors]);
       return opts.editors.map((editorId) => ({
@@ -148,7 +148,7 @@ function makeSkills(
       {
         id: 'discovery',
         name: 'open-knowledge-discovery',
-        description: 'Recognize OpenKnowledge projects.',
+        description: 'Recognize Palimpsest projects.',
         installed: installed.has('discovery'),
         paths: ['~/.agents/skills/open-knowledge-discovery'],
         sourceDir: '/bundles/open-knowledge-discovery',
@@ -215,23 +215,23 @@ describe('classifyEditorState', () => {
 });
 
 describe('testPinnedSchemeHandlers', () => {
-  const smoke = { OK_DESKTOP_E2E_SMOKE: '1' };
+  const smoke = { PS_DESKTOP_E2E_SMOKE: '1' };
 
   test('an empty pin under smoke reports every scheme handler absent', () => {
-    expect(testPinnedSchemeHandlers({ ...smoke, OK_DESKTOP_TEST_SCHEME_HANDLERS: '' })).toEqual(
+    expect(testPinnedSchemeHandlers({ ...smoke, PS_DESKTOP_TEST_SCHEME_HANDLERS: '' })).toEqual(
       new Set(),
     );
   });
 
   test('a pin lists the schemes reported present', () => {
     expect(
-      testPinnedSchemeHandlers({ ...smoke, OK_DESKTOP_TEST_SCHEME_HANDLERS: ' codex, cursor ,' }),
+      testPinnedSchemeHandlers({ ...smoke, PS_DESKTOP_TEST_SCHEME_HANDLERS: ' codex, cursor ,' }),
     ).toEqual(new Set(['codex', 'cursor']));
   });
 
   test('an unset pin, or one outside smoke, leaves the real probe in charge', () => {
     expect(testPinnedSchemeHandlers(smoke)).toBeNull();
-    expect(testPinnedSchemeHandlers({ OK_DESKTOP_TEST_SCHEME_HANDLERS: '' })).toBeNull();
+    expect(testPinnedSchemeHandlers({ PS_DESKTOP_TEST_SCHEME_HANDLERS: '' })).toBeNull();
   });
 });
 
@@ -297,7 +297,7 @@ describe('ok:integrations:dispatch — status', () => {
         detected: true,
         state: 'installed',
         configPath: '~/.claude.json',
-        entryLocator: 'mcpServers.open-knowledge',
+        entryLocator: 'mcpServers.palimpsest',
       },
       {
         id: 'cursor',
@@ -305,7 +305,7 @@ describe('ok:integrations:dispatch — status', () => {
         detected: false,
         state: 'not-installed',
         configPath: '~/.cursor.json',
-        entryLocator: 'mcpServers.open-knowledge',
+        entryLocator: 'mcpServers.palimpsest',
       },
     ]);
     expect(snapshot.path).toEqual({
@@ -317,7 +317,7 @@ describe('ok:integrations:dispatch — status', () => {
       {
         id: 'discovery',
         name: 'open-knowledge-discovery',
-        description: 'Recognize OpenKnowledge projects.',
+        description: 'Recognize Palimpsest projects.',
         installed: true,
         paths: ['~/.agents/skills/open-knowledge-discovery'],
         sourceDir: '/bundles/open-knowledge-discovery',
@@ -406,7 +406,7 @@ describe('ok:integrations:dispatch — set editor', () => {
     const { set } = setup({ cli });
     const result = await set({ component: { kind: 'editor', id: 'claude' }, enabled: false });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toContain("isn't one OpenKnowledge wrote");
+    if (!result.ok) expect(result.error).toContain("isn't one Palimpsest wrote");
     expect(cli.removals).toEqual(['claude']);
   });
 
@@ -414,14 +414,14 @@ describe('ok:integrations:dispatch — set editor', () => {
     const { set } = setup({ cli: makeCli({ removeKind: 'left-foreign' }) });
     const disable = { component: { kind: 'editor', id: 'claude' }, enabled: false } as const;
     const stable = await set(disable);
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       const beta = await set(disable);
       expect(stable.ok ? null : stable.error).toBe(
-        "The open-knowledge entry in Claude isn't one OpenKnowledge wrote — it was left unchanged. Remove it manually if you no longer want it.",
+        "The palimpsest entry in Claude isn't one Palimpsest wrote — it was left unchanged. Remove it manually if you no longer want it.",
       );
       expect(beta.ok ? null : beta.error).toBe(
-        "The open-knowledge-beta entry in Claude isn't one OpenKnowledge wrote — it was left unchanged. Remove it manually if you no longer want it.",
+        "The palimpsest-beta entry in Claude isn't one Palimpsest wrote — it was left unchanged. Remove it manually if you no longer want it.",
       );
     } finally {
       vi.unstubAllEnvs();
@@ -441,13 +441,13 @@ describe('ok:integrations:dispatch — set editor', () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error).toContain("Cursor wasn't found on this machine");
-      expect(result.error).not.toContain("Couldn't add OpenKnowledge");
+      expect(result.error).not.toContain("Couldn't add Palimpsest");
       expect(result.error).not.toContain('()');
     }
   });
 
   test('a dev build says why it adds nothing to user-level editor config', async () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
     try {
       const cli = {
         ...makeCli(),
@@ -459,7 +459,7 @@ describe('ok:integrations:dispatch — set editor', () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         expect(result.error).toBe(
-          "Couldn't add OpenKnowledge to Claude (A dev build registers OpenKnowledge MCP in project config only, never in user-level editor config. Run `node <checkout>/packages/cli/dist/cli.mjs init --dev-mcp` in the project, or set OK_CHANNEL=stable.).",
+          "Couldn't add Palimpsest to Claude (A dev build registers Palimpsest MCP in project config only, never in user-level editor config. Run `node <checkout>/packages/cli/dist/cli.mjs init --dev-mcp` in the project, or set PS_CHANNEL=stable.).",
         );
       }
     } finally {

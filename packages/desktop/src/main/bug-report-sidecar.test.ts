@@ -12,8 +12,8 @@ import {
 import { readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import type { ReportSidecar } from '@inkeep/open-knowledge-core';
-import * as coreServer from '@inkeep/open-knowledge-core/server';
+import type { ReportSidecar } from '@palimpsest/core';
+import * as coreServer from '@palimpsest/core/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   createBugReportSidecarStore,
@@ -44,7 +44,7 @@ async function readSidecarValue(path: string) {
 const tmpDirs: string[] = [];
 
 function makeTmpDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-bugreport-sidecar-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-bugreport-sidecar-'));
   tmpDirs.push(dir);
   return dir;
 }
@@ -709,7 +709,7 @@ describe('reconcileStaleUploading', () => {
       state: 'uploading',
       note: 'the editor froze after a paste',
     });
-    const okId = await seedReport(dir, 2, { state: 'generated' });
+    const psId = await seedReport(dir, 2, { state: 'generated' });
 
     const reconciled = await reconcileStaleUploading(dir);
     expect(reconciled).toBe(1);
@@ -718,7 +718,7 @@ describe('reconcileStaleUploading', () => {
     expect(stale?.state).toBe('upload-failed');
     expect(stale?.lastError?.reason).toBe('interrupted-by-restart');
     expect(stale?.note).toBe('the editor froze after a paste');
-    expect((await readSidecarValue(sidecarPathForId(dir, okId)))?.state).toBe('generated');
+    expect((await readSidecarValue(sidecarPathForId(dir, psId)))?.state).toBe('generated');
   });
 });
 

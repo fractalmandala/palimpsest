@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import type {
   ThreadEvent,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, onTestFailed, test } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger } from '../logger.ts';

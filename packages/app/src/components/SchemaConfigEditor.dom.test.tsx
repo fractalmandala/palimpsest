@@ -22,11 +22,11 @@ if (globalWithDomShims.ResizeObserver === undefined) {
   globalWithDomShims.ResizeObserver = NoopResizeObserver;
 }
 
-const VIEW_MODE_KEY = 'ok-lint-config-view-mode-v1';
-const MAPPED_SCHEMA = '.ok/schemas/doc.schema.json';
-const OTHER_MAPPED_SCHEMA = '.ok/schemas/blog.schema.json';
-const UNMAPPED_SCHEMA = '.ok/schemas/orphan.schema.json';
-const DRAIN_SENTINEL = '.ok/schemas/__drain__.schema.json';
+const VIEW_MODE_KEY = 'ps-lint-config-view-mode-v1';
+const MAPPED_SCHEMA = '.ps/schemas/doc.schema.json';
+const OTHER_MAPPED_SCHEMA = '.ps/schemas/blog.schema.json';
+const UNMAPPED_SCHEMA = '.ps/schemas/orphan.schema.json';
+const DRAIN_SENTINEL = '.ps/schemas/__drain__.schema.json';
 
 let mockMappedFiles: string[] = [];
 

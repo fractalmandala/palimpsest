@@ -2,7 +2,7 @@ import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { z } from 'zod';
 import { MANAGED_ARTIFACT_SCOPES } from '../constants/cc1.ts';
 
-export const OK_PACK_SCHEMA_VERSION = 1;
+export const PS_PACK_SCHEMA_VERSION = 1;
 
 export const SkillManifestSchema = z.looseObject({
   name: z.string(),
@@ -45,8 +45,8 @@ export const CatalogSkillSchema = z.looseObject({
 });
 export type CatalogSkill = z.infer<typeof CatalogSkillSchema>;
 
-export const OkPackSchema = z.looseObject({
-  schema: z.literal(OK_PACK_SCHEMA_VERSION),
+export const PsPackSchema = z.looseObject({
+  schema: z.literal(PS_PACK_SCHEMA_VERSION),
   name: z.string(),
   version: z.string(),
   description: z.string().optional(),
@@ -60,12 +60,12 @@ export const OkPackSchema = z.looseObject({
     .looseObject({ source: z.string(), ref: z.string(), contentHash: z.string() })
     .optional(),
 });
-export type OkPack = z.infer<typeof OkPackSchema>;
+export type PsPack = z.infer<typeof PsPackSchema>;
 
 export const SkillsInstalledSuccessSchema = z
   .object({
     skills: z.array(CatalogSkillSchema),
-    packs: z.array(OkPackSchema),
+    packs: z.array(PsPackSchema),
   })
   .loose() satisfies StandardSchemaV1;
 export type SkillsInstalledSuccess = z.infer<typeof SkillsInstalledSuccessSchema>;

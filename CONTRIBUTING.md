@@ -1,10 +1,10 @@
-# Contributing to OpenKnowledge
+# Contributing to Palimpsest
 
 Thanks for helping. The most useful thing you can send us is a detailed issue, not a pull request.
 
-- **Found a bug or have an idea?** [Open an issue](https://github.com/inkeep/open-knowledge/issues/new/choose). This is the main way to contribute; see [Write an issue we can build from](#write-an-issue-we-can-build-from).
+- **Found a bug or have an idea?** [Open an issue](https://github.com/fractalmandala/palimpsest/issues/new/choose). This is the main way to contribute; see [Write an issue we can build from](#write-an-issue-we-can-build-from).
 - **Question or setup help?** Ask in [Discord](https://discord.gg/VRKk2EaGHN).
-- **Read a language other than English?** Most of our interface translations are machine-translated and have never been read by a native speaker, and we ship them anyway rather than hide them from the people who could fix them. Correcting one is the most useful thing you can do for it — see [Translate the interface](https://openknowledge.ai/docs/contribute/translations).
+- **Read a language other than English?** Most of our interface translations are machine-translated and have never been read by a native speaker, and we ship them anyway rather than hide them from the people who could fix them. Correcting one is the most useful thing you can do for it — see [Translate the interface](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/contribute/translations.mdx).
 - **Want to write the code yourself?** Read [Pull requests](#pull-requests) before you start.
 
 ## Why issues come first
@@ -108,7 +108,7 @@ First-time contributors are asked to sign our [Contributor License Agreement](./
 - Keep PRs focused and small enough to review.
 - Add tests — or a clear manual-verification note — for behavior changes.
 - Write no code comments outside the allowlist above — `pnpm run lint` fails on the rest.
-- Add a changeset by running `pnpm run changeset` if your pull request changes user-facing or programmatic behavior. Open Knowledge is pre-1.0, so a breaking change rides as `minor` and a `major` changeset is rejected — reaching 1.0.0 is a team decision, not one a single changeset makes.
+- Add a changeset by running `pnpm run changeset` if your pull request changes user-facing or programmatic behavior. Palimpsest is pre-1.0, so a breaking change rides as `minor` and a `major` changeset is rejected — reaching 1.0.0 is a team decision, not one a single changeset makes.
 - Run `pnpm run check` and `pnpm run check:drift:guards` and confirm both pass.
 - Commit `pnpm-lock.yaml` when dependencies change, and run `pnpm run notices` to refresh `THIRD_PARTY_NOTICES.md` if third-party packages changed.
 - Never include secrets, credentials, customer data, or local machine paths.
@@ -118,4 +118,4 @@ A maintainer reviews pull requests that are small fixes or link an accepted issu
 
 ## License
 
-By contributing, you agree that your work is licensed under the [GNU General Public License v3.0 or later](./LICENSE) (`GPL-3.0-or-later`), the same license as OpenKnowledge.
+By contributing, you agree that your work is licensed under the [GNU General Public License v3.0 or later](./LICENSE) (`GPL-3.0-or-later`), the same license as Palimpsest.

@@ -234,7 +234,7 @@ describe('GitNotAvailableError', () => {
   test('message includes product name and install URL', () => {
     const guidance = buildGuidance('darwin');
     const err = new GitNotAvailableError('darwin', guidance);
-    expect(err.message).toContain('OpenKnowledge needs Git');
+    expect(err.message).toContain('Palimpsest needs Git');
     expect(err.message).toContain(guidance.url);
     expect(err.message).toContain('After installing');
   });
@@ -334,7 +334,7 @@ describe('resolveOnPath', () => {
   test('searches only absolute PATH folders, never the working directory or a relative entry', () => {
     const project = mkdtempSync(join(tmpdir(), 'resolve-project-'));
     const bin = mkdtempSync(join(tmpdir(), 'resolve-bin-'));
-    const name = 'ok-resolve-probe-tool';
+    const name = 'ps-resolve-probe-tool';
     const file = process.platform === 'win32' ? `${name}.cmd` : name;
     for (const dir of [project, bin]) {
       writeFileSync(join(dir, file), '#!/bin/sh\nexit 0\n', { mode: 0o755 });
@@ -358,7 +358,7 @@ describe('resolveOnPath', () => {
       const previous = process.env.PATHEXT;
       try {
         for (const [index, pathext] of ['', ';;', 'COM EXE'].entries()) {
-          const name = `ok-resolve-pathext-${index}`;
+          const name = `ps-resolve-pathext-${index}`;
           writeFileSync(join(bin, `${name}.cmd`), '@exit /b 0\r\n');
           process.env.PATHEXT = pathext;
           expect(resolveOnPath(name, bin), JSON.stringify(pathext)).toBe(join(bin, `${name}.cmd`));
@@ -374,8 +374,8 @@ describe('resolveOnPath', () => {
   test.skipIf(process.platform === 'win32')('skips a file that is not executable', () => {
     const bin = mkdtempSync(join(tmpdir(), 'resolve-noexec-'));
     try {
-      writeFileSync(join(bin, 'ok-resolve-noexec'), 'x', { mode: 0o644 });
-      expect(resolveOnPath('ok-resolve-noexec', bin)).toBeNull();
+      writeFileSync(join(bin, 'ps-resolve-noexec'), 'x', { mode: 0o644 });
+      expect(resolveOnPath('ps-resolve-noexec', bin)).toBeNull();
     } finally {
       rmSync(bin, { recursive: true, force: true });
     }
@@ -441,7 +441,7 @@ describe('MIN_GIT_VERSION', () => {
 
 describe('detectLinuxFamily fixtures', () => {
   test('parses a fixture file written to disk via the os-release argument', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-git-preflight-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-git-preflight-'));
     const path = join(dir, 'os-release');
     writeFileSync(
       path,
@@ -462,7 +462,7 @@ describe('git remediation names the running channel CLI', () => {
     `Run \`${command} diagnose health --check git\` to verify your installation.`;
 
   test('Stable keeps the ok diagnose line on both errors', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     const guidance = buildGuidance('darwin');
     expect(new GitNotAvailableError('darwin', guidance).message.split('\n')).toContain(
       verify('ok'),
@@ -474,16 +474,16 @@ describe('git remediation names the running channel CLI', () => {
     ).toContain(verify('ok'));
   });
 
-  test('Beta names ok-beta diagnose on both errors', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('Beta names ps-beta diagnose on both errors', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const guidance = buildGuidance('darwin');
     expect(new GitNotAvailableError('darwin', guidance).message.split('\n')).toContain(
-      verify('ok-beta'),
+      verify('ps-beta'),
     );
     expect(
       new GitTooOldError('darwin', '2.10.0', '2.31.0', '/usr/bin/git', guidance).message.split(
         '\n',
       ),
-    ).toContain(verify('ok-beta'));
+    ).toContain(verify('ps-beta'));
   });
 });

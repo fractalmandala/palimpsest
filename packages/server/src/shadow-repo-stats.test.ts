@@ -13,7 +13,7 @@ let tmpDir: string;
 let shadow: ShadowHandle;
 
 beforeEach(async () => {
-  tmpDir = makeTempDir('ok-stale-stats-');
+  tmpDir = makeTempDir('ps-stale-stats-');
   const projectRoot = resolve(tmpDir, 'project');
   const contentDir = resolve(projectRoot, 'content/docs');
   mkdirSync(contentDir, { recursive: true });

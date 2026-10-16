@@ -9,7 +9,7 @@ let projectRoot: string;
 let outside: string;
 
 beforeAll(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-deck-path-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-deck-path-')));
   projectRoot = join(root, 'project');
   outside = join(root, 'outside');
   mkdirSync(join(projectRoot, 'decks'), { recursive: true });

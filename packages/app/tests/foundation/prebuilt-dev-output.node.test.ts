@@ -23,7 +23,7 @@ function scratch(prefix: string): string {
 }
 
 function app(): string {
-  const root = scratch('ok-prebuilt-output-app-');
+  const root = scratch('ps-prebuilt-output-app-');
   for (const [path, content] of Object.entries(APP)) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), content);
@@ -47,7 +47,7 @@ afterAll(() => {
 describe('the prebuilt DEV build output', () => {
   test('classes keep their source names, as the dev server serves them, where bundling and minifying would rename them', async () => {
     const appRoot = app();
-    const outDir = join(scratch('ok-prebuilt-output-dist-'), 'dist');
+    const outDir = join(scratch('ps-prebuilt-output-dist-'), 'dist');
 
     const chunk = entryChunk(
       await build({

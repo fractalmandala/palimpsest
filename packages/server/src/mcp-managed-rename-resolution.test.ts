@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { resolveWikiLinkTargetDocName } from '@inkeep/open-knowledge-core';
+import { resolveWikiLinkTargetDocName } from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { expect, test } from 'vitest';
@@ -72,7 +72,7 @@ const cases = [
 test.each(cases)(
   'managed MCP move: $name',
   async ({ from, to, pages, expected, targets }) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-mcp-rename-resolution-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-mcp-rename-resolution-'));
     let booted: BootedServer | undefined;
     const client = new Client({ name: 'codex', version: '0.0.0-test' });
     try {

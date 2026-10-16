@@ -59,12 +59,12 @@ function previewCodeBlockDoc(): PmNode {
 
 function buildCodeBlockPreviewDom(): HTMLElement {
   const wrapper = document.createElement('div');
-  wrapper.className = 'ok-codeblock relative my-3';
+  wrapper.className = 'ps-codeblock relative my-3';
   wrapper.setAttribute('data-preview', 'true');
   wrapper.setAttribute('data-code-visible', 'false');
 
   const preview = document.createElement('div');
-  preview.className = 'ok-codeblock-preview ok-codeblock-preview--solo';
+  preview.className = 'ps-codeblock-preview ps-codeblock-preview--solo';
   preview.setAttribute('contenteditable', 'false');
   preview.setAttribute('style', 'height: 320px; width: 480px;');
 
@@ -73,21 +73,21 @@ function buildCodeBlockPreviewDom(): HTMLElement {
   iframe.setAttribute('sandbox', 'allow-scripts');
   iframe.setAttribute('referrerpolicy', 'no-referrer');
   iframe.setAttribute('src', PREVIEW_FRAME_URL);
-  iframe.className = 'ok-codeblock-preview-frame';
+  iframe.className = 'ps-codeblock-preview-frame';
   preview.appendChild(iframe);
 
   const handles = document.createElement('div');
-  handles.className = 'ok-resize-handles';
+  handles.className = 'ps-resize-handles';
   for (const dir of ['e', 's', 'se']) {
     const h = document.createElement('div');
-    h.className = `ok-resize-handle ok-resize-handle-${dir}`;
+    h.className = `ps-resize-handle ps-resize-handle-${dir}`;
     handles.appendChild(h);
   }
   preview.appendChild(handles);
   wrapper.appendChild(preview);
 
   const pre = document.createElement('pre');
-  pre.className = 'ok-codeblock-pre m-0 overflow-x-auto px-5 py-4 font-mono text-sm';
+  pre.className = 'ps-codeblock-pre m-0 overflow-x-auto px-5 py-4 font-mono text-sm';
   pre.setAttribute('aria-hidden', 'true');
   const code = document.createElement('code');
   code.className = 'hljs block whitespace-pre bg-transparent p-0 language-html';
@@ -96,7 +96,7 @@ function buildCodeBlockPreviewDom(): HTMLElement {
   wrapper.appendChild(pre);
 
   const chrome = document.createElement('div');
-  chrome.className = 'ok-codeblock-chrome';
+  chrome.className = 'ps-codeblock-chrome';
   chrome.setAttribute('contenteditable', 'false');
   chrome.setAttribute(OPT_OUT_ATTR, 'true');
   const btn = document.createElement('button');
@@ -156,8 +156,8 @@ describe('preview-active codeBlock clipboard emission (text/html tier)', () => {
 
   test('emits no preview render chrome (resize handles) into the payload', () => {
     const { holder } = emitFragmentHtml();
-    expect(holder.querySelector('.ok-resize-handle')).toBeNull();
-    expect(holder.querySelector('.ok-codeblock-preview')).toBeNull();
+    expect(holder.querySelector('.ps-resize-handle')).toBeNull();
+    expect(holder.querySelector('.ps-codeblock-preview')).toBeNull();
   });
 
   test('emits the clean code source, present and not destination-hidden', () => {

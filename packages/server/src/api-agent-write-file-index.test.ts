@@ -50,7 +50,7 @@ async function post(
 
 describe('agent write self-registers the file index (PRD-7201)', () => {
   test('agent-write-md registers the just-written doc into the file index', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-write-file-index-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-write-file-index-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -87,7 +87,7 @@ describe('agent write self-registers the file index (PRD-7201)', () => {
   });
 
   test('a write to a doc already in the file index registers as kind:update', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-write-file-index-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-write-file-index-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -137,7 +137,7 @@ describe('agent write self-registers the file index (PRD-7201)', () => {
   });
 
   test('agent-patch registers the just-edited doc into the file index', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-write-file-index-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-write-file-index-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -178,7 +178,7 @@ describe('agent write self-registers the file index (PRD-7201)', () => {
   });
 
   test('frontmatter-patch registers the patched doc into the file index', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-write-file-index-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-write-file-index-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const hocuspocus = new Hocuspocus({ quiet: true });
@@ -218,10 +218,10 @@ describe('agent write self-registers the file index (PRD-7201)', () => {
   });
 
   test('does NOT register a content-scope-excluded doc (mirrors the watcher gate)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-write-file-index-excluded-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-write-file-index-excluded-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
-    writeFileSync(join(contentDir, '.okignore'), 'secret.md\n', 'utf-8');
+    writeFileSync(join(contentDir, '.psignore'), 'secret.md\n', 'utf-8');
     const hocuspocus = new Hocuspocus({ quiet: true });
     const sessionManager = new AgentSessionManager(hocuspocus);
     const events: DiskEvent[] = [];

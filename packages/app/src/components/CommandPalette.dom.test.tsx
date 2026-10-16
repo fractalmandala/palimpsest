@@ -1,4 +1,4 @@
-import type { HandoffHostPlatform } from '@inkeep/open-knowledge-core/agent-registry';
+import type { HandoffHostPlatform } from '@palimpsest/core/agent-registry';
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -217,9 +217,9 @@ vi.doMock('@/lib/use-workspace', () => ({
   useWorkspace: () => workspaceValue,
 }));
 
-vi.doMock('@inkeep/open-knowledge-core/agent-registry', async (importOriginal) =>
+vi.doMock('@palimpsest/core/agent-registry', async (importOriginal) =>
   withRestrictableHandoffPlatforms(
-    await importOriginal<typeof import('@inkeep/open-knowledge-core/agent-registry')>(),
+    await importOriginal<typeof import('@palimpsest/core/agent-registry')>(),
   ),
 );
 
@@ -246,7 +246,7 @@ vi.doMock('@/components/command-palette-tag-search', () => ({
   fetchDocsForTag: vi.fn(() => Promise.resolve([])),
 }));
 
-let worktreeModelMock: import('@inkeep/open-knowledge-core').WorktreeSelectorModel | null = null;
+let worktreeModelMock: import('@palimpsest/core').WorktreeSelectorModel | null = null;
 vi.doMock('@/hooks/use-worktrees', () => ({
   useWorktrees: () => worktreeModelMock,
 }));
@@ -293,7 +293,7 @@ function createBridge({
       create: vi.fn(() =>
         Promise.resolve({
           ok: true as const,
-          path: '/projects/current/.ok/worktrees/feature-x',
+          path: '/projects/current/.ps/worktrees/feature-x',
           created: true,
         }),
       ),
@@ -832,7 +832,7 @@ describe('CommandPalette DOM behavior', () => {
         },
         {
           branch: 'dev',
-          worktreePath: '/projects/current/.ok/worktrees/dev',
+          worktreePath: '/projects/current/.ps/worktrees/dev',
           isCurrent: false,
           isMain: false,
           locked: false,
@@ -853,7 +853,7 @@ describe('CommandPalette DOM behavior', () => {
     fireEvent.click(screen.getByTestId('command-palette-worktree-dev'));
     await waitFor(() => {
       expect(bridge?.project.open).toHaveBeenCalledWith({
-        path: '/projects/current/.ok/worktrees/dev',
+        path: '/projects/current/.ps/worktrees/dev',
         target: 'new-window',
         entryPoint: 'worktree',
       });
@@ -868,7 +868,7 @@ describe('CommandPalette DOM behavior', () => {
     });
     await waitFor(() => {
       expect(bridge?.project.open).toHaveBeenCalledWith({
-        path: '/projects/current/.ok/worktrees/feature-x',
+        path: '/projects/current/.ps/worktrees/feature-x',
         target: 'new-window',
         entryPoint: 'worktree',
         requireExactManagedProject: true,
@@ -914,7 +914,7 @@ describe('CommandPalette DOM behavior', () => {
       ok: false as const,
       reason: 'project-scope-unavailable' as const,
       issue: 'unsafe-setup-path' as const,
-      path: '/projects/current/.ok/worktrees/feature-x',
+      path: '/projects/current/.ps/worktrees/feature-x',
       created: true as const,
     }));
     await renderPalette({ bridge });
@@ -922,7 +922,7 @@ describe('CommandPalette DOM behavior', () => {
     fireEvent.click(screen.getByTestId('command-palette-worktree-feature-x'));
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        'This branch redirects an OpenKnowledge setup path outside the worktree. The worktree was created but not opened.',
+        'This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened.',
       ),
     );
     expect(refreshWorktreesMock).toHaveBeenCalledTimes(1);
@@ -945,7 +945,7 @@ describe('CommandPalette DOM behavior', () => {
       entries: [
         {
           branch: 'dev',
-          worktreePath: '/projects/current/.ok/worktrees/dev',
+          worktreePath: '/projects/current/.ps/worktrees/dev',
           isCurrent: false,
           isMain: false,
           locked: false,
@@ -1168,9 +1168,9 @@ describe('Cmd+K menu-parity backfill', () => {
       id: 'toggle-show-hidden-files',
     },
     {
-      testid: 'command-palette-toggle-show-ok-folders',
+      testid: 'command-palette-toggle-show-ps-folders',
       query: 'ok folders',
-      id: 'toggle-show-ok-folders',
+      id: 'toggle-show-ps-folders',
     },
     {
       testid: 'command-palette-toggle-show-only-markdown-files',
@@ -1270,21 +1270,21 @@ describe('Cmd+K menu-parity backfill', () => {
 
   test('AC1: set-up-integrations invokes bridge.mcpWiring.reconfigure', async () => {
     const { bridge } = await renderPalette({ bridge: createBridge() });
-    await setQuery('set up openknowledge integrations');
+    await setQuery('set up palimpsest integrations');
     fireEvent.click(screen.getByTestId('command-palette-set-up-integrations'));
     await waitFor(() => expect(bridge?.mcpWiring.reconfigure).toHaveBeenCalledTimes(1));
   });
 
-  test('AC1: OpenKnowledge on GitHub opens the repository URL', async () => {
+  test('AC1: Palimpsest on GitHub opens the repository URL', async () => {
     const { bridge } = await renderPalette({ bridge: createBridge() });
     await setQuery('github');
     fireEvent.click(screen.getByTestId('command-palette-open-github'));
     expect(bridge?.shell.openExternal).toHaveBeenCalledWith(
-      'https://github.com/inkeep/open-knowledge',
+      'https://github.com/fractalmandala/palimpsest',
     );
   });
 
-  test('AC1: OpenKnowledge on GitHub falls back to window.open on the web host', async () => {
+  test('AC1: Palimpsest on GitHub falls back to window.open on the web host', async () => {
     const openSpy = vi.fn(() => null);
     const originalOpen = window.open;
     window.open = openSpy as unknown as typeof window.open;
@@ -1293,7 +1293,7 @@ describe('Cmd+K menu-parity backfill', () => {
       await setQuery('github');
       fireEvent.click(screen.getByTestId('command-palette-open-github'));
       expect(openSpy).toHaveBeenCalledWith(
-        'https://github.com/inkeep/open-knowledge',
+        'https://github.com/fractalmandala/palimpsest',
         '_blank',
         'noopener,noreferrer',
       );
@@ -1302,12 +1302,12 @@ describe('Cmd+K menu-parity backfill', () => {
     }
   });
 
-  test('AC1: with no prop bridge, GitHub takes the web fallback and never the ambient window.okDesktop', async () => {
+  test('AC1: with no prop bridge, GitHub takes the web fallback and never the ambient window.psDesktop', async () => {
     const openSpy = vi.fn(() => null);
     const ambientOpenExternal = vi.fn(() => Promise.resolve());
     const originalOpen = window.open;
     window.open = openSpy as unknown as typeof window.open;
-    (window as { okDesktop?: unknown }).okDesktop = {
+    (window as { psDesktop?: unknown }).psDesktop = {
       shell: { openExternal: ambientOpenExternal },
     };
     try {
@@ -1315,14 +1315,14 @@ describe('Cmd+K menu-parity backfill', () => {
       await setQuery('github');
       fireEvent.click(screen.getByTestId('command-palette-open-github'));
       expect(openSpy).toHaveBeenCalledWith(
-        'https://github.com/inkeep/open-knowledge',
+        'https://github.com/fractalmandala/palimpsest',
         '_blank',
         'noopener,noreferrer',
       );
       expect(ambientOpenExternal).not.toHaveBeenCalled();
     } finally {
       window.open = originalOpen;
-      delete (window as { okDesktop?: unknown }).okDesktop;
+      delete (window as { psDesktop?: unknown }).psDesktop;
     }
   });
 
@@ -1410,7 +1410,7 @@ describe('Cmd+K menu-parity backfill', () => {
       ...projectBridge,
       config: { ...projectBridge.config, singleFile: true },
     };
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: singleFileBridge });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: singleFileBridge });
     try {
       for (const editorVisible of [true, false]) {
         setViewMenuState({ editorVisible });
@@ -1426,7 +1426,7 @@ describe('Cmd+K menu-parity backfill', () => {
         cleanup();
       }
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 

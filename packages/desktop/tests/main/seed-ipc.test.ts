@@ -1,14 +1,14 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { handleSeedApply, handleSeedPlan } from '../../src/main/ipc/seed.ts';
 
 let testDir: string;
 
 beforeEach(() => {
-  testDir = mkdtempSync(join(tmpdir(), 'ok-seed-ipc-test-'));
+  testDir = mkdtempSync(join(tmpdir(), 'ps-seed-ipc-test-'));
 });
 
 afterEach(() => {
@@ -16,12 +16,12 @@ afterEach(() => {
 });
 
 function scaffoldOkDir(dir: string): void {
-  mkdirSync(join(dir, OK_DIR), { recursive: true });
-  writeFileSync(join(dir, OK_DIR, 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
+  mkdirSync(join(dir, PS_DIR), { recursive: true });
+  writeFileSync(join(dir, PS_DIR, 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
 }
 
 describe('handleSeedPlan', () => {
-  test('returns {ok:true, plan} when a project is bound and .ok/ exists', async () => {
+  test('returns {ok:true, plan} when a project is bound and .ps/ exists', async () => {
     scaffoldOkDir(testDir);
     const result = await handleSeedPlan({ resolveProjectRoot: () => testDir });
     expect(result.ok).toBe(true);
@@ -38,12 +38,12 @@ describe('handleSeedPlan', () => {
     }
   });
 
-  test('returns {ok:false, prerequisite-missing} when .ok/ is absent', async () => {
+  test('returns {ok:false, prerequisite-missing} when .ps/ is absent', async () => {
     const result = await handleSeedPlan({ resolveProjectRoot: () => testDir });
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error.kind).toBe('prerequisite-missing');
-      expect(result.error.message).toContain('ok init');
+      expect(result.error.message).toContain('ps init');
     }
   });
 

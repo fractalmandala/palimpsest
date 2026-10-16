@@ -1,14 +1,14 @@
 import type {
-  OkCheckTargetExistsResult,
-  OkDesktopBridge,
-  OkHeadBranchInfo,
+  PsCheckTargetExistsResult,
+  PsDesktopBridge,
+  PsHeadBranchInfo,
   ShareTarget,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/desktop-bridge';
 
-export type * from '@inkeep/open-knowledge-core/desktop-bridge';
+export type * from '@palimpsest/core/desktop-bridge';
 
-export type CheckTargetExistsResult = OkCheckTargetExistsResult;
-export type HeadBranchInfo = OkHeadBranchInfo;
+export type CheckTargetExistsResult = PsCheckTargetExistsResult;
+export type HeadBranchInfo = PsHeadBranchInfo;
 
 export function shareTargetPath(target: ShareTarget): string {
   return target.kind === 'doc' ? target.docPath : target.folderPath;
@@ -16,6 +16,6 @@ export function shareTargetPath(target: ShareTarget): string {
 
 declare global {
   interface Window {
-    okDesktop?: OkDesktopBridge;
+    psDesktop?: PsDesktopBridge;
   }
 }

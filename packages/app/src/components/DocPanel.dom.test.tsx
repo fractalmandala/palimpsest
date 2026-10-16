@@ -202,7 +202,7 @@ describe('DocPanel — Problems badge', () => {
 
 describe('DocPanel — card top bar', () => {
   afterEach(() => {
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
   });
 
   test('the icon row is a 44px top bar with no hairline under it', () => {
@@ -218,7 +218,7 @@ describe('DocPanel — card top bar', () => {
   });
 
   test('on desktop the empty top bar drags the window while the tab buttons opt out', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: { config: { mode: 'editor' } },
     });

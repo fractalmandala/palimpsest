@@ -6,7 +6,7 @@ import {
   type RenderWarning,
   WRITE_WARNING_KINDS,
   type WriteWarning,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   formatAdvisoryBriefs,

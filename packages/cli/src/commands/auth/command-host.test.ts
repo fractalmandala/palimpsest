@@ -23,16 +23,16 @@ let projectDir: string;
 let home: string;
 
 function declareInUserConfig(host: string): void {
-  mkdirSync(join(home, '.ok'));
+  mkdirSync(join(home, '.ps'));
   writeFileSync(
-    join(home, '.ok', 'global.yml'),
+    join(home, '.ps', 'global.yml'),
     `git:\n  hosts:\n    ${host}:\n      provider: github\n`,
   );
 }
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-auth-command-host-'));
-  home = mkdtempSync(join(tmpdir(), 'ok-auth-command-host-home-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-auth-command-host-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-auth-command-host-home-'));
   vi.stubEnv('HOME', home);
   vi.stubEnv('USERPROFILE', home);
   execFileSync('git', ['init', '-q'], { cwd: projectDir });
@@ -54,8 +54,8 @@ test('explicit signout removes a legacy credential even without a provider decla
   expect(clearTokenFromAllBackends).toHaveBeenCalledWith('legacy.example.com');
 });
 
-test('implicit signout names ok-beta auth signout on Beta', async () => {
-  vi.stubEnv('OK_CHANNEL', 'beta');
+test('implicit signout names ps-beta auth signout on Beta', async () => {
+  vi.stubEnv('PS_CHANNEL', 'beta');
   execFileSync('git', ['remote', 'add', 'origin', 'https://git.example.com/team/kb.git'], {
     cwd: projectDir,
   });
@@ -68,7 +68,7 @@ test('implicit signout names ok-beta auth signout on Beta', async () => {
     .mock.calls.map(([text]) => text)
     .join('');
   expect(message).toContain(
-    'Run ok-beta auth signout --host git.example.com to remove stored local credentials.',
+    'Run ps-beta auth signout --host git.example.com to remove stored local credentials.',
   );
 });
 

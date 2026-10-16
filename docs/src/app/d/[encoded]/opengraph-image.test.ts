@@ -54,7 +54,7 @@ describe('opengraph-image route metadata', () => {
   test('exports the OG-image segment metadata Next.js requires', () => {
     expect(size).toEqual({ width: 1200, height: 630 });
     expect(contentType).toBe('image/png');
-    expect(alt).toBe('Open in OpenKnowledge');
+    expect(alt).toBe('Open in Palimpsest');
     expect(dynamic).toBe('force-static');
   });
 
@@ -64,12 +64,12 @@ describe('opengraph-image route metadata', () => {
 });
 
 describe('renderShareOgImage', () => {
-  function okView(blobUrl: string): SplashView {
+  function psView(blobUrl: string): SplashView {
     return buildSplashViewModel(encodeV1(blobUrl));
   }
 
   test('returns Content-Type image/png with non-empty body for a valid encoded fixture', async () => {
-    const view = okView('https://github.com/inkeep/playbooks/blob/main/marketing-playbook.md');
+    const view = psView('https://github.com/inkeep/playbooks/blob/main/marketing-playbook.md');
     const response = renderShareOgImage(view, null);
 
     expect(response.headers.get('Content-Type')).toBe('image/png');
@@ -79,7 +79,7 @@ describe('renderShareOgImage', () => {
   });
 
   test('sets the immutable forever cache header per spec', () => {
-    const view = okView('https://github.com/o/r/blob/main/file.md');
+    const view = psView('https://github.com/o/r/blob/main/file.md');
     const response = renderShareOgImage(view, null);
 
     expect(response.headers.get('Cache-Control')).toBe('public, max-age=31536000, immutable');
@@ -87,7 +87,7 @@ describe('renderShareOgImage', () => {
 
   test('routes through ImageResponse with size 1200×630', () => {
     recordedCalls.length = 0;
-    const view = okView('https://github.com/o/r/blob/main/file.md');
+    const view = psView('https://github.com/o/r/blob/main/file.md');
     renderShareOgImage(view, null);
 
     expect(recordedCalls).toHaveLength(1);
@@ -97,7 +97,7 @@ describe('renderShareOgImage', () => {
 
   test('passes both DM Sans weights when fonts are loaded', () => {
     recordedCalls.length = 0;
-    const view = okView('https://github.com/o/r/blob/main/file.md');
+    const view = psView('https://github.com/o/r/blob/main/file.md');
     const fakeFont = new ArrayBuffer(8);
     renderShareOgImage(view, { light: fakeFont, medium: fakeFont });
 
@@ -112,7 +112,7 @@ describe('renderShareOgImage', () => {
 
   test('omits the fonts arg when font load failed (renders with satori default)', () => {
     recordedCalls.length = 0;
-    const view = okView('https://github.com/o/r/blob/main/file.md');
+    const view = psView('https://github.com/o/r/blob/main/file.md');
     renderShareOgImage(view, null);
 
     expect(recordedCalls[0].options.fonts).toBeUndefined();

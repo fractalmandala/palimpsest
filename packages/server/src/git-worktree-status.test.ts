@@ -11,7 +11,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
-import type { GitWorktreeOpenTarget } from '@inkeep/open-knowledge-core';
+import type { GitWorktreeOpenTarget } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -211,7 +211,7 @@ describe('readIncomingEntries', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-incoming-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-incoming-'));
   });
   afterEach(() => {
     rmSync(dir, { recursive: true, force: true });
@@ -332,7 +332,7 @@ describe('readWorktreeStatus open-target stamping', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-worktree-doc-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-worktree-doc-'));
   });
   afterEach(() => {
     rmSync(dir, { recursive: true, force: true });
@@ -392,7 +392,7 @@ describe('readWorktreeStatus open-target stamping', () => {
 describe('readWorktreeStatus — an unreadable tree is representable', () => {
   let dir: string;
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-unreadable-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-unreadable-'));
   });
   afterEach(() => {
     rmSync(dir, { recursive: true, force: true });
@@ -424,7 +424,7 @@ describe('readWorktreeStatus — an unreadable tree is representable', () => {
 describe('readWorktreeStatus — the panel listing is trustworthy', () => {
   let dir: string;
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-worktree-read-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-worktree-read-'));
   });
   afterEach(() => {
     rmSync(dir, { recursive: true, force: true });

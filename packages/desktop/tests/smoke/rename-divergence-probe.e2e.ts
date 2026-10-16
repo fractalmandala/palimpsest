@@ -32,21 +32,21 @@ async function runProbe(
   variant: 'with-ext' | 'no-ext',
   captureStderrFor: (app: ElectronApplication) => void,
 ): Promise<ProbeOutcome> {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
-  const contentDir = mkdtempSync(join(tmpdir(), `ok-rename-probe-${variant}-`));
-  const userDataDir = mkdtempSync(join(tmpdir(), `ok-pw-userdata-${variant}-`));
+  const contentDir = mkdtempSync(join(tmpdir(), `ps-rename-probe-${variant}-`));
+  const userDataDir = mkdtempSync(join(tmpdir(), `ps-pw-userdata-${variant}-`));
   const sourceDocName = `probe-${variant}-${randomUUID().slice(0, 8)}`;
   const marker = `${MARKER_PREFIX}-${variant}-${randomUUID().slice(0, 8)}`;
   const sourceContent = `# Probe doc\n\nMarker: ${marker}.\n\nParagraph two — non-trivial content for rename.\n\nParagraph three.\n`;
 
-  mkdirSync(join(contentDir, '.ok'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+  mkdirSync(join(contentDir, '.ps'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), 'content:\n  dir: .\n');
   writeFileSync(join(contentDir, `${sourceDocName}.md`), sourceContent);
 
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(
     contentDir,
   )}&doc=${encodeURIComponent(sourceDocName)}`;
 
@@ -80,9 +80,9 @@ async function runProbe(
     ).toContainText(marker, { timeout: 30_000 });
     await configureDesktopGitRepositories(page, contentDir);
 
-    const apiOrigin = await page.evaluate(() => window.okDesktop?.config?.apiOrigin);
+    const apiOrigin = await page.evaluate(() => window.psDesktop?.config?.apiOrigin);
     if (!apiOrigin) {
-      throw new Error(`window.okDesktop.config.apiOrigin was empty (got: ${apiOrigin})`);
+      throw new Error(`window.psDesktop.config.apiOrigin was empty (got: ${apiOrigin})`);
     }
     const port = Number(new URL(apiOrigin).port);
     console.log(`[PROBE ${variant}] API port: ${port}`);

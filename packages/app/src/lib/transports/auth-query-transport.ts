@@ -1,11 +1,11 @@
-import { type ProblemDetails, ProblemDetailsSchema } from '@inkeep/open-knowledge-core/schemas/api';
+import { type ProblemDetails, ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { z } from 'zod';
 import type {
-  OkDesktopBridge,
-  OkLocalOpAuthReposResponse,
-  OkLocalOpAuthSignoutResponse,
-  OkLocalOpAuthStatusResponse,
+  PsDesktopBridge,
+  PsLocalOpAuthReposResponse,
+  PsLocalOpAuthSignoutResponse,
+  PsLocalOpAuthStatusResponse,
 } from '@/lib/desktop-bridge-types';
 
 const DEFAULT_AUTH_QUERY_HOST = 'github.com';
@@ -29,7 +29,7 @@ async function extractProblem(res: Response): Promise<ProblemDetails | undefined
 }
 
 type AuthStatusMember<Authenticated extends boolean> = Extract<
-  OkLocalOpAuthStatusResponse,
+  PsLocalOpAuthStatusResponse,
   { authenticated: Authenticated }
 >;
 
@@ -39,8 +39,8 @@ export type AuthQueryStatus =
 
 export interface AuthQueryTransport {
   status(request?: { host?: string }): Promise<AuthQueryStatus>;
-  repos(request?: { host?: string }): Promise<OkLocalOpAuthReposResponse>;
-  signout?(request?: { host?: string }): Promise<OkLocalOpAuthSignoutResponse>;
+  repos(request?: { host?: string }): Promise<PsLocalOpAuthReposResponse>;
+  signout?(request?: { host?: string }): Promise<PsLocalOpAuthSignoutResponse>;
 }
 
 async function postJson(path: string, body: unknown): Promise<Response> {
@@ -159,7 +159,7 @@ export function httpAuthQueryTransport(): AuthQueryTransport {
   };
 }
 
-export function ipcAuthQueryTransport(bridge: OkDesktopBridge): AuthQueryTransport {
+export function ipcAuthQueryTransport(bridge: PsDesktopBridge): AuthQueryTransport {
   return {
     status: (request) => bridge.localOp.authStatus(request),
     repos: (request) => bridge.localOp.authRepos(request),

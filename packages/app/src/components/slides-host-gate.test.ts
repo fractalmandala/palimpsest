@@ -3,11 +3,11 @@ import { isSlidesHost } from './slides-host-gate';
 
 describe('isSlidesHost', () => {
   test('a desktop bridge exposing the slides namespace is a slides host', () => {
-    expect(isSlidesHost({ okDesktop: { slides: {} } })).toBe(true);
+    expect(isSlidesHost({ psDesktop: { slides: {} } })).toBe(true);
   });
 
   test('an older desktop build without the slides namespace is not a slides host', () => {
-    expect(isSlidesHost({ okDesktop: {} })).toBe(false);
+    expect(isSlidesHost({ psDesktop: {} })).toBe(false);
   });
 
   test('a web host with no bridge is not a slides host', () => {

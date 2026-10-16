@@ -50,7 +50,7 @@ async function withStub(
   payload: Record<string, unknown>,
   body: (tools: StubbedTools) => Promise<void>,
 ): Promise<void> {
-  const cwd = makeTempDir('ok-mcp-link-suppression-');
+  const cwd = makeTempDir('ps-mcp-link-suppression-');
   const stub = await startFetchTestServer({
     port: 0,
     async fetch(req) {

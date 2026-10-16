@@ -11,7 +11,7 @@ function escapeSlackText(text) {
 
 export function githubMarkdownToSlackMrkdwn(markdown) {
   const withoutDownloads = markdown.replace(
-    /<!-- ok-downloads:start -->[\s\S]*?<!-- ok-downloads:end -->/g,
+    /<!-- ps-downloads:start -->[\s\S]*?<!-- ps-downloads:end -->/g,
     '',
   );
   const withoutComments = withoutDownloads.replace(/<!--[\s\S]*?-->/g, '');
@@ -98,7 +98,7 @@ export function buildSlackReleasePayload({ version, releaseUrl, notes = '' }) {
   const blocks = [
     {
       type: 'header',
-      text: { type: 'plain_text', text: `🎉 OpenKnowledge ${version} released`, emoji: true },
+      text: { type: 'plain_text', text: `🎉 Palimpsest ${version} released`, emoji: true },
     },
     ...chunkForSections(mrkdwn).map((chunk) => ({
       type: 'section',
@@ -111,7 +111,7 @@ export function buildSlackReleasePayload({ version, releaseUrl, notes = '' }) {
   ];
 
   return {
-    text: `OpenKnowledge ${version} released — ${releaseUrl}`,
+    text: `Palimpsest ${version} released — ${releaseUrl}`,
     blocks,
   };
 }

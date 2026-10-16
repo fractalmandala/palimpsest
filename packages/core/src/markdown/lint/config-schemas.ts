@@ -5,7 +5,7 @@ import {
   LocalTargetDiagnosticEvidenceSchema,
 } from '../../schemas/api/agent-write.ts';
 import { DEFAULT_MARKDOWNLINT_CONFIG } from './default-config.ts';
-import type { OkfRuleId } from './okf-rule-meta.ts';
+import type { OkfRuleId } from './psf-rule-meta.ts';
 import { LINT_PLUGINS, type LinterConfig } from './plugins.ts';
 import type { FrontmatterSchemaMapping, MarkdownlintRuleSetting } from './types.ts';
 import { FRONTMATTER_SCOPES } from './types.ts';
@@ -27,7 +27,7 @@ export interface PersistedLinterConfig {
   enabled?: boolean;
   markdownlint: PersistedMarkdownlintSlice;
   frontmatter?: PersistedFrontmatterSlice;
-  okf?: PersistedOkfSlice;
+  psf?: PersistedOkfSlice;
 }
 
 export function toEffectiveBase(persisted: PersistedLinterConfig): LinterConfig {
@@ -42,10 +42,10 @@ export function toEffectiveBase(persisted: PersistedLinterConfig): LinterConfig 
         enabled: persisted.frontmatter?.enabled ?? false,
         schemas: persisted.frontmatter?.schemas ?? [],
       },
-      okf: {
-        enabled: persisted.okf?.enabled ?? false,
-        ...(persisted.okf?.rules === undefined ? {} : { rules: persisted.okf.rules }),
-        generate: { index: persisted.okf?.generate?.index ?? false },
+      psf: {
+        enabled: persisted.psf?.enabled ?? false,
+        ...(persisted.psf?.rules === undefined ? {} : { rules: persisted.psf.rules }),
+        generate: { index: persisted.psf?.generate?.index ?? false },
       },
     },
   };

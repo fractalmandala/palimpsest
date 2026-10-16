@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SUPPORTED_LOCALES } from '@inkeep/open-knowledge-core';
+import { SUPPORTED_LOCALES } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import { messageOrigins } from '../../../scripts/lingui-message-origins.mjs';
 

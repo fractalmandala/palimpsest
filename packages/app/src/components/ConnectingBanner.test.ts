@@ -53,9 +53,9 @@ describe('describeError', () => {
     );
   });
 
-  test('network error points at missing ok start', () => {
+  test('network error points at missing ps start', () => {
     expect(describeError({ kind: 'error', code: 'network' })).toBe(
-      'network error (is `ok start` running?)',
+      'network error (is `ps start` running?)',
     );
   });
 
@@ -87,10 +87,10 @@ describe('isNoCollabServerError (D4 — worktree-no-collab-server message branch
 describe('describeError names the running channel CLI', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  test('Beta asks whether ok-beta start is running', () => {
-    vi.stubGlobal('window', { okDesktop: { cliCommandName: 'ok-beta' } });
+  test('Beta asks whether ps-beta start is running', () => {
+    vi.stubGlobal('window', { psDesktop: { cliCommandName: 'ps-beta' } });
     expect(describeError({ kind: 'error', code: 'network' })).toBe(
-      'network error (is `ok-beta start` running?)',
+      'network error (is `ps-beta start` running?)',
     );
   });
 });

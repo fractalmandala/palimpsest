@@ -1,6 +1,6 @@
 export type LoadProbeFixtureMode = 'import-before-listener' | 'listener-before-import';
 
-const LOAD_PROBE_FIXTURE_MODE_ENV = 'OK_UTILITY_LOAD_PROBE_FIXTURE_MODE';
+const LOAD_PROBE_FIXTURE_MODE_ENV = 'PS_UTILITY_LOAD_PROBE_FIXTURE_MODE';
 
 const mode = process.env[LOAD_PROBE_FIXTURE_MODE_ENV];
 
@@ -23,9 +23,9 @@ function registerParentPortListener(): void {
 }
 
 if (mode === 'import-before-listener') {
-  await import('@inkeep/open-knowledge-core/shadow-repo-layout');
+  await import('@palimpsest/core/shadow-repo-layout');
   registerParentPortListener();
 } else {
   registerParentPortListener();
-  await import('@inkeep/open-knowledge-core/shadow-repo-layout');
+  await import('@palimpsest/core/shadow-repo-layout');
 }

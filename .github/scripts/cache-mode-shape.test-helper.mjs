@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { credentialReasons } from './workflow-credentials.test-helper.mjs';
 
-const OK_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const PS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const MODES = ['none', 'read', 'write-only', 'write'];
 
 const isFalse = (value) => /^false$/i.test(String(value));
@@ -51,7 +51,7 @@ const OFF_SWITCHES = {
 
 const actionName = (uses) => (uses.includes('@') ? uses.slice(0, uses.indexOf('@')) : undefined);
 
-function actionSteps(steps, root = OK_ROOT, seen = []) {
+function actionSteps(steps, root = PS_ROOT, seen = []) {
   const found = [];
   for (const step of steps ?? []) {
     const uses = step.uses;
@@ -80,7 +80,7 @@ function actionSteps(steps, root = OK_ROOT, seen = []) {
   return found;
 }
 
-export function cacheOps(steps, root = OK_ROOT) {
+export function cacheOps(steps, root = PS_ROOT) {
   return actionSteps(steps, root).flatMap(({ step, via }) => {
     const classify = ACTIONS[actionName(step.uses)];
     if (classify === undefined) {
@@ -102,7 +102,7 @@ function narrowestMode(ops) {
 
 export const effectiveMode = (workflow, job) => job['cache-mode'] ?? workflow['cache-mode'] ?? null;
 
-export function cacheModeProblems(workflow, job, root = OK_ROOT) {
+export function cacheModeProblems(workflow, job, root = PS_ROOT) {
   if (credentialReasons(workflow, job).length === 0) return [];
   if (job.uses !== undefined)
     return [`calls the reusable workflow ${job.uses}, which this sweep does not trace`];
@@ -130,7 +130,7 @@ export function cacheModeProblems(workflow, job, root = OK_ROOT) {
   return problems;
 }
 
-export function restoresNothingProblems(workflow, job, root = OK_ROOT) {
+export function restoresNothingProblems(workflow, job, root = PS_ROOT) {
   if (job.uses !== undefined)
     return [`calls the reusable workflow ${job.uses}, which this sweep does not trace`];
   const problems = [];

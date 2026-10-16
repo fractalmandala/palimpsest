@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { bootServer, ConfigSchema } from '@inkeep/open-knowledge-server';
+import { bootServer, ConfigSchema } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { createLinkedWorktree, type LinkedWorktreeHandle } from './worktree-test-harness.ts';
 
@@ -17,9 +17,9 @@ afterEach(() => {
 
 describe('Two linked worktrees boot in parallel with isolated state (D13)', () => {
   test('parallel bootServer calls produce distinct ports + lockDirs + shadow paths; destroy of one does not affect the other', async () => {
-    const a = createLinkedWorktree({ seedOkScaffold: true, prefix: 'ok-wt-test-A' });
+    const a = createLinkedWorktree({ seedOkScaffold: true, prefix: 'ps-wt-test-A' });
     handles.push(a);
-    const b = createLinkedWorktree({ seedOkScaffold: true, prefix: 'ok-wt-test-B' });
+    const b = createLinkedWorktree({ seedOkScaffold: true, prefix: 'ps-wt-test-B' });
     handles.push(b);
 
     const expectedShadowA = resolve(a.worktreeGitdir, 'ok/HEAD');
@@ -53,8 +53,8 @@ describe('Two linked worktrees boot in parallel with isolated state (D13)', () =
       expect(bootedB.port).toBeGreaterThan(0);
       expect(bootedA.port).not.toBe(bootedB.port);
 
-      expect(bootedA.lockDir).toBe(resolve(a.worktreePath, '.ok', 'local'));
-      expect(bootedB.lockDir).toBe(resolve(b.worktreePath, '.ok', 'local'));
+      expect(bootedA.lockDir).toBe(resolve(a.worktreePath, '.ps', 'local'));
+      expect(bootedB.lockDir).toBe(resolve(b.worktreePath, '.ps', 'local'));
       expect(bootedA.lockDir).not.toBe(bootedB.lockDir);
 
       expect(existsSync(expectedShadowA)).toBe(true);

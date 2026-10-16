@@ -81,7 +81,7 @@ beforeAll(async () => {
 });
 afterAll(() => testServer.stop());
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-restore-version-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-restore-version-test-'));
   seenRequests.length = 0;
   seenBodies.length = 0;
   mockRollbackWarning = undefined;

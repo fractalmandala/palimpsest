@@ -102,7 +102,7 @@ const DEFAULT_TARGET_BY_OS: Record<DownloadOs, DownloadTargetId> = {
 
 const FALLBACK_TARGET_ID: DownloadTargetId = 'macos-arm64';
 
-const DOWNLOAD_PAGE_ORIGIN = 'https://openknowledge.ai';
+const DOWNLOAD_PAGE_ORIGIN = 'https://github.com/fractalmandala/palimpsest';
 
 export const DOWNLOAD_PAGE_HREF = `${DOWNLOAD_PAGE_ORIGIN}/download`;
 

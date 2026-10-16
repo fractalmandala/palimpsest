@@ -6,28 +6,28 @@ import {
   type McpLauncherRevisionCatalog,
 } from './mcp-launcher.ts';
 
-const UNIX_V1_HISTORICAL_CHAIN = `# ok-mcp-v1
-USER_BUNDLE="$HOME/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh"
+const UNIX_V1_HISTORICAL_CHAIN = `# ps-mcp-v1
+USER_BUNDLE="$HOME/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh"
 [ -f "$USER_BUNDLE" ] && [ -x "$USER_BUNDLE" ] && exec "$USER_BUNDLE" mcp
-BUNDLE="/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh"
+BUNDLE="/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh"
 [ -f "$BUNDLE" ] && [ -x "$BUNDLE" ] && exec "$BUNDLE" mcp
-command -v npx >/dev/null 2>&1 && exec npx -y @inkeep/open-knowledge@latest mcp
+command -v npx >/dev/null 2>&1 && exec npx -y @palimpsest/cli@latest mcp
 for d in "$HOME/.nvm/versions/node"/*/bin "$HOME/.fnm/node-versions"/*/installation/bin "$HOME/.asdf/installs/nodejs"/*/bin /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/.volta/bin"; do
-  [ -f "$d/npx" ] && [ -x "$d/npx" ] && exec "$d/npx" -y @inkeep/open-knowledge@latest mcp
+  [ -f "$d/npx" ] && [ -x "$d/npx" ] && exec "$d/npx" -y @palimpsest/cli@latest mcp
 done
-echo "OpenKnowledge: install OK Desktop or Node.js 24+, then restart your editor" >&2
+echo "Palimpsest: install OK Desktop or Node.js 24+, then restart your editor" >&2
 exit 127`;
 
-const WINDOWS_V1_HISTORICAL_CHAIN = `# ok-mcp-win-v1
+const WINDOWS_V1_HISTORICAL_CHAIN = `# ps-mcp-win-v1
 if ($env:PATHEXT -notmatch 'CMD') { $env:PATHEXT = '.COM;.EXE;.BAT;.CMD;' + $env:PATHEXT }
 if ($env:APPDATA) {
-  $shim = Join-Path $env:APPDATA 'npm\\ok.cmd'
+  $shim = Join-Path $env:APPDATA 'npm\\ps.cmd'
   if (Test-Path -LiteralPath $shim -PathType Leaf) { & $shim mcp; exit $LASTEXITCODE }
 }
-$ok = Get-Command ok.cmd -CommandType Application -ErrorAction SilentlyContinue
+$ok = Get-Command ps.cmd -CommandType Application -ErrorAction SilentlyContinue
 if ($ok) { & $ok.Source mcp; exit $LASTEXITCODE }
 $npx = Get-Command npx.cmd -CommandType Application -ErrorAction SilentlyContinue
-if ($npx) { & $npx.Source -y '@inkeep/open-knowledge@latest' mcp; exit $LASTEXITCODE }
+if ($npx) { & $npx.Source -y '@palimpsest/cli@latest' mcp; exit $LASTEXITCODE }
 $dirs = @()
 if ($env:ProgramFiles) { $dirs += Join-Path $env:ProgramFiles 'nodejs' }
 if ($env:NVM_SYMLINK) { $dirs += $env:NVM_SYMLINK }
@@ -39,9 +39,9 @@ if ($env:LOCALAPPDATA) {
 if ($env:USERPROFILE) { $dirs += Join-Path $env:USERPROFILE 'scoop\\shims' }
 foreach ($d in $dirs) {
   $probe = Join-Path $d 'npx.cmd'
-  if (Test-Path -LiteralPath $probe -PathType Leaf) { & $probe -y '@inkeep/open-knowledge@latest' mcp; exit $LASTEXITCODE }
+  if (Test-Path -LiteralPath $probe -PathType Leaf) { & $probe -y '@palimpsest/cli@latest' mcp; exit $LASTEXITCODE }
 }
-[Console]::Error.WriteLine('OpenKnowledge: install Node.js 24+ (npm i -g @inkeep/open-knowledge), then restart your editor')
+[Console]::Error.WriteLine('Palimpsest: install Node.js 24+ (npm i -g @palimpsest/cli), then restart your editor')
 exit 127`;
 
 const TEST_CATALOG_WITH_WINDOWS_V2 = {
@@ -56,7 +56,7 @@ const TEST_CATALOG_WITH_WINDOWS_V2 = {
 } as const satisfies McpLauncherRevisionCatalog;
 
 function marker(family: McpLauncherFamily, revision: number): string {
-  return family === 'unix-chain' ? `# ok-mcp-v${revision}` : `# ok-mcp-win-v${revision}`;
+  return family === 'unix-chain' ? `# ps-mcp-v${revision}` : `# ps-mcp-win-v${revision}`;
 }
 
 const SHAPES = [
@@ -98,7 +98,7 @@ describe('classifyMcpLauncherEntry', () => {
     expect(
       classifyMcpLauncherEntry({
         command: '/bin/sh',
-        args: ['-l', '-c', '# ok-mcp-v2\nexec npx -y @inkeep/open-knowledge@latest mcp'],
+        args: ['-l', '-c', '# ps-mcp-v2\nexec npx -y @palimpsest/cli@latest mcp'],
       }),
     ).toEqual({
       kind: 'recognized',
@@ -180,7 +180,7 @@ describe('classifyMcpLauncherEntry', () => {
 
     expect(
       classifyMcpLauncherEntry(
-        { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v2\nexit 127'] },
+        { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v2\nexit 127'] },
         unixV1Build,
       ),
     ).toMatchObject({
@@ -208,13 +208,13 @@ describe('classifyMcpLauncherEntry', () => {
 
   test.each([
     [null, 'not-an-object'],
-    [{ command: '/bin/zsh', args: ['-l', '-c', '# ok-mcp-v2'] }, 'foreign-command'],
-    [{ command: '/bin/sh', args: ['-c', '# ok-mcp-v2'] }, 'malformed-argv'],
-    [{ command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v2', 'extra'] }, 'malformed-argv'],
-    [{ type: 'remote', command: ['/bin/sh', '-l', '-c', '# ok-mcp-v2'] }, 'unknown-envelope'],
+    [{ command: '/bin/zsh', args: ['-l', '-c', '# ps-mcp-v2'] }, 'foreign-command'],
+    [{ command: '/bin/sh', args: ['-c', '# ps-mcp-v2'] }, 'malformed-argv'],
+    [{ command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v2', 'extra'] }, 'malformed-argv'],
+    [{ type: 'remote', command: ['/bin/sh', '-l', '-c', '# ps-mcp-v2'] }, 'unknown-envelope'],
     [{ command: 'node', args: ['/tmp/cli.mjs', 'mcp'] }, 'dev-mode'],
     [{ type: 'local', command: ['node', '/tmp/cli.mjs', 'mcp'] }, 'dev-mode'],
-    [{ type: 'local', command: ['/bin/sh', '-l', '-c', '# ok-mcp-v2', 'extra'] }, 'malformed-argv'],
+    [{ type: 'local', command: ['/bin/sh', '-l', '-c', '# ps-mcp-v2', 'extra'] }, 'malformed-argv'],
   ] as const)('declines %j with bounded reason %s', (entry, reason) => {
     expect(classifyMcpLauncherEntry(entry)).toEqual({ kind: 'declined', reason });
   });
@@ -228,13 +228,13 @@ describe('channel-tagged launcher markers', () => {
 
   test('beta recognizes its own marker and declines the stable one', () => {
     const catalog = DEFAULT_MCP_LAUNCHER_REVISION_CATALOG;
-    expect(classifyMcpLauncherEntry(unixEntry('# ok-mcp-beta-v2'), catalog, '-beta')).toMatchObject(
+    expect(classifyMcpLauncherEntry(unixEntry('# ps-mcp-beta-v2'), catalog, '-beta')).toMatchObject(
       {
         kind: 'recognized',
         disposition: 'keep',
       },
     );
-    expect(classifyMcpLauncherEntry(unixEntry('# ok-mcp-v2'), catalog, '-beta')).toEqual({
+    expect(classifyMcpLauncherEntry(unixEntry('# ps-mcp-v2'), catalog, '-beta')).toEqual({
       kind: 'declined',
       reason: 'malformed-marker',
     });
@@ -243,7 +243,7 @@ describe('channel-tagged launcher markers', () => {
   test('stable declines the beta marker', () => {
     expect(
       classifyMcpLauncherEntry(
-        unixEntry('# ok-mcp-beta-v2'),
+        unixEntry('# ps-mcp-beta-v2'),
         DEFAULT_MCP_LAUNCHER_REVISION_CATALOG,
         '',
       ),

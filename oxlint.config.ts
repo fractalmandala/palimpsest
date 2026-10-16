@@ -28,7 +28,7 @@ const noRequireInTests = {
 };
 
 const NO_COMMENTS_PLUGIN = './lint-plugins/no-comments/plugin.mjs';
-const OK_RULES_PLUGIN = './lint-plugins/ok-rules/index.mjs';
+const PS_RULES_PLUGIN = './lint-plugins/ps-rules/index.mjs';
 const NO_COMMENTS_RULE = 'no-comments/no-comments';
 const NO_COMMENTS_SEVERITY = 'error';
 
@@ -38,7 +38,7 @@ export default defineConfig({
     '.codex/skills/**',
     '/reports/**',
     '/specs/**',
-    'lint-plugins/ok-rules/__fixtures__/**',
+    'lint-plugins/ps-rules/__fixtures__/**',
   ],
   options: {
     typeAware: true,
@@ -46,7 +46,7 @@ export default defineConfig({
   jsPlugins: [
     { name: 'eslint-js', specifier: 'oxlint-plugin-eslint' },
     NO_COMMENTS_PLUGIN,
-    OK_RULES_PLUGIN,
+    PS_RULES_PLUGIN,
   ],
   rules: {
     'ok/class-proof-registration-discipline': 'error',

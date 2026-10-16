@@ -1,7 +1,7 @@
 import {
   type AttachmentPart,
   isTextishMime,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
 import { formatToolList } from '@/lib/tool-list-format';

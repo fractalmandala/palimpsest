@@ -1,16 +1,16 @@
-import { desktopChannelLabel } from '@inkeep/open-knowledge-core/constants/product';
+import { desktopChannelLabel } from '@palimpsest/core/constants/product';
 import { t } from '@lingui/core/macro';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
-import type { OkDesktopBridge, OkServerRestartFailure } from '@/lib/desktop-bridge-types';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
+import type { PsDesktopBridge, PsServerRestartFailure } from '@/lib/desktop-bridge-types';
 
-export function restartServerFailureMessage(failure: OkServerRestartFailure): string {
+export function restartServerFailureMessage(failure: PsServerRestartFailure): string {
   switch (failure.reason) {
     case 'other-channel':
       return otherChannelRestartMessage(failure.holderChannel);
     case 'eperm':
-      return t`Couldn't restart the server — another process owns it. Quit other OpenKnowledge windows for this project, then try again.`;
+      return t`Couldn't restart the server — another process owns it. Quit other Palimpsest windows for this project, then try again.`;
     case 'other': {
-      const cliCommand = okCliCommandName();
+      const cliCommand = psCliCommandName();
       return t`Couldn't restart the server. Try \`${cliCommand} start\` in this folder.`;
     }
   }
@@ -22,7 +22,7 @@ export function otherChannelRestartMessage(holderChannel: string): string {
 }
 
 export async function restartCollabServer(
-  bridge: Pick<OkDesktopBridge, 'restartServer' | 'config'>,
+  bridge: Pick<PsDesktopBridge, 'restartServer' | 'config'>,
 ): Promise<{ ok: true } | { ok: false; message: string }> {
   const outcome = await bridge.restartServer(bridge.config.projectPath);
   if (outcome.ok) return { ok: true };

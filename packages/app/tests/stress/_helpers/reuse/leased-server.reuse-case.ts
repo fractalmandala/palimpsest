@@ -9,7 +9,7 @@ import {
   type ConfigBinding,
   ConfigSchema,
   type WriteScope,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { expect } from '@playwright/test';
 import * as Y from 'yjs';
 import { test, type WorkerServer } from '../fixtures.ts';
@@ -17,18 +17,18 @@ import { REUSE_SOCKET_ENV } from './lease-protocol.ts';
 import { CASE_SERVER_ANNOTATION } from './reuse-run.test-helper.ts';
 import { connectLeaseClient } from './supervisor-socket.ts';
 
-const STORAGE_PROBE_KEY = 'ok-reuse-probe';
+const STORAGE_PROBE_KEY = 'ps-reuse-probe';
 const CREATED_PAGE = 'reuse-created';
 const CREATED_FOLDER_PAGE = 'sidebar-folder/reuse-created-inside';
 const NESTED_FIXTURE = 'sidebar-folder/nested-doc';
 const SETTING_SCOPES = [
-  { docName: CONFIG_DOC_NAME_PROJECT, scope: 'project', file: ['.ok', 'config.yml'] },
+  { docName: CONFIG_DOC_NAME_PROJECT, scope: 'project', file: ['.ps', 'config.yml'] },
   {
     docName: CONFIG_DOC_NAME_PROJECT_LOCAL,
     scope: 'project-local',
-    file: ['.ok', 'local', 'config.yml'],
+    file: ['.ps', 'local', 'config.yml'],
   },
-  { docName: CONFIG_DOC_NAME_USER, scope: 'user', file: ['.ok', 'global.yml'] },
+  { docName: CONFIG_DOC_NAME_USER, scope: 'user', file: ['.ps', 'global.yml'] },
 ] as const satisfies ReadonlyArray<{ docName: string; scope: WriteScope; file: readonly string[] }>;
 
 async function withConfigBinding<T>(
@@ -130,7 +130,7 @@ test('a later run finds none of an earlier run’s settings, content or browser 
 
 test('a run leaves server state that no reset can account for', async ({ workerServer }) => {
   test.info().annotations.push({ type: CASE_SERVER_ANNOTATION, description: workerServer.baseURL });
-  writeFileSync(join(workerServer.contentDir, '.ok', 'local', 'unrecognised-state.json'), '{}\n');
+  writeFileSync(join(workerServer.contentDir, '.ps', 'local', 'unrecognised-state.json'), '{}\n');
 });
 
 test('the supervisor shuts down while a test holds its lease', async ({ workerServer }) => {

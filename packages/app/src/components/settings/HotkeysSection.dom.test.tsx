@@ -4,7 +4,7 @@ import { formatShortcut, KEYBOARD_SHORTCUTS } from '@/lib/keyboard-shortcuts';
 import { HotkeysSection } from './HotkeysSection';
 
 function setDesktopHost(present: boolean): void {
-  (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = present
+  (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = present
     ? {}
     : undefined;
 }

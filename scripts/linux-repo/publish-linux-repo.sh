@@ -40,8 +40,8 @@ if [ ${#DEBS[@]} -gt 0 ]; then
       gzip -9 -k -f "dists/$CHANNEL/main/binary-$arch/Packages"
     done
     apt-ftparchive \
-      -o "APT::FTPArchive::Release::Origin=OpenKnowledge" \
-      -o "APT::FTPArchive::Release::Label=OpenKnowledge" \
+      -o "APT::FTPArchive::Release::Origin=Palimpsest" \
+      -o "APT::FTPArchive::Release::Label=Palimpsest" \
       -o "APT::FTPArchive::Release::Suite=$CHANNEL" \
       -o "APT::FTPArchive::Release::Codename=$CHANNEL" \
       -o "APT::FTPArchive::Release::Architectures=amd64 arm64" \
@@ -54,7 +54,7 @@ if [ ${#DEBS[@]} -gt 0 ]; then
   gpg --batch --yes --pinentry-mode loopback --local-user "$GPG_KEY_ID" \
     --armor --detach-sign -o "$DIST/Release.gpg" "$DIST/Release"
 
-  gpg --export "$GPG_KEY_ID" > "$APT/openknowledge.gpg"
+  gpg --export "$GPG_KEY_ID" > "$APT/palimpsest.gpg"
   gpg --armor --export "$GPG_KEY_ID" > "$APT/key.asc"
 fi
 

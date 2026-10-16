@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { context, metrics, trace } from '@opentelemetry/api';
 import {
   BasicTracerProvider,
@@ -25,7 +25,7 @@ const TEST_CONFIG = ConfigSchema.parse({});
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await realpath(await mkdtemp(resolve(tmpdir(), 'ok-git-preflight-boot-')));
+  tmpDir = await realpath(await mkdtemp(resolve(tmpdir(), 'ps-git-preflight-boot-')));
 });
 
 afterEach(async () => {
@@ -33,10 +33,10 @@ afterEach(async () => {
 });
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 }
 
 interface LogEntry {
@@ -115,7 +115,7 @@ describe('bootServer git-preflight', () => {
     expect(caught).toBe(thrown);
     expect(caught).toBeInstanceOf(GitNotAvailableError);
 
-    expect(capturedStderr).toContain('OpenKnowledge needs Git');
+    expect(capturedStderr).toContain('Palimpsest needs Git');
     expect(capturedStderr).toContain('sudo apt install git');
 
     expect(entries).toHaveLength(1);
@@ -165,7 +165,7 @@ describe('bootServer git-preflight', () => {
     expect(caught).toBe(thrown);
     expect(caught).toBeInstanceOf(GitTooOldError);
 
-    expect(capturedStderr).toContain('OpenKnowledge requires Git 2.31.0 or newer');
+    expect(capturedStderr).toContain('Palimpsest requires Git 2.31.0 or newer');
     expect(capturedStderr).toContain('detected 2.20.0');
     expect(capturedStderr).toContain('/usr/bin/git');
 

@@ -4,8 +4,8 @@ import {
   parseManagedArtifactName,
   parseTemplateContentDocName,
   templateContentDocName,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/constants/cc1';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';

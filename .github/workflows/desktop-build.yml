@@ -69,7 +69,7 @@ concurrency:
 
 env:
   TURBO_TELEMETRY_DISABLED: 1
-  OK_DESKTOP_VARIANT: ${{ inputs.variant }}
+  PS_DESKTOP_VARIANT: ${{ inputs.variant }}
 
 jobs:
   build-macos-dmg:
@@ -78,7 +78,7 @@ jobs:
     # universal) per D29 — a universal DMG built on an Intel-only runner has
     # historically produced broken arm64 slices (electron-builder #6891).
     # Xcode 26+ is required because electron-builder compiles
-    # `build/okglass.icon` into `Assets.car` via Apple's `actool`, which only
+    # `build/psglass.icon` into `Assets.car` via Apple's `actool`, which only
     # ships with Xcode 26+.
     runs-on: macos-26
     cache-mode: none
@@ -116,7 +116,7 @@ jobs:
 
       - name: Build workspace (produces packages/cli/dist/public for extraResources)
         run: |
-          pnpm exec turbo run build --filter=@inkeep/open-knowledge --cache=local:,remote:
+          pnpm exec turbo run build --filter=@palimpsest/cli --cache=local:,remote:
 
       - name: Assert the native-config binary set
         run: |
@@ -176,13 +176,13 @@ jobs:
         run: node scripts/stage-parcel-watcher.mjs
 
       - name: Validate variant provisioning profile
-        if: steps.signmode.outputs.mode == 'signed' && env.OK_DESKTOP_VARIANT != 'stable'
+        if: steps.signmode.outputs.mode == 'signed' && env.PS_DESKTOP_VARIANT != 'stable'
         working-directory: packages/desktop
         run: |
           set -euo pipefail
-          PROFILE_PATH="build/embedded.${OK_DESKTOP_VARIANT}.provisionprofile"
+          PROFILE_PATH="build/embedded.${PS_DESKTOP_VARIANT}.provisionprofile"
           if [[ ! -f "$PROFILE_PATH" ]]; then
-            echo "::error::The committed ${OK_DESKTOP_VARIANT} Developer ID provisioning profile is missing."
+            echo "::error::The committed ${PS_DESKTOP_VARIANT} Developer ID provisioning profile is missing."
             exit 1
           fi
           security cms -D -i "$PROFILE_PATH" >/dev/null
@@ -410,7 +410,7 @@ jobs:
           # on another Mac) can filter by prefix without inspecting the
           # DMG signature. Unsigned DMGs can run locally after `xattr -cr`
           # but must never be shipped as if they were a release build.
-          name: open-knowledge-${{ env.OK_DESKTOP_VARIANT }}-macos-${{ steps.signmode.outputs.mode }}-${{ github.sha }}
+          name: open-knowledge-${{ env.PS_DESKTOP_VARIANT }}-macos-${{ steps.signmode.outputs.mode }}-${{ github.sha }}
           path: |
             packages/desktop/dist-desktop/*.dmg
             packages/desktop/dist-desktop/*.dmg.blockmap

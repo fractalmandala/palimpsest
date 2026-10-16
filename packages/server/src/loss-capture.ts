@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import type { BridgeMergeContentLossWhich } from '@inkeep/open-knowledge-core';
+import type { BridgeMergeContentLossWhich } from '@palimpsest/core';
 import { z } from 'zod';
 import { getLogger } from './logger.ts';
 import { RotatingAppender } from './telemetry-file-sink.ts';
@@ -59,7 +59,7 @@ export interface LossCaptureEventInput {
   connections?: number;
 }
 
-const LOSS_CAPTURE_SUBDIR = ['.ok', 'local', 'loss-capture'] as const;
+const LOSS_CAPTURE_SUBDIR = ['.ps', 'local', 'loss-capture'] as const;
 const LOSS_CURRENT_FILENAME = 'loss-current.jsonl';
 const LOSS_PREVIOUS_FILENAME = 'loss-prev.jsonl';
 

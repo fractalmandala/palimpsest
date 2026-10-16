@@ -15,7 +15,7 @@ import {
   isProcessAlive,
   type LockProcessScan,
   scanLockProcesses,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { hasLsof } from '../../../../test-support/capabilities.test-helper.ts';
 import {
@@ -33,7 +33,7 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
     | { candidates: LockProcessScan['candidates']; livePidsAtScanTime: number[] }
     | undefined;
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-uninstall-recovery-')));
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-uninstall-recovery-')));
     observedScan = undefined;
   });
   afterEach(async () => {
@@ -78,14 +78,14 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
     'cleans global state with mixed lock residue (deinit selected=%s)',
     async (deinit) => {
       const home = join(root, 'home');
-      const settings = join(home, 'Library', 'Application Support', 'OpenKnowledge', 'state.json');
-      const skill = join(home, '.ok', 'skills', 'mine', 'SKILL.md');
+      const settings = join(home, 'Library', 'Application Support', 'Palimpsest', 'state.json');
+      const skill = join(home, '.ps', 'skills', 'mine', 'SKILL.md');
       write(settings, '{"recentProjects":[]}');
-      write(join(home, '.ok', 'auth.yml'), 'fixture auth');
+      write(join(home, '.ps', 'auth.yml'), 'fixture auth');
       write(skill, '# My skill');
       write(
         join(home, '.zshrc'),
-        'export EDITOR=vim\n# >>> open-knowledge cli >>>\nmanaged\n# <<< open-knowledge cli <<<\n',
+        'export EDITOR=vim\n# >>> palimpsest cli >>>\nmanaged\n# <<< palimpsest cli <<<\n',
       );
       const kinds = ['valid', 'absent', 'stale', 'pid-only', 'malformed', 'zero', 'one'];
       const projects = kinds.map((kind) => join(root, kind));
@@ -94,8 +94,8 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
       for (const [index, project] of projects.entries()) {
         const kind = kinds[index];
         write(join(project, 'notes.md'), '# Keep my notes');
-        write(join(project, '.ok', 'config.yml'), '{}');
-        const lockDir = join(project, '.ok', 'local');
+        write(join(project, '.ps', 'config.yml'), '{}');
+        const lockDir = join(project, '.ps', 'local');
         mkdirSync(lockDir);
         locks.push(lockDir);
         if (kind === 'absent') continue;
@@ -149,17 +149,17 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
         json.removed.filter((item: { kind: string }) => item.kind === 'stop-server'),
       ).toHaveLength(deinit ? 2 : 1);
       expect(existsSync(settings)).toBe(false);
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
       expect(readFileSync(skill, 'utf8')).toBe('# My skill');
       expect(readFileSync(join(home, '.zshrc'), 'utf8')).toBe('export EDITOR=vim\n');
       if (livePid === undefined) throw new Error('Missing live fixture PID');
       expect(isProcessAlive(livePid)).toBe(false);
       for (const project of projects) {
         expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# Keep my notes');
-        expect(existsSync(join(project, '.ok', 'config.yml'))).toBe(!deinit);
+        expect(existsSync(join(project, '.ps', 'config.yml'))).toBe(!deinit);
       }
       if (!deinit)
-        expect(readFileSync(join(root, 'malformed', '.ok', 'local', 'server.lock'), 'utf8')).toBe(
+        expect(readFileSync(join(root, 'malformed', '.ps', 'local', 'server.lock'), 'utf8')).toBe(
           'not json',
         );
     },
@@ -167,7 +167,7 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
 
   test('shared deinit removes selected project state after harmless invalid residue', async () => {
     const project = join(root, 'project');
-    write(join(project, '.ok', 'local', 'server.lock'), 'not json');
+    write(join(project, '.ps', 'local', 'server.lock'), 'not json');
     write(join(project, 'notes.md'), '# Keep');
     const outcome = await runRemoval(buildDeinitPlan(project, join(root, 'home')), {
       scanProcesses: scanCandidatesWithoutHostUncertainty,
@@ -177,13 +177,13 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
       status: 'skipped',
       detail: expect.stringContaining('No server was stopped'),
     });
-    expect(existsSync(join(project, '.ok'))).toBe(false);
+    expect(existsSync(join(project, '.ps'))).toBe(false);
     expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# Keep');
   });
 
   test('refuses a dep set that supplies both stopServer and scanProcesses', async () => {
     const project = join(root, 'project');
-    const lockPath = join(project, '.ok', 'local', 'server.lock');
+    const lockPath = join(project, '.ps', 'local', 'server.lock');
     write(lockPath, 'not json');
     write(join(project, 'notes.md'), '# Keep');
     const contradictory = {
@@ -212,9 +212,9 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
     ).flatMap((scope) => [0, 99999999].map((pid) => ({ scope, pid }))),
   )('retains foreign project state while applying $scope with PID $pid', async ({ scope, pid }) => {
     const home = join(root, 'home');
-    const settings = join(home, '.ok', 'config.yml');
+    const settings = join(home, '.ps', 'config.yml');
     const project = join(root, 'foreign-project');
-    const lockDir = scope.endsWith('legacy') ? join(project, '.ok') : join(project, '.ok', 'local');
+    const lockDir = scope.endsWith('legacy') ? join(project, '.ps') : join(project, '.ps', 'local');
     const lockPath = join(lockDir, 'server.lock');
     const raw = JSON.stringify({ pid, hostname: 'remote-host', port: 5173 });
     write(lockPath, raw);
@@ -263,14 +263,14 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
     async ({ associated, unrecorded }, ctx) => {
       ctx.skip(!hasLsof, 'the product inspects processes with lsof');
       const home = join(root, 'home');
-      const settings = join(home, '.ok', 'config.yml');
+      const settings = join(home, '.ps', 'config.yml');
       const project = join(root, 'foreign-project');
       const otherProject = join(root, 'other-project');
       write(join(project, 'notes.md'), '# Keep');
       mkdirSync(otherProject);
       write(settings, '{}');
       const child = await childServer(associated ? project : otherProject);
-      const lockDir = join(project, '.ok', 'local');
+      const lockDir = join(project, '.ps', 'local');
       const raw = JSON.stringify({
         pid: child.pid,
         ...(unrecorded ? {} : { hostname: 'remote-host' }),

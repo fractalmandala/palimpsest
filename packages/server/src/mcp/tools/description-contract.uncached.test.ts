@@ -3,9 +3,9 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   LINT_PLUGIN_IDS,
-  OPEN_KNOWLEDGE_MCP_TOOLS,
+  PALIMPSEST_MCP_TOOLS,
   VALIDATION_SOURCES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -68,7 +68,7 @@ const retiredToolAdvice =
 
 test('the production registration after dialect conversion meets both budgets', () => {
   expect(tools).toHaveLength(19);
-  expect(new Set(tools.map((tool) => tool.name))).toEqual(new Set(OPEN_KNOWLEDGE_MCP_TOOLS));
+  expect(new Set(tools.map((tool) => tool.name))).toEqual(new Set(PALIMPSEST_MCP_TOOLS));
   for (const tool of tools) expect(tool.inputSchema.$schema).toBe(JSON_SCHEMA_DIALECT_2020_12);
   assertBudget(tools);
 });
@@ -158,13 +158,13 @@ test('share_link retains its path, kind, cwd and publishing preconditions', () =
 
 test('served descriptions name no single channel CLI command', () => {
   const channelCommand =
-    /(^|[\s`'"(])(ok|ok-beta|open-knowledge|open-knowledge-beta) (open|ps|status|start|stop|init|lint|clean|seed|diagnose|auth|config|cowork|bug-report)\b/;
+    /(^|[\s`'"(])(ok|ps-beta|palimpsest|palimpsest-beta) (open|ps|status|start|stop|init|lint|clean|seed|diagnose|auth|config|cowork|bug-report)\b/;
   const offenders = tools
     .filter((tool) => channelCommand.test(tool.description ?? ''))
     .map((tool) => tool.name);
   expect(offenders).toEqual([]);
-  expect(description('preview_url')).toContain("the OpenKnowledge CLI's open <doc>");
-  expect(description('lint')).toContain("the OpenKnowledge CLI's lint --fix");
+  expect(description('preview_url')).toContain("the Palimpsest CLI's open <doc>");
+  expect(description('lint')).toContain("the Palimpsest CLI's lint --fix");
 });
 
 test('retired conflict tools are neither registered nor suggested as callable tools', () => {
@@ -224,8 +224,8 @@ test('retired guidance guard distinguishes tool calls from ordinary conflict and
     'The `conflicts` MCP tool lists pending conflicts',
     'Available tools: `conflicts`',
     'Call resolve_conflict after editing',
-    'mcp__open_knowledge__conflicts',
-    'mcp__open_knowledge__resolve_conflict',
+    'mcp__palimpsest__conflicts',
+    'mcp__palimpsest__resolve_conflict',
   ])
     expect(text).toMatch(retiredToolAdvice);
   for (const text of [

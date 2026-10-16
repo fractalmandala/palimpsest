@@ -3,7 +3,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -72,14 +72,14 @@ function originTreePaths(bareDir: string): string[] {
 
 let tmpDir = '';
 let projectDir = '';
-let okDir = '';
+let psDir = '';
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-pathspec-invariance-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-pathspec-invariance-'));
   projectDir = join(tmpDir, 'project');
-  okDir = join(projectDir, '.ok', LOCAL_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(join(projectDir, '.ok', '.gitignore'), `${LOCAL_DIR}/\n`, 'utf-8');
+  psDir = join(projectDir, '.ps', LOCAL_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(join(projectDir, '.ps', '.gitignore'), `${LOCAL_DIR}/\n`, 'utf-8');
 });
 
 afterEach(async () => {
@@ -305,7 +305,7 @@ describe('pathspec name invariance — commitBlockingPaths (site 3)', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
     await project.raw('config', 'user.email', 'project@test.com');
@@ -453,7 +453,7 @@ describe('pathspec name invariance — non-content merge auto-resolve (site 5)',
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
     await project.raw('config', 'user.email', 'project@test.com');
@@ -526,7 +526,7 @@ describe('pathspec name invariance — pull-only overlay restore (site 6)', () =
 
     await simpleGit(root).clone(bareDir, cloneDir);
     configureTestGitRepository(cloneDir);
-    mkdirSync(join(cloneDir, '.ok', LOCAL_DIR), { recursive: true });
+    mkdirSync(join(cloneDir, '.ps', LOCAL_DIR), { recursive: true });
     const project = simpleGit(cloneDir);
     await project.raw('config', 'user.name', 'Project');
     await project.raw('config', 'user.email', 'project@test.com');
@@ -623,8 +623,8 @@ describe('pathspec argv sites with no product-producible hostile input today', (
 
     const shadow = await initShadowRepo(projectDir);
     for (const name of [WILDCARD_SKILL, SIBLING_SKILL]) {
-      mkdirSync(join(projectDir, '.ok', 'skills', name), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'skills', name, 'SKILL.md'), `# ${name}\n`, 'utf-8');
+      mkdirSync(join(projectDir, '.ps', 'skills', name), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'skills', name, 'SKILL.md'), `# ${name}\n`, 'utf-8');
     }
     const saved = await saveVersion(shadow, '.', [human], 'main', 'seed skills');
     expect(saved.checkpointRef).toBeTruthy();

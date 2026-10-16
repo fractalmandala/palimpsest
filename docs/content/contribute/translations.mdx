@@ -6,7 +6,7 @@ description: Community driven translations
 
 The app is natively written in English and we did our best to provide machine generated translations for some of the most spoken languages in the world.
 
-OpenKnowledge's interface is available in many languages. The language selection can be found at **Settings → Preferences → Language**.
+Palimpsest's interface is available in many languages. The language selection can be found at **Settings → Preferences → Language**.
 
 This changes the interface, not the languages used to check your writing. Desktop [spelling settings](/docs/features/editor#right-click-menu-and-spell-check) are separate.
 
@@ -17,9 +17,9 @@ Language is an app appearance setting and can be set directly in the config [con
 - Fix errors, improve existing translations
 - Add new language sets
 
-## Run OpenKnowledge in the language you're checking
+## Run Palimpsest in the language you're checking
 
-Set the language in the UI setting or set it by hand in `~/.ok/global.yml` (`~/.ok-beta/global.yml` in OpenKnowledge Beta):
+Set the language in the UI setting or set it by hand in `~/.ps/global.yml` (`~/.ps-beta/global.yml` in Palimpsest Beta):
 
 ```yaml
 appearance:
@@ -30,11 +30,11 @@ Use the tag exactly as it appears in the configuration reference (`zh-Hans`, `pt
 
 Reading the interface in your own language is the best review there is, and the one nobody here can do for you.
 
-On the desktop app, the `OK_LANG` environment variable additionally overrides the **native menus** for a single run, which is the quickest way to check menu translations without touching config. The rest of the window follows `appearance.language`, so set both if you want everything in one language at once.
+On the desktop app, the `PS_LANG` environment variable additionally overrides the **native menus** for a single run, which is the quickest way to check menu translations without touching config. The rest of the window follows `appearance.language`, so set both if you want everything in one language at once.
 
 ## Make the change
 
-Translations live in [`inkeep/open-knowledge`](https://github.com/inkeep/open-knowledge), one gettext catalog per language:
+Translations live in [`fractalmandala/palimpsest`](https://github.com/fractalmandala/palimpsest), one gettext catalog per language:
 
 ```
 packages/app/src/locales/<locale>/messages.po
@@ -50,7 +50,7 @@ packages/app/src/locales/<locale>/messages.po
 
    The code around the match shows the screen the string belongs to and the value each placeholder takes.
 
-2. **Follow the glossary.** [`GLOSSARY.md`](https://github.com/inkeep/open-knowledge/blob/main/packages/app/src/locales/GLOSSARY.md), in the same folder, pins one form per language for the words that recur everywhere (*document*, *folder*, *branch*, and so on) and lists what is never translated at all: the product name, format names such as Markdown and YAML, and placeholders like `{count}`. If a glossary entry is wrong for your language, change that row and sweep every message that uses it in the same pull request. A catalog holding two words for one concept is worse than either word on its own.
+2. **Follow the glossary.** [`GLOSSARY.md`](https://github.com/fractalmandala/palimpsest/blob/main/packages/app/src/locales/GLOSSARY.md), in the same folder, pins one form per language for the words that recur everywhere (*document*, *folder*, *branch*, and so on) and lists what is never translated at all: the product name, format names such as Markdown and YAML, and placeholders like `{count}`. If a glossary entry is wrong for your language, change that row and sweep every message that uses it in the same pull request. A catalog holding two words for one concept is worse than either word on its own.
 
 3. **Normalize the catalog.** CI checks that each `.po` file is exactly what the extractor writes. Run:
 
@@ -62,7 +62,7 @@ packages/app/src/locales/<locale>/messages.po
 
 4. **Open a pull request.** Say which language you read and whether you speak it natively.
 
-[CONTRIBUTING.md](https://github.com/inkeep/open-knowledge/blob/main/CONTRIBUTING.md) covers the rest: toolchain, `pnpm run check`, and the Contributor License Agreement.
+[CONTRIBUTING.md](https://github.com/fractalmandala/palimpsest/blob/main/CONTRIBUTING.md) covers the rest: toolchain, `pnpm run check`, and the Contributor License Agreement.
 
 ## What is and isn't translated
 
@@ -74,4 +74,4 @@ packages/app/src/locales/<locale>/messages.po
 
 ## A language that isn't on the list
 
-Open an [issue](https://github.com/inkeep/open-knowledge/issues) before starting work on one, and wait for a maintainer to accept it: a new language is larger than a small fix, so it follows the [pull request rules](https://github.com/inkeep/open-knowledge/blob/main/CONTRIBUTING.md#pull-requests). Then follow the instructions above to provide a complete language set. Don't forget to add the language to the list of available UI languages so other users can select your translation set from within the desktop application!
+Open an [issue](https://github.com/fractalmandala/palimpsest/issues) before starting work on one, and wait for a maintainer to accept it: a new language is larger than a small fix, so it follows the [pull request rules](https://github.com/fractalmandala/palimpsest/blob/main/CONTRIBUTING.md#pull-requests). Then follow the instructions above to provide a complete language set. Don't forget to add the language to the list of available UI languages so other users can select your translation set from within the desktop application!

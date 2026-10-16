@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { instantiateDoc, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { instantiateDoc, stripFrontmatter } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
@@ -25,7 +25,7 @@ function nameFor(kind: Kind, operation: string): string {
 
 function pathFor(kind: Kind, name: string): string {
   return kind === 'template'
-    ? join(root, 'templates', '.ok', 'templates', `${name}.md`)
+    ? join(root, 'templates', '.ps', 'templates', `${name}.md`)
     : join(root, '.agents', 'skills', name, 'SKILL.md');
 }
 
@@ -53,7 +53,7 @@ function expectFullFieldRefusal(
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-full-put-qualification-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-full-put-qualification-'));
   for (const kind of ['template', 'skill'] as const) {
     for (const operation of ['metadata', 'repair', 'clean']) {
       const name = nameFor(kind, operation);
@@ -67,9 +67,9 @@ beforeAll(async () => {
       );
     }
   }
-  const builtin = pathFor('skill', 'open-knowledge');
+  const builtin = pathFor('skill', 'palimpsest');
   mkdirSync(dirname(builtin), { recursive: true });
-  writeFileSync(builtin, '---\nname: open-knowledge\ndescription: Project\n---\nProject.\n');
+  writeFileSync(builtin, '---\nname: palimpsest\ndescription: Project\n---\nProject.\n');
   server = await bootArtifactAdmissionRig(root);
   client = await connectMcpTestClient(`http://127.0.0.1:${server.port}/mcp`);
 }, 60_000);

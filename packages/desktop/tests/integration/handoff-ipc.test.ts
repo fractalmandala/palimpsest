@@ -362,9 +362,9 @@ describe("'ok:shell:record-handoff' round-trips the stats append", () => {
     };
     const result = await invoke('ok:shell:record-handoff', line);
     expect(result).toBeUndefined();
-    expect(mkdirCalls).toEqual(['/Users/test/.ok']);
+    expect(mkdirCalls).toEqual(['/Users/test/.ps']);
     expect(appendCalls).toHaveLength(1);
-    expect(appendCalls[0]?.path).toBe('/Users/test/.ok/stats.jsonl');
+    expect(appendCalls[0]?.path).toBe('/Users/test/.ps/stats.jsonl');
     expect(JSON.parse(appendCalls[0]?.content.trim() ?? '')).toEqual(line);
   });
 

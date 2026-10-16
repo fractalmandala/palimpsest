@@ -2,9 +2,9 @@
 
 The required cli-e2e mode is `locked`. It packs the CLI from the checkout and replays its runtime graph from the committed workspace `pnpm-lock.yaml`, using the workspace package-manager pin. A temporary consumer retains the lock's package records, integrity, peer snapshots, platform metadata and patches. The consumer lock is generated for the run; it is not another maintained lockfile.
 
-Set `OK_CLI_E2E_INSTALL_MODE=fresh` to use npm's native fresh resolution with the same product assertions. Fresh mode deliberately retains npm's optional-dependency tolerance. Only fatal npm acquisition failures are classified as unavailable; strict complete acquisition applies to locked mode.
+Set `PS_CLI_E2E_INSTALL_MODE=fresh` to use npm's native fresh resolution with the same product assertions. Fresh mode deliberately retains npm's optional-dependency tolerance. Only fatal npm acquisition failures are classified as unavailable; strict complete acquisition applies to locked mode.
 
-Fresh mode writes npm's generated package-lock JSON to `packages/cli/test-results/cli-e2e-fresh-graph.json`, relative to the Open Knowledge workspace. The ignored artifact is replaced each run. It records resolution, including optional declarations and resolved package records. An optional version missing during resolution has no package record, but npm can retain the resolved record after dropping a package whose tarball failed. The artifact therefore cannot identify every optional package absent from disk.
+Fresh mode writes npm's generated package-lock JSON to `packages/cli/test-results/cli-e2e-fresh-graph.json`, relative to the Palimpsest workspace. The ignored artifact is replaced each run. It records resolution, including optional declarations and resolved package records. An optional version missing during resolution has no package record, but npm can retain the resolved record after dropping a package whose tarball failed. The artifact therefore cannot identify every optional package absent from disk.
 
 ## Acquisition outcome
 
@@ -34,7 +34,7 @@ This producer emits these fields:
 
 ## Focused checks
 
-From the Open Knowledge workspace:
+From the Palimpsest workspace:
 
 ```sh
 pnpm --dir packages/cli exec vitest run tests/e2e/packed-install.test.ts tests/e2e/install-outcome.test.ts tests/e2e/install-deadline.test.ts --reporter=verbose --maxWorkers=2

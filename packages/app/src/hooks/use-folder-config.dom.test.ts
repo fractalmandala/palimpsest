@@ -10,7 +10,7 @@ const { useAllTemplates } = await import('./use-folder-config');
 const template = {
   name: 'meeting-notes',
   title: 'Meeting Notes',
-  path: 'meetings/.ok/templates/meeting-notes.md',
+  path: 'meetings/.ps/templates/meeting-notes.md',
   source_folder: 'meetings',
 };
 

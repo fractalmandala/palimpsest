@@ -1,4 +1,4 @@
-import { getTracer, initTelemetry } from '@inkeep/open-knowledge-server';
+import { getTracer, initTelemetry } from '@palimpsest/server';
 import { type Context, context, propagation, type Span, trace } from '@opentelemetry/api';
 import { getLogger } from './desktop-logger.ts';
 

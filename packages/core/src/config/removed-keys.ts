@@ -17,8 +17,8 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     get redirect() {
       return [
         'content.include has been removed.',
-        'For subdirectory scoping, set content.dir in .ok/config.yml instead.',
-        'For pattern-based filtering, use .okignore (gitignore syntax — exclude-only; do not copy include patterns directly).',
+        'For subdirectory scoping, set content.dir in .ps/config.yml instead.',
+        'For pattern-based filtering, use .psignore (gitignore syntax — exclude-only; do not copy include patterns directly).',
         migrateHint(),
       ].join(' ');
     },
@@ -27,7 +27,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['content', 'exclude'],
     get redirect() {
       return [
-        'Move these patterns to .okignore at the project root (gitignore syntax, 1:1 migration).',
+        'Move these patterns to .psignore at the project root (gitignore syntax, 1:1 migration).',
         migrateHint(),
       ].join(' ');
     },
@@ -37,7 +37,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     get redirect() {
       return [
         'folders is no longer a top-level config field.',
-        "A folder's own frontmatter (open-shape, like a doc's) lives in nested `<folder>/.ok/frontmatter.yml`; new-doc starting properties come from templates in `<folder>/.ok/templates/`.",
+        "A folder's own frontmatter (open-shape, like a doc's) lives in nested `<folder>/.ps/frontmatter.yml`; new-doc starting properties come from templates in `<folder>/.ps/templates/`.",
         'Edit via the folder overview in the editor sidebar, or `edit({ folder: { path, frontmatter } })` via the MCP.',
         migrateHint(),
       ].join(' ');
@@ -56,7 +56,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['upload', 'maxBytes'],
     get redirect() {
       return [
-        'streaming uploads have no user-facing cap; the value is hardcoded in @inkeep/open-knowledge-core.',
+        'streaming uploads have no user-facing cap; the value is hardcoded in @palimpsest/core.',
         migrateHint(),
       ].join(' ');
     },
@@ -65,7 +65,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['github', 'oauthAppClientId'],
     get redirect() {
       return [
-        'Use the OPEN_KNOWLEDGE_GITHUB_CLIENT_ID environment variable instead.',
+        'Use the PALIMPSEST_GITHUB_CLIENT_ID environment variable instead.',
         migrateHint(),
       ].join(' ');
     },
@@ -74,7 +74,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['server', 'host'],
     get redirect() {
       return [
-        'Use server.bind in .ok/config.yml instead — a list of bind addresses, e.g. [127.0.0.1]; a non-loopback bind additionally requires server.allowExternal.',
+        'Use server.bind in .ps/config.yml instead — a list of bind addresses, e.g. [127.0.0.1]; a non-loopback bind additionally requires server.allowExternal.',
         'The --bind CLI flag and HOST environment variable also remain available.',
         migrateHint(),
       ].join(' ');
@@ -84,7 +84,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['remote', 'url'],
     get redirect() {
       return [
-        'remote.url has been removed. Use server.externalUrl in .ok/config.yml instead (the public origin your tunnel serves).',
+        'remote.url has been removed. Use server.externalUrl in .ps/config.yml instead (the public origin your tunnel serves).',
         migrateHint(),
       ].join(' ');
     },
@@ -93,7 +93,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['remote', 'port'],
     get redirect() {
       return [
-        'remote.port has been removed. Use server.port in .ok/config.yml instead.',
+        'remote.port has been removed. Use server.port in .ps/config.yml instead.',
         migrateHint(),
       ].join(' ');
     },
@@ -102,7 +102,7 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
     path: ['server', 'publicUrl'],
     get redirect() {
       return [
-        'server.publicUrl has been removed. Use server.externalUrl in .ok/config.yml instead (the same key under its current name).',
+        'server.publicUrl has been removed. Use server.externalUrl in .ps/config.yml instead (the same key under its current name).',
         migrateHint(),
       ].join(' ');
     },
@@ -116,26 +116,26 @@ export const REMOVED_KEYS: readonly RemovedKey[] = [
   {
     path: ['mcp', 'autoStart'],
     get redirect() {
-      return ['To disable MCP auto-start, set OK_MCP_AUTOSTART=0.', migrateHint()].join(' ');
+      return ['To disable MCP auto-start, set PS_MCP_AUTOSTART=0.', migrateHint()].join(' ');
     },
   },
   {
     path: ['mcp', 'tools', 'read_document', 'historyDepth'],
     get redirect() {
-      return ['This value is hardcoded in @inkeep/open-knowledge-core.', migrateHint()].join(' ');
+      return ['This value is hardcoded in @palimpsest/core.', migrateHint()].join(' ');
     },
   },
   {
     path: ['mcp', 'tools', 'grep', 'maxResults'],
     get redirect() {
-      return ['This value is hardcoded in @inkeep/open-knowledge-core.', migrateHint()].join(' ');
+      return ['This value is hardcoded in @palimpsest/core.', migrateHint()].join(' ');
     },
   },
   {
     path: ['mcp', 'tools', 'search', 'maxResults'],
     get redirect() {
       return [
-        'The search result cap is hardcoded in @inkeep/open-knowledge-core; this config key was removed.',
+        'The search result cap is hardcoded in @palimpsest/core; this config key was removed.',
         migrateHint(),
       ].join(' ');
     },

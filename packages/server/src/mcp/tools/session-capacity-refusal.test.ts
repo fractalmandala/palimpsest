@@ -102,11 +102,11 @@ describe('MCP write paths relaying an agent-session capacity refusal', () => {
         return Response.json({ error: `unexpected route ${pathname}` }, { status: 500 });
       },
     });
-    cwd = mkdtempSync(join(tmpdir(), 'ok-session-capacity-refusal-'));
-    mkdirSync(join(cwd, '.ok'), { recursive: true });
-    mkdirSync(join(cwd, 'notes', '.ok', 'templates'), { recursive: true });
+    cwd = mkdtempSync(join(tmpdir(), 'ps-session-capacity-refusal-'));
+    mkdirSync(join(cwd, '.ps'), { recursive: true });
+    mkdirSync(join(cwd, 'notes', '.ps', 'templates'), { recursive: true });
     writeFileSync(
-      join(cwd, 'notes', '.ok', 'templates', 'note.md'),
+      join(cwd, 'notes', '.ps', 'templates', 'note.md'),
       '---\ntitle: Note\ndescription: A plain note\n---\n\n# Note\n',
     );
 

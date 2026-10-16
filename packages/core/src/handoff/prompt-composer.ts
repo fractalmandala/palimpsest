@@ -39,33 +39,33 @@ function sanitizePathForAtMention(path: string): string {
   return path.replace(AT_MENTION_PATH_INJECTION_SANITIZE_RE, '_');
 }
 
-export const OK_PROJECT_SKILL_POINTER =
-  "This is an OpenKnowledge project: load the `open-knowledge` skill and use the OpenKnowledge MCP tools for all markdown — don't probe for `.ok/` or use native file tools on `.md` / `.mdx`.";
+export const PS_PROJECT_SKILL_POINTER =
+  "This is an Palimpsest project: load the `palimpsest` skill and use the Palimpsest MCP tools for all markdown — don't probe for `.ps/` or use native file tools on `.md` / `.mdx`.";
 
 export function withSkillPointer(directive: string): string {
-  return `${OK_PROJECT_SKILL_POINTER} ${directive}`;
+  return `${PS_PROJECT_SKILL_POINTER} ${directive}`;
 }
 
-export const OK_TERMINAL_SURFACE_PREAMBLE =
-  "You're running in the terminal of the OpenKnowledge desktop app.";
+export const PS_TERMINAL_SURFACE_PREAMBLE =
+  "You're running in the terminal of the Palimpsest desktop app.";
 
-export const OK_THREAD_SURFACE_PREAMBLE =
-  "You're an agent working inside OpenKnowledge, with its MCP tools available to you.";
+export const PS_THREAD_SURFACE_PREAMBLE =
+  "You're an agent working inside Palimpsest, with its MCP tools available to you.";
 
 export function composeThreadBareLaunchPrompt(relativePath: string | null): string {
   const tail =
     relativePath === null
       ? 'Then stop.'
-      : `Read \`${sanitizePathForPrompt(relativePath)}\` via the OpenKnowledge MCP server, then stop.`;
-  return `${OK_THREAD_SURFACE_PREAMBLE} ${OK_PROJECT_SKILL_POINTER} ${tail}`;
+      : `Read \`${sanitizePathForPrompt(relativePath)}\` via the Palimpsest MCP server, then stop.`;
+  return `${PS_THREAD_SURFACE_PREAMBLE} ${PS_PROJECT_SKILL_POINTER} ${tail}`;
 }
 
 export function composeTerminalBareLaunchPrompt(relativePath: string | null): string {
   const tail =
     relativePath === null
       ? 'Then stop.'
-      : `Read \`${sanitizePathForPrompt(relativePath)}\` via the OpenKnowledge MCP server, then stop.`;
-  return `${OK_TERMINAL_SURFACE_PREAMBLE} ${OK_PROJECT_SKILL_POINTER} ${tail}`;
+      : `Read \`${sanitizePathForPrompt(relativePath)}\` via the Palimpsest MCP server, then stop.`;
+  return `${PS_TERMINAL_SURFACE_PREAMBLE} ${PS_PROJECT_SKILL_POINTER} ${tail}`;
 }
 
 export function composeFilePrompt(
@@ -75,7 +75,7 @@ export function composeFilePrompt(
   transport: PromptTransport = 'url',
 ): string {
   const safe = sanitizePathForPrompt(relativePath);
-  const base = `Let's work on \`${safe}\` using OpenKnowledge.`;
+  const base = `Let's work on \`${safe}\` using Palimpsest.`;
   const directive = autoOpen ? `${base} Open the OK editor in web view.` : base;
   return appendInstruction(directive, instruction, transport);
 }
@@ -86,7 +86,7 @@ export function composeSkillPrompt(
   autoOpen: boolean,
 ): string {
   const safe = sanitizePathForPrompt(skillName);
-  const base = `Use your open-knowledge-write-skill skill to author the ${scope} Open Knowledge skill \`${safe}\`. Edit it with the Open Knowledge tools.`;
+  const base = `Use your open-knowledge-write-skill skill to author the ${scope} Palimpsest skill \`${safe}\`. Edit it with the Palimpsest tools.`;
   return autoOpen ? `${base} Open the OK editor in web view.` : base;
 }
 
@@ -97,7 +97,7 @@ export function composeFolderPrompt(
   transport: PromptTransport = 'url',
 ): string {
   const safe = sanitizePathForPrompt(relativeFolderPath);
-  const base = `Let's work on the \`${safe}\` folder using OpenKnowledge.`;
+  const base = `Let's work on the \`${safe}\` folder using Palimpsest.`;
   const directive = autoOpen ? `${base} Open the OK editor in web view.` : base;
   return appendInstruction(directive, instruction, transport);
 }
@@ -107,7 +107,7 @@ export function composeEmptySpacePrompt(
   instruction?: string,
   transport: PromptTransport = 'url',
 ): string {
-  const base = `Let's work on this project using OpenKnowledge.`;
+  const base = `Let's work on this project using Palimpsest.`;
   const directive = autoOpen ? `${base} Open the OK editor in web view.` : base;
   return appendInstruction(directive, instruction, transport);
 }
@@ -138,9 +138,9 @@ export function composeCreatePrompt(
     if (scenario === 'existing-repo') {
       const briefPart =
         trimmed === ''
-          ? `Let's work on this project using OpenKnowledge.`
+          ? `Let's work on this project using Palimpsest.`
           : [
-              "Here's what I'd like to do in this OpenKnowledge project:",
+              "Here's what I'd like to do in this Palimpsest project:",
               '',
               blockquote(trimmed),
             ].join('\n');
@@ -150,16 +150,16 @@ export function composeCreatePrompt(
 
     if (scenario === 'skill') {
       const writeSkill =
-        'Use your open-knowledge-write-skill skill to author it with the Open Knowledge tools.';
+        'Use your open-knowledge-write-skill skill to author it with the Palimpsest tools.';
       const base =
         trimmed === ''
           ? mentionBlock === ''
-            ? `Let's create a new Open Knowledge skill. ${writeSkill}`
-            : [`Let's create a new Open Knowledge skill. ${writeSkill}`, '', mentionBlock].join(
+            ? `Let's create a new Palimpsest skill. ${writeSkill}`
+            : [`Let's create a new Palimpsest skill. ${writeSkill}`, '', mentionBlock].join(
                 '\n',
               )
           : [
-              "I want to create a new Open Knowledge skill. Here's what it should do:",
+              "I want to create a new Palimpsest skill. Here's what it should do:",
               '',
               blockquote(trimmed),
               ...(mentionBlock === '' ? [] : ['', mentionBlock]),
@@ -170,14 +170,14 @@ export function composeCreatePrompt(
     }
 
     const scaffold =
-      'Scaffold the folders, templates, and AI-readable rules to match, using OpenKnowledge.';
+      'Scaffold the folders, templates, and AI-readable rules to match, using Palimpsest.';
     const base =
       trimmed === ''
         ? mentionBlock === ''
-          ? `Let's set up a new OpenKnowledge project. ${scaffold}`
-          : [`Let's set up a new OpenKnowledge project. ${scaffold}`, '', mentionBlock].join('\n')
+          ? `Let's set up a new Palimpsest project. ${scaffold}`
+          : [`Let's set up a new Palimpsest project. ${scaffold}`, '', mentionBlock].join('\n')
         : [
-            "I'm setting up a new OpenKnowledge project. Here's what I want to create:",
+            "I'm setting up a new Palimpsest project. Here's what I want to create:",
             '',
             blockquote(trimmed),
             ...(mentionBlock === '' ? [] : ['', mentionBlock]),
@@ -203,7 +203,7 @@ const URL_OVERHEAD_RESERVE = 1024;
 
 const INLINE_PROMPT_ENCODED_BUDGET = MAX_HANDOFF_URL_LENGTH - URL_OVERHEAD_RESERVE;
 
-const POINTER_ENCODED_RESERVE = encodedPromptLength(`${OK_PROJECT_SKILL_POINTER} `, 'cursor');
+const POINTER_ENCODED_RESERVE = encodedPromptLength(`${PS_PROJECT_SKILL_POINTER} `, 'cursor');
 const DIRECTIVE_INLINE_PROMPT_ENCODED_BUDGET =
   INLINE_PROMPT_ENCODED_BUDGET - POINTER_ENCODED_RESERVE;
 
@@ -282,7 +282,7 @@ function encodedPromptLength(prompt: string, target: HandoffTarget): number {
 }
 
 function selectionLead(safePath: string): string {
-  return `Let's work on the selected passage in @${safePath} using OpenKnowledge.`;
+  return `Let's work on the selected passage in @${safePath} using Palimpsest.`;
 }
 
 function instructionLines(instruction: string): readonly string[] {
@@ -376,7 +376,7 @@ function composeLocus(safePath: string, instruction: string, selectionMarkdown: 
     anchor,
     fence,
     '',
-    `Read the full passage from @${safePath} via the OpenKnowledge MCP server before editing.`,
+    `Read the full passage from @${safePath} via the Palimpsest MCP server before editing.`,
   ].join('\n');
 }
 
@@ -409,7 +409,7 @@ export function composeSelectionPrompt(input: SelectionPromptInput): string {
 }
 
 function composeAskBody(safePath: string, instruction: string, autoOpen: boolean): string {
-  const lead = `Let's work on @${safePath} using OpenKnowledge.`;
+  const lead = `Let's work on @${safePath} using Palimpsest.`;
   const trailer = autoOpen ? 'Open the OK editor in web view.' : '';
   const trimmed = instruction.trim();
   if (trimmed === '') {
@@ -505,13 +505,13 @@ function locusSelectionSegment(selectionMarkdown: string, safeDocPath: string): 
     anchor,
     fence,
     '',
-    `Read the full passage from @${safeDocPath} via the OpenKnowledge MCP server before editing.`,
+    `Read the full passage from @${safeDocPath} via the Palimpsest MCP server before editing.`,
   ].join('\n');
 }
 
 function linesSelectionSegment(startLine: number, endLine: number, safeDocPath: string): string {
   const range = startLine === endLine ? `line ${startLine}` : `lines ${startLine}-${endLine}`;
-  return `The selected passage is ${range} of @${safeDocPath}. Read it from @${safeDocPath} via the OpenKnowledge MCP server before editing.`;
+  return `The selected passage is ${range} of @${safeDocPath}. Read it from @${safeDocPath} via the Palimpsest MCP server before editing.`;
 }
 
 function mentionsSegment(mentions: readonly string[]): string {
@@ -522,12 +522,12 @@ function mentionsSegment(mentions: readonly string[]): string {
 
 function scopeLead(input: AssembleHandoffPromptInput): string {
   if (input.scope === 'doc') {
-    return `Let's work on @${sanitizePathForAtMention(input.docRelativePath)} using OpenKnowledge.`;
+    return `Let's work on @${sanitizePathForAtMention(input.docRelativePath)} using Palimpsest.`;
   }
   if (input.scope === 'folder') {
-    return `Let's work on the @${sanitizePathForAtMention(input.folderRelativePath)} folder using OpenKnowledge.`;
+    return `Let's work on the @${sanitizePathForAtMention(input.folderRelativePath)} folder using Palimpsest.`;
   }
-  return `Let's work on this project using OpenKnowledge.`;
+  return `Let's work on this project using Palimpsest.`;
 }
 
 function composeAssembledBlocks(
@@ -588,7 +588,7 @@ function assembleDocSelectionPrompt(
   const { target } = input;
   const transport = input.transport ?? 'url';
   const safeDocPath = sanitizePathForAtMention(input.docRelativePath);
-  const lead = `Let's work on @${safeDocPath} using OpenKnowledge.`;
+  const lead = `Let's work on @${safeDocPath} using Palimpsest.`;
   const selectionSegment = selectionSegmentFor(
     selection,
     lead,
@@ -660,7 +660,7 @@ export function composeLintFixPrompt(input: LintFixPromptInput): string {
       ? `${input.source}/${input.code}`
       : `${input.source}/${input.code} (${input.ruleAlias})`;
   const lines: string[] = [
-    `Fix this lint problem in @${safePath} using OpenKnowledge.`,
+    `Fix this lint problem in @${safePath} using Palimpsest.`,
     '',
     `Problem: ${rule} at line ${input.line}, column ${input.column}:`,
     '',
@@ -673,7 +673,7 @@ export function composeLintFixPrompt(input: LintFixPromptInput): string {
   }
   lines.push(
     '',
-    `Edit @${safePath} via the OpenKnowledge MCP server, then re-lint it to confirm the problem is resolved.`,
+    `Edit @${safePath} via the Palimpsest MCP server, then re-lint it to confirm the problem is resolved.`,
   );
   return lines.join('\n');
 }
@@ -681,14 +681,14 @@ export function composeLintFixPrompt(input: LintFixPromptInput): string {
 export function composeFixAllProblemsPrompt(relativePath: string | null): string {
   if (relativePath === null) {
     return [
-      "Fix every problem across this project's documents using OpenKnowledge.",
+      "Fix every problem across this project's documents using Palimpsest.",
       '',
       "Run the `audit` tool for the current list of lint violations and broken links, then work file by file — the `lint` tool with `fix: true` clears one document's mechanically-fixable problems at a time — and re-audit until it reports no problems.",
     ].join('\n');
   }
   const safePath = sanitizePathForAtMention(relativePath);
   return [
-    `Fix every problem in @${safePath} using OpenKnowledge.`,
+    `Fix every problem in @${safePath} using Palimpsest.`,
     '',
     `Run the \`audit\` tool scoped to it for the current list of lint violations and broken links, then fix each one — the \`lint\` tool with \`fix: true\` clears the mechanically-fixable ones — and re-audit @${safePath} until it reports no problems.`,
   ].join('\n');

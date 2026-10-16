@@ -1,9 +1,9 @@
-import { readBrowserLanguages } from '@inkeep/open-knowledge-core/i18n/browser-locale-provider';
+import { readBrowserLanguages } from '@palimpsest/core/i18n/browser-locale-provider';
 import {
   AUTO_DETECTABLE_LOCALES,
   SUPPORTED_LOCALES,
-} from '@inkeep/open-knowledge-core/i18n/locales';
-import { resolveLocale } from '@inkeep/open-knowledge-core/i18n/resolve-locale';
+} from '@palimpsest/core/i18n/locales';
+import { resolveLocale } from '@palimpsest/core/i18n/resolve-locale';
 import { dynamicActivate } from '@/lib/activate-locale';
 import {
   applyLanguageToDom,

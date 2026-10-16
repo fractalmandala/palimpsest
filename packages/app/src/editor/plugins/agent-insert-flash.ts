@@ -4,7 +4,7 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
 export const AGENT_INSERT_FLASH_MS = 1_400;
 
-export const agentInsertFlashKey = new PluginKey<DecorationSet>('okAgentInsertFlash');
+export const agentInsertFlashKey = new PluginKey<DecorationSet>('psAgentInsertFlash');
 
 interface AgentInsertFlashMeta {
   add?: { from: number; to: number };
@@ -54,7 +54,7 @@ export function createAgentInsertFlashPlugin(): Plugin<DecorationSet> {
         if (meta.add !== undefined && meta.add.to > meta.add.from) {
           const spec: FlashSpec = { addedAt: meta.now };
           next = next.add(tr.doc, [
-            Decoration.inline(meta.add.from, meta.add.to, { class: 'ok-agent-insert-flash' }, spec),
+            Decoration.inline(meta.add.from, meta.add.to, { class: 'ps-agent-insert-flash' }, spec),
           ]);
         }
         return next;

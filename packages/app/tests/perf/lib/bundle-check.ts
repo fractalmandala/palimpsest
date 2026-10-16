@@ -12,8 +12,8 @@ export const INDEX_GZIPPED_DELTA_KB_MAX = 2;
 
 const FORBIDDEN_SENTINELS = [
   '__ok_perf',
-  'ok-hdr-histogram-v1',
-  'ok-typing-burst-detector-v1',
+  'ps-hdr-histogram-v1',
+  'ps-typing-burst-detector-v1',
   DEV_HARNESS_SENTINEL,
 ] as const;
 

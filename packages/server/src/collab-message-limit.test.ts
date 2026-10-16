@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { MessageType } from '@hocuspocus/server';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import * as encoding from 'lib0/encoding';
 import { afterAll, describe, expect, test } from 'vitest';
 import { WebSocket as WsClient } from 'ws';
@@ -12,12 +12,12 @@ import { type BootedServer, bootServer } from './boot.ts';
 import { getMetrics, resetMetrics } from './metrics.ts';
 
 async function bootTestServer(): Promise<{ booted: BootedServer; contentDir: string }> {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-collab-limit-test-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-collab-limit-test-'));
   writeFileSync(join(contentDir, 'test-doc.md'), '# Test doc\n', 'utf-8');
-  const okDir = join(contentDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(join(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(join(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = join(contentDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(join(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(join(psDir, '.gitignore'), '', 'utf-8');
   const booted = await bootServer({
     host: '127.0.0.1',
     contentDir,

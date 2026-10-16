@@ -1,4 +1,4 @@
-import type { LinkPreviewMetadata } from '@inkeep/open-knowledge-core';
+import type { LinkPreviewMetadata } from '@palimpsest/core';
 import {
   type GuardedFetchOptions,
   type GuardedFetchResult,

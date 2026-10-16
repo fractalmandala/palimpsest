@@ -49,8 +49,8 @@ function mountControls({ view }: { view?: Partial<TestEditor['view']> } = {}) {
   if (!hover) throw new Error('Block hover plugin was never constructed');
   if (!captured) throw new Error('DragHandlePlugin was never constructed');
   const { element, onNodeChange, getReferencedVirtualElement, onElementDragEnd } = captured;
-  const addBtn = element.querySelector('.ok-add-block-btn');
-  const grip = element.querySelector('.ok-drag-grip');
+  const addBtn = element.querySelector('.ps-add-block-btn');
+  const grip = element.querySelector('.ps-drag-grip');
   if (!(addBtn instanceof HTMLElement) || !(grip instanceof HTMLElement)) {
     throw new Error('block controls are missing a button');
   }

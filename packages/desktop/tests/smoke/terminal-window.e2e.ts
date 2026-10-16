@@ -23,7 +23,7 @@ import {
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const SHELL_COMMANDS = terminalSmokeShellCommands();
 
 interface Seed {
@@ -33,11 +33,11 @@ interface Seed {
 }
 
 function seed(prefix: string): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-termwin-${prefix}-home-`)));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-termwin-${prefix}-proj-`)));
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
-  writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-termwin-${prefix}-home-`)));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-termwin-${prefix}-proj-`)));
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
+  writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
   seedTerminalShellProfiles(tmpHome, { posixRestrictPath: true });
 
@@ -60,7 +60,7 @@ function seed(prefix: string): Seed {
 }
 
 async function launchApp(s: Seed): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
   return electron.launch(
     desktopLaunchOptions({
       target: TARGET,
@@ -69,8 +69,8 @@ async function launchApp(s: Seed): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...terminalSmokeEnvironment(s.tmpHome, { restrictPath: true }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
       },
     }),
   );
@@ -125,7 +125,7 @@ async function clickNewTerminalWindow(
 async function terminalWindowCount(app: ElectronApplication): Promise<number> {
   let count = 0;
   for (const p of app.windows()) {
-    const mode = await p.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await p.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'terminal') count += 1;
   }
   return count;
@@ -151,7 +151,7 @@ function track(...paths: string[]): void {
 }
 
 test.describe('Standalone terminal window — live Electron', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
   test.afterEach(() => {
@@ -180,7 +180,7 @@ test.describe('Standalone terminal window — live Electron', () => {
 
     expect(await clickNewTerminalWindow(app, editorWebContentsId)).toBe(true);
     const term = await findTerminalWindow(app);
-    expect(await term.evaluate(() => window.okDesktop?.config.collabUrl)).not.toBe('');
+    expect(await term.evaluate(() => window.psDesktop?.config.collabUrl)).not.toBe('');
 
     await expect(term.locator('[data-terminal-status]').first()).toHaveAttribute(
       'data-terminal-status',

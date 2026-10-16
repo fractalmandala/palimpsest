@@ -6,7 +6,7 @@ import { removeTempDirBestEffort } from '../support/temp-dir-cleanup.test-helper
 
 describe('removeTempDirBestEffort', () => {
   test('removes a directory and everything under it', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-temp-cleanup-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-temp-cleanup-'));
     mkdirSync(join(dir, 'nested'));
     writeFileSync(join(dir, 'nested', 'file.txt'), 'content');
 
@@ -16,7 +16,7 @@ describe('removeTempDirBestEffort', () => {
   });
 
   test('no-ops on a path that is already gone', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-temp-cleanup-gone-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-temp-cleanup-gone-'));
     rmSync(dir, { recursive: true });
 
     expect(() => removeTempDirBestEffort(dir)).not.toThrow();
@@ -25,7 +25,7 @@ describe('removeTempDirBestEffort', () => {
   test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
     'swallows a removal the OS refuses',
     () => {
-      const root = mkdtempSync(join(tmpdir(), 'ok-temp-cleanup-locked-'));
+      const root = mkdtempSync(join(tmpdir(), 'ps-temp-cleanup-locked-'));
       const child = join(root, 'child');
       mkdirSync(child);
       writeFileSync(join(child, 'file.txt'), 'content');

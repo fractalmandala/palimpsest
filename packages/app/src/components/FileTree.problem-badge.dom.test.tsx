@@ -2,7 +2,7 @@ import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode, useLayoutEffect, useRef } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { subscribeToDocPanelTabRequests } from '@/components/doc-panel-events';
-import { OK_PROBLEM_BADGE_ATTR } from '@/components/file-tree-problem-indicators';
+import { PS_PROBLEM_BADGE_ATTR } from '@/components/file-tree-problem-indicators';
 import { emitDocumentsChanged } from '@/lib/documents-events';
 import { replaceValidationFromCounts } from '@/lib/validation-store';
 import type { FileEntry } from './file-tree-utils';
@@ -255,7 +255,7 @@ vi.doMock('@/components/use-selection-mirror', () => ({
 }));
 
 vi.doMock('@pierre/trees', () => ({
-  FILE_TREE_TAG_NAME: 'ok-file-tree',
+  FILE_TREE_TAG_NAME: 'ps-file-tree',
   themeToTreeStyles: () => ({}),
 }));
 
@@ -282,7 +282,7 @@ function PierreTreeShadowRows() {
     }
   }, []);
 
-  return createElement('ok-file-tree', { ref: hostRef });
+  return createElement('ps-file-tree', { ref: hostRef });
 }
 
 vi.doMock('@pierre/trees/react', () => ({
@@ -307,7 +307,7 @@ vi.doMock('@pierre/trees/react', () => ({
 const { FileTree } = await import('./FileTree');
 
 function shadowRoot(): ShadowRoot {
-  const host = document.querySelector('ok-file-tree');
+  const host = document.querySelector('ps-file-tree');
   if (!host?.shadowRoot) throw new Error('tree host has no shadow root');
   return host.shadowRoot;
 }
@@ -316,7 +316,7 @@ function findBadge(rowPath: string): HTMLElement | null {
   return (
     shadowRoot()
       .querySelector(`[data-item-path="${rowPath}"]`)
-      ?.querySelector<HTMLElement>(`[${OK_PROBLEM_BADGE_ATTR}]`) ?? null
+      ?.querySelector<HTMLElement>(`[${PS_PROBLEM_BADGE_ATTR}]`) ?? null
   );
 }
 
@@ -377,7 +377,7 @@ describe('FileTree problem badge', () => {
       if (url.startsWith('/api/documents')) return jsonResponse({ documents: listedDocuments });
       if (url === '/api/workspace') {
         return jsonResponse({
-          contentDir: '/tmp/open-knowledge',
+          contentDir: '/tmp/palimpsest',
           pathSeparator: '/',
           symlinkResolved: true,
         });

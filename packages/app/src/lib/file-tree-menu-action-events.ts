@@ -1,10 +1,10 @@
 import type { ResolvedNavigationTarget } from '@/components/navigation-targets';
 
-const FILE_TREE_MENU_ACTION_DELETE_EVENT = 'open-knowledge:file-tree-menu-action-delete';
-const FILE_TREE_MENU_ACTION_RENAME_EVENT = 'open-knowledge:file-tree-menu-action-rename';
-const FILE_TREE_MENU_ACTION_DUPLICATE_EVENT = 'open-knowledge:file-tree-menu-action-duplicate';
+const FILE_TREE_MENU_ACTION_DELETE_EVENT = 'palimpsest:file-tree-menu-action-delete';
+const FILE_TREE_MENU_ACTION_RENAME_EVENT = 'palimpsest:file-tree-menu-action-rename';
+const FILE_TREE_MENU_ACTION_DUPLICATE_EVENT = 'palimpsest:file-tree-menu-action-duplicate';
 const FILE_TREE_MENU_ACTION_IMPORT_TEMPLATE_EVENT =
-  'open-knowledge:file-tree-menu-action-import-template';
+  'palimpsest:file-tree-menu-action-import-template';
 
 interface MenuActionEventDetail {
   readonly target: ResolvedNavigationTarget;

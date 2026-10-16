@@ -1,7 +1,7 @@
 import type {
   UninstallFeedbackAnswers,
   UninstallFeedbackResult,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import {
   confirmDesktopUninstall,

@@ -11,8 +11,8 @@ import {
   SkillStateSchema,
   type SkillStateSurface,
   type SkillStateTarget,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFile, okUserHomeDir, withFileLock } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicWriteFile, psUserHomeDir, withFileLock } from '@palimpsest/core/server';
 import { type ParsedNode, parseDocument } from 'yaml';
 import { tracedAtomicFs, tracedMkdir } from './fs-traced.ts';
 import { getLogger } from './logger.ts';
@@ -24,10 +24,10 @@ export {
   SKILL_STATE_TARGETS,
   type SkillStateSurface,
   type SkillStateTarget,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export function skillStateYamlPath(home: string): string {
-  return join(okUserHomeDir(home), SKILL_STATE_FILENAME);
+  return join(psUserHomeDir(home), SKILL_STATE_FILENAME);
 }
 
 async function withSkillStateWriteLock<T>(home: string, fn: () => Promise<T>): Promise<T> {
@@ -254,7 +254,7 @@ export async function readServerPackageVersion(): Promise<string> {
   const raw = await readFileAsync(fileURLToPath(pkgUrl), 'utf-8');
   const parsed = JSON.parse(raw) as { version?: unknown };
   if (typeof parsed.version !== 'string' || parsed.version.length === 0) {
-    throw new Error('@inkeep/open-knowledge-server/package.json missing version field');
+    throw new Error('@palimpsest/server/package.json missing version field');
   }
   return parsed.version;
 }

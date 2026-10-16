@@ -16,7 +16,7 @@ describe('detectGit probe failure detail', () => {
 
   beforeEach(() => {
     originalPath = process.env.PATH;
-    binDir = mkdtempSync(join(tmpdir(), 'ok-git-probe-'));
+    binDir = mkdtempSync(join(tmpdir(), 'ps-git-probe-'));
   });
 
   afterEach(() => {

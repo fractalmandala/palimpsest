@@ -19,8 +19,8 @@ function writeBundle(root: string, name: string, marker: string, refName: string
 
 beforeAll(async () => {
   server = await createTestServer();
-  writeBundle('.agents/skills', 'open-knowledge', 'agents-side', 'from-agents.md');
-  writeBundle('.claude/skills', 'open-knowledge', 'claude-side', 'from-claude.md');
+  writeBundle('.agents/skills', 'palimpsest', 'agents-side', 'from-agents.md');
+  writeBundle('.claude/skills', 'palimpsest', 'claude-side', 'from-claude.md');
   writeBundle('.agents/skills', 'reviewer', 'agents-side', 'from-agents.md');
   writeBundle('.claude/skills', 'reviewer', 'claude-side', 'from-claude.md');
 }, HARNESS_BOOT_TIMEOUT_MS);
@@ -43,7 +43,7 @@ async function fileAt(name: string, host: string, path: string) {
 }
 
 describe('divergent same-name skills read per host', () => {
-  for (const name of ['open-knowledge', 'reviewer']) {
+  for (const name of ['palimpsest', 'reviewer']) {
     test(`${name}: each host serves its OWN bundle, not its namesake's`, async () => {
       const fromAgents = await skillAt(name, 'agents');
       const fromClaude = await skillAt(name, 'claude');

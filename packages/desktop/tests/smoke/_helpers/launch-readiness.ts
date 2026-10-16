@@ -79,7 +79,7 @@ export interface BootLogSnapshot {
 }
 
 export function bootLogDirFor(home: string): string {
-  return join(home, '.ok', 'logs');
+  return join(home, '.ps', 'logs');
 }
 
 function emptyBootLog(dir: string, unreadableReason?: string): BootLogSnapshot {
@@ -1015,7 +1015,7 @@ export interface WaitForWindowOptions {
 
 function evaluateWindowMode(page: ModeProbePage): Promise<string | undefined> {
   return page.evaluate(
-    () => (window as { okDesktop?: { config?: { mode?: string } } }).okDesktop?.config?.mode,
+    () => (window as { psDesktop?: { config?: { mode?: string } } }).psDesktop?.config?.mode,
   );
 }
 

@@ -2,7 +2,7 @@ import {
   type HandoffTarget,
   type InstallState,
   TERMINAL_CLI_IDS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   IN_APP_THREAD_ID,
@@ -17,8 +17,8 @@ import {
   UNIFIED_AGENT_KEY,
 } from './unified-agent-store';
 
-const LEGACY_BOTTOM_KEY = 'ok-ask-ai-default-agent-v1';
-const LEGACY_CREATE_KEY = 'ok-preferred-agent-v1';
+const LEGACY_BOTTOM_KEY = 'ps-ask-ai-default-agent-v1';
+const LEGACY_CREATE_KEY = 'ps-preferred-agent-v1';
 
 function makeStorage(seed?: Record<string, string>) {
   const values = new Map<string, string>(Object.entries(seed ?? {}));

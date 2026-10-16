@@ -94,7 +94,7 @@ function sidebarCss(light: string, dark: string): string {
 }
 
 test('a running dev server serves the --sidebar token the stylesheet holds now, not the one it held at start', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-chrome-tokens-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-chrome-tokens-'));
   try {
     const cssPath = join(dir, 'globals.css');
     writeFileSync(cssPath, sidebarCss('oklch(0.985 0 0)', 'oklch(0.205 0 0)'));

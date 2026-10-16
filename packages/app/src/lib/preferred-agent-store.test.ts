@@ -1,4 +1,4 @@
-import type { HandoffTarget, InstallState } from '@inkeep/open-knowledge-core';
+import type { HandoffTarget, InstallState } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   PREFERRED_AGENT_KEY,

@@ -75,8 +75,8 @@ async function call(
 }
 
 describe('GET /api/config (desktop / worktree collab server)', () => {
-  test('returns the ok-ui-shaped bootstrap payload with same-origin collabUrl', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-'));
+  test('returns the ps-ui-shaped bootstrap payload with same-origin collabUrl', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-'));
     try {
       const result = await call(buildExtension(dir), 'GET', '/api/config');
       expect(result.status).toBe(200);
@@ -97,7 +97,7 @@ describe('GET /api/config (desktop / worktree collab server)', () => {
   });
 
   test('reports the bound server port from server.lock', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-'));
     try {
       acquireServerLock(getLocalDir(dir), { port: 54321, worktreeRoot: dir });
       const result = await call(buildExtension(dir), 'GET', '/api/config');
@@ -109,7 +109,7 @@ describe('GET /api/config (desktop / worktree collab server)', () => {
   });
 
   test('HEAD returns headers + 200 with no body', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-'));
     try {
       const result = await call(buildExtension(dir), 'HEAD', '/api/config');
       expect(result.status).toBe(200);
@@ -121,7 +121,7 @@ describe('GET /api/config (desktop / worktree collab server)', () => {
   });
 
   test('an absent Host header is refused at the read gate (flipped pin)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-'));
     try {
       const result = await call(buildExtension(dir), 'GET', '/api/config', {});
       expect(result.status).toBe(403);
@@ -142,7 +142,7 @@ describe('GET /api/config (desktop / worktree collab server)', () => {
 
 describe('/api/config rejects unsupported methods', () => {
   test('POST returns 405 method-not-allowed', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-'));
     try {
       const result = await call(buildExtension(dir), 'POST', '/api/config');
       expect(result.status).toBe(405);

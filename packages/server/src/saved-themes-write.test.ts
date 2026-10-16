@@ -11,7 +11,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { BASE16_SLOTS, type Base16Scheme, base16ToYaml } from '@inkeep/open-knowledge-core';
+import { BASE16_SLOTS, type Base16Scheme, base16ToYaml } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { savedThemesDir, scanSavedThemes } from './saved-themes-store.ts';
 import { deleteSavedTheme, saveSavedTheme, updateSavedTheme } from './saved-themes-write.ts';
@@ -19,7 +19,7 @@ import { deleteSavedTheme, saveSavedTheme, updateSavedTheme } from './saved-them
 let home: string;
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-saved-themes-write-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-saved-themes-write-'));
 });
 
 afterEach(() => {
@@ -50,7 +50,7 @@ function storeLockPath(baseDir: string): string {
 }
 
 async function withContendedStoreLock<T>(fn: () => Promise<T>): Promise<T> {
-  const lockDir = join(home, '.ok');
+  const lockDir = join(home, '.ps');
   mkdirSync(lockDir, { recursive: true });
   const lockPath = storeLockPath(lockDir);
   writeFileSync(lockPath, '', { flag: 'wx', mode: 0o600 });
@@ -108,7 +108,7 @@ test('a preclaimed legacy shared-temp lock cannot block saved-theme writes', asy
     .update(resolve(savedThemesDir(home)))
     .digest('hex')
     .slice(0, 24);
-  const legacyLockPath = join(tmpdir(), `ok-saved-themes-${rootKey}.lock`);
+  const legacyLockPath = join(tmpdir(), `ps-saved-themes-${rootKey}.lock`);
   writeFileSync(legacyLockPath, '', { flag: 'wx', mode: 0o600 });
 
   try {
@@ -321,7 +321,7 @@ describe('saveSavedTheme', () => {
     await saveSavedTheme({ name: 'plain', scheme: scheme('Plain'), homedirOverride: home });
     const raw = readFileSync(join(savedThemesDir(home), 'plain.yaml'), 'utf-8');
     expect(raw).not.toMatch(/author:/);
-    expect(raw).not.toMatch(/okVersion|provenance|source:|lock/i);
+    expect(raw).not.toMatch(/psVersion|provenance|source:|lock/i);
   });
 });
 
@@ -476,7 +476,7 @@ describe('deleteSavedTheme', () => {
       scheme: scheme('Gone'),
     });
     expect(storeFiles()).toEqual([]);
-    expect(readdirSync(join(home, '.ok'))).toEqual(['themes']);
+    expect(readdirSync(join(home, '.ps'))).toEqual(['themes']);
   });
 
   test('resolves and removes a hand-dropped .yml file', async () => {
@@ -563,7 +563,7 @@ describe('deleteSavedTheme', () => {
 
     expect(result).toEqual({ ok: true, existed: false });
     expect(existsSync(savedThemesDir(home))).toBe(false);
-    expect(readdirSync(join(home, '.ok'))).toEqual([]);
+    expect(readdirSync(join(home, '.ps'))).toEqual([]);
   });
 
   test('a malformed id is refused with a distinct code', async () => {

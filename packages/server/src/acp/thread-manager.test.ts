@@ -17,8 +17,8 @@ describe('project skill delivery policy', () => {
 });
 
 describe('inline project skill blocks', () => {
-  const skillPath = resolve('project with spaces', '.ok', 'local', 'skill #1', 'SKILL.md');
-  const text = '# OpenKnowledge\n\nUse the project tools before editing markdown.\n';
+  const skillPath = resolve('project with spaces', '.ps', 'local', 'skill #1', 'SKILL.md');
+  const text = '# Palimpsest\n\nUse the project tools before editing markdown.\n';
 
   test('an embedded resource preserves the skill text and native file path', () => {
     const block = inlineSkillBlock(skillPath, text, { embeddedContext: true });

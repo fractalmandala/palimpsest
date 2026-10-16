@@ -1,16 +1,16 @@
 ---
 name: review-a-design
 description: "Reviews whether a design is SOUND — solving the right problem, derived from its stated goals and constraints — and emits ranked, evidence-backed findings, not edits. Read when asked to 'review this design', 'is this design sound', 'pressure-test this proposal', 'do a design review', 'does this solve the right problem', 'poke holes in this spec', 'should we build this', or to critique a proposal / spec / ADR / architecture or product decision. Do NOT read when the user wants to AUTHOR one of these — routing a new proposal is frame-a-proposal, a spec is write-a-spec, a decision record is record-a-decision, a postmortem is write-a-postmortem. Do NOT read for code review of a diff, or to fact-check individual claims (that is a correctness pass, a different job)."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ok-beta` for Beta)."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ps-beta` for Beta)."
 metadata:
   pack: "software-lifecycle"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 
 # Review a design — is it sound, not just complete
 
-The platform `/open-knowledge` skill still governs every markdown operation here (reads via `exec`, writes via `write`/`edit`, links as plain relative markdown, MCP owns in-scope `.md`); this skill layers design-review craft on top of it.
+The platform `/palimpsest` skill still governs every markdown operation here (reads via `exec`, writes via `write`/`edit`, links as plain relative markdown, MCP owns in-scope `.md`); this skill layers design-review craft on top of it.
 
 **Three reviews are not the same review, and only one is this skill's job.**
 

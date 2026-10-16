@@ -11,13 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { OkIntegrationsStatus } from '@/lib/desktop-bridge-types';
+import type { PsIntegrationsStatus } from '@/lib/desktop-bridge-types';
 import { useBuiltinSkillBlurb } from './builtin-skill-copy';
 
 export interface SkillsStudioIntroDialogProps {
   open: boolean;
   onDismiss: () => void;
-  offer: OkIntegrationsStatus['skills'][number] | null;
+  offer: PsIntegrationsStatus['skills'][number] | null;
   onInstall: () => void;
   busy?: boolean;
 }
@@ -47,7 +47,7 @@ export function SkillsStudioIntroDialog({
           </DialogTitle>
           <DialogDescription>
             <Trans comment="First-visit explanation of what the Skills Studio settings page is for">
-              Skills teach your AI tools repeatable tasks. Install the ones OpenKnowledge ships, or
+              Skills teach your AI tools repeatable tasks. Install the ones Palimpsest ships, or
               write your own in the editor's Skills sidebar.
             </Trans>
           </DialogDescription>

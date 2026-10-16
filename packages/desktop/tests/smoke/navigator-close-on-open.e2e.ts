@@ -34,17 +34,17 @@ function userDataDirFor(tmpHome: string): string {
 }
 
 function createProjectDir(prefix: string): string {
-  const projectDir = mkdtempSync(join(tmpdir(), `ok-navigator-close-${prefix}-project-`));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  const projectDir = mkdtempSync(join(tmpdir(), `ps-navigator-close-${prefix}-project-`));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   return projectDir;
 }
 
 function seedHomeWithoutLastOpenedProject(prefix: string): SeededHome {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-navigator-close-${prefix}-`));
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-navigator-close-${prefix}-`));
   const projectDir = createProjectDir(prefix);
   const userDataDir = userDataDirFor(tmpHome);
   mkdirSync(userDataDir, { recursive: true });
@@ -63,7 +63,7 @@ function seedHomeWithoutLastOpenedProject(prefix: string): SeededHome {
 }
 
 function seedHomeWithLastOpenedProjectAndExtra(prefix: string): SeededHomeWithEditor {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-navigator-close-${prefix}-`));
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-navigator-close-${prefix}-`));
   const projectAPath = createProjectDir(`${prefix}-A`);
   const projectBPath = createProjectDir(`${prefix}-B`);
   const userDataDir = userDataDirFor(tmpHome);
@@ -97,7 +97,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
       },
     }),
   );
@@ -110,7 +110,7 @@ async function countWindowsByMode(
   let count = 0;
   for (const page of app.windows()) {
     const observed = await page
-      .evaluate(() => window.okDesktop?.config?.mode)
+      .evaluate(() => window.psDesktop?.config?.mode)
       .catch(() => undefined);
     if (observed === mode) count++;
   }
@@ -123,7 +123,7 @@ async function findFirstWindowByMode(
 ): Promise<Page> {
   for (const page of app.windows()) {
     const observed = await page
-      .evaluate(() => window.okDesktop?.config?.mode)
+      .evaluate(() => window.psDesktop?.config?.mode)
       .catch(() => undefined);
     if (observed === mode) return page;
   }
@@ -184,7 +184,7 @@ async function onlyWindowId(app: ElectronApplication): Promise<number> {
 
 async function openFromNavigator(navigator: Page, path: string): Promise<void> {
   await navigator.evaluate(async (target) => {
-    await window.okDesktop?.project.open({
+    await window.psDesktop?.project.open({
       path: target,
       target: 'new-window',
       entryPoint: 'pick-existing',
@@ -193,7 +193,7 @@ async function openFromNavigator(navigator: Page, path: string): Promise<void> {
 }
 
 test.describe('Project Navigator close-on-project-open smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -215,7 +215,7 @@ test.describe('Project Navigator close-on-project-open smoke', () => {
     expect(await countWindowsByMode(app, 'editor')).toBe(0);
 
     await navigator.evaluate(async (path) => {
-      await window.okDesktop?.project.open({ path, target: 'new-window', entryPoint: 'recents' });
+      await window.psDesktop?.project.open({ path, target: 'new-window', entryPoint: 'recents' });
     }, projectDir);
 
     await expect
@@ -256,7 +256,7 @@ test.describe('Project Navigator close-on-project-open smoke', () => {
     await configureDesktopGitRepositories(editorA, projectAPath);
 
     await editorA.evaluate(async () => {
-      await window.okDesktop?.navigator.open();
+      await window.psDesktop?.navigator.open();
     });
     await expect
       .poll(() => countWindowsByMode(app, 'navigator'), {
@@ -267,7 +267,7 @@ test.describe('Project Navigator close-on-project-open smoke', () => {
     const navigator = await findFirstWindowByMode(app, 'navigator');
 
     await navigator.evaluate(async (path) => {
-      await window.okDesktop?.project.open({ path, target: 'new-window', entryPoint: 'recents' });
+      await window.psDesktop?.project.open({ path, target: 'new-window', entryPoint: 'recents' });
     }, projectBPath);
 
     await expect
@@ -308,7 +308,7 @@ test.describe('Project Navigator close-on-project-open smoke', () => {
     await recordErrorDialogs(app);
 
     await navigator.evaluate(async (path) => {
-      await window.okDesktop?.project.open({
+      await window.psDesktop?.project.open({
         path,
         target: 'new-window',
         entryPoint: 'recents',
@@ -357,7 +357,7 @@ test.describe('Project Navigator close-on-project-open smoke', () => {
     await recordErrorDialogs(app);
 
     await editor.evaluate(async (target) => {
-      await window.okDesktop?.project.open({
+      await window.psDesktop?.project.open({
         path: target,
         target: 'new-window',
         entryPoint: 'pick-existing',

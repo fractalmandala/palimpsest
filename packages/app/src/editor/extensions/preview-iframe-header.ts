@@ -1,4 +1,4 @@
-import { PREVIEW_THEME_TOKENS } from '@inkeep/open-knowledge-core/constants/preview-theme-tokens';
+import { PREVIEW_THEME_TOKENS } from '@palimpsest/core/constants/preview-theme-tokens';
 import {
   domPreviewTokenEnv,
   type PreviewTokenEnv,
@@ -8,9 +8,9 @@ import {
 
 export type PreviewTheme = 'light' | 'dark';
 
-const PREVIEW_THEME_MESSAGE_KEY = 'okPreviewTheme';
+const PREVIEW_THEME_MESSAGE_KEY = 'psPreviewTheme';
 
-const PREVIEW_TOKENS_MESSAGE_KEY = 'okPreviewTokens';
+const PREVIEW_TOKENS_MESSAGE_KEY = 'psPreviewTokens';
 
 export interface PreviewThemeMessage {
   [PREVIEW_THEME_MESSAGE_KEY]: PreviewTheme;
@@ -27,7 +27,7 @@ export function buildPreviewThemeMessage(
     : { [PREVIEW_THEME_MESSAGE_KEY]: theme };
 }
 
-const PREVIEW_DOCUMENT_MESSAGE_KEY = 'okPreviewDocument';
+const PREVIEW_DOCUMENT_MESSAGE_KEY = 'psPreviewDocument';
 
 export interface PreviewDocumentMessage {
   [PREVIEW_DOCUMENT_MESSAGE_KEY]: string;
@@ -39,7 +39,7 @@ export function buildPreviewDocumentMessage(html: string): PreviewDocumentMessag
   return { [PREVIEW_DOCUMENT_MESSAGE_KEY]: html };
 }
 
-const PREVIEW_HEIGHT_MESSAGE_KEY = 'okPreviewHeight';
+const PREVIEW_HEIGHT_MESSAGE_KEY = 'psPreviewHeight';
 
 export function parsePreviewHeightMessage(data: unknown): number | null {
   if (typeof data !== 'object' || data === null) return null;
@@ -47,7 +47,7 @@ export function parsePreviewHeightMessage(data: unknown): number | null {
   return typeof h === 'number' && Number.isFinite(h) && h > 0 ? Math.ceil(h) : null;
 }
 
-const PREVIEW_CSP_VIOLATION_MESSAGE_KEY = 'okPreviewCspViolation';
+const PREVIEW_CSP_VIOLATION_MESSAGE_KEY = 'psPreviewCspViolation';
 
 export interface PreviewBlockedRequest {
   directive: string;

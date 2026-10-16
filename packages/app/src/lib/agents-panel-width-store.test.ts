@@ -119,7 +119,7 @@ describe('resolveAgentsPanelPointerRelease', () => {
 });
 
 test('the storage key keeps its legacy terminal-width value (migration contract)', () => {
-  expect(AGENTS_PANEL_WIDTH_KEY).toBe('ok-terminal-width-v1');
+  expect(AGENTS_PANEL_WIDTH_KEY).toBe('ps-terminal-width-v1');
 });
 
 describe('getInitialAgentsPanelWidth on a storage-restricted host', () => {

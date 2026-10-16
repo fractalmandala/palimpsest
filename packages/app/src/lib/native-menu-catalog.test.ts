@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { COMMAND_IDENTITIES, NATIVE_MENU_LABELS } from '@inkeep/open-knowledge-core';
+import { COMMAND_IDENTITIES, NATIVE_MENU_LABELS } from '@palimpsest/core';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 import { i18n } from '@/lib/i18n';
 import { MENU_LABEL_TEXT_MESSAGES, NATIVE_MENU_MESSAGES } from '@/lib/native-menu-catalog';

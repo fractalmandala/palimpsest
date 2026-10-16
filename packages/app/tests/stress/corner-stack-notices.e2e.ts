@@ -34,11 +34,11 @@ import {
 } from './fixtures/update-event-overlay';
 
 const VERSION = '9.9.9';
-const DOWNLOAD_URL = 'https://openknowledge.ai/download';
-const RELEASE_URL = 'https://openknowledge.ai/changelog';
+const DOWNLOAD_URL = 'https://github.com/fractalmandala/palimpsest/download';
+const RELEASE_URL = 'https://github.com/fractalmandala/palimpsest/changelog';
 const WIDE = { width: 1440, height: 900 } as const;
 const SHORT = { width: 720, height: 480 } as const;
-const UNBROKEN_PATH = `/Users/someone/${'a'.repeat(400)}/OpenKnowledge.app`;
+const UNBROKEN_PATH = `/Users/someone/${'a'.repeat(400)}/Palimpsest.app`;
 
 async function seedOneDoc(api: ApiHelpers, slug: string): Promise<string> {
   const name = `corner-notices-${slug}-w${test.info().workerIndex}`;

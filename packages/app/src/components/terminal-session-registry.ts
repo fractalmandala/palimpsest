@@ -1,4 +1,4 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import type { TerminalCli } from '@palimpsest/core/handoff';
 
 export const IDLE_QUIET_MS = 1200;
 

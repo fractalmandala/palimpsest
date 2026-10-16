@@ -27,10 +27,10 @@ describe('LoadingImage — truthful placeholders', () => {
 
     const overlay = slot.querySelector('[role="img"]');
     expect(overlay).not.toBeNull();
-    expect(overlay?.classList.contains('ok-image-error-placeholder')).toBe(true);
+    expect(overlay?.classList.contains('ps-image-error-placeholder')).toBe(true);
     expect(overlay?.getAttribute('aria-label')).toBe('Image not found: /images/ghost.png');
     expect(overlay?.textContent).toContain('Image not found');
-    expect(overlay?.querySelector('.ok-image-error-target')?.textContent).toBe('/images/ghost.png');
+    expect(overlay?.querySelector('.ps-image-error-target')?.textContent).toBe('/images/ghost.png');
     expect(overlay?.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
   });
 
@@ -43,11 +43,11 @@ describe('LoadingImage — truthful placeholders', () => {
     const slot = screen.getByTestId('image-slot');
     expect(slot.getAttribute('data-image-error-kind')).toBe('undisplayable');
     const overlay = slot.querySelector('[role="img"]');
-    expect(overlay?.classList.contains('ok-image-error-placeholder')).toBe(true);
+    expect(overlay?.classList.contains('ps-image-error-placeholder')).toBe(true);
     expect(overlay?.getAttribute('aria-label')).toBe(
       "Image couldn't be displayed: /images/corrupt.png",
     );
-    expect(overlay?.querySelector('.ok-image-error-target')?.textContent).toBe(
+    expect(overlay?.querySelector('.ps-image-error-target')?.textContent).toBe(
       '/images/corrupt.png',
     );
     expect(overlay?.textContent).toContain("Image couldn't be displayed");

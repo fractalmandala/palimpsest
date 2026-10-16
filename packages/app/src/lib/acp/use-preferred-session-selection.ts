@@ -1,4 +1,4 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import type { TerminalCli } from '@palimpsest/core/handoff';
 import { usePreferBareTerminal } from '../terminal-new-tab-store';
 import { useStickyAgent } from '../unified-agent-store';
 import { useEnabledOverrides } from './enabled-agents';

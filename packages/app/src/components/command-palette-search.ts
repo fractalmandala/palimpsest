@@ -1,7 +1,7 @@
 import {
   type SearchSemanticStatus,
   SearchSemanticStatusSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import {
   createWorkspaceSearchCorpus,
   createWorkspaceSearchDocument,
@@ -9,7 +9,7 @@ import {
   type WorkspaceSearchCorpus,
   type WorkspaceSearchDocument,
   workspaceSearchBasename,
-} from '@inkeep/open-knowledge-core/search/workspace-search';
+} from '@palimpsest/core/search/workspace-search';
 import { parseApiError } from '@/lib/parse-api-error';
 import type { PageMeta } from './PageListContext';
 

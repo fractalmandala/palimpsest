@@ -1,7 +1,7 @@
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { PICKER_LOCALES } from '@inkeep/open-knowledge-core';
+import { PICKER_LOCALES } from '@palimpsest/core';
 import {
   acpCatalogBody,
   DESKTOP_HEADER_PLATFORM_NAMES,
@@ -14,7 +14,7 @@ import {
   windowControlsOf,
 } from './_helpers';
 
-const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ok-header-fit-home-'));
+const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ps-header-fit-home-'));
 
 test.use({ workerServerEnv: { HOME: ISOLATED_HOME } });
 

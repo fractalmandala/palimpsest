@@ -4,8 +4,8 @@ import {
   type SkillLocationId,
   SkillLocationIdSchema,
   type SkillScope,
-} from '@inkeep/open-knowledge-core';
-import { parseSkillsShSource } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import { parseSkillsShSource } from '@palimpsest/core/skills-catalog';
 import { z } from 'zod';
 import type { LocalApiDispatch } from '../../http/local-api-dispatch.ts';
 import type { AgentIdentity } from '../agent-identity.ts';
@@ -35,7 +35,7 @@ const KNOWN_CODES: ReadonlySet<string> = new Set<string>([
 
 const DESCRIPTION = [
   'Import an external agentskills.io/skills.sh skill as managed content. Requires the Hocuspocus server. source accepts a full skills.sh page URL (including website catalogs), owner/repo[/subpath], git URL, or local/file:// path. skill picks one from a multi-skill source. scope: project (default, versioned/shared) or global (user-wide, unversioned).',
-  'Writes the .agents/skills/<name>/ hub with provenance in .ok/skills-lock.json. Scripts are NEVER executed. add selects editor locations; import always places the skill somewhere. Use install later to change placement/form/source. Name collisions use <name>-imported, never overwrite; identical content-hash re-import is a no-op.',
+  'Writes the .agents/skills/<name>/ hub with provenance in .ps/skills-lock.json. Scripts are NEVER executed. add selects editor locations; import always places the skill somewhere. Use install later to change placement/form/source. Name collisions use <name>-imported, never overwrite; identical content-hash re-import is a no-op.',
 ].join('\n');
 
 interface ImportDeps {

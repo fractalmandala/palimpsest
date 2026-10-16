@@ -260,7 +260,7 @@ describe('MermaidView controls', () => {
     );
 
     const panzoom = await waitForPanzoomInstance();
-    const scroller = container.querySelector('.ok-mermaid-svg') as HTMLElement;
+    const scroller = container.querySelector('.ps-mermaid-svg') as HTMLElement;
     expect(scroller).not.toBeNull();
 
     const trackpad = new WheelEvent('wheel', {
@@ -327,7 +327,7 @@ describe('MermaidView controls', () => {
     });
     const current = panzoomInstances[1];
 
-    const scroller = container.querySelector('.ok-mermaid-svg') as HTMLElement;
+    const scroller = container.querySelector('.ps-mermaid-svg') as HTMLElement;
     const wheel = new WheelEvent('wheel', {
       deltaX: 10,
       deltaY: 20,
@@ -365,7 +365,7 @@ describe('MermaidView controls', () => {
     await waitForPanzoomInstance();
 
     const root = container.querySelector<HTMLElement>('[data-component-type="mermaid"]');
-    const svgHost = container.querySelector<HTMLElement>('.ok-mermaid-svg');
+    const svgHost = container.querySelector<HTMLElement>('.ps-mermaid-svg');
     const stage = svgHost?.parentElement;
     expect(root?.className).toContain('h-full');
     expect(root?.className).toContain('w-full');

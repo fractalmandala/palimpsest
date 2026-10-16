@@ -70,7 +70,7 @@ const TYPE_ALIAS_MAP: Readonly<Record<string, CalloutType>> = {
   attention: 'warning',
 };
 
-const CALLOUT_CLASS_PREFIX = 'ok-alert';
+const CALLOUT_CLASS_PREFIX = 'ps-alert';
 
 const CLASS_TYPE_RE = new RegExp(`(?:^|\\s)${CALLOUT_CLASS_PREFIX}-(\\w+)(?:\\s|$)`);
 

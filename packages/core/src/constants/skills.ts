@@ -2,9 +2,9 @@ export const AGENTS_SKILLS_ROOT = '.agents/skills';
 
 export const PACK_SKILL_PREFIX = 'open-knowledge-pack-';
 
-export function isOpenKnowledgeSkillsSource(source: string): boolean {
+export function isPalimpsestSkillsSource(source: string): boolean {
   const raw = source.trim();
-  if (raw === OPENKNOWLEDGE_SKILLS_REPO) return true;
+  if (raw === PALIMPSEST_SKILLS_REPO) return true;
 
   if (!raw.includes('://') && !raw.includes('@')) return false;
 
@@ -32,7 +32,7 @@ const TRUSTED_SKILL_HOSTS: ReadonlySet<string> = new Set([
 function pathIsOurRepo(pathname: string): boolean {
   const trimmed = pathname.replace(/^\/+/, '').replace(/\.git$/, '');
   return (
-    trimmed === OPENKNOWLEDGE_SKILLS_REPO || trimmed.startsWith(`${OPENKNOWLEDGE_SKILLS_REPO}/`)
+    trimmed === PALIMPSEST_SKILLS_REPO || trimmed.startsWith(`${PALIMPSEST_SKILLS_REPO}/`)
   );
 }
 
@@ -44,7 +44,7 @@ export const RENAMED_PACK_SKILLS: Readonly<Record<string, string>> = {
   'open-knowledge-pack-knowledge-base': 'knowledge-base',
   'open-knowledge-pack-software-lifecycle': 'software-lifecycle',
   'open-knowledge-pack-entity-vault': 'personal-crm',
-  'open-knowledge-pack-okf': 'okf-knowledge-base',
+  'open-knowledge-pack-psf': 'psf-knowledge-base',
   'open-knowledge-pack-software-lifecycle-frame-a-proposal': 'frame-a-proposal',
   'open-knowledge-pack-software-lifecycle-record-a-decision': 'record-a-decision',
   'open-knowledge-pack-software-lifecycle-write-a-spec': 'write-a-spec',
@@ -54,10 +54,10 @@ export const RENAMED_PACK_SKILLS: Readonly<Record<string, string>> = {
   'open-knowledge-pack-knowledge-base-consolidate': 'consolidate-notes',
 };
 
-export const OPENKNOWLEDGE_SKILLS_REPO = 'inkeep/open-knowledge-skills';
+export const PALIMPSEST_SKILLS_REPO = 'fractalmandala/palimpsest-skills';
 
 export function isRetiredPackListing(name: string, source: string): boolean {
-  return name.startsWith(PACK_SKILL_PREFIX) && isOpenKnowledgeSkillsSource(source);
+  return name.startsWith(PACK_SKILL_PREFIX) && isPalimpsestSkillsSource(source);
 }
 
 export const SKILL_REF_RE = /(^|[\s([])\/([a-z0-9][a-z0-9-]{1,63})(?=$|[\s.,;:!?)\]])/g;

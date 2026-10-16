@@ -14,10 +14,10 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BUNDLE_IDS } from '@inkeep/open-knowledge-server';
+import { BUNDLE_IDS } from '@palimpsest/server';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createSocketPathOverflowingTempDir } from '../../../test-support/temp-dir.test-helper.ts';
-import { okVitestBase } from '../../../test-support/vitest.base';
+import { psVitestBase } from '../../../test-support/vitest.base';
 import { composeSkillAssets, resolveSkillAssetPaths } from './build-skill-assets.ts';
 
 const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -95,13 +95,13 @@ function runSkillAssetCommand(depth: string) {
     cwd: cliRoot,
     env: { ...process.env, TMPDIR: temporary, TMP: temporary, TEMP: temporary },
     encoding: 'utf8',
-    timeout: okVitestBase.test.testTimeout,
+    timeout: psVitestBase.test.testTimeout,
   });
   return { result, cliRoot, serverRoot };
 }
 
 beforeAll(() => {
-  scratchRoot = mkdtempSync(join(tmpdir(), 'ok-cli-skill-assets-'));
+  scratchRoot = mkdtempSync(join(tmpdir(), 'ps-cli-skill-assets-'));
   scratchServerRoot = join(scratchRoot, 'server');
   scratchCliRoot = join(scratchRoot, 'cli');
   scratchSkills = join(scratchCliRoot, 'dist', 'assets', 'skills');

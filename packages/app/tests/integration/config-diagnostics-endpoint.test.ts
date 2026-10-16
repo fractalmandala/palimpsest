@@ -5,8 +5,8 @@ import {
   REMOVED_KEYS,
   resolveThemePlugin,
   type WriteScope,
-} from '@inkeep/open-knowledge-core';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { stringify } from 'yaml';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';

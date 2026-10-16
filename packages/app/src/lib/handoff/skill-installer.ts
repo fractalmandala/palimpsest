@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { parseApiError } from '../parse-api-error.ts';
 
 export type SkillInstallResult =
@@ -14,7 +14,7 @@ export interface SkillInstaller {
   install(opts?: SkillInstallOptions): Promise<SkillInstallResult>;
 }
 
-export type ElectronSkillBridge = Pick<OkDesktopBridge['skill'], 'buildAndOpen'>;
+export type ElectronSkillBridge = Pick<PsDesktopBridge['skill'], 'buildAndOpen'>;
 
 export function electronSkillInstaller(bridge: ElectronSkillBridge): SkillInstaller {
   return {
@@ -110,7 +110,7 @@ export function httpSkillInstaller(opts: HttpSkillInstallerOptions = {}): SkillI
 
 export function defaultSkillInstaller(): SkillInstaller | null {
   if (typeof window === 'undefined') return null;
-  const electronBridge = window.okDesktop?.skill;
+  const electronBridge = window.psDesktop?.skill;
   if (electronBridge) return electronSkillInstaller(electronBridge);
   return httpSkillInstaller();
 }

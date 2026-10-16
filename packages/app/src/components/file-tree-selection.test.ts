@@ -440,15 +440,15 @@ describe('previewTabIdForTreePath', () => {
   });
 });
 
-describe('previewTabIdForTreePath — revealed .ok rows', () => {
+describe('previewTabIdForTreePath — revealed .ps rows', () => {
   test('a template row resolves to its content doc tab', () => {
     expect(
       previewTabIdForTreePath(
-        '.ok/templates/meeting.md',
+        '.ps/templates/meeting.md',
         [
           {
             kind: 'document',
-            docName: '.ok/templates/meeting',
+            docName: '.ps/templates/meeting',
             docExt: '.md',
             size: 0,
             modified: '',
@@ -456,34 +456,34 @@ describe('previewTabIdForTreePath — revealed .ok rows', () => {
         ],
         new Set<string>(),
       ),
-    ).toBe(docTabId('.ok/templates/meeting'));
+    ).toBe(docTabId('.ps/templates/meeting'));
   });
 
-  test('a non-page .ok doc row resolves to the read-only asset tab', () => {
+  test('a non-page .ps doc row resolves to the read-only asset tab', () => {
     expect(
       previewTabIdForTreePath(
-        '.ok/notes/scratch.md',
-        [{ kind: 'document', docName: '.ok/notes/scratch', docExt: '.md', size: 0, modified: '' }],
+        '.ps/notes/scratch.md',
+        [{ kind: 'document', docName: '.ps/notes/scratch', docExt: '.md', size: 0, modified: '' }],
         new Set<string>(),
       ),
-    ).toBe(assetTabId('.ok/notes/scratch.md'));
+    ).toBe(assetTabId('.ps/notes/scratch.md'));
   });
 
-  test('an indexed .ok page keeps the ordinary doc tab', () => {
+  test('an indexed .ps page keeps the ordinary doc tab', () => {
     expect(
       previewTabIdForTreePath(
-        '.ok/skills/thing/SKILL.md',
+        '.ps/skills/thing/SKILL.md',
         [
           {
             kind: 'document',
-            docName: '.ok/skills/thing/SKILL',
+            docName: '.ps/skills/thing/SKILL',
             docExt: '.md',
             size: 0,
             modified: '',
           },
         ],
-        new Set<string>(['.ok/skills/thing/SKILL']),
+        new Set<string>(['.ps/skills/thing/SKILL']),
       ),
-    ).toBe(docTabId('.ok/skills/thing/SKILL'));
+    ).toBe(docTabId('.ps/skills/thing/SKILL'));
   });
 });

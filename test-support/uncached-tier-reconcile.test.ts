@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 function workspace(files: Record<string, string>): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-uncached-tier-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-uncached-tier-'));
   roots.push(root);
   for (const [path, body] of Object.entries(files)) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
@@ -191,7 +191,7 @@ describe('reconcile() over the real tier config, as Vitest resolves it under a -
     try {
       const resolved = vitest.projects.map(({ name }) => name).sort();
       expect(resolved.length).toBeGreaterThan(0);
-      Reflect.deleteProperty(globalThis, Symbol.for('open-knowledge.uncached-tier.reconciled'));
+      Reflect.deleteProperty(globalThis, Symbol.for('palimpsest.uncached-tier.reconciled'));
       const { default: reconcile } = await import('./uncached-tier-reconcile');
       const failure = await reconcile(vitest.projects[0] as TestProject).then(
         () => undefined,

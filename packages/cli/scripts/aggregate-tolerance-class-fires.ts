@@ -1,7 +1,7 @@
 #!/usr/bin/env -S npx tsx
 /**
  * Aggregate tolerance-class fire-rate data from the JSONL telemetry log
- * produced by OK_BRIDGE_TOLERANCE_TELEMETRY=1.
+ * produced by PS_BRIDGE_TOLERANCE_TELEMETRY=1.
  *
  * Usage:
  *   bun run packages/cli/scripts/aggregate-tolerance-class-fires.ts <path-to-tolerance-telemetry.jsonl>
@@ -11,7 +11,7 @@
 
 import { readFileSync } from 'node:fs';
 
-import type { ToleranceFireLine } from '@inkeep/open-knowledge-server';
+import type { ToleranceFireLine } from '@palimpsest/server';
 
 // The line shape is owned by the writer (tolerance-telemetry-writer.ts) and
 // imported here so a producer-side field rename fails this script's

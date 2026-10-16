@@ -1,21 +1,21 @@
 import { fileURLToPath } from 'node:url';
 import { configDefaults, defineConfig, type ViteUserConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 
 export const APP_NODE_SETUP_FILES = [
-  ...okVitestBase.test.setupFiles,
+  ...psVitestBase.test.setupFiles,
   fileURLToPath(new URL('./tests/foundation/node-destination-setup.ts', import.meta.url)),
 ];
 
 const NODE_TEST_FILES = '**/*.node.test.ts?(x)';
 
 export const appNodeVitestConfig = {
-  ...okVitestBase,
+  ...psVitestBase,
   test: {
-    ...okVitestBase.test,
+    ...psVitestBase.test,
     include: [NODE_TEST_FILES],
     exclude: [
-      ...okVitestBase.test.exclude.filter((pattern) => pattern !== NODE_TEST_FILES),
+      ...psVitestBase.test.exclude.filter((pattern) => pattern !== NODE_TEST_FILES),
       'public/excalidraw-assets/**',
       '.excalidraw-assets-staging-*',
     ],

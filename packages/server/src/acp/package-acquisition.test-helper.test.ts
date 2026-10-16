@@ -34,15 +34,15 @@ describe('package acquisition command outcomes', () => {
   });
 
   test('names a missing executable as a prerequisite failure', async () => {
-    const failed = await native('ok-nonexistent-acquisition-executable', []);
+    const failed = await native('ps-nonexistent-acquisition-executable', []);
     expect(failed.code).toBe('ENOENT');
-    expect(failed.stderr).toBe('Missing test prerequisite: ok-nonexistent-acquisition-executable');
+    expect(failed.stderr).toBe('Missing test prerequisite: ps-nonexistent-acquisition-executable');
   });
 });
 
 describe('npm home isolation', () => {
   test('passes only the allowlisted variables and redirects npm state into the home', () => {
-    using home = mkdtempDisposableSync(join(tmpdir(), 'ok-npm-isolation-'));
+    using home = mkdtempDisposableSync(join(tmpdir(), 'ps-npm-isolation-'));
     const env = isolateNpmHome(
       home.path,
       { registry: 'https://registry.example/', cache: '/persistent/npm-cache' },

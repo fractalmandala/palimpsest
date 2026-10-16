@@ -1,8 +1,8 @@
 import {
   type SynthesisedConflictRegion,
   synthesiseConflictMarkersWithRegions,
-} from '@inkeep/open-knowledge-core/bridge';
-import type { SyncConflictContentSuccess } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/bridge';
+import type { SyncConflictContentSuccess } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
 import type {
   FileDiffMetadata,
@@ -16,7 +16,7 @@ import { createPortal } from 'react-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useConflictFooterHeightVar } from '@/hooks/use-conflict-footer-height';
-import { okPierreTheme } from '@/lib/pierre-theme';
+import { psPierreTheme } from '@/lib/pierre-theme';
 import type { ConflictSnapshot } from './conflict-history';
 import { ConflictHistory } from './conflict-history';
 
@@ -169,7 +169,7 @@ export function ConflictView({
     }
 
     const inst = new UnresolvedFile({
-      theme: okPierreTheme(),
+      theme: psPierreTheme(),
       overflow: 'wrap',
       lineDiffType: showBase ? 'none' : 'word-alt',
       unsafeCSS: CONFLICT_WORD_DIFF_CSS,
@@ -356,9 +356,9 @@ export function ConflictView({
         <div className="shrink-0 px-3 py-2">
           <Alert role="status">
             <AlertDescription>
-              {t`The file was restored to an older version. Current is the version OpenKnowledge protected. Incoming is the restored version. Choose which version to keep, then apply your changes.`}
+              {t`The file was restored to an older version. Current is the version Palimpsest protected. Incoming is the restored version. Choose which version to keep, then apply your changes.`}
               {identicalStaleVersions
-                ? ` ${t`Both versions are identical. Choosing Accept current leaves OpenKnowledge's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off.`}`
+                ? ` ${t`Both versions are identical. Choosing Accept current leaves Palimpsest's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off.`}`
                 : null}
             </AlertDescription>
           </Alert>

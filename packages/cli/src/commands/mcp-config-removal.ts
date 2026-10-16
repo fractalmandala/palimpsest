@@ -1,5 +1,5 @@
 import { readFileSync, rmSync } from 'node:fs';
-import { atomicWriteFileSync } from '@inkeep/open-knowledge-core/server';
+import { atomicWriteFileSync } from '@palimpsest/core/server';
 import { parseDocument } from 'yaml';
 import { isOwnPiManagedFileEntry } from '../integrations/pi-extension.ts';
 import { getTomlConfigEngine } from '../native/toml-config-engine.ts';

@@ -1,9 +1,9 @@
-import type { ConfigPatch } from '@inkeep/open-knowledge-core/config/schema';
+import type { ConfigPatch } from '@palimpsest/core/config/schema';
 import type {
-  OkUserConfigBridge,
-  OkUserConfigPatchResult,
-  OkUserConfigSnapshot,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsUserConfigBridge,
+  PsUserConfigPatchResult,
+  PsUserConfigSnapshot,
+} from '@palimpsest/core/desktop-bridge';
 import { describe, expect, test, vi } from 'vitest';
 import { createIpcUserConfigBinding } from './ipc-user-config-binding';
 
@@ -24,15 +24,15 @@ function deferred<T>(): Deferred<T> {
 }
 
 function fakeTransport(initialText: string) {
-  const read = deferred<OkUserConfigSnapshot>();
-  const changeListeners = new Set<(snapshot: OkUserConfigSnapshot) => void>();
-  const patchResponses: Array<Deferred<OkUserConfigPatchResult>> = [];
+  const read = deferred<PsUserConfigSnapshot>();
+  const changeListeners = new Set<(snapshot: PsUserConfigSnapshot) => void>();
+  const patchResponses: Array<Deferred<PsUserConfigPatchResult>> = [];
   const patches: ConfigPatch[] = [];
   let readCount = 0;
   let diskText = initialText;
   let readError: Error | null = null;
-  let heldRead: Deferred<OkUserConfigSnapshot> | null = null;
-  const transport: OkUserConfigBridge = {
+  let heldRead: Deferred<PsUserConfigSnapshot> | null = null;
+  const transport: PsUserConfigBridge = {
     read: () => {
       readCount += 1;
       if (readCount === 1) return read.promise;
@@ -45,7 +45,7 @@ function fakeTransport(initialText: string) {
     },
     patch: (patch) => {
       patches.push(patch);
-      const response = deferred<OkUserConfigPatchResult>();
+      const response = deferred<PsUserConfigPatchResult>();
       patchResponses.push(response);
       return response.promise;
     },
@@ -71,7 +71,7 @@ function fakeTransport(initialText: string) {
     },
     readCount: () => readCount,
     holdNextRead: () => {
-      const held = deferred<OkUserConfigSnapshot>();
+      const held = deferred<PsUserConfigSnapshot>();
       heldRead = held;
       return held;
     },

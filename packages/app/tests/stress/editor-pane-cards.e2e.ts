@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import type {
   ThreadClientFrame,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import type { Locator, Page, WebSocketRoute } from '@playwright/test';
 import { PANE_CARD_GAP_PX } from '../../src/components/ui/pane-card';
 import {
@@ -198,8 +198,8 @@ test('the last selected component stands alone below 48rem and widening restores
   const chatHandle = await page.locator(CHAT_CARD).elementHandle();
   if (editorHandle == null || chatHandle == null) throw new Error('component cards did not mount');
   const savedWideVisibility = await page.evaluate(() => ({
-    editor: localStorage.getItem('ok-editor-visible-v1'),
-    chat: JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}').agentPanelVisible as
+    editor: localStorage.getItem('ps-editor-visible-v1'),
+    chat: JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}').agentPanelVisible as
       | boolean
       | undefined,
   }));
@@ -250,8 +250,8 @@ test('the last selected component stands alone below 48rem and widening restores
   }
   expect(
     await page.evaluate(() => ({
-      editor: localStorage.getItem('ok-editor-visible-v1'),
-      chat: JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}')
+      editor: localStorage.getItem('ps-editor-visible-v1'),
+      chat: JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}')
         .agentPanelVisible as boolean | undefined,
     })),
   ).toEqual(savedWideVisibility);
@@ -447,8 +447,8 @@ test('refresh restores the selected narrow component without changing wide visib
   const editor = page.locator(EDITOR_CARD);
   const chat = page.locator(CHAT_CARD);
   const wideVisibilityBefore = await page.evaluate(() => ({
-    editor: localStorage.getItem('ok-editor-visible-v1'),
-    chat: JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}').agentPanelVisible as
+    editor: localStorage.getItem('ps-editor-visible-v1'),
+    chat: JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}').agentPanelVisible as
       | boolean
       | undefined,
   }));
@@ -465,8 +465,8 @@ test('refresh restores the selected narrow component without changing wide visib
   await expect(editor).toBeHidden();
   expect(
     await page.evaluate(() => ({
-      editor: localStorage.getItem('ok-editor-visible-v1'),
-      chat: JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}')
+      editor: localStorage.getItem('ps-editor-visible-v1'),
+      chat: JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}')
         .agentPanelVisible as boolean | undefined,
     })),
   ).toEqual(wideVisibilityBefore);
@@ -475,7 +475,7 @@ test('refresh restores the selected narrow component without changing wide visib
 test('refresh preserves an intentional empty narrow workspace', async ({ page, api }) => {
   await openDoc(page, api, 767);
   const sessionKey = await page.evaluate(() =>
-    Object.keys(sessionStorage).find((key) => key.startsWith('ok-narrow-workspace-v1:')),
+    Object.keys(sessionStorage).find((key) => key.startsWith('ps-narrow-workspace-v1:')),
   );
   if (sessionKey === undefined) throw new Error('narrow session record was not written');
   await page.evaluate((key) => {
@@ -493,7 +493,7 @@ test('refresh preserves an intentional empty narrow workspace', async ({ page, a
 test('a malformed narrow record falls back to Editor and becomes usable', async ({ page, api }) => {
   await openDoc(page, api, 767);
   const sessionKey = await page.evaluate(() =>
-    Object.keys(sessionStorage).find((key) => key.startsWith('ok-narrow-workspace-v1:')),
+    Object.keys(sessionStorage).find((key) => key.startsWith('ps-narrow-workspace-v1:')),
   );
   if (sessionKey === undefined) throw new Error('narrow session record was not written');
   await page.evaluate((key) => sessionStorage.setItem(key, '{broken'), sessionKey);
@@ -521,7 +521,7 @@ test('a malformed narrow record falls back to Editor and becomes usable', async 
 test('an unavailable Terminal in the narrow record falls back to Editor', async ({ page, api }) => {
   await openDoc(page, api, 767);
   const sessionKey = await page.evaluate(() =>
-    Object.keys(sessionStorage).find((key) => key.startsWith('ok-narrow-workspace-v1:')),
+    Object.keys(sessionStorage).find((key) => key.startsWith('ps-narrow-workspace-v1:')),
   );
   if (sessionKey === undefined) throw new Error('narrow session record was not written');
   await page.evaluate((key) => {
@@ -589,7 +589,7 @@ test('a second browser tab starts with Editor instead of another tab’s narrow 
       page.evaluate(() => {
         for (const storage of [sessionStorage, localStorage]) {
           const key = Object.keys(storage).find((item) =>
-            item.startsWith('ok-narrow-workspace-v1:'),
+            item.startsWith('ps-narrow-workspace-v1:'),
           );
           if (key !== undefined) return JSON.parse(storage.getItem(key) ?? '{}');
         }
@@ -630,7 +630,7 @@ test('a new document deep link selects Editor after a narrow Chat visit', async 
     .poll(() =>
       page.evaluate(() => {
         const key = Object.keys(sessionStorage).find((item) =>
-          item.startsWith('ok-narrow-workspace-v1:'),
+          item.startsWith('ps-narrow-workspace-v1:'),
         );
         return key === undefined ? null : JSON.parse(sessionStorage.getItem(key) ?? '{}');
       }),
@@ -733,7 +733,7 @@ test('a late seeded Chat thread does not replace an explicit document destinatio
 
   await page.addInitScript((agentId) => {
     localStorage.setItem(
-      'ok-acp-registered-agents-v1',
+      'ps-acp-registered-agents-v1',
       JSON.stringify({
         agents: [{ source: 'custom', id: agentId, name: 'Hidden activity fixture' }],
         defaultKey: `custom:${agentId}`,
@@ -854,7 +854,7 @@ test('an independent same-agent thread reveals Chat after a pending seed loses i
 
   await page.addInitScript((agentId) => {
     localStorage.setItem(
-      'ok-acp-registered-agents-v1',
+      'ps-acp-registered-agents-v1',
       JSON.stringify({
         agents: [{ source: 'custom', id: agentId, name: 'Hidden activity fixture' }],
         defaultKey: `custom:${agentId}`,
@@ -966,7 +966,7 @@ test('a disconnected document destination leaves error recovery and header navig
   try {
     await page.addInitScript((agentId) => {
       localStorage.setItem(
-        'ok-acp-registered-agents-v1',
+        'ps-acp-registered-agents-v1',
         JSON.stringify({
           agents: [{ source: 'custom', id: agentId, name: 'Hidden activity fixture' }],
           defaultKey: `custom:${agentId}`,
@@ -1042,7 +1042,7 @@ test('a deleted document destination returns to a surviving editor without claim
   try {
     await page.addInitScript((agentId) => {
       localStorage.setItem(
-        'ok-acp-registered-agents-v1',
+        'ps-acp-registered-agents-v1',
         JSON.stringify({
           agents: [{ source: 'custom', id: agentId, name: 'Hidden activity fixture' }],
           defaultKey: `custom:${agentId}`,
@@ -1239,9 +1239,9 @@ test('repeated Chat selection, Chat Hide and Hide Editor keep the same thread, d
     await waitForActiveProviderSynced(page);
     const wideVisibility = () =>
       page.evaluate(() => ({
-        editor: localStorage.getItem('ok-editor-visible-v1'),
+        editor: localStorage.getItem('ps-editor-visible-v1'),
         chat:
-          (JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}')
+          (JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}')
             .agentPanelVisible as boolean | undefined) ?? false,
       }));
     const wideBefore = await wideVisibility();
@@ -1335,7 +1335,7 @@ test('two tabs keep their own narrow selections across refresh while edits conve
   const readSelection = (target: Page) =>
     target.evaluate(() => {
       const key = Object.keys(sessionStorage).find((item) =>
-        item.startsWith('ok-narrow-workspace-v1:'),
+        item.startsWith('ps-narrow-workspace-v1:'),
       );
       return key === undefined ? null : JSON.parse(sessionStorage.getItem(key) ?? '{}');
     });
@@ -1404,10 +1404,10 @@ test('opening and refreshing below 48rem raises no page error and leaves wide pr
     await page.goto(`/#/${docName}`);
     await waitForActiveProviderSynced(page);
     const readWideIntent = () => ({
-      editor: localStorage.getItem('ok-editor-visible-v1'),
+      editor: localStorage.getItem('ps-editor-visible-v1'),
       chat:
         (
-          JSON.parse(localStorage.getItem('ok-agent-session-order-v1') ?? '{}') as {
+          JSON.parse(localStorage.getItem('ps-agent-session-order-v1') ?? '{}') as {
             agentPanelVisible?: boolean;
           }
         ).agentPanelVisible ?? false,

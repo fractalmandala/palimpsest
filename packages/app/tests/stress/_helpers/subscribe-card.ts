@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-export const NEWSLETTER_KEY = 'ok-subscribe-card-v1';
+export const NEWSLETTER_KEY = 'ps-subscribe-card-v1';
 
 export interface NewsletterState {
   readonly subscribed: boolean;

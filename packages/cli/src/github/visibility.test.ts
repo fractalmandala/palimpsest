@@ -38,9 +38,9 @@ describe('isGitHubRepoPublic', () => {
 
   test('hits api.github.com/repos/OWNER/NAME with cli user-agent', async () => {
     const { fetch, calls } = mockFetch(() => new Response('{}', { status: 200 }));
-    await isGitHubRepoPublic('inkeep', 'open-knowledge', fetch);
+    await isGitHubRepoPublic('inkeep', 'palimpsest', fetch);
     expect(calls).toHaveLength(1);
-    expect(calls[0].url).toBe('https://api.github.com/repos/inkeep/open-knowledge');
+    expect(calls[0].url).toBe('https://api.github.com/repos/fractalmandala/palimpsest');
     const headers = calls[0].init?.headers as Record<string, string> | undefined;
     expect(headers?.['User-Agent']).toBe('open-knowledge-cli');
   });

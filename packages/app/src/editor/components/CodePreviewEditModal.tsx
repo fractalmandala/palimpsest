@@ -214,19 +214,19 @@ export function CodePreviewEditModal({
         </DialogHeader>
         <div
           className={`flex min-h-0 flex-1 gap-3 overflow-y-auto overscroll-contain ${previewEnabled ? 'flex-col md:flex-row-reverse' : 'flex-col'}`}
-          data-testid="ok-code-preview-edit-modal-body"
+          data-testid="ps-code-preview-edit-modal-body"
         >
           {}
           <div
             ref={setHostRef}
-            className="ok-codepreview-cm min-h-[260px] flex-1 overflow-hidden rounded-md border border-border md:min-h-0"
-            data-testid="ok-code-preview-edit-modal-source"
+            className="ps-codepreview-cm min-h-[260px] flex-1 overflow-hidden rounded-md border border-border md:min-h-0"
+            data-testid="ps-code-preview-edit-modal-source"
             data-language={language}
           />
           {previewEnabled ? (
             <div
               className="min-h-[260px] flex-1 overflow-auto rounded-md border border-border bg-muted/30 md:min-h-0"
-              data-testid="ok-code-preview-edit-modal-preview"
+              data-testid="ps-code-preview-edit-modal-preview"
             >
               {renderPreview(debouncedDraft, applyPreviewEdit)}
             </div>

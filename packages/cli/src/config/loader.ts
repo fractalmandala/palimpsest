@@ -11,11 +11,11 @@ import {
   locateIssue,
   mergeLayered,
   stripRemovedKeys,
-} from '@inkeep/open-knowledge-core';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
-import { type Config, ConfigSchema } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
+import { type Config, ConfigSchema } from '@palimpsest/server';
 import { type Document, parseDocument } from 'yaml';
-import { CONFIG_FILENAME, OK_DIR } from '../constants.ts';
+import { CONFIG_FILENAME, PS_DIR } from '../constants.ts';
 import { isObject } from '../utils/is-object.ts';
 import { normalizeCwd } from '../utils/normalize-cwd.ts';
 
@@ -147,7 +147,7 @@ export function loadConfig(cwd?: string): LoadConfigResult {
     return value;
   };
 
-  const projectPath = resolve(workingDir, OK_DIR, CONFIG_FILENAME);
+  const projectPath = resolve(workingDir, PS_DIR, CONFIG_FILENAME);
   const projectRaw = loadRawLayer(projectPath, true);
   const localRaw = loadRawLayer(resolveConfigPath('project-local', workingDir));
 

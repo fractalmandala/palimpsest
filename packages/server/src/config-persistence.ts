@@ -13,13 +13,13 @@ import {
   type WriteScope,
   withConfigSpan,
   withConfigSpanSync,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   atomicTempPath,
   FileLockTimeoutError,
   resolveConfigPath,
   withFileLock,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import type { Counter } from '@opentelemetry/api';
 import { parseDocument, stringify } from 'yaml';
 import type * as Y from 'yjs';
@@ -44,7 +44,7 @@ function configScopeAttr(documentName: string): WriteScope | undefined {
 let _okignoreRejectionCounter: Counter | null = null;
 function okignoreRejectionCounter(): Counter {
   _okignoreRejectionCounter ||= getMeter().createCounter('ok.config.ignore.rejection_total', {
-    description: 'Count of okignore L3 rejections by error code.',
+    description: 'Count of psignore L3 rejections by error code.',
   });
   return _okignoreRejectionCounter;
 }
@@ -84,7 +84,7 @@ export function configDocAbsPath(documentName: string, ctx: ConfigPersistenceCtx
     return resolveConfigPath('user', ctx.projectDir, ctx.homedirOverride);
   }
   if (documentName === CONFIG_DOC_NAME_OKIGNORE) {
-    return resolve(ctx.contentDir ?? ctx.projectDir, '.okignore');
+    return resolve(ctx.contentDir ?? ctx.projectDir, '.psignore');
   }
   throw new Error(`configDocAbsPath: not a config doc name: ${documentName}`);
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const STORAGE_KEY = 'ok-lint-config-view-mode-v1';
+const STORAGE_KEY = 'ps-lint-config-view-mode-v1';
 
 export const LINT_CONFIG_VIEW_MODES = ['source', 'rules'] as const;
 

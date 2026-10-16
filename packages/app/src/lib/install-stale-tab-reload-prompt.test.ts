@@ -1,6 +1,6 @@
 import * as actualSonner from 'sonner';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 const toastLoading = vi.fn((_msg: string, _opts?: unknown) => 'loading-id');
 const toastError = vi.fn((_msg: string, _opts?: unknown) => 'error-id');
@@ -138,7 +138,7 @@ const PROMPT_DETAIL =
 const UNSAVED_REFUSAL =
   "Some edits haven't reached the server yet, so the tab didn't reload. Your edits are still here.";
 const RECONNECTING_REFUSAL =
-  "This tab is still reconnecting to OpenKnowledge, so it didn't reload. Try again in a moment.";
+  "This tab is still reconnecting to Palimpsest, so it didn't reload. Try again in a moment.";
 const UNCONFIRMED_REFUSAL =
   "This tab couldn't confirm that your edits are saved, so it didn't reload. Your edits are still here.";
 
@@ -177,7 +177,7 @@ describe('stale tab reload prompt', () => {
   test('stays silent in the desktop app, which runs its own drift prompt', () => {
     const reload = vi.fn();
     const cleanup = install({
-      bridge: {} as OkDesktopBridge,
+      bridge: {} as PsDesktopBridge,
       waitForSavedWork: () => Promise.resolve('saved'),
       reload,
     });
@@ -209,7 +209,7 @@ describe('stale tab reload prompt', () => {
     });
     const node = renderLastPrompt();
     expect(node.props.body).toBe(
-      'OpenKnowledge on this computer is now v0.83.2, but this tab is still running v0.83.1.',
+      'Palimpsest on this computer is now v0.83.2, but this tab is still running v0.83.1.',
     );
     expect(node.props.detail).toBe(PROMPT_DETAIL);
     expect(node.props.actionLabel).toBe('Reload');
@@ -260,7 +260,7 @@ describe('stale tab reload prompt', () => {
     expect(toastCustom.mock.calls[1]?.[1]).toMatchObject({ id: STALE_TAB_RELOAD_TOAST_ID });
     const node = renderLastPrompt();
     expect(node.props.body).toBe(
-      'OpenKnowledge on this computer is now v0.83.2, but this tab is still running v0.83.1.',
+      'Palimpsest on this computer is now v0.83.2, but this tab is still running v0.83.1.',
     );
     expect(node.props.detail).toBe(UNSAVED_REFUSAL);
     expect(watch.started()).toBe(true);
@@ -292,7 +292,7 @@ describe('stale tab reload prompt', () => {
       expect(renderLastPrompt().props.detail).toBe(UNCONFIRMED_REFUSAL);
       const logged = warn.mock.calls.map((call) => JSON.parse(String(call[0])));
       expect(logged).toContainEqual({
-        event: 'ok-stale-tab-reload-withheld',
+        event: 'ps-stale-tab-reload-withheld',
         reason: 'unconfirmed',
         docsToOpenCount: 0,
         errorName: 'TypeError',
@@ -337,7 +337,7 @@ describe('stale tab reload prompt', () => {
       );
       const logged = warn.mock.calls.map((call) => JSON.parse(String(call[0])));
       expect(logged).toContainEqual({
-        event: 'ok-stale-tab-reload-withheld',
+        event: 'ps-stale-tab-reload-withheld',
         reason: 'unsaved',
         docsToOpenCount: 2,
       });
@@ -454,7 +454,7 @@ describe('stale tab reload copy', () => {
       current: { runtimeVersion: null, protocolVersion: null },
     });
     expect(body).toBe(
-      'OpenKnowledge on this computer changed to a different build, but this tab is still running the old one.',
+      'Palimpsest on this computer changed to a different build, but this tab is still running the old one.',
     );
   });
 

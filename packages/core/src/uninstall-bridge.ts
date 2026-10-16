@@ -55,7 +55,7 @@ export type UninstallDispatchResult =
   | { readonly kind: 'accepted' }
   | { readonly kind: 'refused'; readonly reason: 'unknown-window' | 'invalid-intent' };
 
-export interface OkUninstallBridge {
+export interface PsUninstallBridge {
   ready(): Promise<UninstallDispatchResult>;
   send(intent: UninstallIntent): Promise<UninstallDispatchResult>;
 }

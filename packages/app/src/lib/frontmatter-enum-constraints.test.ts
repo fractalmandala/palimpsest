@@ -1,4 +1,4 @@
-import type { LinterConfig, OkfRuleId } from '@inkeep/open-knowledge-core';
+import type { LinterConfig, OkfRuleId } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { enumConstraintsForDoc } from './frontmatter-enum-constraints.ts';
 
@@ -31,7 +31,7 @@ const DOC_SCHEMA = {
 };
 
 function configWithOkf(
-  okf: { enabled: boolean; rules?: Partial<Record<OkfRuleId, boolean>> },
+  psf: { enabled: boolean; rules?: Partial<Record<OkfRuleId, boolean>> },
   frontmatter: { enabled: boolean; schemas: Parameters<typeof configWith>[0] } = {
     enabled: false,
     schemas: [],
@@ -42,7 +42,7 @@ function configWithOkf(
     plugins: {
       markdownlint: { enabled: false, rules: {} },
       frontmatter,
-      okf,
+      psf,
     },
   } as LinterConfig;
 }

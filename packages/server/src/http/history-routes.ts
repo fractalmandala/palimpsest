@@ -4,7 +4,7 @@ import {
   HistorySuccessSchema,
   HistoryVersionSuccessSchema,
   isValidBranchName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger, type PinoLogger } from '../logger.ts';
 import {
   createAncestorShaSetCache,
@@ -33,7 +33,7 @@ export interface HistoryRouteDeps {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ok' | 'ok-and-templates',
+    components: 'ok' | 'ps-and-templates',
   ) => { folderRel: string; resolvedContentDir: string } | null;
   safeDocPath: (docName: string, contentRoot: string) => { path: string } | { error: string };
   docTreePathCandidates: (docName: string, contentRoot: string) => readonly string[];

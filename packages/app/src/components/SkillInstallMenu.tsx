@@ -1,8 +1,8 @@
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core/constants/editors';
-import { AGENTS_SKILLS_ROOT } from '@inkeep/open-knowledge-core/constants/skills';
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
-import type { SkillInstallTarget } from '@inkeep/open-knowledge-core/skill-targets/schema';
-import { isSkillInstallTarget } from '@inkeep/open-knowledge-core/skill-targets/schema';
+import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
+import { AGENTS_SKILLS_ROOT } from '@palimpsest/core/constants/skills';
+import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
+import type { SkillInstallTarget } from '@palimpsest/core/skill-targets/schema';
+import { isSkillInstallTarget } from '@palimpsest/core/skill-targets/schema';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Folder, Settings as SettingsIcon } from 'lucide-react';
 import { type ReactElement, useEffect, useRef, useState, useSyncExternalStore } from 'react';

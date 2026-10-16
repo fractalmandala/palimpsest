@@ -15,10 +15,10 @@ vi.mock('node:fs', async (importOriginal) => {
 
 const actualFs = await vi.importActual<typeof import('node:fs')>('node:fs');
 
-const OK_TREE: Readonly<Record<string, string>> = {
-  'package.json': '{"name":"open-knowledge"}\n',
+const PS_TREE: Readonly<Record<string, string>> = {
+  'package.json': '{"name":"palimpsest"}\n',
   'pnpm-lock.yaml': "lockfileVersion: '9.0'\n",
-  'packages/app/package.json': '{"name":"@inkeep/open-knowledge-app"}\n',
+  'packages/app/package.json': '{"name":"@palimpsest/app"}\n',
   'packages/app/index.html': '<!doctype html><div id="root"></div>\n',
   'packages/app/src/App.tsx': 'export const App = () => 1;\n',
   'packages/core/src/index.ts': 'export const core = 1;\n',
@@ -38,19 +38,19 @@ function write(root: string, path: string, content: string): void {
   writeFileSync(join(root, path), content);
 }
 
-function okTree(): string {
-  const root = scratch('ok-prebuilt-concurrent-prune-tree-');
-  for (const [path, content] of Object.entries(OK_TREE)) write(root, path, content);
+function psTree(): string {
+  const root = scratch('ps-prebuilt-concurrent-prune-tree-');
+  for (const [path, content] of Object.entries(PS_TREE)) write(root, path, content);
   return root;
 }
 
-function resolveWith(okRoot: string, outRoot: string) {
+function resolveWith(psRoot: string, outRoot: string) {
   return resolvePrebuiltDevApp({
-    okRoot,
+    psRoot,
     outRoot,
     options: PREBUILT_BUILD_OPTIONS,
     build: async (distDir: string) => {
-      const app = readFileSync(join(okRoot, 'packages/app/src/App.tsx'), 'utf8');
+      const app = readFileSync(join(psRoot, 'packages/app/src/App.tsx'), 'utf8');
       write(distDir, 'index.html', `<!doctype html>${app}`);
     },
   });
@@ -74,17 +74,17 @@ afterEach(() => {
 
 describe('builders that prune the same output root together', () => {
   test('a stale build another builder retires after this prune listed it is skipped, and the build still records itself as latest', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-concurrent-prune-out-');
-    const stale = await resolveWith(okRoot, outRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-concurrent-prune-out-');
+    const stale = await resolveWith(psRoot, outRoot);
     stale.use.release();
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
-    const kept = await resolveWith(okRoot, outRoot);
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
+    const kept = await resolveWith(psRoot, outRoot);
     kept.use.release();
 
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
     anotherBuilderRetiresAfterTheListing(outRoot, stale.manifest.digest);
-    const current = await resolveWith(okRoot, outRoot);
+    const current = await resolveWith(psRoot, outRoot);
     current.use.release();
 
     expect(current.built).toBe(true);

@@ -21,7 +21,7 @@ function seedBuiltin(rootRel: string): void {
 }
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-builtin-global-roots-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-builtin-global-roots-'));
   seedBuiltin('.gemini/skills');
   seedBuiltin('.lmstudio/skills');
   seedBuiltin('.copilot/skills');
@@ -54,7 +54,7 @@ describe('built-in skills resolve from the user roots at global scope', () => {
     };
     const row = body.skills?.find((s) => s.name === BUILTIN && s.scope === 'global');
     expect(row).toBeDefined();
-    expect(row?.origin?.source).toBe('inkeep/open-knowledge-skills');
+    expect(row?.origin?.source).toBe('fractalmandala/palimpsest-skills');
     expect([...(row?.hosts ?? [])].sort()).toEqual(['antigravity', 'copilot', 'lm-studio']);
   });
 });

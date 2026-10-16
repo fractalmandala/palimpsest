@@ -100,7 +100,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
         stdout:
-          '12345 /usr/local/bin/bun /path/to/open-knowledge/packages/cli/dist/cli.mjs start\n',
+          '12345 /usr/local/bin/bun /path/to/palimpsest/packages/cli/dist/cli.mjs start\n',
         status: 0,
       }),
     );
@@ -109,14 +109,14 @@ describe('findOkProcessPids with Windows Unix tools', () => {
     expect(pids).toEqual([12345]);
     const [cmd, args] = spawnSyncSpy.mock.calls[0] as [string, string[]];
     expect(cmd).toBe('pgrep');
-    expect(args.join(' ')).toContain('open-knowledge');
+    expect(args.join(' ')).toContain('palimpsest');
   });
 
-  it('finds npx-installed open-knowledge bin processes', async () => {
+  it('finds npx-installed palimpsest bin processes', async () => {
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
         stdout:
-          '54321 /usr/local/bin/node /Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/open-knowledge start\n',
+          '54321 /usr/local/bin/node /Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/palimpsest start\n',
         status: 0,
       }),
     );
@@ -126,10 +126,10 @@ describe('findOkProcessPids with Windows Unix tools', () => {
   });
 
   it('finds Electron utility processes by explicit lock-dir marker', async () => {
-    const encoded = Buffer.from('/Users/mike/notes/.ok/local', 'utf8').toString('base64url');
+    const encoded = Buffer.from('/Users/mike/notes/.ps/local', 'utf8').toString('base64url');
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
-        stdout: `24680 /Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Helper --type=utility --ok-lock-dir-b64=${encoded}\n`,
+        stdout: `24680 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper --type=utility --ok-lock-dir-b64=${encoded}\n`,
         status: 0,
       }),
     );
@@ -138,11 +138,11 @@ describe('findOkProcessPids with Windows Unix tools', () => {
     expect(pids).toEqual([24680]);
   });
 
-  it('finds packaged OpenKnowledge Helper processes without lock-dir marker', async () => {
+  it('finds packaged Palimpsest Helper processes without lock-dir marker', async () => {
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
         stdout:
-          '5816 /Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Helper.app/Contents/MacOS/OpenKnowledge Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
+          '5816 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper.app/Contents/MacOS/Palimpsest Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
         status: 0,
       }),
     );
@@ -151,11 +151,11 @@ describe('findOkProcessPids with Windows Unix tools', () => {
     expect(pids).toEqual([5816]);
   });
 
-  it('still finds a pre-rename "Open Knowledge" packaged Helper (backward-compat regex)', async () => {
+  it('still finds a pre-rename "Palimpsest" packaged Helper (backward-compat regex)', async () => {
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
         stdout:
-          '5817 /Applications/Open Knowledge.app/Contents/Frameworks/Open Knowledge Helper.app/Contents/MacOS/Open Knowledge Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
+          '5817 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper.app/Contents/MacOS/Palimpsest Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
         status: 0,
       }),
     );
@@ -172,7 +172,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n 99999 /usr/local/bin/open-knowledge start\n' +
+            'PID COMMAND\n 99999 /usr/local/bin/palimpsest start\n' +
             '   123 some-other-process\n',
           status: 0,
         }),
@@ -200,7 +200,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n 12345 /usr/local/bin/node /path/node_modules/.bin/open-knowledge start\n',
+            'PID COMMAND\n 12345 /usr/local/bin/node /path/node_modules/.bin/palimpsest start\n',
           status: 0,
         }),
       );
@@ -220,7 +220,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
           stdout:
             '  PID COMMAND\n' +
             '  111 /usr/bin/ruby some-script.rb\n' +
-            '  222 /usr/local/bin/ok start\n' +
+            '  222 /usr/local/bin/ps start\n' +
             '  333 /usr/local/bin/bun run dev packages/app\n',
           status: 0,
         }),
@@ -381,12 +381,12 @@ describe('discoverLockDirs', () => {
 
     existsSyncSpy.mockImplementation(
       (p: unknown) =>
-        p === '/Users/mike/notes/.ok/local' || p === '/Users/mike/notes/.ok/local/server.lock',
+        p === '/Users/mike/notes/.ps/local' || p === '/Users/mike/notes/.ps/local/server.lock',
     );
 
     const dirs = await discoverLockDirs();
     expect(dirs).toHaveLength(1);
-    expect(dirs[0]).toContain('.ok/local');
+    expect(dirs[0]).toContain('.ps/local');
 
     const calls = spawnSyncSpy.mock.calls as [string, string[]][];
     expect(calls[0]?.[0]).toBe('ps');
@@ -406,18 +406,18 @@ describe('discoverLockDirs', () => {
   });
 
   it('discovers Electron utility lock dirs from the explicit argv marker', async () => {
-    const lockDir = '/Users/mike/notes with spaces/.ok/local';
+    const lockDir = '/Users/mike/notes with spaces/.ps/local';
     const encoded = Buffer.from(lockDir, 'utf8').toString('base64url');
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n77 /Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Helper --type=utility --ok-lock-dir-b64=${encoded}\n`,
+          stdout: `PID COMMAND\n77 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper --type=utility --ok-lock-dir-b64=${encoded}\n`,
           status: 0,
         }),
       )
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: 'p77\nfcwd\nn/Applications/OpenKnowledge.app/Contents/Resources\n',
+          stdout: 'p77\nfcwd\nn/Applications/Palimpsest.app/Contents/Resources\n',
           status: 0,
         }),
       )
@@ -435,13 +435,13 @@ describe('discoverLockDirs', () => {
   });
 
   it('discovers desktop project locks from renderer --ok-project-path argv', async () => {
-    const projectPath = '/Users/mike/Documents/OpenKnowledge/garth_nix';
-    const lockDir = `${projectPath}/.ok/local`;
+    const projectPath = '/Users/mike/Documents/Palimpsest/garth_nix';
+    const lockDir = `${projectPath}/.ps/local`;
 
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n93943 /Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Helper (Renderer).app/Contents/MacOS/OpenKnowledge Helper (Renderer) --type=renderer --ok-collab-url=ws://localhost:51473/collab --ok-project-path=${projectPath} --ok-project-name=garth_nix --seatbelt-client=53\n`,
+          stdout: `PID COMMAND\n93943 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper (Renderer).app/Contents/MacOS/Palimpsest Helper (Renderer) --type=renderer --ok-collab-url=ws://localhost:51473/collab --ok-project-path=${projectPath} --ok-project-name=garth_nix --seatbelt-client=53\n`,
           status: 0,
         }),
       )
@@ -461,7 +461,7 @@ describe('discoverLockDirs', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n93943 /Applications/OpenKnowledge Helper (Renderer) --type=renderer --ok-project-path=relative/notes --ok-project-name=notes\n',
+            'PID COMMAND\n93943 /Applications/Palimpsest Helper (Renderer) --type=renderer --ok-project-path=relative/notes --ok-project-name=notes\n',
           status: 0,
         }),
       )
@@ -476,7 +476,7 @@ describe('discoverLockDirs', () => {
 
   it('does not discover lock dirs holding only a legacy ui.lock', async () => {
     const projectPath = '/Users/mike/notes';
-    const lockDir = `${projectPath}/.ok/local`;
+    const lockDir = `${projectPath}/.ps/local`;
 
     spawnSyncSpy
       .mockReturnValueOnce(
@@ -499,7 +499,7 @@ describe('discoverLockDirs', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n42 /Applications/OpenKnowledge.app/Contents/Frameworks/Helper --ok-lock-dir-b64=\n',
+            'PID COMMAND\n42 /Applications/Palimpsest.app/Contents/Frameworks/Helper --ok-lock-dir-b64=\n',
           status: 0,
         }),
       )
@@ -515,7 +515,7 @@ describe('discoverLockDirs', () => {
   });
 
   it('ignores Electron marker with a relative-path payload', async () => {
-    const encoded = Buffer.from('relative/path/.ok/local', 'utf8').toString('base64url');
+    const encoded = Buffer.from('relative/path/.ps/local', 'utf8').toString('base64url');
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
@@ -536,15 +536,15 @@ describe('discoverLockDirs', () => {
 
   it('discovers child project locks from the current-directory subtree fallback', async () => {
     const cwdSpy = vi.spyOn(process, 'cwd');
-    const parent = '/Users/mike/Documents/OpenKnowledge';
+    const parent = '/Users/mike/Documents/Palimpsest';
     const child = `${parent}/garth_nix`;
-    const lockDir = `${child}/.ok/local`;
+    const lockDir = `${child}/.ps/local`;
 
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n5816 /Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Helper.app/Contents/MacOS/OpenKnowledge Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
+            'PID COMMAND\n5816 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper.app/Contents/MacOS/Palimpsest Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
           status: 0,
         }),
       )
@@ -572,18 +572,18 @@ describe('discoverLockDirs', () => {
 
   it('runs subtree fallback for slash-cwd helpers even when another candidate was found', async () => {
     const cwdSpy = vi.spyOn(process, 'cwd');
-    const parent = '/Users/mike/Documents/OpenKnowledge';
+    const parent = '/Users/mike/Documents/Palimpsest';
     const directProject = '/Users/mike/direct-notes';
-    const directLockDir = `${directProject}/.ok/local`;
+    const directLockDir = `${directProject}/.ps/local`;
     const childProject = `${parent}/garth_nix`;
-    const childLockDir = `${childProject}/.ok/local`;
+    const childLockDir = `${childProject}/.ps/local`;
 
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n11 /usr/local/bin/ok start\n' +
-            '22 /Applications/OpenKnowledge.app/Contents/Frameworks/OpenKnowledge Helper.app/Contents/MacOS/OpenKnowledge Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
+            'PID COMMAND\n11 /usr/local/bin/ps start\n' +
+            '22 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper.app/Contents/MacOS/Palimpsest Helper --type=utility --utility-sub-type=node.mojom.NodeService\n',
           status: 0,
         }),
       )
@@ -626,7 +626,7 @@ describe('discoverLockDirs', () => {
       .mockImplementation(() => makeSpawnResult({ error: enoent as NodeJS.ErrnoException }))
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: 'PID COMMAND\n55 /usr/local/bin/ok start\n',
+          stdout: 'PID COMMAND\n55 /usr/local/bin/ps start\n',
           status: 0,
         }),
       );
@@ -698,7 +698,7 @@ describe('lock recovery process evidence', () => {
     ]);
   });
   it('keeps explicit process provenance even without a lock file on disk', async () => {
-    const lockDir = '/missing/project/.ok/local';
+    const lockDir = '/missing/project/.ps/local';
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
@@ -721,7 +721,7 @@ describe('lock recovery process evidence', () => {
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
       .mockReturnValueOnce(makeSpawnResult({ stdout: `p${process.pid}\nfcwd\nn/notes\n` }));
     expect((await scanLockProcesses()).candidates).toContainEqual({
-      lockDir: '/notes/.ok/local',
+      lockDir: '/notes/.ps/local',
       pid: process.pid,
       source: 'process-cwd',
     });
@@ -927,13 +927,13 @@ describe('lock recovery process evidence', () => {
     expect(cwdQueries[0]?.[1]).toContain(pids.join(','));
     for (const pid of pids) {
       expect(scan.candidates).toContainEqual({
-        lockDir: `/notes-${pid}/.ok/local`,
+        lockDir: `/notes-${pid}/.ps/local`,
         pid,
         source: 'process-cwd',
       });
     }
   });
-  it('keeps listener provenance without asserting the process is an OpenKnowledge server', async () => {
+  it('keeps listener provenance without asserting the process is an Palimpsest server', async () => {
     spawnSyncMock
       .mockReturnValueOnce(makeSpawnResult({ stdout: 'PID COMMAND\n', status: 0 }))
       .mockReturnValueOnce(
@@ -941,7 +941,7 @@ describe('lock recovery process evidence', () => {
       )
       .mockReturnValueOnce(makeSpawnResult({ stdout: `p${process.pid}\nfcwd\nn/notes\n` }));
     expect((await scanLockProcesses()).candidates).toContainEqual({
-      lockDir: '/notes/.ok/local',
+      lockDir: '/notes/.ps/local',
       pid: process.pid,
       source: 'listener-cwd',
     });

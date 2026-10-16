@@ -211,7 +211,7 @@ export async function fetchWellKnownSkill(
     throw new SkillFetchError(`Website skill index does not contain ${spec.skill}`);
   }
 
-  const tmp = mkdtempSync(join(tmpdir(), 'ok-skill-site-'));
+  const tmp = mkdtempSync(join(tmpdir(), 'ps-skill-site-'));
   const skillDir = join(tmp, entry.name);
   let totalBytes = 0;
   try {

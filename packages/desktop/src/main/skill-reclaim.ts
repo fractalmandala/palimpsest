@@ -8,8 +8,8 @@ import {
   writeFileSync as fsWriteFileSync,
 } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { HOSTS_WITH_USER_SKILL_DIR } from '@inkeep/open-knowledge';
-import { resolveBundleEnabled, USER_SKILL_HOSTS } from '@inkeep/open-knowledge-core';
+import { HOSTS_WITH_USER_SKILL_DIR } from '@palimpsest/cli';
+import { resolveBundleEnabled, USER_SKILL_HOSTS } from '@palimpsest/core';
 import { classifyInstallShape } from './install-shape.ts';
 
 interface SkillReclaimLogger {
@@ -22,7 +22,7 @@ const DEFAULT_LOGGER: SkillReclaimLogger = {
   warn: (message, ctx) => console.warn('[skill-reclaim]', message, ctx ?? ''),
 };
 
-const LEGACY_SKILL_DIR_NAME = 'open-knowledge';
+const LEGACY_SKILL_DIR_NAME = 'palimpsest';
 
 interface SkillFsOps {
   existsSync(path: string): boolean;

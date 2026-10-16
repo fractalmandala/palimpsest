@@ -17,10 +17,10 @@ describe('CC1ConfigIgnoreNestedErrorPayloadSchema', () => {
       v: CC1_CONTRACT_VERSION,
       ch: CC1_CHANNEL_CONFIG_IGNORE_NESTED_ERROR,
       seq: 7,
-      path: 'subdir/.okignore',
+      path: 'subdir/.psignore',
       error: 'unmatched bracket on line 3',
     });
-    expect(payload.path).toBe('subdir/.okignore');
+    expect(payload.path).toBe('subdir/.psignore');
     expect(payload.error).toBe('unmatched bracket on line 3');
     expect(payload.seq).toBe(7);
   });
@@ -43,7 +43,7 @@ describe('CC1ConfigIgnoreNestedErrorPayloadSchema', () => {
         v: CC1_CONTRACT_VERSION,
         ch: CC1_CHANNEL_CONFIG_IGNORE_NESTED_ERROR,
         seq: 1,
-        path: 'a/.okignore',
+        path: 'a/.psignore',
         error: '',
       }).success,
     ).toBe(false);
@@ -55,7 +55,7 @@ describe('CC1ConfigIgnoreNestedErrorPayloadSchema', () => {
         v: CC1_CONTRACT_VERSION,
         ch: 'files',
         seq: 1,
-        path: 'a/.okignore',
+        path: 'a/.psignore',
         error: 'x',
       }).success,
     ).toBe(false);
@@ -66,10 +66,10 @@ describe('CC1ConfigIgnoreNestedErrorPayloadSchema', () => {
       v: CC1_CONTRACT_VERSION,
       ch: CC1_CHANNEL_CONFIG_IGNORE_NESTED_ERROR,
       seq: 2,
-      path: 'a/.okignore',
+      path: 'a/.psignore',
       error: 'oops',
       futureField: { nested: true },
     });
-    expect(parsed.path).toBe('a/.okignore');
+    expect(parsed.path).toBe('a/.psignore');
   });
 });

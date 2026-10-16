@@ -290,7 +290,7 @@ export function stepRunner(
   return state;
 }
 
-const BEST_SCORE_STORAGE_KEY = 'ok-blob-runner-best';
+const BEST_SCORE_STORAGE_KEY = 'ps-blob-runner-best';
 
 export interface BestScoreStorage {
   getItem(key: string): string | null;

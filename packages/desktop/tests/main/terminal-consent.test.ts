@@ -10,10 +10,10 @@ import {
 const created: string[] = [];
 
 function makeProject(localConfigYaml: string | null): string {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-terminal-consent-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-terminal-consent-'));
   created.push(projectDir);
   if (localConfigYaml !== null) {
-    const localDir = join(projectDir, '.ok', 'local');
+    const localDir = join(projectDir, '.ps', 'local');
     mkdirSync(localDir, { recursive: true });
     writeFileSync(join(localDir, 'config.yml'), localConfigYaml, 'utf-8');
   }
@@ -21,7 +21,7 @@ function makeProject(localConfigYaml: string | null): string {
 }
 
 function writeLocalConfig(projectDir: string, yaml: string): void {
-  const localDir = join(projectDir, '.ok', 'local');
+  const localDir = join(projectDir, '.ps', 'local');
   mkdirSync(localDir, { recursive: true });
   writeFileSync(join(localDir, 'config.yml'), yaml, 'utf-8');
 }

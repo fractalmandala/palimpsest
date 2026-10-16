@@ -10,16 +10,16 @@ import {
   defaultToDevChannel,
   isDevChannel,
   type McpLauncherDeclineReason,
-  OPENKNOWLEDGE_SKILLS_REPO,
-  okUserHomeDisplayPath,
+  PALIMPSEST_SKILLS_REPO,
+  psUserHomeDisplayPath,
   SKILL_STATE_FILENAME,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFileSync, withFileLockSync } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicWriteFileSync, withFileLockSync } from '@palimpsest/core/server';
 import type {
   BundleId,
   InstallUserSkillOptions,
   InstallUserSkillResult,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import {
   BUNDLE_SKILL_NAME,
   detectUserSkillHosts,
@@ -41,7 +41,7 @@ import {
   USER_GLOBAL_BUNDLE_IDS,
   writeBundleDecision,
   writeRootGitignoreForNewRepo,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import checkbox from '@inquirer/checkbox';
 import select from '@inquirer/select';
 import { Command, Option } from 'commander';
@@ -55,7 +55,7 @@ import {
 } from 'jsonc-parser';
 import { stringify as stringifyToml } from 'smol-toml';
 import { isCollection, parseDocument, stringify as stringifyYaml } from 'yaml';
-import { CONFIG_FILENAME, OK_DIR } from '../constants.ts';
+import { CONFIG_FILENAME, PS_DIR } from '../constants.ts';
 import { formatPreviewBlock, type PreviewResult } from '../content/preview.ts';
 import { buildPiExtensionSource, makePiManagedFileEntry } from '../integrations/pi-extension.ts';
 import { isHomeDir, resolveProjectRoot } from '../integrations/resolve-project-root.ts';
@@ -524,7 +524,7 @@ async function promptSharingMode(
   defaultMode: 'shared' | 'local-only',
 ): Promise<'shared' | 'local-only'> {
   return select<'shared' | 'local-only'>({
-    message: 'How do you want to handle OpenKnowledge config files (.ok/, .mcp.json)?',
+    message: 'How do you want to handle Palimpsest config files (.ps/, .mcp.json)?',
     default: defaultMode,
     choices: [
       {
@@ -601,13 +601,13 @@ export class ContentDirError extends Error {
 export class DevMcpScopeError extends Error {
   constructor(scope: McpScope) {
     super(
-      `A dev MCP entry is written to project config only, never to user-level editor config, so --scope ${scope} is not supported with --dev-mcp or OK_CHANNEL=dev. Re-run with --scope project or without --scope.`,
+      `A dev MCP entry is written to project config only, never to user-level editor config, so --scope ${scope} is not supported with --dev-mcp or PS_CHANNEL=dev. Re-run with --scope project or without --scope.`,
     );
     this.name = 'DevMcpScopeError';
   }
 }
 
-const DEV_CHANNEL_USER_MCP_REFUSAL = `A dev build registers OpenKnowledge MCP in project config only, never in user-level editor config. Run \`${CHECKOUT_CLI_COMMAND} init --dev-mcp\` in the project, or set OK_CHANNEL=stable.`;
+const DEV_CHANNEL_USER_MCP_REFUSAL = `A dev build registers Palimpsest MCP in project config only, never in user-level editor config. Run \`${CHECKOUT_CLI_COMMAND} init --dev-mcp\` in the project, or set PS_CHANNEL=stable.`;
 
 export { FilesystemRootProjectError, HomeProjectRootError };
 
@@ -1173,7 +1173,7 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
   if (isFilesystemRoot(projectRoot)) {
     throw new FilesystemRootProjectError(projectRoot);
   }
-  const willScaffold = !existsSync(join(projectRoot, OK_DIR));
+  const willScaffold = !existsSync(join(projectRoot, PS_DIR));
   const promotedFromDir = resolution.gitRootPromoted ? relative(projectRoot, cwd) : undefined;
   const contentDirScope =
     options.contentDir !== undefined
@@ -1184,9 +1184,9 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
   } else if (resolution.gitRootPromoted && willScaffold && contentDirScope === '.') {
     process.stderr.write(
       `${warning(`[ok] Content scope promoted to the git repo root: ${projectRoot}`)}\n` +
-        `      Ran in ${promotedFromDir}/, but .ok/ lives at the git root (one .ok/ per git repo),\n` +
+        `      Ran in ${promotedFromDir}/, but .ps/ lives at the git root (one .ps/ per git repo),\n` +
         `      so the whole repo is now the content scope. To narrow it, re-run with\n` +
-        `      \`${currentCliCommandName()} init --content-dir .\`, or set content.dir: ${promotedFromDir} in ${OK_DIR}/config.yml.\n`,
+        `      \`${currentCliCommandName()} init --content-dir .\`, or set content.dir: ${promotedFromDir} in ${PS_DIR}/config.yml.\n`,
     );
   }
 
@@ -1242,7 +1242,7 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
   try {
     if (removeProjectSkillGitignoreBlock(projectRoot) === 'removed') {
       console.warn(
-        '[ok] Removed the OpenKnowledge project-skill lines from .gitignore. The skill is ordinary project content now — commit it if your team wants it on clone.',
+        '[ok] Removed the Palimpsest project-skill lines from .gitignore. The skill is ordinary project content now — commit it if your team wants it on clone.',
       );
     }
   } catch (err) {
@@ -1331,7 +1331,7 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
     const reportHome = options.home ?? homedir();
     void reportSkillInstall(
       {
-        source: OPENKNOWLEDGE_SKILLS_REPO,
+        source: PALIMPSEST_SKILLS_REPO,
         skills: [BUNDLE_SKILL_NAME.project],
         agents: installedForEditors,
         scope: projectRoot,
@@ -1590,9 +1590,9 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
     lines.push(`Seeded .gitignore at ${cwd}/.gitignore (.DS_Store)`);
   }
 
-  const okDir = join(cwd, OK_DIR);
+  const psDir = join(cwd, PS_DIR);
   if (result.contentCreated.length > 0 || result.contentUpdated.length > 0) {
-    lines.push(accent(`Content scaffolded at ${okDir}/`));
+    lines.push(accent(`Content scaffolded at ${psDir}/`));
     if (result.contentCreated.length > 0) {
       lines.push(`  Created: ${result.contentCreated.join(', ')}`);
     }
@@ -1600,7 +1600,7 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
       lines.push(`  Updated: ${result.contentUpdated.join(', ')}`);
     }
   } else {
-    lines.push(accent(`Content already present at ${okDir}/`));
+    lines.push(accent(`Content already present at ${psDir}/`));
   }
   if (result.contentSkipped.length > 0) {
     lines.push(`  Skipped (already exist): ${result.contentSkipped.join(', ')}`);
@@ -1713,7 +1713,7 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
           lines.push(`  ${label}${pad}no known project skill surface; skipped`);
           break;
         case 'skipped-prerequisite':
-          lines.push(`  ${label}${pad}OpenKnowledge MCP is not configured; skipped`);
+          lines.push(`  ${label}${pad}Palimpsest MCP is not configured; skipped`);
           break;
         case 'failed':
           lines.push(`  ${label}${pad}${displayPath}  ${error('FAILED')}: ${skill.error}`);
@@ -1725,7 +1725,7 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
   if (anyFailed) {
     lines.push('');
     lines.push('For failed editors, add the MCP server entry or project skill manually. See:');
-    lines.push('  https://github.com/inkeep/open-knowledge#mcp-setup');
+    lines.push('  https://github.com/fractalmandala/palimpsest#mcp-setup');
   }
 
   if (result.legacyProjectConfigs.length > 0) {
@@ -1791,7 +1791,7 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
           break;
         case 'decision-read-failed':
           lines.push(
-            `  ${warning(`${name}  not installed — could not read whether it is turned off on this machine; rerun ${currentCliCommandName()} init once ${okUserHomeDisplayPath(SKILL_STATE_FILENAME)} is readable`)}`,
+            `  ${warning(`${name}  not installed — could not read whether it is turned off on this machine; rerun ${currentCliCommandName()} init once ${psUserHomeDisplayPath(SKILL_STATE_FILENAME)} is readable`)}`,
           );
           break;
         default: {
@@ -1817,13 +1817,13 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
     lines.push('');
     lines.push(
       warning(
-        `⚠ --content-dir ${result.contentDirRequested} ignored — ${OK_DIR}/config.yml already exists`,
+        `⚠ --content-dir ${result.contentDirRequested} ignored — ${PS_DIR}/config.yml already exists`,
       ),
     );
-    lines.push(`  Edit ${OK_DIR}/config.yml → content.dir directly to change the content scope.`);
+    lines.push(`  Edit ${PS_DIR}/config.yml → content.dir directly to change the content scope.`);
   } else if (result.contentDir !== undefined && result.contentDir !== '.') {
     lines.push('');
-    lines.push(`Content scope set to ${result.contentDir}/ (content.dir in ${OK_DIR}/config.yml).`);
+    lines.push(`Content scope set to ${result.contentDir}/ (content.dir in ${PS_DIR}/config.yml).`);
   } else if (
     result.gitRootPromoted &&
     result.contentDir === '.' &&
@@ -1832,7 +1832,7 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
     lines.push('');
     lines.push(warning('⚠ Content scope promoted to the git repo root'));
     lines.push(
-      `  .ok/ was initialized at ${cwd} because it contains a .git folder (one .ok/ per git repo),`,
+      `  .ps/ was initialized at ${cwd} because it contains a .git folder (one .ps/ per git repo),`,
     );
     lines.push(
       `  not the sub-folder you ran \`${currentCliCommandName()} init\` in${result.promotedFromDir ? ` (${result.promotedFromDir})` : ''}. The whole repo is now the content scope.`,
@@ -1841,7 +1841,7 @@ export function formatInitResult(result: InitCommandResult, cwd: string): string
       lines.push(
         `  To scope to just that sub-folder, re-run \`${currentCliCommandName()} init --content-dir .\` from there, or set`,
       );
-      lines.push(`  content.dir: ${result.promotedFromDir} in ${OK_DIR}/config.yml.`);
+      lines.push(`  content.dir: ${result.promotedFromDir} in ${PS_DIR}/config.yml.`);
     }
   }
 
@@ -1967,17 +1967,17 @@ function redirectStdoutConsoleToStderr(): () => void {
 export function initCommand(): Command {
   return new Command('init')
     .description(
-      `Scaffold ${OK_DIR}/ in the current directory and register the MCP server for your editor(s)`,
+      `Scaffold ${PS_DIR}/ in the current directory and register the MCP server for your editor(s)`,
     )
     .option('--mcp', 'Register the MCP server for selected editors (default: true)', true)
-    .option('--no-mcp', `Scaffold the ${OK_DIR}/ directory but do not touch MCP config`)
+    .option('--no-mcp', `Scaffold the ${PS_DIR}/ directory but do not touch MCP config`)
     .option(
       '--dev-mcp',
-      'Register a local dev MCP entry (node + packages/cli/dist/cli.mjs, debug logging) in project config only, as the dev channel unless OK_CHANNEL is set',
+      'Register a local dev MCP entry (node + packages/cli/dist/cli.mjs, debug logging) in project config only, as the dev channel unless PS_CHANNEL is set',
     )
     .option(
       '--content-dir <dir>',
-      `Limit content to <dir> instead of the whole project. <dir> is interpreted relative to your current directory (e.g. "." = the folder you run the command in), then saved to ${OK_DIR}/config.yml as content.dir.`,
+      `Limit content to <dir> instead of the whole project. <dir> is interpreted relative to your current directory (e.g. "." = the folder you run the command in), then saved to ${PS_DIR}/config.yml as content.dir.`,
     )
     .option('--json', 'Emit a structured JSON summary to stdout (diagnostics stay on stderr)')
     .option(
@@ -2053,7 +2053,7 @@ export function initCommand(): Command {
             }
             if (err instanceof ProjectGitInitError) {
               process.stderr.write(
-                "open-knowledge could not initialize a git repo for this project. Re-run, or run 'git init' yourself in the project folder.\n",
+                "palimpsest could not initialize a git repo for this project. Re-run, or run 'git init' yourself in the project folder.\n",
               );
               if (err.stderr) process.stderr.write(`${err.stderr.trim()}\n`);
               process.exitCode = 1;
@@ -2065,7 +2065,7 @@ export function initCommand(): Command {
           let effectiveContentDir = result.contentDir ?? '.';
           let contentFileCount: number | null = null;
           const { loadConfig } = await import('../config/loader.ts');
-          const { resolveContentDir } = await import('@inkeep/open-knowledge-server');
+          const { resolveContentDir } = await import('@palimpsest/server');
           let config: Awaited<ReturnType<typeof loadConfig>>['config'] | undefined;
           try {
             config = loadConfig(result.projectRoot).config;

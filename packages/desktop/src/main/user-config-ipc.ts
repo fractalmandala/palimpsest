@@ -1,11 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import type { ConfigPatch, LanguagePreference } from '@inkeep/open-knowledge-core';
+import type { ConfigPatch, LanguagePreference } from '@palimpsest/core';
 import type {
-  OkUserConfigPatchResult,
-  OkUserConfigSnapshot,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
-import { resolveConfigPath, writeConfigPatch } from '@inkeep/open-knowledge-core/server';
+  PsUserConfigPatchResult,
+  PsUserConfigSnapshot,
+} from '@palimpsest/core/desktop-bridge';
+import { resolveConfigPath, writeConfigPatch } from '@palimpsest/core/server';
 import type { UserConfigDispatchRequest } from '../shared/ipc-channels.ts';
 import { type SendableWebContents, sendToRenderer } from '../shared/ipc-send.ts';
 import { type DesktopLogger, getLogger } from './desktop-logger.ts';
@@ -13,9 +13,9 @@ import { type DesktopLogger, getLogger } from './desktop-logger.ts';
 const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
 export interface UserConfigStore {
-  read(): Promise<OkUserConfigSnapshot>;
-  patch(patch: ConfigPatch): Promise<OkUserConfigPatchResult>;
-  watch(onChange: (snapshot: OkUserConfigSnapshot) => void): () => void;
+  read(): Promise<PsUserConfigSnapshot>;
+  patch(patch: ConfigPatch): Promise<PsUserConfigPatchResult>;
+  watch(onChange: (snapshot: PsUserConfigSnapshot) => void): () => void;
 }
 
 async function readTextOrEmpty(path: string): Promise<string> {
@@ -188,7 +188,7 @@ export function createUserConfigDispatch(deps: {
   return async function dispatch(
     sender: UserConfigSubscriber,
     request: UserConfigDispatchRequest,
-  ): Promise<{ ok: true } | OkUserConfigSnapshot | OkUserConfigPatchResult> {
+  ): Promise<{ ok: true } | PsUserConfigSnapshot | PsUserConfigPatchResult> {
     switch (request?.kind) {
       case 'set-language-preference':
         deps.setLanguagePreference(request.preference);

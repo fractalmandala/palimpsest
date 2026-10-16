@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { ProviderPool } from './provider-pool';
 
 export const BranchSwitchedClearFailedLogSchema = z.object({
-  event: z.literal('ok-branch-switched-clear-failed'),
+  event: z.literal('ps-branch-switched-clear-failed'),
   branch: z.string(),
   docName: z.string(),
   reason: z.string(),
@@ -12,7 +12,7 @@ type BranchSwitchedClearFailedLog = z.infer<typeof BranchSwitchedClearFailedLogS
 export async function handleBranchSwitched(pool: ProviderPool, branch: string): Promise<void> {
   if (pool.isMismatchRecycleInFlight()) {
     console.warn(
-      JSON.stringify({ event: 'ok-branch-switched-deferred-to-mismatch-recycle', branch }),
+      JSON.stringify({ event: 'ps-branch-switched-deferred-to-mismatch-recycle', branch }),
     );
     return;
   }
@@ -24,7 +24,7 @@ export async function handleBranchSwitched(pool: ProviderPool, branch: string): 
     clears.push(
       entry.persistence.clearData().catch((err: unknown) => {
         const log: BranchSwitchedClearFailedLog = {
-          event: 'ok-branch-switched-clear-failed',
+          event: 'ps-branch-switched-clear-failed',
           docName,
           branch,
           reason: err instanceof Error ? err.message : String(err),

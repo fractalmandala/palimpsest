@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -37,16 +37,16 @@ const stubContentFilter = {
 
 let tmpDir = '';
 let projectDir = '';
-let okDir = '';
+let psDir = '';
 
 beforeEach(async () => {
   writeCalls.length = 0;
   renameCalls.length = 0;
   tmpDir = mkdtempSync(join(tmpdir(), 'sync-engine-state-persist-'));
   projectDir = join(tmpDir, 'project');
-  okDir = join(projectDir, '.ok', LOCAL_DIR);
+  psDir = join(projectDir, '.ps', LOCAL_DIR);
   mkdirSync(projectDir, { recursive: true });
-  mkdirSync(okDir, { recursive: true });
+  mkdirSync(psDir, { recursive: true });
   const git = simpleGit(projectDir);
   await git.init(['--initial-branch=main']);
   configureTestGitRepository(projectDir);
@@ -59,7 +59,7 @@ afterEach(() => {
 });
 
 function statePath(): string {
-  return join(okDir, 'sync-state.json');
+  return join(psDir, 'sync-state.json');
 }
 
 function makeEngine() {

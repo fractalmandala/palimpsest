@@ -58,7 +58,7 @@ const EMPTY_DOCNAME_CASES: Array<{ route: string; body: Record<string, unknown> 
 describe('empty docName rejection', () => {
   for (const { route, body } of EMPTY_DOCNAME_CASES) {
     test(`${route} rejects empty docName with 400 and creates no test-doc`, async () => {
-      const projectDir = mkdtempSync(join(tmpdir(), 'ok-empty-docname-'));
+      const projectDir = mkdtempSync(join(tmpdir(), 'ps-empty-docname-'));
       const contentDir = join(projectDir, 'content');
       mkdirSync(contentDir, { recursive: true });
 
@@ -88,7 +88,7 @@ describe('empty docName rejection', () => {
   for (const { route, body } of EMPTY_DOCNAME_CASES) {
     const { docName: _omitted, ...bodyWithoutDocName } = body;
     test(`${route} rejects an omitted docName field, not routed to test-doc`, async () => {
-      const projectDir = mkdtempSync(join(tmpdir(), 'ok-empty-docname-'));
+      const projectDir = mkdtempSync(join(tmpdir(), 'ps-empty-docname-'));
       const contentDir = join(projectDir, 'content');
       mkdirSync(contentDir, { recursive: true });
 

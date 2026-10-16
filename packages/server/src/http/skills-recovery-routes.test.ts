@@ -20,7 +20,7 @@ function buildGroup() {
     skillsHome: '/nonexistent-skills-home',
     projectSkillDirRel: (name) => `.agents/skills/${name}`,
     attributeOkArtifactWrite: () => {},
-    okArtifactKey: () => '',
+    psArtifactKey: () => '',
     commitOkArtifactWrite: () => Promise.resolve(),
     signalChannel: undefined,
     bumpSkillsCatalogGen: () => {},

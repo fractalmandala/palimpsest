@@ -42,7 +42,7 @@ afterEach(async () => {
 
 describe('restart-with-embed-doc: server restart preserves single PM image with resolved src', () => {
   test('![[photo.png]] doc survives restart-recycle with exactly one image and /assets/ src', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-embed-restart-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-embed-restart-'));
     writeRel(contentDir, 'photo.png', new Uint8Array([0x89, 0x50, 0x4e, 0x47]));
     writeRel(contentDir, 'test-doc.md', '# Heading\n\n![[photo.png]]\n');
 

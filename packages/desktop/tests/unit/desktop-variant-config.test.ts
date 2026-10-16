@@ -33,10 +33,10 @@ const desktopRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 const MAC_MANIFEST = `version: 1.0.0
 files:
-  - url: OpenKnowledge-arm64.zip
+  - url: Palimpsest-arm64.zip
     sha512: abc
     size: 1
-path: OpenKnowledge-arm64.zip
+path: Palimpsest-arm64.zip
 sha512: abc
 releaseDate: '2026-10-01T00:00:00.000Z'
 `;
@@ -62,7 +62,7 @@ async function runBuilder(
   variant = 'stable',
   writesMacManifest = true,
 ) {
-  const fixture = mkdtempSync(join(tmpdir(), 'ok-builder-wrapper-'));
+  const fixture = mkdtempSync(join(tmpdir(), 'ps-builder-wrapper-'));
   fixtures.push(fixture);
   for (const file of [
     'scripts/run-electron-builder.mjs',
@@ -82,7 +82,7 @@ async function runBuilder(
     mkdirSync(dirname(target), { recursive: true });
     copyFileSync(join(desktopRoot, file), target);
   }
-  for (const dep of ['yaml', '@inkeep/open-knowledge-core']) {
+  for (const dep of ['yaml', '@palimpsest/core']) {
     const target = join(fixture, 'node_modules', dep);
     mkdirSync(dirname(target), { recursive: true });
     symlinkSync(realpathSync(join(desktopRoot, 'node_modules', dep)), target, 'junction');
@@ -97,7 +97,7 @@ async function runBuilder(
     join(builderDir, 'cli.js'),
     `
     import { mkdirSync, writeFileSync } from 'node:fs';
-    if (process.argv.includes('--mac') && process.env.OK_BUILDER_TEST_MAC_MANIFEST === '1') {
+    if (process.argv.includes('--mac') && process.env.PS_BUILDER_TEST_MAC_MANIFEST === '1') {
       mkdirSync('dist-desktop', { recursive: true });
       writeFileSync('dist-desktop/latest-mac.yml', ${JSON.stringify(MAC_MANIFEST)});
     }
@@ -106,9 +106,9 @@ async function runBuilder(
       args: process.argv.slice(2),
       entry: process.argv[1],
       cwd: process.cwd(),
-      marker: process.env.OK_BUILDER_TEST_MARKER,
+      marker: process.env.PS_BUILDER_TEST_MARKER,
     }));
-    process.exit(Number(process.env.OK_BUILDER_TEST_STATUS));
+    process.exit(Number(process.env.PS_BUILDER_TEST_STATUS));
   `,
   );
   const preload = join(fixture, 'platform.mjs');
@@ -118,11 +118,11 @@ async function runBuilder(
     import childProcess from 'node:child_process';
     import { writeFileSync } from 'node:fs';
     import { syncBuiltinESMExports } from 'node:module';
-    Object.defineProperty(process, 'platform', { value: process.env.OK_BUILDER_TEST_PLATFORM });
+    Object.defineProperty(process, 'platform', { value: process.env.PS_BUILDER_TEST_PLATFORM });
     const spawnSync = childProcess.spawnSync;
     childProcess.spawnSync = (command, args, options) => {
       writeFileSync('spawn.json', JSON.stringify({ command, args, shell: options?.shell ?? false, platform: process.platform }));
-      return process.env.OK_BUILDER_TEST_SIGNAL === '1'
+      return process.env.PS_BUILDER_TEST_SIGNAL === '1'
         ? { status: null, signal: 'SIGTERM' }
         : spawnSync(command, args, options);
     };
@@ -139,12 +139,12 @@ async function runBuilder(
         PATH: '',
         CSC_LINK: '',
         CSC_KEYCHAIN: '',
-        OK_DESKTOP_VARIANT: variant,
-        OK_BUILDER_TEST_MARKER: 'forwarded',
-        OK_BUILDER_TEST_STATUS: String(status),
-        OK_BUILDER_TEST_SIGNAL: signal ? '1' : '0',
-        OK_BUILDER_TEST_PLATFORM: platform,
-        OK_BUILDER_TEST_MAC_MANIFEST: writesMacManifest ? '1' : '0',
+        PS_DESKTOP_VARIANT: variant,
+        PS_BUILDER_TEST_MARKER: 'forwarded',
+        PS_BUILDER_TEST_STATUS: String(status),
+        PS_BUILDER_TEST_SIGNAL: signal ? '1' : '0',
+        PS_BUILDER_TEST_PLATFORM: platform,
+        PS_BUILDER_TEST_MAC_MANIFEST: writesMacManifest ? '1' : '0',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     },
@@ -168,18 +168,18 @@ async function runBuilder(
 }
 
 const configSource = `
-appId: com.inkeep.open-knowledge
-productName: OpenKnowledge
+appId: com.fractalmandala.palimpsest
+productName: Palimpsest
 protocols:
-  - name: OpenKnowledge URL
-    schemes: [openknowledge]
+  - name: Palimpsest URL
+    schemes: [palimpsest]
 publish:
   - provider: github
     owner: inkeep
-    repo: open-knowledge
+    repo: palimpsest
     channel: latest
 mac:
-  icon: build/okglass.icon
+  icon: build/psglass.icon
   entitlements: build/entitlements.mac.plist
   provisioningProfile: build/embedded.provisionprofile
   extraResources: []
@@ -188,16 +188,16 @@ mac:
 win:
   icon: build/icon.png
   extraResources:
-    - from: resources/cli/bin/ok.cmd
-      to: cli/bin/ok.cmd
-    - from: resources/cli/bin/ok.ps1
-      to: cli/bin/ok.ps1
+    - from: resources/cli/bin/ps.cmd
+      to: cli/bin/ps.cmd
+    - from: resources/cli/bin/ps.ps1
+      to: cli/bin/ps.ps1
 dmg:
   artifactName: \${productName}-\${arch}.\${ext}
 linux:
   icon: build/icon.png
   artifactName: \${productName}-\${arch}.\${ext}
-  executableName: openknowledge
+  executableName: palimpsest
   extraResources: []
 nsis:
   artifactName: \${productName}-Setup-\${arch}.\${ext}
@@ -245,7 +245,7 @@ describe('desktop variant builder config', () => {
       ...stable,
       extraMetadata: {
         ...stable.extraMetadata,
-        okDesktopVariant: 'legacy-beta',
+        psDesktopVariant: 'legacy-beta',
         version: '0.78.0-beta.6',
       },
       publish: stable.publish.map((entry) => ({ ...entry, channel: 'beta' })),
@@ -260,45 +260,45 @@ describe('desktop variant builder config', () => {
       '0.77.7',
     );
     expect(config).toMatchObject({
-      appId: 'com.inkeep.open-knowledge',
-      productName: 'OpenKnowledge',
-      protocols: [{ schemes: ['openknowledge'] }],
+      appId: 'com.fractalmandala.palimpsest',
+      productName: 'Palimpsest',
+      protocols: [{ schemes: ['palimpsest'] }],
       publish: [{ channel: 'latest' }],
       mac: {
-        icon: 'build/okglass.icon',
-        artifactName: macArtifact('OpenKnowledge'),
+        icon: 'build/psglass.icon',
+        artifactName: macArtifact('Palimpsest'),
         provisioningProfile: 'build/embedded.provisionprofile',
       },
-      dmg: { artifactName: platformArtifact('OpenKnowledge') },
-      nsis: { artifactName: nsisArtifact('OpenKnowledge') },
+      dmg: { artifactName: platformArtifact('Palimpsest') },
+      nsis: { artifactName: nsisArtifact('Palimpsest') },
       linux: {
-        artifactName: platformArtifact('OpenKnowledge'),
-        executableName: 'openknowledge',
+        artifactName: platformArtifact('Palimpsest'),
+        executableName: 'palimpsest',
       },
       deb: {
         afterInstall: paths.postInstallPath,
         afterRemove: paths.postRemovePath,
-        packageName: 'openknowledge',
+        packageName: 'palimpsest',
         fpm: [],
       },
       rpm: {
         afterInstall: paths.postInstallPath,
         afterRemove: paths.postRemovePath,
-        packageName: 'openknowledge',
+        packageName: 'palimpsest',
         depends: ['libsecret'],
         fpm: [
           '--replaces',
-          'OpenKnowledge',
+          'Palimpsest',
           '--provides',
-          'OpenKnowledge',
+          'Palimpsest',
           '--rpm-posttrans',
           paths.postTransactionPath,
         ],
       },
     });
     expect(config.win.extraResources).toEqual([
-      { from: 'resources/cli/bin/ok.cmd', to: 'cli/bin/ok.cmd' },
-      { from: 'resources/cli/bin/ok.ps1', to: 'cli/bin/ok.ps1' },
+      { from: 'resources/cli/bin/ps.cmd', to: 'cli/bin/ps.cmd' },
+      { from: 'resources/cli/bin/ps.ps1', to: 'cli/bin/ps.ps1' },
     ]);
   });
 
@@ -310,49 +310,49 @@ describe('desktop variant builder config', () => {
       '0.77.7',
     );
     expect(beta).toMatchObject({
-      appId: 'com.inkeep.open-knowledge.beta',
-      productName: 'OpenKnowledge Beta',
-      protocols: [{ schemes: ['openknowledge-beta'] }],
+      appId: 'com.fractalmandala.palimpsest.beta',
+      productName: 'Palimpsest Beta',
+      protocols: [{ schemes: ['palimpsest-beta'] }],
       publish: [{ channel: 'beta-product' }],
       extraMetadata: {
-        name: 'openknowledge-beta-desktop',
-        productName: 'OpenKnowledge Beta',
+        name: 'palimpsest-beta-desktop',
+        productName: 'Palimpsest Beta',
         version: '0.77.7-beta.0',
       },
       mac: {
         icon: 'build/icon-beta.png',
-        artifactName: macArtifact('OpenKnowledge-Beta'),
+        artifactName: macArtifact('Palimpsest-Beta'),
         entitlements: paths.localEntitlementsPath,
       },
-      dmg: { artifactName: platformArtifact('OpenKnowledge-Beta') },
-      nsis: { artifactName: nsisArtifact('OpenKnowledge-Beta') },
+      dmg: { artifactName: platformArtifact('Palimpsest-Beta') },
+      nsis: { artifactName: nsisArtifact('Palimpsest-Beta') },
       linux: {
-        artifactName: platformArtifact('OpenKnowledge-Beta'),
-        executableName: 'openknowledge-beta',
+        artifactName: platformArtifact('Palimpsest-Beta'),
+        executableName: 'palimpsest-beta',
       },
       deb: {
         afterInstall: paths.postInstallPath,
         afterRemove: paths.postRemovePath,
-        packageName: 'openknowledge-beta',
+        packageName: 'palimpsest-beta',
         fpm: [
           '--replaces',
-          'openknowledge-beta-desktop',
+          'palimpsest-beta-desktop',
           '--conflicts',
-          'openknowledge-beta-desktop',
+          'palimpsest-beta-desktop',
           '--provides',
-          'openknowledge-beta-desktop',
+          'palimpsest-beta-desktop',
         ],
       },
       rpm: {
         afterInstall: paths.postInstallPath,
         afterRemove: paths.postRemovePath,
-        packageName: 'openknowledge-beta',
+        packageName: 'palimpsest-beta',
         depends: ['libsecret'],
         fpm: [
           '--replaces',
-          'openknowledge-beta-desktop',
+          'palimpsest-beta-desktop',
           '--provides',
-          'openknowledge-beta-desktop',
+          'palimpsest-beta-desktop',
           '--rpm-posttrans',
           paths.postTransactionPath,
         ],
@@ -360,10 +360,10 @@ describe('desktop variant builder config', () => {
     });
     expect(beta.mac.provisioningProfile).toBeUndefined();
     expect(beta.win.extraResources.map((entry) => entry.to)).toEqual([
-      'cli/bin/ok-beta.cmd',
-      'cli/bin/ok-beta.ps1',
-      'cli/bin/open-knowledge-beta.cmd',
-      'cli/bin/open-knowledge-beta.ps1',
+      'cli/bin/ps-beta.cmd',
+      'cli/bin/ps-beta.ps1',
+      'cli/bin/palimpsest-beta.cmd',
+      'cli/bin/palimpsest-beta.ps1',
     ]);
   });
 
@@ -406,33 +406,33 @@ describe('desktop variant builder config', () => {
   test('names platform integration shims per variant', () => {
     expect(
       createVariantNsisInclude(
-        'openknowledge:// Software\\Classes\\openknowledge URL:OpenKnowledge',
+        'palimpsest:// Software\\Classes\\palimpsest URL:Palimpsest',
         'beta',
       ),
-    ).toBe('openknowledge-beta:// Software\\Classes\\openknowledge-beta URL:OpenKnowledge Beta');
+    ).toBe('palimpsest-beta:// Software\\Classes\\palimpsest-beta URL:Palimpsest Beta');
     expect(
       createVariantPostInstall(
-        'ln -sf "$OK_WRAPPER" /usr/bin/ok\nln -sf "$OK_WRAPPER" /usr/bin/open-knowledge',
+        'ln -sf "$PS_WRAPPER" /usr/bin/ok\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest',
         'beta',
       ),
     ).toContain(
-      'ln -sf "$OK_WRAPPER" /usr/bin/ok-beta\nln -sf "$OK_WRAPPER" /usr/bin/open-knowledge-beta',
+      'ln -sf "$PS_WRAPPER" /usr/bin/ps-beta\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest-beta',
     );
     expect(
-      createVariantPostRemove('for link in /usr/bin/ok /usr/bin/open-knowledge; do', 'beta'),
-    ).toContain('/usr/bin/ok-beta /usr/bin/open-knowledge-beta');
+      createVariantPostRemove('for link in /usr/bin/ok /usr/bin/palimpsest; do', 'beta'),
+    ).toContain('/usr/bin/ps-beta /usr/bin/palimpsest-beta');
   });
 
   test.each([
     {
       variant: 'stable',
-      links: ['/usr/bin/ok', '/usr/bin/open-knowledge'],
-      exe: "'/opt/OpenKnowledge/openknowledge'",
+      links: ['/usr/bin/ok', '/usr/bin/palimpsest'],
+      exe: "'/opt/Palimpsest/palimpsest'",
     },
     {
       variant: 'beta',
-      links: ['/usr/bin/ok-beta', '/usr/bin/open-knowledge-beta'],
-      exe: "'/opt/OpenKnowledge Beta/openknowledge-beta'",
+      links: ['/usr/bin/ps-beta', '/usr/bin/palimpsest-beta'],
+      exe: "'/opt/Palimpsest Beta/palimpsest-beta'",
     },
   ] as const)(
     'rebuilds the $variant postinst as an rpm post-transaction script with every macro expanded',
@@ -441,14 +441,14 @@ describe('desktop variant builder config', () => {
       const script = createVariantPostTransaction(postInstall, variant);
       expect(script).not.toMatch(/\$\{/);
       expect(script).toContain(exe);
-      for (const link of links) expect(script).toContain(`ln -sf "$OK_WRAPPER" ${link}`);
+      for (const link of links) expect(script).toContain(`ln -sf "$PS_WRAPPER" ${link}`);
     },
   );
 
   test('refuses a post-transaction template with a macro it cannot expand', () => {
     expect(() =>
       createVariantPostTransaction(
-        `ln -sf "$OK_WRAPPER" /usr/bin/ok\nln -sf "$OK_WRAPPER" /usr/bin/open-knowledge\n${token('version')}`,
+        `ln -sf "$PS_WRAPPER" /usr/bin/ok\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest\n${token('version')}`,
         'beta',
       ),
     ).toThrow(/\$\{version\}/);
@@ -465,11 +465,11 @@ describe('desktop variant builder config', () => {
   test('names the detached helper bundle with the variant identity', () => {
     expect(
       createVariantHelperInfo(
-        'com.inkeep.open-knowledge.server OpenKnowledge Server OpenKnowledge Helper',
+        'com.fractalmandala.palimpsest.server Palimpsest Server Palimpsest Helper',
         'beta',
       ),
     ).toBe(
-      'com.inkeep.open-knowledge.beta.server OpenKnowledge Beta Server OpenKnowledge Beta Helper',
+      'com.fractalmandala.palimpsest.beta.server Palimpsest Beta Server Palimpsest Beta Helper',
     );
   });
 
@@ -491,13 +491,13 @@ describe('desktop variant builder config', () => {
   });
 
   test('fails closed when a packaging template loses a required anchor', () => {
-    expect(() => createVariantNsisInclude('openknowledge://', 'beta')).toThrow(/registry key/);
-    expect(() => createVariantPostInstall('ln -sf "$OK_WRAPPER" /usr/bin/ok', 'beta')).toThrow(
-      /open-knowledge install command/,
+    expect(() => createVariantNsisInclude('palimpsest://', 'beta')).toThrow(/registry key/);
+    expect(() => createVariantPostInstall('ln -sf "$PS_WRAPPER" /usr/bin/ok', 'beta')).toThrow(
+      /palimpsest install command/,
     );
     expect(() => createVariantPostRemove('missing', 'beta')).toThrow(/removal loop/);
     expect(() => createLocalEntitlements('<dict/>')).toThrow(/associated-domains/);
-    expect(() => createVariantHelperInfo('OpenKnowledge Server', 'beta')).toThrow(
+    expect(() => createVariantHelperInfo('Palimpsest Server', 'beta')).toThrow(
       /bundle identifier/,
     );
   });
@@ -579,7 +579,7 @@ describe('electron-builder wrapper execution', () => {
     );
     expect(result.status).toBe(1);
     expect(result.stderr).toContain('wrote no macOS update manifest');
-    expect(result.stderr).toContain('[OK_PACKAGING_UPDATE_MANIFEST_FAILURE]');
+    expect(result.stderr).toContain('[PS_PACKAGING_UPDATE_MANIFEST_FAILURE]');
   });
 
   test('an unpacked --mac --dir build leaves any manifest unstamped', async () => {

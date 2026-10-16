@@ -76,7 +76,7 @@ export function WorkingAvatar({ status, className, testId }: WorkingAvatarProps)
   }, [t]);
 
   return (
-    <div className={cn('ok-working-enter flex items-center gap-2', className)} data-testid={testId}>
+    <div className={cn('ps-working-enter flex items-center gap-2', className)} data-testid={testId}>
       {}
       <span aria-live="polite" className="sr-only" role="status">
         {announced}
@@ -89,9 +89,9 @@ export function WorkingAvatar({ status, className, testId }: WorkingAvatarProps)
           viewBox="0 0 30 30"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
-          className="ok-working-pop ok-working-squint block shrink-0 overflow-visible"
+          className="ps-working-pop ps-working-squint block shrink-0 overflow-visible"
         >
-          <g className="ok-working-group">
+          <g className="ps-working-group">
             <path
               ref={skinRef}
               d={FALLBACK_SKIN_PATH}
@@ -103,7 +103,7 @@ export function WorkingAvatar({ status, className, testId }: WorkingAvatarProps)
             />
             <g ref={eyesRef}>
               <ellipse
-                className="ok-working-eye"
+                className="ps-working-eye"
                 cx={EYE.leftCx}
                 cy={EYE.cy}
                 rx={EYE.rx}
@@ -111,7 +111,7 @@ export function WorkingAvatar({ status, className, testId }: WorkingAvatarProps)
                 fill="currentColor"
               />
               <ellipse
-                className="ok-working-eye"
+                className="ps-working-eye"
                 cx={EYE.rightCx}
                 cy={EYE.cy}
                 rx={EYE.rx}
@@ -123,7 +123,7 @@ export function WorkingAvatar({ status, className, testId }: WorkingAvatarProps)
         </svg>
       </span>
       {}
-      <span key={status} className="ok-working-status text-sm">
+      <span key={status} className="ps-working-status text-sm">
         <span className="shimmer">{status}</span>
       </span>
     </div>

@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSyn
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { createInspectableServer, createTestClient, pollUntil } from './test-harness';
@@ -36,21 +36,21 @@ describe('branch switch with a document that became a link into private state', 
   test.runIf(process.platform !== 'win32')(
     'does not reseed the open document from the private file it now points at',
     async () => {
-      const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-branch-switch-private-')));
+      const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-branch-switch-private-')));
       cleanups.push(() => rmSync(contentDir, { recursive: true, force: true }));
       await ensureProjectGit(contentDir);
       configureTestGitRepository(contentDir);
       git(contentDir, 'config user.name test');
       git(contentDir, 'config user.email test@test.local');
-      mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
-      writeFileSync(join(contentDir, '.ok', 'local', 'secret.md'), '# Secret\n\nPRIVATE-BYTES\n');
+      mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
+      writeFileSync(join(contentDir, '.ps', 'local', 'secret.md'), '# Secret\n\nPRIVATE-BYTES\n');
       writeFileSync(join(contentDir, 'leak.md'), '# Leak\n\nOn main.\n', 'utf-8');
       writeFileSync(join(contentDir, 'other.md'), '# Other\n\nOn main.\n', 'utf-8');
       git(contentDir, 'add leak.md other.md');
       git(contentDir, 'commit -m main');
       git(contentDir, 'checkout -b feature');
       git(contentDir, 'rm -q leak.md');
-      symlinkSync('.ok/local/secret.md', join(contentDir, 'leak.md'));
+      symlinkSync('.ps/local/secret.md', join(contentDir, 'leak.md'));
       writeFileSync(join(contentDir, 'other.md'), '# Other\n\nOn feature.\n', 'utf-8');
       git(contentDir, 'add leak.md other.md');
       git(contentDir, 'commit -m feature');

@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { OkCliCommand } from '@inkeep/open-knowledge-core';
+import type { PsCliCommand } from '@palimpsest/core';
 import {
   type AuthReposResponse,
   type AuthStatusResponse,
@@ -10,7 +10,7 @@ import {
   runCloneSubprocess,
   runDeviceFlowSubprocess,
   validateCloneInputs,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { SendableWebContents } from '../../shared/ipc-send.ts';
 import { sendToRenderer } from '../../shared/ipc-send.ts';
 
@@ -49,7 +49,7 @@ interface LocalOpFailure {
 }
 
 export interface LocalOpDeps {
-  resolveOkCli: () => OkCliCommand;
+  resolveOkCli: () => PsCliCommand;
   logFailure: (failure: LocalOpFailure) => void;
   state: LocalOpHandlerState;
 }
@@ -68,7 +68,7 @@ export function handleAuthStart(
     deps.state.authInFlight = null;
     console.warn(
       JSON.stringify({
-        event: 'ok-local-op:idempotent-start-replaced-stale-slot',
+        event: 'ps-local-op:idempotent-start-replaced-stale-slot',
         channel: 'auth',
         staleStreamId: stale.streamId,
         newStreamId: streamId,
@@ -134,7 +134,7 @@ export function handleCloneStart(
     deps.state.cloneInFlight = null;
     console.warn(
       JSON.stringify({
-        event: 'ok-local-op:idempotent-start-replaced-stale-slot',
+        event: 'ps-local-op:idempotent-start-replaced-stale-slot',
         channel: 'clone',
         staleStreamId: stale.streamId,
         newStreamId: streamId,

@@ -1,4 +1,4 @@
-import type { SkillScope } from '@inkeep/open-knowledge-core';
+import type { SkillScope } from '@palimpsest/core';
 import type { FileTreeSortEntry } from '@pierre/trees';
 import { describe, expect, test } from 'vitest';
 import { createSkillSortComparator, SKILL_MD_PATH } from '@/lib/skill-sort';
@@ -43,8 +43,8 @@ describe('createSkillSortComparator', () => {
       'Global/build/',
       `Global/build/${SKILL_MD_PATH}`,
       'Project/',
-      'Project/open-knowledge/',
-      `Project/open-knowledge/${SKILL_MD_PATH}`,
+      'Project/palimpsest/',
+      `Project/palimpsest/${SKILL_MD_PATH}`,
     ];
     const sorted = sortPaths(paths);
     const lastProject = sorted.reduce((acc, p, i) => (p.startsWith('Project/') ? i : acc), -1);

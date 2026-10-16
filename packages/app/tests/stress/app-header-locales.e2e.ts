@@ -16,7 +16,7 @@ import {
   windowControlsOf,
 } from './_helpers';
 
-const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ok-header-locale-home-'));
+const ISOLATED_HOME = mkdtempSync(join(tmpdir(), 'ps-header-locale-home-'));
 
 test.use({ workerServerEnv: { HOME: ISOLATED_HOME }, locale: 'pt-BR' });
 

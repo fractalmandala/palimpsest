@@ -111,12 +111,12 @@ export async function runManualInstallFallbackDialog(
     'To install it manually, run this in a terminal:\n\n' +
     `${ctx.command}\n\n` +
     'The downloaded update stays on disk until it is installed or replaced by a ' +
-    'newer version. Relaunch restarts OpenKnowledge whether or not you have ' +
+    'newer version. Relaunch restarts Palimpsest whether or not you have ' +
     'installed it yet.';
   const request: ManualInstallDialogRequest = {
-    message: `OpenKnowledge ${ctx.version} couldn't install automatically`,
+    message: `Palimpsest ${ctx.version} couldn't install automatically`,
     detail,
-    buttons: ['Copy Command', 'Relaunch OpenKnowledge', 'Not Now'],
+    buttons: ['Copy Command', 'Relaunch Palimpsest', 'Not Now'],
     defaultId: 0,
     cancelId: 2,
   };

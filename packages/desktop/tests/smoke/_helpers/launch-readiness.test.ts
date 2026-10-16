@@ -94,7 +94,7 @@ function markLine(phase: WaterfallPhase, elapsedMs: number, time: string): strin
 }
 
 function seedHome(lines: string[] = []): string {
-  const home = makeTempDir('ok-readiness-');
+  const home = makeTempDir('ps-readiness-');
   if (lines.length > 0) {
     const dir = bootLogDirFor(home);
     mkdirSync(dir, { recursive: true });
@@ -105,7 +105,7 @@ function seedHome(lines: string[] = []): string {
 
 function snapshot(over: Partial<BootLogSnapshot> = {}): BootLogSnapshot {
   return {
-    dir: '/tmp/x/.ok/logs',
+    dir: '/tmp/x/.ps/logs',
     exists: true,
     fileCount: 1,
     unreadableReason: undefined,
@@ -271,7 +271,7 @@ describe('waitForReadySignal — progress gating', () => {
         readLog: () => snapshot({ exists: false }),
       }),
     ).rejects.toThrow(
-      'Boot log: /tmp/x/.ok/logs (NOT FOUND, the cause is not determined here (it may have been removed, never written, or written elsewhere))',
+      'Boot log: /tmp/x/.ps/logs (NOT FOUND, the cause is not determined here (it may have been removed, never written, or written elsewhere))',
     );
   });
 
@@ -491,7 +491,7 @@ describe('waitForWindowByMode', () => {
   });
 
   it('handles a page rejection that arrives after the cap', () => {
-    const scriptDir = makeTempDir('ok-window-readiness-strict-');
+    const scriptDir = makeTempDir('ps-window-readiness-strict-');
     const script = join(scriptDir, 'late-rejection.mjs');
     const home = seedHome();
     try {
@@ -2015,7 +2015,7 @@ describe('boot-log evidence survives a spec that removes its own launch home', (
       waitForWindowByMode(app, 'editor', { capMs: 300, stallMs: 600_000, pollMs: 20 }),
     ).rejects.toThrow(/did not arrive/);
     expect(tryFirstWaitFor(app)).toMatchObject({ gaveUp: true, reason: 'cap' });
-    rmSync(join(home, '.ok'), { recursive: true, force: true });
+    rmSync(join(home, '.ps'), { recursive: true, force: true });
     expect(readBootLogLines(home)).toEqual([]);
     expect(tryBootLogFor(app)).toEqual(narration);
   });
@@ -2047,7 +2047,7 @@ describe('boot-log evidence survives a spec that removes its own launch home', (
       probeAnswered: false,
       wait: { gaveUp: true, reason: 'cap' },
     });
-    rmSync(join(home, '.ok'), { recursive: true, force: true });
+    rmSync(join(home, '.ps'), { recursive: true, force: true });
     expect(tryBootLogFor(app)).toEqual(narration);
   });
 
@@ -2177,7 +2177,7 @@ describe('the teardown line reports the most complete narration the run produced
     await expect(
       waitForWindowByMode(app, 'editor', { capMs: 300, stallMs: 600_000, pollMs: 20 }),
     ).rejects.toThrow(/did not arrive/);
-    rmSync(join(home, '.ok'), { recursive: true, force: true });
+    rmSync(join(home, '.ps'), { recursive: true, force: true });
     const firstWait = tryFirstWaitFor(app);
     const gap = bootGapLineFor({
       slot: 0,
@@ -2686,7 +2686,7 @@ describe('the cap bounds the wait itself, not only the gaps between polls', () =
   });
 
   it('swallows a probe rejection that arrives after the cap, so no worker dies of it', () => {
-    const script = join(makeTempDir('ok-readiness-strict-'), 'late-rejection.mjs');
+    const script = join(makeTempDir('ps-readiness-strict-'), 'late-rejection.mjs');
     writeFileSync(
       script,
       [

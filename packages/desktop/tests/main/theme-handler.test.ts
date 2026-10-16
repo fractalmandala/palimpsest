@@ -15,7 +15,7 @@ import {
   isOkThemeSource,
   type ThemeSourceRecord,
 } from '../../src/main/theme-handler.ts';
-import type { OkThemeSource } from '../../src/shared/bridge-contract.ts';
+import type { PsThemeSource } from '../../src/shared/bridge-contract.ts';
 import {
   APPLIED_RECORD,
   REJECTED_RECORD_WITH_UNSERIALIZABLE_PAYLOAD,
@@ -26,8 +26,8 @@ interface TraceEvent {
   args?: unknown;
 }
 
-function makeDeps(initialThemeSource: OkThemeSource = 'system') {
-  let current: OkThemeSource = initialThemeSource;
+function makeDeps(initialThemeSource: PsThemeSource = 'system') {
+  let current: PsThemeSource = initialThemeSource;
   const trace: TraceEvent[] = [];
   return {
     trace,
@@ -39,7 +39,7 @@ function makeDeps(initialThemeSource: OkThemeSource = 'system') {
         trace.push({ step: 'getThemeSource' });
         return current;
       },
-      setThemeSource: (source: OkThemeSource) => {
+      setThemeSource: (source: PsThemeSource) => {
         trace.push({ step: 'setThemeSource', args: { source } });
         current = source;
       },
@@ -72,7 +72,7 @@ describe('applyThemeSource happy path', () => {
     ]);
   });
 
-  test.each([['system' as OkThemeSource], ['light' as OkThemeSource], ['dark' as OkThemeSource]])(
+  test.each([['system' as PsThemeSource], ['light' as PsThemeSource], ['dark' as PsThemeSource]])(
     'accepts each user-intent value: %s',
     (source) => {
       const { deps, getCurrent } = makeDeps('system');
@@ -86,7 +86,7 @@ describe('applyThemeSource happy path', () => {
 describe('applyThemeSource defensive rejection', () => {
   test('does not call setThemeSource for an out-of-range value', () => {
     const { deps, trace, getCurrent } = makeDeps('system');
-    const result = applyThemeSource(deps, 'auto' as unknown as OkThemeSource, 1);
+    const result = applyThemeSource(deps, 'auto' as unknown as PsThemeSource, 1);
     expect(result).toEqual({ ok: true });
     expect(getCurrent()).toBe('system');
     expect(trace.find((t) => t.step === 'setThemeSource')).toBeUndefined();
@@ -94,7 +94,7 @@ describe('applyThemeSource defensive rejection', () => {
 
   test('emits a structured record with reason=invalid-source on rejection', () => {
     const { deps, emitted } = makeDeps('system');
-    applyThemeSource(deps, 'rainbow' as unknown as OkThemeSource, 4);
+    applyThemeSource(deps, 'rainbow' as unknown as PsThemeSource, 4);
     expect(emitted()).toEqual([
       {
         event: 'theme-source-set-rejected',
@@ -258,7 +258,7 @@ describe('emitThemeSourceRecord dual sink', () => {
 
 describe('isOkThemeSource type predicate', () => {
   test.each([['system'], ['light'], ['dark']])(
-    'accepts canonical OkThemeSource value: %s',
+    'accepts canonical PsThemeSource value: %s',
     (value) => {
       expect(isOkThemeSource(value)).toBe(true);
     },

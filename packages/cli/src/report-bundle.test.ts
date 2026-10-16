@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { SERVER_CRASH_LOG } from '@inkeep/open-knowledge-core';
+import { SERVER_CRASH_LOG } from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import type { OsTerminationEvidenceDeps } from './diagnose/os-termination-evidence.ts';
 import { collectReportBundle as collectReportBundleFromIndex } from './index.ts';
@@ -20,7 +20,7 @@ vi.mock('./diagnose/os-termination-evidence.ts', async (importOriginal) => {
 
 const tmpDirs: string[] = [];
 
-function makeTmpDir(prefix = 'ok-report-test-'): string {
+function makeTmpDir(prefix = 'ps-report-test-'): string {
   const dir = mkdtempSync(resolve(tmpdir(), prefix));
   tmpDirs.push(dir);
   return dir;
@@ -28,7 +28,7 @@ function makeTmpDir(prefix = 'ok-report-test-'): string {
 
 const realHome = process.env.HOME;
 beforeAll(() => {
-  process.env.HOME = mkdtempSync(resolve(tmpdir(), 'ok-report-test-home-'));
+  process.env.HOME = mkdtempSync(resolve(tmpdir(), 'ps-report-test-home-'));
 });
 afterAll(() => {
   if (realHome === undefined) delete process.env.HOME;
@@ -58,7 +58,7 @@ function readZipEntry(zipPath: string, entry: string): string {
 }
 
 function readZipEntryBuffer(zipPath: string, entry: string): Buffer {
-  const extractDir = makeTmpDir('ok-report-extract-');
+  const extractDir = makeTmpDir('ps-report-extract-');
   execSync(
     `unzip -q -o ${JSON.stringify(zipPath)} ${JSON.stringify(entry)} -d ${JSON.stringify(extractDir)}`,
   );
@@ -69,23 +69,23 @@ const SECRET = `ghp_${'a'.repeat(40)}`;
 
 function makeStandardProjectDir(slug = 'report-proj'): string {
   const projectDir = makeTmpDir();
-  writeAt(projectDir, '.ok/config.yml', `name: ${slug}\n`);
-  writeAt(projectDir, '.ok/local/server.lock', '{"pid":1234}\n');
-  writeAt(projectDir, '.ok/local/last-spawn-error.log', 'spawn failed\n');
-  writeAt(projectDir, '.ok/local/logs/server-current.jsonl', '{"level":30}\n');
+  writeAt(projectDir, '.ps/config.yml', `name: ${slug}\n`);
+  writeAt(projectDir, '.ps/local/server.lock', '{"pid":1234}\n');
+  writeAt(projectDir, '.ps/local/last-spawn-error.log', 'spawn failed\n');
+  writeAt(projectDir, '.ps/local/logs/server-current.jsonl', '{"level":30}\n');
   return projectDir;
 }
 
 function makeFullProjectDir(slug = 'full-proj'): string {
   const projectDir = makeTmpDir();
-  writeAt(projectDir, '.ok/config.yml', `name: ${slug}\n`);
+  writeAt(projectDir, '.ps/config.yml', `name: ${slug}\n`);
   const span = JSON.stringify({
     name: 'doc.write',
     attributes: [{ key: 'doc.name', value: { stringValue: 'secret-notes/plan' } }],
   });
   const leak = JSON.stringify({ msg: `token ${SECRET}` });
-  writeAt(projectDir, '.ok/local/telemetry/spans-current.jsonl', `${span}\n${leak}\n`);
-  writeAt(projectDir, '.ok/local/logs/server-current.jsonl', '{"level":30,"msg":"boot"}\n');
+  writeAt(projectDir, '.ps/local/telemetry/spans-current.jsonl', `${span}\n${leak}\n`);
+  writeAt(projectDir, '.ps/local/logs/server-current.jsonl', '{"level":30,"msg":"boot"}\n');
   return projectDir;
 }
 
@@ -103,7 +103,7 @@ const PLANTED_NOTE = `it died right after I pasted ${STANDARD_PLANTS['note.txt']
 function makePlantedStandardProject(): { projectDir: string; userLogsDir: string } {
   const projectDir = makeTmpDir();
   const userLogsDir = makeTmpDir();
-  writeAt(projectDir, '.ok/config.yml', 'name: planted-proj\n');
+  writeAt(projectDir, '.ps/config.yml', 'name: planted-proj\n');
   writeAt(
     userLogsDir,
     'desktop.log',
@@ -111,22 +111,22 @@ function makePlantedStandardProject(): { projectDir: string; userLogsDir: string
   );
   writeAt(
     projectDir,
-    '.ok/local/logs/server-current.jsonl',
+    '.ps/local/logs/server-current.jsonl',
     `{"level":50,"source":"renderer-console","msg":"push failed ${STANDARD_PLANTS['local-logs/server-current.jsonl']}"}\n`,
   );
   writeAt(
     projectDir,
-    '.ok/local/last-spawn-error.log',
+    '.ps/local/last-spawn-error.log',
     `spawn failed: Authorization: Bearer ${STANDARD_PLANTS['lockdir/last-spawn-error.log']}\n`,
   );
   writeAt(
     projectDir,
-    '.ok/local/server.lock',
+    '.ps/local/server.lock',
     `{"pid":1234,"remote":"https://ci:${STANDARD_PLANTS['lockdir/server.lock']}@github.com/o/r.git"}\n`,
   );
   writeAt(
     projectDir,
-    `.ok/local/${SERVER_CRASH_LOG}`,
+    `.ps/local/${SERVER_CRASH_LOG}`,
     `{"reason":"boot failed","env":"ANTHROPIC_API_KEY=${STANDARD_PLANTS[`lockdir/${SERVER_CRASH_LOG}`]}"}\n`,
   );
   return { projectDir, userLogsDir };
@@ -273,7 +273,7 @@ describe('collectReportBundle — standard level', () => {
     const cachesDir = makeTmpDir();
     writeAt(
       cachesDir,
-      'com.inkeep.open-knowledge.ShipIt/ShipIt_stderr.log',
+      'com.fractalmandala.palimpsest.ShipIt/ShipIt_stderr.log',
       'ShipIt: Failed to move bundle\n',
     );
     const outputPath = join(makeTmpDir(), 'report.zip');
@@ -355,7 +355,7 @@ describe('collectReportBundle — full level', () => {
     const cachesDir = makeTmpDir();
     writeAt(
       cachesDir,
-      'com.inkeep.open-knowledge.ShipIt/ShipIt_stderr.log',
+      'com.fractalmandala.palimpsest.ShipIt/ShipIt_stderr.log',
       `ShipIt: Failed to move bundle\ntoken ${SECRET}\n`,
     );
     const outputPath = join(makeTmpDir(), 'report.zip');
@@ -413,8 +413,8 @@ describe('collectReportBundle — full level', () => {
 
     test('carries the app own report and names the cause', async () => {
       const diagnosticReportsDir = makeTmpDir();
-      writeDiagnosticReport(diagnosticReportsDir, 'OpenKnowledge-2026-08-27-045958.ips', {
-        name: 'OpenKnowledge',
+      writeDiagnosticReport(diagnosticReportsDir, 'Palimpsest-2026-08-27-045958.ips', {
+        name: 'Palimpsest',
       });
       const outputPath = join(makeTmpDir(), 'report.zip');
 
@@ -427,7 +427,7 @@ describe('collectReportBundle — full level', () => {
         diagnosticReportsDir,
       });
 
-      const entry = 'diagnostic-reports/OpenKnowledge-2026-08-27-045958.ips';
+      const entry = 'diagnostic-reports/Palimpsest-2026-08-27-045958.ips';
       expect(listZipEntries(zipPath)).toContain(entry);
       expect(readZipEntry(zipPath, entry)).toContain('USER 0');
       expect(readZipEntry(zipPath, 'state/diagnostic-reports-status.txt')).toBe(
@@ -442,8 +442,8 @@ describe('collectReportBundle — full level', () => {
       ['with no project in scope', false],
     ])('scrubs secrets out of a collected report, %s', async (_label, withProject) => {
       const diagnosticReportsDir = makeTmpDir();
-      writeDiagnosticReport(diagnosticReportsDir, 'OpenKnowledge-2026-08-27-045958.ips', {
-        name: 'OpenKnowledge',
+      writeDiagnosticReport(diagnosticReportsDir, 'Palimpsest-2026-08-27-045958.ips', {
+        name: 'Palimpsest',
         asi: `fetch failed for ${URL_CREDENTIAL}`,
       });
       const outputPath = join(makeTmpDir(), 'report.zip');
@@ -459,7 +459,7 @@ describe('collectReportBundle — full level', () => {
 
       const report = readZipEntry(
         zipPath,
-        'diagnostic-reports/OpenKnowledge-2026-08-27-045958.ips',
+        'diagnostic-reports/Palimpsest-2026-08-27-045958.ips',
       );
       expect(report).toContain('USER 0');
       expect(report).not.toContain('s3cretpassword');
@@ -472,11 +472,11 @@ describe('collectReportBundle — full level', () => {
 
     test('scrubs secrets out of a truncated report that will not parse', async () => {
       const diagnosticReportsDir = makeTmpDir();
-      const header = JSON.stringify({ name: 'OpenKnowledge', bug_type: '309' });
-      const torn = `{"procName":"OpenKnowledge","asi":"fetch failed for ${URL_CREDENTIAL}`;
+      const header = JSON.stringify({ name: 'Palimpsest', bug_type: '309' });
+      const torn = `{"procName":"Palimpsest","asi":"fetch failed for ${URL_CREDENTIAL}`;
       writeAt(
         diagnosticReportsDir,
-        'OpenKnowledge-torn.ips',
+        'Palimpsest-torn.ips',
         `${header}\n${torn}`.replaceAll('/', String.raw`\/`),
       );
       const outputPath = join(makeTmpDir(), 'report.zip');
@@ -490,14 +490,14 @@ describe('collectReportBundle — full level', () => {
         diagnosticReportsDir,
       });
 
-      const report = readZipEntry(zipPath, 'diagnostic-reports/OpenKnowledge-torn.ips');
+      const report = readZipEntry(zipPath, 'diagnostic-reports/Palimpsest-torn.ips');
       expect(report).not.toContain('s3cretpassword');
     });
 
     test('says a report was rewritten even when redaction is disabled', async () => {
       const diagnosticReportsDir = makeTmpDir();
-      writeDiagnosticReport(diagnosticReportsDir, 'OpenKnowledge-2026-08-27-045958.ips', {
-        name: 'OpenKnowledge',
+      writeDiagnosticReport(diagnosticReportsDir, 'Palimpsest-2026-08-27-045958.ips', {
+        name: 'Palimpsest',
       });
       const outputPath = join(makeTmpDir(), 'report.zip');
 
@@ -515,7 +515,7 @@ describe('collectReportBundle — full level', () => {
       expect(readme).toContain('not byte-identical to the files macOS wrote');
       const report = readZipEntry(
         zipPath,
-        'diagnostic-reports/OpenKnowledge-2026-08-27-045958.ips',
+        'diagnostic-reports/Palimpsest-2026-08-27-045958.ips',
       );
       expect(report).not.toContain(DEVICE_KEY);
       expect(report).not.toContain(String.raw`\/Users`);
@@ -558,8 +558,8 @@ describe('collectReportBundle — full level', () => {
 
     test('carries the reports and the record when full level has no project in scope', async () => {
       const diagnosticReportsDir = makeTmpDir();
-      writeDiagnosticReport(diagnosticReportsDir, 'OpenKnowledge-2026-08-27-045958.ips', {
-        name: 'OpenKnowledge',
+      writeDiagnosticReport(diagnosticReportsDir, 'Palimpsest-2026-08-27-045958.ips', {
+        name: 'Palimpsest',
       });
       writeDiagnosticReport(diagnosticReportsDir, 'Slack-2026-08-27-045958.ips', { name: 'Slack' });
       const outputPath = join(makeTmpDir(), 'report.zip');
@@ -574,7 +574,7 @@ describe('collectReportBundle — full level', () => {
 
       expect(summary.systemWide).toBe(true);
       const entries = listZipEntries(zipPath);
-      expect(entries).toContain('diagnostic-reports/OpenKnowledge-2026-08-27-045958.ips');
+      expect(entries).toContain('diagnostic-reports/Palimpsest-2026-08-27-045958.ips');
       expect(entries).not.toContain('diagnostic-reports/Slack-2026-08-27-045958.ips');
       expect(readZipEntry(zipPath, 'state/diagnostic-reports-status.txt')).toBe(
         '1 collected (7d; 1 other-process report(s) ignored; 0 unparseable)\n',
@@ -584,8 +584,8 @@ describe('collectReportBundle — full level', () => {
 
     test('does not collect at standard level', async () => {
       const diagnosticReportsDir = makeTmpDir();
-      writeDiagnosticReport(diagnosticReportsDir, 'OpenKnowledge-2026-08-27-045958.ips', {
-        name: 'OpenKnowledge',
+      writeDiagnosticReport(diagnosticReportsDir, 'Palimpsest-2026-08-27-045958.ips', {
+        name: 'Palimpsest',
       });
       const outputPath = join(makeTmpDir(), 'report.zip');
 
@@ -620,7 +620,7 @@ describe('collectReportBundle — full level', () => {
           runCommand: async () => ({
             status: 0,
             stdout:
-              '2026-10-04T18:49:10.000000+0000 host kernel: Out of memory: Killed process 12 (openknowledge)\n',
+              '2026-10-04T18:49:10.000000+0000 host kernel: Out of memory: Killed process 12 (palimpsest)\n',
             stderr: '',
           }),
         },
@@ -630,7 +630,7 @@ describe('collectReportBundle — full level', () => {
         {
           source: 'linux-journal',
           outcome: 'collected',
-          events: [{ origin: 'kernel', action: 'oom-kill', pid: 12, processName: 'openknowledge' }],
+          events: [{ origin: 'kernel', action: 'oom-kill', pid: 12, processName: 'palimpsest' }],
         },
       );
     });
@@ -649,7 +649,7 @@ describe('collectReportBundle — full level', () => {
           runCommand: async () => ({
             status: 0,
             stdout:
-              '2026-10-04T18:49:10.000000+00:00 host kernel: Out of memory: Killed process 12 (openknowledge)\n',
+              '2026-10-04T18:49:10.000000+00:00 host kernel: Out of memory: Killed process 12 (palimpsest)\n',
             stderr: '',
           }),
         },
@@ -779,7 +779,7 @@ describe('collectReportBundle — full level', () => {
 
   test('omits telemetry entirely when the sink has never written', async () => {
     const projectDir = makeTmpDir();
-    writeAt(projectDir, '.ok/config.yml', 'name: bare-proj\n');
+    writeAt(projectDir, '.ps/config.yml', 'name: bare-proj\n');
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath } = await collectReportBundle({
@@ -827,12 +827,12 @@ describe('collectReportBundle — full level', () => {
     const projectDir = makeFullProjectDir();
     writeAt(
       projectDir,
-      '.ok/local/logs/server-current.jsonl',
+      '.ps/local/logs/server-current.jsonl',
       `{"level":50,"msg":"auth failed for ${SECRET}"}\n`,
     );
     writeAt(
       projectDir,
-      '.ok/local/loss-capture/loss-current.jsonl',
+      '.ps/local/loss-capture/loss-current.jsonl',
       `${JSON.stringify({
         ts: 1,
         schemaVersion: 1,
@@ -864,7 +864,7 @@ describe('collectReportBundle — full level', () => {
     const projectDir = makeFullProjectDir();
     writeAt(
       projectDir,
-      '.ok/local/loss-capture/loss-current.jsonl',
+      '.ps/local/loss-capture/loss-current.jsonl',
       `${JSON.stringify({ ts: 1, schemaVersion: 1, seq: 1, event: 'checkpoint-write', docName: 'd' })}\n`,
     );
 
@@ -978,7 +978,7 @@ describe('collectReportBundle — full level', () => {
 
   test('resolves content.dir from the project config for the full capture', async () => {
     const projectDir = makeTmpDir();
-    writeAt(projectDir, '.ok/config.yml', 'name: split-proj\ncontent:\n  dir: docs\n');
+    writeAt(projectDir, '.ps/config.yml', 'name: split-proj\ncontent:\n  dir: docs\n');
     const outputPath = join(makeTmpDir(), 'report.zip');
 
     const { zipPath } = await collectReportBundle({
@@ -1302,7 +1302,7 @@ describe('collectReportBundle — bug-report send ledger', () => {
   ].join('\n');
 
   function makeBugReportsDir(): string {
-    const dir = makeTmpDir('ok-bug-reports-');
+    const dir = makeTmpDir('ps-bug-reports-');
     writeAt(dir, '2026-08-19T16-42-03-547Z-bugreport.yaml', LEDGER_YAML);
     writeAt(dir, '2026-08-19T16-42-03-547Z-bugreport.zip', Buffer.from([0x50, 0x4b, 0x03, 0x04]));
     return dir;
@@ -1360,7 +1360,7 @@ describe('collectReportBundle — bug-report send ledger', () => {
   });
 
   test('the ledger goes through the secret scrub like every other staged text file', async () => {
-    const dir = makeTmpDir('ok-bug-reports-');
+    const dir = makeTmpDir('ps-bug-reports-');
     writeAt(
       dir,
       '2026-08-19T16-42-03-547Z-bugreport.yaml',
@@ -1388,7 +1388,7 @@ describe('collectReportBundle — bug-report send ledger', () => {
   });
 
   test('a dir with dozens of reports contributes a bounded, newest-first slice', async () => {
-    const dir = makeTmpDir('ok-bug-reports-');
+    const dir = makeTmpDir('ps-bug-reports-');
     for (let i = 0; i < 40; i += 1) {
       const stamp = `2026-08-${String((i % 28) + 1).padStart(2, '0')}T10-00-${String(i).padStart(2, '0')}-000Z`;
       writeAt(dir, `${stamp}-bugreport.yaml`, `id: ${stamp}-bugreport.zip\nstate: sent\n`);

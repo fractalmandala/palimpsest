@@ -242,7 +242,7 @@ describe('client undo across a provider-pool recycle', () => {
     const popped = umB.undo();
     const textAfterUndo = editorB.state.doc.textContent;
 
-    expect(rig.eventNames()).toContain('ok-client-cache-epoch-mismatch');
+    expect(rig.eventNames()).toContain('ps-client-cache-epoch-mismatch');
     expect(rig.evictedDocNames).toContain(DOC);
     expect(textAfterRecycle).toContain('M2-PRE-RECYCLE-TYPED');
     expect(textAfterRecycle).toContain('base paragraph anchor');
@@ -296,8 +296,8 @@ describe('client undo across a provider-pool recycle', () => {
     const editStillPresentAfterUndo = editorB.state.doc.textContent.includes('M3-UNSYNCED-EDIT');
 
     expect(stackAfterOfflineType).toBeGreaterThan(stackBeforeOffline);
-    expect(rig.eventNames()).toContain('ok-client-cache-epoch-mismatch');
-    expect(rig.eventNames()).toContain('ok-buffer-replay-content-applied');
+    expect(rig.eventNames()).toContain('ps-client-cache-epoch-mismatch');
+    expect(rig.eventNames()).toContain('ps-buffer-replay-content-applied');
     expect(ytextHasEdit).toBe(true);
     expect(replayOriginSeen).toBe(true);
     expect(stackAtMount).toBe(0);

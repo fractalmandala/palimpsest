@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import type { ThreadEvent, ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadEvent, ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test } from 'vitest';
 import { getLogger } from '../logger.ts';
 import {
@@ -177,7 +177,7 @@ describe('ThreadPersistenceStore', () => {
     expect(metas.map((m) => m.info.threadId)).toEqual([T1]);
   });
 
-  test('a meta whose id OpenKnowledge did not mint is skipped, so the id never becomes a path', async () => {
+  test('a meta whose id Palimpsest did not mint is skipped, so the id never becomes a path', async () => {
     const store = await makeStore();
     store.queueMetaWrite(T1, meta(T1));
     await store.whenIdle(T1);

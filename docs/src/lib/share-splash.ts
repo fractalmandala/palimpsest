@@ -404,11 +404,11 @@ export { DOWNLOAD_URL as SPLASH_DOWNLOAD_URL } from './site';
 
 export function buildCustomSchemeUrl(sharedUrl: string, token?: string): string {
   return token === undefined
-    ? `openknowledge://share?url=${encodeURIComponent(sharedUrl)}`
-    : `openknowledge://share?token=${token}`;
+    ? `palimpsest://share?url=${encodeURIComponent(sharedUrl)}`
+    : `palimpsest://share?token=${token}`;
 }
 
-export const SPLASH_INSTALL_COMMAND = 'npm install -g @inkeep/open-knowledge';
+export const SPLASH_INSTALL_COMMAND = 'npm install -g @palimpsest/cli';
 
 function shellSingleQuoteShareArg(s: string): string {
   return `'${s.replace(/'/g, "'\\''")}'`;

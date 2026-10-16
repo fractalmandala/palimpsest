@@ -152,7 +152,7 @@ export function getClaudeDesktopIntegrationSnapshot(): ClaudeDesktopIntegrationS
 
 function defaultDetectClaudeDesktop(): (() => Promise<boolean>) | undefined {
   if (typeof window === 'undefined') return undefined;
-  const skill = window.okDesktop?.skill;
+  const skill = window.psDesktop?.skill;
   const detect = skill?.detectClaudeDesktop;
   if (!detect) return undefined;
   return () => detect.call(skill);

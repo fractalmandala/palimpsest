@@ -199,7 +199,7 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-lint-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-lint-test-'));
   seenRequests.length = 0;
 });
 

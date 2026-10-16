@@ -112,7 +112,7 @@ describe('TerminalSection (Settings opt-out toggle)', () => {
   });
 });
 
-describe('TerminalSection (auto-approve OpenKnowledge tools toggle)', () => {
+describe('TerminalSection (auto-approve Palimpsest tools toggle)', () => {
   beforeEach(() => {
     consentState = { enabled: true, synced: true };
     writerImpl = () => ({ ok: true });
@@ -155,10 +155,10 @@ describe('TerminalSection (auto-approve OpenKnowledge tools toggle)', () => {
   });
 });
 
-type CodexReadiness = { onPath: string; okServerConfigured?: boolean };
+type CodexReadiness = { onPath: string; psServerConfigured?: boolean };
 
 function stubDesktopBridge(readiness: CodexReadiness | Error, cliCommandName?: string): void {
-  (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+  (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
     cliCommandName,
     terminal: {
       cliPreflight: async () =>
@@ -181,17 +181,17 @@ describe("TerminalSection (codex-can't-honor note)", () => {
   });
   afterEach(() => {
     cleanup();
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = undefined;
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = undefined;
   });
 
   test('shows the note when codex is installed but OK is not configured for it', async () => {
-    stubDesktopBridge({ onPath: 'present', okServerConfigured: false });
+    stubDesktopBridge({ onPath: 'present', psServerConfigured: false });
     render(<TerminalSection />);
     await waitFor(() => expect(codexNote()).not.toBeNull());
   });
 
   test('stays silent when codex already has OK configured', async () => {
-    stubDesktopBridge({ onPath: 'present', okServerConfigured: true });
+    stubDesktopBridge({ onPath: 'present', psServerConfigured: true });
     render(<TerminalSection />);
     await waitFor(() => expect(autoApproveSwitch()).not.toBeNull());
     expect(codexNote()).toBeNull();
@@ -206,7 +206,7 @@ describe("TerminalSection (codex-can't-honor note)", () => {
 
   test('stays silent when the auto-approve toggle is off (nothing to explain)', async () => {
     userConfig = { agents: { autoApproveOkTools: false } };
-    stubDesktopBridge({ onPath: 'present', okServerConfigured: false });
+    stubDesktopBridge({ onPath: 'present', psServerConfigured: false });
     render(<TerminalSection />);
     await waitFor(() => expect(autoApproveSwitch()).not.toBeNull());
     expect(codexNote()).toBeNull();
@@ -244,30 +244,30 @@ describe('TerminalSection names the running channel CLI', () => {
   });
   afterEach(() => {
     cleanup();
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = undefined;
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = undefined;
   });
 
-  test('Stable keeps ok open and ok init', async () => {
-    stubDesktopBridge({ onPath: 'present', okServerConfigured: false });
+  test('Stable keeps ps open and ps init', async () => {
+    stubDesktopBridge({ onPath: 'present', psServerConfigured: false });
     render(<TerminalSection />);
     await waitFor(() => expect(codexNote()).not.toBeNull());
     expect(screen.getByTestId('settings-terminal-autoapprove-body').textContent).toContain(
-      '(Claude also auto-runs "ok open")',
+      '(Claude also auto-runs "ps open")',
     );
     expect(codexNote()?.textContent).toBe(
-      'Codex will still ask until you run "ok init" in a terminal for this project.',
+      'Codex will still ask until you run "ps init" in a terminal for this project.',
     );
   });
 
-  test('Beta names ok-beta open and ok-beta init', async () => {
-    stubDesktopBridge({ onPath: 'present', okServerConfigured: false }, 'ok-beta');
+  test('Beta names ps-beta open and ps-beta init', async () => {
+    stubDesktopBridge({ onPath: 'present', psServerConfigured: false }, 'ps-beta');
     render(<TerminalSection />);
     await waitFor(() => expect(codexNote()).not.toBeNull());
     expect(screen.getByTestId('settings-terminal-autoapprove-body').textContent).toContain(
-      '(Claude also auto-runs "ok-beta open")',
+      '(Claude also auto-runs "ps-beta open")',
     );
     expect(codexNote()?.textContent).toBe(
-      'Codex will still ask until you run "ok-beta init" in a terminal for this project.',
+      'Codex will still ask until you run "ps-beta init" in a terminal for this project.',
     );
   });
 });

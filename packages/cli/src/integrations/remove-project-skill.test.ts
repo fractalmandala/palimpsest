@@ -12,7 +12,7 @@ describe('removeProjectSkill', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-remove-project-skill-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-remove-project-skill-'));
   });
   afterEach(() => {
     rmSync(dir, { recursive: true, force: true });
@@ -22,7 +22,7 @@ describe('removeProjectSkill', () => {
     const skillPath = CLAUDE.projectSkillPath?.(dir);
     if (!skillPath) throw new Error('claude has no projectSkillPath');
     mkdirSync(dirname(skillPath), { recursive: true });
-    writeFileSync(skillPath, '# open-knowledge\n');
+    writeFileSync(skillPath, '# palimpsest\n');
     return skillPath;
   }
 
@@ -60,11 +60,11 @@ describe('removeProjectSkill', () => {
   });
 
   test('refuses to remove through a symlinked ancestor escaping the project', () => {
-    const outside = mkdtempSync(join(tmpdir(), 'ok-remove-project-skill-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-remove-project-skill-outside-'));
     try {
-      const managed = join(outside, 'skills', 'open-knowledge');
+      const managed = join(outside, 'skills', 'palimpsest');
       mkdirSync(managed, { recursive: true });
-      writeFileSync(join(managed, 'SKILL.md'), '# open-knowledge\n');
+      writeFileSync(join(managed, 'SKILL.md'), '# palimpsest\n');
       symlinkSync(outside, join(dir, '.claude'), 'dir');
 
       const result = removeProjectSkill(CLAUDE, dir);
@@ -80,9 +80,9 @@ describe('removeProjectSkill', () => {
     const skillPath = CLAUDE.projectSkillPath?.(dir);
     if (!skillPath) throw new Error('claude has no projectSkillPath');
     const skillDir = dirname(skillPath);
-    const source = join(dir, '.ok', 'skills', 'open-knowledge');
+    const source = join(dir, '.ps', 'skills', 'palimpsest');
     mkdirSync(source, { recursive: true });
-    writeFileSync(join(source, 'SKILL.md'), '# open-knowledge\n');
+    writeFileSync(join(source, 'SKILL.md'), '# palimpsest\n');
     mkdirSync(dirname(skillDir), { recursive: true });
     symlinkSync(source, skillDir, 'dir');
 
@@ -106,7 +106,7 @@ describe('removeProjectSkill', () => {
       const claudeSkill = CLAUDE.projectSkillPath?.(dir);
       if (!claudeSkill) throw new Error('claude has no projectSkillPath');
       mkdirSync(dirname(claudeSkill), { recursive: true });
-      writeFileSync(claudeSkill, '# open-knowledge\n');
+      writeFileSync(claudeSkill, '# palimpsest\n');
       mkdirSync(join(dir, '.cursor'), { recursive: true });
       symlinkSync(join(dir, '.claude', 'skills'), join(dir, '.cursor', 'skills'), 'dir');
       return claudeSkill;
@@ -131,9 +131,9 @@ describe('removeProjectSkill', () => {
     });
 
     test('removes through an alias to the vendor-neutral hub', () => {
-      const hub = join(dir, '.agents', 'skills', 'open-knowledge');
+      const hub = join(dir, '.agents', 'skills', 'palimpsest');
       mkdirSync(hub, { recursive: true });
-      writeFileSync(join(hub, 'SKILL.md'), '# open-knowledge\n');
+      writeFileSync(join(hub, 'SKILL.md'), '# palimpsest\n');
       mkdirSync(join(dir, '.cursor'), { recursive: true });
       symlinkSync(join(dir, '.agents', 'skills'), join(dir, '.cursor', 'skills'), 'dir');
 
@@ -144,9 +144,9 @@ describe('removeProjectSkill', () => {
     });
 
     test('still removes through an alias nothing else reads', () => {
-      const own = join(dir, '.vendor', 'skills', 'open-knowledge');
+      const own = join(dir, '.vendor', 'skills', 'palimpsest');
       mkdirSync(own, { recursive: true });
-      writeFileSync(join(own, 'SKILL.md'), '# open-knowledge\n');
+      writeFileSync(join(own, 'SKILL.md'), '# palimpsest\n');
       mkdirSync(join(dir, '.cursor'), { recursive: true });
       symlinkSync(join(dir, '.vendor', 'skills'), join(dir, '.cursor', 'skills'), 'dir');
 

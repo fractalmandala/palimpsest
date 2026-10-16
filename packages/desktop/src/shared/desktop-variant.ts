@@ -1,4 +1,4 @@
-import { DESKTOP_PRODUCTS, type PackagedDesktopProductName } from '@inkeep/open-knowledge-core';
+import { DESKTOP_PRODUCTS, type PackagedDesktopProductName } from '@palimpsest/core';
 
 const DESKTOP_VARIANT_NAMES = ['stable', 'beta', 'legacy-beta'] as const;
 
@@ -34,7 +34,7 @@ const DESKTOP_PRODUCT_VARIANTS = {
     name: 'stable',
     appId: DESKTOP_PRODUCTS.stable.appId,
     productName: DESKTOP_PRODUCTS.stable.productName,
-    artifactName: 'OpenKnowledge',
+    artifactName: 'Palimpsest',
     packageName: DESKTOP_PRODUCTS.stable.packageName,
     protocolScheme: DESKTOP_PRODUCTS.stable.protocolScheme,
     updateChannel: 'latest',
@@ -52,7 +52,7 @@ const DESKTOP_PRODUCT_VARIANTS = {
     name: 'beta',
     appId: DESKTOP_PRODUCTS.beta.appId,
     productName: DESKTOP_PRODUCTS.beta.productName,
-    artifactName: 'OpenKnowledge-Beta',
+    artifactName: 'Palimpsest-Beta',
     packageName: DESKTOP_PRODUCTS.beta.packageName,
     protocolScheme: DESKTOP_PRODUCTS.beta.protocolScheme,
     updateChannel: 'beta',
@@ -83,7 +83,7 @@ export function parseDesktopVariantName(raw: string | undefined): DesktopVariant
     return normalized as DesktopVariantName;
   }
   throw new Error(
-    `Unsupported OK_DESKTOP_VARIANT=${JSON.stringify(raw)}. Expected stable or beta or legacy-beta.`,
+    `Unsupported PS_DESKTOP_VARIANT=${JSON.stringify(raw)}. Expected stable or beta or legacy-beta.`,
   );
 }
 

@@ -65,7 +65,7 @@ describe('createSkillsListRoutes builtin-row ignore-rule contract', () => {
   let skillsHome: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-skills-list-routes-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-skills-list-routes-'));
     skillsHome = join(tmpDir, 'skills-home');
     mkdirSync(skillsHome, { recursive: true });
   });

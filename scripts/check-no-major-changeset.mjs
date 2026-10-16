@@ -79,7 +79,7 @@ export async function main() {
       `::error::Forbidden 'major' bump in changeset(s): ${violations.sort().join(' ')}`,
     );
     console.error(
-      "Open Knowledge is pre-1.0 — declare 'minor' for breaking changes, 'patch' for fixes.",
+      "Palimpsest is pre-1.0 — declare 'minor' for breaking changes, 'patch' for fixes.",
     );
     console.error(
       'See .changeset/README.md. 1.0.0 is a deliberate team decision, not a single changeset.',

@@ -26,7 +26,7 @@ const validPayload = (scope: 'local' | 'inherited') => ({
   name: 'daily-journal',
   folder: 'notes',
   scope,
-  path: 'notes/.ok/templates/daily-journal.md',
+  path: 'notes/.ps/templates/daily-journal.md',
   frontmatter: { title: '{{date}}' },
   body: '## Morning\n',
 });

@@ -67,7 +67,7 @@ describe('CopyButton', () => {
   });
 
   test('mounts in the Copy state by default', () => {
-    renderCopyButton({ copyContent: 'https://openknowledge.ai/d/Share123' });
+    renderCopyButton({ copyContent: 'https://github.com/fractalmandala/palimpsest/d/Share123' });
 
     expect(screen.getByRole('button', { name: 'Copy' })).not.toBeNull();
     expect(screen.queryByRole('button', { name: 'Copied!' })).toBeNull();
@@ -76,7 +76,7 @@ describe('CopyButton', () => {
   test('a successful copy flips the icon to Copied! and writes the content', async () => {
     const writes: string[] = [];
     renderCopyButton({
-      copyContent: 'https://openknowledge.ai/d/Share123',
+      copyContent: 'https://github.com/fractalmandala/palimpsest/d/Share123',
       clipboardWrite: (text) => {
         writes.push(text);
         return Promise.resolve();
@@ -88,12 +88,12 @@ describe('CopyButton', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Copied!' })).not.toBeNull();
     });
-    expect(writes).toEqual(['https://openknowledge.ai/d/Share123']);
+    expect(writes).toEqual(['https://github.com/fractalmandala/palimpsest/d/Share123']);
   });
 
   test('initialCopied mounts already in the Copied! state', () => {
     renderCopyButton({
-      copyContent: 'https://openknowledge.ai/d/Share123',
+      copyContent: 'https://github.com/fractalmandala/palimpsest/d/Share123',
       initialCopied: true,
       clipboardWrite: () => Promise.resolve(),
     });
@@ -103,7 +103,7 @@ describe('CopyButton', () => {
 
   test('a refused clipboard write leaves the icon as Copy', async () => {
     renderCopyButton({
-      copyContent: 'https://openknowledge.ai/d/Share123',
+      copyContent: 'https://github.com/fractalmandala/palimpsest/d/Share123',
       clipboardWrite: () => Promise.reject(new Error('permission denied')),
     });
 

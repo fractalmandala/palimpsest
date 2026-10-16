@@ -8,29 +8,29 @@ afterEach(() => {
 });
 
 describe('toDesktopAssetHref', () => {
-  test('prefixes apiOrigin onto a server-absolute src when window.okDesktop is present', () => {
-    g.window = { okDesktop: { config: { apiOrigin: 'http://localhost:12345' } } };
+  test('prefixes apiOrigin onto a server-absolute src when window.psDesktop is present', () => {
+    g.window = { psDesktop: { config: { apiOrigin: 'http://localhost:12345' } } };
     expect(toDesktopAssetHref('/assets/x.png')).toBe('http://localhost:12345/assets/x.png');
   });
 
-  test('identity when window.okDesktop is absent', () => {
+  test('identity when window.psDesktop is absent', () => {
     expect(toDesktopAssetHref('/assets/x.png')).toBe('/assets/x.png');
   });
 
-  test('identity when window exists but okDesktop is absent', () => {
+  test('identity when window exists but psDesktop is absent', () => {
     g.window = {};
     expect(toDesktopAssetHref('/assets/x.png')).toBe('/assets/x.png');
   });
 
   test('identity when apiOrigin is empty or missing', () => {
-    g.window = { okDesktop: { config: {} } };
+    g.window = { psDesktop: { config: {} } };
     expect(toDesktopAssetHref('/assets/x.png')).toBe('/assets/x.png');
-    g.window = { okDesktop: { config: { apiOrigin: '' } } };
+    g.window = { psDesktop: { config: { apiOrigin: '' } } };
     expect(toDesktopAssetHref('/assets/x.png')).toBe('/assets/x.png');
   });
 
-  test('identity for non-server-absolute srcs even with okDesktop present', () => {
-    g.window = { okDesktop: { config: { apiOrigin: 'http://localhost:12345' } } };
+  test('identity for non-server-absolute srcs even with psDesktop present', () => {
+    g.window = { psDesktop: { config: { apiOrigin: 'http://localhost:12345' } } };
     expect(toDesktopAssetHref('https://example.com/x.png')).toBe('https://example.com/x.png');
     expect(toDesktopAssetHref('./x.png')).toBe('./x.png');
     expect(toDesktopAssetHref('')).toBe('');

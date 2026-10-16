@@ -47,7 +47,7 @@ describe('share contract production monitor workflow', () => {
 
   test('uses the shared probe against production and uploads evidence on every outcome', () => {
     expect(count(workflow, /node \.github\/scripts\/probe-share-contract\.mjs/g)).toBe(1);
-    expect(workflow).toContain('https://openknowledge.ai');
+    expect(workflow).toContain('https://github.com/fractalmandala/palimpsest');
     expect(workflow).toContain('test-support/fixtures/share-url-v1-v2.json');
     expect(workflow).toContain('continue-on-error: true');
     expect(workflow).toContain('if: always()');

@@ -4,8 +4,8 @@ import { randomUUID } from './random-uuid.ts';
 export const SYSTEM_WRITER_DISPLAY_NAMES = {
   fileSystem: 'File System',
   gitUpstream: 'Git (upstream)',
-  service: 'OpenKnowledge (service)',
-  generator: 'OpenKnowledge (generated)',
+  service: 'Palimpsest (service)',
+  generator: 'Palimpsest (generated)',
 } as const;
 
 export const AGENT_COLORS = [
@@ -191,8 +191,8 @@ const ANIMALS = [
   'Turtle',
 ] as const;
 
-const LS_NAME_KEY = 'ok-user-name-v3';
-const LS_COLOR_KEY = 'ok-user-color-v3';
+const LS_NAME_KEY = 'ps-user-name-v3';
+const LS_COLOR_KEY = 'ps-user-color-v3';
 
 function randomElement<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];

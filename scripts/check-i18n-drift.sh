@@ -86,7 +86,7 @@ if [ -n "$DIFFERING" ] || [ -n "$CREATED" ]; then
   echo "  $LOCALES_DIR produced catalogs that differ from the index." >&2
   echo "" >&2
   echo "  Fix:" >&2
-  echo "    cd public/open-knowledge/packages/app && pnpm run i18n" >&2
+  echo "    cd public/palimpsest/packages/app && pnpm run i18n" >&2
   echo "  then commit the updated .po catalogs." >&2
   if [ -n "$DIFFERING" ]; then
     echo "" >&2

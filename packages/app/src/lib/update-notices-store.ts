@@ -46,7 +46,7 @@ export function subscribeToNotices(listener: () => void): () => void {
 export function installUpdateNoticesBridge(): void {
   if (attached) return;
   if (typeof window === 'undefined') return;
-  const bridge = window.okDesktop;
+  const bridge = window.psDesktop;
   if (!bridge) return;
   attached = true;
   attachUpdateSubscribers(bridge, addNotice, dismissNotice, undefined, {

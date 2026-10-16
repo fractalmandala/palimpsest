@@ -1,4 +1,4 @@
-import type { ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -6,7 +6,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { reloadEnabledAgentsFromStorage } from '@/lib/acp/enabled-agents';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import {
   readWebDockSessionOrder,
   writeAgentsPanelLevel,
@@ -271,7 +271,7 @@ function installDesktopBridge(
   getDockState: () => Promise<DockStatePayload>,
   hooks: { onViewMenuStateChanged?: (state: Record<string, unknown>) => void } = {},
 ): void {
-  (window as { okDesktop?: unknown }).okDesktop = {
+  (window as { psDesktop?: unknown }).psDesktop = {
     config: { ptyAvailable: true },
     platform: 'darwin',
     onMenuAction: () => () => {},
@@ -289,7 +289,7 @@ function installDesktopBridge(
         cursor: false,
       }),
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 async function renderPane(expectedStoreSubscribers: number): Promise<void> {
@@ -318,7 +318,7 @@ describe('EditorPane agents-panel reload visibility', () => {
 
   afterEach(() => {
     cleanup();
-    delete (window as { okDesktop?: unknown }).okDesktop;
+    delete (window as { psDesktop?: unknown }).psDesktop;
     __resetPaneVisibilityStoreForTests();
   });
 

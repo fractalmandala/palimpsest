@@ -1,4 +1,4 @@
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { useLingui } from '@lingui/react/macro';
 import { X } from 'lucide-react';
 import { createContext, type ReactNode, use } from 'react';

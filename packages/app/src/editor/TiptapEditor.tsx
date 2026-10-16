@@ -4,12 +4,12 @@ import {
   FLASH_DEBOUNCE_MS,
   FLASH_DURATION_MS,
   hasNewEntries,
-} from '@inkeep/open-knowledge-core/constants/activity';
-import { sharedExtensions as coreExtensions } from '@inkeep/open-knowledge-core/extensions/shared';
-import { MarkdownManager } from '@inkeep/open-knowledge-core/markdown';
-import type { AgentFlashEntry } from '@inkeep/open-knowledge-core/types/awareness';
-import { deriveIconColor } from '@inkeep/open-knowledge-core/utils/identity';
-import { randomUUID } from '@inkeep/open-knowledge-core/utils/random-uuid';
+} from '@palimpsest/core/constants/activity';
+import { sharedExtensions as coreExtensions } from '@palimpsest/core/extensions/shared';
+import { MarkdownManager } from '@palimpsest/core/markdown';
+import type { AgentFlashEntry } from '@palimpsest/core/types/awareness';
+import { deriveIconColor } from '@palimpsest/core/utils/identity';
+import { randomUUID } from '@palimpsest/core/utils/random-uuid';
 import { t } from '@lingui/core/macro';
 import { type AnyExtension, Editor, type EditorOptions, Extension, isMacOS } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -757,7 +757,7 @@ const TiptapEditorChrome: FC<TiptapEditorChromeProps> = ({
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           console.warn(
-            JSON.stringify({ event: 'ok-editor-selection-restore-failed', docName, message }),
+            JSON.stringify({ event: 'ps-editor-selection-restore-failed', docName, message }),
           );
           mark('ok/editor/selection-restore-failed', { docName, message });
         }

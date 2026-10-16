@@ -29,18 +29,18 @@ afterEach(() => {
 });
 
 function writeRootConfig(dir: string, body: string): void {
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), body);
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), body);
 }
 
-function wireEditorAtRoot(dir: string, relPath: string, sentinel = '# ok-mcp-v1'): void {
+function wireEditorAtRoot(dir: string, relPath: string, sentinel = '# ps-mcp-v1'): void {
   const abs = join(dir, relPath);
   mkdirSync(join(abs, '..'), { recursive: true });
   writeFileSync(
     abs,
     JSON.stringify({
       mcpServers: {
-        'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', `${sentinel}\nexec ok mcp`] },
+        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', `${sentinel}\nexec ps mcp`] },
       },
     }),
   );
@@ -89,16 +89,16 @@ describe('detectRootWiredEditors', () => {
 
   test('accepts the Windows sentinel too', () => {
     const root = tmp();
-    wireEditorAtRoot(root, '.mcp.json', '# ok-mcp-win-v1');
+    wireEditorAtRoot(root, '.mcp.json', '# ps-mcp-win-v1');
     expect(detectRootWiredEditors(root)).toContain('claude');
   });
 
   test('survives a sentinel version bump — detection keys on the version-independent prefix', () => {
     const rootUnix = tmp();
-    wireEditorAtRoot(rootUnix, '.mcp.json', '# ok-mcp-v2');
+    wireEditorAtRoot(rootUnix, '.mcp.json', '# ps-mcp-v2');
     expect(detectRootWiredEditors(rootUnix)).toContain('claude');
     const rootWin = tmp();
-    wireEditorAtRoot(rootWin, '.mcp.json', '# ok-mcp-win-v9');
+    wireEditorAtRoot(rootWin, '.mcp.json', '# ps-mcp-win-v9');
     expect(detectRootWiredEditors(rootWin)).toContain('claude');
   });
 
@@ -120,19 +120,19 @@ describe('detectRootWiredEditors', () => {
 });
 
 describe('seedWorktreeProjectSetup', () => {
-  test('materializes a valid .ok/config.yml (+ scaffold) at the worktree — the consent-dialog marker', () => {
+  test('materializes a valid .ps/config.yml (+ scaffold) at the worktree — the consent-dialog marker', () => {
     const root = tmp();
     const wt = tmp();
     writeRootConfig(root, 'version: 1\n');
 
-    expect(existsSync(join(wt, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(wt, '.ps', 'config.yml'))).toBe(false);
     seedWorktreeProjectSetup(wt, root);
 
-    const configPath = join(wt, '.ok', 'config.yml');
+    const configPath = join(wt, '.ps', 'config.yml');
     expect(existsSync(configPath)).toBe(true);
     expect(() => parseYaml(readFileSync(configPath, 'utf-8'))).not.toThrow();
-    expect(existsSync(join(wt, '.ok', '.gitignore'))).toBe(true);
-    expect(existsSync(join(wt, '.okignore'))).toBe(true);
+    expect(existsSync(join(wt, '.ps', '.gitignore'))).toBe(true);
+    expect(existsSync(join(wt, '.psignore'))).toBe(true);
   });
 
   test('derives content.dir from the root config', () => {
@@ -140,7 +140,7 @@ describe('seedWorktreeProjectSetup', () => {
     const wt = tmp();
     writeRootConfig(root, 'content:\n  dir: knowledge\n');
     seedWorktreeProjectSetup(wt, root);
-    const parsed = parseYaml(readFileSync(join(wt, '.ok', 'config.yml'), 'utf-8'));
+    const parsed = parseYaml(readFileSync(join(wt, '.ps', 'config.yml'), 'utf-8'));
     expect(parsed.content.dir).toBe('knowledge');
   });
 
@@ -156,7 +156,7 @@ describe('seedWorktreeProjectSetup', () => {
     const wtMcp = join(wt, '.mcp.json');
     const wtCursor = join(wt, '.cursor', 'mcp.json');
     expect(existsSync(wtMcp)).toBe(true);
-    expect(readFileSync(wtMcp, 'utf-8')).toContain('# ok-mcp');
+    expect(readFileSync(wtMcp, 'utf-8')).toContain('# ps-mcp');
     expect(existsSync(wtCursor)).toBe(true);
     expect(existsSync(join(wt, '.claude', 'launch.json'))).toBe(false);
     expect(existsSync(join(wt, '.codex', 'config.toml'))).toBe(false);
@@ -169,7 +169,7 @@ describe('seedWorktreeProjectSetup', () => {
     seedWorktreeProjectSetup(wt, root);
     expect(existsSync(join(wt, '.mcp.json'))).toBe(false);
     expect(existsSync(join(wt, '.cursor', 'mcp.json'))).toBe(false);
-    expect(existsSync(join(wt, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(wt, '.ps', 'config.yml'))).toBe(true);
   });
 
   test('idempotent: never clobbers a config.yml already checked out by the branch (shared + committed root)', () => {
@@ -178,12 +178,12 @@ describe('seedWorktreeProjectSetup', () => {
     writeRootConfig(root, 'content:\n  dir: docs\n');
     const committed =
       'version: 7\n# hand-authored, must survive\ncontent:\n  dir: committed-scope\n';
-    mkdirSync(join(wt, '.ok'), { recursive: true });
-    writeFileSync(join(wt, '.ok', 'config.yml'), committed);
+    mkdirSync(join(wt, '.ps'), { recursive: true });
+    writeFileSync(join(wt, '.ps', 'config.yml'), committed);
 
     seedWorktreeProjectSetup(wt, root);
 
-    expect(readFileSync(join(wt, '.ok', 'config.yml'), 'utf-8')).toBe(committed);
+    expect(readFileSync(join(wt, '.ps', 'config.yml'), 'utf-8')).toBe(committed);
   });
 
   test('is safe to run twice (second run is a no-op)', () => {
@@ -192,10 +192,10 @@ describe('seedWorktreeProjectSetup', () => {
     writeRootConfig(root, 'version: 1\n');
     wireEditorAtRoot(root, '.mcp.json');
     seedWorktreeProjectSetup(wt, root);
-    const firstConfig = readFileSync(join(wt, '.ok', 'config.yml'), 'utf-8');
+    const firstConfig = readFileSync(join(wt, '.ps', 'config.yml'), 'utf-8');
     const firstMcp = readFileSync(join(wt, '.mcp.json'), 'utf-8');
     seedWorktreeProjectSetup(wt, root);
-    expect(readFileSync(join(wt, '.ok', 'config.yml'), 'utf-8')).toBe(firstConfig);
+    expect(readFileSync(join(wt, '.ps', 'config.yml'), 'utf-8')).toBe(firstConfig);
     expect(readFileSync(join(wt, '.mcp.json'), 'utf-8')).toBe(firstMcp);
   });
 });

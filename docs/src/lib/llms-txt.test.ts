@@ -7,12 +7,12 @@ import { buildLlmsTxt, type LlmsTxtLink, marketingLinks } from './llms-txt';
 import { MARKETING_MARKDOWN_PAGES } from './marketing-markdown-pages';
 
 const docsLink: LlmsTxtLink = {
-  url: 'https://openknowledge.ai/docs/get-started/quickstart.md',
+  url: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx',
   name: 'Quickstart',
   description: 'Install and open your first file.',
 };
 const postLink: LlmsTxtLink = {
-  url: 'https://openknowledge.ai/blog/markdownlint-support.md',
+  url: 'https://github.com/fractalmandala/palimpsest/blog/markdownlint-support.md',
   name: 'Keeping you and your agents in check with markdownlint',
 };
 
@@ -23,7 +23,7 @@ function build(overrides: Partial<Parameters<typeof buildLlmsTxt>[0]> = {}) {
 describe('llms.txt index', () => {
   test('opens with a title and a blockquote summary', () => {
     const [title, summary] = build().split('\n\n');
-    expect(title).toBe('# OpenKnowledge');
+    expect(title).toBe('# Palimpsest');
     expect(summary.startsWith('> ')).toBe(true);
     expect(summary.length).toBeGreaterThan('> '.length);
   });
@@ -35,7 +35,7 @@ describe('llms.txt index', () => {
 
   test('lists a page an agent can fetch, with its notes', () => {
     expect(build()).toContain(
-      '- [Quickstart](https://openknowledge.ai/docs/get-started/quickstart.md): Install and open your first file.',
+      '- [Quickstart](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx): Install and open your first file.',
     );
   });
 
@@ -43,7 +43,7 @@ describe('llms.txt index', () => {
     const body = build({
       docs: [
         {
-          url: 'https://openknowledge.ai/docs/reference/components/accordion.md',
+          url: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/components/accordion.mdx',
           name: 'Accordion',
           description: 'Standalone expand/collapse via native HTML5 <details>/<summary>.',
         },
@@ -57,7 +57,7 @@ describe('llms.txt index', () => {
     const body = build({
       docs: [
         {
-          url: 'https://openknowledge.ai/docs/reference/components/accordion.md',
+          url: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/components/accordion.mdx',
           name: 'The <details> element',
         },
       ],
@@ -68,16 +68,16 @@ describe('llms.txt index', () => {
 
   test('keeps a bracket in a title inside the link label', () => {
     const body = build({
-      docs: [{ url: 'https://openknowledge.ai/docs/x.md', name: 'Arrays [and] slices' }],
+      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name: 'Arrays [and] slices' }],
     });
-    expect(body).toContain('- [Arrays \\[and\\] slices](https://openknowledge.ai/docs/x.md)');
+    expect(body).toContain('- [Arrays \\[and\\] slices](https://github.com/fractalmandala/palimpsest/tree/main/docs/content)');
   });
 
   test.each([
     ['A [link](u) title', 'A link title'],
     ['Bang ![img](u) in a title', 'Bang img in a title'],
   ])('reduces link syntax in a title to its words: %j', (name, expected) => {
-    const bullet = build({ docs: [{ url: 'https://openknowledge.ai/docs/x.md', name }] })
+    const bullet = build({ docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name }] })
       .split('\n')
       .find((line) => line.startsWith('- [A ') || line.startsWith('- [Bang '));
     const tree = unified()
@@ -90,14 +90,14 @@ describe('llms.txt index', () => {
     visit(tree, 'link', (node) => links.push(node.url));
     visit(tree, 'image', (node) => images.push(node.url));
 
-    expect(links).toEqual(['https://openknowledge.ai/docs/x.md']);
+    expect(links).toEqual(['https://github.com/fractalmandala/palimpsest/tree/main/docs/content']);
     expect(images).toEqual([]);
     expect(bullet).toContain(`[${expected}]`);
   });
 
   test('leaves a bracket inside a code span alone', () => {
     const body = build({
-      docs: [{ url: 'https://openknowledge.ai/docs/x.md', name: 'The `items[]` prop' }],
+      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name: 'The `items[]` prop' }],
     });
     const tree = unified().use(remarkParse).use(remarkGfm).parse(body);
 
@@ -107,8 +107,8 @@ describe('llms.txt index', () => {
   });
 
   test.each([
-    ['a parenthesis', 'https://openknowledge.ai/blog/note-)-end.md'],
-    ['a space', 'https://openknowledge.ai/blog/pre post.md'],
+    ['a parenthesis', 'https://github.com/fractalmandala/palimpsest/blog/note-)-end.md'],
+    ['a space', 'https://github.com/fractalmandala/palimpsest/blog/pre post.md'],
   ])('round-trips a URL carrying %s', (_name, url) => {
     const body = build({ blogPosts: [{ url, name: 'Note' }] });
     const tree = unified().use(remarkParse).use(remarkGfm).parse(body);
@@ -120,15 +120,15 @@ describe('llms.txt index', () => {
 
   test('keeps a multi-line title on the bullet it belongs to', () => {
     const body = build({
-      docs: [{ url: 'https://openknowledge.ai/docs/x.md', name: 'Folded\n\ntitle' }],
+      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name: 'Folded\n\ntitle' }],
     });
-    expect(body).toContain('- [Folded title](https://openknowledge.ai/docs/x.md)');
+    expect(body).toContain('- [Folded title](https://github.com/fractalmandala/palimpsest/tree/main/docs/content)');
   });
 
   test('omits the notes separator when an entry has no description', () => {
     expect(build()).toContain(
       '- [Keeping you and your agents in check with markdownlint]' +
-        '(https://openknowledge.ai/blog/markdownlint-support.md)\n',
+        '(https://github.com/fractalmandala/palimpsest/blog/markdownlint-support.md)\n',
     );
   });
 
@@ -136,7 +136,7 @@ describe('llms.txt index', () => {
     for (const url of [...build().matchAll(/^- \[(?:\\.|[^\]\\])*]\(([^)]+)\)/gm)].map(
       (m) => m[1],
     )) {
-      expect(url).toMatch(/^https:\/\/openknowledge\.ai\//);
+      expect(url).toMatch(/^https:\/\/palimpsest\.ai\//);
       expect(url).toMatch(/\.md$/);
     }
   });
@@ -149,7 +149,7 @@ describe('llms.txt index', () => {
   test('carries every curated marketing rendition', () => {
     const body = build();
     for (const page of MARKETING_MARKDOWN_PAGES) {
-      expect(body).toContain(`(https://openknowledge.ai${page.path})`);
+      expect(body).toContain(`(https://github.com/fractalmandala/palimpsest${page.path})`);
     }
   });
 
@@ -169,7 +169,7 @@ describe('llms.txt index', () => {
 
   test('resolves marketing paths against the site origin', () => {
     expect(marketingLinks('Product').map((link) => link.url)).toContain(
-      'https://openknowledge.ai/download.md',
+      'https://github.com/fractalmandala/palimpsest/download.md',
     );
   });
 });

@@ -10,7 +10,7 @@ import { packagingInvocation, SINGLE_NOTARIZER_ARG } from './package-desktop.mjs
 const script = fileURLToPath(new URL('./package-desktop.mjs', import.meta.url));
 
 function launcherFixture(body) {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-package-failure-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-package-failure-'));
   mkdirSync(join(cwd, 'scripts'), { recursive: true });
   writeFileSync(join(cwd, 'scripts', 'run-electron-builder.mjs'), body);
   return cwd;
@@ -19,7 +19,7 @@ function launcherFixture(body) {
 const wrapperEnv = {
   ...process.env,
   npm_config_user_agent: 'pnpm/10.33.0',
-  OK_DESKTOP_VARIANT: 'beta',
+  PS_DESKTOP_VARIANT: 'beta',
 };
 
 test.each(
@@ -29,7 +29,7 @@ test.each(
 )(
   'packages source with variant launcher present=%s on %s without changing its identity',
   (modern, platform) => {
-    const cwd = mkdtempSync(join(tmpdir(), 'ok-package-source-'));
+    const cwd = mkdtempSync(join(tmpdir(), 'ps-package-source-'));
     try {
       const launcher = modern
         ? join(cwd, 'scripts', 'run-electron-builder.mjs')
@@ -39,7 +39,7 @@ test.each(
       const output = join(cwd, 'observed.json');
       writeFileSync(
         launcher,
-        `require('node:fs').writeFileSync(${JSON.stringify(output)},JSON.stringify({args:process.argv.slice(2),pm:process.env.npm_config_user_agent,variant:process.env.OK_DESKTOP_VARIANT}));`.replace(
+        `require('node:fs').writeFileSync(${JSON.stringify(output)},JSON.stringify({args:process.argv.slice(2),pm:process.env.npm_config_user_agent,variant:process.env.PS_DESKTOP_VARIANT}));`.replace(
           "require('node:fs')",
           modern ? "(await import('node:fs'))" : "require('node:fs')",
         ),
@@ -50,7 +50,7 @@ test.each(
         env: {
           ...process.env,
           npm_config_user_agent: 'pnpm/10.33.0',
-          OK_DESKTOP_VARIANT: modern ? 'beta' : 'stable',
+          PS_DESKTOP_VARIANT: modern ? 'beta' : 'stable',
         },
       });
       expect(JSON.parse(readFileSync(output, 'utf8'))).toEqual({
@@ -130,7 +130,7 @@ test('an npm user agent is refused before the launcher runs', () => {
 });
 
 function sourceFixture({ launcher, afterSign }) {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-package-notarizer-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-package-notarizer-'));
   mkdirSync(join(cwd, 'scripts'), { recursive: true });
   if (launcher) writeFileSync(join(cwd, 'scripts', 'run-electron-builder.mjs'), '');
   if (afterSign !== undefined) writeFileSync(join(cwd, 'scripts', 'afterSign.mjs'), afterSign);
@@ -214,7 +214,7 @@ test('electron-builder reads the single-notarizer argument as notarize: false', 
     ]),
   ).parseSync();
   const { config } = normalizeOptions(argv);
-  const merged = { appId: 'ai.openknowledge.test', ...config, extends: undefined };
+  const merged = { appId: 'ai.palimpsest.test', ...config, extends: undefined };
   await validateConfiguration(merged, { add() {}, isEnabled: false });
 
   expect(config.extends).toBe('.variant-build/electron-builder.yml');

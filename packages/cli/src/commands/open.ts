@@ -4,7 +4,7 @@ import {
   currentCliCommandName,
   MANAGED_ARTIFACT_SCOPES,
   type SkillScope,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   encodeDocName,
   encodeFolderRoute,
@@ -12,7 +12,7 @@ import {
   findEnclosingProjectRoot,
   resolveLockDir,
   resolveUiInfo,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import type { SpawnDetachedScrubbedOutcome } from '../utils/detached-spawn.ts';
 import {
@@ -63,7 +63,7 @@ export function createRealOpenDeps(
         const code = (err as { code?: string } | null)?.code;
         if (code !== 'ENOENT' && code !== 'ENOTDIR') {
           process.stderr.write(
-            `[ok open] statSync failed for ${abs} (${code ?? 'unknown'}); treating as a doc\n`,
+            `[ps open] statSync failed for ${abs} (${code ?? 'unknown'}); treating as a doc\n`,
           );
         }
         return 'doc';
@@ -85,8 +85,8 @@ function isUnsafeName(name: string): boolean {
 
 function noTargetError(deps: OpenDeps): number {
   deps.error(
-    'No OpenKnowledge desktop app found and no UI is running. ' +
-      `Install it from https://openknowledge.ai/download, or run \`${currentCliCommandName()} start\` to serve the editor, then retry.`,
+    'No Palimpsest desktop app found and no UI is running. ' +
+      `Install it from https://github.com/fractalmandala/palimpsest/download, or run \`${currentCliCommandName()} start\` to serve the editor, then retry.`,
   );
   return 1;
 }
@@ -106,14 +106,14 @@ async function openAndReport(
   }
   deps.log(successMessage);
   if (!isProject) {
-    deps.log(`Working directory: ${projectDir} (not an OpenKnowledge project).`);
+    deps.log(`Working directory: ${projectDir} (not an Palimpsest project).`);
     return 0;
   }
   deps.log(`Project: ${projectDir}`);
   const ancestor = deps.findAncestorProject(projectDir);
   if (ancestor !== null) {
     deps.log(
-      `Note: this project (${projectDir}) is nested inside another OpenKnowledge project at ${ancestor}. ` +
+      `Note: this project (${projectDir}) is nested inside another Palimpsest project at ${ancestor}. ` +
         'Pass --project to choose explicitly.',
     );
   }
@@ -129,7 +129,7 @@ export async function runOpen(name: string, options: OpenOptions, deps: OpenDeps
 
   if (explicitProject && !deps.isProjectRoot(projectDir)) {
     deps.error(
-      `Cannot open with --project ${projectDir}: no .ok/config.yml there, so it is not an OpenKnowledge project.`,
+      `Cannot open with --project ${projectDir}: no .ps/config.yml there, so it is not an Palimpsest project.`,
     );
     return 1;
   }
@@ -163,7 +163,7 @@ export async function runOpen(name: string, options: OpenOptions, deps: OpenDeps
       )}&doc=${encodeURIComponent(`__skill__/${scope}/${cleanName}`)}`;
       return openAndReport(
         deepLink,
-        `Opening skill ${cleanName} (${scope}) in the OpenKnowledge desktop app.`,
+        `Opening skill ${cleanName} (${scope}) in the Palimpsest desktop app.`,
         projectDir,
         isProject,
         deps,
@@ -194,7 +194,7 @@ export async function runOpen(name: string, options: OpenOptions, deps: OpenDeps
       )}&folder=${encodeURIComponent(cleanName)}`;
       return openAndReport(
         deepLink,
-        `Opening folder ${cleanName} in the OpenKnowledge desktop app.`,
+        `Opening folder ${cleanName} in the Palimpsest desktop app.`,
         projectDir,
         isProject,
         deps,
@@ -221,7 +221,7 @@ export async function runOpen(name: string, options: OpenOptions, deps: OpenDeps
     )}&doc=${encodeURIComponent(cleanName)}`;
     return openAndReport(
       deepLink,
-      `Opening ${cleanName} in the OpenKnowledge desktop app.`,
+      `Opening ${cleanName} in the Palimpsest desktop app.`,
       projectDir,
       isProject,
       deps,

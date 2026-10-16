@@ -34,7 +34,7 @@ export const LAYERS: Layer[] = [
 
 export function LayerStack() {
   return (
-    <div className="ok-overview ok-stack not-prose relative mt-1.5 flex flex-col gap-3">
+    <div className="ps-overview ps-stack not-prose relative mt-1.5 flex flex-col gap-3">
       {LAYERS.map((layer) => (
         <div
           key={layer.k}
@@ -92,7 +92,7 @@ export const PATHS: Path[] = [
 
 export function WhereToStart() {
   return (
-    <div className="ok-overview not-prose flex flex-col gap-2.5">
+    <div className="ps-overview not-prose flex flex-col gap-2.5">
       {PATHS.map((path, i) => (
         <a
           key={path.href}

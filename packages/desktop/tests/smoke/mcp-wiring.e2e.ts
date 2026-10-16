@@ -30,12 +30,12 @@ const EXPECTED_CHAIN = WINDOWS
   ? {
       command: 'powershell',
       prefixArgs: ['-NoProfile', '-NonInteractive', '-Command'] as const,
-      sentinel: '# ok-mcp-win-v1',
+      sentinel: '# ps-mcp-win-v1',
     }
   : {
       command: '/bin/sh',
       prefixArgs: ['-l', '-c'] as const,
-      sentinel: '# ok-mcp-v2',
+      sentinel: '# ps-mcp-v2',
     };
 
 interface LaunchOpts {
@@ -55,8 +55,8 @@ async function launchApp({ tmpHome, extraEnv }: LaunchOpts): Promise<ElectronApp
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_M6B_FORCE: '1',
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_M6B_FORCE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
         ...extraEnv,
       },
     }),
@@ -64,7 +64,7 @@ async function launchApp({ tmpHome, extraEnv }: LaunchOpts): Promise<ElectronApp
 }
 
 function createTmpHome(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), `ok-m6b-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `ps-m6b-${prefix}-`));
 }
 
 function seedEditorDetectionDirs(tmpHome: string, editorHints: readonly string[]): void {
@@ -74,7 +74,7 @@ function seedEditorDetectionDirs(tmpHome: string, editorHints: readonly string[]
 }
 
 function markerPath(tmpHome: string): string {
-  return join(tmpHome, '.ok', 'mcp-status.json');
+  return join(tmpHome, '.ps', 'mcp-status.json');
 }
 
 function readMarker(tmpHome: string): Record<string, unknown> | null {
@@ -132,7 +132,7 @@ function forceRemove(pathsToRestore: readonly string[], dir: string): void {
 }
 
 test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -169,15 +169,15 @@ test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
       const claudeConfigPath = join(tmpHome, '.claude.json');
       expect(existsSync(claudeConfigPath)).toBe(true);
       const claudeConfig = JSON.parse(readFileSync(claudeConfigPath, 'utf8')) as {
-        mcpServers?: { 'open-knowledge'?: { command?: string; args?: string[] } };
+        mcpServers?: { 'palimpsest'?: { command?: string; args?: string[] } };
       };
-      const okEntry = claudeConfig.mcpServers?.['open-knowledge'];
-      expect(okEntry).toBeDefined();
-      expect(okEntry?.command).toBe(EXPECTED_CHAIN.command);
-      expect(okEntry?.args?.slice(0, EXPECTED_CHAIN.prefixArgs.length)).toEqual([
+      const psEntry = claudeConfig.mcpServers?.['palimpsest'];
+      expect(psEntry).toBeDefined();
+      expect(psEntry?.command).toBe(EXPECTED_CHAIN.command);
+      expect(psEntry?.args?.slice(0, EXPECTED_CHAIN.prefixArgs.length)).toEqual([
         ...EXPECTED_CHAIN.prefixArgs,
       ]);
-      const chainBody = okEntry?.args?.[EXPECTED_CHAIN.prefixArgs.length];
+      const chainBody = psEntry?.args?.[EXPECTED_CHAIN.prefixArgs.length];
       expect(typeof chainBody).toBe('string');
       expect(chainBody).toContain(EXPECTED_CHAIN.sentinel);
     } finally {
@@ -288,7 +288,7 @@ test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
     captureStderrFor,
   }) => {
     const tmpHome = createTmpHome('idempotent');
-    mkdirSync(join(tmpHome, '.ok'), { recursive: true });
+    mkdirSync(join(tmpHome, '.ps'), { recursive: true });
     writeFileSync(
       markerPath(tmpHome),
       JSON.stringify({
@@ -361,10 +361,10 @@ test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
     const tmpHome = createTmpHome('f1');
     seedEditorDetectionDirs(tmpHome, ['.claude']);
 
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-m6b-f1-project-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-m6b-f1-project-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
 

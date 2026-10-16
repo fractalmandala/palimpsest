@@ -10,8 +10,8 @@ import {
   LEGACY_SKILL_STORE_ROOT,
   LINKABLE_ASSET_EXTENSIONS,
   normalizeAttachmentFolderPath,
-  OK_DIR,
-} from '@inkeep/open-knowledge-core';
+  PS_DIR,
+} from '@palimpsest/core';
 import ignore, { type Ignore } from 'ignore';
 import { isReservedForUserTree } from './cc1-broadcast.ts';
 import { withHiddenWindowsConsole } from './child-process-windows-hide.ts';
@@ -47,9 +47,9 @@ const BUILTIN_SKIP_DIRS = new Set([
   '.parcel-cache',
   'coverage',
   '.git',
-  '.ok',
-  '.open-knowledge',
-  '.openknowledge',
+  '.ps',
+  '.palimpsest',
+  '.palimpsest',
   ...EDITOR_HOST_DIRS,
   'Library',
   'Applications',
@@ -59,13 +59,13 @@ const BUILTIN_SKIP_DIRS = new Set([
 const ALWAYS_SKIP_DIRS = new Set<string>([
   '.git',
   'node_modules',
-  '.ok',
-  '.open-knowledge',
-  '.openknowledge',
+  '.ps',
+  '.palimpsest',
+  '.palimpsest',
   ...EDITOR_HOST_DIRS,
 ]);
 
-const OK_ALWAYS_SKIP_CHILDREN = new Set(['worktrees', 'local']);
+const PS_ALWAYS_SKIP_CHILDREN = new Set(['worktrees', 'local']);
 
 function isBuiltinSkipDirName(name: string): boolean {
   return BUILTIN_SKIP_DIRS.has(name) || ALWAYS_SKIP_DIRS.has(name.toLowerCase());
@@ -135,8 +135,8 @@ function pathHasAlwaysSkipSegment(relativePath: string, showOk?: boolean): boole
     if (!ALWAYS_SKIP_DIRS.has(canonicalSegment)) continue;
     if (
       showOk &&
-      canonicalSegment === OK_DIR &&
-      !OK_ALWAYS_SKIP_CHILDREN.has((segments[i + 1] ?? '').toLowerCase())
+      canonicalSegment === PS_DIR &&
+      !PS_ALWAYS_SKIP_CHILDREN.has((segments[i + 1] ?? '').toLowerCase())
     ) {
       continue;
     }
@@ -162,13 +162,13 @@ function isSkillContentFile(relativePath: string): boolean {
 
 function isSkillContentAncestorDir(relativePath: string): boolean {
   return (
-    relativePath === '.ok' ||
+    relativePath === '.ps' ||
     relativePath === LEGACY_SKILL_STORE_ROOT ||
     isSkillContentFile(relativePath)
   );
 }
 
-const WATCHER_CARVE_OUT_CAPABLE_DIRS = new Set<string>([OK_DIR, ...EDITOR_HOST_DIRS]);
+const WATCHER_CARVE_OUT_CAPABLE_DIRS = new Set<string>([PS_DIR, ...EDITOR_HOST_DIRS]);
 const WATCHER_SAFE_BUILTIN_SKIP_DIRS = new Set(
   [...BUILTIN_SKIP_DIRS].filter((dir) => !WATCHER_CARVE_OUT_CAPABLE_DIRS.has(dir)),
 );
@@ -176,8 +176,8 @@ const WATCHER_SAFE_BUILTIN_SKIP_DIRS = new Set(
 export const WATCHER_STRUCTURAL_IGNORE_DIRS = [
   '.git',
   'node_modules',
-  '.ok/local',
-  '.ok/worktrees',
+  '.ps/local',
+  '.ps/worktrees',
 ] as const;
 
 const WATCHER_STRUCTURAL_IGNORE_GLOBS = WATCHER_STRUCTURAL_IGNORE_DIRS.flatMap((dir) => [
@@ -197,22 +197,22 @@ function watcherPatternIsConfinedToAlwaysSkippedTree(pattern: string): boolean {
 
   return segments.some(
     (segment, index) =>
-      segment.toLowerCase() === OK_DIR &&
-      OK_ALWAYS_SKIP_CHILDREN.has((segments[index + 1] ?? '').toLowerCase()),
+      segment.toLowerCase() === PS_DIR &&
+      PS_ALWAYS_SKIP_CHILDREN.has((segments[index + 1] ?? '').toLowerCase()),
   );
 }
 
 const WATCHER_MANAGED_CONTENT_PROBES = [
   '.gitignore',
-  '.ok',
-  '.ok/config.yml',
-  '.ok/.gitignore',
-  '.ok/schemas/frontmatter.json',
-  '.ok/templates/example.md',
-  '.ok/skills/example/SKILL.md',
-  'docs/.ok',
-  'docs/.ok/frontmatter.yml',
-  'docs/.ok/templates/example.md',
+  '.ps',
+  '.ps/config.yml',
+  '.ps/.gitignore',
+  '.ps/schemas/frontmatter.json',
+  '.ps/templates/example.md',
+  '.ps/skills/example/SKILL.md',
+  'docs/.ps',
+  'docs/.ps/frontmatter.yml',
+  'docs/.ps/templates/example.md',
   ...EDITOR_HOST_DIRS.flatMap((dir) => [dir, `${dir}/skills/example/SKILL.md`]),
 ] as const;
 
@@ -243,8 +243,8 @@ function buildWatcherIgnoreGlobs(patterns: readonly string[]): string[] {
   return [...new Set([...retained, ...WATCHER_STRUCTURAL_IGNORE_GLOBS])];
 }
 
-function templateFolderPrefixIsSkipped(segments: string[], okIndex: number): boolean {
-  for (let i = 0; i < okIndex; i++) {
+function templateFolderPrefixIsSkipped(segments: string[], psIndex: number): boolean {
+  for (let i = 0; i < psIndex; i++) {
     if (isBuiltinSkipDirName(segments[i])) return true;
   }
   return false;
@@ -255,7 +255,7 @@ function isTemplateContentFile(relativePath: string): boolean {
   const n = segments.length;
   if (n < 3) return false;
   if (
-    segments[n - 3] !== OK_DIR ||
+    segments[n - 3] !== PS_DIR ||
     segments[n - 2] !== 'templates' ||
     extname(segments[n - 1]) !== '.md'
   ) {
@@ -267,38 +267,38 @@ function isTemplateContentFile(relativePath: string): boolean {
 function isTemplateContentAncestorDir(relativePath: string): boolean {
   const segments = relativePath.split('/');
   const n = segments.length;
-  if (segments[n - 1] === OK_DIR) {
+  if (segments[n - 1] === PS_DIR) {
     return !templateFolderPrefixIsSkipped(segments, n - 1);
   }
-  if (n >= 2 && segments[n - 1] === 'templates' && segments[n - 2] === OK_DIR) {
+  if (n >= 2 && segments[n - 1] === 'templates' && segments[n - 2] === PS_DIR) {
     return !templateFolderPrefixIsSkipped(segments, n - 2);
   }
   return false;
 }
 
 /**
- * True for a FILE on the shareable `.ok` artifact allow-list. Exported because the symlink guard's
- * `.ok` write exemption must consult THIS predicate on the resolved path: one predicate for
+ * True for a FILE on the shareable `.ps` artifact allow-list. Exported because the symlink guard's
+ * `.ps` write exemption must consult THIS predicate on the resolved path: one predicate for
  * whether a path is in sync scope, never a parallel copy that can drift (precedent #55).
  */
 export function isShareableOkArtifact(relativePath: string): boolean {
   const segments = relativePath.split('/');
   const n = segments.length;
-  if (segments[0] === OK_DIR) {
+  if (segments[0] === PS_DIR) {
     if (n === 2 && (segments[1] === 'config.yml' || segments[1] === '.gitignore')) return true;
     if (n === 3 && segments[1] === 'schemas' && segments[2].toLowerCase().endsWith('.json')) {
       return true;
     }
   }
   if (isTemplateContentFile(relativePath)) return true;
-  if (n >= 2 && segments[n - 1] === 'frontmatter.yml' && segments[n - 2] === OK_DIR) {
+  if (n >= 2 && segments[n - 1] === 'frontmatter.yml' && segments[n - 2] === PS_DIR) {
     return !templateFolderPrefixIsSkipped(segments, n - 2);
   }
   return false;
 }
 
 function isShareableOkArtifactAncestorDir(relativePath: string): boolean {
-  if (relativePath === OK_DIR || relativePath === `${OK_DIR}/schemas`) return true;
+  if (relativePath === PS_DIR || relativePath === `${PS_DIR}/schemas`) return true;
   return isTemplateContentAncestorDir(relativePath);
 }
 
@@ -433,7 +433,7 @@ function createDescendantProjectGate(
   };
 }
 
-const IGNORE_FILE_NAMES = ['.gitignore', '.okignore'] as const;
+const IGNORE_FILE_NAMES = ['.gitignore', '.psignore'] as const;
 
 /**
  * Mirroring these into `ContentFilter` keeps the sync walker and `git add` agreed on scope
@@ -621,7 +621,7 @@ type ContentFilterSyncReadOpts = ContentFilterCommonReadOpts & {
   bypassFilters?: never;
   /**
    * Paths the unified ignore rules reject stay refused even with the scope: the gather walk and
-   * `git add` must agree on every path (precedent #55), and a local-only project's blanket `.ok/`
+   * `git add` must agree on every path (precedent #55), and a local-only project's blanket `.ps/`
    * exclude covers exactly this set.
    */
   syncScope: { pathBase: 'content' | 'project' };
@@ -696,7 +696,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
         const patterns = parseIgnorePatterns(content);
         newRootPatterns.push(...patterns);
         newIg.add(patterns);
-        if (name === '.okignore') newOkignoreIg.add(patterns);
+        if (name === '.psignore') newOkignoreIg.add(patterns);
       } catch (err) {
         log.warn({ path, err }, `Failed to read ${name} at ${path}`);
       }
@@ -713,7 +713,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
           const patterns = parseIgnorePatterns(content);
           const prefixed = patterns.map((p) => prefixPattern(p, contentRelPrefix));
           newIg.add(prefixed);
-          if (name === '.okignore') newOkignoreIg.add(prefixed);
+          if (name === '.psignore') newOkignoreIg.add(prefixed);
         } catch (err) {
           log.warn({ path, err }, `Failed to read ${name} at ${path}`);
         }
@@ -1232,7 +1232,7 @@ function loadNestedIgnoreFiles(
         const patterns = parseIgnorePatterns(content);
         const prefixed = patterns.map((p) => prefixPattern(p, relToProject));
         ig.add(prefixed);
-        if (name === '.okignore') okignoreIg.add(prefixed);
+        if (name === '.psignore') okignoreIg.add(prefixed);
         count++;
       } catch (err) {
         log.warn({ path: filePath, err }, `Failed to read nested ${name} at ${filePath}`);
@@ -1283,7 +1283,7 @@ async function initContentDirStateAsync(
             const patterns = parseIgnorePatterns(await readFileAsync(filePath, 'utf-8'));
             const prefixed = patterns.map((p) => prefixPattern(p, relToProject));
             ig.add(prefixed);
-            if (name === '.okignore') okignoreIg.add(prefixed);
+            if (name === '.psignore') okignoreIg.add(prefixed);
           } catch (err) {
             log.warn({ path: filePath, err }, `Failed to read nested ${name} at ${filePath}`);
           }
@@ -1392,7 +1392,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
         const patterns = parseIgnorePatterns(await readFileAsync(path, 'utf-8'));
         newRootPatterns.push(...patterns);
         newIg.add(patterns);
-        if (name === '.okignore') newOkignoreIg.add(patterns);
+        if (name === '.psignore') newOkignoreIg.add(patterns);
       } catch (err) {
         log.warn({ path, err }, `Failed to read ${name} at ${path}`);
       }
@@ -1406,7 +1406,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
           const patterns = parseIgnorePatterns(await readFileAsync(path, 'utf-8'));
           const prefixed = patterns.map((p) => prefixPattern(p, contentRelPrefix));
           newIg.add(prefixed);
-          if (name === '.okignore') newOkignoreIg.add(prefixed);
+          if (name === '.psignore') newOkignoreIg.add(prefixed);
         } catch (err) {
           log.warn({ path, err }, `Failed to read ${name} at ${path}`);
         }

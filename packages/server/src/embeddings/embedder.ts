@@ -6,7 +6,7 @@ import {
   DEFAULT_EMBEDDINGS_MAX_BATCH_SIZE,
   sleep as defaultSleep,
   isLoopbackEmbeddingsUrl,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger } from '../logger.ts';
 import {
   type EmbeddingErrorReason,
@@ -19,7 +19,7 @@ const log = getLogger('embeddings');
 
 export const DEFAULT_EMBEDDINGS_DIMENSIONS = 1536;
 
-export const EMBEDDINGS_API_KEY_ENV = 'OK_EMBEDDINGS_API_KEY';
+export const EMBEDDINGS_API_KEY_ENV = 'PS_EMBEDDINGS_API_KEY';
 
 export type EmbeddingRole = 'query' | 'document';
 
@@ -383,7 +383,7 @@ export async function loadOpenAiEmbedder(input: LoadOpenAiEmbedderInput): Promis
   return null;
 }
 
-const EMBEDDINGS_PROBE_INPUT = 'OpenKnowledge embeddings connection test';
+const EMBEDDINGS_PROBE_INPUT = 'Palimpsest embeddings connection test';
 
 const PROBE_TIMEOUT_MS = 10_000;
 

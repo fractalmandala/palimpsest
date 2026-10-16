@@ -2,12 +2,12 @@ import {
   HELPER_BUNDLE_NAME,
   HELPER_EXECUTABLE_NAME,
   resolveHelperBundleBinary,
-} from '@inkeep/open-knowledge-core/helper-bundle';
+} from '@palimpsest/core/helper-bundle';
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { maybeRedirectToHelperBundle, resolveSelfSpawn } from './self-spawn.ts';
 
-const PACKAGED_APP = '/Applications/OpenKnowledge.app';
-const PACKAGED_EXEC = `${PACKAGED_APP}/Contents/MacOS/OpenKnowledge`;
+const PACKAGED_APP = '/Applications/Palimpsest.app';
+const PACKAGED_EXEC = `${PACKAGED_APP}/Contents/MacOS/Palimpsest`;
 const PACKAGED_ENTRY = `${PACKAGED_APP}/Contents/Resources/app.asar.unpacked/dist/cli.mjs`;
 const HELPER_BINARY = `${PACKAGED_APP}/Contents/Frameworks/${HELPER_BUNDLE_NAME}/Contents/MacOS/${HELPER_EXECUTABLE_NAME}`;
 
@@ -36,8 +36,8 @@ describe('maybeRedirectToHelperBundle', () => {
   });
 
   test.each([
-    ['linux', '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge'],
-    ['win32', 'C:\\Program Files\\OpenKnowledge\\OpenKnowledge.exe'],
+    ['linux', '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest'],
+    ['win32', 'C:\\Program Files\\Palimpsest\\Palimpsest.exe'],
   ] as const)('non-darwin (%s) → null even if exists() would pass', (platform, execPath) => {
     expect(
       maybeRedirectToHelperBundle({
@@ -51,8 +51,8 @@ describe('maybeRedirectToHelperBundle', () => {
   test.each([
     '/usr/local/bin/node',
     '/opt/homebrew/bin/bun',
-    '/usr/local/lib/node_modules/@inkeep/open-knowledge/dist/cli.mjs',
-    '/Applications/OpenKnowledge.app/Contents/Resources/app/cli.mjs',
+    '/usr/local/lib/node_modules/@palimpsest/cli/dist/cli.mjs',
+    '/Applications/Palimpsest.app/Contents/Resources/app/cli.mjs',
     '/tmp/scratch.app.backup/cli',
   ])('darwin + non-bundle execPath (%s) → null', (execPath) => {
     expect(
@@ -87,10 +87,10 @@ describe('resolveSelfSpawn', () => {
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
-  it('falls back to npx -y @inkeep/open-knowledge@latest when argv[1] is empty', () => {
+  it('falls back to npx -y @palimpsest/cli@latest when argv[1] is empty', () => {
     const result = resolveSelfSpawn({ argv: ['runtime', ''] });
     expect(result.command).toBe('npx');
-    expect(result.prefixArgs).toEqual(['-y', '@inkeep/open-knowledge@latest']);
+    expect(result.prefixArgs).toEqual(['-y', '@palimpsest/cli@latest']);
     expect(warnSpy).toHaveBeenCalled();
   });
 
@@ -107,10 +107,10 @@ describe('resolveSelfSpawn', () => {
   });
 
   it('packaged-darwin Beta execPath → command is the Beta-named helper-bundle binary', () => {
-    const betaApp = '/Applications/OpenKnowledge Beta.app';
-    const betaHelper = `${betaApp}/Contents/Frameworks/OpenKnowledge Beta Server.app/Contents/MacOS/OpenKnowledge Beta Helper`;
+    const betaApp = '/Applications/Palimpsest Beta.app';
+    const betaHelper = `${betaApp}/Contents/Frameworks/Palimpsest Beta Server.app/Contents/MacOS/Palimpsest Beta Helper`;
     const result = resolveSelfSpawn({
-      execPath: `${betaApp}/Contents/MacOS/OpenKnowledge Beta`,
+      execPath: `${betaApp}/Contents/MacOS/Palimpsest Beta`,
       platform: 'darwin',
       argv: ['runtime', PACKAGED_ENTRY],
       exists: (p) => p === betaHelper,
@@ -131,7 +131,7 @@ describe('resolveSelfSpawn', () => {
 
   it.each([
     ['linux', PACKAGED_EXEC],
-    ['win32', 'C:\\Program Files\\OpenKnowledge\\OpenKnowledge.exe'],
+    ['win32', 'C:\\Program Files\\Palimpsest\\Palimpsest.exe'],
   ] as const)(
     'non-darwin (%s) → command stays execPath (no LaunchServices)',
     (platform, execPath) => {
@@ -149,7 +149,7 @@ describe('resolveSelfSpawn', () => {
   it.each([
     '/usr/local/bin/node',
     '/opt/homebrew/bin/bun',
-    '/usr/local/lib/node_modules/@inkeep/open-knowledge/dist/cli.mjs',
+    '/usr/local/lib/node_modules/@palimpsest/cli/dist/cli.mjs',
   ])('darwin + non-bundle execPath (%s) → command stays execPath', (execPath) => {
     const result = resolveSelfSpawn({
       execPath,

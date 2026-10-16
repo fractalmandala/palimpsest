@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig, type ViteUserConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 import { RENDERER_DEDUPE } from './vite.dedupe';
 
 // `@lingui/{react,core}/macro` only run under the build's Babel macro pass; a
@@ -17,7 +17,7 @@ const linguiMacroShim = fileURLToPath(new URL('./tests/lingui-macro-shim.tsx', i
 const srcDir = fileURLToPath(new URL('./src/', import.meta.url));
 
 // Global per-test IDB reset, ported from the bun `[test] preload`. Installs
-// `fake-indexeddb` and wipes every `ok-ydoc:` database after each test so
+// `fake-indexeddb` and wipes every `ps-ydoc:` database after each test so
 // shared doc names do not hydrate from prior-test state.
 const idbPreloadPath = fileURLToPath(
   new URL('./tests/integration/idb-preload.ts', import.meta.url),
@@ -27,11 +27,11 @@ const serverAuthorityRegistrySetup = fileURLToPath(
 );
 
 export const appVitestConfig = {
-  ...okVitestBase,
+  ...psVitestBase,
   publicDir: false,
-  plugins: [...okVitestBase.plugins, react()],
+  plugins: [...psVitestBase.plugins, react()],
   resolve: {
-    ...okVitestBase.resolve,
+    ...psVitestBase.resolve,
     alias: [
       { find: '@lingui/react/macro', replacement: linguiMacroShim },
       { find: '@lingui/core/macro', replacement: linguiMacroShim },
@@ -43,13 +43,13 @@ export const appVitestConfig = {
     dedupe: [...RENDERER_DEDUPE],
   },
   test: {
-    ...okVitestBase.test,
+    ...psVitestBase.test,
     exclude: [
-      ...okVitestBase.test.exclude,
+      ...psVitestBase.test.exclude,
       'public/excalidraw-assets/**',
       '.excalidraw-assets-staging-*',
     ],
-    setupFiles: [...okVitestBase.test.setupFiles, idbPreloadPath, serverAuthorityRegistrySetup],
+    setupFiles: [...psVitestBase.test.setupFiles, idbPreloadPath, serverAuthorityRegistrySetup],
     globalSetup: [fileURLToPath(new URL('./scripts/compile-i18n-catalogs.ts', import.meta.url))],
   },
 } satisfies ViteUserConfig;

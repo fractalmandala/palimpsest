@@ -1,4 +1,4 @@
-import type { TerminalPlacement } from '@inkeep/open-knowledge-core/terminal-layout';
+import type { TerminalPlacement } from '@palimpsest/core/terminal-layout';
 import { useLingui } from '@lingui/react/macro';
 import { useTheme } from 'next-themes';
 import {
@@ -92,7 +92,7 @@ export function TerminalDock({
     strandedReportsRef.current += 1;
     console.warn(
       JSON.stringify({
-        event: 'ok-terminal-dock-stranded-while-hidden',
+        event: 'ps-terminal-dock-stranded-while-hidden',
         panelPx: Math.round(panelPx),
         panelPct: Number.isFinite(panelPct) ? Math.round(panelPct * 10) / 10 : null,
         visible,

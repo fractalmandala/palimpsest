@@ -15,7 +15,7 @@ afterEach(async () => {
 
 describe('local-target watcher integration', () => {
   test('startup seeds ordinary-file existence from the real watcher inventory', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-lti-watch-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-lti-watch-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'assets'), { recursive: true });
     writeFileSync(

@@ -14,19 +14,19 @@ import {
 } from 'node:fs';
 import { arch as osArch, platform as osPlatform, tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve, sep } from 'node:path';
-import type { BundleRedaction as SecretScrubEntry } from '@inkeep/open-knowledge-core';
+import type { BundleRedaction as SecretScrubEntry } from '@palimpsest/core';
 import {
   ACP_LAUNCH_FAILURE_LOG,
   REPORT_SIDECAR_BUNDLE_DIR,
   SERVER_CRASH_LOG,
   SERVER_EXIT_LOG,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   DEFAULT_LOGS_MAX_BYTES,
   DEFAULT_SPANS_MAX_BYTES,
   resolveConfigPath,
-} from '@inkeep/open-knowledge-core/server';
-import { withHiddenWindowsConsole } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core/server';
+import { withHiddenWindowsConsole } from '@palimpsest/server';
 import { parse as parseYaml } from 'yaml';
 import { ZipFile } from 'yazl';
 import {
@@ -127,7 +127,7 @@ export interface CollectBundleDeps {
   readShadowHead?: (contentDir: string) => string | null;
   readCheckpointRefs?: (contentDir: string) => string | null;
   now?: () => Date;
-  okVersion?: () => string;
+  psVersion?: () => string;
   readDesktopEnv?: () => DesktopMetadata | null;
   readLanguage?: () => LanguageMetadata;
   readRuntime?: () => { nodeVersion: string; platform: string; arch: string };
@@ -156,9 +156,9 @@ export interface WriteBundleOpts {
   outputPath: string;
 }
 
-const TELEMETRY_REL = ['.ok', 'local', 'telemetry'] as const;
-const LOGS_REL = ['.ok', 'local', 'logs'] as const;
-const LOSS_CAPTURE_REL = ['.ok', 'local', 'loss-capture'] as const;
+const TELEMETRY_REL = ['.ps', 'local', 'telemetry'] as const;
+const LOGS_REL = ['.ps', 'local', 'logs'] as const;
+const LOSS_CAPTURE_REL = ['.ps', 'local', 'loss-capture'] as const;
 const SPANS_CURRENT = 'spans-current.jsonl';
 const SPANS_PREVIOUS = 'spans-prev.jsonl';
 const LOGS_CURRENT = 'server-current.jsonl';
@@ -288,9 +288,9 @@ function defaultReadCheckpointRefs(contentDir: string): string | null {
 }
 
 export function defaultReadDesktopEnv(): DesktopMetadata | null {
-  const electronVersion = process.env.OK_DESKTOP_VERSION;
-  const packagedRaw = process.env.OK_DESKTOP_PACKAGED;
-  const channel = process.env.OK_DESKTOP_CHANNEL;
+  const electronVersion = process.env.PS_DESKTOP_VERSION;
+  const packagedRaw = process.env.PS_DESKTOP_PACKAGED;
+  const channel = process.env.PS_DESKTOP_CHANNEL;
   if (electronVersion === undefined || packagedRaw === undefined || channel === undefined) {
     return null;
   }
@@ -489,13 +489,13 @@ export async function collectBundle(opts: CollectBundleOpts): Promise<CollectedB
   const readShadowHead = deps.readShadowHead ?? defaultReadShadowHead;
   const readCheckpointRefs = deps.readCheckpointRefs ?? defaultReadCheckpointRefs;
   const now = deps.now ?? (() => new Date());
-  const okVersion = deps.okVersion ?? (() => PACKAGE_VERSION);
+  const psVersion = deps.psVersion ?? (() => PACKAGE_VERSION);
   const readDesktopEnv = deps.readDesktopEnv ?? defaultReadDesktopEnv;
   const readLanguage = deps.readLanguage ?? defaultReadLanguage;
   const readRuntime = deps.readRuntime ?? defaultReadRuntime;
   const isOtlpPushEnabled = deps.isOtlpPushEnabled ?? defaultIsOtlpPushEnabled;
 
-  const stagingDir = mkdtempSync(join(tmpdir(), 'ok-bundle-'));
+  const stagingDir = mkdtempSync(join(tmpdir(), 'ps-bundle-'));
   try {
     mkdirSync(join(stagingDir, 'telemetry'), { recursive: true });
     mkdirSync(join(stagingDir, 'logs'), { recursive: true });
@@ -526,7 +526,7 @@ export async function collectBundle(opts: CollectBundleOpts): Promise<CollectedB
       }
     }
 
-    const lockDir = join(projectDir, '.ok', 'local');
+    const lockDir = join(projectDir, '.ps', 'local');
     const lockPath = join(lockDir, 'server.lock');
     let serverStatus: BundleServerStatus = 'not-running';
     let serverStatusReason = 'no server.lock';
@@ -607,7 +607,7 @@ export async function collectBundle(opts: CollectBundleOpts): Promise<CollectedB
     const language = readLanguage();
     const runtimeJson = {
       ok: {
-        version: okVersion(),
+        version: psVersion(),
         nodeVersion: runtime.nodeVersion,
         platform: runtime.platform,
         arch: runtime.arch,
@@ -699,7 +699,7 @@ export async function collectBundle(opts: CollectBundleOpts): Promise<CollectedB
       schemaVersion: 2,
       createdAt: now().toISOString(),
       ok: {
-        version: okVersion(),
+        version: psVersion(),
         nodeVersion: runtime.nodeVersion,
         platform: runtime.platform,
         arch: runtime.arch,

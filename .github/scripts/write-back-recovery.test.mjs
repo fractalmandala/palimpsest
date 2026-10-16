@@ -8,7 +8,7 @@ import {
 } from './write-back.mjs';
 import { planIssueClose } from './write-back-gate.mjs';
 
-const origin = 'https://github.com/inkeep/open-knowledge/issues/1428';
+const origin = 'https://github.com/fractalmandala/palimpsest/issues/1428';
 const pull = 'https://github.com/inkeep/agents-private/pull/4879';
 const oldVersion = '0.78.0-beta.0';
 const version = '0.78.0-beta.6';
@@ -21,7 +21,7 @@ function recoveryHarness(overrides = {}) {
   const logs = [];
   const deps = {
     channel: 'beta',
-    selfRepo: 'inkeep/open-knowledge',
+    selfRepo: 'fractalmandala/palimpsest',
     live: true,
     listCandidates: async () => [
       {
@@ -93,7 +93,7 @@ test('both channels reuse successful PR, commit-message and mirrored-history loo
   const counts = { pr: 0, message: 0, mirror: 0 };
   const sha = 'a'.repeat(40);
   const resolve = createVersionFor({
-    selfRepo: 'inkeep/open-knowledge',
+    selfRepo: 'fractalmandala/palimpsest',
     stableTags: ['v0.78.0-beta.6', 'v0.78.0'],
     resolvePrMergeSha: () => {
       counts.pr++;
@@ -109,7 +109,7 @@ test('both channels reuse successful PR, commit-message and mirrored-history loo
     },
     contains: () => true,
   });
-  const node = { attachmentUrls: ['https://github.com/inkeep/open-knowledge/pull/1500'] };
+  const node = { attachmentUrls: ['https://github.com/fractalmandala/palimpsest/pull/1500'] };
   expect(resolve(node, 'beta')).toBe('0.78.0-beta.6');
   expect(resolve(node, 'stable')).toBe('0.78.0');
   expect(resolve(node, 'beta')).toBe('0.78.0-beta.6');
@@ -127,7 +127,7 @@ test('a dry-run previews the correction without changing receipts or posting', a
 test('resolution caches keep distinct PR numbers and SHAs separate', () => {
   const counts = { pr: 0, message: 0, mirror: 0 };
   const resolve = createVersionFor({
-    selfRepo: 'inkeep/open-knowledge',
+    selfRepo: 'fractalmandala/palimpsest',
     stableTags: ['v0.78.0-beta.6', 'v0.78.0-beta.9', 'v0.78.0'],
     resolvePrMergeSha: ({ number }) => {
       counts.pr++;
@@ -143,8 +143,8 @@ test('resolution caches keep distinct PR numbers and SHAs separate', () => {
     },
     contains: (tag, sha) => sha === 'a'.repeat(40) || tag !== 'v0.78.0-beta.6',
   });
-  const first = { attachmentUrls: ['https://github.com/inkeep/open-knowledge/pull/1500'] };
-  const second = { attachmentUrls: ['https://github.com/inkeep/open-knowledge/pull/1501'] };
+  const first = { attachmentUrls: ['https://github.com/fractalmandala/palimpsest/pull/1500'] };
+  const second = { attachmentUrls: ['https://github.com/fractalmandala/palimpsest/pull/1501'] };
   expect(resolve(first, 'beta')).toBe('0.78.0-beta.6');
   expect(resolve(second, 'beta')).toBe('0.78.0-beta.9');
   expect(resolve(first, 'stable')).toBe('0.78.0');
@@ -163,14 +163,14 @@ test.each(['pr', 'message', 'mirror'])(
       return value;
     };
     const resolve = createVersionFor({
-      selfRepo: 'inkeep/open-knowledge',
+      selfRepo: 'fractalmandala/palimpsest',
       stableTags: ['v0.78.0-beta.6', 'v0.78.0'],
       resolvePrMergeSha: () => read('pr', sha),
       readCommitMessage: () => read('message', `GitOrigin-RevId: ${sha}`),
       findMirroredCommits: () => read('mirror', [{ sha, message: `GitOrigin-RevId: ${sha}` }]),
       contains: () => true,
     });
-    const node = { attachmentUrls: ['https://github.com/inkeep/open-knowledge/pull/1500'] };
+    const node = { attachmentUrls: ['https://github.com/fractalmandala/palimpsest/pull/1500'] };
     expect(() => resolve(node, 'beta')).toThrow('transient ' + failureAt);
     expect(resolve(node, 'beta')).toBe('0.78.0-beta.6');
     expect(resolve(node, 'stable')).toBe('0.78.0');
@@ -246,6 +246,6 @@ test('a corrected beta receipt does not suppress the later stable follow-up', as
   h.deps.classifyRelease = makeReleaseWindow({ releaseTag: 'v0.78.0' });
   await h.run();
   expect(h.posts).toHaveLength(2);
-  expect(h.posts[1].text).toContain('This shipped in Open Knowledge v0.78.0');
+  expect(h.posts[1].text).toContain('This shipped in Palimpsest v0.78.0');
   expect(h.posts[1].text).not.toContain('Correction');
 });

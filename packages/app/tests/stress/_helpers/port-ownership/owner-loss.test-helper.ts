@@ -132,10 +132,10 @@ function watchScratchGone(runDir: string): { result: Promise<boolean>; stop: () 
 
 export async function runOwnerLossControl(outputDir: string): Promise<OwnerLossRun> {
   const ordering = await createCleanupOrder(outputDir);
-  const runDir = mkdtempSync(join(tmpdir(), 'ok-port-ownership-'));
+  const runDir = mkdtempSync(join(tmpdir(), 'ps-port-ownership-'));
   const child = spawn(process.execPath, ['--import', 'tsx', DRIVER, runDir], {
     cwd: APP_ROOT,
-    env: { ...ordering.env, OK_PORT_OWNERSHIP_SCHEDULE_RUN_DIR: runDir },
+    env: { ...ordering.env, PS_PORT_OWNERSHIP_SCHEDULE_RUN_DIR: runDir },
     stdio: ['ignore', 'pipe', 'pipe', 'ipc'] as const,
   });
   let transcript = '';

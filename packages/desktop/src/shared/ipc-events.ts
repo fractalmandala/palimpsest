@@ -1,23 +1,23 @@
-import type { OkBugReportCrashDetectedEvent } from '@inkeep/open-knowledge-core';
+import type { PsBugReportCrashDetectedEvent } from '@palimpsest/core';
 import type {
-  OkDeepLinkPayload,
-  OkNoteWindowMainAction,
-  OkOnboardingToastPayload,
-  OkUserConfigSnapshot,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsDeepLinkPayload,
+  PsNoteWindowMainAction,
+  PsOnboardingToastPayload,
+  PsUserConfigSnapshot,
+} from '@palimpsest/core/desktop-bridge';
 import type {
-  OkDesktopConfig,
-  OkLocalOpAuthEvent,
-  OkLocalOpCloneEvent,
-  OkMenuActionDispatch,
-  OkPtyData,
-  OkPtyExit,
-  OkPtyNotice,
-  OkRecentRemovedMissingInfo,
-  OkServerRestartedInfo,
-  OkServerVersionDriftInfo,
-  OkShareReceivedPayload,
-  OkUpdateRelaunchFailedInfo,
+  PsDesktopConfig,
+  PsLocalOpAuthEvent,
+  PsLocalOpCloneEvent,
+  PsMenuActionDispatch,
+  PsPtyData,
+  PsPtyExit,
+  PsPtyNotice,
+  PsRecentRemovedMissingInfo,
+  PsServerRestartedInfo,
+  PsServerVersionDriftInfo,
+  PsShareReceivedPayload,
+  PsUpdateRelaunchFailedInfo,
 } from './bridge-contract.ts';
 import type {
   McpWiringEditorDetection,
@@ -28,20 +28,20 @@ import type {
 
 export interface EventChannels {
   'ok:project:switching': { payload: { projectPath: string } };
-  'ok:project:switched': { payload: OkDesktopConfig };
-  'ok:project:recent-removed-missing': { payload: OkRecentRemovedMissingInfo };
-  'ok:menu-action': { payload: OkMenuActionDispatch };
-  'ok:note-window:main-action': { payload: OkNoteWindowMainAction };
+  'ok:project:switched': { payload: PsDesktopConfig };
+  'ok:project:recent-removed-missing': { payload: PsRecentRemovedMissingInfo };
+  'ok:menu-action': { payload: PsMenuActionDispatch };
+  'ok:note-window:main-action': { payload: PsNoteWindowMainAction };
   'ok:update:downloaded': { payload: { version: string | null } };
   'ok:update:relaunching': { payload: { version: string } };
   'ok:update:fetching-latest': { payload: { version: string } };
-  'ok:update:relaunch-failed': { payload: OkUpdateRelaunchFailedInfo };
+  'ok:update:relaunch-failed': { payload: PsUpdateRelaunchFailedInfo };
   'ok:update:whats-new': { payload: { version: string; releaseUrl: string } };
   'ok:update:whats-new-dismissed': { payload: { version: string } };
   'ok:update:stuck-hint': { payload: { downloadUrl: string } };
   'ok:update:manual-check': { payload: { phase: 'started' | 'settled' } };
-  'ok:deep-link': { payload: OkDeepLinkPayload };
-  'ok:share:received': { payload: OkShareReceivedPayload };
+  'ok:deep-link': { payload: PsDeepLinkPayload };
+  'ok:share:received': { payload: PsShareReceivedPayload };
   'ok:mcp-wiring:show': {
     payload: {
       origin: 'first-run' | 'reconfigure';
@@ -54,26 +54,26 @@ export interface EventChannels {
     payload: OnboardingShowPayload;
   };
   'ok:onboarding:toast': {
-    payload: OkOnboardingToastPayload;
+    payload: PsOnboardingToastPayload;
   };
 
   'ok:local-op:auth:event': {
-    payload: { streamId: string; event: OkLocalOpAuthEvent };
+    payload: { streamId: string; event: PsLocalOpAuthEvent };
   };
   'ok:local-op:clone:event': {
-    payload: { streamId: string; event: OkLocalOpCloneEvent };
+    payload: { streamId: string; event: PsLocalOpCloneEvent };
   };
 
   'ok:sidebar:expand-all': { payload: undefined };
   'ok:sidebar:collapse-all': { payload: undefined };
 
-  'ok:server-version-drift': { payload: OkServerVersionDriftInfo };
-  'ok:server-restarted': { payload: OkServerRestartedInfo };
+  'ok:server-version-drift': { payload: PsServerVersionDriftInfo };
+  'ok:server-restarted': { payload: PsServerRestartedInfo };
 
-  'ok:pty:data': { payload: OkPtyData };
-  'ok:pty:exit': { payload: OkPtyExit };
-  'ok:pty:notice': { payload: OkPtyNotice };
+  'ok:pty:data': { payload: PsPtyData };
+  'ok:pty:exit': { payload: PsPtyExit };
+  'ok:pty:notice': { payload: PsPtyNotice };
   'ok:accessibility:changed': { payload: { screenReaderActive: boolean } };
-  'ok:bug-report:crash-detected': { payload: OkBugReportCrashDetectedEvent };
-  'ok:user-config:changed': { payload: OkUserConfigSnapshot };
+  'ok:bug-report:crash-detected': { payload: PsBugReportCrashDetectedEvent };
+  'ok:user-config:changed': { payload: PsUserConfigSnapshot };
 }

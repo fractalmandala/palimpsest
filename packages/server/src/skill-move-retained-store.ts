@@ -4,8 +4,8 @@ import {
   isSkillSourceStateCode,
   SKILL_MOVE_RETAINED_FILENAME,
   type SkillSourceStateCode,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import { getLocalDir } from './config/paths.ts';
 import { tracedAtomicFs, tracedMkdir } from './fs-traced.ts';
 import { createKeyedSerializer } from './keyed-serializer.ts';

@@ -12,7 +12,7 @@ import {
   SuggestLinksSuccessSchema,
   TagsForNameSuccessSchema,
   TagsListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { parseSkillBundleDocAnyScope } from '../backlink-index.ts';
 import { isConfigDoc, isSystemDoc } from '../cc1-broadcast.ts';
 import {

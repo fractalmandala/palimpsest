@@ -1,4 +1,4 @@
-import type { OkMenuAction } from '../shared/bridge-contract';
+import type { PsMenuAction } from '../shared/bridge-contract';
 import type { EditorViewMenuStateSnapshot } from '../shared/ipc-channels';
 import type { MenuDeps } from './menu';
 
@@ -92,7 +92,7 @@ type ViewMenuStateDeps = Pick<
 
 export function buildViewMenuStateDeps(
   state: EditorViewMenuStateSnapshot,
-  sendMenuAction: (action: OkMenuAction) => void,
+  sendMenuAction: (action: PsMenuAction) => void,
 ): ViewMenuStateDeps {
   return {
     showHiddenFilesChecked: state.showHiddenFiles,
@@ -110,7 +110,7 @@ export function buildViewMenuStateDeps(
     editorVisible: state.editorVisible,
     hasEditorSelection: state.hasEditorSelection,
     onToggleShowHiddenFiles: () => sendMenuAction('toggle-show-hidden-files'),
-    onToggleShowOkFolders: () => sendMenuAction('toggle-show-ok-folders'),
+    onToggleShowOkFolders: () => sendMenuAction('toggle-show-ps-folders'),
     onToggleShowOnlyMarkdownFiles: () => sendMenuAction('toggle-show-only-markdown-files'),
     onToggleShowSkillsSection: () => sendMenuAction('toggle-show-skills-section'),
     onToggleSidebar: () => sendMenuAction('toggle-sidebar'),

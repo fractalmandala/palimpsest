@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { ProcessLockMetadata } from '@inkeep/open-knowledge-server';
+import type { ProcessLockMetadata } from '@palimpsest/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { LockState } from '../lock-state.ts';
 import { makeServerLockCheck } from './server-lock.ts';
@@ -16,14 +16,14 @@ afterEach(() => {
 });
 
 function makeProject(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-health-lock-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-health-lock-'));
   tmpDirs.push(dir);
   return dir;
 }
 
 function makeProjectWithLockDir(): string {
   const dir = makeProject();
-  mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+  mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
   return dir;
 }
 
@@ -39,7 +39,7 @@ function makeLockMeta(overrides: Partial<ProcessLockMetadata> = {}): ProcessLock
 }
 
 describe('server-lock check', () => {
-  test('passes when no .ok/local directory exists', async () => {
+  test('passes when no .ps/local directory exists', async () => {
     const cwd = makeProject();
     const def = makeServerLockCheck();
     const result = await def.run({ cwd });
@@ -47,7 +47,7 @@ describe('server-lock check', () => {
     expect(result.summary).toContain('no server lock');
   });
 
-  test('passes when .ok/local exists but no server.lock', async () => {
+  test('passes when .ps/local exists but no server.lock', async () => {
     const cwd = makeProjectWithLockDir();
     const def = makeServerLockCheck({
       inspect: (): LockState => ({ status: 'missing', lockPath: '' }),
@@ -70,7 +70,7 @@ describe('server-lock check', () => {
     expect(result.status).toBe('fail');
     expect(result.summary).toContain('pid 1234');
     expect(result.summary).toContain('on this host');
-    expect(result.remediation).toContain('ok stop');
+    expect(result.remediation).toContain('ps stop');
     expect(result.detail).toContain('port: 5173');
   });
 
@@ -134,15 +134,15 @@ describe('server-lock remediation names the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: live and dead locks name %s stop and clean', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const remediationFor = async (state: LockState) =>
       (await makeServerLockCheck({ inspect: () => state }).run({ cwd: makeProjectWithLockDir() }))
         .remediation;
     expect(
       await remediationFor({ status: 'alive', lockPath: '/x/server.lock', lock: makeLockMeta() }),
-    ).toBe(`Stop the other OpenKnowledge process or run \`${command} stop\`.`);
+    ).toBe(`Stop the other Palimpsest process or run \`${command} stop\`.`);
     expect(
       await remediationFor({
         status: 'dead-pid',

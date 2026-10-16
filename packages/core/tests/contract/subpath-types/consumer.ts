@@ -27,7 +27,7 @@ export type {
   SatisfierId,
   SurfaceState,
   VISIBLE_HANDOFF_TARGETS,
-} from '@inkeep/open-knowledge-core/agent-registry';
+} from '@palimpsest/core/agent-registry';
 export type {
   addsBlankLines,
   bindFrontmatterDoc,
@@ -40,13 +40,13 @@ export type {
   readFmRegionWithError,
   SynthesisedConflictRegion,
   synthesiseConflictMarkersWithRegions,
-} from '@inkeep/open-knowledge-core/bridge';
+} from '@palimpsest/core/bridge';
 export type {
   clampToCodeUnits,
   mapControlCharactersToSpace,
   stripInvisibleCharacters,
-} from '@inkeep/open-knowledge-core/bug-report-sidecar/note-content';
-export type { isSurfacedCheckpointKind } from '@inkeep/open-knowledge-core/checkpoint-kinds';
+} from '@palimpsest/core/bug-report-sidecar/note-content';
+export type { isSurfacedCheckpointKind } from '@palimpsest/core/checkpoint-kinds';
 export type {
   CLIENT_RUNTIME_VERSION_FALLBACK,
   CLIENT_SURFACE_ATTRIBUTE,
@@ -57,24 +57,24 @@ export type {
   clientVersionTokenFields,
   deriveClientSurface,
   readClientSurface,
-} from '@inkeep/open-knowledge-core/client-version';
+} from '@palimpsest/core/client-version';
 export type {
   COMMAND_IDENTITIES,
   CommandContext,
   CommandIdentity,
   evaluateCommandAvailability,
-} from '@inkeep/open-knowledge-core/commands/command-identity';
+} from '@palimpsest/core/commands/command-identity';
 export type {
   commentLeafText,
   commentQuoteText,
-} from '@inkeep/open-knowledge-core/comments/leaf-text';
+} from '@palimpsest/core/comments/leaf-text';
 export type {
   contextEvidenceFloor,
   contextMatchScore,
   findAllPassages,
   PassageMatch,
   rewriteCeiling,
-} from '@inkeep/open-knowledge-core/comments/passage-match';
+} from '@palimpsest/core/comments/passage-match';
 export type {
   isSyncMode,
   modeFromCommittedDefault,
@@ -85,25 +85,25 @@ export type {
   SYNC_INTERVAL_PRESET_SECONDS,
   SyncActiveMode,
   SyncMode,
-} from '@inkeep/open-knowledge-core/config/auto-sync-mode';
+} from '@palimpsest/core/config/auto-sync-mode';
 export type {
   bindConfigDoc,
   ConfigBinding,
   ConfigBindingPatchResult,
-} from '@inkeep/open-knowledge-core/config/bind-config-doc';
+} from '@palimpsest/core/config/bind-config-doc';
 export type {
   bindOkignoreDoc,
   OkignoreBinding,
-} from '@inkeep/open-knowledge-core/config/bind-okignore-doc';
+} from '@palimpsest/core/config/bind-psignore-doc';
 export type {
   ConfigIssue,
   ConfigValidationError,
   humanFormat,
   isKnownConfigError,
   WriteScope,
-} from '@inkeep/open-knowledge-core/config/errors';
-export type { getFieldMeta } from '@inkeep/open-knowledge-core/config/field-registry';
-export type { mergeLayered } from '@inkeep/open-knowledge-core/config/merge-layered';
+} from '@palimpsest/core/config/errors';
+export type { getFieldMeta } from '@palimpsest/core/config/field-registry';
+export type { mergeLayered } from '@palimpsest/core/config/merge-layered';
 export type {
   Config,
   ConfigPatch,
@@ -122,14 +122,14 @@ export type {
   MIN_EMBEDDINGS_MAX_BATCH_CHARS,
   MIN_EMBEDDINGS_MAX_BATCH_SIZE,
   normalizeAttachmentFolderPath,
-} from '@inkeep/open-knowledge-core/config/schema';
-export type { resolveLeafSchema } from '@inkeep/open-knowledge-core/config/schema-leaf';
+} from '@palimpsest/core/config/schema';
+export type { resolveLeafSchema } from '@palimpsest/core/config/schema-leaf';
 export type {
   evictStaleEntries,
   FLASH_DEBOUNCE_MS,
   FLASH_DURATION_MS,
   hasNewEntries,
-} from '@inkeep/open-knowledge-core/constants/activity';
+} from '@palimpsest/core/constants/activity';
 export type {
   CC1_CONTRACT_VERSION,
   CONFIG_DOC_NAME_OKIGNORE,
@@ -155,24 +155,24 @@ export type {
   skillLiveDocName,
   stripMdExt,
   templateContentDocName,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-export type { CHROME_BG_DARK, CHROME_BG_LIGHT } from '@inkeep/open-knowledge-core/constants/chrome';
+} from '@palimpsest/core/constants/cc1';
+export type { CHROME_BG_DARK, CHROME_BG_LIGHT } from '@palimpsest/core/constants/chrome';
 export type {
   codeLanguageForExtension,
   EDITABLE_TEXT_EXTRA_LANGUAGE,
   isEditableTextDocFile,
-} from '@inkeep/open-knowledge-core/constants/code-languages';
-export type { CreateNewBannerKind } from '@inkeep/open-knowledge-core/constants/create-new-banner';
+} from '@palimpsest/core/constants/code-languages';
+export type { CreateNewBannerKind } from '@palimpsest/core/constants/create-new-banner';
 export type {
   CREATE_NEW_PROJECT_FAILURE_REASONS,
   CreateNewProjectFailureReason,
-} from '@inkeep/open-knowledge-core/constants/create-new-project-reason';
-export type { LINEAGE_EPOCH_KEY } from '@inkeep/open-knowledge-core/constants/doc-lifecycle';
+} from '@palimpsest/core/constants/create-new-project-reason';
+export type { LINEAGE_EPOCH_KEY } from '@palimpsest/core/constants/doc-lifecycle';
 export type {
   DOCUMENT_OPEN_BYTE_LIMIT,
   isDocumentOverOpenByteLimit,
   TEXT_DOC_OPEN_BYTE_LIMIT,
-} from '@inkeep/open-knowledge-core/constants/document-open';
+} from '@palimpsest/core/constants/document-open';
 export type {
   EDITOR_LABELS,
   EDITOR_PROJECT_SKILL_ROOT,
@@ -181,52 +181,52 @@ export type {
   RESERVED_PROJECT_SKILL_NAME,
   receivesProjectIntegrationWrite,
   STABLE_EDITOR_PROJECT_CONFIG_PATH,
-} from '@inkeep/open-knowledge-core/constants/editors';
+} from '@palimpsest/core/constants/editors';
 export type {
   detectEmbeddedHostFromBrowser,
   EmbeddedHost,
-} from '@inkeep/open-knowledge-core/constants/embedded-host';
-export type { SHOW_INSTALL_SKILL } from '@inkeep/open-knowledge-core/constants/feature-flags';
-export type { normalizeGitHostname } from '@inkeep/open-knowledge-core/constants/github';
+} from '@palimpsest/core/constants/embedded-host';
+export type { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
+export type { normalizeGitHostname } from '@palimpsest/core/constants/github';
 export type {
   isOrphanMode,
   ORPHAN_MODES,
   OrphanMode,
-} from '@inkeep/open-knowledge-core/constants/graph';
-export type { MANUAL_CHECK_NOTICE_EXPIRY_MS } from '@inkeep/open-knowledge-core/constants/manual-update-check';
+} from '@palimpsest/core/constants/graph';
+export type { MANUAL_CHECK_NOTICE_EXPIRY_MS } from '@palimpsest/core/constants/manual-update-check';
 export type {
-  OPEN_KNOWLEDGE_MCP_WRITE_TOOLS,
+  PALIMPSEST_MCP_WRITE_TOOLS,
   SERVER_TIMEOUT_ERROR_PREFIX,
   SERVER_UNREACHABLE_ERROR_PREFIX,
-} from '@inkeep/open-knowledge-core/constants/mcp';
+} from '@palimpsest/core/constants/mcp';
 export type {
-  OPEN_KNOWLEDGE_DISCORD_URL,
-  OPEN_KNOWLEDGE_DOCS_URL,
-  OPEN_KNOWLEDGE_GITHUB_URL,
-} from '@inkeep/open-knowledge-core/constants/menu-labels';
-export type { NativeMenuLabelKey } from '@inkeep/open-knowledge-core/constants/native-menu-labels';
+  PALIMPSEST_DISCORD_URL,
+  PALIMPSEST_DOCS_URL,
+  PALIMPSEST_GITHUB_URL,
+} from '@palimpsest/core/constants/menu-labels';
+export type { NativeMenuLabelKey } from '@palimpsest/core/constants/native-menu-labels';
 export type {
   PREVIEW_EMBED_STARTERS,
   PreviewEmbedStarter,
-} from '@inkeep/open-knowledge-core/constants/preview-embed-starters';
-export type { PREVIEW_THEME_TOKENS } from '@inkeep/open-knowledge-core/constants/preview-theme-tokens';
+} from '@palimpsest/core/constants/preview-embed-starters';
+export type { PREVIEW_THEME_TOKENS } from '@palimpsest/core/constants/preview-theme-tokens';
 export type {
   DESKTOP_PRODUCTS,
   desktopChannelLabel,
-} from '@inkeep/open-knowledge-core/constants/product';
+} from '@palimpsest/core/constants/product';
 export type {
   AGENTS_SKILLS_ROOT,
   isSkillRefCandidate,
-  OPENKNOWLEDGE_SKILLS_REPO,
+  PALIMPSEST_SKILLS_REPO,
   PACK_SKILL_PREFIX,
   SKILL_REF_RE,
-} from '@inkeep/open-knowledge-core/constants/skills';
+} from '@palimpsest/core/constants/skills';
 export type {
   UNINSTALL_FEEDBACK_EMAIL_MAX_LEN,
   UNINSTALL_FEEDBACK_NOTE_MAX_LEN,
   UNINSTALL_FEEDBACK_REASONS,
   UninstallFeedbackReason,
-} from '@inkeep/open-knowledge-core/constants/uninstall-feedback';
+} from '@palimpsest/core/constants/uninstall-feedback';
 export type {
   ALLOWED_IMAGE_MIME_TYPES,
   ASSET_EXTENSIONS,
@@ -245,42 +245,42 @@ export type {
   mediaKindForSidebarAssetExtension,
   VIDEO_EXTENSIONS,
   WIKI_EMBED_EXTENSIONS,
-} from '@inkeep/open-knowledge-core/constants/upload';
-export type { CodeBlockFidelity } from '@inkeep/open-knowledge-core/extensions/code-block-fidelity';
+} from '@palimpsest/core/constants/upload';
+export type { CodeBlockFidelity } from '@palimpsest/core/extensions/code-block-fidelity';
 export type {
   collectFootnoteIdentifiers,
   findFootnoteDefinitionInsertPos,
   nextFootnoteIdentifier,
-} from '@inkeep/open-knowledge-core/extensions/footnote-reference';
+} from '@palimpsest/core/extensions/footnote-reference';
 export type {
   FM_FENCE_LINE_RE,
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core/extensions/frontmatter';
-export type { ImageReferenceFidelity } from '@inkeep/open-knowledge-core/extensions/image-reference-fidelity';
-export type { ImageSrcFidelity } from '@inkeep/open-knowledge-core/extensions/image-src-fidelity';
-export type { JsxComponent } from '@inkeep/open-knowledge-core/extensions/jsx-component';
-export type { JsxInline } from '@inkeep/open-knowledge-core/extensions/jsx-inline';
+} from '@palimpsest/core/extensions/frontmatter';
+export type { ImageReferenceFidelity } from '@palimpsest/core/extensions/image-reference-fidelity';
+export type { ImageSrcFidelity } from '@palimpsest/core/extensions/image-src-fidelity';
+export type { JsxComponent } from '@palimpsest/core/extensions/jsx-component';
+export type { JsxInline } from '@palimpsest/core/extensions/jsx-inline';
 export type {
   isAllowedLinkUri,
   LinkFidelity,
   LinkStyle,
-} from '@inkeep/open-knowledge-core/extensions/link-fidelity';
-export type { MathInline } from '@inkeep/open-knowledge-core/extensions/math-inline';
-export type { RawMdxFallback } from '@inkeep/open-knowledge-core/extensions/raw-mdx-fallback';
-export type { sharedExtensions } from '@inkeep/open-knowledge-core/extensions/shared';
-export type { Tag } from '@inkeep/open-knowledge-core/extensions/tag';
+} from '@palimpsest/core/extensions/link-fidelity';
+export type { MathInline } from '@palimpsest/core/extensions/math-inline';
+export type { RawMdxFallback } from '@palimpsest/core/extensions/raw-mdx-fallback';
+export type { sharedExtensions } from '@palimpsest/core/extensions/shared';
+export type { Tag } from '@palimpsest/core/extensions/tag';
 export type {
   getWikiLinkText,
   normalizeNullableString,
   parseWikiLink,
   WikiLink,
-} from '@inkeep/open-knowledge-core/extensions/wiki-link';
-export type { WikiLinkEmbed } from '@inkeep/open-knowledge-core/extensions/wiki-link-embed';
+} from '@palimpsest/core/extensions/wiki-link';
+export type { WikiLinkEmbed } from '@palimpsest/core/extensions/wiki-link-embed';
 export type {
   FrontmatterValidationError,
   fieldErrorsFromError,
-} from '@inkeep/open-knowledge-core/frontmatter/errors';
+} from '@palimpsest/core/frontmatter/errors';
 export type {
   FrontmatterMap,
   FrontmatterPatch,
@@ -290,30 +290,30 @@ export type {
   inferType,
   isFrontmatterValueEmpty,
   RESERVED_FRONTMATTER_KEY,
-} from '@inkeep/open-knowledge-core/frontmatter/schema';
+} from '@palimpsest/core/frontmatter/schema';
 export type {
   extractFrontmatterTags,
   FRONTMATTER_TAG_GRAMMAR_HINT,
   FRONTMATTER_TAG_VALUE_RE,
   isValidFrontmatterTagValue,
-} from '@inkeep/open-knowledge-core/frontmatter/tags';
+} from '@palimpsest/core/frontmatter/tags';
 export type {
   diffFrontmatter,
   FrontmatterDelta,
   PropertyChange,
-} from '@inkeep/open-knowledge-core/frontmatter-diff';
+} from '@palimpsest/core/frontmatter-diff';
 export type {
   WorktreeInventoryEntry,
   WorktreeInventoryLocation,
   WorktreeInventoryModel,
   WorktreeInventoryOpenRequest,
-} from '@inkeep/open-knowledge-core/git/worktree-inventory-model';
+} from '@palimpsest/core/git/worktree-inventory-model';
 export type {
   stripRemotePrefix,
   WorktreeCreateResult,
   WorktreeSelectorEntry,
   WorktreeSelectorModel,
-} from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+} from '@palimpsest/core/git/worktree-selector-model';
 export type {
   AssembleHandoffPromptInput,
   assembleHandoffPrompt,
@@ -343,8 +343,8 @@ export type {
   HandoffScope,
   HandoffTarget,
   InstallState,
-  OK_TERMINAL_SURFACE_PREAMBLE,
-  OK_THREAD_SURFACE_PREAMBLE,
+  PS_TERMINAL_SURFACE_PREAMBLE,
+  PS_THREAD_SURFACE_PREAMBLE,
   PromptTransport,
   quoteWindowsShellPath,
   shellSingleQuote,
@@ -356,20 +356,20 @@ export type {
   TerminalLaunchCommand,
   WindowsShellFamily,
   withSkillPointer,
-} from '@inkeep/open-knowledge-core/handoff';
-export type { readBrowserLanguages } from '@inkeep/open-knowledge-core/i18n/browser-locale-provider';
-export type { localeDirection } from '@inkeep/open-knowledge-core/i18n/direction';
+} from '@palimpsest/core/handoff';
+export type { readBrowserLanguages } from '@palimpsest/core/i18n/browser-locale-provider';
+export type { localeDirection } from '@palimpsest/core/i18n/direction';
 export type {
   AUTO_DETECTABLE_LOCALES,
   LanguagePreference,
   PICKER_LOCALES,
   SUPPORTED_LOCALES,
   SupportedLocale,
-} from '@inkeep/open-knowledge-core/i18n/locales';
+} from '@palimpsest/core/i18n/locales';
 export type {
   FALLBACK_LOCALE,
   resolveLocale,
-} from '@inkeep/open-knowledge-core/i18n/resolve-locale';
+} from '@palimpsest/core/i18n/resolve-locale';
 export type {
   BUG_REPORT_ATTACHMENT_CONTENT_TYPES,
   BUG_REPORT_ATTACHMENT_EXTENSIONS,
@@ -379,14 +379,14 @@ export type {
   isBugReportCrashDumpEntry,
   MAX_BUG_REPORT_ATTACHMENTS,
   MAX_BUG_REPORT_ATTACHMENTS_TOTAL_BYTES,
-  OkBugReportCrashDetectedEvent,
-  OkBugReportListRow,
-  OkBugReportScreenshot,
-  OkBugReportSendMetadata,
-  OkBugReportSendResult,
-  OkImageAttachmentContentType,
+  PsBugReportCrashDetectedEvent,
+  PsBugReportListRow,
+  PsBugReportScreenshot,
+  PsBugReportSendMetadata,
+  PsBugReportSendResult,
+  PsImageAttachmentContentType,
   ReportBundleSummary,
-} from '@inkeep/open-knowledge-core/logger-types';
+} from '@palimpsest/core/logger-types';
 export type {
   LOGGER_OWNED_FIELDS,
   parseStructuredConsoleMessage,
@@ -394,18 +394,18 @@ export type {
   RENDERER_LOG_MAX_ENTRIES,
   RENDERER_LOG_MAX_MESSAGE_BYTES,
   truncateLogMessage,
-} from '@inkeep/open-knowledge-core/logging/renderer-log';
-export type { scrubSecrets } from '@inkeep/open-knowledge-core/logging/secret-scrub';
-export type { MarkdownManager } from '@inkeep/open-knowledge-core/markdown';
+} from '@palimpsest/core/logging/renderer-log';
+export type { scrubSecrets } from '@palimpsest/core/logging/secret-scrub';
+export type { MarkdownManager } from '@palimpsest/core/markdown';
 export type {
   selectFenceChar,
   widenFenceLength,
-} from '@inkeep/open-knowledge-core/markdown/code-fence';
+} from '@palimpsest/core/markdown/code-fence';
 export type {
   HtmlPayloadTooLargeError,
   htmlToMdast,
   mdastToMarkdown,
-} from '@inkeep/open-knowledge-core/markdown/html-to-mdast';
+} from '@palimpsest/core/markdown/html-to-mdast';
 export type {
   AppliesToPatternSummary,
   assertNeverOkfRuleGroupId,
@@ -443,8 +443,8 @@ export type {
   MarkdownlintRuleSetting,
   MarkdownlintRuleSeverity,
   MarkdownlintRuleWriteValue,
-  OKF_RULE_GROUPS,
-  OKF_RULE_IDS,
+  PSF_RULE_GROUPS,
+  PSF_RULE_IDS,
   OkfRuleGroupId,
   OkfRuleId,
   PersistedLinterConfig,
@@ -465,21 +465,21 @@ export type {
   ValidationDocResult,
   ValidationSourceCounts,
   ValidationSourceKey,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 export type {
   markdownToHtml,
   mdastToHtml,
-} from '@inkeep/open-knowledge-core/markdown/mdast-to-html';
-export type { markdownToPlainText } from '@inkeep/open-knowledge-core/markdown/plain-text';
-export type { normalizeReferenceLabel } from '@inkeep/open-knowledge-core/markdown/reference-label';
-export type { normalizeDocRelativeAssetUrl } from '@inkeep/open-knowledge-core/markdown/resolve-image-url';
+} from '@palimpsest/core/markdown/mdast-to-html';
+export type { markdownToPlainText } from '@palimpsest/core/markdown/plain-text';
+export type { normalizeReferenceLabel } from '@palimpsest/core/markdown/reference-label';
+export type { normalizeDocRelativeAssetUrl } from '@palimpsest/core/markdown/resolve-image-url';
 export type {
   isRelativeUrl,
   isSafeUrl,
   SAFE_URL_SCHEME_RE,
   SAFE_URL_SCHEMES,
-} from '@inkeep/open-knowledge-core/markdown/safe-url';
-export type { INLINE_TAG_VALUE_RE } from '@inkeep/open-knowledge-core/markdown/tag-promotion';
+} from '@palimpsest/core/markdown/safe-url';
+export type { INLINE_TAG_VALUE_RE } from '@palimpsest/core/markdown/tag-promotion';
 export type {
   incrementBlockGripClickSelectFailed,
   incrementJsxActionAborted,
@@ -495,13 +495,13 @@ export type {
   incrementJsxStuckCopyFailed,
   incrementJsxStuckDeleteFailed,
   JsxNodeAction,
-} from '@inkeep/open-knowledge-core/metrics/parse-health';
-export type { createRegistry } from '@inkeep/open-knowledge-core/registry';
+} from '@palimpsest/core/metrics/parse-health';
+export type { createRegistry } from '@palimpsest/core/registry';
 export type {
   JsxComponentMeta,
   PropDef,
   PropDefString,
-} from '@inkeep/open-knowledge-core/registry/types';
+} from '@palimpsest/core/registry/types';
 export type {
   ActivityAgentHeader,
   ActivityBurst,
@@ -631,7 +631,7 @@ export type {
   UploadAssetSuccess,
   UploadAssetSuccessSchema,
   WorkspaceSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 export type {
   CC1_CHANNEL_BRANCH_SWITCHED,
   CC1_CHANNEL_CONFIG_IGNORE_NESTED_ERROR,
@@ -650,7 +650,7 @@ export type {
   CC1ServerInfoPayloadSchema,
   DerivedViewChannel,
   DerivedViewChannelSchema,
-} from '@inkeep/open-knowledge-core/schemas/cc1';
+} from '@palimpsest/core/schemas/cc1';
 export type {
   createWorkspaceSearchCorpus,
   createWorkspaceSearchDocument,
@@ -660,14 +660,14 @@ export type {
   WorkspaceSearchDocument,
   WorkspaceSearchKind,
   workspaceSearchBasename,
-} from '@inkeep/open-knowledge-core/search/workspace-search';
-export type { planHasOutstandingWork } from '@inkeep/open-knowledge-core/seed-plan-work';
+} from '@palimpsest/core/search/workspace-search';
+export type { planHasOutstandingWork } from '@palimpsest/core/seed-plan-work';
 export type {
   BranchMatchOutcome,
   canonicalGitHubRemoteUrl,
   classifyBranchMatch,
   ExpectedShareRepo,
-} from '@inkeep/open-knowledge-core/sharing';
+} from '@palimpsest/core/sharing';
 export type {
   isSkillInstallTarget,
   SkillInstallTarget,
@@ -675,7 +675,7 @@ export type {
   SkillTargetEditorSchema,
   SkillUserTargetEditor,
   SkillUserTargetEditorSchema,
-} from '@inkeep/open-knowledge-core/skill-targets/schema';
+} from '@palimpsest/core/skill-targets/schema';
 export type {
   CatalogSkill,
   PluginBundleMetadata,
@@ -687,20 +687,20 @@ export type {
   SkillSearchResult,
   SkillsInstalledSuccess,
   SkillsSearchSuccess,
-} from '@inkeep/open-knowledge-core/skills-catalog/schema';
-export type { catalogRawScopeToOkScope } from '@inkeep/open-knowledge-core/skills-catalog/scope';
+} from '@palimpsest/core/skills-catalog/schema';
+export type { catalogRawScopeToOkScope } from '@palimpsest/core/skills-catalog/scope';
 export type {
   ALWAYS_ON_TOKEN_BUDGET,
   estimateSkillCost,
   ON_TRIGGER_TOKEN_BUDGET,
   SkillCostTiers,
-} from '@inkeep/open-knowledge-core/skills-catalog/skill-cost';
+} from '@palimpsest/core/skills-catalog/skill-cost';
 export type {
   isLocalSkillSource,
   parseSkillsShCatalogSource,
   skillsShSkillLinks,
-} from '@inkeep/open-knowledge-core/skills-catalog/source-fields';
-export type { SyncPausedReason } from '@inkeep/open-knowledge-core/sync-paused-reason';
+} from '@palimpsest/core/skills-catalog/source-fields';
+export type { SyncPausedReason } from '@palimpsest/core/sync-paused-reason';
 export type {
   DEFAULT_TERMINAL_PLACEMENT,
   MIN_TERMINAL_RIGHT_WIDTH,
@@ -708,7 +708,7 @@ export type {
   normalizeTerminalRightWidth,
   PREFERRED_TERMINAL_RIGHT_WIDTH,
   TerminalPlacement,
-} from '@inkeep/open-knowledge-core/terminal-layout';
+} from '@palimpsest/core/terminal-layout';
 export type {
   AnsiSlotName,
   BASE16_SLOT_ROLES,
@@ -723,7 +723,7 @@ export type {
   mixHex,
   parseBase16Scheme,
   relativeLuminance,
-} from '@inkeep/open-knowledge-core/theme/base16';
+} from '@palimpsest/core/theme/base16';
 export type {
   ColorThemeSelection,
   ColorThemeSelectionInput,
@@ -737,19 +737,19 @@ export type {
   resolveThemePlugin,
   THEME_PLUGINS,
   ThemePlugin,
-} from '@inkeep/open-knowledge-core/theme/theme-plugins';
+} from '@palimpsest/core/theme/theme-plugins';
 export type {
   AgentFlashEntry,
   AgentPresenceEntry,
   AwarenessState,
   AwarenessUser,
   isPresenceSentinelDocName,
-} from '@inkeep/open-knowledge-core/types/awareness';
-export type { Identity } from '@inkeep/open-knowledge-core/types/identity';
-export type { Principal } from '@inkeep/open-knowledge-core/types/principal';
-export type { TimelineEntry } from '@inkeep/open-knowledge-core/types/timeline';
+} from '@palimpsest/core/types/awareness';
+export type { Identity } from '@palimpsest/core/types/identity';
+export type { Principal } from '@palimpsest/core/types/principal';
+export type { TimelineEntry } from '@palimpsest/core/types/timeline';
 export type {
-  OkUninstallBridge,
+  PsUninstallBridge,
   UNINSTALL_RESULT_WAIT_TIMEOUT_MS,
   UninstallDispatchResult,
   UninstallIntent,
@@ -757,26 +757,26 @@ export type {
   UninstallNoticeScreen,
   UninstallProjectRow,
   UninstallScreenSpec,
-} from '@inkeep/open-knowledge-core/uninstall-bridge';
+} from '@palimpsest/core/uninstall-bridge';
 export type {
   isHiddenDocName,
   isProjectSkillBundlePath,
-} from '@inkeep/open-knowledge-core/util/doc-name';
-export type { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
+} from '@palimpsest/core/util/doc-name';
+export type { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 export type {
   ChunkedInsertError,
   chunkedYTextInsert,
-} from '@inkeep/open-knowledge-core/utils/chunked-insert';
-export type { createCodeFenceTracker } from '@inkeep/open-knowledge-core/utils/code-fence-tracker';
-export type { rewriteEmbedUrl } from '@inkeep/open-knowledge-core/utils/embed-url-rewrite';
-export type { extensionOf } from '@inkeep/open-knowledge-core/utils/extension';
-export type { formatFileSize } from '@inkeep/open-knowledge-core/utils/file-size';
-export type { getGitHubStars } from '@inkeep/open-knowledge-core/utils/github-stars';
+} from '@palimpsest/core/utils/chunked-insert';
+export type { createCodeFenceTracker } from '@palimpsest/core/utils/code-fence-tracker';
+export type { rewriteEmbedUrl } from '@palimpsest/core/utils/embed-url-rewrite';
+export type { extensionOf } from '@palimpsest/core/utils/extension';
+export type { formatFileSize } from '@palimpsest/core/utils/file-size';
+export type { getGitHubStars } from '@palimpsest/core/utils/github-stars';
 export type {
   graphemePrefix,
   graphemeSuffix,
-} from '@inkeep/open-knowledge-core/utils/grapheme-clip';
-export type { scanHeadingLine } from '@inkeep/open-knowledge-core/utils/heading-scan';
+} from '@palimpsest/core/utils/grapheme-clip';
+export type { scanHeadingLine } from '@palimpsest/core/utils/heading-scan';
 export type {
   AGENT_ICON_COLORS,
   AGENT_ICON_COLORS_DARK,
@@ -788,7 +788,7 @@ export type {
   HUMAN_COLORS,
   iconFromClientName,
   SYSTEM_WRITER_DISPLAY_NAMES,
-} from '@inkeep/open-knowledge-core/utils/identity';
+} from '@palimpsest/core/utils/identity';
 export type {
   assertNeverLinkTarget,
   buildRelativeMarkdownHref,
@@ -798,22 +798,22 @@ export type {
   extractAssetExtension,
   isExternalHref,
   resolveAssetProjectPath,
-} from '@inkeep/open-knowledge-core/utils/link-targets';
-export type { isLoomUrl, parseLoomUrl } from '@inkeep/open-knowledge-core/utils/loom-embed';
-export type { parsePdfAnchor } from '@inkeep/open-knowledge-core/utils/pdf-anchor';
-export type { randomUUID } from '@inkeep/open-knowledge-core/utils/random-uuid';
-export type { formatRelativeAge } from '@inkeep/open-knowledge-core/utils/relative-time';
+} from '@palimpsest/core/utils/link-targets';
+export type { isLoomUrl, parseLoomUrl } from '@palimpsest/core/utils/loom-embed';
+export type { parsePdfAnchor } from '@palimpsest/core/utils/pdf-anchor';
+export type { randomUUID } from '@palimpsest/core/utils/random-uuid';
+export type { formatRelativeAge } from '@palimpsest/core/utils/relative-time';
 export type {
   decodeHrefPath,
   resolveInternalHref,
-} from '@inkeep/open-knowledge-core/utils/resolve-internal-href';
-export type { sanitizeFolderName } from '@inkeep/open-knowledge-core/utils/sanitize-folder-name';
+} from '@palimpsest/core/utils/resolve-internal-href';
+export type { sanitizeFolderName } from '@palimpsest/core/utils/sanitize-folder-name';
 export type {
   getHeadingSlug,
   HeadingEntry,
   toWikiLinkSlug,
   wikiLinkHref,
-} from '@inkeep/open-knowledge-core/utils/slug';
+} from '@palimpsest/core/utils/slug';
 export type {
   DependencySlug,
   dependencySlug,
@@ -822,7 +822,7 @@ export type {
   leafKey,
   TARGET_IDENTITY,
   TargetKind,
-} from '@inkeep/open-knowledge-core/utils/target-identity';
+} from '@palimpsest/core/utils/target-identity';
 export type {
   asTargetNamespace,
   createTargetNamespace,
@@ -831,8 +831,8 @@ export type {
   resolveName,
   TargetMatch,
   TargetNamespace,
-} from '@inkeep/open-knowledge-core/utils/target-namespace';
-export type { isVimeoUrl } from '@inkeep/open-knowledge-core/utils/vimeo-embed';
+} from '@palimpsest/core/utils/target-namespace';
+export type { isVimeoUrl } from '@palimpsest/core/utils/vimeo-embed';
 export type {
   buildPagesByBasenameIndex,
   buildPagesBySlugIndex,
@@ -843,8 +843,8 @@ export type {
   resolveWikiLinkTarget,
   resolveWikiLinkTargetDocName,
   WikiLinkLookupIndex,
-} from '@inkeep/open-knowledge-core/utils/wiki-link-resolve';
+} from '@palimpsest/core/utils/wiki-link-resolve';
 export type {
   ParsedYouTubeUrl,
   parseYouTubeUrl,
-} from '@inkeep/open-knowledge-core/utils/youtube-embed';
+} from '@palimpsest/core/utils/youtube-embed';

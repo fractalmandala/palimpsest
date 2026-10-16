@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import {
   filterOpenTabsForKnownTargets,

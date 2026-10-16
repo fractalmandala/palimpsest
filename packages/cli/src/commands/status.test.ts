@@ -192,9 +192,9 @@ describe('status hints name the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: stale and corrupt locks suggest %s clean', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     expect(renderStatusText(buildStatusReport(dead(999)))).toContain(
       `server  stale (dead pid=999) — run \`${command} clean\``,
     );

@@ -5,7 +5,7 @@ import { isAbsolute, join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { DmgMountError, MOUNT_ERROR_CODES, withMountedDmg } from './dmg-mount.mjs';
 
-function makeDeps({ attachFails = false, apps = ['OpenKnowledge.app'], proc } = {}) {
+function makeDeps({ attachFails = false, apps = ['Palimpsest.app'], proc } = {}) {
   const calls = [];
   const removed = [];
   let tmpCounter = 0;
@@ -45,7 +45,7 @@ describe('withMountedDmg', () => {
     let seen = null;
 
     const result = await withMountedDmg(
-      '/tmp/OpenKnowledge.dmg',
+      '/tmp/Palimpsest.dmg',
       async (appPath) => {
         seen = appPath;
         expect(calls.some((c) => c[0] === 'hdiutil' && c[1] === 'detach')).toBe(true);
@@ -55,7 +55,7 @@ describe('withMountedDmg', () => {
     );
 
     expect(result).toBe('callback-result');
-    expect(seen).toMatch(/OpenKnowledge\.app$/);
+    expect(seen).toMatch(/Palimpsest\.app$/);
     expect(seen).not.toMatch(/ok-dmg-mount-/);
 
     const attach = calls.find((c) => c[1] === 'attach');
@@ -66,10 +66,10 @@ describe('withMountedDmg', () => {
   });
 
   test('copies an Electron-shaped bundle without absolutizing its relative symlinks', async () => {
-    const scratch = await mkdtemp(join(tmpdir(), 'ok-dmg-mount-test-'));
+    const scratch = await mkdtemp(join(tmpdir(), 'ps-dmg-mount-test-'));
     const framework = join(
       scratch,
-      'OpenKnowledge.app/Contents/Frameworks/Electron Framework.framework',
+      'Palimpsest.app/Contents/Frameworks/Electron Framework.framework',
     );
     await mkdir(join(framework, 'Versions/A'), { recursive: true });
     await writeFile(join(framework, 'Versions/A/Electron Framework'), 'mach-o');
@@ -78,7 +78,7 @@ describe('withMountedDmg', () => {
 
     let linkTarget = null;
     await withMountedDmg(
-      '/tmp/OpenKnowledge.dmg',
+      '/tmp/Palimpsest.dmg',
       async (appPath) => {
         linkTarget = await readlink(
           join(appPath, 'Contents/Frameworks/Electron Framework.framework/Electron Framework'),
@@ -87,10 +87,10 @@ describe('withMountedDmg', () => {
       {
         runCommand: async () => {},
         mkdtemp: async (prefix) =>
-          prefix.includes('ok-dmg-mount-') ? scratch : await mkdtemp(prefix),
+          prefix.includes('ps-dmg-mount-') ? scratch : await mkdtemp(prefix),
         cp,
         rm,
-        listAppsInMount: async () => ['OpenKnowledge.app'],
+        listAppsInMount: async () => ['Palimpsest.app'],
         process: new EventEmitter(),
       },
     );
@@ -106,7 +106,7 @@ describe('withMountedDmg', () => {
 
     await expect(
       withMountedDmg(
-        '/tmp/OpenKnowledge.dmg',
+        '/tmp/Palimpsest.dmg',
         async () => {
           throw new Error('smoke run blew up');
         },
@@ -122,7 +122,7 @@ describe('withMountedDmg', () => {
 
     await expect(
       withMountedDmg(
-        '/tmp/OpenKnowledge.dmg',
+        '/tmp/Palimpsest.dmg',
         async () => {
           throw new Error('boom');
         },
@@ -130,8 +130,8 @@ describe('withMountedDmg', () => {
       ),
     ).rejects.toThrow('boom');
 
-    expect(removed.some((p) => p.includes('ok-dmg-app-'))).toBe(true);
-    expect(removed.some((p) => p.includes('ok-dmg-mount-'))).toBe(true);
+    expect(removed.some((p) => p.includes('ps-dmg-app-'))).toBe(true);
+    expect(removed.some((p) => p.includes('ps-dmg-mount-'))).toBe(true);
   });
 
   test('attach failure throws with the hdiutil stderr and leaves no mountpoint behind', async () => {
@@ -150,7 +150,7 @@ describe('withMountedDmg', () => {
     expect(err).toBeInstanceOf(DmgMountError);
     expect(err.code).toBe(MOUNT_ERROR_CODES.attachFailed);
     expect(err.message).toContain('no mountable file systems');
-    expect(removed.some((p) => p.includes('ok-dmg-mount-'))).toBe(true);
+    expect(removed.some((p) => p.includes('ps-dmg-mount-'))).toBe(true);
   });
 
   test('an empty volume detaches and throws a distinct no-app-bundle error', async () => {
@@ -171,7 +171,7 @@ describe('withMountedDmg', () => {
     const { calls, deps } = makeDeps({ proc });
 
     await withMountedDmg(
-      '/tmp/OpenKnowledge.dmg',
+      '/tmp/Palimpsest.dmg',
       async () => {
         proc.emit('SIGTERM');
         await Promise.resolve();
@@ -189,7 +189,7 @@ describe('withMountedDmg', () => {
     const removed = [];
     let tmpCounter = 0;
 
-    await withMountedDmg('/tmp/OpenKnowledge.dmg', async () => {}, {
+    await withMountedDmg('/tmp/Palimpsest.dmg', async () => {}, {
       runCommand: async (cmd, args) => {
         calls.push([cmd, ...args]);
         if (args[0] === 'attach') {
@@ -202,13 +202,13 @@ describe('withMountedDmg', () => {
       rm: async (p) => {
         removed.push(p);
       },
-      listAppsInMount: async () => ['OpenKnowledge.app'],
+      listAppsInMount: async () => ['Palimpsest.app'],
       process: proc,
     });
 
     expect(proc.exitCodes).toEqual([130]);
     expect(calls.some((c) => c[1] === 'detach')).toBe(true);
-    expect(removed.some((p) => p.includes('ok-dmg-mount-'))).toBe(true);
+    expect(removed.some((p) => p.includes('ps-dmg-mount-'))).toBe(true);
   });
 
   test('de-registers its signal handlers so repeated mounts do not leak listeners', async () => {
@@ -216,7 +216,7 @@ describe('withMountedDmg', () => {
 
     for (let i = 0; i < 5; i += 1) {
       const { deps } = makeDeps({ proc });
-      await withMountedDmg('/tmp/OpenKnowledge.dmg', async () => {}, deps);
+      await withMountedDmg('/tmp/Palimpsest.dmg', async () => {}, deps);
     }
 
     expect(proc.listenerCount('SIGINT')).toBe(0);
@@ -244,7 +244,7 @@ describe('cleanup failures are logged, not silently swallowed', () => {
     };
     deps.warn = (m) => warnings.push(m);
 
-    await expect(withMountedDmg('/tmp/OpenKnowledge.dmg', async () => 'ok', deps)).resolves.toBe(
+    await expect(withMountedDmg('/tmp/Palimpsest.dmg', async () => 'ok', deps)).resolves.toBe(
       'ok',
     );
     expect(warnings.join('\n')).toContain('Resource busy');
@@ -259,9 +259,9 @@ describe('cleanup failures are logged, not silently swallowed', () => {
     };
     deps.warn = (m) => warnings.push(m);
 
-    await withMountedDmg('/tmp/OpenKnowledge.dmg', async () => {}, deps);
+    await withMountedDmg('/tmp/Palimpsest.dmg', async () => {}, deps);
     expect(warnings.filter((w) => w.includes('EPERM'))).toHaveLength(2);
-    expect(warnings.join('\n')).toContain('ok-dmg-app-');
-    expect(warnings.join('\n')).toContain('ok-dmg-mount-');
+    expect(warnings.join('\n')).toContain('ps-dmg-app-');
+    expect(warnings.join('\n')).toContain('ps-dmg-mount-');
   });
 });

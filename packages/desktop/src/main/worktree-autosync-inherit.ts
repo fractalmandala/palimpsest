@@ -6,8 +6,8 @@ import {
   type StoredSyncMode,
   type SyncMode,
   type SyncModeChangeSource,
-} from '@inkeep/open-knowledge-core';
-import { resolveConfigPath, writeConfigPatch } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { resolveConfigPath, writeConfigPatch } from '@palimpsest/core/server';
 import { parse as parseYaml } from 'yaml';
 import { getLogger } from './desktop-logger.ts';
 

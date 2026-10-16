@@ -1,14 +1,14 @@
 import {
   isManagedArtifactDocName,
   parseTemplateContentDocName,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+} from '@palimpsest/core/constants/cc1';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import {
   isExcalidrawDocFile,
   isMarkdownDocFile,
   isMermaidDocFile,
-} from '@inkeep/open-knowledge-core/constants/upload';
-import { randomUUID } from '@inkeep/open-knowledge-core/utils/random-uuid';
+} from '@palimpsest/core/constants/upload';
+import { randomUUID } from '@palimpsest/core/utils/random-uuid';
 import { t } from '@lingui/core/macro';
 import { RefreshCw } from 'lucide-react';
 import {
@@ -946,7 +946,7 @@ function ActivityEntry({
                       <div className="relative flex-1">
                         {gate.renderSource ? (
                           <div
-                            className={effectiveIsSourceMode ? 'h-full' : 'ok-mode-hidden h-full'}
+                            className={effectiveIsSourceMode ? 'h-full' : 'ps-mode-hidden h-full'}
                           >
                             <SourceEditorSlot
                               entry={entry}
@@ -958,7 +958,7 @@ function ActivityEntry({
                         ) : null}
                         {gate.renderVisual ? (
                           <div
-                            className={effectiveIsSourceMode ? 'ok-mode-hidden h-full' : 'h-full'}
+                            className={effectiveIsSourceMode ? 'ps-mode-hidden h-full' : 'h-full'}
                           >
                             <TiptapEditor
                               key={`${entry.docName}-${String(isNewDoc)}-${entry.poolEventId}`}

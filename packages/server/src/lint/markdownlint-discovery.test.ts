@@ -25,7 +25,7 @@ function write(name: string, content: string): void {
 }
 
 beforeEach(() => {
-  dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-mdl-discovery-')));
+  dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-mdl-discovery-')));
 });
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });
@@ -167,7 +167,7 @@ describe('extends resolution', () => {
   });
 
   test('refuses an extends target whose SYMLINK realpath escapes the project', () => {
-    const outside = mkdtempSync(join(tmpdir(), 'ok-mdl-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-mdl-outside-'));
     try {
       writeFileSync(join(outside, 'evil.json'), JSON.stringify({ MD041: false }), 'utf-8');
       symlinkSync(join(outside, 'evil.json'), join(dir, 'linked.json'));

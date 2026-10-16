@@ -257,7 +257,7 @@ test('A11Y10: Zero axe-core violations on 5-pack fixture', async ({ page, api })
 
   const link = page.locator('.ProseMirror').first().locator('[data-link][role="link"]');
   await expect(link).toHaveCount(1);
-  await expect(page.locator('.ok-agent-insert-flash')).toHaveCount(0, { timeout: 5_000 });
+  await expect(page.locator('.ps-agent-insert-flash')).toHaveCount(0, { timeout: 5_000 });
   await link.scrollIntoViewIfNeeded();
 
   const axeResults = await new AxeBuilder({ page })

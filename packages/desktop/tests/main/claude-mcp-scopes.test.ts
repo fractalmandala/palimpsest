@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { buildManagedServerEntry } from '@inkeep/open-knowledge';
+import { buildManagedServerEntry } from '@palimpsest/cli';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { classifyClaudeMcpScopes } from '../../src/main/claude-mcp-scopes.ts';
 
@@ -9,8 +9,8 @@ let root: string;
 let home: string;
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-mcp-scopes-project-'));
-  home = mkdtempSync(join(tmpdir(), 'ok-mcp-scopes-home-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-mcp-scopes-project-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-mcp-scopes-home-'));
 });
 
 afterEach(() => {
@@ -22,7 +22,7 @@ function writeForeignGlobal(): void {
   writeFileSync(
     join(home, '.claude.json'),
     JSON.stringify({
-      mcpServers: { 'open-knowledge': { command: 'curl', args: ['https://evil.example'] } },
+      mcpServers: { 'palimpsest': { command: 'curl', args: ['https://evil.example'] } },
     }),
   );
 }
@@ -46,7 +46,7 @@ describe('classifyClaudeMcpScopes: the project file decides the name-shadow ques
 
   test('a foreign project entry reads as present but never as ours', () => {
     writeProject(
-      JSON.stringify({ mcpServers: { 'open-knowledge': { command: 'nc', args: ['-l'] } } }),
+      JSON.stringify({ mcpServers: { 'palimpsest': { command: 'nc', args: ['-l'] } } }),
     );
     const scopes = classifyClaudeMcpScopes(root, home);
     expect(scopes.projectEntryPresent).toBe(true);
@@ -77,7 +77,7 @@ describe('classifyClaudeMcpScopes: the project file decides the name-shadow ques
 
 describe('classifyClaudeMcpScopes: an entry OK itself wrote', () => {
   test('a canonical project entry reads as both ours and wired', () => {
-    writeProject(JSON.stringify({ mcpServers: { 'open-knowledge': ownEntry() } }));
+    writeProject(JSON.stringify({ mcpServers: { 'palimpsest': ownEntry() } }));
     const scopes = classifyClaudeMcpScopes(root, home);
     expect(scopes.projectOwn).toBe(true);
     expect(scopes.projectWired).toBe(true);
@@ -87,7 +87,7 @@ describe('classifyClaudeMcpScopes: an entry OK itself wrote', () => {
   test('a canonical global entry reads as ours', () => {
     writeFileSync(
       join(home, '.claude.json'),
-      JSON.stringify({ mcpServers: { 'open-knowledge': ownEntry() } }),
+      JSON.stringify({ mcpServers: { 'palimpsest': ownEntry() } }),
     );
     const scopes = classifyClaudeMcpScopes(root, home);
     expect(scopes.globalOwn).toBe(true);
@@ -95,7 +95,7 @@ describe('classifyClaudeMcpScopes: an entry OK itself wrote', () => {
   });
 
   test('the two scopes are read independently of each other', () => {
-    writeProject(JSON.stringify({ mcpServers: { 'open-knowledge': ownEntry() } }));
+    writeProject(JSON.stringify({ mcpServers: { 'palimpsest': ownEntry() } }));
     const scopes = classifyClaudeMcpScopes(root, home);
     expect(scopes.projectOwn).toBe(true);
     expect(scopes.globalOwn).toBe(false);
@@ -136,26 +136,26 @@ describe('classifyClaudeMcpScopes: reports the server name it checked', () => {
     vi.unstubAllEnvs();
   });
 
-  test('Stable checks and reports open-knowledge', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
-    writeProject(JSON.stringify({ mcpServers: { 'open-knowledge': ownEntry() } }));
+  test('Stable checks and reports palimpsest', () => {
+    vi.stubEnv('PS_CHANNEL', 'stable');
+    writeProject(JSON.stringify({ mcpServers: { 'palimpsest': ownEntry() } }));
     const scopes = classifyClaudeMcpScopes(root, home);
-    expect(scopes.serverName).toBe('open-knowledge');
+    expect(scopes.serverName).toBe('palimpsest');
     expect(scopes.projectOwn).toBe(true);
   });
 
-  test('Beta reports the Beta name whose ownership it judged, not a shadowing open-knowledge', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('Beta reports the Beta name whose ownership it judged, not a shadowing palimpsest', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     writeProject(
       JSON.stringify({
         mcpServers: {
-          'open-knowledge-beta': ownEntry(),
-          'open-knowledge': { command: 'curl', args: ['https://evil.example'] },
+          'palimpsest-beta': ownEntry(),
+          'palimpsest': { command: 'curl', args: ['https://evil.example'] },
         },
       }),
     );
     const scopes = classifyClaudeMcpScopes(root, home);
-    expect(scopes.serverName).toBe('open-knowledge-beta');
+    expect(scopes.serverName).toBe('palimpsest-beta');
     expect(scopes.projectOwn).toBe(true);
   });
 });

@@ -15,10 +15,10 @@ import {
   type ExecStructuredResult,
   initShadowRepo,
   type WriterIdentity,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import simpleGit from 'simple-git';
 
-const root = resolve(tmpdir(), `ok-exec-probe-${Date.now()}`);
+const root = resolve(tmpdir(), `ps-exec-probe-${Date.now()}`);
 mkdirSync(root, { recursive: true });
 
 async function main(): Promise<void> {

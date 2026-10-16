@@ -9,7 +9,7 @@ let tmpRoot: string;
 let projectDir: string;
 
 beforeEach(() => {
-  tmpRoot = realpathSync(mkdtempSync(resolve(tmpdir(), 'ok-write-project-ai-')));
+  tmpRoot = realpathSync(mkdtempSync(resolve(tmpdir(), 'ps-write-project-ai-')));
   projectDir = resolve(tmpRoot, 'proj');
   mkdirSync(projectDir, { recursive: true });
 });
@@ -30,7 +30,7 @@ describe('writeProjectAiIntegrations — installs MCP config AND the project ski
     for (const outcome of claudeOutcomes) expect(outcome.action).toBe('written');
 
     expect(existsSync(join(projectDir, '.mcp.json'))).toBe(true);
-    expect(existsSync(join(projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
   });
@@ -38,10 +38,10 @@ describe('writeProjectAiIntegrations — installs MCP config AND the project ski
   test('installs the project skill for cursor and codex too', () => {
     writeProjectAiIntegrations(projectDir, ['cursor', 'codex']);
 
-    expect(existsSync(join(projectDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
-    expect(existsSync(join(projectDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
   });
@@ -54,7 +54,7 @@ describe('writeProjectAiIntegrations — installs MCP config AND the project ski
     const hub = result.integrations.filter((o) => String(o.editorId) === 'agents');
     expect(hub).toHaveLength(1);
     expect(hub[0]?.action).toBe('written');
-    expect(hub[0]?.path).toContain('.agents/skills/open-knowledge/SKILL.md');
+    expect(hub[0]?.path).toContain('.agents/skills/palimpsest/SKILL.md');
 
     const desktop = result.integrations.filter((o) => o.editorId === 'claude-desktop');
     expect(desktop).toHaveLength(2);

@@ -33,7 +33,7 @@ function buildGroup() {
     respondStaleExternalWrite: () => {},
     respondPersistenceFailure: () => {},
     respondDiskDivergence: () => {},
-    okArtifactKey: () => '',
+    psArtifactKey: () => '',
     resolveSkillsRoot: () => '/nonexistent-skills',
     extractActorIdentityFromQuery: () => ({ kind: 'invalid-summary' }),
     captureAndCloseDocuments: () => Promise.resolve(new Map()),

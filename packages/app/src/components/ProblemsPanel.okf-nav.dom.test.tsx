@@ -1,4 +1,4 @@
-import { type LinterConfig, lintDocument } from '@inkeep/open-knowledge-core';
+import { type LinterConfig, lintDocument } from '@palimpsest/core';
 import { cleanup, fireEvent, render as rtlRender, screen } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -30,7 +30,7 @@ const config: LinterConfig = {
   plugins: {
     markdownlint: { enabled: false, rules: {} },
     frontmatter: { enabled: false, schemas: [] },
-    okf: { enabled: true },
+    psf: { enabled: true },
   },
 };
 
@@ -49,7 +49,7 @@ describe('ProblemsPanel navigation detail for a real OKF frontmatter diagnostic'
     const diagnostics: DiagnosticLike[] = await lintDocument(text, config, DOC_NAME);
 
     const produced = diagnostics.find(
-      (d) => d.source === 'okf' && d.code === 'frontmatter-required',
+      (d) => d.source === 'psf' && d.code === 'frontmatter-required',
     );
     expect(produced?.frontmatterScope).toBe('missing');
     expect(produced?.frontmatterProperty).toBe('type');
@@ -67,7 +67,7 @@ describe('ProblemsPanel navigation detail for a real OKF frontmatter diagnostic'
         docName: DOC_NAME,
         line: (produced?.range.start.line ?? Number.NaN) + 1,
         column: (produced?.range.start.character ?? Number.NaN) + 1,
-        source: 'okf',
+        source: 'psf',
         frontmatterScope: 'missing',
       });
     } finally {

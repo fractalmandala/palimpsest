@@ -23,7 +23,7 @@ test.describe('Settings search — navigation + pinned layout', () => {
     await expect(search).toBeVisible();
     const before = await search.boundingBox();
 
-    await page.getByTestId('settings-sidebar-item-okignore').scrollIntoViewIfNeeded();
+    await page.getByTestId('settings-sidebar-item-psignore').scrollIntoViewIfNeeded();
 
     const after = await search.boundingBox();
     await expect(search).toBeInViewport();
@@ -202,7 +202,7 @@ test.describe('Settings → Search — embedding request settings', () => {
       await page.getByTestId('settings-search-semantic-toggle').click();
       await page.getByTestId('settings-search-confirm-enable').click();
 
-      const configPath = join(workerServer.contentDir, '.ok', 'local', 'config.yml');
+      const configPath = join(workerServer.contentDir, '.ps', 'local', 'config.yml');
       const readConfig = () => (existsSync(configPath) ? readFileSync(configPath, 'utf8') : '');
       await expect.poll(readConfig, { timeout: 10_000 }).toMatch(/enabled:\s*true/);
 

@@ -1,4 +1,4 @@
-const OK_CHECKPOINT_PREFIX = 'ok-checkpoint-v1: ';
+const PS_CHECKPOINT_PREFIX = 'ps-checkpoint-v1: ';
 
 export type AutoConsolidationTrigger = 'dead-chain' | 'session-close' | 'boot' | 'ttl';
 
@@ -92,10 +92,10 @@ export function parseCheckpoint(body: string): ParsedCheckpoint | null {
   if (!body) return null;
   for (const line of body.split('\n')) {
     const trimmed = line.trim();
-    if (!trimmed.startsWith(OK_CHECKPOINT_PREFIX)) continue;
+    if (!trimmed.startsWith(PS_CHECKPOINT_PREFIX)) continue;
     let parsed: unknown;
     try {
-      parsed = JSON.parse(trimmed.slice(OK_CHECKPOINT_PREFIX.length));
+      parsed = JSON.parse(trimmed.slice(PS_CHECKPOINT_PREFIX.length));
     } catch {
       return null;
     }
@@ -306,7 +306,7 @@ export function formatCheckpointBodyLine(parsed: ParsedCheckpoint): string {
   };
   if (parsed.docName !== null) payload.docName = parsed.docName;
   if (parsed.size !== null) payload.size = parsed.size;
-  return `${OK_CHECKPOINT_PREFIX}${JSON.stringify(payload)}`;
+  return `${PS_CHECKPOINT_PREFIX}${JSON.stringify(payload)}`;
 }
 
 export type CheckpointKind = ParsedCheckpoint['kind'];
@@ -486,7 +486,7 @@ export const CHECKPOINT_SAMPLE_BY_KIND = {
   },
   'managed-artifact-reconcile': {
     kind: 'managed-artifact-reconcile',
-    docName: '.ok/templates/daily',
+    docName: '.ps/templates/daily',
     size: 12,
     metadata: { diskBytes: 41, discardedBytes: 66 },
   },

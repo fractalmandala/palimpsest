@@ -1,4 +1,4 @@
-import type { HandoffTarget, TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import type { HandoffTarget, TerminalCli } from '@palimpsest/core/handoff';
 import {
   desktopEnabledKey,
   type EnabledOverrides,

@@ -3,7 +3,7 @@ const DRAG_BAND_HEIGHT = 'h-12';
 const DRAG_BAND_CLEARANCE = 'max-h-[calc(100dvh-6rem)]';
 
 function isElectronHost() {
-  return typeof window !== 'undefined' && window.okDesktop != null;
+  return typeof window !== 'undefined' && window.psDesktop != null;
 }
 
 export function electronDragBandClearance(): string | undefined {

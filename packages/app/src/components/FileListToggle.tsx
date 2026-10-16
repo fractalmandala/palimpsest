@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 export function FileListToggle() {
   const { t } = useLingui();
   const { state } = useSidebar();
-  const isElectronHost = typeof window !== 'undefined' && window.okDesktop != null;
+  const isElectronHost = typeof window !== 'undefined' && window.psDesktop != null;
 
   return (
     <div

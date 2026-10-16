@@ -27,8 +27,8 @@ export interface GitTriangle {
 
 export function createGitTriangle(opts: { branch?: string } = {}): GitTriangle {
   const branch = opts.branch ?? 'main';
-  const senderDir = mkdtempSync(join(tmpdir(), 'ok-share-sender-'));
-  const originDir = mkdtempSync(join(tmpdir(), 'ok-share-origin-'));
+  const senderDir = mkdtempSync(join(tmpdir(), 'ps-share-sender-'));
+  const originDir = mkdtempSync(join(tmpdir(), 'ps-share-origin-'));
   let receiverDir: string | null = null;
 
   const git = (cwd: string, args: string[]): string =>
@@ -61,7 +61,7 @@ export function createGitTriangle(opts: { branch?: string } = {}): GitTriangle {
   git(senderDir, ['init', '-b', branch]);
   configureTestGitRepository(senderDir);
   configure(senderDir);
-  writeFile(senderDir, '.ok/config.yml', '');
+  writeFile(senderDir, '.ps/config.yml', '');
   writeFile(senderDir, 'README.md', '# base\n');
   git(senderDir, ['add', '-A']);
   git(senderDir, ['commit', '-m', 'seed base']);
@@ -108,7 +108,7 @@ export function createGitTriangle(opts: { branch?: string } = {}): GitTriangle {
       git(senderDir, ['push', 'origin', branch]);
     },
     mergeRenameOnOrigin(oldRel, newRel) {
-      git(senderDir, ['checkout', '-b', 'ok-merge-side']);
+      git(senderDir, ['checkout', '-b', 'ps-merge-side']);
       writeFile(senderDir, 'SIDE.md', '# side\n');
       git(senderDir, ['add', '--', 'SIDE.md']);
       git(senderDir, ['commit', '-m', 'side: unrelated change']);
@@ -116,7 +116,7 @@ export function createGitTriangle(opts: { branch?: string } = {}): GitTriangle {
       writeFile(senderDir, 'MAIN.md', '# main\n');
       git(senderDir, ['add', '--', 'MAIN.md']);
       git(senderDir, ['commit', '-m', 'main: unrelated change']);
-      git(senderDir, ['merge', '--no-ff', '--no-commit', 'ok-merge-side']);
+      git(senderDir, ['merge', '--no-ff', '--no-commit', 'ps-merge-side']);
       mkdirSync(dirname(join(senderDir, newRel)), { recursive: true });
       git(senderDir, ['mv', oldRel, newRel]);
       git(senderDir, ['commit', '--no-edit']);
@@ -148,7 +148,7 @@ export function createGitTriangle(opts: { branch?: string } = {}): GitTriangle {
     },
     cloneReceiver() {
       if (receiverDir) return receiverDir;
-      const dir = mkdtempSync(join(tmpdir(), 'ok-share-receiver-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-share-receiver-'));
       git(dir, ['clone', originDir, '.']);
       configureTestGitRepository(dir);
       configure(dir);

@@ -5,7 +5,7 @@ type Page = Parameters<typeof getLLMText>[0];
 
 const SOURCE = `---
 title: Overview
-description: What OpenKnowledge is.
+description: What Palimpsest is.
 ---
 
 Read the [quickstart](../get-started/quickstart.mdx).
@@ -22,7 +22,7 @@ function fakePage(data: Partial<Page['data']> = {}, url = '/docs/get-started/ove
     url,
     data: {
       title: 'Overview',
-      description: 'What OpenKnowledge is.',
+      description: 'What Palimpsest is.',
       getText: async () => SOURCE,
       ...data,
     },
@@ -33,11 +33,11 @@ describe('getLLMText', () => {
   test('renders title + URL header, description, then the serialized body', async () => {
     const md = await getLLMText(fakePage());
     expect(md).toBe(
-      `# Overview (https://openknowledge.ai/docs/get-started/overview)
+      `# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)
 
-What OpenKnowledge is.
+What Palimpsest is.
 
-Read the [quickstart](https://openknowledge.ai/docs/get-started/quickstart).
+Read the [quickstart](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx).
 
 > **Heads up**
 >
@@ -48,7 +48,7 @@ Read the [quickstart](https://openknowledge.ai/docs/get-started/quickstart).
   test('heads the document with the absolute human URL, not the site-relative one', async () => {
     const md = await getLLMText(fakePage({}, '/docs/reference/components/callout'));
     expect(md.split('\n')[0]).toBe(
-      '# Overview (https://openknowledge.ai/docs/reference/components/callout)',
+      '# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/components/callout.mdx)',
     );
   });
 
@@ -74,21 +74,21 @@ Read the [quickstart](https://openknowledge.ai/docs/get-started/quickstart).
   test('neutralises raw HTML a title names in passing', async () => {
     const md = await getLLMText(fakePage({ title: 'The <details> element' }));
     expect(md.split('\n')[0]).toBe(
-      '# The \\<details> element (https://openknowledge.ai/docs/get-started/overview)',
+      '# The \\<details> element (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)',
     );
   });
 
   test('keeps a multi-line title on the heading line', async () => {
     const md = await getLLMText(fakePage({ title: 'Folded\n\ntitle' }));
     expect(md.split('\n')[0]).toBe(
-      '# Folded title (https://openknowledge.ai/docs/get-started/overview)',
+      '# Folded title (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)',
     );
   });
 
   test('tolerates a missing description without emitting "undefined"', async () => {
     const md = await getLLMText(fakePage({ description: undefined }));
     expect(md).not.toContain('undefined');
-    expect(md).toContain('# Overview (https://openknowledge.ai/docs/get-started/overview)');
+    expect(md).toContain('# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)');
   });
 
   test('fails loudly on a component with no registry disposition', async () => {

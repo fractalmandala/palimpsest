@@ -1,9 +1,9 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, sep } from 'node:path';
-import { applyAgentConnectionIntents } from '@inkeep/open-knowledge-app/test-support/agent-connections';
-import { type ApplyIntent, SatisfierIdSchema } from '@inkeep/open-knowledge-core';
-import { ConfigSchema, MCP_SERVER_NAME, readBundleDecision } from '@inkeep/open-knowledge-server';
+import { applyAgentConnectionIntents } from '@palimpsest/app/test-support/agent-connections';
+import { type ApplyIntent, SatisfierIdSchema } from '@palimpsest/core';
+import { ConfigSchema, MCP_SERVER_NAME, readBundleDecision } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { type BootedStartServer, bootStartServer } from '../commands/start.ts';
 
@@ -38,8 +38,8 @@ describe('web apply through the CLI registry host', () => {
   let previousEnv: ReadonlyArray<readonly [AmbientPathKey, string | undefined]>;
 
   beforeEach(async () => {
-    projectDir = await mkdtemp(join(tmpdir(), 'ok-registry-http-project-'));
-    temporaryHome = await mkdtemp(join(tmpdir(), 'ok-registry-http-home-'));
+    projectDir = await mkdtemp(join(tmpdir(), 'ps-registry-http-project-'));
+    temporaryHome = await mkdtemp(join(tmpdir(), 'ps-registry-http-home-'));
     booted = null;
     previousFetch = globalThis.fetch;
     previousEnv = AMBIENT_PATH_KEYS.map((key) => [key, process.env[key]] as const);
@@ -56,8 +56,8 @@ describe('web apply through the CLI registry host', () => {
     } as const satisfies Record<AmbientPathKey, string>;
     for (const key of AMBIENT_PATH_KEYS) process.env[key] = homePaths[key];
 
-    await mkdir(join(projectDir, '.ok'), { recursive: true });
-    await writeFile(join(projectDir, '.ok', 'config.yml'), '');
+    await mkdir(join(projectDir, '.ps'), { recursive: true });
+    await writeFile(join(projectDir, '.ps', 'config.yml'), '');
     await mkdir(join(temporaryHome, '.claude'), { recursive: true });
   });
 
@@ -162,7 +162,7 @@ describe('web apply through the CLI registry host', () => {
       'open-knowledge-discovery',
       'SKILL.md',
     );
-    const decisionPath = join(temporaryHome, '.ok', 'skill-state.yml');
+    const decisionPath = join(temporaryHome, '.ps', 'skill-state.yml');
 
     const result = await applyAgentConnectionIntents([
       { satisfierId: CLAUDE_USER_SKILL, desired: 'present' },

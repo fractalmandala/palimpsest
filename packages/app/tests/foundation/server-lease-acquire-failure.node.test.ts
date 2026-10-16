@@ -60,7 +60,7 @@ interface GatedSupervisor {
 }
 
 async function supervisorWithGatedLaunch(): Promise<GatedSupervisor> {
-  const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lease-acquire-failure-')));
+  const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lease-acquire-failure-')));
   scratchDirs.push(scratch);
   const launcher = contractServerLauncher();
   let markStarted: () => void = () => {};
@@ -78,7 +78,7 @@ async function supervisorWithGatedLaunch(): Promise<GatedSupervisor> {
     return launcher.launch(slot, env);
   };
   const supervisor = new WorkerServerSupervisor({
-    okRoot: WORKTREE,
+    psRoot: WORKTREE,
     launch,
     identityTimeoutMs: 2_000,
   });

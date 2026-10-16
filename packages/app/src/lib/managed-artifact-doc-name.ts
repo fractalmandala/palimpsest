@@ -3,8 +3,8 @@ import {
   skillFileLiveDocName,
   skillLiveDocName,
   stripMdExt,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/constants/cc1';
+import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 
 export { skillLiveDocName };
 

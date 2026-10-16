@@ -1,6 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import { tracedAtomicFs, tracedMkdir, tracedRm } from '../fs-traced.ts';
 import type { PinoLogger } from '../logger.ts';
 import {

@@ -85,7 +85,7 @@ describe('SharingModeField', () => {
 
     const link = screen.getByTestId('t-sharing-docs-link');
     expect(link.getAttribute('href')).toBe(
-      'https://openknowledge.ai/docs/reference/what-open-knowledge-writes',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/what-palimpsest-writes.mdx',
     );
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toBe('noopener noreferrer');

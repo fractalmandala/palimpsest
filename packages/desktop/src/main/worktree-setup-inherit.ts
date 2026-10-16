@@ -5,25 +5,25 @@ import {
   EDITOR_TARGETS,
   ProjectPathSafetyError,
   writeProjectAiIntegrations,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 import {
   AGENTS_SKILLS_ROOT,
   ALL_EDITOR_IDS,
   type EditorId,
   RESERVED_PROJECT_SKILL_NAME,
-} from '@inkeep/open-knowledge-core';
-import { initContent } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { initContent } from '@palimpsest/server';
 import { parse as parseYaml } from 'yaml';
 import { getLogger } from './desktop-logger.ts';
 
-const OK_MCP_MARKER_PREFIX = '# ok-mcp-';
+const PS_MCP_MARKER_PREFIX = '# ps-mcp-';
 
 function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
 
 export function readRootContentDir(mainRoot: string): string | undefined {
-  const configPath = `${mainRoot}/.ok/config.yml`;
+  const configPath = `${mainRoot}/.ps/config.yml`;
   if (!existsSync(configPath)) return undefined;
   let parsed: unknown;
   try {
@@ -45,7 +45,7 @@ function editorWiredForOk(configPath: string | undefined): boolean {
   try {
     if (!existsSync(configPath)) return false;
     const bytes = readFileSync(configPath, 'utf-8');
-    return bytes.includes(OK_MCP_MARKER_PREFIX);
+    return bytes.includes(PS_MCP_MARKER_PREFIX);
   } catch {
     return false;
   }
@@ -70,7 +70,7 @@ export function seedWorktreeProjectSetup(
   try {
     initContent(worktreeProjectPath, { contentDir: readRootContentDir(sourceProjectPath) });
   } catch (err) {
-    logger.warn({ worktreeProjectPath, err }, 'failed to seed inherited .ok/ scaffold');
+    logger.warn({ worktreeProjectPath, err }, 'failed to seed inherited .ps/ scaffold');
   }
 
   try {
@@ -99,9 +99,9 @@ export function assertWorktreeProjectSetupSafe(
 ): EditorId[] {
   const editors = detectRootWiredEditors(sourceProjectPath);
   const writeTargets = [
-    join(worktreeProjectPath, '.ok', 'config.yml'),
-    join(worktreeProjectPath, '.ok', 'local', 'config.yml'),
-    join(worktreeProjectPath, '.okignore'),
+    join(worktreeProjectPath, '.ps', 'config.yml'),
+    join(worktreeProjectPath, '.ps', 'local', 'config.yml'),
+    join(worktreeProjectPath, '.psignore'),
   ];
   if (editors.length > 0) {
     writeTargets.push(

@@ -8,7 +8,7 @@ import {
   createTargetNamespace,
   EXECUTABLE_BLOCKLIST_EXTENSIONS,
   INLINE_RENDERABLE_EXTENSIONS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import sirv from 'sirv';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createAssetServeMiddleware } from './asset-serve-middleware.ts';
@@ -62,7 +62,7 @@ describe('asset-serve middleware (narrow integration)', () => {
   let harness: Harness;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-asset-serve-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-asset-serve-'));
 
     mkdirSync(join(contentDir, 'docs'));
     writeFileSync(join(contentDir, 'docs', 'guide.md'), '# Guide');
@@ -236,8 +236,8 @@ describe('asset-serve middleware (narrow integration)', () => {
       expect(body).not.toContain('spa fallback sentinel');
     });
 
-    test('a `.gitignore`/`.okignore`-excluded asset is still refused even in a dedicated assets dir', async () => {
-      writeFileSync(join(contentDir, '.okignore'), 'assets/secret/\n');
+    test('a `.gitignore`/`.psignore`-excluded asset is still refused even in a dedicated assets dir', async () => {
+      writeFileSync(join(contentDir, '.psignore'), 'assets/secret/\n');
       mkdirSync(join(contentDir, 'assets', 'secret'), { recursive: true });
       writeFileSync(join(contentDir, 'assets', 'secret', 'token.png'), 'sensitive-bytes');
       await harness.close();
@@ -255,14 +255,14 @@ describe('asset-serve middleware (narrow integration)', () => {
     const SECRET = 'machine-local-secret';
 
     beforeEach(() => {
-      mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
-      writeFileSync(join(contentDir, '.ok', 'local', 'principal.json'), `{"token":"${SECRET}"}`);
+      mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
+      writeFileSync(join(contentDir, '.ps', 'local', 'principal.json'), `{"token":"${SECRET}"}`);
       mkdirSync(join(contentDir, '.git'), { recursive: true });
       writeFileSync(join(contentDir, '.git', 'config'), `[core]\n\t# ${SECRET}\n`);
     });
 
     test('a markdown link into machine-local state is not served', async () => {
-      symlinkSync('../.ok/local/principal.json', join(contentDir, 'docs', 'leak.md'));
+      symlinkSync('../.ps/local/principal.json', join(contentDir, 'docs', 'leak.md'));
       const res = await fetch(`${harness.baseURL}/docs/leak.md`);
       const body = await res.text();
       expect(body).not.toContain(SECRET);
@@ -277,7 +277,7 @@ describe('asset-serve middleware (narrow integration)', () => {
     });
 
     test('an asset link outside the content dir is not served', async () => {
-      const outsideDir = mkdtempSync(join(tmpdir(), 'ok-asset-serve-outside-'));
+      const outsideDir = mkdtempSync(join(tmpdir(), 'ps-asset-serve-outside-'));
       try {
         writeFileSync(join(outsideDir, 'secret.png'), SECRET);
         symlinkSync(join(outsideDir, 'secret.png'), join(contentDir, 'docs', 'outside.png'));
@@ -291,14 +291,14 @@ describe('asset-serve middleware (narrow integration)', () => {
 
     test('a path is checked as sirv decodes it, not as the extension gate decodes it', async () => {
       writeFileSync(join(contentDir, 'docs', 'x+.png'), 'harmless-bytes');
-      symlinkSync('../.ok/local/principal.json', join(contentDir, 'docs', 'x%2B.png'));
+      symlinkSync('../.ps/local/principal.json', join(contentDir, 'docs', 'x%2B.png'));
       const res = await fetch(`${harness.baseURL}/docs/x%2B.png`);
       expect(res.status).toBe(404);
       expect(await res.text()).not.toContain(SECRET);
     });
 
     test('a missing asset does not fall back to a linked html sibling', async () => {
-      symlinkSync('../.ok/local/principal.json', join(contentDir, 'docs', 'gone.png.html'));
+      symlinkSync('../.ps/local/principal.json', join(contentDir, 'docs', 'gone.png.html'));
       const res = await fetch(`${harness.baseURL}/docs/gone.png`);
       expect(res.status).toBe(404);
       expect(await res.text()).not.toContain(SECRET);
@@ -410,7 +410,7 @@ describe('asset-serve middleware (narrow integration)', () => {
     }
 
     test('a # in the request line never serves the ignored file its prefix names', async () => {
-      writeFileSync(join(contentDir, '.okignore'), '/docs/secret\n');
+      writeFileSync(join(contentDir, '.psignore'), '/docs/secret\n');
       writeFileSync(join(contentDir, 'docs', 'secret'), SECRET);
       writeFileSync(join(contentDir, '.env'), SECRET);
       await harness.close();
@@ -428,7 +428,7 @@ describe('asset-serve middleware (narrow integration)', () => {
     });
 
     test('an encoded reserved character the gate and sirv decode differently is refused before sirv', async () => {
-      writeFileSync(join(contentDir, '.okignore'), 'x%2Fy.png\n');
+      writeFileSync(join(contentDir, '.psignore'), 'x%2Fy.png\n');
       writeFileSync(join(contentDir, 'docs', 'x%2Fy.png'), SECRET);
       await harness.close();
       harness = await startHarness(contentDir);
@@ -446,7 +446,7 @@ describe('asset-serve middleware (narrow integration)', () => {
       }
       writeFileSync(join(contentDir, 'docs', 'secret.png'), SECRET);
       const beforeTheRule = await rawGet('/docs/secret.png');
-      writeFileSync(join(contentDir, '.okignore'), '/docs/secret.png\n');
+      writeFileSync(join(contentDir, '.psignore'), '/docs/secret.png\n');
       const backslashSpelling = 'x\\..\\docs\\secret.png';
       writeFileSync(join(contentDir, backslashSpelling), SECRET);
       await harness.close();
@@ -522,7 +522,7 @@ describe('asset-serve middleware (narrow integration)', () => {
     });
 
     test('a tracked name holding ? never serves the ignored file its prefix names', async () => {
-      writeFileSync(join(contentDir, '.okignore'), '/docs/secret\n');
+      writeFileSync(join(contentDir, '.psignore'), '/docs/secret\n');
       writeFileSync(join(contentDir, 'docs', 'secret'), SECRET);
       await restartWithTracked(['docs/secret?.png']);
       const res = await fetch(`${harness.baseURL}/docs/SECRET%3F.png`);

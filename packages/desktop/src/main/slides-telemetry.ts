@@ -1,5 +1,5 @@
-import { getMeter, withSpanSync } from '@inkeep/open-knowledge-server';
-import type { OkSlidesOpenResult } from '../shared/ipc-channels.ts';
+import { getMeter, withSpanSync } from '@palimpsest/server';
+import type { PsSlidesOpenResult } from '../shared/ipc-channels.ts';
 
 let _deckOpenFailureCounterCache: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
@@ -10,7 +10,7 @@ function deckOpenFailureCounter() {
   return _deckOpenFailureCounterCache;
 }
 
-export function recordDeckOpen(result: OkSlidesOpenResult): void {
+export function recordDeckOpen(result: PsSlidesOpenResult): void {
   if (result.ok) {
     withSpanSync(
       'ok.slides.deckOpen',

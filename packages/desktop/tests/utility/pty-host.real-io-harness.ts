@@ -78,9 +78,9 @@ const createHost = (
 
 const BASE_ENV = { ...process.env };
 const shellCommands = terminalSmokeShellCommands();
-const CWD_PROOF_FILE = '.ok-pty-cwd-proof';
+const CWD_PROOF_FILE = '.ps-pty-cwd-proof';
 const HARNESS_BUDGET_MS = resolveHarnessBudgetMs(
-  process.env.OK_PTY_HARNESS_BUDGET_MS,
+  process.env.PS_PTY_HARNESS_BUDGET_MS,
   harnessTimeouts(process.platform).budgetMs,
 );
 const harnessBudget = createHarnessBudget(HARNESS_BUDGET_MS, HARNESS_REPORT_RESERVE_MS);
@@ -118,7 +118,7 @@ async function waitForInteractiveShellReady(
 async function main(): Promise<void> {
   ensureSpawnHelperExecutable();
 
-  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pty-harness-')));
+  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pty-harness-')));
 
   await runner.run('real command round-trip at project root', async (deadlineAt) => {
     const cwdToken = randomUUID();
@@ -160,8 +160,8 @@ async function main(): Promise<void> {
   await runner.run('strips desktop env markers from the shell', async (deadlineAt) => {
     const host = createHost({
       ...BASE_ENV,
-      OK_ELECTRON_PROTOCOL_HOST: '1',
-      OK_LOCK_KIND: 'interactive',
+      PS_ELECTRON_PROTOCOL_HOST: '1',
+      PS_LOCK_KIND: 'interactive',
     });
     const env = host.streamOf('env');
     const readiness = createHarnessReadinessObserver(
@@ -179,19 +179,19 @@ async function main(): Promise<void> {
     host.send({
       type: 'input',
       ptyId: 'env',
-      data: `${shellCommands.readEnvironment('OK_LOCK_KIND', 'LOCK')}\r`,
+      data: `${shellCommands.readEnvironment('PS_LOCK_KIND', 'LOCK')}\r`,
     });
     host.send({
       type: 'input',
       ptyId: 'env',
-      data: `${shellCommands.readEnvironment('OK_ELECTRON_PROTOCOL_HOST', 'HOST')}\r`,
+      data: `${shellCommands.readEnvironment('PS_ELECTRON_PROTOCOL_HOST', 'HOST')}\r`,
     });
     await readiness.waitForCondition(
       () => env.read().includes('LOCK=[]') && env.read().includes('HOST=[]'),
       'empty markers in shell',
     );
     if (env.read().includes('LOCK=[interactive]')) {
-      throw new Error('OK_LOCK_KIND leaked into the shell');
+      throw new Error('PS_LOCK_KIND leaked into the shell');
     }
   });
 
@@ -203,7 +203,7 @@ async function main(): Promise<void> {
       const launchToken = randomUUID();
       const host = createHost({
         ...BASE_ENV,
-        OK_HARNESS_LAUNCH_TOKEN: launchToken,
+        PS_HARNESS_LAUNCH_TOKEN: launchToken,
       });
       const launch = host.streamOf('launch');
       const readiness = createHarnessReadinessObserver(
@@ -220,7 +220,7 @@ async function main(): Promise<void> {
         shell: powershell,
         launchCommand: {
           executable: 'cmd.exe',
-          args: ['/d', '/c', 'echo', '%OK_HARNESS_LAUNCH_TOKEN%'],
+          args: ['/d', '/c', 'echo', '%PS_HARNESS_LAUNCH_TOKEN%'],
         },
       });
       await readiness.waitForCondition(

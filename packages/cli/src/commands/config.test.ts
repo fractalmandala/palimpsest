@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ConfigSchema, getLeafFieldMeta, REMOVED_KEYS } from '@inkeep/open-knowledge-core';
+import { ConfigSchema, getLeafFieldMeta, REMOVED_KEYS } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { CONFIG_FILENAME, OK_DIR } from '../constants.ts';
+import { CONFIG_FILENAME, PS_DIR } from '../constants.ts';
 import {
   buildClearPatchForTest,
   configCommand,
@@ -14,7 +14,7 @@ import {
 } from './config.ts';
 
 function makeTempProject(): { cwd: string; userHome: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), 'ok-config-test-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-config-test-'));
   const cwd = join(root, 'project');
   const userHome = join(root, 'home');
   mkdirSync(cwd, { recursive: true });
@@ -31,15 +31,15 @@ function makeTempProject(): { cwd: string; userHome: string; cleanup: () => void
 }
 
 function projectConfigPath(cwd: string): string {
-  return join(cwd, OK_DIR, CONFIG_FILENAME);
+  return join(cwd, PS_DIR, CONFIG_FILENAME);
 }
 
 function projectLocalConfigPath(cwd: string): string {
-  return join(cwd, OK_DIR, 'local', CONFIG_FILENAME);
+  return join(cwd, PS_DIR, 'local', CONFIG_FILENAME);
 }
 
 function userConfigPath(home: string): string {
-  return join(home, OK_DIR, 'global.yml');
+  return join(home, PS_DIR, 'global.yml');
 }
 
 function writeConfigYaml(absPath: string, content: string): void {
@@ -56,7 +56,7 @@ describe('runValidate', () => {
       loadConfigFn: () =>
         ({
           config: {} as never,
-          sources: ['/home/test/project/.ok/config.yml'],
+          sources: ['/home/test/project/.ps/config.yml'],
           diagnostics: [],
           sidelined: [],
         }) as never,
@@ -65,7 +65,7 @@ describe('runValidate', () => {
     });
     expect(outcome.ok).toBe(true);
     expect(stderr.some((m) => m.includes('✓ Configuration valid'))).toBe(true);
-    expect(stderr.some((m) => m.includes('/home/test/project/.ok/config.yml'))).toBe(true);
+    expect(stderr.some((m) => m.includes('/home/test/project/.ps/config.yml'))).toBe(true);
     expect(stdout).toEqual([]);
   });
 
@@ -76,12 +76,12 @@ describe('runValidate', () => {
       loadConfigFn: () =>
         ({
           config: {} as never,
-          sources: ['/home/test/project/.ok/config.yml'],
+          sources: ['/home/test/project/.ps/config.yml'],
           diagnostics: [{ code: 'YAML_PARSE', detail: 'unexpected end of flow sequence' }],
           sidelined: [
             {
-              from: '/home/test/.ok/global.yml',
-              to: '/home/test/.ok/global.yml.invalid-2026-01-01T00-00-00-000Z',
+              from: '/home/test/.ps/global.yml',
+              to: '/home/test/.ps/global.yml.invalid-2026-01-01T00-00-00-000Z',
             },
           ],
         }) as never,
@@ -94,7 +94,7 @@ describe('runValidate', () => {
     expect(joined).toContain('config layer(s) had issues');
     expect(joined).not.toContain('could not be read');
     expect(joined).toContain('unexpected end of flow sequence');
-    expect(joined).toContain('/home/test/.ok/global.yml.invalid-2026-01-01T00-00-00-000Z');
+    expect(joined).toContain('/home/test/.ps/global.yml.invalid-2026-01-01T00-00-00-000Z');
   });
 
   test('removed keys alone do not qualify the headline', () => {
@@ -104,7 +104,7 @@ describe('runValidate', () => {
       loadConfigFn: () =>
         ({
           config: {} as never,
-          sources: ['/home/test/project/.ok/config.yml'],
+          sources: ['/home/test/project/.ps/config.yml'],
           diagnostics: [{ code: 'REMOVED_KEY', path: ['server', 'host'], redirect: 'Use --host.' }],
           sidelined: [],
         }) as never,
@@ -183,7 +183,7 @@ describe('runValidate', () => {
     const outcome = runValidate({
       readProjectLocalFn: () => [],
       loadConfigFn: () => {
-        throw new Error('Invalid configuration at /tmp/.ok/config.yml:7:18\n  ...');
+        throw new Error('Invalid configuration at /tmp/.ps/config.yml:7:18\n  ...');
       },
       error: (msg) => stderr.push(msg),
     });
@@ -669,10 +669,10 @@ describe('runMigrate', () => {
     ]);
   });
 
-  test('content.include is stripped without writing .okignore', async () => {
+  test('content.include is stripped without writing .psignore', async () => {
     const wsPath = projectConfigPath(project.cwd);
     writeConfigYaml(wsPath, 'content:\n  dir: .\n  include:\n    - "docs/**/*.md"\n');
-    const okignorePath = join(project.cwd, '.okignore');
+    const okignorePath = join(project.cwd, '.psignore');
     const outcome = await runMigrate({
       cwd: project.cwd,
       scope: 'project',

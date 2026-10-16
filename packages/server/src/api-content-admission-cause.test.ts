@@ -10,7 +10,7 @@ import { connectMcpTestClient } from './mcp/client.test-helper.ts';
 let root: string;
 let server: BootedServer;
 let client: Client;
-const templatePath = () => join(root, 'templates', '.ok', 'templates', 'existing.md');
+const templatePath = () => join(root, 'templates', '.ps', 'templates', 'existing.md');
 const skillPath = () => join(root, '.agents', 'skills', 'existing', 'SKILL.md');
 
 function skillFile(path: string, content: string) {
@@ -22,13 +22,13 @@ function skillFile(path: string, content: string) {
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-admission-cause-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-admission-cause-'));
   for (const [path, content] of [
     [templatePath(), '---\ntitle: Existing\n---\nExisting target.\n'],
     [skillPath(), '---\nname: existing\ndescription: Existing\n---\nExisting target.\n'],
     [
-      join(root, '.agents', 'skills', 'open-knowledge', 'SKILL.md'),
-      '---\nname: open-knowledge\ndescription: Project\n---\nProject.\n',
+      join(root, '.agents', 'skills', 'palimpsest', 'SKILL.md'),
+      '---\nname: palimpsest\ndescription: Project\n---\nProject.\n',
     ],
     [
       join(dirname(skillPath()), 'references', 'existing.md'),

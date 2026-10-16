@@ -9,7 +9,7 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
 const APP_FONT_FAMILY = 'Inter Variable';
@@ -34,21 +34,21 @@ async function findWindowByPath(
 }
 
 test.describe('uninstall renderer chrome smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'The uninstall flow is darwin-only.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('loads the app font, the app tokens, and the theme main resolved', async ({
     captureStderrFor,
   }) => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-chrome-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-chrome-'));
 
     const app = await launchDesktopInHome(
       home,
       desktopLaunchOptions({
         target: TARGET,
         args: [`--user-data-dir=${join(home, 'electron-userdata')}`],
-        env: { ...process.env, OK_UNINSTALL_UI_PREVIEW: 'renderer' },
+        env: { ...process.env, PS_UNINSTALL_UI_PREVIEW: 'renderer' },
         timeout: 30_000,
       }),
     );

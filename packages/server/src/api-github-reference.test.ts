@@ -34,7 +34,7 @@ function useRig(): {
   let tmpDir = '';
   let server: Server | null = null;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-github-reference-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-github-reference-'));
     mkdirSync(join(tmpDir, 'content'), { recursive: true });
   });
   afterEach(async () => {
@@ -153,7 +153,7 @@ describe('POST /api/github-reference', () => {
   });
 
   test('an exposed server reads a remote caller anonymously even with a loopback Origin and Host', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-github-reference-remote-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-github-reference-remote-'));
     try {
       const tokenHosts: string[] = [];
       const authorizations: (string | null)[] = [];

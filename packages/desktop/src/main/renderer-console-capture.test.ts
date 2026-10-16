@@ -1,4 +1,4 @@
-import { RENDERER_LOG_MAX_MESSAGE_BYTES } from '@inkeep/open-knowledge-core';
+import { RENDERER_LOG_MAX_MESSAGE_BYTES } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   attachRendererConsoleCapture,
@@ -72,7 +72,7 @@ describe('attachRendererConsoleCapture', () => {
     wc.emit({
       level: 'warning',
       message: JSON.stringify({
-        event: 'ok-provider-server-driven-close-reauth',
+        event: 'ps-provider-server-driven-close-reauth',
         docName: 'notes',
         reason: 'Failed to connect',
       }),
@@ -84,7 +84,7 @@ describe('attachRendererConsoleCapture', () => {
     const call = spy.calls[0];
     if (!call) throw new Error('expected exactly one log call');
     expect(call.level).toBe('warn');
-    expect(call.msg).toBe('ok-provider-server-driven-close-reauth');
+    expect(call.msg).toBe('ps-provider-server-driven-close-reauth');
     expect(call.data.reason).toBe('Failed to connect');
     expect(call.data.docName).toBe('notes');
     expect(call.data.source).toBe('renderer-console');
@@ -154,7 +154,7 @@ describe('attachRendererConsoleCapture', () => {
     wc.emit({
       level: 'warning',
       message: JSON.stringify({
-        event: 'ok-provider-auth-failed',
+        event: 'ps-provider-auth-failed',
         reason: `rejected creds ${secret}`,
         docPath: '/Users/alice/notes/plan.md',
       }),
@@ -175,7 +175,7 @@ describe('attachRendererConsoleCapture', () => {
     wc.emit({
       level: 'warning',
       message: JSON.stringify({
-        event: 'ok-provider-auth-failed',
+        event: 'ps-provider-auth-failed',
         detail: 'authorization: Bearer abc123secret',
         docName: 'notes/plan',
       }),
@@ -183,7 +183,7 @@ describe('attachRendererConsoleCapture', () => {
 
     const call = spy.calls[0];
     if (!call) throw new Error('expected exactly one log call');
-    expect(call.msg).toBe('ok-provider-auth-failed');
+    expect(call.msg).toBe('ps-provider-auth-failed');
     expect(call.data.docName).toBe('notes/plan');
     expect(JSON.stringify(call.data)).not.toContain('abc123secret');
   });

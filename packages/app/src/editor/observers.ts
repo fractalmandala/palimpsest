@@ -5,7 +5,7 @@
  */
 
 import type { LocalTransactionOrigin } from '@hocuspocus/server';
-import type { MarkdownManager } from '@inkeep/open-knowledge-core/markdown';
+import type { MarkdownManager } from '@palimpsest/core/markdown';
 import type { Schema } from '@tiptap/pm/model';
 import type * as Y from 'yjs';
 

@@ -124,10 +124,10 @@ describe('applyStateQuery about info', () => {
   test('describes the installed build with its variant product name and release notes', async () => {
     const snapshot = await applyStateQuery(makeRig().deps);
     expect(snapshot.about).toEqual({
-      productName: 'OpenKnowledge Beta',
+      productName: 'Palimpsest Beta',
       version: '0.83.0-beta.8',
-      releasesUrl: 'https://github.com/inkeep/open-knowledge/releases',
-      releaseNotesUrl: 'https://github.com/inkeep/open-knowledge/releases/tag/v0.83.0-beta.8',
+      releasesUrl: 'https://github.com/fractalmandala/palimpsest/releases',
+      releaseNotesUrl: 'https://github.com/fractalmandala/palimpsest/releases/tag/v0.83.0-beta.8',
       updateChecks: 'available',
     });
   });

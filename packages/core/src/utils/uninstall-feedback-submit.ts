@@ -22,7 +22,7 @@ export type UninstallFeedbackResult =
   | { ok: true; reference: string }
   | { ok: false; reason: 'invalid' | 'unavailable' | 'timeout' | 'error' };
 
-const DEFAULT_INTAKE_ORIGIN = 'https://openknowledge.ai';
+const DEFAULT_INTAKE_ORIGIN = 'https://github.com/fractalmandala/palimpsest';
 
 const DEFAULT_TIMEOUT_MS = 4_000;
 
@@ -56,7 +56,7 @@ function resolveIntakeOrigin(): URL | null {
   const fromEnv =
     typeof process === 'undefined'
       ? undefined
-      : presentText(process.env?.OK_FEEDBACK_INTAKE_ORIGIN);
+      : presentText(process.env?.PS_FEEDBACK_INTAKE_ORIGIN);
   return transportSafeOrigin(fromEnv ?? DEFAULT_INTAKE_ORIGIN);
 }
 

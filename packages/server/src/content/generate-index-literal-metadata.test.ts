@@ -3,7 +3,7 @@ import {
   MarkdownManager,
   resolveInternalHref,
   sharedExtensions,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { JSONContent } from '@tiptap/core';
 import { describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
@@ -116,9 +116,9 @@ const GENERATED_ARTIFACT_ORIGIN = Object.freeze({
 });
 
 const GENERATED_ARTIFACT_WRITER: GeneratedArtifactEnv['writer'] = {
-  id: 'ok-generator',
-  name: 'OpenKnowledge (generated)',
-  email: 'ok-generator@openknowledge.local',
+  id: 'ps-generator',
+  name: 'Palimpsest (generated)',
+  email: 'ps-generator@palimpsest.local',
 };
 
 function walkJson(root: JSONContent): JSONContent[] {

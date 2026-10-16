@@ -2,7 +2,7 @@ import {
   type SkillsListEntry,
   skillFileLiveDocName,
   skillLiveDocName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { skillFileTabId, skillPreviewTabId } from '@/editor/editor-tabs';
 import {
@@ -15,7 +15,7 @@ import {
 
 describe('parseSkillTabDocName', () => {
   test('parses a project skill content doc (SKILL-level, rel null)', () => {
-    expect(parseSkillTabDocName('.ok/skills/demo/SKILL')).toEqual({
+    expect(parseSkillTabDocName('.ps/skills/demo/SKILL')).toEqual({
       scope: 'project',
       name: 'demo',
       rel: null,
@@ -31,7 +31,7 @@ describe('parseSkillTabDocName', () => {
   });
 
   test('parses a project skill reference FILE doc (carries rel)', () => {
-    expect(parseSkillTabDocName('.ok/skills/demo/references/notes')).toEqual({
+    expect(parseSkillTabDocName('.ps/skills/demo/references/notes')).toEqual({
       scope: 'project',
       name: 'demo',
       rel: 'notes',
@@ -46,7 +46,7 @@ describe('parseSkillTabDocName', () => {
 
   test('rejects a non-skill doc (plain page, template content doc)', () => {
     expect(parseSkillTabDocName('notes/standup')).toBeNull();
-    expect(parseSkillTabDocName('notes/.ok/templates/daily')).toBeNull();
+    expect(parseSkillTabDocName('notes/.ps/templates/daily')).toBeNull();
   });
 });
 
@@ -143,7 +143,7 @@ describe('skillFileForDocName', () => {
 describe('computeSkillTabReconcile', () => {
   test('leaves a tab whose skill still exists at its scope untouched', () => {
     const actions = computeSkillTabReconcile(
-      ['.ok/skills/demo/SKILL', 'notes/standup'],
+      ['.ps/skills/demo/SKILL', 'notes/standup'],
       [{ scope: 'project', name: 'demo', path: '.agents/skills/demo/SKILL.md' }],
     );
     expect(actions).toEqual([]);
@@ -151,7 +151,7 @@ describe('computeSkillTabReconcile', () => {
 
   test('leaves a reference FILE tab whose skill still exists untouched', () => {
     const actions = computeSkillTabReconcile(
-      ['.ok/skills/demo/references/notes'],
+      ['.ps/skills/demo/references/notes'],
       [{ scope: 'project', name: 'demo', path: '.agents/skills/demo/SKILL.md' }],
     );
     expect(actions).toEqual([]);
@@ -159,13 +159,13 @@ describe('computeSkillTabReconcile', () => {
 
   test('retargets an orphaned project SKILL tab to the OTHER scope when the skill moved there', () => {
     const actions = computeSkillTabReconcile(
-      ['.ok/skills/demo/SKILL'],
+      ['.ps/skills/demo/SKILL'],
       [{ scope: 'global', name: 'demo', path: '~/.claude/skills/demo/SKILL.md' }],
     );
     expect(actions).toEqual([
       {
         kind: 'retarget',
-        fromDocName: '.ok/skills/demo/SKILL',
+        fromDocName: '.ps/skills/demo/SKILL',
         toDocName: skillLiveDocName('global', 'demo'),
       },
     ]);
@@ -187,29 +187,29 @@ describe('computeSkillTabReconcile', () => {
 
   test('closes an orphaned SKILL tab when the skill is gone from both scopes', () => {
     const actions = computeSkillTabReconcile(
-      ['.ok/skills/gone/SKILL'],
+      ['.ps/skills/gone/SKILL'],
       [{ scope: 'project', name: 'other', path: '.agents/skills/other/SKILL.md' }],
     );
-    expect(actions).toEqual([{ kind: 'close', docName: '.ok/skills/gone/SKILL' }]);
+    expect(actions).toEqual([{ kind: 'close', docName: '.ps/skills/gone/SKILL' }]);
   });
 
   test('closes a reference FILE tab when its skill is deleted (§2.4)', () => {
-    const actions = computeSkillTabReconcile(['.ok/skills/demo/references/notes'], []);
-    expect(actions).toEqual([{ kind: 'close', docName: '.ok/skills/demo/references/notes' }]);
+    const actions = computeSkillTabReconcile(['.ps/skills/demo/references/notes'], []);
+    expect(actions).toEqual([{ kind: 'close', docName: '.ps/skills/demo/references/notes' }]);
   });
 
   test('closes a reference FILE tab when its skill moved scope and the SKILL tab carries it', () => {
     const actions = computeSkillTabReconcile(
-      ['.ok/skills/demo/SKILL', '.ok/skills/demo/references/notes'],
+      ['.ps/skills/demo/SKILL', '.ps/skills/demo/references/notes'],
       [{ scope: 'global', name: 'demo', path: '~/.claude/skills/demo/SKILL.md' }],
     );
     expect(actions).toEqual([
       {
         kind: 'retarget',
-        fromDocName: '.ok/skills/demo/SKILL',
+        fromDocName: '.ps/skills/demo/SKILL',
         toDocName: skillLiveDocName('global', 'demo'),
       },
-      { kind: 'close', docName: '.ok/skills/demo/references/notes' },
+      { kind: 'close', docName: '.ps/skills/demo/references/notes' },
     ]);
   });
 
@@ -261,7 +261,7 @@ describe('computeSkillTabReconcile', () => {
   });
 
   test('ignores non-skill tabs entirely', () => {
-    const actions = computeSkillTabReconcile(['notes/standup', 'notes/.ok/templates/daily'], []);
+    const actions = computeSkillTabReconcile(['notes/standup', 'notes/.ps/templates/daily'], []);
     expect(actions).toEqual([]);
   });
 });

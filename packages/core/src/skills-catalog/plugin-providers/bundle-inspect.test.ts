@@ -6,7 +6,7 @@ import { inspectPluginBundleDir } from './registry.ts';
 
 let root: string;
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-bundle-inspect-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-bundle-inspect-'));
 });
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });

@@ -2,9 +2,9 @@ import { spawn } from 'node:child_process';
 import { posix, win32 } from 'node:path';
 import {
   envWithoutDevChannel,
-  type OkCliCommand,
-  type OkCliRefusal,
-} from '@inkeep/open-knowledge-core';
+  type PsCliCommand,
+  type PsCliRefusal,
+} from '@palimpsest/core';
 import { withHiddenWindowsConsole } from '../child-process-windows-hide.ts';
 import type { LocalOpSubprocessLifetime } from './subprocess-lifetime.ts';
 
@@ -18,7 +18,7 @@ type LocalOpCliEnv = Readonly<Record<string, string | undefined>>;
 export const LOCAL_OP_AUTH_SUBPROCESS_TIMEOUT_MS = 30_000;
 
 export interface LocalOpCliInvocation {
-  readonly cli: OkCliCommand;
+  readonly cli: PsCliCommand;
   readonly cwd?: string;
 }
 
@@ -48,10 +48,10 @@ interface SubprocessController {
   cancel(): void;
 }
 
-type OkCliRunResult = SubprocessRunResult | OkCliRefusal;
+type PsCliRunResult = SubprocessRunResult | PsCliRefusal;
 
-interface OkCliSubprocessController {
-  done: Promise<OkCliRunResult>;
+interface PsCliSubprocessController {
+  done: Promise<PsCliRunResult>;
   cancel(): void;
 }
 
@@ -252,9 +252,9 @@ export function runSubprocess(opts: SubprocessRunOptions): SubprocessController 
 }
 
 export function runOkCliSubprocess(
-  cli: OkCliCommand,
+  cli: PsCliCommand,
   opts: Omit<SubprocessRunOptions, 'cliArgs' | 'cliEnv'>,
-): OkCliSubprocessController {
+): PsCliSubprocessController {
   const invocation = cli.runnerInvocation(opts.trailingArgs);
   if ('refused' in invocation) {
     return { done: Promise.resolve({ refused: invocation.refused }), cancel: () => {} };

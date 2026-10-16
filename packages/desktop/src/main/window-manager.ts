@@ -8,9 +8,9 @@ import {
   desktopChannelLabel,
   SPAWN_ERROR_LOG,
   sliceLastSpawnAttempt,
-} from '@inkeep/open-knowledge-core';
-import type { KeepaliveHandle } from '@inkeep/open-knowledge-core/keepalive';
-import { getLocalDir } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import type { KeepaliveHandle } from '@palimpsest/core/keepalive';
+import { getLocalDir } from '@palimpsest/server';
 import {
   BOOT_HEARTBEAT_EVENTS,
   isUtilityInitPhase,
@@ -25,7 +25,7 @@ import {
   type UtilityInitPhase,
   utilityInitPhaseEvent,
 } from '../shared/boot-narration.ts';
-import type { OkServerRestartOutcome } from '../shared/bridge-contract.ts';
+import type { PsServerRestartOutcome } from '../shared/bridge-contract.ts';
 import { registerPendingDelivery } from '../shared/ipc-send.ts';
 import type { AssetOpenResult } from './asset-allowlist.ts';
 import { attachAssetSafetyNet } from './asset-safety-net.ts';
@@ -106,7 +106,7 @@ function instanceLabelArgs(): string[] {
 
 function formatEditorTitle(projectName: string): string {
   const suffix = windowInstanceLabel ? ` (${windowInstanceLabel})` : '';
-  return `${projectName} — OpenKnowledge${suffix}`;
+  return `${projectName} — Palimpsest${suffix}`;
 }
 
 export interface BrowserWindowLike {
@@ -180,7 +180,7 @@ function otherChannelHolderError(
   return Object.assign(
     new Error(
       `${desktopChannelLabel(holderChannel)} is serving this project (pid ${lock.pid}). Only one ` +
-        `OpenKnowledge app can edit a project at a time.`,
+        `Palimpsest app can edit a project at a time.`,
     ),
     {
       name: 'OtherChannelHolderError',
@@ -908,7 +908,7 @@ export class WindowManager {
   async restartAttachedServer(
     projectPath: string,
     opts?: { localOpCliInvocation?: HostCliInvocation },
-  ): Promise<OkServerRestartOutcome> {
+  ): Promise<PsServerRestartOutcome> {
     const resolved = resolve(projectPath);
     const canonicalKey = this.canonicalizeKey(resolved);
     const lockDir = getLocalDir(resolved);
@@ -1020,7 +1020,7 @@ export class WindowManager {
   async restartEphemeralServer(
     identity: EphemeralOpenIdentity,
     requestingWindow: BrowserWindowLike,
-  ): Promise<OkServerRestartOutcome> {
+  ): Promise<PsServerRestartOutcome> {
     this.deps.log?.info(
       {
         event: 'desktop-ephemeral-restart',
@@ -1083,7 +1083,7 @@ export class WindowManager {
     sender: BrowserWindowLike | null,
     projectPath: string,
     opts: { localOpCliInvocation?: HostCliInvocation },
-  ): Promise<OkServerRestartOutcome> {
+  ): Promise<PsServerRestartOutcome> {
     if (sender !== null) {
       const ephemeralIdentity = this.getEphemeralIdentityForWindow(sender);
       if (ephemeralIdentity !== undefined) {
@@ -1358,12 +1358,12 @@ export class WindowManager {
         );
         const holder = adoptedForeignLock
           ? `Another process (pid ${lock.pid})`
-          : `The server OpenKnowledge just started (pid ${lock.pid})`;
+          : `The server Palimpsest just started (pid ${lock.pid})`;
         throw Object.assign(
           new Error(
             unusableLock
               ? `${holder} holds this project's server lock, but the lock does not name a port ` +
-                  `OpenKnowledge can keep a connection open on (${String(lock.port)}).`
+                  `Palimpsest can keep a connection open on (${String(lock.port)}).`
               : `${holder} holds this project's server lock but is not serving on port ${lock.port}.`,
           ),
           {
@@ -1432,7 +1432,7 @@ export class WindowManager {
       ? resolveLocalOpCliArgsForUtilityFork(opts.localOpCliInvocation)
       : null;
 
-    const serviceName = `OpenKnowledge Project Server ${++this.projectServerSequence}`;
+    const serviceName = `Palimpsest Project Server ${++this.projectServerSequence}`;
     const utility = this.deps.forkUtility(
       this.deps.utilityEntryPath,
       [`--ok-lock-dir-b64=${Buffer.from(lockDir, 'utf8').toString('base64url')}`],
@@ -2090,10 +2090,10 @@ export class WindowManager {
             : exit.code !== null
               ? `, exit code ${exit.code}`
               : '';
-      messageBase = `OpenKnowledge server exited before binding a port (pid=${pid}${reason}).`;
+      messageBase = `Palimpsest server exited before binding a port (pid=${pid}${reason}).`;
     } else {
       const liveness = childExited === false ? ', still running' : '';
-      messageBase = `OpenKnowledge server did not bind a port within ${deadlineMs}ms after ${spawnLabel} (pid=${pid}${liveness}).`;
+      messageBase = `Palimpsest server did not bind a port within ${deadlineMs}ms after ${spawnLabel} (pid=${pid}${liveness}).`;
     }
 
     const stderrHeading = exited
@@ -2298,7 +2298,7 @@ export class WindowManager {
         apiOrigin,
         capabilities: lock.capabilities,
       },
-      'attaching to existing OpenKnowledge server',
+      'attaching to existing Palimpsest server',
     );
 
     this.deps.startup?.markServerLockReady?.({ startedAt: lock.startedAt, apiOrigin });

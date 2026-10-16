@@ -6,10 +6,10 @@ import { setTimeout as wait } from 'node:timers/promises';
 import {
   formatSpawnAttemptHeader,
   LOCAL_DIR,
-  OK_DIR,
+  PS_DIR,
   SPAWN_ERROR_LOG,
-} from '@inkeep/open-knowledge-core';
-import { AutoStartDisabledError, type ServerLockMetadata } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { AutoStartDisabledError, type ServerLockMetadata } from '@palimpsest/server';
 import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
@@ -21,7 +21,7 @@ import {
 } from './shim.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -86,8 +86,8 @@ describe('MCP stdio shim server resolution', () => {
   let lockDir: string;
 
   beforeEach(async () => {
-    tmp = await mkdtemp(resolve(tmpdir(), 'ok-mcp-shim-'));
-    lockDir = resolve(tmp, OK_DIR, LOCAL_DIR);
+    tmp = await mkdtemp(resolve(tmpdir(), 'ps-mcp-shim-'));
+    lockDir = resolve(tmp, PS_DIR, LOCAL_DIR);
   });
 
   afterEach(async () => {
@@ -190,7 +190,7 @@ describe('MCP stdio shim server resolution', () => {
     expect(url).toBe('http://127.0.0.1:4123/mcp');
   });
 
-  test('missing lock spawns ok start and polls until a live port appears', async () => {
+  test('missing lock spawns ps start and polls until a live port appears', async () => {
     const calls: Array<{
       cmd: string;
       args: readonly string[];
@@ -239,14 +239,14 @@ describe('MCP stdio shim server resolution', () => {
       isAlive: () => false,
     }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(AutoStartDisabledError);
-    expect((err as Error).message).toContain('OK_MCP_AUTOSTART=0');
-    expect((err as Error).message).toContain('Run `ok start` in the target project');
+    expect((err as Error).message).toContain('PS_MCP_AUTOSTART=0');
+    expect((err as Error).message).toContain('Run `ps start` in the target project');
     expect((err as Error).message).toContain('then retry this tool');
-    expect((err as Error).message).toContain('native file edits for OpenKnowledge content');
+    expect((err as Error).message).toContain('native file edits for Palimpsest content');
   });
 
-  test('auto-start opt-out on Beta names ok-beta start', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('auto-start opt-out on Beta names ps-beta start', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const err: unknown = await resolveMcpHttpUrl({
       lockDir,
       contentDir: tmp,
@@ -255,7 +255,7 @@ describe('MCP stdio shim server resolution', () => {
       isAlive: () => false,
     }).catch((e: unknown) => e);
     expect((err as Error).message).toContain(
-      'Run `ok-beta start` in the target project, then retry this tool.',
+      'Run `ps-beta start` in the target project, then retry this tool.',
     );
   });
 
@@ -273,9 +273,9 @@ describe('MCP stdio shim server resolution', () => {
       expect(err).not.toBeInstanceOf(AutoStartDisabledError);
       expect((err as Error).message).toContain('spawn failed:');
       expect((err as Error).message).toMatch(/ENOENT|ENAMETOOLONG/);
-      expect((err as Error).message).toContain('Run `ok start` in the target project');
+      expect((err as Error).message).toContain('Run `ps start` in the target project');
       expect((err as Error).message).toContain('then retry this tool');
-      expect((err as Error).message).toContain('native file edits for OpenKnowledge content');
+      expect((err as Error).message).toContain('native file edits for Palimpsest content');
     },
   );
 
@@ -576,8 +576,8 @@ describe('startMcpShim lifecycle', () => {
   let lockDir: string;
 
   beforeEach(async () => {
-    tmp = await mkdtemp(resolve(tmpdir(), 'ok-mcp-shim-lifecycle-'));
-    lockDir = resolve(tmp, OK_DIR, LOCAL_DIR);
+    tmp = await mkdtemp(resolve(tmpdir(), 'ps-mcp-shim-lifecycle-'));
+    lockDir = resolve(tmp, PS_DIR, LOCAL_DIR);
   });
 
   afterEach(async () => {
@@ -600,7 +600,7 @@ describe('startMcpShim lifecycle', () => {
             keepaliveClosed = true;
           },
           isConnected: () => false,
-        })) as unknown as typeof import('@inkeep/open-knowledge-core/keepalive').startKeepalive,
+        })) as unknown as typeof import('@palimpsest/core/keepalive').startKeepalive,
         bridgeFn: async () => {
           throw bridgeError;
         },

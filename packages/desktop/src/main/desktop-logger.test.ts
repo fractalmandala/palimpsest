@@ -10,9 +10,9 @@ import { flushDesktopLogger, getLogger, getRootDesktopLogger } from './desktop-l
 
 describe('a process that exits in the same tick it first logs', () => {
   test('exits cleanly and the line reaches the log file', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-desktop-logs-exit-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-desktop-logs-exit-'));
     const loggerUrl = pathToFileURL(join(import.meta.dirname, 'desktop-logger.ts')).href;
-    const { OK_CHANNEL: _channel, ...inheritedEnv } = process.env;
+    const { PS_CHANNEL: _channel, ...inheritedEnv } = process.env;
     try {
       const child = spawnSync(
         process.execPath,
@@ -32,7 +32,7 @@ describe('a process that exits in the same tick it first logs', () => {
             HOME: home,
             USERPROFILE: home,
             NODE_ENV: 'production',
-            OK_LOG_LEVEL: 'info',
+            PS_LOG_LEVEL: 'info',
           },
         },
       );
@@ -86,16 +86,16 @@ describe('logs dir per channel', () => {
     vi.resetModules();
   });
 
-  test('importing under an unsupported OK_CHANNEL does not throw', async () => {
-    vi.stubEnv('OK_CHANNEL', 'bogus');
+  test('importing under an unsupported PS_CHANNEL does not throw', async () => {
+    vi.stubEnv('PS_CHANNEL', 'bogus');
     vi.resetModules();
     await expect(import('./desktop-logger.ts')).resolves.toBeDefined();
   });
 
-  test('Beta writes logs under ~/.ok-beta/logs, not ~/.ok/logs', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-desktop-logs-'));
+  test('Beta writes logs under ~/.ps-beta/logs, not ~/.ps/logs', async () => {
+    const home = mkdtempSync(join(tmpdir(), 'ps-desktop-logs-'));
     vi.stubEnv('HOME', home);
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     vi.resetModules();
     try {
       const { getRootDesktopLogger } = await import('./desktop-logger.ts');
@@ -105,8 +105,8 @@ describe('logs dir per channel', () => {
       const closed = once(stream, 'close');
       stream.end();
       await closed;
-      expect(existsSync(join(home, '.ok-beta', 'logs'))).toBe(true);
-      expect(existsSync(join(home, '.ok', 'logs'))).toBe(false);
+      expect(existsSync(join(home, '.ps-beta', 'logs'))).toBe(true);
+      expect(existsSync(join(home, '.ps', 'logs'))).toBe(false);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }

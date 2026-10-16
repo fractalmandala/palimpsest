@@ -63,7 +63,7 @@ function launchFixture(
 ) {
   vi.useFakeTimers();
   vi.setSystemTime(new Date('2026-10-01T00:00:00.000Z'));
-  const home = mkdtempSync(join(tmpdir(), 'ok-renderer-liveness-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-renderer-liveness-'));
   homes.push(home);
   mkdirSync(bootLogDirFor(home), { recursive: true });
   const log = join(bootLogDirFor(home), 'desktop.renderer-leg.log');
@@ -188,7 +188,7 @@ describe('renderer activity during first-window readiness', () => {
         fixture.write({
           source: 'renderer-console',
           transport: 'electron',
-          event: 'ok-terminal-sessions-host-state',
+          event: 'ps-terminal-sessions-host-state',
           attached: true,
         }),
       );

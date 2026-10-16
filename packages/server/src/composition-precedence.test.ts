@@ -12,7 +12,7 @@ let tmpRoot: string;
 let normal: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-precedence-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-precedence-'));
   const normalDir = mkdtempSync(resolve(tmpRoot, 'normal-'));
   normal = await bootCompositionRig(normalDir);
   await normal.ready;
@@ -108,7 +108,7 @@ describe('desktop-shape composition (React shell mounted)', () => {
   let desktopTmp: string;
 
   beforeAll(async () => {
-    desktopTmp = await mkdtemp(resolve(tmpdir(), 'ok-precedence-desktop-'));
+    desktopTmp = await mkdtemp(resolve(tmpdir(), 'ps-precedence-desktop-'));
     const projectDir = mkdtempSync(resolve(desktopTmp, 'proj-'));
     const shellDistDir = mkdtempSync(resolve(desktopTmp, 'dist-'));
     writeFileSync(
@@ -153,7 +153,7 @@ describe('desktop-shape composition (React shell mounted)', () => {
 
 describe('readiness and shutdown over the composed listener', () => {
   test('a document-list request racing async init never sees a false-empty index', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-ready-race-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-ready-race-'));
     try {
       mkdirSync(resolve(tmp, 'docs'), { recursive: true });
       writeFileSync(resolve(tmp, 'docs', 'seeded-note.md'), '# seeded\n', 'utf-8');
@@ -173,7 +173,7 @@ describe('readiness and shutdown over the composed listener', () => {
   }, 90_000);
 
   test('destroy() drains a live collab WebSocket, closes the listener, and marks server.lock draining', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-shutdown-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-shutdown-'));
     try {
       const booted = await bootCompositionRig(tmp);
       await booted.ready;

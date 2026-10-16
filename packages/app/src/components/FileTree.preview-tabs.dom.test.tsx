@@ -46,7 +46,7 @@ function makeFetchMock() {
     }
     if (url === '/api/workspace') {
       return jsonResponse({
-        contentDir: '/tmp/open-knowledge',
+        contentDir: '/tmp/palimpsest',
         pathSeparator: '/',
         symlinkResolved: true,
       });
@@ -243,7 +243,7 @@ vi.doMock('@/components/use-selection-mirror', () => ({
   useSelectionMirror: () => {},
 }));
 vi.doMock('@pierre/trees', () => ({
-  FILE_TREE_TAG_NAME: 'ok-file-tree',
+  FILE_TREE_TAG_NAME: 'ps-file-tree',
   themeToTreeStyles: () => ({}),
 }));
 vi.doMock('@pierre/trees/react', () => ({

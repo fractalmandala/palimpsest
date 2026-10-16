@@ -1,14 +1,14 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import type { HocuspocusProvider } from '@hocuspocus/provider';
 import {
   parseExternalSkillDocName,
   parseManagedArtifactName,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
-import { isExcalidrawDocFile } from '@inkeep/open-knowledge-core/constants/upload';
-import type { LintDiagnostic } from '@inkeep/open-knowledge-core/markdown/lint';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/constants/cc1';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
+import { isExcalidrawDocFile } from '@palimpsest/core/constants/upload';
+import type { LintDiagnostic } from '@palimpsest/core/markdown/lint';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { lazy, Suspense } from 'react';
 import { AddPropertiesButton } from '@/components/AddPropertiesButton';
 import type { EditorModeValue } from '@/editor/use-editor-mode.ts';

@@ -5,8 +5,8 @@ import {
   type PlannedStep,
   parsePathId,
   type StepExecutor,
-} from '@inkeep/open-knowledge-core';
-import { getLogger } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { getLogger } from '@palimpsest/server';
 import { EDITOR_TARGETS, type McpInstallOptions } from '../commands/editors.ts';
 import { writeEditorMcpConfig, writeUserMcpConfigs } from '../commands/init.ts';
 import { removeOwnMcpEntry } from '../commands/mcp-config-removal.ts';

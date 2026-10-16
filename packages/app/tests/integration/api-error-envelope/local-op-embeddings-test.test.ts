@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import {
   LocalOpEmbeddingsTestResponseSchema,
   ProblemDetailsSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   type FakeEmbeddingsServer,
@@ -23,17 +23,17 @@ const PROVIDER_DIMS = 1024;
 
 beforeAll(async () => {
   provider = await startFakeEmbeddingsServer({ dims: PROVIDER_DIMS });
-  contentDir = mkdtempSync(join(tmpdir(), 'ok-emb-test-content-'));
-  homeDir = mkdtempSync(join(tmpdir(), 'ok-emb-test-home-'));
+  contentDir = mkdtempSync(join(tmpdir(), 'ps-emb-test-content-'));
+  homeDir = mkdtempSync(join(tmpdir(), 'ps-emb-test-home-'));
 
-  mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), '', 'utf-8');
+  mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), '', 'utf-8');
   writeFileSync(
-    join(contentDir, '.ok', 'local', 'config.yml'),
+    join(contentDir, '.ps', 'local', 'config.yml'),
     `search:\n  semantic:\n    enabled: true\n    baseUrl: ${provider.baseUrl}\n    model: ${MODEL}\n`,
     'utf-8',
   );
-  mkdirSync(join(homeDir, '.ok'), { recursive: true });
+  mkdirSync(join(homeDir, '.ps'), { recursive: true });
 
   server = await createTestServer({ contentDir, configHomedirOverride: homeDir });
   await fetch(`http://127.0.0.1:${server.port}/api/local-op/embeddings/set-key`, {
@@ -115,16 +115,16 @@ describe('local-op-embeddings-test — provider failure', () => {
 
   beforeAll(async () => {
     failing = await startFakeEmbeddingsServer({ dims: PROVIDER_DIMS, failWithStatus: 401 });
-    failingContentDir = mkdtempSync(join(tmpdir(), 'ok-emb-test-content-'));
-    failingHomeDir = mkdtempSync(join(tmpdir(), 'ok-emb-test-home-'));
-    mkdirSync(join(failingContentDir, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(failingContentDir, '.ok', 'config.yml'), '', 'utf-8');
+    failingContentDir = mkdtempSync(join(tmpdir(), 'ps-emb-test-content-'));
+    failingHomeDir = mkdtempSync(join(tmpdir(), 'ps-emb-test-home-'));
+    mkdirSync(join(failingContentDir, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(failingContentDir, '.ps', 'config.yml'), '', 'utf-8');
     writeFileSync(
-      join(failingContentDir, '.ok', 'local', 'config.yml'),
+      join(failingContentDir, '.ps', 'local', 'config.yml'),
       `search:\n  semantic:\n    enabled: true\n    baseUrl: ${failing.baseUrl}\n`,
       'utf-8',
     );
-    mkdirSync(join(failingHomeDir, '.ok'), { recursive: true });
+    mkdirSync(join(failingHomeDir, '.ps'), { recursive: true });
     failingServer = await createTestServer({
       contentDir: failingContentDir,
       configHomedirOverride: failingHomeDir,
@@ -164,16 +164,16 @@ describe('local-op-embeddings-test — no key configured', () => {
   let noKeyHomeDir: string;
 
   beforeAll(async () => {
-    noKeyContentDir = mkdtempSync(join(tmpdir(), 'ok-emb-test-content-'));
-    noKeyHomeDir = mkdtempSync(join(tmpdir(), 'ok-emb-test-home-'));
-    mkdirSync(join(noKeyContentDir, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(noKeyContentDir, '.ok', 'config.yml'), '', 'utf-8');
+    noKeyContentDir = mkdtempSync(join(tmpdir(), 'ps-emb-test-content-'));
+    noKeyHomeDir = mkdtempSync(join(tmpdir(), 'ps-emb-test-home-'));
+    mkdirSync(join(noKeyContentDir, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(noKeyContentDir, '.ps', 'config.yml'), '', 'utf-8');
     writeFileSync(
-      join(noKeyContentDir, '.ok', 'local', 'config.yml'),
+      join(noKeyContentDir, '.ps', 'local', 'config.yml'),
       'search:\n  semantic:\n    enabled: true\n    baseUrl: https://api.openai.com/v1\n',
       'utf-8',
     );
-    mkdirSync(join(noKeyHomeDir, '.ok'), { recursive: true });
+    mkdirSync(join(noKeyHomeDir, '.ps'), { recursive: true });
     noKeyServer = await createTestServer({
       contentDir: noKeyContentDir,
       configHomedirOverride: noKeyHomeDir,

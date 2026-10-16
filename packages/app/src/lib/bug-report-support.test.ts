@@ -1,29 +1,29 @@
-import { isBlankNoteContent } from '@inkeep/open-knowledge-core';
+import { isBlankNoteContent } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { bugReportNoteTitle, supportMailtoUrl, zipBasename } from './bug-report-support.ts';
 
 describe('zipBasename', () => {
   test('reduces a posix path to the filename', () => {
     expect(zipBasename('/Users/x/Library/ok/reports/ok-report-2026-08-18.zip')).toBe(
-      'ok-report-2026-08-18.zip',
+      'ps-report-2026-08-18.zip',
     );
   });
 
   test('reduces a Windows path to the filename', () => {
-    expect(zipBasename('C:\\Users\\x\\AppData\\ok\\ok-report-2026-08-18.zip')).toBe(
-      'ok-report-2026-08-18.zip',
+    expect(zipBasename('C:\\Users\\x\\AppData\\ok\\ps-report-2026-08-18.zip')).toBe(
+      'ps-report-2026-08-18.zip',
     );
   });
 
   test('passes a bare filename through unchanged', () => {
-    expect(zipBasename('ok-report-2026-08-18.zip')).toBe('ok-report-2026-08-18.zip');
+    expect(zipBasename('ps-report-2026-08-18.zip')).toBe('ps-report-2026-08-18.zip');
   });
 });
 
 describe('supportMailtoUrl', () => {
   test('addresses support and percent-encodes the subject', () => {
     expect(supportMailtoUrl('Bug report OK-1234 #2')).toBe(
-      'mailto:support@inkeep.com?subject=Bug%20report%20OK-1234%20%232',
+      'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-1234%20%232',
     );
   });
 });

@@ -8,11 +8,11 @@ import {
 } from './local-op-cli-invocation.ts';
 
 const WIN_EXE =
-  'C:\\Users\\q\\AppData\\Local\\Programs\\@inkeepopen-knowledge-desktop\\OpenKnowledge.exe';
+  'C:\\Users\\q\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
 const WIN_RESOURCES =
-  'C:\\Users\\q\\AppData\\Local\\Programs\\@inkeepopen-knowledge-desktop\\resources';
+  'C:\\Users\\q\\AppData\\Local\\Programs\\@palimpsestdesktop\\resources';
 
-const WORKSPACE_CLI = '/src/open-knowledge/packages/cli/dist/cli.mjs';
+const WORKSPACE_CLI = '/src/palimpsest/packages/cli/dist/cli.mjs';
 
 function invocationFor(
   input: Omit<ResolveLocalOpCliInvocationInput, 'workspaceCliBuilt'>,
@@ -35,7 +35,7 @@ describe('resolveLocalOpCliInvocation', () => {
         parentEnv: {},
         workspaceCliEntry: WORKSPACE_CLI,
       }),
-    ).toEqual({ cliArgs: ['open-knowledge'] });
+    ).toEqual({ cliArgs: ['palimpsest'] });
   });
 
   test('a dev-channel build runs the workspace CLI, which knows the dev channel, never the CLI on PATH', () => {
@@ -44,7 +44,7 @@ describe('resolveLocalOpCliInvocation', () => {
       isPackaged: false,
       execPath: '/src/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron',
       resourcesPath: '/src/node_modules/electron/dist/Electron.app/Contents/Resources',
-      parentEnv: { OK_CHANNEL: 'dev' },
+      parentEnv: { PS_CHANNEL: 'dev' },
       workspaceCliEntry: WORKSPACE_CLI,
     });
     expect(invocation).toEqual({ cliArgs: ['node', WORKSPACE_CLI] });
@@ -58,14 +58,14 @@ describe('resolveLocalOpCliInvocation', () => {
         isPackaged: false,
         execPath: '/src/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron',
         resourcesPath: '/src/node_modules/electron/dist/Electron.app/Contents/Resources',
-        parentEnv: { OK_CHANNEL: 'dev' },
+        parentEnv: { PS_CHANNEL: 'dev' },
         workspaceCliEntry: WORKSPACE_CLI,
         workspaceCliBuilt: false,
       }),
     ).toBeUndefined();
   });
 
-  test('packaged win32 spawns OpenKnowledge.exe as Node on the bundled CLI, never the .cmd wrapper', () => {
+  test('packaged win32 spawns Palimpsest.exe as Node on the bundled CLI, never the .cmd wrapper', () => {
     const invocation = invocationFor({
       platform: 'win32',
       isPackaged: true,
@@ -93,7 +93,7 @@ describe('resolveLocalOpCliInvocation', () => {
     expect(entry).not.toContain('app.asar.unpacked');
   });
 
-  test('packaged win32 moves NODE_OPTIONS aside the way ok.cmd does', () => {
+  test('packaged win32 moves NODE_OPTIONS aside the way ps.cmd does', () => {
     const invocation = invocationFor({
       platform: 'win32',
       isPackaged: true,
@@ -105,12 +105,12 @@ describe('resolveLocalOpCliInvocation', () => {
     expect(invocation.cliEnv).toEqual({
       ELECTRON_RUN_AS_NODE: '1',
       NODE_OPTIONS: undefined,
-      OK_NODE_OPTIONS: '--require ./hook.js',
+      PS_NODE_OPTIONS: '--require ./hook.js',
     });
     expect(Object.hasOwn(invocation.cliEnv ?? {}, 'NODE_OPTIONS')).toBe(true);
   });
 
-  test('packaged win32 without NODE_OPTIONS still clears it and sets no OK_NODE_OPTIONS', () => {
+  test('packaged win32 without NODE_OPTIONS still clears it and sets no PS_NODE_OPTIONS', () => {
     const invocation = invocationFor({
       platform: 'win32',
       isPackaged: true,
@@ -127,22 +127,22 @@ describe('resolveLocalOpCliInvocation', () => {
       invocationFor({
         platform: 'darwin',
         isPackaged: true,
-        execPath: '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
-        resourcesPath: '/Applications/OpenKnowledge.app/Contents/Resources',
+        execPath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+        resourcesPath: '/Applications/Palimpsest.app/Contents/Resources',
         parentEnv: {},
         workspaceCliEntry: WORKSPACE_CLI,
       }),
-    ).toEqual({ cliArgs: ['/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh'] });
+    ).toEqual({ cliArgs: ['/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh'] });
     expect(
       invocationFor({
         platform: 'linux',
         isPackaged: true,
-        execPath: '/opt/OpenKnowledge/openknowledge',
-        resourcesPath: '/opt/OpenKnowledge/resources',
+        execPath: '/opt/Palimpsest/palimpsest',
+        resourcesPath: '/opt/Palimpsest/resources',
         parentEnv: {},
         workspaceCliEntry: WORKSPACE_CLI,
       }),
-    ).toEqual({ cliArgs: ['/opt/OpenKnowledge/resources/cli/bin/ok.sh'] });
+    ).toEqual({ cliArgs: ['/opt/Palimpsest/resources/cli/bin/ps.sh'] });
   });
 });
 
@@ -157,7 +157,7 @@ describe('resolveLocalOpCliArgsForUtilityFork', () => {
       workspaceCliEntry: WORKSPACE_CLI,
     });
     const args = resolveLocalOpCliArgsForUtilityFork(invocation);
-    expect(args).toEqual(['open-knowledge']);
+    expect(args).toEqual(['palimpsest']);
     expect(args).not.toBe(invocation.cliArgs);
   });
 
@@ -167,13 +167,13 @@ describe('resolveLocalOpCliArgsForUtilityFork', () => {
         invocationFor({
           platform: 'darwin',
           isPackaged: true,
-          execPath: '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
-          resourcesPath: '/Applications/OpenKnowledge.app/Contents/Resources',
+          execPath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+          resourcesPath: '/Applications/Palimpsest.app/Contents/Resources',
           parentEnv: {},
           workspaceCliEntry: WORKSPACE_CLI,
         }),
       ),
-    ).toEqual(['/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh']);
+    ).toEqual(['/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh']);
   });
 
   test('throws on a packaged win32 invocation rather than silently dropping its cliEnv', () => {
@@ -192,7 +192,7 @@ describe('resolveLocalOpCliArgsForUtilityFork', () => {
   test('throws for any invocation carrying a cliEnv overlay, not just the win32 shape', () => {
     expect(() =>
       resolveLocalOpCliArgsForUtilityFork({
-        cliArgs: ['open-knowledge'],
+        cliArgs: ['palimpsest'],
         cliEnv: { ELECTRON_RUN_AS_NODE: '1' },
       }),
     ).toThrow(/cliEnv/);
@@ -201,17 +201,17 @@ describe('resolveLocalOpCliArgsForUtilityFork', () => {
 
 describe('mainProcessOkCli', () => {
   test('a dev build pins dev on its workspace CLI, since the spawn drops the inherited channel', () => {
-    const cli = mainProcessOkCli({ cliArgs: ['node', WORKSPACE_CLI] }, { OK_CHANNEL: 'dev' });
+    const cli = mainProcessOkCli({ cliArgs: ['node', WORKSPACE_CLI] }, { PS_CHANNEL: 'dev' });
     expect(cli.runnerInvocation(['auth', 'login'])).toEqual({
       cliArgs: ['node', WORKSPACE_CLI, 'auth', 'login'],
-      cliEnv: { OK_CHANNEL: 'dev' },
+      cliEnv: { PS_CHANNEL: 'dev' },
     });
   });
 
   test('a dev build with no workspace CLI reads through the CLI on PATH with no channel and refuses sign-in', () => {
-    const cli = mainProcessOkCli(undefined, { OK_CHANNEL: 'dev' });
+    const cli = mainProcessOkCli(undefined, { PS_CHANNEL: 'dev' });
     expect(cli.runnerInvocation(['auth', 'status'])).toEqual({
-      cliArgs: ['open-knowledge', 'auth', 'status'],
+      cliArgs: ['palimpsest', 'auth', 'status'],
       cliEnv: {},
     });
     expect(cli.refusalFor(['auth', 'login'])).toContain('pnpm build');
@@ -221,11 +221,11 @@ describe('mainProcessOkCli', () => {
     expect(
       mainProcessOkCli(
         { cliArgs: [WIN_EXE, 'cli.mjs'], cliEnv: { ELECTRON_RUN_AS_NODE: '1' } },
-        { OK_CHANNEL: 'beta' },
+        { PS_CHANNEL: 'beta' },
       ).runnerInvocation([]),
     ).toEqual({
       cliArgs: [WIN_EXE, 'cli.mjs'],
-      cliEnv: { ELECTRON_RUN_AS_NODE: '1', OK_CHANNEL: 'beta' },
+      cliEnv: { ELECTRON_RUN_AS_NODE: '1', PS_CHANNEL: 'beta' },
     });
   });
 });

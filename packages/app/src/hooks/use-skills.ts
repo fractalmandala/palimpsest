@@ -1,7 +1,7 @@
 import {
   type SkillsListEntry,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import {
@@ -126,7 +126,7 @@ export function useSkills(options?: { enabled?: boolean }): AsyncState<readonly 
         const parsed = SkillsListSuccessSchema.safeParse(payload);
         if (!parsed.success) {
           console.error(
-            '[ok-skills] /api/skills response failed schema validation:',
+            '[ps-skills] /api/skills response failed schema validation:',
             parsed.error.issues,
           );
           setState({ status: 'error', message: t`Server returned an incomplete skills response.` });

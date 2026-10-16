@@ -49,9 +49,9 @@ vi.doMock('@/components/GraphView', () => ({
 }));
 
 function setElectronHost(on: boolean) {
-  const w = window as unknown as { okDesktop?: unknown };
-  if (on) w.okDesktop = {};
-  else delete w.okDesktop;
+  const w = window as unknown as { psDesktop?: unknown };
+  if (on) w.psDesktop = {};
+  else delete w.psDesktop;
 }
 
 describe('GraphPanel fullscreen safe-area behavior', () => {

@@ -10,10 +10,10 @@ import {
 
 let base: string;
 
-const ledgerPath = () => join(base, '.ok', 'local', 'skill-move-retained.json');
+const ledgerPath = () => join(base, '.ps', 'local', 'skill-move-retained.json');
 
 const seedLedger = (contents: string): void => {
-  mkdirSync(join(base, '.ok', 'local'), { recursive: true });
+  mkdirSync(join(base, '.ps', 'local'), { recursive: true });
   writeFileSync(ledgerPath(), contents);
 };
 
@@ -27,7 +27,7 @@ const record = {
 };
 
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'ok-move-retained-'));
+  base = mkdtempSync(join(tmpdir(), 'ps-move-retained-'));
 });
 
 afterEach(() => {
@@ -51,7 +51,7 @@ describe('skill move retained store', () => {
     expect(readSkillMoveRetention(base, 'global', 'beta')).toEqual({ state: 'none' });
   });
 
-  test('the ledger lives under .ok/local and keeps the full payload for operators', async () => {
+  test('the ledger lives under .ps/local and keeps the full payload for operators', async () => {
     await recordSkillMoveRetention(base, 'global', 'alpha', record);
 
     expect(existsSync(ledgerPath())).toBe(true);

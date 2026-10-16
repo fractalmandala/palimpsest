@@ -1,4 +1,4 @@
-import { toWikiLinkSlug } from '@inkeep/open-knowledge-core';
+import { toWikiLinkSlug } from '@palimpsest/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   __resetPageListCacheForTests,

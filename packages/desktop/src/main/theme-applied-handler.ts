@@ -1,16 +1,16 @@
-import type { OkChromeColors } from '../shared/bridge-contract.ts';
+import type { PsChromeColors } from '../shared/bridge-contract.ts';
 
 interface ApplyThemeAppliedDeps {
   fireThemeApplied: (window: object) => void;
   applyReducedTransparency: (reduced: boolean) => void;
-  applyChromeColors: (chrome: OkChromeColors) => void;
+  applyChromeColors: (chrome: PsChromeColors) => void;
   warn: (line: string) => void;
 }
 
 export function applyThemeApplied(
   deps: ApplyThemeAppliedDeps,
   senderWindow: object | null,
-  opts: { reducedTransparency?: boolean; chrome?: OkChromeColors } | undefined,
+  opts: { reducedTransparency?: boolean; chrome?: PsChromeColors } | undefined,
 ): void {
   if (opts?.reducedTransparency !== undefined) {
     deps.applyReducedTransparency(opts.reducedTransparency);

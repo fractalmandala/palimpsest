@@ -13,7 +13,7 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { OkUninstallBridge } from '@inkeep/open-knowledge-core';
+import type { PsUninstallBridge } from '@palimpsest/core';
 import { type Browser, chromium, _electron as electron, expect, test } from '@playwright/test';
 import { buildDesktopUninstallHandoffScript } from '../../src/main/desktop-uninstall-handoff';
 import { captureAppProcess, closeAppBounded } from './_helpers/electron-cleanup';
@@ -41,12 +41,12 @@ function closeOrRecord(proc: Parameters<typeof closeAppBounded>[0]): Promise<voi
 }
 
 test.describe('isolated uninstall completion', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'macOS uninstall handoff');
   test.skip(!TARGET.exists, TARGET.missingReason);
   for (const success of [true, false]) {
     test(`renders the ${success ? 'success' : 'failure'} result in the handed-off language`, async () => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-locale-test-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-locale-test-'));
       owned.push(home);
       const app = await electron.launch(
         desktopLaunchOptions({
@@ -55,7 +55,7 @@ test.describe('isolated uninstall completion', () => {
             `--user-data-dir=${join(home, 'profile')}`,
             '--ok-uninstall-locale=es',
             '--ok-uninstall-result',
-            success ? 'OpenKnowledge files were removed' : 'Cleanup didn’t finish',
+            success ? 'Palimpsest files were removed' : 'Cleanup didn’t finish',
             'Details in the log.',
             success ? 'Reveal in Finder' : 'Close',
           ],
@@ -68,7 +68,7 @@ test.describe('isolated uninstall completion', () => {
         await expect(
           page.getByRole('heading', {
             name: success
-              ? 'Se eliminaron los archivos de OpenKnowledge'
+              ? 'Se eliminaron los archivos de Palimpsest'
               : 'La limpieza no terminó',
           }),
         ).toBeVisible();
@@ -78,7 +78,7 @@ test.describe('isolated uninstall completion', () => {
         const exited = once(child, 'exit');
         await page.keyboard.down('Escape');
         expect(await exited).toEqual([0, null]);
-        expect(existsSync(join(home, '.ok'))).toBe(false);
+        expect(existsSync(join(home, '.ps'))).toBe(false);
       } finally {
         await closeOrRecord(child);
       }
@@ -86,13 +86,13 @@ test.describe('isolated uninstall completion', () => {
   }
   test('keeps the normal desktop entry available', async () => {
     test.skip(TARGET.mode === 'packaged', 'The notice preview is development-only.');
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-normal-entry-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-normal-entry-'));
     owned.push(home);
     const app = await electron.launch(
       desktopLaunchOptions({
         target: TARGET,
         args: [`--user-data-dir=${join(home, 'profile')}`],
-        env: { ...process.env, HOME: home, OK_UNINSTALL_UI_PREVIEW: 'notice' },
+        env: { ...process.env, HOME: home, PS_UNINSTALL_UI_PREVIEW: 'notice' },
       }),
     );
     const child = captureAppProcess(app);
@@ -101,7 +101,7 @@ test.describe('isolated uninstall completion', () => {
         const headings = await Promise.all(
           app.windows().map((page) => page.locator('h1').allTextContents()),
         );
-        expect(headings.flat()).toContain('Uninstall OpenKnowledge?');
+        expect(headings.flat()).toContain('Uninstall Palimpsest?');
       }).toPass({ timeout: 20_000 });
     } finally {
       await closeOrRecord(child);
@@ -116,7 +116,7 @@ test.describe('isolated uninstall completion', () => {
   ] as const) {
     // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture contract
     test(`renders ${success ? 'success' : 'failure'} and exits on ${action}`, async ({}, testInfo) => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-result-test-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-result-test-'));
       owned.push(home);
       const profile = join(home, 'result-profile');
       mkdirSync(profile);
@@ -128,7 +128,7 @@ test.describe('isolated uninstall completion', () => {
           args: [
             `--user-data-dir=${profile}`,
             '--ok-uninstall-result',
-            success ? 'OpenKnowledge files were removed' : 'Cleanup didn’t finish',
+            success ? 'Palimpsest files were removed' : 'Cleanup didn’t finish',
             success ? 'Settings removed.' : 'A server remains alive. Project state was retained.',
             success ? 'Reveal in Finder' : 'Close',
           ],
@@ -154,7 +154,7 @@ test.describe('isolated uninstall completion', () => {
           await expect(page.getByRole('listitem')).toHaveCount(0);
           await expect(
             page.getByText(
-              'Some files may not have been removed. Open the cleanup log for details. You can reopen OpenKnowledge to try again.',
+              'Some files may not have been removed. Open the cleanup log for details. You can reopen Palimpsest to try again.',
             ),
           ).toBeVisible();
         }
@@ -163,8 +163,8 @@ test.describe('isolated uninstall completion', () => {
         else await page.getByRole('button', { name: action }).click();
         const [code] = await exited;
         expect(code).toBe(exitCode);
-        expect(existsSync(join(home, '.ok'))).toBe(false);
-        expect(existsSync(join(home, 'Library', 'Application Support', 'OpenKnowledge'))).toBe(
+        expect(existsSync(join(home, '.ps'))).toBe(false);
+        expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(
           false,
         );
         expect(readFileSync(note, 'utf8')).toBe('# Keep my notes');
@@ -176,18 +176,18 @@ test.describe('isolated uninstall completion', () => {
 });
 
 test.describe('continuous uninstall handoff', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'macOS uninstall handoff');
   test.skip(!TARGET.exists, TARGET.missingReason);
   for (const success of [true, false]) {
     // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture contract
     test(`keeps the same window through shutdown, cleanup and ${success ? 'success' : 'failure'}`, async ({}, testInfo) => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-progress-test-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-progress-test-'));
       owned.push(home);
       const logPath = join(home, 'cleanup.log');
       const state = join(home, 'settings');
       const note = join(home, 'notes.md');
-      const appBundlePath = join(home, 'OpenKnowledge.app');
+      const appBundlePath = join(home, 'Palimpsest.app');
       mkdirSync(appBundlePath);
       writeFileSync(note, '# Keep my notes');
       const parent = spawn(
@@ -247,19 +247,19 @@ ${success ? `rm '${state}'` : 'exit 31'}
         );
         helper = spawn('/bin/sh', ['-c', script], {
           detached: true,
-          env: { ...process.env, HOME: home, TMPDIR: home, OK_LANG: 'en' },
+          env: { ...process.env, HOME: home, TMPDIR: home, PS_LANG: 'en' },
           stdio: ['ignore', 'pipe', 'ignore'],
         });
         let output = '';
         helper.stdout?.on('data', (chunk) => {
           output += String(chunk);
         });
-        await expect.poll(() => output, { timeout: 35_000 }).toContain('OK_UNINSTALL_READY');
+        await expect.poll(() => output, { timeout: 35_000 }).toContain('PS_UNINSTALL_READY');
         browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`);
         const page = browser.contexts()[0]?.pages()[0];
         if (page === undefined) throw new Error('No progress window');
         await expect(
-          page.getByRole('heading', { name: 'Removing OpenKnowledge files…' }),
+          page.getByRole('heading', { name: 'Removing Palimpsest files…' }),
         ).toBeVisible();
         expect(parent.exitCode).toBeNull();
         expect(existsSync(join(home, 'cleaning'))).toBe(false);
@@ -270,8 +270,8 @@ ${success ? `rm '${state}'` : 'exit 31'}
         await expect(page.getByRole('status')).toBeVisible();
         expect(
           await page.evaluate(() => {
-            const host = window as typeof window & { okUninstall?: OkUninstallBridge };
-            return host.okUninstall?.send({ kind: 'notice-confirm' });
+            const host = window as typeof window & { psUninstall?: PsUninstallBridge };
+            return host.psUninstall?.send({ kind: 'notice-confirm' });
           }),
         ).toEqual({ kind: 'refused', reason: 'invalid-intent' });
         writeFileSync(join(home, 'quit'), 'quit');
@@ -282,7 +282,7 @@ ${success ? `rm '${state}'` : 'exit 31'}
         writeFileSync(join(home, 'finish-cleanup'), 'finish');
         await expect(
           page.getByRole('heading', {
-            name: success ? 'OpenKnowledge files were removed' : 'Cleanup didn’t finish',
+            name: success ? 'Palimpsest files were removed' : 'Cleanup didn’t finish',
           }),
         ).toBeVisible();
         expect(await page.evaluate(() => window.name)).toBe('continuous-progress');
@@ -302,11 +302,11 @@ ${success ? `rm '${state}'` : 'exit 31'}
         );
         expect(existsSync(state)).toBe(!success);
         expect(readFileSync(note, 'utf8')).toBe('# Keep my notes');
-        expect(readdirSync(home).filter((name) => name.startsWith('ok-uninstall-result.'))).toEqual(
+        expect(readdirSync(home).filter((name) => name.startsWith('ps-uninstall-result.'))).toEqual(
           [],
         );
-        expect(existsSync(join(home, '.ok'))).toBe(false);
-        expect(existsSync(join(home, 'Library', 'Application Support', 'OpenKnowledge'))).toBe(
+        expect(existsSync(join(home, '.ps'))).toBe(false);
+        expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(
           false,
         );
       } finally {

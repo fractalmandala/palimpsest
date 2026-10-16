@@ -16,7 +16,7 @@ function makeAliveServer(overrides?: {
 }): LockState {
   return {
     status: 'alive',
-    lockPath: `${overrides?.worktreeRoot ?? '/tmp/notes'}/.ok/server.lock`,
+    lockPath: `${overrides?.worktreeRoot ?? '/tmp/notes'}/.ps/server.lock`,
     lock: {
       pid: overrides?.pid ?? 12345,
       hostname: overrides?.hostname ?? 'test-host',
@@ -36,7 +36,7 @@ function makeDeadServer(overrides?: {
 }): LockState {
   return {
     status: 'dead-pid',
-    lockPath: `${overrides?.worktreeRoot ?? '/tmp/old-project'}/.ok/server.lock`,
+    lockPath: `${overrides?.worktreeRoot ?? '/tmp/old-project'}/.ps/server.lock`,
     lock: {
       pid: overrides?.pid ?? 44444,
       hostname: 'test-host',
@@ -55,7 +55,7 @@ function makeForeignServer(overrides?: {
 }): LockState {
   return {
     status: 'foreign-host',
-    lockPath: `${overrides?.worktreeRoot ?? '/tmp/shared'}/.ok/server.lock`,
+    lockPath: `${overrides?.worktreeRoot ?? '/tmp/shared'}/.ps/server.lock`,
     lock: {
       pid: overrides?.pid ?? 99999,
       hostname: 'other-host',
@@ -68,12 +68,12 @@ function makeForeignServer(overrides?: {
 
 const missingLock: LockState = {
   status: 'missing',
-  lockPath: '/tmp/notes/.ok/server.lock',
+  lockPath: '/tmp/notes/.ps/server.lock',
 };
 
 const corruptLock: LockState = {
   status: 'corrupt',
-  lockPath: '/tmp/notes/.ok/server.lock',
+  lockPath: '/tmp/notes/.ps/server.lock',
 };
 
 describe('startedCell', () => {
@@ -92,10 +92,10 @@ describe('runPs default (alive + foreign-host)', () => {
     const aliveServerState = makeAliveServer({ worktreeRoot: '/tmp/notes' });
     const deadServerState = makeDeadServer({ worktreeRoot: '/tmp/old-project' });
 
-    const lockDirs = ['/tmp/notes/.ok', '/tmp/old-project/.ok'];
+    const lockDirs = ['/tmp/notes/.ps', '/tmp/old-project/.ps'];
     const lockMap: Record<string, Record<string, LockState>> = {
-      '/tmp/notes/.ok': { server: aliveServerState },
-      '/tmp/old-project/.ok': { server: deadServerState },
+      '/tmp/notes/.ps': { server: aliveServerState },
+      '/tmp/old-project/.ps': { server: deadServerState },
     };
 
     const lines: string[] = [];
@@ -115,7 +115,7 @@ describe('runPs default (alive + foreign-host)', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/shared/.ok'],
+      discover: async () => ['/tmp/shared/.ps'],
       inspect: () => foreignServerState,
       log: (msg) => lines.push(msg),
     });
@@ -130,13 +130,13 @@ describe('runPs default (alive + foreign-host)', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/old-project/.ok'],
+      discover: async () => ['/tmp/old-project/.ps'],
       inspect: () => deadServerState,
       log: (msg) => lines.push(msg),
     });
 
     const output = lines.join('\n');
-    expect(output).toBe('No open-knowledge servers found.');
+    expect(output).toBe('No palimpsest servers found.');
   });
 
   test('prints empty state message when no servers discovered at all', async () => {
@@ -148,7 +148,7 @@ describe('runPs default (alive + foreign-host)', () => {
     });
 
     const output = lines.join('\n');
-    expect(output).toBe('No open-knowledge servers found.');
+    expect(output).toBe('No palimpsest servers found.');
   });
 });
 
@@ -157,10 +157,10 @@ describe('runPs --all', () => {
     const aliveServerState = makeAliveServer({ worktreeRoot: '/tmp/notes' });
     const deadServerState = makeDeadServer({ worktreeRoot: '/tmp/old-project' });
 
-    const lockDirs = ['/tmp/notes/.ok', '/tmp/old-project/.ok'];
+    const lockDirs = ['/tmp/notes/.ps', '/tmp/old-project/.ps'];
     const lockMap: Record<string, Record<string, LockState>> = {
-      '/tmp/notes/.ok': { server: aliveServerState },
-      '/tmp/old-project/.ok': { server: deadServerState },
+      '/tmp/notes/.ps': { server: aliveServerState },
+      '/tmp/old-project/.ps': { server: deadServerState },
     };
 
     const lines: string[] = [];
@@ -183,7 +183,7 @@ describe('runPs --all', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/shared/.ok'],
+      discover: async () => ['/tmp/shared/.ps'],
       inspect: () => foreignServerState,
       all: true,
       log: (msg) => lines.push(msg),
@@ -202,7 +202,7 @@ describe('isDesktopCommand', () => {
 
   test('returns false for CLI start command', () => {
     expect(
-      isDesktopCommand('/usr/local/bin/node /opt/open-knowledge/packages/cli/dist/cli.mjs start'),
+      isDesktopCommand('/usr/local/bin/node /opt/palimpsest/packages/cli/dist/cli.mjs start'),
     ).toBe(false);
   });
 
@@ -230,7 +230,7 @@ describe('runPs desktop labeling', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServerState,
       resolveCommand: () => ELECTRON_UTILITY_COMMAND,
       log: (msg) => lines.push(msg),
@@ -247,7 +247,7 @@ describe('runPs desktop labeling', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/vault/.ok'],
+      discover: async () => ['/tmp/vault/.ps'],
       inspect: () => foreignServerState,
       resolveCommand: () => ELECTRON_UTILITY_COMMAND,
       log: (msg) => lines.push(msg),
@@ -264,10 +264,10 @@ describe('runPs desktop labeling', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServerState,
       resolveCommand: () =>
-        '/usr/local/bin/node /opt/open-knowledge/packages/cli/dist/cli.mjs start',
+        '/usr/local/bin/node /opt/palimpsest/packages/cli/dist/cli.mjs start',
       log: (msg) => lines.push(msg),
     });
 
@@ -281,7 +281,7 @@ describe('runPs desktop labeling', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServerState,
       resolveCommand: () => ELECTRON_UTILITY_COMMAND,
       json: true,
@@ -297,7 +297,7 @@ describe('runPs desktop labeling', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => deadServerState,
       resolveCommand: () => ELECTRON_UTILITY_COMMAND,
       all: true,
@@ -315,10 +315,10 @@ describe('runPs --json', () => {
     const aliveServerState = makeAliveServer({ worktreeRoot: '/tmp/notes' });
     const deadServerState = makeDeadServer({ worktreeRoot: '/tmp/old-project' });
 
-    const lockDirs = ['/tmp/notes/.ok', '/tmp/old-project/.ok'];
+    const lockDirs = ['/tmp/notes/.ps', '/tmp/old-project/.ps'];
     const lockMap: Record<string, Record<string, LockState>> = {
-      '/tmp/notes/.ok': { server: aliveServerState },
-      '/tmp/old-project/.ok': { server: deadServerState },
+      '/tmp/notes/.ps': { server: aliveServerState },
+      '/tmp/old-project/.ps': { server: deadServerState },
     };
 
     const lines: string[] = [];
@@ -348,9 +348,9 @@ describe('runPs --json', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServerState,
-      resolveCommand: () => '/usr/local/bin/node /tmp/open-knowledge/packages/cli/src/cli.ts start',
+      resolveCommand: () => '/usr/local/bin/node /tmp/palimpsest/packages/cli/src/cli.ts start',
       resolveUsage: (pid) =>
         pid === 12345 ? { cpuPercent: 1.2, memPercent: 3.4 } : { cpuPercent: 5.6, memPercent: 7.8 },
       json: true,
@@ -398,9 +398,9 @@ describe('runPs --json', () => {
     expect(entry.ui?.usage).toEqual({ cpuPercent: 1.2, memPercent: 3.4 });
     expect(entry.hostname).toBe('test-host');
     expect(typeof entry.lockPath).toBe('string');
-    expect(entry.binary).toBe('/tmp/open-knowledge/packages/cli/src/cli.ts');
+    expect(entry.binary).toBe('/tmp/palimpsest/packages/cli/src/cli.ts');
     expect(entry.command).toBe(
-      '/usr/local/bin/node /tmp/open-knowledge/packages/cli/src/cli.ts start',
+      '/usr/local/bin/node /tmp/palimpsest/packages/cli/src/cli.ts start',
     );
     expect(entry.isDesktop).toBe(false);
     expect(entry.displayStatus).toBe('running');
@@ -414,7 +414,7 @@ describe('runPs --json', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServerState,
       json: true,
       log: (msg) => lines.push(msg),
@@ -430,7 +430,7 @@ describe('runPs --json', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServerState,
       json: true,
       log: (msg) => lines.push(msg),
@@ -449,7 +449,7 @@ describe('PORTS column', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/starting/.ok'],
+      discover: async () => ['/tmp/starting/.ps'],
       inspect: () => startingServer,
       log: (msg) => lines.push(msg),
     });
@@ -467,7 +467,7 @@ describe('PORTS column', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServer,
       log: (msg) => lines.push(msg),
     });
@@ -485,7 +485,7 @@ describe('PORTS column', () => {
 
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/notes/.ok'],
+      discover: async () => ['/tmp/notes/.ps'],
       inspect: () => aliveServer,
       log: (msg) => lines.push(msg),
     });
@@ -499,32 +499,32 @@ describe('server lock missing/corrupt discards entry', () => {
   test('missing server lock: entry discarded', async () => {
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/gone/.ok'],
+      discover: async () => ['/tmp/gone/.ps'],
       inspect: () => missingLock,
       log: (msg) => lines.push(msg),
     });
 
     const output = lines.join('\n');
-    expect(output).toBe('No open-knowledge servers found.');
+    expect(output).toBe('No palimpsest servers found.');
   });
 
   test('corrupt server lock: entry discarded', async () => {
     const lines: string[] = [];
     await runPs({
-      discover: async () => ['/tmp/gone/.ok'],
+      discover: async () => ['/tmp/gone/.ps'],
       inspect: () => corruptLock,
       log: (msg) => lines.push(msg),
     });
 
     const output = lines.join('\n');
-    expect(output).toBe('No open-knowledge servers found.');
+    expect(output).toBe('No palimpsest servers found.');
   });
 });
 
 describe('renderTable', () => {
   test('renders header row', () => {
     const output = renderTable([]);
-    expect(output).toBe('No open-knowledge servers found.');
+    expect(output).toBe('No palimpsest servers found.');
   });
 
   test('table has DIRECTORY, PORTS, CPU/MEM, STATUS, PID, STARTED, BINARY header columns', () => {
@@ -539,9 +539,9 @@ describe('renderTable', () => {
       },
       ui: null,
       hostname: 'test-host',
-      lockPath: '/tmp/notes/.ok/server.lock',
-      binary: '/tmp/open-knowledge/packages/cli/src/cli.ts',
-      command: '/usr/local/bin/node /tmp/open-knowledge/packages/cli/src/cli.ts start',
+      lockPath: '/tmp/notes/.ps/server.lock',
+      binary: '/tmp/palimpsest/packages/cli/src/cli.ts',
+      command: '/usr/local/bin/node /tmp/palimpsest/packages/cli/src/cli.ts start',
       isDesktop: false,
     };
 
@@ -555,7 +555,7 @@ describe('renderTable', () => {
     expect(firstLine).toContain('STARTED');
     expect(firstLine).toContain('BINARY');
     expect(output).toContain('1.2% / 3.4% | —');
-    expect(output).toContain('/tmp/open-knowledge/packages/cli/src/cli.ts');
+    expect(output).toContain('/tmp/palimpsest/packages/cli/src/cli.ts');
   });
 });
 
@@ -563,21 +563,21 @@ describe('extractOkBinaryPath', () => {
   test('extracts source cli path from node invocation', () => {
     expect(
       extractOkBinaryPath(
-        'node /Users/mike/src/agents-private/public/open-knowledge/packages/cli/src/cli.ts start',
+        'node /Users/mike/src/agents-private/public/palimpsest/packages/cli/src/cli.ts start',
       ),
-    ).toBe('/Users/mike/src/agents-private/public/open-knowledge/packages/cli/src/cli.ts');
+    ).toBe('/Users/mike/src/agents-private/public/palimpsest/packages/cli/src/cli.ts');
   });
 
-  test('extracts npx-installed open-knowledge bin path', () => {
+  test('extracts npx-installed palimpsest bin path', () => {
     expect(
       extractOkBinaryPath(
-        '/usr/local/bin/node /Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/open-knowledge start',
+        '/usr/local/bin/node /Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/palimpsest start',
       ),
-    ).toBe('/Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/open-knowledge');
+    ).toBe('/Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/palimpsest');
   });
 
   test('ignores package specifier in npm exec parent command', () => {
-    expect(extractOkBinaryPath('npm exec @inkeep/open-knowledge mcp HOME=/Users/mike')).toBeNull();
+    expect(extractOkBinaryPath('npm exec @palimpsest/cli mcp HOME=/Users/mike')).toBeNull();
   });
 });
 
@@ -586,16 +586,16 @@ describe('renderTable stop hint names the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: the footer names %s stop', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const output = renderTable([
       {
         directory: '/tmp/notes',
         server: { port: 5173, status: 'alive' as const, pid: 12345, startedAt: null, usage: null },
         ui: null,
         hostname: 'test-host',
-        lockPath: '/tmp/notes/.ok/server.lock',
+        lockPath: '/tmp/notes/.ps/server.lock',
         binary: null,
         command: null,
         isDesktop: false,

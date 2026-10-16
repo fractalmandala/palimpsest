@@ -1,5 +1,5 @@
-import type { GuidanceRef } from '@inkeep/open-knowledge-core/agent-registry';
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core/constants/editors';
+import type { GuidanceRef } from '@palimpsest/core/agent-registry';
+import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { t } from '@lingui/core/macro';
 
 export function followupHintText(ref: GuidanceRef | undefined): string | null {
@@ -10,6 +10,6 @@ export function followupHintText(ref: GuidanceRef | undefined): string | null {
   if (ref.id !== 'followup.enable-manually') return null;
   return t({
     id: 'followup.enable-manually',
-    message: `${agent} keeps project MCP servers off until you turn them on under Customize → MCPs. OpenKnowledge can't see that setting.`,
+    message: `${agent} keeps project MCP servers off until you turn them on under Customize → MCPs. Palimpsest can't see that setting.`,
   });
 }

@@ -1,4 +1,4 @@
-import { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
+import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 import { FileUp } from 'lucide-react';
 
 interface FileProps {
@@ -47,15 +47,15 @@ export function File(props: FileProps) {
     <a
       href={href}
       title={props.title}
-      className="ok-file-attachment"
+      className="ps-file-attachment"
       target="_blank"
       rel="noopener noreferrer"
       onMouseDown={(e) => e.stopPropagation()}
       onClick={handleClick}
     >
-      <FileUp className="ok-file-icon" aria-hidden="true" />
-      <span className="ok-file-name">{displayName}</span>
-      {sizeText ? <span className="ok-file-size">{sizeText}</span> : null}
+      <FileUp className="ps-file-icon" aria-hidden="true" />
+      <span className="ps-file-name">{displayName}</span>
+      {sizeText ? <span className="ps-file-size">{sizeText}</span> : null}
     </a>
   );
 }

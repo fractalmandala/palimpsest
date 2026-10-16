@@ -2,7 +2,7 @@ import {
   BROKEN_LINK_SUPPRESSION_REASONS,
   type BrokenLinkSuppression,
   type BrokenLinkSuppressionReason,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 type AuditSuppressionAudience = 'agent' | 'human';
 export type AuditSuppressionTarget = { surface: 'cli'; serverBaseUrl: string } | { surface: 'mcp' };
@@ -15,7 +15,7 @@ const SUPPRESSION_EXPLANATIONS = {
   },
   human: {
     'reserved-log-policy':
-      'a reserved `log.md` records history whose links are expected not to resolve. These findings stay out of the repair queue to protect that history. Set `validation.suppressLogLinkAdvisories: false` in `.ok/config.yml` to bring them back, or turn off "Ignore broken links in log.md" under Settings ▸ This project ▸ Preferences ▸ Content rules.',
+      'a reserved `log.md` records history whose links are expected not to resolve. These findings stay out of the repair queue to protect that history. Set `validation.suppressLogLinkAdvisories: false` in `.ps/config.yml` to bring them back, or turn off "Ignore broken links in log.md" under Settings ▸ This project ▸ Preferences ▸ Content rules.',
   },
 } as const satisfies Record<AuditSuppressionAudience, Record<BrokenLinkSuppressionReason, string>>;
 

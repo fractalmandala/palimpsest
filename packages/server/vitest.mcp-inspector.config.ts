@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 
 export default defineConfig({
-  ...okVitestBase,
+  ...psVitestBase,
   test: {
-    ...okVitestBase.test,
+    ...psVitestBase.test,
     include: ['src/mcp/mcp-inspector-portability.network.test.ts'],
   },
 });

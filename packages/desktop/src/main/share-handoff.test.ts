@@ -52,7 +52,7 @@ describe('classifyRedeemRequest', () => {
       }),
     ).toMatchObject({
       kind: 'redeem',
-      shareUrl: `https://openknowledge.ai/d/${fixture.bounds.maxCase.token}`,
+      shareUrl: `https://github.com/fractalmandala/palimpsest/d/${fixture.bounds.maxCase.token}`,
     });
     expect(
       classifyRedeemRequest({
@@ -127,15 +127,15 @@ describe('classifyRedeemRequest', () => {
     });
     expect(decision).toEqual({
       kind: 'redeem',
-      shareUrl: `https://openknowledge.ai/d/${TOKEN}`,
-      doneLocation: 'https://openknowledge.ai/continue/done',
+      shareUrl: `https://github.com/fractalmandala/palimpsest/d/${TOKEN}`,
+      doneLocation: 'https://github.com/fractalmandala/palimpsest/continue/done',
     });
   });
 });
 
 describe('resolveContinueBase (dev override, loopback-pinned)', () => {
   test('defaults to production when the env var is unset', () => {
-    expect(resolveContinueBase({})).toBe('https://openknowledge.ai');
+    expect(resolveContinueBase({})).toBe('https://github.com/fractalmandala/palimpsest');
   });
 
   test.each([
@@ -144,25 +144,25 @@ describe('resolveContinueBase (dev override, loopback-pinned)', () => {
     ['https://localhost:3010', 'https://localhost:3010'],
     ['http://[::1]:3010', 'http://[::1]:3010'],
   ])('honors a loopback override %s → %s (trailing slash trimmed)', (input, expected) => {
-    expect(resolveContinueBase({ OK_CONTINUE_URL_BASE: input })).toBe(expected);
+    expect(resolveContinueBase({ PS_CONTINUE_URL_BASE: input })).toBe(expected);
   });
 
   test.each([
     ['https://evil.example.com'],
     ['http://192.168.1.5:3010'],
-    ['http://openknowledge.ai.evil.com'],
+    ['http://palimpsest.ai.evil.com'],
     ['ftp://localhost'],
     ['not a url'],
     [''],
   ])('rejects non-loopback / malformed %s → falls back to production', (input) => {
-    expect(resolveContinueBase({ OK_CONTINUE_URL_BASE: input })).toBe('https://openknowledge.ai');
+    expect(resolveContinueBase({ PS_CONTINUE_URL_BASE: input })).toBe('https://github.com/fractalmandala/palimpsest');
   });
 });
 
 describe('url helpers', () => {
   test('buildContinueUrl targets the apex continue route with port+nonce', () => {
-    expect(buildContinueUrl(52431, NONCE, 'https://openknowledge.ai')).toBe(
-      `https://openknowledge.ai/continue?port=52431&nonce=${NONCE}`,
+    expect(buildContinueUrl(52431, NONCE, 'https://github.com/fractalmandala/palimpsest')).toBe(
+      `https://github.com/fractalmandala/palimpsest/continue?port=52431&nonce=${NONCE}`,
     );
   });
 
@@ -182,7 +182,7 @@ describe('url helpers', () => {
     });
     expect(decision).toEqual({
       kind: 'redeem',
-      shareUrl: `https://openknowledge.ai/d/${TOKEN}`,
+      shareUrl: `https://github.com/fractalmandala/palimpsest/d/${TOKEN}`,
       doneLocation: 'http://localhost:3010/continue/done',
     });
   });
@@ -335,8 +335,8 @@ describe('startFirstRunHandshake', () => {
       );
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('location')).toBe('https://openknowledge.ai/continue/done');
-      expect(await routedUrl).toBe(`https://openknowledge.ai/d/${token}`);
+      expect(response.headers.get('location')).toBe('https://github.com/fractalmandala/palimpsest/continue/done');
+      expect(await routedUrl).toBe(`https://github.com/fractalmandala/palimpsest/d/${token}`);
       expect(parsedResults).toEqual([
         {
           kind: 'ok',
@@ -390,7 +390,7 @@ describe('startFirstRunHandshake', () => {
 
   test('arms a loopback listener and opens the continue URL with the nonce', () => {
     const h = harness();
-    expect(h.opened).toEqual([`https://openknowledge.ai/continue?port=52431&nonce=${NONCE}`]);
+    expect(h.opened).toEqual([`https://github.com/fractalmandala/palimpsest/continue?port=52431&nonce=${NONCE}`]);
     expect(h.outcomes).toEqual([]);
   });
 
@@ -398,8 +398,8 @@ describe('startFirstRunHandshake', () => {
     const h = harness();
     const res = h.getServer().request(`/redeem?token=${TOKEN}&nonce=${NONCE}`);
     expect(res.statusCode).toBe(302);
-    expect(res.headers.Location).toBe('https://openknowledge.ai/continue/done');
-    expect(h.routed).toEqual([`https://openknowledge.ai/d/${TOKEN}`]);
+    expect(res.headers.Location).toBe('https://github.com/fractalmandala/palimpsest/continue/done');
+    expect(h.routed).toEqual([`https://github.com/fractalmandala/palimpsest/d/${TOKEN}`]);
     expect(h.outcomes).toEqual(['redeemed']);
     expect(h.getServer().closed).toBe(true);
   });

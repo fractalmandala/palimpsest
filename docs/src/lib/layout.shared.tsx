@@ -2,7 +2,7 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { DiscordIcon } from '@/components/icons/discord';
 import { GitHubIcon } from '@/components/icons/github';
 import { XIcon } from '@/components/icons/x';
-import { OkWordmark } from '@/components/ok-wordmark';
+import { PsWordmark } from '@/components/ps-wordmark';
 import { DISCORD_URL, GITHUB_URL, X_URL } from '@/lib/site';
 
 export function baseOptions({
@@ -12,7 +12,7 @@ export function baseOptions({
 } = {}): BaseLayoutProps {
   return {
     nav: {
-      title: <OkWordmark aria-label="OpenKnowledge" className={wordmarkClassName} />,
+      title: <PsWordmark aria-label="Palimpsest" className={wordmarkClassName} />,
     },
     links: [
       {

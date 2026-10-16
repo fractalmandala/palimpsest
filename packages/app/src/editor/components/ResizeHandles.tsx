@@ -25,56 +25,56 @@ const HANDLES: ReadonlyArray<HandleSpec> = [
     dx: -1,
     dy: -1,
     cursor: 'nwse-resize',
-    className: 'ok-resize-handle ok-resize-handle--tl',
+    className: 'ps-resize-handle ps-resize-handle--tl',
   },
   {
     key: 't',
     dx: 0,
     dy: -1,
     cursor: 'ns-resize',
-    className: 'ok-resize-handle ok-resize-handle--t',
+    className: 'ps-resize-handle ps-resize-handle--t',
   },
   {
     key: 'tr',
     dx: 1,
     dy: -1,
     cursor: 'nesw-resize',
-    className: 'ok-resize-handle ok-resize-handle--tr',
+    className: 'ps-resize-handle ps-resize-handle--tr',
   },
   {
     key: 'r',
     dx: 1,
     dy: 0,
     cursor: 'ew-resize',
-    className: 'ok-resize-handle ok-resize-handle--r',
+    className: 'ps-resize-handle ps-resize-handle--r',
   },
   {
     key: 'br',
     dx: 1,
     dy: 1,
     cursor: 'nwse-resize',
-    className: 'ok-resize-handle ok-resize-handle--br',
+    className: 'ps-resize-handle ps-resize-handle--br',
   },
   {
     key: 'b',
     dx: 0,
     dy: 1,
     cursor: 'ns-resize',
-    className: 'ok-resize-handle ok-resize-handle--b',
+    className: 'ps-resize-handle ps-resize-handle--b',
   },
   {
     key: 'bl',
     dx: -1,
     dy: 1,
     cursor: 'nesw-resize',
-    className: 'ok-resize-handle ok-resize-handle--bl',
+    className: 'ps-resize-handle ps-resize-handle--bl',
   },
   {
     key: 'l',
     dx: -1,
     dy: 0,
     cursor: 'ew-resize',
-    className: 'ok-resize-handle ok-resize-handle--l',
+    className: 'ps-resize-handle ps-resize-handle--l',
   },
 ];
 
@@ -158,7 +158,7 @@ export function ResizeHandles({ targetRef, onResize, onResizeEnd, bounds }: Resi
   }
 
   return (
-    <div className="ok-resize-overlay" contentEditable={false} aria-hidden="true">
+    <div className="ps-resize-overlay" contentEditable={false} aria-hidden="true">
       {HANDLES.map((handle) => {
         const handleKey = handle.key;
         return (

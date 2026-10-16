@@ -1,7 +1,7 @@
 import {
   bindConfigDoc,
   type ConfigBinding,
-} from '@inkeep/open-knowledge-core/config/bind-config-doc';
+} from '@palimpsest/core/config/bind-config-doc';
 import { type RenderResult, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

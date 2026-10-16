@@ -63,7 +63,7 @@ export function register(server: ServerInstance, deps: GetHistoryDeps): void {
           .string()
           .optional()
           .describe(
-            'Folder path to query the FOLDER timeline for — attributed activity over the folder\'s `.ok/` artifacts (templates + frontmatter): created / edited / renamed / moved / deleted, by whom, when. Mutually exclusive with `document`. Use `""` for the project root.',
+            'Folder path to query the FOLDER timeline for — attributed activity over the folder\'s `.ps/` artifacts (templates + frontmatter): created / edited / renamed / moved / deleted, by whom, when. Mutually exclusive with `document`. Use `""` for the project root.',
           ),
         skill: z
           .string()

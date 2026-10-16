@@ -1,9 +1,9 @@
 import { existsSync, lstatSync, readdirSync, realpathSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { tracedMkdirSync, tracedRenameSync, tracedRmSync, tracedSymlinkSync } from './fs-traced.ts';
 
-export { scanSkillFolderStates } from '@inkeep/open-knowledge-core/skill-folder-state';
+export { scanSkillFolderStates } from '@palimpsest/core/skill-folder-state';
 
 export type FolderLinkResult =
   | { ok: true; moved: string[]; dropped: string[]; linked: string[] }

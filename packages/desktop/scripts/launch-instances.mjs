@@ -12,8 +12,8 @@ if (process.platform !== 'darwin') {
 
 function parseArgs(argv) {
   const pairs = [];
-  let appPath = process.env.OK_DESKTOP_APP ?? null;
-  let userDataRoot = join(homedir(), '.ok', 'instances');
+  let appPath = process.env.PS_DESKTOP_APP ?? null;
+  let userDataRoot = join(homedir(), '.ps', 'instances');
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--app') {
@@ -45,12 +45,12 @@ function resolveAppPath(flagPath) {
     return abs;
   }
   const pkgRoot = resolve(import.meta.dirname, '..');
-  const candidate = join(pkgRoot, 'dist-desktop', 'mac-arm64', 'OpenKnowledge.app');
+  const candidate = join(pkgRoot, 'dist-desktop', 'mac-arm64', 'Palimpsest.app');
   if (!existsSync(candidate)) {
     throw new Error(
       `No built app at ${candidate}.\n` +
         `Build it first:  bun run build:dir   (from packages/desktop)\n` +
-        `or pass an explicit --app <path> / set OK_DESKTOP_APP.`,
+        `or pass an explicit --app <path> / set PS_DESKTOP_APP.`,
     );
   }
   return candidate;
@@ -107,7 +107,7 @@ function launch(appPath, userDataDir) {
 }
 
 async function waitForServerLock(project, timeoutMs = 30000) {
-  const lock = join(project, '.ok', 'local', 'server.lock');
+  const lock = join(project, '.ps', 'local', 'server.lock');
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     if (existsSync(lock)) return true;

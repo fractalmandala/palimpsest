@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { UNINSTALL_RESULT_WAIT_TIMEOUT_MS } from '@inkeep/open-knowledge-core';
+import { UNINSTALL_RESULT_WAIT_TIMEOUT_MS } from '@palimpsest/core';
 import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
 import pino from 'pino';
 import { createHandler } from '../shared/ipc-handler.ts';
@@ -42,12 +42,12 @@ export async function runDesktopUninstallResultWindow(
       minimizable: false,
       maximizable: false,
       fullscreenable: false,
-      title: result?.title ?? 'Uninstalling OpenKnowledge',
+      title: result?.title ?? 'Uninstalling Palimpsest',
       backgroundColor: nativeTheme.shouldUseDarkColors ? '#181818' : '#ffffff',
       webPreferences: {
         preload: join(mainDir, '../preload/index.js'),
         additionalArguments: [UNINSTALL_PRELOAD_ARG],
-        partition: 'ok-uninstall-result',
+        partition: 'ps-uninstall-result',
         sandbox: true,
         contextIsolation: true,
         nodeIntegration: false,

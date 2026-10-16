@@ -1,7 +1,7 @@
 import { lstatSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { bootCompositionRig, rawRequest } from './composition-rig.test-helper.ts';
@@ -16,8 +16,8 @@ vi.mock('node:os', async (original) => ({
 let root: string;
 let server: BootedServer;
 beforeAll(async () => {
-  isolated.home = mkdtempSync(join(tmpdir(), 'ok-reform-home-'));
-  root = mkdtempSync(join(tmpdir(), 'ok-reform-project-'));
+  isolated.home = mkdtempSync(join(tmpdir(), 'ps-reform-home-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-reform-project-'));
   mkdirSync(join(root, '.claude'));
   server = await bootCompositionRig(root, { configHomedirOverride: isolated.home });
   await server.ready;

@@ -1,7 +1,7 @@
 import {
   type LinterConfig,
   selectGoverningFrontmatterSchemas,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 
 export interface FieldEnumConstraint {
   values: string[];

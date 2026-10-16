@@ -1,5 +1,5 @@
 import { dirname, join } from 'node:path';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import type { BundleId } from './build-skill-zip.ts';
 import { tracedMkdir, tracedWriteFile } from './fs-traced.ts';
 import { getLogger } from './logger.ts';
@@ -50,7 +50,7 @@ export async function recordSkillInstallEvent(
     );
     return;
   }
-  const file = join(okUserHomeDir(home), SKILL_INSTALL_EVENTS_FILENAME);
+  const file = join(psUserHomeDir(home), SKILL_INSTALL_EVENTS_FILENAME);
   const json = `${JSON.stringify(event)}\n`;
 
   try {

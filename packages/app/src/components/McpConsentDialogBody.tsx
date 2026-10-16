@@ -1,11 +1,11 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { i18n } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useTheme } from 'next-themes';
 import { type ComponentType, type ReactNode, useId, useState, useSyncExternalStore } from 'react';
 import { toast as sonnerToast } from 'sonner';
-import { OkIcon } from '@/components/icons/ok';
+import { PsIcon } from '@/components/icons/ps';
 import { RowDisclosure } from '@/components/RowDisclosure';
 import { AGENT_CONNECTIONS_SECTION_LABEL } from '@/components/settings/settings-section-labels';
 import { narrowThemePreference, ThemePicker, type ThemePreference } from '@/components/ThemePicker';
@@ -31,15 +31,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
 import { useConfigContextOptional, useSettingsLoadingReason } from '@/lib/config-context';
-import type { OkMcpWiringShowPayload } from '@/lib/desktop-bridge-types';
+import type { PsMcpWiringShowPayload } from '@/lib/desktop-bridge-types';
 import { type McpConsentStore, mcpConsentStore } from '@/lib/mcp-consent-store';
 import { formatToolList } from '@/lib/tool-list-format';
 import { cn } from '@/lib/utils';
 
-type EditorDetection = OkMcpWiringShowPayload['detectedEditors'][number];
-type PathInstallDescriptor = OkMcpWiringShowPayload['pathInstall'];
+type EditorDetection = PsMcpWiringShowPayload['detectedEditors'][number];
+type PathInstallDescriptor = PsMcpWiringShowPayload['pathInstall'];
 
 const SUBTEXT = 'text-1sm leading-normal';
 const ROW_SUBTEXT = `${SUBTEXT} ps-6.5 text-muted-foreground`;
@@ -98,7 +98,7 @@ const DISMISSIBLE_SURFACE: ConsentSurface = {
 export interface McpConsentDialogBodyProps {
   store?: McpConsentStore;
   toast?: ToastImpl;
-  payload?: OkMcpWiringShowPayload;
+  payload?: PsMcpWiringShowPayload;
 }
 
 export interface ToastImpl {
@@ -131,7 +131,7 @@ export function McpConsentDialogBody({
 }
 
 interface McpConsentDialogFormProps {
-  payload: OkMcpWiringShowPayload;
+  payload: PsMcpWiringShowPayload;
   store: McpConsentStore;
   toast: ToastImpl;
 }
@@ -142,8 +142,8 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
   const globalSkills = payload.globalSkills;
   const skillsOffered = globalSkills.some((skill) => skill.paths.length > 0);
   const pathActionable = isPathRowActionable(pathInstall);
-  const ptyAvailable = window.okDesktop?.config.ptyAvailable === true;
-  const cliCommand = okCliCommandName();
+  const ptyAvailable = window.psDesktop?.config.ptyAvailable === true;
+  const cliCommand = psCliCommandName();
   const editors = connectableEditors(payload.detectedEditors);
   const hasEditors = editors.length > 0;
   const replacing = editors.filter((e) => e.willReplace);
@@ -250,24 +250,24 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
         <Surface.Header>
           <Surface.Title className="flex flex-col gap-8 text-2xl tracking-tighter">
             {}
-            <OkIcon className="size-10 shrink-0" aria-hidden />
+            <PsIcon className="size-10 shrink-0" aria-hidden />
             {}
             {firstRun ? (
               <span className="flex flex-col gap-1.5">
                 <span className="uppercase font-mono font-normal text-2xs text-muted-foreground tracking-widest">
-                  <Trans>Welcome to OpenKnowledge</Trans>
+                  <Trans>Welcome to Palimpsest</Trans>
                 </span>
                 <Trans>Let's get set up.</Trans>
               </span>
             ) : (
               <span>
-                <Trans>Customize your OpenKnowledge experience.</Trans>
+                <Trans>Customize your Palimpsest experience.</Trans>
               </span>
             )}
           </Surface.Title>
           {firstRun && (
             <Surface.Description className="sr-only">
-              <Trans>Customize your OpenKnowledge experience.</Trans>
+              <Trans>Customize your Palimpsest experience.</Trans>
             </Surface.Description>
           )}
         </Surface.Header>
@@ -318,7 +318,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                   {pathActionable && (
                     <span className={ROW_SUBTEXT}>
                       <Trans comment="Subtext under the terminal toggle explaining what the ok command gives you">
-                        Launch OpenKnowledge from any terminal —{' '}
+                        Launch Palimpsest from any terminal —{' '}
                         <code className="inline-code text-xs!">{cliCommand}</code> opens a project,{' '}
                         <code className="inline-code text-xs!">{cliCommand} init</code> connects
                         your agents.
@@ -336,7 +336,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                         <Trans comment="Warning shown when the user unchecks the PATH toggle on a desktop build with the built-in terminal">
                           <code className="inline-code text-xs!">{cliCommand}</code> won't run in
                           external terminals until you add it later from the File menu.
-                          OpenKnowledge's built-in terminal and AI tools keep working.
+                          Palimpsest's built-in terminal and AI tools keep working.
                         </Trans>
                       ) : (
                         <Trans comment="Warning shown when the user unchecks the PATH toggle on a desktop build without the built-in terminal">
@@ -377,7 +377,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                 {hasEditors ? (
                   <p className={cn(SECTION_SUBTEXT, 'mb-1')}>
                     <Trans comment="Description under the AI-tools section label in the first-launch dialog">
-                      Globally install the OpenKnowledge skills and MCP to let the agents you
+                      Globally install the Palimpsest skills and MCP to let the agents you
                       already use read and update your projects.
                     </Trans>
                   </p>
@@ -401,8 +401,8 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                             className="flex min-w-0 flex-1 items-center gap-1.5 pe-28 text-sm font-medium text-foreground"
                             data-testid="mcp-consent-connect-summary"
                           >
-                            <Trans comment="Checkbox that wires the OpenKnowledge MCP into every detected AI tool">
-                              Install OpenKnowledge in your AI tools
+                            <Trans comment="Checkbox that wires the Palimpsest MCP into every detected AI tool">
+                              Install Palimpsest in your AI tools
                             </Trans>
                           </span>
                         </span>
@@ -410,7 +410,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                         <span className={ROW_SUBTEXT}>
                           {}
                           <Trans comment="Subtext under the AI-tools MCP checkbox">
-                            Adds an OpenKnowledge MCP entry to{' '}
+                            Adds an Palimpsest MCP entry to{' '}
                             <span className="font-medium text-foreground">{connectToolList}</span>,
                             so your agents can read and edit your files.
                           </Trans>
@@ -421,7 +421,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                             {t({
                               message: `Already connected to ${replacingToolList}`,
                               comment:
-                                'Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an OpenKnowledge MCP entry, which stay as they are while the box is unticked',
+                                'Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked',
                             })}
                           </span>
                         )}
@@ -432,8 +432,8 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                           >
                             {}
                             {replacingAll
-                              ? t`Replaces the OpenKnowledge entry each of them already has.`
-                              : t`Replaces the existing OpenKnowledge entry in ${formatToolList(
+                              ? t`Replaces the Palimpsest entry each of them already has.`
+                              : t`Replaces the existing Palimpsest entry in ${formatToolList(
                                   replacing.map((e) => e.label),
                                   i18n.locale,
                                 )}`}
@@ -490,7 +490,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                         </span>
                         <span className={ROW_SUBTEXT}>
                           <Trans comment="Subtext under the discovery-skill checkbox">
-                            Help your agents discover and use OpenKnowledge in any project.
+                            Help your agents discover and use Palimpsest in any project.
                           </Trans>
                         </span>
                       </Label>

@@ -20,8 +20,8 @@ import {
   withSourceReferences,
 } from './generate-locale-review-packet.mjs';
 
-const OK_ROOT = fileURLToPath(new URL('..', import.meta.url));
-const read = (rel) => readFileSync(join(OK_ROOT, rel), 'utf8');
+const PS_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const read = (rel) => readFileSync(join(PS_ROOT, rel), 'utf8');
 
 const LOCALES_TS = read('packages/core/src/i18n/locales.ts');
 const REVIEW_MD = read('packages/app/src/locales/REVIEW.md');
@@ -109,7 +109,7 @@ describe('reading the glossary', () => {
     '',
     '## Never translated',
     '',
-    '- **OpenKnowledge** — the product name.',
+    '- **Palimpsest** — the product name.',
     '',
     '## Why these forms',
     '',
@@ -135,7 +135,7 @@ describe('reading the glossary', () => {
 
   test('quotes one section verbatim and stops at the next heading', () => {
     expect(readSection(glossary, 'Never translated')).toBe(
-      '- **OpenKnowledge** — the product name.',
+      '- **Palimpsest** — the product name.',
     );
   });
 });
@@ -283,7 +283,7 @@ describe('the packet', () => {
       catalogStamp: '2026-01-01',
       messageCount: 2900,
       glossaryTerms: [{ term: 'folder', translation: 'dossier' }],
-      neverTranslated: '- **OpenKnowledge** — the product name.',
+      neverTranslated: '- **Palimpsest** — the product name.',
       selection: {
         glossaryUses: [
           {
@@ -391,7 +391,7 @@ describe('the tracking table', () => {
   test('parses a row into its recorded fields', () => {
     expect(
       readReviewStatus(
-        '| `fr` | français | reviewed | A. Reviewer | inkeep/open-knowledge#42 | — |',
+        '| `fr` | français | reviewed | A. Reviewer | fractalmandala/palimpsest#42 | — |',
       ),
     ).toEqual(
       new Map([
@@ -401,7 +401,7 @@ describe('the tracking table', () => {
             language: 'français',
             status: 'reviewed',
             basis: 'A. Reviewer',
-            evidence: 'inkeep/open-knowledge#42',
+            evidence: 'fractalmandala/palimpsest#42',
             blocker: '—',
           },
         ],
@@ -535,16 +535,16 @@ describe('against the real catalogs', () => {
 
   test('runs from the command line', () => {
     const result = spawnSync('node', ['scripts/generate-locale-review-packet.mjs', 'bn'], {
-      cwd: OK_ROOT,
+      cwd: PS_ROOT,
       encoding: 'utf8',
     });
     expect(result.status).toBe(0);
-    expect(result.stdout).toMatch(/# Reviewing OpenKnowledge in/);
+    expect(result.stdout).toMatch(/# Reviewing Palimpsest in/);
   });
 
   test('explains itself rather than throwing a stack trace when given no locale', () => {
     const result = spawnSync('node', ['scripts/generate-locale-review-packet.mjs'], {
-      cwd: OK_ROOT,
+      cwd: PS_ROOT,
       encoding: 'utf8',
     });
     expect(result.status).toBe(1);

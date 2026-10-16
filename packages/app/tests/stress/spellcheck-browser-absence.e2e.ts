@@ -9,7 +9,7 @@ const LANGUAGES_RESULT_ID = 'settings-search-result-subsection:preferences:spell
 
 async function expectBrowserHost(page: Page): Promise<void> {
   expect(
-    await page.evaluate(() => (window as { okDesktop?: unknown }).okDesktop === undefined),
+    await page.evaluate(() => (window as { psDesktop?: unknown }).psDesktop === undefined),
   ).toBe(true);
 }
 

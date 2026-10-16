@@ -37,7 +37,7 @@ let contentDir: string;
 let server: BootedServer;
 
 beforeAll(async () => {
-  contentDir = await mkdtemp(resolve(tmpdir(), 'ok-skills-contract-'));
+  contentDir = await mkdtemp(resolve(tmpdir(), 'ps-skills-contract-'));
   server = await bootCompositionRig(contentDir);
   await server.ready;
 }, 60_000);
@@ -117,7 +117,7 @@ describe('skills contracts over the composed listener', () => {
   });
 
   test('both install routes accept consented external origins before parsing malformed JSON', async () => {
-    const externalDir = await mkdtemp(resolve(tmpdir(), 'ok-skills-external-contract-'));
+    const externalDir = await mkdtemp(resolve(tmpdir(), 'ps-skills-external-contract-'));
     const external = await bootCompositionRig(externalDir, {
       serverRuntime: {
         bind: ['127.0.0.1'],
@@ -158,7 +158,7 @@ describe('skills contracts over the composed listener', () => {
   test('catalog install requires a name while handoff validates its output path', async () => {
     const body = JSON.stringify({
       noOpen: true,
-      out: resolve(homedir(), '..', 'ok-skills-contract-output.skill'),
+      out: resolve(homedir(), '..', 'ps-skills-contract-output.skill'),
     });
     const headers = { 'Content-Type': 'application/json' };
     const catalog = await rawRequest(server.port, '/api/skill/install', {

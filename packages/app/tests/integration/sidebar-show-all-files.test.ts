@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { awaitFileWatcherIndexed, createTestServer, type TestServer } from './test-harness';
@@ -9,7 +9,7 @@ import { awaitFileWatcherIndexed, createTestServer, type TestServer } from './te
 let server: TestServer;
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-show-all-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-show-all-')));
 
   writeFileSync(join(contentDir, 'README.md'), '# Readme\n');
   mkdirSync(join(contentDir, 'docs'), { recursive: true });
@@ -22,7 +22,7 @@ beforeAll(async () => {
   writeFileSync(join(contentDir, 'build', 'compiled.md'), '# Compiled\n');
   writeFileSync(join(contentDir, 'debug.log'), 'debug output\n');
 
-  writeFileSync(join(contentDir, '.okignore'), 'drafts/\n');
+  writeFileSync(join(contentDir, '.psignore'), 'drafts/\n');
   mkdirSync(join(contentDir, 'drafts'), { recursive: true });
   writeFileSync(join(contentDir, 'drafts', 'wip.md'), '# WIP\n');
 
@@ -30,8 +30,8 @@ beforeAll(async () => {
   writeFileSync(join(contentDir, 'node_modules', 'pkg', 'README.md'), '# Pkg\n');
   mkdirSync(join(contentDir, '.git'), { recursive: true });
   writeFileSync(join(contentDir, '.git', 'HEAD'), 'ref: refs/heads/main\n');
-  mkdirSync(join(contentDir, '.ok'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+  mkdirSync(join(contentDir, '.ps'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), 'content:\n  dir: .\n');
 
   writeFileSync(join(contentDir, 'package.json'), '{"name":"test"}\n');
   mkdirSync(join(contentDir, 'src'), { recursive: true });
@@ -74,7 +74,7 @@ describe('/api/documents?showAll=true', () => {
     expect(docNames).not.toContain('node_modules/pkg/README');
   });
 
-  test('?showAll=true surfaces .gitignored / content-bearing skip-dir markdown, honors .okignore, and prunes the always-skip floor', async () => {
+  test('?showAll=true surfaces .gitignored / content-bearing skip-dir markdown, honors .psignore, and prunes the always-skip floor', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/documents?showAll=true`);
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
@@ -121,7 +121,7 @@ describe('/api/documents?showAll=true', () => {
     expect(gitignore?.assetExt).toBe('gitignore');
   });
 
-  test('?showAll=true emits folder entries for content dirs but prunes the always-skip floor (.git / node_modules / .ok)', async () => {
+  test('?showAll=true emits folder entries for content dirs but prunes the always-skip floor (.git / node_modules / .ps)', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/documents?showAll=true`);
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
@@ -137,7 +137,7 @@ describe('/api/documents?showAll=true', () => {
     expect(folderPaths).not.toContain('node_modules');
     expect(folderPaths).not.toContain('node_modules/pkg');
     expect(folderPaths).not.toContain('.git');
-    expect(folderPaths).not.toContain('.ok');
+    expect(folderPaths).not.toContain('.ps');
   });
 
   test('STOP rule preserved — synthetic system + config docs stay hidden in bypass mode', async () => {

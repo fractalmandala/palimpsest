@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { setTimeout as wait } from 'node:timers/promises';
 import { Compartment } from '@codemirror/state';
-import { PROTOCOL_VERSION } from '@inkeep/open-knowledge-core';
-import { parseHocuspocusAuthToken } from '@inkeep/open-knowledge-server';
+import { PROTOCOL_VERSION } from '@palimpsest/core';
+import { parseHocuspocusAuthToken } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { buildAuthToken } from '../lib/auth-token';
@@ -1053,12 +1053,12 @@ describe('ProviderPool server-instance-ID claim (US-001)', () => {
       const { stub, store } = makeStubStorage();
       pool = new ProviderPool(3, DUMMY_WS, { storage: stub });
       pool.setObservedBranch('feature');
-      expect(store.get('ok-last-observed-branch')).toBe('feature');
+      expect(store.get('ps-last-observed-branch')).toBe('feature');
     });
 
     test('cold pool with pre-seeded storage value claims that branch on first open()', () => {
       const { stub, store } = makeStubStorage();
-      store.set('ok-last-observed-branch', 'main');
+      store.set('ps-last-observed-branch', 'main');
       pool = new ProviderPool(3, DUMMY_WS, { storage: stub });
       const entry = pool.open('doc1');
       if (!entry) throw new Error('expected entry');
@@ -1069,10 +1069,10 @@ describe('ProviderPool server-instance-ID claim (US-001)', () => {
 
     test('setObservedBranch with empty string clears the storage key', () => {
       const { stub, store } = makeStubStorage();
-      store.set('ok-last-observed-branch', 'feature');
+      store.set('ps-last-observed-branch', 'feature');
       pool = new ProviderPool(3, DUMMY_WS, { storage: stub });
       pool.setObservedBranch('');
-      expect(store.has('ok-last-observed-branch')).toBe(false);
+      expect(store.has('ps-last-observed-branch')).toBe(false);
     });
 
     test('storage.setItem throw is non-fatal — in-memory cache still updates', () => {
@@ -1210,8 +1210,8 @@ describe('cross-project storage-key isolation', () => {
     const projectless = new ProviderPool(3, DUMMY_WS, { storage: stub, storageNamespace: '' });
     try {
       projectless.setObservedBranch('main');
-      expect(store.has('ok-last-observed-branch')).toBe(false);
-      expect(store.get('ok-last-observed-branch:811c9dc5')).toBe('main');
+      expect(store.has('ps-last-observed-branch')).toBe(false);
+      expect(store.get('ps-last-observed-branch:811c9dc5')).toBe('main');
     } finally {
       projectless.dispose();
     }
@@ -1241,7 +1241,7 @@ describe('cross-project storage-key isolation', () => {
 });
 
 describe('ProviderPool doc-lineage epoch records', () => {
-  const ENVELOPE_KEY = 'ok-doc-lineage-epochs';
+  const ENVELOPE_KEY = 'ps-doc-lineage-epochs';
 
   function makeStubStorage(): {
     stub: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
@@ -1406,7 +1406,7 @@ describe('ProviderPool doc-lineage epoch records', () => {
 
     const emitted = warnSpy.mock.calls
       .map((call) => call[0] as string)
-      .filter((line) => typeof line === 'string' && line.includes('ok-doc-lineage-mismatch'));
+      .filter((line) => typeof line === 'string' && line.includes('ps-doc-lineage-mismatch'));
     expect(emitted.length).toBe(1);
     const event = JSON.parse(emitted[0] ?? '{}') as Record<string, string>;
     expect(event.via).toBe('auth-rejection');
@@ -1449,7 +1449,7 @@ describe('ProviderPool doc-lineage epoch records', () => {
 
     const emitted = warnSpy.mock.calls
       .map((call) => call[0] as string)
-      .filter((line) => typeof line === 'string' && line.includes('ok-doc-lineage-mismatch'));
+      .filter((line) => typeof line === 'string' && line.includes('ps-doc-lineage-mismatch'));
     expect(emitted.length).toBe(1);
     const event = JSON.parse(emitted[0] ?? '{}') as Record<string, string>;
     expect(event.via).toBe('deferred-attach');
@@ -1594,7 +1594,7 @@ describe('ProviderPool stored-state validation spine', () => {
       expect(replaced).toBe(true);
       expect(pool.getActiveDocName()).toBe(docName);
 
-      const emitted = warns.lines().filter((line) => line.includes('ok-doc-lineage-mismatch'));
+      const emitted = warns.lines().filter((line) => line.includes('ps-doc-lineage-mismatch'));
       expect(emitted.length).toBe(1);
       const event = JSON.parse(emitted[0] ?? '{}') as Record<string, string>;
       expect(event.via).toBe('stored-state-validation');
@@ -1630,7 +1630,7 @@ describe('ProviderPool stored-state validation spine', () => {
       );
       expect(replaced).toBe(true);
 
-      const emitted = warns.lines().filter((line) => line.includes('ok-doc-lineage-mismatch'));
+      const emitted = warns.lines().filter((line) => line.includes('ps-doc-lineage-mismatch'));
       expect(emitted.length).toBe(1);
       const event = JSON.parse(emitted[0] ?? '{}') as Record<string, string>;
       expect(event.via).toBe('stored-state-validation');
@@ -1810,13 +1810,13 @@ describe('ProviderPool stored-state validation spine', () => {
       if (!entry) throw new Error('expected entry');
 
       const emitted = await waitFor(
-        () => warns.lines().some((line) => line.includes('ok-client-persistence-attach-failed')),
+        () => warns.lines().some((line) => line.includes('ps-client-persistence-attach-failed')),
         2_000,
       );
       expect(emitted).toBe(true);
       const lines = warns
         .lines()
-        .filter((line) => line.includes('ok-client-persistence-attach-failed'));
+        .filter((line) => line.includes('ps-client-persistence-attach-failed'));
       expect(lines.length).toBe(1);
       const event = JSON.parse(lines[0] ?? '{}') as Record<string, string>;
       expect(event.docName).toBe(docName);
@@ -1846,13 +1846,13 @@ describe('ProviderPool stored-state validation spine', () => {
       if (!entry) throw new Error('expected entry');
 
       const emitted = await waitFor(
-        () => warns.lines().some((line) => line.includes('ok-client-persistence-attach-failed')),
+        () => warns.lines().some((line) => line.includes('ps-client-persistence-attach-failed')),
         2_000,
       );
       expect(emitted).toBe(true);
       const lines = warns
         .lines()
-        .filter((line) => line.includes('ok-client-persistence-attach-failed'));
+        .filter((line) => line.includes('ps-client-persistence-attach-failed'));
       const event = JSON.parse(lines[0] ?? '{}') as Record<string, string>;
       expect(event.docName).toBe(docName);
       expect(event.phase).toBe('peek');
@@ -1884,13 +1884,13 @@ describe('ProviderPool stored-state validation spine', () => {
       entry.provider.emit('synced', { state: true });
 
       const emitted = await waitFor(
-        () => warns.lines().some((line) => line.includes('ok-client-persistence-attach-failed')),
+        () => warns.lines().some((line) => line.includes('ps-client-persistence-attach-failed')),
         2_000,
       );
       expect(emitted).toBe(true);
       const lines = warns
         .lines()
-        .filter((line) => line.includes('ok-client-persistence-attach-failed'));
+        .filter((line) => line.includes('ps-client-persistence-attach-failed'));
       const event = JSON.parse(lines[0] ?? '{}') as Record<string, string>;
       expect(event.docName).toBe(docName);
       expect(event.phase).toBe('attach');
@@ -1930,13 +1930,13 @@ describe('ProviderPool stored-state validation spine', () => {
       entry.provider.emit('synced', { state: true });
 
       const emitted = await waitFor(
-        () => warns.lines().some((line) => line.includes('ok-client-persistence-attach-failed')),
+        () => warns.lines().some((line) => line.includes('ps-client-persistence-attach-failed')),
         2_000,
       );
       expect(emitted).toBe(true);
       const lines = warns
         .lines()
-        .filter((line) => line.includes('ok-client-persistence-attach-failed'));
+        .filter((line) => line.includes('ps-client-persistence-attach-failed'));
       const event = JSON.parse(lines[0] ?? '{}') as Record<string, string>;
       expect(event.docName).toBe(docName);
       expect(event.phase).toBe('backfill');
@@ -2036,7 +2036,7 @@ describe("ProviderPool authenticationFailed handling (US-002 / 'server-instance-
       const epochSignals = warnSpy.mock.calls.filter(([first]) => {
         if (typeof first !== 'string') return false;
         try {
-          return JSON.parse(first).event === 'ok-client-cache-epoch-mismatch';
+          return JSON.parse(first).event === 'ps-client-cache-epoch-mismatch';
         } catch {
           return false;
         }
@@ -2048,7 +2048,7 @@ describe("ProviderPool authenticationFailed handling (US-002 / 'server-instance-
       const epochAfterSecond = warnSpy.mock.calls.filter(([first]) => {
         if (typeof first !== 'string') return false;
         try {
-          return JSON.parse(first).event === 'ok-client-cache-epoch-mismatch';
+          return JSON.parse(first).event === 'ps-client-cache-epoch-mismatch';
         } catch {
           return false;
         }
@@ -2138,7 +2138,7 @@ describe("ProviderPool authenticationFailed handling (US-002 / 'server-instance-
         .filter((first): first is string => typeof first === 'string')
         .filter((first) => {
           try {
-            return JSON.parse(first).event === 'ok-client-cache-clear-failed';
+            return JSON.parse(first).event === 'ps-client-cache-clear-failed';
           } catch {
             return false;
           }
@@ -2194,7 +2194,7 @@ describe("ProviderPool authenticationFailed handling (US-002 / 'server-instance-
         .filter((first): first is string => typeof first === 'string')
         .filter((first) => {
           try {
-            return JSON.parse(first).event === 'ok-client-cache-clear-failed';
+            return JSON.parse(first).event === 'ps-client-cache-clear-failed';
           } catch {
             return false;
           }
@@ -2213,7 +2213,7 @@ describe('ProviderPool epoch-transition observation', () => {
     return infoSpy.mock.calls.filter(([first]) => {
       if (typeof first !== 'string') return false;
       try {
-        return (JSON.parse(first) as { event?: string }).event === 'ok-pool-mismatch-recycle-begin';
+        return (JSON.parse(first) as { event?: string }).event === 'ps-pool-mismatch-recycle-begin';
       } catch {
         return false;
       }
@@ -2367,7 +2367,7 @@ describe('ProviderPool epoch-transition observation', () => {
         try {
           const parsed = JSON.parse(first) as { event?: string; reason?: string };
           return (
-            parsed.event === 'ok-pool-mismatch-transition-deduped' &&
+            parsed.event === 'ps-pool-mismatch-transition-deduped' &&
             parsed.reason === 'recycle-in-flight'
           );
         } catch {
@@ -2629,7 +2629,7 @@ describe('ProviderPool syncPromise lifecycle integration (F15)', () => {
     }
 
     const ceilingWarns = warns.filter((w) =>
-      w.includes('ok-provider-server-driven-close-reauth-ceiling'),
+      w.includes('ps-provider-server-driven-close-reauth-ceiling'),
     );
     expect(ceilingWarns).toHaveLength(1);
   });
@@ -2668,22 +2668,22 @@ function makeFakeNode(): FakeContainer {
   return node;
 }
 
-interface OkPerfCountersShape {
+interface PsPerfCountersShape {
   providerObserverFires: Record<string, number>;
 }
 
 function readFireCount(docName: string): number {
-  const counters = (globalThis as { __okPerfCounters?: OkPerfCountersShape }).__okPerfCounters;
+  const counters = (globalThis as { __okPerfCounters?: PsPerfCountersShape }).__okPerfCounters;
   return counters?.providerObserverFires[docName] ?? 0;
 }
 
 function hasFireCountEntry(docName: string): boolean {
-  const counters = (globalThis as { __okPerfCounters?: OkPerfCountersShape }).__okPerfCounters;
+  const counters = (globalThis as { __okPerfCounters?: PsPerfCountersShape }).__okPerfCounters;
   return counters !== undefined && docName in counters.providerObserverFires;
 }
 
 function resetFireCounts(): void {
-  const counters = (globalThis as { __okPerfCounters?: OkPerfCountersShape }).__okPerfCounters;
+  const counters = (globalThis as { __okPerfCounters?: PsPerfCountersShape }).__okPerfCounters;
   if (counters) counters.providerObserverFires = {};
 }
 
@@ -2811,7 +2811,7 @@ describe('US-003 (cap-calibration-probes): observer-fire counter for M5', () => 
     if (!entry) throw new Error('expected entry');
     Y.applyUpdate(entry.provider.document, Y.encodeStateAsUpdate(peer));
 
-    const counters = (globalThis as { __okPerfCounters?: OkPerfCountersShape }).__okPerfCounters;
+    const counters = (globalThis as { __okPerfCounters?: PsPerfCountersShape }).__okPerfCounters;
     expect(counters).toBeDefined();
     expect(typeof counters?.providerObserverFires).toBe('object');
     expect(counters?.providerObserverFires['doc-shape']).toBeGreaterThanOrEqual(1);
@@ -3046,7 +3046,7 @@ describe('ProviderPool client-persistence attachment (US-003)', () => {
       expect(badEntry.persistence).toBeNull();
       const events = warnSpy.mock.calls.map((call) => String(call[0] ?? ''));
       expect(
-        events.some((event) => event.includes('"event":"ok-client-persistence-attach-failed"')),
+        events.some((event) => event.includes('"event":"ps-client-persistence-attach-failed"')),
       ).toBe(true);
     } finally {
       warnSpy.mockRestore();
@@ -3201,7 +3201,7 @@ describe('ProviderPool client-persistence attachment (US-003)', () => {
     pool.setObservedBranch('main');
     pool.setExpectedServerInstanceId('server-rename-orphan');
     const docName = uniqueDocName('pp-rename-orphan');
-    const dbName = `ok-ydoc:main:server-rename-orphan:${docName}`;
+    const dbName = `ps-ydoc:main:server-rename-orphan:${docName}`;
 
     await new Promise<void>((resolve, reject) => {
       const req = indexedDB.open(dbName);
@@ -3227,7 +3227,7 @@ describe('ProviderPool client-persistence attachment (US-003)', () => {
     pool.setObservedBranch('main');
     const docName = uniqueDocName('pp-rename-noepoch');
 
-    const dbName = `ok-ydoc:main:server-prior:${docName}`;
+    const dbName = `ps-ydoc:main:server-prior:${docName}`;
     await new Promise<void>((resolve, reject) => {
       const req = indexedDB.open(dbName);
       req.onsuccess = () => {
@@ -3255,8 +3255,8 @@ describe('ProviderPool client-persistence attachment (US-003)', () => {
     pool.setExpectedServerInstanceId('server-roundtrip');
     const nameA = uniqueDocName('pp-roundtrip-A');
     const nameB = uniqueDocName('pp-roundtrip-B');
-    const dbA = `ok-ydoc:main:server-roundtrip:${nameA}`;
-    const dbB = `ok-ydoc:main:server-roundtrip:${nameB}`;
+    const dbA = `ps-ydoc:main:server-roundtrip:${nameA}`;
+    const dbB = `ps-ydoc:main:server-roundtrip:${nameB}`;
 
     const entryA1 = pool.open(nameA);
     if (!entryA1) throw new Error('expected entry');
@@ -3524,7 +3524,7 @@ describe('ProviderPool client-persistence attachment (US-003)', () => {
 
         const skippedWarn = warnSpy.mock.calls
           .map((call) => String(call[0] ?? ''))
-          .find((s) => s.includes('"event":"ok-pool-deferred-persistence-attach-skipped"'));
+          .find((s) => s.includes('"event":"ps-pool-deferred-persistence-attach-skipped"'));
         expect(skippedWarn).toBeDefined();
         expect(skippedWarn).toContain('"reason":"pending-clear-failed"');
         expect(entry2.persistence).toBeNull();
@@ -3636,7 +3636,7 @@ describe('ProviderPool client-persistence attachment (US-003)', () => {
 
         expect(entry2.persistence).toBeNull();
 
-        const retryDbName = `ok-ydoc:main:${TEST_SERVER_INSTANCE_ID}:${docName}`;
+        const retryDbName = `ps-ydoc:main:${TEST_SERVER_INSTANCE_ID}:${docName}`;
         expect(deleteDbSpy.mock.calls.length).toBeGreaterThan(baselineDeleteCalls);
         expect(deleteDbSpy.mock.calls.some((call) => call[0] === retryDbName)).toBe(true);
 
@@ -3875,7 +3875,7 @@ describe('ProviderPool handleServerInstanceMismatch baseline-selection', () => {
       const noBaselineSkipped = warnSpy.mock.calls.filter(([first]) => {
         if (typeof first !== 'string') return false;
         try {
-          return JSON.parse(first).event === 'ok-buffer-replay-skipped-no-baseline';
+          return JSON.parse(first).event === 'ps-buffer-replay-skipped-no-baseline';
         } catch {
           return false;
         }
@@ -3947,7 +3947,7 @@ describe('ProviderPool handleServerInstanceMismatch baseline-selection', () => {
       const noBaselineCalls = warnSpy.mock.calls.filter(([first]) => {
         if (typeof first !== 'string') return false;
         try {
-          return JSON.parse(first).event === 'ok-buffer-replay-skipped-no-baseline';
+          return JSON.parse(first).event === 'ps-buffer-replay-skipped-no-baseline';
         } catch {
           return false;
         }
@@ -3962,7 +3962,7 @@ describe('ProviderPool handleServerInstanceMismatch baseline-selection', () => {
         serverInstanceId: string;
         reason: string;
       };
-      expect(payload.event).toBe('ok-buffer-replay-skipped-no-baseline');
+      expect(payload.event).toBe('ps-buffer-replay-skipped-no-baseline');
       expect(payload.docName).toBe(docName);
       expect(payload.branch).toBe('no-baseline-branch');
       expect(payload.serverInstanceId).toBe('server-old');
@@ -3977,7 +3977,7 @@ describe('ProviderPool handleServerInstanceMismatch baseline-selection', () => {
 });
 
 describe('ProviderPool structured mismatch telemetry', () => {
-  test('replay applies corrupt buffer emits ok-buffer-replay-failed with bounded fields', async () => {
+  test('replay applies corrupt buffer emits ps-buffer-replay-failed with bounded fields', async () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     try {
       pool = new ProviderPool(3, DUMMY_WS);
@@ -4012,7 +4012,7 @@ describe('ProviderPool structured mismatch telemetry', () => {
         .filter((first): first is string => typeof first === 'string')
         .filter((first) => {
           try {
-            return JSON.parse(first).event === 'ok-buffer-replay-failed';
+            return JSON.parse(first).event === 'ps-buffer-replay-failed';
           } catch {
             return false;
           }
@@ -4027,7 +4027,7 @@ describe('ProviderPool structured mismatch telemetry', () => {
         errorName: string;
         errorMessage: string;
       };
-      expect(payload.event).toBe('ok-buffer-replay-failed');
+      expect(payload.event).toBe('ps-buffer-replay-failed');
       expect(payload.docName).toBe(docName);
       expect(payload.branch).toBe('replay-telemetry-branch');
       expect(payload.serverInstanceId).toBe('epoch-replay-telemetry');
@@ -4069,7 +4069,7 @@ describe('ProviderPool structured mismatch telemetry', () => {
         .filter((first): first is string => typeof first === 'string')
         .filter((first) => {
           try {
-            return JSON.parse(first).event === 'ok-client-cache-epoch-mismatch';
+            return JSON.parse(first).event === 'ps-client-cache-epoch-mismatch';
           } catch {
             return false;
           }
@@ -4150,8 +4150,8 @@ describe('ProviderPool provider-open gating', () => {
 
     if (typeof indexedDB !== 'undefined') {
       const dbs = await indexedDB.databases();
-      const staleShapeName = `ok-ydoc:main:${docName}`;
-      const newShapeUnknownEpoch = `ok-ydoc:main::${docName}`;
+      const staleShapeName = `ps-ydoc:main:${docName}`;
+      const newShapeUnknownEpoch = `ps-ydoc:main::${docName}`;
       expect(dbs.find((d) => d.name === staleShapeName)).toBeUndefined();
       expect(dbs.find((d) => d.name === newShapeUnknownEpoch)).toBeUndefined();
     }
@@ -4185,10 +4185,10 @@ describe('ProviderPool provider-open gating', () => {
       await entryB.persistence?.whenSynced;
       const dbs = await indexedDB.databases();
       const names = new Set(dbs.map((d) => d.name).filter((n): n is string => n !== undefined));
-      expect(names.has(`ok-ydoc:main:server-retro-attach:${docA}`)).toBe(true);
-      expect(names.has(`ok-ydoc:main:server-retro-attach:${docB}`)).toBe(true);
-      expect(names.has(`ok-ydoc:main:${docA}`)).toBe(false);
-      expect(names.has(`ok-ydoc:main::${docA}`)).toBe(false);
+      expect(names.has(`ps-ydoc:main:server-retro-attach:${docA}`)).toBe(true);
+      expect(names.has(`ps-ydoc:main:server-retro-attach:${docB}`)).toBe(true);
+      expect(names.has(`ps-ydoc:main:${docA}`)).toBe(false);
+      expect(names.has(`ps-ydoc:main::${docA}`)).toBe(false);
     }
   });
 
@@ -4349,11 +4349,11 @@ describe('ProviderPool authenticationFailed: rename-redirect / doc-deleted', () 
     try {
       provider.emit('close', { event: { code: 1000, reason: 'rename-driven' } });
       await waitFor(
-        () => warns.some((w) => w.includes('ok-provider-server-driven-close-reauth-failed')),
+        () => warns.some((w) => w.includes('ps-provider-server-driven-close-reauth-failed')),
         500,
       );
       const matched = warns.filter((w) =>
-        w.includes('ok-provider-server-driven-close-reauth-failed'),
+        w.includes('ps-provider-server-driven-close-reauth-failed'),
       );
       expect(matched.length).toBeGreaterThanOrEqual(1);
       expect(matched[0]).toContain('"docName":"doc-warn"');

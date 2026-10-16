@@ -1,4 +1,4 @@
-import type { ForwardLinkLocalTarget, ForwardLinksSuccess } from '@inkeep/open-knowledge-core';
+import type { ForwardLinkLocalTarget, ForwardLinksSuccess } from '@palimpsest/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render as rtlRender, screen } from '@testing-library/react';
 import type { ReactElement, ReactNode } from 'react';
@@ -16,7 +16,7 @@ const linguiMacroMock = {
 vi.doMock('@lingui/core/macro', () => linguiMacroMock);
 vi.doMock('@lingui/react/macro', () => linguiMacroMock);
 
-const LINT_NAV_EVENT = 'open-knowledge:lint-nav';
+const LINT_NAV_EVENT = 'palimpsest:lint-nav';
 vi.doMock('@/components/ProblemsPanel', () => ({ LINT_NAV_EVENT }));
 
 const rememberedIntents: { docName: string; detail: LintNavDetail }[] = [];

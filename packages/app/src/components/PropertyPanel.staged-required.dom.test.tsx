@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import type { LintDiagnostic, LinterConfig } from '@inkeep/open-knowledge-core';
+import type { LintDiagnostic, LinterConfig } from '@palimpsest/core';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

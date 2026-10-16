@@ -33,7 +33,7 @@ export function ScopeBadge({ scope }: { scope: SettingsScope }) {
             </Trans>
           ) : scope === 'project-local' ? (
             <Trans>
-              Applies to this project on this computer only. Stored in .ok/local, not shared via
+              Applies to this project on this computer only. Stored in .ps/local, not shared via
               git.
             </Trans>
           ) : (

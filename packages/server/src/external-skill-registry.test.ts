@@ -10,7 +10,7 @@ import {
 } from './external-skill-registry.ts';
 
 function freshSkillDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-ext-skill-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-ext-skill-'));
   writeFileSync(resolve(dir, 'SKILL.md'), '# original\n');
   return dir;
 }

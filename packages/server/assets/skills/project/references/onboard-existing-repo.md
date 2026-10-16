@@ -4,11 +4,11 @@ Use this when (a) the user asks to set up an existing repo that already has cont
 
 This is the brownfield counterpart to `ok seed` (greenfield). Read the content directory from `config({ key: 'content.dir' })`; paths below are relative to it.
 
-Use OK primitives only — no new files outside `<folder>/.ok/`, no body rewrites without per-pair user confirmation.
+Use OK primitives only — no new files outside `<folder>/.ps/`, no body rewrites without per-pair user confirmation.
 
 **Seven phases, in order. STOP gates require user confirmation before proceeding. Do not skip or batch ahead.**
 
-**Server requirement.** Phases 1-4 run fs-direct — `exec` (scan + read) and the `write`/`edit` verbs (folder frontmatter + templates) need no running server. Phase 5 (link-graph activation) composes `links` and `search`, which **require the OK Hocuspocus server** — Phase 5 step 0 checks for it and exits cleanly with a `run ok start` instruction if it is down.
+**Server requirement.** Phases 1-4 run fs-direct — `exec` (scan + read) and the `write`/`edit` verbs (folder frontmatter + templates) need no running server. Phase 5 (link-graph activation) composes `links` and `search`, which **require the OK Hocuspocus server** — Phase 5 step 0 checks for it and exits cleanly with a `run ps start` instruction if it is down.
 
 ---
 
@@ -50,7 +50,7 @@ Trivial folders (one-offs):
   - tech-probes/  4 .md
   - 14 root-level docs (README, AGENTS, CLAUDE, CI, CONTRIBUTING)
 
-Likely noise (recommend .okignore):
+Likely noise (recommend .psignore):
   - node_modules/  ~200 .md  (vendored deps)
   - dist/           ~30 .md  (build outputs)
   - Per-package CHANGELOG.md  (generated)
@@ -60,19 +60,19 @@ Seeded layout: no external-sources/ / research/ / articles/ present.
 Mark each substantial folder as:
   [KB]    knowledge-base content — extract conventions, add folder frontmatter + template
   [skip]  already-structured or out of scope — leave existing settings
-  [noise] add to .okignore
+  [noise] add to .psignore
 ```
 
 **Wait for user response. Do not proceed until each substantial folder is classified.**
 
 ---
 
-## Phase 3 — `.okignore` curation (STOP gate 2)
+## Phase 3 — `.psignore` curation (STOP gate 2)
 
-Based on user `[noise]` marks + agent-detected patterns, propose `.okignore` entries:
+Based on user `[noise]` marks + agent-detected patterns, propose `.psignore` entries:
 
 ```
-Proposed .okignore additions:
+Proposed .psignore additions:
   node_modules/**/*.md          # vendored dep READMEs
   dist/**/*.md                  # build outputs
   **/CHANGELOG.md               # per-package generated changelogs
@@ -80,11 +80,11 @@ Proposed .okignore additions:
   <any user-marked folders>
 ```
 
-Ask the user: "Apply these `.okignore` additions? (yes / edit list / skip)"
+Ask the user: "Apply these `.psignore` additions? (yes / edit list / skip)"
 
-On confirm: read the existing `.okignore`, append new entries, write via native `Write` (`.okignore` is a plain config file, not in-scope markdown — escape-hatch ok).
+On confirm: read the existing `.psignore`, append new entries, write via native `Write` (`.psignore` is a plain config file, not in-scope markdown — escape-hatch ok).
 
-**Don't redundantly propose what `.gitignore` already covers.** `.gitignore` and `.okignore` evaluate together; if the repo's `.gitignore` already excludes `node_modules/`, you don't need to add it again.
+**Don't redundantly propose what `.gitignore` already covers.** `.gitignore` and `.psignore` evaluate together; if the repo's `.gitignore` already excludes `node_modules/`, you don't need to add it again.
 
 ---
 
@@ -112,7 +112,7 @@ For **each** folder the user marked `[KB]`:
 5. **Propose folder frontmatter + template.** One `write`/`edit` call per target:
 
    ```ts
-   // Folder frontmatter → writes <folder>/.ok/frontmatter.yml.
+   // Folder frontmatter → writes <folder>/.ps/frontmatter.yml.
    // Open-shape (any key, like a doc's); here the conventional
    // title/description/tags describing the FOLDER. Self-only — does NOT
    // cascade into child docs. Use `write({ folder })` for a new folder,
@@ -128,7 +128,7 @@ For **each** folder the user marked `[KB]`:
      },
    })
 
-   // Template → writes <folder>/.ok/templates/<name>.md. This is where
+   // Template → writes <folder>/.ps/templates/<name>.md. This is where
    // recurring per-doc starting values live (status, owner, ...) — bake them
    // into the template body's frontmatter region so new docs start with them.
    write({
@@ -154,7 +154,7 @@ Repeat for every `[KB]` folder.
 
 The largest phase. Uses the `links` tool (every link-graph view) plus `search` and `edit` to apply confirmed link insertions.
 
-0. **Server check (required for this phase).** `links` and `search` need the OK Hocuspocus server. Probe via `links({ kind: "hubs" })`. If the response starts with `"Error: Hocuspocus server is not running"`, STOP — tell the user "the link-graph phase needs the OK server. Start it with `ok start` from a terminal, then resume here (Phases 1-4 are already applied)." Exit cleanly.
+0. **Server check (required for this phase).** `links` and `search` need the OK Hocuspocus server. Probe via `links({ kind: "hubs" })`. If the response starts with `"Error: Hocuspocus server is not running"`, STOP — tell the user "the link-graph phase needs the OK server. Start it with `ps start` from a terminal, then resume here (Phases 1-4 are already applied)." Exit cleanly.
 
 Six sub-passes, each with its own STOP gate.
 
@@ -163,7 +163,7 @@ Six sub-passes, each with its own STOP gate.
 1. Run `links({ kind: "orphans" })`.
 2. For each orphan, run `links({ kind: "suggest", document: <orphan> })`:
    - If `mentions[]` is non-empty → there are docs that mention this orphan without linking. Adoption candidates.
-   - If `mentions[]` is empty → the orphan is **genuinely standalone** (no other doc references it at all). Surface as: "this looks intentionally standalone (e.g., a README). Skip / adopt anyway by linking from a hub / add to `.okignore`?"
+   - If `mentions[]` is empty → the orphan is **genuinely standalone** (no other doc references it at all). Surface as: "this looks intentionally standalone (e.g., a README). Skip / adopt anyway by linking from a hub / add to `.psignore`?"
 3. Confirm per orphan. For each "link" choice, `edit({ document: { path, find, replace } })` on the source doc — find the existing mention text `links({ kind: "suggest" })` surfaced and replace it wrapped in link syntax.
 
 **Note on re-surfacing:** "intentional standalone" markers are not persisted. Each re-run surfaces the same intentional orphans (root `README.md`, `CONTRIBUTING.md`, etc.) and the user re-dismisses them. Acceptable minor friction.
@@ -193,7 +193,7 @@ Six sub-passes, each with its own STOP gate.
 
    ```
    In specs/2026-04-23-foo/SPEC.md, found 3 untextualized references:
-     line 12: "the existing `ok init` scaffolds..." → matches code, NOT a doc — skip
+     line 12: "the existing `ps init` scaffolds..." → matches code, NOT a doc — skip
      line 145: "...replaces the instructional init-content tool" → matches a spec — accept as link
      line 203: "...per AGENTS.md ecosystem convention" → matches root AGENTS.md — accept as link
    ```
@@ -247,17 +247,17 @@ Share a structured summary with the user. Distinguish initial-setup mode from ex
 ```
 Onboarding complete:
 
-Folder frontmatter added (<folder>/.ok/frontmatter.yml):
+Folder frontmatter added (<folder>/.ps/frontmatter.yml):
   specs/                  title: Specifications, tags: [spec]
   reports/                title: Research Reports, tags: [report]
   stories/                title: User Stories, tags: [story]
   projects/               title: Projects, tags: [project]
 
-Templates added (<folder>/.ok/templates/<name>.md):
-  specs/.ok/templates/SPEC.md     (heading skeleton from 3 siblings, link-aware)
-  reports/.ok/templates/REPORT.md (heading skeleton from 3 siblings, link-aware)
+Templates added (<folder>/.ps/templates/<name>.md):
+  specs/.ps/templates/SPEC.md     (heading skeleton from 3 siblings, link-aware)
+  reports/.ps/templates/REPORT.md (heading skeleton from 3 siblings, link-aware)
 
-.okignore additions: 4 entries (node_modules, dist, CHANGELOG.md, THIRD_PARTY_NOTICES.md)
+.psignore additions: 4 entries (node_modules, dist, CHANGELOG.md, THIRD_PARTY_NOTICES.md)
 
 Link-graph activation:
   Orphan triage:          7 orphans triaged (4 adopted, 3 left as intentional standalones)
@@ -272,7 +272,7 @@ Notes:
     No "standalone" marker is persisted; you'll re-dismiss them next time.
 
 Next steps:
-  - Review the extracted templates in <folder>/.ok/templates/ — they're starter shapes, not finished.
+  - Review the extracted templates in <folder>/.ps/templates/ — they're starter shapes, not finished.
   - The next agent in this repo will see templates_available + the folder's own frontmatter for every KB folder.
   - Re-run after significant content additions (new folder categories, major restructures).
 ```
@@ -286,7 +286,7 @@ New folder frontmatter:
   tech-probes/            (was missing — title: Tech Probes, tags: [probe])
 
 Updated templates:
-  specs/.ok/templates/SPEC.md   (heading skeleton refreshed from current siblings)
+  specs/.ps/templates/SPEC.md   (heading skeleton refreshed from current siblings)
 
 Link-graph activation:
   Orphan triage:          3 new orphans found (all triaged)
@@ -305,7 +305,7 @@ Link-graph activation:
 - **Don't auto-apply** — every phase has a confirmation gate. You propose; the user disposes.
 - **Don't run if the project has fewer than 5 `.md` files** — exit early; redirect to `ok seed`.
 - **Don't run if the project is already fully configured** — exit early with "already configured."
-- **Don't redundantly propose what `.gitignore` covers** in `.okignore`.
+- **Don't redundantly propose what `.gitignore` covers** in `.psignore`.
 - **Don't attempt nested-pattern detection** — each substantial top-level folder gets its own folder frontmatter; nested sub-patterns (`specs/*/evidence/`) are left for users to set up manually.
 
 ---
@@ -314,6 +314,6 @@ Link-graph activation:
 
 - **Empty project** (Phase 1): fewer than 5 `.md` files total → exit with "try `ok seed` instead."
 - **All-greenfield-already** (Phase 1 step 6): folder frontmatter exists AND templates exist for every substantial folder → exit with "this project is already configured."
-- **Server down** (Phase 5 step 0): Phases 1-4 already applied fs-direct; surface "the link-graph phase needs `ok start` running" and exit cleanly — resuming picks up at Phase 5.
+- **Server down** (Phase 5 step 0): Phases 1-4 already applied fs-direct; surface "the link-graph phase needs `ps start` running" and exit cleanly — resuming picks up at Phase 5.
 - **User aborts at any STOP gate** → exit cleanly, leaving any already-applied proposals in place (apply is per-phase, not all-or-nothing).
 - **Validation failure** (Phase 6) → don't pretend to succeed; surface the failed step to the user.

@@ -1,1 +1,1 @@
-export type OkFolderState = 'free' | 'exists-empty' | 'exists-nonempty';
+export type PsFolderState = 'free' | 'exists-empty' | 'exists-nonempty';

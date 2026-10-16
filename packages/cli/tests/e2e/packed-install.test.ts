@@ -23,7 +23,7 @@ import { createInstallFixture, LEAF, PARENT, PEER } from './install-fixture.test
 import { installPackedCli } from './packed-install.test-helper';
 
 test('reports unavailable registry acquisition after bounded attempts', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-install-contract-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-install-contract-'));
   const packageDir = join(root, 'package');
   const packDest = join(root, 'pack');
   const installPrefix = join(root, 'install');
@@ -31,9 +31,9 @@ test('reports unavailable registry acquisition after bounded attempts', async ()
   writeFileSync(
     join(packageDir, 'package.json'),
     JSON.stringify({
-      name: '@inkeep/open-knowledge',
+      name: '@palimpsest/cli',
       version: '1.0.0',
-      dependencies: { 'ok-cli-registry-fixture': '1.0.0' },
+      dependencies: { 'ps-cli-registry-fixture': '1.0.0' },
     }),
   );
   let registryReached = false;
@@ -94,7 +94,7 @@ test('keeps fresh npm resolution selectable', async () => {
   try {
     const installed = await installPackedCli({
       ...fixture,
-      env: { ...fixture.env, OK_CLI_E2E_INSTALL_MODE: 'fresh' },
+      env: { ...fixture.env, PS_CLI_E2E_INSTALL_MODE: 'fresh' },
     });
     const result = await promisify(execFile)(process.execPath, [installed.cliPath]);
     expect(JSON.parse(result.stdout)).toEqual({ leaf: '1.1.0', peer: '1.1.0' });

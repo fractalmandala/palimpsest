@@ -4,7 +4,7 @@ import {
   EmptyRequestSchema,
   encodeShareUrl,
   InvalidShareUrlError,
-  OkCliCommand,
+  PsCliCommand,
   parseCanonicalGitHubShareUrl,
   ShareConstructUrlRequestSchema,
   ShareConstructUrlResponseSchema,
@@ -14,7 +14,7 @@ import {
   SharePublishResponseSchema,
   ShareTargetStatusRequestSchema,
   ShareTargetStatusResponseSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   LOCAL_OP_PIPE_STDIO_OPTIONS,
   withHiddenWindowsConsole,
@@ -95,7 +95,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
     toGitRelativePath,
   } = deps;
   const declaredGitHubHosts = deps.declaredGitHubHosts ?? readDeclaredGitHubHosts();
-  const okCli = OkCliCommand.resolve({
+  const psCli = PsCliCommand.resolve({
     host: localOpCliArgs === undefined ? undefined : { cliArgs: localOpCliArgs },
   });
 
@@ -340,7 +340,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
   async function spawnShareSubprocess(
     args: readonly string[],
   ): Promise<{ stdout: string; code: number | null }> {
-    const invocation = okCli.spawn(args, process.env);
+    const invocation = psCli.spawn(args, process.env);
     if ('refused' in invocation) throw new Error(invocation.refused);
     return await new Promise<{ stdout: string; code: number | null }>((resolveSpawn, reject) => {
       const child = spawn(

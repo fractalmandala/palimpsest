@@ -41,7 +41,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     packagingInvocation({
       cwd: resolve(process.cwd()),
       args: process.argv.slice(2),
-      variant: process.env.OK_DESKTOP_VARIANT,
+      variant: process.env.PS_DESKTOP_VARIANT,
     }),
     { stdio: 'inherit', env: process.env },
   );

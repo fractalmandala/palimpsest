@@ -7,7 +7,7 @@ import {
 } from '@codemirror/search';
 import { EditorView } from '@codemirror/view';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { sharedExtensions } from '@inkeep/open-knowledge-core/extensions/shared';
+import { sharedExtensions } from '@palimpsest/core/extensions/shared';
 import { tags } from '@lezer/highlight';
 import { FileTree } from '@pierre/trees';
 import { act, cleanup, waitFor } from '@testing-library/react';
@@ -24,7 +24,7 @@ import { ActivityPanelDiffView } from '@/components/ActivityPanelDiffView';
 import { ConflictView } from '@/components/ConflictView';
 import { FileTreeEmptyState } from '@/components/FileTree';
 import { createFileTreeStyle, FILE_TREE_DENSITY_OPTIONS } from '@/components/file-tree-density';
-import { OK_FILE_TREE_READONLY_UNSAFE_CSS } from '@/components/file-tree-shared';
+import { PS_FILE_TREE_READONLY_UNSAFE_CSS } from '@/components/file-tree-shared';
 import { MermaidDocEditor } from '@/components/MermaidDocEditor';
 import { ColorThemePicker } from '@/components/settings/ColorThemePicker';
 import { SettingsDialogShell } from '@/components/settings/SettingsDialogShell';
@@ -37,12 +37,12 @@ import { CodeMirrorPropInput } from '@/editor/components/CodeMirrorPropInput';
 import { CodePreviewEditModal } from '@/editor/components/CodePreviewEditModal';
 import { DocumentProvider } from '@/editor/DocumentContext';
 import { evictCmEditor } from '@/editor/editor-cache';
-import { okSyntaxHighlight } from '@/editor/extensions/cm-theme';
+import { psSyntaxHighlight } from '@/editor/extensions/cm-theme';
 import { CodeBlockFidelity } from '@/editor/extensions/code-block';
 import { RawMdxFallback } from '@/editor/extensions/raw-mdx-fallback';
 import { SourceEditor } from '@/editor/SourceEditor';
 import { ConfigContext, type ConfigContextValue } from '@/lib/config-context';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { stubApiRoutes } from './api-routes.test-helper';
 import { renderWithI18n } from './render-with-i18n.test-helper';
 import { textLeaves, textMeasurement } from './theme-contrast.test-helper';
@@ -293,7 +293,7 @@ function richEditorPortal(editor: Editor) {
   );
 }
 
-function terminalBridge(): OkDesktopBridge {
+function terminalBridge(): PsDesktopBridge {
   const terminal = {
     adopt: async () => ({
       ok: true as const,
@@ -311,7 +311,7 @@ function terminalBridge(): OkDesktopBridge {
     terminal,
     config: { e2eSmoke: true, projectPath: '/contrast-fixture' },
     platform: 'darwin',
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 describe('rendered theme text contrast', () => {
@@ -353,7 +353,7 @@ describe('rendered theme text contrast', () => {
       await waitFor(() =>
         expect(view.state.facet(EditorView.darkTheme)).toBe(theme.mode === 'dark'),
       );
-      await highlighted(container, '// note', okSyntaxHighlight.style([tags.comment]));
+      await highlighted(container, '// note', psSyntaxHighlight.style([tags.comment]));
       await settleCodeMirror(view);
       checkText(theme, 'source', textLeaves(view.contentDOM));
       const audit = await axe.run(view.contentDOM, { runOnly: ['color-contrast'] });
@@ -506,7 +506,7 @@ describe('rendered theme text contrast', () => {
       const wrapper = container.querySelector('[data-contrast="tree"]') as HTMLElement;
       const tree = new FileTree({
         ...FILE_TREE_DENSITY_OPTIONS,
-        unsafeCSS: OK_FILE_TREE_READONLY_UNSAFE_CSS,
+        unsafeCSS: PS_FILE_TREE_READONLY_UNSAFE_CSS,
         paths: ['note.md'],
         initialExpansion: 'open',
       });
@@ -585,7 +585,7 @@ describe('rendered theme text contrast', () => {
         dialog.getAnimations({ subtree: true }).map((animation) => animation.finished),
       );
       await highlighted(dialog, '// note');
-      const editor = dialog.querySelector('.ok-codepreview-cm');
+      const editor = dialog.querySelector('.ps-codepreview-cm');
       if (!editor) throw new Error('Code modal did not render');
       await settleCodeMirror(await cmView(editor));
       checkText(theme, 'code-modal', textLeaves(editor));

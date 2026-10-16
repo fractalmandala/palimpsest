@@ -18,8 +18,8 @@ let writes = 0;
 const detail = 'body: Disallowed content control U+001F at zero-based UTF-16 offset 9.';
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-metadata-control-advice-'));
-  const templates = join(root, 'templates', '.ok', 'templates');
+  root = mkdtempSync(join(tmpdir(), 'ps-metadata-control-advice-'));
+  const templates = join(root, 'templates', '.ps', 'templates');
   mkdirSync(templates, { recursive: true });
   writeFileSync(
     join(templates, 'existing.md'),

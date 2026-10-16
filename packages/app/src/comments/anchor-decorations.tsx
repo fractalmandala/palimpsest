@@ -15,7 +15,7 @@ import {
   subscribeActiveThread,
 } from './store';
 
-const commentAnchorKey = new PluginKey('okCommentAnchors');
+const commentAnchorKey = new PluginKey('psCommentAnchors');
 
 interface DraftRange {
   from: number;

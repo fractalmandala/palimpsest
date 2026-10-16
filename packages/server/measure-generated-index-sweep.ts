@@ -183,17 +183,17 @@ export function buildMeasurementResult(options: BuildMeasurementResultOptions) {
 }
 
 function writeFixture(projectDir: string, documentCount: number, directoryCount: number): void {
-  const okDir = join(projectDir, '.ok');
-  mkdirSync(okDir, { recursive: true });
+  const psDir = join(projectDir, '.ps');
+  mkdirSync(psDir, { recursive: true });
   writeFileSync(
-    join(okDir, 'config.yml'),
+    join(psDir, 'config.yml'),
     stringifyYaml({
-      contentRules: { okf: { enabled: true, generate: { index: true } } },
+      contentRules: { psf: { enabled: true, generate: { index: true } } },
       telemetry: { localSink: { enabled: false } },
     }),
     'utf8',
   );
-  writeFileSync(join(okDir, '.gitignore'), 'local/\n', 'utf8');
+  writeFileSync(join(psDir, '.gitignore'), 'local/\n', 'utf8');
 
   const distribution = distributeDocuments(documentCount, directoryCount);
   const documentWidth = String(documentCount).length;
@@ -231,13 +231,13 @@ async function measureCell(
   documentCount: number,
   directoryCount: number,
 ): Promise<MeasurementSample> {
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-generated-index-sweep-')));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-generated-index-sweep-')));
   activeProjectDir = projectDir;
   try {
     writeFixture(projectDir, documentCount, directoryCount);
     await ensureProjectGit(projectDir);
     const config = ConfigSchema.parse({
-      contentRules: { okf: { enabled: true, generate: { index: true } } },
+      contentRules: { psf: { enabled: true, generate: { index: true } } },
       telemetry: { localSink: { enabled: false } },
     });
     activeServer = await bootServer({

@@ -3,7 +3,7 @@ import {
   CLIENT_SURFACE_ATTRIBUTE,
   CLIENT_VERSION_HEADER,
   readClientSurface,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { context, propagation, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import {
   ATTR_HTTP_REQUEST_METHOD,

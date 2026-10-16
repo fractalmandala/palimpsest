@@ -371,7 +371,7 @@ beforeEach(() => {
   lastKnownHash.clear();
   writeTracker.clear();
   removalTracker.clear();
-  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-parcel-notice-')));
+  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-parcel-notice-')));
   vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
 });
 
@@ -478,7 +478,7 @@ function dynamicSkillFilter(): ContentFilter {
 }
 
 function writeSkillLedger(value: unknown): string {
-  const path = join(contentDir, '.ok', 'local', 'skill-placements.json');
+  const path = join(contentDir, '.ps', 'local', 'skill-placements.json');
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, typeof value === 'string' ? value : JSON.stringify(value));
   return path;
@@ -851,7 +851,7 @@ test('notice recovery keeps self-write and self-removal suppression while applyi
 });
 
 test('notice recovery respects markdown, general-file and directory filters while admitting a sibling asset', async () => {
-  writeFileSync(join(contentDir, '.okignore'), 'ignored.md\nignored.csv\ndist/\n');
+  writeFileSync(join(contentDir, '.psignore'), 'ignored.md\nignored.csv\ndist/\n');
   const filter = createContentFilter({ projectDir: contentDir, contentDir });
   const { watcher, events } = await watchContent(filter);
   const freshDir = join(contentDir, 'fresh');
@@ -1360,11 +1360,11 @@ function fingerprintOf(...dirs: string[]): string {
 }
 
 function prepareSkillServerProject(ledgerValue: unknown): { home: string; ledger: string } {
-  const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-admission-home-')));
+  const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-admission-home-')));
   cleanupDirs.push(home);
   const ledger = writeSkillLedger(ledgerValue);
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), '');
-  writeFileSync(join(contentDir, '.ok', '.gitignore'), '');
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), '');
+  writeFileSync(join(contentDir, '.ps', '.gitignore'), '');
   const gitEnv = {
     ...Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_'))),
     GIT_CONFIG_GLOBAL: '/dev/null',
@@ -1886,7 +1886,7 @@ test('missing and rejected ledger paths leave a valid in-root skill selectable',
   const skillDir = '.claude/skills/fixture';
   writeSkillFixture(skillDir);
   expect([...scanInPlaceSkillDirs(contentDir)]).toEqual([skillDir]);
-  const outside = realpathSync(mkdtempSync(join(tmpdir(), 'ok-admission-outside-')));
+  const outside = realpathSync(mkdtempSync(join(tmpdir(), 'ps-admission-outside-')));
   cleanupDirs.push(outside);
   const outsideSkill = join(outside, 'skills', 'escaped');
   mkdirSync(outsideSkill, { recursive: true });
@@ -1912,15 +1912,15 @@ test('missing and rejected ledger paths leave a valid in-root skill selectable',
 
 test('server startup and raw skill refresh retain admission across an unreadable root', async () => {
   vi.useRealTimers();
-  const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-admission-home-')));
+  const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-admission-home-')));
   cleanupDirs.push(home);
   const skillDir = '.claude/skills/fixture';
   const skillPath = writeSkillFixture(skillDir);
   const skillRoot = join(contentDir, '.claude', 'skills');
   const visiblePath = writeDoc('visible.md', '# Before\n');
-  mkdirSync(join(contentDir, '.ok'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), '');
-  writeFileSync(join(contentDir, '.ok', '.gitignore'), '');
+  mkdirSync(join(contentDir, '.ps'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), '');
+  writeFileSync(join(contentDir, '.ps', '.gitignore'), '');
   const gitEnv = {
     ...Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_'))),
     GIT_CONFIG_GLOBAL: '/dev/null',
@@ -2163,7 +2163,7 @@ test('notice recovery preserves canonical folder identity and rejects broken, cy
   mkdirSync(canonicalDir);
   const canonicalNote = join(canonicalDir, 'note.md');
   writeFileSync(canonicalNote, '# Canonical\n');
-  const outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-parcel-outside-')));
+  const outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-parcel-outside-')));
   cleanupDirs.push(outsideDir);
   const outsideNote = join(outsideDir, 'outside.md');
   writeFileSync(outsideNote, '# Outside\n');
@@ -4065,8 +4065,8 @@ test.each([
     const originalBytes = '# Original\n\nEarlier bytes.\n';
     const recreatedBytes =
       bytes === 'original' ? originalBytes : '# Recreated\n\nDifferent bytes now.\n';
-    mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'templates', 'recreated.md'), recreatedBytes);
+    mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'templates', 'recreated.md'), recreatedBytes);
     const first = writeDoc('first.md', '# First\n\nSeparate content.\n');
     const later = writeDoc('later.md', originalBytes);
     const moved = join(contentDir, 'moved.md');
@@ -4199,8 +4199,8 @@ test.each(['before', 'during'] as const)(
     });
     configureTestGitRepository(contentDir);
     const recreatedBytes = '# Recreated\n\nContent after the supplied deletes.\n';
-    mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'templates', 'recreated.md'), recreatedBytes);
+    mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'templates', 'recreated.md'), recreatedBytes);
     const first = writeDoc('first.md', '# First\n');
     const later = writeDoc('later.md', '# Earlier later\n');
     let server: Awaited<ReturnType<typeof bootCompositionRig>> | undefined;
@@ -5838,7 +5838,7 @@ test.each(['general', 'markdown'] as const)(
     symlinkSync(real, alias);
     scanSchedule.orderedPath = contentDir;
     scanSchedule.firstEntry = 'alias.csv';
-    const ignore = join(contentDir, '.okignore');
+    const ignore = join(contentDir, '.psignore');
     writeFileSync(ignore, '');
     const filter = dynamicSkillFilter();
     const events: DiskEvent[] = [];
@@ -7006,7 +7006,7 @@ test.each(['startup', 'recovery'] as const)(
     const l = join(contentDir, 'l.csv');
     symlinkSync(x, r);
     symlinkSync(x, l);
-    writeDoc('.okignore', 'blocked.csv\n');
+    writeDoc('.psignore', 'blocked.csv\n');
     const filter = dynamicSkillFilter();
     expect(filter.isPathIgnored('blocked.csv')).toBe(true);
     const entered = deferred();
@@ -7025,7 +7025,7 @@ test.each(['startup', 'recovery'] as const)(
       const { watcher } = await started;
       expect(
         [...(localTargetInventoryFromWatcher(watcher, contentDir)?.fileTargets ?? [])].toSorted(),
-      ).toEqual(['.okignore', 'c.csv', 'l.csv', 'r.csv', 'x.csv']);
+      ).toEqual(['.psignore', 'c.csv', 'l.csv', 'r.csv', 'x.csv']);
       holdScan();
       pending = deliverNotice(contentDir);
     }
@@ -7052,7 +7052,7 @@ test.each(['startup', 'recovery'] as const)(
         : [],
     );
     expect([...new Set(generalMembers)].toSorted()).toEqual([
-      '.okignore',
+      '.psignore',
       'c.csv',
       'l.csv',
       'x.csv',
@@ -7078,7 +7078,7 @@ test('a role change removes absent and ignored dependents while retaining accept
   symlinkSync(a, missing);
   symlinkSync(b, rejected);
   symlinkSync(a, z);
-  writeDoc('.okignore', 'blocked.csv\n');
+  writeDoc('.psignore', 'blocked.csv\n');
   const filter = dynamicSkillFilter();
   expect(filter.isPathIgnored('blocked.csv')).toBe(true);
   expect(filter.isPathIgnored('q-rejected.csv')).toBe(false);
@@ -7302,14 +7302,14 @@ test('filter rebuild prunes individual hardlink paths and aliases before positiv
   linkSync(a, b);
   symlinkSync(a, z);
   symlinkSync(b, y);
-  const ignore = writeDoc('.okignore', 'a.csv\n');
+  const ignore = writeDoc('.psignore', 'a.csv\n');
   const filter = dynamicSkillFilter();
   scanSchedule.orderedPath = contentDir;
   scanSchedule.orderedEntries = ['a.csv', 'b.csv', 'y-alias.csv', 'z-alias.csv', 'a.csv.md'];
   const { watcher, events } = await watchContent(filter);
   const memberRows = () =>
     indexedGeneralRows(watcher).filter((row) => row.inode === statSync(a).ino);
-  const memberTargets = () => indexedFileTargets(watcher).filter((name) => name !== '.okignore');
+  const memberTargets = () => indexedFileTargets(watcher).filter((name) => name !== '.psignore');
   expect(filter.isPathIgnored('a.csv')).toBe(true);
   expect(filter.isPathIgnored('b.csv')).toBe(false);
   expect([statSync(a).dev, statSync(a).ino]).toEqual([statSync(b).dev, statSync(b).ino]);
@@ -8158,7 +8158,7 @@ test.each(['notice recovery', 'index-only rescan', 'idle reconcile'] as const)(
     const b = writeDoc('b.csv', 'b,kept,on,disk\n');
     const note = writeDoc('note.md', '# Kept on disk\n');
     const latch = writeDoc('z-latch.csv', 'z,admitted\n');
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     scanSchedule.orderedPath = contentDir;
     scanSchedule.orderedEntries = ['b.csv', 'note.md', 'z-latch.csv'];
@@ -8190,7 +8190,7 @@ test.each(['notice recovery', 'index-only rescan', 'idle reconcile'] as const)(
     handles.push(watcher);
     expect(inventory()).toEqual({
       documentTargets: ['note'],
-      fileTargets: ['.okignore', 'b.csv', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'b.csv', 'z-latch.csv'],
     });
 
     const entered = deferred();
@@ -8217,7 +8217,7 @@ test.each(['notice recovery', 'index-only rescan', 'idle reconcile'] as const)(
         ).toEqual([b, note, latch]);
         expect(inventory()).toEqual({
           documentTargets: ['note'],
-          fileTargets: ['.okignore', 'b.csv', 'z-latch.csv'],
+          fileTargets: ['.psignore', 'b.csv', 'z-latch.csv'],
         });
       }
 
@@ -8230,7 +8230,7 @@ test.each(['notice recovery', 'index-only rescan', 'idle reconcile'] as const)(
       afterPrune = inventory();
       expect(afterPrune).toEqual({
         documentTargets: [],
-        fileTargets: ['.okignore', 'z-latch.csv'],
+        fileTargets: ['.psignore', 'z-latch.csv'],
       });
     } finally {
       resume.release();
@@ -8241,17 +8241,17 @@ test.each(['notice recovery', 'index-only rescan', 'idle reconcile'] as const)(
     expect(reconciled).toEqual({ prunedFiles: 2, prunedFolders: 0 });
     expect(afterPrune).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'z-latch.csv'],
     });
     if (surface !== 'idle reconcile') {
       expect.soft(afterObservation).toEqual({
         documentTargets: [],
-        fileTargets: ['.okignore', 'z-latch.csv'],
+        fileTargets: ['.psignore', 'z-latch.csv'],
       });
     }
     expect.soft(inventory()).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'z-latch.csv'],
     });
     expect
       .soft(events.filter((event) => 'path' in event && (event.path === b || event.path === note)))
@@ -8281,7 +8281,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
   '%s does not publish newly captured files excluded before publication',
   async (surface) => {
     const latch = writeDoc('z-latch.csv', 'z,admitted\n');
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     scanSchedule.orderedPath = contentDir;
     scanSchedule.orderedEntries = ['b.csv', 'note.md', 'z-latch.csv'];
@@ -8305,7 +8305,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     handles.push(watcher);
     const initial = {
       documentTargets: [],
-      fileTargets: ['.okignore', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'z-latch.csv'],
       folderTargets: [],
     };
     expect(sortedTargetInventory(watcher)).toEqual(initial);
@@ -8369,7 +8369,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     const alias = join(contentDir, 'y-alias.csv');
     symlinkSync(target, alias);
     const latch = writeDoc('z-latch.csv', 'z,survives\n');
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     scanSchedule.orderedPath = contentDir;
     scanSchedule.orderedEntries = ['a.csv', 'empty-folder', 'y-alias.csv', 'z-latch.csv'];
@@ -8394,7 +8394,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     expect(watcher.getFolderIndex().has('empty-folder')).toBe(true);
     expect(sortedTargetInventory(watcher)).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore', 'a.csv', 'y-alias.csv', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'a.csv', 'y-alias.csv', 'z-latch.csv'],
       folderTargets: ['empty-folder'],
     });
     const entered = deferred();
@@ -8414,7 +8414,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     let afterPrune: ReturnType<typeof sortedTargetInventory> | undefined;
     const excluded = {
       documentTargets: [],
-      fileTargets: ['.okignore', 'a.csv', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'a.csv', 'z-latch.csv'],
       folderTargets: [],
     };
     try {
@@ -8466,7 +8466,7 @@ test('a recovered callback cannot restore entries pruned after observation compl
   const note = writeDoc('note.md', '# Unchanged\n');
   const trigger = writeDoc('trigger.md', '# Before\n');
   const latch = writeDoc('z-latch.csv', 'z,unchanged\n');
-  const ignore = writeDoc('.okignore', '');
+  const ignore = writeDoc('.psignore', '');
   const filter = createContentFilter({ projectDir: contentDir, contentDir });
   scanSchedule.orderedPath = contentDir;
   scanSchedule.orderedEntries = ['b.csv', 'note.md', 'trigger.md', 'z-latch.csv'];
@@ -8500,7 +8500,7 @@ test('a recovered callback cannot restore entries pruned after observation compl
   handles.push(watcher);
   expect(sortedTargetInventory(watcher)).toEqual({
     documentTargets: ['note', 'trigger'],
-    fileTargets: ['.okignore', 'b.csv', 'z-latch.csv'],
+    fileTargets: ['.psignore', 'b.csv', 'z-latch.csv'],
     folderTargets: [],
   });
   writeFileSync(trigger, '# After\n');
@@ -8530,7 +8530,7 @@ test('a recovered callback cannot restore entries pruned after observation compl
   expect(filter.isPathIgnored('z-latch.csv')).toBe(false);
   const excluded = {
     documentTargets: ['trigger'],
-    fileTargets: ['.okignore', 'z-latch.csv'],
+    fileTargets: ['.psignore', 'z-latch.csv'],
     folderTargets: [],
   };
   expect(reconciled).toEqual({ prunedFiles: 2, prunedFolders: 0 });
@@ -8562,7 +8562,7 @@ test.each(['folder alias', 'ordinary folder'] as const)(
     mkdirSync(ordinary);
     const alias = join(contentDir, 'linked-folder');
     symlinkSync(canonical, alias);
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     scanSchedule.orderedPath = contentDir;
     scanSchedule.orderedEntries = ['canonical-folder', 'linked-folder', 'ordinary-folder'];
@@ -8573,7 +8573,7 @@ test.each(['folder alias', 'ordinary folder'] as const)(
     const initial = sortedTargetInventory(watcher);
     expect(initial).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore'],
+      fileTargets: ['.psignore'],
       folderTargets: ['canonical-folder', 'linked-folder', 'ordinary-folder'],
     });
 
@@ -8606,7 +8606,7 @@ test.each(['folder alias', 'ordinary folder'] as const)(
     expect.soft(immediateCanonical).toBe(true);
     expect.soft(immediateInventory).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore'],
+      fileTargets: ['.psignore'],
       folderTargets: expectedFolders,
     });
     expect.soft(immediateGeneration).toBeGreaterThan(generationBefore);
@@ -8615,7 +8615,7 @@ test.each(['folder alias', 'ordinary folder'] as const)(
     expect.soft(watcher.getFolderIndex().has('canonical-folder')).toBe(true);
     expect.soft(sortedTargetInventory(watcher)).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore'],
+      fileTargets: ['.psignore'],
       folderTargets: expectedFolders,
     });
     expect(events).toEqual([]);
@@ -8634,7 +8634,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     const document = writeDoc('canonical-folder/inside.md', '# Inside\n');
     const data = writeDoc('canonical-folder/data.csv', 'inside,data\n');
     const latch = writeDoc('z-latch.csv', 'z,admitted\n');
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     scanSchedule.orderedPath = contentDir;
     scanSchedule.orderedEntries = ['canonical-folder', 'linked-folder', 'z-latch.csv'];
@@ -8664,7 +8664,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     handles.push(watcher);
     const admitted = {
       documentTargets: ['canonical-folder/inside'],
-      fileTargets: ['.okignore', 'canonical-folder/data.csv', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'canonical-folder/data.csv', 'z-latch.csv'],
       folderTargets: ['canonical-folder'],
     };
     expect(watcher.getFolderIndex().has('canonical-folder')).toBe(true);
@@ -8734,7 +8734,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     const alias = join(contentDir, 'y-alias.csv');
     symlinkSync(b, alias);
     const latch = writeDoc('z-latch.csv', 'z,admitted\n');
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     const filter = createContentFilter({ projectDir: contentDir, contentDir });
     scanSchedule.orderedPath = contentDir;
     scanSchedule.orderedEntries = ['a.csv', 'b.csv', 'y-alias.csv', 'z-latch.csv'];
@@ -8763,7 +8763,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     handles.push(watcher);
     expect(sortedTargetInventory(watcher)).toEqual({
       documentTargets: [],
-      fileTargets: ['.okignore', 'a.csv', 'b.csv', 'y-alias.csv', 'z-latch.csv'],
+      fileTargets: ['.psignore', 'a.csv', 'b.csv', 'y-alias.csv', 'z-latch.csv'],
       folderTargets: [],
     });
     const entered = deferred();
@@ -8811,7 +8811,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
         inode: Number(cStat.ino),
       });
       expect(sortedTargetInventory(watcher).fileTargets).toEqual([
-        '.okignore',
+        '.psignore',
         'a.csv',
         'b.csv',
         'c.csv',
@@ -8829,7 +8829,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
       afterPrune = capture();
       expect(afterPrune.inventory).toEqual({
         documentTargets: [],
-        fileTargets: ['.okignore', 'a.csv', 'c.csv', 'z-latch.csv'],
+        fileTargets: ['.psignore', 'a.csv', 'c.csv', 'z-latch.csv'],
         folderTargets: [],
       });
     } finally {
@@ -8842,7 +8842,7 @@ test.each(['notice recovery', 'index-only rescan'] as const)(
     expect(reconciled).toEqual({ prunedFiles: 0, prunedFolders: 0 });
     expect(afterPrune?.aSize).toBe(publicStat.size);
     expect(afterPrune?.aModified).toBe(expectedModified);
-    const expectedTargets = ['.okignore', 'a.csv', 'c.csv', 'z-latch.csv'];
+    const expectedTargets = ['.psignore', 'a.csv', 'c.csv', 'z-latch.csv'];
     expect.soft(afterObservation?.inventory.fileTargets).toEqual(expectedTargets);
     expect.soft(sortedTargetInventory(watcher).fileTargets).toEqual(expectedTargets);
     expect.soft(afterObservation?.aSize).toBe(publicStat.size);
@@ -8872,7 +8872,7 @@ test('a recovered Markdown callback excludes a second changed document before pu
   const a = writeDoc('a.md', '# Before A\n');
   const b = writeDoc('b.md', '# Before B\n');
   const latch = writeDoc('z-latch.csv', 'z,admitted\n');
-  const ignore = writeDoc('.okignore', '');
+  const ignore = writeDoc('.psignore', '');
   const filter = createContentFilter({ projectDir: contentDir, contentDir });
   scanSchedule.orderedPath = contentDir;
   scanSchedule.orderedEntries = ['a.md', 'b.md', 'z-latch.csv'];
@@ -8916,7 +8916,7 @@ test('a recovered Markdown callback excludes a second changed document before pu
   handles.push(watcher);
   expect(sortedTargetInventory(watcher)).toEqual({
     documentTargets: ['a', 'b'],
-    fileTargets: ['.okignore', 'z-latch.csv'],
+    fileTargets: ['.psignore', 'z-latch.csv'],
     folderTargets: [],
   });
   writeFileSync(a, '# After A\n');
@@ -8951,7 +8951,7 @@ test('a recovered Markdown callback excludes a second changed document before pu
   expect(reconciled).toEqual({ prunedFiles: 1, prunedFolders: 0 });
   const expected = {
     documentTargets: [first],
-    fileTargets: ['.okignore', 'z-latch.csv'],
+    fileTargets: ['.psignore', 'z-latch.csv'],
     folderTargets: [],
   };
   expect(afterPrune).toEqual(expected);
@@ -8977,7 +8977,7 @@ test('a pending alias deletion is rejected after the first alias callback exclud
   const y = join(contentDir, 'y-alias.csv');
   symlinkSync(a, x);
   symlinkSync(b, y);
-  const ignore = writeDoc('.okignore', '');
+  const ignore = writeDoc('.psignore', '');
   const filter = createContentFilter({ projectDir: contentDir, contentDir });
   scanSchedule.orderedPath = contentDir;
   scanSchedule.orderedEntries = ['a.csv', 'b.csv', 'x-alias.csv', 'y-alias.csv'];
@@ -9011,7 +9011,7 @@ test('a pending alias deletion is rejected after the first alias callback exclud
   handles.push(watcher);
   expect(sortedTargetInventory(watcher)).toEqual({
     documentTargets: [],
-    fileTargets: ['.okignore', 'a.csv', 'b.csv', 'x-alias.csv', 'y-alias.csv'],
+    fileTargets: ['.psignore', 'a.csv', 'b.csv', 'x-alias.csv', 'y-alias.csv'],
     folderTargets: [],
   });
   unlinkSync(x);
@@ -9028,7 +9028,7 @@ test('a pending alias deletion is rejected after the first alias callback exclud
   expect(reconciled).toEqual({ prunedFiles: 0, prunedFolders: 0 });
   expect(afterCallback).toEqual({
     documentTargets: [],
-    fileTargets: ['.okignore', 'a.csv', 'b.csv'],
+    fileTargets: ['.psignore', 'a.csv', 'b.csv'],
     folderTargets: [],
   });
   expect(
@@ -9039,7 +9039,7 @@ test('a pending alias deletion is rejected after the first alias callback exclud
     .toEqual([]);
   expect.soft(sortedTargetInventory(watcher)).toEqual({
     documentTargets: [],
-    fileTargets: ['.okignore', 'a.csv', 'b.csv'],
+    fileTargets: ['.psignore', 'a.csv', 'b.csv'],
     folderTargets: [],
   });
   expect(existsSync(x)).toBe(false);
@@ -9452,7 +9452,7 @@ test.each(['origin', 'target'] as const)(
     const b = writeDoc('b.csv', 'second,target\n');
     const x = join(contentDir, 'x.csv');
     const y = join(contentDir, 'y.csv');
-    const ignore = writeDoc('.okignore', '');
+    const ignore = writeDoc('.psignore', '');
     symlinkSync(a, x);
     symlinkSync(b, y);
     const filter = dynamicSkillFilter();
@@ -9471,7 +9471,7 @@ test.each(['origin', 'target'] as const)(
     let physicalRetained = false;
     let callbackTargets: string[] = [];
     const targetNames = (watcher: WatcherHandle) =>
-      indexedFileTargets(watcher).filter((name) => name !== '.okignore');
+      indexedFileTargets(watcher).filter((name) => name !== '.psignore');
     const watched = await watchContent(filter, async (event) => {
       if (event.kind !== 'file-update' || (event.path !== a && event.path !== b)) return;
       if (firstTarget !== undefined) return;
@@ -9680,7 +9680,7 @@ test('a warmed referenced asset leaves the document listing after a filter rebui
   linkSync(a, b);
   const sourceContent = '# Source\n\n[A](a.csv)\n\n[B](b.csv)\n';
   const source = writeDoc('source.md', sourceContent);
-  const ignore = writeDoc('.okignore', '');
+  const ignore = writeDoc('.psignore', '');
   const sourceStat = statSync(source);
   const bStat = statSync(b);
   expect([statSync(a).dev, statSync(a).ino]).toEqual([bStat.dev, bStat.ino]);
@@ -9744,7 +9744,7 @@ test('a warmed exclusion yields a referenced asset after rebuild and completed n
   linkSync(a, b);
   const sourceContent = '# Source\n\n[A](a.csv)\n\n[B](b.csv)\n';
   const source = writeDoc('source.md', sourceContent);
-  const ignore = writeDoc('.okignore', 'b.csv\n');
+  const ignore = writeDoc('.psignore', 'b.csv\n');
   const sourceStat = statSync(source);
   const bStat = statSync(b);
   expect([statSync(a).dev, statSync(a).ino]).toEqual([bStat.dev, bStat.ino]);

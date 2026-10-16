@@ -18,7 +18,7 @@ import {
   MetricsReconciliationSuccessSchema,
   PagesSuccessSchema,
   ThreadListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { expect, vi } from 'vitest';
 import { CommentService } from '../../../server/src/comments/comment-service.ts';
 import { DerivedDocumentIndex } from '../../../server/src/derived-document-index.ts';
@@ -43,7 +43,7 @@ export async function startDeletionScenario(
 ) {
   resetMetrics();
   const docName = `deletion-${randomUUID()}`;
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-delete-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-delete-')));
   const filePath = join(contentDir, `${docName}.md`);
   const reached = Promise.withResolvers<void>();
   const release = Promise.withResolvers<void>();

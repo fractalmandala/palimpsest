@@ -79,7 +79,7 @@ async function callRoute(
 
 describe('graph endpoints', () => {
   test('serve backlinks, forward links, mode-based orphans, and hubs', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-graph-api-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-graph-api-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -272,7 +272,7 @@ describe('graph endpoints', () => {
   });
 
   test('serve dead links globally and with source-doc scoping', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-dead-links-api-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-dead-links-api-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -403,7 +403,7 @@ describe('graph endpoints', () => {
   });
 
   test('link/title consumers resolve a graph-indexed doc the file index is missing (PRD-7201)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-graph-api-prd7201-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-graph-api-prd7201-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'evidence'), { recursive: true });
     try {
@@ -448,7 +448,7 @@ describe('graph endpoints', () => {
   });
 
   test('the dead-link endpoint stays silent for a dotted-name doc link and an asset embed', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-dead-links-dotted-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-dead-links-dotted-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(join(contentDir, 'notes'), { recursive: true });
     try {
@@ -486,7 +486,7 @@ describe('graph endpoints', () => {
   });
 
   test('returns 503 when the backlink index is unavailable', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-dead-links-unavailable-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-dead-links-unavailable-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
@@ -502,7 +502,7 @@ describe('graph endpoints', () => {
   });
 
   test('returns a quiet 503 when derived-index query routes race shutdown', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-derived-query-shutdown-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-derived-query-shutdown-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const contentFilter = createContentFilter({ projectDir, contentDir });
@@ -552,7 +552,7 @@ describe('graph endpoints', () => {
   });
 
   test('keeps unexpected derived-index query failures as 500 faults', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-derived-query-failure-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-derived-query-failure-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const failure = new Error('unexpected query failure');
@@ -587,7 +587,7 @@ describe('graph endpoints', () => {
   });
 
   test('keeps forward links available while the local-target projection is not ready', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-forward-links-partial-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-forward-links-partial-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const unavailableIndex = new DerivedDocumentIndex({
@@ -618,11 +618,11 @@ describe('graph endpoints', () => {
   });
 
   test('forward-links / hubs / link-graph fall back to docName for excluded targets', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-graph-api-excluded-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-graph-api-excluded-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     try {
-      writeFileSync(join(contentDir, '.okignore'), 'secret.md\n', 'utf-8');
+      writeFileSync(join(contentDir, '.psignore'), 'secret.md\n', 'utf-8');
       writeFileSync(join(contentDir, 'public.md'), '# Public\n\nLinks to [[secret]].\n', 'utf-8');
       writeFileSync(
         join(contentDir, 'secret.md'),
@@ -701,7 +701,7 @@ describe('graph endpoints', () => {
   });
 
   test('reject invalid orphan mode query values', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-graph-api-invalid-mode-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-graph-api-invalid-mode-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -733,7 +733,7 @@ describe('graph endpoints', () => {
 
 describe('POST /api/test-rescan-backlinks', () => {
   test('rebuilds the backlink index from disk when enableTestRoutes=true', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-api-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-api-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -766,7 +766,7 @@ describe('POST /api/test-rescan-backlinks', () => {
   });
 
   test('returns 404 when enableTestRoutes is not set (default)', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-gate-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-gate-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -794,7 +794,7 @@ describe('POST /api/test-rescan-backlinks', () => {
   });
 
   test('405s on non-POST methods', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-rescan-method-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-rescan-method-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -819,7 +819,7 @@ describe('POST /api/test-rescan-backlinks', () => {
   });
 
   test('admits skill/template link targets and resolves their titles', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-graph-skill-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-graph-skill-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -829,7 +829,7 @@ describe('POST /api/test-rescan-backlinks', () => {
         '# Alpha\n\nSee [[.ok/skills/my-skill/SKILL]].\n',
         'utf-8',
       );
-      const skillDir = join(contentDir, '.ok', 'skills', 'my-skill');
+      const skillDir = join(contentDir, '.ps', 'skills', 'my-skill');
       mkdirSync(skillDir, { recursive: true });
       writeFileSync(join(skillDir, 'SKILL.md'), '# My Skill\n\nGuidance.\n', 'utf-8');
 
@@ -845,7 +845,7 @@ describe('POST /api/test-rescan-backlinks', () => {
           },
         ],
         [
-          '.ok/skills/my-skill/SKILL',
+          '.ps/skills/my-skill/SKILL',
           {
             size: 10,
             modified: new Date(0).toISOString(),
@@ -863,7 +863,7 @@ describe('POST /api/test-rescan-backlinks', () => {
           .body,
       ) as { forwardLinks: Array<{ kind: string; docName: string; title: string }> };
 
-      const skillLink = forward.forwardLinks.find((l) => l.docName === '.ok/skills/my-skill/SKILL');
+      const skillLink = forward.forwardLinks.find((l) => l.docName === '.ps/skills/my-skill/SKILL');
       expect(skillLink).toBeDefined();
       expect(skillLink?.title).toBe('My Skill');
     } finally {

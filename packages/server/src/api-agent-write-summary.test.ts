@@ -71,7 +71,7 @@ describe('summary parameter — three agent-write endpoints (US-003)', () => {
   let sessionManager: AgentSessionManager;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-api-summary-'));
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-api-summary-'));
     contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     hocuspocus = new Hocuspocus({ quiet: true });

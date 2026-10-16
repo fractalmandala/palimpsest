@@ -47,7 +47,7 @@ function WikiImageHost() {
 describe('WikiLinkEmbedImageView', () => {
   afterEach(() => {
     cleanup();
-    delete (window as typeof window & { okDesktop?: unknown }).okDesktop;
+    delete (window as typeof window & { psDesktop?: unknown }).psDesktop;
   });
 
   test('a wiki image embed load failure uses the shared image placeholder', () => {
@@ -63,9 +63,9 @@ describe('WikiLinkEmbedImageView', () => {
 
   test('the shared leaf keeps the Electron asset-origin rewrite', () => {
     const windowWithDesktop = window as typeof window & {
-      okDesktop?: { config: { apiOrigin: string } };
+      psDesktop?: { config: { apiOrigin: string } };
     };
-    windowWithDesktop.okDesktop = {
+    windowWithDesktop.psDesktop = {
       config: { apiOrigin: 'http://127.0.0.1:54321' },
     };
 

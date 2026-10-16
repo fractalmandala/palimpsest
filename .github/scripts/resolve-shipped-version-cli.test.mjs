@@ -9,7 +9,7 @@ import { configureTestGitRepository } from '../../test-support/configure-git-fix
 import { expectNoAutomaticGitMaintenance } from './git-fixture-maintenance.test-helper.mjs';
 
 test('the operator CLI resolves only published desktop releases and fails closed on API errors', () => {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-shipped-cli-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-shipped-cli-'));
   const env = gitCleanEnv();
   const git = (...args) =>
     execFileSync('git', args, { cwd, env, encoding: 'utf8', stdio: 'pipe' }).trim();
@@ -36,7 +36,7 @@ test('the operator CLI resolves only published desktop releases and fails closed
       tag_name,
       draft: i === 0,
       published_at: i === 0 ? null : '2026-09-24T22:00:00Z',
-      assets: [{ name: 'OpenKnowledge-arm64.dmg' }, { name: 'latest-mac.yml' }],
+      assets: [{ name: 'Palimpsest-arm64.dmg' }, { name: 'latest-mac.yml' }],
     }));
     writeFileSync(
       join(bin, 'gh'),

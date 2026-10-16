@@ -6,7 +6,7 @@ import { ONE_LAUNCH_AND_ITS_READINESS_VERDICT_MS } from './tests/smoke/_helpers/
  *
  * Runs a deliberately small subset of the SAME smoke files as
  * `playwright.config.ts`, but against a packaged `.app` bundle selected via
- * `OK_DESKTOP_PACKAGED_APP` (see `tests/smoke/_helpers/launch-desktop.ts`).
+ * `PS_DESKTOP_PACKAGED_APP` (see `tests/smoke/_helpers/launch-desktop.ts`).
  * Two configs, one set of test files.
  *
  * Why a separate file rather than a `projects` array on the existing config:
@@ -20,7 +20,7 @@ import { ONE_LAUNCH_AND_ITS_READINESS_VERDICT_MS } from './tests/smoke/_helpers/
  * here would fail on a perfectly good DMG.
  */
 
-/* WARN: desktopLaunchOptions sets OK_IDLE_SHUTDOWN to
+/* WARN: desktopLaunchOptions sets PS_IDLE_SHUTDOWN to
    PACKAGED_SMOKE_SERVER_IDLE_SHUTDOWN_MS on every packaged launch, so a spec
    added here must never leave its server without a /collab client that long. */
 /**

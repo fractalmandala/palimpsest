@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
-import { resolveConfigPath, writeConfigPatch } from '@inkeep/open-knowledge-core/server';
+import { resolveConfigPath, writeConfigPatch } from '@palimpsest/core/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 import { getLogger } from './desktop-logger.ts';

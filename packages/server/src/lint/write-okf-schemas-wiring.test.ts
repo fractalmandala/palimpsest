@@ -5,17 +5,17 @@ import { join, resolve } from 'node:path';
 import {
   type Config,
   ConfigSchema,
-  okfAdvertisedSchemaMappings,
-} from '@inkeep/open-knowledge-core';
+  psfAdvertisedSchemaMappings,
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { type BootedServer, bootServer } from '../boot.ts';
-import { resetOkfSchemaWriteState } from './write-okf-schemas.ts';
+import { resetOkfSchemaWriteState } from './write-psf-schemas.ts';
 
 let tmpDir: string;
 let booted: BootedServer | null = null;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-okf-wiring-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-psf-wiring-'));
   resetOkfSchemaWriteState();
 });
 
@@ -25,12 +25,12 @@ afterEach(async () => {
   await rm(tmpDir, { recursive: true, force: true });
 });
 
-function seedProject(okfEnabled: boolean, okfExtraYaml = ''): string {
+function seedProject(psfEnabled: boolean, psfExtraYaml = ''): string {
   const project = resolve(tmpDir, 'project');
-  mkdirSync(join(project, '.ok'), { recursive: true });
+  mkdirSync(join(project, '.ps'), { recursive: true });
   writeFileSync(
-    join(project, '.ok', 'config.yml'),
-    okfEnabled ? `contentRules:\n  okf:\n    enabled: true\n${okfExtraYaml}` : 'contentRules: {}\n',
+    join(project, '.ps', 'config.yml'),
+    psfEnabled ? `contentRules:\n  psf:\n    enabled: true\n${psfExtraYaml}` : 'contentRules: {}\n',
     'utf8',
   );
   writeFileSync(resolve(project, 'note.md'), '---\ntype: Note\n---\n\nBody.\n', 'utf8');
@@ -55,7 +55,7 @@ async function boot(project: string): Promise<BootedServer> {
 }
 
 describe('OKF schemas reach disk through a real server', () => {
-  test('an audit request materializes them under .ok/okf/', async () => {
+  test('an audit request materializes them under .ps/psf/', async () => {
     const project = seedProject(true);
     const server = await boot(project);
 
@@ -70,7 +70,7 @@ describe('OKF schemas reach disk through a real server', () => {
       'reserved-index',
       'root-index',
     ]) {
-      const path = join(project, '.ok', 'okf', `${name}.schema.json`);
+      const path = join(project, '.ps', 'psf', `${name}.schema.json`);
       expect(existsSync(path), path).toBe(true);
     }
   });
@@ -80,7 +80,7 @@ describe('OKF schemas reach disk through a real server', () => {
     const server = await boot(project);
     await fetch(`http://127.0.0.1:${server.port}/api/audit`);
 
-    const advertised = okfAdvertisedSchemaMappings(undefined).map((m) => m.file);
+    const advertised = psfAdvertisedSchemaMappings(undefined).map((m) => m.file);
     expect(advertised.length).toBeGreaterThan(0);
     for (const path of advertised) {
       expect(existsSync(join(project, path)), path).toBe(true);
@@ -92,8 +92,8 @@ describe('OKF schemas reach disk through a real server', () => {
     const server = await boot(project);
     await fetch(`http://127.0.0.1:${server.port}/api/audit`);
 
-    expect(existsSync(join(project, '.ok', 'okf', 'provenance.schema.json'))).toBe(false);
-    expect(existsSync(join(project, '.ok', 'okf', 'required.schema.json'))).toBe(true);
+    expect(existsSync(join(project, '.ps', 'psf', 'provenance.schema.json'))).toBe(false);
+    expect(existsSync(join(project, '.ps', 'psf', 'required.schema.json'))).toBe(true);
   });
 
   test('with the plugin off, nothing is written', async () => {
@@ -102,6 +102,6 @@ describe('OKF schemas reach disk through a real server', () => {
 
     await fetch(`http://127.0.0.1:${server.port}/api/audit`);
 
-    expect(existsSync(join(project, '.ok', 'okf'))).toBe(false);
+    expect(existsSync(join(project, '.ps', 'psf'))).toBe(false);
   });
 });

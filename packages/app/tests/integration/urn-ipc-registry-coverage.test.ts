@@ -1,4 +1,4 @@
-import { ProblemTypeSchema, URN_HTTP_ONLY, URN_IPC_REGISTRY } from '@inkeep/open-knowledge-core';
+import { ProblemTypeSchema, URN_HTTP_ONLY, URN_IPC_REGISTRY } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 
 describe('URN → IPC registry coverage', () => {

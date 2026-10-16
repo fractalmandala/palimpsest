@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { OBSTACLE_POOL_SIZE } from './OkBlobRunner';
+import { OBSTACLE_POOL_SIZE } from './PsBlobRunner';
 import {
   collides,
   createRunnerState,
@@ -559,7 +559,7 @@ describe('persisted high score', () => {
 
   test('garbage in storage reads as no score, never NaN', () => {
     for (const junk of ['', 'abc', '-5', 'NaN', 'Infinity', '{}']) {
-      expect(readBestScore(fakeStorage({ 'ok-blob-runner-best': junk })), junk).toBe(0);
+      expect(readBestScore(fakeStorage({ 'ps-blob-runner-best': junk })), junk).toBe(0);
     }
   });
 

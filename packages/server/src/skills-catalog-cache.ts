@@ -2,7 +2,7 @@ import {
   enumerateInstalledSkills,
   type PluginUpstream,
   pluginUpstreamsByName,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { cachedSkillContentHash } from './in-place-skills.ts';
 import type { PinoLogger } from './logger.ts';
 

@@ -1,6 +1,6 @@
-import { parseGitUrl } from '@inkeep/open-knowledge';
-import { classifyGitHubShareHost } from '@inkeep/open-knowledge-core';
-import { inspectGitRepository } from '@inkeep/open-knowledge-core/git-repository';
+import { parseGitUrl } from '@palimpsest/cli';
+import { classifyGitHubShareHost } from '@palimpsest/core';
+import { inspectGitRepository } from '@palimpsest/core/git-repository';
 
 export function readCanonicalGitHubRemoteUrl(projectPath: string): string | null {
   const inspection = inspectGitRepository(projectPath);

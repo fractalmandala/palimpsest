@@ -39,7 +39,7 @@ afterEach(() => {
 });
 
 function makeDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-main-thread-watchdog-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-main-thread-watchdog-'));
   tmpDirs.push(dir);
   return dir;
 }

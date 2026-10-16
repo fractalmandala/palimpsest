@@ -68,7 +68,7 @@ function persistedTabSessions(page: Page): Promise<Record<string, unknown> | Pro
       const out: Record<string, unknown> = {};
       for (let i = 0; i < localStorage.length; i += 1) {
         const key = localStorage.key(i);
-        if (!key?.startsWith('ok-editor-tabs-v1:')) continue;
+        if (!key?.startsWith('ps-editor-tabs-v1:')) continue;
         const raw = localStorage.getItem(key) ?? '';
         try {
           out[key] = JSON.parse(raw);

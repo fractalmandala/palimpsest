@@ -1,4 +1,4 @@
-import { OK_CHUNK_WRAPPER_CLASS } from './extensions/chunk-wrapper-decoration.ts';
+import { PS_CHUNK_WRAPPER_CLASS } from './extensions/chunk-wrapper-decoration.ts';
 
 export interface DisplayLockSnapshot {
   locked: boolean;
@@ -27,7 +27,7 @@ interface ClassListBearing {
 function isChunkWrapper(target: EventTarget | null): boolean {
   const classList = (target as ClassListBearing | null)?.classList;
   if (typeof classList?.contains !== 'function') return false;
-  return classList.contains(OK_CHUNK_WRAPPER_CLASS);
+  return classList.contains(PS_CHUNK_WRAPPER_CLASS);
 }
 
 interface ListenerTarget {
@@ -45,7 +45,7 @@ interface ListenerTarget {
 
 function desktopSink(): ((state: string) => void) | undefined {
   if (typeof window === 'undefined') return undefined;
-  const publish = window.okDesktop?.setDisplayLockCrashKey;
+  const publish = window.psDesktop?.setDisplayLockCrashKey;
   if (typeof publish !== 'function') return undefined;
   return publish;
 }

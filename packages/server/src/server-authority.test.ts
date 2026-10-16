@@ -21,7 +21,7 @@ import {
 import { ServerAuthorityLeaseVerificationError } from './server-authority-lease.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -129,7 +129,7 @@ const releases: Array<() => void> = [];
 const workers: Array<{ child: ChildProcess; exited: Promise<void> }> = [];
 
 beforeEach(() => {
-  directory = mkdtempSync(join(tmpdir(), 'ok-server-authority-'));
+  directory = mkdtempSync(join(tmpdir(), 'ps-server-authority-'));
   registryPath = join(directory, 'runtime', 'authority.sqlite');
 });
 
@@ -302,10 +302,10 @@ describe('acquireServerAuthority', () => {
     writeFileSync(join(directory, 'corrupt.sqlite'), 'not a SQLite database');
     registryPath = join(directory, 'corrupt.sqlite');
     try {
-      vi.stubEnv('OK_CHANNEL', 'stable');
-      expect(() => claim(tree())).toThrow(/Run ok stop all and confirm/);
-      vi.stubEnv('OK_CHANNEL', 'beta');
-      expect(() => claim(tree())).toThrow(/Run ok-beta stop all and confirm/);
+      vi.stubEnv('PS_CHANNEL', 'stable');
+      expect(() => claim(tree())).toThrow(/Run ps stop all and confirm/);
+      vi.stubEnv('PS_CHANNEL', 'beta');
+      expect(() => claim(tree())).toThrow(/Run ps-beta stop all and confirm/);
     } finally {
       vi.unstubAllEnvs();
     }
@@ -394,7 +394,7 @@ describe('acquireServerAuthority', () => {
           );
           expect((error as Error).message).toContain(`Registry: ${registryPath}.`);
           expect((error as Error).message).not.toContain('Version 1.');
-          expect((error as Error).message).toContain('ok stop all');
+          expect((error as Error).message).toContain('ps stop all');
           expect((error as Error).message).toContain('-journal');
         }
         expect(database.prepare('PRAGMA user_version').get()?.user_version).toBe(1);
@@ -544,7 +544,7 @@ describe('acquireServerAuthority', () => {
         } else expect((error as Error).message).not.toContain('retry');
         expect((error as Error).message).toContain('could not be verified');
         expect((error as Error).message).toContain(registryPath);
-        expect((error as Error).message).toContain('ok stop all');
+        expect((error as Error).message).toContain('ps stop all');
       }
     },
   );

@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { resolveShadowDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { resolveShadowDir } from '@palimpsest/core/shadow-repo-layout';
 import { afterEach, describe, expect, test } from 'vitest';
 import {
   loadRenameLogIndex,
@@ -577,7 +577,7 @@ describe('Timeline rename-history mitigation — integration', () => {
     }
   }, 60_000);
 
-  test('folder rename — user-supplied summary appears exactly once in OkActorEntry.summaries (no per-doc duplication)', async () => {
+  test('folder rename — user-supplied summary appears exactly once in PsActorEntry.summaries (no per-doc duplication)', async () => {
     const server = await bootServer();
     mkdirSync(join(server.contentDir, 'src-folder'), { recursive: true });
     await agentWriteMdAndAwaitWip(server, '# a\n', {
@@ -623,13 +623,13 @@ describe('Timeline rename-history mitigation — integration', () => {
     const body = execSync(`git --git-dir=${shadow} show -s --format=%B ${renameSha}`, {
       encoding: 'utf-8',
     });
-    const okActorLine = body.split('\n').find((l) => l.startsWith('ok-actor:')) ?? '';
-    const okActor = JSON.parse(okActorLine.slice('ok-actor: '.length)) as {
+    const psActorLine = body.split('\n').find((l) => l.startsWith('ps-actor:')) ?? '';
+    const psActor = JSON.parse(psActorLine.slice('ps-actor: '.length)) as {
       summaries?: string[];
       previous_paths?: Array<{ from: string; to: string }>;
     };
-    expect(okActor.summaries).toEqual(['Renamed src-folder → dst-folder']);
-    expect(okActor.previous_paths).toHaveLength(3);
+    expect(psActor.summaries).toEqual(['Renamed src-folder → dst-folder']);
+    expect(psActor.previous_paths).toHaveLength(3);
   }, 60_000);
 
   test('user-supplied summary lands on the same commit as the rename event (no leak across drains)', async () => {
@@ -661,12 +661,12 @@ describe('Timeline rename-history mitigation — integration', () => {
     const body = execSync(`git --git-dir=${shadow} show -s --format=%B ${renameSha}`, {
       encoding: 'utf-8',
     });
-    const okActorLine = body.split('\n').find((l) => l.startsWith('ok-actor:')) ?? '';
-    const okActorBody = okActorLine.slice('ok-actor: '.length);
-    const okActor = JSON.parse(okActorBody) as { summaries?: string[]; previous_paths?: unknown };
-    expect(okActor.summaries).toBeDefined();
-    expect(okActor.summaries).toContain('Renamed summary-a → summary-b');
-    expect(okActor.previous_paths).toBeDefined();
+    const psActorLine = body.split('\n').find((l) => l.startsWith('ps-actor:')) ?? '';
+    const psActorBody = psActorLine.slice('ps-actor: '.length);
+    const psActor = JSON.parse(psActorBody) as { summaries?: string[]; previous_paths?: unknown };
+    expect(psActor.summaries).toBeDefined();
+    expect(psActor.summaries).toContain('Renamed summary-a → summary-b');
+    expect(psActor.previous_paths).toBeDefined();
 
     await agentWriteMdAndAwaitWip(server, '# Unrelated\n', {
       docName: 'unrelated-doc',

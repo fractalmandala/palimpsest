@@ -1,17 +1,17 @@
 ---
 name: worldbuilding
-description: "How to work in a Worldbuilding project (the `worldbuilding` starter pack): a fiction encyclopedia of characters, settings, themes, factions, and lore. Read when the project has these folders, OR when asked to add a character, setting, faction, or piece of lore, or to check the world for internal consistency. Carries the auto-stub and consistency behaviors so that guidance does not live inside template bodies or folder descriptions. Complements the platform `open-knowledge` skill; does not replace it."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack worldbuilding` (`ok-beta` for Beta)."
+description: "How to work in a Worldbuilding project (the `worldbuilding` starter pack): a fiction encyclopedia of characters, settings, themes, factions, and lore. Read when the project has these folders, OR when asked to add a character, setting, faction, or piece of lore, or to check the world for internal consistency. Carries the auto-stub and consistency behaviors so that guidance does not live inside template bodies or folder descriptions. Complements the platform `palimpsest` skill; does not replace it."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack worldbuilding` (`ps-beta` for Beta)."
 metadata:
   pack: "worldbuilding"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Worldbuilding pack — how to work here
 
 This project is a fiction encyclopedia. The graph is the product: characters, settings, themes, factions, and lore that link to each other. The agent's main jobs are auto-stubbing new entities as they're mentioned and flagging contradictions. This skill holds those behaviors so templates and folder descriptions stay clean.
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the worldbuilding conventions on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the worldbuilding conventions on top.
 
 ## Folders
 

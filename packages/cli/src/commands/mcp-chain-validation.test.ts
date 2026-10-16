@@ -2,14 +2,14 @@ import { spawnSync } from 'node:child_process';
 import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DESKTOP_PRODUCTS, type DesktopProductName } from '@inkeep/open-knowledge-core';
+import { DESKTOP_PRODUCTS, type DesktopProductName } from '@palimpsest/core';
 import { describe, expect, it, vi } from 'vitest';
 import { buildManagedServerEntry } from './editors.ts';
 
 const CHANNELS = ['stable', 'beta'] as const satisfies readonly DesktopProductName[];
 
 function chainFor(channel: DesktopProductName): string {
-  vi.stubEnv('OK_CHANNEL', channel);
+  vi.stubEnv('PS_CHANNEL', channel);
   try {
     const args = buildManagedServerEntry({ mode: 'published', platformName: 'darwin' }).args;
     if (!Array.isArray(args) || typeof args[2] !== 'string') throw new Error('expected a chain');
@@ -49,13 +49,13 @@ function instrumentChain(channel: DesktopProductName, opts: InstrumentOpts = {})
   chain = replaceOrThrow(chain, 'exec "$BUNDLE" mcp', 'echo "HIT:bundle:$BUNDLE" && exit 0');
   chain = replaceOrThrow(
     chain,
-    `exec npx -y @inkeep/open-knowledge@${product.npmDistTag} mcp`,
-    'echo "HIT:npx:$(command -v npx):channel=$OK_CHANNEL" && exit 0',
+    `exec npx -y @palimpsest/cli@${product.npmDistTag} mcp`,
+    'echo "HIT:npx:$(command -v npx):channel=$PS_CHANNEL" && exit 0',
   );
   chain = replaceOrThrow(
     chain,
-    `exec "$d/npx" -y @inkeep/open-knowledge@${product.npmDistTag} mcp`,
-    'echo "HIT:glob:$d/npx:channel=$OK_CHANNEL" && exit 0',
+    `exec "$d/npx" -y @palimpsest/cli@${product.npmDistTag} mcp`,
+    'echo "HIT:glob:$d/npx:channel=$PS_CHANNEL" && exit 0',
   );
   if (opts.suppressNpxPath) {
     chain = replaceOrThrow(
@@ -79,12 +79,12 @@ function instrumentChain(channel: DesktopProductName, opts: InstrumentOpts = {})
     }
     chain = replaceOrThrow(
       chain,
-      `USER_BUNDLE="$HOME/Applications/${product.productName}.app/Contents/Resources/cli/bin/ok.sh"`,
+      `USER_BUNDLE="$HOME/Applications/${product.productName}.app/Contents/Resources/cli/bin/ps.sh"`,
       `USER_BUNDLE="${opts.bundleOverride}__user_bundle__"`,
     );
     chain = replaceOrThrow(
       chain,
-      `BUNDLE="/Applications/${product.productName}.app/Contents/Resources/cli/bin/ok.sh"`,
+      `BUNDLE="/Applications/${product.productName}.app/Contents/Resources/cli/bin/ps.sh"`,
       `BUNDLE="${opts.bundleOverride}"`,
     );
   }
@@ -128,7 +128,7 @@ describe.each(CHANNELS)('%s chain POSIX shell grammar (cross-platform)', (channe
         chainOverride: chain,
       });
       expect(status).toBe(127);
-      expect(stderr).toContain('OpenKnowledge: install OK Desktop or Node.js 24+');
+      expect(stderr).toContain('Palimpsest: install OK Desktop or Node.js 24+');
     } finally {
       rmSync(tmpHome, { recursive: true, force: true });
     }
@@ -175,7 +175,7 @@ describe.each(CHANNELS)('%s chain POSIX shell grammar (cross-platform)', (channe
         chainOverride: chain,
       });
       expect(status).toBe(127);
-      expect(stderr).toContain('OpenKnowledge: install OK Desktop or Node.js 24+');
+      expect(stderr).toContain('Palimpsest: install OK Desktop or Node.js 24+');
       expect(stderr).not.toContain('no matches found');
     } finally {
       rmSync(tmpHome, { recursive: true, force: true });
@@ -218,12 +218,12 @@ describe.each(CHANNELS)('%s chain POSIX shell grammar (cross-platform)', (channe
       const productName = DESKTOP_PRODUCTS[channel].productName;
       let chain = replaceOrThrow(
         chainFor(channel),
-        `USER_BUNDLE="$HOME/Applications/${productName}.app/Contents/Resources/cli/bin/ok.sh"`,
+        `USER_BUNDLE="$HOME/Applications/${productName}.app/Contents/Resources/cli/bin/ps.sh"`,
         `USER_BUNDLE="${join(tmpHome, 'no-such-user-bundle.sh')}"`,
       );
       chain = replaceOrThrow(
         chain,
-        `BUNDLE="/Applications/${productName}.app/Contents/Resources/cli/bin/ok.sh"`,
+        `BUNDLE="/Applications/${productName}.app/Contents/Resources/cli/bin/ps.sh"`,
         `BUNDLE="${crashBundle}"`,
       );
       const { stdout, status } = runChain({

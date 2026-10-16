@@ -4,26 +4,26 @@ import { join } from 'node:path';
 import { afterAll, describe, expect, test, vi } from 'vitest';
 
 const previousChannel = vi.hoisted(() => {
-  const previous = process.env.OK_CHANNEL;
-  process.env.OK_CHANNEL = 'dev';
+  const previous = process.env.PS_CHANNEL;
+  process.env.PS_CHANNEL = 'dev';
   return previous;
 });
 
 import { ensureCliOnPath, pathInstallMarkerPath } from './path-install.ts';
 
 afterAll(() => {
-  if (previousChannel === undefined) delete process.env.OK_CHANNEL;
-  else process.env.OK_CHANNEL = previousChannel;
+  if (previousChannel === undefined) delete process.env.PS_CHANNEL;
+  else process.env.PS_CHANNEL = previousChannel;
 });
 
-const STABLE_EXE = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
-const STABLE_WRAPPER = '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
+const STABLE_EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
+const STABLE_WRAPPER = '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
 
 describe('forced PATH install from a dev build', () => {
   test('lands in the dev home under dev command names, leaving Stable untouched', async () => {
-    const userHome = mkdtempSync(join(tmpdir(), 'ok-dev-path-install-'));
+    const userHome = mkdtempSync(join(tmpdir(), 'ps-dev-path-install-'));
     const zshrc = join(userHome, '.zshrc');
-    const stableBlock = '# >>> open-knowledge cli >>>\nstable\n# <<< open-knowledge cli <<<\n';
+    const stableBlock = '# >>> palimpsest cli >>>\nstable\n# <<< palimpsest cli <<<\n';
     writeFileSync(zshrc, stableBlock);
 
     const result = await ensureCliOnPath({
@@ -39,18 +39,18 @@ describe('forced PATH install from a dev build', () => {
     });
 
     expect(result.status).toBe('installed');
-    const devRoot = join(userHome, '.ok-dev');
+    const devRoot = join(userHome, '.ps-dev');
     expect(pathInstallMarkerPath(userHome)).toBe(join(devRoot, 'path-install.json'));
-    expect(readlinkSync(join(devRoot, 'bin', 'ok-dev'))).toBe(STABLE_WRAPPER);
-    expect(readlinkSync(join(devRoot, 'bin', 'open-knowledge-dev'))).toBe(STABLE_WRAPPER);
-    expect(readFileSync(join(devRoot, 'env.sh'), 'utf8')).toContain('$' + '{HOME}/.ok-dev/bin');
+    expect(readlinkSync(join(devRoot, 'bin', 'ps-dev'))).toBe(STABLE_WRAPPER);
+    expect(readlinkSync(join(devRoot, 'bin', 'palimpsest-dev'))).toBe(STABLE_WRAPPER);
+    expect(readFileSync(join(devRoot, 'env.sh'), 'utf8')).toContain('$' + '{HOME}/.ps-dev/bin');
     const rc = readFileSync(zshrc, 'utf8');
     expect(rc).toContain(stableBlock);
-    expect(rc).toContain('# >>> open-knowledge dev cli >>>');
-    expect(existsSync(join(userHome, '.ok'))).toBe(false);
+    expect(rc).toContain('# >>> palimpsest dev cli >>>');
+    expect(existsSync(join(userHome, '.ps'))).toBe(false);
     expect(
       existsSync(
-        join(userHome, 'Library', 'Application Support', 'OpenKnowledge', 'path-install.json'),
+        join(userHome, 'Library', 'Application Support', 'Palimpsest', 'path-install.json'),
       ),
     ).toBe(false);
   });

@@ -6,13 +6,13 @@ import { describe, expect, test } from 'vitest';
 
 const APP_PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const WORKSPACE_ROOT = join(APP_PACKAGE_ROOT, '..', '..');
-const APP_PACKAGE_NAME = '@inkeep/open-knowledge-app';
+const APP_PACKAGE_NAME = '@palimpsest/app';
 const COMPILE_GLOBAL_SETUP = './tests/stress/_helpers/i18n-catalog-compile.ts';
 const TURBO_DRY_RUN_TIMEOUT_MS = 120_000;
 const TURBO_DRY_RUN_MAX_BUFFER_BYTES = 64 * 1024 * 1024;
 const TURBO_OUTPUT_HEAD_CHARS = 400;
 const BUILD_EDGE_REASON =
-  'The edge keeps the ordering associated with a recorded CI failure: the app build, scheduled beside the e2e tier, could not resolve @inkeep/open-knowledge-core while Vite loaded its config. Concurrency is the most-supported explanation for that failure rather than a reproduced one.';
+  'The edge keeps the ordering associated with a recorded CI failure: the app build, scheduled beside the e2e tier, could not resolve @palimpsest/core while Vite loaded its config. Concurrency is the most-supported explanation for that failure rather than a reproduced one.';
 
 const PLAYWRIGHT_TIERS = {
   e2e: {
@@ -163,7 +163,7 @@ describe('i18n catalog compile wiring', () => {
     const declared = declaredGlobalSetups((await load()).default.globalSetup);
     expect(
       declared,
-      `the ${tier} tier (packages/app/${configFile}) does not declare ${COMPILE_GLOBAL_SETUP} in globalSetup, so its dev servers would serve missing or stale src/locales/*/messages.json: every dev server it boots sets OK_TEST_SKIP_I18N_COMPILE, so nothing else in the run compiles them and every assertion reads whatever an earlier compile left instead of the edit under test. Re-add that path to globalSetup in packages/app/${configFile}.`,
+      `the ${tier} tier (packages/app/${configFile}) does not declare ${COMPILE_GLOBAL_SETUP} in globalSetup, so its dev servers would serve missing or stale src/locales/*/messages.json: every dev server it boots sets PS_TEST_SKIP_I18N_COMPILE, so nothing else in the run compiles them and every assertion reads whatever an earlier compile left instead of the edit under test. Re-add that path to globalSetup in packages/app/${configFile}.`,
     ).toContain(COMPILE_GLOBAL_SETUP);
     expect(
       declared[0],
@@ -171,7 +171,7 @@ describe('i18n catalog compile wiring', () => {
     ).toBe(COMPILE_GLOBAL_SETUP);
     expect(
       existsSync(join(APP_PACKAGE_ROOT, COMPILE_GLOBAL_SETUP)),
-      `the ${tier} tier (packages/app/${configFile}) names ${COMPILE_GLOBAL_SETUP} in globalSetup but no such file exists under packages/app, so the tier declares a catalog compile Playwright cannot load and its dev servers would serve missing or stale src/locales/*/messages.json under OK_TEST_SKIP_I18N_COMPILE. Point packages/app/${configFile} at the helper's real path.`,
+      `the ${tier} tier (packages/app/${configFile}) names ${COMPILE_GLOBAL_SETUP} in globalSetup but no such file exists under packages/app, so the tier declares a catalog compile Playwright cannot load and its dev servers would serve missing or stale src/locales/*/messages.json under PS_TEST_SKIP_I18N_COMPILE. Point packages/app/${configFile} at the helper's real path.`,
     ).toBe(true);
   });
 });

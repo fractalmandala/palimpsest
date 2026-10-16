@@ -1,15 +1,15 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { useLanguageBridge } from './use-language-bridge';
 
-function makeBridge(): { bridge: OkDesktopBridge; sent: string[] } {
+function makeBridge(): { bridge: PsDesktopBridge; sent: string[] } {
   const sent: string[] = [];
   const setLanguagePreference = vi.fn(async (preference: string) => {
     sent.push(preference);
     return { ok: true } as const;
   });
-  return { bridge: { setLanguagePreference } as unknown as OkDesktopBridge, sent };
+  return { bridge: { setLanguagePreference } as unknown as PsDesktopBridge, sent };
 }
 
 describe('useLanguageBridge', () => {
@@ -59,7 +59,7 @@ describe('useLanguageBridge', () => {
   });
 
   test('no-ops against a bridge that predates the method rather than crashing the shell', () => {
-    const olderBridge = { project: {} } as unknown as OkDesktopBridge;
+    const olderBridge = { project: {} } as unknown as PsDesktopBridge;
     expect(() => renderHook(() => useLanguageBridge(olderBridge, 'es', true))).not.toThrow();
   });
 
@@ -69,7 +69,7 @@ describe('useLanguageBridge', () => {
       setLanguagePreference: vi.fn(async () => {
         throw new Error('main is gone');
       }),
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     renderHook(() => useLanguageBridge(bridge, 'es', true));
     await waitFor(() => expect(warn).toHaveBeenCalled());
     expect(String(warn.mock.calls[0]?.[0])).toContain('language-preference-push-failed');

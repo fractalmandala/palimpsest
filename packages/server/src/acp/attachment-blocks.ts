@@ -5,7 +5,7 @@ import type { ContentBlock, PromptCapabilities } from '@agentclientprotocol/sdk'
 import {
   type AttachmentPart,
   isTextishMime,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 
 function mimeFromExtension(path: string): string | null {
   const dot = path.lastIndexOf('.');

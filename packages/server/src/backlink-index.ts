@@ -35,8 +35,8 @@ import {
   stripFrontmatter,
   toWikiLinkSlug,
   type WikiLinkLookupIndex,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import { isLinkIndexExcludedDoc } from './cc1-broadcast.ts';
 import { getLocalDir } from './config/paths.ts';
 import type { ContentFilter } from './content-filter.ts';

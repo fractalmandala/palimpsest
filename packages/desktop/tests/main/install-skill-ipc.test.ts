@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readTargetVersion, writeTargetVersion } from '@inkeep/open-knowledge-server';
+import { readTargetVersion, writeTargetVersion } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { handleBuildAndOpen } from '../../src/main/ipc/install-skill.ts';
 
@@ -43,7 +43,7 @@ async function readServerVersion(): Promise<string> {
 }
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-handle-build-and-open-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-handle-build-and-open-'));
   downloads = join(home, 'Downloads');
   mkdirSync(downloads, { recursive: true });
 });
@@ -87,7 +87,7 @@ describe('handleBuildAndOpen — install-state gate', () => {
 
     expect(result.ok).toBe(true);
     if (result.ok && !result.skipped) {
-      expect(result.path).toContain('openknowledge.skill');
+      expect(result.path).toContain('palimpsest.skill');
     }
     expect(shell.openPath).toHaveBeenCalledTimes(1);
     expect(await readTargetVersion(home, 'claude-cowork')).toBe(currentVersion);
@@ -106,7 +106,7 @@ describe('handleBuildAndOpen — install-state gate', () => {
 
     expect(result.ok).toBe(true);
     if (result.ok && !result.skipped) {
-      expect(result.path).toContain('openknowledge.skill');
+      expect(result.path).toContain('palimpsest.skill');
     }
     expect(shell.openPath).toHaveBeenCalledTimes(1);
     expect(await readTargetVersion(home, 'claude-cowork')).toBe(currentVersion);

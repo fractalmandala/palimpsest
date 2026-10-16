@@ -52,7 +52,7 @@ import 'katex/dist/katex.min.css';
 import './globals.css';
 
 installClientFetchWrapper({
-  apiOrigin: typeof window !== 'undefined' ? window.okDesktop?.config.apiOrigin : undefined,
+  apiOrigin: typeof window !== 'undefined' ? window.psDesktop?.config.apiOrigin : undefined,
 });
 
 installClientLogForwarder();
@@ -76,46 +76,46 @@ installFeedbackNudgeStore();
 
 installContactEmailStore();
 
-if (typeof window !== 'undefined' && window.okDesktop !== undefined) {
+if (typeof window !== 'undefined' && window.psDesktop !== undefined) {
   installPointerPositionTracker();
 }
 
 installRelaunchStateBridge();
 
 if (typeof window !== 'undefined') {
-  installDeepLinkListener({ bridge: window.okDesktop });
+  installDeepLinkListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installServerDriftListener({ bridge: window.okDesktop });
+  installServerDriftListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installRecentRemovedListener({ bridge: window.okDesktop });
+  installRecentRemovedListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installMcpConsentListener({ bridge: window.okDesktop });
+  installMcpConsentListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installConsentListener({ bridge: window.okDesktop });
+  installConsentListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installOnboardingToastListener({ bridge: window.okDesktop });
+  installOnboardingToastListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installShareReceivedListener({ bridge: window.okDesktop });
+  installShareReceivedListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installCrashInviteListener({ bridge: window.okDesktop });
+  installCrashInviteListener({ bridge: window.psDesktop });
 }
 
 if (typeof window !== 'undefined') {
-  installBugReportSendToasts({ bridge: window.okDesktop });
+  installBugReportSendToasts({ bridge: window.psDesktop });
 }
 
 seedInitialDocHashFromWindow();
@@ -129,7 +129,7 @@ const queryClient = new QueryClient({
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element not found');
 
-const desktopBridge = typeof window === 'undefined' ? undefined : window.okDesktop;
+const desktopBridge = typeof window === 'undefined' ? undefined : window.psDesktop;
 
 function RegisteredAgentHydrator(): null {
   useHydrateRegisteredAgentMeta();
@@ -147,7 +147,7 @@ createRoot(root).render(
           attribute="class"
           defaultTheme="system"
           enableSystem
-          storageKey="ok-theme-v1"
+          storageKey="ps-theme-v1"
         >
           <RegisteredAgentHydrator />
           {}

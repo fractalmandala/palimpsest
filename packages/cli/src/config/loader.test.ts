@@ -9,7 +9,7 @@ import {
   requiresExternalConsent,
   resolveEnvConfigLayer,
   resolveServerRuntimeConfig,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { stringify } from 'yaml';
 
@@ -24,13 +24,13 @@ await vi.doMock('node:os', async () => {
   };
 });
 
-const { OK_DIR } = await import('../constants.ts');
+const { PS_DIR } = await import('../constants.ts');
 const { createProjectConfigResolver, loadConfig } = await import('./loader');
 
 beforeEach(() => {
   testDir = resolve(
     tmpdir(),
-    `ok-config-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    `ps-config-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
   mkdirSync(testDir, { recursive: true });
   fakeHome = resolve(testDir, '__home__');
@@ -41,19 +41,19 @@ afterEach(() => {
 });
 
 function writeWorkspaceConfig(yaml: string) {
-  const configDir = resolve(testDir, OK_DIR);
+  const configDir = resolve(testDir, PS_DIR);
   mkdirSync(configDir, { recursive: true });
   writeFileSync(resolve(configDir, 'config.yml'), yaml, 'utf-8');
 }
 
 function writeLocalConfig(yaml: string) {
-  const localDir = resolve(testDir, OK_DIR, 'local');
+  const localDir = resolve(testDir, PS_DIR, 'local');
   mkdirSync(localDir, { recursive: true });
   writeFileSync(resolve(localDir, 'config.yml'), yaml, 'utf-8');
 }
 
 function writeWorkspaceConfigAt(dir: string, yaml: string) {
-  const configDir = resolve(dir, OK_DIR);
+  const configDir = resolve(dir, PS_DIR);
   mkdirSync(configDir, { recursive: true });
   writeFileSync(resolve(configDir, 'config.yml'), yaml, 'utf-8');
 }
@@ -133,10 +133,10 @@ describe('loadConfig', () => {
     const joined = removed.map((r) => r.redirect).join('\n');
     expect(joined).toContain('--bind');
     expect(joined).toContain('HOST');
-    expect(joined).toContain('OPEN_KNOWLEDGE_GITHUB_CLIENT_ID');
-    expect(joined).toContain('OK_MCP_AUTOSTART');
+    expect(joined).toContain('PALIMPSEST_GITHUB_CLIENT_ID');
+    expect(joined).toContain('PS_MCP_AUTOSTART');
     expect(joined).toContain('streaming uploads have no user-facing cap');
-    const expectedPath = resolve(testDir, OK_DIR, 'config.yml');
+    const expectedPath = resolve(testDir, PS_DIR, 'config.yml');
     for (const d of diagnostics) {
       if (d.code === 'REMOVED_KEY') {
         expect(d.source?.file).toBe(expectedPath);
@@ -169,7 +169,7 @@ appearance:
     expect(config.appearance.theme).toBeUndefined();
   });
 
-  test('content.include in project config is stripped with .okignore redirect; content.dir survives', () => {
+  test('content.include in project config is stripped with .psignore redirect; content.dir survives', () => {
     writeWorkspaceConfig(`content:
   dir: docs
   include:
@@ -180,11 +180,11 @@ appearance:
     const include = removedKeys(diagnostics).find((r) => r.dotted === 'content.include');
     expect(include).toBeDefined();
     expect(include?.redirect).toContain('content.dir');
-    expect(include?.redirect).toContain('.okignore');
+    expect(include?.redirect).toContain('.psignore');
     expect(include?.redirect).toContain('exclude-only');
   });
 
-  test('content.exclude in project config is stripped with a 1:1 .okignore redirect', () => {
+  test('content.exclude in project config is stripped with a 1:1 .psignore redirect', () => {
     writeWorkspaceConfig(`content:
   dir: docs
   exclude:
@@ -194,7 +194,7 @@ appearance:
     expect(config.content.dir).toBe('docs');
     const exclude = removedKeys(diagnostics).find((r) => r.dotted === 'content.exclude');
     expect(exclude).toBeDefined();
-    expect(exclude?.redirect).toContain('.okignore');
+    expect(exclude?.redirect).toContain('.psignore');
     expect(exclude?.redirect).toContain('1:1 migration');
   });
 
@@ -216,7 +216,7 @@ appearance:
     expect(joined).toContain('1:1 migration');
   });
 
-  test('folders in project config is stripped with a nested .ok/ redirect', () => {
+  test('folders in project config is stripped with a nested .ps/ redirect', () => {
     writeWorkspaceConfig(`content:
   dir: docs
 folders:
@@ -228,7 +228,7 @@ folders:
     expect(config.content.dir).toBe('docs');
     const folders = removedKeys(diagnostics).find((r) => r.dotted === 'folders');
     expect(folders).toBeDefined();
-    expect(folders?.redirect).toContain('.ok/');
+    expect(folders?.redirect).toContain('.ps/');
     expect(folders?.redirect).toContain('edit({ folder');
   });
 
@@ -311,7 +311,7 @@ folders:
       caught = e as Error;
     }
     expect(caught).toBeDefined();
-    const expectedPath = resolve(testDir, OK_DIR, 'config.yml');
+    const expectedPath = resolve(testDir, PS_DIR, 'config.yml');
     expect(caught?.message).toContain(`${expectedPath}:2:`);
     expect(caught?.message).toContain('server.port');
   });
@@ -332,20 +332,20 @@ folders:
     expect(() => loadConfig(testDir)).not.toThrow();
   });
 
-  test('user-global reads from `~/.ok/global.yml` (not `config.yml`)', () => {
-    const okDir = resolve(fakeHome, OK_DIR);
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'global.yml'), 'appearance:\n  theme: dark\n', 'utf-8');
+  test('user-global reads from `~/.ps/global.yml` (not `config.yml`)', () => {
+    const psDir = resolve(fakeHome, PS_DIR);
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'global.yml'), 'appearance:\n  theme: dark\n', 'utf-8');
     const { config, sources } = loadConfig(testDir);
     expect(config.appearance.theme).toBe('dark');
-    expect(sources).toContain(resolve(okDir, 'global.yml'));
+    expect(sources).toContain(resolve(psDir, 'global.yml'));
   });
 
   test('user-global strip-and-continue: sibling survives the merge, key is reported', () => {
-    const okDir = resolve(fakeHome, OK_DIR);
-    mkdirSync(okDir, { recursive: true });
+    const psDir = resolve(fakeHome, PS_DIR);
+    mkdirSync(psDir, { recursive: true });
     writeFileSync(
-      resolve(okDir, 'global.yml'),
+      resolve(psDir, 'global.yml'),
       'server:\n  host: 0.0.0.0\nappearance:\n  theme: dark\n',
       'utf-8',
     );
@@ -481,7 +481,7 @@ describe('loadConfig — scope-aware layering (project-local)', () => {
     writeLocalConfig('server:\n  allowExternal: true\n');
     const { config, sources } = loadConfig(testDir);
     expect(config.server.allowExternal).toBe(true);
-    expect(sources).toContain(resolve(testDir, OK_DIR, 'local', 'config.yml'));
+    expect(sources).toContain(resolve(testDir, PS_DIR, 'local', 'config.yml'));
   });
 
   test('a committed server.allowExternal: true never arms exposure (clone-leak guarantee)', () => {
@@ -498,10 +498,10 @@ describe('loadConfig — scope-aware layering (project-local)', () => {
   });
 
   test('an explicit user-global value survives an empty project file (precedence, not clobber)', () => {
-    const okDir = resolve(fakeHome, OK_DIR);
-    mkdirSync(okDir, { recursive: true });
+    const psDir = resolve(fakeHome, PS_DIR);
+    mkdirSync(psDir, { recursive: true });
     writeFileSync(
-      resolve(okDir, 'global.yml'),
+      resolve(psDir, 'global.yml'),
       'telemetry:\n  localSink:\n    enabled: false\n',
       'utf-8',
     );
@@ -530,7 +530,7 @@ describe('loadConfig — scope-aware layering (project-local)', () => {
     expect(config.server.bind).toEqual(['127.0.0.1']);
     const bindKey = ignoredCommittedKeys.find((k) => k.path.join('.') === 'server.bind');
     expect(bindKey).toBeDefined();
-    expect(bindKey?.envVar).toBe('OK_BIND');
+    expect(bindKey?.envVar).toBe('PS_BIND');
   });
 
   test('a project-local server.bind is honored, with no ignored-committed-key warning', () => {
@@ -548,10 +548,10 @@ describe('loadConfig — scope-aware layering (project-local)', () => {
     expect(removedKeys(diagnostics).some((k) => k.dotted === 'server.host')).toBe(true);
     const bindKey = ignoredCommittedKeys.find((k) => k.path.join('.') === 'server.bind');
     expect(bindKey).toBeDefined();
-    expect(bindKey?.envVar).toBe('OK_BIND');
+    expect(bindKey?.envVar).toBe('PS_BIND');
   });
 
-  test('interlock resolution: a committed bind boots on loopback, but explicit OK_BIND stays exposing', () => {
+  test('interlock resolution: a committed bind boots on loopback, but explicit PS_BIND stays exposing', () => {
     writeWorkspaceConfig('server:\n  bind:\n    - 0.0.0.0\n');
     const { config } = loadConfig(testDir);
 
@@ -560,7 +560,7 @@ describe('loadConfig — scope-aware layering (project-local)', () => {
     expect(committedRuntime.loopbackOnly).toBe(true);
     expect(requiresExternalConsent(committedRuntime)).toBe(false);
 
-    const envLayer = resolveEnvConfigLayer({ OK_BIND: '0.0.0.0' });
+    const envLayer = resolveEnvConfigLayer({ PS_BIND: '0.0.0.0' });
     const envConfig = applyConfigOverlay(config, envLayer.layer) as typeof config;
     const envRuntime = resolveServerRuntimeConfig(envConfig);
     expect(envRuntime.bind).toEqual(['0.0.0.0']);

@@ -25,7 +25,7 @@ import {
   isWindowsShellFamily,
   isWindowsShellLaunchFailureReason,
   launchWithoutSupportFile,
-  OK_GATED_TOOL_NAMES,
+  PS_GATED_TOOL_NAMES,
   psQuoteArg,
   quoteWindowsShellPath,
   resolveWindowsShellFamily,
@@ -39,11 +39,11 @@ import {
   WindowsShellLaunchError,
 } from './terminal-launch.ts';
 
-const OK_ALLOW = `["mcp__${MCP_SERVER_NAME}","Bash(ok open:*)"]`;
-const OK_ASK = `["mcp__${MCP_SERVER_NAME}__delete","mcp__${MCP_SERVER_NAME}__move","mcp__${MCP_SERVER_NAME}__share_link","mcp__${MCP_SERVER_NAME}__install","mcp__${MCP_SERVER_NAME}__import"]`;
+const PS_ALLOW = `["mcp__${MCP_SERVER_NAME}","Bash(ps open:*)"]`;
+const PS_ASK = `["mcp__${MCP_SERVER_NAME}__delete","mcp__${MCP_SERVER_NAME}__move","mcp__${MCP_SERVER_NAME}__share_link","mcp__${MCP_SERVER_NAME}__install","mcp__${MCP_SERVER_NAME}__import"]`;
 const CLAUDE_PREAPPROVE_JSON = `{"enabledMcpjsonServers":["${MCP_SERVER_NAME}"]}`;
-const CLAUDE_AUTO_APPROVE_JSON = `{"permissions":{"allow":${OK_ALLOW},"ask":${OK_ASK}}}`;
-const CLAUDE_BOTH_JSON = `{"enabledMcpjsonServers":["${MCP_SERVER_NAME}"],"permissions":{"allow":${OK_ALLOW},"ask":${OK_ASK}}}`;
+const CLAUDE_AUTO_APPROVE_JSON = `{"permissions":{"allow":${PS_ALLOW},"ask":${PS_ASK}}}`;
+const CLAUDE_BOTH_JSON = `{"enabledMcpjsonServers":["${MCP_SERVER_NAME}"],"permissions":{"allow":${PS_ALLOW},"ask":${PS_ASK}}}`;
 const CODEX_APPROVE = `mcp_servers.${MCP_SERVER_NAME}.default_tools_approval_mode="approve"`;
 
 describe('TERMINAL_CLI_IDS', () => {
@@ -122,11 +122,11 @@ describe('Windows launch composition', () => {
       }),
     ).toEqual({
       executable: 'claude',
-      args: ['--settings', '.ok/local/terminal/claude-settings-mcp-tools.json'],
+      args: ['--settings', '.ps/local/terminal/claude-settings-mcp-tools.json'],
       supportFile: {
         kind: 'claude-settings',
-        relativePath: '.ok/local/terminal/claude-settings-mcp-tools.json',
-        contents: `{"enabledMcpjsonServers":["${MCP_SERVER_NAME}"],"permissions":{"allow":${OK_ALLOW},"ask":${OK_ASK}}}`,
+        relativePath: '.ps/local/terminal/claude-settings-mcp-tools.json',
+        contents: `{"enabledMcpjsonServers":["${MCP_SERVER_NAME}"],"permissions":{"allow":${PS_ALLOW},"ask":${PS_ASK}}}`,
       },
     });
     expect(
@@ -174,7 +174,7 @@ describe('Windows launch composition', () => {
         args: ['--settings', 'unexpected.json', '--future-coupled-token'],
         supportFile: {
           kind: 'claude-settings',
-          relativePath: '.ok/local/terminal/claude-settings-mcp-tools.json',
+          relativePath: '.ps/local/terminal/claude-settings-mcp-tools.json',
           contents: '{}',
         },
       }),
@@ -190,7 +190,7 @@ describe('Windows launch composition', () => {
         pathPrepend: ['/rt/bin'],
         supportFile: {
           kind: 'claude-settings',
-          relativePath: '.ok/local/terminal/claude-settings-mcp.json',
+          relativePath: '.ps/local/terminal/claude-settings-mcp.json',
           contents: '{}',
         },
       }),
@@ -275,7 +275,7 @@ describe('Windows launch composition', () => {
     const launchTokens = [
       'claude',
       '--settings',
-      '.ok/local/terminal/settings with spaces.json',
+      '.ps/local/terminal/settings with spaces.json',
       "'; calc #",
       'trailing newline\n',
     ];
@@ -400,7 +400,7 @@ describe.each([
 
 function findNulMapfileBash(): string {
   const candidates = [
-    process.env.OK_TEST_BASH,
+    process.env.PS_TEST_BASH,
     'bash',
     '/opt/homebrew/bin/bash',
     '/usr/local/bin/bash',
@@ -462,7 +462,7 @@ describe('Git Bash structured launch, run by a real Bash', () => {
   it.skipIf(NUL_MAPFILE_BASH === '')(
     'reconstructs every launch token byte-for-byte, empty argument and trailing newline included',
     () => {
-      const dir = mkdtempSync(join(tmpdir(), 'ok-git-bash-launch-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-git-bash-launch-'));
       try {
         const capturedArgvPath = join(dir, 'argv');
         const capturedShellStatPath = join(dir, 'shell-stat');
@@ -471,15 +471,15 @@ describe('Git Bash structured launch, run by a real Bash', () => {
           capturePath,
           "const { execFileSync } = require('node:child_process');\n" +
             "const { writeFileSync } = require('node:fs');\n" +
-            "writeFileSync(process.env.OK_CAPTURED_ARGV, [process.argv0, ...process.argv.slice(1)].join('\\0') + '\\0');\n" +
-            "if (process.platform !== 'win32') writeFileSync(process.env.OK_CAPTURED_SHELL_STAT, execFileSync('ps', ['-o', 'stat=', '-p', String(process.ppid)], { encoding: 'utf8' }));\n",
+            "writeFileSync(process.env.PS_CAPTURED_ARGV, [process.argv0, ...process.argv.slice(1)].join('\\0') + '\\0');\n" +
+            "if (process.platform !== 'win32') writeFileSync(process.env.PS_CAPTURED_SHELL_STAT, execFileSync('ps', ['-o', 'stat=', '-p', String(process.ppid)], { encoding: 'utf8' }));\n",
         );
 
         const launchTokens = [
           process.execPath,
           capturePath,
           '--settings',
-          '.ok/local/terminal/settings with spaces.json',
+          '.ps/local/terminal/settings with spaces.json',
           "'; calc #",
           '',
           'trailing newline\n',
@@ -495,8 +495,8 @@ describe('Git Bash structured launch, run by a real Bash', () => {
           env: {
             ...process.env,
             HOME: dir,
-            OK_CAPTURED_ARGV: capturedArgvPath,
-            OK_CAPTURED_SHELL_STAT: capturedShellStatPath,
+            PS_CAPTURED_ARGV: capturedArgvPath,
+            PS_CAPTURED_SHELL_STAT: capturedShellStatPath,
           },
         });
         const recordedOptions = spawnSyncMock.mock.calls.find(
@@ -661,11 +661,11 @@ describe('psQuoteArg output read back by a model of the PowerShell tokenizer', (
   });
 });
 
-const POWERSHELL = process.env.OK_TEST_PWSH ?? 'pwsh';
+const POWERSHELL = process.env.PS_TEST_PWSH ?? 'pwsh';
 
 const POWERSHELL_READBACK_SCRIPT = [
   "$ErrorActionPreference = 'Stop'",
-  '$lines = Get-Content -Raw -LiteralPath $env:OK_TEST_POWERSHELL_LINES | ConvertFrom-Json',
+  '$lines = Get-Content -Raw -LiteralPath $env:PS_TEST_POWERSHELL_LINES | ConvertFrom-Json',
   'foreach ($line in $lines) {',
   '  $tokens = $null',
   '  $errors = $null',
@@ -698,7 +698,7 @@ function asciiJson(value: unknown): string {
 }
 
 function parseWithRealPowerShell(lines: readonly string[]): PowerShellParse[] | null {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-powershell-readback-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-powershell-readback-'));
   try {
     const linesPath = join(dir, 'lines.json');
     const scriptPath = join(dir, 'readback.ps1');
@@ -718,7 +718,7 @@ function parseWithRealPowerShell(lines: readonly string[]): PowerShellParse[] | 
           XDG_DATA_HOME: join(dir, 'data'),
           POWERSHELL_TELEMETRY_OPTOUT: '1',
           POWERSHELL_UPDATECHECK: 'Off',
-          OK_TEST_POWERSHELL_LINES: linesPath,
+          PS_TEST_POWERSHELL_LINES: linesPath,
         },
       },
     );
@@ -808,7 +808,7 @@ describe('PowerShell launch composition with curly single quotes', () => {
         composeWindowsShellLaunchArgs('pwsh.exe', CURLY_QUOTE_LAUNCH_WITH_ENV),
       ),
     ).toBe(
-      "$__ok_names = @('AGENT_HOME'); $__ok_slots = @('OK_TERMINAL_LAUNCH_ENV_0'); $__ok_prev = @{}; " +
+      "$__ok_names = @('AGENT_HOME'); $__ok_slots = @('PS_TERMINAL_LAUNCH_ENV_0'); $__ok_prev = @{}; " +
         'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
         '$__ok_prev[$__ok_names[$__ok_i]] = [Environment]::GetEnvironmentVariable($__ok_names[$__ok_i]); ' +
         "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], [Environment]::GetEnvironmentVariable($__ok_slots[$__ok_i]), 'Process') }; " +
@@ -1217,8 +1217,8 @@ describe('OK auto-approve (autoApproveOkTools)', () => {
 
   it('keeps every gated tool in the ask list (never silently auto-approved)', () => {
     const settings = buildPosixCliLaunch('claude', 'hi', AUTO).args[1];
-    expect(OK_GATED_TOOL_NAMES).toEqual(['delete', 'move', 'share_link', 'install', 'import']);
-    for (const gated of OK_GATED_TOOL_NAMES) {
+    expect(PS_GATED_TOOL_NAMES).toEqual(['delete', 'move', 'share_link', 'install', 'import']);
+    for (const gated of PS_GATED_TOOL_NAMES) {
       expect(settings).toContain(`"mcp__${MCP_SERVER_NAME}__${gated}"`);
     }
   });
@@ -1262,17 +1262,17 @@ describe('launch approval names the server the main process checked', () => {
   }
 
   it('uses only the supplied Beta name, even when this process resolves to Stable', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     try {
-      const out = artifacts({ ...ALL_ON, mcpServerName: BETA, cliCommandName: 'ok-beta' });
+      const out = artifacts({ ...ALL_ON, mcpServerName: BETA, cliCommandName: 'ps-beta' });
       expect(out[0]).toBe(
-        `--settings {"enabledMcpjsonServers":["${BETA}"],"permissions":{"allow":["mcp__${BETA}","Bash(ok-beta open:*)"],"ask":["mcp__${BETA}__delete","mcp__${BETA}__move","mcp__${BETA}__share_link","mcp__${BETA}__install","mcp__${BETA}__import"]}} hi`,
+        `--settings {"enabledMcpjsonServers":["${BETA}"],"permissions":{"allow":["mcp__${BETA}","Bash(ps-beta open:*)"],"ask":["mcp__${BETA}__delete","mcp__${BETA}__move","mcp__${BETA}__share_link","mcp__${BETA}__install","mcp__${BETA}__import"]}} hi`,
       );
       expect(out[1]).toBe(`-c mcp_servers.${BETA}.default_tools_approval_mode="approve" hi`);
       expect(out[2]).toContain(`["${BETA}"]`);
       expect(out[3]).toBe(`-c mcp_servers.${BETA}.default_tools_approval_mode=approve`);
       for (const artifact of out) {
-        expect(artifact.replaceAll(BETA, '')).not.toContain('open-knowledge');
+        expect(artifact.replaceAll(BETA, '')).not.toContain('palimpsest');
       }
     } finally {
       vi.unstubAllEnvs();
@@ -1305,16 +1305,16 @@ describe('launch approval names the server the main process checked', () => {
   });
 
   it('keeps the Stable artifacts byte-identical when main supplies the Stable names', () => {
-    const out = artifacts({ ...ALL_ON, mcpServerName: 'open-knowledge', cliCommandName: 'ok' });
+    const out = artifacts({ ...ALL_ON, mcpServerName: 'palimpsest', cliCommandName: 'ok' });
     expect(out[0]).toBe(
-      `--settings {"enabledMcpjsonServers":["open-knowledge"],"permissions":{"allow":["mcp__open-knowledge","Bash(ok open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}} hi`,
+      `--settings {"enabledMcpjsonServers":["palimpsest"],"permissions":{"allow":["mcp__palimpsest","Bash(ps open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}} hi`,
     );
-    expect(out[1]).toBe(`-c mcp_servers.open-knowledge.default_tools_approval_mode="approve" hi`);
-    expect(out[3]).toBe('-c mcp_servers.open-knowledge.default_tools_approval_mode=approve');
+    expect(out[1]).toBe(`-c mcp_servers.palimpsest.default_tools_approval_mode="approve" hi`);
+    expect(out[3]).toBe('-c mcp_servers.palimpsest.default_tools_approval_mode=approve');
   });
 
-  it('imports without resolving the channel, so an unrecognised OK_CHANNEL cannot crash boot', async () => {
-    vi.stubEnv('OK_CHANNEL', 'nightly');
+  it('imports without resolving the channel, so an unrecognised PS_CHANNEL cannot crash boot', async () => {
+    vi.stubEnv('PS_CHANNEL', 'nightly');
     vi.resetModules();
     try {
       const mod = await import('./terminal-launch.ts');
@@ -1391,9 +1391,9 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
     expect(decodeArgv(args[5] ?? '')).toEqual(['auggie', '--acp', 'login']);
     expect(decodeArgv(args[6] ?? '')).toEqual([
       'AUGGIE_HOME',
-      'OK_TERMINAL_LAUNCH_ENV_0',
+      'PS_TERMINAL_LAUNCH_ENV_0',
       'AUGGIE_LOGIN_FLOW',
-      'OK_TERMINAL_LAUNCH_ENV_1',
+      'PS_TERMINAL_LAUNCH_ENV_1',
     ]);
     expect(args[3]).toContain(
       `(for ((__ok_i = 0; __ok_i < \${#__ok_env[@]}; __ok_i += 2)); do __ok_slot="\${__ok_env[__ok_i + 1]}"; export "\${__ok_env[__ok_i]}=\${!__ok_slot}"; done; exec "\${__ok_argv[@]}"); `,
@@ -1408,7 +1408,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
     const args = composeWindowsShellLaunchArgs('pwsh.exe', launch) as string[];
     const script = Buffer.from(args[2] ?? '', 'base64').toString('utf16le');
     expect(script).toBe(
-      "$__ok_names = @('AUGGIE_HOME', 'AUGGIE_LOGIN_FLOW'); $__ok_slots = @('OK_TERMINAL_LAUNCH_ENV_0', 'OK_TERMINAL_LAUNCH_ENV_1'); $__ok_prev = @{}; " +
+      "$__ok_names = @('AUGGIE_HOME', 'AUGGIE_LOGIN_FLOW'); $__ok_slots = @('PS_TERMINAL_LAUNCH_ENV_0', 'PS_TERMINAL_LAUNCH_ENV_1'); $__ok_prev = @{}; " +
         'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
         '$__ok_prev[$__ok_names[$__ok_i]] = [Environment]::GetEnvironmentVariable($__ok_names[$__ok_i]); ' +
         "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], [Environment]::GetEnvironmentVariable($__ok_slots[$__ok_i]), 'Process') }; " +
@@ -1434,7 +1434,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
         env: { AUGGIE_LOGIN_FLOW: 'terminal' },
       }),
     ).toBe(
-      '/K cmd /d /v:on /c "set "AUGGIE_LOGIN_FLOW=!OK_TERMINAL_LAUNCH_ENV_0!" & auggie login" & set "OK_TERMINAL_LAUNCH_ENV_0="',
+      '/K cmd /d /v:on /c "set "AUGGIE_LOGIN_FLOW=!PS_TERMINAL_LAUNCH_ENV_0!" & auggie login" & set "PS_TERMINAL_LAUNCH_ENV_0="',
     );
     expect(
       composeWindowsShellLaunchArgs('cmd.exe', {
@@ -1443,7 +1443,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
         env: { AUGGIE_HOME: 'C:\\auggie', AUGGIE_LOGIN_FLOW: 'terminal' },
       }),
     ).toBe(
-      '/K cmd /d /v:on /c "set "AUGGIE_HOME=!OK_TERMINAL_LAUNCH_ENV_0!" & set "AUGGIE_LOGIN_FLOW=!OK_TERMINAL_LAUNCH_ENV_1!" & auggie login" & set "OK_TERMINAL_LAUNCH_ENV_0=" & set "OK_TERMINAL_LAUNCH_ENV_1="',
+      '/K cmd /d /v:on /c "set "AUGGIE_HOME=!PS_TERMINAL_LAUNCH_ENV_0!" & set "AUGGIE_LOGIN_FLOW=!PS_TERMINAL_LAUNCH_ENV_1!" & auggie login" & set "PS_TERMINAL_LAUNCH_ENV_0=" & set "PS_TERMINAL_LAUNCH_ENV_1="',
     );
     expect(
       composeWindowsShellLaunchArgs('cmd.exe', { executable: 'auggie', args: ['login'] }),
@@ -1455,7 +1455,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
         env: { AUGGIE_HOME: 'C:\\Users\\me space\\.auggie', AUGGIE_LOGIN_FLOW: 'terminal=yes' },
       }),
     ).toBe(
-      '/K cmd /d /v:on /c "set "AUGGIE_HOME=!OK_TERMINAL_LAUNCH_ENV_0!" & set "AUGGIE_LOGIN_FLOW=!OK_TERMINAL_LAUNCH_ENV_1!" & auggie login" & set "OK_TERMINAL_LAUNCH_ENV_0=" & set "OK_TERMINAL_LAUNCH_ENV_1="',
+      '/K cmd /d /v:on /c "set "AUGGIE_HOME=!PS_TERMINAL_LAUNCH_ENV_0!" & set "AUGGIE_LOGIN_FLOW=!PS_TERMINAL_LAUNCH_ENV_1!" & auggie login" & set "PS_TERMINAL_LAUNCH_ENV_0=" & set "PS_TERMINAL_LAUNCH_ENV_1="',
     );
     for (const value of [
       'say "hi"',
@@ -1467,7 +1467,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
       'group (x)',
       'caret ^x',
       '%TEMP%',
-      '!OK_TERMINAL_LAUNCH_ENV_0!',
+      '!PS_TERMINAL_LAUNCH_ENV_0!',
       'two\nlines',
       'cr\rhere',
     ]) {
@@ -1509,7 +1509,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
       { '--split-string': 'evil' },
       { 'A B': '1' },
       { '1ABC': '1' },
-      { OK_TERMINAL_LAUNCH_ENV_0: 'reserved for the slot the launch itself uses' },
+      { PS_TERMINAL_LAUNCH_ENV_0: 'reserved for the slot the launch itself uses' },
       { ok_terminal_launch_env_0: 'the same slot on a case-folding shell' },
       { OK: `a${NUL}b` },
     ]) {

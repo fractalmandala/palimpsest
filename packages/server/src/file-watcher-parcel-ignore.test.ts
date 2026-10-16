@@ -25,7 +25,7 @@ describe('what startWatcher hands @parcel/watcher as `ignore`', () => {
 
   beforeEach(async () => {
     subscribeCalls.length = 0;
-    contentDir = await mkdtemp(resolve(tmpdir(), 'ok-parcel-wiring-'));
+    contentDir = await mkdtemp(resolve(tmpdir(), 'ps-parcel-wiring-'));
   });
 
   afterEach(async () => {
@@ -59,8 +59,8 @@ describe('what startWatcher hands @parcel/watcher as `ignore`', () => {
         expect.arrayContaining([
           '.git',
           'node_modules',
-          '.ok/local',
-          '.ok/worktrees',
+          '.ps/local',
+          '.ps/worktrees',
           'packages/app/node_modules',
         ]),
       );

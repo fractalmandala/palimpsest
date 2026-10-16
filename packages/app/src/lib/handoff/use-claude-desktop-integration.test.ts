@@ -10,7 +10,7 @@ import {
   validateSkillInstallStateSnapshot,
 } from './use-claude-desktop-integration';
 
-const okSnapshot = (version: string) => ({
+const psSnapshot = (version: string) => ({
   currentVersion: version,
   targets: { 'claude-cowork': { version, recordedAt: '2026-05-12T00:00:00.000Z' } },
 });
@@ -33,7 +33,7 @@ describe('probeClaudeDesktopIntegration — happy paths', () => {
     const result = await probeClaudeDesktopIntegration(
       deps({
         detectClaudeDesktop: async () => true,
-        fetchSnapshot: async () => okSnapshot('2.0.0'),
+        fetchSnapshot: async () => psSnapshot('2.0.0'),
       }),
     );
     expect(result).toEqual({
@@ -47,7 +47,7 @@ describe('probeClaudeDesktopIntegration — happy paths', () => {
     const result = await probeClaudeDesktopIntegration(
       deps({
         detectClaudeDesktop: undefined,
-        fetchSnapshot: async () => okSnapshot('1.0.0'),
+        fetchSnapshot: async () => psSnapshot('1.0.0'),
       }),
     );
     expect(result.desktopPresent).toBe(true);
@@ -59,7 +59,7 @@ describe('probeClaudeDesktopIntegration — happy paths', () => {
     const result = await probeClaudeDesktopIntegration(
       deps({
         detectClaudeDesktop: async () => false,
-        fetchSnapshot: async () => okSnapshot('1.0.0'),
+        fetchSnapshot: async () => psSnapshot('1.0.0'),
       }),
     );
     expect(result.desktopPresent).toBe(false);
@@ -136,7 +136,7 @@ describe('runIntegrationProbe — cache + subscriber coalescing', () => {
     const unsubA = subscribeClaudeDesktopIntegration(a);
     const unsubB = subscribeClaudeDesktopIntegration(b);
     try {
-      await runIntegrationProbe(deps({ fetchSnapshot: async () => okSnapshot('3.0.0') }));
+      await runIntegrationProbe(deps({ fetchSnapshot: async () => psSnapshot('3.0.0') }));
       const expected = {
         desktopPresent: true,
         skillInstalled: true,
@@ -156,7 +156,7 @@ describe('runIntegrationProbe — cache + subscriber coalescing', () => {
     const slowFetch = async () => {
       fetchCount += 1;
       await new Promise((r) => setTimeout(r, 5));
-      return okSnapshot('4.0.0');
+      return psSnapshot('4.0.0');
     };
     const d = deps({ fetchSnapshot: slowFetch });
     const a = runIntegrationProbe(d);
@@ -167,19 +167,19 @@ describe('runIntegrationProbe — cache + subscriber coalescing', () => {
   });
 
   test('sequential probes each run their own fetch — pins the refresh() code path', async () => {
-    await runIntegrationProbe(deps({ fetchSnapshot: async () => okSnapshot('1.0.0') }));
+    await runIntegrationProbe(deps({ fetchSnapshot: async () => psSnapshot('1.0.0') }));
     expect(peekClaudeDesktopIntegrationCache()?.skillVersion).toBe('1.0.0');
-    await runIntegrationProbe(deps({ fetchSnapshot: async () => okSnapshot('2.0.0') }));
+    await runIntegrationProbe(deps({ fetchSnapshot: async () => psSnapshot('2.0.0') }));
     expect(peekClaudeDesktopIntegrationCache()?.skillVersion).toBe('2.0.0');
   });
 
   test('subscriber unsubscribe stops further notifications', async () => {
     const a = vi.fn();
     const unsub = subscribeClaudeDesktopIntegration(a);
-    await runIntegrationProbe(deps({ fetchSnapshot: async () => okSnapshot('6.0.0') }));
+    await runIntegrationProbe(deps({ fetchSnapshot: async () => psSnapshot('6.0.0') }));
     expect(a).toHaveBeenCalledTimes(1);
     unsub();
-    await runIntegrationProbe(deps({ fetchSnapshot: async () => okSnapshot('7.0.0') }));
+    await runIntegrationProbe(deps({ fetchSnapshot: async () => psSnapshot('7.0.0') }));
     expect(a).toHaveBeenCalledTimes(1);
   });
 });
@@ -206,7 +206,7 @@ describe('createDefaultFetchSnapshot — abort + timeout behavior', () => {
 
   test('returns parsed snapshot when fetch resolves in time', async () => {
     const fetchImpl: typeof fetch = async () =>
-      new Response(JSON.stringify(okSnapshot('5.0.0')), {
+      new Response(JSON.stringify(psSnapshot('5.0.0')), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       });

@@ -27,10 +27,10 @@ vi.mock('node:fs', async (importOriginal) => {
 
 const actualFs = await vi.importActual<typeof import('node:fs')>('node:fs');
 
-const OK_TREE: Readonly<Record<string, string>> = {
-  'package.json': '{"name":"open-knowledge"}\n',
+const PS_TREE: Readonly<Record<string, string>> = {
+  'package.json': '{"name":"palimpsest"}\n',
   'pnpm-lock.yaml': "lockfileVersion: '9.0'\n",
-  'packages/app/package.json': '{"name":"@inkeep/open-knowledge-app"}\n',
+  'packages/app/package.json': '{"name":"@palimpsest/app"}\n',
   'packages/app/index.html': '<!doctype html><div id="root"></div>\n',
   'packages/app/src/App.tsx': 'export const App = () => 1;\n',
   'packages/core/src/index.ts': 'export const core = 1;\n',
@@ -49,9 +49,9 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { resolvePrebuiltDevApp } from ${JSON.stringify(APP_MODULE)};
 import { PREBUILT_BUILD_OPTIONS } from ${JSON.stringify(SERVING_MODULE)};
-const [okRoot, outRoot] = process.argv.slice(1);
+const [psRoot, outRoot] = process.argv.slice(1);
 const app = await resolvePrebuiltDevApp({
-  okRoot,
+  psRoot,
   outRoot,
   options: PREBUILT_BUILD_OPTIONS,
   build: async (distDir) => {
@@ -80,15 +80,15 @@ function write(root: string, path: string, content: string): void {
   writeFileSync(join(root, path), content);
 }
 
-function okTree(): string {
-  const root = scratch('ok-prebuilt-race-tree-');
-  for (const [path, content] of Object.entries(OK_TREE)) write(root, path, content);
+function psTree(): string {
+  const root = scratch('ps-prebuilt-race-tree-');
+  for (const [path, content] of Object.entries(PS_TREE)) write(root, path, content);
   return root;
 }
 
-function resolveSecond(okRoot: string, outRoot: string, beforeLanding: () => void = () => {}) {
+function resolveSecond(psRoot: string, outRoot: string, beforeLanding: () => void = () => {}) {
   return resolvePrebuiltDevApp({
-    okRoot,
+    psRoot,
     outRoot,
     options: PREBUILT_BUILD_OPTIONS,
     build: async (distDir) => {
@@ -106,12 +106,12 @@ function beforeTheRename(land: (outputDir: string) => void): void {
   });
 }
 
-function otherBuilderLandsFirst(okRoot: string, outRoot: string) {
+function otherBuilderLandsFirst(psRoot: string, outRoot: string) {
   let other: OtherBuild | undefined;
   const land = () => {
     const run = spawnSync(
       process.execPath,
-      ['--input-type=module', '-e', OTHER_BUILDER, okRoot, outRoot],
+      ['--input-type=module', '-e', OTHER_BUILDER, psRoot, outRoot],
       { encoding: 'utf8', timeout: OTHER_BUILDER_DEADLINE_MS },
     );
     process.stdout.write(
@@ -140,11 +140,11 @@ afterEach(() => {
 
 describe('two builders of the same inputs at once', () => {
   test('a builder joins another complete same-input build that lands during its build', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-race-out-');
-    const other = otherBuilderLandsFirst(okRoot, outRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-race-out-');
+    const other = otherBuilderLandsFirst(psRoot, outRoot);
 
-    const second = await resolveSecond(okRoot, outRoot, other.land);
+    const second = await resolveSecond(psRoot, outRoot, other.land);
     second.use.release();
 
     expect(other()).toEqual({ built: true, distDir: second.distDir });
@@ -154,22 +154,22 @@ describe('two builders of the same inputs at once', () => {
   });
 
   test('a builder whose rename finds a directory without a build manifest there still fails', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-race-out-');
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-race-out-');
     beforeTheRename((outputDir) => {
       write(outputDir, 'dist/index.html', '<!doctype html><p>no manifest</p>\n');
     });
 
-    await expect(resolveSecond(okRoot, outRoot)).rejects.toMatchObject({
+    await expect(resolveSecond(psRoot, outRoot)).rejects.toMatchObject({
       code: expect.stringMatching(/^(ENOTEMPTY|EEXIST)$/),
     });
     expect(stagingLeft(outRoot)).toEqual([]);
   });
 
   test('a builder whose rename finds a build of other inputs there still fails', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-race-out-');
-    const manifest = prebuiltManifest(okRoot, PREBUILT_BUILD_OPTIONS);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-race-out-');
+    const manifest = prebuiltManifest(psRoot, PREBUILT_BUILD_OPTIONS);
     beforeTheRename((outputDir) => {
       write(outputDir, 'dist/index.html', '<!doctype html><p>other inputs</p>\n');
       write(
@@ -182,7 +182,7 @@ describe('two builders of the same inputs at once', () => {
       );
     });
 
-    await expect(resolveSecond(okRoot, outRoot)).rejects.toMatchObject({
+    await expect(resolveSecond(psRoot, outRoot)).rejects.toMatchObject({
       code: expect.stringMatching(/^(ENOTEMPTY|EEXIST)$/),
     });
     expect(stagingLeft(outRoot)).toEqual([]);

@@ -1,12 +1,12 @@
-import { TERMINAL_CLIS, type TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from '@/components/ui/button';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { TerminalNoticeBanner } from './TerminalNoticeBanner';
 
 interface TerminalCliMissingBannerProps {
   readonly cli: TerminalCli;
-  readonly bridge: OkDesktopBridge;
+  readonly bridge: PsDesktopBridge;
   readonly onDismiss: () => void;
 }
 

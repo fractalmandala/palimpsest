@@ -14,7 +14,7 @@ afterEach(() => {
 });
 
 function makeProjectWithShadow(): { cwd: string; shadowDir: string } {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-health-sh-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-health-sh-'));
   tmpDirs.push(cwd);
   mkdirSync(join(cwd, '.git'), { recursive: true });
   const shadowDir = join(cwd, '.git', 'ok');
@@ -41,7 +41,7 @@ function check(facts: ShadowHealthFacts, shadowDir: string) {
 
 describe('shadow-health check', () => {
   test('warns when .git/ is missing', async () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'ok-health-nogit-'));
+    const cwd = mkdtempSync(join(tmpdir(), 'ps-health-nogit-'));
     tmpDirs.push(cwd);
     const result = await makeShadowHealthCheck().run({ cwd });
     expect(result.status).toBe('warn');
@@ -49,10 +49,10 @@ describe('shadow-health check', () => {
   });
 
   test('warns when the shadow dir is not yet initialized', async () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'ok-health-noshadow-'));
+    const cwd = mkdtempSync(join(tmpdir(), 'ps-health-noshadow-'));
     tmpDirs.push(cwd);
     mkdirSync(join(cwd, '.git'), { recursive: true });
-    const def = makeShadowHealthCheck({ resolveDir: () => join(cwd, '.git', 'ok-missing') });
+    const def = makeShadowHealthCheck({ resolveDir: () => join(cwd, '.git', 'ps-missing') });
     const result = await def.run({ cwd });
     expect(result.status).toBe('warn');
     expect(result.summary).toContain('not yet initialized');
@@ -146,16 +146,16 @@ describe('shadow-health remediation names the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: both uninitialized states name %s start', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const remediation = `Run \`${command} start\` once to initialize the shadow repo.`;
-    const bare = mkdtempSync(join(tmpdir(), 'ok-health-nogit-'));
+    const bare = mkdtempSync(join(tmpdir(), 'ps-health-nogit-'));
     tmpDirs.push(bare);
     expect((await makeShadowHealthCheck().run({ cwd: bare })).remediation).toBe(remediation);
     const { cwd } = makeProjectWithShadow();
     const missingShadow = makeShadowHealthCheck({
-      resolveDir: () => join(cwd, '.git', 'ok-missing'),
+      resolveDir: () => join(cwd, '.git', 'ps-missing'),
     });
     expect((await missingShadow.run({ cwd })).remediation).toBe(remediation);
   });

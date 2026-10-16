@@ -4,9 +4,9 @@ const MARK_ATTR = 'data-ok-provenance-mark';
 const KEY_ATTR = 'data-ok-provenance-key';
 
 const failedAvatarLogins = new Set<string>();
-const PLUGIN_POOL_KEY = 'ok-provenance-plugin';
-const PIN_POOL_KEY = 'ok-provenance-pin';
-const LIBRARY_POOL_KEY = 'ok-provenance-library';
+const PLUGIN_POOL_KEY = 'ps-provenance-plugin';
+const PIN_POOL_KEY = 'ps-provenance-pin';
+const LIBRARY_POOL_KEY = 'ps-provenance-library';
 
 export const PROVENANCE_POOL_KEY_ATTR = 'data-ok-provenance-pool-key';
 export const PROVENANCE_PLUGIN_POOL_KEY = PLUGIN_POOL_KEY;

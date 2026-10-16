@@ -12,7 +12,7 @@ import {
   MCP_SERVER_NAME,
   type McpHttpHandler,
   RUNTIME_VERSION,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { afterEach, expect, test } from 'vitest';
 import { bridgeStdioToHttpMcp } from './shim.ts';
 
@@ -100,7 +100,7 @@ function createMessageReader(stdout: PassThrough): {
 }
 
 async function startHttpMcpServer(): Promise<Harness> {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-bridge-e2e-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-bridge-e2e-'));
   writeFileSync(join(contentDir, 'bridge-note.md'), '# Bridge note\n\nstdio-http-bridge-marker\n');
 
   let port = 0;

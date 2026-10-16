@@ -234,7 +234,7 @@ describe('buildViewMenuStateDeps — snapshot → menu-deps wiring', () => {
 
     expect(dispatched).toEqual([
       'toggle-show-hidden-files',
-      'toggle-show-ok-folders',
+      'toggle-show-ps-folders',
       'toggle-show-only-markdown-files',
       'toggle-show-skills-section',
       'toggle-sidebar',

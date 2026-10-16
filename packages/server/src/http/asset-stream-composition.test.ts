@@ -53,7 +53,7 @@ let root: string;
 let server: Server | undefined;
 
 async function start() {
-  root = mkdtempSync(resolve(tmpdir(), 'ok-asset-stream-'));
+  root = mkdtempSync(resolve(tmpdir(), 'ps-asset-stream-'));
   mkdirSync(resolve(root, 'docs'));
   const file = resolve(root, 'docs', 'large.png');
   writeFileSync(file, Buffer.alloc(8_000_000, 97));

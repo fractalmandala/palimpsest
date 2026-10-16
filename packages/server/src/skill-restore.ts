@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { dirname, resolve, sep } from 'node:path';
-import { pathspecArgs } from '@inkeep/open-knowledge-core';
+import { pathspecArgs } from '@palimpsest/core';
 import { tracedMkdirSync, tracedRmSync, tracedWriteFileSync } from './fs-traced.ts';
 import { listNames } from './git-paths.ts';
 import { type ShadowHandle, shadowGit } from './shadow-repo.ts';
@@ -33,13 +33,13 @@ export async function restoreSkillVersion(opts: {
   skillDirRel?: string;
 }): Promise<RestoreSkillResult> {
   const { shadow, contentDir, contentRoot, name, version } = opts;
-  const skillDirRel = opts.skillDirRel ?? `.ok/skills/${name}`;
+  const skillDirRel = opts.skillDirRel ?? `.ps/skills/${name}`;
   if (!existsSync(shadow.workTree) || !existsSync(shadow.gitDir)) {
     return { ok: false, code: 'no-shadow', error: 'No shadow repo — nothing to restore from.' };
   }
   const sg = shadowGit(shadow);
 
-  const candidateRels = [...new Set([skillDirRel, `.ok/skills/${name}`])];
+  const candidateRels = [...new Set([skillDirRel, `.ps/skills/${name}`])];
   let files: string[] = [];
   let shadowPath = skillShadowPath(contentRoot, skillDirRel);
   try {

@@ -10,7 +10,7 @@ import {
   MetricsReconciliationSuccessSchema,
   type MetricsWatcherRecentSuccess,
   MetricsWatcherRecentSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { EffectValue } from '../activity-log.ts';
 import { type AgentPresenceBroadcaster, BROADCASTER_EVICTION_MS } from '../agent-presence.ts';
 import { isConfigDoc, isSystemDoc } from '../cc1-broadcast.ts';

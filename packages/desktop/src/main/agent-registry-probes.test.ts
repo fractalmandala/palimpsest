@@ -1,4 +1,4 @@
-import { checkProbeCoverage, type ProbeWorkItem } from '@inkeep/open-knowledge-core';
+import { checkProbeCoverage, type ProbeWorkItem } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import {
   collectDesktopHostSnapshot,

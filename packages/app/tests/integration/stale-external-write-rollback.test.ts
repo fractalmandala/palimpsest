@@ -189,9 +189,9 @@ describe('stale external write does not roll back an acknowledged agent write', 
     },
   );
   test('a corrupt recovery snapshot stops startup with actionable diagnostics and preserves bytes', async () => {
-    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-boot-')));
-    const snapshot = join(ownedProjectDir, '.ok', 'local', 'stale-external-writes.json');
-    mkdirSync(join(ownedProjectDir, '.ok', 'local'), { recursive: true });
+    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-boot-')));
+    const snapshot = join(ownedProjectDir, '.ps', 'local', 'stale-external-writes.json');
+    mkdirSync(join(ownedProjectDir, '.ps', 'local'), { recursive: true });
     const raw = '{protected edits, truncated';
     writeFileSync(snapshot, raw);
     await expect(
@@ -201,10 +201,10 @@ describe('stale external write does not roll back an acknowledged agent write', 
   });
 
   test('a shareable template stale conflict can be listed, read and resolved', async () => {
-    const docName = '.ok/templates/stale-template';
+    const docName = '.ps/templates/stale-template';
     const file = `${docName}.md`;
-    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shareable-template-')));
-    mkdirSync(join(ownedProjectDir, '.ok', 'templates'), { recursive: true });
+    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shareable-template-')));
+    mkdirSync(join(ownedProjectDir, '.ps', 'templates'), { recursive: true });
     writeFileSync(join(ownedProjectDir, file), 'rejected\n');
     server = await createTestServer({
       contentDir: ownedProjectDir,
@@ -369,7 +369,7 @@ describe('stale external write does not roll back an acknowledged agent write', 
       until: '2026-12-01',
     },
   }, async () => {
-    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-subdir-')));
+    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-subdir-')));
     const contentDir = join(ownedProjectDir, 'notes');
     mkdirSync(contentDir);
     server = await createTestServer({
@@ -530,7 +530,7 @@ describe('stale external write does not roll back an acknowledged agent write', 
   );
 
   test('resolution refuses an escaping symlink without modifying its target', async () => {
-    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-outside-')));
+    ownedProjectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-outside-')));
     server = await createTestServer({ debounce: 50, maxDebounce: 200 });
     const docName = `escape-${randomUUID()}`;
     const outside = join(ownedProjectDir, 'outside.md');

@@ -4,14 +4,14 @@ import {
   type TargetData,
   TERMINAL_CLI_IDS,
   type TerminalCli,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import { useSyncExternalStore } from 'react';
 import { VISIBLE_TARGETS } from '@/lib/handoff/targets';
 
-export const UNIFIED_AGENT_KEY = 'ok-ask-ai-agent-v2';
+export const UNIFIED_AGENT_KEY = 'ps-ask-ai-agent-v2';
 
-const LEGACY_BOTTOM_KEY = 'ok-ask-ai-default-agent-v1';
-const LEGACY_CREATE_KEY = 'ok-preferred-agent-v1';
+const LEGACY_BOTTOM_KEY = 'ps-ask-ai-default-agent-v1';
+const LEGACY_CREATE_KEY = 'ps-preferred-agent-v1';
 
 export const TERMINAL_CLI_ID = 'terminal-cli';
 

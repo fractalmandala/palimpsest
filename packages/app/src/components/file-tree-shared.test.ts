@@ -6,18 +6,18 @@ import {
   lucideMaskDataUri,
   MARKDOWN_FILE_ICON_ID,
   MARKDOWN_FILE_ICON_SYMBOL,
-  OK_FILE_TREE_READONLY_UNSAFE_CSS,
+  PS_FILE_TREE_READONLY_UNSAFE_CSS,
 } from './file-tree-shared.ts';
 
 describe('buildOkFileTreeOptions', () => {
   test('passes paths through and defaults to the read-only unsafeCSS base', () => {
     const opts = buildOkFileTreeOptions({ paths: ['a.md', 'b/c.ts'] });
     expect(opts.paths).toEqual(['a.md', 'b/c.ts']);
-    expect(opts.unsafeCSS).toBe(OK_FILE_TREE_READONLY_UNSAFE_CSS);
+    expect(opts.unsafeCSS).toBe(PS_FILE_TREE_READONLY_UNSAFE_CSS);
   });
 
   test('the read-only base gives every row its own writing direction', () => {
-    expect(OK_FILE_TREE_READONLY_UNSAFE_CSS).toContain(FILE_TREE_USER_NAME_DIRECTION_CSS);
+    expect(PS_FILE_TREE_READONLY_UNSAFE_CSS).toContain(FILE_TREE_USER_NAME_DIRECTION_CSS);
   });
 
   test('the read-only base suppresses fractional-zoom false truncation', () => {
@@ -26,7 +26,7 @@ describe('buildOkFileTreeOptions', () => {
   });
 
   test('unsafeCSS override wins (the editable main tree passes its full composition)', () => {
-    const full = `${OK_FILE_TREE_READONLY_UNSAFE_CSS}\n/* rename + drop */`;
+    const full = `${PS_FILE_TREE_READONLY_UNSAFE_CSS}\n/* rename + drop */`;
     const opts = buildOkFileTreeOptions({ paths: [], unsafeCSS: full });
     expect(opts.unsafeCSS).toBe(full);
   });

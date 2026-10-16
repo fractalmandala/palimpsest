@@ -35,9 +35,9 @@ import {
 } from './check-typescript-resolution.mjs';
 import { stripJsonc } from './read-jsonc.mjs';
 
-const OK_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PS_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const realConfig = (pkg) =>
-  fs.readFileSync(path.join(OK_ROOT, 'packages', pkg, 'tsdown.config.ts'), 'utf8');
+  fs.readFileSync(path.join(PS_ROOT, 'packages', pkg, 'tsdown.config.ts'), 'utf8');
 const withoutLinesMatching = (text, pattern) =>
   text
     .split('\n')
@@ -66,7 +66,7 @@ const withTree = (files, assertions) => {
 const healthyRoot = { binVersion: '7.0.2', shimVersion: '6.0.3', tsserverBytes: 272 };
 
 const gatedMember = (over = {}) => ({
-  name: '@inkeep/open-knowledge-core',
+  name: '@palimpsest/core',
   dir: '/ok/packages/core',
   declaredRange: '^7.0.2',
   resolvedVersion: '7.0.2',
@@ -128,7 +128,7 @@ describe('checkMember', () => {
 
   it('names the package whose resolution silently sits on the shim line', () => {
     const [violation] = checkMember(gatedMember({ resolvedVersion: '6.0.3' }));
-    expect(violation).toContain('@inkeep/open-knowledge-core');
+    expect(violation).toContain('@palimpsest/core');
     expect(violation).toContain('resolves 6.0.3');
   });
 
@@ -144,7 +144,7 @@ describe('checkMember', () => {
   it('accepts a package that neither declares typescript nor runs tsc', () => {
     expect(
       checkMember({
-        name: '@inkeep/open-knowledge-native-config',
+        name: '@palimpsest/native-config',
         dir: '/ok/packages/native-config',
         declaredRange: null,
         resolvedVersion: null,
@@ -156,14 +156,14 @@ describe('checkMember', () => {
 
   it('catches a package that runs tsc without declaring the compiler it runs', () => {
     const [violation] = checkMember({
-      name: '@inkeep/open-knowledge-plugin',
+      name: '@palimpsest/plugin',
       dir: '/ok/packages/plugin',
       declaredRange: null,
       resolvedVersion: null,
       binVersion: null,
       scripts: { typecheck: 'tsc --noEmit' },
     });
-    expect(violation).toContain('@inkeep/open-knowledge-plugin');
+    expect(violation).toContain('@palimpsest/plugin');
     expect(violation).toContain('without declaring typescript');
   });
 
@@ -286,7 +286,7 @@ describe('collectViolations', () => {
     ],
   ];
   const sourceSites = [
-    { name: '@inkeep/open-knowledge-core', private: true, total: 1, missing: [], present: ['.'] },
+    { name: '@palimpsest/core', private: true, total: 1, missing: [], present: ['.'] },
   ];
 
   it('reports nothing for a healthy workspace', () => {
@@ -300,7 +300,7 @@ describe('collectViolations', () => {
       { ...healthyRoot, binVersion: '6.0.3' },
       [
         gatedMember(),
-        gatedMember({ name: '@inkeep/open-knowledge-server', resolvedVersion: '6.0.3' }),
+        gatedMember({ name: '@palimpsest/server', resolvedVersion: '6.0.3' }),
       ],
       null,
       boundEmit,
@@ -308,7 +308,7 @@ describe('collectViolations', () => {
     );
     expect(violations).toHaveLength(2);
     expect(violations[0]).toContain('root `tsc` bin');
-    expect(violations[1]).toContain('@inkeep/open-knowledge-server');
+    expect(violations[1]).toContain('@palimpsest/server');
   });
 
   it('refuses when the source-condition corpus it was handed is empty', () => {
@@ -397,7 +397,7 @@ describe('declarationBuildConfigs', () => {
     '/ok/packages/core/package.json': publisher,
     '/ok/packages/server/package.json': publisher,
     '/ok/packages/cli/package.json': publisher,
-    '/ok/packages/app/package.json': { name: '@inkeep/open-knowledge-app', private: true },
+    '/ok/packages/app/package.json': { name: '@palimpsest/app', private: true },
     '/ok/packages/core/tsconfig.build.json': reset,
     '/ok/packages/server/tsconfig.build.json': reset,
     '/ok/packages/app/tsconfig.build.json': reset,
@@ -528,7 +528,7 @@ describe('publishesDeclarations', () => {
 
   it('exempts only the packages named in the non-tsc list', () => {
     expect(
-      publishesDeclarations({ name: '@inkeep/open-knowledge-native-config', types: 'index.d.ts' }),
+      publishesDeclarations({ name: '@palimpsest/native-config', types: 'index.d.ts' }),
     ).toBe(false);
   });
 });
@@ -542,7 +542,7 @@ describe('staleNonTscListing', () => {
   it('stays quiet while the listed package really does emit its declaration outside tsc', () => {
     expect(
       staleNonTscListing({
-        name: '@inkeep/open-knowledge-native-config',
+        name: '@palimpsest/native-config',
         types: 'index.d.ts',
       }),
     ).toBe(null);
@@ -550,7 +550,7 @@ describe('staleNonTscListing', () => {
 
   it('refuses the exemption once the listed package publishes from an output directory', () => {
     const stale = staleNonTscListing({
-      name: '@inkeep/open-knowledge-native-config',
+      name: '@palimpsest/native-config',
       types: 'dist/index.d.mts',
     });
 
@@ -592,14 +592,14 @@ describe('evaluate wires every probe into the verdict', () => {
     rootProbe: { binVersion: '7.0.2', shimVersion: '6.0.3', tsserverBytes: 272 },
     members: [
       {
-        name: '@inkeep/open-knowledge-core',
+        name: '@palimpsest/core',
         declaredRange: '^7.0.2',
         resolvedVersion: '7.0.2',
         binVersion: '7.0.2',
         scripts: { typecheck: 'tsc --noEmit' },
       },
     ],
-    gated: [{ name: '@inkeep/open-knowledge-core' }],
+    gated: [{ name: '@palimpsest/core' }],
     baseConditions: [SOURCE_CONDITION],
     declarationBuild: { configs: [['packages/core/tsconfig.build.json', []]], missing: [] },
     emitConfigs: [
@@ -609,7 +609,7 @@ describe('evaluate wires every probe into the verdict', () => {
       ],
     ],
     sourceSites: [
-      { name: '@inkeep/open-knowledge-core', private: true, total: 1, missing: [], present: ['.'] },
+      { name: '@palimpsest/core', private: true, total: 1, missing: [], present: ['.'] },
     ],
     tsconfigs: {
       files: ['packages/core/tsconfig.build.json', 'packages/core/tsconfig.json', 'tsconfig.json'],
@@ -650,9 +650,9 @@ describe('evaluate wires every probe into the verdict', () => {
   });
 
   it('names the redirect in the OK line when the root came from the environment', () => {
-    const result = evaluate({ ...healthy, rootSource: 'OK_RESOLUTION_ROOT' });
+    const result = evaluate({ ...healthy, rootSource: 'PS_RESOLUTION_ROOT' });
 
-    expect(result.out.join(' ')).toContain('OK at /ok [from OK_RESOLUTION_ROOT]');
+    expect(result.out.join(' ')).toContain('OK at /ok [from PS_RESOLUTION_ROOT]');
   });
 
   it('fails when a tsdown config emits declarations under the base tsconfig', () => {
@@ -672,7 +672,7 @@ describe('evaluate wires every probe into the verdict', () => {
       ...healthy,
       sourceSites: [
         {
-          name: '@inkeep/open-knowledge-core',
+          name: '@palimpsest/core',
           private: true,
           total: 1,
           missing: ['.'],
@@ -945,7 +945,7 @@ describe('declarationEmitConfigs', () => {
     '/ok/packages/plugin/package.json': {
       exports: { '.': { types: './dist/index.d.mts' } },
     },
-    '/ok/packages/app/package.json': { name: '@inkeep/open-knowledge-app', private: true },
+    '/ok/packages/app/package.json': { name: '@palimpsest/app', private: true },
     '/ok/packages/core/tsdown.config.ts': 'dts: false,',
   };
   const dirs = ['/ok/packages/app', '/ok/packages/cli', '/ok/packages/core', '/ok/packages/plugin'];
@@ -971,12 +971,12 @@ describe('declarationEmitConfigs', () => {
 
   it('enrols every real tsdown builder in the workspace', () => {
     const onDisk = memberDirs(
-      OK_ROOT,
-      fs.readFileSync(path.join(OK_ROOT, 'pnpm-workspace.yaml'), 'utf8'),
+      PS_ROOT,
+      fs.readFileSync(path.join(PS_ROOT, 'pnpm-workspace.yaml'), 'utf8'),
       () => {},
       () => {},
     );
-    const entries = declarationEmitConfigs(OK_ROOT, onDisk);
+    const entries = declarationEmitConfigs(PS_ROOT, onDisk);
 
     expect(entries.map(([file]) => file).sort()).toEqual([
       'packages/cli/tsdown.config.ts',
@@ -990,9 +990,9 @@ describe('declarationEmitConfigs', () => {
 describe('main() refuses rather than passing', () => {
   const run = (root) =>
     spawnSync('node', ['scripts/check-typescript-resolution.mjs'], {
-      cwd: OK_ROOT,
+      cwd: PS_ROOT,
       encoding: 'utf8',
-      env: { ...process.env, OK_RESOLUTION_ROOT: root },
+      env: { ...process.env, PS_RESOLUTION_ROOT: root },
     });
 
   it('refuses when there is no workspace file to enumerate from', () => {
@@ -1287,8 +1287,8 @@ describe('sourceConditionSites', () => {
 
   it('classifies every real workspace package that declares an exports field', () => {
     const onDisk = memberDirs(
-      OK_ROOT,
-      fs.readFileSync(path.join(OK_ROOT, 'pnpm-workspace.yaml'), 'utf8'),
+      PS_ROOT,
+      fs.readFileSync(path.join(PS_ROOT, 'pnpm-workspace.yaml'), 'utf8'),
       () => {},
       () => {},
     );
@@ -1574,7 +1574,7 @@ describe('tsconfigFiles', () => {
     expect(rules.prefixes).toEqual(['report-']);
   });
 
-  const rootGitignore = path.join(OK_ROOT, '.gitignore');
+  const rootGitignore = path.join(PS_ROOT, '.gitignore');
 
   it.runIf(fs.existsSync(rootGitignore))(
     'derives real rules from whichever gitignore sits beside the walk root',
@@ -1587,7 +1587,7 @@ describe('tsconfigFiles', () => {
     },
   );
 
-  const nativeConfigGitignore = path.join(OK_ROOT, 'packages/native-config/.gitignore');
+  const nativeConfigGitignore = path.join(PS_ROOT, 'packages/native-config/.gitignore');
 
   it.runIf(fs.existsSync(nativeConfigGitignore))(
     'carves out the one nested build output its own gitignore anchors without a trailing slash',
@@ -1596,7 +1596,7 @@ describe('tsconfigFiles', () => {
     },
   );
 
-  it.runIf(fs.existsSync(path.join(OK_ROOT, 'specs')))(
+  it.runIf(fs.existsSync(path.join(PS_ROOT, 'specs')))(
     'derives the subtree record in full when the walk root is the subtree itself',
     () => {
       const real = outputDirRules(fs.readFileSync(rootGitignore, 'utf8'));
@@ -1676,8 +1676,8 @@ describe('tsconfigConditions', () => {
 
 describe('the tsconfigs on disk', () => {
   it('declares customConditions only in the base config and in configs that reset it', () => {
-    const listed = tsconfigFiles(OK_ROOT);
-    const declared = tsconfigConditions(OK_ROOT, listed.files);
+    const listed = tsconfigFiles(PS_ROOT);
+    const declared = tsconfigConditions(PS_ROOT, listed.files);
 
     expect(listed.blind).toEqual([]);
     expect(declared.blind).toEqual([]);

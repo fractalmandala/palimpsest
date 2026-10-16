@@ -241,12 +241,12 @@ describe('persistence refuses links into private repository state', () => {
   let contentDir: string;
 
   beforeEach(() => {
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-private-link-persistence-')));
-    mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-private-link-persistence-')));
+    mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
     mkdirSync(join(contentDir, '.git'), { recursive: true });
     mkdirSync(join(contentDir, 'notes'), { recursive: true });
     mkdirSync(join(contentDir, 'shared'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'local', 'principal.json'), SECRET);
+    writeFileSync(join(contentDir, '.ps', 'local', 'principal.json'), SECRET);
     writeFileSync(join(contentDir, '.git', 'config'), GIT_CONFIG);
   });
 
@@ -312,7 +312,7 @@ describe('persistence refuses links into private repository state', () => {
   }
 
   test('load leaves a doc linked to machine-local state empty', async () => {
-    symlinkSync('../.ok/local/principal.json', join(contentDir, 'notes', 'leak.md'));
+    symlinkSync('../.ps/local/principal.json', join(contentDir, 'notes', 'leak.md'));
     const persistence = createPersistence();
     const document = new Y.Doc();
 
@@ -371,15 +371,15 @@ describe('persistence refuses links into private repository state', () => {
     const write = tracedFs.tracedWriteFile;
     const staging = vi.spyOn(tracedFs, 'tracedWriteFile').mockImplementation(async (...args) => {
       await write(...args);
-      mkdirSync(join(contentDir, 'notes', '.ok'), { recursive: true });
-      writeFileSync(join(contentDir, 'notes', '.ok', 'config.yml'), '');
+      mkdirSync(join(contentDir, 'notes', '.ps'), { recursive: true });
+      writeFileSync(join(contentDir, 'notes', '.ps', 'config.yml'), '');
     });
     try {
       await expect(storeDocument(persistence, document, docName)).rejects.toThrow(
         /nested project/i,
       );
       expect(readFileSync(docPath, 'utf8')).toBe(before);
-      expect(readdirSync(join(contentDir, 'notes')).sort()).toEqual(['.ok', 'race.md']);
+      expect(readdirSync(join(contentDir, 'notes')).sort()).toEqual(['.ps', 'race.md']);
     } finally {
       staging.mockRestore();
       document.destroy();
@@ -402,7 +402,7 @@ describe('persistence refuses links into private repository state', () => {
   });
 
   test('load leaves an editable text doc linked outside the content dir empty', async () => {
-    const outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-private-link-outside-')));
+    const outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-private-link-outside-')));
     try {
       writeFileSync(join(outsideDir, 'secret.ts'), 'export const secret = 1;\n');
       symlinkSync(join(outsideDir, 'secret.ts'), join(contentDir, 'notes', 'outside.ts'));
@@ -424,7 +424,7 @@ describe('persistence refuses links into private repository state', () => {
 
   test('store neither reads nor replaces a Mermaid doc linked into machine-local state', async () => {
     const linkPath = join(contentDir, 'notes', 'leak.mmd');
-    symlinkSync('../.ok/local/principal.json', linkPath);
+    symlinkSync('../.ps/local/principal.json', linkPath);
     const persistence = createPersistence();
     const document = new Y.Doc();
     document.getText('source').insert(0, 'graph TD; A-->B;\n');
@@ -433,12 +433,12 @@ describe('persistence refuses links into private repository state', () => {
 
     expect(document.getText('source').toString()).toBe('graph TD; A-->B;\n');
     expect(lstatSync(linkPath).isSymbolicLink()).toBe(true);
-    expect(readFileSync(join(contentDir, '.ok', 'local', 'principal.json'), 'utf-8')).toBe(SECRET);
+    expect(readFileSync(join(contentDir, '.ps', 'local', 'principal.json'), 'utf-8')).toBe(SECRET);
     document.destroy();
   });
 
   test('store does not write a Mermaid doc under a directory link outside the content dir', async () => {
-    const outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-private-link-outside-')));
+    const outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-private-link-outside-')));
     try {
       symlinkSync(outsideDir, join(contentDir, 'notes', 'away'));
       const persistence = createPersistence();
@@ -475,7 +475,7 @@ describe('durable derived-index projection', () => {
   let contentDir: string;
 
   beforeEach(() => {
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-derived-persistence-')));
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-derived-persistence-')));
   });
 
   afterEach(() => {
@@ -587,7 +587,7 @@ describe('resolveWriterFromOrigin', () => {
     const writer = resolveWriterFromOrigin(origin);
     expect(writer).not.toBeNull();
     expect(writer?.id).toBe('agent-conn-abc123');
-    expect(writer?.email).toBe('agent-conn-abc123@openknowledge.local');
+    expect(writer?.email).toBe('agent-conn-abc123@palimpsest.local');
   });
 
   test('local undo origin with session_id → agent-<sessionId> writer', () => {
@@ -638,7 +638,7 @@ describe('resolveWriterFromOrigin', () => {
     const writer = resolveWriterFromOrigin(origin);
     expect(writer).not.toBeNull();
     expect(writer?.id).toBe(principalId);
-    expect(writer?.email).toBe(`${principalId}@openknowledge.local`);
+    expect(writer?.email).toBe(`${principalId}@palimpsest.local`);
   });
 
   test('connection origin without principalId → SERVICE_WRITER', () => {

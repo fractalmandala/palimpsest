@@ -84,8 +84,8 @@ export function resolvePickedPathForIndex(raw: string, callIndex: number): strin
 let testPickedPathCallIndex = 0;
 
 function readTestPickedPath(): string | null {
-  if (process.env.OK_DESKTOP_E2E_SMOKE !== '1') return null;
-  const raw = process.env.OK_DESKTOP_TEST_PICKED_PATH;
+  if (process.env.PS_DESKTOP_E2E_SMOKE !== '1') return null;
+  const raw = process.env.PS_DESKTOP_TEST_PICKED_PATH;
   if (typeof raw !== 'string' || raw.length === 0) return null;
   const resolved = resolvePickedPathForIndex(raw, testPickedPathCallIndex);
   if (resolved === null) return null;

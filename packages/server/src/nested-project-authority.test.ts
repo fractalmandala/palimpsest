@@ -27,13 +27,13 @@ import { getLogger } from './logger.ts';
 import { ServerLockCollisionError } from './server-lock.ts';
 
 function seedProject(projectDir: string): void {
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), '');
-  writeFileSync(join(projectDir, '.ok', '.gitignore'), '');
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), '');
+  writeFileSync(join(projectDir, '.ps', '.gitignore'), '');
 }
 
 test('missing cached documents wait for offline removal reconciliation, not existing documents', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-offline-removal-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-offline-removal-'));
   seedProject(root);
   writeFileSync(join(root, 'plain.md'), '# Plain\n');
   const index = new BacklinkIndex({ projectDir: root, contentDir: root });
@@ -93,7 +93,7 @@ test('missing cached documents wait for offline removal reconciliation, not exis
 }, 30_000);
 
 test('failed startup logs why missing-document admission is refused', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-removal-boot-failure-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-removal-boot-failure-'));
   const failure = new Error('Injected startup failure before offline reconciliation');
   vi.spyOn(DerivedDocumentIndex.prototype, 'beginStartup').mockImplementationOnce(() => {
     throw failure;
@@ -118,7 +118,7 @@ test('failed startup logs why missing-document admission is refused', async () =
 test.each(['rebuild', 'skill-ingestion'] as const)(
   'missing-document admission does not await startup %s',
   async (phase) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-removal-ready-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-removal-ready-'));
     seedProject(root);
     if (phase === 'skill-ingestion') {
       const index = new BacklinkIndex({ projectDir: root, contentDir: root });
@@ -169,7 +169,7 @@ test.each(['rebuild', 'skill-ingestion'] as const)(
 );
 
 test('startup refreshes embeds loaded before asset indexes without blocking authentication', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-auth-ready-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-auth-ready-'));
   writeFileSync(join(root, 'note.md'), '# Note\n\n![[photo.png]]\n');
   writeFileSync(join(root, 'plain.md'), '# Plain\n');
   writeFileSync(join(root, 'photo.png'), new Uint8Array([0x89, 0x50, 0x4e, 0x47]));
@@ -199,7 +199,7 @@ test('startup refreshes embeds loaded before asset indexes without blocking auth
       '__user__/config.yml',
       '__config__/project',
       '__local__/project',
-      '__config__/okignore',
+      '__config__/psignore',
     ]) {
       expect(await authenticate(owner.port, name)).toBe('authenticated');
     }
@@ -251,7 +251,7 @@ test('startup refreshes embeds loaded before asset indexes without blocking auth
 }, 30_000);
 
 test('a rejected alias startup preserves the live owner’s discovery lock', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-alias-authority-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-alias-authority-'));
   const content = join(root, 'content');
   const alias = join(root, 'project-alias');
   mkdirSync(content);
@@ -282,12 +282,12 @@ test('a rejected alias startup preserves the live owner’s discovery lock', asy
 }, 60_000);
 
 test('a failed project lock releases the new content claim before retry', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-primary-authority-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-primary-authority-'));
   const content = join(root, 'content');
   const project = join(root, 'project');
   mkdirSync(content);
   seedProject(project);
-  const local = join(project, '.ok', 'local');
+  const local = join(project, '.ps', 'local');
   mkdirSync(local);
   const lock = join(local, 'server.lock');
   writeFileSync(
@@ -363,17 +363,17 @@ async function authenticate(port: number, documentName: string): Promise<string>
 }
 
 test('nested servers cannot acquire authority over each other’s documents', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-nested-authority-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-nested-authority-'));
   const nested = join(root, 'public', 'knowledge');
-  mkdirSync(join(root, '.ok'), { recursive: true });
-  mkdirSync(join(nested, '.ok'), { recursive: true });
-  writeFileSync(join(root, '.ok', 'config.yml'), '');
-  writeFileSync(join(nested, '.ok', 'config.yml'), '');
+  mkdirSync(join(root, '.ps'), { recursive: true });
+  mkdirSync(join(nested, '.ps'), { recursive: true });
+  writeFileSync(join(root, '.ps', 'config.yml'), '');
+  writeFileSync(join(nested, '.ps', 'config.yml'), '');
   writeFileSync(join(root, 'parent.md'), '# Parent\n');
   writeFileSync(join(nested, 'child.md'), '# Child\n');
-  mkdirSync(join(root, '.ok', 'local'));
+  mkdirSync(join(root, '.ps', 'local'));
   writeFileSync(
-    join(root, '.ok', 'local', 'conflicts.json'),
+    join(root, '.ps', 'local', 'conflicts.json'),
     JSON.stringify({
       version: 2,
       branch: 'main',
@@ -477,7 +477,7 @@ test('nested servers cannot acquire authority over each other’s documents', as
     });
     expect(ownParentWrite.status).toBe(200);
 
-    unlinkSync(join(nested, '.ok', 'config.yml'));
+    unlinkSync(join(nested, '.ps', 'config.yml'));
     const form = new FormData();
     form.set('file', new Blob(['asset bytes'], { type: 'text/plain' }), 'note.txt');
     form.set('parentDocName', 'public/knowledge/child');
@@ -507,8 +507,8 @@ test('nested servers cannot acquire authority over each other’s documents', as
       agentId: 'cached-owner',
     };
     expect((await request(parent.port, '/api/agent-write-md', lateBody)).status).toBe(200);
-    mkdirSync(join(root, 'late', '.ok'));
-    writeFileSync(join(root, 'late', '.ok', 'config.yml'), '');
+    mkdirSync(join(root, 'late', '.ps'));
+    writeFileSync(join(root, 'late', '.ps', 'config.yml'), '');
     expect((await request(parent.port, '/api/document?docName=late/note')).status).toBe(403);
     expect(
       (await request(parent.port, '/api/agent-write-md', { ...lateBody, markdown: '# After\n' }))
@@ -523,7 +523,7 @@ test('nested servers cannot acquire authority over each other’s documents', as
 }, 60_000);
 
 test('synchronous construction failure releases its content claim before retry', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-failed-authority-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-failed-authority-'));
   seedProject(root);
   const fault = vi.spyOn(contentFilterModule, 'createContentFilter').mockImplementationOnce(() => {
     throw new Error('Construction fault');
@@ -554,7 +554,7 @@ test('synchronous construction failure releases its content claim before retry',
 test.each(['parent-first', 'child-first'])(
   'custom content scopes refuse overlap (%s)',
   async (order) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-custom-authority-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-custom-authority-'));
     const content = join(root, 'content');
     const nested = join(content, 'nested');
     mkdirSync(nested, { recursive: true });
@@ -583,11 +583,11 @@ test.each(['parent-first', 'child-first'])(
       await first.ready;
       first.serverInstance.conflicts.raise({
         kind: 'working-tree',
-        file: '.ok/config.yml',
+        file: '.ps/config.yml',
         theirsSha: 'unread-blob',
       });
       await expect(
-        first.serverInstance.conflicts.resolve('.ok/config.yml', 'mine'),
+        first.serverInstance.conflicts.resolve('.ps/config.yml', 'mine'),
       ).resolves.toBeUndefined();
       await expect(boot(secondContent, 'second')).rejects.toThrow(
         /content ownership is already held/i,
@@ -607,7 +607,7 @@ test.each(['parent-first', 'child-first'])(
 );
 
 test('single-file previews own only their file and block project takeover until retirement', async () => {
-  const fixture = mkdtempSync(join(tmpdir(), 'ok-preview-authority-'));
+  const fixture = mkdtempSync(join(tmpdir(), 'ps-preview-authority-'));
   const root = join(fixture, 'content');
   mkdirSync(root);
   writeFileSync(join(root, 'one.md'), '# One\n');
@@ -644,7 +644,7 @@ test('single-file previews own only their file and block project takeover until 
       '__user__/config.yml',
       '__config__/project',
       '__local__/project',
-      '__config__/okignore',
+      '__config__/psignore',
     ]) {
       await expect(authenticate(preview.port, docName)).resolves.toBe('authenticated');
     }

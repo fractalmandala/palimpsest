@@ -196,7 +196,7 @@ describe('Video — YouTube dispatch', () => {
     const { container } = render(
       <Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" width={400} height={300} />,
     );
-    const wrapper = container.querySelector('.ok-video-youtube') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-youtube') as HTMLElement | null;
     expect(wrapper?.style.width).toBe('400px');
     const article = container.querySelector('.yt-lite') as HTMLElement | null;
     expect(article?.style.aspectRatio).toBe('400 / 300');
@@ -206,7 +206,7 @@ describe('Video — YouTube dispatch', () => {
     const { container } = render(
       <Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" width={400} />,
     );
-    const wrapper = container.querySelector('.ok-video-youtube') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-youtube') as HTMLElement | null;
     expect(wrapper?.style.width).toBe('400px');
     const article = container.querySelector('.yt-lite') as HTMLElement | null;
     expect(article?.style.aspectRatio).toBe('');
@@ -237,7 +237,7 @@ describe('Video — Vimeo dispatch', () => {
     'https://vimeo.com/groups/motion/videos/76979871',
   ])('routes %s to the Vimeo wrapper (no native <video>, no YouTube facade)', (src) => {
     const { container } = render(<Video src={src} />);
-    expect(container.querySelector('.ok-video-vimeo')).not.toBeNull();
+    expect(container.querySelector('.ps-video-vimeo')).not.toBeNull();
     expect(container.querySelector('.yt-lite')).toBeNull();
     expect(container.querySelector('video')).toBeNull();
   });
@@ -264,7 +264,7 @@ describe('Video — Vimeo dispatch', () => {
       '[data-testid="vimeo-mock-iframe"]',
     ) as HTMLIFrameElement | null;
     expect(iframe?.title).toBe('Walkthrough');
-    const wrapper = container.querySelector('.ok-video-vimeo') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-vimeo') as HTMLElement | null;
     expect(wrapper?.getAttribute('title')).toBe('Walkthrough');
   });
 
@@ -349,30 +349,30 @@ describe('Video — Vimeo dispatch', () => {
 
   test('explicit width sets the wrapper inline style (overrides CSS default 720px)', () => {
     const { container } = render(<Video src="https://vimeo.com/76979871" width={400} />);
-    const wrapper = container.querySelector('.ok-video-vimeo') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-vimeo') as HTMLElement | null;
     expect(wrapper?.style.width).toBe('400px');
   });
 
   test('no width omits the inline style so the CSS default applies', () => {
     const { container } = render(<Video src="https://vimeo.com/76979871" />);
-    const wrapper = container.querySelector('.ok-video-vimeo') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-vimeo') as HTMLElement | null;
     expect(wrapper?.style.width).toBe('');
   });
 
   test('threads `title` to the wrapper for native tooltip parity', () => {
     const { container } = render(<Video src="https://vimeo.com/76979871" title="Walkthrough" />);
-    const wrapper = container.querySelector('.ok-video-vimeo') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-vimeo') as HTMLElement | null;
     expect(wrapper?.getAttribute('title')).toBe('Walkthrough');
   });
 
   test('Vimeo wins over the HTML5 path; YouTube URLs still route to YouTube', () => {
     const yt = render(<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
     expect(yt.container.querySelector('.yt-lite')).not.toBeNull();
-    expect(yt.container.querySelector('.ok-video-vimeo')).toBeNull();
+    expect(yt.container.querySelector('.ps-video-vimeo')).toBeNull();
     cleanup();
 
     const vimeo = render(<Video src="https://vimeo.com/76979871" />);
-    expect(vimeo.container.querySelector('.ok-video-vimeo')).not.toBeNull();
+    expect(vimeo.container.querySelector('.ps-video-vimeo')).not.toBeNull();
     expect(vimeo.container.querySelector('.yt-lite')).toBeNull();
   });
 });
@@ -389,22 +389,22 @@ describe('Video — Loom dispatch', () => {
     'https://loom.com/embed/abc123def456ghi789jk',
   ])('routes %s to the Loom wrapper (no native <video>, no YouTube facade)', (src) => {
     const { container } = render(<Video src={src} />);
-    expect(container.querySelector('.ok-video-loom')).not.toBeNull();
+    expect(container.querySelector('.ps-video-loom')).not.toBeNull();
     expect(container.querySelector('.yt-lite')).toBeNull();
-    expect(container.querySelector('.ok-video-vimeo')).toBeNull();
+    expect(container.querySelector('.ps-video-vimeo')).toBeNull();
     expect(container.querySelector('video')).toBeNull();
   });
 
   test('renders an iframe pointing at the canonical /embed/<id> URL (share → embed conversion)', () => {
     const { container } = render(<Video src="https://www.loom.com/share/abc123def456ghi789jk" />);
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     expect(iframe).not.toBeNull();
     expect(iframe?.getAttribute('src')).toBe('https://www.loom.com/embed/abc123def456ghi789jk');
   });
 
   test('pins `referrerPolicy` + `allow` attributes on the Loom iframe (security contract)', () => {
     const { container } = render(<Video src="https://www.loom.com/share/abc123def456ghi789jk" />);
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     expect(iframe?.getAttribute('referrerpolicy')).toBe('strict-origin-when-cross-origin');
     expect(iframe?.getAttribute('allow') ?? '').toContain('autoplay');
     expect(iframe?.getAttribute('allow') ?? '').toContain('fullscreen');
@@ -415,7 +415,7 @@ describe('Video — Loom dispatch', () => {
     const { container } = render(
       <Video src="https://www.loom.com/share/abc123def456ghi789jk?t=2m30s" />,
     );
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     expect(iframe?.getAttribute('src')).toContain('t=2m30s');
   });
 
@@ -423,7 +423,7 @@ describe('Video — Loom dispatch', () => {
     const { container } = render(
       <Video src="https://www.loom.com/share/abc123def456ghi789jk" autoplay muted />,
     );
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     const src = iframe?.getAttribute('src') ?? '';
     expect(src).toContain('autoplay=true');
     expect(src).toContain('muted=true');
@@ -433,7 +433,7 @@ describe('Video — Loom dispatch', () => {
     const { container } = render(
       <Video src="https://www.loom.com/share/abc123def456ghi789jk" autoplay />,
     );
-    const src = container.querySelector('.ok-video-loom iframe')?.getAttribute('src') ?? '';
+    const src = container.querySelector('.ps-video-loom iframe')?.getAttribute('src') ?? '';
     expect(src).toContain('autoplay=true');
     expect(src).not.toContain('muted=true');
   });
@@ -442,14 +442,14 @@ describe('Video — Loom dispatch', () => {
     const { container } = render(
       <Video src="https://www.loom.com/share/abc123def456ghi789jk" muted />,
     );
-    const src = container.querySelector('.ok-video-loom iframe')?.getAttribute('src') ?? '';
+    const src = container.querySelector('.ps-video-loom iframe')?.getAttribute('src') ?? '';
     expect(src).toContain('muted=true');
     expect(src).not.toContain('autoplay=true');
   });
 
   test('omits autoplay/muted params when props are unset (default URL stays clean)', () => {
     const { container } = render(<Video src="https://www.loom.com/share/abc123def456ghi789jk" />);
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     const src = iframe?.getAttribute('src') ?? '';
     expect(src).not.toContain('autoplay');
     expect(src).not.toContain('muted');
@@ -457,7 +457,7 @@ describe('Video — Loom dispatch', () => {
 
   test('sets a default accessible iframe title when no title prop is supplied', () => {
     const { container } = render(<Video src="https://www.loom.com/share/abc123def456ghi789jk" />);
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     expect(iframe?.getAttribute('title')).toBe('Loom video player');
   });
 
@@ -468,9 +468,9 @@ describe('Video — Loom dispatch', () => {
         title="Engineering Walkthrough"
       />,
     );
-    const iframe = container.querySelector('.ok-video-loom iframe') as HTMLIFrameElement | null;
+    const iframe = container.querySelector('.ps-video-loom iframe') as HTMLIFrameElement | null;
     expect(iframe?.getAttribute('title')).toBe('Engineering Walkthrough');
-    const wrapper = container.querySelector('.ok-video-loom') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-loom') as HTMLElement | null;
     expect(wrapper?.getAttribute('title')).toBe('Engineering Walkthrough');
   });
 
@@ -478,30 +478,30 @@ describe('Video — Loom dispatch', () => {
     const { container } = render(
       <Video src="https://www.loom.com/share/abc123def456ghi789jk" width={400} />,
     );
-    const wrapper = container.querySelector('.ok-video-loom') as HTMLElement | null;
+    const wrapper = container.querySelector('.ps-video-loom') as HTMLElement | null;
     expect(wrapper?.style.width).toBe('400px');
   });
 
   test('Loom wins over HTML5 path; YouTube + Vimeo URLs still route to their dispatchers', () => {
     const yt = render(<Video src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
     expect(yt.container.querySelector('.yt-lite')).not.toBeNull();
-    expect(yt.container.querySelector('.ok-video-loom')).toBeNull();
+    expect(yt.container.querySelector('.ps-video-loom')).toBeNull();
     cleanup();
 
     const vimeo = render(<Video src="https://vimeo.com/22439234" />);
-    expect(vimeo.container.querySelector('.ok-video-vimeo')).not.toBeNull();
-    expect(vimeo.container.querySelector('.ok-video-loom')).toBeNull();
+    expect(vimeo.container.querySelector('.ps-video-vimeo')).not.toBeNull();
+    expect(vimeo.container.querySelector('.ps-video-loom')).toBeNull();
     cleanup();
 
     const loom = render(<Video src="https://www.loom.com/share/abc123def456ghi789jk" />);
-    expect(loom.container.querySelector('.ok-video-loom')).not.toBeNull();
+    expect(loom.container.querySelector('.ps-video-loom')).not.toBeNull();
     expect(loom.container.querySelector('.yt-lite')).toBeNull();
-    expect(loom.container.querySelector('.ok-video-vimeo')).toBeNull();
+    expect(loom.container.querySelector('.ps-video-vimeo')).toBeNull();
   });
 
   test('falls back to native <video> for malformed Loom-like URLs (too-short id)', () => {
     const { container } = render(<Video src="https://www.loom.com/share/short" />);
-    expect(container.querySelector('.ok-video-loom')).toBeNull();
+    expect(container.querySelector('.ps-video-loom')).toBeNull();
     expect(container.querySelector('video')).not.toBeNull();
   });
 });

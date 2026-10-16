@@ -8,7 +8,7 @@ import {
   useRef,
 } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { OK_SIDEBAR_DRAG_MIME, parseSidebarDragPayload } from '@/lib/sidebar-drag';
+import { PS_SIDEBAR_DRAG_MIME, parseSidebarDragPayload } from '@/lib/sidebar-drag';
 import type { FileEntry } from './file-tree-utils';
 
 let hasRemote = true;
@@ -189,7 +189,7 @@ function makeFetchMock() {
     if (url.startsWith('/api/documents')) return jsonResponse({ documents: DOCUMENTS });
     if (url === '/api/workspace') {
       return jsonResponse({
-        contentDir: '/tmp/open-knowledge',
+        contentDir: '/tmp/palimpsest',
         pathSeparator: '/',
         symlinkResolved: true,
       });
@@ -316,7 +316,7 @@ vi.doMock('@/components/use-selection-mirror', () => ({
 }));
 
 vi.doMock('@pierre/trees', () => ({
-  FILE_TREE_TAG_NAME: 'ok-file-tree',
+  FILE_TREE_TAG_NAME: 'ps-file-tree',
   themeToTreeStyles: () => ({}),
 }));
 
@@ -345,7 +345,7 @@ function PierreTreeDragSurface() {
     return () => row.removeEventListener('dragstart', handlePierreDragStart);
   }, []);
 
-  return createElement('ok-file-tree', { ref: hostRef });
+  return createElement('ps-file-tree', { ref: hostRef });
 }
 
 vi.doMock('@pierre/trees/react', () => ({
@@ -435,7 +435,7 @@ describe('FileTree context-menu Share action', () => {
   test('publishes a pane-compatible sidebar payload after Pierre initializes its row drag', async () => {
     const { container } = renderFileTree();
     await screen.findByTestId('fake-pierre-tree');
-    const host = container.querySelector('ok-file-tree');
+    const host = container.querySelector('ps-file-tree');
     const row = host?.shadowRoot?.querySelector<HTMLElement>(
       '[data-testid="fake-pierre-tree-row"]',
     );
@@ -444,7 +444,7 @@ describe('FileTree context-menu Share action', () => {
     await waitFor(() => {
       const probe = createTestDataTransfer();
       row?.dispatchEvent(new TestDragEvent('dragstart', probe));
-      expect(probe.getData(OK_SIDEBAR_DRAG_MIME)).not.toBe('');
+      expect(probe.getData(PS_SIDEBAR_DRAG_MIME)).not.toBe('');
     });
 
     const dataTransfer = createTestDataTransfer();

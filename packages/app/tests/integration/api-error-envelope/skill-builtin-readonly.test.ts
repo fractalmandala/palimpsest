@@ -1,11 +1,11 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  OPENKNOWLEDGE_SKILLS_REPO,
+  PALIMPSEST_SKILLS_REPO,
   ProblemDetailsSchema,
   SkillGetSuccessSchema,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -14,21 +14,21 @@ let server: TestServer;
 const base = () => `http://127.0.0.1:${server.port}`;
 
 const SKILL_MD = `---
-name: open-knowledge
-description: The OpenKnowledge project skill agents load for this KB.
+name: palimpsest
+description: The Palimpsest project skill agents load for this KB.
 ---
 
-# Open Knowledge
+# Palimpsest
 
 Route reads and writes through the MCP tools.
 `;
-const REFERENCE_MD = '# Setup\n\nRun `ok init` first.\n';
+const REFERENCE_MD = '# Setup\n\nRun `ps init` first.\n';
 
 let builtinSkillMd: string;
 
 beforeAll(async () => {
   server = await createTestServer();
-  const dir = join(server.contentDir, '.claude', 'skills', 'open-knowledge');
+  const dir = join(server.contentDir, '.claude', 'skills', 'palimpsest');
   mkdirSync(join(dir, 'references'), { recursive: true });
   builtinSkillMd = join(dir, 'SKILL.md');
   writeFileSync(builtinSkillMd, SKILL_MD, 'utf-8');
@@ -39,27 +39,27 @@ afterAll(async () => {
   await server.cleanup();
 });
 
-describe('built-in open-knowledge skill: read-only surfacing', () => {
+describe('built-in palimpsest skill: read-only surfacing', () => {
   test('GET /api/skills includes it as a managed entry', async () => {
     const res = await fetch(`${base()}/api/skills`);
     expect(res.status).toBe(200);
     const parsed = SkillsListSuccessSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (!parsed.success) return;
-    const entry = parsed.data.skills.find((s) => s.name === 'open-knowledge');
+    const entry = parsed.data.skills.find((s) => s.name === 'palimpsest');
     expect(entry).toBeDefined();
     expect(entry?.managed).toBe(true);
     expect(entry?.scope).toBe('project');
     expect(entry?.installed).toBe(true);
     expect(entry?.hosts).toContain('claude');
-    expect(entry?.description).toBe('The OpenKnowledge project skill agents load for this KB.');
-    expect(entry?.origin?.source).toBe(OPENKNOWLEDGE_SKILLS_REPO);
-    expect(entry?.origin?.skill).toBe('open-knowledge');
+    expect(entry?.description).toBe('The Palimpsest project skill agents load for this KB.');
+    expect(entry?.origin?.source).toBe(PALIMPSEST_SKILLS_REPO);
+    expect(entry?.origin?.skill).toBe('palimpsest');
     expect(entry?.origin?.autoUpdate).toBe(false);
   });
 
   test('GET /api/skill serves its body + references from the host dir', async () => {
-    const res = await fetch(`${base()}/api/skill?name=open-knowledge&scope=project`);
+    const res = await fetch(`${base()}/api/skill?name=palimpsest&scope=project`);
     expect(res.status).toBe(200);
     const parsed = SkillGetSuccessSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
@@ -67,21 +67,21 @@ describe('built-in open-knowledge skill: read-only surfacing', () => {
     expect(parsed.data.skill.managed).toBe(true);
     expect(parsed.data.skill.body).toContain('Route reads and writes through the MCP tools.');
     const ref = parsed.data.skill.files?.find((f) => f.path === 'references/setup.md');
-    expect(ref?.text).toContain('Run `ok init` first.');
+    expect(ref?.text).toContain('Run `ps init` first.');
   });
 
   test('GET /api/skill-file serves SKILL.md read-only (skill-dir root)', async () => {
     const res = await fetch(
-      `${base()}/api/skill-file?name=open-knowledge&scope=project&path=SKILL.md`,
+      `${base()}/api/skill-file?name=palimpsest&scope=project&path=SKILL.md`,
     );
     expect(res.status).toBe(200);
     const body = (await res.json()) as { text?: string };
-    expect(body.text).toContain('# Open Knowledge');
+    expect(body.text).toContain('# Palimpsest');
   });
 
   test('GET /api/skill-file serves a reference read-only', async () => {
     const res = await fetch(
-      `${base()}/api/skill-file?name=open-knowledge&scope=project&path=references/setup.md`,
+      `${base()}/api/skill-file?name=palimpsest&scope=project&path=references/setup.md`,
     );
     expect(res.status).toBe(200);
     const body = (await res.json()) as { text?: string };
@@ -99,9 +99,9 @@ describe('built-in open-knowledge skill: read-only surfacing', () => {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: 'open-knowledge',
+        name: 'palimpsest',
         body: 'hijacked',
-        frontmatter: { name: 'open-knowledge', description: 'hijacked' },
+        frontmatter: { name: 'palimpsest', description: 'hijacked' },
       }),
     });
     await expectReserved(res);
@@ -111,7 +111,7 @@ describe('built-in open-knowledge skill: read-only surfacing', () => {
     const squat = await fetch(`${base()}/api/skill`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scope: 'project', fromName: 'authored', toName: 'open-knowledge' }),
+      body: JSON.stringify({ scope: 'project', fromName: 'authored', toName: 'palimpsest' }),
     });
     expect([400, 409]).toContain(squat.status);
 
@@ -120,7 +120,7 @@ describe('built-in open-knowledge skill: read-only surfacing', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         scope: 'project',
-        fromName: 'open-knowledge',
+        fromName: 'palimpsest',
         toName: 'my-own-guide',
       }),
     });
@@ -131,7 +131,7 @@ describe('built-in open-knowledge skill: read-only surfacing', () => {
       body: JSON.stringify({
         scope: 'project',
         fromName: 'my-own-guide',
-        toName: 'open-knowledge',
+        toName: 'palimpsest',
       }),
     });
     expect([400, 409]).toContain(restored.status);
@@ -143,7 +143,7 @@ describe('built-in open-knowledge skill: read-only surfacing', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         scope: 'project',
-        name: 'open-knowledge',
+        name: 'palimpsest',
         path: 'references/evil.md',
         content: 'x',
       }),

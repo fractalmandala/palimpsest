@@ -1,11 +1,11 @@
 import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DocumentListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { DocumentListSuccessSchema } from '@palimpsest/core';
 import {
   __getShowAllWalkStatsForTesting,
   __resetShowAllWalkStatsForTesting,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { createTestServer, type TestServer } from './test-harness';
 
@@ -20,7 +20,7 @@ function showAllUrl(dir?: string): string {
 }
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-showall-sf-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-showall-sf-')));
   for (let i = 0; i < ROOT_FILE_COUNT; i++) {
     writeFileSync(join(contentDir, `file-${String(i).padStart(4, '0')}.md`), `# File ${i}\n`);
   }
@@ -35,8 +35,8 @@ beforeAll(async () => {
     mkdirSync(join(contentDir, sub));
     writeFileSync(join(contentDir, sub, 'note.md'), `# ${sub}\n`);
   }
-  mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'templates', 'daily.md'), '# Daily\n');
+  mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'templates', 'daily.md'), '# Daily\n');
   server = await createTestServer({ contentDir, keepContentDir: false });
 }, 60_000);
 
@@ -84,8 +84,8 @@ describe('single-flight dedupe (AC1, AC2)', () => {
   }, 30_000);
 
   test('a truncated coalesced walk delivers truncated:true to every waiter', async () => {
-    const prev = process.env.OK_SHOWALL_MAX_ENTRIES;
-    process.env.OK_SHOWALL_MAX_ENTRIES = '50';
+    const prev = process.env.PS_SHOWALL_MAX_ENTRIES;
+    process.env.PS_SHOWALL_MAX_ENTRIES = '50';
     try {
       __resetShowAllWalkStatsForTesting();
       const N = 6;
@@ -99,8 +99,8 @@ describe('single-flight dedupe (AC1, AC2)', () => {
         expect(body.documents.length).toBeLessThanOrEqual(50);
       }
     } finally {
-      if (prev === undefined) delete process.env.OK_SHOWALL_MAX_ENTRIES;
-      else process.env.OK_SHOWALL_MAX_ENTRIES = prev;
+      if (prev === undefined) delete process.env.PS_SHOWALL_MAX_ENTRIES;
+      else process.env.PS_SHOWALL_MAX_ENTRIES = prev;
     }
   }, 30_000);
 });
@@ -121,8 +121,8 @@ describe('showOk single-flight isolation', () => {
 
     const pathOf = (e: { kind: string; docName?: string; path?: string }) =>
       e.kind === 'folder' ? (e.path ?? '') : (e.docName ?? e.path ?? '');
-    expect(plain.documents.map(pathOf).some((p) => p.split('/').includes('.ok'))).toBe(false);
-    expect(reveal.documents.map(pathOf)).toContain('.ok/templates/daily');
+    expect(plain.documents.map(pathOf).some((p) => p.split('/').includes('.ps'))).toBe(false);
+    expect(reveal.documents.map(pathOf)).toContain('.ps/templates/daily');
   }, 30_000);
 });
 

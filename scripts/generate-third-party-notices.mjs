@@ -16,7 +16,7 @@ const SHIPPING_WORKSPACES = [
   'packages/desktop',
 ];
 
-const WORKSPACE_NAME_PREFIX = '@inkeep/open-knowledge';
+const WORKSPACE_NAME_PREFIX = '@palimpsest/cli';
 
 const LICENSE_FILENAMES = [
   'LICENSE',
@@ -421,7 +421,7 @@ function vendoredCodexEntry() {
   ].join('\n');
 }
 
-const NATIVE_CONFIG_CRATE = 'open-knowledge-native-config';
+const NATIVE_CONFIG_CRATE = 'palimpsest-native-config';
 const NATIVE_CONFIG_CARGO_LOCK = join(REPO_ROOT, 'packages', 'native-config', 'Cargo.lock');
 
 const RUST_RUNTIME_CRATES = {
@@ -542,7 +542,7 @@ function bundledRustCratesSection() {
     .sort((a, b) => byteCompare(a.name, b.name) || byteCompare(a.version, b.version));
 
   const lines = [
-    "The native harness-config addon's `.node` binaries statically link the Rust crates below. Each is redistributed under the license shown; every license here is MIT, Apache-2.0, or ISC, whose full texts are reproduced elsewhere in this document (for dual- or multi-licensed crates OpenKnowledge elects a reproduced license). Compile-time-only crates (proc-macros, build scripts) and test-only dev-dependencies are not listed — their code is not present in the distributed binary. Versions track `packages/native-config/Cargo.lock`.",
+    "The native harness-config addon's `.node` binaries statically link the Rust crates below. Each is redistributed under the license shown; every license here is MIT, Apache-2.0, or ISC, whose full texts are reproduced elsewhere in this document (for dual- or multi-licensed crates Palimpsest elects a reproduced license). Compile-time-only crates (proc-macros, build scripts) and test-only dev-dependencies are not listed — their code is not present in the distributed binary. Versions track `packages/native-config/Cargo.lock`.",
     '',
   ];
   for (const { name, version } of runtime) {
@@ -586,7 +586,7 @@ function build() {
 
   push('# Third-Party Notices', '');
   push(
-    '`@inkeep/open-knowledge` (npm CLI) and `@inkeep/open-knowledge-desktop` (Electron app) bundle source code from the third-party packages listed below. Each package is redistributed under its own license; the relevant copyright notice and license text are reproduced here as required.',
+    '`@palimpsest/cli` (npm CLI) and `@palimpsest/desktop` (Electron app) bundle source code from the third-party packages listed below. Each package is redistributed under its own license; the relevant copyright notice and license text are reproduced here as required.',
     '',
   );
   push(
@@ -612,7 +612,7 @@ function build() {
   push(
     `\`node-liblzma\`${
       lgplResolved ? `@${lgplResolved.pkg.version}` : ''
-    } is an **optional** transitive dependency of \`just-bash\`, used by \`@inkeep/open-knowledge\` for sandboxed shell execution. The package is licensed under LGPL-3.0. For the npm CLI tarball, \`node-liblzma\` is not bundled — it is resolved from the public npm registry at install time on platforms where the native build succeeds. For the Electron desktop \`.app\`, whether the binary lands in \`Resources/app.asar.unpacked/\` depends on the build host's toolchain at packaging time; if present, the binary ships subject to LGPL-3.0 obligations. Upstream source: https://github.com/Manawyrm/node-liblzma. Corresponding source can be obtained from upstream per LGPL §6.`,
+    } is an **optional** transitive dependency of \`just-bash\`, used by \`@palimpsest/cli\` for sandboxed shell execution. The package is licensed under LGPL-3.0. For the npm CLI tarball, \`node-liblzma\` is not bundled — it is resolved from the public npm registry at install time on platforms where the native build succeeds. For the Electron desktop \`.app\`, whether the binary lands in \`Resources/app.asar.unpacked/\` depends on the build host's toolchain at packaging time; if present, the binary ships subject to LGPL-3.0 obligations. Upstream source: https://github.com/Manawyrm/node-liblzma. Corresponding source can be obtained from upstream per LGPL §6.`,
     '',
   );
   push('The full text of the GNU Lesser General Public License v3.0 follows.', '');
@@ -745,7 +745,7 @@ function build() {
   if (grouped.has('FIRST_PARTY_GPL')) {
     push('## Inkeep first-party packages (GPL-3.0-or-later)', '');
     push(
-      'The packages below are authored and published by Inkeep and are licensed under GPL-3.0-or-later, the same license as OpenKnowledge itself (see the repository LICENSE for the full text). They are listed for completeness; they are not third-party material.',
+      'The packages below are authored and published by Inkeep and are licensed under GPL-3.0-or-later, the same license as Palimpsest itself (see the repository LICENSE for the full text). They are listed for completeness; they are not third-party material.',
       '',
     );
     for (const e of grouped.get('FIRST_PARTY_GPL')) {
@@ -849,13 +849,13 @@ function main() {
     );
   }
 
-  if (build.lastAuditCount > 0 && process.env.OK_NOTICES_ALLOW_AUDIT_BUCKET !== '1') {
+  if (build.lastAuditCount > 0 && process.env.PS_NOTICES_ALLOW_AUDIT_BUCKET !== '1') {
     console.error('');
     console.error(
       `Audit-needed bucket is non-empty (${build.lastAuditCount} package(s) with unrecognized SPDX).`,
     );
     console.error(
-      'Review and either (a) add explicit handling in `categorize()` and re-run, or (b) re-run with `OK_NOTICES_ALLOW_AUDIT_BUCKET=1` after auditing.',
+      'Review and either (a) add explicit handling in `categorize()` and re-run, or (b) re-run with `PS_NOTICES_ALLOW_AUDIT_BUCKET=1` after auditing.',
     );
     exit(1);
   }

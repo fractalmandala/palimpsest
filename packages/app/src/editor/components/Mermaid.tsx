@@ -428,7 +428,7 @@ export function MermaidView({ chart = '', className, editBinding, onExpand }: Me
           showCanvas ? 'flex' : 'hidden',
         )}
       >
-        <div ref={canvasRef} className="ok-mermaid-svg flex min-h-0 flex-1" />
+        <div ref={canvasRef} className="ps-mermaid-svg flex min-h-0 flex-1" />
         {showCanvas && (
           <PanzoomControls
             panzoomRef={panzoomRef}

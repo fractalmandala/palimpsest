@@ -887,7 +887,7 @@ test('comment composer stays inside a pane narrower than the card', async ({ pag
 
 const SLASH_PICKER = '[data-suggestion-popup="slash-command"]';
 const SUGGESTION_POPUP = SLASH_PICKER;
-const LINT_CALLOUT = '.ok-lint-tooltip';
+const LINT_CALLOUT = '.ps-lint-tooltip';
 
 const SUGGESTION_MAX_HEIGHT_FRACTION = 0.4;
 
@@ -1092,7 +1092,7 @@ for (const picker of PICKERS) {
 async function previewColumnCount(page: Page): Promise<number> {
   return page.evaluate(
     (selector) =>
-      Array.from(document.querySelectorAll(`${selector} .ok-suggestion-preview`)).filter(
+      Array.from(document.querySelectorAll(`${selector} .ps-suggestion-preview`)).filter(
         (el) => el.getClientRects().length > 0,
       ).length,
     SUGGESTION_POPUP,
@@ -1143,16 +1143,16 @@ test.describe('markdown-lint hover callout', () => {
     'more than one visual line in the editor so a pointer can rest anywhere along its width.';
 
   test.beforeEach(({ workerServer }) => {
-    mkdirSync(join(workerServer.contentDir, '.ok'), { recursive: true });
+    mkdirSync(join(workerServer.contentDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(workerServer.contentDir, '.ok', 'config.yml'),
+      join(workerServer.contentDir, '.ps', 'config.yml'),
       'contentRules:\n  markdownlint:\n    enabled: true\n',
       'utf-8',
     );
   });
 
   test.afterAll(({ workerServer }) => {
-    writeFileSync(join(workerServer.contentDir, '.ok', 'config.yml'), '', 'utf-8');
+    writeFileSync(join(workerServer.contentDir, '.ps', 'config.yml'), '', 'utf-8');
   });
 
   async function openLintDoc(page: Page, api: ApiHelpers, prefix: string): Promise<void> {
@@ -1165,7 +1165,7 @@ test.describe('markdown-lint hover callout', () => {
     await page.goto(`/#/${docName}`);
     await waitForActiveProviderSynced(page);
     await expect(page.locator(WYSIWYG).first()).toBeVisible();
-    await expect(page.locator(`${WYSIWYG} .ok-lint-block`).first()).toBeVisible({
+    await expect(page.locator(`${WYSIWYG} .ps-lint-block`).first()).toBeVisible({
       timeout: 20_000,
     });
   }
@@ -1184,7 +1184,7 @@ test.describe('markdown-lint hover callout', () => {
           );
           if (!scroller) throw new Error('scrollLintBlockTo: no painted scrollport');
           const blocks = Array.from(
-            document.querySelectorAll<HTMLElement>(`${wysiwygSel} .ok-lint-block`),
+            document.querySelectorAll<HTMLElement>(`${wysiwygSel} .ps-lint-block`),
           );
           if (blocks.length === 0) throw new Error('scrollLintBlockTo: no lint blocks painted');
           const nearest = blocks.reduce((best, block) =>
@@ -1206,7 +1206,7 @@ test.describe('markdown-lint hover callout', () => {
     return page.evaluate(
       ({ target, wysiwygSel }) => {
         const blocks = Array.from(
-          document.querySelectorAll<HTMLElement>(`${wysiwygSel} .ok-lint-block`),
+          document.querySelectorAll<HTMLElement>(`${wysiwygSel} .ps-lint-block`),
         );
         const nearest = blocks.reduce((best, block) =>
           Math.abs(block.getBoundingClientRect().top - target) <

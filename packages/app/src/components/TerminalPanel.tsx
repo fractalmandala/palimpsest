@@ -4,7 +4,7 @@ import {
   assertNeverPtyAdoptReason,
   assertNeverPtyCreateReason,
   assetOpenRefusalRevealsInstead,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/desktop-bridge';
 import {
   BRACKETED_PASTE_ENABLE_MARKER,
   buildPosixCliLaunch,
@@ -17,7 +17,7 @@ import {
   type TerminalCli,
   type TerminalLaunchCommand,
   type WindowsShellFamily,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
 import { FitAddon } from '@xterm/addon-fit';
 import { Unicode11Addon } from '@xterm/addon-unicode11';
@@ -27,7 +27,7 @@ import { Terminal } from '@xterm/xterm';
 import { useTheme } from 'next-themes';
 import { use, useEffect, useRef, useState } from 'react';
 import { ConfigContext } from '@/lib/config-context';
-import type { OkDesktopBridge, OkPtyNotice } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsPtyNotice } from '@/lib/desktop-bridge-types';
 import { revealEditor } from '@/lib/reveal-editor';
 import { cn } from '@/lib/utils';
 import { getPageListCache } from '../editor/page-list-cache';
@@ -62,7 +62,7 @@ export const STAGE_PASTE_SETTLE_MS = 500;
 export const STAGE_PASTE_CAP_MS = 4000;
 
 interface TerminalPanelProps {
-  readonly bridge: OkDesktopBridge;
+  readonly bridge: PsDesktopBridge;
   readonly className?: string;
   readonly onClose?: () => void;
   readonly onExit?: (info: { readonly exitCode: number; readonly signal: number | null }) => void;
@@ -117,7 +117,7 @@ export function TerminalPanel({
 type SessionStatus = 'starting' | 'running' | 'no-project' | 'not-consented' | 'exited';
 
 interface TerminalSessionProps {
-  readonly bridge: OkDesktopBridge;
+  readonly bridge: PsDesktopBridge;
   readonly onClose?: () => void;
   readonly onExit?: (info: { readonly exitCode: number; readonly signal: number | null }) => void;
   readonly onTitleChange?: (title: string) => void;
@@ -153,11 +153,11 @@ function TerminalSession({
   const [connectionCli, setConnectionCli] = useState<TerminalCli | null>(null);
   const [exitInfo, setExitInfo] = useState<TerminalExitInfo | null>(null);
   const [shellNotice, setShellNotice] = useState<Extract<
-    OkPtyNotice,
+    PsPtyNotice,
     { notice: 'invalid-shell-override' }
   > | null>(null);
   const [supportFileNotice, setSupportFileNotice] = useState<Extract<
-    OkPtyNotice,
+    PsPtyNotice,
     { notice: 'support-file-degraded' }
   > | null>(null);
   const [pathDropNotice, setPathDropNotice] = useState(false);
@@ -199,7 +199,7 @@ function TerminalSession({
     let unsubData: (() => void) | undefined;
     let unsubExit: (() => void) | undefined;
     let unsubNotice: (() => void) | undefined;
-    let pendingShellNotices: OkPtyNotice[] = [];
+    let pendingShellNotices: PsPtyNotice[] = [];
     let launchCapabilityLimited = false;
     let readinessScan: ((data: string) => void) | undefined;
     const armReadinessScan = (marker: string, onReady: () => void): void => {
@@ -231,7 +231,7 @@ function TerminalSession({
     window.addEventListener('pagehide', markDocumentUnloading);
     document.addEventListener('visibilitychange', markDocumentVisible);
 
-    const applyShellNotice = (notice: OkPtyNotice): void => {
+    const applyShellNotice = (notice: PsPtyNotice): void => {
       if (notice.notice === 'shell-resolved') {
         shellFamilyRef.current = notice.shellFamily;
       } else if (notice.notice === 'invalid-shell-override') {
@@ -661,7 +661,7 @@ function TerminalSession({
               mcpServerName: fresh.mcpServerName,
               ...(bridge.cliCommandName ? { cliCommandName: bridge.cliCommandName } : {}),
               autoApproveOkTools:
-                autoApproveOkToolsRef.current && fresh.okToolsAutoApprovable === true,
+                autoApproveOkToolsRef.current && fresh.psToolsAutoApprovable === true,
             });
           }
           if (!cancelled) {
@@ -688,7 +688,7 @@ function TerminalSession({
           return buildLaunch({
             autoApproveOkTools:
               intent.cli === 'codex' &&
-              res.okServerConfigured === true &&
+              res.psServerConfigured === true &&
               autoApproveOkToolsRef.current,
             mcpServerName: res.mcpServerName,
           });
@@ -997,8 +997,8 @@ function TerminalSession({
             onDismiss={() => setSupportFileNotice(null)}
           >
             {supportFileNotice.reason === 'containment-refused'
-              ? t`OpenKnowledge couldn't write launch settings under .ok/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve OpenKnowledge.`
-              : t`OpenKnowledge couldn't write launch settings under .ok/local/terminal this time. Check that the folder is writable. Claude will ask you to approve OpenKnowledge.`}
+              ? t`Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest.`
+              : t`Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest.`}
           </TerminalNoticeBanner>
         ) : shellNotice ? (
           <TerminalNoticeBanner
@@ -1006,14 +1006,14 @@ function TerminalSession({
             onDismiss={() => setShellNotice(null)}
           >
             {shellNotice.reason === 'config-unreadable'
-              ? t`OpenKnowledge couldn't read terminal.shell in .ok/local/config.yml. Using an available Windows shell instead.`
+              ? t`Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead.`
               : shellNotice.reason === 'invalid-value'
-                ? t`terminal.shell in .ok/local/config.yml must be a string. Using an available Windows shell instead.`
+                ? t`terminal.shell in .ps/local/config.yml must be a string. Using an available Windows shell instead.`
                 : shellNotice.reason === 'not-absolute'
-                  ? t`terminal.shell in .ok/local/config.yml must be an absolute Windows path. Using an available Windows shell instead.`
+                  ? t`terminal.shell in .ps/local/config.yml must be an absolute Windows path. Using an available Windows shell instead.`
                   : shellNotice.reason === 'unsupported-family'
-                    ? t`terminal.shell in .ok/local/config.yml supports PowerShell, cmd.exe, or Git Bash for OpenKnowledge-managed launches and dropped-file paths. This shell opens a plain terminal only; agent and command launches do not run in it.`
-                    : t`The terminal.shell executable in .ok/local/config.yml was not found. Using an available Windows shell instead.`}
+                    ? t`terminal.shell in .ps/local/config.yml supports PowerShell, cmd.exe, or Git Bash for Palimpsest-managed launches and dropped-file paths. This shell opens a plain terminal only; agent and command launches do not run in it.`
+                    : t`The terminal.shell executable in .ps/local/config.yml was not found. Using an available Windows shell instead.`}
           </TerminalNoticeBanner>
         ) : manualSubmitNotice ? (
           <TerminalNoticeBanner

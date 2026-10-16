@@ -1,7 +1,7 @@
 import { existsSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { delimiter, resolve } from 'node:path';
-import { augmentGitSpawnPath, OkCliCommand } from '@inkeep/open-knowledge-core';
+import { augmentGitSpawnPath, PsCliCommand } from '@palimpsest/core';
 import simpleGit, { type SimpleGit, type SimpleGitOptions } from 'simple-git';
 import { shellEscape } from './bash/shell-escape.ts';
 
@@ -84,9 +84,9 @@ export function buildGitEnv(ghToken?: RelayGhToken): Record<string, string> {
     if (value !== undefined) env[key] = value;
   }
   if (ghToken) {
-    env.OK_GH_TOKEN = ghToken.token;
-    env.OK_GH_TOKEN_HOST = ghToken.host;
-    if (ghToken.login) env.OK_GH_TOKEN_LOGIN = ghToken.login;
+    env.PS_GH_TOKEN = ghToken.token;
+    env.PS_GH_TOKEN_HOST = ghToken.host;
+    if (ghToken.login) env.PS_GH_TOKEN_LOGIN = ghToken.login;
   }
   return env;
 }
@@ -134,7 +134,7 @@ export function buildSyncCredentialConfig(
   localOpCliArgs: string[] | undefined,
   opts: { resetAmbient: boolean },
 ): string[] {
-  const cli = OkCliCommand.resolve({
+  const cli = PsCliCommand.resolve({
     host: localOpCliArgs === undefined ? undefined : { cliArgs: localOpCliArgs },
   });
   const helper = `credential.helper=!${cli.shellCommand(['auth', 'git-credential'], shellEscape)}`;

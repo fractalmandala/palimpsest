@@ -1,4 +1,4 @@
-import type { LintPluginId } from '@inkeep/open-knowledge-core';
+import type { LintPluginId } from '@palimpsest/core';
 
 export type PackId =
   | 'knowledge-base'
@@ -8,7 +8,7 @@ export type PackId =
   | 'worldbuilding'
   | 'writing-pipeline'
   | 'entity-vault'
-  | 'okf';
+  | 'psf';
 
 export const DEFAULT_PACK_ID: PackId = 'knowledge-base';
 
@@ -1019,7 +1019,7 @@ const ENTITY_VAULT_FOLDERS: readonly StarterFolder[] = [
     title: 'Media',
     uiSummary: 'Transcripts, voice notes, and long attachments.',
     description:
-      "Bulk transcripts, voice notes, articles, large attachments. Frontmatter `type: transcript` (template provided). Often `.okignore`-d so the OK index stays light. Keep raw media/source material here; analysis belongs in dossiers, not here. If you also run Garry Tan's `gbrain`, import/sync can index these Markdown transcripts alongside the entity dossiers.",
+      "Bulk transcripts, voice notes, articles, large attachments. Frontmatter `type: transcript` (template provided). Often `.psignore`-d so the OK index stays light. Keep raw media/source material here; analysis belongs in dossiers, not here. If you also run Garry Tan's `gbrain`, import/sync can index these Markdown transcripts alongside the entity dossiers.",
     tags: ['media', 'transcript', 'bulk'],
     starterTemplate: 'transcript',
   },
@@ -1252,7 +1252,7 @@ description: What the agent may read, write, and surface. A 4-tier privacy model
 
 ## Tier 4: Restricted
 
-(Things the agent should never read or surface. Use \`.okignore\` to enforce hard exclusion at the file level.)
+(Things the agent should never read or surface. Use \`.psignore\` to enforce hard exclusion at the file level.)
 
 `;
 
@@ -1282,19 +1282,19 @@ description: "When the agent does scheduled work: daily briefings, end-of-day do
 
 `;
 
-const OKF_FOLDERS: readonly StarterFolder[] = [
+const PSF_FOLDERS: readonly StarterFolder[] = [
   {
     path: 'concepts',
     title: 'Concepts',
     uiSummary: 'Durable knowledge, one concept per file.',
     description:
       'Durable knowledge, one concept per file. New documents start as draft Concepts and use standard Markdown links for portable relationships.',
-    tags: ['okf'],
+    tags: ['psf'],
     starterTemplate: 'concept',
   },
 ] as const;
 
-const OKF_TEMPLATES: Readonly<Record<string, string>> = {
+const PSF_TEMPLATES: Readonly<Record<string, string>> = {
   concept: `---
 template:
   title: Concept Name
@@ -1311,7 +1311,7 @@ status: draft
 `,
 };
 
-const OKF_GETTING_STARTED_MD = `---
+const PSF_GETTING_STARTED_MD = `---
 type: Guide
 title: Getting started
 description: Purpose and organization of this knowledge base.
@@ -1324,10 +1324,10 @@ Use this knowledge base for durable concepts that people and agents can link, ex
 
 Each concept needs parseable YAML frontmatter with a non-empty \`type\`. Use standard Markdown links so relationships remain portable to other OKF tools.
 
-The OpenKnowledge OKF plugin warns when content may not survive a handoff to another OKF consumer. Its companion skill provides the complete authoring guidance.
+The Palimpsest OKF plugin warns when content may not survive a handoff to another OKF consumer. Its companion skill provides the complete authoring guidance.
 `;
 
-const OKF_INDEX_MD = `---
+const PSF_INDEX_MD = `---
 okf_version: "0.2"
 ---
 
@@ -1374,18 +1374,18 @@ export const STARTER_PACKS: Readonly<Record<PackId, StarterPack>> = {
     folders: PLAIN_NOTES_FOLDERS,
     templates: PLAIN_NOTES_TEMPLATES,
   },
-  okf: {
-    id: 'okf',
-    name: 'Open Knowledge Format',
-    description: "Wiki using Google's Open Knowledge Format.",
+  psf: {
+    id: 'psf',
+    name: 'Palimpsest Format',
+    description: "Wiki using Google's Palimpsest Format.",
     defaultSubfolder: undefined,
-    folders: OKF_FOLDERS,
-    templates: OKF_TEMPLATES,
+    folders: PSF_FOLDERS,
+    templates: PSF_TEMPLATES,
     rootFiles: {
-      'index.md': OKF_INDEX_MD,
-      'concepts/getting-started.md': OKF_GETTING_STARTED_MD,
+      'index.md': PSF_INDEX_MD,
+      'concepts/getting-started.md': PSF_GETTING_STARTED_MD,
     },
-    requiredPlugins: ['okf'],
+    requiredPlugins: ['psf'],
   },
   'writing-pipeline': {
     id: 'writing-pipeline',
@@ -1422,7 +1422,7 @@ export const STARTER_PACKS: Readonly<Record<PackId, StarterPack>> = {
 
 export const STARTER_PACK_IDS: readonly PackId[] = Object.keys(STARTER_PACKS) as PackId[];
 
-export const OKF_RESERVED_FILENAMES: readonly string[] = ['index.md', 'log.md'];
+export const PSF_RESERVED_FILENAMES: readonly string[] = ['index.md', 'log.md'];
 
 export function resolvePack(packId?: PackId): StarterPack {
   if (!packId) return STARTER_PACKS[DEFAULT_PACK_ID];

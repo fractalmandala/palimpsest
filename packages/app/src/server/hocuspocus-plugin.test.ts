@@ -2,14 +2,14 @@ import { EventEmitter } from 'node:events';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import * as actualServerPkg from '@inkeep/open-knowledge-server';
+import * as actualServerPkg from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { resolveContentConfig } from './hocuspocus-plugin.ts';
 
 const createdDirs: string[] = [];
 
 function mkTmp(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-hocuspocus-plugin-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-hocuspocus-plugin-'));
   createdDirs.push(dir);
   return dir;
 }
@@ -30,16 +30,16 @@ describe('resolveContentConfig', () => {
 
   test('config.yml without content.dir: defaults to projectRoot', () => {
     const projectRoot = mkTmp();
-    mkdirSync(join(projectRoot, '.ok'), { recursive: true });
-    writeFileSync(join(projectRoot, '.ok/config.yml'), 'server:\n  host: 0.0.0.0\n', 'utf-8');
+    mkdirSync(join(projectRoot, '.ps'), { recursive: true });
+    writeFileSync(join(projectRoot, '.ps/config.yml'), 'server:\n  host: 0.0.0.0\n', 'utf-8');
     const config = resolveContentConfig(projectRoot);
     expect(config.dir).toBe(projectRoot);
   });
 
   test('config.yml with content.dir: resolves relative to projectRoot', () => {
     const projectRoot = mkTmp();
-    mkdirSync(join(projectRoot, '.ok'), { recursive: true });
-    writeFileSync(join(projectRoot, '.ok/config.yml'), "content:\n  dir: 'content'\n", 'utf-8');
+    mkdirSync(join(projectRoot, '.ps'), { recursive: true });
+    writeFileSync(join(projectRoot, '.ps/config.yml'), "content:\n  dir: 'content'\n", 'utf-8');
     const config = resolveContentConfig(projectRoot);
     expect(config.dir).toBe(join(projectRoot, 'content'));
   });
@@ -48,17 +48,17 @@ describe('resolveContentConfig', () => {
 describe('hocuspocusPlugin.configureServer middleware ordering', () => {
   let origEnv: string | undefined;
   beforeEach(() => {
-    origEnv = process.env.OK_TEST_CONTENT_DIR;
+    origEnv = process.env.PS_TEST_CONTENT_DIR;
   });
   afterEach(() => {
-    if (origEnv !== undefined) process.env.OK_TEST_CONTENT_DIR = origEnv;
-    else delete process.env.OK_TEST_CONTENT_DIR;
+    if (origEnv !== undefined) process.env.PS_TEST_CONTENT_DIR = origEnv;
+    else delete process.env.PS_TEST_CONTENT_DIR;
     vi.restoreAllMocks();
   });
 
   test('registers asset + api middlewares synchronously, no post-hook returned', async () => {
     const testContentDir = mkTmp();
-    process.env.OK_TEST_CONTENT_DIR = testContentDir;
+    process.env.PS_TEST_CONTENT_DIR = testContentDir;
 
     let innerAssetCalls = 0;
     const innerAssetFn = (..._args: unknown[]) => {
@@ -116,7 +116,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
       destroy: destroyServer,
     }));
 
-    vi.doMock('@inkeep/open-knowledge-server', () => ({
+    vi.doMock('@palimpsest/server', () => ({
       ...actualServerPkg,
       AcpThreadManager: FakeAcpThreadManager,
       createAssetServeMiddleware: createAssetServeMiddlewareSpy,
@@ -229,7 +229,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
 
   test('buildEnd awaits every overlapping configureServer runtime', async () => {
     const testContentDir = mkTmp();
-    process.env.OK_TEST_CONTENT_DIR = testContentDir;
+    process.env.PS_TEST_CONTENT_DIR = testContentDir;
     const shutdowns = [Promise.withResolvers<void>(), Promise.withResolvers<void>()];
     const destroyServers = [vi.fn(async () => {}), vi.fn(async () => {})];
     const hosts = shutdowns.map((shutdown) => ({
@@ -243,7 +243,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
       async init(): Promise<void> {}
       async destroy(): Promise<void> {}
     }
-    vi.doMock('@inkeep/open-knowledge-server', () => ({
+    vi.doMock('@palimpsest/server', () => ({
       ...actualServerPkg,
       AcpThreadManager: FakeAcpThreadManager,
       createAssetServeMiddleware: () => () => {},
@@ -308,7 +308,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
     vi.useFakeTimers();
     try {
       const testContentDir = mkTmp();
-      process.env.OK_TEST_CONTENT_DIR = testContentDir;
+      process.env.PS_TEST_CONTENT_DIR = testContentDir;
       const order: string[] = [];
       const logger = { info: vi.fn(), error: vi.fn() };
       const terminateClient = vi.fn(() => {
@@ -335,7 +335,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
       const destroy = vi.fn(async () => {
         order.push('server');
       });
-      vi.doMock('@inkeep/open-knowledge-server', () => ({
+      vi.doMock('@palimpsest/server', () => ({
         ...actualServerPkg,
         AcpThreadManager: FakeAcpThreadManager,
         createAssetServeMiddleware: () => () => {},
@@ -400,7 +400,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
 
   test('propagates buildEnd AggregateError and contains HTTP-close fallback failures', async () => {
     const testContentDir = mkTmp();
-    process.env.OK_TEST_CONTENT_DIR = testContentDir;
+    process.env.PS_TEST_CONTENT_DIR = testContentDir;
     const order: string[] = [];
     const logger = { info: vi.fn(), error: vi.fn() };
     class FakeAcpThreadManager {
@@ -427,7 +427,7 @@ describe('hocuspocusPlugin.configureServer middleware ordering', () => {
       order.push('server');
       throw new Error('server failed');
     });
-    vi.doMock('@inkeep/open-knowledge-server', () => ({
+    vi.doMock('@palimpsest/server', () => ({
       ...actualServerPkg,
       AcpThreadManager: FakeAcpThreadManager,
       createAssetServeMiddleware: () => () => {},

@@ -6,7 +6,7 @@ import { makeTree as populateTree } from './mktree.test-helper.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function makeTree(files: Parameters<typeof populateTree>[1]): string {
-  return populateTree(makeTempDir('ok-migrate-'), files);
+  return populateTree(makeTempDir('ps-migrate-'), files);
 }
 
 const ID = '2a145f35b5ad808e9200ff850d964d8f';
@@ -33,7 +33,7 @@ describe('isNotionExport', () => {
   });
 
   test('ignores signals inside dot-directories', () => {
-    const root = makeTree({ [`.ok/cache/x ${ID}.md`]: 'x', 'plain.md': '# plain\n' });
+    const root = makeTree({ [`.ps/cache/x ${ID}.md`]: 'x', 'plain.md': '# plain\n' });
     expect(isNotionExport(root)).toBe(false);
   });
 });

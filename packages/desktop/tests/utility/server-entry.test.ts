@@ -3,8 +3,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { resolveServerRuntimeConfig } from '@inkeep/open-knowledge-core';
-import { ConfigSchema } from '@inkeep/open-knowledge-server';
+import { resolveServerRuntimeConfig } from '@palimpsest/core';
+import { ConfigSchema } from '@palimpsest/server';
 import { beforeEach, describe, expect, type Mock, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { UTILITY_INIT_PHASES } from '../../src/shared/boot-narration.ts';
@@ -89,7 +89,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     };
     const bootServer = vi.fn(() => Promise.resolve(fakeBooted));
     const importServer = vi.fn(() =>
-      Promise.resolve({ bootServer } as unknown as typeof import('@inkeep/open-knowledge-server')),
+      Promise.resolve({ bootServer } as unknown as typeof import('@palimpsest/server')),
     );
     const prepared = makeFakePrepared({ contentDir: '/fake/test-project', contentRoot: undefined });
 
@@ -175,7 +175,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: () => {
@@ -212,7 +212,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -248,7 +248,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -285,7 +285,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -308,7 +308,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     expect(destroy).toHaveBeenCalledTimes(1);
   });
 
-  test('boot auto-smoke: OK_DEBUG_KEYRING_SMOKE=1 + OUT path writes JSON atomically', async () => {
+  test('boot auto-smoke: PS_DEBUG_KEYRING_SMOKE=1 + OUT path writes JSON atomically', async () => {
     const smokeResult: KeyringSmokeResult = {
       ok: true,
       backend: 'keyring',
@@ -321,7 +321,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     setupUtility({
       parentPort: env.parentPort,
       importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@inkeep/open-knowledge-server')),
+        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -332,8 +332,8 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       },
       runSmoke,
       env: {
-        OK_DEBUG_KEYRING_SMOKE: '1',
-        OK_DEBUG_KEYRING_SMOKE_OUT: '/tmp/smoke-out.json',
+        PS_DEBUG_KEYRING_SMOKE: '1',
+        PS_DEBUG_KEYRING_SMOKE_OUT: '/tmp/smoke-out.json',
       },
       writeSmokeResult,
     });
@@ -363,7 +363,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     setupUtility({
       parentPort: env.parentPort,
       importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@inkeep/open-knowledge-server')),
+        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -374,9 +374,9 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       },
       runSmoke,
       env: {
-        OK_DEBUG_KEYRING_SMOKE: '1',
-        OK_DEBUG_KEYRING_SMOKE_OUT: '/tmp/smoke-exit.json',
-        OK_DEBUG_KEYRING_SMOKE_EXIT: '1',
+        PS_DEBUG_KEYRING_SMOKE: '1',
+        PS_DEBUG_KEYRING_SMOKE_OUT: '/tmp/smoke-exit.json',
+        PS_DEBUG_KEYRING_SMOKE_EXIT: '1',
       },
       writeSmokeResult,
     });
@@ -389,7 +389,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     expect(env.parentPort.on).not.toHaveBeenCalled();
   });
 
-  test('boot auto-smoke: OK_DEBUG_KEYRING_SMOKE=1 without OUT path still posts IPC result', async () => {
+  test('boot auto-smoke: PS_DEBUG_KEYRING_SMOKE=1 without OUT path still posts IPC result', async () => {
     const smokeResult: KeyringSmokeResult = {
       ok: true,
       backend: 'keyring',
@@ -402,7 +402,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     setupUtility({
       parentPort: env.parentPort,
       importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@inkeep/open-knowledge-server')),
+        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -412,7 +412,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
         return { unref: vi.fn(() => {}), clear: env.intervalCancel };
       },
       runSmoke,
-      env: { OK_DEBUG_KEYRING_SMOKE: '1' },
+      env: { PS_DEBUG_KEYRING_SMOKE: '1' },
       writeSmokeResult,
     });
 
@@ -436,7 +436,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     setupUtility({
       parentPort: env.parentPort,
       importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@inkeep/open-knowledge-server')),
+        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -468,7 +468,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
     setupUtility({
       parentPort: env.parentPort,
       importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@inkeep/open-knowledge-server')),
+        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -479,8 +479,8 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       },
       runSmoke,
       env: {
-        OK_DEBUG_KEYRING_SMOKE: '1',
-        OK_DEBUG_KEYRING_SMOKE_OUT: '/tmp/unwritable/smoke.json',
+        PS_DEBUG_KEYRING_SMOKE: '1',
+        PS_DEBUG_KEYRING_SMOKE_OUT: '/tmp/unwritable/smoke.json',
       },
       writeSmokeResult,
     });
@@ -507,7 +507,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer: vi.fn(() => Promise.resolve({})),
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -543,7 +543,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -594,7 +594,7 @@ describe('handleInit boot prelude (FR-16/17/18/19/22/24)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -637,7 +637,7 @@ describe('handleInit boot prelude (FR-16/17/18/19/22/24)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -668,7 +668,7 @@ describe('handleInit boot prelude (FR-16/17/18/19/22/24)', () => {
     expect(ipcArgs?.projectDir).toBe('/projects/myrepo');
   });
 
-  test('OK_DEBUG_DESKTOP_BOOT_TRACE=1 logs the resolved config trace', async () => {
+  test('PS_DEBUG_DESKTOP_BOOT_TRACE=1 logs the resolved config trace', async () => {
     const fakeBooted = {
       port: 4242,
       destroy: vi.fn(() => Promise.resolve()),
@@ -684,7 +684,7 @@ describe('handleInit boot prelude (FR-16/17/18/19/22/24)', () => {
         importServer: () =>
           Promise.resolve({
             bootServer,
-          } as unknown as typeof import('@inkeep/open-knowledge-server')),
+          } as unknown as typeof import('@palimpsest/server')),
         exit: env.exit,
         parentPid: 99999,
         killProbe: env.killProbe,
@@ -700,7 +700,7 @@ describe('handleInit boot prelude (FR-16/17/18/19/22/24)', () => {
             configValid: true,
           }),
         ),
-        env: { OK_DEBUG_DESKTOP_BOOT_TRACE: '1' },
+        env: { PS_DEBUG_DESKTOP_BOOT_TRACE: '1' },
       });
 
       env.parentPort.fire({
@@ -743,7 +743,7 @@ describe('handleInit boot prelude (FR-16/17/18/19/22/24)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -838,15 +838,15 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
 
   beforeEach(() => {
     env = buildEnv();
-    tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-utility-prelude-'));
+    tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-utility-prelude-'));
   });
 
-  test('loads real .ok/config.yml + resolves content.dir via the production prelude', async () => {
+  test('loads real .ps/config.yml + resolves content.dir via the production prelude', async () => {
     mkdirSync(resolve(tmpRoot, '.git'), { recursive: true });
     writeFileSync(resolve(tmpRoot, '.git/HEAD'), 'ref: refs/heads/main\n', 'utf-8');
-    mkdirSync(resolve(tmpRoot, '.ok'), { recursive: true });
+    mkdirSync(resolve(tmpRoot, '.ps'), { recursive: true });
     writeFileSync(
-      resolve(tmpRoot, '.ok/config.yml'),
+      resolve(tmpRoot, '.ps/config.yml'),
       'version: 1\ncontent:\n  dir: docs\n',
       'utf-8',
     );
@@ -864,7 +864,7 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -909,7 +909,7 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -933,7 +933,7 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
     configureTestGitRepository(tmpRoot);
 
     const headPath = resolve(tmpRoot, '.git/HEAD');
-    const configPath = resolve(tmpRoot, '.ok/config.yml');
+    const configPath = resolve(tmpRoot, '.ps/config.yml');
     const headStat = execFileSync('test', ['-f', headPath], { encoding: 'utf-8' });
     expect(headStat).toBe('');
     const configStat = execFileSync('test', ['-f', configPath], { encoding: 'utf-8' });
@@ -945,8 +945,8 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
   test('invalid YAML config falls back to schema defaults and logs warning', async () => {
     mkdirSync(resolve(tmpRoot, '.git'), { recursive: true });
     writeFileSync(resolve(tmpRoot, '.git/HEAD'), 'ref: refs/heads/main\n', 'utf-8');
-    mkdirSync(resolve(tmpRoot, '.ok'), { recursive: true });
-    writeFileSync(resolve(tmpRoot, '.ok/config.yml'), 'version: 1\ncontent: {\n', 'utf-8');
+    mkdirSync(resolve(tmpRoot, '.ps'), { recursive: true });
+    writeFileSync(resolve(tmpRoot, '.ps/config.yml'), 'version: 1\ncontent: {\n', 'utf-8');
 
     const fakeBooted = {
       port: 4242,
@@ -964,7 +964,7 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
         importServer: () =>
           Promise.resolve({
             bootServer,
-          } as unknown as typeof import('@inkeep/open-knowledge-server')),
+          } as unknown as typeof import('@palimpsest/server')),
         exit: env.exit,
         parentPid: 99999,
         killProbe: env.killProbe,
@@ -1006,9 +1006,9 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
   test('initContent is idempotent on re-runs — does not clobber an existing config.yml', async () => {
     mkdirSync(resolve(tmpRoot, '.git'), { recursive: true });
     writeFileSync(resolve(tmpRoot, '.git/HEAD'), 'ref: refs/heads/main\n', 'utf-8');
-    mkdirSync(resolve(tmpRoot, '.ok'), { recursive: true });
+    mkdirSync(resolve(tmpRoot, '.ps'), { recursive: true });
     const userCustomized = 'version: 1\ncontent:\n  dir: notes\n';
-    writeFileSync(resolve(tmpRoot, '.ok/config.yml'), userCustomized, 'utf-8');
+    writeFileSync(resolve(tmpRoot, '.ps/config.yml'), userCustomized, 'utf-8');
     mkdirSync(resolve(tmpRoot, 'notes'), { recursive: true });
 
     const fakeBooted = {
@@ -1023,7 +1023,7 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
       importServer: () =>
         Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server')),
+        } as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -1047,7 +1047,7 @@ describe('handleInit defaultPrepareBootEnvironment (integration)', () => {
     await handle.readyPromise;
 
     const { readFileSync } = await import('node:fs');
-    const post = readFileSync(resolve(tmpRoot, '.ok/config.yml'), 'utf-8');
+    const post = readFileSync(resolve(tmpRoot, '.ps/config.yml'), 'utf-8');
     expect(post).toBe(userCustomized);
 
     rmSync(tmpRoot, { recursive: true, force: true });
@@ -1119,7 +1119,7 @@ describe('setupUtility narrates its startup phases to main before it reports rea
         phasesPostedBefore.importServer = initPhasesPostedToMain(env);
         return Promise.resolve({
           bootServer,
-        } as unknown as typeof import('@inkeep/open-knowledge-server'));
+        } as unknown as typeof import('@palimpsest/server'));
       },
       exit: env.exit,
       parentPid: 99999,
@@ -1164,7 +1164,7 @@ describe('setupUtility narrates its startup phases to main before it reports rea
     'marks ensuring the project git only when it ensured it itself (didEnsureGit=$didEnsureGit), with counters it read itself',
     async ({ didEnsureGit, markedPhases }) => {
       expect(UTILITY_INIT_PHASES).toEqual(PLANNED_UTILITY_INIT_PHASES);
-      const tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-utility-phase-marks-'));
+      const tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-utility-phase-marks-'));
       if (didEnsureGit) {
         mkdirSync(resolve(tmpRoot, '.git'), { recursive: true });
         writeFileSync(resolve(tmpRoot, '.git/HEAD'), 'ref: refs/heads/main\n', 'utf-8');
@@ -1181,7 +1181,7 @@ describe('setupUtility narrates its startup phases to main before it reports rea
           importServer: () =>
             Promise.resolve({
               bootServer,
-            } as unknown as typeof import('@inkeep/open-knowledge-server')),
+            } as unknown as typeof import('@palimpsest/server')),
           exit: env.exit,
           parentPid: 99999,
           killProbe: env.killProbe,
@@ -1251,7 +1251,7 @@ describe('setupUtility narrates its startup phases to main before it reports rea
   });
 
   test('reads its default phase counters in milliseconds of its own uptime and CPU clocks', async () => {
-    const tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-utility-phase-counters-'));
+    const tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-utility-phase-counters-'));
     mkdirSync(resolve(tmpRoot, '.git'), { recursive: true });
     writeFileSync(resolve(tmpRoot, '.git/HEAD'), 'ref: refs/heads/main\n', 'utf-8');
     try {
@@ -1265,7 +1265,7 @@ describe('setupUtility narrates its startup phases to main before it reports rea
         importServer: () =>
           Promise.resolve({
             bootServer: vi.fn(() => Promise.resolve(fakeBooted)),
-          } as unknown as typeof import('@inkeep/open-knowledge-server')),
+          } as unknown as typeof import('@palimpsest/server')),
         exit: env.exit,
         parentPid: 99999,
         killProbe: env.killProbe,
@@ -1356,7 +1356,7 @@ function startUtilityWhoseBootPreparationWaits(env: MockEnv): {
     importServer: () =>
       Promise.resolve({
         bootServer,
-      } as unknown as typeof import('@inkeep/open-knowledge-server')),
+      } as unknown as typeof import('@palimpsest/server')),
     exit: env.exit,
     parentPid: 99999,
     killProbe: env.killProbe,

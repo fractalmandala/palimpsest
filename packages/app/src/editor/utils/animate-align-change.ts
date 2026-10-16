@@ -1,10 +1,10 @@
-const ALIGN_TARGET_SELECTOR = 'img, .ok-embed, .ok-video';
+const ALIGN_TARGET_SELECTOR = 'img, .ps-embed, .ps-video';
 
 const FLIP_DURATION_MS = 220;
 
 const FLIP_EASING = 'cubic-bezier(0.23, 1, 0.32, 1)';
 
-const FLIP_ANIMATION_ID = 'ok-image-align-flip';
+const FLIP_ANIMATION_ID = 'ps-image-align-flip';
 
 const PIXEL_SHIFT_THRESHOLD = 0.5;
 

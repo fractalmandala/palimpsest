@@ -1,4 +1,4 @@
-import { AGENT_REGISTRY, type ApplyReport, type HostSnapshot } from '@inkeep/open-knowledge-core';
+import { AGENT_REGISTRY, type ApplyReport, type HostSnapshot } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   applyAgentConnectionIntents,
@@ -24,7 +24,7 @@ describe('applyAgentConnectionIntents', () => {
       report: EMPTY_REPORT,
       snapshot: SNAPSHOT,
     }));
-    vi.stubGlobal('window', { okDesktop: { agentIntegrations: { apply } } });
+    vi.stubGlobal('window', { psDesktop: { agentIntegrations: { apply } } });
     const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const failure = new Error('subscriber failed');
     const stopFailing = subscribeAgentConnectionChanges(() => {
@@ -64,7 +64,7 @@ describe('applyAgentConnectionIntents', () => {
       report: EMPTY_REPORT,
       snapshot: SNAPSHOT,
     }));
-    vi.stubGlobal('window', { okDesktop: { agentIntegrations: { apply } } });
+    vi.stubGlobal('window', { psDesktop: { agentIntegrations: { apply } } });
     const intent = {
       satisfierId: AGENT_REGISTRY.claude.satisfiers[0].id,
       desired: 'present' as const,
@@ -211,7 +211,7 @@ describe('applyAgentConnectionIntents', () => {
 describe('what a refused desktop apply carries back', () => {
   test('an older desktop bridge without agent integrations fails closed', async () => {
     const fetch = vi.fn();
-    vi.stubGlobal('window', { okDesktop: { shell: {} } });
+    vi.stubGlobal('window', { psDesktop: { shell: {} } });
     vi.stubGlobal('fetch', fetch);
 
     const result = await applyAgentConnectionIntents([]);
@@ -230,7 +230,7 @@ describe('what a refused desktop apply carries back', () => {
       report: EMPTY_REPORT,
       snapshot: SNAPSHOT,
     }));
-    vi.stubGlobal('window', { okDesktop: { agentIntegrations: { apply } } });
+    vi.stubGlobal('window', { psDesktop: { agentIntegrations: { apply } } });
 
     const result = await applyAgentConnectionIntents([]);
 
@@ -252,7 +252,7 @@ describe('what a refused desktop apply carries back', () => {
       report: EMPTY_REPORT,
       snapshot: SNAPSHOT,
     }));
-    vi.stubGlobal('window', { okDesktop: { agentIntegrations: { apply } } });
+    vi.stubGlobal('window', { psDesktop: { agentIntegrations: { apply } } });
 
     const result = await applyAgentConnectionIntents([]);
 
@@ -263,7 +263,7 @@ describe('what a refused desktop apply carries back', () => {
     const apply = vi.fn(async () => {
       throw new Error('bridge exploded');
     });
-    vi.stubGlobal('window', { okDesktop: { agentIntegrations: { apply } } });
+    vi.stubGlobal('window', { psDesktop: { agentIntegrations: { apply } } });
 
     const result = await applyAgentConnectionIntents([]);
 

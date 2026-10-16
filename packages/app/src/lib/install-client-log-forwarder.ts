@@ -4,9 +4,9 @@ import {
   RENDERER_LOG_MAX_ENTRIES,
   RENDERER_LOG_MAX_MESSAGE_BYTES,
   truncateLogMessage,
-} from '@inkeep/open-knowledge-core/logging/renderer-log';
-import { scrubSecrets } from '@inkeep/open-knowledge-core/logging/secret-scrub';
-import type { ClientLogEntry } from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/logging/renderer-log';
+import { scrubSecrets } from '@palimpsest/core/logging/secret-scrub';
+import type { ClientLogEntry } from '@palimpsest/core/schemas/api';
 
 const FORWARDER_MARKER = Symbol.for('ok.client.logForwarder');
 
@@ -24,7 +24,7 @@ const LEVEL_BY_METHOD: Record<ConsoleMethod, ClientLogEntry['level']> = {
 type ConsoleLike = Record<ConsoleMethod, (...args: unknown[]) => void>;
 
 interface ForwarderWindowLike {
-  okDesktop?: unknown;
+  psDesktop?: unknown;
   fetch: typeof fetch;
   addEventListener(type: string, listener: (event: Event) => void): void;
   removeEventListener(type: string, listener: (event: Event) => void): void;
@@ -78,7 +78,7 @@ export function installClientLogForwarder(
     options.windowObj ??
     (typeof window !== 'undefined' ? (window as unknown as ForwarderWindowLike) : undefined);
   if (!resolvedWin) return undefined;
-  if (resolvedWin.okDesktop) return undefined;
+  if (resolvedWin.psDesktop) return undefined;
 
   const win: ForwarderWindowLike & { [FORWARDER_MARKER]?: true } = resolvedWin;
   if (win[FORWARDER_MARKER]) return undefined;

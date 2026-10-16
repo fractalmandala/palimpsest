@@ -1,15 +1,15 @@
-import type { OkBugReportCrashDetectedEvent } from '@inkeep/open-knowledge-core/logger-types';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsBugReportCrashDetectedEvent } from '@palimpsest/core/logger-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 export interface CrashInviteStore {
-  install(opts: { bridge: OkDesktopBridge | undefined }): (() => void) | undefined;
-  getSnapshot(): OkBugReportCrashDetectedEvent | null;
+  install(opts: { bridge: PsDesktopBridge | undefined }): (() => void) | undefined;
+  getSnapshot(): PsBugReportCrashDetectedEvent | null;
   subscribe(listener: () => void): () => void;
   dismiss(): void;
 }
 
 export function createCrashInviteStore(): CrashInviteStore {
-  let current: OkBugReportCrashDetectedEvent | null = null;
+  let current: PsBugReportCrashDetectedEvent | null = null;
   const listeners = new Set<() => void>();
   let attached = false;
   let unsubscribeFromBridge: (() => void) | null = null;
@@ -26,7 +26,7 @@ export function createCrashInviteStore(): CrashInviteStore {
 
   return {
     install({ bridge }): (() => void) | undefined {
-      const onCrashDetected = (bridge as { bugReport?: OkDesktopBridge['bugReport'] } | undefined)
+      const onCrashDetected = (bridge as { bugReport?: PsDesktopBridge['bugReport'] } | undefined)
         ?.bugReport?.onCrashDetected;
       if (typeof onCrashDetected !== 'function') return undefined;
       if (attached) return unsubscribeFromBridge ?? undefined;
@@ -43,7 +43,7 @@ export function createCrashInviteStore(): CrashInviteStore {
       };
     },
 
-    getSnapshot(): OkBugReportCrashDetectedEvent | null {
+    getSnapshot(): PsBugReportCrashDetectedEvent | null {
       return current;
     },
 
@@ -63,7 +63,7 @@ export function createCrashInviteStore(): CrashInviteStore {
 export const crashInviteStore: CrashInviteStore = createCrashInviteStore();
 
 export function installCrashInviteListener(opts: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
 }): (() => void) | undefined {
   return crashInviteStore.install(opts);
 }

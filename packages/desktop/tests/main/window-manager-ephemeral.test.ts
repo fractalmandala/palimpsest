@@ -1,5 +1,5 @@
 import { setTimeout as wait } from 'node:timers/promises';
-import { getLocalDir } from '@inkeep/open-knowledge-server';
+import { getLocalDir } from '@palimpsest/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { ShowGateRegistry } from '../../src/main/show-gate.ts';
 import type { WindowChromeKind } from '../../src/main/window-chrome.ts';
@@ -229,7 +229,7 @@ describe('createEphemeralWindow', () => {
     });
 
     expect(ctx.port).toBe(52001);
-    expect(env.createWindowOpts[0]?.title).toBe('todo.md — OpenKnowledge');
+    expect(env.createWindowOpts[0]?.title).toBe('todo.md — Palimpsest');
     expect(env.createWindowOpts[0]?.additionalArguments).toContain(
       '--ok-collab-url=ws://localhost:52001/collab',
     );

@@ -21,7 +21,7 @@ let tmpDir: string;
 let shadow: ShadowHandle;
 
 beforeEach(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-gc-budget-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-gc-budget-'));
   const projectRoot = resolve(tmpDir, 'project');
   mkdirSync(resolve(projectRoot, 'content/docs'), { recursive: true });
   const git = simpleGit(projectRoot);

@@ -1,7 +1,7 @@
 import {
   discoverGitRepository,
   type GitRepository,
-} from '@inkeep/open-knowledge-core/git-repository';
+} from '@palimpsest/core/git-repository';
 import { getLogger } from './logger.ts';
 import { classifyParcelNotification } from './parcel-recovery.ts';
 import { subscribeParcel } from './parcel-subscription.ts';

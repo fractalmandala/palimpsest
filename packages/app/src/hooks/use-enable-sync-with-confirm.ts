@@ -4,8 +4,8 @@ import {
   type StoredSyncMode,
   type SyncActiveMode,
   type SyncMode,
-} from '@inkeep/open-knowledge-core/config/auto-sync-mode';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
+} from '@palimpsest/core/config/auto-sync-mode';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';

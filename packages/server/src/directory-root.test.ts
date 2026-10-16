@@ -9,7 +9,7 @@ describe('resolveDirectoryRoot', () => {
   let scratch: string;
 
   beforeEach(() => {
-    scratch = mkdtempSync(join(tmpdir(), 'ok-directory-root-'));
+    scratch = mkdtempSync(join(tmpdir(), 'ps-directory-root-'));
   });
 
   afterEach(() => {

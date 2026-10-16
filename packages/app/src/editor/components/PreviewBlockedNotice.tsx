@@ -18,7 +18,7 @@ export function PreviewBlockedNotice({ blocked, truncated, onDismiss }: PreviewB
   return (
     <div
       role="status"
-      className="ok-codeblock-preview-blocked mt-1.5 flex items-start gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+      className="ps-codeblock-preview-blocked mt-1.5 flex items-start gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
       contentEditable={false}
     >
       <ShieldAlert className="mt-0.5 size-3.5 shrink-0 text-amber-500" aria-hidden="true" />

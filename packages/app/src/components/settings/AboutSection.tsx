@@ -5,16 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
-import type { OkAboutInfo, OkUpdateMode } from '@/lib/desktop-bridge-types';
+import type { PsAboutInfo, PsUpdateMode } from '@/lib/desktop-bridge-types';
 import { SettingsSectionHeader } from './SettingsSectionHeader';
 
 const UNAVAILABLE_REREAD_INTERVAL_MS = 3000;
 const UNAVAILABLE_REREAD_LIMIT = 20;
 
 export function AboutSection() {
-  const bridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
-  const [about, setAbout] = useState<OkAboutInfo | null>(null);
-  const [updateMode, setUpdateMode] = useState<OkUpdateMode | null>(null);
+  const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
+  const [about, setAbout] = useState<PsAboutInfo | null>(null);
+  const [updateMode, setUpdateMode] = useState<PsUpdateMode | null>(null);
   const [savingMode, setSavingMode] = useState(false);
   const [modeError, setModeError] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -75,7 +75,7 @@ export function AboutSection() {
   if (!bridge) return null;
   const version = about?.version ?? bridge.appVersion;
   const updatesUnavailable = about?.updateChecks === 'unavailable';
-  const changeUpdateMode = (next: OkUpdateMode) => {
+  const changeUpdateMode = (next: PsUpdateMode) => {
     if (savingMode) return;
     const previous = updateMode;
     modeWrites.current += 1;
@@ -169,11 +169,11 @@ export function AboutSection() {
               >
                 {updateMode === 'off' ? (
                   <Trans>
-                    OpenKnowledge doesn't check for or download updates on its own. Check for
+                    Palimpsest doesn't check for or download updates on its own. Check for
                     updates still works when you want a newer version.
                   </Trans>
                 ) : (
-                  <Trans>OpenKnowledge checks for and downloads updates in the background.</Trans>
+                  <Trans>Palimpsest checks for and downloads updates in the background.</Trans>
                 )}
               </p>
               {modeError ? (

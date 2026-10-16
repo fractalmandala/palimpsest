@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { runBootstrap } from '../../src/main/bootstrap.ts';
 import { emptyState } from '../../src/main/state-store.ts';
-import type { OkThemeSource } from '../../src/shared/bridge-contract.ts';
+import type { PsThemeSource } from '../../src/shared/bridge-contract.ts';
 
 interface CallTrace {
   step: string;
@@ -54,7 +54,7 @@ function makeTracingDeps(overrides?: {
       registerIpcHandlers: () => {
         calls.push({ step: 'registerIpcHandlers' });
       },
-      setNativeThemeSource: (source: OkThemeSource) => {
+      setNativeThemeSource: (source: PsThemeSource) => {
         calls.push({ step: 'setNativeThemeSource', args: { source } });
       },
       refreshApplicationMenu: () => {

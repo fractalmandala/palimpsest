@@ -1,4 +1,4 @@
-import { SKILL_NAME_REGEX, type SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
+import { SKILL_NAME_REGEX, type SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MultiFileDiff } from '@pierre/diffs/react';
 import { useEffect, useId, useState } from 'react';
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { okPierreTheme } from '@/lib/pierre-theme';
+import { psPierreTheme } from '@/lib/pierre-theme';
 import { skillHostRootDir } from '@/lib/skill-scope';
 import { fetchSkillPreview, resolveSkillFork } from '@/lib/skills-api';
 
@@ -132,7 +132,7 @@ export function SkillForkDialog({
               className="pierre-diff"
               oldFile={{ name: skill.name, contents: canonicalBody }}
               newFile={{ name: skill.name, contents: forkBody }}
-              options={{ overflow: 'wrap', diffStyle: 'unified', theme: okPierreTheme() }}
+              options={{ overflow: 'wrap', diffStyle: 'unified', theme: psPierreTheme() }}
             />
           ) : previewError ? (
             <div className="flex min-h-56 items-center justify-center px-6 text-center text-muted-foreground text-sm">

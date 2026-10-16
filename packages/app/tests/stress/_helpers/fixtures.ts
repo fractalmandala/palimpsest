@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { ProblemType } from '@inkeep/open-knowledge-core';
+import type { ProblemType } from '@palimpsest/core';
 import { test as base } from '@playwright/test';
 import { resetContentToFixtureBaseline } from './content-reset.ts';
 import { gotoWhileLoadProgresses, requireDeadlineAt } from './load-progress.ts';
@@ -538,7 +538,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
           const request = createViteStartupRequest('127.0.0.1');
           releaseSetupResources.push(() => request.dispose());
 
-          const contentDir = mkdtempSync(join(tmpdir(), `ok-w${workerInfo.workerIndex}-`));
+          const contentDir = mkdtempSync(join(tmpdir(), `ps-w${workerInfo.workerIndex}-`));
           releaseSetupResources.push(() => removeAllDuringTeardown(contentDir));
 
           const viteCacheDir = prepareViteCacheDir(`w${workerInfo.workerIndex}`);

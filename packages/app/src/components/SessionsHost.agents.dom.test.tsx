@@ -1,4 +1,4 @@
-import type { ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode, useEffect, useState, useSyncExternalStore } from 'react';
@@ -17,7 +17,7 @@ import {
   subscribeStagedThreadDraft,
 } from '@/lib/acp/thread-draft-staging';
 import type { ThreadRenderModel } from '@/lib/acp/thread-event-model';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { IN_APP_THREAD_ID, saveStickyAgent, terminalCliId } from '@/lib/unified-agent-store';
 import type { ThreadLaunchIntent } from './EditorPane';
 import { requestPreferredSession } from './handoff/preferred-session-events';
@@ -278,7 +278,7 @@ function agentsDockWrites(setDockState: ReturnType<typeof vi.fn>) {
   );
 }
 
-function makeTerminalBridge(): OkDesktopBridge {
+function makeTerminalBridge(): PsDesktopBridge {
   return {
     terminal: {
       create: vi.fn(async () => ({ ptyId: 'pty-1' })),
@@ -287,7 +287,7 @@ function makeTerminalBridge(): OkDesktopBridge {
       list: vi.fn(async () => []),
     },
     editor: { notifyViewMenuStateChanged: vi.fn() },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 type HarnessControl = {
@@ -295,7 +295,7 @@ type HarnessControl = {
   setShowing: (v: boolean) => void;
   setThreadLaunch: (t: ThreadLaunchIntent | null) => void;
   setRestoreSettled: (v: boolean) => void;
-  setBridge: (b: OkDesktopBridge | null) => void;
+  setBridge: (b: PsDesktopBridge | null) => void;
   rerender: () => void;
 };
 
@@ -318,7 +318,7 @@ function Harness({
   onPreferredSessionHostReady,
   installedClis = {},
 }: {
-  bridge?: OkDesktopBridge | null;
+  bridge?: PsDesktopBridge | null;
   initialVisible?: boolean;
   hostKey?: string;
   placementProbe?: boolean;
@@ -380,7 +380,7 @@ function Harness({
   );
 }
 
-function DualDesktopPreferredHosts({ bridge }: { bridge: OkDesktopBridge }) {
+function DualDesktopPreferredHosts({ bridge }: { bridge: PsDesktopBridge }) {
   const [terminalContainer, setTerminalContainer] = useState<HTMLDivElement | null>(null);
   return (
     <TooltipProvider>
@@ -425,7 +425,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     try {
       render(<Harness bridge={bridge} initialVisible={false} />);
@@ -496,7 +496,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     try {
       render(<Harness bridge={bridge} initialVisible={false} />);
@@ -532,7 +532,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     render(<Harness bridge={bridge} initialVisible={false} />);
 
@@ -568,7 +568,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState: vi.fn(() => ({ ok: true as const })),
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     setOpenThreads([
       makeThread({ threadId: 'a', title: 'Alpha' }),
       makeThread({ threadId: 'b', title: 'Beta', createdAt: 2, lastActivityAt: 2 }),
@@ -601,7 +601,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     render(<Harness bridge={bridge} initialVisible={false} />);
 
@@ -665,7 +665,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState: vi.fn(() => ({ ok: true as const })),
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     try {
       render(<Harness bridge={bridge} initialVisible />);
@@ -699,7 +699,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     render(<Harness bridge={bridge} initialVisible={false} />);
 
@@ -728,7 +728,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     render(<Harness bridge={bridge} initialVisible />);
     await act(async () => {});
@@ -766,7 +766,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     try {
       render(<Harness bridge={bridge} initialVisible />);
@@ -816,7 +816,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     try {
       render(<Harness bridge={bridge} initialVisible />);
@@ -882,7 +882,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     try {
       render(<Harness bridge={bridge} initialVisible />);
@@ -932,7 +932,7 @@ describe('SessionsHost — agents desktop order-restore gate', () => {
         setDockState,
       },
       editor: { notifyViewMenuStateChanged: vi.fn() },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     render(<Harness bridge={bridge} initialVisible />);
     await act(async () => {});
@@ -3315,7 +3315,7 @@ describe('SessionsHost — agents panel (web / no bridge)', () => {
             setDockState: vi.fn(() => ({ ok: true as const })),
           },
           editor: { notifyViewMenuStateChanged: vi.fn() },
-        }) as unknown as OkDesktopBridge;
+        }) as unknown as PsDesktopBridge;
 
       render(<Harness bridge={makeDockBridge()} initialVisible={false} control={control} />);
       await act(async () => {});

@@ -158,7 +158,7 @@ describe('useFileTreeListing', () => {
       documentEntry('README'),
       documentEntry('.hidden'),
       assetEntry('data.csv'),
-      folderEntry('.ok'),
+      folderEntry('.ps'),
     ];
     await waitFor(() => expect(pending).toHaveLength(1));
     await act(async () => {
@@ -201,7 +201,7 @@ describe('useFileTreeListing', () => {
     expect(result.current.documents).toEqual([
       documentEntry('README'),
       documentEntry('.hidden'),
-      folderEntry('.ok'),
+      folderEntry('.ps'),
     ]);
   });
 

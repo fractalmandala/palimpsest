@@ -17,11 +17,11 @@ export const FORBIDDEN_BUNDLE_PATHS = [
   },
   {
     pattern:
-      /^(cli\/dist|app\.asar(\.unpacked)?\/node_modules\/@inkeep\/open-knowledge\/dist)\/public\//,
+      /^(cli\/dist|app\.asar(\.unpacked)?\/node_modules\/@inkeep\/palimpsest\/dist)\/public\//,
     reason: 'a second copy of the web app; Resources/app is the only one',
   },
   {
-    pattern: /^app\.asar(\.unpacked)?\/node_modules\/@inkeep\/open-knowledge-native-config\//,
+    pattern: /^app\.asar(\.unpacked)?\/node_modules\/@inkeep\/palimpsest-native-config\//,
     reason: 'a native-config package in the asar; the CLI loads its own dist/native copy',
   },
   {
@@ -37,12 +37,12 @@ export const REQUIRED_BUNDLE_PATHS = [
   },
   {
     pattern:
-      /^app\.asar\.unpacked\/node_modules\/@inkeep\/open-knowledge\/dist\/native\/index\.js$/,
+      /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/index\.js$/,
     reason: "the main process's native-config loader, unpacked",
   },
   {
     pattern:
-      /^app\.asar\.unpacked\/node_modules\/@inkeep\/open-knowledge\/dist\/native\/[^/]+\.node$/,
+      /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/[^/]+\.node$/,
     reason: "the main process's native-config addon, unpacked",
   },
   {

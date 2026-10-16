@@ -23,7 +23,7 @@ test('scheduled reconciliation selects the newest published release of each chan
 });
 
 test('the workflow entrypoint resolves real gh output and refuses API failures before emitting a target', () => {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-writeback-target-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-writeback-target-'));
   try {
     const bin = join(cwd, 'bin');
     mkdirSync(bin);
@@ -31,7 +31,7 @@ test('the workflow entrypoint resolves real gh output and refuses API failures b
       join(bin, 'gh'),
       `#!/usr/bin/env node
 if (process.env.TEST_API_FAILURE) process.exit(1);
-for (const [tag_name,draft] of [['v0.78.0-beta.6',false],['v0.78.0-beta.7',true]]) console.log(JSON.stringify({tag_name,draft,published_at:draft?null:'2026-09-24T22:50:04Z',assets:[{name:'OpenKnowledge-arm64.dmg'},{name:'beta-mac.yml'}]}));
+for (const [tag_name,draft] of [['v0.78.0-beta.6',false],['v0.78.0-beta.7',true]]) console.log(JSON.stringify({tag_name,draft,published_at:draft?null:'2026-09-24T22:50:04Z',assets:[{name:'Palimpsest-arm64.dmg'},{name:'beta-mac.yml'}]}));
 `,
     );
     chmodSync(join(bin, 'gh'), 0o755);

@@ -9,7 +9,7 @@ function note(tag: string): ReleaseNote {
     title: tag,
     publishedAt: '2026-07-01T00:00:00Z',
     bodyHtml: `<p>${tag}</p>`,
-    htmlUrl: `https://github.com/inkeep/open-knowledge/releases/tag/${tag}`,
+    htmlUrl: `https://github.com/fractalmandala/palimpsest/releases/tag/${tag}`,
   };
 }
 

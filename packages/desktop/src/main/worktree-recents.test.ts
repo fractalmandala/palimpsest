@@ -143,7 +143,7 @@ describe('readWorktreeBranch', () => {
 
   test('resolves up from a SUBDIRECTORY of a worktree (the OK-subtree case)', async () => {
     handle = await makeRepoWithWorktree();
-    const subdir = join(handle.worktree, 'public', 'open-knowledge');
+    const subdir = join(handle.worktree, 'public', 'palimpsest');
     mkdirSync(subdir, { recursive: true });
     expect(readWorktreeBranch(subdir)).toBe('feature');
   });
@@ -250,7 +250,7 @@ describe('readWorktreeBranchAsync', () => {
 
   test('resolves up from a SUBDIRECTORY of a worktree (the OK-subtree case)', async () => {
     handle = await makeRepoWithWorktree();
-    const subdir = join(handle.worktree, 'public', 'open-knowledge');
+    const subdir = join(handle.worktree, 'public', 'palimpsest');
     mkdirSync(subdir, { recursive: true });
     expect(await readWorktreeBranchAsync(subdir)).toBe('feature');
   });

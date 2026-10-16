@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import type { LintPluginId } from '@inkeep/open-knowledge-core';
+import type { LintPluginId } from '@palimpsest/core';
 import { tracedWriteFileSync } from '../fs-traced.ts';
 import { scanInPlaceSkills } from '../in-place-skills.ts';
 import { CONFIG_FILENAME } from '../init-project.ts';
@@ -23,14 +23,14 @@ function resolveFileContent(
     return pack.rootFiles[templateId];
   }
 
-  const fmMatch = /^(.+)\/\.ok\/frontmatter\.yml$/.exec(templateId);
+  const fmMatch = /^(.+)\/\.ps\/frontmatter\.yml$/.exec(templateId);
   if (fmMatch) {
     const folder = pack.folders.find((f) => f.path === fmMatch[1]);
     if (!folder) return undefined;
     return buildStarterFolderFrontmatterYaml(folder);
   }
 
-  const tplMatch = /^(.+)\/\.ok\/templates\/([^/]+)\.md$/.exec(templateId);
+  const tplMatch = /^(.+)\/\.ps\/templates\/([^/]+)\.md$/.exec(templateId);
   if (tplMatch) {
     const templateName = tplMatch[2] ?? '';
     return pack.templates[templateName];
@@ -109,7 +109,7 @@ export async function applySeed(plan: ScaffoldPlan, opts: SeedOptions = {}): Pro
   if (!('refusal' in resolvePackSkillHome(projectDir))) {
     const presentNames = new Set(scanInPlaceSkills(projectDir).map((sk) => sk.name));
     for (const { name } of resolvePackSkillSources(pack.id)) {
-      const inStore = existsSync(join(projectDir, '.ok', 'skills', name, 'SKILL.md'));
+      const inStore = existsSync(join(projectDir, '.ps', 'skills', name, 'SKILL.md'));
       if (!presentNames.has(name) && !inStore) {
         errors.push({ path: name, error: 'skill source could not be authored' });
       }
@@ -121,7 +121,7 @@ export async function applySeed(plan: ScaffoldPlan, opts: SeedOptions = {}): Pro
     pluginsEnabled = enableRequiredPlugins(projectDir, pack.requiredPlugins ?? []);
   } catch (err) {
     errors.push({
-      path: `.ok/${CONFIG_FILENAME}`,
+      path: `.ps/${CONFIG_FILENAME}`,
       error: `could not enable required plugin(s): ${err instanceof Error ? err.message : String(err)}`,
     });
   }

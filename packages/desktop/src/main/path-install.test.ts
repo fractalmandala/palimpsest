@@ -11,7 +11,7 @@ import {
 import { dirname, join } from 'node:path';
 import { afterAll, describe, expect, test, vi } from 'vitest';
 import { createTempDirFactory } from '../../../../test-support/temp-dir.test-helper.ts';
-import { okManagedBinDirs } from '../shared/ok-child-env.ts';
+import { psManagedBinDirs } from '../shared/ps-child-env.ts';
 import {
   computePathInstallDescriptor,
   computePathLeg,
@@ -24,14 +24,14 @@ import {
 
 const makeTempDir = createTempDirFactory(afterAll);
 
-const EXE = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
-const WRAPPER = '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
+const EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
+const WRAPPER = '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
 
 const GRANTED = { status: 'granted', at: '2026-07-02T00:00:00.000Z' } as const;
 const DECLINED = { status: 'declined', at: '2026-07-02T00:00:00.000Z' } as const;
 
 function home() {
-  return makeTempDir('ok-path-install-');
+  return makeTempDir('ps-path-install-');
 }
 
 type EnsureOpts = Parameters<typeof ensureCliOnPath>[0];
@@ -58,14 +58,14 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
     const h = home();
     const result = await ensureCliOnPath(baseOpts(h));
     expect(result.status).toBe('installed-silent');
-    expect(readlinkSync(join(h, '.ok', 'bin', 'ok'))).toBe(WRAPPER);
-    expect(readlinkSync(join(h, '.ok', 'bin', 'open-knowledge'))).toBe(WRAPPER);
-    expect(readFileSync(join(h, '.ok', 'env.sh'), 'utf8')).toContain(
-      'export PATH="$' + '{HOME}/.ok/bin:$' + '{PATH}"',
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(WRAPPER);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'palimpsest'))).toBe(WRAPPER);
+    expect(readFileSync(join(h, '.ps', 'env.sh'), 'utf8')).toContain(
+      'export PATH="$' + '{HOME}/.ps/bin:$' + '{PATH}"',
     );
     expect(existsSync(join(h, '.zshrc'))).toBe(false);
     expect(existsSync(join(h, '.bash_profile'))).toBe(false);
-    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish'))).toBe(false);
+    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(false);
     const marker = readMarkerFile(h);
     expect(marker.rcFiles).toEqual([]);
     expect(marker.consent).toBeUndefined();
@@ -90,9 +90,9 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
       expect(result.summary).toBe('Added ok to your PATH — managed block in ~/.zshrc.');
     }
     const zshrc = readFileSync(join(h, '.zshrc'), 'utf8');
-    expect(zshrc).toContain('# >>> open-knowledge cli >>>');
+    expect(zshrc).toContain('# >>> palimpsest cli >>>');
     expect(zshrc).toContain('Delete this whole block to opt out');
-    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish'))).toBe(false);
+    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(false);
     const marker = readMarkerFile(h);
     expect(marker.consent).toEqual({ status: 'granted', at: GRANTED.at });
     const granted = events.find((e) => e.event === 'path-install-consent-granted');
@@ -104,7 +104,7 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
     await ensureCliOnPath(baseOpts(h));
     const granted = await ensureCliOnPath(baseOpts(h, { consentDecision: GRANTED }));
     expect(granted.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> palimpsest cli >>>');
     const relaunch = await ensureCliOnPath(baseOpts(h));
     expect(relaunch.status).toBe('healthy-current');
   });
@@ -134,12 +134,12 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
     expect(fastPath.status).toBe('healthy-current');
     expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toBe('export BAR=1\n');
 
-    const newExe = '/Users/someone/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+    const newExe = '/Users/someone/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
     const result = await ensureCliOnPath(baseOpts(h, { executablePath: newExe }));
     expect(result.status).toBe('installed');
     if (result.status === 'installed') expect(result.summary).toContain('~/.bash_profile');
     expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toContain(
-      '# >>> open-knowledge cli >>>',
+      '# >>> palimpsest cli >>>',
     );
   });
 
@@ -167,12 +167,12 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
     const h = home();
     writeFileSync(
       join(h, '.zshrc'),
-      '# >>> open-knowledge cli >>>\nstale contents\n# <<< open-knowledge cli <<<\n',
+      '# >>> palimpsest cli >>>\nstale contents\n# <<< palimpsest cli <<<\n',
     );
     const events: Array<Record<string, unknown>> = [];
     const result = await ensureCliOnPath(baseOpts(h, { logger: { event: (e) => events.push(e) } }));
     expect(result.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('$HOME/.ok/env.sh');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('$HOME/.ps/env.sh');
     expect((readMarkerFile(h).consent as { status: string }).status).toBe('granted');
     expect(events.find((e) => e.event === 'path-install-consent-granted')).toMatchObject({
       source: 'grandfather',
@@ -211,10 +211,10 @@ describe('ensureCliOnPath', () => {
     await ensureCliOnPath(baseOpts(h));
     const healthy = await ensureCliOnPath(baseOpts(h));
     expect(healthy.status).toBe('healthy-current');
-    unlinkSync(join(h, '.ok', 'bin', 'ok'));
+    unlinkSync(join(h, '.ps', 'bin', 'ok'));
     const repaired = await ensureCliOnPath(baseOpts(h));
     expect(repaired.status).toBe('installed-silent');
-    expect(readlinkSync(join(h, '.ok', 'bin', 'ok'))).toBe(WRAPPER);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(WRAPPER);
     expect(existsSync(join(h, '.zshrc'))).toBe(false);
   });
 
@@ -223,26 +223,26 @@ describe('ensureCliOnPath', () => {
     const run = (overrides: Partial<EnsureOpts> = {}) =>
       ensureCliOnPath(
         baseOpts(h, {
-          spawn: async () => ({ code: 0, stdout: `${h}/.ok/bin:/usr/bin`, stderr: '' }),
+          spawn: async () => ({ code: 0, stdout: `${h}/.ps/bin:/usr/bin`, stderr: '' }),
           ...overrides,
         }),
       );
     const first = await run({ consentDecision: GRANTED });
     expect(first.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> palimpsest cli >>>');
     if (first.status === 'installed') expect(first.summary).toContain('~/.zshrc');
 
     writeFileSync(join(h, '.zshrc'), 'export FOO=1\n');
     const second = await run();
     expect(second.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> palimpsest cli >>>');
     if (second.status === 'installed') expect(second.summary).toContain("won't be re-added");
     const marker = readMarkerFile(h);
     expect(marker.rcOptOuts).toEqual([join(h, '.zshrc')]);
 
     const third = await run();
     expect(third.status).toBe('healthy-current');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> palimpsest cli >>>');
   });
 
   test('does not seed symlinks into other PATH dirs and pads the zshrc block with blank lines', async () => {
@@ -258,10 +258,10 @@ describe('ensureCliOnPath', () => {
     );
     expect(result.status).toBe('installed');
     expect(() => lstatSync(join(bin, 'ok'))).toThrow();
-    expect(() => lstatSync(join(bin, 'open-knowledge'))).toThrow();
+    expect(() => lstatSync(join(bin, 'palimpsest'))).toThrow();
     const zshrc = readFileSync(join(h, '.zshrc'), 'utf8');
-    expect(zshrc).toContain('export FOO=1\n\n# >>> open-knowledge cli >>>');
-    expect(zshrc.endsWith('# <<< open-knowledge cli <<<\n\n')).toBe(true);
+    expect(zshrc).toContain('export FOO=1\n\n# >>> palimpsest cli >>>');
+    expect(zshrc.endsWith('# <<< palimpsest cli <<<\n\n')).toBe(true);
   });
 
   test('removes legacy marker-recorded extra symlinks, leaves re-pointed ones, retries failures', async () => {
@@ -269,7 +269,7 @@ describe('ensureCliOnPath', () => {
     const bin = join(h, 'bin');
     mkdirSync(bin);
     symlinkSync(WRAPPER, join(bin, 'ok'));
-    symlinkSync('/elsewhere/ok.sh', join(bin, 'open-knowledge'));
+    symlinkSync('/elsewhere/ps.sh', join(bin, 'palimpsest'));
     const markerPath = pathInstallMarkerPath(h);
     mkdirSync(dirname(markerPath), { recursive: true });
     const entry = (path: string) => ({
@@ -285,13 +285,13 @@ describe('ensureCliOnPath', () => {
         installedAt: '2026-05-01T00:00:00.000Z',
         bundleVersion: '0.4.0',
         bundleWrapperPath: WRAPPER,
-        binDir: join(h, '.ok', 'bin'),
-        envShimPath: join(h, '.ok', 'env.sh'),
+        binDir: join(h, '.ps', 'bin'),
+        envShimPath: join(h, '.ps', 'env.sh'),
         rcFiles: [],
         pathDiscovery: null,
         extraSymlinks: [
           entry(join(bin, 'ok')),
-          entry(join(bin, 'open-knowledge')),
+          entry(join(bin, 'palimpsest')),
           entry(join(bin, 'gone')),
         ],
       }),
@@ -299,14 +299,14 @@ describe('ensureCliOnPath', () => {
     const events: Array<Record<string, unknown>> = [];
     const result = await ensureCliOnPath(
       baseOpts(h, {
-        spawn: async () => ({ code: 0, stdout: `${h}/.ok/bin:/usr/bin`, stderr: '' }),
+        spawn: async () => ({ code: 0, stdout: `${h}/.ps/bin:/usr/bin`, stderr: '' }),
         logger: { event: (e) => events.push(e) },
       }),
     );
     expect(result.status).toBe('installed');
     if (result.status === 'installed') expect(result.summary).toContain('leftover ok symlink');
     expect(() => lstatSync(join(bin, 'ok'))).toThrow();
-    expect(readlinkSync(join(bin, 'open-knowledge'))).toBe('/elsewhere/ok.sh');
+    expect(readlinkSync(join(bin, 'palimpsest'))).toBe('/elsewhere/ps.sh');
     const marker = readMarkerFile(h);
     expect(marker.extraSymlinks).toEqual([]);
     expect(events.some((e) => e.event === 'path-install-extra-symlink-removed')).toBe(true);
@@ -329,7 +329,7 @@ describe('ensureCliOnPath', () => {
       await ensureCliOnPath({
         ...base,
         platform: 'linux',
-        executablePath: '/tmp/.mount_okXYZ/openknowledge',
+        executablePath: '/tmp/.mount_okXYZ/palimpsest',
         env: { HOME: h, SHELL: '/bin/bash', APPIMAGE: '/home/u/OK.AppImage' },
       }),
     ).toEqual({
@@ -360,10 +360,10 @@ describe('ensureCliOnPath', () => {
     );
     expect(result.status).toBe('installed');
     expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toContain(
-      '# >>> open-knowledge cli >>>',
+      '# >>> palimpsest cli >>>',
     );
     expect(existsSync(join(h, '.zshrc'))).toBe(false);
-    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish'))).toBe(false);
+    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(false);
   });
 
   test('linux deb install: symlinks target the flat-layout wrapper and bash gets .bashrc', async () => {
@@ -371,16 +371,16 @@ describe('ensureCliOnPath', () => {
     const result = await ensureCliOnPath(
       baseOpts(h, {
         platform: 'linux',
-        executablePath: '/opt/OpenKnowledge/openknowledge',
+        executablePath: '/opt/Palimpsest/palimpsest',
         env: { HOME: h, SHELL: '/bin/bash' },
         consentDecision: GRANTED,
       }),
     );
     expect(result.status).toBe('installed');
-    expect(readlinkSync(join(h, '.ok', 'bin', 'ok'))).toBe(
-      '/opt/OpenKnowledge/resources/cli/bin/ok.sh',
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(
+      '/opt/Palimpsest/resources/cli/bin/ps.sh',
     );
-    expect(readFileSync(join(h, '.bashrc'), 'utf8')).toContain('.ok/env.sh');
+    expect(readFileSync(join(h, '.bashrc'), 'utf8')).toContain('.ps/env.sh');
   });
 
   test('returns failed-all instead of throwing when an fs operation fails', async () => {
@@ -421,8 +421,8 @@ describe('ensureCliOnPath', () => {
         consentDecision: GRANTED,
       }),
     );
-    const fish = readFileSync(join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish'), 'utf8');
-    expect(fish).toContain('# >>> open-knowledge cli >>>');
+    const fish = readFileSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'), 'utf8');
+    expect(fish).toContain('# >>> palimpsest cli >>>');
     expect(fish).toContain('set -gx PATH');
     expect(fish).not.toContain('export PATH');
     expect(existsSync(join(h, '.zshrc'))).toBe(false);
@@ -430,7 +430,7 @@ describe('ensureCliOnPath', () => {
 
   test('a full pass retains a previously recorded Fish file for later cleanup', async () => {
     const h = home();
-    const fishConf = join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish');
+    const fishConf = join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish');
     await ensureCliOnPath(
       baseOpts(h, {
         env: { HOME: h, SHELL: '/opt/homebrew/bin/fish' },
@@ -438,7 +438,7 @@ describe('ensureCliOnPath', () => {
       }),
     );
 
-    const newExe = '/Users/someone/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+    const newExe = '/Users/someone/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
     await ensureCliOnPath(baseOpts(h, { executablePath: newExe }));
 
     const marker = readMarkerFile(h);
@@ -452,13 +452,13 @@ describe('ensureCliOnPath', () => {
   test('app update repoints canonical symlinks to the new bundle wrapper', async () => {
     const h = home();
     await ensureCliOnPath(baseOpts(h));
-    const newExe = '/Users/someone/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+    const newExe = '/Users/someone/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
     const newWrapper =
-      '/Users/someone/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
+      '/Users/someone/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
     const result = await ensureCliOnPath(baseOpts(h, { executablePath: newExe }));
     expect(result.status).toBe('installed-silent');
-    expect(readlinkSync(join(h, '.ok', 'bin', 'ok'))).toBe(newWrapper);
-    expect(readlinkSync(join(h, '.ok', 'bin', 'open-knowledge'))).toBe(newWrapper);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(newWrapper);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'palimpsest'))).toBe(newWrapper);
   });
 });
 
@@ -517,7 +517,7 @@ describe('computePathInstallDescriptor', () => {
         platform: 'darwin',
         env: { SHELL: '/opt/homebrew/bin/fish' },
       }).rcFilesToTouch,
-    ).toEqual(['~/.config/fish/conf.d/open-knowledge.fish']);
+    ).toEqual(['~/.config/fish/conf.d/palimpsest.fish']);
 
     const configuredHome = home();
     mkdirSync(join(configuredHome, '.config', 'fish'), { recursive: true });
@@ -528,7 +528,7 @@ describe('computePathInstallDescriptor', () => {
         platform: 'darwin',
         env: { SHELL: '/bin/zsh' },
       }).rcFilesToTouch,
-    ).toEqual(['~/.zshrc', '~/.config/fish/conf.d/open-knowledge.fish']);
+    ).toEqual(['~/.zshrc', '~/.config/fish/conf.d/palimpsest.fish']);
 
     const usedHome = home();
     mkdirSync(join(usedHome, '.config', 'fish'), { recursive: true });
@@ -542,15 +542,15 @@ describe('computePathInstallDescriptor', () => {
         platform: 'darwin',
         env: { SHELL: '/bin/zsh' },
       }).rcFilesToTouch,
-    ).toEqual(['~/.zshrc', '~/.config/fish/conf.d/open-knowledge.fish']);
+    ).toEqual(['~/.zshrc', '~/.config/fish/conf.d/palimpsest.fish']);
   });
 
   test('a legacy OK-created fish directory and conf file are not Fish-detection evidence', async () => {
     const h = home();
-    const fishConf = join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish');
+    const fishConf = join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish');
     mkdirSync(dirname(fishConf), { recursive: true });
     const legacyBlock =
-      '# >>> open-knowledge cli >>>\n# legacy OK-owned block\n# <<< open-knowledge cli <<<\n';
+      '# >>> palimpsest cli >>>\n# legacy OK-owned block\n# <<< palimpsest cli <<<\n';
     writeFileSync(fishConf, legacyBlock);
 
     const descriptor = computePathInstallDescriptor({
@@ -583,16 +583,16 @@ describe('computePathInstallDescriptor', () => {
     expect(descriptor.shellDetected).toBe(true);
   });
 
-  test('an explicit grant writes the promised block even when ~/.ok/bin is already on the discovered PATH', async () => {
+  test('an explicit grant writes the promised block even when ~/.ps/bin is already on the discovered PATH', async () => {
     const h = home();
     await ensureCliOnPath(baseOpts(h));
     await ensureCliOnPath(
       baseOpts(h, {
         consentDecision: GRANTED,
-        spawn: async () => ({ code: 0, stdout: `${h}/.ok/bin:/usr/bin`, stderr: '' }),
+        spawn: async () => ({ code: 0, stdout: `${h}/.ps/bin:/usr/bin`, stderr: '' }),
       }),
     );
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> palimpsest cli >>>');
     const descriptor = computePathInstallDescriptor({
       home: h,
       platform: 'darwin',
@@ -612,7 +612,7 @@ describe('computePathInstallDescriptor', () => {
       env: { SHELL: '/bin/zsh' },
     });
     expect(descriptor.rcFilesToTouch).not.toContain('~/.zshrc');
-    expect(descriptor.rcFilesToTouch).not.toContain('~/.config/fish/conf.d/open-knowledge.fish');
+    expect(descriptor.rcFilesToTouch).not.toContain('~/.config/fish/conf.d/palimpsest.fish');
     expect(descriptor.shellDetected).toBe(false);
   });
 });
@@ -656,9 +656,9 @@ describe('isPathShimInstalled / removePathShimFromRcFiles — the Settings → A
 
     const result = removePathShimFromRcFiles({ home: h, env });
     expect(result.status).toBe('removed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> palimpsest cli >>>');
     expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('export FOO=1');
-    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish'))).toBe(false);
+    expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(false);
     const marker = readMarkerFile(h);
     expect(marker.rcFiles).toEqual([]);
     expect((marker.consent as { status: string }).status).toBe('declined');
@@ -673,22 +673,22 @@ describe('isPathShimInstalled / removePathShimFromRcFiles — the Settings → A
     removePathShimFromRcFiles({ home: h, platform: 'darwin', env: { SHELL: '/bin/zsh' } });
 
     await ensureCliOnPath(baseOpts(h));
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).not.toContain('# >>> palimpsest cli >>>');
 
     const regrant = await ensureCliOnPath(baseOpts(h, { consentDecision: GRANTED }));
     expect(regrant.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> palimpsest cli >>>');
     expect(isPathShimInstalled({ home: h, platform: 'darwin', env: { SHELL: '/bin/zsh' } })).toBe(
       true,
     );
   });
 
-  test('re-grant works even when the probe shell inherits a stale PATH containing ~/.ok/bin', async () => {
+  test('re-grant works even when the probe shell inherits a stale PATH containing ~/.ps/bin', async () => {
     const h = home();
     writeFileSync(join(h, '.zshrc'), 'export FOO=1\n');
     const stalePathSpawn = async () => ({
       code: 0,
-      stdout: `${join(h, '.ok', 'bin')}:/usr/bin:/bin`,
+      stdout: `${join(h, '.ps', 'bin')}:/usr/bin:/bin`,
       stderr: '',
     });
     await ensureCliOnPath(baseOpts(h, { consentDecision: GRANTED, spawn: stalePathSpawn }));
@@ -698,7 +698,7 @@ describe('isPathShimInstalled / removePathShimFromRcFiles — the Settings → A
       baseOpts(h, { consentDecision: GRANTED, spawn: stalePathSpawn }),
     );
     expect(regrant.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> palimpsest cli >>>');
     expect(isPathShimInstalled({ home: h, platform: 'darwin', env: { SHELL: '/bin/zsh' } })).toBe(
       true,
     );
@@ -717,7 +717,7 @@ describe('isPathShimInstalled / removePathShimFromRcFiles — the Settings → A
 
     const regrant = await ensureCliOnPath(baseOpts(h, { consentDecision: GRANTED }));
     expect(regrant.status).toBe('installed');
-    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> open-knowledge cli >>>');
+    expect(readFileSync(join(h, '.zshrc'), 'utf8')).toContain('# >>> palimpsest cli >>>');
   });
 
   test('nothing installed and no marker → not-installed no-op', () => {
@@ -737,8 +737,8 @@ describe('isPathShimInstalled / removePathShimFromRcFiles — the Settings → A
     const zshrc = join(h, '.zshrc');
     const withBlock = readFileSync(zshrc, 'utf8');
     const block = withBlock.slice(
-      withBlock.indexOf('# >>> open-knowledge cli >>>'),
-      withBlock.indexOf('# <<< open-knowledge cli <<<') + '# <<< open-knowledge cli <<<\n'.length,
+      withBlock.indexOf('# >>> palimpsest cli >>>'),
+      withBlock.indexOf('# <<< palimpsest cli <<<') + '# <<< palimpsest cli <<<\n'.length,
     );
     writeFileSync(zshrc, `${withBlock}\n${block}`);
     const result = removePathShimFromRcFiles({
@@ -747,26 +747,26 @@ describe('isPathShimInstalled / removePathShimFromRcFiles — the Settings → A
       env: { SHELL: '/bin/zsh' },
     });
     expect(result.status).toBe('removed');
-    expect(readFileSync(zshrc, 'utf8')).not.toContain('open-knowledge cli');
+    expect(readFileSync(zshrc, 'utf8')).not.toContain('palimpsest cli');
   });
 });
 
 describe('Stable installer and runtime agree on the bin dir', () => {
   test('the marker, env.sh and rc block all name the dir the runtime puts on PATH', async () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     try {
       const h = home();
       const result = await ensureCliOnPath(
         baseOpts(h, { env: { HOME: h, SHELL: '/usr/bin/fish' }, consentDecision: GRANTED }),
       );
       if (result.status !== 'installed') throw new Error(`unexpected ${result.status}`);
-      const runtimeBin = okManagedBinDirs({ platform: 'darwin', home: h })[0];
-      expect(runtimeBin).toBe(join(h, '.ok', 'bin'));
+      const runtimeBin = psManagedBinDirs({ platform: 'darwin', home: h })[0];
+      expect(runtimeBin).toBe(join(h, '.ps', 'bin'));
       expect(result.marker.binDir).toBe(runtimeBin);
       const relative = runtimeBin?.slice(h.length);
       expect(readFileSync(result.marker.envShimPath, 'utf8')).toContain(`"$\{HOME}${relative}"`);
       expect(
-        readFileSync(join(h, '.config', 'fish', 'conf.d', 'open-knowledge.fish'), 'utf8'),
+        readFileSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'), 'utf8'),
       ).toContain(`"$HOME${relative}"`);
     } finally {
       vi.unstubAllEnvs();

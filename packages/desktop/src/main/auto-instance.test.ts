@@ -58,37 +58,37 @@ describe('deriveAutoInstanceName', () => {
 describe('resolveEffectiveInstanceName', () => {
   const gitOn = (ctx: GitInstanceContext) => ({ readGit: () => ctx });
 
-  test('explicit OK_INSTANCE wins over git derivation', () => {
+  test('explicit PS_INSTANCE wins over git derivation', () => {
     expect(
       resolveEffectiveInstanceName(
-        { OK_INSTANCE: 'work' },
+        { PS_INSTANCE: 'work' },
         '/repo',
         gitOn({ branch: 'feat/x', worktreeDir: '/repo' }),
       ),
     ).toEqual({ name: 'work', source: 'env' });
   });
 
-  test('explicit OK_INSTANCE isolates even on the default branch', () => {
+  test('explicit PS_INSTANCE isolates even on the default branch', () => {
     expect(
       resolveEffectiveInstanceName(
-        { OK_INSTANCE: 'main' },
+        { PS_INSTANCE: 'main' },
         '/repo',
         gitOn({ branch: 'main', worktreeDir: '/repo' }),
       ),
     ).toEqual({ name: 'main', source: 'env' });
   });
 
-  test('blank OK_INSTANCE falls through to git derivation', () => {
+  test('blank PS_INSTANCE falls through to git derivation', () => {
     expect(
       resolveEffectiveInstanceName(
-        { OK_INSTANCE: '   ' },
+        { PS_INSTANCE: '   ' },
         '/repo',
         gitOn({ branch: 'feat/x', worktreeDir: '/repo' }),
       ),
     ).toEqual({ name: 'feat/x', source: 'git' });
   });
 
-  test('derives from git when OK_INSTANCE is unset', () => {
+  test('derives from git when PS_INSTANCE is unset', () => {
     expect(
       resolveEffectiveInstanceName(
         {},
@@ -98,11 +98,11 @@ describe('resolveEffectiveInstanceName', () => {
     ).toEqual({ name: 'theming-as-plugin', source: 'git' });
   });
 
-  test('OK_AUTO_INSTANCE=0/false/off disables auto-derivation', () => {
+  test('PS_AUTO_INSTANCE=0/false/off disables auto-derivation', () => {
     for (const off of ['0', 'false', 'off', 'OFF']) {
       expect(
         resolveEffectiveInstanceName(
-          { OK_AUTO_INSTANCE: off },
+          { PS_AUTO_INSTANCE: off },
           '/repo',
           gitOn({ branch: 'feat/x', worktreeDir: '/repo' }),
         ),
@@ -122,7 +122,7 @@ describe('resolveEffectiveInstanceName', () => {
       resolveEffectiveInstanceName({}, '/repo', { ...gitOn(ctx), autoDeriveEnabled: false }),
     ).toBeNull();
     expect(
-      resolveEffectiveInstanceName({ OK_INSTANCE: 'work' }, '/repo', {
+      resolveEffectiveInstanceName({ PS_INSTANCE: 'work' }, '/repo', {
         ...gitOn(ctx),
         autoDeriveEnabled: false,
       }),

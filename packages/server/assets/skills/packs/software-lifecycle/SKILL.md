@@ -1,17 +1,17 @@
 ---
 name: software-lifecycle
-description: "How to work in a Software Lifecycle project (the `software-lifecycle` starter pack): proposals → decisions → specs → postmortems, plus guides. Read when the project has these folders, or when asked how this project is organized. Carries the doc lifecycle, status flows, and per-folder agent behaviors so that guidance does not live inside template bodies or folder descriptions. The five workflows — frame a proposal, write a spec, record a decision, write a postmortem, review a design — each ship as their own sibling skill in this pack. Complements the platform `open-knowledge` skill; does not replace it."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ok-beta` for Beta)."
+description: "How to work in a Software Lifecycle project (the `software-lifecycle` starter pack): proposals → decisions → specs → postmortems, plus guides. Read when the project has these folders, or when asked how this project is organized. Carries the doc lifecycle, status flows, and per-folder agent behaviors so that guidance does not live inside template bodies or folder descriptions. The five workflows — frame a proposal, write a spec, record a decision, write a postmortem, review a design — each ship as their own sibling skill in this pack. Complements the platform `palimpsest` skill; does not replace it."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ps-beta` for Beta)."
 metadata:
   pack: "software-lifecycle"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Software Lifecycle pack — how to work here
 
 This project holds the doc lifecycle for an engineering team or OSS project. The flow is **proposals → decisions → specs → postmortems**, with **guides** as the how-to bucket. This skill holds the workflow so templates and folder descriptions stay clean.
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the lifecycle conventions on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the lifecycle conventions on top.
 
 ## The flow
 

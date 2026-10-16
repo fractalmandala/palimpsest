@@ -19,7 +19,7 @@ function renderToggle(isPanelCollapsed = false) {
 describe('DocPanelToggle', () => {
   afterEach(() => {
     cleanup();
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
   });
 
   test('renders the document-panel shortcut as a Kbd keycap', async () => {
@@ -40,7 +40,7 @@ describe('DocPanelToggle', () => {
   });
 
   test('hides the document-panel toggle in a note window', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: { config: { mode: 'note' } },
     });
@@ -62,7 +62,7 @@ describe('DocPanelToggle', () => {
   });
 
   test('opts out of the window drag band on desktop', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: { config: { mode: 'editor' } },
     });

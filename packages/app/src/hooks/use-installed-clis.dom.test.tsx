@@ -12,13 +12,13 @@ function readMap(): Record<string, boolean> {
 }
 
 function setBridge(bridge: unknown) {
-  (window as { okDesktop?: unknown }).okDesktop = bridge;
+  (window as { psDesktop?: unknown }).psDesktop = bridge;
 }
 
 describe('useInstalledClis', () => {
   afterEach(() => {
     cleanup();
-    delete (window as { okDesktop?: unknown }).okDesktop;
+    delete (window as { psDesktop?: unknown }).psDesktop;
   });
 
   test('capability guard: no terminal surface → empty map, never throws', async () => {
@@ -29,7 +29,7 @@ describe('useInstalledClis', () => {
   });
 
   test('capability guard: no desktop bridge at all (web host) → empty map', async () => {
-    delete (window as { okDesktop?: unknown }).okDesktop;
+    delete (window as { psDesktop?: unknown }).psDesktop;
     render(<Probe />);
     await act(async () => {});
     expect(readMap()).toEqual({});

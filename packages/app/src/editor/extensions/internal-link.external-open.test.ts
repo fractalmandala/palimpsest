@@ -21,7 +21,7 @@ afterAll(() => {
 type OpenExternalBridge = { shell?: { openExternal?: (url: string) => Promise<void> } };
 
 interface OpenExternalWindow {
-  okDesktop?: OpenExternalBridge;
+  psDesktop?: OpenExternalBridge;
   open: (url?: string, target?: string, features?: string) => unknown;
 }
 
@@ -35,7 +35,7 @@ afterEach(() => {
   for (const editor of liveEditors) editor.destroy();
   liveEditors.clear();
   const w = testWindow();
-  delete w.okDesktop;
+  delete w.psDesktop;
 });
 
 function mountWithExternalLink(url: string): {
@@ -73,12 +73,12 @@ function mountWithExternalLink(url: string): {
 }
 
 describe('WYSIWYG external-link activation — desktop (bridge present)', () => {
-  test('bare click routes to the OS browser via okDesktop.shell.openExternal, NOT window.open', () => {
+  test('bare click routes to the OS browser via psDesktop.shell.openExternal, NOT window.open', () => {
     const url = 'https://youtube.com/watch?v=abc';
     const openExternal = vi.fn(async (_url: string) => {});
     const openWindow = vi.fn(() => null);
     const w = testWindow();
-    w.okDesktop = { shell: { openExternal } };
+    w.psDesktop = { shell: { openExternal } };
     w.open = openWindow as unknown as OpenExternalWindow['open'];
 
     const { activate } = mountWithExternalLink(url);
@@ -95,7 +95,7 @@ describe('WYSIWYG external-link activation — desktop (bridge present)', () => 
     const openExternal = vi.fn(async (_url: string) => {});
     const openWindow = vi.fn(() => null);
     const w = testWindow();
-    w.okDesktop = { shell: { openExternal } };
+    w.psDesktop = { shell: { openExternal } };
     w.open = openWindow as unknown as OpenExternalWindow['open'];
 
     const { activate } = mountWithExternalLink(url);
@@ -112,7 +112,7 @@ describe('WYSIWYG external-link activation — web (no bridge)', () => {
     const url = 'https://example.com/web';
     const openWindow = vi.fn(() => null);
     const w = testWindow();
-    delete w.okDesktop;
+    delete w.psDesktop;
     w.open = openWindow as unknown as OpenExternalWindow['open'];
 
     const { activate } = mountWithExternalLink(url);

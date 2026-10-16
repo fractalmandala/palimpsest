@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { pathspecArgs } from '@inkeep/open-knowledge-core';
+import { pathspecArgs } from '@palimpsest/core';
 import simpleGit, { type SimpleGit } from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -29,7 +29,7 @@ function write(dir: string, relPath: string): void {
 }
 
 function createRepo(): string {
-  const repo = mkdtempSync(join(tmpdir(), 'ok-tracked-paths-'));
+  const repo = mkdtempSync(join(tmpdir(), 'ps-tracked-paths-'));
   fixtures.push(repo);
   git(repo, ['init', '-q', '-b', 'main']);
   configureTestGitRepository(repo);

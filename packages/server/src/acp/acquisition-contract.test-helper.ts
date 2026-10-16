@@ -90,7 +90,7 @@ export function acquisitionFailureContract(
 
 export type AcquisitionRegistryControl = { closeRegistry: () => Promise<void> };
 
-export const ARGV_PROBE_PACKAGE = 'ok-argv-probe';
+export const ARGV_PROBE_PACKAGE = 'ps-argv-probe';
 export const ARGV_PROBE_VERSION = '1.0.0';
 
 export async function withLocalAcquisitionRegistry(

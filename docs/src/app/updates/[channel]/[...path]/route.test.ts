@@ -16,7 +16,7 @@ vi.doMock('../../../../lib/track.ts', () => ({
 }));
 
 const BETA_DMG_URL =
-  'https://github.com/inkeep/open-knowledge/releases/download/v0.20.0-beta.4/OpenKnowledge-Beta-arm64.dmg';
+  'https://github.com/fractalmandala/palimpsest/releases/download/v0.20.0-beta.4/Palimpsest-Beta-arm64.dmg';
 type BetaRedirect = { kind: string; url: string; cause?: string; refreshError?: string };
 let _betaRedirect: BetaRedirect = { kind: 'fresh', url: BETA_DMG_URL };
 let _selectedAsset: string | undefined;
@@ -30,7 +30,7 @@ vi.doMock('../../../../lib/download-links.ts', () => ({
 }));
 
 const { GET } = await import('./route.ts');
-const REL = 'https://github.com/inkeep/open-knowledge/releases';
+const REL = 'https://github.com/fractalmandala/palimpsest/releases';
 
 function call(
   channel: string,
@@ -38,7 +38,7 @@ function call(
   headers: Record<string, string> = {},
 ): Promise<Response> {
   return GET(
-    new Request(`https://openknowledge.ai/updates/${channel}/${path.join('/')}`, { headers }),
+    new Request(`https://github.com/fractalmandala/palimpsest/updates/${channel}/${path.join('/')}`, { headers }),
     {
       params: Promise.resolve({ channel, path }),
     },
@@ -48,10 +48,10 @@ function call(
 describe('GET /updates/[channel]/[...path]', () => {
   test.each([
     ['beta', 'beta-mac.yml', 'beta-mac.yml'],
-    ['beta', 'OpenKnowledge-Setup-x64.exe', 'beta.yml'],
-    ['beta', 'OpenKnowledge-arm64.deb', 'beta-linux-arm64.yml'],
-    ['beta', 'OpenKnowledge-x86_64.rpm', 'beta-linux.yml'],
-    ['beta-product', 'OpenKnowledge-Beta-aarch64.rpm', 'beta-product-linux-arm64.yml'],
+    ['beta', 'Palimpsest-Setup-x64.exe', 'beta.yml'],
+    ['beta', 'Palimpsest-arm64.deb', 'beta-linux-arm64.yml'],
+    ['beta', 'Palimpsest-x86_64.rpm', 'beta-linux.yml'],
+    ['beta-product', 'Palimpsest-Beta-aarch64.rpm', 'beta-product-linux-arm64.yml'],
   ])(
     '%s/%s resolves a release carrying %s, not another platform',
     async (channel, filename, manifest) => {
@@ -80,7 +80,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('stable zip 302s to the tagged release and counts app_update_downloaded', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-0.20.0-arm64-mac.zip';
+    const file = 'Palimpsest-0.20.0-arm64-mac.zip';
     const res = await call('stable', [file], { 'x-ok-from-version': '0.19.1' });
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/download/v0.20.0/${file}`);
@@ -97,7 +97,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('beta zip parses the prerelease version and counts (no from_version header)', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-0.20.0-beta.4-arm64-mac.zip';
+    const file = 'Palimpsest-0.20.0-beta.4-arm64-mac.zip';
     const res = await call('beta', [file]);
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/download/v0.20.0-beta.4/${file}`);
@@ -107,7 +107,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('an ill-formed x-ok-from-version header is dropped, not forwarded to analytics', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-0.20.0-arm64-mac.zip';
+    const file = 'Palimpsest-0.20.0-arm64-mac.zip';
     const res = await call('stable', [file], { 'x-ok-from-version': '../etc; rm -rf' });
     expect(res.status).toBe(302);
     expect(_lastCapture?.event).toBe('app_update_downloaded');
@@ -116,7 +116,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('blockmap 302s but is NOT counted', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-0.20.0-arm64-mac.zip.blockmap';
+    const file = 'Palimpsest-0.20.0-arm64-mac.zip.blockmap';
     const res = await call('stable', [file]);
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/download/v0.20.0/${file}`);
@@ -125,15 +125,15 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('human dmg 302s (latest alias) but is NOT counted', async () => {
     _lastCapture = null;
-    const res = await call('stable', ['OpenKnowledge-arm64.dmg']);
+    const res = await call('stable', ['Palimpsest-arm64.dmg']);
     expect(res.status).toBe(302);
-    expect(res.headers.get('location')).toBe(`${REL}/latest/download/OpenKnowledge-arm64.dmg`);
+    expect(res.headers.get('location')).toBe(`${REL}/latest/download/Palimpsest-arm64.dmg`);
     expect(_lastCapture).toBeNull();
   });
 
   test('dmg blockmap 302s (latest alias) but is NOT counted', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-arm64.dmg.blockmap';
+    const file = 'Palimpsest-arm64.dmg.blockmap';
     const res = await call('stable', [file]);
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/latest/download/${file}`);
@@ -147,16 +147,16 @@ describe('GET /updates/[channel]/[...path]', () => {
   test('public channel paths reject the other product manifest or artifact', async () => {
     expect((await call('stable', ['beta-mac.yml'])).status).toBe(404);
     expect((await call('beta', ['latest-mac.yml'])).status).toBe(404);
-    expect((await call('stable', ['OpenKnowledge-Beta-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
+    expect((await call('stable', ['Palimpsest-Beta-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
       404,
     );
-    expect((await call('beta', ['OpenKnowledge-0.21.0-arm64-mac.zip'])).status).toBe(404);
-    expect((await call('beta', ['OpenKnowledge-Beta-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
+    expect((await call('beta', ['Palimpsest-0.21.0-arm64-mac.zip'])).status).toBe(404);
+    expect((await call('beta', ['Palimpsest-Beta-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
       404,
     );
     expect((await call('beta', ['beta-product-mac.yml'])).status).toBe(404);
     expect((await call('beta-product', ['beta-mac.yml'])).status).toBe(404);
-    expect((await call('beta-product', ['OpenKnowledge-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
+    expect((await call('beta-product', ['Palimpsest-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
       404,
     );
   });
@@ -167,7 +167,7 @@ describe('GET /updates/[channel]/[...path]', () => {
     expect(manifest.headers.get('location')).toBe(
       `${REL}/download/v0.20.0-beta.4/beta-product-mac.yml`,
     );
-    const file = 'OpenKnowledge-Beta-0.20.0-beta.4-arm64-mac.zip';
+    const file = 'Palimpsest-Beta-0.20.0-beta.4-arm64-mac.zip';
     expect((await call('beta-product', [file])).headers.get('location')).toBe(
       `${REL}/download/v0.20.0-beta.4/${file}`,
     );
@@ -183,7 +183,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('x64 zip parses the version and counts', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-0.20.0-x64-mac.zip';
+    const file = 'Palimpsest-0.20.0-x64-mac.zip';
     const res = await call('stable', [file]);
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/download/v0.20.0/${file}`);
@@ -239,7 +239,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('Windows stable exe counts with artifact_type=exe and no to_version when the updater sends no header', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-Setup-x64.exe';
+    const file = 'Palimpsest-Setup-x64.exe';
     const res = await call('stable', [file], { 'x-ok-from-version': '0.19.1' });
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/latest/download/${file}`);
@@ -253,7 +253,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('a versionless stable installer takes to_version from the updater header', async () => {
     _lastCapture = null;
-    const res = await call('stable', ['OpenKnowledge-Setup-arm64.exe'], {
+    const res = await call('stable', ['Palimpsest-Setup-arm64.exe'], {
       'x-ok-from-version': '0.19.1',
       'x-ok-to-version': '0.20.0',
     });
@@ -264,7 +264,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('an ill-formed x-ok-to-version is dropped, not forwarded to analytics', async () => {
     _lastCapture = null;
-    const res = await call('stable', ['OpenKnowledge-amd64.deb'], {
+    const res = await call('stable', ['Palimpsest-amd64.deb'], {
       'x-ok-to-version': '0.20.0; DROP TABLE',
     });
     expect(res.status).toBe(302);
@@ -273,19 +273,19 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('server-derived versions outrank the header, which is only a client claim', async () => {
     _lastCapture = null;
-    await call('stable', ['OpenKnowledge-0.20.0-arm64-mac.zip'], {
+    await call('stable', ['Palimpsest-0.20.0-arm64-mac.zip'], {
       'x-ok-to-version': '9.9.9',
     });
     expect(_lastCapture?.properties?.to_version).toBe('0.20.0');
 
     _lastCapture = null;
-    await call('beta', ['OpenKnowledge-arm64.deb'], { 'x-ok-to-version': '9.9.9' });
+    await call('beta', ['Palimpsest-arm64.deb'], { 'x-ok-to-version': '9.9.9' });
     expect(_lastCapture?.properties?.to_version).toBe('0.20.0-beta.4');
   });
 
   test('Linux beta deb counts with to_version derived from the resolved beta tag', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-arm64.deb';
+    const file = 'Palimpsest-arm64.deb';
     const res = await call('beta', [file]);
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/download/v0.20.0-beta.4/${file}`);
@@ -298,7 +298,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('Linux stable rpm counts with artifact_type=rpm and no to_version when the updater sends no header', async () => {
     _lastCapture = null;
-    const file = 'OpenKnowledge-x86_64.rpm';
+    const file = 'Palimpsest-x86_64.rpm';
     const res = await call('stable', [file]);
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/latest/download/${file}`);
@@ -310,10 +310,10 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('every packager arch spelling normalizes onto one analytics vocabulary', async () => {
     const cases: ReadonlyArray<readonly [string, string, string]> = [
-      ['OpenKnowledge-Setup-arm64.exe', 'windows', 'arm64'],
-      ['OpenKnowledge-amd64.deb', 'linux', 'x64'],
-      ['OpenKnowledge-aarch64.rpm', 'linux', 'arm64'],
-      ['OpenKnowledge-0.20.0-universal-mac.zip', 'macos', 'universal'],
+      ['Palimpsest-Setup-arm64.exe', 'windows', 'arm64'],
+      ['Palimpsest-amd64.deb', 'linux', 'x64'],
+      ['Palimpsest-aarch64.rpm', 'linux', 'arm64'],
+      ['Palimpsest-0.20.0-universal-mac.zip', 'macos', 'universal'],
     ];
     for (const [file, os, arch] of cases) {
       _lastCapture = null;
@@ -326,7 +326,7 @@ describe('GET /updates/[channel]/[...path]', () => {
 
   test('an unrecognized arch token is dropped, not forwarded to analytics', async () => {
     _lastCapture = null;
-    const res = await call('stable', ['OpenKnowledge-riscv64.deb']);
+    const res = await call('stable', ['Palimpsest-riscv64.deb']);
     expect(res.status).toBe(302);
     expect(_lastCapture?.properties?.os).toBe('linux');
     expect(_lastCapture?.properties?.arch).toBeUndefined();

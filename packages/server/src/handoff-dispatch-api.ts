@@ -4,7 +4,7 @@ import {
   sleep as defaultSleep,
   type HandoffTarget,
   type HostSnapshot,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import { observeReadiness } from './agent-registry-gate.ts';
 import { createOsProbe, type InstalledAgentScheme } from './handoff-api.ts';

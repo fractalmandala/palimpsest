@@ -7,7 +7,7 @@ import { reportSkillInstall } from './skills-sh-install-report.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function freshHome(): string {
-  return makeTempDir('ok-install-report-');
+  return makeTempDir('ps-install-report-');
 }
 
 function recordingFetch(): { calls: string[]; impl: typeof fetch } {
@@ -26,7 +26,7 @@ describe('reportSkillInstall', () => {
     const { calls, impl } = recordingFetch();
     const reported = await reportSkillInstall(
       {
-        source: 'inkeep/open-knowledge-skills',
+        source: 'fractalmandala/palimpsest-skills',
         skills: ['open-knowledge-discovery'],
         agents: ['claude', 'codex'],
         global: true,
@@ -39,7 +39,7 @@ describe('reportSkillInstall', () => {
     const url = new URL(calls[0] as string);
     expect(url.origin + url.pathname).toBe('https://add-skill.vercel.sh/t');
     expect(url.searchParams.get('event')).toBe('install');
-    expect(url.searchParams.get('source')).toBe('inkeep/open-knowledge-skills');
+    expect(url.searchParams.get('source')).toBe('fractalmandala/palimpsest-skills');
     expect(url.searchParams.get('skills')).toBe('open-knowledge-discovery');
     expect(url.searchParams.get('agents')).toBe('claude,codex');
     expect(url.searchParams.get('global')).toBe('1');
@@ -49,7 +49,7 @@ describe('reportSkillInstall', () => {
   test('reports a given skill only once per machine', async () => {
     const home = freshHome();
     const { calls, impl } = recordingFetch();
-    const report = { source: 'inkeep/open-knowledge-skills', skills: ['open-knowledge-discovery'] };
+    const report = { source: 'fractalmandala/palimpsest-skills', skills: ['open-knowledge-discovery'] };
     await reportSkillInstall(report, { home, ...ENABLED, fetchImpl: impl });
     await reportSkillInstall(report, { home, ...ENABLED, fetchImpl: impl });
     await reportSkillInstall(report, { home, ...ENABLED, fetchImpl: impl });
@@ -59,7 +59,7 @@ describe('reportSkillInstall', () => {
   test('reports only the skills not already reported', async () => {
     const home = freshHome();
     const { calls, impl } = recordingFetch();
-    const source = 'inkeep/open-knowledge-skills';
+    const source = 'fractalmandala/palimpsest-skills';
     await reportSkillInstall({ source, skills: ['a'] }, { home, ...ENABLED, fetchImpl: impl });
     await reportSkillInstall({ source, skills: ['a', 'b'] }, { home, ...ENABLED, fetchImpl: impl });
     expect(calls).toHaveLength(2);
@@ -85,7 +85,7 @@ describe('reportSkillInstall', () => {
 
   test('does not send when the ledger claim cannot be written', async () => {
     const home = freshHome();
-    mkdirSync(join(home, '.ok', 'skill-state.yml'), { recursive: true });
+    mkdirSync(join(home, '.ps', 'skill-state.yml'), { recursive: true });
     const { calls, impl } = recordingFetch();
     const reported = await reportSkillInstall(
       { source: 'o/r', skills: ['x'] },

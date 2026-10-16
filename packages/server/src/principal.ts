@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { getLocalDir } from './config/paths.ts';
 import { sanitizeGitIdentity } from './git-identity-sanitize.ts';
@@ -23,8 +23,8 @@ async function readGitConfig(
 }
 
 export async function loadPrincipal(projectDir: string): Promise<Principal> {
-  const okDir = getLocalDir(projectDir);
-  const principalPath = resolve(okDir, PRINCIPAL_FILE);
+  const psDir = getLocalDir(projectDir);
+  const principalPath = resolve(psDir, PRINCIPAL_FILE);
 
   const { name: gitName, email: gitEmail } = await readGitConfig(projectDir);
 
@@ -54,7 +54,7 @@ export async function loadPrincipal(projectDir: string): Promise<Principal> {
       ? sanitizeGitIdentity(gitEmail)
       : typeof existing.display_email === 'string'
         ? existing.display_email
-        : `principal-${shortId}@openknowledge.local`;
+        : `principal-${shortId}@palimpsest.local`;
 
     const source: Principal['source'] = gitName || gitEmail ? 'git-config' : 'synthesized';
 
@@ -69,13 +69,13 @@ export async function loadPrincipal(projectDir: string): Promise<Principal> {
     return updated;
   }
 
-  mkdirSync(okDir, { recursive: true });
+  mkdirSync(psDir, { recursive: true });
   const id = `principal-${randomUUID()}`;
   const shortId = id.slice('principal-'.length, 'principal-'.length + 8);
   const displayName = gitName ? sanitizeGitIdentity(gitName) : 'Local User';
   const displayEmail = gitEmail
     ? sanitizeGitIdentity(gitEmail)
-    : `principal-${shortId}@openknowledge.local`;
+    : `principal-${shortId}@palimpsest.local`;
   const source: Principal['source'] = gitName || gitEmail ? 'git-config' : 'synthesized';
 
   const principal: Principal = {

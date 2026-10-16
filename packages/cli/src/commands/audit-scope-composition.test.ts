@@ -19,8 +19,8 @@ import {
   ProblemDetailsSchema,
   type ValidationAuditResponse,
   ValidationAuditResponseSchema,
-} from '@inkeep/open-knowledge-core';
-import { ConfigSchema, readServerLock } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { ConfigSchema, readServerLock } from '@palimpsest/server';
 import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import { afterAll, afterEach, test as baseTest, beforeAll, describe, expect, vi } from 'vitest';
 import type { BootedServer } from '../../../server/src/boot.ts';
@@ -94,7 +94,7 @@ function spawnCli(cwd: string, args: string[]) {
 function spawnCliProcess(entry: string, args: string[]) {
   return spawn(process.execPath, ['--import', CLI_OWNER_PRELOAD, entry, ...args], {
     cwd: CLI_PACKAGE_ROOT,
-    env: { ...process.env, NO_COLOR: '1', OK_BUNDLE_PROXY: '0' },
+    env: { ...process.env, NO_COLOR: '1', PS_BUNDLE_PROXY: '0' },
     stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
   }) as ChildProcessByStdio<null, Readable, Readable>;
 }
@@ -156,13 +156,13 @@ async function http(name: string, path: string): Promise<ValidationAuditResponse
 beforeAll(() => {
   if (!existsSync(CLI_ENTRY)) {
     throw new Error(
-      'Build the CLI first: pnpm exec turbo run build --filter=@inkeep/open-knowledge',
+      'Build the CLI first: pnpm exec turbo run build --filter=@palimpsest/cli',
     );
   }
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-cli-scope-')));
-  headless = realpathSync(mkdtempSync(join(tmpdir(), 'ok-headless-scope-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-cli-scope-')));
+  headless = realpathSync(mkdtempSync(join(tmpdir(), 'ps-headless-scope-')));
   for (const directory of [root, headless]) {
-    seed(directory, '.ok/config.yml', CONFIG);
+    seed(directory, '.ps/config.yml', CONFIG);
     seed(directory, 'guides/solo.md', TABBED);
     seed(directory, 'guides/dual.md', '# MD\n\n\tMD tab.\n');
     seed(directory, 'guides/dual.mdx', TABBED);
@@ -318,7 +318,7 @@ describe('CLI child supervision', () => {
 describe('CLI scope parity across real process, HTTP and MCP boundaries', () => {
   beforeAll(async () => {
     server = await bootCompositionRig(root, { config: ConfigSchema.parse({}) });
-    seed(root, '.ok/config.yml', CONFIG);
+    seed(root, '.ps/config.yml', CONFIG);
     await server.ready;
     client = await connectMcpTestClient(`http://127.0.0.1:${server.port}/mcp`);
     expect(readServerLock(server.lockDir)?.port).toBe(server.port);
@@ -332,9 +332,9 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
   test('headless lint exits with a not-found problem when content.dir is missing', async ({
     cli,
   }) => {
-    const project = realpathSync(mkdtempSync(join(tmpdir(), 'ok-missing-lint-content-')));
+    const project = realpathSync(mkdtempSync(join(tmpdir(), 'ps-missing-lint-content-')));
     try {
-      seed(project, '.ok/config.yml', 'content:\n  dir: missing-content\n');
+      seed(project, '.ps/config.yml', 'content:\n  dir: missing-content\n');
       expect(existsSync(join(project, 'missing-content'))).toBe(false);
       expect(resolveAuditScope(undefined, join(project, 'missing-content')).ok).toBe(false);
       for (const args of [
@@ -372,7 +372,7 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
   test('audit exits with a not-found problem for a missing root through the HTTP boundary', async ({
     cli,
   }) => {
-    const project = realpathSync(mkdtempSync(join(tmpdir(), 'ok-missing-audit-content-')));
+    const project = realpathSync(mkdtempSync(join(tmpdir(), 'ps-missing-audit-content-')));
     const contentDir = join(project, 'missing-content');
     const seenPaths: string[] = [];
     const httpServer = createServer((req, res) => {
@@ -388,13 +388,13 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
       );
     });
     try {
-      seed(project, '.ok/config.yml', 'content:\n  dir: missing-content\n');
+      seed(project, '.ps/config.yml', 'content:\n  dir: missing-content\n');
       await new Promise<void>((resolveListen) => httpServer.listen(0, '127.0.0.1', resolveListen));
       const address = httpServer.address();
       if (address === null || typeof address === 'string') throw new Error('Missing HTTP port');
       seed(
         project,
-        '.ok/local/server.lock',
+        '.ps/local/server.lock',
         JSON.stringify({ pid: process.pid, hostname: hostname(), port: address.port }),
       );
       for (const args of [

@@ -1,4 +1,4 @@
-import { CONCURRENT_REPLACE_WINDOW_MS } from '@inkeep/open-knowledge-server';
+import { CONCURRENT_REPLACE_WINDOW_MS } from '@palimpsest/server';
 import {
   expect,
   isConcurrentOverwriteRefusal,

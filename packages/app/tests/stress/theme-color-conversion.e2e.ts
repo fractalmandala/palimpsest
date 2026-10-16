@@ -1,4 +1,4 @@
-import { PREVIEW_THEME_TOKENS } from '@inkeep/open-knowledge-core';
+import { PREVIEW_THEME_TOKENS } from '@palimpsest/core';
 import { E2E_PAGE_MODULES_SOURCE } from '../../src/build/prebuilt-dev-contract.ts';
 import type * as PageModules from '../../src/test-utils/e2e-page-modules.ts';
 import {

@@ -1,4 +1,4 @@
-import { classifyMarkdownHref } from '@inkeep/open-knowledge-core';
+import { classifyMarkdownHref } from '@palimpsest/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   activateAssetLink,
@@ -180,18 +180,18 @@ describe('navigateToMarkdownTarget — external routing', () => {
     });
   });
 
-  function stubWindow(overrides: { okDesktop?: unknown; open?: unknown }): void {
+  function stubWindow(overrides: { psDesktop?: unknown; open?: unknown }): void {
     Object.defineProperty(globalThis, 'window', {
       configurable: true,
-      value: { location: { hash: '' }, open: overrides.open, okDesktop: overrides.okDesktop },
+      value: { location: { hash: '' }, open: overrides.open, psDesktop: overrides.psDesktop },
       writable: true,
     });
   }
 
-  it('desktop (bridge present): routes through okDesktop.shell.openExternal, NOT window.open', () => {
+  it('desktop (bridge present): routes through psDesktop.shell.openExternal, NOT window.open', () => {
     const openExternal = vi.fn(async (_url: string) => {});
     const openWindow = vi.fn(() => null);
-    stubWindow({ okDesktop: { shell: { openExternal } }, open: openWindow });
+    stubWindow({ psDesktop: { shell: { openExternal } }, open: openWindow });
 
     navigateToMarkdownTarget({ kind: 'external', url: 'https://example.com/watch' });
 
@@ -202,7 +202,7 @@ describe('navigateToMarkdownTarget — external routing', () => {
 
   it('web (no bridge): falls back to window.open with the new-tab + noopener features', () => {
     const openWindow = vi.fn(() => null);
-    stubWindow({ okDesktop: undefined, open: openWindow });
+    stubWindow({ psDesktop: undefined, open: openWindow });
 
     navigateToMarkdownTarget({ kind: 'external', url: 'https://example.com/web' });
 
@@ -217,7 +217,7 @@ describe('navigateToMarkdownTarget — external routing', () => {
   it('unsafe scheme is refused: neither the bridge nor window.open fires', () => {
     const openExternal = vi.fn(async (_url: string) => {});
     const openWindow = vi.fn(() => null);
-    stubWindow({ okDesktop: { shell: { openExternal } }, open: openWindow });
+    stubWindow({ psDesktop: { shell: { openExternal } }, open: openWindow });
 
     navigateToMarkdownTarget({ kind: 'external', url: 'javascript:alert(1)' });
 

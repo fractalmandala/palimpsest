@@ -30,7 +30,7 @@ function initRepo(): void {
 }
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-git-dirty-test-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-git-dirty-test-'));
   initRepo();
 });
 

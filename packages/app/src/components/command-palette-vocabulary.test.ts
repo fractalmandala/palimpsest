@@ -1,4 +1,4 @@
-import { COMMAND_IDENTITIES, MENU_LABELS } from '@inkeep/open-knowledge-core';
+import { COMMAND_IDENTITIES, MENU_LABELS } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { matchesCommandQuery } from '@/components/command-palette-search';
 
@@ -86,7 +86,7 @@ const INTENTS: ReadonlyArray<readonly [string, string]> = [
   ['hidden files', 'toggle-show-hidden-files'],
   ['only markdown', 'toggle-show-only-markdown-files'],
   ['skills section', 'toggle-show-skills-section'],
-  ['show ok folders', 'toggle-show-ok-folders'],
+  ['show ok folders', 'toggle-show-ps-folders'],
   ['show sidebar', 'toggle-sidebar'],
   ['hide document panel', 'toggle-doc-panel'],
   ['hide agents', 'toggle-agent-panel'],

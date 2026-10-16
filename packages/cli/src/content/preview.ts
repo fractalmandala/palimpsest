@@ -1,8 +1,8 @@
 import { existsSync, lstatSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { currentDesktopProduct } from '@inkeep/open-knowledge-core';
-import { createContentFilter } from '@inkeep/open-knowledge-server';
-import { OK_DIR } from '../constants.ts';
+import { currentDesktopProduct } from '@palimpsest/core';
+import { createContentFilter } from '@palimpsest/server';
+import { PS_DIR } from '../constants.ts';
 
 interface PreviewOptions {
   projectDir: string;
@@ -138,13 +138,13 @@ export function formatPreviewBlock(result: PreviewResult, cwd: string): string {
   }
 
   lines.push('');
-  const configPath = join(cwd, OK_DIR, 'config.yml');
+  const configPath = join(cwd, PS_DIR, 'config.yml');
   if (existsSync(configPath)) {
-    lines.push('  To adjust scope, add patterns to .okignore at the project root.');
-    lines.push(`  To change the content root, edit ${OK_DIR}/config.yml → content.dir.`);
+    lines.push('  To adjust scope, add patterns to .psignore at the project root.');
+    lines.push(`  To change the content root, edit ${PS_DIR}/config.yml → content.dir.`);
   } else {
     lines.push(
-      `  Run \`${currentDesktopProduct().cliCommandNames[1]} init\` to scaffold config + .okignore.`,
+      `  Run \`${currentDesktopProduct().cliCommandNames[1]} init\` to scaffold config + .psignore.`,
     );
   }
 

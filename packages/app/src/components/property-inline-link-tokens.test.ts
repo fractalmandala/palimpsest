@@ -64,12 +64,12 @@ describe('tokenizePropertyInlineLinks — wiki-links', () => {
 
   test('PRD-7111 reported shape — wikilink + em-dash + parenthetical', () => {
     const input =
-      '[[public/open-knowledge/specs/2026-06-12-showall-truncation-ux/SPEC]] — which entries appear (cap), NOT horizontal density';
+      '[[public/palimpsest/specs/2026-06-12-showall-truncation-ux/SPEC]] — which entries appear (cap), NOT horizontal density';
     const segs = tokenizePropertyInlineLinks(input);
     expect(segs[0]).toEqual({
       type: 'wikilink',
-      raw: '[[public/open-knowledge/specs/2026-06-12-showall-truncation-ux/SPEC]]',
-      target: 'public/open-knowledge/specs/2026-06-12-showall-truncation-ux/SPEC',
+      raw: '[[public/palimpsest/specs/2026-06-12-showall-truncation-ux/SPEC]]',
+      target: 'public/palimpsest/specs/2026-06-12-showall-truncation-ux/SPEC',
       alias: null,
       anchor: null,
     });

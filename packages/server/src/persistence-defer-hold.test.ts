@@ -3,7 +3,7 @@ import { mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { Hocuspocus } from '@hocuspocus/server';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { updateYFragment } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
@@ -60,7 +60,7 @@ async function createStoreHarness(
   docName: string,
   overrides?: Partial<PersistenceOptions>,
 ): Promise<StoreHarness> {
-  const tmpDir = await realpath(await mkdtemp(resolve(tmpdir(), 'ok-defer-hold-')));
+  const tmpDir = await realpath(await mkdtemp(resolve(tmpdir(), 'ps-defer-hold-')));
   const projectRoot = resolve(tmpDir, 'project');
   const shadow = await initShadowRepo(projectRoot);
   const ring = new LossCaptureRing({ projectDir: projectRoot, maxBytes: 1_000_000 });

@@ -8,7 +8,7 @@ import type {
   SkillMoveStateCode,
   SkillRetentionLedgerCode,
   SkillSourceStateCode,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   EmptyRequestSchema,
   externalSkillLiveDocName,
@@ -27,13 +27,13 @@ import {
   SkillPutRequestSchema,
   SkillPutSuccessSchema,
   skillLiveDocName,
-} from '@inkeep/open-knowledge-core';
-import type { SkillHostId } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import type { SkillHostId } from '@palimpsest/core/skills-catalog';
 import {
   parseSkillDir,
   SKILLS_LOCK_REL,
   type SkillsLock,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { composeAndWriteRawBody } from '../bridge-intake.ts';
 import { isLinkIndexExcludedDoc } from '../cc1-broadcast.ts';
@@ -168,7 +168,7 @@ export interface SkillsDocumentRouteDeps {
   >;
   respondPersistenceFailure: (res: ServerResponse, failure: StoreFailure, handler: string) => void;
   respondDiskDivergence: (res: ServerResponse, handler: string) => void;
-  okArtifactKey: (
+  psArtifactKey: (
     kind: 'template' | 'folder-frontmatter' | 'folder' | 'skill',
     folder: string,
     name?: string,
@@ -242,7 +242,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
     respondStaleExternalWrite,
     respondPersistenceFailure,
     respondDiskDivergence,
-    okArtifactKey,
+    psArtifactKey,
     resolveSkillsRoot,
     extractActorIdentityFromQuery,
     captureAndCloseDocuments,
@@ -640,7 +640,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (body.scope === 'project') {
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('skill', '', body.name),
+            psArtifactKey('skill', '', body.name),
             `${created ? 'skill-create' : 'skill-edit'}: ${relPath}`,
           );
           scheduleOkArtifactFlush('skill-put');
@@ -1053,7 +1053,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (body.scope === 'project') {
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('skill', '', body.toName),
+            psArtifactKey('skill', '', body.toName),
             `skill-rename: ${fromKeyPath} -> ${toKeyPath}`,
             [{ from: fromKeyPath, to: toKeyPath }],
           );
@@ -2111,7 +2111,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           const targetRel = relative(contentDir, targetDir).split(sep).join('/');
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('skill', '', body.toName),
+            psArtifactKey('skill', '', body.toName),
             `skill-duplicate: ${body.name} -> ${targetRel}`,
           );
           void commitOkArtifactWrite('skill-duplicate');

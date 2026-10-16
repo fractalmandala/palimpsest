@@ -47,15 +47,15 @@ describe('ContentFilter', () => {
     '%s filtering preserves captured exclusions after a nested marker is removed',
     async (_name, create) => {
       const child = join(projectDir, 'child');
-      mkdirSync(join(child, '.ok'), { recursive: true });
-      writeFileSync(join(child, '.ok', 'config.yml'), '');
+      mkdirSync(join(child, '.ps'), { recursive: true });
+      writeFileSync(join(child, '.ps', 'config.yml'), '');
       writeFileSync(join(child, 'note.md'), '# Child\n');
       const filter = await create({
         projectDir,
         contentDir: projectDir,
         isContentScopeExcluded: (path) => path === child || path.startsWith(`${child}${sep}`),
       });
-      unlinkSync(join(child, '.ok', 'config.yml'));
+      unlinkSync(join(child, '.ps', 'config.yml'));
       await filter.rebuildIgnorePatterns();
       expect(filter.isExcluded('child/note.md')).toBe(true);
       expect(filter.isDirExcluded('child')).toBe(true);
@@ -75,7 +75,7 @@ describe('ContentFilter', () => {
 
       expect(openable(filter, 'opencode.json')).toBe(true);
       expect(openable(filter, '.gitignore')).toBe(true);
-      expect(openable(filter, '.ok/config.yml')).toBe(true);
+      expect(openable(filter, '.ps/config.yml')).toBe(true);
       expect(openable(filter, '.claude/skills/reviewer/SKILL.md')).toBe(false);
       expect(openable(filter, 'ignored-note.md')).toBe(true);
     });
@@ -88,7 +88,7 @@ describe('ContentFilter', () => {
       expect(openable(filter, 'deploy/prod.pem')).toBe(false);
       expect(openable(filter, '.ssh/id_rsa')).toBe(false);
       expect(openable(filter, '.aws/credentials')).toBe(false);
-      expect(openable(filter, '.ok/local/server.lock')).toBe(false);
+      expect(openable(filter, '.ps/local/server.lock')).toBe(false);
       expect(openable(filter, '.git/config')).toBe(false);
       expect(openable(filter, 'node_modules/pkg/index.js')).toBe(false);
     });
@@ -130,9 +130,9 @@ describe('ContentFilter', () => {
     });
   });
 
-  describe('.okignore filtering', () => {
-    test('excludes files matching root .okignore patterns', () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+  describe('.psignore filtering', () => {
+    test('excludes files matching root .psignore patterns', () => {
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -140,18 +140,18 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('docs/guide.md')).toBe(false);
     });
 
-    test('cross-source negation — .okignore !pattern overrides .gitignore exclusion', () => {
+    test('cross-source negation — .psignore !pattern overrides .gitignore exclusion', () => {
       writeFileSync(join(projectDir, '.gitignore'), 'secret.md\n');
-      writeFileSync(join(projectDir, '.okignore'), '!secret.md\n');
+      writeFileSync(join(projectDir, '.psignore'), '!secret.md\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
       expect(filter.isExcluded('secret.md')).toBe(false);
     });
 
-    test('nested .okignore at folder depth applies patterns with correct path prefix', () => {
+    test('nested .psignore at folder depth applies patterns with correct path prefix', () => {
       mkdirSync(join(projectDir, 'subdir'), { recursive: true });
-      writeFileSync(join(projectDir, 'subdir', '.okignore'), 'private.md\n');
+      writeFileSync(join(projectDir, 'subdir', '.psignore'), 'private.md\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -159,11 +159,11 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('private.md')).toBe(false);
     });
 
-    test('mixed nested .gitignore + .okignore are both honored', () => {
+    test('mixed nested .gitignore + .psignore are both honored', () => {
       writeFileSync(join(projectDir, '.gitignore'), 'node_modules/\n');
       mkdirSync(join(projectDir, 'docs'), { recursive: true });
       writeFileSync(join(projectDir, 'docs', '.gitignore'), 'build/\n');
-      writeFileSync(join(projectDir, 'docs', '.okignore'), 'wip/\n');
+      writeFileSync(join(projectDir, 'docs', '.psignore'), 'wip/\n');
       mkdirSync(join(projectDir, 'docs', 'build'), { recursive: true });
       mkdirSync(join(projectDir, 'docs', 'wip'), { recursive: true });
 
@@ -174,8 +174,8 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('docs/readme.md')).toBe(false);
     });
 
-    test('malformed lines in .okignore are silently skipped (gitignore parity)', () => {
-      writeFileSync(join(projectDir, '.okignore'), '   \n# valid comment\nvalid.md\n');
+    test('malformed lines in .psignore are silently skipped (gitignore parity)', () => {
+      writeFileSync(join(projectDir, '.psignore'), '   \n# valid comment\nvalid.md\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -229,7 +229,7 @@ describe('ContentFilter', () => {
   });
 
   describe('non-git graceful degradation', () => {
-    test('works with no .gitignore and no .okignore', () => {
+    test('works with no .gitignore and no .psignore', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
       expect(filter.isExcluded('readme.md')).toBe(false);
@@ -370,7 +370,7 @@ describe('ContentFilter', () => {
   describe('getWatcherIgnoreGlobs', () => {
     test('retains ordinary user watcher bounds while stripping managed-content blockers', () => {
       writeFileSync(join(projectDir, '.gitignore'), 'dist/\ntmp/\n# comment\n!keep\n');
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n!important.md\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n!important.md\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -401,21 +401,21 @@ describe('ContentFilter', () => {
         '**/.git/**',
         'node_modules',
         '**/node_modules/**',
-        '.ok/local',
-        '**/.ok/local/**',
-        '.ok/worktrees',
-        '**/.ok/worktrees/**',
+        '.ps/local',
+        '**/.ps/local/**',
+        '.ps/worktrees',
+        '**/.ps/worktrees/**',
       ]) {
         expect(globs).toContain(structural);
       }
-      expect(globs.some((glob) => glob === '.ok' || glob === '.ok/**')).toBe(false);
+      expect(globs.some((glob) => glob === '.ps' || glob === '.ps/**')).toBe(false);
       expect(globs.some((glob) => glob.startsWith('.claude'))).toBe(false);
     });
 
-    test('drops blanket .ok globs so the OS watcher can reach .ok/skills (skills-as-content)', () => {
+    test('drops blanket .ps globs so the OS watcher can reach .ps/skills (skills-as-content)', () => {
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
-      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
       writeFileSync(join(projectDir, '.gitignore'), 'dist/\n.ok\nnode_modules/\n');
 
       const globs = createContentFilter({
@@ -423,23 +423,23 @@ describe('ContentFilter', () => {
         contentDir: projectDir,
       }).getWatcherIgnoreGlobs();
 
-      expect(globs).not.toContain('.ok');
-      expect(globs).not.toContain('.ok/');
+      expect(globs).not.toContain('.ps');
+      expect(globs).not.toContain('.ps/');
       expect(globs).toContain('dist/');
       expect(globs).toContain('node_modules/');
     });
 
     function assertCarveChildrenExcludeStripped(filter: ContentFilter) {
       const globs = filter.getWatcherIgnoreGlobs();
-      expect(globs).not.toContain('**/.ok/*');
-      expect(globs).not.toContain('!**/.ok/skills/');
+      expect(globs).not.toContain('**/.ps/*');
+      expect(globs).not.toContain('!**/.ps/skills/');
       expect(globs).toContain('dist/');
     }
 
     test('drops the children-exclude the skills-sharing carve writes (sync)', () => {
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
-      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '**/.ok/*\n!**/.ok/skills/\n');
+      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '**/.ps/*\n!**/.ps/skills/\n');
       writeFileSync(join(projectDir, '.gitignore'), 'dist/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertCarveChildrenExcludeStripped(filter);
@@ -447,7 +447,7 @@ describe('ContentFilter', () => {
     test('drops the children-exclude the skills-sharing carve writes (async)', async () => {
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
-      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '**/.ok/*\n!**/.ok/skills/\n');
+      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '**/.ps/*\n!**/.ps/skills/\n');
       writeFileSync(join(projectDir, '.gitignore'), 'dist/\n');
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertCarveChildrenExcludeStripped(filter);
@@ -491,45 +491,45 @@ describe('ContentFilter', () => {
     function assertShareableOkLeavesUnblocked(filter: ContentFilter) {
       const globs = filter.getWatcherIgnoreGlobs();
       for (const blocker of [
-        'docs/.ok/templates/',
-        'packages/app/.ok/templates/',
+        'docs/.ps/templates/',
+        'packages/app/.ps/templates/',
         '.*',
-        '.ok/**/*',
-        '**/.ok/**/*',
-        '.ok/templates/',
-        '.ok/local/../templates',
+        '.ps/**/*',
+        '**/.ps/**/*',
+        '.ps/templates/',
+        '.ps/local/../templates',
         'node_modules/../docs',
       ]) {
         expect(globs, blocker).not.toContain(blocker);
       }
-      expect(globs.filter((glob) => glob === '.ok/local')).toHaveLength(1);
-      expect(globs.filter((glob) => glob === '.ok/local/**')).toHaveLength(1);
-      expect(globs).toContain('**/.ok/local/**');
-      expect(globs).toContain('.ok/worktrees/**');
-      expect(globs).toContain('**/.ok/worktrees/**');
+      expect(globs.filter((glob) => glob === '.ps/local')).toHaveLength(1);
+      expect(globs.filter((glob) => glob === '.ps/local/**')).toHaveLength(1);
+      expect(globs).toContain('**/.ps/local/**');
+      expect(globs).toContain('.ps/worktrees/**');
+      expect(globs).toContain('**/.ps/worktrees/**');
       expect(globs).toContain('dist/');
       expect(globs).toContain('node_modules/**');
     }
 
-    test('watcher globs never block the shareable .ok leaves; .ok/local stays pruned (sync)', () => {
+    test('watcher globs never block the shareable .ps leaves; .ps/local stays pruned (sync)', () => {
       writeFileSync(
         join(projectDir, '.gitignore'),
-        'dist/\nnode_modules/**\ndocs/.ok/templates/\npackages/app/.ok/templates/\n.*\n.ok\n.ok/**\n.ok/**/*\n**/.ok\n**/.ok/**\n**/.ok/**/*\n.ok/*\n**/.ok/*\n.ok/templates/\n.ok/local\n.ok/local/**\n.ok/local/../templates\nnode_modules/../docs\n',
+        'dist/\nnode_modules/**\ndocs/.ps/templates/\npackages/app/.ps/templates/\n.*\n.ok\n.ok/**\n.ok/**/*\n**/.ps\n**/.ps/**\n**/.ps/**/*\n.ok/*\n**/.ps/*\n.ok/templates/\n.ok/local\n.ok/local/**\n.ok/local/../templates\nnode_modules/../docs\n',
       );
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
-      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertShareableOkLeavesUnblocked(filter);
     });
-    test('watcher globs never block the shareable .ok leaves; .ok/local stays pruned (async)', async () => {
+    test('watcher globs never block the shareable .ps leaves; .ps/local stays pruned (async)', async () => {
       writeFileSync(
         join(projectDir, '.gitignore'),
-        'dist/\nnode_modules/**\ndocs/.ok/templates/\npackages/app/.ok/templates/\n.*\n.ok\n.ok/**\n.ok/**/*\n**/.ok\n**/.ok/**\n**/.ok/**/*\n.ok/*\n**/.ok/*\n.ok/templates/\n.ok/local\n.ok/local/**\n.ok/local/../templates\nnode_modules/../docs\n',
+        'dist/\nnode_modules/**\ndocs/.ps/templates/\npackages/app/.ps/templates/\n.*\n.ok\n.ok/**\n.ok/**/*\n**/.ps\n**/.ps/**\n**/.ps/**/*\n.ok/*\n**/.ps/*\n.ok/templates/\n.ok/local\n.ok/local/**\n.ok/local/../templates\nnode_modules/../docs\n',
       );
       execFileSync('git', ['init', '-q'], { cwd: projectDir });
       configureTestGitRepository(projectDir);
-      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertShareableOkLeavesUnblocked(filter);
     });
@@ -537,12 +537,12 @@ describe('ContentFilter', () => {
 
   describe('dot-dir scope symmetry', () => {
     test('admits user-tracked markdown in non-built-in dot dirs and rejects built-in/internal dirs', () => {
-      mkdirSync(join(projectDir, '.cursor', 'skills', 'open-knowledge'), { recursive: true });
+      mkdirSync(join(projectDir, '.cursor', 'skills', 'palimpsest'), { recursive: true });
       writeFileSync(
-        join(projectDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'),
+        join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'),
         '# Skill\n',
       );
-      writeFileSync(join(projectDir, '.cursor', 'skills', 'open-knowledge', 'diagram.png'), 'png');
+      writeFileSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'diagram.png'), 'png');
       mkdirSync(join(projectDir, '.claude', 'skills'), { recursive: true });
       writeFileSync(join(projectDir, '.claude', 'skills', 'foo.md'), '# Claude\n');
       mkdirSync(join(projectDir, '.agents', 'skills'), { recursive: true });
@@ -564,13 +564,13 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('.codex/skills/foo.md')).toBe(true);
       expect(filter.isExcluded('.opencode/skills/foo.md')).toBe(true);
       expect(filter.isExcluded('packages/.cursor/skills/SKILL.md')).toBe(true);
-      expect(filter.isExcluded('.cursor/skills/open-knowledge/diagram.png')).toBe(true);
+      expect(filter.isExcluded('.cursor/skills/palimpsest/diagram.png')).toBe(true);
 
       expect(filter.isExcluded('.github/PULL_REQUEST_TEMPLATE.md')).toBe(false);
       expect(filter.isExcluded('.vscode/notes.md')).toBe(false);
 
       expect(filter.isExcluded('.git/config')).toBe(true);
-      expect(filter.isExcluded('.ok/config.yml')).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml')).toBe(true);
       expect(filter.isExcluded('node_modules/foo/README.md')).toBe(true);
       expect(filter.isExcluded('.next/build.md')).toBe(true);
       expect(filter.isExcluded('apps/web/.next/foo.md')).toBe(true);
@@ -582,27 +582,27 @@ describe('ContentFilter', () => {
 
       expect(filter.isDirExcluded('.cursor')).toBe(true);
       expect(filter.isDirExcluded('.git')).toBe(true);
-      expect(filter.isDirExcluded('.ok')).toBe(false);
-      expect(filter.isDirExcluded('.ok/local')).toBe(true);
+      expect(filter.isDirExcluded('.ps')).toBe(false);
+      expect(filter.isDirExcluded('.ps/local')).toBe(true);
     });
   });
 
   describe('in-place skill admission (allow-list)', () => {
     test('a gitignored bundle is NOT admitted, even on the allow-list', () => {
-      writeFileSync(join(projectDir, '.gitignore'), '.claude/skills/open-knowledge/\n');
+      writeFileSync(join(projectDir, '.gitignore'), '.claude/skills/palimpsest/\n');
       const filter = createContentFilter({
         projectDir,
         contentDir: projectDir,
         inPlaceSkillDirs: new Set([
-          '.claude/skills/open-knowledge',
-          '.agents/skills/open-knowledge',
+          '.claude/skills/palimpsest',
+          '.agents/skills/palimpsest',
         ]),
       });
 
-      expect(filter.isExcluded('.claude/skills/open-knowledge/SKILL.md')).toBe(true);
-      expect(filter.isPathIgnored('.claude/skills/open-knowledge/SKILL.md')).toBe(true);
-      expect(filter.isExcluded('.agents/skills/open-knowledge/SKILL.md')).toBe(false);
-      expect(filter.isPathIgnored('.agents/skills/open-knowledge/SKILL.md')).toBe(false);
+      expect(filter.isExcluded('.claude/skills/palimpsest/SKILL.md')).toBe(true);
+      expect(filter.isPathIgnored('.claude/skills/palimpsest/SKILL.md')).toBe(true);
+      expect(filter.isExcluded('.agents/skills/palimpsest/SKILL.md')).toBe(false);
+      expect(filter.isPathIgnored('.agents/skills/palimpsest/SKILL.md')).toBe(false);
     });
 
     test('admits ONLY the registry canonical bundle dirs out of the editor host dirs', () => {
@@ -650,8 +650,8 @@ describe('ContentFilter', () => {
       expect(filter.isDirExcluded('docs')).toBe(false);
     });
 
-    test('excludes directories matching .okignore patterns', () => {
-      writeFileSync(join(projectDir, '.okignore'), 'archive/\n');
+    test('excludes directories matching .psignore patterns', () => {
+      writeFileSync(join(projectDir, '.psignore'), 'archive/\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -672,9 +672,9 @@ describe('ContentFilter', () => {
       expect(filter.isDirExcluded('.turbo')).toBe(true);
       expect(filter.isDirExcluded('coverage')).toBe(true);
       expect(filter.isDirExcluded('.git')).toBe(true);
-      expect(filter.isDirExcluded('.ok')).toBe(false);
-      expect(filter.isDirExcluded('.ok/local')).toBe(true);
-      expect(filter.isDirExcluded('.ok/local/cache')).toBe(true);
+      expect(filter.isDirExcluded('.ps')).toBe(false);
+      expect(filter.isDirExcluded('.ps/local')).toBe(true);
+      expect(filter.isDirExcluded('.ps/local/cache')).toBe(true);
       expect(filter.isDirExcluded('docs')).toBe(false);
       expect(filter.isDirExcluded('src')).toBe(false);
     });
@@ -682,10 +682,10 @@ describe('ContentFilter', () => {
     test('excludes BUILTIN_SKIP_DIRS at any path depth, not just top segment (FR-CF1)', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
-      expect(filter.isDirExcluded('meetings/.ok')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/templates')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/local')).toBe(true);
-      expect(filter.isDirExcluded('a/b/c/.ok/d')).toBe(true);
+      expect(filter.isDirExcluded('meetings/.ps')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/templates')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/local')).toBe(true);
+      expect(filter.isDirExcluded('a/b/c/.ps/d')).toBe(true);
 
       expect(filter.isDirExcluded('packages/foo/node_modules')).toBe(true);
       expect(filter.isDirExcluded('packages/foo/node_modules/bar')).toBe(true);
@@ -709,25 +709,25 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('node_modules/logo.png')).toBe(true);
     });
 
-    test('admits .ok only down the skills path; non-skill .ok files stay excluded', () => {
-      mkdirSync(join(projectDir, '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'AGENTS.md'), '# Agents\n');
+    test('admits .ps only down the skills path; non-skill .ps files stay excluded', () => {
+      mkdirSync(join(projectDir, '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'AGENTS.md'), '# Agents\n');
       writeFileSync(join(projectDir, 'docs.md'), '# Docs\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
-      expect(filter.isDirExcluded('.ok')).toBe(false);
-      expect(filter.isDirExcluded('.ok/local')).toBe(true);
-      expect(filter.isExcluded('.ok/logo.png')).toBe(true);
-      expect(filter.isExcluded('.ok/AGENTS.md')).toBe(true);
+      expect(filter.isDirExcluded('.ps')).toBe(false);
+      expect(filter.isDirExcluded('.ps/local')).toBe(true);
+      expect(filter.isExcluded('.ps/logo.png')).toBe(true);
+      expect(filter.isExcluded('.ps/AGENTS.md')).toBe(true);
     });
 
     test('isExcluded rejects supported docs born inside BUILTIN_SKIP_DIRS except the templates carve-out', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
-      expect(filter.isExcluded('.ok/templates/daily.md')).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md')).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/frontmatter.yml.md')).toBe(true);
+      expect(filter.isExcluded('.ps/templates/daily.md')).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md')).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/frontmatter.yml.md')).toBe(true);
       expect(filter.isExcluded('node_modules/some-pkg/README.md')).toBe(true);
       expect(filter.isExcluded('apps/web/dist/index.md')).toBe(true);
 
@@ -738,15 +738,15 @@ describe('ContentFilter', () => {
 
   describe('templates-as-content admission', () => {
     function assertTemplateAdmission(filter: ContentFilter) {
-      expect(filter.isExcluded('.ok/templates/daily.md')).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md')).toBe(false);
-      expect(filter.isExcluded('a/b/.ok/templates/note.md')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/templates')).toBe(false);
-      expect(filter.isExcluded('.ok/templates/daily.mdx')).toBe(true);
-      expect(filter.isDirExcluded('.ok/templates/sub')).toBe(true);
-      expect(filter.isExcluded('.ok/templates/sub/x.md')).toBe(true);
-      expect(filter.isPathIgnored('.ok/templates/daily.md')).toBe(false);
+      expect(filter.isExcluded('.ps/templates/daily.md')).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md')).toBe(false);
+      expect(filter.isExcluded('a/b/.ps/templates/note.md')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/templates')).toBe(false);
+      expect(filter.isExcluded('.ps/templates/daily.mdx')).toBe(true);
+      expect(filter.isDirExcluded('.ps/templates/sub')).toBe(true);
+      expect(filter.isExcluded('.ps/templates/sub/x.md')).toBe(true);
+      expect(filter.isPathIgnored('.ps/templates/daily.md')).toBe(false);
     }
 
     test('sync factory (createContentFilter)', () => {
@@ -763,15 +763,15 @@ describe('ContentFilter', () => {
   describe('templates-as-content carve-out matrix (FR1)', () => {
     function assertSecretFloorWins(filter: ContentFilter) {
       for (const secret of [
-        '.ok/templates/server.key',
-        '.ok/templates/server.pem',
-        'meetings/.ok/templates/id_rsa',
+        '.ps/templates/server.key',
+        '.ps/templates/server.pem',
+        'meetings/.ps/templates/id_rsa',
       ]) {
         expect(filter.isExcluded(secret), secret).toBe(true);
         expect(filter.isPathIgnored(secret), secret).toBe(true);
       }
-      expect(filter.isDirExcluded('.ok/templates/.ssh')).toBe(true);
-      expect(filter.isExcluded('.ok/templates/daily.md')).toBe(false);
+      expect(filter.isDirExcluded('.ps/templates/.ssh')).toBe(true);
+      expect(filter.isExcluded('.ps/templates/daily.md')).toBe(false);
     }
 
     test('secret floor wins over the carve-out (sync)', () => {
@@ -784,54 +784,54 @@ describe('ContentFilter', () => {
     });
 
     function assertCarveOutIsNarrow(filter: ContentFilter) {
-      expect(filter.isExcluded('.ok/templates/daily.md')).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md')).toBe(false);
-      expect(filter.isExcluded('.ok/config.yml')).toBe(true);
-      expect(filter.isExcluded('.ok/AGENTS.md')).toBe(true);
-      expect(filter.isExcluded('meetings/.ok/frontmatter.yml.md')).toBe(true);
-      expect(filter.isExcluded('.ok/local/cache/notes.md')).toBe(true);
-      expect(filter.isDirExcluded('.ok/local')).toBe(true);
-      expect(filter.isDirExcluded('.ok/worktrees')).toBe(true);
-      expect(filter.isDirExcluded('meetings/.ok/local')).toBe(true);
+      expect(filter.isExcluded('.ps/templates/daily.md')).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md')).toBe(false);
+      expect(filter.isExcluded('.ps/config.yml')).toBe(true);
+      expect(filter.isExcluded('.ps/AGENTS.md')).toBe(true);
+      expect(filter.isExcluded('meetings/.ps/frontmatter.yml.md')).toBe(true);
+      expect(filter.isExcluded('.ps/local/cache/notes.md')).toBe(true);
+      expect(filter.isDirExcluded('.ps/local')).toBe(true);
+      expect(filter.isDirExcluded('.ps/worktrees')).toBe(true);
+      expect(filter.isDirExcluded('meetings/.ps/local')).toBe(true);
     }
 
-    test('carve-out does not over-admit other .ok children (sync)', () => {
+    test('carve-out does not over-admit other .ps children (sync)', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertCarveOutIsNarrow(filter);
     });
-    test('carve-out does not over-admit other .ok children (async)', async () => {
+    test('carve-out does not over-admit other .ps children (async)', async () => {
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertCarveOutIsNarrow(filter);
     });
 
     function assertFolderIndexDescendable(filter: ContentFilter) {
-      expect(filter.isDirExcluded('.ok')).toBe(false);
-      expect(filter.isDirExcluded('.ok/templates')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/templates')).toBe(false);
-      expect(filter.isDirExcluded('a/b/.ok')).toBe(false);
-      expect(filter.isDirExcluded('a/b/.ok/templates')).toBe(false);
-      expect(filter.isDirExcluded('.ok/templates/sub')).toBe(true);
-      expect(filter.isDirExcluded('meetings/.ok/templates/sub')).toBe(true);
+      expect(filter.isDirExcluded('.ps')).toBe(false);
+      expect(filter.isDirExcluded('.ps/templates')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/templates')).toBe(false);
+      expect(filter.isDirExcluded('a/b/.ps')).toBe(false);
+      expect(filter.isDirExcluded('a/b/.ps/templates')).toBe(false);
+      expect(filter.isDirExcluded('.ps/templates/sub')).toBe(true);
+      expect(filter.isDirExcluded('meetings/.ps/templates/sub')).toBe(true);
     }
 
-    test('folder-index keeps nested .ok/templates descendable (sync)', () => {
+    test('folder-index keeps nested .ps/templates descendable (sync)', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertFolderIndexDescendable(filter);
     });
-    test('folder-index keeps nested .ok/templates descendable (async)', async () => {
+    test('folder-index keeps nested .ps/templates descendable (async)', async () => {
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertFolderIndexDescendable(filter);
     });
 
     async function assertBootWalkAdmits(makeFilter: () => ContentFilter | Promise<ContentFilter>) {
-      mkdirSync(join(projectDir, 'meetings', '.ok', 'templates'), { recursive: true });
-      writeFileSync(join(projectDir, 'meetings', '.ok', 'templates', 'standup.md'), '# Standup\n');
+      mkdirSync(join(projectDir, 'meetings', '.ps', 'templates'), { recursive: true });
+      writeFileSync(join(projectDir, 'meetings', '.ps', 'templates', 'standup.md'), '# Standup\n');
       const filter = await makeFilter();
       expect(filter.isDirExcluded('meetings')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok')).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/templates')).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps')).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/templates')).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md')).toBe(false);
     }
 
     test('pre-existing template on disk is admitted by the walk (sync)', async () => {
@@ -845,9 +845,9 @@ describe('ContentFilter', () => {
 
     function assertSingleFileScope(filter: ContentFilter) {
       expect(filter.isExcluded('notes.md')).toBe(false);
-      expect(filter.isExcluded('.ok/templates/daily.md')).toBe(true);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md')).toBe(true);
-      expect(filter.isPathIgnored('.ok/templates/daily.md')).toBe(false);
+      expect(filter.isExcluded('.ps/templates/daily.md')).toBe(true);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md')).toBe(true);
+      expect(filter.isPathIgnored('.ps/templates/daily.md')).toBe(false);
     }
 
     test('single-file scope excludes templates (sync)', () => {
@@ -869,26 +869,26 @@ describe('ContentFilter', () => {
 
     function assertGlobStripSet(filter: ContentFilter) {
       const globs = filter.getWatcherIgnoreGlobs();
-      for (const blanket of ['.ok', '.ok/**', '**/.ok', '**/.ok/**']) {
+      for (const blanket of ['.ps', '.ps/**', '**/.ps', '**/.ps/**']) {
         expect(globs, blanket).not.toContain(blanket);
       }
-      expect(globs).toContain('.ok/local');
+      expect(globs).toContain('.ps/local');
       expect(globs).toContain('dist/');
       expect(globs).toContain('node_modules/');
     }
 
-    test('watcher glob strip drops blanket .ok, keeps the rest (sync)', () => {
+    test('watcher glob strip drops blanket .ps, keeps the rest (sync)', () => {
       writeFileSync(
         join(projectDir, '.gitignore'),
-        'dist/\nnode_modules/\n.ok\n.ok/**\n**/.ok\n**/.ok/**\n.ok/local\n',
+        'dist/\nnode_modules/\n.ok\n.ok/**\n**/.ps\n**/.ps/**\n.ok/local\n',
       );
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertGlobStripSet(filter);
     });
-    test('watcher glob strip drops blanket .ok, keeps the rest (async)', async () => {
+    test('watcher glob strip drops blanket .ps, keeps the rest (async)', async () => {
       writeFileSync(
         join(projectDir, '.gitignore'),
-        'dist/\nnode_modules/\n.ok\n.ok/**\n**/.ok\n**/.ok/**\n.ok/local\n',
+        'dist/\nnode_modules/\n.ok\n.ok/**\n**/.ps\n**/.ps/**\n.ok/local\n',
       );
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertGlobStripSet(filter);
@@ -898,18 +898,18 @@ describe('ContentFilter', () => {
   describe('templates-as-content carve-out stays below the skip-dir floor', () => {
     function assertSkipDirAncestorExcluded(filter: ContentFilter) {
       for (const vendored of [
-        'node_modules/pkg/.ok/templates/x.md',
-        'dist/.ok/templates/x.md',
-        'vendor/lib/.ok/templates/note.md',
+        'node_modules/pkg/.ps/templates/x.md',
+        'dist/.ps/templates/x.md',
+        'vendor/lib/.ps/templates/note.md',
       ]) {
         expect(filter.isExcluded(vendored), vendored).toBe(true);
         expect(filter.isPathIgnored(vendored), vendored).toBe(true);
       }
-      expect(filter.isExcluded('docs/.ok/templates/x.md')).toBe(false);
-      expect(filter.isExcluded('a/b/c/.ok/templates/x.md')).toBe(false);
-      expect(filter.isPathIgnored('docs/.ok/templates/x.md')).toBe(false);
-      expect(filter.isDirExcluded('node_modules/pkg/.ok')).toBe(true);
-      expect(filter.isDirExcluded('dist/.ok/templates')).toBe(true);
+      expect(filter.isExcluded('docs/.ps/templates/x.md')).toBe(false);
+      expect(filter.isExcluded('a/b/c/.ps/templates/x.md')).toBe(false);
+      expect(filter.isPathIgnored('docs/.ps/templates/x.md')).toBe(false);
+      expect(filter.isDirExcluded('node_modules/pkg/.ps')).toBe(true);
+      expect(filter.isDirExcluded('dist/.ps/templates')).toBe(true);
     }
 
     test('skip-dir ancestor excluded from admission and serve path (sync)', () => {
@@ -922,19 +922,19 @@ describe('ContentFilter', () => {
     });
   });
 
-  describe('shareable .ok artifact sync scope (allow-list)', () => {
+  describe('shareable .ps artifact sync scope (allow-list)', () => {
     const SYNC = { syncScope: { pathBase: 'project' } } as const;
 
     function assertSyncScopeAdmission(filter: ContentFilter) {
-      expect(filter.isExcluded('.ok/config.yml', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/.gitignore', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/schemas/lint.json', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/schemas/LINT.JSON', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/templates/daily.md', SYNC)).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md', SYNC)).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/frontmatter.yml', SYNC)).toBe(false);
-      expect(filter.isExcluded('a/b/c/.ok/frontmatter.yml', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/frontmatter.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/config.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/.gitignore', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/schemas/lint.json', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/schemas/LINT.JSON', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/templates/daily.md', SYNC)).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md', SYNC)).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/frontmatter.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('a/b/c/.ps/frontmatter.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/frontmatter.yml', SYNC)).toBe(false);
     }
 
     test('sync scope admits exactly the shareable artifact shapes (sync)', () => {
@@ -950,18 +950,18 @@ describe('ContentFilter', () => {
       const contentScope = { syncScope: { pathBase: 'content' } } as const;
       const projectScope = { syncScope: { pathBase: 'project' } } as const;
 
-      expect(filter.isExcluded('.ok/config.yml', contentScope)).toBe(true);
-      expect(filter.isExcluded('.ok/.gitignore', contentScope)).toBe(true);
-      expect(filter.isExcluded('.ok/schemas/lint.json', contentScope)).toBe(true);
-      expect(filter.isDirExcluded('.ok/schemas', contentScope)).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', contentScope)).toBe(true);
+      expect(filter.isExcluded('.ps/.gitignore', contentScope)).toBe(true);
+      expect(filter.isExcluded('.ps/schemas/lint.json', contentScope)).toBe(true);
+      expect(filter.isDirExcluded('.ps/schemas', contentScope)).toBe(true);
 
-      expect(filter.isExcluded('.ok/config.yml', projectScope)).toBe(false);
-      expect(filter.isExcluded('.ok/.gitignore', projectScope)).toBe(false);
-      expect(filter.isExcluded('.ok/schemas/lint.json', projectScope)).toBe(false);
-      expect(filter.isDirExcluded('.ok/schemas', projectScope)).toBe(false);
+      expect(filter.isExcluded('.ps/config.yml', projectScope)).toBe(false);
+      expect(filter.isExcluded('.ps/.gitignore', projectScope)).toBe(false);
+      expect(filter.isExcluded('.ps/schemas/lint.json', projectScope)).toBe(false);
+      expect(filter.isDirExcluded('.ps/schemas', projectScope)).toBe(false);
 
-      expect(filter.isExcluded('.ok/templates/daily.md', contentScope)).toBe(false);
-      expect(filter.isExcluded('.ok/frontmatter.yml', contentScope)).toBe(true);
+      expect(filter.isExcluded('.ps/templates/daily.md', contentScope)).toBe(false);
+      expect(filter.isExcluded('.ps/frontmatter.yml', contentScope)).toBe(true);
       expect(filter.isExcluded('note.md', contentScope)).toBe(true);
     }
 
@@ -970,7 +970,7 @@ describe('ContentFilter', () => {
       mkdirSync(contentDir);
       writeFileSync(
         join(projectDir, '.gitignore'),
-        '/content/note.md\n/content/.ok/frontmatter.yml\n',
+        '/content/note.md\n/content/.ps/frontmatter.yml\n',
       );
       const filter = createContentFilter({ projectDir, contentDir });
       assertSubfolderPathCoordinates(filter);
@@ -981,7 +981,7 @@ describe('ContentFilter', () => {
       mkdirSync(contentDir);
       writeFileSync(
         join(projectDir, '.gitignore'),
-        '/content/note.md\n/content/.ok/frontmatter.yml\n',
+        '/content/note.md\n/content/.ps/frontmatter.yml\n',
       );
       const filter = await createContentFilterAsync({ projectDir, contentDir });
       assertSubfolderPathCoordinates(filter);
@@ -989,41 +989,41 @@ describe('ContentFilter', () => {
 
     function assertSyncScopeIsNarrow(filter: ContentFilter) {
       for (const path of [
-        '.ok/local/server.lock',
-        '.ok/local/cache/embeddings.json',
-        '.ok/worktrees/wt1/notes.md',
-        '.ok/principal.json',
-        '.ok/state.json',
-        '.ok/server.lock',
-        '.ok/ui.lock',
-        '.ok/sync-state.json',
-        '.ok/last-spawn-error.log',
-        '.ok/AGENTS.md',
-        '.ok/schemas/nested/deep.json',
-        '.ok/schemas/readme.md',
-        'docs/.ok/config.yml',
-        'docs/.ok/.gitignore',
-        'docs/.ok/schemas/lint.json',
+        '.ps/local/server.lock',
+        '.ps/local/cache/embeddings.json',
+        '.ps/worktrees/wt1/notes.md',
+        '.ps/principal.json',
+        '.ps/state.json',
+        '.ps/server.lock',
+        '.ps/ui.lock',
+        '.ps/sync-state.json',
+        '.ps/last-spawn-error.log',
+        '.ps/AGENTS.md',
+        '.ps/schemas/nested/deep.json',
+        '.ps/schemas/readme.md',
+        'docs/.ps/config.yml',
+        'docs/.ps/.gitignore',
+        'docs/.ps/schemas/lint.json',
       ]) {
         expect(filter.isExcluded(path, SYNC), path).toBe(true);
       }
     }
 
-    test('sync scope never becomes a blanket .ok admission (sync)', () => {
+    test('sync scope never becomes a blanket .ps admission (sync)', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertSyncScopeIsNarrow(filter);
     });
-    test('sync scope never becomes a blanket .ok admission (async)', async () => {
+    test('sync scope never becomes a blanket .ps admission (async)', async () => {
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertSyncScopeIsNarrow(filter);
     });
 
     function assertSecretFloorPrecedesSyncScope(filter: ContentFilter) {
-      for (const secret of ['.ok/schemas/foo.key', '.ok/schemas/service.pem', '.ok/schemas/.env']) {
+      for (const secret of ['.ps/schemas/foo.key', '.ps/schemas/service.pem', '.ps/schemas/.env']) {
         expect(filter.isExcluded(secret, SYNC), secret).toBe(true);
       }
-      expect(filter.isDirExcluded('.ok/.ssh', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/schemas/foo.json', SYNC)).toBe(false);
+      expect(filter.isDirExcluded('.ps/.ssh', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/schemas/foo.json', SYNC)).toBe(false);
     }
 
     test('secret floor wins over the sync scope (sync)', () => {
@@ -1036,16 +1036,16 @@ describe('ContentFilter', () => {
     });
 
     function assertSyncScopeDirAncestors(filter: ContentFilter) {
-      expect(filter.isDirExcluded('.ok', SYNC)).toBe(false);
-      expect(filter.isDirExcluded('.ok/schemas', SYNC)).toBe(false);
-      expect(filter.isDirExcluded('.ok/templates', SYNC)).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok', SYNC)).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/templates', SYNC)).toBe(false);
-      expect(filter.isDirExcluded('.ok/schemas/sub', SYNC)).toBe(true);
-      expect(filter.isDirExcluded('.ok/local', SYNC)).toBe(true);
-      expect(filter.isDirExcluded('.ok/worktrees', SYNC)).toBe(true);
-      expect(filter.isDirExcluded('node_modules/pkg/.ok', SYNC)).toBe(true);
-      expect(filter.isDirExcluded('docs/.ok/schemas', SYNC)).toBe(true);
+      expect(filter.isDirExcluded('.ps', SYNC)).toBe(false);
+      expect(filter.isDirExcluded('.ps/schemas', SYNC)).toBe(false);
+      expect(filter.isDirExcluded('.ps/templates', SYNC)).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps', SYNC)).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/templates', SYNC)).toBe(false);
+      expect(filter.isDirExcluded('.ps/schemas/sub', SYNC)).toBe(true);
+      expect(filter.isDirExcluded('.ps/local', SYNC)).toBe(true);
+      expect(filter.isDirExcluded('.ps/worktrees', SYNC)).toBe(true);
+      expect(filter.isDirExcluded('node_modules/pkg/.ps', SYNC)).toBe(true);
+      expect(filter.isDirExcluded('docs/.ps/schemas', SYNC)).toBe(true);
     }
 
     test('sync scope keeps the schemas dir descendable, bounded (sync)', () => {
@@ -1059,17 +1059,17 @@ describe('ContentFilter', () => {
 
     function assertSyncScopeSkipDirBound(filter: ContentFilter) {
       for (const vendored of [
-        'node_modules/pkg/.ok/frontmatter.yml',
-        'dist/.ok/frontmatter.yml',
-        '.ok/worktrees/wt1/docs/.ok/frontmatter.yml',
-        '.ok/worktrees/wt1/.ok/config.yml',
-        '.OK/local/cache/.ok/frontmatter.yml',
-        '.OK/worktrees/wt1/docs/.ok/frontmatter.yml',
-        'node_modules/pkg/.ok/templates/x.md',
+        'node_modules/pkg/.ps/frontmatter.yml',
+        'dist/.ps/frontmatter.yml',
+        '.ps/worktrees/wt1/docs/.ps/frontmatter.yml',
+        '.ps/worktrees/wt1/.ps/config.yml',
+        '.OK/local/cache/.ps/frontmatter.yml',
+        '.OK/worktrees/wt1/docs/.ps/frontmatter.yml',
+        'node_modules/pkg/.ps/templates/x.md',
       ]) {
         expect(filter.isExcluded(vendored, SYNC), vendored).toBe(true);
       }
-      expect(filter.isExcluded('a/b/c/.ok/frontmatter.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('a/b/c/.ps/frontmatter.yml', SYNC)).toBe(false);
     }
 
     test('skip-dir ancestors stay excluded from sync scope (sync)', () => {
@@ -1082,45 +1082,45 @@ describe('ContentFilter', () => {
     });
 
     function assertGitignoredArtifactsRefused(filter: ContentFilter) {
-      expect(filter.isExcluded('.ok/config.yml', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/.gitignore', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/schemas/lint.json', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/frontmatter.yml', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/.gitignore', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/schemas/lint.json', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/frontmatter.yml', SYNC)).toBe(true);
     }
 
     test('gitignored artifacts are NOT admitted, even with the scope (sync)', () => {
-      writeFileSync(join(projectDir, '.gitignore'), '.ok/\n');
+      writeFileSync(join(projectDir, '.gitignore'), '.ps/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       assertGitignoredArtifactsRefused(filter);
     });
     test('gitignored artifacts are NOT admitted, even with the scope (async)', async () => {
-      writeFileSync(join(projectDir, '.gitignore'), '.ok/\n');
+      writeFileSync(join(projectDir, '.gitignore'), '.ps/\n');
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       assertGitignoredArtifactsRefused(filter);
     });
 
     test('a narrower gitignore refuses only its own subtree (sync)', () => {
-      writeFileSync(join(projectDir, '.gitignore'), '.ok/schemas/\n');
+      writeFileSync(join(projectDir, '.gitignore'), '.ps/schemas/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
-      expect(filter.isExcluded('.ok/schemas/lint.json', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/config.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/schemas/lint.json', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', SYNC)).toBe(false);
     });
     test('a narrower gitignore refuses only its own subtree (async)', async () => {
-      writeFileSync(join(projectDir, '.gitignore'), '.ok/schemas/\n');
+      writeFileSync(join(projectDir, '.gitignore'), '.ps/schemas/\n');
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
-      expect(filter.isExcluded('.ok/schemas/lint.json', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/config.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/schemas/lint.json', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', SYNC)).toBe(false);
     });
 
     function assertNoScopeBehaviorUnchanged(filter: ContentFilter) {
-      expect(filter.isExcluded('.ok/config.yml')).toBe(true);
-      expect(filter.isExcluded('.ok/.gitignore')).toBe(true);
-      expect(filter.isExcluded('.ok/schemas/lint.json')).toBe(true);
-      expect(filter.isExcluded('meetings/.ok/frontmatter.yml')).toBe(true);
-      expect(filter.isExcluded('.ok/frontmatter.yml')).toBe(true);
-      expect(filter.isDirExcluded('.ok/schemas')).toBe(true);
-      expect(filter.isExcluded('.ok/templates/daily.md')).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/templates/standup.md')).toBe(false);
+      expect(filter.isExcluded('.ps/config.yml')).toBe(true);
+      expect(filter.isExcluded('.ps/.gitignore')).toBe(true);
+      expect(filter.isExcluded('.ps/schemas/lint.json')).toBe(true);
+      expect(filter.isExcluded('meetings/.ps/frontmatter.yml')).toBe(true);
+      expect(filter.isExcluded('.ps/frontmatter.yml')).toBe(true);
+      expect(filter.isDirExcluded('.ps/schemas')).toBe(true);
+      expect(filter.isExcluded('.ps/templates/daily.md')).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/templates/standup.md')).toBe(false);
     }
 
     test('without the scope the index/sidebar view is unchanged (sync)', () => {
@@ -1133,10 +1133,10 @@ describe('ContentFilter', () => {
     });
 
     function assertServeFloorHolds(filter: ContentFilter) {
-      expect(filter.isPathIgnored('.ok/config.yml')).toBe(true);
-      expect(filter.isPathIgnored('.ok/.gitignore')).toBe(true);
-      expect(filter.isPathIgnored('.ok/schemas/lint.json')).toBe(true);
-      expect(filter.isPathIgnored('meetings/.ok/frontmatter.yml')).toBe(true);
+      expect(filter.isPathIgnored('.ps/config.yml')).toBe(true);
+      expect(filter.isPathIgnored('.ps/.gitignore')).toBe(true);
+      expect(filter.isPathIgnored('.ps/schemas/lint.json')).toBe(true);
+      expect(filter.isPathIgnored('meetings/.ps/frontmatter.yml')).toBe(true);
     }
 
     test('the asset-serve gate ignores the scope (sync)', () => {
@@ -1150,8 +1150,8 @@ describe('ContentFilter', () => {
 
     function assertSingleFileScopeHolds(filter: ContentFilter) {
       expect(filter.isExcluded('notes.md', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/config.yml', SYNC)).toBe(true);
-      expect(filter.isExcluded('.ok/schemas/lint.json', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', SYNC)).toBe(true);
+      expect(filter.isExcluded('.ps/schemas/lint.json', SYNC)).toBe(true);
     }
 
     test('single-file scope excludes shareable artifacts (sync)', () => {
@@ -1173,9 +1173,9 @@ describe('ContentFilter', () => {
 
     test('sync scope and bypass remain separate runtime modes', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
-      expect(filter.isExcluded('.ok/config.yml', SYNC)).toBe(false);
-      expect(filter.isExcluded('.ok/config.yml', { bypassFilters: true })).toBe(true);
-      expect(filter.isPathIgnored('.ok/config.yml', { bypassFilters: true })).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', SYNC)).toBe(false);
+      expect(filter.isExcluded('.ps/config.yml', { bypassFilters: true })).toBe(true);
+      expect(filter.isPathIgnored('.ps/config.yml', { bypassFilters: true })).toBe(true);
     });
   });
 
@@ -1186,19 +1186,19 @@ describe('ContentFilter', () => {
       expect(filter.isDirExcluded('.git', BYPASS)).toBe(true);
       expect(filter.isDirExcluded('node_modules', BYPASS)).toBe(true);
       expect(filter.isDirExcluded('node_modules/some-pkg', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('.ok', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('.ok/local', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('.open-knowledge', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('.openknowledge', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('.ps', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('.ps/local', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('.palimpsest', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('.palimpsest', BYPASS)).toBe(true);
       expect(filter.isDirExcluded('packages/foo/node_modules', BYPASS)).toBe(true);
       expect(filter.isDirExcluded('a/b/.git/c', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('meetings/.ok/templates', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('a/b/.open-knowledge/c', BYPASS)).toBe(true);
-      expect(filter.isDirExcluded('a/b/.openknowledge', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('meetings/.ps/templates', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('a/b/.palimpsest/c', BYPASS)).toBe(true);
+      expect(filter.isDirExcluded('a/b/.palimpsest', BYPASS)).toBe(true);
 
       expect(filter.isExcluded('.git/objects/x.md', BYPASS)).toBe(true);
       expect(filter.isExcluded('node_modules/pkg/README.md', BYPASS)).toBe(true);
-      expect(filter.isExcluded('.ok/templates/daily.md', BYPASS)).toBe(true);
+      expect(filter.isExcluded('.ps/templates/daily.md', BYPASS)).toBe(true);
       expect(filter.isPathIgnored('.git/config', BYPASS)).toBe(true);
       expect(filter.isPathIgnored('node_modules/pkg/index.js', BYPASS)).toBe(true);
 
@@ -1289,15 +1289,15 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('docs/.Environment.md', BYPASS)).toBe(false);
       expect(filter.isExcluded('docs/KEYMAP.md', BYPASS)).toBe(false);
 
-      expect(filter.isExcluded('.ok/skills/foo/server.key')).toBe(true);
-      expect(filter.isExcluded('.ok/skills/foo/id_rsa')).toBe(true);
-      expect(filter.isExcluded('.ok/skills/foo/.env')).toBe(true);
-      expect(filter.isPathIgnored('.ok/skills/foo/server.key')).toBe(true);
-      expect(filter.isPathIgnored('.ok/skills/foo/id_rsa')).toBe(true);
-      expect(filter.isPathIgnored('.ok/skills/foo/.env')).toBe(true);
-      expect(filter.isDirExcluded('.ok/skills/foo/.ssh')).toBe(true);
-      expect(filter.isExcluded('.ok/skills/foo/SKILL.md')).toBe(false);
-      expect(filter.isExcluded('.ok/skills/foo/diagram.png')).toBe(false);
+      expect(filter.isExcluded('.ps/skills/foo/server.key')).toBe(true);
+      expect(filter.isExcluded('.ps/skills/foo/id_rsa')).toBe(true);
+      expect(filter.isExcluded('.ps/skills/foo/.env')).toBe(true);
+      expect(filter.isPathIgnored('.ps/skills/foo/server.key')).toBe(true);
+      expect(filter.isPathIgnored('.ps/skills/foo/id_rsa')).toBe(true);
+      expect(filter.isPathIgnored('.ps/skills/foo/.env')).toBe(true);
+      expect(filter.isDirExcluded('.ps/skills/foo/.ssh')).toBe(true);
+      expect(filter.isExcluded('.ps/skills/foo/SKILL.md')).toBe(false);
+      expect(filter.isExcluded('.ps/skills/foo/diagram.png')).toBe(false);
 
       expect(filter.isDirExcluded('dist', BYPASS)).toBe(false);
       expect(filter.isDirExcluded('build', BYPASS)).toBe(false);
@@ -1326,66 +1326,66 @@ describe('ContentFilter', () => {
     });
   });
 
-  describe('showOk lifts the .ok floor for the tree-listing walk only', () => {
+  describe('showOk lifts the .ps floor for the tree-listing walk only', () => {
     const REVEAL = { bypassFilters: true, showOk: true } as const;
 
     function assertShowOkReveal(filter: ContentFilter) {
-      expect(filter.isDirExcluded('.ok', REVEAL)).toBe(false);
-      expect(filter.isDirExcluded('.ok/templates', REVEAL)).toBe(false);
-      expect(filter.isDirExcluded('.ok/skills', REVEAL)).toBe(false);
-      expect(filter.isDirExcluded('.ok/skills/demo', REVEAL)).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok', REVEAL)).toBe(false);
-      expect(filter.isDirExcluded('meetings/.ok/templates', REVEAL)).toBe(false);
+      expect(filter.isDirExcluded('.ps', REVEAL)).toBe(false);
+      expect(filter.isDirExcluded('.ps/templates', REVEAL)).toBe(false);
+      expect(filter.isDirExcluded('.ps/skills', REVEAL)).toBe(false);
+      expect(filter.isDirExcluded('.ps/skills/demo', REVEAL)).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps', REVEAL)).toBe(false);
+      expect(filter.isDirExcluded('meetings/.ps/templates', REVEAL)).toBe(false);
 
-      expect(filter.isDirExcluded('.ok/worktrees', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/worktrees/checkout', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/local', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/local/cache', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('meetings/.ok/worktrees', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('meetings/.ok/local', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/worktrees', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/worktrees/checkout', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/local', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/local/cache', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('meetings/.ps/worktrees', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('meetings/.ps/local', REVEAL)).toBe(true);
 
-      expect(filter.isDirExcluded('.ok/Worktrees', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/Local', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/Worktrees', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/Local', REVEAL)).toBe(true);
       expect(filter.isDirExcluded('.OK/worktrees', REVEAL)).toBe(true);
       expect(filter.isDirExcluded('.OK/local', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/LOCAL/cache', REVEAL)).toBe(true);
-      expect(filter.isExcluded('.ok/Local/server.lock', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/LOCAL/cache', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/Local/server.lock', REVEAL)).toBe(true);
       expect(filter.isExcluded('.OK/local/server.lock', REVEAL)).toBe(true);
-      expect(filter.isExcluded('.OK/worktrees/wt/.ok/frontmatter.yml', REVEAL)).toBe(true);
-      expect(filter.isExcluded('meetings/.ok/WORKTREES/checkout/README.md', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.OK/worktrees/wt/.ps/frontmatter.yml', REVEAL)).toBe(true);
+      expect(filter.isExcluded('meetings/.ps/WORKTREES/checkout/README.md', REVEAL)).toBe(true);
 
-      expect(filter.isExcluded('.ok/config.yml', REVEAL)).toBe(false);
-      expect(filter.isExcluded('.ok/.gitignore', REVEAL)).toBe(false);
-      expect(filter.isExcluded('.ok/templates/daily.md', REVEAL)).toBe(false);
-      expect(filter.isExcluded('.ok/skills/demo/SKILL.md', REVEAL)).toBe(false);
-      expect(filter.isExcluded('meetings/.ok/frontmatter.yml', REVEAL)).toBe(false);
-      expect(filter.isExcluded('.ok/local/server.lock', REVEAL)).toBe(true);
-      expect(filter.isExcluded('.ok/worktrees/checkout/README.md', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', REVEAL)).toBe(false);
+      expect(filter.isExcluded('.ps/.gitignore', REVEAL)).toBe(false);
+      expect(filter.isExcluded('.ps/templates/daily.md', REVEAL)).toBe(false);
+      expect(filter.isExcluded('.ps/skills/demo/SKILL.md', REVEAL)).toBe(false);
+      expect(filter.isExcluded('meetings/.ps/frontmatter.yml', REVEAL)).toBe(false);
+      expect(filter.isExcluded('.ps/local/server.lock', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/worktrees/checkout/README.md', REVEAL)).toBe(true);
 
       expect(filter.isDirExcluded('.git', REVEAL)).toBe(true);
       expect(filter.isDirExcluded('node_modules', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.open-knowledge', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.openknowledge', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.palimpsest', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.palimpsest', REVEAL)).toBe(true);
       expect(filter.isExcluded('.git/objects/x.md', REVEAL)).toBe(true);
       expect(filter.isExcluded('node_modules/pkg/README.md', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/templates/node_modules', REVEAL)).toBe(true);
-      expect(filter.isExcluded('.ok/templates/node_modules/pkg/x.md', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/templates/node_modules', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/templates/node_modules/pkg/x.md', REVEAL)).toBe(true);
 
-      expect(filter.isExcluded('.ok/.DS_Store', REVEAL)).toBe(true);
-      expect(filter.isExcluded('.ok/templates/server.pem', REVEAL)).toBe(true);
-      expect(filter.isExcluded('.ok/skills/demo/id_rsa', REVEAL)).toBe(true);
-      expect(filter.isDirExcluded('.ok/skills/demo/.ssh', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/.DS_Store', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/templates/server.pem', REVEAL)).toBe(true);
+      expect(filter.isExcluded('.ps/skills/demo/id_rsa', REVEAL)).toBe(true);
+      expect(filter.isDirExcluded('.ps/skills/demo/.ssh', REVEAL)).toBe(true);
 
       expect(filter.isExcluded('__system__.md', REVEAL)).toBe(true);
       expect(filter.isExcluded('__config__/project.md', REVEAL)).toBe(true);
       expect(filter.isExcluded('__local__/project.md', REVEAL)).toBe(true);
 
-      expect(filter.isPathIgnored('.ok/config.yml', REVEAL)).toBe(true);
-      expect(filter.isPathIgnored('.ok/templates/daily.md', REVEAL)).toBe(false);
+      expect(filter.isPathIgnored('.ps/config.yml', REVEAL)).toBe(true);
+      expect(filter.isPathIgnored('.ps/templates/daily.md', REVEAL)).toBe(false);
 
-      expect(filter.isDirExcluded('.ok/templates', { showOk: true })).toBe(false);
-      expect(filter.isDirExcluded('.ok/local', { showOk: true })).toBe(true);
-      expect(filter.isExcluded('.ok/config.yml', { showOk: true })).toBe(true);
+      expect(filter.isDirExcluded('.ps/templates', { showOk: true })).toBe(false);
+      expect(filter.isDirExcluded('.ps/local', { showOk: true })).toBe(true);
+      expect(filter.isExcluded('.ps/config.yml', { showOk: true })).toBe(true);
     }
 
     test('sync factory (createContentFilter)', () => {
@@ -1471,10 +1471,10 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('guide.md')).toBe(false);
     });
 
-    test('loads .okignore at contentDir root when contentDir != projectDir', () => {
+    test('loads .psignore at contentDir root when contentDir != projectDir', () => {
       const contentDir = join(projectDir, 'docs');
       mkdirSync(contentDir);
-      writeFileSync(join(contentDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(contentDir, '.psignore'), 'drafts/\n');
 
       const filter = createContentFilter({ projectDir, contentDir });
 
@@ -1619,7 +1619,7 @@ describe('ContentFilter', () => {
       }
     });
 
-    test('gitignore, secret, and .ok floors override configured attachment admission in both factories', async () => {
+    test('gitignore, secret, and .ps floors override configured attachment admission in both factories', async () => {
       writeFileSync(join(projectDir, '.gitignore'), 'assets/private/\n');
       const filters = [
         createContentFilter({
@@ -1640,13 +1640,13 @@ describe('ContentFilter', () => {
         expect(filter.isExcluded('assets/signing.key')).toBe(true);
       }
 
-      const okFilter = createContentFilter({
+      const psFilter = createContentFilter({
         projectDir,
         contentDir: projectDir,
-        attachmentFolderPath: '.ok/assets',
+        attachmentFolderPath: '.ps/assets',
       });
-      expect(okFilter.isDirExcluded('.ok/assets')).toBe(true);
-      expect(okFilter.isExcluded('.ok/assets/private.png')).toBe(true);
+      expect(psFilter.isDirExcluded('.ps/assets')).toBe(true);
+      expect(psFilter.isExcluded('.ps/assets/private.png')).toBe(true);
     });
 
     test('live attachment-folder updates replace the previous admission shape in both factories', async () => {
@@ -1739,10 +1739,10 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('standalone/Characters.base')).toBe(true);
     });
 
-    test('.okignore exclusion takes precedence over sibling-asset rule', () => {
+    test('.psignore exclusion takes precedence over sibling-asset rule', () => {
       mkdirSync(join(projectDir, 'docs'));
       writeFileSync(join(projectDir, 'docs', 'guide.md'), '# Guide');
-      writeFileSync(join(projectDir, '.okignore'), '**/*.png\n');
+      writeFileSync(join(projectDir, '.psignore'), '**/*.png\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -1837,7 +1837,7 @@ describe('ContentFilter', () => {
       expect(filter.isPathIgnored('node_modules/pkg/img.png')).toBe(true);
       expect(filter.isPathIgnored('dist/output.png')).toBe(true);
       expect(filter.isPathIgnored('.git/objects/pack/foo.png')).toBe(true);
-      expect(filter.isPathIgnored('.ok/templates/img.png')).toBe(true);
+      expect(filter.isPathIgnored('.ps/templates/img.png')).toBe(true);
       expect(filter.isPathIgnored('a/b/node_modules/c/img.png')).toBe(true);
     });
 
@@ -1887,8 +1887,8 @@ describe('ContentFilter', () => {
       expect(filter.isPathIgnored('docs/photo.png')).toBe(false);
     });
 
-    test('rejects paths matched by .okignore patterns', () => {
-      writeFileSync(join(projectDir, '.okignore'), 'private/\n');
+    test('rejects paths matched by .psignore patterns', () => {
+      writeFileSync(join(projectDir, '.psignore'), 'private/\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
@@ -1953,11 +1953,11 @@ describe('ContentFilter', () => {
       expect(scans).toBe(afterBurst + 1);
     });
 
-    test('reflects new patterns after .okignore is created on disk', async () => {
+    test('reflects new patterns after .psignore is created on disk', async () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       expect(filter.isExcluded('drafts/foo.md')).toBe(false);
 
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       const result = await filter.rebuildIgnorePatterns();
 
       expect(result.ok).toBe(true);
@@ -1965,24 +1965,24 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('docs/guide.md')).toBe(false);
     });
 
-    test('removes patterns when .okignore is deleted on disk', async () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+    test('removes patterns when .psignore is deleted on disk', async () => {
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       expect(filter.isExcluded('drafts/foo.md')).toBe(true);
 
-      rmSync(join(projectDir, '.okignore'));
+      rmSync(join(projectDir, '.psignore'));
       await filter.rebuildIgnorePatterns();
 
       expect(filter.isExcluded('drafts/foo.md')).toBe(false);
     });
 
     test('refreshes watcher globs when patterns change', async () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\ndist/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\ndist/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       expect(filter.getWatcherIgnoreGlobs()).toContain('dist/');
       expect(filter.getWatcherIgnoreGlobs()).toContain('drafts/');
 
-      writeFileSync(join(projectDir, '.okignore'), 'archive/\nnode_modules/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'archive/\nnode_modules/\n');
       await filter.rebuildIgnorePatterns();
 
       const globs = filter.getWatcherIgnoreGlobs();
@@ -1997,7 +1997,7 @@ describe('ContentFilter', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       expect(filter.isExcluded('docs/screenshot.png')).toBe(false);
 
-      writeFileSync(join(projectDir, '.okignore'), 'docs/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'docs/\n');
       await filter.rebuildIgnorePatterns();
 
       expect(filter.isExcluded('docs/guide.md')).toBe(true);
@@ -2006,7 +2006,7 @@ describe('ContentFilter', () => {
 
     test('returns RebuildResult with success branch and bounded attrs', async () => {
       writeFileSync(join(projectDir, '.gitignore'), 'node_modules/\n');
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\nscratch/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\nscratch/\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       const result = await filter.rebuildIgnorePatterns();
@@ -2022,7 +2022,7 @@ describe('ContentFilter', () => {
     });
 
     test('async factory reports root ignore pattern count, not retained watcher globs', async () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\nscratch/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\nscratch/\n');
 
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
       const result = await filter.rebuildIgnorePatterns();
@@ -2035,9 +2035,9 @@ describe('ContentFilter', () => {
     });
 
     test('counts nested ignore files correctly', async () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       mkdirSync(join(projectDir, 'subdir'));
-      writeFileSync(join(projectDir, 'subdir', '.okignore'), 'private.md\n');
+      writeFileSync(join(projectDir, 'subdir', '.psignore'), 'private.md\n');
       mkdirSync(join(projectDir, 'subdir', 'deep'), { recursive: true });
       writeFileSync(join(projectDir, 'subdir', 'deep', '.gitignore'), 'tmp/\n');
 
@@ -2051,7 +2051,7 @@ describe('ContentFilter', () => {
 
     test('skips nested ignore files under any case of node_modules', async () => {
       mkdirSync(join(projectDir, 'subdir'));
-      writeFileSync(join(projectDir, 'subdir', '.okignore'), 'private.md\n');
+      writeFileSync(join(projectDir, 'subdir', '.psignore'), 'private.md\n');
       mkdirSync(join(projectDir, 'NODE_MODULES', 'p'), { recursive: true });
       writeFileSync(join(projectDir, 'NODE_MODULES', 'p', '.gitignore'), 'tmp/\n');
 
@@ -2075,7 +2075,7 @@ describe('ContentFilter', () => {
 
       expect(calls).toBe(0);
 
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       const result = await filter.rebuildIgnorePatterns();
 
       expect(result.ok).toBe(true);
@@ -2083,7 +2083,7 @@ describe('ContentFilter', () => {
     });
 
     test('does not fire onAfterRebuild on error (state rolls back)', async () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       let calls = 0;
       const filter = createContentFilter({
         projectDir,
@@ -2112,7 +2112,7 @@ describe('ContentFilter', () => {
     });
 
     test('rolls back state on error (ig + watcherGlobs + dirCount)', async () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\ndist/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\ndist/\n');
       mkdirSync(join(projectDir, 'docs'));
       writeFileSync(join(projectDir, 'docs', 'guide.md'), '# Guide');
 
@@ -2126,7 +2126,7 @@ describe('ContentFilter', () => {
         throw new Error('boom');
       });
 
-      writeFileSync(join(projectDir, '.okignore'), 'archive/\nnode_modules/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'archive/\nnode_modules/\n');
 
       try {
         const result = await filter.rebuildIgnorePatterns();
@@ -2157,7 +2157,7 @@ describe('ContentFilter', () => {
         },
       });
 
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       const result = await filter.rebuildIgnorePatterns();
 
       expect(result.ok).toBe(true);
@@ -2189,7 +2189,7 @@ describe('ContentFilter', () => {
 
     test('emits one config.ignore.rebuild span per call with bounded attrs', async () => {
       writeFileSync(join(projectDir, '.gitignore'), 'node_modules/\n');
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\nscratch/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\nscratch/\n');
 
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
       const result = await filter.rebuildIgnorePatterns();
@@ -2245,7 +2245,7 @@ describe('ContentFilter', () => {
   describe('rebuildIgnorePatterns performance gate (NFR Performance)', () => {
     test('rebuild on N=1000-doc workspace completes well under 500ms', async () => {
       writeFileSync(join(projectDir, '.gitignore'), 'node_modules/\n');
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       for (let d = 0; d < 50; d++) {
         const dir = join(projectDir, `folder-${d}`);
         mkdirSync(dir);
@@ -2253,7 +2253,7 @@ describe('ContentFilter', () => {
           writeFileSync(join(dir, `doc-${f}.md`), '# x');
         }
         if (d % 10 === 0) {
-          writeFileSync(join(dir, '.okignore'), 'tmp/\n');
+          writeFileSync(join(dir, '.psignore'), 'tmp/\n');
         }
       }
 
@@ -2275,7 +2275,7 @@ describe('ContentFilter', () => {
   });
 
   describe('FR15 default-shape regression', () => {
-    test('default project (gitignore + no .okignore + no content.* keys) indexes the same .md/.mdx set as before the rename', () => {
+    test('default project (gitignore + no .psignore + no content.* keys) indexes the same .md/.mdx set as before the rename', () => {
       writeFileSync(join(projectDir, '.gitignore'), 'node_modules/\n');
       mkdirSync(join(projectDir, 'docs'), { recursive: true });
       writeFileSync(join(projectDir, 'docs', 'guide.md'), '# Guide');
@@ -2309,16 +2309,16 @@ describe('ContentFilter', () => {
     });
 
     test('admits .okignored files', () => {
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
       expect(filter.isExcluded('drafts/wip.md')).toBe(true);
       expect(filter.isExcluded('drafts/wip.md', { bypassFilters: true })).toBe(false);
     });
 
-    test('respectOkignore keeps .okignore patterns active while admitting .gitignored files', () => {
+    test('respectOkignore keeps .psignore patterns active while admitting .gitignored files', () => {
       writeFileSync(join(projectDir, '.gitignore'), 'dist/\n');
-      writeFileSync(join(projectDir, '.okignore'), 'drafts/\n');
+      writeFileSync(join(projectDir, '.psignore'), 'drafts/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
       expect(filter.isExcluded('dist/out.md', { bypassFilters: true })).toBe(false);
@@ -2357,7 +2357,7 @@ describe('ContentFilter', () => {
       expect(filter.isExcluded('__system__.md', { bypassFilters: true })).toBe(true);
       expect(filter.isExcluded('__config__/project.md', { bypassFilters: true })).toBe(true);
       expect(filter.isExcluded('__config__/project.mdx', { bypassFilters: true })).toBe(true);
-      expect(filter.isExcluded('__config__/okignore.md', { bypassFilters: true })).toBe(true);
+      expect(filter.isExcluded('__config__/psignore.md', { bypassFilters: true })).toBe(true);
       expect(filter.isExcluded('__user__/config.yml.md', { bypassFilters: true })).toBe(true);
       expect(filter.isExcluded('__local__/project.md', { bypassFilters: true })).toBe(true);
     });
@@ -2500,18 +2500,18 @@ describe('ContentFilter', () => {
       mkdirSync(join(projectDir, 'notes'), { recursive: true });
       writeFileSync(join(projectDir, 'notes', 'own.md'), '# own');
 
-      mkdirSync(join(projectDir, 'nested', '.ok'), { recursive: true });
+      mkdirSync(join(projectDir, 'nested', '.ps'), { recursive: true });
       writeFileSync(
-        join(projectDir, 'nested', '.ok', 'config.yml'),
+        join(projectDir, 'nested', '.ps', 'config.yml'),
         'autoSync:\n  enabled: false\n',
       );
       writeFileSync(join(projectDir, 'nested', 'inside.md'), '# inside');
       mkdirSync(join(projectDir, 'nested', 'deep'), { recursive: true });
       writeFileSync(join(projectDir, 'nested', 'deep', 'deeper.md'), '# deeper');
 
-      mkdirSync(join(projectDir, 'rules', '.ok', 'templates'), { recursive: true });
-      writeFileSync(join(projectDir, 'rules', '.ok', 'frontmatter.yml'), 'type: note\n');
-      writeFileSync(join(projectDir, 'rules', '.ok', 'templates', 'note.md'), '# template');
+      mkdirSync(join(projectDir, 'rules', '.ps', 'templates'), { recursive: true });
+      writeFileSync(join(projectDir, 'rules', '.ps', 'frontmatter.yml'), 'type: note\n');
+      writeFileSync(join(projectDir, 'rules', '.ps', 'templates', 'note.md'), '# template');
       writeFileSync(join(projectDir, 'rules', 'ruled.md'), '# ruled');
     }
 
@@ -2523,20 +2523,20 @@ describe('ContentFilter', () => {
       expect(filter.isDirExcluded('nested/deep')).toBe(true);
       expect(filter.isExcluded('nested/inside.md')).toBe(true);
       expect(filter.isExcluded('nested/deep/deeper.md')).toBe(true);
-      expect(filter.isExcluded('nested/.ok/skills/demo/SKILL.md')).toBe(true);
+      expect(filter.isExcluded('nested/.ps/skills/demo/SKILL.md')).toBe(true);
 
       expect(filter.isExcluded('ancestor.md')).toBe(false);
       expect(filter.isExcluded('notes/own.md')).toBe(false);
       expect(filter.isDirExcluded('notes')).toBe(false);
     });
 
-    test('a nested `.ok` carrying only folder metadata is not a project', () => {
+    test('a nested `.ps` carrying only folder metadata is not a project', () => {
       seedTwoLevelFixture();
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
 
       expect(filter.isDirExcluded('rules')).toBe(false);
       expect(filter.isExcluded('rules/ruled.md')).toBe(false);
-      expect(filter.isExcluded('rules/.ok/templates/note.md')).toBe(false);
+      expect(filter.isExcluded('rules/.ps/templates/note.md')).toBe(false);
     });
 
     test('single-file scope is unaffected — the one admitted doc stays admitted', () => {
@@ -2552,11 +2552,11 @@ describe('ContentFilter', () => {
     });
 
     test('detects the descendant root under either path base', () => {
-      mkdirSync(join(projectDir, 'content', 'docs', '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, 'content', 'docs', '.ok', 'config.yml'), 'x: 1\n');
+      mkdirSync(join(projectDir, 'content', 'docs', '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, 'content', 'docs', '.ps', 'config.yml'), 'x: 1\n');
       writeFileSync(join(projectDir, 'content', 'docs', 'inside.md'), '# inside');
-      mkdirSync(join(projectDir, 'content', 'guides', '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, 'content', 'guides', '.ok', 'frontmatter.yml'), 'icon: map\n');
+      mkdirSync(join(projectDir, 'content', 'guides', '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, 'content', 'guides', '.ps', 'frontmatter.yml'), 'icon: map\n');
       writeFileSync(join(projectDir, 'content', 'guides', 'ruled.md'), '# ruled');
 
       const filter = createContentFilter({
@@ -2572,7 +2572,7 @@ describe('ContentFilter', () => {
 
       expect(filter.isDirExcluded('guides')).toBe(false);
       expect(filter.isDirExcluded('content/guides', projectScope)).toBe(false);
-      expect(filter.isExcluded('content/guides/.ok/frontmatter.yml', projectScope)).toBe(false);
+      expect(filter.isExcluded('content/guides/.ps/frontmatter.yml', projectScope)).toBe(false);
     });
 
     test('async factory mirrors the descendant-project floor', async () => {

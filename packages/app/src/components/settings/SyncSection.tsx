@@ -5,7 +5,7 @@ import {
   resolveLocalAutoSyncMode,
   SYNC_INTERVAL_PRESET_SECONDS,
   type SyncMode,
-} from '@inkeep/open-knowledge-core/config/auto-sync-mode';
+} from '@palimpsest/core/config/auto-sync-mode';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { type RefObject, useEffect, useRef, useState } from 'react';
@@ -132,7 +132,7 @@ function SyncSectionContent({
             <p className="text-sm text-muted-foreground">
               {fetchError === 'network' ? (
                 <Trans>
-                  Couldn't reach the OpenKnowledge server, so sync options are hidden. They appear
+                  Couldn't reach the Palimpsest server, so sync options are hidden. They appear
                   here as soon as the sync status loads; closing and reopening Settings also
                   retries.
                 </Trans>
@@ -661,7 +661,7 @@ function SyncSectionContent({
           <p className="text-muted-foreground text-1sm">
             <Trans>
               The sync mode teammates start with the first time they open this project. It's saved
-              in the project's OpenKnowledge settings, so it only reaches them when Config sharing
+              in the project's Palimpsest settings, so it only reaches them when Config sharing
               below is set to Shared.
             </Trans>
           </p>

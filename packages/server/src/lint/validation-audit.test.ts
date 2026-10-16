@@ -7,7 +7,7 @@ import {
   SUPPORTED_DOC_EXTENSIONS,
   ValidationAuditCountsResponseSchema,
   ValidationAuditResponseSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { BacklinkIndex } from '../backlink-index.ts';
 import { createContentFilter } from '../content-filter.ts';
@@ -38,7 +38,7 @@ const lintOn: LinterConfig = {
 const DOC_WITH_TAB = '# Title\n\n\tindented with a tab\n';
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-validation-audit-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-validation-audit-')));
   index = new BacklinkIndex({ projectDir: root, contentDir: root });
   localTargets = new LocalTargetIndex({ contentDir: root });
   admitted = new Set();
@@ -222,7 +222,7 @@ describe('runValidationAudit', () => {
     admitted.add('guide');
     const config: LinterConfig = {
       ...lintOn,
-      plugins: { ...lintOn.plugins, okf: { enabled: true } },
+      plugins: { ...lintOn.plugins, psf: { enabled: true } },
     };
 
     const result = await runValidationAudit(createProjectValidators(deps({ baseConfig: config })), {
@@ -232,7 +232,7 @@ describe('runValidationAudit', () => {
     expect(result.fileCount).toBe(1);
     expect(result.files.map((file) => file.file)).toEqual(['guide.mdx']);
     expect(result.files[0]?.diagnostics.map((diagnostic) => diagnostic.source)).toEqual(
-      expect.arrayContaining(['markdownlint', 'links', 'okf']),
+      expect.arrayContaining(['markdownlint', 'links', 'psf']),
     );
   });
 
@@ -314,8 +314,8 @@ describe('runValidationAudit', () => {
     seedDoc('dirty', DOC_WITH_TAB);
     const boom = {
       id: 'boom',
-      sourceFamilies: ['okf'] as const,
-      failureSourceFamily: 'okf' as const,
+      sourceFamilies: ['psf'] as const,
+      failureSourceFamily: 'psf' as const,
       run: async () => {
         throw new Error('kaboom');
       },
@@ -325,8 +325,8 @@ describe('runValidationAudit', () => {
 
     expect(result.files.map((f) => f.file)).toEqual(['dirty.md']);
     expect(result.files[0]?.diagnostics.some((d) => d.code === 'MD010')).toBe(true);
-    expect(result.warnings).toContain('source family "okf" validation failed: kaboom');
-    expect(result.ran).toEqual(['markdownlint', 'links', 'okf']);
+    expect(result.warnings).toContain('source family "psf" validation failed: kaboom');
+    expect(result.ran).toEqual(['markdownlint', 'links', 'psf']);
   });
 
   test('a lint-walk failure keeps its label whatever the enabled plugin count is', async () => {
@@ -348,7 +348,7 @@ describe('runValidationAudit', () => {
 
     const twoFamilies = {
       ...lintOn,
-      plugins: { ...lintOn.plugins, okf: { enabled: true } },
+      plugins: { ...lintOn.plugins, psf: { enabled: true } },
     } as LinterConfig;
 
     expect(await walkFailure(lintOn)).toEqual(['validator "lint" failed: EACCES']);
@@ -356,17 +356,17 @@ describe('runValidationAudit', () => {
   });
 
   test('a project-validator failure reports under its public source family', async () => {
-    const okfOn = {
+    const psfOn = {
       ...lintOn,
-      plugins: { ...lintOn.plugins, okf: { enabled: true } },
+      plugins: { ...lintOn.plugins, psf: { enabled: true } },
     } as LinterConfig;
     const validators = createProjectValidators(
-      deps({ baseConfig: okfOn, linkPolicy: linkPolicy({ links: 'off' }) }),
+      deps({ baseConfig: psfOn, linkPolicy: linkPolicy({ links: 'off' }) }),
     );
-    const okfProject = validators.find((validator) => validator.id === 'okf-project');
-    if (!okfProject) throw new Error('okf project validator missing');
+    const psfProject = validators.find((validator) => validator.id === 'psf-project');
+    if (!psfProject) throw new Error('psf project validator missing');
     const failing: ProjectValidator = {
-      ...okfProject,
+      ...psfProject,
       run: async () => {
         throw new Error('kaboom');
       },
@@ -374,8 +374,8 @@ describe('runValidationAudit', () => {
 
     const result = await runValidationAudit([failing]);
 
-    expect(result.warnings).toEqual(['source family "okf" validation failed: kaboom']);
-    expect(result.ran).toEqual(['okf']);
+    expect(result.warnings).toEqual(['source family "psf" validation failed: kaboom']);
+    expect(result.ran).toEqual(['psf']);
   });
 
   test('a dead link from an admitted-but-unsaved source still names a file', async () => {
@@ -518,7 +518,7 @@ describe('local-target findings (files, images, reference-style)', () => {
     expect(ValidationAuditResponseSchema.parse(result)).toEqual(result);
   });
 
-  test('a file that exists but is excluded by ignore rules says so and names the .okignore remedy (PRD-8896)', async () => {
+  test('a file that exists but is excluded by ignore rules says so and names the .psignore remedy (PRD-8896)', async () => {
     writeFileSync(join(root, '.gitignore'), 'ignored/\n');
     mkdirSync(join(root, 'ignored'));
     writeFileSync(join(root, 'ignored', 'ig.png'), 'png');
@@ -536,11 +536,11 @@ describe('local-target findings (files, images, reference-style)', () => {
     const diagnostics = result.files[0]?.diagnostics ?? [];
     expect(diagnostics.map((d) => [d.message, d.localTarget?.reason])).toEqual([
       [
-        'Link target "ignored/ig.png" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.',
+        'Link target "ignored/ig.png" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.',
         'excluded',
       ],
       [
-        'Image target "ignored/ig.png" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.',
+        'Image target "ignored/ig.png" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.',
         'excluded',
       ],
       ['Link target "ignored/missing.png" does not resolve to an existing file.', 'no-such-file'],
@@ -761,12 +761,12 @@ describe('local-target findings (files, images, reference-style)', () => {
 });
 
 describe('the OKF project validator', () => {
-  const okfOnly: LinterConfig = {
+  const psfOnly: LinterConfig = {
     ...DEFAULT_LINTER_CONFIG,
     plugins: {
       ...DEFAULT_LINTER_CONFIG.plugins,
       markdownlint: { ...DEFAULT_LINTER_CONFIG.plugins.markdownlint, enabled: false },
-      okf: { enabled: true },
+      psf: { enabled: true },
     },
   } as LinterConfig;
 
@@ -779,23 +779,23 @@ describe('the OKF project validator', () => {
   const auditOkf = async (overrides: Partial<ValidationAuditDeps> = {}) =>
     runValidationAudit(
       createProjectValidators(
-        deps({ baseConfig: okfOnly, linkPolicy: linkPolicy({ links: 'off' }), ...overrides }),
+        deps({ baseConfig: psfOnly, linkPolicy: linkPolicy({ links: 'off' }), ...overrides }),
       ),
     );
 
-  test('reports okf in ran exactly once — the lint and tree validators share the family', async () => {
+  test('reports psf in ran exactly once — the lint and tree validators share the family', async () => {
     writeFile('index.md', '# Index\n\n* [a](a.md) - a\n');
     writeFile('a.md');
     const result = await auditOkf();
-    expect(result.ran).toEqual(['okf']);
+    expect(result.ran).toEqual(['psf']);
   });
 
-  test('a mis-cased reserved file reaches the plane under the okf source', async () => {
+  test('a mis-cased reserved file reaches the plane under the psf source', async () => {
     writeFile('Index.md', '# Index\n\n* [a](a.md) - a\n');
     const result = await auditOkf();
     const row = result.files.find((f) => f.file === 'Index.md');
     expect(row?.diagnostics.map((d) => d.code)).toContain('reserved-casing');
-    expect(row?.diagnostics.every((d) => d.source === 'okf')).toBe(true);
+    expect(row?.diagnostics.every((d) => d.source === 'psf')).toBe(true);
   });
 
   test('a DOC-SCOPED audit still reports — the shape the Problems panel asks for', async () => {
@@ -803,7 +803,7 @@ describe('the OKF project validator', () => {
     writeFile('guide.mdx');
     const scoped = await runValidationAudit(
       createProjectValidators(
-        deps({ baseConfig: okfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
+        deps({ baseConfig: psfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
       ),
       { targetPath: 'guide.mdx' },
     );
@@ -818,7 +818,7 @@ describe('the OKF project validator', () => {
     writeFile('guide.mdx');
     const scoped = await runValidationAudit(
       createProjectValidators(
-        deps({ baseConfig: okfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
+        deps({ baseConfig: psfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
       ),
       { targetPath: 'guide.mdx' },
     );
@@ -832,7 +832,7 @@ describe('the OKF project validator', () => {
     writeFile('two.mdx');
     const scoped = await runValidationAudit(
       createProjectValidators(
-        deps({ baseConfig: okfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
+        deps({ baseConfig: psfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
       ),
       { targetPath: 'one.mdx' },
     );
@@ -849,19 +849,19 @@ describe('the OKF project validator', () => {
     expect(result.files.find((f) => f.file === 'guide.md')).toBeUndefined();
   });
 
-  test('a clean project produces no okf findings', async () => {
+  test('a clean project produces no psf findings', async () => {
     writeFile('index.md', '# Index\n\n* [a](a.md) - a\n');
     writeFile('a.md');
     const result = await auditOkf();
-    const okf = result.files.flatMap((f) => f.diagnostics).filter((d) => d.source === 'okf');
-    expect(okf).toEqual([]);
+    const psf = result.files.flatMap((f) => f.diagnostics).filter((d) => d.source === 'psf');
+    expect(psf).toEqual([]);
   });
 
   test('the plugin switched off is a clean empty contribution, not a warning', async () => {
     writeFile('Index.md');
     const off = {
-      ...okfOnly,
-      plugins: { ...okfOnly.plugins, okf: { enabled: false } },
+      ...psfOnly,
+      plugins: { ...psfOnly.plugins, psf: { enabled: false } },
     } as LinterConfig;
     const result = await auditOkf({ baseConfig: off });
     expect(result.files.flatMap((f) => f.diagnostics)).toEqual([]);
@@ -872,10 +872,10 @@ describe('the OKF project validator', () => {
     writeFile('Index.md');
     writeFile('guide.mdx');
     const oneOff = {
-      ...okfOnly,
+      ...psfOnly,
       plugins: {
-        ...okfOnly.plugins,
-        okf: { enabled: true, rules: { 'reserved-casing': false } },
+        ...psfOnly.plugins,
+        psf: { enabled: true, rules: { 'reserved-casing': false } },
       },
     } as LinterConfig;
     const result = await auditOkf({ baseConfig: oneOff });
@@ -896,7 +896,7 @@ describe('the OKF project validator', () => {
 
     const scoped = await runValidationAudit(
       createProjectValidators(
-        deps({ baseConfig: okfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
+        deps({ baseConfig: psfOnly, linkPolicy: linkPolicy({ links: 'off' }) }),
       ),
       { targetPath: 'sub' },
     );
@@ -1058,11 +1058,11 @@ describe('skill-bundle doc scoping', () => {
 
   test('folder templates keep their link findings', async () => {
     seedDoc('control', '# Control\n\nSee [[ghost]].\n');
-    seedDoc('.ok/templates/daily', '# Daily\n\nSee [[template-ghost]].\n');
+    seedDoc('.ps/templates/daily', '# Daily\n\nSee [[template-ghost]].\n');
 
     const result = await runValidationAudit(createProjectValidators(deps()));
 
-    const template = result.files.find((f) => f.file === '.ok/templates/daily.md');
+    const template = result.files.find((f) => f.file === '.ps/templates/daily.md');
     expect(template?.diagnostics.some((d) => d.code === 'dead-link')).toBe(true);
   });
 

@@ -40,7 +40,7 @@ function longDocumentWithLink(link: string): string {
   const paragraphs = Array.from(
     { length: 140 },
     (_, index) =>
-      `Paragraph ${index}: ${'Open Knowledge interaction test filler text. '.repeat(18)}`,
+      `Paragraph ${index}: ${'Palimpsest interaction test filler text. '.repeat(18)}`,
   );
   paragraphs.splice(80, 0, link);
   return `# Long source\n\n${paragraphs.join('\n\n')}\n`;
@@ -198,13 +198,13 @@ test('hidden-editor wrapper does not intercept pointer events (both modes)', asy
 }) => {
   await openFreshDoc(api, page, 'hidden-wrapper-invariant');
 
-  const hiddenInVisual = page.locator('.ok-mode-hidden').first();
+  const hiddenInVisual = page.locator('.ps-mode-hidden').first();
   await expect(hiddenInVisual).toHaveCSS('pointer-events', 'none');
   await expect(hiddenInVisual).toHaveCSS('position', 'absolute');
 
   await sourceToggle(page).click();
   await page.waitForSelector('.cm-editor');
-  const hiddenInSource = page.locator('.ok-mode-hidden').first();
+  const hiddenInSource = page.locator('.ps-mode-hidden').first();
   await expect(hiddenInSource).toHaveCSS('pointer-events', 'none');
   await expect(hiddenInSource).toHaveCSS('position', 'absolute');
 });
@@ -218,7 +218,7 @@ test('table cell-handle layer does not shift document content', async ({ page, a
   if (!before) throw new Error('heading has no bounding box');
 
   await page.locator('.ProseMirror table td').first().click();
-  const layer = page.locator('.ok-table-cell-handle-layer');
+  const layer = page.locator('.ps-table-cell-handle-layer');
   await expect(layer).toBeAttached();
   await expect(page.locator('[data-testid="table-cell-handle"]:visible')).toHaveCount(2);
   const after = await heading.boundingBox();

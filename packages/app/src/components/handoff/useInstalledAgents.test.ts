@@ -15,18 +15,18 @@ describe('isElectronHostDefault — pure host classifier', () => {
     expect(isElectronHostDefault(undefined)).toBe(false);
   });
 
-  test('returns false when okDesktop is absent (web / CLI distribution)', async () => {
+  test('returns false when psDesktop is absent (web / CLI distribution)', async () => {
     const { isElectronHostDefault } = await import('./useInstalledAgents');
     expect(isElectronHostDefault({})).toBe(false);
   });
 
-  test('returns false when okDesktop is explicitly undefined', async () => {
+  test('returns false when psDesktop is explicitly undefined', async () => {
     const { isElectronHostDefault } = await import('./useInstalledAgents');
-    expect(isElectronHostDefault({ okDesktop: undefined })).toBe(false);
+    expect(isElectronHostDefault({ psDesktop: undefined })).toBe(false);
   });
 
-  test('returns true when okDesktop is any non-nullish object (Electron preload populated)', async () => {
+  test('returns true when psDesktop is any non-nullish object (Electron preload populated)', async () => {
     const { isElectronHostDefault } = await import('./useInstalledAgents');
-    expect(isElectronHostDefault({ okDesktop: { shell: {} } })).toBe(true);
+    expect(isElectronHostDefault({ psDesktop: { shell: {} } })).toBe(true);
   });
 });

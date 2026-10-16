@@ -21,7 +21,7 @@ function ghUnavailable(): (host?: string) => GhDetectResult {
 describe('resolveReposToken', () => {
   let tmpDir: string;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-resolve-repos-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-resolve-repos-'));
   });
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });

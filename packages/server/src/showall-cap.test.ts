@@ -1,6 +1,6 @@
 import { mkdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { DocumentListEntry } from '@inkeep/open-knowledge-core';
+import type { DocumentListEntry } from '@palimpsest/core';
 import { afterAll, afterEach, describe, expect, test } from 'vitest';
 import { createTempDirFactory } from '../../../test-support/temp-dir.test-helper.ts';
 import {
@@ -16,7 +16,7 @@ import { createContentFilter } from './content-filter.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function makeFlatFixture(fileCount: number): string {
-  const dir = realpathSync(makeTempDir('ok-showall-walk-'));
+  const dir = realpathSync(makeTempDir('ps-showall-walk-'));
   for (let i = 0; i < fileCount; i++) {
     writeFileSync(join(dir, `file-${String(i).padStart(3, '0')}.md`), `# File ${i}\n`);
   }
@@ -36,7 +36,7 @@ async function walkFixture(dir: string, maxEntries: number) {
 }
 
 describe('getShowAllMaxEntries — env-parse fallback (QA-006)', () => {
-  const KEY = 'OK_SHOWALL_MAX_ENTRIES';
+  const KEY = 'PS_SHOWALL_MAX_ENTRIES';
   const prev = process.env[KEY];
   afterEach(() => {
     if (prev === undefined) delete process.env[KEY];
@@ -113,7 +113,7 @@ describe('walkContentDirForShowAll — entry-cap boundary honesty', () => {
   });
 
   test('cap consumed by a folder entry short-circuits the recursive descent', async () => {
-    const dir = realpathSync(makeTempDir('ok-showall-nested-'));
+    const dir = realpathSync(makeTempDir('ps-showall-nested-'));
     mkdirSync(join(dir, 'sub'));
     writeFileSync(join(dir, 'sub', 'a.md'), '# A\n');
     writeFileSync(join(dir, 'sub', 'b.md'), '# B\n');

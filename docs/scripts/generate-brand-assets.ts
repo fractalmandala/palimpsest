@@ -23,19 +23,19 @@ function extractPaths(src: string): SvgPath[] {
 
 const read = (rel: string) => readFileSync(path.join(root, rel), 'utf8');
 const iconPaths = extractPaths(read('src/components/ok-icon.tsx'));
-const wordmarkPath = extractPaths(read('src/components/ok-wordmark.tsx')).find(
+const wordmarkPath = extractPaths(read('src/components/ps-wordmark.tsx')).find(
   (p) => p.fill === 'currentColor',
 );
 
 if (iconPaths.length !== 4) {
-  throw new Error(`Expected 4 icon paths, extracted ${iconPaths.length} — check ok-icon.tsx`);
+  throw new Error(`Expected 4 icon paths, extracted ${iconPaths.length} — check ps-icon.tsx`);
 }
 if (!wordmarkPath) {
-  throw new Error('Could not find the currentColor wordmark path in ok-wordmark.tsx');
+  throw new Error('Could not find the currentColor wordmark path in ps-wordmark.tsx');
 }
 
 const SHADOW_FILTER = `  <defs>
-    <filter id="ok-shadow" x="0" y="0" width="226.297" height="251.133" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+    <filter id="ps-shadow" x="0" y="0" width="226.297" height="251.133" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
       <feFlood flood-opacity="0" result="BackgroundImageFix"/>
       <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
       <feOffset dy="8.35549"/>
@@ -48,13 +48,13 @@ const SHADOW_FILTER = `  <defs>
   </defs>`;
 
 const iconGroup = (paths: SvgPath[]) =>
-  `  <g filter="url(#ok-shadow)">\n${paths
+  `  <g filter="url(#ps-shadow)">\n${paths
     .map((p) => `    <path d="${p.d}" fill="${p.fill}"/>`)
     .join('\n')}\n  </g>`;
 
 const svgDoc = (viewBox: string, width: number, height: number, body: string) =>
   `<svg width="${width}" height="${height}" viewBox="${viewBox}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
-  <title>OpenKnowledge</title>
+  <title>Palimpsest</title>
 ${body}
 ${SHADOW_FILTER}
 </svg>

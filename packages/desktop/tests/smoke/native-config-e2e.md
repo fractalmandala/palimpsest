@@ -36,7 +36,7 @@ After an unsigned or signed build, point the driver at the artifact:
 ```bash
 pnpm --dir packages/desktop run build:mac:unsigned
 node scripts/verify-native-config-in-packaged-dmg.mjs \
-  packages/desktop/dist-desktop/OpenKnowledge-arm64.dmg
+  packages/desktop/dist-desktop/Palimpsest-arm64.dmg
 # Expect: "verify-native-config: OK — backend=native ..." and exit 0
 ```
 
@@ -50,13 +50,13 @@ The Node-load checks above do not exercise the Electron main process's own resol
 
 1. Launch the packaged app from `/Applications/`.
 2. Open a project so the MCP repair sweep runs (it loads the addon in-process via `writeUserMcpConfigs -> getTomlConfigEngine`).
-3. Register OK into a Codex `~/.codex/config.toml` containing a comment + a 64-bit integer; confirm the comment + value survive (format-preserving write = the native engine ran). If the comment is stripped/reflowed, the desktop main fell back to the JS path — investigate `app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/native/`, the main process's copy of the loader and `.node`. The native-config package itself is intentionally absent from the asar; the afterPack guard (`scripts/assert-packaged-bundle.mjs`) fails the build if it appears or if that loader or `.node` is missing.
+3. Register OK into a Codex `~/.codex/config.toml` containing a comment + a 64-bit integer; confirm the comment + value survive (format-preserving write = the native engine ran). If the comment is stripped/reflowed, the desktop main fell back to the JS path — investigate `app.asar.unpacked/node_modules/@palimpsest/cli/dist/native/`, the main process's copy of the loader and `.node`. The native-config package itself is intentionally absent from the asar; the afterPack guard (`scripts/assert-packaged-bundle.mjs`) fails the build if it appears or if that loader or `.node` is missing.
 
 A quicker in-Electron check needs only a built `.app`, no Codex install and no signing. Run the packaged binary as Node and load the main process's library copy. Any output other than `native` means the main process fell back to the JS engine:
 
 ```bash
-R="/Applications/OpenKnowledge.app/Contents/Resources"
-ELECTRON_RUN_AS_NODE=1 "$R/../MacOS/OpenKnowledge" -e "import('$R/app.asar/node_modules/@inkeep/open-knowledge/dist/index.mjs').then((m) => console.log(m.getNativeTomlMcpEditor()?.backend))"
+R="/Applications/Palimpsest.app/Contents/Resources"
+ELECTRON_RUN_AS_NODE=1 "$R/../MacOS/Palimpsest" -e "import('$R/app.asar/node_modules/@palimpsest/cli/dist/index.mjs').then((m) => console.log(m.getNativeTomlMcpEditor()?.backend))"
 # Expect: native
 ```
 

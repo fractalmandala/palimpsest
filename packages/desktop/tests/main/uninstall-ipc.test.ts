@@ -1,4 +1,4 @@
-import type { UninstallIntent, UninstallScreenSpec } from '@inkeep/open-knowledge-core';
+import type { UninstallIntent, UninstallScreenSpec } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import {
   createUninstallScreenRegistry,
@@ -7,7 +7,7 @@ import {
 
 const NOTICE: UninstallScreenSpec = {
   kind: 'notice',
-  notice: { title: 'Uninstall OpenKnowledge?', paragraphs: [], confirmLabel: 'Uninstall' },
+  notice: { title: 'Uninstall Palimpsest?', paragraphs: [], confirmLabel: 'Uninstall' },
 };
 
 function openScreen(screen: UninstallScreenSpec = NOTICE) {

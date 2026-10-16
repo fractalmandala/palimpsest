@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 
-import { setToleranceTelemetryHook, type ToleranceFireRecord } from '@inkeep/open-knowledge-core';
+import { setToleranceTelemetryHook, type ToleranceFireRecord } from '@palimpsest/core';
 
 import { getLocalDir } from './config/paths.ts';
 import { getLogger } from './logger.ts';
@@ -25,7 +25,7 @@ let appendFailureWarned = false;
 export function isToleranceTelemetryEnabled(
   env: Record<string, string | undefined> = process.env,
 ): boolean {
-  return env.OK_BRIDGE_TOLERANCE_TELEMETRY === '1';
+  return env.PS_BRIDGE_TOLERANCE_TELEMETRY === '1';
 }
 
 export function initToleranceTelemetryWriter(projectDir: string): void {

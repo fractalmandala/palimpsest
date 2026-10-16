@@ -1,5 +1,5 @@
 import { homedir } from 'node:os';
-import { ProblemDetailsSchema, StreamingProblemEventSchema } from '@inkeep/open-knowledge-core';
+import { ProblemDetailsSchema, StreamingProblemEventSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -138,7 +138,7 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
   test('mid-stream: spawn ENOENT emits typed { type: "error", problem: ProblemDetails } event on the NDJSON stream', async () => {
     const res = await postClone({
       url: 'https://github.com/owner/repo',
-      dir: `${homedir()}/.ok-test-clone-target`,
+      dir: `${homedir()}/.ps-test-clone-target`,
     });
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toBe('application/x-ndjson');

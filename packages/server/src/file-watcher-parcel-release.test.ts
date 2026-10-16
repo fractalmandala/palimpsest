@@ -22,7 +22,7 @@ let contentDir: string;
 
 beforeEach(() => {
   forgetNativeSubscriptions();
-  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-parcel-release-')));
+  contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-parcel-release-')));
 });
 
 afterEach(() => {

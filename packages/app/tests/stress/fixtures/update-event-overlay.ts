@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 const UPDATE_EVENT_CHANNELS = [
   'onUpdateDownloaded',
@@ -10,20 +10,20 @@ const UPDATE_EVENT_CHANNELS = [
   'onWhatsNewDismissed',
   'onUpdateStuckHint',
   'onUpdateManualCheck',
-] as const satisfies ReadonlyArray<keyof OkDesktopBridge>;
+] as const satisfies ReadonlyArray<keyof PsDesktopBridge>;
 
 export type UpdateEventChannel = (typeof UPDATE_EVENT_CHANNELS)[number];
 
 export type UpdateEventPayload<C extends UpdateEventChannel> = Parameters<
-  Parameters<OkDesktopBridge[C]>[0]
+  Parameters<PsDesktopBridge[C]>[0]
 >[0];
 
 export type OnboardingToastPayload = Parameters<
-  Parameters<OkDesktopBridge['onboarding']['onToast']>[0]
+  Parameters<PsDesktopBridge['onboarding']['onToast']>[0]
 >[0];
 
 export type SchemaIncompatibility = NonNullable<
-  Awaited<ReturnType<OkDesktopBridge['state']['query']>>['schemaIncompatibility']
+  Awaited<ReturnType<PsDesktopBridge['state']['query']>>['schemaIncompatibility']
 >;
 
 export interface UpdateEventOverlayConfig {
@@ -71,7 +71,7 @@ export async function installUpdateEventOverlay(
       const overlayWindow = window as OverlayWindow;
       overlayWindow.__okUpdateEventOverlay__ = state;
 
-      const overlay = (bridge: OkDesktopBridge): void => {
+      const overlay = (bridge: PsDesktopBridge): void => {
         for (const channel of channels) {
           const listeners = new Set<UpdateListener>();
           state.listeners[channel] = listeners;
@@ -101,16 +101,16 @@ export async function installUpdateEventOverlay(
         if (freshlyCreated) {
           Object.assign(bridge.config, {
             freshlyCreated: true,
-          } satisfies Partial<OkDesktopBridge['config']>);
+          } satisfies Partial<PsDesktopBridge['config']>);
         }
       };
 
-      let installed: OkDesktopBridge | undefined;
-      Object.defineProperty(overlayWindow, 'okDesktop', {
+      let installed: PsDesktopBridge | undefined;
+      Object.defineProperty(overlayWindow, 'psDesktop', {
         configurable: true,
         enumerable: true,
         get: () => installed,
-        set: (bridge: OkDesktopBridge | undefined) => {
+        set: (bridge: PsDesktopBridge | undefined) => {
           if (bridge !== undefined) overlay(bridge);
           installed = bridge;
         },

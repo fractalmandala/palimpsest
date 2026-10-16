@@ -11,7 +11,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import type { BridgeWorktreeEntry } from '@inkeep/open-knowledge-core';
+import type { BridgeWorktreeEntry } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import {
@@ -36,16 +36,16 @@ async function git(cwd: string, ...args: string[]): Promise<void> {
 }
 
 async function makeFixture(): Promise<Fixture> {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-worktree-inventory-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-worktree-inventory-')));
   const repo = join(root, 'repo');
   mkdirSync(join(repo, 'packages', 'docs'), { recursive: true });
   mkdirSync(join(repo, 'packages', 'notes'), { recursive: true });
-  mkdirSync(join(repo, '.ok'), { recursive: true });
-  mkdirSync(join(repo, 'packages', 'docs', '.ok'), { recursive: true });
-  mkdirSync(join(repo, 'packages', 'notes', '.ok'), { recursive: true });
-  writeFileSync(join(repo, '.ok', 'config.yml'), 'content:\n  dir: .\n');
-  writeFileSync(join(repo, 'packages', 'docs', '.ok', 'config.yml'), 'content:\n  dir: .\n');
-  writeFileSync(join(repo, 'packages', 'notes', '.ok', 'config.yml'), 'content:\n  dir: .\n');
+  mkdirSync(join(repo, '.ps'), { recursive: true });
+  mkdirSync(join(repo, 'packages', 'docs', '.ps'), { recursive: true });
+  mkdirSync(join(repo, 'packages', 'notes', '.ps'), { recursive: true });
+  writeFileSync(join(repo, '.ps', 'config.yml'), 'content:\n  dir: .\n');
+  writeFileSync(join(repo, 'packages', 'docs', '.ps', 'config.yml'), 'content:\n  dir: .\n');
+  writeFileSync(join(repo, 'packages', 'notes', '.ps', 'config.yml'), 'content:\n  dir: .\n');
   writeFileSync(join(repo, 'packages', 'docs', 'README.md'), 'docs\n');
   writeFileSync(join(repo, 'packages', 'notes', 'README.md'), 'notes\n');
   await git(repo, 'init', '-b', 'main');
@@ -54,9 +54,9 @@ async function makeFixture(): Promise<Fixture> {
   await git(repo, 'config', 'user.name', 'Test');
   await git(repo, 'add', '.');
   await git(repo, 'commit', '-m', 'initial');
-  const internal = join(repo, '.ok', 'worktrees', 'dev');
+  const internal = join(repo, '.ps', 'worktrees', 'dev');
   const external = join(root, 'repo-prefix-external');
-  mkdirSync(join(repo, '.ok', 'worktrees'), { recursive: true });
+  mkdirSync(join(repo, '.ps', 'worktrees'), { recursive: true });
   await git(repo, 'worktree', 'add', '-b', 'dev', internal);
   configureTestGitRepository(internal);
   await git(repo, 'worktree', 'add', '-b', 'external', external);
@@ -70,7 +70,7 @@ afterEach(() => {
 });
 
 describe('WorktreeInventoryService', () => {
-  test('projects the repository registry onto one nested OpenKnowledge project scope', async () => {
+  test('projects the repository registry onto one nested Palimpsest project scope', async () => {
     fixture = await makeFixture();
     const service = new WorktreeInventoryService();
     const result = await service.inventory(join(fixture.repo, 'packages', 'docs'));
@@ -100,7 +100,7 @@ describe('WorktreeInventoryService', () => {
 
   test('marks a checkout unavailable when the projected directory is not an exact project root', async () => {
     fixture = await makeFixture();
-    unlinkSync(join(fixture.external, 'packages', 'docs', '.ok', 'config.yml'));
+    unlinkSync(join(fixture.external, 'packages', 'docs', '.ps', 'config.yml'));
     const service = new WorktreeInventoryService();
     const result = await service.inventory(join(fixture.repo, 'packages', 'docs'));
     expect(result.ok).toBe(true);
@@ -116,8 +116,8 @@ describe('WorktreeInventoryService', () => {
   test('refuses a projected project symlink that escapes its registered checkout', async () => {
     fixture = await makeFixture();
     const outside = join(fixture.root, 'outside-project');
-    mkdirSync(join(outside, '.ok'), { recursive: true });
-    writeFileSync(join(outside, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+    mkdirSync(join(outside, '.ps'), { recursive: true });
+    writeFileSync(join(outside, '.ps', 'config.yml'), 'content:\n  dir: .\n');
     const projected = join(fixture.external, 'packages', 'docs');
     rmSync(projected, { recursive: true, force: true });
     symlinkSync(outside, projected);
@@ -387,9 +387,9 @@ describe('WorktreeInventoryService', () => {
 describe('classifyLocation', () => {
   test('uses segment-aware containment and rejects same-prefix external paths', () => {
     expect(classifyLocation('/repo', '/repo')).toBe('primary');
-    expect(classifyLocation('/repo', '/repo/.ok/worktrees/dev')).toBe('internal');
-    expect(classifyLocation('/repo', '/repo/.ok/worktrees-prefix/dev')).toBe('external');
-    expect(classifyLocation('/repo', '/repo-copy/.ok/worktrees/dev')).toBe('external');
+    expect(classifyLocation('/repo', '/repo/.ps/worktrees/dev')).toBe('internal');
+    expect(classifyLocation('/repo', '/repo/.ps/worktrees-prefix/dev')).toBe('external');
+    expect(classifyLocation('/repo', '/repo-copy/.ps/worktrees/dev')).toBe('external');
   });
 });
 

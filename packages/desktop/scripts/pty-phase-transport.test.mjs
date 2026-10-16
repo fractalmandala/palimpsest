@@ -21,12 +21,12 @@ const records = ['module-entry', 'listener-ready'].map((phase, index) => ({
 }));
 
 async function capture(flag) {
-  const root = mkdtempSync(join(tmpdir(), 'ok-pty-transport-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-pty-transport-'));
   const logPath = join(root, 'app.log');
   const destination = createWriteStream(logPath);
   const stderr = new PassThrough();
   const utility = Object.assign(new EventEmitter(), { pid: 42, stderr });
-  const trace = createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: flag }, 'main', () => {});
+  const trace = createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: flag }, 'main', () => {});
   const bytes = Buffer.from(
     `${JSON.stringify(records[0])}\nutility π\n${JSON.stringify(records[1])}\n`,
   );

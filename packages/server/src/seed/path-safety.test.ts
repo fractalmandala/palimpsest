@@ -12,7 +12,7 @@ describe('seed path-safety — apply rejects path traversal in plan entries', ()
 
   beforeEach(async () => {
     projectDir = await mkdtemp(join(tmpdir(), 'seed-pathsafe-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
   });
 
   afterEach(async () => {
@@ -76,9 +76,9 @@ describe('seed path-safety — apply rejects path traversal in plan entries', ()
           created: [
             { path: 'brain/external-sources', kind: 'folder' },
             {
-              path: 'brain/external-sources/.ok/frontmatter.yml',
+              path: 'brain/external-sources/.ps/frontmatter.yml',
               kind: 'file',
-              template: 'external-sources/.ok/frontmatter.yml',
+              template: 'external-sources/.ps/frontmatter.yml',
             },
           ],
           skipped: [],
@@ -155,8 +155,8 @@ describe('seed path-safety — plan rejects rootDir symlink escape', () => {
 
   beforeEach(async () => {
     projectDir = await mkdtemp(join(tmpdir(), 'seed-plan-pathsafe-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
   });
 
   afterEach(async () => {

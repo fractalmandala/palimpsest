@@ -1,4 +1,4 @@
-export const SKILLS_STUDIO_INTRO_KEY = 'ok-skills-studio-intro-seen-v1';
+export const SKILLS_STUDIO_INTRO_KEY = 'ps-skills-studio-intro-seen-v1';
 
 export interface IntroSeenStorage {
   getItem(key: string): string | null;

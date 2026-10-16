@@ -3,12 +3,12 @@ import {
   declaredGitHubHostsFrom,
   isGitHubHost,
   normalizeGitHostname,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   type GitRepository,
   inspectGitRepository,
-} from '@inkeep/open-knowledge-core/git-repository';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/git-repository';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { buildSyncCredentialConfig } from '../git-handle.ts';
 import { getLogger } from '../logger.ts';
 

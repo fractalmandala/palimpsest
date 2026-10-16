@@ -23,8 +23,8 @@ const CHILD_WRITER = `
   const write = () => {
     process.send('entered');
     const state = JSON.parse(readFileSync(canonical, 'utf8'));
-    if (mode === 'async') state.openknowledge = true;
-    else delete state.openknowledge;
+    if (mode === 'async') state.palimpsest = true;
+    else delete state.palimpsest;
     writeFileSync(canonical, JSON.stringify(state));
   };
   process.send('ready');
@@ -46,7 +46,7 @@ describe.each(['async', 'sync'] as const)('Pi trust lock (%s)', (mode) => {
   const children: ChildProcess[] = [];
 
   beforeEach(() => {
-    root = mkdtempSync(join(tmpdir(), 'ok-pi-trust-lock-'));
+    root = mkdtempSync(join(tmpdir(), 'ps-pi-trust-lock-'));
     configured = join(root, 'configured', 'trust.json');
     canonical = join(root, 'canonical', 'trust.json');
     mkdirSync(dirname(configured));
@@ -71,7 +71,7 @@ describe.each(['async', 'sync'] as const)('Pi trust lock (%s)', (mode) => {
 
   test('coordinates with a separate Pi writer and preserves its update', async () => {
     const original =
-      mode === 'sync' ? { existing: false, openknowledge: true } : { existing: false };
+      mode === 'sync' ? { existing: false, palimpsest: true } : { existing: false };
     writeFileSync(canonical, JSON.stringify(original));
     const releasePi = lockfile.lockSync(dirname(configured), {
       realpath: false,
@@ -120,7 +120,7 @@ describe.each(['async', 'sync'] as const)('Pi trust lock (%s)', (mode) => {
     expect(entered).toBe(true);
     expect(JSON.parse(readFileSync(canonical, 'utf8'))).toEqual(
       mode === 'async'
-        ? { existing: false, pi: true, openknowledge: true }
+        ? { existing: false, pi: true, palimpsest: true }
         : { existing: false, pi: true },
     );
     expect(existsSync(`${canonical}.ok.lock`)).toBe(false);

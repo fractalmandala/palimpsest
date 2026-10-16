@@ -3,7 +3,7 @@ import {
   type HostSnapshot,
   type SatisfierProbe,
   type TerminalCli,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export function terminalAgentSnapshot(connected: readonly TerminalCli[] = []): HostSnapshot {
   return {

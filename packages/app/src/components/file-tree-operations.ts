@@ -1,9 +1,9 @@
-import { mediaKindForSidebarAssetExtension } from '@inkeep/open-knowledge-core/constants/upload';
+import { mediaKindForSidebarAssetExtension } from '@palimpsest/core/constants/upload';
 import type {
   DuplicatePathSuccess,
   RenamedAssetMapping,
   RenamedDocMapping,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import {
   docNameToTreePath,
   resolveExtensionlessAssetPath,

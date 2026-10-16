@@ -39,7 +39,7 @@ const bugLaneVerify = readFileSync(
 
 const appManifest = (e2e) =>
   JSON.stringify({
-    name: '@inkeep/open-knowledge-app',
+    name: '@palimpsest/app',
     private: true,
     scripts: { test: 'vitest run', 'test:e2e': `playwright test ${e2e}` },
   });
@@ -75,7 +75,7 @@ describe('classifyConflictPath', () => {
 
   test('a published manifest is never inert, whatever key moved', () => {
     const pub = (e2e) =>
-      JSON.stringify({ name: '@inkeep/open-knowledge', scripts: { 'test:e2e': e2e } });
+      JSON.stringify({ name: '@palimpsest/cli', scripts: { 'test:e2e': e2e } });
     const got = classifyConflictPath({
       path: 'packages/cli/package.json',
       before: pub('a'),
@@ -88,7 +88,7 @@ describe('classifyConflictPath', () => {
   test('a sibling key riding along disqualifies the whole path', () => {
     const before = appManifest('a.e2e.ts');
     const after = JSON.stringify({
-      name: '@inkeep/open-knowledge-app',
+      name: '@palimpsest/app',
       private: true,
       scripts: { test: 'vitest run', 'test:e2e': 'playwright test a.e2e.ts b.e2e.ts' },
       dependencies: { react: '19.2.0' },
@@ -101,7 +101,7 @@ describe('classifyConflictPath', () => {
   test('scripts.test is not inert even though test:e2e is', () => {
     expect(INERT_JSON_KEYS.has('scripts.test')).toBe(false);
     const after = JSON.stringify({
-      name: '@inkeep/open-knowledge-app',
+      name: '@palimpsest/app',
       private: true,
       scripts: { test: 'vitest run --changed', 'test:e2e': 'playwright test a.e2e.ts' },
     });
@@ -947,7 +947,7 @@ describe('the page a failed toolchain install sends', () => {
         GITHUB_OUTPUT: pageOutput,
         GITHUB_SHA: lane,
         GITHUB_SERVER_URL: 'https://github.com',
-        GITHUB_REPOSITORY: 'inkeep/open-knowledge',
+        GITHUB_REPOSITORY: 'fractalmandala/palimpsest',
         GITHUB_RUN_ID: '1',
       },
     });

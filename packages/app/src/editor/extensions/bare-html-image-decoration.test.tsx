@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { describe, expect, test } from 'vitest';
 import {

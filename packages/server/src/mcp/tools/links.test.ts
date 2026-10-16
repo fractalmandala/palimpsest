@@ -154,7 +154,7 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-links-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-links-test-'));
   seenRequests.length = 0;
 });
 

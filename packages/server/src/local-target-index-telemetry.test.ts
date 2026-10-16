@@ -46,7 +46,7 @@ function createDiskRig(): {
   contentDir: string;
   write: (rel: string, body: string) => void;
 } {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-lti-telemetry-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-lti-telemetry-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   const contentFilter = createContentFilter({ projectDir, contentDir });
@@ -123,7 +123,7 @@ describe('local-target index update telemetry is proportional to real work', () 
   });
 
   test('setFileTarget spans the existence flip and nothing either side of it', () => {
-    const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ok-lti-telemetry-absent') });
+    const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ps-lti-telemetry-absent') });
     cleanups.push(() => index.close());
     index.setSource('source', 'Download [pdf](assets/report.pdf).\n');
 
@@ -140,7 +140,7 @@ describe('local-target index update telemetry is proportional to real work', () 
   });
 
   test('reconcileFileTargets spans a moved snapshot and not an identical one', () => {
-    const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ok-lti-telemetry-absent') });
+    const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ps-lti-telemetry-absent') });
     cleanups.push(() => index.close());
     index.setSource('source', 'Download [pdf](assets/report.pdf).\n');
 

@@ -184,12 +184,12 @@ describe('bug-lane failure extraction', () => {
     const failures = extract(
       [
         '::error::command (/home/runner/work/ok/ok/packages/core) pnpm run typecheck exited (1)',
-        '@inkeep/open-knowledge-core#typecheck:  ERROR  command (/home/runner/work/ok/ok/packages/core) pnpm run typecheck exited (1)',
+        '@palimpsest/core#typecheck:  ERROR  command (/home/runner/work/ok/ok/packages/core) pnpm run typecheck exited (1)',
         ' ERROR  run failed: command  exited (1)',
       ].join('\n'),
     );
     expect(failures).toHaveLength(1);
-    expect(failures[0]).toContain('@inkeep/open-knowledge-core#typecheck');
+    expect(failures[0]).toContain('@palimpsest/core#typecheck');
   });
 
   test('yields an empty array when nothing matches, without failing the step', () => {
@@ -201,7 +201,7 @@ describe('bug-lane failure extraction', () => {
     const failures = extract(
       [
         failLine('src/thing.test.ts', 'a case'),
-        '@inkeep/open-knowledge-server#test:  ERROR  command (…) exited (1)',
+        '@palimpsest/server#test:  ERROR  command (…) exited (1)',
       ].join('\n'),
     );
     expect(failures).toEqual(['src/thing.test.ts > a case']);

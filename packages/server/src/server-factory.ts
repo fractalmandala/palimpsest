@@ -36,21 +36,21 @@ import {
   type SyncMode,
   type SyncModeChangeSource,
   toEffectiveBase,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   atomicWriteFile,
   collectConfigDiagnostics,
   readConfigSafely,
   resolveConfigPath,
   writeConfigPatch,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import {
   type CheckpointKind,
   formatReconcileSubject,
   gitAuthorWriterId,
   resolveGitDir,
   resolveShadowDir,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import type { Doc } from 'yjs';
 import { AcpPermissionStore } from './acp/permissions.ts';
@@ -204,7 +204,7 @@ import {
   isPeerAdmitted,
 } from './ingress-policy.ts';
 import type { LinkAdvisoryPolicy } from './link-advisory-policy.ts';
-import { ensureOkfSchemaFiles } from './lint/write-okf-schemas.ts';
+import { ensureOkfSchemaFiles } from './lint/write-psf-schemas.ts';
 import { createLiveDerivedIndexExtension } from './live-derived-index.ts';
 import { wikiFilePath } from './local-target-assessment.ts';
 import {
@@ -304,7 +304,7 @@ import {
   destroyShadowRepo,
   initShadowRepo,
   isShadowExcludesDegraded,
-  OK_GENERATOR_WRITER,
+  PS_GENERATOR_WRITER,
   type ParkableDoc,
   parkBranch,
   readParkedState,
@@ -883,7 +883,7 @@ export function createServer(options: ServerOptions): ServerInstance {
     });
     const persisted = project.value.contentRules as PersistedLinterConfig | undefined;
     const base = persisted ? toEffectiveBase(persisted) : DEFAULT_LINTER_CONFIG;
-    ensureOkfSchemaFiles(projectDir, base.plugins.okf);
+    ensureOkfSchemaFiles(projectDir, base.plugins.psf);
     return base;
   }
 
@@ -1022,7 +1022,7 @@ export function createServer(options: ServerOptions): ServerInstance {
       cc1Broadcaster?.signal('lint-config');
       const generatedIndexEnabled =
         generatedIndexEnabledOverride ??
-        readLinterBaseConfig().plugins.okf?.generate?.index === true;
+        readLinterBaseConfig().plugins.psf?.generate?.index === true;
       if (!generatedIndexEnabled) {
         void updateGeneratedIndexGitAttributes({
           projectDir,
@@ -1033,7 +1033,7 @@ export function createServer(options: ServerOptions): ServerInstance {
           if (!result.ok) {
             log.warn(
               { state: result.status.state },
-              '[index] could not remove Open Knowledge generated-index Git attributes',
+              '[index] could not remove Palimpsest generated-index Git attributes',
             );
           }
         });
@@ -1353,7 +1353,7 @@ export function createServer(options: ServerOptions): ServerInstance {
       try {
         const RETRY_BUDGET = 30;
         const retryIntervalMs =
-          Number.parseInt(process.env.OK_BOOT_RENAME_GC_RETRY_INTERVAL_MS ?? '', 10) || 1_000;
+          Number.parseInt(process.env.PS_BOOT_RENAME_GC_RETRY_INTERVAL_MS ?? '', 10) || 1_000;
         let rebuilt = false;
         for (let attempt = 0; attempt < RETRY_BUDGET; attempt++) {
           const gc = await gcRenameLog(shadow, bootRenameLogIndex, { rebuild: true });
@@ -1556,7 +1556,7 @@ export function createServer(options: ServerOptions): ServerInstance {
   let generatedAttributionPending = false;
   const generatedArtifactEnv: GeneratedArtifactEnv = {
     origin: GENERATED_ARTIFACT_ORIGIN,
-    writer: OK_GENERATOR_WRITER,
+    writer: PS_GENERATOR_WRITER,
     isConflict: (docName) => conflicts.has(docName),
     getDocument: (docName) => hocuspocus.documents.get(docName),
     writeDisk: async (absPath, markdown) => {
@@ -1593,7 +1593,7 @@ export function createServer(options: ServerOptions): ServerInstance {
   function toGeneratedIndexSettingsStatus(
     git: GeneratedIndexGitAttributesStatus,
   ): GeneratedIndexSettingsStatus {
-    const enabled = readLinterBaseConfig().plugins.okf?.generate?.index === true;
+    const enabled = readLinterBaseConfig().plugins.psf?.generate?.index === true;
     const admitted = git.state === 'ready' || git.state === 'not-applicable';
     return {
       enabled,
@@ -1633,7 +1633,7 @@ export function createServer(options: ServerOptions): ServerInstance {
     const configResult = await writeConfigPatch({
       cwd: projectDir,
       scope: 'project',
-      patch: { contentRules: { okf: { generate: { index: enabled } } } },
+      patch: { contentRules: { psf: { generate: { index: enabled } } } },
     });
     if (!configResult.ok) {
       try {
@@ -1666,7 +1666,7 @@ export function createServer(options: ServerOptions): ServerInstance {
   ): Promise<IndexRegenerationPassResult> {
     let generatedIndexCount = 0;
     const sweepStartedAt = request.fullSweep ? performance.now() : undefined;
-    const generationIsDisabled = () => readLinterBaseConfig().plugins.okf?.generate?.index !== true;
+    const generationIsDisabled = () => readLinterBaseConfig().plugins.psf?.generate?.index !== true;
     try {
       if (signal.aborted) return { status: 'cancelled', indexCount: 0 };
       if (generationIsDisabled()) {
@@ -3615,7 +3615,7 @@ export function createServer(options: ServerOptions): ServerInstance {
           void hocuspocus.unloadDocument(doc).catch((err: unknown) => {
             console.warn(
               JSON.stringify({
-                event: 'ok-shutdown-unload-document-failed',
+                event: 'ps-shutdown-unload-document-failed',
                 docName: doc.name,
                 reason: err instanceof Error ? err.message : String(err),
               }),
@@ -4464,7 +4464,7 @@ export function createServer(options: ServerOptions): ServerInstance {
     }
 
     try {
-      const okignorePath = resolve(contentDir, '.okignore');
+      const okignorePath = resolve(contentDir, '.psignore');
       const gitignorePath = resolve(projectDir, '.gitignore');
       let gitInfoExcludePath: string | null = null;
       try {
@@ -4489,7 +4489,7 @@ export function createServer(options: ServerOptions): ServerInstance {
       const ignoreLog = log;
       ignoreLog.info(
         { okignorePath, gitignorePath, gitInfoExcludePath, ephemeral },
-        '[ignore-watcher] starting multi-path watcher for .okignore + .gitignore (+ .git/info/exclude when present)',
+        '[ignore-watcher] starting multi-path watcher for .psignore + .gitignore (+ .git/info/exclude when present)',
       );
       const ignoreCleanup = ephemeral
         ? null

@@ -48,7 +48,7 @@ function renderShareButton(input: ShareTargetInput | null) {
 describe('ShareButton', () => {
   beforeEach(() => {
     if (typeof window !== 'undefined') window.location.hash = '';
-    Reflect.deleteProperty(globalThis, 'okDesktop');
+    Reflect.deleteProperty(globalThis, 'psDesktop');
     Object.defineProperty(globalThis.navigator, 'clipboard', {
       configurable: true,
       value: undefined,
@@ -58,8 +58,8 @@ describe('ShareButton', () => {
         new Response(
           JSON.stringify({
             ok: true,
-            shareUrl: 'https://openknowledge.ai/d/Share123',
-            sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/docs/readme.md',
+            shareUrl: 'https://github.com/fractalmandala/palimpsest/d/Share123',
+            sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/readme.md',
             branch: 'main',
           }),
           { status: 200 },
@@ -108,7 +108,7 @@ describe('ShareButton', () => {
       expect(screen.getByTestId('share-button-popover')).not.toBeNull();
     });
     const input = screen.getByLabelText('Share URL') as HTMLInputElement;
-    expect(input.value).toBe('https://openknowledge.ai/d/Share123');
+    expect(input.value).toBe('https://github.com/fractalmandala/palimpsest/d/Share123');
     expect(screen.getByRole('button', { name: 'Copied!' })).not.toBeNull();
     expect(screen.getByRole('dialog', { name: 'Share' })).toBe(
       screen.getByTestId('share-button-popover'),
@@ -152,7 +152,7 @@ describe('ShareButton', () => {
       expect(screen.getByTestId('share-button-popover')).not.toBeNull();
     });
     const input = screen.getByLabelText('Share URL') as HTMLInputElement;
-    expect(input.value).toBe('https://openknowledge.ai/d/Share123');
+    expect(input.value).toBe('https://github.com/fractalmandala/palimpsest/d/Share123');
     expect(screen.getByRole('button', { name: 'Copy' })).not.toBeNull();
     expect(screen.queryByRole('button', { name: 'Copied!' })).toBeNull();
     const copyBinding = { mac: '⌘ C', windowsLinux: 'Ctrl C' };
@@ -174,8 +174,8 @@ describe('ShareButton', () => {
         new Response(
           JSON.stringify({
             ok: true,
-            shareUrl: 'https://openknowledge.ai/d/Share123',
-            sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/docs/readme.md',
+            shareUrl: 'https://github.com/fractalmandala/palimpsest/d/Share123',
+            sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/readme.md',
             branch: 'main',
             freshness: 'absent',
           }),
@@ -201,8 +201,8 @@ describe('ShareButton', () => {
         new Response(
           JSON.stringify({
             ok: true,
-            shareUrl: 'https://openknowledge.ai/d/Share123',
-            sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/docs/readme.md',
+            shareUrl: 'https://github.com/fractalmandala/palimpsest/d/Share123',
+            sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/readme.md',
             branch: 'main',
             freshness: 'current',
           }),

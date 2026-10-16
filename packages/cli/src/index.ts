@@ -17,7 +17,7 @@ export {
   type BundleExtraFile,
   type BundleLogger,
   defaultBugReportZipPath,
-  okBugReportsDir,
+  psBugReportsDir,
 } from './commands/bug-report-bundle.ts';
 export { redactContent } from './commands/bug-report-redact.ts';
 export {

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { sleep } from '@inkeep/open-knowledge-core';
-import { resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { sleep } from '@palimpsest/core';
+import { resolveConfigPath } from '@palimpsest/core/server';
 import { parse as parseYaml } from 'yaml';
 import type { TerminalShellNoticeReason } from '../shared/bridge-contract.ts';
 import { getLogger } from './desktop-logger.ts';

@@ -1,5 +1,5 @@
-import { ACP_AGENT_HARNESS_CLI_MAP } from '@inkeep/open-knowledge-core/agent-registry';
-import { TERMINAL_CLI_IDS, type TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import { ACP_AGENT_HARNESS_CLI_MAP } from '@palimpsest/core/agent-registry';
+import { TERMINAL_CLI_IDS, type TerminalCli } from '@palimpsest/core/handoff';
 import { useInstalledClis } from '@/hooks/use-installed-clis';
 import { isNoteWindow } from '@/lib/note-window-mode';
 
@@ -19,7 +19,7 @@ export function harnessTerminalCli(
 
 export function terminalLaunchAvailable(): boolean {
   if (typeof window === 'undefined' || isNoteWindow()) return false;
-  const bridge = window.okDesktop ?? null;
+  const bridge = window.psDesktop ?? null;
   return bridge?.terminal != null && bridge.config.ptyAvailable === true;
 }
 

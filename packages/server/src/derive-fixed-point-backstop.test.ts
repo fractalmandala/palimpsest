@@ -281,7 +281,7 @@ describe('re-derive fixed-point backstop — checkpoint floor', () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(1_000_000);
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-backstop-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-backstop-'));
   });
   afterEach(async () => {
     vi.useRealTimers();

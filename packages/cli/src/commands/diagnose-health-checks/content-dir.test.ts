@@ -14,17 +14,17 @@ afterEach(() => {
 });
 
 function makeProject(initOk = true): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-health-contentdir-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-health-contentdir-'));
   tmpDirs.push(dir);
   if (initOk) {
-    mkdirSync(join(dir, '.ok'), { recursive: true });
-    writeFileSync(join(dir, '.ok', 'config.yml'), 'content:\n  dir: ./content\n');
+    mkdirSync(join(dir, '.ps'), { recursive: true });
+    writeFileSync(join(dir, '.ps', 'config.yml'), 'content:\n  dir: ./content\n');
   }
   return dir;
 }
 
 describe('content-dir check', () => {
-  test('emits warn when .ok/config.yml is missing', async () => {
+  test('emits warn when .ps/config.yml is missing', async () => {
     const cwd = makeProject(false);
     const def = makeContentDirCheck();
     const result = await def.run({ cwd });
@@ -102,9 +102,9 @@ describe('content-dir remediation names the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: an uninitialized project names %s init', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const result = await makeContentDirCheck().run({ cwd: makeProject(false) });
     expect(result.remediation).toBe(`Run \`${command} init\` to scaffold the project.`);
   });

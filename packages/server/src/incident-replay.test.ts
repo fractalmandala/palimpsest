@@ -157,7 +157,7 @@ describe('PRD-6972 incident replay — storyline from telemetry + diagnose reade
 
   beforeEach(async () => {
     h = setupHarness();
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-replay-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-replay-'));
     const projectRoot = resolve(tmpDir, 'project');
     const contentDir = resolve(projectRoot, 'content/docs');
     mkdirSync(contentDir, { recursive: true });
@@ -243,7 +243,7 @@ describe('gc.log latch counter measures distinct episodes, not observations', ()
 
   beforeEach(async () => {
     h = setupHarness();
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-latch-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-latch-'));
     const projectRoot = resolve(tmpDir, 'project');
     mkdirSync(projectRoot, { recursive: true });
     const git = simpleGit(projectRoot);

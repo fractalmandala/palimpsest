@@ -1,4 +1,4 @@
-import { shellSingleQuote, type TerminalLaunchCommand } from '@inkeep/open-knowledge-core/handoff';
+import { shellSingleQuote, type TerminalLaunchCommand } from '@palimpsest/core/handoff';
 
 export type TerminalCommandId = 'install-slidev' | 'git-status';
 
@@ -29,7 +29,7 @@ export function windowsTerminalCommandFor(id: string): TerminalLaunchCommand | u
     : undefined;
 }
 
-const TERMINAL_COMMAND_EVENT = 'open-knowledge:terminal-command';
+const TERMINAL_COMMAND_EVENT = 'palimpsest:terminal-command';
 
 export function requestTerminalCommand(
   id: TerminalCommandId,

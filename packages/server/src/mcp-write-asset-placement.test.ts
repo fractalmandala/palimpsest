@@ -1,6 +1,6 @@
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { posix, relative, resolve, sep } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
@@ -38,17 +38,17 @@ let rig: DualTransportMcpRig;
 
 beforeAll(async () => {
   rig = await startDualTransportMcpRig({
-    tmpPrefix: 'ok-mcp-asset-placement-',
+    tmpPrefix: 'ps-mcp-asset-placement-',
     clientName: 'asset-placement-suite',
     seed: (contentDir) => {
-      const okDir = resolve(contentDir, OK_DIR);
-      mkdirSync(okDir, { recursive: true });
+      const psDir = resolve(contentDir, PS_DIR);
+      mkdirSync(psDir, { recursive: true });
       writeFileSync(
-        resolve(okDir, 'config.yml'),
+        resolve(psDir, 'config.yml'),
         `content:\n  attachmentFolderPath: ${ATTACHMENT_FOLDER}\n`,
         'utf-8',
       );
-      writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+      writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
       mkdirSync(resolve(contentDir, 'docs'), { recursive: true });
       writeFileSync(resolve(contentDir, 'docs', 'readme.md'), '# Docs\n', 'utf-8');
     },
@@ -64,7 +64,7 @@ const clientFor = (transport: Transport): Client =>
 
 function listContentFiles(dir: string = rig.contentDir, out: string[] = []): string[] {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === OK_DIR || entry.name === '.git') continue;
+    if (entry.name === PS_DIR || entry.name === '.git') continue;
     const abs = resolve(dir, entry.name);
     if (entry.isDirectory()) listContentFiles(abs, out);
     else out.push(relative(rig.contentDir, abs).split(sep).join('/'));

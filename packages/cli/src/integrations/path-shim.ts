@@ -9,18 +9,18 @@ import {
   pathShimFishConfFileName,
   pathShimMarkerPath,
   resolveDesktopProductName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
-export const PATH_SHIM_BEGIN = '# >>> open-knowledge cli >>>';
-export const PATH_SHIM_END = '# <<< open-knowledge cli <<<';
+export const PATH_SHIM_BEGIN = '# >>> palimpsest cli >>>';
+export const PATH_SHIM_END = '# <<< palimpsest cli <<<';
 export const PATH_SHIM_BLOCK_RE =
-  /^# >>> open-knowledge cli >>>\n[\s\S]*?^# <<< open-knowledge cli <<<\n?/m;
+  /^# >>> palimpsest cli >>>\n[\s\S]*?^# <<< palimpsest cli <<<\n?/m;
 
 export interface PathDiscovery {
   capturedAt: string;
   pathEntries: string[];
   shellUsed: string;
-  okBinAlreadyOnPath: boolean;
+  psBinAlreadyOnPath: boolean;
 }
 
 export interface PathInstallConsent {

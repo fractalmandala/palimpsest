@@ -68,8 +68,8 @@ describe('findReplacePlugin', () => {
       { from: 12, to: 17, text: 'alpha' },
     ]);
     expect(decorationAttrs(state)).toEqual([
-      { class: 'ok-find-match ok-find-match-active' },
-      { class: 'ok-find-match' },
+      { class: 'ps-find-match ps-find-match-active' },
+      { class: 'ps-find-match' },
     ]);
   });
 
@@ -83,8 +83,8 @@ describe('findReplacePlugin', () => {
     );
     expect(getFindReplaceState(state).activeIndex).toBe(1);
     expect(decorationAttrs(state)).toEqual([
-      { class: 'ok-find-match' },
-      { class: 'ok-find-match ok-find-match-active' },
+      { class: 'ps-find-match' },
+      { class: 'ps-find-match ps-find-match-active' },
     ]);
   });
 

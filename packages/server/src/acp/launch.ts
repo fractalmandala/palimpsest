@@ -8,9 +8,9 @@ import { stripVTControlCharacters } from 'node:util';
 import {
   augmentAgentSpawnPath,
   envWithoutDevChannel,
-  OK_HOSTED_AGENT_ENV,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+  PS_HOSTED_AGENT_ENV,
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import { z } from 'zod';
 import {
   tracedMkdir,
@@ -71,7 +71,7 @@ export class AgentLaunchError extends Error {
 }
 
 function defaultBinaryCacheDir(): string {
-  return join(okUserHomeDir(), 'acp-agents');
+  return join(psUserHomeDir(), 'acp-agents');
 }
 
 function isDir(dir: string): boolean {
@@ -106,7 +106,7 @@ export function overlaySetsPath(overlay?: Record<string, string>): boolean {
 }
 
 export function withHostedAgentMarker(env: Record<string, string>): Record<string, string> {
-  return { ...env, [OK_HOSTED_AGENT_ENV]: '1' };
+  return { ...env, [PS_HOSTED_AGENT_ENV]: '1' };
 }
 
 type PrepareRegistryLaunch = (launch: ResolvedLaunch) => Promise<ResolvedLaunch | null>;
@@ -1000,7 +1000,7 @@ export function unrepairableManagedRuntimeHint(launch: ResolvedLaunch, detail: s
 }
 
 export function incompatibleManagedRuntimeHint(detail: string): string {
-  return `OK's private Node.js runtime is incompatible (${detail}). Update Open Knowledge and try again.`;
+  return `OK's private Node.js runtime is incompatible (${detail}). Update Palimpsest and try again.`;
 }
 
 export function undeletableManagedRuntimeHint(launch: ResolvedLaunch, detail: string): string {
@@ -1178,7 +1178,7 @@ export function probeNpxNodeCompatibility(
 }
 
 export function incompatibleNodeHint(launch: ResolvedLaunch, detail: string): string {
-  return `\`${launch.cmd}\` cannot run this agent with the selected Node.js runtime (${detail}). Upgrade Node.js or let Open Knowledge download a private compatible copy.`;
+  return `\`${launch.cmd}\` cannot run this agent with the selected Node.js runtime (${detail}). Upgrade Node.js or let Palimpsest download a private compatible copy.`;
 }
 
 export function expiredIncompatibleNodeHint(launch: ResolvedLaunch, detail: string): string {
@@ -1282,7 +1282,7 @@ export function windowsCmdWrap(cmd: string, args: string[]): { cmd: string; args
 }
 
 function acpNpxIsolatedCwd(): string {
-  const dir = join(okUserHomeDir(), 'acp-npx-cwd');
+  const dir = join(psUserHomeDir(), 'acp-npx-cwd');
   tracedMkdirSync(dir, { recursive: true, mode: 0o700 });
   const marker = join(dir, 'package.json');
   if (!existsSync(marker)) {

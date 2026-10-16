@@ -695,7 +695,7 @@ test.describe('deliberate opens show a hidden editor', () => {
     await hideEditor(page);
     await runPaletteCommand(page, 'blob', 'open-blob-run');
     await expect(headerPaneButton(page, 'editor')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('[data-slot="ok-blob-runner"]')).toBeVisible();
+    await expect(page.locator('[data-slot="ps-blob-runner"]')).toBeVisible();
   });
 
   test('Skills from the palette shows the editor with the skills dock open', async ({
@@ -870,6 +870,6 @@ test.describe('dialogs that ride the address bar', () => {
     await page.getByRole('button', { name: 'Create template' }).click();
 
     await expect(page.getByTestId('settings-dialog')).toHaveCount(0);
-    await expectEditorShownOn(page, `.ok/templates/${templateName}`);
+    await expectEditorShownOn(page, `.ps/templates/${templateName}`);
   });
 });

@@ -8,10 +8,10 @@ import { declareSetupNonResult } from '../setup-non-result.ts';
 const INJECT_BOOT_FAILURE = pathToFileURL(join(import.meta.dirname, 'inject-boot-failure.ts')).href;
 
 function requireRunDir(): string {
-  const runDir = process.env.OK_BOOT_VERDICT_RUN_DIR;
+  const runDir = process.env.PS_BOOT_VERDICT_RUN_DIR;
   if (runDir === undefined) {
     throw new Error(
-      'OK_BOOT_VERDICT_RUN_DIR is unset; run these cases through verdict-run.config.ts',
+      'PS_BOOT_VERDICT_RUN_DIR is unset; run these cases through verdict-run.config.ts',
     );
   }
   return runDir;
@@ -63,7 +63,7 @@ export const setupRecoveredOnRetryTest = verdictTest.extend({
       const testInfo = verdictTest.info();
       if (testInfo.retry === 0) {
         const reason =
-          'OK_BOOT_VERDICT: the first attempt declares its setup incomplete before dialling any server';
+          'PS_BOOT_VERDICT: the first attempt declares its setup incomplete before dialling any server';
         declareSetupNonResult(testInfo, reason);
         throw new Error(reason);
       }

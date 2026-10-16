@@ -11,7 +11,7 @@ vi.doMock('@lingui/react/macro', () => ({
 }));
 
 vi.doMock('@/lib/skills-studio-intro-store', () => ({
-  SKILLS_STUDIO_INTRO_KEY: 'ok-skills-studio-intro-seen-v1',
+  SKILLS_STUDIO_INTRO_KEY: 'ps-skills-studio-intro-seen-v1',
   hasSeenSkillsStudioIntro: () => true,
   markSkillsStudioIntroSeen: () => {},
 }));
@@ -52,13 +52,13 @@ function installBridge() {
     editors: [],
     skill: {
       installed: true,
-      paths: ['.claude/skills/open-knowledge/SKILL.md'],
+      paths: ['.claude/skills/palimpsest/SKILL.md'],
       description: 'trigger text',
       hosts: ['claude'],
       sourceDir: '/bundles/project',
     },
   };
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: {
       integrations: { status: async () => userStatus, setComponent: async () => ({ ok: true }) },
       projectIntegrations: {
@@ -74,7 +74,7 @@ function installBridge() {
 afterEach(() => {
   cleanup();
   // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-  (window as any).okDesktop = undefined;
+  (window as any).psDesktop = undefined;
 });
 
 describe('SkillsManagerSection scope wiring', () => {

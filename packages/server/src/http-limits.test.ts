@@ -10,7 +10,7 @@ let tmpRoot: string;
 let booted: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-http-limits-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-http-limits-'));
   const dir = mkdtempSync(resolve(tmpRoot, 'proj-'));
   booted = await bootCompositionRig(dir);
   await booted.ready;

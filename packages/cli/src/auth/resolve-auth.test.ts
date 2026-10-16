@@ -26,11 +26,11 @@ const RESET = 'credential.helper=';
 describe('buildCliCredentialHelper', () => {
   test('shell-quotes each argv element so a spaced bundle path survives', () => {
     const helper = buildCliCredentialHelper([
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
-      '/Applications/OpenKnowledge.app/Contents/Resources/cli/dist/cli.mjs',
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+      '/Applications/Palimpsest.app/Contents/Resources/cli/dist/cli.mjs',
     ]);
     expect(helper).toBe(
-      "credential.helper=!'/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge' '/Applications/OpenKnowledge.app/Contents/Resources/cli/dist/cli.mjs' auth git-credential",
+      "credential.helper=!'/Applications/Palimpsest.app/Contents/MacOS/Palimpsest' '/Applications/Palimpsest.app/Contents/Resources/cli/dist/cli.mjs' auth git-credential",
     );
   });
 });
@@ -38,7 +38,7 @@ describe('buildCliCredentialHelper', () => {
 describe('resolveAuth', () => {
   let tmpDir: string;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-resolve-auth-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-resolve-auth-'));
   });
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });
@@ -149,13 +149,13 @@ describe('resolveAuth', () => {
     expect(result.gitConfig[0]).toBe(RESET);
   });
 
-  test('default selfCliArgs falls back to the bare open-knowledge helper', async () => {
+  test('default selfCliArgs falls back to the bare palimpsest helper', async () => {
     const store = makeStore(tmpDir);
     await store.set('github.com', 'alice', 'gho_abc');
     const result = await resolveAuth('github.com', store, {}, ghUnavailable());
     expect(result.gitConfig).toEqual([
       RESET,
-      "credential.helper=!'open-knowledge' auth git-credential",
+      "credential.helper=!'palimpsest' auth git-credential",
     ]);
   });
 

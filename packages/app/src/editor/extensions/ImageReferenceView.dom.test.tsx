@@ -86,9 +86,9 @@ describe('ImageReferenceView', () => {
 
   test('normalizes a local definition href against the configured document on initial render', async () => {
     const desktopWindow = window as typeof window & {
-      okDesktop?: { config: { apiOrigin: string } };
+      psDesktop?: { config: { apiOrigin: string } };
     };
-    desktopWindow.okDesktop = { config: { apiOrigin: 'http://localhost:53351' } };
+    desktopWindow.psDesktop = { config: { apiOrigin: 'http://localhost:53351' } };
 
     try {
       render(<Host content={referenceImageDoc()} />);
@@ -101,7 +101,7 @@ describe('ImageReferenceView', () => {
         ).toBe('http://localhost:53351/assets/working.png');
       });
     } finally {
-      delete desktopWindow.okDesktop;
+      delete desktopWindow.psDesktop;
     }
   });
 });

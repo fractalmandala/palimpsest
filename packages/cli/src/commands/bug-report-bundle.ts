@@ -10,9 +10,9 @@ import {
   REPORT_SENT_MARKER_SUFFIX,
   REPORT_SIDECAR_BUNDLE_DIR,
   SERVER_CRASH_LOG,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
-import { withHiddenWindowsConsole } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
+import { withHiddenWindowsConsole } from '@palimpsest/server';
 import type { ZipFile } from 'yazl';
 import type { DesktopMetadata } from '../diagnose/bundle.ts';
 import {
@@ -29,13 +29,13 @@ import type { LanguageMetadata } from '../report-language.ts';
 import { redactContent, SECRET_PATTERN_NAMES } from './bug-report-redact.ts';
 import { DESKTOP_BUNDLE_ID } from './desktop-dispatch.ts';
 
-export function okBugReportsDir(): string {
-  return join(okUserHomeDir(), 'bug-reports');
+export function psBugReportsDir(): string {
+  return join(psUserHomeDir(), 'bug-reports');
 }
 
 export function defaultBugReportZipPath(now: Date = new Date()): string {
   const timestamp = now.toISOString().replace(/[:.]/g, '-');
-  const dir = okBugReportsDir();
+  const dir = psBugReportsDir();
   const base = `${timestamp}-bugreport`;
   let candidate = join(dir, `${base}.zip`);
   for (let counter = 2; existsSync(candidate); counter += 1) {
@@ -93,7 +93,7 @@ export interface StandardBundleResult {
 }
 
 export function resolveProjectSlug(cwd: string, logger?: BundleLogger): string | null {
-  const configPath = join(cwd, '.ok', 'config.yml');
+  const configPath = join(cwd, '.ps', 'config.yml');
   if (existsSync(configPath)) {
     try {
       const content = readFileSync(configPath, 'utf8');
@@ -102,12 +102,12 @@ export function resolveProjectSlug(cwd: string, logger?: BundleLogger): string |
     } catch (err) {
       logger?.warn(
         { configPath, err },
-        'bug-report: failed to read .ok/config.yml for project slug; using path-hash fallback',
+        'bug-report: failed to read .ps/config.yml for project slug; using path-hash fallback',
       );
     }
   }
 
-  if (existsSync(join(cwd, '.ok'))) {
+  if (existsSync(join(cwd, '.ps'))) {
     return createHash('sha256').update(resolve(cwd)).digest('hex').slice(0, 12);
   }
 
@@ -142,7 +142,7 @@ function collectSysinfo(): Record<string, unknown> {
     const pkgPath = join(__dirname, '..', '..', 'package.json');
     if (existsSync(pkgPath)) {
       const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-      info.okVersion = pkg.version;
+      info.psVersion = pkg.version;
     }
   } catch {}
 
@@ -257,7 +257,7 @@ function collectLogs(
 }
 
 function collectLockDir(cwd: string): { files: string[] } {
-  const lockDir = join(cwd, '.ok', 'local');
+  const lockDir = join(cwd, '.ps', 'local');
   if (!existsSync(lockDir)) return { files: [] };
 
   const candidates = [
@@ -272,7 +272,7 @@ function collectLockDir(cwd: string): { files: string[] } {
 }
 
 function collectLocalSinkLogs(cwd: string): { files: string[] } {
-  const logsDir = join(cwd, '.ok', 'local', 'logs');
+  const logsDir = join(cwd, '.ps', 'local', 'logs');
   if (!existsSync(logsDir)) return { files: [] };
 
   const candidates = ['server-current.jsonl', 'server-prev.jsonl'];
@@ -363,7 +363,7 @@ export async function collectStandardBundle(
 ): Promise<StandardBundleResult> {
   const { redact, outputPath, logger } = opts;
   const revealDocNames = opts.revealDocNames ?? false;
-  const userLogsDir = opts.userLogsDir ?? join(okUserHomeDir(), 'logs');
+  const userLogsDir = opts.userLogsDir ?? join(psUserHomeDir(), 'logs');
   const projectSlug = opts.projectDir ? resolveProjectSlug(opts.projectDir, logger) : null;
 
   mkdirSync(dirname(outputPath), { recursive: true });
@@ -515,7 +515,7 @@ export async function collectStandardBundle(
     projectSlug,
     files: bundleFiles,
     redactions,
-    sysinfo: sysinfo as Record<string, import('@inkeep/open-knowledge-core').Loggable>,
+    sysinfo: sysinfo as Record<string, import('@palimpsest/core').Loggable>,
   };
   zipfile.addBuffer(Buffer.from(JSON.stringify(manifest, null, 2), 'utf8'), 'MANIFEST.json');
 
@@ -581,7 +581,7 @@ export async function collectStandardBundle(
     ...(installerLogEntries.length > 0
       ? [
           'Installer logs: written by the macOS update helper rather than by',
-          'OpenKnowledge itself, and machine-wide rather than scoped to any one',
+          'Palimpsest itself, and machine-wide rather than scoped to any one',
           'project. They record the install and update history of this app on',
           'this machine. Only this app is collected, never other applications',
           'that use the same update mechanism:',
@@ -591,7 +591,7 @@ export async function collectStandardBundle(
       : []),
     ...(diagnosticReportEntries.length > 0
       ? [
-          'Crash reports: written by macOS itself rather than by OpenKnowledge,',
+          'Crash reports: written by macOS itself rather than by Palimpsest,',
           'and machine-wide rather than scoped to any one project. They record',
           'why the operating system ended a process of this app — the signal or',
           'exception, the code-signing verdict, and whatever text the process',

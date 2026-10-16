@@ -1,4 +1,4 @@
-import { findEnclosingProjectRoot } from '@inkeep/open-knowledge-server';
+import { findEnclosingProjectRoot } from '@palimpsest/server';
 
 const PROJECT_ANCHORED_COMMANDS: ReadonlySet<string> = new Set([
   'start',

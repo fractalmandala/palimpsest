@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { terminalCommandFor } from '@/components/handoff/terminal-command-events';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkSlidesStatusResult } from '@/lib/desktop-bridge-types';
+import type { PsSlidesStatusResult } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
 vi.doMock('@lingui/react/macro', () => ({
@@ -15,12 +15,12 @@ vi.doMock('@lingui/react/macro', () => ({
 }));
 
 function installBridge(
-  status: () => Promise<OkSlidesStatusResult>,
+  status: () => Promise<PsSlidesStatusResult>,
   opts: { ptyAvailable?: boolean } = {},
 ) {
   const statusSpy = vi.fn(status);
   const ptyAvailable = opts.ptyAvailable ?? true;
-  (window as unknown as { okDesktop?: unknown }).okDesktop = {
+  (window as unknown as { psDesktop?: unknown }).psDesktop = {
     config: { projectPath: '/proj', ptyAvailable },
     platform: 'darwin',
     ...(ptyAvailable ? { terminal: { create: vi.fn() } } : {}),
@@ -40,7 +40,7 @@ async function renderPanel() {
 
 afterEach(() => {
   cleanup();
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   vi.clearAllMocks();
 });
 
@@ -95,7 +95,7 @@ describe('SlidesPluginSection — availability status', () => {
   });
 
   test('sits in the checking state until the probe settles', async () => {
-    installBridge(() => new Promise<OkSlidesStatusResult>(() => {}));
+    installBridge(() => new Promise<PsSlidesStatusResult>(() => {}));
     await renderPanel();
     expect(await screen.findByTestId('slides-status-checking')).toBeTruthy();
     expect(screen.queryByTestId('slides-status-missing')).toBeNull();
@@ -109,8 +109,8 @@ describe('SlidesPluginSection — re-probe', () => {
     const statusSpy = installBridge(() =>
       Promise.resolve(
         available
-          ? ({ kind: 'status', available: true, source: 'global' } as OkSlidesStatusResult)
-          : ({ kind: 'status', available: false } as OkSlidesStatusResult),
+          ? ({ kind: 'status', available: true, source: 'global' } as PsSlidesStatusResult)
+          : ({ kind: 'status', available: false } as PsSlidesStatusResult),
       ),
     );
     await renderPanel();
@@ -127,7 +127,7 @@ describe('SlidesPluginSection — re-probe', () => {
 
   test('stops probing once unmounted', async () => {
     const statusSpy = installBridge(() =>
-      Promise.resolve({ kind: 'status', available: false } as OkSlidesStatusResult),
+      Promise.resolve({ kind: 'status', available: false } as PsSlidesStatusResult),
     );
     const { unmount } = await renderPanel();
     await waitFor(() => expect(statusSpy).toHaveBeenCalledTimes(1));
@@ -146,7 +146,7 @@ describe('SlidesPluginSection — run in terminal', () => {
     const user = userEvent.setup();
     const requests: string[] = [];
     const onCommand = (e: Event) => requests.push((e as CustomEvent<string>).detail);
-    window.addEventListener('open-knowledge:terminal-command', onCommand);
+    window.addEventListener('palimpsest:terminal-command', onCommand);
     const backSpy = vi.spyOn(window.history, 'back').mockImplementation(() => {});
     window.location.hash = '#settings/plugin:slides';
 
@@ -157,7 +157,7 @@ describe('SlidesPluginSection — run in terminal', () => {
     expect(requests).toEqual(['install-slidev']);
     expect(backSpy).toHaveBeenCalledTimes(1);
 
-    window.removeEventListener('open-knowledge:terminal-command', onCommand);
+    window.removeEventListener('palimpsest:terminal-command', onCommand);
     backSpy.mockRestore();
     window.location.hash = '';
   });

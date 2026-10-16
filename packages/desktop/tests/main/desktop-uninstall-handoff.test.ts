@@ -36,7 +36,7 @@ afterEach(() => {
 });
 
 function fixture() {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-uninstall-handoff-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-uninstall-handoff-'));
   fixtures.push(dir);
   const executable = (name: string, body: string) => {
     const path = join(dir, name);
@@ -96,7 +96,7 @@ describe.skipIf(process.platform === 'win32')('desktop uninstall after exit', ()
             cliPath,
             projectPaths: [],
             logPath: join(f.dir, 'cleanup.log'),
-            appBundlePath: '/Applications/OpenKnowledge.app',
+            appBundlePath: '/Applications/Palimpsest.app',
             parentPid,
             parentStartedAt,
           },
@@ -115,7 +115,7 @@ describe.skipIf(process.platform === 'win32')('desktop uninstall after exit', ()
       expect(existsSync(sentinel)).toBe(false);
       const events = readFileSync(f.events, 'utf8');
       expect(events.indexOf('cleanup')).toBeLessThan(
-        events.indexOf('OpenKnowledge files were removed'),
+        events.indexOf('Palimpsest files were removed'),
       );
       expect(readFileSync(join(f.dir, 'cleanup.log'), 'utf8')).toContain(
         'Cleanup result: succeeded',
@@ -134,7 +134,7 @@ describe.skipIf(process.platform === 'win32')('desktop uninstall after exit', ()
         cliPath: f.executable('cli', `printf 'cleanup\\n' >> '${f.events}'`),
         projectPaths: [],
         logPath: join(f.dir, 'cleanup.log'),
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt,
       },
@@ -148,7 +148,7 @@ describe.skipIf(process.platform === 'win32')('desktop uninstall after exit', ()
     await expect(once(child, 'close')).resolves.toEqual([1, null]);
     expect(readFileSync(f.events, 'utf8')).toContain('Cleanup didn’t finish');
     expect(readFileSync(f.events, 'utf8')).not.toContain('cleanup\n');
-    expect(readFileSync(f.events, 'utf8')).not.toContain('OpenKnowledge files were removed');
+    expect(readFileSync(f.events, 'utf8')).not.toContain('Palimpsest files were removed');
   });
 
   test('reports cleanup errors without a success dialog or app removal instruction', async () => {
@@ -158,7 +158,7 @@ describe.skipIf(process.platform === 'win32')('desktop uninstall after exit', ()
         cliPath: f.executable('cli', 'exit 1'),
         projectPaths: [],
         logPath: join(f.dir, 'cleanup.log'),
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt: 'original process',
       },
@@ -168,7 +168,7 @@ describe.skipIf(process.platform === 'win32')('desktop uninstall after exit', ()
     await expect(once(child, 'close')).resolves.toEqual([1, null]);
     const events = readFileSync(f.events, 'utf8');
     expect(events).toContain('Cleanup didn’t finish');
-    expect(events).not.toContain('OpenKnowledge files were removed');
+    expect(events).not.toContain('Palimpsest files were removed');
     expect(events).not.toContain('Trash');
   });
 });
@@ -180,10 +180,10 @@ describe('desktop uninstall handoff readiness', () => {
     unref = vi.fn();
   }
   const input = {
-    cliPath: '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh',
+    cliPath: '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh',
     projectPaths: [],
     logPath: '/tmp/uninstall.log',
-    appBundlePath: '/Applications/OpenKnowledge.app',
+    appBundlePath: '/Applications/Palimpsest.app',
   };
 
   test('detaches only after the helper reports readiness', async () => {
@@ -194,7 +194,7 @@ describe('desktop uninstall handoff readiness', () => {
       readParentStartedAt: () => 'original process',
     });
     expect(child.unref).not.toHaveBeenCalled();
-    child.stdout.write('OK_UNINSTALL_');
+    child.stdout.write('PS_UNINSTALL_');
     expect(child.unref).not.toHaveBeenCalled();
     child.stdout.write('READY\n');
     await expect(launched).resolves.toEqual({ ok: true });
@@ -310,7 +310,7 @@ describe.skipIf(process.platform === 'win32')('desktop cleanup failure boundarie
   test('reports failure when selected projects succeed but global cleanup fails', async () => {
     const f = fixture();
     const project = join(f.dir, 'project');
-    mkdirSync(join(project, '.ok'), { recursive: true });
+    mkdirSync(join(project, '.ps'), { recursive: true });
     const logPath = join(f.dir, 'cleanup.log');
     const script = buildDesktopUninstallHandoffScript(
       {
@@ -321,7 +321,7 @@ if [ "$1" = 'uninstall' ]; then exit 31; fi`,
         ),
         projectPaths: [project],
         logPath,
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt: 'original process',
       },
@@ -333,7 +333,7 @@ if [ "$1" = 'uninstall' ]; then exit 31; fi`,
     expect(events).toMatch(/^deinit\nuninstall\n/);
     expect(events).toContain('Cleanup didn’t finish');
     expect(events).not.toContain('Trash');
-    expect(events).not.toContain('OpenKnowledge files were removed');
+    expect(events).not.toContain('Palimpsest files were removed');
     const log = readFileSync(logPath, 'utf8');
     expect(log).toContain('deinit=0 global=31');
     expect(log).toContain('Cleanup result: failed');
@@ -342,7 +342,7 @@ if [ "$1" = 'uninstall' ]; then exit 31; fi`,
   test('retains global settings after any selected project fails while still trying other selected projects', async () => {
     const f = fixture();
     const projects = [join(f.dir, 'failed'), join(f.dir, 'succeeded')];
-    for (const project of projects) mkdirSync(join(project, '.ok'), { recursive: true });
+    for (const project of projects) mkdirSync(join(project, '.ps'), { recursive: true });
     const cliPath = f.executable(
       'cli',
       `printf '%s\\n' "$1 $3" >> '${f.events}'
@@ -353,7 +353,7 @@ if [ "$3" = '${projects[0]}' ]; then exit 1; fi`,
         cliPath,
         projectPaths: projects,
         logPath: join(f.dir, 'cleanup.log'),
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt: 'original process',
       },
@@ -374,7 +374,7 @@ if [ "$3" = '${projects[0]}' ]; then exit 1; fi`,
         cliPath: f.executable('cli', `printf 'cleanup\\n' >> '${f.events}'`),
         projectPaths: [],
         logPath: join(f.dir, 'cleanup.log'),
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt: 'original process',
       },
@@ -383,7 +383,7 @@ if [ "$3" = '${projects[0]}' ]; then exit 1; fi`,
     const child = spawn('/bin/sh', ['-c', script], { stdio: 'ignore' });
     await expect(once(child, 'close')).resolves.toEqual([1, null]);
     const events = readFileSync(f.events, 'utf8');
-    expect(events).toContain('Could not verify that OpenKnowledge stopped');
+    expect(events).toContain('Could not verify that Palimpsest stopped');
     expect(events).not.toContain('cleanup\n');
   });
 });
@@ -399,7 +399,7 @@ describe.skipIf(process.platform === 'win32')('desktop cleanup result', () => {
           cliPath: f.executable('cli', ok ? 'exit 0' : 'exit 1'),
           projectPaths: [],
           logPath,
-          appBundlePath: '/Applications/OpenKnowledge.app',
+          appBundlePath: '/Applications/Palimpsest.app',
           parentPid: 123,
           parentStartedAt: 'original process',
         },
@@ -421,7 +421,7 @@ describe.skipIf(process.platform === 'win32')('desktop cleanup result', () => {
     'previews the actual native result without invoking cleanup (ok=%s)',
     async (ok) => {
       const f = fixture();
-      const appBundlePath = join(f.dir, 'OpenKnowledge.app');
+      const appBundlePath = join(f.dir, 'Palimpsest.app');
       const settings = join(appBundlePath, 'settings');
       mkdirSync(appBundlePath);
       writeFileSync(settings, 'pre-existing settings');
@@ -437,7 +437,7 @@ describe.skipIf(process.platform === 'win32')('desktop cleanup result', () => {
       await expect(once(child, 'close')).resolves.toEqual([0, null]);
       expect(readFileSync(settings, 'utf8')).toBe('pre-existing settings');
       const events = readFileSync(f.events, 'utf8');
-      expect(events).toContain(ok ? 'OpenKnowledge files were removed' : 'Cleanup didn’t finish');
+      expect(events).toContain(ok ? 'Palimpsest files were removed' : 'Cleanup didn’t finish');
       if (!ok) expect(events).not.toContain('Trash');
     },
   );
@@ -456,7 +456,7 @@ describe.skipIf(process.platform === 'win32')('result dialog dismissal', () => {
     async (ok, action, revealFails) => {
       const f = fixture();
       const logPath = join(f.dir, 'cleanup.log');
-      const appBundlePath = join(f.dir, 'OpenKnowledge.app');
+      const appBundlePath = join(f.dir, 'Palimpsest.app');
       mkdirSync(appBundlePath);
       const count = join(f.dir, 'count');
       const commands = {
@@ -529,7 +529,7 @@ describe.skipIf(process.platform === 'win32')('rendered uninstall result handoff
     async (ok, result, reveal) => {
       const f = fixture();
       const logPath = join(f.dir, 'cleanup.log');
-      const appBundlePath = join(f.dir, 'OpenKnowledge.app');
+      const appBundlePath = join(f.dir, 'Palimpsest.app');
       const commands = {
         ...f.commands,
         ps: f.executable('ps', 'exit 1'),
@@ -583,7 +583,7 @@ exit ${result}`,
         ...(reveal ? [`reveal:${reveal === 'log' ? logPath : appBundlePath}`] : []),
       ]);
       expect(readFileSync(join(f.dir, 'result'), 'utf8').split('\0')[0]).toBe(
-        ok ? 'OpenKnowledge files were removed' : 'Cleanup didn’t finish',
+        ok ? 'Palimpsest files were removed' : 'Cleanup didn’t finish',
       );
       const profile = readFileSync(join(f.dir, 'profile-path'), 'utf8');
       expect(profile).not.toBe('');
@@ -605,7 +605,7 @@ describe.skipIf(process.platform === 'win32')('continuous uninstall progress', (
           cliPath: f.executable('cli', `printf 'cleanup\\n' >> '${f.events}'`),
           projectPaths: [],
           logPath: join(f.dir, 'cleanup.log'),
-          appBundlePath: '/Applications/OpenKnowledge.app',
+          appBundlePath: '/Applications/Palimpsest.app',
           parentPid: 123,
           parentStartedAt: 'old',
         },
@@ -630,7 +630,7 @@ describe.skipIf(process.platform === 'win32')('continuous uninstall progress', (
       fixtureDir: f.dir,
     });
     expect(outcome.status).toBe(1);
-    expect(outcome.stdout).not.toContain('OK_UNINSTALL_READY');
+    expect(outcome.stdout).not.toContain('PS_UNINSTALL_READY');
     expect(existsSync(f.events)).toBe(false);
     expect(existsSync(readFileSync(join(f.dir, 'profile-path'), 'utf8'))).toBe(false);
   });
@@ -649,7 +649,7 @@ describe.skipIf(process.platform === 'win32')('progress window failure boundarie
           ),
           projectPaths: [],
           logPath: join(f.dir, 'cleanup.log'),
-          appBundlePath: '/Applications/OpenKnowledge.app',
+          appBundlePath: '/Applications/Palimpsest.app',
           parentPid: 123,
           parentStartedAt: 'old',
         },
@@ -682,7 +682,7 @@ exit 7`,
     expect(events.match(/cleanup\n/g)).toHaveLength(1);
     expect(events.match(/-e on run argv/g)).toHaveLength(1);
     expect(events).toContain('Cleanup didn’t finish');
-    expect(events).not.toContain('OpenKnowledge files were removed');
+    expect(events).not.toContain('Palimpsest files were removed');
     expect(existsSync(readFileSync(join(f.dir, 'profile-path'), 'utf8'))).toBe(false);
   });
 
@@ -693,7 +693,7 @@ exit 7`,
         cliPath: f.executable('cli', `touch '${f.dir}/cleaning'`),
         projectPaths: [],
         logPath: join(f.dir, 'cleanup.log'),
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt: 'old',
       },
@@ -752,13 +752,13 @@ function settleWindowFor(boundMs: number) {
 }
 
 const NO_START_TIME_OUTCOME =
-  'Could not verify that OpenKnowledge stopped (process query returned no start time); no cleanup was started.';
+  'Could not verify that Palimpsest stopped (process query returned no start time); no cleanup was started.';
 const QUERY_GAVE_UP_OUTCOME =
-  'Could not verify that OpenKnowledge stopped (process query exit 2); no cleanup was started.';
+  'Could not verify that Palimpsest stopped (process query exit 2); no cleanup was started.';
 const CLEANUP_SUCCEEDED_OUTCOME = 'Cleanup result: succeeded';
 
 const FAILED_CLOSED_FOR_ANOTHER_REASON =
-  /^Could not verify that OpenKnowledge stopped \((?!process query returned no start time\)).+\); no cleanup was started\.$/;
+  /^Could not verify that Palimpsest stopped \((?!process query returned no start time\)).+\); no cleanup was started\.$/;
 
 type BoundedHandoffCase = {
   name: string;
@@ -847,7 +847,7 @@ function startRowClockOver<T>(buildRow: () => T): RowClockOverSetup<T> {
 }
 
 function readQueryProbeResidue(dir: string) {
-  return readdirSync(dir).filter((name) => name.startsWith('ok-uninstall-ps.'));
+  return readdirSync(dir).filter((name) => name.startsWith('ps-uninstall-ps.'));
 }
 
 function countCleanupRuns(dir: string) {
@@ -1086,7 +1086,7 @@ async function runBoundedHandoffAttempts({
 }
 
 describe('query probe residue across a settle window', () => {
-  const RESIDUE_NAME = 'ok-uninstall-ps.left-behind';
+  const RESIDUE_NAME = 'ps-uninstall-ps.left-behind';
 
   test('keeps the residue read at the bound when a later poll cannot list the dir', async () => {
     const f = fixture();
@@ -1279,7 +1279,7 @@ describe('bounded uninstall handoff spawns', () => {
     const BUDGET_EXHAUSTED_DEADLINE_MS = attemptsDeadlineFor(HANDOFF_LIVENESS_BOUND_MS);
     const ELAPSED_ON_THE_DEADLINE_MS = BUDGET_EXHAUSTED_DEADLINE_MS;
     const ELAPSED_PAST_THE_DEADLINE_MS = BUDGET_EXHAUSTED_DEADLINE_MS + TRAIL_SETTLE_OVERRUN_MS;
-    const EXHAUSTED_BUDGET_PROBE = 'ok-uninstall-ps.budget-exhausted-wait';
+    const EXHAUSTED_BUDGET_PROBE = 'ps-uninstall-ps.budget-exhausted-wait';
     const f = fixture();
     writeFileSync(join(f.dir, EXHAUSTED_BUDGET_PROBE), '');
     const admitted: number[] = [];
@@ -1354,7 +1354,7 @@ describe('bounded uninstall handoff spawns', () => {
     async () => {
       const FIRED_BOUND_MS = 400;
       const FIRED_BOUND_STALL_SECONDS = 2;
-      const UNREAPED_PROBE = 'ok-uninstall-ps.unreaped-wait';
+      const UNREAPED_PROBE = 'ps-uninstall-ps.unreaped-wait';
       const f = fixture();
       writeFileSync(join(f.dir, UNREAPED_PROBE), '');
       let raised: unknown = new Error('the bounded spawn returned instead of blowing its bound');
@@ -1406,7 +1406,7 @@ describe('bounded uninstall handoff spawns', () => {
     'reports the blown bound when the diagnostic trail cannot be read',
     async () => {
       const TRAIL_READ_FAILURE_BOUND_MS = 250;
-      const unreadableFixtureDir = join(tmpdir(), 'ok-uninstall-handoff-never-created');
+      const unreadableFixtureDir = join(tmpdir(), 'ps-uninstall-handoff-never-created');
       expect(
         existsSync(unreadableFixtureDir),
         'this case needs a state dir the residue read cannot list, and one is present, so the read would succeed and the case would assert nothing',
@@ -1444,10 +1444,10 @@ describe('shipped process-query watchdog', () => {
   test('arms the watchdog from the default when the caller supplies no timeout', () => {
     const script = buildDesktopUninstallHandoffScript(
       {
-        cliPath: '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh',
+        cliPath: '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh',
         projectPaths: [],
         logPath: '/tmp/uninstall.log',
-        appBundlePath: '/Applications/OpenKnowledge.app',
+        appBundlePath: '/Applications/Palimpsest.app',
         parentPid: 123,
         parentStartedAt: 'original process',
       },
@@ -1493,8 +1493,8 @@ exit 1`,
     });
     expect(result.status).toBe(1);
     expect(existsSync(join(f.dir, 'cleanup-ran'))).toBe(false);
-    expect(readFileSync(f.events, 'utf8')).toContain('Could not verify that OpenKnowledge stopped');
-    expect(readdirSync(f.dir).filter((name) => name.startsWith('ok-uninstall-ps.'))).toEqual([]);
+    expect(readFileSync(f.events, 'utf8')).toContain('Could not verify that Palimpsest stopped');
+    expect(readdirSync(f.dir).filter((name) => name.startsWith('ps-uninstall-ps.'))).toEqual([]);
   },
 );
 
@@ -1526,8 +1526,8 @@ test.skipIf(process.platform === 'win32')(
       fixtureDir: f.dir,
     });
     expect(result.status).toBe(1);
-    expect(readdirSync(f.dir).filter((name) => name.startsWith('ok-uninstall-ps.'))).toEqual([]);
-    expect(readFileSync(f.events, 'utf8')).toContain('Could not verify that OpenKnowledge stopped');
+    expect(readdirSync(f.dir).filter((name) => name.startsWith('ps-uninstall-ps.'))).toEqual([]);
+    expect(readFileSync(f.events, 'utf8')).toContain('Could not verify that Palimpsest stopped');
     expect(readFileSync(f.events, 'utf8')).not.toContain('cleanup\n');
   },
 );
@@ -1717,7 +1717,7 @@ esac
 if [ "$1" = -- ]; then shift; fi
 target=${'$'}{1-}
 recordSender=$PPID
-if [ -n "${'$'}{OK_SIGNAL_RECORDER_REPLACE_UI:-}" ]; then recordSender=$$; fi
+if [ -n "${'$'}{PS_SIGNAL_RECORDER_REPLACE_UI:-}" ]; then recordSender=$$; fi
 record="sender=$recordSender self=$$ signal=$signal target=$target"
 if [ "$#" -ne 1 ] || [ -z "$signal" ]; then
   printf '%s refused=call\\n' "$record" >> '${recordsPath}'
@@ -1735,8 +1735,8 @@ if [ "$signal" = 0 ]; then
   /bin/kill -s 0 "$target" 2>/dev/null
   status=$?
   printf '%s probed=%s\\n' "$record" "$status" >> '${recordsPath}'
-  if [ -n "${'$'}{OK_SIGNAL_RECORDER_REPLACE_UI:-}" ]; then
-    exec /bin/sleep "$OK_SIGNAL_RECORDER_REPLACE_UI"
+  if [ -n "${'$'}{PS_SIGNAL_RECORDER_REPLACE_UI:-}" ]; then
+    exec /bin/sleep "$PS_SIGNAL_RECORDER_REPLACE_UI"
   fi
   exit "$status"
 fi
@@ -1859,7 +1859,7 @@ describe.skipIf(process.platform === 'win32')('signals the uninstall scripts sen
       '\\kill -s KILL "$pid"',
       `trap 'kill -s KILL "$ps_pid"' TERM`,
       'alive=$(kill -0 "$pid" && printf yes)',
-      'pkill -f ok-uninstall',
+      'pkill -f ps-uninstall',
       'killall sleep',
     ];
     const adjacent = [
@@ -2078,7 +2078,7 @@ printf '%s %s %s\\n' "$held" "$released" "$?"`,
         status: run.status,
         probeResidue: readQueryProbeResidue(f.dir),
         failedClosed: lastLoggedLine(readCleanupLog(f.dir)).startsWith(
-          'Could not verify that OpenKnowledge stopped',
+          'Could not verify that Palimpsest stopped',
         ),
       }).toEqual({ status: 1, probeResidue: [], failedClosed: true });
     },
@@ -2118,7 +2118,7 @@ printf '%s %s %s\\n' "$held" "$released" "$?"`,
       if (run instanceof BoundedSpawnTimeoutError) throw run;
       expect({
         status: run.status,
-        announcedReady: run.stdout.includes('OK_UNINSTALL_READY'),
+        announcedReady: run.stdout.includes('PS_UNINSTALL_READY'),
         cleanupRuns: countCleanupRuns(f.dir),
       }).toEqual({ status: 1, announcedReady: false, cleanupRuns: 0 });
     },
@@ -2260,7 +2260,7 @@ exec /bin/sleep ${COUNTED_PROGRESS_WAIT_STALL_MS / 1000}`,
       ).toBeGreaterThan(0);
       expect({
         status: outcome.status,
-        announcedReady: outcome.stdout.includes('OK_UNINSTALL_READY'),
+        announcedReady: outcome.stdout.includes('PS_UNINSTALL_READY'),
         loggedOutcome: lastLoggedLine(readCleanupLog(f.dir)),
       }).toEqual({
         status: 1,
@@ -2802,7 +2802,7 @@ function readQueryGiveUp(dir: string, run: SpawnSyncReturns<string>) {
 function readProgressGiveUp(dir: string, run: SpawnSyncReturns<string>) {
   return {
     status: run.status,
-    announcedReady: run.stdout.includes('OK_UNINSTALL_READY'),
+    announcedReady: run.stdout.includes('PS_UNINSTALL_READY'),
     cleanupRuns: countCleanupRuns(dir),
     loggedOutcome: lastLoggedLine(readCleanupLog(dir)),
   };
@@ -3266,7 +3266,7 @@ exec /bin/sleep ${STUCK_QUERY_SECONDS}`,
             cleanupRuns: countCleanupRuns(f.dir),
             loggedOutcome: lastLoggedLine(readCleanupLog(f.dir)),
           },
-          'a handoff whose process query subshell was killed has no answer about whether OpenKnowledge stopped, so it must fail closed without cleanup, for a reason other than a missing start time',
+          'a handoff whose process query subshell was killed has no answer about whether Palimpsest stopped, so it must fail closed without cleanup, for a reason other than a missing start time',
         ).toEqual({
           status: 1,
           cleanupRuns: 0,
@@ -3340,7 +3340,7 @@ exec /bin/sleep ${STUCK_QUERY_SECONDS}`,
           loggedOutcome: lastLoggedLine(readCleanupLog(f.dir)),
           probeResidue: readQueryProbeResidue(temporaryDirectory.path),
         },
-        'OpenKnowledge is still running here and the process query could not write the file its answer goes to, so the handoff must fail closed on the query’s exit 2, start no cleanup and remove its probe directory: zsh run as sh, which macOS can make /bin/sh, ends a subshell whose write through a special built-in fails with status 1, no output and no EXIT trap, and the attempts loop reads that as OpenKnowledge having exited',
+        'Palimpsest is still running here and the process query could not write the file its answer goes to, so the handoff must fail closed on the query’s exit 2, start no cleanup and remove its probe directory: zsh run as sh, which macOS can make /bin/sh, ends a subshell whose write through a special built-in fails with status 1, no output and no EXIT trap, and the attempts loop reads that as Palimpsest having exited',
       ).toEqual({
         status: 1,
         cleanupRuns: 0,
@@ -3431,15 +3431,15 @@ const unreadableClockRows = UNINSTALL_SHELLS.flatMap((shell) =>
 
 const PROGRESS_WINDOW_NOT_STARTED =
   'The uninstall progress window could not be started; no cleanup was started.';
-const RESULT_PROFILE_TEMPLATE = 'ok-uninstall-result.XXXXXX';
+const RESULT_PROFILE_TEMPLATE = 'ps-uninstall-result.XXXXXX';
 const RESULT_PROFILE_PREFIX = RESULT_PROFILE_TEMPLATE.replace(/X+$/, '');
 const RESULT_WINDOW_TOKEN = 'watched';
-const QUERY_PROBE_TEMPLATE = 'ok-uninstall-ps.XXXXXX';
+const QUERY_PROBE_TEMPLATE = 'ps-uninstall-ps.XXXXXX';
 const QUERY_PROBE_OUTPUT = 'output';
 const RESULT_WINDOW_UNSTARTED_STATUS = 1;
 const KILLED_WINDOW_EXIT_STATUS = 137;
 const WINDOW_WATCH_FAILED = 'Could not keep watching the uninstall window; it was stopped.';
-const SUCCESS_DIALOG_TITLE = 'OpenKnowledge files were removed';
+const SUCCESS_DIALOG_TITLE = 'Palimpsest files were removed';
 
 function resultWindowFellBack(exitStatus: number) {
   return `Could not show the completion window (exit ${exitStatus}); using the system dialog.`;
@@ -3905,7 +3905,7 @@ while [ -f "$profile/watched" ]; do
   [ "$polls" -le ${inMilliseconds(STUCK_QUERY_SECONDS) / RECORDED_IDENTITY_POLL_MS} ] || exit 1
   /bin/sleep ${RECORDED_IDENTITY_POLL_MS / 1000}
 done
-export OK_SIGNAL_RECORDER_REPLACE_UI=${STUCK_QUERY_SECONDS}
+export PS_SIGNAL_RECORDER_REPLACE_UI=${STUCK_QUERY_SECONDS}
 exec '${recorder.path}' -s 0 "$$"`,
               ),
             ],
@@ -4051,7 +4051,7 @@ exec /bin/sleep ${STUCK_QUERY_SECONDS}`,
       } finally {
         if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
         for (const name of readdirSync(f.dir)) {
-          if (name.startsWith('ok-uninstall-result.')) {
+          if (name.startsWith('ps-uninstall-result.')) {
             rmSync(join(f.dir, name, 'watched'), { force: true });
           }
         }
@@ -4226,7 +4226,7 @@ describe.skipIf(process.platform === 'win32')(
         const f = fixture();
         const recorder = signalRecorder(f);
         const logPath = join(f.dir, 'cleanup.log');
-        const appBundlePath = join(f.dir, 'OpenKnowledge.app');
+        const appBundlePath = join(f.dir, 'Palimpsest.app');
         const profilePath = join(f.dir, 'profile-path');
         const windowModes = join(f.dir, 'window-modes');
         const script = buildDesktopUninstallResultScript(

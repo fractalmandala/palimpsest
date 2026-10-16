@@ -19,7 +19,7 @@ export interface CreateLinkedWorktreeOptions {
 }
 
 export function createLinkedWorktree(opts: CreateLinkedWorktreeOptions = {}): LinkedWorktreeHandle {
-  const prefix = opts.prefix ?? 'ok-wt-test';
+  const prefix = opts.prefix ?? 'ps-wt-test';
   const repoRoot = mkdtempSync(resolve(tmpdir(), `${prefix}-repo-`));
 
   execFileSync('git', ['init', '--initial-branch=main', repoRoot], { stdio: 'pipe' });
@@ -47,10 +47,10 @@ export function createLinkedWorktree(opts: CreateLinkedWorktreeOptions = {}): Li
   const worktreeGitdir = resolve(worktreesDir, adminName);
 
   if (opts.seedOkScaffold) {
-    const okDir = resolve(worktreePath, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    const psDir = resolve(worktreePath, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
   }
 
   return {

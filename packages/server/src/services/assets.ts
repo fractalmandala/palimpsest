@@ -19,7 +19,7 @@ import {
   INLINE_RENDERABLE_EXTENSIONS,
   isValidAttachmentFolderPath,
   normalizeAttachmentFolderPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { fileTypeFromBuffer } from 'file-type';
 import { toContentRelativePath } from '../asset-references.ts';
 import { isReservedProjectStatePath } from '../content/managed-doc-enum.ts';

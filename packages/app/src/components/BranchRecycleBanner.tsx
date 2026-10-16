@@ -10,7 +10,7 @@ export function BranchRecycleBanner() {
   const { contentRecycleNotice, dismissContentRecycleNotice } = useDocumentContext();
   const [restarting, setRestarting] = useState(false);
   const [switchExpired, setSwitchExpired] = useState(false);
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
 
   useEffect(() => {
     setSwitchExpired(false);

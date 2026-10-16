@@ -16,7 +16,7 @@ import { agentPatch, agentWriteMd, createTestServer, type TestServer } from './t
 let server: TestServer;
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-symlink-test-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-symlink-test-')));
   writeFileSync(join(contentDir, 'test-doc.md'), '', 'utf-8');
   writeFileSync(join(contentDir, 'target.md'), '# Target\n', 'utf-8');
   symlinkSync('target.md', join(contentDir, 'foo.md'));

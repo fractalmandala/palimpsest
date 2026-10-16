@@ -1,4 +1,4 @@
-import type { CatalogSkill, SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { CatalogSkill, SkillsListEntry } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import {
   buildSkillsTreePaths,
@@ -115,7 +115,7 @@ describe('detected skills', () => {
   });
 
   it("skips OK's own product skills — managing them with OK is circular", () => {
-    const r = build({ detected: [detectedSkill('open-knowledge')] });
+    const r = build({ detected: [detectedSkill('palimpsest')] });
     expect(r.detectedByPrefix.size).toBe(0);
   });
 
@@ -264,7 +264,7 @@ describe('isSkillDocActive', () => {
   });
 });
 
-const OKS = 'inkeep/open-knowledge-skills';
+const OKS = 'fractalmandala/palimpsest-skills';
 const PLUGIN_DIR = '/home/u/.claude/plugins/cache/mkt/eng/4.0.0/skills/pr';
 
 function imported(name: string, source: string, over: Partial<SkillsListEntry> = {}) {
@@ -339,11 +339,11 @@ describe('two-level provenance nesting (repo parent over pack/plugin child)', ()
 
   it('a one-skill pack beside a loose repo sibling nests the full hierarchy', () => {
     const r = build({
-      skills: [packed('note-taking', 'plain-notes'), imported('open-knowledge', OKS)],
+      skills: [packed('note-taking', 'plain-notes'), imported('palimpsest', OKS)],
       showSkillGroups: true,
     });
     expect(r.paths).toContain('PROJECT/open-knowledge-skills/plain-notes/note-taking/SKILL.md');
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/open-knowledge/SKILL.md');
+    expect(r.paths).toContain('PROJECT/open-knowledge-skills/palimpsest/SKILL.md');
     expect(r.groupByPrefix.get('PROJECT/open-knowledge-skills')?.kind).toBe('source');
     expect(r.groupByPrefix.get('PROJECT/open-knowledge-skills/plain-notes')?.kind).toBe('plugin');
   });

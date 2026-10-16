@@ -1,7 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SERVER_EXIT_LOG } from '@inkeep/open-knowledge-core';
+import { SERVER_EXIT_LOG } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { createServerExitRecorder, type ServerExitRecord } from './server-exit-record.ts';
 
@@ -14,7 +14,7 @@ afterEach(() => {
 });
 
 function makeLockDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-exit-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-exit-'));
   tmpDirs.push(dir);
   return dir;
 }
@@ -272,7 +272,7 @@ describe('createServerExitRecorder', () => {
       now: clock.now,
       logger: {
         warn: () => {
-          throw new Error("EACCES: permission denied, mkdir '/x/.ok/logs'");
+          throw new Error("EACCES: permission denied, mkdir '/x/.ps/logs'");
         },
       },
     });

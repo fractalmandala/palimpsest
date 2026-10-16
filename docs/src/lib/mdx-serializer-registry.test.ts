@@ -14,7 +14,7 @@ import { DOWNLOAD_TARGETS } from './download-targets.ts';
 import { serializeMdx } from './mdx-serializer.ts';
 import { DOCS_SERIALIZER_REGISTRY } from './mdx-serializer-registry.ts';
 
-const PAGE_URL = 'https://openknowledge.ai/docs/get-started/quickstart';
+const PAGE_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx';
 
 function serialize(source: string, pageUrl = PAGE_URL): string {
   return serializeMdx(source, { registry: DOCS_SERIALIZER_REGISTRY, pageUrl }).body;
@@ -146,7 +146,7 @@ describe('inputs the registry refuses rather than serializes wrong', () => {
 
   test('an Image becomes a markdown image, not a plain link', () => {
     expect(serialize('<Image src="/images/x.png" alt="A skill" />')).toBe(
-      '![A skill](https://openknowledge.ai/images/x.png)',
+      '![A skill](https://github.com/fractalmandala/palimpsest/images/x.png)',
     );
   });
 
@@ -251,9 +251,9 @@ describe('components whose content lives in their own module', () => {
   });
 
   test('the start paths render as absolute links', () => {
-    const md = serialize('<WhereToStart />', 'https://openknowledge.ai/docs/get-started/overview');
+    const md = serialize('<WhereToStart />', 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx');
     for (const path of PATHS) {
-      expect(md).toContain(`[${path.title}](https://openknowledge.ai${path.href})`);
+      expect(md).toContain(`[${path.title}](https://github.com/fractalmandala/palimpsest${path.href})`);
     }
   });
 
@@ -266,7 +266,7 @@ describe('components whose content lives in their own module', () => {
     const md = serialize('<McpInstall editor="Cursor" />');
     expect(md).toContain('two ways to connect Cursor');
     expect(md).toContain(
-      '](https://openknowledge.ai/docs/get-started/quickstart#ok-install-web-app)',
+      '](https://github.com/fractalmandala/palimpsest/tree/main/docs/content)',
     );
   });
 
@@ -279,7 +279,7 @@ describe('components whose content lives in their own module', () => {
   test('the verify block keeps the prompt and names the subject', () => {
     const md = serialize('<VerifyExec subject="Claude Code" />');
     expect(md).toContain('> List the first 5 documents you come across in this project.');
-    expect(md).toContain('Claude Code should call the OpenKnowledge `exec` tool');
+    expect(md).toContain('Claude Code should call the Palimpsest `exec` tool');
   });
 
   test('an editor name that reads as markup is neutralised before it lands in prose', () => {
@@ -310,8 +310,8 @@ describe('containers and visual-only demos', () => {
   });
 
   test('a card keeps the inline formatting in its description', () => {
-    expect(serialize('<Card title="CLI" href="/docs/reference/cli">Run `ok init`.</Card>')).toBe(
-      '- [CLI](https://openknowledge.ai/docs/reference/cli): Run `ok init`.',
+    expect(serialize('<Card title="CLI" href="/docs/reference/cli">Run `ps init`.</Card>')).toBe(
+      '- [CLI](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/cli.mdx): Run `ps init`.',
     );
   });
 
@@ -327,8 +327,8 @@ describe('containers and visual-only demos', () => {
       '<Cards>\n  <Card title="CLI" href="/docs/reference/cli">Command line.</Card>\n  <Card title="Config" href="/docs/reference/configuration">Settings.</Card>\n</Cards>',
     );
     expect(md).toBe(
-      '- [CLI](https://openknowledge.ai/docs/reference/cli): Command line.\n' +
-        '- [Config](https://openknowledge.ai/docs/reference/configuration): Settings.',
+      '- [CLI](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/cli.mdx): Command line.\n' +
+        '- [Config](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/configuration.mdx): Settings.',
     );
   });
 });
@@ -414,7 +414,7 @@ describe('the docs corpus through the real registry', () => {
     const embedding = pages.filter((page) => page.source.includes('<McpInstall'));
     expect(embedding.length).toBeGreaterThan(5);
     for (const page of embedding) {
-      expect(output.get(page.slug), page.slug).toContain('depending on how you run OpenKnowledge');
+      expect(output.get(page.slug), page.slug).toContain('depending on how you run Palimpsest');
     }
   });
 

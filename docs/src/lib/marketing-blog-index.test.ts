@@ -20,10 +20,10 @@ function feed(...items: FeedItem[]): string {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     '  <channel>',
-    '    <title>OpenKnowledge Blog</title>',
-    '    <link>https://openknowledge.ai/blog</link>',
-    '    <description>News, releases, and engineering notes from the OpenKnowledge team.</description>',
-    '    <atom:link href="https://openknowledge.ai/blog/rss.xml" rel="self" type="application/rss+xml" />',
+    '    <title>Palimpsest Blog</title>',
+    '    <link>https://github.com/fractalmandala/palimpsest/blog</link>',
+    '    <description>News, releases, and engineering notes from the Palimpsest team.</description>',
+    '    <atom:link href="https://github.com/fractalmandala/palimpsest/blog/rss.xml" rel="self" type="application/rss+xml" />',
     ...items.map((item) =>
       [
         '    <item>',
@@ -45,16 +45,16 @@ function feed(...items: FeedItem[]): string {
 
 const MARKDOWNLINT: FeedItem = {
   title: 'Keeping you and your agents in check with markdownlint',
-  link: 'https://openknowledge.ai/blog/markdownlint-support',
+  link: 'https://github.com/fractalmandala/palimpsest/blog/markdownlint-support',
   description:
-    "Native markdownlint support in Open Knowledge: your existing config works as-is, a GUI builds one if you don't have it, and your agents see the same rules you do.",
+    "Native markdownlint support in Palimpsest: your existing config works as-is, a GUI builds one if you don't have it, and your agents see the same rules you do.",
 };
 
 const VISIMER: FeedItem = {
   title: 'Edit Mermaid diagrams visually with Visimer',
-  link: 'https://openknowledge.ai/blog/edit-mermaid-diagrams-visually',
+  link: 'https://github.com/fractalmandala/palimpsest/blog/edit-mermaid-diagrams-visually',
   description:
-    'Edit Mermaid diagrams visually with Visimer, the open source library that powers the Mermaid editing experience in OpenKnowledge.',
+    'Edit Mermaid diagrams visually with Visimer, the open source library that powers the Mermaid editing experience in Palimpsest.',
 };
 
 const LIVE_FEED = feed(MARKDOWNLINT, VISIMER);
@@ -87,12 +87,12 @@ describe('blog posts read from the marketing zone feed', () => {
     respondWith(LIVE_FEED);
     expect(await fetchBlogPostLinks(3600)).toEqual([
       {
-        url: 'https://openknowledge.ai/blog/markdownlint-support.md',
+        url: 'https://github.com/fractalmandala/palimpsest/blog/markdownlint-support.md',
         name: 'Keeping you and your agents in check with markdownlint',
         description: MARKDOWNLINT.description,
       },
       {
-        url: 'https://openknowledge.ai/blog/edit-mermaid-diagrams-visually.md',
+        url: 'https://github.com/fractalmandala/palimpsest/blog/edit-mermaid-diagrams-visually.md',
         name: 'Edit Mermaid diagrams visually with Visimer',
         description: VISIMER.description,
       },
@@ -100,17 +100,17 @@ describe('blog posts read from the marketing zone feed', () => {
   });
 
   test('reads a title the encoder split across two CDATA sections', async () => {
-    respondWith(feed({ title: 'before ]]> after', link: 'https://openknowledge.ai/blog/a-post' }));
+    respondWith(feed({ title: 'before ]]> after', link: 'https://github.com/fractalmandala/palimpsest/blog/a-post' }));
     expect((await fetchBlogPostLinks(3600))[0].name).toBe('before ]]> after');
   });
 
   test('decodes XML entities in a link', async () => {
-    respondWith(feed({ title: 'A', link: 'https://openknowledge.ai/blog/a&amp;b' }));
-    expect((await fetchBlogPostLinks(3600))[0].url).toBe('https://openknowledge.ai/blog/a&b.md');
+    respondWith(feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/a&amp;b' }));
+    expect((await fetchBlogPostLinks(3600))[0].url).toBe('https://github.com/fractalmandala/palimpsest/blog/a&b.md');
   });
 
   test('carries no description when the feed has none to give', async () => {
-    respondWith(feed({ title: 'A', link: 'https://openknowledge.ai/blog/a-post' }));
+    respondWith(feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/a-post' }));
     expect((await fetchBlogPostLinks(3600))[0]).not.toHaveProperty('description');
   });
 
@@ -139,7 +139,7 @@ describe('blog posts read from the marketing zone feed', () => {
       feed(
         {
           title: 'How </title> and </item> survive CDATA',
-          link: 'https://openknowledge.ai/blog/closing-tags',
+          link: 'https://github.com/fractalmandala/palimpsest/blog/closing-tags',
           description: 'A summary that mentions </description>, </item> and <item> in passing.',
         },
         VISIMER,
@@ -147,12 +147,12 @@ describe('blog posts read from the marketing zone feed', () => {
     );
     expect(await fetchBlogPostLinks(3600)).toEqual([
       {
-        url: 'https://openknowledge.ai/blog/closing-tags.md',
+        url: 'https://github.com/fractalmandala/palimpsest/blog/closing-tags.md',
         name: 'How </title> and </item> survive CDATA',
         description: 'A summary that mentions </description>, </item> and <item> in passing.',
       },
       {
-        url: 'https://openknowledge.ai/blog/edit-mermaid-diagrams-visually.md',
+        url: 'https://github.com/fractalmandala/palimpsest/blog/edit-mermaid-diagrams-visually.md',
         name: VISIMER.title,
         description: VISIMER.description,
       },
@@ -162,8 +162,8 @@ describe('blog posts read from the marketing zone feed', () => {
   test('an item left unclosed ends where the next one opens, so its successor is not lost', async () => {
     respondWith(feed(MARKDOWNLINT, VISIMER).replace('</item>', ''));
     expect((await fetchBlogPostLinks(3600)).map((post) => post.url)).toEqual([
-      'https://openknowledge.ai/blog/markdownlint-support.md',
-      'https://openknowledge.ai/blog/edit-mermaid-diagrams-visually.md',
+      'https://github.com/fractalmandala/palimpsest/blog/markdownlint-support.md',
+      'https://github.com/fractalmandala/palimpsest/blog/edit-mermaid-diagrams-visually.md',
     ]);
   });
 
@@ -181,17 +181,17 @@ describe('blog posts read from the marketing zone feed', () => {
     respondWith(
       feed(
         MARKDOWNLINT,
-        { title: 'Meet the team', link: 'https://openknowledge.ai/team' },
+        { title: 'Meet the team', link: 'https://github.com/fractalmandala/palimpsest/team' },
         VISIMER,
       ),
     );
 
     expect((await fetchBlogPostLinks(3600)).map((post) => post.url)).toEqual([
-      'https://openknowledge.ai/blog/markdownlint-support.md',
-      'https://openknowledge.ai/blog/edit-mermaid-diagrams-visually.md',
+      'https://github.com/fractalmandala/palimpsest/blog/markdownlint-support.md',
+      'https://github.com/fractalmandala/palimpsest/blog/edit-mermaid-diagrams-visually.md',
     ]);
     expect(warn).toHaveBeenCalledTimes(1);
-    expect(warn.mock.calls[0]?.[0]).toContain('"https://openknowledge.ai/team" is not a post at');
+    expect(warn.mock.calls[0]?.[0]).toContain('"https://github.com/fractalmandala/palimpsest/team" is not a post at');
   });
 
   test('keeps the link out of a log line: one line, bounded, quoted', async () => {
@@ -211,7 +211,7 @@ describe('blog posts read from the marketing zone feed', () => {
       BLOG_FEED_URL,
       expect.objectContaining({ next: { revalidate: 3600 } }),
     );
-    expect(BLOG_FEED_URL).toBe('https://openknowledge.ai/blog/rss.xml');
+    expect(BLOG_FEED_URL).toBe('https://github.com/fractalmandala/palimpsest/blog/rss.xml');
   });
 
   test('gives up rather than hanging on an origin that never answers', async () => {
@@ -244,17 +244,17 @@ describe('blog posts read from the marketing zone feed', () => {
     ],
     [
       'a link outside the blog',
-      feed({ title: 'A', link: 'https://openknowledge.ai/team/someone' }),
+      feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/team/someone' }),
       'is not a post at',
     ],
     [
       'post URLs that gained a segment',
-      feed({ title: 'A', link: 'https://openknowledge.ai/blog/2026/a-post' }),
+      feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/2026/a-post' }),
       'the post URL shape changed',
     ],
     [
       'an item with no title',
-      feed({ title: '', link: 'https://openknowledge.ai/blog/a-post' }),
+      feed({ title: '', link: 'https://github.com/fractalmandala/palimpsest/blog/a-post' }),
       'no <title> or no <link>',
     ],
     [
@@ -421,7 +421,7 @@ describe('failure posture', () => {
     const error = (await settle(blogPostLinks(3600)).catch((thrown: unknown) => thrown)) as Error;
     expect(error.message).toContain(BLOG_FEED_URL);
     expect(error.message).toContain('redeploy this commit');
-    expect(error.message).toContain('OK_ALLOW_BLOGLESS_LLMS_TXT=1');
+    expect(error.message).toContain('PS_ALLOW_BLOGLESS_LLMS_TXT=1');
 
     const cause = error.cause as Error;
     expect(cause.message).toContain('after 3 attempts');
@@ -441,11 +441,11 @@ describe('failure posture', () => {
     building({ VERCEL_ENV: 'production' });
     refuseConnection();
 
-    vi.stubEnv('OK_ALLOW_BLOGLESS_LLMS_TXT', 'true');
+    vi.stubEnv('PS_ALLOW_BLOGLESS_LLMS_TXT', 'true');
     await expect(settle(blogPostLinks(3600))).rejects.toThrow('refusing to publish');
 
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    vi.stubEnv('OK_ALLOW_BLOGLESS_LLMS_TXT', '1');
+    vi.stubEnv('PS_ALLOW_BLOGLESS_LLMS_TXT', '1');
     expect(await settle(blogPostLinks(3600))).toEqual([]);
   });
 

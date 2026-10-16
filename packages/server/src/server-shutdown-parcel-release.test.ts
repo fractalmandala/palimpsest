@@ -26,7 +26,7 @@ let server: BootedServer | undefined;
 
 beforeEach(() => {
   forgetNativeSubscriptions();
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-parcel-shutdown-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-parcel-shutdown-')));
   execFileSync('git', ['init', '--quiet', '--initial-branch=main'], {
     cwd: root,
     stdio: 'ignore',

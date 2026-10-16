@@ -21,12 +21,12 @@ import { withoutTurboAgentDetection } from '../../../test-support/turbo-agent-en
 import { MANIFEST_NAME } from './build-output.mjs';
 
 const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OK_ROOT = join(PACKAGE_ROOT, '..', '..');
-const TURBO_BIN = join(OK_ROOT, 'node_modules', 'turbo', 'bin', 'turbo');
+const PS_ROOT = join(PACKAGE_ROOT, '..', '..');
+const TURBO_BIN = join(PS_ROOT, 'node_modules', 'turbo', 'bin', 'turbo');
 const CORE_MANIFEST = JSON.parse(readFileSync(join(PACKAGE_ROOT, 'package.json'), 'utf8'));
-const OK_MANIFEST = JSON.parse(readFileSync(join(OK_ROOT, 'package.json'), 'utf8'));
+const PS_MANIFEST = JSON.parse(readFileSync(join(PS_ROOT, 'package.json'), 'utf8'));
 const CORE = CORE_MANIFEST.name as string;
-const REAL_TURBO = JSON.parse(readFileSync(join(OK_ROOT, 'turbo.json'), 'utf8'));
+const REAL_TURBO = JSON.parse(readFileSync(join(PS_ROOT, 'turbo.json'), 'utf8'));
 const PRODUCER_TASK_ID = `${CORE}#build:output`;
 const COMPLETION_TASK_ID = `${CORE}#build`;
 const RUN_TIMEOUT_MS = 60_000;
@@ -85,7 +85,7 @@ function writeJson(path: string, value: unknown) {
 }
 
 function createWorkspace(): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-core-build-output-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-core-build-output-'));
   workspaces.push(root);
   const tasks: Record<string, unknown> = { build: REAL_TURBO.tasks.build };
   for (const [key, definition] of Object.entries(REAL_TURBO.tasks)) {
@@ -101,7 +101,7 @@ function createWorkspace(): string {
   writeJson(join(root, 'package.json'), {
     name: 'core-build-output-fixture',
     private: true,
-    packageManager: OK_MANIFEST.packageManager,
+    packageManager: PS_MANIFEST.packageManager,
   });
   writeFileSync(join(root, 'pnpm-workspace.yaml'), "packages:\n  - 'packages/*'\n");
   writeFileSync(
@@ -110,7 +110,7 @@ function createWorkspace(): string {
   );
   mkdirSync(join(root, 'node_modules'), { recursive: true });
   symlinkSync(
-    join(OK_ROOT, 'node_modules', 'turbo'),
+    join(PS_ROOT, 'node_modules', 'turbo'),
     join(root, 'node_modules', 'turbo'),
     'junction',
   );

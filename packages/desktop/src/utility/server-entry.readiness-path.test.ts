@@ -10,8 +10,8 @@ const PROBE_COUNT = 3;
 const SUITE_LIVENESS_BUDGET_MS = 90_000;
 const PROBE_LIVENESS_TIMEOUT_MS = Math.floor(SUITE_LIVENESS_BUDGET_MS / PROBE_COUNT);
 const TEST_LIVENESS_TIMEOUT_MS = PROBE_LIVENESS_TIMEOUT_MS + 5_000;
-const OK_PACKAGE_SPECIFIER_PREFIX = '@inkeep/open-knowledge';
-const OK_DEBUG_ENV_PREFIX = 'OK_DEBUG_';
+const PS_PACKAGE_SPECIFIER_PREFIX = '@palimpsest/cli';
+const PS_DEBUG_ENV_PREFIX = 'PS_DEBUG_';
 
 const utilityDir = fileURLToPath(new URL('.', import.meta.url));
 const probePath = join(utilityDir, 'server-entry-load-probe.test-helper.ts');
@@ -28,12 +28,12 @@ function runLoadProbe(
   entryPath: string,
   extraEnv: Record<string, string> = {},
 ): UtilityLoadProbeRecord {
-  const sandbox = mkdtempSync(join(tmpdir(), 'ok-utility-load-probe-'));
+  const sandbox = mkdtempSync(join(tmpdir(), 'ps-utility-load-probe-'));
   probeSandboxes.push(sandbox);
   const recordPath = join(sandbox, 'record.json');
   const scrubbed: Record<string, string | undefined> = {};
   for (const name of Object.keys(process.env)) {
-    if (name.startsWith(OK_DEBUG_ENV_PREFIX)) scrubbed[name] = undefined;
+    if (name.startsWith(PS_DEBUG_ENV_PREFIX)) scrubbed[name] = undefined;
   }
   const env: Record<string, string | undefined> = {
     ...process.env,
@@ -59,7 +59,7 @@ function assertProbeImportedItsEntry(record: UtilityLoadProbeRecord): void {
   if (record.entryImportFailure === null) return;
   const unresolved = record.entryImportFailure.code === 'ERR_MODULE_NOT_FOUND';
   const remedy = unresolved
-    ? ' This suite resolves @inkeep/open-knowledge, -core and -server through their production export conditions (dist), so those three packages must be built first. The desktop `test` turbo task supplies that through its `dependsOn: ["^build"]`; a bare `vitest run` in this package does not.'
+    ? ' This suite resolves @palimpsest/cli, -core and -server through their production export conditions (dist), so those three packages must be built first. The desktop `test` turbo task supplies that through its `dependsOn: ["^build"]`; a bare `vitest run` in this package does not.'
     : '';
   throw new Error(
     `the load probe could not import ${record.entryPath}: ${record.entryImportFailure.message} (code=${record.entryImportFailure.code}).${remedy}`,
@@ -86,23 +86,23 @@ function modulesLoadedBeforeParentPortListener(record: UtilityLoadProbeRecord): 
   return [...loadedEarly].sort();
 }
 
-function okPackagesLoadedBeforeParentPortListener(record: UtilityLoadProbeRecord): string[] {
+function psPackagesLoadedBeforeParentPortListener(record: UtilityLoadProbeRecord): string[] {
   return modulesLoadedBeforeParentPortListener(record).filter((entry) =>
-    entry.startsWith(OK_PACKAGE_SPECIFIER_PREFIX),
+    entry.startsWith(PS_PACKAGE_SPECIFIER_PREFIX),
   );
 }
 
 describe('utility readiness critical path: what the process evaluates before it can act on a queued `init`', () => {
   test(
-    'the probe reports a violation for a fixture that finishes an @inkeep/open-knowledge import before registering its parent-port listener',
+    'the probe reports a violation for a fixture that finishes an @palimpsest/cli import before registering its parent-port listener',
     () => {
       const record = runLoadProbe(fixturePath, {
-        OK_UTILITY_LOAD_PROBE_FIXTURE_MODE: 'import-before-listener',
+        PS_UTILITY_LOAD_PROBE_FIXTURE_MODE: 'import-before-listener',
       });
       assertProbeImportedItsEntry(record);
       expect(record.parentPortListenerRegisteredAtSeq).toEqual(expect.any(Number));
-      expect(okPackagesLoadedBeforeParentPortListener(record)).toEqual([
-        '@inkeep/open-knowledge-core/shadow-repo-layout',
+      expect(psPackagesLoadedBeforeParentPortListener(record)).toEqual([
+        '@palimpsest/core/shadow-repo-layout',
       ]);
     },
     TEST_LIVENESS_TIMEOUT_MS,
@@ -112,14 +112,14 @@ describe('utility readiness critical path: what the process evaluates before it 
     'the probe reports no violation for a fixture that registers its parent-port listener before the same import',
     () => {
       const record = runLoadProbe(fixturePath, {
-        OK_UTILITY_LOAD_PROBE_FIXTURE_MODE: 'listener-before-import',
+        PS_UTILITY_LOAD_PROBE_FIXTURE_MODE: 'listener-before-import',
       });
       assertProbeImportedItsEntry(record);
       expect(record.parentPortListenerRegisteredAtSeq).toEqual(expect.any(Number));
       expect(record.bareSpecifierResolves.map((event) => event.specifier)).toContain(
-        '@inkeep/open-knowledge-core/shadow-repo-layout',
+        '@palimpsest/core/shadow-repo-layout',
       );
-      expect(okPackagesLoadedBeforeParentPortListener(record)).toEqual([]);
+      expect(psPackagesLoadedBeforeParentPortListener(record)).toEqual([]);
     },
     TEST_LIVENESS_TIMEOUT_MS,
   );

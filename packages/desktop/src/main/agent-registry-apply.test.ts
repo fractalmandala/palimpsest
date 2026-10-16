@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import type { HostSnapshot, SurfaceState } from '@inkeep/open-knowledge-core';
+import type { HostSnapshot, SurfaceState } from '@palimpsest/core';
 import type { IpcMainInvokeEvent } from 'electron';
 import { describe, expect, test, vi } from 'vitest';
 import { EDITOR_TARGETS } from '../../../cli/src/commands/editors.ts';
@@ -189,12 +189,12 @@ function actionFor(
 }
 
 function piFixture() {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-desktop-pi-removal-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-desktop-pi-removal-')));
   const projectDir = join(root, 'project');
   const home = join(root, 'home');
   mkdirSync(projectDir);
   mkdirSync(home);
-  const bridgePath = join(projectDir, '.pi', 'extensions', 'open-knowledge.ts');
+  const bridgePath = join(projectDir, '.pi', 'extensions', 'palimpsest.ts');
   const trustPath = join(home, '.pi', 'agent', 'trust.json');
   const surfaces = makeSurfaces();
   surfaces.project.projectConfigPath = (id, cwd) =>
@@ -205,14 +205,14 @@ function piFixture() {
 }
 
 function projectSkillFixture() {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-desktop-project-skill-reopen-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-desktop-project-skill-reopen-')));
   const projectDir = join(root, 'project');
   const home = join(root, 'home');
   mkdirSync(projectDir);
   mkdirSync(home);
   const skillPaths = {
-    claude: join(projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'),
-    codex: join(projectDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md'),
+    claude: join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'),
+    codex: join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'),
   };
   const surfaces = makeSurfaces();
   surfaces.project.projectConfigPath = (id, cwd) =>
@@ -236,7 +236,7 @@ function projectSkillFixture() {
   async function reopen() {
     return checkAndRepairProjectMcpOnProjectOpen({
       projectDir,
-      executablePath: '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+      executablePath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       isPackaged: true,
       platform: 'darwin',
       env: {},
@@ -442,7 +442,7 @@ describe('applyIntents on the desktop host', () => {
         chmodSync(trustPath, 0o600);
         expect(readFileSync(trustPath, 'utf8')).toBe(before);
         expect(existsSync(bridgePath)).toBe(false);
-        expect(existsSync(join(home, '.ok', 'pi-trust'))).toBe(true);
+        expect(existsSync(join(home, '.ps', 'pi-trust'))).toBe(true);
         expect(snapshot.probes.satisfiers[PI_PROJECT_MCP]?.state).toBe('absent');
       } finally {
         if (existsSync(trustPath)) chmodSync(trustPath, 0o600);
@@ -679,9 +679,9 @@ describe('applyIntents on the desktop host', () => {
         join(fixture.projectDir, '.mcp.json'),
         JSON.stringify({
           mcpServers: {
-            'open-knowledge': {
+            'palimpsest': {
               command: '/bin/sh',
-              args: ['-l', '-c', '# ok-mcp-v1\nexit 127'],
+              args: ['-l', '-c', '# ps-mcp-v1\nexit 127'],
             },
           },
         }),

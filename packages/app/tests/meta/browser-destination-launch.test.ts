@@ -26,7 +26,7 @@ type CliRun = { exitCode: number | string | null; killed: boolean; output: strin
 const scratch: string[] = [];
 
 function scratchConfig(source: string): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-browser-tier-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-browser-tier-'));
   scratch.push(dir);
   const config = join(dir, 'vitest.browser.config.mts');
   writeFileSync(config, source);

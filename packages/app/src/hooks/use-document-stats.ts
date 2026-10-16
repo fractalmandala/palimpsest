@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import { useEffect, useState } from 'react';
 import {
   computeBodyStats,

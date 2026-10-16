@@ -68,7 +68,7 @@ function EntryEffectProbe({ docName, testId }: { docName: string; testId: string
 function signalSyncStatus() {
   act(() => {
     window.dispatchEvent(
-      new CustomEvent('open-knowledge:documents-changed', {
+      new CustomEvent('palimpsest:documents-changed', {
         detail: { channels: ['sync-status'] },
       }),
     );
@@ -235,7 +235,7 @@ describe('ConflictsProvider', () => {
 
     act(() => {
       window.dispatchEvent(
-        new CustomEvent('open-knowledge:documents-changed', {
+        new CustomEvent('palimpsest:documents-changed', {
           detail: { channels: ['files'] },
         }),
       );

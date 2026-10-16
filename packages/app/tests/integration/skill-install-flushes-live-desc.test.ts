@@ -17,7 +17,7 @@ describe('skill install flushes the live SKILL.md before validating (PRD-7447)',
   const skillDocName = `${skillDirRel}/SKILL`;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-skill-flush-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-skill-flush-'));
     mkdirSync(join(contentDir, skillDirRel), { recursive: true });
     writeFileSync(
       join(contentDir, skillDirRel, 'SKILL.md'),

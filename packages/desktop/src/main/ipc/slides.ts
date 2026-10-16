@@ -1,4 +1,4 @@
-import type { OkSlidesOpenResult, OkSlidesStatusResult } from '../../shared/ipc-channels.ts';
+import type { PsSlidesOpenResult, PsSlidesStatusResult } from '../../shared/ipc-channels.ts';
 import type { SlidesDeckRegistry, SlidesDeckWindow } from '../slides-registry.ts';
 import type { SlidesWindowOutcome } from '../slides-window.ts';
 import { resolveSlidev, type SlidevResolveProbes } from '../slidev-resolve.ts';
@@ -7,7 +7,7 @@ import { type SlidevProcess, type StartSlidevDeps, startSlidevServer } from '../
 export async function handleSlidesStatus(
   projectRoot: string | undefined,
   probes: SlidevResolveProbes,
-): Promise<OkSlidesStatusResult> {
+): Promise<PsSlidesStatusResult> {
   const resolution = await resolveSlidev(projectRoot, probes);
   return resolution.available
     ? { kind: 'status', available: true, source: resolution.source }
@@ -26,13 +26,13 @@ export interface SlidesOpenDeps {
     process: SlidevProcess;
   }): Promise<SlidesWindowOutcome>;
   focusWindow(window: SlidesDeckWindow): void;
-  recordOpenAttempt(result: OkSlidesOpenResult): void;
+  recordOpenAttempt(result: PsSlidesOpenResult): void;
 }
 
 export async function handleSlidesOpen(
   docPath: string,
   deps: SlidesOpenDeps,
-): Promise<OkSlidesOpenResult> {
+): Promise<PsSlidesOpenResult> {
   const existing = deps.registry.get(docPath);
   if (existing !== undefined) {
     deps.focusWindow(existing.window);
@@ -41,13 +41,13 @@ export async function handleSlidesOpen(
   const inFlight = deps.registry.getOpenInFlight(docPath);
   if (inFlight !== undefined) return inFlight;
 
-  const attempt = (async (): Promise<OkSlidesOpenResult> => {
+  const attempt = (async (): Promise<PsSlidesOpenResult> => {
     const started = await startSlidevServer({
       ...deps.startDeps,
       onSpawned: (process) => deps.registry.trackSpawned(docPath, process),
     });
     if (!started.ok) {
-      const result: OkSlidesOpenResult = { kind: 'open', ok: false, reason: started.reason };
+      const result: PsSlidesOpenResult = { kind: 'open', ok: false, reason: started.reason };
       deps.recordOpenAttempt(result);
       return result;
     }
@@ -62,7 +62,7 @@ export async function handleSlidesOpen(
       void started.process.signal('SIGTERM');
       throw err;
     }
-    const result: OkSlidesOpenResult = opened.shown
+    const result: PsSlidesOpenResult = opened.shown
       ? { kind: 'open', ok: true }
       : { kind: 'open', ok: false, reason: opened.reason };
     if (!opened.shown && opened.reason === 'cancelled') return result;
@@ -78,7 +78,7 @@ export async function handleSlidesOpen(
 }
 
 export function shouldLogSlidesOpenError(
-  result: OkSlidesOpenResult,
-): result is Extract<OkSlidesOpenResult, { ok: false }> {
+  result: PsSlidesOpenResult,
+): result is Extract<PsSlidesOpenResult, { ok: false }> {
   return !result.ok && result.reason !== 'cancelled';
 }

@@ -1,8 +1,8 @@
-import type { FrontmatterType } from '@inkeep/open-knowledge-core/frontmatter/schema';
+import type { FrontmatterType } from '@palimpsest/core/frontmatter/schema';
 import {
   type LinterConfig,
   selectGoverningFrontmatterSchemas,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 
 export interface SchemaField {
   type: FrontmatterType;

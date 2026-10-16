@@ -10,7 +10,7 @@ let tmpRoot: string;
 let fixtureRoot: string;
 
 beforeEach(() => {
-  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-preview-unbounded-'));
+  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-preview-unbounded-'));
   fixtureRoot = realpathSync(tmpRoot);
 });
 

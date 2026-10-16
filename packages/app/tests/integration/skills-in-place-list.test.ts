@@ -27,7 +27,7 @@ describe('in-place skills in /api/skills + /api/skills/installed', () => {
   let server: TestServer;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-inplace-list-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-inplace-list-'));
     writeSkill(contentDir, '.claude/skills/foo', '# Same');
     writeSkill(contentDir, '.codex/skills/foo', '# Same');
     writeSkill(contentDir, '.codex/skills/qux', '# Qux');
@@ -83,9 +83,9 @@ describe('in-place skills in /api/skills + /api/skills/installed', () => {
 
   test('an in-place imported skill carries origin + Modified off the lockfile (R14)', async () => {
     const { writeFileSync: wf, mkdirSync: mk } = await import('node:fs');
-    mk(join(contentDir, '.ok'), { recursive: true });
+    mk(join(contentDir, '.ps'), { recursive: true });
     wf(
-      join(contentDir, '.ok', 'skills-lock.json'),
+      join(contentDir, '.ps', 'skills-lock.json'),
       JSON.stringify({
         schema: 1,
         skills: {
@@ -115,8 +115,8 @@ describe('in-place skills in /api/skills + /api/skills/installed', () => {
   });
 
   test("CHOKIDAR backend: a host dir's FIRST skill is admitted without a restart", async () => {
-    const gContent = mkdtempSync(join(tmpdir(), 'ok-chokidar-first-'));
-    process.env.OK_FILE_WATCHER_BACKEND = 'chokidar';
+    const gContent = mkdtempSync(join(tmpdir(), 'ps-chokidar-first-'));
+    process.env.PS_FILE_WATCHER_BACKEND = 'chokidar';
     let chokidarServer: TestServer | undefined;
     try {
       mkdirSync(join(gContent, '.codex/skills'), { recursive: true });
@@ -133,7 +133,7 @@ describe('in-place skills in /api/skills + /api/skills/installed', () => {
         }, 20000),
       ).resolves.toBeUndefined();
     } finally {
-      delete process.env.OK_FILE_WATCHER_BACKEND;
+      delete process.env.PS_FILE_WATCHER_BACKEND;
       await chokidarServer?.cleanup();
       rmSync(gContent, { recursive: true, force: true });
     }
@@ -177,7 +177,7 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
   let server: TestServer;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-inplace-install-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-inplace-install-'));
     writeSkill(contentDir, '.claude/skills/fanout', '# Canonical');
     server = await createTestServer({ contentDir });
   });
@@ -293,9 +293,9 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
 
   test('add to an ALIAS-covered viewer whose pool LACKS the skill materializes + installs (BUG-5)', async () => {
     const { symlinkSync, lstatSync, realpathSync } = await import('node:fs');
-    writeSkill(contentDir, '.ok/skills/legacy-resident', '# Old pool resident');
+    writeSkill(contentDir, '.ps/skills/legacy-resident', '# Old pool resident');
     mkdirSync(join(contentDir, '.codex'), { recursive: true });
-    symlinkSync(join(contentDir, '.ok/skills'), join(contentDir, '.codex/skills'), 'dir');
+    symlinkSync(join(contentDir, '.ps/skills'), join(contentDir, '.codex/skills'), 'dir');
 
     const res = await fetch(`${base()}/api/skill/install`, {
       method: 'POST',
@@ -309,7 +309,7 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
     expect(lstatSync(codexRoot).isSymbolicLink()).toBe(false);
     expect(existsSync(join(codexRoot, 'fanout', 'SKILL.md'))).toBe(true);
     expect(realpathSync(join(codexRoot, 'legacy-resident'))).toBe(
-      realpathSync(join(contentDir, '.ok/skills/legacy-resident')),
+      realpathSync(join(contentDir, '.ps/skills/legacy-resident')),
     );
   });
 
@@ -360,10 +360,10 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
   });
 
   test('DELETE is total: a legacy store resident dies with the native canonical', async () => {
-    const gContent = mkdtempSync(join(tmpdir(), 'ok-total-del-gc-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-total-del-home-'));
+    const gContent = mkdtempSync(join(tmpdir(), 'ps-total-del-gc-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-total-del-home-'));
     writeSkill(home, '.claude/skills/zombie', '# Native');
-    writeSkill(home, '.ok/skills/zombie', '# Store resident');
+    writeSkill(home, '.ps/skills/zombie', '# Store resident');
     const gServer = await createTestServer({ contentDir: gContent, configHomedirOverride: home });
     try {
       const del = await fetch(
@@ -372,7 +372,7 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
       );
       expect(del.status).toBe(200);
       expect(existsSync(join(home, '.claude/skills/zombie'))).toBe(false);
-      expect(existsSync(join(home, '.ok/skills/zombie'))).toBe(false);
+      expect(existsSync(join(home, '.ps/skills/zombie'))).toBe(false);
     } finally {
       await gServer.cleanup();
       rmSync(gContent, { recursive: true, force: true });
@@ -381,8 +381,8 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
   });
 
   test('ADDITIVE works at GLOBAL scope against the user home', async () => {
-    const gContent = mkdtempSync(join(tmpdir(), 'ok-additive-gc-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-additive-ghome-'));
+    const gContent = mkdtempSync(join(tmpdir(), 'ps-additive-gc-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-additive-ghome-'));
     writeSkill(home, '.claude/skills/globby', '# Native global');
     const gServer = await createTestServer({
       contentDir: gContent,
@@ -417,8 +417,8 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
   });
 
   test('global omitted targets project only into host roots that already exist', async () => {
-    const gContent = mkdtempSync(join(tmpdir(), 'ok-global-default-targets-content-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-global-default-targets-home-'));
+    const gContent = mkdtempSync(join(tmpdir(), 'ps-global-default-targets-content-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-global-default-targets-home-'));
     writeSkill(home, '.codex/skills/globby', '# Native global');
     mkdirSync(join(home, '.cursor'), { recursive: true });
     const gServer = await createTestServer({
@@ -447,8 +447,8 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
   });
 
   test('global explicit targets may create a host root that does not exist yet', async () => {
-    const gContent = mkdtempSync(join(tmpdir(), 'ok-global-explicit-target-content-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-global-explicit-target-home-'));
+    const gContent = mkdtempSync(join(tmpdir(), 'ps-global-explicit-target-content-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-global-explicit-target-home-'));
     writeSkill(home, '.codex/skills/globby', '# Native global');
     const gServer = await createTestServer({
       contentDir: gContent,
@@ -505,7 +505,7 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
     const res = await fetch(`${base()}/api/skill/install`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scope: 'project', name: 'fanout', add: ['.ok/local'] }),
+      body: JSON.stringify({ scope: 'project', name: 'fanout', add: ['.ps/local'] }),
     });
     expect(res.status).toBe(200);
     const body = (await res.json()) as { warningCodes: string[] };
@@ -702,7 +702,7 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
 
   test('setSource promotes a STORE-backed skill to the clicked host', async () => {
     const { mkdirSync, writeFileSync: wf, lstatSync } = await import('node:fs');
-    const store = join(contentDir, '.ok/skills/storey');
+    const store = join(contentDir, '.ps/skills/storey');
     mkdirSync(store, { recursive: true });
     wf(join(store, 'SKILL.md'), '---\nname: storey\ndescription: Use when testing.\n---\n# S');
     const res = await fetch(`${base()}/api/skill/install`, {
@@ -731,7 +731,7 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
           body: JSON.stringify({
             name: 'fanout',
             scope: 'project',
-            place: { dir: '.ok/skills', mode: 'copy' },
+            place: { dir: '.ps/skills', mode: 'copy' },
           }),
         })
       ).status,
@@ -739,20 +739,20 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
     const res = await fetch(`${base()}/api/skill/install`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'fanout', scope: 'project', setSource: '.ok/skills' }),
+      body: JSON.stringify({ name: 'fanout', scope: 'project', setSource: '.ps/skills' }),
     });
     expect(res.status).toBe(200);
     const body = (await res.json()) as { hosts: string[]; sourceMovedTo?: string };
-    expect(body.sourceMovedTo).toBe('.ok/skills/fanout');
-    const okDir = join(contentDir, '.ok/skills/fanout');
-    expect(lstatSync(okDir).isDirectory()).toBe(true);
-    expect(lstatSync(okDir).isSymbolicLink()).toBe(false);
+    expect(body.sourceMovedTo).toBe('.ps/skills/fanout');
+    const psDir = join(contentDir, '.ps/skills/fanout');
+    expect(lstatSync(psDir).isDirectory()).toBe(true);
+    expect(lstatSync(psDir).isSymbolicLink()).toBe(false);
     expect(existsSync(join(contentDir, '.claude/skills/fanout/SKILL.md'))).toBe(true);
-    expect(body.hosts[0]).toBe('.ok/skills');
+    expect(body.hosts[0]).toBe('.ps/skills');
     const list = (await (await fetch(`${base()}/api/skills?scope=project`)).json()) as {
       skills: Array<{ name: string; path: string }>;
     };
-    expect(list.skills.find((s) => s.name === 'fanout')?.path).toBe('.ok/skills/fanout/SKILL.md');
+    expect(list.skills.find((s) => s.name === 'fanout')?.path).toBe('.ps/skills/fanout/SKILL.md');
 
     const flip = await fetch(`${base()}/api/skill/install`, {
       method: 'POST',
@@ -767,9 +767,9 @@ describe('in-place skill install fan-out (R13 inversion)', () => {
     expect(flip.status).toBe(200);
     const flipBody = (await flip.json()) as { hosts: string[]; sourceMovedTo?: string };
     expect(flipBody.sourceMovedTo).toBeUndefined();
-    expect(flipBody.hosts[0]).toBe('.ok/skills');
-    expect(lstatSync(okDir).isDirectory()).toBe(true);
-    expect(lstatSync(okDir).isSymbolicLink()).toBe(false);
+    expect(flipBody.hosts[0]).toBe('.ps/skills');
+    expect(lstatSync(psDir).isDirectory()).toBe(true);
+    expect(lstatSync(psDir).isSymbolicLink()).toBe(false);
   });
 
   test('drift is PASSIVE disclosure: external rewrites are reported; an explicit re-flip wins', async () => {
@@ -1083,8 +1083,8 @@ describe('GLOBAL in-place skills (R12) — native user-dir skills are first-clas
   let server: TestServer;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-inplace-glist-'));
-    tmpHome = mkdtempSync(join(tmpdir(), 'ok-inplace-ghome-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-inplace-glist-'));
+    tmpHome = mkdtempSync(join(tmpdir(), 'ps-inplace-ghome-'));
     writeSkill(tmpHome, '.claude/skills/globby', '# Native global');
     server = await createTestServer({ contentDir, configHomedirOverride: tmpHome });
   });
@@ -1129,15 +1129,15 @@ describe('GLOBAL provenance + reimport (store retirement, part 2)', () => {
   let server: TestServer;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-greimport-c-'));
-    tmpHome = mkdtempSync(join(tmpdir(), 'ok-greimport-h-'));
-    upstreamDir = mkdtempSync(join(tmpdir(), 'ok-greimport-up-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-greimport-c-'));
+    tmpHome = mkdtempSync(join(tmpdir(), 'ps-greimport-h-'));
+    upstreamDir = mkdtempSync(join(tmpdir(), 'ps-greimport-up-'));
     writeSkill(tmpHome, '.claude/skills/glosk', '# Seeded v1');
     writeSkill(upstreamDir, 'glosk', '# Upstream v2 — changed');
     const { mkdirSync: mkd } = await import('node:fs');
-    mkd(join(tmpHome, '.ok'), { recursive: true });
+    mkd(join(tmpHome, '.ps'), { recursive: true });
     writeFileSync(
-      join(tmpHome, '.ok', 'skills-lock.json'),
+      join(tmpHome, '.ps', 'skills-lock.json'),
       JSON.stringify({
         schema: 1,
         skills: {
@@ -1160,7 +1160,7 @@ describe('GLOBAL provenance + reimport (store retirement, part 2)', () => {
 
   const base = () => `http://127.0.0.1:${server.port}`;
 
-  test('global entries surface origin from ~/.ok/skills-lock.json', async () => {
+  test('global entries surface origin from ~/.ps/skills-lock.json', async () => {
     const list = (await (await fetch(`${base()}/api/skills`)).json()) as {
       skills: Array<{ name: string; scope: string; origin?: { source: string } }>;
     };
@@ -1181,7 +1181,7 @@ describe('GLOBAL provenance + reimport (store retirement, part 2)', () => {
     expect(rf(join(tmpHome, '.claude/skills/glosk/SKILL.md'), 'utf-8')).toContain(
       'Upstream v2 — changed',
     );
-    const lock = JSON.parse(rf(join(tmpHome, '.ok', 'skills-lock.json'), 'utf-8')) as {
+    const lock = JSON.parse(rf(join(tmpHome, '.ps', 'skills-lock.json'), 'utf-8')) as {
       skills: Record<string, { contentHash: string }>;
     };
     expect(lock.skills.glosk?.contentHash).not.toBe('stale-hash-forces-update');
@@ -1193,7 +1193,7 @@ describe('folder-level verbs via PUT /api/skill-targets (slice 2)', () => {
   let server: TestServer;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-folder-verbs-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-folder-verbs-'));
     writeSkill(contentDir, '.agents/skills/shared', '# Shared');
     writeSkill(contentDir, '.cursor/skills/own-only', '# Mine');
     server = await createTestServer({ contentDir });
@@ -1428,7 +1428,7 @@ describe('outsideProject stamp on /api/skills/installed', () => {
   });
 
   test('does NOT flag a project skill in the user own checkout under content.dir', async () => {
-    const projectRoot = mkdtempSync(join(tmpdir(), 'ok-outside-proj-'));
+    const projectRoot = mkdtempSync(join(tmpdir(), 'ps-outside-proj-'));
     trash.push(projectRoot);
     const docsDir = join(projectRoot, 'docs');
     mkdirSync(docsDir, { recursive: true });
@@ -1442,7 +1442,7 @@ describe('outsideProject stamp on /api/skills/installed', () => {
   });
 
   test('flags a project skill that lives in the parent checkout of a linked worktree', async () => {
-    const wt = createLinkedWorktree({ prefix: 'ok-outside-wt', seedOkScaffold: true });
+    const wt = createLinkedWorktree({ prefix: 'ps-outside-wt', seedOkScaffold: true });
     trash.push(wt.repoRoot, wt.worktreePath);
     writeSkill(wt.repoRoot, '.claude/skills/fromparent', '# From the parent checkout');
 
@@ -1459,7 +1459,7 @@ describe('repo-declared plugin identity on /api/skills (no harness registry)', (
   let server: TestServer;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-repo-plugin-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-repo-plugin-'));
     mkdirSync(join(contentDir, '.claude-plugin'), { recursive: true });
     writeFileSync(
       join(contentDir, '.claude-plugin', 'marketplace.json'),
@@ -1530,10 +1530,10 @@ describe('hub activation computed server-side', () => {
   };
 
   test('the hub is NOT a project folder row when nothing on the machine reads it', async () => {
-    const projectRoot = mkdtempSync(join(tmpdir(), 'ok-hub-none-'));
+    const projectRoot = mkdtempSync(join(tmpdir(), 'ps-hub-none-'));
     trash.push(projectRoot);
     writeSkill(projectRoot, '.claude/skills/x', '# X');
-    const skillsHome = mkdtempSync(join(tmpdir(), 'ok-hub-home-'));
+    const skillsHome = mkdtempSync(join(tmpdir(), 'ps-hub-home-'));
     trash.push(skillsHome);
 
     server = await createTestServer({ contentDir: projectRoot, skillsHome });
@@ -1543,10 +1543,10 @@ describe('hub activation computed server-side', () => {
   });
 
   test('an existing .agents makes it a project folder row', async () => {
-    const projectRoot = mkdtempSync(join(tmpdir(), 'ok-hub-adopted-'));
+    const projectRoot = mkdtempSync(join(tmpdir(), 'ps-hub-adopted-'));
     trash.push(projectRoot);
     writeSkill(projectRoot, '.agents/skills/shared', '# Shared');
-    const skillsHome = mkdtempSync(join(tmpdir(), 'ok-hub-home2-'));
+    const skillsHome = mkdtempSync(join(tmpdir(), 'ps-hub-home2-'));
     trash.push(skillsHome);
 
     server = await createTestServer({ contentDir: projectRoot, skillsHome });
@@ -1556,13 +1556,13 @@ describe('hub activation computed server-side', () => {
   });
 
   test('hubOffered is computed against projectDir, not contentDir', async () => {
-    const projectRoot = mkdtempSync(join(tmpdir(), 'ok-hub-base-'));
+    const projectRoot = mkdtempSync(join(tmpdir(), 'ps-hub-base-'));
     trash.push(projectRoot);
     const docsDir = join(projectRoot, 'docs');
     mkdirSync(docsDir, { recursive: true });
     writeSkill(docsDir, '.claude/skills/indocs', '# In docs');
     mkdirSync(join(projectRoot, '.agents', 'skills'), { recursive: true });
-    const skillsHome = mkdtempSync(join(tmpdir(), 'ok-hub-home3-'));
+    const skillsHome = mkdtempSync(join(tmpdir(), 'ps-hub-home3-'));
     trash.push(skillsHome);
 
     server = await createTestServer({ contentDir: docsDir, projectDir: projectRoot, skillsHome });

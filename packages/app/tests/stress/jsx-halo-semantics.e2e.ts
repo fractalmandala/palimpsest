@@ -93,7 +93,7 @@ test('AC25: grip-click on a Callout sets data-selected=true and the halo paints 
   await callout.waitFor({ state: 'visible' });
   await callout.hover();
 
-  const grip = page.locator('.ok-drag-grip').first();
+  const grip = page.locator('.ps-drag-grip').first();
   await expect(grip).toBeVisible({ timeout: 5_000 });
   await grip.click();
 
@@ -170,7 +170,7 @@ test('AC27: SelectionAnnouncer aria-live updates through TextSelection-inside �
   await expect(liveRegion).toContainText('Outside any block', { timeout: 2_000 });
 
   await callout.hover();
-  const grip = page.locator('.ok-drag-grip').first();
+  const grip = page.locator('.ps-drag-grip').first();
   await expect(grip).toBeVisible({ timeout: 5_000 });
   await grip.click();
   await expect(callout).toHaveAttribute('data-selected', 'true', { timeout: 2_000 });
@@ -186,7 +186,7 @@ test('AC30: NodeSelect → gear → drift → Esc — halo re-paints after FR16 
   await callout.waitFor({ state: 'visible' });
 
   await callout.hover();
-  const grip = page.locator('.ok-drag-grip').first();
+  const grip = page.locator('.ps-drag-grip').first();
   await expect(grip).toBeVisible({ timeout: 5_000 });
   await grip.click();
   await expect(callout).toHaveAttribute('data-selected', 'true', { timeout: 2_000 });

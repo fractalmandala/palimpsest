@@ -15,13 +15,13 @@ import langTsx from '@shikijs/langs/tsx';
 import langYaml from '@shikijs/langs/yaml';
 import { createHighlighterCore, type HighlighterCore, type TokensResult } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
-import { OK_SYNTAX_THEME_NAME, okSyntaxTheme } from '@/lib/ok-syntax-theme';
+import { PS_SYNTAX_THEME_NAME, psSyntaxTheme } from '@/lib/ps-syntax-theme';
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
 
 function getHighlighter(): Promise<HighlighterCore> {
   highlighterPromise ??= createHighlighterCore({
-    themes: [okSyntaxTheme],
+    themes: [psSyntaxTheme],
     langs: [
       langCss,
       langDiff,
@@ -50,5 +50,5 @@ function getHighlighter(): Promise<HighlighterCore> {
 export async function tokenize(code: string, language: string): Promise<TokensResult> {
   const highlighter = await getHighlighter();
   const resolved = highlighter.getLoadedLanguages().includes(language) ? language : 'text';
-  return highlighter.codeToTokens(code, { lang: resolved, theme: OK_SYNTAX_THEME_NAME });
+  return highlighter.codeToTokens(code, { lang: resolved, theme: PS_SYNTAX_THEME_NAME });
 }

@@ -280,7 +280,7 @@ describe('restart lifecycle (corrected: no testReset truncation)', () => {
   }, 90_000);
 
   test('RESTART-CRASH: a flushed edge run survives a crash-simulated fast restart', async () => {
-    const contentDir = makeTempDir('ok-restartable-');
+    const contentDir = makeTempDir('ps-restartable-');
     writeFileSync(join(contentDir, 'test-doc.md'), '', 'utf8');
     let restartable = await createRestartableServer({ contentDir, keepContentDir: true });
     try {

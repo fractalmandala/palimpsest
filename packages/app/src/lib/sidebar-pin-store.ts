@@ -1,7 +1,7 @@
 import type { Partition, SidebarSide, SidebarState } from './sidebar-partition.ts';
 import { smartDefault } from './sidebar-partition.ts';
 
-export const SIDEBAR_PINS_KEY = 'ok-sidebar-pins-v2';
+export const SIDEBAR_PINS_KEY = 'ps-sidebar-pins-v2';
 
 type PartitionSlots = Partial<Record<Partition, SidebarState>>;
 

@@ -2,7 +2,7 @@ export const ALLOWED_SCHEMES: ReadonlySet<string> = new Set([
   'https:',
   'http:',
   'mailto:',
-  'openknowledge:',
+  'palimpsest:',
 
   /**
    * Claude Desktop unified app. OK emits `claude://<mode>/new?folder=<enc>` (doc-scoped) and

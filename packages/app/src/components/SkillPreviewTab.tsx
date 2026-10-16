@@ -1,10 +1,10 @@
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import type {
   PluginBundleMetadata,
   PluginSourceMetadata,
   SkillDetail,
-} from '@inkeep/open-knowledge-core/skills-catalog/schema';
-import { skillsShSkillLinks } from '@inkeep/open-knowledge-core/skills-catalog/source-fields';
+} from '@palimpsest/core/skills-catalog/schema';
+import { skillsShSkillLinks } from '@palimpsest/core/skills-catalog/source-fields';
 import { Trans } from '@lingui/react/macro';
 import { ArrowUpRightIcon, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -203,7 +203,7 @@ export function SkillPreviewTab({ flavor, source, name, subtitle, level, path }:
     </Trans>
   ) : builtin ? (
     <Trans>
-      This is a preview of {boldName} — a built-in skill shipped with Open Knowledge. It's
+      This is a preview of {boldName} — a built-in skill shipped with Palimpsest. It's
       read-only.
     </Trans>
   ) : pluginInfo ? (

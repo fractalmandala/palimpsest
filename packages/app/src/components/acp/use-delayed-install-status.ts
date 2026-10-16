@@ -1,4 +1,4 @@
-import type { ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { useEffect, useRef, useState } from 'react';
 
 const INSTALLING_SHOW_DELAY_MS = 200;

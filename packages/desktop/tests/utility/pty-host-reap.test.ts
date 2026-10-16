@@ -2,7 +2,7 @@ import { spawn as nodeSpawn } from 'node:child_process';
 import { once } from 'node:events';
 import { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
-import { isProcessAlive } from '@inkeep/open-knowledge-server';
+import { isProcessAlive } from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import { pid1Reaps } from '../../../../test-support/capabilities.test-helper.ts';
 

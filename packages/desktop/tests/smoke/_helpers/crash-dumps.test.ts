@@ -44,15 +44,15 @@ const PARCEL_WATCHER_ADDON =
 const TERMINAL_HOST: AppProcess = {
   pid: 5678,
   type: 'Utility',
-  serviceName: 'OpenKnowledge Terminal Host 1',
-  name: 'OpenKnowledge Terminal Host 1',
+  serviceName: 'Palimpsest Terminal Host 1',
+  name: 'Palimpsest Terminal Host 1',
   creationTime: QUIT_REQUESTED_AT_MS - 5_300,
 };
 const PROJECT_SERVER: AppProcess = {
   pid: 4321,
   type: 'Utility',
-  serviceName: 'OpenKnowledge Project Server 1',
-  name: 'OpenKnowledge Project Server 1',
+  serviceName: 'Palimpsest Project Server 1',
+  name: 'Palimpsest Project Server 1',
   creationTime: QUIT_REQUESTED_AT_MS - 18_000,
 };
 const OBSERVATION: QuitObservation = {
@@ -74,7 +74,7 @@ interface CrashpadFixture {
 }
 
 function crashpadFixture(executable: (bundleRoot: string) => string): CrashpadFixture {
-  const root = mkdtempSync(join(tmpdir(), 'ok-crash-dumps-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-crash-dumps-'));
   tmpDirs.push(root);
   const crashDumps = join(root, 'electron-userdata', 'Crashpad');
   mkdirSync(crashDumps, { recursive: true });
@@ -175,7 +175,7 @@ describe('readCrashDumpFacts', () => {
     const path = fixture.writeDump(
       'reports/annotations.dmp',
       buildMinidump(['C:\\app\\electron.exe'], {
-        annotations: { _productName: 'OpenKnowledge', _version: '0.77.9' },
+        annotations: { _productName: 'Palimpsest', _version: '0.77.9' },
         annotationObjects: [
           { ignored_binary: 'x', first: 'kept' },
           { process_type: 'utility', 'switch-1': '--type=utility' },
@@ -186,7 +186,7 @@ describe('readCrashDumpFacts', () => {
     );
 
     expect(readCrashDumpFacts(path).annotations).toEqual([
-      { key: '_productName', value: 'OpenKnowledge', source: 'simple' },
+      { key: '_productName', value: 'Palimpsest', source: 'simple' },
       { key: '_version', value: '0.77.9', source: 'simple' },
       { key: 'first', value: 'kept', source: 'module' },
       { key: 'process_type', value: 'utility', source: 'module' },
@@ -240,11 +240,11 @@ describe('processRoleOf', () => {
     ['the pnpm development layout', PNPM_CONPTY_ADDON],
     [
       'the packaged Windows layout',
-      'C:\\Users\\me\\AppData\\Local\\Programs\\OpenKnowledge\\resources\\app.asar.unpacked\\node_modules\\node-pty\\prebuilds\\win32-x64\\conpty.node',
+      'C:\\Users\\me\\AppData\\Local\\Programs\\Palimpsest\\resources\\app.asar.unpacked\\node_modules\\node-pty\\prebuilds\\win32-x64\\conpty.node',
     ],
     [
       'a macOS build of the addon',
-      '/Applications/OpenKnowledge.app/Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-arm64/pty.node',
+      '/Applications/Palimpsest.app/Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-arm64/pty.node',
     ],
   ])('a process with node-pty’s terminal addon from %s is the pty-host', (_layout, addon) => {
     const fixture = windowsFixture();
@@ -318,7 +318,7 @@ describe('crashDumpVerdict names the process a clean quit crashed', () => {
     expect(verdict.crashes).toHaveLength(1);
     expect(verdict.headline).toBe(
       'the quit left 1 crash dump(s) from the app; first: ' +
-        'pid 5678 Utility "OpenKnowledge Terminal Host 1"; pty-host (node-pty terminal addon loaded); ' +
+        'pid 5678 Utility "Palimpsest Terminal Host 1"; pty-host (node-pty terminal addon loaded); ' +
         'exception 0xC0000005 EXCEPTION_ACCESS_VIOLATION at 0x7FFA10009ABC in ntdll.dll; ' +
         'written 463 ms after quit was requested',
     );
@@ -420,7 +420,7 @@ describe('crashDumpsSince decides which dumps count against the quit', () => {
 
   test('a macOS dump written without crashing does not count; one from a crash does', () => {
     const fixture = crashpadFixture((bundleRoot) =>
-      join(bundleRoot, 'OpenKnowledge.app', 'Contents', 'MacOS', 'OpenKnowledge'),
+      join(bundleRoot, 'Palimpsest.app', 'Contents', 'MacOS', 'Palimpsest'),
     );
     const watch = fixture.watch('darwin');
     fixture.writeDump(
@@ -483,7 +483,7 @@ describe('collectCrashDumps', () => {
   }
 
   function verdictOutputDir(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-crash-verdicts-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-crash-verdicts-'));
     tmpDirs.push(dir);
     return dir;
   }

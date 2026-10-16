@@ -271,7 +271,7 @@ describe('AlertDialog surface classes', () => {
   });
 
   test('restores the title-bar drag band, between the overlay and the dialog', () => {
-    vi.stubGlobal('okDesktop', {});
+    vi.stubGlobal('psDesktop', {});
     try {
       renderAlert();
 
@@ -294,7 +294,7 @@ describe('AlertDialog surface classes', () => {
   });
 
   test('clamps the dialog clear of the band on the desktop host', () => {
-    vi.stubGlobal('okDesktop', {});
+    vi.stubGlobal('psDesktop', {});
     try {
       renderAlert();
 

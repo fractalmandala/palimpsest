@@ -24,7 +24,7 @@ function writeTree(root, files) {
 }
 
 function packResources({ asarFiles, diskFiles }) {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-packaged-bundle-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-packaged-bundle-'));
   tempDirs.push(dir);
   const resources = join(dir, 'Resources');
   mkdirSync(resources, { recursive: true });
@@ -33,20 +33,20 @@ function packResources({ asarFiles, diskFiles }) {
   return resources;
 }
 
-const LIBRARY_NATIVE = 'app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/native';
+const LIBRARY_NATIVE = 'app.asar.unpacked/node_modules/@palimpsest/cli/dist/native';
 const SOUND_ASAR = [
   'package.json',
   'out/main/index.js',
-  'node_modules/@inkeep/open-knowledge-server/dist/index.mjs',
-  'node_modules/@inkeep/open-knowledge-core/dist/index.mjs',
+  'node_modules/@palimpsest/server/dist/index.mjs',
+  'node_modules/@palimpsest/core/dist/index.mjs',
 ];
 const SOUND_DISK = [
   'app/index.html',
   'cli/dist/cli.mjs',
   'cli/dist/native/index.js',
   'cli/dist/native/native-config.linux-x64-gnu.node',
-  'cli/node_modules/@inkeep/open-knowledge-native-config/index.js',
-  'app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/index.mjs',
+  'cli/node_modules/@palimpsest/native-config/index.js',
+  'app.asar.unpacked/node_modules/@palimpsest/cli/dist/index.mjs',
   `${LIBRARY_NATIVE}/index.js`,
   `${LIBRARY_NATIVE}/native-config.darwin-arm64.node`,
   'app.asar.unpacked/node_modules/@napi-rs/keyring/index.js',
@@ -60,18 +60,18 @@ describe('findForbiddenBundlePaths', () => {
   });
 
   test.each([
-    ['cli/node_modules/@inkeep/open-knowledge-native-config/target/release/CACHEDIR.TAG', 'cargo'],
+    ['cli/node_modules/@palimpsest/native-config/target/release/CACHEDIR.TAG', 'cargo'],
     ['app.asar/src/main/index.ts', 'outside out/'],
     ['app.asar/tests/e2e/app.e2e.ts', 'outside out/'],
     ['app.asar/electron-builder.linux.yml', 'outside out/'],
     ['app.asar/out/renderer/index.html', 'renderer'],
     ['cli/dist/public/index.html', 'web app'],
-    ['app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/public/index.html', 'web app'],
+    ['app.asar.unpacked/node_modules/@palimpsest/cli/dist/public/index.html', 'web app'],
     [
-      'app.asar.unpacked/node_modules/@inkeep/open-knowledge-native-config/index.js',
+      'app.asar.unpacked/node_modules/@palimpsest/native-config/index.js',
       'native-config',
     ],
-    ['app.asar/node_modules/@inkeep/open-knowledge-core/src/index.ts', 'sources'],
+    ['app.asar/node_modules/@palimpsest/core/src/index.ts', 'sources'],
   ])('flags %s', (path, reasonFragment) => {
     const hits = findForbiddenBundlePaths([...SOUND_PATHS, path]);
     expect(hits).toHaveLength(1);

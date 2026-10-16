@@ -1,15 +1,15 @@
 # Palimpsest — Fork Notice
 
-Palimpsest is a fork of [OpenKnowledge](https://github.com/inkeep/open-knowledge)
+Palimpsest is a fork of [Palimpsest](https://github.com/fractalmandala/palimpsest)
 by [Inkeep](https://inkeep.com), rebranded and developed independently under
 the name "Palimpsest".
 
 ## Upstream acknowledgement
 
-- Upstream project: OpenKnowledge (`open-knowledge`), copyright its respective
+- Upstream project: Palimpsest (`palimpsest`), copyright its respective
   contributors (see upstream git history and `CONTRIBUTING.md`).
-- Upstream repository: <https://github.com/inkeep/open-knowledge>
-- Upstream website: <https://openknowledge.ai>
+- Upstream repository: <https://github.com/fractalmandala/palimpsest>
+- Upstream website: <https://github.com/fractalmandala/palimpsest>
 
 ## License
 
@@ -28,6 +28,6 @@ remove or alter upstream copyright ownership of the forked code.
 
 ## Trademarks & brand
 
-"OpenKnowledge" and Inkeep's logos/wordmarks remain the property of their
+"Palimpsest" and Inkeep's logos/wordmarks remain the property of their
 respective owners and are **not** reused in this fork. Palimpsest branding
 (name, logo, wordmarks) is separate — see [`assets/brand/`](./assets/brand/).

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { hostname, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { lockFilePath } from '@inkeep/open-knowledge-server';
+import { lockFilePath } from '@palimpsest/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { LockState } from './lock-state.ts';
 import { buildStopPlan, formatNoTargetMessage, probeCollabClients, runStop } from './stop.ts';
@@ -79,7 +79,7 @@ describe('runStop', () => {
     expect(outcome.stopped).toEqual([]);
     expect(outcome.failed).toEqual([]);
     expect(killed).toEqual([]);
-    expect(logs).toEqual(['No running open-knowledge processes.']);
+    expect(logs).toEqual(['No running palimpsest processes.']);
   });
 
   test('alive → SIGTERM sent, log stopped summary', async () => {
@@ -204,7 +204,7 @@ describe('runStop channel guard', () => {
     const { outcome, killed, errors } = run('stable');
     expect((await outcome).declined).toEqual({ otherChannel: 'stable' });
     expect(killed).toEqual([]);
-    expect(errors[0]).toContain('OpenKnowledge (Stable)');
+    expect(errors[0]).toContain('Palimpsest (Stable)');
     expect(errors[0]).toContain('--force');
   });
 
@@ -226,22 +226,22 @@ describe('runStop channel guard', () => {
     expect(killed).toEqual([[100, 'SIGTERM']]);
   });
 
-  test("OK_CHANNEL=beta refuses Stable's server", async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test("PS_CHANNEL=beta refuses Stable's server", async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const { outcome, killed } = run('stable', { selfChannel: undefined });
     expect((await outcome).declined).toEqual({ otherChannel: 'stable' });
     expect(killed).toEqual([]);
   });
 
-  test("OK_CHANNEL=stable stops Stable's server", async () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+  test("PS_CHANNEL=stable stops Stable's server", async () => {
+    vi.stubEnv('PS_CHANNEL', 'stable');
     const { outcome, killed } = run('stable', { selfChannel: undefined });
     expect((await outcome).declined).toBeUndefined();
     expect(killed).toEqual([[100, 'SIGTERM']]);
   });
 
-  test('an unsupported OK_CHANNEL skips the check, warns, and stops as before', async () => {
-    vi.stubEnv('OK_CHANNEL', 'bogus');
+  test('an unsupported PS_CHANNEL skips the check, warns, and stops as before', async () => {
+    vi.stubEnv('PS_CHANNEL', 'bogus');
     const warnings: string[] = [];
     const logger = {
       info: () => {},
@@ -250,30 +250,30 @@ describe('runStop channel guard', () => {
     const { outcome, killed } = run('stable', { selfChannel: undefined, logger });
     expect((await outcome).declined).toBeUndefined();
     expect(killed).toEqual([[100, 'SIGTERM']]);
-    expect(warnings.some((msg) => msg.includes('Unsupported OK_CHANNEL'))).toBe(true);
+    expect(warnings.some((msg) => msg.includes('Unsupported PS_CHANNEL'))).toBe(true);
   });
 
   test("installed Stable refuses a dev build's server without --force", async () => {
-    vi.stubEnv('OK_CHANNEL', '');
+    vi.stubEnv('PS_CHANNEL', '');
     const { outcome, killed, errors } = run('dev', { selfChannel: undefined });
     expect((await outcome).declined).toEqual({ otherChannel: 'dev' });
     expect(killed).toEqual([]);
-    expect(errors[0]).toContain('OpenKnowledge Dev');
+    expect(errors[0]).toContain('Palimpsest Dev');
     expect(errors[0]).toContain(
-      '`node <checkout>/packages/cli/dist/cli.mjs stop` with OK_CHANNEL=dev set',
+      '`node <checkout>/packages/cli/dist/cli.mjs stop` with PS_CHANNEL=dev set',
     );
     expect(errors[0]).toContain('--force');
   });
 
   test("a dev-channel CLI stops the dev build's server", async () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
     const { outcome, killed } = run('dev', { selfChannel: undefined });
     expect((await outcome).declined).toBeUndefined();
     expect(killed).toEqual([[100, 'SIGTERM']]);
   });
 
   test("a dev-channel CLI refuses installed Stable's server", async () => {
-    vi.stubEnv('OK_CHANNEL', 'dev');
+    vi.stubEnv('PS_CHANNEL', 'dev');
     const { outcome, killed } = run('stable', { selfChannel: undefined });
     expect((await outcome).declined).toEqual({ otherChannel: 'stable' });
     expect(killed).toEqual([]);
@@ -377,7 +377,7 @@ describe('runStop durable record', () => {
   test('records the resolved lock dir and every signalled pid', async () => {
     const { logger, records } = captureLogger();
     await runStop({
-      lockDir: '/tmp/target/.ok/local',
+      lockDir: '/tmp/target/.ps/local',
       inspect: () => aliveLock(100, 3001),
       kill: () => {},
       log: () => {},
@@ -388,7 +388,7 @@ describe('runStop durable record', () => {
 
     const record = records.find((r) => r.msg === 'stop signalled processes');
     expect(record).toBeDefined();
-    expect(record?.obj.lockDir).toBe('/tmp/target/.ok/local');
+    expect(record?.obj.lockDir).toBe('/tmp/target/.ps/local');
     expect(record?.obj.signalled).toEqual([{ name: 'server', pid: 100, port: 3001 }]);
     expect(record?.obj.forced).toBe(false);
   });
@@ -396,7 +396,7 @@ describe('runStop durable record', () => {
   test('records a decline with the client count and the target', async () => {
     const { logger, records } = captureLogger();
     await runStop({
-      lockDir: '/tmp/other/.ok/local',
+      lockDir: '/tmp/other/.ps/local',
       inspect: () => aliveLock(7, 3001),
       kill: () => {},
       log: () => {},
@@ -407,7 +407,7 @@ describe('runStop durable record', () => {
 
     const record = records.find((r) => r.msg === 'stop declined: live collaboration clients');
     expect(record?.level).toBe('warn');
-    expect(record?.obj).toMatchObject({ lockDir: '/tmp/other/.ok/local', clients: 1, pids: [7] });
+    expect(record?.obj).toMatchObject({ lockDir: '/tmp/other/.ps/local', clients: 1, pids: [7] });
   });
 });
 
@@ -415,29 +415,29 @@ describe('formatNoTargetMessage', () => {
   test('nothing here AND nothing anywhere says both', () => {
     const msg = formatNoTargetMessage('/proj', 0);
     expect(msg).toContain('/proj');
-    expect(msg).toContain('no other open-knowledge servers are running');
+    expect(msg).toContain('no other palimpsest servers are running');
   });
 
   test('nothing here but servers elsewhere does not claim nothing is running', () => {
     const msg = formatNoTargetMessage('/proj', 2);
     expect(msg).toContain('Nothing was running for /proj');
-    expect(msg).toContain('2 other open-knowledge servers are running');
+    expect(msg).toContain('2 other palimpsest servers are running');
     expect(msg).toContain('ok ps');
     expect(msg).not.toContain('no other');
   });
 
   test('singular agreement for one other server', () => {
-    expect(formatNoTargetMessage('/proj', 1)).toContain('1 other open-knowledge server is running');
+    expect(formatNoTargetMessage('/proj', 1)).toContain('1 other palimpsest server is running');
   });
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: the pointer names %s ps', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     try {
       expect(formatNoTargetMessage('/proj', 2)).toBe(
-        `Nothing was running for /proj. 2 other open-knowledge servers are running — run \`${command} ps\` to list them.`,
+        `Nothing was running for /proj. 2 other palimpsest servers are running — run \`${command} ps\` to list them.`,
       );
     } finally {
       vi.unstubAllEnvs();
@@ -447,7 +447,7 @@ describe('formatNoTargetMessage', () => {
   test('drops the `ok ps` pointer when the caller prints the listing itself', () => {
     const msg = formatNoTargetMessage('/proj', 2, { listingFollows: true });
     expect(msg).toContain('Nothing was running for /proj');
-    expect(msg).toContain('2 other open-knowledge servers are running');
+    expect(msg).toContain('2 other palimpsest servers are running');
     expect(msg).not.toContain('ok ps');
   });
 });
@@ -462,7 +462,7 @@ describe('probeCollabClients failure record', () => {
   let lockDir: string;
 
   function seedAliveServerLock(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-stop-probe-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-stop-probe-'));
     mkdirSync(dir, { recursive: true });
     writeFileSync(
       lockFilePath(dir, 'server'),

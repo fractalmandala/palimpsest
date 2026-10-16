@@ -41,7 +41,7 @@ export function docInConflictEnvelope(conflict?: Conflict): DocInConflictEnvelop
     conflict?.kind === 'reconcile' ? conflict.reason : undefined;
   return {
     detail:
-      'The document is in a conflict state. Ask the user to resolve it in the OpenKnowledge app, then retry.',
+      'The document is in a conflict state. Ask the user to resolve it in the Palimpsest app, then retry.',
     ...(conflict === undefined
       ? {}
       : { conflict: { kind: conflict.kind, ...(reason === undefined ? {} : { reason }) } }),

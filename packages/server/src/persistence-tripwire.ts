@@ -1,4 +1,4 @@
-import { normalizeBridge, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { normalizeBridge, stripFrontmatter } from '@palimpsest/core';
 
 type DuplicationReason =
   | 'empty-base'

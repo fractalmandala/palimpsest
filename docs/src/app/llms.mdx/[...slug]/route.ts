@@ -8,7 +8,7 @@ export const dynamic = 'force-static';
 
 const NOT_FOUND_BODY = `# 404 Not Found
 
-No OpenKnowledge documentation page exists at this URL.
+No Palimpsest documentation page exists at this URL.
 
 Every published page is listed at <${SITE_URL}/llms.txt>, each with a \`.md\`
 rendition of its own.

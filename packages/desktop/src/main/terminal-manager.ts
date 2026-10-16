@@ -4,17 +4,17 @@ import {
   isWindowsShellLaunchFailureReason,
   type TerminalLaunchCommand,
   type WindowsShellFamily,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   isTerminalShellNoticeReason,
   isTerminalSupportFileNoticeReason,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/desktop-bridge';
 import type {
-  OkPtyAdoptResult,
-  OkPtyCreateResult,
-  OkPtyExit,
-  OkPtyListEntry,
-  OkPtyNotice,
+  PsPtyAdoptResult,
+  PsPtyCreateResult,
+  PsPtyExit,
+  PsPtyListEntry,
+  PsPtyNotice,
   TerminalShellNoticeReason,
 } from '../shared/bridge-contract.ts';
 import type { SendableWebContents } from '../shared/ipc-send.ts';
@@ -36,8 +36,8 @@ type TimerToken = unknown;
 export interface TerminalManagerDeps {
   forkPtyHost: (windowId: number) => PtyUtilityLike;
   sendData: (webContents: SendableWebContents, payload: { ptyId: string; data: string }) => void;
-  sendExit: (webContents: SendableWebContents, payload: OkPtyExit) => void;
-  sendNotice?: (webContents: SendableWebContents, payload: OkPtyNotice) => void;
+  sendExit: (webContents: SendableWebContents, payload: PsPtyExit) => void;
+  sendNotice?: (webContents: SendableWebContents, payload: PsPtyNotice) => void;
   newPtyId: () => string;
   canSpawnAt: (projectRoot: string) => boolean;
   setTimer: (cb: () => void, ms: number) => TimerToken;
@@ -174,17 +174,17 @@ function containsCommandSubmit(data: string): boolean {
 }
 
 export interface TerminalManager {
-  create(req: TerminalCreateRequest): OkPtyCreateResult;
+  create(req: TerminalCreateRequest): PsPtyCreateResult;
   input(req: TerminalAddressedRequest & { data: string }): void;
   resize(req: TerminalAddressedRequest & { cols: number; rows: number }): void;
   kill(req: TerminalAddressedRequest): void;
   drain(req: TerminalAddressedRequest & { bytes: number }): void;
-  listSessions(windowId: number): OkPtyListEntry[];
+  listSessions(windowId: number): PsPtyListEntry[];
   setSessionMeta(
     req: TerminalAddressedRequest & { customLabel?: string | null; ordinal?: number },
   ): void;
   setSessionOrder(req: { windowId: number; orderedPtyIds: readonly string[] }): void;
-  adoptSession(req: TerminalAdoptRequest): OkPtyAdoptResult;
+  adoptSession(req: TerminalAdoptRequest): PsPtyAdoptResult;
   noteAppShutdown(cause: AppShutdownCause): void;
   killForWindow(windowId: number): void;
   killAll(cause: AppShutdownCause): Promise<void>;
@@ -261,12 +261,12 @@ export function createTerminalManager(deps: TerminalManagerDeps): TerminalManage
     deps.sendData(handle.webContents, { ptyId, data });
   }
 
-  function pushExit(handle: PtyWindowHandle, payload: OkPtyExit): void {
+  function pushExit(handle: PtyWindowHandle, payload: PsPtyExit): void {
     if (handle.webContents.isDestroyed?.()) return;
     deps.sendExit(handle.webContents, payload);
   }
 
-  function pushNotice(handle: PtyWindowHandle, payload: OkPtyNotice): void {
+  function pushNotice(handle: PtyWindowHandle, payload: PsPtyNotice): void {
     if (handle.webContents.isDestroyed?.()) return;
     deps.sendNotice?.(handle.webContents, payload);
   }
@@ -556,7 +556,7 @@ export function createTerminalManager(deps: TerminalManagerDeps): TerminalManage
   }
 
   return {
-    create(req): OkPtyCreateResult {
+    create(req): PsPtyCreateResult {
       if (req.projectRoot === null) return { ok: false, reason: 'no-project' };
       const handle = ensureHandle(req);
       const ptyId = deps.newPtyId();
@@ -665,7 +665,7 @@ export function createTerminalManager(deps: TerminalManagerDeps): TerminalManage
       }
     },
 
-    listSessions(windowId): OkPtyListEntry[] {
+    listSessions(windowId): PsPtyListEntry[] {
       const handle = handles.get(windowId);
       if (!handle) return [];
       return [...handle.sessions.entries()]
@@ -700,7 +700,7 @@ export function createTerminalManager(deps: TerminalManagerDeps): TerminalManage
       for (const [, session] of rest) session.order = i++;
     },
 
-    adoptSession(req): OkPtyAdoptResult {
+    adoptSession(req): PsPtyAdoptResult {
       const handle = handles.get(req.windowId);
       const session = handle?.sessions.get(req.ptyId);
       if (!handle || !session) return { ok: false, reason: 'unknown-session' };

@@ -42,7 +42,7 @@ describe.skipIf(process.platform === 'win32')(
     let harness: ForkedWatcherProcess | undefined;
 
     beforeEach(() => {
-      root = mkdtempSync(join(tmpdir(), 'ok-ma-readiness-'));
+      root = mkdtempSync(join(tmpdir(), 'ps-ma-readiness-'));
       execFileSync('mkfifo', [join(root, 'threadpool-barrier')]);
     });
     afterEach(async () => {
@@ -55,7 +55,7 @@ describe.skipIf(process.platform === 'win32')(
       { scenario, initialContent, content }: ReadinessCase,
       timing: ManagedTiming,
     ) {
-      const skillsRoot = resolve(root, '.ok', 'skills');
+      const skillsRoot = resolve(root, '.ps', 'skills');
       const leaf = resolve(skillsRoot, 'demo', 'SKILL.md');
       if (initialContent !== null) {
         mkdirSync(dirname(leaf), { recursive: true });

@@ -1,23 +1,23 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 
 describe('desktop scaffold', () => {
-  test('OK_DIR from core resolves to .ok', () => {
-    expect(OK_DIR).toBe('.ok');
+  test('PS_DIR from core resolves to .ps', () => {
+    expect(PS_DIR).toBe('.ps');
   });
 
   test('server package is importable', async () => {
-    const server = await import('@inkeep/open-knowledge-server');
+    const server = await import('@palimpsest/server');
     expect(typeof server.bootServer).toBe('function');
     expect(typeof server.createServer).toBe('function');
   });
 
   test('workspace deps resolve to the development src barrel', () => {
-    expect(import.meta.resolve('@inkeep/open-knowledge-server')).toMatch(/\/src\/index\.ts$/);
-    expect(import.meta.resolve('@inkeep/open-knowledge-core')).toMatch(/\/src\/index\.ts$/);
+    expect(import.meta.resolve('@palimpsest/server')).toMatch(/\/src\/index\.ts$/);
+    expect(import.meta.resolve('@palimpsest/core')).toMatch(/\/src\/index\.ts$/);
   });
 });
 

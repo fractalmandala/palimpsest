@@ -6,7 +6,7 @@ import {
   shellSingleQuote,
   TERMINAL_CLI_IDS,
   TERMINAL_INLINE_PROMPT_BUDGET,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import type { HandoffDispatchInput } from './useHandoffDispatch';
 

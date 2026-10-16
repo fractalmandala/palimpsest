@@ -13,9 +13,9 @@ import {
 
 describe('server.lock — the Desktop attach advertisement', () => {
   test('port sentinel: acquire writes 0, updateServerLockPort stamps the bound port, release unlinks', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-attach-sentinel-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-attach-sentinel-'));
     try {
-      const lockDir = resolve(tmp, '.ok', 'local');
+      const lockDir = resolve(tmp, '.ps', 'local');
       mkdirSync(lockDir, { recursive: true });
 
       acquireServerLock(lockDir, { port: 0, worktreeRoot: tmp });
@@ -32,7 +32,7 @@ describe('server.lock — the Desktop attach advertisement', () => {
   });
 
   test('a data server without the shell 404s with the no-UI restart hint and omits the ui capability', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-attach-hint-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-attach-hint-'));
     try {
       const booted = await bootCompositionRig(tmp);
       try {
@@ -41,10 +41,10 @@ describe('server.lock — the Desktop attach advertisement', () => {
         expect(res.status).toBe(404);
         const body = parseProblem(await res.text());
         expect(body.detail).toContain('running without the web UI');
-        expect(body.detail).toContain('ok start');
-        const lock = readServerLock(resolve(tmp, '.ok', 'local'));
+        expect(body.detail).toContain('ps start');
+        const lock = readServerLock(resolve(tmp, '.ps', 'local'));
         expect(lock?.capabilities ?? []).not.toContain('ui');
-        expect(existsSync(resolve(tmp, '.ok', 'local', 'ui.lock'))).toBe(false);
+        expect(existsSync(resolve(tmp, '.ps', 'local', 'ui.lock'))).toBe(false);
       } finally {
         await booted.destroy();
       }
@@ -56,7 +56,7 @@ describe('server.lock — the Desktop attach advertisement', () => {
 
 describe('server.lock v2 — the canonical Claude Desktop attach contract', () => {
   test('a shell-serving server advertises url + the ui capability, and that url serves the shell', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-attach-v2-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-attach-v2-'));
     try {
       const projectDir = mkdtempSync(resolve(tmp, 'proj-'));
       const shellDistDir = mkdtempSync(resolve(tmp, 'dist-'));
@@ -66,7 +66,7 @@ describe('server.lock v2 — the canonical Claude Desktop attach contract', () =
       try {
         await booted.ready;
 
-        const lock = readServerLock(resolve(projectDir, '.ok', 'local'));
+        const lock = readServerLock(resolve(projectDir, '.ps', 'local'));
         expect(lock).not.toBeNull();
         expect(lock?.port).toBe(booted.port);
         expect(lock?.url).toBe(`http://127.0.0.1:${booted.port}`);
@@ -89,12 +89,12 @@ describe('server.lock v2 — the canonical Claude Desktop attach contract', () =
   }, 30_000);
 
   test('a server not serving the shell advertises no ui capability', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-attach-v2-noui-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-attach-v2-noui-'));
     try {
       const booted = await bootCompositionRig(tmp);
       try {
         await booted.ready;
-        const lock = readServerLock(resolve(tmp, '.ok', 'local'));
+        const lock = readServerLock(resolve(tmp, '.ps', 'local'));
         expect(lock).not.toBeNull();
         expect(lock?.capabilities).toEqual(['http', 'ws']);
       } finally {

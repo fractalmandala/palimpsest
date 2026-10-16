@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { type Config, ConfigSchema } from '@inkeep/open-knowledge-server';
+import { type Config, ConfigSchema } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { OK_DIR } from '../constants.ts';
+import { PS_DIR } from '../constants.ts';
 import { formatPreviewBlock, previewContent } from '../content/preview.ts';
 
 function makeConfig(dir = '.'): Config {
@@ -25,12 +25,12 @@ describe('preview command', () => {
     rmSync(testDir, { recursive: true, force: true });
   });
 
-  it('works pre-init (no .ok/) using schema defaults', () => {
+  it('works pre-init (no .ps/) using schema defaults', () => {
     writeFileSync(join(testDir, 'a.md'), '# A');
     writeFileSync(join(testDir, 'b.md'), '# B');
     writeFileSync(join(testDir, 'c.md'), '# C');
 
-    expect(existsSync(join(testDir, OK_DIR))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR))).toBe(false);
 
     const config = makeConfig();
     const contentDir = resolve(testDir, config.content.dir);
@@ -43,7 +43,7 @@ describe('preview command', () => {
     expect(output).toContain('Found 3 markdown files');
   });
 
-  it('reflects .okignore edits (count drops after adding patterns)', () => {
+  it('reflects .psignore edits (count drops after adding patterns)', () => {
     mkdirSync(join(testDir, 'docs'));
     mkdirSync(join(testDir, 'vendored'));
     for (let i = 0; i < 3; i++) {
@@ -60,7 +60,7 @@ describe('preview command', () => {
     });
     expect(result1.totalCount).toBe(8);
 
-    writeFileSync(join(testDir, '.okignore'), 'vendored/\n');
+    writeFileSync(join(testDir, '.psignore'), 'vendored/\n');
 
     const result2 = previewContent({
       projectDir: testDir,
@@ -82,13 +82,13 @@ describe('preview command', () => {
   it('produces zero filesystem writes', () => {
     writeFileSync(join(testDir, 'test.md'), '# Test');
 
-    const okExistsBefore = existsSync(join(testDir, OK_DIR));
+    const psExistsBefore = existsSync(join(testDir, PS_DIR));
     const mcpExistsBefore = existsSync(join(testDir, '.mcp.json'));
 
     const config = makeConfig();
     previewContent({ projectDir: testDir, contentDir: resolve(testDir, config.content.dir) });
 
-    expect(existsSync(join(testDir, OK_DIR))).toBe(okExistsBefore);
+    expect(existsSync(join(testDir, PS_DIR))).toBe(psExistsBefore);
     expect(existsSync(join(testDir, '.mcp.json'))).toBe(mcpExistsBefore);
   });
 

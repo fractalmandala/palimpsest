@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
-import { SERVER_AUTHORITY_LEASES_DIRNAME } from '@inkeep/open-knowledge-core';
+import { SERVER_AUTHORITY_LEASES_DIRNAME } from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import * as fsTraced from './fs-traced.ts';
 import {
@@ -21,7 +21,7 @@ afterEach(() => {
 });
 
 function fixture() {
-  const directory = mkdtempSync(join(tmpdir(), 'ok-authority-lease-'));
+  const directory = mkdtempSync(join(tmpdir(), 'ps-authority-lease-'));
   directories.push(directory);
   const ownerToken = randomUUID();
   const registryPath = join(directory, 'registry.sqlite');

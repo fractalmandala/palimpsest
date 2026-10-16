@@ -7,23 +7,23 @@ import {
 } from '@/lib/pane-visibility-store';
 import { missDialogStore } from '@/lib/share/miss-dialog-store';
 import { pendingReceiveNavStore } from '@/lib/share/pending-receive-nav-store';
-import type { OkDeepLinkPayload, OkDesktopBridge, OkDesktopConfig } from './desktop-bridge-types';
+import type { PsDeepLinkPayload, PsDesktopBridge, PsDesktopConfig } from './desktop-bridge-types';
 import { deriveShareReceiveToast, installDeepLinkListener } from './install-deep-link-listener';
 
-type DeepLinkPayload = OkDeepLinkPayload;
+type DeepLinkPayload = PsDeepLinkPayload;
 
-function makeBridge(overrides: Partial<OkDesktopBridge> = {}): OkDesktopBridge & {
+function makeBridge(overrides: Partial<PsDesktopBridge> = {}): PsDesktopBridge & {
   fireDeepLink: (evt: DeepLinkPayload) => void;
 } {
   let handler: ((evt: DeepLinkPayload) => void) | null = null;
-  const base: OkDesktopBridge = {
+  const base: PsDesktopBridge = {
     config: {
       collabUrl: 'ws://localhost:52000/collab',
       apiOrigin: 'http://localhost:52000',
       projectPath: '/tmp/project',
       projectName: 'project',
       mode: 'editor',
-    } as OkDesktopConfig,
+    } as PsDesktopConfig,
     onProjectSwitched: vi.fn(() => () => {}),
     onMenuAction: vi.fn(() => () => {}),
     onDeepLink: vi.fn((cb: (evt: DeepLinkPayload) => void) => {

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createBasenameIndex } from '@inkeep/open-knowledge-core';
+import { createBasenameIndex } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { seedBasenameIndex } from './asset-walk.ts';
 import { BacklinkIndex } from './backlink-index.ts';
@@ -17,7 +17,7 @@ let expectedDocs: Set<string>;
 let expectedAssets: Set<string>;
 
 beforeEach(() => {
-  baseDir = mkdtempSync(join(tmpdir(), 'ok-boot-walk-'));
+  baseDir = mkdtempSync(join(tmpdir(), 'ps-boot-walk-'));
   contentDir = join(baseDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   expectedDocs = new Set();

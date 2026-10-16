@@ -10,7 +10,7 @@ import {
   nextClickLevel,
 } from './ok-blob-logic';
 
-interface OkBlobProps {
+interface PsBlobProps {
   size?: number;
   className?: string;
   style?: CSSProperties;
@@ -70,7 +70,7 @@ function particleStyle(p: FireworkParticle): CSSProperties {
   };
 }
 
-export function OkBlob({
+export function PsBlob({
   size = 48,
   className,
   style,
@@ -78,7 +78,7 @@ export function OkBlob({
   variant = 'default',
   celebrateSignal = 0,
   onRage,
-}: OkBlobProps) {
+}: PsBlobProps) {
   const wrapperRef = useRef<HTMLSpanElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const eyesGroupRef = useRef<SVGGElement>(null);
@@ -246,10 +246,10 @@ export function OkBlob({
 
   const isClicked = clickLevel > 0;
   const activeLevel: ActiveClickLevel = isClicked ? (clickLevel as ActiveClickLevel) : 1;
-  const bounceClass = isClicked ? `ok-blob-clicked-${clickLevel}` : null;
+  const bounceClass = isClicked ? `ps-blob-clicked-${clickLevel}` : null;
 
   return (
-    <span ref={wrapperRef} className={cn('ok-blob-3d-wrapper', className)} style={style}>
+    <span ref={wrapperRef} className={cn('ps-blob-3d-wrapper', className)} style={style}>
       <svg
         ref={svgRef}
         width={size}
@@ -266,9 +266,9 @@ export function OkBlob({
         {}
         <g
           key={`body-${clickSeq}`}
-          className={cn('ok-blob-group', isSleeping && 'ok-blob-sleeping', bounceClass)}
+          className={cn('ps-blob-group', isSleeping && 'ps-blob-sleeping', bounceClass)}
         >
-          <path d={MASCOT_OUTLINE_PATH} className="ok-blob-body" />
+          <path d={MASCOT_OUTLINE_PATH} className="ps-blob-body" />
 
           {}
           <g ref={eyesGroupRef}>
@@ -278,7 +278,7 @@ export function OkBlob({
               cy={EYE_CY}
               rx={1.2722}
               ry={1.9083}
-              className={cn('ok-blob-eye', (isClicked || isSleeping) && 'ok-blob-eye-hidden')}
+              className={cn('ps-blob-eye', (isClicked || isSleeping) && 'ps-blob-eye-hidden')}
             />
             <ellipse
               cx={RIGHT_EYE_CX}
@@ -286,8 +286,8 @@ export function OkBlob({
               rx={1.2722}
               ry={1.9083}
               className={cn(
-                'ok-blob-eye ok-blob-eye-right',
-                (isClicked || isSleeping) && 'ok-blob-eye-hidden',
+                'ps-blob-eye ps-blob-eye-right',
+                (isClicked || isSleeping) && 'ps-blob-eye-hidden',
               )}
             />
 
@@ -298,8 +298,8 @@ export function OkBlob({
               strokeLinecap="round"
               fill="none"
               className={cn(
-                'ok-blob-happy-eye',
-                (!isClicked || isSleeping) && 'ok-blob-eye-hidden',
+                'ps-blob-happy-eye',
+                (!isClicked || isSleeping) && 'ps-blob-eye-hidden',
               )}
             />
             <path
@@ -308,8 +308,8 @@ export function OkBlob({
               strokeLinecap="round"
               fill="none"
               className={cn(
-                'ok-blob-happy-eye',
-                (!isClicked || isSleeping) && 'ok-blob-eye-hidden',
+                'ps-blob-happy-eye',
+                (!isClicked || isSleeping) && 'ps-blob-eye-hidden',
               )}
             />
 
@@ -321,14 +321,14 @@ export function OkBlob({
                   strokeWidth="1.2"
                   strokeLinecap="round"
                   fill="none"
-                  className="ok-blob-sleeping-eye"
+                  className="ps-blob-sleeping-eye"
                 />
                 <path
                   d={sleepingEyeArc(RIGHT_EYE_CX)}
                   strokeWidth="1.2"
                   strokeLinecap="round"
                   fill="none"
-                  className="ok-blob-sleeping-eye"
+                  className="ps-blob-sleeping-eye"
                 />
               </>
             ) : null}
@@ -338,10 +338,10 @@ export function OkBlob({
         {}
         {isSleeping ? (
           <g>
-            <text x={21} y={7} className="ok-blob-z ok-blob-z-1">
+            <text x={21} y={7} className="ps-blob-z ps-blob-z-1">
               z
             </text>
-            <text x={26} y={2} className="ok-blob-z ok-blob-z-2">
+            <text x={26} y={2} className="ps-blob-z ps-blob-z-2">
               z
             </text>
           </g>
@@ -349,14 +349,14 @@ export function OkBlob({
 
         {}
         {particles.length > 0 && (
-          <g key={`firework-${burstSeq}`} data-slot="ok-blob-burst">
+          <g key={`firework-${burstSeq}`} data-slot="ps-blob-burst">
             {particles.map((p) => (
               <circle
                 key={p.id}
                 cx={FIREWORK_CENTER_X + p.originDx}
                 cy={FIREWORK_CENTER_Y + p.originDy}
                 r={p.size}
-                className="ok-blob-firework"
+                className="ps-blob-firework"
                 style={particleStyle(p)}
               />
             ))}

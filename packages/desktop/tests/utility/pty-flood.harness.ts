@@ -178,7 +178,7 @@ interface FloodMetrics {
 }
 
 async function runFloodScenario(opts: FloodOptions): Promise<FloodMetrics> {
-  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pty-flood-')));
+  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pty-flood-')));
   const file = join(tmp, 'flood.txt');
   writeFileSync(file, UNIT.repeat(opts.units), 'utf8');
 
@@ -324,7 +324,7 @@ async function scenario(name: string, fn: () => Promise<void>): Promise<void> {
 const FLOOD_UNITS_RESPONSIVE = 1_500_000;
 const FLOOD_UNITS_BACKPRESSURE = 300_000;
 const MAX_HEARTBEAT_GAP_MS = (() => {
-  const override = Number(process.env.OK_FLOOD_MAX_GAP_MS);
+  const override = Number(process.env.PS_FLOOD_MAX_GAP_MS);
   return Number.isFinite(override) && override > 0 ? override : 500;
 })();
 
@@ -393,7 +393,7 @@ function createMultiSessionRig(opts: {
   lowWaterBytes: number;
   meterTickMs?: number;
 }): MultiSessionRig {
-  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pty-multi-')));
+  const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pty-multi-')));
   const bridge = new InProcessBridge(spawn, { ...process.env });
   const sessions = new Map<string, SessionRuntime>();
   const webContents: SendableWebContents = { send: () => {}, isDestroyed: () => false };

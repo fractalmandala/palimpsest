@@ -4,7 +4,7 @@ import {
   PageHeadingsSuccessSchema,
   PagesSuccessSchema,
   ProblemDetailsSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import {
   createWorkspaceSearchCorpus,
   createWorkspaceSearchDocument,
@@ -12,9 +12,9 @@ import {
   searchWorkspaceCorpus,
   type WorkspaceSearchCorpus,
   type WorkspaceSearchKind,
-} from '@inkeep/open-knowledge-core/search/workspace-search';
-import { isHiddenDocName } from '@inkeep/open-knowledge-core/util/doc-name';
-import type { HeadingEntry } from '@inkeep/open-knowledge-core/utils/slug';
+} from '@palimpsest/core/search/workspace-search';
+import { isHiddenDocName } from '@palimpsest/core/util/doc-name';
+import type { HeadingEntry } from '@palimpsest/core/utils/slug';
 import type { Editor } from '@tiptap/core';
 import type { ResolvedPos } from '@tiptap/pm/model';
 import { PluginKey } from '@tiptap/pm/state';

@@ -312,9 +312,9 @@ describe('failure evidence classification', () => {
     'notarytool submission completed\n{"status":"Invalid"}',
     'entitlement com.apple.security.foo is not permitted',
     'Electron fuse verification failed',
-    '[afterSign] fuse verification failed (D17 paranoid check):\n  RunAsNode: expected ENABLE (target=true), got DISABLE [OK_PACKAGING_FUSE_FAILURE]',
-    '[afterSign] fuse verification read failed on /tmp/OpenKnowledge: EACCES [OK_PACKAGING_FUSE_FAILURE]',
-    '[afterPack] fuse flip failed on /tmp/OpenKnowledge: Could not find sentinel [OK_PACKAGING_FUSE_FAILURE]',
+    '[afterSign] fuse verification failed (D17 paranoid check):\n  RunAsNode: expected ENABLE (target=true), got DISABLE [PS_PACKAGING_FUSE_FAILURE]',
+    '[afterSign] fuse verification read failed on /tmp/Palimpsest: EACCES [PS_PACKAGING_FUSE_FAILURE]',
+    '[afterPack] fuse flip failed on /tmp/Palimpsest: Could not find sentinel [PS_PACKAGING_FUSE_FAILURE]',
     'Electron fuse mismatch',
     'Electron fuse mismatches target',
     'Electron fuse mismatched target',
@@ -326,7 +326,7 @@ describe('failure evidence classification', () => {
     'ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "electron-builder" not found',
     'spawn electron-builder ENOENT',
     'ENOSPC: no space left on device',
-    '[desktop-builder] beta-mac.yml: The macOS update manifest is not a YAML mapping [OK_PACKAGING_UPDATE_MANIFEST_FAILURE]',
+    '[desktop-builder] beta-mac.yml: The macOS update manifest is not a YAML mapping [PS_PACKAGING_UPDATE_MANIFEST_FAILURE]',
   ])('classifies explicit terminal evidence as terminal: %s', (text) => {
     expect(inspect(text).classification).toBe('terminal');
   });
@@ -349,9 +349,9 @@ describe('failure evidence classification', () => {
   });
 
   test.each([
-    '[afterSign] getCurrentFuseWire failed on /tmp/OpenKnowledge: EACCES',
+    '[afterSign] getCurrentFuseWire failed on /tmp/Palimpsest: EACCES',
     '[afterSign] Fuse verification failed (D17 paranoid check):\n  RunAsNode: expected ENABLE (target=true), got DISABLE',
-    '[afterPack] fuse flip failed on /tmp/OpenKnowledge: Could not find sentinel',
+    '[afterPack] fuse flip failed on /tmp/Palimpsest: Could not find sentinel',
   ])('classifies old-tag fuse failures without the owned marker: %s', (text) => {
     expect(inspect(text).classification).toBe('terminal');
   });
@@ -369,7 +369,7 @@ describe('failure evidence classification', () => {
     '[afterSign] fuse verification done; no notarize step on platform "linux"',
     '[afterSign] signed + notarized + stapled + fuse-verified successfully',
     '[afterPack] skipping per-arch temp "/tmp/app-temp" — fuses flip on the merged universal app',
-    '[afterPack] flipping fuses on /tmp/OpenKnowledge',
+    '[afterPack] flipping fuses on /tmp/Palimpsest',
     '[afterPack] fuses flipped successfully; electron-builder will re-sign next',
     '[afterPack] fuses done; skipping darwin-only helper-bundle + node-pty steps on "linux"',
     'fuse: failed to exec fusermount: No such file or directory',
@@ -468,7 +468,7 @@ describe('failure evidence classification', () => {
     expect(maskedTlsTrust.log).not.toContain('rule:download-integrity');
     const maskedUpdateManifest = await run({
       command: nodeCmd(
-        'console.error("sha512 checksum mismatch, expected AAA, got BBB\\n[desktop-builder] beta-mac.yml: not a YAML mapping [OK_PACKAGING_UPDATE_MANIFEST_FAILURE]");process.exit(1)',
+        'console.error("sha512 checksum mismatch, expected AAA, got BBB\\n[desktop-builder] beta-mac.yml: not a YAML mapping [PS_PACKAGING_UPDATE_MANIFEST_FAILURE]");process.exit(1)',
       ),
     });
     expect(maskedUpdateManifest.log).toContain('reason=rule:update-manifest outcome=terminal');
@@ -495,13 +495,13 @@ describe('failure evidence classification', () => {
     );
     const fuseFailure = await run({
       command: nodeCmd(
-        'console.error("[afterPack] fuse flip failed on /tmp/OpenKnowledge: Could not find sentinel [OK_PACKAGING_FUSE_FAILURE]");process.exit(1)',
+        'console.error("[afterPack] fuse flip failed on /tmp/Palimpsest: Could not find sentinel [PS_PACKAGING_FUSE_FAILURE]");process.exit(1)',
       ),
     });
     expect(fuseFailure.log).toContain('reason=rule:fuse outcome=terminal');
     const d17FuseFailure = await run({
       command: nodeCmd(
-        'console.error("[afterSign] fuse verification failed (D17 paranoid check):\\n  RunAsNode: expected ENABLE (target=true), got DISABLE [OK_PACKAGING_FUSE_FAILURE]");process.exit(1)',
+        'console.error("[afterSign] fuse verification failed (D17 paranoid check):\\n  RunAsNode: expected ENABLE (target=true), got DISABLE [PS_PACKAGING_FUSE_FAILURE]");process.exit(1)',
       ),
     });
     expect(d17FuseFailure.log).toContain('reason=rule:fuse outcome=terminal');
@@ -2334,7 +2334,7 @@ describe('workflow wiring', () => {
     const fake = join(dir, 'stalled-package.js');
     writeFileSync(
       fake,
-      `const fs=require('fs');fs.writeFileSync(${JSON.stringify(`${pidFile}.pending`)},String(process.pid));fs.renameSync(${JSON.stringify(`${pidFile}.pending`)},${JSON.stringify(pidFile)});console.log('  • signing         file=OpenKnowledge.app');setTimeout(()=>{},${childSelfExitMs});`,
+      `const fs=require('fs');fs.writeFileSync(${JSON.stringify(`${pidFile}.pending`)},String(process.pid));fs.renameSync(${JSON.stringify(`${pidFile}.pending`)},${JSON.stringify(pidFile)});console.log('  • signing         file=Palimpsest.app');setTimeout(()=>{},${childSelfExitMs});`,
     );
     const invocation = wrapperInvocation(
       step(job('build-macos'), 'Build + sign + notarize DMG/ZIP'),

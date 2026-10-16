@@ -1,7 +1,7 @@
-import type { TerminalCli, TerminalLaunchCommand } from '@inkeep/open-knowledge-core/handoff';
+import type { TerminalCli, TerminalLaunchCommand } from '@palimpsest/core/handoff';
 import { routeNoteWindowActionToMain } from '@/lib/note-window-main-actions';
 
-const TERMINAL_LAUNCH_EVENT = 'open-knowledge:terminal-launch';
+const TERMINAL_LAUNCH_EVENT = 'palimpsest:terminal-launch';
 
 export type TerminalLaunchRequest =
   | {

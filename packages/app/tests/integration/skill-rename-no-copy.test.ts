@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { SkillsListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { SkillsListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestServer, type TestServer } from './test-harness';
@@ -33,7 +33,7 @@ async function listNames(): Promise<string[]> {
 }
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-skill-rename-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-skill-rename-home-'));
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);
 afterAll(async () => {
@@ -58,7 +58,7 @@ describe('skill rename moves, never copies (PRD-7603)', () => {
       ).status,
     ).toBe(200);
 
-    const lockPath = join(server.contentDir, '.ok', 'skills-lock.json');
+    const lockPath = join(server.contentDir, '.ps', 'skills-lock.json');
     mkdirSync(dirname(lockPath), { recursive: true });
     writeFileSync(
       lockPath,

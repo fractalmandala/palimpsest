@@ -4,7 +4,7 @@ import { request as httpRequest } from 'node:http';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { testAuthorityRegistryPath } from '../../../test-support/server-authority-registry.test-helper.ts';
 import { type BootedServer, type BootServerOptions, bootServer } from './boot.ts';
 import { ConfigSchema } from './config/schema.ts';
@@ -20,10 +20,10 @@ export function assertPathAbsentFromLegacyRegistry(source: string, path: string)
 }
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 }
 
 const TEST_CONFIG = ConfigSchema.parse({});
@@ -34,7 +34,7 @@ export async function bootCompositionRig(
 ): Promise<BootedServer> {
   seedOkScaffold(contentDir);
   const ownedHome =
-    overrides.configHomedirOverride ?? mkdtempSync(resolve(tmpdir(), 'ok-rig-home-'));
+    overrides.configHomedirOverride ?? mkdtempSync(resolve(tmpdir(), 'ps-rig-home-'));
   let booted: BootedServer;
   try {
     booted = await bootServer({

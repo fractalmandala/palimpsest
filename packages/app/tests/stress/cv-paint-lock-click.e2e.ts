@@ -45,7 +45,7 @@ async function clickFirstParagraphAndProbe(page: Page): Promise<ClickOutcome> {
   return await Promise.race([crashed, clickAndProbe]);
 }
 
-test('click into the editor survives the inactive-pane paint lock (.ok-mode-hidden) landing mid-dispatch', async ({
+test('click into the editor survives the inactive-pane paint lock (.ps-mode-hidden) landing mid-dispatch', async ({
   page,
   api,
 }) => {
@@ -55,12 +55,12 @@ test('click into the editor survives the inactive-pane paint lock (.ok-mode-hidd
     const pm = document.querySelector('.ProseMirror:not(.composer-prosemirror)');
     const pane = pm
       ?.closest('div.relative.flex-1')
-      ?.querySelector(':scope > div.h-full:not(.ok-mode-hidden)');
+      ?.querySelector(':scope > div.h-full:not(.ps-mode-hidden)');
     if (!(pane instanceof HTMLElement)) throw new Error('visual editor pane not found');
     window.addEventListener(
       'mousedown',
       () => {
-        pane.classList.add('ok-mode-hidden');
+        pane.classList.add('ps-mode-hidden');
         void pane.offsetHeight;
       },
       { capture: true, once: true },
@@ -70,6 +70,6 @@ test('click into the editor survives the inactive-pane paint lock (.ok-mode-hidd
   const outcome = await clickFirstParagraphAndProbe(page);
   expect(
     outcome,
-    'renderer must survive a click whose editor pane gains the .ok-mode-hidden paint lock during the same dispatch',
+    'renderer must survive a click whose editor pane gains the .ps-mode-hidden paint lock during the same dispatch',
   ).toBe('alive');
 });

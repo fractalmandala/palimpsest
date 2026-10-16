@@ -2,11 +2,11 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export function mcpStatusMarkerPath(tmpHome: string): string {
-  return join(tmpHome, '.ok', 'mcp-status.json');
+  return join(tmpHome, '.ps', 'mcp-status.json');
 }
 
 export function seedMcpConsentComplete(tmpHome: string): void {
-  mkdirSync(join(tmpHome, '.ok'), { recursive: true });
+  mkdirSync(join(tmpHome, '.ps'), { recursive: true });
   writeFileSync(
     mcpStatusMarkerPath(tmpHome),
     JSON.stringify({

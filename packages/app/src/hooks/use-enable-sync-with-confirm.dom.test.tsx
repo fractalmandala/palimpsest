@@ -1,4 +1,4 @@
-import type { SyncMode } from '@inkeep/open-knowledge-core';
+import type { SyncMode } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';

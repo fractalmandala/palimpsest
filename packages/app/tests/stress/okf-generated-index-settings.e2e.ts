@@ -14,12 +14,12 @@ import {
 } from './_helpers';
 
 test.use({
-  workerServerEnv: { OK_TEST_OKF_GENERATED_INDEX_SETTINGS: 'isolated-content-v1' },
+  workerServerEnv: { PS_TEST_OKF_GENERATED_INDEX_SETTINGS: 'isolated-content-v1' },
 });
 
 type OkfProjectConfig = {
   contentRules?: {
-    okf?: {
+    psf?: {
       enabled?: boolean;
       generate?: { index?: boolean };
     };
@@ -33,21 +33,21 @@ function readProjectConfig(configPath: string): OkfProjectConfig {
 
 async function openOkfSettings(page: Page): Promise<void> {
   await openProjectPluginsPanel(page);
-  await setPluginEnabled(page, 'okf', true);
-  await openSettingsSection(page, 'plugin:okf', 'settings-plugin-okf');
+  await setPluginEnabled(page, 'psf', true);
+  await openSettingsSection(page, 'plugin:psf', 'settings-plugin-psf');
 }
 
 async function expectDisclosureContrast(page: Page, theme: 'light' | 'dark'): Promise<void> {
   await page.evaluate((nextTheme) => {
     const transitionBlocker = document.createElement('style');
-    transitionBlocker.id = 'ok-test-disable-disclosure-transitions';
+    transitionBlocker.id = 'ps-test-disable-disclosure-transitions';
     transitionBlocker.textContent = `
-      [data-testid="settings-okf-generate-index-confirm"],
-      [data-testid="settings-okf-generate-index-confirm"]::before,
-      [data-testid="settings-okf-generate-index-confirm"]::after,
-      [data-testid="settings-okf-generate-index-confirm"] *,
-      [data-testid="settings-okf-generate-index-confirm"] *::before,
-      [data-testid="settings-okf-generate-index-confirm"] *::after {
+      [data-testid="settings-psf-generate-index-confirm"],
+      [data-testid="settings-psf-generate-index-confirm"]::before,
+      [data-testid="settings-psf-generate-index-confirm"]::after,
+      [data-testid="settings-psf-generate-index-confirm"] *,
+      [data-testid="settings-psf-generate-index-confirm"] *::before,
+      [data-testid="settings-psf-generate-index-confirm"] *::after {
         transition: none !important;
       }
     `;
@@ -55,13 +55,13 @@ async function expectDisclosureContrast(page: Page, theme: 'light' | 'dark'): Pr
     void document.body.offsetHeight;
 
     document.documentElement.removeAttribute('data-color-theme');
-    document.getElementById('ok-custom-theme')?.remove();
+    document.getElementById('ps-custom-theme')?.remove();
     document.documentElement.classList.toggle('dark', nextTheme === 'dark');
     void document.body.offsetHeight;
   }, theme);
 
   try {
-    await page.getByTestId('settings-okf-generate-index-confirm').evaluate(async (dialog) => {
+    await page.getByTestId('settings-psf-generate-index-confirm').evaluate(async (dialog) => {
       await Promise.all(
         [...document.documentElement.getAnimations(), ...dialog.getAnimations()].map(
           (animation) => animation.finished,
@@ -69,14 +69,14 @@ async function expectDisclosureContrast(page: Page, theme: 'light' | 'dark'): Pr
       );
     });
     const results = await new AxeBuilder({ page })
-      .include('[data-testid="settings-okf-generate-index-confirm"]')
+      .include('[data-testid="settings-psf-generate-index-confirm"]')
       .withRules(['color-contrast'])
       .analyze();
 
     expect(results.violations).toEqual([]);
   } finally {
     await page.evaluate(() => {
-      document.getElementById('ok-test-disable-disclosure-transitions')?.remove();
+      document.getElementById('ps-test-disable-disclosure-transitions')?.remove();
     });
   }
 }
@@ -99,16 +99,16 @@ test('Escape decline restores focus, confirmation creates indexes, and disabling
     },
   ]);
 
-  const configPath = join(workerServer.contentDir, '.ok', 'config.yml');
+  const configPath = join(workerServer.contentDir, '.ps', 'config.yml');
   const rootIndexPath = join(workerServer.contentDir, 'index.md');
   const nestedIndexPath = join(workerServer.contentDir, 'guides', 'index.md');
   const attributesPath = join(workerServer.contentDir, '.gitattributes');
 
   await openOkfSettings(page);
-  await expect.poll(() => readProjectConfig(configPath).contentRules?.okf?.enabled).toBe(true);
+  await expect.poll(() => readProjectConfig(configPath).contentRules?.psf?.enabled).toBe(true);
 
   const configBeforeDisclosure = readFileSync(configPath, 'utf-8');
-  const generateToggle = page.getByTestId('settings-okf-generate-index');
+  const generateToggle = page.getByTestId('settings-psf-generate-index');
   await expect(generateToggle).toHaveAttribute('aria-checked', 'false');
 
   await generateToggle.press('Space');
@@ -159,7 +159,7 @@ test('Escape decline restores focus, confirmation creates indexes, and disabling
   await disclosure.getByRole('button', { name: 'Enable indexes' }).click();
   await expect(generateToggle).toHaveAttribute('aria-checked', 'true');
   await expect
-    .poll(() => readProjectConfig(configPath).contentRules?.okf?.generate?.index, {
+    .poll(() => readProjectConfig(configPath).contentRules?.psf?.generate?.index, {
       timeout: 15_000,
     })
     .toBe(true);
@@ -186,7 +186,7 @@ test('Escape decline restores focus, confirmation creates indexes, and disabling
   await generateToggle.click();
   await expect(generateToggle).toHaveAttribute('aria-checked', 'false');
   await expect
-    .poll(() => readProjectConfig(configPath).contentRules?.okf?.generate?.index, {
+    .poll(() => readProjectConfig(configPath).contentRules?.psf?.generate?.index, {
       timeout: 15_000,
     })
     .toBe(false);
@@ -203,9 +203,9 @@ test('Escape decline restores focus, confirmation creates indexes, and disabling
   await generateToggle.click();
   await disclosure.getByRole('button', { name: 'Enable indexes' }).click();
   await expect(generateToggle).toHaveAttribute('aria-checked', 'false');
-  await expect(page.getByTestId('settings-okf-generate-index-status')).toContainText(
+  await expect(page.getByTestId('settings-psf-generate-index-status')).toContainText(
     'another Git attribute controls index.md',
   );
-  expect(readProjectConfig(configPath).contentRules?.okf?.generate?.index).toBe(false);
+  expect(readProjectConfig(configPath).contentRules?.psf?.generate?.index).toBe(false);
   expect(readFileSync(attributesPath, 'utf-8')).toBe('index.md merge=ours\n');
 });

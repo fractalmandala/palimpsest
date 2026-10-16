@@ -34,8 +34,8 @@ const { rmSync: actualRmSync } = await vi.importActual<typeof import('node:fs')>
 const mockedRm = vi.mocked(rmSync);
 const mockedMkdtemp = vi.mocked(mkdtempSync);
 
-const TEMP_DIR_PREFIX = 'ok-i18n-catalog-compile-';
-const SCRATCH_DIR_MARKER = '.ok-i18n-compile-';
+const TEMP_DIR_PREFIX = 'ps-i18n-catalog-compile-';
+const SCRATCH_DIR_MARKER = '.ps-i18n-compile-';
 const EDITED_LOCALE = 'es';
 const UNCOMPILED_LOCALE = 'fr';
 const UNCONFIGURED_LOCALE = 'xx';
@@ -154,7 +154,7 @@ describe('i18n catalog compile', { timeout: COMPILE_TIMEOUT_MS + 30_000 }, () =>
         mockedMkdtemp,
         'a run the stamp covers must not compile at all, or every tier pays for a lingui compile',
       ).not.toHaveBeenCalled();
-      rmSync(join(appRoot, 'node_modules', '.cache', 'ok-i18n-catalogs.json'));
+      rmSync(join(appRoot, 'node_modules', '.cache', 'ps-i18n-catalogs.json'));
       expect(
         compileI18nCatalogs(appRoot),
         'a lost stamp, as after a fresh install, must still leave byte-identical catalogs alone, or a running dev server reloads every connected browser',

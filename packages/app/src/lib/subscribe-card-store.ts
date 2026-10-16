@@ -1,4 +1,4 @@
-export const SUBSCRIBE_CARD_STORAGE_KEY = 'ok-subscribe-card-v1';
+export const SUBSCRIBE_CARD_STORAGE_KEY = 'ps-subscribe-card-v1';
 
 export const MAX_SUBSCRIBE_CARD_SHOWS = 3;
 

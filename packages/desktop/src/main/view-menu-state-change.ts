@@ -1,4 +1,4 @@
-import type { OkTerminalDockStateWriteResult } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsTerminalDockStateWriteResult } from '@palimpsest/core/desktop-bridge';
 import type {
   EditorViewMenuStateChange,
   EditorViewMenuStateSnapshot,
@@ -21,7 +21,7 @@ export interface ViewMenuStateChangeDeps {
   readonly rememberEditorVisible: (windowId: number, visible: boolean) => void;
   readonly rememberTerminalVisible: (windowId: number, visible: boolean) => void;
   readonly rememberAgentPanelVisible: (windowId: number, visible: boolean) => void;
-  readonly persist: (update: DockVisibilityUpdate) => OkTerminalDockStateWriteResult;
+  readonly persist: (update: DockVisibilityUpdate) => PsTerminalDockStateWriteResult;
   readonly warnPersistFailed: (kind: 'editor' | 'terminal' | 'agents', reason: string) => void;
   readonly refreshApplicationMenu: () => void;
 }

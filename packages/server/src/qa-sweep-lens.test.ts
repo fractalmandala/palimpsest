@@ -132,7 +132,7 @@ describe('QA-009: restore is NEVER automatic — checkpoint content stays out of
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(1_000_000);
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-qa009-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-qa009-'));
   });
   afterEach(async () => {
     vi.useRealTimers();

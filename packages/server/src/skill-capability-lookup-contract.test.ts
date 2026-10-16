@@ -5,8 +5,8 @@ import { describe, expect, test } from 'vitest';
 const PROJECT_SKILL_PATH = join(import.meta.dir, '../assets/skills/project/SKILL.md');
 const DISCOVERY_SKILL_PATH = join(import.meta.dir, '../assets/skills/discovery/SKILL.md');
 
-const DOCS_URL = 'https://openknowledge.ai/docs';
-const SOURCE_URL = 'https://github.com/inkeep/open-knowledge';
+const DOCS_URL = 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content';
+const SOURCE_URL = 'https://github.com/fractalmandala/palimpsest';
 
 describe('bundled skills — capability lookup contract', () => {
   const project = readFileSync(PROJECT_SKILL_PATH, 'utf-8');

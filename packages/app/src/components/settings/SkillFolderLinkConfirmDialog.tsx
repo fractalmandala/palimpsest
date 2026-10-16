@@ -1,4 +1,4 @@
-import type { SkillFolderLinkPreview } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillFolderLinkPreview } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowRight, Copy, Trash2, Unlink } from 'lucide-react';
 import {

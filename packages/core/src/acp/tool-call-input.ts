@@ -1,8 +1,8 @@
 import { piToolNamespace } from '../constants/editors.ts';
 import {
   MCP_SERVER_NAME,
-  OPEN_KNOWLEDGE_MCP_TOOLS,
-  type OpenKnowledgeMcpTool,
+  PALIMPSEST_MCP_TOOLS,
+  type PalimpsestMcpTool,
 } from '../constants/mcp.ts';
 import { DESKTOP_PRODUCTS } from '../constants/product.ts';
 
@@ -45,22 +45,22 @@ export interface ToolCallInput {
   readonly rawInput?: unknown;
 }
 
-export interface OpenKnowledgeToolCall {
-  tool: OpenKnowledgeMcpTool;
+export interface PalimpsestToolCall {
+  tool: PalimpsestMcpTool;
   args: Record<string, unknown>;
 }
 
-export type OpenKnowledgeServerMatch = 'any' | 'known';
+export type PalimpsestServerMatch = 'any' | 'known';
 
-const OPEN_KNOWLEDGE_TOOLS: ReadonlySet<string> = new Set(OPEN_KNOWLEDGE_MCP_TOOLS);
+const PALIMPSEST_TOOLS: ReadonlySet<string> = new Set(PALIMPSEST_MCP_TOOLS);
 
-const ANY_OPEN_KNOWLEDGE_SERVER = /^(?:open[-_ ]?knowledge|ok)(?:[-_][a-z]+)*$/;
+const ANY_PALIMPSEST_SERVER = /^(?:open[-_ ]?knowledge|ok)(?:[-_][a-z]+)*$/;
 
 const KNOWN_SERVER_SUFFIXES = Object.values(DESKTOP_PRODUCTS)
   .map((product) => product.mcpServerName.slice(MCP_SERVER_NAME.length))
   .filter((suffix) => suffix !== '');
 
-const KNOWN_OPEN_KNOWLEDGE_SERVER = new RegExp(
+const KNOWN_PALIMPSEST_SERVER = new RegExp(
   `^open[-_ ]?knowledge(?:${KNOWN_SERVER_SUFFIXES.join('|')})?$`,
 );
 
@@ -68,23 +68,23 @@ const PI_BRIDGE_NAMESPACES: ReadonlySet<string> = new Set(
   Object.values(DESKTOP_PRODUCTS).map(piToolNamespace),
 );
 
-const OPEN_KNOWLEDGE_TITLE =
+const PALIMPSEST_TITLE =
   /^(mcp[^a-z0-9]+)?((?:open[-_ ]?knowledge|ok)(?:-[a-z]+)*)[^a-z0-9]+([a-z_]+)$/;
 
-function isOpenKnowledgeTool(candidate: string | null): candidate is OpenKnowledgeMcpTool {
-  return candidate !== null && OPEN_KNOWLEDGE_TOOLS.has(candidate);
+function isPalimpsestTool(candidate: string | null): candidate is PalimpsestMcpTool {
+  return candidate !== null && PALIMPSEST_TOOLS.has(candidate);
 }
 
-export function identifyOpenKnowledgeToolCall(
+export function identifyPalimpsestToolCall(
   call: ToolCallInput,
-  servers: OpenKnowledgeServerMatch = 'any',
-): OpenKnowledgeToolCall | null {
+  servers: PalimpsestServerMatch = 'any',
+): PalimpsestToolCall | null {
   const serverPattern =
-    servers === 'known' ? KNOWN_OPEN_KNOWLEDGE_SERVER : ANY_OPEN_KNOWLEDGE_SERVER;
+    servers === 'known' ? KNOWN_PALIMPSEST_SERVER : ANY_PALIMPSEST_SERVER;
   const inputServer = stringField(asRecord(call.rawInput), 'server')?.toLowerCase() ?? null;
   if (inputServer !== null && !serverPattern.test(inputServer)) return null;
 
-  const titleMatch = OPEN_KNOWLEDGE_TITLE.exec((call.title ?? '').trim().toLowerCase());
+  const titleMatch = PALIMPSEST_TITLE.exec((call.title ?? '').trim().toLowerCase());
   const titleViaMcp = titleMatch?.[1] !== undefined;
   const titleServer = titleMatch?.[2] ?? null;
   const titleTool = titleMatch?.[3] ?? null;
@@ -95,19 +95,19 @@ export function identifyOpenKnowledgeToolCall(
       ? serverPattern.test(titleServer)
       : PI_BRIDGE_NAMESPACES.has(titleServer) && inputServer === null;
     if (!knownServer) return null;
-    if (!isOpenKnowledgeTool(titleTool)) return null;
+    if (!isPalimpsestTool(titleTool)) return null;
     const inputTool = unwrapped?.tool ?? null;
     if (inputTool !== null && inputTool !== titleTool) return null;
     return { tool: titleTool, args: unwrapped?.args ?? {} };
   }
 
-  const tool = [titleTool, unwrapped?.tool ?? null].find(isOpenKnowledgeTool);
+  const tool = [titleTool, unwrapped?.tool ?? null].find(isPalimpsestTool);
   if (tool === undefined) return null;
   return { tool, args: unwrapped?.args ?? {} };
 }
 
-export function openKnowledgeToolName(call: ToolCallInput): OpenKnowledgeMcpTool | null {
-  return identifyOpenKnowledgeToolCall(call)?.tool ?? null;
+export function palimpsestToolName(call: ToolCallInput): PalimpsestMcpTool | null {
+  return identifyPalimpsestToolCall(call)?.tool ?? null;
 }
 
 const POSIX_SHELL = /^(?:\/bin\/|\/usr\/bin\/|\/usr\/local\/bin\/)?(?:ba|da|z)?sh$/;

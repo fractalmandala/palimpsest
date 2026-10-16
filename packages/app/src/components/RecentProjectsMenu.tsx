@@ -1,10 +1,10 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { WorktreeInventoryModel } from '@inkeep/open-knowledge-core/git/worktree-inventory-model';
+import type { WorktreeInventoryModel } from '@palimpsest/core/git/worktree-inventory-model';
 import type {
   WorktreeSelectorEntry,
   WorktreeSelectorModel,
-} from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+} from '@palimpsest/core/git/worktree-selector-model';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Check, GitBranch, Plus, Search } from 'lucide-react';
 import type * as React from 'react';
@@ -19,7 +19,7 @@ import {
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
-import type { OkDesktopBridge, RecentProjectEntry } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, RecentProjectEntry } from '@/lib/desktop-bridge-types';
 import { cn } from '@/lib/utils';
 import { worktreeCreateErrorCopy } from '@/lib/worktree-create-error';
 import { refreshWorktrees } from '@/lib/worktree-store';
@@ -35,7 +35,7 @@ import {
 import { RecentItemContextMenu, RecentRemoveButton } from './recent-remove-controls';
 
 interface RecentProjectsMenuProps {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   recents: readonly RecentProjectEntry[];
   currentPath: string;
   query: string;
@@ -689,7 +689,7 @@ function MissingCheckoutStatus({ className }: { className?: string }) {
   return (
     <span
       className={cn('shrink-0 text-destructive text-xs', className)}
-      title={t`The OpenKnowledge project is missing at this checkout path.`}
+      title={t`The Palimpsest project is missing at this checkout path.`}
     >
       {t`project missing`}
     </span>
@@ -705,11 +705,11 @@ function RowLocationBadge({ entry }: { entry: WorktreeFlyoutEntry }) {
     },
     internal: {
       label: t`internal`,
-      description: t`Inside this repository's OpenKnowledge worktrees folder`,
+      description: t`Inside this repository's Palimpsest worktrees folder`,
     },
     external: {
       label: t`external`,
-      description: t`Outside this repository's OpenKnowledge worktrees folder`,
+      description: t`Outside this repository's Palimpsest worktrees folder`,
     },
     unknown: {
       label: t`worktree`,

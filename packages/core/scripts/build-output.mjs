@@ -197,7 +197,7 @@ function verify() {
   if (!differs(state)) return;
   const name = packageName();
   throw new BuildOutputError(
-    `${name}: dist differs from the manifest its producer wrote (${describe(state)}). Rebuild it through Turbo (\`turbo run build --filter=${name}\` from public/open-knowledge), or re-download it from the job that built it.`,
+    `${name}: dist differs from the manifest its producer wrote (${describe(state)}). Rebuild it through Turbo (\`turbo run build --filter=${name}\` from public/palimpsest), or re-download it from the job that built it.`,
   );
 }
 

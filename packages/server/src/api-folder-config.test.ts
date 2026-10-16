@@ -75,18 +75,18 @@ describe('GET/PUT /api/folder-config', () => {
   }
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-folder-config-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-folder-config-'));
     contentDir = join(tmpDir, 'content');
-    mkdirSync(join(contentDir, 'docs', '.ok'), { recursive: true });
+    mkdirSync(join(contentDir, 'docs', '.ps'), { recursive: true });
     mkdirSync(join(contentDir, 'plain'), { recursive: true });
-    mkdirSync(join(contentDir, 'weird', '.ok'), { recursive: true });
-    mkdirSync(join(contentDir, 'broken', '.ok'), { recursive: true });
+    mkdirSync(join(contentDir, 'weird', '.ps'), { recursive: true });
+    mkdirSync(join(contentDir, 'broken', '.ps'), { recursive: true });
     writeFileSync(
-      join(contentDir, 'docs', '.ok', 'frontmatter.yml'),
+      join(contentDir, 'docs', '.ps', 'frontmatter.yml'),
       'status: active\nowner: omar\n',
     );
-    writeFileSync(join(contentDir, 'weird', '.ok', 'frontmatter.yml'), '- just\n- a list\n');
-    writeFileSync(join(contentDir, 'broken', '.ok', 'frontmatter.yml'), 'key: [unclosed\n');
+    writeFileSync(join(contentDir, 'weird', '.ps', 'frontmatter.yml'), '- just\n- a list\n');
+    writeFileSync(join(contentDir, 'broken', '.ps', 'frontmatter.yml'), 'key: [unclosed\n');
   });
 
   afterEach(() => {
@@ -162,8 +162,8 @@ describe('GET/PUT /api/folder-config', () => {
   test('GET degrades a symlinked frontmatter.yml leaf: null field + signal, no leak, folder meta intact', async () => {
     const secret = join(tmpDir, 'gh-hosts.yml');
     writeFileSync(secret, 'oauth_token: leak-me-not\n');
-    mkdirSync(join(contentDir, 'linked', '.ok'), { recursive: true });
-    symlinkSync(secret, join(contentDir, 'linked', '.ok', 'frontmatter.yml'));
+    mkdirSync(join(contentDir, 'linked', '.ps'), { recursive: true });
+    symlinkSync(secret, join(contentDir, 'linked', '.ps', 'frontmatter.yml'));
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config?path=linked', 'GET');
     expect(captured.status).toBe(200);
@@ -181,8 +181,8 @@ describe('GET/PUT /api/folder-config', () => {
   test('GET degrades a symlinked frontmatter.yml leaf even when the target stays in-root', async () => {
     mkdirSync(join(contentDir, '.git'), { recursive: true });
     writeFileSync(join(contentDir, '.git', 'config'), 'password: in-root-secret\n');
-    mkdirSync(join(contentDir, 'inroot', '.ok'), { recursive: true });
-    symlinkSync('../../.git/config', join(contentDir, 'inroot', '.ok', 'frontmatter.yml'));
+    mkdirSync(join(contentDir, 'inroot', '.ps'), { recursive: true });
+    symlinkSync('../../.git/config', join(contentDir, 'inroot', '.ps', 'frontmatter.yml'));
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config?path=inroot', 'GET');
     expect(captured.status).toBe(200);
@@ -195,11 +195,11 @@ describe('GET/PUT /api/folder-config', () => {
     expect(captured.body).not.toContain('in-root-secret');
   });
 
-  test('GET refuses an in-root symlinked .ok directory outright (aliasing bypass)', async () => {
+  test('GET refuses an in-root symlinked .ps directory outright (aliasing bypass)', async () => {
     mkdirSync(join(contentDir, 'secretdir'), { recursive: true });
     writeFileSync(join(contentDir, 'secretdir', 'frontmatter.yml'), 'hidden: aliased-secret\n');
     mkdirSync(join(contentDir, 'aliased'), { recursive: true });
-    symlinkSync('../secretdir', join(contentDir, 'aliased', '.ok'), 'dir');
+    symlinkSync('../secretdir', join(contentDir, 'aliased', '.ps'), 'dir');
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config?path=aliased', 'GET');
     expect(captured.status).toBe(400);
@@ -210,8 +210,8 @@ describe('GET/PUT /api/folder-config', () => {
   test('PUT refuses a symlinked frontmatter.yml leaf and does not materialize it', async () => {
     const secret = join(tmpDir, 'kube-config.yml');
     writeFileSync(secret, 'token: hush\n');
-    mkdirSync(join(contentDir, 'linkput', '.ok'), { recursive: true });
-    const leaf = join(contentDir, 'linkput', '.ok', 'frontmatter.yml');
+    mkdirSync(join(contentDir, 'linkput', '.ps'), { recursive: true });
+    const leaf = join(contentDir, 'linkput', '.ps', 'frontmatter.yml');
     symlinkSync(secret, leaf);
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config', 'PUT', {
@@ -227,8 +227,8 @@ describe('GET/PUT /api/folder-config', () => {
   test('PUT refuses an in-root symlinked leaf (leaf identity, not containment)', async () => {
     mkdirSync(join(contentDir, '.git'), { recursive: true });
     writeFileSync(join(contentDir, '.git', 'config'), 'password: put-in-root\n');
-    mkdirSync(join(contentDir, 'inrootput', '.ok'), { recursive: true });
-    const leaf = join(contentDir, 'inrootput', '.ok', 'frontmatter.yml');
+    mkdirSync(join(contentDir, 'inrootput', '.ps'), { recursive: true });
+    const leaf = join(contentDir, 'inrootput', '.ps', 'frontmatter.yml');
     symlinkSync('../../.git/config', leaf);
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config', 'PUT', {
@@ -243,12 +243,12 @@ describe('GET/PUT /api/folder-config', () => {
     );
   });
 
-  test('GET degrades a requested folder whose .ok/templates symlinks OUT of the content root (same as in-root)', async () => {
+  test('GET degrades a requested folder whose .ps/templates symlinks OUT of the content root (same as in-root)', async () => {
     const outside = join(tmpDir, 'outside-tpl');
     mkdirSync(outside);
     writeFileSync(join(outside, 'leak.md'), '---\ntitle: Leak\n---\n');
-    mkdirSync(join(contentDir, 'esc', '.ok'), { recursive: true });
-    symlinkSync(outside, join(contentDir, 'esc', '.ok', 'templates'), 'dir');
+    mkdirSync(join(contentDir, 'esc', '.ps'), { recursive: true });
+    symlinkSync(outside, join(contentDir, 'esc', '.ps', 'templates'), 'dir');
     const get = await dispatch(buildExt(), '/api/folder-config?path=esc', 'GET');
     expect(get.status).toBe(200);
     const body = JSON.parse(get.body) as {
@@ -260,21 +260,21 @@ describe('GET/PUT /api/folder-config', () => {
     expect(get.body).not.toContain('leak');
   });
 
-  test('GET no longer 500s when the requested folder has a regular FILE named .ok', async () => {
+  test('GET no longer 500s when the requested folder has a regular FILE named .ps', async () => {
     mkdirSync(join(contentDir, 'flatok'), { recursive: true });
-    writeFileSync(join(contentDir, 'flatok', '.ok'), 'not a directory\n');
+    writeFileSync(join(contentDir, 'flatok', '.ps'), 'not a directory\n');
     const get = await dispatch(buildExt(), '/api/folder-config?path=flatok', 'GET');
     expect(get.status).toBe(200);
     expect(JSON.parse(get.body).warningCodes).toEqual(['unverifiable']);
   });
 
   test.runIf(process.getuid?.() !== 0)(
-    'GET degrades an uninspectable OWN .ok (EACCES) instead of 500ing, templates from the root still resolve',
+    'GET degrades an uninspectable OWN .ps (EACCES) instead of 500ing, templates from the root still resolve',
     async () => {
-      const ownOk = join(contentDir, 'unvown', '.ok');
+      const ownOk = join(contentDir, 'unvown', '.ps');
       mkdirSync(join(ownOk, 'templates'), { recursive: true });
-      mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-      writeFileSync(join(contentDir, '.ok', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
+      mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+      writeFileSync(join(contentDir, '.ps', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
       chmodSync(ownOk, 0o000);
       try {
         const get = await dispatch(buildExt(), '/api/folder-config?path=unvown', 'GET');
@@ -291,27 +291,27 @@ describe('GET/PUT /api/folder-config', () => {
     },
   );
 
-  test('GET degrades a DANGLING .ok/templates link (what a clone of a committed link produces)', async () => {
-    mkdirSync(join(contentDir, 'dangle', '.ok'), { recursive: true });
+  test('GET degrades a DANGLING .ps/templates link (what a clone of a committed link produces)', async () => {
+    mkdirSync(join(contentDir, 'dangle', '.ps'), { recursive: true });
     symlinkSync(
       '/nonexistent/attacker/templates',
-      join(contentDir, 'dangle', '.ok', 'templates'),
+      join(contentDir, 'dangle', '.ps', 'templates'),
       'dir',
     );
     const get = await dispatch(buildExt(), '/api/folder-config?path=dangle', 'GET');
     expect(get.status).toBe(200);
     const body = JSON.parse(get.body) as { warningCodes?: string[]; warnings?: string[] };
     expect(body.warningCodes).toEqual(['templates-symlink-refused']);
-    expect(body.warnings?.[0]).toContain('dangle/.ok/templates is a symlink');
+    expect(body.warnings?.[0]).toContain('dangle/.ps/templates is a symlink');
   });
 
-  test('an in-root symlinked .ok/templates refuses the template arms but degrades folder-config', async () => {
+  test('an in-root symlinked .ps/templates refuses the template arms but degrades folder-config', async () => {
     mkdirSync(join(contentDir, 'agentsdir'), { recursive: true });
     writeFileSync(join(contentDir, 'agentsdir', 'keep.md'), '# keep me\n');
-    mkdirSync(join(contentDir, 'aliased3', '.ok'), { recursive: true });
-    symlinkSync('../../agentsdir', join(contentDir, 'aliased3', '.ok', 'templates'), 'dir');
-    mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
+    mkdirSync(join(contentDir, 'aliased3', '.ps'), { recursive: true });
+    symlinkSync('../../agentsdir', join(contentDir, 'aliased3', '.ps', 'templates'), 'dir');
+    mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
     const ext = buildExt();
 
     const get = await dispatch(ext, '/api/folder-config?path=aliased3', 'GET');
@@ -324,7 +324,7 @@ describe('GET/PUT /api/folder-config', () => {
     expect((getBody.folder.templates_available ?? []).map((t) => t.name)).toEqual(['global']);
     expect(getBody.warningCodes).toEqual(['templates-symlink-refused']);
     expect(getBody.warnings).toEqual([
-      'aliased3/.ok/templates is a symlink — its templates are not enumerated. Replace the symlink with a real file or directory and retry.',
+      'aliased3/.ps/templates is a symlink — its templates are not enumerated. Replace the symlink with a real file or directory and retry.',
     ]);
     expect(get.body).not.toContain('keep.md');
 
@@ -342,16 +342,16 @@ describe('GET/PUT /api/folder-config', () => {
     expect(JSON.parse(del.body).type).toBe('urn:ok:error:symlink-refused');
   });
 
-  test('GET reports a symlinked ANCESTOR .ok/templates the folder would inherit from', async () => {
+  test('GET reports a symlinked ANCESTOR .ps/templates the folder would inherit from', async () => {
     mkdirSync(join(contentDir, 'agentsdir-anc'), { recursive: true });
     writeFileSync(join(contentDir, 'agentsdir-anc', 'keep.md'), '# keep me\n');
-    mkdirSync(join(contentDir, 'anc', '.ok'), { recursive: true });
+    mkdirSync(join(contentDir, 'anc', '.ps'), { recursive: true });
     mkdirSync(join(contentDir, 'anc', 'child'), { recursive: true });
-    symlinkSync('../../agentsdir-anc', join(contentDir, 'anc', '.ok', 'templates'), 'dir');
+    symlinkSync('../../agentsdir-anc', join(contentDir, 'anc', '.ps', 'templates'), 'dir');
     const ext = buildExt();
 
-    mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
+    mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
 
     const get = await dispatch(ext, '/api/folder-config?path=anc/child', 'GET');
     expect(get.status).toBe(200);
@@ -362,19 +362,19 @@ describe('GET/PUT /api/folder-config', () => {
     };
     expect((getBody.folder.templates_available ?? []).map((t) => t.name)).toEqual(['global']);
     expect(getBody.warningCodes).toEqual(['templates-symlink-refused']);
-    expect(getBody.warnings?.[0]).toContain('anc/.ok/templates is a symlink');
+    expect(getBody.warnings?.[0]).toContain('anc/.ps/templates is a symlink');
     expect(get.body).not.toContain('keep.md');
   });
 
-  test('GET reports a symlinked ANCESTOR .ok (menu skips it) while the requested folder still resolves', async () => {
+  test('GET reports a symlinked ANCESTOR .ps (menu skips it) while the requested folder still resolves', async () => {
     mkdirSync(join(contentDir, 'agentsdir-ancok', 'templates'), { recursive: true });
     writeFileSync(join(contentDir, 'agentsdir-ancok', 'templates', 'keep.md'), '# keep me\n');
     mkdirSync(join(contentDir, 'ancok', 'child'), { recursive: true });
-    symlinkSync('../agentsdir-ancok', join(contentDir, 'ancok', '.ok'), 'dir');
+    symlinkSync('../agentsdir-ancok', join(contentDir, 'ancok', '.ps'), 'dir');
     const ext = buildExt();
 
-    mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
+    mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
 
     const get = await dispatch(ext, '/api/folder-config?path=ancok/child', 'GET');
     expect(get.status).toBe(200);
@@ -385,18 +385,18 @@ describe('GET/PUT /api/folder-config', () => {
     };
     expect((getBody.folder.templates_available ?? []).map((t) => t.name)).toEqual(['global']);
     expect(getBody.warningCodes).toEqual(['templates-symlink-refused']);
-    expect(getBody.warnings?.[0]).toContain('ancok/.ok is a symlink');
+    expect(getBody.warnings?.[0]).toContain('ancok/.ps is a symlink');
     expect(get.body).not.toContain('keep.md');
   });
 
   test.runIf(process.getuid?.() !== 0)(
-    'GET reports an ANCESTOR .ok/templates it cannot inspect as unverifiable, not as absent',
+    'GET reports an ANCESTOR .ps/templates it cannot inspect as unverifiable, not as absent',
     async () => {
-      const ancestorOk = join(contentDir, 'unv', '.ok');
+      const ancestorOk = join(contentDir, 'unv', '.ps');
       mkdirSync(join(ancestorOk, 'templates'), { recursive: true });
       mkdirSync(join(contentDir, 'unv', 'child'), { recursive: true });
-      mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-      writeFileSync(join(contentDir, '.ok', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
+      mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+      writeFileSync(join(contentDir, '.ps', 'templates', 'global.md'), '---\ntitle: Global\n---\n');
       chmodSync(ancestorOk, 0o000);
       try {
         const ext = buildExt();
@@ -410,7 +410,7 @@ describe('GET/PUT /api/folder-config', () => {
         expect((getBody.folder.templates_available ?? []).map((t) => t.name)).toEqual(['global']);
         expect(getBody.warningCodes).toEqual(['templates-unverifiable']);
         expect(getBody.warnings?.[0]).toContain(
-          'unv/.ok/templates could not be inspected (EACCES)',
+          'unv/.ps/templates could not be inspected (EACCES)',
         );
       } finally {
         chmodSync(ancestorOk, 0o755);
@@ -421,8 +421,8 @@ describe('GET/PUT /api/folder-config', () => {
   test('template PUT refuses an in-root symlinked template LEAF before any write', async () => {
     mkdirSync(join(contentDir, '.claude'), { recursive: true });
     writeFileSync(join(contentDir, '.claude', 'CLAUDE.md'), '# victim agent definition\n');
-    mkdirSync(join(contentDir, 'notes', '.ok', 'templates'), { recursive: true });
-    const leaf = join(contentDir, 'notes', '.ok', 'templates', 'meeting.md');
+    mkdirSync(join(contentDir, 'notes', '.ps', 'templates'), { recursive: true });
+    const leaf = join(contentDir, 'notes', '.ps', 'templates', 'meeting.md');
     symlinkSync('../../../.claude/CLAUDE.md', leaf);
     const ext = buildExt();
 
@@ -440,11 +440,11 @@ describe('GET/PUT /api/folder-config', () => {
     );
   });
 
-  test('PUT refuses an in-root symlinked .ok directory and writes nothing through it', async () => {
+  test('PUT refuses an in-root symlinked .ps directory and writes nothing through it', async () => {
     mkdirSync(join(contentDir, 'secretdir2'), { recursive: true });
     writeFileSync(join(contentDir, 'secretdir2', 'frontmatter.yml'), 'existing: keep\n');
     mkdirSync(join(contentDir, 'aliased2'), { recursive: true });
-    symlinkSync('../secretdir2', join(contentDir, 'aliased2', '.ok'), 'dir');
+    symlinkSync('../secretdir2', join(contentDir, 'aliased2', '.ps'), 'dir');
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config', 'PUT', {
       path: 'aliased2',
@@ -468,14 +468,14 @@ describe('GET/PUT /api/folder-config', () => {
     });
     expect(captured.status).toBe(400);
     expect(JSON.parse(captured.body).type).toBe('urn:ok:error:path-escape');
-    expect(existsSync(join(outside, 'x', '.ok', 'frontmatter.yml'))).toBe(false);
+    expect(existsSync(join(outside, 'x', '.ps', 'frontmatter.yml'))).toBe(false);
   });
 
-  test('PUT refuses a REAL folder whose .ok is a symlink out of the content root', async () => {
+  test('PUT refuses a REAL folder whose .ps is a symlink out of the content root', async () => {
     const outside = join(tmpDir, 'outside-okdir');
     mkdirSync(outside);
     mkdirSync(join(contentDir, 'notes-real'));
-    symlinkSync(outside, join(contentDir, 'notes-real', '.ok'), 'dir');
+    symlinkSync(outside, join(contentDir, 'notes-real', '.ps'), 'dir');
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config', 'PUT', {
       path: 'notes-real',
@@ -497,27 +497,27 @@ describe('GET/PUT /api/folder-config', () => {
     expect(JSON.parse(captured.body).type).toBe('urn:ok:error:internal-server-error');
   });
 
-  test('PUT no longer rejects a folder whose own .ok/templates resolves outside the content root (the write never touches it)', async () => {
+  test('PUT no longer rejects a folder whose own .ps/templates resolves outside the content root (the write never touches it)', async () => {
     const outside = join(tmpDir, 'outside-tpl-put');
     mkdirSync(outside);
-    mkdirSync(join(contentDir, 'escput', '.ok'), { recursive: true });
-    symlinkSync(outside, join(contentDir, 'escput', '.ok', 'templates'), 'dir');
+    mkdirSync(join(contentDir, 'escput', '.ps'), { recursive: true });
+    symlinkSync(outside, join(contentDir, 'escput', '.ps', 'templates'), 'dir');
     const put = await dispatch(buildExt(), '/api/folder-config', 'PUT', {
       path: 'escput',
       frontmatter: { status: 'draft' },
     });
     expect(put.status).toBe(200);
     expect(JSON.parse(put.body).applied).toEqual([
-      { path: 'escput/.ok/frontmatter.yml', action: 'written' },
+      { path: 'escput/.ps/frontmatter.yml', action: 'written' },
     ]);
-    expect(readFileSync(join(contentDir, 'escput', '.ok', 'frontmatter.yml'), 'utf-8')).toContain(
+    expect(readFileSync(join(contentDir, 'escput', '.ps', 'frontmatter.yml'), 'utf-8')).toContain(
       'status: draft',
     );
     expect(existsSync(join(outside, 'frontmatter.yml'))).toBe(false);
   });
 
   test('PUT fails on a malformed frontmatter.yml and leaves it byte-identical', async () => {
-    const fmPath = join(contentDir, 'broken', '.ok', 'frontmatter.yml');
+    const fmPath = join(contentDir, 'broken', '.ps', 'frontmatter.yml');
     const before = readFileSync(fmPath, 'utf-8');
     const put = await dispatch(buildExt(), '/api/folder-config', 'PUT', {
       path: 'broken',
@@ -535,9 +535,9 @@ describe('GET/PUT /api/folder-config', () => {
     });
     expect(first.status).toBe(200);
     expect(JSON.parse(first.body).applied).toEqual([
-      { path: 'plain/.ok/frontmatter.yml', action: 'written' },
+      { path: 'plain/.ps/frontmatter.yml', action: 'written' },
     ]);
-    const sidecar = join(contentDir, 'plain', '.ok', 'frontmatter.yml');
+    const sidecar = join(contentDir, 'plain', '.ps', 'frontmatter.yml');
     expect(existsSync(sidecar)).toBe(true);
     expect(await readFile(sidecar, 'utf-8')).toContain('status: draft');
 
@@ -546,7 +546,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(JSON.parse(second.body).applied).toEqual([
-      { path: 'plain/.ok/frontmatter.yml', action: 'written' },
+      { path: 'plain/.ps/frontmatter.yml', action: 'written' },
     ]);
 
     mkdirSync(join(contentDir, 'untouched'), { recursive: true });
@@ -555,9 +555,9 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { 'never-existed': null },
     });
     expect(JSON.parse(noop.body).applied).toEqual([
-      { path: 'untouched/.ok/frontmatter.yml', action: 'noop' },
+      { path: 'untouched/.ps/frontmatter.yml', action: 'noop' },
     ]);
-    expect(existsSync(join(contentDir, 'untouched', '.ok'))).toBe(false);
+    expect(existsSync(join(contentDir, 'untouched', '.ps'))).toBe(false);
   });
 
   test('PUT with null values deletes keys; clearing the last key deletes the sidecar', async () => {
@@ -568,9 +568,9 @@ describe('GET/PUT /api/folder-config', () => {
     });
     expect(cleared.status).toBe(200);
     expect(JSON.parse(cleared.body).applied).toEqual([
-      { path: 'docs/.ok/frontmatter.yml', action: 'deleted' },
+      { path: 'docs/.ps/frontmatter.yml', action: 'deleted' },
     ]);
-    expect(existsSync(join(contentDir, 'docs', '.ok', 'frontmatter.yml'))).toBe(false);
+    expect(existsSync(join(contentDir, 'docs', '.ps', 'frontmatter.yml'))).toBe(false);
   });
 
   test('PUT without a frontmatter field applies nothing', async () => {
@@ -598,6 +598,6 @@ describe('GET/PUT /api/folder-config', () => {
       summary: 42,
     });
     expect(captured.status).toBe(400);
-    expect(existsSync(join(contentDir, 'plain', '.ok', 'frontmatter.yml'))).toBe(false);
+    expect(existsSync(join(contentDir, 'plain', '.ps', 'frontmatter.yml'))).toBe(false);
   });
 });

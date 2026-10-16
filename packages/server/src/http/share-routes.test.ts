@@ -38,10 +38,10 @@ function buildGroup(overrides: Partial<ShareRouteDeps> = {}) {
     contentDir: '/nonexistent-content',
     log: loggerFactory.getLogger('test'),
     checkLocalOpSecurity: () => true,
-    localOpCliArgs: ['open-knowledge'],
+    localOpCliArgs: ['palimpsest'],
     localOpGuard: { tryAcquire: () => true, release: () => {} },
     getSyncEngine: undefined,
-    resolveCredentialConfig: async () => ['credential.helper=!open-knowledge auth git-credential'],
+    resolveCredentialConfig: async () => ['credential.helper=!palimpsest auth git-credential'],
     toGitRelativePath: () => null,
     ...overrides,
   });
@@ -51,8 +51,8 @@ describe('share target-status credential chain', () => {
   test('each status check runs with the chain the resolver returns at request time', async () => {
     targetStatusCredentialConfigs.length = 0;
     const chains = [
-      ['credential.helper=', 'credential.helper=!open-knowledge auth git-credential'],
-      ['credential.helper=!open-knowledge auth git-credential'],
+      ['credential.helper=', 'credential.helper=!palimpsest auth git-credential'],
+      ['credential.helper=!palimpsest auth git-credential'],
     ];
     let call = 0;
     const group = buildGroup({
@@ -82,14 +82,14 @@ describe('createShareRoutes table', () => {
   const home = useIsolatedHome();
 
   test('keeps declared hosts for its lifetime and accepts an injected boot snapshot', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-share-host-snapshot-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-share-host-snapshot-'));
     const git = (...args: string[]) => execFileSync('git', args, { cwd: projectDir });
     try {
       git('init', '--initial-branch=main');
       configureTestGitRepository(projectDir);
       git('remote', 'add', 'origin', 'https://ghes.example.com/team/kb.git');
-      mkdirSync(join(home(), '.ok'));
-      const config = join(home(), '.ok', 'global.yml');
+      mkdirSync(join(home(), '.ps'));
+      const config = join(home(), '.ps', 'global.yml');
       writeFileSync(config, 'git:\n  hosts:\n    ghes.example.com:\n      provider: github\n');
       const initial = buildGroup({ projectDir });
       const refused = buildGroup({ projectDir, declaredGitHubHosts: new Set() });
@@ -150,7 +150,7 @@ describe('spawnShareSubprocess timeout settlement', () => {
 
   test('a SIGTERM-trapping, never-exiting subprocess times out to a 500 and releases the guard slot', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-    const readyPath = join(tmpdir(), `ok-share-latch-ready-${randomUUID()}`);
+    const readyPath = join(tmpdir(), `ps-share-latch-ready-${randomUUID()}`);
     const acquired: string[] = [];
     const released: string[] = [];
     const group = buildGroup({

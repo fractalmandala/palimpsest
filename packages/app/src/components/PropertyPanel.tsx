@@ -19,8 +19,8 @@ import {
   type FrontmatterSnapshot,
   readFmKeys,
   readFmRegionWithError,
-} from '@inkeep/open-knowledge-core/bridge';
-import { fieldErrorsFromError } from '@inkeep/open-knowledge-core/frontmatter/errors';
+} from '@palimpsest/core/bridge';
+import { fieldErrorsFromError } from '@palimpsest/core/frontmatter/errors';
 import {
   type FrontmatterPatch,
   type FrontmatterType,
@@ -28,7 +28,7 @@ import {
   frontmatterValuesEqual,
   inferType,
   isFrontmatterValueEmpty,
-} from '@inkeep/open-knowledge-core/frontmatter/schema';
+} from '@palimpsest/core/frontmatter/schema';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';

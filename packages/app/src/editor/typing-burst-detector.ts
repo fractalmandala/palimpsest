@@ -1,7 +1,7 @@
 import { mark } from '@/lib/perf';
 import { readNumericOverride } from '@/lib/perf/env-override';
 
-export const TYPING_BURST_DETECTOR_SENTINEL = 'ok-typing-burst-detector-v1' as const;
+export const TYPING_BURST_DETECTOR_SENTINEL = 'ps-typing-burst-detector-v1' as const;
 
 export type EditorMode = 'WYSIWYG' | 'Source';
 

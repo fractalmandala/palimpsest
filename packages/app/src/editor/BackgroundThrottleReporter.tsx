@@ -10,7 +10,7 @@ export function BackgroundThrottleReporter(): null {
 
   useEffect(() => {
     if (collabUrl === null) return;
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     const notify = bridge?.editor?.notifyBackgroundThrottle;
     if (typeof notify !== 'function') return;
     const pool = getPool(collabUrl);

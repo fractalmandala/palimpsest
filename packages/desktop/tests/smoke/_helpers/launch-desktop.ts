@@ -12,7 +12,7 @@ const HELPERS_DIR = dirname(fileURLToPath(import.meta.url));
 
 export const DESKTOP_ROOT = resolve(HELPERS_DIR, '..', '..', '..');
 
-export const PACKAGED_APP_ENV = 'OK_DESKTOP_PACKAGED_APP';
+export const PACKAGED_APP_ENV = 'PS_DESKTOP_PACKAGED_APP';
 
 export const UNPACKAGED_MAIN_ENTRY = join(DESKTOP_ROOT, 'out', 'main', 'index.js');
 
@@ -20,7 +20,7 @@ export const DEFAULT_LOCAL_PACKAGED_APP = join(
   DESKTOP_ROOT,
   'dist-desktop',
   'mac-arm64',
-  'OpenKnowledge.app',
+  'Palimpsest.app',
 );
 
 export type DesktopLaunchMode = 'packaged' | 'unpackaged';
@@ -74,7 +74,7 @@ export function resolveDesktopTarget(options: ResolveDesktopTargetOptions = {}):
 
   if (appPath !== undefined) {
     const targetPath =
-      platform === 'linux' ? join(appPath, 'openknowledge') : executableForAppBundle(appPath);
+      platform === 'linux' ? join(appPath, 'palimpsest') : executableForAppBundle(appPath);
     return probedOnRead({
       mode: 'packaged',
       appPath,
@@ -130,11 +130,11 @@ export function desktopLaunchOptions(input: DesktopLaunchOptionsInput = {}): Des
     env: {
       ...process.env,
       ...input.env,
-      OK_LANG: 'en',
-      OK_LOG_LEVEL: 'info',
-      OK_DEV_PROTOCOL: '1',
+      PS_LANG: 'en',
+      PS_LOG_LEVEL: 'info',
+      PS_DEV_PROTOCOL: '1',
       ...(target.mode === 'packaged'
-        ? { OK_IDLE_SHUTDOWN: `${PACKAGED_SMOKE_SERVER_IDLE_SHUTDOWN_MS / 1000}s` }
+        ? { PS_IDLE_SHUTDOWN: `${PACKAGED_SMOKE_SERVER_IDLE_SHUTDOWN_MS / 1000}s` }
         : {}),
     },
   };

@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { isLockProcessRunning, readProcessState } from '@inkeep/open-knowledge-server';
+import { isLockProcessRunning, readProcessState } from '@palimpsest/server';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { runClean } from './clean.ts';
 import { makeServerLockCheck } from './diagnose-health-checks/server-lock.ts';
@@ -24,8 +24,8 @@ let lockDir: string;
 let lockPath: string;
 const raw = JSON.stringify({ pid: 4242 });
 beforeEach(() => {
-  project = mkdtempSync(join(tmpdir(), 'ok-unverified-owner-owned-'));
-  lockDir = join(project, '.ok', 'local');
+  project = mkdtempSync(join(tmpdir(), 'ps-unverified-owner-owned-'));
+  lockDir = join(project, '.ps', 'local');
   mkdirSync(lockDir, { recursive: true });
   lockPath = join(lockDir, 'server.lock');
   writeFileSync(lockPath, raw);
@@ -95,7 +95,7 @@ test.each([
   'ps reports the project directory for $layout locks with json=$json',
   async ({ json, layout }) => {
     if (layout !== 'current') {
-      lockDir = join(project, layout === 'legacy' ? '.ok' : 'custom-state');
+      lockDir = join(project, layout === 'legacy' ? '.ps' : 'custom-state');
       mkdirSync(lockDir, { recursive: true });
       lockPath = join(lockDir, 'server.lock');
       writeFileSync(lockPath, raw);

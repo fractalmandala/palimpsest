@@ -6,7 +6,7 @@ import {
   readSharingMode,
   removeOkPathsFromGitExclude,
   type SharingMode,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 
 export interface SharingStatusResult {
   kind: 'status';

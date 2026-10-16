@@ -4,14 +4,14 @@ import {
   claimNoteWindowInitialFocus,
 } from './note-window-focus.ts';
 
-type OkDesktopStub = { config: { mode: string } };
+type PsDesktopStub = { config: { mode: string } };
 
 function stubMode(mode: string | null): void {
   if (mode === null) {
-    (window as unknown as { okDesktop?: OkDesktopStub }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: PsDesktopStub }).psDesktop = undefined;
     return;
   }
-  (window as unknown as { okDesktop?: OkDesktopStub }).okDesktop = { config: { mode } };
+  (window as unknown as { psDesktop?: PsDesktopStub }).psDesktop = { config: { mode } };
 }
 
 beforeEach(() => {

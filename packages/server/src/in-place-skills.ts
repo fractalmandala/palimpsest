@@ -9,13 +9,13 @@ import {
   estimateSkillCost,
   HUB_READER_EDITORS,
   LEGACY_SKILL_STORE_ROOT,
-  OK_DIR,
+  PS_DIR,
   parseFrontmatterRecord,
   SKILLS_STORE_DIRNAME,
   type SkillCostTiers,
   type SkillScope,
   skillRootActivationPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   type AcquiredSkill,
   BUNDLE_WALK_IGNORE,
@@ -27,7 +27,7 @@ import {
   parseSkillDirAsync,
   SKILL_CANONICAL_PRECEDENCE,
   type SkillHostId,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { getLogger } from './logger.ts';
 import { isInternalBundleSkillName, isUserGlobalBundleSkillName } from './skill-bundles.ts';
 import {
@@ -120,7 +120,7 @@ function hostSkillRootsFor(
 
 export function globalSkillGraphRoots(home: string): string[] {
   const roots = knownSkillRootsFor(home, 'global').map((r) => join(home, r.root));
-  const legacyStore = join(home, OK_DIR, SKILLS_STORE_DIRNAME);
+  const legacyStore = join(home, PS_DIR, SKILLS_STORE_DIRNAME);
   return roots.includes(legacyStore) ? roots : [...roots, legacyStore];
 }
 

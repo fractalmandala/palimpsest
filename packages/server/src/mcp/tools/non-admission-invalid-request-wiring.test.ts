@@ -90,8 +90,8 @@ let problem = {
 let writes = 0;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-non-admission-wiring-'));
-  const templates = join(root, 'templates', '.ok', 'templates');
+  root = mkdtempSync(join(tmpdir(), 'ps-non-admission-wiring-'));
+  const templates = join(root, 'templates', '.ps', 'templates');
   mkdirSync(templates, { recursive: true });
   writeFileSync(join(templates, 'existing.md'), '---\ntitle: Existing\n---\nExisting target.\n');
   listener = createServer((req, res) => {

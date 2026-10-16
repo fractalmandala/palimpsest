@@ -2,16 +2,16 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@inkeep/open-knowledge-docs": "0.0.272",
-    "@inkeep/open-knowledge-app": "0.86.18",
-    "@inkeep/open-knowledge": "0.86.18",
-    "@inkeep/open-knowledge-core": "0.86.18",
-    "@inkeep/open-knowledge-desktop": "0.86.18",
+    "@palimpsest/docs": "0.0.272",
+    "@palimpsest/app": "0.86.18",
+    "@palimpsest/cli": "0.86.18",
+    "@palimpsest/core": "0.86.18",
+    "@palimpsest/desktop": "0.86.18",
     "@inkeep/md-conformance": "0.0.280",
-    "@inkeep/open-knowledge-md-audit": "0.0.0",
-    "@inkeep/open-knowledge-native-config": "0.0.0",
-    "@inkeep/open-knowledge-plugin": "0.3.1",
-    "@inkeep/open-knowledge-server": "0.86.18"
+    "@palimpsest/palimpsest-md-audit": "0.0.0",
+    "@palimpsest/native-config": "0.0.0",
+    "@palimpsest/plugin": "0.3.1",
+    "@palimpsest/server": "0.86.18"
   },
   "changesets": []
 }

@@ -101,19 +101,19 @@ describe('classifyMarkdownHref', () => {
   });
 
   test('skill bundle ref from a SKILL doc resolves into the skill dir (§8.2)', () => {
-    expect(classifyMarkdownHref('references/setup.md', '.ok/skills/demo/SKILL')).toEqual({
+    expect(classifyMarkdownHref('references/setup.md', '.ps/skills/demo/SKILL')).toEqual({
       kind: 'doc',
-      docName: '.ok/skills/demo/references/setup',
+      docName: '.ps/skills/demo/references/setup',
       anchor: null,
     });
-    expect(classifyMarkdownHref('references/setup#usage', '.ok/skills/demo/SKILL')).toEqual({
+    expect(classifyMarkdownHref('references/setup#usage', '.ps/skills/demo/SKILL')).toEqual({
       kind: 'doc',
-      docName: '.ok/skills/demo/references/setup',
+      docName: '.ps/skills/demo/references/setup',
       anchor: 'usage',
     });
-    expect(classifyMarkdownHref('scripts/run', '.ok/skills/demo/SKILL')).toEqual({
+    expect(classifyMarkdownHref('scripts/run', '.ps/skills/demo/SKILL')).toEqual({
       kind: 'doc',
-      docName: '.ok/skills/demo/scripts/run',
+      docName: '.ps/skills/demo/scripts/run',
       anchor: null,
     });
   });
@@ -136,7 +136,7 @@ describe('classifyMarkdownHref', () => {
 
   test('bundle overlay is narrow: non-skill source is unaffected', () => {
     expect(classifyMarkdownHref('references/setup.md', 'docs/index')?.docName).not.toBe(
-      '.ok/skills/docs/references/setup',
+      '.ps/skills/docs/references/setup',
     );
   });
 });

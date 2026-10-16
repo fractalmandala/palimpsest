@@ -99,8 +99,8 @@ let fixtureDir: string;
 let outsideDir: string;
 
 beforeAll(() => {
-  fixtureDir = mkdtempSync(join(tmpdir(), 'ok-asset-serve-unit-'));
-  outsideDir = mkdtempSync(join(tmpdir(), 'ok-asset-serve-outside-'));
+  fixtureDir = mkdtempSync(join(tmpdir(), 'ps-asset-serve-unit-'));
+  outsideDir = mkdtempSync(join(tmpdir(), 'ps-asset-serve-outside-'));
   for (const name of SERVABLE_FIXTURES) writeFileSync(join(fixtureDir, name), 'fixture');
   writeFileSync(join(outsideDir, 'secret.png'), 'outside');
   symlinkSync(join(outsideDir, 'secret.png'), join(fixtureDir, 'escape.png'));

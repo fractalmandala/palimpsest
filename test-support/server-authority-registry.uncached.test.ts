@@ -112,7 +112,7 @@ test.each([
 ])(
   'Vitest releases the shared authority registry after $consumer completes',
   async ({ file, name, config }) => {
-    await withTempDir('ok-registry-lifecycle-', async (temp) => {
+    await withTempDir('ps-registry-lifecycle-', async (temp) => {
       const allocated = await runConsumer(temp, file, name, config);
       expect(allocated.size).toBeGreaterThan(0);
       expect([...allocated].filter((directory) => existsSync(directory))).toEqual([]);
@@ -121,7 +121,7 @@ test.each([
 );
 
 test('native upload fixture remains usable through the composition rig', async () => {
-  await withTempDir('ok-registry-native-consumer-', async (temp) => {
+  await withTempDir('ps-registry-native-consumer-', async (temp) => {
     await runConsumer(
       temp,
       'packages/server/src/api-skill-import-composition.test.ts',
@@ -132,7 +132,7 @@ test('native upload fixture remains usable through the composition rig', async (
 });
 
 test('Vitest leaves no authority directory when every importing fixture test is filtered out', async () => {
-  await withTempDir('ok-registry-filtered-', async (temp) => {
+  await withTempDir('ps-registry-filtered-', async (temp) => {
     const previousExitCode = process.exitCode;
     const runner = await createRegistryRunner(
       temp,
@@ -173,12 +173,12 @@ test('Vitest leaves no authority directory when every importing fixture test is 
         process.exitCode = previousExitCode;
       }
     }
-    expect(readdirSync(temp).filter((entry) => entry.startsWith('ok-test-authority-'))).toEqual([]);
+    expect(readdirSync(temp).filter((entry) => entry.startsWith('ps-test-authority-'))).toEqual([]);
   });
 });
 
 test('Vitest leaves no authority directory after an importing fixture fails collection', async () => {
-  await withTempDir('ok-registry-collection-', async (temp) => {
+  await withTempDir('ps-registry-collection-', async (temp) => {
     const file = relative(
       root,
       fileURLToPath(
@@ -206,7 +206,7 @@ test('Vitest leaves no authority directory after an importing fixture fails coll
           errors: [
             {
               message: 'Registry fixture collection failed after import',
-              cause: expect.stringContaining(join(temp, 'ok-test-authority-')),
+              cause: expect.stringContaining(join(temp, 'ps-test-authority-')),
             },
           ],
           cases: [],
@@ -219,7 +219,7 @@ test('Vitest leaves no authority directory after an importing fixture fails coll
         process.exitCode = previousExitCode;
       }
     }
-    expect(readdirSync(temp).filter((entry) => entry.startsWith('ok-test-authority-'))).toEqual([]);
+    expect(readdirSync(temp).filter((entry) => entry.startsWith('ps-test-authority-'))).toEqual([]);
   });
 });
 
@@ -230,7 +230,7 @@ test.each([
   'packages/app/vitest.config.ts',
   'packages/cli/vitest.config.ts',
 ])('Vitest releases the shared authority registry under %s', async (config) => {
-  await withTempDir('ok-registry-config-', async (temp) => {
+  await withTempDir('ps-registry-config-', async (temp) => {
     const allocated = await runConsumer(
       temp,
       helperFixture,

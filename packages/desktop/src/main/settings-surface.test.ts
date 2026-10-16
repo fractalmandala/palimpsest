@@ -386,7 +386,7 @@ describe('settingsHashScript', () => {
         },
       },
       dispatchEvent: (event: Event) => {
-        if (event.type === 'open-knowledge:settings-section-intent') {
+        if (event.type === 'palimpsest:settings-section-intent') {
           sectionIntents.push((event as CustomEvent).detail);
         }
         return true;

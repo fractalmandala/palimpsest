@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { LINEAGE_EPOCH_KEY } from '@inkeep/open-knowledge-core';
+import { LINEAGE_EPOCH_KEY } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { tracedAtomicFs } from './fs-traced.ts';
@@ -29,7 +29,7 @@ function writeMmd(content: string): void {
 }
 
 beforeEach(() => {
-  contentDir = mkdtempSync(join(tmpdir(), 'ok-mermaid-'));
+  contentDir = mkdtempSync(join(tmpdir(), 'ps-mermaid-'));
 });
 afterEach(() => {
   rmSync(contentDir, { recursive: true, force: true });
@@ -47,8 +47,8 @@ describe('storeMermaidDoc', () => {
     const write = tracedAtomicFs.writeFile;
     const staged = vi.spyOn(tracedAtomicFs, 'writeFile').mockImplementation(async (...args) => {
       await write(...args);
-      mkdirSync(join(contentDir, 'assets', '.ok'));
-      writeFileSync(join(contentDir, 'assets', '.ok', 'config.yml'), '');
+      mkdirSync(join(contentDir, 'assets', '.ps'));
+      writeFileSync(join(contentDir, 'assets', '.ps', 'config.yml'), '');
     });
     try {
       expect(await storeMermaidDoc(doc, DOC, 'agent', ctx)).toBe('write-failed');

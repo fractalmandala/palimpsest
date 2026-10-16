@@ -17,8 +17,8 @@ interface Fixture {
 }
 
 function makeFixture(): Fixture {
-  const root = mkdtempSync(join(tmpdir(), 'ok-config-watcher-'));
-  const absPath = join(root, '.ok', 'config.yml');
+  const root = mkdtempSync(join(tmpdir(), 'ps-config-watcher-'));
+  const absPath = join(root, '.ps', 'config.yml');
   mkdirSync(dirname(absPath), { recursive: true });
   return {
     root,
@@ -166,8 +166,8 @@ describe('startConfigFileWatcher', () => {
 
 describe('startMultiPathConfigFileWatcher', () => {
   function makeMultiFixture(): { root: string; pathA: string; pathB: string; cleanup: () => void } {
-    const root = mkdtempSync(join(tmpdir(), 'ok-multi-config-watcher-'));
-    const pathA = join(root, '.okignore');
+    const root = mkdtempSync(join(tmpdir(), 'ps-multi-config-watcher-'));
+    const pathA = join(root, '.psignore');
     const pathB = join(root, '.gitignore');
     return {
       root,

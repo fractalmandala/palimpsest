@@ -7,8 +7,8 @@ import {
   prependFrontmatter,
   stripFrontmatter,
   toBridgeInvariantLog,
-} from '@inkeep/open-knowledge-core';
-import { formatReconcileSubject } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { formatReconcileSubject } from '@palimpsest/core/shadow-repo-layout';
 import type * as Y from 'yjs';
 import type { PrecomputedParse } from './bridge-intake.ts';
 import {
@@ -47,7 +47,7 @@ import { FILE_SYSTEM_WRITER } from './shadow-repo.ts';
 export { FILE_WATCHER_ORIGIN } from './disk-content-intake.ts';
 
 export function redactedErrorSummary(err: unknown): unknown {
-  const verbose = process.env.OK_TELEMETRY_VERBOSE === '1';
+  const verbose = process.env.PS_TELEMETRY_VERBOSE === '1';
   if (err instanceof BridgeMergeContentLossError) return err.toLog({ verbose });
   if (err instanceof BridgeInvariantViolationError) {
     return toBridgeInvariantLog(err.violation, { verbose });

@@ -14,17 +14,17 @@ let ephemeralDir: string;
 let ephemeralServer: BootedServer;
 
 beforeAll(async () => {
-  contentDir = mkdtempSync(resolve(tmpdir(), 'ok-agent-blank-line-'));
+  contentDir = mkdtempSync(resolve(tmpdir(), 'ps-agent-blank-line-'));
   writeFileSync(resolve(contentDir, 'lint-target.md'), HEADINGS_WITHOUT_BLANK_LINES, 'utf-8');
   writeFileSync(resolve(contentDir, 'edit-target.md'), HEADINGS_WITHOUT_BLANK_LINES, 'utf-8');
   server = await bootCompositionRig(contentDir);
   await server.ready;
   appendFileSync(
-    resolve(contentDir, '.ok', 'config.yml'),
+    resolve(contentDir, '.ps', 'config.yml'),
     '\ncontentRules:\n  enabled: true\n  markdownlint:\n    enabled: true\n',
   );
 
-  ephemeralDir = mkdtempSync(resolve(tmpdir(), 'ok-agent-blank-line-ephemeral-'));
+  ephemeralDir = mkdtempSync(resolve(tmpdir(), 'ps-agent-blank-line-ephemeral-'));
   writeFileSync(resolve(ephemeralDir, 'note.md'), HEADINGS_WITHOUT_BLANK_LINES, 'utf-8');
   ephemeralServer = await bootCompositionRig(ephemeralDir, {
     ephemeral: true,

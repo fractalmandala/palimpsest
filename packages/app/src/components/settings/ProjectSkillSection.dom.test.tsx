@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -29,12 +29,12 @@ function renderSection() {
 }
 
 const projectSkill: SkillsListEntry = {
-  name: 'open-knowledge',
+  name: 'palimpsest',
   description:
-    'Authoritative agent-runtime contract for working inside an OpenKnowledge project — a markdown-CRDT knowledge base exposed over MCP.',
+    'Authoritative agent-runtime contract for working inside an Palimpsest project — a markdown-CRDT knowledge base exposed over MCP.',
   scope: 'project',
-  path: '.claude/skills/open-knowledge/SKILL.md',
-  absolutePath: '/proj/.claude/skills/open-knowledge/SKILL.md',
+  path: '.claude/skills/palimpsest/SKILL.md',
+  absolutePath: '/proj/.claude/skills/palimpsest/SKILL.md',
   installed: true,
   hosts: ['claude', 'codex'],
   managed: true,
@@ -65,7 +65,7 @@ describe('ProjectSkillSection', () => {
     await waitFor(() => {
       expect(screen.getByTestId('settings-project-skill')).toBeTruthy();
     });
-    expect(screen.getByText('How to use OpenKnowledge and its MCP tools.')).toBeTruthy();
+    expect(screen.getByText('How to use Palimpsest and its MCP tools.')).toBeTruthy();
     expect(screen.queryByText(/markdown-CRDT knowledge base/)).toBeNull();
     expect(screen.getAllByTestId('skill-consent-row-preview').length).toBe(1);
     expect(screen.queryByText('grill-me')).toBeNull();
@@ -91,7 +91,7 @@ describe('ProjectSkillSection', () => {
 
     expect(window.location.hash.startsWith('#/__skill-preview__/')).toBe(true);
     expect(decodeURIComponent(window.location.hash)).toContain(
-      '/proj/.claude/skills/open-knowledge',
+      '/proj/.claude/skills/palimpsest',
     );
     expect(decodeURIComponent(window.location.hash)).not.toContain('SKILL.md');
     expect(decodeURIComponent(window.location.hash)).toMatch(/\/project$/);
@@ -103,8 +103,8 @@ describe('ProjectSkillSection', () => {
       expect(screen.getByTestId('settings-project-skill')).toBeTruthy();
     });
     const block = screen.getByTestId('settings-project-skill').textContent ?? '';
-    expect(block).toContain('Skills from OpenKnowledge');
-    expect(block).toContain('how to work with OpenKnowledge');
+    expect(block).toContain('Skills from Palimpsest');
+    expect(block).toContain('how to work with Palimpsest');
     expect(block).toContain('everyone who opens the project');
   });
 
@@ -145,7 +145,7 @@ describe('ProjectSkillSection', () => {
       expect(screen.getByTestId('project-skill-unavailable')).toBeTruthy();
     });
     expect(screen.getByTestId('settings-project-skill').textContent).toContain(
-      'Skills from OpenKnowledge',
+      'Skills from Palimpsest',
     );
   });
 

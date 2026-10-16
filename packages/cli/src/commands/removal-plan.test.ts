@@ -12,8 +12,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
-import { SHARED_OK_ENTRIES } from '@inkeep/open-knowledge-core';
-import { MCP_SERVER_NAME } from '@inkeep/open-knowledge-server';
+import { SHARED_OK_ENTRIES } from '@palimpsest/core';
+import { MCP_SERVER_NAME } from '@palimpsest/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { DESKTOP_UPDATER_CACHE_DIR_NAME } from '../integrations/desktop-state.ts';
 import { readPathInstallMarker } from '../integrations/path-shim.ts';
@@ -59,17 +59,17 @@ function stubDeps(over: Partial<RunRemovalDeps> = {}): RunRemovalDeps {
 }
 
 function seedHome(home: string): void {
-  write(join(home, '.ok', 'auth.yml'), 'github.com: {}\n');
-  write(join(home, '.ok', 'secrets.yml'), 'key: x\n');
-  write(join(home, '.ok', 'logs', 'server.jsonl'), '{}\n');
-  write(join(home, '.ok', 'skills', 'my-note-skill', 'SKILL.md'), '# mine\n');
+  write(join(home, '.ps', 'auth.yml'), 'github.com: {}\n');
+  write(join(home, '.ps', 'secrets.yml'), 'key: x\n');
+  write(join(home, '.ps', 'logs', 'server.jsonl'), '{}\n');
+  write(join(home, '.ps', 'skills', 'my-note-skill', 'SKILL.md'), '# mine\n');
   write(
-    join(home, 'Library', 'Application Support', 'OpenKnowledge', 'state.json'),
+    join(home, 'Library', 'Application Support', 'Palimpsest', 'state.json'),
     JSON.stringify({ recentProjects: [] }),
   );
-  write(join(home, 'Library', 'Application Support', 'OpenKnowledge', 'path-install.json'), '{}');
+  write(join(home, 'Library', 'Application Support', 'Palimpsest', 'path-install.json'), '{}');
   write(
-    join(home, 'Library', 'Application Support', 'Open Knowledge', 'state.json'),
+    join(home, 'Library', 'Application Support', 'Palimpsest', 'state.json'),
     JSON.stringify({ theirData: true }),
   );
   write(join(home, 'Library', 'Caches', DESKTOP_UPDATER_CACHE_DIR_NAME, 'pending.zip'), 'x');
@@ -83,16 +83,16 @@ function seedHome(home: string): void {
   );
   write(
     join(home, '.zshrc'),
-    `export EDITOR=vim\n\n# >>> open-knowledge cli >>>\n[ -f "$HOME/.ok/env.sh" ] && . "$HOME/.ok/env.sh"\n# <<< open-knowledge cli <<<\n\nalias ll='ls -la'\n`,
+    `export EDITOR=vim\n\n# >>> palimpsest cli >>>\n[ -f "$HOME/.ps/env.sh" ] && . "$HOME/.ps/env.sh"\n# <<< palimpsest cli <<<\n\nalias ll='ls -la'\n`,
   );
   write(
-    join(home, '.config', 'fish', 'conf.d', 'open-knowledge.fish'),
-    `# >>> open-knowledge cli >>>\nset -gx PATH "$HOME/.ok/bin" $PATH\n# <<< open-knowledge cli <<<\n`,
+    join(home, '.config', 'fish', 'conf.d', 'palimpsest.fish'),
+    `# >>> palimpsest cli >>>\nset -gx PATH "$HOME/.ps/bin" $PATH\n# <<< palimpsest cli <<<\n`,
   );
 }
 
 function markerFor(home: string): UninstallPlanInput['marker'] {
-  const extraTarget = join(home, '.ok', 'bin', 'ok');
+  const extraTarget = join(home, '.ps', 'bin', 'ok');
   const extraLink = join(home, '.local', 'bin', 'ok');
   mkdirSync(dirname(extraTarget), { recursive: true });
   writeFileSync(extraTarget, 'wrapper');
@@ -104,9 +104,9 @@ function markerFor(home: string): UninstallPlanInput['marker'] {
     installedAt: 'x',
     bundleVersion: '1.0.0',
     bundleWrapperPath: '/w',
-    binDir: join(home, '.ok', 'bin'),
-    envShimPath: join(home, '.ok', 'env.sh'),
-    rcFiles: [join(home, '.zshrc'), join(home, '.config', 'fish', 'conf.d', 'open-knowledge.fish')],
+    binDir: join(home, '.ps', 'bin'),
+    envShimPath: join(home, '.ps', 'env.sh'),
+    rcFiles: [join(home, '.zshrc'), join(home, '.config', 'fish', 'conf.d', 'palimpsest.fish')],
     rcOptOuts: [],
     pathDiscovery: null,
     extraSymlinks: [{ path: extraLink, target: extraTarget, createdAt: 'x', kind: 'created' }],
@@ -127,12 +127,12 @@ function baseInput(home: string, over: Partial<UninstallPlanInput> = {}): Uninst
 }
 
 describe('buildUninstallPlan ordering', () => {
-  test('stops servers first and removes ~/.ok last, with recent-project deinits before it', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+  test('stops servers first and removes ~/.ps last, with recent-project deinits before it', () => {
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       const plan = buildUninstallPlan(
         baseInput(home, {
-          lockDirs: ['/some/project/.ok/local'],
+          lockDirs: ['/some/project/.ps/local'],
           recentDeinitProjectRoots: ['/recent/proj'],
         }),
       );
@@ -140,7 +140,7 @@ describe('buildUninstallPlan ordering', () => {
       expect(kinds[0]).toBe('stop-server');
       const last = plan.ops[plan.ops.length - 1];
       expect(last.kind).toBe('remove-path');
-      expect((last as { path: string }).path).toBe(join(home, '.ok'));
+      expect((last as { path: string }).path).toBe(join(home, '.ps'));
       const recentIdx = plan.ops.findIndex((o) => o.group === 'Project: proj');
       expect(recentIdx).toBeGreaterThan(-1);
       expect(recentIdx).toBeLessThan(plan.ops.length - 1);
@@ -155,8 +155,8 @@ describe('buildUninstallPlan ordering', () => {
       home: '/Users/x',
       env: {},
       expected: [
-        '/Users/x/Library/Application Support/OpenKnowledge',
-        '/Users/x/Library/Application Support/Open Knowledge',
+        '/Users/x/Library/Application Support/Palimpsest',
+        '/Users/x/Library/Application Support/Palimpsest',
         `/Users/x/Library/Caches/${DESKTOP_UPDATER_CACHE_DIR_NAME}`,
       ],
     },
@@ -168,7 +168,7 @@ describe('buildUninstallPlan ordering', () => {
         LOCALAPPDATA: 'C:\\Users\\x\\AppData\\Local',
       },
       expected: [
-        'C:\\Users\\x\\AppData\\Roaming\\OpenKnowledge',
+        'C:\\Users\\x\\AppData\\Roaming\\Palimpsest',
         `C:\\Users\\x\\AppData\\Local\\${DESKTOP_UPDATER_CACHE_DIR_NAME}`,
       ],
     },
@@ -176,7 +176,7 @@ describe('buildUninstallPlan ordering', () => {
       platform: 'linux' as const,
       home: '/home/x',
       env: { XDG_CONFIG_HOME: '/xdg/config', XDG_CACHE_HOME: '/xdg/cache' },
-      expected: ['/xdg/config/OpenKnowledge', `/xdg/cache/${DESKTOP_UPDATER_CACHE_DIR_NAME}`],
+      expected: ['/xdg/config/Palimpsest', `/xdg/cache/${DESKTOP_UPDATER_CACHE_DIR_NAME}`],
     },
   ])('plans only owned desktop data on $platform', ({ platform, home, env, expected }) => {
     const applicationData = applicationDataOps(home, platform, env);
@@ -202,21 +202,21 @@ describe('buildUninstallPlan ordering', () => {
 
     const human = formatRemovalPlan(plan);
     expect(human).toContain('Application data:');
-    expect(human).toContain('Remove ~/.config/OpenKnowledge');
+    expect(human).toContain('Remove ~/.config/Palimpsest');
     expect(human).toContain(`Remove ~/.cache/${DESKTOP_UPDATER_CACHE_DIR_NAME}`);
 
     const json = removalPlanToJson(plan);
     expect(json.mode).toBe('dry-run');
     expect(json.planned.map((item) => item.label)).toEqual(
       expect.arrayContaining([
-        'Remove ~/.config/OpenKnowledge',
+        'Remove ~/.config/Palimpsest',
         `Remove ~/.cache/${DESKTOP_UPDATER_CACHE_DIR_NAME}`,
       ]),
     );
   });
 
   test('keeps non-macOS PATH-shim behavior independent of desktop cleanup', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       const plan = buildUninstallPlan({
         home,
@@ -240,12 +240,12 @@ describe('buildUninstallPlan ordering', () => {
   });
 
   test('strips the ~/.zshrc block even when the path-install manifest is ABSENT', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       const zshrc = join(home, '.zshrc');
       writeFileSync(
         zshrc,
-        `export EDITOR=vim\n\n# >>> open-knowledge cli >>>\n[ -f "$HOME/.ok/env.sh" ] && . "$HOME/.ok/env.sh"\n# <<< open-knowledge cli <<<\n\nalias ll='ls -la'\n`,
+        `export EDITOR=vim\n\n# >>> palimpsest cli >>>\n[ -f "$HOME/.ps/env.sh" ] && . "$HOME/.ps/env.sh"\n# <<< palimpsest cli <<<\n\nalias ll='ls -la'\n`,
       );
       const plan = buildUninstallPlan(baseInput(home, { marker: null }));
       const shellOps = plan.ops.filter((o) => o.kind === 'shell-block');
@@ -253,7 +253,7 @@ describe('buildUninstallPlan ordering', () => {
 
       await runRemoval(plan, stubDeps());
       const after = readFileSync(zshrc, 'utf-8');
-      expect(after).not.toContain('open-knowledge cli');
+      expect(after).not.toContain('palimpsest cli');
       expect(after).toContain('export EDITOR=vim');
       expect(after).toContain("alias ll='ls -la'");
     } finally {
@@ -265,11 +265,11 @@ describe('buildUninstallPlan ordering', () => {
 describe('runRemoval — git-exclude write failure', () => {
   const asRoot = typeof process.getuid === 'function' && process.getuid() === 0;
   test.skipIf(asRoot)('a read-only .git/info/exclude surfaces as a failed op', async () => {
-    const projectRoot = mkdtempSync(join(tmpdir(), 'ok-gitx-'));
+    const projectRoot = mkdtempSync(join(tmpdir(), 'ps-gitx-'));
     try {
       const excludePath = join(projectRoot, '.git', 'info', 'exclude');
       mkdirSync(dirname(excludePath), { recursive: true });
-      writeFileSync(excludePath, '.ok/\n');
+      writeFileSync(excludePath, '.ps/\n');
       chmodSync(excludePath, 0o444);
 
       const op = {
@@ -292,7 +292,7 @@ describe('runRemoval — git-exclude write failure', () => {
 
 describe('runRemoval — project path containment guard', () => {
   test('refuses to remove a project artifact that escapes via a symlink', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-contain-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-contain-'));
     try {
       const projectRoot = join(home, 'proj');
       const outside = join(home, 'outside-secret');
@@ -304,8 +304,8 @@ describe('runRemoval — project path containment guard', () => {
       const escaping = {
         kind: 'remove-path' as const,
         group: 'test',
-        label: 'Remove .claude/skills/open-knowledge/',
-        path: join(projectRoot, '.claude', 'skills', 'open-knowledge'),
+        label: 'Remove .claude/skills/palimpsest/',
+        path: join(projectRoot, '.claude', 'skills', 'palimpsest'),
         containWithin: projectRoot,
       };
       const outcome = await runRemoval({ scope: 'deinit', ops: [escaping] }, stubDeps());
@@ -317,13 +317,13 @@ describe('runRemoval — project path containment guard', () => {
   });
 
   test('removes an OK skill-projection symlink, leaving the link target intact', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-projlink-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-projlink-'));
     try {
       const projectRoot = join(home, 'proj');
-      write(join(projectRoot, '.ok', 'skills', 'pack-kb', 'SKILL.md'), '# pack\n');
+      write(join(projectRoot, '.ps', 'skills', 'pack-kb', 'SKILL.md'), '# pack\n');
       mkdirSync(join(projectRoot, '.claude', 'skills'), { recursive: true });
       symlinkSync(
-        join('..', '..', '.ok', 'skills', 'pack-kb'),
+        join('..', '..', '.ps', 'skills', 'pack-kb'),
         join(projectRoot, '.claude', 'skills', 'pack-kb'),
       );
 
@@ -340,19 +340,19 @@ describe('runRemoval — project path containment guard', () => {
       expect(
         lstatSync(join(projectRoot, '.claude', 'skills', 'pack-kb'), { throwIfNoEntry: false }),
       ).toBeUndefined();
-      expect(existsSync(join(projectRoot, '.ok', 'skills', 'pack-kb', 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(projectRoot, '.ps', 'skills', 'pack-kb', 'SKILL.md'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test('removes a DANGLING projection symlink instead of reporting not-present', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-danglink-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-danglink-'));
     try {
       const projectRoot = join(home, 'proj');
       mkdirSync(join(projectRoot, '.claude', 'skills'), { recursive: true });
       symlinkSync(
-        join('..', '..', '.ok', 'skills', 'already-swept'),
+        join('..', '..', '.ps', 'skills', 'already-swept'),
         join(projectRoot, '.claude', 'skills', 'already-swept'),
       );
 
@@ -376,7 +376,7 @@ describe('runRemoval — project path containment guard', () => {
   });
 
   test('a leaf symlink pointing outside the project is unlinked; its target survives', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-leafout-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-leafout-'));
     try {
       const projectRoot = join(home, 'proj');
       const outside = join(home, 'outside-secret');
@@ -402,19 +402,19 @@ describe('runRemoval — project path containment guard', () => {
 
 describe('runRemoval — uninstall end to end', () => {
   test('reverses the whole footprint, preserving user content + foreign files', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       seedHome(home);
       const plan = buildUninstallPlan(baseInput(home));
       const outcome = await runRemoval(plan, stubDeps());
       expect(outcome.failed).toHaveLength(0);
 
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
-      expect(existsSync(join(home, '.ok', 'logs'))).toBe(false);
-      expect(existsSync(join(home, '.ok', 'skills', 'my-note-skill', 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'logs'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'skills', 'my-note-skill', 'SKILL.md'))).toBe(true);
 
-      expect(existsSync(join(home, 'Library', 'Application Support', 'OpenKnowledge'))).toBe(false);
-      expect(existsSync(join(home, 'Library', 'Application Support', 'Open Knowledge'))).toBe(true);
+      expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(false);
+      expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(true);
       expect(existsSync(join(home, 'Library', 'Caches', DESKTOP_UPDATER_CACHE_DIR_NAME))).toBe(
         false,
       );
@@ -431,8 +431,8 @@ describe('runRemoval — uninstall end to end', () => {
       const zshrc = readFileSync(join(home, '.zshrc'), 'utf-8');
       expect(zshrc).toContain('export EDITOR=vim');
       expect(zshrc).toContain("alias ll='ls -la'");
-      expect(zshrc).not.toContain('open-knowledge cli');
-      expect(existsSync(join(home, '.config', 'fish', 'conf.d', 'open-knowledge.fish'))).toBe(
+      expect(zshrc).not.toContain('palimpsest cli');
+      expect(existsSync(join(home, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(
         false,
       );
 
@@ -442,23 +442,23 @@ describe('runRemoval — uninstall end to end', () => {
     }
   });
 
-  test('--purge-content also removes user-authored ~/.ok/skills but keeps the shared machine-id', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+  test('--purge-content also removes user-authored ~/.ps/skills but keeps the shared machine-id', async () => {
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       seedHome(home);
-      write(join(home, '.ok', 'machine-id'), 'abc\n');
+      write(join(home, '.ps', 'machine-id'), 'abc\n');
       const plan = buildUninstallPlan(baseInput(home, { purgeContent: true }));
       await runRemoval(plan, stubDeps());
-      expect(existsSync(join(home, '.ok', 'skills'))).toBe(false);
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
-      expect(readFileSync(join(home, '.ok', 'machine-id'), 'utf-8')).toBe('abc\n');
+      expect(existsSync(join(home, '.ps', 'skills'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
+      expect(readFileSync(join(home, '.ps', 'machine-id'), 'utf-8')).toBe('abc\n');
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test('a locked keychain reports failure and retains state for retry', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       seedHome(home);
       const plan = buildUninstallPlan(baseInput(home));
@@ -471,17 +471,17 @@ describe('runRemoval — uninstall end to end', () => {
       const keychain = outcome.results.find((r) => r.op.kind === 'keychain-token');
       expect(keychain?.status).toBe('failed');
       expect(keychain?.detail).toContain('Keychain Access');
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(true);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test('a stop-server failure preserves files still needed by the live process', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       seedHome(home);
-      const plan = buildUninstallPlan(baseInput(home, { lockDirs: ['/proj/.ok/local'] }));
+      const plan = buildUninstallPlan(baseInput(home, { lockDirs: ['/proj/.ps/local'] }));
       const outcome = await runRemoval(
         plan,
         stubDeps({
@@ -492,14 +492,14 @@ describe('runRemoval — uninstall end to end', () => {
       expect(stop?.status).toBe('failed');
       expect(stop?.detail).toContain('4242');
       expect(outcome.failed.some((r) => r.op.kind === 'stop-server')).toBe(true);
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(true);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test('idempotent — a second run is a clean no-op (nothing removed, nothing failed)', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-'));
     try {
       seedHome(home);
       const input = baseInput(home);
@@ -522,7 +522,7 @@ describe('runRemoval — uninstall end to end', () => {
 
 describe('deinitOps', () => {
   test('emits stop + surgical MCP + launch + git-exclude + whole-remove + shadow ops', () => {
-    const projectRoot = mkdtempSync(join(tmpdir(), 'ok-deinit-'));
+    const projectRoot = mkdtempSync(join(tmpdir(), 'ps-deinit-'));
     try {
       const ops = deinitOps(projectRoot, '/home/x');
       const kinds = ops.map((o) => o.kind);
@@ -530,11 +530,11 @@ describe('deinitOps', () => {
       expect(kinds).toContain('mcp-entry');
       expect(kinds).toContain('launch-entry');
       expect(kinds).toContain('git-exclude');
-      const okRemoval = ops.find(
+      const psRemoval = ops.find(
         (o) =>
-          o.kind === 'remove-path' && (o as { path: string }).path === join(projectRoot, '.ok'),
+          o.kind === 'remove-path' && (o as { path: string }).path === join(projectRoot, '.ps'),
       );
-      expect(okRemoval).toBeDefined();
+      expect(psRemoval).toBeDefined();
       const mcpWholeRemove = ops.find(
         (o) =>
           o.kind === 'remove-path' &&
@@ -557,13 +557,13 @@ describe('pi trust revocation surfaces through the removal plan', () => {
       scope: 'project' as const,
       cwd,
       home,
-      configPath: join(cwd, '.pi', 'extensions', 'open-knowledge.ts'),
+      configPath: join(cwd, '.pi', 'extensions', 'palimpsest.ts'),
     };
   }
 
   test('a revoked trust entry reports plain removal', async () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'ok-pi-removal-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-'));
+    const cwd = mkdtempSync(join(tmpdir(), 'ps-pi-removal-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-'));
     try {
       await ensurePiBridge(cwd, { mode: 'published' }, home);
       const { results } = await runRemoval({ ops: [piOp(cwd, home)] }, stubDeps());
@@ -577,8 +577,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   });
 
   test('a trust entry kept for another extension says so instead of claiming a clean sweep', async () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'ok-pi-removal-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-'));
+    const cwd = mkdtempSync(join(tmpdir(), 'ps-pi-removal-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-'));
     try {
       await ensurePiBridge(cwd, { mode: 'published' }, home);
       write(join(cwd, '.pi', 'extensions', 'theirs.ts'), '// someone else\n');
@@ -598,8 +598,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   });
 
   test('reports every failed store alongside a completed trust handoff', async () => {
-    const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-')));
-    const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-')));
+    const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-')));
+    const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-')));
     try {
       const stores = ['first', 'second', 'shared'].map((name) => join(home, name));
       for (const store of stores) {
@@ -642,8 +642,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   test.skipIf(process.platform === 'win32' || process.getuid?.() === 0).each([true, false])(
     'reports bridge deletion failure after trust cleanup with shared resources: %s',
     async (shared) => {
-      const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-')));
-      const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-')));
+      const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-')));
+      const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-')));
       const extensions = join(cwd, '.pi', 'extensions');
       try {
         await ensurePiBridge(cwd, { mode: 'published' }, home);
@@ -679,8 +679,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   );
 
   test('explains shared trust without claiming ownership of a pre-existing grant', async () => {
-    const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-')));
-    const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-')));
+    const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-')));
+    const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-')));
     try {
       const trustPath = join(home, '.pi', 'agent', 'trust.json');
       const before = JSON.stringify({ [cwd]: true, other: false });
@@ -705,8 +705,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   test.skipIf(process.platform === 'win32')(
     'quotes resource names, escapes terminal controls, and bounds the retained-resource list',
     async () => {
-      const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-')));
-      const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-')));
+      const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-')));
+      const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-')));
       try {
         await ensurePiBridge(cwd, { mode: 'published' }, home);
         const name = '\u001b[2K\rforged\nnotice\u0085\u2028\u2029\u202e.ts';
@@ -745,8 +745,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   test.each(['unrecorded', 'pending'] as const)(
     'explains %s trust retention in human and JSON output without changing the grant',
     async (ownership) => {
-      const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-')));
-      const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-')));
+      const cwd = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-')));
+      const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-')));
       try {
         const trustPath = join(home, '.pi', 'agent', 'trust.json');
         const before = `${JSON.stringify({ [cwd]: true, other: false })}\n`;
@@ -761,7 +761,7 @@ describe('pi trust revocation surfaces through the removal plan', () => {
         const detail = outcome.results[0]?.detail;
         expect(outcome.results[0]?.status).toBe('removed');
         expect(detail).toContain(
-          ownership === 'pending' ? 'record is pending' : 'no OpenKnowledge ownership record',
+          ownership === 'pending' ? 'record is pending' : 'no Palimpsest ownership record',
         );
         if (ownership === 'pending') expect(detail).toContain('does not reconcile this record');
         expect(detail).toContain(trustPath);
@@ -781,8 +781,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   );
 
   test('a trust store OK cannot parse fails the op rather than reporting success', async () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'ok-pi-removal-'));
-    const home = mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-'));
+    const cwd = mkdtempSync(join(tmpdir(), 'ps-pi-removal-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-'));
     try {
       await ensurePiBridge(cwd, { mode: 'published' }, home);
       write(join(home, '.pi', 'agent', 'trust.json'), 'not json at all');
@@ -799,10 +799,10 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   test.skipIf(process.platform === 'win32')(
     'retains Pi trust and project state when the bridge symlink has no target',
     async () => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-pi-missing-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-pi-missing-'));
       const cwd = join(home, 'project');
       try {
-        write(join(cwd, '.ok', 'config.yml'), '{}');
+        write(join(cwd, '.ps', 'config.yml'), '{}');
         await ensurePiBridge(cwd, { mode: 'published' }, home);
         const op = piOp(cwd, home);
         const bridge = readFileSync(op.configPath, 'utf8');
@@ -817,17 +817,17 @@ describe('pi trust revocation surfaces through the removal plan', () => {
           "Pi's separate folder trust grant has not been checked or removed",
         );
         expect(outcome.failed[0]?.detail).toContain(
-          `Restore the missing target of the OpenKnowledge bridge symlink at ${op.configPath}`,
+          `Restore the missing target of the Palimpsest bridge symlink at ${op.configPath}`,
         );
         expect(lstatSync(op.configPath).isSymbolicLink()).toBe(true);
         expect(readFileSync(trustPath, 'utf8')).toBe(trust);
-        expect(readFileSync(join(cwd, '.ok', 'config.yml'), 'utf8')).toBe('{}');
+        expect(readFileSync(join(cwd, '.ps', 'config.yml'), 'utf8')).toBe('{}');
         writeFileSync(join(home, 'missing-bridge.ts'), bridge);
         const retry = await runRemoval({ ops: deinitOps(cwd, home) }, stubDeps());
         expect(retry.failed).toHaveLength(0);
         expect(probePiBridgeState(cwd, home).trust).toBe('untrusted');
         expect(existsSync(op.configPath)).toBe(false);
-        expect(existsSync(join(cwd, '.ok'))).toBe(false);
+        expect(existsSync(join(cwd, '.ps'))).toBe(false);
       } finally {
         rmSync(home, { recursive: true, force: true });
       }
@@ -837,8 +837,8 @@ describe('pi trust revocation surfaces through the removal plan', () => {
   test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
     'retains the bridge and reports why trust cannot be checked until permissions are repaired',
     async () => {
-      const cwd = mkdtempSync(join(tmpdir(), 'ok-pi-removal-'));
-      const home = mkdtempSync(join(tmpdir(), 'ok-pi-removal-home-'));
+      const cwd = mkdtempSync(join(tmpdir(), 'ps-pi-removal-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-pi-removal-home-'));
       const extensions = join(cwd, '.pi', 'extensions');
       try {
         await ensurePiBridge(cwd, { mode: 'published' }, home);
@@ -894,7 +894,7 @@ describe.each(['mcp', 'launch', 'shell'] as const)(
     }
 
     test('names a non-file path without claiming its contents are malformed', async () => {
-      const dir = mkdtempSync(join(tmpdir(), 'ok-config-decline-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-config-decline-'));
       try {
         const { op, path } = configOp(dir);
         mkdirSync(path);
@@ -911,7 +911,7 @@ describe.each(['mcp', 'launch', 'shell'] as const)(
     test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
       'names read permission failures and leaves the existing configuration intact',
       async () => {
-        const dir = mkdtempSync(join(tmpdir(), 'ok-config-decline-'));
+        const dir = mkdtempSync(join(tmpdir(), 'ps-config-decline-'));
         const { op, path } = configOp(dir);
         const raw = '{"user":"settings"}';
         writeFileSync(path, raw);
@@ -934,7 +934,7 @@ describe.each(['mcp', 'launch', 'shell'] as const)(
     test.skipIf(process.platform === 'win32').each(['dangling', 'cycle'])(
       'reports a %s symlink while preserving it',
       async (kind) => {
-        const dir = mkdtempSync(join(tmpdir(), 'ok-config-decline-'));
+        const dir = mkdtempSync(join(tmpdir(), 'ps-config-decline-'));
         try {
           const { op, path } = configOp(dir);
           symlinkSync(kind === 'cycle' ? path : join(dir, 'missing'), path);
@@ -976,7 +976,7 @@ describe('configuration repair guidance', () => {
   test.each(['oversize', 'duplicate-container'] as const)(
     'explains how to repair %s without changing the existing file',
     async (reason) => {
-      const dir = mkdtempSync(join(tmpdir(), 'ok-config-remedy-'));
+      const dir = mkdtempSync(join(tmpdir(), 'ps-config-remedy-'));
       try {
         const configPath = join(dir, 'config.json');
         const raw =
@@ -1003,7 +1003,7 @@ describe('configuration repair guidance', () => {
   );
 
   test('explains the missing TOML writer and accepts manual entry removal on retry', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-remedy-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-remedy-'));
     try {
       const configPath = join(dir, 'config.toml');
       const raw = `[mcp_servers.${MCP_SERVER_NAME}]\ncommand = "/bin/sh"\nargs = ${JSON.stringify(OWN_ENTRY.args)}\n`;
@@ -1013,7 +1013,7 @@ describe('configuration repair guidance', () => {
       const outcome = await runRemoval(plan, stubDeps());
       expect(outcome.failed[0]?.detail).toContain('no format-preserving TOML writer');
       expect(outcome.failed[0]?.detail).toContain(
-        'remove the OpenKnowledge entry manually or reinstall',
+        'remove the Palimpsest entry manually or reinstall',
       );
       expect(readFileSync(configPath, 'utf8')).toBe(raw);
       const repaired = '# keep my other server\n[mcp_servers.other]\ncommand = "node"\n';
@@ -1029,7 +1029,7 @@ describe('configuration repair guidance', () => {
   });
 
   test('reports a file that disappears after classification and succeeds on a subsequent retry', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-config-remedy-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-config-remedy-'));
     try {
       const configPath = join(dir, 'config.toml');
       writeFileSync(
@@ -1092,7 +1092,7 @@ describe('safe uninstall cleanup', () => {
   test.skipIf(process.platform === 'win32')(
     'identifies each dangling config when two projects have matching relative paths',
     async () => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-dangling-projects-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-dangling-projects-'));
       try {
         const projects = [join(home, 'one'), join(home, 'two')];
         const paths: string[] = [];
@@ -1127,10 +1127,10 @@ describe('safe uninstall cleanup', () => {
   test.skipIf(process.platform === 'win32')(
     'preserves dangling editor and launch links without retaining unrelated project state',
     async () => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-dangling-configs-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-dangling-configs-'));
       const project = join(home, 'project');
       try {
-        write(join(project, '.ok', 'config.yml'), '{}');
+        write(join(project, '.ps', 'config.yml'), '{}');
         write(join(project, 'notes.md'), '# My notes\n');
         const paths = [join(project, '.mcp.json'), join(project, '.claude', 'launch.json')];
         for (const path of paths) {
@@ -1139,7 +1139,7 @@ describe('safe uninstall cleanup', () => {
         }
         const outcome = await runRemoval({ ops: deinitOps(project, home) }, stubDeps());
         expect(outcome.failed).toHaveLength(0);
-        expect(existsSync(join(project, '.ok'))).toBe(false);
+        expect(existsSync(join(project, '.ps'))).toBe(false);
         expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# My notes\n');
         for (const path of paths) expect(lstatSync(path).isSymbolicLink()).toBe(true);
         expect(formatRemovalOutcome(outcome)).toContain('no target file');
@@ -1150,12 +1150,12 @@ describe('safe uninstall cleanup', () => {
   );
 
   test('explains recovery for a permanently missing Git directory and permits cleanup after manual repair', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-orphaned-worktree-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-orphaned-worktree-'));
     const project = join(home, 'project');
     const pointer = join(project, '.git');
     const rawPointer = 'gitdir: ../missing-main/.git/worktrees/project\n';
     try {
-      write(join(project, '.ok', 'config.yml'), '{}');
+      write(join(project, '.ps', 'config.yml'), '{}');
       write(join(project, 'notes.md'), '# My notes\n');
       write(pointer, rawPointer);
       const outcome = await runRemoval({ ops: deinitOps(project, home) }, stubDeps());
@@ -1168,13 +1168,13 @@ describe('safe uninstall cleanup', () => {
         'If the repository is permanently gone, back up and remove only the stale .git pointer file',
       );
       expect(readFileSync(pointer, 'utf8')).toBe(rawPointer);
-      expect(existsSync(join(project, '.ok'))).toBe(true);
+      expect(existsSync(join(project, '.ps'))).toBe(true);
       const backup = join(home, 'git-pointer.backup');
       writeFileSync(backup, readFileSync(pointer));
       rmSync(pointer);
       const retry = await runRemoval({ ops: deinitOps(project, home) }, stubDeps());
       expect(retry.failed).toHaveLength(0);
-      expect(existsSync(join(project, '.ok'))).toBe(false);
+      expect(existsSync(join(project, '.ps'))).toBe(false);
       expect(readFileSync(join(project, 'notes.md'), 'utf8')).toBe('# My notes\n');
       expect(readFileSync(backup, 'utf8')).toBe(rawPointer);
     } finally {
@@ -1183,13 +1183,13 @@ describe('safe uninstall cleanup', () => {
   });
 
   test('keeps remaining shared editor exclude rules while removing OK-only and absent artifact rules', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-removal-excludes-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-removal-excludes-'));
     const project = join(home, 'project');
     try {
       write(join(project, '.git', 'HEAD'), 'ref: refs/heads/main\n');
       mkdirSync(join(project, '.git', 'objects'), { recursive: true });
       mkdirSync(join(project, '.git', 'refs'), { recursive: true });
-      write(join(project, '.ok', 'config.yml'), '{}');
+      write(join(project, '.ps', 'config.yml'), '{}');
       write(
         join(project, '.mcp.json'),
         JSON.stringify({
@@ -1201,7 +1201,7 @@ describe('safe uninstall cleanup', () => {
       const exclude = join(project, '.git', 'info', 'exclude');
       write(
         exclude,
-        '# personal rules\r\n/.mcp.json\r\n.cursor/mcp.json\r\n.claude/launch.json\r\n.codex/config.toml\r\n.ok/\r\n.okignore\r\nprivate.env\r\n',
+        '# personal rules\r\n/.mcp.json\r\n.cursor/mcp.json\r\n.claude/launch.json\r\n.codex/config.toml\r\n.ok/\r\n.psignore\r\nprivate.env\r\n',
       );
       await runRemoval({ scope: 'deinit', ops: deinitOps(project, home) }, stubDeps());
       expect(readFileSync(exclude, 'utf-8')).toBe(
@@ -1218,19 +1218,19 @@ describe('safe uninstall cleanup', () => {
   test.each(['reported', 'thrown'] as const)(
     'preserves blocked project and global state after a %s stop failure, but cleans an independent project',
     async (failure) => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-removal-stop-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-removal-stop-'));
       const blocked = join(home, 'one', 'project');
       const independent = join(home, 'two', 'project');
       try {
         seedHome(home);
         for (const project of [blocked, independent]) {
-          write(join(project, '.ok', 'config.yml'), '{}');
+          write(join(project, '.ps', 'config.yml'), '{}');
           write(
             join(project, '.mcp.json'),
             JSON.stringify({ mcpServers: { [MCP_SERVER_NAME]: OWN_ENTRY } }),
           );
         }
-        const blockedLock = join(blocked, '.ok', 'local');
+        const blockedLock = join(blocked, '.ps', 'local');
         const calls: string[] = [];
         const outcome = await runRemoval(
           buildUninstallPlan(
@@ -1242,7 +1242,7 @@ describe('safe uninstall cleanup', () => {
           stubDeps({
             stopServer: async (lockDir) => {
               calls.push(lockDir);
-              expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(true);
+              expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(true);
               if (lockDir !== blockedLock) return { stopped: 1, failed: [] };
               if (failure === 'thrown') throw new Error('stop unavailable');
               return { stopped: 0, failed: [{ pid: 4242, error: 'EPERM' }] };
@@ -1250,13 +1250,13 @@ describe('safe uninstall cleanup', () => {
           }),
         );
         expect(calls.filter((dir) => dir === blockedLock)).toHaveLength(1);
-        expect(existsSync(join(blocked, '.ok', 'config.yml'))).toBe(true);
+        expect(existsSync(join(blocked, '.ps', 'config.yml'))).toBe(true);
         expect(readFileSync(join(blocked, '.mcp.json'), 'utf-8')).toContain(MCP_SERVER_NAME);
-        expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(true);
+        expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(true);
         expect(
-          existsSync(join(home, 'Library', 'Application Support', 'OpenKnowledge', 'state.json')),
+          existsSync(join(home, 'Library', 'Application Support', 'Palimpsest', 'state.json')),
         ).toBe(true);
-        expect(existsSync(join(independent, '.ok'))).toBe(false);
+        expect(existsSync(join(independent, '.ps'))).toBe(false);
         expect(outcome.failed.length).toBeGreaterThan(0);
       } finally {
         rmSync(home, { recursive: true, force: true });
@@ -1269,7 +1269,7 @@ describe('shell configuration symlinks', () => {
   test.skipIf(process.platform === 'win32')(
     'preserves a dangling shell symlink without retaining unrelated uninstall state',
     async () => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-shell-missing-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-shell-missing-'));
       try {
         seedHome(home);
         const rcFile = join(home, '.zshrc');
@@ -1278,7 +1278,7 @@ describe('shell configuration symlinks', () => {
         const outcome = await runRemoval(buildUninstallPlan(baseInput(home)), stubDeps());
         expect(outcome.failed).toHaveLength(0);
         expect(lstatSync(rcFile).isSymbolicLink()).toBe(true);
-        expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
+        expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
         expect(formatRemovalOutcome(outcome)).toContain(
           'left the dangling shell symlink untouched',
         );
@@ -1291,13 +1291,13 @@ describe('shell configuration symlinks', () => {
   test.each(['alias ll="ls -la"\n', ''])(
     'keeps the symlink and destination after stripping the managed block with remaining content %j',
     async (before) => {
-      const home = mkdtempSync(join(tmpdir(), 'ok-shell-remove-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-shell-remove-'));
       try {
         const target = join(home, 'dotfiles', 'zshrc');
         const rcFile = join(home, '.zshrc');
         write(
           target,
-          `${before}# >>> open-knowledge cli >>>\nmanaged\n# <<< open-knowledge cli <<<\n`,
+          `${before}# >>> palimpsest cli >>>\nmanaged\n# <<< palimpsest cli <<<\n`,
         );
         chmodSync(target, 0o600);
         symlinkSync(target, rcFile);
@@ -1321,19 +1321,19 @@ describe('shell configuration symlinks', () => {
 
 describe('uninstall owns only its own channel', () => {
   const STABLE_BLOCK =
-    '# >>> open-knowledge cli >>>\n[ -f "$HOME/.ok/env.sh" ] && . "$HOME/.ok/env.sh"\n# <<< open-knowledge cli <<<\n';
+    '# >>> palimpsest cli >>>\n[ -f "$HOME/.ps/env.sh" ] && . "$HOME/.ps/env.sh"\n# <<< palimpsest cli <<<\n';
   const BETA_BLOCK =
-    '# >>> open-knowledge beta cli >>>\n[ -f "$HOME/.ok-beta/env.sh" ] && . "$HOME/.ok-beta/env.sh"\n# <<< open-knowledge beta cli <<<\n';
+    '# >>> palimpsest beta cli >>>\n[ -f "$HOME/.ps-beta/env.sh" ] && . "$HOME/.ps-beta/env.sh"\n# <<< palimpsest beta cli <<<\n';
 
   afterEach(() => {
     vi.unstubAllEnvs();
   });
 
   function seedBothChannels(home: string): string {
-    write(join(home, '.ok', 'auth.yml'), 'github.com: {}\n');
-    write(join(home, '.ok-beta', 'auth.yml'), 'github.com: {}\n');
-    write(join(home, '.ok', 'machine-id'), 'shared-id\n');
-    write(join(home, '.ok', 'skills', 'mine', 'SKILL.md'), '# mine\n');
+    write(join(home, '.ps', 'auth.yml'), 'github.com: {}\n');
+    write(join(home, '.ps-beta', 'auth.yml'), 'github.com: {}\n');
+    write(join(home, '.ps', 'machine-id'), 'shared-id\n');
+    write(join(home, '.ps', 'skills', 'mine', 'SKILL.md'), '# mine\n');
     const zshrc = join(home, '.zshrc');
     writeFileSync(zshrc, `export EDITOR=vim\n\n${STABLE_BLOCK}\n${BETA_BLOCK}`);
     return zshrc;
@@ -1343,96 +1343,96 @@ describe('uninstall owns only its own channel', () => {
     return ops.flatMap((op) => ('path' in op ? [op.path] : 'rcFile' in op ? [op.rcFile] : []));
   }
 
-  test('Stable removes ~/.ok and its own rc block, never ~/.ok-beta or Beta app data', async () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-channel-'));
+  test('Stable removes ~/.ps and its own rc block, never ~/.ps-beta or Beta app data', async () => {
+    vi.stubEnv('PS_CHANNEL', 'stable');
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-channel-'));
     try {
       const zshrc = seedBothChannels(home);
       const plan = buildUninstallPlan(baseInput(home, { marker: null }));
       const globalOp = plan.ops.find((o) => o.group === 'Global directory');
       expect(globalOp).toMatchObject({
-        path: join(home, '.ok'),
+        path: join(home, '.ps'),
         label:
-          'Remove ~/.ok (keeping ~/.ok/machine-id, ~/.ok/skills, ~/.ok/skills-lock.json, ~/.ok/local/installed-skills.json, ~/.ok/local/skill-placements.json, ~/.ok/local/skill-move-retained.json, ~/.ok/local/server-authority.sqlite, ~/.ok/local/server-authority.sqlite-journal, ~/.ok/local/server-authority-leases, shared by every channel)',
+          'Remove ~/.ps (keeping ~/.ps/machine-id, ~/.ps/skills, ~/.ps/skills-lock.json, ~/.ps/local/installed-skills.json, ~/.ps/local/skill-placements.json, ~/.ps/local/skill-move-retained.json, ~/.ps/local/server-authority.sqlite, ~/.ps/local/server-authority.sqlite-journal, ~/.ps/local/server-authority-leases, shared by every channel)',
       });
       const paths = planPaths(plan.ops);
-      expect(paths).toContain(join(home, 'Library', 'Application Support', 'OpenKnowledge'));
+      expect(paths).toContain(join(home, 'Library', 'Application Support', 'Palimpsest'));
       expect(paths).toContain(join(home, 'Library', 'Caches', DESKTOP_UPDATER_CACHE_DIR_NAME));
       expect(paths.filter((p) => relative(home, p).toLowerCase().includes('beta'))).toEqual([]);
 
       expect((await runRemoval(plan, stubDeps())).failed).toHaveLength(0);
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
-      expect(readFileSync(join(home, '.ok', 'machine-id'), 'utf-8')).toBe('shared-id\n');
-      expect(existsSync(join(home, '.ok', 'skills', 'mine', 'SKILL.md'))).toBe(true);
-      expect(existsSync(join(home, '.ok-beta', 'auth.yml'))).toBe(true);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
+      expect(readFileSync(join(home, '.ps', 'machine-id'), 'utf-8')).toBe('shared-id\n');
+      expect(existsSync(join(home, '.ps', 'skills', 'mine', 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(home, '.ps-beta', 'auth.yml'))).toBe(true);
       const after = readFileSync(zshrc, 'utf-8');
-      expect(after).not.toContain('# >>> open-knowledge cli >>>');
+      expect(after).not.toContain('# >>> palimpsest cli >>>');
       expect(after).toContain(BETA_BLOCK);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
-  test('Beta removes ~/.ok-beta and its own rc block, never ~/.ok or Stable app data', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-channel-'));
+  test('Beta removes ~/.ps-beta and its own rc block, never ~/.ps or Stable app data', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-channel-'));
     try {
       const zshrc = seedBothChannels(home);
       const plan = buildUninstallPlan(baseInput(home, { marker: null }));
       const globalOp = plan.ops.find((o) => o.group === 'Global directory');
       expect(globalOp).toMatchObject({
-        path: join(home, '.ok-beta'),
-        label: 'Remove ~/.ok-beta (keeping ~/.ok/skills, shared by every channel)',
+        path: join(home, '.ps-beta'),
+        label: 'Remove ~/.ps-beta (keeping ~/.ps/skills, shared by every channel)',
       });
       expect(globalOp).not.toHaveProperty('preserve');
       const paths = planPaths(plan.ops);
-      expect(paths).toContain(join(home, 'Library', 'Application Support', 'OpenKnowledge Beta'));
+      expect(paths).toContain(join(home, 'Library', 'Application Support', 'Palimpsest Beta'));
       expect(paths).toContain(
-        join(home, 'Library', 'Caches', 'openknowledge-beta-desktop-updater'),
+        join(home, 'Library', 'Caches', 'palimpsest-beta-desktop-updater'),
       );
       expect(
         paths.filter(
           (p) =>
-            p === join(home, '.ok') ||
-            p.startsWith(`${join(home, '.ok')}/`) ||
-            p.endsWith('/OpenKnowledge') ||
-            p.endsWith('/Open Knowledge') ||
+            p === join(home, '.ps') ||
+            p.startsWith(`${join(home, '.ps')}/`) ||
+            p.endsWith('/Palimpsest') ||
+            p.endsWith('/Palimpsest') ||
             p.endsWith(DESKTOP_UPDATER_CACHE_DIR_NAME),
         ),
       ).toEqual([]);
 
       expect((await runRemoval(plan, stubDeps())).failed).toHaveLength(0);
-      expect(existsSync(join(home, '.ok-beta', 'auth.yml'))).toBe(false);
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(true);
-      expect(readFileSync(join(home, '.ok', 'machine-id'), 'utf-8')).toBe('shared-id\n');
-      expect(existsSync(join(home, '.ok', 'skills', 'mine', 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(home, '.ps-beta', 'auth.yml'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(true);
+      expect(readFileSync(join(home, '.ps', 'machine-id'), 'utf-8')).toBe('shared-id\n');
+      expect(existsSync(join(home, '.ps', 'skills', 'mine', 'SKILL.md'))).toBe(true);
       const after = readFileSync(zshrc, 'utf-8');
       expect(after).toContain(STABLE_BLOCK);
-      expect(after).not.toContain('open-knowledge beta cli');
+      expect(after).not.toContain('palimpsest beta cli');
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
-  test('Beta --purge-content removes the shared ~/.ok/skills store, never ~/.ok/machine-id', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-channel-'));
+  test('Beta --purge-content removes the shared ~/.ps/skills store, never ~/.ps/machine-id', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-channel-'));
     try {
       seedBothChannels(home);
       const plan = buildUninstallPlan(baseInput(home, { marker: null, purgeContent: true }));
       expect(plan.ops.filter((o) => o.group === 'Global directory')).toMatchObject([
-        { path: join(home, '.ok-beta'), label: 'Remove ~/.ok-beta' },
+        { path: join(home, '.ps-beta'), label: 'Remove ~/.ps-beta' },
         {
-          path: join(home, '.ok', 'skills'),
-          label: 'Remove ~/.ok/skills (user-authored skills, shared by every channel)',
+          path: join(home, '.ps', 'skills'),
+          label: 'Remove ~/.ps/skills (user-authored skills, shared by every channel)',
         },
       ]);
 
       expect((await runRemoval(plan, stubDeps())).failed).toHaveLength(0);
-      expect(existsSync(join(home, '.ok-beta'))).toBe(false);
-      expect(existsSync(join(home, '.ok', 'skills'))).toBe(false);
-      expect(readFileSync(join(home, '.ok', 'machine-id'), 'utf-8')).toBe('shared-id\n');
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(true);
+      expect(existsSync(join(home, '.ps-beta'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'skills'))).toBe(false);
+      expect(readFileSync(join(home, '.ps', 'machine-id'), 'utf-8')).toBe('shared-id\n');
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
@@ -1451,41 +1451,41 @@ describe('uninstall owns only its own channel', () => {
   test.each([false, true])(
     'Stable keeps machine-id and the global skill bookkeeping every channel reads (purgeContent=%s)',
     async (purgeContent) => {
-      vi.stubEnv('OK_CHANNEL', 'stable');
-      const home = mkdtempSync(join(tmpdir(), 'ok-uninst-channel-'));
+      vi.stubEnv('PS_CHANNEL', 'stable');
+      const home = mkdtempSync(join(tmpdir(), 'ps-uninst-channel-'));
       try {
         seedBothChannels(home);
-        for (const rel of SHARED_BOOKKEEPING) write(join(home, '.ok', ...rel), '{}\n');
-        write(join(home, '.ok', 'local', 'logs', 'server.log'), 'log\n');
-        write(join(home, '.ok', 'local', 'conflicts.json'), '{}\n');
+        for (const rel of SHARED_BOOKKEEPING) write(join(home, '.ps', ...rel), '{}\n');
+        write(join(home, '.ps', 'local', 'logs', 'server.log'), 'log\n');
+        write(join(home, '.ps', 'local', 'conflicts.json'), '{}\n');
         const plan = buildUninstallPlan(baseInput(home, { marker: null, purgeContent }));
         const globalOp = plan.ops.find((o) => o.group === 'Global directory');
         for (const entry of SHARED_OK_ENTRIES) {
           if (purgeContent && entry === 'skills') continue;
-          expect(globalOp?.label).toContain(`~/.ok/${entry},`);
+          expect(globalOp?.label).toContain(`~/.ps/${entry},`);
         }
-        expect(globalOp?.label?.startsWith('Remove ~/.ok (including user-authored skills;')).toBe(
+        expect(globalOp?.label?.startsWith('Remove ~/.ps (including user-authored skills;')).toBe(
           purgeContent,
         );
 
         expect((await runRemoval(plan, stubDeps())).failed).toHaveLength(0);
         for (const rel of SHARED_BOOKKEEPING) {
-          expect(readFileSync(join(home, '.ok', ...rel), 'utf-8')).toBe('{}\n');
+          expect(readFileSync(join(home, '.ps', ...rel), 'utf-8')).toBe('{}\n');
         }
-        expect(readFileSync(join(home, '.ok', 'machine-id'), 'utf-8')).toBe('shared-id\n');
-        expect(existsSync(join(home, '.ok', 'local', 'logs'))).toBe(false);
-        expect(existsSync(join(home, '.ok', 'local', 'conflicts.json'))).toBe(false);
-        expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
-        expect(existsSync(join(home, '.ok', 'skills', 'mine', 'SKILL.md'))).toBe(!purgeContent);
+        expect(readFileSync(join(home, '.ps', 'machine-id'), 'utf-8')).toBe('shared-id\n');
+        expect(existsSync(join(home, '.ps', 'local', 'logs'))).toBe(false);
+        expect(existsSync(join(home, '.ps', 'local', 'conflicts.json'))).toBe(false);
+        expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
+        expect(existsSync(join(home, '.ps', 'skills', 'mine', 'SKILL.md'))).toBe(!purgeContent);
       } finally {
         rmSync(home, { recursive: true, force: true });
       }
     },
   );
 
-  test('Beta --purge-content leaves ~/.ok/skills untouched after an earlier failure', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-channel-'));
+  test('Beta --purge-content leaves ~/.ps/skills untouched after an earlier failure', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-channel-'));
     try {
       seedBothChannels(home);
       const plan = buildUninstallPlan(baseInput(home, { marker: null, purgeContent: true }));
@@ -1494,21 +1494,21 @@ describe('uninstall owns only its own channel', () => {
         stubDeps({ clearToken: async () => ({ touched: [], keychainError: 'locked' }) }),
       );
       const skillsResult = outcome.results.find(
-        (r) => r.op.kind === 'remove-path' && r.op.path === join(home, '.ok', 'skills'),
+        (r) => r.op.kind === 'remove-path' && r.op.path === join(home, '.ps', 'skills'),
       );
       expect(skillsResult?.status).toBe('blocked');
-      expect(existsSync(join(home, '.ok', 'skills', 'mine', 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(home, '.ps', 'skills', 'mine', 'SKILL.md'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test.each([
-    ['stable', 'open-knowledge'],
-    ['beta', 'open-knowledge-beta'],
+    ['stable', 'palimpsest'],
+    ['beta', 'palimpsest-beta'],
   ])('a keychain failure on %s names that channel keychain service', async (channel, service) => {
-    vi.stubEnv('OK_CHANNEL', channel);
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-channel-'));
+    vi.stubEnv('PS_CHANNEL', channel);
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-channel-'));
     try {
       const plan = buildUninstallPlan(baseInput(home, { marker: null }));
       const outcome = await runRemoval(

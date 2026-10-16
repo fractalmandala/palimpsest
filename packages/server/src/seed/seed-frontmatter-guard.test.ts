@@ -2,7 +2,7 @@ import {
   parseTemplateFile,
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 import { STARTER_PACKS } from './starter.ts';

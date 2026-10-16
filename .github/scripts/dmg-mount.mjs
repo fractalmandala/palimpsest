@@ -43,8 +43,8 @@ export async function withMountedDmg(dmgPath, callback, deps = {}) {
   const proc = deps.process ?? process;
 
   const abs = resolve(dmgPath);
-  const mountRoot = await mkdtempImpl(join(tmpdir(), 'ok-dmg-mount-'));
-  const appCopyRoot = await mkdtempImpl(join(tmpdir(), 'ok-dmg-app-'));
+  const mountRoot = await mkdtempImpl(join(tmpdir(), 'ps-dmg-mount-'));
+  const appCopyRoot = await mkdtempImpl(join(tmpdir(), 'ps-dmg-app-'));
 
   const warn = deps.warn ?? ((msg) => process.stderr.write(`[dmg-mount] ${msg}\n`));
   const describe = (err) => err?.message ?? String(err);

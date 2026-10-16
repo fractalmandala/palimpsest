@@ -10,8 +10,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import type { ProcessTerminationLookup, ProcessTerminationQuery } from '@inkeep/open-knowledge';
-import type { OkBugReportCrashDetectedEvent } from '@inkeep/open-knowledge-core';
+import type { ProcessTerminationLookup, ProcessTerminationQuery } from '@palimpsest/cli';
+import type { PsBugReportCrashDetectedEvent } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { installWasInFlightDuring } from './auto-updater.ts';
 import {
@@ -57,7 +57,7 @@ const BLIP_VERSION = '0.44.2';
 
 interface Rig {
   deps: CrashDetectionDeps;
-  emitted: OkBugReportCrashDetectedEvent[];
+  emitted: PsBugReportCrashDetectedEvent[];
   warnings: Record<string, unknown>[];
   infos: Record<string, unknown>[];
   ownDump: Buffer;
@@ -88,9 +88,9 @@ interface Rig {
 }
 
 function makeRig(): Rig {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-crash-detection-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-crash-detection-'));
   tmpDirs.push(dir);
-  const emitted: OkBugReportCrashDetectedEvent[] = [];
+  const emitted: PsBugReportCrashDetectedEvent[] = [];
   const warnings: Record<string, unknown>[] = [];
   const infos: Record<string, unknown>[] = [];
   let rendererAvailable = true;
@@ -112,16 +112,16 @@ function makeRig(): Rig {
   const watchdogStarts: string[] = [];
   let watchdogStops = 0;
   let clockMs = Date.parse('2026-07-10T00:00:00.000Z');
-  const appBundleRoot = join(dir, 'Applications', 'OpenKnowledge.app');
+  const appBundleRoot = join(dir, 'Applications', 'Palimpsest.app');
   const ownModules = [
     join(
       appBundleRoot,
       'Contents',
       'Frameworks',
-      'OpenKnowledge Helper (Renderer).app',
+      'Palimpsest Helper (Renderer).app',
       'Contents',
       'MacOS',
-      'OpenKnowledge Helper (Renderer)',
+      'Palimpsest Helper (Renderer)',
     ),
     '/usr/lib/dyld',
   ];
@@ -135,21 +135,21 @@ function makeRig(): Rig {
     ownDumpCrashed: buildMinidump(ownModules, { exceptionCode: 0xc000_0005 }),
     ownSizedForeignDump: buildMinidump(
       ownModules.map((modulePath) =>
-        modulePath.replace(appBundleRoot, join(dir, 'Applicationz', 'OpenKnowledge.app')),
+        modulePath.replace(appBundleRoot, join(dir, 'Applicationz', 'Palimpsest.app')),
       ),
     ),
     ownDumpStamped: (version: string) =>
       buildMinidump(ownModules, {
-        annotations: { _productName: 'OpenKnowledge', _version: version, prod: 'Electron' },
+        annotations: { _productName: 'Palimpsest', _version: version, prod: 'Electron' },
       }),
     ownDumpWithAxMode: (version: string, mode: string) =>
       buildMinidump(ownModules, {
-        annotations: { _productName: 'OpenKnowledge', _version: version, prod: 'Electron' },
+        annotations: { _productName: 'Palimpsest', _version: version, prod: 'Electron' },
         annotationObjects: [{}, { ax_mode: mode, process_type: 'renderer' }],
       }),
     ownDumpWithProcessType: (processType: string, version = CRASHED_VERSION) =>
       buildMinidump(ownModules, {
-        annotations: { _productName: 'OpenKnowledge', _version: version, prod: 'Electron' },
+        annotations: { _productName: 'Palimpsest', _version: version, prod: 'Electron' },
         annotationObjects: [{}, { process_type: processType }],
       }),
     setRendererAvailable(available: boolean) {
@@ -252,7 +252,7 @@ function makeRig(): Rig {
   return rig;
 }
 
-function bootInvite(armed: OkBugReportCrashDetectedEvent | null) {
+function bootInvite(armed: PsBugReportCrashDetectedEvent | null) {
   expect(armed?.kind).toBe('boot');
   if (armed?.kind !== 'boot') throw new Error('expected a boot invitation, got none');
   return armed;
@@ -366,7 +366,7 @@ describe('runtime process-gone invitations', () => {
       type: 'Utility',
       reason: 'crashed',
       exitCode: -1,
-      name: 'OpenKnowledge Terminal Host 7',
+      name: 'Palimpsest Terminal Host 7',
       serviceName: 'node.mojom.NodeService',
       processSnapshot,
     });
@@ -377,7 +377,7 @@ describe('runtime process-gone invitations', () => {
     expect(
       rig.warnings.find((line) => line.event === 'crash-detection.child-process-gone'),
     ).toMatchObject({
-      name: 'OpenKnowledge Terminal Host 7',
+      name: 'Palimpsest Terminal Host 7',
       processSnapshot,
     });
     expect(
@@ -1080,7 +1080,7 @@ describe('crash-dump ownership filtering', () => {
       rig,
       'pending/lookalike.dmp',
       rig.tick(),
-      buildMinidump([`${rig.deps.appBundleRoot}.malicious/Contents/MacOS/OpenKnowledge`]),
+      buildMinidump([`${rig.deps.appBundleRoot}.malicious/Contents/MacOS/Palimpsest`]),
     );
 
     const session = createCrashDetection(rig.deps);
@@ -1454,10 +1454,10 @@ describe('the version a boot invitation attributes the crash to', () => {
           rig.deps.appBundleRoot,
           'Contents',
           'Frameworks',
-          'OpenKnowledge Helper (Renderer).app',
+          'Palimpsest Helper (Renderer).app',
           'Contents',
           'MacOS',
-          'OpenKnowledge Helper (Renderer)',
+          'Palimpsest Helper (Renderer)',
         ),
       ],
       { annotations: { _version: CRASHED_VERSION }, annotationsRva: 0xffff },
@@ -4540,9 +4540,9 @@ describe('a session an installer closed to replace the app', () => {
 
 describe('when the installed app last changed on disk', () => {
   test('a file just written reads as changed now', () => {
-    const dir = mkdtempSync(resolve(tmpdir(), 'ok-installed-app-'));
+    const dir = mkdtempSync(resolve(tmpdir(), 'ps-installed-app-'));
     tmpDirs.push(dir);
-    const exePath = join(dir, 'OpenKnowledge.exe');
+    const exePath = join(dir, 'Palimpsest.exe');
     const beforeMs = Date.now() - 1_000;
     writeFileSync(exePath, 'MZ');
 
@@ -4554,24 +4554,24 @@ describe('when the installed app last changed on disk', () => {
 
   test('the later of creation and metadata change wins, so restored file times do not hide a reinstall', () => {
     expect(
-      readInstalledAppChangeSync('OpenKnowledge.exe', () => ({
+      readInstalledAppChangeSync('Palimpsest.exe', () => ({
         birthtimeMs: 1_000,
         ctimeMs: 5_000,
       })),
     ).toEqual({ kind: 'read', changedAtMs: 5_000 });
     expect(
-      readInstalledAppChangeSync('OpenKnowledge.exe', () => ({
+      readInstalledAppChangeSync('Palimpsest.exe', () => ({
         birthtimeMs: 7_000,
         ctimeMs: 5_000,
       })),
     ).toEqual({ kind: 'read', changedAtMs: 7_000 });
     expect(
-      readInstalledAppChangeSync('OpenKnowledge.exe', () => ({ birthtimeMs: 0, ctimeMs: 0 })),
+      readInstalledAppChangeSync('Palimpsest.exe', () => ({ birthtimeMs: 0, ctimeMs: 0 })),
     ).toEqual({ kind: 'unreadable', error: 'invalid-time' });
   });
 
   test('a missing executable reads as unreadable with its error code', () => {
-    const dir = mkdtempSync(resolve(tmpdir(), 'ok-installed-app-'));
+    const dir = mkdtempSync(resolve(tmpdir(), 'ps-installed-app-'));
     tmpDirs.push(dir);
     expect(readInstalledAppChangeSync(join(dir, 'missing.exe'))).toEqual({
       kind: 'unreadable',

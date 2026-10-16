@@ -1,4 +1,4 @@
-import { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
+import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 
 interface AudioProps {
   src?: string;
@@ -17,7 +17,7 @@ function resolveControls(controls: boolean | undefined): boolean {
 export function Audio(props: AudioProps) {
   return (
     <audio
-      className="ok-audio"
+      className="ps-audio"
       src={props.src === undefined ? undefined : toDesktopAssetHref(props.src)}
       title={props.title}
       controls={resolveControls(props.controls)}

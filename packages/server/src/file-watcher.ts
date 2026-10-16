@@ -12,7 +12,7 @@ import {
 } from 'node:fs';
 import { lstat, readdir, readFile, realpath, stat } from 'node:fs/promises';
 import { basename, dirname, extname, isAbsolute, join, relative, sep } from 'node:path';
-import { LINKABLE_ASSET_EXTENSIONS } from '@inkeep/open-knowledge-core';
+import { LINKABLE_ASSET_EXTENSIONS } from '@palimpsest/core';
 import { isConfigDoc, isReservedForUserTree, isSystemDoc } from './cc1-broadcast.ts';
 import { type ContentFilter, WATCHER_STRUCTURAL_IGNORE_DIRS } from './content-filter.ts';
 import { isWithinContentDir } from './content-path.ts';
@@ -3641,7 +3641,7 @@ async function startParcelWatcher(
         if (closed) return;
         if (failure) throw failure;
         const name = `watcher-settle-fence-${randomUUID()}`;
-        const fencePath = join(contentDir, '.ok', name);
+        const fencePath = join(contentDir, '.ps', name);
         const reached = Promise.withResolvers<void>();
         let quiet: ReturnType<typeof setTimeout> | undefined;
         const progressed = (): void => {
@@ -3705,7 +3705,7 @@ export function isChokidarPathIgnored(
   }
   if (isDirectory) {
     const m = /^(\.[A-Za-z0-9_-]+)(\/skills(\/[^/]+)?)?$/.exec(rel);
-    if (m && m[1] !== '.ok') {
+    if (m && m[1] !== '.ps') {
       if (m[2] !== undefined) return false;
       if (existsSync(join(contentDir, rel, 'skills'))) return false;
     }
@@ -3878,7 +3878,7 @@ export async function startWatcher(
   let runOrderedRescan: ((work: () => Promise<void>) => Promise<void>) | undefined;
   let settleSubscription: (() => Promise<void>) | undefined;
   let backend: WatcherBackend;
-  const forceChokidar = process.env.OK_FILE_WATCHER_BACKEND === 'chokidar';
+  const forceChokidar = process.env.PS_FILE_WATCHER_BACKEND === 'chokidar';
   const platform = opts.platform ?? process.platform;
   try {
     const parcelSub =

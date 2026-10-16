@@ -12,16 +12,16 @@ import { isValidLockPid, type ProcessLiveness, readProcessLiveness } from './pro
 const SPAWN_TIMEOUT_MS = 2000;
 const LOCK_SCAN_MAX_DEPTH = 3;
 const LOCK_SCAN_MAX_ENTRIES = 2000;
-const OK_LOCK_DIR_ARG_PREFIX = '--ok-lock-dir-b64=';
-const OK_PROJECT_PATH_ARG_PREFIX = '--ok-project-path=';
+const PS_LOCK_DIR_ARG_PREFIX = '--ok-lock-dir-b64=';
+const PS_PROJECT_PATH_ARG_PREFIX = '--ok-project-path=';
 const LISTENER_QUERY_ARGS = ['-iTCP', '-sTCP:LISTEN', '-nP'];
-const OK_PROCESS_PGREP_QUERY =
-  'cli\\.mjs|open-knowledge|Open ?Knowledge(\\.app| Helper)|--ok-lock-dir-b64=|--ok-project-path=|(^|[ /])ok[ ]+(start|mcp|ui)([ ]|$)|packages/(cli|app)|hocuspocus|vite';
+const PS_PROCESS_PGREP_QUERY =
+  'cli\\.mjs|palimpsest|Open ?Knowledge(\\.app| Helper)|--ok-lock-dir-b64=|--ok-project-path=|(^|[ /])ok[ ]+(start|mcp|ui)([ ]|$)|packages/(cli|app)|hocuspocus|vite';
 
-const OK_PROCESS_PATTERNS: RegExp[] = [
+const PS_PROCESS_PATTERNS: RegExp[] = [
   /^open-knowledge-server(?:\s|$)/,
   /cli\.mjs/,
-  /(^|[\s/])(open-knowledge|ok)\s+(start|mcp|ui)(\s|$)/,
+  /(^|[\s/])(palimpsest|ok)\s+(start|mcp|ui)(\s|$)/,
   /Open ?Knowledge(?:\.app| Helper)/,
   /(^|[\s/])bun([\s/]).*?(run dev|packages\/app|vite|hocuspocus)/,
   /(^|[\s/])node([\s/]).*?(packages\/(cli|app)|vite|hocuspocus)/,
@@ -30,16 +30,16 @@ const OK_PROCESS_PATTERNS: RegExp[] = [
 ];
 
 function isOkProcess(command: string): boolean {
-  return OK_PROCESS_PATTERNS.some((re) => re.test(command));
+  return PS_PROCESS_PATTERNS.some((re) => re.test(command));
 }
 
 function extractMarkedLockDir(command: string): string | null {
   const token = command
     .trim()
     .split(/\s+/)
-    .find((part) => part.startsWith(OK_LOCK_DIR_ARG_PREFIX));
+    .find((part) => part.startsWith(PS_LOCK_DIR_ARG_PREFIX));
   if (token == null) return null;
-  const encoded = token.slice(OK_LOCK_DIR_ARG_PREFIX.length);
+  const encoded = token.slice(PS_LOCK_DIR_ARG_PREFIX.length);
   if (!encoded) return null;
   try {
     const decoded = Buffer.from(encoded, 'base64url').toString('utf8');
@@ -50,9 +50,9 @@ function extractMarkedLockDir(command: string): string | null {
 }
 
 function extractProjectPathArg(command: string): string | null {
-  const markerIdx = command.indexOf(OK_PROJECT_PATH_ARG_PREFIX);
+  const markerIdx = command.indexOf(PS_PROJECT_PATH_ARG_PREFIX);
   if (markerIdx === -1) return null;
-  const valueStart = markerIdx + OK_PROJECT_PATH_ARG_PREFIX.length;
+  const valueStart = markerIdx + PS_PROJECT_PATH_ARG_PREFIX.length;
   const rest = command.slice(valueStart);
   const nextArgIdx = rest.search(/\s--/);
   const raw = (nextArgIdx === -1 ? rest : rest.slice(0, nextArgIdx)).trim();
@@ -60,13 +60,13 @@ function extractProjectPathArg(command: string): string | null {
   return isAbsolute(raw) ? raw : null;
 }
 
-interface OkProcessEntry {
+interface PsProcessEntry {
   pid: number;
   command: string;
 }
 
-function parsePgrepOutput(output: string): OkProcessEntry[] {
-  const entries: OkProcessEntry[] = [];
+function parsePgrepOutput(output: string): PsProcessEntry[] {
+  const entries: PsProcessEntry[] = [];
   for (const line of output.split('\n')) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -169,8 +169,8 @@ class PsListingError extends Error {
   }
 }
 
-async function readPsEntries(args: string[]): Promise<OkProcessEntry[]> {
-  const entries: OkProcessEntry[] = [];
+async function readPsEntries(args: string[]): Promise<PsProcessEntry[]> {
+  const entries: PsProcessEntry[] = [];
   let header = true;
   const result = await readCommandLines('ps', args, (line) => {
     if (header) {
@@ -191,13 +191,13 @@ async function readPsEntries(args: string[]): Promise<OkProcessEntry[]> {
   return entries;
 }
 
-async function findOkProcessEntries(strict = false): Promise<OkProcessEntry[]> {
+async function findOkProcessEntries(strict = false): Promise<PsProcessEntry[]> {
   const failures: string[] = [];
   const unix = process.platform === 'darwin' || process.platform === 'linux';
   if (!unix) {
     const pgrepResult = spawnSync(
       'pgrep',
-      ['-a', '-f', OK_PROCESS_PGREP_QUERY],
+      ['-a', '-f', PS_PROCESS_PGREP_QUERY],
       withHiddenWindowsConsole({
         encoding: 'utf-8',
         timeout: SPAWN_TIMEOUT_MS,
@@ -252,7 +252,7 @@ export function extractOkBinaryPath(command: string): string | null {
   for (const token of tokens) {
     if (token.startsWith('@')) continue;
     const base = basename(token);
-    if (base === 'open-knowledge' || base === 'ok') return token;
+    if (base === 'palimpsest' || base === 'ok') return token;
     if (
       token.endsWith('/packages/cli/src/cli.ts') ||
       token.endsWith('/packages/cli/dist/cli.mjs')
@@ -451,7 +451,7 @@ function hasLockFile(lockDir: string): boolean {
 }
 
 function addLockDirsForCwd(candidateDirs: Set<string>, cwd: string): void {
-  for (const lockDir of [join(cwd, '.ok', 'local'), join(cwd, '.ok')]) {
+  for (const lockDir of [join(cwd, '.ps', 'local'), join(cwd, '.ps')]) {
     if (existsSync(lockDir) && hasLockFile(lockDir)) {
       candidateDirs.add(lockDir);
     }
@@ -478,7 +478,7 @@ function addLockDirsUnderCwd(candidateDirs: Set<string>, cwd: string): void {
     for (const entry of entries) {
       if (visited >= LOCK_SCAN_MAX_ENTRIES) return;
       if (entry === 'node_modules' || entry === '.git' || entry === 'Library') continue;
-      if (entry.startsWith('.') && entry !== '.ok') continue;
+      if (entry.startsWith('.') && entry !== '.ps') continue;
 
       const child = join(dir, entry);
       let isDirectory = false;
@@ -497,11 +497,11 @@ function addLockDirsUnderCwd(candidateDirs: Set<string>, cwd: string): void {
 export async function discoverLockDirs(): Promise<string[]> {
   const candidateDirs = new Set<string>();
 
-  const okEntries = await findOkProcessEntries();
-  const okCwds = readPidCwds(okEntries.map((entry) => entry.pid));
-  const cwds = okEntries.map((entry) => okCwds.get(entry.pid) ?? null);
+  const psEntries = await findOkProcessEntries();
+  const psCwds = readPidCwds(psEntries.map((entry) => entry.pid));
+  const cwds = psEntries.map((entry) => psCwds.get(entry.pid) ?? null);
 
-  for (const entry of okEntries) {
+  for (const entry of psEntries) {
     const markedLockDir = extractMarkedLockDir(entry.command);
     if (markedLockDir != null && existsSync(markedLockDir)) {
       candidateDirs.add(markedLockDir);
@@ -520,7 +520,7 @@ export async function discoverLockDirs(): Promise<string[]> {
 
   const listeningPids = await readListeningPids().catch(() => null);
   if (listeningPids !== null) {
-    const knownPidSet = new Set(okEntries.map((e) => e.pid));
+    const knownPidSet = new Set(psEntries.map((e) => e.pid));
     const newPids = listeningPids.filter((p) => !knownPidSet.has(p));
     const portCwdsByPid = readPidCwds(newPids);
     const portCwds = newPids.map((pid) => portCwdsByPid.get(pid) ?? null);
@@ -572,7 +572,7 @@ export async function scanLockProcesses(
   probeOptions: (pid: number) => ProcessProbeOptions = createProbeFailureReporter(),
 ): Promise<LockProcessScan> {
   const scan: LockProcessScan = { candidates: [], unavailable: [] };
-  let entries: OkProcessEntry[];
+  let entries: PsProcessEntry[];
   try {
     entries = await findOkProcessEntries(true);
   } catch (error) {
@@ -592,8 +592,8 @@ export async function scanLockProcesses(
     pid: number,
     source: LockProcessScan['candidates'][number]['source'],
   ) => {
-    await add(join(project, '.ok', 'local'), pid, source);
-    await add(join(project, '.ok'), pid, source);
+    await add(join(project, '.ps', 'local'), pid, source);
+    await add(join(project, '.ps'), pid, source);
   };
   const pendingCwd: Array<{ pid: number; source: 'process-cwd' | 'listener-cwd' }> = [];
   for (const entry of entries) {

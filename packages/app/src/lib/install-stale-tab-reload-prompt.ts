@@ -3,7 +3,7 @@ import { plural, t } from '@lingui/core/macro';
 import { createElement } from 'react';
 import { toast } from 'sonner';
 import { ServerDriftToast } from '@/components/ServerDriftToast';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import {
   type ServerVersion,
   type ServerVersionChange,
@@ -82,9 +82,9 @@ export function staleTabReloadBody({
   const serverVersion = current.runtimeVersion;
   const tabVersion = loaded.runtimeVersion;
   if (serverVersion !== null && tabVersion !== null && serverVersion !== tabVersion) {
-    return t`OpenKnowledge on this computer is now v${serverVersion}, but this tab is still running v${tabVersion}.`;
+    return t`Palimpsest on this computer is now v${serverVersion}, but this tab is still running v${tabVersion}.`;
   }
-  return t`OpenKnowledge on this computer changed to a different build, but this tab is still running the old one.`;
+  return t`Palimpsest on this computer changed to a different build, but this tab is still running the old one.`;
 }
 
 function unsavedDocList(docNames: readonly string[]): string {
@@ -108,7 +108,7 @@ export function staleTabReloadRefusal(
 ): string {
   switch (reason) {
     case 'reconnecting':
-      return t`This tab is still reconnecting to OpenKnowledge, so it didn't reload. Try again in a moment.`;
+      return t`This tab is still reconnecting to Palimpsest, so it didn't reload. Try again in a moment.`;
     case 'unconfirmed':
       return t`This tab couldn't confirm that your edits are saved, so it didn't reload. Your edits are still here.`;
     case 'unsaved': {
@@ -124,7 +124,7 @@ export function staleTabReloadRefusal(
 }
 
 export function installStaleTabReloadPrompt(opts: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
   waitForSavedWork: () => Promise<SavedWorkResult>;
   watchForSavedWork: (onSaved: () => void) => () => void;
   docNamesToOpen: () => readonly string[];
@@ -188,7 +188,7 @@ export function installStaleTabReloadPrompt(opts: {
     const docNamesToOpen = opts.docNamesToOpen();
     console.warn(
       JSON.stringify({
-        event: 'ok-stale-tab-reload-withheld',
+        event: 'ps-stale-tab-reload-withheld',
         reason,
         docsToOpenCount: docNamesToOpen.length,
         ...failure,

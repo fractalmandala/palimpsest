@@ -7,11 +7,11 @@ import {
   shouldProxyToBundle,
 } from './bundle-proxy.ts';
 
-const userBundle = '/Users/alice/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
-const systemBundle = '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
+const userBundle = '/Users/alice/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
+const systemBundle = '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
 const userBetaBundle =
-  '/Users/alice/Applications/OpenKnowledge Beta.app/Contents/Resources/cli/bin/ok.sh';
-const systemBetaBundle = '/Applications/OpenKnowledge Beta.app/Contents/Resources/cli/bin/ok.sh';
+  '/Users/alice/Applications/Palimpsest Beta.app/Contents/Resources/cli/bin/ps.sh';
+const systemBetaBundle = '/Applications/Palimpsest Beta.app/Contents/Resources/cli/bin/ps.sh';
 
 describe('findBundledOkPath', () => {
   test('returns the user-local bundle before /Applications', () => {
@@ -56,7 +56,7 @@ describe('findBundledOkPath', () => {
 describe('shouldProxyToBundle', () => {
   test('suppresses via env, flag, platform, and bundled self detection', () => {
     expect(
-      shouldProxyToBundle({ OK_BUNDLE_PROXY: '0' }, ['node', 'cli.mjs', 'mcp'], 'darwin'),
+      shouldProxyToBundle({ PS_BUNDLE_PROXY: '0' }, ['node', 'cli.mjs', 'mcp'], 'darwin'),
     ).toEqual({
       proxy: false,
       suppressedBy: 'env',
@@ -74,7 +74,7 @@ describe('shouldProxyToBundle', () => {
     expect(
       shouldProxyToBundle(
         {},
-        ['node', '/Applications/OpenKnowledge.app/Contents/Resources/cli/dist/cli.mjs', 'mcp'],
+        ['node', '/Applications/Palimpsest.app/Contents/Resources/cli/dist/cli.mjs', 'mcp'],
         'darwin',
       ),
     ).toEqual({ proxy: false, suppressedBy: 'self' });

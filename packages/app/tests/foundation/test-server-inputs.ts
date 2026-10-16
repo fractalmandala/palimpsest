@@ -61,12 +61,12 @@ function sorted(entries: Iterable<readonly [string, string]>): InputDigests {
   return Object.fromEntries([...entries].sort(([left], [right]) => (left < right ? -1 : 1)));
 }
 
-export function digestInputs(okRoot: string, patterns: readonly string[]): InputDigests {
-  const files = globSync([...patterns], { cwd: okRoot, exclude: GENERATED_OUTPUTS }).filter(
-    (path) => statSync(join(okRoot, path)).isFile(),
+export function digestInputs(psRoot: string, patterns: readonly string[]): InputDigests {
+  const files = globSync([...patterns], { cwd: psRoot, exclude: GENERATED_OUTPUTS }).filter(
+    (path) => statSync(join(psRoot, path)).isFile(),
   );
   return sorted(
-    files.map((path) => [path.split(sep).join('/'), sha256(readFileSync(join(okRoot, path)))]),
+    files.map((path) => [path.split(sep).join('/'), sha256(readFileSync(join(psRoot, path)))]),
   );
 }
 
@@ -80,10 +80,10 @@ function changedKeys(before: InputDigests, after: InputDigests): string[] {
 }
 
 export function serverFingerprint(
-  okRoot: string,
+  psRoot: string,
   workerEnv: Readonly<Record<string, string>>,
 ): ServerFingerprint {
-  const inputs = digestInputs(okRoot, SERVER_RESTART_INPUTS);
+  const inputs = digestInputs(psRoot, SERVER_RESTART_INPUTS);
   const env = digestValues(workerEnv);
   return { digest: sha256(JSON.stringify({ inputs, env })), inputs, env };
 }
@@ -117,8 +117,8 @@ export type PrebuiltServingDecision =
       readonly changedOptions: readonly string[];
     };
 
-export function prebuiltManifest(okRoot: string, buildOptions: BuildOptions): PrebuiltManifest {
-  const inputs = digestInputs(okRoot, PREBUILT_BUILD_INPUTS);
+export function prebuiltManifest(psRoot: string, buildOptions: BuildOptions): PrebuiltManifest {
+  const inputs = digestInputs(psRoot, PREBUILT_BUILD_INPUTS);
   const options = sorted(
     Object.entries(buildOptions).map(([key, value]) => [key, JSON.stringify(value)]),
   );

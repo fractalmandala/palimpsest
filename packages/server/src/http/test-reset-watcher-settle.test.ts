@@ -33,7 +33,7 @@ afterEach(async () => {
 });
 
 async function serverWithTestDoc(): Promise<{ server: BootedServer; contentDir: string }> {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-reset-settle-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-reset-settle-')));
   scratch.push(contentDir);
   writeFileSync(join(contentDir, 'test-doc.md'), KEPT);
   const server = await bootCompositionRig(contentDir, { enableTestRoutes: true });
@@ -50,7 +50,7 @@ function postServerReset(server: BootedServer): Promise<Response> {
 }
 
 function fencesIn(contentDir: string): string[] {
-  return readdirSync(join(contentDir, '.ok')).filter((name) =>
+  return readdirSync(join(contentDir, '.ps')).filter((name) =>
     name.startsWith('watcher-settle-fence-'),
   );
 }
@@ -63,7 +63,7 @@ test('a server-scope reset runs once the watcher has handled its settle fence', 
   const [fence] = fencesIn(contentDir);
   expect(readFileSync(join(contentDir, 'test-doc.md'), 'utf-8')).toBe(KEPT);
   await nativeSubscriptionOn(contentDir).deliver([
-    { type: 'create', path: join(contentDir, '.ok', fence) },
+    { type: 'create', path: join(contentDir, '.ps', fence) },
   ]);
   const response = await reset;
 

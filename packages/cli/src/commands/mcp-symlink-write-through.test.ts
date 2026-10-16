@@ -36,8 +36,8 @@ afterEach(() => {
 
 describe('symlink write-through on the harness write path', () => {
   it.skipIf(!unix)('writes a JSON harness through a symlink, leaving the symlink intact', () => {
-    const home = tempDir('ok-symlink-home-');
-    const repo = tempDir('ok-symlink-repo-');
+    const home = tempDir('ps-symlink-home-');
+    const repo = tempDir('ps-symlink-repo-');
     const target = join(repo, 'mcp.json');
     const original = [
       '{',
@@ -59,7 +59,7 @@ describe('symlink write-through on the harness write path', () => {
     const after = readFileSync(target, 'utf-8');
     expect(after).toContain('// dotfiles-managed cursor config');
     expect(after).toContain('"existing"');
-    expect(after).toContain('open-knowledge');
+    expect(after).toContain('palimpsest');
   });
 
   it.skipIf(!unix)(
@@ -71,8 +71,8 @@ describe('symlink write-through on the harness write path', () => {
       }
       setTomlConfigEngineForTesting(engine);
 
-      const home = tempDir('ok-symlink-home-');
-      const repo = tempDir('ok-symlink-repo-');
+      const home = tempDir('ps-symlink-home-');
+      const repo = tempDir('ps-symlink-repo-');
       const target = join(repo, 'config.toml');
       const original = [
         '# dotfiles-managed codex config',
@@ -93,12 +93,12 @@ describe('symlink write-through on the harness write path', () => {
       const after = readFileSync(target, 'utf-8');
       expect(after).toContain('# dotfiles-managed codex config');
       expect(after).toContain('command = "other-cmd"  # keep');
-      expect(after).toContain('[mcp_servers.open-knowledge]');
+      expect(after).toContain('[mcp_servers.palimpsest]');
     },
   );
 
   it.skipIf(!unix)('breaks a cyclic symlink into a regular file carrying our entry', () => {
-    const home = tempDir('ok-symlink-home-');
+    const home = tempDir('ps-symlink-home-');
     symlinkSync('b.json', join(home, 'a.json'));
     symlinkSync('a.json', join(home, 'b.json'));
     const config = join(home, 'config.json');
@@ -108,6 +108,6 @@ describe('symlink write-through on the harness write path', () => {
     expect(result.action).toBe('written');
 
     expect(lstatSync(config).isSymbolicLink()).toBe(false);
-    expect(readFileSync(config, 'utf-8')).toContain('open-knowledge');
+    expect(readFileSync(config, 'utf-8')).toContain('palimpsest');
   });
 });

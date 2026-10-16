@@ -117,7 +117,7 @@ function isSecFetchSite(value: string): value is SecFetchSite {
 export type UaClass = 'browser' | 'bot' | 'cli' | 'electron' | 'none' | 'other';
 
 function isOwnSiteHostname(hostname: string): boolean {
-  return hostname === 'openknowledge.ai' || hostname.endsWith('.openknowledge.ai');
+  return hostname === 'palimpsest.ai' || hostname.endsWith('.palimpsest.ai');
 }
 
 export interface AttributionProperties {

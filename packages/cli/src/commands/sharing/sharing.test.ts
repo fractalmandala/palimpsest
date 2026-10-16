@@ -59,7 +59,7 @@ async function capture<T>(fn: () => Promise<T>): Promise<{
   }
 }
 
-describe('ok config-sharing unshare → share round-trip', () => {
+describe('ps config-sharing unshare → share round-trip', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('sharing-cmd-test');
@@ -75,10 +75,10 @@ describe('ok config-sharing unshare → share round-trip', () => {
       await sharingUnshareCommand().parseAsync(['node', 'unshare', '--project', dir]);
     });
     const exclude = readExclude(dir);
-    expect(exclude).toContain('.ok/');
+    expect(exclude).toContain('.ps/');
     expect(exclude).toContain('.mcp.json');
     expect(exclude).toContain('.claude/launch.json');
-    expect(exclude).not.toContain('.claude/skills/open-knowledge/');
+    expect(exclude).not.toContain('.claude/skills/palimpsest/');
     expect(process.exitCode).not.toBe(1);
   });
 
@@ -90,7 +90,7 @@ describe('ok config-sharing unshare → share round-trip', () => {
     });
     const afterUnshare = readExclude(dir);
     expect(afterUnshare.startsWith(original)).toBe(true);
-    expect(afterUnshare).toContain('.ok/');
+    expect(afterUnshare).toContain('.ps/');
 
     await capture(async () => {
       await sharingShareCommand().parseAsync(['node', 'share', '--project', dir]);
@@ -122,9 +122,9 @@ describe('draining a stale skill exclude is reported, never silently written', (
   beforeEach(() => {
     dir = uniqueDir('sharing-drain-test');
     initGitRepo(dir);
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
     writeFileSync(
-      join(dir, '.ok', 'local', 'installed-skills.json'),
+      join(dir, '.ps', 'local', 'installed-skills.json'),
       JSON.stringify({
         schema: 1,
         skills: {
@@ -145,7 +145,7 @@ describe('draining a stale skill exclude is reported, never silently written', (
   });
 
   it('unshare that BOTH appends and drains reports both halves', async () => {
-    writeExclude(dir, '.ok/\n.claude/skills/trip-log/\n');
+    writeExclude(dir, '.ps/\n.claude/skills/trip-log/\n');
     const { stderr } = await capture(async () => {
       await sharingUnshareCommand().parseAsync(['node', 'unshare', '--project', dir]);
     });
@@ -166,7 +166,7 @@ describe('draining a stale skill exclude is reported, never silently written', (
   });
 });
 
-describe('ok config-sharing unshare — §5.5 tracked-files refusal', () => {
+describe('ps config-sharing unshare — §5.5 tracked-files refusal', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('sharing-refuse-test');
@@ -189,12 +189,12 @@ describe('ok config-sharing unshare — §5.5 tracked-files refusal', () => {
       await sharingUnshareCommand().parseAsync(['node', 'unshare', '--project', dir]);
     });
     expect(process.exitCode).toBe(1);
-    expect(stderr).toContain('Cannot switch OpenKnowledge to local-only');
+    expect(stderr).toContain('Cannot switch Palimpsest to local-only');
     expect(stderr).toContain('git rm --cached -- .mcp.json');
     expect(stderr).toContain('your teammates will see a deletion on their next pull');
 
     const after = readExclude(dir);
-    expect(after).not.toContain('.ok/');
+    expect(after).not.toContain('.ps/');
     expect(after).not.toContain('.mcp.json');
   });
 
@@ -235,11 +235,11 @@ describe('ok config-sharing unshare — §5.5 tracked-files refusal', () => {
     });
     expect(process.exitCode).not.toBe(1);
     expect(readExclude(dir)).toContain('.mcp.json');
-    expect(readExclude(dir)).toContain('.ok/');
+    expect(readExclude(dir)).toContain('.ps/');
   });
 });
 
-describe('ok config-sharing status', () => {
+describe('ps config-sharing status', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('sharing-status-test');

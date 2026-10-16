@@ -1,4 +1,4 @@
-import type { HandoffTarget, InstallState } from '@inkeep/open-knowledge-core';
+import type { HandoffTarget, InstallState } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

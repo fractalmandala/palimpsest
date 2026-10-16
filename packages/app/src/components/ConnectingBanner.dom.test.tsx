@@ -29,7 +29,7 @@ afterEach(() => {
   vi.useRealTimers();
   collabTerminal = true;
   collabLastError = null;
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
 });
 
 describe('ConnectingBanner placement', () => {
@@ -62,9 +62,9 @@ describe('ConnectingBanner placement', () => {
 describe('ConnectingBanner terminal copy names the running channel CLI', () => {
   test.each([
     [undefined, 'ok'],
-    ['ok-beta', 'ok-beta'],
+    ['ps-beta', 'ps-beta'],
   ])('no collab server names %s start', (cliCommandName, command) => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = { cliCommandName };
+    (window as unknown as { psDesktop?: unknown }).psDesktop = { cliCommandName };
     collabLastError = { kind: 'null-collab' };
     render(<ConnectingBanner />);
     expect(screen.getByRole('alert').textContent).toContain(
@@ -74,13 +74,13 @@ describe('ConnectingBanner terminal copy names the running channel CLI', () => {
 
   test.each([
     [undefined, 'ok'],
-    ['ok-beta', 'ok-beta'],
+    ['ps-beta', 'ps-beta'],
   ])('an unreachable server names %s status and start', (cliCommandName, command) => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = { cliCommandName };
+    (window as unknown as { psDesktop?: unknown }).psDesktop = { cliCommandName };
     collabLastError = { kind: 'error', code: 'network' };
     render(<ConnectingBanner />);
     expect(screen.getByRole('alert').textContent).toContain(
-      `Couldn't reach collab server — network error (is \`${command} start\` running?). Try ${command} status or check .ok/local/last-spawn-error.log.`,
+      `Couldn't reach collab server — network error (is \`${command} start\` running?). Try ${command} status or check .ps/local/last-spawn-error.log.`,
     );
   });
 });

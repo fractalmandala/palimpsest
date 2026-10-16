@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseCheckpoint } from '@inkeep/open-knowledge-core';
+import { parseCheckpoint } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestClient, createTestServer, type TestServer } from './test-harness.ts';
@@ -27,7 +27,7 @@ interface LossRingEvent {
 let server: TestServer | undefined;
 
 afterEach(async () => {
-  delete process.env.OK_TEST_STORE_DIVERGENCE;
+  delete process.env.PS_TEST_STORE_DIVERGENCE;
   if (server) {
     await server.cleanup();
     server = undefined;
@@ -35,7 +35,7 @@ afterEach(async () => {
 });
 
 function readLossEvents(contentDir: string): LossRingEvent[] {
-  const path = join(contentDir, '.ok', 'local', 'loss-capture', 'loss-current.jsonl');
+  const path = join(contentDir, '.ps', 'local', 'loss-capture', 'loss-current.jsonl');
   if (!existsSync(path)) return [];
   return readFileSync(path, 'utf-8')
     .split('\n')
@@ -134,7 +134,7 @@ describe('L3 agent-write divergence realign — content-loss conventions', () =>
       );
       expect(readFileSync(docPath, 'utf-8')).not.toContain(HUMAN_PENDING_LINE);
 
-      process.env.OK_TEST_STORE_DIVERGENCE = docName;
+      process.env.PS_TEST_STORE_DIVERGENCE = docName;
 
       const attempt = await agentWriteMd(port, `${AGENT_LINE}\n`, { docName, position: 'append' });
       expect(attempt.status).toBe(409);

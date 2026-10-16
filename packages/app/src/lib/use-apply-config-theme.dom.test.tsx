@@ -11,16 +11,16 @@ function ConfigThemeHarness({ themeValue }: { themeValue: string | undefined }) 
 
 function themeTree(themeValue: string | undefined): ReactElement {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="ok-theme-v1">
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="ps-theme-v1">
       <ConfigThemeHarness themeValue={themeValue} />
     </ThemeProvider>
   );
 }
 
 function dispatchCrossWindowStorage(newValue: string) {
-  window.localStorage.setItem('ok-theme-v1', newValue);
+  window.localStorage.setItem('ps-theme-v1', newValue);
   const ev = new Event('storage');
-  Object.assign(ev, { key: 'ok-theme-v1', newValue, oldValue: null });
+  Object.assign(ev, { key: 'ps-theme-v1', newValue, oldValue: null });
   window.dispatchEvent(ev);
 }
 
@@ -49,7 +49,7 @@ describe('useApplyConfigTheme — cross-window flicker guard', () => {
 
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     expect(document.documentElement.classList.contains('light')).toBe(false);
-    expect(window.localStorage.getItem('ok-theme-v1')).toBe('dark');
+    expect(window.localStorage.getItem('ps-theme-v1')).toBe('dark');
   });
 
   test('a genuine config-theme change still applies (the effect is not dead)', async () => {

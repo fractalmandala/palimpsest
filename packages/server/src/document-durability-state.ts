@@ -1,8 +1,8 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+import { currentCliCommandName } from '@palimpsest/core';
+import { atomicTempPath } from '@palimpsest/core/server';
 import {
   tracedMkdirSync,
   tracedRenameSync,
@@ -49,10 +49,10 @@ export function assertNeverDeferredStoreWait(wait: never): never {
   throw new Error(`[DeferredStoreWait] unhandled variant: ${JSON.stringify(wait)}`);
 }
 
-export const OK_DOC_REMOVED = 'OK_DOC_REMOVED';
-export const OK_PATH_UNRESOLVABLE = 'OK_PATH_UNRESOLVABLE';
-export const OK_STORE_REFUSED = 'OK_STORE_REFUSED';
-export const OK_STORE_DISCARDED = 'OK_STORE_DISCARDED';
+export const PS_DOC_REMOVED = 'PS_DOC_REMOVED';
+export const PS_PATH_UNRESOLVABLE = 'PS_PATH_UNRESOLVABLE';
+export const PS_STORE_REFUSED = 'PS_STORE_REFUSED';
+export const PS_STORE_DISCARDED = 'PS_STORE_DISCARDED';
 
 const IN_FLIGHT_FLUSH_TTL_MS = 60_000;
 
@@ -183,7 +183,7 @@ export class DocumentDurabilityStateError extends Error {
     const recovery =
       kind === 'unreadable'
         ? code === 'EACCES' || code === 'EPERM'
-          ? 'Check the snapshot and parent-directory permissions for the account running OpenKnowledge, then retry.'
+          ? 'Check the snapshot and parent-directory permissions for the account running Palimpsest, then retry.'
           : code === 'EISDIR'
             ? 'The snapshot path must be a regular file, not a directory. Preserve that directory and restore the snapshot file to this path.'
             : 'Check the filesystem or mount and restore read access to this path, then retry.'

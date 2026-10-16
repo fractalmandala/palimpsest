@@ -192,7 +192,7 @@ async function findCaretCandidateLine(
       }
       const portBox = scrollport.getBoundingClientRect();
       const painted = [...document.querySelectorAll<HTMLElement>(lineSelector as string)].filter(
-        (element) => element.closest('.ok-mode-hidden') === null,
+        (element) => element.closest('.ps-mode-hidden') === null,
       );
       const textOf = (element: HTMLElement): string => element.textContent ?? '';
       const occurrences = new Map<string, number>();
@@ -266,7 +266,7 @@ async function findLineByText(
         throw new Error(`no painted scrollport matched ${scrollportSelector}`);
       }
       const match = [...document.querySelectorAll<HTMLElement>(lineSelector)]
-        .filter((element) => element.closest('.ok-mode-hidden') === null)
+        .filter((element) => element.closest('.ps-mode-hidden') === null)
         .find((element) => (element.textContent ?? '') === wanted);
       if (match === undefined) return null;
       const rect = match.getBoundingClientRect();

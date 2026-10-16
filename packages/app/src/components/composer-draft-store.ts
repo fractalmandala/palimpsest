@@ -1,6 +1,6 @@
 import type { JSONContent } from '@tiptap/core';
 
-const DRAFT_STORAGE_KEY = 'ok-ask-ai-draft-v2';
+const DRAFT_STORAGE_KEY = 'ps-ask-ai-draft-v2';
 
 interface ComposerDraftState {
   readonly doc: JSONContent | null;

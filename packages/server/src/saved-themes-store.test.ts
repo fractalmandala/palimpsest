@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { BASE16_SLOTS } from '@inkeep/open-knowledge-core';
+import { BASE16_SLOTS } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   SAVED_THEME_FILE_BYTE_LIMIT,
@@ -22,7 +22,7 @@ import {
 let home: string;
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-saved-themes-home-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-saved-themes-home-'));
 });
 
 afterEach(() => {
@@ -51,14 +51,14 @@ function byId(entries: SavedThemeEntry[]): Map<string | undefined, SavedThemeEnt
 }
 
 describe('savedThemesDir', () => {
-  test('resolves the store under <home>/.ok/themes', () => {
-    expect(savedThemesDir(home)).toBe(join(home, '.ok', 'themes'));
+  test('resolves the store under <home>/.ps/themes', () => {
+    expect(savedThemesDir(home)).toBe(join(home, '.ps', 'themes'));
   });
 
-  test('resolves Beta themes under <home>/.ok-beta/themes', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('resolves Beta themes under <home>/.ps-beta/themes', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
-      expect(savedThemesDir(home)).toBe(join(home, '.ok-beta', 'themes'));
+      expect(savedThemesDir(home)).toBe(join(home, '.ps-beta', 'themes'));
     } finally {
       vi.unstubAllEnvs();
     }

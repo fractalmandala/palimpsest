@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { afterEach, describe, expect, test } from 'vitest';
 import { makeCaptureRes } from '../composition-rig.test-helper.ts';
-import { OK_DOC_REMOVED } from '../document-durability-state.ts';
+import { PS_DOC_REMOVED } from '../document-durability-state.ts';
 import { loggerFactory } from '../logger.ts';
 import { createSkillsInstallRoutes, type SkillsInstallRouteDeps } from './skills-install-routes.ts';
 
@@ -81,8 +81,8 @@ describe('skill-install surfaces every flush outcome instead of installing over 
   });
 
   function seedSourcelessSkill() {
-    const skillsRoot = mkdtempSync(join(tmpdir(), 'ok-skill-install-root-'));
-    const skillsHome = mkdtempSync(join(tmpdir(), 'ok-skill-install-home-'));
+    const skillsRoot = mkdtempSync(join(tmpdir(), 'ps-skill-install-root-'));
+    const skillsHome = mkdtempSync(join(tmpdir(), 'ps-skill-install-home-'));
     roots.push(skillsRoot, skillsHome);
     mkdirSync(join(skillsRoot, SKILL_NAME), { recursive: true });
     return { skillsRoot, skillsHome };
@@ -109,7 +109,7 @@ describe('skill-install surfaces every flush outcome instead of installing over 
       flushDiskAndDetectOutcome: () =>
         Promise.resolve({
           kind: 'failure',
-          failure: { code: OK_DOC_REMOVED, message: 'the skill document is no longer on disk' },
+          failure: { code: PS_DOC_REMOVED, message: 'the skill document is no longer on disk' },
         }),
       respondPersistenceFailure: (res, failure, handler) => {
         seen.push({ failure, handler });
@@ -119,7 +119,7 @@ describe('skill-install surfaces every flush outcome instead of installing over 
     });
     expect(seen).toEqual([
       {
-        failure: { code: OK_DOC_REMOVED, message: 'the skill document is no longer on disk' },
+        failure: { code: PS_DOC_REMOVED, message: 'the skill document is no longer on disk' },
         handler: 'skill-install',
       },
     ]);

@@ -9,10 +9,10 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
-const CONFIRM_HEADING = 'Uninstall OpenKnowledge?';
+const CONFIRM_HEADING = 'Uninstall Palimpsest?';
 const FAILURE_HEADING = 'Cleanup didn’t finish';
 const RESULTS_HEADING = 'Notice results';
 
@@ -50,7 +50,7 @@ async function launchNoticePreview(
     desktopLaunchOptions({
       target: TARGET,
       args: [`--user-data-dir=${join(home, 'electron-userdata')}`],
-      env: { ...process.env, OK_UNINSTALL_UI_PREVIEW: 'notice' },
+      env: { ...process.env, PS_UNINSTALL_UI_PREVIEW: 'notice' },
       timeout: 30_000,
     }),
   );
@@ -58,21 +58,21 @@ async function launchNoticePreview(
 }
 
 test.describe('uninstall notice smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'The uninstall flow is darwin-only.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('pressing each notice through carries the answer to main', async ({ captureStderrFor }) => {
-    const { app, home } = await launchNoticePreview('ok-uninstall-notice-');
+    const { app, home } = await launchNoticePreview('ps-uninstall-notice-');
     captureStderrFor(app, { cleanupDirs: [home] });
     await expectCaptureHomeMatchesProcess(app);
 
     await app.firstWindow({ timeout: 20_000 });
 
     const confirm = await findNoticeWindow(app, CONFIRM_HEADING);
-    await expect(confirm.getByText('OpenKnowledge will quit before cleanup starts.')).toBeVisible();
+    await expect(confirm.getByText('Palimpsest will quit before cleanup starts.')).toBeVisible();
     let closed = confirm.waitForEvent('close', { timeout: 15_000 });
-    await confirm.getByRole('button', { name: 'Uninstall OpenKnowledge' }).click();
+    await confirm.getByRole('button', { name: 'Uninstall Palimpsest' }).click();
     await closed;
 
     const failure = await findNoticeWindow(app, FAILURE_HEADING);
@@ -91,7 +91,7 @@ test.describe('uninstall notice smoke', () => {
   test('closing an unanswered question cancels, closing a failure notice acknowledges it', async ({
     captureStderrFor,
   }) => {
-    const { app, home } = await launchNoticePreview('ok-uninstall-notice-close-');
+    const { app, home } = await launchNoticePreview('ps-uninstall-notice-close-');
     captureStderrFor(app, { cleanupDirs: [home] });
     await expectCaptureHomeMatchesProcess(app);
 

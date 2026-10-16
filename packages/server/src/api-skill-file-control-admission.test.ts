@@ -62,8 +62,8 @@ function toolError(result: { isError?: boolean; content?: unknown }, code: numbe
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-reference-admission-'));
-  for (const skill of [name, 'open-knowledge']) {
+  root = mkdtempSync(join(tmpdir(), 'ps-reference-admission-'));
+  for (const skill of [name, 'palimpsest']) {
     const directory = join(root, '.agents', 'skills', skill);
     mkdirSync(directory, { recursive: true });
     writeFileSync(

@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const NATIVE_CONFIG_PACKAGE = '@inkeep/open-knowledge-native-config';
+const NATIVE_CONFIG_PACKAGE = '@palimpsest/native-config';
 
 function isModuleNotFound(err: unknown): boolean {
   const code =
@@ -31,7 +31,7 @@ export function describeNativeFailure(context: string, err: unknown): string {
 }
 
 export function debugNativeLoadFailure(context: string, err: unknown): void {
-  if (!process.env.OK_DEBUG_NATIVE) return;
+  if (!process.env.PS_DEBUG_NATIVE) return;
   process.stderr.write(`[ok] native-config ${describeNativeFailure(context, err)}\n`);
 }
 

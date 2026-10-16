@@ -1,5 +1,5 @@
-import { OkCliCommand } from '@inkeep/open-knowledge-core';
-import type { CloneEvent } from '@inkeep/open-knowledge-server';
+import { PsCliCommand } from '@palimpsest/core';
+import type { CloneEvent } from '@palimpsest/server';
 import { describe, expect, test, vi } from 'vitest';
 
 interface CloneSpawn {
@@ -11,7 +11,7 @@ interface CloneSpawn {
 
 const cloneSpawns: CloneSpawn[] = [];
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   runAuthStatusSubprocess: () => Promise.resolve({ authenticated: false, host: 'github.com' }),
   runAuthReposSubprocess: () => Promise.resolve({ ok: false, error: 'unused' }),
   runDeviceFlowSubprocess: () => ({ done: Promise.resolve(), cancel: () => {} }),
@@ -50,7 +50,7 @@ function makeSender(captured: CapturedSend[]) {
 
 function makeDeps() {
   return {
-    resolveOkCli: () => OkCliCommand.resolve({ host: { cliArgs: ['open-knowledge'] }, env: {} }),
+    resolveOkCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
     logFailure: vi.fn(),
     state: createLocalOpState(),
   };

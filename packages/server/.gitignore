@@ -4,5 +4,5 @@
 # filter and turbo's `dist/**` output declaration cannot take them; biome.jsonc
 # excludes the same prefix, since it reads no ignore file. This file
 # lives here rather than in the subtree root `.gitignore` so the rule reaches
-# `inkeep/open-knowledge` too, where the root ignore file is the overlay's.
-/.ok-skill-publish-*/
+# `fractalmandala/palimpsest` too, where the root ignore file is the overlay's.
+/.ps-skill-publish-*/

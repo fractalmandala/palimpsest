@@ -39,7 +39,7 @@ const globalProjection = (editor: (typeof EDITORS)[number], name: string) =>
   join(tmpHome, HOST_DOTDIR[editor], 'skills', name);
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-scope-move-hosts-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-scope-move-hosts-home-'));
   mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);

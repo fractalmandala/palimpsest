@@ -8,7 +8,7 @@ import {
   ASSET_EXTENSIONS,
   EXECUTABLE_BLOCKLIST_EXTENSIONS,
   INLINE_RENDERABLE_EXTENSIONS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import sirv from 'sirv';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { WebSocket } from 'ws';
@@ -381,7 +381,7 @@ describe('mountMcpAndApi content-asset middleware', () => {
   const tmpDirs: string[] = [];
 
   function makeContentDir(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-assets-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-assets-'));
     tmpDirs.push(dir);
     return dir;
   }
@@ -389,7 +389,7 @@ describe('mountMcpAndApi content-asset middleware', () => {
   async function startWithAssets(contentDir: string): Promise<{ port: number }> {
     const httpServer = createServer();
     const filter = {
-      isPathIgnored: (rel: string) => rel.startsWith('.ok/') || rel === 'excluded.png',
+      isPathIgnored: (rel: string) => rel.startsWith('.ps/') || rel === 'excluded.png',
     };
     const mount = mountMcpAndApi({
       httpServer,
@@ -482,7 +482,7 @@ describe('mountMcpAndApi ephemeral content-asset gate', () => {
   const tmpDirs: string[] = [];
 
   async function startAssets(ephemeral: boolean): Promise<{ port: number }> {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-gate-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-gate-'));
     tmpDirs.push(contentDir);
     writeFileSync(
       join(contentDir, 'secret.png'),
@@ -540,7 +540,7 @@ describe('mountMcpAndApi react-shell middleware', () => {
   const SHELL_FONT_BYTES = Buffer.from('woff2-bundle-bytes', 'utf-8');
 
   function makeShellDir(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-shell-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-shell-'));
     tmpDirs.push(dir);
     writeFileSync(
       join(dir, 'index.html'),
@@ -590,7 +590,7 @@ describe('mountMcpAndApi react-shell middleware', () => {
   });
 
   test('serves a bundled binary asset (/assets/<hash>.woff2) when the content middleware would fail-close', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-shell-woff2-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-shell-woff2-'));
     tmpDirs.push(contentDir);
     const filter = { isPathIgnored: () => false };
     const contentAssetMiddleware = createAssetServeMiddleware({
@@ -624,7 +624,7 @@ describe('mountMcpAndApi react-shell middleware', () => {
   });
 
   test('user upload under /assets/ with no shell match falls through to the content middleware', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-shell-content-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-shell-content-'));
     tmpDirs.push(contentDir);
     mkdirSync(join(contentDir, 'assets'));
     const bytes = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
@@ -648,7 +648,7 @@ describe('mountMcpAndApi react-shell middleware', () => {
   });
 
   test('on a /assets/ name collision the SPA shell wins over the content copy', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-shell-collision-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-shell-collision-'));
     tmpDirs.push(contentDir);
     mkdirSync(join(contentDir, 'assets'));
     const contentBytes = Buffer.from('content-copy-distinct-bytes', 'utf-8');
@@ -672,7 +672,7 @@ describe('mountMcpAndApi react-shell middleware', () => {
   });
 
   test('content-miss falls through to react-shell SPA fallback', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-mount-shell-empty-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-mount-shell-empty-'));
     tmpDirs.push(contentDir);
     const filter = { isPathIgnored: () => false };
     const contentAssetMiddleware = createAssetServeMiddleware({

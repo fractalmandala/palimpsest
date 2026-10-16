@@ -1,4 +1,4 @@
-import { COMMAND_IDENTITIES } from '@inkeep/open-knowledge-core';
+import { COMMAND_IDENTITIES } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import type { PaletteCommandContext } from '@/components/command-palette-commands';
 import { PALETTE_COMMANDS } from '@/components/command-palette-commands';

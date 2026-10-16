@@ -7,7 +7,7 @@ import { readRepoMarketplacePlugins, repoMarketplacePluginFor } from './repo-mar
 let repo: string;
 
 beforeEach(() => {
-  repo = mkdtempSync(join(tmpdir(), 'ok-repo-marketplace-'));
+  repo = mkdtempSync(join(tmpdir(), 'ps-repo-marketplace-'));
   mkdirSync(join(repo, '.claude-plugin'));
   writeFileSync(
     join(repo, '.claude-plugin', 'marketplace.json'),

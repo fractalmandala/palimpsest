@@ -35,7 +35,7 @@ Stable paragraph: shared marker LINEAGE-ALPHA.
 Paragraph with marker LINEAGE-V2-ONLY introduced by the rewrite.
 `;
 
-const ENVELOPE_KEY = 'ok-doc-lineage-epochs';
+const ENVELOPE_KEY = 'ps-doc-lineage-epochs';
 
 const HYDRATION_WINDOW_MS = 5_000;
 
@@ -100,7 +100,7 @@ function captureLineageMismatchWarns(): {
   const original = console.warn;
   console.warn = (...args: unknown[]): void => {
     const first = args[0];
-    if (typeof first === 'string' && first.includes('ok-doc-lineage-mismatch')) {
+    if (typeof first === 'string' && first.includes('ps-doc-lineage-mismatch')) {
       emitted.push(first);
     }
     original.apply(console, args);
@@ -254,7 +254,7 @@ describe('client-persisted state meets a re-seeded doc lineage (record-absent pr
 });
 
 describe('refusing dead-lineage state is observable (boot-window fresh-pool door)', () => {
-  test('fencing the late attach emits the structured ok-doc-lineage-mismatch recovery event', async () => {
+  test('fencing the late attach emits the structured ps-doc-lineage-mismatch recovery event', async () => {
     const server = await createTestServer();
     cleanups.push(() => server.cleanup());
 
@@ -294,7 +294,7 @@ describe('refusing dead-lineage state is observable (boot-window fresh-pool door
 });
 
 describe('refusing dead-lineage state is observable (record-absent profile door)', () => {
-  test('fencing the claimless admission attach emits the structured ok-doc-lineage-mismatch recovery event', async () => {
+  test('fencing the claimless admission attach emits the structured ps-doc-lineage-mismatch recovery event', async () => {
     const server = await createTestServer();
     cleanups.push(() => server.cleanup());
 

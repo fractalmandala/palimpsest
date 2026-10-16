@@ -241,7 +241,7 @@ test('preserves unclassified pnpm exits with optional acquisition errors', async
   const failure = Object.assign(transportFailure('locked'), {
     stdout: '',
     stderr:
-      '{"name":"pnpm:fetching-progress","status":"started","packageId":"ok-cli-fixture-leaf@1.0.0"}\nRegistry unavailable…\n',
+      '{"name":"pnpm:fetching-progress","status":"started","packageId":"ps-cli-fixture-leaf@1.0.0"}\nRegistry unavailable…\n',
   });
   const installation = installPackedCli(fixture, {
     now: () => 0,
@@ -256,7 +256,7 @@ test('preserves unclassified pnpm exits with optional acquisition errors', async
 });
 
 const UNFINISHED_LEAF_FETCH =
-  '{"name":"pnpm:fetching-progress","status":"started","packageId":"ok-cli-fixture-leaf@1.0.0"}\n';
+  '{"name":"pnpm:fetching-progress","status":"started","packageId":"ps-cli-fixture-leaf@1.0.0"}\n';
 
 test('an install killed at the acquisition deadline makes no refetch requests', async () => {
   let clock = 0;

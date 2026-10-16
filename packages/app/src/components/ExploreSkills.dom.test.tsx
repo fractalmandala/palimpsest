@@ -7,7 +7,7 @@ const discoverSkillsInSource = vi.fn(async () => ({
   ok: true as const,
   skills: [
     { name: 'knowledge-base', description: 'Starter pack.' },
-    { name: 'open-knowledge', description: 'The runtime contract.' },
+    { name: 'palimpsest', description: 'The runtime contract.' },
   ],
 }));
 const fetchPublisherSkills = vi.fn(async () => ({
@@ -16,15 +16,15 @@ const fetchPublisherSkills = vi.fn(async () => ({
     {
       id: 'x',
       name: 'knowledge-base',
-      source: 'inkeep/open-knowledge-skills',
+      source: 'fractalmandala/palimpsest-skills',
       description: '',
       installs: 21,
       publisher: 'inkeep',
     },
     {
       id: 'y',
-      name: 'open-knowledge',
-      source: 'inkeep/open-knowledge-skills',
+      name: 'palimpsest',
+      source: 'fractalmandala/palimpsest-skills',
       description: '',
       installs: 478,
       publisher: 'inkeep',
@@ -64,31 +64,31 @@ function renderExplore() {
   );
 }
 
-describe('ExploreSkills — Open Knowledge toggle', () => {
+describe('ExploreSkills — Palimpsest toggle', () => {
   test('fills the grid from our repo, ranked by installs, in place', async () => {
     renderExplore();
-    await userEvent.click(screen.getByRole('button', { name: 'OpenKnowledge' }));
-    await waitFor(() => expect(screen.getByText('open-knowledge')).toBeTruthy());
-    expect(discoverSkillsInSource).toHaveBeenCalledWith('inkeep/open-knowledge-skills');
+    await userEvent.click(screen.getByRole('button', { name: 'Palimpsest' }));
+    await waitFor(() => expect(screen.getByText('palimpsest')).toBeTruthy());
+    expect(discoverSkillsInSource).toHaveBeenCalledWith('fractalmandala/palimpsest-skills');
     const order = screen.getAllByRole('listitem').map((li) => li.textContent ?? '');
-    expect(order[0]).toContain('open-knowledge');
+    expect(order[0]).toContain('palimpsest');
     expect(order[1]).toContain('knowledge-base');
   });
 
   test('an unrankable list still renders, in repository order', async () => {
     fetchPublisherSkills.mockResolvedValueOnce({ ok: false, error: 'upstream down' } as never);
     renderExplore();
-    await userEvent.click(screen.getByRole('button', { name: 'OpenKnowledge' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Palimpsest' }));
     await waitFor(() => expect(screen.getByText('knowledge-base')).toBeTruthy());
-    expect(screen.getByText('open-knowledge')).toBeTruthy();
+    expect(screen.getByText('palimpsest')).toBeTruthy();
   });
 
   test('a list that will not load says so, rather than rendering an empty grid', async () => {
     discoverSkillsInSource.mockResolvedValueOnce({ ok: false, error: 'clone failed' } as never);
     renderExplore();
-    await userEvent.click(screen.getByRole('button', { name: 'OpenKnowledge' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Palimpsest' }));
     await waitFor(() =>
-      expect(screen.getByText(/Couldn't load the OpenKnowledge skills/)).toBeTruthy(),
+      expect(screen.getByText(/Couldn't load the Palimpsest skills/)).toBeTruthy(),
     );
     expect(screen.queryByRole('listitem')).toBeNull();
   });
@@ -127,11 +127,11 @@ describe('ExploreSkills — Open Knowledge toggle', () => {
 
   test('a topic chip turns it back off instead of stacking into the query', async () => {
     renderExplore();
-    const ok = screen.getByRole('button', { name: 'OpenKnowledge' });
+    const ok = screen.getByRole('button', { name: 'Palimpsest' });
     await userEvent.click(ok);
     await waitFor(() => expect(ok.getAttribute('aria-pressed')).toBe('true'));
     await userEvent.click(screen.getByRole('button', { name: 'Design' }));
     expect(ok.getAttribute('aria-pressed')).toBe('false');
-    await waitFor(() => expect(screen.queryByText('open-knowledge')).toBeNull());
+    await waitFor(() => expect(screen.queryByText('palimpsest')).toBeNull());
   });
 });

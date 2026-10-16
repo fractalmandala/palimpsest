@@ -3,12 +3,12 @@ import type {
   AuthReposResponse,
   AuthStatusResponse,
   RawCloneEvent,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type {
-  OkLocalOpAuthEvent,
-  OkLocalOpAuthReposResponse,
-  OkLocalOpAuthStatusResponse,
-  OkLocalOpCloneEvent,
+  PsLocalOpAuthEvent,
+  PsLocalOpAuthReposResponse,
+  PsLocalOpAuthStatusResponse,
+  PsLocalOpCloneEvent,
 } from './bridge-contract.ts';
 
 type Equal<A, B> =
@@ -17,18 +17,18 @@ type Expect<T extends true> = T;
 type AssignableTo<A, B> = [A] extends [B] ? true : false;
 type WithoutGhAvailable<T> = T extends unknown ? Omit<T, 'ghAvailable'> : never;
 
-export type PinAuthEventIdenticalToBridge = Expect<Equal<AuthEvent, OkLocalOpAuthEvent>>;
+export type PinAuthEventIdenticalToBridge = Expect<Equal<AuthEvent, PsLocalOpAuthEvent>>;
 
-export type PinCloneEventIdenticalToBridge = Expect<Equal<RawCloneEvent, OkLocalOpCloneEvent>>;
+export type PinCloneEventIdenticalToBridge = Expect<Equal<RawCloneEvent, PsLocalOpCloneEvent>>;
 
 export type PinAuthReposResponseIdenticalToBridge = Expect<
-  Equal<AuthReposResponse, OkLocalOpAuthReposResponse>
+  Equal<AuthReposResponse, PsLocalOpAuthReposResponse>
 >;
 
 export type PinAuthStatusResponseAssignableToBridge = Expect<
-  AssignableTo<AuthStatusResponse, OkLocalOpAuthStatusResponse>
+  AssignableTo<AuthStatusResponse, PsLocalOpAuthStatusResponse>
 >;
 
 export type PinAuthStatusResponseWidenedOnlyByGhAvailable = Expect<
-  Equal<AuthStatusResponse, WithoutGhAvailable<OkLocalOpAuthStatusResponse>>
+  Equal<AuthStatusResponse, WithoutGhAvailable<PsLocalOpAuthStatusResponse>>
 >;

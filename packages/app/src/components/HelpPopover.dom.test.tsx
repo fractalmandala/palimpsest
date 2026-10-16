@@ -17,9 +17,9 @@ vi.doMock('@lingui/react/macro', () => ({
 
 const servedCore = createServedBindingLog();
 
-vi.doMock('@inkeep/open-knowledge-core/utils/github-stars', async (importActual) =>
-  servedCore.serve('@inkeep/open-knowledge-core/utils/github-stars', {
-    ...(await importActual<typeof import('@inkeep/open-knowledge-core/utils/github-stars')>()),
+vi.doMock('@palimpsest/core/utils/github-stars', async (importActual) =>
+  servedCore.serve('@palimpsest/core/utils/github-stars', {
+    ...(await importActual<typeof import('@palimpsest/core/utils/github-stars')>()),
     getGitHubStars: async () => 1234,
   }),
 );
@@ -100,14 +100,14 @@ describe('HelpPopover runtime behavior', () => {
     expect(links.map(linkShape)).toEqual([
       {
         label: 'Docs',
-        href: 'https://openknowledge.ai/docs',
+        href: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
         target: '_blank',
         rel: 'noopener noreferrer',
         hasIcon: true,
       },
       {
         label: 'Download app',
-        href: 'https://openknowledge.ai/download',
+        href: 'https://github.com/fractalmandala/palimpsest/download',
         target: '_blank',
         rel: 'noopener noreferrer',
         hasIcon: true,
@@ -123,14 +123,14 @@ describe('HelpPopover runtime behavior', () => {
     expect(links.map(linkShape)).toEqual([
       {
         label: 'GitHub',
-        href: 'https://github.com/inkeep/open-knowledge',
+        href: 'https://github.com/fractalmandala/palimpsest',
         target: '_blank',
         rel: 'noopener noreferrer',
         hasIcon: true,
       },
       {
         label: 'X (Twitter)',
-        href: 'https://x.com/OpenKnowledge',
+        href: 'https://x.com/Palimpsest',
         target: '_blank',
         rel: 'noopener noreferrer',
         hasIcon: true,
@@ -165,7 +165,7 @@ describe('HelpPopover runtime behavior', () => {
 
     const nav = screen.getByRole('navigation', { name: 'Product updates' });
     const whatsNew = within(nav).getByRole('link', { name: "What's new" });
-    expect(whatsNew.getAttribute('href')).toBe('https://github.com/inkeep/open-knowledge/releases');
+    expect(whatsNew.getAttribute('href')).toBe('https://github.com/fractalmandala/palimpsest/releases');
 
     const subscribe = within(nav).getByRole('button', { name: 'Subscribe' });
     expect(subscribe).not.toBeNull();
@@ -177,13 +177,13 @@ describe('HelpPopover runtime behavior', () => {
 
 describe('HelpPopover with the desktop bridge present', () => {
   beforeEach(() => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {
       state: { query: async () => ({ channel: 'latest', schemaIncompatibility: null }) },
     };
   });
 
   afterEach(() => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('adds Report a bug and Send feedback actions after the Docs link', async () => {
@@ -215,7 +215,7 @@ describe('HelpPopover with the desktop bridge present', () => {
     await renderOpenHelpPopover();
 
     expect(screen.getByRole('link', { name: 'Download app' }).getAttribute('href')).toBe(
-      'https://openknowledge.ai/download',
+      'https://github.com/fractalmandala/palimpsest/download',
     );
   });
 });
@@ -223,7 +223,7 @@ describe('HelpPopover with the desktop bridge present', () => {
 describe('HelpPopover version and updates on the desktop app', () => {
   function aboutInfo(updateChecks: 'available' | 'unavailable') {
     return {
-      productName: 'OpenKnowledge Beta',
+      productName: 'Palimpsest Beta',
       version: '0.83.0-beta.8',
       releasesUrl: 'https://example.test/releases',
       releaseNotesUrl: 'https://example.test/releases/tag/v0.83.0-beta.8',
@@ -239,7 +239,7 @@ describe('HelpPopover version and updates on the desktop app', () => {
       ...(checks ? { about: aboutInfo(checks) } : {}),
     });
     const query = vi.fn(async () => snapshot(updateChecks));
-    (window as unknown as { okDesktop?: unknown }).okDesktop = {
+    (window as unknown as { psDesktop?: unknown }).psDesktop = {
       appVersion: '0.83.0-beta.8',
       update: { checkNow },
       state: { query },
@@ -257,7 +257,7 @@ describe('HelpPopover version and updates on the desktop app', () => {
   }
 
   afterEach(() => {
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
     window.location.hash = '';
   });
 
@@ -346,7 +346,7 @@ describe('HelpPopover version and updates on the desktop app', () => {
     expect(screen.getByRole('button', { name: 'v0.83.0-beta.8 About & updates' })).not.toBeNull();
     expect(screen.queryByRole('button', { name: 'Check for updates' })).toBeNull();
     expect(screen.getByRole('link', { name: "What's new" }).getAttribute('href')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases',
+      'https://github.com/fractalmandala/palimpsest/releases',
     );
   });
 
@@ -368,7 +368,7 @@ describe('HelpPopover core replacement liveness', () => {
     await waitFor(() => expect(within(githubLink).getByText('1.2k')).not.toBeNull());
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/utils/github-stars',
+        '@palimpsest/core/utils/github-stars',
         'getGitHubStars',
         since,
       ),

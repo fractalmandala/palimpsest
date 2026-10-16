@@ -2,7 +2,7 @@ import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useConfigContext } from '@/lib/config-provider';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { TRANSITION_ATTRIBUTE, TRANSITION_STYLE_ID } from '@/lib/theme-color-transitions';
 
 vi.doMock('@tanstack/react-query', () => ({
@@ -28,13 +28,13 @@ vi.doMock('./ReportBugMenuTrigger', () => ({
 
 const { TerminalWindowApp } = await import('./TerminalWindowApp');
 
-function bridgeWithCollabUrl(collabUrl: string): OkDesktopBridge {
+function bridgeWithCollabUrl(collabUrl: string): PsDesktopBridge {
   return {
     config: { mode: 'terminal', collabUrl },
     onMenuAction: () => () => {},
     editor: { notifyViewMenuStateChanged: () => {} },
     terminal: { create: async () => ({ ok: true, ptyId: 'pty-1' }), kill: async () => {} },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 describe('TerminalWindowApp ConfigProvider wiring', () => {

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import type { InPlaceSkill } from './in-place-skills.ts';
 import {
@@ -40,9 +40,9 @@ function canonicalSkill(hash: string): InPlaceSkill {
 }
 
 function writeLedger(path: string, hash: string): void {
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'local', 'skill-placements.json'),
+    join(projectDir, '.ps', 'local', 'skill-placements.json'),
     JSON.stringify({
       schema: 1,
       skills: { guarded: [{ path, mode: 'copy', hash }] },
@@ -51,7 +51,7 @@ function writeLedger(path: string, hash: string): void {
 }
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-placement-safety-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-placement-safety-'));
   projectDir = join(root, 'project');
   outsideDir = join(root, 'outside');
   mkdirSync(projectDir);
@@ -64,9 +64,9 @@ afterEach(() => {
 
 describe('placement ledger path safety', () => {
   test('one parser feeds safe placements, roots, and source preferences', () => {
-    mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'local', 'skill-placements.json'),
+      join(projectDir, '.ps', 'local', 'skill-placements.json'),
       JSON.stringify({
         schema: 1,
         skills: {

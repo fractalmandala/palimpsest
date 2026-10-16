@@ -52,7 +52,7 @@ describe('replay-outbox', () => {
       namespace: null,
     });
     expect(read).toBeNull();
-    expect(await hasOutboxDb('ok-replay-outbox:main:never-written')).toBe(false);
+    expect(await hasOutboxDb('ps-replay-outbox:main:never-written')).toBe(false);
   });
 
   it('a consumed entry reads back as null', async () => {
@@ -136,7 +136,7 @@ describe('replay-outbox', () => {
 
   it('reads null for a foreign/truncated record rather than returning garbage', async () => {
     await new Promise<void>((resolve, reject) => {
-      const req = indexedDB.open('ok-replay-outbox:main:garbage');
+      const req = indexedDB.open('ps-replay-outbox:main:garbage');
       req.onupgradeneeded = () => req.result.createObjectStore('entry');
       req.onsuccess = () => {
         const db = req.result;
@@ -159,7 +159,7 @@ describe('replay-outbox', () => {
     await expect(
       consumeReplayOutboxEntry({ branch: 'main', docName: 'absent', namespace: null }),
     ).resolves.toBe(false);
-    expect(await hasOutboxDb('ok-replay-outbox:main:absent')).toBe(false);
+    expect(await hasOutboxDb('ps-replay-outbox:main:absent')).toBe(false);
   });
 
   it('writes nothing on an engine with no indexedDB.databases()', async () => {
@@ -174,7 +174,7 @@ describe('replay-outbox', () => {
       expect(persisted).toBe(false);
     });
 
-    expect(await hasOutboxDb('ok-replay-outbox:main:no-databases-api')).toBe(false);
+    expect(await hasOutboxDb('ps-replay-outbox:main:no-databases-api')).toBe(false);
     expect(
       await readReplayOutboxEntry({ branch: 'main', docName: 'no-databases-api', namespace: null }),
     ).toBeNull();
@@ -315,6 +315,6 @@ describe('replay-outbox project scoping', () => {
       { branch: 'main', docName: 'doc-unscoped', namespace: null },
       { delta: bytes(1), fullState: bytes(2) },
     );
-    expect(await hasOutboxDb('ok-replay-outbox:main:doc-unscoped')).toBe(true);
+    expect(await hasOutboxDb('ps-replay-outbox:main:doc-unscoped')).toBe(true);
   });
 });

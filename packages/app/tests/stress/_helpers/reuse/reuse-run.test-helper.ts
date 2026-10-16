@@ -91,11 +91,11 @@ function grepFor(titles: readonly string[]): string {
 export async function runReuseCase(socketPath: string, ...titles: string[]): Promise<ReuseCaseRun> {
   const { exitCode, transcript, report } = await runNestedPlaywright({
     args: ['--config', RUN_CONFIG, CASE_FILE, '--grep', grepFor(titles)],
-    runDirPrefix: 'ok-reuse-case-',
+    runDirPrefix: 'ps-reuse-case-',
     env: (runDir) =>
       createNestedPlaywrightEnv({
         [REUSE_SOCKET_ENV]: socketPath,
-        OK_REUSE_CASE_RUN_DIR: runDir,
+        PS_REUSE_CASE_RUN_DIR: runDir,
         PLAYWRIGHT_HTML_OPEN: 'never',
       }),
   });

@@ -27,7 +27,7 @@ index 07f4fbb6da0b0b0621b5696370aabf230f7293a8..1100d7720756275e7f5a2305644b9452
 +          // keystroke debounce.
 +          if (globalThis.__okYdbWriteWarned) return
 +          globalThis.__okYdbWriteWarned = true
-+          console.warn(JSON.stringify({ event: 'ok-ydb-write-failed', cause: err?.name ?? 'unknown', message: err?.message ?? String(err) }))
++          console.warn(JSON.stringify({ event: 'ps-ydb-write-failed', cause: err?.name ?? 'unknown', message: err?.message ?? String(err) }))
 +        })
          if (++this._dbsize >= PREFERRED_TRIM_SIZE) {
            // debounce store call

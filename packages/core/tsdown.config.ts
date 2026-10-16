@@ -25,7 +25,7 @@ const entry = {
   'comments-passage-match': 'src/comments/passage-match.ts',
   'config-auto-sync-mode': 'src/config/auto-sync-mode.ts',
   'config-bind-config-doc': 'src/config/bind-config-doc.ts',
-  'config-bind-okignore-doc': 'src/config/bind-okignore-doc.ts',
+  'config-bind-psignore-doc': 'src/config/bind-psignore-doc.ts',
   'config-errors': 'src/config/errors.ts',
   'config-field-registry': 'src/config/field-registry.ts',
   'config-merge-layered': 'src/config/merge-layered.ts',

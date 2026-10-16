@@ -1,6 +1,6 @@
 import * as actualSonner from 'sonner';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 const toastPlain = vi.fn((_msg: string) => 'toast-id');
 vi.doMock('sonner', () => ({
@@ -48,7 +48,7 @@ describe('installRecentRemovedListener', () => {
         captured = cb;
         return unsubscribe;
       }),
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     const dispose = installRecentRemovedListener({ bridge });
     expect(bridge.onRecentRemovedMissing).toHaveBeenCalledTimes(1);

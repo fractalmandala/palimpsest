@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { access, constants, readdir, stat } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { dirname, join } from 'node:path';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import { tracedMkdir, tracedRename, tracedRm } from '../fs-traced.ts';
 import type { PinoLogger } from '../logger.ts';
 import {
@@ -76,7 +76,7 @@ export function describeRuntime(kind: ManagedRuntimeKind): RuntimeDescriptor {
 }
 
 function defaultRuntimeRoot(): string {
-  return join(okUserHomeDir(), 'runtimes');
+  return join(psUserHomeDir(), 'runtimes');
 }
 
 function versionOf(kind: ManagedRuntimeKind): string {

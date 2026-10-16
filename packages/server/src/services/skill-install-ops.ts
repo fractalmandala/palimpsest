@@ -8,9 +8,9 @@ import {
   isSkillInstallTarget,
   SKILL_NAME_REGEX,
   type SkillInstallWarningCode,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
-import { parseSkillDir, type SkillHostId } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
+import { parseSkillDir, type SkillHostId } from '@palimpsest/core/skills-catalog';
 import { applySkillDirNameSync } from '../content/skills-write.ts';
 import { tracedCpSync, tracedMkdirSync, tracedRenameSync, tracedRmSync } from '../fs-traced.ts';
 import {
@@ -166,7 +166,7 @@ export function createSkillInstallOpsService(deps: SkillInstallOpsDeps): SkillIn
       const stash = (dirAbs: string, label: string): void => {
         try {
           const dest = resolve(
-            okUserHomeDir(deps.skillsHome),
+            psUserHomeDir(deps.skillsHome),
             'edit-backups',
             'forks',
             `${name}-${label}-${stamp}`,

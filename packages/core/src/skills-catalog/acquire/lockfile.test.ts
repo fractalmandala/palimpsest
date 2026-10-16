@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { OPENKNOWLEDGE_SKILLS_REPO, PACK_SKILL_PREFIX } from '../../constants/skills.ts';
+import { PALIMPSEST_SKILLS_REPO, PACK_SKILL_PREFIX } from '../../constants/skills.ts';
 import { packMarkerOf, retrofitPackLockEntry } from './lockfile.ts';
 
 describe('retrofitPackLockEntry', () => {
@@ -7,7 +7,7 @@ describe('retrofitPackLockEntry', () => {
     const name = `${PACK_SKILL_PREFIX}getting-started`;
     const entry = retrofitPackLockEntry(name, 'a'.repeat(64), '2026-07-15T00:00:00.000Z');
     expect(entry).toEqual({
-      source: OPENKNOWLEDGE_SKILLS_REPO,
+      source: PALIMPSEST_SKILLS_REPO,
       skill: name,
       contentHash: 'a'.repeat(64),
       importedAt: '2026-07-15T00:00:00.000Z',
@@ -24,7 +24,7 @@ describe('retrofitPackLockEntry', () => {
     const entry = retrofitPackLockEntry('note-taking', 'a'.repeat(64), '2026-08-04T00:00:00.000Z', {
       selfIdentifiesAsPack: true,
     });
-    expect(entry?.source).toBe(OPENKNOWLEDGE_SKILLS_REPO);
+    expect(entry?.source).toBe(PALIMPSEST_SKILLS_REPO);
     expect(entry?.skill).toBe('note-taking');
   });
 
@@ -40,7 +40,7 @@ describe('retrofitPackLockEntry', () => {
   });
 
   test('a name we do not publish is refused even with a witness', () => {
-    for (const name of ['my-own-skill', 'code-review', 'open-knowledge']) {
+    for (const name of ['my-own-skill', 'code-review', 'palimpsest']) {
       expect(
         retrofitPackLockEntry(name, 'a'.repeat(64), '2026-08-04T00:00:00.000Z', {
           selfIdentifiesAsPack: true,
@@ -55,7 +55,7 @@ describe('retrofitPackLockEntry', () => {
       'a'.repeat(64),
       '2026-08-04T00:00:00.000Z',
     );
-    expect(entry?.source).toBe(OPENKNOWLEDGE_SKILLS_REPO);
+    expect(entry?.source).toBe(PALIMPSEST_SKILLS_REPO);
   });
 
   test('still returns null for a name that is not a pack skill', () => {

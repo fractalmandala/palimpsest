@@ -1,4 +1,4 @@
-import type { CopyImageResult } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { CopyImageResult } from '@palimpsest/core/desktop-bridge';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { type CopyImageEnv, copyImage } from './copy-image.ts';
 
@@ -158,11 +158,11 @@ describe('copyImage — default environment', () => {
     );
   }
 
-  test('uses the desktop bridge on window.okDesktop when it is present', async () => {
+  test('uses the desktop bridge on window.psDesktop when it is present', async () => {
     const copy = vi.fn(async (): Promise<CopyImageResult> => ({ ok: true }));
     const write = vi.fn(async () => {});
     stubBrowser({ write });
-    vi.stubGlobal('window', { okDesktop: { clipboard: { copyImage: copy } } });
+    vi.stubGlobal('window', { psDesktop: { clipboard: { copyImage: copy } } });
     await expect(copyImage(REQUEST)).resolves.toEqual({ ok: true, via: 'desktop' });
     expect(copy).toHaveBeenCalledWith(REQUEST);
     expect(write).not.toHaveBeenCalled();

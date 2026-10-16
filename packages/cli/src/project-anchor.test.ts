@@ -15,14 +15,14 @@ afterAll(() => {
 });
 
 function makeFixture(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-anchor-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-anchor-'));
   cleanups.push(dir);
   return dir;
 }
 
 function makeProjectRoot(dir: string, configYaml = ''): void {
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), configYaml);
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), configYaml);
 }
 
 describe('resolveProjectAnchor — command gating', () => {
@@ -101,11 +101,11 @@ describe('resolveProjectAnchor — real filesystem walk', () => {
     expect(resolveProjectAnchor('start', sub)).toBe(inner);
   });
 
-  test('a bare .ok/ directory without config.yml is not a project root', () => {
+  test('a bare .ps/ directory without config.yml is not a project root', () => {
     const root = makeFixture();
     makeProjectRoot(root);
     const sub = join(root, 'a');
-    mkdirSync(join(sub, '.ok'), { recursive: true });
+    mkdirSync(join(sub, '.ps'), { recursive: true });
     const deeper = join(sub, 'b');
     mkdirSync(deeper, { recursive: true });
 
@@ -135,7 +135,7 @@ function spawnCli(args: string[]): { exitCode: number | null; stdout: string; st
       `,
     ],
     cwd: CLI_PACKAGE_ROOT,
-    env: { ...process.env, NO_COLOR: '1', OK_BUNDLE_PROXY: '0' },
+    env: { ...process.env, NO_COLOR: '1', PS_BUNDLE_PROXY: '0' },
     stdin: 'ignore',
     timeout: 25_000,
   });
@@ -147,7 +147,7 @@ function spawnCli(args: string[]): { exitCode: number | null; stdout: string; st
 }
 
 describe('CLI preAction project anchoring (cold spawn)', () => {
-  test('`ok status` from a subdirectory anchors to the root and prints the disclosure line', () => {
+  test('`ps status` from a subdirectory anchors to the root and prints the disclosure line', () => {
     const root = makeFixture();
     makeProjectRoot(root);
     const sub = join(root, 'notes', 'daily');
@@ -156,7 +156,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'status', '--json']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain(`[ok] Using OpenKnowledge project at ${realpathSync(root)}`);
+    expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
     const report = JSON.parse(stdout);
     expect(report).toHaveProperty('server');
   }, 30_000);
@@ -172,7 +172,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'preview']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain(`[ok] Using OpenKnowledge project at ${realpathSync(root)}`);
+    expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
     expect(stdout).toContain('hello.md');
   }, 30_000);
 
@@ -183,34 +183,34 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stderr } = spawnCli(['--cwd', root, 'status', '--json']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).not.toContain('Using OpenKnowledge project at');
+    expect(stderr).not.toContain('Using Palimpsest project at');
   }, 30_000);
 
-  test('`ok stop <relative-dir>` resolves the target against the invocation cwd, not the anchored root', () => {
+  test('`ps stop <relative-dir>` resolves the target against the invocation cwd, not the anchored root', () => {
     const root = makeFixture();
     makeProjectRoot(root);
     const sub = join(root, 'sub');
     const targetDir = join(sub, 'target');
-    mkdirSync(join(targetDir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(targetDir, '.ps', 'local'), { recursive: true });
 
     const sleeper = spawn('sleep', ['60'], { stdio: 'ignore' });
     try {
       writeFileSync(
-        join(targetDir, '.ok', 'local', 'server.lock'),
+        join(targetDir, '.ps', 'local', 'server.lock'),
         JSON.stringify({ pid: sleeper.pid, port: 4242, hostname: hostname() }),
       );
 
       const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'stop', './target']);
 
       expect(exitCode).toBe(0);
-      expect(stderr).toContain(`[ok] Using OpenKnowledge project at ${realpathSync(root)}`);
+      expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
       expect(stdout).toContain(`Stopped: server (pid=${sleeper.pid}, port=4242)`);
     } finally {
       sleeper.kill();
     }
   }, 30_000);
 
-  test('`ok mcp` from a subdirectory keeps stdout clean for JSON-RPC', () => {
+  test('`ps mcp` from a subdirectory keeps stdout clean for JSON-RPC', () => {
     const root = makeFixture();
     makeProjectRoot(root);
     const sub = join(root, 'notes');
@@ -219,7 +219,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'mcp']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain(`[ok] Using OpenKnowledge project at ${realpathSync(root)}`);
+    expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
     expect(stdout).toBe('');
   }, 30_000);
 
@@ -232,6 +232,6 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stderr } = spawnCli(['--cwd', sub, 'ps', '--json']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).not.toContain('Using OpenKnowledge project at');
+    expect(stderr).not.toContain('Using Palimpsest project at');
   }, 30_000);
 });

@@ -11,7 +11,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { ALL_EDITOR_IDS } from '@inkeep/open-knowledge-core';
+import { ALL_EDITOR_IDS } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { runningAsRoot } from '../../../../test-support/capabilities.test-helper.ts';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -40,7 +40,7 @@ async function runCreateNew(...args: Parameters<typeof runCreateNewProduct>) {
 let tmpRoot: string;
 
 beforeEach(() => {
-  tmpRoot = mkdtempSync(join(tmpdir(), 'ok-create-new-'));
+  tmpRoot = mkdtempSync(join(tmpdir(), 'ps-create-new-'));
 });
 
 afterEach(() => {
@@ -123,9 +123,9 @@ describe('CreateNewProjectError — IPC-parseable message format', () => {
 });
 
 describe('resolveDefaultProjectsRoot', () => {
-  test('falls back to <documents>/OpenKnowledge on first call', () => {
+  test('falls back to <documents>/Palimpsest on first call', () => {
     const got = resolveDefaultProjectsRoot(null, '/Users/alice/Documents');
-    expect(got).toBe('/Users/alice/Documents/OpenKnowledge');
+    expect(got).toBe('/Users/alice/Documents/Palimpsest');
   });
 
   test('returns the persisted parent when it still exists', () => {
@@ -137,7 +137,7 @@ describe('resolveDefaultProjectsRoot', () => {
   test('falls back when the persisted parent no longer exists', () => {
     const persisted = join(tmpRoot, 'deleted');
     expect(resolveDefaultProjectsRoot(persisted, '/Users/alice/Documents')).toBe(
-      '/Users/alice/Documents/OpenKnowledge',
+      '/Users/alice/Documents/Palimpsest',
     );
   });
 
@@ -146,7 +146,7 @@ describe('resolveDefaultProjectsRoot', () => {
     const got = resolveDefaultProjectsRoot(persisted, '/Users/alice/Documents', () => {
       throw new Error('boom');
     });
-    expect(got).toBe('/Users/alice/Documents/OpenKnowledge');
+    expect(got).toBe('/Users/alice/Documents/Palimpsest');
   });
 });
 
@@ -168,7 +168,7 @@ const withDetected = (
 ): RunCreateNewDeps => ({ ...base, detectInstalledEditors: () => detected });
 
 describe('runCreateNew — happy paths', () => {
-  test('scaffolds .ok/config.yml and reports default variant', async () => {
+  test('scaffolds .ps/config.yml and reports default variant', async () => {
     const parent = tmpRoot;
     const result = await runCreateNew(
       {
@@ -181,7 +181,7 @@ describe('runCreateNew — happy paths', () => {
     expect(result.target).toBe(join(parent, 'My Notes'));
     expect(result.projectDir).toBe(realpathSync(result.target));
     expect(result.defaultContentDir).toBe('.');
-    expect(existsSync(join(result.projectDir, '.ok/config.yml'))).toBe(true);
+    expect(existsSync(join(result.projectDir, '.ps/config.yml'))).toBe(true);
     expect(existsSync(join(result.projectDir, '.git'))).toBe(true);
     expect(result.gitRootPromoted).toBe(false);
     expect(result.variant).toBe('create-new-default');
@@ -205,7 +205,7 @@ describe('runCreateNew — happy paths', () => {
           'add',
           '-b',
           'wt-1',
-          join(result.projectDir, '.ok/worktrees/wt-1'),
+          join(result.projectDir, '.ps/worktrees/wt-1'),
           '--',
           'main',
         ],
@@ -255,7 +255,7 @@ describe('runCreateNew — happy paths', () => {
       name: 'manual',
       editors: [...ALL_EDITOR_IDS],
     });
-    expect(existsSync(join(result.projectDir, '.ok/config.yml'))).toBe(true);
+    expect(existsSync(join(result.projectDir, '.ps/config.yml'))).toBe(true);
   });
 
   test('seeds project-root .gitignore with cross-platform desktop metadata', async () => {
@@ -335,7 +335,7 @@ describe('runCreateNew — starter-pack seeding under git-root promotion', () =>
 });
 
 describe('runCreateNew — git-root promotion', () => {
-  test('scaffolds .ok/config.yml at git root; content.dir defaults to the git root, not the picked sub-folder', async () => {
+  test('scaffolds .ps/config.yml at git root; content.dir defaults to the git root, not the picked sub-folder', async () => {
     const tmpReal = realpathSync(tmpRoot);
     const fakeHome = resolve(tmpReal, 'home');
     const repo = resolve(fakeHome, 'repo');
@@ -358,12 +358,12 @@ describe('runCreateNew — git-root promotion', () => {
     expect(result.gitRootPromoted).toBe(true);
     expect(result.variant).toBe('create-new-default');
 
-    expect(existsSync(resolve(repo, '.ok/config.yml'))).toBe(true);
-    expect(existsSync(resolve(target, '.ok/config.yml'))).toBe(false);
+    expect(existsSync(resolve(repo, '.ps/config.yml'))).toBe(true);
+    expect(existsSync(resolve(target, '.ps/config.yml'))).toBe(false);
 
     expect(existsSync(target)).toBe(true);
 
-    const cfg = readFileSync(resolve(repo, '.ok/config.yml'), 'utf8');
+    const cfg = readFileSync(resolve(repo, '.ps/config.yml'), 'utf8');
     expect(cfg).not.toMatch(/^\s*dir:\s*notes\/MyProj/m);
 
     const gi = resolve(repo, '.gitignore');
@@ -388,9 +388,9 @@ describe('runCreateNew — git-root promotion', () => {
     expect(result.target).toBe(target);
     expect(result.defaultContentDir).toBe('.');
     expect(result.gitRootPromoted).toBe(false);
-    expect(existsSync(resolve(target, '.ok/config.yml'))).toBe(true);
+    expect(existsSync(resolve(target, '.ps/config.yml'))).toBe(true);
 
-    const cfg = readFileSync(resolve(target, '.ok/config.yml'), 'utf8');
+    const cfg = readFileSync(resolve(target, '.ps/config.yml'), 'utf8');
     expect(cfg).not.toMatch(/^\s*dir:\s*\S/m);
   });
 
@@ -425,7 +425,7 @@ describe('runCreateNew — git-root promotion', () => {
     }
   });
 
-  test('race: enclosing .ok/ materializes between cascade and discovery → nested-project', async () => {
+  test('race: enclosing .ps/ materializes between cascade and discovery → nested-project', async () => {
     const deps: RunCreateNewDeps = {
       discoverProject: async (pickedPath: string): Promise<DiscoverProjectResult> => ({
         kind: 'managed',
@@ -448,8 +448,8 @@ describe('runCreateNew — git-root promotion', () => {
 describe('runCreateNew — defense-in-depth rejections', () => {
   test('rejects nested-project parents', async () => {
     const existing = join(tmpRoot, 'existing');
-    mkdirSync(join(existing, '.ok'), { recursive: true });
-    writeFileSync(join(existing, '.ok', 'config.yml'), '# stub\n');
+    mkdirSync(join(existing, '.ps'), { recursive: true });
+    writeFileSync(join(existing, '.ps', 'config.yml'), '# stub\n');
     try {
       await runCreateNew({
         parent: existing,
@@ -555,8 +555,8 @@ describe('runCreateNew — idempotency', () => {
       name: 'retry',
       editors: [...ALL_EDITOR_IDS],
     });
-    const firstConfig = readFileSync(join(first.target, '.ok/config.yml'), 'utf8');
-    writeFileSync(join(first.target, '.ok/config.yml'), `${firstConfig}\n# tampered\n`);
+    const firstConfig = readFileSync(join(first.target, '.ps/config.yml'), 'utf8');
+    writeFileSync(join(first.target, '.ps/config.yml'), `${firstConfig}\n# tampered\n`);
 
     try {
       await runCreateNew({
@@ -569,7 +569,7 @@ describe('runCreateNew — idempotency', () => {
       expect(err).toBeInstanceOf(CreateNewProjectError);
       expect((err as CreateNewProjectError).reason).toBe('target-not-empty');
     }
-    expect(readFileSync(join(first.target, '.ok/config.yml'), 'utf8')).toContain('# tampered');
+    expect(readFileSync(join(first.target, '.ps/config.yml'), 'utf8')).toContain('# tampered');
   });
 });
 
@@ -582,7 +582,7 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
     writeFileSync(
       join(copilotHome, 'mcp-config.json'),
       JSON.stringify({
-        mcpServers: { 'open-knowledge': { command: 'custom-ok', args: ['mcp'] } },
+        mcpServers: { 'palimpsest': { command: 'custom-ok', args: ['mcp'] } },
       }),
     );
     let result: Awaited<ReturnType<typeof runCreateNew>>;
@@ -598,21 +598,21 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
     }
 
     expect(
-      existsSync(join(result.projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
     expect(
-      existsSync(join(result.projectDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
     expect(
-      existsSync(join(result.projectDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
     expect(
-      existsSync(join(result.projectDir, '.github', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
     expect(
-      existsSync(join(result.projectDir, '.opencode', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.opencode', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
-    expect(existsSync(join(result.projectDir, '.pi', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(result.projectDir, '.pi', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
     const skillWrites = result.aiIntegrations.integrations.filter(
@@ -628,7 +628,7 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
       'pi',
     ]);
     expect(
-      existsSync(join(result.projectDir, '.agents', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.agents', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
   });
 
@@ -648,7 +648,7 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
     }
 
     expect(
-      existsSync(join(result.projectDir, '.github', 'skills', 'open-knowledge', 'SKILL.md')),
+      existsSync(join(result.projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(false);
     expect(result.aiIntegrations.integrations).toContainEqual(
       expect.objectContaining({
@@ -702,7 +702,7 @@ describe('runCreateNew — starter-pack seeding', () => {
       editors: [...ALL_EDITOR_IDS],
       packId: 'not-a-real-pack-id',
     });
-    expect(existsSync(join(result.projectDir, '.ok/config.yml'))).toBe(true);
+    expect(existsSync(join(result.projectDir, '.ps/config.yml'))).toBe(true);
     expect(existsSync(join(result.projectDir, 'notes'))).toBe(false);
     expect(existsSync(join(result.projectDir, 'daily'))).toBe(false);
   });

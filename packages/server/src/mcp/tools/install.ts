@@ -5,7 +5,7 @@ import {
   type SkillLocationId,
   SkillLocationIdSchema,
   type SkillScope,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import type { LocalApiDispatch } from '../../http/local-api-dispatch.ts';
 import type { AgentIdentity } from '../agent-identity.ts';
@@ -36,7 +36,7 @@ const DESCRIPTION = [
   "name is the bundle identity: lowercase letters/digits/hyphens, ≤64 chars. Locations: claude/cursor/codex/copilot/opencode/pi, agents (.agents/skills), or custom root containing '/' such as .team/skills. Custom roots are project-relative, home-relative at global scope. scope: project (default, shared via git) or global (user-wide).",
   'add/remove change membership; omitting both installs to configured editors. remove cannot remove the source; folder aliases unfollow minus this skill and keep others. Differing copies are preserved; editor removal may succeed and leave them in place.',
   'mode: link = live symlink for source updates (copy where the OS refuses symlinks); copy = separate folder, refreshed on watcher/startup sync while unedited. Hand-edited copies fork; differing copies are preserved and cannot be converted. Requires add or convert; affects named locations only, no skill-wide default. Omit mode on add to inherit form. convert requires mode and changes form without membership; name all locations for uniformity.',
-  'source moves the real folder; its old location becomes a symlink. Run alone, not with add/remove. Source SKILL.md with conflict markers, invalid/missing frontmatter, XML in name/description or reserved open-knowledge* names is refused before projection.',
+  'source moves the real folder; its old location becomes a symlink. Run alone, not with add/remove. Source SKILL.md with conflict markers, invalid/missing frontmatter, XML in name/description or reserved palimpsest* names is refused before projection.',
   "skillFolders runs alone without name. link: {action:'link', scope, root, target}; target required, merge then symlink root; equal entries deduplicate, differing skills abort, interrupted merges can rerun. unlink: {action:'unlink', scope, root, exclude?}; makes a real directory of per-skill symlinks, excluding named skills and retaining others. add-root: {action:'add-root', scope, root}; declares a custom root for install/link.",
 ].join('\n');
 

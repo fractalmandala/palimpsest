@@ -1,4 +1,4 @@
-import { getGitHubStars } from '@inkeep/open-knowledge-core';
+import { getGitHubStars } from '@palimpsest/core';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { DocsSidebarCta } from '@/components/docs-sidebar-cta';
 import { DocsSidebarItem } from '@/components/docs-sidebar-item';

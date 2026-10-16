@@ -16,10 +16,10 @@ import {
   commitWip,
   initShadowRepo,
   type WriterIdentity,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import simpleGit from 'simple-git';
 
-const root = resolve(tmpdir(), `ok-probe-${Date.now()}`);
+const root = resolve(tmpdir(), `ps-probe-${Date.now()}`);
 mkdirSync(root, { recursive: true });
 
 async function main(): Promise<void> {

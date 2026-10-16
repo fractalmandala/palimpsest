@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 export function recentRemovedMissingMessage(projectName: string): string {
   return t`Removed "${projectName}" from recent projects. Its folder no longer exists.`;
 }
 
 export function installRecentRemovedListener(opts: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
 }): (() => void) | undefined {
   const bridge = opts.bridge;
   if (!bridge) return undefined;

@@ -31,10 +31,10 @@ describe('descendant-project probe failures', () => {
   });
 
   test('a throwing probe is not cached as a negative', () => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-descendant-probe-'));
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-descendant-probe-'));
     const nested = join(projectDir, 'nested');
-    mkdirSync(join(nested, '.ok'), { recursive: true });
-    writeFileSync(join(nested, '.ok', 'config.yml'), 'autoSync:\n  enabled: false\n');
+    mkdirSync(join(nested, '.ps'), { recursive: true });
+    writeFileSync(join(nested, '.ps', 'config.yml'), 'autoSync:\n  enabled: false\n');
     writeFileSync(join(nested, 'inside.md'), '# inside');
 
     const filter = createContentFilter({ projectDir, contentDir: projectDir });

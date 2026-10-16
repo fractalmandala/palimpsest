@@ -80,32 +80,32 @@ export function windowsPackageLaunchArgs(projectDir, userDataDir) {
     '--remote-debugging-port=9222',
     '--remote-allow-origins=*',
     `--user-data-dir=${userDataDir}`,
-    `openknowledge://open?project=${project}&doc=start`,
+    `palimpsest://open?project=${project}&doc=start`,
   ];
 }
 
 export function windowsPtyDriverEnv(env = process.env) {
   return {
     ...env,
-    OK_PTY_PHASE_TRACE: '1',
-    OK_SMOKE_EXPECT_PLATFORM: 'win32',
-    OK_SMOKE_DISCOVERY_DEADLINE_MS: String(packagedDiscoveryDeadlineMs()),
-    OK_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS),
+    PS_PTY_PHASE_TRACE: '1',
+    PS_SMOKE_EXPECT_PLATFORM: 'win32',
+    PS_SMOKE_DISCOVERY_DEADLINE_MS: String(packagedDiscoveryDeadlineMs()),
+    PS_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS),
   };
 }
 
 export function windowsPackageAppEnv(env = process.env) {
-  return { ...env, OK_DESKTOP_E2E_SMOKE: '1', OK_LOG_LEVEL: 'info', OK_PTY_PHASE_TRACE: '1' };
+  return { ...env, PS_DESKTOP_E2E_SMOKE: '1', PS_LOG_LEVEL: 'info', PS_PTY_PHASE_TRACE: '1' };
 }
 
 export function seedWindowsPtySmokeProject(rootDir, shellPath) {
   const projectDir = join(rootDir, 'project');
   const userDataDir = join(rootDir, 'user-data');
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
   mkdirSync(userDataDir, { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(
-    join(projectDir, '.ok', 'local', 'config.yml'),
+    join(projectDir, '.ps', 'local', 'config.yml'),
     `terminal:\n  enabled: true\n  shell: ${JSON.stringify(shellPath.trim())}\n`,
   );
   writeFileSync(join(projectDir, 'start.md'), '# Packaged Windows terminal smoke\n');
@@ -162,7 +162,7 @@ export function runWindowsPackageTerminalSmoke({
   diagnosticsDir = resolve(scriptDir, '../windows-terminal-package-diagnostics'),
   platform = process.platform,
   env = process.env,
-  python = env.OK_PYTHON ?? 'python',
+  python = env.PS_PYTHON ?? 'python',
 } = {}) {
   if (platform !== 'win32') fail('the packaged Windows PTY smoke must run on Windows');
   const shellPath = env.ComSpec;
@@ -171,11 +171,11 @@ export function runWindowsPackageTerminalSmoke({
   }
 
   const resolvedPackageDir = resolve(packageDir);
-  const executable = join(resolvedPackageDir, 'OpenKnowledge.exe');
+  const executable = join(resolvedPackageDir, 'Palimpsest.exe');
   if (!existsSync(executable)) fail(`packaged executable not found: ${executable}`);
 
-  const smokeRoot = mkdtempSync(join(tmpdir(), 'ok-packaged-win-pty-'));
-  const logPath = join(smokeRoot, 'openknowledge.log');
+  const smokeRoot = mkdtempSync(join(tmpdir(), 'ps-packaged-win-pty-'));
+  const logPath = join(smokeRoot, 'palimpsest.log');
   const { projectDir, userDataDir } = seedWindowsPtySmokeProject(smokeRoot, shellPath);
   const logFd = openSync(logPath, 'w');
   const launchedAt = Date.now();

@@ -2,7 +2,7 @@ import { type SpawnSyncOptions, spawnSync } from 'node:child_process';
 import { accessSync, existsSync, constants as fsConstants, readFileSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { isAbsolute, join, delimiter as PATH_DELIM } from 'node:path';
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
+import { currentCliCommandName } from '@palimpsest/core';
 import { withHiddenWindowsConsole } from './child-process-windows-hide.ts';
 
 export const MIN_GIT_VERSION = '2.31.0';
@@ -381,7 +381,7 @@ function hasChoco(): boolean {
 function buildMissingMessage(g: InstallGuidance): string {
   const lines: string[] = [];
   lines.push(
-    `OpenKnowledge needs ${g.product} to track changes to your knowledge base, but it isn't installed (or isn't on PATH).`,
+    `Palimpsest needs ${g.product} to track changes to your knowledge base, but it isn't installed (or isn't on PATH).`,
   );
   lines.push('');
   if (g.options.length > 0) {
@@ -395,7 +395,7 @@ function buildMissingMessage(g: InstallGuidance): string {
   }
   lines.push(`Or download from: ${g.url}`);
   lines.push('');
-  lines.push('After installing, re-run OpenKnowledge.');
+  lines.push('After installing, re-run Palimpsest.');
   lines.push(
     `Run \`${currentCliCommandName()} diagnose health --check git\` to verify your installation.`,
   );
@@ -410,7 +410,7 @@ function buildTooOldMessage(
 ): string {
   const lines: string[] = [];
   lines.push(
-    `OpenKnowledge requires ${g.product} ${required} or newer (detected ${detected} at ${resolvedPath}).`,
+    `Palimpsest requires ${g.product} ${required} or newer (detected ${detected} at ${resolvedPath}).`,
   );
   lines.push('');
   if (g.options.length > 0) {
@@ -424,7 +424,7 @@ function buildTooOldMessage(
   }
   lines.push(`Or download from: ${g.url}`);
   lines.push('');
-  lines.push('After updating, re-run OpenKnowledge.');
+  lines.push('After updating, re-run Palimpsest.');
   lines.push(
     `Run \`${currentCliCommandName()} diagnose health --check git\` to verify your installation.`,
   );

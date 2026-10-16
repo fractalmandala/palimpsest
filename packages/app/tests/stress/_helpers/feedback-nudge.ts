@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import type { FeedbackNudgeState } from '@/lib/feedback-nudge-store';
 
-export const FEEDBACK_NUDGE_KEY = 'ok-feedback-nudge-v1';
+export const FEEDBACK_NUDGE_KEY = 'ps-feedback-nudge-v1';
 
 const FEEDBACK_NUDGE_DOC_COUNT = 10;
 

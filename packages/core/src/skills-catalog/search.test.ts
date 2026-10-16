@@ -37,15 +37,15 @@ describe('parseSkillsShSearch', () => {
     const r = parseSkillsShSearch({
       skills: [
         {
-          id: 'inkeep/open-knowledge-skills/open-knowledge-pack-knowledge-base',
+          id: 'fractalmandala/palimpsest-skills/open-knowledge-pack-knowledge-base',
           name: 'open-knowledge-pack-knowledge-base',
-          source: 'inkeep/open-knowledge-skills',
+          source: 'fractalmandala/palimpsest-skills',
           installs: 18,
         },
         {
-          id: 'inkeep/open-knowledge-skills/knowledge-base',
+          id: 'fractalmandala/palimpsest-skills/knowledge-base',
           name: 'knowledge-base',
-          source: 'inkeep/open-knowledge-skills',
+          source: 'fractalmandala/palimpsest-skills',
           installs: 21,
         },
         {

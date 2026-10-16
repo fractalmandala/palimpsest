@@ -16,12 +16,12 @@ function writeSkill(contentDir: string, name: string, body: string): void {
 }
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-linkgraph-managed-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-linkgraph-managed-'));
   const contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
 
   writeFileSync(resolve(contentDir, 'alpha.md'), '# Alpha\n\nLinks to [[beta]].\n', 'utf-8');
   writeFileSync(resolve(contentDir, 'beta.md'), '# Beta\n\nBody.\n', 'utf-8');
-  writeSkill(contentDir, 'open-knowledge', '---\nname: open-knowledge\n---\n\n# OK\n');
+  writeSkill(contentDir, 'palimpsest', '---\nname: palimpsest\n---\n\n# OK\n');
   writeSkill(
     contentDir,
     'open-knowledge-pack-worldbuilding',
@@ -53,14 +53,14 @@ describe('/api/link-graph managed-skill flagging', () => {
 
     expect([...flagByDocName.keys()].sort()).toEqual([
       '.claude/skills/open-knowledge-pack-worldbuilding/SKILL',
-      '.claude/skills/open-knowledge/SKILL',
+      '.claude/skills/palimpsest/SKILL',
       '.claude/skills/team-notes/SKILL',
       'alpha',
       'beta',
     ]);
 
     expect([...flagByDocName.entries()].filter(([, flagged]) => flagged).map(([n]) => n)).toEqual([
-      '.claude/skills/open-knowledge/SKILL',
+      '.claude/skills/palimpsest/SKILL',
     ]);
   });
 });

@@ -1,4 +1,4 @@
-import { withSpanSync } from '@inkeep/open-knowledge-server';
+import { withSpanSync } from '@palimpsest/server';
 
 function platformAttributes(): { 'ok.platform': NodeJS.Platform } {
   return { 'ok.platform': process.platform };

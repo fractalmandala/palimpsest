@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
-import type { ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { act, cleanup, render, screen, within } from '@testing-library/react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import type { SessionPlacements } from './EditorArea';
 import { tabTitles } from './sessions-host-tabs.test-helper';
 
@@ -224,7 +224,7 @@ function terminalDockHostStateRecords(
     } catch {
       return [];
     }
-    return record.event === 'ok-terminal-sessions-host-state' && record.surface === 'terminal-dock'
+    return record.event === 'ps-terminal-sessions-host-state' && record.surface === 'terminal-dock'
       ? [record]
       : [];
   });
@@ -243,7 +243,7 @@ function makeThread(overrides: Partial<ThreadInfo> & { threadId: string }): Thre
   };
 }
 
-function makeRestartBridge(): OkDesktopBridge {
+function makeRestartBridge(): PsDesktopBridge {
   return {
     platform: 'win32',
     config: { ptyAvailable: true, mode: 'editor' },
@@ -268,7 +268,7 @@ function makeRestartBridge(): OkDesktopBridge {
       cliInstalledMap: vi.fn(async () => ({})),
     },
     editor: { notifyViewMenuStateChanged: vi.fn() },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 function ProducerHarness({ attachContainerAfterMs }: { attachContainerAfterMs: number }) {
@@ -362,7 +362,7 @@ function ChurnHarness({ slot }: { slot: ContainerSlot }) {
 
 const publishedTerminalContainers: (HTMLElement | null)[] = [];
 
-function CompositionHarness({ bridge }: { bridge: OkDesktopBridge }) {
+function CompositionHarness({ bridge }: { bridge: PsDesktopBridge }) {
   const [placements, setPlacements] = useState<SessionPlacements>({
     terminal: { container: null, isShowing: false },
     agents: { container: null, isShowing: false },

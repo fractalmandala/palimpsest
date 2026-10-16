@@ -314,7 +314,7 @@ describe('ShareFreshnessSchema (closed v1 enum)', () => {
 describe('ShareConstructUrlResponseSchema freshness field', () => {
   const successBase = {
     ok: true,
-    shareUrl: 'https://openknowledge.ai/d/abc',
+    shareUrl: 'https://github.com/fractalmandala/palimpsest/d/abc',
     sharedUrl: 'https://github.com/o/r/blob/main/doc.md',
     branch: 'main',
   };

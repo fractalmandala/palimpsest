@@ -68,7 +68,7 @@ async function callAgentPatch(
 
 describe('POST /api/agent-patch', () => {
   test('patches the requested occurrence when offset matches', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-agent-patch-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-agent-patch-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -109,7 +109,7 @@ describe('POST /api/agent-patch', () => {
   });
 
   test('returns a stale-target error and leaves the document unchanged when offset drifts', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-agent-patch-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-agent-patch-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -146,7 +146,7 @@ describe('POST /api/agent-patch', () => {
   });
 
   test('preserves first-match behavior when offset is omitted', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-agent-patch-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-agent-patch-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 
@@ -187,7 +187,7 @@ describe('POST /api/agent-patch', () => {
 
 describe('POST /api/agent-patch — surgical/incremental write shape', () => {
   test('a small find/replace produces a minimal Y.Text delta, not a whole-doc overwrite', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-agent-patch-shape-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-agent-patch-shape-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
 

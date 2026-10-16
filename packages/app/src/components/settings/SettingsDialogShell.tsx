@@ -1,8 +1,8 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button> awaiting shadcn Button migration; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button> awaiting shadcn Button migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { SHOW_INSTALL_SKILL } from '@inkeep/open-knowledge-core/constants/feature-flags';
+import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { matchesCommandQuery, splitTextByQueryMatches } from '@/components/command-palette-search';
@@ -114,7 +114,7 @@ function NavigatorSettingsDialogShell(props: SettingsDialogHostProps) {
 function useIntegrationsMenuAvailable(): boolean {
   const [available, setAvailable] = useState(false);
   useEffect(() => {
-    const menu = window.okDesktop?.menu;
+    const menu = window.psDesktop?.menu;
     if (!menu) return;
     let cancelled = false;
     menu
@@ -263,7 +263,7 @@ function SettingsDialogFrame({
       enabled: true,
       ...(integrationsMenuAvailable
         ? {
-            disabledHint: t`To connect AI tools without a project, use File > Set up OpenKnowledge integrations…`,
+            disabledHint: t`To connect AI tools without a project, use File > Set up Palimpsest integrations…`,
           }
         : {}),
       items: [
@@ -395,7 +395,7 @@ function SettingsDialogFrame({
         ...(isOkDesktopHost ? [{ id: 'network-access', label: t`Remote control` }] : []),
         { id: 'project-templates', label: t`Templates` },
         { id: 'skills', label: t`Skills Studio` },
-        { id: 'okignore', label: t`Ignore patterns` },
+        { id: 'psignore', label: t`Ignore patterns` },
       ],
     },
     {
@@ -680,7 +680,7 @@ function SettingsSearchResultItem({
 function SettingsSidebarVersion({ onSelect }: { onSelect: (id: string) => void }) {
   const { t } = useLingui();
   const notices = useSyncExternalStore(subscribeToNotices, getNoticesSnapshot, getNoticesSnapshot);
-  const version = typeof window !== 'undefined' ? window.okDesktop?.appVersion : undefined;
+  const version = typeof window !== 'undefined' ? window.psDesktop?.appVersion : undefined;
   if (!version) return null;
   const checkingForUpdates = notices.some((notice) => notice.id === UPDATE_CHECKING_NOTICE_ID);
 

@@ -212,7 +212,7 @@ ${String(err)}`,
 
   test('DELETE removes an in-place bundle file from the REAL dir (not a store no-op)', async () => {
     const dirRel = await putSkill('del-target', 'delete pin', '# Body\n');
-    expect(dirRel.startsWith('.ok/skills/')).toBe(false);
+    expect(dirRel.startsWith('.ps/skills/')).toBe(false);
     expect((await putSkillFile('del-target', 'references/gone.md', '# Gone\n')).status).toBe(200);
     const abs = resolve(server.contentDir, dirRel, 'references', 'gone.md');
     expect(existsSync(abs)).toBe(true);

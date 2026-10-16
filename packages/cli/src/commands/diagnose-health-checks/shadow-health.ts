@@ -1,13 +1,13 @@
 import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
-import { parseCheckpoint, resolveShadowDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { currentCliCommandName } from '@palimpsest/core';
+import { parseCheckpoint, resolveShadowDir } from '@palimpsest/core/shadow-repo-layout';
 import {
   countShadowObjects,
   countStaleAgentWipRefs,
   countWipRefs,
   hasGcLogLatch,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import simpleGit from 'simple-git';
 import type { CheckContext, CheckDefinition, CheckResult } from './types.ts';
 

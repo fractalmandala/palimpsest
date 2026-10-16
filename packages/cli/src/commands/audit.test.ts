@@ -1,14 +1,14 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { hostname, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { ValidationAuditResponse } from '@inkeep/open-knowledge-core';
-import type { Config } from '@inkeep/open-knowledge-server';
-import { RUNTIME_VERSION } from '@inkeep/open-knowledge-server';
+import type { ValidationAuditResponse } from '@palimpsest/core';
+import type { Config } from '@palimpsest/server';
+import { RUNTIME_VERSION } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { runAudit, toContentRelativeTarget } from './audit.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -101,8 +101,8 @@ describe('runAudit', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-audit-test-'));
-    const lockDir = join(dir, '.ok', 'local');
+    dir = mkdtempSync(join(tmpdir(), 'ps-audit-test-'));
+    const lockDir = join(dir, '.ps', 'local');
     mkdirSync(lockDir, { recursive: true });
     writeFileSync(
       join(lockDir, 'server.lock'),
@@ -165,7 +165,7 @@ describe('runAudit', () => {
     expect(text).toContain('does NOT prove every link resolves');
     expect(text).toContain('http://127.0.0.1:54321/api/dead-links');
     expect(text).toContain('validation.suppressLogLinkAdvisories: false');
-    expect(text).toContain('.ok/config.yml');
+    expect(text).toContain('.ps/config.yml');
     expect(text).toContain('Settings ▸ This project ▸ Preferences ▸ Content rules');
     expect(text).not.toContain('links({ kind: "dead" })');
     expect(text).toContain('not as a repair queue');
@@ -298,23 +298,23 @@ describe('runAudit', () => {
     expect(out.join('\n')).toContain('source family "links" validation failed');
   });
 
-  test('errors with `ok start` guidance when no server lock is live', async () => {
-    rmSync(join(dir, '.ok', 'local', 'server.lock'));
+  test('errors with `ps start` guidance when no server lock is live', async () => {
+    rmSync(join(dir, '.ps', 'local', 'server.lock'));
     const { io, err } = collectIo();
 
     const code = await runAudit(undefined, {}, minimalConfig, dir, dir, io);
 
     expect(code).toBe(1);
-    expect(err.join('\n')).toContain('ok start');
+    expect(err.join('\n')).toContain('ps start');
     expect(err.join('\n')).toContain('ok lint');
   });
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('no-server guidance names the %s command', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
-    rmSync(join(dir, '.ok', 'local', 'server.lock'));
+    vi.stubEnv('PS_CHANNEL', channel);
+    rmSync(join(dir, '.ps', 'local', 'server.lock'));
     const { io, err } = collectIo();
 
     expect(await runAudit(undefined, {}, minimalConfig, dir, dir, io)).toBe(1);

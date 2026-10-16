@@ -13,15 +13,15 @@ interface InstanceBadgeProps {
 
 export function InstanceBadge({ className, compact = false }: InstanceBadgeProps) {
   const { t } = useLingui();
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const label = bridge?.instanceLabel ?? null;
   if (!label) return null;
   const reportedVersion = bridge?.appVersion;
   const version =
     reportedVersion && reportedVersion !== UNKNOWN_APP_VERSION ? reportedVersion : null;
   const description = version
-    ? t`${label} build, v${version}. Its settings and data are kept separate from other OpenKnowledge apps.`
-    : t`${label} build. Its settings and data are kept separate from other OpenKnowledge apps.`;
+    ? t`${label} build, v${version}. Its settings and data are kept separate from other Palimpsest apps.`
+    : t`${label} build. Its settings and data are kept separate from other Palimpsest apps.`;
   const accessibleName = version
     ? t`App instance: ${label}, v${version}`
     : t`App instance: ${label}`;

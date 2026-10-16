@@ -1,8 +1,8 @@
 import { execFile } from 'node:child_process';
 import { join } from 'node:path';
-import { okBugReportsDir } from '@inkeep/open-knowledge';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
-import { userGlobalSkillRoots } from '@inkeep/open-knowledge-core/skills-catalog';
+import { psBugReportsDir } from '@palimpsest/cli';
+import { psUserHomeDir } from '@palimpsest/core/server';
+import { userGlobalSkillRoots } from '@palimpsest/core/skills-catalog';
 import {
   createOsProbe,
   type ExecFileLike,
@@ -10,7 +10,7 @@ import {
   type InstalledAgentScheme,
   resolveCursorBinaryDefault,
   resolveCursorSpawnInvocation,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { HandoffStatsLine, SpawnOutcome } from '../shared/ipc-channels.ts';
 import { isPathWithinProject, validateSpawnPath } from './path-containment.ts';
 
@@ -161,7 +161,7 @@ type ShowItemInFolderOutcome =
   | { ok: false; reason: 'invalid-format' | 'no-project-bound' | 'out-of-project' };
 
 export function revealAllowedRoots(): string[] {
-  return [okBugReportsDir(), ...userGlobalSkillRoots()];
+  return [psBugReportsDir(), ...userGlobalSkillRoots()];
 }
 
 interface ShowItemInFolderDeps {
@@ -266,7 +266,7 @@ export async function recordHandoff(
   line: HandoffStatsLine,
 ): Promise<void> {
   const home = deps.homedir();
-  const dir = okUserHomeDir(home);
+  const dir = psUserHomeDir(home);
   const file = join(dir, STATS_FILE_NAME);
   const json = `${JSON.stringify(line)}\n`;
 

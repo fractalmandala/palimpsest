@@ -6,8 +6,8 @@ import {
   type CC1DerivedViewPayload,
   CC1DerivedViewPayloadSchema,
   SYSTEM_DOC_NAME,
-} from '@inkeep/open-knowledge-core';
-import { applyExternalChange, BacklinkIndex, reconcile } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { applyExternalChange, BacklinkIndex, reconcile } from '@palimpsest/server';
 import * as encoding from 'lib0/encoding';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
@@ -92,7 +92,7 @@ describe('CC1 broadcast — L1 integration', () => {
       new Set(['files', 'lint-config']),
     );
     const markdownlintFile = join(server.contentDir, '.markdownlint.json');
-    const schemaFile = `.ok/schemas/cc1-${crypto.randomUUID()}.schema.json`;
+    const schemaFile = `.ps/schemas/cc1-${crypto.randomUUID()}.schema.json`;
     const schemaPath = join(server.contentDir, schemaFile);
     try {
       await waitForSync(provider);

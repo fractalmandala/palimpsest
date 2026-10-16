@@ -179,11 +179,11 @@ describe('EditorArea — markdownlint config dispatch', () => {
   });
 
   test('routes a tool-managed frontmatter schema to the schema editor', async () => {
-    docCtx = assetCtx('.ok/schemas/doc.schema.json');
+    docCtx = assetCtx('.ps/schemas/doc.schema.json');
     renderEditorArea();
 
     const editor = await screen.findByTestId('schema-config-editor');
-    expect(editor.getAttribute('data-asset-path')).toBe('.ok/schemas/doc.schema.json');
+    expect(editor.getAttribute('data-asset-path')).toBe('.ps/schemas/doc.schema.json');
     expect(screen.queryByTestId('asset-preview')).toBeNull();
     expect(screen.queryByTestId('lint-config-editor')).toBeNull();
   });
@@ -197,8 +197,8 @@ describe('EditorArea — markdownlint config dispatch', () => {
     expect(screen.queryByTestId('asset-preview')).toBeNull();
   });
 
-  test('leaves a non-JSON file under .ok/schemas and unconventional json on the preview', () => {
-    docCtx = assetCtx('.ok/schemas/notes.md');
+  test('leaves a non-JSON file under .ps/schemas and unconventional json on the preview', () => {
+    docCtx = assetCtx('.ps/schemas/notes.md');
     renderEditorArea();
     expect(screen.getByTestId('asset-preview')).toBeDefined();
     expect(screen.queryByTestId('schema-config-editor')).toBeNull();

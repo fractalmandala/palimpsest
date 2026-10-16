@@ -1,11 +1,11 @@
-import { bindConfigDoc, type ConfigBinding } from '@inkeep/open-knowledge-core';
+import { bindConfigDoc, type ConfigBinding } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { getLastKnownSignedIn, setLastKnownSignedIn } from '@/lib/auth-state-cache';
-import type { OkLocalOpAuthEvent, OkLocalOpAuthStatusResponse } from '@/lib/desktop-bridge-types';
+import type { PsLocalOpAuthEvent, PsLocalOpAuthStatusResponse } from '@/lib/desktop-bridge-types';
 import type { AuthQueryTransport } from '@/lib/transports/auth-query-transport';
 import type { AuthTransport } from '@/lib/transports/auth-transport';
 import { AccountSection, hostFromRemoteLabel } from './AccountSection';
@@ -29,24 +29,24 @@ if (globalWithDomShims.ResizeObserver === undefined) {
   globalWithDomShims.ResizeObserver = NoopResizeObserver;
 }
 
-const CONNECTED: OkLocalOpAuthStatusResponse = {
+const CONNECTED: PsLocalOpAuthStatusResponse = {
   authenticated: true,
   host: 'github.com',
   login: 'octocat',
   tier: 'B',
 };
-const CONNECTED_GH_CLI: OkLocalOpAuthStatusResponse = {
+const CONNECTED_GH_CLI: PsLocalOpAuthStatusResponse = {
   authenticated: true,
   host: 'github.com',
   login: 'octocat',
   tier: 'A',
 };
-const CONNECTED_NO_TIER: OkLocalOpAuthStatusResponse = {
+const CONNECTED_NO_TIER: PsLocalOpAuthStatusResponse = {
   authenticated: true,
   host: 'github.com',
   login: 'octocat',
 };
-const NOT_CONNECTED: OkLocalOpAuthStatusResponse = { authenticated: false, host: 'github.com' };
+const NOT_CONNECTED: PsLocalOpAuthStatusResponse = { authenticated: false, host: 'github.com' };
 
 function makeQueryTransport(parts: {
   status: AuthQueryTransport['status'];
@@ -63,7 +63,7 @@ const noopAuthTransport: AuthTransport = {
   start: () => ({
     events: {
       [Symbol.asyncIterator]() {
-        return { next: () => new Promise<IteratorResult<OkLocalOpAuthEvent>>(() => {}) };
+        return { next: () => new Promise<IteratorResult<PsLocalOpAuthEvent>>(() => {}) };
       },
     },
     cancel() {},
@@ -328,7 +328,7 @@ describe('AccountSection', () => {
     expect(ghRow.textContent).toContain(
       'Provided by the GitHub CLI (gh) on this computer. To switch accounts or sign out, run gh auth in a terminal.',
     );
-    expect(ghRow.textContent).not.toContain('OpenKnowledge credential');
+    expect(ghRow.textContent).not.toContain('Palimpsest credential');
     expect(screen.queryByTestId('settings-account-disconnect')).toBeNull();
   });
 
@@ -577,9 +577,9 @@ describe('AccountSection host-token form', () => {
     expect((submit as HTMLButtonElement).disabled).toBe(false);
   });
 
-  test('the confirmation names ok-beta auth signout on Beta', async () => {
+  test('the confirmation names ps-beta auth signout on Beta', async () => {
     const user = userEvent.setup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = { cliCommandName: 'ok-beta' };
+    (window as unknown as { psDesktop?: unknown }).psDesktop = { cliCommandName: 'ps-beta' };
     try {
       renderSection(
         makeQueryTransport({ status: async () => CONNECTED }),
@@ -590,10 +590,10 @@ describe('AccountSection host-token form', () => {
       await user.type(screen.getByLabelText('Access token'), 'glpat_secret');
       await user.click(screen.getByTestId('settings-account-host-token-submit'));
       expect((await screen.findByTestId('settings-account-host-token-success')).textContent).toBe(
-        'Token stored for oauth2 on gitea.internal. To remove it, run ok-beta auth signout --host gitea.internal.',
+        'Token stored for oauth2 on gitea.internal. To remove it, run ps-beta auth signout --host gitea.internal.',
       );
     } finally {
-      (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+      (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
     }
   });
 

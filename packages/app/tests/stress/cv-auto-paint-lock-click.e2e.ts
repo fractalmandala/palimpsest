@@ -1,5 +1,5 @@
 /**
- * Renderer-survival pin for the `.ok-chunk-wrapper` (`content-visibility: auto`) display-lock
+ * Renderer-survival pin for the `.ps-chunk-wrapper` (`content-visibility: auto`) display-lock
  * site the sibling test leaves unpinned: a click whose hit-tested node has a paint-blocked
  * ancestor kills the renderer. Per-test docName isolation per precedent #20(a).
  */
@@ -20,7 +20,7 @@ test.describe.configure({ retries: 0 });
 test.use({ trace: 'retain-on-failure' });
 
 const WYSIWYG = '.ProseMirror:not(.composer-prosemirror)';
-const CHUNK_WRAPPER = `${WYSIWYG} .ok-chunk-wrapper`;
+const CHUNK_WRAPPER = `${WYSIWYG} .ps-chunk-wrapper`;
 const SCROLLER = '[data-testid="editor-scroll-container"]';
 
 const BLOCK_COUNT = 400;
@@ -183,7 +183,7 @@ async function pointInsideBlockText(page: Page, marker: string): Promise<{ x: nu
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }
 
-test('PRD-8158: a clicked .ok-chunk-wrapper stays out of the cv:auto paint lock', async ({
+test('PRD-8158: a clicked .ps-chunk-wrapper stays out of the cv:auto paint lock', async ({
   page,
   api,
 }) => {
@@ -221,8 +221,8 @@ test('PRD-8158: a clicked .ok-chunk-wrapper stays out of the cv:auto paint lock'
     `the clicked block "${targetMarker}" entered a cv:auto paint lock. Chromium no longer keeps a ` +
       'selection-containing element relevant, which is the property that currently keeps this site ' +
       "safe: a click's hit test resolves to a descendant, and a wrapper that can lock afterwards " +
-      'reopens the display-lock CHECK. Harden .ok-chunk-wrapper with the same deferral trio ' +
-      '.ok-mode-hidden carries.',
+      'reopens the display-lock CHECK. Harden .ps-chunk-wrapper with the same deferral trio ' +
+      '.ps-mode-hidden carries.',
   ).toBe(0);
 });
 
@@ -260,7 +260,7 @@ test('PRD-8158: a click survives its chunk wrapper being scrolled out of relevan
   const outcome = await pressAndProbe(page, point.x, point.y);
   expect(
     outcome,
-    'renderer must survive a click whose .ok-chunk-wrapper is scrolled out of cv:auto relevance during the same dispatch',
+    'renderer must survive a click whose .ps-chunk-wrapper is scrolled out of cv:auto relevance during the same dispatch',
   ).toBe('alive');
 
   await waitForLockTransitionsToSettle(page, before);
@@ -328,7 +328,7 @@ test('PRD-8158: rapid clicks during scroll churn survive cv:auto relevance flips
   }
   expect(
     outcome,
-    'renderer must survive clicks landing while .ok-chunk-wrapper blocks flip cv:auto relevance under a congested main thread',
+    'renderer must survive clicks landing while .ps-chunk-wrapper blocks flip cv:auto relevance under a congested main thread',
   ).toBe('alive');
 
   await page.evaluate(() => {

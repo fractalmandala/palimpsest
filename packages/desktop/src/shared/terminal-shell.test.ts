@@ -138,14 +138,14 @@ describe.skipIf(process.platform === 'win32')('detached interactive-shell wrappe
     spawnInteractiveShellSync(process.execPath, ['-e', 'process.exit(0)'], undefined, 5_000);
     expect(
       syncSpawnCallOptions()?.timeout,
-      'the ok-bin caller passes 5s to keep its pre-change bound, and nothing else observes that argument reaching spawnSync: dropping or reordering the parameter would otherwise leave every suite green while that caller silently ran on the 20s default',
+      'the ps-bin caller passes 5s to keep its pre-change bound, and nothing else observes that argument reaching spawnSync: dropping or reordering the parameter would otherwise leave every suite green while that caller silently ran on the 20s default',
     ).toBe(5_000);
   });
 });
 
 describe.skipIf(zsh === undefined)('commandWithManagedPath', () => {
   test('keeps startup-defined functions available in the initialized shell', () => {
-    const zdotdir = mkdtempSync(join(tmpdir(), 'ok-managed-path-zsh-'));
+    const zdotdir = mkdtempSync(join(tmpdir(), 'ps-managed-path-zsh-'));
     try {
       writeFileSync(join(zdotdir, '.zshrc'), 'slidev() { exit 42; }\n');
       const command = commandWithManagedPath(zsh ?? '/bin/zsh', 'slidev deck.md --port 4300', [
@@ -165,7 +165,7 @@ describe.skipIf(zsh === undefined)('commandWithManagedPath', () => {
 
 describe.skipIf(bash === undefined)('commandWithManagedPath in Bash', () => {
   test('launches a function accepted by the presence probe', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-managed-path-bash-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-managed-path-bash-'));
     try {
       writeFileSync(join(home, '.bashrc'), 'slidev() { exit 43; }\n');
       const shell = bash ?? '/bin/bash';

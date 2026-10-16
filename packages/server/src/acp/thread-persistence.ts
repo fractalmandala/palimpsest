@@ -6,7 +6,7 @@ import type {
   BrowserUnavailableReason,
   ThreadEvent,
   ThreadInfo,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import {
   tracedAppendFile,
   tracedMkdir,
@@ -209,7 +209,7 @@ export class ThreadPersistenceStore {
       if (!isMintedThreadId(parsed.info.threadId) || name !== `${parsed.info.threadId}.meta.json`) {
         this.log.warn(
           { path },
-          '[acp-persist] skipping a thread meta whose id OpenKnowledge did not mint',
+          '[acp-persist] skipping a thread meta whose id Palimpsest did not mint',
         );
         continue;
       }

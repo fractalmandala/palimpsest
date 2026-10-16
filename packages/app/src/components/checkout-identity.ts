@@ -1,4 +1,4 @@
-import type { WorktreeSelectorModel } from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+import type { WorktreeSelectorModel } from '@palimpsest/core/git/worktree-selector-model';
 import { basenameOf } from './project-switcher-recents';
 
 export interface CheckoutIdentity {

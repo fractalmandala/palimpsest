@@ -1,8 +1,8 @@
-import type { SkillOrigin, SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillOrigin, SkillScope } from '@palimpsest/core/schemas/api';
 import {
   isLocalSkillSource,
   skillsShSkillLinks,
-} from '@inkeep/open-knowledge-core/skills-catalog/source-fields';
+} from '@palimpsest/core/skills-catalog/source-fields';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';

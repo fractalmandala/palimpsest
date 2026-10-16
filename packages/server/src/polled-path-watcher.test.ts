@@ -161,7 +161,7 @@ function runChild(script: string, args: readonly string[]): Promise<ChildOutcome
     ],
     {
       stdio: ['ignore', 'pipe', 'pipe'],
-      env: { ...process.env, OK_CONSOLE_LEVEL: 'silent', OK_FILE_LEVEL: 'trace' },
+      env: { ...process.env, PS_CONSOLE_LEVEL: 'silent', PS_FILE_LEVEL: 'trace' },
     },
   );
   let stdout = '';
@@ -212,7 +212,7 @@ function primitiveLogRecords(dir: string): PrimitiveLogRecord[] {
 let dir: string;
 
 beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), 'ok-polled-watcher-'));
+  dir = mkdtempSync(join(tmpdir(), 'ps-polled-watcher-'));
 });
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });

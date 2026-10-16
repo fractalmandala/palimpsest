@@ -2213,7 +2213,7 @@ describe('EditorArea right-rail layout assert on column mount/unmount', () => {
       fireEvent.pointerUp(window, { pointerId: 1 });
     });
     expect(groupSetLayoutCalls.at(-1)?.['agents-column']).toBeCloseTo(pctOf(600), 3);
-    expect(localStorage.getItem('ok-terminal-width-v1')).toBe('600');
+    expect(localStorage.getItem('ps-terminal-width-v1')).toBe('600');
   });
 
   test('a close-threshold release without a visibility callback restores the preferred width', () => {
@@ -2288,7 +2288,7 @@ describe('EditorArea right-rail layout assert on column mount/unmount', () => {
         });
         vi.advanceTimersByTime(101);
       });
-      expect(localStorage.getItem('ok-terminal-width-v1')).toBeNull();
+      expect(localStorage.getItem('ps-terminal-width-v1')).toBeNull();
       act(() => {
         fireEvent.pointerCancel(window, { pointerId: 1 });
       });
@@ -2341,7 +2341,7 @@ describe('EditorArea right-rail layout assert on column mount/unmount', () => {
     });
     expect(groupSetLayoutCalls.at(-1)?.['agents-column']).toBeCloseTo(pctOf(320), 3);
     expect(document.activeElement).toBe(activeElement);
-    expect(localStorage.getItem('ok-terminal-width-v1')).toBeNull();
+    expect(localStorage.getItem('ps-terminal-width-v1')).toBeNull();
 
     const terminalHandle = screen.getAllByTestId('resizable-handle').at(-2);
     terminalHandle?.focus();
@@ -3109,7 +3109,7 @@ describe('EditorArea hash-load skeleton renders inside the editor card (cold sta
 
     act(() => emitLocalMenuAction('toggle-doc-panel'));
 
-    expect(localStorage.getItem('ok-sidebar-pins-v2')).toBeNull();
+    expect(localStorage.getItem('ps-sidebar-pins-v2')).toBeNull();
   });
 
   test('keeps the side panel slot the same panel when the document arrives, so its width restore is undisturbed', () => {
@@ -3306,11 +3306,11 @@ describe('EditorArea doc-panel tab requests', () => {
       expect(infoWidthPx()).toBe(0);
       expect(docPanelToggle().getAttribute('aria-expanded')).toBe('false');
 
-      const storedPins = localStorage.getItem('ok-sidebar-pins-v2');
+      const storedPins = localStorage.getItem('ps-sidebar-pins-v2');
       act(() => requestDocPanelTab('problems', { scope: 'doc' }));
       await act(async () => {});
 
-      expect(localStorage.getItem('ok-sidebar-pins-v2')).toBe(storedPins);
+      expect(localStorage.getItem('ps-sidebar-pins-v2')).toBe(storedPins);
 
       expect(screen.getByRole('tabpanel').getAttribute('id')).toBe('panel-problems');
       expect(screen.getByTestId('panel-scope-doc').getAttribute('data-state')).toBe('on');
@@ -3872,7 +3872,7 @@ describe('EditorArea editor card rows', () => {
   });
 
   test('a note window keeps the tab row target above the row and renders the flat card', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: {
         config: { mode: 'note' },
@@ -3890,12 +3890,12 @@ describe('EditorArea editor card rows', () => {
       expect(screen.getByTestId('resizable-group-inner').contains(card)).toBe(false);
       expect(card?.contains(screen.getByTestId('resizable-group-inner'))).toBe(true);
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
   test('a single-file window renders the normal editor card', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: {
         config: { singleFile: true },
@@ -3911,7 +3911,7 @@ describe('EditorArea editor card rows', () => {
       const card = document.querySelector('[data-slot="pane-card"][data-pane="editor"]');
       expect(card?.getAttribute('data-variant')).toBe('card');
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -5394,7 +5394,7 @@ describe('EditorArea terminal and chat cards', () => {
   });
 
   test('a single-file window renders every normal card', () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: {
         config: { singleFile: true },
@@ -5420,7 +5420,7 @@ describe('EditorArea terminal and chat cards', () => {
       expect(cardOf('agents')?.getAttribute('data-variant')).toBe('card');
       expect(screen.getByRole('main').contains(screen.getByTestId('workspace-tabs'))).toBe(true);
     } finally {
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
     }
   });
 
@@ -5496,9 +5496,9 @@ describe('EditorArea terminal and chat cards', () => {
       innerSetLayoutCalls = [];
       innerSetLayoutPx = [];
       toastInfoMessages = [];
-      Reflect.deleteProperty(window, 'okDesktop');
+      Reflect.deleteProperty(window, 'psDesktop');
       if (singleFile) {
-        Object.defineProperty(window, 'okDesktop', {
+        Object.defineProperty(window, 'psDesktop', {
           configurable: true,
           value: {
             config: { singleFile: true },
@@ -5567,7 +5567,7 @@ describe('EditorArea terminal and chat cards', () => {
       } finally {
         cleanup();
         resizeObserver.restore();
-        Reflect.deleteProperty(window, 'okDesktop');
+        Reflect.deleteProperty(window, 'psDesktop');
       }
     };
 

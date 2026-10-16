@@ -6,8 +6,8 @@ import {
   resolveHelperBundleBinary,
 } from './helper-bundle.ts';
 
-const PARENT_APP = '/Applications/OpenKnowledge.app';
-const PARENT_EXEC = `${PARENT_APP}/Contents/MacOS/OpenKnowledge`;
+const PARENT_APP = '/Applications/Palimpsest.app';
+const PARENT_EXEC = `${PARENT_APP}/Contents/MacOS/Palimpsest`;
 const HELPER_BINARY = `${PARENT_APP}/Contents/Frameworks/${HELPER_BUNDLE_NAME}/Contents/MacOS/${HELPER_EXECUTABLE_NAME}`;
 
 describe('resolveHelperBundleBinary', () => {
@@ -16,17 +16,17 @@ describe('resolveHelperBundleBinary', () => {
   });
 
   test('handles a user-Applications path identically', () => {
-    const userParent = '/Users/alex/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+    const userParent = '/Users/alex/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
     expect(resolveHelperBundleBinary(userParent)).toBe(
-      `/Users/alex/Applications/OpenKnowledge.app/Contents/Frameworks/${HELPER_BUNDLE_NAME}/Contents/MacOS/${HELPER_EXECUTABLE_NAME}`,
+      `/Users/alex/Applications/Palimpsest.app/Contents/Frameworks/${HELPER_BUNDLE_NAME}/Contents/MacOS/${HELPER_EXECUTABLE_NAME}`,
     );
   });
 
   test('keys off the executable, so a renamed app bundle still resolves', () => {
     expect(
-      resolveHelperBundleBinary('/Applications/Renamed.app/Contents/MacOS/OpenKnowledge Beta'),
+      resolveHelperBundleBinary('/Applications/Renamed.app/Contents/MacOS/Palimpsest Beta'),
     ).toBe(
-      '/Applications/Renamed.app/Contents/Frameworks/OpenKnowledge Beta Server.app/Contents/MacOS/OpenKnowledge Beta Helper',
+      '/Applications/Renamed.app/Contents/Frameworks/Palimpsest Beta Server.app/Contents/MacOS/Palimpsest Beta Helper',
     );
   });
 

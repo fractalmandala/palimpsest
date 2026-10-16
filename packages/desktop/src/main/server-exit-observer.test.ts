@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { attachServerExitObserver, createServerExitObserver } from './server-exit-observer.ts';
 import type { ServerExitInfo } from './server-exit-record.ts';
 
-const LOCK_DIR = '/tmp/ok-project/.ok/local';
+const LOCK_DIR = '/tmp/ok-project/.ps/local';
 const PID = 51502;
 
 function makeObserver(pid: number | undefined) {
@@ -86,7 +86,7 @@ describe('createServerExitObserver', () => {
       recordExit: (info) => recorded.push(info),
       logger: {
         info: () => {
-          throw Object.assign(new Error("EACCES: permission denied, mkdir '/x/.ok/logs'"), {
+          throw Object.assign(new Error("EACCES: permission denied, mkdir '/x/.ps/logs'"), {
             code: 'EACCES',
           });
         },

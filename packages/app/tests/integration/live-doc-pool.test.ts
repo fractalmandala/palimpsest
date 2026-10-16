@@ -99,7 +99,7 @@ describe('live-doc pool machinery', () => {
       '__config__/project',
       '__local__/project',
       '__user__/config.yml',
-      '__config__/okignore',
+      '__config__/psignore',
     ]) {
       expect(acquireLiveDocProvider(collabUrl, name)).toEqual({
         ok: false,

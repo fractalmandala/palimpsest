@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import * as nativeConfig from '@inkeep/open-knowledge-native-config';
+import * as nativeConfig from '@palimpsest/native-config';
 import { describe, expect, test } from 'vitest';
 
 interface McpEditResult {
@@ -23,7 +23,7 @@ interface NativeMcpEditBinding {
 
 const binding: NativeMcpEditBinding = nativeConfig;
 
-const SERVER = 'open-knowledge';
+const SERVER = 'palimpsest';
 const ENTRY = JSON.stringify({ command: '/bin/sh', args: ['-l', '-c', 'run-ok'] });
 
 describe('native mcp toml-edit binding', () => {
@@ -33,12 +33,12 @@ describe('native mcp toml-edit binding', () => {
     expect(result.changed).toBe(true);
     expect(result.existed).toBe(false);
     expect(typeof result.text).toBe('string');
-    expect(result.text).toContain('[mcp_servers.open-knowledge]');
+    expect(result.text).toContain('[mcp_servers.palimpsest]');
     expect(result.text).toContain('command = "other"  # keep');
   });
 
   test('reports existed=true when updating an entry that is already present', () => {
-    const input = '[mcp_servers.open-knowledge]\ncommand = "/old"\n';
+    const input = '[mcp_servers.palimpsest]\ncommand = "/old"\n';
     const result = binding.upsertMcpServer(input, SERVER, ENTRY);
     expect(result.existed).toBe(true);
     expect(result.changed).toBe(true);
@@ -53,10 +53,10 @@ describe('native mcp toml-edit binding', () => {
   });
 
   test('remove deletes only our entry and reports the change', () => {
-    const input = `[mcp_servers.other]\ncommand = "other"\n\n[mcp_servers.open-knowledge]\ncommand = "/bin/sh"\n`;
+    const input = `[mcp_servers.other]\ncommand = "other"\n\n[mcp_servers.palimpsest]\ncommand = "/bin/sh"\n`;
     const result = binding.removeMcpServer(input, SERVER);
     expect(result.changed).toBe(true);
-    expect(result.text).not.toContain('[mcp_servers.open-knowledge]');
+    expect(result.text).not.toContain('[mcp_servers.palimpsest]');
     expect(result.text).toContain('[mcp_servers.other]');
   });
 
@@ -65,7 +65,7 @@ describe('native mcp toml-edit binding', () => {
   });
 
   test('resolveSymlinkWritePath marshals a real target back as both paths', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-resolve-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-resolve-'));
     try {
       const plain = join(dir, 'config.toml');
       writeFileSync(plain, 'x = 1\n');
@@ -78,7 +78,7 @@ describe('native mcp toml-edit binding', () => {
   });
 
   test('resolveSymlinkWritePath marshals a cyclic chain as an undefined readPath', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-resolve-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-resolve-'));
     try {
       symlinkSync('b.toml', join(dir, 'a.toml'));
       symlinkSync('a.toml', join(dir, 'b.toml'));

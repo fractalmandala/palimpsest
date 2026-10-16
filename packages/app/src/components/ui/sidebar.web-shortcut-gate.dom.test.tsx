@@ -17,7 +17,7 @@ function pressSidebarShortcut() {
 }
 
 function setOkDesktop(value: unknown) {
-  (window as { okDesktop?: unknown }).okDesktop = value;
+  (window as { psDesktop?: unknown }).psDesktop = value;
 }
 
 describe('SidebarProvider web-mode ⌥⌘S shortcut — Electron gate', () => {
@@ -33,7 +33,7 @@ describe('SidebarProvider web-mode ⌥⌘S shortcut — Electron gate', () => {
     window.localStorage.removeItem(SIDEBAR_PINS_KEY);
   });
 
-  test('web host (no window.okDesktop): ⌥⌘S toggles the sidebar', () => {
+  test('web host (no window.psDesktop): ⌥⌘S toggles the sidebar', () => {
     render(
       <SidebarProvider>
         <StateProbe />
@@ -46,7 +46,7 @@ describe('SidebarProvider web-mode ⌥⌘S shortcut — Electron gate', () => {
     expect(screen.getByTestId('sidebar-state').textContent).toBe('collapsed');
   });
 
-  test('Electron host (window.okDesktop set): ⌥⌘S does NOT toggle (native menu owns it)', () => {
+  test('Electron host (window.psDesktop set): ⌥⌘S does NOT toggle (native menu owns it)', () => {
     setOkDesktop({});
     render(
       <SidebarProvider>

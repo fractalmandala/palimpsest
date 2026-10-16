@@ -3,7 +3,7 @@ import {
   SUPPORTED_LOCALES,
   type SupportedLocale,
   type UninstallScreenSpec,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export const UNINSTALL_PROGRESS_READY_TIMEOUT_MS = 30_000;
 

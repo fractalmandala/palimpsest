@@ -21,7 +21,7 @@ type ReportedFile = { name: string; status: string; assertionResults: ReportedTe
 const scratch: string[] = [];
 
 function scratchDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-node-tier-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-node-tier-'));
   scratch.push(dir);
   return dir;
 }

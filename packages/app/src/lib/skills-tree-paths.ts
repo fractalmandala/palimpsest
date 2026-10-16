@@ -1,6 +1,6 @@
-import type { SkillScope, SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
-import type { CatalogSkill } from '@inkeep/open-knowledge-core/skills-catalog/schema';
-import { catalogRawScopeToOkScope } from '@inkeep/open-knowledge-core/skills-catalog/scope';
+import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
+import type { CatalogSkill } from '@palimpsest/core/skills-catalog/schema';
+import { catalogRawScopeToOkScope } from '@palimpsest/core/skills-catalog/scope';
 import {
   bucketForDetected,
   bucketForSkill,
@@ -12,8 +12,8 @@ import { SKILL_MD_PATH } from '@/lib/skill-sort';
 
 export const EMPTY_SCOPE_SENTINEL = '__ok_empty_scope__';
 
-const OK_OWN_SKILLS: ReadonlySet<string> = new Set([
-  'open-knowledge',
+const PS_OWN_SKILLS: ReadonlySet<string> = new Set([
+  'palimpsest',
   'open-knowledge-discovery',
   'open-knowledge-write-skill',
 ]);
@@ -146,7 +146,7 @@ export function buildSkillsTreePaths({
     for (const s of skills) bump(s.scope, bucketForSkill(s));
     const managedNamesForCount = new Set(skills.map((s) => s.name));
     for (const d of detected ?? []) {
-      if (isManagedDuplicate(d, managedNamesForCount) || OK_OWN_SKILLS.has(d.name)) continue;
+      if (isManagedDuplicate(d, managedNamesForCount) || PS_OWN_SKILLS.has(d.name)) continue;
       bump(catalogRawScopeToOkScope(d.provenance.scope), bucketForDetected(d));
     }
   }
@@ -161,7 +161,7 @@ export function buildSkillsTreePaths({
     skillSegmentsByScope.get(sk.scope)?.add(segmentFor(sk));
   }
   for (const d of detected ?? []) {
-    if (OK_OWN_SKILLS.has(d.name)) continue;
+    if (PS_OWN_SKILLS.has(d.name)) continue;
     const scope = catalogRawScopeToOkScope(d.provenance.scope);
     if (!rendersAtScopeLevel(scope, bucketForDetected(d))) continue;
     skillSegmentsByScope.get(scope)?.add(skillDisplayName(d.name));
@@ -317,7 +317,7 @@ export function buildSkillsTreePaths({
   const managedNames = new Set<string>(skills.map((s) => s.name));
   const detectedByPrefix = new Map<string, CatalogSkill>();
   for (const s of detected ?? []) {
-    if (isManagedDuplicate(s, managedNames) || OK_OWN_SKILLS.has(s.name)) continue;
+    if (isManagedDuplicate(s, managedNames) || PS_OWN_SKILLS.has(s.name)) continue;
     const scope = catalogRawScopeToOkScope(s.provenance.scope);
     const used = usedSegments.get(scope);
     if (!used) continue;

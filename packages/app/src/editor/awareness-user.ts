@@ -1,11 +1,11 @@
-import type { AwarenessUser } from '@inkeep/open-knowledge-core/types/awareness';
-import type { Identity } from '@inkeep/open-knowledge-core/types/identity';
-import type { Principal } from '@inkeep/open-knowledge-core/types/principal';
+import type { AwarenessUser } from '@palimpsest/core/types/awareness';
+import type { Identity } from '@palimpsest/core/types/identity';
+import type { Principal } from '@palimpsest/core/types/principal';
 import {
   colorFromSeed,
   formatPresenceLabel,
   HUMAN_COLORS,
-} from '@inkeep/open-knowledge-core/utils/identity';
+} from '@palimpsest/core/utils/identity';
 
 type AwarenessUserPayload = AwarenessUser & { type: 'human' };
 

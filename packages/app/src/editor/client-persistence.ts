@@ -1,4 +1,4 @@
-import { LINEAGE_EPOCH_KEY } from '@inkeep/open-knowledge-core/constants/doc-lifecycle';
+import { LINEAGE_EPOCH_KEY } from '@palimpsest/core/constants/doc-lifecycle';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
 import { mark } from '@/lib/perf';
@@ -38,7 +38,7 @@ class ClientPersistenceImpl implements ClientPersistenceProvider {
         'createClientPersistence: serverInstanceId is required and must be non-empty',
       );
     }
-    this._dbName = `ok-ydoc:${branch}:${serverInstanceId}:${docName}`;
+    this._dbName = `ps-ydoc:${branch}:${serverInstanceId}:${docName}`;
     const start = instrumentationDisabled() ? 0 : performance.now();
     this._idb = new IndexeddbPersistence(this._dbName, doc);
     this.whenSynced = this._idb.whenSynced.then(() => {
@@ -127,7 +127,7 @@ class ClientPersistenceImpl implements ClientPersistenceProvider {
         req.onsuccess = () => resolve();
         req.onerror = () => reject(req.error);
         req.onblocked = () => {
-          console.warn(JSON.stringify({ event: 'ok-client-persistence-clear-blocked', dbName }));
+          console.warn(JSON.stringify({ event: 'ps-client-persistence-clear-blocked', dbName }));
         };
       });
     } finally {
@@ -159,7 +159,7 @@ export async function peekStoredLineageEpoch(
   args: PeekStoredLineageEpochArgs,
 ): Promise<string | null> {
   if (typeof indexedDB === 'undefined') return null;
-  const dbName = `ok-ydoc:${args.branch}:${args.serverInstanceId}:${args.docName}`;
+  const dbName = `ps-ydoc:${args.branch}:${args.serverInstanceId}:${args.docName}`;
   if (typeof indexedDB.databases === 'function') {
     const dbs = await indexedDB.databases();
     if (!dbs.some((d) => d.name === dbName)) return null;

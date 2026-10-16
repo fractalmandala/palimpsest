@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { currentCliCommandName, OK_PROJECT_MARKER } from '@inkeep/open-knowledge-core';
-import { SKILLS_LOCK_REL } from '@inkeep/open-knowledge-core/skills-catalog';
+import { currentCliCommandName, PS_PROJECT_MARKER } from '@palimpsest/core';
+import { SKILLS_LOCK_REL } from '@palimpsest/core/skills-catalog';
 import { isProjectRoot } from '../fs/find-project-root.ts';
 import { scanInPlaceSkills } from '../in-place-skills.ts';
 import { readSkillsLockFile } from '../skills-lock-store.ts';
@@ -19,11 +19,11 @@ import type { FileEntry, ScaffoldPlan, SeedOptions, SkipEntry } from './types.ts
 import { SeedPrerequisiteError, SeedRootDirError } from './types.ts';
 
 function frontmatterTemplateId(folderPath: string): string {
-  return `${folderPath}/.ok/frontmatter.yml`;
+  return `${folderPath}/.ps/frontmatter.yml`;
 }
 
 function templateFileTemplateId(folderPath: string, templateName: string): string {
-  return `${folderPath}/.ok/templates/${templateName}.md`;
+  return `${folderPath}/.ps/templates/${templateName}.md`;
 }
 
 function normalizeRootDir(rootDir: string | undefined, projectDir: string): string {
@@ -52,7 +52,7 @@ export async function planSeed(opts: SeedOptions = {}): Promise<ScaffoldPlan> {
 
   if (!opts.skipPrerequisite && !isProjectRoot(projectDir)) {
     throw new SeedPrerequisiteError(
-      `No ${OK_PROJECT_MARKER} found at ${projectDir}. Run \`${currentCliCommandName()} init\` first to scaffold the tool config.`,
+      `No ${PS_PROJECT_MARKER} found at ${projectDir}. Run \`${currentCliCommandName()} init\` first to scaffold the tool config.`,
     );
   }
 
@@ -81,15 +81,15 @@ export async function planSeed(opts: SeedOptions = {}): Promise<ScaffoldPlan> {
       created.push({ path: folderPath, kind: 'folder' });
     }
 
-    const okSubDir = `${folderPath}/.ok`;
-    const okSubAbs = join(projectDir, okSubDir);
-    if (existsSync(okSubAbs)) {
-      skipped.push({ path: okSubDir, reason: 'already-exists' });
+    const psSubDir = `${folderPath}/.ps`;
+    const psSubAbs = join(projectDir, psSubDir);
+    if (existsSync(psSubAbs)) {
+      skipped.push({ path: psSubDir, reason: 'already-exists' });
     } else {
-      created.push({ path: okSubDir, kind: 'folder' });
+      created.push({ path: psSubDir, kind: 'folder' });
     }
 
-    const fmPath = `${okSubDir}/${STARTER_FOLDER_FRONTMATTER_FILENAME}`;
+    const fmPath = `${psSubDir}/${STARTER_FOLDER_FRONTMATTER_FILENAME}`;
     const fmAbs = join(projectDir, fmPath);
     if (existsSync(fmAbs)) {
       skipped.push({ path: fmPath, reason: 'already-exists' });
@@ -101,7 +101,7 @@ export async function planSeed(opts: SeedOptions = {}): Promise<ScaffoldPlan> {
       });
     }
 
-    const tplDir = `${okSubDir}/templates`;
+    const tplDir = `${psSubDir}/templates`;
     const tplDirAbs = join(projectDir, tplDir);
     if (existsSync(tplDirAbs)) {
       skipped.push({ path: tplDir, reason: 'already-exists' });
@@ -154,14 +154,14 @@ export async function planSeed(opts: SeedOptions = {}): Promise<ScaffoldPlan> {
   const inPlaceDirByName = new Map(scan.map((sk) => [sk.name, join(projectDir, sk.dir)]));
   const lock = sources.length > 0 ? readSkillsLockFile(join(projectDir, ...SKILLS_LOCK_REL)) : null;
   const packSkills = sources.map(({ name }) => {
-    const storeDir = join(projectDir, '.ok', 'skills', name);
+    const storeDir = join(projectDir, '.ps', 'skills', name);
     const legacyName = OLD_PACK_SKILL_NAME[name];
     const legacyDir =
       legacyName === undefined
         ? null
         : (inPlaceDirByName.get(legacyName) ??
-          (existsSync(join(projectDir, '.ok', 'skills', legacyName, 'SKILL.md'))
-            ? join(projectDir, '.ok', 'skills', legacyName)
+          (existsSync(join(projectDir, '.ps', 'skills', legacyName, 'SKILL.md'))
+            ? join(projectDir, '.ps', 'skills', legacyName)
             : null));
     const presentDir =
       inPlaceDirByName.get(name) ??

@@ -6,8 +6,8 @@ import {
   DESKTOP_PRODUCTS,
   desktopWindowsExecutableName,
   PACKAGED_DESKTOP_PRODUCT_NAMES,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import {
   DIAGNOSTIC_REPORT_WINDOW_DAYS,
   isOwnedProcessName,
@@ -24,7 +24,7 @@ const COMMAND_MAX_BUFFER = 16 * 1024 * 1024;
 
 const MACOS_SYSTEM_DIAGNOSTIC_REPORTS_DIR = '/Library/Logs/DiagnosticReports';
 
-const OWNED_NAME = /openknowledge/i;
+const OWNED_NAME = /palimpsest/i;
 
 const WINDOWS_EXECUTABLES = PACKAGED_DESKTOP_PRODUCT_NAMES.map((name) =>
   desktopWindowsExecutableName(DESKTOP_PRODUCTS[name]),
@@ -67,7 +67,7 @@ interface WindowsEvidenceEvent {
   log: 'System' | 'Application';
   provider: string;
   eventId: number;
-  mentionsOpenKnowledge: boolean;
+  mentionsPalimpsest: boolean;
   data: string[];
 }
 
@@ -806,8 +806,8 @@ function parseWindowsEventXml(
     }
     const values = elementTexts(record, 'Data');
     const processNames = elementTexts(record, 'Name');
-    const mentionsOpenKnowledge = [...values, ...processNames].some((v) => OWNED_NAME.test(v));
-    if (log === 'Application' && !mentionsOpenKnowledge) {
+    const mentionsPalimpsest = [...values, ...processNames].some((v) => OWNED_NAME.test(v));
+    if (log === 'Application' && !mentionsPalimpsest) {
       foreignIgnored += 1;
       continue;
     }
@@ -817,7 +817,7 @@ function parseWindowsEventXml(
       log,
       provider,
       eventId,
-      mentionsOpenKnowledge,
+      mentionsPalimpsest,
       data: log === 'Application' ? values.filter((v) => v !== '' && !looksLikePath(v)) : [],
     });
   }
@@ -867,7 +867,7 @@ export async function collectOsTerminationEvidence(
     case 'darwin':
       return collectMacosJetsam(deps.macosReportsDir ?? MACOS_SYSTEM_DIAGNOSTIC_REPORTS_DIR, now);
     case 'linux':
-      return collectLinuxJournal(run, now, deps.desktopLogsDir ?? join(okUserHomeDir(), 'logs'));
+      return collectLinuxJournal(run, now, deps.desktopLogsDir ?? join(psUserHomeDir(), 'logs'));
     case 'win32':
       return collectWindowsEventLog(run, deps.systemRoot ?? process.env.SystemRoot);
     default:

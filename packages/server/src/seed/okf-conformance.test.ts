@@ -10,23 +10,23 @@ import {
   parseFrontmatterYaml,
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 import { computeBrokenOutboundLinks } from '../backlink-index.ts';
 import { applySubstitution } from '../content/substitution.ts';
 import { applySeed } from './apply.ts';
 import { planSeed } from './plan.ts';
-import { OKF_RESERVED_FILENAMES, type PackId, STARTER_PACKS } from './starter.ts';
+import { PSF_RESERVED_FILENAMES, type PackId, STARTER_PACKS } from './starter.ts';
 
-const OKF_PACK = STARTER_PACKS.okf;
-const OKF_INDEX_BODY = OKF_PACK.rootFiles?.['index.md'];
-const OKF_GETTING_STARTED_BODY = OKF_PACK.rootFiles?.['concepts/getting-started.md'];
-if (!OKF_INDEX_BODY || !OKF_GETTING_STARTED_BODY) {
-  throw new Error('okf pack is missing its minimal portable bundle');
+const PSF_PACK = STARTER_PACKS.psf;
+const PSF_INDEX_BODY = PSF_PACK.rootFiles?.['index.md'];
+const PSF_GETTING_STARTED_BODY = PSF_PACK.rootFiles?.['concepts/getting-started.md'];
+if (!PSF_INDEX_BODY || !PSF_GETTING_STARTED_BODY) {
+  throw new Error('psf pack is missing its minimal portable bundle');
 }
 
-const RESERVED_FILES = new Set(OKF_RESERVED_FILENAMES);
+const RESERVED_FILES = new Set(PSF_RESERVED_FILENAMES);
 
 function collectMarkdown(root: string, dir = root): string[] {
   const out: string[] = [];
@@ -42,7 +42,7 @@ function collectMarkdown(root: string, dir = root): string[] {
 }
 
 function consumerFrontmatterYaml(relPath: string, raw: string): string | null {
-  const isTemplate = relPath.includes('/.ok/templates/');
+  const isTemplate = relPath.includes('/.ps/templates/');
   const docSource = isTemplate
     ? applySubstitution(instantiateDoc(raw), { date: '2026-01-01', user: 'Test User' })
     : raw;
@@ -54,12 +54,12 @@ function consumerFrontmatterYaml(relPath: string, raw: string): string | null {
 async function seedOkf(
   rootDir?: string,
 ): Promise<{ projectDir: string; cleanup: () => Promise<void> }> {
-  const projectDir = await mkdtemp(join(tmpdir(), 'seed-okf-'));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
+  const projectDir = await mkdtemp(join(tmpdir(), 'seed-psf-'));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
   mkdirSync(join(projectDir, '.agents', 'skills'), { recursive: true });
-  const plan = await planSeed({ projectDir, packId: 'okf', rootDir });
-  const result = await applySeed(plan, { projectDir, packId: 'okf' });
+  const plan = await planSeed({ projectDir, packId: 'psf', rootDir });
+  const result = await applySeed(plan, { projectDir, packId: 'psf' });
   expect(result.errors).toEqual([]);
   return {
     projectDir,
@@ -70,9 +70,9 @@ async function seedOkf(
 async function seedPackSequence(
   order: readonly PackId[],
 ): Promise<{ projectDir: string; cleanup: () => Promise<void> }> {
-  const projectDir = await mkdtemp(join(tmpdir(), 'seed-okf-compatible-packs-'));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
+  const projectDir = await mkdtemp(join(tmpdir(), 'seed-psf-compatible-packs-'));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
   mkdirSync(join(projectDir, '.agents', 'skills'), { recursive: true });
   for (const packId of order) {
     const plan = await planSeed({ projectDir, packId });
@@ -85,11 +85,11 @@ async function seedPackSequence(
   };
 }
 
-describe('okf pack — minimal starter contract', () => {
+describe('psf pack — minimal starter contract', () => {
   test('ships one populated domain folder, one template, and two portable documents', () => {
-    expect(OKF_PACK.folders.map((folder) => folder.path)).toEqual(['concepts']);
-    expect(Object.keys(OKF_PACK.templates)).toEqual(['concept']);
-    expect(Object.keys(OKF_PACK.rootFiles ?? {})).toEqual([
+    expect(PSF_PACK.folders.map((folder) => folder.path)).toEqual(['concepts']);
+    expect(Object.keys(PSF_PACK.templates)).toEqual(['concept']);
+    expect(Object.keys(PSF_PACK.rootFiles ?? {})).toEqual([
       'index.md',
       'concepts/getting-started.md',
     ]);
@@ -97,26 +97,26 @@ describe('okf pack — minimal starter contract', () => {
 
   test('the companion skill targets v0.2 and explains the plugin rather than the scaffold', () => {
     const skillSource = readFileSync(
-      join(import.meta.dirname, '..', '..', 'assets', 'skills', 'packs', 'okf', 'SKILL.md'),
+      join(import.meta.dirname, '..', '..', 'assets', 'skills', 'packs', 'psf', 'SKILL.md'),
       'utf-8',
     );
     const { frontmatter, body } = stripFrontmatter(skillSource);
     const parsed = parseFrontmatterYaml(unwrapFrontmatterFences(frontmatter));
 
     expect(parsed.map?.description).toContain('v0.2 guidance');
-    expect(body).toContain("## OpenKnowledge's `okf` plugin");
+    expect(body).toContain("## Palimpsest's `psf` plugin");
     expect(body).toContain('continuous portability feedback');
     expect(body).not.toMatch(/starter pack/i);
   });
 });
 
-describe('okf pack — OKF §11 conformance by construction', () => {
+describe('psf pack — OKF §11 conformance by construction', () => {
   test('rule 1+2: every non-reserved seed .md parses to frontmatter with a non-empty type', async () => {
     const { projectDir, cleanup } = await seedOkf();
     try {
       const docs = collectMarkdown(projectDir).filter((p) => !RESERVED_FILES.has(p));
       expect(docs).toContain('concepts/getting-started.md');
-      expect(docs).toContain('concepts/.ok/templates/concept.md');
+      expect(docs).toContain('concepts/.ps/templates/concept.md');
       expect(docs.some((path) => path.endsWith('/SKILL.md'))).toBe(true);
 
       for (const relPath of docs) {
@@ -194,16 +194,16 @@ describe('okf pack — OKF §11 conformance by construction', () => {
   });
 
   test('a pre-existing bundle index is preserved while the typed document is added', async () => {
-    const projectDir = await mkdtemp(join(tmpdir(), 'seed-okf-existing-root-index-'));
+    const projectDir = await mkdtemp(join(tmpdir(), 'seed-psf-existing-root-index-'));
     const existingIndex = '# User-authored bundle index\n';
     try {
-      mkdirSync(join(projectDir, '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
+      mkdirSync(join(projectDir, '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
       mkdirSync(join(projectDir, 'bundle'), { recursive: true });
       writeFileSync(join(projectDir, 'bundle', 'index.md'), existingIndex, 'utf-8');
 
-      const plan = await planSeed({ projectDir, packId: 'okf', rootDir: 'bundle' });
-      const result = await applySeed(plan, { projectDir, packId: 'okf' });
+      const plan = await planSeed({ projectDir, packId: 'psf', rootDir: 'bundle' });
+      const result = await applySeed(plan, { projectDir, packId: 'psf' });
 
       expect(result.errors).toEqual([]);
       expect(readFileSync(join(projectDir, 'bundle', 'index.md'), 'utf-8')).toBe(existingIndex);
@@ -216,9 +216,9 @@ describe('okf pack — OKF §11 conformance by construction', () => {
   test('apply writes the two portable documents to disk verbatim', async () => {
     const { projectDir, cleanup } = await seedOkf();
     try {
-      expect(readFileSync(join(projectDir, 'index.md'), 'utf-8')).toBe(OKF_INDEX_BODY);
+      expect(readFileSync(join(projectDir, 'index.md'), 'utf-8')).toBe(PSF_INDEX_BODY);
       expect(readFileSync(join(projectDir, 'concepts', 'getting-started.md'), 'utf-8')).toBe(
-        OKF_GETTING_STARTED_BODY,
+        PSF_GETTING_STARTED_BODY,
       );
     } finally {
       await cleanup();
@@ -231,9 +231,9 @@ describe('okf pack — OKF §11 conformance by construction', () => {
       const guideAbs = join(projectDir, 'concepts', 'getting-started.md');
       writeFileSync(guideAbs, 'EDITED BY USER\n', 'utf-8');
 
-      const plan2 = await planSeed({ projectDir, packId: 'okf' });
+      const plan2 = await planSeed({ projectDir, packId: 'psf' });
       expect(plan2.created, 're-run should plan zero new writes').toEqual([]);
-      const result2 = await applySeed(plan2, { projectDir, packId: 'okf' });
+      const result2 = await applySeed(plan2, { projectDir, packId: 'psf' });
       expect(result2.errors).toEqual([]);
       expect(result2.applied).toBe(0);
       expect(readFileSync(guideAbs, 'utf-8')).toBe('EDITED BY USER\n');
@@ -243,24 +243,24 @@ describe('okf pack — OKF §11 conformance by construction', () => {
   });
 
   test('rule 2 holds with an editor present: the installed pack skill markdown carries a non-empty type', async () => {
-    const projectDir = await mkdtemp(join(tmpdir(), 'seed-okf-skill-'));
+    const projectDir = await mkdtemp(join(tmpdir(), 'seed-psf-skill-'));
     try {
-      mkdirSync(join(projectDir, '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
-      const platformSkillDir = join(projectDir, '.claude', 'skills', 'open-knowledge');
+      mkdirSync(join(projectDir, '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
+      const platformSkillDir = join(projectDir, '.claude', 'skills', 'palimpsest');
       mkdirSync(platformSkillDir, { recursive: true });
       writeFileSync(
         join(platformSkillDir, 'SKILL.md'),
-        '---\nname: open-knowledge\n---\n',
+        '---\nname: palimpsest\n---\n',
         'utf-8',
       );
 
-      const plan = await planSeed({ projectDir, packId: 'okf' });
-      const result = await applySeed(plan, { projectDir, packId: 'okf' });
+      const plan = await planSeed({ projectDir, packId: 'psf' });
+      const result = await applySeed(plan, { projectDir, packId: 'psf' });
       expect(result.errors).toEqual([]);
       expect(result.packSkillsInstalled).toContain('Claude Code');
 
-      const packSkillDir = join(projectDir, '.claude', 'skills', 'okf-knowledge-base');
+      const packSkillDir = join(projectDir, '.claude', 'skills', 'psf-knowledge-base');
       const skillDocs = collectMarkdown(packSkillDir).map((p) => join(packSkillDir, p));
       expect(skillDocs.length).toBeGreaterThanOrEqual(1);
       for (const abs of skillDocs) {
@@ -280,14 +280,14 @@ describe('okf pack — OKF §11 conformance by construction', () => {
   });
 });
 
-const OKF_LINT_CONFIG: LinterConfig = {
+const PSF_LINT_CONFIG: LinterConfig = {
   ...DEFAULT_LINTER_CONFIG,
   enabled: true,
-  plugins: { ...DEFAULT_LINTER_CONFIG.plugins, okf: { enabled: true } },
+  plugins: { ...DEFAULT_LINTER_CONFIG.plugins, psf: { enabled: true } },
 };
 
-describe('okf pack — the okf lint rules find nothing in the seeded bundle', () => {
-  test('every produced .md, including the dot-directory templates and pack skill, yields zero okf findings', async () => {
+describe('psf pack — the psf lint rules find nothing in the seeded bundle', () => {
+  test('every produced .md, including the dot-directory templates and pack skill, yields zero psf findings', async () => {
     const { projectDir, cleanup } = await seedOkf();
     try {
       const files = collectMarkdown(projectDir);
@@ -295,19 +295,19 @@ describe('okf pack — the okf lint rules find nothing in the seeded bundle', ()
       expect(files).toContain('concepts/getting-started.md');
       expect(files).not.toContain('log.md');
       expect(files.filter((relPath) => relPath.endsWith('/index.md'))).toEqual([]);
-      expect(files.some((relPath) => relPath.includes('.ok/templates/'))).toBe(true);
+      expect(files.some((relPath) => relPath.includes('.ps/templates/'))).toBe(true);
       expect(files.some((relPath) => relPath.endsWith('SKILL.md'))).toBe(true);
 
       for (const relPath of files) {
         const source = readFileSync(join(projectDir, relPath), 'utf-8');
-        const findings = await lintDocument(source, OKF_LINT_CONFIG, relPath);
+        const findings = await lintDocument(source, PSF_LINT_CONFIG, relPath);
         const detail = findings
           .map(
             (f) =>
               `${f.code} @ ${f.range.start.line + 1}:${f.range.start.character + 1} — ${f.message}`,
           )
           .join('; ');
-        expect(findings, `${relPath} produced okf findings: ${detail}`).toEqual([]);
+        expect(findings, `${relPath} produced psf findings: ${detail}`).toEqual([]);
       }
     } finally {
       await cleanup();
@@ -315,10 +315,10 @@ describe('okf pack — the okf lint rules find nothing in the seeded bundle', ()
   });
 });
 
-describe('knowledge-base + okf pack compatibility', () => {
+describe('knowledge-base + psf pack compatibility', () => {
   test.each([
-    ['knowledge-base', 'okf'],
-    ['okf', 'knowledge-base'],
+    ['knowledge-base', 'psf'],
+    ['psf', 'knowledge-base'],
   ] satisfies PackId[][])(
     'both seed orders produce one clean OKF bundle: %s then %s',
     async (first, second) => {
@@ -328,9 +328,9 @@ describe('knowledge-base + okf pack compatibility', () => {
         const files = collectMarkdown(projectDir);
         expect(files).toContain('index.md');
         expect(files).toContain('log.md');
-        expect(files).toContain('external-sources/.ok/templates/clip.md');
-        expect(files).toContain('research/.ok/templates/research-log.md');
-        expect(files).toContain('articles/.ok/templates/article.md');
+        expect(files).toContain('external-sources/.ps/templates/clip.md');
+        expect(files).toContain('research/.ps/templates/research-log.md');
+        expect(files).toContain('articles/.ps/templates/article.md');
 
         const installedSkillNames = files
           .filter((relPath) => relPath.endsWith('/SKILL.md'))
@@ -343,13 +343,13 @@ describe('knowledge-base + okf pack compatibility', () => {
         expect(installedSkillNames).toEqual([
           'consolidate-notes',
           'knowledge-base',
-          'okf-knowledge-base',
+          'psf-knowledge-base',
           'research-with-sources',
         ]);
 
         for (const relPath of files) {
           const source = readFileSync(join(projectDir, relPath), 'utf-8');
-          const findings = await lintDocument(source, OKF_LINT_CONFIG, relPath);
+          const findings = await lintDocument(source, PSF_LINT_CONFIG, relPath);
           expect(
             findings,
             `${order.join(' → ')}: ${relPath} produced ${findings.map((f) => f.code).join(', ')}`,
@@ -372,7 +372,7 @@ describe('all starter packs — OKF §11 rule 2 (every template instantiates a t
       expect(templates.length, `${pack.id}: pack defines no templates`).toBeGreaterThan(0);
 
       for (const [name, body] of templates) {
-        const relPath = `${pack.id}/.ok/templates/${name}.md`;
+        const relPath = `${pack.id}/.ps/templates/${name}.md`;
         const yaml = consumerFrontmatterYaml(relPath, body);
         expect(
           yaml,

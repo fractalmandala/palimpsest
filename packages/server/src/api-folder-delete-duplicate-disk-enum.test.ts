@@ -86,7 +86,7 @@ const baseHocuspocus = () =>
 let contentDir: string;
 
 beforeEach(() => {
-  contentDir = mkdtempSync(join(tmpdir(), 'ok-folder-del-dup-disk-'));
+  contentDir = mkdtempSync(join(tmpdir(), 'ps-folder-del-dup-disk-'));
   _resetDocExtensionsForTests();
 });
 

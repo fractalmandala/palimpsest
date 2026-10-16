@@ -6,7 +6,7 @@ import { afterEach, beforeEach, vi } from 'vitest';
 export function useIsolatedHome(): () => string {
   let home = '';
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'ok-git-hosts-home-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-git-hosts-home-'));
     vi.stubEnv('HOME', home);
     vi.stubEnv('USERPROFILE', home);
   });
@@ -18,8 +18,8 @@ export function useIsolatedHome(): () => string {
 }
 
 export function writeUserConfig(home: string, body: string): void {
-  mkdirSync(join(home, '.ok'), { recursive: true });
-  writeFileSync(join(home, '.ok', 'global.yml'), body, 'utf-8');
+  mkdirSync(join(home, '.ps'), { recursive: true });
+  writeFileSync(join(home, '.ps', 'global.yml'), body, 'utf-8');
 }
 
 export function gitHostsYaml(...hosts: string[]): string {

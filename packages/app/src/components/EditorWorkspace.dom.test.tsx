@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { EditorPaneState } from '@/editor/editor-panes';
-import { OK_SIDEBAR_DRAG_MIME, serializeSidebarDragPayload } from '@/lib/sidebar-drag';
+import { PS_SIDEBAR_DRAG_MIME, serializeSidebarDragPayload } from '@/lib/sidebar-drag';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 import {
   expectVisualClassTokens,
@@ -339,8 +339,8 @@ describe('EditorWorkspace', () => {
   });
 
   test('does not paint a temporary desktop pane layout before session restore settles', () => {
-    const previousDesktopBridge = window.okDesktop;
-    Object.defineProperty(window, 'okDesktop', {
+    const previousDesktopBridge = window.psDesktop;
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       writable: true,
       value: { config: { mode: 'editor' } },
@@ -363,7 +363,7 @@ describe('EditorWorkspace', () => {
 
     expect(view.container.querySelector('[data-editor-workspace-pending]')).toBeNull();
     expect(view.container.querySelector('[data-editor-pane-id="pane-a"]')).toBeTruthy();
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       writable: true,
       value: previousDesktopBridge,
@@ -681,9 +681,9 @@ describe('EditorWorkspace', () => {
     const pane = container.querySelector<HTMLElement>('[data-editor-pane-id="pane-b"]');
     let payloadReadable = false;
     const dataTransfer = {
-      types: [OK_SIDEBAR_DRAG_MIME],
+      types: [PS_SIDEBAR_DRAG_MIME],
       getData: (type: string) =>
-        type === OK_SIDEBAR_DRAG_MIME && payloadReadable
+        type === PS_SIDEBAR_DRAG_MIME && payloadReadable
           ? serializeSidebarDragPayload({
               v: 1,
               kind: 'doc',
@@ -728,9 +728,9 @@ describe('EditorWorkspace', () => {
     const portaledPaneBody = screen.getByTestId('portaled-pane-body');
     portaledPaneBody.addEventListener('drop', consumeDrop);
     const dataTransfer = {
-      types: [OK_SIDEBAR_DRAG_MIME],
+      types: [PS_SIDEBAR_DRAG_MIME],
       getData: (type: string) =>
-        type === OK_SIDEBAR_DRAG_MIME
+        type === PS_SIDEBAR_DRAG_MIME
           ? serializeSidebarDragPayload({
               v: 1,
               kind: 'doc',
@@ -766,7 +766,7 @@ describe('EditorWorkspace', () => {
     const nestedDrop = vi.fn();
     nestedPaneBody.addEventListener('drop', nestedDrop);
     const dataTransfer = {
-      types: [OK_SIDEBAR_DRAG_MIME],
+      types: [PS_SIDEBAR_DRAG_MIME],
       getData: () => '{',
       dropEffect: 'none',
     };
@@ -787,7 +787,7 @@ describe('EditorWorkspace', () => {
     const { container } = renderWorkspace();
     const pane = container.querySelector<HTMLElement>('[data-editor-pane-id="pane-b"]');
     const dataTransfer = {
-      types: [OK_SIDEBAR_DRAG_MIME],
+      types: [PS_SIDEBAR_DRAG_MIME],
       getData: () => '',
       dropEffect: 'none',
     };

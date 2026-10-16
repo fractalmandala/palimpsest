@@ -26,8 +26,8 @@ function pickMarkdownFile(host: PickerHost, opts: PickerOpts = {}) {
   return promptForExistingMarkdownFile(host, { errorParent: () => null, ...opts });
 }
 
-const ORIGINAL_SMOKE = process.env.OK_DESKTOP_E2E_SMOKE;
-const ORIGINAL_PICKED = process.env.OK_DESKTOP_TEST_PICKED_PATH;
+const ORIGINAL_SMOKE = process.env.PS_DESKTOP_E2E_SMOKE;
+const ORIGINAL_PICKED = process.env.PS_DESKTOP_TEST_PICKED_PATH;
 
 function messageBoxAcknowledged() {
   return vi.fn(async () => ({ response: 0, checkboxChecked: false }));
@@ -42,16 +42,16 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  if (ORIGINAL_SMOKE === undefined) delete process.env.OK_DESKTOP_E2E_SMOKE;
-  else process.env.OK_DESKTOP_E2E_SMOKE = ORIGINAL_SMOKE;
-  if (ORIGINAL_PICKED === undefined) delete process.env.OK_DESKTOP_TEST_PICKED_PATH;
-  else process.env.OK_DESKTOP_TEST_PICKED_PATH = ORIGINAL_PICKED;
+  if (ORIGINAL_SMOKE === undefined) delete process.env.PS_DESKTOP_E2E_SMOKE;
+  else process.env.PS_DESKTOP_E2E_SMOKE = ORIGINAL_SMOKE;
+  if (ORIGINAL_PICKED === undefined) delete process.env.PS_DESKTOP_TEST_PICKED_PATH;
+  else process.env.PS_DESKTOP_TEST_PICKED_PATH = ORIGINAL_PICKED;
 });
 
 describe('promptForExistingFolder', () => {
   beforeEach(() => {
-    delete process.env.OK_DESKTOP_E2E_SMOKE;
-    delete process.env.OK_DESKTOP_TEST_PICKED_PATH;
+    delete process.env.PS_DESKTOP_E2E_SMOKE;
+    delete process.env.PS_DESKTOP_TEST_PICKED_PATH;
   });
 
   test('OS picker uses openDirectory + createDirectory + showHiddenFiles (macOS: New Folder button + dot-dirs visible for `.claude/worktrees`)', async () => {
@@ -134,8 +134,8 @@ describe('promptForExistingFolder', () => {
   });
 
   test('test seam returns env path when both gates set, never calls OS picker', async () => {
-    process.env.OK_DESKTOP_E2E_SMOKE = '1';
-    process.env.OK_DESKTOP_TEST_PICKED_PATH = '/tmp/seam';
+    process.env.PS_DESKTOP_E2E_SMOKE = '1';
+    process.env.PS_DESKTOP_TEST_PICKED_PATH = '/tmp/seam';
     const showOpenDialog = vi.fn(async () => ({ canceled: false, filePaths: ['/never/used'] }));
     expect(await pickFolder({ showOpenDialog, showMessageBox: messageBoxAcknowledged() })).toBe(
       '/tmp/seam',
@@ -143,8 +143,8 @@ describe('promptForExistingFolder', () => {
     expect(showOpenDialog).not.toHaveBeenCalled();
   });
 
-  test('test seam ignored when OK_DESKTOP_E2E_SMOKE missing — production safety', async () => {
-    process.env.OK_DESKTOP_TEST_PICKED_PATH = '/tmp/should-not-fire';
+  test('test seam ignored when PS_DESKTOP_E2E_SMOKE missing — production safety', async () => {
+    process.env.PS_DESKTOP_TEST_PICKED_PATH = '/tmp/should-not-fire';
     const showOpenDialog = vi.fn(async () => ({ canceled: false, filePaths: ['/real/pick'] }));
     expect(await pickFolder({ showOpenDialog, showMessageBox: messageBoxAcknowledged() })).toBe(
       '/real/pick',
@@ -152,9 +152,9 @@ describe('promptForExistingFolder', () => {
     expect(showOpenDialog).toHaveBeenCalled();
   });
 
-  test('test seam ignored when OK_DESKTOP_TEST_PICKED_PATH empty', async () => {
-    process.env.OK_DESKTOP_E2E_SMOKE = '1';
-    process.env.OK_DESKTOP_TEST_PICKED_PATH = '';
+  test('test seam ignored when PS_DESKTOP_TEST_PICKED_PATH empty', async () => {
+    process.env.PS_DESKTOP_E2E_SMOKE = '1';
+    process.env.PS_DESKTOP_TEST_PICKED_PATH = '';
     const showOpenDialog = vi.fn(async () => ({ canceled: false, filePaths: ['/real/pick'] }));
     expect(await pickFolder({ showOpenDialog, showMessageBox: messageBoxAcknowledged() })).toBe(
       '/real/pick',
@@ -224,8 +224,8 @@ describe('resolvePickedPathForIndex', () => {
 
 describe('promptForExistingMarkdownFile', () => {
   beforeEach(() => {
-    delete process.env.OK_DESKTOP_E2E_SMOKE;
-    delete process.env.OK_DESKTOP_TEST_PICKED_PATH;
+    delete process.env.PS_DESKTOP_E2E_SMOKE;
+    delete process.env.PS_DESKTOP_TEST_PICKED_PATH;
   });
 
   test('OS picker uses openFile + a md/mdx filter', async () => {
@@ -269,8 +269,8 @@ describe('promptForExistingMarkdownFile', () => {
   });
 
   test('test seam returns env path when both gates set, never calls OS picker', async () => {
-    process.env.OK_DESKTOP_E2E_SMOKE = '1';
-    process.env.OK_DESKTOP_TEST_PICKED_PATH = '/tmp/seam.md';
+    process.env.PS_DESKTOP_E2E_SMOKE = '1';
+    process.env.PS_DESKTOP_TEST_PICKED_PATH = '/tmp/seam.md';
     const showOpenDialog = vi.fn(async () => ({ canceled: false, filePaths: ['/never/used.md'] }));
     expect(
       await pickMarkdownFile({

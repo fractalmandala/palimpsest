@@ -64,8 +64,8 @@ async function withRefusedStoreShutdown(
     blockedSignalRequests.push({ pid: this.pid, signal });
     return false;
   });
-  const homeDir = await mkdtemp(join(tmpdir(), 'ok-shutdown-refused-home-'));
-  const projectDir = await mkdtemp(join(tmpdir(), 'ok-shutdown-refused-'));
+  const homeDir = await mkdtemp(join(tmpdir(), 'ps-shutdown-refused-home-'));
+  const projectDir = await mkdtemp(join(tmpdir(), 'ps-shutdown-refused-'));
   homeState.path = homeDir;
   const contentDir = join(projectDir, 'content');
   const refusedPath = join(contentDir, `${refusedName}.md`);
@@ -89,7 +89,7 @@ async function withRefusedStoreShutdown(
     writeFileSync(refusedPath, refusedInitial, 'utf-8');
     writeFileSync(join(contentDir, `${normalName}.md`), '# Normal shutdown doc\n', 'utf-8');
     writeFileSync(
-      join(projectDir, '.okignore'),
+      join(projectDir, '.psignore'),
       `content/${normalName}.md\ncontent/${refusedName}.md\n`,
       'utf-8',
     );

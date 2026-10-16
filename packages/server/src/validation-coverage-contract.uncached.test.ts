@@ -4,7 +4,7 @@ import {
   isMutatingParserReservation,
   LINT_PLUGIN_IDS,
   VALIDATION_SOURCES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { formatValidatorDegradationWarning } from './lint/validation-audit.ts';
 import { DESCRIPTION as AUDIT_DESCRIPTION, AUDIT_WARNINGS_DESCRIPTION } from './mcp/tools/audit.ts';
@@ -22,8 +22,8 @@ const MCP_REFERENCE = readFileSync(
   join(import.meta.dir, '../../../docs/content/reference/mcp.mdx'),
   'utf8',
 );
-const OKF_PLUGIN = readFileSync(
-  join(import.meta.dir, '../../../docs/content/plugins/okf.mdx'),
+const PSF_PLUGIN = readFileSync(
+  join(import.meta.dir, '../../../docs/content/plugins/psf.mdx'),
   'utf8',
 );
 
@@ -33,7 +33,7 @@ function formatCodepoint(codepoint: number): string {
 
 function documentedParserReservations(): string[] {
   const clause = /Parser-reserved Private Use Area code points (.+?) are also replaced/.exec(
-    OKF_PLUGIN,
+    PSF_PLUGIN,
   )?.[1];
   if (clause === undefined) throw new Error('OKF parser-reservation disclosure is missing');
   return [...clause.matchAll(/U\+([0-9A-F]{4,6})(?:–U\+([0-9A-F]{4,6}))?/g)].flatMap(
@@ -119,10 +119,10 @@ describe('validation coverage source contract', () => {
     );
     expect(AUDIT_DESCRIPTION).toContain('document and project-tree OKF checks here');
     expect(mcpReferenceRow('audit')).toContain(
-      'Document and project-tree OKF checks share the `okf` family',
+      'Document and project-tree OKF checks share the `psf` family',
     );
     expect(CONTENT_RULES_OVERVIEW).toContain(
-      "OKF's document and project-tree checks share the public `okf` family",
+      "OKF's document and project-tree checks share the public `psf` family",
     );
   });
 

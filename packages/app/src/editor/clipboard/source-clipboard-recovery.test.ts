@@ -1,4 +1,4 @@
-import { ChunkedInsertError } from '@inkeep/open-knowledge-core';
+import { ChunkedInsertError } from '@palimpsest/core';
 import * as actualSonner from 'sonner';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 

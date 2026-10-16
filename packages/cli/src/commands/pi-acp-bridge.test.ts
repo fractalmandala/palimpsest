@@ -46,7 +46,7 @@ function probeReadyPiBridgeState(...args: Parameters<typeof probePiBridgeState>)
   return state;
 }
 
-const bridgePathIn = (cwd: string) => join(cwd, '.pi', 'extensions', 'open-knowledge.ts');
+const bridgePathIn = (cwd: string) => join(cwd, '.pi', 'extensions', 'palimpsest.ts');
 const trustPathIn = (home: string) => join(home, '.pi', 'agent', 'trust.json');
 
 function write(path: string, text: string): void {
@@ -112,7 +112,7 @@ describe('probePiBridgeState', () => {
       '"zeta.ts"',
     ]);
     expect(readdirSync(extensionDir).sort()).toEqual(
-      [...names, 'open-knowledge.ts', 'notes.txt'].sort(),
+      [...names, 'palimpsest.ts', 'notes.txt'].sort(),
     );
     for (const name of names)
       expect(readFileSync(join(extensionDir, name), 'utf8')).toBe(`User extension ${name}`);
@@ -268,7 +268,7 @@ describe('ensurePiBridge', () => {
     expect(probeReadyPiBridgeState(cwd, home).bridgeLoadable).toBe(true);
   });
 
-  test('defaults to the published shape `ok init` writes', async () => {
+  test('defaults to the published shape `ps init` writes', async () => {
     const cwd = tmp();
     const home = tmp();
     expect((await ensurePiBridge(cwd, undefined, home)).ok).toBe(true);
@@ -702,7 +702,7 @@ describe('owned Pi trust grants', () => {
       write(join(agentDir, 'trust.json'), '{"other":true}\n');
       expect(
         (await ensurePiBridge(cwd, { mode: 'published' }, home, { PI_CODING_AGENT_DIR: agentDir }))
-          .ok,
+          .ps,
       ).toBe(true);
     }
     expect(listPiTrustGrants(home, cwd)).toHaveLength(2);
@@ -803,7 +803,7 @@ describe('owned Pi trust grants', () => {
     expect(result.error).toContain('ENOTEMPTY');
     expect(result.error).toContain(dirname(promptPath));
     expect(result.error).toContain('To remove this grant manually');
-    expect(result.error).toContain('OpenKnowledge has relinquished this grant');
+    expect(result.error).toContain('Palimpsest has relinquished this grant');
     expect(readFileSync(trustPath, 'utf8')).toBe(before);
     expect(listPiTrustGrants(home, cwd)).toEqual([]);
     expect(existsSync(bridgePathIn(cwd))).toBe(true);
@@ -943,7 +943,7 @@ describe('owned Pi trust grants', () => {
     const trustPath = trustPathIn(home);
     const before = '{"other":true}\n';
     write(trustPath, before);
-    write(join(home, '.ok', 'pi-trust'), 'not a directory');
+    write(join(home, '.ps', 'pi-trust'), 'not a directory');
 
     const result = await ensurePiBridge(cwd, { mode: 'published' }, home);
 
@@ -1638,8 +1638,8 @@ describe('canonical Pi project identity', () => {
         expect(result.action).toBe('failed');
         expect(result.error).toContain(
           shared
-            ? 'OpenKnowledge kept the existing ownership record; cleanup of its recorded location remains incomplete.'
-            : `OpenKnowledge must reconcile its recorded location at ${configured} before removing it.`,
+            ? 'Palimpsest kept the existing ownership record; cleanup of its recorded location remains incomplete.'
+            : `Palimpsest must reconcile its recorded location at ${configured} before removing it.`,
         );
         expect(result.error).toContain(`remove only the ${JSON.stringify(cwd)} entry`);
         expect(result.error).not.toContain('has relinquished');

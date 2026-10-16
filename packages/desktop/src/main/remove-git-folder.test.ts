@@ -15,7 +15,7 @@ import { removeGitFolder } from './remove-git-folder.ts';
 let tmpRoot: string;
 
 beforeEach(() => {
-  tmpRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-remove-git-')));
+  tmpRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-remove-git-')));
 });
 
 afterEach(() => {

@@ -2,10 +2,10 @@ import {
   AUDIO_EXTENSIONS,
   IMAGE_EXTENSIONS,
   VIDEO_EXTENSIONS,
-} from '@inkeep/open-knowledge-core/constants/upload';
-import { isLoomUrl } from '@inkeep/open-knowledge-core/utils/loom-embed';
-import { isVimeoUrl } from '@inkeep/open-knowledge-core/utils/vimeo-embed';
-import { parseYouTubeUrl } from '@inkeep/open-knowledge-core/utils/youtube-embed';
+} from '@palimpsest/core/constants/upload';
+import { isLoomUrl } from '@palimpsest/core/utils/loom-embed';
+import { isVimeoUrl } from '@palimpsest/core/utils/vimeo-embed';
+import { parseYouTubeUrl } from '@palimpsest/core/utils/youtube-embed';
 
 type MediaKind = 'video' | 'audio' | 'image';
 

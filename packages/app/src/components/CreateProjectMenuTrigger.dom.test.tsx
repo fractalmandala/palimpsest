@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import {
   __resetLocalMenuActionBusForTests,
   emitLocalMenuAction,
@@ -32,7 +32,7 @@ function fireMenuAction(action: Parameters<typeof emitLocalMenuAction>[0]): void
   act(() => emitLocalMenuAction(action));
 }
 
-function makeBridge(): OkDesktopBridge {
+function makeBridge(): PsDesktopBridge {
   return {
     fs: {
       defaultProjectsRoot: async (): Promise<string> => '/Users/test/Projects',
@@ -54,7 +54,7 @@ function makeBridge(): OkDesktopBridge {
     dialog: {
       openFolder: async (): Promise<string | null> => null,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 describe('CreateProjectMenuTrigger', () => {

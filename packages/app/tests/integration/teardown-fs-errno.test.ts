@@ -113,7 +113,7 @@ describe('removeAllDuringTeardown removal policy', () => {
   });
 
   test('is silent on an absent path, which `force` already suppresses', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-teardown-fs-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-teardown-fs-'));
     expect(() => removeAllDuringTeardown(join(dir, 'never-existed'), dir)).not.toThrow();
     expect(warn).not.toHaveBeenCalled();
     expect(existsSync(dir)).toBe(false);

@@ -3,7 +3,7 @@ import {
   currentDesktopProduct,
   type DesktopProduct,
   type McpLauncherDescriptor,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   applyEdits,
   findNodeAtLocation,

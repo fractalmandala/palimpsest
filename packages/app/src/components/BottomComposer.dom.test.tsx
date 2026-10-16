@@ -295,7 +295,7 @@ async function renderComposerWithThrowingTerminal(docName = 'notes') {
 }
 
 async function renderComposerWithInstalledClis(installed: Record<string, boolean>) {
-  (window as { okDesktop?: unknown }).okDesktop = {
+  (window as { psDesktop?: unknown }).psDesktop = {
     terminal: { cliInstalledMap: async () => installed },
   };
   return renderComposerWithTerminal('notes', installed);
@@ -391,7 +391,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   consoleErrorSpy.mockRestore();
-  delete (window as { okDesktop?: unknown }).okDesktop;
+  delete (window as { psDesktop?: unknown }).psDesktop;
 });
 
 describe('BottomComposer (shell behavior)', () => {

@@ -87,11 +87,11 @@ describe('defineSweep', () => {
     expect(payload.cells.length).toBe(3);
     const errCell = payload.cells.find((c: { axesValues: { n: number } }) => c.axesValues.n === 2);
     expect(errCell?.errors?.[0]).toContain('cell-2-fault');
-    const okCells = payload.cells.filter(
+    const psCells = payload.cells.filter(
       (c: { axesValues: { n: number } }) => c.axesValues.n !== 2,
     );
-    expect(okCells.length).toBe(2);
-    for (const c of okCells) expect(c.result).toBeDefined();
+    expect(psCells.length).toBe(2);
+    for (const c of psCells) expect(c.result).toBeDefined();
   });
 
   test('returns a defineScenario-shaped definition with name + run', () => {

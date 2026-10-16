@@ -22,7 +22,7 @@ import {
 let tmpDir = '';
 
 function setupTmpDir(): string {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-managed-rename-journal-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-managed-rename-journal-'));
   return tmpDir;
 }
 

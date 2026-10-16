@@ -16,7 +16,7 @@ import { configureTestGitRepository } from '../../../../test-support/configure-g
 import { isTestOnlySourceFile } from '../../../../test-support/test-only-source-file.mjs';
 import { getRegisteredDescriptors } from '../../src/editor/registry/index.ts';
 
-const OK_ROOT = resolve(import.meta.dirname, '../../../..');
+const PS_ROOT = resolve(import.meta.dirname, '../../../..');
 const SELF_FILE = resolve(import.meta.dirname, 'substrate-vocabulary-drift.uncached.test.ts');
 
 const TEST_FIXTURE_KNOWN_NONREGISTERED: Record<string, string> = {
@@ -122,7 +122,7 @@ function runGit(root: string, args: readonly string[]): void {
 
 describe('substrate vocabulary drift — every test reference must resolve', () => {
   test('every `data-component-type="<name>"` literal is a registered descriptor or a known exception', () => {
-    const references = findReferences(listPackageTestFiles(OK_ROOT));
+    const references = findReferences(listPackageTestFiles(PS_ROOT));
     expect(
       references.length,
       'git lists no test file under packages/ that holds a data-component-type literal, so this ' +
@@ -150,7 +150,7 @@ describe('substrate vocabulary drift — every test reference must resolve', () 
   });
 
   test('flags an unregistered literal in an untracked test file git lists under packages/, and not in an ignored directory, a non-test file or outside packages/ (planted positive)', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-substrate-vocabulary-drift-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-substrate-vocabulary-drift-'));
     try {
       runGit(root, ['init', '-q']);
       configureTestGitRepository(root);
@@ -186,7 +186,7 @@ describe('substrate vocabulary drift — every test reference must resolve', () 
   });
 
   test('throws when git exits 0 but warns it could not read a .gitignore under packages/ (planted positive)', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-substrate-vocabulary-drift-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-substrate-vocabulary-drift-'));
     try {
       runGit(root, ['init', '-q']);
       configureTestGitRepository(root);
@@ -204,7 +204,7 @@ describe('substrate vocabulary drift — every test reference must resolve', () 
   });
 
   test('throws when a test file git lists sits behind a symlink loop (planted positive)', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-substrate-vocabulary-drift-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-substrate-vocabulary-drift-'));
     try {
       runGit(root, ['init', '-q']);
       configureTestGitRepository(root);
@@ -222,7 +222,7 @@ describe('substrate vocabulary drift — every test reference must resolve', () 
   });
 
   test('throws when the root is not a git work tree (planted positive)', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-substrate-vocabulary-drift-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-substrate-vocabulary-drift-'));
     try {
       expect(() => listPackageTestFiles(root)).toThrow(
         /status 128, signal null, stderr "fatal: not a git repository/,
@@ -233,7 +233,7 @@ describe('substrate vocabulary drift — every test reference must resolve', () 
   });
 
   test('throws on a listing that was killed by a signal or exited non-zero without writing stderr, and accepts a clean one (planted positive)', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-substrate-vocabulary-drift-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-substrate-vocabulary-drift-'));
     try {
       const listed = join('packages', 'p', 'tests', 'listed.test.ts');
       mkdirSync(dirname(join(root, listed)), { recursive: true });

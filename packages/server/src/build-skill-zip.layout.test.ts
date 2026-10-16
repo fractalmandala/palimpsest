@@ -19,7 +19,7 @@ import { listPackSkillSources } from './skill-pack-sources.ts';
 const { bundledSkillCandidates, missingBundleMessage } = __testing;
 const PACKAGE = fileURLToPath(new URL('..', import.meta.url));
 const APP_SKILLS = join(
-  'OpenKnowledge.app',
+  'Palimpsest.app',
   'Contents',
   'Resources',
   'cli',
@@ -27,15 +27,15 @@ const APP_SKILLS = join(
   'assets',
   'skills',
 );
-const ROOT = join(tmpdir(), 'ok-bundled-skill-layout');
+const ROOT = join(tmpdir(), 'ps-bundled-skill-layout');
 const moduleAt = (...segments: string[]) => pathToFileURL(join(ROOT, ...segments)).href;
 const at = (...segments: string[]) => join(ROOT, ...segments);
 
 describe('resolveBundledSkillDir running from source', () => {
   test('reads the package source assets even when a build output is present', () => {
     expect(resolveBundledSkillDir('project')).toBe(join(PACKAGE, 'assets', 'skills', 'project'));
-    expect(listPackSkillSources('okf')[0]?.sourceDir).toBe(
-      join(PACKAGE, 'assets', 'skills', 'packs', 'okf'),
+    expect(listPackSkillSources('psf')[0]?.sourceDir).toBe(
+      join(PACKAGE, 'assets', 'skills', 'packs', 'psf'),
     );
   });
 
@@ -85,11 +85,11 @@ describe('bundledSkillCandidates', () => {
   test('the server build installed with the desktop app probes its build output first', () => {
     const server = ['app', 'node_modules', '@inkeep', 'open-knowledge-server'];
     expect(
-      bundledSkillCandidates('packs/okf', moduleAt(...server, 'dist', 'index.mjs'), {}),
+      bundledSkillCandidates('packs/psf', moduleAt(...server, 'dist', 'index.mjs'), {}),
     ).toEqual([
-      at(...server, 'dist', 'assets', 'skills', 'packs', 'okf'),
-      at(...server, 'assets', 'skills', 'packs', 'okf'),
-      at(...server, 'dist', 'assets', 'skills', 'packs', 'okf'),
+      at(...server, 'dist', 'assets', 'skills', 'packs', 'psf'),
+      at(...server, 'assets', 'skills', 'packs', 'psf'),
+      at(...server, 'dist', 'assets', 'skills', 'packs', 'psf'),
     ]);
   });
 

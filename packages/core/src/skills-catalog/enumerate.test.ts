@@ -37,7 +37,7 @@ function hashTree(root: string): string {
 let home: string;
 
 beforeAll(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-skills-catalog-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-skills-catalog-'));
 
   const pluginsDir = join(home, '.claude', 'plugins');
   const cache = join(pluginsDir, 'cache', 'inkeep-team-skills', 'eng');
@@ -194,7 +194,7 @@ describe('enumerateInstalledSkills', () => {
   });
 
   test('empty home → empty result', () => {
-    const empty = mkdtempSync(join(tmpdir(), 'ok-skills-empty-'));
+    const empty = mkdtempSync(join(tmpdir(), 'ps-skills-empty-'));
     try {
       expect(enumerateInstalledSkills({ home: empty })).toEqual({ skills: [], packs: [] });
     } finally {
@@ -204,7 +204,7 @@ describe('enumerateInstalledSkills', () => {
 });
 
 test('a broken harness home is skipped; sibling homes still enumerate', () => {
-  const h = mkdtempSync(join(tmpdir(), 'ok-degrade-'));
+  const h = mkdtempSync(join(tmpdir(), 'ps-degrade-'));
   mkdirSync(join(h, '.claude', 'plugins'), { recursive: true });
   writeFileSync(
     join(h, '.claude', 'plugins', 'installed_plugins.json'),
@@ -222,24 +222,24 @@ describe('enumerateInstalledSkills — projectDir (harness-symmetric project det
   let proj: string;
 
   beforeAll(() => {
-    emptyHome = mkdtempSync(join(tmpdir(), 'ok-skills-emptyhome-'));
-    proj = mkdtempSync(join(tmpdir(), 'ok-skills-proj-'));
+    emptyHome = mkdtempSync(join(tmpdir(), 'ps-skills-emptyhome-'));
+    proj = mkdtempSync(join(tmpdir(), 'ps-skills-proj-'));
     writeSkill(
       join(proj, '.codex', 'skills', 'proj-only'),
       'name: proj-only\ndescription: Codex-local',
     );
     writeSkill(join(proj, '.codex', 'skills', 'dup'), 'name: dup\ndescription: same');
     writeSkill(join(proj, '.claude', 'skills', 'dup'), 'name: dup\ndescription: same');
-    writeSkill(join(proj, '.ok', 'skills', 'mine'), 'name: mine\ndescription: OK-managed');
+    writeSkill(join(proj, '.ps', 'skills', 'mine'), 'name: mine\ndescription: OK-managed');
     mkdirSync(join(proj, '.claude', 'skills'), { recursive: true });
     symlinkSync(
-      join(proj, '.ok', 'skills', 'mine'),
+      join(proj, '.ps', 'skills', 'mine'),
       join(proj, '.claude', 'skills', 'mine'),
       'dir',
     );
     writeSkill(
-      join(proj, '.claude', 'skills', 'open-knowledge'),
-      'name: open-knowledge\ndescription: shipped bundle',
+      join(proj, '.claude', 'skills', 'palimpsest'),
+      'name: palimpsest\ndescription: shipped bundle',
     );
   });
 
@@ -264,11 +264,11 @@ describe('enumerateInstalledSkills — projectDir (harness-symmetric project det
     expect(rows[0]?.sourceHarnesses).toEqual(['claude', 'codex']);
   });
 
-  test('OK-owned projections (symlink into .ok/skills, reserved bundle name) are excluded', () => {
+  test('OK-owned projections (symlink into .ps/skills, reserved bundle name) are excluded', () => {
     const { skills } = enumerateInstalledSkills({ home: emptyHome, projectDir: proj });
     const names = skills.map((s) => s.name);
     expect(names).not.toContain('mine');
-    expect(names).not.toContain('open-knowledge');
+    expect(names).not.toContain('palimpsest');
   });
 
   test('without projectDir, no project harness skills surface', () => {
@@ -277,7 +277,7 @@ describe('enumerateInstalledSkills — projectDir (harness-symmetric project det
   });
 
   test('suffix-mismatched names do NOT dedup-collapse — they stay two distinct rows', () => {
-    const p = mkdtempSync(join(tmpdir(), 'ok-skills-suffix-'));
+    const p = mkdtempSync(join(tmpdir(), 'ps-skills-suffix-'));
     try {
       writeSkill(join(p, '.codex', 'skills', 'foo'), 'name: foo\ndescription: base');
       writeSkill(
@@ -294,7 +294,7 @@ describe('enumerateInstalledSkills — projectDir (harness-symmetric project det
   });
 
   test('same-scoped, same-named bundles with different bytes remain distinct forks', () => {
-    const p = mkdtempSync(join(tmpdir(), 'ok-skills-forks-'));
+    const p = mkdtempSync(join(tmpdir(), 'ps-skills-forks-'));
     try {
       writeSkill(join(p, '.codex', 'skills', 'fork'), 'name: fork\ndescription: codex', '# A');
       writeSkill(join(p, '.claude', 'skills', 'fork'), 'name: fork\ndescription: claude', '# B');
@@ -311,8 +311,8 @@ describe('enumerateInstalledSkills — projectDir (harness-symmetric project det
   });
 
   test('byte-identical project and global skills remain separate identities', () => {
-    const h = mkdtempSync(join(tmpdir(), 'ok-skills-scope-home-'));
-    const p = mkdtempSync(join(tmpdir(), 'ok-skills-scope-project-'));
+    const h = mkdtempSync(join(tmpdir(), 'ps-skills-scope-home-'));
+    const p = mkdtempSync(join(tmpdir(), 'ps-skills-scope-project-'));
     try {
       const frontmatter = 'name: scoped\ndescription: same bytes';
       writeSkill(join(h, '.codex', 'skills', 'scoped'), frontmatter);

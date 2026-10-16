@@ -54,7 +54,7 @@ for (const [kind, markdown] of [
     await page.goto(`/#/${docName}`);
     const child = page.locator(`${EDITOR} li`).filter({ hasText: /^Child$/ });
     await child.hover();
-    const grip = page.locator('.ok-drag-grip:visible');
+    const grip = page.locator('.ps-drag-grip:visible');
     await expect(grip).toBeVisible();
     const start = await child.boundingBox();
     const handle = await grip.boundingBox();
@@ -99,7 +99,7 @@ test('nested handle is dismissed after a document update and returns on hover', 
   await page.goto(`/#/${docName}`);
   const child = page.locator(`${EDITOR} li`).filter({ hasText: /^Child$/ });
   await child.hover();
-  const grip = page.locator('.ok-drag-grip:visible');
+  const grip = page.locator('.ps-drag-grip:visible');
   await expect(grip).toBeVisible();
   const before = await grip.boundingBox();
   if (!before) throw new Error('Nested handle must be visible');
@@ -127,7 +127,7 @@ test('handle appears again over the same item after cancelling a drag', async ({
   await page.goto(`/#/${docName}`);
   const item = page.locator(`${EDITOR} > ul > li`).first();
   await item.hover();
-  const grip = page.locator('.ok-drag-grip:visible');
+  const grip = page.locator('.ps-drag-grip:visible');
   await expect(grip).toBeVisible();
   const handle = await grip.boundingBox();
   const itemRect = await item.boundingBox();
@@ -161,7 +161,7 @@ test('list handles share a gutter outside bullets, numbers, and checkboxes', asy
     const items = list.locator(':scope > li');
     for (let itemIndex = 0; itemIndex < 2; itemIndex++) {
       await items.nth(itemIndex).hover();
-      const controls = page.locator('.ok-block-controls:visible');
+      const controls = page.locator('.ps-block-controls:visible');
       await expect(controls).toBeVisible();
       await expect
         .poll(async () => {
@@ -182,7 +182,7 @@ test('list handles share a gutter outside bullets, numbers, and checkboxes', asy
 
 async function dragItem(page: Page, item: Locator, target: Locator, edge: 'before' | 'after') {
   await item.hover();
-  const grip = page.locator('.ok-drag-grip:visible');
+  const grip = page.locator('.ps-drag-grip:visible');
   await expect(grip).toBeVisible();
   const start = await grip.boundingBox();
   const end = await target.boundingBox();
@@ -335,7 +335,7 @@ for (const [kind, ending] of [
     const menu = page.getByTestId('bubble-menu-bar');
     await expect(menu).toBeVisible();
     await blocks.nth(1).hover();
-    const grip = page.locator('.ok-drag-grip:visible');
+    const grip = page.locator('.ps-drag-grip:visible');
     await expect(grip).toBeVisible();
     const handle = await grip.boundingBox();
     const source = await blocks.nth(1).boundingBox();
@@ -383,7 +383,7 @@ test('drag a nested item independently and keep the plus control adding below th
   await expect(topItems.nth(0).locator('li')).toHaveText(['Sibling']);
   await topItems.nth(1).hover();
   await page.screenshot({ path: testInfo.outputPath('nested-list-drag.png') });
-  await page.locator('.ok-add-block-btn:visible').click();
+  await page.locator('.ps-add-block-btn:visible').click();
   await expect(topItems).toHaveCount(4);
   await expect(editor.locator(':scope > p').last()).toHaveText('/');
 });

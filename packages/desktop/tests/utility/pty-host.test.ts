@@ -1,12 +1,12 @@
 import { homedir } from 'node:os';
 
 import {
-  OK_DESKTOP_TERMINAL_ENV,
-  OK_HOSTED_AGENT_ENV,
+  PS_DESKTOP_TERMINAL_ENV,
+  PS_HOSTED_AGENT_ENV,
   posixOkManagedBinDir,
   shellSingleQuote,
-} from '@inkeep/open-knowledge-core';
-import { TERMINAL_SHELL_NOTICE_REASONS } from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core';
+import { TERMINAL_SHELL_NOTICE_REASONS } from '@palimpsest/core/desktop-bridge';
 import { describe, expect, test, vi } from 'vitest';
 
 vi.mock('node:os', async (importOriginal) => {
@@ -101,7 +101,7 @@ interface Harness {
   spawnCalls: Array<{ file: string; args: string[] | string; options: PtySpawnOptions }>;
   materializedSupportFiles: Array<{
     cwd: string;
-    file: NonNullable<import('@inkeep/open-knowledge-core').TerminalLaunchCommand['supportFile']>;
+    file: NonNullable<import('@palimpsest/core').TerminalLaunchCommand['supportFile']>;
   }>;
   handle: ReturnType<typeof setupPtyHost>;
 }
@@ -125,7 +125,7 @@ function makeHarness(opts?: {
   shutdownMs?: number;
   materializeSupportFile?: (
     cwd: string,
-    file: NonNullable<import('@inkeep/open-knowledge-core').TerminalLaunchCommand['supportFile']>,
+    file: NonNullable<import('@palimpsest/core').TerminalLaunchCommand['supportFile']>,
   ) => void;
 }): Harness {
   let handler: ((event: { data: unknown }) => void) | null = null;
@@ -335,46 +335,46 @@ describe('setupPtyHost — create', () => {
         SHELL: '/bin/zsh',
         PATH: '/usr/bin',
         HOME: '/Users/alice',
-        OK_ELECTRON_PROTOCOL_HOST: '1',
-        OK_LOCK_KIND: 'interactive',
-        [OK_HOSTED_AGENT_ENV]: '1',
+        PS_ELECTRON_PROTOCOL_HOST: '1',
+        PS_LOCK_KIND: 'interactive',
+        [PS_HOSTED_AGENT_ENV]: '1',
       },
     });
     h.fire(CREATE());
     const env = h.spawnCalls[0]?.options.env ?? {};
-    expect(env.OK_ELECTRON_PROTOCOL_HOST).toBeUndefined();
-    expect(env.OK_LOCK_KIND).toBeUndefined();
-    expect(env[OK_HOSTED_AGENT_ENV]).toBeUndefined();
-    expect(env.PATH).toBe('/Users/alice/.ok/bin:/usr/bin');
+    expect(env.PS_ELECTRON_PROTOCOL_HOST).toBeUndefined();
+    expect(env.PS_LOCK_KIND).toBeUndefined();
+    expect(env[PS_HOSTED_AGENT_ENV]).toBeUndefined();
+    expect(env.PATH).toBe('/Users/alice/.ps/bin:/usr/bin');
   });
 
-  test('marks the shell as the OK Desktop terminal (OK_DESKTOP_TERMINAL=1)', () => {
-    const h = makeHarness({ env: { SHELL: '/bin/zsh', [OK_DESKTOP_TERMINAL_ENV]: '' } });
+  test('marks the shell as the OK Desktop terminal (PS_DESKTOP_TERMINAL=1)', () => {
+    const h = makeHarness({ env: { SHELL: '/bin/zsh', [PS_DESKTOP_TERMINAL_ENV]: '' } });
     h.fire(CREATE());
     const env = h.spawnCalls[0]?.options.env ?? {};
-    expect(env[OK_DESKTOP_TERMINAL_ENV]).toBe('1');
+    expect(env[PS_DESKTOP_TERMINAL_ENV]).toBe('1');
   });
 
-  test('prepends ~/.ok/bin to the child PATH so `ok` resolves regardless of rc consent', () => {
+  test('prepends ~/.ps/bin to the child PATH so `ok` resolves regardless of rc consent', () => {
     const h = makeHarness({
       env: { SHELL: '/bin/zsh', PATH: '/usr/bin:/bin', HOME: '/Users/alice' },
     });
     h.fire(CREATE());
     const env = h.spawnCalls[0]?.options.env ?? {};
-    expect(env.PATH).toBe('/Users/alice/.ok/bin:/usr/bin:/bin');
+    expect(env.PATH).toBe('/Users/alice/.ps/bin:/usr/bin:/bin');
   });
 
-  test('does not duplicate ~/.ok/bin when the parent PATH already carries it', () => {
+  test('does not duplicate ~/.ps/bin when the parent PATH already carries it', () => {
     const h = makeHarness({
       env: {
         SHELL: '/bin/zsh',
-        PATH: '/opt/x:/Users/alice/.ok/bin:/usr/bin',
+        PATH: '/opt/x:/Users/alice/.ps/bin:/usr/bin',
         HOME: '/Users/alice',
       },
     });
     h.fire(CREATE());
     const env = h.spawnCalls[0]?.options.env ?? {};
-    expect(env.PATH).toBe('/opt/x:/Users/alice/.ok/bin:/usr/bin');
+    expect(env.PATH).toBe('/opt/x:/Users/alice/.ps/bin:/usr/bin');
   });
 
   test('falls back to the home the CLI installer used when the env carries no HOME', () => {
@@ -2021,9 +2021,9 @@ describe('setupPtyHost — incoming message validation (asIncomingMessage guard)
       '-l',
       '-i',
       '-c',
-      `case ":$PATH:" in *:'${managedBinDir}':*) ;; *) PATH='${managedBinDir}'"\${PATH:+:$PATH}" ;; esac; case ":$PATH:" in *:'/rt/bin':*) ;; *) PATH='/rt/bin'"\${PATH:+:$PATH}" ;; esac; export PATH; (export AUGGIE_LOGIN_FLOW="$OK_TERMINAL_LAUNCH_ENV_0"; exec '/rt/bin/npx' '-y' '@augmentcode/auggie@1.2.3' '--acp' 'login'); unset OK_TERMINAL_LAUNCH_ENV_0; exec '/bin/zsh' -l -i`,
+      `case ":$PATH:" in *:'${managedBinDir}':*) ;; *) PATH='${managedBinDir}'"\${PATH:+:$PATH}" ;; esac; case ":$PATH:" in *:'/rt/bin':*) ;; *) PATH='/rt/bin'"\${PATH:+:$PATH}" ;; esac; export PATH; (export AUGGIE_LOGIN_FLOW="$PS_TERMINAL_LAUNCH_ENV_0"; exec '/rt/bin/npx' '-y' '@augmentcode/auggie@1.2.3' '--acp' 'login'); unset PS_TERMINAL_LAUNCH_ENV_0; exec '/bin/zsh' -l -i`,
     ]);
-    expect(h.spawnCalls[0]?.options.env?.OK_TERMINAL_LAUNCH_ENV_0).toBe('terminal');
+    expect(h.spawnCalls[0]?.options.env?.PS_TERMINAL_LAUNCH_ENV_0).toBe('terminal');
     expect(h.spawnCalls[0]?.options.env).not.toHaveProperty('AUGGIE_LOGIN_FLOW');
     expect(h.spawnCalls[0]?.args).not.toContain('terminal');
     expect(h.spawnCalls[0]?.options.env?.PATH).not.toContain('/rt/bin');
@@ -2056,7 +2056,7 @@ describe('setupPtyHost — incoming message validation (asIncomingMessage guard)
       launchCommand: {
         executable: 'agent',
         args: ['login'],
-        env: { OK_TERMINAL_LAUNCH_ENV_0: 'the slot the launch itself uses' },
+        env: { PS_TERMINAL_LAUNCH_ENV_0: 'the slot the launch itself uses' },
       },
     });
     h.fireRaw({
@@ -2112,8 +2112,8 @@ describe('setupPtyHost — incoming message validation (asIncomingMessage guard)
     });
     const supportFile = {
       kind: 'claude-settings' as const,
-      relativePath: '.ok/local/terminal/claude-settings-mcp-tools.json',
-      contents: '{"enabledMcpjsonServers":["open-knowledge"]}',
+      relativePath: '.ps/local/terminal/claude-settings-mcp-tools.json',
+      contents: '{"enabledMcpjsonServers":["palimpsest"]}',
     };
     h.fireRaw({
       type: 'create',
@@ -2130,7 +2130,7 @@ describe('setupPtyHost — incoming message validation (asIncomingMessage guard)
 
     expect(h.materializedSupportFiles).toEqual([{ cwd: 'C:\\project', file: supportFile }]);
     expect(h.spawnCalls[0]?.args).toBe(
-      '/K claude --settings .ok/local/terminal/claude-settings-mcp-tools.json',
+      '/K claude --settings .ps/local/terminal/claude-settings-mcp-tools.json',
     );
   });
 
@@ -2155,11 +2155,11 @@ describe('setupPtyHost — incoming message validation (asIncomingMessage guard)
       rows: 24,
       launchCommand: {
         executable: 'claude',
-        args: ['--settings', '.ok/local/terminal/claude-settings-mcp-tools.json'],
+        args: ['--settings', '.ps/local/terminal/claude-settings-mcp-tools.json'],
         supportFile: {
           kind: 'claude-settings',
-          relativePath: '.ok/local/terminal/claude-settings-mcp-tools.json',
-          contents: '{"enabledMcpjsonServers":["open-knowledge"]}',
+          relativePath: '.ps/local/terminal/claude-settings-mcp-tools.json',
+          contents: '{"enabledMcpjsonServers":["palimpsest"]}',
         },
       },
     });
@@ -2340,15 +2340,15 @@ describe('buildShellArgs', () => {
     if (!call) throw new Error('no spawn');
     const script = call.args[3] ?? '';
     expect(script).toContain(
-      `(export ZDOTDIR="$OK_TERMINAL_LAUNCH_ENV_0" AUGGIE_HOME="$OK_TERMINAL_LAUNCH_ENV_1"; exec agent 'login'); unset OK_TERMINAL_LAUNCH_ENV_0 OK_TERMINAL_LAUNCH_ENV_1; exec`,
+      `(export ZDOTDIR="$PS_TERMINAL_LAUNCH_ENV_0" AUGGIE_HOME="$PS_TERMINAL_LAUNCH_ENV_1"; exec agent 'login'); unset PS_TERMINAL_LAUNCH_ENV_0 PS_TERMINAL_LAUNCH_ENV_1; exec`,
     );
-    const pairs = [...script.matchAll(/(\w+)="\$(OK_TERMINAL_LAUNCH_ENV_\d+)"/g)].map((match) => [
+    const pairs = [...script.matchAll(/(\w+)="\$(PS_TERMINAL_LAUNCH_ENV_\d+)"/g)].map((match) => [
       match[1] ?? '',
       match[2] ?? '',
     ]);
     expect(pairs).toEqual([
-      ['ZDOTDIR', 'OK_TERMINAL_LAUNCH_ENV_0'],
-      ['AUGGIE_HOME', 'OK_TERMINAL_LAUNCH_ENV_1'],
+      ['ZDOTDIR', 'PS_TERMINAL_LAUNCH_ENV_0'],
+      ['AUGGIE_HOME', 'PS_TERMINAL_LAUNCH_ENV_1'],
     ]);
     for (const [name, slot] of pairs) {
       expect(call.options.env?.[slot]).toBe(env[name as keyof typeof env]);
@@ -2367,7 +2367,7 @@ describe('buildShellArgs', () => {
     ).toEqual([
       '-i',
       '-c',
-      `begin; set -lx A "$OK_TERMINAL_LAUNCH_ENV_0"; agent 'it\\\\\\'s' 'trailing\\\\'; end; set -e OK_TERMINAL_LAUNCH_ENV_0; exec '/usr/bin/fish' -i`,
+      `begin; set -lx A "$PS_TERMINAL_LAUNCH_ENV_0"; agent 'it\\\\\\'s' 'trailing\\\\'; end; set -e PS_TERMINAL_LAUNCH_ENV_0; exec '/usr/bin/fish' -i`,
     ]);
   });
 
@@ -2434,8 +2434,8 @@ describe('buildShellEnv', () => {
     const { env } = buildShellEnv({
       PATH: '/usr/bin',
       HOME: '/Users/x',
-      OK_ELECTRON_PROTOCOL_HOST: '1',
-      OK_LOCK_KIND: 'interactive',
+      PS_ELECTRON_PROTOCOL_HOST: '1',
+      PS_LOCK_KIND: 'interactive',
       ELECTRON_RUN_AS_NODE: '1',
       GDK_PIXBUF_MODULEDIR: '/app/lib/gdk-pixbuf',
       GDK_PIXBUF_MODULE_FILE: '/app/lib/loaders.cache',
@@ -2444,11 +2444,11 @@ describe('buildShellEnv', () => {
       MAYBE: undefined,
     });
     expect(env).toEqual({
-      PATH: '/Users/x/.ok/bin:/usr/bin',
+      PATH: '/Users/x/.ps/bin:/usr/bin',
       HOME: '/Users/x',
       ELECTRON_TRASH: 'gio',
       GDK_THEME: 'Adwaita',
-      [OK_DESKTOP_TERMINAL_ENV]: '1',
+      [PS_DESKTOP_TERMINAL_ENV]: '1',
     });
   });
 
@@ -2458,14 +2458,14 @@ describe('buildShellEnv', () => {
         Path: 'C:\\Windows\\System32;C:\\Tools',
         HOME: 'C:\\Users\\alice',
       },
-      { platform: 'win32', cliBinDir: 'C:\\Program Files\\Open Knowledge\\resources\\cli\\bin' },
+      { platform: 'win32', cliBinDir: 'C:\\Program Files\\Palimpsest\\resources\\cli\\bin' },
     );
 
     expect(env.Path).toBe(
-      'C:\\Program Files\\Open Knowledge\\resources\\cli\\bin;C:\\Windows\\System32;C:\\Tools',
+      'C:\\Program Files\\Palimpsest\\resources\\cli\\bin;C:\\Windows\\System32;C:\\Tools',
     );
     expect(env.PATH).toBeUndefined();
-    expect(env.Path).not.toContain('.ok\\bin');
+    expect(env.Path).not.toContain('.ps\\bin');
   });
 });
 
@@ -2807,7 +2807,7 @@ describe('buildShellArgs Windows launch composition', () => {
     const launchTokens = [
       'codex',
       '-c',
-      'mcp_servers.open-knowledge.default_tools_approval_mode=approve',
+      'mcp_servers.palimpsest.default_tools_approval_mode=approve',
       "apostrophe'and space",
     ];
     const args = buildShellArgs(
@@ -2861,11 +2861,11 @@ describe('buildShellArgs Windows launch composition', () => {
         shell: 'C:\\Tools\\fish.exe',
         launchCommand: {
           executable: 'claude',
-          args: ['--settings', '.ok/local/terminal/claude-settings-mcp-tools.json'],
+          args: ['--settings', '.ps/local/terminal/claude-settings-mcp-tools.json'],
           supportFile: {
             kind: 'claude-settings',
-            relativePath: '.ok/local/terminal/claude-settings-mcp-tools.json',
-            contents: '{"enabledMcpjsonServers":["open-knowledge"]}',
+            relativePath: '.ps/local/terminal/claude-settings-mcp-tools.json',
+            contents: '{"enabledMcpjsonServers":["palimpsest"]}',
           },
         },
       }),
@@ -3144,7 +3144,7 @@ describe('buildLaunchEnv', () => {
         { PATH: '/usr/bin', A: '1' },
         { executable: 'x', args: [], env: { B: '2' }, pathPrepend: ['/rt/bin'] },
       ),
-    ).toEqual({ PATH: '/usr/bin', A: '1', OK_TERMINAL_LAUNCH_ENV_0: '2' });
+    ).toEqual({ PATH: '/usr/bin', A: '1', PS_TERMINAL_LAUNCH_ENV_0: '2' });
   });
 
   test("a method env name never reaches the shell's startup environment", () => {
@@ -3160,9 +3160,9 @@ describe('buildLaunchEnv', () => {
     expect(env).toEqual({
       PATH: '/usr/bin',
       HOME: '/Users/me',
-      OK_TERMINAL_LAUNCH_ENV_0: '/tmp/agent-owned',
-      OK_TERMINAL_LAUNCH_ENV_1: '/tmp/agent-owned',
-      OK_TERMINAL_LAUNCH_ENV_2: '/tmp/x.sh',
+      PS_TERMINAL_LAUNCH_ENV_0: '/tmp/agent-owned',
+      PS_TERMINAL_LAUNCH_ENV_1: '/tmp/agent-owned',
+      PS_TERMINAL_LAUNCH_ENV_2: '/tmp/x.sh',
     });
     expect(env).not.toHaveProperty('ZDOTDIR');
     expect(env).not.toHaveProperty('BASH_ENV');

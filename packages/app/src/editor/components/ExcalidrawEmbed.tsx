@@ -1,4 +1,4 @@
-import { isExcalidrawDocFile } from '@inkeep/open-knowledge-core/constants/upload';
+import { isExcalidrawDocFile } from '@palimpsest/core/constants/upload';
 import { Trans, useLingui } from '@lingui/react/macro';
 import type { PanzoomObject } from '@panzoom/panzoom';
 import { AlertTriangle, ExternalLink } from 'lucide-react';

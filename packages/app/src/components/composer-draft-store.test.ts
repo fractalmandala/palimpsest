@@ -9,7 +9,7 @@ import {
   subscribeComposerDraft,
 } from './composer-draft-store';
 
-const DRAFT_KEY = 'ok-ask-ai-draft-v2';
+const DRAFT_KEY = 'ps-ask-ai-draft-v2';
 
 function doc(...inline: JSONContent[]): JSONContent {
   return { type: 'doc', content: [{ type: 'paragraph', content: inline }] };

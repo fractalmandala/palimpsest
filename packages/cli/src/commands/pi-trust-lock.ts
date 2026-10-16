@@ -1,6 +1,6 @@
 import { dirname } from 'node:path';
 import { setTimeout } from 'node:timers/promises';
-import { withFileLock, withFileLockSync } from '@inkeep/open-knowledge-core/server';
+import { withFileLock, withFileLockSync } from '@palimpsest/core/server';
 import lockfile from 'proper-lockfile';
 import { getCliLogger } from '../cli-logger.ts';
 

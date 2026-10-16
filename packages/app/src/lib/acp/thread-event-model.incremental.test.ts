@@ -1,4 +1,4 @@
-import type { SessionUpdate, ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { SessionUpdate, ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test } from 'vitest';
 import { buildThreadRenderModel, ThreadRenderModelBuilder } from './thread-event-model';
 

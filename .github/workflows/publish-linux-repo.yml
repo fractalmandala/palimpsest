@@ -1,6 +1,6 @@
 # Publish the Linux apt + rpm repository for one channel.
 #
-# Runs ON THE MIRROR (inkeep/open-knowledge) like the other release
+# Runs ON THE MIRROR (fractalmandala/palimpsest) like the other release
 # workflows — dispatch it there, not on agents-private. It downloads the
 # .deb/.rpm assets from the given GitHub Release, generates a signed
 # repository tree (scripts/linux-repo/publish-linux-repo.sh — stateless,
@@ -16,7 +16,7 @@
 #   LINUX_REPO_R2_ACCESS_KEY_ID / LINUX_REPO_R2_SECRET_ACCESS_KEY
 #   LINUX_REPO_R2_ENDPOINT      https://<account-id>.r2.cloudflarestorage.com
 # Variables:
-#   LINUX_REPO_BUCKET           bucket name (e.g. ok-packages)
+#   LINUX_REPO_BUCKET           bucket name (e.g. ps-packages)
 
 name: publish-linux-repo
 
@@ -156,7 +156,7 @@ jobs:
             sync --delete "/tmp/repo/rpm/$CHANNEL" "s3://$BUCKET/rpm/$CHANNEL"
           fi
           # Public keys: tiny, immutable in practice, never --delete.
-          [ -f /tmp/repo/apt/openknowledge.gpg ] && sync /tmp/repo/apt "s3://$BUCKET/apt" --exclude 'dists/*' --exclude 'pool/*'
+          [ -f /tmp/repo/apt/palimpsest.gpg ] && sync /tmp/repo/apt "s3://$BUCKET/apt" --exclude 'dists/*' --exclude 'pool/*'
           [ -f /tmp/repo/rpm/key.asc ] && aws s3 cp --endpoint-url "$ENDPOINT" /tmp/repo/rpm/key.asc "s3://$BUCKET/rpm/key.asc"
           echo "published channel=$CHANNEL from tag=$TAG"
 
@@ -169,7 +169,7 @@ jobs:
         if: ${{ !inputs.dry_run }}
         run: |
           set -euo pipefail
-          base="https://packages.openknowledge.ai"
+          base="https://__PALIMPSEST_PACKAGES_HOST__"
           if [ -d "/tmp/repo/apt/dists/$CHANNEL" ]; then
             curl -fsSL --retry 5 --retry-delay 3 "$base/apt/dists/$CHANNEL/InRelease" -o /tmp/live-inrelease
             gpg --batch --verify /tmp/live-inrelease

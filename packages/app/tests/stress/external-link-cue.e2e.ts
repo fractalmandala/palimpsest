@@ -59,7 +59,7 @@ test('a remote caret inside an external link does not duplicate the external-lin
     {
       name: docName,
       markdown:
-        '# Cue\n\nTicket list: [Open Knowledge Burn Down](https://linear.app/burn-down).\n\nChips [[https://a.example.com|Alpha]][[https://b.example.com|Beta]] touch.\n',
+        '# Cue\n\nTicket list: [Palimpsest Burn Down](https://linear.app/burn-down).\n\nChips [[https://a.example.com|Alpha]][[https://b.example.com|Beta]] touch.\n',
     },
   ]);
 
@@ -69,7 +69,7 @@ test('a remote caret inside an external link does not duplicate the external-lin
   await Promise.all([waitForActiveProviderSynced(page), waitForActiveProviderSynced(editorTab)]);
   await expect(
     page.locator('.ProseMirror [data-link] [data-resolution-state="external"]'),
-  ).toHaveText('Open Knowledge Burn Down');
+  ).toHaveText('Palimpsest Burn Down');
 
   await expect
     .poll(

@@ -22,8 +22,8 @@ import {
   getWipRefPattern,
   gitAuthorWriterId,
   MalformedGitPointerError,
-  OK_GENERATOR_WRITER_ID,
-  type OkActorEntry,
+  PS_GENERATOR_WRITER_ID,
+  type PsActorEntry,
   parseCheckpoint,
   parseContributors,
   parseOkActor,
@@ -38,7 +38,7 @@ import {
 let tmp: string;
 
 beforeEach(async () => {
-  tmp = await mkdtemp(resolve(tmpdir(), 'ok-shadow-layout-test-'));
+  tmp = await mkdtemp(resolve(tmpdir(), 'ps-shadow-layout-test-'));
 });
 
 afterEach(async () => {
@@ -64,8 +64,8 @@ describe('parseContributors', () => {
   test('parses multiple contributor lines', () => {
     const body = [
       '',
-      'ok-contributors: {"id":"agent-a","name":"Alice","docs":["a"]}',
-      'ok-contributors: {"id":"agent-b","name":"Bob","docs":["b","c"]}',
+      'ps-contributors: {"id":"agent-a","name":"Alice","docs":["a"]}',
+      'ps-contributors: {"id":"agent-b","name":"Bob","docs":["b","c"]}',
     ].join('\n');
     const result = parseContributors(body);
     expect(result).toHaveLength(2);
@@ -216,14 +216,14 @@ describe('parseWriterId (D34 taxonomy)', () => {
     expect(p.isAgent).toBe(null);
   });
 
-  test('"ok-generator" → classified-ok-generator, isAgent null', () => {
-    const p = parseWriterId(OK_GENERATOR_WRITER_ID);
+  test('"ps-generator" → classified-ok-generator, isAgent null', () => {
+    const p = parseWriterId(PS_GENERATOR_WRITER_ID);
     expect(p.classification).toBe('classified-ok-generator');
     expect(p.isAgent).toBe(null);
   });
 
   test('the generator writer id is classified, never "unknown"', () => {
-    expect(parseWriterId(OK_GENERATOR_WRITER_ID).classification).not.toBe('unknown');
+    expect(parseWriterId(PS_GENERATOR_WRITER_ID).classification).not.toBe('unknown');
   });
 
   test('gitAuthorWriterId is stable per email and case/space-insensitive', () => {
@@ -504,7 +504,7 @@ describe('resolveShadowDir', () => {
     mkdirSync(adminDir, { recursive: true });
     writeFileSync(resolve(adminDir, 'HEAD'), 'ref: refs/heads/main\n');
     writeFileSync(resolve(repo, '.git'), `gitdir: ${adminDir}\n`);
-    expect(resolveShadowDir(sub)).toBe(resolve(adminDir, 'ok-docs'));
+    expect(resolveShadowDir(sub)).toBe(resolve(adminDir, 'ps-docs'));
   });
 
   test('subfolder that already has its own .git wins over ancestor walk-up (precedence)', () => {
@@ -571,7 +571,7 @@ describe('resolveShadowDir sub-path keys are injective', () => {
     writeFileSync(resolve(dir, 'HEAD'), 'ref: refs/heads/main\n');
     writeFileSync(
       resolve(dir, 'config'),
-      `[core]\n\trepositoryformatversion = 0\n\tworktree = ${worktree}\n[user]\n\tname = openknowledge\n`,
+      `[core]\n\trepositoryformatversion = 0\n\tworktree = ${worktree}\n[user]\n\tname = palimpsest\n`,
     );
   }
 
@@ -602,12 +602,12 @@ describe('resolveShadowDir sub-path keys are injective', () => {
   });
 
   test('ASCII-safe sub-paths keep the exact key they had before', () => {
-    const repo = makeRepo('my-notes_v2.0', 'public/open-knowledge');
+    const repo = makeRepo('my-notes_v2.0', 'public/palimpsest');
     expect(resolveShadowDir(resolve(repo, 'my-notes_v2.0'))).toBe(
       resolve(repo, '.git/ok-my-notes_v2.0'),
     );
-    expect(resolveShadowDir(resolve(repo, 'public/open-knowledge'))).toBe(
-      resolve(repo, '.git/ok-public-open-knowledge'),
+    expect(resolveShadowDir(resolve(repo, 'public/palimpsest'))).toBe(
+      resolve(repo, '.git/ok-public-palimpsest'),
     );
   });
 
@@ -696,17 +696,17 @@ describe('getShadowRepoPath', () => {
     expect(getShadowRepoPath(project)).toBe(resolve(project, '.git/ok'));
   });
 
-  test('never returns legacy .git/openknowledge/ path (single-mode layout)', () => {
+  test('never returns legacy .git/palimpsest/ path (single-mode layout)', () => {
     const project = resolve(tmp, 'project');
-    mkdirSync(resolve(project, '.git/openknowledge'), { recursive: true });
-    writeFileSync(resolve(project, '.git/openknowledge/HEAD'), 'ref: refs/heads/main\n');
+    mkdirSync(resolve(project, '.git/palimpsest'), { recursive: true });
+    writeFileSync(resolve(project, '.git/palimpsest/HEAD'), 'ref: refs/heads/main\n');
     expect(getShadowRepoPath(project)).toBe(null);
   });
 
-  test('never returns .openknowledge/ (standalone path deleted)', () => {
+  test('never returns .palimpsest/ (standalone path deleted)', () => {
     const project = resolve(tmp, 'project');
-    mkdirSync(resolve(project, '.openknowledge'), { recursive: true });
-    writeFileSync(resolve(project, '.openknowledge/HEAD'), 'ref: refs/heads/main\n');
+    mkdirSync(resolve(project, '.palimpsest'), { recursive: true });
+    writeFileSync(resolve(project, '.palimpsest/HEAD'), 'ref: refs/heads/main\n');
     expect(getShadowRepoPath(project)).toBe(null);
   });
 
@@ -852,7 +852,7 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
 
   test('backward-compat: pre-enrichment body without docName/size returns nulls', () => {
     const legacyLine =
-      'ok-checkpoint-v1: {"kind":"external-change-rescue","metadata":{"incomingDiskSha":"abc"}}';
+      'ps-checkpoint-v1: {"kind":"external-change-rescue","metadata":{"incomingDiskSha":"abc"}}';
     const body = `checkpoint: Legacy\n\n${legacyLine}`;
     const parsed = parseCheckpoint(body);
     expect(parsed?.kind).toBe('external-change-rescue');
@@ -866,7 +866,7 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
     expect(parseCheckpoint('')).toBe(null);
   });
 
-  test('returns null for body without the ok-checkpoint-v1 prefix', () => {
+  test('returns null for body without the ps-checkpoint-v1 prefix', () => {
     expect(parseCheckpoint('checkpoint: Save Version\n\nok-contributors: {...}')).toBe(null);
   });
 
@@ -886,13 +886,13 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
     ).toBe(null);
   });
 
-  test('parseContributors tolerates sibling ok-checkpoint-v1 lines (Q7)', () => {
+  test('parseContributors tolerates sibling ps-checkpoint-v1 lines (Q7)', () => {
     const body = [
       'checkpoint: some label',
       '',
-      'ok-contributors: {"id":"human-a","name":"Alice","docs":["a.md"]}',
-      'ok-checkpoint-v1: {"kind":"bridge-merge-loss","docName":"x.md","size":10,"metadata":{"lostSubstrings":["x"]}}',
-      'ok-contributors: {"id":"human-b","name":"Bob","docs":["b.md"]}',
+      'ps-contributors: {"id":"human-a","name":"Alice","docs":["a.md"]}',
+      'ps-checkpoint-v1: {"kind":"bridge-merge-loss","docName":"x.md","size":10,"metadata":{"lostSubstrings":["x"]}}',
+      'ps-contributors: {"id":"human-b","name":"Bob","docs":["b.md"]}',
     ].join('\n');
 
     const contributors = parseContributors(body);
@@ -948,8 +948,8 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
       size: null,
       metadata: { foldedRefs: 2, trigger: 'boot' },
     });
-    expect(line.startsWith('ok-checkpoint-v1: ')).toBe(true);
-    expect(JSON.parse(line.slice('ok-checkpoint-v1: '.length)).kind).toBe('auto-consolidation');
+    expect(line.startsWith('ps-checkpoint-v1: ')).toBe(true);
+    expect(JSON.parse(line.slice('ps-checkpoint-v1: '.length)).kind).toBe('auto-consolidation');
   });
 });
 
@@ -973,7 +973,7 @@ describe('formatWipSubject', () => {
 });
 
 describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
-  const baseEntry: OkActorEntry = {
+  const baseEntry: PsActorEntry = {
     v: 1,
     writer_id: 'agent-conn-abc123',
     principal: null,
@@ -987,7 +987,7 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
     docs: ['notes.md', 'ideas.md'],
   };
 
-  test('round-trips a full OkActorEntry', () => {
+  test('round-trips a full PsActorEntry', () => {
     const line = formatOkActor(baseEntry);
     const body = `wip: notes.md\n\n${line}`;
     const parsed = parseOkActor(body);
@@ -1004,7 +1004,7 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
   });
 
   test('round-trips an entry with all nullable fields null', () => {
-    const sparse: OkActorEntry = {
+    const sparse: PsActorEntry = {
       v: 1,
       writer_id: 'openknowledge-service',
       principal: null,
@@ -1013,7 +1013,7 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
       client_name: null,
       client_version: null,
       label: null,
-      display_name: 'OpenKnowledge (service)',
+      display_name: 'Palimpsest (service)',
       color_seed: 'openknowledge-service',
       docs: [],
     };
@@ -1029,35 +1029,35 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
     expect(parseOkActor('')).toBeNull();
   });
 
-  test('returns null when ok-actor: line is absent', () => {
+  test('returns null when ps-actor: line is absent', () => {
     expect(parseOkActor('wip: auto-save\n\nok-contributors: {...}')).toBeNull();
   });
 
   test('returns null for malformed JSON', () => {
-    expect(parseOkActor('ok-actor: {not json')).toBeNull();
+    expect(parseOkActor('ps-actor: {not json')).toBeNull();
   });
 
   test('rejects v:0 (schema version must be 1)', () => {
-    const line = 'ok-actor: {"v":0,"display_name":"X","docs":[]}';
+    const line = 'ps-actor: {"v":0,"display_name":"X","docs":[]}';
     expect(parseOkActor(line)).toBeNull();
   });
 
   test('rejects missing display_name', () => {
-    const line = 'ok-actor: {"v":1,"docs":[]}';
+    const line = 'ps-actor: {"v":1,"docs":[]}';
     expect(parseOkActor(line)).toBeNull();
   });
 
   test('rejects missing docs array', () => {
-    const line = 'ok-actor: {"v":1,"display_name":"X"}';
+    const line = 'ps-actor: {"v":1,"display_name":"X"}';
     expect(parseOkActor(line)).toBeNull();
   });
 
-  test('tolerates sibling ok-contributors: and ok-checkpoint-v1: lines (coexistence)', () => {
+  test('tolerates sibling ps-contributors: and ps-checkpoint-v1: lines (coexistence)', () => {
     const actorLine = formatOkActor(baseEntry);
     const body = [
       'wip: notes.md',
       '',
-      'ok-contributors: {"v":1,"id":"agent-abc","name":"Claude","docs":["notes.md"]}',
+      'ps-contributors: {"v":1,"id":"agent-abc","name":"Claude","docs":["notes.md"]}',
       actorLine,
     ].join('\n');
     const parsed = parseOkActor(body);
@@ -1068,15 +1068,15 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
   });
 
   test('color_seed defaults to "unknown" when missing in stored JSON', () => {
-    const line = 'ok-actor: {"v":1,"display_name":"X","docs":[]}';
+    const line = 'ps-actor: {"v":1,"display_name":"X","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.color_seed).toBe('unknown');
   });
 });
 
-describe('OkActorEntry writer_id field + derivation back-compat', () => {
+describe('PsActorEntry writer_id field + derivation back-compat', () => {
   test('formatOkActor emits writer_id inline', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-abc123',
       principal: null,
@@ -1095,47 +1095,47 @@ describe('OkActorEntry writer_id field + derivation back-compat', () => {
 
   test('parseOkActor derives writer_id from agent_session when missing (pre-consolidation commit back-compat)', () => {
     const line =
-      'ok-actor: {"v":1,"principal":null,"agent_session":"old-conn","display_name":"Claude","docs":[]}';
+      'ps-actor: {"v":1,"principal":null,"agent_session":"old-conn","display_name":"Claude","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.writer_id).toBe('agent-old-conn');
   });
 
   test('parseOkActor derives writer_id from principal when agent_session is null', () => {
     const line =
-      'ok-actor: {"v":1,"principal":"principal-alice-uuid","agent_session":null,"display_name":"Alice","docs":[]}';
+      'ps-actor: {"v":1,"principal":"principal-alice-uuid","agent_session":null,"display_name":"Alice","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.writer_id).toBe('principal-alice-uuid');
   });
 
   test('parseOkActor derives writer_id from display_name for classified writers (file-system)', () => {
-    const line = 'ok-actor: {"v":1,"display_name":"File System","docs":[]}';
+    const line = 'ps-actor: {"v":1,"display_name":"File System","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.writer_id).toBe('file-system');
   });
 
   test('parseOkActor derives writer_id from display_name for classified writers (git-upstream)', () => {
-    const line = 'ok-actor: {"v":1,"display_name":"Git (upstream)","docs":[]}';
+    const line = 'ps-actor: {"v":1,"display_name":"Git (upstream)","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.writer_id).toBe('git-upstream');
   });
 
   test('parseOkActor falls back to openknowledge-service for unknown classified display_name', () => {
-    const line = 'ok-actor: {"v":1,"display_name":"OpenKnowledge (service)","docs":[]}';
+    const line = 'ps-actor: {"v":1,"display_name":"Palimpsest (service)","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.writer_id).toBe('openknowledge-service');
   });
 
   test('explicit writer_id in stored JSON wins over any derivation', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"custom-writer","principal":"principal-ignored","display_name":"X","docs":[]}';
+      'ps-actor: {"v":1,"writer_id":"custom-writer","principal":"principal-ignored","display_name":"X","docs":[]}';
     const parsed = parseOkActor(line);
     expect(parsed?.writer_id).toBe('custom-writer');
   });
 });
 
-describe('OkActorEntry summaries field (consolidated from ok-contributors:)', () => {
+describe('PsActorEntry summaries field (consolidated from ps-contributors:)', () => {
   test('formatOkActor elides summaries when empty/absent (legacy byte-identity)', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
       principal: null,
@@ -1152,7 +1152,7 @@ describe('OkActorEntry summaries field (consolidated from ok-contributors:)', ()
   });
 
   test('formatOkActor elides summaries when explicitly empty array', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
       principal: null,
@@ -1170,7 +1170,7 @@ describe('OkActorEntry summaries field (consolidated from ok-contributors:)', ()
   });
 
   test('formatOkActor includes summaries when populated', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
       principal: null,
@@ -1189,7 +1189,7 @@ describe('OkActorEntry summaries field (consolidated from ok-contributors:)', ()
   });
 
   test('parseOkActor round-trips summaries', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
       principal: null,
@@ -1209,7 +1209,7 @@ describe('OkActorEntry summaries field (consolidated from ok-contributors:)', ()
 
   test('parseOkActor drops summaries field when malformed (D27 divergence — keep entry)', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"summaries":"not-an-array"}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"summaries":"not-an-array"}';
     const parsed = parseOkActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.writer_id).toBe('agent-a');
@@ -1218,14 +1218,14 @@ describe('OkActorEntry summaries field (consolidated from ok-contributors:)', ()
 
   test('parseOkActor drops summaries field when array has non-string element', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"summaries":["ok",42,"also-ok"]}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"summaries":["ok",42,"also-ok"]}';
     const parsed = parseOkActor(line);
     expect(parsed?.summaries).toBeUndefined();
   });
 });
 
-describe('OkActorEntry previous_paths field (timeline rename-history mitigation)', () => {
-  const baseEntry: OkActorEntry = {
+describe('PsActorEntry previous_paths field (timeline rename-history mitigation)', () => {
+  const baseEntry: PsActorEntry = {
     v: 1,
     writer_id: 'agent-a',
     principal: null,
@@ -1244,12 +1244,12 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
   });
 
   test('formatOkActor elides previous_paths when explicitly empty array', () => {
-    const entry: OkActorEntry = { ...baseEntry, previous_paths: [] };
+    const entry: PsActorEntry = { ...baseEntry, previous_paths: [] };
     expect(formatOkActor(entry)).not.toContain('previous_paths');
   });
 
   test('formatOkActor includes previous_paths when populated', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       ...baseEntry,
       previous_paths: [{ from: 'articles/auth', to: 'essays/auth' }],
     };
@@ -1258,7 +1258,7 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
   });
 
   test('formatOkActor includes previous_paths after summaries when both present', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       ...baseEntry,
       summaries: ['rename'],
       previous_paths: [{ from: 'articles/auth', to: 'essays/auth' }],
@@ -1271,7 +1271,7 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
   });
 
   test('parseOkActor round-trips previous_paths chain', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       ...baseEntry,
       previous_paths: [
         { from: 'articles/auth', to: 'docs/auth' },
@@ -1286,9 +1286,9 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
     ]);
   });
 
-  test('legacy ok-actor body (no previous_paths field) parses with previous_paths undefined', () => {
+  test('legacy ps-actor body (no previous_paths field) parses with previous_paths undefined', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","principal":null,"agent_session":"a","agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Claude","color_seed":"claude","docs":["x.md"]}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","principal":null,"agent_session":"a","agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Claude","color_seed":"claude","docs":["x.md"]}';
     const parsed = parseOkActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toBeUndefined();
@@ -1296,7 +1296,7 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
 
   test('parseOkActor drops previous_paths field when not an array', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":"not-an-array"}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":"not-an-array"}';
     const parsed = parseOkActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.writer_id).toBe('agent-a');
@@ -1305,7 +1305,7 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
 
   test('parseOkActor drops single malformed previous_paths entry but keeps the rest', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":"a","to":"b"},{"from":42,"to":"c"},{"from":"c","to":"d"}]}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":"a","to":"b"},{"from":42,"to":"c"},{"from":"c","to":"d"}]}';
     const parsed = parseOkActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toEqual([
@@ -1316,7 +1316,7 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
 
   test('parseOkActor drops previous_paths element missing required fields', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":"only-from"},{"to":"only-to"},{"from":"a","to":"b"}]}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":"only-from"},{"to":"only-to"},{"from":"a","to":"b"}]}';
     const parsed = parseOkActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toEqual([{ from: 'a', to: 'b' }]);
@@ -1324,14 +1324,14 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
 
   test('parseOkActor drops null entry inside previous_paths array', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[null,{"from":"a","to":"b"}]}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[null,{"from":"a","to":"b"}]}';
     const parsed = parseOkActor(line);
     expect(parsed?.previous_paths).toEqual([{ from: 'a', to: 'b' }]);
   });
 
   test('formatOkActor elides previous_paths when every element is malformed', () => {
     const line =
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":42},{"to":99}]}';
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":42},{"to":99}]}';
     const parsed = parseOkActor(line);
     expect(parsed?.previous_paths).toBeUndefined();
   });
@@ -1340,8 +1340,8 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
     const body = [
       'rename: articles/x -> essays/x',
       '',
-      'ok-actor: {"v":1,"writer_id":"agent-alice","display_name":"Alice","docs":["essays/x.md"],"previous_paths":[{"from":"articles/x","to":"essays/x"}]}',
-      'ok-actor: {"v":1,"writer_id":"agent-bob","display_name":"Bob","docs":["essays/y.md"],"previous_paths":[{"from":"articles/y","to":"essays/y"}]}',
+      'ps-actor: {"v":1,"writer_id":"agent-alice","display_name":"Alice","docs":["essays/x.md"],"previous_paths":[{"from":"articles/x","to":"essays/x"}]}',
+      'ps-actor: {"v":1,"writer_id":"agent-bob","display_name":"Bob","docs":["essays/y.md"],"previous_paths":[{"from":"articles/y","to":"essays/y"}]}',
     ].join('\n');
     const actors = parseOkActors(body);
     expect(actors).toHaveLength(2);
@@ -1351,20 +1351,20 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
 
   test('byte-identity: format(parse(legacyBody)) === legacyBody for a corpus of pre-spec lines', () => {
     const corpus = [
-      'ok-actor: {"v":1,"writer_id":"agent-conn-abc123","principal":null,"agent_session":"conn-abc123","agent_type":"claude-3-5-sonnet","client_name":"claude-code","client_version":"1.0.0","label":"My agent","display_name":"Claude (abc1)","color_seed":"conn-abc123","docs":["notes.md","ideas.md"]}',
-      'ok-actor: {"v":1,"writer_id":"openknowledge-service","principal":null,"agent_session":null,"agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"OpenKnowledge (service)","color_seed":"openknowledge-service","docs":[]}',
-      'ok-actor: {"v":1,"writer_id":"agent-a","principal":null,"agent_session":"a","agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Claude","color_seed":"claude","docs":["a.md"],"summaries":["one","two"]}',
+      'ps-actor: {"v":1,"writer_id":"agent-conn-abc123","principal":null,"agent_session":"conn-abc123","agent_type":"claude-3-5-sonnet","client_name":"claude-code","client_version":"1.0.0","label":"My agent","display_name":"Claude (abc1)","color_seed":"conn-abc123","docs":["notes.md","ideas.md"]}',
+      'ps-actor: {"v":1,"writer_id":"openknowledge-service","principal":null,"agent_session":null,"agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Palimpsest (service)","color_seed":"openknowledge-service","docs":[]}',
+      'ps-actor: {"v":1,"writer_id":"agent-a","principal":null,"agent_session":"a","agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Claude","color_seed":"claude","docs":["a.md"],"summaries":["one","two"]}',
     ];
     for (const legacyLine of corpus) {
       const parsed = parseOkActor(legacyLine);
       expect(parsed).not.toBeNull();
-      const reformatted = formatOkActor(parsed as OkActorEntry);
+      const reformatted = formatOkActor(parsed as PsActorEntry);
       expect(reformatted).toBe(legacyLine);
     }
   });
 
   test('byte-identity: round-trip preserves previous_paths exactly', () => {
-    const entry: OkActorEntry = {
+    const entry: PsActorEntry = {
       ...baseEntry,
       previous_paths: [
         { from: 'a', to: 'b' },
@@ -1375,7 +1375,7 @@ describe('OkActorEntry previous_paths field (timeline rename-history mitigation)
     const line = formatOkActor(entry);
     const parsed = parseOkActor(line);
     expect(parsed).not.toBeNull();
-    const relined = formatOkActor(parsed as OkActorEntry);
+    const relined = formatOkActor(parsed as PsActorEntry);
     expect(relined).toBe(line);
   });
 });
@@ -1385,12 +1385,12 @@ describe('parseOkActors (plural — multi-writer L2 drain)', () => {
     expect(parseOkActors('')).toEqual([]);
   });
 
-  test('returns every ok-actor line, in file order', () => {
+  test('returns every ps-actor line, in file order', () => {
     const body = [
       'wip: notes.md (2 edits)',
       '',
-      'ok-actor: {"v":1,"writer_id":"agent-alice","display_name":"Alice","docs":["a.md"],"summaries":["Alice note"]}',
-      'ok-actor: {"v":1,"writer_id":"agent-bob","display_name":"Bob","docs":["b.md"],"summaries":["Bob note"]}',
+      'ps-actor: {"v":1,"writer_id":"agent-alice","display_name":"Alice","docs":["a.md"],"summaries":["Alice note"]}',
+      'ps-actor: {"v":1,"writer_id":"agent-bob","display_name":"Bob","docs":["b.md"],"summaries":["Bob note"]}',
     ].join('\n');
     const actors = parseOkActors(body);
     expect(actors).toHaveLength(2);
@@ -1400,27 +1400,27 @@ describe('parseOkActors (plural — multi-writer L2 drain)', () => {
 
   test('skips malformed lines silently, keeps valid ones', () => {
     const body = [
-      'ok-actor: {not json}',
-      'ok-actor: {"v":1,"writer_id":"agent-ok","display_name":"Good","docs":[]}',
-      'ok-actor: {"v":0,"display_name":"wrong-version","docs":[]}',
+      'ps-actor: {not json}',
+      'ps-actor: {"v":1,"writer_id":"agent-ok","display_name":"Good","docs":[]}',
+      'ps-actor: {"v":0,"display_name":"wrong-version","docs":[]}',
     ].join('\n');
     const actors = parseOkActors(body);
     expect(actors).toHaveLength(1);
     expect(actors[0]?.writer_id).toBe('agent-ok');
   });
 
-  test('no ok-actor lines → []', () => {
+  test('no ps-actor lines → []', () => {
     const body = 'wip: foo\n\nok-contributors: {"id":"x","name":"X","docs":[]}';
     expect(parseOkActors(body)).toEqual([]);
   });
 });
 
-describe('readContributors (dispatcher: prefers ok-actor, falls back to ok-contributors)', () => {
-  test('modern commit with only ok-actor: → projects to ShadowContributor[]', () => {
+describe('readContributors (dispatcher: prefers ps-actor, falls back to ps-contributors)', () => {
+  test('modern commit with only ps-actor: → projects to ShadowContributor[]', () => {
     const body = [
       'wip: a.md — added design',
       '',
-      'ok-actor: {"v":1,"writer_id":"agent-claude","principal":null,"agent_session":"claude","agent_type":"claude","display_name":"Claude","color_seed":"claude","docs":["a.md"],"summaries":["added design"]}',
+      'ps-actor: {"v":1,"writer_id":"agent-claude","principal":null,"agent_session":"claude","agent_type":"claude","display_name":"Claude","color_seed":"claude","docs":["a.md"],"summaries":["added design"]}',
     ].join('\n');
     const contributors = readContributors(body);
     expect(contributors).toHaveLength(1);
@@ -1431,11 +1431,11 @@ describe('readContributors (dispatcher: prefers ok-actor, falls back to ok-contr
     expect(contributors[0]?.summaries).toEqual(['added design']);
   });
 
-  test('legacy commit with only ok-contributors: → falls back to parseContributors', () => {
+  test('legacy commit with only ps-contributors: → falls back to parseContributors', () => {
     const body = [
       'wip: legacy.md',
       '',
-      'ok-contributors: {"v":1,"id":"agent-legacy","name":"Legacy","colorSeed":"seed","docs":["legacy.md"],"summaries":["pre-consolidation note"]}',
+      'ps-contributors: {"v":1,"id":"agent-legacy","name":"Legacy","colorSeed":"seed","docs":["legacy.md"],"summaries":["pre-consolidation note"]}',
     ].join('\n');
     const contributors = readContributors(body);
     expect(contributors).toHaveLength(1);
@@ -1443,24 +1443,24 @@ describe('readContributors (dispatcher: prefers ok-actor, falls back to ok-contr
     expect(contributors[0]?.summaries).toEqual(['pre-consolidation note']);
   });
 
-  test('transitional commit with BOTH lines → ok-actor wins (no double-counting)', () => {
+  test('transitional commit with BOTH lines → ps-actor wins (no double-counting)', () => {
     const body = [
       'wip: both.md',
       '',
-      'ok-contributors: {"v":1,"id":"agent-stale","name":"Stale","colorSeed":"x","docs":["both.md"]}',
-      'ok-actor: {"v":1,"writer_id":"agent-fresh","display_name":"Fresh","color_seed":"y","docs":["both.md"]}',
+      'ps-contributors: {"v":1,"id":"agent-stale","name":"Stale","colorSeed":"x","docs":["both.md"]}',
+      'ps-actor: {"v":1,"writer_id":"agent-fresh","display_name":"Fresh","color_seed":"y","docs":["both.md"]}',
     ].join('\n');
     const contributors = readContributors(body);
     expect(contributors).toHaveLength(1);
     expect(contributors[0]?.id).toBe('agent-fresh');
   });
 
-  test('multi-writer modern commit → one ShadowContributor per ok-actor line', () => {
+  test('multi-writer modern commit → one ShadowContributor per ps-actor line', () => {
     const body = [
       'wip: shared.md',
       '',
-      'ok-actor: {"v":1,"writer_id":"agent-a","display_name":"A","docs":["x.md"]}',
-      'ok-actor: {"v":1,"writer_id":"file-system","display_name":"File System","docs":["y.md"]}',
+      'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"A","docs":["x.md"]}',
+      'ps-actor: {"v":1,"writer_id":"file-system","display_name":"File System","docs":["y.md"]}',
     ].join('\n');
     const contributors = readContributors(body);
     expect(contributors).toHaveLength(2);
@@ -1609,7 +1609,7 @@ describe('composeCommitSubject — line-terminator stripping (commit-injection g
 
   for (const [ch, label] of LINE_BREAK_CASES) {
     test(`single summary with embedded ${label} → stripped from subject`, () => {
-      const summary = `legit${ch}ok-actor: {"v":1,"display_name":"X","docs":[]}`;
+      const summary = `legit${ch}ps-actor: {"v":1,"display_name":"X","docs":[]}`;
       const subject = composeCommitSubject('wip: notes.md', [summary]);
       expect(subject.includes(ch)).toBe(false);
       expect(subject.split('\n').length).toBe(1);

@@ -24,7 +24,7 @@ describe('Calendar', () => {
   });
 
   test('a caller can still override the month grid styling', () => {
-    render(<Calendar month={new Date(2026, 0, 1)} classNames={{ month_grid: 'ok-custom-grid' }} />);
-    expect(screen.getByRole('grid').className).toContain('ok-custom-grid');
+    render(<Calendar month={new Date(2026, 0, 1)} classNames={{ month_grid: 'ps-custom-grid' }} />);
+    expect(screen.getByRole('grid').className).toContain('ps-custom-grid');
   });
 });

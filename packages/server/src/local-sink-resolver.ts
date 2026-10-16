@@ -4,7 +4,7 @@ import {
   DEFAULT_SPANS_MAX_BYTES,
   DEFAULT_TELEMETRY_ATTRIBUTE_DENYLIST,
   resolveConfigPath,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import { parse as parseYaml } from 'yaml';
 
 export interface ResolveLocalSinkArgs {
@@ -78,7 +78,7 @@ function readMaxBytes(
 }
 
 export function resolveLocalSinkConfig(args: ResolveLocalSinkArgs): ResolvedLocalSink | null {
-  if (process.env.OK_DISABLE_LOCAL_SINK === '1' || process.env.OK_DISABLE_LOCAL_SINK === 'true') {
+  if (process.env.PS_DISABLE_LOCAL_SINK === '1' || process.env.PS_DISABLE_LOCAL_SINK === 'true') {
     return null;
   }
 

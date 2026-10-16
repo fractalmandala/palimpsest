@@ -9,7 +9,7 @@ describe('the browser file bridge confines reads to its declared roots', () => {
   let root: string;
 
   beforeEach(() => {
-    scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ok-file-bridge-')));
+    scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ps-file-bridge-')));
     root = join(scratch, 'root');
     mkdirSync(root);
     writeFileSync(join(root, 'inside.txt'), 'inside');
@@ -69,14 +69,14 @@ describe('the browser file bridge confines reads to its declared roots', () => {
 });
 
 describe('node: imports are substituted for test modules only', () => {
-  const APP = '/repo/public/open-knowledge/packages/app';
+  const APP = '/repo/public/palimpsest/packages/app';
 
   test('a test file, a test helper and a test-support module get the substitute', () => {
     for (const importer of [
       `${APP}/src/lib/thing.dom.test.ts`,
       `${APP}/src/test-utils/helper.ts`,
       `${APP}/tests/foundation/case.browser.test.ts`,
-      '/repo/public/open-knowledge/test-support/known-bug.test-helper.ts',
+      '/repo/public/palimpsest/test-support/known-bug.test-helper.ts',
     ]) {
       expect(nodeSubstituteFor('node:fs', importer)).toMatch(
         /tests\/foundation\/node-substitutes\/fs\.ts$/,

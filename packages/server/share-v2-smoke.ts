@@ -4,7 +4,7 @@ import {
   decodeShareUrl,
   type ShareConstructUrlResponse,
   ShareConstructUrlResponseSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { EndpointRig } from './src/share/endpoint-http.test-helper.ts';
 
 type ShareSuccess = Extract<ShareConstructUrlResponse, { ok: true }>;
@@ -12,7 +12,7 @@ type ShareSuccess = Extract<ShareConstructUrlResponse, { ok: true }>;
 const CONTENT_ROOT = 'knowledge base/handbook';
 const DOCUMENT_PATH = 'guides/getting started.md';
 const REPOSITORY_DOCUMENT_PATH = `${CONTENT_ROOT}/${DOCUMENT_PATH}`;
-const GITHUB_REPOSITORY = 'https://github.com/inkeep/open-knowledge';
+const GITHUB_REPOSITORY = 'https://github.com/fractalmandala/palimpsest';
 
 process.env.LOG_LEVEL ??= 'silent';
 const [{ bootEndpointServer }, { createGitTriangle }] = await Promise.all([
@@ -79,7 +79,7 @@ try {
     source: {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'main',
       kind: 'doc',
       targetSegments: ['knowledge base', 'handbook', 'guides', 'getting started.md'],
@@ -100,7 +100,7 @@ try {
     source: {
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'main',
       kind: 'folder',
       targetSegments: ['knowledge base', 'handbook'],

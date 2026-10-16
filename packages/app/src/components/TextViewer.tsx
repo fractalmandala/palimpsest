@@ -1,22 +1,22 @@
 import { syntaxHighlighting } from '@codemirror/language';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { codeLanguageForExtension } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { codeLanguageForExtension } from '@palimpsest/core/constants/code-languages';
 import { basicSetup } from 'codemirror';
 import { useTheme } from 'next-themes';
 import { useEffect, useRef } from 'react';
-import { okCmTheme, okSyntaxHighlight } from '@/editor/extensions/cm-theme';
+import { psCmTheme, psSyntaxHighlight } from '@/editor/extensions/cm-theme';
 import { loadCodeMirrorLanguageForExtension } from './text-viewer-languages';
 import { useViewerText, type ViewerTextSource } from './use-viewer-text';
 import { ViewerErrorPane, ViewerLoadingPane } from './ViewerStatusPane';
 import { resolveViewerOpenFile } from './viewer-open-file';
 
-const darkTheme = okCmTheme({
+const darkTheme = psCmTheme({
   dark: true,
   background: 'var(--background)',
   gutterBackground: 'var(--muted)',
 });
-const lightTheme = okCmTheme({
+const lightTheme = psCmTheme({
   dark: false,
   background: 'var(--background)',
   gutterBackground: 'var(--muted)',
@@ -48,7 +48,7 @@ export function TextViewer({ fileName, extension, ...source }: TextViewerProps) 
       if (!containerRef.current) return;
       const extensions = [
         basicSetup,
-        syntaxHighlighting(okSyntaxHighlight),
+        syntaxHighlighting(psSyntaxHighlight),
         ...(language ? [language] : []),
         EditorView.editable.of(true),
         EditorState.readOnly.of(true),

@@ -58,7 +58,7 @@ afterEach(() => {
 });
 
 function plantSyntheticTree(): string {
-  const root = mkdtempSync(join(tmpdir(), 'ok-paired-scan-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-paired-scan-'));
   scratchDirs.push(root);
   writeFileSync(
     join(root, 'top-level-surface.ts'),

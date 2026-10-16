@@ -3,11 +3,11 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix as pathPosix } from 'node:path';
-import { resolveHelperBundleBinary } from '@inkeep/open-knowledge-core/helper-bundle';
+import { resolveHelperBundleBinary } from '@palimpsest/core/helper-bundle';
 
 export const HELPER_PROBE_TIMEOUT_MS = 10_000;
 
-const HELPER_PROBE_SOURCE = 'console.log("ok-helper-node-mode", process.versions.node)';
+const HELPER_PROBE_SOURCE = 'console.log("ps-helper-node-mode", process.versions.node)';
 const NODE_MODE_LINE = /ok-helper-node-mode\s+(\d+\.\d+\.\d+)/;
 
 function listDir(path) {
@@ -57,7 +57,7 @@ export function helperProbeProblems(result) {
   else if (result.status !== 0) problems.push(`it exited ${result.status}`);
   if (!NODE_MODE_LINE.test(result.stdout)) {
     problems.push(
-      `its stdout lacks the "ok-helper-node-mode <version>" line: ${JSON.stringify(result.stdout.slice(-200))}`,
+      `its stdout lacks the "ps-helper-node-mode <version>" line: ${JSON.stringify(result.stdout.slice(-200))}`,
     );
   }
   if (result.stderr !== '') {

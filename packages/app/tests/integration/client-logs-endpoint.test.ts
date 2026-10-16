@@ -1,4 +1,4 @@
-import { RENDERER_LOG_MAX_ENTRIES } from '@inkeep/open-knowledge-core';
+import { RENDERER_LOG_MAX_ENTRIES } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { fetchWithHostHeader } from './host-header-request.test-helper';
@@ -30,8 +30,8 @@ describe('POST /api/client-logs', () => {
         {
           level: 'info',
           message:
-            '{"event":"ok-provider-server-driven-close-reauth","reason":"Failed to connect"}',
-          event: 'ok-provider-server-driven-close-reauth',
+            '{"event":"ps-provider-server-driven-close-reauth","reason":"Failed to connect"}',
+          event: 'ps-provider-server-driven-close-reauth',
           fields: { reason: 'Failed to connect', docName: 'notes' },
           sourceId: 'app.js',
           lineNumber: 1515,

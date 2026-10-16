@@ -10,7 +10,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkSpellcheckEnabledSetResult } from '@/lib/desktop-bridge-types';
+import type { PsSpellcheckEnabledSetResult } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
 vi.doMock('@lingui/react/macro', () => ({
@@ -34,7 +34,7 @@ function render(ui: ReactNode) {
 
 interface BridgeOptions {
   readonly query?: () => Promise<{ spellCheckEnabled: boolean } | undefined>;
-  readonly setEnabled?: (enabled: boolean) => Promise<OkSpellcheckEnabledSetResult>;
+  readonly setEnabled?: (enabled: boolean) => Promise<PsSpellcheckEnabledSetResult>;
   readonly omitMenu?: boolean;
 }
 
@@ -60,7 +60,7 @@ function installBridge(options: BridgeOptions = {}) {
       },
     },
   };
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: bridge,
     configurable: true,
     writable: true,
@@ -72,7 +72,7 @@ afterEach(() => {
   cleanup();
   toastError.mockClear();
   // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-  (window as any).okDesktop = undefined;
+  (window as any).psDesktop = undefined;
 });
 
 describe('SpellcheckRow', () => {

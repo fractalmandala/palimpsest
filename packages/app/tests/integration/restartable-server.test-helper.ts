@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { z } from 'zod';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { testAuthorityRegistryPath } from '../../../../test-support/server-authority-registry.test-helper.ts';
@@ -56,20 +56,20 @@ export async function createRestartableServer(
   options: CreateRestartableServerOptions = {},
 ): Promise<RestartableServer> {
   const contentDir = realpathSync.native(
-    options.contentDir ?? mkdtempSync(join(tmpdir(), 'ok-restartable-')),
+    options.contentDir ?? mkdtempSync(join(tmpdir(), 'ps-restartable-')),
   );
   let home = options.configHomedirOverride;
   let port: number;
   try {
-    home ??= mkdtempSync(join(tmpdir(), 'ok-restart-home-'));
-    mkdirSync(join(contentDir, '.ok'), { recursive: true });
+    home ??= mkdtempSync(join(tmpdir(), 'ps-restart-home-'));
+    mkdirSync(join(contentDir, '.ps'), { recursive: true });
     if (options.contentDir === undefined) {
       writeFileSync(join(contentDir, 'test-doc.md'), '');
     }
-    if (!existsSync(join(contentDir, '.ok', 'config.yml'))) {
-      writeFileSync(join(contentDir, '.ok', 'config.yml'), options.seedProjectConfigYml ?? '');
+    if (!existsSync(join(contentDir, '.ps', 'config.yml'))) {
+      writeFileSync(join(contentDir, '.ps', 'config.yml'), options.seedProjectConfigYml ?? '');
     }
-    writeFileSync(join(contentDir, '.ok', '.gitignore'), '*\n');
+    writeFileSync(join(contentDir, '.ps', '.gitignore'), '*\n');
     await ensureProjectGit(contentDir);
     configureTestGitRepository(contentDir);
     port = options.port ?? (await getFreePort());

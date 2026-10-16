@@ -1,13 +1,13 @@
 import { autoUpdate, computePosition, flip, offset, shift, size } from '@floating-ui/dom';
-import { sharedExtensions as coreExtensions } from '@inkeep/open-knowledge-core/extensions/shared';
-import { MarkdownManager } from '@inkeep/open-knowledge-core/markdown';
+import { sharedExtensions as coreExtensions } from '@palimpsest/core/extensions/shared';
+import { MarkdownManager } from '@palimpsest/core/markdown';
 import {
   isFrontmatterScoped,
   type LintDiagnostic,
   type LinterConfig,
   type LintTextEdit,
   lintDocument,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 import { t } from '@lingui/core/macro';
 import { type Editor, Extension } from '@tiptap/core';
 import type { Node as PmNode } from '@tiptap/pm/model';
@@ -36,9 +36,9 @@ const LINT_CALLOUT_MAX_WIDTH = '22rem';
 
 const markdownLintDecorationKey = new PluginKey<DecorationSet>('markdownLintDecorations');
 
-const OK_LINT_BLOCK_CLASS = 'ok-lint-block';
-const OK_LINT_BLOCK_ERROR_CLASS = 'ok-lint-block-error';
-const OK_LINT_BLOCK_ATOM_CLASS = 'ok-lint-block-atom';
+const PS_LINT_BLOCK_CLASS = 'ps-lint-block';
+const PS_LINT_BLOCK_ERROR_CLASS = 'ps-lint-block-error';
+const PS_LINT_BLOCK_ATOM_CLASS = 'ps-lint-block-atom';
 
 const RECOMPUTE_DEBOUNCE_MS = 400;
 
@@ -84,9 +84,9 @@ function buildDecorationSet(
     if (!diagnostics || diagnostics.length === 0) return;
     const hasError = diagnostics.some((d) => d.severity === 'error');
     const tooltip = diagnostics.map((d) => `${d.source}/${d.code}: ${d.message}`).join('\n');
-    const classNames = [OK_LINT_BLOCK_CLASS];
-    if (node.textContent.length === 0) classNames.push(OK_LINT_BLOCK_ATOM_CLASS);
-    if (hasError) classNames.push(OK_LINT_BLOCK_ERROR_CLASS);
+    const classNames = [PS_LINT_BLOCK_CLASS];
+    if (node.textContent.length === 0) classNames.push(PS_LINT_BLOCK_ATOM_CLASS);
+    if (hasError) classNames.push(PS_LINT_BLOCK_ERROR_CLASS);
     const attrs: Record<string, string> = {
       class: classNames.join(' '),
       [LINT_TOOLTIP_ATTR]: tooltip,
@@ -110,15 +110,15 @@ function createLintTooltip(
   },
 ): { destroy: () => void } {
   const tooltip = document.createElement('div');
-  tooltip.className = 'ok-lint-tooltip';
+  tooltip.className = 'ps-lint-tooltip';
   tooltip.hidden = true;
   const message = document.createElement('div');
-  message.className = 'ok-lint-tooltip-message';
+  message.className = 'ps-lint-tooltip-message';
   tooltip.appendChild(message);
   const fixButton = document.createElement('button');
   fixButton.type = 'button';
   fixButton.className = cn(
-    'ok-lint-tooltip-fix',
+    'ps-lint-tooltip-fix',
     buttonVariants({ variant: 'default', size: 'xs' }),
     'mt-1 self-start',
   );
@@ -230,7 +230,7 @@ function createLintTooltip(
   function onOver(event: Event) {
     const pe = event as PointerEvent;
     const target = event.target as HTMLElement | null;
-    const block = target?.closest<HTMLElement>(`.${OK_LINT_BLOCK_CLASS}`) ?? null;
+    const block = target?.closest<HTMLElement>(`.${PS_LINT_BLOCK_CLASS}`) ?? null;
     if (block) {
       if (block !== current) {
         anchorX = pe.clientX;
@@ -251,11 +251,11 @@ function createLintTooltip(
 
   function onOut(event: Event) {
     const related = (event as PointerEvent).relatedTarget as HTMLElement | null;
-    if (related === tooltip || related?.closest('.ok-lint-tooltip')) {
+    if (related === tooltip || related?.closest('.ps-lint-tooltip')) {
       cancelHide();
       return;
     }
-    if (!related?.closest(`.${OK_LINT_BLOCK_CLASS}`)) scheduleHide();
+    if (!related?.closest(`.${PS_LINT_BLOCK_CLASS}`)) scheduleHide();
   }
 
   function onTooltipEnter() {
@@ -265,7 +265,7 @@ function createLintTooltip(
   function onTooltipLeave(event: Event) {
     overTooltip = false;
     const related = (event as PointerEvent).relatedTarget as HTMLElement | null;
-    if (related !== current && !related?.closest(`.${OK_LINT_BLOCK_CLASS}`)) scheduleHide();
+    if (related !== current && !related?.closest(`.${PS_LINT_BLOCK_CLASS}`)) scheduleHide();
   }
 
   function onKeyDown() {

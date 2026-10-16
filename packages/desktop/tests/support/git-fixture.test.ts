@@ -13,7 +13,7 @@ import {
 import { createServer, type Server } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { resolveShadowDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { resolveShadowDir } from '@palimpsest/core/shadow-repo-layout';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import {
@@ -49,7 +49,7 @@ describe('desktop Git fixture ownership', () => {
   let server: Server | undefined;
 
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-desktop-git-fixture-')));
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-desktop-git-fixture-')));
   });
 
   afterEach(async () => {
@@ -160,8 +160,8 @@ describe('desktop Git fixture ownership', () => {
   test('selects only the matching direct owned root and rejects ambiguous or mismatched metadata', async () => {
     const origin = await serveReady();
     const port = Number(new URL(origin).port);
-    const project = join(root, 'ok-ephemeral-selected');
-    const lockDir = join(project, '.ok', 'local');
+    const project = join(root, 'ps-ephemeral-selected');
+    const lockDir = join(project, '.ps', 'local');
     mkdirSync(lockDir, { recursive: true });
     git(project, ['init']);
     configureTestGitRepository(project);
@@ -170,16 +170,16 @@ describe('desktop Git fixture ownership', () => {
     git(shadow, ['config', '--local', 'maintenance.auto', 'true']);
     const metadata = { worktreeRoot: project, url: origin, port };
     writeFileSync(join(lockDir, 'server.lock'), JSON.stringify(metadata));
-    const nested = join(root, 'nested', 'ok-ephemeral-nested');
+    const nested = join(root, 'nested', 'ps-ephemeral-nested');
     mkdirSync(nested, { recursive: true });
-    symlinkSync(project, join(root, 'ok-ephemeral-symlink'), 'junction');
+    symlinkSync(project, join(root, 'ps-ephemeral-symlink'), 'junction');
     expect(findEphemeralTestProject(root, origin)).toBe(project);
     expect(() => findEphemeralTestProject(root, 'http://127.0.0.1:1')).toThrow('found 0');
     await configureEphemeralGitRepositories(project, origin);
     expect(maintenance(project)).toBe('false');
     expect(maintenance(shadow)).toBe('true');
-    const duplicate = join(root, 'ok-ephemeral-duplicate');
-    const duplicateLock = join(duplicate, '.ok', 'local');
+    const duplicate = join(root, 'ps-ephemeral-duplicate');
+    const duplicateLock = join(duplicate, '.ps', 'local');
     mkdirSync(duplicateLock, { recursive: true });
     writeFileSync(
       join(duplicateLock, 'server.lock'),

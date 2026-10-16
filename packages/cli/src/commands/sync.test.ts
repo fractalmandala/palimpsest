@@ -1,8 +1,8 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { hostname, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Config } from '@inkeep/open-knowledge-server';
-import { RUNTIME_VERSION } from '@inkeep/open-knowledge-server';
+import type { Config } from '@palimpsest/server';
+import { RUNTIME_VERSION } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { runSync } from './sync.ts';
 
@@ -19,8 +19,8 @@ describe('runSync — client version headers (AC-5)', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-sync-test-'));
-    const lockDir = join(dir, '.ok', 'local');
+    dir = mkdtempSync(join(tmpdir(), 'ps-sync-test-'));
+    const lockDir = join(dir, '.ps', 'local');
     mkdirSync(lockDir, { recursive: true });
     writeFileSync(
       join(lockDir, 'server.lock'),

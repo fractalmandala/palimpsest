@@ -15,7 +15,7 @@ import { getDocumentHistory } from './timeline-query.ts';
 let projectDir: string;
 
 async function bootstrap(): Promise<string> {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-summary-e2e-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-summary-e2e-'));
   const git = simpleGit(projectDir);
   await git.init();
   configureTestGitRepository(projectDir);
@@ -108,7 +108,7 @@ describe('summaries round-trip: accumulator → shadow commit → timeline query
     const legacyBody = [
       'WIP auto-save 2026-04-10T00:00:00.000Z',
       '',
-      'ok-contributors: {"v":1,"id":"agent-legacy","name":"Legacy","colorSeed":"x","docs":["content/foo"]}',
+      'ps-contributors: {"v":1,"id":"agent-legacy","name":"Legacy","colorSeed":"x","docs":["content/foo"]}',
     ].join('\n');
     const writer: WriterIdentity = {
       id: 'agent-legacy',

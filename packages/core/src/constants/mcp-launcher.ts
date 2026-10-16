@@ -130,7 +130,7 @@ function extractLauncher(
 }
 
 export function mcpChainMarkerPrefix(family: McpLauncherFamily, chainTag: McpChainTag): string {
-  return family === 'unix-chain' ? `# ok-mcp${chainTag}-v` : `# ok-mcp${chainTag}-win-v`;
+  return family === 'unix-chain' ? `# ps-mcp${chainTag}-v` : `# ps-mcp${chainTag}-win-v`;
 }
 
 function revisionFromFirstLine(

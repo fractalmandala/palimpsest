@@ -1,4 +1,4 @@
-import type { GitHubReferencePreview } from '@inkeep/open-knowledge-core/schemas/api';
+import type { GitHubReferencePreview } from '@palimpsest/core/schemas/api';
 
 export type ReferenceStatusTone = 'success' | 'attention' | 'severe' | 'danger';
 

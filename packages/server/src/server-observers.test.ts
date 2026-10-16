@@ -12,7 +12,7 @@ import {
   readFmMap,
   sharedExtensions,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { describe, expect, test, vi } from 'vitest';
@@ -632,17 +632,17 @@ describe('shouldRethrowBridgeMergeLoss (D3-LOCKED polarity)', () => {
     expect(shouldRethrowBridgeMergeLoss({ NODE_ENV: 'test' } as NodeJS.ProcessEnv)).toBe(true);
   });
 
-  test('OK_RETHROW_BRIDGE_LOSS=1 triggers rethrow regardless of NODE_ENV', () => {
+  test('PS_RETHROW_BRIDGE_LOSS=1 triggers rethrow regardless of NODE_ENV', () => {
     expect(
       shouldRethrowBridgeMergeLoss({
         NODE_ENV: 'production',
-        OK_RETHROW_BRIDGE_LOSS: '1',
+        PS_RETHROW_BRIDGE_LOSS: '1',
       } as NodeJS.ProcessEnv),
     ).toBe(true);
   });
 
-  test('OK_RETHROW_BRIDGE_LOSS=0 does not trigger rethrow', () => {
-    expect(shouldRethrowBridgeMergeLoss({ OK_RETHROW_BRIDGE_LOSS: '0' } as NodeJS.ProcessEnv)).toBe(
+  test('PS_RETHROW_BRIDGE_LOSS=0 does not trigger rethrow', () => {
+    expect(shouldRethrowBridgeMergeLoss({ PS_RETHROW_BRIDGE_LOSS: '0' } as NodeJS.ProcessEnv)).toBe(
       false,
     );
   });

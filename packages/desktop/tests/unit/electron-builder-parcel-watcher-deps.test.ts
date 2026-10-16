@@ -9,8 +9,8 @@ import { parse } from 'yaml';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = resolve(__dirname, '../..');
 const builderYml = resolve(desktopRoot, 'electron-builder.yml');
-const okRoot = resolve(desktopRoot, '..', '..');
-const parcelPkgDir = resolve(okRoot, 'node_modules', '@parcel', 'watcher');
+const psRoot = resolve(desktopRoot, '..', '..');
+const parcelPkgDir = resolve(psRoot, 'node_modules', '@parcel', 'watcher');
 
 const HEADERS_ONLY_DEPS = new Set(['node-addon-api']);
 

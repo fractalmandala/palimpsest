@@ -37,8 +37,8 @@ function linkProjection(editorRel: string, name: string): string {
 }
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-migrate-'));
-  skillsRoot = join(root, '.ok', 'skills');
+  root = mkdtempSync(join(tmpdir(), 'ps-migrate-'));
+  skillsRoot = join(root, '.ps', 'skills');
   mkdirSync(skillsRoot, { recursive: true });
 });
 afterEach(() => {
@@ -271,11 +271,11 @@ describe('genuineInPlaceNames', () => {
 });
 
 describe('migrateStoreSkillsInPlace — a deliberate placement is not residue', () => {
-  test('a skill RECORDED at `.ok/skills` stays put; unrecorded residue still drains', async () => {
+  test('a skill RECORDED at `.ps/skills` stays put; unrecorded residue still drains', async () => {
     makeStore('chosen', '# Chosen');
     makeStore('residue', '# Residue');
     mkdirSync(join(root, '.claude', 'skills'), { recursive: true });
-    await recordSkillPlacement(root, 'chosen', { path: '.ok/skills/chosen', mode: 'copy' });
+    await recordSkillPlacement(root, 'chosen', { path: '.ps/skills/chosen', mode: 'copy' });
 
     const r = await migrateStoreSkillsInPlace({ projectDir: root, skillsRoot });
 

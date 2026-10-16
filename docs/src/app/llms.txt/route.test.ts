@@ -11,8 +11,8 @@ const { GET, revalidate } = await import('./route.ts');
 const FEED = [
   '<rss version="2.0"><channel>',
   '<item><title><![CDATA[Keeping you and your agents in check with markdownlint]]></title>',
-  '<link>https://openknowledge.ai/blog/markdownlint-support</link>',
-  '<description><![CDATA[Native markdownlint support in Open Knowledge.]]></description></item>',
+  '<link>https://github.com/fractalmandala/palimpsest/blog/markdownlint-support</link>',
+  '<description><![CDATA[Native markdownlint support in Palimpsest.]]></description></item>',
   '</channel></rss>',
 ].join('\n');
 
@@ -53,7 +53,7 @@ describe('GET /llms.txt', () => {
   test('links the Markdown rendition of every docs page', async () => {
     const listed = new Set(listedUrls(await body()));
     for (const page of pages) {
-      expect(listed).toContain(`https://openknowledge.ai${page.url}.md`);
+      expect(listed).toContain(`https://github.com/fractalmandala/palimpsest${page.url}.md`);
     }
   });
 
@@ -61,28 +61,28 @@ describe('GET /llms.txt', () => {
     const quickstart = pages.find((page) => page.url === '/docs/get-started/quickstart');
     expect(quickstart).toBeDefined();
     expect(await body()).toContain(
-      `- [${quickstart?.data.title}](https://openknowledge.ai/docs/get-started/quickstart.md)`,
+      `- [${quickstart?.data.title}](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx)`,
     );
   });
 
   test('covers the marketing zone the docs app cannot enumerate', async () => {
     const listed = new Set(listedUrls(await body()));
     for (const page of MARKETING_MARKDOWN_PAGES) {
-      expect(listed).toContain(`https://openknowledge.ai${page.path}`);
+      expect(listed).toContain(`https://github.com/fractalmandala/palimpsest${page.path}`);
     }
   });
 
   test('lists the blog posts the marketing zone reported, under their own titles', async () => {
     expect(await body()).toContain(
       '- [Keeping you and your agents in check with markdownlint]' +
-        '(https://openknowledge.ai/blog/markdownlint-support.md): ' +
-        'Native markdownlint support in Open Knowledge.',
+        '(https://github.com/fractalmandala/palimpsest/blog/markdownlint-support.md): ' +
+        'Native markdownlint support in Palimpsest.',
     );
   });
 
   test('keeps its own promise that every page it names negotiates Markdown', async () => {
     const docsPages = [...(await body()).matchAll(/^- \[(?:\\.|[^\]\\])*]\((\S+)\.md\)/gm)]
-      .map((match) => match[1].replace('https://openknowledge.ai', ''))
+      .map((match) => match[1].replace('https://github.com/fractalmandala/palimpsest', ''))
       .filter((path) => path.startsWith('/docs/'));
 
     expect(
@@ -94,7 +94,7 @@ describe('GET /llms.txt', () => {
 
   test('holds the llms.txt shape: title, summary, then named sections', async () => {
     const text = await body();
-    expect(text.startsWith('# OpenKnowledge\n\n> ')).toBe(true);
+    expect(text.startsWith('# Palimpsest\n\n> ')).toBe(true);
     expect([...text.matchAll(/^## (.+)$/gm)].map((match) => match[1])).toEqual([
       'Docs',
       'Blog',
@@ -106,7 +106,7 @@ describe('GET /llms.txt', () => {
     const urls = listedUrls(await body());
     expect(urls.length).toBeGreaterThan(50);
     for (const url of urls) {
-      expect(url).toMatch(/^https:\/\/openknowledge\.ai\/[^\s]*\.md$/);
+      expect(url).toMatch(/^https:\/\/palimpsest\.ai\/[^\s]*\.md$/);
     }
     expect(urls).toEqual([...new Set(urls)]);
   });

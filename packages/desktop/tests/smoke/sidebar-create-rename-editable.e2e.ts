@@ -23,10 +23,10 @@ function userDataDirFor(home: string): string {
 }
 
 function seedProject(prefix: string): SeededProject {
-  const tmpHome = mkdtempSync(join(tmpdir(), `ok-sidebar-create-${prefix}-home-`));
-  const projectDir = mkdtempSync(join(tmpdir(), `ok-sidebar-create-${prefix}-project-`));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  const tmpHome = mkdtempSync(join(tmpdir(), `ps-sidebar-create-${prefix}-home-`));
+  const projectDir = mkdtempSync(join(tmpdir(), `ps-sidebar-create-${prefix}-project-`));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
 
   const userDataDir = userDataDirFor(tmpHome);
@@ -53,7 +53,7 @@ function seedProject(prefix: string): SeededProject {
 }
 
 async function launchApp(seed: SeededProject): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(seed.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(seed.projectDir)}&doc=start`;
   const args = [`--user-data-dir=${seed.userDataDir}`, deepLink];
   return electron.launch(
     desktopLaunchOptions({
@@ -63,8 +63,8 @@ async function launchApp(seed: SeededProject): Promise<ElectronApplication> {
       env: {
         ...process.env,
         HOME: seed.tmpHome,
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
         NODE_ENV: 'production',
       },
     }),
@@ -142,7 +142,7 @@ async function createSidebarFileAndType(
 }
 
 test.describe('Sidebar create and rename editability smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Drives the packaged mac .app; see comment.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 

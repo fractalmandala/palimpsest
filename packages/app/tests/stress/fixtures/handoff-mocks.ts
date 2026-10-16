@@ -1,6 +1,6 @@
-import { AGENT_REGISTRY, type HostSnapshot } from '@inkeep/open-knowledge-core';
+import { AGENT_REGISTRY, type HostSnapshot } from '@palimpsest/core';
 import type { Page } from '@playwright/test';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 export interface InstallMap {
   readonly claude: boolean;
@@ -334,7 +334,7 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
           runCheckout: async () => null,
           fetchTargetStatus: async () => null,
           awaitBranchSwitched: async () => ({ ok: false, reason: 'timeout' as const }),
-          okInit: async () => ({
+          psInit: async () => ({
             ok: false as const,
             reason: 'init-failed' as const,
             message: 'test mock',
@@ -355,7 +355,7 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
               mode: 'shared' as const,
               excluded: [],
               trackedUpstream: [],
-            }) satisfies import('@/lib/desktop-bridge-types').OkSharingStatusResult,
+            }) satisfies import('@/lib/desktop-bridge-types').PsSharingStatusResult,
           setMode: async () => ({
             kind: 'applied' as const,
             mode: 'shared' as const,
@@ -366,13 +366,13 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
             ({
               kind: 'status' as const,
               available: false as const,
-            }) satisfies import('@/lib/desktop-bridge-types').OkSlidesStatusResult,
+            }) satisfies import('@/lib/desktop-bridge-types').PsSlidesStatusResult,
           open: async () =>
             ({
               kind: 'open' as const,
               ok: false as const,
               reason: 'not-available' as const,
-            }) satisfies import('@/lib/desktop-bridge-types').OkSlidesOpenResult,
+            }) satisfies import('@/lib/desktop-bridge-types').PsSlidesOpenResult,
         },
         bugReport: {
           create: async () => ({ ok: false as const, error: 'test mock' }),
@@ -381,7 +381,7 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
           send: async () => ({
             ok: false as const,
             reason: 'send-failed' as const,
-            fallback: { mailtoUrl: 'mailto:support@inkeep.com' },
+            fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues' },
           }),
           crashAck: async () => ({ ok: true as const }),
           list: async () => ({ ok: true as const, reports: [] }),
@@ -595,15 +595,15 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
         cliCommandName: null,
         getPathForFile: () => null,
         setDisplayLockCrashKey: () => undefined,
-      } satisfies OkDesktopBridge;
+      } satisfies PsDesktopBridge;
 
       // biome-ignore lint/suspicious/noExplicitAny: test-only global attachment.
-      (window as any).okDesktop = bridge;
+      (window as any).psDesktop = bridge;
     }
 
     try {
       // biome-ignore lint/suspicious/noExplicitAny: matches production resolution in cowork-skill-install.ts.
-      const ver = (window as any).okDesktop?.appVersion ?? 'unknown';
+      const ver = (window as any).psDesktop?.appVersion ?? 'unknown';
       window.localStorage.setItem(`ok:skill:cowork:installed:v${ver}`, '1');
     } catch {}
   }, initConfig);

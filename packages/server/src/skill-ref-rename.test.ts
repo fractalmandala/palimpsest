@@ -21,7 +21,7 @@ const read = (name: string, rel = 'SKILL.md'): string =>
   readFileSync(resolve(contentDir, '.claude', 'skills', name, rel), 'utf-8');
 
 beforeEach(() => {
-  contentDir = mkdtempSync(join(tmpdir(), 'ok-skill-ref-rename-'));
+  contentDir = mkdtempSync(join(tmpdir(), 'ps-skill-ref-rename-'));
 });
 afterEach(() => {
   rmSync(contentDir, { recursive: true, force: true });
@@ -79,7 +79,7 @@ describe('rewriteSkillRefsAcrossScope', () => {
   });
 
   test('carries refs at global scope too, through the other scanner', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-skill-ref-rename-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-skill-ref-rename-home-'));
     try {
       const mk = (name: string, body: string) => {
         const dir = resolve(home, '.claude', 'skills', name);

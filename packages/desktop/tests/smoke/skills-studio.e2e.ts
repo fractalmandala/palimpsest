@@ -9,22 +9,22 @@ import { expect, test } from './_helpers/smoke-test';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MAIN_ENTRY = resolve(__dirname, '..', '..', 'out', 'main', 'index.js');
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 const BUILD_EXISTS = existsSync(MAIN_ENTRY);
 
 test.describe('Skills Studio', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Deep-link project open is macOS-only in v0.');
   test.skip(!BUILD_EXISTS, `Main build missing at ${MAIN_ENTRY} — run "pnpm run build:desktop".`);
 
   test('installs from the first-visit intro, states what skills are for, and keeps AI tools to connections', async ({
     captureStderrFor,
   }) => {
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-skills-studio-home-'));
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-skills-studio-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-skills-studio-home-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-skills-studio-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
     writeFileSync(join(projectDir, 'note.md'), '# Note\n');
 
     mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
@@ -36,11 +36,11 @@ test.describe('Skills Studio', () => {
 
     const userDataDir = join(tmpHome, 'electron-userdata');
     mkdirSync(userDataDir, { recursive: true });
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=note`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=note`;
 
     const app = await electron.launch({
       args: [MAIN_ENTRY, deepLink, `--user-data-dir=${userDataDir}`],
-      env: { ...process.env, HOME: tmpHome, OK_M6B_FORCE: '1' },
+      env: { ...process.env, HOME: tmpHome, PS_M6B_FORCE: '1' },
       timeout: 30_000,
     });
     captureStderrFor(app, { home: tmpHome, cleanupDirs: [projectDir, tmpHome] });
@@ -83,8 +83,8 @@ test.describe('Skills Studio', () => {
     ).toHaveCount(0, { timeout: 15_000 });
 
     const section = page.getByTestId('settings-builtin-skills');
-    await expect(section).toContainText('Skills from OpenKnowledge');
-    await expect(section).toContainText('How to set up new projects with OpenKnowledge.');
+    await expect(section).toContainText('Skills from Palimpsest');
+    await expect(section).toContainText('How to set up new projects with Palimpsest.');
     await expect(section).not.toContainText('Do NOT load');
     await expect(section).not.toContainText('Read when the user asks');
 
@@ -107,7 +107,7 @@ test.describe('Skills Studio', () => {
     await page.getByTestId('settings-sidebar-item-skills').click();
     const projectSkill = page.getByTestId('settings-project-skill');
     await expect(projectSkill).toBeVisible({ timeout: 10_000 });
-    await expect(projectSkill).toContainText('Skills from OpenKnowledge');
+    await expect(projectSkill).toContainText('Skills from Palimpsest');
     await expect(projectSkill).toContainText('everyone who opens the project');
 
     const shotDir = resolve(__dirname, '..', '..', 'tmp');

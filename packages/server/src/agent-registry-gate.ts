@@ -5,7 +5,7 @@ import {
   type ReadinessAssessment,
   type ReadinessLogSite,
   summarizeReadinessForLog,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export interface ReadinessObservationLogger {
   info(data: unknown, message: string): void;

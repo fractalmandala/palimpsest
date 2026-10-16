@@ -6,7 +6,7 @@ import {
   createTargetNamespace,
   createWikiAssetResolver,
   SUPPORTED_DOC_EXTENSIONS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { BacklinkIndex } from '../backlink-index.ts';
 import { createContentFilter } from '../content-filter.ts';
 import { isWithinContentDir } from '../content-path.ts';

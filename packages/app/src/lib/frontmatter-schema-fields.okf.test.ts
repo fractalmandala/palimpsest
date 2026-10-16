@@ -1,9 +1,9 @@
-import type { LinterConfig, OkfRuleId } from '@inkeep/open-knowledge-core';
+import type { LinterConfig, OkfRuleId } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { schemaFieldsForDoc } from './frontmatter-schema-fields.ts';
 
 function configWithOkf(
-  okf: { enabled: boolean; rules?: Partial<Record<OkfRuleId, boolean>> },
+  psf: { enabled: boolean; rules?: Partial<Record<OkfRuleId, boolean>> },
   frontmatter: {
     enabled: boolean;
     schemas: { appliesTo?: string | string[]; file: string; schema?: Record<string, unknown> }[];
@@ -14,7 +14,7 @@ function configWithOkf(
     plugins: {
       markdownlint: { enabled: false, rules: {} },
       frontmatter,
-      okf,
+      psf,
     },
   } as LinterConfig;
 }

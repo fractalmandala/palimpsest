@@ -10,7 +10,7 @@ import {
   isSurfacedCheckpointKind,
   type ParsedCheckpoint,
   type TimelineEntry,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 const { TimelineContent } = await import('./TimelinePanel');
@@ -33,7 +33,7 @@ function checkpointEntry(sha: string): TimelineEntry {
     sha,
     timestamp: '2026-04-17T00:00:00Z',
     author: 'openknowledge-service',
-    authorEmail: 'service@openknowledge.local',
+    authorEmail: 'service@palimpsest.local',
     type: 'checkpoint',
     message: 'checkpoint: cleanup',
     contributors: [],
@@ -46,7 +46,7 @@ function upstreamEntry(sha: string): TimelineEntry {
     sha,
     timestamp: '2026-04-17T00:00:00Z',
     author: 'git-upstream',
-    authorEmail: 'upstream@openknowledge.local',
+    authorEmail: 'upstream@palimpsest.local',
     type: 'upstream',
     message: 'import: upstream sync',
     contributors: [],
@@ -58,8 +58,8 @@ function recoveredCheckpointEntry(sha: string, checkpoint: ParsedCheckpoint): Ti
   return {
     sha,
     timestamp: '2026-04-17T00:00:00Z',
-    author: 'openknowledge',
-    authorEmail: 'noreply@openknowledge.local',
+    author: 'palimpsest',
+    authorEmail: 'noreply@palimpsest.local',
     type: 'checkpoint',
     message: 'checkpoint: Before concurrent merge @ 2026-05-05T12:00:00Z',
     contributors: [],
@@ -128,7 +128,7 @@ const SURFACED_KINDS: ParsedCheckpoint[] = [
   },
   {
     kind: 'managed-artifact-reconcile',
-    docName: '.ok/templates/daily',
+    docName: '.ps/templates/daily',
     size: 12,
     metadata: { diskBytes: 41, discardedBytes: 66 },
   },
@@ -241,7 +241,7 @@ describe('TimelineContent — recovered-content checkpoints', () => {
     });
     expect(screen.getByText('Recovered content')).toBeTruthy();
     expect(screen.queryByText(/Before concurrent merge/)).toBeNull();
-    expect(screen.queryByText('openknowledge')).toBeNull();
+    expect(screen.queryByText('palimpsest')).toBeNull();
     expect(screen.getAllByTestId('timeline-entry-restore')).toHaveLength(2);
   });
 

@@ -1,5 +1,5 @@
-import { TERMINAL_CLIS } from '@inkeep/open-knowledge-core';
-import type { OkNoteWindowMainAction } from '@inkeep/open-knowledge-core/desktop-bridge';
+import { TERMINAL_CLIS } from '@palimpsest/core';
+import type { PsNoteWindowMainAction } from '@palimpsest/core/desktop-bridge';
 import type { NoteWindowContext, NoteWindowEntryPoint } from './note-window-registry.ts';
 import {
   findNoteWindowForDoc,
@@ -58,7 +58,7 @@ function isNullableString(value: unknown): value is string | null {
   return typeof value === 'string' || value === null;
 }
 
-type NoteWindowMainActionKind = OkNoteWindowMainAction['kind'];
+type NoteWindowMainActionKind = PsNoteWindowMainAction['kind'];
 const NOTE_WINDOW_MAIN_ACTION_KINDS = {
   'active-input': true,
   'agent-thread': true,
@@ -70,7 +70,7 @@ function isNoteWindowMainActionKind(value: unknown): value is NoteWindowMainActi
   return typeof value === 'string' && Object.hasOwn(NOTE_WINDOW_MAIN_ACTION_KINDS, value);
 }
 
-export function parseNoteWindowMainAction(value: unknown): OkNoteWindowMainAction | null {
+export function parseNoteWindowMainAction(value: unknown): PsNoteWindowMainAction | null {
   if (!isRecord(value) || !isNoteWindowMainActionKind(value.kind)) return null;
 
   if (value.kind === 'active-input') {
@@ -145,7 +145,7 @@ export interface DispatchNoteWindowMainActionDeps<TTarget> {
   readonly action: unknown;
   readonly getContext: (windowId: number) => NoteWindowContext | undefined;
   readonly focusProjectWindow: (projectRoot: string) => TTarget | null;
-  readonly send: (target: TTarget, action: OkNoteWindowMainAction) => void;
+  readonly send: (target: TTarget, action: PsNoteWindowMainAction) => void;
 }
 
 export function dispatchNoteWindowMainActionToProject<TTarget>(

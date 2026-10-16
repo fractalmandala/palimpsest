@@ -4,7 +4,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import { BASE16_SLOTS } from '@inkeep/open-knowledge-core';
+import { BASE16_SLOTS } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createApiExtension } from './api-extension.test-helper.ts';
 import { savedThemesDir } from './saved-themes-store.ts';
@@ -82,7 +82,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
       .update(resolve(savedThemesDir(home)))
       .digest('hex')
       .slice(0, 24);
-    const lockDir = join(home, '.ok');
+    const lockDir = join(home, '.ps');
     mkdirSync(lockDir, { recursive: true });
     const lockPath = join(lockDir, `saved-themes-${rootKey}.lock`);
     writeFileSync(lockPath, '', { flag: 'wx', mode: 0o600 });
@@ -94,7 +94,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
   }
 
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'ok-api-saved-themes-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-api-saved-themes-'));
     savedThemeLockTimeoutMs = undefined;
   });
 

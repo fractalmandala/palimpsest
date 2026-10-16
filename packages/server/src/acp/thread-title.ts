@@ -1,4 +1,4 @@
-import { graphemePrefix } from '@inkeep/open-knowledge-core/utils/grapheme-clip';
+import { graphemePrefix } from '@palimpsest/core/utils/grapheme-clip';
 
 export const TITLE_MAX_CHARS = 48;
 

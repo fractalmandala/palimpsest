@@ -16,9 +16,9 @@ function directory(required: boolean, entries: SlotTree = {}): SlotEntry {
 
 const SERVER_WRITTEN_TREE: SlotTree = {
   '.git': SERVER_OWNED,
-  '.okignore': { kind: 'empty-file', required: false },
+  '.psignore': { kind: 'empty-file', required: false },
   '.claude': directory(true, { skills: directory(true) }),
-  '.ok': directory(false, {
+  '.ps': directory(false, {
     skills: directory(false),
     local: directory(false, {
       'acp-registry-cache.json': SERVER_OWNED,

@@ -6,7 +6,7 @@
 
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { useThemeBridge } from './use-theme-bridge';
 
 const ASYNC_EFFECT_TIMEOUT_MS = 1000;
@@ -89,7 +89,7 @@ function HookProbe({
   themeValue,
   colorThemeKey,
 }: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
   themeValue: string | undefined;
   colorThemeKey?: string;
 }) {
@@ -184,7 +184,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
     await act(async () => {
       view.rerender(
-        <HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="solarized" />,
+        <HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="solarized" />,
       );
       await Promise.resolve();
     });
@@ -195,7 +195,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
   test('forwards themeValue verbatim to setThemeSource on mount', async () => {
     const stubBridge = makeStubBridge();
-    render(<HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="system" />);
+    render(<HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="system" />);
 
     await waitFor(
       () => {
@@ -208,7 +208,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
   test('signalThemeApplied fires after the .finally(...) drain with the matchMedia reading', async () => {
     const stubBridge = makeStubBridge();
-    render(<HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="dark" />);
+    render(<HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="dark" />);
 
     await waitFor(
       () => {
@@ -224,7 +224,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
   test('cleanup on unmount: signalThemeApplied does NOT fire after unmount, no React warning', async () => {
     const stubBridge = makeStubBridge();
     const { unmount } = render(
-      <HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="light" />,
+      <HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="light" />,
     );
 
     unmount();
@@ -245,7 +245,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
   test('rerender with the same themeValue forwards the original verbatim user-intent', async () => {
     const stubBridge = makeStubBridge();
     const { rerender } = render(
-      <HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="system" />,
+      <HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="system" />,
     );
 
     await waitFor(
@@ -256,7 +256,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     );
     expect(stubBridge.setThemeSourceCalls[0]).toBe('system');
 
-    rerender(<HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="system" />);
+    rerender(<HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="system" />);
 
     await act(async () => {
       await Promise.resolve();
@@ -269,7 +269,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
   test('rerender with a changed themeValue re-fires setThemeSource and releases gate', async () => {
     const stubBridge = makeStubBridge();
     const { rerender } = render(
-      <HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="system" />,
+      <HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="system" />,
     );
 
     await waitFor(
@@ -281,7 +281,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     expect(stubBridge.setThemeSourceCalls.length).toBe(1);
     expect(stubBridge.setThemeSourceCalls[0]).toBe('system');
 
-    rerender(<HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="dark" />);
+    rerender(<HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="dark" />);
 
     await waitFor(
       () => {
@@ -316,7 +316,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     try {
       render(
         <HookProbe
-          bridge={stubBridge as unknown as OkDesktopBridge}
+          bridge={stubBridge as unknown as PsDesktopBridge}
           themeValue="light"
           colorThemeKey="default:"
         />,
@@ -343,7 +343,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     const stubBridge = makeStubBridge();
     const { rerender } = render(
       <HookProbe
-        bridge={stubBridge as unknown as OkDesktopBridge}
+        bridge={stubBridge as unknown as PsDesktopBridge}
         themeValue="dark"
         colorThemeKey="dracula:"
       />,
@@ -358,7 +358,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
     rerender(
       <HookProbe
-        bridge={stubBridge as unknown as OkDesktopBridge}
+        bridge={stubBridge as unknown as PsDesktopBridge}
         themeValue="dark"
         colorThemeKey="monokai:"
       />,
@@ -375,7 +375,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
   test('a readiness re-entry with an unchanged preference re-reports chrome without re-pushing the source', async () => {
     const stubBridge = makeStubBridge();
-    const typedBridge = stubBridge as unknown as OkDesktopBridge;
+    const typedBridge = stubBridge as unknown as PsDesktopBridge;
     const { rerender } = render(<HookProbe bridge={undefined} themeValue={undefined} />);
 
     rerender(<HookProbe bridge={typedBridge} themeValue="system" />);
@@ -404,7 +404,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     const secondBridge = makeStubBridge();
     expect(secondBridge).not.toBe(firstBridge);
     const { rerender } = render(
-      <HookProbe bridge={firstBridge as unknown as OkDesktopBridge} themeValue="system" />,
+      <HookProbe bridge={firstBridge as unknown as PsDesktopBridge} themeValue="system" />,
     );
     await waitFor(
       () => {
@@ -413,7 +413,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
       { timeout: ASYNC_EFFECT_TIMEOUT_MS },
     );
 
-    rerender(<HookProbe bridge={secondBridge as unknown as OkDesktopBridge} themeValue="system" />);
+    rerender(<HookProbe bridge={secondBridge as unknown as PsDesktopBridge} themeValue="system" />);
 
     await waitFor(
       () => {
@@ -426,7 +426,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
   test('a superseded push that later fails leaves the push that replaced it recorded', async () => {
     const deferredBridge = makeDeferredBridge();
-    const typedBridge = deferredBridge as unknown as OkDesktopBridge;
+    const typedBridge = deferredBridge as unknown as PsDesktopBridge;
     const { rerender } = render(
       <HookProbe bridge={typedBridge} themeValue="light" colorThemeKey="before" />,
     );
@@ -449,7 +449,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
   test('a re-entry that skips the push waits for that push before signalling the theme applied', async () => {
     const deferredBridge = makeDeferredBridge();
-    const typedBridge = deferredBridge as unknown as OkDesktopBridge;
+    const typedBridge = deferredBridge as unknown as PsDesktopBridge;
     const { rerender } = render(
       <HookProbe bridge={typedBridge} themeValue="system" colorThemeKey="before" />,
     );
@@ -478,7 +478,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
 
   test('a push that fails without being superseded is re-attempted on the next re-entry', async () => {
     const deferredBridge = makeDeferredBridge();
-    const typedBridge = deferredBridge as unknown as OkDesktopBridge;
+    const typedBridge = deferredBridge as unknown as PsDesktopBridge;
     const { rerender } = render(
       <HookProbe bridge={typedBridge} themeValue="dark" colorThemeKey="before" />,
     );
@@ -502,7 +502,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     const stubBridge = makeStubBridge();
     function Owner() {
       renders += 1;
-      useThemeBridge(stubBridge as unknown as OkDesktopBridge, 'dark');
+      useThemeBridge(stubBridge as unknown as PsDesktopBridge, 'dark');
       return null;
     }
     const view = render(<Owner />);
@@ -530,7 +530,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
   test('rejection path: signalThemeApplied still fires via .finally so the show-gate releases', async () => {
     const rejectionError = new Error('ipc-teardown: setThemeSource bridge unreachable');
     const stubBridge = makeRejectingBridge(rejectionError);
-    render(<HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="system" />);
+    render(<HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="system" />);
 
     await waitFor(
       () => {
@@ -561,7 +561,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
     try {
       const stubBridge = makeStubBridge();
       const { unmount } = render(
-        <HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="system" />,
+        <HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="system" />,
       );
 
       await waitFor(
@@ -595,7 +595,7 @@ describe('useThemeBridge (Tier-3 mount)', () => {
       active ? ([{ transitionProperty: '--background' }] as unknown as Animation[]) : [];
     const stubBridge = makeStubBridge();
     const view = render(
-      <HookProbe bridge={stubBridge as unknown as OkDesktopBridge} themeValue="dark" />,
+      <HookProbe bridge={stubBridge as unknown as PsDesktopBridge} themeValue="dark" />,
     );
     try {
       await waitFor(() => expect(stubBridge.signalThemeAppliedCalls).toHaveLength(1));

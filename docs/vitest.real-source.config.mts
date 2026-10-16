@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import mdx from 'fumadocs-mdx/vite';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../test-support/vitest.base';
+import { psVitestBase } from '../test-support/vitest.base';
 import * as Config from './source.config.ts';
 
 const docsRoot = fileURLToPath(new URL('.', import.meta.url));
@@ -32,20 +32,20 @@ function withConfigAdditionsOnly(plugin: Plugin): Plugin {
 }
 
 export default defineConfig(async () => ({
-  ...okVitestBase,
+  ...psVitestBase,
   plugins: [
-    ...okVitestBase.plugins,
+    ...psVitestBase.plugins,
     withConfigAdditionsOnly(await mdx(Config, { outDir: OUT_DIR })),
     collectionJsonModule,
   ],
   test: {
-    ...okVitestBase.test,
+    ...psVitestBase.test,
     include: ['src/**/*.real-source.test.ts'],
     css: false,
     server: { deps: { inline: [/fumadocs-ui/] } },
   },
   resolve: {
-    ...okVitestBase.resolve,
+    ...psVitestBase.resolve,
     alias: [
       { find: /(?:\.\.\/)+\.source(?=$|\/)/, replacement: `${docsRoot}${OUT_DIR}` },
       { find: /^@\/\.source(?=$|\/)/, replacement: `${docsRoot}${OUT_DIR}` },

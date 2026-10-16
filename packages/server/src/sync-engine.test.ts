@@ -14,7 +14,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import { LOCAL_DIR, type SyncMode, SyncStatusSchema } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR, type SyncMode, SyncStatusSchema } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -83,15 +83,15 @@ function captureSyncLogs(name = 'sync-engine'): { entries: CapturedLog[]; restor
 let tmpDir = '';
 let projectDir = '';
 let contentDir = '';
-let okDir = '';
+let psDir = '';
 
 beforeEach(() => {
   tmpDir = mkdtempSync(join(tmpdir(), 'sync-engine-test-'));
   projectDir = join(tmpDir, 'project');
   contentDir = join(tmpDir, 'content');
-  okDir = join(projectDir, '.ok', LOCAL_DIR);
+  psDir = join(projectDir, '.ps', LOCAL_DIR);
   mkdirSync(projectDir, { recursive: true });
-  mkdirSync(okDir, { recursive: true });
+  mkdirSync(psDir, { recursive: true });
 });
 
 afterEach(() => {
@@ -135,7 +135,7 @@ function makeEngine(
   });
 }
 
-async function initGitWithOrigin(originUrl = 'https://github.com/inkeep/open-knowledge.git') {
+async function initGitWithOrigin(originUrl = 'https://github.com/fractalmandala/palimpsest.git') {
   const git = simpleGit(projectDir);
   await git.init(['--initial-branch=main']);
   configureTestGitRepository(projectDir);
@@ -240,7 +240,7 @@ describe('SyncEngine destroy()', () => {
 });
 
 describe('SyncEngine state persistence round-trip', () => {
-  const statePath = () => join(okDir, 'sync-state.json');
+  const statePath = () => join(psDir, 'sync-state.json');
 
   test('saveStateNow via destroy() writes sync-state.json', async () => {
     const engine = makeEngine();
@@ -377,7 +377,7 @@ describe('SyncEngine state persistence round-trip', () => {
     await setupRealMergeConflict(files);
 
     writeFileSync(
-      join(okDir, 'conflicts.json'),
+      join(psDir, 'conflicts.json'),
       JSON.stringify({
         version: 1,
         branch: 'main',
@@ -425,7 +425,7 @@ describe('SyncEngine state persistence round-trip', () => {
     await git.addRemote('origin', bareDir);
 
     writeFileSync(
-      join(okDir, 'conflicts.json'),
+      join(psDir, 'conflicts.json'),
       JSON.stringify({
         version: 1,
         branch: 'main',
@@ -466,7 +466,7 @@ describe('SyncEngine state persistence round-trip', () => {
     await git.raw(['add', '--', 'docs/a.md']);
 
     writeFileSync(
-      join(okDir, 'conflicts.json'),
+      join(psDir, 'conflicts.json'),
       JSON.stringify({
         version: 1,
         branch: 'main',
@@ -505,7 +505,7 @@ describe('SyncEngine state persistence round-trip', () => {
     await setupRealMergeConflict([conflictedFile]);
 
     writeFileSync(
-      join(okDir, 'conflicts.json'),
+      join(psDir, 'conflicts.json'),
       JSON.stringify({
         version: 1,
         branch: 'main',
@@ -651,7 +651,7 @@ describe('SyncEngine ConflictStore admission (content-only)', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
     await project.raw('config', 'user.email', 'project@test.com');
@@ -697,7 +697,7 @@ describe('SyncEngine ConflictStore admission (content-only)', () => {
       const mergeHeadPath = join(projectDir, '.git', 'MERGE_HEAD');
       expect(existsSync(mergeHeadPath)).toBe(false);
 
-      const conflictsJsonPath = join(okDir, 'conflicts.json');
+      const conflictsJsonPath = join(psDir, 'conflicts.json');
       if (existsSync(conflictsJsonPath)) {
         const parsed = JSON.parse(readFileSync(conflictsJsonPath, 'utf-8')) as {
           conflicts?: Array<{ file: string }>;
@@ -750,7 +750,7 @@ describe('SyncEngine ConflictStore admission (content-only)', () => {
       const mergeHeadPath = join(projectDir, '.git', 'MERGE_HEAD');
       expect(existsSync(mergeHeadPath)).toBe(false);
 
-      const conflictsJsonPath = join(okDir, 'conflicts.json');
+      const conflictsJsonPath = join(psDir, 'conflicts.json');
       if (existsSync(conflictsJsonPath)) {
         const parsed = JSON.parse(readFileSync(conflictsJsonPath, 'utf-8')) as {
           conflicts?: Array<{ file: string }>;
@@ -800,10 +800,10 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     const v1 = JSON.stringify({
       mcpServers: {
         other: { command: 'keep-me' },
-        'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v1\nexit 127'] },
+        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexit 127'] },
       },
     });
-    const v2 = v1.replace('# ok-mcp-v1', '# ok-mcp-v2');
+    const v2 = v1.replace('# ps-mcp-v1', '# ps-mcp-v2');
     const sister = simpleGit(sisterDir);
     await sister.init(['--initial-branch=main']);
     configureTestGitRepository(sisterDir);
@@ -818,7 +818,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     appendFileSync(join(projectDir, '.git', 'info', 'exclude'), '\n.ok/\n', 'utf-8');
 
     writeFileSync(join(sisterDir, '.mcp.json'), `${v2}\n`, 'utf-8');
@@ -865,7 +865,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
         theme,
         mcpServers: {
           other: { command: 'keep-me' },
-          'open-knowledge': {
+          'palimpsest': {
             command: '/bin/sh',
             args: ['-l', '-c', `${marker}\nexit 127`],
           },
@@ -876,7 +876,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     configureTestGitRepository(sisterDir);
     await sister.raw('config', 'user.name', 'Sister');
     await sister.raw('config', 'user.email', 'sister@test.com');
-    writeFileSync(join(sisterDir, '.mcp.json'), config('# ok-mcp-v1', 'base'), 'utf8');
+    writeFileSync(join(sisterDir, '.mcp.json'), config('# ps-mcp-v1', 'base'), 'utf8');
     await sister.add('.mcp.json');
     await sister.commit('base');
     await sister.addRemote('origin', bareDir);
@@ -885,13 +885,13 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
-    writeFileSync(join(sisterDir, '.mcp.json'), config('# ok-mcp-v2', 'incoming'), 'utf8');
+    writeFileSync(join(sisterDir, '.mcp.json'), config('# ps-mcp-v2', 'incoming'), 'utf8');
     await sister.add('.mcp.json');
     await sister.commit('incoming launcher');
     await sister.push('origin', 'main');
-    writeFileSync(join(projectDir, '.mcp.json'), config('# ok-mcp-v99', 'base'), 'utf8');
+    writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v99', 'base'), 'utf8');
 
     const engine = new SyncEngine({
       conflicts: newAuthority(),
@@ -910,7 +910,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
       const project = simpleGit(projectDir);
       const raw = readFileSync(join(projectDir, '.mcp.json'), 'utf8');
       expect(raw).not.toContain('<<<<<<<');
-      expect(JSON.parse(raw)).toEqual(JSON.parse(config('# ok-mcp-v99', 'incoming')));
+      expect(JSON.parse(raw)).toEqual(JSON.parse(config('# ps-mcp-v99', 'incoming')));
       expect((await project.raw(['diff', '--name-only', '--diff-filter=U'])).trim()).toBe('');
       expect((await project.log({ maxCount: 1 })).latest?.message).toBe('incoming launcher');
       expect((await project.raw(['stash', 'list'])).trim()).toBe('');
@@ -934,13 +934,13 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
         theme: 'keep',
         mcpServers: {
           other: { command: 'keep-me' },
-          'open-knowledge': entry(marker),
+          'palimpsest': entry(marker),
         },
       })}\n`;
-    writeFileSync(join(projectDir, '.mcp.json'), config('# ok-mcp-v2'), 'utf8');
+    writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v2'), 'utf8');
     await project.add('.mcp.json');
     await project.commit('base');
-    writeFileSync(join(projectDir, '.mcp.json'), config('# ok-mcp-v99'), 'utf8');
+    writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v99'), 'utf8');
 
     const engine = new SyncEngine({
       conflicts: newAuthority(),
@@ -958,17 +958,17 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     ).persistReconciledMcpEntries([
       {
         path: '.mcp.json',
-        raw: config('# ok-mcp-v99'),
-        winnerEntry: entry('# ok-mcp-v99'),
+        raw: config('# ps-mcp-v99'),
+        winnerEntry: entry('# ps-mcp-v99'),
       },
     ]);
 
     expect((await project.log({ maxCount: 1 })).latest?.message).toBe(
-      'Update OpenKnowledge MCP launcher',
+      'Update Palimpsest MCP launcher',
     );
     expect(await project.show(['--format=', '--name-only', 'HEAD'])).toBe('.mcp.json\n');
     expect(JSON.parse(readFileSync(join(projectDir, '.mcp.json'), 'utf8'))).toEqual(
-      JSON.parse(config('# ok-mcp-v99')),
+      JSON.parse(config('# ps-mcp-v99')),
     );
     expect((await project.status()).files).toEqual([]);
     const committed = JSON.parse(await project.show(['HEAD:.mcp.json'])) as {
@@ -993,7 +993,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
       `${JSON.stringify({
         mcpServers: {
           other: { command: 'keep-me' },
-          'open-knowledge': {
+          'palimpsest': {
             command: '/bin/sh',
             args: ['-l', '-c', `${marker}\nexit 127`],
           },
@@ -1004,8 +1004,8 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     configureTestGitRepository(sisterDir);
     await sister.raw('config', 'user.name', 'Sister');
     await sister.raw('config', 'user.email', 'sister@test.com');
-    writeFileSync(join(sisterDir, '.gitignore'), '/.ok/*\n', 'utf8');
-    writeFileSync(join(sisterDir, '.mcp.json'), config('# ok-mcp-v1'), 'utf8');
+    writeFileSync(join(sisterDir, '.gitignore'), '/.ps/*\n', 'utf8');
+    writeFileSync(join(sisterDir, '.mcp.json'), config('# ps-mcp-v1'), 'utf8');
     writeFileSync(join(sisterDir, 'shared.md'), 'base\n', 'utf8');
     await sister.add(['.gitignore', '.mcp.json', 'shared.md']);
     await sister.commit('base');
@@ -1015,16 +1015,16 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     await simpleGit(projectDir).raw(['config', 'user.name', '']);
     await simpleGit(projectDir).raw(['config', 'user.email', '']);
 
-    writeFileSync(join(sisterDir, '.mcp.json'), config('# ok-mcp-v2'), 'utf8');
+    writeFileSync(join(sisterDir, '.mcp.json'), config('# ps-mcp-v2'), 'utf8');
     await sister.add('.mcp.json');
     await sister.commit('incoming launcher');
     await sister.push('origin', 'main');
 
-    writeFileSync(join(projectDir, '.mcp.json'), config('# ok-mcp-v99'), 'utf8');
+    writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v99'), 'utf8');
     writeFileSync(join(projectDir, 'local.md'), 'local content\n', 'utf8');
     const engine = new SyncEngine({
       conflicts: newAuthority(),
@@ -1045,18 +1045,18 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
       const project = simpleGit(projectDir);
       const raw = readFileSync(join(projectDir, '.mcp.json'), 'utf8');
       expect(raw).not.toContain('<<<<<<<');
-      expect(JSON.parse(raw)).toEqual(JSON.parse(config('# ok-mcp-v99')));
+      expect(JSON.parse(raw)).toEqual(JSON.parse(config('# ps-mcp-v99')));
       expect((await project.raw(['diff', '--name-only', '--diff-filter=U'])).trim()).toBe('');
       const status = await project.status();
       expect(status.files.filter((file) => file.path !== '.mcp.json')).toEqual([]);
       expect(status.files.find((file) => file.path === '.mcp.json')?.index ?? ' ').toBe(' ');
       expect((await project.raw(['stash', 'list'])).trim()).toBe('');
       expect(JSON.parse(await bare.show(['main:.mcp.json']))).toEqual(
-        JSON.parse(config('# ok-mcp-v99')),
+        JSON.parse(config('# ps-mcp-v99')),
       );
       expect(await bare.show(['main:local.md'])).toBe('local content\n');
       expect((await project.log({ maxCount: 1 })).latest?.message).toBe(
-        'Update OpenKnowledge MCP launcher',
+        'Update Palimpsest MCP launcher',
       );
     } finally {
       await engine.destroy();
@@ -1089,7 +1089,7 @@ describe('SyncEngine delete/modify dirty content conflicts', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir, ['--branch', 'main']);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
@@ -1127,7 +1127,7 @@ describe('SyncEngine delete/modify dirty content conflicts', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir, ['--branch', 'main']);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
@@ -1242,7 +1242,7 @@ describe('SyncEngine non-ASCII filename conflicts', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir, ['--branch', 'main']);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
@@ -1623,14 +1623,14 @@ describe('SyncEngine unified pull — B1 in every mode', () => {
 
   test('follow mode keeps a local artifact edit that origin also changed (the phantom-offline fix)', async () => {
     const { sister, sisterDir } = await projectWithSister();
-    mkdirSync(join(sisterDir, '.ok'), { recursive: true });
-    writeFileSync(join(sisterDir, '.ok', 'config.yml'), 'shared: remote\n');
-    await sister.add(['.ok/config.yml']);
+    mkdirSync(join(sisterDir, '.ps'), { recursive: true });
+    writeFileSync(join(sisterDir, '.ps', 'config.yml'), 'shared: remote\n');
+    await sister.add(['.ps/config.yml']);
     await sister.commit('teammate edits config');
     await sister.push();
 
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'shared: local\n');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'shared: local\n');
 
     const engine = makeRootContentEngine('follow');
     try {
@@ -1645,7 +1645,7 @@ describe('SyncEngine unified pull — B1 in every mode', () => {
       const status = engine.getStatus();
       expect(status.state).not.toBe('offline');
       expect(status.pullError).toBeUndefined();
-      expect(readFileSync(join(projectDir, '.ok', 'config.yml'), 'utf-8')).toBe('shared: local\n');
+      expect(readFileSync(join(projectDir, '.ps', 'config.yml'), 'utf-8')).toBe('shared: local\n');
     } finally {
       await engine.destroy();
     }
@@ -1901,7 +1901,7 @@ describe('SyncEngine updateCurrentBranch()', () => {
 });
 
 describe('SyncEngine backoff thresholds via persisted state', () => {
-  const statePath = () => join(okDir, 'sync-state.json');
+  const statePath = () => join(psDir, 'sync-state.json');
 
   function persistState(overrides: Record<string, unknown>) {
     const base = {
@@ -2719,11 +2719,11 @@ describe('SyncEngine lifecycle edge cases', () => {
     const engine = makeEngine({ syncEnabled: false });
     await engine.start();
     await engine.destroy();
-    expect(existsSync(join(okDir, 'sync-state.json'))).toBe(true);
+    expect(existsSync(join(psDir, 'sync-state.json'))).toBe(true);
   });
 
   test('pausedReason is persisted through destroy + restore', async () => {
-    const statePath = join(okDir, 'sync-state.json');
+    const statePath = join(psDir, 'sync-state.json');
     const persisted = {
       version: 1,
       lastSyncUtc: null,
@@ -2741,7 +2741,7 @@ describe('SyncEngine lifecycle edge cases', () => {
   });
 
   test('loadState drops no-push-permission from legacy state files (defense-in-depth)', async () => {
-    const statePath = join(okDir, 'sync-state.json');
+    const statePath = join(psDir, 'sync-state.json');
     const persisted = {
       version: 1,
       lastSyncUtc: null,
@@ -2768,7 +2768,7 @@ describe('SyncEngine lifecycle edge cases', () => {
 
     await engine.destroy();
 
-    const statePath = join(okDir, 'sync-state.json');
+    const statePath = join(psDir, 'sync-state.json');
     const reloaded = JSON.parse(readFileSync(statePath, 'utf-8')) as { pausedReason?: string };
     expect(reloaded.pausedReason).toBeUndefined();
   });
@@ -2895,8 +2895,8 @@ describe('SyncEngine push cycle with non-ASCII filenames', () => {
 });
 
 describe('SyncEngine push cycle vs gitignored content (precedent #55 at the staging boundary)', () => {
-  const templatePath = join('trips', '.ok', 'templates', 'article.md');
-  const templateRel = 'trips/.ok/templates/article.md';
+  const templatePath = join('trips', '.ps', 'templates', 'article.md');
+  const templateRel = 'trips/.ps/templates/article.md';
 
   async function initRepoWithBareRemote() {
     const git = simpleGit(projectDir);
@@ -2929,9 +2929,9 @@ describe('SyncEngine push cycle vs gitignored content (precedent #55 at the stag
 
   test('skips untracked ignored paths instead of failing the whole push cycle', async () => {
     const git = await initRepoWithBareRemote();
-    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
 
-    mkdirSync(join(projectDir, 'trips', '.ok', 'templates'), { recursive: true });
+    mkdirSync(join(projectDir, 'trips', '.ps', 'templates'), { recursive: true });
     writeFileSync(join(projectDir, templatePath), '# Template\n');
     writeFileSync(join(projectDir, 'note.md'), 'new note\n');
 
@@ -2995,13 +2995,13 @@ describe('SyncEngine push cycle vs gitignored content (precedent #55 at the stag
 
   test('keeps syncing edits to a tracked file that an ignore rule also matches', async () => {
     const git = await initRepoWithBareRemote();
-    mkdirSync(join(projectDir, 'trips', '.ok', 'templates'), { recursive: true });
+    mkdirSync(join(projectDir, 'trips', '.ps', 'templates'), { recursive: true });
     writeFileSync(join(projectDir, templatePath), '# Template v1\n');
     await git.add('.');
     await git.commit('add template while shared');
     await git.push(['origin', 'main']);
 
-    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
     writeFileSync(join(projectDir, templatePath), '# Template v2\n');
 
     const engine = makePushEngine();
@@ -3025,7 +3025,7 @@ describe('SyncEngine push cycle vs gitignored content (precedent #55 at the stag
   });
 });
 
-describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', () => {
+describe('SyncEngine push cycle stages shareable .ps artifacts (sync scope)', () => {
   async function initSharedRepoWithBareRemote() {
     const git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
@@ -3070,15 +3070,15 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
   test('stages and pushes every shareable artifact class in a shared full-mode project', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-    mkdirSync(join(projectDir, '.ok', 'templates'), { recursive: true });
-    mkdirSync(join(projectDir, 'docs', '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: full\n');
-    writeFileSync(join(projectDir, '.ok', '.gitignore'), 'local/\nworktrees/\n');
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-    writeFileSync(join(projectDir, '.ok', 'templates', 'meeting.md'), '# Meeting\n');
-    writeFileSync(join(projectDir, 'docs', '.ok', 'templates', 'article.md'), '# Article\n');
-    writeFileSync(join(projectDir, 'docs', '.ok', 'frontmatter.yml'), 'icon: book\n');
+    mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', 'templates'), { recursive: true });
+    mkdirSync(join(projectDir, 'docs', '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: full\n');
+    writeFileSync(join(projectDir, '.ps', '.gitignore'), 'local/\nworktrees/\n');
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+    writeFileSync(join(projectDir, '.ps', 'templates', 'meeting.md'), '# Meeting\n');
+    writeFileSync(join(projectDir, 'docs', '.ps', 'templates', 'article.md'), '# Article\n');
+    writeFileSync(join(projectDir, 'docs', '.ps', 'frontmatter.yml'), 'icon: book\n');
     writeFileSync(join(projectDir, 'docs', 'guide.md'), '# Guide\n');
 
     const engine = makeShareableEngine();
@@ -3092,12 +3092,12 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
       for (const path of [
-        '.ok/config.yml',
-        '.ok/.gitignore',
-        '.ok/schemas/frontmatter.json',
-        '.ok/templates/meeting.md',
-        'docs/.ok/templates/article.md',
-        'docs/.ok/frontmatter.yml',
+        '.ps/config.yml',
+        '.ps/.gitignore',
+        '.ps/schemas/frontmatter.json',
+        '.ps/templates/meeting.md',
+        'docs/.ps/templates/article.md',
+        'docs/.ps/frontmatter.yml',
         'docs/guide.md',
       ]) {
         expect(headPaths).toContain(path);
@@ -3215,13 +3215,13 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     }
   });
 
-  test('local-only .ok sharing does not block a configured attachment folder', async () => {
+  test('local-only .ps sharing does not block a configured attachment folder', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     mkdirSync(join(projectDir, 'assets'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       'content:\n  attachmentFolderPath: assets\n',
     );
     writeFileSync(join(projectDir, 'assets', 'shared.png'), 'attachment');
@@ -3243,7 +3243,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
       expect(headPaths).toContain('assets/shared.png');
-      expect(headPaths).not.toContain('.ok/config.yml');
+      expect(headPaths).not.toContain('.ps/config.yml');
     } finally {
       await engine.destroy();
     }
@@ -3251,14 +3251,14 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
   test('tracks the deletion of a shareable artifact and keeps the surviving ones', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: full\n');
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-    await git.add(['.ok/config.yml', '.ok/schemas/frontmatter.json']);
+    mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: full\n');
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+    await git.add(['.ps/config.yml', '.ps/schemas/frontmatter.json']);
     await git.commit('add shareable artifacts');
     await git.push(['origin', 'main']);
 
-    rmSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'));
+    rmSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'));
 
     const engine = makeShareableEngine();
     try {
@@ -3267,8 +3267,8 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       expect(engine.getStatus().pushError).toBeUndefined();
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-      expect(headPaths).not.toContain('.ok/schemas/frontmatter.json');
-      expect(headPaths).toContain('.ok/config.yml');
+      expect(headPaths).not.toContain('.ps/schemas/frontmatter.json');
+      expect(headPaths).toContain('.ps/config.yml');
 
       const remoteHead = (await git.revparse(['origin/main'])).trim();
       expect(remoteHead).toBe((await git.revparse(['HEAD'])).trim());
@@ -3281,10 +3281,10 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     'fails closed on an unreadable tracked schema when content and project roots match',
     async () => {
       const { git } = await initSharedRepoWithBareRemote();
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-      await git.add(['.ok/schemas/frontmatter.json']);
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+      await git.add(['.ps/schemas/frontmatter.json']);
       await git.commit('track project schema');
       await git.push(['origin', 'main']);
       const headBefore = (await git.revparse(['HEAD'])).trim();
@@ -3295,12 +3295,12 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       const engine = makeShareableEngine();
       const cap = captureSyncLogs();
       try {
-        chmodSync(join(projectDir, '.ok', 'schemas'), 0o311);
+        chmodSync(join(projectDir, '.ps', 'schemas'), 0o311);
         await engine.start();
         await engine.trigger('push');
 
         const status = engine.getStatus();
-        expect(status.pushError).toContain('Shareable .ok subtree ".ok/schemas"');
+        expect(status.pushError).toContain('Shareable .ps subtree ".ps/schemas"');
         expect(status.consecutivePushFailures).toBeGreaterThan(0);
         expect(status.consecutiveFailures).toBe(0);
         const detail = cap.entries.find(
@@ -3313,12 +3313,12 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
         expect((await git.revparse(['HEAD'])).trim()).toBe(headBefore);
         expect((await git.revparse(['origin/main'])).trim()).toBe(remoteBefore);
         const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-        expect(headPaths).toContain('.ok/schemas/frontmatter.json');
+        expect(headPaths).toContain('.ps/schemas/frontmatter.json');
         expect(headPaths).not.toContain('note.md');
-        expect(existsSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'))).toBe(true);
+        expect(existsSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'))).toBe(true);
       } finally {
         cap.restore();
-        chmodSync(join(projectDir, '.ok', 'schemas'), 0o755);
+        chmodSync(join(projectDir, '.ps', 'schemas'), 0o755);
         await engine.destroy();
       }
     },
@@ -3328,9 +3328,9 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     'names a nested unreadable template subtree and commits no partial snapshot',
     async () => {
       const { git } = await initSharedRepoWithBareRemote();
-      mkdirSync(join(projectDir, 'docs', '.ok', 'templates'), { recursive: true });
-      writeFileSync(join(projectDir, 'docs', '.ok', 'templates', 'article.md'), '# Template\n');
-      await git.add(['docs/.ok/templates/article.md']);
+      mkdirSync(join(projectDir, 'docs', '.ps', 'templates'), { recursive: true });
+      writeFileSync(join(projectDir, 'docs', '.ps', 'templates', 'article.md'), '# Template\n');
+      await git.add(['docs/.ps/templates/article.md']);
       await git.commit('track folder template');
       await git.push(['origin', 'main']);
       const headBefore = (await git.revparse(['HEAD'])).trim();
@@ -3340,33 +3340,33 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       const engine = makeShareableEngine();
       try {
-        chmodSync(join(projectDir, 'docs', '.ok', 'templates'), 0o311);
+        chmodSync(join(projectDir, 'docs', '.ps', 'templates'), 0o311);
         await engine.start();
         await engine.trigger('push');
 
         const status = engine.getStatus();
         expect(status.pushError).toContain(
-          'Shareable .ok subtree "docs/.ok/templates" could not be fully enumerated',
+          'Shareable .ps subtree "docs/.ps/templates" could not be fully enumerated',
         );
         expect((await git.revparse(['HEAD'])).trim()).toBe(headBefore);
         expect((await git.revparse(['origin/main'])).trim()).toBe(remoteBefore);
-        expect(await git.raw(['show', 'HEAD:docs/.ok/templates/article.md'])).toBe('# Template\n');
+        expect(await git.raw(['show', 'HEAD:docs/.ps/templates/article.md'])).toBe('# Template\n');
         expect(await git.raw(['ls-tree', '-r', '--name-only', 'HEAD'])).not.toContain('note.md');
       } finally {
-        chmodSync(join(projectDir, 'docs', '.ok', 'templates'), 0o755);
+        chmodSync(join(projectDir, 'docs', '.ps', 'templates'), 0o755);
         await engine.destroy();
       }
     },
   );
 
-  test('never stages .ok local state, worktrees, or legacy root state files', async () => {
+  test('never stages .ps local state, worktrees, or legacy root state files', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    mkdirSync(join(projectDir, '.ok', 'worktrees', 'wt1'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: full\n');
-    writeFileSync(join(projectDir, '.ok', 'local', 'principal.json'), '{}\n');
-    writeFileSync(join(projectDir, '.ok', 'worktrees', 'wt1', 'scratch.md'), '# Scratch\n');
-    writeFileSync(join(projectDir, '.ok', 'state.json'), '{}\n');
-    writeFileSync(join(projectDir, '.ok', 'server.lock'), '{}\n');
+    mkdirSync(join(projectDir, '.ps', 'worktrees', 'wt1'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: full\n');
+    writeFileSync(join(projectDir, '.ps', 'local', 'principal.json'), '{}\n');
+    writeFileSync(join(projectDir, '.ps', 'worktrees', 'wt1', 'scratch.md'), '# Scratch\n');
+    writeFileSync(join(projectDir, '.ps', 'state.json'), '{}\n');
+    writeFileSync(join(projectDir, '.ps', 'server.lock'), '{}\n');
 
     const engine = makeShareableEngine();
     try {
@@ -3375,12 +3375,12 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       expect(engine.getStatus().pushError).toBeUndefined();
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-      expect(headPaths).toContain('.ok/config.yml');
+      expect(headPaths).toContain('.ps/config.yml');
       expect(
-        headPaths.filter((p) => p.startsWith('.ok/local/') || p.startsWith('.ok/worktrees/')),
+        headPaths.filter((p) => p.startsWith('.ps/local/') || p.startsWith('.ps/worktrees/')),
       ).toEqual([]);
-      expect(headPaths).not.toContain('.ok/state.json');
-      expect(headPaths).not.toContain('.ok/server.lock');
+      expect(headPaths).not.toContain('.ps/state.json');
+      expect(headPaths).not.toContain('.ps/server.lock');
     } finally {
       await engine.destroy();
     }
@@ -3391,8 +3391,8 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     async () => {
       const { bareDir } = await initSharedRepoWithBareRemote();
 
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{}\n');
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{}\n');
 
       const engine = makeShareableEngine('off');
       const internal = engine as unknown as {
@@ -3400,7 +3400,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       };
       const commitDirty = internal.commitDirtyContentFilesToHead.bind(engine);
       internal.commitDirtyContentFilesToHead = async (handle, op) => {
-        chmodSync(join(projectDir, '.ok', 'schemas'), 0o311);
+        chmodSync(join(projectDir, '.ps', 'schemas'), 0o311);
         await commitDirty(handle, op);
       };
 
@@ -3417,10 +3417,10 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
         await expect(engine.pushOnce()).resolves.toBeUndefined();
 
         const status = engine.getStatus();
-        expect(status.pushError).toContain('Shareable .ok subtree ".ok/schemas"');
+        expect(status.pushError).toContain('Shareable .ps subtree ".ps/schemas"');
         expect(status.pullError).toBeUndefined();
       } finally {
-        chmodSync(join(projectDir, '.ok', 'schemas'), 0o755);
+        chmodSync(join(projectDir, '.ps', 'schemas'), 0o755);
         await engine.destroy();
       }
     },
@@ -3436,8 +3436,8 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       await sister.commit('advance remote');
       await sister.push(['origin', 'main']);
 
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{}\n');
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{}\n');
       writeFileSync(join(projectDir, 'local.md'), '# Local\n');
       const engine = makeShareableEngine();
       const internal = engine as unknown as {
@@ -3445,7 +3445,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       };
       const commitDirty = internal.commitDirtyContentFilesToHead.bind(engine);
       internal.commitDirtyContentFilesToHead = async (handle, op) => {
-        chmodSync(join(projectDir, '.ok', 'schemas'), 0o311);
+        chmodSync(join(projectDir, '.ps', 'schemas'), 0o311);
         await commitDirty(handle, op);
       };
 
@@ -3454,20 +3454,20 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
         await engine.trigger('push');
 
         const status = engine.getStatus();
-        expect(status.pushError).toContain('Shareable .ok subtree ".ok/schemas"');
+        expect(status.pushError).toContain('Shareable .ps subtree ".ps/schemas"');
         expect(status.pullError).toBeUndefined();
       } finally {
-        chmodSync(join(projectDir, '.ok', 'schemas'), 0o755);
+        chmodSync(join(projectDir, '.ps', 'schemas'), 0o755);
         await engine.destroy();
       }
     },
   );
 
-  test('refuses a secret-suffixed file inside an admitted .ok directory', async () => {
+  test('refuses a secret-suffixed file inside an admitted .ps directory', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'api.key'), 'secret\n');
+    mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'api.key'), 'secret\n');
 
     const engine = makeShareableEngine();
     try {
@@ -3476,8 +3476,8 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       expect(engine.getStatus().pushError).toBeUndefined();
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-      expect(headPaths).toContain('.ok/schemas/frontmatter.json');
-      expect(headPaths).not.toContain('.ok/schemas/api.key');
+      expect(headPaths).toContain('.ps/schemas/frontmatter.json');
+      expect(headPaths).not.toContain('.ps/schemas/api.key');
     } finally {
       await engine.destroy();
     }
@@ -3485,12 +3485,12 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
   test('local-only projects keep every artifact class unstaged without failing the cycle', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
-    mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-    mkdirSync(join(projectDir, 'docs', '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: full\n');
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-    writeFileSync(join(projectDir, 'docs', '.ok', 'templates', 'article.md'), '# Article\n');
+    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
+    mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+    mkdirSync(join(projectDir, 'docs', '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: full\n');
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+    writeFileSync(join(projectDir, 'docs', '.ps', 'templates', 'article.md'), '# Article\n');
     writeFileSync(join(projectDir, 'note.md'), 'new note\n');
 
     const engine = makeShareableEngine();
@@ -3504,7 +3504,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
       expect(headPaths).toContain('note.md');
-      expect(headPaths.filter((p) => p.includes('.ok/'))).toEqual([]);
+      expect(headPaths.filter((p) => p.includes('.ps/'))).toEqual([]);
 
       const remoteHead = (await git.revparse(['origin/main'])).trim();
       expect(remoteHead).toBe((await git.revparse(['HEAD'])).trim());
@@ -3515,13 +3515,13 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
   test('local-only projects freeze a tracked artifact: no edit sync, no spurious deletion', async () => {
     const { git } = await initSharedRepoWithBareRemote();
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: full\n');
-    await git.add(['.ok/config.yml']);
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: full\n');
+    await git.add(['.ps/config.yml']);
     await git.commit('add config while shared');
     await git.push(['origin', 'main']);
 
-    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: follow\n');
+    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: follow\n');
     writeFileSync(join(projectDir, 'note.md'), 'new note\n');
 
     const engine = makeShareableEngine();
@@ -3534,7 +3534,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
       const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
       expect(headPaths).toContain('note.md');
-      expect(headPaths).toContain('.ok/config.yml');
+      expect(headPaths).toContain('.ps/config.yml');
       const blob = await git.raw(['show', 'HEAD:.ok/config.yml']);
       expect(blob).toBe('sync:\n  mode: full\n');
 
@@ -3548,9 +3548,9 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
   test('follow-mode pull fast-forwards shareable artifacts into the working tree', async () => {
     const { git, bareDir } = await initSharedRepoWithBareRemote();
     const { sister, sisterDir } = await cloneAsTeammate(bareDir);
-    mkdirSync(join(sisterDir, '.ok', 'schemas'), { recursive: true });
-    writeFileSync(join(sisterDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-    await sister.add(['.ok/schemas/frontmatter.json']);
+    mkdirSync(join(sisterDir, '.ps', 'schemas'), { recursive: true });
+    writeFileSync(join(sisterDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+    await sister.add(['.ps/schemas/frontmatter.json']);
     await sister.commit('teammate adds schema');
     await sister.push(['origin', 'main']);
 
@@ -3559,7 +3559,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       await engine.start();
       await engine.trigger('pull');
 
-      expect(existsSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'))).toBe(true);
+      expect(existsSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'))).toBe(true);
       expect((await git.revparse(['HEAD'])).trim()).toBe(
         (await git.revparse(['origin/main'])).trim(),
       );
@@ -3576,7 +3576,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     await sister.commit('teammate note');
     await sister.push(['origin', 'main']);
 
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'sync:\n  mode: full\n');
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'sync:\n  mode: full\n');
 
     const engine = makeShareableEngine();
     try {
@@ -3589,7 +3589,7 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       expect(status.state).toBe('idle');
       expect(existsSync(join(projectDir, 'from-teammate.md'))).toBe(true);
 
-      expect(readFileSync(join(projectDir, '.ok', 'config.yml'), 'utf-8')).toBe(
+      expect(readFileSync(join(projectDir, '.ps', 'config.yml'), 'utf-8')).toBe(
         'sync:\n  mode: full\n',
       );
       const lastMessage = (await git.log({ maxCount: 1 })).latest?.message;
@@ -3603,40 +3603,40 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
   test('keeps local artifact edits and pins template conflicts without merging', async () => {
     const { git, bareDir } = await initSharedRepoWithBareRemote();
-    mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-    mkdirSync(join(projectDir, '.ok', 'templates'), { recursive: true });
-    mkdirSync(join(projectDir, 'docs', '.ok', 'templates'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'shared: base\n');
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'lint.json'), '{"a":1}\n');
-    writeFileSync(join(projectDir, '.ok', 'templates', 'project.md'), '# Base project\n');
-    writeFileSync(join(projectDir, 'docs', '.ok', 'templates', 'folder.md'), '# Base folder\n');
+    mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', 'templates'), { recursive: true });
+    mkdirSync(join(projectDir, 'docs', '.ps', 'templates'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'shared: base\n');
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'lint.json'), '{"a":1}\n');
+    writeFileSync(join(projectDir, '.ps', 'templates', 'project.md'), '# Base project\n');
+    writeFileSync(join(projectDir, 'docs', '.ps', 'templates', 'folder.md'), '# Base folder\n');
     await git.add([
-      '.ok/config.yml',
-      '.ok/schemas/lint.json',
-      '.ok/templates/project.md',
-      'docs/.ok/templates/folder.md',
+      '.ps/config.yml',
+      '.ps/schemas/lint.json',
+      '.ps/templates/project.md',
+      'docs/.ps/templates/folder.md',
     ]);
     await git.commit('add shareable artifacts');
     await git.push(['origin', 'main']);
 
     const { sister, sisterDir } = await cloneAsTeammate(bareDir);
-    writeFileSync(join(sisterDir, '.ok', 'config.yml'), 'shared: remote\n');
-    writeFileSync(join(sisterDir, '.ok', 'schemas', 'lint.json'), '{"a":99}\n');
-    writeFileSync(join(sisterDir, '.ok', 'templates', 'project.md'), '# Remote project\n');
-    writeFileSync(join(sisterDir, 'docs', '.ok', 'templates', 'folder.md'), '# Remote folder\n');
+    writeFileSync(join(sisterDir, '.ps', 'config.yml'), 'shared: remote\n');
+    writeFileSync(join(sisterDir, '.ps', 'schemas', 'lint.json'), '{"a":99}\n');
+    writeFileSync(join(sisterDir, '.ps', 'templates', 'project.md'), '# Remote project\n');
+    writeFileSync(join(sisterDir, 'docs', '.ps', 'templates', 'folder.md'), '# Remote folder\n');
     await sister.add([
-      '.ok/config.yml',
-      '.ok/schemas/lint.json',
-      '.ok/templates/project.md',
-      'docs/.ok/templates/folder.md',
+      '.ps/config.yml',
+      '.ps/schemas/lint.json',
+      '.ps/templates/project.md',
+      'docs/.ps/templates/folder.md',
     ]);
     await sister.commit('teammate edits config and schema');
     await sister.push(['origin', 'main']);
 
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'shared: local\n');
-    writeFileSync(join(projectDir, '.ok', 'schemas', 'lint.json'), '{"a":2}\n');
-    writeFileSync(join(projectDir, '.ok', 'templates', 'project.md'), '# Local project\n');
-    writeFileSync(join(projectDir, 'docs', '.ok', 'templates', 'folder.md'), '# Local folder\n');
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'shared: local\n');
+    writeFileSync(join(projectDir, '.ps', 'schemas', 'lint.json'), '{"a":2}\n');
+    writeFileSync(join(projectDir, '.ps', 'templates', 'project.md'), '# Local project\n');
+    writeFileSync(join(projectDir, 'docs', '.ps', 'templates', 'folder.md'), '# Local folder\n');
 
     const engine = makeShareableEngine();
     const cap = captureSyncLogs();
@@ -3650,18 +3650,18 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       expect(status.conflictCount).toBe(2);
       const conflicts = authority.list();
       expect(conflicts.map((conflict) => conflict.file).sort()).toEqual([
-        '.ok/templates/project.md',
-        'docs/.ok/templates/folder.md',
+        '.ps/templates/project.md',
+        'docs/.ps/templates/folder.md',
       ]);
       expect(workingTreeConflicts()).toHaveLength(conflicts.length);
       expect(workingTreeConflicts().every((c) => c.theirsSha.length > 0)).toBe(true);
       expect(existsSync(join(projectDir, '.git', 'MERGE_HEAD'))).toBe(false);
 
-      expect(readFileSync(join(projectDir, '.ok', 'config.yml'), 'utf-8')).toBe('shared: local\n');
-      expect(readFileSync(join(projectDir, '.ok', 'schemas', 'lint.json'), 'utf-8')).toBe(
+      expect(readFileSync(join(projectDir, '.ps', 'config.yml'), 'utf-8')).toBe('shared: local\n');
+      expect(readFileSync(join(projectDir, '.ps', 'schemas', 'lint.json'), 'utf-8')).toBe(
         '{"a":2}\n',
       );
-      expect(readFileSync(join(projectDir, '.ok', 'templates', 'project.md'), 'utf-8')).toBe(
+      expect(readFileSync(join(projectDir, '.ps', 'templates', 'project.md'), 'utf-8')).toBe(
         '# Local project\n',
       );
 
@@ -3714,24 +3714,24 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
     test('stages the project-root shareable set alongside subfolder content', async () => {
       const { git } = await initSharedRepoWithBareRemote();
-      mkdirSync(join(projectDir, 'content', 'docs', '.ok'), { recursive: true });
-      mkdirSync(join(projectDir, 'content', 'guides', '.ok'), { recursive: true });
-      mkdirSync(join(projectDir, 'content', '.ok', 'schemas'), { recursive: true });
-      mkdirSync(join(projectDir, 'content', '.ok', 'templates'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'templates'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'config.yml'), 'content:\n  dir: content\n');
-      writeFileSync(join(projectDir, '.ok', '.gitignore'), 'local/\nworktrees/\n');
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
-      writeFileSync(join(projectDir, '.ok', 'templates', 'meeting.md'), '# Meeting\n');
-      writeFileSync(join(projectDir, 'content', '.ok', 'config.yml'), 'wrong: root\n');
-      writeFileSync(join(projectDir, 'content', '.ok', '.gitignore'), 'local/\n');
-      writeFileSync(join(projectDir, 'content', '.ok', 'schemas', 'nested.json'), '{}\n');
-      writeFileSync(join(projectDir, 'content', '.ok', 'templates', 'daily.md'), '# Daily\n');
+      mkdirSync(join(projectDir, 'content', 'docs', '.ps'), { recursive: true });
+      mkdirSync(join(projectDir, 'content', 'guides', '.ps'), { recursive: true });
+      mkdirSync(join(projectDir, 'content', '.ps', 'schemas'), { recursive: true });
+      mkdirSync(join(projectDir, 'content', '.ps', 'templates'), { recursive: true });
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      mkdirSync(join(projectDir, '.ps', 'templates'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'config.yml'), 'content:\n  dir: content\n');
+      writeFileSync(join(projectDir, '.ps', '.gitignore'), 'local/\nworktrees/\n');
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+      writeFileSync(join(projectDir, '.ps', 'templates', 'meeting.md'), '# Meeting\n');
+      writeFileSync(join(projectDir, 'content', '.ps', 'config.yml'), 'wrong: root\n');
+      writeFileSync(join(projectDir, 'content', '.ps', '.gitignore'), 'local/\n');
+      writeFileSync(join(projectDir, 'content', '.ps', 'schemas', 'nested.json'), '{}\n');
+      writeFileSync(join(projectDir, 'content', '.ps', 'templates', 'daily.md'), '# Daily\n');
       writeFileSync(join(projectDir, 'content', 'note.md'), '# Note\n');
-      writeFileSync(join(projectDir, 'content', 'docs', '.ok', 'config.yml'), 'not: project\n');
-      writeFileSync(join(projectDir, 'content', 'docs', '.ok', 'frontmatter.yml'), 'icon: book\n');
-      writeFileSync(join(projectDir, 'content', 'guides', '.ok', 'frontmatter.yml'), 'icon: map\n');
+      writeFileSync(join(projectDir, 'content', 'docs', '.ps', 'config.yml'), 'not: project\n');
+      writeFileSync(join(projectDir, 'content', 'docs', '.ps', 'frontmatter.yml'), 'icon: book\n');
+      writeFileSync(join(projectDir, 'content', 'guides', '.ps', 'frontmatter.yml'), 'icon: map\n');
 
       const engine = makeSubfolderEngine();
       try {
@@ -3744,21 +3744,21 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
         const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
         for (const path of [
-          '.ok/config.yml',
-          '.ok/.gitignore',
-          '.ok/schemas/frontmatter.json',
-          '.ok/templates/meeting.md',
-          'content/.ok/templates/daily.md',
+          '.ps/config.yml',
+          '.ps/.gitignore',
+          '.ps/schemas/frontmatter.json',
+          '.ps/templates/meeting.md',
+          'content/.ps/templates/daily.md',
           'content/note.md',
-          'content/guides/.ok/frontmatter.yml',
+          'content/guides/.ps/frontmatter.yml',
         ]) {
           expect(headPaths).toContain(path);
         }
-        expect(headPaths).not.toContain('content/.ok/config.yml');
-        expect(headPaths).not.toContain('content/.ok/.gitignore');
-        expect(headPaths).not.toContain('content/.ok/schemas/nested.json');
-        expect(headPaths).not.toContain('content/docs/.ok/config.yml');
-        expect(headPaths).not.toContain('content/docs/.ok/frontmatter.yml');
+        expect(headPaths).not.toContain('content/.ps/config.yml');
+        expect(headPaths).not.toContain('content/.ps/.gitignore');
+        expect(headPaths).not.toContain('content/.ps/schemas/nested.json');
+        expect(headPaths).not.toContain('content/docs/.ps/config.yml');
+        expect(headPaths).not.toContain('content/docs/.ps/frontmatter.yml');
 
         const remoteHead = (await git.revparse(['origin/main'])).trim();
         expect(remoteHead).toBe((await git.revparse(['HEAD'])).trim());
@@ -3770,15 +3770,15 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     test('tracks deletion of a project-root artifact and keeps the survivors', async () => {
       const { git } = await initSharedRepoWithBareRemote();
       mkdirSync(join(projectDir, 'content'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'config.yml'), 'content:\n  dir: content\n');
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'config.yml'), 'content:\n  dir: content\n');
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
       writeFileSync(join(projectDir, 'content', 'note.md'), '# Note\n');
-      await git.add(['.ok/config.yml', '.ok/schemas/frontmatter.json', 'content/note.md']);
+      await git.add(['.ps/config.yml', '.ps/schemas/frontmatter.json', 'content/note.md']);
       await git.commit('add shareable artifacts');
       await git.push(['origin', 'main']);
 
-      rmSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'));
+      rmSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'));
 
       const engine = makeSubfolderEngine();
       try {
@@ -3787,8 +3787,8 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
         expect(engine.getStatus().pushError).toBeUndefined();
         const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-        expect(headPaths).not.toContain('.ok/schemas/frontmatter.json');
-        expect(headPaths).toContain('.ok/config.yml');
+        expect(headPaths).not.toContain('.ps/schemas/frontmatter.json');
+        expect(headPaths).toContain('.ps/config.yml');
         expect(headPaths).toContain('content/note.md');
 
         const remoteHead = (await git.revparse(['origin/main'])).trim();
@@ -3798,17 +3798,17 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       }
     });
 
-    test('folder artifacts outside contentDir and outside the root .ok stay frozen', async () => {
+    test('folder artifacts outside contentDir and outside the root .ps stay frozen', async () => {
       const { git } = await initSharedRepoWithBareRemote();
       mkdirSync(join(projectDir, 'content'), { recursive: true });
-      mkdirSync(join(projectDir, 'docs', '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, 'docs', '.ok', 'frontmatter.yml'), 'icon: book\n');
-      await git.add(['docs/.ok/frontmatter.yml']);
+      mkdirSync(join(projectDir, 'docs', '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, 'docs', '.ps', 'frontmatter.yml'), 'icon: book\n');
+      await git.add(['docs/.ps/frontmatter.yml']);
       await git.commit('folder metadata outside the content walk');
       await git.push(['origin', 'main']);
 
-      mkdirSync(join(projectDir, 'docs2', '.ok'), { recursive: true });
-      writeFileSync(join(projectDir, 'docs2', '.ok', 'frontmatter.yml'), 'icon: rocket\n');
+      mkdirSync(join(projectDir, 'docs2', '.ps'), { recursive: true });
+      writeFileSync(join(projectDir, 'docs2', '.ps', 'frontmatter.yml'), 'icon: rocket\n');
       writeFileSync(join(projectDir, 'content', 'note.md'), '# Note\n');
 
       const engine = makeSubfolderEngine();
@@ -3818,8 +3818,8 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
         expect(engine.getStatus().pushError).toBeUndefined();
         const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-        expect(headPaths).toContain('docs/.ok/frontmatter.yml');
-        expect(headPaths).not.toContain('docs2/.ok/frontmatter.yml');
+        expect(headPaths).toContain('docs/.ps/frontmatter.yml');
+        expect(headPaths).not.toContain('docs2/.ps/frontmatter.yml');
         expect(headPaths).toContain('content/note.md');
       } finally {
         await engine.destroy();
@@ -3829,13 +3829,13 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     test('the second walk still refuses local state, legacy files, and secrets', async () => {
       const { git } = await initSharedRepoWithBareRemote();
       mkdirSync(join(projectDir, 'content'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'worktrees', 'wt1'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'lint.json'), '{"type":"object"}\n');
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'api.key'), 'secret\n');
-      writeFileSync(join(projectDir, '.ok', 'local', 'principal.json'), '{}\n');
-      writeFileSync(join(projectDir, '.ok', 'worktrees', 'wt1', 'scratch.md'), '# Scratch\n');
-      writeFileSync(join(projectDir, '.ok', 'state.json'), '{}\n');
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      mkdirSync(join(projectDir, '.ps', 'worktrees', 'wt1'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'lint.json'), '{"type":"object"}\n');
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'api.key'), 'secret\n');
+      writeFileSync(join(projectDir, '.ps', 'local', 'principal.json'), '{}\n');
+      writeFileSync(join(projectDir, '.ps', 'worktrees', 'wt1', 'scratch.md'), '# Scratch\n');
+      writeFileSync(join(projectDir, '.ps', 'state.json'), '{}\n');
       writeFileSync(join(projectDir, 'content', 'note.md'), '# Note\n');
 
       const engine = makeSubfolderEngine();
@@ -3845,13 +3845,13 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
         expect(engine.getStatus().pushError).toBeUndefined();
         const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-        expect(headPaths).toContain('.ok/schemas/lint.json');
+        expect(headPaths).toContain('.ps/schemas/lint.json');
         expect(headPaths).toContain('content/note.md');
         for (const path of headPaths) {
-          expect(path).not.toMatch(/^\.ok\/(local|worktrees)\//);
+          expect(path).not.toMatch(/^\.ps\/(local|worktrees)\//);
         }
-        expect(headPaths).not.toContain('.ok/schemas/api.key');
-        expect(headPaths).not.toContain('.ok/state.json');
+        expect(headPaths).not.toContain('.ps/schemas/api.key');
+        expect(headPaths).not.toContain('.ps/state.json');
       } finally {
         await engine.destroy();
       }
@@ -3860,11 +3860,11 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
     test('local-only subfolder projects keep the project-root set unstaged without errors', async () => {
       const { git } = await initSharedRepoWithBareRemote();
       mkdirSync(join(projectDir, 'content'), { recursive: true });
-      mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-      writeFileSync(join(projectDir, '.ok', 'config.yml'), 'content:\n  dir: content\n');
-      writeFileSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
+      mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+      writeFileSync(join(projectDir, '.ps', 'config.yml'), 'content:\n  dir: content\n');
+      writeFileSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'), '{"type":"object"}\n');
       writeFileSync(join(projectDir, 'content', 'note.md'), '# Note\n');
-      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+      writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
 
       const engine = makeSubfolderEngine();
       try {
@@ -3876,20 +3876,20 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
         expect(status.consecutiveFailures).toBe(0);
         const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
         expect(headPaths).toContain('content/note.md');
-        expect(headPaths.filter((p) => p.startsWith('.ok/'))).toEqual([]);
+        expect(headPaths.filter((p) => p.startsWith('.ps/'))).toEqual([]);
       } finally {
         await engine.destroy();
       }
     });
 
     test.runIf(process.getuid?.() !== 0)(
-      'fails closed when a tracked project-root .ok is unreadable',
+      'fails closed when a tracked project-root .ps is unreadable',
       async () => {
         const { git } = await initSharedRepoWithBareRemote();
         mkdirSync(join(projectDir, 'content'), { recursive: true });
-        writeFileSync(join(projectDir, '.ok', 'config.yml'), 'content:\n  dir: content\n');
-        mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-        await git.add(['.ok/config.yml']);
+        writeFileSync(join(projectDir, '.ps', 'config.yml'), 'content:\n  dir: content\n');
+        mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+        await git.add(['.ps/config.yml']);
         await git.commit('track project config');
         await git.push(['origin', 'main']);
         const headBefore = (await git.revparse(['HEAD'])).trim();
@@ -3899,22 +3899,22 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
         const engine = makeSubfolderEngine();
         try {
-          chmodSync(join(projectDir, '.ok'), 0o311);
+          chmodSync(join(projectDir, '.ps'), 0o311);
           await engine.start();
           await engine.trigger('push');
 
           const status = engine.getStatus();
-          expect(status.pushError).toContain('Shareable .ok subtree ".ok"');
+          expect(status.pushError).toContain('Shareable .ps subtree ".ps"');
           expect(status.consecutivePushFailures).toBeGreaterThan(0);
           expect(status.consecutiveFailures).toBe(0);
           expect((await git.revparse(['HEAD'])).trim()).toBe(headBefore);
           expect((await git.revparse(['origin/main'])).trim()).toBe(remoteBefore);
           const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-          expect(headPaths).toContain('.ok/config.yml');
+          expect(headPaths).toContain('.ps/config.yml');
           expect(headPaths).not.toContain('content/note.md');
-          expect(existsSync(join(projectDir, '.ok', 'config.yml'))).toBe(true);
+          expect(existsSync(join(projectDir, '.ps', 'config.yml'))).toBe(true);
         } finally {
-          chmodSync(join(projectDir, '.ok'), 0o755);
+          chmodSync(join(projectDir, '.ps'), 0o755);
           await engine.destroy();
         }
       },
@@ -3925,13 +3925,13 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
       async () => {
         const { git } = await initSharedRepoWithBareRemote();
         mkdirSync(join(projectDir, 'content'), { recursive: true });
-        mkdirSync(join(projectDir, '.ok', 'schemas'), { recursive: true });
-        mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
+        mkdirSync(join(projectDir, '.ps', 'schemas'), { recursive: true });
+        mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
         writeFileSync(
-          join(projectDir, '.ok', 'schemas', 'frontmatter.json'),
+          join(projectDir, '.ps', 'schemas', 'frontmatter.json'),
           '{"type":"object"}\n',
         );
-        await git.add(['.ok/schemas/frontmatter.json']);
+        await git.add(['.ps/schemas/frontmatter.json']);
         await git.commit('track project schema');
         await git.push(['origin', 'main']);
         const headBefore = (await git.revparse(['HEAD'])).trim();
@@ -3941,22 +3941,22 @@ describe('SyncEngine push cycle stages shareable .ok artifacts (sync scope)', ()
 
         const engine = makeSubfolderEngine();
         try {
-          chmodSync(join(projectDir, '.ok', 'schemas'), 0o311);
+          chmodSync(join(projectDir, '.ps', 'schemas'), 0o311);
           await engine.start();
           await engine.trigger('push');
 
           const status = engine.getStatus();
-          expect(status.pushError).toContain('Shareable .ok subtree ".ok/schemas"');
+          expect(status.pushError).toContain('Shareable .ps subtree ".ps/schemas"');
           expect(status.consecutivePushFailures).toBeGreaterThan(0);
           expect(status.consecutiveFailures).toBe(0);
           expect((await git.revparse(['HEAD'])).trim()).toBe(headBefore);
           expect((await git.revparse(['origin/main'])).trim()).toBe(remoteBefore);
           const headPaths = await listNames(git, ['ls-tree', '-r', '--name-only', 'HEAD']);
-          expect(headPaths).toContain('.ok/schemas/frontmatter.json');
+          expect(headPaths).toContain('.ps/schemas/frontmatter.json');
           expect(headPaths).not.toContain('content/note.md');
-          expect(existsSync(join(projectDir, '.ok', 'schemas', 'frontmatter.json'))).toBe(true);
+          expect(existsSync(join(projectDir, '.ps', 'schemas', 'frontmatter.json'))).toBe(true);
         } finally {
-          chmodSync(join(projectDir, '.ok', 'schemas'), 0o755);
+          chmodSync(join(projectDir, '.ps', 'schemas'), 0o755);
           await engine.destroy();
         }
       },
@@ -4051,8 +4051,8 @@ describe('SyncEngine push-permission probe', () => {
   const home = useIsolatedHome();
 
   test('keeps host classification from construction until a new engine starts', async () => {
-    await initGitWithOrigin('https://ghes.acme.test/inkeep/open-knowledge.git');
-    const path = join(home(), '.ok', 'global.yml');
+    await initGitWithOrigin('https://ghes.acme.test/fractalmandala/palimpsest.git');
+    const path = join(home(), '.ps', 'global.yml');
     declareGitHubHosts(home(), 'ghes.acme.test');
     const probe = fakeProbe({ kind: 'allowed' });
     const engine = makeProbeEngine({ syncEnabled: false, fakeProbe: probe.fn });
@@ -4062,7 +4062,7 @@ describe('SyncEngine push-permission probe', () => {
       await waitForPushPermissionResolved(engine);
       expect(probe.calls).toBe(1);
       expect(engine.getStatus().remote?.webUrl).toBe(
-        'https://ghes.acme.test/inkeep/open-knowledge',
+        'https://ghes.acme.test/fractalmandala/palimpsest',
       );
       const restartedProbe = fakeProbe({ kind: 'allowed' });
       const restarted = makeProbeEngine({ syncEnabled: false, fakeProbe: restartedProbe.fn });
@@ -4109,7 +4109,7 @@ describe('SyncEngine push-permission probe', () => {
   });
 
   test('probes a DECLARED GitHub Enterprise origin against the enterprise host', async () => {
-    await initGitWithOrigin('https://ghes.acme.test/inkeep/open-knowledge.git');
+    await initGitWithOrigin('https://ghes.acme.test/fractalmandala/palimpsest.git');
     declareGitHubHosts(home(), 'ghes.acme.test');
     const probe = fakeProbe({ kind: 'allowed' });
     const engine = makeProbeEngine({ syncEnabled: false, fakeProbe: probe.fn });
@@ -4118,7 +4118,7 @@ describe('SyncEngine push-permission probe', () => {
     expect(probe.calls).toBe(1);
     expect(probe.opts[0]).toMatchObject({
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       host: 'ghes.acme.test',
     });
     expect(engine.getStatus().pushPermission).toEqual({
@@ -4144,7 +4144,7 @@ describe('SyncEngine push-permission probe', () => {
   });
 
   test('threads the origin-declared account and the accounts listing into the probe', async () => {
-    await initGitWithOrigin('https://alice@github.com/inkeep/open-knowledge.git');
+    await initGitWithOrigin('https://alice@github.com/fractalmandala/palimpsest.git');
     const probe = fakeProbe({ kind: 'allowed' });
     const accountsFn: DetectGhAccountsFn = () => [{ login: 'alice', active: true }];
     const engine = makeProbeEngine({
@@ -4333,7 +4333,7 @@ describe('SyncEngine push-permission probe', () => {
   });
 
   test('an origin with no declared account probes with no login — the owner is never a selector', async () => {
-    await initGitWithOrigin('https://github.com/inkeep/open-knowledge.git');
+    await initGitWithOrigin('https://github.com/fractalmandala/palimpsest.git');
     const probe = fakeProbe({ kind: 'allowed' });
     const engine = makeProbeEngine({
       syncEnabled: false,
@@ -4429,7 +4429,7 @@ describe('SyncEngine push-permission probe', () => {
     await engine.start();
     await waitForPushPermissionResolved(engine);
     const persisted =
-      existsSync(join(okDir, 'config.yml')) || existsSync(join(okDir, 'config.json'));
+      existsSync(join(psDir, 'config.yml')) || existsSync(join(psDir, 'config.json'));
     expect(persisted).toBe(false);
   });
 
@@ -4584,7 +4584,7 @@ describe('SyncEngine push-permission probe', () => {
 });
 
 describe('SyncEngine getStatus() with restored state', () => {
-  const statePath = () => join(okDir, 'sync-state.json');
+  const statePath = () => join(psDir, 'sync-state.json');
 
   test('lastSyncUtc and lastFetchUtc are restored', async () => {
     const now = new Date().toISOString();
@@ -4623,7 +4623,7 @@ interface InternalState {
 }
 
 describe('SyncEngine auth-error recovery', () => {
-  const statePath = () => join(okDir, 'sync-state.json');
+  const statePath = () => join(psDir, 'sync-state.json');
 
   test('does not restore a persisted auth-error pausedReason (re-attempts on restart)', async () => {
     writeFileSync(
@@ -4724,7 +4724,7 @@ describe('SyncEngine auth-error recovery', () => {
             return storedHosts.has(host) ? { login: 'alice', token: 'tok' } : null;
           },
         },
-        localOpCliArgs: ['open-knowledge'],
+        localOpCliArgs: ['palimpsest'],
         declaredGitHubHosts: new Set(),
       });
       const engine = new SyncEngine({
@@ -5000,7 +5000,7 @@ describe('SyncEngine gh-token credential relay', () => {
   });
 
   test('resolves the gh token against a declared GitHub Enterprise origin host', async () => {
-    await initGitWithOrigin('https://ghes.acme.test/inkeep/open-knowledge.git');
+    await initGitWithOrigin('https://ghes.acme.test/fractalmandala/palimpsest.git');
     declareGitHubHosts(home(), 'ghes.acme.test');
     const detect = recordDetectGh({ available: true, token: 'gho_relayed' });
     const engine = new SyncEngine({
@@ -5096,8 +5096,8 @@ describe('SyncEngine declared-account resolution', () => {
 
     expect(detect.logins()).toEqual(['alice']);
     expect(detect.lastHost()).toBe('github.com');
-    expect(handle.env.OK_GH_TOKEN).toBe('gho_alice');
-    expect(handle.env.OK_GH_TOKEN_LOGIN).toBe('alice');
+    expect(handle.env.PS_GH_TOKEN).toBe('gho_alice');
+    expect(handle.env.PS_GH_TOKEN_LOGIN).toBe('alice');
     expect(urlMatch.calls()).toBe(0);
   });
 
@@ -5111,8 +5111,8 @@ describe('SyncEngine declared-account resolution', () => {
 
     expect(detect.logins()).toEqual([undefined]);
     expect(detect.lastHost()).toBe('github.com');
-    expect(handle.env.OK_GH_TOKEN).toBe('gho_active');
-    expect('OK_GH_TOKEN_LOGIN' in handle.env).toBe(false);
+    expect(handle.env.PS_GH_TOKEN).toBe('gho_active');
+    expect('PS_GH_TOKEN_LOGIN' in handle.env).toBe(false);
   });
 
   test('the credential-config lookup runs once per window across many handles', async () => {
@@ -5136,9 +5136,9 @@ describe('SyncEngine declared-account resolution', () => {
     const engine = makeAccountEngine(detect.fn, countingUrlMatch(null).fn);
     const internal = engine as unknown as { gitHandle: () => GitHandle };
 
-    expect(internal.gitHandle().env.OK_GH_TOKEN_LOGIN).toBe('alice');
+    expect(internal.gitHandle().env.PS_GH_TOKEN_LOGIN).toBe('alice');
     await git.raw('remote', 'set-url', 'origin', 'https://bob@github.com/mona/kb.git');
-    expect(internal.gitHandle().env.OK_GH_TOKEN_LOGIN).toBe('bob');
+    expect(internal.gitHandle().env.PS_GH_TOKEN_LOGIN).toBe('bob');
     expect(detect.logins()).toEqual(['alice', 'bob']);
   });
 
@@ -5168,12 +5168,12 @@ describe('SyncEngine declared-account resolution', () => {
         declaredLogin: 'alice',
         declaredSource: 'remote-url',
       });
-      expect(handle.env.OK_GH_TOKEN).toBe('gho_active');
-      expect('OK_GH_TOKEN_LOGIN' in handle.env).toBe(false);
+      expect(handle.env.PS_GH_TOKEN).toBe('gho_active');
+      expect('PS_GH_TOKEN_LOGIN' in handle.env).toBe(false);
 
       honor = true;
       await engine.notifyCredentialsChanged();
-      expect(internal.gitHandle().env.OK_GH_TOKEN_LOGIN).toBe('alice');
+      expect(internal.gitHandle().env.PS_GH_TOKEN_LOGIN).toBe('alice');
       expect(missWarns()).toHaveLength(1);
 
       honor = false;
@@ -5205,7 +5205,7 @@ describe('SyncEngine declared-account resolution', () => {
         declaredLogin: 'alice',
         declaredSource: 'remote-url',
       });
-      expect('OK_GH_TOKEN' in handle.env).toBe(false);
+      expect('PS_GH_TOKEN' in handle.env).toBe(false);
     } finally {
       logs.restore();
     }
@@ -5250,7 +5250,7 @@ describe('SyncEngine declared-account resolution', () => {
 
     try {
       const handle = internal.gitHandle();
-      expect(handle.env.OK_GH_TOKEN).toBe('gho_active');
+      expect(handle.env.PS_GH_TOKEN).toBe('gho_active');
       const miss = logs.entries.find(
         (e) => e.level === 'warn' && e.msg.includes('declared GitHub account'),
       );
@@ -5355,7 +5355,7 @@ describe('SyncEngine pull-only mode', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     writeFileSync(join(sisterDir, 'doc.md'), 'v1\nv2\n', 'utf-8');
     await sister.add('.');
@@ -5495,7 +5495,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     for (const [f, c] of Object.entries(opts.advance)) {
       if (c === null) rmSync(join(sisterDir, f), { force: true });
@@ -5586,14 +5586,14 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
       `${JSON.stringify({
         mcpServers: {
           other: { command: 'keep-me' },
-          'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
+          'palimpsest': { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
         },
       })}\n`;
     const { originTip } = await cloneBehindOrigin({
-      seed: { '.mcp.json': mcp('# ok-mcp-v1') },
-      advance: { '.mcp.json': mcp('# ok-mcp-v2') },
+      seed: { '.mcp.json': mcp('# ps-mcp-v1') },
+      advance: { '.mcp.json': mcp('# ps-mcp-v2') },
     });
-    writeFileSync(join(projectDir, '.mcp.json'), mcp('# ok-mcp-v1'), 'utf8');
+    writeFileSync(join(projectDir, '.mcp.json'), mcp('# ps-mcp-v1'), 'utf8');
 
     const engine = makePullEngine();
     try {
@@ -5601,7 +5601,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
       await engine.trigger('pull');
       const project = simpleGit(projectDir);
       expect((await project.revparse(['HEAD'])).trim()).toBe(originTip);
-      expect(readFileSync(join(projectDir, '.mcp.json'), 'utf8')).toBe(mcp('# ok-mcp-v2'));
+      expect(readFileSync(join(projectDir, '.mcp.json'), 'utf8')).toBe(mcp('# ps-mcp-v2'));
       expect(await listNames(project, ['diff-index', '--name-only', 'HEAD'])).toEqual([]);
       expect(
         (await project.log()).all.filter((commit) => commit.message.includes('MCP launcher')),
@@ -5616,14 +5616,14 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
       `${JSON.stringify({
         mcpServers: {
           other: { command: 'keep-me' },
-          'open-knowledge': { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
+          'palimpsest': { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
         },
       })}\n`;
     const { originTip } = await cloneBehindOrigin({
-      seed: { '.mcp.json': mcp('# ok-mcp-v1') },
-      advance: { '.mcp.json': mcp('# ok-mcp-v2') },
+      seed: { '.mcp.json': mcp('# ps-mcp-v1') },
+      advance: { '.mcp.json': mcp('# ps-mcp-v2') },
     });
-    writeFileSync(join(projectDir, '.mcp.json'), mcp('# ok-mcp-v99'), 'utf8');
+    writeFileSync(join(projectDir, '.mcp.json'), mcp('# ps-mcp-v99'), 'utf8');
 
     const engine = makePullEngine();
     try {
@@ -5631,7 +5631,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
       await engine.trigger('pull');
       const project = simpleGit(projectDir);
       expect((await project.revparse(['HEAD'])).trim()).toBe(originTip);
-      expect(readFileSync(join(projectDir, '.mcp.json'), 'utf8')).toBe(mcp('# ok-mcp-v99'));
+      expect(readFileSync(join(projectDir, '.mcp.json'), 'utf8')).toBe(mcp('# ps-mcp-v99'));
       expect(await listNames(project, ['diff-index', '--name-only', 'HEAD'])).toEqual([
         '.mcp.json',
       ]);
@@ -5821,7 +5821,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     writeFileSync(join(projectDir, 'a.md'), 'A1\nLOCAL\n', 'utf-8');
 
@@ -5866,7 +5866,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     const escapeDir = join(tmpDir, 'escape-dir');
     mkdirSync(escapeDir, { recursive: true });
@@ -6310,7 +6310,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
     });
     const blob = (await simpleGit(projectDir).raw(['rev-parse', 'HEAD:a.md'])).trim();
     writeFileSync(
-      join(okDir, 'conflicts.json'),
+      join(psDir, 'conflicts.json'),
       JSON.stringify({
         version: 1,
         branch: 'main',
@@ -6372,7 +6372,7 @@ describe('SyncEngine pull-only mode transitions', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Follower');
     await project.raw('config', 'user.email', 'follower@test.com');
@@ -6632,7 +6632,7 @@ describe('classifyFastForwardRefusal (pinned against real git)', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     writeFileSync(join(sisterDir, 'a.md'), advance, 'utf-8');
     await sister.add('.');
     await sister.commit('advance');
@@ -6693,7 +6693,7 @@ describe("SyncEngine one-shot pull (op 'pull')", () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     if (opts.advance) {
       for (const [f, c] of Object.entries(opts.advance)) {
@@ -6906,7 +6906,7 @@ describe('SyncEngine telemetry', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
 
     if (opts.advance) {
       for (const [f, c] of Object.entries(opts.advance)) {
@@ -7067,7 +7067,7 @@ describe('SyncEngine blocking-change resolution', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
     await project.raw('config', 'user.email', 'project@test.com');
@@ -7278,7 +7278,7 @@ describe('SyncEngine split-leg backoff, end to end', () => {
     rmSync(projectDir, { recursive: true, force: true });
     await simpleGit(tmpDir).clone(bareDir, projectDir);
     configureTestGitRepository(projectDir);
-    mkdirSync(okDir, { recursive: true });
+    mkdirSync(psDir, { recursive: true });
     const project = simpleGit(projectDir);
     await project.raw('config', 'user.name', 'Project');
     await project.raw('config', 'user.email', 'project@test.com');
@@ -7425,7 +7425,7 @@ describe('SyncEngine exclusive merge ownership', () => {
     configureTestGitRepository(bareDir);
     await bare.raw(['symbolic-ref', 'HEAD', 'refs/heads/main']);
     const git = await initGitWithOrigin(bareDir);
-    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ok/\n');
+    writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
     await git.push(['--set-upstream', 'origin', 'main']);
     const conflicts = newAuthority();
     const engine = new SyncEngine({
@@ -7756,7 +7756,7 @@ describe('SyncEngine exclusive merge ownership', () => {
   test('the operation pause is neither written to the state file nor restored from it', async () => {
     const { engine, internals, git } = await setup('off');
     const markerPath = join(projectDir, '.git', 'CHERRY_PICK_HEAD');
-    const statePath = join(okDir, 'sync-state.json');
+    const statePath = join(psDir, 'sync-state.json');
     writeFileSync(markerPath, await git.revparse('HEAD'));
     try {
       await engine.pushOnce();

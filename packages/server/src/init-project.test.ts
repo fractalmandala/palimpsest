@@ -12,10 +12,10 @@ import {
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import {
-  OK_DIR,
-  OK_MACHINE_LOCAL_ROOT_DIRS,
-  OK_MACHINE_LOCAL_ROOT_FILES,
-} from '@inkeep/open-knowledge-core';
+  PS_DIR,
+  PS_MACHINE_LOCAL_ROOT_DIRS,
+  PS_MACHINE_LOCAL_ROOT_FILES,
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   buildConfigYmlContent,
@@ -41,21 +41,21 @@ describe('initContent', () => {
     rmSync(testDir, { recursive: true, force: true });
   });
 
-  it('creates config-only .ok/ scaffold from scratch', () => {
+  it('creates config-only .ps/ scaffold from scratch', () => {
     const result = initContent(testDir);
 
-    const okDir = join(testDir, OK_DIR);
-    expect(existsSync(okDir)).toBe(true);
-    expect(existsSync(join(okDir, 'local'))).toBe(false);
-    expect(existsSync(join(okDir, 'cache'))).toBe(false);
-    expect(existsSync(join(okDir, '.gitignore'))).toBe(true);
-    expect(existsSync(join(okDir, 'config.yml'))).toBe(true);
+    const psDir = join(testDir, PS_DIR);
+    expect(existsSync(psDir)).toBe(true);
+    expect(existsSync(join(psDir, 'local'))).toBe(false);
+    expect(existsSync(join(psDir, 'cache'))).toBe(false);
+    expect(existsSync(join(psDir, '.gitignore'))).toBe(true);
+    expect(existsSync(join(psDir, 'config.yml'))).toBe(true);
 
-    expect(existsSync(join(okDir, 'AGENTS.md'))).toBe(false);
+    expect(existsSync(join(psDir, 'AGENTS.md'))).toBe(false);
 
-    expect(existsSync(join(okDir, 'articles'))).toBe(false);
-    expect(existsSync(join(okDir, 'external-sources'))).toBe(false);
-    expect(existsSync(join(okDir, 'research'))).toBe(false);
+    expect(existsSync(join(psDir, 'articles'))).toBe(false);
+    expect(existsSync(join(psDir, 'external-sources'))).toBe(false);
+    expect(existsSync(join(psDir, 'research'))).toBe(false);
 
     expect(result.created.length).toBeGreaterThan(0);
     expect(result.skipped.length).toBe(0);
@@ -64,7 +64,7 @@ describe('initContent', () => {
   it('is idempotent — does not clobber existing files', () => {
     initContent(testDir);
 
-    const configPath = join(testDir, OK_DIR, 'config.yml');
+    const configPath = join(testDir, PS_DIR, 'config.yml');
     writeFileSync(configPath, 'custom content');
 
     const result = initContent(testDir);
@@ -76,14 +76,14 @@ describe('initContent', () => {
   it('generates files with expected content', () => {
     initContent(testDir);
 
-    const okDir = join(testDir, OK_DIR);
+    const psDir = join(testDir, PS_DIR);
 
-    const gitignore = readFileSync(join(okDir, '.gitignore'), 'utf-8');
+    const gitignore = readFileSync(join(psDir, '.gitignore'), 'utf-8');
     expect(gitignore).toContain('local/');
     expect(gitignore).toContain('worktrees/');
 
-    const configYml = readFileSync(join(okDir, 'config.yml'), 'utf-8');
-    expect(configYml).toContain('OpenKnowledge — project configuration');
+    const configYml = readFileSync(join(psDir, 'config.yml'), 'utf-8');
+    expect(configYml).toContain('Palimpsest — project configuration');
     expect(configYml).toContain('# content:');
     expect(configYml).toContain('# appearance:');
     const activeLines = configYml
@@ -95,18 +95,18 @@ describe('initContent', () => {
 
   it('config.yml first line is the schema-version-pinned $schema magic comment', () => {
     initContent(testDir);
-    const configYml = readFileSync(join(testDir, OK_DIR, 'config.yml'), 'utf-8');
+    const configYml = readFileSync(join(testDir, PS_DIR, 'config.yml'), 'utf-8');
     const firstLine = configYml.split('\n')[0];
     expect(firstLine).toMatch(
-      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/open-knowledge@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json$/,
+      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/palimpsest@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json$/,
     );
-    expect(configYml.split('\n')[1]).toBe('# OpenKnowledge — project configuration');
+    expect(configYml.split('\n')[1]).toBe('# Palimpsest — project configuration');
     expect(configYml).toContain('# Schema reference: packages/core/src/config/schema.ts');
   });
 
   it('config.yml scaffold does not teach the removed folders: key or a folder-metadata block', () => {
     initContent(testDir);
-    const configYml = readFileSync(join(testDir, OK_DIR, 'config.yml'), 'utf-8');
+    const configYml = readFileSync(join(testDir, PS_DIR, 'config.yml'), 'utf-8');
     expect(configYml).not.toContain('# folders:');
     expect(configYml).not.toContain("#   - match: 'external-sources/**'");
     expect(configYml).not.toContain('Picomatch glob cheatsheet');
@@ -116,7 +116,7 @@ describe('initContent', () => {
 
   it('config.yml scaffold describes the suggested three-tier lifecycle', () => {
     initContent(testDir);
-    const configYml = readFileSync(join(testDir, OK_DIR, 'config.yml'), 'utf-8');
+    const configYml = readFileSync(join(testDir, PS_DIR, 'config.yml'), 'utf-8');
     expect(configYml).toContain('Suggested lifecycle');
     expect(configYml).toContain('external-sources');
     expect(configYml).toContain('research');
@@ -124,14 +124,14 @@ describe('initContent', () => {
   });
 
   it('appends missing scaffold entries to a stale legacy .gitignore (upgrade path)', () => {
-    const okDir = join(testDir, OK_DIR);
-    mkdirSync(okDir, { recursive: true });
+    const psDir = join(testDir, PS_DIR);
+    mkdirSync(psDir, { recursive: true });
     const stale = `cache/\nserver.lock\nui.lock\nsync-state.json\n`;
-    writeFileSync(join(okDir, '.gitignore'), stale, 'utf-8');
+    writeFileSync(join(psDir, '.gitignore'), stale, 'utf-8');
 
     const result = initContent(testDir);
 
-    const after = readFileSync(join(okDir, '.gitignore'), 'utf-8');
+    const after = readFileSync(join(psDir, '.gitignore'), 'utf-8');
     expect(after).toBe(
       `cache/\nserver.lock\nui.lock\nsync-state.json\nlocal/\nworktrees/\ntmp/\nprincipal.json\nstate.json\nconflicts.json\nlast-spawn-error.log\n`,
     );
@@ -140,64 +140,64 @@ describe('initContent', () => {
   });
 
   it('preserves user-added .gitignore entries during scaffold merge', () => {
-    const okDir = join(testDir, OK_DIR);
-    mkdirSync(okDir, { recursive: true });
+    const psDir = join(testDir, PS_DIR);
+    mkdirSync(psDir, { recursive: true });
     const userCustomized = `cache/\nserver.lock\nmy-custom-ignore.tmp\n`;
-    writeFileSync(join(okDir, '.gitignore'), userCustomized, 'utf-8');
+    writeFileSync(join(psDir, '.gitignore'), userCustomized, 'utf-8');
 
     initContent(testDir);
 
-    const after = readFileSync(join(okDir, '.gitignore'), 'utf-8');
+    const after = readFileSync(join(psDir, '.gitignore'), 'utf-8');
     expect(after).toContain('my-custom-ignore.tmp');
     expect(after).toContain('local/');
   });
 
   describe('symlink-guard against malicious upstream scaffold paths', () => {
-    it('refuses to follow .ok/.gitignore symlink with existing target (read-modify-write)', () => {
-      const okDir = join(testDir, OK_DIR);
-      mkdirSync(okDir, { recursive: true });
+    it('refuses to follow .ps/.gitignore symlink with existing target (read-modify-write)', () => {
+      const psDir = join(testDir, PS_DIR);
+      mkdirSync(psDir, { recursive: true });
       const victim = resolve(testDir, 'victim-rc');
       const victimContent = '#!/bin/sh\nexec /usr/local/bin/realprog\n';
       writeFileSync(victim, victimContent, 'utf-8');
-      symlinkSync(victim, join(okDir, '.gitignore'));
+      symlinkSync(victim, join(psDir, '.gitignore'));
 
       expect(() => initContent(testDir)).toThrow(/symlink/i);
       expect(readFileSync(victim, 'utf-8')).toBe(victimContent);
-      expect(lstatSync(join(okDir, '.gitignore')).isSymbolicLink()).toBe(true);
+      expect(lstatSync(join(psDir, '.gitignore')).isSymbolicLink()).toBe(true);
     });
 
-    it('refuses to follow .ok/.gitignore symlink with non-existent target (write-creates-file)', () => {
-      const okDir = join(testDir, OK_DIR);
-      mkdirSync(okDir, { recursive: true });
+    it('refuses to follow .ps/.gitignore symlink with non-existent target (write-creates-file)', () => {
+      const psDir = join(testDir, PS_DIR);
+      mkdirSync(psDir, { recursive: true });
       const phantomTarget = resolve(testDir, 'phantom-victim');
-      symlinkSync(phantomTarget, join(okDir, '.gitignore'));
+      symlinkSync(phantomTarget, join(psDir, '.gitignore'));
 
       expect(() => initContent(testDir)).toThrow(/symlink/i);
       expect(existsSync(phantomTarget)).toBe(false);
     });
 
-    it('refuses to follow .ok/config.yml symlink (writeIfMissing path)', () => {
-      const okDir = join(testDir, OK_DIR);
-      mkdirSync(okDir, { recursive: true });
+    it('refuses to follow .ps/config.yml symlink (writeIfMissing path)', () => {
+      const psDir = join(testDir, PS_DIR);
+      mkdirSync(psDir, { recursive: true });
       const phantomTarget = resolve(testDir, 'phantom-config');
-      symlinkSync(phantomTarget, join(okDir, 'config.yml'));
+      symlinkSync(phantomTarget, join(psDir, 'config.yml'));
 
       expect(() => initContent(testDir)).toThrow(/symlink/i);
       expect(existsSync(phantomTarget)).toBe(false);
     });
 
-    it('refuses to follow project-root .okignore symlink (writeIfMissing path)', () => {
-      const phantomTarget = resolve(testDir, 'phantom-okignore-target');
-      symlinkSync(phantomTarget, join(testDir, '.okignore'));
+    it('refuses to follow project-root .psignore symlink (writeIfMissing path)', () => {
+      const phantomTarget = resolve(testDir, 'phantom-psignore-target');
+      symlinkSync(phantomTarget, join(testDir, '.psignore'));
 
       expect(() => initContent(testDir)).toThrow(/symlink/i);
       expect(existsSync(phantomTarget)).toBe(false);
     });
 
-    it('refuses to operate when .ok/ itself is a symlink (would redirect every scaffold write)', () => {
+    it('refuses to operate when .ps/ itself is a symlink (would redirect every scaffold write)', () => {
       const decoy = resolve(testDir, 'decoy-dir');
       mkdirSync(decoy, { recursive: true });
-      symlinkSync(decoy, join(testDir, OK_DIR));
+      symlinkSync(decoy, join(testDir, PS_DIR));
 
       expect(() => initContent(testDir)).toThrow(/symlink/i);
       expect(existsSync(join(decoy, '.gitignore'))).toBe(false);
@@ -205,16 +205,16 @@ describe('initContent', () => {
     });
   });
 
-  it('ignores every machine-local name the product can leave at the .ok/ root', () => {
+  it('ignores every machine-local name the product can leave at the .ps/ root', () => {
     initContent(testDir);
-    const lines = readFileSync(join(testDir, OK_DIR, '.gitignore'), 'utf-8')
+    const lines = readFileSync(join(testDir, PS_DIR, '.gitignore'), 'utf-8')
       .split('\n')
       .map((l) => l.trim());
 
-    for (const name of OK_MACHINE_LOCAL_ROOT_FILES) {
+    for (const name of PS_MACHINE_LOCAL_ROOT_FILES) {
       expect(lines, `${name} must be ignored`).toContain(name);
     }
-    for (const name of OK_MACHINE_LOCAL_ROOT_DIRS) {
+    for (const name of PS_MACHINE_LOCAL_ROOT_DIRS) {
       expect(lines, `${name}/ must be ignored`).toContain(`${name}/`);
     }
     expect(lines).not.toContain('config.yml');
@@ -225,7 +225,7 @@ describe('initContent', () => {
     initContent(testDir);
     initContent(testDir);
 
-    const gitignore = readFileSync(join(testDir, OK_DIR, '.gitignore'), 'utf-8');
+    const gitignore = readFileSync(join(testDir, PS_DIR, '.gitignore'), 'utf-8');
     const matches = gitignore.split('\n').filter((l) => l.trim() === 'local/').length;
     expect(matches).toBe(1);
   });
@@ -233,13 +233,13 @@ describe('initContent', () => {
   it('writes config.yml with content.dir override when contentDir option is set', () => {
     const result = initContent(testDir, { contentDir: 'docs' });
     expect(result.created).toContain('config.yml');
-    const configYml = readFileSync(join(testDir, OK_DIR, 'config.yml'), 'utf-8');
+    const configYml = readFileSync(join(testDir, PS_DIR, 'config.yml'), 'utf-8');
     expect(configYml).toContain('content:\n  dir: docs');
   });
 
   it('writes config.yml with default commented content.dir when contentDir is "."', () => {
     initContent(testDir, { contentDir: '.' });
-    const configYml = readFileSync(join(testDir, OK_DIR, 'config.yml'), 'utf-8');
+    const configYml = readFileSync(join(testDir, PS_DIR, 'config.yml'), 'utf-8');
     expect(configYml).toContain('# content:\n#   dir: .');
   });
 });
@@ -312,7 +312,7 @@ describe('buildConfigYmlContent', () => {
   it('templates the magic comment with @latest + schema-major path', () => {
     const out = buildConfigYmlContent('3.5.0');
     expect(out.split('\n')[0]).toMatch(
-      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/open-knowledge@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json$/,
+      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/palimpsest@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json$/,
     );
   });
 
@@ -350,30 +350,30 @@ describe('buildConfigYmlContent', () => {
     expect(out).toContain('content:\n  dir: "with spaces/sub"');
   });
 
-  it('precedence header points to user-global `~/.ok/global.yml`, not `config.yml`', () => {
+  it('precedence header points to user-global `~/.ps/global.yml`, not `config.yml`', () => {
     const out = buildConfigYmlContent('1.0.0');
-    expect(out).toContain('~/.ok/global.yml');
-    expect(out).toContain('./.ok/config.yml');
-    expect(out).not.toContain('~/.ok/config.yml');
+    expect(out).toContain('~/.ps/global.yml');
+    expect(out).toContain('./.ps/config.yml');
+    expect(out).not.toContain('~/.ps/config.yml');
   });
 });
 
 describe('removeProjectSkillGitignoreBlock', () => {
   let testDir: string;
   beforeEach(() => {
-    testDir = mkdtempSync(join(tmpdir(), 'ok-gitignore-drain-'));
+    testDir = mkdtempSync(join(tmpdir(), 'ps-gitignore-drain-'));
   });
   afterEach(() => {
     rmSync(testDir, { recursive: true, force: true });
   });
 
   const PATHS = [
-    '.claude/skills/open-knowledge/',
-    '.cursor/skills/open-knowledge/',
-    '.codex/skills/open-knowledge/',
-    '.github/skills/open-knowledge/',
-    '.opencode/skills/open-knowledge/',
-    '.pi/skills/open-knowledge/',
+    '.claude/skills/palimpsest/',
+    '.cursor/skills/palimpsest/',
+    '.codex/skills/palimpsest/',
+    '.github/skills/palimpsest/',
+    '.opencode/skills/palimpsest/',
+    '.pi/skills/palimpsest/',
   ];
 
   it('drains the bare-paths shape an existing .gitignore received', () => {
@@ -389,7 +389,7 @@ describe('removeProjectSkillGitignoreBlock', () => {
     writeFileSync(
       path,
       `${[
-        '# OpenKnowledge regenerates its built-in project skill on every open, and',
+        '# Palimpsest regenerates its built-in project skill on every open, and',
         '# different app builds version-stamp it differently. It is a per-machine',
         "# artifact — keep it out of git so teammates don't collide under auto-sync.",
         ...PATHS,
@@ -425,7 +425,7 @@ describe('removeProjectSkillGitignoreBlock', () => {
 
   it('a user line that merely mentions the path survives', () => {
     const path = join(testDir, '.gitignore');
-    const original = '# keep .claude/skills/open-knowledge/ around\n.claude/skills/*.bak\n';
+    const original = '# keep .claude/skills/palimpsest/ around\n.claude/skills/*.bak\n';
     writeFileSync(path, original, 'utf-8');
 
     expect(removeProjectSkillGitignoreBlock(testDir)).toBe('unchanged');
@@ -436,18 +436,18 @@ describe('removeProjectSkillGitignoreBlock', () => {
 describe('removeProjectSkillGitignoreBlock touches only the seam it opened', () => {
   let testDir: string;
   beforeEach(() => {
-    testDir = mkdtempSync(join(tmpdir(), 'ok-gitignore-seam-'));
+    testDir = mkdtempSync(join(tmpdir(), 'ps-gitignore-seam-'));
   });
   afterEach(() => {
     rmSync(testDir, { recursive: true, force: true });
   });
   const PATHS = [
-    '.claude/skills/open-knowledge/',
-    '.cursor/skills/open-knowledge/',
-    '.codex/skills/open-knowledge/',
-    '.github/skills/open-knowledge/',
-    '.opencode/skills/open-knowledge/',
-    '.pi/skills/open-knowledge/',
+    '.claude/skills/palimpsest/',
+    '.cursor/skills/palimpsest/',
+    '.codex/skills/palimpsest/',
+    '.github/skills/palimpsest/',
+    '.opencode/skills/palimpsest/',
+    '.pi/skills/palimpsest/',
   ];
 
   it('leaves blank runs elsewhere in the file alone', () => {

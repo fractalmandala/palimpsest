@@ -4,7 +4,7 @@ import {
   type ThreadEvent,
   type ThreadInfo,
   type ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test, vi } from 'vitest';
 import fixture from '../../../../../test-support/fixtures/codex-legacy-warning-envelopes.json' with {
   type: 'json',

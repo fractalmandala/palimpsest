@@ -32,8 +32,8 @@ import {
   TrashCleanupSuccessSchema,
   UploadAssetSuccessSchema,
   UploadRequestSchema,
-} from '@inkeep/open-knowledge-core';
-import { formatRenameSubject } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { formatRenameSubject } from '@palimpsest/core/shadow-repo-layout';
 import type { SummaryResponse } from '../agent-write-summary.ts';
 import { ManagedRenameCollisionError } from '../apply-managed-rename.ts';
 import { isConfigDoc, isSystemDoc } from '../cc1-broadcast.ts';
@@ -538,7 +538,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             {
               handler: 'create-page',
               detail:
-                'Cannot create a page inside .ok or .git — skills and templates are authored through their own validating flows.',
+                'Cannot create a page inside .ps or .git — skills and templates are authored through their own validating flows.',
             },
           );
           return;
@@ -688,7 +688,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             res,
             400,
             'urn:ok:error:reserved-doc-name',
-            '.ok and .git are reserved directories.',
+            '.ps and .git are reserved directories.',
             { handler: 'create-folder' },
           );
           return;
@@ -961,7 +961,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             res,
             400,
             'urn:ok:error:reserved-doc-name',
-            '.ok and .git are reserved directories.',
+            '.ps and .git are reserved directories.',
             {
               handler: 'rename-path',
             },
@@ -1242,7 +1242,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             res,
             400,
             'urn:ok:error:reserved-doc-name',
-            '.ok and .git are reserved directories.',
+            '.ps and .git are reserved directories.',
             { handler: 'delete-path' },
           );
           return;
@@ -1491,7 +1491,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         res,
         400,
         'urn:ok:error:reserved-doc-name',
-        '.ok and .git are reserved directories.',
+        '.ps and .git are reserved directories.',
         { handler: 'upload-asset' },
       );
       return;
@@ -1559,7 +1559,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           res,
           400,
           'urn:ok:error:reserved-doc-name',
-          '.ok and .git are reserved directories.',
+          '.ps and .git are reserved directories.',
           { handler: 'upload-asset' },
         );
         return;

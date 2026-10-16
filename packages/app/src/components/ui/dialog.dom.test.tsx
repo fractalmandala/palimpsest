@@ -135,7 +135,7 @@ describe('Dialog window-drag band', () => {
   });
 
   test('restores the title-bar drag band, between the overlay and the dialog', async () => {
-    vi.stubGlobal('okDesktop', {});
+    vi.stubGlobal('psDesktop', {});
     await renderDialogContent();
 
     const strip = screen.getByTestId('dialog-drag-strip');
@@ -155,7 +155,7 @@ describe('Dialog window-drag band', () => {
   });
 
   test('clamps the dialog clear of the band on the desktop host', async () => {
-    vi.stubGlobal('okDesktop', {});
+    vi.stubGlobal('psDesktop', {});
     await renderDialogContent();
 
     const className =
@@ -165,7 +165,7 @@ describe('Dialog window-drag band', () => {
   });
 
   test('a Dialog hosting an AlertDialog yields two distinct strips', async () => {
-    vi.stubGlobal('okDesktop', {});
+    vi.stubGlobal('psDesktop', {});
     const { Dialog, DialogContent, DialogTitle } = await import('./dialog');
     const { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } = await import(
       './alert-dialog'
@@ -191,7 +191,7 @@ describe('Dialog window-drag band', () => {
   });
 
   test('a caller max-h still wins over the clearance clamp', async () => {
-    vi.stubGlobal('okDesktop', {});
+    vi.stubGlobal('psDesktop', {});
     const { Dialog, DialogContent, DialogTitle } = await import('./dialog');
 
     render(

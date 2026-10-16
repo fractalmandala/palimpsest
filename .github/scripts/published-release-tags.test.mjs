@@ -10,7 +10,7 @@ const release = (tag_name, over = {}) => ({
   tag_name,
   draft: false,
   published_at: '2026-09-24T22:00:00Z',
-  assets: [{ name: 'OpenKnowledge-arm64.dmg' }, { name: 'beta-mac.yml' }],
+  assets: [{ name: 'Palimpsest-arm64.dmg' }, { name: 'beta-mac.yml' }],
   ...over,
 });
 
@@ -21,7 +21,7 @@ test('drafts, missing publication timestamps and metadata-only records are not s
       release('v0.77.9', { draft: true }),
       release('v0.78.0-beta.1', { published_at: null }),
       release('v0.78.0-beta.2', { assets: [] }),
-      release('v0.78.0-beta.4', { assets: [{ name: 'OpenKnowledge-arm64.dmg' }] }),
+      release('v0.78.0-beta.4', { assets: [{ name: 'Palimpsest-arm64.dmg' }] }),
       release('v0.78.0-beta.5', { assets: [{ name: 'beta-mac.yml' }] }),
       release('v0.78.0-beta.3'),
     ]),

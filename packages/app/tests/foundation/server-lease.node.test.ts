@@ -42,7 +42,7 @@ const STRESS_CONFIG = '/worktree/packages/app/playwright.config.ts#chromium';
 interface Rig {
   readonly supervisor: WorkerServerSupervisor;
   readonly launcher: ReturnType<typeof contractServerLauncher>;
-  readonly okRoot: string;
+  readonly psRoot: string;
   readonly releaseFailure: string | undefined;
   request(overrides: Partial<LeaseRequest>): LeaseRequest;
 }
@@ -59,24 +59,24 @@ const openClients: LeaseClient[] = [];
 const openScratch: string[] = [];
 
 function makeRig({ launch, releaseFailure }: RigOptions = {}): Rig {
-  const okRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lease-root-')));
-  mkdirSync(join(okRoot, 'packages', 'server', 'src'), { recursive: true });
-  mkdirSync(join(okRoot, 'packages', 'app', 'src'), { recursive: true });
-  writeFileSync(join(okRoot, 'packages', 'server', 'src', 'boot.ts'), 'export const boot = 1;\n');
-  writeFileSync(join(okRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 1;\n');
+  const psRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lease-root-')));
+  mkdirSync(join(psRoot, 'packages', 'server', 'src'), { recursive: true });
+  mkdirSync(join(psRoot, 'packages', 'app', 'src'), { recursive: true });
+  writeFileSync(join(psRoot, 'packages', 'server', 'src', 'boot.ts'), 'export const boot = 1;\n');
+  writeFileSync(join(psRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 1;\n');
   const launcher = contractServerLauncher();
   const supervisor = new WorkerServerSupervisor({
-    okRoot,
+    psRoot,
     launch: launch === undefined ? launcher.launch : launch(launcher.launch),
     identityTimeoutMs: 2_000,
   });
   const rig: Rig = {
     supervisor,
     launcher,
-    okRoot,
+    psRoot,
     releaseFailure,
     request: (overrides) => ({
-      worktree: okRoot,
+      worktree: psRoot,
       config: STRESS_CONFIG,
       run: 'run-a',
       slot: 0,
@@ -102,7 +102,7 @@ afterEach(async () => {
         throw error;
       }
     });
-    rmSync(rig.okRoot, { recursive: true, force: true });
+    rmSync(rig.psRoot, { recursive: true, force: true });
   }
   for (const dir of openScratch.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
@@ -204,16 +204,16 @@ describe('worker server leases', () => {
 
   test('a run whose worker environment differs restarts the idle slot with that environment', async () => {
     const rig = makeRig();
-    const env: WorkerServerEnv = { OK_TEST_FEATURE: 'on' };
+    const env: WorkerServerEnv = { PS_TEST_FEATURE: 'on' };
     const first = granted(await rig.supervisor.acquire(rig.request({ workerServerEnv: env })));
     await rig.supervisor.release(first.token, false);
 
-    const changed: WorkerServerEnv = { OK_TEST_FEATURE: 'off' };
+    const changed: WorkerServerEnv = { PS_TEST_FEATURE: 'off' };
     const differing = granted(
       await rig.supervisor.acquire(rig.request({ run: 'run-b', workerServerEnv: changed })),
     );
     expect(differing.launched).toBe(true);
-    expect(differing.relaunchedBecause).toBe('its workerServerEnv differs in OK_TEST_FEATURE');
+    expect(differing.relaunchedBecause).toBe('its workerServerEnv differs in PS_TEST_FEATURE');
     expect(differing.baseURL).not.toBe(first.baseURL);
     expect(await serving(first.baseURL)).toBe(false);
     await rig.supervisor.release(differing.token, false);
@@ -247,13 +247,13 @@ describe('worker server leases', () => {
   test('an admission whose discard of the previous server fails is refused with that failure and leaves the slot unleased', async () => {
     const rig = makeRig({ launch: failingRelease, releaseFailure: RELEASE_FAILURE });
     const first = granted(
-      await rig.supervisor.acquire(rig.request({ workerServerEnv: { OK_TEST_FEATURE: 'on' } })),
+      await rig.supervisor.acquire(rig.request({ workerServerEnv: { PS_TEST_FEATURE: 'on' } })),
     );
     await rig.supervisor.release(first.token, false);
 
     const failed = refusal(
       await rig.supervisor.acquire(
-        rig.request({ run: 'run-b', workerServerEnv: { OK_TEST_FEATURE: 'off' } }),
+        rig.request({ run: 'run-b', workerServerEnv: { PS_TEST_FEATURE: 'off' } }),
       ),
     );
     expect(failed.reason).toBe('launch-failed');
@@ -262,7 +262,7 @@ describe('worker server leases', () => {
 
     const next = granted(
       await rig.supervisor.acquire(
-        rig.request({ run: 'run-c', workerServerEnv: { OK_TEST_FEATURE: 'off' } }),
+        rig.request({ run: 'run-c', workerServerEnv: { PS_TEST_FEATURE: 'off' } }),
       ),
     );
     expect(next.launched).toBe(true);
@@ -272,8 +272,8 @@ describe('worker server leases', () => {
     const rig = makeRig();
     const first = granted(await rig.supervisor.acquire(rig.request({})));
     await rig.supervisor.release(first.token, false);
-    const dangling = join(rig.okRoot, 'packages', 'server', 'src', 'dangling.ts');
-    symlinkSync(join(rig.okRoot, 'missing.ts'), dangling);
+    const dangling = join(rig.psRoot, 'packages', 'server', 'src', 'dangling.ts');
+    symlinkSync(join(rig.psRoot, 'missing.ts'), dangling);
 
     const failed = refusal(await rig.supervisor.acquire(rig.request({ run: 'run-b' })));
     expect(failed.reason).toBe('launch-failed');
@@ -288,13 +288,13 @@ describe('worker server leases', () => {
 
   test('a run from another worktree is refused before an empty slot launches a server from this one', async () => {
     const rig = makeRig();
-    const elsewhere = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lease-other-worktree-')));
+    const elsewhere = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lease-other-worktree-')));
     openScratch.push(elsewhere);
 
     const other = refusal(await rig.supervisor.acquire(rig.request({ worktree: elsewhere })));
     expect(other.reason).toBe('incompatible');
     expect(other.detail).toBe(
-      `worktree ${elsewhere} is not this supervisor's worktree ${rig.okRoot}; it would test that checkout's code`,
+      `worktree ${elsewhere} is not this supervisor's worktree ${rig.psRoot}; it would test that checkout's code`,
     );
     expect(rig.launcher.launched).toHaveLength(0);
 
@@ -402,13 +402,13 @@ describe('worker server leases', () => {
     const rig = makeRig();
     const first = granted(await rig.supervisor.acquire(rig.request({})));
     await rig.supervisor.release(first.token, false);
-    writeFileSync(join(rig.okRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 2;\n');
+    writeFileSync(join(rig.psRoot, 'packages', 'app', 'src', 'App.tsx'), 'export const app = 2;\n');
     const appEdit = granted(await rig.supervisor.acquire(rig.request({ run: 'run-b' })));
     expect(appEdit.launched).toBe(false);
     await rig.supervisor.release(appEdit.token, false);
 
     writeFileSync(
-      join(rig.okRoot, 'packages', 'server', 'src', 'boot.ts'),
+      join(rig.psRoot, 'packages', 'server', 'src', 'boot.ts'),
       'export const boot = 2;\n',
     );
     const serverEdit = granted(await rig.supervisor.acquire(rig.request({ run: 'run-c' })));
@@ -458,7 +458,7 @@ async function servedRig(
   options: RigOptions = {},
 ): Promise<{ rig: Rig; endpoint: SupervisorEndpoint }> {
   const rig = makeRig(options);
-  const endpoint = await serveSupervisor(rig.supervisor, join(rig.okRoot, 'supervisor.sock'));
+  const endpoint = await serveSupervisor(rig.supervisor, join(rig.psRoot, 'supervisor.sock'));
   openEndpoints.push(endpoint);
   return { rig, endpoint };
 }
@@ -656,7 +656,7 @@ describe('worker server leases over the supervisor socket', () => {
   test('a socket already served by a live supervisor is refused and a stale socket file is reclaimed', async () => {
     const { rig, endpoint } = await servedRig();
     const rival = new WorkerServerSupervisor({
-      okRoot: rig.okRoot,
+      psRoot: rig.psRoot,
       launch: rig.launcher.launch,
       identityTimeoutMs: 2_000,
     });
@@ -665,7 +665,7 @@ describe('worker server leases over the supervisor socket', () => {
     );
     expect(await (await client(endpoint)).status(CALL_MS)).toEqual([]);
 
-    const stale = join(rig.okRoot, 'stale.sock');
+    const stale = join(rig.psRoot, 'stale.sock');
     execFileSync(process.execPath, [
       '-e',
       `require('node:net').createServer().listen(${JSON.stringify(stale)}, () => process.exit(0))`,
@@ -679,17 +679,17 @@ describe('worker server leases over the supervisor socket', () => {
   test('an entry at the socket path that is not a socket is refused by its kind and left in place', async () => {
     const rig = makeRig();
     const rival = new WorkerServerSupervisor({
-      okRoot: rig.okRoot,
+      psRoot: rig.psRoot,
       launch: rig.launcher.launch,
       identityTimeoutMs: 2_000,
     });
-    const regular = join(rig.okRoot, 'regular.sock');
+    const regular = join(rig.psRoot, 'regular.sock');
     writeFileSync(regular, 'a regular file\n');
-    const directory = join(rig.okRoot, 'directory.sock');
+    const directory = join(rig.psRoot, 'directory.sock');
     mkdirSync(directory);
-    const target = join(rig.okRoot, 'link-target.txt');
+    const target = join(rig.psRoot, 'link-target.txt');
     writeFileSync(target, 'the link target\n');
-    const link = join(rig.okRoot, 'link.sock');
+    const link = join(rig.psRoot, 'link.sock');
     symlinkSync(target, link);
     const inodes = [regular, directory, link].map((path) => lstatSync(path).ino);
 

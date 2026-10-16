@@ -1,5 +1,5 @@
-import { parseManagedArtifactName } from '@inkeep/open-knowledge-core/constants/cc1';
-import { APP_HEADER_HEIGHT } from '@inkeep/open-knowledge-core/constants/chrome';
+import { parseManagedArtifactName } from '@palimpsest/core/constants/cc1';
+import { APP_HEADER_HEIGHT } from '@palimpsest/core/constants/chrome';
 import { useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -107,7 +107,7 @@ export function AppHeader({ onOpenSearch }: AppHeaderProps) {
   const { t } = useLingui();
   const singleFile = useSingleFileMode();
   const { activeDocName, activeTarget } = useDocumentContext();
-  const desktopBridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const desktopBridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const isElectronHost = desktopBridge != null;
   const foldsBadges = isElectronHost && desktopBridge.platform !== 'darwin';
   const [publishOpen, setPublishOpen] = useState(false);

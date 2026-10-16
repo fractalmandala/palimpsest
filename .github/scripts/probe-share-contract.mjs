@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 export const FIXED_PROBE_CASE_IDS = ['v2-one-segment-document', 'v2-one-segment-content-root'];
 
 const REQUIRED_EPOCH = 2;
-const MANIFEST_PATH = '/.well-known/openknowledge-share-contract.json';
+const MANIFEST_PATH = '/.well-known/palimpsest-share-contract.json';
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
 const DEPLOYMENT_SHA_PATTERN = /^[0-9a-f]{40}$/;
 const REQUEST_TIMEOUT_MS = 15_000;
@@ -240,7 +240,7 @@ function assertDecodedSplash(html, fixture, manifest, now) {
   }
 
   const customSchemeHref = anchorHref(html, 'splash-open-cta', now, manifest, fixture.id);
-  const expectedCustomSchemeHref = `openknowledge://share?token=${fixture.token}`;
+  const expectedCustomSchemeHref = `palimpsest://share?token=${fixture.token}`;
   if (customSchemeHref !== expectedCustomSchemeHref) {
     fail(
       'page-custom-uri',

@@ -9,8 +9,8 @@ import {
   type McpDeclineReason,
   type McpEntryClassification,
   truncatePriorEntry,
-} from '@inkeep/open-knowledge';
-import { classifyMcpLauncherEntry } from '@inkeep/open-knowledge-core';
+} from '@palimpsest/cli';
+import { classifyMcpLauncherEntry } from '@palimpsest/core';
 import type { McpWiringEditorId } from '../shared/ipc-channels.ts';
 import { classifyInstallShape } from './install-shape.ts';
 

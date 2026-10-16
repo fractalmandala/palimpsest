@@ -28,9 +28,9 @@ export type HeldInstallRegistry = {
   publishBrowser: (published: boolean) => void;
 };
 
-const AGENT_NAME = 'ok-held-install-agent';
-const DEPENDENCY_NAME = 'ok-held-install-dependency';
-const BROWSER_DEPENDENCY_NAME = 'ok-held-install-browser-dependency';
+const AGENT_NAME = 'ps-held-install-agent';
+const DEPENDENCY_NAME = 'ps-held-install-dependency';
+const BROWSER_DEPENDENCY_NAME = 'ps-held-install-browser-dependency';
 const VERSION = '1.0.0';
 const UNPINNED_BROWSER_VERSION = '0.0.1';
 const PUBLISHED = '2020-01-01T00:00:00.000Z';
@@ -110,7 +110,7 @@ async function wheel(): Promise<Buffer> {
     'ok_held_install_agent/__init__.py': PYTHON_ACP_AGENT,
     [`${distInfo}/METADATA`]: `Metadata-Version: 2.1\nName: ${AGENT_NAME}\nVersion: ${VERSION}\n`,
     [`${distInfo}/WHEEL`]:
-      'Wheel-Version: 1.0\nGenerator: ok-held-install\nRoot-Is-Purelib: true\nTag: py3-none-any\n',
+      'Wheel-Version: 1.0\nGenerator: ps-held-install\nRoot-Is-Purelib: true\nTag: py3-none-any\n',
     [`${distInfo}/entry_points.txt`]: `[console_scripts]\n${AGENT_NAME} = ok_held_install_agent:main\n`,
   };
   const record = Object.entries(files).map(

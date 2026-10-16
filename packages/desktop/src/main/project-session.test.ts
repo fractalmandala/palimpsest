@@ -23,11 +23,11 @@ function createHarness() {
   const contexts = {
     firstFile: {
       projectPath: '/notes',
-      ephemeral: { projectDir: '/tmp/first-file', pid: 11, lockDir: '/tmp/first-file/.ok/local' },
+      ephemeral: { projectDir: '/tmp/first-file', pid: 11, lockDir: '/tmp/first-file/.ps/local' },
     },
     secondFile: {
       projectPath: '/notes',
-      ephemeral: { projectDir: '/tmp/second-file', pid: 12, lockDir: '/tmp/second-file/.ok/local' },
+      ephemeral: { projectDir: '/tmp/second-file', pid: 12, lockDir: '/tmp/second-file/.ps/local' },
     },
     project: { projectPath: '/notes' },
     otherProject: { projectPath: '/other' },

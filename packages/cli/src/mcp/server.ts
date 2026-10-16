@@ -4,8 +4,8 @@ import { realpathSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { OK_PROJECT_MARKER, resolveIsHostedAgent } from '@inkeep/open-knowledge-core';
-import { type KeepaliveHandle, startKeepalive } from '@inkeep/open-knowledge-core/keepalive';
+import { PS_PROJECT_MARKER, resolveIsHostedAgent } from '@palimpsest/core';
+import { type KeepaliveHandle, startKeepalive } from '@palimpsest/core/keepalive';
 import {
   type AgentIdentity,
   type Config,
@@ -19,7 +19,7 @@ import {
   resolveContentDir,
   sanitizeClientName,
   withHiddenWindowsConsole,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createProjectConfigResolver } from '../config/loader.ts';
@@ -71,7 +71,7 @@ export function findProjectDir(startCwd: string): string {
     const parent = dirname(dir);
     if (parent === dir) {
       throw new Error(
-        `No OpenKnowledge project found at or above ${startCwd}. Pass an explicit \`cwd\` argument that points inside an OK project (a directory with a \`${OK_PROJECT_MARKER}\`).`,
+        `No Palimpsest project found at or above ${startCwd}. Pass an explicit \`cwd\` argument that points inside an OK project (a directory with a \`${PS_PROJECT_MARKER}\`).`,
       );
     }
     dir = parent;
@@ -139,7 +139,7 @@ export async function resolveStickyProjectDir(
 }
 
 const CWD_REQUIRED_MESSAGE =
-  '`cwd` is required for tool calls against the global MCP server. Pass an absolute path inside an OpenKnowledge project, or have the MCP client advertise a single root.';
+  '`cwd` is required for tool calls against the global MCP server. Pass an absolute path inside an Palimpsest project, or have the MCP client advertise a single root.';
 
 export async function startGlobalMcpServer(
   opts: StartGlobalMcpServerOptions,
@@ -152,8 +152,8 @@ export async function startGlobalMcpServer(
     },
   };
   const spawnTimeoutMs =
-    opts.spawnTimeoutMs ?? parseSpawnTimeoutEnv(process.env.OK_MCP_SPAWN_TIMEOUT_MS);
-  const envAutoStart = opts.envAutoStart ?? process.env.OK_MCP_AUTOSTART;
+    opts.spawnTimeoutMs ?? parseSpawnTimeoutEnv(process.env.PS_MCP_SPAWN_TIMEOUT_MS);
+  const envAutoStart = opts.envAutoStart ?? process.env.PS_MCP_AUTOSTART;
 
   const resolveConfigForCwd = createProjectConfigResolver({
     startupCwd: opts.startupCwd,

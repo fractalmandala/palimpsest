@@ -10,34 +10,34 @@ import { expect, test } from './_helpers/smoke-test';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MAIN_ENTRY = resolve(__dirname, '..', '..', 'out', 'main', 'index.js');
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 const BUILD_EXISTS = existsSync(MAIN_ENTRY);
 
 const RULE = 'no-wiki-links';
-const TOGGLE = `settings-okf-rule-toggle-${RULE}`;
+const TOGGLE = `settings-psf-rule-toggle-${RULE}`;
 
-test.describe('okf per-rule toggle round-trip', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+test.describe('psf per-rule toggle round-trip', () => {
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Deep-link project open is macOS-only in v0.');
   test.skip(!BUILD_EXISTS, `Main build missing at ${MAIN_ENTRY} — run "pnpm run build:desktop".`);
 
   test('a rule switched off can be switched back on, and config records only the deviation', async ({
     captureStderrFor,
   }) => {
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-okf-toggle-home-'));
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-okf-toggle-'));
-    const configPath = join(projectDir, '.ok', 'config.yml');
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-psf-toggle-home-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-psf-toggle-'));
+    const configPath = join(projectDir, '.ps', 'config.yml');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
       configPath,
-      "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\ncontentRules:\n  okf:\n    enabled: true\n",
+      "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\ncontentRules:\n  psf:\n    enabled: true\n",
     );
     writeFileSync(join(projectDir, 'note.md'), '# Note\n\nA [[WikiLink]] to flag.\n');
 
     const userDataDir = join(tmpHome, 'electron-userdata');
     mkdirSync(userDataDir, { recursive: true });
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=note`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=note`;
 
     const app = await launchDesktopInHome(tmpHome, {
       args: [MAIN_ENTRY, deepLink, `--user-data-dir=${userDataDir}`],
@@ -60,7 +60,7 @@ test.describe('okf per-rule toggle round-trip', () => {
     await configureDesktopGitRepositories(settingsPage, projectDir);
 
     await settingsPage.getByTestId('header-settings-button').click({ timeout: 15_000 });
-    await settingsPage.getByTestId('settings-sidebar-item-plugin:okf').click({ timeout: 15_000 });
+    await settingsPage.getByTestId('settings-sidebar-item-plugin:psf').click({ timeout: 15_000 });
 
     const toggle = settingsPage.getByTestId(TOGGLE);
     await expect(toggle).toBeVisible({ timeout: 15_000 });

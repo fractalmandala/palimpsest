@@ -3,7 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import { metrics } from '@opentelemetry/api';
 import {
   AggregationTemporality,
@@ -96,7 +96,7 @@ afterAll(async () => {
 
 let tmpDir: string;
 beforeEach(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rename-telem-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rename-telem-'));
   swapContributors();
   resetMetrics();
   exporter.reset();

@@ -11,13 +11,13 @@ import {
 import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { ACP_LAUNCH_FAILURE_LOG } from '@inkeep/open-knowledge-core';
+import { ACP_LAUNCH_FAILURE_LOG } from '@palimpsest/core';
 import type {
   ThreadEvent,
   ThreadInfo,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
+import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import {
@@ -908,8 +908,8 @@ process.stdin.on('data', (chunk) => {
       clientCapabilities?: unknown;
     };
     expect(params.clientInfo).toEqual({
-      name: 'open-knowledge',
-      title: 'Open Knowledge',
+      name: 'palimpsest',
+      title: 'Palimpsest',
       version: RUNTIME_VERSION,
     });
     expect(params.clientCapabilities).toBeDefined();
@@ -1415,7 +1415,7 @@ describe('AcpThreadManager persistence + resume', () => {
 
     manager.sendPrompt(
       info.threadId,
-      "You're an agent working inside OpenKnowledge, with its MCP tools available to you. Here's what I'd like to do:\n\n> Fix the login redirect",
+      "You're an agent working inside Palimpsest, with its MCP tools available to you. Here's what I'd like to do:\n\n> Fix the login redirect",
     );
     await waitUntil(
       () => manager.getInfo(info.threadId)?.title !== info.agent.name,
@@ -1849,7 +1849,7 @@ describe('handleFsWrite exclusion gate', () => {
     const contentDir = tmp();
     const localDir = tmp();
     const manager = makeManager(contentDir, localDir, {
-      isIgnoredPath: (rel) => rel.startsWith('.ok/') || rel.startsWith('.git/'),
+      isIgnoredPath: (rel) => rel.startsWith('.ps/') || rel.startsWith('.git/'),
     });
     const m = manager as unknown as {
       handleFsWrite: (record: unknown, path: string, content: string) => Promise<void>;
@@ -1857,7 +1857,7 @@ describe('handleFsWrite exclusion gate', () => {
     const record = { info: { lastActivityAt: 0 } };
 
     await expect(
-      m.handleFsWrite(record, join(contentDir, '.ok', 'local', 'acp-agents.json'), '[]'),
+      m.handleFsWrite(record, join(contentDir, '.ps', 'local', 'acp-agents.json'), '[]'),
     ).rejects.toThrow(/excluded from the project content scope/);
     await expect(
       m.handleFsWrite(record, join(contentDir, '.git', 'hooks', 'pre-commit'), '#!/bin/sh'),
@@ -2139,7 +2139,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
   function writeOkToolAgentEntry(localDir: string): void {
     writeRequestingAgentEntry(
       localDir,
-      'ok-tool-agent',
+      'ps-tool-agent',
       `
   const response = await request('session/request_permission', {
     toolCall: {
@@ -2158,7 +2158,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
     sessionUpdate: 'agent_message_chunk',
     content: {
       type: 'text',
-      text: 'ok-tool:' + (outcome.outcome === 'selected' ? outcome.optionId : outcome.outcome) + ';',
+      text: 'ps-tool:' + (outcome.outcome === 'selected' ? outcome.optionId : outcome.outcome) + ';',
     },
   });
   finish();
@@ -2174,7 +2174,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
     const manager = makeManager(contentDir, localDir, {
       autoApproveOkTools: () => readAutoApproveOkTools(contentDir, home),
     });
-    const info = await manager.createThread({ agent: { source: 'custom', id: 'ok-tool-agent' } });
+    const info = await manager.createThread({ agent: { source: 'custom', id: 'ps-tool-agent' } });
     const events: Collected = [];
     await manager.subscribe(info.threadId, 0, collect(events));
     await waitUntil(() => manager.getInfo(info.threadId)?.status === 'ready', 15_000, 'ready');
@@ -2185,8 +2185,8 @@ describe('AcpThreadManager terminals + permission effects', () => {
       );
     const turnsEnded = () => events.filter((e) => e.event.kind === 'turn_ended').length;
 
-    mkdirSync(join(home, '.ok'), { recursive: true });
-    writeFileSync(join(home, '.ok', 'global.yml'), 'agents:\n  autoApproveOkTools: false\n');
+    mkdirSync(join(home, '.ps'), { recursive: true });
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApproveOkTools: false\n');
     manager.sendPrompt(info.threadId, 'search');
     await waitUntil(() => requests().length === 1, 20_000, 'a prompt while the setting is off');
     const request = requests()[0]?.event;
@@ -2198,12 +2198,12 @@ describe('AcpThreadManager terminals + permission effects', () => {
     await waitUntil(() => turnsEnded() === 1, 20_000, 'first turn end');
     expect(autoApprovals()).toHaveLength(0);
 
-    rmSync(join(home, '.ok', 'global.yml'), { force: true });
+    rmSync(join(home, '.ps', 'global.yml'), { force: true });
     manager.sendPrompt(info.threadId, 'search again');
     await waitUntil(() => turnsEnded() === 2, 20_000, 'second turn end');
     expect(requests()).toHaveLength(1);
     expect(autoApprovals()).toHaveLength(1);
-    expect(agentText(events)).toContain('ok-tool:allow;ok-tool:allow;');
+    expect(agentText(events)).toContain('ps-tool:allow;ps-tool:allow;');
 
     await manager.closeThread(info.threadId);
   }, 60_000);
@@ -2229,8 +2229,8 @@ describe('AcpThreadManager terminals + permission effects', () => {
       storeGrants(localDir, agentId, [
         'execute',
         'other',
-        'mcp:ok-browser/browser_navigate',
-        'mcp:ok-browser/browser_snapshot',
+        'mcp:ps-browser/browser_navigate',
+        'mcp:ps-browser/browser_snapshot',
       ]);
       writeRequestingRegistryAgent(binDir, promptBody);
       const manager = registryManagerFor(agentId, contentDir, localDir, binDir, {
@@ -2337,8 +2337,8 @@ describe('AcpThreadManager terminals + permission effects', () => {
       expect(chat.grantsOnDisk()).toEqual([
         'execute',
         'other',
-        'mcp:ok-browser/browser_navigate',
-        'mcp:ok-browser/browser_snapshot',
+        'mcp:ps-browser/browser_navigate',
+        'mcp:ps-browser/browser_snapshot',
       ]);
       await chat.manager.closeThread(chat.threadId);
     }, 60_000);
@@ -2373,17 +2373,17 @@ describe('AcpThreadManager terminals + permission effects', () => {
       _meta: { is_mcp_tool_approval: true },
       options,
     });
-  mcpCall('call-code', 'ok-browser', 'browser_run_code_unsafe');
+  mcpCall('call-code', 'ps-browser', 'browser_run_code_unsafe');
   answer('code', await correlated('call-code'));
   answer(
     'standalone',
     await request('session/request_permission', {
       toolCall: {
-        toolCallId: 'elicitation:sess-1:ok-browser:1',
+        toolCallId: 'elicitation:sess-1:ps-browser:1',
         kind: 'execute',
         status: 'pending',
         title: 'MCP tool call approval',
-        rawInput: { serverName: 'ok-browser', description: 'Allow the browser tool?' },
+        rawInput: { serverName: 'ps-browser', description: 'Allow the browser tool?' },
       },
       _meta: { is_mcp_tool_approval: true },
       options,
@@ -2391,7 +2391,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
   );
   mcpCall('call-gh', 'github', 'list_issues');
   answer('github', await correlated('call-gh'));
-  mcpCall('call-snap', 'ok-browser', 'browser_snapshot');
+  mcpCall('call-snap', 'ps-browser', 'browser_snapshot');
   answer('snap', await correlated('call-snap'));
   notify({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'answers:' + answers.join(',') + ';' } });
   finish();
@@ -2402,7 +2402,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
       await waitUntil(() => chat.requests().length === 1, 20_000, 'code prompt');
       const code = chat.requests()[0];
       if (code === undefined) throw new Error('unreachable');
-      expect(code.toolCall.title).toBe('mcp.ok-browser.browser_run_code_unsafe');
+      expect(code.toolCall.title).toBe('mcp.ps-browser.browser_run_code_unsafe');
       expect(code.options.map((o) => o.kind)).toEqual(['allow_once', 'reject_once']);
       chat.manager.respondPermission(chat.threadId, code.requestId, {
         kind: 'selected',
@@ -2421,7 +2421,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
       await waitUntil(() => chat.requests().length === 3, 20_000, 'snapshot prompt');
       const snap = chat.requests()[2];
       if (snap === undefined) throw new Error('unreachable');
-      expect(snap.toolCall.title).toBe('mcp.ok-browser.browser_snapshot');
+      expect(snap.toolCall.title).toBe('mcp.ps-browser.browser_snapshot');
       expect(snap.options.map((o) => o.kind)).toEqual(['allow_once', 'reject_once']);
       chat.manager.respondPermission(chat.threadId, snap.requestId, {
         kind: 'selected',
@@ -4197,7 +4197,7 @@ describe.skipIf(process.platform === 'win32')('login-shell PATH fallback', () =>
     const contentDir = tmp();
     const localDir = tmp();
     const shimDir = tmp();
-    const command = `ok-login-shell-agent-${process.pid}`;
+    const command = `ps-login-shell-agent-${process.pid}`;
     writeFileSync(join(shimDir, command), `#!/bin/sh\nexec node ${EXAMPLE_AGENT} "$@"\n`, {
       mode: 0o755,
     });
@@ -4221,7 +4221,7 @@ describe.skipIf(process.platform === 'win32')('login-shell PATH fallback', () =>
     writeFileSync(
       join(localDir, 'acp-agents.json'),
       JSON.stringify([
-        { id: 'absent-agent', name: 'Absent Agent', command: `ok-absent-${process.pid}` },
+        { id: 'absent-agent', name: 'Absent Agent', command: `ps-absent-${process.pid}` },
       ]),
     );
 
@@ -7506,7 +7506,7 @@ process.stdin.on('data', (chunk) => {
   test('a content subfolder still receives the pointer above its cwd', async () => {
     const projectDir = tmp();
     const contentDir = join(projectDir, 'docs');
-    const localDir = join(projectDir, '.ok', 'local');
+    const localDir = join(projectDir, '.ps', 'local');
     mkdirSync(contentDir, { recursive: true });
     mkdirSync(localDir, { recursive: true });
     writeBlocksAgent(localDir, 'subfolder-agent', false);

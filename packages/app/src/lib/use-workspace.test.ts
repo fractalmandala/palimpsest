@@ -6,14 +6,14 @@ describe('resolveSyncWorkspace', () => {
     expect(resolveSyncWorkspace(undefined)).toBeNull();
   });
 
-  test('no okDesktop bridge: returns null', () => {
+  test('no psDesktop bridge: returns null', () => {
     const windowLike = {} as Window;
     expect(resolveSyncWorkspace(windowLike)).toBeNull();
   });
 
   test('Electron macOS: forward-slash separator + projectPath pass-through', () => {
     const windowLike = {
-      okDesktop: {
+      psDesktop: {
         config: { projectPath: '/Users/andrew/repo' },
         platform: 'darwin',
       },
@@ -26,7 +26,7 @@ describe('resolveSyncWorkspace', () => {
 
   test('Electron Windows: backslash separator', () => {
     const windowLike = {
-      okDesktop: {
+      psDesktop: {
         config: { projectPath: 'C:\\repo' },
         platform: 'win32',
       },
@@ -39,7 +39,7 @@ describe('resolveSyncWorkspace', () => {
 
   test('Electron Linux: forward-slash separator', () => {
     const windowLike = {
-      okDesktop: {
+      psDesktop: {
         config: { projectPath: '/home/u/repo' },
         platform: 'linux',
       },

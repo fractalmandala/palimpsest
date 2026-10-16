@@ -8,10 +8,10 @@ import { fileURLToPath } from 'node:url';
 import { deflateRawSync } from 'node:zlib';
 
 const SUPPORTED_CHANNELS = /** @type {const} */ (['latest', 'beta', 'beta-product']);
-const RAW_CHANNEL = process.env.OK_UPDATER_MOCK_CHANNEL ?? 'latest';
+const RAW_CHANNEL = process.env.PS_UPDATER_MOCK_CHANNEL ?? 'latest';
 if (!SUPPORTED_CHANNELS.includes(/** @type {any} */ (RAW_CHANNEL))) {
   console.error(
-    `[mock-updater] event=fatal message=unsupported OK_UPDATER_MOCK_CHANNEL=${RAW_CHANNEL} (expected one of: ${SUPPORTED_CHANNELS.join(', ')})`,
+    `[mock-updater] event=fatal message=unsupported PS_UPDATER_MOCK_CHANNEL=${RAW_CHANNEL} (expected one of: ${SUPPORTED_CHANNELS.join(', ')})`,
   );
   process.exit(2);
 }
@@ -30,7 +30,7 @@ const DEV_APP_UPDATE_YML = resolve(DESKTOP_ROOT, 'dev-app-update.yml');
 function buildMinimalZip() {
   const filename = 'payload.txt';
   const contents = Buffer.from(
-    `OpenKnowledge M3 mock update payload\nversion=${VERSION}\ntimestamp=${new Date().toISOString()}\n`,
+    `Palimpsest M3 mock update payload\nversion=${VERSION}\ntimestamp=${new Date().toISOString()}\n`,
     'utf-8',
   );
   const compressed = deflateRawSync(contents);
@@ -221,7 +221,7 @@ async function main() {
         `[mock-updater] event=dev-config-written path=${DEV_APP_UPDATE_YML} channel=${CHANNEL}`,
       );
       console.log(
-        '[mock-updater] event=keep-alive — server will stay up until Ctrl+C. Pair with: OK_UPDATER_FORCE_DEV=1 bun run --filter=@inkeep/open-knowledge-desktop dev',
+        '[mock-updater] event=keep-alive — server will stay up until Ctrl+C. Pair with: PS_UPDATER_FORCE_DEV=1 bun run --filter=@palimpsest/desktop dev',
       );
       return;
     }

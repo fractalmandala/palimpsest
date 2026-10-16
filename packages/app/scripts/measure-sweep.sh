@@ -128,7 +128,7 @@ fi
 if [[ "$SKIP_BUILD" -eq 0 ]]; then
   echo "[measure-sweep] building cli + app (turbo-cached)…"
   ( cd "$REPO_ROOT" && pnpm exec turbo run build \
-      --filter=@inkeep/open-knowledge --filter=@inkeep/open-knowledge-app ) \
+      --filter=@palimpsest/cli --filter=@palimpsest/app ) \
     || { echo "error: build failed — re-run 'pnpm build' to see output" >&2; exit 4; }
 fi
 if [[ ! -f "$CLI_BIN" ]]; then
@@ -136,8 +136,8 @@ if [[ ! -f "$CLI_BIN" ]]; then
   exit 4
 fi
 
-SCRATCH="$(mktemp -d -t ok-sweep-XXXXXX)"
-SERVER_LOG="$(mktemp -t ok-sweep-server-XXXXXX.log)"
+SCRATCH="$(mktemp -d -t ps-sweep-XXXXXX)"
+SERVER_LOG="$(mktemp -t ps-sweep-server-XXXXXX.log)"
 SERVER_PID=""
 
 cleanup() {
@@ -166,16 +166,16 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 echo "[measure-sweep] copying fixture → $SCRATCH …"
-rsync -a --exclude='.git' --exclude='.ok/local' "$FIXTURE/" "$SCRATCH/"
+rsync -a --exclude='.git' --exclude='.ps/local' "$FIXTURE/" "$SCRATCH/"
 
-NAV_MD="$(find "$SCRATCH" -name '*.md' -not -path '*/.ok/*' | sort | head -1 || true)"
+NAV_MD="$(find "$SCRATCH" -name '*.md' -not -path '*/.ps/*' | sort | head -1 || true)"
 if [[ -z "$NAV_MD" ]]; then
   echo "error: no markdown docs found under $SCRATCH" >&2
   exit 5
 fi
 NAV_DOC="${NAV_MD#"$SCRATCH"/}"
 NAV_DOC="${NAV_DOC%.md}"
-DOC_COUNT="$(find "$SCRATCH" -name '*.md' -not -path '*/.ok/*' | wc -l | tr -d ' ')"
+DOC_COUNT="$(find "$SCRATCH" -name '*.md' -not -path '*/.ps/*' | wc -l | tr -d ' ')"
 echo "[measure-sweep] fixture: $DOC_COUNT docs · nav-doc: $NAV_DOC"
 
 echo "[measure-sweep] starting ok server on a kernel-assigned port…"
@@ -184,7 +184,7 @@ SERVER_PID=$!
 
 read_server_port() {
   local lock port
-  lock="$(find "$SCRATCH/.ok" -name server.lock 2>/dev/null | head -1 || true)"
+  lock="$(find "$SCRATCH/.ps" -name server.lock 2>/dev/null | head -1 || true)"
   [[ -z "$lock" ]] && return 1
   port="$(jq -r '.port // 0' "$lock" 2>/dev/null || echo 0)"
   [[ "$port" =~ ^[0-9]+$ ]] && (( port > 0 )) && { printf '%s\n' "$port"; return 0; }
@@ -221,7 +221,7 @@ FIXTURE_TAG="$(basename "$FIXTURE")"
 echo "[measure-sweep] driving the sweep (target http://localhost:$EDITOR_PORT)…"
 START_MS="$(epoch_ms)"
 set +e
-MEAS_OUT="$(OK_SWEEP_DOC="$NAV_DOC" "$TSX_BIN" "$SWEEP_SCRIPT" \
+MEAS_OUT="$(PS_SWEEP_DOC="$NAV_DOC" "$TSX_BIN" "$SWEEP_SCRIPT" \
   --target="http://localhost:$EDITOR_PORT" \
   --nav-doc="$NAV_DOC" \
   --sweep-timeout="$SWEEP_TIMEOUT_MS")"

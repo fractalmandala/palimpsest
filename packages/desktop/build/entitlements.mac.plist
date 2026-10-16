@@ -43,8 +43,8 @@
     <true/>
     <key>com.apple.developer.associated-domains</key>
     <array>
-        <string>applinks:openknowledge.ai</string>
-        <string>applinks:www.openknowledge.ai</string>
+        <string>applinks:palimpsest.ai</string>
+        <string>applinks:www.palimpsest.ai</string>
     </array>
 </dict>
 </plist>

@@ -34,7 +34,7 @@ const human: WriterIdentity = {
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-restore-floor-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-restore-floor-test-'));
 });
 
 afterEach(async () => {

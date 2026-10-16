@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ProblemDetailsSchema, TemplateImportSuccessSchema } from '@inkeep/open-knowledge-core';
+import { ProblemDetailsSchema, TemplateImportSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   createTestServer,
@@ -51,7 +51,7 @@ async function importedPath(res: Response): Promise<string> {
 }
 
 function templateBytes(folder: string, name: string): string {
-  return readFileSync(join(server.contentDir, folder, '.ok', 'templates', `${name}.md`), 'utf-8');
+  return readFileSync(join(server.contentDir, folder, '.ps', 'templates', `${name}.md`), 'utf-8');
 }
 
 async function waitForRemoval(docName: string): Promise<void> {
@@ -81,8 +81,8 @@ describe('template import never overwrites an existing template', () => {
       }),
     );
 
-    expect(firstPath).toBe(`${folder}/.ok/templates/議事録.md`);
-    expect(secondPath).toBe(`${folder}/.ok/templates/議事録-2.md`);
+    expect(firstPath).toBe(`${folder}/.ps/templates/議事録.md`);
+    expect(secondPath).toBe(`${folder}/.ps/templates/議事録-2.md`);
     expect(templateBytes(folder, '議事録')).toContain(firstMarker);
     expect(templateBytes(folder, '議事録')).not.toContain(secondMarker);
     expect(templateBytes(folder, '議事録-2')).toContain(secondMarker);
@@ -108,8 +108,8 @@ describe('template import never overwrites an existing template', () => {
     ];
 
     expect(paths).toEqual([
-      `${folder}/.ok/templates/imported-template.md`,
-      `${folder}/.ok/templates/imported-template-2.md`,
+      `${folder}/.ps/templates/imported-template.md`,
+      `${folder}/.ps/templates/imported-template-2.md`,
     ]);
     expect(templateBytes(folder, 'imported-template')).toContain(markers[0]);
     expect(templateBytes(folder, 'imported-template-2')).toContain(markers[1]);
@@ -135,9 +135,9 @@ describe('template import never overwrites an existing template', () => {
     ];
 
     expect(paths).toEqual([
-      `${folder}/.ok/templates/team-notes.md`,
-      `${folder}/.ok/templates/team-notes-2.md`,
-      `${folder}/.ok/templates/team-notes-3.md`,
+      `${folder}/.ps/templates/team-notes.md`,
+      `${folder}/.ps/templates/team-notes-2.md`,
+      `${folder}/.ps/templates/team-notes-3.md`,
     ]);
     expect(templateBytes(folder, 'team-notes')).toContain(markers[0]);
     expect(templateBytes(folder, 'team-notes-2')).toContain(markers[1]);
@@ -161,9 +161,9 @@ describe('template import never overwrites an existing template', () => {
 
     expect(new Set(paths).size).toBe(names.length);
     expect([...paths].sort()).toEqual([
-      `${folder}/.ok/templates/привет-2.md`,
-      `${folder}/.ok/templates/привет-3.md`,
-      `${folder}/.ok/templates/привет.md`,
+      `${folder}/.ps/templates/привет-2.md`,
+      `${folder}/.ps/templates/привет-3.md`,
+      `${folder}/.ps/templates/привет.md`,
     ]);
     const contents = paths.map((p) => readFileSync(join(server.contentDir, p), 'utf-8'));
     for (const name of names) {

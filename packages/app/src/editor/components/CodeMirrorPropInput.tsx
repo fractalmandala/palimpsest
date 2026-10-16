@@ -15,7 +15,7 @@ import {
 import { stex } from '@codemirror/legacy-modes/mode/stex';
 import { Compartment, EditorState, type Extension } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
-import type { PropDefString } from '@inkeep/open-knowledge-core/registry/types';
+import type { PropDefString } from '@palimpsest/core/registry/types';
 import { tags } from '@lezer/highlight';
 import { mermaid } from 'codemirror-lang-mermaid';
 import { useEffect, useRef } from 'react';
@@ -173,7 +173,7 @@ export function CodeMirrorPropInput({
     <div
       ref={wrapperRef}
       id={id}
-      className="ok-prop-codemirror"
+      className="ps-prop-codemirror"
       data-prop-codemirror=""
       data-prop-language={language}
     />

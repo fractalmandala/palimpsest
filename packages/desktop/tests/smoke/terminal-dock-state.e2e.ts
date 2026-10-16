@@ -15,21 +15,21 @@ import {
 import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 
 test.describe('terminal dock-state IPC', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('terminal tab snapshot survives renderer reload together', async ({ captureStderrFor }) => {
     test.setTimeout(sumOfDeclaredBoundsMs(test.info()));
-    const testRoot = mkdtempSync(join(tmpdir(), 'ok-terminal-dock-state-'));
+    const testRoot = mkdtempSync(join(tmpdir(), 'ps-terminal-dock-state-'));
     const tmpHome = join(testRoot, 'home');
     mkdirSync(tmpHome, { recursive: true });
     const projectDir = join(testRoot, 'project');
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
     writeFileSync(join(projectDir, 'start.md'), '# Start\n');
     const userDataDir = join(testRoot, 'user-data');
     mkdirSync(userDataDir, { recursive: true });
@@ -51,7 +51,7 @@ test.describe('terminal dock-state IPC', () => {
         target: TARGET,
         args: [`--user-data-dir=${userDataDir}`],
         timeout: 30_000,
-        env: { ...process.env, ...homeEnv(tmpHome), OK_RECLAIM_DISABLE: '1' },
+        env: { ...process.env, ...homeEnv(tmpHome), PS_RECLAIM_DISABLE: '1' },
       }),
     );
     captureStderrFor(app, { home: tmpHome, cleanupDirs: [testRoot] });
@@ -59,12 +59,12 @@ test.describe('terminal dock-state IPC', () => {
     await configureDesktopGitRepositories(editorPage, projectDir);
 
     await waitForAgentsDockPublish(
-      () => editorPage.evaluate(() => window.okDesktop?.terminal.getDockState()),
+      () => editorPage.evaluate(() => window.psDesktop?.terminal.getDockState()),
       undefined,
       { timeout: 35_000 },
     );
     await expect
-      .poll(() => editorPage.evaluate(() => window.okDesktop?.terminal.getDockState()), {
+      .poll(() => editorPage.evaluate(() => window.psDesktop?.terminal.getDockState()), {
         timeout: 10_000,
       })
       .toMatchObject({ agents: { order: [], activeKey: null } });
@@ -73,13 +73,13 @@ test.describe('terminal dock-state IPC', () => {
       .poll(
         async () => {
           await editorPage.evaluate(() =>
-            window.okDesktop?.terminal.setDockState({
+            window.psDesktop?.terminal.setDockState({
               surface: 'agents',
               order: ['thread-a', 'thread-b'],
               activeKey: 'thread-a',
             }),
           );
-          return editorPage.evaluate(() => window.okDesktop?.terminal.getDockState());
+          return editorPage.evaluate(() => window.psDesktop?.terminal.getDockState());
         },
         { timeout: 5_000 },
       )
@@ -88,7 +88,7 @@ test.describe('terminal dock-state IPC', () => {
       .poll(
         () =>
           editorPage.evaluate(() =>
-            window.okDesktop?.terminal.setDockState({
+            window.psDesktop?.terminal.setDockState({
               surface: 'terminal',
               order: ['pty-a', 'pty-b'],
               activeKey: 'pty-b',
@@ -117,17 +117,17 @@ test.describe('terminal dock-state IPC', () => {
       agents: { order: ['thread-a', 'thread-b'], activeKey: 'thread-a' },
     };
     await expect
-      .poll(() => editorPage.evaluate(() => window.okDesktop?.terminal.getDockState()), {
+      .poll(() => editorPage.evaluate(() => window.psDesktop?.terminal.getDockState()), {
         timeout: 5_000,
       })
       .toMatchObject(expectedBeforeReload);
-    const dockState = await editorPage.evaluate(() => window.okDesktop?.terminal.getDockState());
+    const dockState = await editorPage.evaluate(() => window.psDesktop?.terminal.getDockState());
     expect(dockState).not.toHaveProperty('placement');
     expect(dockState).not.toHaveProperty('rightWidth');
 
     await editorPage.reload({ waitUntil: 'domcontentloaded' });
     await waitForAgentsDockPublish(
-      () => editorPage.evaluate(() => window.okDesktop?.terminal.getDockState()),
+      () => editorPage.evaluate(() => window.psDesktop?.terminal.getDockState()),
       expectedBeforeReload.agents,
       { timeout: 25_000 },
     );
@@ -135,7 +135,7 @@ test.describe('terminal dock-state IPC', () => {
       .poll(
         () =>
           editorPage.evaluate(async () => {
-            const state = await window.okDesktop?.terminal.getDockState();
+            const state = await window.psDesktop?.terminal.getDockState();
             return {
               agents: state?.agents,
               terminalCount: state?.terminal?.order.length,

@@ -62,7 +62,7 @@ describe.skipIf(process.platform === 'win32')(
     let harness: ForkedWatcherProcess | undefined;
 
     beforeEach(() => {
-      root = mkdtempSync(join(tmpdir(), 'ok-config-readiness-'));
+      root = mkdtempSync(join(tmpdir(), 'ps-config-readiness-'));
       execFileSync('mkfifo', [join(root, 'threadpool-barrier')]);
     });
     afterEach(async () => {
@@ -74,7 +74,7 @@ describe.skipIf(process.platform === 'win32')(
     async function changeTheFile({ entry, scenario }: ConfigReadinessCase, timing: MutationTiming) {
       const project = join(root, 'project');
       const target =
-        entry === 'config' ? join(project, '.ok', 'config.yml') : join(project, '.okignore');
+        entry === 'config' ? join(project, '.ps', 'config.yml') : join(project, '.psignore');
       const watch = entry === 'config' ? [target] : [target, join(project, '.gitignore')];
       mkdirSync(dirname(target), { recursive: true });
       if (entry === 'multi-config') writeFileSync(join(project, '.gitignore'), 'dist/\n', 'utf-8');

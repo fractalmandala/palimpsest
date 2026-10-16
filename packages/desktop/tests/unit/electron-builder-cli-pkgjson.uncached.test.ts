@@ -53,7 +53,7 @@ describe('electron-builder.yml ships the project GPLv3 LICENSE', () => {
   });
 
   test('the source LICENSE exists at build time', () => {
-    const okRootLicense = resolve(desktopRoot, '..', '..', 'LICENSE');
-    expect(existsSync(okRootLicense)).toBe(true);
+    const psRootLicense = resolve(desktopRoot, '..', '..', 'LICENSE');
+    expect(existsSync(psRootLicense)).toBe(true);
   });
 });

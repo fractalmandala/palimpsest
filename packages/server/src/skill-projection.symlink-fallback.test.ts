@@ -9,8 +9,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { AGENTS_SKILLS_ROOT } from '@inkeep/open-knowledge-core';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { AGENTS_SKILLS_ROOT } from '@palimpsest/core';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createSkillPlacementOpsService } from './services/skill-placement-ops.ts';
 import { projectInPlaceSkill, projectSkill } from './skill-projection.ts';
@@ -51,7 +51,7 @@ function isRealDirWithSkill(path: string): boolean {
 }
 
 beforeEach(() => {
-  cwd = mkdtempSync(join(tmpdir(), 'ok-symlink-fallback-'));
+  cwd = mkdtempSync(join(tmpdir(), 'ps-symlink-fallback-'));
   symlinkFailure.code = undefined;
 });
 afterEach(() => {

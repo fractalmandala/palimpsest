@@ -3,7 +3,7 @@ import {
   isReservedLogDoc,
   type LinkCheckDeferredWarning,
   type LinksValidationSetting,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { createReservedLogBrokenLinkSuppression } from './broken-link-suppression.ts';
 import type { WriteAdvisoryLink } from './write-advisory-links.ts';
 

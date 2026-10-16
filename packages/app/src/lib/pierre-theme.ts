@@ -1,12 +1,12 @@
 import { registerCustomTheme } from '@pierre/diffs';
-import { OK_SYNTAX_THEME_NAME, okSyntaxTheme } from './ok-syntax-theme';
+import { PS_SYNTAX_THEME_NAME, psSyntaxTheme } from './ps-syntax-theme';
 
 let registered = false;
 
-export function okPierreTheme(): string {
+export function psPierreTheme(): string {
   if (!registered) {
-    registerCustomTheme(OK_SYNTAX_THEME_NAME, () => Promise.resolve(okSyntaxTheme));
+    registerCustomTheme(PS_SYNTAX_THEME_NAME, () => Promise.resolve(psSyntaxTheme));
     registered = true;
   }
-  return OK_SYNTAX_THEME_NAME;
+  return PS_SYNTAX_THEME_NAME;
 }

@@ -1,4 +1,4 @@
-import type { CatalogSkill, SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { CatalogSkill, SkillsListEntry } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { bucketForDetected, bucketForSkill, bucketKey } from './skill-provenance-bucket';
 
@@ -33,19 +33,19 @@ describe('bucketForSkill', () => {
 
   test('an owner/repo source buckets by repo, with the owner as publisher', () => {
     const b = bucketForSkill(
-      skill({ source: 'inkeep/open-knowledge-skills', importedAt: '2026-08-13T00:00:00.000Z' }),
+      skill({ source: 'fractalmandala/palimpsest-skills', importedAt: '2026-08-13T00:00:00.000Z' }),
     );
     expect(b).toEqual({
       kind: 'source',
       id: 'open-knowledge-skills',
       publisher: 'inkeep',
-      url: 'https://www.skills.sh/inkeep/open-knowledge-skills',
+      url: 'https://www.skills.sh/fractalmandala/palimpsest-skills',
     });
   });
 
   test('built-ins are not special-cased — they bucket under their source like anything else', () => {
     const b = bucketForSkill(
-      skill({ source: 'inkeep/open-knowledge-skills', importedAt: '2026-08-13T00:00:00.000Z' }),
+      skill({ source: 'fractalmandala/palimpsest-skills', importedAt: '2026-08-13T00:00:00.000Z' }),
     );
     expect(b).not.toBeNull();
     expect(b && bucketKey(b)).toBe('source:open-knowledge-skills\u0001inkeep');
@@ -110,12 +110,12 @@ describe('bucketForSkill', () => {
   test('a recorded publisher wins over one derived from the source', () => {
     const b = bucketForSkill(
       skill({
-        source: 'inkeep/open-knowledge-skills',
-        publisher: 'openknowledge',
+        source: 'fractalmandala/palimpsest-skills',
+        publisher: 'palimpsest',
         importedAt: 'now',
       }),
     );
-    expect(b?.publisher).toBe('openknowledge');
+    expect(b?.publisher).toBe('palimpsest');
   });
 });
 

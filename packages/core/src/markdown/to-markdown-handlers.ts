@@ -21,7 +21,7 @@ declare module 'mdast-util-to-markdown' {
     comment: 'comment';
     commentBlock: 'commentBlock';
     strikethrough: 'strikethrough';
-    okAtxHeading: 'okAtxHeading';
+    psAtxHeading: 'psAtxHeading';
   }
 }
 
@@ -84,7 +84,7 @@ export const toMarkdownHandlers = {
     if (
       escapeProvenance.kind === 'malformed' &&
       typeof process !== 'undefined' &&
-      process.env?.OK_DEBUG_POSITION_SLICE === '1'
+      process.env?.PS_DEBUG_POSITION_SLICE === '1'
     ) {
       console.warn(
         '[escape-provenance] malformed escapedChars metadata: CommonMark-safe serialization applies',
@@ -283,7 +283,7 @@ export const toMarkdownHandlers = {
   break(node, _parent, state) {
     const raw = node.data?.sourceRaw;
     if (typeof raw === 'string' && raw.length > 0) return raw;
-    if (state.stack.includes('tableCell') || state.stack.includes('okAtxHeading')) {
+    if (state.stack.includes('tableCell') || state.stack.includes('psAtxHeading')) {
       return '<br />';
     }
     if (node.data?.sourceStyle === 'backslash') return '\\\n';
@@ -393,7 +393,7 @@ export const toMarkdownHandlers = {
     const interior =
       typeof interiorCount === 'number' && interiorCount >= 2 ? ' '.repeat(interiorCount) : ' ';
     const hashes = '#'.repeat(depth);
-    const atxExit = state.enter('okAtxHeading');
+    const atxExit = state.enter('psAtxHeading');
     const content = state.containerPhrasing(node, {
       ...info,
       before: `${hashes} `,

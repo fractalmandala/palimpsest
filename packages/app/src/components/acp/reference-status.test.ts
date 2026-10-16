@@ -1,4 +1,4 @@
-import type { GitHubReferencePreview, GitHubReferenceStatus } from '@inkeep/open-knowledge-core';
+import type { GitHubReferencePreview, GitHubReferenceStatus } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { diffBlocks, referenceStatusLine } from './reference-status';
 

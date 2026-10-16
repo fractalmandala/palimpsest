@@ -1,6 +1,6 @@
 # `no-comments`
 
-Open Knowledge writes **no code comments by default**. A comment is legal only when a tool
+Palimpsest writes **no code comments by default**. A comment is legal only when a tool
 parses it, or when it carries a contract that code cannot express. Everything else belongs in
 the commit message, the PR body, `AGENTS.md`, a spec, or a `README`.
 
@@ -62,7 +62,7 @@ Two flags aim it somewhere else. `--root <dir>` sweeps another tree, judged by t
 config, which is how an adopter runs this predicate without vendoring it. `--file <path>` judges
 only the paths it names and skips discovery, so the per-unit non-vacuity floor does not apply and
 a path no unit claims exits 0 with an `out-of-scope:` line rather than a silent pass. The monorepo root's
-`lint-staged` block uses both in a single extension-free route, `public/open-knowledge/**`, so the
+`lint-staged` block uses both in a single extension-free route, `public/palimpsest/**`, so the
 config alone decides membership and the glob cannot drift from it. That block is this repository's;
 the public tree's own root block carries no such route. Every staged path reaches the
 sweep; one no unit claims prints `out-of-scope: <path> (no unit claims it; nothing was read)` and
@@ -116,7 +116,7 @@ GitHub Actions runner (`GITHUB_ACTIONS` set to a non-empty value), for a differe
 discovered by walking up from the edited file, so on a runner that tree is a PR checkout and the hook would execute
 PR-authored node inside a session that holds a review token. In
 this monorepo, harnesses that do not run hooks are covered at
-commit by the staged sweep: the extension-free `public/open-knowledge/**` route in the monorepo
+commit by the staged sweep: the extension-free `public/palimpsest/**` route in the monorepo
 root's `lint-staged` block sends every staged in-scope path through it, whatever its family, and a
 suppression cannot silence it; the staged `oxlint` pass adds the rule's own diagnostics on top, for
 the `{ts,tsx,mjs}` paths it names. In the public repository none of that lane exists, and no other
@@ -378,7 +378,7 @@ predicate meeting a newer manifest fails loud instead of admitting everything.
 The manifest describes the tree it ships in, so it only stands in for that tree's
 `PRECEDENTS.md`. Point the predicate at a different repository that has no `PRECEDENTS.md`
 of its own and citations there are admitted unvalidated instead of being checked against
-these numbers - a foreign `precedent #104` is not a fabrication, and Open Knowledge's
+these numbers - a foreign `precedent #104` is not a fabrication, and Palimpsest's
 numbering has no authority over it.
 
 ### Guard-defined metacomment markers
@@ -684,7 +684,7 @@ Two conflict shapes, two resolutions:
    then merge again. The codemod is idempotent, so both sides now carry the same deletions and the
    remaining conflict is your own change with no comments in it - resolve it by taking your side.
 
-Run these from the repository root of the monorepo checkout (`public/open-knowledge/` there); a
+Run these from the repository root of the monorepo checkout (`public/palimpsest/` there); a
 public clone carries the oxlint rule and a `lint` with no sweep leg, but neither the codemod, the
 shfmt provisioner nor the write-time hook, so the recipe below does not apply to it:
 

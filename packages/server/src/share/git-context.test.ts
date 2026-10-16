@@ -65,7 +65,7 @@ const CANONICAL_HEAD = 'ref: refs/heads/main\n';
 const OID_A = 'a'.repeat(40);
 const OID_B = 'b'.repeat(40);
 const CANONICAL_CONFIG_HTTPS =
-  '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n\tfetch = +refs/heads/*:refs/remotes/origin/*\n';
+  '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n\tfetch = +refs/heads/*:refs/remotes/origin/*\n';
 
 describe('readGitHeadBranch', () => {
   let dir: string;
@@ -133,26 +133,26 @@ describe('readOriginGitHubRepo', () => {
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
 
   test('the parser surfaces an https userinfo account; the origin read stays login-free', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://alice@github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://alice@github.com/fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
-    expect(parseGitHubOriginUrl('https://alice@github.com/inkeep/open-knowledge.git')).toEqual({
+    expect(parseGitHubOriginUrl('https://alice@github.com/fractalmandala/palimpsest.git')).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
       login: 'alice',
     });
@@ -160,45 +160,45 @@ describe('readOriginGitHubRepo', () => {
 
   test('parses SSH SCP-style github.com origin URL', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = git@github.com:inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = git@github.com:fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'ssh',
     });
   });
 
   test('parses ssh:// github.com origin URL', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = ssh://git@github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = ssh://git@github.com/fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'ssh',
     });
   });
 
   test('surfaces the account declared in an ssh:// origin userinfo', () => {
-    expect(parseGitHubOriginUrl('ssh://alice@github.com/inkeep/open-knowledge.git')).toEqual({
+    expect(parseGitHubOriginUrl('ssh://alice@github.com/fractalmandala/palimpsest.git')).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'ssh',
       login: 'alice',
     });
   });
 
   test('surfaces the account declared in an scp-style origin userinfo', () => {
-    expect(parseGitHubOriginUrl('alice@github.com:inkeep/open-knowledge.git')).toEqual({
+    expect(parseGitHubOriginUrl('alice@github.com:fractalmandala/palimpsest.git')).toEqual({
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'ssh',
       login: 'alice',
     });
@@ -206,9 +206,9 @@ describe('readOriginGitHubRepo', () => {
 
   test('treats the literal git userinfo as absent on every transport', () => {
     for (const url of [
-      'git@github.com:inkeep/open-knowledge.git',
-      'ssh://git@github.com/inkeep/open-knowledge.git',
-      'https://git@github.com/inkeep/open-knowledge.git',
+      'git@github.com:fractalmandala/palimpsest.git',
+      'ssh://git@github.com/fractalmandala/palimpsest.git',
+      'https://git@github.com/fractalmandala/palimpsest.git',
     ]) {
       const parsed = parseGitHubOriginUrl(url);
       expect(parsed).toMatchObject({ host: 'github.com' });
@@ -218,30 +218,30 @@ describe('readOriginGitHubRepo', () => {
 
   test('percent-decodes an encoded login before validating it', () => {
     expect(
-      parseGitHubOriginUrl('https://alice%2Dcontoso@github.com/inkeep/open-knowledge.git'),
+      parseGitHubOriginUrl('https://alice%2Dcontoso@github.com/fractalmandala/palimpsest.git'),
     ).toMatchObject({ login: 'alice-contoso' });
   });
 
   test('an email-shaped decoded userinfo is not a GitHub login', () => {
     const parsed = parseGitHubOriginUrl(
-      'https://alice%40contoso.com@github.com/inkeep/open-knowledge.git',
+      'https://alice%40contoso.com@github.com/fractalmandala/palimpsest.git',
     );
     expect(parsed).toMatchObject({ host: 'github.com' });
     expect(parsed).not.toHaveProperty('login');
   });
 
   test('a malformed percent escape fails the login grammar and reads as absent', () => {
-    const parsed = parseGitHubOriginUrl('https://ali%zz@github.com/inkeep/open-knowledge.git');
+    const parsed = parseGitHubOriginUrl('https://ali%zz@github.com/fractalmandala/palimpsest.git');
     expect(parsed).toMatchObject({ host: 'github.com' });
     expect(parsed).not.toHaveProperty('login');
   });
 
   test('a token-shaped username is never an account', () => {
     const cases = [
-      `https://ghp_${'a'.repeat(36)}@github.com/inkeep/open-knowledge.git`,
-      `https://gho_${'b'.repeat(36)}@github.com/inkeep/open-knowledge.git`,
-      `https://ghs_${'c'.repeat(36)}@github.com/inkeep/open-knowledge.git`,
-      `https://github_pat_${'d'.repeat(70)}@github.com/inkeep/open-knowledge.git`,
+      `https://ghp_${'a'.repeat(36)}@github.com/fractalmandala/palimpsest.git`,
+      `https://gho_${'b'.repeat(36)}@github.com/fractalmandala/palimpsest.git`,
+      `https://ghs_${'c'.repeat(36)}@github.com/fractalmandala/palimpsest.git`,
+      `https://github_pat_${'d'.repeat(70)}@github.com/fractalmandala/palimpsest.git`,
     ];
     for (const url of cases) {
       const parsed = parseGitHubOriginUrl(url);
@@ -253,7 +253,7 @@ describe('readOriginGitHubRepo', () => {
   test('token-auth placeholder usernames are never accounts', () => {
     for (const user of ['x-access-token', 'x-oauth-basic', 'oauth2', 'token']) {
       const parsed = parseGitHubOriginUrl(
-        `https://${user}:tok123@github.com/inkeep/open-knowledge.git`,
+        `https://${user}:tok123@github.com/fractalmandala/palimpsest.git`,
       );
       expect(parsed).toMatchObject({ host: 'github.com' });
       expect(parsed).not.toHaveProperty('login');
@@ -262,13 +262,13 @@ describe('readOriginGitHubRepo', () => {
 
   test('an EMU-style login with an underscore is a valid account', () => {
     expect(
-      parseGitHubOriginUrl('https://mona_acme@github.com/inkeep/open-knowledge.git'),
+      parseGitHubOriginUrl('https://mona_acme@github.com/fractalmandala/palimpsest.git'),
     ).toMatchObject({ login: 'mona_acme' });
   });
 
   test('a 40-char opaque string is rejected by the login length cap', () => {
     const parsed = parseGitHubOriginUrl(
-      `https://${'s'.repeat(40)}@github.com/inkeep/open-knowledge.git`,
+      `https://${'s'.repeat(40)}@github.com/fractalmandala/palimpsest.git`,
     );
     expect(parsed).toMatchObject({ host: 'github.com' });
     expect(parsed).not.toHaveProperty('login');
@@ -276,34 +276,34 @@ describe('readOriginGitHubRepo', () => {
 
   test('returns ok when repo URL omits the .git suffix', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge\n',
+      config: '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
 
   test('returns non-github for gitlab origin URL', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = git@gitlab.com:inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = git@gitlab.com:fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({ kind: 'non-github', host: 'gitlab.com' });
   });
 
   test('classifies a declared GitHub Enterprise host as a GitHub origin', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://ghes.acme.test/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://ghes.acme.test/fractalmandala/palimpsest.git\n',
     });
     declareGitHubHosts(home(), 'ghes.acme.test');
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'ghes.acme.test',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
@@ -338,26 +338,26 @@ describe('readOriginGitHubRepo', () => {
 
   test('parses the git:// protocol form', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = git://github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = git://github.com/fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'git',
     });
   });
 
   test('normalizes host casing, port, and www-folding', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://WWW.GitHub.com:443/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://WWW.GitHub.com:443/fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
@@ -425,13 +425,13 @@ describe('readOriginGitHubRepo', () => {
   test('uses the first url= line and ignores subsequent ones', () => {
     seedRepo(dir, {
       config:
-        '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n\turl = https://gitlab.com/x/y.git\n',
+        '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n\turl = https://gitlab.com/x/y.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
@@ -439,13 +439,13 @@ describe('readOriginGitHubRepo', () => {
   test('ignores url lines from other remote sections', () => {
     seedRepo(dir, {
       config:
-        '[remote "upstream"]\n\turl = https://github.com/upstream/foo.git\n[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+        '[remote "upstream"]\n\turl = https://github.com/upstream/foo.git\n[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
@@ -464,7 +464,7 @@ describe('resolveGitHubAuthHost', () => {
 
   test('returns github.com for a github.com origin', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
     });
     expect(resolveGitHubAuthHost(dir)).toEqual({ kind: 'ok', host: 'github.com' });
   });
@@ -534,7 +534,7 @@ describe('shouldResetAmbientCredentials', () => {
 
   test('github.com origin resets — OK can supply a credential there', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
     });
     expect(shouldResetAmbientCredentials(dir)).toBe(true);
   });
@@ -549,7 +549,7 @@ describe('shouldResetAmbientCredentials', () => {
 
   test('github.com SSH origin resets — the decision is host-scoped', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = git@github.com:inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = git@github.com:fractalmandala/palimpsest.git\n',
     });
     expect(shouldResetAmbientCredentials(dir)).toBe(true);
   });
@@ -570,7 +570,7 @@ describe('shouldResetAmbientCredentials', () => {
 
   test('https origin with userinfo resets — the host is what decides', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://alice@github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://alice@github.com/fractalmandala/palimpsest.git\n',
     });
     expect(shouldResetAmbientCredentials(dir)).toBe(true);
   });
@@ -714,7 +714,7 @@ describe('resolveAmbientCredentialReset', () => {
 
   test('a GitHub origin resets without reading the token store', async () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
     });
     const { store, asked } = storeWith();
     expect(await resolveAmbientCredentialReset(dir, store)).toBe(true);
@@ -803,19 +803,19 @@ describe('readSyncRemoteInfo', () => {
   test('GitHub https origin yields owner/repo label + browsable webUrl', () => {
     seedRepo(dir, { config: CANONICAL_CONFIG_HTTPS });
     expect(readSyncRemoteInfo(dir)).toEqual({
-      label: 'inkeep/open-knowledge',
-      webUrl: 'https://github.com/inkeep/open-knowledge',
+      label: 'fractalmandala/palimpsest',
+      webUrl: 'https://github.com/fractalmandala/palimpsest',
       transport: 'https',
     });
   });
 
   test('GitHub scp-style ssh origin yields the same github webUrl', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = git@github.com:inkeep/open-knowledge.git\n',
+      config: '[remote "origin"]\n\turl = git@github.com:fractalmandala/palimpsest.git\n',
     });
     expect(readSyncRemoteInfo(dir)).toEqual({
-      label: 'inkeep/open-knowledge',
-      webUrl: 'https://github.com/inkeep/open-knowledge',
+      label: 'fractalmandala/palimpsest',
+      webUrl: 'https://github.com/fractalmandala/palimpsest',
       transport: 'ssh',
     });
   });
@@ -930,15 +930,15 @@ describe('linked-worktree common-dir resolution', () => {
       kind: 'ok',
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       transport: 'https',
     });
   });
 
   test('readSyncRemoteInfo resolves the common-dir origin for a worktree', () => {
     expect(readSyncRemoteInfo(project)).toEqual({
-      label: 'inkeep/open-knowledge',
-      webUrl: 'https://github.com/inkeep/open-knowledge',
+      label: 'fractalmandala/palimpsest',
+      webUrl: 'https://github.com/fractalmandala/palimpsest',
       transport: 'https',
     });
   });
@@ -1079,7 +1079,7 @@ describe('git host declaration gates GitHub treatment', () => {
     });
   });
 
-  test('a malformed ~/.ok/global.yml yields no declarations and is left on disk unchanged', () => {
+  test('a malformed ~/.ps/global.yml yields no declarations and is left on disk unchanged', () => {
     const malformed = 'git:\n  hosts:\n   - [unclosed\n';
     writeUserConfig(home(), malformed);
     seedRepo(dir, { config: SELF_HOSTED_CONFIG });
@@ -1087,14 +1087,14 @@ describe('git host declaration gates GitHub treatment', () => {
     expect(readDeclaredGitHubHosts().size).toBe(0);
     expect(readOriginGitHubRepo(dir)).toEqual({ kind: 'non-github', host: 'git.example.internal' });
 
-    const configPath = join(home(), '.ok', 'global.yml');
+    const configPath = join(home(), '.ps', 'global.yml');
     expect(existsSync(configPath)).toBe(true);
     expect(readFileSync(configPath, 'utf-8')).toBe(malformed);
   });
 
-  test("a declaration in the project's .ok/config.yml is ignored", () => {
-    mkdirSync(join(dir, '.ok'), { recursive: true });
-    writeFileSync(join(dir, '.ok', 'config.yml'), gitHostsYaml('git.example.internal'), 'utf-8');
+  test("a declaration in the project's .ps/config.yml is ignored", () => {
+    mkdirSync(join(dir, '.ps'), { recursive: true });
+    writeFileSync(join(dir, '.ps', 'config.yml'), gitHostsYaml('git.example.internal'), 'utf-8');
     seedRepo(dir, { config: SELF_HOSTED_CONFIG });
 
     expect(readDeclaredGitHubHosts().size).toBe(0);

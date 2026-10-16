@@ -3,7 +3,7 @@ import {
   deriveValidationRunSources,
   type LinterConfig,
   runOkfProjectRules,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { auditScopeWarning, collectDocFiles, resolveScope } from './audit.ts';
 import type {
   ProjectValidator,
@@ -22,14 +22,14 @@ export interface OkfProjectValidatorDeps {
   baseConfig: LinterConfig;
 }
 
-export function createOkfProjectValidator(deps: OkfProjectValidatorDeps): ProjectValidator<'okf'> {
+export function createOkfProjectValidator(deps: OkfProjectValidatorDeps): ProjectValidator<'psf'> {
   const sourceFamilies = deriveValidationRunSources(deps.baseConfig, { mode: 'lint' }).filter(
-    (source): source is 'okf' => source === 'okf',
+    (source): source is 'psf' => source === 'psf',
   );
   return {
-    id: 'okf-project',
+    id: 'psf-project',
     sourceFamilies,
-    failureSourceFamily: 'okf',
+    failureSourceFamily: 'psf',
     async run(scope: ValidationScope) {
       if (sourceFamilies.length === 0) {
         return { files: [], fileCount: 0, warnings: [] };
@@ -56,14 +56,14 @@ export function createOkfProjectValidator(deps: OkfProjectValidatorDeps): Projec
         onWarning: (warning) => warnings.push(warning),
       });
 
-      const byFile = new Map<string, ValidationDiagnosticFor<'okf'>[]>();
-      for (const finding of runOkfProjectRules(docFiles, deps.baseConfig.plugins.okf?.rules)) {
+      const byFile = new Map<string, ValidationDiagnosticFor<'psf'>[]>();
+      for (const finding of runOkfProjectRules(docFiles, deps.baseConfig.plugins.psf?.rules)) {
         if (targetFile !== undefined && finding.file !== targetFile) continue;
         const diagnostics = byFile.get(finding.file) ?? [];
         diagnostics.push({
           range: FILE_RANGE,
           severity: 'warning',
-          source: 'okf',
+          source: 'psf',
           code: finding.code,
           message: finding.message,
         });

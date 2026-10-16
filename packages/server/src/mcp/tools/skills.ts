@@ -2,7 +2,7 @@ import {
   AGENTS_SKILLS_ROOT,
   EDITOR_PROJECT_SKILL_ROOT,
   EDITOR_USER_SKILL_ROOT,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import { INTERNAL_BUNDLE_SKILL_NAMES, isInternalBundleSkillName } from '../../skill-bundles.ts';
 import {
@@ -99,9 +99,9 @@ function projectListRow(s: Record<string, unknown>): {
 
 function internalSkillHint(name: string): string {
   return [
-    `"${name}" is one of OpenKnowledge's built-in agent skills — it is NOT managed by this tool and cannot be read or listed here.`,
+    `"${name}" is one of Palimpsest's built-in agent skills — it is NOT managed by this tool and cannot be read or listed here.`,
     "It is already provided to you in your loaded skill list (a hidden runtime skill projected into your editor); don't fetch or re-load it — just follow the skill you already have.",
-    'The `skills` tool covers skills wherever they live — editor dirs (`.claude/skills`, …), the `.agents/skills` hub, custom roots, and the legacy `.ok/skills` store, at project AND global (user-home) level. Built-in `open-knowledge*` skills never appear.',
+    'The `skills` tool covers skills wherever they live — editor dirs (`.claude/skills`, …), the `.agents/skills` hub, custom roots, and the legacy `.ps/skills` store, at project AND global (user-home) level. Built-in `palimpsest*` skills never appear.',
   ].join(' ');
 }
 
@@ -206,8 +206,8 @@ const SkillMarketplaceResultOutputSchema = z.object({
 
 const DESCRIPTION = [
   'Read-only skill discovery. Requires the Hocuspocus server. query searches the skills.sh marketplace and returns import-ready name/source/description/publisher/install-count rows. Import a chosen row with import({source,skill:name}); external rows are not managed or active editor content until imported/projected.',
-  'Omit name to list Project and Global managed skills with scope/description/hosts. name reads description/body plus a bundle files list (path/kind, no inline text); name+file reads one reference/script/bundle file. Optional scope; name-only prefers Project. Address skills by name/scope, never raw .ok/ paths or native cat.',
-  'Built-in open-knowledge* runtime skills are already in your skill list; do not fetch them here. Use write/edit/delete/move/install for changes.',
+  'Omit name to list Project and Global managed skills with scope/description/hosts. name reads description/body plus a bundle files list (path/kind, no inline text); name+file reads one reference/script/bundle file. Optional scope; name-only prefers Project. Address skills by name/scope, never raw .ps/ paths or native cat.',
+  'Built-in palimpsest* runtime skills are already in your skill list; do not fetch them here. Use write/edit/delete/move/install for changes.',
 ].join('\n');
 
 export interface SkillsToolDeps {

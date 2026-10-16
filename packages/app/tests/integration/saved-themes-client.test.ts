@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { BASE16_SLOTS } from '@inkeep/open-knowledge-core';
+import { BASE16_SLOTS } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   deleteSavedTheme,
@@ -35,8 +35,8 @@ function scheme(name: string) {
 }
 
 beforeAll(async () => {
-  homeDir = mkdtempSync(join(tmpdir(), 'ok-saved-themes-client-'));
-  const dir = join(homeDir, '.ok', 'themes');
+  homeDir = mkdtempSync(join(tmpdir(), 'ps-saved-themes-client-'));
+  const dir = join(homeDir, '.ps', 'themes');
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'day.yaml'), schemeYaml('Day'));
   writeFileSync(join(dir, 'broken.yaml'), 'name: "Broken"\npalette:\n  base00: "#000000"\n');
@@ -65,7 +65,7 @@ describe('saved-theme server-to-app list', () => {
     const baseUrl = `http://127.0.0.1:${server.port}`;
     const request = (path: string, init?: RequestInit) => fetch(`${baseUrl}${path}`, init);
     const recoverable = scheme('Recoverable');
-    const dotOkEntriesBefore = readdirSync(join(homeDir, '.ok')).sort();
+    const dotOkEntriesBefore = readdirSync(join(homeDir, '.ps')).sort();
 
     expect(
       await saveSavedTheme({ name: 'recoverable', scheme: recoverable }, { request }),
@@ -77,8 +77,8 @@ describe('saved-theme server-to-app list', () => {
       filename: 'recoverable.yaml',
       scheme: recoverable,
     });
-    expect(readdirSync(join(homeDir, '.ok', 'themes')).sort()).toEqual(['broken.yaml', 'day.yaml']);
-    expect(readdirSync(join(homeDir, '.ok')).sort()).toEqual(dotOkEntriesBefore);
+    expect(readdirSync(join(homeDir, '.ps', 'themes')).sort()).toEqual(['broken.yaml', 'day.yaml']);
+    expect(readdirSync(join(homeDir, '.ps')).sort()).toEqual(dotOkEntriesBefore);
     expect(
       (await fetchSavedThemes({ request })).themes.some(
         (theme) => theme.id === 'saved-recoverable',

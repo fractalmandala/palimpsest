@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
-import { resolveLockDir } from '@inkeep/open-knowledge-server';
+import { currentCliCommandName } from '@palimpsest/core';
+import { resolveLockDir } from '@palimpsest/server';
 import { describeLockOwnershipRefusal, inspectLock, type LockState } from '../lock-state.ts';
 import type { CheckContext, CheckDefinition, CheckResult } from './types.ts';
 
@@ -18,7 +18,7 @@ export function makeServerLockCheck(deps: ServerLockCheckDeps = {}): CheckDefini
         return {
           name: 'server-lock',
           status: 'pass',
-          summary: 'no server lock (no `.ok/local/` yet)',
+          summary: 'no server lock (no `.ps/local/` yet)',
         };
       }
       const state = inspect(lockDir);
@@ -34,7 +34,7 @@ export function makeServerLockCheck(deps: ServerLockCheckDeps = {}): CheckDefini
             name: 'server-lock',
             status: 'fail',
             summary: `server lock held by pid ${state.lock.pid} on this host`,
-            remediation: `Stop the other OpenKnowledge process or run \`${currentCliCommandName()} stop\`.`,
+            remediation: `Stop the other Palimpsest process or run \`${currentCliCommandName()} stop\`.`,
             detail: `lockPath: ${state.lockPath}; port: ${state.lock.port}; started: ${state.lock.startedAt}`,
           };
         case 'unverified-owner':

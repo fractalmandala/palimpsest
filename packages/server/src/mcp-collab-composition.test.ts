@@ -72,7 +72,7 @@ let booted: BootedServer;
 let mcpBase: string;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-mcp-collab-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-mcp-collab-'));
   booted = await bootCompositionRig(mkdtempSync(resolve(tmpRoot, 'proj-')));
   await booted.ready;
   mcpBase = `http://127.0.0.1:${booted.port}/mcp`;

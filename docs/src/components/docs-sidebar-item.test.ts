@@ -43,7 +43,7 @@ vi.doMock('../../.source/server', () => ({
   },
 }));
 
-vi.doMock('@inkeep/open-knowledge-core', () => ({
+vi.doMock('@palimpsest/core', () => ({
   getGitHubStars: async () => 0,
 }));
 

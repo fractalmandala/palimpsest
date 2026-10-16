@@ -1,4 +1,4 @@
-import type { CreateScenario, InstallState } from '@inkeep/open-knowledge-core';
+import type { CreateScenario, InstallState } from '@palimpsest/core';
 import { i18n } from '@lingui/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';

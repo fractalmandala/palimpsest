@@ -2,13 +2,13 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
-  OK_DIR,
-  OK_MACHINE_LOCAL_ROOT_DIRS,
-  OK_MACHINE_LOCAL_ROOT_FILES,
+  PS_DIR,
+  PS_MACHINE_LOCAL_ROOT_DIRS,
+  PS_MACHINE_LOCAL_ROOT_FILES,
   pathspecArgs,
   SYSTEM_WRITER_DISPLAY_NAMES,
-} from '@inkeep/open-knowledge-core';
-import { ATOMIC_TEMP_GLOB } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { ATOMIC_TEMP_GLOB } from '@palimpsest/core/server';
 import {
   type AutoConsolidationTrigger,
   CHECKPOINT_KIND_REGISTRY,
@@ -19,14 +19,14 @@ import {
   formatImportSubject,
   formatOkActor,
   formatParkSubject,
-  OK_GENERATOR_WRITER_ID,
-  type OkActorEntry,
+  PS_GENERATOR_WRITER_ID,
+  type PsActorEntry,
   type ParsedCheckpoint,
   parseCheckpoint,
   parseWriterId,
   resolveShadowDir,
   type WriterClassification,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { resolveCheckpointChainAnchors } from './checkpoint-chain.ts';
 import { tracedMkdirSync, tracedRenameSync, tracedWriteFileSync } from './fs-traced.ts';
@@ -60,21 +60,21 @@ export interface WriterIdentity {
 }
 
 const GIT_TIMEOUT_MS = (() => {
-  const raw = process.env.OK_GIT_TIMEOUT_MS;
+  const raw = process.env.PS_GIT_TIMEOUT_MS;
   if (!raw) return 30_000;
   const parsed = Number.parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 30_000;
 })();
 
 export const MAINTENANCE_GIT_TIMEOUT_MS = (() => {
-  const raw = process.env.OK_SHADOW_MAINTENANCE_GC_TIMEOUT_MS;
+  const raw = process.env.PS_SHADOW_MAINTENANCE_GC_TIMEOUT_MS;
   if (!raw) return 600_000;
   const parsed = Number.parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 600_000;
 })();
 
 const CORPUS_STAGE_GIT_TIMEOUT_MS = (() => {
-  const raw = process.env.OK_SHADOW_STAGE_TIMEOUT_MS;
+  const raw = process.env.PS_SHADOW_STAGE_TIMEOUT_MS;
   if (!raw) return 300_000;
   const parsed = Number.parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 300_000;
@@ -82,18 +82,18 @@ const CORPUS_STAGE_GIT_TIMEOUT_MS = (() => {
 
 const SHADOW_GC_AUTO = 512;
 
-const MACHINE_LOCAL_DIRS = OK_MACHINE_LOCAL_ROOT_DIRS.map((name) => `${OK_DIR}/${name}/`);
+const MACHINE_LOCAL_DIRS = PS_MACHINE_LOCAL_ROOT_DIRS.map((name) => `${PS_DIR}/${name}/`);
 
-const MACHINE_LOCAL_FILES = OK_MACHINE_LOCAL_ROOT_FILES.map((name) => `${OK_DIR}/${name}`);
+const MACHINE_LOCAL_FILES = PS_MACHINE_LOCAL_ROOT_FILES.map((name) => `${PS_DIR}/${name}`);
 
 const SHADOW_EXCLUDE_PATTERNS: readonly string[] = [
   ...MACHINE_LOCAL_DIRS.map((dir) => `**/${dir}`),
   ...MACHINE_LOCAL_FILES.map((file) => `**/${file}`),
-  `**/${OK_DIR}/watcher-settle-fence-*`,
+  `**/${PS_DIR}/watcher-settle-fence-*`,
   ATOMIC_TEMP_GLOB,
 ];
 
-const SHADOW_EXCLUDE_CONTENT = `# OpenKnowledge machine-local state and in-flight atomic writes: never part of a version, never staged.
+const SHADOW_EXCLUDE_CONTENT = `# Palimpsest machine-local state and in-flight atomic writes: never part of a version, never staged.
 ${SHADOW_EXCLUDE_PATTERNS.join('\n')}
 `;
 
@@ -274,7 +274,7 @@ export async function initShadowRepo(
 ): Promise<ShadowHandle> {
   const shadowDir = resolveShadowDir(projectRoot);
 
-  const legacyDir = resolve(projectRoot, '.git/openknowledge');
+  const legacyDir = resolve(projectRoot, '.git/palimpsest');
   const legacyExists = existsSync(legacyDir);
   const newExists = existsSync(shadowDir);
   if (legacyExists && !newExists) {
@@ -296,8 +296,8 @@ export async function initShadowRepo(
     const sg = simpleGit({ timeout: { block: GIT_TIMEOUT_MS } }).env({ GIT_DIR: shadowDir });
     await sg.raw('config', '--unset', 'core.bare');
     await sg.raw('config', 'core.worktree', projectRoot);
-    await sg.raw('config', 'user.name', 'openknowledge');
-    await sg.raw('config', 'user.email', 'noreply@openknowledge.local');
+    await sg.raw('config', 'user.name', 'palimpsest');
+    await sg.raw('config', 'user.email', 'noreply@palimpsest.local');
   }
 
   const handle: ShadowHandle = { gitDir: shadowDir, workTree: projectRoot };
@@ -475,8 +475,8 @@ async function commitWipInner(
       GIT_DIR: shadow.gitDir,
       GIT_AUTHOR_NAME: writer.name,
       GIT_AUTHOR_EMAIL: writer.email,
-      GIT_COMMITTER_NAME: 'openknowledge',
-      GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+      GIT_COMMITTER_NAME: 'palimpsest',
+      GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
     };
     if (date) {
       commitEnv.GIT_AUTHOR_DATE = date;
@@ -617,8 +617,8 @@ async function commitWipFromTreeInner(
         GIT_DIR: shadow.gitDir,
         GIT_AUTHOR_NAME: writer.name,
         GIT_AUTHOR_EMAIL: writer.email,
-        GIT_COMMITTER_NAME: 'openknowledge',
-        GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+        GIT_COMMITTER_NAME: 'palimpsest',
+        GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
       })
       .raw(...args)
   ).trim();
@@ -630,29 +630,29 @@ async function commitWipFromTreeInner(
 export const FILE_SYSTEM_WRITER: WriterIdentity = {
   id: 'file-system',
   name: SYSTEM_WRITER_DISPLAY_NAMES.fileSystem,
-  email: 'file-system@openknowledge.local',
+  email: 'file-system@palimpsest.local',
 };
 
 export const GIT_UPSTREAM_WRITER: WriterIdentity = {
   id: 'git-upstream',
   name: SYSTEM_WRITER_DISPLAY_NAMES.gitUpstream,
-  email: 'git@openknowledge.local',
+  email: 'git@palimpsest.local',
 };
 
 export const SERVICE_WRITER: WriterIdentity = {
   id: 'openknowledge-service',
   name: SYSTEM_WRITER_DISPLAY_NAMES.service,
-  email: 'service@openknowledge.local',
+  email: 'service@palimpsest.local',
 };
 
 /**
  * Deliberately NOT `SERVICE_WRITER`: that one is the fallback for work with no contributor behind
  * it, and precedent #25 reserves it for exactly that.
  */
-export const OK_GENERATOR_WRITER: WriterIdentity = {
-  id: OK_GENERATOR_WRITER_ID,
+export const PS_GENERATOR_WRITER: WriterIdentity = {
+  id: PS_GENERATOR_WRITER_ID,
   name: SYSTEM_WRITER_DISPLAY_NAMES.generator,
-  email: `${OK_GENERATOR_WRITER_ID}@openknowledge.local`,
+  email: `${PS_GENERATOR_WRITER_ID}@palimpsest.local`,
 };
 
 const UPSTREAM_WRITER: WriterIdentity = GIT_UPSTREAM_WRITER;
@@ -679,7 +679,7 @@ async function commitUpstreamImportInner(
   branch = 'main',
 ): Promise<string> {
   const subject = formatImportSubject(oldHead, newHead);
-  const actorEntry: OkActorEntry = {
+  const actorEntry: PsActorEntry = {
     v: 1,
     writer_id: UPSTREAM_WRITER.id,
     principal: null,
@@ -710,7 +710,7 @@ export async function safetyCheckpoint(
   branch = 'main',
 ): Promise<string> {
   const subject = formatCheckpointSubject(`pre-${params.action}`);
-  const actorEntry: OkActorEntry = {
+  const actorEntry: PsActorEntry = {
     v: 1,
     writer_id: SAFETY_WRITER.id,
     principal: null,
@@ -987,10 +987,10 @@ async function saveInMemoryCheckpointInner(
 
     const commitEnv: Record<string, string> = {
       GIT_DIR: shadow.gitDir,
-      GIT_AUTHOR_NAME: 'openknowledge',
-      GIT_AUTHOR_EMAIL: 'noreply@openknowledge.local',
-      GIT_COMMITTER_NAME: 'openknowledge',
-      GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+      GIT_AUTHOR_NAME: 'palimpsest',
+      GIT_AUTHOR_EMAIL: 'noreply@palimpsest.local',
+      GIT_COMMITTER_NAME: 'palimpsest',
+      GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
     };
     if (params.date) {
       commitEnv.GIT_AUTHOR_DATE = params.date;
@@ -1486,7 +1486,7 @@ async function parkBranchInner(
       parentSha = (await sg.raw('rev-parse', ref)).trim();
     } catch {}
 
-    const parkActorEntry: OkActorEntry = {
+    const parkActorEntry: PsActorEntry = {
       v: 1,
       writer_id: SERVICE_WRITER.id,
       principal: null,
@@ -1507,10 +1507,10 @@ async function parkBranchInner(
       await sg
         .env({
           GIT_DIR: shadow.gitDir,
-          GIT_AUTHOR_NAME: 'openknowledge',
-          GIT_AUTHOR_EMAIL: 'noreply@openknowledge.local',
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+          GIT_AUTHOR_NAME: 'palimpsest',
+          GIT_AUTHOR_EMAIL: 'noreply@palimpsest.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
         })
         .raw(...args)
     ).trim();
@@ -1646,7 +1646,7 @@ async function saveVersionInner(
       );
     }
 
-    const checkpointActorEntry: OkActorEntry = {
+    const checkpointActorEntry: PsActorEntry = {
       v: 1,
       writer_id: SERVICE_WRITER.id,
       principal: null,
@@ -1679,10 +1679,10 @@ async function saveVersionInner(
 
     const checkpointEnv: Record<string, string> = {
       GIT_DIR: shadow.gitDir,
-      GIT_AUTHOR_NAME: 'openknowledge',
-      GIT_AUTHOR_EMAIL: 'noreply@openknowledge.local',
-      GIT_COMMITTER_NAME: 'openknowledge',
-      GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+      GIT_AUTHOR_NAME: 'palimpsest',
+      GIT_AUTHOR_EMAIL: 'noreply@palimpsest.local',
+      GIT_COMMITTER_NAME: 'palimpsest',
+      GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
     };
     if (options?.date) {
       checkpointEnv.GIT_AUTHOR_DATE = options.date;

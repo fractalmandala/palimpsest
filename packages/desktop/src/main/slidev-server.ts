@@ -1,15 +1,15 @@
 import { type ChildProcess, spawn } from 'node:child_process';
 import { statSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { augmentAgentSpawnPath } from '@inkeep/open-knowledge-core';
+import { augmentAgentSpawnPath } from '@palimpsest/core';
 import {
   composeOkChildEnv,
   hasNoResolvableOkHome,
-  type OkManagedBinDirsOptions,
-  okChildEnvOptionsFromProcess,
-  okManagedBinDirs,
-  okPathDelimiter,
-} from '../shared/ok-child-env.ts';
+  type PsManagedBinDirsOptions,
+  psChildEnvOptionsFromProcess,
+  psManagedBinDirs,
+  psPathDelimiter,
+} from '../shared/ps-child-env.ts';
 import {
   commandWithManagedPath,
   interactiveShellArgs,
@@ -304,7 +304,7 @@ function isDir(dir: string): boolean {
 
 export function composeSlidevSpawnEnv(
   parentEnv: Record<string, string | undefined>,
-  options: OkManagedBinDirsOptions,
+  options: PsManagedBinDirsOptions,
   isDirSync: (dir: string) => boolean = isDir,
 ): Record<string, string> {
   const env = composeOkChildEnv(parentEnv, options);
@@ -323,13 +323,13 @@ export function composeSlidevSpawnEnv(
     platform: options.platform,
     homeDir,
     isDir: isDirSync,
-    delimiter: okPathDelimiter(options.platform),
+    delimiter: psPathDelimiter(options.platform),
   });
   return env;
 }
 
 export function slidevSpawnEnv(
-  options: OkManagedBinDirsOptions = okChildEnvOptionsFromProcess(),
+  options: PsManagedBinDirsOptions = psChildEnvOptionsFromProcess(),
 ): NodeJS.ProcessEnv {
   return composeSlidevSpawnEnv(process.env, options);
 }
@@ -372,12 +372,12 @@ export function adaptSlidevChild(child: ChildProcess): SlidevProcess {
 }
 
 export function realSpawnSlidev(config: SlidevSpawnConfig, port: number): SlidevProcess {
-  const options = okChildEnvOptionsFromProcess();
+  const options = psChildEnvOptionsFromProcess();
   const invocation = buildSlidevInvocation(
     config,
     port,
     process.platform,
-    okManagedBinDirs(options),
+    psManagedBinDirs(options),
   );
   if (invocation.mode === 'interactive-shell') {
     getLogger('slidev-server').info(

@@ -38,7 +38,7 @@ let disabled: BootedServer;
 let ephemeral: BootedServer;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-agent-native-preservation-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-agent-native-preservation-'));
   for (const name of ['enabled', 'disabled', 'ephemeral']) mkdirSync(join(root, name));
   writeFileSync(join(root, 'ephemeral', 'note.md'), '# Note\n');
   enabled = await bootCompositionRig(join(root, 'enabled'), { enableTestRoutes: true });
@@ -186,7 +186,7 @@ test('enabled reset and rescans execute against real sessions, files and indexes
   expect(enabled.serverInstance.sessionManager.hasSession(docName, 'agent-reset')).toBe(true);
   const reset = await rawRequest(
     enabled.port,
-    `/api/test-reset?docName=${docName}&reset-okignore=false`,
+    `/api/test-reset?docName=${docName}&reset-psignore=false`,
     { method: 'POST', body: '{' },
   );
   expect(reset.status, reset.body).toBe(200);

@@ -1,4 +1,4 @@
-import type { LintDiagnostic } from '@inkeep/open-knowledge-core';
+import type { LintDiagnostic } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { partitionFrontmatterProblems } from './useFrontmatterDiagnostics.ts';
 
@@ -94,7 +94,7 @@ describe('partitionFrontmatterProblems', () => {
     const { invalid } = partitionFrontmatterProblems([
       diag({
         frontmatterScope: 'invalid',
-        source: 'okf',
+        source: 'psf',
         code: 'frontmatter-recommended',
         message: 'Frontmatter property "tags" must be array',
       }),

@@ -7,7 +7,7 @@ export const CONFIG_DOC_NAME_USER = '__user__/config.yml';
 
 export const CONFIG_DOC_NAME_PROJECT_LOCAL = '__local__/project';
 
-export const CONFIG_DOC_NAME_OKIGNORE = '__config__/okignore';
+export const CONFIG_DOC_NAME_OKIGNORE = '__config__/psignore';
 
 export const CONFIG_DOC_NAMES = Object.freeze([
   CONFIG_DOC_NAME_PROJECT,
@@ -62,7 +62,7 @@ export function stripMdExt(path: string): string {
   return path.replace(/\.mdx?$/i, '');
 }
 
-export const LEGACY_SKILL_STORE_ROOT = '.ok/skills';
+export const LEGACY_SKILL_STORE_ROOT = '.ps/skills';
 
 export function projectSkillContentDocName(name: string): string {
   return `${LEGACY_SKILL_STORE_ROOT}/${name}/SKILL`;
@@ -201,13 +201,13 @@ export function parseManagedArtifactName(name: string): ParsedManagedArtifactNam
   return null;
 }
 
-const TEMPLATE_FILE_TARGET_RE = /^(?:(.+)\/)?\.ok\/templates\/([^/]+?)(?:\.md)?$/;
+const TEMPLATE_FILE_TARGET_RE = /^(?:(.+)\/)?\.ps\/templates\/([^/]+?)(?:\.md)?$/;
 
 export type ParsedTemplateName = { folder: string; name: string };
 
 export function templateContentDocName(folderRel: string, name: string): string {
   const folder = folderRel.replace(/^\/+|\/+$/g, '');
-  return folder ? `${folder}/.ok/templates/${name}` : `.ok/templates/${name}`;
+  return folder ? `${folder}/.ps/templates/${name}` : `.ps/templates/${name}`;
 }
 
 export function parseTemplateContentDocName(docName: string): ParsedTemplateName | null {

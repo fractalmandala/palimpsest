@@ -217,7 +217,7 @@ function assetPathsFromDocumentList(response: CapturedResponse): string[] {
 let tmpDir: string;
 
 function setupTmpDir(): string {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-file-ops-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-file-ops-'));
   return tmpDir;
 }
 
@@ -799,7 +799,7 @@ describe('file operation API routes', () => {
     }
   });
 
-  test('managed rename rejects .ok as a destination (reserved directory)', async () => {
+  test('managed rename rejects .ps as a destination (reserved directory)', async () => {
     const dir = setupTmpDir();
     mkdirSync(join(dir, 'project'));
     writeFileSync(join(dir, 'project', 'index.md'), '# Index\n', 'utf-8');
@@ -811,7 +811,7 @@ describe('file operation API routes', () => {
       {
         kind: 'folder',
         fromPath: 'project',
-        toPath: '.ok',
+        toPath: '.ps',
       },
       { backlinkIndex: buildBacklinkIndex(dir) },
     );
@@ -820,11 +820,11 @@ describe('file operation API routes', () => {
     {
       const parsed = JSON.parse(result.body) as Record<string, unknown>;
       expect(parsed.type).toBe('urn:ok:error:reserved-doc-name');
-      expect(parsed.title).toContain('.ok and .git are reserved directories');
+      expect(parsed.title).toContain('.ps and .git are reserved directories');
     }
   });
 
-  test('managed rename rejects .ok subpath as a destination', async () => {
+  test('managed rename rejects .ps subpath as a destination', async () => {
     const dir = setupTmpDir();
     writeFileSync(join(dir, 'notes.md'), '# Notes\n', 'utf-8');
 
@@ -835,7 +835,7 @@ describe('file operation API routes', () => {
       {
         kind: 'file',
         fromPath: 'notes',
-        toPath: '.ok/secret',
+        toPath: '.ps/secret',
       },
       { backlinkIndex: buildBacklinkIndex(dir) },
     );
@@ -844,7 +844,7 @@ describe('file operation API routes', () => {
     {
       const parsed = JSON.parse(result.body) as Record<string, unknown>;
       expect(parsed.type).toBe('urn:ok:error:reserved-doc-name');
-      expect(parsed.title).toContain('.ok and .git are reserved directories');
+      expect(parsed.title).toContain('.ps and .git are reserved directories');
     }
   });
 
@@ -1417,7 +1417,7 @@ describe('file operation API routes', () => {
     mkdirSync(join(dir, 'docs/media'), { recursive: true });
     writeFileSync(join(dir, 'docs/media/diagram.png'), 'fake image bytes', 'utf-8');
     writeFileSync(join(dir, 'docs/guide.md'), '# Guide\n', 'utf-8');
-    writeFileSync(join(dir, '.okignore'), 'private-assets/\n', 'utf-8');
+    writeFileSync(join(dir, '.psignore'), 'private-assets/\n', 'utf-8');
     const contentFilter = createContentFilter({ projectDir: dir, contentDir: dir });
 
     const result = await callApi(
@@ -2174,7 +2174,7 @@ describe('file operation API routes', () => {
     const b = join(dir, 'b.csv');
     const linked = join(dir, 'linked.csv');
     const source = join(dir, 'source.md');
-    const ignore = join(dir, '.okignore');
+    const ignore = join(dir, '.psignore');
     const sourceContent = '# Source\n\n[A](a.csv)\n\n[Linked](linked.csv)\n';
     writeFileSync(a, 'a,admitted\n');
     writeFileSync(b, 'b,admitted\n');
@@ -2251,7 +2251,7 @@ describe('file operation API routes', () => {
     writeFileSync(source, '![foo](foo.png)\n');
     writeFileSync(foo, 'foo bytes');
     writeFileSync(bar, 'bar bytes');
-    writeFileSync(join(dir, '.okignore'), '');
+    writeFileSync(join(dir, '.psignore'), '');
     const filter = createContentFilter({ projectDir: dir, contentDir: dir });
     const fileIndex = new Map(buildFileIndex(dir));
     const indexedSource = fileIndex.get('source');
@@ -2743,7 +2743,7 @@ describe('file operation API routes', () => {
 
     const okResult = await callApi(dir, '/api/duplicate-path', 'POST', {
       kind: 'folder',
-      path: '.ok/local',
+      path: '.ps/local',
     });
     const configFolderResult = await callApi(dir, '/api/duplicate-path', 'POST', {
       kind: 'folder',
@@ -2861,7 +2861,7 @@ describe('file operation API routes', () => {
   test('rejects duplicate-path destinations excluded by content config', async () => {
     const dir = setupTmpDir();
     writeFileSync(join(dir, 'notes.md'), '# Notes\n', 'utf-8');
-    writeFileSync(join(dir, '.okignore'), 'notes copy.md\n', 'utf-8');
+    writeFileSync(join(dir, '.psignore'), 'notes copy.md\n', 'utf-8');
     const contentFilter = createContentFilter({ projectDir: dir, contentDir: dir });
 
     const result = await callApi(
@@ -2888,7 +2888,7 @@ describe('file operation API routes', () => {
     const dir = setupTmpDir();
     mkdirSync(join(dir, 'archive'), { recursive: true });
     writeFileSync(join(dir, 'archive/index.md'), '# Archive\n', 'utf-8');
-    writeFileSync(join(dir, '.okignore'), 'archive copy/\n', 'utf-8');
+    writeFileSync(join(dir, '.psignore'), 'archive copy/\n', 'utf-8');
     const contentFilter = createContentFilter({ projectDir: dir, contentDir: dir });
 
     const result = await callApi(
@@ -2938,18 +2938,18 @@ describe('file operation API routes', () => {
     });
   });
 
-  test('rejects create-folder destinations inside .ok even without content filter', async () => {
+  test('rejects create-folder destinations inside .ps even without content filter', async () => {
     const dir = setupTmpDir();
 
     const result = await callApi(dir, '/api/create-folder', 'POST', {
-      path: '.ok/local/cache',
+      path: '.ps/local/cache',
     });
 
     expect(result.status).toBe(400);
-    expect(existsSync(join(dir, '.ok/local/cache'))).toBe(false);
+    expect(existsSync(join(dir, '.ps/local/cache'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
       type: 'urn:ok:error:reserved-doc-name',
-      title: '.ok and .git are reserved directories.',
+      title: '.ps and .git are reserved directories.',
       status: 400,
     });
   });
@@ -2972,7 +2972,7 @@ describe('file operation API routes', () => {
 
   test('rejects create-folder destinations excluded by content config', async () => {
     const dir = setupTmpDir();
-    writeFileSync(join(dir, '.okignore'), 'ignored/\n', 'utf-8');
+    writeFileSync(join(dir, '.psignore'), 'ignored/\n', 'utf-8');
     const contentFilter = createContentFilter({ projectDir: dir, contentDir: dir });
 
     const result = await callApi(

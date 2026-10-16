@@ -1,11 +1,11 @@
 import {
   asRecord,
-  identifyOpenKnowledgeToolCall,
-  openKnowledgeToolName,
+  identifyPalimpsestToolCall,
+  palimpsestToolName,
   stringField,
   unwrapMcpInput,
-} from '@inkeep/open-knowledge-core/acp/tool-call-input';
-import { graphemePrefix } from '@inkeep/open-knowledge-core/utils/grapheme-clip';
+} from '@palimpsest/core/acp/tool-call-input';
+import { graphemePrefix } from '@palimpsest/core/utils/grapheme-clip';
 import { plural, t } from '@lingui/core/macro';
 
 export type ToolCallGlyph =
@@ -112,7 +112,7 @@ function inlineText(value: unknown): string | null {
     : collapsed;
 }
 
-function openKnowledgeDisplay(tool: string, args: Record<string, unknown>): ToolCallDisplay {
+function palimpsestDisplay(tool: string, args: Record<string, unknown>): ToolCallDisplay {
   const found = targetPaths(args);
   const first = found[0];
   const subject: string | null =
@@ -128,32 +128,32 @@ function openKnowledgeDisplay(tool: string, args: Record<string, unknown>): Tool
         glyph: 'edit',
         text:
           subject === null
-            ? t`OpenKnowledge wrote a document`
-            : t`OpenKnowledge wrote to ${subject}`,
+            ? t`Palimpsest wrote a document`
+            : t`Palimpsest wrote to ${subject}`,
       };
     case 'edit':
       return {
         glyph: 'edit',
         text:
           subject === null
-            ? t`OpenKnowledge edited a document`
-            : t`OpenKnowledge edited ${subject}`,
+            ? t`Palimpsest edited a document`
+            : t`Palimpsest edited ${subject}`,
       };
     case 'delete':
       return {
         glyph: 'delete',
         text:
           subject === null
-            ? t`OpenKnowledge deleted a document`
-            : t`OpenKnowledge deleted ${subject}`,
+            ? t`Palimpsest deleted a document`
+            : t`Palimpsest deleted ${subject}`,
       };
     case 'move': {
       const to = pathsOf(args.to)[0];
       if (subject === null || to === undefined) {
-        return { glyph: 'move', text: t`OpenKnowledge moved a document` };
+        return { glyph: 'move', text: t`Palimpsest moved a document` };
       }
       const destination = docLabel(to);
-      return { glyph: 'move', text: t`OpenKnowledge moved ${subject} to ${destination}` };
+      return { glyph: 'move', text: t`Palimpsest moved ${subject} to ${destination}` };
     }
     case 'search': {
       const query = inlineText(args.query);
@@ -161,15 +161,15 @@ function openKnowledgeDisplay(tool: string, args: Record<string, unknown>): Tool
         glyph: 'search',
         text:
           query === null
-            ? t`OpenKnowledge searched the knowledge base`
-            : t`OpenKnowledge searched for ${query}`,
+            ? t`Palimpsest searched the knowledge base`
+            : t`Palimpsest searched for ${query}`,
       };
     }
     case 'exec': {
       const command = inlineText(args.command);
       return {
         glyph: 'execute',
-        text: command === null ? t`OpenKnowledge ran a command` : t`OpenKnowledge ran ${command}`,
+        text: command === null ? t`Palimpsest ran a command` : t`Palimpsest ran ${command}`,
       };
     }
     case 'lint':
@@ -178,24 +178,24 @@ function openKnowledgeDisplay(tool: string, args: Record<string, unknown>): Tool
         glyph: 'check',
         text:
           subject === null
-            ? t`OpenKnowledge checked the project`
-            : t`OpenKnowledge checked ${subject}`,
+            ? t`Palimpsest checked the project`
+            : t`Palimpsest checked ${subject}`,
       };
     case 'links':
       return {
         glyph: 'link',
         text:
           subject === null
-            ? t`OpenKnowledge looked at the link graph`
-            : t`OpenKnowledge looked up links for ${subject}`,
+            ? t`Palimpsest looked at the link graph`
+            : t`Palimpsest looked up links for ${subject}`,
       };
     case 'history':
       return {
         glyph: 'history',
         text:
           subject === null
-            ? t`OpenKnowledge read the edit history`
-            : t`OpenKnowledge read the history of ${subject}`,
+            ? t`Palimpsest read the edit history`
+            : t`Palimpsest read the history of ${subject}`,
       };
     case 'config': {
       const key = inlineText(args.key);
@@ -203,52 +203,52 @@ function openKnowledgeDisplay(tool: string, args: Record<string, unknown>): Tool
         glyph: 'settings',
         text:
           key === null
-            ? t`OpenKnowledge read the project settings`
-            : t`OpenKnowledge read the setting ${key}`,
+            ? t`Palimpsest read the project settings`
+            : t`Palimpsest read the setting ${key}`,
       };
     }
     case 'skills':
-      return { glyph: 'read', text: t`OpenKnowledge listed the installed skills` };
+      return { glyph: 'read', text: t`Palimpsest listed the installed skills` };
     case 'install':
       return {
         glyph: 'install',
         text:
           subject === null
-            ? t`OpenKnowledge installed a skill`
-            : t`OpenKnowledge installed ${subject}`,
+            ? t`Palimpsest installed a skill`
+            : t`Palimpsest installed ${subject}`,
       };
     case 'import': {
       const source = inlineText(args.skill) ?? inlineText(args.source);
       return {
         glyph: 'install',
         text:
-          source === null ? t`OpenKnowledge imported a skill` : t`OpenKnowledge imported ${source}`,
+          source === null ? t`Palimpsest imported a skill` : t`Palimpsest imported ${source}`,
       };
     }
     case 'palette':
-      return { glyph: 'read', text: t`OpenKnowledge looked up the authoring palette` };
+      return { glyph: 'read', text: t`Palimpsest looked up the authoring palette` };
     case 'preview_url':
-      return { glyph: 'fetch', text: t`OpenKnowledge opened the live preview` };
+      return { glyph: 'fetch', text: t`Palimpsest opened the live preview` };
     case 'share_link':
       return {
         glyph: 'share',
         text:
           subject === null
-            ? t`OpenKnowledge created a share link`
-            : t`OpenKnowledge created a share link for ${subject}`,
+            ? t`Palimpsest created a share link`
+            : t`Palimpsest created a share link for ${subject}`,
       };
     case 'checkpoint':
-      return { glyph: 'history', text: t`OpenKnowledge saved a checkpoint` };
+      return { glyph: 'history', text: t`Palimpsest saved a checkpoint` };
     case 'restore_version':
       return {
         glyph: 'restore',
         text:
           subject === null
-            ? t`OpenKnowledge restored an earlier version`
-            : t`OpenKnowledge restored an earlier version of ${subject}`,
+            ? t`Palimpsest restored an earlier version`
+            : t`Palimpsest restored an earlier version of ${subject}`,
       };
     default:
-      return { glyph: 'other', text: t`OpenKnowledge ran ${tool}` };
+      return { glyph: 'other', text: t`Palimpsest ran ${tool}` };
   }
 }
 
@@ -287,7 +287,7 @@ function kindLabel(toolKind: string): string | null {
   }
 }
 
-function openKnowledgePurpose(tool: string): string | null {
+function palimpsestPurpose(tool: string): string | null {
   switch (tool) {
     case 'exec':
       return t`Reads documents and folders in this project with read-only shell commands`;
@@ -300,7 +300,7 @@ function openKnowledgePurpose(tool: string): string | null {
     case 'skills':
       return t`Finds skills and reads what's installed`;
     case 'config':
-      return t`Reads this project's OpenKnowledge settings`;
+      return t`Reads this project's Palimpsest settings`;
     case 'palette':
       return t`Reads the authoring palette so new documents match the project's style`;
     case 'preview_url':
@@ -362,8 +362,8 @@ export function describeToolPurpose(call: {
   toolKind: string;
   rawInput: unknown;
 }): string | null {
-  const tool = openKnowledgeToolName(call);
-  if (tool !== null) return openKnowledgePurpose(tool);
+  const tool = palimpsestToolName(call);
+  if (tool !== null) return palimpsestPurpose(tool);
   const match = MCP_TITLE.exec(call.title.trim());
   const server = match?.[2];
   const mcpTool = match?.[3];
@@ -374,13 +374,13 @@ export function describeToolPurpose(call: {
 }
 
 export function toolRunLabel(call: { title: string; toolKind: string; rawInput: unknown }): string {
-  const tool = openKnowledgeToolName(call);
-  if (tool !== null) return `OpenKnowledge ${tool.replace(/_/g, ' ')}`;
+  const tool = palimpsestToolName(call);
+  if (tool !== null) return `Palimpsest ${tool.replace(/_/g, ' ')}`;
   return mcpServerAndTool(call.title) ?? kindLabel(call.toolKind) ?? call.title;
 }
 
 export function toolRunKey(call: { title: string; toolKind: string; rawInput: unknown }): string {
-  const tool = openKnowledgeToolName(call);
+  const tool = palimpsestToolName(call);
   if (tool !== null) return `ok:${tool}`;
   const match = MCP_TITLE.exec(call.title.trim());
   const server = match?.[2];
@@ -394,8 +394,8 @@ export function describeToolCall(call: {
   toolKind: string;
   rawInput: unknown;
 }): ToolCallDisplay {
-  const openKnowledge = identifyOpenKnowledgeToolCall(call);
-  if (openKnowledge !== null) return openKnowledgeDisplay(openKnowledge.tool, openKnowledge.args);
+  const palimpsest = identifyPalimpsestToolCall(call);
+  if (palimpsest !== null) return palimpsestDisplay(palimpsest.tool, palimpsest.args);
   const text = mcpServerAndTool(call.title) ?? call.title;
   const value = argumentValue(call.rawInput);
   const redundant = value !== undefined && text.includes(value);

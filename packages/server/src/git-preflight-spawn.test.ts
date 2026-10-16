@@ -2,21 +2,21 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 
 const SERVER_PACKAGE_ROOT = resolve(import.meta.dir, '..');
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 }
 
 describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)', () => {
   test('subprocess that throws GitNotAvailableError from gitPreflight exits 78 with install guidance on stderr', async () => {
-    const projectDir = await mkdtemp(resolve(tmpdir(), 'ok-spawn-preflight-'));
+    const projectDir = await mkdtemp(resolve(tmpdir(), 'ps-spawn-preflight-'));
     try {
       seedOkScaffold(projectDir);
 
@@ -26,9 +26,9 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
         const { ConfigSchema } = await import('./src/config/schema.ts');
         const { GitNotAvailableError, GitTooOldError } = await import('./src/git-preflight.ts');
 
-        const projectDir = process.env.OK_TEST_PROJECT_DIR;
+        const projectDir = process.env.PS_TEST_PROJECT_DIR;
         if (!projectDir) {
-          console.error('missing OK_TEST_PROJECT_DIR');
+          console.error('missing PS_TEST_PROJECT_DIR');
           process.exit(99);
         }
 
@@ -75,7 +75,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
         env: {
           ...process.env,
           NO_COLOR: '1',
-          OK_TEST_PROJECT_DIR: projectDir,
+          PS_TEST_PROJECT_DIR: projectDir,
           OTEL_SDK_DISABLED: 'true',
         },
       });
@@ -84,7 +84,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
       const stdout = result.stdout.toString();
 
       expect(result.exitCode).toBe(78);
-      expect(stderr).toContain('OpenKnowledge needs Git');
+      expect(stderr).toContain('Palimpsest needs Git');
       expect(stderr).toContain('sudo apt install git');
       expect(stderr).not.toContain('UNEXPECTED-CATCH');
       expect(stderr).not.toContain('PREFLIGHT-DID-NOT-FIRE');
@@ -95,7 +95,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
   }, 30_000);
 
   test('subprocess that throws GitTooOldError exits 78 with too-old message', async () => {
-    const projectDir = await mkdtemp(resolve(tmpdir(), 'ok-spawn-preflight-too-old-'));
+    const projectDir = await mkdtemp(resolve(tmpdir(), 'ps-spawn-preflight-too-old-'));
     try {
       seedOkScaffold(projectDir);
 
@@ -104,9 +104,9 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
         const { ConfigSchema } = await import('./src/config/schema.ts');
         const { GitNotAvailableError, GitTooOldError } = await import('./src/git-preflight.ts');
 
-        const projectDir = process.env.OK_TEST_PROJECT_DIR;
+        const projectDir = process.env.PS_TEST_PROJECT_DIR;
         if (!projectDir) {
-          console.error('missing OK_TEST_PROJECT_DIR');
+          console.error('missing PS_TEST_PROJECT_DIR');
           process.exit(99);
         }
 
@@ -149,7 +149,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
         env: {
           ...process.env,
           NO_COLOR: '1',
-          OK_TEST_PROJECT_DIR: projectDir,
+          PS_TEST_PROJECT_DIR: projectDir,
           OTEL_SDK_DISABLED: 'true',
         },
       });
@@ -157,7 +157,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
       const stderr = result.stderr.toString();
 
       expect(result.exitCode).toBe(78);
-      expect(stderr).toContain('OpenKnowledge requires Git 2.31.0 or newer');
+      expect(stderr).toContain('Palimpsest requires Git 2.31.0 or newer');
       expect(stderr).toContain('detected 2.20.0 at /usr/bin/git');
       expect(stderr).not.toContain('UNEXPECTED-CATCH');
       expect(stderr).not.toContain('PREFLIGHT-DID-NOT-FIRE');

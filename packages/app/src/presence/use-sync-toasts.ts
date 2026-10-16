@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { FORCE_SYNC_INTERVAL_MS } from '@/editor/provider-pool';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { useRelaunchInFlight } from '@/lib/relaunch-store';
 import { restartCollabServer } from '@/lib/restart-collab-server';
 import type { SyncStatus } from './use-sync-status';
@@ -17,7 +17,7 @@ const NO_TOAST_HANDLERS = { onDismiss: undefined, onAutoClose: undefined };
 type CatchupClaim = 'idle' | 'armed' | 'asserted' | 'dismissed';
 
 export async function runDisconnectRestart(
-  bridge: Pick<OkDesktopBridge, 'restartServer' | 'config'>,
+  bridge: Pick<PsDesktopBridge, 'restartServer' | 'config'>,
 ): Promise<void> {
   try {
     const result = await restartCollabServer(bridge);
@@ -94,7 +94,7 @@ export function useSyncToasts(status: SyncStatus, activeDocName: string | null) 
       return;
     }
 
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     const hasRestartButton = bridge !== undefined;
     const restartAction =
       bridge !== undefined

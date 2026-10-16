@@ -1,6 +1,6 @@
 import type { SessionUpdate } from '@agentclientprotocol/sdk';
-import type { CodexLegacyAgentIdentity } from '@inkeep/open-knowledge-core/acp/codex-legacy-notice';
-import type { ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { CodexLegacyAgentIdentity } from '@palimpsest/core/acp/codex-legacy-notice';
+import type { ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test } from 'vitest';
 import fixture from '../../../../test-support/fixtures/codex-legacy-warning-envelopes.json' with {
   type: 'json',

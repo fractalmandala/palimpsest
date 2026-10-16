@@ -1,16 +1,16 @@
-import type { OkThemeSource } from '../shared/bridge-contract.ts';
+import type { PsThemeSource } from '../shared/bridge-contract.ts';
 import { getLogger } from './desktop-logger.ts';
 
-const VALID_THEME_SOURCES: ReadonlySet<OkThemeSource> = new Set(['system', 'light', 'dark']);
+const VALID_THEME_SOURCES: ReadonlySet<PsThemeSource> = new Set(['system', 'light', 'dark']);
 
-export function isOkThemeSource(value: unknown): value is OkThemeSource {
-  return typeof value === 'string' && VALID_THEME_SOURCES.has(value as OkThemeSource);
+export function isOkThemeSource(value: unknown): value is PsThemeSource {
+  return typeof value === 'string' && VALID_THEME_SOURCES.has(value as PsThemeSource);
 }
 
 type AppliedThemeSourceRecord = {
   readonly event: 'theme-source-set';
-  readonly source: OkThemeSource;
-  readonly prevSource: OkThemeSource;
+  readonly source: PsThemeSource;
+  readonly prevSource: PsThemeSource;
   readonly trigger: 'ipc';
   readonly senderWindowId: number | null;
 };
@@ -79,14 +79,14 @@ export function emitThemeSourceRecord(record: ThemeSourceRecord): void {
 }
 
 interface ApplyThemeSourceDeps {
-  getThemeSource: () => OkThemeSource;
-  setThemeSource: (source: OkThemeSource) => void;
+  getThemeSource: () => PsThemeSource;
+  setThemeSource: (source: PsThemeSource) => void;
   emit: (record: ThemeSourceRecord) => void;
 }
 
 export function applyThemeSource(
   deps: ApplyThemeSourceDeps,
-  source: OkThemeSource,
+  source: PsThemeSource,
   senderWindowId: number | null,
 ): { ok: true } {
   if (!VALID_THEME_SOURCES.has(source)) {

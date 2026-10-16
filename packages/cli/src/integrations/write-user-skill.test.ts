@@ -18,7 +18,7 @@ describe('writeUserSkill', () => {
   let home: string;
 
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'ok-write-user-skill-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-write-user-skill-'));
   });
   afterEach(() => {
     rmSync(home, { recursive: true, force: true });
@@ -91,7 +91,7 @@ describe('userSkillPresentAnywhere', () => {
   let home: string;
 
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'ok-present-anywhere-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-present-anywhere-'));
   });
   afterEach(() => {
     rmSync(home, { recursive: true, force: true });
@@ -136,7 +136,7 @@ describe('a user skills folder aliased outside the home directory', () => {
   let outside: string;
 
   beforeEach(() => {
-    root = mkdtempSync(join(tmpdir(), 'ok-user-skill-escape-'));
+    root = mkdtempSync(join(tmpdir(), 'ps-user-skill-escape-'));
     home = join(root, 'home');
     outside = join(root, 'elsewhere', 'skills');
     mkdirSync(join(home, '.codex'), { recursive: true });

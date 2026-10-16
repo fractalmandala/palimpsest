@@ -90,7 +90,7 @@ async function readComposerHeight(page: Page): Promise<number> {
 async function readLineBottom(page: Page, lineSelector: string): Promise<number> {
   return page.evaluate((selector) => {
     const painted = [...document.querySelectorAll<HTMLElement>(selector)].filter(
-      (element) => element.closest('.ok-mode-hidden') === null,
+      (element) => element.closest('.ps-mode-hidden') === null,
     );
     const last = painted.at(-1);
     if (!last) throw new Error(`no painted line matched ${selector}`);
@@ -109,7 +109,7 @@ async function readGeometry(page: Page, surface: Surface): Promise<Geometry> {
         throw new Error(`no painted scrollport matched ${scrollportSelector}`);
       }
       const painted = [...document.querySelectorAll<HTMLElement>(lineSelector)].filter(
-        (element) => element.closest('.ok-mode-hidden') === null,
+        (element) => element.closest('.ps-mode-hidden') === null,
       );
       const last = painted.at(-1);
       if (!last) throw new Error(`no painted line matched ${lineSelector}`);
@@ -203,7 +203,7 @@ async function pinScrollportToBottom(page: Page, surface: Surface): Promise<void
 async function placeCaretOnLastLine(page: Page, surface: Surface): Promise<void> {
   await page
     .locator(surface.lineSelector)
-    .filter({ hasNot: page.locator('.ok-mode-hidden') })
+    .filter({ hasNot: page.locator('.ps-mode-hidden') })
     .last()
     .click({ position: { x: 4, y: 4 } });
 }

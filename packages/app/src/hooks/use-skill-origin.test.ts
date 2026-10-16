@@ -52,14 +52,14 @@ describe('skillOriginUrl', () => {
     expect(
       skillOriginUrl(
         {
-          source: 'inkeep/open-knowledge-skills',
+          source: 'fractalmandala/palimpsest-skills',
           publisher: 'inkeep',
           skill: 'open-knowledge-discovery',
           importedAt: '2026-07-30T12:00:00.000Z',
         },
         'open-knowledge-discovery',
       ),
-    ).toBe('https://www.skills.sh/inkeep/open-knowledge-skills/open-knowledge-discovery');
+    ).toBe('https://www.skills.sh/fractalmandala/palimpsest-skills/open-knowledge-discovery');
   });
 
   test('uses the /site/ shape for a website-catalog source', () => {
@@ -94,14 +94,14 @@ describe('skillAutoUpdateEnabled', () => {
   });
 
   test('requires explicit opt-in for remote sources', () => {
-    expect(skillAutoUpdateEnabled(origin('inkeep/open-knowledge-skills'))).toBe(false);
-    expect(skillAutoUpdateEnabled(origin('https://github.com/inkeep/open-knowledge-skills'))).toBe(
+    expect(skillAutoUpdateEnabled(origin('fractalmandala/palimpsest-skills'))).toBe(false);
+    expect(skillAutoUpdateEnabled(origin('https://github.com/fractalmandala/palimpsest-skills'))).toBe(
       false,
     );
-    expect(skillAutoUpdateEnabled(origin('git@github.com:inkeep/open-knowledge-skills.git'))).toBe(
+    expect(skillAutoUpdateEnabled(origin('git@github.com:fractalmandala/palimpsest-skills.git'))).toBe(
       false,
     );
-    expect(skillAutoUpdateEnabled(origin('inkeep/open-knowledge-skills', true))).toBe(true);
+    expect(skillAutoUpdateEnabled(origin('fractalmandala/palimpsest-skills', true))).toBe(true);
   });
 
   test('keeps local sources on by default and honors an explicit opt-out', () => {

@@ -1,13 +1,13 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type {
-  OkIntegrationsSetRequest,
-  OkIntegrationsSetResult,
-  OkIntegrationsStatus,
+  PsIntegrationsSetRequest,
+  PsIntegrationsSetResult,
+  PsIntegrationsStatus,
 } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
@@ -49,7 +49,7 @@ vi.doMock('@/lib/perf', async () => {
 
 let introSeen = true;
 vi.doMock('@/lib/skills-studio-intro-store', () => ({
-  SKILLS_STUDIO_INTRO_KEY: 'ok-skills-studio-intro-seen-v1',
+  SKILLS_STUDIO_INTRO_KEY: 'ps-skills-studio-intro-seen-v1',
   hasSeenSkillsStudioIntro: () => introSeen,
   markSkillsStudioIntroSeen: () => {
     introSeen = true;
@@ -70,7 +70,7 @@ function renderSection() {
 const discovery: SkillsListEntry = {
   name: 'open-knowledge-discovery',
   description:
-    'Read when the user asks what OpenKnowledge is, wants to install it on a repository. Do NOT load to perform OpenKnowledge reads/writes.',
+    'Read when the user asks what Palimpsest is, wants to install it on a repository. Do NOT load to perform Palimpsest reads/writes.',
   scope: 'global',
   path: '.claude/skills/open-knowledge-discovery/SKILL.md',
   absolutePath: '/home/.claude/skills/open-knowledge-discovery/SKILL.md',
@@ -102,16 +102,16 @@ const authored: SkillsListEntry = {
   hosts: ['claude'],
 };
 const projectBuiltin: SkillsListEntry = {
-  name: 'open-knowledge',
+  name: 'palimpsest',
   scope: 'project',
-  path: '.claude/skills/open-knowledge/SKILL.md',
-  absolutePath: '/proj/.claude/skills/open-knowledge/SKILL.md',
+  path: '.claude/skills/palimpsest/SKILL.md',
+  absolutePath: '/proj/.claude/skills/palimpsest/SKILL.md',
   installed: true,
   hosts: ['claude'],
   managed: true,
 };
 
-const baseStatus: OkIntegrationsStatus = {
+const baseStatus: PsIntegrationsStatus = {
   available: true,
   editors: [],
   path: { shellDetected: true, rcFilesToTouch: ['~/.zshrc'], installed: false },
@@ -145,22 +145,22 @@ const baseStatus: OkIntegrationsStatus = {
 };
 
 interface HarnessOpts {
-  status?: OkIntegrationsStatus;
-  setResult?: (request: OkIntegrationsSetRequest) => OkIntegrationsSetResult;
+  status?: PsIntegrationsStatus;
+  setResult?: (request: PsIntegrationsSetRequest) => PsIntegrationsSetResult;
 }
 
 function installBridge({ status = baseStatus, setResult }: HarnessOpts = {}) {
-  const setCalls: OkIntegrationsSetRequest[] = [];
+  const setCalls: PsIntegrationsSetRequest[] = [];
   const bridge = {
     integrations: {
       status: async () => status,
-      setComponent: async (request: OkIntegrationsSetRequest) => {
+      setComponent: async (request: PsIntegrationsSetRequest) => {
         setCalls.push(request);
         return setResult ? setResult(request) : { ok: true as const, status };
       },
     },
   };
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: bridge,
     configurable: true,
     writable: true,
@@ -180,7 +180,7 @@ afterEach(() => {
   openPreviewSpy.mockClear();
   window.location.hash = '';
   // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-  (window as any).okDesktop = undefined;
+  (window as any).psDesktop = undefined;
 });
 
 describe('BuiltInSkillsSection', () => {
@@ -192,7 +192,7 @@ describe('BuiltInSkillsSection', () => {
     });
     expect(screen.getAllByTestId('skill-consent-row-preview').length).toBe(2);
     expect(screen.queryByText('grill-me')).toBeNull();
-    expect(screen.queryByText('open-knowledge')).toBeNull();
+    expect(screen.queryByText('palimpsest')).toBeNull();
   });
 
   test('the rows render without the desktop bridge', async () => {
@@ -212,7 +212,7 @@ describe('BuiltInSkillsSection', () => {
     renderSection();
 
     await waitFor(() => {
-      expect(screen.getByText('How to set up new projects with OpenKnowledge.')).toBeTruthy();
+      expect(screen.getByText('How to set up new projects with Palimpsest.')).toBeTruthy();
     });
     expect(screen.getByText('How to write a new skill and install it.')).toBeTruthy();
     expect(screen.queryByText(/Do NOT load/)).toBeNull();
@@ -307,7 +307,7 @@ describe('BuiltInSkillsSection', () => {
       expect(screen.getByTestId('builtin-skills-unavailable')).toBeTruthy();
     });
     expect(screen.getByTestId('settings-builtin-skills').textContent).toContain(
-      'Skills from OpenKnowledge',
+      'Skills from Palimpsest',
     );
   });
 
@@ -472,7 +472,7 @@ describe('BuiltInSkillsSection', () => {
 
     test('a bridge that fails to answer costs the offer, not the section', async () => {
       introSeen = false;
-      Object.defineProperty(window, 'okDesktop', {
+      Object.defineProperty(window, 'psDesktop', {
         value: { integrations: { status: async () => Promise.reject(new Error('no main')) } },
         configurable: true,
         writable: true,

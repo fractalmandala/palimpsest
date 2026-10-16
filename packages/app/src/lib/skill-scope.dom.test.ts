@@ -10,7 +10,7 @@ describe('skillDisplayName', () => {
   });
 
   test('leaves post-rename and user-authored names alone', () => {
-    for (const name of ['note-taking', 'research-with-sources', 'my-own-skill', 'open-knowledge']) {
+    for (const name of ['note-taking', 'research-with-sources', 'my-own-skill', 'palimpsest']) {
       expect(skillDisplayName(name)).toBe(name);
     }
   });

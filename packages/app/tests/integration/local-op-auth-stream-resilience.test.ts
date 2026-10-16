@@ -17,7 +17,7 @@ afterEach(async () => {
 });
 
 function scratchDir(): { sigtermMarker: string; completedMarker: string } {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-auth-resilience-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-auth-resilience-'));
   tmpDirs.push(dir);
   return { sigtermMarker: join(dir, 'sigterm'), completedMarker: join(dir, 'completed') };
 }

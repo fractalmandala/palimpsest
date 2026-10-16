@@ -1,8 +1,8 @@
-import { type FrontmatterValue, inferType } from '@inkeep/open-knowledge-core/frontmatter/schema';
+import { type FrontmatterValue, inferType } from '@palimpsest/core/frontmatter/schema';
 import type {
   FrontmatterDelta,
   PropertyChange,
-} from '@inkeep/open-knowledge-core/frontmatter-diff';
+} from '@palimpsest/core/frontmatter-diff';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Minus, Pencil, Plus } from 'lucide-react';
 import type { ReactNode } from 'react';

@@ -2,7 +2,7 @@ import { docNameFromHash } from '@/lib/doc-hash';
 import { isPaneId, type PaneId } from '@/lib/pane-visibility-store';
 import { scopedStorageKey } from '@/lib/storage-scope';
 
-const STORAGE_KEY = 'ok-narrow-workspace-v1';
+const STORAGE_KEY = 'ps-narrow-workspace-v1';
 
 export interface NarrowWorkspaceSession {
   selected: PaneId | null;

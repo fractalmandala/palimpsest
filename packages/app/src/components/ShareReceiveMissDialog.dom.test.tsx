@@ -1,4 +1,4 @@
-import type { ShareTargetStatusResponse } from '@inkeep/open-knowledge-core';
+import type { ShareTargetStatusResponse } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { useSyncExternalStore } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -89,7 +89,7 @@ type FetchTargetStatus = (req: {
 }) => Promise<ShareTargetStatusResponse | null>;
 
 function installBridge(fetchTargetStatus: FetchTargetStatus): void {
-  (window as { okDesktop?: unknown }).okDesktop = {
+  (window as { psDesktop?: unknown }).psDesktop = {
     config: { projectPath: '/tmp/project' },
     project: { fetchTargetStatus },
   };
@@ -128,7 +128,7 @@ afterEach(() => {
   cleanup();
   missDialogStore.dismiss();
   pendingReceiveNavStore.clear();
-  Reflect.deleteProperty(window, 'okDesktop');
+  Reflect.deleteProperty(window, 'psDesktop');
   autoSyncWrites = [];
   configPatchResult = { ok: true };
   syncTriggers = [];

@@ -17,7 +17,7 @@ function identifyAll(pids, eventsPath, runId) {
           ...process.env,
           ...(eventsPath === undefined
             ? {}
-            : { OK_LIFETIME_IDENTITY_EVENTS: eventsPath, OK_LIFETIME_IDENTITY_RUN: runId }),
+            : { PS_LIFETIME_IDENTITY_EVENTS: eventsPath, PS_LIFETIME_IDENTITY_RUN: runId }),
         },
       },
     );

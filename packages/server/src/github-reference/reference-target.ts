@@ -1,4 +1,4 @@
-import { isGitHubHost, normalizeGitHostname } from '@inkeep/open-knowledge-core';
+import { isGitHubHost, normalizeGitHostname } from '@palimpsest/core';
 
 export interface GitHubReferenceTarget {
   readonly host: string;

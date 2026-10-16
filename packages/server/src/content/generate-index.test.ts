@@ -1,4 +1,4 @@
-import { resolveInternalHref } from '@inkeep/open-knowledge-core';
+import { resolveInternalHref } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { buildIndexMarkdown, GENERATOR_OWNED_HEADINGS, type IndexEntry } from './generate-index.ts';
 

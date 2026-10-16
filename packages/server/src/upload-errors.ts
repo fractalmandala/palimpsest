@@ -1,4 +1,4 @@
-import { assertNeverProblemType, type ProblemType } from '@inkeep/open-knowledge-core';
+import { assertNeverProblemType, type ProblemType } from '@palimpsest/core';
 import type { HttpErrorStatus } from './http/error-response.ts';
 
 export type UploadWriteReason = Extract<

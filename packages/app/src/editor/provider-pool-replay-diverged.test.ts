@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { MarkdownManager } from '@inkeep/open-knowledge-core';
+import { MarkdownManager } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { updateYFragment } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -59,8 +59,8 @@ let info: ReturnType<typeof vi.spyOn>;
 function replaySettled(): boolean {
   const seen = [...emittedEvents(warn), ...emittedEvents(info)];
   return (
-    seen.includes('ok-buffer-replay-content-applied') ||
-    seen.includes('ok-pool-buffer-replay-delta-applied')
+    seen.includes('ps-buffer-replay-content-applied') ||
+    seen.includes('ps-pool-buffer-replay-delta-applied')
   );
 }
 
@@ -97,19 +97,19 @@ describe('content-level replay against content the server has moved past', () =>
     });
 
     expect(ytext.toString()).toContain(MOVED_MARKER);
-    expect(emittedEvents(warn)).toContain('ok-buffer-replay-diverged');
-    expect(emittedEvents(warn)).not.toContain('ok-buffer-replay-content-applied');
-    expect(emittedEvents(info)).toContain('ok-pool-buffer-replay-delta-applied');
+    expect(emittedEvents(warn)).toContain('ps-buffer-replay-diverged');
+    expect(emittedEvents(warn)).not.toContain('ps-buffer-replay-content-applied');
+    expect(emittedEvents(info)).toContain('ps-pool-buffer-replay-delta-applied');
   });
 
   it('splices the same buffer when the server content has NOT moved', async () => {
     const { ytext } = armReplay(BASE_MD);
 
     await vi.waitFor(() => {
-      expect(emittedEvents(warn)).toContain('ok-buffer-replay-content-applied');
+      expect(emittedEvents(warn)).toContain('ps-buffer-replay-content-applied');
     });
     expect(ytext.toString()).toContain(BUFFERED_MARKER);
-    expect(emittedEvents(warn)).not.toContain('ok-buffer-replay-diverged');
+    expect(emittedEvents(warn)).not.toContain('ps-buffer-replay-diverged');
   });
 });
 
@@ -129,9 +129,9 @@ describe('content-level replay of an edit the comparator cannot see', () => {
     entry.provider.emit('synced', { state: true });
 
     await vi.waitFor(() => {
-      expect(emittedEvents(warn)).toContain('ok-buffer-replay-content-applied');
+      expect(emittedEvents(warn)).toContain('ps-buffer-replay-content-applied');
     });
     expect(ytext.toString()).toContain('# Notes\n\n\n\nSettled paragraph.');
-    expect(emittedEvents(warn)).not.toContain('ok-buffer-replay-diverged');
+    expect(emittedEvents(warn)).not.toContain('ps-buffer-replay-diverged');
   });
 });

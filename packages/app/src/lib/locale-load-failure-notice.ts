@@ -1,9 +1,9 @@
-import type { SupportedLocale } from '@inkeep/open-knowledge-core/i18n/locales';
+import type { SupportedLocale } from '@palimpsest/core/i18n/locales';
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 import { i18n } from './i18n';
 
-const NOTICE_ID = 'ok-locale-load-failed';
+const NOTICE_ID = 'ps-locale-load-failed';
 
 export interface LocaleLoadFailureNotice {
   locale: SupportedLocale;

@@ -1,4 +1,4 @@
-import type { SkillPreview } from '@inkeep/open-knowledge-core';
+import type { SkillPreview } from '@palimpsest/core';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, test, vi } from 'vitest';

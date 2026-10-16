@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ProblemDetailsSchema, SkillInstallSuccessSchema } from '@inkeep/open-knowledge-core';
+import { ProblemDetailsSchema, SkillInstallSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -87,7 +87,7 @@ describe('skill install-projection lifecycle', () => {
     expect(res.status).toBe(404);
   });
 
-  test('install refuses the reserved open-knowledge* prefix → 400', async () => {
+  test('install refuses the reserved palimpsest* prefix → 400', async () => {
     expect((await putSkill('open-knowledge-mine')).status).toBe(200);
     const res = await installSkill({ name: 'open-knowledge-mine', targets: ['claude'] });
     expect(res.status).toBe(400);
@@ -96,7 +96,7 @@ describe('skill install-projection lifecycle', () => {
   });
 
   test('install refuses a source with git conflict markers → 400', async () => {
-    const dir = join(server.contentDir, '.ok', 'skills', 'conflicted');
+    const dir = join(server.contentDir, '.ps', 'skills', 'conflicted');
     mkdirSync(dir, { recursive: true });
     writeFileSync(
       join(dir, 'SKILL.md'),

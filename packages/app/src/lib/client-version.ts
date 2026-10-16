@@ -5,8 +5,8 @@ import {
   clientVersionHeaders,
   clientVersionTokenFields,
   deriveClientSurface,
-} from '@inkeep/open-knowledge-core/client-version';
-import { detectEmbeddedHostFromBrowser } from '@inkeep/open-knowledge-core/constants/embedded-host';
+} from '@palimpsest/core/client-version';
+import { detectEmbeddedHostFromBrowser } from '@palimpsest/core/constants/embedded-host';
 
 const importMetaEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
 
@@ -14,7 +14,7 @@ export const BROWSER_RUNTIME_VERSION: string =
   importMetaEnv?.VITE_APP_VERSION ?? CLIENT_RUNTIME_VERSION_FALLBACK;
 
 export const CLIENT_SURFACE: ClientSurface = deriveClientSurface({
-  hasDesktopBridge: typeof window !== 'undefined' && window.okDesktop !== undefined,
+  hasDesktopBridge: typeof window !== 'undefined' && window.psDesktop !== undefined,
   embeddedHost: detectEmbeddedHostFromBrowser(),
 });
 

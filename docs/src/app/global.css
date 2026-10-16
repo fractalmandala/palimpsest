@@ -213,13 +213,13 @@
  * chips for blocks rendered inside not-prose. Surfaces/borders/text are
  * driven by Fumadocs `fd-*` tokens in the components themselves.
  * ------------------------------------------------------------------ */
-.ok-overview {
+.ps-overview {
   /* Canonical azure — same hex used in packages/app/src/globals.css. */
   --ok-accent: #3784ff;
   --ok-accent-ink: #00245d;
   --ok-accent-soft: #e6efff;
 }
-.dark .ok-overview {
+.dark .ps-overview {
   --ok-accent: #69a3ff;
   --ok-accent-ink: lab(75.6609% 6.56351 -50.5176);
   --ok-accent-soft: lab(18.1437% 4.66092 -25.0407);
@@ -227,7 +227,7 @@
 
 /* Vertical spine joining the three layers; the icon chips carry a 5px
    card-colored ring that masks it where they sit, so it reads as a stack. */
-.ok-overview.ok-stack::before {
+.ps-overview.ps-stack::before {
   content: "";
   position: absolute;
   left: 42px;
@@ -239,8 +239,8 @@
 }
 
 /* Inline code chips inside the not-prose overview blocks (prose styling
-   doesn't reach them). Mirrors the design's `.ok-code`. */
-.ok-overview code {
+   doesn't reach them). Mirrors the design's `.ps-code`. */
+.ps-overview code {
   font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
   font-size: 0.82em;
   color: var(--color-fd-foreground);
@@ -251,56 +251,56 @@
 }
 
 /* ------------------------------------------------------------------
- * .ok-flush-tabs — strip Fumadocs' tab "card" (outer border + secondary
+ * .ps-flush-tabs — strip Fumadocs' tab "card" (outer border + secondary
  * bg, and the inner panel's bg + padding) so the tab content flows like
  * normal page content (no double left-rail against <Steps>). Keeps a
  * hairline under the trigger row so it still reads as tabs. Unlayered so
  * it wins over Tailwind utilities; targets ARIA roles so Radix a11y + the
  * shared-groupId sync are preserved. Purely visual.
  * ------------------------------------------------------------------ */
-.ok-flush-tabs {
+.ps-flush-tabs {
   border: 0;
   border-radius: 0;
   background: transparent;
   overflow: visible;
 }
-.ok-flush-tabs > [role="tablist"] {
+.ps-flush-tabs > [role="tablist"] {
   gap: 1.5rem;
   padding-inline: 0;
   border-bottom: 1px solid var(--color-fd-border);
   margin-bottom: 1.5rem;
 }
-.ok-flush-tabs [role="tab"] {
+.ps-flush-tabs [role="tab"] {
   font-size: 1rem;
   line-height: 1.25;
   font-weight: 600;
   padding-block: 0.15rem 0.6rem;
   color: var(--color-fd-muted-foreground);
 }
-.ok-flush-tabs [role="tab"]:hover {
+.ps-flush-tabs [role="tab"]:hover {
   color: var(--color-fd-foreground);
 }
-.ok-flush-tabs [role="tab"][data-state="active"] {
+.ps-flush-tabs [role="tab"][data-state="active"] {
   color: var(--color-fd-foreground);
   font-weight: 700;
 }
-.ok-flush-tabs [role="tabpanel"] {
+.ps-flush-tabs [role="tabpanel"] {
   padding: 0;
   background: transparent;
   border-radius: 0;
 }
 
 /* ------------------------------------------------------------------
- * .ok-tabs-h2 — opt-in modifier (layered on .ok-flush-tabs) that gives a
+ * .ps-tabs-h2 — opt-in modifier (layered on .ps-flush-tabs) that gives a
  * page's install-path tabs the visual weight of an <h2> section heading:
  * extra space above so they stand out from the preceding paragraph, and
  * trigger labels sized to match a Fumadocs prose `##`. Scoped to the page
- * that opts in — the shared .ok-flush-tabs (e.g. Quickstart) is unchanged.
+ * that opts in — the shared .ps-flush-tabs (e.g. Quickstart) is unchanged.
  * ------------------------------------------------------------------ */
-.ok-tabs-h2 {
+.ps-tabs-h2 {
   margin-top: 2.5rem;
 }
-.ok-tabs-h2 [role="tab"] {
+.ps-tabs-h2 [role="tab"] {
   font-size: 1.5rem;
 }
 
@@ -346,101 +346,101 @@
 }
 
 /* ------------------------------------------------------------------
- * .ok-prosemirror — Landing-page editor demo content styles.
+ * .ps-prosemirror — Landing-page editor demo content styles.
  * Mirrors the real .ProseMirror styles from packages/app/src/globals.css
  * so the demo looks identical to the shipped product.
  * ------------------------------------------------------------------ */
 
-.ok-prosemirror > *:first-child {
+.ps-prosemirror > *:first-child {
   margin-top: 0;
 }
 
-.ok-prosemirror h1,
-.ok-prosemirror h2,
-.ok-prosemirror h3 {
+.ps-prosemirror h1,
+.ps-prosemirror h2,
+.ps-prosemirror h3 {
   font-weight: 600;
   margin-top: 1em;
   margin-bottom: 0.4em;
 }
-.ok-prosemirror h1 {
+.ps-prosemirror h1 {
   font-size: 1.5em;
   letter-spacing: -0.04em;
 }
-.ok-prosemirror h2 {
+.ps-prosemirror h2 {
   font-size: 1.25em;
   letter-spacing: -0.03em;
 }
-.ok-prosemirror h3 {
+.ps-prosemirror h3 {
   font-size: 1.1em;
   letter-spacing: -0.02em;
 }
-.ok-prosemirror p {
+.ps-prosemirror p {
   margin-bottom: 0.5em;
 }
-.ok-prosemirror ul {
+.ps-prosemirror ul {
   list-style-type: disc;
   padding-left: 1.5em;
   margin-bottom: 0.5em;
 }
-.ok-prosemirror li {
+.ps-prosemirror li {
   margin-bottom: 0.15em;
 }
-.ok-prosemirror blockquote {
+.ps-prosemirror blockquote {
   border-left: 3px solid var(--slide-border);
   padding-left: 1em;
   margin-left: 0;
   margin-bottom: 0.5em;
   color: var(--slide-muted);
 }
-.ok-prosemirror pre {
+.ps-prosemirror pre {
   background: color-mix(in srgb, var(--slide-text) 4%, transparent);
   border-radius: 0.5em;
   padding: 0.75em 1em;
   margin-bottom: 0.5em;
   overflow-x: auto;
 }
-.ok-prosemirror code {
+.ps-prosemirror code {
   background: color-mix(in srgb, var(--slide-text) 6%, transparent);
   border-radius: 0.25em;
   padding: 0.15em 0.35em;
   font-family: ui-monospace, monospace;
   font-size: 0.875em;
 }
-.ok-prosemirror pre code {
+.ps-prosemirror pre code {
   background: none;
   padding: 0;
   border-radius: 0;
   font-size: inherit;
   color: inherit;
 }
-.ok-prosemirror a {
+.ps-prosemirror a {
   color: var(--slide-accent);
   font-weight: 500;
 }
-.ok-prosemirror hr {
+.ps-prosemirror hr {
   border: none;
   border-top: 1px solid var(--border);
   margin: 1em 0;
 }
-.ok-prosemirror .ok-wikilink {
+.ps-prosemirror .ps-wikilink {
   color: var(--slide-accent);
   font-weight: 500;
   background: color-mix(in srgb, var(--slide-accent) 8%, transparent);
   border-radius: 0.25em;
   padding: 0.1em 0.35em;
 }
-.dark .ok-prosemirror blockquote {
+.dark .ps-prosemirror blockquote {
   border-color: color-mix(in srgb, var(--slide-muted) 40%, transparent);
 }
-.dark .ok-prosemirror pre {
+.dark .ps-prosemirror pre {
   background: color-mix(in srgb, var(--slide-text) 6%, transparent);
 }
-.dark .ok-prosemirror code {
+.dark .ps-prosemirror code {
   background: color-mix(in srgb, var(--slide-text) 10%, transparent);
 }
 
 /* Placeholder */
-.ok-prosemirror p.is-empty::before {
+.ps-prosemirror p.is-empty::before {
   content: attr(data-placeholder);
   pointer-events: none;
   float: left;
@@ -450,45 +450,45 @@
 }
 
 /* Ordered lists */
-.ok-prosemirror ol {
+.ps-prosemirror ol {
   list-style-type: decimal;
   padding-left: 1.5em;
   margin-bottom: 0.5em;
 }
 
 /* Task lists */
-.ok-prosemirror ul[data-type="taskList"] {
+.ps-prosemirror ul[data-type="taskList"] {
   list-style: none;
   padding-left: 0;
 }
-.ok-prosemirror ul[data-type="taskList"] li {
+.ps-prosemirror ul[data-type="taskList"] li {
   display: flex;
   align-items: flex-start;
   gap: 0.5em;
 }
-.ok-prosemirror ul[data-type="taskList"] li > label {
+.ps-prosemirror ul[data-type="taskList"] li > label {
   margin-top: 0.25em;
 }
 
 /* Tables */
-.ok-prosemirror table {
+.ps-prosemirror table {
   border-collapse: collapse;
   width: 100%;
   margin-bottom: 0.5em;
 }
-.ok-prosemirror th,
-.ok-prosemirror td {
+.ps-prosemirror th,
+.ps-prosemirror td {
   border: 1px solid var(--border);
   padding: 0.4em 0.6em;
   text-align: left;
 }
-.ok-prosemirror th {
+.ps-prosemirror th {
   font-weight: 600;
   background: color-mix(in srgb, var(--slide-text) 4%, transparent);
 }
 
 /* Block controls — + button and drag grip (mirrors packages/app/src/globals.css) */
-.ok-block-controls {
+.ps-block-controls {
   position: absolute;
   display: flex;
   align-items: center;
@@ -498,7 +498,7 @@
   user-select: none;
 }
 
-.ok-add-block-btn {
+.ps-add-block-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -512,11 +512,11 @@
   padding: 0;
   transition: background-color 100ms ease-out;
 }
-.ok-add-block-btn:hover {
+.ps-add-block-btn:hover {
   background-color: color-mix(in srgb, var(--slide-text) 6%, transparent);
 }
 
-.ok-drag-grip {
+.ps-drag-grip {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -530,15 +530,15 @@
     background-color 100ms ease-out,
     opacity 100ms ease-out;
 }
-.ok-drag-grip:hover {
+.ps-drag-grip:hover {
   opacity: 0.75;
   background-color: color-mix(in srgb, var(--slide-text) 6%, transparent);
 }
-.ok-drag-grip:active {
+.ps-drag-grip:active {
   cursor: grabbing;
 }
 
-.ok-block-controls[style*="visibility: hidden"],
-.ok-block-controls[style*="visibility:hidden"] {
+.ps-block-controls[style*="visibility: hidden"],
+.ps-block-controls[style*="visibility:hidden"] {
   opacity: 0;
 }

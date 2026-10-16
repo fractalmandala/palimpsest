@@ -94,7 +94,7 @@ describe('createTerminalWindow', () => {
   test('titles the window with the project name when a project is present', () => {
     const h = makeDeps({ id: 70_001, project: PROJECT });
     createTerminalWindow(h.deps);
-    expect(h.createWindow.mock.calls[0]?.[0]?.title).toBe('Open Knowledge Terminal — project');
+    expect(h.createWindow.mock.calls[0]?.[0]?.title).toBe('Palimpsest Terminal — project');
   });
 
   test('records the window in the terminalWindows registry with its project root', () => {
@@ -122,7 +122,7 @@ describe('createTerminalWindow', () => {
     expect(args?.additionalArguments).toContain('--ok-collab-url=');
     expect(args?.additionalArguments).toContain('--ok-api-origin=');
     expect(args?.additionalArguments).toContain('--ok-project-path=');
-    expect(args?.title).toBe('Open Knowledge Terminal');
+    expect(args?.title).toBe('Palimpsest Terminal');
     expect(getTerminalWindowContext(70_002)?.projectRoot).toBeNull();
   });
 

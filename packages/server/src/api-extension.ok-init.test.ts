@@ -43,7 +43,7 @@ function initRepo(cwd: string): void {
 async function bootRig(
   options: { localOpConcurrencyGuard?: TestConcurrencyGuard } = {},
 ): Promise<TestRig> {
-  const tmpRoot = realpathSync(mkdtempSync(join(homedir(), '.ok-init-api-test-')));
+  const tmpRoot = realpathSync(mkdtempSync(join(homedir(), '.ps-init-api-test-')));
   const projectDir = join(tmpRoot, 'host-project');
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
@@ -118,7 +118,7 @@ afterEach(async () => {
 });
 
 describe('POST /api/local-op/ok-init', () => {
-  test('scaffolds .ok/config.yml on a fresh git worktree → {ok:true}', async () => {
+  test('scaffolds .ps/config.yml on a fresh git worktree → {ok:true}', async () => {
     rig = await bootRig();
     const target = join(rig.tmpRoot, 'fresh-worktree');
     mkdirSync(target);
@@ -127,15 +127,15 @@ describe('POST /api/local-op/ok-init', () => {
     run(target, 'git add -A');
     run(target, 'git commit -q -m initial');
 
-    expect(existsSync(join(target, '.ok'))).toBe(false);
+    expect(existsSync(join(target, '.ps'))).toBe(false);
 
     const res = await postOkInit(rig.port, { projectPath: target });
     expect(res.status).toBe(200);
     expect(res.json.ok).toBe(true);
     expect(res.json.projectPath).toBe(target);
-    expect(existsSync(join(target, '.ok/config.yml'))).toBe(true);
-    expect(existsSync(join(target, '.ok/.gitignore'))).toBe(true);
-    expect(existsSync(join(target, '.okignore'))).toBe(true);
+    expect(existsSync(join(target, '.ps/config.yml'))).toBe(true);
+    expect(existsSync(join(target, '.ps/.gitignore'))).toBe(true);
+    expect(existsSync(join(target, '.psignore'))).toBe(true);
   });
 
   test('idempotent: re-call on already-initialized project returns {ok:true} without rewriting config.yml', async () => {
@@ -150,7 +150,7 @@ describe('POST /api/local-op/ok-init', () => {
     const first = await postOkInit(rig.port, { projectPath: target });
     expect(first.json.ok).toBe(true);
 
-    const configPath = join(target, '.ok/config.yml');
+    const configPath = join(target, '.ps/config.yml');
     writeFileSync(configPath, 'custom: true\n');
 
     const second = await postOkInit(rig.port, { projectPath: target });
@@ -167,7 +167,7 @@ describe('POST /api/local-op/ok-init', () => {
     expect(res.status).toBe(200);
     expect(res.json.ok).toBe(false);
     expect(res.json.reason).toBe('not-a-git-worktree');
-    expect(existsSync(join(target, '.ok'))).toBe(false);
+    expect(existsSync(join(target, '.ps'))).toBe(false);
   });
 
   test('non-existent path returns {ok:false, reason:"not-a-git-worktree"}', async () => {
@@ -181,7 +181,7 @@ describe('POST /api/local-op/ok-init', () => {
 
   test('projectPath outside home returns 400 (urn:ok:error:dir-outside-home) without scaffolding', async () => {
     rig = await bootRig();
-    const outsideRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-outside-home-')));
+    const outsideRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-outside-home-')));
     try {
       mkdirSync(join(outsideRoot, 'repo'));
       const target = join(outsideRoot, 'repo');
@@ -193,7 +193,7 @@ describe('POST /api/local-op/ok-init', () => {
       const res = await postOkInit(rig.port, { projectPath: target });
       expect(res.status).toBe(400);
       expect(res.json.type).toBe('urn:ok:error:dir-outside-home');
-      expect(existsSync(join(target, '.ok'))).toBe(false);
+      expect(existsSync(join(target, '.ps'))).toBe(false);
     } finally {
       rmSync(outsideRoot, { recursive: true, force: true });
     }
@@ -240,7 +240,7 @@ describe('POST /api/local-op/ok-init', () => {
     expect(released).toEqual([]);
 
     rejectAcquisition = false;
-    writeFileSync(join(target, '.ok'), 'blocks scaffold directory\n');
+    writeFileSync(join(target, '.ps'), 'blocks scaffold directory\n');
     const failed = await postOkInit(rig.port, { projectPath: target });
     expect(failed.status).toBe(200);
     expect(failed.json).toMatchObject({ ok: false, reason: 'init-failed' });
@@ -262,6 +262,6 @@ describe('POST /api/local-op/ok-init', () => {
 
     const res = await postOkInit(rig.port, { projectPath: wt });
     expect(res.json.ok).toBe(true);
-    expect(existsSync(join(wt, '.ok/config.yml'))).toBe(true);
+    expect(existsSync(join(wt, '.ps/config.yml'))).toBe(true);
   });
 });

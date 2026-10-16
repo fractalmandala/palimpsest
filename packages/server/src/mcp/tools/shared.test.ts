@@ -1,7 +1,7 @@
 import {
   SKILL_INSTALL_WARNING_CODES,
   summarizeLintPluginFailures,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { z } from 'zod';
 
@@ -22,7 +22,7 @@ import {
   httpPost,
   INSTALL_WARNING_CODE_GLOSS,
   normalizeDocName,
-  okReservedPathRedirect,
+  psReservedPathRedirect,
   outputSchemaWithText,
   parseRenameCollidingPairs,
   requestFailureText,
@@ -35,7 +35,7 @@ import {
 } from './shared.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -287,17 +287,17 @@ describe('normalizeDocName', () => {
 
 describe('hocuspocusNotRunningError', () => {
   test('names the recovery command', () => {
-    expect(hocuspocusNotRunningError()).toContain('ok start');
+    expect(hocuspocusNotRunningError()).toContain('ps start');
   });
 
-  test('keeps the Stable text byte-identical and names ok-beta on Beta', () => {
+  test('keeps the Stable text byte-identical and names ps-beta on Beta', () => {
     try {
-      vi.stubEnv('OK_CHANNEL', 'stable');
+      vi.stubEnv('PS_CHANNEL', 'stable');
       expect(hocuspocusNotRunningError()).toBe(
-        'Error: Hocuspocus server is not running. Start it with `ok start`, then retry.\nDo not fall back to native file edits for in-scope markdown; route writes through OpenKnowledge so attribution and live sync stay intact.',
+        'Error: Hocuspocus server is not running. Start it with `ps start`, then retry.\nDo not fall back to native file edits for in-scope markdown; route writes through Palimpsest so attribution and live sync stay intact.',
       );
-      vi.stubEnv('OK_CHANNEL', 'beta');
-      expect(hocuspocusNotRunningError()).toContain('Start it with `ok-beta start`, then retry.');
+      vi.stubEnv('PS_CHANNEL', 'beta');
+      expect(hocuspocusNotRunningError()).toContain('Start it with `ps-beta start`, then retry.');
     } finally {
       vi.unstubAllEnvs();
     }
@@ -305,7 +305,7 @@ describe('hocuspocusNotRunningError', () => {
 
   test('does not offer a native-edit escape hatch', () => {
     expect(hocuspocusNotRunningError()).toContain('Do not fall back to native file edits');
-    expect(hocuspocusNotRunningError()).toContain('route writes through OpenKnowledge');
+    expect(hocuspocusNotRunningError()).toContain('route writes through Palimpsest');
   });
 });
 
@@ -926,39 +926,39 @@ describe('alignWarningCodes — defensive normalization at trust boundary', () =
   });
 });
 
-describe('okReservedPathRedirect', () => {
-  test('.ok/skills/ path → skill-verb redirect naming write-skill', () => {
-    const msg = okReservedPathRedirect('.ok/skills/research/SKILL');
+describe('psReservedPathRedirect', () => {
+  test('.ps/skills/ path → skill-verb redirect naming write-skill', () => {
+    const msg = psReservedPathRedirect('.ps/skills/research/SKILL');
     expect(msg).not.toBeNull();
     expect(msg).toContain('`skill` target');
     expect(msg).toContain('open-knowledge-write-skill');
   });
 
   test('leading slash is tolerated', () => {
-    expect(okReservedPathRedirect('/.ok/skills/x/SKILL')).toContain('`skill` target');
+    expect(psReservedPathRedirect('/.ps/skills/x/SKILL')).toContain('`skill` target');
   });
 
-  test('.ok/templates/ path → template-verb redirect', () => {
-    expect(okReservedPathRedirect('.ok/templates/note')).toContain('`template` target');
+  test('.ps/templates/ path → template-verb redirect', () => {
+    expect(psReservedPathRedirect('.ps/templates/note')).toContain('`template` target');
   });
 
-  test('a raw document write into .ok/templates is refused, not admitted as a content doc (D7)', () => {
-    const path = '.ok/templates/standup';
+  test('a raw document write into .ps/templates is refused, not admitted as a content doc (D7)', () => {
+    const path = '.ps/templates/standup';
     expect(normalizeDocName(path).ok).toBe(false);
-    expect(okReservedPathRedirect(path)).toContain('`template` target');
+    expect(psReservedPathRedirect(path)).toContain('`template` target');
 
-    const nested = 'notes/.ok/templates/standup';
+    const nested = 'notes/.ps/templates/standup';
     expect(normalizeDocName(nested).ok).toBe(false);
-    expect(okReservedPathRedirect(nested)).toBeNull();
+    expect(psReservedPathRedirect(nested)).toBeNull();
   });
 
-  test('other .ok/ path → generic .ok redirect', () => {
-    expect(okReservedPathRedirect('.ok/config/whatever')).toContain('not addressable as documents');
+  test('other .ps/ path → generic .ps redirect', () => {
+    expect(psReservedPathRedirect('.ps/config/whatever')).toContain('not addressable as documents');
   });
 
   test('non-.ok path → null (normal docName error stands)', () => {
-    expect(okReservedPathRedirect('meetings/standup')).toBeNull();
-    expect(okReservedPathRedirect('docs/.hidden/x')).toBeNull();
+    expect(psReservedPathRedirect('meetings/standup')).toBeNull();
+    expect(psReservedPathRedirect('docs/.hidden/x')).toBeNull();
   });
 });
 

@@ -12,6 +12,6 @@ declare module 'vitest' {
 afterEach(({ task }) => {
   const temp = tmpdir();
   task.meta.authorityRegistryDirectories = readdirSync(temp)
-    .filter((entry) => entry.startsWith('ok-test-authority-'))
+    .filter((entry) => entry.startsWith('ps-test-authority-'))
     .map((entry) => join(temp, entry));
 });

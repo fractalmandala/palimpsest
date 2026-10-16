@@ -109,7 +109,7 @@ let boundary: SignalBoundary;
 let standIns: ChildProcess[];
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-settle-servers-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-settle-servers-'));
   standIns = [];
   boundary = installSignalBoundary({ deliverToHeldChildren: false });
 });
@@ -143,7 +143,7 @@ async function startStandInServer(): Promise<{
   lockPath: string;
   logPath: string;
 }> {
-  const lockPath = join(root, '.ok', 'local', 'server.lock');
+  const lockPath = join(root, '.ps', 'local', 'server.lock');
   const logPath = join(root, 'stand-in.log');
   const standIn = spawn(process.execPath, ['-e', STAND_IN_SERVER, lockPath, logPath], {
     stdio: ['pipe', 'ignore', 'ignore'],
@@ -568,11 +568,11 @@ function mentionsPid(text: string, pid: number): boolean {
 describe('cleanupIncompleteReport — the app-cleanup-incomplete attachment body', () => {
   const survivingServers = [
     {
-      lockPath: join(tmpdir(), 'ok-smoke-report', 'consent', '.ok', 'local', 'server.lock'),
+      lockPath: join(tmpdir(), 'ps-smoke-report', 'consent', '.ps', 'local', 'server.lock'),
       pid: 4_194_319,
     },
     {
-      lockPath: join(tmpdir(), 'ok-smoke-report', 'create-new', 'a', '.ok', 'local', 'server.lock'),
+      lockPath: join(tmpdir(), 'ps-smoke-report', 'create-new', 'a', '.ps', 'local', 'server.lock'),
       pid: 41_943,
     },
   ] satisfies ServerLockRecord[];
@@ -631,7 +631,7 @@ describe('cleanupIncompleteReport — the app-cleanup-incomplete attachment body
   );
 
   test('a server lock that never yields a readable pid within the release window is named in the warning and the body by its exact path alone, and nothing is probed or signalled', async () => {
-    const local = join(root, '.ok', 'local');
+    const local = join(root, '.ps', 'local');
     mkdirSync(local, { recursive: true });
     const lockPath = join(local, 'server.lock');
     writeFileSync(lockPath, '');

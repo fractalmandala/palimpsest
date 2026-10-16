@@ -1,9 +1,9 @@
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core/constants/editors';
+import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import type {
   SkillInstallWarningCode,
   SkillScope,
   SkillsListEntry,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   ArrowLeftRight,
@@ -337,7 +337,7 @@ export function SkillRevealMenuItem({
   absolutePath: string | undefined;
   menuKind?: SkillMenuKind;
 }) {
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   if (!bridge || !absolutePath) return null;
   return (
     <SkillMenuItem
@@ -515,7 +515,7 @@ export function SkillContextMenuItems({
   const workspace = useWorkspace();
   const installStates = useInstalledAgents().states;
   const { dispatch } = useHandoffDispatch();
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const input = buildSkillHandoffInput({
     skillName: skill.name,
     scope: skill.scope,

@@ -4,7 +4,7 @@ import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useTerminalConsentState, useTerminalEnabledWriter } from '@/hooks/use-terminal-enabled';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { lazyWithPreload } from '@/lib/lazy-with-preload';
 import type { TerminalLaunchIntent } from './EditorPane';
 import type { TerminalCommandId } from './handoff/terminal-command-events';
@@ -15,7 +15,7 @@ const TerminalPanel = lazyWithPreload(() =>
 );
 
 interface TerminalGateProps {
-  readonly bridge: OkDesktopBridge;
+  readonly bridge: PsDesktopBridge;
   readonly onClose?: () => void;
   readonly onExit?: (info: { readonly exitCode: number; readonly signal: number | null }) => void;
   readonly onTitleChange?: (title: string) => void;

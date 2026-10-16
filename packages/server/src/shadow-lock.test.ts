@@ -8,7 +8,7 @@ import { acquireLock, type LockMetadata, releaseLock } from './shadow-lock';
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-lock-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-lock-test-'));
 });
 
 afterEach(async () => {

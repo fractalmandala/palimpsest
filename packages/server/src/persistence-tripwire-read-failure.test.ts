@@ -37,7 +37,7 @@ describe('tripwire reset readFileSync failure', () => {
   let durabilityState: DocumentDurabilityState;
 
   beforeEach(() => {
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-tripwire-readfail-')));
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-tripwire-readfail-')));
     durabilityState = new DocumentDurabilityState();
   });
 

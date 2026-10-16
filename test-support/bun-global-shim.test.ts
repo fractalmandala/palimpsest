@@ -191,7 +191,7 @@ describe('Bun global facade', () => {
     expect(() =>
       bunFacade.spawnSync({
         cmd: [process.execPath, '-e', 'process.exit(0)'],
-        cwd: join(tmpdir(), 'ok-shim-nonexistent-cwd-probe'),
+        cwd: join(tmpdir(), 'ps-shim-nonexistent-cwd-probe'),
       }),
     ).toThrow();
   });

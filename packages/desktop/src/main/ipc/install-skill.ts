@@ -8,7 +8,7 @@ import {
   recordSkillInstallEvent,
   type SkillInstallEventOutcome,
   writeTargetVersion,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { App, Shell } from 'electron';
 
 export type BuildAndOpenResult =
@@ -27,7 +27,7 @@ interface InstallSkillIpcDeps {
   force?: boolean;
 }
 
-export { detectClaudeDesktopPresence as handleDetectClaudeDesktop } from '@inkeep/open-knowledge-server';
+export { detectClaudeDesktopPresence as handleDetectClaudeDesktop } from '@palimpsest/server';
 
 export async function handleBuildAndOpen(deps: InstallSkillIpcDeps): Promise<BuildAndOpenResult> {
   const home = deps.home ?? homedir();
@@ -63,7 +63,7 @@ export async function handleBuildAndOpen(deps: InstallSkillIpcDeps): Promise<Bui
     };
   }
 
-  const outputPath = join(downloadsDir, 'openknowledge.skill');
+  const outputPath = join(downloadsDir, 'palimpsest.skill');
 
   if (!deps.force) {
     let currentVersion: string | null = null;

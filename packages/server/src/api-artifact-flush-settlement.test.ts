@@ -14,7 +14,7 @@ import * as persistence from './persistence.ts';
 import * as shadowRepo from './shadow-repo.ts';
 
 test('test flush waits for accepted artifact attribution before acknowledging settlement', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-artifact-flush-settlement-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-artifact-flush-settlement-'));
   mkdirSync(join(root, 'templates'));
   let server: BootedServer | undefined;
   let gated = false;
@@ -63,7 +63,7 @@ test('test flush waits for accepted artifact attribution before acknowledging se
     });
     expect(write.status, write.body).toBe(200);
     await started;
-    expect(__formatContributorsForTests()).toContain('templates/.ok/templates/example');
+    expect(__formatContributorsForTests()).toContain('templates/.ps/templates/example');
     let received!: () => void;
     const requestReceived = new Promise<void>((resolve) => {
       received = resolve;
@@ -91,7 +91,7 @@ test('test flush waits for accepted artifact attribution before acknowledging se
 });
 
 test('shared settlement joins the separate skill-file attribution flush', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-skill-file-flush-settlement-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-skill-file-flush-settlement-'));
   const directory = join(root, '.agents', 'skills', 'example');
   mkdirSync(directory, { recursive: true });
   writeFileSync(

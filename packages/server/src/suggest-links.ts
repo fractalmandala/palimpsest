@@ -7,7 +7,7 @@ import {
   stripFrontmatter,
   toWikiLinkSlug,
   type WikiLinkLookupIndex,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { FileIndexEntry } from './file-watcher.ts';
 import { readMarkdownLinkAt, readWikiLinkAt } from './link-syntax.ts';
 import { getLogger } from './logger.ts';

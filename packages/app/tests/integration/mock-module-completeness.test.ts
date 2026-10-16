@@ -160,7 +160,7 @@ describe('the walk, on a fixture package', () => {
   let shared = '';
 
   const makeFixture = (files: Record<string, string>): string => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-mock-completeness-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-mock-completeness-'));
     fixtureRoots.push(root);
     for (const [rel, body] of Object.entries(files)) {
       mkdirSync(dirname(join(root, rel)), { recursive: true });

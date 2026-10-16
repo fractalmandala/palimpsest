@@ -3,8 +3,8 @@ import { menuDispatchHelpLinkUrl } from '../../src/main/menu-dispatch-help-link.
 
 describe('menuDispatchHelpLinkUrl', () => {
   test.each([
-    ['open-github', 'https://github.com/inkeep/open-knowledge'],
-    ['open-docs', 'https://openknowledge.ai/docs'],
+    ['open-github', 'https://github.com/fractalmandala/palimpsest'],
+    ['open-docs', 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content'],
     ['open-discord', 'https://discord.gg/VRKk2EaGHN'],
   ] as const)('%s opens %s', (command, url) => {
     expect(menuDispatchHelpLinkUrl(command)).toBe(url);

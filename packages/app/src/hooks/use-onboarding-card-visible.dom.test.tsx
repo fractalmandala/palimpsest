@@ -20,14 +20,14 @@ function memoryStorage(): OnboardingCardStorage {
 }
 
 function setDesktopHost(recents: Array<{ path: string }>): void {
-  (window as unknown as { okDesktop: unknown }).okDesktop = {
+  (window as unknown as { psDesktop: unknown }).psDesktop = {
     project: { listRecent: () => Promise.resolve(recents) },
     config: { projectPath: CURRENT_PATH },
   };
 }
 
 function clearDesktopHost(): void {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
 }
 
 function mockDocuments(documents: unknown[]): void {
@@ -77,7 +77,7 @@ describe('useOnboardingCardVisible', () => {
 
   test('established session (other project present) → stays hidden', async () => {
     const listRecent = vi.fn(() => Promise.resolve([{ path: CURRENT_PATH }, { path: '/other' }]));
-    (window as unknown as { okDesktop: unknown }).okDesktop = {
+    (window as unknown as { psDesktop: unknown }).psDesktop = {
       project: { listRecent },
       config: { projectPath: CURRENT_PATH },
     };
@@ -138,7 +138,7 @@ describe('useOnboardingCardVisible', () => {
           resolveRecents = res;
         }),
     );
-    (window as unknown as { okDesktop: unknown }).okDesktop = {
+    (window as unknown as { psDesktop: unknown }).psDesktop = {
       project: { listRecent },
       config: { projectPath: CURRENT_PATH },
     };

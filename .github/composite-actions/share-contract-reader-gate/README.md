@@ -1,6 +1,6 @@
 # Share contract reader gate
 
-This composite action blocks a release or deployment when the deployed Open Knowledge reader cannot consume the fixed v2 share corpus.
+This composite action blocks a release or deployment when the deployed Palimpsest reader cannot consume the fixed v2 share corpus.
 
 It runs `.github/scripts/probe-share-contract.mjs`, records the contract epoch, corpus digest, deployment SHA, and fixed-case results in the job summary, and uploads the JSON evidence even when the probe fails.
 

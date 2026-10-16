@@ -1,5 +1,5 @@
 {
-  "name": "open-knowledge",
+  "name": "palimpsest",
   "license": "GPL-3.0-or-later",
   "private": true,
   "type": "module",
@@ -16,13 +16,13 @@
   },
   "scripts": {
     "postinstall": "node scripts/create-turbo-cache-key.mjs && node packages/app/scripts/compile-i18n-catalogs.ts --best-effort",
-    "knip": "turbo run build --filter=@inkeep/open-knowledge-server --filter=@inkeep/open-knowledge-core --output-logs=errors-only && node packages/app/scripts/compile-i18n-catalogs.ts && knip",
+    "knip": "turbo run build --filter=@palimpsest/server --filter=@palimpsest/core --output-logs=errors-only && node packages/app/scripts/compile-i18n-catalogs.ts && knip",
     "notices": "node scripts/generate-third-party-notices.mjs",
     "schema:dump": "node --import tsx packages/core/scripts/dump-schema.ts",
     "build": "turbo run build",
     "build:desktop": "turbo run build:desktop",
     "build:desktop:dir": "turbo run build:desktop:dir",
-    "check:desktop": "turbo run lint typecheck test --filter=@inkeep/open-knowledge-desktop && pnpm run test:uncached",
+    "check:desktop": "turbo run lint typecheck test --filter=@palimpsest/desktop && pnpm run test:uncached",
     "check:fast": "pnpm run typecheck",
     "check:doc-links": "pnpm --dir docs run validate-link",
     "check:server-test-inputs": "node scripts/check-server-test-inputs.mjs",

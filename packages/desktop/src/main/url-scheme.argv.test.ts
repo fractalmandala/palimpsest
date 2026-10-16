@@ -5,7 +5,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { resolveBootRestoreDecision } from './boot-restore-decision.ts';
 import { registerProtocolHandler } from './url-scheme.ts';
 
-const executable = resolve(tmpdir(), 'OpenKnowledge.exe');
+const executable = resolve(tmpdir(), 'Palimpsest.exe');
 const documentPath = (name: string) => resolve(tmpdir(), 'open-knowledge-argv', name);
 
 function makeHandler(
@@ -78,7 +78,7 @@ describe('Windows file-association argv delivery', () => {
         documentPath(`high-${String.fromCharCode(0xd800)}.md`),
         file,
         documentPath(`low-${String.fromCharCode(0xdc00)}.mdx`),
-        `openknowledge://open?file=${encodeURIComponent(linkedFile)}`,
+        `palimpsest://open?file=${encodeURIComponent(linkedFile)}`,
         '--inspect=9229',
       ];
       const h = makeHandler(delivery === 'cold' ? args : undefined);
@@ -209,7 +209,7 @@ describe('Windows file-association argv delivery', () => {
     'preserves custom-scheme single-file delivery on %s startup',
     (delivery) => {
       const file = documentPath('url-note.md');
-      const args = [executable, `openknowledge://open?file=${encodeURIComponent(file)}`];
+      const args = [executable, `palimpsest://open?file=${encodeURIComponent(file)}`];
       const h = makeHandler(delivery === 'cold' ? args : undefined);
       if (delivery === 'second-instance') h.secondInstance(args);
       expect(h.control.urlLaunchOwnsWindow()).toBe(true);
@@ -259,7 +259,7 @@ describe('relaunch without a target', () => {
     const file = documentPath('url-note.md');
     const h = makeHandler();
     h.control.drainQueuedUrls();
-    h.secondInstance([executable, `openknowledge://open?file=${encodeURIComponent(file)}`]);
+    h.secondInstance([executable, `palimpsest://open?file=${encodeURIComponent(file)}`]);
     expect(h.openEphemeralFile).toHaveBeenCalledExactlyOnceWith(file);
     expect(h.onRelaunchWithoutTarget).not.toHaveBeenCalled();
   });

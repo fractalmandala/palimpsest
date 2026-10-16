@@ -32,7 +32,7 @@ describe('moveSkillScope transport', () => {
       new Response(
         JSON.stringify({
           scope: 'global',
-          path: '.ok/skills/example',
+          path: '.ps/skills/example',
           droppedLocations: ['agents', '.team/skills'],
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
@@ -50,7 +50,7 @@ describe('moveSkillScope transport', () => {
     expect(result).toEqual({
       ok: true,
       scope: 'global',
-      path: '.ok/skills/example',
+      path: '.ps/skills/example',
       droppedLocations: ['agents', '.team/skills'],
     });
     expect(changed.count()).toBe(1);

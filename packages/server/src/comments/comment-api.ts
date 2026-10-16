@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import {
   CompleteBatchSuccessSchema,
   DeleteSuccessSchema,
@@ -7,7 +7,7 @@ import {
   PrepareDispatchSuccessSchema,
   QueueSuccessSchema,
   ThreadListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import { extractActorIdentity } from '../extract-actor-identity.ts';
 import { errorResponse } from '../http/error-response.ts';

@@ -1,7 +1,7 @@
 import { lstatSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterEach, describe, expect, test } from 'vitest';
 import { projectInPlaceSkill } from './skill-projection.ts';
 
@@ -11,7 +11,7 @@ afterEach(() => {
 });
 
 function setup() {
-  const cwd = mkdtempSync(join(tmpdir(), 'ok-form-'));
+  const cwd = mkdtempSync(join(tmpdir(), 'ps-form-'));
   dirs.push(cwd);
   const canonical = join(cwd, '.claude/skills/demo');
   mkdirSync(canonical, { recursive: true });

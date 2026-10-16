@@ -71,12 +71,12 @@ describe('decideSingleFileTarget', () => {
     expect(decideSingleFileTarget(['start'], opts(['start']))).toBeNull();
   });
 
-  test('`ok open <file>` (fileish 2nd operand) routes to single-file open of that file', () => {
+  test('`ps open <file>` (fileish 2nd operand) routes to single-file open of that file', () => {
     expect(decideSingleFileTarget(['open', 'notes.md'], opts())).toBe('notes.md');
     expect(decideSingleFileTarget(['open', './start'], opts(['./start']))).toBe('./start');
   });
 
-  test('`ok open <ext-less doc>` is left to the existing `ok open` subcommand', () => {
+  test('`ps open <ext-less doc>` is left to the existing `ps open` subcommand', () => {
     expect(decideSingleFileTarget(['open', 'specs/foo/SPEC'], opts())).toBeNull();
   });
 
@@ -102,7 +102,7 @@ describe('hasMarkdownExtension', () => {
 describe('isFileishTarget (fs-backed predicate)', () => {
   let dir: string;
   beforeAll(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-fileish-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-fileish-'));
     writeFileSync(join(dir, 'note.md'), '# note');
     writeFileSync(join(dir, 'data.json'), '{}');
     mkdirSync(join(dir, 'a-folder'));
@@ -118,7 +118,7 @@ describe('isFileishTarget (fs-backed predicate)', () => {
     expect(isFileishTarget(join(dir, 'note.md'), 'note.md')).toBe(true);
   });
 
-  test('an existing DIRECTORY is NOT fileish — so `ok open <folder>` falls through to the open command', () => {
+  test('an existing DIRECTORY is NOT fileish — so `ps open <folder>` falls through to the open command', () => {
     expect(isFileishTarget(join(dir, 'a-folder'), 'a-folder')).toBe(false);
   });
 

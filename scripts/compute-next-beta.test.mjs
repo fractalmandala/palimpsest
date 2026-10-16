@@ -119,7 +119,7 @@ describe('parseSection', () => {
     const section = `### Patch Changes
 
 - Updated dependencies [abc1234]
-  - @inkeep/open-knowledge-core@0.5.0
+  - @palimpsest/core@0.5.0
 `;
     const groups = parseSection(section);
     expect(groups['Patch Changes']).toHaveLength(1);
@@ -176,7 +176,7 @@ describe('renderNotes', () => {
   body
 
 - Updated dependencies [abc1234]
-  - @inkeep/open-knowledge-core@0.5.0
+  - @palimpsest/core@0.5.0
 `,
     };
     const notes = renderNotes({ ...baseInput, packageDeltas });
@@ -188,11 +188,11 @@ describe('renderNotes', () => {
     const packageDeltas = {
       core: `### Patch Changes
 
-- @inkeep/open-knowledge-core@0.5.0-beta.6
+- @palimpsest/core@0.5.0-beta.6
 `,
       server: `### Patch Changes
 
-- @inkeep/open-knowledge-server@0.5.0-beta.6
+- @palimpsest/server@0.5.0-beta.6
 `,
       cli: `### Patch Changes
 
@@ -200,8 +200,8 @@ describe('renderNotes', () => {
 `,
     };
     const notes = renderNotes({ ...baseInput, packageDeltas });
-    expect(notes).not.toContain('@inkeep/open-knowledge-core@');
-    expect(notes).not.toContain('@inkeep/open-knowledge-server@');
+    expect(notes).not.toContain('@palimpsest/core@');
+    expect(notes).not.toContain('@palimpsest/server@');
     expect(notes).toContain('real narrative change');
   });
 
@@ -241,7 +241,7 @@ describe('renderNotes', () => {
       ...baseInput,
       packageDeltas: { cli: '### Patch Changes\n\n- x: y\n' },
     });
-    expect(notes).toMatch(/<!-- ok-consumed-set: \["a","b"\] -->$/);
+    expect(notes).toMatch(/<!-- ps-consumed-set: \["a","b"\] -->$/);
   });
 
   test('writes "Delta since previous beta" header when prevBetaTag provided', () => {
@@ -276,7 +276,7 @@ describe('renderNotes', () => {
 
 describe('round-trip: extractDeltaSection → parseSection → renderNotes', () => {
   test('multi-package CHANGELOG harvest produces a single deduplicated note', () => {
-    const cliChangelog = `# @inkeep/open-knowledge
+    const cliChangelog = `# @palimpsest/cli
 
 ## 0.5.0-beta.7
 
@@ -288,7 +288,7 @@ describe('round-trip: extractDeltaSection → parseSection → renderNotes', () 
   span paragraphs.
 
 - Updated dependencies [abc1234]
-  - @inkeep/open-knowledge-core@0.5.0-beta.7
+  - @palimpsest/core@0.5.0-beta.7
 
 ## 0.5.0-beta.6
 
@@ -296,7 +296,7 @@ describe('round-trip: extractDeltaSection → parseSection → renderNotes', () 
 
 - old: prior beta entry
 `;
-    const appChangelog = `# @inkeep/open-knowledge-app
+    const appChangelog = `# @palimpsest/app
 
 ## 0.5.0-beta.7
 
@@ -328,11 +328,11 @@ describe('round-trip: extractDeltaSection → parseSection → renderNotes', () 
     expect(occurrences).toBe(1);
     expect(notes).toContain('jsx selection UX');
     expect(notes).not.toContain('Updated dependencies');
-    expect(notes).toMatch(/<!-- ok-consumed-set:.*-->$/);
+    expect(notes).toMatch(/<!-- ps-consumed-set:.*-->$/);
   });
 
   test('does not truncate an entry whose body has a prettier-de-indented code-span wrap', () => {
-    const cliChangelog = `# @inkeep/open-knowledge
+    const cliChangelog = `# @palimpsest/cli
 
 ## 0.34.0
 
@@ -379,10 +379,10 @@ describe('previousBeta reads the previous beta through the gh calls it is handed
     ['an empty list bootstraps', ok('\n'), null, { prevBetaTag: null, recovered: null }],
     ['a failed view keeps the tag and bootstraps the set', ok(`${TAG}\n`), { status: 1, stdout: '', stderr: '' }, { prevBetaTag: TAG, recovered: null }],
     ['a body without a marker bootstraps the set', ok(`${TAG}\n`), ok(body('no marker here')), { prevBetaTag: TAG, recovered: null }],
-    ['a marker that is not JSON bootstraps the set', ok(`${TAG}\n`), ok(body('<!-- ok-consumed-set: [a, b] -->')), { prevBetaTag: TAG, recovered: null }],
-    ['a marker that is not a string array bootstraps the set', ok(`${TAG}\n`), ok(body('<!-- ok-consumed-set: [1, 2] -->')), { prevBetaTag: TAG, recovered: null }],
-    ['a well-formed marker is the consumed set', ok(`${TAG}\n`), ok(body('<!-- ok-consumed-set: ["a","b"] -->')), { prevBetaTag: TAG, recovered: ['a', 'b'] }],
-    ['a quoted tag is unquoted', ok(`"${TAG}"\n`), ok(body('<!-- ok-consumed-set: ["a"] -->')), { prevBetaTag: TAG, recovered: ['a'] }],
+    ['a marker that is not JSON bootstraps the set', ok(`${TAG}\n`), ok(body('<!-- ps-consumed-set: [a, b] -->')), { prevBetaTag: TAG, recovered: null }],
+    ['a marker that is not a string array bootstraps the set', ok(`${TAG}\n`), ok(body('<!-- ps-consumed-set: [1, 2] -->')), { prevBetaTag: TAG, recovered: null }],
+    ['a well-formed marker is the consumed set', ok(`${TAG}\n`), ok(body('<!-- ps-consumed-set: ["a","b"] -->')), { prevBetaTag: TAG, recovered: ['a', 'b'] }],
+    ['a quoted tag is unquoted', ok(`"${TAG}"\n`), ok(body('<!-- ps-consumed-set: ["a"] -->')), { prevBetaTag: TAG, recovered: ['a'] }],
   ])('%s', (_, list, view, expected) => {
     expect(previousBeta(answering(list, view))).toEqual(expected);
   });
@@ -391,7 +391,7 @@ describe('previousBeta reads the previous beta through the gh calls it is handed
     const calls = [];
     previousBeta((args) => {
       calls.push(args);
-      return args[1] === 'list' ? ok(`${TAG}\n`) : ok(body('<!-- ok-consumed-set: [] -->'));
+      return args[1] === 'list' ? ok(`${TAG}\n`) : ok(body('<!-- ps-consumed-set: [] -->'));
     });
     expect(calls).toEqual([RELEASE_LIST_ARGS, releaseViewArgs(TAG)]);
     expect(RELEASE_LIST_ARGS.slice(0, 3)).toEqual(['release', 'list', '--repo']);
@@ -409,7 +409,7 @@ describe('recordedReleases replays what the read-releases job recorded', () => {
     RELEASE_LIST_STDERR: '',
     RELEASE_VIEW_TAG: TAG,
     RELEASE_VIEW_STATUS: '0',
-    RELEASE_VIEW_STDOUT: 'Notes.\n<!-- ok-consumed-set: ["a"] -->',
+    RELEASE_VIEW_STDOUT: 'Notes.\n<!-- ps-consumed-set: ["a"] -->',
   };
 
   test('answers the recorded list and view calls', () => {
@@ -516,7 +516,7 @@ describe('publishedStableTags', () => {
   });
 });
 
-const OK = '@inkeep/open-knowledge';
+const OK = '@palimpsest/cli';
 const changeset = (id, type = 'patch') => ({ id, releases: [{ name: OK, type }] });
 
 function baseFor({ tags, published, commit }) {
@@ -534,7 +534,7 @@ function baseFor({ tags, published, commit }) {
 describe('betaBase cadence vectors over the newest stable tag', () => {
   const base = (types) =>
     betaBase({
-      changesets: types.map((type, i) => ({ id: `c${i}`, releases: type ? [{ name: '@inkeep/open-knowledge', type }] : [] })),
+      changesets: types.map((type, i) => ({ id: `c${i}`, releases: type ? [{ name: '@palimpsest/cli', type }] : [] })),
       newestStableTag: 'v0.5.0',
       releasedIds: new Set(),
       anchorIds: new Set(),
@@ -646,13 +646,13 @@ describe('betaBase numbers a beta from the newest stable tag and the changesets 
 
 describe('transientPreState', () => {
   test('starts every fixed-group member at the newest stable version and carries the consumed set', () => {
-    const config = { fixed: [['@inkeep/open-knowledge', '@inkeep/open-knowledge-core']] };
+    const config = { fixed: [['@palimpsest/cli', '@palimpsest/core']] };
     expect(
       transientPreState({ fixedGroup: fixedGroupOf(config), anchorVersion: '0.86.13', consumed: ['a'] }),
     ).toEqual({
       mode: 'pre',
       tag: 'beta',
-      initialVersions: { '@inkeep/open-knowledge': '0.86.13', '@inkeep/open-knowledge-core': '0.86.13' },
+      initialVersions: { '@palimpsest/cli': '0.86.13', '@palimpsest/core': '0.86.13' },
       changesets: ['a'],
     });
   });
@@ -723,7 +723,7 @@ describe('the compute-next-beta CLI numbers from the stable tags and reads only 
     RELEASE_LIST_STDERR: '',
     RELEASE_VIEW_TAG: 'v0.86.14-beta.0',
     RELEASE_VIEW_STATUS: '0',
-    RELEASE_VIEW_STDOUT: `Draft notes.\n<!-- ok-consumed-set: ${JSON.stringify(ids)} -->`,
+    RELEASE_VIEW_STDOUT: `Draft notes.\n<!-- ps-consumed-set: ${JSON.stringify(ids)} -->`,
   });
 
   function run({ root, bin }, env) {
@@ -749,7 +749,7 @@ describe('the compute-next-beta CLI numbers from the stable tags and reads only 
     expect(out.releaseNotes).toContain('- Drafted in v0.86.13.');
     expect(out.releaseNotes).toContain('- A fresh fix.');
     expect(out.releaseNotes).not.toContain('Shipped in v0.86.12.');
-    expect(out.releaseNotes).toContain('<!-- ok-consumed-set: ["drafted","fixture-change"] -->');
+    expect(out.releaseNotes).toContain('<!-- ps-consumed-set: ["drafted","fixture-change"] -->');
     expect(existsSync(fx.tripwire)).toBe(false);
   });
 
@@ -761,7 +761,7 @@ describe('the compute-next-beta CLI numbers from the stable tags and reads only 
     expect(out).toMatchObject({ skip: false, baseVersion: '0.86.14', pendingCount: 1 });
     expect(out.releaseNotes).toContain('- A fresh fix.');
     expect(out.releaseNotes).not.toContain('Drafted in v0.86.13.');
-    expect(out.releaseNotes).toContain('<!-- ok-consumed-set: ["drafted","fixture-change"] -->');
+    expect(out.releaseNotes).toContain('<!-- ps-consumed-set: ["drafted","fixture-change"] -->');
   });
 
   test('a draft newest stable keeps its changesets pending and the stale anchor in pre.json is ignored', () => {

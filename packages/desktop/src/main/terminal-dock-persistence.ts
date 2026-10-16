@@ -1,8 +1,8 @@
 import { isDeepStrictEqual } from 'node:util';
 import type {
-  OkTerminalDockStateWriteResult,
-  OkTerminalRestartSnapshot,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsTerminalDockStateWriteResult,
+  PsTerminalRestartSnapshot,
+} from '@palimpsest/core/desktop-bridge';
 import {
   type AppState,
   getTerminalDockState,
@@ -15,7 +15,7 @@ interface CommitTerminalDockStateInput {
   readonly stateKey: string;
   readonly update: Partial<{
     terminalVisible: boolean;
-    terminalSnapshot: OkTerminalRestartSnapshot;
+    terminalSnapshot: PsTerminalRestartSnapshot;
     agentPanelVisible: boolean;
     editorVisible: boolean;
   }>;
@@ -29,7 +29,7 @@ export function commitTerminalDockState({
   save,
 }: CommitTerminalDockStateInput): {
   readonly state: AppState;
-  readonly result: OkTerminalDockStateWriteResult;
+  readonly result: PsTerminalDockStateWriteResult;
 } {
   const retained = getTerminalDockState(current, stateKey);
   const next = setTerminalDockState(current, stateKey, { ...retained, ...update });
@@ -62,7 +62,7 @@ export function resolveRestoredEditorVisible({
 
 export interface DockVisibilityUpdateDeps {
   readonly rememberForWindow: (visible: boolean) => void;
-  readonly persist: (visible: boolean) => OkTerminalDockStateWriteResult;
+  readonly persist: (visible: boolean) => PsTerminalDockStateWriteResult;
   readonly warnPersistFailed: (reason: string) => void;
 }
 

@@ -6,7 +6,7 @@ import {
   SemanticProviderErrorReasonSchema,
   SemanticQueryOutcomeSchema,
   semanticProviderErrorBlocks,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import type { LocalApiDispatch } from '../../http/local-api-dispatch.ts';
 import { getLogger } from '../../logger.ts';
@@ -223,7 +223,7 @@ function formatSemanticNote(semantic: SearchSemanticStatus | undefined): string 
   const { embedded, total } = semantic.coverage;
   switch (semantic.outcome) {
     case 'restart_required':
-      return '> Semantic: the provider changed vector dimensions repeatedly — restart OpenKnowledge before retrying.';
+      return '> Semantic: the provider changed vector dimensions repeatedly — restart Palimpsest before retrying.';
     case 'provider_error':
       return '> Semantic: provider unavailable — lexical ranking only.';
     case 'incapable':

@@ -9,11 +9,11 @@ export function buildUtilityForkEnv(
 ): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = {
     ...parentEnv,
-    OK_ELECTRON_PROTOCOL_HOST: '1',
-    OK_LOCK_KIND: 'interactive',
+    PS_ELECTRON_PROTOCOL_HOST: '1',
+    PS_LOCK_KIND: 'interactive',
   };
   if (opts.startupTraceparent !== undefined) {
-    env.OK_STARTUP_TRACEPARENT = opts.startupTraceparent;
+    env.PS_STARTUP_TRACEPARENT = opts.startupTraceparent;
   }
   if (opts.otlpEndpoint !== undefined) {
     env.OTEL_EXPORTER_OTLP_ENDPOINT = opts.otlpEndpoint;

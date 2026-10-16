@@ -5,13 +5,13 @@ import {
   DEV_CHANNEL,
   desktopChannelLabel,
   resolveDesktopProductName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   type Config,
   isProcessAlive,
   lockBaseUrl,
   resolveLockDir,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import type { Logger as PinoLoggerInstance } from 'pino';
 import { getCliLogger } from '../cli-logger.ts';
@@ -131,7 +131,7 @@ export async function runStop(deps: RunStopDeps): Promise<StopOutcome> {
   const plan = buildStopPlan(serverState, { isAlive: deps.isAlive });
 
   if (plan.targets.length === 0) {
-    log('No running open-knowledge processes.');
+    log('No running palimpsest processes.');
     logger?.info({ lockDir: deps.lockDir, targets: 0 }, 'stop found nothing to signal');
     return { stopped: [], failed: [], hadTargets: false };
   }
@@ -146,7 +146,7 @@ export async function runStop(deps: RunStopDeps): Promise<StopOutcome> {
       error(
         `Not stopping: the server at ${deps.lockDir} belongs to ${desktopChannelLabel(holder)}. ` +
           (holder === DEV_CHANNEL
-            ? `Stop it from that dev build, or run \`${CHECKOUT_CLI_COMMAND} stop\` with OK_CHANNEL=dev set, or re-run with --force to terminate anyway.`
+            ? `Stop it from that dev build, or run \`${CHECKOUT_CLI_COMMAND} stop\` with PS_CHANNEL=dev set, or re-run with --force to terminate anyway.`
             : 'Stop it from that app or its CLI, or re-run with --force to terminate anyway.'),
       );
       logger?.warn(
@@ -250,13 +250,13 @@ export function formatNoTargetMessage(
   } = {},
 ): string {
   if (otherRunningServers === 0) {
-    return `Nothing was running for ${targetDir}, and no other open-knowledge servers are running.`;
+    return `Nothing was running for ${targetDir}, and no other palimpsest servers are running.`;
   }
   const agreement = otherRunningServers === 1 ? ' is' : 's are';
   const pointer =
     opts.listingFollows === true ? '' : ` — run \`${currentCliCommandName()} ps\` to list them`;
   return (
-    `Nothing was running for ${targetDir}. ${otherRunningServers} other open-knowledge server` +
+    `Nothing was running for ${targetDir}. ${otherRunningServers} other palimpsest server` +
     `${agreement} running${pointer}.`
   );
 }
@@ -276,13 +276,13 @@ async function countOtherRunningServers(exceptLockDir: string): Promise<number> 
 export function stopCommand(getConfig: () => Config): Command {
   return new Command('stop')
     .description(
-      'Stop open-knowledge server(s). With no argument: stops the server for the enclosing project — run it from anywhere inside the project. ' +
+      'Stop palimpsest server(s). With no argument: stops the server for the enclosing project — run it from anywhere inside the project. ' +
         'Pass a port number, a directory path, or "all" to target globally.',
     )
     .argument('[target...]', 'port number, directory path (spaces OK), or "all"')
     .option(
       '--force',
-      'Stop even when the server belongs to another OpenKnowledge app (Stable, Beta or a dev build run from source) or editor windows or agents are still connected to it',
+      'Stop even when the server belongs to another Palimpsest app (Stable, Beta or a dev build run from source) or editor windows or agents are still connected to it',
     )
     .action(async (parts: string[], options: { force?: boolean }) => {
       const force = options.force === true;
@@ -311,7 +311,7 @@ export function stopCommand(getConfig: () => Config): Command {
       if (target === 'all') {
         const lockDirs = await discoverLockDirs();
         if (lockDirs.length === 0) {
-          console.log('No running open-knowledge servers found.');
+          console.log('No running palimpsest servers found.');
           return;
         }
         let stopped = 0;
@@ -320,7 +320,7 @@ export function stopCommand(getConfig: () => Config): Command {
           await executeStop(lockDir, force);
           stopped++;
         }
-        if (stopped === 0) console.log('No running open-knowledge servers found.');
+        if (stopped === 0) console.log('No running palimpsest servers found.');
         return;
       }
 
@@ -328,7 +328,7 @@ export function stopCommand(getConfig: () => Config): Command {
         const n = Number.parseInt(target, 10);
         const lockDir = await findLockDirByNumber(n);
         if (lockDir === null) {
-          console.log(`No running open-knowledge server found with port or PID ${n}.`);
+          console.log(`No running palimpsest server found with port or PID ${n}.`);
           return;
         }
         await executeStop(lockDir, force);

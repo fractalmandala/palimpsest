@@ -12,7 +12,7 @@ afterEach(() => {
 });
 
 function createIndex(): LocalTargetIndex {
-  const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ok-lti-nonexistent') });
+  const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ps-lti-nonexistent') });
   cleanups.push(() => index.close());
   return index;
 }
@@ -25,7 +25,7 @@ function createDiskRig(
   contentDir: string;
   write: (rel: string, md: string) => void;
 } {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-lti-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-lti-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   for (const [rel, text] of Object.entries(projectFiles))
@@ -543,7 +543,7 @@ describe('LocalTargetIndex disk lifecycle', () => {
   });
 
   test('rebuild against a missing content dir settles ready and empty', async () => {
-    const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ok-lti-does-not-exist-xyz') });
+    const index = new LocalTargetIndex({ contentDir: join(tmpdir(), 'ps-lti-does-not-exist-xyz') });
     cleanups.push(() => index.close());
     const result = await index.rebuildFromDisk({ documentTargets: [], fileTargets: [] });
     expect(result).toEqual({ sources: 0, occurrences: 0 });
@@ -866,8 +866,8 @@ describe('file targets that exist but are excluded by ignore rules (PRD-8896)', 
     ]);
   });
 
-  test('a file on disk under a .okignore rule reports excluded', () => {
-    const rig = createDiskRig({}, { '.okignore': 'ignored/\n' });
+  test('a file on disk under a .psignore rule reports excluded', () => {
+    const rig = createDiskRig({}, { '.psignore': 'ignored/\n' });
     rig.write('ignored/ig.png', 'png');
     rig.index.setSource('src', '[d](ignored/ig.png)\n');
     expect(reasonsOf(rig.index)).toEqual([['ignored/ig.png', 'missing', 'excluded']]);
@@ -891,7 +891,7 @@ describe('file targets that exist but are excluded by ignore rules (PRD-8896)', 
   });
 
   test('a file under a built-in skip folder stays no-such-file even when an ignore file also matches it', () => {
-    const rig = createDiskRig({}, { '.okignore': 'build/\noutput/\n' });
+    const rig = createDiskRig({}, { '.psignore': 'build/\noutput/\n' });
     rig.write('build/diagram.png', 'png');
     rig.write('output/chart.png', 'png');
     rig.index.setSource('src', '[b](build/diagram.png)\n[o](output/chart.png)\n');

@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { createContentFilter } from './content-filter.ts';
 import {
@@ -27,7 +27,7 @@ import {
 describe('resolveDefaultSkillHomeRel', () => {
   let base: string;
   beforeEach(() => {
-    base = mkdtempSync(join(tmpdir(), 'ok-default-skill-home-'));
+    base = mkdtempSync(join(tmpdir(), 'ps-default-skill-home-'));
   });
   afterEach(() => {
     rmSync(base, { recursive: true, force: true });
@@ -80,7 +80,7 @@ function writeSkill(root: string, rel: string, body: string): void {
 describe('scanInPlaceSkillDirs', () => {
   let contentDir: string;
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-inplace-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-inplace-'));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });
@@ -133,7 +133,7 @@ describe('scanInPlaceSkillDirs', () => {
 describe('scanInPlaceSkills (list projection)', () => {
   let contentDir: string;
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-inplace-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-inplace-'));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });
@@ -178,18 +178,18 @@ describe('scanInPlaceSkills (list projection)', () => {
   });
 
   test("OK's own bundles collapse to one row even when a projection drifted", () => {
-    writeSkill(contentDir, '.claude/skills/open-knowledge', '# current');
-    writeSkill(contentDir, '.agents/skills/open-knowledge', '# stale pre-split copy');
+    writeSkill(contentDir, '.claude/skills/palimpsest', '# current');
+    writeSkill(contentDir, '.agents/skills/palimpsest', '# stale pre-split copy');
     writeSkill(contentDir, '.claude/skills/mine', '# A');
     writeSkill(contentDir, '.agents/skills/mine', '# B different');
 
     const skills = scanInPlaceSkills(contentDir);
-    expect(skills.filter((s) => s.name === 'open-knowledge')).toHaveLength(1);
+    expect(skills.filter((s) => s.name === 'palimpsest')).toHaveLength(1);
     expect(skills.filter((s) => s.name === 'mine')).toHaveLength(2);
-    expect(skills.find((s) => s.name === 'open-knowledge')?.dir).toBe(
-      '.agents/skills/open-knowledge',
+    expect(skills.find((s) => s.name === 'palimpsest')?.dir).toBe(
+      '.agents/skills/palimpsest',
     );
-    expect(skills.find((s) => s.name === 'open-knowledge')?.conflictHosts).toEqual([]);
+    expect(skills.find((s) => s.name === 'palimpsest')?.conflictHosts).toEqual([]);
   });
 
   test('three distinct contents under one name yield three rows', () => {
@@ -270,7 +270,7 @@ describe('parse cache (bundle stamp invalidation)', () => {
   let contentDir: string;
   const PINNED = new Date(1_700_000_000_000);
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-parse-cache-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-parse-cache-'));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });
@@ -340,7 +340,7 @@ describe('parse cache (bundle stamp invalidation)', () => {
 describe('global tier (R12): scanGlobalInPlaceSkills + resolveGlobalNativeSkillDir', () => {
   let home: string;
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'ok-inplace-home-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-inplace-home-'));
   });
   afterEach(() => {
     rmSync(home, { recursive: true, force: true });
@@ -373,7 +373,7 @@ describe('global tier (R12): scanGlobalInPlaceSkills + resolveGlobalNativeSkillD
 describe('symlinked occurrences (D7 disclosure)', () => {
   let contentDir: string;
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-inplace-link-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-inplace-link-'));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });
@@ -412,7 +412,7 @@ describe('symlinked occurrences (D7 disclosure)', () => {
 describe('scanHostRootAliases (folder-level aliases, observable facts only)', () => {
   let contentDir: string;
   beforeEach(() => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-root-alias-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-root-alias-'));
   });
   afterEach(() => {
     rmSync(contentDir, { recursive: true, force: true });
@@ -427,7 +427,7 @@ describe('scanHostRootAliases (folder-level aliases, observable facts only)', ()
 
   test('real, absent, and outside-base roots are not aliases', () => {
     mkdirSync(join(contentDir, '.claude/skills'), { recursive: true });
-    const outside = mkdtempSync(join(tmpdir(), 'ok-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-outside-'));
     mkdirSync(join(contentDir, '.cursor'), { recursive: true });
     symlinkSync(outside, join(contentDir, '.cursor/skills'), 'dir');
     try {
@@ -441,9 +441,9 @@ describe('scanHostRootAliases (folder-level aliases, observable facts only)', ()
     writeSkill(contentDir, '.agents/skills/foo', '# Same');
     mkdirSync(join(contentDir, '.codex'), { recursive: true });
     symlinkSync(join(contentDir, '.agents/skills'), join(contentDir, '.codex/skills'), 'dir');
-    mkdirSync(join(contentDir, '.ok/local'), { recursive: true });
+    mkdirSync(join(contentDir, '.ps/local'), { recursive: true });
     writeFileSync(
-      join(contentDir, '.ok/local/skill-placements.json'),
+      join(contentDir, '.ps/local/skill-placements.json'),
       JSON.stringify({ skills: {}, sources: { foo: 'codex' } }),
     );
     const skills = scanInPlaceSkills(contentDir);
@@ -459,16 +459,16 @@ describe('scanHostRootAliases (folder-level aliases, observable facts only)', ()
   });
 
   test('a CUSTOM root symlinked into another root is an alias too (keyed by its path)', () => {
-    writeSkill(contentDir, '.ok/skills/foo', '# Same');
+    writeSkill(contentDir, '.ps/skills/foo', '# Same');
     mkdirSync(join(contentDir, '.tim'), { recursive: true });
-    symlinkSync(join(contentDir, '.ok/skills'), join(contentDir, '.tim/skills'), 'dir');
-    mkdirSync(join(contentDir, '.ok/local'), { recursive: true });
+    symlinkSync(join(contentDir, '.ps/skills'), join(contentDir, '.tim/skills'), 'dir');
+    mkdirSync(join(contentDir, '.ps/local'), { recursive: true });
     writeFileSync(
-      join(contentDir, '.ok/local/skill-placements.json'),
+      join(contentDir, '.ps/local/skill-placements.json'),
       JSON.stringify({
         skills: {
           foo: [
-            { path: '.ok/skills/foo', mode: 'copy' },
+            { path: '.ps/skills/foo', mode: 'copy' },
             { path: '.tim/skills/foo', mode: 'copy' },
           ],
         },
@@ -476,11 +476,11 @@ describe('scanHostRootAliases (folder-level aliases, observable facts only)', ()
       }),
     );
     expect(scanHostRootAliases(contentDir, 'project')).toEqual({
-      '.tim/skills': '.ok/skills',
+      '.tim/skills': '.ps/skills',
     });
     const skills = scanInPlaceSkills(contentDir);
     const foo = skills.find((s) => s.name === 'foo');
-    expect(foo?.dir).toBe('.ok/skills/foo');
+    expect(foo?.dir).toBe('.ps/skills/foo');
     expect(foo?.hosts).not.toContain('.tim/skills');
   });
 });
@@ -488,7 +488,7 @@ describe('scanHostRootAliases (folder-level aliases, observable facts only)', ()
 describe('removableSkillOccurrenceDirs', () => {
   let base: string;
   beforeEach(() => {
-    base = mkdtempSync(join(tmpdir(), 'ok-occurrences-'));
+    base = mkdtempSync(join(tmpdir(), 'ps-occurrences-'));
   });
   afterEach(() => {
     rmSync(base, { recursive: true, force: true });
@@ -518,11 +518,11 @@ describe('removableSkillOccurrenceDirs', () => {
     ]);
   });
 
-  test('covers the legacy .ok/skills store, not just host roots', () => {
-    writeSkill(base, '.ok/skills/foo', '# Moved');
-    const moved = hashOf('.ok/skills/foo');
+  test('covers the legacy .ps/skills store, not just host roots', () => {
+    writeSkill(base, '.ps/skills/foo', '# Moved');
+    const moved = hashOf('.ps/skills/foo');
     expect(removableSkillOccurrenceDirs(base, 'project', 'foo', moved)).toEqual([
-      join(base, '.ok/skills/foo'),
+      join(base, '.ps/skills/foo'),
     ]);
   });
 
@@ -535,8 +535,8 @@ describe('isActivatedSkillRoot', () => {
   let base: string;
   let home: string;
   beforeEach(() => {
-    base = mkdtempSync(join(tmpdir(), 'ok-activated-root-'));
-    home = mkdtempSync(join(tmpdir(), 'ok-activated-home-'));
+    base = mkdtempSync(join(tmpdir(), 'ps-activated-root-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-activated-home-'));
   });
   afterEach(() => {
     rmSync(base, { recursive: true, force: true });

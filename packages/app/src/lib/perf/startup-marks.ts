@@ -20,7 +20,7 @@ function maybeReport(): void {
 
   const firstContentMs = Math.max(pageListReadyAt, activeDocSyncedAt);
   const reportMarks =
-    typeof window !== 'undefined' ? window.okDesktop?.startup?.reportMarks : undefined;
+    typeof window !== 'undefined' ? window.psDesktop?.startup?.reportMarks : undefined;
   reportMarks?.({ pageListReadyMs: pageListReadyAt, firstContentMs });
   firstContentListener?.(firstContentMs);
   firstContentListener = undefined;

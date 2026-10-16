@@ -53,7 +53,7 @@ let boundary: SignalBoundary;
 let standIns: ChildProcess[];
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-reap-servers-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-reap-servers-'));
   standIns = [];
   boundary = installSignalBoundary({ deliverToHeldChildren: false });
 });
@@ -68,7 +68,7 @@ afterEach(async () => {
 });
 
 function seedLock(dir: string, lock: Record<string, unknown>): string {
-  const local = join(dir, '.ok', 'local');
+  const local = join(dir, '.ps', 'local');
   mkdirSync(local, { recursive: true });
   const lockPath = join(local, 'server.lock');
   writeFileSync(lockPath, JSON.stringify(lock));
@@ -154,7 +154,7 @@ describe('reapDetachedServers — signals only what it holds', () => {
   test(
     'a live process named by a server.lock is neither signalled nor assumed stopped: it stops on its own or the reaper reports it',
     async () => {
-      const lockPath = join(root, '.ok', 'local', 'server.lock');
+      const lockPath = join(root, '.ps', 'local', 'server.lock');
       const logPath = join(root, 'stand-in.log');
       const standIn = spawnStandIn(lockPath, logPath);
       if (standIn.pid === undefined) await once(standIn, 'spawn');
@@ -237,7 +237,7 @@ describe('reapDetachedServers — reports what outlives the release bound, never
     lockPath: string;
     logPath: string;
   }> {
-    const lockPath = join(root, '.ok', 'local', 'server.lock');
+    const lockPath = join(root, '.ps', 'local', 'server.lock');
     const logPath = join(root, 'stand-in.log');
     const standIn = spawnLifelineStandIn(lockPath, logPath);
     if (standIn.pid === undefined) await once(standIn, 'spawn');
@@ -291,7 +291,7 @@ describe('reapDetachedServers — reports what outlives the release bound, never
   test(
     'a live server that outlives the release bound is returned and warned with its pid and exact lock path, and is never signalled',
     async () => {
-      const lockPath = join(root, '.ok', 'local', 'server.lock');
+      const lockPath = join(root, '.ps', 'local', 'server.lock');
       const logPath = join(root, 'stand-in.log');
       const staleLockPath = seedLock(join(root, 'stale-project'), {
         pid: PID_BEYOND_ANY_KERNEL_LIMIT,

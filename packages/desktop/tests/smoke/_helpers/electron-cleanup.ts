@@ -137,8 +137,8 @@ function collectServerLocks(dir: string, depth: number, out: Map<string, ServerL
   }
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
-    if (entry.name === '.ok') {
-      const lockPath = join(dir, '.ok', 'local', 'server.lock');
+    if (entry.name === '.ps') {
+      const lockPath = join(dir, '.ps', 'local', 'server.lock');
       const lock = readLock(lockPath);
       if (lock.kind === 'names') out.set(lockPath, { lockPath, pid: lock.pid });
       if (lock.kind === 'unreadable') out.set(lockPath, { lockPath, pid: undefined });

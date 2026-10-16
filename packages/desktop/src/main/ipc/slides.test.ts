@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { OkSlidesOpenResult } from '../../shared/ipc-channels.ts';
+import type { PsSlidesOpenResult } from '../../shared/ipc-channels.ts';
 import { createSlidesDeckRegistry, type SlidesDeckWindow } from '../slides-registry.ts';
 import type { SlidevResolveProbes } from '../slidev-resolve.ts';
 import type { SlidevProcess, StartSlidevDeps } from '../slidev-server.ts';
@@ -271,7 +271,7 @@ describe('handleSlidesOpen', () => {
 
   it('reports renderer-failed when the server shell loads but the deck never mounts', async () => {
     const registry = createSlidesDeckRegistry();
-    const attempts: OkSlidesOpenResult[] = [];
+    const attempts: PsSlidesOpenResult[] = [];
     const started = readyStartDeps(5200);
     const result = await handleSlidesOpen(DECK, {
       registry,
@@ -289,7 +289,7 @@ describe('handleSlidesOpen', () => {
 
   it('preserves a navigation failure from the hidden window lifecycle', async () => {
     const registry = createSlidesDeckRegistry();
-    const attempts: OkSlidesOpenResult[] = [];
+    const attempts: PsSlidesOpenResult[] = [];
     const result = await handleSlidesOpen(DECK, {
       registry,
       startDeps: readyStartDeps(5200).deps,
@@ -304,7 +304,7 @@ describe('handleSlidesOpen', () => {
 
   it('does not record a user-cancelled hidden window as a failed open', async () => {
     const registry = createSlidesDeckRegistry();
-    const attempts: OkSlidesOpenResult[] = [];
+    const attempts: PsSlidesOpenResult[] = [];
     const result = await handleSlidesOpen(DECK, {
       registry,
       startDeps: readyStartDeps(5200).deps,
@@ -319,7 +319,7 @@ describe('handleSlidesOpen', () => {
 
   it('records exactly one open attempt for a fresh spawn', async () => {
     const registry = createSlidesDeckRegistry();
-    const attempts: OkSlidesOpenResult[] = [];
+    const attempts: PsSlidesOpenResult[] = [];
     await handleSlidesOpen(DECK, {
       registry,
       startDeps: readyStartDeps(5200).deps,
@@ -341,7 +341,7 @@ describe('handleSlidesOpen', () => {
       process: fakeSlidevProcess(),
       window: fakeWindow(1),
     });
-    const attempts: OkSlidesOpenResult[] = [];
+    const attempts: PsSlidesOpenResult[] = [];
     await handleSlidesOpen(DECK, {
       registry,
       startDeps: readyStartDeps(5300).deps,
@@ -370,7 +370,7 @@ describe('handleSlidesOpen', () => {
       now: () => 0,
       delay: () => Promise.resolve(),
     };
-    const attempts: OkSlidesOpenResult[] = [];
+    const attempts: PsSlidesOpenResult[] = [];
     const deps = {
       registry,
       startDeps,
@@ -379,7 +379,7 @@ describe('handleSlidesOpen', () => {
         return { shown: true };
       },
       focusWindow: () => {},
-      recordOpenAttempt: (r: OkSlidesOpenResult) => attempts.push(r),
+      recordOpenAttempt: (r: PsSlidesOpenResult) => attempts.push(r),
     };
 
     const first = handleSlidesOpen(DECK, deps);

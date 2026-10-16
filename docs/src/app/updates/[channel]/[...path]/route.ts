@@ -3,11 +3,11 @@ import { captureServerEvent, resolveDistinctId, userAgentProperties } from '@/li
 
 export const dynamic = 'force-dynamic';
 
-const RELEASES_BASE = 'https://github.com/inkeep/open-knowledge/releases';
+const RELEASES_BASE = 'https://github.com/fractalmandala/palimpsest/releases';
 const CHANNELS = {
-  stable: { manifestPrefix: 'latest', productPrefix: 'OpenKnowledge-' },
-  beta: { manifestPrefix: 'beta', productPrefix: 'OpenKnowledge-' },
-  'beta-product': { manifestPrefix: 'beta-product', productPrefix: 'OpenKnowledge-Beta-' },
+  stable: { manifestPrefix: 'latest', productPrefix: 'Palimpsest-' },
+  beta: { manifestPrefix: 'beta', productPrefix: 'Palimpsest-' },
+  'beta-product': { manifestPrefix: 'beta-product', productPrefix: 'Palimpsest-Beta-' },
 } as const;
 type UpdateChannel = keyof typeof CHANNELS;
 const SAFE_FILENAME = /^[A-Za-z0-9._-]+$/;

@@ -3,7 +3,7 @@ import babel from '@rolldown/plugin-babel';
 import react from '@vitejs/plugin-react';
 import { playwright } from '@vitest/browser-playwright';
 import { configDefaults, defineConfig, type ViteUserConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 import { babelOutputCache } from './tests/foundation/babel-output-cache';
 import {
   BROWSER_OPTIMIZE_DEPS_INCLUDE,
@@ -56,7 +56,7 @@ const BROWSER_TEST_FILES = '**/*.browser.test.ts?(x)';
 
 export const appBrowserVitestConfig = {
   plugins: [
-    ...okVitestBase.plugins,
+    ...psVitestBase.plugins,
     chromiumGcLaunchEnvGuard(),
     dependencyReloadGuard(),
     browserCiValue(process.env),
@@ -71,15 +71,15 @@ export const appBrowserVitestConfig = {
   },
   optimizeDeps: { force: true, include: [...BROWSER_OPTIMIZE_DEPS_INCLUDE] },
   test: {
-    testTimeout: okVitestBase.test.testTimeout,
-    hookTimeout: okVitestBase.test.hookTimeout,
-    env: okVitestBase.test.env,
-    clearMocks: okVitestBase.test.clearMocks,
-    expect: okVitestBase.test.expect,
-    tags: okVitestBase.test.tags,
+    testTimeout: psVitestBase.test.testTimeout,
+    hookTimeout: psVitestBase.test.hookTimeout,
+    env: psVitestBase.test.env,
+    clearMocks: psVitestBase.test.clearMocks,
+    expect: psVitestBase.test.expect,
+    tags: psVitestBase.test.tags,
     include: [BROWSER_TEST_FILES],
     exclude: [
-      ...okVitestBase.test.exclude.filter((pattern) => pattern !== BROWSER_TEST_FILES),
+      ...psVitestBase.test.exclude.filter((pattern) => pattern !== BROWSER_TEST_FILES),
       'public/excalidraw-assets/**',
       '.excalidraw-assets-staging-*',
     ],

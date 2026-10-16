@@ -14,7 +14,7 @@ import {
 } from './download-targets.ts';
 
 const ALL_OS: readonly DetectedOs[] = ['macos', 'windows', 'linux', 'unknown'];
-const ASSET_PREFIX = 'https://github.com/inkeep/open-knowledge/releases/latest/download/';
+const ASSET_PREFIX = 'https://github.com/fractalmandala/palimpsest/releases/latest/download/';
 
 describe('DOWNLOAD_TARGETS', () => {
   test('ids are unique — they are the analytics discriminator', () => {
@@ -94,7 +94,7 @@ describe('downloadHrefForDetectedOs', () => {
     const expected = `${DOWNLOAD_PAGE_HREF}?utm_content=docs-sidebar`;
     expect(downloadHrefForDetectedOs('docs-sidebar', 'windows')).toBe(expected);
     expect(downloadHrefForDetectedOs('docs-sidebar', 'linux')).toBe(expected);
-    expect(DOWNLOAD_PAGE_HREF).toBe('https://openknowledge.ai/download');
+    expect(DOWNLOAD_PAGE_HREF).toBe('https://github.com/fractalmandala/palimpsest/download');
   });
 
   test('keeps the sole macOS build and the working SSR floor direct', () => {

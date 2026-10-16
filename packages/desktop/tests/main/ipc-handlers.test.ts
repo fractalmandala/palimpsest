@@ -418,7 +418,7 @@ describe('isPathWithinProject — Review M5 confined-path check', () => {
     let root: string;
 
     beforeAll(() => {
-      root = mkdtempSync(join(tmpdir(), 'ok-pathcheck-symlink-'));
+      root = mkdtempSync(join(tmpdir(), 'ps-pathcheck-symlink-'));
       mkdirSync(join(root, 'proj'), { recursive: true });
       mkdirSync(join(root, 'outside'), { recursive: true });
       writeFileSync(join(root, 'outside', 'secret.md'), 'OUT-OF-PROJECT TARGET');
@@ -740,12 +740,12 @@ describe('recordHandoff', () => {
     ]);
   });
 
-  test('writes to ~/.ok/stats.jsonl with mkdir(parent) called first', async () => {
+  test('writes to ~/.ps/stats.jsonl with mkdir(parent) called first', async () => {
     const { calls, deps } = makeStubs();
     await recordHandoff(deps, sampleLine);
-    expect(calls.mkdir).toEqual(['/Users/test/.ok']);
+    expect(calls.mkdir).toEqual(['/Users/test/.ps']);
     expect(calls.appendFile).toHaveLength(1);
-    expect(calls.appendFile[0]?.path).toBe('/Users/test/.ok/stats.jsonl');
+    expect(calls.appendFile[0]?.path).toBe('/Users/test/.ps/stats.jsonl');
     expect(STATS_FILE_NAME).toBe('stats.jsonl');
   });
 

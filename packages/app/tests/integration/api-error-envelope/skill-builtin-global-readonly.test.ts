@@ -2,10 +2,10 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
-  OPENKNOWLEDGE_SKILLS_REPO,
+  PALIMPSEST_SKILLS_REPO,
   SkillGetSuccessSchema,
   SkillsListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, type TestServer } from '../test-harness';
@@ -17,7 +17,7 @@ const base = () => `http://127.0.0.1:${server.port}`;
 const GLOBAL_BUILTINS = [
   {
     name: 'open-knowledge-discovery',
-    description: 'What OpenKnowledge is and how to install it.',
+    description: 'What Palimpsest is and how to install it.',
   },
   {
     name: 'open-knowledge-write-skill',
@@ -26,7 +26,7 @@ const GLOBAL_BUILTINS = [
 ] as const;
 
 beforeAll(async () => {
-  homeDir = mkdtempSync(join(tmpdir(), 'ok-global-builtin-'));
+  homeDir = mkdtempSync(join(tmpdir(), 'ps-global-builtin-'));
   for (const { name, description } of GLOBAL_BUILTINS) {
     const dir = join(homeDir, '.claude', 'skills', name);
     mkdirSync(dir, { recursive: true });
@@ -44,7 +44,7 @@ afterAll(async () => {
   rmSync(homeDir, { recursive: true, force: true });
 });
 
-describe('built-in global open-knowledge skills: read-only surfacing', () => {
+describe('built-in global palimpsest skills: read-only surfacing', () => {
   test('GET /api/skills lists each as a managed global entry', async () => {
     const res = await fetch(`${base()}/api/skills`);
     expect(res.status).toBe(200);
@@ -60,7 +60,7 @@ describe('built-in global open-knowledge skills: read-only surfacing', () => {
       expect(entry?.hosts).toContain('claude');
       expect(entry?.description).toBe(description);
       expect(entry?.size?.alwaysOn).toBeGreaterThan(0);
-      expect(entry?.origin?.source).toBe(OPENKNOWLEDGE_SKILLS_REPO);
+      expect(entry?.origin?.source).toBe(PALIMPSEST_SKILLS_REPO);
       expect(entry?.origin?.skill).toBe(name);
       expect(entry?.origin?.autoUpdate).toBe(false);
     }
@@ -72,7 +72,7 @@ describe('built-in global open-knowledge skills: read-only surfacing', () => {
     const parsed = SkillsListSuccessSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (!parsed.success) return;
-    const entry = parsed.data.skills.find((s) => s.name === 'open-knowledge');
+    const entry = parsed.data.skills.find((s) => s.name === 'palimpsest');
     expect(entry).toBeDefined();
     expect(entry?.managed).toBe(true);
     expect(entry?.installed).toBe(false);
@@ -87,14 +87,14 @@ describe('built-in global open-knowledge skills: read-only surfacing', () => {
     const beforeParsed = SkillsListSuccessSchema.safeParse(await before.json());
     expect(beforeParsed.success).toBe(true);
     if (!beforeParsed.success) return;
-    expect(beforeParsed.data.skills.find((s) => s.name === 'open-knowledge')?.installed).toBe(
+    expect(beforeParsed.data.skills.find((s) => s.name === 'palimpsest')?.installed).toBe(
       false,
     );
 
     const res = await fetch(`${base()}/api/skill/install`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scope: 'project', name: 'open-knowledge', targets: ['claude'] }),
+      body: JSON.stringify({ scope: 'project', name: 'palimpsest', targets: ['claude'] }),
     });
     expect(res.status).toBe(200);
     const payload = (await res.json()) as { hosts?: string[] };
@@ -104,7 +104,7 @@ describe('built-in global open-knowledge skills: read-only surfacing', () => {
     const afterParsed = SkillsListSuccessSchema.safeParse(await after.json());
     expect(afterParsed.success).toBe(true);
     if (!afterParsed.success) return;
-    const entry = afterParsed.data.skills.find((s) => s.name === 'open-knowledge');
+    const entry = afterParsed.data.skills.find((s) => s.name === 'palimpsest');
     expect(entry?.installed).toBe(true);
     expect(entry?.hosts).toContain('claude');
   });

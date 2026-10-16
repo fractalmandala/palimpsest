@@ -1,10 +1,10 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core';
+import type { TerminalCli } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type PointerEventHandler, useEffect, useRef, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkDesktopBridge, OkMenuAction } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsMenuAction } from '@/lib/desktop-bridge-types';
 import {
   __resetLocalMenuActionBusForTests,
   emitLocalMenuAction,
@@ -157,7 +157,7 @@ const { TerminalDock, MAX_STRANDED_REPORTS } = await import('./TerminalDock');
 const { SessionsHost } = await import('./SessionsHost');
 const { STAGE_PASTE_SETTLE_MS } = await import('./TerminalPanel');
 
-function makeBridge(platform: OkDesktopBridge['platform'] = 'darwin') {
+function makeBridge(platform: PsDesktopBridge['platform'] = 'darwin') {
   const viewMenuPushes: Array<{ terminalLive?: boolean }> = [];
   let ptyCounter = 0;
   const create = vi.fn(async () => {
@@ -175,14 +175,14 @@ function makeBridge(platform: OkDesktopBridge['platform'] = 'darwin') {
       },
     },
     terminal: { create, kill, input },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return {
     bridge,
     create,
     kill,
     input,
     viewMenuPushes,
-    dispatchMenuAction(action: OkMenuAction) {
+    dispatchMenuAction(action: PsMenuAction) {
       emitLocalMenuAction(action);
     },
   };
@@ -247,7 +247,7 @@ function renderDock(
   visible: boolean,
   launch?: TestLaunch | null,
   placement = 'bottom',
-  platform: OkDesktopBridge['platform'] = 'darwin',
+  platform: PsDesktopBridge['platform'] = 'darwin',
   onPreferredSessionHostReady?: () => void,
 ) {
   const onVisibleChange = vi.fn((_v: boolean) => {});
@@ -1528,7 +1528,7 @@ describe('TerminalDock hidden-dock invariant', () => {
   function strandedLogs(warn: ReturnType<typeof vi.spyOn>): string[] {
     return warn.mock.calls
       .map((call) => String(call[0]))
-      .filter((line) => line.includes('ok-terminal-dock-stranded-while-hidden'));
+      .filter((line) => line.includes('ps-terminal-dock-stranded-while-hidden'));
   }
 
   test('a hidden dock that reports a non-zero height is snapped shut', () => {
@@ -1567,7 +1567,7 @@ describe('TerminalDock hidden-dock invariant', () => {
       const [line] = strandedLogs(warn);
       expect(line).toBeDefined();
       expect(JSON.parse(line as string)).toMatchObject({
-        event: 'ok-terminal-dock-stranded-while-hidden',
+        event: 'ps-terminal-dock-stranded-while-hidden',
         panelPx: 588,
         panelPct: 42.5,
         visible: false,

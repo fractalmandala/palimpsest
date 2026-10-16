@@ -85,7 +85,7 @@ interface Scratch {
 }
 
 function scratchWithOwnTmpdir(): Scratch {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-owned-launch-scratch-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-owned-launch-scratch-')));
   scratchDirs.push(root);
   const tmp = join(root, 'tmp');
   mkdirSync(tmp);
@@ -108,7 +108,7 @@ describe('an owned server whose launch fails', () => {
     const scratch = scratchWithOwnTmpdir();
     faults.removal.add(`ok-${LABEL}-`);
     const supervisor = new WorkerServerSupervisor({
-      okRoot: WORKTREE,
+      psRoot: WORKTREE,
       launch: (_slot, workerServerEnv) =>
         launchOwnedWorkerServer({
           label: LABEL,
@@ -147,7 +147,7 @@ describe('an owned server whose launch fails', () => {
 
   test('a launch whose server log cannot be opened releases its startup request and receipt directory, and says no log was open', async () => {
     const scratch = scratchWithOwnTmpdir();
-    faults.open.add(`ok-e2e-${LABEL}-`);
+    faults.open.add(`ps-e2e-${LABEL}-`);
 
     const failure = await launchOwnedWorkerServer({
       label: LABEL,
@@ -169,7 +169,7 @@ describe('an owned server whose launch fails', () => {
 
   test('a contract dev server that exits before it is ready, and whose cleanup then fails too, reports its exit, its stderr and the cleanup failure', async () => {
     const scratch = scratchWithOwnTmpdir();
-    faults.removal.add('ok-contract-s0-');
+    faults.removal.add('ps-contract-s0-');
     const launcher = contractServerLauncher();
 
     const failure = await launcher
@@ -180,7 +180,7 @@ describe('an owned server whose launch fails', () => {
       );
 
     const leftBehind = readdirSync(scratch.tmp);
-    expect(leftBehind).toEqual([expect.stringMatching(/^ok-contract-s0-/)]);
+    expect(leftBehind).toEqual([expect.stringMatching(/^ps-contract-s0-/)]);
     const contentDir = join(scratch.tmp, leftBehind[0] ?? '');
     expect(failure).toBeInstanceOf(Error);
     const message = (failure as Error).message;

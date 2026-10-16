@@ -1,6 +1,6 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
-import { normalizeGitHostname } from '@inkeep/open-knowledge-core/constants/github';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { humanFormat } from '@palimpsest/core/config/errors';
+import { normalizeGitHostname } from '@palimpsest/core/constants/github';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Trash2 } from 'lucide-react';
 import { type SubmitEvent, useEffect, useId, useRef, useState } from 'react';
@@ -97,7 +97,7 @@ export function EnterpriseHostsSection({ binding }: { binding: ConfigBinding }) 
         </h4>
         <p id={hintId} className="text-1sm text-muted-foreground">
           <Trans>
-            If you use a GitHub Enterprise Server, add its host here so OpenKnowledge can sign in,
+            If you use a GitHub Enterprise Server, add its host here so Palimpsest can sign in,
             check push permission, and create share links for repositories hosted there.
           </Trans>
         </p>
@@ -169,7 +169,7 @@ export function EnterpriseHostsSection({ binding }: { binding: ConfigBinding }) 
         ) : null}
         {pendingRestart ? (
           <p role="status" className="text-1sm text-muted-foreground">
-            <Trans>Saved. Restart OpenKnowledge to apply the change.</Trans>
+            <Trans>Saved. Restart Palimpsest to apply the change.</Trans>
           </p>
         ) : null}
       </div>

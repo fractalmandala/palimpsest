@@ -10,9 +10,9 @@ import {
   DEFAULT_SERVER_HOST,
   SPAWN_ERROR_LOG,
   sliceLastSpawnAttempt,
-} from '@inkeep/open-knowledge-core';
-import { startKeepalive as defaultStartKeepalive } from '@inkeep/open-knowledge-core/keepalive';
-import { openSpawnErrorLog } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { startKeepalive as defaultStartKeepalive } from '@palimpsest/core/keepalive';
+import { openSpawnErrorLog } from '@palimpsest/core/server';
 import {
   AutoStartDisabledError,
   isProcessAlive as defaultIsProcessAlive,
@@ -21,7 +21,7 @@ import {
   RUNTIME_VERSION,
   readServerLock,
   type ServerLockMetadata,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js';
@@ -31,7 +31,7 @@ const DEFAULT_SPAWN_TIMEOUT_MS = 5000;
 const DEFAULT_POLL_INTERVAL_MS = 100;
 const DEFAULT_REQUEST_TIMEOUT_MS = 120_000;
 function serverStartRecovery(): string {
-  return `Run \`${currentCliCommandName()} start\` in the target project, then retry this tool. Do not fall back to native file edits for OpenKnowledge content.`;
+  return `Run \`${currentCliCommandName()} start\` in the target project, then retry this tool. Do not fall back to native file edits for Palimpsest content.`;
 }
 
 interface ShimTransport {
@@ -216,7 +216,7 @@ export async function resolveMcpHttpUrl(opts: ResolveMcpHttpUrlOptions): Promise
 
   if (opts.envAutoStart === '0') {
     throw new AutoStartDisabledError(
-      `OpenKnowledge server is not running and OK_MCP_AUTOSTART=0 disables auto-start. ${serverStartRecovery()}`,
+      `Palimpsest server is not running and PS_MCP_AUTOSTART=0 disables auto-start. ${serverStartRecovery()}`,
     );
   }
 
@@ -256,7 +256,7 @@ export async function resolveMcpHttpUrl(opts: ResolveMcpHttpUrlOptions): Promise
         cwd: opts.contentDir,
         env: {
           ...process.env,
-          OK_LOCK_KIND: 'mcp-spawned',
+          PS_LOCK_KIND: 'mcp-spawned',
           ELECTRON_RUN_AS_NODE: '1',
         },
       });

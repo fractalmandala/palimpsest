@@ -1,14 +1,14 @@
 import { STABLE_DMG_URL } from './download-links';
 
-export const SITE_URL = 'https://openknowledge.ai';
+export const SITE_URL = 'https://github.com/fractalmandala/palimpsest';
 
 export function absoluteSiteUrl(path: string): string {
   return new URL(path, SITE_URL).href;
 }
-export const SITE_NAME = 'OpenKnowledge';
-export const TWITTER_HANDLE = '@OpenKnowledge';
+export const SITE_NAME = 'Palimpsest';
+export const TWITTER_HANDLE = '@Palimpsest';
 
-export const GITHUB_URL = 'https://github.com/inkeep/open-knowledge';
+export const GITHUB_URL = 'https://github.com/fractalmandala/palimpsest';
 export const DISCORD_URL = 'https://discord.gg/VRKk2EaGHN';
 export const CHANGELOG_ROUTE = '/docs/changelog';
 export const CHANGELOG_TIMELINE_LIMIT = 30;

@@ -21,7 +21,7 @@ vi.doMock('@lingui/react/macro', () => ({
 }));
 
 function setElectronHost(enabled: boolean) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: enabled ? {} : undefined,
   });

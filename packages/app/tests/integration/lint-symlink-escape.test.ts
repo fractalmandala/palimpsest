@@ -13,7 +13,7 @@ const DOC_WITH_TAB = '# Title\n\n\tindented with a tab\n';
 
 beforeAll(async () => {
   server = await createTestServer({ markdownlintEnabled: true });
-  outside = mkdtempSync(join(tmpdir(), 'ok-lint-outside-'));
+  outside = mkdtempSync(join(tmpdir(), 'ps-lint-outside-'));
   writeFileSync(join(outside, 'secret.md'), `# Secret\n\n\t${SECRET}\n`, 'utf-8');
 }, HARNESS_BOOT_TIMEOUT_MS);
 

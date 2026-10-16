@@ -1,4 +1,4 @@
-import type { LintDiagnostic, ValidationAuditResponse } from '@inkeep/open-knowledge-core';
+import type { LintDiagnostic, ValidationAuditResponse } from '@palimpsest/core';
 import {
   act,
   cleanup,
@@ -101,7 +101,7 @@ function lintConfigWith(plugins: { markdownlint: boolean; frontmatter: boolean }
       plugins: {
         markdownlint: { enabled: plugins.markdownlint, rules: {} },
         frontmatter: { enabled: plugins.frontmatter, schemas: [] },
-        okf: { enabled: false },
+        psf: { enabled: false },
       },
     },
     configFile: null,
@@ -419,7 +419,7 @@ describe('ProblemsPanel', () => {
     expect(screen.queryByText('opaque server fallback')).toBeNull();
   });
 
-  test('an excluded file target renders the ignore-rule message with the .okignore remedy (PRD-8896)', () => {
+  test('an excluded file target renders the ignore-rule message with the .psignore remedy (PRD-8896)', () => {
     render(
       <ProblemsPanel
         docName="notes"
@@ -443,7 +443,7 @@ describe('ProblemsPanel', () => {
     );
     expect(
       screen.getByText(
-        'Link target "ignored/ig.png" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.',
+        'Link target "ignored/ig.png" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.',
       ),
     ).toBeTruthy();
     expect(screen.queryByText('opaque server fallback')).toBeNull();

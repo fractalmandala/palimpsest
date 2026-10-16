@@ -6,7 +6,7 @@ import {
   normalizeBridge,
   pendingContentLines,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { updateYFragment } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import * as Y from 'yjs';
@@ -164,7 +164,7 @@ describe('createBridgeDeriveLossReporter (real shadow + ring)', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-derive-loss-test-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-derive-loss-test-'));
   });
 
   afterEach(async () => {
@@ -277,7 +277,7 @@ describe('Observer-A apply post-condition (real drain)', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-apply-loss-test-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-apply-loss-test-'));
   });
 
   afterEach(async () => {
@@ -386,7 +386,7 @@ describe('paired-intake derive-loss (composeAndWriteRawBody / replaceRawBody, re
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-paired-intake-loss-test-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-paired-intake-loss-test-'));
   });
 
   afterEach(async () => {
@@ -624,7 +624,7 @@ describe('paired-intake floor through the real pipeline (real shadow + ring)', (
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-paired-floor-test-'));
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-paired-floor-test-'));
   });
 
   afterEach(async () => {

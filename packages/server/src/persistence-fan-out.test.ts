@@ -13,7 +13,7 @@ describe('persistence L2 fan-out (US-014)', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-fanout-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-fanout-test-'));
     swapContributors();
   });
 

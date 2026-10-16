@@ -68,7 +68,7 @@ const connectedStatus: GitSyncStatus = {
   conflictCount: 0,
   hasRemote: true,
   syncEnabled: true,
-  remote: { label: 'inkeep/open-knowledge', webUrl: 'https://github.com/inkeep/open-knowledge' },
+  remote: { label: 'fractalmandala/palimpsest', webUrl: 'https://github.com/fractalmandala/palimpsest' },
 };
 
 async function openSyncPopover() {

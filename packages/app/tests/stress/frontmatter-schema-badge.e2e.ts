@@ -24,14 +24,14 @@ const addPropertiesButton = (page: Page) => page.getByTestId('add-properties-but
 const missingBadge = (page: Page) => page.getByTestId('add-properties-problem-badge');
 const invalidBadge = (page: Page) => page.getByTestId('property-problem-badge');
 const decoratedBlocks = (page: Page) =>
-  page.locator('.ProseMirror:not(.composer-prosemirror) > .ok-lint-block');
+  page.locator('.ProseMirror:not(.composer-prosemirror) > .ps-lint-block');
 
 const markedBlockIndex = (page: Page) =>
   page.evaluate(() => {
     const editor = document.querySelector('.ProseMirror:not(.composer-prosemirror)');
     if (!editor) return -1;
     return Array.from(editor.children).findIndex((child) =>
-      child.classList.contains('ok-lint-block'),
+      child.classList.contains('ps-lint-block'),
     );
   });
 
@@ -43,9 +43,9 @@ async function seed(page: Page, api: ApiHelpers, markdown: string) {
 }
 
 test.beforeEach(async ({ page, api, workerServer }) => {
-  mkdirSync(join(workerServer.contentDir, '.ok', 'schemas'), { recursive: true });
+  mkdirSync(join(workerServer.contentDir, '.ps', 'schemas'), { recursive: true });
   writeFileSync(
-    join(workerServer.contentDir, '.ok', 'schemas', 'doc.schema.json'),
+    join(workerServer.contentDir, '.ps', 'schemas', 'doc.schema.json'),
     JSON.stringify({
       type: 'object',
       required: ['status', 'owner'],
@@ -54,7 +54,7 @@ test.beforeEach(async ({ page, api, workerServer }) => {
     'utf-8',
   );
   writeFileSync(
-    join(workerServer.contentDir, '.ok', 'config.yml'),
+    join(workerServer.contentDir, '.ps', 'config.yml'),
     [
       'contentRules:',
       '  markdownlint:',
@@ -62,7 +62,7 @@ test.beforeEach(async ({ page, api, workerServer }) => {
       '  frontmatter:',
       '    enabled: true',
       '    schemas:',
-      '      - file: .ok/schemas/doc.schema.json',
+      '      - file: .ps/schemas/doc.schema.json',
       '',
     ].join('\n'),
     'utf-8',
@@ -88,7 +88,7 @@ test.afterEach(() => {
 });
 
 test.afterAll(({ workerServer }) => {
-  writeFileSync(join(workerServer.contentDir, '.ok', 'config.yml'), '', 'utf-8');
+  writeFileSync(join(workerServer.contentDir, '.ps', 'config.yml'), '', 'utf-8');
 });
 
 test.describe('frontmatter schema violations in WYSIWYG', () => {

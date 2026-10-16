@@ -133,7 +133,7 @@ describe('FileBackend', () => {
   let store: FileBackend;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-token-store-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-token-store-test-'));
     authFile = join(tmpDir, 'auth.yml');
     store = new FileBackend(authFile);
   });
@@ -272,7 +272,7 @@ describe.each(authFileWrites)('FileBackend $operation auth.yml write', ({ run })
   let authFile: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-token-store-write-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-token-store-write-'));
     authFile = join(tmpDir, 'auth.yml');
     writeFileSync(authFile, SEEDED_AUTH_YML, { mode: 0o600 });
   });
@@ -341,7 +341,7 @@ describe('createTokenStore', () => {
   test('returns a store with a recognised backend property', async () => {
     const { createTokenStore } = await import('./token-store.ts');
     const store = await createTokenStore(
-      join(mkdtempSync(join(tmpdir(), 'ok-ts-smoke-')), 'auth.yml'),
+      join(mkdtempSync(join(tmpdir(), 'ps-ts-smoke-')), 'auth.yml'),
     );
     expect(['keyring', 'file']).toContain(store.backend);
     expect(typeof store.get).toBe('function');
@@ -355,7 +355,7 @@ describe('createTokenStore diagnostics', () => {
 
   beforeEach(() => {
     resetKeyringMockState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-ts-diag-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-ts-diag-'));
   });
 
   afterEach(() => {
@@ -412,7 +412,7 @@ describe('createTokenStore diagnostics', () => {
 
   test('onKeychainRead reports corrupt-entry (no stored bytes) when JSON.parse fails', async () => {
     const TOKEN_BYTES = 'gho_corrupt_secret_value_xyz';
-    keyringMockState.getPasswordReturns.set(`open-knowledge:github.com`, TOKEN_BYTES);
+    keyringMockState.getPasswordReturns.set(`palimpsest:github.com`, TOKEN_BYTES);
     const { createTokenStore } = await import('./token-store.ts');
     const reads: Array<{ kind: string; host: string; error?: string }> = [];
     const store = await createTokenStore(join(tmpDir, 'auth.yml'), {
@@ -455,7 +455,7 @@ describe('KeyringBackend upsert semantics', () => {
 
   beforeEach(() => {
     resetKeyringMockState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-ts-upsert-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-ts-upsert-'));
   });
 
   afterEach(() => {
@@ -471,7 +471,7 @@ describe('KeyringBackend upsert semantics', () => {
 
     expect(keyringMockState.setPasswordCalls).toHaveLength(1);
     const [call] = keyringMockState.setPasswordCalls;
-    expect(call?.service).toBe('open-knowledge');
+    expect(call?.service).toBe('palimpsest');
     expect(call?.account).toBe('github.com');
     const parsed = JSON.parse(call?.value ?? '{}') as Record<string, unknown>;
     expect(parsed).toMatchObject({ login: 'alice', token: 'gho_token_1' });
@@ -510,7 +510,7 @@ describe('KeyringBackend upsert semantics', () => {
     await store.clear('github.com');
     expect(keyringMockState.deletePasswordCalls).toHaveLength(1);
     expect(keyringMockState.deletePasswordCalls[0]).toMatchObject({
-      service: 'open-knowledge',
+      service: 'palimpsest',
       account: 'github.com',
     });
   });
@@ -522,7 +522,7 @@ describe('createTokenStore fallback to FileBackend', () => {
 
   beforeEach(() => {
     resetKeyringMockState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-ts-fallback-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-ts-fallback-'));
     authFile = join(tmpDir, 'auth.yml');
   });
 
@@ -579,7 +579,7 @@ describe('clearTokenFromAllBackends', () => {
 
   beforeEach(() => {
     resetKeyringMockState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-ts-clearall-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-ts-clearall-'));
     authFile = join(tmpDir, 'auth.yml');
   });
 
@@ -609,7 +609,7 @@ describe('clearTokenFromAllBackends', () => {
 
   test('clears keychain entry and reports touched:["keychain"]', async () => {
     keyringMockState.getPasswordReturns.set(
-      'open-knowledge:github.com',
+      'palimpsest:github.com',
       JSON.stringify({ login: 'alice', token: 'gho_keychain_only' }),
     );
     const { clearTokenFromAllBackends } = await import('./token-store.ts');
@@ -626,7 +626,7 @@ describe('clearTokenFromAllBackends', () => {
     const { FileBackend, clearTokenFromAllBackends } = await import('./token-store.ts');
     await new FileBackend(authFile).set('github.com', 'alice', 'gho_file');
     keyringMockState.getPasswordReturns.set(
-      'open-knowledge:github.com',
+      'palimpsest:github.com',
       JSON.stringify({ login: 'alice', token: 'gho_keychain' }),
     );
 
@@ -689,7 +689,7 @@ describe('createTokenStore cross-backend read fallback', () => {
   let authFile: string;
   beforeEach(() => {
     resetKeyringMockState();
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-auth-fallback-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-auth-fallback-'));
     authFile = join(tmpDir, 'auth.yml');
   });
   afterEach(() => {
@@ -722,7 +722,7 @@ describe('createTokenStore cross-backend read fallback', () => {
     await store.get('github.com');
 
     const migrated = keyringMockState.setPasswordCalls.find(
-      (c) => c.service === 'open-knowledge' && c.account === 'github.com',
+      (c) => c.service === 'palimpsest' && c.account === 'github.com',
     );
     expect(migrated).toBeDefined();
     const payload = JSON.parse(migrated?.value ?? '{}') as { token?: string; email?: string };
@@ -735,7 +735,7 @@ describe('createTokenStore cross-backend read fallback', () => {
   test('keychain hit short-circuits — no file read, no migration', async () => {
     const { createTokenStore } = await import('./token-store.ts');
     keyringMockState.getPasswordReturns.set(
-      'open-knowledge:github.com',
+      'palimpsest:github.com',
       JSON.stringify({ login: 'octocat', token: 'gho_keychain', gitProtocol: 'https' }),
     );
 
@@ -758,7 +758,7 @@ describe('credentials per channel', () => {
 
   beforeEach(() => {
     resetKeyringMockState();
-    fakeHome = mkdtempSync(join(tmpdir(), 'ok-ts-channel-'));
+    fakeHome = mkdtempSync(join(tmpdir(), 'ps-ts-channel-'));
     vi.stubEnv('HOME', fakeHome);
     vi.resetModules();
   });
@@ -769,35 +769,35 @@ describe('credentials per channel', () => {
     rmSync(fakeHome, { recursive: true, force: true });
   });
 
-  test('Stable keeps the open-knowledge keychain service and ~/.ok/auth.yml', async () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+  test('Stable keeps the palimpsest keychain service and ~/.ps/auth.yml', async () => {
+    vi.stubEnv('PS_CHANNEL', 'stable');
     const { createTokenStore, FileBackend: ChannelFileBackend } = await import('./token-store.ts');
     await (await createTokenStore(join(fakeHome, 'unused.yml'))).set('github.com', 'a', 't');
-    expect(keyringMockState.setPasswordCalls.map((c) => c.service)).toEqual(['open-knowledge']);
+    expect(keyringMockState.setPasswordCalls.map((c) => c.service)).toEqual(['palimpsest']);
     await new ChannelFileBackend().set('github.com', 'a', 't');
-    expect(readFileSync(join(fakeHome, '.ok', 'auth.yml'), 'utf-8')).toContain('github.com');
+    expect(readFileSync(join(fakeHome, '.ps', 'auth.yml'), 'utf-8')).toContain('github.com');
   });
 
-  test('Beta uses its own keychain service and ~/.ok-beta/auth.yml, sharing nothing', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('Beta uses its own keychain service and ~/.ps-beta/auth.yml, sharing nothing', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const { createTokenStore, FileBackend: ChannelFileBackend } = await import('./token-store.ts');
     await (await createTokenStore(join(fakeHome, 'unused.yml'))).set('github.com', 'a', 't');
     expect(keyringMockState.setPasswordCalls.map((c) => c.service)).toEqual([
-      'open-knowledge-beta',
+      'palimpsest-beta',
     ]);
     await new ChannelFileBackend().set('github.com', 'a', 't');
-    expect(readFileSync(join(fakeHome, '.ok-beta', 'auth.yml'), 'utf-8')).toContain('github.com');
-    expect(() => readFileSync(join(fakeHome, '.ok', 'auth.yml'), 'utf-8')).toThrow();
+    expect(readFileSync(join(fakeHome, '.ps-beta', 'auth.yml'), 'utf-8')).toContain('github.com');
+    expect(() => readFileSync(join(fakeHome, '.ps', 'auth.yml'), 'utf-8')).toThrow();
   });
 
   test('Beta reads, clears and clears-all only its own keychain service', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     keyringMockState.getPasswordReturns.set(
-      'open-knowledge:github.com',
+      'palimpsest:github.com',
       JSON.stringify({ login: 'stable', token: 'gho_stable' }),
     );
     keyringMockState.getPasswordReturns.set(
-      'open-knowledge-beta:github.com',
+      'palimpsest-beta:github.com',
       JSON.stringify({ login: 'beta', token: 'gho_beta' }),
     );
     const { createTokenStore, clearTokenFromAllBackends } = await import('./token-store.ts');
@@ -808,14 +808,14 @@ describe('credentials per channel', () => {
 
     await store.clear('github.com');
     expect(keyringMockState.deletePasswordCalls.map((c) => c.service)).toEqual([
-      'open-knowledge-beta',
+      'palimpsest-beta',
     ]);
 
     keyringMockState.deletePasswordCalls = [];
     const result = await clearTokenFromAllBackends('github.com', authFile);
     expect(result.touched).toEqual(['keychain']);
     expect(keyringMockState.deletePasswordCalls.map((c) => c.service)).toEqual([
-      'open-knowledge-beta',
+      'palimpsest-beta',
     ]);
   });
 });

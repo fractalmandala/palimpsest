@@ -56,7 +56,7 @@ describe('reconcileRecoveredFileTarget', () => {
   });
 
   test('restores a recovered file with its canonical metadata', () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-recovered-file-target-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-recovered-file-target-'));
     try {
       const relativePath = 'assets/report.pdf';
       mkdirSync(join(contentDir, 'assets'));

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import type {
   ThreadEvent,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger } from '../logger.ts';
@@ -277,7 +277,7 @@ describe.skipIf(process.platform === 'win32')(
           if (entry === undefined) throw new Error('the first chat installed no browser entry');
           rmSync(join(entry, 'node_modules', BROWSER_NAME, 'started'));
           rmSync(join(entry, 'package.json'));
-          rmSync(join(entry, 'node_modules', 'ok-held-install-browser-dependency', 'package.json'));
+          rmSync(join(entry, 'node_modules', 'ps-held-install-browser-dependency', 'package.json'));
 
           manager = browserManager(held);
           const second = await manager.createThread({

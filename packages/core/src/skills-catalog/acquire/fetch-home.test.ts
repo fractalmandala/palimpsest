@@ -12,7 +12,7 @@ vi.mock('node:os', async (importOriginal) => {
 const { tmpdir } = await vi.importActual<typeof import('node:os')>('node:os');
 const { fetchSource } = await import('./fetch.ts');
 
-fakeHome.dir = mkdtempSync(join(tmpdir(), 'ok-fake-home-'));
+fakeHome.dir = mkdtempSync(join(tmpdir(), 'ps-fake-home-'));
 mkdirSync(join(fakeHome.dir, 'skills'));
 
 afterAll(() => rmSync(fakeHome.dir, { recursive: true, force: true }));

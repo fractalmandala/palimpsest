@@ -38,8 +38,8 @@ async function resolveAppPath(inputPath, deps = {}) {
     return { appPath: abs, kind, cleanup: async () => {} };
   }
 
-  const mountRoot = await mkdtempImpl(join(tmpdir(), 'ok-dmg-mount-'));
-  const appCopyRoot = await mkdtempImpl(join(tmpdir(), 'ok-app-copy-'));
+  const mountRoot = await mkdtempImpl(join(tmpdir(), 'ps-dmg-mount-'));
+  const appCopyRoot = await mkdtempImpl(join(tmpdir(), 'ps-app-copy-'));
   let detached = false;
   const detach = async () => {
     if (detached) return;
@@ -94,9 +94,9 @@ async function spawnAppWithEnv(appPath, outPath, deps = {}) {
   const child = spawnImpl(execPath, [], {
     env: {
       ...process.env,
-      OK_DEBUG_KEYRING_SMOKE: '1',
-      OK_DEBUG_KEYRING_SMOKE_EXIT: '1',
-      OK_DEBUG_KEYRING_SMOKE_OUT: outPath,
+      PS_DEBUG_KEYRING_SMOKE: '1',
+      PS_DEBUG_KEYRING_SMOKE_EXIT: '1',
+      PS_DEBUG_KEYRING_SMOKE_OUT: outPath,
       ELECTRON_ENABLE_LOGGING: '1',
     },
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -198,7 +198,7 @@ export async function runDriver(argv, deps = {}) {
 
   try {
     resolvedApp = await resolveAppPath(args.inputPath, deps);
-    outDir = await mkdtempImpl(join(tmpdir(), 'ok-smoke-out-'));
+    outDir = await mkdtempImpl(join(tmpdir(), 'ps-smoke-out-'));
     const outPath = join(outDir, 'smoke.json');
 
     const { exitCode, stderr } = await spawnAppWithEnv(resolvedApp.appPath, outPath, deps);

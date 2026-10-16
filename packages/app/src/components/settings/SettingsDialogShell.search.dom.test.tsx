@@ -1,4 +1,4 @@
-import type { ConfigBinding, OkignoreBinding } from '@inkeep/open-knowledge-core';
+import type { ConfigBinding, OkignoreBinding } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -79,10 +79,10 @@ const SEMANTIC_STATUS_RESPONSE = {
 
 const servedCore = createServedBindingLog();
 
-vi.doMock('@inkeep/open-knowledge-core/markdown/lint', async () =>
-  servedCore.serve('@inkeep/open-knowledge-core/markdown/lint', {
-    ...(await vi.importActual<typeof import('@inkeep/open-knowledge-core/markdown/lint')>(
-      '@inkeep/open-knowledge-core/markdown/lint',
+vi.doMock('@palimpsest/core/markdown/lint', async () =>
+  servedCore.serve('@palimpsest/core/markdown/lint', {
+    ...(await vi.importActual<typeof import('@palimpsest/core/markdown/lint')>(
+      '@palimpsest/core/markdown/lint',
     )),
     MARKDOWNLINT_RULE_CATALOG: FAKE_RULE_CATALOG,
   }),
@@ -207,7 +207,7 @@ describe('settings dialog search', () => {
 
   describe('in the desktop app', () => {
     beforeEach(() => {
-      (window as unknown as { okDesktop?: unknown }).okDesktop = {
+      (window as unknown as { psDesktop?: unknown }).psDesktop = {
         platform: 'linux',
         appVersion: '0.81.5-cloud.1343',
         config: { ptyAvailable: false },
@@ -215,7 +215,7 @@ describe('settings dialog search', () => {
     });
 
     afterEach(() => {
-      (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+      (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
     });
 
     test('About & updates is findable as "update" and as "about"', async () => {
@@ -303,7 +303,7 @@ describe('settings dialog search', () => {
     expect(screen.queryByTestId('settings-search-result-rule:MD009')).toBeNull();
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/markdown/lint',
+        '@palimpsest/core/markdown/lint',
         'MARKDOWNLINT_RULE_CATALOG',
         since,
       ),

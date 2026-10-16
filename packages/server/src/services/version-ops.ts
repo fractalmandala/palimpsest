@@ -45,7 +45,7 @@ export function createVersionOpsService(deps: VersionOpsDeps): VersionOpsService
               ? foldable.map((c) => ({
                   id: c.writerId,
                   name: c.writerId,
-                  email: `${c.writerId}@openknowledge.local`,
+                  email: `${c.writerId}@palimpsest.local`,
                 }))
               : [SERVICE_WRITER];
           foldEnumeratedAll = true;

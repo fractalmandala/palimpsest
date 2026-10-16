@@ -1,18 +1,18 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
-import { atomicWriteFile } from '@inkeep/open-knowledge-core/server';
+import { atomicWriteFile } from '@palimpsest/core/server';
 import { normalizeFsPath, tracedAtomicFs, tracedRm } from '../fs-traced.ts';
 import { getLogger } from '../logger.ts';
 
-const MANAGED_BLOCK_START = '# BEGIN OpenKnowledge generated indexes';
-const MANAGED_BLOCK_END = '# END OpenKnowledge generated indexes';
-const MANAGED_BLOCK_NOTE = '# Required while Open Knowledge maintains generated index.md files.';
+const MANAGED_BLOCK_START = '# BEGIN Palimpsest generated indexes';
+const MANAGED_BLOCK_END = '# END Palimpsest generated indexes';
+const MANAGED_BLOCK_NOTE = '# Required while Palimpsest maintains generated index.md files.';
 const log = getLogger('generated-index-git-attributes');
 
 export type GeneratedIndexGitAttributesStatus =
   | { state: 'not-applicable' }
-  | { state: 'ready'; ownership: 'open-knowledge' | 'existing' }
+  | { state: 'ready'; ownership: 'palimpsest' | 'existing' }
   | { state: 'missing' }
   | { state: 'conflict' }
   | { state: 'unavailable' };
@@ -208,7 +208,7 @@ function inspectWithContext(
     ) {
       return { state: 'missing' };
     }
-    return allUnion ? { state: 'ready', ownership: 'open-knowledge' } : { state: 'conflict' };
+    return allUnion ? { state: 'ready', ownership: 'palimpsest' } : { state: 'conflict' };
   }
   if (hasConflict) return { state: 'conflict' };
   if (content === null) return { state: 'missing' };
@@ -259,7 +259,7 @@ async function restoreAttributes(
   const current = readAttributes(path);
   if (current === previous) return;
   if (current !== expectedCurrent) {
-    throw new Error('.gitattributes changed after Open Knowledge updated it');
+    throw new Error('.gitattributes changed after Palimpsest updated it');
   }
   if (previous === null) {
     await tracedRm(path);

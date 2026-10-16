@@ -10,19 +10,19 @@ import {
   type ScaffoldPlan,
   SeedPrerequisiteError,
   SeedRootDirError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type {
-  OkSeedApplyResult,
-  OkSeedListPacksResult,
-  OkSeedPlanResult,
+  PsSeedApplyResult,
+  PsSeedListPacksResult,
+  PsSeedPlanResult,
   SeedApplyOptions,
   SeedPlanOptions,
 } from '../../shared/bridge-contract.ts';
 import { getLogger } from '../desktop-logger.ts';
 
-export type SeedPlanResult = OkSeedPlanResult;
-export type SeedApplyResult = OkSeedApplyResult;
-export type SeedListPacksResult = OkSeedListPacksResult;
+export type SeedPlanResult = PsSeedPlanResult;
+export type SeedApplyResult = PsSeedApplyResult;
+export type SeedListPacksResult = PsSeedListPacksResult;
 
 interface SeedIpcDeps {
   resolveProjectRoot: () => string | undefined;
@@ -64,7 +64,7 @@ export async function handleSeedPlan(
 ): Promise<SeedPlanResult> {
   const preview = options?.preview;
   const projectRoot = preview
-    ? join(tmpdir(), `ok-seed-preview-${randomUUID()}`)
+    ? join(tmpdir(), `ps-seed-preview-${randomUUID()}`)
     : deps.resolveProjectRoot();
   if (!projectRoot) return noProjectError();
 

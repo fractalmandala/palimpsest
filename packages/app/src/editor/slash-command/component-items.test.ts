@@ -2,7 +2,7 @@ import {
   builtInComponents,
   getAgentCanonicalDescriptors,
   getCanonicalDescriptors,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import {
   _resetPendingLinkEditForTest,

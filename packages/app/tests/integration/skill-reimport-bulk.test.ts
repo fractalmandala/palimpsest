@@ -20,7 +20,7 @@ function writeSkillDir(dir: string, name: string, description: string): void {
 }
 
 beforeAll(() => {
-  srcRoot = mkdtempSync(join(tmpdir(), 'ok-rebulk-src-'));
+  srcRoot = mkdtempSync(join(tmpdir(), 'ps-rebulk-src-'));
   for (const name of ['one-skill', 'two-skill']) {
     writeSkillDir(join(srcRoot, 'bundle', name), name, `Does ${name} things`);
   }

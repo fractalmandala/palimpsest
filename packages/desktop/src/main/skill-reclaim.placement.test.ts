@@ -1,11 +1,11 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { USER_SKILL_HOSTS } from '@inkeep/open-knowledge-core';
+import { USER_SKILL_HOSTS } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { reconcileUserGlobalSkillBundles } from './skill-reclaim.ts';
 
-const EXE = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+const EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
 const BUNDLES = [{ id: 'discovery', name: 'open-knowledge-discovery' }] as const;
 const NAME = 'open-knowledge-discovery';
 
@@ -36,14 +36,14 @@ afterEach(() => {
 });
 
 function bundleDir(): string {
-  const d = mkdtempSync(join(tmpdir(), 'ok-placement-bundle-'));
+  const d = mkdtempSync(join(tmpdir(), 'ps-placement-bundle-'));
   cleanup.push(d);
   writeFileSync(join(d, 'SKILL.md'), `---\nname: ${NAME}\n---\n# body\n`);
   return d;
 }
 
 function homeWithAllHosts(): string {
-  const h = mkdtempSync(join(tmpdir(), 'ok-placement-home-'));
+  const h = mkdtempSync(join(tmpdir(), 'ps-placement-home-'));
   cleanup.push(h);
   for (const [hostDir] of HOSTS) mkdirSync(join(h, hostDir), { recursive: true });
   mkdirSync(join(h, '.agents'), { recursive: true });

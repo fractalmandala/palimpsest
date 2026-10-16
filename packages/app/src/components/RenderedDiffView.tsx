@@ -83,7 +83,7 @@ export function RenderedDiffView({ diff, docName }: { diff: RenderedDiff; docNam
 
   return (
     <div
-      className="ok-rendered-diff editor-doc-scroll min-h-0 flex-1"
+      className="ps-rendered-diff editor-doc-scroll min-h-0 flex-1"
       data-testid="rendered-diff-view"
     >
       <div className="tiptap-editor">

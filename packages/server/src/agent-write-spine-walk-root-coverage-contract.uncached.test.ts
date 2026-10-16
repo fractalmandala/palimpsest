@@ -18,7 +18,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 const monorepoRoot = join(here, '..', '..', '..');
 
-const SERVER_PACKAGE_NAME = '@inkeep/open-knowledge-server';
+const SERVER_PACKAGE_NAME = '@palimpsest/server';
 
 const SPINE_HELPER_SPECIFIER = './agent-write-spine-files.test-helper.ts';
 
@@ -124,7 +124,7 @@ describe('agent-write spine walk root coverage contract', () => {
   });
 
   it('flags a spine call site planted outside the walk root, and ignores its neighbour', () => {
-    const plantedRoot = mkdtempSync(join(tmpdir(), 'ok-agent-write-census-'));
+    const plantedRoot = mkdtempSync(join(tmpdir(), 'ps-agent-write-census-'));
     try {
       writeFileSync(
         join(plantedRoot, 'stray-handler.ts'),
@@ -138,7 +138,7 @@ describe('agent-write spine walk root coverage contract', () => {
   });
 
   it('names a server consumer with no src directory, and not one that has src or a package that is no consumer (planted positive)', () => {
-    const workspace = mkdtempSync(join(tmpdir(), 'ok-agent-write-consumers-'));
+    const workspace = mkdtempSync(join(tmpdir(), 'ps-agent-write-consumers-'));
     const consumerManifest = `${JSON.stringify({ dependencies: { [SERVER_PACKAGE_NAME]: 'workspace:*' } })}\n`;
     try {
       mkdirSync(join(workspace, 'with-src', 'src'), { recursive: true });

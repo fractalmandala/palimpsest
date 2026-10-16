@@ -1,13 +1,13 @@
 import { rename, writeFile } from 'node:fs/promises';
 import { isAbsolute, relative, resolve } from 'node:path';
-import type { ServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import type { ServerRuntimeConfig } from '@palimpsest/core';
 import type {
   BootedServer,
   BootServerOptions,
   Config,
   ServerAuthorityCollisionError,
   ServerExitReason,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import type { UtilityInitCounters, UtilityInitPhase } from '../shared/boot-narration.ts';
 import { type KeyringSmokeResult, runKeyringSmoke } from './keyring-smoke.ts';
 
@@ -219,8 +219,8 @@ export function setupUtility(deps: SetupUtilityDeps): UtilityHandle {
       markInitPhase('init-received');
       const [server, cli, serverNamespace] = await Promise.all([
         deps.importServer(),
-        import('@inkeep/open-knowledge'),
-        import('@inkeep/open-knowledge-server'),
+        import('@palimpsest/cli'),
+        import('@palimpsest/server'),
       ]);
       markInitPhase('imports-resolved');
       const {
@@ -238,7 +238,7 @@ export function setupUtility(deps: SetupUtilityDeps): UtilityHandle {
       const prepared = await prepare(msg.opts, markInitPhase);
       if (shuttingDown) return;
 
-      if (env.OK_DEBUG_DESKTOP_BOOT_TRACE === '1') {
+      if (env.PS_DEBUG_DESKTOP_BOOT_TRACE === '1') {
         console.warn(
           `[desktop-boot-trace] projectDir=${projectDir} contentRoot=${JSON.stringify(
             prepared.contentRoot,
@@ -367,7 +367,7 @@ export function setupUtility(deps: SetupUtilityDeps): UtilityHandle {
 
   async function runBootAutoSmoke(): Promise<void> {
     const result = await runSmoke();
-    const outPath = env.OK_DEBUG_KEYRING_SMOKE_OUT;
+    const outPath = env.PS_DEBUG_KEYRING_SMOKE_OUT;
     if (outPath && outPath.length > 0) {
       try {
         await writeSmokeResult(outPath, `${JSON.stringify(result)}\n`);
@@ -383,14 +383,14 @@ export function setupUtility(deps: SetupUtilityDeps): UtilityHandle {
       correlationId: 'auto-boot',
       result,
     });
-    if (env.OK_DEBUG_KEYRING_SMOKE_EXIT === '1') {
+    if (env.PS_DEBUG_KEYRING_SMOKE_EXIT === '1') {
       deps.exit(0);
       return;
     }
     registerMessageListener();
   }
 
-  if (env.OK_DEBUG_KEYRING_SMOKE === '1') {
+  if (env.PS_DEBUG_KEYRING_SMOKE === '1') {
     void runBootAutoSmoke();
   } else {
     registerMessageListener();
@@ -430,9 +430,9 @@ export async function resolveDesktopServerRuntime(projectDir: string): Promise<{
   serverRuntime: ServerRuntimeConfig;
 }> {
   const [{ loadConfig }, { resolveServerRuntimeConfig }, { ConfigSchema }] = await Promise.all([
-    import('@inkeep/open-knowledge'),
-    import('@inkeep/open-knowledge-core'),
-    import('@inkeep/open-knowledge-server'),
+    import('@palimpsest/cli'),
+    import('@palimpsest/core'),
+    import('@palimpsest/server'),
   ]);
   let config: Config;
   let configValid: boolean;
@@ -464,7 +464,7 @@ async function defaultPrepareBootEnvironment(
   onPhase?: (phase: UtilityInitPhase) => void,
 ): Promise<PreparedBootEnvironment> {
   const projectDir = ipcOpts.projectDir ?? ipcOpts.contentDir;
-  const { ensureProjectGit, initContent } = await import('@inkeep/open-knowledge-server');
+  const { ensureProjectGit, initContent } = await import('@palimpsest/server');
 
   const degradedHints: string[] = [];
   if (ipcOpts.didEnsureGit !== true) {
@@ -526,7 +526,7 @@ if ((process as NodeJS.Process & { parentPort?: unknown }).parentPort) {
   setupUtility({
     parentPort: (process as NodeJS.Process & { parentPort: SetupUtilityDeps['parentPort'] })
       .parentPort,
-    importServer: () => import('@inkeep/open-knowledge-server'),
+    importServer: () => import('@palimpsest/server'),
     exit: (code) => process.exit(code),
     parentPid: process.ppid,
     killProbe: (pid, signal) => {

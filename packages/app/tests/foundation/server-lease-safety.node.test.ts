@@ -57,10 +57,10 @@ const savedEnv = new Map(LEASE_ENV_NAMES.map((name) => [name, process.env[name]]
 const RELEASE_FAILURE = 'the server stopped, but its release reported a failure';
 
 function makeRig({ releaseFails = false }: { releaseFails?: boolean } = {}): Rig {
-  const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lease-safety-scratch-')));
+  const scratch = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lease-safety-scratch-')));
   const launcher = contractServerLauncher();
   const supervisor = new WorkerServerSupervisor({
-    okRoot: WORKTREE,
+    psRoot: WORKTREE,
     launch: releaseFails
       ? async (slot, env) => {
           const owned = await launcher.launch(slot, env);
@@ -297,8 +297,8 @@ describe('a discarded slot whose lease connection fails as the worker releases i
 describe('a worker environment change on a held slot', () => {
   test('a run with a different worker environment is refused as busy while the slot is held, and restarts it once the slot is idle', async () => {
     const rig = makeRig();
-    const env = { OK_TEST_FEATURE: 'on' };
-    const changed = { OK_TEST_FEATURE: 'off' };
+    const env = { PS_TEST_FEATURE: 'on' };
+    const changed = { PS_TEST_FEATURE: 'off' };
     const held = granted(await rig.supervisor.acquire(rig.request({ workerServerEnv: env })));
     const nonce = await identityNonce(held.baseURL);
 
@@ -316,7 +316,7 @@ describe('a worker environment change on a held slot', () => {
       await rig.supervisor.acquire(rig.request({ run: 'run-b', workerServerEnv: changed })),
     );
     expect(onceIdle.launched).toBe(true);
-    expect(onceIdle.relaunchedBecause).toBe('its workerServerEnv differs in OK_TEST_FEATURE');
+    expect(onceIdle.relaunchedBecause).toBe('its workerServerEnv differs in PS_TEST_FEATURE');
     expect(await serving(held.baseURL)).toBe(false);
     expect(rig.launcher.environments).toEqual([env, changed]);
   }, 60_000);

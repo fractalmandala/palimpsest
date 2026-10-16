@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SUPPORTED_LOCALES } from '@inkeep/open-knowledge-core';
+import { SUPPORTED_LOCALES } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { parse } from 'yaml';
 import { resolveMenuCatalogDir } from '../../src/main/main-i18n.ts';

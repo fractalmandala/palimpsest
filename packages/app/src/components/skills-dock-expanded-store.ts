@@ -1,6 +1,6 @@
 import { revealEditor } from '@/lib/reveal-editor';
 
-const STORAGE_KEY = 'ok-skills-dock-expanded-v1';
+const STORAGE_KEY = 'ps-skills-dock-expanded-v1';
 
 function storage(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> | null {
   if (typeof window === 'undefined') return null;
@@ -54,7 +54,7 @@ export function __resetSkillsDockExpandedForTests(): void {
   } catch {}
 }
 
-const HEIGHT_KEY = 'ok-skills-dock-height-v1';
+const HEIGHT_KEY = 'ps-skills-dock-height-v1';
 
 export const SKILLS_DOCK_MIN_HEIGHT = 96;
 export function skillsDockMaxHeight(viewportHeight: number): number {

@@ -1,5 +1,5 @@
 import { unlinkSync } from 'node:fs';
-import { type Config, isLockProcessRunning, resolveLockDir } from '@inkeep/open-knowledge-server';
+import { type Config, isLockProcessRunning, resolveLockDir } from '@palimpsest/server';
 import { Command } from 'commander';
 import { describeLockOwnershipRefusal, inspectLock, type LockState } from './lock-state.ts';
 
@@ -116,7 +116,7 @@ export function runClean(deps: RunCleanDeps): CleanOutcome {
 
 export function cleanCommand(getConfig: () => Config): Command {
   return new Command('clean')
-    .description('Prune a stale / corrupt open-knowledge lock file (never touches live locks)')
+    .description('Prune a stale / corrupt palimpsest lock file (never touches live locks)')
     .action(() => {
       getConfig();
       const lockDir = resolveLockDir(process.cwd());

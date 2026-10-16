@@ -52,7 +52,7 @@ describe('GET /api/asset-text', () => {
   let harness: Harness;
 
   beforeEach(async () => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-api-asset-text-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-api-asset-text-'));
     contentDir = join(tmpDir, 'content');
     mkdirSync(join(contentDir, 'docs'), { recursive: true });
     writeFileSync(join(contentDir, 'docs', 'data.csv'), 'a,b\n1,2\n');

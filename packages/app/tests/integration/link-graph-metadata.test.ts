@@ -32,7 +32,7 @@ interface LinkGraphResponse {
 let server: TestServer;
 
 beforeAll(async () => {
-  const contentDir = realpathSync(makeTempDir('ok-linkgraph-meta-'));
+  const contentDir = realpathSync(makeTempDir('ps-linkgraph-meta-'));
 
   writeFileSync(
     join(contentDir, 'hub.md'),

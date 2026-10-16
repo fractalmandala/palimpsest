@@ -5,10 +5,10 @@ import { expect, test } from 'vitest';
 import { assertProjectContentSubtree } from './project-content-scope.ts';
 
 test('recursive operations refuse a descendant project without relying on a file index', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-scope-subtree-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-scope-subtree-'));
   try {
-    mkdirSync(join(root, 'public', 'knowledge', '.ok'), { recursive: true });
-    writeFileSync(join(root, 'public', 'knowledge', '.ok', 'config.yml'), '');
+    mkdirSync(join(root, 'public', 'knowledge', '.ps'), { recursive: true });
+    writeFileSync(join(root, 'public', 'knowledge', '.ps', 'config.yml'), '');
     expect(() => assertProjectContentSubtree(join(root, 'public'), root)).toThrow(
       /nested project/i,
     );
@@ -18,12 +18,12 @@ test('recursive operations refuse a descendant project without relying on a file
 });
 
 test('recursive operations allow folder metadata and do not follow directory links', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-scope-subtree-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-scope-subtree-'));
   try {
-    mkdirSync(join(root, 'notes', '.ok'), { recursive: true });
-    writeFileSync(join(root, 'notes', '.ok', 'frontmatter.yml'), 'icon: note\n');
-    mkdirSync(join(root, 'child', '.ok'), { recursive: true });
-    writeFileSync(join(root, 'child', '.ok', 'config.yml'), '');
+    mkdirSync(join(root, 'notes', '.ps'), { recursive: true });
+    writeFileSync(join(root, 'notes', '.ps', 'frontmatter.yml'), 'icon: note\n');
+    mkdirSync(join(root, 'child', '.ps'), { recursive: true });
+    writeFileSync(join(root, 'child', '.ps', 'config.yml'), '');
     symlinkSync(join(root, 'child'), join(root, 'notes', 'alias'), 'junction');
     expect(() => assertProjectContentSubtree(join(root, 'notes'), root)).not.toThrow();
   } finally {

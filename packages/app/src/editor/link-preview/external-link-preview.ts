@@ -1,7 +1,7 @@
 import {
   type LinkPreviewMetadata,
   LinkPreviewResponseSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 
 export const SUCCESS_CACHE_MAX_ENTRIES = 128;
 

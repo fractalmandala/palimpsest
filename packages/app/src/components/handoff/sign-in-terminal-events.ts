@@ -1,4 +1,4 @@
-const SIGN_IN_TERMINAL_EXIT_EVENT = 'open-knowledge:sign-in-terminal-exit';
+const SIGN_IN_TERMINAL_EXIT_EVENT = 'palimpsest:sign-in-terminal-exit';
 
 interface SignInTerminalExitDetail {
   readonly threadId: string;

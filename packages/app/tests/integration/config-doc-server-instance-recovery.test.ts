@@ -2,7 +2,7 @@ import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { CONFIG_DOC_NAME_OKIGNORE } from '@inkeep/open-knowledge-core';
+import { CONFIG_DOC_NAME_OKIGNORE } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { buildAuthToken } from '../../src/lib/auth-token';
@@ -24,7 +24,7 @@ describe('PRD-6881: config-doc server-instance recovery', () => {
   test('CONTROL: untokened config provider union-merges (duplicates) across a respawn', async () => {
     let server = await createRestartableServer();
     cleanups.push(() => server.shutdown());
-    writeFileSync(join(server.contentDir, '.okignore'), 'foo\n', 'utf-8');
+    writeFileSync(join(server.contentDir, '.psignore'), 'foo\n', 'utf-8');
 
     const doc = new Y.Doc();
     const provider = new HocuspocusProvider({
@@ -50,7 +50,7 @@ describe('PRD-6881: config-doc server-instance recovery', () => {
   test('FIX: epoch-claiming config provider is rejected on respawn and does not duplicate', async () => {
     let server = await createRestartableServer();
     cleanups.push(() => server.shutdown());
-    writeFileSync(join(server.contentDir, '.okignore'), 'foo\n', 'utf-8');
+    writeFileSync(join(server.contentDir, '.psignore'), 'foo\n', 'utf-8');
 
     const instanceA = server.serverInstanceId;
     const doc = new Y.Doc();

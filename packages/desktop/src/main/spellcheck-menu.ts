@@ -1,4 +1,4 @@
-import { NATIVE_MENU_LABELS } from '@inkeep/open-knowledge-core';
+import { NATIVE_MENU_LABELS } from '@palimpsest/core';
 import type { BrowserWindow, EditFlags, Menu, MenuItemConstructorOptions } from 'electron';
 import { type MenuTranslator, translateEnglish } from './menu-translator.ts';
 

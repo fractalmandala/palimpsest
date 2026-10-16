@@ -1,9 +1,9 @@
-import type { LanguagePreference } from '@inkeep/open-knowledge-core/i18n/locales';
+import type { LanguagePreference } from '@palimpsest/core/i18n/locales';
 import { useEffect } from 'react';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 export function useLanguageBridge(
-  bridge: OkDesktopBridge | undefined,
+  bridge: PsDesktopBridge | undefined,
   preference: LanguagePreference | undefined,
   synced: boolean,
 ): void {

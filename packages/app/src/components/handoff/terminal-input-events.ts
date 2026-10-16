@@ -1,6 +1,6 @@
 import { routeNoteWindowActionToMain } from '@/lib/note-window-main-actions';
 
-const ACTIVE_TERMINAL_INPUT_EVENT = 'open-knowledge:active-terminal-input';
+const ACTIVE_TERMINAL_INPUT_EVENT = 'palimpsest:active-terminal-input';
 
 export interface ActiveTerminalInputDetail {
   readonly text: string;

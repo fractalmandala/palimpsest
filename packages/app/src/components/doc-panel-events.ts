@@ -3,7 +3,7 @@ import type { PanelScope } from './PanelScopeHeader';
 
 type DocPanelTab = PanelTab;
 
-const DOC_PANEL_TAB_EVENT = 'open-knowledge:doc-panel-tab';
+const DOC_PANEL_TAB_EVENT = 'palimpsest:doc-panel-tab';
 let pendingRequestedTab: DocPanelTab | null = null;
 
 export interface DocPanelTabRequest {

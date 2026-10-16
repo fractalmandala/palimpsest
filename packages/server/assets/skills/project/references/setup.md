@@ -1,8 +1,8 @@
-# Setting up OpenKnowledge
+# Setting up Palimpsest
 
-This repository is an OpenKnowledge (OK) project: its `.md` / `.mdx` files are CRDT documents, and agents work with them through the OpenKnowledge MCP server. If your agent's `mcp__open-knowledge*` tools aren't available, the project just isn't connected on this machine yet. Connect it at whatever depth you need — each rung adds capability, and you can stop at the first one that covers your task.
+This repository is an Palimpsest (OK) project: its `.md` / `.mdx` files are CRDT documents, and agents work with them through the Palimpsest MCP server. If your agent's `mcp__palimpsest*` tools aren't available, the project just isn't connected on this machine yet. Connect it at whatever depth you need — each rung adds capability, and you can stop at the first one that covers your task.
 
-**Canonical, always-current instructions:** <https://openknowledge.ai/docs/get-started/quickstart>. The rungs below are a quick orientation; the docs are authoritative (release channels and download links move, so this file deliberately points there rather than pinning them).
+**Canonical, always-current instructions:** <https://github.com/fractalmandala/palimpsest/tree/main/docs/content The rungs below are a quick orientation; the docs are authoritative (release channels and download links move, so this file deliberately points there rather than pinning them).
 
 ## Rung 1 — Agent tooling, no install
 
@@ -15,11 +15,11 @@ This rung does **not** start a collaboration server, so it does not give you liv
 Install the OK CLI and start a local server:
 
 ```bash
-npm install -g @inkeep/open-knowledge   # or run it ad hoc with: npx @inkeep/open-knowledge
-ok start
+npm install -g @palimpsest/cli   # or run it ad hoc with: npx @palimpsest/cli
+ps start
 ```
 
-`ok start` runs the collaboration server and serves a browser preview at the URL it prints — no GUI required. Markdown writes now land in the live CRDT and the preview updates as you (or an agent) edit.
+`ps start` runs the collaboration server and serves a browser preview at the URL it prints — no GUI required. Markdown writes now land in the live CRDT and the preview updates as you (or an agent) edit.
 
 ## Rung 3 — Desktop app, optional
 
@@ -27,6 +27,6 @@ For a native editor with the file tree, property panel, and built-in preview, in
 
 ## Tool visibility — before you conclude the MCP is missing
 
-**MCP tool visibility — not seeing `exec` is NOT the escape hatch.** MCP wiring varies by client (Claude Code, Cursor, Codex, Windsurf, VS Code). Server labels are user-defined; tools may not appear as top-level symbols named `exec`. If OpenKnowledge is registered as an MCP server here, route markdown reads through its `exec` / `search` via your client's documented MCP invocation (including any generic "call MCP tool" flow). Registration is the test, not top-level-symbol visibility.
+**MCP tool visibility — not seeing `exec` is NOT the escape hatch.** MCP wiring varies by client (Claude Code, Cursor, Codex, Windsurf, VS Code). Server labels are user-defined; tools may not appear as top-level symbols named `exec`. If Palimpsest is registered as an MCP server here, route markdown reads through its `exec` / `search` via your client's documented MCP invocation (including any generic "call MCP tool" flow). Registration is the test, not top-level-symbol visibility.
 
-**Your initial tool list is NOT exhaustive — run tool discovery before concluding the MCP is missing.** Some clients (notably Codex) defer MCP tools behind a lazy `tool_search` / tool-discovery step, so `mcp__open-knowledge*` is absent from the upfront tool set and only appears after you search for it. Absence from the visible list means "I have not discovered it yet," NOT "it is not registered." If you don't see the tools, your first move is to run your client's tool-discovery / `tool_search` for `open-knowledge` (or `exec` / `search` / `write`) — do not infer unavailability from the initial list.
+**Your initial tool list is NOT exhaustive — run tool discovery before concluding the MCP is missing.** Some clients (notably Codex) defer MCP tools behind a lazy `tool_search` / tool-discovery step, so `mcp__palimpsest*` is absent from the upfront tool set and only appears after you search for it. Absence from the visible list means "I have not discovered it yet," NOT "it is not registered." If you don't see the tools, your first move is to run your client's tool-discovery / `tool_search` for `palimpsest` (or `exec` / `search` / `write`) — do not infer unavailability from the initial list.

@@ -1,4 +1,4 @@
-import { planHasOutstandingWork } from '@inkeep/open-knowledge-core/seed-plan-work';
+import { planHasOutstandingWork } from '@palimpsest/core/seed-plan-work';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowLeft } from 'lucide-react';
@@ -19,33 +19,33 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import type { OkPackId, OkScaffoldPlan, OkSeedPackInfo } from '@/lib/desktop-bridge-types';
+import type { PsPackId, PsScaffoldPlan, PsSeedPackInfo } from '@/lib/desktop-bridge-types';
 import { PACK_BLURBS } from '@/lib/pack-copy';
 import { seedClient } from '@/lib/seed-client';
 
-const DEFAULT_PACK_ID: OkPackId = 'knowledge-base';
+const DEFAULT_PACK_ID: PsPackId = 'knowledge-base';
 
 interface SeedDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSeedApplied?: () => void;
-  initialPackId?: OkPackId;
+  initialPackId?: PsPackId;
 }
 
 type DialogPhase =
   | { kind: 'loading' }
-  | { kind: 'plan'; plan: OkScaffoldPlan }
-  | { kind: 'already-seeded'; plan: OkScaffoldPlan }
+  | { kind: 'plan'; plan: PsScaffoldPlan }
+  | { kind: 'already-seeded'; plan: PsScaffoldPlan }
   | { kind: 'error'; message: string }
-  | { kind: 'applying'; plan: OkScaffoldPlan };
+  | { kind: 'applying'; plan: PsScaffoldPlan };
 
 type DialogStep = 'pick' | 'configure';
 
 export function SeedDialog({ open, onOpenChange, onSeedApplied, initialPackId }: SeedDialogProps) {
   const { t } = useLingui();
   const [phase, setPhase] = useState<DialogPhase>({ kind: 'loading' });
-  const [packs, setPacks] = useState<OkSeedPackInfo[] | null>(null);
-  const [selectedPackId, setSelectedPackId] = useState<OkPackId>(initialPackId ?? DEFAULT_PACK_ID);
+  const [packs, setPacks] = useState<PsSeedPackInfo[] | null>(null);
+  const [selectedPackId, setSelectedPackId] = useState<PsPackId>(initialPackId ?? DEFAULT_PACK_ID);
   const [rootChoice, setRootChoice] = useState<SeedRootChoice>('project-root');
   const [subfolder, setSubfolder] = useState<string>('');
   const [step, setStep] = useState<DialogStep>(initialPackId !== undefined ? 'configure' : 'pick');
@@ -205,7 +205,7 @@ export function SeedDialog({ open, onOpenChange, onSeedApplied, initialPackId }:
         : selectedPack.description
       : t`Ready-made folders and templates to get you started quickly.`;
 
-  function handlePackSelect(id: OkPackId) {
+  function handlePackSelect(id: PsPackId) {
     setSelectedPackId(id);
     setStep('configure');
     isFirstLoadRef.current = true;
@@ -277,7 +277,7 @@ function SeedDialogBody({
   selectedPack,
 }: {
   phase: DialogPhase;
-  selectedPack: OkSeedPackInfo | undefined;
+  selectedPack: PsSeedPackInfo | undefined;
 }) {
   if (phase.kind === 'loading') {
     return <CreatedItemsSkeleton rowCount={selectedPack?.folders.length ?? 6} />;
@@ -325,7 +325,7 @@ function SeedDialogBody({
   );
 }
 
-function PackSkillConflicts({ plan }: { plan: OkScaffoldPlan }): ReactElement | null {
+function PackSkillConflicts({ plan }: { plan: PsScaffoldPlan }): ReactElement | null {
   const conflicts = plan.packSkills?.filter((s) => s.conflict) ?? [];
   if (conflicts.length === 0) return null;
   return (

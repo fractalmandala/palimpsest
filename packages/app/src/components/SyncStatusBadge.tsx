@@ -1,14 +1,14 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { isSyncMode } from '@inkeep/open-knowledge-core/config/auto-sync-mode';
+import { isSyncMode } from '@palimpsest/core/config/auto-sync-mode';
 import type {
   GitStatusCode,
   GitWorktreeEntry,
   GitWorktreeOpenTarget,
   PushPermissionWire,
   SyncErrorCode,
-} from '@inkeep/open-knowledge-core/schemas/api';
-import type { SyncPausedReason } from '@inkeep/open-knowledge-core/sync-paused-reason';
+} from '@palimpsest/core/schemas/api';
+import type { SyncPausedReason } from '@palimpsest/core/sync-paused-reason';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg, plural, t } from '@lingui/core/macro';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
@@ -959,7 +959,7 @@ function WorktreeStatusSection({
             <WorktreeGroup title={<Trans>Push includes</Trans>} entries={willPush} />
             <WorktreeGroup
               title={<Trans>Push skips</Trans>}
-              note={<Trans>Outside what Open Knowledge commits.</Trans>}
+              note={<Trans>Outside what Palimpsest commits.</Trans>}
               entries={wontPush}
               dimmed
             />

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkSlidesOpenResult } from '../shared/ipc-channels.ts';
+import type { PsSlidesOpenResult } from '../shared/ipc-channels.ts';
 
-const actual = await import('@inkeep/open-knowledge-server');
+const actual = await import('@palimpsest/server');
 
 interface SpanCall {
   name: string;
@@ -17,7 +17,7 @@ const counterAdds: CounterAdd[] = [];
 let getMeterCalls = 0;
 let createCounterCalls = 0;
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   ...actual,
   withSpanSync: (
     name: string,
@@ -54,7 +54,7 @@ beforeEach(() => {
 });
 
 describe('recordDeckOpen — span outcome', () => {
-  test('a successful open emits one ok-outcome span and no counter', async () => {
+  test('a successful open emits one ps-outcome span and no counter', async () => {
     const { recordDeckOpen } = await loadFresh();
     recordDeckOpen({ kind: 'open', ok: true });
     expect(spanCalls).toEqual([
@@ -99,7 +99,7 @@ describe('recordDeckOpen — lazily-cached instrument', () => {
 
   test('the failure counter is created once and reused across failures', async () => {
     const { recordDeckOpen } = await loadFresh();
-    const failures: OkSlidesOpenResult[] = [
+    const failures: PsSlidesOpenResult[] = [
       { kind: 'open', ok: false, reason: 'timeout' },
       { kind: 'open', ok: false, reason: 'exited-early' },
       { kind: 'open', ok: false, reason: 'load-failed' },

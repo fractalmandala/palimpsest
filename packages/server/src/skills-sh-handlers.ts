@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { join, relative, sep } from 'node:path';
-import type { SkillRefResolution } from '@inkeep/open-knowledge-core';
+import type { SkillRefResolution } from '@palimpsest/core';
 import {
   EmptyRequestSchema,
   SKILL_NAME_REGEX,
@@ -9,7 +9,7 @@ import {
   SkillPreviewSchema,
   SkillRefResolutionSchema,
   SkillsSearchSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   acquiredBundleTooLarge,
   discoverSkillDirs,
@@ -28,7 +28,7 @@ import {
   SKILLS_LOCK_REL,
   SkillFetchError,
   skillsShSkillLinks,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { errorResponse } from './http/error-response.ts';
 import { withValidation } from './http/request-validation.ts';
 import { successResponse } from './http/success-response.ts';

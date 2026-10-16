@@ -11,8 +11,8 @@ import {
   lintDocument,
   SUPPORTED_DOC_EXTENSIONS,
   summarizeLintPluginFailures,
-} from '@inkeep/open-knowledge-core';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicTempPath } from '@palimpsest/core/server';
 import {
   type AuditScope,
   composeEffectiveLinterConfig,
@@ -20,7 +20,7 @@ import {
   createContentFilter,
   resolveAuditScope,
   resolveNativeConfigForDoc,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 
 interface FileLintResult {
   file: string;

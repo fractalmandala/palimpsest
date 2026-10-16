@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { evaluateFreshProject } from './use-onboarding-card-visible';
 
 const CURRENT_PATH = '/Users/me/project';
@@ -7,18 +7,18 @@ const CURRENT_PATH = '/Users/me/project';
 function bridgeWith(
   recents: Array<{ path: string }>,
   config: { freshlyCreated?: boolean } = {},
-): OkDesktopBridge {
+): PsDesktopBridge {
   return {
     project: { listRecent: () => Promise.resolve(recents) },
     config: { projectPath: CURRENT_PATH, freshlyCreated: config.freshlyCreated ?? false },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
-function rejectingBridge(): OkDesktopBridge {
+function rejectingBridge(): PsDesktopBridge {
   return {
     project: { listRecent: () => Promise.reject(new Error('IPC down')) },
     config: { projectPath: CURRENT_PATH },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 }
 
 function mockDocumentsResponse(body: unknown, status = 200): void {

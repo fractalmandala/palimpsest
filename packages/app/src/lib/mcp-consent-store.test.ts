@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 import type {
-  OkDesktopBridge,
-  OkMcpWiringEditorId,
-  OkMcpWiringShowPayload,
+  PsDesktopBridge,
+  PsMcpWiringEditorId,
+  PsMcpWiringShowPayload,
 } from './desktop-bridge-types';
 import { createMcpConsentStore } from './mcp-consent-store';
 
@@ -13,7 +13,7 @@ interface MockBridgeShape {
     confirm: ReturnType<typeof vi.fn>;
     skip: ReturnType<typeof vi.fn>;
   };
-  fireShow: (payload: OkMcpWiringShowPayload) => void;
+  fireShow: (payload: PsMcpWiringShowPayload) => void;
   unsubscribeCalls: number;
 }
 
@@ -24,12 +24,12 @@ function makeBridge(
     confirmThrows?: boolean;
     skipThrows?: boolean;
   } = {},
-): OkDesktopBridge & MockBridgeShape {
+): PsDesktopBridge & MockBridgeShape {
   const state = {
-    handler: null as ((payload: OkMcpWiringShowPayload) => void) | null,
+    handler: null as ((payload: PsMcpWiringShowPayload) => void) | null,
     unsubscribeCalls: 0,
   };
-  const onShow = vi.fn((cb: (payload: OkMcpWiringShowPayload) => void) => {
+  const onShow = vi.fn((cb: (payload: PsMcpWiringShowPayload) => void) => {
     state.handler = cb;
     return vi.fn(() => {
       state.handler = null;
@@ -48,10 +48,10 @@ function makeBridge(
 
   const bridge = {
     mcpWiring: { onShow, signalReady, confirm, skip },
-  } as unknown as OkDesktopBridge & MockBridgeShape;
+  } as unknown as PsDesktopBridge & MockBridgeShape;
 
   Object.defineProperty(bridge, 'fireShow', {
-    value: (payload: OkMcpWiringShowPayload) => state.handler?.(payload),
+    value: (payload: PsMcpWiringShowPayload) => state.handler?.(payload),
   });
   Object.defineProperty(bridge, 'unsubscribeCalls', {
     get: () => state.unsubscribeCalls,
@@ -59,7 +59,7 @@ function makeBridge(
   return bridge;
 }
 
-const sampleShowPayload: OkMcpWiringShowPayload = {
+const sampleShowPayload: PsMcpWiringShowPayload = {
   origin: 'first-run',
   detectedEditors: [
     {
@@ -68,7 +68,7 @@ const sampleShowPayload: OkMcpWiringShowPayload = {
       detected: true,
       willReplace: false,
       configPath: '~/.claude.json',
-      entryLocator: 'mcpServers.open-knowledge',
+      entryLocator: 'mcpServers.palimpsest',
     },
     {
       id: 'cursor',
@@ -76,7 +76,7 @@ const sampleShowPayload: OkMcpWiringShowPayload = {
       detected: false,
       willReplace: false,
       configPath: '~/.cursor/mcp.json',
-      entryLocator: 'mcpServers.open-knowledge',
+      entryLocator: 'mcpServers.palimpsest',
     },
   ],
   pathInstall: { shellDetected: true, rcFilesToTouch: ['~/.zshrc'], alreadyInstalled: false },
@@ -159,7 +159,7 @@ describe('createMcpConsentStore — confirm', () => {
     store.install({ bridge });
     bridge.fireShow(sampleShowPayload);
 
-    const editorIds: OkMcpWiringEditorId[] = ['claude', 'cursor'];
+    const editorIds: PsMcpWiringEditorId[] = ['claude', 'cursor'];
     const result = await store.confirm({ editorIds, pathInstall: false });
 
     expect(result).toEqual({ ok: true });

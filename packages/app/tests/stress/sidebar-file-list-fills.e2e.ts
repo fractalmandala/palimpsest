@@ -133,8 +133,8 @@ test.describe('sidebar file list fills the body', () => {
   }) => {
     const savedHeight = '560';
     await page.addInitScript((height: string) => {
-      localStorage.setItem('ok-skills-dock-expanded-v1', 'true');
-      localStorage.setItem('ok-skills-dock-height-v1', height);
+      localStorage.setItem('ps-skills-dock-expanded-v1', 'true');
+      localStorage.setItem('ps-skills-dock-height-v1', height);
     }, savedHeight);
     await page.setViewportSize({ width: 1280, height: 700 });
     await api.seedDocs([{ name: 'folder/note', markdown: '# Note\n' }]);
@@ -156,7 +156,7 @@ test.describe('sidebar file list fills the body', () => {
     }).toPass({ timeout: 15_000 });
     const files = await boxOf(page, '[data-slot="sidebar-content"] > .group\\/files');
     expect(files.height).toBeGreaterThanOrEqual(192 - 1);
-    expect(await page.evaluate(() => localStorage.getItem('ok-skills-dock-height-v1'))).toBe(
+    expect(await page.evaluate(() => localStorage.getItem('ps-skills-dock-height-v1'))).toBe(
       savedHeight,
     );
   });

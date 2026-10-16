@@ -5,7 +5,7 @@ import {
   EMPTY_DETECTION_SNAPSHOT,
   EMPTY_PROBE_SNAPSHOT,
   type HostSnapshot,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger, type PinoLogger } from '../logger.ts';

@@ -39,7 +39,7 @@ export function harnessHomes(home: string = homedir()): HarnessHome[] {
 }
 
 export function userGlobalSkillRoots(home: string = homedir()): string[] {
-  return [...harnessHomes(home).map((h) => h.dir), join(home, '.ok', 'skills')];
+  return [...harnessHomes(home).map((h) => h.dir), join(home, '.ps', 'skills')];
 }
 
 export function projectHarnessHomes(projectDir: string): HarnessHome[] {

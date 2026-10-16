@@ -1,4 +1,4 @@
-import type { OkPtyExit } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsPtyExit } from '@palimpsest/core/desktop-bridge';
 import { describe, expect, test } from 'vitest';
 import {
   createTerminalManager,
@@ -50,7 +50,7 @@ function makeWebContents(): FakeWebContents {
 
 function makeManager(over?: Partial<TerminalManagerDeps>) {
   const forked: FakeUtility[] = [];
-  const exits: OkPtyExit[] = [];
+  const exits: PsPtyExit[] = [];
   const shellExits: Array<{ crashed: boolean }> = [];
   let idn = 0;
   const mgr = createTerminalManager({

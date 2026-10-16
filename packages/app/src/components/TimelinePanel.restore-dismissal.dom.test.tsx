@@ -6,7 +6,7 @@ vi.mock('next-themes', () => ({
   useTheme: () => ({ resolvedTheme: 'light' }),
 }));
 
-import type { ParsedCheckpoint, TimelineEntry } from '@inkeep/open-knowledge-core';
+import type { ParsedCheckpoint, TimelineEntry } from '@palimpsest/core';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 const { TimelineContent } = await import('./TimelinePanel');
@@ -38,8 +38,8 @@ function recoveredCheckpointEntry(sha: string): TimelineEntry {
   return {
     sha,
     timestamp: '2026-04-17T00:00:00Z',
-    author: 'openknowledge',
-    authorEmail: 'noreply@openknowledge.local',
+    author: 'palimpsest',
+    authorEmail: 'noreply@palimpsest.local',
     type: 'checkpoint',
     message: 'checkpoint: Before concurrent merge @ 2026-05-05T12:00:00Z',
     contributors: [],

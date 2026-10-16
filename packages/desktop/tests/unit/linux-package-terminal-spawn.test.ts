@@ -10,7 +10,7 @@ import { DESKTOP_VARIANTS, parseDesktopVariantName } from '../../src/shared/desk
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = resolve(__dirname, '../..');
-const packageDirInput = process.env.OK_LINUX_PACKAGE_DIR?.trim() ?? '';
+const packageDirInput = process.env.PS_LINUX_PACKAGE_DIR?.trim() ?? '';
 const packageDir = packageDirInput === '' ? null : resolve(desktopRoot, packageDirInput);
 
 const PTY_PROBE_OUTPUT = 'node-pty-spawned';
@@ -131,7 +131,7 @@ function hangAfterPrinting(stdout: string, stderr: string): string {
 }
 
 function scratchDirectory(onTestFinished: TestContext['onTestFinished']): string {
-  const directory = mkdtempSync(join(tmpdir(), 'ok-pty-probe-report-'));
+  const directory = mkdtempSync(join(tmpdir(), 'ps-pty-probe-report-'));
   onTestFinished(() => rmSync(directory, { recursive: true, force: true }));
   return directory;
 }
@@ -226,8 +226,8 @@ describe('node-pty probe', () => {
     ],
     [
       'names the executable it could not run',
-      { ...finished, error: new Error('spawn /app/openknowledge ENOENT'), code: -2, stdout: '' },
-      ['/app/openknowledge could not be run: spawn /app/openknowledge ENOENT'],
+      { ...finished, error: new Error('spawn /app/palimpsest ENOENT'), code: -2, stdout: '' },
+      ['/app/palimpsest could not be run: spawn /app/palimpsest ENOENT'],
     ],
     [
       'names the test timeout that stopped it',
@@ -262,7 +262,7 @@ describe('node-pty probe', () => {
       [`the shell's output lacks "${PTY_PROBE_OUTPUT}"`],
     ],
   ])('%s', (_label, run, expected) => {
-    expect(nodePtyProbeProblems('/app/openknowledge', run)).toEqual(expected);
+    expect(nodePtyProbeProblems('/app/palimpsest', run)).toEqual(expected);
   });
 
   test.skipIf(process.platform === 'win32')(
@@ -271,7 +271,7 @@ describe('node-pty probe', () => {
   );
 
   test('reports an executable that does not exist', async ({ signal }) => {
-    const missing = join(desktopRoot, 'dist-desktop', 'missing', 'openknowledge');
+    const missing = join(desktopRoot, 'dist-desktop', 'missing', 'palimpsest');
     const run = await runNodePtyProbe(missing, workspaceNodePty(), signal);
     expect(nodePtyProbeProblems(missing, run)).toEqual([
       `${missing} could not be run: spawn ${missing} ENOENT`,
@@ -292,9 +292,9 @@ describe.skipIf(packageDir === null)('packaged Linux terminal', () => {
   test('loads node-pty from the packaged app with its own Electron and spawns a command', async (context) => {
     expect(
       process.platform,
-      'OK_LINUX_PACKAGE_DIR must only be set in a Linux packaging lane',
+      'PS_LINUX_PACKAGE_DIR must only be set in a Linux packaging lane',
     ).toBe('linux');
-    const variant = DESKTOP_VARIANTS[parseDesktopVariantName(process.env.OK_DESKTOP_VARIANT)];
+    const variant = DESKTOP_VARIANTS[parseDesktopVariantName(process.env.PS_DESKTOP_VARIANT)];
     const executable = join(packageDir as string, variant.linuxExecutableName);
     await expectNodePtyProbeSpawns(
       executable,
@@ -319,10 +319,10 @@ describe.skipIf(packageDir !== null)('node-pty probe failure report', () => {
       const scratch = scratchDirectory(onTestFinished);
       const packageRoot = join(scratch, 'package');
       mkdirSync(packageRoot);
-      const variant = DESKTOP_VARIANTS[parseDesktopVariantName(process.env.OK_DESKTOP_VARIANT)];
+      const variant = DESKTOP_VARIANTS[parseDesktopVariantName(process.env.PS_DESKTOP_VARIANT)];
       symlinkSync(process.execPath, join(packageRoot, variant.linuxExecutableName));
       await expectHangReported(PACKAGED_PROBE_TEST, scratch, signal, {
-        OK_LINUX_PACKAGE_DIR: packageRoot,
+        PS_LINUX_PACKAGE_DIR: packageRoot,
       });
     },
     Number.POSITIVE_INFINITY,

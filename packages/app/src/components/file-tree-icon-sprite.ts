@@ -7,10 +7,10 @@ import {
   MARKDOWN_FILE_ICON_VIEWBOX,
 } from '@/components/file-entry-icon';
 
-export const LINK_DECORATION_ICON_ID = 'ok-file-tree-link-decoration';
-export const AGENT_DECORATION_ICON_ID = 'ok-file-tree-agent-decoration';
-export const MARKDOWN_FILE_ICON_ID = 'ok-file-tree-markdown';
-export const EXCALIDRAW_FILE_ICON_ID = 'ok-file-tree-excalidraw';
+export const LINK_DECORATION_ICON_ID = 'ps-file-tree-link-decoration';
+export const AGENT_DECORATION_ICON_ID = 'ps-file-tree-agent-decoration';
+export const MARKDOWN_FILE_ICON_ID = 'ps-file-tree-markdown';
+export const EXCALIDRAW_FILE_ICON_ID = 'ps-file-tree-excalidraw';
 const MARKDOWN_FILE_ICON_SYMBOL = `<symbol id="${MARKDOWN_FILE_ICON_ID}" viewBox="${MARKDOWN_FILE_ICON_VIEWBOX}" fill="currentColor"><path d="${MARKDOWN_FILE_ICON_PATH_D}"/></symbol>`;
 const EXCALIDRAW_FILE_ICON_SYMBOL = `<symbol id="${EXCALIDRAW_FILE_ICON_ID}" viewBox="${EXCALIDRAW_FILE_ICON_VIEWBOX}" fill="currentColor"><path d="${EXCALIDRAW_FILE_ICON_PATH_D}"/></symbol>`;
 

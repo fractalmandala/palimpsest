@@ -13,7 +13,7 @@ import {
 import { readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, sep } from 'node:path';
-import { createBasenameIndex } from '@inkeep/open-knowledge-core';
+import { createBasenameIndex } from '@palimpsest/core';
 import { afterEach, describe, expect, type TestContext, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { seedBasenameIndex } from './asset-walk.ts';
@@ -77,7 +77,7 @@ interface SpelledRoot {
 }
 
 function spelledRoot(spelling: RootSpelling): SpelledRoot {
-  const temporaryDir = mkdtempSync(join(tmpdir(), 'ok-path-identity-'));
+  const temporaryDir = mkdtempSync(join(tmpdir(), 'ps-path-identity-'));
   fixtures.push(temporaryDir);
   const projectDir =
     spelling === '8.3 short-name' ? temporaryDir : realpathSync.native(temporaryDir);
@@ -197,7 +197,7 @@ describe('directory identity across server components', () => {
   ])(
     'persistence keeps writes within the $spelling root, which resolves to the working directory',
     async ({ contentDir }) => {
-      const insideDir = mkdtempSync(join(process.cwd(), 'ok-cwd-root-'));
+      const insideDir = mkdtempSync(join(process.cwd(), 'ps-cwd-root-'));
       fixtures.push(insideDir);
       const { projectDir } = spelledRoot('natively spelled');
       const insidePath = join(insideDir, 'inside.md');
@@ -429,13 +429,13 @@ describe('one directory identity for watcher keys and linked documents', () => {
       const root = spelledRoot(spelling);
       requireSpellingOnThisLeg(root, ctx);
       const { contentDir } = root;
-      const home = mkdtempSync(join(tmpdir(), 'ok-path-identity-home-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-path-identity-home-'));
       fixtures.push(home);
       const docName = `echo-${randomUUID().slice(0, 8)}`;
       const filePath = join(contentDir, `${docName}.md`);
       const seed = '# Echo\n\nSeed paragraph.\n';
       writeFileSync(filePath, seed);
-      if (watcher === 'chokidar') vi.stubEnv('OK_FILE_WATCHER_BACKEND', 'chokidar');
+      if (watcher === 'chokidar') vi.stubEnv('PS_FILE_WATCHER_BACKEND', 'chokidar');
       resetWatcherDecisionDiagnostics();
       echoGate.docName = docName;
       const server = createServer({
@@ -565,12 +565,12 @@ describe('one directory identity for watcher keys and linked documents', () => {
       const { projectDir, contentDir, canonicalContentDir } = root;
       const original = '# Target\n\nTarget body.\n';
       const edited = '# Target\n\nTarget body.\n\nAppended.\n';
-      mkdirSync(join(canonicalContentDir, '.ok', 'local'), { recursive: true });
+      mkdirSync(join(canonicalContentDir, '.ps', 'local'), { recursive: true });
       const targets = {
         'root-spelled': join(contentDir, 'root-target.md'),
         'native-spelled': join(canonicalContentDir, 'native-target.md'),
         outside: join(projectDir, 'outside-target.md'),
-        private: join(contentDir, '.ok', 'local', 'private-target.md'),
+        private: join(contentDir, '.ps', 'local', 'private-target.md'),
       };
       for (const [docName, target] of Object.entries(targets)) {
         writeFileSync(target, original);
@@ -706,7 +706,7 @@ describe('one directory identity for watcher keys and linked documents', () => {
       const root = spelledRoot(spelling);
       requireSpellingOnThisLeg(root, ctx);
       const { contentDir } = root;
-      const home = mkdtempSync(join(tmpdir(), 'ok-path-identity-home-'));
+      const home = mkdtempSync(join(tmpdir(), 'ps-path-identity-home-'));
       fixtures.push(home);
       const skillName = 'alias-refresh';
       const skillFile = (body: string) =>
@@ -717,7 +717,7 @@ describe('one directory identity for watcher keys and linked documents', () => {
         mkdirSync(join(root.canonicalContentDir, skill, '..'), { recursive: true });
         writeFileSync(join(root.canonicalContentDir, skill), skillFile('Before the edit.'));
       }
-      if (watcher === 'chokidar') vi.stubEnv('OK_FILE_WATCHER_BACKEND', 'chokidar');
+      if (watcher === 'chokidar') vi.stubEnv('PS_FILE_WATCHER_BACKEND', 'chokidar');
       const server = createServer({
         contentDir,
         quiet: true,

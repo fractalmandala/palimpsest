@@ -17,7 +17,7 @@ import {
   CONFIG_DOC_NAME_USER,
   type ConfigBinding,
   ConfigSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { removeAllDuringTeardown } from '../stress/_helpers/teardown-fs.ts';
@@ -60,7 +60,7 @@ afterEach(async () => {
 });
 
 async function isolatedServer(): Promise<IsolatedServer> {
-  const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-reset-home-')));
+  const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-reset-home-')));
   opened.push(() => removeAllDuringTeardown(home));
   const server = await createTestServer({
     configHomedirOverride: home,
@@ -179,15 +179,15 @@ async function saveEverySettingScope(server: IsolatedServer): Promise<void> {
 }
 
 function projectConfigPath(server: TestServer): string {
-  return join(server.contentDir, '.ok', 'config.yml');
+  return join(server.contentDir, '.ps', 'config.yml');
 }
 
 function localConfigPath(server: TestServer): string {
-  return join(server.contentDir, '.ok', 'local', 'config.yml');
+  return join(server.contentDir, '.ps', 'local', 'config.yml');
 }
 
 function userConfigPath(server: IsolatedServer): string {
-  return join(server.home, '.ok', 'global.yml');
+  return join(server.home, '.ps', 'global.yml');
 }
 
 describe('test-reset with scope=server returns an isolated server to its booted state', () => {
@@ -254,13 +254,13 @@ describe('test-reset with scope=server returns an isolated server to its booted 
   }, 60_000);
 
   test('a page deleted just before the reset leaves no removal record once the server has seen the deletion on disk', async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-reset-removal-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-reset-removal-')));
     opened.push(() => removeAllDuringTeardown(contentDir));
-    const home = realpathSync(mkdtempSync(join(tmpdir(), 'ok-reset-home-')));
+    const home = realpathSync(mkdtempSync(join(tmpdir(), 'ps-reset-home-')));
     opened.push(() => removeAllDuringTeardown(home));
     writeFileSync(join(contentDir, 'test-doc.md'), '', 'utf-8');
-    mkdirSync(join(contentDir, '.ok'));
-    writeFileSync(join(contentDir, '.ok', 'config.yml'), '{}\n', 'utf-8');
+    mkdirSync(join(contentDir, '.ps'));
+    writeFileSync(join(contentDir, '.ps', 'config.yml'), '{}\n', 'utf-8');
     mkdirSync(join(contentDir, '.claude', 'skills'), { recursive: true });
     mkdirSync(join(contentDir, 'sidebar-folder'));
     writeFileSync(join(contentDir, 'sidebar-folder', 'nested-doc.md'), '', 'utf-8');
@@ -292,7 +292,7 @@ describe('test-reset with scope=server returns an isolated server to its booted 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ scope: 'server', residue: NO_RESIDUE });
     expect(
-      readdirSync(join(contentDir, '.ok')).filter((name) =>
+      readdirSync(join(contentDir, '.ps')).filter((name) =>
         name.startsWith('watcher-settle-fence-'),
       ),
     ).toEqual([]);
@@ -306,28 +306,28 @@ describe('test-reset with scope=server returns an isolated server to its booted 
     running = false;
     await server.cleanup();
     const journal = JSON.parse(
-      readFileSync(join(contentDir, '.ok', 'local', 'removed-docs.json'), 'utf-8'),
+      readFileSync(join(contentDir, '.ps', 'local', 'removed-docs.json'), 'utf-8'),
     ) as { entries: Array<{ docName: string }> };
     expect(journal.entries.map((entry) => entry.docName)).toEqual([]);
   }, 120_000);
 
-  test('a server-scope reset that asks to keep .okignore is refused and changes nothing, and a plain one clears .okignore', async () => {
+  test('a server-scope reset that asks to keep .psignore is refused and changes nothing, and a plain one clears .psignore', async () => {
     const server = await isolatedServer();
     const local = await bindConfig(server, CONFIG_DOC_NAME_PROJECT_LOCAL, 'project-local');
     expect(local.binding.patch({ search: { semantic: { enabled: true } } }).ok).toBe(true);
     await pollUntil(() => existsSync(localConfigPath(server)), 15_000, 100, 'the local config');
     local.close();
-    const okignorePath = join(server.contentDir, '.okignore');
+    const okignorePath = join(server.contentDir, '.psignore');
     writeFileSync(okignorePath, 'kept-by-request/\n', 'utf-8');
     await pollUntil(
       () => server.instance.contentFilter.isExcluded('kept-by-request/note.md'),
       15_000,
       100,
-      'the .okignore pattern to apply',
+      'the .psignore pattern to apply',
     );
 
     const refused = await fetch(
-      `${server.baseUrl}/api/test-reset?scope=server&reset-okignore=false`,
+      `${server.baseUrl}/api/test-reset?scope=server&reset-psignore=false`,
       { method: 'POST' },
     );
 
@@ -335,7 +335,7 @@ describe('test-reset with scope=server returns an isolated server to its booted 
     expect(await refused.json()).toMatchObject({
       type: 'urn:ok:error:invalid-request',
       title:
-        'reset-okignore cannot be combined with scope=server: a server-scope reset always restores .okignore.',
+        'reset-psignore cannot be combined with scope=server: a server-scope reset always restores .psignore.',
     });
     expect(readFileSync(okignorePath, 'utf-8')).toBe('kept-by-request/\n');
     expect(server.instance.contentFilter.isExcluded('kept-by-request/note.md')).toBe(true);
@@ -374,15 +374,15 @@ describe('test-reset with scope=server returns an isolated server to its booted 
     expect(next.binding.current().content.attachmentFolderPath).toBe('assets');
   }, 60_000);
 
-  test('an .okignore the next run writes again with the same bytes applies after the reset', async () => {
+  test('an .psignore the next run writes again with the same bytes applies after the reset', async () => {
     const server = await isolatedServer();
-    const okignorePath = join(server.contentDir, '.okignore');
+    const okignorePath = join(server.contentDir, '.psignore');
     writeFileSync(okignorePath, 'seeded-again/\n', 'utf-8');
     await pollUntil(
       () => server.instance.contentFilter.isExcluded('seeded-again/note.md'),
       15_000,
       100,
-      'the seeded .okignore pattern to apply',
+      'the seeded .psignore pattern to apply',
     );
 
     expect((await resetServer(server)).status).toBe(200);
@@ -393,7 +393,7 @@ describe('test-reset with scope=server returns an isolated server to its booted 
       () => server.instance.contentFilter.isExcluded('seeded-again/note.md'),
       15_000,
       100,
-      'the same .okignore pattern, written again after the reset, to apply',
+      'the same .psignore pattern, written again after the reset, to apply',
     );
   }, 60_000);
 

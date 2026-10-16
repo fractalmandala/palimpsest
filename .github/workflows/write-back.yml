@@ -104,14 +104,14 @@ jobs:
         if: steps.tag.outputs.channel != 'none'
         id: bridge-check
         env:
-          OK_RELEASE_BRIDGE_APP_ID: ${{ secrets.OK_RELEASE_BRIDGE_APP_ID }}
+          PS_RELEASE_BRIDGE_APP_ID: ${{ secrets.PS_RELEASE_BRIDGE_APP_ID }}
         run: |
           set -euo pipefail
-          if [[ -n "${OK_RELEASE_BRIDGE_APP_ID:-}" ]]; then
+          if [[ -n "${PS_RELEASE_BRIDGE_APP_ID:-}" ]]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::OK_RELEASE_BRIDGE_APP_ID not set — reads against the private monorepo will 404 and those candidates will be reported as failures."
+            echo "::warning::PS_RELEASE_BRIDGE_APP_ID not set — reads against the private monorepo will 404 and those candidates will be reported as failures."
           fi
 
       - name: Mint cross-repo read token (bridge App)
@@ -121,7 +121,7 @@ jobs:
         with:
           # Public client ID for inkeep-ok-release-bridge (non-secret; supersedes the deprecated app-id input).
           client-id: Iv23lii4qS2FAc6tkzfI
-          private-key: ${{ secrets.OK_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
+          private-key: ${{ secrets.PS_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
           # The bridge App is installed on agents-private, not here. Scoping the
           # token to that installation is also why it cannot be the only token:
           # it has no standing to post the reply back onto an issue in this repo.

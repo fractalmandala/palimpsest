@@ -21,9 +21,9 @@ describe('migrateLegacyUserDataDir', () => {
   let legacyDir: string;
 
   beforeEach(() => {
-    appSupport = mkdtempSync(join(tmpdir(), 'ok-userdata-migrate-'));
-    targetDir = join(appSupport, 'OpenKnowledge');
-    legacyDir = join(appSupport, 'Open Knowledge');
+    appSupport = mkdtempSync(join(tmpdir(), 'ps-userdata-migrate-'));
+    targetDir = join(appSupport, 'Palimpsest');
+    legacyDir = join(appSupport, 'Palimpsest');
   });
 
   afterEach(() => {

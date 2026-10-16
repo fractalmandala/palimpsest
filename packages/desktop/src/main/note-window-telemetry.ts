@@ -1,4 +1,4 @@
-import { withSpanSync } from '@inkeep/open-knowledge-server';
+import { withSpanSync } from '@palimpsest/server';
 import type { NoteWindowEntryPoint } from './note-window-registry.ts';
 
 export function recordNoteWindowOpened(info: { entryPoint: NoteWindowEntryPoint }): void {

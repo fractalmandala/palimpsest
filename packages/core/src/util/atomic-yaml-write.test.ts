@@ -17,7 +17,7 @@ let testDir: string;
 let target: string;
 
 beforeEach(() => {
-  testDir = mkdtempSync(join(tmpdir(), 'ok-atomic-write-'));
+  testDir = mkdtempSync(join(tmpdir(), 'ps-atomic-write-'));
   target = join(testDir, 'state.yml');
 });
 

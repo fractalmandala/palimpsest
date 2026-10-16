@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema, type JSONContent } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, describe, expect, test, vi } from 'vitest';
@@ -35,9 +35,9 @@ function serializeFragment(fragment: Y.XmlFragment): string {
 }
 
 function guardDisabledContentDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-defer-guard-off-'));
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', 'config.yml'), 'bridge:\n  deferGuard:\n    enabled: false\n');
+  const dir = mkdtempSync(join(tmpdir(), 'ps-defer-guard-off-'));
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', 'config.yml'), 'bridge:\n  deferGuard:\n    enabled: false\n');
   writeFileSync(join(dir, 'test-doc.md'), '', 'utf-8');
   return dir;
 }

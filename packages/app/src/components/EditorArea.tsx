@@ -1,16 +1,16 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { parseExternalSkillDocName } from '@inkeep/open-knowledge-core/constants/cc1';
-import { detectEmbeddedHostFromBrowser } from '@inkeep/open-knowledge-core/constants/embedded-host';
+import { parseExternalSkillDocName } from '@palimpsest/core/constants/cc1';
+import { detectEmbeddedHostFromBrowser } from '@palimpsest/core/constants/embedded-host';
 import {
   isFrontmatterSchemaAsset,
   isMarkdownlintJsonConfig,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 import {
   PREFERRED_TERMINAL_RIGHT_WIDTH,
   type TerminalPlacement,
-} from '@inkeep/open-knowledge-core/terminal-layout';
+} from '@palimpsest/core/terminal-layout';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ChevronLeft, PanelRightClose } from 'lucide-react';
 import {
@@ -44,7 +44,7 @@ import { FolderOverview } from '@/components/FolderOverview';
 import { LargeFileEditorState } from '@/components/LargeFileEditorState';
 import { MountStalledAffordance } from '@/components/MountStalledAffordance';
 import { NothingOpen } from '@/components/NothingOpen';
-import { OkBlobRunnerPage } from '@/components/OkBlobRunnerPage';
+import { PsBlobRunnerPage } from '@/components/PsBlobRunnerPage';
 import { PropertyProvider, useProperties } from '@/components/PropertyContext';
 import { ShareReceiveMissPanel } from '@/components/ShareReceiveMissPanel';
 import { SkillFileViewer } from '@/components/SkillFileViewer';
@@ -87,7 +87,7 @@ import {
   resolveAgentsPanelPointerRelease,
   writeAgentsPanelWidth,
 } from '@/lib/agents-panel-width-store';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { docNameFromHash, hashFromDocName, isSameHash } from '@/lib/doc-hash';
 import { getInitialDocPanelWidth, writeDocPanelWidth } from '@/lib/doc-panel-width-store';
 import { focusAwayFromHiddenEditor, focusWaitsForEditor } from '@/lib/editor-hidden-focus';
@@ -546,7 +546,7 @@ interface EditorAreaProps {
   onModeChange: (mode: EditorMode) => void;
   activeTab: PanelTab;
   onActiveTabChange: (tab: PanelTab) => void;
-  terminalBridge?: OkDesktopBridge | null;
+  terminalBridge?: PsDesktopBridge | null;
   editorVisible?: boolean;
   terminalVisible?: boolean;
   terminalPlacement?: TerminalPlacement;
@@ -2333,8 +2333,8 @@ function EditorAreaInner({
 
   useEffect(() => {
     setViewMenuState({ docPanelVisible: !isCollapsed || docPanelCover });
-    if (window.okDesktop == null) return;
-    window.okDesktop.editor.notifyViewMenuStateChanged({
+    if (window.psDesktop == null) return;
+    window.psDesktop.editor.notifyViewMenuStateChanged({
       docPanelVisible: !isCollapsed || docPanelCover,
     });
   }, [isCollapsed, docPanelCover]);
@@ -2351,7 +2351,7 @@ function EditorAreaInner({
   ]);
 
   useEffect(() => {
-    if (window.okDesktop != null) return;
+    if (window.psDesktop != null) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!matchesKeyboardShortcut(event, 'toggle-document-panel')) return;
       if (isOverlayLayerOpen()) return;
@@ -2503,11 +2503,11 @@ function EditorAreaInner({
       docSlotHeldForLoad = true;
       skeletonReplacesWorkspace = terminalBridge == null || !everHadProvider;
     } else if (isBlobRunnerNewTabId(activeNewTabId)) {
-      viewContent = <OkBlobRunnerPage />;
+      viewContent = <PsBlobRunnerPage />;
     } else {
       viewContent =
         blobRunRevealedTabId !== null && blobRunRevealedTabId === activeNewTabId ? (
-          <OkBlobRunnerPage autoStart />
+          <PsBlobRunnerPage autoStart />
         ) : (
           <EmptyEditorState
             terminalOpen={terminalVisible}

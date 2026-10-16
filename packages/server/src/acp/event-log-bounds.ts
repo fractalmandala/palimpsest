@@ -1,7 +1,7 @@
 import type { SessionUpdate } from '@agentclientprotocol/sdk';
-import type { CodexLegacyAgentIdentity } from '@inkeep/open-knowledge-core/acp/codex-legacy-notice';
-import { isCodexLegacyWarningUpdate } from '@inkeep/open-knowledge-core/acp/codex-legacy-notice';
-import type { ThreadEvent } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { CodexLegacyAgentIdentity } from '@palimpsest/core/acp/codex-legacy-notice';
+import { isCodexLegacyWarningUpdate } from '@palimpsest/core/acp/codex-legacy-notice';
+import type { ThreadEvent } from '@palimpsest/core/acp/thread-protocol';
 
 const EVENT_TEXT_CAP = 16_000;
 

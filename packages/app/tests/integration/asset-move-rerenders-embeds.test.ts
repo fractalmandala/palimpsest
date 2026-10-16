@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -40,7 +40,7 @@ afterEach(async () => {
 
 describe('asset-move embed re-resolution — head-watcher-independent fallback', () => {
   test('moving photo.png → assets/photo.png updates PM image src without git', async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-asset-move-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-asset-move-')));
     cleanups.push(() => {
       try {
         rmSync(contentDir, { recursive: true, force: true });
@@ -125,7 +125,7 @@ describe('asset-move embed re-resolution — head-watcher-independent fallback',
   }, 30_000);
 
   test('deleting photo.png without replacement re-renders embed with null src', async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-asset-delete-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-asset-delete-')));
     cleanups.push(() => {
       try {
         rmSync(contentDir, { recursive: true, force: true });

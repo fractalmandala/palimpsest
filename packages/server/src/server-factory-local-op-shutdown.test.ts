@@ -116,7 +116,7 @@ test('destroy rejects with a refused auth subprocess termination and records the
       expires_in: 900,
     })}\n`,
   );
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-local-op-shutdown-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-local-op-shutdown-'));
   const instance = createServer({
     contentDir: projectDir,
     projectDir,

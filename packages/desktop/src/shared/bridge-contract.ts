@@ -1,20 +1,20 @@
 import type {
-  OkCheckTargetExistsResult,
-  OkDesktopBridge,
-  OkHeadBranchInfo,
-  OkSeedApplyOptions,
-  OkSeedPlanOptions,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsCheckTargetExistsResult,
+  PsDesktopBridge,
+  PsHeadBranchInfo,
+  PsSeedApplyOptions,
+  PsSeedPlanOptions,
+} from '@palimpsest/core/desktop-bridge';
 
-export type * from '@inkeep/open-knowledge-core/desktop-bridge';
+export type * from '@palimpsest/core/desktop-bridge';
 
-export type CheckTargetExistsResult = OkCheckTargetExistsResult;
-export type HeadBranchInfo = OkHeadBranchInfo;
-export type SeedPlanOptions = OkSeedPlanOptions;
-export type SeedApplyOptions = OkSeedApplyOptions;
+export type CheckTargetExistsResult = PsCheckTargetExistsResult;
+export type HeadBranchInfo = PsHeadBranchInfo;
+export type SeedPlanOptions = PsSeedPlanOptions;
+export type SeedApplyOptions = PsSeedApplyOptions;
 
 declare global {
   interface Window {
-    okDesktop?: OkDesktopBridge;
+    psDesktop?: PsDesktopBridge;
   }
 }

@@ -1,14 +1,14 @@
-import type { OkDesktopBridge, OkShareReceivedPayload } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsShareReceivedPayload } from '@/lib/desktop-bridge-types';
 
 export interface ShareReceiveStore {
-  install(opts: { bridge: OkDesktopBridge | undefined }): (() => void) | undefined;
-  getSnapshot(): OkShareReceivedPayload | null;
+  install(opts: { bridge: PsDesktopBridge | undefined }): (() => void) | undefined;
+  getSnapshot(): PsShareReceivedPayload | null;
   subscribe(listener: () => void): () => void;
   dismiss(): void;
 }
 
 export function createShareReceiveStore(): ShareReceiveStore {
-  let current: OkShareReceivedPayload | null = null;
+  let current: PsShareReceivedPayload | null = null;
   const listeners = new Set<() => void>();
   let attached = false;
   let unsubscribeFromBridge: (() => void) | null = null;
@@ -40,7 +40,7 @@ export function createShareReceiveStore(): ShareReceiveStore {
       };
     },
 
-    getSnapshot(): OkShareReceivedPayload | null {
+    getSnapshot(): PsShareReceivedPayload | null {
       return current;
     },
 
@@ -60,7 +60,7 @@ export function createShareReceiveStore(): ShareReceiveStore {
 export const shareReceiveStore: ShareReceiveStore = createShareReceiveStore();
 
 export function installShareReceivedListener(opts: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
 }): (() => void) | undefined {
   return shareReceiveStore.install(opts);
 }

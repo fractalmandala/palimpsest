@@ -431,10 +431,10 @@ async function runDispatch(
   return shipped;
 }
 
-const FOCUS_EVENT = 'open-knowledge:comment-focus-thread';
-const OPEN_THREAD_EVENT = 'open-knowledge:comment-open-thread';
-const START_EVENT = 'open-knowledge:comment-start';
-const POSTED_EVENT = 'open-knowledge:comment-posted';
+const FOCUS_EVENT = 'palimpsest:comment-focus-thread';
+const OPEN_THREAD_EVENT = 'palimpsest:comment-open-thread';
+const START_EVENT = 'palimpsest:comment-start';
+const POSTED_EVENT = 'palimpsest:comment-posted';
 
 const bus: EventTarget = typeof window === 'undefined' ? new EventTarget() : window;
 

@@ -6,7 +6,7 @@ import {
   composeWindowsShellLaunchArgs,
   isTerminalLaunchEnvName,
   launchWithoutSupportFile,
-  OK_DESKTOP_TERMINAL_ENV,
+  PS_DESKTOP_TERMINAL_ENV,
   resolveWindowsShellFamily,
   shellSingleQuote,
   type TerminalLaunchCommand,
@@ -14,8 +14,8 @@ import {
   type WindowsShellFamily,
   WindowsShellLaunchError,
   type WindowsShellLaunchFailureReason,
-} from '@inkeep/open-knowledge-core';
-import { isTerminalShellNoticeReason } from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core';
+import { isTerminalShellNoticeReason } from '@palimpsest/core/desktop-bridge';
 import type {
   TerminalShellNoticeReason,
   TerminalSupportFileNoticeReason,
@@ -23,10 +23,10 @@ import type {
 import {
   composeOkChildEnv,
   hasNoResolvableOkHome,
-  okChildEnvOptions,
-  okManagedBinDirs,
-  okPackagedCliBinDir,
-} from '../shared/ok-child-env.ts';
+  psChildEnvOptions,
+  psManagedBinDirs,
+  psPackagedCliBinDir,
+} from '../shared/ps-child-env.ts';
 import { createPtyPhaseTrace, type PtyPhaseTrace } from '../shared/pty-phase-trace.ts';
 import {
   commandWithManagedPath,
@@ -470,7 +470,7 @@ function asIncomingMessage(raw: unknown): PtyHostIncomingMessage | null {
           supportFile !== null &&
           (supportFile as Record<string, unknown>).kind === 'claude-settings' &&
           typeof (supportFile as Record<string, unknown>).relativePath === 'string' &&
-          /^\.ok\/local\/terminal\/claude-settings-(?:mcp|tools|mcp-tools)\.json$/u.test(
+          /^\.ps\/local\/terminal\/claude-settings-(?:mcp|tools|mcp-tools)\.json$/u.test(
             (supportFile as Record<string, unknown>).relativePath as string,
           ) &&
           typeof (supportFile as Record<string, unknown>).contents === 'string' &&
@@ -866,7 +866,7 @@ export function buildShellEnv(
     logger?: { warn: (data: Record<string, unknown>) => void };
   } = {},
 ): { env: Record<string, string>; managedBinDirs: readonly string[] } {
-  const childOptions = okChildEnvOptions(parentEnv, {
+  const childOptions = psChildEnvOptions(parentEnv, {
     platform: options.platform,
     cliBinDir: options.cliBinDir,
   });
@@ -874,8 +874,8 @@ export function buildShellEnv(
     options.logger?.warn({ event: 'pty-host-no-ok-managed-home', platform: childOptions.platform });
   }
   const out = composeOkChildEnv(parentEnv, childOptions);
-  out[OK_DESKTOP_TERMINAL_ENV] = '1';
-  return { env: out, managedBinDirs: okManagedBinDirs(childOptions) };
+  out[PS_DESKTOP_TERMINAL_ENV] = '1';
+  return { env: out, managedBinDirs: psManagedBinDirs(childOptions) };
 }
 
 const CONPTY_DLL_LOAD_ERROR_PREFIXES = {
@@ -1609,7 +1609,7 @@ if ((process as NodeJS.Process & { parentPort?: unknown }).parentPort) {
       exitHost: (code) => process.exit(code),
       flushLogger,
       env: process.env,
-      cliBinDir: okPackagedCliBinDir(
+      cliBinDir: psPackagedCliBinDir(
         process.platform,
         (process as NodeJS.Process & { resourcesPath?: string }).resourcesPath,
       ),

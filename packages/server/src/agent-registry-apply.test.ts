@@ -9,7 +9,7 @@ import {
   type SatisfierId,
   type StepExecutor,
   type SurfaceState,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, it } from 'vitest';
 import { applyAgentRegistryIntents, NO_WRITER_EXECUTOR } from './agent-registry-apply.ts';
 import { readBundleDecision } from './skill-state.ts';
@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 function tempHome(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-apply-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-apply-'));
   tempDirs.push(dir);
   return dir;
 }

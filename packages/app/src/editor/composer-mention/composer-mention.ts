@@ -1,4 +1,4 @@
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
 import { type Editor, Extension, mergeAttributes, Node } from '@tiptap/core';
 import Placeholder from '@tiptap/extension-placeholder';

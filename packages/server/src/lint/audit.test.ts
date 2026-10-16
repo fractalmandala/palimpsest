@@ -6,7 +6,7 @@ import {
   DEFAULT_LINTER_CONFIG,
   LINT_PLUGINS,
   type LinterConfig,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { auditProject, lintDoc, resolveScope } from './audit.ts';
 import { AuditCache } from './audit-cache.ts';
@@ -31,7 +31,7 @@ const base: LinterConfig = {
 };
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-')));
 });
 afterEach(() => {
   vi.restoreAllMocks();
@@ -140,7 +140,7 @@ describe('auditProject', () => {
           ...DEFAULT_LINTER_CONFIG.plugins,
           frontmatter: {
             enabled: true,
-            schemas: [{ appliesTo: '**', file: '.ok/schemas/missing.json' }],
+            schemas: [{ appliesTo: '**', file: '.ps/schemas/missing.json' }],
           },
         },
       },
@@ -200,10 +200,10 @@ describe('auditProject', () => {
     expect(audit.ran).toEqual(['markdownlint']);
   });
 
-  test('respects .okignore exclusions', async () => {
+  test('respects .psignore exclusions', async () => {
     write('keep.md', DOC_WITH_TAB);
     write('drafts/skip.md', DOC_WITH_TAB);
-    write('.okignore', 'drafts/\n');
+    write('.psignore', 'drafts/\n');
     const audit = await auditProject({ projectDir: root, contentDir: root, baseConfig: base });
     expect(audit.files.map((f) => f.file)).toEqual(['keep.md']);
     expect(audit.fileCount).toBe(1);
@@ -264,7 +264,7 @@ describe('auditProject', () => {
   });
 
   test('skips hidden path segments — docs there are not addressable to fix or navigate', async () => {
-    write('.ok/skills/pack/SKILL.md', DOC_WITH_TAB);
+    write('.ps/skills/pack/SKILL.md', DOC_WITH_TAB);
     write('.hidden-notes.md', DOC_WITH_TAB);
     write('visible.md', DOC_WITH_TAB);
     const audit = await auditProject({
@@ -276,12 +276,12 @@ describe('auditProject', () => {
   });
 
   test('refuses a targetPath under a hidden segment', async () => {
-    write('.ok/skills/pack/SKILL.md', DOC_WITH_TAB);
+    write('.ps/skills/pack/SKILL.md', DOC_WITH_TAB);
     const audit = await auditProject({
       projectDir: root,
       contentDir: root,
       baseConfig: base,
-      targetPath: '.ok/skills',
+      targetPath: '.ps/skills',
     });
     expect(audit.files).toEqual([]);
     expect(audit.warnings).toEqual([

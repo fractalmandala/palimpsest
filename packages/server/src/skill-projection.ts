@@ -11,8 +11,8 @@ import {
   PROJECT_SKILL_EDITOR_IDS,
   RENAMED_PACK_SKILLS,
   USER_SKILL_EDITOR_IDS,
-} from '@inkeep/open-knowledge-core';
-import type { SkillHostId } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import type { SkillHostId } from '@palimpsest/core/skills-catalog';
 import { parse as parseYaml } from 'yaml';
 import { isSkillBundlePathWithheld } from './content-filter.ts';
 import {
@@ -30,7 +30,7 @@ export function resolvedHosts(hosts: readonly string[], scope: 'project' | 'glob
   return hosts.filter((h): h is EditorId => valid.includes(h));
 }
 
-const RESERVED_SKILL_PREFIX = 'open-knowledge';
+const RESERVED_SKILL_PREFIX = 'palimpsest';
 
 const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
 const CONFLICT_MARKER_RES = [/^<{7} /m, /^={7}$/m, /^>{7} /m];

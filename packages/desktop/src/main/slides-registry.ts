@@ -1,4 +1,4 @@
-import type { OkSlidesOpenResult } from '../shared/ipc-channels.ts';
+import type { PsSlidesOpenResult } from '../shared/ipc-channels.ts';
 import type { SlidevProcess } from './slidev-server.ts';
 import type { BrowserWindowLike } from './window-manager.ts';
 
@@ -17,15 +17,15 @@ export interface SlidesDeckRegistry {
   unregister(docPath: string): void;
   reapAll(): Promise<void>;
   size(): number;
-  getOpenInFlight(docPath: string): Promise<OkSlidesOpenResult> | undefined;
-  setOpenInFlight(docPath: string, attempt: Promise<OkSlidesOpenResult>): void;
+  getOpenInFlight(docPath: string): Promise<PsSlidesOpenResult> | undefined;
+  setOpenInFlight(docPath: string, attempt: Promise<PsSlidesOpenResult>): void;
   clearOpenInFlight(docPath: string): void;
   trackSpawned(docPath: string, process: SlidevProcess): void;
 }
 
 export function createSlidesDeckRegistry(): SlidesDeckRegistry {
   const decks = new Map<string, RunningSlidesDeck>();
-  const opening = new Map<string, Promise<OkSlidesOpenResult>>();
+  const opening = new Map<string, Promise<PsSlidesOpenResult>>();
   const spawned = new Map<string, Set<SlidevProcess>>();
   return {
     get: (docPath) => decks.get(docPath),

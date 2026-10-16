@@ -10,7 +10,7 @@ import {
 import { homedir } from 'node:os';
 import { basename, dirname, join, relative, resolve as resolvePath } from 'node:path';
 import { createInterface } from 'node:readline/promises';
-import { currentCliCommandName, USER_SKILL_HOSTS } from '@inkeep/open-knowledge-core';
+import { currentCliCommandName, USER_SKILL_HOSTS } from '@palimpsest/core';
 import {
   BUNDLE_SKILL_NAME,
   type BundleId,
@@ -24,7 +24,7 @@ import {
   USER_GLOBAL_BUNDLE_IDS,
   writeBundleDecision,
   writeTargetVersion,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import { canonicalizeForCompare } from '../integrations/resolve-project-root.ts';
 import {
@@ -43,7 +43,7 @@ import {
 } from './editors.ts';
 
 const USER_SKILL_DIR_NAME = 'open-knowledge-discovery';
-const PROJECT_SKILL_DIR_NAME = 'open-knowledge';
+const PROJECT_SKILL_DIR_NAME = 'palimpsest';
 const CENTRAL_USER_SKILL_REL = ['.agents', 'skills', USER_SKILL_DIR_NAME] as const;
 
 export interface RepairSkillsLogEvent {
@@ -359,14 +359,14 @@ function installUserBundleToHostDirs(
   };
 }
 
-const OK_MCP_MARKER_PREFIX = '# ok-mcp-';
+const PS_MCP_MARKER_PREFIX = '# ps-mcp-';
 
 function editorWiredForOk(configPath: string | undefined, fs: RepairSkillsFsOps): boolean {
   if (!configPath) return false;
   try {
     if (!fs.existsSync(configPath)) return false;
     const bytes = fs.readFileSync(configPath).toString('utf8');
-    return bytes.includes(OK_MCP_MARKER_PREFIX);
+    return bytes.includes(PS_MCP_MARKER_PREFIX);
   } catch {
     return false;
   }
@@ -816,7 +816,7 @@ export function repairSkillsCommand(): Command {
     .action(async (opts: { yes?: boolean }) => {
       const result = await repairSkills({
         projectDir: resolvePath(process.cwd()),
-        reclaimDisableEnv: process.env.OK_RECLAIM_DISABLE ?? null,
+        reclaimDisableEnv: process.env.PS_RECLAIM_DISABLE ?? null,
         confirmLegacyCleanup: (plan) => confirmLegacyCleanup(plan, { yes: opts.yes === true }),
       });
       process.stdout.write(`${formatRepairSkillsResult(result)}\n`);
@@ -835,7 +835,7 @@ async function confirmLegacyCleanup(
   const lines: string[] = [
     '',
     accent(
-      'A previous version of OpenKnowledge installed its skill into agent tools you may never have used.',
+      'A previous version of Palimpsest installed its skill into agent tools you may never have used.',
     ),
     dim(
       '(Versions before 0.42 wrote to every host a third-party installer knew about — see issue #820.)',
@@ -844,7 +844,7 @@ async function confirmLegacyCleanup(
   if (plan.skillDirs.length > 0) {
     lines.push(
       '',
-      `${accent('Remove OpenKnowledge skills:')} ${plan.skillDirs.length}`,
+      `${accent('Remove Palimpsest skills:')} ${plan.skillDirs.length}`,
       ...plan.skillDirs.map((p) => `  ${show(p)}`),
     );
   }

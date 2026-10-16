@@ -21,7 +21,7 @@ import {
 } from './mac-update-manifest.ts';
 import { UPDATE_MANIFEST_FAILURE_MARKER } from './packaging-diagnostics.mjs';
 
-const variantName = parseDesktopVariantName(process.env.OK_DESKTOP_VARIANT);
+const variantName = parseDesktopVariantName(process.env.PS_DESKTOP_VARIANT);
 const variant = DESKTOP_VARIANTS[variantName];
 const args = process.argv.slice(2);
 const buildDir = join(process.cwd(), '.variant-build');

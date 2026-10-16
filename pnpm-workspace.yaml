@@ -42,7 +42,7 @@ verifyDepsBeforeRun: false
 # script is explicitly allowed or denied. Electron ships no install script of
 # its own as of 43, but the entry stays so a future release that reintroduces one
 # is not silently blocked. The napi native addon
-# (@inkeep/open-knowledge-native-config) builds via its own turbo `napi build`
+# (@palimpsest/native-config) builds via its own turbo `napi build`
 # task, not a dependency install script, so it needs no entry here. node-pty
 # publishes N-API prebuilds for the supported desktop platforms; its install
 # script remains allowlisted as a source-build fallback when no matching

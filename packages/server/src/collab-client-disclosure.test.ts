@@ -10,7 +10,7 @@ let tmpRoot: string;
 let booted: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-collab-count-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-collab-count-'));
   booted = await bootCompositionRig(tmpRoot);
   await booted.ready;
 }, 60_000);

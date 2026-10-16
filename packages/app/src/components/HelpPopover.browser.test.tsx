@@ -1,4 +1,4 @@
-import { FALLBACK_LOCALE } from '@inkeep/open-knowledge-core/i18n/resolve-locale';
+import { FALLBACK_LOCALE } from '@palimpsest/core/i18n/resolve-locale';
 import type { Messages } from '@lingui/core';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,14 +9,14 @@ import spanishCatalog from '@/locales/es/messages.json';
 import { renderWithI18n } from '../../tests/foundation/render-with-i18n.test-helper';
 import { HelpPopover } from './HelpPopover';
 
-vi.mock('@inkeep/open-knowledge-core/utils/github-stars', () => ({
+vi.mock('@palimpsest/core/utils/github-stars', () => ({
   getGitHubStars: async () => 1234,
 }));
 
 const CLOUD_VERSION = '0.84.1-cloud.1596';
 
 function installDesktopBridge(appVersion: string) {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = {
+  (window as unknown as { psDesktop?: unknown }).psDesktop = {
     appVersion,
     update: { checkNow: async () => {} },
     state: {
@@ -52,7 +52,7 @@ function clipping(element: HTMLElement, container: HTMLElement) {
 }
 
 afterEach(() => {
-  (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+  (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   act(() => i18n.activate(FALLBACK_LOCALE));
 });
 

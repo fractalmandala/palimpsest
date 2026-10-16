@@ -3,7 +3,7 @@ import type { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 
-export const okSyntaxHighlight = HighlightStyle.define([
+export const psSyntaxHighlight = HighlightStyle.define([
   {
     tag: [tags.heading, tags.heading1, tags.heading2, tags.heading3],
     color: 'var(--syntax-func)',
@@ -79,13 +79,13 @@ export const okSyntaxHighlight = HighlightStyle.define([
   { tag: tags.invalid, color: 'var(--destructive)' },
 ]);
 
-export interface OkCmThemeOptions {
+export interface PsCmThemeOptions {
   dark: boolean;
   background?: string;
   gutterBackground?: string;
 }
 
-function createOkCmTheme(options: OkCmThemeOptions): Extension {
+function createOkCmTheme(options: PsCmThemeOptions): Extension {
   const background = options.background ?? 'transparent';
   const gutterBackground = options.gutterBackground ?? 'transparent';
   return EditorView.theme(
@@ -125,6 +125,6 @@ function createOkCmTheme(options: OkCmThemeOptions): Extension {
   );
 }
 
-export function okCmTheme(options: OkCmThemeOptions): Extension[] {
-  return [createOkCmTheme(options), syntaxHighlighting(okSyntaxHighlight, { fallback: true })];
+export function psCmTheme(options: PsCmThemeOptions): Extension[] {
+  return [createOkCmTheme(options), syntaxHighlighting(psSyntaxHighlight, { fallback: true })];
 }

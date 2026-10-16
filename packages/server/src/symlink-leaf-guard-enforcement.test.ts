@@ -35,15 +35,15 @@ const GUARD_CALL = /checkSymlinkLeaf\s*\(((?:[^()]|\([^()]*\))*)\)/g;
 const GUARD_DEFINING_MODULE = 'fs-safety.ts';
 
 const GUARD_CALL_SITES: Record<string, readonly string[]> = {
-  'api-extension.ts': ['okDir', 'okTemplatesDir'],
+  'api-extension.ts': ['psDir', 'psTemplatesDir'],
   'content/folder-frontmatter-write.ts': ['fmPath'],
   'content/nested-folder-rules.ts': ['dirname(yamlPath)', 'yamlPath'],
-  'content/templates-resolver.ts': ['okDir'],
+  'content/templates-resolver.ts': ['psDir'],
   'http/folder-template-routes.ts': [
     'foundAbs',
     'localFmPath',
     'movedAbs',
-    'okAbs',
+    'psAbs',
     'templateFilePath',
     'templateFilePath',
     'templatesAbs',
@@ -160,7 +160,7 @@ describe('checkSymlinkLeaf (tri-state semantics)', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-symlink-leaf-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-symlink-leaf-'));
   });
 
   afterEach(() => {

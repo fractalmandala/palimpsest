@@ -42,7 +42,7 @@ name: Bug lane
 # every step that reads it.
 #
 # This lane can never block anything: nothing waits on it, a refusal only
-# means the fix ships with its cycle, and the shared ok-release-cadence group
+# means the fix ships with its cycle, and the shared ps-release-cadence group
 # on point-release itself serializes real releases against beta cuts and
 # promotions.
 
@@ -69,7 +69,7 @@ concurrency:
   # tick supersedes an older one; the evaluation is idempotent. Since the split
   # this job runs for seconds, so supersession is a near-empty window rather
   # than the ~15-minute one that used to paint commits red.
-  group: ok-bug-lane
+  group: ps-bug-lane
   cancel-in-progress: true
 
 jobs:

@@ -2,7 +2,7 @@ import {
   mapConsoleLevel,
   parseStructuredConsoleMessage,
   prepareCapturedConsoleMessage,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger } from './desktop-logger.ts';
 
 interface ConsoleMessageEvent {

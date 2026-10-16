@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
+import { currentCliCommandName } from '@palimpsest/core';
 import { Command } from 'commander';
 import {
   getExcludedOkPaths,
@@ -50,7 +50,7 @@ export function sharingStatusCommand(): Command {
       }
 
       const lines: string[] = [];
-      lines.push(`OpenKnowledge sharing mode: ${formatMode(mode)}`);
+      lines.push(`Palimpsest sharing mode: ${formatMode(mode)}`);
       lines.push('');
       lines.push(`Excluded from git via ${accent('.git/info/exclude')}:`);
       if (excluded.length === 0) {

@@ -6,7 +6,7 @@ import { enumerateAgentPluginsRoot } from './manifest-providers.ts';
 
 let root: string;
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-agent-plugins-root-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-agent-plugins-root-'));
 });
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });
@@ -41,7 +41,7 @@ describe('enumerateAgentPluginsRoot', () => {
       name: 'ok',
       version: '1.2.0',
       description: 'Team skills',
-      repository: 'https://github.com/inkeep/open-knowledge',
+      repository: 'https://github.com/fractalmandala/palimpsest',
     });
 
     const bundles = enumerateAgentPluginsRoot(root, 'agent-plugins', {
@@ -59,7 +59,7 @@ describe('enumerateAgentPluginsRoot', () => {
       pluginProvider: 'agent-plugins',
       plugin: 'ok',
       version: '1.2.0',
-      repositoryUrl: 'https://github.com/inkeep/open-knowledge',
+      repositoryUrl: 'https://github.com/fractalmandala/palimpsest',
       scope: 'project',
       projectPath: '/proj',
     });

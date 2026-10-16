@@ -34,10 +34,10 @@ describe('repairLaunchJson (remove sweep)', () => {
     return path;
   }
 
-  const OK_ENTRY = {
+  const PS_ENTRY = {
     name: 'open-knowledge-ui',
     runtimeExecutable: '/bin/sh',
-    runtimeArgs: ['-l', '-c', '# ok-ui-v1\nexec ok start'],
+    runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexec ps start'],
     port: 39848,
   };
   const FOREIGN = {
@@ -47,7 +47,7 @@ describe('repairLaunchJson (remove sweep)', () => {
   };
 
   it("removes OK's entry, preserving co-located configurations", () => {
-    const configPath = writeLaunchJson({ version: '0.0.1', configurations: [FOREIGN, OK_ENTRY] });
+    const configPath = writeLaunchJson({ version: '0.0.1', configurations: [FOREIGN, PS_ENTRY] });
 
     const result = repairLaunchJson({ projectDir, logger });
 
@@ -66,7 +66,7 @@ describe('repairLaunchJson (remove sweep)', () => {
   });
 
   it("keeps the file when OK's entry was the only configuration", () => {
-    const configPath = writeLaunchJson({ version: '0.0.1', configurations: [OK_ENTRY] });
+    const configPath = writeLaunchJson({ version: '0.0.1', configurations: [PS_ENTRY] });
 
     const result = repairLaunchJson({ projectDir, logger });
 
@@ -97,8 +97,8 @@ describe('repairLaunchJson (remove sweep)', () => {
     expect(readFileSync(configPath, 'utf-8')).toBe(before);
   });
 
-  it('OK_RECLAIM_DISABLE=1 short-circuits with a structured event and no removal', () => {
-    const configPath = writeLaunchJson({ version: '0.0.1', configurations: [OK_ENTRY] });
+  it('PS_RECLAIM_DISABLE=1 short-circuits with a structured event and no removal', () => {
+    const configPath = writeLaunchJson({ version: '0.0.1', configurations: [PS_ENTRY] });
     const before = readFileSync(configPath, 'utf-8');
 
     const result = repairLaunchJson({ projectDir, logger, reclaimDisableEnv: '1' });

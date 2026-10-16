@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ForwardLinksSuccessSchema } from '@inkeep/open-knowledge-core';
+import { ForwardLinksSuccessSchema } from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import * as fileWatcher from '../../../server/src/file-watcher.ts';
 import * as fsTraced from '../../../server/src/fs-traced.ts';
@@ -34,7 +34,7 @@ afterEach(async () => {
 });
 
 test('a direct managed rename rewrite adopts a recreated reference before its older delete arrives', async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-stale-managed-rewrite-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-stale-managed-rewrite-')));
   const docName = 'reference';
   const filePath = join(contentDir, `${docName}.md`);
   const entered = Promise.withResolvers<void>();
@@ -152,8 +152,8 @@ test('a direct managed rename rewrite adopts a recreated reference before its ol
 
   writeFileSync(filePath, ORIGINAL, { flag: 'wx' });
   writeFileSync(join(contentDir, 'source.md'), '# Source\n', { flag: 'wx' });
-  mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'templates', 'same-reference.md'), ORIGINAL, {
+  mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'templates', 'same-reference.md'), ORIGINAL, {
     flag: 'wx',
   });
   server = await createTestServer({ contentDir });

@@ -31,7 +31,7 @@ async function outboxDbsForDoc(docName: string): Promise<string[]> {
   return dbs
     .map((d) => d.name)
     .filter((n): n is string => typeof n === 'string')
-    .filter((n) => n.startsWith('ok-replay-outbox:') && n.endsWith(`:${docName}`));
+    .filter((n) => n.startsWith('ps-replay-outbox:') && n.endsWith(`:${docName}`));
 }
 
 describe('durable replay outbox across server-instance-mismatch', () => {
@@ -88,7 +88,7 @@ describe('durable replay outbox across server-instance-mismatch', () => {
     expect(outboxDbs.length).toBeGreaterThanOrEqual(1);
     for (const dbName of outboxDbs) {
       const withoutDoc = dbName.slice(0, -(docName.length + 1));
-      const branch = withoutDoc.slice('ok-replay-outbox:'.length);
+      const branch = withoutDoc.slice('ps-replay-outbox:'.length);
       expect(branch).not.toContain(':');
       expect(await readReplayOutboxEntry({ branch, docName, namespace: null })).toBeNull();
     }

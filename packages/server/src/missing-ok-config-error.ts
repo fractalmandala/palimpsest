@@ -1,9 +1,9 @@
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
+import { currentCliCommandName } from '@palimpsest/core';
 
 export type MissingOkConfigKind = 'okdir' | 'config';
 
 export function missingOkConfigMessage(): string {
-  return `OpenKnowledge config not found at .ok/config.yml. Run ${currentCliCommandName()} init to scaffold OK in this directory.`;
+  return `Palimpsest config not found at .ps/config.yml. Run ${currentCliCommandName()} init to scaffold OK in this directory.`;
 }
 
 export class MissingOkConfigError extends Error {

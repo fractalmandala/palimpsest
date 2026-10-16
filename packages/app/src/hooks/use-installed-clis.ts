@@ -1,10 +1,10 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import type { TerminalCli } from '@palimpsest/core/handoff';
 import { useEffect, useState } from 'react';
 
 export function useInstalledClis(): Partial<Record<TerminalCli, boolean>> {
   const [installedClis, setInstalledClis] = useState<Partial<Record<TerminalCli, boolean>>>({});
   useEffect(() => {
-    const terminal = window.okDesktop?.terminal;
+    const terminal = window.psDesktop?.terminal;
     if (typeof terminal?.cliInstalledMap !== 'function') return;
     let cancelled = false;
     const probe = () => {

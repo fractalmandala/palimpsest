@@ -1,6 +1,6 @@
 import { flushSync } from 'react-dom';
 
-export const MASCOT_VIEW_TRANSITION_NAME = 'ok-blob-mascot';
+export const MASCOT_VIEW_TRANSITION_NAME = 'ps-blob-mascot';
 
 type ViewTransitionDocument = Document & {
   startViewTransition?: (callback: () => void) => { finished: Promise<void> };

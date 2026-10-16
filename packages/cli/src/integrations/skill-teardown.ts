@@ -1,11 +1,11 @@
 import { existsSync, lstatSync, readdirSync, rmdirSync, rmSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
-import { USER_SKILL_HOSTS } from '@inkeep/open-knowledge-core';
+import { USER_SKILL_HOSTS } from '@palimpsest/core';
 import {
   BUNDLE_SKILL_NAME,
   type BundleId,
   USER_GLOBAL_BUNDLE_IDS,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 
 interface LegacyFanoutHost {
   readonly hostDir: string;
@@ -67,7 +67,7 @@ const LEGACY_FANOUT_HOSTS: readonly LegacyFanoutHost[] = [
 
 const LEGACY_SWEEPABLE_SKILL_NAMES: readonly string[] = [
   ...USER_GLOBAL_BUNDLE_IDS.map((id) => BUNDLE_SKILL_NAME[id]),
-  'open-knowledge',
+  'palimpsest',
 ];
 
 export interface LegacyFanoutSweepPlan {

@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
-import { TERMINAL_CLIS } from '@inkeep/open-knowledge-core';
+import { TERMINAL_CLIS } from '@palimpsest/core';
 import type { ElectronApplication, Page } from '@playwright/test';
 import { _electron as electron } from '@playwright/test';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -31,7 +31,7 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const DESKTOP_PRODUCT_NAME = '@inkeep/open-knowledge-desktop';
+const DESKTOP_PRODUCT_NAME = '@palimpsest/desktop';
 
 const CLI_BINS = Object.values(TERMINAL_CLIS).map((cli) => cli.bin);
 const CLI_SUFFIXES = process.platform === 'win32' ? ['.exe', '.cmd', '.bat', '.ps1'] : [''];
@@ -66,7 +66,7 @@ function seedCliOnPath(tmpHome: string, bin: string): void {
 }
 
 function seedTmpHome(prefix: string, stateOverride?: Record<string, unknown>): string {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-qa-${prefix}-`)));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-qa-${prefix}-`)));
   const userDataDir = join(tmpHome, 'Library', 'Application Support', DESKTOP_PRODUCT_NAME);
   mkdirSync(userDataDir, { recursive: true });
   writeFileSync(
@@ -100,10 +100,10 @@ async function launchApp(tmpHome: string, opts: LaunchOpts = {}): Promise<Electr
         ...process.env,
         [windowsPathKey(process.env)]: hermeticPath(tmpHome),
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_DESKTOP_TEST_SCHEME_HANDLERS: '',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_TEST_SCHEME_HANDLERS: '',
         ...(opts.pickedParent !== undefined
-          ? { OK_DESKTOP_TEST_PICKED_PATH: opts.pickedParent }
+          ? { PS_DESKTOP_TEST_PICKED_PATH: opts.pickedParent }
           : {}),
       },
     }),
@@ -120,7 +120,7 @@ async function findWindowByMode(
       async () => {
         for (const page of app.windows()) {
           const m = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (m === mode) return true;
         }
@@ -130,7 +130,7 @@ async function findWindowByMode(
     )
     .toBe(true);
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) return page;
   }
   throw new Error(`${mode} window vanished between poll resolution and read`);
@@ -142,7 +142,7 @@ async function countWindowsByMode(
 ): Promise<number> {
   let n = 0;
   for (const page of app.windows()) {
-    const m = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) n += 1;
   }
   return n;
@@ -160,7 +160,7 @@ function trackForCleanup(...paths: string[]): void {
 }
 
 test.describe('QA extended create-new-project', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -221,7 +221,7 @@ test.describe('QA extended create-new-project', () => {
       .toBeGreaterThanOrEqual(1);
 
     await expect
-      .poll(() => existsSync(join(expected, '.ok', 'config.yml')), { timeout: 15_000 })
+      .poll(() => existsSync(join(expected, '.ps', 'config.yml')), { timeout: 15_000 })
       .toBe(true);
 
     await expect
@@ -320,7 +320,7 @@ test.describe('QA extended create-new-project', () => {
 
     const firstProject = join(parent, projectName);
     await expect
-      .poll(() => existsSync(join(firstProject, '.ok', 'config.yml')), { timeout: 15_000 })
+      .poll(() => existsSync(join(firstProject, '.ps', 'config.yml')), { timeout: 15_000 })
       .toBe(true);
     expect(existsSync(join(firstProject, '.cursor'))).toBe(false);
     expect(existsSync(join(firstProject, '.mcp.json'))).toBe(false);
@@ -454,7 +454,7 @@ test.describe('QA extended create-new-project', () => {
     await new Promise((r) => setTimeout(r, 2_000));
     const editorCount = await countWindowsByMode(app, 'editor');
     expect(editorCount).toBe(1);
-    expect(existsSync(join(parent, projectName, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(parent, projectName, '.ps', 'config.yml'))).toBe(true);
     const projectDir = join(parent, projectName);
     await configureDesktopGitRepositories(await findProjectEditor(app, projectDir), projectDir);
   });
@@ -462,8 +462,8 @@ test.describe('QA extended create-new-project', () => {
   test('QA-025 — banner ARIA roles per severity', async ({ captureStderrFor }) => {
     const tmpHome = seedTmpHome('aria');
     const rootPath = join(tmpHome, 'existing-project');
-    mkdirSync(join(rootPath, '.ok'), { recursive: true });
-    writeFileSync(join(rootPath, '.ok', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
+    mkdirSync(join(rootPath, '.ps'), { recursive: true });
+    writeFileSync(join(rootPath, '.ps', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
     const subFolder = join(rootPath, 'sub');
     mkdirSync(subFolder, { recursive: true });
     const projectName = 'Nested';
@@ -557,7 +557,7 @@ test.describe('QA extended create-new-project', () => {
     await expect
       .poll(() => countWindowsByMode(app, 'editor'), { timeout: 30_000 })
       .toBeGreaterThanOrEqual(1);
-    expect(existsSync(join(parent, projectName, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(parent, projectName, '.ps', 'config.yml'))).toBe(true);
     const projectDir = join(parent, projectName);
     await configureDesktopGitRepositories(await findProjectEditor(app, projectDir), projectDir);
   });
@@ -567,8 +567,8 @@ test.describe('QA extended create-new-project', () => {
   }) => {
     const tmpHome = seedTmpHome('open-nested');
     const rootPath = join(tmpHome, 'NestedTarget');
-    mkdirSync(join(rootPath, '.ok'), { recursive: true });
-    writeFileSync(join(rootPath, '.ok', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
+    mkdirSync(join(rootPath, '.ps'), { recursive: true });
+    writeFileSync(join(rootPath, '.ps', 'config.yml'), 'schemaVersion: 1\ncontent:\n  dir: "."\n');
     const subFolder = join(rootPath, 'sub');
     mkdirSync(subFolder, { recursive: true });
     const projectName = 'Anything';

@@ -2,9 +2,9 @@ import {
   bindConfigDoc,
   type ConfigBinding,
   type ConfigDocProvider,
-} from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import type { ConfigValidationError } from '@inkeep/open-knowledge-core/config/errors';
-import type { OkUserConfigBridge } from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core/config/bind-config-doc';
+import type { ConfigValidationError } from '@palimpsest/core/config/errors';
+import type { PsUserConfigBridge } from '@palimpsest/core/desktop-bridge';
 import * as Y from 'yjs';
 
 const IPC_USER_CONFIG_FILE_ORIGIN = Symbol('ipc-user-config-file');
@@ -21,7 +21,7 @@ function logTransportFailure(event: string, err: unknown): void {
 }
 
 export function createIpcUserConfigBinding(
-  transport: OkUserConfigBridge,
+  transport: PsUserConfigBridge,
   options: IpcUserConfigBindingOptions = {},
 ): ConfigBinding {
   const ydoc = new Y.Doc();
@@ -99,7 +99,7 @@ export function createIpcUserConfigBinding(
       },
       (err: unknown) => {
         missed = true;
-        if (!resyncFailing) logTransportFailure('ok-user-config-resync-failed', err);
+        if (!resyncFailing) logTransportFailure('ps-user-config-resync-failed', err);
         resyncFailing = true;
         scheduleResyncRetry();
       },
@@ -115,7 +115,7 @@ export function createIpcUserConfigBinding(
       },
       (err: unknown) => {
         if (disposed || synced) return;
-        if (!loadFailed) logTransportFailure('ok-user-config-read-failed', err);
+        if (!loadFailed) logTransportFailure('ps-user-config-read-failed', err);
         setLoadFailed(true);
         retryTimer = setTimeout(() => {
           retryTimer = null;
@@ -161,7 +161,7 @@ export function createIpcUserConfigBinding(
         },
         (err: unknown) => {
           inFlight -= 1;
-          logTransportFailure('ok-user-config-patch-failed', err);
+          logTransportFailure('ps-user-config-patch-failed', err);
           options.onRemoteRejected?.({
             code: 'WRITE_ERROR',
             detail: err instanceof Error ? err.message : String(err),

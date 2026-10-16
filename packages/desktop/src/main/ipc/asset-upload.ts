@@ -1,9 +1,9 @@
-import { MAX_BUG_REPORT_ATTACHMENTS_TOTAL_BYTES } from '@inkeep/open-knowledge-core';
-import type { OkAssetUploadResult } from '@inkeep/open-knowledge-core/desktop-bridge';
+import { MAX_BUG_REPORT_ATTACHMENTS_TOTAL_BYTES } from '@palimpsest/core';
+import type { PsAssetUploadResult } from '@palimpsest/core/desktop-bridge';
 import { logIpcError } from '../ipc-log.ts';
 import {
   isValidAttachmentContentType,
-  type OkAssetUploadRequestMessage,
+  type PsAssetUploadRequestMessage,
   parseTransportSafeUrl,
   uploadFeedbackImageAsset,
 } from './bug-report.ts';
@@ -15,7 +15,7 @@ export interface AssetUploadDeps {
 
 const MAX_FILENAME_LENGTH = 255;
 
-function isUploadImageRequest(request: unknown): request is OkAssetUploadRequestMessage {
+function isUploadImageRequest(request: unknown): request is PsAssetUploadRequestMessage {
   if (typeof request !== 'object' || request === null) return false;
   const r = request as Record<string, unknown>;
   if (r.kind !== 'upload-image') return false;
@@ -29,7 +29,7 @@ function isUploadImageRequest(request: unknown): request is OkAssetUploadRequest
 export async function handleAssetUpload(
   deps: AssetUploadDeps,
   request: unknown,
-): Promise<OkAssetUploadResult> {
+): Promise<PsAssetUploadResult> {
   if (!isUploadImageRequest(request)) {
     logIpcError({
       event: 'ipc.error',

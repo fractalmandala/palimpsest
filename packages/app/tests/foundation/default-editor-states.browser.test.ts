@@ -11,7 +11,7 @@ import { EditorView } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { commands } from 'vitest/browser';
-import { okCmTheme } from '@/editor/extensions/cm-theme';
+import { psCmTheme } from '@/editor/extensions/cm-theme';
 import { sourceModeSetup } from '@/editor/source-mode-setup';
 import { sourceCharacterMeasurements } from './theme-contrast.test-helper';
 
@@ -88,7 +88,7 @@ for (const mode of ['light', 'dark'] as const) {
               parent: host,
               state: EditorState.create({
                 doc: DOC,
-                extensions: [sourceModeSetup, language, okCmTheme({ dark: mode === 'dark' })],
+                extensions: [sourceModeSetup, language, psCmTheme({ dark: mode === 'dark' })],
               }),
             });
             try {

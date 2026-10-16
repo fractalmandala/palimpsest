@@ -1,23 +1,23 @@
 import { t } from '@lingui/core/macro';
 import type {
-  OkDesktopBridge,
-  OkOnboardingConfirmRequest,
-  OkOnboardingResult,
-  OkOnboardingShowPayload,
+  PsDesktopBridge,
+  PsOnboardingConfirmRequest,
+  PsOnboardingResult,
+  PsOnboardingShowPayload,
 } from '@/lib/desktop-bridge-types';
 
 export interface ConsentStore {
-  install(opts: { bridge: OkDesktopBridge | undefined }): (() => void) | undefined;
-  getSnapshot(): OkOnboardingShowPayload | null;
+  install(opts: { bridge: PsDesktopBridge | undefined }): (() => void) | undefined;
+  getSnapshot(): PsOnboardingShowPayload | null;
   subscribe(listener: () => void): () => void;
-  confirm(request: OkOnboardingConfirmRequest): Promise<OkOnboardingResult>;
-  cancel(): Promise<OkOnboardingResult>;
+  confirm(request: PsOnboardingConfirmRequest): Promise<PsOnboardingResult>;
+  cancel(): Promise<PsOnboardingResult>;
   dismiss(): void;
 }
 
 export function createConsentStore(): ConsentStore {
-  let currentRequest: OkOnboardingShowPayload | null = null;
-  let bridge: OkDesktopBridge | null = null;
+  let currentRequest: PsOnboardingShowPayload | null = null;
+  let bridge: PsDesktopBridge | null = null;
   const listeners = new Set<() => void>();
   let attached = false;
   let unsubscribeFromBridge: (() => void) | null = null;
@@ -53,7 +53,7 @@ export function createConsentStore(): ConsentStore {
       };
     },
 
-    getSnapshot(): OkOnboardingShowPayload | null {
+    getSnapshot(): PsOnboardingShowPayload | null {
       return currentRequest;
     },
 
@@ -64,7 +64,7 @@ export function createConsentStore(): ConsentStore {
       };
     },
 
-    async confirm(request): Promise<OkOnboardingResult> {
+    async confirm(request): Promise<PsOnboardingResult> {
       const b = bridge;
       if (!b) return { ok: false, error: t`Not attached to desktop bridge` };
       try {
@@ -76,7 +76,7 @@ export function createConsentStore(): ConsentStore {
       }
     },
 
-    async cancel(): Promise<OkOnboardingResult> {
+    async cancel(): Promise<PsOnboardingResult> {
       const b = bridge;
       if (!b) return { ok: false, error: t`Not attached to desktop bridge` };
       try {
@@ -97,7 +97,7 @@ export function createConsentStore(): ConsentStore {
 export const consentStore: ConsentStore = createConsentStore();
 
 export function installConsentListener(opts: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
 }): (() => void) | undefined {
   return consentStore.install(opts);
 }

@@ -4,7 +4,7 @@ import {
   DEFAULT_LINTER_CONFIG,
   type LintDiagnostic,
   type LintRange,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { createMarkdownLintExtension, mapLintDiagnostics } from './markdown-lint-source.ts';
 

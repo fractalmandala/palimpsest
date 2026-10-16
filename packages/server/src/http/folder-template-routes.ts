@@ -27,7 +27,7 @@ import {
   TemplatePutSuccessSchema,
   templateContentDocName,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { composeAndWriteRawBody } from '../bridge-intake.ts';
@@ -80,7 +80,7 @@ export interface FolderTemplateRouteDeps {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ok' | 'ok-and-templates',
+    components: 'ok' | 'ps-and-templates',
   ) => { folderRel: string; resolvedContentDir: string } | null;
   extractAgentIdentity: (body: Record<string, unknown>) => {
     agentId: string;
@@ -92,7 +92,7 @@ export interface FolderTemplateRouteDeps {
     url: URL,
     principal: (() => Principal | null) | undefined,
   ) => ReturnType<typeof extractActorIdentity>;
-  okArtifactKey: (
+  psArtifactKey: (
     kind: 'template' | 'folder-frontmatter' | 'folder' | 'skill',
     folder: string,
     name?: string,
@@ -156,7 +156,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
     validateFolderRel,
     extractAgentIdentity,
     extractActorIdentityFromQuery,
-    okArtifactKey,
+    psArtifactKey,
     attributeOkArtifactWrite,
     scheduleOkArtifactFlush,
     flushDiskAndDetectOutcome,
@@ -207,25 +207,25 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         continue;
       }
       /* STOP: identity, not containment — an IN-ROOT symlinked ancestor
-         `.ok` / `.ok/templates` realpaths inside the content root and defeats
+         `.ps` / `.ps/templates` realpaths inside the content root and defeats
          every root-anchored check, exactly like the leaf case. The invariant
          is one-directional: this walk must never SERVE what the menu
          (`collectFromFolder` in templates-resolver.ts) hides; refusing more
          than the menu is permitted. A symlink aborts loudly (400). ENOTDIR is
-         treated as absent and the walk continues — a non-directory `.ok` or
+         treated as absent and the walk continues — a non-directory `.ps` or
          `templates` provably holds no templates, matching the menu's skip.
          Every OTHER lstat errno (EACCES/ELOOP) aborts loudly (500): an
          unreadable ancestor COULD hold a shadowing name, so resolving past it
          from a higher folder would be a silent wrong answer. */
-      const okAbs = resolve(ancestorAbs, '.ok');
-      const okCheck = checkSymlinkLeaf(okAbs);
-      if (okCheck.kind === 'symlink') {
+      const psAbs = resolve(ancestorAbs, '.ps');
+      const psCheck = checkSymlinkLeaf(psAbs);
+      if (psCheck.kind === 'symlink') {
         return { kind: 'refused', folder: ancestorFolder };
       }
-      if (okCheck.kind === 'unverifiable' && okCheck.code !== 'ENOTDIR') {
-        return { kind: 'unverifiable', folder: ancestorFolder, code: okCheck.code };
+      if (psCheck.kind === 'unverifiable' && psCheck.code !== 'ENOTDIR') {
+        return { kind: 'unverifiable', folder: ancestorFolder, code: psCheck.code };
       }
-      const templatesAbs = resolve(okAbs, 'templates');
+      const templatesAbs = resolve(psAbs, 'templates');
       const templatesCheck = checkSymlinkLeaf(templatesAbs);
       if (templatesCheck.kind === 'symlink') {
         return { kind: 'refused', folder: ancestorFolder };
@@ -280,7 +280,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           'ok',
         );
         if (!validated) return;
-        const folderOkDir = resolve(validated.resolvedContentDir, validated.folderRel, '.ok');
+        const folderOkDir = resolve(validated.resolvedContentDir, validated.folderRel, '.ps');
         const localFmPath = resolve(folderOkDir, 'frontmatter.yml');
         const warnings: string[] = [];
         const warningCodes: FolderConfigWarningCode[] = [];
@@ -309,7 +309,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
                 case 'unverifiable':
                   addWarning(
                     'templates-unverifiable',
-                    `${where} could not be inspected (${refusal.code ?? 'unknown errno'}) — its templates are not enumerated. The errno may come from ${refusal.folder || '.'}/.ok itself; check its permissions.`,
+                    `${where} could not be inspected (${refusal.code ?? 'unknown errno'}) — its templates are not enumerated. The errno may come from ${refusal.folder || '.'}/.ps itself; check its permissions.`,
                   );
                   log.warn(
                     { path, folder: validated.folderRel || '.', code: refusal.code },
@@ -331,16 +331,16 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         if (leafCheck.kind === 'symlink') {
           addWarning(
             'symlink-refused',
-            `${validated.folderRel || '.'}/.ok/frontmatter.yml is a symlink — refusing to read through it. Replace the symlink with a real file or directory and retry.`,
+            `${validated.folderRel || '.'}/.ps/frontmatter.yml is a symlink — refusing to read through it. Replace the symlink with a real file or directory and retry.`,
           );
           log.warn(
             { path: localFmPath, folder: validated.folderRel || '.' },
-            `[folder-config:get] ${validated.folderRel || '.'}/.ok/frontmatter.yml is a symlink — refusing to read through it.`,
+            `[folder-config:get] ${validated.folderRel || '.'}/.ps/frontmatter.yml is a symlink — refusing to read through it.`,
           );
         } else if (leafCheck.kind === 'unverifiable') {
           addWarning(
             'unverifiable',
-            `${validated.folderRel || '.'}/.ok/frontmatter.yml could not be inspected (${leafCheck.code ?? 'unknown errno'}) — folder properties skipped.`,
+            `${validated.folderRel || '.'}/.ps/frontmatter.yml could not be inspected (${leafCheck.code ?? 'unknown errno'}) — folder properties skipped.`,
           );
           log.warn(
             { path: localFmPath, code: leafCheck.code },
@@ -359,7 +359,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             const reason = err instanceof Error ? err.message : String(err);
             addWarning(
               'malformed-yaml',
-              `${validated.folderRel || '.'}/.ok/frontmatter.yml has malformed YAML.`,
+              `${validated.folderRel || '.'}/.ps/frontmatter.yml has malformed YAML.`,
             );
             log.warn(
               { path: localFmPath, reason },
@@ -441,7 +441,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           if (result.action !== 'noop') {
             attributeOkArtifactWrite(
               actor,
-              okArtifactKey('folder-frontmatter', validated.folderRel),
+              psArtifactKey('folder-frontmatter', validated.folderRel),
               `folder-frontmatter-${result.action === 'deleted' ? 'delete' : 'edit'}: ${result.path}`,
             );
             scheduleOkArtifactFlush('folder-config-put');
@@ -499,7 +499,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'folder',
           'template-get',
-          'ok-and-templates',
+          'ps-and-templates',
         );
         if (!validated) return;
         const { folderRel, resolvedContentDir } = validated;
@@ -510,7 +510,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             res,
             400,
             'urn:ok:error:symlink-refused',
-            `"${found.folder || '.'}/.ok" or its templates directory is a symlink — refusing to resolve templates through it. Replace the symlink with a real file or directory and retry.`,
+            `"${found.folder || '.'}/.ps" or its templates directory is a symlink — refusing to resolve templates through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-get', detail: found.folder || '.' },
           );
           return;
@@ -520,7 +520,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             res,
             500,
             'urn:ok:error:internal-server-error',
-            `Cannot inspect "${found.folder || '.'}/.ok" (${found.code ?? 'unknown errno'}) — refusing to resolve templates through it.`,
+            `Cannot inspect "${found.folder || '.'}/.ps" (${found.code ?? 'unknown errno'}) — refusing to resolve templates through it.`,
             { handler: 'template-get', detail: found.code ?? 'unknown-errno' },
           );
           return;
@@ -534,8 +534,8 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         }
         const { abs: foundAbs, folder: foundFolder, scope: foundScope } = found;
 
-        /* STOP: the walk above refuses symlinked ancestor `.ok` /
-           `.ok/templates` dirs BY IDENTITY (in-root included); the two checks
+        /* STOP: the walk above refuses symlinked ancestor `.ps` /
+           `.ps/templates` dirs BY IDENTITY (in-root included); the two checks
            below cover the remaining shapes — a symlinked `<name>.md` leaf,
            and (defence in depth) a resolved path escaping the content root.
            The fetch-by-name arm bypasses the resolver's guarded enumeration
@@ -545,7 +545,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             res,
             400,
             'urn:ok:error:symlink-refused',
-            `Template "${name}" at "${foundFolder || '.'}/.ok/templates/${name}.md" is a symlink — refusing to read through it. Replace the symlink with a real file or directory and retry.`,
+            `Template "${name}" at "${foundFolder || '.'}/.ps/templates/${name}.md" is a symlink — refusing to read through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-get', detail: foundFolder || '.' },
           );
           return;
@@ -633,14 +633,14 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'folder',
           'template-put',
-          'ok-and-templates',
+          'ps-and-templates',
         );
         if (!validated) return;
 
         const templateFilePath = resolve(
           validated.resolvedContentDir,
           validated.folderRel,
-          '.ok',
+          '.ps',
           'templates',
           `${name}.md`,
         );
@@ -654,7 +654,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             res,
             400,
             'urn:ok:error:symlink-refused',
-            `${validated.folderRel || '.'}/.ok/templates/${name}.md is a symlink — refusing to write through it. Replace the symlink with a real file or directory and retry.`,
+            `${validated.folderRel || '.'}/.ps/templates/${name}.md is a symlink — refusing to write through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-put', detail: validated.folderRel || '.' },
           );
           return;
@@ -720,7 +720,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         attributeOkArtifactWrite(
           actor,
-          okArtifactKey('template', validated.folderRel, name),
+          psArtifactKey('template', validated.folderRel, name),
           `${templateCreated ? 'template-create' : 'template-edit'}: ${templateRelPath}`,
         );
         scheduleOkArtifactFlush('template-put');
@@ -757,7 +757,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'folder',
           'template-delete',
-          'ok-and-templates',
+          'ps-and-templates',
         );
         if (!validated) return;
 
@@ -809,7 +809,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         if (result.existed) {
           attributeOkArtifactWrite(
             actor,
-            okArtifactKey('template', validated.folderRel, name),
+            psArtifactKey('template', validated.folderRel, name),
             `template-delete: ${result.path}`,
           );
           scheduleOkArtifactFlush('template-delete');
@@ -856,7 +856,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'folder',
           'template-move',
-          'ok-and-templates',
+          'ps-and-templates',
         );
         if (!fromValidated) return;
         const toValidated = validateFolderRel(
@@ -864,7 +864,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'folder',
           'template-move',
-          'ok-and-templates',
+          'ps-and-templates',
         );
         if (!toValidated) return;
 
@@ -911,7 +911,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
                 res,
                 400,
                 'urn:ok:error:symlink-refused',
-                `"${found.folder || '.'}/.ok" or its templates directory is a symlink — refusing to resolve templates through it. Replace the symlink with a real file or directory and retry.`,
+                `"${found.folder || '.'}/.ps" or its templates directory is a symlink — refusing to resolve templates through it. Replace the symlink with a real file or directory and retry.`,
                 { handler: 'template-move', detail: found.folder || '.' },
               );
               return;
@@ -921,7 +921,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
                 res,
                 500,
                 'urn:ok:error:internal-server-error',
-                `Cannot inspect "${found.folder || '.'}/.ok" (${found.code ?? 'unknown errno'}) — refusing to resolve templates through it.`,
+                `Cannot inspect "${found.folder || '.'}/.ps" (${found.code ?? 'unknown errno'}) — refusing to resolve templates through it.`,
                 { handler: 'template-move', detail: found.code ?? 'unknown-errno' },
               );
               return;
@@ -973,7 +973,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         attributeOkArtifactWrite(
           actor,
-          okArtifactKey('template', toValidated.folderRel, body.toName),
+          psArtifactKey('template', toValidated.folderRel, body.toName),
           `template-rename: ${result.fromPath} -> ${result.toPath}`,
           [{ from: result.fromPath, to: result.toPath }],
         );
@@ -1203,14 +1203,14 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'folder',
           'template-import',
-          'ok-and-templates',
+          'ps-and-templates',
         );
         if (!validated) return;
 
         const templatesDir = resolve(
           validated.resolvedContentDir,
           validated.folderRel,
-          '.ok',
+          '.ps',
           'templates',
         );
         if (!body.name) {
@@ -1226,7 +1226,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             res,
             400,
             'urn:ok:error:symlink-refused',
-            `${validated.folderRel || '.'}/.ok/templates/${name}.md is a symlink — refusing to write through it. Replace the symlink with a real file or directory and retry.`,
+            `${validated.folderRel || '.'}/.ps/templates/${name}.md is a symlink — refusing to write through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-import', detail: validated.folderRel || '.' },
           );
           return;
@@ -1335,7 +1335,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         attributeOkArtifactWrite(
           actor,
-          okArtifactKey('template', validated.folderRel, name),
+          psArtifactKey('template', validated.folderRel, name),
           `template-import: ${templateRelPath}`,
         );
 

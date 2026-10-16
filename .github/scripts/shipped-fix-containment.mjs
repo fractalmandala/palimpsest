@@ -10,7 +10,7 @@ const FULL_SHA_RE = /\b[0-9a-f]{40}\b/g;
 const APPLIED_LINE_RE = /^Applied:(.*)$/gm;
 const CHERRY_LINE_RE = /^([+-]) ([0-9a-f]{40})$/;
 const ANNOTATION_LIMIT = 10;
-const DEFAULT_REPO = 'inkeep/open-knowledge';
+const DEFAULT_REPO = 'fractalmandala/palimpsest';
 
 export const REFUSED_EXIT = 2;
 

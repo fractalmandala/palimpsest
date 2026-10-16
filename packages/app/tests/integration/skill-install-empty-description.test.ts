@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SkillInstallSuccessSchema } from '@inkeep/open-knowledge-core';
+import { SkillInstallSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { createTestServer, type TestServer } from './test-harness';
@@ -24,7 +24,7 @@ const install = (scope: string, name: string, targets: string[]) =>
   });
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-install-emptydesc-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-install-emptydesc-home-'));
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);
 afterAll(async () => {

@@ -5,7 +5,7 @@ import {
   AgentIntegrationsApplySuccessSchema,
   type EnvTier,
   type Principal,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { type AgentRegistryHostSeam, applyAgentRegistryIntents } from '../agent-registry-apply.ts';
 import { collectServerHostSnapshot } from '../agent-registry-probes.ts';
 import { extractActorIdentity } from '../extract-actor-identity.ts';

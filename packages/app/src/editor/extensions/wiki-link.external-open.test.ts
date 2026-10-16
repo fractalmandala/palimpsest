@@ -1,4 +1,4 @@
-import { toWikiLinkSlug } from '@inkeep/open-knowledge-core';
+import { toWikiLinkSlug } from '@palimpsest/core';
 import { Editor } from '@tiptap/core';
 import { TextSelection } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
@@ -30,7 +30,7 @@ afterAll(() => {
 type OpenExternalBridge = { shell?: { openExternal?: (url: string) => Promise<void> } };
 
 interface OpenExternalWindow {
-  okDesktop?: OpenExternalBridge;
+  psDesktop?: OpenExternalBridge;
   open: (url?: string, target?: string, features?: string) => unknown;
 }
 
@@ -45,7 +45,7 @@ afterEach(() => {
   liveEditors.clear();
   __resetPageListCacheForTests();
   resetLinkValidationPolicyForTest();
-  delete testWindow().okDesktop;
+  delete testWindow().psDesktop;
 });
 
 function mountWithExternalWikiLink(url: string): {
@@ -95,12 +95,12 @@ function mountWikiLink(target: string): { editor: Editor; chip: HTMLElement } {
 }
 
 describe('WYSIWYG wiki-link external activation — desktop (bridge present)', () => {
-  test('bare click routes to the OS browser via okDesktop.shell.openExternal, NOT window.open', () => {
+  test('bare click routes to the OS browser via psDesktop.shell.openExternal, NOT window.open', () => {
     const url = 'https://youtube.com/watch?v=abc';
     const openExternal = vi.fn(async (_url: string) => {});
     const openWindow = vi.fn(() => null);
     const w = testWindow();
-    w.okDesktop = { shell: { openExternal } };
+    w.psDesktop = { shell: { openExternal } };
     w.open = openWindow as unknown as OpenExternalWindow['open'];
 
     const { activate } = mountWithExternalWikiLink(url);
@@ -118,7 +118,7 @@ describe('WYSIWYG wiki-link external activation — web (no bridge)', () => {
     const url = 'https://example.com/web';
     const openWindow = vi.fn(() => null);
     const w = testWindow();
-    delete w.okDesktop;
+    delete w.psDesktop;
     w.open = openWindow as unknown as OpenExternalWindow['open'];
 
     const { activate } = mountWithExternalWikiLink(url);

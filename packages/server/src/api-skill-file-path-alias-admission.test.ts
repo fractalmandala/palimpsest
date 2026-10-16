@@ -55,12 +55,12 @@ async function read(name: string, path: string) {
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-skill-path-alias-'));
-  const builtin = join(root, '.agents', 'skills', 'open-knowledge');
+  root = mkdtempSync(join(tmpdir(), 'ps-skill-path-alias-'));
+  const builtin = join(root, '.agents', 'skills', 'palimpsest');
   mkdirSync(builtin, { recursive: true });
   writeFileSync(
     join(builtin, 'SKILL.md'),
-    '---\nname: open-knowledge\ndescription: Project\n---\nProject.\n',
+    '---\nname: palimpsest\ndescription: Project\n---\nProject.\n',
   );
   server = await bootArtifactAdmissionRig(root);
   client = await connectMcpTestClient(`http://127.0.0.1:${server.port}/mcp`);

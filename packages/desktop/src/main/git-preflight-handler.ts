@@ -3,7 +3,7 @@ import {
   type GitDetected,
   GitNotAvailableError,
   GitTooOldError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 
 export type EnsureGitOutcome = 'ok' | 'recovered' | 'aborted';
 
@@ -73,7 +73,7 @@ async function showUnknownErrorDialog(deps: EnsureGitDeps, err: Error): Promise<
       buttons: ['Quit'],
       defaultId: 0,
       cancelId: 0,
-      title: 'OpenKnowledge could not start',
+      title: 'Palimpsest could not start',
       message: 'An unexpected error occurred during startup.',
       detail: err.message,
     });
@@ -113,8 +113,8 @@ export async function ensureGitAvailable(deps: EnsureGitDeps): Promise<EnsureGit
     const title = currentErr instanceof GitTooOldError ? 'Git too old' : 'Git not found';
     const message =
       currentErr instanceof GitTooOldError
-        ? `OpenKnowledge requires ${currentErr.guidance.product} ${currentErr.required} or newer.`
-        : `OpenKnowledge needs ${currentErr.guidance.product} to track changes to your knowledge base.`;
+        ? `Palimpsest requires ${currentErr.guidance.product} ${currentErr.required} or newer.`
+        : `Palimpsest needs ${currentErr.guidance.product} to track changes to your knowledge base.`;
     const detail =
       failedInstallUrl === null
         ? currentErr.message

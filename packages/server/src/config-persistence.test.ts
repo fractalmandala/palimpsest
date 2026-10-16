@@ -16,7 +16,7 @@ import {
   CONFIG_DOC_NAME_USER,
   type ConfigValidationError,
   isKnownConfigError,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import {
@@ -42,7 +42,7 @@ interface Fixture {
 }
 
 function makeFixture(): Fixture {
-  const root = mkdtempSync(join(tmpdir(), 'ok-config-persist-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-config-persist-'));
   const projectDir = join(root, 'project');
   const homedir = join(root, 'home');
   mkdirSync(projectDir, { recursive: true });
@@ -70,14 +70,14 @@ function makeFixture(): Fixture {
 }
 
 function writeWorkspaceConfig(projectDir: string, content: string): string {
-  const path = join(projectDir, '.ok', 'config.yml');
+  const path = join(projectDir, '.ps', 'config.yml');
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, content, 'utf-8');
   return path;
 }
 
 function writeProjectLocalConfig(projectDir: string, content: string): string {
-  const path = join(projectDir, '.ok', 'local', 'config.yml');
+  const path = join(projectDir, '.ps', 'local', 'config.yml');
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, content, 'utf-8');
   return path;
@@ -94,36 +94,36 @@ afterEach(() => {
 });
 
 describe('configDocAbsPath', () => {
-  test('project doc resolves under projectDir/.ok/config.yml', () => {
+  test('project doc resolves under projectDir/.ps/config.yml', () => {
     expect(configDocAbsPath(CONFIG_DOC_NAME_PROJECT, fx.ctx)).toBe(
-      join(fx.projectDir, '.ok', 'config.yml'),
+      join(fx.projectDir, '.ps', 'config.yml'),
     );
   });
 
-  test('user doc resolves under homedirOverride/.ok/global.yml', () => {
+  test('user doc resolves under homedirOverride/.ps/global.yml', () => {
     expect(configDocAbsPath(CONFIG_DOC_NAME_USER, fx.ctx)).toBe(
-      join(fx.homedir, '.ok', 'global.yml'),
+      join(fx.homedir, '.ps', 'global.yml'),
     );
   });
 
-  test('project-local doc resolves under projectDir/.ok/local/config.yml', () => {
+  test('project-local doc resolves under projectDir/.ps/local/config.yml', () => {
     expect(configDocAbsPath(CONFIG_DOC_NAME_PROJECT_LOCAL, fx.ctx)).toBe(
-      join(fx.projectDir, '.ok', 'local', 'config.yml'),
+      join(fx.projectDir, '.ps', 'local', 'config.yml'),
     );
   });
 
-  test('okignore doc resolves under projectDir/.okignore when contentDir is unset', () => {
+  test('psignore doc resolves under projectDir/.psignore when contentDir is unset', () => {
     expect(configDocAbsPath(CONFIG_DOC_NAME_OKIGNORE, fx.ctx)).toBe(
-      join(fx.projectDir, '.okignore'),
+      join(fx.projectDir, '.psignore'),
     );
   });
 
-  test('okignore doc resolves under contentDir/.okignore when contentDir is set', () => {
+  test('psignore doc resolves under contentDir/.psignore when contentDir is set', () => {
     const contentDir = join(fx.projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const ctxWithContent: ConfigPersistenceCtx = { ...fx.ctx, contentDir };
     expect(configDocAbsPath(CONFIG_DOC_NAME_OKIGNORE, ctxWithContent)).toBe(
-      join(contentDir, '.okignore'),
+      join(contentDir, '.psignore'),
     );
   });
 
@@ -194,7 +194,7 @@ describe('loadConfigDoc — cold start', () => {
     expect(doc.getText('source').length).toBe(firstLength);
   });
 
-  test('project-local doc seeds Y.Text from <projectDir>/.ok/local/config.yml', () => {
+  test('project-local doc seeds Y.Text from <projectDir>/.ps/local/config.yml', () => {
     const yaml = 'autoSync:\n  enabled: true\n';
     writeProjectLocalConfig(fx.projectDir, yaml);
     const doc = new Y.Doc();
@@ -225,7 +225,7 @@ describe('storeConfigDoc — happy path', () => {
     const doc = new Y.Doc();
     doc.getText('source').insert(0, 'mcp:\n  autoStart: true\n');
 
-    expect(existsSync(join(fx.homedir, '.ok'))).toBe(false);
+    expect(existsSync(join(fx.homedir, '.ps'))).toBe(false);
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_USER, undefined, fx.ctx);
 
     expect(outcome).toBe('persisted');
@@ -239,7 +239,7 @@ describe('storeConfigDoc — happy path', () => {
 
     await storeConfigDoc(doc, CONFIG_DOC_NAME_PROJECT, undefined, fx.ctx);
 
-    const dir = join(fx.projectDir, '.ok');
+    const dir = join(fx.projectDir, '.ps');
     const entries = readdirSafe(dir);
     expect(entries.filter((e) => e.includes('.tmp.'))).toHaveLength(0);
     expect(entries).toContain('config.yml');
@@ -357,7 +357,7 @@ describe('storeConfigDoc — cross-process reconciliation (file lock)', () => {
   });
 
   test('mkdir failure surfaces as write-failed via onConfigRejected; no exception escapes', async () => {
-    const parentPath = join(fx.homedir, '.ok');
+    const parentPath = join(fx.homedir, '.ps');
     writeFileSync(parentPath, 'placeholder', 'utf-8');
 
     const doc = new Y.Doc();
@@ -407,7 +407,7 @@ describe('storeConfigDoc — write failures', () => {
 
     expect(doc.getText('source').toString()).toBe('mcp:\n  autoStart: false\n');
 
-    const dir = join(fx.projectDir, '.ok');
+    const dir = join(fx.projectDir, '.ps');
     const entries = readdirSafe(dir);
     expect(entries.filter((e) => e.includes('.tmp.'))).toHaveLength(0);
   });
@@ -427,7 +427,7 @@ describe('storeConfigDoc — short-circuits', () => {
     );
 
     expect(outcome).toBe('no-op');
-    expect(existsSync(join(fx.projectDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.ps', 'config.yml'))).toBe(false);
     expect(fx.rejections).toHaveLength(0);
   });
 
@@ -436,7 +436,7 @@ describe('storeConfigDoc — short-circuits', () => {
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_PROJECT, undefined, fx.ctx);
 
     expect(outcome).toBe('no-op');
-    expect(existsSync(join(fx.projectDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.ps', 'config.yml'))).toBe(false);
   });
 
   test('YAML doc: empty Y.Text with non-empty LKG → no-op (YAML scope preserved)', async () => {
@@ -486,7 +486,7 @@ describe('storeConfigDoc — rejection + revert', () => {
     if (isKnownConfigError(r.error)) {
       expect(r.error.code).toBe('YAML_PARSE');
     }
-    expect(existsSync(join(fx.projectDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.ps', 'config.yml'))).toBe(false);
   });
 
   test('schema-invalid → reverts Y.Text + structured SCHEMA_INVALID error with issues', async () => {
@@ -556,7 +556,7 @@ describe('storeConfigDoc — rejection + revert', () => {
     });
     const r2 = await storeConfigDoc(doc, CONFIG_DOC_NAME_PROJECT, undefined, fx.ctx);
     expect(r2).toBe('persisted');
-    expect(readFileSync(join(fx.projectDir, '.ok', 'config.yml'), 'utf-8')).toBe(
+    expect(readFileSync(join(fx.projectDir, '.ps', 'config.yml'), 'utf-8')).toBe(
       'mcp:\n  autoStart: false\n',
     );
     expect(fx.ctx.lkgCache.get(CONFIG_DOC_NAME_PROJECT)).toBe('mcp:\n  autoStart: false\n');
@@ -706,7 +706,7 @@ describe('persistence extension dispatch — config-doc integration', () => {
 
     expect(rejections).toHaveLength(1);
     expect(rejections[0]?.docName).toBe(CONFIG_DOC_NAME_PROJECT);
-    expect(existsSync(join(fx.projectDir, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.ps', 'config.yml'))).toBe(false);
   });
 
   test('non-config doc names skip the config branch entirely', async () => {
@@ -902,7 +902,7 @@ describe('applyExternalConfigChange', () => {
   });
 });
 
-describe('okignore — loadConfigDoc cold start', () => {
+describe('psignore — loadConfigDoc cold start', () => {
   test('missing disk file → empty Y.Text + LKG = empty string (not schema-defaults)', () => {
     const doc = new Y.Doc();
 
@@ -914,7 +914,7 @@ describe('okignore — loadConfigDoc cold start', () => {
 
   test('valid disk content seeds Y.Text + LKG with raw bytes', () => {
     writeFileSync(
-      join(fx.projectDir, '.okignore'),
+      join(fx.projectDir, '.psignore'),
       '# user comment\n\ndrafts/\n*.draft.md\n',
       'utf-8',
     );
@@ -929,7 +929,7 @@ describe('okignore — loadConfigDoc cold start', () => {
 
   test('invalid disk content (whitespace-only line) seeds raw bytes but LKG falls back to empty string', () => {
     const broken = 'drafts/\n   \n*.draft.md\n';
-    writeFileSync(join(fx.projectDir, '.okignore'), broken, 'utf-8');
+    writeFileSync(join(fx.projectDir, '.psignore'), broken, 'utf-8');
     const doc = new Y.Doc();
 
     loadConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, fx.ctx);
@@ -938,10 +938,10 @@ describe('okignore — loadConfigDoc cold start', () => {
     expect(fx.ctx.lkgCache.get(CONFIG_DOC_NAME_OKIGNORE)).toBe('');
   });
 
-  test('contentDir override resolves to <contentDir>/.okignore (not projectDir)', () => {
+  test('contentDir override resolves to <contentDir>/.psignore (not projectDir)', () => {
     const contentDir = join(fx.projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
-    writeFileSync(join(contentDir, '.okignore'), 'drafts/\n', 'utf-8');
+    writeFileSync(join(contentDir, '.psignore'), 'drafts/\n', 'utf-8');
     const doc = new Y.Doc();
     const ctx: ConfigPersistenceCtx = { ...fx.ctx, contentDir };
 
@@ -952,8 +952,8 @@ describe('okignore — loadConfigDoc cold start', () => {
   });
 });
 
-describe('okignore — storeConfigDoc validator', () => {
-  test('valid pattern body is persisted to <projectDir>/.okignore via atomic write', async () => {
+describe('psignore — storeConfigDoc validator', () => {
+  test('valid pattern body is persisted to <projectDir>/.psignore via atomic write', async () => {
     const doc = new Y.Doc();
     fx.ctx.lkgCache.set(CONFIG_DOC_NAME_OKIGNORE, '');
     doc.getText('source').insert(0, 'drafts/\n*.draft.md\n');
@@ -968,7 +968,7 @@ describe('okignore — storeConfigDoc validator', () => {
 
     const entries = readdirSafe(fx.projectDir);
     expect(entries.filter((e) => e.includes('.tmp.'))).toHaveLength(0);
-    expect(entries).toContain('.okignore');
+    expect(entries).toContain('.psignore');
   });
 
   test('comments + blank lines round-trip byte-identically', async () => {
@@ -980,7 +980,7 @@ describe('okignore — storeConfigDoc validator', () => {
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, fx.ctx);
 
     expect(outcome).toBe('persisted');
-    expect(readFileSync(join(fx.projectDir, '.okignore'), 'utf-8')).toBe(body);
+    expect(readFileSync(join(fx.projectDir, '.psignore'), 'utf-8')).toBe(body);
   });
 
   test('whitespace-only line is rejected with OKIGNORE_INVALID + 1-indexed lineNumber', async () => {
@@ -1001,7 +1001,7 @@ describe('okignore — storeConfigDoc validator', () => {
     if (r.error.code === 'OKIGNORE_INVALID') {
       expect(r.error.lineNumber).toBe(2);
     }
-    expect(existsSync(join(fx.projectDir, '.okignore'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.psignore'))).toBe(false);
   });
 
   test('truly empty line ("" between newlines) is accepted (round-tripped blank metadata)', async () => {
@@ -1012,7 +1012,7 @@ describe('okignore — storeConfigDoc validator', () => {
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, fx.ctx);
 
     expect(outcome).toBe('persisted');
-    expect(readFileSync(join(fx.projectDir, '.okignore'), 'utf-8')).toBe('a\n\nb\n\nc\n');
+    expect(readFileSync(join(fx.projectDir, '.psignore'), 'utf-8')).toBe('a\n\nb\n\nc\n');
   });
 
   test('rejection with no prior LKG falls back to empty string (matches Settings empty-state)', async () => {
@@ -1043,7 +1043,7 @@ describe('okignore — storeConfigDoc validator', () => {
     });
     const r2 = await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, fx.ctx);
     expect(r2).toBe('persisted');
-    expect(readFileSync(join(fx.projectDir, '.okignore'), 'utf-8')).toBe('drafts/\n*.tmp\n');
+    expect(readFileSync(join(fx.projectDir, '.psignore'), 'utf-8')).toBe('drafts/\n*.tmp\n');
   });
 
   test('content equals LKG → no-op (no spurious rewrite)', async () => {
@@ -1055,17 +1055,17 @@ describe('okignore — storeConfigDoc validator', () => {
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, fx.ctx);
 
     expect(outcome).toBe('no-op');
-    expect(existsSync(join(fx.projectDir, '.okignore'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.psignore'))).toBe(false);
   });
 
-  test('empty Y.Text with empty-string LKG (okignore cold-start floor) → no-op', async () => {
+  test('empty Y.Text with empty-string LKG (psignore cold-start floor) → no-op', async () => {
     fx.ctx.lkgCache.set(CONFIG_DOC_NAME_OKIGNORE, '');
     const doc = new Y.Doc();
 
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, fx.ctx);
 
     expect(outcome).toBe('no-op');
-    expect(existsSync(join(fx.projectDir, '.okignore'))).toBe(false);
+    expect(existsSync(join(fx.projectDir, '.psignore'))).toBe(false);
   });
 
   test('empty Y.Text with non-empty LKG → persists empty body to disk + clears LKG (remove-last-pattern)', async () => {
@@ -1100,7 +1100,7 @@ describe('okignore — storeConfigDoc validator', () => {
     expect(observedOrigins.some((o) => o === CONFIG_VALIDATION_REVERT_ORIGIN)).toBe(true);
   });
 
-  test('persists to <contentDir>/.okignore when contentDir differs from projectDir', async () => {
+  test('persists to <contentDir>/.psignore when contentDir differs from projectDir', async () => {
     const contentDir = join(fx.projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const ctx: ConfigPersistenceCtx = { ...fx.ctx, contentDir };
@@ -1111,12 +1111,12 @@ describe('okignore — storeConfigDoc validator', () => {
     const outcome = await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, ctx);
 
     expect(outcome).toBe('persisted');
-    expect(readFileSync(join(contentDir, '.okignore'), 'utf-8')).toBe('drafts/\n');
-    expect(existsSync(join(fx.projectDir, '.okignore'))).toBe(false);
+    expect(readFileSync(join(contentDir, '.psignore'), 'utf-8')).toBe('drafts/\n');
+    expect(existsSync(join(fx.projectDir, '.psignore'))).toBe(false);
   });
 });
 
-describe('okignore — applyExternalConfigChange', () => {
+describe('psignore — applyExternalConfigChange', () => {
   test('valid external content updates Y.Text under CONFIG_FILE_WATCHER_ORIGIN', () => {
     const doc = new Y.Doc();
     fx.ctx.lkgCache.set(CONFIG_DOC_NAME_OKIGNORE, '');
@@ -1177,7 +1177,7 @@ describe('okignore — applyExternalConfigChange', () => {
   });
 });
 
-describe('okignore — rejection counter telemetry', () => {
+describe('psignore — rejection counter telemetry', () => {
   let metricExporter: import('@opentelemetry/sdk-metrics').InMemoryMetricExporter;
   let meterProvider: import('@opentelemetry/sdk-metrics').MeterProvider;
   let metricReader: import('@opentelemetry/sdk-metrics').PeriodicExportingMetricReader;
@@ -1247,7 +1247,7 @@ describe('okignore — rejection counter telemetry', () => {
     expect(total).toBe(1);
   });
 
-  test('YAML config rejection does NOT increment the okignore counter', async () => {
+  test('YAML config rejection does NOT increment the psignore counter', async () => {
     fx.ctx.lkgCache.set(CONFIG_DOC_NAME_PROJECT, 'mcp:\n  autoStart: true\n');
     const doc = new Y.Doc();
     doc.getText('source').insert(0, 'broken: [yaml\n');

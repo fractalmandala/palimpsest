@@ -1,7 +1,7 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import {
   checkEmbeddingsBaseUrl,
   DEFAULT_EMBEDDINGS_BASE_URL,
@@ -15,13 +15,13 @@ import {
   MIN_EMBEDDINGS_DOC_TIMEOUT_MS,
   MIN_EMBEDDINGS_MAX_BATCH_CHARS,
   MIN_EMBEDDINGS_MAX_BATCH_SIZE,
-} from '@inkeep/open-knowledge-core/config/schema';
+} from '@palimpsest/core/config/schema';
 import {
   classifySemanticProviderError,
   isSemanticSearchOffered,
   type LocalOpEmbeddingsTestResponse,
   type SemanticIndexStatus,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ChevronRight } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
@@ -42,7 +42,7 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useSemanticSearchStatus } from '@/hooks/use-semantic-search-status';
-import { okUserHomeLabel } from '@/lib/channel-cli-copy';
+import { psUserHomeLabel } from '@/lib/channel-cli-copy';
 import { useConfigContext } from '@/lib/config-provider';
 import {
   type EmbeddingsKeyTransport,
@@ -502,7 +502,7 @@ export function SearchSection({ transport }: { transport?: EmbeddingsKeyTranspor
             label={<Trans>Indexing request timeout (seconds)</Trans>}
             help={
               <Trans>
-                How long OpenKnowledge waits for each embedding request while indexing. Search
+                How long Palimpsest waits for each embedding request while indexing. Search
                 requests use a fixed 8-second timeout per attempt, unchanged by this setting.
               </Trans>
             }
@@ -712,7 +712,7 @@ function EmbeddingsKeyField({
   loaded,
 }: EmbeddingsKeyFieldProps) {
   const { t } = useLingui();
-  const secretsPath = okUserHomeLabel('secrets.yml');
+  const secretsPath = psUserHomeLabel('secrets.yml');
   const [keyInput, setKeyInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -771,9 +771,9 @@ function EmbeddingsKeyField({
           <Trans>
             Using the{' '}
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-              OK_EMBEDDINGS_API_KEY
+              PS_EMBEDDINGS_API_KEY
             </code>{' '}
-            environment variable (managed outside OpenKnowledge).
+            environment variable (managed outside Palimpsest).
           </Trans>
         </p>
       ) : (
@@ -902,7 +902,7 @@ function SemanticStatusPanel({ status }: SemanticStatusPanelProps) {
       >
         <Trans>
           The embeddings provider's vector size kept changing. Semantic search is off until
-          OpenKnowledge restarts.
+          Palimpsest restarts.
         </Trans>
       </div>
     );
@@ -989,7 +989,7 @@ function TestConnectionResult({
   if (response === null) {
     return (
       <TestConnectionMessage tone="error" testId="settings-search-test-unreachable">
-        <Trans>Couldn't run the test. Check that OpenKnowledge is still running.</Trans>
+        <Trans>Couldn't run the test. Check that Palimpsest is still running.</Trans>
       </TestConnectionMessage>
     );
   }
@@ -1229,7 +1229,7 @@ function EnableSemanticSearchConfirmDialog({
                 <Trans>
                   Embeddings are computed only when a search runs and are cached locally under{' '}
                   <code className="rounded bg-amber-100 px-1 py-0.5 font-mono text-xs dark:bg-amber-900">
-                    .ok/local
+                    .ps/local
                   </code>
                   .
                 </Trans>

@@ -25,10 +25,10 @@ interface Seed {
 }
 
 function seed(prefix: string): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-notewin-${prefix}-home-`)));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-notewin-${prefix}-proj-`)));
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-notewin-${prefix}-home-`)));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-notewin-${prefix}-proj-`)));
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
   writeFileSync(join(projectDir, 'second.md'), '# Second\n\nAnother document.\n');
 
@@ -53,7 +53,7 @@ function seed(prefix: string): Seed {
 async function launchApp(s: Seed, opts: { deepLink?: boolean } = {}): Promise<ElectronApplication> {
   const args = [`--user-data-dir=${s.userDataDir}`];
   if (opts.deepLink !== false) {
-    args.push(`openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`);
+    args.push(`palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`);
   }
   return electron.launch(
     desktopLaunchOptions({
@@ -64,8 +64,8 @@ async function launchApp(s: Seed, opts: { deepLink?: boolean } = {}): Promise<El
         ...process.env,
         ...homeEnv(s.tmpHome),
         ...(process.platform === 'win32' ? {} : { PATH: '/usr/bin:/bin:/usr/sbin:/sbin' }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
       },
     }),
   );
@@ -79,7 +79,7 @@ async function findWindowByMode(
   let page: Page | undefined;
   await expect(async () => {
     for (const p of app.windows()) {
-      const m = await p.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+      const m = await p.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
       if (m === mode) {
         page = p;
         return;
@@ -97,7 +97,7 @@ async function windowCountByMode(
 ): Promise<number> {
   let count = 0;
   for (const p of app.windows()) {
-    const m = await p.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const m = await p.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (m === mode) count += 1;
   }
   return count;
@@ -170,7 +170,7 @@ function registerAppCleanup(
 }
 
 test.describe('Popped-out note window — live Electron', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
   test.afterEach(() => {
@@ -196,8 +196,8 @@ test.describe('Popped-out note window — live Electron', () => {
     await popOutFrom(app, editor);
     const note = await findWindowByMode(app, 'note');
 
-    expect(await note.evaluate(() => window.okDesktop?.config.collabUrl)).not.toBe('');
-    expect(await note.evaluate(() => window.okDesktop?.config.projectPath)).toBe(s.projectDir);
+    expect(await note.evaluate(() => window.psDesktop?.config.collabUrl)).not.toBe('');
+    expect(await note.evaluate(() => window.psDesktop?.config.projectPath)).toBe(s.projectDir);
 
     await expect(editorBody(note)).toBeVisible({ timeout: 15_000 });
     await expect(note.locator('[data-sidebar="trigger"]')).toHaveCount(0);
@@ -254,7 +254,7 @@ test.describe('Popped-out note window — live Electron', () => {
     await editor.evaluate(() => {
       const probe = window as unknown as { __noteWindowActiveInput?: unknown };
       window.addEventListener(
-        'open-knowledge:active-terminal-input',
+        'palimpsest:active-terminal-input',
         (event) => {
           probe.__noteWindowActiveInput = (event as CustomEvent).detail;
         },
@@ -263,7 +263,7 @@ test.describe('Popped-out note window — live Electron', () => {
     });
     expect(
       await note.evaluate(() =>
-        window.okDesktop?.noteWindow.dispatchToMain({
+        window.psDesktop?.noteWindow.dispatchToMain({
           kind: 'active-input',
           text: 'Review this passage',
           newTab: true,
@@ -290,7 +290,7 @@ test.describe('Popped-out note window — live Electron', () => {
 
     expect(
       await note.evaluate(() =>
-        window.okDesktop?.noteWindow.dispatchToMain({
+        window.psDesktop?.noteWindow.dispatchToMain({
           kind: 'reveal-comments',
           docName: 'second',
           scope: 'doc',
@@ -380,7 +380,7 @@ test.describe('Popped-out note window — live Electron', () => {
     expect(clicked).toBe(true);
 
     const term = await findWindowByMode(app, 'terminal');
-    expect(await term.evaluate(() => window.okDesktop?.config.projectPath)).toBe(s.projectDir);
+    expect(await term.evaluate(() => window.psDesktop?.config.projectPath)).toBe(s.projectDir);
   });
 
   test('closing the project window closes its pop-outs, leaving no orphan', async ({
@@ -427,8 +427,8 @@ test.describe('Popped-out note window — live Electron', () => {
     registerAppCleanup(captureStderrFor, second, s);
 
     const restored = await findWindowByMode(second, 'note', 30_000);
-    expect(await restored.evaluate(() => window.okDesktop?.config.projectPath)).toBe(s.projectDir);
-    expect(await restored.evaluate(() => window.okDesktop?.config.collabUrl)).not.toBe('');
+    expect(await restored.evaluate(() => window.psDesktop?.config.projectPath)).toBe(s.projectDir);
+    expect(await restored.evaluate(() => window.psDesktop?.config.collabUrl)).not.toBe('');
     await expect(editorBody(restored)).toBeVisible({ timeout: 20_000 });
   });
 });

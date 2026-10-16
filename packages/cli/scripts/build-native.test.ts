@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 function runBuildNative(binaries: string[]) {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-build-native-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-build-native-'));
   scratches.push(root);
   const nativeConfig = join(root, 'native-config');
   const cli = join(root, 'cli');

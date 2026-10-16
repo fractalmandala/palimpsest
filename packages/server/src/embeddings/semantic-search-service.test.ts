@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import {
   createWorkspaceSearchDocument,
   type WorkspaceSearchDocument,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { getLogger } from '../logger.ts';
 import { CHUNK_CONFIG_ID } from './chunking.ts';
@@ -449,7 +449,7 @@ describe('SemanticSearchService', () => {
   });
 
   test('disable racing an in-flight embed pass does NOT wipe the on-disk cache', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-vec-race-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-vec-race-'));
     const info = vi.spyOn(getLogger('embeddings'), 'info');
     try {
       const inner = createConceptEmbedder({ concepts });
@@ -563,7 +563,7 @@ describe('SemanticSearchService', () => {
   });
 
   test('applyConfig transport-fingerprint change re-loads only the embedder and reuses vectors', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-transport-reload-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-transport-reload-'));
     const info = vi.spyOn(getLogger('embeddings'), 'info');
     let loads = 0;
     let documentInputs = 0;
@@ -661,7 +661,7 @@ describe('SemanticSearchService', () => {
   });
 
   test('transport changes preserve a pending pass and its persisted progress across restart', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-transport-pending-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-transport-pending-'));
     const started = Promise.withResolvers<void>();
     const release = Promise.withResolvers<void>();
     const calls: number[] = [];
@@ -820,7 +820,7 @@ describe('SemanticSearchService', () => {
   });
 
   test('a superseded cache initialization finishes before the new provider initializes its cache', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-cache-init-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-cache-init-'));
     const started = Promise.withResolvers<void>();
     const release = Promise.withResolvers<void>();
     const init = VectorCache.prototype.init;

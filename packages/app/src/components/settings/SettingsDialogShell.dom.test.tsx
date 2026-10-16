@@ -1,4 +1,4 @@
-import type { ConfigBinding, OkignoreBinding } from '@inkeep/open-knowledge-core';
+import type { ConfigBinding, OkignoreBinding } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -67,16 +67,16 @@ let mockMerged: unknown = null;
 
 const servedCore = createServedBindingLog();
 
-vi.doMock('@inkeep/open-knowledge-core/constants/feature-flags', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/constants/feature-flags', {
+vi.doMock('@palimpsest/core/constants/feature-flags', () =>
+  servedCore.serve('@palimpsest/core/constants/feature-flags', {
     get SHOW_INSTALL_SKILL() {
       return mockShowInstallSkill;
     },
   }),
 );
 
-vi.doMock('@inkeep/open-knowledge-core/markdown/lint', () =>
-  servedCore.serve('@inkeep/open-knowledge-core/markdown/lint', {
+vi.doMock('@palimpsest/core/markdown/lint', () =>
+  servedCore.serve('@palimpsest/core/markdown/lint', {
     MARKDOWNLINT_RULE_CATALOG: [],
   }),
 );
@@ -365,7 +365,7 @@ describe('SettingsDialogShell userBinding gating (Tier-3 mount)', () => {
   });
 
   test('yields to the drag-band clearance on the desktop host', () => {
-    vi.stubGlobal('okDesktop', { config: { ptyAvailable: false } });
+    vi.stubGlobal('psDesktop', { config: { ptyAvailable: false } });
     try {
       render(<SettingsDialogShell open={true} onOpenChange={() => {}} />);
 
@@ -386,7 +386,7 @@ describe('SettingsDialogShell userBinding gating (Tier-3 mount)', () => {
     expect(screen.getByTestId('settings-sidebar-item-claude-desktop')).toBeTruthy();
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/constants/feature-flags',
+        '@palimpsest/core/constants/feature-flags',
         'SHOW_INSTALL_SKILL',
         since,
       ),
@@ -406,7 +406,7 @@ describe('SettingsDialogShell userBinding gating (Tier-3 mount)', () => {
     expect(screen.queryByTestId('settings-search-result-rule:MD013')).toBeNull();
     expect(
       servedCore.readersOf(
-        '@inkeep/open-knowledge-core/markdown/lint',
+        '@palimpsest/core/markdown/lint',
         'MARKDOWNLINT_RULE_CATALOG',
         since,
       ),

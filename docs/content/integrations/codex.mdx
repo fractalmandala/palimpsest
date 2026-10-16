@@ -1,10 +1,10 @@
 ---
 title: Codex
-description: Use OpenKnowledge with Codex.
+description: Use Palimpsest with Codex.
 icon: custom/Codex
 ---
 
-OpenKnowledge works with Codex through MCP plus an installed skill.
+Palimpsest works with Codex through MCP plus an installed skill.
 
 ## Install
 
@@ -12,10 +12,10 @@ OpenKnowledge works with Codex through MCP plus an installed skill.
 
 ## Trust the project
 
-The user-level entry `ok init` writes to `~/.codex/config.toml` is not affected by project trust, so with the default setup the agent already sees the tools. Trust matters if you registered project-level only, or want the project skill and `.codex/config.toml` entry active: Codex loads project-scoped `.codex/` layers only in a project you have trusted. The CLI asks the first time you run `codex` there, but `codex exec` cannot ask and older builds may not remember the answer.
+The user-level entry `ps init` writes to `~/.codex/config.toml` is not affected by project trust, so with the default setup the agent already sees the tools. Trust matters if you registered project-level only, or want the project skill and `.codex/config.toml` entry active: Codex loads project-scoped `.codex/` layers only in a project you have trusted. The CLI asks the first time you run `codex` there, but `codex exec` cannot ask and older builds may not remember the answer.
 
 <Callout type="warn">
-  Trust is not scoped to the MCP entry: a trusted project loads its whole `.codex/` layer, meaning project config, hooks, and exec policies, which widen what commands Codex runs without asking, and Codex applies the decision at the Git repository root, so every nested `.codex/` directory in that repo is trusted too. `ok init` commits `.codex/config.toml` and `.codex/skills/` so the repo is ready for teammates, which means a knowledge base you cloned carries a `.codex/` layer someone else wrote. Read it before trusting it.
+  Trust is not scoped to the MCP entry: a trusted project loads its whole `.codex/` layer, meaning project config, hooks, and exec policies, which widen what commands Codex runs without asking, and Codex applies the decision at the Git repository root, so every nested `.codex/` directory in that repo is trusted too. `ps init` commits `.codex/config.toml` and `.codex/skills/` so the repo is ready for teammates, which means a knowledge base you cloned carries a `.codex/` layer someone else wrote. Read it before trusting it.
 </Callout>
 
 If you're scripting with `codex exec`, run `codex` interactively in the project once and answer the prompt; on current builds that persists the decision for later non-interactive runs. If the tools still don't appear after you answered the prompt, or you can't run `codex` interactively at all (CI, cron), mark the project trusted by hand in `~/.codex/config.toml` (or `$CODEX_HOME/config.toml` when `CODEX_HOME` is set):
@@ -31,7 +31,7 @@ Use the absolute path of the Git repository root; Codex matches the key exactly.
 
 From the editor, **Open with AI ▸ Codex** dispatches the current file, folder, or project to Codex in one click. Entry points include the sidebar's right-click menu (file / folder / empty space), the **File → Open with AI** menu, and the Command Palette. You can also hand the current doc to Codex from the bottom **Ask AI** composer.
 
-Codex receives a short prompt asking it to open the target in OpenKnowledge's web preview. The agent then grounds the rest of the conversation through MCP. See [Editor → Open with AI](/docs/features/editor#open-with-ai) for the full UX.
+Codex receives a short prompt asking it to open the target in Palimpsest's web preview. The agent then grounds the rest of the conversation through MCP. See [Editor → Open with AI](/docs/features/editor#open-with-ai) for the full UX.
 
 ## Verify
 
@@ -39,9 +39,9 @@ Open the project in Codex and ask:
 
 <VerifyExec />
 
-If you don't see the tool, check that the project is trusted first, then restart Codex. If it's still missing and `ok init` reported your config was `left unchanged`, the reason in parentheses says why `~/.codex/config.toml` (or `$CODEX_HOME/config.toml` if set) was left untouched. For config problems, fix the file and re-run `ok init`; for `no format-preserving writer available`, your config isn't the problem — OpenKnowledge can't rewrite the file safely on this platform, so add an `open-knowledge` entry to `mcp_servers` by hand (command: `ok mcp`).
+If you don't see the tool, check that the project is trusted first, then restart Codex. If it's still missing and `ps init` reported your config was `left unchanged`, the reason in parentheses says why `~/.codex/config.toml` (or `$CODEX_HOME/config.toml` if set) was left untouched. For config problems, fix the file and re-run `ps init`; for `no format-preserving writer available`, your config isn't the problem — Palimpsest can't rewrite the file safely on this platform, so add an `palimpsest` entry to `mcp_servers` by hand (command: `ps mcp`).
 
-OpenKnowledge Beta registers as `open-knowledge-beta` instead; see [Beta uses its own entry](/docs/reference/what-open-knowledge-writes#beta-uses-its-own-entry).
+Palimpsest Beta registers as `palimpsest-beta` instead; see [Beta uses its own entry](/docs/reference/what-palimpsest-writes#beta-uses-its-own-entry).
 
 ## Scheduled runs
 

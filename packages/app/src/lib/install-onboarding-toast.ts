@@ -1,14 +1,14 @@
-import { EDITOR_LABELS } from '@inkeep/open-knowledge-core/constants/editors';
+import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { plural, t } from '@lingui/core/macro';
 import { toast as sonnerToast } from 'sonner';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { relativeToProject } from '@/lib/project-paths';
 
 const TOAST_DURATION_MS = 4000;
 const STICKY_TOAST_DURATION_MS = 24 * 60 * 60 * 1000;
 
 export function installOnboardingToastListener(opts: {
-  bridge: OkDesktopBridge | undefined;
+  bridge: PsDesktopBridge | undefined;
 }): (() => void) | undefined {
   const bridge = opts.bridge;
   if (!bridge) return undefined;
@@ -16,7 +16,7 @@ export function installOnboardingToastListener(opts: {
   return bridge.onboarding.onToast((payload) => {
     if (payload.kind === 'ancestor-promote') {
       const ancestorPath = payload.ancestorPath;
-      sonnerToast.success(t`Opened existing OpenKnowledge project at ${ancestorPath}`, {
+      sonnerToast.success(t`Opened existing Palimpsest project at ${ancestorPath}`, {
         duration: TOAST_DURATION_MS,
       });
       return;
@@ -47,7 +47,7 @@ export function installOnboardingToastListener(opts: {
         const summary = payload.path.summary;
         parts.push(t`PATH install failed: ${summary}`);
       }
-      const message = parts.length > 0 ? parts.join('; ') : t`OpenKnowledge integrations checked.`;
+      const message = parts.length > 0 ? parts.join('; ') : t`Palimpsest integrations checked.`;
       const hasFailure = payload.mcp.status === 'failed' || payload.path.status === 'failed';
       const pathTouched = payload.path.status !== 'none';
       sonnerToast[hasFailure ? 'error' : 'success'](message, {
@@ -81,7 +81,7 @@ export function installOnboardingToastListener(opts: {
     const subPath = relativeToProject(payload.gitRoot, payload.pickedPath) ?? payload.pickedPath;
     const gitRoot = payload.gitRoot;
     sonnerToast.success(
-      t`Initialized OpenKnowledge at ${gitRoot} — opened parent of ${subPath} because it contains a .git folder`,
+      t`Initialized Palimpsest at ${gitRoot} — opened parent of ${subPath} because it contains a .git folder`,
       { duration: TOAST_DURATION_MS },
     );
   });

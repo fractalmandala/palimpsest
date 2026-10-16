@@ -60,7 +60,7 @@ for (const host of Object.keys(TEST_SERVER_HOST_FAMILY).filter(isTestServerHost)
     },
   })) {
     test(`records ownership evidence after ${collision} on ${family}`, async () => {
-      const root = await mkdtemp(join(tmpdir(), 'ok-recording-'));
+      const root = await mkdtemp(join(tmpdir(), 'ps-recording-'));
       const contender = createNetServer((socket) => socket.destroy());
       const previousRequest = process.env[TEST_SERVER_STARTUP_ENV];
       const originalEmit = Server.prototype.emit;
@@ -116,7 +116,7 @@ for (const host of Object.keys(TEST_SERVER_HOST_FAMILY).filter(isTestServerHost)
           };
         }
         await vite.listen();
-        const recordsPath = process.env.OK_PORT_OWNERSHIP_RECORDS;
+        const recordsPath = process.env.PS_PORT_OWNERSHIP_RECORDS;
         if (!recordsPath) throw new Error('expected an ownership records path');
         const records = readOwnershipRecords(recordsPath).filter(
           (record): record is Record<string, unknown> =>

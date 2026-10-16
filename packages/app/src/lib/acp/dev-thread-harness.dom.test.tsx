@@ -2,7 +2,7 @@ import type {
   SessionUpdate,
   ThreadAgentInfo,
   ThreadInfo,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { MockComposerMentionInput } from '@/components/acp/composer-mention-input.test-helper';

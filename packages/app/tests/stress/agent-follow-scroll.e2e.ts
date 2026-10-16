@@ -12,7 +12,7 @@ import {
 } from './_helpers';
 
 const WYSIWYG = '.ProseMirror:not(.composer-prosemirror)';
-const FLASH = '.ok-agent-insert-flash';
+const FLASH = '.ps-agent-insert-flash';
 const EDGE_EPSILON_PX = 3;
 const BLOCK_COUNT = 400;
 const READING_AT = 150;
@@ -47,7 +47,7 @@ async function watchFlash(page: Page): Promise<void> {
       const clip = Array.from(
         document.querySelectorAll<HTMLElement>('[data-testid="editor-scroll-container"]'),
       ).find((el) => el.getClientRects().length > 0);
-      return clip?.querySelector('.ok-agent-insert-flash') != null;
+      return clip?.querySelector('.ps-agent-insert-flash') != null;
     };
     w.__okReadableFlash = readableFlash;
     const options = {
@@ -108,7 +108,7 @@ async function topReadableMarker(page: Page): Promise<string | null> {
       if (clip === undefined) return null;
       const clipRect = clip.getBoundingClientRect();
       const readableTop = clipRect.top + insetPx;
-      for (const w of Array.from(clip.querySelectorAll<HTMLElement>('.ok-chunk-wrapper'))) {
+      for (const w of Array.from(clip.querySelectorAll<HTMLElement>('.ps-chunk-wrapper'))) {
         if (w.getClientRects().length === 0) continue;
         const r = w.getBoundingClientRect();
         if (r.bottom > readableTop + epsilonPx && r.top < clipRect.bottom) {

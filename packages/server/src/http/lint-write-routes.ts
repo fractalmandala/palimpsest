@@ -15,7 +15,7 @@ import {
   type Principal,
   type ReLintFailure,
   summarizeLintPluginFailures,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { ANONYMOUS_WRITER_ID, sessionWriterId } from '../agent-id.ts';
 import type { AgentPresenceBroadcaster } from '../agent-presence.ts';
 import {

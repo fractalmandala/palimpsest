@@ -1,10 +1,10 @@
-import { TERMINAL_CLIS } from '@inkeep/open-knowledge-core';
+import { TERMINAL_CLIS } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 vi.doMock('@lingui/react/macro', () => ({
   ...actualLinguiMacro,
@@ -20,7 +20,7 @@ const { TerminalCliMissingBanner } = await import('./TerminalCliMissingBanner');
 function makeBridge() {
   const openExternal = vi.fn(async (_url: string) => {});
   return {
-    bridge: { shell: { openExternal } } as unknown as OkDesktopBridge,
+    bridge: { shell: { openExternal } } as unknown as PsDesktopBridge,
     openExternal,
   };
 }

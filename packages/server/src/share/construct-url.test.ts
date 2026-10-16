@@ -3,7 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { decodeShareUrl, ShareFreshnessSchema } from '@inkeep/open-knowledge-core';
+import { decodeShareUrl, ShareFreshnessSchema } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { loggerFactory, PinoLogger } from '../logger.ts';
 import {
@@ -126,7 +126,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -136,15 +136,15 @@ describe('POST /api/share/construct-url', () => {
     expect(json.ok).toBe(true);
     expect(json.branch).toBe('main');
     expect(json.sharedUrl).toBe(
-      'https://github.com/inkeep/open-knowledge/blob/main/content/docs/guide.md',
+      'https://github.com/fractalmandala/palimpsest/blob/main/content/docs/guide.md',
     );
     expect(typeof json.shareUrl).toBe('string');
-    expect(json.shareUrl).toMatch(/^https:\/\/openknowledge\.ai\/d\/[A-Za-z0-9_-]+$/);
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    expect(json.shareUrl).toMatch(/^https:\/\/palimpsest\.ai\/d\/[A-Za-z0-9_-]+$/);
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     const decoded = decodeShareUrl(encoded);
     expect(decoded).toMatchObject({
       version: 2,
-      sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/content/docs/guide.md',
+      sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/content/docs/guide.md',
       contentRootDepth: 1,
       target: { kind: 'doc', docPath: 'docs/guide.md' },
     });
@@ -155,7 +155,7 @@ describe('POST /api/share/construct-url', () => {
       (projectDir) => {
         seedRemoteAndHead(projectDir, {
           head: 'ref: refs/heads/main\n',
-          originUrl: 'https://github.com/inkeep/open-knowledge.git',
+          originUrl: 'https://github.com/fractalmandala/palimpsest.git',
           branchesOnOrigin: ['main'],
         });
       },
@@ -164,11 +164,11 @@ describe('POST /api/share/construct-url', () => {
     const res = await postConstructUrl(rig.port, { kind: 'doc', docPath: 'docs/guide.md' });
     expect(res.status).toBe(200);
     const json = (await res.json()) as Record<string, unknown>;
-    expect(json.sharedUrl).toBe('https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md');
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    expect(json.sharedUrl).toBe('https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     expect(decodeShareUrl(encoded)).toEqual({
       version: 1,
-      sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md',
+      sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md',
     });
   });
 
@@ -177,7 +177,7 @@ describe('POST /api/share/construct-url', () => {
       (projectDir) => {
         seedRemoteAndHead(projectDir, {
           head: 'ref: refs/heads/main\n',
-          originUrl: 'https://github.com/inkeep/open-knowledge.git',
+          originUrl: 'https://github.com/fractalmandala/palimpsest.git',
           branchesOnOrigin: ['main'],
         });
       },
@@ -187,9 +187,9 @@ describe('POST /api/share/construct-url', () => {
     expect(res.status).toBe(200);
     const json = (await res.json()) as Record<string, unknown>;
     expect(json.sharedUrl).toBe(
-      'https://github.com/inkeep/open-knowledge/blob/main/knowledge%20base/handbook/start%20here.md',
+      'https://github.com/fractalmandala/palimpsest/blob/main/knowledge%20base/handbook/start%20here.md',
     );
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     expect(decodeShareUrl(encoded)).toMatchObject({
       version: 2,
       contentRootDepth: 2,
@@ -214,7 +214,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: '0123456789abcdef0123456789abcdef01234567\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -228,7 +228,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/feature-not-pushed\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -246,7 +246,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'git@gitlab.com:inkeep/open-knowledge.git',
+        originUrl: 'git@gitlab.com:fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -270,7 +270,7 @@ describe('POST /api/share/construct-url', () => {
     const json = (await res.json()) as Record<string, unknown>;
     expect(json.ok).toBe(true);
     expect(json.sharedUrl).toBe('https://ghes.acme.test/team/notes/blob/main/content/a.md');
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     expect(decodeShareUrl(encoded)).toMatchObject({
       version: 2,
       contentRootDepth: 1,
@@ -282,7 +282,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -296,7 +296,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -310,7 +310,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -324,7 +324,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -334,13 +334,13 @@ describe('POST /api/share/construct-url', () => {
     const json = (await res.json()) as Record<string, unknown>;
     expect(json.ok).toBe(true);
     expect(json.sharedUrl).toBe(
-      `https://github.com/inkeep/open-knowledge/blob/main/content/${encodeURIComponent('Q4 OKRs — Marketing.md').replace(/^/, 'docs/')}`,
+      `https://github.com/fractalmandala/palimpsest/blob/main/content/${encodeURIComponent('Q4 OKRs — Marketing.md').replace(/^/, 'docs/')}`,
     );
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     const decoded = decodeShareUrl(encoded);
     const decodedUrl = new URL(decoded.sharedUrl);
     const segments = decodedUrl.pathname.split('/');
-    expect(segments.slice(0, 5)).toEqual(['', 'inkeep', 'open-knowledge', 'blob', 'main']);
+    expect(segments.slice(0, 5)).toEqual(['', 'inkeep', 'palimpsest', 'blob', 'main']);
     const decodedDocPath = segments
       .slice(5)
       .map((s) => decodeURIComponent(s))
@@ -357,7 +357,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/feat/sharing-virality-flow\n',
-        originUrl: 'git@github.com:inkeep/open-knowledge.git',
+        originUrl: 'git@github.com:fractalmandala/palimpsest.git',
         branchesOnOrigin: ['feat/sharing-virality-flow'],
       });
     });
@@ -367,7 +367,7 @@ describe('POST /api/share/construct-url', () => {
     expect(json.ok).toBe(true);
     expect(json.branch).toBe('feat/sharing-virality-flow');
     expect(json.sharedUrl).toBe(
-      'https://github.com/inkeep/open-knowledge/blob/feat%2Fsharing-virality-flow/content/docs/guide.md',
+      'https://github.com/fractalmandala/palimpsest/blob/feat%2Fsharing-virality-flow/content/docs/guide.md',
     );
     const sharedUrl = new URL(json.sharedUrl as string);
     const segments = sharedUrl.pathname.split('/').filter(Boolean);
@@ -379,7 +379,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -391,7 +391,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -403,7 +403,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -415,7 +415,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -427,7 +427,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -437,12 +437,12 @@ describe('POST /api/share/construct-url', () => {
     expect(json.ok).toBe(true);
     expect(json.branch).toBe('main');
     expect(json.sharedUrl).toBe(
-      'https://github.com/inkeep/open-knowledge/tree/main/content/docs/guides',
+      'https://github.com/fractalmandala/palimpsest/tree/main/content/docs/guides',
     );
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     const decoded = decodeShareUrl(encoded);
     expect(decoded.sharedUrl).toBe(
-      'https://github.com/inkeep/open-knowledge/tree/main/content/docs/guides',
+      'https://github.com/fractalmandala/palimpsest/tree/main/content/docs/guides',
     );
     expect(decoded).toMatchObject({
       version: 2,
@@ -456,7 +456,7 @@ describe('POST /api/share/construct-url', () => {
       (projectDir) => {
         seedRemoteAndHead(projectDir, {
           head: 'ref: refs/heads/main\n',
-          originUrl: 'https://github.com/inkeep/open-knowledge.git',
+          originUrl: 'https://github.com/fractalmandala/palimpsest.git',
           branchesOnOrigin: ['main'],
         });
       },
@@ -466,8 +466,8 @@ describe('POST /api/share/construct-url', () => {
     expect(res.status).toBe(200);
     const json = (await res.json()) as Record<string, unknown>;
     expect(json.ok).toBe(true);
-    expect(json.sharedUrl).toBe('https://github.com/inkeep/open-knowledge/tree/main');
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    expect(json.sharedUrl).toBe('https://github.com/fractalmandala/palimpsest/tree/main');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     expect(decodeShareUrl(encoded).version).toBe(1);
   });
 
@@ -475,7 +475,7 @@ describe('POST /api/share/construct-url', () => {
     rig = await bootRig((projectDir) => {
       seedRemoteAndHead(projectDir, {
         head: 'ref: refs/heads/main\n',
-        originUrl: 'https://github.com/inkeep/open-knowledge.git',
+        originUrl: 'https://github.com/fractalmandala/palimpsest.git',
         branchesOnOrigin: ['main'],
       });
     });
@@ -483,8 +483,8 @@ describe('POST /api/share/construct-url', () => {
     expect(res.status).toBe(200);
     const json = (await res.json()) as Record<string, unknown>;
     expect(json.ok).toBe(true);
-    expect(json.sharedUrl).toBe('https://github.com/inkeep/open-knowledge/tree/main/content');
-    const encoded = (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    expect(json.sharedUrl).toBe('https://github.com/fractalmandala/palimpsest/tree/main/content');
+    const encoded = (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
     expect(decodeShareUrl(encoded)).toMatchObject({
       version: 2,
       contentRootDepth: 1,
@@ -497,7 +497,7 @@ describe('POST /api/share/construct-url', () => {
       (projectDir) => {
         seedRemoteAndHead(projectDir, {
           head: 'ref: refs/heads/main\n',
-          originUrl: 'https://github.com/inkeep/open-knowledge.git',
+          originUrl: 'https://github.com/fractalmandala/palimpsest.git',
           branchesOnOrigin: ['main'],
         });
       },
@@ -631,10 +631,10 @@ describe('isValidSharePath (kind-aware)', () => {
     expect(isValidSharePath('a/.git/b', 'folder')).toBe(false);
   });
 
-  test('.ok and .github dot-folders allowed (gate is .git-only per D21)', () => {
-    expect(isValidSharePath('.ok/config.yml', 'doc')).toBe(true);
+  test('.ps and .github dot-folders allowed (gate is .git-only per D21)', () => {
+    expect(isValidSharePath('.ps/config.yml', 'doc')).toBe(true);
     expect(isValidSharePath('.github/workflows', 'folder')).toBe(true);
-    expect(isValidSharePath('.ok', 'folder')).toBe(true);
+    expect(isValidSharePath('.ps', 'folder')).toBe(true);
   });
 
   test('empty intermediate segment (a//b) rejected', () => {

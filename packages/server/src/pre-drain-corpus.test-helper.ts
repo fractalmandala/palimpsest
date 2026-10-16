@@ -4,7 +4,7 @@ import {
   type MarkdownManager,
   sharedExtensions,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getSchema, type JSONContent } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';

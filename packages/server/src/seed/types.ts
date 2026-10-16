@@ -1,4 +1,4 @@
-import type { LintPluginId } from '@inkeep/open-knowledge-core';
+import type { LintPluginId } from '@palimpsest/core';
 import type { PackId } from './starter.ts';
 
 export interface PackSkillConflict {

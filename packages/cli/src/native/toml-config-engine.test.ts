@@ -90,11 +90,11 @@ describe('createTomlConfigEngine', () => {
     };
     const engine = createTomlConfigEngine(() => fake);
     if (engine.backend !== 'native') throw new Error('expected the native engine');
-    const result = engine.upsertEntry('x = 1\n', 'open-knowledge', { command: 'c' });
+    const result = engine.upsertEntry('x = 1\n', 'palimpsest', { command: 'c' });
     expect(result).toEqual({ text: 'edited', existed: true });
     expect(captured).toEqual({
       toml: 'x = 1\n',
-      name: 'open-knowledge',
+      name: 'palimpsest',
       json: '{"command":"c"}',
     });
   });
@@ -111,23 +111,23 @@ describe('createTomlConfigEngine', () => {
     };
     const engine = createTomlConfigEngine(() => fake);
     if (engine.backend !== 'native') throw new Error('expected the native engine');
-    const result = engine.removeEntry('x = 1\n', 'open-knowledge');
+    const result = engine.removeEntry('x = 1\n', 'palimpsest');
     expect(result).toEqual({ text: 'trimmed', existed: true });
-    expect(captured).toEqual({ toml: 'x = 1\n', name: 'open-knowledge' });
+    expect(captured).toEqual({ toml: 'x = 1\n', name: 'palimpsest' });
   });
 
   test('the real native engine removes OK’s entry, preserving a sibling', () => {
     const engine = createTomlConfigEngine();
     if (engine.backend !== 'native') throw new Error('native addon must be built for this gate');
     const input =
-      '# keep\n[mcp_servers.other]\ncommand = "node"  # sibling\n\n[mcp_servers.open-knowledge]\ncommand = "/bin/sh"\n';
-    const removed = engine.removeEntry(input, 'open-knowledge');
+      '# keep\n[mcp_servers.other]\ncommand = "node"  # sibling\n\n[mcp_servers.palimpsest]\ncommand = "/bin/sh"\n';
+    const removed = engine.removeEntry(input, 'palimpsest');
     expect(removed.existed).toBe(true);
     expect(removed.text).toContain('# keep');
     expect(removed.text).toContain('[mcp_servers.other]');
     expect(removed.text).toContain('command = "node"  # sibling');
-    expect(removed.text).not.toContain('[mcp_servers.open-knowledge]');
-    const again = engine.removeEntry(removed.text, 'open-knowledge');
+    expect(removed.text).not.toContain('[mcp_servers.palimpsest]');
+    const again = engine.removeEntry(removed.text, 'palimpsest');
     expect(again.existed).toBe(false);
     expect(again.text).toBe(removed.text);
   });
@@ -136,15 +136,15 @@ describe('createTomlConfigEngine', () => {
     const engine = createTomlConfigEngine();
     if (engine.backend !== 'native') throw new Error('native addon must be built for this gate');
     const input = '# keep\n[mcp_servers.other]\ncommand = "node"\n';
-    const result = engine.upsertEntry(input, 'open-knowledge', {
+    const result = engine.upsertEntry(input, 'palimpsest', {
       command: '/bin/sh',
       args: ['-l', '-c', 'run'],
     });
     expect(result.existed).toBe(false);
     expect(result.text).toContain('# keep');
     expect(result.text).toContain('[mcp_servers.other]');
-    expect(result.text).toContain('[mcp_servers.open-knowledge]');
-    const again = engine.upsertEntry(result.text, 'open-knowledge', {
+    expect(result.text).toContain('[mcp_servers.palimpsest]');
+    const again = engine.upsertEntry(result.text, 'palimpsest', {
       command: '/bin/sh',
       args: ['-l', '-c', 'run'],
     });

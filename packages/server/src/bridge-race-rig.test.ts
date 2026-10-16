@@ -2,7 +2,7 @@ import {
   MarkdownManager,
   type SerializeCallOptions,
   sharedExtensions,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { JSONContent } from '@tiptap/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { type BridgeRaceRig, createBridgeRaceRig } from './bridge-race-rig.test-helper.ts';

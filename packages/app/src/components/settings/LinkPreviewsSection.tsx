@@ -1,6 +1,6 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { type RefObject, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -179,7 +179,7 @@ function EnableLinkPreviewsConfirmDialog({
               <li>
                 <Trans>
                   In an agent chat, hovering a link to a GitHub pull request or issue asks GitHub
-                  for its status, signed in as you when OpenKnowledge can use your GitHub sign-in.
+                  for its status, signed in as you when Palimpsest can use your GitHub sign-in.
                 </Trans>
               </li>
               <li>

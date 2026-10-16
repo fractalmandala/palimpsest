@@ -1,4 +1,4 @@
-import { scrubSecrets } from '@inkeep/open-knowledge-core';
+import { scrubSecrets } from '@palimpsest/core';
 
 export const ACQUISITION_DETAIL_MAX_CHARS = 16_000;
 

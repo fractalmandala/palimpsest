@@ -97,7 +97,7 @@ export function createVariantBuilderConfig(
   config.productName = variant.productName;
   config.extraMetadata = {
     ...config.extraMetadata,
-    okDesktopVariant: variantName,
+    psDesktopVariant: variantName,
     productName: variant.productName,
     ...(variant.name === 'stable' ? {} : { name: variant.packageName }),
     ...(variant.updateChannel === 'beta' ? { version: betaBuildVersion(sourceVersion) } : {}),
@@ -168,12 +168,12 @@ export function createVariantBuilderConfig(
   if (variant.name === 'beta') {
     const wrapperEntries = config.win.extraResources.filter(
       (entry) =>
-        entry.from !== 'resources/cli/bin/ok.cmd' && entry.from !== 'resources/cli/bin/ok.ps1',
+        entry.from !== 'resources/cli/bin/ps.cmd' && entry.from !== 'resources/cli/bin/ps.ps1',
     );
     config.win.extraResources = [
       ...variant.cliCommandNames.flatMap((name) => [
-        { from: 'resources/cli/bin/ok.cmd', to: `cli/bin/${name}.cmd` },
-        { from: 'resources/cli/bin/ok.ps1', to: `cli/bin/${name}.ps1` },
+        { from: 'resources/cli/bin/ps.cmd', to: `cli/bin/${name}.cmd` },
+        { from: 'resources/cli/bin/ps.ps1', to: `cli/bin/${name}.ps1` },
       ]),
       ...wrapperEntries,
     ];
@@ -192,21 +192,21 @@ export function createVariantNsisInclude(source: string, variantName: DesktopVar
   const variant = DESKTOP_VARIANTS[variantName];
   const withScheme = replaceAllRequired(
     source,
-    'openknowledge://',
+    'palimpsest://',
     `${variant.protocolScheme}://`,
-    'the openknowledge:// URL scheme in build/installer.nsh',
+    'the palimpsest:// URL scheme in build/installer.nsh',
   );
   const withRegistryKey = replaceAllRequired(
     withScheme,
-    'Software\\Classes\\openknowledge',
+    'Software\\Classes\\palimpsest',
     `Software\\Classes\\${variant.protocolScheme}`,
-    'the openknowledge registry key in build/installer.nsh',
+    'the palimpsest registry key in build/installer.nsh',
   );
   return replaceAllRequired(
     withRegistryKey,
-    'URL:OpenKnowledge',
+    'URL:Palimpsest',
     `URL:${variant.productName}`,
-    'the OpenKnowledge protocol label in build/installer.nsh',
+    'the Palimpsest protocol label in build/installer.nsh',
   );
 }
 
@@ -214,15 +214,15 @@ export function createVariantPostInstall(source: string, variantName: DesktopVar
   const [shortName, longName] = DESKTOP_VARIANTS[variantName].cliCommandNames;
   const withShortName = replaceRequired(
     source,
-    'ln -sf "$OK_WRAPPER" /usr/bin/ok',
-    `ln -sf "$OK_WRAPPER" /usr/bin/${shortName}`,
-    'the /usr/bin/ok install command in build/deb-postinst.sh',
+    'ln -sf "$PS_WRAPPER" /usr/bin/ok',
+    `ln -sf "$PS_WRAPPER" /usr/bin/${shortName}`,
+    'the /usr/bin/ps install command in build/deb-postinst.sh',
   );
   return replaceRequired(
     withShortName,
-    'ln -sf "$OK_WRAPPER" /usr/bin/open-knowledge',
-    `ln -sf "$OK_WRAPPER" /usr/bin/${longName}`,
-    'the /usr/bin/open-knowledge install command in build/deb-postinst.sh',
+    'ln -sf "$PS_WRAPPER" /usr/bin/palimpsest',
+    `ln -sf "$PS_WRAPPER" /usr/bin/${longName}`,
+    'the /usr/bin/palimpsest install command in build/deb-postinst.sh',
   );
 }
 
@@ -230,7 +230,7 @@ export function createVariantPostRemove(source: string, variantName: DesktopVari
   const [shortName, longName] = DESKTOP_VARIANTS[variantName].cliCommandNames;
   return replaceRequired(
     source,
-    'for link in /usr/bin/ok /usr/bin/open-knowledge; do',
+    'for link in /usr/bin/ok /usr/bin/palimpsest; do',
     `for link in /usr/bin/${shortName} /usr/bin/${longName}; do`,
     'the Linux CLI removal loop in build/deb-postrm.sh',
   );
@@ -272,19 +272,19 @@ export function createVariantHelperInfo(source: string, variantName: DesktopVari
   const variant = DESKTOP_VARIANTS[variantName];
   const withAppId = replaceAllRequired(
     source,
-    'com.inkeep.open-knowledge.server',
+    'com.fractalmandala.palimpsest.server',
     `${variant.appId}.server`,
     'the helper bundle identifier in build/helper-bundle/Info.plist',
   );
   const withServerName = replaceAllRequired(
     withAppId,
-    'OpenKnowledge Server',
+    'Palimpsest Server',
     `${variant.productName} Server`,
     'the helper bundle name in build/helper-bundle/Info.plist',
   );
   return replaceAllRequired(
     withServerName,
-    'OpenKnowledge Helper',
+    'Palimpsest Helper',
     `${variant.productName} Helper`,
     'the helper executable name in build/helper-bundle/Info.plist',
   );

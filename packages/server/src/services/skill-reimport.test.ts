@@ -1,4 +1,4 @@
-import type { SkillLockEntry } from '@inkeep/open-knowledge-core/skills-catalog';
+import type { SkillLockEntry } from '@palimpsest/core/skills-catalog';
 import { describe, expect, it } from 'vitest';
 import { groupReimportNamesBySource, pickReimportDir, planReimportDiff } from './skill-reimport.ts';
 
@@ -142,8 +142,8 @@ describe('planReimportDiff', () => {
 
 describe('groupReimportNamesBySource', () => {
   const lock: Record<string, SkillLockEntry> = {
-    one: { source: 'inkeep/open-knowledge-skills', contentHash: 'a', importedAt: 'x' },
-    two: { source: 'inkeep/open-knowledge-skills', contentHash: 'b', importedAt: 'x' },
+    one: { source: 'fractalmandala/palimpsest-skills', contentHash: 'a', importedAt: 'x' },
+    two: { source: 'fractalmandala/palimpsest-skills', contentHash: 'b', importedAt: 'x' },
     other: { source: 'mattpocock/skills', contentHash: 'c', importedAt: 'x' },
   };
   const entryFor = (name: string) => lock[name] ?? null;
@@ -151,7 +151,7 @@ describe('groupReimportNamesBySource', () => {
   it('collapses one source to a single clone', () => {
     const grouped = groupReimportNamesBySource(['one', 'two'], entryFor);
     expect(grouped.bySource).toEqual([
-      { source: 'inkeep/open-knowledge-skills', names: ['one', 'two'] },
+      { source: 'fractalmandala/palimpsest-skills', names: ['one', 'two'] },
     ]);
     expect(grouped.unrecorded).toEqual([]);
   });
@@ -159,7 +159,7 @@ describe('groupReimportNamesBySource', () => {
   it('keeps distinct sources apart so neither is fetched from the wrong repo', () => {
     const grouped = groupReimportNamesBySource(['one', 'other', 'two'], entryFor);
     expect(grouped.bySource).toEqual([
-      { source: 'inkeep/open-knowledge-skills', names: ['one', 'two'] },
+      { source: 'fractalmandala/palimpsest-skills', names: ['one', 'two'] },
       { source: 'mattpocock/skills', names: ['other'] },
     ]);
   });
@@ -167,11 +167,11 @@ describe('groupReimportNamesBySource', () => {
   it('reports names with no recorded upstream instead of fetching for them', () => {
     const grouped = groupReimportNamesBySource(['one', 'authored-here'], entryFor);
     expect(grouped.unrecorded).toEqual(['authored-here']);
-    expect(grouped.bySource).toEqual([{ source: 'inkeep/open-knowledge-skills', names: ['one'] }]);
+    expect(grouped.bySource).toEqual([{ source: 'fractalmandala/palimpsest-skills', names: ['one'] }]);
   });
 
   it('de-duplicates a repeated name', () => {
     const grouped = groupReimportNamesBySource(['one', 'one'], entryFor);
-    expect(grouped.bySource).toEqual([{ source: 'inkeep/open-knowledge-skills', names: ['one'] }]);
+    expect(grouped.bySource).toEqual([{ source: 'fractalmandala/palimpsest-skills', names: ['one'] }]);
   });
 });

@@ -5,12 +5,12 @@ import {
   DocumentListSuccessSchema,
   PagesSuccessSchema,
   SearchSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { createTestServer, type TestServer } from './test-harness';
 
 const VISIBLE_TOKEN = 'zzcontroltoken';
-const OK_TOKEN = 'zzoktemplatetoken';
+const PS_TOKEN = 'zzoktemplatetoken';
 const SHARED_TOKEN = 'zzsharedranktoken';
 let server: TestServer;
 
@@ -25,23 +25,23 @@ function entryPath(e: ListedEntry): string {
 }
 
 function hasOkSegment(p: string): boolean {
-  return p.split('/').includes('.ok');
+  return p.split('/').includes('.ps');
 }
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-showok-reveal-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-showok-reveal-')));
   writeFileSync(
     join(contentDir, `${VISIBLE_TOKEN}.md`),
     `# ${SHARED_TOKEN}\n\n${VISIBLE_TOKEN} body\n`,
   );
-  mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+  mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), 'content:\n  dir: .\n');
   writeFileSync(
-    join(contentDir, '.ok', 'templates', `${OK_TOKEN}.md`),
-    `# ${SHARED_TOKEN}\n\n${OK_TOKEN} body\n`,
+    join(contentDir, '.ps', 'templates', `${PS_TOKEN}.md`),
+    `# ${SHARED_TOKEN}\n\n${PS_TOKEN} body\n`,
   );
-  mkdirSync(join(contentDir, '.ok', 'worktrees', 'checkout'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'worktrees', 'checkout', 'README.md'), '# checkout\n');
+  mkdirSync(join(contentDir, '.ps', 'worktrees', 'checkout'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'worktrees', 'checkout', 'README.md'), '# checkout\n');
   server = await createTestServer({ contentDir, keepContentDir: false });
 }, 60_000);
 
@@ -50,20 +50,20 @@ afterAll(async () => {
 });
 
 describe('showOk reveal on GET /api/documents', () => {
-  test('showAll+showOk buffered listing reveals .ok rows minus worktrees/local', async () => {
+  test('showAll+showOk buffered listing reveals .ps rows minus worktrees/local', async () => {
     const res = await fetch(documentsUrl('?showAll=true&showOk=true'));
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
     const paths = body.documents.map(entryPath);
-    expect(paths).toContain('.ok');
-    expect(paths).toContain('.ok/config.yml');
-    expect(paths).toContain('.ok/templates');
-    expect(paths).toContain(`.ok/templates/${OK_TOKEN}`);
-    expect(paths.some((p) => p.startsWith('.ok/worktrees'))).toBe(false);
-    expect(paths.some((p) => p.startsWith('.ok/local'))).toBe(false);
+    expect(paths).toContain('.ps');
+    expect(paths).toContain('.ps/config.yml');
+    expect(paths).toContain('.ps/templates');
+    expect(paths).toContain(`.ps/templates/${PS_TOKEN}`);
+    expect(paths.some((p) => p.startsWith('.ps/worktrees'))).toBe(false);
+    expect(paths.some((p) => p.startsWith('.ps/local'))).toBe(false);
   }, 30_000);
 
-  test('showAll without showOk stays .ok-free (default listing unchanged)', async () => {
+  test('showAll without showOk stays .ps-free (default listing unchanged)', async () => {
     const res = await fetch(documentsUrl('?showAll=true'));
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
@@ -84,29 +84,29 @@ describe('showOk reveal on GET /api/documents', () => {
       .map((line) => JSON.parse(line) as ListedEntry & { type?: string });
     const entries = rows.filter((row) => row.type === undefined);
     const paths = entries.map(entryPath);
-    expect(paths).toContain(`.ok/templates/${OK_TOKEN}`);
-    expect(paths.some((p) => p.startsWith('.ok/worktrees'))).toBe(false);
-    expect(paths.some((p) => p.startsWith('.ok/local'))).toBe(false);
+    expect(paths).toContain(`.ps/templates/${PS_TOKEN}`);
+    expect(paths.some((p) => p.startsWith('.ps/worktrees'))).toBe(false);
+    expect(paths.some((p) => p.startsWith('.ps/local'))).toBe(false);
   }, 30_000);
 
-  test('lazy .ok expansion composes showOk with dir + depth', async () => {
+  test('lazy .ps expansion composes showOk with dir + depth', async () => {
     const res = await fetch(
-      documentsUrl(`?showAll=true&showOk=true&dir=${encodeURIComponent('.ok')}&depth=1`),
+      documentsUrl(`?showAll=true&showOk=true&dir=${encodeURIComponent('.ps')}&depth=1`),
     );
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
     const paths = body.documents.map(entryPath);
-    expect(paths).toContain('.ok/config.yml');
-    expect(paths).toContain('.ok/templates');
-    expect(paths.some((p) => p.startsWith('.ok/worktrees'))).toBe(false);
-    expect(paths.some((p) => p.startsWith('.ok/local'))).toBe(false);
-    const templates = body.documents.find((d) => d.kind === 'folder' && d.path === '.ok/templates');
+    expect(paths).toContain('.ps/config.yml');
+    expect(paths).toContain('.ps/templates');
+    expect(paths.some((p) => p.startsWith('.ps/worktrees'))).toBe(false);
+    expect(paths.some((p) => p.startsWith('.ps/local'))).toBe(false);
+    const templates = body.documents.find((d) => d.kind === 'folder' && d.path === '.ps/templates');
     expect(templates?.kind === 'folder' && templates.hasChildren).toBe(true);
   }, 30_000);
 });
 
 describe('showOk is a tree-only reveal; template content docs are searchable and link-target-able', () => {
-  test('with showOk in use, the watcher index keeps non-skill/template .ok content out', async () => {
+  test('with showOk in use, the watcher index keeps non-skill/template .ps content out', async () => {
     await (await fetch(documentsUrl('?showAll=true&showOk=true'))).json();
     const res = await fetch(documentsUrl(''));
     expect(res.ok).toBe(true);
@@ -115,10 +115,10 @@ describe('showOk is a tree-only reveal; template content docs are searchable and
     const nonCarveOutOkPaths = paths.filter(
       (p) =>
         hasOkSegment(p) &&
-        p !== '.ok' &&
-        !p.startsWith('.ok/skills/') &&
-        p !== '.ok/templates' &&
-        !p.startsWith('.ok/templates/'),
+        p !== '.ps' &&
+        !p.startsWith('.ps/skills/') &&
+        p !== '.ps/templates' &&
+        !p.startsWith('.ps/templates/'),
     );
     expect(nonCarveOutOkPaths).toEqual([]);
     expect(paths).toContain(VISIBLE_TOKEN);
@@ -133,10 +133,10 @@ describe('showOk is a tree-only reveal; template content docs are searchable and
     const control = SearchSuccessSchema.parse(await controlRes.json());
     expect(control.results.length).toBeGreaterThan(0);
 
-    const okRes = await fetch(`http://127.0.0.1:${server.port}/api/search?query=${OK_TOKEN}`);
-    expect(okRes.ok).toBe(true);
-    const okBody = SearchSuccessSchema.parse(await okRes.json());
-    expect(okBody.results.some((r) => r.path === `.ok/templates/${OK_TOKEN}`)).toBe(true);
+    const psRes = await fetch(`http://127.0.0.1:${server.port}/api/search?query=${PS_TOKEN}`);
+    expect(psRes.ok).toBe(true);
+    const okBody = SearchSuccessSchema.parse(await psRes.json());
+    expect(okBody.results.some((r) => r.path === `.ps/templates/${PS_TOKEN}`)).toBe(true);
 
     const sharedRes = await fetch(
       `http://127.0.0.1:${server.port}/api/search?query=${SHARED_TOKEN}&intent=omnibar`,
@@ -145,7 +145,7 @@ describe('showOk is a tree-only reveal; template content docs are searchable and
     const shared = SearchSuccessSchema.parse(await sharedRes.json());
     const paths = shared.results.map((r) => r.path);
     const visibleRank = paths.indexOf(VISIBLE_TOKEN);
-    const templateRank = paths.indexOf(`.ok/templates/${OK_TOKEN}`);
+    const templateRank = paths.indexOf(`.ps/templates/${PS_TOKEN}`);
     expect(visibleRank).toBeGreaterThanOrEqual(0);
     expect(templateRank).toBeGreaterThanOrEqual(0);
     expect(templateRank).toBeGreaterThan(visibleRank);
@@ -157,6 +157,6 @@ describe('showOk is a tree-only reveal; template content docs are searchable and
     const body = PagesSuccessSchema.parse(await res.json());
     const docNames = body.pages.map((p) => p.docName);
     expect(docNames).toContain(VISIBLE_TOKEN);
-    expect(docNames).toContain(`.ok/templates/${OK_TOKEN}`);
+    expect(docNames).toContain(`.ps/templates/${PS_TOKEN}`);
   }, 30_000);
 });

@@ -5,9 +5,9 @@ const CHROME_UA =
 const CURSOR_PANE_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Cursor/1.7.33 Chrome/138.0.7204.251 Electron/37.7.0 Safari/537.36';
 
-async function loadInSurface(env: { userAgent: string; okDesktop?: object }) {
+async function loadInSurface(env: { userAgent: string; psDesktop?: object }) {
   vi.stubGlobal('navigator', { userAgent: env.userAgent });
-  vi.stubGlobal('window', env.okDesktop === undefined ? {} : { okDesktop: env.okDesktop });
+  vi.stubGlobal('window', env.psDesktop === undefined ? {} : { psDesktop: env.psDesktop });
   vi.resetModules();
   return import('./client-version.ts');
 }
@@ -36,7 +36,7 @@ describe('browser client-version reader', () => {
   });
 
   test('the OK Desktop window sends kind=desktop', async () => {
-    const mod = await loadInSurface({ userAgent: CHROME_UA, okDesktop: {} });
+    const mod = await loadInSurface({ userAgent: CHROME_UA, psDesktop: {} });
     expect(mod.CLIENT_SURFACE).toBe('desktop');
     expect(mod.browserClientVersionHeaders()['x-ok-client-kind']).toBe('desktop');
     expect(mod.browserClientVersionTokenFields().clientKind).toBe('desktop');

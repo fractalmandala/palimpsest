@@ -10,7 +10,7 @@ import { mark } from '@/lib/perf';
 
 export const chunkWrapperDecorationKey = new PluginKey('chunkWrapperDecoration');
 
-export const OK_CHUNK_WRAPPER_CLASS = 'ok-chunk-wrapper';
+export const PS_CHUNK_WRAPPER_CLASS = 'ps-chunk-wrapper';
 
 let firstEmitFired = false;
 
@@ -41,7 +41,7 @@ export function chunkWrapperDecorationPlugin(): Plugin {
           if (node.type.name === 'jsxComponent') return;
           decos.push(
             Decoration.node(pos, pos + node.nodeSize, {
-              class: OK_CHUNK_WRAPPER_CLASS,
+              class: PS_CHUNK_WRAPPER_CLASS,
             }),
           );
         });

@@ -54,7 +54,7 @@ describe('save-version shadow checkpoint', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-sv-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-sv-test-'));
   });
 
   afterEach(() => {
@@ -103,7 +103,7 @@ describe('PRD-6716: save-version + rollback do not mutate parent git', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-prd-6716-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-prd-6716-'));
   });
 
   afterEach(() => {
@@ -321,7 +321,7 @@ describe('PRD-6972 FR6: Save Version unification', () => {
   let shadow: ShadowHandle;
 
   beforeEach(async () => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-fr6-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-fr6-'));
     projectDir = tmpDir;
     contentDir = join(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });

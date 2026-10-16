@@ -38,7 +38,7 @@ function rng(seed: number): () => number {
 
 let base: string;
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'ok-prop-'));
+  base = mkdtempSync(join(tmpdir(), 'ps-prop-'));
 });
 afterEach(() => {
   rmSync(base, { recursive: true, force: true });

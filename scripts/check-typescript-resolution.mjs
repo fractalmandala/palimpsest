@@ -537,7 +537,7 @@ const EMITTED_DECLARATION = /\.d\.[cm]?ts$/;
 const EMITTED_JS = /^.+\/[^/]+\.[cm]?js$/;
 const NESTED_DECLARATION = /^.+\/[^/]+\.d\.[cm]?ts$/;
 
-export const NON_TSC_DECLARATIONS = new Set(['@inkeep/open-knowledge-native-config']);
+export const NON_TSC_DECLARATIONS = new Set(['@palimpsest/native-config']);
 
 function stringLeaves(node, out = []) {
   if (typeof node === 'string') out.push(node);
@@ -740,9 +740,9 @@ export function evaluate({
 }
 
 function main() {
-  const rootSource = process.env.OK_RESOLUTION_ROOT ? 'OK_RESOLUTION_ROOT' : null;
-  const root = process.env.OK_RESOLUTION_ROOT
-    ? path.resolve(process.env.OK_RESOLUTION_ROOT)
+  const rootSource = process.env.PS_RESOLUTION_ROOT ? 'PS_RESOLUTION_ROOT' : null;
+  const root = process.env.PS_RESOLUTION_ROOT
+    ? path.resolve(process.env.PS_RESOLUTION_ROOT)
     : path.resolve(import.meta.dirname, '..');
   const workspaceFile = path.join(root, 'pnpm-workspace.yaml');
   if (!fs.existsSync(workspaceFile)) {

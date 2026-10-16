@@ -3,12 +3,12 @@ import {
   addsBlankLines,
   composeWithDerivedBody,
   normalizeBridge,
-} from '@inkeep/open-knowledge-core/bridge';
-import { LINEAGE_EPOCH_KEY } from '@inkeep/open-knowledge-core/constants/doc-lifecycle';
-import { stripFrontmatter } from '@inkeep/open-knowledge-core/extensions/frontmatter';
-import { MarkdownManager } from '@inkeep/open-knowledge-core/markdown';
-import { randomUUID } from '@inkeep/open-knowledge-core/utils/random-uuid';
-import type { HocuspocusAuthRejectionReason } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core/bridge';
+import { LINEAGE_EPOCH_KEY } from '@palimpsest/core/constants/doc-lifecycle';
+import { stripFrontmatter } from '@palimpsest/core/extensions/frontmatter';
+import { MarkdownManager } from '@palimpsest/core/markdown';
+import { randomUUID } from '@palimpsest/core/utils/random-uuid';
+import type { HocuspocusAuthRejectionReason } from '@palimpsest/server';
 import { getSchema } from '@tiptap/core';
 import { yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
@@ -197,9 +197,9 @@ class StoredEpochPeekTimeoutError extends Error {
   }
 }
 
-const LAST_OBSERVED_BRANCH_KEY = 'ok-last-observed-branch';
+const LAST_OBSERVED_BRANCH_KEY = 'ps-last-observed-branch';
 
-const DOC_LINEAGE_EPOCHS_KEY = 'ok-doc-lineage-epochs';
+const DOC_LINEAGE_EPOCHS_KEY = 'ps-doc-lineage-epochs';
 
 export const FORCE_SYNC_INTERVAL_MS = 5_000;
 
@@ -377,7 +377,7 @@ export class ProviderPool {
       });
     } catch (err: unknown) {
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-client-persistence-attach-failed',
+        event: 'ps-client-persistence-attach-failed',
         ...this.recoveryTelemetryBase(docName),
         phase: 'peek',
         errorName: err instanceof Error ? err.name : 'non-error-throw',
@@ -402,7 +402,7 @@ export class ProviderPool {
       return;
     }
     this.emitStructuredClientRecoveryEvent({
-      event: 'ok-doc-lineage-mismatch',
+      event: 'ps-doc-lineage-mismatch',
       ...this.recoveryTelemetryBase(docName),
       via: 'stored-state-validation',
       staleEpoch: storedEpoch,
@@ -423,7 +423,7 @@ export class ProviderPool {
       this.scheduleCacheBackfill(entry, persistence);
     } catch (err: unknown) {
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-client-persistence-attach-failed',
+        event: 'ps-client-persistence-attach-failed',
         ...this.recoveryTelemetryBase(docName),
         phase: 'attach',
         errorName: err instanceof Error ? err.name : 'non-error-throw',
@@ -438,7 +438,7 @@ export class ProviderPool {
   ): void {
     void this.backfillCacheAfterFirstSync(entry, persistence).catch((err: unknown) => {
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-client-persistence-attach-failed',
+        event: 'ps-client-persistence-attach-failed',
         ...this.recoveryTelemetryBase(entry.docName),
         phase: 'backfill',
         errorName: err instanceof Error ? err.name : 'non-error-throw',
@@ -493,7 +493,7 @@ export class ProviderPool {
         ) {
           const docName = entry.docName;
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-doc-lineage-mismatch',
+            event: 'ps-doc-lineage-mismatch',
             ...this.recoveryTelemetryBase(docName),
             via: 'deferred-attach',
             staleEpoch: entry.lineageEpochRecordAtOpen,
@@ -583,7 +583,7 @@ export class ProviderPool {
       if (!(err instanceof DOMException)) {
         console.warn(
           JSON.stringify({
-            event: 'ok-lineage-epoch-envelope-read-error',
+            event: 'ps-lineage-epoch-envelope-read-error',
             errorName: err instanceof Error ? err.name : typeof err,
             message: err instanceof Error ? err.message : String(err),
           }),
@@ -693,7 +693,7 @@ export class ProviderPool {
 
   private beginServerRestartRecovery(docNames: readonly string[], startedAt: number): void {
     this.emitStructuredClientBreadcrumb({
-      event: 'ok-pool-restart-recovery-begin',
+      event: 'ps-pool-restart-recovery-begin',
       phase: 'clearing-local-cache',
       docCount: docNames.length,
     });
@@ -717,7 +717,7 @@ export class ProviderPool {
     failureReason: 'clear-data-failed' | 'clear-data-timeout',
   ): void {
     this.emitStructuredClientBreadcrumb({
-      event: 'ok-pool-restart-recovery-reconnecting',
+      event: 'ps-pool-restart-recovery-reconnecting',
       docCount: docNames.length,
       failedCount: failedDocNames.length,
     });
@@ -755,7 +755,7 @@ export class ProviderPool {
 
     const remaining = state.docNames.filter((candidate) => candidate !== docName);
     this.emitStructuredClientBreadcrumb({
-      event: 'ok-pool-restart-recovery-synced',
+      event: 'ps-pool-restart-recovery-synced',
       docName,
       remaining: remaining.length,
     });
@@ -906,7 +906,7 @@ export class ProviderPool {
     ) {
       mark('ok/pool/recycle-disconnected-on-open', { docName });
       this.emitStructuredClientBreadcrumb({
-        event: 'ok-pool-recycle-disconnected-on-open',
+        event: 'ps-pool-recycle-disconnected-on-open',
         docName,
       });
       this.recycleDisconnectedEntry(docName);
@@ -1079,7 +1079,7 @@ export class ProviderPool {
         !entry.pendingRecycleTimer
       ) {
         this.emitStructuredClientBreadcrumb({
-          event: 'ok-pool-recycle-timer-armed',
+          event: 'ps-pool-recycle-timer-armed',
           docName,
           debounceMs: this.recycleDebounceMs,
         });
@@ -1090,7 +1090,7 @@ export class ProviderPool {
           if (provider.unsyncedChanges > 0) {
             mark('ok/pool/recycle-skipped-unsynced', { docName });
             this.emitStructuredClientBreadcrumb({
-              event: 'ok-pool-recycle-skipped-unsynced',
+              event: 'ps-pool-recycle-skipped-unsynced',
               docName,
             });
             return;
@@ -1116,7 +1116,7 @@ export class ProviderPool {
       const colonIdx = reason.indexOf(':');
       const candidateKind = colonIdx === -1 ? reason : reason.slice(0, colonIdx);
       if (!(KNOWN as readonly string[]).includes(candidateKind)) {
-        console.warn(JSON.stringify({ event: 'ok-auth-failed-unknown-reason', reason }));
+        console.warn(JSON.stringify({ event: 'ps-auth-failed-unknown-reason', reason }));
         return;
       }
       const rawPayload = colonIdx === -1 ? '' : reason.slice(colonIdx + 1);
@@ -1166,7 +1166,7 @@ export class ProviderPool {
         if (entry.kind !== 'active' || this.entries.get(docName) !== entry) return;
         this.deleteLineageEpochRecord(docName);
         this.emitStructuredClientRecoveryEvent({
-          event: 'ok-doc-lineage-mismatch',
+          event: 'ps-doc-lineage-mismatch',
           ...this.recoveryTelemetryBase(docName),
           via: 'auth-rejection',
           staleEpoch: entry.lineageEpochRecordAtOpen ?? '',
@@ -1186,7 +1186,7 @@ export class ProviderPool {
       if (!event?.reason) return;
       if (event.code === FORCED_CLOSE_CODE && event.reason === FORCED_CLOSE_REASON) {
         this.emitStructuredClientBreadcrumb({
-          event: 'ok-provider-half-open-forced-close',
+          event: 'ps-provider-half-open-forced-close',
           docName,
           code: event.code,
           reason: event.reason,
@@ -1199,7 +1199,7 @@ export class ProviderPool {
           entry.serverDrivenCloseReauthAttempts = SERVER_DRIVEN_CLOSE_REAUTH_CEILING + 1;
           console.warn(
             JSON.stringify({
-              event: 'ok-provider-server-driven-close-reauth-ceiling',
+              event: 'ps-provider-server-driven-close-reauth-ceiling',
               docName,
               attempts: SERVER_DRIVEN_CLOSE_REAUTH_CEILING,
               reason: event?.reason ?? '<unknown>',
@@ -1216,7 +1216,7 @@ export class ProviderPool {
         .catch((err: unknown) => {
           console.warn(
             JSON.stringify({
-              event: 'ok-provider-server-driven-close-reauth-failed',
+              event: 'ps-provider-server-driven-close-reauth-failed',
               docName,
               message: err instanceof Error ? err.message : String(err),
             }),
@@ -1229,7 +1229,7 @@ export class ProviderPool {
         });
       console.info(
         JSON.stringify({
-          event: 'ok-provider-server-driven-close-reauth',
+          event: 'ps-provider-server-driven-close-reauth',
           docName,
           reason: event.reason,
           code: event?.code ?? null,
@@ -1258,7 +1258,7 @@ export class ProviderPool {
         if (buffered.branch !== branch) {
           this.discardBufferedUpdate(docName);
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-buffer-replay-branch-mismatch',
+            event: 'ps-buffer-replay-branch-mismatch',
             ...this.recoveryTelemetryBase(docName, staleClaimAtReplayInstall),
             reason: 'buffer-captured-on-another-branch',
           });
@@ -1280,7 +1280,7 @@ export class ProviderPool {
           tokenBacked = true;
         } catch (err: unknown) {
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-buffer-replay-outbox-read-failed',
+            event: 'ps-buffer-replay-outbox-read-failed',
             ...this.recoveryTelemetryBase(docName, staleClaimAtReplayInstall),
             ...this.outboxFailureFields(err),
           });
@@ -1298,7 +1298,7 @@ export class ProviderPool {
           });
         } catch (err: unknown) {
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-buffer-replay-outbox-consume-failed',
+            event: 'ps-buffer-replay-outbox-consume-failed',
             ...this.recoveryTelemetryBase(docName, staleClaimAtReplayInstall),
             ...this.outboxFailureFields(err),
           });
@@ -1306,7 +1306,7 @@ export class ProviderPool {
         }
         if (!claimed) {
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-buffer-replay-superseded',
+            event: 'ps-buffer-replay-superseded',
             ...this.recoveryTelemetryBase(docName, staleClaimAtReplayInstall),
             reason: 'claimed-by-another-tab',
           });
@@ -1315,7 +1315,7 @@ export class ProviderPool {
       }
       if (entry.kind !== 'active' || this.entries.get(docName) !== entry) {
         this.emitStructuredClientRecoveryEvent({
-          event: 'ok-buffer-replay-abandoned',
+          event: 'ps-buffer-replay-abandoned',
           ...this.recoveryTelemetryBase(docName, staleClaimAtReplayInstall),
           reason: 'entry-replaced-during-consume',
           replayByteLength: source.delta.byteLength,
@@ -1332,14 +1332,14 @@ export class ProviderPool {
         }
         Y.applyUpdate(provider.document, source.delta, TAB_REPLAY_ORIGIN);
         this.emitStructuredClientBreadcrumb({
-          event: 'ok-pool-buffer-replay-delta-applied',
+          event: 'ps-pool-buffer-replay-delta-applied',
           docName,
           deltaBytes: source.delta.byteLength,
         });
       } catch (err: unknown) {
         const errorName = err instanceof Error ? err.name : 'non-error-throw';
         this.emitStructuredClientRecoveryEvent({
-          event: 'ok-buffer-replay-failed',
+          event: 'ps-buffer-replay-failed',
           ...this.recoveryTelemetryBase(docName, staleClaimAtReplayInstall),
           replayByteLength: source.delta.byteLength,
           errorName,
@@ -1353,7 +1353,7 @@ export class ProviderPool {
       void runReplay()
         .catch((err: unknown) => {
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-buffer-replay-unexpected-error',
+            event: 'ps-buffer-replay-unexpected-error',
             ...this.recoveryTelemetryBase(docName),
             errorName: err instanceof Error ? err.name : 'non-error-throw',
             errorMessage: err instanceof Error ? err.message : String(err),
@@ -1394,7 +1394,7 @@ export class ProviderPool {
         (err: unknown) => {
           console.warn(
             JSON.stringify({
-              event: 'ok-pool-deferred-persistence-attach-skipped',
+              event: 'ps-pool-deferred-persistence-attach-skipped',
               docName,
               reason: 'pending-clear-failed',
               message: err instanceof Error ? err.message : String(err),
@@ -1432,7 +1432,7 @@ export class ProviderPool {
   private handleServerInstanceMismatch(staleClaimedServerInstanceId: string): void {
     if (this.handledStaleClaims.has(staleClaimedServerInstanceId)) {
       this.emitStructuredClientBreadcrumb({
-        event: 'ok-pool-mismatch-transition-deduped',
+        event: 'ps-pool-mismatch-transition-deduped',
         reason: 'claim-already-handled',
         staleClaim: staleClaimedServerInstanceId,
       });
@@ -1444,7 +1444,7 @@ export class ProviderPool {
     }
     if (this.mismatchInFlight !== null) {
       this.emitStructuredClientBreadcrumb({
-        event: 'ok-pool-mismatch-transition-deduped',
+        event: 'ps-pool-mismatch-transition-deduped',
         reason: 'recycle-in-flight',
         staleClaim: staleClaimedServerInstanceId,
         inflightForClaim: this.recoveryMismatchStaleClaim ?? '',
@@ -1457,7 +1457,7 @@ export class ProviderPool {
 
     const snapshot = Array.from(this.entries.entries());
     this.emitStructuredClientBreadcrumb({
-      event: 'ok-pool-mismatch-recycle-begin',
+      event: 'ps-pool-mismatch-recycle-begin',
       entryCount: snapshot.length,
       branch: this.normalizedObservedBranch(),
     });
@@ -1479,7 +1479,7 @@ export class ProviderPool {
       '';
     if (telemetryDocName.length > 0) {
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-client-cache-epoch-mismatch',
+        event: 'ps-client-cache-epoch-mismatch',
         ...this.recoveryTelemetryBase(telemetryDocName),
       });
     }
@@ -1496,7 +1496,7 @@ export class ProviderPool {
       const baseline = poolEntry.lastDiskAckedSV ?? poolEntry.lastServerSyncedSV;
       if (baseline === null) {
         this.emitStructuredClientRecoveryEvent({
-          event: 'ok-buffer-replay-skipped-no-baseline',
+          event: 'ps-buffer-replay-skipped-no-baseline',
           ...this.recoveryTelemetryBase(docName),
           reason: 'no-disk-ack-or-server-sync-vector',
         });
@@ -1527,7 +1527,7 @@ export class ProviderPool {
                 if (persisted) buffered.durable = true;
                 else {
                   this.emitStructuredClientRecoveryEvent({
-                    event: 'ok-buffer-replay-outbox-unavailable',
+                    event: 'ps-buffer-replay-outbox-unavailable',
                     ...this.recoveryTelemetryBase(docName),
                     reason: 'indexeddb-databases-unsupported',
                   });
@@ -1535,7 +1535,7 @@ export class ProviderPool {
               })
               .catch((err: unknown) => {
                 this.emitStructuredClientRecoveryEvent({
-                  event: 'ok-buffer-replay-outbox-write-failed',
+                  event: 'ps-buffer-replay-outbox-write-failed',
                   ...this.recoveryTelemetryBase(docName),
                   ...this.outboxFailureFields(err),
                 });
@@ -1543,7 +1543,7 @@ export class ProviderPool {
           );
         }
         this.emitStructuredClientBreadcrumb({
-          event: 'ok-pool-mismatch-buffer-captured',
+          event: 'ps-pool-mismatch-buffer-captured',
           docName,
           deltaBytes: unsynced.byteLength,
           fullStateBytes: fullStateForBuffer === null ? 0 : fullStateForBuffer.byteLength,
@@ -1566,7 +1566,7 @@ export class ProviderPool {
         }),
       );
       this.emitStructuredClientBreadcrumb({
-        event: 'ok-pool-mismatch-clears-begin',
+        event: 'ps-pool-mismatch-clears-begin',
         count: clears.length,
       });
       return Promise.allSettled(clears.map((c) => c.promise)).then((results) => {
@@ -1585,14 +1585,14 @@ export class ProviderPool {
             }
             if (isClearTimeout) {
               this.emitStructuredClientRecoveryEvent({
-                event: 'ok-client-cache-clear-failed',
+                event: 'ps-client-cache-clear-failed',
                 ...this.recoveryTelemetryBase(docName),
                 failureKind: 'timeout',
               });
             } else {
               const errorName = result.reason instanceof Error ? result.reason.name : 'unknown';
               this.emitStructuredClientRecoveryEvent({
-                event: 'ok-client-cache-clear-failed',
+                event: 'ps-client-cache-clear-failed',
                 ...this.recoveryTelemetryBase(docName),
                 failureKind: 'rejected',
                 errorName,
@@ -1611,7 +1611,7 @@ export class ProviderPool {
             : 'clear-data-failed';
           console.warn(
             JSON.stringify({
-              event: 'ok-mismatch-recycle-partial-clears-failed',
+              event: 'ps-mismatch-recycle-partial-clears-failed',
               failedDocs: failed,
               clearedDocs: cleared,
             }),
@@ -1670,7 +1670,7 @@ export class ProviderPool {
         ours = oursYtext;
       } else {
         this.emitStructuredClientRecoveryEvent({
-          event: 'ok-buffer-replay-diverged',
+          event: 'ps-buffer-replay-diverged',
           ...this.recoveryTelemetryBase(docName),
         });
         return false;
@@ -1693,14 +1693,14 @@ export class ProviderPool {
         }, TAB_REPLAY_ORIGIN);
       }
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-buffer-replay-content-applied',
+        event: 'ps-buffer-replay-content-applied',
         ...this.recoveryTelemetryBase(docName),
         surface: ytextClean ? 'fragment' : 'ytext',
       });
       return true;
     } catch (err: unknown) {
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-buffer-replay-content-failed',
+        event: 'ps-buffer-replay-content-failed',
         ...this.recoveryTelemetryBase(docName),
         errorName: err instanceof Error ? err.name : 'non-error-throw',
         errorMessage: err instanceof Error ? err.message : String(err),
@@ -1722,7 +1722,7 @@ export class ProviderPool {
   recycleAllEntries(): void {
     const docNames = Array.from(this.entries.keys());
     this.emitStructuredClientBreadcrumb({
-      event: 'ok-pool-recycle-all',
+      event: 'ps-pool-recycle-all',
       count: docNames.length,
     });
     for (const docName of docNames) {
@@ -1820,7 +1820,7 @@ export class ProviderPool {
     const serverInstanceId = this.cachedServerInstanceId;
     if (serverInstanceId === null) return;
 
-    const dbName = `ok-ydoc:${branch}:${serverInstanceId}:${docName}`;
+    const dbName = `ps-ydoc:${branch}:${serverInstanceId}:${docName}`;
     try {
       await this.withClearDataTimeout(
         docName,
@@ -1858,7 +1858,7 @@ export class ProviderPool {
       namespace: this.storageNamespace,
     }).catch((err: unknown) => {
       this.emitStructuredClientRecoveryEvent({
-        event: 'ok-buffer-replay-outbox-discard-failed',
+        event: 'ps-buffer-replay-outbox-discard-failed',
         ...this.recoveryTelemetryBase(docName),
         ...this.outboxFailureFields(err),
       });
@@ -1934,7 +1934,7 @@ export class ProviderPool {
         entry.provider.forceSync();
         void entry.persistence?.flushFullState().catch((err: unknown) => {
           this.emitStructuredClientRecoveryEvent({
-            event: 'ok-pool-flush-on-hide-failed',
+            event: 'ps-pool-flush-on-hide-failed',
             ...this.recoveryTelemetryBase(entry.docName),
             errorName: err instanceof Error ? err.name : 'non-error-throw',
             errorMessage: err instanceof Error ? err.message : String(err),
@@ -1994,7 +1994,7 @@ export class ProviderPool {
         cb();
       } catch (err) {
         this.emitStructuredClientRecoveryEvent({
-          event: 'ok-pool-unsynced-work-listener-threw',
+          event: 'ps-pool-unsynced-work-listener-threw',
           error: err instanceof Error ? err.message : String(err),
         });
       }
@@ -2101,7 +2101,7 @@ export class ProviderPool {
     const wasActive = this.activeDocName === docName;
     mark('ok/pool/recycle-disconnected', { docName, wasActive });
     this.emitStructuredClientBreadcrumb({
-      event: 'ok-pool-recycle-entry',
+      event: 'ps-pool-recycle-entry',
       docName,
       wasActive,
     });

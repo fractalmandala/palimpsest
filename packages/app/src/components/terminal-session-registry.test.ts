@@ -1,4 +1,4 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core';
+import type { TerminalCli } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import {
   _clearTerminalSessionRegistry,

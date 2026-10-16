@@ -1,4 +1,4 @@
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
 import { toast } from 'sonner';
 import { useManagedArtifactRetarget } from '@/components/ManagedArtifactProperties';

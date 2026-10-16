@@ -1,7 +1,7 @@
 import {
   isChainAnchorCheckpointKind,
   parseCheckpoint,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 import type { SimpleGit } from 'simple-git';
 import { getLogger } from './logger.ts';
 

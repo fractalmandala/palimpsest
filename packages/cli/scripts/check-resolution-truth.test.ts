@@ -3,13 +3,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-const okRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const CORE = '@inkeep/open-knowledge-core';
+const psRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+const CORE = '@palimpsest/core';
 const SOURCE_CONDITION = "condition '@inkeep/source'";
 
 function trace(cwd: string, args: string[]): string {
   const run = spawnSync('pnpm', ['exec', 'tsc', '--noEmit', '--traceResolution', ...args], {
-    cwd: path.join(okRoot, cwd),
+    cwd: path.join(psRoot, cwd),
     encoding: 'utf8',
     maxBuffer: 512 * 1024 * 1024,
   });

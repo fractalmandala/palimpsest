@@ -35,7 +35,7 @@ function captureLog(): { log: PinoLogger; entries: Entry[] } {
 
 describe('server exit reason', () => {
   test('an external signal teardown records the reason', async () => {
-    const dir = await mkdtemp(resolve(tmpdir(), 'ok-exit-reason-'));
+    const dir = await mkdtemp(resolve(tmpdir(), 'ps-exit-reason-'));
     const { log, entries } = captureLog();
     const booted = await bootCompositionRig(dir, { log });
     await booted.ready;
@@ -51,7 +51,7 @@ describe('server exit reason', () => {
   }, 60_000);
 
   test('an idle self-reap records a different reason than an external stop', async () => {
-    const dir = await mkdtemp(resolve(tmpdir(), 'ok-exit-reason-idle-'));
+    const dir = await mkdtemp(resolve(tmpdir(), 'ps-exit-reason-idle-'));
     const { log, entries } = captureLog();
     let fireIdle: (() => Promise<void>) | undefined;
     const booted = await bootCompositionRig(dir, {
@@ -77,7 +77,7 @@ describe('server exit reason', () => {
   }, 60_000);
 
   test('an unattributed teardown is recorded as unspecified, not as a stop', async () => {
-    const dir = await mkdtemp(resolve(tmpdir(), 'ok-exit-reason-plain-'));
+    const dir = await mkdtemp(resolve(tmpdir(), 'ps-exit-reason-plain-'));
     const { log, entries } = captureLog();
     const booted = await bootCompositionRig(dir, { log });
     await booted.ready;

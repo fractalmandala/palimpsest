@@ -1,7 +1,7 @@
 import type { BrokenLinkReason } from '../../schemas/api/agent-write.ts';
-import type { OkfRuleId } from './okf-rule-meta.ts';
+import type { OkfRuleId } from './psf-rule-meta.ts';
 
-export const LINT_PLUGIN_IDS = ['markdownlint', 'frontmatter', 'okf'] as const;
+export const LINT_PLUGIN_IDS = ['markdownlint', 'frontmatter', 'psf'] as const;
 export type LintPluginId = (typeof LINT_PLUGIN_IDS)[number];
 
 export type LintSeverity = 'error' | 'warning' | 'info' | 'hint';

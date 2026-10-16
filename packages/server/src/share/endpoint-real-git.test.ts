@@ -1,7 +1,7 @@
 import { createServer as createHttpServer } from 'node:http';
 import type { AddressInfo, Socket } from 'node:net';
 import { join } from 'node:path';
-import { decodeShareUrl } from '@inkeep/open-knowledge-core';
+import { decodeShareUrl } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import {
   createGitTriangle,
@@ -244,7 +244,7 @@ describe('POST /api/share/construct-url (v2 minting through the endpoint)', () =
   const home = useIsolatedHome();
 
   function shareToken(json: Record<string, unknown>): string {
-    return (json.shareUrl as string).replace('https://openknowledge.ai/d/', '');
+    return (json.shareUrl as string).replace('https://github.com/fractalmandala/palimpsest/d/', '');
   }
 
   test('a nested content root mints v2 with current freshness and the reader-decodable source', async () => {

@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import * as nativeConfig from '@inkeep/open-knowledge-native-config';
+import * as nativeConfig from '@palimpsest/native-config';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { resolveHarnessWritePaths, type SymlinkWritePaths } from './symlink-resolve.ts';
 
@@ -18,7 +18,7 @@ function describeResolver(label: string, resolve: (path: string) => SymlinkWrite
     let dir: string;
 
     beforeEach(() => {
-      dir = mkdtempSync(join(tmpdir(), 'ok-symlink-resolve-'));
+      dir = mkdtempSync(join(tmpdir(), 'ps-symlink-resolve-'));
     });
 
     afterEach(() => {
@@ -43,7 +43,7 @@ function describeResolver(label: string, resolve: (path: string) => SymlinkWrite
     test.skipIf(!unix)(
       'follows a chain to its real target, keeping the target as both paths',
       () => {
-        const targetDir = mkdtempSync(join(tmpdir(), 'ok-symlink-target-'));
+        const targetDir = mkdtempSync(join(tmpdir(), 'ps-symlink-target-'));
         try {
           const target = join(targetDir, 'real-config.toml');
           writeFileSync(target, 'model = "x"\n');
@@ -92,7 +92,7 @@ describe('resolveHarnessWritePaths backend selection', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-symlink-backend-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-symlink-backend-'));
   });
 
   afterEach(() => {

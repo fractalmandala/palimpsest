@@ -1,4 +1,4 @@
-import type { ThreadInfo } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { useLingui } from '@lingui/react/macro';
 import { ChevronLeft, History, Pencil, Search, Trash2, X } from 'lucide-react';
 import {

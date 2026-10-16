@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import type { RecentProjectEntry } from '@inkeep/open-knowledge-core';
+import type { RecentProjectEntry } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { filterShareEligibleRecents, resolveShareTarget } from './resolve-share-target.ts';
@@ -64,8 +64,8 @@ function recent(path: string): RecentProjectEntry {
 }
 
 function seedOkProject(projectPath: string): void {
-  mkdirSync(join(projectPath, '.ok'), { recursive: true });
-  writeFileSync(join(projectPath, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+  mkdirSync(join(projectPath, '.ps'), { recursive: true });
+  writeFileSync(join(projectPath, '.ps', 'config.yml'), 'content:\n  dir: .\n');
 }
 
 const PAYLOAD = { host: 'github.com', owner: 'acme', repo: 'widget', branch: 'feat-foo' } as const;
@@ -78,7 +78,7 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     handle = null;
   });
 
-  test('branch-match: a worktree on the shared branch with .ok/config.yml resolves branch-match-ok', async () => {
+  test('branch-match: a worktree on the shared branch with .ps/config.yml resolves branch-match-ok', async () => {
     handle = await makeRepoWithWorktrees(['feat-foo']);
     const wtPath = handle.worktrees.get('feat-foo');
     expect(wtPath).toBeDefined();
@@ -97,7 +97,7 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     }
   });
 
-  test('branch-match non-OK: worktree on the shared branch without .ok/config.yml routes to consent', async () => {
+  test('branch-match non-OK: worktree on the shared branch without .ps/config.yml routes to consent', async () => {
     handle = await makeRepoWithWorktrees(['feat-foo']);
     const wtPath = handle.worktrees.get('feat-foo');
     expect(wtPath).toBeDefined();
@@ -171,8 +171,8 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     seedOkProject(wtPath);
 
     const ghostPath = join(handle.root, 'CollaborationUX');
-    mkdirSync(join(ghostPath, '.ok', 'local', 'logs'), { recursive: true });
-    writeFileSync(join(ghostPath, '.ok', 'local', 'logs', 'server-current.jsonl'), '{}\n');
+    mkdirSync(join(ghostPath, '.ps', 'local', 'logs'), { recursive: true });
+    writeFileSync(join(ghostPath, '.ps', 'local', 'logs', 'server-current.jsonl'), '{}\n');
 
     const selection = await resolveShareTarget(PAYLOAD, {
       listRecent: () => [recent(ghostPath), recent(handle?.mainRepo ?? '')],
@@ -189,8 +189,8 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     const ghostRoot = realpathSync(mkdtempSync(join(tmpdir(), 'eligible-ghost-')));
     try {
       const ghostPath = join(ghostRoot, 'CollaborationUX');
-      mkdirSync(join(ghostPath, '.ok', 'local', 'logs'), { recursive: true });
-      writeFileSync(join(ghostPath, '.ok', 'local', 'logs', 'server-current.jsonl'), '{}\n');
+      mkdirSync(join(ghostPath, '.ps', 'local', 'logs'), { recursive: true });
+      writeFileSync(join(ghostPath, '.ps', 'local', 'logs', 'server-current.jsonl'), '{}\n');
 
       const ghostEntry = recent(ghostPath);
       const liveEntry = recent(handle.mainRepo);
@@ -225,7 +225,7 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     }
   });
 
-  test('ghost recents entry (exists, no .git, no .ok/config.yml) resolves to miss through the production annotateMissing wiring', async () => {
+  test('ghost recents entry (exists, no .git, no .ps/config.yml) resolves to miss through the production annotateMissing wiring', async () => {
     const root = realpathSync(mkdtempSync(join(tmpdir(), 'resolve-share-ghost-')));
     handle = {
       root,
@@ -234,8 +234,8 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
       cleanup: () => rmSync(root, { recursive: true, force: true }),
     };
     const ghostPath = join(root, 'CollaborationUX');
-    mkdirSync(join(ghostPath, '.ok', 'local', 'logs'), { recursive: true });
-    writeFileSync(join(ghostPath, '.ok', 'local', 'logs', 'server-current.jsonl'), '{}\n');
+    mkdirSync(join(ghostPath, '.ps', 'local', 'logs'), { recursive: true });
+    writeFileSync(join(ghostPath, '.ps', 'local', 'logs', 'server-current.jsonl'), '{}\n');
 
     const state = {
       ...emptyState(),

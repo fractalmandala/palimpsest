@@ -9,12 +9,12 @@ import {
   type MenuSection,
   menuLabelForPlatform,
   NATIVE_MENU_LABELS,
-  OPEN_KNOWLEDGE_DISCORD_URL,
-  OPEN_KNOWLEDGE_DOCS_URL,
-  OPEN_KNOWLEDGE_GITHUB_URL,
+  PALIMPSEST_DISCORD_URL,
+  PALIMPSEST_DOCS_URL,
+  PALIMPSEST_GITHUB_URL,
   SHOW_INSTALL_SKILL,
   type TerminalPlacement,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { BrowserWindow, Dialog, MenuItemConstructorOptions } from 'electron';
 import type { EntryPoint } from '../shared/entry-point.ts';
 import type { EditorActiveTargetSnapshot } from '../shared/ipc-channels.ts';
@@ -313,7 +313,7 @@ const MENU_BINDINGS: Record<string, MenuCommandBinding> = {
     enabled: (d) => d.onToggleShowHiddenFiles !== undefined,
     checked: (d) => d.showHiddenFilesChecked ?? false,
   },
-  'toggle-show-ok-folders': {
+  'toggle-show-ps-folders': {
     click: (d) => () => d.onToggleShowOkFolders?.(),
     enabled: (d) => d.onToggleShowOkFolders !== undefined,
     checked: (d) => d.showOkFoldersChecked ?? false,
@@ -336,9 +336,9 @@ const MENU_BINDINGS: Record<string, MenuCommandBinding> = {
     click: (d) => () => d.onCollapseAll?.(),
     enabled: (d) => d.onCollapseAll !== undefined,
   },
-  'open-github': { click: (d) => () => d.openExternalUrl(OPEN_KNOWLEDGE_GITHUB_URL) },
-  'open-docs': { click: (d) => () => d.openExternalUrl(OPEN_KNOWLEDGE_DOCS_URL) },
-  'open-discord': { click: (d) => () => d.openExternalUrl(OPEN_KNOWLEDGE_DISCORD_URL) },
+  'open-github': { click: (d) => () => d.openExternalUrl(PALIMPSEST_GITHUB_URL) },
+  'open-docs': { click: (d) => () => d.openExternalUrl(PALIMPSEST_DOCS_URL) },
+  'open-discord': { click: (d) => () => d.openExternalUrl(PALIMPSEST_DISCORD_URL) },
   'report-bug': { click: (d) => () => d.onReportBug?.() },
   'send-feedback': { click: (d) => () => d.onSendFeedback?.() },
   'install-claude-desktop': {

@@ -1,4 +1,4 @@
-export const TERMINAL_HEIGHT_KEY = 'ok-terminal-height-v1';
+export const TERMINAL_HEIGHT_KEY = 'ps-terminal-height-v1';
 
 export const DEFAULT_TERMINAL_HEIGHT = 240;
 export const MIN_TERMINAL_HEIGHT = 120;

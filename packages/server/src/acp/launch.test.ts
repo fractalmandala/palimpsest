@@ -12,7 +12,7 @@ import {
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
-import { OK_HOSTED_AGENT_ENV } from '@inkeep/open-knowledge-core';
+import { PS_HOSTED_AGENT_ENV } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { pid1Reaps } from '../../../../test-support/capabilities.test-helper.ts';
 import { getLogger, type PinoLogger } from '../logger.ts';
@@ -243,24 +243,24 @@ describe('mergedEnv PATH augmentation', () => {
   });
 
   test('keeps the dev channel away from agents, whose MCP children may run a CLI that predates it', () => {
-    const prior = process.env.OK_CHANNEL;
-    process.env.OK_CHANNEL = 'dev';
+    const prior = process.env.PS_CHANNEL;
+    process.env.PS_CHANNEL = 'dev';
     try {
-      expect(mergedEnv().OK_CHANNEL).toBeUndefined();
+      expect(mergedEnv().PS_CHANNEL).toBeUndefined();
     } finally {
-      if (prior === undefined) delete process.env.OK_CHANNEL;
-      else process.env.OK_CHANNEL = prior;
+      if (prior === undefined) delete process.env.PS_CHANNEL;
+      else process.env.PS_CHANNEL = prior;
     }
   });
 
   test('passes a shipped channel through to agents', () => {
-    const prior = process.env.OK_CHANNEL;
-    process.env.OK_CHANNEL = 'beta';
+    const prior = process.env.PS_CHANNEL;
+    process.env.PS_CHANNEL = 'beta';
     try {
-      expect(mergedEnv().OK_CHANNEL).toBe('beta');
+      expect(mergedEnv().PS_CHANNEL).toBe('beta');
     } finally {
-      if (prior === undefined) delete process.env.OK_CHANNEL;
-      else process.env.OK_CHANNEL = prior;
+      if (prior === undefined) delete process.env.PS_CHANNEL;
+      else process.env.PS_CHANNEL = prior;
     }
   });
 
@@ -838,12 +838,12 @@ describe('ensureBinaryInstalled', () => {
 describe('hosted-agent marker', () => {
   test('sets the marker and leaves the rest of the env alone', () => {
     const out = withHostedAgentMarker({ FOO: 'bar' });
-    expect(out[OK_HOSTED_AGENT_ENV]).toBe('1');
+    expect(out[PS_HOSTED_AGENT_ENV]).toBe('1');
     expect(out.FOO).toBe('bar');
   });
 
   test('wins over a launch env that already set the key — hosting is our fact, not the agent config’s', () => {
-    expect(withHostedAgentMarker({ [OK_HOSTED_AGENT_ENV]: '0' })[OK_HOSTED_AGENT_ENV]).toBe('1');
+    expect(withHostedAgentMarker({ [PS_HOSTED_AGENT_ENV]: '0' })[PS_HOSTED_AGENT_ENV]).toBe('1');
   });
 
   test('a really-spawned agent receives it in its environment', async () => {
@@ -853,7 +853,7 @@ describe('hosted-agent marker', () => {
       script,
       [
         "const fs = require('node:fs');",
-        `fs.writeFileSync(process.argv[1] + '.tmp', String(process.env.${OK_HOSTED_AGENT_ENV} ?? 'ABSENT'));`,
+        `fs.writeFileSync(process.argv[1] + '.tmp', String(process.env.${PS_HOSTED_AGENT_ENV} ?? 'ABSENT'));`,
         "fs.renameSync(process.argv[1] + '.tmp', process.argv[1] + '.out');",
       ].join('\n'),
     );
@@ -896,7 +896,7 @@ describe('spawnAcpAgent — cwd isolation for npx launches', () => {
     await waitFor(() => existsSync(`${script}.out`), 10_000, 'spawned agent to report its cwd');
     const observed = readFileSync(`${script}.out`, 'utf8');
     expect(observed).not.toBe(dir);
-    expect(observed.endsWith('/.ok/acp-npx-cwd')).toBe(true);
+    expect(observed.endsWith('/.ps/acp-npx-cwd')).toBe(true);
   });
 
   test('the isolated cwd carries a private marker package.json so arborist walk terminates there', () => {
@@ -910,7 +910,7 @@ describe('spawnAcpAgent — cwd isolation for npx launches', () => {
       }).spawnargs === undefined
         ? ''
         : '';
-    const markerPath = join(process.env.HOME ?? homedir(), '.ok', 'acp-npx-cwd', 'package.json');
+    const markerPath = join(process.env.HOME ?? homedir(), '.ps', 'acp-npx-cwd', 'package.json');
     const marker = JSON.parse(readFileSync(markerPath, 'utf8'));
     expect(marker.private).toBe(true);
     expect(marker.overrides).toBeUndefined();
@@ -1211,7 +1211,7 @@ describe('brokenInterpreterHint', () => {
   test("a replacement that still won't run blames the machine, not the user", () => {
     const hint = unrepairableManagedRuntimeHint(
       {
-        cmd: '/home/u/.ok/runtimes/node/bin/npx',
+        cmd: '/home/u/.ps/runtimes/node/bin/npx',
         args: [],
         env: {},
         kind: 'npx',
@@ -1227,7 +1227,7 @@ describe('brokenInterpreterHint', () => {
 
   test('the managed-runtime hints name uv for a uvx runtime', () => {
     const uvx: ResolvedLaunch = {
-      cmd: '/home/u/.ok/runtimes/uv/uvx',
+      cmd: '/home/u/.ps/runtimes/uv/uvx',
       args: [],
       env: {},
       kind: 'uvx',
@@ -1246,7 +1246,7 @@ describe('brokenInterpreterHint', () => {
   test('the un-replaceable hint does not claim a fresh copy was tried', () => {
     const hint = undeletableManagedRuntimeHint(
       {
-        cmd: '/home/u/.ok/runtimes/node/bin/npx',
+        cmd: '/home/u/.ps/runtimes/node/bin/npx',
         args: [],
         env: {},
         kind: 'npx',
@@ -1260,7 +1260,7 @@ describe('brokenInterpreterHint', () => {
 
   test('the declined-repair hint says damaged, not missing', () => {
     const hint = declinedRepairHint({
-      cmd: '/home/u/.ok/runtimes/node/bin/npx',
+      cmd: '/home/u/.ps/runtimes/node/bin/npx',
       args: [],
       env: {},
       kind: 'npx',
@@ -1470,7 +1470,7 @@ describe('staleNpxCacheEntry', () => {
 
 describe('npxInstallRefused', () => {
   const refusal =
-    'npm error npx canceled due to missing packages and no YES option: ["ok-argv-probe@1.0.0"]';
+    'npm error npx canceled due to missing packages and no YES option: ["ps-argv-probe@1.0.0"]';
 
   test("recognizes npm's refusal to install a missing package", () => {
     expect(npxInstallRefused(`${refusal}\n`)).toBe(true);
@@ -1479,7 +1479,7 @@ describe('npxInstallRefused', () => {
   test('reads the older npm ERR! spelling', () => {
     expect(
       npxInstallRefused(
-        'npm ERR! npx canceled due to missing packages and no YES option: ["ok-argv-probe@1.0.0"]\r\n',
+        'npm ERR! npx canceled due to missing packages and no YES option: ["ps-argv-probe@1.0.0"]\r\n',
       ),
     ).toBe(true);
   });
@@ -1495,7 +1495,7 @@ describe('npxInstallRefused', () => {
   test('reads a refusal npm printed with color=always', () => {
     expect(
       npxInstallRefused(
-        '\u001b[1mnpm\u001b[22m \u001b[31merror\u001b[39m npx canceled due to missing packages and no YES option: ["ok-argv-probe@1.0.0"]\n',
+        '\u001b[1mnpm\u001b[22m \u001b[31merror\u001b[39m npx canceled due to missing packages and no YES option: ["ps-argv-probe@1.0.0"]\n',
       ),
     ).toBe(true);
   });

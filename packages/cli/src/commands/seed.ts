@@ -7,7 +7,7 @@ import {
   PROJECT_SKILL_EDITOR_IDS,
   planHasOutstandingWork,
   skillRootActivationPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   applySeed,
   DEFAULT_PACK_ID,
@@ -18,7 +18,7 @@ import {
   SeedPrerequisiteError,
   STARTER_PACK_IDS,
   STARTER_PACKS,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import { accent, dim, error as errorColor, info, success, warning } from '../ui/colors.ts';
 
@@ -34,7 +34,7 @@ interface SeedCommandOptions {
 function skillHomeRefusalNote(plan: ScaffoldPlan, packName: string): string {
   if (plan.packSkillHomeRefusal === undefined) return '';
   if (plan.packSkillHomeRefusal === 'home-escapes-project') {
-    return `\n${warning('!')} The ${packName} skills were not installed: this project's skill folder is a symlink pointing outside the project, and Open Knowledge will not write through it. Replace it with a real directory inside the project, then run \`${currentCliCommandName()} seed\` again.`;
+    return `\n${warning('!')} The ${packName} skills were not installed: this project's skill folder is a symlink pointing outside the project, and Palimpsest will not write through it. Replace it with a real directory inside the project, then run \`${currentCliCommandName()} seed\` again.`;
   }
   const homes = [
     ...new Set(
@@ -43,7 +43,7 @@ function skillHomeRefusalNote(plan: ScaffoldPlan, packName: string): string {
         .map(skillRootActivationPath),
     ),
   ].map((home) => `${home}/`);
-  return `\n${warning('!')} The ${packName} skills were not installed: this project has no agent folder for them. Open Knowledge only writes skills into a folder that already exists (${homes.join(', ')}) and never creates one for you. Create the folder your agent uses, then run \`${currentCliCommandName()} seed\` again to install them.`;
+  return `\n${warning('!')} The ${packName} skills were not installed: this project has no agent folder for them. Palimpsest only writes skills into a folder that already exists (${homes.join(', ')}) and never creates one for you. Create the folder your agent uses, then run \`${currentCliCommandName()} seed\` again to install them.`;
 }
 
 function isPackId(value: unknown): value is PackId {

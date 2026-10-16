@@ -1,4 +1,4 @@
-import { DESKTOP_PRODUCTS } from '@inkeep/open-knowledge-core';
+import { DESKTOP_PRODUCTS } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   DESKTOP_VARIANTS,
@@ -9,12 +9,12 @@ import {
 describe('desktop variant identities', () => {
   test('keeps Stable on every existing identity', () => {
     expect(DESKTOP_VARIANTS.stable).toMatchObject({
-      appId: 'com.inkeep.open-knowledge',
-      productName: 'OpenKnowledge',
-      artifactName: 'OpenKnowledge',
-      protocolScheme: 'openknowledge',
+      appId: 'com.fractalmandala.palimpsest',
+      productName: 'Palimpsest',
+      artifactName: 'Palimpsest',
+      protocolScheme: 'palimpsest',
       updateChannel: 'latest',
-      cliCommandNames: ['ok', 'open-knowledge'],
+      cliCommandNames: ['ok', 'palimpsest'],
     });
   });
 
@@ -38,7 +38,7 @@ describe('desktop variant identities', () => {
   test('takes each product deep-link scheme from the shared desktop product', () => {
     expect(DESKTOP_VARIANTS.stable.protocolScheme).toBe(DESKTOP_PRODUCTS.stable.protocolScheme);
     expect(DESKTOP_VARIANTS.beta.protocolScheme).toBe(DESKTOP_PRODUCTS.beta.protocolScheme);
-    expect(DESKTOP_VARIANTS.beta.protocolScheme).toBe('openknowledge-beta');
+    expect(DESKTOP_VARIANTS.beta.protocolScheme).toBe('palimpsest-beta');
   });
 
   test('keeps legacy Beta on the original identity and manifest contract', () => {

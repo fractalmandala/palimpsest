@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { pathShimBlockLabel, pathShimFishConfFileName } from '@inkeep/open-knowledge-core';
+import { pathShimBlockLabel, pathShimFishConfFileName } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   extraSymlinkStillOurs,
@@ -13,7 +13,7 @@ import {
   stripManagedPathBlock,
 } from './path-shim.ts';
 
-function block(inner = '[ -f "$HOME/.ok/env.sh" ] && . "$HOME/.ok/env.sh"'): string {
+function block(inner = '[ -f "$HOME/.ps/env.sh" ] && . "$HOME/.ps/env.sh"'): string {
   return `${PATH_SHIM_BEGIN}\n${inner}\n${PATH_SHIM_END}\n`;
 }
 
@@ -47,7 +47,7 @@ describe('stripManagedPathBlock', () => {
 
 describe('readPathInstallMarker', () => {
   test('reads a valid v1 marker', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-marker-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-marker-'));
     try {
       const markerPath = pathInstallMarkerPath(home);
       const dir = markerPath.slice(0, markerPath.lastIndexOf('/'));
@@ -59,8 +59,8 @@ describe('readPathInstallMarker', () => {
           installedAt: 'x',
           bundleVersion: '1.0.0',
           bundleWrapperPath: '/w',
-          binDir: join(home, '.ok', 'bin'),
-          envShimPath: join(home, '.ok', 'env.sh'),
+          binDir: join(home, '.ps', 'bin'),
+          envShimPath: join(home, '.ps', 'env.sh'),
           rcFiles: [join(home, '.zshrc')],
           rcOptOuts: [],
           pathDiscovery: null,
@@ -76,7 +76,7 @@ describe('readPathInstallMarker', () => {
   });
 
   test('returns null for an absent, malformed, or wrong-version marker', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-marker-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-marker-'));
     try {
       expect(readPathInstallMarker(home)).toBeNull();
       const markerPath = pathInstallMarkerPath(home);
@@ -94,9 +94,9 @@ describe('readPathInstallMarker', () => {
 
 describe('extraSymlinkStillOurs', () => {
   test('true only when the path is a symlink still pointing at the recorded target', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-xsym-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-xsym-'));
     try {
-      const target = join(dir, '.ok', 'bin', 'ok');
+      const target = join(dir, '.ps', 'bin', 'ok');
       const link = join(dir, 'ok');
       symlinkSync(target, link);
       expect(extraSymlinkStillOurs(link, target)).toBe(true);
@@ -113,25 +113,25 @@ describe('extraSymlinkStillOurs', () => {
 
 describe('path shim per channel', () => {
   const BETA_BLOCK =
-    '# >>> open-knowledge beta cli >>>\n[ -f "$HOME/.ok-beta/env.sh" ] && . "$HOME/.ok-beta/env.sh"\n# <<< open-knowledge beta cli <<<\n';
+    '# >>> palimpsest beta cli >>>\n[ -f "$HOME/.ps-beta/env.sh" ] && . "$HOME/.ps-beta/env.sh"\n# <<< palimpsest beta cli <<<\n';
 
   afterEach(() => {
     vi.unstubAllEnvs();
   });
 
   test('Stable keeps its Application Support marker and strips only the Stable block', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(pathInstallMarkerPath('/home/me')).toBe(
-      join('/home/me', 'Library', 'Application Support', 'OpenKnowledge', 'path-install.json'),
+      join('/home/me', 'Library', 'Application Support', 'Palimpsest', 'path-install.json'),
     );
     const { text } = stripManagedPathBlock(`${block()}${BETA_BLOCK}`);
     expect(text).toBe(BETA_BLOCK);
   });
 
-  test('Beta reads its marker under ~/.ok-beta and strips only the Beta block', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('Beta reads its marker under ~/.ps-beta and strips only the Beta block', () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(pathInstallMarkerPath('/home/me')).toBe(
-      join('/home/me', '.ok-beta', 'path-install.json'),
+      join('/home/me', '.ps-beta', 'path-install.json'),
     );
     const { text, changed } = stripManagedPathBlock(`${block()}${BETA_BLOCK}`);
     expect(changed).toBe(true);
@@ -139,17 +139,17 @@ describe('path shim per channel', () => {
   });
 
   test('Beta removes the fish file and block the desktop installer writes', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(pathShimFishConfName()).toBe(pathShimFishConfFileName('beta'));
-    expect(pathShimFishConfName()).toBe('open-knowledge-beta.fish');
+    expect(pathShimFishConfName()).toBe('palimpsest-beta.fish');
     const label = pathShimBlockLabel('beta');
-    expect(label).toBe('open-knowledge beta cli');
-    const fish = `# >>> ${label} >>>\nset -gx PATH "$HOME/.ok-beta/bin" $PATH\n# <<< ${label} <<<\n`;
+    expect(label).toBe('palimpsest beta cli');
+    const fish = `# >>> ${label} >>>\nset -gx PATH "$HOME/.ps-beta/bin" $PATH\n# <<< ${label} <<<\n`;
     expect(stripManagedPathBlock(fish)).toEqual({ text: '', changed: true, emptyAfter: true });
   });
 
   test('Stable keeps its fish file name', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
-    expect(pathShimFishConfName()).toBe('open-knowledge.fish');
+    vi.stubEnv('PS_CHANNEL', 'stable');
+    expect(pathShimFishConfName()).toBe('palimpsest.fish');
   });
 });

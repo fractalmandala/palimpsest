@@ -1,4 +1,4 @@
-import type { Config } from '@inkeep/open-knowledge-core';
+import type { Config } from '@palimpsest/core';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import type { NodeViewProps } from '@tiptap/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

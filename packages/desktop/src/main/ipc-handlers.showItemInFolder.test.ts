@@ -1,11 +1,11 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { userGlobalSkillRoots } from '@inkeep/open-knowledge-core/skills-catalog';
+import { userGlobalSkillRoots } from '@palimpsest/core/skills-catalog';
 import { describe, expect, test } from 'vitest';
 import { revealAllowedRoots, showItemInFolder } from './ipc-handlers.ts';
 
 const HOME = '/Users/tester';
-const BUG_REPORTS = '/Users/tester/.ok/bug-reports';
+const BUG_REPORTS = '/Users/tester/.ps/bug-reports';
 const PROJECT = '/Users/tester/projects/demo';
 const SKILL_ROOTS = userGlobalSkillRoots(HOME);
 
@@ -14,11 +14,11 @@ describe('revealAllowedRoots — the policy the reveal handler passes in', () =>
     const roots = revealAllowedRoots();
     const home = homedir();
 
-    expect(roots).toContain(join(home, '.ok', 'bug-reports'));
+    expect(roots).toContain(join(home, '.ps', 'bug-reports'));
     expect(roots).toContain(join(home, '.claude', 'skills'));
     expect(roots).toContain(join(home, '.agents', 'skills'));
     expect(roots).toContain(join(home, '.claude', 'plugins'));
-    expect(roots).toContain(join(home, '.ok', 'skills'));
+    expect(roots).toContain(join(home, '.ps', 'skills'));
   });
 
   test('admits a real global skill path and still refuses a sibling home dir', () => {

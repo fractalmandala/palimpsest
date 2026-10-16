@@ -15,7 +15,7 @@ import {
 
 const WYSIWYG = '.ProseMirror:not(.composer-prosemirror)';
 const VIEW_IN_SOURCE_BUBBLE = 'view-in-source-bubble-button';
-const LANDING_FLASH = '.cm-editor .ok-landing-flash';
+const LANDING_FLASH = '.cm-editor .ps-landing-flash';
 
 const SEED = [
   'cs',

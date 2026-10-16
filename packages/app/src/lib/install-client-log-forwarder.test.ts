@@ -2,7 +2,7 @@ import {
   RENDERER_LOG_MAX_BATCH_BYTES,
   RENDERER_LOG_MAX_ENTRIES,
   RENDERER_LOG_MAX_MESSAGE_BYTES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   type ClientLogForwarderHandle,
@@ -33,10 +33,10 @@ function makeFakeConsole() {
   return obj;
 }
 
-function makeFakeWindow(opts: { okDesktop?: unknown; fetchImpl?: typeof fetch } = {}) {
+function makeFakeWindow(opts: { psDesktop?: unknown; fetchImpl?: typeof fetch } = {}) {
   const listeners = new Map<string, (event: Event) => void>();
   return {
-    okDesktop: opts.okDesktop,
+    psDesktop: opts.psDesktop,
     fetch: (opts.fetchImpl ??
       (() => Promise.resolve(new Response(null, { status: 200 })))) as typeof fetch,
     addEventListener(type: string, listener: (event: Event) => void) {
@@ -100,13 +100,13 @@ describe('installClientLogForwarder', () => {
     expect(installClientLogForwarder({ fetchImpl: makeFetchSpy() })).toBeUndefined();
   });
 
-  test('no-op inside Electron (window.okDesktop present)', () => {
+  test('no-op inside Electron (window.psDesktop present)', () => {
     const fetchSpy = makeFetchSpy();
     const con = makeFakeConsole();
     handle = installClientLogForwarder({
       fetchImpl: fetchSpy,
       consoleObj: con,
-      windowObj: makeFakeWindow({ okDesktop: {} }),
+      windowObj: makeFakeWindow({ psDesktop: {} }),
       documentObj: makeFakeDocument(),
     });
     expect(handle).toBeUndefined();
@@ -119,7 +119,7 @@ describe('installClientLogForwarder', () => {
     const { con } = install(fetchSpy);
     con.warn(
       JSON.stringify({
-        event: 'ok-provider-server-driven-close-reauth',
+        event: 'ps-provider-server-driven-close-reauth',
         reason: 'Failed to connect',
       }),
     );
@@ -128,7 +128,7 @@ describe('installClientLogForwarder', () => {
     const { entries } = bodyOf(fetchSpy);
     expect(entries).toHaveLength(1);
     expect(entries[0]?.level).toBe('warn');
-    expect(entries[0]?.event).toBe('ok-provider-server-driven-close-reauth');
+    expect(entries[0]?.event).toBe('ps-provider-server-driven-close-reauth');
     expect((entries[0]?.fields as Record<string, unknown>)?.reason).toBe('Failed to connect');
     expect(entries[0]?.ts).toBe(111);
   });
@@ -148,7 +148,7 @@ describe('installClientLogForwarder', () => {
     const fetchSpy = makeFetchSpy();
     const { con } = install(fetchSpy);
     const secret = 'ghp_0123456789abcdefghijklmnopqrstuvwxyz';
-    con.warn(JSON.stringify({ event: 'ok-pool-recycle-all', detail: `token ${secret}` }));
+    con.warn(JSON.stringify({ event: 'ps-pool-recycle-all', detail: `token ${secret}` }));
     handle?.flushNow();
     const { entries } = bodyOf(fetchSpy);
     const fields = entries[0]?.fields as Record<string, unknown>;

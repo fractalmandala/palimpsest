@@ -42,7 +42,7 @@ export type LaunchOwnedServer = (
 ) => Promise<OwnedServer>;
 
 export interface SupervisorOptions {
-  readonly okRoot: string;
+  readonly psRoot: string;
   readonly launch: LaunchOwnedServer;
   readonly identityTimeoutMs: number;
 }
@@ -111,15 +111,15 @@ export async function identityProblem(
     : 'its identity endpoint answers for a different server';
 }
 
-function displayPath(okRoot: string, path: string): string {
-  const fromRoot = relative(okRoot, path);
+function displayPath(psRoot: string, path: string): string {
+  const fromRoot = relative(psRoot, path);
   const outside = fromRoot === '..' || fromRoot.startsWith(`..${sep}`) || isAbsolute(fromRoot);
   return outside ? path : fromRoot.split(sep).join('/');
 }
 
 async function loadedInputsProblem(
   server: OwnedServer,
-  okRoot: string,
+  psRoot: string,
   timeoutMs: number,
 ): Promise<string | undefined> {
   let response: Response;
@@ -145,7 +145,7 @@ async function loadedInputsProblem(
   const changed = changedLoadedInputs(loaded);
   return changed.length === 0
     ? undefined
-    : `its loaded configuration inputs changed: ${changed.map((path) => displayPath(okRoot, path)).join(', ')}`;
+    : `its loaded configuration inputs changed: ${changed.map((path) => displayPath(psRoot, path)).join(', ')}`;
 }
 
 function refused(reason: RefusalReason, detail: string): LeaseOutcome {
@@ -184,10 +184,10 @@ export class WorkerServerSupervisor {
     if (aborted !== undefined) {
       return refused('run-aborted', `run ${request.run} lost an earlier lease: ${aborted}`);
     }
-    if (request.worktree !== this.#options.okRoot) {
+    if (request.worktree !== this.#options.psRoot) {
       return refused(
         'incompatible',
-        `worktree ${request.worktree} is not this supervisor's worktree ${this.#options.okRoot}; it would test that checkout's code`,
+        `worktree ${request.worktree} is not this supervisor's worktree ${this.#options.psRoot}; it would test that checkout's code`,
       );
     }
     let entry = this.#slots.get(request.slot);
@@ -372,12 +372,12 @@ export class WorkerServerSupervisor {
     if (problem !== undefined) return `its server identity changed: ${problem}`;
     const decision = reuseDecision(
       owned.fingerprint,
-      serverFingerprint(this.#options.okRoot, owned.compatibility.workerServerEnv),
+      serverFingerprint(this.#options.psRoot, owned.compatibility.workerServerEnv),
     );
     if (!decision.reuse) {
       return `its consumed inputs changed: ${[...decision.changedInputs, ...decision.changedEnv].join(', ')}`;
     }
-    return loadedInputsProblem(server, this.#options.okRoot, this.#options.identityTimeoutMs);
+    return loadedInputsProblem(server, this.#options.psRoot, this.#options.identityTimeoutMs);
   }
 
   async #launch(request: LeaseRequest): Promise<OwnedSlotServer> {
@@ -386,7 +386,7 @@ export class WorkerServerSupervisor {
       workerServerEnv: { ...request.workerServerEnv },
       serverMode: request.serverMode,
     };
-    const fingerprint = serverFingerprint(this.#options.okRoot, compatibility.workerServerEnv);
+    const fingerprint = serverFingerprint(this.#options.psRoot, compatibility.workerServerEnv);
     const server = await this.#options.launch(request.slot, compatibility.workerServerEnv);
     return { slot: request.slot, server, compatibility, fingerprint };
   }

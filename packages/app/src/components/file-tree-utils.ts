@@ -1,10 +1,10 @@
-import { isManagedArtifactDocName } from '@inkeep/open-knowledge-core/constants/cc1';
-import type { InlineAssetMediaKind } from '@inkeep/open-knowledge-core/constants/upload';
-import type { DocumentListEntry } from '@inkeep/open-knowledge-core/schemas/api';
+import { isManagedArtifactDocName } from '@palimpsest/core/constants/cc1';
+import type { InlineAssetMediaKind } from '@palimpsest/core/constants/upload';
+import type { DocumentListEntry } from '@palimpsest/core/schemas/api';
 import {
   isHiddenDocName,
   isProjectSkillBundlePath,
-} from '@inkeep/open-knowledge-core/util/doc-name';
+} from '@palimpsest/core/util/doc-name';
 
 export interface DocumentEntry {
   kind: 'document';
@@ -166,7 +166,7 @@ interface TreeVisibility {
 }
 
 export function hasOkPathSegment(ref: string): boolean {
-  return ref.split('/').some((segment) => segment.toLowerCase() === '.ok');
+  return ref.split('/').some((segment) => segment.toLowerCase() === '.ps');
 }
 
 function failsOnlyMarkdownAxis(kind: unknown, showOnlyMarkdownFiles: boolean): boolean {
@@ -193,10 +193,10 @@ export function filterVisibleEntries<T extends { kind?: unknown; docName?: strin
       return false;
     }
     const segments = ref.split('/');
-    const okIndex = segments.indexOf('.ok');
-    if (okIndex !== -1) {
+    const psIndex = segments.indexOf('.ps');
+    if (psIndex !== -1) {
       if (!showOkFolders) return false;
-      const ancestorPath = segments.slice(0, okIndex).join('/');
+      const ancestorPath = segments.slice(0, psIndex).join('/');
       return showHiddenFiles || ancestorPath === '' || !isHiddenDocName(ancestorPath);
     }
     if (isProjectSkillBundlePath(ref)) return false;

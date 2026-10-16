@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { describe, expect, it } from 'vitest';
 import { groupDeletableSkills, groupUpdatableSkills } from './skill-group-update';
 import type { ProvenanceBucket } from './skill-provenance-bucket';
@@ -18,7 +18,7 @@ const sourceBucket: ProvenanceBucket = {
   kind: 'source',
   id: 'open-knowledge-skills',
   publisher: 'inkeep',
-  url: 'https://www.skills.sh/inkeep/open-knowledge-skills',
+  url: 'https://www.skills.sh/fractalmandala/palimpsest-skills',
 };
 const pluginBucket: ProvenanceBucket = {
   kind: 'plugin',
@@ -32,8 +32,8 @@ const GROUP = 'PROJECT/open-knowledge-skills';
 describe('groupUpdatableSkills', () => {
   it('returns the group members that record a fetchable source', () => {
     const map = new Map([
-      [`${GROUP}/a`, skill('a', 'inkeep/open-knowledge-skills')],
-      [`${GROUP}/b`, skill('b', 'inkeep/open-knowledge-skills')],
+      [`${GROUP}/a`, skill('a', 'fractalmandala/palimpsest-skills')],
+      [`${GROUP}/b`, skill('b', 'fractalmandala/palimpsest-skills')],
     ]);
     const members = groupUpdatableSkills({
       groupPrefix: GROUP,
@@ -55,7 +55,7 @@ describe('groupUpdatableSkills', () => {
   });
 
   it('declines when the bucket is unknown', () => {
-    const map = new Map([[`${GROUP}/a`, skill('a', 'inkeep/open-knowledge-skills')]]);
+    const map = new Map([[`${GROUP}/a`, skill('a', 'fractalmandala/palimpsest-skills')]]);
     expect(
       groupUpdatableSkills({ groupPrefix: GROUP, bucket: undefined, skillByPrefix: map }),
     ).toEqual([]);
@@ -63,7 +63,7 @@ describe('groupUpdatableSkills', () => {
 
   it('skips a member with no recorded source, and one adopted from a harness', () => {
     const map = new Map([
-      [`${GROUP}/a`, skill('a', 'inkeep/open-knowledge-skills')],
+      [`${GROUP}/a`, skill('a', 'fractalmandala/palimpsest-skills')],
       [`${GROUP}/hand-written`, skill('hand-written')],
       [`${GROUP}/adopted`, skill('adopted', 'adopt:cursor')],
     ]);
@@ -77,7 +77,7 @@ describe('groupUpdatableSkills', () => {
 
   it('ignores rows outside the group, including a prefix that merely starts the same', () => {
     const map = new Map([
-      [`${GROUP}/a`, skill('a', 'inkeep/open-knowledge-skills')],
+      [`${GROUP}/a`, skill('a', 'fractalmandala/palimpsest-skills')],
       ['PROJECT/open-knowledge-skills-extra/b', skill('b', 'someone/else')],
       ['PROJECT/loose', skill('loose', 'someone/else')],
     ]);
@@ -100,7 +100,7 @@ describe('groupUpdatableSkills', () => {
 describe('groupDeletableSkills', () => {
   it('includes every non-managed member, recorded source or not', () => {
     const map = new Map([
-      [`${GROUP}/a`, skill('a', 'inkeep/open-knowledge-skills')],
+      [`${GROUP}/a`, skill('a', 'fractalmandala/palimpsest-skills')],
       [`${GROUP}/b`, skill('b')],
       [`${GROUP}/c`, skill('c', 'adopt:claude')],
     ]);

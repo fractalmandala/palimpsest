@@ -15,34 +15,34 @@ import {
 describe('desktopUserDataDir', () => {
   test('resolves the Electron userData path per platform', () => {
     expect(desktopUserDataDir({ home: '/Users/x', platformName: 'darwin' })).toBe(
-      '/Users/x/Library/Application Support/OpenKnowledge',
+      '/Users/x/Library/Application Support/Palimpsest',
     );
     expect(desktopUserDataDir({ home: '/home/x', platformName: 'linux', env: {} })).toBe(
-      '/home/x/.config/OpenKnowledge',
+      '/home/x/.config/Palimpsest',
     );
     expect(
       desktopUserDataDir({ home: '/home/x', platformName: 'linux', env: { XDG_CONFIG_HOME: '' } }),
-    ).toBe('/home/x/.config/OpenKnowledge');
+    ).toBe('/home/x/.config/Palimpsest');
     expect(
       desktopUserDataDir({
         home: '/home/x',
         platformName: 'linux',
         env: { XDG_CONFIG_HOME: '/cfg' },
       }),
-    ).toBe('/cfg/OpenKnowledge');
+    ).toBe('/cfg/Palimpsest');
     expect(
       desktopUserDataDir({
         home: 'C:\\Users\\x',
         platformName: 'win32',
         env: { APPDATA: 'C:\\Users\\x\\AppData\\Roaming' },
       }),
-    ).toBe('C:\\Users\\x\\AppData\\Roaming\\OpenKnowledge');
+    ).toBe('C:\\Users\\x\\AppData\\Roaming\\Palimpsest');
     expect(desktopUserDataDir({ home: 'C:\\Users\\x', platformName: 'win32', env: {} })).toBe(
-      'C:\\Users\\x\\AppData\\Roaming\\OpenKnowledge',
+      'C:\\Users\\x\\AppData\\Roaming\\Palimpsest',
     );
     expect(
       desktopUserDataDir({ home: 'C:\\Users\\x', platformName: 'win32', env: { APPDATA: '' } }),
-    ).toBe('C:\\Users\\x\\AppData\\Roaming\\OpenKnowledge');
+    ).toBe('C:\\Users\\x\\AppData\\Roaming\\Palimpsest');
   });
 
   test('the legacy product name resolves the space-named macOS dir', () => {
@@ -52,7 +52,7 @@ describe('desktopUserDataDir', () => {
         platformName: 'darwin',
         productName: DESKTOP_LEGACY_PRODUCT_NAME,
       }),
-    ).toBe('/Users/x/Library/Application Support/Open Knowledge');
+    ).toBe('/Users/x/Library/Application Support/Palimpsest');
     expect(DESKTOP_PRODUCT_NAME).not.toBe(DESKTOP_LEGACY_PRODUCT_NAME);
   });
 });
@@ -105,7 +105,7 @@ function writeState(dir: string, value: unknown): void {
 
 describe('readDesktopRecentProjects', () => {
   test('reads the recent-projects list, keeping only string path+name entries', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-state-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-state-'));
     try {
       writeState(dir, {
         recentProjects: [
@@ -126,7 +126,7 @@ describe('readDesktopRecentProjects', () => {
   });
 
   test('returns [] for an absent, malformed, or foreign-shaped state.json', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-state-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-state-'));
     try {
       expect(readDesktopRecentProjects(dir)).toEqual([]);
       writeFileSync(join(dir, 'state.json'), 'not json');
@@ -141,7 +141,7 @@ describe('readDesktopRecentProjects', () => {
 
 describe('stateDirIsOurs', () => {
   test('true only when state.json parses as our AppState shape', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-state-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-state-'));
     try {
       expect(stateDirIsOurs(dir)).toBe(false);
       writeState(dir, { recentProjects: [] });
@@ -154,7 +154,7 @@ describe('stateDirIsOurs', () => {
   });
 
   test('false for a FOREIGN vendor’s same-named dir (no recentProjects array)', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-state-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-state-'));
     try {
       writeState(dir, { windows: [], preferences: { theme: 'dark' } });
       expect(stateDirIsOurs(dir)).toBe(false);

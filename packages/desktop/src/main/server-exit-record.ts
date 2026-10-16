@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { SERVER_EXIT_LOG } from '@inkeep/open-knowledge-core';
+import { SERVER_EXIT_LOG } from '@palimpsest/core';
 
 const REASON_CORRELATION_WINDOW_MS = 3_000;
 

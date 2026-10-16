@@ -3,7 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import type { Principal } from '@inkeep/open-knowledge-core';
+import type { Principal } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
@@ -155,8 +155,8 @@ async function setupRollback(tmpDir: string): Promise<RollbackHarness> {
 function parseContributorLines(formatted: string): ContributorEntry[] {
   const entries: ContributorEntry[] = [];
   for (const line of formatted.split('\n')) {
-    if (!line.startsWith('ok-contributors: ')) continue;
-    const payload = JSON.parse(line.slice('ok-contributors: '.length));
+    if (!line.startsWith('ps-contributors: ')) continue;
+    const payload = JSON.parse(line.slice('ps-contributors: '.length));
     entries.push({
       writerId: payload.id,
       displayName: payload.name,
@@ -171,7 +171,7 @@ function parseContributorLines(formatted: string): ContributorEntry[] {
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rollback-actor-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rollback-actor-'));
   resetContributorsForTest();
 });
 

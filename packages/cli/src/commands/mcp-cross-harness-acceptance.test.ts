@@ -146,7 +146,7 @@ describe('cross-harness FR1 acceptance matrix', () => {
   });
 
   function tempFile(name: string): string {
-    dir = mkdtempSync(join(tmpdir(), 'ok-acceptance-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-acceptance-'));
     return join(dir, name);
   }
 
@@ -167,8 +167,8 @@ describe('cross-harness FR1 acceptance matrix', () => {
       const afterData = parseFor(c.id, after);
       const key = EDITOR_TARGETS[c.id].topLevelKey;
       const container = afterData[key] as Record<string, unknown>;
-      expect(container['open-knowledge']).toEqual(c.expectedEntry);
-      delete container['open-knowledge'];
+      expect(container['palimpsest']).toEqual(c.expectedEntry);
+      delete container['palimpsest'];
       expect(afterData).toEqual(beforeData);
 
       expect(readdirSync(dir).some((n) => n.includes('.broken-'))).toBe(false);
@@ -191,7 +191,7 @@ describe('cross-harness FR1 acceptance matrix', () => {
 
     const parsed = parseFor('codex', after);
     expect(parsed.mcp_servers.other).toEqual({ command: 'node' });
-    expect(parsed.mcp_servers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('claude: preserves a leading BOM on a JSON harness', () => {
@@ -206,7 +206,7 @@ describe('cross-harness FR1 acceptance matrix', () => {
     expect(after.charCodeAt(0)).toBe(0xfeff);
     expect(after).toContain('// keep me');
     expect(
-      (parseFor('claude', after).mcpServers as Record<string, unknown>)['open-knowledge'],
+      (parseFor('claude', after).mcpServers as Record<string, unknown>)['palimpsest'],
     ).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 });
@@ -228,7 +228,7 @@ describe('surgical-text-splice counterfactual guard', () => {
   });
 
   function tempFile(name: string): string {
-    dir = mkdtempSync(join(tmpdir(), 'ok-counterfactual-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-counterfactual-'));
     return join(dir, name);
   }
 
@@ -237,7 +237,7 @@ describe('surgical-text-splice counterfactual guard', () => {
     const original = [
       '# codex with an inline OK entry',
       'model = "gpt-5"',
-      'mcp_servers.open-knowledge = { command = "STALE", args = ["old"] }',
+      'mcp_servers.palimpsest = { command = "STALE", args = ["old"] }',
       '',
       '[mcp_servers.linear]',
       'command = "linear-cmd"  # keep',
@@ -253,7 +253,7 @@ describe('surgical-text-splice counterfactual guard', () => {
     if (engine.backend !== 'native') throw new Error('native addon required');
     const parsed = engine.parseToObject(after) as { mcp_servers: Record<string, unknown> };
     expect(after).not.toContain('STALE');
-    expect(parsed.mcp_servers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(parsed.mcp_servers.linear).toEqual({ command: 'linear-cmd' });
   });
 
@@ -281,7 +281,7 @@ describe('surgical-text-splice counterfactual guard', () => {
     expect(parsed.profile).toEqual({ name: 'default' });
     expect(parsed.mcp_servers.linear).toEqual({ command: 'linear-cmd', args: ['--stdio'] });
     expect(parsed.mcp_servers.github).toEqual({ command: 'gh-cmd' });
-    expect(parsed.mcp_servers['open-knowledge']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 });
 
@@ -291,7 +291,7 @@ describe('decline carries no config contents', () => {
     if (dir) rmSync(dir, { recursive: true, force: true });
   });
   function tempFile(name: string): string {
-    dir = mkdtempSync(join(tmpdir(), 'ok-decline-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-decline-'));
     return join(dir, name);
   }
 
@@ -316,7 +316,7 @@ describe('pi file-drop write path (whole-file sibling of the entry upserts)', ()
   });
 
   function projectDir(): string {
-    dir = mkdtempSync(join(tmpdir(), 'ok-acceptance-pi-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-acceptance-pi-'));
     return dir;
   }
 
@@ -354,7 +354,7 @@ describe('pi file-drop write path (whole-file sibling of the entry upserts)', ()
     const target = EDITOR_TARGETS.pi;
     const projPath = target.projectConfigPath?.(cwd) as string;
     mkdirSync(dirname(projPath), { recursive: true });
-    writeFileSync(projPath, '// ok-pi-bridge-v0\n// stale drop\n');
+    writeFileSync(projPath, '// ps-pi-bridge-v0\n// stale drop\n');
     const stale = writePi(cwd);
     expect(stale.result.action).toBe('overwritten');
     expect(readFileSync(projPath, 'utf-8')).toBe(buildPiExtensionSource({ mode: 'published' }));
@@ -362,7 +362,7 @@ describe('pi file-drop write path (whole-file sibling of the entry upserts)', ()
 
   it('refuses to write through a symlinked .pi ancestor (project path safety)', () => {
     const cwd = projectDir();
-    const outside = mkdtempSync(join(tmpdir(), 'ok-acceptance-pi-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-acceptance-pi-outside-'));
     try {
       symlinkSync(outside, join(cwd, '.pi'));
       const outcome = writePi(cwd);
@@ -387,16 +387,16 @@ model = "gpt-5"
 [mcp_servers.other]
 command = "other"
 
-[mcp_servers.open-knowledge]
+[mcp_servers.palimpsest]
 command = "/bin/sh"
 args = ["-l", "-c", "${marker}\\nexit 127"]
 startup_timeout_ms = 9000
 
-[mcp_servers.open-knowledge.env]
+[mcp_servers.palimpsest.env]
 KEEP = "${keep}"
 `;
-    const v1 = toml('# ok-mcp-v1');
-    const v2 = toml('# ok-mcp-v2', 'incoming');
+    const v1 = toml('# ps-mcp-v1');
+    const v2 = toml('# ps-mcp-v2', 'incoming');
     const plan = reconcileTrackedMcpConfig({
       target: '.codex/config.toml',
       layers: { base: v1, head: v1, index: v1, worktree: v1, incoming: v2 },
@@ -408,6 +408,6 @@ KEEP = "${keep}"
     expect(plan.raw).toContain('[mcp_servers.other]');
     expect(plan.raw).toContain('startup_timeout_ms = 9000');
     expect(plan.raw).toContain('KEEP = "incoming"');
-    expect(plan.raw).toContain('# ok-mcp-v2');
+    expect(plan.raw).toContain('# ps-mcp-v2');
   });
 });

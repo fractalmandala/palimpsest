@@ -60,7 +60,7 @@ export function createPtyPhaseTrace(
   producer: PtyPhaseRecord['producer'],
   write: (record: PtyPhaseRecord) => void,
 ): PtyPhaseTrace | undefined {
-  if (env.OK_PTY_PHASE_TRACE !== '1') return undefined;
+  if (env.PS_PTY_PHASE_TRACE !== '1') return undefined;
   let sequence = 0;
   let previousWriteMs = 0;
   let droppedWrites = 0;

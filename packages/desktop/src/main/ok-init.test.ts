@@ -41,7 +41,7 @@ describe('runOkInit', () => {
   });
 
   test('reports not-a-git-worktree when path has no .git', async () => {
-    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-main-')));
+    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     const result = await runOkInit(testRoot);
     expect(result.ok).toBe(false);
     if (result.ok === false) {
@@ -58,8 +58,8 @@ describe('runOkInit', () => {
     }
   });
 
-  test('scaffolds .ok/ inside a main-checkout git directory', async () => {
-    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-main-')));
+  test('scaffolds .ps/ inside a main-checkout git directory', async () => {
+    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
     const result = await runOkInit(testRoot);
@@ -67,13 +67,13 @@ describe('runOkInit', () => {
     if (result.ok === true) {
       expect(result.projectPath).toBe(testRoot);
     }
-    expect(existsSync(join(testRoot, '.ok', 'config.yml'))).toBe(true);
-    expect(existsSync(join(testRoot, '.ok', '.gitignore'))).toBe(true);
-    expect(existsSync(join(testRoot, '.okignore'))).toBe(true);
+    expect(existsSync(join(testRoot, '.ps', 'config.yml'))).toBe(true);
+    expect(existsSync(join(testRoot, '.ps', '.gitignore'))).toBe(true);
+    expect(existsSync(join(testRoot, '.psignore'))).toBe(true);
   });
 
-  test('scaffolds .ok/ inside a linked-worktree root', async () => {
-    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-main-')));
+  test('scaffolds .ps/ inside a linked-worktree root', async () => {
+    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     const mainRepo = join(testRoot, 'main');
     mkdirSync(mainRepo);
     await git(mainRepo, 'init', '--initial-branch=main', '.');
@@ -91,16 +91,16 @@ describe('runOkInit', () => {
     if (result.ok === true) {
       expect(result.projectPath).toBe(realpathSync(wt));
     }
-    expect(existsSync(join(wt, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(wt, '.ps', 'config.yml'))).toBe(true);
   });
 
   test('idempotent on already-initialized projects (no rewrite)', async () => {
-    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-main-')));
+    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
     const first = await runOkInit(testRoot);
     expect(first.ok).toBe(true);
-    const configPath = join(testRoot, '.ok', 'config.yml');
+    const configPath = join(testRoot, '.ps', 'config.yml');
     const userMarker = '# user-customized\n';
     writeFileSync(configPath, userMarker);
     const second = await runOkInit(testRoot);
@@ -110,7 +110,7 @@ describe('runOkInit', () => {
   });
 
   test('coalesces concurrent calls on the same path', async () => {
-    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-main-')));
+    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
     const [a, b, c] = await Promise.all([
@@ -121,11 +121,11 @@ describe('runOkInit', () => {
     expect(a.ok).toBe(true);
     expect(b.ok).toBe(true);
     expect(c.ok).toBe(true);
-    expect(existsSync(join(testRoot, '.ok', 'config.yml'))).toBe(true);
+    expect(existsSync(join(testRoot, '.ps', 'config.yml'))).toBe(true);
   });
 
   test('returns canonical realpath in result', async () => {
-    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-init-main-')));
+    testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
     const result = await runOkInit(testRoot);

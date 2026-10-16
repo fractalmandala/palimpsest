@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { Hocuspocus } from '@hocuspocus/server';
-import { readFmMap, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { readFmMap, stripFrontmatter } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import {
   AGENT_WRITE_ORIGIN,
@@ -64,7 +64,7 @@ async function callApi(
 }
 
 function setup() {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-api-agent-fm-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-api-agent-fm-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   const hocuspocus = new Hocuspocus({ quiet: true });

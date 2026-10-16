@@ -45,7 +45,7 @@ let sessionManager: AgentSessionManager;
 let durabilityState: DocumentDurabilityState;
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-deferred-store-wait-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-deferred-store-wait-'));
   contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   hocuspocus = new Hocuspocus({ quiet: true });

@@ -1,5 +1,5 @@
 import type { PromptCapabilities } from '@agentclientprotocol/sdk';
-import type { AttachmentPart } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test, vi } from 'vitest';
 import {
   type AttachmentPathResolver,

@@ -1,4 +1,4 @@
-import type { HandoffTarget, InstallState } from '@inkeep/open-knowledge-core/handoff';
+import type { HandoffTarget, InstallState } from '@palimpsest/core/handoff';
 import { useEffect, useRef, useState } from 'react';
 import {
   createProbeCoordinator,
@@ -12,15 +12,15 @@ import {
 import '@/lib/desktop-bridge-types';
 
 export function isElectronHostDefault(
-  windowLike: { okDesktop?: unknown } | undefined = typeof window !== 'undefined'
+  windowLike: { psDesktop?: unknown } | undefined = typeof window !== 'undefined'
     ? window
     : undefined,
 ): boolean {
-  return windowLike?.okDesktop != null;
+  return windowLike?.psDesktop != null;
 }
 
 export function defaultProbeDeps(): ProbeDeps {
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   if (bridge) {
     const detector = (scheme: string) => bridge.shell.detectProtocol(scheme);
     return {

@@ -2,7 +2,7 @@ import {
   DEFAULT_LINTER_CONFIG,
   type LinterConfig,
   lintDocument,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { afterEach, describe, expect, test } from 'vitest';
@@ -21,7 +21,7 @@ function configFor(schema: Record<string, unknown>): LinterConfig {
       markdownlint: { ...DEFAULT_LINTER_CONFIG.plugins.markdownlint, enabled: false },
       frontmatter: {
         enabled: true,
-        schemas: [{ appliesTo: 'docs/**', file: '.ok/schemas/probe.schema.json', schema }],
+        schemas: [{ appliesTo: 'docs/**', file: '.ps/schemas/probe.schema.json', schema }],
       },
     },
   };

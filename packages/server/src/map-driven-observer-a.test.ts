@@ -2,7 +2,7 @@ import {
   MarkdownManager,
   type SerializeCallOptions,
   sharedExtensions,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getSchema, type JSONContent } from '@tiptap/core';
 import { updateYFragment } from '@tiptap/y-tiptap';
 import { describe, expect, test, vi } from 'vitest';
@@ -187,7 +187,7 @@ describe('map-driven Observer A — default Path A behavior', () => {
   });
 
   test('(f) map-driven splice is the default — active with no env configuration', () => {
-    expect(process.env.OK_MAP_DRIVEN_OBSERVER_A).toBeUndefined();
+    expect(process.env.PS_MAP_DRIVEN_OBSERVER_A).toBeUndefined();
 
     const raw = '# Notes\n\n| a | b |\n| - | - |\n| 1 | 2\n';
     const { doc, xmlFragment, ytext } = createTestDoc();

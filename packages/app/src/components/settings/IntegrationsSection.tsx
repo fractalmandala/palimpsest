@@ -1,4 +1,4 @@
-import { SHOW_INSTALL_SKILL } from '@inkeep/open-knowledge-core/constants/feature-flags';
+import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { InstallInClaudeDesktopDialog } from '@/components/InstallInClaudeDesktopDialog';
@@ -18,7 +18,7 @@ export function IntegrationsSection() {
         title={<Trans>Integrations</Trans>}
         scope="user"
       >
-        <Trans>Connect OpenKnowledge to other tools you use.</Trans>
+        <Trans>Connect Palimpsest to other tools you use.</Trans>
       </SettingsSectionHeader>
       <div className="rounded-md border p-3">
         <div className="flex items-center justify-between gap-3">

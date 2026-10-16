@@ -25,7 +25,7 @@ function writeSkill(dir: string, fm: string, body = 'Body.'): void {
 let root: string;
 
 beforeAll(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-acquire-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-acquire-'));
 });
 afterAll(() => {
   rmSync(root, { recursive: true, force: true });

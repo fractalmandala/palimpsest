@@ -1,4 +1,4 @@
-import type { GitWorktreeEntry } from '@inkeep/open-knowledge-core/schemas/api';
+import type { GitWorktreeEntry } from '@palimpsest/core/schemas/api';
 
 export const MAX_WORKTREE_GROUPS = 8;
 

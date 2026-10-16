@@ -1,6 +1,6 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { DEV_FALLBACK_CLI_REFUSAL, OkCliCommand } from '@inkeep/open-knowledge-core';
+import { DEV_FALLBACK_CLI_REFUSAL, PsCliCommand } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { classifyCloneError } from './clone-error-classify.ts';
 import {
@@ -11,10 +11,10 @@ import {
   validateCloneInputs,
 } from './clone-flow.ts';
 
-const okCli = (
+const psCli = (
   cliArgs: readonly string[],
   cliEnv?: Readonly<Record<string, string | undefined>>,
-): OkCliCommand => OkCliCommand.resolve({ host: { cliArgs, cliEnv }, env: {} });
+): PsCliCommand => PsCliCommand.resolve({ host: { cliArgs, cliEnv }, env: {} });
 
 const HOME_PATH = join(homedir(), 'open-knowledge-test-clone');
 
@@ -24,7 +24,7 @@ describe('runCloneSubprocess', () => {
   test('forwards progress + complete events parsed from stdout', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         console.log(JSON.stringify({type:'progress', phase:'receiving', pct:25}));
         console.log(JSON.stringify({type:'progress', phase:'resolving', pct:80}));
@@ -45,7 +45,7 @@ describe('runCloneSubprocess', () => {
   test('a dev build without its workspace CLI reports the refusal and clones nothing', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: OkCliCommand.resolve({ env: { OK_CHANNEL: 'dev' } }),
+      cli: PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
       url: 'https://github.com/octocat/hello.git',
       dir: '/tmp/cloned-repo',
       onEvent: (e) => events.push(e),
@@ -57,7 +57,7 @@ describe('runCloneSubprocess', () => {
   test('emits structured error event on nonzero exit, including stderr detail', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         process.stderr.write('fatal: repository not found\\n');
         process.exit(128);
@@ -80,7 +80,7 @@ describe('runCloneSubprocess', () => {
     const events: RawCloneEvent[] = [];
     const token = `ghp_${'a'.repeat(36)}`;
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         process.stderr.write("fatal: could not read Password for 'https://${token}@github.com': terminal prompts disabled\\n");
         process.exit(128);
@@ -104,7 +104,7 @@ describe('runCloneSubprocess', () => {
   test('caps a very long stderr detail so the toast stays readable', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         process.stderr.write('x'.repeat(3000) + '\\n');
         process.exit(128);
@@ -126,7 +126,7 @@ describe('runCloneSubprocess', () => {
   test('whitespace-only stderr produces no dangling detail separator', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         process.stderr.write('   \\n');
         process.exit(128);
@@ -147,7 +147,7 @@ describe('runCloneSubprocess', () => {
   test('emits "Clone timed out" error on timeout', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(fixtureCli(`setInterval(() => {}, 1000)`)),
+      cli: psCli(fixtureCli(`setInterval(() => {}, 1000)`)),
       url: 'https://github.com/octocat/slow.git',
       dir: '/tmp/slow',
       timeoutMs: 100,
@@ -164,7 +164,7 @@ describe('runCloneSubprocess', () => {
   test('CLI-emitted error event is forwarded as terminal — no second event synthesized', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         console.log(JSON.stringify({type:'error', message:'permission denied'}));
         process.exit(0);
@@ -182,7 +182,7 @@ describe('runCloneSubprocess', () => {
   test('an unsafe-symlink refusal reaches the consumer with fixed wording and a structured path list', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         console.log(JSON.stringify({
           type: 'error',
@@ -212,7 +212,7 @@ describe('runCloneSubprocess', () => {
     const events: RawCloneEvent[] = [];
     const token = `ghp_${'b'.repeat(36)}`;
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         const message = "[auth] Failed to parse auth.yml at line 2:\\n  token: ${token} " + "y".repeat(3000);
         console.log(JSON.stringify({type:'error', message}));
@@ -235,7 +235,7 @@ describe('runCloneSubprocess', () => {
   test('CLI-emitted error message that redacts to nothing falls back to "Unknown error"', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         console.log(JSON.stringify({type:'error', message:'   \\n  '}));
       `),
@@ -251,7 +251,7 @@ describe('runCloneSubprocess', () => {
   test('a cancel landing after the timeout still reports the timeout', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl: RunCloneController = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         process.on('SIGTERM', () => {
           console.log(JSON.stringify({type:'progress', phase:'terminating', pct:99}));
@@ -279,7 +279,7 @@ describe('runCloneSubprocess', () => {
   test('progress events with missing fields are dropped', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         console.log(JSON.stringify({type:'progress', phase:'receiving'}));
         console.log(JSON.stringify({type:'complete', dir:'/tmp/x'}));
@@ -296,7 +296,7 @@ describe('runCloneSubprocess', () => {
   test('synthesizes a complete event when CLI exits 0 without emitting one', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         // Emit only an invalid (missing dir) line, then clean exit. The runner
         // ignores the malformed line and synthesizes a complete from opts.dir
@@ -317,7 +317,7 @@ describe('runCloneSubprocess', () => {
   test('unknown JSON event types are dropped, terminal still detected', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         console.log(JSON.stringify({type:'unknown-event', stuff:'ignored'}));
         console.log(JSON.stringify({type:'complete', dir:'/tmp/y'}));
@@ -334,7 +334,7 @@ describe('runCloneSubprocess', () => {
   test('cancel SIGTERMs the subprocess without synthesizing an error event', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(fixtureCli(`setInterval(() => {}, 1000)`)),
+      cli: psCli(fixtureCli(`setInterval(() => {}, 1000)`)),
       url: 'https://github.com/x/y.git',
       dir: '/tmp/y',
       onEvent: (e) => events.push(e),
@@ -347,11 +347,11 @@ describe('runCloneSubprocess', () => {
   test('forwards cliEnv through to the spawned CLI', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
-        console.log(JSON.stringify({type:'complete', dir: process.env.OK_CLONE_ENV_MARKER || 'unset'}));
+        console.log(JSON.stringify({type:'complete', dir: process.env.PS_CLONE_ENV_MARKER || 'unset'}));
       `),
-        { OK_CLONE_ENV_MARKER: '/tmp/marker-from-cli-env' },
+        { PS_CLONE_ENV_MARKER: '/tmp/marker-from-cli-env' },
       ),
       url: 'https://github.com/octocat/hello.git',
       dir: '/tmp/cloned-repo',
@@ -364,7 +364,7 @@ describe('runCloneSubprocess', () => {
   test('handles a chunked stream that splits a JSON line across writes', async () => {
     const events: RawCloneEvent[] = [];
     const ctrl = runCloneSubprocess({
-      cli: okCli(
+      cli: psCli(
         fixtureCli(`
         process.stdout.write('{"type":"prog');
         setTimeout(() => process.stdout.write('ress","phase":"receiving","pct":50}\\n'), 30);

@@ -24,7 +24,7 @@ const allExist = () => true;
 const scratchRoots: string[] = [];
 
 const makePackageRoot = (packageJson: unknown, files: string[]) => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-exports-targets-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-exports-targets-'));
   scratchRoots.push(root);
   writeFileSync(join(root, 'package.json'), JSON.stringify(packageJson));
   for (const file of files) {
@@ -150,7 +150,7 @@ describe('validateExportsTargets flat JS closure', () => {
   const allExist = () => true;
 
   it('is silent when the default target imports only flat siblings', () => {
-    const read = () => 'import { x } from "./ok-dir-B1t7FLiw.mjs";';
+    const read = () => 'import { x } from "./ps-dir-B1t7FLiw.mjs";';
     expect(validateExportsTargets(map, allExist, read)).toEqual([]);
   });
 
@@ -192,7 +192,7 @@ describe('jsBelowDistTopLevel', () => {
 
 describe('verifyExportsTargets', () => {
   const packageJson = {
-    name: '@inkeep/open-knowledge-core-fixture',
+    name: '@palimpsest/core-fixture',
     exports: {
       '.': {
         '@inkeep/source': './src/index.ts',

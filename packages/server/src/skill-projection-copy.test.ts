@@ -7,14 +7,14 @@ import { projectSkill } from './skill-projection.ts';
 let cwd: string;
 
 function makeSource(name: string): string {
-  const dir = join(cwd, '.ok', 'skills', name);
+  const dir = join(cwd, '.ps', 'skills', name);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'SKILL.md'), `---\nname: ${name}\ndescription: d\n---\n\nBody.\n`);
   return dir;
 }
 
 beforeEach(() => {
-  cwd = mkdtempSync(join(tmpdir(), 'ok-projection-'));
+  cwd = mkdtempSync(join(tmpdir(), 'ps-projection-'));
 });
 afterEach(() => {
   rmSync(cwd, { recursive: true, force: true });

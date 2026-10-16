@@ -1,9 +1,9 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { defaultToDevChannel, isDevChannel } from '@inkeep/open-knowledge-core/constants/product';
+import { defaultToDevChannel, isDevChannel } from '@palimpsest/core/constants/product';
 
 export function applyDevServerChannel(env: Record<string, string | undefined>): void {
-  if (env.OK_TEST_CONTENT_DIR) return;
+  if (env.PS_TEST_CONTENT_DIR) return;
   defaultToDevChannel(env);
 }
 

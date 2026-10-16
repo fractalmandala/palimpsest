@@ -182,7 +182,7 @@ describe('classifyOctokitError', () => {
 describe('runPublishFlow (error branches)', () => {
   let tmpDir: string;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-share-publish-err-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-share-publish-err-'));
   });
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });
@@ -210,7 +210,7 @@ describe('runPublishFlow (error branches)', () => {
       }),
       token: 'tok',
       projectDir: tmpDir,
-      body: { owner: 'inkeep', name: 'open-knowledge', visibility: 'public' },
+      body: { owner: 'inkeep', name: 'palimpsest', visibility: 'public' },
       ownerKind: 'org',
       deps: {
         ensureOkScaffold: () => {},
@@ -232,7 +232,7 @@ describe('runPublishFlow (error branches)', () => {
   });
 
   test('idempotent retry: 422 + existing-repo-at-owner proceeds to push (e2e)', async () => {
-    const bareRepo = mkdtempSync(join(tmpdir(), 'ok-share-publish-retry-bare-'));
+    const bareRepo = mkdtempSync(join(tmpdir(), 'ps-share-publish-retry-bare-'));
     execSync('git init --bare', { cwd: bareRepo, stdio: 'ignore' });
     configureTestGitRepository(bareRepo);
     execSync('git init', { cwd: tmpDir, stdio: 'ignore' });
@@ -255,7 +255,7 @@ describe('runPublishFlow (error branches)', () => {
         }),
         token: 'gho_fake',
         projectDir: tmpDir,
-        body: { owner: 'alice', name: 'open-knowledge', visibility: 'private' },
+        body: { owner: 'alice', name: 'palimpsest', visibility: 'private' },
         ownerKind: 'user',
         deps: { ensureOkScaffold: () => {} },
       });
@@ -310,7 +310,7 @@ describe('runPublishFlow (e2e against bare repo)', () => {
   let projectDir: string;
   let bareRepo: string;
   beforeEach(() => {
-    workspace = mkdtempSync(join(tmpdir(), 'ok-share-publish-e2e-'));
+    workspace = mkdtempSync(join(tmpdir(), 'ps-share-publish-e2e-'));
     projectDir = join(workspace, 'project');
     bareRepo = join(workspace, 'remote.git');
     mkdirSync(projectDir, { recursive: true });
@@ -340,8 +340,8 @@ describe('runPublishFlow (e2e against bare repo)', () => {
       ownerKind: 'user',
       deps: {
         ensureOkScaffold: (dir) => {
-          mkdirSync(join(dir, '.ok'), { recursive: true });
-          writeFileSync(join(dir, '.ok', '.gitignore'), 'local/\n', 'utf-8');
+          mkdirSync(join(dir, '.ps'), { recursive: true });
+          writeFileSync(join(dir, '.ps', '.gitignore'), 'local/\n', 'utf-8');
         },
       },
     });
@@ -369,7 +369,7 @@ describe('runPublishFlow (e2e against bare repo)', () => {
       cwd: projectDir,
       encoding: 'utf-8',
     });
-    expect(tree).toContain('.ok/.gitignore');
+    expect(tree).toContain('.ps/.gitignore');
     expect(tree).toContain('README.md');
     expect(readFileSync(join(projectDir, 'README.md'), 'utf-8')).toBe('# Hello\n');
     const remoteRefSha = execSync('git rev-parse refs/remotes/origin/main', {
@@ -433,7 +433,7 @@ describe('runPublishFlow (e2e against bare repo)', () => {
 
 describe('share publish — refuses --project-dir $HOME', () => {
   test('prints the actionable refusal and exits 64, not a generic init-failed', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-publish-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-publish-home-'));
     const savedExitCode = process.exitCode;
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
     const tokenStore = async () => ({}) as never;

@@ -28,7 +28,7 @@ let tmpRoot: string;
 let projectDir: string;
 
 beforeEach(() => {
-  tmpRoot = realpathSync(mkdtempSync(resolve(tmpdir(), 'ok-project-integration-writers-')));
+  tmpRoot = realpathSync(mkdtempSync(resolve(tmpdir(), 'ps-project-integration-writers-')));
   projectDir = resolve(tmpRoot, 'proj');
   mkdirSync(projectDir, { recursive: true });
 });
@@ -59,7 +59,7 @@ describe('mcpConfigWriter', () => {
     writeFileSync(
       cursorMcp,
       JSON.stringify({
-        mcpServers: { 'open-knowledge': { command: 'old', args: ['mcp'] } },
+        mcpServers: { 'palimpsest': { command: 'old', args: ['mcp'] } },
       }),
     );
 
@@ -68,9 +68,9 @@ describe('mcpConfigWriter', () => {
     expect(outcome.action).toBe('overwritten');
     expect(outcome.path).toBe(cursorMcp);
     const written = JSON.parse(readFileSync(cursorMcp, 'utf-8'));
-    expect(written.mcpServers['open-knowledge'].command).toBe('/bin/sh');
-    expect(written.mcpServers['open-knowledge'].args.slice(0, 2)).toEqual(['-l', '-c']);
-    expect(written.mcpServers['open-knowledge'].args[2]).toContain('# ok-mcp-v2');
+    expect(written.mcpServers['palimpsest'].command).toBe('/bin/sh');
+    expect(written.mcpServers['palimpsest'].args.slice(0, 2)).toEqual(['-l', '-c']);
+    expect(written.mcpServers['palimpsest'].args[2]).toContain('# ps-mcp-v2');
   });
 
   test('reports "skipped-unsupported" for an editor without projectConfigPath', () => {
@@ -97,7 +97,7 @@ describe('mcpConfigWriter', () => {
   test('reports "declined" with the reason when the present config is unparseable', () => {
     const cursorMcp = join(projectDir, '.cursor', 'mcp.json');
     mkdirSync(join(projectDir, '.cursor'), { recursive: true });
-    const malformed = '{ "mcpServers": { "open-knowledge": ';
+    const malformed = '{ "mcpServers": { "palimpsest": ';
     writeFileSync(cursorMcp, malformed);
 
     const outcome = mcpConfigWriter.write(EDITOR_TARGETS.cursor, projectDir, {});
@@ -132,34 +132,34 @@ describe('projectSkillWriter', () => {
     expect(outcome.integration).toBe('project-skill');
     expect(outcome.editorId).toBe('claude');
     expect(outcome.action).toBe('written');
-    expect(outcome.path).toBe(join(projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'));
+    expect(outcome.path).toBe(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'));
     expect(outcome.error).toBeUndefined();
     expect(existsSync(outcome.path ?? '')).toBe(true);
   });
 
-  test('writes for cursor (.cursor/skills/open-knowledge/SKILL.md)', () => {
+  test('writes for cursor (.cursor/skills/palimpsest/SKILL.md)', () => {
     const outcome = projectSkillWriter.write(EDITOR_TARGETS.cursor, projectDir, {});
 
     expect(outcome.action).toBe('written');
-    expect(outcome.path).toBe(join(projectDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'));
+    expect(outcome.path).toBe(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'));
     expect(existsSync(outcome.path ?? '')).toBe(true);
   });
 
-  test('writes for codex (.codex/skills/open-knowledge/SKILL.md)', () => {
+  test('writes for codex (.codex/skills/palimpsest/SKILL.md)', () => {
     const outcome = projectSkillWriter.write(EDITOR_TARGETS.codex, projectDir, {});
 
     expect(outcome.action).toBe('written');
-    expect(outcome.path).toBe(join(projectDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md'));
+    expect(outcome.path).toBe(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'));
     expect(existsSync(outcome.path ?? '')).toBe(true);
   });
 
-  test('does not write the Copilot skill without an OpenKnowledge MCP entry', () => {
+  test('does not write the Copilot skill without an Palimpsest MCP entry', () => {
     const outcome = projectSkillWriter.write(EDITOR_TARGETS.copilot, projectDir, {
       home: tmpRoot,
     });
 
     expect(outcome.action).toBe('skipped-prerequisite');
-    expect(outcome.path).toBe(join(projectDir, '.github', 'skills', 'open-knowledge', 'SKILL.md'));
+    expect(outcome.path).toBe(join(projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md'));
     expect(existsSync(outcome.path ?? '')).toBe(false);
   });
 
@@ -169,7 +169,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(copilotHome, 'mcp-config.json'),
       JSON.stringify({
-        mcpServers: { 'open-knowledge': OWN_MCP_ENTRY },
+        mcpServers: { 'palimpsest': OWN_MCP_ENTRY },
       }),
     );
 
@@ -187,7 +187,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(copilotHome, 'mcp-config.json'),
       `${JSON.stringify({
-        mcpServers: { 'open-knowledge': { command: 'custom-ok', args: ['mcp'] } },
+        mcpServers: { 'palimpsest': { command: 'custom-ok', args: ['mcp'] } },
       })}${' '.repeat(10 * 1024 * 1024)}`,
     );
 
@@ -199,14 +199,14 @@ describe('projectSkillWriter', () => {
     expect(existsSync(outcome.path ?? '')).toBe(false);
   });
 
-  test('writes the Copilot skill over the dev launcher OpenKnowledge writes for itself', () => {
+  test('writes the Copilot skill over the dev launcher Palimpsest writes for itself', () => {
     const savedEntry = process.argv[1];
-    process.argv[1] = join(tmpRoot, 'ok-dev-repo', 'packages', 'cli', 'src', 'cli.ts');
+    process.argv[1] = join(tmpRoot, 'ps-dev-repo', 'packages', 'cli', 'src', 'cli.ts');
     try {
       writeFileSync(
         join(projectDir, '.mcp.json'),
         JSON.stringify({
-          mcpServers: { 'open-knowledge': buildManagedServerEntry({ mode: 'dev' }) },
+          mcpServers: { 'palimpsest': buildManagedServerEntry({ mode: 'dev' }) },
         }),
       );
 
@@ -225,9 +225,9 @@ describe('projectSkillWriter', () => {
       join(projectDir, '.mcp.json'),
       JSON.stringify({
         mcpServers: {
-          'open-knowledge': {
+          'palimpsest': {
             command: 'npx',
-            args: ['-y', '@inkeep/open-knowledge@latest', 'mcp'],
+            args: ['-y', '@palimpsest/cli@latest', 'mcp'],
           },
         },
       }),
@@ -244,7 +244,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(projectDir, '.mcp.json'),
       JSON.stringify({
-        mcpServers: { 'open-knowledge': { ...OWN_MCP_ENTRY, enabled: false } },
+        mcpServers: { 'palimpsest': { ...OWN_MCP_ENTRY, enabled: false } },
       }),
     );
 
@@ -259,7 +259,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(projectDir, '.mcp.json'),
       JSON.stringify({
-        mcpServers: { 'open-knowledge': { command: 'curl', args: ['https://example.invalid'] } },
+        mcpServers: { 'palimpsest': { command: 'curl', args: ['https://example.invalid'] } },
       }),
     );
 
@@ -275,7 +275,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(projectDir, '.mcp.json'),
       JSON.stringify({
-        mcpServers: { 'open-knowledge': OWN_MCP_ENTRY },
+        mcpServers: { 'palimpsest': OWN_MCP_ENTRY },
       }),
     );
 
@@ -331,7 +331,7 @@ describe('projectSkillWriter', () => {
     expect(outcome.action).toBe('failed');
     expect(outcome.error).toBeDefined();
     expect(outcome.error?.length ?? 0).toBeGreaterThan(0);
-    expect(outcome.path).toBe(join(projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'));
+    expect(outcome.path).toBe(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'));
   });
 
   test('never throws even when the target path environment is hostile', () => {
@@ -389,15 +389,15 @@ describe('applyProjectIntegrations', () => {
     ]);
 
     expect(existsSync(join(projectDir, '.mcp.json'))).toBe(true);
-    expect(existsSync(join(projectDir, '.claude', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
     expect(existsSync(join(projectDir, '.cursor', 'mcp.json'))).toBe(true);
-    expect(existsSync(join(projectDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
     expect(existsSync(join(projectDir, '.codex', 'config.toml'))).toBe(true);
-    expect(existsSync(join(projectDir, '.codex', 'skills', 'open-knowledge', 'SKILL.md'))).toBe(
+    expect(existsSync(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
     );
   });
@@ -461,16 +461,16 @@ describe('applyProjectIntegrations', () => {
       const mcpOutcome = outcomes.find((o) => o.integration === 'mcp-config');
       expect(mcpOutcome?.action).toBe('written');
       const written = JSON.parse(readFileSync(join(projectDir, '.mcp.json'), 'utf-8'));
-      expect(written.mcpServers['open-knowledge'].command).toBe('node');
+      expect(written.mcpServers['palimpsest'].command).toBe('node');
     } finally {
       process.argv[1] = originalArgv1;
     }
   });
 });
 
-describe('a skill folder OpenKnowledge did not write', () => {
+describe('a skill folder Palimpsest did not write', () => {
   test('is not replaced: a folder with no SKILL.md fails the write instead of being deleted', () => {
-    const stray = join(projectDir, '.claude', 'skills', 'open-knowledge');
+    const stray = join(projectDir, '.claude', 'skills', 'palimpsest');
     mkdirSync(stray, { recursive: true });
     writeFileSync(join(stray, 'notes.txt'), 'mine');
 

@@ -4,7 +4,7 @@ import { findRotMatches } from './rot.mjs';
 export const SANCTIONED_TAGS = [];
 
 export const DOCS_URL_BASE =
-  'https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/no-comments/README.md';
+  'https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/no-comments/README.md';
 
 const LINTIGNORE_RE = /(?:^|\n)[^\S\n]*(?:\/\*+|\*+)?[^\S\n]*@lintignore\b/;
 const LINTIGNORE_WITH_REASON_RE =

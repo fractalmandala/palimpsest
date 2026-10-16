@@ -10,16 +10,16 @@ import {
   INLINE_RENDERABLE_EXTENSIONS,
   isLoopbackOnlyBind,
   LOCAL_DIR,
-  OK_DIR,
-  OK_LEGACY_MACHINE_LOCAL_ROOT_DIRS,
-  OK_MACHINE_LOCAL_ROOT_FILES,
+  PS_DIR,
+  PS_LEGACY_MACHINE_LOCAL_ROOT_DIRS,
+  PS_MACHINE_LOCAL_ROOT_FILES,
   requiresExternalConsent,
   resolveServerRuntimeConfig,
   type ServerRuntimeConfig,
   SKILLS_STORE_DIRNAME,
-} from '@inkeep/open-knowledge-core';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
-import { resolveGitDirDetailed } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { psUserHomeDir } from '@palimpsest/core/server';
+import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
 import { context, propagation } from '@opentelemetry/api';
 import sirv from 'sirv';
 import { readAgentBrowserTools, readAutoApproveOkTools } from './acp/permissions.ts';
@@ -74,8 +74,8 @@ import {
   teardownToleranceTelemetryWriter,
 } from './tolerance-telemetry-writer.ts';
 
-export function findLegacyRuntimeFiles(okDir: string): string[] {
-  const localDir = resolve(okDir, LOCAL_DIR);
+export function findLegacyRuntimeFiles(psDir: string): string[] {
+  const localDir = resolve(psDir, LOCAL_DIR);
   const localDirEmpty = (() => {
     if (!existsSync(localDir)) return true;
     try {
@@ -87,11 +87,11 @@ export function findLegacyRuntimeFiles(okDir: string): string[] {
   if (!localDirEmpty) return [];
 
   const found: string[] = [];
-  for (const name of OK_MACHINE_LOCAL_ROOT_FILES) {
-    if (existsSync(resolve(okDir, name))) found.push(name);
+  for (const name of PS_MACHINE_LOCAL_ROOT_FILES) {
+    if (existsSync(resolve(psDir, name))) found.push(name);
   }
-  for (const name of OK_LEGACY_MACHINE_LOCAL_ROOT_DIRS) {
-    const candidate = resolve(okDir, name);
+  for (const name of PS_LEGACY_MACHINE_LOCAL_ROOT_DIRS) {
+    const candidate = resolve(psDir, name);
     try {
       if (existsSync(candidate) && statSync(candidate).isDirectory()) {
         found.push(`${name}/`);
@@ -120,7 +120,7 @@ function computeWorktreeAttributes(projectDir: string): {
 }
 
 const DEFAULT_IDLE_THRESHOLD_MS = 30 * 60 * 1000;
-const DESTROY_STEP_TIMEOUT_MS = Number(process.env.OK_DESTROY_STEP_TIMEOUT_MS) || 5000;
+const DESTROY_STEP_TIMEOUT_MS = Number(process.env.PS_DESTROY_STEP_TIMEOUT_MS) || 5000;
 
 export interface BootServerOptions
   extends Pick<
@@ -228,7 +228,7 @@ export async function bootServer(opts: BootServerOptions): Promise<BootedServer>
 
   const crashCapture = installCrashCapture(sinkProjectDir);
 
-  const startupTraceparent = process.env.OK_STARTUP_TRACEPARENT;
+  const startupTraceparent = process.env.PS_STARTUP_TRACEPARENT;
   const bootSpan = () =>
     withSpan('ok.boot', { attributes: spanAttributes }, async () => bootServerInner(opts));
   const runBoot = (): Promise<BootedServer> => {
@@ -283,7 +283,7 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
       ? serverRuntime.bind
       : effectiveBindAddresses;
     throw new ExposureConsentError(
-      `refusing to start: the server would bind a non-loopback address (${exposingAddresses.join(', ')}), which exposes this server beyond this machine. Consent with OK_ALLOW_EXTERNAL=1, or server.allowExternal: true in .ok/local/config.yml.`,
+      `refusing to start: the server would bind a non-loopback address (${exposingAddresses.join(', ')}), which exposes this server beyond this machine. Consent with PS_ALLOW_EXTERNAL=1, or server.allowExternal: true in .ps/local/config.yml.`,
     );
   }
 
@@ -307,8 +307,8 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
   }
 
   const envLockKind =
-    process.env.OK_LOCK_KIND === 'mcp-spawned' || process.env.OK_LOCK_KIND === 'interactive'
-      ? process.env.OK_LOCK_KIND
+    process.env.PS_LOCK_KIND === 'mcp-spawned' || process.env.PS_LOCK_KIND === 'interactive'
+      ? process.env.PS_LOCK_KIND
       : undefined;
   const lockKind = opts.lockKind ?? envLockKind ?? 'interactive';
 
@@ -328,17 +328,17 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
   }
 
   const projectDir = opts.projectDir ?? opts.contentDir;
-  const okDir = resolve(projectDir, OK_DIR);
-  const configPath = resolve(okDir, 'config.yml');
+  const psDir = resolve(projectDir, PS_DIR);
+  const configPath = resolve(psDir, 'config.yml');
   if (!existsSync(configPath)) {
-    const okDirExists = existsSync(okDir);
-    throw new MissingOkConfigError(okDirExists ? 'config' : 'okdir', projectDir);
+    const psDirExists = existsSync(psDir);
+    throw new MissingOkConfigError(psDirExists ? 'config' : 'okdir', projectDir);
   }
-  const gitignorePath = resolve(okDir, '.gitignore');
+  const gitignorePath = resolve(psDir, '.gitignore');
   if (!existsSync(gitignorePath)) {
     getLogger('boot').warn(
       { path: gitignorePath },
-      `Note: ${OK_DIR}/.gitignore is missing — per-machine state files in ${OK_DIR}/ may show up as untracked changes. Run \`${currentCliCommandName()} init\` to add the recommended ignore entries.`,
+      `Note: ${PS_DIR}/.gitignore is missing — per-machine state files in ${PS_DIR}/ may show up as untracked changes. Run \`${currentCliCommandName()} init\` to add the recommended ignore entries.`,
     );
   }
 
@@ -369,11 +369,11 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
     throw err;
   }
 
-  const legacyFound = findLegacyRuntimeFiles(okDir);
+  const legacyFound = findLegacyRuntimeFiles(psDir);
   if (legacyFound.length > 0) {
     getLogger('boot').warn(
       { files: legacyFound },
-      `Found legacy runtime files at ${OK_DIR}/${legacyFound.join(', ')}. Delete ${OK_DIR}/ and re-init — these files moved to ${OK_DIR}/${LOCAL_DIR}/.`,
+      `Found legacy runtime files at ${PS_DIR}/${legacyFound.join(', ')}. Delete ${PS_DIR}/ and re-init — these files moved to ${PS_DIR}/${LOCAL_DIR}/.`,
     );
   }
 
@@ -478,7 +478,7 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
     : new AcpThreadManager({
         contentDir: opts.contentDir,
         localDir: lockDir,
-        globalDir: okUserHomeDir(),
+        globalDir: psUserHomeDir(),
         registry: serverInstance.acpRegistry,
         permissions: serverInstance.acpPermissions,
         sessionManager,
@@ -788,7 +788,7 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
   try {
     const m = await migrateStoreSkillsInPlace({
       projectDir,
-      skillsRoot: resolve(opts.contentDir, OK_DIR, SKILLS_STORE_DIRNAME),
+      skillsRoot: resolve(opts.contentDir, PS_DIR, SKILLS_STORE_DIRNAME),
       inPlaceNames: async () =>
         genuineInPlaceNames(opts.contentDir, scanInPlaceSkills(opts.contentDir)),
     });
@@ -813,7 +813,7 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
     const home = homedir();
     const gm = await migrateStoreSkillsInPlace({
       projectDir: home,
-      skillsRoot: resolve(home, OK_DIR, SKILLS_STORE_DIRNAME),
+      skillsRoot: resolve(home, PS_DIR, SKILLS_STORE_DIRNAME),
       hostRoots: USER_HOST_ROOTS_BY_PRECEDENCE,
       inPlaceNames: async () => genuineInPlaceNames(home, await scanGlobalInPlaceSkillsAsync(home)),
     });

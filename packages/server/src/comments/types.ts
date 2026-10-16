@@ -1,4 +1,4 @@
-import type { CommentThreadMeta } from '@inkeep/open-knowledge-core';
+import type { CommentThreadMeta } from '@palimpsest/core';
 
 export {
   type Anchor,
@@ -6,7 +6,7 @@ export {
   type CommentThreadMeta,
   CommentThreadMetaSchema,
   type PropertyPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export type CommentThreadPatch = Partial<
   Pick<CommentThreadMeta, 'docName' | 'anchor' | 'state' | 'queued' | 'latestComment' | 'updatedAt'>

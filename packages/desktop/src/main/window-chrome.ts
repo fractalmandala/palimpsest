@@ -3,9 +3,9 @@ import {
   CHROME_BG_DARK,
   CHROME_BG_LIGHT,
   REDUCED_CHROME_HEADER_HEIGHT_PX,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { BrowserWindowConstructorOptions } from 'electron';
-import type { OkChromeColors } from '../shared/bridge-contract.ts';
+import type { PsChromeColors } from '../shared/bridge-contract.ts';
 
 export const TITLEBAR_OVERLAY_HEIGHT = REDUCED_CHROME_HEADER_HEIGHT_PX;
 
@@ -41,7 +41,7 @@ export interface TitleBarOverlayOptions {
   height: number;
 }
 
-function chromeColors(isDark: boolean, live?: OkChromeColors): OkChromeColors {
+function chromeColors(isDark: boolean, live?: PsChromeColors): PsChromeColors {
   return {
     bg: live?.bg ?? (isDark ? CHROME_BG.dark : CHROME_BG.light),
     symbol: live?.symbol ?? (isDark ? CHROME_SYMBOL.dark : CHROME_SYMBOL.light),
@@ -50,7 +50,7 @@ function chromeColors(isDark: boolean, live?: OkChromeColors): OkChromeColors {
 
 export function computeTitleBarOverlay(
   isDark: boolean,
-  live?: OkChromeColors,
+  live?: PsChromeColors,
   height: number = TITLEBAR_OVERLAY_HEIGHT,
 ): TitleBarOverlayOptions {
   const { bg, symbol } = chromeColors(isDark, live);
@@ -102,7 +102,7 @@ export function applyThemeToWindow(
   win: ThemeableWindow,
   platform: NodeJS.Platform,
   isDark: boolean,
-  live?: OkChromeColors,
+  live?: PsChromeColors,
 ): void {
   if (platform === 'darwin' || win.isDestroyed()) return;
   const { bg } = chromeColors(isDark, live);

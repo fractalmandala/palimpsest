@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ComponentProps, ReactNode } from 'react';
 import { DotTexture } from '@/components/dot-texture';
 import { SiteFooter } from '@/components/footer';
-import { OkWordmark } from '@/components/ok-wordmark';
+import { PsWordmark } from '@/components/ps-wordmark';
 import { cn } from '@/lib/utils';
 
 export function SlidePageShell({ children }: { children: ReactNode }) {
@@ -19,9 +19,9 @@ export function SlidePageShell({ children }: { children: ReactNode }) {
       />
       <header className="relative z-10 px-6">
         <div className="container mx-auto flex pt-8 md:pt-10">
-          <Link href="/" aria-label="OpenKnowledge home" className="inline-flex items-center">
+          <Link href="/" aria-label="Palimpsest home" className="inline-flex items-center">
             {}
-            <OkWordmark aria-hidden="true" className="h-8 w-auto text-slide-text" />
+            <PsWordmark aria-hidden="true" className="h-8 w-auto text-slide-text" />
           </Link>
         </div>
       </header>

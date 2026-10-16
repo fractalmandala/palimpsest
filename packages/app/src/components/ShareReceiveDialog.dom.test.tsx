@@ -1,10 +1,10 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkShareReceivedPayload } from '@/lib/desktop-bridge-types';
+import type { PsShareReceivedPayload } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
-type SharePayload = OkShareReceivedPayload | null;
+type SharePayload = PsShareReceivedPayload | null;
 
 function createTestStore(initial: SharePayload) {
   let current = initial;
@@ -28,17 +28,17 @@ function createTestStore(initial: SharePayload) {
 }
 
 function okPayload(
-  overrides: Partial<Extract<OkShareReceivedPayload, { kind: 'launcher-miss' }>['share']> = {},
-): Extract<OkShareReceivedPayload, { kind: 'launcher-miss' }> {
+  overrides: Partial<Extract<PsShareReceivedPayload, { kind: 'launcher-miss' }>['share']> = {},
+): Extract<PsShareReceivedPayload, { kind: 'launcher-miss' }> {
   return {
     kind: 'launcher-miss',
     share: {
       contentRootDepth: null,
       host: 'github.com',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'main',
-      sharedUrl: 'https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md',
+      sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md',
       repositoryTarget: { kind: 'doc', docPath: 'docs/guide.md' },
       target: { kind: 'doc', docPath: 'docs/guide.md' },
       ...overrides,
@@ -219,7 +219,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
           detail: [
             "Cloning into '/Users/me/Documents/sharing-repo'...",
             'remote: Repository not found.',
-            "fatal: repository 'https://github.com/inkeep/open-knowledge.git/' not found",
+            "fatal: repository 'https://github.com/fractalmandala/palimpsest.git/' not found",
           ].join('\n'),
         }),
       ),
@@ -243,7 +243,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     expect(message).toContain('Repository not found');
     expect(message).not.toMatch(/Cloning into/i);
     expect(message).not.toContain('/Users/me');
-    expect(message).not.toContain('github.com/inkeep/open-knowledge');
+    expect(message).not.toContain('github.com/fractalmandala/palimpsest');
     expect(screen.queryByTestId('share-receive-clone-error-url')).toBeNull();
     expect(screen.queryByTestId('share-receive-clone-error-detail')).toBeNull();
 
@@ -371,7 +371,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     const store = createTestStore(okPayload({ branch: 'feat/share' }));
     const cloneController = {
       getAuthStatus: vi.fn(() => Promise.resolve({ authenticated: false, host: 'github.com' })),
-      runClone: vi.fn(() => Promise.resolve({ kind: 'ok', dir: '/cloned/open-knowledge' })),
+      runClone: vi.fn(() => Promise.resolve({ kind: 'ok', dir: '/cloned/palimpsest' })),
       startSignIn: vi.fn(() =>
         Promise.resolve({ authenticated: true, host: 'github.com', login: 'alice' }),
       ),
@@ -379,14 +379,14 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/wrong', '/right');
     bridge.__validationResults.push(
       { kind: 'wrong-repo', actualOwner: 'fork', actualRepo: 'repo' },
-      { kind: 'ok', gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git' },
+      { kind: 'ok', gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git' },
     );
 
     await renderDialog({ bridge, cloneController, store });
 
     expect(await screen.findByTestId('share-receive-dialog')).toBeTruthy();
     expect(screen.getByTestId('share-receive-metadata').textContent).toContain(
-      'inkeep/open-knowledge',
+      'fractalmandala/palimpsest',
     );
     expect(screen.getByTestId('share-receive-metadata').textContent).toContain('docs/guide.md');
     expect(screen.getByTestId('share-receive-metadata-branch').textContent).toBe('feat/share');
@@ -402,13 +402,13 @@ describe('ShareReceiveDialog runtime behavior', () => {
     await waitFor(() =>
       expect(cloneController.runClone).toHaveBeenCalledWith({
         branch: 'feat/share',
-        url: 'https://github.com/inkeep/open-knowledge.git',
+        url: 'https://github.com/fractalmandala/palimpsest.git',
       }),
     );
     await waitFor(() =>
       expect(bridge.project.open).toHaveBeenCalledWith({
         entryPoint: 'share-receive',
-        path: '/cloned/open-knowledge',
+        path: '/cloned/palimpsest',
         pendingDeepLinkTarget: {
           kind: 'doc',
           path: 'docs/guide.md',
@@ -425,7 +425,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     fireEvent.click(screen.getByTestId('share-receive-local'));
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
-        'This folder is a clone of fork/repo, not inkeep/open-knowledge. Pick a different folder?',
+        'This folder is a clone of fork/repo, not fractalmandala/palimpsest. Pick a different folder?',
       ),
     );
     await waitFor(() => expect(bridge.project.readHeadBranch).toHaveBeenCalledWith('/right'));
@@ -447,7 +447,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/local/clone');
     bridge.__validationResults.push({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
 
     await renderDialog({ bridge, store });
@@ -473,7 +473,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     expect(openArg.pendingShareBranchSwitch?.currentBranch).toBe('main');
     expect(openArg.pendingShareBranchSwitch?.share).toMatchObject({
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
       branch: 'feat/share',
       target: { kind: 'doc', docPath: 'docs/guide.md' },
     });
@@ -487,7 +487,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/local/clone');
     bridge.__validationResults.push({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
 
     await renderDialog({ bridge, store });
@@ -515,7 +515,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/local/clone');
     bridge.__validationResults.push({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
     bridge.project.readHeadBranch = vi.fn(() =>
       Promise.resolve({ currentBranch: null, detached: true, headSha: '1234567' }),
@@ -549,7 +549,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/local/clone');
     bridge.__validationResults.push({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
     bridge.project.readHeadBranch = vi.fn(() =>
       Promise.resolve({ currentBranch: null, detached: false, headSha: null }),
@@ -580,7 +580,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/local/clone');
     bridge.__validationResults.push({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
 
     await renderDialog({ bridge, store });
@@ -608,7 +608,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     bridge.__folderPicks.push('/local/clone');
     bridge.__validationResults.push({
       kind: 'ok',
-      gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+      gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
     });
     bridge.project.readHeadBranch = vi.fn(() => Promise.reject(new Error('ipc channel closed')));
 

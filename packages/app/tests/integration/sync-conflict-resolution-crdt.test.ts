@@ -318,7 +318,7 @@ describe('FR7 + FR9: mutating handlers refuse with RFC 9457 slim 409 during conf
     const folder = `folder-${crypto.randomUUID()}`;
     const childBase = `child-${crypto.randomUUID()}`;
     const childDocName = `${folder}/${childBase}`;
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-test-folderconflict-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-test-folderconflict-')));
     mkdirSync(join(contentDir, folder), { recursive: true });
     writeFileSync(join(contentDir, folder, `${childBase}.md`), BASE_CONTENT, 'utf-8');
     const server = await createTestServer({

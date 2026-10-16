@@ -1,4 +1,4 @@
-import { currentCliCommandName } from '@inkeep/open-knowledge-core';
+import { currentCliCommandName } from '@palimpsest/core';
 
 function posixQuote(value: string): string {
   return `'${value.replaceAll("'", "'\\''")}'`;

@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   DEFAULT_LINKS_VALIDATION,
   DEFAULT_SUPPRESS_LOG_LINK_ADVISORIES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { ApiExtensionOptions } from './api-extension.ts';
 import { createApiExtension as createApiExtensionBase } from './api-extension.ts';
 import type { BacklinkIndex } from './backlink-index.ts';

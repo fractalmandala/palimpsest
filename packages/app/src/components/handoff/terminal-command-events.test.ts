@@ -50,7 +50,7 @@ describe('the bus', () => {
     const unsubscribe = subscribeToTerminalCommandRequests(seen, target);
 
     target.dispatchEvent(
-      new CustomEvent('open-knowledge:terminal-command', { detail: 'npm publish' }),
+      new CustomEvent('palimpsest:terminal-command', { detail: 'npm publish' }),
     );
 
     expect(seen).not.toHaveBeenCalled();

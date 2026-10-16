@@ -13,9 +13,9 @@ test('header, shortcuts and palette switch constrained sidebars without changing
   await api.seedDocs([{ name: docName, markdown: MARKDOWN }]);
   await page.context().addCookies([{ name: 'sidebar_width', value: '288px', url: baseURL }]);
   await page.addInitScript(() => {
-    localStorage.setItem('ok-doc-panel-width-v1', '600');
+    localStorage.setItem('ps-doc-panel-width-v1', '600');
     localStorage.setItem(
-      'ok-sidebar-pins-v2',
+      'ps-sidebar-pins-v2',
       JSON.stringify({
         left: { above: 'open', below: 'open', embedded: 'open' },
         right: { above: 'open', below: 'open', embedded: 'open' },
@@ -85,7 +85,7 @@ test('header, shortcuts and palette switch constrained sidebars without changing
   await expect(page.locator('.ProseMirror:not(.composer-prosemirror)').first()).toContainText(
     'The document survives sidebar switching.',
   );
-  expect(await page.evaluate(() => localStorage.getItem('ok-doc-panel-width-v1'))).toBe('600');
+  expect(await page.evaluate(() => localStorage.getItem('ps-doc-panel-width-v1'))).toBe('600');
   expect(
     (await page.context().cookies()).find((cookie) => cookie.name === 'sidebar_width')?.value,
   ).toBe('288px');

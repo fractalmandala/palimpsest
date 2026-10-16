@@ -93,7 +93,7 @@ test.describe('invalid-image placeholder (PRD-7860)', () => {
       ].join('\n'),
     );
 
-    const placeholders = page.locator('.ok-image-error-placeholder');
+    const placeholders = page.locator('.ps-image-error-placeholder');
     await expect(placeholders).toHaveCount(2, { timeout: 15_000 });
 
     for (const placeholder of await placeholders.all()) {
@@ -114,8 +114,8 @@ test.describe('invalid-image placeholder (PRD-7860)', () => {
       expect(geometry?.elementRight).toBeLessThanOrEqual((geometry?.cellRight ?? 0) + 0.5);
 
       const textStyles = await placeholder.evaluate((element) => {
-        const message = element.querySelector('.ok-image-error-message');
-        const target = element.querySelector('.ok-image-error-target');
+        const message = element.querySelector('.ps-image-error-message');
+        const target = element.querySelector('.ps-image-error-target');
         const rootStyle = getComputedStyle(document.documentElement);
         return {
           messageColor: message ? getComputedStyle(message).color : null,

@@ -18,8 +18,8 @@ import {
   type IntentDesire,
   planIntents,
   type SatisfierId,
-} from '@inkeep/open-knowledge-core';
-import { loggerFactory, logsCurrentPath } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { loggerFactory, logsCurrentPath } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EDITOR_TARGETS } from '../commands/editors.ts';
 import { ensurePiBridge, probePiBridgeState } from '../commands/pi-acp-bridge.ts';
@@ -30,7 +30,7 @@ let root: string;
 let ctx: CliWriteContext;
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-registry-apply-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-registry-apply-')));
   mkdirSync(join(root, 'project'), { recursive: true });
   mkdirSync(join(root, 'home'), { recursive: true });
   ctx = { cwd: join(root, 'project'), home: join(root, 'home') };
@@ -94,7 +94,7 @@ it.each(['kept-shared', 'kept-unowned'] as const)(
           editor: 'pi',
           trust,
           trustDetail: expect.stringContaining(
-            trust === 'kept-shared' ? prompts : 'no OpenKnowledge ownership record',
+            trust === 'kept-shared' ? prompts : 'no Palimpsest ownership record',
           ),
         }),
       );
@@ -122,7 +122,7 @@ it('removes Pi trust from the configured agent directory without changing other 
   const report = await run([{ satisfierId: 'pi/mcp/project/managed-file', desired: 'absent' }]);
 
   expect(actionFor(report, 'pi/mcp/project/managed-file')?.action).toBe('removed');
-  expect(existsSync(join(ctx.cwd, '.pi', 'extensions', 'open-knowledge.ts'))).toBe(false);
+  expect(existsSync(join(ctx.cwd, '.pi', 'extensions', 'palimpsest.ts'))).toBe(false);
   expect(JSON.parse(readFileSync(trustPath, 'utf8'))).toEqual({ [unrelated]: true });
   expect(readFileSync(defaultTrustPath, 'utf8')).toBe(defaultTrust);
 });
@@ -137,7 +137,7 @@ it.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
       },
     });
     const extensions = join(ctx.cwd, '.pi', 'extensions');
-    const bridgePath = join(extensions, 'open-knowledge.ts');
+    const bridgePath = join(extensions, 'palimpsest.ts');
     const trustPath = join(root, 'home', '.pi', 'agent', 'trust.json');
     try {
       await ensurePiBridge(ctx.cwd, { mode: 'published' }, ctx.home);
@@ -176,18 +176,18 @@ describe('a Beta Pi bridge', () => {
   });
 
   it('is written beside a Stable bridge without touching it, and only its own file reads back satisfied', async () => {
-    const stablePath = join(ctx.cwd, '.pi', 'extensions', 'open-knowledge.ts');
-    const betaPath = join(ctx.cwd, '.pi', 'extensions', 'open-knowledge-beta.ts');
+    const stablePath = join(ctx.cwd, '.pi', 'extensions', 'palimpsest.ts');
+    const betaPath = join(ctx.cwd, '.pi', 'extensions', 'palimpsest-beta.ts');
     await run([{ satisfierId: 'pi/mcp/project/managed-file', desired: 'present' }]);
     const stableBytes = readFileSync(stablePath, 'utf-8');
 
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     expect(await stateOf('pi/mcp/project/managed-file')).not.toBe('satisfied');
     const report = await run([{ satisfierId: 'pi/mcp/project/managed-file', desired: 'present' }]);
 
     expect(actionFor(report, 'pi/mcp/project/managed-file')?.action).toBe('written');
     expect(readFileSync(stablePath, 'utf-8')).toBe(stableBytes);
-    expect(readFileSync(betaPath, 'utf-8').split('\n')[0]).toBe('// ok-pi-bridge-beta-v1');
+    expect(readFileSync(betaPath, 'utf-8').split('\n')[0]).toBe('// ps-pi-bridge-beta-v1');
     expect(await stateOf('pi/mcp/project/managed-file')).toBe('satisfied');
   });
 });

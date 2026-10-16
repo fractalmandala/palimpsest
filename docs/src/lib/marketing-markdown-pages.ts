@@ -9,7 +9,7 @@ export const MARKETING_MARKDOWN_PAGES: readonly MarketingMarkdownPage[] = [
   {
     path: '/index.md',
     section: 'Product',
-    name: 'OpenKnowledge',
+    name: 'Palimpsest',
     description: 'What it is, how to get it, and where everything else lives.',
   },
   {
@@ -22,7 +22,7 @@ export const MARKETING_MARKDOWN_PAGES: readonly MarketingMarkdownPage[] = [
     path: '/team.md',
     section: 'Product',
     name: 'Team',
-    description: 'Who builds OpenKnowledge, and the rendition of each profile.',
+    description: 'Who builds Palimpsest, and the rendition of each profile.',
   },
   {
     path: '/brand.md',

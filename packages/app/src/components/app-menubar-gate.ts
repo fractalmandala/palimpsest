@@ -1,6 +1,6 @@
 export function shouldShowAppMenubar(): boolean {
   if (typeof window === 'undefined') return false;
-  const bridge = window.okDesktop;
+  const bridge = window.psDesktop;
   return (
     bridge != null &&
     bridge.menu != null &&

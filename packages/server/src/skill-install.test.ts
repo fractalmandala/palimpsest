@@ -2,7 +2,7 @@ import type { SpawnOptions } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { HOSTS_WITH_USER_SKILL_DIR } from '@inkeep/open-knowledge-core';
+import { HOSTS_WITH_USER_SKILL_DIR } from '@palimpsest/core';
 import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { createTempDirFactory } from '../../../test-support/temp-dir.test-helper.ts';
 import { BUNDLE_SKILL_NAME } from './skill-bundles.ts';
@@ -39,7 +39,7 @@ function makeRecordingLogger(): { logger: SkillInstallLogger; records: RecordedL
 }
 
 function freshHome(): string {
-  return makeTempDir('ok-skill-install-');
+  return makeTempDir('ps-skill-install-');
 }
 
 function installHost(home: string, hostDir: string): void {
@@ -52,7 +52,7 @@ function homeEntries(home: string): string[] {
   return readdirSync(home).sort();
 }
 
-const YAML_REL = ['.ok', 'skill-state.yml'] as const;
+const YAML_REL = ['.ps', 'skill-state.yml'] as const;
 function yamlPathFor(home: string): string {
   return join(home, ...YAML_REL);
 }
@@ -77,13 +77,13 @@ function findWarn(records: RecordedLog[], event: string): RecordedLog | undefine
 }
 
 function writeLegacyUserSkill(home: string, hostDir = '.claude'): void {
-  const dir = join(home, hostDir, 'skills', 'open-knowledge');
+  const dir = join(home, hostDir, 'skills', 'palimpsest');
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'SKILL.md'), '# legacy\n', 'utf-8');
 }
 
 function writeSidecar(home: string, content: string): void {
-  const dir = join(home, '.ok');
+  const dir = join(home, '.ps');
   mkdirSync(dir, { recursive: true });
   const trimmed = content.replace(/\n+$/, '');
   const yaml = [
@@ -121,7 +121,7 @@ beforeEach(async () => {
 function readInstallEvents(home: string): Array<Record<string, unknown>> {
   let raw: string;
   try {
-    raw = readFileSync(join(home, '.ok', 'skill-install-events.jsonl'), 'utf-8');
+    raw = readFileSync(join(home, '.ps', 'skill-install-events.jsonl'), 'utf-8');
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return [];
     throw err;
@@ -140,7 +140,7 @@ describe('installUserSkill — scope discipline', () => {
     const result = await installUserSkill({ home, logger });
 
     expect(result).toBe('no-hosts');
-    expect(homeEntries(home)).toEqual(['.ok']);
+    expect(homeEntries(home)).toEqual(['.ps']);
     expect(existsSync(centralSkillDirFor(home))).toBe(false);
     expect(
       records.some((r) => (r.data as { event?: string }).event === 'skill-install.no-hosts'),
@@ -153,7 +153,7 @@ describe('installUserSkill — scope discipline', () => {
 
     await installUserSkill({ home });
 
-    expect(homeEntries(home)).toEqual(['.claude', '.ok']);
+    expect(homeEntries(home)).toEqual(['.claude', '.ps']);
     expect(existsSync(centralSkillDirFor(home))).toBe(false);
     for (const hostDir of ALL_HOST_DIRS.filter((d) => d !== '.claude')) {
       expect(existsSync(join(home, hostDir))).toBe(false);
@@ -211,7 +211,7 @@ describe('installUserSkill — scope discipline', () => {
   test('an unreadable decision file declines rather than installing', async () => {
     const home = freshHome();
     installHost(home, '.claude');
-    mkdirSync(join(home, '.ok', 'skill-state.yml'), { recursive: true });
+    mkdirSync(join(home, '.ps', 'skill-state.yml'), { recursive: true });
     const { logger, records } = makeRecordingLogger();
 
     const result = await installUserSkill({ home, logger });
@@ -263,7 +263,7 @@ describe('installUserSkill — scope discipline', () => {
 });
 
 function seedDeclaredRoots(home: string, roots: string[]): void {
-  const dir = join(home, '.ok', 'local');
+  const dir = join(home, '.ps', 'local');
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'skill-placements.json'), JSON.stringify({ roots }));
 }
@@ -308,8 +308,8 @@ describe('resolveBuiltinSkillHosts', () => {
   test('an unreadable placements ledger degrades to the static hosts only', () => {
     const home = freshHome();
     installHost(home, '.codex');
-    mkdirSync(join(home, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(home, '.ok', 'local', 'skill-placements.json'), '{ not json');
+    mkdirSync(join(home, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(home, '.ps', 'local', 'skill-placements.json'), '{ not json');
     expect(resolveBuiltinSkillHosts(home)).toEqual([
       { editor: 'codex', skillsRoot: '.codex/skills', custom: false },
     ]);
@@ -358,7 +358,7 @@ describe('installUserSkill — fresh install', () => {
 });
 
 describe('installUserSkill — legacy migration', () => {
-  test('pre-split open-knowledge dir is removed before the discovery bundle lands', async () => {
+  test('pre-split palimpsest dir is removed before the discovery bundle lands', async () => {
     const home = freshHome();
     installHost(home, '.claude');
     writeLegacyUserSkill(home, '.claude');
@@ -366,7 +366,7 @@ describe('installUserSkill — legacy migration', () => {
     const result = await installUserSkill({ home });
 
     expect(result).toBe('installed');
-    expect(existsSync(join(home, '.claude', 'skills', 'open-knowledge'))).toBe(false);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest'))).toBe(false);
     expect(existsSync(join(hostSkillDirFor(home, '.claude'), 'SKILL.md'))).toBe(true);
   });
 
@@ -377,7 +377,7 @@ describe('installUserSkill — legacy migration', () => {
 
     await installUserSkill({ home });
 
-    expect(existsSync(join(home, '.agents', 'skills', 'open-knowledge'))).toBe(false);
+    expect(existsSync(join(home, '.agents', 'skills', 'palimpsest'))).toBe(false);
   });
 
   test('fresh machine with no legacy dir → migration is a no-op', async () => {
@@ -479,7 +479,7 @@ describe('installUserSkill — stale sidecar', () => {
   test('malformed sidecar content → treated as fresh install', async () => {
     const home = freshHome();
     installHost(home, '.claude');
-    mkdirSync(join(home, '.ok'), { recursive: true });
+    mkdirSync(join(home, '.ps'), { recursive: true });
     writeFileSync(yamlPathFor(home), 'not: [valid', 'utf-8');
 
     expect(await installUserSkill({ home })).toBe('installed');
@@ -649,7 +649,7 @@ describe('buildAndOpenSkill — install-state gate', () => {
     }) as unknown as SpawnLike;
   }
   function writeCoworkState(home: string, version: string): void {
-    const dir = join(home, '.ok');
+    const dir = join(home, '.ps');
     mkdirSync(dir, { recursive: true });
     const yaml = [
       'schema: 1',
@@ -664,7 +664,7 @@ describe('buildAndOpenSkill — install-state gate', () => {
   function readCoworkState(home: string): string | null {
     let raw: string;
     try {
-      raw = readFileSync(join(home, '.ok', 'skill-state.yml'), 'utf-8');
+      raw = readFileSync(join(home, '.ps', 'skill-state.yml'), 'utf-8');
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
       throw err;
@@ -763,7 +763,7 @@ describe('installUserSkill — home guard', () => {
       expect(findWarn(records, 'skill-install.failed')?.data).toMatchObject({
         reason: 'home-not-absolute',
       });
-      expect(existsSync(join(process.cwd(), bogus, '.ok'))).toBe(false);
+      expect(existsSync(join(process.cwd(), bogus, '.ps'))).toBe(false);
     },
   );
 

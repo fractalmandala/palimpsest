@@ -1,22 +1,22 @@
 ---
 name: write-a-postmortem
 description: "Write a blameless incident postmortem under postmortems/ following the Google SRE shape — evidence-based timeline, trigger vs root cause vs symptom, contributing factors, what went well, and owned+dated+verifiable action items. Read when asked to write a postmortem, do an incident review, run a root cause analysis, write up the outage, retro on the outage, or when the user says we had an incident and wants it documented. Do NOT read to frame a proposal (use frame-a-proposal), write a spec (use write-a-spec), record a decision (use record-a-decision), or review a design (use review-a-design) — a postmortem documents an incident that already happened, it does not propose, specify, decide, or critique future work."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ok-beta` for Beta)."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ps-beta` for Beta)."
 metadata:
   pack: "software-lifecycle"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 
 # Write a postmortem
 
-The platform `/open-knowledge` skill still governs every markdown operation here — folder scope, the read/write tool surface, linking, and preview. This skill layers postmortem craft on top of it; it does not replace those rules.
+The platform `/palimpsest` skill still governs every markdown operation here — folder scope, the read/write tool surface, linking, and preview. This skill layers postmortem craft on top of it; it does not replace those rules.
 
 A postmortem is not a status update and not a blame ledger. It is a durable, blameless reconstruction of one incident, built from evidence, that makes the system's failure mode legible and produces action items someone will actually verify. The value compounds only when postmortems that share a subsystem link to each other — that is how a repeat class stops being invisible.
 
 This pack scaffolds `proposals/`, `decisions/`, `specs/`, `postmortems/`, and `guides/` at the project root. Postmortems live in `postmortems/`, one file per incident, filename `YYYY-MM-DD-name.md`, template id `postmortem`. Action items that are guide-shaped produce `runbook` stubs in `guides/`.
 
-The knowledge base is markdown owned by OpenKnowledge MCP. Read and list in-scope markdown with `exec` (`exec("ls -A postmortems/")`, `exec("cat postmortems/2024-03-02-auth-outage.md")`, `exec("grep -rln failover .")`) and `search({ query: "..." })`; create and edit with `write` and `edit`; inspect the link graph with `links`. Never use native Read/Edit/Grep/Glob/`cat` on in-scope markdown. Source code, logs, dashboards, deploy history, and chat transcripts are OUTSIDE the knowledge base — read those with the host's native tools. Links are plain markdown relative links `[db failover](./guides/db-failover.md)` — never backticked, never HTML anchors.
+The knowledge base is markdown owned by Palimpsest MCP. Read and list in-scope markdown with `exec` (`exec("ls -A postmortems/")`, `exec("cat postmortems/2024-03-02-auth-outage.md")`, `exec("grep -rln failover .")`) and `search({ query: "..." })`; create and edit with `write` and `edit`; inspect the link graph with `links`. Never use native Read/Edit/Grep/Glob/`cat` on in-scope markdown. Source code, logs, dashboards, deploy history, and chat transcripts are OUTSIDE the knowledge base — read those with the host's native tools. Links are plain markdown relative links `[db failover](./guides/db-failover.md)` — never backticked, never HTML anchors.
 
 ---
 

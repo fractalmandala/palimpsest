@@ -102,7 +102,7 @@ function useHarness(): {
   let opened: Harness | null = null;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-link-preview-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-link-preview-'));
     contentDir = join(tmpDir, 'content');
     mkdirSync(contentDir, { recursive: true });
   });

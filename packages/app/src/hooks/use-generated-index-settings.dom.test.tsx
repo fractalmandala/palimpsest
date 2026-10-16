@@ -156,7 +156,7 @@ describe('useGeneratedIndexSettings', () => {
     const activeStatus = {
       enabled: true,
       active: true,
-      git: { state: 'ready', ownership: 'open-knowledge' },
+      git: { state: 'ready', ownership: 'palimpsest' },
     };
     vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(

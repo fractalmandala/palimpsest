@@ -10,7 +10,7 @@ Typical day-2 flow: user shares a URL → ingest (preserve) → user asks "now r
 
 **None of these are MCP tools.** They are procedures that ship as skill guidance, in one of two shapes: a **reference file** inside a skill's bundle, which you open by path once that skill is loaded; or a **skill of its own**, which loads on description match when its pack is seeded.
 
-- ingest → reference file `ingest-and-sources.md`, here in this bundle. Ships with every `ok init` because Core's Grounding rule depends on it, pack or no pack.
+- ingest → reference file `ingest-and-sources.md`, here in this bundle. Ships with every `ps init` because Core's Grounding rule depends on it, pack or no pack.
 - onboard a repo that already has content → reference file `onboard-existing-repo.md`, here in this bundle.
 - research / consolidate → their own skills, `/research-with-sources` and `/consolidate-notes`, installed alongside their pack by `ok seed --pack knowledge-base`. **Not available otherwise** — if the pack isn't seeded, say so rather than improvising a lookalike pipeline.
 - generate / refresh a codebase wiki → reference file `generate-and-refresh.md`, inside the `codebase-wiki` skill's bundle and readable once that skill loads. Installed by `ok seed --pack codebase-wiki`.
@@ -25,7 +25,7 @@ Read the relevant procedure and execute its numbered steps with the OK verbs; do
 
 ## Starter packs — reference for inspiration
 
-The `ok` CLI (a Bash surface beside the MCP tools; other verbs `ok start` / `ok open` are documented in the core) ships proven layouts you can study to build a *similar* structure of your own — adapt the idea, don't clone the pack:
+The `ok` CLI (a Bash surface beside the MCP tools; other verbs `ps start` / `ps open` are documented in the core) ships proven layouts you can study to build a *similar* structure of your own — adapt the idea, don't clone the pack:
 
 - `knowledge-base` — source-grounded research articles
 - `software-lifecycle` — proposals, decisions, specs
@@ -34,7 +34,7 @@ The `ok` CLI (a Bash surface beside the MCP tools; other verbs `ok start` / `ok 
 - `worldbuilding` — fiction story wiki
 - `writing-pipeline` — drafts → published
 - `entity-vault` — people / companies / meetings (personal CRM)
-- `okf` — Open Knowledge Format–conformant base
+- `psf` — Palimpsest Format–conformant base
 
 A pack that ships skills installs them project-local when seeded. Those skills are where the pack's procedures live; a pack may ship one skill or several.
 

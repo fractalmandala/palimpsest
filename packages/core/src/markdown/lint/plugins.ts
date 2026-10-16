@@ -6,13 +6,13 @@ import {
 } from './frontmatter-validate.ts';
 import { fixMarkdownText, runMarkdownlint } from './markdownlint-runner.ts';
 import {
-  OKF_FRONTMATTER_ONLY_TOGGLES,
-  okfAdvertisedSchemaMappings,
+  PSF_FRONTMATTER_ONLY_TOGGLES,
+  psfAdvertisedSchemaMappings,
   runOkfFrontmatterRules,
   selectOkfFrontmatterSchemas,
-} from './okf-frontmatter/registry.ts';
-import { selectEnabledOkfRules } from './okf-rules.ts';
-import { runOkfRules } from './okf-runner.ts';
+} from './psf-frontmatter/registry.ts';
+import { selectEnabledOkfRules } from './psf-rules.ts';
+import { runOkfRules } from './psf-runner.ts';
 import {
   type FrontmatterSchemaMapping,
   type FrontmatterSlice,
@@ -89,8 +89,8 @@ const frontmatterPlugin: LintPlugin<'frontmatter', FrontmatterSlice> = {
   },
 };
 
-const okfPlugin: LintPlugin<'okf', OkfSlice> = {
-  id: 'okf',
+const psfPlugin: LintPlugin<'psf', OkfSlice> = {
+  id: 'psf',
   sliceSchema: z.object({
     enabled: z.boolean(),
     rules: z.record(z.string(), z.boolean()).optional(),
@@ -107,13 +107,13 @@ const okfPlugin: LintPlugin<'okf', OkfSlice> = {
     schemasForDoc: (slice, docName) => selectOkfFrontmatterSchemas(slice.rules, docName),
     narrowSliceToFrontmatter: (slice) => ({
       ...slice,
-      rules: { ...slice.rules, ...OKF_FRONTMATTER_ONLY_TOGGLES },
+      rules: { ...slice.rules, ...PSF_FRONTMATTER_ONLY_TOGGLES },
     }),
-    advertisedMappings: (slice) => okfAdvertisedSchemaMappings(slice.rules),
+    advertisedMappings: (slice) => psfAdvertisedSchemaMappings(slice.rules),
   },
 };
 
-export const LINT_PLUGINS = [markdownlintPlugin, frontmatterPlugin, okfPlugin] as const;
+export const LINT_PLUGINS = [markdownlintPlugin, frontmatterPlugin, psfPlugin] as const;
 
 type LintPluginEntry = (typeof LINT_PLUGINS)[number];
 

@@ -6,7 +6,7 @@ import type { PinoLogger } from '../logger.ts';
 import { stagedInstall } from './staged-install.ts';
 
 const PROJECT_SKILL_STAGE_PARENT = 'agent-skill';
-const PROJECT_SKILL_STAGE_NAME = 'open-knowledge';
+const PROJECT_SKILL_STAGE_NAME = 'palimpsest';
 export const PROJECT_SKILL_ENTRY = 'SKILL.md';
 
 const MISSING_OR_WRONG_KIND = new Set(['ENOENT', 'ENOTDIR', 'EISDIR']);

@@ -32,8 +32,8 @@ import {
 
 const WIDE = { width: 1440, height: 900 } as const;
 const VERSION = '9.9.9';
-const DOWNLOAD_URL = 'https://openknowledge.ai/download';
-const RELEASE_URL = 'https://openknowledge.ai/changelog';
+const DOWNLOAD_URL = 'https://github.com/fractalmandala/palimpsest/download';
+const RELEASE_URL = 'https://github.com/fractalmandala/palimpsest/changelog';
 const STACK_NAME = 'Updates and feedback';
 const STACK = `[data-testid="${CORNER_STACK_TEST_ID}"]`;
 const BOTTOM_TERMINAL = terminalPaneCard('bottom');

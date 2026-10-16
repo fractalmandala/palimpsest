@@ -1,8 +1,8 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import type { ServerRuntimeConfig } from '@inkeep/open-knowledge-core';
-import type { BootedServer, BootServerOptions } from '@inkeep/open-knowledge-server';
+import type { ServerRuntimeConfig } from '@palimpsest/core';
+import type { BootedServer, BootServerOptions } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { SetupUtilityDeps, UtilityHandle } from './server-entry.ts';
 
@@ -19,7 +19,7 @@ let testDir: string;
 beforeEach(() => {
   testDir = resolve(
     tmpdir(),
-    `ok-desktop-entry-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    `ps-desktop-entry-${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
   mkdirSync(testDir, { recursive: true });
   fakeHome = resolve(testDir, '__home__');
@@ -30,13 +30,13 @@ afterEach(() => {
 });
 
 function writeProjectConfig(yaml: string) {
-  const dir = resolve(testDir, '.ok');
+  const dir = resolve(testDir, '.ps');
   mkdirSync(dir, { recursive: true });
   writeFileSync(resolve(dir, 'config.yml'), yaml, 'utf-8');
 }
 
 function writeLocalConfig(yaml: string) {
-  const dir = resolve(testDir, '.ok', 'local');
+  const dir = resolve(testDir, '.ps', 'local');
   mkdirSync(dir, { recursive: true });
   writeFileSync(resolve(dir, 'config.yml'), yaml, 'utf-8');
 }
@@ -60,7 +60,7 @@ describe('resolveDesktopServerRuntime — scope-correct three-layer load', () =>
     writeLocalConfig('server:\n  allowExternal: false\n');
     expect((await resolveDesktopServerRuntime(testDir)).serverRuntime.allowExternal).toBe(false);
 
-    rmSync(resolve(testDir, '.ok'), { recursive: true, force: true });
+    rmSync(resolve(testDir, '.ps'), { recursive: true, force: true });
     writeProjectConfig('server:\n  allowExternal: false\n');
     writeLocalConfig('server:\n  allowExternal: true\n');
     expect((await resolveDesktopServerRuntime(testDir)).serverRuntime.allowExternal).toBe(true);
@@ -157,7 +157,7 @@ async function driveInit(opts: {
       },
     },
     importServer: async () =>
-      ({ bootServer: fakeBootServer }) as unknown as typeof import('@inkeep/open-knowledge-server'),
+      ({ bootServer: fakeBootServer }) as unknown as typeof import('@palimpsest/server'),
     exit: () => {},
     parentPid: process.pid,
     killProbe: () => {},

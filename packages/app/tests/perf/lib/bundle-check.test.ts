@@ -20,7 +20,7 @@ function write(relPath: string, content: string): void {
 }
 
 function fakeIndexChunk(): string {
-  return 'console.log("ok-index-stub");\n'.repeat(50);
+  return 'console.log("ps-index-stub");\n'.repeat(50);
 }
 
 function fakeTelemetryChunk(): string {
@@ -55,20 +55,20 @@ describe('assertBundleHealth', () => {
     expect(report.forbiddenHits.some((h) => h.sentinel === '__ok_perf')).toBe(true);
   });
 
-  test("fails when 'ok-hdr-histogram-v1' sentinel appears in a prod chunk", () => {
+  test("fails when 'ps-hdr-histogram-v1' sentinel appears in a prod chunk", () => {
     write('telemetry-impl-abc.js', fakeTelemetryChunk());
-    write('index-def.js', `${fakeIndexChunk()}\nconsole.log("ok-hdr-histogram-v1");`);
+    write('index-def.js', `${fakeIndexChunk()}\nconsole.log("ps-hdr-histogram-v1");`);
     const report = assertBundleHealth({ distAssetsDir: join(dir, 'assets') });
     expect(report.ok).toBe(false);
-    expect(report.forbiddenHits.some((h) => h.sentinel === 'ok-hdr-histogram-v1')).toBe(true);
+    expect(report.forbiddenHits.some((h) => h.sentinel === 'ps-hdr-histogram-v1')).toBe(true);
   });
 
-  test("fails when 'ok-typing-burst-detector-v1' sentinel appears in a prod chunk", () => {
+  test("fails when 'ps-typing-burst-detector-v1' sentinel appears in a prod chunk", () => {
     write('telemetry-impl-abc.js', fakeTelemetryChunk());
-    write('index-def.js', `${fakeIndexChunk()}\nconst x = "ok-typing-burst-detector-v1";`);
+    write('index-def.js', `${fakeIndexChunk()}\nconst x = "ps-typing-burst-detector-v1";`);
     const report = assertBundleHealth({ distAssetsDir: join(dir, 'assets') });
     expect(report.ok).toBe(false);
-    expect(report.forbiddenHits.some((h) => h.sentinel === 'ok-typing-burst-detector-v1')).toBe(
+    expect(report.forbiddenHits.some((h) => h.sentinel === 'ps-typing-burst-detector-v1')).toBe(
       true,
     );
   });

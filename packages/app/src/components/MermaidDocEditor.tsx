@@ -17,17 +17,17 @@ import { yCollab } from 'y-codemirror.next';
 import type * as Y from 'yjs';
 import { propEditorHighlight } from '@/editor/components/CodeMirrorPropInput';
 import { type MermaidSourceBinding, MermaidView } from '@/editor/components/Mermaid';
-import { okCmTheme } from '@/editor/extensions/cm-theme';
+import { psCmTheme } from '@/editor/extensions/cm-theme';
 import { registerFullPageCmView, unregisterFullPageCmView } from '@/editor/full-page-cm-views';
 import { isOverlayLayerOpen } from '@/lib/overlay-layers';
 import { acquireDocUndoManager } from './doc-undo-manager';
 
-const darkTheme = okCmTheme({
+const darkTheme = psCmTheme({
   dark: true,
   background: 'var(--background)',
   gutterBackground: 'var(--muted)',
 });
-const lightTheme = okCmTheme({
+const lightTheme = psCmTheme({
   dark: false,
   background: 'var(--background)',
   gutterBackground: 'var(--muted)',

@@ -1,4 +1,4 @@
-import type { OkNoteWindowMainAction } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsNoteWindowMainAction } from '@palimpsest/core/desktop-bridge';
 import { useEffect } from 'react';
 import { revealQueue } from '@/comments/reveal-queue';
 import { requestDocPanelTab } from '@/components/doc-panel-events';
@@ -9,7 +9,7 @@ import { hashFromDocName, isSameHash } from '@/lib/doc-hash';
 import { isNoteWindow } from '@/lib/note-window-mode';
 
 export function dispatchNoteWindowMainAction(
-  action: OkNoteWindowMainAction,
+  action: PsNoteWindowMainAction,
   target: Window | EventTarget,
 ): void {
   switch (action.kind) {
@@ -57,7 +57,7 @@ export function dispatchNoteWindowMainAction(
 export function NoteWindowMainActionReceiver() {
   useEffect(() => {
     if (isNoteWindow()) return;
-    const subscribe = window.okDesktop?.noteWindow?.onMainAction;
+    const subscribe = window.psDesktop?.noteWindow?.onMainAction;
     if (typeof subscribe !== 'function') return;
     return subscribe((action) => dispatchNoteWindowMainAction(action, window));
   }, []);

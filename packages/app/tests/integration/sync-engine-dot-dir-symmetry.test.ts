@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createContentFilter } from '@inkeep/open-knowledge-server';
+import { createContentFilter } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { createTestConflictAuthority } from '../../../server/src/conflict-authority.test-helper.ts';
@@ -15,20 +15,20 @@ function git(cwd: string, args: string[]): string {
 }
 
 function makeRepo(): { projectDir: string; originDir: string } {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-sync-dotdir-repo-'));
-  const originDir = mkdtempSync(join(tmpdir(), 'ok-sync-dotdir-origin-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-sync-dotdir-repo-'));
+  const originDir = mkdtempSync(join(tmpdir(), 'ps-sync-dotdir-origin-'));
   tmpRoots.push(projectDir, originDir);
 
   git(projectDir, ['init', '-b', 'main']);
   configureTestGitRepository(projectDir);
   git(projectDir, ['config', 'user.name', 'Test User']);
   git(projectDir, ['config', 'user.email', 'test@example.com']);
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
-  mkdirSync(join(projectDir, '.cursor', 'skills', 'open-knowledge'), { recursive: true });
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
+  mkdirSync(join(projectDir, '.cursor', 'skills', 'palimpsest'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.cursor', 'skills', 'open-knowledge', 'SKILL.md'),
-    '# OpenKnowledge Skill\n',
+    join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'),
+    '# Palimpsest Skill\n',
     'utf-8',
   );
   writeFileSync(join(projectDir, 'regular.md'), '# Regular\n', 'utf-8');
@@ -50,7 +50,7 @@ describe('sync-engine dot-dir filter symmetry', () => {
   test('push cycle does not commit a deletion for tracked markdown under .cursor/skills', async () => {
     const { projectDir } = makeRepo();
     const headBefore = git(projectDir, ['rev-parse', 'HEAD']);
-    const skillPath = '.cursor/skills/open-knowledge/SKILL.md';
+    const skillPath = '.cursor/skills/palimpsest/SKILL.md';
 
     const engine = new SyncEngine({
       conflicts: createTestConflictAuthority(projectDir, projectDir),

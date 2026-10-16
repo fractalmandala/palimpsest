@@ -2,7 +2,7 @@ import {
   currentCliCommandName,
   currentDesktopProduct,
   piToolNamespace,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   buildManagedServerEntry,
   type McpInstallOptions,
@@ -47,11 +47,11 @@ export function buildPiExtensionSource(options: McpInstallOptions = {}): string 
   };
   return `${header}
 /**
- * Open Knowledge bridge for Pi — MANAGED FILE, written by \`${currentCliCommandName()} init\`.
+ * Palimpsest bridge for Pi — MANAGED FILE, written by \`${currentCliCommandName()} init\`.
  * Hand edits are overwritten whenever OK re-syncs this project; remove it
  * with \`${currentCliCommandName()} deinit\` (or delete the file) to disconnect Pi from OK.
  *
- * On session start it spawns Open Knowledge's MCP stdio server via OK's
+ * On session start it spawns Palimpsest's MCP stdio server via OK's
  * resilient launcher (bundle, then npx, then version-manager probes), performs
  * the MCP handshake, and registers each MCP tool as a Pi tool under an
  * \`${toolPrefix}\` prefix (Pi has no MCP namespacing; the prefix keeps OK's \`edit\` /
@@ -83,7 +83,7 @@ interface PendingRequest {
   reject: (err: Error) => void;
 }
 
-class OkMcpClient {
+class PsMcpClient {
   private child: ChildProcessWithoutNullStreams;
   private pending = new Map<number, PendingRequest>();
   private nextId = 1;
@@ -119,7 +119,7 @@ class OkMcpClient {
       if (!this.alive) return;
       this.alive = false;
       const err = new Error(
-        "Open Knowledge MCP server exited" +
+        "Palimpsest MCP server exited" +
           (this.stderrTail ? ": " + this.stderrTail.trim() : ""),
       );
       for (const p of this.pending.values()) p.reject(err);
@@ -167,7 +167,7 @@ class OkMcpClient {
     this.pending.delete(id);
     const error = msg.error as { message?: string } | undefined;
     if (error) {
-      pending.reject(new Error(error.message || "Open Knowledge MCP error"));
+      pending.reject(new Error(error.message || "Palimpsest MCP error"));
       return;
     }
     pending.resolve((msg.result ?? {}) as Record<string, unknown>);
@@ -185,7 +185,7 @@ class OkMcpClient {
     params: Record<string, unknown>,
     opts: { timeoutMs?: number; signal?: AbortSignal } = {},
   ): Promise<Record<string, unknown>> {
-    if (!this.alive) return Promise.reject(new Error("Open Knowledge MCP server is not running"));
+    if (!this.alive) return Promise.reject(new Error("Palimpsest MCP server is not running"));
     const id = this.nextId++;
     return new Promise<Record<string, unknown>>((resolve, reject) => {
       let timer: ReturnType<typeof setTimeout> | undefined;
@@ -234,10 +234,10 @@ class OkMcpClient {
   close(): void {
     this.alive = false;
     for (const p of this.pending.values()) {
-      p.reject(new Error("Open Knowledge MCP client closed"));
+      p.reject(new Error("Palimpsest MCP client closed"));
     }
     this.pending.clear();
-    // ok mcp exits on stdin EOF; the delayed kill is a backstop.
+    // ps mcp exits on stdin EOF; the delayed kill is a backstop.
     try {
       this.child.stdin.end();
     } catch {
@@ -272,20 +272,20 @@ function contentText(content: unknown): string {
     .join("\\n");
 }
 
-export default function okBridge(pi: {
+export default function psBridge(pi: {
   on(event: string, handler: (event: unknown, ctx: unknown) => unknown): void;
   registerTool(definition: Record<string, unknown>): void;
 }) {
-  let client: OkMcpClient | null = null;
-  let starting: Promise<OkMcpClient> | null = null;
+  let client: PsMcpClient | null = null;
+  let starting: Promise<PsMcpClient> | null = null;
   let sessionCwd = process.cwd();
   const registeredTools = new Set<string>();
 
-  async function ensureClient(): Promise<OkMcpClient> {
+  async function ensureClient(): Promise<PsMcpClient> {
     if (client && client.alive) return client;
     if (starting) return starting;
     starting = (async () => {
-      const next = new OkMcpClient(sessionCwd, () => {
+      const next = new PsMcpClient(sessionCwd, () => {
         if (client === next) client = null;
       });
       try {
@@ -326,7 +326,7 @@ export default function okBridge(pi: {
       pi.registerTool({
         name,
         label: "OK " + tool.name,
-        description: tool.description || "Open Knowledge " + tool.name + " tool.",
+        description: tool.description || "Palimpsest " + tool.name + " tool.",
         parameters: toParameters(tool.inputSchema),
         execute: async (
           _toolCallId: string,
@@ -341,7 +341,7 @@ export default function okBridge(pi: {
           );
           const text = contentText(result.content);
           if (result.isError) {
-            throw new Error(text || "Open Knowledge tool " + tool.name + " failed");
+            throw new Error(text || "Palimpsest tool " + tool.name + " failed");
           }
           return {
             content: [{ type: "text", text }],
@@ -362,7 +362,7 @@ export default function okBridge(pi: {
       const ui = (ctx as { ui?: { notify?: (m: string, level: string) => void } } | undefined)?.ui;
       try {
         ui?.notify?.(
-          "Open Knowledge tools unavailable: " + (err instanceof Error ? err.message : String(err)),
+          "Palimpsest tools unavailable: " + (err instanceof Error ? err.message : String(err)),
           "warning",
         );
       } catch {

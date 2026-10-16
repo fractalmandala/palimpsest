@@ -317,7 +317,7 @@ describe('Electron host short-circuit (US-010)', () => {
     expect(tryElectronBridge(undefined)).toBeNull();
   });
 
-  test('tryElectronBridge returns null when window.okDesktop is undefined (web/CLI)', async () => {
+  test('tryElectronBridge returns null when window.psDesktop is undefined (web/CLI)', async () => {
     const { tryElectronBridge } = await import('./use-collab-url');
     expect(tryElectronBridge({})).toBeNull();
   });
@@ -346,7 +346,7 @@ describe('Electron host short-circuit (US-010)', () => {
       platform: 'darwin' as const,
       appVersion: '0.0.0',
     };
-    expect(tryElectronBridge({ okDesktop: fakeBridge })).toBeNull();
+    expect(tryElectronBridge({ psDesktop: fakeBridge })).toBeNull();
   });
 
   test('tryElectronBridge returns the bridge when collabUrl is populated', async () => {
@@ -373,7 +373,7 @@ describe('Electron host short-circuit (US-010)', () => {
       platform: 'darwin' as const,
       appVersion: '0.1.0',
     };
-    const result = tryElectronBridge({ okDesktop: fakeBridge });
+    const result = tryElectronBridge({ psDesktop: fakeBridge });
     expect(result).toBe(fakeBridge);
   });
 

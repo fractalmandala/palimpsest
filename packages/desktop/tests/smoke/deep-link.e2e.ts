@@ -11,7 +11,7 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
 function userDataDirFor(tmpHome: string): string {
@@ -19,18 +19,18 @@ function userDataDirFor(tmpHome: string): string {
 }
 
 test.describe('deep-link warm-start smoke (M4 US-009 / AC7)', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Deep-link URL scheme is macOS-only in v0 (D51 NOT NOW).');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('open(1) shell-out post-launch routes extension-less docName to renderer hash', async ({
     captureStderrFor,
   }) => {
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-m4-deep-link-home-'));
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-m4-deep-link-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-m4-deep-link-home-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-m4-deep-link-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
     writeFileSync(join(projectDir, 'target.md'), '# Target Doc\n\nDeep-link smoke content.\n');
@@ -49,7 +49,7 @@ test.describe('deep-link warm-start smoke (M4 US-009 / AC7)', () => {
     const firstWindow = await app.firstWindow({ timeout: 15_000 });
     expect(firstWindow).toBeDefined();
 
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=target`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=target`;
     execSync(`open -g "${deepLink}"`, { stdio: 'pipe' });
 
     let editorPage: Page | undefined;
@@ -70,11 +70,11 @@ test.describe('deep-link warm-start smoke (M4 US-009 / AC7)', () => {
   test('open(1) shell-out with nested docName round-trips encoded slash', async ({
     captureStderrFor,
   }) => {
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-m4-deep-link-nested-home-'));
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-m4-deep-link-nested-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-m4-deep-link-nested-home-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-m4-deep-link-nested-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
     mkdirSync(join(projectDir, 'notes'), { recursive: true });
@@ -97,7 +97,7 @@ test.describe('deep-link warm-start smoke (M4 US-009 / AC7)', () => {
     const firstWindow = await app.firstWindow({ timeout: 15_000 });
     expect(firstWindow).toBeDefined();
 
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=notes%2Fmeeting`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=notes%2Fmeeting`;
     execSync(`open -g "${deepLink}"`, { stdio: 'pipe' });
 
     let editorPage: Page | undefined;

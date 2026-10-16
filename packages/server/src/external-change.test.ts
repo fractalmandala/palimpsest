@@ -6,7 +6,7 @@ import {
   BridgeInvariantViolationError,
   BridgeMergeContentLossError,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type * as Y from 'yjs';
 import { DocumentDurabilityState } from './document-durability-state.ts';
@@ -222,7 +222,7 @@ describe('applyExternalChange — throwing helper', () => {
   });
 
   test('preserves the original bridge violation when recovery snapshot persistence also fails', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-external-double-failure-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-external-double-failure-'));
     const persistencePath = join(dir, 'state.json');
     const state = new DocumentDurabilityState('main', { persistencePath });
     const docName = 'double-failure';
@@ -274,7 +274,7 @@ describe('applyExternalChange — throwing helper', () => {
   });
 
   test('redacts merge content loss and keeps ordinary failures diagnosable in the same field', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-external-redaction-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-external-redaction-'));
     const persistencePath = join(dir, 'state.json');
     const state = new DocumentDurabilityState('main', { persistencePath });
     const docName = 'redaction';
@@ -404,7 +404,7 @@ describe('createExternalChangeHandler — error-swallowing factory', () => {
     }
   });
 
-  test('factory wrapper re-throws BridgeMergeContentLossError to preserve OK_RETHROW_BRIDGE_LOSS gate', async () => {
+  test('factory wrapper re-throws BridgeMergeContentLossError to preserve PS_RETHROW_BRIDGE_LOSS gate', async () => {
     const errorSpy = vi.fn(() => {});
     const originalError = console.error;
     console.error = errorSpy;

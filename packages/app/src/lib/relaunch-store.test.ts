@@ -74,7 +74,7 @@ describe('relaunch-store', () => {
 });
 
 describe('installRelaunchStateBridge', () => {
-  test('no-op when window.okDesktop is undefined', () => {
+  test('no-op when window.psDesktop is undefined', () => {
     Object.defineProperty(globalThis, 'window', {
       configurable: true,
       value: {} as Window & typeof globalThis,
@@ -86,7 +86,7 @@ describe('installRelaunchStateBridge', () => {
     const { bridge, onRelaunching, onRelaunchFailed } = makeBridge();
     const testWindow = {} as Window & typeof globalThis;
     Object.defineProperty(globalThis, 'window', { configurable: true, value: testWindow });
-    Object.defineProperty(testWindow, 'okDesktop', { configurable: true, value: bridge });
+    Object.defineProperty(testWindow, 'psDesktop', { configurable: true, value: bridge });
 
     store.installRelaunchStateBridge();
     expect(onRelaunching).toHaveBeenCalledTimes(1);

@@ -15,7 +15,7 @@ interface SpawnResult {
 function runSmoke(env: Record<string, string>): Promise<SpawnResult> {
   return new Promise((resolve, reject) => {
     const child = spawn('node', [SCRIPT_PATH], {
-      env: { ...process.env, OK_UPDATER_FORCE_DEV: '1', MOCK_UPDATE_TIMEOUT_MS: '5000', ...env },
+      env: { ...process.env, PS_UPDATER_FORCE_DEV: '1', MOCK_UPDATE_TIMEOUT_MS: '5000', ...env },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';
@@ -48,7 +48,7 @@ describe('smoke-mock-update.mjs — self-test round-trip', () => {
   }, 15000);
 
   test('beta channel: serves /beta-mac.yml with default 0.4.0-beta.0 version', async () => {
-    const result = await runSmoke({ OK_UPDATER_MOCK_CHANNEL: 'beta' });
+    const result = await runSmoke({ PS_UPDATER_MOCK_CHANNEL: 'beta' });
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain('[mock-updater] event=start channel=beta version=0.4.0-beta.0');
@@ -60,10 +60,10 @@ describe('smoke-mock-update.mjs — self-test round-trip', () => {
   }, 15000);
 
   test('unsupported channel rejected with exit code 2', async () => {
-    const result = await runSmoke({ OK_UPDATER_MOCK_CHANNEL: 'rc' });
+    const result = await runSmoke({ PS_UPDATER_MOCK_CHANNEL: 'rc' });
 
     expect(result.code).toBe(2);
-    expect(result.stderr).toContain('unsupported OK_UPDATER_MOCK_CHANNEL=rc');
+    expect(result.stderr).toContain('unsupported PS_UPDATER_MOCK_CHANNEL=rc');
     expect(result.stdout).not.toContain('event=start');
   }, 15000);
 });

@@ -1,8 +1,8 @@
-import { stripFrontmatter } from '@inkeep/open-knowledge-core/extensions/frontmatter';
+import { stripFrontmatter } from '@palimpsest/core/extensions/frontmatter';
 import {
   diffFrontmatter,
   type FrontmatterDelta,
-} from '@inkeep/open-knowledge-core/frontmatter-diff';
+} from '@palimpsest/core/frontmatter-diff';
 import { createPatch } from 'diff';
 import { useEffect, useRef, useState } from 'react';
 import { useDocumentContext } from '@/editor/DocumentContext';

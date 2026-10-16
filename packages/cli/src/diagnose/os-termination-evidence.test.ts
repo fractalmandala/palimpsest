@@ -23,7 +23,7 @@ afterEach(() => {
 });
 
 function makeTmpDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-os-termination-test-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-os-termination-test-'));
   tmpDirs.push(dir);
   return dir;
 }
@@ -50,17 +50,17 @@ describe('parseJetsamReport', () => {
       jetsamReport(
         [
           {
-            name: 'OpenKnowledge',
+            name: 'Palimpsest',
             pid: 4406,
             rpages: 900,
             lifetimeMax: 1200,
             reason: 'vm-pageshortage',
           },
-          { name: 'OpenKnowledge Helper (Renderer)', pid: 4410, rpages: 50, lifetimeMax: 60 },
+          { name: 'Palimpsest Helper (Renderer)', pid: 4410, rpages: 50, lifetimeMax: 60 },
           { name: 'Slack', pid: 77, rpages: 9000, reason: 'per-process-limit' },
-          { name: 'OpenKnowledgeImpostor', pid: 5 },
+          { name: 'PalimpsestImpostor', pid: 5 },
         ],
-        'OpenKnowledge',
+        'Palimpsest',
       ),
     );
 
@@ -72,14 +72,14 @@ describe('parseJetsamReport', () => {
       largestProcessOwned: true,
       ownedProcesses: [
         {
-          name: 'OpenKnowledge',
+          name: 'Palimpsest',
           pid: 4406,
           killReason: 'vm-pageshortage',
           residentPages: 900,
           lifetimeMaxPages: 1200,
         },
         {
-          name: 'OpenKnowledge Helper (Renderer)',
+          name: 'Palimpsest Helper (Renderer)',
           pid: 4410,
           killReason: null,
           residentPages: 50,
@@ -99,11 +99,11 @@ describe('parseJetsamReport', () => {
 describe('macOS jetsam collection', () => {
   test('collects in-window events naming this app and counts the rest', async () => {
     const dir = makeTmpDir();
-    writeAged(dir, 'JetsamEvent-owned.ips', jetsamReport([{ name: 'OpenKnowledge', pid: 1 }]), 1);
+    writeAged(dir, 'JetsamEvent-owned.ips', jetsamReport([{ name: 'Palimpsest', pid: 1 }]), 1);
     writeAged(dir, 'JetsamEvent-foreign.ips', jetsamReport([{ name: 'Slack', pid: 2 }]), 1);
     writeAged(dir, 'JetsamEvent-garbage.ips', 'garbage', 1);
-    writeAged(dir, 'JetsamEvent-old.ips', jetsamReport([{ name: 'OpenKnowledge', pid: 3 }]), 9);
-    writeAged(dir, 'OpenKnowledge-crash.ips', jetsamReport([{ name: 'OpenKnowledge', pid: 4 }]), 1);
+    writeAged(dir, 'JetsamEvent-old.ips', jetsamReport([{ name: 'Palimpsest', pid: 3 }]), 9);
+    writeAged(dir, 'Palimpsest-crash.ips', jetsamReport([{ name: 'Palimpsest', pid: 4 }]), 1);
 
     const evidence = await collectOsTerminationEvidence({
       platform: 'darwin',
@@ -130,7 +130,7 @@ describe('macOS jetsam collection', () => {
       writeAged(
         dir,
         `JetsamEvent-${String(i).padStart(2, '0')}.ips`,
-        jetsamReport([{ name: 'OpenKnowledge', pid: i }]),
+        jetsamReport([{ name: 'Palimpsest', pid: i }]),
         1 + i / 100,
       );
     }
@@ -170,7 +170,7 @@ describe('the jetsam kill of one process', () => {
     utimesSync(path, new Date(atMs), new Date(atMs));
   }
 
-  const MAIN_KILLED = { name: 'OpenKnowledge', pid: 4406, rpages: 900, reason: 'vm-pageshortage' };
+  const MAIN_KILLED = { name: 'Palimpsest', pid: 4406, rpages: 900, reason: 'vm-pageshortage' };
   const NOTHING_MISSED = { unreadable: 0, unparseable: 0, skippedNewerOverCap: 0 };
 
   test('names the reason jetsam killed the queried pid and who held the most memory', () => {
@@ -233,7 +233,7 @@ describe('the jetsam kill of one process', () => {
     writeAt(
       dir,
       'JetsamEvent-alive.ips',
-      jetsamReport([{ name: 'OpenKnowledge', pid: 4406, rpages: 900 }]),
+      jetsamReport([{ name: 'Palimpsest', pid: 4406, rpages: 900 }]),
       LAST_ALIVE_MS + 40_000,
     );
     writeAt(
@@ -386,11 +386,11 @@ function runner(results: Record<string, CommandResult>) {
 
 describe('Linux journal collection', () => {
   const KERNEL_INVOKED =
-    '2026-10-04T18:49:10.100000+00:00 host-a kernel: openknowledge invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200';
+    '2026-10-04T18:49:10.100000+00:00 host-a kernel: palimpsest invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200';
   const KERNEL_TASK =
-    '2026-10-04T18:49:10.110000+00:00 host-a kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/run-p1.service,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/run-p1.service,task=openknowledge,pid=1234,uid=1000';
+    '2026-10-04T18:49:10.110000+00:00 host-a kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/run-p1.service,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/run-p1.service,task=palimpsest,pid=1234,uid=1000';
   const KERNEL_KILLED =
-    '2026-10-04T18:49:10.123456+00:00 host-a kernel: Memory cgroup out of memory: Killed process 1234 (openknowledge) total-vm:79404kB, anon-rss:65208kB, UID:1000';
+    '2026-10-04T18:49:10.123456+00:00 host-a kernel: Memory cgroup out of memory: Killed process 1234 (palimpsest) total-vm:79404kB, anon-rss:65208kB, UID:1000';
   const OOMD_PRESSURE =
     '2026-10-04T18:40:00.000000+00:00 host-a systemd-oomd[812]: Killed /user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-openknowledge-1234.scope due to memory pressure for /user.slice/user-1000.slice being 71.20% > 50.00% for > 20s with reclaim activity';
   const OOMD_SWAP =
@@ -480,7 +480,7 @@ describe('Linux journal collection', () => {
         origin: 'kernel',
         action: 'oom-invoked',
         pid: null,
-        processName: 'openknowledge',
+        processName: 'palimpsest',
         unit: null,
         trigger: null,
       },
@@ -490,7 +490,7 @@ describe('Linux journal collection', () => {
         origin: 'kernel',
         action: 'oom-kill',
         pid: 1234,
-        processName: 'openknowledge',
+        processName: 'palimpsest',
         unit: null,
         trigger: null,
       },
@@ -500,7 +500,7 @@ describe('Linux journal collection', () => {
         origin: 'kernel',
         action: 'oom-kill',
         pid: 1234,
-        processName: 'openknowledge',
+        processName: 'palimpsest',
         unit: null,
         trigger: null,
       },
@@ -590,7 +590,7 @@ describe('Linux journal collection', () => {
   describe('display-server connection loss', () => {
     const OWNED_PID = 2544264;
     const OWNED_FATAL = `2026-10-04T23:46:38.123456+00:00 host-a Hyprland[1200]: [${OWNED_PID}:1004/234638.123456:ERROR:ui/events/platform/wayland/wayland_event_watcher.cc:78] Fatal Wayland communication error: Broken pipe.`;
-    const OWNED_PROTOCOL = `2026-10-04T23:46:38.120000+00:00 host-a openknowledge[${OWNED_PID}]: [${OWNED_PID}:${OWNED_PID}:1004/234638.120000:ERROR:wayland_event_watcher.cc(42)] Wayland protocol error: zwp_text_input_v3@44: error 0: text input already enabled`;
+    const OWNED_PROTOCOL = `2026-10-04T23:46:38.120000+00:00 host-a palimpsest[${OWNED_PID}]: [${OWNED_PID}:${OWNED_PID}:1004/234638.120000:ERROR:wayland_event_watcher.cc(42)] Wayland protocol error: zwp_text_input_v3@44: error 0: text input already enabled`;
     const OWNED_X11 = `2026-10-03T08:00:00.000000+00:00 host-a gnome-shell[900]: [${OWNED_PID}:1003/080000.000000:ERROR:x11_util.cc(85)] X IO error received (X server probably went away)`;
     const FOREIGN_CHROMIUM =
       '2026-10-04T22:00:00.000000+00:00 host-a Hyprland[1200]: [4242:1004/220000.000000:ERROR:wayland_event_watcher.cc(42)] Fatal Wayland communication error: Connection reset by peer.';
@@ -819,7 +819,7 @@ describe('Windows event log collection', () => {
     expect(windowsEventLogArgs('Application')).toEqual([
       'qe',
       'Application',
-      "/q:*[System[(EventID=1000 or EventID=1001 or EventID=1002) and TimeCreated[timediff(@SystemTime) <= 604800000]] and EventData[Data='OpenKnowledge.exe' or Data='OpenKnowledge Beta.exe']]",
+      "/q:*[System[(EventID=1000 or EventID=1001 or EventID=1002) and TimeCreated[timediff(@SystemTime) <= 604800000]] and EventData[Data='Palimpsest.exe' or Data='Palimpsest Beta.exe']]",
       '/f:xml',
       '/rd:true',
       '/c:200',
@@ -832,7 +832,7 @@ describe('Windows event log collection', () => {
         'Microsoft-Windows-Resource-Exhaustion-Detector',
         2004,
         '2026-10-04T10:00:00Z',
-        memoryExhaustion(['OpenKnowledge.exe', 'chrome.exe']),
+        memoryExhaustion(['Palimpsest.exe', 'chrome.exe']),
       ),
       windowsEvent(
         'Microsoft-Windows-Resource-Exhaustion-Detector',
@@ -849,10 +849,10 @@ describe('Windows event log collection', () => {
         1002,
         '2026-10-04T09:00:00Z',
         eventData([
-          'OpenKnowledge.exe',
+          'Palimpsest.exe',
           '0.79.9.0',
           '4412',
-          'C:\\Users\\someone\\AppData\\Local\\Programs\\OpenKnowledge\\OpenKnowledge.exe',
+          'C:\\Users\\someone\\AppData\\Local\\Programs\\Palimpsest\\Palimpsest.exe',
           'Quit',
         ]),
       ),
@@ -883,7 +883,7 @@ describe('Windows event log collection', () => {
         log: 'System',
         provider: 'Microsoft-Windows-Resource-Exhaustion-Detector',
         eventId: 2004,
-        mentionsOpenKnowledge: true,
+        mentionsPalimpsest: true,
         data: [],
       },
       {
@@ -892,7 +892,7 @@ describe('Windows event log collection', () => {
         log: 'System',
         provider: 'Microsoft-Windows-Resource-Exhaustion-Detector',
         eventId: 2004,
-        mentionsOpenKnowledge: false,
+        mentionsPalimpsest: false,
         data: [],
       },
       {
@@ -901,7 +901,7 @@ describe('Windows event log collection', () => {
         log: 'System',
         provider: 'EventLog',
         eventId: 6008,
-        mentionsOpenKnowledge: false,
+        mentionsPalimpsest: false,
         data: [],
       },
       {
@@ -910,8 +910,8 @@ describe('Windows event log collection', () => {
         log: 'Application',
         provider: 'Application Hang',
         eventId: 1002,
-        mentionsOpenKnowledge: true,
-        data: ['OpenKnowledge.exe', '0.79.9.0', '4412', 'Quit'],
+        mentionsPalimpsest: true,
+        data: ['Palimpsest.exe', '0.79.9.0', '4412', 'Quit'],
       },
     ]);
   });
@@ -931,8 +931,8 @@ describe('Windows event log collection', () => {
       documented
         .filter(([l]) => l === log)
         .flatMap(([, id, provider]) => [
-          windowsEvent(provider, id, at, eventData(['OpenKnowledge.exe'])),
-          windowsEvent('Impostor', id, at, eventData(['OpenKnowledge.exe'])),
+          windowsEvent(provider, id, at, eventData(['Palimpsest.exe'])),
+          windowsEvent('Impostor', id, at, eventData(['Palimpsest.exe'])),
         ])
         .join('');
     const { run } = runner({

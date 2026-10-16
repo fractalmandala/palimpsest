@@ -3,7 +3,7 @@ import {
   DEFAULT_LINTER_CONFIG,
   isEditableTextDocFile,
   type LinterConfig,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
@@ -37,7 +37,7 @@ const markdownAndOkfEnabled: LinterConfig = {
   ...enabled,
   plugins: {
     ...enabled.plugins,
-    okf: { ...enabled.plugins.okf, enabled: true },
+    psf: { ...enabled.plugins.psf, enabled: true },
   },
 };
 
@@ -93,7 +93,7 @@ describe('useDocDiagnostics', () => {
       await waitFor(() => {
         const sources = new Set(result.current.map((diagnostic) => diagnostic.source));
         expect(sources.has('markdownlint')).toBe(true);
-        expect(sources.has('okf')).toBe(true);
+        expect(sources.has('psf')).toBe(true);
       });
 
       rerender({ provider: editableTextProvider });
@@ -103,7 +103,7 @@ describe('useDocDiagnostics', () => {
       await waitFor(() => {
         const sources = new Set(result.current.map((diagnostic) => diagnostic.source));
         expect(sources.has('markdownlint')).toBe(true);
-        expect(sources.has('okf')).toBe(true);
+        expect(sources.has('psf')).toBe(true);
       });
     },
   );

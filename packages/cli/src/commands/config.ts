@@ -5,12 +5,12 @@ import {
   humanFormat,
   REMOVED_KEYS,
   type WriteScope,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   readConfigSafely,
   resolveConfigPath,
   writeConfigPatch,
-} from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core/server';
 import { Command } from 'commander';
 import { parseDocument } from 'yaml';
 import { loadConfig } from '../config/loader.ts';
@@ -258,7 +258,7 @@ export function shouldAnnounceRemovedKeys(subcommandName: string | undefined): b
 
 export function configCommand(): Command {
   const cmd = new Command('config').description(
-    'Inspect and maintain OpenKnowledge configuration files',
+    'Inspect and maintain Palimpsest configuration files',
   );
 
   cmd

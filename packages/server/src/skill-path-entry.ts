@@ -1,5 +1,5 @@
 import { lstatSync, realpathSync } from 'node:fs';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 
 export type SkillPathEntry =
   | { kind: 'absent' }

@@ -1,30 +1,30 @@
-import type { OkEditorViewMenuStateChange } from './desktop-bridge.ts';
+import type { PsEditorViewMenuStateChange } from './desktop-bridge.ts';
 
-const _paired: OkEditorViewMenuStateChange = {
+const _paired: PsEditorViewMenuStateChange = {
   agentPanelVisible: false,
   wideIntent: { agentPanelVisible: true },
 };
 void _paired;
 
-const _menuOnly: OkEditorViewMenuStateChange = { sidebarVisible: true };
+const _menuOnly: PsEditorViewMenuStateChange = { sidebarVisible: true };
 void _menuOnly;
 
 // @ts-expect-error -- an empty intent would update the menu and persist nothing for the changed pane.
-const _emptyIntent: OkEditorViewMenuStateChange = { terminalVisible: true, wideIntent: {} };
+const _emptyIntent: PsEditorViewMenuStateChange = { terminalVisible: true, wideIntent: {} };
 void _emptyIntent;
 
 // @ts-expect-error -- an intent for another pane leaves the changed pane unpersisted.
-const _mismatchedIntent: OkEditorViewMenuStateChange = {
+const _mismatchedIntent: PsEditorViewMenuStateChange = {
   editorVisible: true,
   wideIntent: { terminalVisible: false },
 };
 void _mismatchedIntent;
 
 // @ts-expect-error -- a dock visibility change without its intent is the unpersisted case this type exists to reject.
-const _missingIntent: OkEditorViewMenuStateChange = { editorVisible: true };
+const _missingIntent: PsEditorViewMenuStateChange = { editorVisible: true };
 void _missingIntent;
 
-const _strayIntent: OkEditorViewMenuStateChange = {
+const _strayIntent: PsEditorViewMenuStateChange = {
   editorVisible: true,
   // @ts-expect-error -- an intent for a pane the change does not name would persist a pane the menu did not change.
   wideIntent: { editorVisible: true, terminalVisible: false },
@@ -32,7 +32,7 @@ const _strayIntent: OkEditorViewMenuStateChange = {
 void _strayIntent;
 
 // @ts-expect-error -- one change names one pane; every sender reports each pane separately.
-const _twoPanes: OkEditorViewMenuStateChange = {
+const _twoPanes: PsEditorViewMenuStateChange = {
   editorVisible: true,
   terminalVisible: false,
   wideIntent: { editorVisible: true },

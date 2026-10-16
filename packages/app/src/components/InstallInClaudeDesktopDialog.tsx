@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowRight, CheckCircle2, Copy, Download, MoveUpRight } from 'lucide-react';
@@ -18,8 +18,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { dispatchExternalLinkClick } from '@/lib/external-link';
 import { cn } from '@/lib/utils';
 
-const INSTALL_COMMAND = 'npx @inkeep/open-knowledge cowork';
-const DOCS_URL = 'https://openknowledge.ai/docs/integrations/claude-code';
+const INSTALL_COMMAND = 'npx @palimpsest/cli cowork';
+const DOCS_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/integrations/claude-code.mdx';
 
 interface InstallInClaudeDesktopDialogProps {
   open: boolean;
@@ -34,7 +34,7 @@ type Phase =
   | { kind: 'error'; message: string };
 
 function isElectronHost(): boolean {
-  return typeof window !== 'undefined' && typeof window.okDesktop?.skill === 'object';
+  return typeof window !== 'undefined' && typeof window.psDesktop?.skill === 'object';
 }
 
 function InlineCode({ children }: { children: React.ReactNode }) {
@@ -103,7 +103,7 @@ function UploadStepsSection() {
           <StepNumber n={3} />
           <span>
             <Trans>
-              Pick <InlineCode>openknowledge.skill</InlineCode> from your{' '}
+              Pick <InlineCode>palimpsest.skill</InlineCode> from your{' '}
               <strong className="font-medium">Downloads</strong> folder. It enables automatically.
             </Trans>
           </span>
@@ -144,7 +144,7 @@ export function InstallInClaudeDesktopDialog({
 
   async function handleInstallElectron() {
     setPhase({ kind: 'downloading' });
-    const bridge = window.okDesktop?.skill;
+    const bridge = window.psDesktop?.skill;
     if (!bridge) {
       setPhase({
         kind: 'error',
@@ -188,18 +188,18 @@ export function InstallInClaudeDesktopDialog({
           <DialogTitle className="flex items-center gap-2">
             <Download aria-hidden="true" className="h-4 w-4" />
             {reinstall ? (
-              <Trans comment="Dialog title — installing the OpenKnowledge skill into the Claude Desktop App">
+              <Trans comment="Dialog title — installing the Palimpsest skill into the Claude Desktop App">
                 Reinstall for Claude Chat & Cowork
               </Trans>
             ) : (
-              <Trans comment="Dialog title — installing the OpenKnowledge skill into the Claude Desktop App">
+              <Trans comment="Dialog title — installing the Palimpsest skill into the Claude Desktop App">
                 Install for Claude Chat & Cowork
               </Trans>
             )}
           </DialogTitle>
           <DialogDescription>
             <Trans>
-              Adds the OpenKnowledge skill to the{' '}
+              Adds the Palimpsest skill to the{' '}
               <strong className="font-medium text-foreground">Claude Desktop App</strong> so it's
               available in Chat and Cowork sessions.
             </Trans>
@@ -219,7 +219,7 @@ export function InstallInClaudeDesktopDialog({
                   </SectionLabel>
                   <p className="text-1sm text-muted-foreground">
                     <Trans>
-                      We'll build <InlineCode>openknowledge.skill</InlineCode>, save it to{' '}
+                      We'll build <InlineCode>palimpsest.skill</InlineCode>, save it to{' '}
                       <InlineCode>~/Downloads</InlineCode>, and open the Claude Desktop App for you.
                     </Trans>
                   </p>
@@ -259,7 +259,7 @@ export function InstallInClaudeDesktopDialog({
                   </div>
                   <p className="text-1sm text-muted-foreground">
                     <Trans>
-                      Saves the file to <InlineCode>~/Downloads/openknowledge.skill</InlineCode> and
+                      Saves the file to <InlineCode>~/Downloads/palimpsest.skill</InlineCode> and
                       opens the Claude Desktop App. Requires Node.js or Bun on your PATH.
                     </Trans>
                   </p>
@@ -273,7 +273,7 @@ export function InstallInClaudeDesktopDialog({
               <div className="flex items-center gap-2 text-sm">
                 <Spinner aria-hidden="true" className="h-4 w-4" />
                 <Trans>
-                  Building <InlineCode>openknowledge.skill</InlineCode> and opening the Claude
+                  Building <InlineCode>palimpsest.skill</InlineCode> and opening the Claude
                   Desktop App
                 </Trans>
               </div>
@@ -289,7 +289,7 @@ export function InstallInClaudeDesktopDialog({
                       <Trans>File saved & Claude Desktop App opened</Trans>
                     </span>
                     <code className="font-mono text-xs text-muted-foreground">
-                      {phase.path ?? '~/Downloads/openknowledge.skill'}
+                      {phase.path ?? '~/Downloads/palimpsest.skill'}
                     </code>
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export function InstallInClaudeDesktopDialog({
                     </span>
                     <span className="text-1sm text-muted-foreground">
                       <Trans>
-                        File saves to <InlineCode>~/Downloads/openknowledge.skill</InlineCode>.
+                        File saves to <InlineCode>~/Downloads/palimpsest.skill</InlineCode>.
                       </Trans>
                     </span>
                   </div>

@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { commitWip, initShadowRepo, type WriterIdentity } from '@inkeep/open-knowledge-server';
+import { commitWip, initShadowRepo, type WriterIdentity } from '@palimpsest/server';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -52,7 +52,7 @@ function fileEntries(s: ExecStructuredResult): EnrichedMeta[] {
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-exec-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-exec-test-'));
 });
 
 afterEach(async () => {
@@ -191,10 +191,10 @@ describe('exec — happy path', () => {
     expect(result.content[0].text).toMatch(/most recent:.*\d{4}-\d{2}-\d{2}/);
   });
 
-  test('ls with explicit dir arg surfaces nested .ok/frontmatter.yml folder defaults', async () => {
+  test('ls with explicit dir arg surfaces nested .ps/frontmatter.yml folder defaults', async () => {
     const project = await bootstrap();
     const specs = resolve(project, 'specs');
-    const specsOk = resolve(specs, '.ok');
+    const specsOk = resolve(specs, '.ps');
     mkdirSync(specsOk, { recursive: true });
     writeFileSync(resolve(specs, 'foo.md'), '# Foo\n');
     writeFileSync(
@@ -222,7 +222,7 @@ describe('exec — happy path', () => {
   test("ls <dir> surfaces the folder's own well-known frontmatter keys + templates_available", async () => {
     const project = await bootstrap();
     const specs = resolve(project, 'specs');
-    const specsOk = resolve(specs, '.ok');
+    const specsOk = resolve(specs, '.ps');
     const specsOkTemplates = resolve(specsOk, 'templates');
     mkdirSync(specsOkTemplates, { recursive: true });
     writeFileSync(resolve(specs, 'foo.md'), '# Foo\n');
@@ -750,10 +750,10 @@ describe('exec — per-row route-only previewUrl (FR-2.2)', () => {
     expect(s.enrichedPaths).toEqual([]);
   });
 
-  test('FR13: nested .ok/ paths are filtered from enrichedPaths (not surfaced as listings)', async () => {
+  test('FR13: nested .ps/ paths are filtered from enrichedPaths (not surfaced as listings)', async () => {
     const project = await bootstrap();
     const meetings = resolve(project, 'meetings');
-    const meetingsOkTpls = resolve(meetings, '.ok', 'templates');
+    const meetingsOkTpls = resolve(meetings, '.ps', 'templates');
     mkdirSync(meetingsOkTpls, { recursive: true });
     writeFileSync(resolve(meetingsOkTpls, 'prep-notes.md'), '---\ntitle: Prep\n---\nbody\n');
     writeFileSync(resolve(meetings, '2026-05-01.md'), '---\ntitle: Meeting\n---\nbody\n');
@@ -765,7 +765,7 @@ describe('exec — per-row route-only previewUrl (FR-2.2)', () => {
     const s = structured(result);
     const paths = s.enrichedPaths.map((e) => e.path);
     expect(paths).toContain('meetings/2026-05-01.md');
-    expect(paths.some((p) => p.includes('.ok/'))).toBe(false);
+    expect(paths.some((p) => p.includes('.ps/'))).toBe(false);
   });
 });
 
@@ -773,7 +773,7 @@ describe('exec — explicit subdirectory cwd', () => {
   function walkUpResolveCwd(start: string): string {
     let dir = resolve(start);
     for (;;) {
-      if (existsSync(resolve(dir, '.ok', 'config.yml'))) return dir;
+      if (existsSync(resolve(dir, '.ps', 'config.yml'))) return dir;
       const parent = resolve(dir, '..');
       if (parent === dir) throw new Error(`no OK project at or above ${start}`);
       dir = parent;
@@ -782,8 +782,8 @@ describe('exec — explicit subdirectory cwd', () => {
 
   async function bootstrapWithMarker(): Promise<{ project: string; subdir: string }> {
     const project = await bootstrap();
-    mkdirSync(resolve(project, '.ok'), { recursive: true });
-    writeFileSync(resolve(project, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+    mkdirSync(resolve(project, '.ps'), { recursive: true });
+    writeFileSync(resolve(project, '.ps', 'config.yml'), 'content:\n  dir: .\n');
     const subdir = resolve(project, 'subdir');
     mkdirSync(subdir, { recursive: true });
     return { project, subdir };
@@ -1129,7 +1129,7 @@ describe('exec — frontmatter schemas_applicable read-time advertisement', () =
     contentRules: {
       frontmatter: {
         enabled: true,
-        schemas: [{ appliesTo: 'content/**', file: '.ok/schemas/doc.schema.json' }],
+        schemas: [{ appliesTo: 'content/**', file: '.ps/schemas/doc.schema.json' }],
       },
     },
   });
@@ -1146,7 +1146,7 @@ describe('exec — frontmatter schemas_applicable read-time advertisement', () =
     )) as ExecResult;
 
     const files = fileEntries(structured(result));
-    expect(files[0]?.schemas_applicable).toEqual(['.ok/schemas/doc.schema.json']);
+    expect(files[0]?.schemas_applicable).toEqual(['.ps/schemas/doc.schema.json']);
   });
 
   test('a doc outside the appliesTo scope carries no schemas_applicable', async () => {
@@ -1181,8 +1181,8 @@ describe('exec — frontmatter schemas_applicable read-time advertisement', () =
 });
 
 describe('exec — OKF schemas_applicable read-time advertisement', () => {
-  const OKF_CONFIG: Config = ConfigSchema.parse({
-    contentRules: { okf: { enabled: true } },
+  const PSF_CONFIG: Config = ConfigSchema.parse({
+    contentRules: { psf: { enabled: true } },
   });
 
   test('cat advertises the OKF schemas governing a concept document', async () => {
@@ -1193,15 +1193,15 @@ describe('exec — OKF schemas_applicable read-time advertisement', () => {
 
     const result = (await buildExecResult(
       { command: 'cat content/guide.md' },
-      { resolveCwd: async () => project, serverUrl: undefined, config: OKF_CONFIG },
+      { resolveCwd: async () => project, serverUrl: undefined, config: PSF_CONFIG },
     )) as ExecResult;
 
     const files = fileEntries(structured(result));
     expect(files[0]?.schemas_applicable).toEqual([
-      '.ok/okf/required.schema.json',
-      '.ok/okf/recommended.schema.json',
-      '.ok/okf/provenance.schema.json',
-      '.ok/okf/computation.schema.json',
+      '.ps/psf/required.schema.json',
+      '.ps/psf/recommended.schema.json',
+      '.ps/psf/provenance.schema.json',
+      '.ps/psf/computation.schema.json',
     ]);
   });
 
@@ -1211,11 +1211,11 @@ describe('exec — OKF schemas_applicable read-time advertisement', () => {
 
     const result = (await buildExecResult(
       { command: 'cat index.md' },
-      { resolveCwd: async () => project, serverUrl: undefined, config: OKF_CONFIG },
+      { resolveCwd: async () => project, serverUrl: undefined, config: PSF_CONFIG },
     )) as ExecResult;
 
     const files = fileEntries(structured(result));
-    expect(files[0]?.schemas_applicable).toEqual(['.ok/okf/root-index.schema.json']);
+    expect(files[0]?.schemas_applicable).toEqual(['.ps/psf/root-index.schema.json']);
   });
 
   test('a log advertises nothing — OKF does not constrain its frontmatter', async () => {
@@ -1224,7 +1224,7 @@ describe('exec — OKF schemas_applicable read-time advertisement', () => {
 
     const result = (await buildExecResult(
       { command: 'cat log.md' },
-      { resolveCwd: async () => project, serverUrl: undefined, config: OKF_CONFIG },
+      { resolveCwd: async () => project, serverUrl: undefined, config: PSF_CONFIG },
     )) as ExecResult;
 
     const files = fileEntries(structured(result));
@@ -1238,7 +1238,7 @@ describe('exec — OKF schemas_applicable read-time advertisement', () => {
     writeFileSync(resolve(contentDir, 'guide.md'), '---\ntype: Reference\n---\nBody\n');
     const partial: Config = ConfigSchema.parse({
       contentRules: {
-        okf: {
+        psf: {
           enabled: true,
           rules: { 'frontmatter-provenance': false, 'frontmatter-computation': false },
         },
@@ -1252,8 +1252,8 @@ describe('exec — OKF schemas_applicable read-time advertisement', () => {
 
     const files = fileEntries(structured(result));
     expect(files[0]?.schemas_applicable).toEqual([
-      '.ok/okf/required.schema.json',
-      '.ok/okf/recommended.schema.json',
+      '.ps/psf/required.schema.json',
+      '.ps/psf/recommended.schema.json',
     ]);
   });
 

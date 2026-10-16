@@ -102,7 +102,7 @@ describe('handleSharingSetMode', () => {
     handleSharingSetMode(dir, 'shared');
     expect(handleSharingStatus(dir).mode).toBe('shared');
     const exclude = readFileSync(join(dir, '.git', 'info', 'exclude'), 'utf-8');
-    expect(exclude).not.toContain('.ok/');
+    expect(exclude).not.toContain('.ps/');
     expect(exclude).not.toContain('.mcp.json');
   });
 

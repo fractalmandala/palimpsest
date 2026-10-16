@@ -7,7 +7,7 @@ function slidesEmbedUrl(port: number): string {
 
 const SLIDES_PARTITION = 'slides';
 
-const SLIDES_WINDOW_TITLE = 'Slidev — OpenKnowledge';
+const SLIDES_WINDOW_TITLE = 'Slidev — Palimpsest';
 
 const SLIDEV_RENDER_STABILITY_MS = 500;
 

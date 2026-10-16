@@ -47,20 +47,20 @@ describe('stopCommandLine', () => {
   });
 
   test('keeps the Stable command byte-identical', () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     expect(stopCommandLine("/Users/bob/Bob's Notes", 'darwin')).toBe(
-      "ok stop '/Users/bob/Bob'\\''s Notes'",
+      "ps stop '/Users/bob/Bob'\\''s Notes'",
     );
     expect(stopCommandLine('C:\\notes\\', 'win32', { force: true })).toBe(
-      'ok stop --force "C:\\notes\\\\"',
+      'ps stop --force "C:\\notes\\\\"',
     );
   });
 
   test('names the Beta command on Beta', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
-    expect(stopCommandLine('/Users/me/notes', 'darwin')).toBe("ok-beta stop '/Users/me/notes'");
+    vi.stubEnv('PS_CHANNEL', 'beta');
+    expect(stopCommandLine('/Users/me/notes', 'darwin')).toBe("ps-beta stop '/Users/me/notes'");
     expect(stopCommandLine('/Users/me/notes', 'linux', { force: true })).toBe(
-      "ok-beta stop --force '/Users/me/notes'",
+      "ps-beta stop --force '/Users/me/notes'",
     );
   });
 });

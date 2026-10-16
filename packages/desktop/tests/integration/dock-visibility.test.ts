@@ -372,9 +372,9 @@ describe('detached-server spawn: macOS Dock visibility regression guard', () => 
   });
 
   test('runtime pin — resolveDetachedSpawnArgs() returns a structurally safe shape on darwin packaged', () => {
-    const parentAppPath = '/Applications/OpenKnowledge.app';
-    const parentExecPath = `${parentAppPath}/Contents/MacOS/OpenKnowledge`;
-    const bundleCliMjsPath = `${parentAppPath}/Contents/Resources/app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/cli.mjs`;
+    const parentAppPath = '/Applications/Palimpsest.app';
+    const parentExecPath = `${parentAppPath}/Contents/MacOS/Palimpsest`;
+    const bundleCliMjsPath = `${parentAppPath}/Contents/Resources/app.asar.unpacked/node_modules/@palimpsest/cli/dist/cli.mjs`;
     const reactShellDistDir = `${parentAppPath}/Contents/Resources/app`;
 
     const result = resolveDetachedSpawnArgs({

@@ -7,7 +7,7 @@ import {
   type LockName,
   lockFilePath,
   type ProcessLockMetadata,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 
 export type LockState =
   | { status: 'missing'; lockPath: string }
@@ -84,13 +84,13 @@ export function describeLockOwnershipRefusal(
     return (
       `Cannot verify shutdown: the server lock at ${state.lockPath} does not record its owning machine, ` +
       `and its recorded process ${state.pid} is still running on this machine. ` +
-      `Check whether process ${state.pid} is an OpenKnowledge server. If it is, stop it and retry. ` +
+      `Check whether process ${state.pid} is an Palimpsest server. If it is, stop it and retry. ` +
       'Do not remove the lock file while that process is running.'
     );
   }
   return (
     `Cannot verify shutdown: the server lock at ${state.lockPath} belongs to another machine. ` +
-    'Stop OpenKnowledge on the owning machine. Confirm that no OpenKnowledge server is using this directory on the owning machine or any other machine sharing it. ' +
+    'Stop Palimpsest on the owning machine. Confirm that no Palimpsest server is using this directory on the owning machine or any other machine sharing it. ' +
     `Only then remove the stale lock file at ${state.lockPath} and retry cleanup.`
   );
 }

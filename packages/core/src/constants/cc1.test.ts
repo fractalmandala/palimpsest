@@ -61,7 +61,7 @@ describe('parseManagedArtifactName — skill name/rel split (per-file editabilit
 
   test('skillFileLiveDocName(project) is a content doc, not a managed-artifact name', () => {
     expect(skillFileLiveDocName('project', 'demo', 'references/patterns.md')).toBe(
-      '.ok/skills/demo/references/patterns',
+      '.ps/skills/demo/references/patterns',
     );
     expect(skillLiveDocName('global', 'demo')).toBe('__skill__/global/demo');
   });
@@ -80,40 +80,40 @@ describe('parseManagedArtifactName — __template__ tombstone', () => {
   });
 
   test('a template content name is NOT a managed-artifact name', () => {
-    expect(parseManagedArtifactName('docs/.ok/templates/note')).toBeNull();
-    expect(isManagedArtifactDocName('docs/.ok/templates/note')).toBe(false);
+    expect(parseManagedArtifactName('docs/.ps/templates/note')).toBeNull();
+    expect(isManagedArtifactDocName('docs/.ps/templates/note')).toBe(false);
   });
 });
 
 describe('resolveSkillBundleWikiTarget', () => {
-  const skill = '.ok/skills/demo/SKILL';
+  const skill = '.ps/skills/demo/SKILL';
 
   test('resolves a references/ wiki-target to the sibling bundle ref', () => {
     expect(resolveSkillBundleWikiTarget('references/notes', skill)).toBe(
-      '.ok/skills/demo/references/notes',
+      '.ps/skills/demo/references/notes',
     );
     expect(resolveSkillBundleWikiTarget('references/sub/deep', skill)).toBe(
-      '.ok/skills/demo/references/sub/deep',
+      '.ps/skills/demo/references/sub/deep',
     );
   });
 
   test('strips a markdown extension so [[references/x.md]] == [[references/x]]', () => {
     expect(resolveSkillBundleWikiTarget('references/notes.md', skill)).toBe(
-      '.ok/skills/demo/references/notes',
+      '.ps/skills/demo/references/notes',
     );
     expect(resolveSkillBundleWikiTarget('references/notes.MDX', skill)).toBe(
-      '.ok/skills/demo/references/notes',
+      '.ps/skills/demo/references/notes',
     );
   });
 
   test('resolves a scripts/ wiki-target too', () => {
-    expect(resolveSkillBundleWikiTarget('scripts/run', skill)).toBe('.ok/skills/demo/scripts/run');
+    expect(resolveSkillBundleWikiTarget('scripts/run', skill)).toBe('.ps/skills/demo/scripts/run');
   });
 
   test('resolves from a REFERENCE doc, an IN-PLACE bundle, a GLOBAL artifact, and an extskill', () => {
     expect(
-      resolveSkillBundleWikiTarget('references/sibling', '.ok/skills/demo/references/notes'),
-    ).toBe('.ok/skills/demo/references/sibling');
+      resolveSkillBundleWikiTarget('references/sibling', '.ps/skills/demo/references/notes'),
+    ).toBe('.ps/skills/demo/references/sibling');
     expect(
       resolveSkillBundleWikiTarget('references/notes', '.agents/skills/demo/references/deep/x'),
     ).toBe('.agents/skills/demo/references/notes');
@@ -163,7 +163,7 @@ describe('resolveSkillBundleWikiTarget', () => {
 
 describe('parseProjectSkillBundleDoc', () => {
   test('parses a project SKILL doc', () => {
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo/SKILL')).toEqual({
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo/SKILL')).toEqual({
       name: 'demo',
       kind: 'skill',
       rel: null,
@@ -171,19 +171,19 @@ describe('parseProjectSkillBundleDoc', () => {
   });
 
   test('parses a project reference doc (flat and nested)', () => {
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo/references/notes')).toEqual({
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo/references/notes')).toEqual({
       name: 'demo',
       kind: 'reference',
       rel: 'notes',
     });
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo/references/sub/deep')).toEqual({
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo/references/sub/deep')).toEqual({
       name: 'demo',
       kind: 'reference',
       rel: 'sub/deep',
     });
   });
 
-  test('parses an IN-PLACE editor-dir skill (SKILL + references), same shape as .ok/skills', () => {
+  test('parses an IN-PLACE editor-dir skill (SKILL + references), same shape as .ps/skills', () => {
     expect(parseProjectSkillBundleDoc('.claude/skills/demo/SKILL')).toEqual({
       name: 'demo',
       kind: 'skill',
@@ -200,11 +200,11 @@ describe('parseProjectSkillBundleDoc', () => {
   test('rejects non-bundle docs, scripts, global skills, and the bare skill dir', () => {
     expect(parseProjectSkillBundleDoc('notes/index')).toBeNull();
     expect(parseProjectSkillBundleDoc('notes/references/x')).toBeNull();
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo/scripts/run')).toBeNull();
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo/scripts/run')).toBeNull();
     expect(parseProjectSkillBundleDoc('__skill__/global/demo')).toBeNull();
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo')).toBeNull();
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo/references')).toBeNull();
-    expect(parseProjectSkillBundleDoc('.ok/skills/demo/references/')).toBeNull();
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo')).toBeNull();
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo/references')).toBeNull();
+    expect(parseProjectSkillBundleDoc('.ps/skills/demo/references/')).toBeNull();
   });
 });
 
@@ -234,8 +234,8 @@ describe('parseGlobalSkillBundleDoc', () => {
   });
 
   test('rejects project bundle docs, scripts, the bare dir, and other scopes', () => {
-    expect(parseGlobalSkillBundleDoc('.ok/skills/demo/SKILL')).toBeNull();
-    expect(parseGlobalSkillBundleDoc('.ok/skills/demo/references/notes')).toBeNull();
+    expect(parseGlobalSkillBundleDoc('.ps/skills/demo/SKILL')).toBeNull();
+    expect(parseGlobalSkillBundleDoc('.ps/skills/demo/references/notes')).toBeNull();
     expect(parseGlobalSkillBundleDoc('__skill__/global/demo/scripts/run')).toBeNull();
     expect(parseGlobalSkillBundleDoc('__skill__/global/demo/references')).toBeNull();
     expect(parseGlobalSkillBundleDoc('__skill__/global/demo/references/')).toBeNull();
@@ -248,53 +248,53 @@ describe('parseGlobalSkillBundleDoc', () => {
 
 describe('templateContentDocName', () => {
   test('builds a root template content doc name (ext-less, raw)', () => {
-    expect(templateContentDocName('', 'daily')).toBe('.ok/templates/daily');
+    expect(templateContentDocName('', 'daily')).toBe('.ps/templates/daily');
   });
 
   test('builds a single-level folder template content doc name', () => {
-    expect(templateContentDocName('docs', 'daily')).toBe('docs/.ok/templates/daily');
+    expect(templateContentDocName('docs', 'daily')).toBe('docs/.ps/templates/daily');
   });
 
   test('builds a nested-folder template content doc name', () => {
-    expect(templateContentDocName('a/b', 'daily')).toBe('a/b/.ok/templates/daily');
+    expect(templateContentDocName('a/b', 'daily')).toBe('a/b/.ps/templates/daily');
   });
 
   test('normalizes leading/trailing slashes on the folder', () => {
-    expect(templateContentDocName('/docs/', 'daily')).toBe('docs/.ok/templates/daily');
+    expect(templateContentDocName('/docs/', 'daily')).toBe('docs/.ps/templates/daily');
   });
 
   test('keeps a spaced folder RAW — no percent-encoding', () => {
-    expect(templateContentDocName('My Notes', 'daily')).toBe('My Notes/.ok/templates/daily');
+    expect(templateContentDocName('My Notes', 'daily')).toBe('My Notes/.ps/templates/daily');
   });
 });
 
 describe('parseTemplateContentDocName', () => {
   test('parses a root template leaf', () => {
-    expect(parseTemplateContentDocName('.ok/templates/daily')).toEqual({
+    expect(parseTemplateContentDocName('.ps/templates/daily')).toEqual({
       folder: '',
       name: 'daily',
     });
   });
 
   test('parses a template leaf under a folder, preserving the folder segment', () => {
-    expect(parseTemplateContentDocName('docs/.ok/templates/daily')).toEqual({
+    expect(parseTemplateContentDocName('docs/.ps/templates/daily')).toEqual({
       folder: 'docs',
       name: 'daily',
     });
-    expect(parseTemplateContentDocName('a/b/.ok/templates/daily')).toEqual({
+    expect(parseTemplateContentDocName('a/b/.ps/templates/daily')).toEqual({
       folder: 'a/b',
       name: 'daily',
     });
   });
 
-  test('returns null for a subdirectory under .ok/templates — templates are single leaves', () => {
-    expect(parseTemplateContentDocName('.ok/templates/sub/daily')).toBeNull();
-    expect(parseTemplateContentDocName('docs/.ok/templates/sub/daily')).toBeNull();
+  test('returns null for a subdirectory under .ps/templates — templates are single leaves', () => {
+    expect(parseTemplateContentDocName('.ps/templates/sub/daily')).toBeNull();
+    expect(parseTemplateContentDocName('docs/.ps/templates/sub/daily')).toBeNull();
   });
 
-  test('returns null for a non-template .ok path', () => {
-    expect(parseTemplateContentDocName('.ok/skills/demo/SKILL')).toBeNull();
-    expect(parseTemplateContentDocName('.ok/config.yml')).toBeNull();
+  test('returns null for a non-template .ps path', () => {
+    expect(parseTemplateContentDocName('.ps/skills/demo/SKILL')).toBeNull();
+    expect(parseTemplateContentDocName('.ps/config.yml')).toBeNull();
   });
 
   test('returns null for an ordinary content doc name', () => {
@@ -304,22 +304,22 @@ describe('parseTemplateContentDocName', () => {
   });
 
   test('strips a `.md` suffix but no other extension — a template IS a `.md` leaf', () => {
-    expect(parseTemplateContentDocName('.ok/templates/daily.md')).toEqual({
+    expect(parseTemplateContentDocName('.ps/templates/daily.md')).toEqual({
       folder: '',
       name: 'daily',
     });
-    expect(parseTemplateContentDocName('docs/.ok/templates/daily.mdx')).toEqual({
+    expect(parseTemplateContentDocName('docs/.ps/templates/daily.mdx')).toEqual({
       folder: 'docs',
       name: 'daily.mdx',
     });
   });
 
   test('parses by SHAPE only — a name that would fail the template-name grammar still parses', () => {
-    expect(parseTemplateContentDocName('.ok/templates/Has Spaces')).toEqual({
+    expect(parseTemplateContentDocName('.ps/templates/Has Spaces')).toEqual({
       folder: '',
       name: 'Has Spaces',
     });
-    expect(parseTemplateContentDocName('docs/.ok/templates/UPPER_case!')).toEqual({
+    expect(parseTemplateContentDocName('docs/.ps/templates/UPPER_case!')).toEqual({
       folder: 'docs',
       name: 'UPPER_case!',
     });
@@ -350,7 +350,7 @@ describe('parseLegacyTemplateDocName', () => {
   });
 
   test('returns null for a content-shaped name and other non-synthetic names', () => {
-    expect(parseLegacyTemplateDocName('docs/.ok/templates/daily')).toBeNull();
+    expect(parseLegacyTemplateDocName('docs/.ps/templates/daily')).toBeNull();
     expect(parseLegacyTemplateDocName('docs/getting-started')).toBeNull();
     expect(parseLegacyTemplateDocName('__skill__/global/demo')).toBeNull();
     expect(parseLegacyTemplateDocName('__template__/')).toBeNull();

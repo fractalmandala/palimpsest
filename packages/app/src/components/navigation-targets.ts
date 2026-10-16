@@ -5,21 +5,21 @@ import {
   parseTemplateContentDocName,
   projectSkillContentDocName,
   templateContentDocName,
-} from '@inkeep/open-knowledge-core/constants/cc1';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+} from '@palimpsest/core/constants/cc1';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import {
   DOCUMENT_OPEN_BYTE_LIMIT,
   isDocumentOverOpenByteLimit,
-} from '@inkeep/open-knowledge-core/constants/document-open';
+} from '@palimpsest/core/constants/document-open';
 import {
   type InlineAssetMediaKind,
   isExcalidrawDocFile,
   isMermaidDocFile,
   mediaKindForSidebarAssetExtension,
-} from '@inkeep/open-knowledge-core/constants/upload';
-import type { SkillScope } from '@inkeep/open-knowledge-core/schemas/api';
-import { resolveName } from '@inkeep/open-knowledge-core/utils/target-namespace';
-import { resolveWikiLinkTargetDocName } from '@inkeep/open-knowledge-core/utils/wiki-link-resolve';
+} from '@palimpsest/core/constants/upload';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
+import { resolveName } from '@palimpsest/core/utils/target-namespace';
+import { resolveWikiLinkTargetDocName } from '@palimpsest/core/utils/wiki-link-resolve';
 import type { SkillPreviewFlavor } from '@/lib/doc-hash';
 import { normalizeDocNameInput } from '@/lib/doc-paths';
 import { parseProjectSkillContentDocName } from '@/lib/managed-artifact-doc-name';
@@ -133,20 +133,20 @@ export function deriveKnownFolderPaths(docNames: Iterable<string>): Set<string> 
   return folderPaths;
 }
 
-function okReadOnlyAssetPath(docName: string, docExt?: string): string {
+function psReadOnlyAssetPath(docName: string, docExt?: string): string {
   if (docExt) return `${docName}${docExt}`;
   const leaf = docName.split('/').pop() ?? '';
   return leaf.lastIndexOf('.') > 0 ? docName : `${docName}.md`;
 }
 
-export function okContentNavigationTarget(
+export function psContentNavigationTarget(
   docName: string,
   options: { pages: ReadonlySet<string>; docExt?: string },
 ): ResolvedContentTarget | null {
   if (!hasOkPathSegment(docName)) return null;
   if (parseTemplateContentDocName(docName)) return null;
   if (resolveName(options.pages, docName) !== undefined) return null;
-  const assetPath = okReadOnlyAssetPath(docName, options.docExt);
+  const assetPath = psReadOnlyAssetPath(docName, options.docExt);
   return {
     kind: 'asset',
     target: assetPath,
@@ -260,8 +260,8 @@ export function resolveNavigationTarget(
   }
 
   if (!expectsFolder) {
-    const okTarget = okContentNavigationTarget(normalizedTarget, options);
-    if (okTarget) return okTarget;
+    const psTarget = psContentNavigationTarget(normalizedTarget, options);
+    if (psTarget) return psTarget;
   }
   return {
     kind: 'missing',

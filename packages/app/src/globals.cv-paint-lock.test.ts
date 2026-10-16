@@ -47,9 +47,9 @@ describe('globals.css content-visibility paint-lock deferral contract', () => {
     expect(cvHiddenBlocks.length).toBeGreaterThanOrEqual(1);
   });
 
-  test('.ok-mode-hidden keeps content-visibility: hidden (steady-state perf lock is intentional)', () => {
-    const modeHidden = blocks.find((b) => b.selector === '.ok-mode-hidden');
-    expect(modeHidden, '.ok-mode-hidden rule block must exist').toBeDefined();
+  test('.ps-mode-hidden keeps content-visibility: hidden (steady-state perf lock is intentional)', () => {
+    const modeHidden = blocks.find((b) => b.selector === '.ps-mode-hidden');
+    expect(modeHidden, '.ps-mode-hidden rule block must exist').toBeDefined();
     expect(modeHidden?.declarations).toMatch(CV_HIDDEN);
   });
 

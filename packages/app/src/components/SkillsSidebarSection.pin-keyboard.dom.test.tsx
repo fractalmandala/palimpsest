@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillsListEntry } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,8 +37,8 @@ vi.doMock('@pierre/trees/react', () => ({
   useFileTree: () => ({ model }),
 }));
 
-vi.doMock('@/components/OkFileTree', () => ({
-  OkFileTree: ({
+vi.doMock('@/components/PsFileTree', () => ({
+  PsFileTree: ({
     renderContextMenu,
   }: {
     renderContextMenu: (

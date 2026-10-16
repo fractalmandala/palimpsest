@@ -1,10 +1,10 @@
-import { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
-import { isLoomUrl, parseLoomUrl } from '@inkeep/open-knowledge-core/utils/loom-embed';
-import { isVimeoUrl } from '@inkeep/open-knowledge-core/utils/vimeo-embed';
+import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
+import { isLoomUrl, parseLoomUrl } from '@palimpsest/core/utils/loom-embed';
+import { isVimeoUrl } from '@palimpsest/core/utils/vimeo-embed';
 import {
   type ParsedYouTubeUrl,
   parseYouTubeUrl,
-} from '@inkeep/open-knowledge-core/utils/youtube-embed';
+} from '@palimpsest/core/utils/youtube-embed';
 import Vimeo from '@u-wave/react-vimeo';
 import { type CSSProperties, useEffect, useRef } from 'react';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
@@ -73,7 +73,7 @@ function VimeoEmbed(props: VideoProps & { src: string }) {
 
   return (
     <div
-      className="ok-video ok-video-vimeo"
+      className="ps-video ps-video-vimeo"
       style={buildVideoWrapperStyle(props)}
       title={props.title}
     >
@@ -109,12 +109,12 @@ function LoomEmbed(props: VideoProps & { src: string }) {
 
   return (
     <div
-      className="ok-video ok-video-loom"
+      className="ps-video ps-video-loom"
       style={buildVideoWrapperStyle(props)}
       title={props.title}
     >
       <iframe
-        className="ok-video-loom-iframe"
+        className="ps-video-loom-iframe"
         src={embedUrl}
         title={props.title ?? 'Loom video player'}
         width={props.width}
@@ -140,7 +140,7 @@ export function Video(props: VideoProps) {
     const explicitWidth = props.width !== undefined;
     const explicitAspect = explicitWidth && props.height !== undefined;
     return (
-      <div className="ok-video ok-video-youtube" style={buildVideoWrapperStyle(props)}>
+      <div className="ps-video ps-video-youtube" style={buildVideoWrapperStyle(props)}>
         <LiteYouTubeEmbed
           id={yt.id}
           title={props.title ?? 'YouTube video player'}
@@ -159,7 +159,7 @@ export function Video(props: VideoProps) {
   }
   return (
     <video
-      className="ok-video"
+      className="ps-video"
       src={props.src === undefined ? undefined : toDesktopAssetHref(props.src)}
       title={props.title}
       controls={resolveControls(props.controls)}

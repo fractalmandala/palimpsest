@@ -1,8 +1,8 @@
 import { mkdirSync, mkdtempSync, realpathSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+import { PS_DIR } from '@palimpsest/core';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { isSupportedDocFile, stripDocExtension } from './doc-extensions.ts';
 import { findEnclosingProjectRoot, isProjectRoot } from './fs/find-project-root.ts';
 
@@ -36,7 +36,7 @@ export class SingleFileProjectOverrideError extends Error {
 export class SingleFileNotMarkdownError extends Error {
   readonly filePath: string;
   constructor(filePath: string) {
-    super(`OpenKnowledge edits markdown files (.md / .mdx): ${filePath}`);
+    super(`Palimpsest edits markdown files (.md / .mdx): ${filePath}`);
     this.filePath = filePath;
     this.name = 'SingleFileNotMarkdownError';
   }
@@ -90,7 +90,7 @@ export function prepareSingleFileOpen(
     if (!isProjectRoot(projectRoot)) {
       throw new SingleFileProjectOverrideError(
         projectRoot,
-        'no .ok/config.yml there, so it is not an OpenKnowledge project root',
+        'no .ps/config.yml there, so it is not an Palimpsest project root',
       );
     }
     const projectContentDir = resolveProjectContentDir(projectRoot);
@@ -142,17 +142,17 @@ function resolveProjectContentDir(projectRoot: string): string {
   return resolve(projectRoot, contentRel);
 }
 
-export const EPHEMERAL_PROJECT_DIR_PREFIX = 'ok-ephemeral-';
+export const EPHEMERAL_PROJECT_DIR_PREFIX = 'ps-ephemeral-';
 
 export function seedEphemeralProjectDir(projectDir: string, contentDir: string): string {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
   writeFileSync(
-    resolve(okDir, 'config.yml'),
+    resolve(psDir, 'config.yml'),
     `# Ephemeral single-file session (\`ok <file>\`). Throwaway — safe to delete.\ncontent:\n  dir: ${JSON.stringify(contentDir)}\n`,
     'utf-8',
   );
-  writeFileSync(resolve(okDir, '.gitignore'), 'local/\n', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), 'local/\n', 'utf-8');
   return projectDir;
 }
 

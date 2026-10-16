@@ -174,7 +174,7 @@
   }
 
   /* Agent insert flash — position-accurate highlight on the exact ranges an
-     agent write changed (.ok-agent-insert-flash inline decorations from the
+     agent write changed (.ps-agent-insert-flash inline decorations from the
      agent-insert-flash PM plugin). Background/box-shadow only — no layout,
      so it stays cheap on large writes. */
   @keyframes agent-insert-flash {
@@ -514,10 +514,10 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    The data-agent-flash-state attribute lives on the React wrapper (stable across PM updates).
    Targets only the last 3 blocks (append) or first 3 blocks (prepend) — covers most agent writes.
    Uses :nth-last-child / :nth-child to scope the flash without touching PM-managed DOM.
-   The append half counts `of :not(.ok-trailing-affordance, .ProseMirror-gapcursor)` because
+   The append half counts `of :not(.ps-trailing-affordance, .ProseMirror-gapcursor)` because
    both are widget decorations that render as a direct .ProseMirror child at the document end.
    Counting either would shift the append flash one block up while it is showing. CSS cannot
-   import OK_TRAILING_AFFORDANCE_CLASS from editor/extensions/trailing-affordance.ts, so this
+   import PS_TRAILING_AFFORDANCE_CLASS from editor/extensions/trailing-affordance.ts, so this
    list is the one place carrying the names literally; globals.test.ts pins them together.
 
    The append and prepend halves are separate rules on purpose rather than one comma-joined
@@ -530,7 +530,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    the agent-insert-flash PM plugin to the exact ranges a remote agent write
    changed. `box-decoration-break: clone` keeps wrapped lines individually
    rounded; duration matches AGENT_INSERT_FLASH_MS in agent-insert-flash.ts. */
-.ok-agent-insert-flash {
+.ps-agent-insert-flash {
   animation: agent-insert-flash 1.4s var(--ease-out-strong) forwards;
   border-radius: 3px;
   box-decoration-break: clone;
@@ -538,7 +538,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ok-agent-insert-flash {
+  .ps-agent-insert-flash {
     animation-duration: 1ms;
   }
 }
@@ -567,7 +567,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    Inline decoration in both editors, so one rule covers CodeMirror and
    ProseMirror. box-decoration-break keeps a wrapped multi-line range
    individually accented; duration matches FLASH_DURATION_MS. */
-.ok-landing-flash {
+.ps-landing-flash {
   animation: agent-flash 2s var(--ease-out-strong) forwards;
   border-radius: 3px;
   box-decoration-break: clone;
@@ -577,7 +577,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 
 /* Reduced motion — static terracotta accent bar, no movement or background sweep. */
 @media (prefers-reduced-motion: reduce) {
-  .ok-landing-flash {
+  .ps-landing-flash {
     animation: none;
     box-shadow: inset 3px 0 0 var(--color-agent);
     transition: box-shadow 2s ease;
@@ -586,7 +586,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 
 [data-agent-flash-state="editing"][data-agent-flash-position="append"]
   .ProseMirror
-  > *:nth-last-child(-n + 3 of :not(.ok-trailing-affordance, .ProseMirror-gapcursor)) {
+  > *:nth-last-child(-n + 3 of :not(.ps-trailing-affordance, .ProseMirror-gapcursor)) {
   animation: agent-flash 2s var(--ease-out-strong) forwards;
   position: relative;
 }
@@ -600,12 +600,12 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 /* Stagger — second affected block fires 30ms after first, third at 60ms */
 [data-agent-flash-state="editing"][data-agent-flash-position="append"]
   .ProseMirror
-  > *:nth-last-child(2 of :not(.ok-trailing-affordance, .ProseMirror-gapcursor)) {
+  > *:nth-last-child(2 of :not(.ps-trailing-affordance, .ProseMirror-gapcursor)) {
   animation-delay: 30ms;
 }
 [data-agent-flash-state="editing"][data-agent-flash-position="append"]
   .ProseMirror
-  > *:nth-last-child(1 of :not(.ok-trailing-affordance, .ProseMirror-gapcursor)) {
+  > *:nth-last-child(1 of :not(.ps-trailing-affordance, .ProseMirror-gapcursor)) {
   animation-delay: 0ms;
 }
 [data-agent-flash-state="editing"][data-agent-flash-position="prepend"]
@@ -629,7 +629,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 @media (prefers-reduced-motion: reduce) {
   [data-agent-flash-state="editing"][data-agent-flash-position="append"]
     .ProseMirror
-    > *:nth-last-child(-n + 3 of :not(.ok-trailing-affordance, .ProseMirror-gapcursor)) {
+    > *:nth-last-child(-n + 3 of :not(.ps-trailing-affordance, .ProseMirror-gapcursor)) {
     animation: none;
     box-shadow: inset 3px 0 0 var(--color-agent);
     transition: box-shadow 2s ease;
@@ -646,9 +646,9 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 /* OK Blob mascot */
 
 /* 3D wrapper — hosts perspective + cursor-following rotateX/rotateY so the
-   head can tilt independently of the click-bounce transform on .ok-blob-group.
+   head can tilt independently of the click-bounce transform on .ps-blob-group.
    Inline-flex avoids inline-block whitespace gaps. */
-.ok-blob-3d-wrapper {
+.ps-blob-3d-wrapper {
   display: inline-flex;
   perspective: 400px;
   transform-style: preserve-3d;
@@ -660,36 +660,36 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 /* Group wrapper — the click bounce animates the group so body + eyes squish together. */
-.ok-blob-group {
+.ps-blob-group {
   transform-box: fill-box;
   transform-origin: center bottom;
 }
 
-.ok-blob-body {
+.ps-blob-body {
   fill: var(--color-azure-blue);
-  animation: ok-blob-squish 6s ease-in-out infinite;
+  animation: ps-blob-squish 6s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: center bottom;
 }
-.dark .ok-blob-body {
+.dark .ps-blob-body {
   fill: var(--color-sky-blue);
 }
 
-.ok-blob-eye {
+.ps-blob-eye {
   fill: var(--color-azure-blue);
-  animation: ok-blob-blink 6s ease-in-out infinite;
+  animation: ps-blob-blink 6s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: center;
 }
-.dark .ok-blob-eye {
+.dark .ps-blob-eye {
   fill: var(--color-sky-blue);
 }
-.ok-blob-eye-right {
+.ps-blob-eye-right {
   animation-delay: 0.04s;
 }
 
 /* Single blink then long pause */
-@keyframes ok-blob-blink {
+@keyframes ps-blob-blink {
   0%,
   28%,
   34%,
@@ -703,7 +703,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 /* Body squish synced to the blink */
-@keyframes ok-blob-squish {
+@keyframes ps-blob-squish {
   0%,
   28%,
   38%,
@@ -722,19 +722,19 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 /* Click — happy ^^ eyes + bounce */
-.ok-blob-eye-hidden {
+.ps-blob-eye-hidden {
   opacity: 0;
 }
 
-.ok-blob-happy-eye {
+.ps-blob-happy-eye {
   stroke: var(--color-azure-blue);
   transition: opacity 100ms ease;
 }
-.dark .ok-blob-happy-eye {
+.dark .ps-blob-happy-eye {
   stroke: var(--color-sky-blue);
 }
 
-@keyframes ok-blob-click-bounce {
+@keyframes ps-blob-click-bounce {
   0% {
     transform: scaleY(1) scaleX(1);
   }
@@ -753,7 +753,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 /* Level 2 — rapid click, bouncier + snappier */
-@keyframes ok-blob-click-bounce-2 {
+@keyframes ps-blob-click-bounce-2 {
   0% {
     transform: scaleY(1) scaleX(1);
   }
@@ -772,7 +772,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 /* Level 3 — rage click, max squish + max stretch */
-@keyframes ok-blob-click-bounce-3 {
+@keyframes ps-blob-click-bounce-3 {
   0% {
     transform: scaleY(1) scaleX(1);
   }
@@ -793,14 +793,14 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
   }
 }
 
-.ok-blob-clicked-1 {
-  animation: ok-blob-click-bounce 500ms var(--ease-out-strong) forwards;
+.ps-blob-clicked-1 {
+  animation: ps-blob-click-bounce 500ms var(--ease-out-strong) forwards;
 }
-.ok-blob-clicked-2 {
-  animation: ok-blob-click-bounce-2 550ms var(--ease-out-strong) forwards;
+.ps-blob-clicked-2 {
+  animation: ps-blob-click-bounce-2 550ms var(--ease-out-strong) forwards;
 }
-.ok-blob-clicked-3 {
-  animation: ok-blob-click-bounce-3 650ms var(--ease-out-strong) forwards;
+.ps-blob-clicked-3 {
+  animation: ps-blob-click-bounce-3 650ms var(--ease-out-strong) forwards;
 }
 
 /* Firework burst — radial particles launch from the blob center, translate
@@ -808,14 +808,14 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    variation is pumped in via CSS custom properties (--fx-tx, --fx-ty,
    --fx-delay, --fx-duration) set inline by the React component so one keyframe
    serves every spark. */
-.ok-blob-firework {
+.ps-blob-firework {
   transform-box: fill-box;
   transform-origin: center;
-  animation: ok-blob-firework-pop var(--fx-duration, 700ms) var(--ease-out-strong)
+  animation: ps-blob-firework-pop var(--fx-duration, 700ms) var(--ease-out-strong)
     var(--fx-delay, 0ms) forwards;
 }
 
-@keyframes ok-blob-firework-pop {
+@keyframes ps-blob-firework-pop {
   0% {
     transform: translate(0, 0) scale(0.2);
     opacity: 0;
@@ -838,22 +838,22 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    The sleeping class lives on the group, so descendant selectors pause the
    blink/squish animations without removing them entirely (a very slow rest
    cycle reads as breathing). */
-.ok-blob-sleeping .ok-blob-body {
-  animation: ok-blob-sleeping-breathe 4.8s ease-in-out infinite;
+.ps-blob-sleeping .ps-blob-body {
+  animation: ps-blob-sleeping-breathe 4.8s ease-in-out infinite;
 }
-.ok-blob-sleeping .ok-blob-eye {
+.ps-blob-sleeping .ps-blob-eye {
   animation: none;
 }
 
-.ok-blob-sleeping-eye {
+.ps-blob-sleeping-eye {
   stroke: var(--color-azure-blue);
   opacity: 0.9;
 }
-.dark .ok-blob-sleeping-eye {
+.dark .ps-blob-sleeping-eye {
   stroke: var(--color-sky-blue);
 }
 
-@keyframes ok-blob-sleeping-breathe {
+@keyframes ps-blob-sleeping-breathe {
   0%,
   100% {
     transform: scaleY(1) scaleX(1);
@@ -865,7 +865,7 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 
 /* Floating z letters — drift up + fade. Two instances with staggered delay
    and different travel so the rhythm doesn't look mechanical. */
-.ok-blob-z {
+.ps-blob-z {
   font-family: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
   font-size: 6px;
   font-style: italic;
@@ -875,17 +875,17 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
   transform-box: fill-box;
   transform-origin: center;
 }
-.dark .ok-blob-z {
+.dark .ps-blob-z {
   fill: var(--color-sky-blue);
 }
-.ok-blob-z-1 {
-  animation: ok-blob-z-float 2.4s ease-out 0s infinite;
+.ps-blob-z-1 {
+  animation: ps-blob-z-float 2.4s ease-out 0s infinite;
 }
-.ok-blob-z-2 {
-  animation: ok-blob-z-float 2.4s ease-out 1.2s infinite;
+.ps-blob-z-2 {
+  animation: ps-blob-z-float 2.4s ease-out 1.2s infinite;
 }
 
-@keyframes ok-blob-z-float {
+@keyframes ps-blob-z-float {
   0% {
     transform: translate(0, 0) scale(0.7);
     opacity: 0;
@@ -900,26 +900,26 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ok-blob-eye {
+  .ps-blob-eye {
     animation: none;
   }
-  .ok-blob-body {
+  .ps-blob-body {
     animation: none;
   }
-  .ok-blob-clicked-1,
-  .ok-blob-clicked-2,
-  .ok-blob-clicked-3 {
+  .ps-blob-clicked-1,
+  .ps-blob-clicked-2,
+  .ps-blob-clicked-3 {
     animation: none;
   }
-  .ok-blob-firework {
+  .ps-blob-firework {
     display: none;
   }
-  .ok-blob-sleeping .ok-blob-body,
-  .ok-blob-z-1,
-  .ok-blob-z-2 {
+  .ps-blob-sleeping .ps-blob-body,
+  .ps-blob-z-1,
+  .ps-blob-z-2 {
     animation: none;
   }
-  .ok-blob-z {
+  .ps-blob-z {
     opacity: 0.7;
   }
 }
@@ -933,11 +933,11 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 /* The row arrives when a turn opens. Short enough to stay under the
    interactive-UI ceiling — this is a state change you see on every turn, not a
    scroll reveal you see once. Compositor-only (opacity + transform). */
-.ok-working-enter {
-  animation: ok-working-enter 180ms var(--ease-out-strong) both;
+.ps-working-enter {
+  animation: ps-working-enter 180ms var(--ease-out-strong) both;
 }
 
-@keyframes ok-working-enter {
+@keyframes ps-working-enter {
   from {
     opacity: 0;
     transform: translateY(2px);
@@ -950,25 +950,25 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    makes an un-crossfadeable swap (the outgoing text is already gone) still
    read as one transformation. Kept well under the 20px where blur gets
    expensive. */
-.ok-working-status {
-  animation: ok-working-status-in 200ms var(--ease-out-strong) both;
+.ps-working-status {
+  animation: ps-working-status-in 200ms var(--ease-out-strong) both;
 }
 
-@keyframes ok-working-status-in {
+@keyframes ps-working-status-in {
   from {
     opacity: 0;
     filter: blur(2px);
   }
 }
 
-.ok-working-group {
+.ps-working-group {
   transform-box: fill-box;
   transform-origin: 50% 50%;
 }
 
 /* Needed by the squint below — SVG children resolve a percentage
    transform-origin against the viewport box, not their own. */
-.ok-working-eye {
+.ps-working-eye {
   transform-box: fill-box;
   transform-origin: 50% 50%;
 }
@@ -976,11 +976,11 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 /* Four squash beats per cycle — the "still going" tell on long tasks. The
    strong in-out curve is what makes each beat land as a squash; the built-in
    `ease-in-out` is too weak and reads as a slow pulse instead. */
-.ok-working-pop .ok-working-group {
-  animation: ok-working-pop 4.8s var(--ease-in-out-strong) infinite;
+.ps-working-pop .ps-working-group {
+  animation: ps-working-pop 4.8s var(--ease-in-out-strong) infinite;
 }
 
-@keyframes ok-working-pop {
+@keyframes ps-working-pop {
   0%,
   25%,
   50%,
@@ -998,11 +998,11 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
 
 /* Effort tell. Replaces the ambient blink by specificity — the mascot is
    squinting at the work, not idly blinking at you. */
-.ok-working-squint .ok-working-eye {
-  animation: ok-working-squint 1.8s ease-in-out infinite;
+.ps-working-squint .ps-working-eye {
+  animation: ps-working-squint 1.8s ease-in-out infinite;
 }
 
-@keyframes ok-working-squint {
+@keyframes ps-working-squint {
   0%,
   44%,
   100% {
@@ -1022,23 +1022,23 @@ body[style*="pointer-events: none"] .corner-card-column .floating-card-surface {
    spatial travel — the fade is what tells you a new row appeared, and dropping
    it would make the working state blink into existence with no warning. */
 @media (prefers-reduced-motion: reduce) {
-  .ok-working-group,
-  .ok-working-eye,
-  .ok-working-pop .ok-working-group,
-  .ok-working-squint .ok-working-eye {
+  .ps-working-group,
+  .ps-working-eye,
+  .ps-working-pop .ps-working-group,
+  .ps-working-squint .ps-working-eye {
     animation: none;
   }
-  .ok-working-enter {
-    animation-name: ok-working-enter-fade;
+  .ps-working-enter {
+    animation-name: ps-working-enter-fade;
   }
   /* The status swap keeps its fade but drops the blur — blur is a spatial
      effect, and the fade alone still marks the line as having changed. */
-  .ok-working-status {
-    animation-name: ok-working-enter-fade;
+  .ps-working-status {
+    animation-name: ps-working-enter-fade;
   }
 }
 
-@keyframes ok-working-enter-fade {
+@keyframes ps-working-enter-fade {
   from {
     opacity: 0;
   }
@@ -1301,7 +1301,7 @@ section[data-editor-pane-id] {
  */
 .tiptap-editor .tiptap-editor-portal-content {
   grid-column: content;
-  /* Explicit row: `.ok-table-cell-handle-layer` is pinned to row 1 to share
+  /* Explicit row: `.ps-table-cell-handle-layer` is pinned to row 1 to share
      this row (see that rule for why); without an explicit row here,
      auto-placement would skip the occupied content-column cell and bump the
      editor body to row 2 whenever the cursor is in a table. */
@@ -1673,13 +1673,13 @@ section[data-editor-pane-id] {
   margin: 0.6rem 0;
 }
 
-.ProseMirror .ok-find-match {
+.ProseMirror .ps-find-match {
   border-radius: 0.15rem;
   background-color: color-mix(in oklab, var(--color-agent) 28%, transparent);
   color: inherit;
 }
 
-.ProseMirror .ok-find-match-active {
+.ProseMirror .ps-find-match-active {
   background-color: color-mix(in oklab, var(--primary) 34%, transparent);
   box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent);
 }
@@ -1822,7 +1822,7 @@ section[data-editor-pane-id] {
   color: var(--muted-foreground);
 }
 
-/* Code blocks — fallback for any <pre> not wrapped by the .ok-codeblock NodeView */
+/* Code blocks — fallback for any <pre> not wrapped by the .ps-codeblock NodeView */
 .ProseMirror pre {
   background: var(--syntax-bg);
   padding: 0.75em 1em;
@@ -1834,24 +1834,24 @@ section[data-editor-pane-id] {
   @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 dark:scrollbar-thumb-muted-foreground/50 rounded-lg;
 }
 
-/* .ok-codeblock — zero permanent chrome (precedent #30). Single rounded
+/* .ps-codeblock — zero permanent chrome (precedent #30). Single rounded
    container, generous padding, no border. Hover/selection reveals a chrome
    bar floating above the block edge. Dark theme inverts the surface so
    the block reads as a code surface in either color mode. */
-.ProseMirror .ok-codeblock {
+.ProseMirror .ps-codeblock {
   position: relative;
 }
 
-.ProseMirror .ok-codeblock-pre {
+.ProseMirror .ps-codeblock-pre {
   background: var(--syntax-bg);
   color: var(--foreground);
   border: 0;
   @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 dark:scrollbar-thumb-muted-foreground/50;
 }
 
-/* Strip the outer-pre fallback chrome — the NodeView's own .ok-codeblock-pre
+/* Strip the outer-pre fallback chrome — the NodeView's own .ps-codeblock-pre
    carries the box. */
-.ProseMirror .ok-codeblock pre.ok-codeblock-pre {
+.ProseMirror .ps-codeblock pre.ps-codeblock-pre {
   margin: 0;
   border-radius: 0.5rem;
 }
@@ -1860,7 +1860,7 @@ section[data-editor-pane-id] {
    (PRD-6819). Display-only — the editable surface is the title input
    inside the chrome's settings popover. The strip and the `<pre>` below
    it form one visual card by squaring the pre's top corners (rule below). */
-.ok-codeblock-title {
+.ps-codeblock-title {
   display: flex;
   align-items: center;
   gap: 0.375rem;
@@ -1875,12 +1875,12 @@ section[data-editor-pane-id] {
   user-select: none;
 }
 
-.dark .ok-codeblock-title {
+.dark .ps-codeblock-title {
   background: oklch(0.22 0.005 285);
   color: oklch(0.78 0 0);
 }
 
-.ok-codeblock-title-text {
+.ps-codeblock-title-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1889,7 +1889,7 @@ section[data-editor-pane-id] {
 
 /* Square the pre's top corners when a title strip is rendered above it
    so the two surfaces share a single visual edge. */
-.ProseMirror .ok-codeblock:has(> .ok-codeblock-title) pre.ok-codeblock-pre {
+.ProseMirror .ps-codeblock:has(> .ps-codeblock-title) pre.ps-codeblock-pre {
   border-radius: 0 0 0.5rem 0.5rem;
 }
 
@@ -1897,7 +1897,7 @@ section[data-editor-pane-id] {
    preview toggle, settings, Ask AI, copy, and delete affordances. Floats
    above the block edge (opacity-toggled) so the surface stays clean and
    the chrome does not overlap a preview iframe's content. */
-.ok-codeblock-chrome {
+.ps-codeblock-chrome {
   position: absolute;
   /* Float above the block edge (same visual pattern as the text-selection
      bubble menu) rather than inside the top-right corner, where the chrome
@@ -1925,10 +1925,10 @@ section[data-editor-pane-id] {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-.ProseMirror .ok-codeblock:hover > .ok-codeblock-chrome,
-.ProseMirror .ok-codeblock:focus-within > .ok-codeblock-chrome,
-.ProseMirror .ok-codeblock[data-cursor-inside="true"] > .ok-codeblock-chrome,
-.ProseMirror .ok-codeblock[data-selected="true"] > .ok-codeblock-chrome {
+.ProseMirror .ps-codeblock:hover > .ps-codeblock-chrome,
+.ProseMirror .ps-codeblock:focus-within > .ps-codeblock-chrome,
+.ProseMirror .ps-codeblock[data-cursor-inside="true"] > .ps-codeblock-chrome,
+.ProseMirror .ps-codeblock[data-selected="true"] > .ps-codeblock-chrome {
   opacity: 1;
   pointer-events: auto;
 }
@@ -1938,12 +1938,12 @@ section[data-editor-pane-id] {
    wrapper. `CodeBlockView` mirrors hover state onto `data-hovered="true"`
    via native mouseenter/mouseleave listeners so the chrome still reveals
    on interaction. */
-.ProseMirror .ok-codeblock[data-hovered="true"] > .ok-codeblock-chrome {
+.ProseMirror .ps-codeblock[data-hovered="true"] > .ps-codeblock-chrome {
   opacity: 1;
   pointer-events: auto;
 }
 
-.ok-codeblock-chrome-btn {
+.ps-codeblock-chrome-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1963,8 +1963,8 @@ section[data-editor-pane-id] {
     color 0.1s;
 }
 
-.ok-codeblock-chrome-btn:hover:not(:disabled),
-.ok-codeblock-chrome-btn[data-state="open"] {
+.ps-codeblock-chrome-btn:hover:not(:disabled),
+.ps-codeblock-chrome-btn[data-state="open"] {
   background: var(--accent);
   color: var(--accent-foreground);
 }
@@ -1974,27 +1974,27 @@ section[data-editor-pane-id] {
    `data-active="true"` when their underlying state is on. Mirrors the
    sibling `.jsx-chrome-btn[data-active="true"]` treatment so the two
    chrome surfaces read the same to a user. */
-.ok-codeblock-chrome-btn[data-active="true"] {
+.ps-codeblock-chrome-btn[data-active="true"] {
   background: var(--accent);
   color: var(--accent-foreground);
 }
 
-.ok-codeblock-chrome-btn:focus-visible {
+.ps-codeblock-chrome-btn:focus-visible {
   outline: 2px solid var(--color-ring);
   outline-offset: 2px;
 }
 
-.ok-codeblock-chrome-btn:disabled {
+.ps-codeblock-chrome-btn:disabled {
   cursor: default;
   opacity: 0.6;
 }
 
-.ok-codeblock-chrome-lang {
+.ps-codeblock-chrome-lang {
   color: var(--foreground);
   font-weight: 500;
 }
 
-.ok-codeblock-chrome-btn--delete:hover {
+.ps-codeblock-chrome-btn--delete:hover {
   background: transparent;
   color: var(--destructive, #ef4444);
 }
@@ -2004,10 +2004,10 @@ section[data-editor-pane-id] {
    reach the parent doc / cookies / auth-bearing fetch surface. The code body
    is hidden by default in preview mode (see [data-code-visible] selectors
    below) and toggled visible via the code-icon chrome button. Resize is
-   driven by the shared `ok-resize-overlay` handles (8 corners + edges), not
+   driven by the shared `ps-resize-overlay` handles (8 corners + edges), not
    native CSS `resize` — replaces the bottom-only grip with full-axis control
-   and unifies the affordance with `.ok-embed`. */
-.ProseMirror .ok-codeblock > .ok-codeblock-preview {
+   and unifies the affordance with `.ps-embed`. */
+.ProseMirror .ps-codeblock > .ps-codeblock-preview {
   position: relative;
   /* Track the editor theme so a dark-mode preview does not flash white
      before / while the iframe document paints (the iframe's own srcDoc sets
@@ -2021,22 +2021,22 @@ section[data-editor-pane-id] {
   @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/30 dark:scrollbar-thumb-muted-foreground/50;
 }
 
-.ok-codeblock-preview--solo {
+.ps-codeblock-preview--solo {
   border-radius: 0.5rem;
 }
 
-.ok-codeblock-preview--with-code {
+.ps-codeblock-preview--with-code {
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
 
-.ok-codeblock-preview-frame {
+.ps-codeblock-preview-frame {
   display: block;
   width: 100%;
   height: 100%;
   border: 0;
   /* Themed so the pre-load iframe surface matches light/dark (see the
-     .ok-codeblock-preview rule above). */
+     .ps-codeblock-preview rule above). */
   background: var(--background);
 }
 
@@ -2045,7 +2045,7 @@ section[data-editor-pane-id] {
    #30 — never literally `display:none` PM content) and instead clip it
    to zero height; PM still owns the contentDOM, undo history is stable,
    caret can re-enter when toggled back on. */
-.ProseMirror .ok-codeblock[data-preview="true"][data-code-visible="false"] > .ok-codeblock-pre {
+.ProseMirror .ps-codeblock[data-preview="true"][data-code-visible="false"] > .ps-codeblock-pre {
   max-height: 0;
   padding-top: 0;
   padding-bottom: 0;
@@ -2076,54 +2076,54 @@ section[data-editor-pane-id] {
  * via ProseMirror Decoration.inline. Light & dark palettes mirror the
  * `github` / `github-dark` hljs themes, tuned to our color tokens.
  * ---------------------------------------------------------------------- */
-.ProseMirror .ok-codeblock code .hljs-comment,
-.ProseMirror .ok-codeblock code .hljs-quote {
+.ProseMirror .ps-codeblock code .hljs-comment,
+.ProseMirror .ps-codeblock code .hljs-quote {
   color: var(--syntax-comment);
   font-style: italic;
 }
 
-.ProseMirror .ok-codeblock code .hljs-keyword,
-.ProseMirror .ok-codeblock code .hljs-selector-tag,
-.ProseMirror .ok-codeblock code .hljs-doctag,
-.ProseMirror .ok-codeblock code .hljs-formula {
+.ProseMirror .ps-codeblock code .hljs-keyword,
+.ProseMirror .ps-codeblock code .hljs-selector-tag,
+.ProseMirror .ps-codeblock code .hljs-doctag,
+.ProseMirror .ps-codeblock code .hljs-formula {
   color: var(--syntax-keyword);
 }
 
-.ProseMirror .ok-codeblock code .hljs-name,
-.ProseMirror .ok-codeblock code .hljs-section,
-.ProseMirror .ok-codeblock code .hljs-tag,
-.ProseMirror .ok-codeblock code .hljs-template-variable,
-.ProseMirror .ok-codeblock code .hljs-variable {
+.ProseMirror .ps-codeblock code .hljs-name,
+.ProseMirror .ps-codeblock code .hljs-section,
+.ProseMirror .ps-codeblock code .hljs-tag,
+.ProseMirror .ps-codeblock code .hljs-template-variable,
+.ProseMirror .ps-codeblock code .hljs-variable {
   color: var(--syntax-var);
 }
 
-.ProseMirror .ok-codeblock code .hljs-attr {
+.ProseMirror .ps-codeblock code .hljs-attr {
   color: var(--syntax-attr);
 }
 
-.ProseMirror .ok-codeblock code .hljs-string,
-.ProseMirror .ok-codeblock code .hljs-regexp,
-.ProseMirror .ok-codeblock code .hljs-literal,
-.ProseMirror .ok-codeblock code .hljs-meta-string,
-.ProseMirror .ok-codeblock code .hljs-symbol,
-.ProseMirror .ok-codeblock code .hljs-bullet,
-.ProseMirror .ok-codeblock code .hljs-addition {
+.ProseMirror .ps-codeblock code .hljs-string,
+.ProseMirror .ps-codeblock code .hljs-regexp,
+.ProseMirror .ps-codeblock code .hljs-literal,
+.ProseMirror .ps-codeblock code .hljs-meta-string,
+.ProseMirror .ps-codeblock code .hljs-symbol,
+.ProseMirror .ps-codeblock code .hljs-bullet,
+.ProseMirror .ps-codeblock code .hljs-addition {
   color: var(--syntax-string);
 }
 
-.ProseMirror .ok-codeblock code .hljs-number,
-.ProseMirror .ok-codeblock code .hljs-built_in,
-.ProseMirror .ok-codeblock code .hljs-link {
+.ProseMirror .ps-codeblock code .hljs-number,
+.ProseMirror .ps-codeblock code .hljs-built_in,
+.ProseMirror .ps-codeblock code .hljs-link {
   color: var(--syntax-number);
 }
 
-.ProseMirror .ok-codeblock code .hljs-type {
+.ProseMirror .ps-codeblock code .hljs-type {
   color: var(--syntax-type);
 }
 
-.ProseMirror .ok-codeblock code .hljs-title,
-.ProseMirror .ok-codeblock code .hljs-attribute,
-.ProseMirror .ok-codeblock code .hljs-meta {
+.ProseMirror .ps-codeblock code .hljs-title,
+.ProseMirror .ps-codeblock code .hljs-attribute,
+.ProseMirror .ps-codeblock code .hljs-meta {
   color: var(--syntax-func);
 }
 
@@ -2131,24 +2131,24 @@ section[data-editor-pane-id] {
    document order matches specificity order (biome's noDescendingSpecificity).
    `.hljs-class .hljs-title` paints class names as types; `.hljs-function
    .hljs-title` keeps function names in the function slot. */
-.ProseMirror .ok-codeblock code .hljs-class .hljs-title {
+.ProseMirror .ps-codeblock code .hljs-class .hljs-title {
   color: var(--syntax-type);
 }
 
-.ProseMirror .ok-codeblock code .hljs-function .hljs-title {
+.ProseMirror .ps-codeblock code .hljs-function .hljs-title {
   color: var(--syntax-func);
 }
 
-.ProseMirror .ok-codeblock code .hljs-deletion {
+.ProseMirror .ps-codeblock code .hljs-deletion {
   color: var(--diff-removed);
   background: color-mix(in oklab, var(--diff-removed) 15%, transparent);
 }
 
-.ProseMirror .ok-codeblock code .hljs-emphasis {
+.ProseMirror .ps-codeblock code .hljs-emphasis {
   font-style: italic;
 }
 
-.ProseMirror .ok-codeblock code .hljs-strong {
+.ProseMirror .ps-codeblock code .hljs-strong {
   font-weight: 600;
 }
 
@@ -2236,18 +2236,18 @@ section[data-editor-pane-id] {
 
 /* `/skill-name` references in skill-doc prose: installed reads as a link;
    missing reads as the broken-link treatment with an install path on click. */
-.ProseMirror .ok-skill-ref,
+.ProseMirror .ps-skill-ref,
 .cm-skill-ref {
   cursor: pointer;
   color: var(--color-azure-blue);
   @apply dark:text-sky-blue;
 }
-.ProseMirror .ok-skill-ref:hover,
+.ProseMirror .ps-skill-ref:hover,
 .cm-skill-ref:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.ProseMirror .ok-skill-ref-missing,
+.ProseMirror .ps-skill-ref-missing,
 .cm-skill-ref-missing {
   color: var(--muted-foreground);
   text-decoration: underline dotted;
@@ -2255,10 +2255,10 @@ section[data-editor-pane-id] {
 }
 
 /* In-viewer find (§8.4): CSS Custom Highlight API paint — DOM untouched. */
-::highlight(ok-find) {
+::highlight(ps-find) {
   background-color: color-mix(in srgb, var(--color-azure-blue) 30%, transparent);
 }
-::highlight(ok-find-active) {
+::highlight(ps-find-active) {
   background-color: color-mix(in srgb, var(--color-azure-blue) 60%, transparent);
 }
 
@@ -2267,11 +2267,11 @@ section[data-editor-pane-id] {
    tint + solid underline). Dotted-at-rest was tried and read as the
    unresolved/spellcheck error style, and wrapped chips in tables stacked
    rows of dots. Decoration-only; bytes and chip styling untouched. */
-.ProseMirror .ok-skill-path-link,
+.ProseMirror .ps-skill-path-link,
 .cm-skill-path-link {
   cursor: pointer;
 }
-.ProseMirror .ok-skill-path-link:hover,
+.ProseMirror .ps-skill-path-link:hover,
 .cm-skill-path-link:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -2563,7 +2563,7 @@ section[data-editor-pane-id] {
 /* DragHandlePlugin container — absolutely positioned flex row of grip + "+"
    created imperatively by `BlockDragHandle` (see
    `packages/app/src/editor/extensions/drag-handle.ts`). Per FR-15 / FR-16. */
-.ok-block-controls {
+.ps-block-controls {
   position: absolute;
   display: flex;
   align-items: center;
@@ -2573,9 +2573,9 @@ section[data-editor-pane-id] {
   user-select: none;
 }
 
-/* Gutter "+" chrome, shared by the block handle's button (`ok-add-block-btn`, a
+/* Gutter "+" chrome, shared by the block handle's button (`ps-add-block-btn`, a
    real <button> parked beside a block by DragHandlePlugin) and the
-   TrailingAffordance hint (`ok-trailing-affordance-plus`, a <span> inside a
+   TrailingAffordance hint (`ps-trailing-affordance-plus`, a <span> inside a
    widget decoration below the last block). The two are deliberately the same
    glyph at the same gutter offset, so hovering the dead zone reads as "a block
    goes here" exactly the way hovering a block does. One rule rather than two
@@ -2594,8 +2594,8 @@ section[data-editor-pane-id] {
    alone. Every figure is `Y = L³` for these chroma-0 colors, then the standard
    `(Y1 + 0.05) / (Y2 + 0.05)`, with the translucent layer composited in sRGB
    before linearizing. */
-.ok-add-block-btn,
-.ok-trailing-affordance-plus {
+.ps-add-block-btn,
+.ps-trailing-affordance-plus {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2609,8 +2609,8 @@ section[data-editor-pane-id] {
   padding: 0;
   transition: background-color 100ms var(--ease-out-strong);
 }
-.ok-add-block-btn:hover,
-.ok-trailing-affordance-plus:hover {
+.ps-add-block-btn:hover,
+.ps-trailing-affordance-plus:hover {
   background-color: oklch(0 0 0 / 6%);
 }
 
@@ -2618,7 +2618,7 @@ section[data-editor-pane-id] {
    semantic interactive element discoverable by screen readers). Default
    <button> chrome (border, padding, system background) is reset so the
    visual is unchanged from when this was a <div>. */
-.ok-drag-grip {
+.ps-drag-grip {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2631,10 +2631,10 @@ section[data-editor-pane-id] {
   background: transparent;
   padding: 0;
 }
-.ok-drag-grip:hover {
+.ps-drag-grip:hover {
   background-color: oklch(0 0 0 / 6%);
 }
-.ok-drag-grip:active {
+.ps-drag-grip:active {
   cursor: grabbing;
 }
 
@@ -2644,12 +2644,12 @@ body[data-editor-tab-dragging] * {
 }
 
 /* Keyboard focus indicator — mirrors the editor-wide pattern used by
-   .tag, [data-link], a.ok-file-attachment, and task-list checkboxes.
+   .tag, [data-link], a.ps-file-attachment, and task-list checkboxes.
    The grip carries tabindex="-1" today, so the indicator only fires on
    explicit `.focus()` calls; the add button is reachable via Tab while
    its hover-only chrome is visible. */
-.ok-add-block-btn:focus-visible,
-.ok-drag-grip:focus-visible {
+.ps-add-block-btn:focus-visible,
+.ps-drag-grip:focus-visible {
   outline: 2px solid var(--color-ring);
   outline-offset: 2px;
 }
@@ -2667,8 +2667,8 @@ body[data-editor-tab-dragging] * {
    measures the handle's box via floating-ui (the position write lands a
    microtask after the reveal), and `display: none` would zero the dimensions
    that measurement needs. */
-.ok-block-controls[style*="visibility: hidden"],
-.ok-block-controls[style*="visibility:hidden"] {
+.ps-block-controls[style*="visibility: hidden"],
+.ps-block-controls[style*="visibility:hidden"] {
   opacity: 0;
   /* biome-ignore lint/complexity/noImportantStyles: the plugin writes top/left as inline styles, which no selector specificity can outrank. */
   top: 0 !important;
@@ -2677,19 +2677,19 @@ body[data-editor-tab-dragging] * {
 }
 
 /* Dark mode */
-.dark :is(.ok-add-block-btn, .ok-trailing-affordance-plus) {
+.dark :is(.ps-add-block-btn, .ps-trailing-affordance-plus) {
   color: oklch(0.5 0 0);
 }
-.dark :is(.ok-add-block-btn, .ok-trailing-affordance-plus):hover {
+.dark :is(.ps-add-block-btn, .ps-trailing-affordance-plus):hover {
   background-color: oklch(1 0 0 / 8%);
   /* 0.5 against the hover-lifted ground is 2.79:1, under the 3:1 floor; 0.62
      restores 4.60:1. Derivation on the shared rule above. */
   color: oklch(0.62 0 0);
 }
-.dark .ok-drag-grip {
+.dark .ps-drag-grip {
   color: oklch(0.5 0 0);
 }
-.dark .ok-drag-grip:hover {
+.dark .ps-drag-grip:hover {
   background-color: oklch(1 0 0 / 8%);
   /* Same ground, same floor, same lift — the grip is part of the gutter
      vocabulary and moves with it. */
@@ -2712,7 +2712,7 @@ body[data-editor-tab-dragging] * {
    exception: the glyph opts back in, and it has to, because `left: -52px` puts
    it partly left of `view.dom`'s border box and so outside that coordinate
    test, which is why `inTrailingZone` recognizes it by target instead. */
-.ok-trailing-affordance {
+.ps-trailing-affordance {
   position: relative;
   height: 0;
   pointer-events: none;
@@ -2724,7 +2724,7 @@ body[data-editor-tab-dragging] * {
    handle uses: the row is a child of `.ProseMirror`, whose content box starts
    2.5rem (40px) inside its border box, and the handle sits 12px further out
    still. `top` centers the 20px box on the line a click would create. */
-.ok-trailing-affordance-plus {
+.ps-trailing-affordance-plus {
   position: absolute;
   top: 4px;
   left: -52px;
@@ -2739,7 +2739,7 @@ body[data-editor-tab-dragging] * {
    nothing. Must stay AFTER the rule above — a media query adds no specificity,
    so an earlier block loses to it on source order. */
 @media (width < 40rem) and (pointer: coarse) {
-  .ok-trailing-affordance-plus {
+  .ps-trailing-affordance-plus {
     left: 0;
   }
 }
@@ -2749,14 +2749,14 @@ body[data-editor-tab-dragging] * {
    opacity and the two gutter glyphs read as different components. There is no
    exit half: the decoration is removed, not hidden. */
 @media (prefers-reduced-motion: no-preference) {
-  .ok-trailing-affordance-plus {
+  .ps-trailing-affordance-plus {
     transition:
       background-color 100ms var(--ease-out-strong),
       opacity 100ms var(--ease-out-strong);
   }
 
   @starting-style {
-    .ok-trailing-affordance-plus {
+    .ps-trailing-affordance-plus {
       opacity: 0;
     }
   }
@@ -2803,7 +2803,7 @@ body[data-editor-tab-dragging] * {
    moved to the body-portaled menu content). `visibility: hidden` (not
    `display: none`) keeps floating-ui's positioning math live and drops the
    pills out of tab order. */
-.ok-table-cell-handle-layer {
+.ps-table-cell-handle-layer {
   position: relative;
   grid-row: 1;
   align-self: start;
@@ -2814,8 +2814,8 @@ body[data-editor-tab-dragging] * {
      selectors below override transition-delay to 0s. */
   transition: visibility 0s 150ms;
 }
-.tiptap-editor:focus-within .ok-table-cell-handle-layer,
-.ok-table-cell-handle-layer:has([data-state="open"]) {
+.tiptap-editor:focus-within .ps-table-cell-handle-layer,
+.ps-table-cell-handle-layer:has([data-state="open"]) {
   visibility: visible;
   transition-delay: 0s;
 }
@@ -2825,7 +2825,7 @@ body[data-editor-tab-dragging] * {
    `editor.view.dom.parentElement`. Each bar is a persistent but
    transparent hit zone at the table edge; hovering it (the mouse landing inside
    the bar) reveals the "+", so reveal is pure CSS — no JS hover tracking. */
-.ok-table-insert-controls {
+.ps-table-insert-controls {
   position: absolute;
   top: 0;
   left: 0;
@@ -2835,7 +2835,7 @@ body[data-editor-tab-dragging] * {
   z-index: 5;
 }
 
-.ok-table-insert-bar {
+.ps-table-insert-bar {
   position: absolute;
   display: flex;
   align-items: center;
@@ -2863,30 +2863,30 @@ body[data-editor-tab-dragging] * {
     color 100ms var(--ease-out-strong);
 }
 /* width/height = transparent gutter (toward the table) + visible strip. */
-.ok-table-insert-column {
+.ps-table-insert-column {
   width: calc(var(--ok-table-bar-thickness) + var(--ok-table-bar-gap));
   padding-left: var(--ok-table-bar-gap);
 }
-.ok-table-insert-row {
+.ps-table-insert-row {
   height: calc(var(--ok-table-bar-thickness) + var(--ok-table-bar-gap));
   padding-top: var(--ok-table-bar-gap);
 }
 /* Revealed when hovered directly, focused, or when the pointer is in the
    table's last column / last row (`.is-active`, toggled by TableInsertControls). */
-.ok-table-insert-bar:hover,
-.ok-table-insert-bar:focus-visible,
-.ok-table-insert-bar.is-active {
+.ps-table-insert-bar:hover,
+.ps-table-insert-bar:focus-visible,
+.ps-table-insert-bar.is-active {
   background-color: oklch(0 0 0 / 6%);
   /* ~3:1 against the page (WCAG 1.4.11 non-text contrast); 0.72 was too faint. */
   color: oklch(0.55 0 0);
 }
-.dark .ok-table-insert-bar:hover,
-.dark .ok-table-insert-bar:focus-visible,
-.dark .ok-table-insert-bar.is-active {
+.dark .ps-table-insert-bar:hover,
+.dark .ps-table-insert-bar:focus-visible,
+.dark .ps-table-insert-bar.is-active {
   background-color: oklch(1 0 0 / 8%);
   color: oklch(0.5 0 0);
 }
-.ok-table-insert-bar:focus-visible {
+.ps-table-insert-bar:focus-visible {
   outline: 2px solid var(--color-ring);
   outline-offset: 2px;
 }
@@ -3678,7 +3678,7 @@ html.dark [data-app-header] button[data-variant="ghost"]:is(:hover, [data-state=
   Electron-mode outer-canvas alpha-aware retrofit.
 
   Triggered by the `electron-mode` class added to <html> by the FOUC inline
-  script in index.html when `window.okDesktop` is present (preload bridge
+  script in index.html when `window.psDesktop` is present (preload bridge
   runs before any inline page script). Web mode (no class) leaves the
   outer canvas solid — visually unchanged from baseline.
 
@@ -3720,7 +3720,7 @@ html.electron-mode {
     the web the first button's icon lines up with the file list, 16px from
     the edge. Windows and Linux re-declare it as 0px inside the AppHeader for
     the same alignment (see the rule after the reduced-transparency block).
-    Web hosts (no `window.okDesktop`) never gain the `electron-mode` class,
+    Web hosts (no `window.psDesktop`) never gain the `electron-mode` class,
     so the variable is undefined there. Consumers MUST always supply a
     fallback, and its value is the padding that consumer wants on the web:
     `pl-[var(--ok-titlebar-reserve-left,1rem)]` for the ones whose base is
@@ -3735,7 +3735,7 @@ html.electron-mode {
 
 /*
   Windows/Linux chrome (electron-platform-* classes come from the FOUC
-  script alongside electron-mode, read off `window.okDesktop.platform`).
+  script alongside electron-mode, read off `window.psDesktop.platform`).
   No traffic lights on these platforms — collapse the left reserve back to
   the 1rem base padding. The OS window controls instead float via Electron's
   titleBarOverlay (Window Controls Overlay), so reserve the chrome row's edge
@@ -4126,7 +4126,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 }
 
 /* Video alignment — parity with img + embed (PRD-6822). `text-align` on the
-   wrapper centers / lefts / rights the inline-block `.ok-video` child inside
+   wrapper centers / lefts / rights the inline-block `.ps-video` child inside
    the column. The wrapper stays at column width (no fit-content) so the
    right-anchored chrome bar and the floating PropPanel stay column-stable
    while the author tweaks the video's `width` prop. */
@@ -4142,10 +4142,10 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 
 /* Embed pane — `display: inline-block` so the `text-align` alignment rules
    above can center / left / right the pane within the column. Resize is
-   driven by the `ok-resize-overlay` handles (see below), not native CSS
+   driven by the `ps-resize-overlay` handles (see below), not native CSS
    `resize` — the handles work on all 4 sides + 4 corners and don't
    require the user to find the bottom-right grip. */
-.ProseMirror .ok-embed {
+.ProseMirror .ps-embed {
   position: relative;
   display: inline-block;
   width: 100%;
@@ -4158,7 +4158,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   border-radius: 0.5rem;
 }
 
-.ProseMirror .ok-embed-frame {
+.ProseMirror .ps-embed-frame {
   display: block;
   width: 100%;
   height: 100%;
@@ -4171,7 +4171,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 
 /* Placeholder shown for a fresh `<Embed />` with no src yet. Kept in a
    single matched-color box so the slash-insert UX is recognisable. */
-.ProseMirror .ok-embed--placeholder {
+.ProseMirror .ps-embed--placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4190,14 +4190,14 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * render as thin lines centred on each side. All 8 share the same hover
  * tint so the affordance reads consistently.
  * --------------------------------------------------------------------- */
-.ok-resize-overlay {
+.ps-resize-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 5;
 }
 
-.ok-resize-handle {
+.ps-resize-handle {
   position: absolute;
   margin: 0;
   padding: 0;
@@ -4214,77 +4214,77 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 /* Honor the user's reduced-motion preference. Matches the codebase
    pattern applied to every other transition in this file. */
 @media (prefers-reduced-motion: reduce) {
-  .ok-resize-handle {
+  .ps-resize-handle {
     transition: none;
   }
 }
 
 /* Edge handles — thin centred lines spanning ~40% of the side. Larger
    invisible hit-target padding makes them grabbable without precision. */
-.ok-resize-handle--t,
-.ok-resize-handle--b {
+.ps-resize-handle--t,
+.ps-resize-handle--b {
   left: 30%;
   right: 30%;
   height: 8px;
   background: currentColor;
   border-radius: 4px;
 }
-.ok-resize-handle--t {
+.ps-resize-handle--t {
   top: -4px;
 }
-.ok-resize-handle--b {
+.ps-resize-handle--b {
   bottom: -4px;
 }
 
-.ok-resize-handle--l,
-.ok-resize-handle--r {
+.ps-resize-handle--l,
+.ps-resize-handle--r {
   top: 30%;
   bottom: 30%;
   width: 8px;
   background: currentColor;
   border-radius: 4px;
 }
-.ok-resize-handle--l {
+.ps-resize-handle--l {
   left: -4px;
 }
-.ok-resize-handle--r {
+.ps-resize-handle--r {
   right: -4px;
 }
 
 /* Corner handles — L-shaped brackets. Drawn with a 14×14 box whose two
    visible borders form the bracket; the inside is transparent. */
-.ok-resize-handle--tl,
-.ok-resize-handle--tr,
-.ok-resize-handle--bl,
-.ok-resize-handle--br {
+.ps-resize-handle--tl,
+.ps-resize-handle--tr,
+.ps-resize-handle--bl,
+.ps-resize-handle--br {
   width: 14px;
   height: 14px;
   background: transparent;
   border: 0;
 }
 
-.ok-resize-handle--tl {
+.ps-resize-handle--tl {
   top: -1px;
   left: -1px;
   border-top: 2px solid currentColor;
   border-left: 2px solid currentColor;
   border-top-left-radius: 4px;
 }
-.ok-resize-handle--tr {
+.ps-resize-handle--tr {
   top: -1px;
   right: -1px;
   border-top: 2px solid currentColor;
   border-right: 2px solid currentColor;
   border-top-right-radius: 4px;
 }
-.ok-resize-handle--bl {
+.ps-resize-handle--bl {
   bottom: -1px;
   left: -1px;
   border-bottom: 2px solid currentColor;
   border-left: 2px solid currentColor;
   border-bottom-left-radius: 4px;
 }
-.ok-resize-handle--br {
+.ps-resize-handle--br {
   bottom: -1px;
   right: -1px;
   border-bottom: 2px solid currentColor;
@@ -4293,20 +4293,20 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 }
 
 /* Hover-on-host reveal. Host is the resizable component's wrapper
-   (`.ok-embed`, `.ok-codeblock-preview`, etc.). The handle pointer-events
+   (`.ps-embed`, `.ps-codeblock-preview`, etc.). The handle pointer-events
    only enable while visible so the wrapper's normal interactions
    (iframe clicks, text selection) work in resting state. */
-.ProseMirror .ok-embed:hover .ok-resize-handle,
-.ProseMirror .ok-embed:focus-within .ok-resize-handle,
-.ProseMirror .ok-codeblock-preview:hover .ok-resize-handle,
-.ProseMirror .ok-codeblock[data-cursor-inside="true"] .ok-codeblock-preview .ok-resize-handle,
-.ProseMirror .jsx-component-wrapper[data-selected="true"] .ok-resize-handle {
+.ProseMirror .ps-embed:hover .ps-resize-handle,
+.ProseMirror .ps-embed:focus-within .ps-resize-handle,
+.ProseMirror .ps-codeblock-preview:hover .ps-resize-handle,
+.ProseMirror .ps-codeblock[data-cursor-inside="true"] .ps-codeblock-preview .ps-resize-handle,
+.ProseMirror .jsx-component-wrapper[data-selected="true"] .ps-resize-handle {
   opacity: 1;
   pointer-events: auto;
   color: var(--ring, oklch(0.55 0.18 250));
 }
 
-.ok-resize-handle:hover {
+.ps-resize-handle:hover {
   color: var(--ring, oklch(0.55 0.18 250));
 }
 
@@ -4447,7 +4447,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * then UN-apply it on any `.footnote-def` that has a prior
  * `.footnote-def` SIBLING anywhere earlier in the parent. The general-
  * sibling combinator (`~`) matches across intervening non-footnote
- * elements — PM inserts `<p class="ok-chunk-wrapper">` chunks between
+ * elements — PM inserts `<p class="ps-chunk-wrapper">` chunks between
  * every block-level node, so the adjacent-sibling combinator (`+`)
  * would never see a `.footnote-def + .footnote-def` match in practice.
  *
@@ -4646,7 +4646,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * fullscreen button, keyboard shortcuts, and reduced-motion all remain the
  * browser's responsibility.
  */
-.ok-video {
+.ps-video {
   display: block;
   max-width: 100%;
   @apply rounded-lg;
@@ -4664,12 +4664,12 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    to the full column. `max-width: 100%` keeps the embed contained when
    the column is narrower than 720px. Author-supplied `width` (via
    inline style from the Video descriptor) overrides this default. */
-.ok-video-youtube {
+.ps-video-youtube {
   width: 720px;
   max-width: 100%;
   /* Clip the inner `.yt-lite`'s rectangular thumbnail (and the
      post-activation iframe) to the wrapper's rounded corners — without
-     this, the lib's background-image bleeds past the `.ok-video`'s
+     this, the lib's background-image bleeds past the `.ps-video`'s
      border-radius and the video looks like it's leaking on the right.
      Native `<video>` doesn't need this because the element renders its
      pixels inside its own box; for a `<div>` wrapper with rounded
@@ -4677,12 +4677,12 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   overflow: hidden;
 }
 
-/* Vimeo dispatch: parallel to `.ok-video-youtube`. `@u-wave/react-vimeo`
+/* Vimeo dispatch: parallel to `.ps-video-youtube`. `@u-wave/react-vimeo`
    in `responsive` mode renders an iframe wrapped in a div that resizes
    to its parent — give the parent the same 720px default so authors who
    don't supply explicit width get the same UX as the YouTube path. The
    iframe itself is rectangular; rounded-corner clipping is on us. */
-.ok-video-vimeo {
+.ps-video-vimeo {
   width: 720px;
   max-width: 100%;
   overflow: hidden;
@@ -4693,13 +4693,13 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    The Loom iframe itself defaults to no width/height (Loom's embed sizes
    itself via CSS internals), so we set sensible defaults on the iframe
    to match the wrapper. Author-supplied width/height override. */
-.ok-video-loom {
+.ps-video-loom {
   width: 720px;
   max-width: 100%;
   overflow: hidden;
 }
 
-/* Video alignment (PRD-6822) — `.ok-video` is `display: block` by default
+/* Video alignment (PRD-6822) — `.ps-video` is `display: block` by default
    (HTML5 `<video>` is block, and the YouTube / Vimeo / Loom wrapper `<div>`
    is too). Block elements ignore the parent's `text-align`, breaking the
    three `[data-component-type="video"][data-align="…"]` rules above (which
@@ -4709,12 +4709,12 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    video wrappers (defaulting to `center` via the `ALIGNABLE_DESCRIPTOR_NAMES`
    clamp), so the wrapper-component-type selector is the precise scope. The
    global `display: block` default stays everywhere outside the JSX
-   wrapper. Placed after the `.ok-video-*` width rules so selector
+   wrapper. Placed after the `.ps-video-*` width rules so selector
    specificity stays ascending in document order. */
-.ProseMirror .jsx-component-wrapper[data-component-type="video"] .ok-video {
+.ProseMirror .jsx-component-wrapper[data-component-type="video"] .ps-video {
   display: inline-block;
 }
-.ok-video-loom-iframe {
+.ps-video-loom-iframe {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -4728,7 +4728,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * from the `height=N` anchor parameter (default 600px); per-page width
  * is computed at render time so the viewer fits the prose column.
  */
-.ok-pdf {
+.ps-pdf {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
@@ -4738,7 +4738,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   overflow: hidden;
 }
 
-.ok-pdf-toolbar {
+.ps-pdf-toolbar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -4749,7 +4749,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   user-select: none;
 }
 
-.ok-pdf-title {
+.ps-pdf-title {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -4758,13 +4758,13 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   font-weight: 500;
 }
 
-.ok-pdf-controls {
+.ps-pdf-controls {
   display: flex;
   align-items: center;
   gap: 0.2rem;
 }
 
-.ok-pdf-divider {
+.ps-pdf-divider {
   display: inline-block;
   width: 1px;
   height: 1.1rem;
@@ -4772,11 +4772,11 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   margin: 0 0.2rem;
 }
 
-.ok-pdf-page-form {
+.ps-pdf-page-form {
   display: inline-flex;
 }
 
-.ok-pdf-page-input {
+.ps-pdf-page-input {
   width: 2.4rem;
   height: 1.5rem;
   padding: 0 0.25rem;
@@ -4788,19 +4788,19 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   background: var(--background);
   color: var(--foreground);
 }
-.ok-pdf-page-input:focus {
+.ps-pdf-page-input:focus {
   outline: 2px solid var(--ring, var(--border));
   outline-offset: -1px;
 }
 
-.ok-pdf-page-of {
+.ps-pdf-page-of {
   font-variant-numeric: tabular-nums;
   font-size: 0.78rem;
   color: var(--muted-foreground);
   margin-right: 0.15rem;
 }
 
-.ok-pdf-zoom-display {
+.ps-pdf-zoom-display {
   font-variant-numeric: tabular-nums;
   font-size: 0.78rem;
   color: var(--muted-foreground);
@@ -4808,7 +4808,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   text-align: center;
 }
 
-.ok-pdf-btn {
+.ps-pdf-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4821,15 +4821,15 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   border: 1px solid transparent;
   padding: 0;
 }
-.ok-pdf-btn:hover:not(:disabled) {
+.ps-pdf-btn:hover:not(:disabled) {
   background-color: var(--muted);
   border-color: var(--border);
 }
-.ok-pdf-btn:disabled {
+.ps-pdf-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
-.ok-pdf-btn[aria-pressed="true"] {
+.ps-pdf-btn[aria-pressed="true"] {
   background-color: var(--muted);
   border-color: var(--border);
 }
@@ -4837,11 +4837,11 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 /* Layout-dropdown menu — anchored to the chevron button.
  * Width is determined by content; max set so long labels don't push
  * the embed sideways. The wrapping `<div>` is the positioning context. */
-.ok-pdf-layout-menu {
+.ps-pdf-layout-menu {
   position: relative;
 }
 
-.ok-pdf-menu {
+.ps-pdf-menu {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
@@ -4856,7 +4856,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-.ok-pdf-menu-item {
+.ps-pdf-menu-item {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -4869,17 +4869,17 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   color: var(--foreground);
   cursor: pointer;
 }
-.ok-pdf-menu-item:hover {
+.ps-pdf-menu-item:hover {
   background-color: var(--muted);
 }
-.ok-pdf-menu-check {
+.ps-pdf-menu-check {
   display: inline-flex;
   width: 0.9rem;
   align-items: center;
   justify-content: center;
   color: var(--foreground);
 }
-.ok-pdf-menu-divider {
+.ps-pdf-menu-divider {
   margin: 0.25rem 0;
   border: 0;
   border-top: 1px solid var(--border);
@@ -4888,13 +4888,13 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 /* Body — flex row that hosts the optional thumbnail sidebar and the
  * main page-stack viewport. Sidebar is a fixed-width column; pages
  * take the remaining space. */
-.ok-pdf-body {
+.ps-pdf-body {
   flex: 1;
   display: flex;
   min-height: 0; /* allow children to shrink below their content size */
 }
 
-.ok-pdf-sidebar {
+.ps-pdf-sidebar {
   flex: 0 0 auto;
   width: 9rem;
   overflow-y: auto;
@@ -4906,7 +4906,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   background: var(--background);
 }
 
-.ok-pdf-thumb {
+.ps-pdf-thumb {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4917,21 +4917,21 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   border-radius: 0.3rem;
   cursor: pointer;
 }
-.ok-pdf-thumb:hover {
+.ps-pdf-thumb:hover {
   background-color: var(--muted);
 }
-.ok-pdf-thumb[data-active] {
+.ps-pdf-thumb[data-active] {
   border-color: var(--ring, var(--foreground));
   background-color: var(--muted);
 }
-.ok-pdf-thumb-canvas {
+.ps-pdf-thumb-canvas {
   display: block;
   max-width: 100%;
   background: white;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-radius: 1px;
 }
-.ok-pdf-thumb-num {
+.ps-pdf-thumb-num {
   font-size: 0.7rem;
   color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
@@ -4939,7 +4939,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 
 /* Pages container — default vertical column. Two-page modes flip the
  * layout to a 2-column grid via the `data-layout` selector below. */
-.ok-pdf-pages {
+.ps-pdf-pages {
   flex: 1;
   overflow: auto;
   display: flex;
@@ -4955,8 +4955,8 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   background-color: color-mix(in oklab, var(--muted) 70%, transparent);
 }
 
-.ok-pdf-pages[data-layout="two-odd"],
-.ok-pdf-pages[data-layout="two-even"] {
+.ps-pdf-pages[data-layout="two-odd"],
+.ps-pdf-pages[data-layout="two-even"] {
   display: grid;
   grid-template-columns: repeat(2, max-content);
   justify-content: center;
@@ -4968,11 +4968,11 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 /* Two-page (even) — page 1 is a "cover" alone on the right, then pairs
  * (2,3) (4,5) … Achieved by shifting the first canvas to grid column 2;
  * subsequent pages flow normally starting at column 1. */
-.ok-pdf-pages[data-layout="two-even"] > .ok-pdf-page:first-child {
+.ps-pdf-pages[data-layout="two-even"] > .ps-pdf-page:first-child {
   grid-column-start: 2;
 }
 
-.ok-pdf-page {
+.ps-pdf-page {
   display: block;
   /* No `max-width: 100%` — the inline `style.width` set by `Pdf.tsx` is
    * authoritative. At zoom > 1× the canvas is intentionally wider than
@@ -4985,13 +4985,13 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   border-radius: 2px;
 }
 
-.ok-pdf-loading,
-.ok-pdf-error {
+.ps-pdf-loading,
+.ps-pdf-error {
   padding: 1rem;
   font-size: 0.85rem;
   color: var(--muted-foreground);
 }
-.ok-pdf-error {
+.ps-pdf-error {
   color: var(--destructive, #c33);
 }
 
@@ -5014,7 +5014,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 /* Descendant base rules — declared before the anchor's hover/focus rules
  * so the cascade reads in ascending-specificity order (Biome
  * `noDescendingSpecificity` rule). The anchor selector uses
- * `.ProseMirror a.ok-file-attachment` (1 class + 1 element + 1 class) so
+ * `.ProseMirror a.ps-file-attachment` (1 class + 1 element + 1 class) so
  * it beats Tailwind v4 typography's `.prose a` rule (1 class + 1
  * element) on specificity — without `.ProseMirror`, the blue prose-link
  * color + underline defaults bleed through and the row reads as a
@@ -5025,7 +5025,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * `.ProseMirror` overflow box and make the row look truncated on the
  * left). Internal padding gives the hover background breathing room
  * around the content without poking outside the column. */
-.ok-file-icon {
+.ps-file-icon {
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
@@ -5038,7 +5038,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   color: var(--foreground);
 }
 
-.ok-file-name {
+.ps-file-name {
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5046,7 +5046,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   max-width: 60ch;
 }
 
-.ok-file-size {
+.ps-file-size {
   font-size: 0.85em;
   color: var(--muted-foreground);
 }
@@ -5058,7 +5058,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * 4px border around the full prose column when only the row is the
  * "selected thing" reads as a wide rectangle outline floating in
  * empty space. The selection feedback paints on the inner row instead
- * (a rule further below scoped to `[data-selected="true"] a.ok-file-attachment`)
+ * (a rule further below scoped to `[data-selected="true"] a.ps-file-attachment`)
  * so the highlight tracks the visible content.
  *
  * Both source-form variants — canonical `[data-component-type="file"]`
@@ -5067,10 +5067,10 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * the same treatment so selection looks identical regardless of how
  * the row was authored.
  *
- * Rule ordering: the base `.ProseMirror a.ok-file-attachment` rule is
+ * Rule ordering: the base `.ProseMirror a.ps-file-attachment` rule is
  * declared FIRST so that the more-specific selection-state rules below
  * cascade over it in source order (Biome `noDescendingSpecificity`). */
-.ProseMirror a.ok-file-attachment {
+.ProseMirror a.ps-file-attachment {
   /* Full-width row (block-level flex) so the hover/selection background
    * spans the whole prose column — matches Notion's "file attached"
    * row visual where the row reads as a structural element of the
@@ -5088,21 +5088,21 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   transition: background-color 120ms ease;
 }
 
-.ProseMirror a.ok-file-attachment:hover {
+.ProseMirror a.ps-file-attachment:hover {
   background-color: var(--muted);
 }
 
-.ProseMirror a.ok-file-attachment:focus-visible {
+.ProseMirror a.ps-file-attachment:focus-visible {
   outline: 2px solid var(--ring, currentColor);
   outline-offset: 2px;
 }
 
-.ProseMirror a.ok-file-attachment:hover .ok-file-name {
+.ProseMirror a.ps-file-attachment:hover .ps-file-name {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
-.ProseMirror a.ok-file-attachment:hover .ok-file-size {
+.ProseMirror a.ps-file-attachment:hover .ps-file-size {
   /* Override the prose typography hover-underline that would otherwise
    * cascade through the `<a>` and paint a single underline beneath the
    * size span too — only the name should pick up the hover-underline,
@@ -5120,10 +5120,10 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 
 .ProseMirror
   .jsx-component-wrapper[data-component-type="file"][data-selected="true"]
-  a.ok-file-attachment,
+  a.ps-file-attachment,
 .ProseMirror
   .jsx-component-wrapper[data-component-type="wikiembedfile"][data-selected="true"]
-  a.ok-file-attachment {
+  a.ps-file-attachment {
   /* Selection feedback is the muted background only — no outline ring.
    * The full-width row + bg tint reads clearly as "this row is the
    * thing you've selected" without painting a hard rectangle. The
@@ -5146,7 +5146,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * editor sits visually consistent with sibling string inputs in the
  * same panel. */
 /* PRD-6821 — Code preview "Edit source" modal's CodeMirror surface.
- * Sibling of `.ok-prop-codemirror` below but sized to fill its modal pane
+ * Sibling of `.ps-prop-codemirror` below but sized to fill its modal pane
  * instead of capping at 18rem. The inner editor expands to the host
  * div's full height (the modal's pane uses `flex-1 min-h-[260px]`), the
  * scroller takes the remainder via `flex: 1 1 0`, and color tokens flow
@@ -5157,25 +5157,25 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * battle against the dialog's solid surfaces and left the source pane
  * blank against the dark background. The all-CSS approach below
  * sidesteps that whole class of bug. */
-.ok-codepreview-cm {
+.ps-codepreview-cm {
   background-color: var(--background);
   color: var(--foreground);
   font-size: 0.8125rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-.ok-codepreview-cm .cm-editor {
+.ps-codepreview-cm .cm-editor {
   display: flex;
   flex-direction: column;
   height: 100%;
   outline: none;
 }
 
-.ok-codepreview-cm .cm-editor.cm-focused {
+.ps-codepreview-cm .cm-editor.cm-focused {
   outline: none;
 }
 
-.ok-codepreview-cm .cm-scroller {
+.ps-codepreview-cm .cm-scroller {
   flex: 1 1 0;
   min-height: 0;
   overflow: auto;
@@ -5185,35 +5185,35 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   overscroll-behavior: contain;
 }
 
-.ok-codepreview-cm .cm-content {
+.ps-codepreview-cm .cm-content {
   padding: 0.5rem 0;
   color: var(--foreground);
   caret-color: var(--foreground);
 }
 
-.ok-codepreview-cm .cm-gutters {
+.ps-codepreview-cm .cm-gutters {
   background-color: var(--background);
   border-right: 1px solid var(--border);
   color: var(--muted-foreground);
 }
 
-.ok-codepreview-cm .cm-activeLineGutter,
-.ok-codepreview-cm .cm-activeLine {
+.ps-codepreview-cm .cm-activeLineGutter,
+.ps-codepreview-cm .cm-activeLine {
   background-color: var(--muted);
 }
 
-.ok-codepreview-cm .cm-selectionBackground,
+.ps-codepreview-cm .cm-selectionBackground,
 /* `.cm-focused` lands on `.cm-editor` (CM6's wrapper), not on this
  * outer host div — so the focused-selection rule must nest through it.
- * Sibling `.ok-prop-codemirror` uses the same nesting at line 3790. */
-  .ok-codepreview-cm
+ * Sibling `.ps-prop-codemirror` uses the same nesting at line 3790. */
+  .ps-codepreview-cm
   .cm-editor.cm-focused
   .cm-selectionBackground,
-.ok-codepreview-cm ::selection {
+.ps-codepreview-cm ::selection {
   background-color: var(--accent);
 }
 
-.ok-prop-codemirror {
+.ps-prop-codemirror {
   width: 100%;
   /* Tightened from 6.5rem / 18rem — the PropPanel popover is narrow, so
    * a tall code surface dominated the visible area (Mermaid's `chart`
@@ -5236,24 +5236,24 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   transition: border-color 120ms ease;
 }
 
-.ok-prop-codemirror:focus-within {
+.ps-prop-codemirror:focus-within {
   border-color: var(--ring, var(--border));
   outline: 2px solid var(--ring, currentColor);
   outline-offset: -1px;
 }
 
-.ok-prop-codemirror .cm-editor {
+.ps-prop-codemirror .cm-editor {
   height: 100%;
   /* Matches the host's compacted max-height (was 18rem). */
   max-height: 12rem;
   outline: none;
 }
 
-.ok-prop-codemirror .cm-editor.cm-focused {
+.ps-prop-codemirror .cm-editor.cm-focused {
   outline: none;
 }
 
-.ok-prop-codemirror .cm-scroller {
+.ps-prop-codemirror .cm-scroller {
   font-family: inherit;
   font-size: inherit;
   line-height: 1.45;
@@ -5266,19 +5266,19 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   overscroll-behavior: contain;
 }
 
-.ok-prop-codemirror .cm-content {
+.ps-prop-codemirror .cm-content {
   padding: 0.4rem 0;
   caret-color: var(--foreground);
 }
 
-.ok-prop-codemirror .cm-gutters {
+.ps-prop-codemirror .cm-gutters {
   background-color: var(--muted);
   border-right: 1px solid var(--border);
   color: var(--muted-foreground);
 }
 
-.ok-prop-codemirror .cm-activeLineGutter,
-.ok-prop-codemirror .cm-activeLine {
+.ps-prop-codemirror .cm-activeLineGutter,
+.ps-prop-codemirror .cm-activeLine {
   background-color: var(--accent);
 }
 
@@ -5895,7 +5895,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 .dark
   [data-agent-flash-state="editing"][data-agent-flash-position="append"]
   .ProseMirror
-  > *:nth-last-child(-n + 3 of :not(.ok-trailing-affordance, .ProseMirror-gapcursor)) {
+  > *:nth-last-child(-n + 3 of :not(.ps-trailing-affordance, .ProseMirror-gapcursor)) {
   animation-name: agent-flash-dark;
 }
 .dark
@@ -5912,7 +5912,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 /* Boosted-alpha landing flash on the dark canvas (reduced motion already
    neutralizes the animation via a 0s duration, so the accent-bar fallback
    still stands). */
-.dark .ok-landing-flash {
+.dark .ps-landing-flash {
   animation-name: agent-flash-dark;
 }
 
@@ -6033,27 +6033,27 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    recognizable squiggle, reusing the --lint-*-color tokens so the two surfaces
    match in light and dark. The native `title` tooltip the plugin sets on the
    block lists the rule + message on hover. */
-.ProseMirror .ok-lint-block {
+.ProseMirror .ps-lint-block {
   text-decoration-line: underline;
   text-decoration-style: wavy;
   text-decoration-color: var(--lint-warning-color);
   text-decoration-skip-ink: none;
   text-underline-offset: 0.2em;
 }
-.ProseMirror .ok-lint-block.ok-lint-block-error {
+.ProseMirror .ps-lint-block.ps-lint-block-error {
   text-decoration-color: var(--lint-error-color);
 }
 /* Textless blocks (thematic break, block image) carry no inline text, so the
    wavy text-decoration above paints nothing. Swap it for an outline that reads
-   the same warning/error color. The base .ok-lint-block class stays applied for
+   the same warning/error color. The base .ps-lint-block class stays applied for
    the hover-tooltip lookup; here we cancel its (invisible) underline. */
-.ProseMirror .ok-lint-block-atom {
+.ProseMirror .ps-lint-block-atom {
   text-decoration: none;
   outline: 2px dashed var(--lint-warning-color);
   outline-offset: 3px;
   border-radius: 3px;
 }
-.ProseMirror .ok-lint-block-atom.ok-lint-block-error {
+.ProseMirror .ps-lint-block-atom.ps-lint-block-error {
   outline-color: var(--lint-error-color);
 }
 
@@ -6062,22 +6062,22 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    a target proven absent by the project inventory is an error. The labeled
    placeholder and ImageOff icon remain the non-color channels, while the
    authored target gets the familiar audit squiggle. */
-.ok-image-error-placeholder {
+.ps-image-error-placeholder {
   --ok-image-error-accent: color-mix(in oklch, var(--lint-warning-color) 82%, var(--foreground));
 
   border-color: var(--ok-image-error-accent);
   background: color-mix(in oklch, var(--lint-warning-color) 9%, transparent);
 }
-[data-image-error-kind="not-found"] > .ok-image-error-placeholder {
+[data-image-error-kind="not-found"] > .ps-image-error-placeholder {
   --ok-image-error-accent: color-mix(in oklch, var(--lint-error-color) 82%, var(--foreground));
 
   border-color: var(--ok-image-error-accent);
   background: color-mix(in oklch, var(--lint-error-color) 8%, transparent);
 }
-.ok-image-error-placeholder > svg {
+.ps-image-error-placeholder > svg {
   color: var(--ok-image-error-accent);
 }
-.ok-image-error-target {
+.ps-image-error-target {
   text-decoration: underline wavy var(--ok-image-error-accent);
   text-underline-offset: 0.2em;
 }
@@ -6086,7 +6086,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    an auto-layout table cell. Give the error slot a definite cell-relative
    width there, then let the target grid item shrink and truncate within it. */
 .ProseMirror td [data-image-error="true"],
-.ProseMirror td .ok-image-error-placeholder {
+.ProseMirror td .ps-image-error-placeholder {
   width: 100%;
   min-width: 0;
 }
@@ -6099,7 +6099,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    be clickable and the enter/leave handlers keep the box alive while the
    pointer travels to it, so it also swallows clicks on the region it covers
    (the line above the hovered one). Any keypress retires it. */
-.ok-lint-tooltip {
+.ps-lint-tooltip {
   position: absolute;
   z-index: 50;
   max-width: 22rem;
@@ -6116,16 +6116,16 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   display: flex;
   flex-direction: column;
 }
-.ok-lint-tooltip-message {
+.ps-lint-tooltip-message {
   white-space: pre-line;
 }
 /* Fix button styling comes from the shadcn buttonVariants recipe applied in
    markdown-lint-decorations.ts; this guard keeps the recipe's inline-flex from
    overriding the `hidden` attribute on the imperative DOM element. */
-.ok-lint-tooltip-fix[hidden] {
+.ps-lint-tooltip-fix[hidden] {
   display: none;
 }
-.ok-lint-tooltip[hidden] {
+.ps-lint-tooltip[hidden] {
   display: none;
 }
 
@@ -6194,7 +6194,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    Squeezing both columns into a pane that fits neither reads worse than the
    list alone, and the preview is `aria-hidden` decoration, so it is the column
    that gives way. */
-[data-suggestion-popup][data-suggestion-narrow] .ok-suggestion-preview {
+[data-suggestion-popup][data-suggestion-narrow] .ps-suggestion-preview {
   display: none;
 }
 
@@ -6264,7 +6264,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    dispatch), but do not rely on the deferral for newly mounted subtrees.
    Do NOT read this deferral as equivalent to what `content-visibility: auto`
    does natively — an earlier version of this note did, and the corrected
-   account is on `.ok-chunk-wrapper` below. cv:auto defers only its
+   account is on `.ps-chunk-wrapper` below. cv:auto defers only its
    INTERSECTION-driven lock; a style-driven one still lands at the next
    recalc. The deferral here is explicit and owned by this rule.
    `visibility: hidden` covers the deferral window: it removes the subtree
@@ -6276,7 +6276,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    deferring transition + visibility: hidden) — the pairing is pinned by
    `globals.cv-paint-lock.test.ts` and exercised at Playwright fidelity by
    `tests/stress/cv-paint-lock-click.e2e.ts`. */
-.ok-mode-hidden {
+.ps-mode-hidden {
   content-visibility: hidden;
   transition: content-visibility 0s 32ms allow-discrete;
   visibility: hidden;
@@ -6343,7 +6343,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    a single text paragraph; lists / tables / headings reserve more
    accurately via their own computed style once intersected.
 
-   Composes with `.ok-mode-hidden`: when an ancestor is CV:hidden,
+   Composes with `.ps-mode-hidden`: when an ancestor is CV:hidden,
    descendant CV:auto is moot until the ancestor returns to visible.
 
    Scoped to `.ProseMirror` so source-mode CodeMirror DOM is untouched
@@ -6367,19 +6367,19 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    a future Chromium drops it.
 
    Do not replace `auto` with `hidden` here without the same deferred-lock +
-   visibility pair `.ok-mode-hidden` carries — an undeferred paint lock over
+   visibility pair `.ps-mode-hidden` carries — an undeferred paint lock over
    hit-testable editor content trips Blink's display-lock CHECK (see the
-   `.ok-mode-hidden` comment above). */
-.ProseMirror .ok-chunk-wrapper {
+   `.ps-mode-hidden` comment above). */
+.ProseMirror .ps-chunk-wrapper {
   content-visibility: auto;
   contain-intrinsic-size: 0 var(--ok-cv-h, 80px);
 }
 
 /* Code-block wrapper needs an unclipped paint area — the block's chrome
-   floats above the block edge (see `.ok-codeblock-chrome`). content-visibility
+   floats above the block edge (see `.ps-codeblock-chrome`). content-visibility
    auto's paint containment would otherwise clip the chrome to the wrapper's box,
    hiding it entirely. */
-.ProseMirror .ok-chunk-wrapper.node-codeBlock {
+.ProseMirror .ps-chunk-wrapper.node-codeBlock {
   content-visibility: visible;
 }
 
@@ -6574,7 +6574,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    Scoped under .ProseMirror so they render inside the read-only diff editor's
    content DOM (RenderedDiffView). `ins`/`del` are decoration classes, not real
    nodes — see lib/rendered-diff/diff-decorations.ts. */
-.ProseMirror .ok-diff-ins {
+.ProseMirror .ps-diff-ins {
   background-color: color-mix(in srgb, var(--color-emerald-500) 18%, transparent);
   border-radius: 2px;
   box-decoration-break: clone;
@@ -6582,14 +6582,14 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 }
 
 /* Whole added block (node decoration on the `<li>`/`<p>`/`<h2>` itself). */
-.ProseMirror .ok-diff-ins-block {
+.ProseMirror .ps-diff-ins-block {
   background-color: color-mix(in srgb, var(--color-emerald-500) 14%, transparent);
   border-radius: 2px;
   padding-inline: 0.25rem;
   border-left: 2px solid var(--color-emerald-500);
 }
 
-.ProseMirror .ok-diff-del {
+.ProseMirror .ps-diff-del {
   color: var(--color-red-600);
   text-decoration: line-through;
   background-color: color-mix(in srgb, var(--color-red-500) 10%, transparent);
@@ -6597,13 +6597,13 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   opacity: 0.85;
 }
 
-.dark .ProseMirror .ok-diff-del {
+.dark .ProseMirror .ps-diff-del {
   color: var(--color-red-400);
 }
 
 /* Whole-block deletions render as a struck-through block (removed heading /
    list / code) rather than an inline run. */
-.ProseMirror .ok-diff-del-block {
+.ProseMirror .ps-diff-del-block {
   display: block;
   margin-block: 0.15em;
   padding-inline: 0.25rem;
@@ -6611,16 +6611,16 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 }
 
 /* Removed content is chrome, not editable document — never show a text caret. */
-.ProseMirror .ok-diff-del,
-.ProseMirror .ok-diff-del * {
+.ProseMirror .ps-diff-del,
+.ProseMirror .ps-diff-del * {
   cursor: default;
 }
 
-.ok-rendered-diff .tabs-strip {
+.ps-rendered-diff .tabs-strip {
   display: none;
 }
 
-.ok-rendered-diff
+.ps-rendered-diff
   .tabs-content
   > .component-children
   > [data-node-view-content-react]
@@ -6628,7 +6628,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   display: block;
 }
 
-.ok-rendered-diff .tab-panel[data-tab-label]::before {
+.ps-rendered-diff .tab-panel[data-tab-label]::before {
   content: attr(data-tab-label);
   display: block;
   margin-bottom: 0.25rem;
@@ -6643,9 +6643,9 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    Map those hooks onto OK's design tokens, and pin the SVG host back to the
    exact pre-package layout (centered, filling, non-selectable) so the rendered
    diagram is pixel-identical to the previous DIY renderer. Selectors ride on
-   `.ok-mermaid-svg.mw-canvas` — two classes out-specify every single-class
+   `.ps-mermaid-svg.mw-canvas` — two classes out-specify every single-class
    rule in the runtime-injected sheet regardless of load order. */
-.ok-mermaid-svg.mw-canvas {
+.ps-mermaid-svg.mw-canvas {
   --mw-accent: var(--ring);
   --mw-chrome-bg: var(--popover);
   --mw-chrome-border: var(--border);
@@ -6656,7 +6656,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   /* Package default is `overflow: auto`; OK pans/zooms the SVG in place. */
   overflow: hidden;
 }
-.ok-mermaid-svg.mw-canvas .mw-svg-host {
+.ps-mermaid-svg.mw-canvas .mw-svg-host {
   flex: 1;
   min-height: 0;
   display: flex;
@@ -6664,7 +6664,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
   justify-content: center;
   padding: 0;
 }
-.ok-mermaid-svg.mw-canvas .mw-svg-host > svg {
+.ps-mermaid-svg.mw-canvas .mw-svg-host > svg {
   width: 100%;
   height: 100%;
   user-select: none;
@@ -6672,7 +6672,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
 }
 /* Mid-edit parse failures keep the last good diagram on canvas; restyle the
    package's red badge to OK's destructive banner language. */
-.ok-mermaid-svg.mw-canvas .mw-error-badge {
+.ps-mermaid-svg.mw-canvas .mw-error-badge {
   background: var(--background);
   color: var(--destructive);
   border: 1px solid color-mix(in srgb, var(--destructive) 30%, transparent);
@@ -6683,22 +6683,22 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    blown-out halo on dark canvases (and puts a glow on text glyphs while
    editing). Replace with a single tight edge tint. `!important` is required
    to beat the package's own `!important` on `.mw-selected`. */
-.ok-mermaid-svg.mw-canvas [data-mw-entity]:hover {
+.ps-mermaid-svg.mw-canvas [data-mw-entity]:hover {
   filter: drop-shadow(0 0 1px color-mix(in srgb, var(--mw-accent) 55%, transparent));
 }
-.ok-mermaid-svg.mw-canvas .mw-selected,
-.ok-mermaid-svg.mw-canvas .mw-connect-source {
+.ps-mermaid-svg.mw-canvas .mw-selected,
+.ps-mermaid-svg.mw-canvas .mw-connect-source {
   /* biome-ignore lint/complexity/noImportantStyles: the package's injected `.mw-selected` rule is itself `!important`; matching importance is the only way to replace its stacked-bloom filter. */
   filter: drop-shadow(0 0 1.25px var(--mw-accent)) !important;
 }
 /* In-place label editing shows the caret only — no outline, no underline, no
    backdrop — matching how the previous inline editor read as "the label just
    became typeable". */
-.ok-mermaid-svg.mw-canvas [contenteditable="true"] {
+.ps-mermaid-svg.mw-canvas [contenteditable="true"] {
   outline: none;
   box-shadow: none;
 }
-.ok-mermaid-svg.mw-canvas .mw-inplace-editor {
+.ps-mermaid-svg.mw-canvas .mw-inplace-editor {
   box-shadow: none;
   background: transparent;
 }
@@ -6728,7 +6728,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
    respond to .dark, so this single rule block covers both themes.
 
    Chrome only — the SYNTAX colours inside a hunk come from the Shiki theme
-   (lib/ok-syntax-theme.ts), not from anything here. Four of the properties
+   (lib/ps-syntax-theme.ts), not from anything here. Four of the properties
    below (--diffs-fg, --diffs-bg, --diffs-addition-color,
    --diffs-deletion-color) are also written by Pierre at :host from that
    theme's colors, and :host wins over this rule — the two are kept resolving
@@ -6830,7 +6830,7 @@ html [data-editor-file-list-slot] [data-slot="sidebar-inner"] {
  * surface underneath; and a fade-in would risk the shot catching it
  * half-transparent. The centre stays hollow so the pixel being pointed at is
  * still visible. */
-.ok-pointer-marker {
+.ps-pointer-marker {
   position: fixed;
   /* Above every layer in the app, including any that sets its own — an overlay
      the user is reporting is exactly what this has to sit on top of. */

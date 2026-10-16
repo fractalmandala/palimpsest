@@ -15,7 +15,7 @@ const jsoncParserEsmEntry = createRequire(import.meta.url).resolve('jsonc-parser
 const nativeAddonNeverBundle = [
   '@parcel/watcher',
   '@napi-rs/keyring',
-  '@inkeep/open-knowledge-native-config',
+  '@palimpsest/native-config',
 ];
 
 // tsdown defaults to externalizing entries in `dependencies`, but the
@@ -53,7 +53,7 @@ const alwaysBundlePureJsDeps = [
   /^proper-lockfile(\/|$)/,
   /^shell-quote(\/|$)/,
   /^simple-git(\/|$)/,
-  // sirv is inlined TRANSITIVELY via @inkeep/open-knowledge-server (boot.ts's
+  // sirv is inlined TRANSITIVELY via @palimpsest/server (boot.ts's
   // react-shell mount) — it is NOT a cli package.json dep (dropped with the
   // `--only ui` proxy). Do not remove this entry when reconciling `alwaysBundle`
   // against cli deps; the server-inlined-closure guard in
@@ -124,7 +124,7 @@ const sharedInputOptions: NonNullable<UserConfig['inputOptions']> = (options) =>
 // Two builds instead of one, split on how yjs resolves. yjs keeps a
 // module-level singleton and breaks `instanceof` across duplicate copies
 // (yjs/yjs#438), and the desktop's main + utility processes import BOTH this
-// package's library entry AND `@inkeep/open-knowledge-server` — the server
+// package's library entry AND `@palimpsest/server` — the server
 // leaves yjs external, so a library entry with yjs inlined loads a second
 // copy into those processes ("Yjs was already imported" at packaged startup).
 // The standalone bin (dist/cli.mjs), by contrast, runs with no node_modules
@@ -155,7 +155,7 @@ export default defineConfig([
     // build EXCEPT yjs, which stays a bare `import 'yjs'` so every consumer
     // process resolves the one copy in its node_modules — the desktop's
     // main/utility processes then share that copy with
-    // `@inkeep/open-knowledge-server` and yjs's singleton stays intact.
+    // `@palimpsest/server` and yjs's singleton stays intact.
     // Backed by `yjs` in package.json `dependencies`.
     entry: { index: 'src/index.ts' },
     unbundle: false,

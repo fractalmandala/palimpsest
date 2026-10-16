@@ -23,7 +23,7 @@ import {
   type WorkspaceSearchResult,
   type WorkspaceSearchScope,
   type WorkspaceSemanticInput,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { isConfigDoc, isSystemDoc } from '../cc1-broadcast.ts';
 import { recordSemanticQuery } from '../embeddings/embeddings-telemetry.ts';
 import { SEMANTIC_MIN_QUERY_LENGTH, type SemanticSearchService } from '../embeddings/index.ts';
@@ -54,7 +54,7 @@ let _searchCorpusTruncatedCounter: ReturnType<ReturnType<typeof getMeter>['creat
 function searchCorpusTruncatedCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
   _searchCorpusTruncatedCounter ||= getMeter().createCounter('ok.search.corpus_truncated_total', {
     description:
-      'Count of corpus builds whose name-only file tier was truncated at OK_SEARCH_MAX_ENTRIES.',
+      'Count of corpus builds whose name-only file tier was truncated at PS_SEARCH_MAX_ENTRIES.',
   });
   return _searchCorpusTruncatedCounter;
 }
@@ -342,7 +342,7 @@ export function createSearchService(deps: SearchServiceDeps): SearchService {
     for (const [docName, entry] of getAllFilesIndex()) {
       if (isSystemDoc(docName) || isConfigDoc(docName)) continue;
       if (parseProjectSkillBundleDoc(docName)?.kind === 'skill') continue;
-      if (docName.startsWith('.ok/skills/')) continue;
+      if (docName.startsWith('.ps/skills/')) continue;
       if (entry.kind === 'file') {
         files.push(
           createWorkspaceSearchDocument({
@@ -409,7 +409,7 @@ export function createSearchService(deps: SearchServiceDeps): SearchService {
           retained: admittedFiles.length,
           limit: maxFiles,
         },
-        '[search] corpus name-only file tier truncated at OK_SEARCH_MAX_ENTRIES',
+        '[search] corpus name-only file tier truncated at PS_SEARCH_MAX_ENTRIES',
       );
       searchCorpusTruncatedCounter().add(1);
     }

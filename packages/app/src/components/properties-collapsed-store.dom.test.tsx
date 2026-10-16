@@ -45,6 +45,6 @@ describe('usePropertiesCollapsed (live shared state)', () => {
   it('persists the preference for future mounts', () => {
     const { result } = renderHook(() => usePropertiesCollapsed());
     act(() => result.current[1](true));
-    expect(localStorage.getItem('ok-properties-collapsed-v1')).toBe('true');
+    expect(localStorage.getItem('ps-properties-collapsed-v1')).toBe('true');
   });
 });

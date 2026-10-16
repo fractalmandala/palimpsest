@@ -318,7 +318,7 @@ async function portalGeneration(page: Page, docName: string): Promise<string> {
 
 test.describe('vertical editor splits', () => {
   test.afterEach(({ workerServer }) => {
-    writeFileSync(join(workerServer.contentDir, '.ok', 'config.yml'), '', 'utf-8');
+    writeFileSync(join(workerServer.contentDir, '.ps', 'config.yml'), '', 'utf-8');
   });
 
   test('narrow editor selects one live group and restores the split', async ({ page, api }) => {
@@ -535,7 +535,7 @@ test.describe('vertical editor splits', () => {
     await expect
       .poll(() =>
         page.evaluate(() => {
-          const raw = localStorage.getItem(`ok-editor-tabs-v1:${window.location.origin}`);
+          const raw = localStorage.getItem(`ps-editor-tabs-v1:${window.location.origin}`);
           if (!raw) return 0;
           const session = JSON.parse(raw) as { panes?: unknown[] };
           return session.panes?.length ?? 0;
@@ -545,7 +545,7 @@ test.describe('vertical editor splits', () => {
 
     const readSavedSizes = () =>
       page.evaluate(() => {
-        const raw = localStorage.getItem(`ok-editor-tabs-v1:${window.location.origin}`);
+        const raw = localStorage.getItem(`ps-editor-tabs-v1:${window.location.origin}`);
         if (!raw) throw new Error('no persisted editor session');
         return (JSON.parse(raw) as { panes: Array<{ id: string; size: number }> }).panes.map(
           ({ id, size }) => ({ id, size }),
@@ -1069,9 +1069,9 @@ test.describe('vertical editor splits', () => {
     const suffix = testId();
     const first = `split-keyboard-a-${suffix}`;
     const second = `split-keyboard-b-${suffix}`;
-    mkdirSync(join(workerServer.contentDir, '.ok'), { recursive: true });
+    mkdirSync(join(workerServer.contentDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(workerServer.contentDir, '.ok', 'config.yml'),
+      join(workerServer.contentDir, '.ps', 'config.yml'),
       'contentRules:\n  markdownlint:\n    enabled: true\n',
       'utf-8',
     );
@@ -1098,7 +1098,7 @@ test.describe('vertical editor splits', () => {
     await expect(paneTabs(page)).toHaveCount(2);
 
     await page.evaluate(() => {
-      localStorage.setItem('ok-editor-mode-v1', 'source');
+      localStorage.setItem('ps-editor-mode-v1', 'source');
     });
     await page.reload();
     await waitForActiveProviderSynced(page);
@@ -1189,7 +1189,7 @@ test.describe('vertical editor splits', () => {
 
     const skewed = [55, 20, 12.5, 12.5];
     await page.evaluate((sizes) => {
-      const key = `ok-editor-tabs-v1:${window.location.origin}`;
+      const key = `ps-editor-tabs-v1:${window.location.origin}`;
       const raw = localStorage.getItem(key);
       if (!raw) throw new Error('no persisted editor session');
       const session = JSON.parse(raw) as { panes?: Array<{ size?: number }> };

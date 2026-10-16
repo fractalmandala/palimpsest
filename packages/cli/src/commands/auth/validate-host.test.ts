@@ -13,14 +13,14 @@ function hostsYaml(provider: string, ...hostnames: string[]): string {
 }
 
 function writeOkFile(dir: string, file: string, body: string): void {
-  mkdirSync(join(dir, '.ok'), { recursive: true });
-  writeFileSync(join(dir, '.ok', file), body, 'utf-8');
+  mkdirSync(join(dir, '.ps'), { recursive: true });
+  writeFileSync(join(dir, '.ps', file), body, 'utf-8');
 }
 
 let home: string;
 
 beforeEach(() => {
-  home = mkdtempSync(join(tmpdir(), 'ok-validate-host-home-'));
+  home = mkdtempSync(join(tmpdir(), 'ps-validate-host-home-'));
   vi.stubEnv('HOME', home);
   vi.stubEnv('USERPROFILE', home);
 });
@@ -38,7 +38,7 @@ describe('gitHubHostRejection', () => {
   let projectDir: string;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-validate-host-'));
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-validate-host-'));
   });
 
   afterEach(() => {
@@ -66,28 +66,28 @@ describe('gitHubHostRejection', () => {
   test('rejects an undeclared self-hosted host and names the config key as the remedy', () => {
     const rejection = gitHubHostRejection('git.example.internal');
     expect(rejection).toContain('git.example.internal is not a known GitHub host');
-    expect(rejection).toContain('~/.ok/global.yml');
+    expect(rejection).toContain('~/.ps/global.yml');
     expect(rejection).toContain(
       'git:\n    hosts:\n      git.example.internal:\n        provider: github',
     );
   });
 
   test('prints the Stable remedy byte-for-byte', () => {
-    vi.stubEnv('OK_CHANNEL', '');
+    vi.stubEnv('PS_CHANNEL', '');
     expect(gitHubHostRejection('git.example.internal')).toBe(
       `${errorColor('Error:')} git.example.internal is not a known GitHub host.\n` +
-        'To use a GitHub Enterprise Server host, declare it in ~/.ok/global.yml:\n\n  git:\n    hosts:\n      git.example.internal:\n        provider: github\n\n' +
+        'To use a GitHub Enterprise Server host, declare it in ~/.ps/global.yml:\n\n  git:\n    hosts:\n      git.example.internal:\n        provider: github\n\n' +
         'If git.example.internal is not a GitHub host, store an access token for git with:\n\n  ok auth token --host git.example.internal --username <username>\n',
     );
   });
 
   test('names the Beta user config when the running channel is Beta', () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const rejection = gitHubHostRejection('git.example.internal');
-    expect(rejection).toContain('declare it in ~/.ok-beta/global.yml:\n');
-    expect(rejection).not.toContain('~/.ok/');
+    expect(rejection).toContain('declare it in ~/.ps-beta/global.yml:\n');
+    expect(rejection).not.toContain('~/.ps/');
     expect(rejection).toContain(
-      '  ok-beta auth token --host git.example.internal --username <username>\n',
+      '  ps-beta auth token --host git.example.internal --username <username>\n',
     );
   });
 
@@ -109,7 +109,7 @@ describe('gitHubHostRejection', () => {
     },
   );
 
-  test("ignores a declaration in the project's .ok/config.yml", () => {
+  test("ignores a declaration in the project's .ps/config.yml", () => {
     writeOkFile(projectDir, 'config.yml', hostsYaml('github', 'ghes.example.com'));
     expect(gitHubHostRejection('ghes.example.com')).not.toBeNull();
   });
@@ -131,7 +131,7 @@ describe('resolveAuthHost', () => {
   let projectDir: string;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-resolve-auth-host-'));
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-resolve-auth-host-'));
   });
 
   afterEach(() => {

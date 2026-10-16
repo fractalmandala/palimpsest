@@ -6,7 +6,7 @@ import {
   DuplicatePathSuccessSchema,
   MetricsReconciliationSuccessSchema,
   MetricsWatcherRecentSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, expect, test } from 'vitest';
 import {
   createTestClient,

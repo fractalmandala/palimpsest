@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync, truncateSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { DOCUMENT_OPEN_BYTE_LIMIT } from '@inkeep/open-knowledge-core';
+import { DOCUMENT_OPEN_BYTE_LIMIT } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { createPersistenceExtension, DocumentOpenSizeLimitError } from './persistence.ts';
@@ -22,7 +22,7 @@ describe('persistence large-file cap', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-large-file-cap-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-large-file-cap-'));
   });
 
   afterEach(() => {

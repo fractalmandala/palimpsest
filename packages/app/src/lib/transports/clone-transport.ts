@@ -1,13 +1,13 @@
-import { ProblemDetailsSchema } from '@inkeep/open-knowledge-core/schemas/api';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
-import type { OkDesktopBridge, OkLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
 import { createBufferedAsyncStream } from './buffered-async-stream';
 
 type HttpCloneCompleteEvent = { type: 'complete'; port: number; dir: string };
 
 type CloneBranchFallbackEvent = { type: 'branch-fallback'; branch: string };
 
-type CloneEvent = OkLocalOpCloneEvent | HttpCloneCompleteEvent | CloneBranchFallbackEvent;
+type CloneEvent = PsLocalOpCloneEvent | HttpCloneCompleteEvent | CloneBranchFallbackEvent;
 
 interface CloneTransportHandle {
   readonly events: AsyncIterable<CloneEvent>;
@@ -106,7 +106,7 @@ export function httpCloneTransport(): CloneTransport {
   };
 }
 
-export function ipcCloneTransport(bridge: OkDesktopBridge): CloneTransport {
+export function ipcCloneTransport(bridge: PsDesktopBridge): CloneTransport {
   return {
     start(request): CloneTransportHandle {
       const branch =

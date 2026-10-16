@@ -43,7 +43,7 @@ beforeEach(() => {
   const stamp = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   testDir = resolve(
     tmpdir(),
-    `ok-readconfig-test-${FIXTURE_PATH_DELIBERATELY_CARRIES_EVERY_FORBIDDEN_VALUE}-${stamp}`,
+    `ps-readconfig-test-${FIXTURE_PATH_DELIBERATELY_CARRIES_EVERY_FORBIDDEN_VALUE}-${stamp}`,
   );
   mkdirSync(testDir, { recursive: true });
 });
@@ -622,7 +622,7 @@ describe('readConfigSafely', () => {
 describe('readConfigSafely — strip-and-continue invariant', () => {
   let dir: string;
   beforeEach(() => {
-    dir = resolve(tmpdir(), `ok-strip-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    dir = resolve(tmpdir(), `ps-strip-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     mkdirSync(dir, { recursive: true });
   });
   afterEach(() => {
@@ -659,7 +659,7 @@ describe('readConfigSafely — strip-and-continue invariant', () => {
 describe('readConfigSafely — diagnostics on the invalid arm', () => {
   let dir: string;
   beforeEach(() => {
-    dir = resolve(tmpdir(), `ok-invalid-diag-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    dir = resolve(tmpdir(), `ps-invalid-diag-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     mkdirSync(dir, { recursive: true });
   });
   afterEach(() => {

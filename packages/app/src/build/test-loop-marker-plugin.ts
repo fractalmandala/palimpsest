@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import { TEST_LOOP_CORE_MARKER, TEST_LOOP_SERVER_MARKER } from '@inkeep/open-knowledge-server';
+import { TEST_LOOP_CORE_MARKER, TEST_LOOP_SERVER_MARKER } from '@palimpsest/server';
 import type { Connect, Plugin } from 'vite';
 import { TEST_LOOP_MARKERS_PATH } from './test-loop-marker-contract';
 
@@ -20,7 +20,7 @@ function serveLoopMarkers(
 
 export function testLoopMarkerPlugin(): Plugin {
   return {
-    name: 'ok-test-loop-markers',
+    name: 'ps-test-loop-markers',
     configureServer(server) {
       server.middlewares.use(serveLoopMarkers);
     },

@@ -9,7 +9,7 @@ import {
   LinkGraphSuccessSchema,
   OrphansSuccessSchema,
   SuggestLinksSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { expect, test } from 'vitest';
@@ -23,7 +23,7 @@ async function get(booted: BootedServer, route: string): Promise<unknown> {
 }
 
 test('HTTP, MCP and app-facing graph queries agree across a body edit, with a real ancestor hub advisory', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-resolved-link-api-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-resolved-link-api-'));
   let booted: BootedServer | undefined;
   const client = new Client({ name: 'codex', version: '0.0.0-test' });
   try {

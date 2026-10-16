@@ -19,8 +19,8 @@ describe('checkOutboundUrl (D47 outbound scheme allowlist)', () => {
     expect(checkOutboundUrl('mailto:hello@example.com')).toEqual({ ok: true });
   });
 
-  test('allows openknowledge: (our own deep-link scheme)', () => {
-    expect(checkOutboundUrl('openknowledge://open?project=/tmp')).toEqual({ ok: true });
+  test('allows palimpsest: (our own deep-link scheme)', () => {
+    expect(checkOutboundUrl('palimpsest://open?project=/tmp')).toEqual({ ok: true });
   });
 
   test('rejects ms-msdt: (Shabarkin 2022 RCE class)', () => {
@@ -64,7 +64,7 @@ describe('checkOutboundUrl (D47 outbound scheme allowlist)', () => {
       ['https://example.com', true],
       ['http://example.com', true],
       ['mailto:hi@example.com', true],
-      ['openknowledge://open?project=/tmp&doc=x', true],
+      ['palimpsest://open?project=/tmp&doc=x', true],
       ['file:///etc/passwd', false],
       ['javascript:alert(1)', false],
       ['data:text/html,x', false],
@@ -83,11 +83,11 @@ describe('handleShellOpenExternal (preload → main bridge enforcement)', () => 
     expect(openExternal).toHaveBeenCalledWith('https://example.com');
   });
 
-  test('delegates to openExternal for openknowledge:// (our own scheme)', async () => {
+  test('delegates to openExternal for palimpsest:// (our own scheme)', async () => {
     const openExternal = vi.fn(() => Promise.resolve());
     const handle = handleShellOpenExternal({ openExternal });
-    await handle('openknowledge://open?project=/tmp&doc=x');
-    expect(openExternal).toHaveBeenCalledWith('openknowledge://open?project=/tmp&doc=x');
+    await handle('palimpsest://open?project=/tmp&doc=x');
+    expect(openExternal).toHaveBeenCalledWith('palimpsest://open?project=/tmp&doc=x');
   });
 
   test('rejects file:// with a scheme-not-allowed error (no openExternal call)', async () => {
@@ -128,7 +128,7 @@ describe('ALLOWED_SCHEMES exact-set contract (D47 + handoff extension)', () => {
       'http:',
       'https:',
       'mailto:',
-      'openknowledge:',
+      'palimpsest:',
     ]);
   });
 });

@@ -9,9 +9,9 @@ import {
 } from '../half-open-forced-close.test-helper';
 import { createTestServer, seedPoolServerInstanceId, type TestServer } from './test-harness';
 
-const REAUTH_BREADCRUMB = 'ok-provider-server-driven-close-reauth';
+const REAUTH_BREADCRUMB = 'ps-provider-server-driven-close-reauth';
 
-const DECLINE_BREADCRUMB = 'ok-provider-half-open-forced-close';
+const DECLINE_BREADCRUMB = 'ps-provider-half-open-forced-close';
 
 let cleanup: (() => Promise<void>) | null = null;
 

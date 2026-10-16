@@ -11,7 +11,7 @@ const LINEAR_UPLOAD_RE = /^https?:\/\/uploads\.linear\.app\//i;
 
 const RELEASE_VERSION_RE = /^v?(\d+)\.(\d+)\.(\d+)(?:-beta\.(\d+))?$/;
 
-const RELEASES_URL = 'https://github.com/inkeep/open-knowledge/releases';
+const RELEASES_URL = 'https://github.com/fractalmandala/palimpsest/releases';
 
 export function classifyAttachment(rawUrl) {
   const url = String(rawUrl ?? '').trim();
@@ -277,10 +277,10 @@ function updateInstruction(originChannel, channel, version) {
 function openingLine(channel, version) {
   if (channel === 'beta') {
     return (
-      `This fix is available in Open Knowledge beta v${version}. ` +
+      `This fix is available in Palimpsest beta v${version}. ` +
       'Thanks for the report. It will reach the stable channel in an upcoming release, ' +
       'and we will follow up here when it does.'
     );
   }
-  return `This shipped in Open Knowledge v${version}. Thanks for the report.`;
+  return `This shipped in Palimpsest v${version}. Thanks for the report.`;
 }

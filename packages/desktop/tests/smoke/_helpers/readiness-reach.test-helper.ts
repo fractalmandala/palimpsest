@@ -410,7 +410,7 @@ function dailyLogFileOf(launchLines: readonly NarrationLine[]): string {
 }
 
 async function waitOutLaunch(launch: ScriptedLaunch, watchMs: number): Promise<Reach> {
-  const home = mkdtempSync(join(tmpdir(), 'ok-readiness-reach-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-readiness-reach-'));
   vi.useFakeTimers({ now: WAIT_STARTED_AT, toFake: ['setTimeout', 'clearTimeout', 'Date'] });
   try {
     mkdirSync(bootLogDirFor(home), { recursive: true });

@@ -15,7 +15,7 @@ const INJECTED_MARKER = 'native-divergence-injected';
 let server: TestServer | undefined;
 
 afterEach(async () => {
-  delete process.env.OK_TEST_STORE_DIVERGENCE;
+  delete process.env.PS_TEST_STORE_DIVERGENCE;
   if (server) {
     await server.cleanup();
     server = undefined;
@@ -59,7 +59,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     expect(seed.status).toBe(200);
     await pollUntil(() => readTestDoc(contentDir, docName).includes('body-v1'));
 
-    process.env.OK_TEST_STORE_DIVERGENCE = docName;
+    process.env.PS_TEST_STORE_DIVERGENCE = docName;
 
     const attempt1 = await writeMd(port, 'AGENT-APPEND-XYZ\n', {
       docName,
@@ -73,7 +73,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     expect(afterRevert).toContain(INJECTED_MARKER);
     expect(afterRevert).not.toContain('AGENT-APPEND-XYZ');
 
-    delete process.env.OK_TEST_STORE_DIVERGENCE;
+    delete process.env.PS_TEST_STORE_DIVERGENCE;
     const attempt2 = await writeMd(port, 'AGENT-APPEND-XYZ\n', {
       docName,
       position: 'append',
@@ -101,7 +101,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     await agentWriteMd(port, 'UNDO-ME-LINE\n', { docName, position: 'append', agentId: 'u1' });
     await pollUntil(() => readTestDoc(contentDir, docName).includes('UNDO-ME-LINE'));
 
-    process.env.OK_TEST_STORE_DIVERGENCE = docName;
+    process.env.PS_TEST_STORE_DIVERGENCE = docName;
 
     const undoRes = await agentUndoRaw(port, { docName, connectionId: 'agent-u1', scope: 'last' });
     expect(undoRes.status).toBe(409);
@@ -112,7 +112,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     expect(afterRevert).toContain(INJECTED_MARKER);
     expect(afterRevert).not.toContain('base-body');
 
-    delete process.env.OK_TEST_STORE_DIVERGENCE;
+    delete process.env.PS_TEST_STORE_DIVERGENCE;
     await agentWriteMd(port, 'RECOVERY-LINE\n', { docName, position: 'append', agentId: 'u1' });
     await pollUntil(() => readTestDoc(contentDir, docName).includes('RECOVERY-LINE'));
     const afterRecovery = readTestDoc(contentDir, docName);
@@ -133,7 +133,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     try {
       await pollUntil(() => client.ytext.toString().includes('seed-body'), 5000);
 
-      process.env.OK_TEST_STORE_DIVERGENCE = docName;
+      process.env.PS_TEST_STORE_DIVERGENCE = docName;
 
       const HUMAN_MARK = 'HUMAN-EDIT-NOT-REVERTED';
       client.doc.transact(() => {
@@ -143,7 +143,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
 
       await pollUntil(() => readTestDoc(contentDir, docName).includes(HUMAN_MARK), 8000);
     } finally {
-      delete process.env.OK_TEST_STORE_DIVERGENCE;
+      delete process.env.PS_TEST_STORE_DIVERGENCE;
       await client.cleanup();
     }
   });

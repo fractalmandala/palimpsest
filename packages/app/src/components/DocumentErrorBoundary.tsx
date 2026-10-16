@@ -3,7 +3,7 @@ import { Trans } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { toast } from 'sonner';
-import { OkBlobRunnerEasterEgg } from '@/components/OkBlobRunnerEasterEgg';
+import { PsBlobRunnerEasterEgg } from '@/components/PsBlobRunnerEasterEgg';
 import { ReportBugDialog } from '@/components/ReportBugDialog';
 import { Button } from '@/components/ui/button';
 import { MountAbortError } from '@/editor/mount-promise';
@@ -75,7 +75,7 @@ export function errorCopy(error: unknown): ErrorCopy {
   if (error instanceof ServerCapabilityMismatchError) {
     return {
       title: t`Server can't open documents`,
-      summary: t`This project's running server doesn't support live editing. Restart OpenKnowledge to fix.`,
+      summary: t`This project's running server doesn't support live editing. Restart Palimpsest to fix.`,
     };
   }
   if (error instanceof MountAbortError) {
@@ -111,7 +111,7 @@ function DocumentErrorFallback({
   const retryRef = useRef<HTMLButtonElement>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [restarting, setRestarting] = useState(false);
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const restartBridge = bridge && isServerReachError(error) ? bridge : null;
 
   useEffect(() => {
@@ -126,7 +126,7 @@ function DocumentErrorFallback({
       className="flex h-full flex-col items-center justify-center gap-8 p-8 text-center"
     >
       {}
-      <OkBlobRunnerEasterEgg keyboard={isServerReachError(error)} />
+      <PsBlobRunnerEasterEgg keyboard={isServerReachError(error)} />
       <div className="flex flex-col items-center gap-1">
         <h2 id="document-error-title" className="text-2xl font-light tracking-tighter text-balance">
           {title}

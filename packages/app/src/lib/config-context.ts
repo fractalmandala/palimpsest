@@ -1,6 +1,6 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import type { OkignoreBinding } from '@inkeep/open-knowledge-core/config/bind-okignore-doc';
-import type { Config } from '@inkeep/open-knowledge-core/config/schema';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import type { OkignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
+import type { Config } from '@palimpsest/core/config/schema';
 import { useLingui } from '@lingui/react/macro';
 import { createContext, use } from 'react';
 

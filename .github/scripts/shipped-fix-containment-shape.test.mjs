@@ -11,9 +11,9 @@ import { configureTestGitRepository } from '../../test-support/configure-git-fix
 import { expectNoAutomaticGitMaintenance } from './git-fixture-maintenance.test-helper.mjs';
 
 const SCRIPTS = dirname(fileURLToPath(import.meta.url));
-const OK_ROOT = join(SCRIPTS, '..', '..');
+const PS_ROOT = join(SCRIPTS, '..', '..');
 const GUARD = '.github/scripts/shipped-fix-containment.mjs';
-const workflow = (name) => parse(readFileSync(join(OK_ROOT, '.github', 'workflows', name), 'utf8'));
+const workflow = (name) => parse(readFileSync(join(PS_ROOT, '.github', 'workflows', name), 'utf8'));
 const stepsOf = (file, job) => {
   const steps = workflow(file).jobs?.[job]?.steps;
   if (!Array.isArray(steps) || steps.length < 3) {
@@ -117,7 +117,7 @@ describe('direct recovery: desktop-release refuses a stable in prepare', () => {
       const file = pending.pop();
       if (needed.has(file)) continue;
       needed.add(file);
-      const source = readFileSync(join(OK_ROOT, file), 'utf8');
+      const source = readFileSync(join(PS_ROOT, file), 'utf8');
       for (const [, specifier] of source.matchAll(/^import [^;]*? from '(\.{1,2}\/[^']+)';$/gms)) {
         pending.push(posix.normalize(posix.join(posix.dirname(file), specifier)));
       }
@@ -136,7 +136,7 @@ describe('direct recovery: desktop-release refuses a stable in prepare', () => {
   });
 
   test('the archived guard runs on its own against a tag checkout that predates it', () => {
-    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-archive-')));
+    const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-archive-')));
     scratch.push(root);
     const env = gitCleanEnv();
     const git = (...args) =>
@@ -167,7 +167,7 @@ describe('direct recovery: desktop-release refuses a stable in prepare', () => {
     const guardDir = join(root, 'guard');
     for (const file of [GUARD, 'scripts/git-clean-env.mjs']) {
       mkdirSync(dirname(join(guardDir, file)), { recursive: true });
-      writeFileSync(join(guardDir, file), readFileSync(join(OK_ROOT, file)));
+      writeFileSync(join(guardDir, file), readFileSync(join(PS_ROOT, file)));
     }
     const listing = join(root, 'releases.json');
     writeFileSync(
@@ -202,7 +202,7 @@ describe('direct recovery and re-runs: desktop-release checks again right before
   test('RELEASES.md stable publication holds one lock across the final check and draft flip', () => {
     expect(release.jobs.finalize.concurrency).toEqual({
       group:
-        "${{ needs.prepare.outputs.channel == 'latest' && 'ok-stable-publication' || format('desktop-finalize-{0}', github.run_id) }}",
+        "${{ needs.prepare.outputs.channel == 'latest' && 'ps-stable-publication' || format('desktop-finalize-{0}', github.run_id) }}",
       'cancel-in-progress': false,
     });
     expect(release.concurrency).toEqual({
@@ -255,7 +255,7 @@ describe('an asset repair of an already published stable is the one run the guar
   const prepareGuard = guardSteps(stepsOf('desktop-release.yml', 'prepare'))[0];
   const finalizeGuard = guardSteps(stepsOf('desktop-release.yml', 'finalize'))[0];
   const runStep = (step, event, nodeExit = 0) => {
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-shipped-fix-step-')));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-shipped-fix-step-')));
     scratch.push(dir);
     const bin = join(dir, 'bin');
     mkdirSync(bin);
@@ -395,14 +395,14 @@ describe('stable publication recovery reporting', () => {
       (candidate) => candidate.name === 'Alert on a blocked release (FR5c)',
     );
     expect(step).toBeDefined();
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-finalize-cancel-')));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-finalize-cancel-')));
     scratch.push(dir);
     const capture = join(dir, 'curl-args');
     const res = spawnSync(
       'bash',
       ['-c', `curl() { printf '%s\\0' "$@" > "$CAPTURE"; return ${curlStatus}; }\n${step.run}`],
       {
-        cwd: OK_ROOT,
+        cwd: PS_ROOT,
         encoding: 'utf8',
         env: {
           PATH: process.env.PATH,
@@ -445,7 +445,7 @@ describe('stable announcements cannot consume the finalizer job budget', () => {
       (candidate) => candidate.name === `Announce stable release to ${service}`,
     );
     expect(step).toBeDefined();
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-finalize-post-')));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-finalize-post-')));
     scratch.push(dir);
     const capture = join(dir, 'curl-args');
     const fetchCapture = join(dir, 'fetch-args');
@@ -460,7 +460,7 @@ curl() { printf '%s\\0' "$@" > "$CAPTURE"; return 28; }
 ${step.run}`,
       ],
       {
-        cwd: OK_ROOT,
+        cwd: PS_ROOT,
         encoding: 'utf8',
         env: {
           PATH: process.env.PATH,

@@ -49,7 +49,7 @@ function startRoute(
 
 describe('derived-index API readiness gate', () => {
   test('backlink and tag queries wait for post-watcher startup settlement', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-derived-ready-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-derived-ready-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     writeFileSync(join(contentDir, 'source.md'), 'See [[target]]. #startup\n');
@@ -98,7 +98,7 @@ describe('derived-index API readiness gate', () => {
   });
 
   test('test rescan retains the route-level 500 boundary for coordinator failures', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-derived-rescan-error-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-derived-rescan-error-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     const index = new DerivedDocumentIndex({
@@ -140,8 +140,8 @@ describe('derived-index API readiness gate', () => {
   });
 
   test('project skill move responds WITHOUT waiting for derived-index projection', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-derived-skill-move-'));
-    const sourceSkillDir = join(contentDir, '.ok', 'skills', 'old-skill');
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-derived-skill-move-'));
+    const sourceSkillDir = join(contentDir, '.ps', 'skills', 'old-skill');
     mkdirSync(sourceSkillDir, { recursive: true });
     writeFileSync(
       join(sourceSkillDir, 'SKILL.md'),
@@ -192,8 +192,8 @@ describe('derived-index API readiness gate', () => {
         expect(recordDirectMutations).toHaveBeenCalledTimes(1);
       });
       expect(JSON.parse(route.captured.body)).toMatchObject({
-        from: '.ok/skills/old-skill',
-        to: '.ok/skills/new-skill',
+        from: '.ps/skills/old-skill',
+        to: '.ps/skills/new-skill',
       });
     } finally {
       releaseProjection();

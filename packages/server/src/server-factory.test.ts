@@ -23,13 +23,13 @@ import {
   LOCAL_DIR,
   lintDocument,
   REMOVED_KEYS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   readConfigSafely,
   resolveConfigPath,
   writeConfigPatch,
-} from '@inkeep/open-knowledge-core/server';
-import { parseCheckpoint } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/server';
+import { parseCheckpoint } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { stringify as stringifyYaml } from 'yaml';
@@ -182,8 +182,8 @@ function captureAllLoggers(): {
 
 describe('createServer() — document durability state isolation', () => {
   test('keeps same-named documents, branch scope, batch state, and disk intake per server', async () => {
-    const projectA = await mkdtemp(join(tmpdir(), 'ok-durability-a-'));
-    const projectB = await mkdtemp(join(tmpdir(), 'ok-durability-b-'));
+    const projectA = await mkdtemp(join(tmpdir(), 'ps-durability-a-'));
+    const projectB = await mkdtemp(join(tmpdir(), 'ps-durability-b-'));
     const docName = 'same-doc';
     const diskA = '# Disk A\n';
     const diskB = '# Disk B\n';
@@ -261,7 +261,7 @@ describe('createServer() — agent-session cap passthrough', () => {
   let server: ServerInstance | null;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(resolve(tmpdir(), 'ok-agent-session-cap-'));
+    projectDir = mkdtempSync(resolve(tmpdir(), 'ps-agent-session-cap-'));
     server = null;
   });
 
@@ -301,7 +301,7 @@ describe('createServer() — wiki embed target resolution', () => {
   let server: ServerInstance | null;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(resolve(tmpdir(), 'ok-wiki-embed-'));
+    projectDir = mkdtempSync(resolve(tmpdir(), 'ps-wiki-embed-'));
     server = null;
   });
 
@@ -352,7 +352,7 @@ describe('createServer() — derived-index branch lifecycle', () => {
   let server: ServerInstance | null;
 
   beforeEach(async () => {
-    projectDir = await mkdtemp(join(tmpdir(), 'ok-derived-branch-'));
+    projectDir = await mkdtemp(join(tmpdir(), 'ps-derived-branch-'));
     git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(projectDir);
@@ -509,7 +509,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
   let logCapture: ReturnType<typeof captureAllLoggers>;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-destroy-test-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-destroy-test-'));
     logCapture = captureAllLoggers();
   });
 
@@ -602,7 +602,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
     });
     await server.ready;
 
-    const lockPath = join(tmpDir, '.ok', LOCAL_DIR, 'server.lock');
+    const lockPath = join(tmpDir, '.ps', LOCAL_DIR, 'server.lock');
     const docName = 'shutdown-order';
     const contentPath = join(tmpDir, `${docName}.md`);
     const captures: Array<{ lockExists: boolean; contentOnDisk: boolean; payload: string }> = [];
@@ -732,7 +732,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
     const initial = '# Refused store doc\n\nPersisted paragraph.\n';
     const docPath = join(contentDir, `${docName}.md`);
     writeFileSync(docPath, initial, 'utf-8');
-    writeFileSync(join(projectDir, '.okignore'), `content/${docName}.md\n`, 'utf-8');
+    writeFileSync(join(projectDir, '.psignore'), `content/${docName}.md\n`, 'utf-8');
 
     const server = createServer({
       contentDir,
@@ -818,7 +818,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
     const initial = '# Runtime refused doc\n\nPersisted paragraph.\n';
     const docPath = join(contentDir, `${docName}.md`);
     writeFileSync(docPath, initial, 'utf-8');
-    writeFileSync(join(projectDir, '.okignore'), `content/${docName}.md\n`, 'utf-8');
+    writeFileSync(join(projectDir, '.psignore'), `content/${docName}.md\n`, 'utf-8');
 
     const server = createServer({
       contentDir,
@@ -940,7 +940,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
     const initial = '# Runtime refused refresh\n\nPersisted paragraph.\n';
     const docPath = join(contentDir, `${docName}.md`);
     writeFileSync(docPath, initial, 'utf-8');
-    writeFileSync(join(projectDir, '.okignore'), `content/${docName}.md\n`, 'utf-8');
+    writeFileSync(join(projectDir, '.psignore'), `content/${docName}.md\n`, 'utf-8');
 
     const server = createServer({
       contentDir,
@@ -1023,7 +1023,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
     const initial = '# Refused rescue lost doc\n\nPersisted paragraph.\n';
     const docPath = join(contentDir, `${docName}.md`);
     writeFileSync(docPath, initial, 'utf-8');
-    writeFileSync(join(projectDir, '.okignore'), `content/${docName}.md\n`, 'utf-8');
+    writeFileSync(join(projectDir, '.psignore'), `content/${docName}.md\n`, 'utf-8');
 
     const server = createServer({
       contentDir,
@@ -1133,7 +1133,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
     const initial = '# Refused unload hangs doc\n\nPersisted paragraph.\n';
     const docPath = join(contentDir, `${docName}.md`);
     writeFileSync(docPath, initial, 'utf-8');
-    writeFileSync(join(projectDir, '.okignore'), `content/${docName}.md\n`, 'utf-8');
+    writeFileSync(join(projectDir, '.psignore'), `content/${docName}.md\n`, 'utf-8');
 
     const server = createServer({
       contentDir,
@@ -1238,7 +1238,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
       writeFileSync(pathOf(docName), initialOf(docName), 'utf-8');
     }
     writeFileSync(
-      join(projectDir, '.okignore'),
+      join(projectDir, '.psignore'),
       docNames.map((docName) => `content/${docName}.md\n`).join(''),
       'utf-8',
     );
@@ -1322,7 +1322,7 @@ describe('createServer().destroy() — graceful shutdown flush', () => {
       .toBe('false');
     const shadowGitDir = join(projectDir, '.git');
     chmodSync(shadowGitDir, 0o500);
-    writeFileSync(join(projectDir, '.okignore'), 'content/shadowless-flush-doc.md\n', 'utf-8');
+    writeFileSync(join(projectDir, '.psignore'), 'content/shadowless-flush-doc.md\n', 'utf-8');
 
     const mintDocName = 'shadowless-mint-doc';
     const mintInitial = '# Shadowless mint doc\n\nPersisted paragraph.\n';
@@ -1570,7 +1570,7 @@ describe('createServer() degraded signal', () => {
   let testProjectDir: string;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-degraded-test-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-degraded-test-'));
   });
 
   afterEach(() => {
@@ -1715,9 +1715,9 @@ describe('createServer() degraded signal', () => {
     _resetDocExtensionsForTests();
     const contentDir = mkdtempSync(resolve(testProjectDir, 'content-'));
     const diskContent = 'bytes the editor tried to overwrite';
-    mkdirSync(join(testProjectDir, '.ok', LOCAL_DIR), { recursive: true });
+    mkdirSync(join(testProjectDir, '.ps', LOCAL_DIR), { recursive: true });
     writeFileSync(
-      join(testProjectDir, '.ok', LOCAL_DIR, 'stale-external-writes.json'),
+      join(testProjectDir, '.ps', LOCAL_DIR, 'stale-external-writes.json'),
       JSON.stringify({
         version: 1,
         branches: {
@@ -1757,7 +1757,7 @@ describe('createServer() — config-doc admission (US-005)', () => {
   let testProjectDir: string;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-config-admission-test-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-config-admission-test-'));
   });
 
   afterEach(() => {
@@ -1851,8 +1851,8 @@ describe('createServer() — config file watcher (US-007)', () => {
   let testHomedir: string;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-cfg-watcher-test-'));
-    testHomedir = mkdtempSync(resolve(tmpdir(), 'ok-cfg-watcher-home-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-cfg-watcher-test-'));
+    testHomedir = mkdtempSync(resolve(tmpdir(), 'ps-cfg-watcher-home-'));
   });
 
   afterEach(() => {
@@ -1881,8 +1881,8 @@ describe('createServer() — config file watcher (US-007)', () => {
 
     expect(ytext.toString()).toBe('');
 
-    const configPath = join(testProjectDir, '.ok', 'config.yml');
-    mkdirSync(join(testProjectDir, '.ok'), { recursive: true });
+    const configPath = join(testProjectDir, '.ps', 'config.yml');
+    mkdirSync(join(testProjectDir, '.ps'), { recursive: true });
     const newContent = 'mcp:\n  autoStart: false\n';
     writeFileSync(configPath, newContent, 'utf-8');
 
@@ -1927,8 +1927,8 @@ describe('createServer() — config file watcher (US-007)', () => {
   test('external broken-YAML write keeps Y.Text at LKG and does not crash the server', async () => {
     const logs = captureAllLoggers();
     const contentDir = mkdtempSync(resolve(testProjectDir, 'content-'));
-    const configPath = join(testProjectDir, '.ok', 'config.yml');
-    mkdirSync(join(testProjectDir, '.ok'), { recursive: true });
+    const configPath = join(testProjectDir, '.ps', 'config.yml');
+    mkdirSync(join(testProjectDir, '.ps'), { recursive: true });
     const validContent = 'mcp:\n  autoStart: false\n';
     writeFileSync(configPath, validContent, 'utf-8');
 
@@ -1989,7 +1989,7 @@ describe('createServer() — config file watcher (US-007)', () => {
       ytext.insert(0, newContent);
     });
 
-    const configPath = join(testProjectDir, '.ok', 'config.yml');
+    const configPath = join(testProjectDir, '.ps', 'config.yml');
     const fileLanded = await waitFor(
       () => existsSync(configPath) && readFileSync(configPath, 'utf-8') === newContent,
     );
@@ -2022,8 +2022,8 @@ describe('createServer() — project-local file watcher → engine.setMode', () 
   let testHomedir: string;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-pl-engine-test-'));
-    testHomedir = mkdtempSync(resolve(tmpdir(), 'ok-pl-engine-home-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-pl-engine-test-'));
+    testHomedir = mkdtempSync(resolve(tmpdir(), 'ps-pl-engine-home-'));
   });
 
   afterEach(() => {
@@ -2043,7 +2043,7 @@ describe('createServer() — project-local file watcher → engine.setMode', () 
 
     expect(srv.syncEngine?.getStatus().syncEnabled).toBe(false);
 
-    const localDir = join(testProjectDir, '.ok', LOCAL_DIR);
+    const localDir = join(testProjectDir, '.ps', LOCAL_DIR);
     mkdirSync(localDir, { recursive: true });
     const configPath = join(localDir, 'config.yml');
     writeFileSync(configPath, 'autoSync:\n  enabled: true\n', 'utf-8');
@@ -2055,9 +2055,9 @@ describe('createServer() — project-local file watcher → engine.setMode', () 
   });
 
   test('toggling autoSync.enabled: false on disk disables the engine within 4s', async () => {
-    mkdirSync(join(testProjectDir, '.ok', LOCAL_DIR), { recursive: true });
+    mkdirSync(join(testProjectDir, '.ps', LOCAL_DIR), { recursive: true });
     writeFileSync(
-      join(testProjectDir, '.ok', LOCAL_DIR, 'config.yml'),
+      join(testProjectDir, '.ps', LOCAL_DIR, 'config.yml'),
       'autoSync:\n  enabled: true\n',
       'utf-8',
     );
@@ -2074,7 +2074,7 @@ describe('createServer() — project-local file watcher → engine.setMode', () 
     expect(srv.syncEngine?.getStatus().syncEnabled).toBe(true);
 
     writeFileSync(
-      join(testProjectDir, '.ok', LOCAL_DIR, 'config.yml'),
+      join(testProjectDir, '.ps', LOCAL_DIR, 'config.yml'),
       'autoSync:\n  enabled: false\n',
       'utf-8',
     );
@@ -2097,9 +2097,9 @@ describe('createServer() — project-local file watcher → engine.setMode', () 
 
     expect(srv.syncEngine?.getStatus().syncEnabled).toBe(false);
 
-    mkdirSync(join(testProjectDir, '.ok'), { recursive: true });
+    mkdirSync(join(testProjectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(testProjectDir, '.ok', 'config.yml'),
+      join(testProjectDir, '.ps', 'config.yml'),
       'autoSync:\n  default: true\n',
       'utf-8',
     );
@@ -2124,8 +2124,8 @@ describe('createServer() — a removed key in project-local config does not disa
   let logCapture: ReturnType<typeof captureAllLoggers>;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-removed-key-sync-'));
-    testHomedir = mkdtempSync(resolve(tmpdir(), 'ok-removed-key-home-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-removed-key-sync-'));
+    testHomedir = mkdtempSync(resolve(tmpdir(), 'ps-removed-key-home-'));
     servers = [];
     logCapture = captureAllLoggers();
   });
@@ -2140,7 +2140,7 @@ describe('createServer() — a removed key in project-local config does not disa
   });
 
   function writeProjectLocal(yaml: string): void {
-    const localDir = join(testProjectDir, '.ok', LOCAL_DIR);
+    const localDir = join(testProjectDir, '.ps', LOCAL_DIR);
     mkdirSync(localDir, { recursive: true });
     writeFileSync(join(localDir, 'config.yml'), yaml, 'utf-8');
   }
@@ -2215,18 +2215,18 @@ describe('createServer() — a removed key in project-local config does not disa
   });
 });
 
-describe('createServer() — okignore + gitignore multi-path watcher (US-005)', () => {
+describe('createServer() — psignore + gitignore multi-path watcher (US-005)', () => {
   let testProjectDir: string;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-okignore-watcher-test-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-psignore-watcher-test-'));
   });
 
   afterEach(() => {
     rmSync(testProjectDir, { recursive: true, force: true });
   });
 
-  test('external write to .okignore propagates to __config__/okignore Y.Text + ContentFilter rebuilds', async () => {
+  test('external write to .psignore propagates to __config__/psignore Y.Text + ContentFilter rebuilds', async () => {
     mkdirSync(join(testProjectDir, 'drafts'), { recursive: true });
     writeFileSync(join(testProjectDir, 'keep.md'), '# Keep\n', 'utf-8');
     writeFileSync(join(testProjectDir, 'drafts', 'foo.md'), '# Foo\n', 'utf-8');
@@ -2241,7 +2241,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
     expect(srv.contentFilter.isExcluded('drafts/foo.md')).toBe(false);
     expect(srv.contentFilter.isExcluded('keep.md')).toBe(false);
 
-    const okignoreDoc = srv.hocuspocus.documents.get('__config__/okignore');
+    const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
     expect(okignoreDoc).toBeDefined();
     if (!okignoreDoc) {
       await srv.destroy();
@@ -2250,7 +2250,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
     const ytext = okignoreDoc.getText('source');
     expect(ytext.toString()).toBe('');
 
-    const okignorePath = join(testProjectDir, '.okignore');
+    const okignorePath = join(testProjectDir, '.psignore');
     const newContent = 'drafts/\n';
     writeFileSync(okignorePath, newContent, 'utf-8');
 
@@ -2264,7 +2264,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
     await srv.destroy();
   });
 
-  test('external write to .gitignore triggers ContentFilter rebuild WITHOUT mutating __config__/okignore Y.Text', async () => {
+  test('external write to .gitignore triggers ContentFilter rebuild WITHOUT mutating __config__/psignore Y.Text', async () => {
     mkdirSync(join(testProjectDir, 'logs'), { recursive: true });
     writeFileSync(join(testProjectDir, 'index.md'), '# Index\n', 'utf-8');
     writeFileSync(join(testProjectDir, 'logs', 'debug.md'), '# Debug\n', 'utf-8');
@@ -2278,7 +2278,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
 
     expect(srv.contentFilter.isExcluded('logs/debug.md')).toBe(false);
 
-    const okignoreDoc = srv.hocuspocus.documents.get('__config__/okignore');
+    const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
     if (!okignoreDoc) {
       await srv.destroy();
       return;
@@ -2297,7 +2297,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
     await srv.destroy();
   });
 
-  test('persistence-hook write of __config__/okignore Y.Text ends in atomic .okignore on disk + ContentFilter visibility change', async () => {
+  test('persistence-hook write of __config__/psignore Y.Text ends in atomic .psignore on disk + ContentFilter visibility change', async () => {
     writeFileSync(join(testProjectDir, 'visible.md'), '# Visible\n', 'utf-8');
     mkdirSync(join(testProjectDir, 'tmp'), { recursive: true });
     writeFileSync(join(testProjectDir, 'tmp', 'cache.md'), '# Cache\n', 'utf-8');
@@ -2311,7 +2311,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
 
     expect(srv.contentFilter.isExcluded('tmp/cache.md')).toBe(false);
 
-    const okignoreDoc = srv.hocuspocus.documents.get('__config__/okignore');
+    const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
     if (!okignoreDoc) {
       await srv.destroy();
       return;
@@ -2323,7 +2323,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
       ytext.insert(0, newContent);
     });
 
-    const okignorePath = join(testProjectDir, '.okignore');
+    const okignorePath = join(testProjectDir, '.psignore');
     const fileLanded = await waitFor(
       () => existsSync(okignorePath) && readFileSync(okignorePath, 'utf-8') === newContent,
     );
@@ -2351,7 +2351,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
       await srv.ready;
       expect(srv.contentFilter.isExcluded('drafts/foo.md')).toBe(false);
 
-      const okignoreDoc = srv.hocuspocus.documents.get('__config__/okignore');
+      const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
       expect(okignoreDoc).toBeDefined();
       if (!okignoreDoc) return;
 
@@ -2365,7 +2365,7 @@ describe('createServer() — okignore + gitignore multi-path watcher (US-005)', 
       });
 
       try {
-        const okignorePath = join(testProjectDir, '.okignore');
+        const okignorePath = join(testProjectDir, '.psignore');
         writeFileSync(okignorePath, 'drafts/\n', 'utf-8');
 
         const filterUpdated = await waitFor(() => srv.contentFilter.isExcluded('drafts/foo.md'));
@@ -2392,7 +2392,7 @@ describe('createServer() managed rename recovery', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-managed-rename-recovery-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-managed-rename-recovery-'));
   });
 
   afterEach(async () => {
@@ -2431,7 +2431,7 @@ describe('createServer() managed rename recovery', () => {
   });
 
   test('marks the server degraded when the managed rename journal is corrupt', async () => {
-    mkdirSync(join(tmpDir, '.ok', LOCAL_DIR), { recursive: true });
+    mkdirSync(join(tmpDir, '.ps', LOCAL_DIR), { recursive: true });
     writeFileSync(managedRenameJournalPath(tmpDir), '{not valid json', 'utf-8');
 
     const server = createServer({
@@ -2451,7 +2451,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-server-lock-int-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-server-lock-int-'));
   });
 
   afterEach(async () => {
@@ -2466,7 +2466,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
     });
     await server.ready;
 
-    const lockPath = join(tmpDir, '.ok', LOCAL_DIR, 'server.lock');
+    const lockPath = join(tmpDir, '.ps', LOCAL_DIR, 'server.lock');
     expect(existsSync(lockPath)).toBe(true);
     const md = JSON.parse(readFileSync(lockPath, 'utf-8'));
     expect(md.pid).toBe(process.pid);
@@ -2489,7 +2489,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
     });
     await server.ready;
 
-    expect(server.lockDir).toBe(join(tmpDir, '.ok', LOCAL_DIR));
+    expect(server.lockDir).toBe(join(tmpDir, '.ps', LOCAL_DIR));
 
     await server.destroy();
   });
@@ -2504,7 +2504,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
 
     const { hostname } = await import('node:os');
     const foreignPid = process.ppid > 1 ? process.ppid : process.pid + 1;
-    const lockPath = join(tmpDir, '.ok', LOCAL_DIR, 'server.lock');
+    const lockPath = join(tmpDir, '.ps', LOCAL_DIR, 'server.lock');
     writeFileSync(
       lockPath,
       JSON.stringify({
@@ -2545,7 +2545,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
     });
     await server.ready;
 
-    const lockPath = join(tmpDir, '.ok', LOCAL_DIR, 'server.lock');
+    const lockPath = join(tmpDir, '.ps', LOCAL_DIR, 'server.lock');
     const before = JSON.parse(readFileSync(lockPath, 'utf-8'));
     expect(before.port).toBe(0);
 
@@ -2568,7 +2568,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
     });
     await server.ready;
 
-    const lockPath = join(tmpDir, '.ok', LOCAL_DIR, 'server.lock');
+    const lockPath = join(tmpDir, '.ps', LOCAL_DIR, 'server.lock');
     const acquired = JSON.parse(readFileSync(lockPath, 'utf-8'));
     expect(acquired.port).toBe(0);
 
@@ -2583,7 +2583,7 @@ describe('createServer() server-lock integration (V0-1)', () => {
     });
     await server.ready;
 
-    const lockPath = join(tmpDir, '.ok', LOCAL_DIR, 'server.lock');
+    const lockPath = join(tmpDir, '.ps', LOCAL_DIR, 'server.lock');
     expect(existsSync(lockPath)).toBe(true);
 
     const origCloseAll = server.sessionManager.closeAll.bind(server.sessionManager);
@@ -2603,8 +2603,8 @@ describe('createServer() — serverInstanceId', () => {
   let tmpDirB: string;
 
   beforeEach(async () => {
-    tmpDirA = await mkdtemp(join(tmpdir(), 'ok-iid-a-'));
-    tmpDirB = await mkdtemp(join(tmpdir(), 'ok-iid-b-'));
+    tmpDirA = await mkdtemp(join(tmpdir(), 'ps-iid-a-'));
+    tmpDirB = await mkdtemp(join(tmpdir(), 'ps-iid-b-'));
   });
 
   afterEach(async () => {
@@ -2643,7 +2643,7 @@ describe("createServer() — onAuthenticate rejects 'server-instance-mismatch'",
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-auth-mismatch-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-auth-mismatch-'));
   });
   afterEach(async () => {
     await rm(tmpDir, { recursive: true, force: true });
@@ -2793,7 +2793,7 @@ describe("createServer() — onAuthenticate rejects 'branch-mismatch'", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-auth-branch-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-auth-branch-'));
   });
   afterEach(async () => {
     await rm(tmpDir, { recursive: true, force: true });
@@ -2920,7 +2920,7 @@ describe('createServer() — onAuthenticate branch gate parks on readiness', () 
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-auth-branch-boot-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-auth-branch-boot-'));
   });
   afterEach(async () => {
     await rm(tmpDir, { recursive: true, force: true });
@@ -3059,7 +3059,7 @@ describe('createServer() — onAuthenticate rejections reach the structured log'
   let logCapture: ReturnType<typeof captureAllLoggers>;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-auth-log-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-auth-log-'));
     logCapture = captureAllLoggers();
   });
   afterEach(async () => {
@@ -3195,7 +3195,7 @@ describe('createServer() — config-doc admission guard', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-config-admission-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-config-admission-'));
   });
   afterEach(async () => {
     await rm(tmpDir, { recursive: true, force: true });
@@ -3484,8 +3484,8 @@ describe('createServer() — readProjectAutoSyncMode precedence', () => {
   let testHomedir: string;
 
   beforeEach(() => {
-    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ok-autosync-read-test-'));
-    testHomedir = mkdtempSync(resolve(tmpdir(), 'ok-autosync-read-home-'));
+    testProjectDir = mkdtempSync(resolve(tmpdir(), 'ps-autosync-read-test-'));
+    testHomedir = mkdtempSync(resolve(tmpdir(), 'ps-autosync-read-home-'));
   });
 
   afterEach(() => {
@@ -3494,13 +3494,13 @@ describe('createServer() — readProjectAutoSyncMode precedence', () => {
   });
 
   function seedProjectLocalConfig(content: string): void {
-    mkdirSync(join(testProjectDir, '.ok', LOCAL_DIR), { recursive: true });
-    writeFileSync(join(testProjectDir, '.ok', LOCAL_DIR, 'config.yml'), content, 'utf-8');
+    mkdirSync(join(testProjectDir, '.ps', LOCAL_DIR), { recursive: true });
+    writeFileSync(join(testProjectDir, '.ps', LOCAL_DIR, 'config.yml'), content, 'utf-8');
   }
 
   function seedProjectConfig(content: string): void {
-    mkdirSync(join(testProjectDir, '.ok'), { recursive: true });
-    writeFileSync(join(testProjectDir, '.ok', 'config.yml'), content, 'utf-8');
+    mkdirSync(join(testProjectDir, '.ps'), { recursive: true });
+    writeFileSync(join(testProjectDir, '.ps', 'config.yml'), content, 'utf-8');
   }
 
   test('project-local autoSync.enabled: true → engine boots enabled', async () => {
@@ -3649,12 +3649,12 @@ describe('createServer() — readProjectAutoSyncMode precedence', () => {
 
 describe('createServer() — protected-branch auto-disable persistence', () => {
   test('persists autoSync.enabled=false to project-local config only', async () => {
-    const projectDir = mkdtempSync(resolve(tmpdir(), 'ok-auto-disable-test-'));
-    const homedir = mkdtempSync(resolve(tmpdir(), 'ok-auto-disable-home-'));
+    const projectDir = mkdtempSync(resolve(tmpdir(), 'ps-auto-disable-test-'));
+    const homedir = mkdtempSync(resolve(tmpdir(), 'ps-auto-disable-home-'));
     const contentDir = mkdtempSync(resolve(projectDir, 'content-'));
     const projectConfigPath = resolveConfigPath('project', projectDir);
     const localConfigPath = resolveConfigPath('project-local', projectDir);
-    mkdirSync(join(projectDir, '.ok', LOCAL_DIR), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', LOCAL_DIR), { recursive: true });
     writeFileSync(projectConfigPath, 'autoSync:\n  default: true\n', 'utf-8');
     writeFileSync(localConfigPath, 'autoSync:\n  enabled: true\n', 'utf-8');
 
@@ -3722,7 +3722,7 @@ describe('createServer() — phantom-doc unload', () => {
   let phantomTmpDir: string;
 
   beforeEach(async () => {
-    phantomTmpDir = await mkdtemp(join(tmpdir(), 'ok-phantom-unload-'));
+    phantomTmpDir = await mkdtemp(join(tmpdir(), 'ps-phantom-unload-'));
   });
 
   afterEach(async () => {
@@ -3828,7 +3828,7 @@ describe('createServer() — shouldUnloadDocument forceUnloadSet branched guard'
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-shouldunload-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-shouldunload-'));
   });
   afterEach(async () => {
     await rm(tmpDir, { recursive: true, force: true });
@@ -3911,7 +3911,7 @@ describe('createServer() — removalRedirectGuard registration', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-removal-redirect-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-removal-redirect-'));
   });
   afterEach(async () => {
     await rm(tmpDir, { recursive: true, force: true });
@@ -4089,7 +4089,7 @@ describe('createServer() — push-permission auth wiring', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(join(tmpdir(), 'ok-auth-wiring-'));
+    tmpDir = await mkdtemp(join(tmpdir(), 'ps-auth-wiring-'));
     const git = simpleGit(tmpDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(tmpDir);
@@ -4101,7 +4101,7 @@ describe('createServer() — push-permission auth wiring', () => {
     writeFileSync(join(tmpDir, 'README.md'), 'seed\n', 'utf-8');
     await git.add('.');
     await git.commit('seed');
-    await git.addRemote('origin', 'https://github.com/inkeep/open-knowledge.git');
+    await git.addRemote('origin', 'https://github.com/fractalmandala/palimpsest.git');
   });
 
   afterEach(async () => {
@@ -4150,7 +4150,7 @@ describe('createServer() — push-permission auth wiring', () => {
       expect(firstCall.detectGhAccounts).toBe(detectGhAccountsStub);
       expect(firstCall.tokenStore).toBe(tokenStoreStub);
       expect(firstCall.owner).toBe('inkeep');
-      expect(firstCall.repo).toBe('open-knowledge');
+      expect(firstCall.repo).toBe('palimpsest');
     } finally {
       await server.destroy();
     }
@@ -4285,7 +4285,7 @@ describe('createServer() — generated index wiring', () => {
       absPath: resolveConfigPath('project', projectDir),
       sideline: false,
     });
-    if (config.value.contentRules?.okf?.generate?.index !== true) return;
+    if (config.value.contentRules?.psf?.generate?.index !== true) return;
     const result = await updateGeneratedIndexGitAttributes({
       projectDir,
       contentDir,
@@ -4354,16 +4354,16 @@ describe('createServer() — generated index wiring', () => {
   afterAll(() => restoreIndexClose());
 
   beforeEach(async () => {
-    projectDir = await mkdtemp(join(tmpdir(), 'ok-index-wiring-'));
+    projectDir = await mkdtemp(join(tmpdir(), 'ps-index-wiring-'));
     indexDrains = [];
     holdIndexClose = undefined;
     releaseIndexClose = undefined;
     contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
-      stringifyYaml({ contentRules: { okf: { enabled: true, generate: { index: true } } } }),
+      join(projectDir, '.ps', 'config.yml'),
+      stringifyYaml({ contentRules: { psf: { enabled: true, generate: { index: true } } } }),
       'utf-8',
     );
     server = null;
@@ -4529,8 +4529,8 @@ describe('createServer() — generated index wiring', () => {
     await firstWrite;
 
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
-      stringifyYaml({ contentRules: { okf: { enabled: true, generate: { index: false } } } }),
+      join(projectDir, '.ps', 'config.yml'),
+      stringifyYaml({ contentRules: { psf: { enabled: true, generate: { index: false } } } }),
       'utf-8',
     );
     releaseFirstWrite();
@@ -4694,8 +4694,8 @@ describe('createServer() — generated index wiring', () => {
 
   test('settings endpoint commits the Git rule and config as one lifecycle operation', async () => {
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
-      stringifyYaml({ contentRules: { okf: { enabled: true, generate: { index: false } } } }),
+      join(projectDir, '.ps', 'config.yml'),
+      stringifyYaml({ contentRules: { psf: { enabled: true, generate: { index: false } } } }),
       'utf-8',
     );
     writeDoc('waiting.md', 'Waiting', 'note');
@@ -4718,7 +4718,7 @@ describe('createServer() — generated index wiring', () => {
       enabled: true,
       active: true,
       applied: true,
-      git: { state: 'ready', ownership: 'open-knowledge' },
+      git: { state: 'ready', ownership: 'palimpsest' },
     });
 
     await waitForIndex((md) => md.includes('[Waiting]'));
@@ -4744,7 +4744,7 @@ describe('createServer() — generated index wiring', () => {
 
   test('settings endpoint rolls the Git rule back when the config write is rejected', async () => {
     const invalidConfig = 'contentRules: [\n';
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), invalidConfig, 'utf-8');
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), invalidConfig, 'utf-8');
     writeDoc('waiting.md', 'Waiting', 'note');
     const activeServer = await bootServer();
     await expect(activeServer.generatedIndexSweepReady).resolves.toEqual({
@@ -4766,15 +4766,15 @@ describe('createServer() — generated index wiring', () => {
       reason: 'config-write',
       git: { state: 'missing' },
     });
-    expect(readFileSync(join(projectDir, '.ok', 'config.yml'), 'utf-8')).toBe(invalidConfig);
+    expect(readFileSync(join(projectDir, '.ps', 'config.yml'), 'utf-8')).toBe(invalidConfig);
     expect(existsSync(join(projectDir, '.gitattributes'))).toBe(false);
     expect(existsSync(indexPath())).toBe(false);
   });
 
   test('settings endpoint repairs a missing Git rule when config is already enabled', async () => {
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
-      stringifyYaml({ contentRules: { okf: { enabled: true, generate: { index: true } } } }),
+      join(projectDir, '.ps', 'config.yml'),
+      stringifyYaml({ contentRules: { psf: { enabled: true, generate: { index: true } } } }),
       'utf-8',
     );
     const activeServer = await bootServer();
@@ -4792,7 +4792,7 @@ describe('createServer() — generated index wiring', () => {
       enabled: true,
       active: true,
       applied: true,
-      git: { state: 'ready', ownership: 'open-knowledge' },
+      git: { state: 'ready', ownership: 'palimpsest' },
     });
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(readFileSync(join(projectDir, '.gitattributes'), 'utf-8')).toContain(
@@ -4917,7 +4917,7 @@ describe('createServer() — generated index wiring', () => {
     expect(statSync(indexPathAt('source')).mtimeMs).toBe(orphanMtime);
   });
 
-  test('a rebuild lands on the ok-generator ref, not a human or service writer', async () => {
+  test('a rebuild lands on the ps-generator ref, not a human or service writer', async () => {
     await bootServer();
     writeDoc('note.md', 'A note', 'note', 'Something to index.');
     await waitForIndex((md) => md.includes('A note'));
@@ -4926,7 +4926,7 @@ describe('createServer() — generated index wiring', () => {
     await vi.waitFor(
       async () => {
         const out = (await sg.raw('for-each-ref', '--format=%(refname)', 'refs/wip/')).trim();
-        expect(out).toContain('ok-generator');
+        expect(out).toContain('ps-generator');
       },
       { timeout: 20_000, interval: 100 },
     );
@@ -4989,9 +4989,9 @@ describe('createServer() — generated index wiring', () => {
       '',
     ].join('\n');
     writeFileSync(indexPathAt('concepts'), conflicted, 'utf-8');
-    mkdirSync(join(projectDir, '.ok', LOCAL_DIR), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', LOCAL_DIR), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', LOCAL_DIR, 'conflicts.json'),
+      join(projectDir, '.ps', LOCAL_DIR, 'conflicts.json'),
       JSON.stringify({
         version: 1,
         branch: 'main',
@@ -5298,8 +5298,8 @@ describe('createServer() — generated index wiring', () => {
 
   test('enabling generation sweeps nested folders, not only the root', async () => {
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
-      stringifyYaml({ contentRules: { okf: { enabled: true, generate: { index: false } } } }),
+      join(projectDir, '.ps', 'config.yml'),
+      stringifyYaml({ contentRules: { psf: { enabled: true, generate: { index: false } } } }),
       'utf-8',
     );
     writeDoc('deep/leaf.md', 'Leaf', 'note');
@@ -5482,7 +5482,7 @@ describe('createServer() — generated index wiring', () => {
     plugins: {
       ...DEFAULT_LINTER_CONFIG.plugins,
       markdownlint: { ...DEFAULT_LINTER_CONFIG.plugins.markdownlint, enabled: true },
-      okf: { enabled: true },
+      psf: { enabled: true },
     },
   };
 
@@ -5500,7 +5500,7 @@ describe('createServer() — generated index wiring', () => {
       'git',
       [
         '-c',
-        'user.name=Open Knowledge Test',
+        'user.name=Palimpsest Test',
         '-c',
         'user.email=test@example.invalid',
         '-c',
@@ -5537,7 +5537,7 @@ describe('createServer() — generated index wiring', () => {
       enabled: true,
     });
     expect(installed.ok).toBe(true);
-    expect(installed.status).toEqual({ state: 'ready', ownership: 'open-knowledge' });
+    expect(installed.status).toEqual({ state: 'ready', ownership: 'palimpsest' });
 
     writeDoc('README.md', 'Home', 'Index');
     writeDoc('alpha.md', 'Alpha', 'Guide');
@@ -5673,7 +5673,7 @@ function persistedStaleExternalWrite(
   projectDir: string,
   docName: string,
 ): Record<string, unknown> | undefined {
-  const snapshot = join(projectDir, '.ok', LOCAL_DIR, 'stale-external-writes.json');
+  const snapshot = join(projectDir, '.ps', LOCAL_DIR, 'stale-external-writes.json');
   if (!existsSync(snapshot)) return undefined;
   const parsed = JSON.parse(readFileSync(snapshot, 'utf-8')) as {
     branches: Record<string, { docName: string; staleExternalWrite?: Record<string, unknown> }[]>;
@@ -5706,7 +5706,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   });
 
   test('an external disk update on a loaded doc with an absent base adopts disk content instead of concatenating it', async () => {
-    rig = await setupReconcileRig('ok-reconcile-absent-base-');
+    rig = await setupReconcileRig('ps-reconcile-absent-base-');
     const docName = 'absent-base-target';
     const initial = '# Absent base target\n\nParagraph that only the editor doc holds.\n';
     const theirs = '# Absent base target\n\nDisk-authoritative replacement paragraph.\n';
@@ -5755,7 +5755,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('delete-path teardown with an absent base still rescues a non-empty doc and spares an empty doc', async () => {
-    rig = await setupReconcileRig('ok-reconcile-rescue-guard-');
+    rig = await setupReconcileRig('ps-reconcile-rescue-guard-');
     const fullDoc = 'rescue-guard-full';
     const emptyDoc = 'rescue-guard-empty';
     const fullContent = '# Rescue guard full\n\nLive body that exists only in the editor doc.\n';
@@ -5809,7 +5809,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution rescues unflushed live edits now that the suppressed self-delete no longer routes that teardown through the watcher', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-rescue-');
+    rig = await setupReconcileRig('ps-resolve-delete-rescue-');
     const docName = 'resolve-delete-rescue-target';
     const diskContent = '# Resolve delete rescue target\n\nOn-disk body.\n';
     writeFileSync(join(rig.tmpDir, `${docName}.md`), diskContent, 'utf-8');
@@ -5869,7 +5869,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution that fails after its rescue decision leaves the base the retry re-reads', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-retry-base-');
+    rig = await setupReconcileRig('ps-resolve-delete-retry-base-');
     const docName = 'resolve-delete-retry-base';
     const diskContent = '# Resolve delete retry base\n\nOn-disk body.\n';
     writeFileSync(join(rig.tmpDir, `${docName}.md`), diskContent, 'utf-8');
@@ -5915,7 +5915,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution whose file is already gone leaves the directory count its remaining markdown justifies', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-dircount-');
+    rig = await setupReconcileRig('ps-resolve-delete-dircount-');
     const notesDir = join(rig.tmpDir, 'notes');
     mkdirSync(notesDir);
     writeFileSync(join(notesDir, 'keep.md'), '# Keep\n', 'utf-8');
@@ -5942,7 +5942,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution that unlinks then fails, retried with mine, leaves the directory count matching the file it put back', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-then-mine-dircount-');
+    rig = await setupReconcileRig('ps-resolve-delete-then-mine-dircount-');
     const notesDir = join(rig.tmpDir, 'notes');
     mkdirSync(notesDir);
     const docName = 'notes/delete-then-mine';
@@ -5991,7 +5991,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution that fails at unload leaves the lifecycle it found, so a later resolution clears the document', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-lifecycle-restore-');
+    rig = await setupReconcileRig('ps-resolve-delete-lifecycle-restore-');
     const docName = 'resolve-delete-lifecycle-restore';
     const diskContent = '# Resolve delete lifecycle restore\n\nOn-disk body.\n';
     writeFileSync(join(rig.tmpDir, `${docName}.md`), diskContent, 'utf-8');
@@ -6045,7 +6045,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution that fails at unload leaves the stale-external-write record its rehydration re-reads', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-durable-restore-');
+    rig = await setupReconcileRig('ps-resolve-delete-durable-restore-');
     const docName = 'resolve-delete-durable-restore';
     const file = `${docName}.md`;
     const retained = '# Resolve delete durable restore\n\nAcknowledged body.\n';
@@ -6114,7 +6114,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution whose teardown observed a newer external write rolls back to that newer record', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-durable-newer-');
+    rig = await setupReconcileRig('ps-resolve-delete-durable-newer-');
     const docName = 'resolve-delete-durable-newer';
     const file = `${docName}.md`;
     const retained = '# Resolve delete durable newer\n\nAcknowledged body.\n';
@@ -6161,7 +6161,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a delete resolution that fails at unload after a checkout restores the record to the branch it was cleared from', async () => {
-    rig = await setupReconcileRig('ok-resolve-delete-branch-moved-');
+    rig = await setupReconcileRig('ps-resolve-delete-branch-moved-');
     const docName = 'resolve-delete-branch-moved';
     const file = `${docName}.md`;
     const retained = '# Resolve delete branch moved\n\nAcknowledged body.\n';
@@ -6227,7 +6227,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a resolution that rewrites a file already on disk leaves the directory count where it found it', async () => {
-    rig = await setupReconcileRig('ok-resolve-mine-dircount-');
+    rig = await setupReconcileRig('ps-resolve-mine-dircount-');
     const notesDir = join(rig.tmpDir, 'notes');
     mkdirSync(notesDir);
     const docName = 'notes/rewritten-in-place';
@@ -6264,7 +6264,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('rename-path teardown rescues a dirty doc under the same checkpoint kind as the other teardown sites', async () => {
-    rig = await setupReconcileRig('ok-reconcile-rename-rescue-');
+    rig = await setupReconcileRig('ps-reconcile-rename-rescue-');
     const docName = 'rename-rescue-source';
     const newDocName = 'rename-rescue-destination';
     const diskContent = '# Rename rescue source\n\nOn-disk body.\n';
@@ -6316,7 +6316,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a branch-switch round trip keeps an absent-base doc on disk content instead of resurrecting parked WIP', async () => {
-    const projectDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-reconcile-park-')));
+    const projectDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-reconcile-park-')));
     const git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(projectDir);
@@ -6388,7 +6388,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 60_000);
 
   test('a branch-switch reset rescues unflushed WIP on an absent-base doc before overwriting with disk content', async () => {
-    const projectDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-reconcile-bs-rescue-')));
+    const projectDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-reconcile-bs-rescue-')));
     const git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(projectDir);
@@ -6494,7 +6494,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 60_000);
 
   test('a first-visit branch switch mints no rescue for a settled doc whose content already matches the destination disk', async () => {
-    const projectDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-reconcile-firstvisit-')));
+    const projectDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-reconcile-firstvisit-')));
     const git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(projectDir);
@@ -6556,7 +6556,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 60_000);
 
   test('a blockless acknowledged base refuses the merge and adopts disk content with a rescue', async () => {
-    rig = await setupReconcileRig('ok-reconcile-refused-no-base-');
+    rig = await setupReconcileRig('ps-reconcile-refused-no-base-');
     const docName = 'refused-no-base-target';
     const initial = '# Refused no-base target\n\nParagraph that only the editor doc holds.\n';
     const theirs = '# Refused no-base target\n\nDisk-authoritative replacement paragraph.\n';
@@ -6610,7 +6610,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 30_000);
 
   test('a failed disk-authoritative ingest keeps the live content, adopts the disk bytes as the base, and does not re-ingest on the next update', async () => {
-    rig = await setupReconcileRig('ok-reconcile-ingest-failure-');
+    rig = await setupReconcileRig('ps-reconcile-ingest-failure-');
     const docName = 'ingest-failure-target';
     const initial = '# Ingest failure target\n\nLive paragraph that exists only in the editor.\n';
     const theirs = '# Ingest failure target\n\nBase paragraph from disk.\n';
@@ -6704,7 +6704,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 45_000);
 
   test('the disk-authoritative ingest durably buffers live-only content before it adopts disk bytes', async () => {
-    rig = await setupReconcileRig('ok-reconcile-ingest-rescue-order-');
+    rig = await setupReconcileRig('ps-reconcile-ingest-rescue-order-');
     const docName = 'ingest-rescue-order-target';
     const initial =
       '# Ingest rescue order target\n\nLive paragraph that exists only in the editor.\n';
@@ -6756,7 +6756,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
 
   test('an ingest whose rescue writes all fail is not reported as a clean ingest', async (ctx) => {
     ctx.skip(runningAsRoot, 'root bypasses the chmod refusal this test induces');
-    rig = await setupReconcileRig('ok-reconcile-rescue-write-failure-');
+    rig = await setupReconcileRig('ps-reconcile-rescue-write-failure-');
     const docName = 'rescue-write-failure-target';
     const initial =
       '# Rescue write failure target\n\nLive paragraph that exists only in the editor.\n';
@@ -6843,7 +6843,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
 
   test('an ingest that loses its rescue and then fails to apply is not counted as an unrescued clean ingest', async (ctx) => {
     ctx.skip(runningAsRoot, 'root bypasses the chmod refusal this test induces');
-    rig = await setupReconcileRig('ok-reconcile-compound-ingest-failure-');
+    rig = await setupReconcileRig('ps-reconcile-compound-ingest-failure-');
     const docName = 'compound-ingest-failure-target';
     const initial =
       '# Compound ingest failure target\n\nLive paragraph that exists only in the editor.\n';
@@ -6936,7 +6936,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 45_000);
   test('an ingest that loses its rescue and then fails to apply after the live Y.Text is overwritten is reported as an unrescued loss', async (ctx) => {
     ctx.skip(runningAsRoot, 'root bypasses the chmod refusal this test induces');
-    rig = await setupReconcileRig('ok-reconcile-post-write-ingest-failure-');
+    rig = await setupReconcileRig('ps-reconcile-post-write-ingest-failure-');
     const docName = 'post-write-ingest-failure-target';
     const initial =
       '# Post-write ingest failure target\n\nLive paragraph that exists only in the editor.\n';
@@ -7030,7 +7030,7 @@ describe('createServer() — disk-event reconcile with an absent reconciled base
   }, 45_000);
 
   test('an ingest whose apply fails after the live Y.Text is overwritten is not unrescued when the rescue buffer was written', async () => {
-    rig = await setupReconcileRig('ok-reconcile-post-write-ingest-rescued-');
+    rig = await setupReconcileRig('ps-reconcile-post-write-ingest-rescued-');
     const docName = 'post-write-ingest-rescued-target';
     const initial =
       '# Post-write ingest rescued target\n\nLive paragraph that exists only in the editor.\n';
@@ -7124,7 +7124,7 @@ describe('createServer() — disk-event reconcile insert-group dedup reporting',
   });
 
   test('a conflicting reconcile that also skipped insert dedup past the LCS cap still counts the skip', async () => {
-    rig = await setupReconcileRig('ok-reconcile-conflict-dedup-');
+    rig = await setupReconcileRig('ps-reconcile-conflict-dedup-');
     const docName = 'conflict-dedup-target';
     const perSide = Math.ceil(Math.sqrt(MAX_LCS_CELLS)) + 10;
     const shared = Array.from({ length: 10 }, (_, i) => `Shared ${i}.`);

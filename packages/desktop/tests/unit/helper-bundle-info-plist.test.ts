@@ -39,13 +39,13 @@ describe('helper-bundle Info.plist (detached-server Dock-leak regression guard)'
   test('CFBundleIdentifier is namespaced under the parent bundle ID', () => {
     const content = readFileSync(helperPlistPath, 'utf8');
     expect(extractStringValue(content, 'CFBundleIdentifier')).toBe(
-      'com.inkeep.open-knowledge.server',
+      'com.fractalmandala.palimpsest.server',
     );
   });
 
-  test('CFBundleExecutable is "OpenKnowledge Helper" — Electron canonical generic-helper name', () => {
+  test('CFBundleExecutable is "Palimpsest Helper" — Electron canonical generic-helper name', () => {
     const content = readFileSync(helperPlistPath, 'utf8');
-    expect(extractStringValue(content, 'CFBundleExecutable')).toBe('OpenKnowledge Helper');
+    expect(extractStringValue(content, 'CFBundleExecutable')).toBe('Palimpsest Helper');
   });
 
   test('CFBundlePackageType=APPL (canonical .app bundle marker)', () => {

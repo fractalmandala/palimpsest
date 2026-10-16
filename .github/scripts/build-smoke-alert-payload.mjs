@@ -3,7 +3,7 @@
 import { pathToFileURL } from 'node:url';
 
 const ALERT_HEADLINE = 'RELEASE BLOCKED';
-const DEFAULT_REPO = 'inkeep/open-knowledge';
+const DEFAULT_REPO = 'fractalmandala/palimpsest';
 
 export function describeVerdict(verdict) {
   if (verdict === 'fail') {

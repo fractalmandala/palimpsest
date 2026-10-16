@@ -1,10 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "okf",
-  "description": "Starter pack: Open Knowledge Format (OKF) guidance",
+  "name": "psf",
+  "description": "Starter pack: Palimpsest Format (OKF) guidance",
   "author": {
     "name": "Inkeep"
   },
-  "repository": "https://github.com/inkeep/open-knowledge-skills",
-  "keywords": ["openknowledge", "starter-pack"]
+  "repository": "https://github.com/fractalmandala/palimpsest-skills",
+  "keywords": ["palimpsest", "starter-pack"]
 }

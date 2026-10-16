@@ -1,4 +1,4 @@
-import { ConfigSchema } from '@inkeep/open-knowledge-core/config/schema';
+import { ConfigSchema } from '@palimpsest/core/config/schema';
 import type { ConfigContextValue } from '@/lib/config-context';
 
 export interface ProjectTerminalSetting {

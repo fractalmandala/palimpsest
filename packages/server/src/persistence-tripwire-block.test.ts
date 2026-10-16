@@ -24,7 +24,7 @@ interface Fixture {
 }
 
 async function setupFixture(): Promise<Fixture> {
-  const tmpDir = mkdtempSync(join(tmpdir(), 'ok-tripwire-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'ps-tripwire-'));
   const contentDir = tmpDir;
   const git = simpleGit({ baseDir: tmpDir });
   await git.init();
@@ -93,11 +93,11 @@ describe('persistence onStoreDocument tripwire', () => {
       expect(doubledChildren).toBe(baseChildren * 2);
 
       await waitWithinTestBudget(
-        'an ok-persistence-duplication-blocked warning to be logged',
+        'an ps-persistence-duplication-blocked warning to be logged',
         () =>
           warnSpy.mock.calls.some((call) => {
             const arg = String(call[0] ?? '');
-            return arg.includes('"event":"ok-persistence-duplication-blocked"');
+            return arg.includes('"event":"ps-persistence-duplication-blocked"');
           }),
         { timeoutMs: 5_000 },
       );
@@ -120,10 +120,10 @@ describe('persistence onStoreDocument tripwire', () => {
 
       const blockedCalls = warnSpy.mock.calls
         .map((call) => String(call[0] ?? ''))
-        .filter((s) => s.includes('"event":"ok-persistence-duplication-blocked"'));
+        .filter((s) => s.includes('"event":"ps-persistence-duplication-blocked"'));
       expect(blockedCalls.length).toBe(1);
       const payload = JSON.parse(blockedCalls[0] ?? '{}') as Record<string, unknown>;
-      expect(payload.event).toBe('ok-persistence-duplication-blocked');
+      expect(payload.event).toBe('ps-persistence-duplication-blocked');
       expect(payload['doc.name']).toBe(docName);
       expect(payload.copies).toBe(2);
       expect(payload.reason).toBe('structural-duplication');
@@ -188,7 +188,7 @@ describe('persistence onStoreDocument tripwire', () => {
 
       const blockedCalls = warnSpy.mock.calls
         .map((call) => String(call[0] ?? ''))
-        .filter((s) => s.includes('"event":"ok-persistence-duplication-blocked"'));
+        .filter((s) => s.includes('"event":"ps-persistence-duplication-blocked"'));
       expect(blockedCalls.length).toBe(0);
 
       conn.disconnect();

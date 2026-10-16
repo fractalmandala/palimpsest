@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import { post } from './rename-rebinding.test-helper.ts';
@@ -64,7 +64,7 @@ async function startWithOpenDoc(
   docName: string,
   otherDocs: Record<string, string> = {},
 ): Promise<TestServer> {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-reoccupied-name-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-reoccupied-name-'));
   writeFileSync(join(dir, `${docName}.md`), BODY, 'utf-8');
   for (const [name, body] of Object.entries(otherDocs)) {
     writeFileSync(join(dir, `${name}.md`), body, 'utf-8');
@@ -212,19 +212,19 @@ describe('switching back to a branch that has a tombstoned document', () => {
   test.runIf(process.platform !== 'win32')(
     'lets edits to that document reach disk again',
     async () => {
-      const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-branch-switch-revive-')));
+      const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-branch-switch-revive-')));
       cleanups.push(() => rmSync(contentDir, { recursive: true, force: true }));
       await ensureProjectGit(contentDir);
       configureTestGitRepository(contentDir);
-      mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
-      writeFileSync(join(contentDir, '.ok', 'local', 'private.md'), '# Private\n', 'utf-8');
+      mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
+      writeFileSync(join(contentDir, '.ps', 'local', 'private.md'), '# Private\n', 'utf-8');
       writeFileSync(join(contentDir, 'note.md'), '# Note\n\nOn main.\n', 'utf-8');
       writeFileSync(join(contentDir, 'other.md'), '# Other\n\nOn main.\n', 'utf-8');
       git(contentDir, 'add note.md other.md');
       git(contentDir, 'commit -m main');
       git(contentDir, 'checkout -b feature');
       git(contentDir, 'rm -q note.md');
-      symlinkSync('.ok/local/private.md', join(contentDir, 'note.md'));
+      symlinkSync('.ps/local/private.md', join(contentDir, 'note.md'));
       writeFileSync(join(contentDir, 'other.md'), '# Other\n\nOn feature.\n', 'utf-8');
       git(contentDir, 'add note.md other.md');
       git(contentDir, 'commit -m feature');

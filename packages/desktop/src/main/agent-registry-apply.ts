@@ -14,7 +14,7 @@ import {
   planIntents,
   type SatisfierId,
   type StepExecutor,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { IpcMainInvokeEvent } from 'electron';
 import type {
   AgentIntegrationsApplyRequest,

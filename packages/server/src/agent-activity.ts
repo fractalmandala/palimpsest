@@ -5,7 +5,7 @@ import {
   type FrontmatterDelta,
   iconFromClientName,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { createPatch } from 'diff';
 import type * as Y from 'yjs';
 import {

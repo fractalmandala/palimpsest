@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -33,7 +33,7 @@ beforeEach(() => {
   tmpDir = mkdtempSync(join(tmpdir(), 'gh-account-agreement-'));
   projectDir = join(tmpDir, 'project');
   contentDir = join(tmpDir, 'content');
-  mkdirSync(join(projectDir, '.ok', LOCAL_DIR), { recursive: true });
+  mkdirSync(join(projectDir, '.ps', LOCAL_DIR), { recursive: true });
 });
 
 afterEach(() => {
@@ -174,8 +174,8 @@ describe('declared-account agreement across probe, push, and clone', () => {
       deniedReason: 'private-no-access',
       resolvedLogin: 'alice',
     });
-    expect(run.handleEnv.OK_GH_TOKEN).toBe('gho_alice');
-    expect(run.handleEnv.OK_GH_TOKEN_LOGIN).toBe('alice');
+    expect(run.handleEnv.PS_GH_TOKEN).toBe('gho_alice');
+    expect(run.handleEnv.PS_GH_TOKEN_LOGIN).toBe('alice');
   });
 
   test('a credential-config-declared account resolves to one identity in all three consumers', async () => {
@@ -205,8 +205,8 @@ describe('declared-account agreement across probe, push, and clone', () => {
       deniedReason: 'private-no-access',
       resolvedLogin: 'workbot',
     });
-    expect(run.handleEnv.OK_GH_TOKEN).toBe('gho_workbot');
-    expect(run.handleEnv.OK_GH_TOKEN_LOGIN).toBe('workbot');
+    expect(run.handleEnv.PS_GH_TOKEN).toBe('gho_workbot');
+    expect(run.handleEnv.PS_GH_TOKEN_LOGIN).toBe('workbot');
   });
 
   test('with no declared account, all three consumers agree on the active gh account', async () => {
@@ -230,7 +230,7 @@ describe('declared-account agreement across probe, push, and clone', () => {
       checkStatus: 'denied',
       deniedReason: 'private-no-access',
     });
-    expect(run.handleEnv.OK_GH_TOKEN).toBe('gho_active');
-    expect('OK_GH_TOKEN_LOGIN' in run.handleEnv).toBe(false);
+    expect(run.handleEnv.PS_GH_TOKEN).toBe('gho_active');
+    expect('PS_GH_TOKEN_LOGIN' in run.handleEnv).toBe(false);
   });
 });

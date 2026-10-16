@@ -5,7 +5,7 @@ import type {
   SharePublishOwnersErrorCode,
   SharePublishOwnersResponse,
   SharePublishResponse,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger } from '../logger.ts';
 import { loginShapedUserinfoUser } from './git-context.ts';
 

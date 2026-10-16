@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -7,20 +7,20 @@ import { ConfigSharingInfoTooltip } from '@/components/ConfigSharingInfoTooltip'
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
-import type { OkSharingStatusResult } from '@/lib/desktop-bridge-types';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
+import type { PsSharingStatusResult } from '@/lib/desktop-bridge-types';
 import { SettingsSectionHeader } from './SettingsSectionHeader';
 
 const TITLE_ID = 'settings-sharing-title';
 
 export function SharingSection() {
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const sharingBridge = bridge?.sharing;
   return sharingBridge !== undefined ? <SharingSectionBody /> : <SharingSectionUnsupported />;
 }
 
 function SharingSectionUnsupported() {
-  const cliCommand = okCliCommandName();
+  const cliCommand = psCliCommandName();
   return (
     <section aria-labelledby={TITLE_ID} className="space-y-3" data-field="section:sharing">
       <SettingsSectionHeader
@@ -30,7 +30,7 @@ function SharingSectionUnsupported() {
         level="block"
       >
         <Trans>
-          Available in the OpenKnowledge desktop app. From a terminal, use
+          Available in the Palimpsest desktop app. From a terminal, use
           <code> {cliCommand} config-sharing status</code> / <code>share</code> /{' '}
           <code>unshare</code>.
         </Trans>
@@ -41,7 +41,7 @@ function SharingSectionUnsupported() {
 
 function SharingSectionBody() {
   const { t } = useLingui();
-  const [status, setStatus] = useState<OkSharingStatusResult | null>(null);
+  const [status, setStatus] = useState<PsSharingStatusResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [refusal, setRefusal] = useState<{
     tracked: readonly string[];
@@ -49,7 +49,7 @@ function SharingSectionBody() {
   } | null>(null);
 
   async function refresh() {
-    const bridge = window.okDesktop?.sharing;
+    const bridge = window.psDesktop?.sharing;
     if (!bridge) return;
     try {
       setStatus(await bridge.status());
@@ -73,7 +73,7 @@ function SharingSectionBody() {
   }, []);
 
   async function onSelect(mode: 'shared' | 'local-only') {
-    const bridge = window.okDesktop?.sharing;
+    const bridge = window.psDesktop?.sharing;
     if (!bridge || status === null || busy) return;
     if (status.mode === mode) return;
     setBusy(true);
@@ -147,7 +147,7 @@ function SharingSectionBody() {
         adornment={<ConfigSharingInfoTooltip />}
       >
         <Trans>
-          Choose whether this project's OpenKnowledge setup, including its AI-tool connections and
+          Choose whether this project's Palimpsest setup, including its AI-tool connections and
           the Shared default sync mode, is saved with the project so teammates get it too, or kept
           only on your computer.
         </Trans>

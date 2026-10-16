@@ -5,9 +5,9 @@ import { fileURLToPath } from 'node:url';
 import { isTestOnlySourceFile } from '../test-support/test-only-source-file.mjs';
 import { isUncachedTestFile } from '../test-support/uncached-tier.ts';
 
-const OK_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const PS_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PKG_REL = 'packages/server';
-const TASK = '@inkeep/open-knowledge-server#test';
+const TASK = '@palimpsest/server#test';
 
 const RELATIVE_PATH_LITERAL = /'([^'\n]*\.\.\/[^'\n]*)'|"([^"\n]*\.\.\/[^"\n]*)"/g;
 
@@ -46,8 +46,8 @@ function existsOnDisk(absolutePath) {
   }
 }
 
-export function escapingReads(okRoot = OK_ROOT) {
-  const packageDir = join(okRoot, PKG_REL);
+export function escapingReads(psRoot = PS_ROOT) {
+  const packageDir = join(psRoot, PKG_REL);
   const byTarget = new Map();
   for (const file of walkTestFiles(packageDir)) {
     const source = readFileSync(file, 'utf-8');
@@ -55,7 +55,7 @@ export function escapingReads(okRoot = OK_ROOT) {
       const literal = match[1] ?? match[2];
       const absolute = resolve(join(file, '..'), literal);
       const fromPackage = relative(packageDir, absolute);
-      const fromOkRoot = relative(okRoot, absolute);
+      const fromOkRoot = relative(psRoot, absolute);
       const staysInsidePackage = !fromPackage.startsWith('..');
       const leavesTheSubtree = fromOkRoot.startsWith('..');
       const isAncestorOfPackage = !relative(absolute, packageDir).startsWith('..');
@@ -68,8 +68,8 @@ export function escapingReads(okRoot = OK_ROOT) {
     for (const call of source.matchAll(ROOT_JOIN_CALL)) {
       const segments = [...call[2].matchAll(QUOTED_SEGMENT)].map((m) => m[1] ?? m[2]);
       if (segments.length === 0) continue;
-      const absolute = resolve(okRoot, ...segments);
-      const fromOkRoot = relative(okRoot, absolute);
+      const absolute = resolve(psRoot, ...segments);
+      const fromOkRoot = relative(psRoot, absolute);
       const fromPackage = relative(packageDir, absolute);
       if (fromOkRoot.startsWith('..')) continue;
       if (!fromPackage.startsWith('..')) continue;
@@ -97,22 +97,22 @@ function globToAnchoredRegex(escaped) {
   return new RegExp(`^${pattern}(/|$)`);
 }
 
-export function packageRelativeGlobCovers(entry, targetFromOkRoot, okRoot = OK_ROOT) {
-  const fromOkRoot = relative(okRoot, resolve(join(okRoot, PKG_REL), entry));
+export function packageRelativeGlobCovers(entry, targetFromOkRoot, psRoot = PS_ROOT) {
+  const fromOkRoot = relative(psRoot, resolve(join(psRoot, PKG_REL), entry));
   return globToAnchoredRegex(escapeGlobLiterals(fromOkRoot)).test(targetFromOkRoot);
 }
 
-export function uncoveredReads(okRoot = OK_ROOT) {
-  const turbo = JSON.parse(readFileSync(join(okRoot, 'turbo.json'), 'utf-8'));
+export function uncoveredReads(psRoot = PS_ROOT) {
+  const turbo = JSON.parse(readFileSync(join(psRoot, 'turbo.json'), 'utf-8'));
   const inputs = (turbo.tasks?.[TASK]?.inputs ?? []).filter(
     (entry) => !entry.startsWith('!') && entry !== '$TURBO_DEFAULT$',
   );
   const globalDependencies = turbo.globalDependencies ?? [];
 
   const uncovered = [];
-  for (const [target, readers] of escapingReads(okRoot)) {
+  for (const [target, readers] of escapingReads(psRoot)) {
     const declaredAsInput = inputs.some((entry) =>
-      packageRelativeGlobCovers(entry, target, okRoot),
+      packageRelativeGlobCovers(entry, target, psRoot),
     );
     const declaredGlobally = globalDependencies.some((entry) =>
       globalDependencyCovers(entry, target),
@@ -135,13 +135,13 @@ export function knownUnsweptWitness(glob) {
   return glob.replace(/\/\*\*$/, '');
 }
 
-export function missingKnownUnswept(okRoot = OK_ROOT) {
-  const turbo = JSON.parse(readFileSync(join(okRoot, 'turbo.json'), 'utf-8'));
+export function missingKnownUnswept(psRoot = PS_ROOT) {
+  const turbo = JSON.parse(readFileSync(join(psRoot, 'turbo.json'), 'utf-8'));
   const inputs = turbo.tasks?.[TASK]?.inputs ?? [];
   return Object.keys(KNOWN_UNSWEPT).filter((glob) => {
-    const witness = relative(okRoot, resolve(join(okRoot, PKG_REL), knownUnsweptWitness(glob)));
+    const witness = relative(psRoot, resolve(join(psRoot, PKG_REL), knownUnsweptWitness(glob)));
     return !inputs.some(
-      (entry) => entry === glob || packageRelativeGlobCovers(entry, witness, okRoot),
+      (entry) => entry === glob || packageRelativeGlobCovers(entry, witness, psRoot),
     );
   });
 }
@@ -191,7 +191,7 @@ function main() {
         `suffix. Rename each reader to <name>.uncached.test.ts, and the uncached tier runs it\n` +
         `every round, in CI's lint job, and in every whole-suite \`turbo run\` that names\n` +
         `\`test:uncached\` beside \`test\`, such as \`pnpm test\`; a --filter'ed run does not.\n` +
-        `Add a matching glob to \`${TASK}\`.inputs in public/open-knowledge/turbo.json\n` +
+        `Add a matching glob to \`${TASK}\`.inputs in public/palimpsest/turbo.json\n` +
         `instead only if the whole server tier should re-run whenever that path changes.\n`,
     );
     process.exit(1);

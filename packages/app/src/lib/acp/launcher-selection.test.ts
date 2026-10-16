@@ -1,4 +1,4 @@
-import type { TerminalCli } from '@inkeep/open-knowledge-core';
+import type { TerminalCli } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { IN_APP_THREAD_ID, terminalCliId } from '../unified-agent-store';
 import {

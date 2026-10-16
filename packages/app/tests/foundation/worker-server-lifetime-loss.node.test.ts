@@ -29,7 +29,7 @@ afterEach(() => {
 });
 
 function lostOwnerLaunch() {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-lifetime-loss-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-lifetime-loss-')));
   scratchDirs.push(root);
   const tmp = join(root, 'tmp');
   mkdirSync(tmp);

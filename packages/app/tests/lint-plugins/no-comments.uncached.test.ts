@@ -137,7 +137,7 @@ describe('no-comments oxlint plugin', () => {
     expect(raw).toContain('Use a resolvable referent');
     for (const diagnostic of diagnostics) {
       expect(diagnostic.message).toMatch(
-        /See https:\/\/github\.com\/inkeep\/open-knowledge\/blob\/main\/lint-plugins\/no-comments\/README\.md#[a-z-]+$/,
+        /See https:\/\/github\.com\/inkeep\/palimpsest\/blob\/main\/lint-plugins\/no-comments\/README\.md#[a-z-]+$/,
       );
     }
   });

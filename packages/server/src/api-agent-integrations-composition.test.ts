@@ -6,7 +6,7 @@ import {
   AgentIntegrationsApplySuccessSchema,
   type ProbeResolver,
   type StepExecutor,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, expect, test } from 'vitest';
 import type { AgentRegistryHostSeam } from './agent-registry-apply.ts';
 import type { BootedServer } from './boot.ts';
@@ -37,7 +37,7 @@ function assertExclusiveNativeOwnership(server: BootedServer): void {
 async function bootApplyComposition(
   agentIntegrations: AgentRegistryHostSeam,
 ): Promise<ApplyCompositionFixture> {
-  const root = mkdtempSync(join(tmpdir(), 'ok-agent-integrations-composition-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-agent-integrations-composition-'));
   const contentDir = join(root, 'project');
   const configPath = join(contentDir, '.mcp.json');
   mkdirSync(contentDir);

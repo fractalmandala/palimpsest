@@ -36,7 +36,7 @@ vi.stubGlobal('fetch', async (input: RequestInfo | URL) => {
 });
 
 function installDesktopBridge() {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: { config: { projectName: 'Field Notes', projectPath: '/projects/field-notes' } },
   });
@@ -66,7 +66,7 @@ async function renderFooterWithFileList(fileList: 'open' | 'closed') {
 
 afterEach(() => {
   cleanup();
-  Object.defineProperty(window, 'okDesktop', { configurable: true, value: undefined });
+  Object.defineProperty(window, 'psDesktop', { configurable: true, value: undefined });
 });
 
 afterAll(() => {

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { stripFrontmatter } from '@palimpsest/core';
 import { expect, test } from './_helpers';
 
 test('template creation shows actionable admission detail and accepts explicit printable repair', async ({
@@ -9,7 +9,7 @@ test('template creation shows actionable admission detail and accepts explicit p
   workerServer,
 }, testInfo) => {
   const name = `admission-${randomUUID()}`;
-  const path = join(workerServer.contentDir, '.ok', 'templates', `${name}.md`);
+  const path = join(workerServer.contentDir, '.ps', 'templates', `${name}.md`);
   const unsafe = 'x😀\u0000private-tail\n';
   const cleaned = 'x😀\\u0000private-tail\n';
   await page.goto('/#settings');

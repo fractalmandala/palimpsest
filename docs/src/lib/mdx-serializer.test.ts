@@ -17,7 +17,7 @@ import {
   serializeMdx,
 } from './mdx-serializer.ts';
 
-const PAGE_URL = 'https://openknowledge.ai/docs/get-started/quickstart';
+const PAGE_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx';
 
 function body(source: string, registry: SerializerRegistry = {}): string {
   return serializeMdx(source, { registry, pageUrl: PAGE_URL }).body;
@@ -49,7 +49,7 @@ describe('serializeMdx', () => {
     });
     expect(md).toBe(
       [
-        'Read the [editor guide](https://openknowledge.ai/docs/features/editor#ask-ai) first.',
+        'Read the [editor guide](https://github.com/fractalmandala/palimpsest/tree/main/docs/content) first.',
         '',
         '- one',
         '- two',
@@ -173,49 +173,49 @@ describe('link rewriting', () => {
     [
       'parent-relative source link',
       '[a](../features/editor.mdx)',
-      'https://openknowledge.ai/docs/features/editor',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/editor.mdx',
     ],
     [
       'sibling-relative source link',
       '[a](./overview.mdx)',
-      'https://openknowledge.ai/docs/get-started/overview',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx',
     ],
     [
       'a .md sibling',
       '[a](../reference/core-concepts.md)',
-      'https://openknowledge.ai/docs/reference/core-concepts',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/core-concepts.md',
     ],
     [
       'a fragment on a relative link',
       '[a](../features/editor.mdx#ask-ai)',
-      'https://openknowledge.ai/docs/features/editor#ask-ai',
+      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
     ],
-    ['a root-relative link', '[a](/download)', 'https://openknowledge.ai/download'],
+    ['a root-relative link', '[a](/download)', 'https://github.com/fractalmandala/palimpsest/download'],
     [
       'a bare fragment',
       '[a](#section)',
-      'https://openknowledge.ai/docs/get-started/quickstart#section',
+      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
     ],
-    ['an image', '![a](/screenshots/x.png)', 'https://openknowledge.ai/screenshots/x.png'],
+    ['an image', '![a](/screenshots/x.png)', 'https://github.com/fractalmandala/palimpsest/screenshots/x.png'],
     [
       'an extensionless route named index',
       '[a](/api/index?q=1#item)',
-      'https://openknowledge.ai/api/index?q=1#item',
+      'https://github.com/fractalmandala/palimpsest/api/index?q=1#item',
     ],
     [
       'a folder index, which fumadocs serves at the folder URL',
       '[a](../features/skills/index.mdx)',
-      'https://openknowledge.ai/docs/features/skills',
+      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
     ],
     [
       'a fragment on a folder index',
       '[a](./skills/index.mdx#where-to-find-skills-studio)',
-      'https://openknowledge.ai/docs/get-started/skills#where-to-find-skills-studio',
+      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
     ],
     [
       'a folder index named from inside its own folder',
       '[a](./index.mdx)',
-      'https://openknowledge.ai/docs/get-started',
+      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
     ],
   ])('absolutises %s', (_label, source, expected) => {
     expect(body(source)).toContain(`(${expected})`);
@@ -223,7 +223,7 @@ describe('link rewriting', () => {
 
   test.each([
     ['an external URL that happens to end in .md', 'https://github.com/o/r/blob/main/SPEC.md'],
-    ['a mailto link', 'mailto:hi@openknowledge.ai'],
+    ['a mailto link', 'mailto:hi@palimpsest.ai'],
     ['a protocol-relative URL', '//cdn.example.com/x.png'],
   ])('leaves %s untouched', (_label, url) => {
     expect(body(`[a](${url})`)).toContain(`(${url})`);
@@ -231,7 +231,7 @@ describe('link rewriting', () => {
 
   test('rewrites a link reference definition', () => {
     expect(body('[a][ref]\n\n[ref]: ../features/editor.mdx\n')).toContain(
-      'https://openknowledge.ai/docs/features/editor',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/editor.mdx',
     );
   });
 
@@ -239,7 +239,7 @@ describe('link rewriting', () => {
     const md = body('<Callout>\n\n[a](../features/editor.mdx)\n\n</Callout>', {
       Callout: 'flatten',
     });
-    expect(md).toContain('https://openknowledge.ai/docs/features/editor');
+    expect(md).toContain('https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/editor.mdx');
   });
 });
 
@@ -272,7 +272,7 @@ describe('escapeRawHtml', () => {
   });
 
   test('keeps the inline formatting the author wrote', () => {
-    const prose = 'Prefer **the editor**, or read [the guide](https://openknowledge.ai/docs).';
+    const prose = 'Prefer **the editor**, or read [the guide](https://github.com/fractalmandala/palimpsest/tree/main/docs/content).';
     expect(escapeRawHtml(prose)).toBe(prose);
   });
 
@@ -283,7 +283,7 @@ describe('escapeRawHtml', () => {
   });
 
   test('leaves prose carrying no markup byte-identical', () => {
-    const prose = 'What OpenKnowledge is, and why it exists.';
+    const prose = 'What Palimpsest is, and why it exists.';
     expect(escapeRawHtml(prose)).toBe(prose);
   });
 });
@@ -321,7 +321,7 @@ describe('componentNames', () => {
 
 describe('the docs content corpus', () => {
   const CONTENT_ROOT = fileURLToPath(new URL('../../content/', import.meta.url));
-  const DOCS_ORIGIN = 'https://openknowledge.ai';
+  const DOCS_ORIGIN = 'https://github.com/fractalmandala/palimpsest';
   const FLATTEN_EVERY_COMPONENT = new Proxy(
     {},
     {
@@ -348,7 +348,7 @@ describe('the docs content corpus', () => {
       .relative(CONTENT_ROOT, file)
       .replace(/\.mdx?$/, '')
       .replace(/(^|\/)index$/, '');
-    return `https://openknowledge.ai/docs/${slug}`.replace(/\/$/, '');
+    return `https://github.com/fractalmandala/palimpsest/tree/main/docs/content '');
   }
 
   const files = corpusFiles();
@@ -409,15 +409,15 @@ describe('a refusal names the page it came from', () => {
     expect(() =>
       serializeMdx('<Unknown />', {
         registry: {},
-        pageUrl: 'https://openknowledge.ai/docs/x/y',
+        pageUrl: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
       }),
-    ).toThrow('https://openknowledge.ai/docs/x/y: No serializer disposition for <Unknown>');
+    ).toThrow('https://github.com/fractalmandala/palimpsest/tree/main/docs/content No serializer disposition for <Unknown>');
   });
 
   test('keeps the original refusal reachable as the cause', () => {
     const thrown = (() => {
       try {
-        serializeMdx('<Unknown />', { registry: {}, pageUrl: 'https://openknowledge.ai/docs/x' });
+        serializeMdx('<Unknown />', { registry: {}, pageUrl: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content' });
       } catch (error) {
         return error as Error;
       }

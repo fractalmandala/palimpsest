@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseTemplateFile } from '@inkeep/open-knowledge-core';
+import { parseTemplateFile } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   extractMarkdownLinksFromMarkdown,
@@ -9,7 +9,7 @@ import {
 import {
   buildStarterFolderFrontmatterYaml,
   listStarterPacks,
-  OKF_RESERVED_FILENAMES,
+  PSF_RESERVED_FILENAMES,
   STARTER_FOLDER_FRONTMATTER_FILENAME,
   STARTER_PACK_IDS,
   STARTER_PACKS,
@@ -155,7 +155,7 @@ describe('STARTER_PACKS — all packs structural validation', () => {
       'codebase-wiki',
       'entity-vault',
       'knowledge-base',
-      'okf',
+      'psf',
       'plain-notes',
       'software-lifecycle',
       'worldbuilding',
@@ -283,12 +283,12 @@ describe('STARTER_PACKS — all packs structural validation', () => {
     }
   });
 
-  const OKF_RESERVED_ROOTFILES = new Set(OKF_RESERVED_FILENAMES);
+  const PSF_RESERVED_ROOTFILES = new Set(PSF_RESERVED_FILENAMES);
 
   test('every non-reserved rootFile body has frontmatter with a non-empty title', () => {
     for (const pack of Object.values(STARTER_PACKS)) {
       for (const [filename, body] of Object.entries(pack.rootFiles ?? {})) {
-        if (pack.id === 'okf' && OKF_RESERVED_ROOTFILES.has(filename)) continue;
+        if (pack.id === 'psf' && PSF_RESERVED_ROOTFILES.has(filename)) continue;
         expect(
           body.startsWith('---\n'),
           `Pack "${pack.id}" rootFile "${filename}" missing frontmatter`,

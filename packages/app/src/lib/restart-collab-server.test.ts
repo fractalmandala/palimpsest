@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { restartCollabServer, restartServerFailureMessage } from './restart-collab-server';
 
 describe('restartServerFailureMessage', () => {
@@ -7,27 +7,27 @@ describe('restartServerFailureMessage', () => {
     expect(
       restartServerFailureMessage({ ok: false, reason: 'other-channel', holderChannel: 'stable' }),
     ).toBe(
-      "OpenKnowledge (Stable) is serving this project, so this app won't stop it. Close this window and open the project again to stop OpenKnowledge (Stable)'s server and open the project here.",
+      "Palimpsest (Stable) is serving this project, so this app won't stop it. Close this window and open the project again to stop Palimpsest (Stable)'s server and open the project here.",
     );
   });
 
   test('eperm names the ownership conflict', () => {
     expect(restartServerFailureMessage({ ok: false, reason: 'eperm' })).toBe(
-      "Couldn't restart the server — another process owns it. Quit other OpenKnowledge windows for this project, then try again.",
+      "Couldn't restart the server — another process owns it. Quit other Palimpsest windows for this project, then try again.",
     );
   });
 
-  test('other points at the ok start fallback', () => {
+  test('other points at the ps start fallback', () => {
     expect(restartServerFailureMessage({ ok: false, reason: 'other' })).toBe(
-      "Couldn't restart the server. Try `ok start` in this folder.",
+      "Couldn't restart the server. Try `ps start` in this folder.",
     );
   });
 
-  test('other in a Beta window points at ok-beta start', () => {
-    vi.stubGlobal('window', { okDesktop: { cliCommandName: 'ok-beta' } });
+  test('other in a Beta window points at ps-beta start', () => {
+    vi.stubGlobal('window', { psDesktop: { cliCommandName: 'ps-beta' } });
     try {
       expect(restartServerFailureMessage({ ok: false, reason: 'other' })).toBe(
-        "Couldn't restart the server. Try `ok-beta start` in this folder.",
+        "Couldn't restart the server. Try `ps-beta start` in this folder.",
       );
     } finally {
       vi.unstubAllGlobals();
@@ -36,8 +36,8 @@ describe('restartServerFailureMessage', () => {
 });
 
 describe('restartCollabServer', () => {
-  function makeBridge(outcome: Awaited<ReturnType<OkDesktopBridge['restartServer']>>): {
-    bridge: Pick<OkDesktopBridge, 'restartServer' | 'config'>;
+  function makeBridge(outcome: Awaited<ReturnType<PsDesktopBridge['restartServer']>>): {
+    bridge: Pick<PsDesktopBridge, 'restartServer' | 'config'>;
     restartServer: ReturnType<typeof vi.fn>;
   } {
     const restartServer = vi.fn(async () => outcome);
@@ -45,7 +45,7 @@ describe('restartCollabServer', () => {
       bridge: {
         restartServer,
         config: { projectPath: '/tmp/proj' },
-      } as unknown as Pick<OkDesktopBridge, 'restartServer' | 'config'>,
+      } as unknown as Pick<PsDesktopBridge, 'restartServer' | 'config'>,
       restartServer,
     };
   }
@@ -66,7 +66,7 @@ describe('restartCollabServer', () => {
     });
   });
 
-  test('maps an other failure to the ok start fallback message', async () => {
+  test('maps an other failure to the ps start fallback message', async () => {
     const { bridge } = makeBridge({ ok: false, reason: 'other' });
     const result = await restartCollabServer(bridge);
     expect(result).toEqual({

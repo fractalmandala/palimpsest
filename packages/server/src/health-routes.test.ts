@@ -19,7 +19,7 @@ let tmpRoot: string;
 let booted: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-health-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-health-'));
   booted = await bootCompositionRig(mkdtempSync(resolve(tmpRoot, 'proj-')));
 }, 60_000);
 
@@ -77,7 +77,7 @@ describe('/readyz', () => {
   });
 
   test('during boot answers either 503 not-ready or 200 ready, never a gate refusal', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-readyz-race-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-readyz-race-'));
     try {
       const racing = await bootCompositionRig(tmp);
       try {
@@ -97,7 +97,7 @@ describe('/readyz', () => {
   }, 30_000);
 
   test('destroy() flips readiness to draining before the listener closes', async () => {
-    const tmp = await mkdtemp(resolve(tmpdir(), 'ok-readyz-drain-'));
+    const tmp = await mkdtemp(resolve(tmpdir(), 'ps-readyz-drain-'));
     try {
       const draining = await bootCompositionRig(tmp);
       try {

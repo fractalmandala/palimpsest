@@ -3,7 +3,7 @@ import {
   type TargetData,
   TERMINAL_CLIS,
   type TerminalCli,
-} from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/handoff';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, Check, ChevronDown, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -137,8 +137,8 @@ export function CreatePromptComposer({ scenario, className }: CreatePromptCompos
     clear: clearPendingAttachments,
   } = useComposerAttachments({
     absPathOf:
-      typeof window !== 'undefined' && window.okDesktop
-        ? window.okDesktop.getPathForFile
+      typeof window !== 'undefined' && window.psDesktop
+        ? window.psDesktop.getPathForFile
         : undefined,
     workspaceContentDir: workspace?.contentDir,
     pathSeparator: workspace?.pathSeparator,

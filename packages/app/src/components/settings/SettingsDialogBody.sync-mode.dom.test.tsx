@@ -250,8 +250,8 @@ describe('Settings Sync section — three-way mode control (real hooks + dialog)
       syncMode: 'off',
       ahead: 0,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'off' } };
@@ -335,8 +335,8 @@ describe('Settings Sync section — three-way mode control (real hooks + dialog)
       pausedReason: 'no-push-permission',
       ahead: 2,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
 
@@ -440,8 +440,8 @@ describe('Settings Sync section — cycle cadence controls', () => {
       syncMode: 'follow',
       ahead: 0,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'follow' } };
@@ -542,8 +542,8 @@ describe('Settings Sync section — Advanced disclosure intent', () => {
       syncMode: 'follow',
       ahead: 0,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'follow' } };
@@ -606,8 +606,8 @@ describe('Settings Sync section — GitHub sign-in prompts', () => {
       syncMode: 'full',
       ahead: 0,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = { autoSync: { mode: 'full' } };
@@ -696,8 +696,8 @@ describe('Settings Sync section — publish-to-GitHub reachability', () => {
       syncMode: 'off',
       ahead: 0,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     } as SyncStatus;
 
@@ -759,7 +759,7 @@ describe('Settings Sync section: unknown or missing remote never offers auto syn
     expectNoModeControls();
     const unavailable = screen.getByTestId('settings-sync-unavailable');
     expect(within(unavailable).getByRole('status').textContent ?? '').toContain(
-      "Couldn't reach the OpenKnowledge server",
+      "Couldn't reach the Palimpsest server",
     );
   });
 
@@ -908,8 +908,8 @@ describe('Settings Sync section: a remote with no local choice shows the mode th
       syncMode: 'full',
       ahead: 0,
       remote: {
-        label: 'inkeep/open-knowledge',
-        webUrl: 'https://github.com/inkeep/open-knowledge',
+        label: 'fractalmandala/palimpsest',
+        webUrl: 'https://github.com/fractalmandala/palimpsest',
       },
     };
     projectLocalConfig = {};

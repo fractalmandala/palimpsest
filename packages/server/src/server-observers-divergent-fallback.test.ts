@@ -1,4 +1,4 @@
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
@@ -15,7 +15,7 @@ const CLIENT_ORIGIN = { client: 'simulated-y-prosemirror-client' };
 const SOURCE = 'Para one.\n\n<Foo>broken</Bar>\n\nPara two.\n';
 const BROKEN_BLOCK = '<Foo>broken</Bar>';
 
-const ENV_KEYS = ['NODE_ENV', 'OK_BRIDGE_THROW_ON_VIOLATION', 'OK_RETHROW_BRIDGE_LOSS'] as const;
+const ENV_KEYS = ['NODE_ENV', 'PS_BRIDGE_THROW_ON_VIOLATION', 'PS_RETHROW_BRIDGE_LOSS'] as const;
 let savedEnv: Partial<Record<(typeof ENV_KEYS)[number], string | undefined>>;
 
 beforeEach(() => {
@@ -24,8 +24,8 @@ beforeEach(() => {
     savedEnv[key] = process.env[key];
   }
   process.env.NODE_ENV = 'production';
-  delete process.env.OK_BRIDGE_THROW_ON_VIOLATION;
-  delete process.env.OK_RETHROW_BRIDGE_LOSS;
+  delete process.env.PS_BRIDGE_THROW_ON_VIOLATION;
+  delete process.env.PS_RETHROW_BRIDGE_LOSS;
   resetMetrics();
   __resetBridgeWatchdogForTests();
 });

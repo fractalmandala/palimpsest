@@ -12,7 +12,7 @@ import {
 } from 'node:fs';
 import { hostname, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { isProcessAlive, lockFilePath, scanLockProcesses } from '@inkeep/open-knowledge-server';
+import { isProcessAlive, lockFilePath, scanLockProcesses } from '@palimpsest/server';
 import pino from 'pino';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as cliLogger from '../cli-logger.ts';
@@ -26,7 +26,7 @@ describe('stopServerForRemoval', () => {
   let warnings: Array<Record<string, unknown>>;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-removal-stop-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-removal-stop-'));
     warnings = [];
     vi.spyOn(cliLogger, 'getCliLogger').mockReturnValue(
       pino({ level: 'warn' }, { write: (record) => warnings.push(JSON.parse(record)) }),
@@ -398,7 +398,7 @@ describe('stopServerForRemoval', () => {
     `);
       await expect(
         stopServerForRemoval(dir, { platform, readProcessStart: () => null }),
-      ).rejects.toThrow('Confirm the OpenKnowledge server has exited before retrying cleanup');
+      ).rejects.toThrow('Confirm the Palimpsest server has exited before retrying cleanup');
       expect(isProcessAlive(pid)).toBe(true);
       expectRefusalLogged('alive', 'Cannot verify the identity');
       expect(warnings[0]).toMatchObject({ lockPid: pid });
@@ -431,19 +431,19 @@ describe('stopServerForRemoval', () => {
     });
     expect(warnings[0]?.msg).toContain(lockFilePath(dir, 'server'));
     expect(warnings[0]?.msg).not.toContain('OpenProcess: os error 5');
-    expect(warnings[0]?.msg).toContain('recorded in the CLI log under ~/.ok/logs');
+    expect(warnings[0]?.msg).toContain('recorded in the CLI log under ~/.ps/logs');
   });
 
   test.each([
     [
       'unavailable',
-      'Reinstall OpenKnowledge to restore the Windows component that verifies process identity',
+      'Reinstall Palimpsest to restore the Windows component that verifies process identity',
       'the operating system refused the query',
     ],
     [
       'query-failed',
       'the operating system refused the query, so reinstalling will not help',
-      'Reinstall OpenKnowledge',
+      'Reinstall Palimpsest',
     ],
   ] as const)(
     'picks the win32 remedy for a %s fault on any host',
@@ -475,7 +475,7 @@ describe('stopServerForRemoval', () => {
       stopServerForRemoval(dir, { platform: 'win32', readProcessStart: () => null }),
     ).rejects.toThrow('Stop the server manually.');
     expect(isProcessAlive(pid)).toBe(true);
-    expect(warnings[0]?.msg).not.toContain('Reinstall OpenKnowledge');
+    expect(warnings[0]?.msg).not.toContain('Reinstall Palimpsest');
     expect(warnings[0]?.msg).not.toContain('refused the query');
   });
 
@@ -571,7 +571,7 @@ describe('stopServerForRemoval', () => {
       'Cannot verify the identity',
     );
     expect(isProcessAlive(pid)).toBe(true);
-    expect(warnings[0]?.msg).not.toContain('~/.ok/logs');
+    expect(warnings[0]?.msg).not.toContain('~/.ps/logs');
     expect(warnings[0]).not.toHaveProperty('nativeFailures');
   });
 
@@ -647,7 +647,7 @@ describe('stopServerForRemoval', () => {
       JSON.stringify({ pid, hostname: `${hostname()}-other-machine`, port: 0 }),
     );
     await expect(stopServerForRemoval(dir)).rejects.toThrow(
-      'Confirm that no OpenKnowledge server is using this directory on the owning machine or any other machine sharing it',
+      'Confirm that no Palimpsest server is using this directory on the owning machine or any other machine sharing it',
     );
     expect(isProcessAlive(pid)).toBe(true);
     expectRefusalLogged('foreign-host', 'another machine');

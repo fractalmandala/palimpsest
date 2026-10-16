@@ -9,8 +9,8 @@ import {
   type SkillAuthoringWarningCode,
   type SkillFrontmatter,
   skillFilePathSegments,
-} from '@inkeep/open-knowledge-core';
-import { ATOMIC_TEMP_INFIX, atomicTempPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { ATOMIC_TEMP_INFIX, atomicTempPath } from '@palimpsest/core/server';
 import { stringify as stringifyYaml } from 'yaml';
 import { isSkillBundlePathWithheld } from '../content-filter.ts';
 /*
@@ -667,10 +667,10 @@ function cleanEmptyDirs(skillsRoot: string): void {
       tracedRmdirSync(skillsRoot);
     } catch {}
   }
-  const okDir = normalize(join(skillsRoot, '..'));
-  if (okDir.endsWith(`${sep}.ok`) && existsSync(okDir) && isEmpty(okDir)) {
+  const psDir = normalize(join(skillsRoot, '..'));
+  if (psDir.endsWith(`${sep}.ok`) && existsSync(psDir) && isEmpty(psDir)) {
     try {
-      tracedRmdirSync(okDir);
+      tracedRmdirSync(psDir);
     } catch {}
   }
 }

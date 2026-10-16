@@ -1,17 +1,17 @@
 ---
 name: writing-workflow
-description: "How to work in a Writing Pipeline project (the `writing-pipeline` starter pack): a three-stage drafting flow, ideas → drafts → published. Read when the project has these folders, OR when asked to capture an idea, start or revise a draft, review a piece before it ships, or publish it. Carries the stage flow and review behaviors so that guidance does not live inside template bodies or folder descriptions. Complements the platform `open-knowledge` skill; does not replace it."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack writing-pipeline` (`ok-beta` for Beta)."
+description: "How to work in a Writing Pipeline project (the `writing-pipeline` starter pack): a three-stage drafting flow, ideas → drafts → published. Read when the project has these folders, OR when asked to capture an idea, start or revise a draft, review a piece before it ships, or publish it. Carries the stage flow and review behaviors so that guidance does not live inside template bodies or folder descriptions. Complements the platform `palimpsest` skill; does not replace it."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack writing-pipeline` (`ps-beta` for Beta)."
 metadata:
   pack: "writing-pipeline"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Writing Pipeline pack — how to work here
 
 A lean three-stage flow for short-to-medium-form writing (essays, newsletters, blog posts).
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the drafting flow on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the drafting flow on top.
 
 
 ```

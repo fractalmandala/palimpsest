@@ -1,5 +1,5 @@
 {
-  "name": "@inkeep/open-knowledge-docs",
+  "name": "@palimpsest/docs",
   "version": "0.0.272",
   "license": "GPL-3.0-or-later",
   "private": true,
@@ -21,7 +21,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
     "@inkeep/cxkit-react": "^0.5.117",
-    "@inkeep/open-knowledge-core": "workspace:*",
+    "@palimpsest/core": "workspace:*",
     "@radix-ui/react-popover": "^1.1.17",
     "@types/mdx": "^2.0.13",
     "@vercel/microfrontends": "^2.3.6",

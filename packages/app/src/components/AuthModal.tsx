@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
@@ -263,7 +263,7 @@ function PatBody({
   onGhSignIn,
 }: PatBodyProps) {
   const { t } = useLingui();
-  const createUrl = `https://${host}/settings/tokens/new?scopes=repo,read:user&description=OpenKnowledge`;
+  const createUrl = `https://${host}/settings/tokens/new?scopes=repo,read:user&description=Palimpsest`;
   return (
     <div className="flex flex-col gap-3">
       {showGhOption ? (
@@ -439,7 +439,7 @@ export function AuthModal({
       .then((status) => {
         if (settled) return;
         if (!status.authenticated && status.unsupportedOrigin !== undefined) {
-          refuse(status.error ?? t`OpenKnowledge can't sign in to GitHub for this project.`);
+          refuse(status.error ?? t`Palimpsest can't sign in to GitHub for this project.`);
           return;
         }
         const enterprise = !!status.host && status.host !== 'github.com';

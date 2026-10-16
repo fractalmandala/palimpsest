@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 import fixture from '../../../../../../test-support/fixtures/share-url-v1-v2.json';
 
 const SPLASH_URL =
-  'https://github.com/inkeep/open-knowledge/releases/latest/download/OpenKnowledge-arm64.dmg';
+  'https://github.com/fractalmandala/palimpsest/releases/latest/download/Palimpsest-arm64.dmg';
 
 type CaptureOpts = {
   event: string;
@@ -16,7 +16,7 @@ vi.doMock('../../../../lib/track.ts', () => ({
     _lastCapture = opts;
   },
   resolveDistinctId: () => 'splash-1',
-  attribution: () => ({ referrer: 'openknowledge.ai', utm_content: 'should-be-overridden' }),
+  attribution: () => ({ referrer: 'palimpsest.ai', utm_content: 'should-be-overridden' }),
   isPrefetchRequest: () => _isPrefetch,
 }));
 
@@ -39,14 +39,14 @@ vi.doMock('../../../../lib/deferred-share.ts', async (importOriginal) => {
     buildPendingShareCookie: (encoded: string) =>
       _useRealShareContract
         ? actual.buildPendingShareCookie(encoded)
-        : { name: 'ok-pending-share', value: encoded },
+        : { name: 'ps-pending-share', value: encoded },
   };
 });
 
 const { GET } = await import('./route.ts');
 
 function call(encoded: string, query = ''): Promise<Response> {
-  return GET(new Request(`https://openknowledge.ai/d/${encoded}/download${query}`), {
+  return GET(new Request(`https://github.com/fractalmandala/palimpsest/d/${encoded}/download${query}`), {
     params: Promise.resolve({ encoded }),
   });
 }
@@ -82,9 +82,9 @@ describe('GET /d/[encoded]/download', () => {
     const res = await call('valid-share', '?picker=1');
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(
-      'https://openknowledge.ai/download?utm_content=share-splash',
+      'https://github.com/fractalmandala/palimpsest/download?utm_content=share-splash',
     );
-    expect(res.headers.get('set-cookie')).toContain('ok-pending-share=valid-share');
+    expect(res.headers.get('set-cookie')).toContain('ps-pending-share=valid-share');
     expect(_lastCapture).toBeNull();
   });
 
@@ -95,7 +95,7 @@ describe('GET /d/[encoded]/download', () => {
       const res = await call(`${kind}-share`, '?picker=1');
       expect(res.status).toBe(302);
       expect(res.headers.get('location')).toBe(
-        'https://openknowledge.ai/download?utm_content=share-splash',
+        'https://github.com/fractalmandala/palimpsest/download?utm_content=share-splash',
       );
       expect(res.headers.get('set-cookie')).toBeNull();
       expect(_lastCapture).toBeNull();
@@ -108,9 +108,9 @@ describe('GET /d/[encoded]/download', () => {
     const res = await call('valid-share', '?os=linux&arch=arm64&format=rpm');
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/latest/download/OpenKnowledge-aarch64.rpm',
+      'https://github.com/fractalmandala/palimpsest/releases/latest/download/Palimpsest-aarch64.rpm',
     );
-    expect(res.headers.get('set-cookie')).toContain('ok-pending-share=valid-share');
+    expect(res.headers.get('set-cookie')).toContain('ps-pending-share=valid-share');
     expect(_lastCapture?.event).toBe('dmg_downloaded');
     expect(_lastCapture?.properties).toMatchObject({ os: 'linux', arch: 'arm64', format: 'rpm' });
   });
@@ -120,13 +120,13 @@ describe('GET /d/[encoded]/download', () => {
     _lastCapture = null;
     const windows = await call('valid-share', '?os=windows');
     expect(windows.headers.get('location')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/latest/download/OpenKnowledge-Setup-x64.exe',
+      'https://github.com/fractalmandala/palimpsest/releases/latest/download/Palimpsest-Setup-x64.exe',
     );
     expect(_lastCapture?.properties).toMatchObject({ os: 'windows', arch: 'x64', format: 'exe' });
 
     const linux = await call('valid-share', '?os=linux');
     expect(linux.headers.get('location')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/latest/download/OpenKnowledge-amd64.deb',
+      'https://github.com/fractalmandala/palimpsest/releases/latest/download/Palimpsest-amd64.deb',
     );
     expect(_lastCapture?.properties).toMatchObject({ os: 'linux', arch: 'x64', format: 'deb' });
   });
@@ -147,7 +147,7 @@ describe('GET /d/[encoded]/download', () => {
       '?os=linux&arch=x64&format=rpm',
     ]) {
       const res = await call('valid-share', query);
-      expect(res.headers.get('set-cookie')).toContain('ok-pending-share=valid-share');
+      expect(res.headers.get('set-cookie')).toContain('ps-pending-share=valid-share');
     }
   });
 

@@ -1,4 +1,4 @@
-import type { SkillSearchResult, SkillsListEntry } from '@inkeep/open-knowledge-core';
+import type { SkillSearchResult, SkillsListEntry } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { findImportedSkill } from './use-skill-directory';
 

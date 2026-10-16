@@ -52,7 +52,7 @@ afterEach(() => {
 });
 
 function scratchTmpdir(): string {
-  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-owned-lifetime-scratch-')));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-owned-lifetime-scratch-')));
   scratchDirs.push(root);
   const tmp = join(root, 'tmp');
   mkdirSync(tmp);

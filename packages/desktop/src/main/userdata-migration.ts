@@ -3,8 +3,8 @@ import { cp } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 import { parseAppState } from './state-store.ts';
 
-const LEGACY_DIR_NAME = 'Open Knowledge';
-const TARGET_DIR_NAME = 'OpenKnowledge';
+const LEGACY_DIR_NAME = 'Palimpsest';
+const TARGET_DIR_NAME = 'Palimpsest';
 const STATE_FILE = 'state.json';
 
 type UserDataMigrationStatus =

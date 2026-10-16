@@ -1,8 +1,8 @@
 import type {
   ThreadErrorCode,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { parseThreadClientFrame } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
+import { parseThreadClientFrame } from '@palimpsest/core/acp/thread-protocol';
 import type { PinoLogger } from '../logger.ts';
 import { type AcpThreadManager, ThreadOpError } from './thread-manager.ts';
 

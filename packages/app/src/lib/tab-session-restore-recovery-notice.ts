@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 
-const NOTICE_ID = 'ok-tab-session-restore-recovered';
+const NOTICE_ID = 'ps-tab-session-restore-recovered';
 
 export function showTabSessionRestoreRecoveryNotice(): void {
   toast(t`Your last open document couldn't be restored.`, {

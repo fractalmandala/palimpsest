@@ -17,7 +17,7 @@ vi.mock('node:os', async (importOriginal) => {
 });
 
 const names = ['first', 'second', 'third'];
-const outerBudget = Number(process.env.OK_DESTROY_STEP_TIMEOUT_MS) || 5000;
+const outerBudget = Number(process.env.PS_DESTROY_STEP_TIMEOUT_MS) || 5000;
 const innerBudget = 10_000;
 
 function captureShutdownReports() {
@@ -102,8 +102,8 @@ async function withLoadedDocuments(
     blockedSignalRequests.push({ pid: this.pid, signal });
     return false;
   });
-  const homeDir = await mkdtemp(join(tmpdir(), 'ok-shutdown-home-'));
-  const projectDir = await mkdtemp(join(tmpdir(), 'ok-shutdown-progress-'));
+  const homeDir = await mkdtemp(join(tmpdir(), 'ps-shutdown-home-'));
+  const projectDir = await mkdtemp(join(tmpdir(), 'ps-shutdown-progress-'));
   homeState.path = homeDir;
   let booted: Awaited<ReturnType<typeof bootServer>> | undefined;
   let startedBootDestroy: Promise<void> | undefined;
@@ -119,8 +119,8 @@ async function withLoadedDocuments(
   try {
     await ensureProjectGit(projectDir);
     configureTestGitRepository(projectDir);
-    await mkdir(join(projectDir, '.ok'), { recursive: true });
-    await writeFile(join(projectDir, '.ok', 'config.yml'), '');
+    await mkdir(join(projectDir, '.ps'), { recursive: true });
+    await writeFile(join(projectDir, '.ps', 'config.yml'), '');
     for (const name of names) await writeFile(join(projectDir, `${name}.md`), `# ${name}\n`);
     booted = await bootServer({
       host: '127.0.0.1',

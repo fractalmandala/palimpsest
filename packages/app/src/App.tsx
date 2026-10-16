@@ -1,5 +1,5 @@
-import { SHOW_INSTALL_SKILL } from '@inkeep/open-knowledge-core/constants/feature-flags';
-import { mediaKindForSidebarAssetExtension } from '@inkeep/open-knowledge-core/constants/upload';
+import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
+import { mediaKindForSidebarAssetExtension } from '@palimpsest/core/constants/upload';
 import {
   type CSSProperties,
   lazy,
@@ -227,7 +227,7 @@ function NavigationHandler() {
   }, []);
 
   useEffect(() => {
-    if (!tabSessionLoaded && window.okDesktop?.config.mode === 'editor') return;
+    if (!tabSessionLoaded && window.psDesktop?.config.mode === 'editor') return;
     if (initialDocumentNavigationRef.current) {
       initialDocumentNavigationRef.current = false;
       revealEditor();
@@ -451,7 +451,7 @@ function SettingsShortcutHandler() {
 
 function ActiveTargetBridgePush() {
   const { activeTarget } = useDocumentContext();
-  const bridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
+  const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
 
   const kind =
     activeTarget?.kind === 'doc' ||
@@ -594,8 +594,8 @@ export function App() {
 }
 
 function AppBody() {
-  const desktopBridge = typeof window !== 'undefined' ? (window.okDesktop ?? null) : null;
-  const isElectronHost = typeof window !== 'undefined' && window.okDesktop != null;
+  const desktopBridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
+  const isElectronHost = typeof window !== 'undefined' && window.psDesktop != null;
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const singleFile = useSingleFileMode();
   const noteWindow = isNoteWindow();

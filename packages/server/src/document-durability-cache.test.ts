@@ -30,7 +30,7 @@ afterEach(() => {
 });
 
 function setup() {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-durability-cache-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-durability-cache-'));
   fixtures.push(dir);
   const persistencePath = join(dir, 'state.json');
   return { dir, persistencePath, state: new DocumentDurabilityState('main', { persistencePath }) };

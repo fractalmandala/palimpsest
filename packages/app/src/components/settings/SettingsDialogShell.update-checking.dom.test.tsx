@@ -67,7 +67,7 @@ vi.doMock('@/lib/handoff/use-claude-desktop-integration', () => ({
 type ManualCheckListener = (info: { phase: 'started' | 'settled' }) => void;
 let manualCheckListener: ManualCheckListener | null = null;
 const unsubscribe = () => () => {};
-(window as unknown as { okDesktop?: unknown }).okDesktop = {
+(window as unknown as { psDesktop?: unknown }).psDesktop = {
   appVersion: '1.2.3',
   config: { ptyAvailable: false },
   shell: { openExternal: () => Promise.resolve() },
@@ -105,7 +105,7 @@ describe('SettingsDialogShell sidebar update-check status', () => {
     cleanup();
   });
   afterAll(() => {
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
   });
 
   test('shows Checking for updates while a manual check runs and clears it when the check settles', () => {

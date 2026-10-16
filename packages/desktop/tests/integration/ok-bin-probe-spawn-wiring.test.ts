@@ -7,12 +7,12 @@ const DESKTOP_SRC = resolve(fileURLToPath(new URL('../../src', import.meta.url))
 const INDEX_TS = join(DESKTOP_SRC, 'main', 'index.ts');
 
 const FIX = (what: string): string =>
-  `\n[ok-bin-probe-spawn] ${what}\n\n` +
-  `OK Desktop creates and populates ~/.ok/bin unconditionally, and buildShellEnv (pty-host.ts)\n` +
+  `\n[ps-bin-probe-spawn] ${what}\n\n` +
+  `OK Desktop creates and populates ~/.ps/bin unconditionally, and buildShellEnv (pty-host.ts)\n` +
   `prepends it to every shell the app spawns for the user. That is the contract #2405 shipped, and\n` +
   `pty-host.test.ts pins it on the producer side. The CLI-presence probe adapter is the other end\n` +
   `of that pair: it composes a child environment for a real shell, so it owes the same PATH.\n` +
-  `Spawning it with the app process environment makes every CLI installed in ~/.ok/bin read as\n` +
+  `Spawning it with the app process environment makes every CLI installed in ~/.ps/bin read as\n` +
   `absent, and the false negative is silent, because a non-zero exit is indistinguishable from a\n` +
   `genuine absence. The behavioral half of this pin is\n` +
   `tests/integration/ok-bin-child-spawn-path.test.ts. This file covers the four call sites, which\n` +

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-const actual = await import('@inkeep/open-knowledge-server');
+const actual = await import('@palimpsest/server');
 
 interface EmittedError {
   name: string;
@@ -10,7 +10,7 @@ interface EmittedError {
 
 const emissions: EmittedError[] = [];
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   ...actual,
   emitPreflightFailureSpan: (err: unknown) => {
     const e = err as Error & { platform?: string; detected?: string };

@@ -3,14 +3,14 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { type Config, UnsafeIncomingSymlinkError } from '@inkeep/open-knowledge-server';
+import { type Config, UnsafeIncomingSymlinkError } from '@palimpsest/server';
 import simpleGit, { type SimpleGitOptions } from 'simple-git';
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import type { ExecFileSyncFn, GhDetectResult } from '../auth/gh-detect.ts';
 import { detectGh } from '../auth/gh-detect.ts';
 import { FileBackend, type TokenStore } from '../auth/token-store.ts';
-import { OK_DIR } from '../constants.ts';
+import { PS_DIR } from '../constants.ts';
 import {
   buildCloneArgs,
   buildCloneAuthEnv,
@@ -32,7 +32,7 @@ import {
 } from './clone.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -117,7 +117,7 @@ describe('resolveCloneUrl', () => {
 describe('resolveCloneAuth', () => {
   let tmpDir: string;
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-clone-auth-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-clone-auth-'));
   });
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });
@@ -563,59 +563,59 @@ describe('buildCloneEnv', () => {
 });
 
 describe('buildCloneAuthEnv', () => {
-  test('sets OK_GH_TOKEN and OK_GH_TOKEN_HOST when a relay token is present', () => {
+  test('sets PS_GH_TOKEN and PS_GH_TOKEN_HOST when a relay token is present', () => {
     const env = buildCloneAuthEnv(
       { relayToken: { token: 'ghs_relay', host: 'github.com' } },
       { PATH: '/usr/bin' },
     );
-    expect(env.OK_GH_TOKEN).toBe('ghs_relay');
-    expect(env.OK_GH_TOKEN_HOST).toBe('github.com');
+    expect(env.PS_GH_TOKEN).toBe('ghs_relay');
+    expect(env.PS_GH_TOKEN_HOST).toBe('github.com');
   });
 
   test('sets no relay vars when relayToken is absent (Tier B/C/none)', () => {
     const env = buildCloneAuthEnv({}, { PATH: '/usr/bin' });
-    expect('OK_GH_TOKEN' in env).toBe(false);
-    expect('OK_GH_TOKEN_HOST' in env).toBe(false);
+    expect('PS_GH_TOKEN' in env).toBe(false);
+    expect('PS_GH_TOKEN_HOST' in env).toBe(false);
   });
 
-  test('strips an inherited OK_GH_TOKEN when no relay token was resolved', () => {
+  test('strips an inherited PS_GH_TOKEN when no relay token was resolved', () => {
     const env = buildCloneAuthEnv(
       {},
-      { PATH: '/usr/bin', OK_GH_TOKEN: 'ghs_stale', OK_GH_TOKEN_HOST: 'github.com' },
+      { PATH: '/usr/bin', PS_GH_TOKEN: 'ghs_stale', PS_GH_TOKEN_HOST: 'github.com' },
     );
-    expect('OK_GH_TOKEN' in env).toBe(false);
-    expect('OK_GH_TOKEN_HOST' in env).toBe(false);
+    expect('PS_GH_TOKEN' in env).toBe(false);
+    expect('PS_GH_TOKEN_HOST' in env).toBe(false);
   });
 
   test('a resolved relay token overrides an inherited stale one', () => {
     const env = buildCloneAuthEnv(
       { relayToken: { token: 'ghs_fresh', host: 'ghes.acme.test' } },
-      { PATH: '/usr/bin', OK_GH_TOKEN: 'ghs_stale', OK_GH_TOKEN_HOST: 'github.com' },
+      { PATH: '/usr/bin', PS_GH_TOKEN: 'ghs_stale', PS_GH_TOKEN_HOST: 'github.com' },
     );
-    expect(env.OK_GH_TOKEN).toBe('ghs_fresh');
-    expect(env.OK_GH_TOKEN_HOST).toBe('ghes.acme.test');
+    expect(env.PS_GH_TOKEN).toBe('ghs_fresh');
+    expect(env.PS_GH_TOKEN_HOST).toBe('ghes.acme.test');
   });
 
-  test('relays OK_GH_TOKEN_LOGIN when the relay token names its account', () => {
+  test('relays PS_GH_TOKEN_LOGIN when the relay token names its account', () => {
     const env = buildCloneAuthEnv(
       { relayToken: { token: 'ghs_relay', host: 'github.com', login: 'alice' } },
       { PATH: '/usr/bin' },
     );
-    expect(env.OK_GH_TOKEN_LOGIN).toBe('alice');
+    expect(env.PS_GH_TOKEN_LOGIN).toBe('alice');
   });
 
   test('an anonymous relay token sets no login var and strips an inherited one', () => {
     const env = buildCloneAuthEnv(
       { relayToken: { token: 'ghs_relay', host: 'github.com' } },
-      { PATH: '/usr/bin', OK_GH_TOKEN_LOGIN: 'stale-name' },
+      { PATH: '/usr/bin', PS_GH_TOKEN_LOGIN: 'stale-name' },
     );
-    expect(env.OK_GH_TOKEN).toBe('ghs_relay');
-    expect('OK_GH_TOKEN_LOGIN' in env).toBe(false);
+    expect(env.PS_GH_TOKEN).toBe('ghs_relay');
+    expect('PS_GH_TOKEN_LOGIN' in env).toBe(false);
   });
 
-  test('strips an inherited OK_GH_TOKEN_LOGIN when no relay token was resolved', () => {
-    const env = buildCloneAuthEnv({}, { PATH: '/usr/bin', OK_GH_TOKEN_LOGIN: 'stale-name' });
-    expect('OK_GH_TOKEN_LOGIN' in env).toBe(false);
+  test('strips an inherited PS_GH_TOKEN_LOGIN when no relay token was resolved', () => {
+    const env = buildCloneAuthEnv({}, { PATH: '/usr/bin', PS_GH_TOKEN_LOGIN: 'stale-name' });
+    expect('PS_GH_TOKEN_LOGIN' in env).toBe(false);
   });
 });
 
@@ -716,7 +716,7 @@ describe('ensureOkExcludedFromGit', () => {
     expect(ensureOkExcludedFromGit(testDir)).toBe('no-exclude');
   });
 
-  it('appends OK_DIR/ to a fresh exclude file with default git template', () => {
+  it('appends PS_DIR/ to a fresh exclude file with default git template', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
     const defaultTemplate = `# git ls-files --others --exclude-from=.git/info/exclude
 # Lines that start with '#' are comments.
@@ -729,16 +729,16 @@ describe('ensureOkExcludedFromGit', () => {
 
     expect(ensureOkExcludedFromGit(testDir)).toBe('appended');
     const after = readFileSync(excludePath, 'utf-8');
-    expect(after).toContain(`${OK_DIR}/`);
+    expect(after).toContain(`${PS_DIR}/`);
     expect(after.startsWith(defaultTemplate)).toBe(true);
   });
 
-  it('appends OK_DIR/ to an empty exclude file', () => {
+  it('appends PS_DIR/ to an empty exclude file', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
     writeFileSync(excludePath, '', 'utf-8');
 
     expect(ensureOkExcludedFromGit(testDir)).toBe('appended');
-    expect(readFileSync(excludePath, 'utf-8')).toBe(`${OK_DIR}/\n`);
+    expect(readFileSync(excludePath, 'utf-8')).toBe(`${PS_DIR}/\n`);
   });
 
   it('inserts a newline before appending when existing file has no trailing newline', () => {
@@ -746,20 +746,20 @@ describe('ensureOkExcludedFromGit', () => {
     writeFileSync(excludePath, '*.tmp', 'utf-8');
 
     expect(ensureOkExcludedFromGit(testDir)).toBe('appended');
-    expect(readFileSync(excludePath, 'utf-8')).toBe(`*.tmp\n${OK_DIR}/\n`);
+    expect(readFileSync(excludePath, 'utf-8')).toBe(`*.tmp\n${PS_DIR}/\n`);
   });
 
   it('is idempotent — re-running returns "already-present"', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
-    writeFileSync(excludePath, `${OK_DIR}/\n`, 'utf-8');
+    writeFileSync(excludePath, `${PS_DIR}/\n`, 'utf-8');
 
     expect(ensureOkExcludedFromGit(testDir)).toBe('already-present');
-    expect(readFileSync(excludePath, 'utf-8')).toBe(`${OK_DIR}/\n`);
+    expect(readFileSync(excludePath, 'utf-8')).toBe(`${PS_DIR}/\n`);
   });
 
   it('recognizes leading-slash and no-trailing-slash variants', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
-    for (const variant of [OK_DIR, `/${OK_DIR}`, `/${OK_DIR}/`]) {
+    for (const variant of [PS_DIR, `/${PS_DIR}`, `/${PS_DIR}/`]) {
       writeFileSync(excludePath, `${variant}\n`, 'utf-8');
       expect(ensureOkExcludedFromGit(testDir)).toBe('already-present');
     }
@@ -801,7 +801,7 @@ describe('ensureOkExcludedFromGit', () => {
       expect(result).toBe('appended');
 
       const mainExclude = readFileSync(join(mainRepoDir, '.git', 'info', 'exclude'), 'utf-8');
-      expect(mainExclude).toContain(`${OK_DIR}/`);
+      expect(mainExclude).toContain(`${PS_DIR}/`);
     } finally {
       rmSync(linkedDir, { recursive: true, force: true });
       rmSync(mainRepoDir, { recursive: true, force: true });
@@ -1218,7 +1218,7 @@ describe('runClone declared-miss warning', () => {
   let restore: (() => void) | null = null;
 
   beforeEach(() => {
-    tmp = mkdtempSync(join(tmpdir(), 'ok-clone-warn-'));
+    tmp = mkdtempSync(join(tmpdir(), 'ps-clone-warn-'));
     stderrChunks = [];
     stdoutChunks = [];
     const realErr = process.stderr.write.bind(process.stderr);
@@ -1466,7 +1466,7 @@ describe('emitCloneFailure', () => {
 
 describe('clone stores the remote URL verbatim, userinfo included', () => {
   test('git clone of a userinfo URL writes that URL into .git/config unchanged', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'ok-clone-userinfo-'));
+    const base = mkdtempSync(join(tmpdir(), 'ps-clone-userinfo-'));
     try {
       const srcDir = join(base, 'seed');
       mkdirSync(srcDir);
@@ -1505,10 +1505,10 @@ describe('runClone git preflight', () => {
       configurable: true,
     });
     try {
-      const { GitNotAvailableError } = await import('@inkeep/open-knowledge-server');
+      const { GitNotAvailableError } = await import('@palimpsest/server');
       const cwd = join(
         tmpdir(),
-        `ok-clone-preflight-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        `ps-clone-preflight-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       );
       await expect(
         runClone('inkeep/playbooks', { json: true }, {} as unknown as Config, cwd),
@@ -1530,9 +1530,9 @@ describe('formatCloneAuthFailure names the running channel command', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s', (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     const login = formatCloneAuthFailure({
       error: new Error('fatal: could not read Username for https://github.com'),
       url: 'https://github.com/inkeep/playbooks',

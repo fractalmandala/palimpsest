@@ -48,7 +48,7 @@ describe('formatRemovalOutcome', () => {
   });
 
   test('groups real retained Pi records and recovery guidance beneath each project failure', async () => {
-    const base = realpathSync(mkdtempSync(join(tmpdir(), 'ok-removal-render-')));
+    const base = realpathSync(mkdtempSync(join(tmpdir(), 'ps-removal-render-')));
     try {
       const home = join(base, 'home');
       mkdirSync(home);
@@ -114,7 +114,7 @@ describe('formatRemovalOutcome', () => {
 });
 
 test('reports root stop failures once and counts dependent items separately', async () => {
-  const locks = ['/one/.ok/local', '/two/.ok/local'];
+  const locks = ['/one/.ps/local', '/two/.ps/local'];
   const outcome = await runRemoval(
     {
       scope: 'uninstall',

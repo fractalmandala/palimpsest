@@ -5,7 +5,7 @@ The rules are in the "Pull requests" section of CONTRIBUTING.md.
 
 ## Accepted issue
 
-<!-- Paste the full issue URL, e.g. https://github.com/inkeep/open-knowledge/issues/123. Write "small fix" if this is a typo, link, docs or translation correction. -->
+<!-- Paste the full issue URL, e.g. https://github.com/fractalmandala/palimpsest/issues/123. Write "small fix" if this is a typo, link, docs or translation correction. -->
 
 ## What & why
 

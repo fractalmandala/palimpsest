@@ -11,8 +11,8 @@ import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type {
-  OkSpellingLanguagesQueryResult,
-  OkSpellingLanguagesSetResult,
+  PsSpellingLanguagesQueryResult,
+  PsSpellingLanguagesSetResult,
 } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
@@ -64,8 +64,8 @@ function render(ui: ReactNode) {
 
 interface BridgeOptions {
   readonly platform?: 'darwin' | 'win32' | 'linux';
-  readonly languages?: () => Promise<OkSpellingLanguagesQueryResult>;
-  readonly setLanguages?: (languages: readonly string[]) => Promise<OkSpellingLanguagesSetResult>;
+  readonly languages?: () => Promise<PsSpellingLanguagesQueryResult>;
+  readonly setLanguages?: (languages: readonly string[]) => Promise<PsSpellingLanguagesSetResult>;
 }
 
 function installBridge(options: BridgeOptions = {}) {
@@ -97,7 +97,7 @@ function installBridge(options: BridgeOptions = {}) {
       },
     },
   };
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: bridge,
     configurable: true,
     writable: true,
@@ -110,7 +110,7 @@ afterEach(() => {
   vi.restoreAllMocks();
   toastError.mockClear();
   // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-  (window as any).okDesktop = undefined;
+  (window as any).psDesktop = undefined;
 });
 
 describe('SpellcheckLanguagesRow', () => {

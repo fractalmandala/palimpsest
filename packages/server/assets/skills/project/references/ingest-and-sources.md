@@ -240,4 +240,4 @@ If the source is directly relevant to an existing article or research doc, updat
 - **No streaming-video direct download** — `yt-dlp` is a separate workflow; STOP and route to it (Step 1a STOP gate 1).
 - **No executable / scripted-document auto-fetch** — hard-blocked at Step 1b STOP gate 1 (write-path only). The user runs `curl` manually outside the agent if they need to archive such a file.
 
-This procedure feeds a three-layer pipeline (ingest → research → consolidate). Ingest is this file, and ships with every `ok init`; research and consolidate are two member skills of the `knowledge-base` starter pack, available only once it is seeded. See `references/starter-packs.md`.
+This procedure feeds a three-layer pipeline (ingest → research → consolidate). Ingest is this file, and ships with every `ps init`; research and consolidate are two member skills of the `knowledge-base` starter pack, available only once it is seeded. See `references/starter-packs.md`.

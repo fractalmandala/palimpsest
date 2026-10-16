@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 const overviewPage = {
   url: '/docs/get-started/overview',
-  data: { title: 'Overview', description: 'What OpenKnowledge is.' },
+  data: { title: 'Overview', description: 'What Palimpsest is.' },
 };
 
 vi.doMock('@/lib/source', () => ({
@@ -19,7 +19,7 @@ describe('docs page markdown alternate link', () => {
     } as never);
 
     expect(meta.alternates?.types).toMatchObject({
-      'text/markdown': 'https://openknowledge.ai/docs/get-started/overview.md',
+      'text/markdown': 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx',
     });
   });
 

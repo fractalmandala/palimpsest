@@ -2,20 +2,20 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import {
   bindConfigDoc,
   type ConfigBinding,
-} from '@inkeep/open-knowledge-core/config/bind-config-doc';
+} from '@palimpsest/core/config/bind-config-doc';
 import {
   bindOkignoreDoc,
   type OkignoreBinding,
-} from '@inkeep/open-knowledge-core/config/bind-okignore-doc';
-import type { WriteScope } from '@inkeep/open-knowledge-core/config/errors';
-import { mergeLayered } from '@inkeep/open-knowledge-core/config/merge-layered';
-import type { Config } from '@inkeep/open-knowledge-core/config/schema';
+} from '@palimpsest/core/config/bind-psignore-doc';
+import type { WriteScope } from '@palimpsest/core/config/errors';
+import { mergeLayered } from '@palimpsest/core/config/merge-layered';
+import type { Config } from '@palimpsest/core/config/schema';
 import {
   CONFIG_DOC_NAME_OKIGNORE,
   CONFIG_DOC_NAME_PROJECT,
   CONFIG_DOC_NAME_PROJECT_LOCAL,
   CONFIG_DOC_NAME_USER,
-} from '@inkeep/open-knowledge-core/constants/cc1';
+} from '@palimpsest/core/constants/cc1';
 import { useTheme } from 'next-themes';
 import { type ReactNode, useEffect, useState } from 'react';
 import * as Y from 'yjs';
@@ -101,9 +101,9 @@ function makeOkignoreBinding(collabUrl: string, serverInstanceId: string | null)
     document: ydoc,
     token: buildAuthToken(null, serverInstanceId, null),
     onDisconnect: ({ event }) =>
-      logProviderEvent('okignore-provider', CONFIG_DOC_NAME_OKIGNORE, 'disconnect', event),
+      logProviderEvent('psignore-provider', CONFIG_DOC_NAME_OKIGNORE, 'disconnect', event),
     onClose: ({ event }) =>
-      logProviderEvent('okignore-provider', CONFIG_DOC_NAME_OKIGNORE, 'close', event),
+      logProviderEvent('psignore-provider', CONFIG_DOC_NAME_OKIGNORE, 'close', event),
   });
   const binding = bindOkignoreDoc(provider);
   const cleanup = () => {
@@ -236,7 +236,7 @@ function ConfigProviderBody({
           scoped.cleanup();
         } catch (e) {
           console.warn(
-            JSON.stringify({ event: 'ok-config-provider-cleanup-error', error: String(e) }),
+            JSON.stringify({ event: 'ps-config-provider-cleanup-error', error: String(e) }),
           );
         }
       }
@@ -295,7 +295,7 @@ function ConfigProviderBody({
   });
 
   useLanguageBridge(
-    typeof window !== 'undefined' ? window.okDesktop : undefined,
+    typeof window !== 'undefined' ? window.psDesktop : undefined,
     merged?.appearance?.language,
     userState?.synced ?? false,
   );
@@ -310,7 +310,7 @@ function ConfigProviderBody({
         ? JSON.stringify(activeRuntimeScheme)
         : '';
   useThemeBridge(
-    colorThemeBridgeReady && typeof window !== 'undefined' ? window.okDesktop : undefined,
+    colorThemeBridgeReady && typeof window !== 'undefined' ? window.psDesktop : undefined,
     colorThemeBridgeReady ? (themeValue ?? 'system') : undefined,
     `${activePalette}:${runtimeSchemeKey}`,
   );

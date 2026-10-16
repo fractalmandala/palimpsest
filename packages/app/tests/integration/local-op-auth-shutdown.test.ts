@@ -47,7 +47,7 @@ describe.each(['login', 'gh-login'])('auth shutdown: %s', (channel) => {
     'server destruction reaps every owned child after %s',
     async (scenario) => {
       const fixture = await createControlledAuthCli();
-      const binDir = mkdtempSync(join(tmpdir(), 'ok-auth-bin-'));
+      const binDir = mkdtempSync(join(tmpdir(), 'ps-auth-bin-'));
       copyFileSync(
         process.execPath,
         join(binDir, process.platform === 'win32' ? 'gh.exe' : 'gh'),

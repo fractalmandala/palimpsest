@@ -1,4 +1,4 @@
-import type { OkMenuActionOrigin, OkMenuDispatchRequest } from '../shared/bridge-contract.ts';
+import type { PsMenuActionOrigin, PsMenuDispatchRequest } from '../shared/bridge-contract.ts';
 
 interface MenuActionTargetDeps<TSender, TWindow> {
   fromWebContents: (sender: TSender) => TWindow | null;
@@ -17,9 +17,9 @@ export function resolveMenuActionTarget<TSender, TWindow>(
   return deps.getFocusedWindow() ?? deps.getAllWindows()[0] ?? null;
 }
 
-export const LAUNCHER_FREE_ORIGIN: OkMenuActionOrigin = Object.freeze({ launcherBorne: false });
+export const LAUNCHER_FREE_ORIGIN: PsMenuActionOrigin = Object.freeze({ launcherBorne: false });
 
-export const LAUNCHER_BORNE_ORIGIN: OkMenuActionOrigin = Object.freeze({ launcherBorne: true });
+export const LAUNCHER_BORNE_ORIGIN: PsMenuActionOrigin = Object.freeze({ launcherBorne: true });
 
 const ORIGIN_BY_DISPATCH_KIND = {
   query: LAUNCHER_FREE_ORIGIN,
@@ -30,12 +30,12 @@ const ORIGIN_BY_DISPATCH_KIND = {
   'spelling-languages-query': LAUNCHER_FREE_ORIGIN,
   'spelling-languages-set': LAUNCHER_FREE_ORIGIN,
   'spellcheck-enabled-set': LAUNCHER_FREE_ORIGIN,
-} satisfies Record<OkMenuDispatchRequest['kind'], OkMenuActionOrigin>;
+} satisfies Record<PsMenuDispatchRequest['kind'], PsMenuActionOrigin>;
 
 export const MENU_DISPATCH_KINDS = Object.keys(
   ORIGIN_BY_DISPATCH_KIND,
-) as OkMenuDispatchRequest['kind'][];
+) as PsMenuDispatchRequest['kind'][];
 
-export function originForMenuDispatch(kind: OkMenuDispatchRequest['kind']): OkMenuActionOrigin {
+export function originForMenuDispatch(kind: PsMenuDispatchRequest['kind']): PsMenuActionOrigin {
   return ORIGIN_BY_DISPATCH_KIND[kind];
 }

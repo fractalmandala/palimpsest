@@ -294,7 +294,7 @@ test('no freeze before the table reaches the toolbar', async ({
   workerServer,
 }, testInfo) => {
   await page.addInitScript(() => {
-    localStorage.setItem('ok-acp-follow-file-v1', '0');
+    localStorage.setItem('ps-acp-follow-file-v1', '0');
   });
   await api.seedDocs([{ name: 'frozen-hdr-long-1', markdown: LONG_TABLE_MARKDOWN }]);
   await page.goto(`${workerServer.baseURL}/#/frozen-hdr-long-1`);
@@ -606,9 +606,9 @@ test('virtualized long doc: both freezes hold on a 200-row table', async ({
   await waitForQuiescence(page, SCROLL_SELECTOR);
 
   const chunkState = await page.evaluate(() => {
-    const wrappers = document.querySelectorAll<HTMLElement>('.ProseMirror .ok-chunk-wrapper');
+    const wrappers = document.querySelectorAll<HTMLElement>('.ProseMirror .ps-chunk-wrapper');
     const tableChunk = document.querySelector<HTMLElement>(
-      '.ProseMirror .tableWrapper.ok-chunk-wrapper',
+      '.ProseMirror .tableWrapper.ps-chunk-wrapper',
     );
     const deepRow = document.querySelectorAll<HTMLElement>(
       '.ProseMirror .tableWrapper > table > tbody > tr',
@@ -776,11 +776,11 @@ test('an editor width change lays out once, not once per table in a skipped chun
     Array.from(document.querySelectorAll<HTMLElement>('.ProseMirror .tableWrapper')).flatMap(
       (wrapper, index) => {
         const controls = Array.from(
-          document.querySelectorAll<HTMLElement>('.ok-table-insert-controls'),
+          document.querySelectorAll<HTMLElement>('.ps-table-insert-controls'),
         )[index];
         const table = wrapper.getBoundingClientRect();
-        const column = controls?.querySelector('.ok-table-insert-column')?.getBoundingClientRect();
-        const row = controls?.querySelector('.ok-table-insert-row')?.getBoundingClientRect();
+        const column = controls?.querySelector('.ps-table-insert-column')?.getBoundingClientRect();
+        const row = controls?.querySelector('.ps-table-insert-row')?.getBoundingClientRect();
         if (!column || !row) return [`table ${index}: no insert bars`];
         const errors = {
           columnLeft: column.left - table.right,

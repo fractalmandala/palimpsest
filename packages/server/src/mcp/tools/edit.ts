@@ -4,7 +4,7 @@ import {
   SKILL_AUTHORING_WARNING_CODES,
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 import { formatBrokenLinkSuppressionLine } from '../../broken-link-suppression.ts';
@@ -34,7 +34,7 @@ import {
   httpPut,
   nestDocResult,
   normalizeDocName,
-  okReservedPathRedirect,
+  psReservedPathRedirect,
   outputSchemaWithText,
   previewAttachWarningField,
   previewUrlOutputField,
@@ -149,7 +149,7 @@ async function handleDocBody(
   autoOpen: boolean,
 ) {
   const normalized = normalizeDocName(doc.path);
-  if (!normalized.ok) return textResult(okReservedPathRedirect(doc.path) ?? normalized.error, true);
+  if (!normalized.ok) return textResult(psReservedPathRedirect(doc.path) ?? normalized.error, true);
   const identity = deps.identityRef?.current;
 
   let offset: number | undefined;
@@ -209,7 +209,7 @@ async function handleDocFrontmatter(
   autoOpen: boolean,
 ) {
   const normalized = normalizeDocName(doc.path);
-  if (!normalized.ok) return textResult(okReservedPathRedirect(doc.path) ?? normalized.error, true);
+  if (!normalized.ok) return textResult(psReservedPathRedirect(doc.path) ?? normalized.error, true);
   const identity = deps.identityRef?.current;
   const result = await httpPost(url, '/api/frontmatter-patch', {
     docName: normalized.docName,
@@ -299,7 +299,7 @@ function templateFilePath(
 ): { ok: true; abs: string } | { ok: false } {
   const contained = resolveWithinRoot(
     cwd,
-    `${folder.replace(/\/+$/, '')}/.ok/templates/${name}.md`,
+    `${folder.replace(/\/+$/, '')}/.ps/templates/${name}.md`,
   );
   return contained.ok ? { ok: true, abs: contained.abs } : { ok: false };
 }
@@ -575,7 +575,7 @@ async function handleFolder(
   const action = entry.action ?? 'written';
   const verb = action === 'deleted' ? 'Cleared' : action === 'noop' ? 'No change to' : 'Updated';
   return textPlusStructured(`${verb} folder properties for ${folder.path}.`, {
-    folder: { ok: true, path: entry.path ?? `${folder.path}/.ok/frontmatter.yml`, action },
+    folder: { ok: true, path: entry.path ?? `${folder.path}/.ps/frontmatter.yml`, action },
   });
 }
 

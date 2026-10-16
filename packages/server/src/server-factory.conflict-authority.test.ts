@@ -8,9 +8,9 @@ import { promisify } from 'node:util';
 import {
   DocumentListSuccessSchema,
   DocumentReadSuccessSchema,
-  OK_DIR,
+  PS_DIR,
   SyncConflictsSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -31,14 +31,14 @@ const CONTROL_MARKER = 'stored while the batch was down';
 const DEFERRED_MARKER = 'drained by the resolve';
 
 function seedOkScaffold(projectDir: string): void {
-  const okDir = resolve(projectDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(resolve(okDir, '.gitignore'), 'local/\n', 'utf-8');
+  const psDir = resolve(projectDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(resolve(psDir, '.gitignore'), 'local/\n', 'utf-8');
 }
 
 function seedConflictsJson(projectDir: string, file: string): void {
-  const localDir = resolve(projectDir, OK_DIR, 'local');
+  const localDir = resolve(projectDir, PS_DIR, 'local');
   mkdirSync(localDir, { recursive: true });
   writeFileSync(
     resolve(localDir, 'conflicts.json'),
@@ -153,7 +153,7 @@ let tmpDir: string;
 let pendingTeardown: Promise<void> = Promise.resolve();
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-conflict-authority-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-conflict-authority-'));
 });
 
 afterEach(async () => {

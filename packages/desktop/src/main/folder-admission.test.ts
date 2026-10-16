@@ -23,8 +23,8 @@ import {
 const execFileAsync = promisify(execFile);
 
 const simulatedFilesystemRoots = vi.hoisted(() => new Set<string>());
-vi.mock('@inkeep/open-knowledge-server', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@inkeep/open-knowledge-server')>();
+vi.mock('@palimpsest/server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@palimpsest/server')>();
   return {
     ...actual,
     isFilesystemRoot: (dir: string, platform?: NodeJS.Platform) =>
@@ -146,7 +146,7 @@ let tmpReal: string;
 let fakeHome: string;
 
 beforeEach(() => {
-  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-discover-project-'));
+  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-discover-project-'));
   tmpReal = realpathSync(tmpRoot);
   fakeHome = resolve(tmpReal, 'home');
   mkdirSync(fakeHome, { recursive: true });
@@ -165,8 +165,8 @@ const stubGitTopLevel =
   };
 
 const writeOkConfig = (dir: string, contents = '$schema: x\n'): void => {
-  mkdirSync(resolve(dir, '.ok'), { recursive: true });
-  writeFileSync(resolve(dir, '.ok/config.yml'), contents);
+  mkdirSync(resolve(dir, '.ps'), { recursive: true });
+  writeFileSync(resolve(dir, '.ps/config.yml'), contents);
 };
 
 describe('discoverProject — the home directory is never a project', () => {
@@ -182,7 +182,7 @@ describe('discoverProject — the home directory is never a project', () => {
     expect(result.reason).toBe('home-directory');
   });
 
-  test('rejects a home that already carries the pre-fix .ok/config.yml', async () => {
+  test('rejects a home that already carries the pre-fix .ps/config.yml', async () => {
     writeOkConfig(fakeHome);
 
     const result = await discoverProject(fakeHome, {
@@ -386,7 +386,7 @@ describe('isSystemDirectory', () => {
 });
 
 describe('discoverProject — managed kind (ancestor walk)', () => {
-  test('returns managed at picked path when .ok/config.yml is at picked', async () => {
+  test('returns managed at picked path when .ps/config.yml is at picked', async () => {
     const project = resolve(fakeHome, 'project');
     mkdirSync(project, { recursive: true });
     writeOkConfig(project);
@@ -405,7 +405,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
     expect(isExactManagedProject(result)).toBe(true);
   });
 
-  test('promotes to ancestor when .ok/ is one level up', async () => {
+  test('promotes to ancestor when .ps/ is one level up', async () => {
     const project = resolve(fakeHome, 'project');
     const sub = resolve(project, 'sub');
     mkdirSync(sub, { recursive: true });
@@ -460,7 +460,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
     },
   );
 
-  test('walk excludes home itself — a home .ok/ never promotes a child', async () => {
+  test('walk excludes home itself — a home .ps/ never promotes a child', async () => {
     writeOkConfig(fakeHome);
     const sub = resolve(fakeHome, 'sub');
     mkdirSync(sub, { recursive: true });
@@ -494,7 +494,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
     expect(result.projectDir).toBe(sub);
   });
 
-  test('legacy .ok/ below git root wins over git-root promotion', async () => {
+  test('legacy .ps/ below git root wins over git-root promotion', async () => {
     const repo = resolve(fakeHome, 'repo');
     const docs = resolve(repo, 'docs');
     const api = resolve(docs, 'api');
@@ -516,7 +516,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
 });
 
 describe('discoverProject — fresh kind, git-root promotion (FR-2a)', () => {
-  test('promotes to gitRoot when picked is sub-folder of a git repo without .ok/', async () => {
+  test('promotes to gitRoot when picked is sub-folder of a git repo without .ps/', async () => {
     const repo = resolve(fakeHome, 'myrepo');
     const docs = resolve(repo, 'docs');
     mkdirSync(docs, { recursive: true });
@@ -591,7 +591,7 @@ describe('discoverProject — fresh kind, git-root promotion (FR-2a)', () => {
     expect(result.gitRootPromoted).toBe(false);
   });
 
-  test('returns fresh with gitState=absent when no git and no ancestor .ok/', async () => {
+  test('returns fresh with gitState=absent when no git and no ancestor .ps/', async () => {
     const folder = resolve(fakeHome, 'no-git');
     mkdirSync(folder, { recursive: true });
 
@@ -612,7 +612,7 @@ describe('discoverProject — fresh kind, git-root promotion (FR-2a)', () => {
 describe('discoverProject — linked-worktree carveout scoping', () => {
   test('subfolder of a linked worktree promotes to the git root, not in-place Setup', async () => {
     const worktree = resolve(fakeHome, 'wt');
-    const sub = resolve(worktree, 'public/open-knowledge');
+    const sub = resolve(worktree, 'public/palimpsest');
     const gitDir = resolve(fakeHome, 'main/.git/worktrees/wt');
     mkdirSync(sub, { recursive: true });
     mkdirSync(gitDir, { recursive: true });
@@ -630,7 +630,7 @@ describe('discoverProject — linked-worktree carveout scoping', () => {
     expect(result.gitRootPromoted).toBe(true);
   });
 
-  test('the linked-worktree root itself still classifies standalone under an ancestor .ok/', async () => {
+  test('the linked-worktree root itself still classifies standalone under an ancestor .ps/', async () => {
     const parent = resolve(fakeHome, 'parent');
     const worktree = resolve(parent, 'wt');
     const gitDir = resolve(fakeHome, 'main/.git/worktrees/wt');
@@ -755,7 +755,7 @@ describe('discoverProject — rejected kind', () => {
 });
 
 describe('discoverProject — depth + boundary safety', () => {
-  test('walk respects ANCESTOR_WALK_DEPTH_LIMIT — .ok/ at depth 31 is NOT found', async () => {
+  test('walk respects ANCESTOR_WALK_DEPTH_LIMIT — .ps/ at depth 31 is NOT found', async () => {
     const chainRoot = resolve(tmpReal, 'deep');
     let cursor = chainRoot;
     for (let i = 0; i < 31; i += 1) cursor = resolve(cursor, `lvl${i}`);
@@ -812,13 +812,13 @@ describe('discoverProject — type surface', () => {
   });
 
   test.each([
-    ['stable', '~/.ok'],
-    ['beta', '~/.ok-beta'],
+    ['stable', '~/.ps'],
+    ['beta', '~/.ps-beta'],
   ])('%s: the home-directory copy names %s as the user-global folder', (channel, home) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     try {
       expect(REJECTION_REASON_COPY['home-directory']).toBe(
-        `This is your home directory, not a project. ${home} is OpenKnowledge's own user-global folder (settings, skills), and opening a project here would set up git in your home directory and write project config into your editors' global folders. Make a folder for your notes and open that instead.`,
+        `This is your home directory, not a project. ${home} is Palimpsest's own user-global folder (settings, skills), and opening a project here would set up git in your home directory and write project config into your editors' global folders. Make a folder for your notes and open that instead.`,
       );
     } finally {
       vi.unstubAllEnvs();
@@ -984,7 +984,7 @@ describe('discoverProject — integration with real git', () => {
 });
 
 describe('discoverProject — D12 linked-worktree carveout', () => {
-  test('linked-worktree root under an ancestor with .ok/ is treated as standalone', async () => {
+  test('linked-worktree root under an ancestor with .ps/ is treated as standalone', async () => {
     const parent = resolve(fakeHome, 'parent');
     mkdirSync(parent, { recursive: true });
     writeOkConfig(parent);
@@ -1012,7 +1012,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
     expect(result.gitRootPromoted).toBe(false);
   });
 
-  test('main-checkout subfolder under an ancestor with .ok/ still gets promoted (D12 narrowly scoped)', async () => {
+  test('main-checkout subfolder under an ancestor with .ps/ still gets promoted (D12 narrowly scoped)', async () => {
     const parent = resolve(fakeHome, 'parent2');
     mkdirSync(parent, { recursive: true });
     writeOkConfig(parent);
@@ -1031,7 +1031,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
     expect(result.ancestorPromoted).toBe(true);
   });
 
-  test('linked-worktree root with NO ancestor .ok/ classifies as fresh standalone (no regression)', async () => {
+  test('linked-worktree root with NO ancestor .ps/ classifies as fresh standalone (no regression)', async () => {
     const repo = resolve(fakeHome, 'standalone-repo');
     mkdirSync(repo, { recursive: true });
     await execFileAsync('git', ['init', '--initial-branch=main', repo]);
@@ -1053,7 +1053,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
     expect(result.gitRootPromoted).toBe(false);
   });
 
-  test('linked-worktree root with its OWN .ok/config.yml classifies as managed (not fresh)', async () => {
+  test('linked-worktree root with its OWN .ps/config.yml classifies as managed (not fresh)', async () => {
     const parent = resolve(fakeHome, 'parent-init');
     mkdirSync(parent, { recursive: true });
     writeOkConfig(parent);

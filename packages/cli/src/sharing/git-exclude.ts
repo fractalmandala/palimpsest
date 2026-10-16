@@ -6,22 +6,22 @@ import {
   type EditorId,
   INSTALLED_SKILLS_REL,
   LEGACY_SKILL_STORE_ROOT,
-  OK_DIR,
+  PS_DIR,
   parseInstalledSkills,
   pathspecArgs,
   RESERVED_PROJECT_SKILL_NAME,
   toPathspec,
-} from '@inkeep/open-knowledge-core';
-import { discoverGitRepository } from '@inkeep/open-knowledge-core/git-repository';
-import { withHiddenWindowsConsole } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { discoverGitRepository } from '@palimpsest/core/git-repository';
+import { withHiddenWindowsConsole } from '@palimpsest/server';
 import { ALL_EDITOR_IDS, EDITOR_TARGETS } from '../commands/editors.ts';
 
 const CLAUDE_LAUNCH_JSON = '.claude/launch.json';
 
-const OK_IGNORE_FILENAME = '.okignore';
+const PS_IGNORE_FILENAME = '.psignore';
 
-const OK_CARVE_CHILDREN = `**/${OK_DIR}/*`;
-const OK_CARVE_SKILLS_REINCLUDE = `!**/${LEGACY_SKILL_STORE_ROOT}/`;
+const PS_CARVE_CHILDREN = `**/${PS_DIR}/*`;
+const PS_CARVE_SKILLS_REINCLUDE = `!**/${LEGACY_SKILL_STORE_ROOT}/`;
 
 export type ExcludeWriteResult =
   | { kind: 'updated'; appended: string[]; alreadyPresent: string[]; removed: string[] }
@@ -39,7 +39,7 @@ export interface TrackedRefusal {
 export type SharingMode = 'shared' | 'local-only' | 'no-git';
 
 export function getOkArtifactPaths(projectRoot: string): readonly string[] {
-  const paths: string[] = [`${OK_DIR}/`, OK_IGNORE_FILENAME];
+  const paths: string[] = [`${PS_DIR}/`, PS_IGNORE_FILENAME];
   for (const id of ALL_EDITOR_IDS) {
     const target = EDITOR_TARGETS[id];
     if (target.projectConfigPath) {
@@ -145,8 +145,8 @@ export function removeOkPathsFromGitExclude(
   for (const set of variantsByPath) {
     for (const v of set) allVariants.add(v);
   }
-  allVariants.add(OK_CARVE_CHILDREN);
-  allVariants.add(OK_CARVE_SKILLS_REINCLUDE);
+  allVariants.add(PS_CARVE_CHILDREN);
+  allVariants.add(PS_CARVE_SKILLS_REINCLUDE);
   for (const p of getInstalledSkillProjectionPaths(projectRoot)) {
     allVariants.add(p);
   }
@@ -207,7 +207,7 @@ export function readSharingMode(projectRoot: string): SharingMode {
   for (const p of artifacts) {
     if (hasAnyVariant(present, p)) return 'local-only';
   }
-  if (present.has(OK_CARVE_CHILDREN)) return 'local-only';
+  if (present.has(PS_CARVE_CHILDREN)) return 'local-only';
   return 'shared';
 }
 
@@ -236,7 +236,7 @@ export function getExcludedOkPaths(projectRoot: string): readonly string[] {
   const orphans: string[] = [];
   for (const line of present) {
     if (alreadyReported.has(line)) continue;
-    if (line === OK_CARVE_CHILDREN || line === OK_CARVE_SKILLS_REINCLUDE) {
+    if (line === PS_CARVE_CHILDREN || line === PS_CARVE_SKILLS_REINCLUDE) {
       orphans.push(line);
       continue;
     }
@@ -284,7 +284,7 @@ function remediationOperand(path: string): string {
 
 export function formatTrackedRemediation(tracked: readonly string[]): string {
   const lines: string[] = [];
-  lines.push('Cannot switch OpenKnowledge to local-only — these OK files are tracked upstream:');
+  lines.push('Cannot switch Palimpsest to local-only — these OK files are tracked upstream:');
   lines.push('');
   for (const p of tracked) lines.push(`  ${p}`);
   lines.push('');

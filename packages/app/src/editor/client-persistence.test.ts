@@ -23,7 +23,7 @@ async function countPersistedUpdates(
   serverInstanceId: string,
   docName: string,
 ): Promise<number> {
-  const dbName = `ok-ydoc:${branch}:${serverInstanceId}:${docName}`;
+  const dbName = `ps-ydoc:${branch}:${serverInstanceId}:${docName}`;
   const dbs = await indexedDB.databases();
   if (!dbs.some((d) => d.name === dbName)) return 0;
 
@@ -66,7 +66,7 @@ async function readPersistedUpdates(
   serverInstanceId: string,
   docName: string,
 ): Promise<unknown[]> {
-  const dbName = `ok-ydoc:${branch}:${serverInstanceId}:${docName}`;
+  const dbName = `ps-ydoc:${branch}:${serverInstanceId}:${docName}`;
   const dbs = await indexedDB.databases();
   if (!dbs.some((d) => d.name === dbName)) return [];
 
@@ -237,7 +237,7 @@ describe('createClientPersistence', () => {
 
   test('clearData onblocked logs structured event and settles via onsuccess once blocker closes', async () => {
     const docName = uniqueDocName('cp-onblocked');
-    const dbName = `ok-ydoc:${TEST_BRANCH}:${TEST_SERVER_INSTANCE_ID}:${docName}`;
+    const dbName = `ps-ydoc:${TEST_BRANCH}:${TEST_SERVER_INSTANCE_ID}:${docName}`;
 
     const docA = new Y.Doc();
     const provider = createClientPersistence({
@@ -274,7 +274,7 @@ describe('createClientPersistence', () => {
 
       const events = warnSpy.mock.calls.map((call) => String(call[0] ?? ''));
       const blockedWarn = events.find((s) =>
-        s.includes('"event":"ok-client-persistence-clear-blocked"'),
+        s.includes('"event":"ps-client-persistence-clear-blocked"'),
       );
       expect(blockedWarn).toBeDefined();
       expect(blockedWarn).toContain(dbName);
@@ -363,14 +363,14 @@ describe('createClientPersistence', () => {
       dbs.map((d) => d.name).filter((n): n is string => n !== undefined),
     );
     for (const { branch, serverInstanceId } of triples) {
-      const expected = `ok-ydoc:${branch}:${serverInstanceId}:${docName}`;
+      const expected = `ps-ydoc:${branch}:${serverInstanceId}:${docName}`;
       expect(observedNames.has(expected)).toBe(true);
     }
   });
 
-  test('ignores legacy ok-ydoc:branch:docName DB shape — new shape hydrates empty', async () => {
+  test('ignores legacy ps-ydoc:branch:docName DB shape — new shape hydrates empty', async () => {
     const docName = uniqueDocName('legacy-shape');
-    const legacyDbName = `ok-ydoc:${TEST_BRANCH}:${docName}`;
+    const legacyDbName = `ps-ydoc:${TEST_BRANCH}:${docName}`;
 
     const stagingDoc = new Y.Doc();
     stagingDoc.getText('t').insert(0, 'stale-from-legacy-shape');
@@ -618,7 +618,7 @@ describe('flushFullState', () => {
     });
     await provider.whenSynced;
     doc.getText('source').insert(0, 'healthy');
-    const dbName = `ok-ydoc:${TEST_BRANCH}:${TEST_SERVER_INSTANCE_ID}:${docName}`;
+    const dbName = `ps-ydoc:${TEST_BRANCH}:${TEST_SERVER_INSTANCE_ID}:${docName}`;
     await new Promise<void>((resolve, reject) => {
       const req = indexedDB.open(dbName);
       req.onerror = () => reject(req.error);
@@ -866,7 +866,7 @@ describe('flushFullState cross-tab fold', () => {
     otherTab.getText('other').insert(0, 'tab-b edit not yet synced');
     const otherTabRow = Y.encodeStateAsUpdate(otherTab);
     otherTab.destroy();
-    const dbName = `ok-ydoc:${TEST_BRANCH}:${TEST_SERVER_INSTANCE_ID}:${docName}`;
+    const dbName = `ps-ydoc:${TEST_BRANCH}:${TEST_SERVER_INSTANCE_ID}:${docName}`;
     await new Promise<void>((resolve, reject) => {
       const req = indexedDB.open(dbName);
       req.onerror = () => reject(req.error);

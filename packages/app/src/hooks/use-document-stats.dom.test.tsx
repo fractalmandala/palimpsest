@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core';
+import { isEditableTextDocFile } from '@palimpsest/core';
 import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';

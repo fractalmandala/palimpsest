@@ -31,7 +31,7 @@ const mockedReadSync = vi.mocked(readSync);
 const tmpDirs: string[] = [];
 
 function makeTmpDir(): string {
-  const dir = mkdtempSync(resolve(tmpdir(), 'ok-diagnostic-reports-test-'));
+  const dir = mkdtempSync(resolve(tmpdir(), 'ps-diagnostic-reports-test-'));
   tmpDirs.push(dir);
   return dir;
 }
@@ -65,7 +65,7 @@ function headerTimestamp(at: Date, offsetHours = 0): string {
 function headerOfExactBytes(target: number): string {
   const build = (pad: string): string =>
     JSON.stringify({
-      name: 'OpenKnowledge',
+      name: 'Palimpsest',
       bug_type: '309',
       timestamp: headerTimestamp(daysBefore(1)),
       pad,
@@ -126,7 +126,7 @@ describe('prepareDiagnosticReportText', () => {
   });
 
   test('leaves an already-unescaped report byte-identical', () => {
-    const plain = '{"name":"OpenKnowledge"}\n{"procPath":"/Applications/OpenKnowledge.app"}\n';
+    const plain = '{"name":"Palimpsest"}\n{"procPath":"/Applications/Palimpsest.app"}\n';
     expect(prepareDiagnosticReportText(plain)).toBe(plain);
   });
 
@@ -178,25 +178,25 @@ describe('prepareDiagnosticReportText', () => {
 describe('collectDiagnosticReports', () => {
   test('collects a report for the app main process', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-2026-08-27-045958.ips', { name: 'OpenKnowledge' });
+    writeReport(dir, 'Palimpsest-2026-08-27-045958.ips', { name: 'Palimpsest' });
 
     const result = collectDiagnosticReports(dir, NOW);
 
-    expect(result.files.map((f) => basename(f))).toEqual(['OpenKnowledge-2026-08-27-045958.ips']);
+    expect(result.files.map((f) => basename(f))).toEqual(['Palimpsest-2026-08-27-045958.ips']);
     expect(result.outcome).toBe('collected');
     expect(renderDiagnosticReportsStatus(result, result.files.length)).toContain('1 collected');
   });
 
   test('collects every helper variant, including the one the detached server runs as', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge Helper-2026-08-27-045958.ips', {
-      name: 'OpenKnowledge Helper',
+    writeReport(dir, 'Palimpsest Helper-2026-08-27-045958.ips', {
+      name: 'Palimpsest Helper',
     });
-    writeReport(dir, 'OpenKnowledge Helper (GPU)-2026-08-27-045959.ips', {
-      name: 'OpenKnowledge Helper (GPU)',
+    writeReport(dir, 'Palimpsest Helper (GPU)-2026-08-27-045959.ips', {
+      name: 'Palimpsest Helper (GPU)',
     });
-    writeReport(dir, 'OpenKnowledge Helper (Renderer)-2026-08-27-050000.ips', {
-      name: 'OpenKnowledge Helper (Renderer)',
+    writeReport(dir, 'Palimpsest Helper (Renderer)-2026-08-27-050000.ips', {
+      name: 'Palimpsest Helper (Renderer)',
     });
 
     expect(collectedNames(dir)).toHaveLength(3);
@@ -204,14 +204,14 @@ describe('collectDiagnosticReports', () => {
 
   test('never harvests another application report', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-2026-08-27-045958.ips', { name: 'OpenKnowledge' });
+    writeReport(dir, 'Palimpsest-2026-08-27-045958.ips', { name: 'Palimpsest' });
     writeReport(dir, 'Slack-2026-08-27-045958.ips', { name: 'Slack' });
     writeReport(dir, 'bash-2026-08-27-045958.ips', { name: 'bash' });
     writeReport(dir, 'node-2026-08-27-045958.ips', { name: 'node' });
 
     const result = collectDiagnosticReports(dir, NOW);
 
-    expect(result.files.map((f) => basename(f))).toEqual(['OpenKnowledge-2026-08-27-045958.ips']);
+    expect(result.files.map((f) => basename(f))).toEqual(['Palimpsest-2026-08-27-045958.ips']);
     expect(result.foreignIgnored).toBe(3);
     expect(renderDiagnosticReportsStatus(result, result.files.length)).toContain(
       '3 other-process report(s) ignored',
@@ -220,7 +220,7 @@ describe('collectDiagnosticReports', () => {
 
   test('does not collect an unrelated app whose name shares the prefix', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledgeBase-2026-08-27-045958.ips', { name: 'OpenKnowledgeBase' });
+    writeReport(dir, 'PalimpsestBase-2026-08-27-045958.ips', { name: 'PalimpsestBase' });
 
     expect(collectedNames(dir)).toEqual([]);
   });
@@ -228,17 +228,17 @@ describe('collectDiagnosticReports', () => {
   test('skips a directory even when its name ends in .ips', () => {
     const dir = makeTmpDir();
     mkdirSync(join(dir, 'Retired.ips'));
-    writeReport(dir, 'OpenKnowledge-2026-08-27-045958.ips', { name: 'OpenKnowledge' });
+    writeReport(dir, 'Palimpsest-2026-08-27-045958.ips', { name: 'Palimpsest' });
 
     const result = collectDiagnosticReports(dir, NOW);
 
-    expect(result.files.map((f) => basename(f))).toEqual(['OpenKnowledge-2026-08-27-045958.ips']);
+    expect(result.files.map((f) => basename(f))).toEqual(['Palimpsest-2026-08-27-045958.ips']);
     expect(result.unparseable).toBe(0);
   });
 
   test('ignores a valid owned report that does not carry the .ips extension', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-2026-08-27-045958.diag', { name: 'OpenKnowledge' });
+    writeReport(dir, 'Palimpsest-2026-08-27-045958.diag', { name: 'Palimpsest' });
 
     const result = collectDiagnosticReports(dir, NOW);
 
@@ -249,23 +249,23 @@ describe('collectDiagnosticReports', () => {
 
   test('collects up to the seven-day boundary and no further', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-inside.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-inside.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(6 * 24 + 23),
     });
-    writeReport(dir, 'OpenKnowledge-outside.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-outside.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(7 * 24 + 1),
     });
 
-    expect(collectedNames(dir)).toEqual(['OpenKnowledge-inside.ips']);
+    expect(collectedNames(dir)).toEqual(['Palimpsest-inside.ips']);
   });
 
   test('caps the collection and keeps the newest reports', () => {
     const dir = makeTmpDir();
     for (let i = 0; i < 30; i += 1) {
-      writeReport(dir, `OpenKnowledge-${String(i).padStart(2, '0')}.ips`, {
-        name: 'OpenKnowledge',
+      writeReport(dir, `Palimpsest-${String(i).padStart(2, '0')}.ips`, {
+        name: 'Palimpsest',
         at: new Date(NOW.getTime() - (30 - i) * 60 * 1000),
       });
     }
@@ -274,8 +274,8 @@ describe('collectDiagnosticReports', () => {
     const names = result.files.map((f) => basename(f));
 
     expect(names).toHaveLength(25);
-    expect(names[0]).toBe('OpenKnowledge-29.ips');
-    expect(names).not.toContain('OpenKnowledge-00.ips');
+    expect(names[0]).toBe('Palimpsest-29.ips');
+    expect(names).not.toContain('Palimpsest-00.ips');
     expect(result.droppedOverCap).toBe(5);
     expect(renderDiagnosticReportsStatus(result, result.files.length)).toContain(
       '5 older dropped over cap',
@@ -284,108 +284,108 @@ describe('collectDiagnosticReports', () => {
 
   test('orders by the incident time in the header, not by mtime', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-stale-but-touched.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-stale-but-touched.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(1),
       incidentAt: hoursBefore(100),
     });
-    writeReport(dir, 'OpenKnowledge-recent.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-recent.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(50),
       incidentAt: hoursBefore(2),
     });
 
     expect(collectedNames(dir)).toEqual([
-      'OpenKnowledge-recent.ips',
-      'OpenKnowledge-stale-but-touched.ips',
+      'Palimpsest-recent.ips',
+      'Palimpsest-stale-but-touched.ips',
     ]);
   });
 
   test('orders by the instant the offset denotes, not the printed wall clock', () => {
     const dir = makeTmpDir();
     const sameMtime = hoursBefore(1);
-    writeReport(dir, 'OpenKnowledge-later-instant.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-later-instant.ips', {
+      name: 'Palimpsest',
       at: sameMtime,
       incidentAt: NOW,
       incidentOffsetHours: -7,
     });
-    writeReport(dir, 'OpenKnowledge-earlier-instant.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-earlier-instant.ips', {
+      name: 'Palimpsest',
       at: sameMtime,
       incidentAt: hoursBefore(3),
       incidentOffsetHours: 0,
     });
 
     expect(collectedNames(dir)).toEqual([
-      'OpenKnowledge-later-instant.ips',
-      'OpenKnowledge-earlier-instant.ips',
+      'Palimpsest-later-instant.ips',
+      'Palimpsest-earlier-instant.ips',
     ]);
   });
 
   test('windows on mtime while ordering on the incident time', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-old-incident-fresh-mtime.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-old-incident-fresh-mtime.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(1),
       incidentAt: daysBefore(10),
     });
-    writeReport(dir, 'OpenKnowledge-recent-incident.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-recent-incident.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(50),
       incidentAt: hoursBefore(2),
     });
 
     expect(collectedNames(dir)).toEqual([
-      'OpenKnowledge-recent-incident.ips',
-      'OpenKnowledge-old-incident-fresh-mtime.ips',
+      'Palimpsest-recent-incident.ips',
+      'Palimpsest-old-incident-fresh-mtime.ips',
     ]);
   });
 
   test('falls back to mtime when the header timestamp does not parse', () => {
     const dir = makeTmpDir();
     const header = JSON.stringify({
-      app_name: 'OpenKnowledge',
-      name: 'OpenKnowledge',
+      app_name: 'Palimpsest',
+      name: 'Palimpsest',
       bug_type: '309',
       timestamp: 'Thu Aug 27 04:59:58 2026',
     });
-    writeReport(dir, 'OpenKnowledge-odd-timestamp.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-odd-timestamp.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(1),
-      raw: `${header}\n{"procName":"OpenKnowledge"}\n`,
+      raw: `${header}\n{"procName":"Palimpsest"}\n`,
     });
-    writeReport(dir, 'OpenKnowledge-older.ips', {
-      name: 'OpenKnowledge',
+    writeReport(dir, 'Palimpsest-older.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(40),
     });
 
     expect(collectedNames(dir)).toEqual([
-      'OpenKnowledge-odd-timestamp.ips',
-      'OpenKnowledge-older.ips',
+      'Palimpsest-odd-timestamp.ips',
+      'Palimpsest-older.ips',
     ]);
   });
 
   test('falls back to mtime when the header carries no usable timestamp', () => {
     const dir = makeTmpDir();
-    const header = JSON.stringify({ name: 'OpenKnowledge', bug_type: '309' });
-    writeReport(dir, 'OpenKnowledge-no-timestamp.ips', {
-      name: 'OpenKnowledge',
+    const header = JSON.stringify({ name: 'Palimpsest', bug_type: '309' });
+    writeReport(dir, 'Palimpsest-no-timestamp.ips', {
+      name: 'Palimpsest',
       at: hoursBefore(2),
       raw: `${header}\n{}\n`,
     });
-    writeReport(dir, 'OpenKnowledge-older.ips', { name: 'OpenKnowledge', at: hoursBefore(3) });
+    writeReport(dir, 'Palimpsest-older.ips', { name: 'Palimpsest', at: hoursBefore(3) });
 
     expect(collectedNames(dir)).toEqual([
-      'OpenKnowledge-no-timestamp.ips',
-      'OpenKnowledge-older.ips',
+      'Palimpsest-no-timestamp.ips',
+      'Palimpsest-older.ips',
     ]);
   });
 
   describe('reports we cannot identify', () => {
     test('counts an unparseable header apart from another application report', () => {
       const dir = makeTmpDir();
-      writeReport(dir, 'garbled.ips', { name: 'OpenKnowledge', raw: 'not json at all\n{}\n' });
+      writeReport(dir, 'garbled.ips', { name: 'Palimpsest', raw: 'not json at all\n{}\n' });
       writeReport(dir, 'Slack-2026-08-27-045958.ips', { name: 'Slack' });
 
       const result = collectDiagnosticReports(dir, NOW);
@@ -401,7 +401,7 @@ describe('collectDiagnosticReports', () => {
     test('counts a header that parses but names no process', () => {
       const dir = makeTmpDir();
       writeReport(dir, 'Nameless-2026-08-27.ips', {
-        name: 'OpenKnowledge',
+        name: 'Palimpsest',
         at: hoursBefore(1),
         raw: `${JSON.stringify({ bug_type: '298', timestamp: '2026-08-27 04:59:58.00 +0000' })}\n{}\n`,
       });
@@ -416,15 +416,15 @@ describe('collectDiagnosticReports', () => {
     test('reads a header that is the whole file, with no trailing newline', () => {
       const dir = makeTmpDir();
       const header = JSON.stringify({
-        name: 'OpenKnowledge',
+        name: 'Palimpsest',
         bug_type: '309',
         timestamp: headerTimestamp(daysBefore(1)),
       });
-      writeReport(dir, 'OpenKnowledge-partial.ips', { name: 'OpenKnowledge', raw: header });
+      writeReport(dir, 'Palimpsest-partial.ips', { name: 'Palimpsest', raw: header });
 
       const result = collectDiagnosticReports(dir, NOW);
 
-      expect(result.files.map((f) => basename(f))).toEqual(['OpenKnowledge-partial.ips']);
+      expect(result.files.map((f) => basename(f))).toEqual(['Palimpsest-partial.ips']);
       expect(result.unparseable).toBe(0);
     });
 
@@ -434,7 +434,7 @@ describe('collectDiagnosticReports', () => {
 
     test('reassembles a header delivered in short reads, as a network mount may return it', () => {
       const dir = makeTmpDir();
-      writeReport(dir, 'OpenKnowledge-chunked.ips', { name: 'OpenKnowledge' });
+      writeReport(dir, 'Palimpsest-chunked.ips', { name: 'Palimpsest' });
       mockedReadSync.mockImplementation((fd, buffer, offset, length, position) =>
         (fsHolder.realReadSync as typeof import('node:fs').readSync)(
           fd,
@@ -447,7 +447,7 @@ describe('collectDiagnosticReports', () => {
 
       const result = collectDiagnosticReports(dir, NOW);
 
-      expect(result.files.map((f) => basename(f))).toEqual(['OpenKnowledge-chunked.ips']);
+      expect(result.files.map((f) => basename(f))).toEqual(['Palimpsest-chunked.ips']);
       expect(result.unparseable).toBe(0);
       expect(mockedReadSync.mock.calls.length).toBeGreaterThan(1);
     });
@@ -455,23 +455,23 @@ describe('collectDiagnosticReports', () => {
     test('collects a header whose newline lands on the last byte the window covers', () => {
       const dir = makeTmpDir();
       const padded = headerOfExactBytes(MAX_HEADER_BYTES - 1);
-      writeReport(dir, 'OpenKnowledge-at-bound.ips', {
-        name: 'OpenKnowledge',
-        raw: `${padded}\n{"procName":"OpenKnowledge"}\n`,
+      writeReport(dir, 'Palimpsest-at-bound.ips', {
+        name: 'Palimpsest',
+        raw: `${padded}\n{"procName":"Palimpsest"}\n`,
       });
 
       const result = collectDiagnosticReports(dir, NOW);
 
-      expect(result.files.map((f) => basename(f))).toEqual(['OpenKnowledge-at-bound.ips']);
+      expect(result.files.map((f) => basename(f))).toEqual(['Palimpsest-at-bound.ips']);
       expect(result.unparseable).toBe(0);
     });
 
     test('treats a header complete at exactly the bound as unreadable', () => {
       const dir = makeTmpDir();
       const padded = headerOfExactBytes(MAX_HEADER_BYTES);
-      writeReport(dir, 'OpenKnowledge-exact-bound.ips', {
-        name: 'OpenKnowledge',
-        raw: `${padded}\n{"procName":"OpenKnowledge"}\n`,
+      writeReport(dir, 'Palimpsest-exact-bound.ips', {
+        name: 'Palimpsest',
+        raw: `${padded}\n{"procName":"Palimpsest"}\n`,
       });
 
       const result = collectDiagnosticReports(dir, NOW);
@@ -483,9 +483,9 @@ describe('collectDiagnosticReports', () => {
     test('treats a header line that runs past the bound as unreadable', () => {
       const dir = makeTmpDir();
       const padded = headerOfExactBytes(MAX_HEADER_BYTES + 1);
-      writeReport(dir, 'OpenKnowledge-past-bound.ips', {
-        name: 'OpenKnowledge',
-        raw: `${padded}\n{"procName":"OpenKnowledge"}\n`,
+      writeReport(dir, 'Palimpsest-past-bound.ips', {
+        name: 'Palimpsest',
+        raw: `${padded}\n{"procName":"Palimpsest"}\n`,
       });
 
       const result = collectDiagnosticReports(dir, NOW);
@@ -531,8 +531,8 @@ describe('collectDiagnosticReports', () => {
 
   test('renders the staged count when it falls short of what was selected', () => {
     const dir = makeTmpDir();
-    writeReport(dir, 'OpenKnowledge-a.ips', { name: 'OpenKnowledge' });
-    writeReport(dir, 'OpenKnowledge-b.ips', { name: 'OpenKnowledge' });
+    writeReport(dir, 'Palimpsest-a.ips', { name: 'Palimpsest' });
+    writeReport(dir, 'Palimpsest-b.ips', { name: 'Palimpsest' });
 
     const result = collectDiagnosticReports(dir, NOW);
 

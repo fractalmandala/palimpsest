@@ -2,12 +2,12 @@ import {
   DEFAULT_TERMINAL_PLACEMENT,
   normalizeTerminalPlacement,
   type TerminalPlacement,
-} from '@inkeep/open-knowledge-core/terminal-layout';
+} from '@palimpsest/core/terminal-layout';
 
-export type { TerminalPlacement } from '@inkeep/open-knowledge-core/terminal-layout';
-export { DEFAULT_TERMINAL_PLACEMENT } from '@inkeep/open-knowledge-core/terminal-layout';
+export type { TerminalPlacement } from '@palimpsest/core/terminal-layout';
+export { DEFAULT_TERMINAL_PLACEMENT } from '@palimpsest/core/terminal-layout';
 
-export const TERMINAL_PLACEMENT_KEY = 'ok-terminal-placement-v1';
+export const TERMINAL_PLACEMENT_KEY = 'ps-terminal-placement-v1';
 
 export interface TerminalPlacementStorage {
   getItem(key: string): string | null;

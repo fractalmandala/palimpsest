@@ -24,7 +24,7 @@ import {
 } from '../../../../../test-support/refused-loopback.test-helper.ts';
 
 const startedSpanNames: string[] = [];
-vi.mock('@inkeep/open-knowledge-server', async (importOriginal) => {
+vi.mock('@palimpsest/server', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
@@ -66,7 +66,7 @@ import {
   handleBugReportSend,
   MAX_UPLOAD_ZIP_BYTES,
   type MinidumpIntent,
-  type OkBugReportCreateRequest,
+  type PsBugReportCreateRequest,
   parseTransportSafeUrl,
   resolveBugReportIntakeUrl,
   resolveMinidumpAttachment,
@@ -81,7 +81,7 @@ async function readSidecarValue(path: string) {
 
 const tmpDirs: string[] = [];
 
-function makeTmpDir(prefix = 'ok-bugreport-ipc-'): string {
+function makeTmpDir(prefix = 'ps-bugreport-ipc-'): string {
   const dir = mkdtempSync(resolve(tmpdir(), prefix));
   tmpDirs.push(dir);
   return dir;
@@ -89,9 +89,9 @@ function makeTmpDir(prefix = 'ok-bugreport-ipc-'): string {
 
 const ENV_KEYS = [
   'HOME',
-  'OK_DESKTOP_VERSION',
-  'OK_DESKTOP_PACKAGED',
-  'OK_DESKTOP_CHANNEL',
+  'PS_DESKTOP_VERSION',
+  'PS_DESKTOP_PACKAGED',
+  'PS_DESKTOP_CHANNEL',
 ] as const;
 let envSnapshot: Partial<Record<(typeof ENV_KEYS)[number], string | undefined>> = {};
 
@@ -124,7 +124,7 @@ function listZipEntries(zipPath: string): string[] {
 }
 
 function readZipEntry(zipPath: string, entry: string): string {
-  const extractDir = makeTmpDir('ok-bugreport-ipc-extract-');
+  const extractDir = makeTmpDir('ps-bugreport-ipc-extract-');
   execSync(
     `unzip -q -o ${JSON.stringify(zipPath)} ${JSON.stringify(entry)} -d ${JSON.stringify(extractDir)}`,
   );
@@ -132,7 +132,7 @@ function readZipEntry(zipPath: string, entry: string): string {
 }
 
 function readZipEntryBytes(zipPath: string, entry: string): Buffer {
-  const extractDir = makeTmpDir('ok-bugreport-ipc-extract-');
+  const extractDir = makeTmpDir('ps-bugreport-ipc-extract-');
   execSync(
     `unzip -q -o ${JSON.stringify(zipPath)} ${JSON.stringify(entry)} -d ${JSON.stringify(extractDir)}`,
   );
@@ -141,7 +141,7 @@ function readZipEntryBytes(zipPath: string, entry: string): Buffer {
 
 function makeProjectDir(slug = 'ipc-proj'): string {
   const projectDir = makeTmpDir();
-  writeAt(projectDir, '.ok/config.yml', `name: ${slug}\n`);
+  writeAt(projectDir, '.ps/config.yml', `name: ${slug}\n`);
   return projectDir;
 }
 
@@ -195,8 +195,8 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   const threadId = '0f5c0c0b-f439-4e49-84d6-6a6a97d675c6';
 
   test("attaches the chosen chat's transcript with secrets scrubbed", async () => {
-    process.env.HOME = makeTmpDir('ok-bugreport-home-');
-    const threadsDir = makeTmpDir('ok-bugreport-threads-');
+    process.env.HOME = makeTmpDir('ps-bugreport-home-');
+    const threadsDir = makeTmpDir('ps-bugreport-threads-');
     const secret = `ghp_${'a'.repeat(36)}`;
     writeFileSync(
       join(threadsDir, `${threadId}.ndjson`),
@@ -205,7 +205,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
     writeFileSync(join(threadsDir, `${threadId}.meta.json`), '{"version":1}');
     const deps = makeDeps({
       projectDir: makeProjectDir(),
-      agentChatThreadDirs: [makeTmpDir('ok-bugreport-empty-'), threadsDir],
+      agentChatThreadDirs: [makeTmpDir('ps-bugreport-empty-'), threadsDir],
     });
 
     const result = await handleBugReportCreate(deps, {
@@ -235,7 +235,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   });
 
   test('a token that starts a line of tool output never reaches the zip', async () => {
-    const threadsDir = makeTmpDir('ok-bugreport-threads-');
+    const threadsDir = makeTmpDir('ps-bugreport-threads-');
     const secret = `gho_${'b'.repeat(36)}`;
     writeFileSync(
       join(threadsDir, `${threadId}.ndjson`),
@@ -256,7 +256,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   });
 
   test("a detailed report audits the transcript's redactions in its manifest", async () => {
-    const threadsDir = makeTmpDir('ok-bugreport-threads-');
+    const threadsDir = makeTmpDir('ps-bugreport-threads-');
     const secret = `ghp_${'c'.repeat(36)}`;
     writeFileSync(
       join(threadsDir, `${threadId}.ndjson`),
@@ -286,7 +286,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   });
 
   test('a newest event too large to read is logged as left out, with the reason', async () => {
-    const threadsDir = makeTmpDir('ok-bugreport-threads-');
+    const threadsDir = makeTmpDir('ps-bugreport-threads-');
     writeFileSync(
       join(threadsDir, `${threadId}.ndjson`),
       `{"kind":"turn_started","ts":1}\n${JSON.stringify({ kind: 'agent_stderr', line: 'x'.repeat(600), ts: 2 })}\n`,
@@ -319,7 +319,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
     'a transcript lookup that fails for another reason is logged with its error',
     async () => {
-      const locked = join(makeTmpDir('ok-bugreport-threads-'), 'locked');
+      const locked = join(makeTmpDir('ps-bugreport-threads-'), 'locked');
       mkdirSync(locked);
       writeFileSync(join(locked, `${threadId}.ndjson`), '{"kind":"turn_started","ts":1}\n');
       chmodSync(locked, 0o000);
@@ -351,7 +351,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   );
 
   test('missing metadata is logged as left out, and the transcript still goes in', async () => {
-    const threadsDir = makeTmpDir('ok-bugreport-threads-');
+    const threadsDir = makeTmpDir('ps-bugreport-threads-');
     writeFileSync(join(threadsDir, `${threadId}.ndjson`), '{"kind":"turn_started","ts":1}\n');
     const recorder = makeLogRecorder();
     const deps = makeDeps({
@@ -391,7 +391,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   });
 
   test('metadata too large to read is logged as left out, and the transcript still goes in', async () => {
-    const threadsDir = makeTmpDir('ok-bugreport-threads-');
+    const threadsDir = makeTmpDir('ps-bugreport-threads-');
     writeFileSync(join(threadsDir, `${threadId}.ndjson`), '{"kind":"turn_started","ts":1}\n');
     writeFileSync(
       join(threadsDir, `${threadId}.meta.json`),
@@ -427,7 +427,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
   test.skipIf(process.platform === 'win32' || process.getuid?.() === 0)(
     'metadata that cannot be read is logged with its error, and the transcript still goes in',
     async () => {
-      const threadsDir = makeTmpDir('ok-bugreport-threads-');
+      const threadsDir = makeTmpDir('ps-bugreport-threads-');
       writeFileSync(join(threadsDir, `${threadId}.ndjson`), '{"kind":"turn_started","ts":1}\n');
       const metaPath = join(threadsDir, `${threadId}.meta.json`);
       writeFileSync(metaPath, '{"version":1}');
@@ -463,7 +463,7 @@ describe('handleBugReportCreate — agent chat transcript', () => {
     const recorder = makeLogRecorder();
     const deps = makeDeps({
       projectDir: makeProjectDir(),
-      agentChatThreadDirs: [makeTmpDir('ok-bugreport-empty-')],
+      agentChatThreadDirs: [makeTmpDir('ps-bugreport-empty-')],
       logger: recorder.logger,
     });
 
@@ -504,8 +504,8 @@ describe('handleBugReportCreate — agent chat transcript', () => {
 describe('handleBugReportCreate — project bundle', () => {
   test('builds the zip at the returned path with the project content set and the note', async () => {
     const projectDir = makeProjectDir();
-    writeAt(projectDir, '.ok/local/server.lock', '{"pid":1234}\n');
-    writeAt(projectDir, '.ok/local/logs/server-current.jsonl', '{"level":30}\n');
+    writeAt(projectDir, '.ps/local/server.lock', '{"pid":1234}\n');
+    writeAt(projectDir, '.ps/local/logs/server-current.jsonl', '{"level":30}\n');
     const deps = makeDeps({ projectDir });
 
     const result = await handleBugReportCreate(deps, {
@@ -532,7 +532,7 @@ describe('handleBugReportCreate — project bundle', () => {
   });
 
   test('carries the send ledger from the directory the report is written into', async () => {
-    const reportsDir = makeTmpDir('ok-bugreport-reports-');
+    const reportsDir = makeTmpDir('ps-bugreport-reports-');
     writeFileSync(
       join(reportsDir, '2026-08-19T16-42-03-547Z-bugreport.yaml'),
       ['id: 2026-08-19T16-42-03-547Z-bugreport.zip', 'state: upload-failed'].join('\n'),
@@ -566,7 +566,7 @@ describe('handleBugReportCreate — project bundle', () => {
   test('redacts a seeded secret in the bundled copy and audits it in the summary', async () => {
     const secret = 'sk-ant-api03-abcdefghijklmnopqrstuvwx';
     const projectDir = makeProjectDir();
-    writeAt(projectDir, '.ok/local/logs/server-current.jsonl', `{"msg":"key ${secret}"}\n`);
+    writeAt(projectDir, '.ps/local/logs/server-current.jsonl', `{"msg":"key ${secret}"}\n`);
     const deps = makeDeps({ projectDir });
 
     const result = await handleBugReportCreate(deps, { kind: 'create', level: 'standard' });
@@ -582,9 +582,9 @@ describe('handleBugReportCreate — project bundle', () => {
   test('full level stamps the desktop host metadata into the bundle runtime block', async () => {
     const projectDir = makeProjectDir();
     const deps = makeDeps({ projectDir });
-    process.env.OK_DESKTOP_VERSION = 'env-canary-must-not-be-read';
-    process.env.OK_DESKTOP_PACKAGED = '1';
-    process.env.OK_DESKTOP_CHANNEL = 'env-canary';
+    process.env.PS_DESKTOP_VERSION = 'env-canary-must-not-be-read';
+    process.env.PS_DESKTOP_PACKAGED = '1';
+    process.env.PS_DESKTOP_CHANNEL = 'env-canary';
 
     const result = await handleBugReportCreate(deps, { kind: 'create', level: 'full' });
 
@@ -648,18 +648,18 @@ describe('handleBugReportCreate — project bundle', () => {
     );
   });
 
-  test('create leaves process.env free of OK_DESKTOP_* — metadata is injected, never stamped', async () => {
-    delete process.env.OK_DESKTOP_VERSION;
-    delete process.env.OK_DESKTOP_PACKAGED;
-    delete process.env.OK_DESKTOP_CHANNEL;
+  test('create leaves process.env free of PS_DESKTOP_* — metadata is injected, never stamped', async () => {
+    delete process.env.PS_DESKTOP_VERSION;
+    delete process.env.PS_DESKTOP_PACKAGED;
+    delete process.env.PS_DESKTOP_CHANNEL;
     const deps = makeDeps({ projectDir: makeProjectDir() });
 
     const result = await handleBugReportCreate(deps, { kind: 'create', level: 'full' });
 
     if (!result.ok) throw new Error(`expected ok, got: ${result.error}`);
-    expect(process.env.OK_DESKTOP_VERSION).toBeUndefined();
-    expect(process.env.OK_DESKTOP_PACKAGED).toBeUndefined();
-    expect(process.env.OK_DESKTOP_CHANNEL).toBeUndefined();
+    expect(process.env.PS_DESKTOP_VERSION).toBeUndefined();
+    expect(process.env.PS_DESKTOP_PACKAGED).toBeUndefined();
+    expect(process.env.PS_DESKTOP_CHANNEL).toBeUndefined();
   });
 });
 
@@ -682,10 +682,10 @@ describe('handleBugReportCreate — no project (system-wide)', () => {
     expect(entries.some((e) => e.startsWith('local-logs/'))).toBe(false);
   });
 
-  test('defaults the destination to ~/.ok/bug-reports/<timestamp>-bugreport.zip', () => {
-    const fakeHome = makeTmpDir('ok-bugreport-home-');
+  test('defaults the destination to ~/.ps/bug-reports/<timestamp>-bugreport.zip', () => {
+    const fakeHome = makeTmpDir('ps-bugreport-home-');
     const userLogsDir = makeTmpDir();
-    const driverDir = makeTmpDir('ok-bugreport-driver-');
+    const driverDir = makeTmpDir('ps-bugreport-driver-');
     const handlerPath = resolve(import.meta.dirname, 'bug-report.ts');
     writeFileSync(
       join(driverDir, 'driver.ts'),
@@ -709,7 +709,7 @@ describe('handleBugReportCreate — no project (system-wide)', () => {
     >;
 
     if (!result.ok) throw new Error(`expected ok, got: ${result.error}`);
-    expect(dirname(result.zipPath)).toBe(join(fakeHome, '.ok', 'bug-reports'));
+    expect(dirname(result.zipPath)).toBe(join(fakeHome, '.ps', 'bug-reports'));
     expect(result.zipPath.endsWith('-bugreport.zip')).toBe(true);
     expect(existsSync(result.zipPath)).toBe(true);
   });
@@ -837,7 +837,7 @@ function startIntakeStub(
 const SEND_HOST = { appVersion: '0.9.9-test.1', platform: 'darwin 25.4.0' };
 
 function makeBugReportsRoot(): string {
-  return makeTmpDir('ok-bugreport-root-');
+  return makeTmpDir('ps-bugreport-root-');
 }
 
 function makeSendDeps(
@@ -1301,7 +1301,7 @@ describe('handleBugReportSend — zip path containment', () => {
   test('a zipPath outside the bug-reports root is refused before any read or network attempt', async () => {
     const stub = await startIntakeStub();
     const bugReportsRoot = makeBugReportsRoot();
-    const outsideZip = makeZipFixture(makeTmpDir('ok-bugreport-outside-'));
+    const outsideZip = makeZipFixture(makeTmpDir('ps-bugreport-outside-'));
 
     const result = await handleBugReportSend(makeSendDeps(stub.url, bugReportsRoot), {
       kind: 'send',
@@ -1313,7 +1313,7 @@ describe('handleBugReportSend — zip path containment', () => {
     if (result.ok) throw new Error('expected refusal');
     expect(result.reason).toBe('send-failed');
     expect(result.fallback.mailtoUrl).not.toContain(encodeURIComponent(outsideZip));
-    expect(result.fallback.mailtoUrl.startsWith('mailto:support@inkeep.com?')).toBe(true);
+    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
     expect(stub.requests).toHaveLength(0);
   });
 
@@ -1348,7 +1348,7 @@ describe('handleBugReportSend — zip path containment', () => {
   test('a symlink inside the bug-reports root that targets a file outside is refused', async () => {
     const stub = await startIntakeStub();
     const bugReportsRoot = makeBugReportsRoot();
-    const outsideZip = makeZipFixture(makeTmpDir('ok-bugreport-outside-'));
+    const outsideZip = makeZipFixture(makeTmpDir('ps-bugreport-outside-'));
     const linkPath = join(bugReportsRoot, 'escape-link.zip');
     symlinkSync(outsideZip, linkPath);
 
@@ -1377,7 +1377,7 @@ describe('handleBugReportSend — transport hardening', () => {
 
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error('expected fallback');
-    expect(result.fallback.mailtoUrl.startsWith('mailto:support@inkeep.com?')).toBe(true);
+    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
     expect(stub.requests.map((r) => `${r.method} ${r.path}`)).toEqual(['POST /api/bug-report']);
   });
 
@@ -1503,17 +1503,17 @@ describe('handleBugReportSend — transport hardening', () => {
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error('expected refusal');
     expect(result.reason).toBe('send-failed');
-    expect(result.fallback.mailtoUrl.startsWith('mailto:support@inkeep.com?')).toBe(true);
+    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
     expect(stub.requests).toHaveLength(0);
   });
 
   test('parseTransportSafeUrl admits https anywhere and http only on loopback', () => {
-    expect(parseTransportSafeUrl('https://openknowledge.ai')).not.toBeNull();
+    expect(parseTransportSafeUrl('https://github.com/fractalmandala/palimpsest')).not.toBeNull();
     expect(parseTransportSafeUrl('http://127.0.0.1:8080')).not.toBeNull();
     expect(parseTransportSafeUrl('http://localhost:8080')).not.toBeNull();
     expect(parseTransportSafeUrl('http://[::1]:8080')).not.toBeNull();
     expect(parseTransportSafeUrl('http://intake.example.com')).toBeNull();
-    expect(parseTransportSafeUrl('ftp://openknowledge.ai')).toBeNull();
+    expect(parseTransportSafeUrl('ftp://palimpsest.ai')).toBeNull();
     expect(parseTransportSafeUrl('not a url')).toBeNull();
   });
 });
@@ -1580,8 +1580,8 @@ describe('handleBugReportSend — email fallback', () => {
       'Project: ipc-proj',
       'Detail level: standard',
     ].join('\n');
-    const expectedMailto = `mailto:support@inkeep.com?subject=${encodeURIComponent(
-      'OpenKnowledge bug report (v0.9.9-test.1)',
+    const expectedMailto = `mailto:https://github.com/fractalmandala/palimpsest/issues?subject=${encodeURIComponent(
+      'Palimpsest bug report (v0.9.9-test.1)',
     )}&body=${encodeURIComponent(expectedBody)}`;
     expect(result).toEqual({
       ok: false,
@@ -1630,7 +1630,7 @@ describe('handleBugReportSend — email fallback', () => {
 
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error('expected fallback');
-    expect(result.fallback.mailtoUrl.startsWith('mailto:support@inkeep.com?')).toBe(true);
+    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
   });
 
   test('a failed PUT falls back and never fires the completion call', async () => {
@@ -1693,8 +1693,8 @@ describe('handleBugReportSend — email fallback', () => {
       ok: false,
       reason: 'send-failed',
       fallback: {
-        mailtoUrl: `mailto:support@inkeep.com?subject=${encodeURIComponent(
-          'OpenKnowledge bug report (v0.9.9-test.1)',
+        mailtoUrl: `mailto:https://github.com/fractalmandala/palimpsest/issues?subject=${encodeURIComponent(
+          'Palimpsest bug report (v0.9.9-test.1)',
         )}&body=${encodeURIComponent(degenerateBody)}`,
       },
     });
@@ -1731,7 +1731,7 @@ describe('handleBugReportCreate — crash-dump opt-in', () => {
     const dumpPath = join(makeTmpDir(), 'renderer-crash.dmp');
     writeFileSync(
       dumpPath,
-      buildMinidump(['/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge'], {
+      buildMinidump(['/Applications/Palimpsest.app/Contents/MacOS/Palimpsest'], {
         annotationObjects: [{}, { ax_mode: mode, process_type: 'renderer' }],
       }),
     );
@@ -2254,7 +2254,7 @@ describe('handleBugReportCreate — crash-dump decision record', () => {
     const dumpName = 'renderer-crash-0BADF00D.dmp';
     const branches: Array<{
       lookupPath: string | null;
-      request: Partial<OkBugReportCreateRequest>;
+      request: Partial<PsBugReportCreateRequest>;
     }> = [
       { lookupPath: null, request: {} },
       { lookupPath: seedDump(dumpName), request: { includeCrashDump: false } },
@@ -2600,14 +2600,14 @@ describe('handleBugReportCreate — failure modes', () => {
 
 describe('handleBugReportCrashAck', () => {
   function makeCrashDetectionRig() {
-    const dir = makeTmpDir('ok-bugreport-crashack-');
+    const dir = makeTmpDir('ps-bugreport-crashack-');
     let clockMs = Date.parse('2026-07-10T00:00:00.000Z');
     const deps = {
       sentinelPath: join(dir, 'sentinel.json'),
       mainExitPath: join(dir, 'main-exit.json'),
       ackStorePath: join(dir, 'crash-acks.json'),
       crashDumpsDir: join(dir, 'dumps'),
-      appBundleRoot: join(dir, 'OpenKnowledge.app'),
+      appBundleRoot: join(dir, 'Palimpsest.app'),
       emit: () => true,
       now: () => {
         clockMs += 10_000;
@@ -2748,7 +2748,7 @@ describe('bug-report sidecar wiring — create writes the record, send tracks st
   const REPORT_ID = '2026-07-15T18-30-00-000Z-bugreport.zip';
 
   function makeSidecarRig() {
-    const dir = makeTmpDir('ok-bugreport-sidecar-wiring-');
+    const dir = makeTmpDir('ps-bugreport-sidecar-wiring-');
     const store = createBugReportSidecarStore({ dir });
     const zipPath = join(dir, REPORT_ID);
     const createDeps: BugReportCreateDeps = {
@@ -3464,10 +3464,10 @@ describe('handleBugReportCreate — the crash dump that armed the invitation', (
   const SECOND_DUMP = '4f1b2c3d-0000-4000-8000-00000000000b.dmp';
 
   function makeBindingRig() {
-    const dir = makeTmpDir('ok-bugreport-binding-');
+    const dir = makeTmpDir('ps-bugreport-binding-');
     let clockMs = Date.parse('2026-07-10T00:00:00.000Z');
-    const appBundleRoot = join(dir, 'OpenKnowledge.app');
-    const mainModule = join(appBundleRoot, 'Contents', 'MacOS', 'OpenKnowledge');
+    const appBundleRoot = join(dir, 'Palimpsest.app');
+    const mainModule = join(appBundleRoot, 'Contents', 'MacOS', 'Palimpsest');
     const detectionDeps = {
       sentinelPath: join(dir, 'sentinel.json'),
       mainExitPath: join(dir, 'main-exit.json'),
@@ -3750,7 +3750,7 @@ describe('handleBugReportCreate — the crash dump that armed the invitation', (
         level: 'standard',
         includeCrashDump: true,
         crashEventId,
-      } as unknown as OkBugReportCreateRequest);
+      } as unknown as PsBugReportCreateRequest);
 
       expect(result).toEqual({ ok: false, error: 'invalid-request' });
     }

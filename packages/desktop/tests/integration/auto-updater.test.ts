@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import type { OutgoingHttpHeaders } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MANUAL_CHECK_WATCHDOG_MS } from '@inkeep/open-knowledge-core';
+import { MANUAL_CHECK_WATCHDOG_MS } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { expectKnownBug } from '../../../../test-support/known-bug.vitest.test-helper';
 import {
@@ -300,7 +300,7 @@ function makeRig(
 }
 
 const COMMITTED_LONG_AGO = new Date('2020-01-01T00:00:00.000Z').getTime();
-const PROXY_BASE = 'https://openknowledge.ai/updates';
+const PROXY_BASE = 'https://github.com/fractalmandala/palimpsest/updates';
 
 const CLASSIFIED_CODES: readonly string[] = [
   'ERR_UPDATER_CHANNEL_FILE_NOT_FOUND',
@@ -558,7 +558,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).toHaveBeenCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(rig.updater.requestHeaders).toBeNull();
     expect(rig.clock.setTimeout).toHaveBeenCalledTimes(3);
@@ -592,7 +592,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).toHaveBeenCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(rig.updater.requestHeaders).toBeNull();
   });
@@ -645,7 +645,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).not.toHaveBeenCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
@@ -670,7 +670,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
 
     const checkObservations: Array<{
@@ -703,7 +703,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(
       rig.updater.setFeedURL.mock.calls.filter(
@@ -727,7 +727,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).not.toHaveBeenCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
@@ -756,7 +756,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).not.toHaveBeenCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
@@ -807,7 +807,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     expect(rig.updater.setFeedURL).not.toHaveBeenCalledWith({
       provider: 'github',
       owner: 'inkeep',
-      repo: 'open-knowledge',
+      repo: 'palimpsest',
     });
     expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
@@ -987,7 +987,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
       expect(rig.updater.setFeedURL).toHaveBeenLastCalledWith({
         provider: 'github',
         owner: 'inkeep',
-        repo: 'open-knowledge',
+        repo: 'palimpsest',
       });
 
       fireTimerFor(rig.clock, UPDATE_CHECK_INTERVAL_MS);
@@ -1643,16 +1643,16 @@ describe('first-launch version notice (Toast B — AC7, D9)', () => {
 
   test('releaseUrlFor produces the GitHub tag URL', () => {
     expect(releaseUrlFor('1.2.3')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/tag/v1.2.3',
+      'https://github.com/fractalmandala/palimpsest/releases/tag/v1.2.3',
     );
   });
 
   test('releaseUrlFor percent-encodes path-traversal chars (Finding #11)', () => {
     expect(releaseUrlFor('../../../etc/passwd')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/tag/v..%2F..%2F..%2Fetc%2Fpasswd',
+      'https://github.com/fractalmandala/palimpsest/releases/tag/v..%2F..%2F..%2Fetc%2Fpasswd',
     );
     expect(releaseUrlFor('1.2.3/..')).toBe(
-      'https://github.com/inkeep/open-knowledge/releases/tag/v1.2.3%2F..',
+      'https://github.com/fractalmandala/palimpsest/releases/tag/v1.2.3%2F..',
     );
   });
 });
@@ -4284,7 +4284,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
     const err = Object.assign(
       new Error(
-        'Cannot find latest-mac.yml in the latest release artifacts (https://github.com/inkeep/open-knowledge/releases/download/v0.5.0-beta.22/latest-mac.yml): HttpError: 404',
+        'Cannot find latest-mac.yml in the latest release artifacts (https://github.com/fractalmandala/palimpsest/releases/download/v0.5.0-beta.22/latest-mac.yml): HttpError: 404',
       ),
       { code: 'ERR_UPDATER_CHANNEL_FILE_NOT_FOUND' },
     );
@@ -4379,7 +4379,7 @@ describe('a download that fails after the menu check said "available"', () => {
   } as const;
 
   function assetMissing(): Error {
-    return Object.assign(new Error('Cannot find OpenKnowledge-amd64.deb in the latest release'), {
+    return Object.assign(new Error('Cannot find Palimpsest-amd64.deb in the latest release'), {
       code: 'ERR_UPDATER_ASSET_NOT_FOUND',
     });
   }
@@ -5407,7 +5407,7 @@ describe('linux manual-install fallback', () => {
   test('unrecognized staged format (AppImage) falls through to quitAndInstall even without auth', async () => {
     const { rig, fallback } = makeLinuxRig({
       hasGraphicalAuth: false,
-      downloadedFile: '/x/OpenKnowledge.AppImage',
+      downloadedFile: '/x/Palimpsest.AppImage',
     });
     await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);

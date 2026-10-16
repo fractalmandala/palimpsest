@@ -143,7 +143,7 @@ describe('content.attachmentFolderPath', () => {
 });
 
 describe('appearance.sidebar view toggles', () => {
-  test('sidebar defaults: hidden files off, only-markdown off, Skills section on, .ok folders off, grouping on', () => {
+  test('sidebar defaults: hidden files off, only-markdown off, Skills section on, .ps folders off, grouping on', () => {
     const sidebar = ConfigSchema.parse({ appearance: { sidebar: {} } }).appearance.sidebar;
     expect(sidebar).toEqual({
       showHiddenFiles: false,

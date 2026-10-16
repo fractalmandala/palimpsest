@@ -12,7 +12,7 @@ import {
   writeFileSync as fsWriteFileSync,
 } from 'node:fs';
 import { dirname, join } from 'node:path';
-import type { PathDiscovery, PathInstallConsent, PathInstallMarker } from '@inkeep/open-knowledge';
+import type { PathDiscovery, PathInstallConsent, PathInstallMarker } from '@palimpsest/cli';
 import {
   DESKTOP_PRODUCTS,
   type DesktopProductName,
@@ -22,7 +22,7 @@ import {
   pathShimFishConfFileName,
   pathShimHomeDirName,
   pathShimMarkerPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { DESKTOP_VARIANT } from '../shared/desktop-variant.ts';
 import type { McpWiringPathInstallDescriptor } from '../shared/ipc-channels.ts';
 import { classifyInstallShape } from './install-shape.ts';
@@ -34,7 +34,7 @@ const RC_BIN_DIR = pathShimBinDir(CHANNEL, '$HOME');
 const ENV_SH_BIN_DIR = pathShimBinDir(CHANNEL, `\${HOME}`);
 const FISH_CONF_NAME = pathShimFishConfFileName(CHANNEL);
 const LEGACY_CLI_HOME_PREFIX = DESKTOP_VARIANT.cliHomeSegment
-  ? `.ok/variants/${DESKTOP_VARIANT.cliHomeSegment}`
+  ? `.ps/variants/${DESKTOP_VARIANT.cliHomeSegment}`
   : null;
 const CLI_BLOCK_NAME = pathShimBlockLabel(CHANNEL);
 const BEGIN = `# >>> ${CLI_BLOCK_NAME} >>>`;
@@ -193,7 +193,7 @@ function writeMarker(home: string, marker: PathInstallMarker, fs: PathInstallFsO
   fs.writeFileSync(path, `${JSON.stringify(marker, null, 2)}\n`);
 }
 
-function okBin(home: string): string {
+function psBin(home: string): string {
   return pathShimBinDir(CHANNEL, home);
 }
 
@@ -202,7 +202,7 @@ function envShim(home: string): string {
 }
 
 const MANAGED_HINT =
-  '# ! Contents within this block are managed by OpenKnowledge. Do not edit.\n# ! Delete this whole block to opt out — OpenKnowledge will not re-add it.';
+  '# ! Contents within this block are managed by Palimpsest. Do not edit.\n# ! Delete this whole block to opt out — Palimpsest will not re-add it.';
 
 function block(): string {
   return `${BEGIN}\n${MANAGED_HINT}\n[ -f "$HOME/${CLI_HOME_PREFIX}/env.sh" ] && . "$HOME/${CLI_HOME_PREFIX}/env.sh"\n${END}\n`;
@@ -304,7 +304,7 @@ function canonicalHealthy(
   fs: PathInstallFsOps,
   logger?: PathInstallLogger,
 ): boolean {
-  return NAMES.every((name) => linkPointsTo(join(okBin(home), name), wrapper, fs, logger));
+  return NAMES.every((name) => linkPointsTo(join(psBin(home), name), wrapper, fs, logger));
 }
 
 function replaceSymlinkAtomic(link: string, wrapper: string, fs: PathInstallFsOps): void {
@@ -326,7 +326,7 @@ function replaceSymlinkAtomic(link: string, wrapper: string, fs: PathInstallFsOp
 }
 
 function installCanonical(home: string, wrapper: string, fs: PathInstallFsOps): void {
-  const bin = okBin(home);
+  const bin = psBin(home);
   fs.mkdirSync(bin, { recursive: true });
   for (const name of NAMES) {
     replaceSymlinkAtomic(join(bin, name), wrapper, fs);
@@ -399,12 +399,12 @@ async function discoverRealInteractivePath(
       return null;
     }
     const pathEntries = result.stdout.split(':').filter(Boolean);
-    const binDir = okBin(opts.home);
+    const binDir = psBin(opts.home);
     return {
       capturedAt: (opts.now?.() ?? new Date()).toISOString(),
       pathEntries,
       shellUsed: shell,
-      okBinAlreadyOnPath: pathEntries.includes(binDir),
+      psBinAlreadyOnPath: pathEntries.includes(binDir),
     };
   } catch (err) {
     logger.event({
@@ -554,7 +554,7 @@ export async function ensureCliOnPath(opts: EnsureCliOnPathOpts): Promise<Ensure
       !explicitGrant &&
       prior != null &&
       !priorIsLegacy &&
-      discovery?.okBinAlreadyOnPath === true &&
+      discovery?.psBinAlreadyOnPath === true &&
       activePriorRcFiles.every((file) => rcBlockHealthy(file, fs));
     const nowIso = (opts.now?.() ?? new Date()).toISOString();
     const grandfatherEvidence =
@@ -587,7 +587,7 @@ export async function ensureCliOnPath(opts: EnsureCliOnPathOpts): Promise<Ensure
       installedAt: nowIso,
       bundleVersion,
       bundleWrapperPath: wrapper,
-      binDir: okBin(home),
+      binDir: psBin(home),
       envShimPath: shim,
       rcFiles,
       rcOptOuts,
@@ -617,7 +617,7 @@ export async function ensureCliOnPath(opts: EnsureCliOnPathOpts): Promise<Ensure
       );
     if (newOptOuts.length > 0)
       parts.push(
-        `You removed the OpenKnowledge block from ${newOptOuts.map((p) => tildify(p, home)).join(', ')} — it won't be re-added.`,
+        `You removed the Palimpsest block from ${newOptOuts.map((p) => tildify(p, home)).join(', ')} — it won't be re-added.`,
       );
     if (cleanup.removedCount > 0)
       parts.push(
@@ -691,13 +691,13 @@ export function removePathShimFromRcFiles(opts: {
 }): RemovePathShimResult {
   const { home, fs = defaultFsOps, logger = DEFAULT_LOGGER } = opts;
   const marker = readMarker(home, fs, logger);
-  const okOwnedFishConf = join(home, '.config', 'fish', 'conf.d', FISH_CONF_NAME);
+  const psOwnedFishConf = join(home, '.config', 'fish', 'conf.d', FISH_CONF_NAME);
   const candidates = new Set<string>([
     ...rcTargets(home, (opts.env ?? process.env).SHELL, fs, opts.platform).map(
       (target) => target.path,
     ),
     ...(marker?.rcFiles ?? []),
-    okOwnedFishConf,
+    psOwnedFishConf,
   ]);
   const strippedFiles: string[] = [];
   try {
@@ -707,7 +707,7 @@ export function removePathShimFromRcFiles(opts: {
       let next = prior;
       while (BLOCK_RE.test(next)) next = next.replace(BLOCK_RE, '');
       if (next === prior) continue;
-      if (next.trim() === '' && path === okOwnedFishConf) {
+      if (next.trim() === '' && path === psOwnedFishConf) {
         fs.unlinkSync(path);
       } else {
         fs.writeFileSync(path, next);

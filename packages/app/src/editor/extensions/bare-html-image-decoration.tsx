@@ -1,5 +1,5 @@
-import { normalizeDocRelativeAssetUrl } from '@inkeep/open-knowledge-core/markdown/resolve-image-url';
-import { resolveAssetProjectPath } from '@inkeep/open-knowledge-core/utils/link-targets';
+import { normalizeDocRelativeAssetUrl } from '@palimpsest/core/markdown/resolve-image-url';
+import { resolveAssetProjectPath } from '@palimpsest/core/utils/link-targets';
 import { type Editor, Extension } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
@@ -144,7 +144,7 @@ function buildDecorations(
     decorations.push(
       Decoration.inline(from, to, {
         'aria-hidden': 'true',
-        class: 'hidden ok-bare-html-image-source',
+        class: 'hidden ps-bare-html-image-source',
       }),
       Decoration.widget(
         from,
@@ -153,7 +153,7 @@ function buildDecorations(
             editor,
             props,
             as: 'span',
-            className: 'ok-bare-html-image-render',
+            className: 'ps-bare-html-image-render',
           });
           renderer.element.setAttribute('contenteditable', 'false');
           return renderer.element;

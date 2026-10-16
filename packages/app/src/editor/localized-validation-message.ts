@@ -1,4 +1,4 @@
-import type { ValidationDocResult } from '@inkeep/open-knowledge-core/markdown/lint';
+import type { ValidationDocResult } from '@palimpsest/core/markdown/lint';
 import { t } from '@lingui/core/macro';
 
 type Diagnostic = ValidationDocResult['diagnostics'][number];
@@ -15,8 +15,8 @@ export function localizedValidationMessage(diagnostic: Diagnostic): string {
   }
   if (evidence.reason === 'excluded') {
     return evidence.role === 'image'
-      ? t`Image target "${shown}" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.`
-      : t`Link target "${shown}" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a "!" rule in .okignore.`;
+      ? t`Image target "${shown}" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.`
+      : t`Link target "${shown}" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a "!" rule in .psignore.`;
   }
   if (evidence.targetKind === 'file') {
     return evidence.role === 'image'

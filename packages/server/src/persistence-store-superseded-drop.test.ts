@@ -8,7 +8,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ATOMIC_TEMP_PATH_RE } from '@inkeep/open-knowledge-core/server';
+import { ATOMIC_TEMP_PATH_RE } from '@palimpsest/core/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { __setQuiescentOverrideForTests } from './bridge-quiescence.ts';
@@ -74,7 +74,7 @@ describe('persistence superseded-store drop — a store that loses the publish r
   }
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-store-superseded-drop-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-store-superseded-drop-')));
     docName = 'superseded-drop';
     docPath = join(tmpDir, `${docName}.md`);
     document = new Y.Doc();

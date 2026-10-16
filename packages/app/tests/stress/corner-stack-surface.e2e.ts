@@ -38,11 +38,11 @@ import {
 import { emitUpdateEvent, installUpdateEventOverlay } from './fixtures/update-event-overlay';
 
 const VERSION = '9.9.9';
-const DOWNLOAD_URL = 'https://openknowledge.ai/download';
-const RELEASE_URL = 'https://openknowledge.ai/changelog';
+const DOWNLOAD_URL = 'https://github.com/fractalmandala/palimpsest/download';
+const RELEASE_URL = 'https://github.com/fractalmandala/palimpsest/changelog';
 const WIDE = { width: 1440, height: 900 } as const;
 const PHONE = { width: 393, height: 852 } as const;
-const THEME_KEY = 'ok-theme-v1';
+const THEME_KEY = 'ps-theme-v1';
 const FEEDBACK_LATCH_TIMEOUT_MS = 15_000;
 const THEMES = ['light', 'dark'] as const;
 const EDGE_CHANNEL_TOLERANCE = 3;

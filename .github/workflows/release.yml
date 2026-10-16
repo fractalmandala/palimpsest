@@ -1,23 +1,23 @@
 name: Release
 
-# Release workflow on inkeep/open-knowledge. Single npm publisher
+# Release workflow on fractalmandala/palimpsest. Single npm publisher
 # for BOTH auto-cadence beta releases AND on-demand stable promotions.
 #
-# Beta path: event-driven on `push` to open-knowledge/main with a paths
+# Beta path: event-driven on `push` to palimpsest/main with a paths
 # filter on `.changeset/**`. Copybara mirrors
-# `public/open-knowledge/.changeset/*.md`, `pre.json`, and `config.json`
+# `public/palimpsest/.changeset/*.md`, `pre.json`, and `config.json`
 # from agents-private. When agents-private merges a PR with a changeset,
-# Copybara batches it into a Project-import commit on open-knowledge/main;
+# Copybara batches it into a Project-import commit on palimpsest/main;
 # that import push IS the release trigger. The workflow then runs
 # `compute-next-beta.mjs` locally to derive baseVersion
 # + release notes from the pending changeset pile (skip-gated by the
 # previous beta's embedded consumed-set marker), resolves -beta.N inside
-# the ok-release-cadence concurrency slot, and tags `github.sha` —
+# the ps-release-cadence concurrency slot, and tags `github.sha` —
 # guaranteed to be the import that contains the change because checkout
 # happens AT the push event. This replaces the prior cross-repo
 # repository_dispatch model, which suffered an off-by-one: the dispatch
 # from agents-private fired before Copybara's mirror push landed, so
-# open-knowledge/main HEAD was still the previous import when checkout resolved
+# palimpsest/main HEAD was still the previous import when checkout resolved
 # `github.sha`, tagging the wrong commit (Linear PRD-6701).
 #
 # Three trigger types:
@@ -33,7 +33,7 @@ name: Release
 #        (e.g., Copybara import that only touched non-changeset files
 #        matching the paths filter) → skip cleanly.
 #      - Resolves -beta.N counter from existing vX.Y.Z-beta.* tags
-#        (race-free inside the ok-release-cadence concurrency slot).
+#        (race-free inside the ps-release-cadence concurrency slot).
 #      - Overrides every fixed-group packages/*/package.json#version AND
 #        both packages/server/assets/skills/{project,discovery}/SKILL.md
 #        metadata.version to X.Y.Z-beta.N (transient jq, never committed).
@@ -59,7 +59,7 @@ name: Release
 #      - Overrides every fixed-group package.json#version to the clean
 #        X.Y.Z (the public repo's commit at that SHA carries the version
 #        the last main reset wrote, normally the previous stable).
-#      - Publishes @inkeep/open-knowledge@X.Y.Z to npm with
+#      - Publishes @palimpsest/cli@X.Y.Z to npm with
 #        `--tag latest --provenance`.
 #    desktop-release.yml is dispatched by promote-stable.yml or
 #    point-release.yml; it lands the stable DMG + `latest-mac.yml` on the
@@ -99,7 +99,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ok-release-cadence
+  group: ps-release-cadence
   cancel-in-progress: false
 
 env:
@@ -449,7 +449,7 @@ jobs:
             mv "${f}.tmp" "$f"
           done
           # Both skill bundles' metadata.version "tracks
-          # @inkeep/open-knowledge-server package version" — the build-time
+          # @palimpsest/server package version" — the build-time
           # invariant test in packages/server/src/skill-state.test.ts asserts
           # they match. Mutate in place (sed: same transient-only model as jq
           # above), once per bundle.
@@ -490,7 +490,7 @@ jobs:
 
       - name: Build the cli and its workspace dependencies at the overridden versions
         run: |
-          pnpm exec turbo run build --filter=@inkeep/open-knowledge --cache=local:,remote:
+          pnpm exec turbo run build --filter=@palimpsest/cli --cache=local:,remote:
 
       - name: Assert the native-config binary set
         env:
@@ -631,7 +631,7 @@ jobs:
         if: github.event.action == 'publish-stable' || needs.build.outputs.run_beta == 'true'
         uses: ./.github/composite-actions/share-contract-reader-gate
         with:
-          origin: https://openknowledge.ai
+          origin: https://github.com/fractalmandala/palimpsest
           evidence-name: share-contract-release-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Tag + create prerelease GitHub Release
@@ -724,7 +724,7 @@ jobs:
           ACTION: ${{ github.event.action }}
           BETA_VERSION: ${{ needs.release.outputs.version }}
           STABLE_VERSION: ${{ github.event.client_payload.version }}
-          PACKAGE_NAME: "@inkeep/open-knowledge"
+          PACKAGE_NAME: "@palimpsest/cli"
           PACKAGE_DIR: ${{ runner.temp }}/npm-package
         run: |
           set -euo pipefail

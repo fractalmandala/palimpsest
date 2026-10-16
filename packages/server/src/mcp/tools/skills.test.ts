@@ -134,15 +134,15 @@ describe('skills read tool — marketplace search overload', () => {
 });
 
 describe('skills read tool — built-in OK skills short-circuit before the network', () => {
-  test('READ open-knowledge teaches instead of looking it up', async () => {
+  test('READ palimpsest teaches instead of looking it up', async () => {
     const handler = captureSkills(undefined);
-    const r = await handler({ name: 'open-knowledge', scope: 'project' });
+    const r = await handler({ name: 'palimpsest', scope: 'project' });
     expect(r.isError).toBe(true);
     expect(text(r)).toContain('built-in agent skills');
     expect(text(r)).toContain('already provided to you in your loaded skill list');
   });
 
-  test('every shipped bundle name short-circuits (not just open-knowledge)', async () => {
+  test('every shipped bundle name short-circuits (not just palimpsest)', async () => {
     const handler = captureSkills(undefined);
     for (const name of Object.values(BUNDLE_SKILL_NAME)) {
       const r = await handler({ name });
@@ -153,7 +153,7 @@ describe('skills read tool — built-in OK skills short-circuit before the netwo
 
   test('READ-file on a built-in skill is short-circuited too', async () => {
     const handler = captureSkills(undefined);
-    const r = await handler({ name: 'open-knowledge', file: 'references/x.md' });
+    const r = await handler({ name: 'palimpsest', file: 'references/x.md' });
     expect(r.isError).toBe(true);
     expect(text(r)).toContain('built-in agent skills');
   });

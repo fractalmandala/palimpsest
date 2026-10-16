@@ -1,16 +1,16 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 
 const serverAuthorityRegistrySetup = fileURLToPath(
   new URL('../../test-support/server-authority-registry.setup.ts', import.meta.url),
 );
 
 export default defineConfig({
-  ...okVitestBase,
+  ...psVitestBase,
   test: {
-    ...okVitestBase.test,
-    setupFiles: [...okVitestBase.test.setupFiles, serverAuthorityRegistrySetup],
-    exclude: [...okVitestBase.test.exclude, '**/*.network.test.ts', '.ok-skill-publish-*'],
+    ...psVitestBase.test,
+    setupFiles: [...psVitestBase.test.setupFiles, serverAuthorityRegistrySetup],
+    exclude: [...psVitestBase.test.exclude, '**/*.network.test.ts', '.ps-skill-publish-*'],
   },
 });

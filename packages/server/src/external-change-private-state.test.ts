@@ -20,9 +20,9 @@ describe('reconcile before an agent write', () => {
   let contentDir = '';
 
   beforeEach(() => {
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-reconcile-private-')));
-    mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(contentDir, '.ok', 'local', 'secret.md'), '# Secret\n\nprivate bytes\n');
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-reconcile-private-')));
+    mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(contentDir, '.ps', 'local', 'secret.md'), '# Secret\n\nprivate bytes\n');
   });
 
   afterEach(() => {
@@ -44,7 +44,7 @@ describe('reconcile before an agent write', () => {
       }, 'seed');
 
       unlinkSync(join(contentDir, 'note.md'));
-      symlinkSync('.ok/local/secret.md', join(contentDir, 'note.md'));
+      symlinkSync('.ps/local/secret.md', join(contentDir, 'note.md'));
 
       const result = reconcileDiskBeforeAgentWrite(
         durabilityState,

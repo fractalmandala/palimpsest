@@ -1,5 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import type { LinterConfig } from '@inkeep/open-knowledge-core';
+import type { LinterConfig } from '@palimpsest/core';
 import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
@@ -22,19 +22,19 @@ function fakeProvider(initial: string): { provider: HocuspocusProvider; doc: Y.D
   };
 }
 
-const okfEnabled: LinterConfig = {
+const psfEnabled: LinterConfig = {
   enabled: true,
   plugins: {
     markdownlint: { enabled: true, rules: {} },
     frontmatter: { enabled: true, schemas: [] },
-    okf: { enabled: true },
+    psf: { enabled: true },
   },
 };
 
 const frontmatterPluginOff: LinterConfig = {
-  ...okfEnabled,
+  ...psfEnabled,
   plugins: {
-    ...okfEnabled.plugins,
+    ...psfEnabled.plugins,
     frontmatter: { enabled: false, schemas: [] },
   },
 };
@@ -46,13 +46,13 @@ afterEach(() => cleanup());
 describe('useFrontmatterDiagnostics with the OKF plugin enabled', () => {
   test('reports the OKF missing-`type` violation with full badge metadata', async () => {
     const { provider } = fakeProvider(MISSING_TYPE);
-    const { result } = renderHook(() => useFrontmatterDiagnostics(provider, okfEnabled));
+    const { result } = renderHook(() => useFrontmatterDiagnostics(provider, psfEnabled));
 
     await waitFor(() =>
       expect(
         result.current.some(
           (d) =>
-            d.source === 'okf' &&
+            d.source === 'psf' &&
             d.code === 'frontmatter-required' &&
             d.frontmatterScope === 'missing' &&
             d.frontmatterProperty === 'type',
@@ -64,7 +64,7 @@ describe('useFrontmatterDiagnostics with the OKF plugin enabled', () => {
 
   test('feeds the Add-properties badge through partitionFrontmatterProblems', async () => {
     const { provider } = fakeProvider(MISSING_TYPE);
-    const { result } = renderHook(() => useFrontmatterDiagnostics(provider, okfEnabled));
+    const { result } = renderHook(() => useFrontmatterDiagnostics(provider, psfEnabled));
 
     await waitFor(() => {
       const { missing, invalid } = partitionFrontmatterProblems(result.current);
@@ -79,14 +79,14 @@ describe('useFrontmatterDiagnostics with the OKF plugin enabled', () => {
 
     await waitFor(() =>
       expect(
-        result.current.some((d) => d.source === 'okf' && d.frontmatterScope === 'missing'),
+        result.current.some((d) => d.source === 'psf' && d.frontmatterScope === 'missing'),
       ).toBe(true),
     );
   });
 
   test('clears once the missing `type` is added', async () => {
     const { provider, doc } = fakeProvider('---\ntitle: Serafin\n---\n\nPlain notes.\n');
-    const { result } = renderHook(() => useFrontmatterDiagnostics(provider, okfEnabled));
+    const { result } = renderHook(() => useFrontmatterDiagnostics(provider, psfEnabled));
     await waitFor(() =>
       expect(result.current.some((d) => d.frontmatterProperty === 'type')).toBe(true),
     );

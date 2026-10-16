@@ -88,13 +88,13 @@ export function FindReplaceBar({
       aria-label={t`Find and replace`}
       className="pointer-events-auto flex max-w-[min(calc(100vw-1rem),720px)] touch-manipulation items-center gap-1 rounded-[calc(var(--radius)+2px)] border border-input bg-popover/95 p-1 text-popover-foreground shadow-md shadow-black/10 backdrop-blur"
     >
-      <label className="sr-only" htmlFor="ok-find-input">
+      <label className="sr-only" htmlFor="ps-find-input">
         <Trans>Find</Trans>
       </label>
       <InputGroup className="h-7 w-56 rounded-[min(var(--radius-md),12px)]">
         <InputGroupInput
           ref={findInputRef}
-          id="ok-find-input"
+          id="ps-find-input"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           onKeyDown={handleFindKeyDown}
@@ -196,7 +196,7 @@ export function FindReplaceBar({
             size="icon-sm"
             aria-label={replaceOpen ? t`Hide replace` : t`Show replace`}
             aria-expanded={replaceOpen}
-            aria-controls={replaceOpen ? 'ok-replace-input' : undefined}
+            aria-controls={replaceOpen ? 'ps-replace-input' : undefined}
             onClick={() => onReplaceOpenChange(!replaceOpen)}
           >
             <Replace data-icon="inline-start" aria-hidden="true" />
@@ -209,11 +209,11 @@ export function FindReplaceBar({
 
       {replaceOpen ? (
         <>
-          <label className="sr-only" htmlFor="ok-replace-input">
+          <label className="sr-only" htmlFor="ps-replace-input">
             <Trans>Replace</Trans>
           </label>
           <Input
-            id="ok-replace-input"
+            id="ps-replace-input"
             value={replacement}
             onChange={(event) => onReplacementChange(event.target.value)}
             onKeyDown={handleReplaceKeyDown}

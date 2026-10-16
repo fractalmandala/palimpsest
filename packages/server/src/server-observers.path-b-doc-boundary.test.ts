@@ -5,7 +5,7 @@ import {
   prependFrontmatter,
   sharedExtensions,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
@@ -197,14 +197,14 @@ describe('in-sync residual merge (sibling router branch) — byte-preservation g
 });
 
 describe('Path B doc-boundary alignment: content-loss recovery arm re-projects the boundary', () => {
-  const ENV_KEYS = ['NODE_ENV', 'OK_RETHROW_BRIDGE_LOSS'] as const;
+  const ENV_KEYS = ['NODE_ENV', 'PS_RETHROW_BRIDGE_LOSS'] as const;
   let savedEnv: Partial<Record<(typeof ENV_KEYS)[number], string | undefined>>;
 
   beforeEach(() => {
     savedEnv = {};
     for (const key of ENV_KEYS) savedEnv[key] = process.env[key];
     process.env.NODE_ENV = 'production';
-    delete process.env.OK_RETHROW_BRIDGE_LOSS;
+    delete process.env.PS_RETHROW_BRIDGE_LOSS;
   });
 
   afterEach(() => {

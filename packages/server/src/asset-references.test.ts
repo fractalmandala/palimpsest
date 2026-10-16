@@ -15,7 +15,7 @@ import type { FileIndexEntry } from './file-watcher.ts';
 import { getLogger } from './logger.ts';
 
 function withFixture(fn: (dir: string) => void) {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-assets-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-assets-'));
   try {
     fn(dir);
   } finally {
@@ -509,7 +509,7 @@ describe('asset reference extraction', () => {
     const warnSpy = vi.spyOn(getLogger('asset-references'), 'warn');
     try {
       const assets = collectReferencedAssets({
-        contentDir: join(tmpdir(), 'ok-missing-content-dir'),
+        contentDir: join(tmpdir(), 'ps-missing-content-dir'),
         fileIndex: new Map(),
         readMarkdown: () => '',
       });
@@ -526,7 +526,7 @@ describe('asset reference extraction', () => {
     try {
       expect(
         resolveReferencedAssetPath({
-          contentDir: join(tmpdir(), 'ok-missing-content-dir'),
+          contentDir: join(tmpdir(), 'ps-missing-content-dir'),
           fromDocName: 'docs/guide',
           href: './photo.png',
           literal: false,

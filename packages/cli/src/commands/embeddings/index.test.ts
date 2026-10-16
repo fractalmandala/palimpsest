@@ -6,7 +6,7 @@ import {
   DEFAULT_EMBEDDINGS_BASE_URL,
   DEFAULT_EMBEDDINGS_MODEL,
   type SemanticIndexStatus,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { stringify } from 'yaml';
 import * as embeddingsKeyStore from '../../auth/embeddings-key-store.ts';
@@ -26,7 +26,7 @@ const LIVE_STATUS: SemanticIndexStatus = {
 
 function readLocalConfig(dir: string): string {
   try {
-    return readFileSync(join(dir, '.ok', 'local', 'config.yml'), 'utf-8');
+    return readFileSync(join(dir, '.ps', 'local', 'config.yml'), 'utf-8');
   } catch {
     return '';
   }
@@ -37,7 +37,7 @@ describe('ok embeddings set-url / clear-url', () => {
   let stderr: string;
   let restoreWrite: () => void;
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-embeddings-url-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-embeddings-url-'));
     stderr = '';
     const orig = process.stderr.write.bind(process.stderr);
     process.stderr.write = ((chunk: string | Uint8Array) => {
@@ -133,7 +133,7 @@ describe('ok embeddings status transport settings', () => {
   let stdout: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-embeddings-status-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-embeddings-status-'));
     stdout = '';
     vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
       stdout += typeof chunk === 'string' ? chunk : Buffer.from(chunk).toString('utf-8');
@@ -155,9 +155,9 @@ describe('ok embeddings status transport settings', () => {
     { maxBatchSize: 2, maxBatchChars: 16_000, docTimeoutMs: 120_000 },
     { maxBatchSize: 96, maxBatchChars: 96_000, docTimeoutMs: 30_000 },
   ])('JSON exposes resolved transport settings: %j', async (transport) => {
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
     writeFileSync(
-      join(dir, '.ok', 'local', 'config.yml'),
+      join(dir, '.ps', 'local', 'config.yml'),
       stringify({ search: { semantic: { ...transport, baseUrl: 'http://localhost:11434/v1' } } }),
     );
 
@@ -208,7 +208,7 @@ describe('embeddings hints name the running channel CLI', () => {
   let stderr: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-embeddings-channel-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-embeddings-channel-'));
     stdout = '';
     stderr = '';
     vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
@@ -235,9 +235,9 @@ describe('embeddings hints name the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: status, enable and set-key name %s embeddings', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     await embeddingsCommand().parseAsync(['status', '--cwd', dir], { from: 'user' });
     expect(stdout).toContain(`  Set a key:  ${command} embeddings set-key   (or export `);
     expect(stdout).toContain(

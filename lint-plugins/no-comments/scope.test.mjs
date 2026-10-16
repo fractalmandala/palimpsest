@@ -471,7 +471,7 @@ describe('discovery from a nested Git worktree root', () => {
   beforeAll(() => {
     root = createScratchRoot({
       prefix: 'no-comments-nested-git-',
-      nest: 'public/open-knowledge',
+      nest: 'public/palimpsest',
       config: configWith({
         units: [{ id: 'desktop', family: 'typescript', roots: ['packages/desktop'] }],
       }),
@@ -481,7 +481,7 @@ describe('discovery from a nested Git worktree root', () => {
       },
     });
     const outer = dirname(dirname(root));
-    writeFileSync(join(outer, '.gitignore'), 'public/open-knowledge/packages/desktop/out/\n');
+    writeFileSync(join(outer, '.gitignore'), 'public/palimpsest/packages/desktop/out/\n');
     execFileSync('git', ['init', '-q'], { cwd: outer });
   });
 

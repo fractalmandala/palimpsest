@@ -1,4 +1,4 @@
-import { ConfigSchema } from '@inkeep/open-knowledge-core';
+import { ConfigSchema } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   buildPatch,

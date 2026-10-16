@@ -136,7 +136,7 @@ describe('pre-drain paired-vector arms (H15)', () => {
   });
 
   test('SAME-BLOCK / overlap: a replace over the pending content checkpoints it byte-level, restorable', async () => {
-    const tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-pre-drain-floor-'));
+    const tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-pre-drain-floor-'));
     const projectRoot = resolve(tmpDir, 'project');
     const shadow = await initShadowRepo(projectRoot);
     const ring = new LossCaptureRing({ projectDir: projectRoot, maxBytes: 1_000_000 });

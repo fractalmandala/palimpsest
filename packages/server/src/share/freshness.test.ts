@@ -123,9 +123,9 @@ describe('computeShareFreshness — push-fixable folders stay absent', () => {
     expect(await computeShareFreshness(t.senderDir, t.branch, 'later', 'folder')).toBe('absent');
   });
 
-  test('a folder holding only .ok metadata is absent — that folder does push', async () => {
+  test('a folder holding only .ps metadata is absent — that folder does push', async () => {
     const t = newTriangle();
-    t.writeWorkingTree('meta/.ok/folder.yml', 'title: Meta\n');
+    t.writeWorkingTree('meta/.ps/folder.yml', 'title: Meta\n');
     expect(await computeShareFreshness(t.senderDir, t.branch, 'meta', 'folder')).toBe('absent');
   });
 
@@ -165,7 +165,7 @@ describe('computeShareFreshness — content-root folder share (empty path)', () 
 
 describe('computeShareFreshness — fail-open', () => {
   test('a non-git directory omits freshness (returns undefined, does not throw)', async () => {
-    const notARepo = mkdtempSync(join(tmpdir(), 'ok-share-not-a-repo-'));
+    const notARepo = mkdtempSync(join(tmpdir(), 'ps-share-not-a-repo-'));
     scratchDirs.push(notARepo);
     expect(await computeShareFreshness(notARepo, 'main', 'doc.md', 'doc')).toBeUndefined();
   });

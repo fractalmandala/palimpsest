@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import {
-  identifyOpenKnowledgeToolCall,
-  openKnowledgeToolName,
+  identifyPalimpsestToolCall,
+  palimpsestToolName,
   shellCommandFromRawInput,
   unwrapMcpInput,
 } from './tool-call-input.ts';
@@ -24,18 +24,18 @@ describe('unwrapMcpInput', () => {
   });
 });
 
-describe('identifyOpenKnowledgeToolCall', () => {
+describe('identifyPalimpsestToolCall', () => {
   test('reads the tool out of the title shapes each harness writes', () => {
     expect(
-      identifyOpenKnowledgeToolCall({ title: 'mcp__open-knowledge__search', rawInput: {} }),
+      identifyPalimpsestToolCall({ title: 'mcp__open-knowledge__search', rawInput: {} }),
     ).toEqual({ tool: 'search', args: {} });
     expect(
-      identifyOpenKnowledgeToolCall({
-        title: 'mcp.open-knowledge.edit',
-        rawInput: { server: 'open-knowledge', tool: 'edit', arguments: { document: 'a' } },
+      identifyPalimpsestToolCall({
+        title: 'mcp.palimpsest.edit',
+        rawInput: { server: 'palimpsest', tool: 'edit', arguments: { document: 'a' } },
       }),
     ).toEqual({ tool: 'edit', args: { document: 'a' } });
-    expect(identifyOpenKnowledgeToolCall({ title: 'ok_exec', rawInput: {} })).toEqual({
+    expect(identifyPalimpsestToolCall({ title: 'ok_exec', rawInput: {} })).toEqual({
       tool: 'exec',
       args: {},
     });
@@ -43,36 +43,36 @@ describe('identifyOpenKnowledgeToolCall', () => {
 
   test('a call to another server or another tool is not an OK call', () => {
     expect(
-      identifyOpenKnowledgeToolCall({ title: 'mcp__github__search', rawInput: {} }),
+      identifyPalimpsestToolCall({ title: 'mcp__github__search', rawInput: {} }),
     ).toBeNull();
     expect(
-      identifyOpenKnowledgeToolCall({
-        title: 'mcp.open-knowledge.edit',
+      identifyPalimpsestToolCall({
+        title: 'mcp.palimpsest.edit',
         rawInput: { server: 'github', tool: 'edit' },
       }),
     ).toBeNull();
     expect(
-      identifyOpenKnowledgeToolCall({ title: 'Bash', rawInput: { command: 'ls' } }),
+      identifyPalimpsestToolCall({ title: 'Bash', rawInput: { command: 'ls' } }),
     ).toBeNull();
-    expect(identifyOpenKnowledgeToolCall({ title: null, rawInput: undefined })).toBeNull();
+    expect(identifyPalimpsestToolCall({ title: null, rawInput: undefined })).toBeNull();
   });
 
   test('display matching admits any OK-looking server alias', () => {
-    expect(openKnowledgeToolName({ title: 'mcp__ok-payments__write', rawInput: {} })).toBe('write');
-    expect(openKnowledgeToolName({ title: 'write', rawInput: { tool: 'write' } })).toBe('write');
+    expect(palimpsestToolName({ title: 'mcp__ok-payments__write', rawInput: {} })).toBe('write');
+    expect(palimpsestToolName({ title: 'write', rawInput: { tool: 'write' } })).toBe('write');
   });
 
   test('known-server matching needs a channel server we inject or its Pi bridge prefix', () => {
     for (const title of [
       'mcp__open-knowledge__write',
-      'mcp__open-knowledge-dev__write',
-      'mcp__open-knowledge-beta__write',
-      'mcp.open_knowledge.write',
+      'mcp__palimpsest-dev__write',
+      'mcp__palimpsest-beta__write',
+      'mcp.palimpsest.write',
       'ok_write',
-      'ok-beta_write',
-      'ok-dev_write',
+      'ps-beta_write',
+      'ps-dev_write',
     ]) {
-      expect(identifyOpenKnowledgeToolCall({ title, rawInput: {} }, 'known')?.tool).toBe('write');
+      expect(identifyPalimpsestToolCall({ title, rawInput: {} }, 'known')?.tool).toBe('write');
     }
     for (const title of [
       'mcp__ok__write',
@@ -80,16 +80,16 @@ describe('identifyOpenKnowledgeToolCall', () => {
       'mcp.ok.write',
       'mcp__open-knowledge-payments__write',
     ]) {
-      expect(identifyOpenKnowledgeToolCall({ title, rawInput: {} }, 'known')).toBeNull();
+      expect(identifyPalimpsestToolCall({ title, rawInput: {} }, 'known')).toBeNull();
     }
     expect(
-      identifyOpenKnowledgeToolCall({ title: 'ok_write', rawInput: { server: 'ok' } }, 'known'),
+      identifyPalimpsestToolCall({ title: 'ok_write', rawInput: { server: 'ok' } }, 'known'),
     ).toBeNull();
     expect(
-      identifyOpenKnowledgeToolCall(
+      identifyPalimpsestToolCall(
         {
-          title: 'mcp.open-knowledge.edit',
-          rawInput: { server: 'open-knowledge', tool: 'edit', arguments: { document: 'a' } },
+          title: 'mcp.palimpsest.edit',
+          rawInput: { server: 'palimpsest', tool: 'edit', arguments: { document: 'a' } },
         },
         'known',
       ),
@@ -98,22 +98,22 @@ describe('identifyOpenKnowledgeToolCall', () => {
       { title: 'mcp__ok-payments__write', rawInput: {} },
       { title: 'mcp__open-knowledge-shadow__write', rawInput: {} },
       { title: 'write', rawInput: { tool: 'write' } },
-      { title: 'write', rawInput: { server: 'ok-payments', tool: 'write' } },
+      { title: 'write', rawInput: { server: 'ps-payments', tool: 'write' } },
       { title: 'mcp__open-knowledge__write', rawInput: { server: 'github' } },
     ]) {
-      expect(identifyOpenKnowledgeToolCall(call, 'known')).toBeNull();
+      expect(identifyPalimpsestToolCall(call, 'known')).toBeNull();
     }
   });
 
   test('known-server matching never trusts rawInput on its own: the title has to name the tool', () => {
     for (const call of [
-      { title: 'write', rawInput: { server: 'open-knowledge', tool: 'write' } },
-      { title: 'Bash', rawInput: { server: 'open-knowledge', tool: 'write', command: 'rm -rf x' } },
-      { title: 'mcp__github__write', rawInput: { server: 'open-knowledge', tool: 'write' } },
+      { title: 'write', rawInput: { server: 'palimpsest', tool: 'write' } },
+      { title: 'Bash', rawInput: { server: 'palimpsest', tool: 'write', command: 'rm -rf x' } },
+      { title: 'mcp__github__write', rawInput: { server: 'palimpsest', tool: 'write' } },
       { title: 'mcp__open-knowledge__search', rawInput: { tool: 'delete' } },
       { title: 'mcp__open-knowledge__search', rawInput: { name: 'write' } },
     ]) {
-      expect(identifyOpenKnowledgeToolCall(call, 'known')).toBeNull();
+      expect(identifyPalimpsestToolCall(call, 'known')).toBeNull();
     }
   });
 
@@ -121,11 +121,11 @@ describe('identifyOpenKnowledgeToolCall', () => {
     for (const call of [
       { title: 'mcp__open-knowledge__format_disk', rawInput: {} },
       { title: 'ok_shell', rawInput: {} },
-      { title: 'format_disk', rawInput: { server: 'open-knowledge', tool: 'format_disk' } },
-      { title: 'mcp.open-knowledge.run', rawInput: { server: 'open-knowledge', tool: 'run' } },
+      { title: 'format_disk', rawInput: { server: 'palimpsest', tool: 'format_disk' } },
+      { title: 'mcp.palimpsest.run', rawInput: { server: 'palimpsest', tool: 'run' } },
     ]) {
-      expect(identifyOpenKnowledgeToolCall(call, 'known')).toBeNull();
-      expect(identifyOpenKnowledgeToolCall(call)).toBeNull();
+      expect(identifyPalimpsestToolCall(call, 'known')).toBeNull();
+      expect(identifyPalimpsestToolCall(call)).toBeNull();
     }
   });
 });

@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { act, render, waitFor } from '@testing-library/react';
 import type { Terminal as XtermTerminal } from '@xterm/xterm';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge, OkPtyData } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsPtyData } from '@/lib/desktop-bridge-types';
 
 interface Geometry {
   readonly cols: number;
@@ -79,7 +79,7 @@ afterEach(async () => {
 });
 
 interface ModelledHost {
-  readonly platform: OkDesktopBridge['platform'];
+  readonly platform: PsDesktopBridge['platform'];
   readonly prompt: string;
   repaintAfterResize(previous: Geometry, next: Geometry, screen: ScreenModel): string;
 }
@@ -110,7 +110,7 @@ const unixPtyHost = (platform: 'darwin' | 'linux'): ModelledHost => ({
 });
 
 function hostSession(host: ModelledHost, token: string) {
-  const dataSubscribers: Array<(message: OkPtyData) => void> = [];
+  const dataSubscribers: Array<(message: PsPtyData) => void> = [];
   const pendingDrains: Array<() => void> = [];
   const repaints: Promise<void>[] = [];
   const ptyId = `pty-${token}`;
@@ -159,7 +159,7 @@ function hostSession(host: ModelledHost, token: string) {
     drain: vi.fn(() => {
       pendingDrains.shift()?.();
     }),
-    onData: vi.fn((subscriber: (message: OkPtyData) => void) => {
+    onData: vi.fn((subscriber: (message: PsPtyData) => void) => {
       dataSubscribers.push(subscriber);
       return () => {};
     }),
@@ -181,7 +181,7 @@ function hostSession(host: ModelledHost, token: string) {
     config: { e2eSmoke: true, projectPath: '/project' },
     platform: host.platform,
     getPathForFile: () => null,
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   const record = (text: string) => {
     const [first = '', ...rest] = text.split('\r\n');

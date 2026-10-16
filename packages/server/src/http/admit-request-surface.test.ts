@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import type { ServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import type { ServerRuntimeConfig } from '@palimpsest/core';
 import { beforeEach, describe, expect, test } from 'vitest';
 import {
   __resetWarnedForwardedHeaderRefusalForTests,
@@ -161,7 +161,7 @@ describe('admitRequestSurface under allowExternal consent', () => {
     expect(warns.length).toBe(1);
     expect(warns[0]).toContain('server.externalUrl');
     expect(warns[0]).toContain('server.allowExternal');
-    expect(warns[0]).toContain('.ok/local/config.yml');
+    expect(warns[0]).toContain('.ps/local/config.yml');
     expect(warns[0]).toContain('ok.api.error.count');
     expect(admitRequestSurface(forwarded(), fakeRes().res, local, 'mcp-mount', log)).toBe(false);
     expect(warns.length).toBe(1);

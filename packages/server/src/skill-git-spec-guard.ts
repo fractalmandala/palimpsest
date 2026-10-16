@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import type { SourceSpec } from '@inkeep/open-knowledge-core/skills-catalog';
+import type { SourceSpec } from '@palimpsest/core/skills-catalog';
 import { errorResponse } from './http/error-response.ts';
 import { isAllowedGitUrl } from './local-op-security.ts';
 

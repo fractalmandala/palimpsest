@@ -30,11 +30,11 @@ interface SeededHome {
 }
 
 function seedHomeWithLastOpenedProject(): SeededHome {
-  const tmpHome = mkdtempSync(join(tmpdir(), 'ok-window-chrome-'));
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-window-chrome-project-'));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  const tmpHome = mkdtempSync(join(tmpdir(), 'ps-window-chrome-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-window-chrome-project-'));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   const userDataDir = userDataDirFor(tmpHome);
@@ -64,7 +64,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
       },
     }),
   );
@@ -82,7 +82,7 @@ async function findEditorWindow(app: ElectronApplication, timeoutMs = 20_000): P
       async () => {
         for (const page of app.windows()) {
           const mode = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (mode === 'editor') return true;
         }
@@ -92,7 +92,7 @@ async function findEditorWindow(app: ElectronApplication, timeoutMs = 20_000): P
     )
     .toBe(true);
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'editor') return page;
   }
   throw new Error('editor window vanished between poll resolution and read');
@@ -191,7 +191,7 @@ function readSettledHeaderFit(frames: number): Promise<HeaderFitReading | null> 
 }
 
 test.describe('Windows/Linux window chrome smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(DARWIN, 'macOS composes its own vibrancy/hiddenInset chrome, not this branch.');
   test.skip(!TARGET.exists, TARGET.missingReason);
@@ -244,7 +244,7 @@ test.describe('Windows/Linux window chrome smoke', () => {
 });
 
 test.describe('Editor header drag-region smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -408,7 +408,7 @@ test.describe('Editor header drag-region smoke', () => {
 
     const appHeader = editor.locator('header[data-app-header]');
     const ptyAvailable = await editor.evaluate(
-      () => window.okDesktop?.config.ptyAvailable === true,
+      () => window.psDesktop?.config.ptyAvailable === true,
     );
     const namedButtonRegions = {
       agentsButton: await appRegionOfButton(appHeader, 'Agents'),
@@ -472,7 +472,7 @@ test.describe('Editor header drag-region smoke', () => {
       timeout: 20_000,
     });
     const ptyAvailable = await editor.evaluate(
-      () => window.okDesktop?.config.ptyAvailable === true,
+      () => window.psDesktop?.config.ptyAvailable === true,
     );
 
     const winHandle: JSHandle = await app.browserWindow(editor);

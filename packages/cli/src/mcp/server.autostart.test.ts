@@ -7,12 +7,12 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { expect, test } from 'vitest';
 
 test.each(['disabled', 'failed-start'])(
-  'ok mcp teaches manual startup on a real tool call when autostart is %s',
+  'ps mcp teaches manual startup on a real tool call when autostart is %s',
   async (mode) => {
-    const project = mkdtempSync(join(tmpdir(), 'ok-mcp-autostart-'));
+    const project = mkdtempSync(join(tmpdir(), 'ps-mcp-autostart-'));
     const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-    mkdirSync(join(project, '.ok'));
-    writeFileSync(join(project, '.ok/config.yml'), '{}\n');
+    mkdirSync(join(project, '.ps'));
+    writeFileSync(join(project, '.ps/config.yml'), '{}\n');
     const launcher = join(project, 'launcher.mjs');
     writeFileSync(
       launcher,
@@ -40,9 +40,9 @@ test.each(['disabled', 'failed-start'])(
             (entry): entry is [string, string] => entry[1] !== undefined,
           ),
         ),
-        OK_MCP_AUTOSTART: mode === 'disabled' ? '0' : '1',
-        OK_MCP_SPAWN_TIMEOUT_MS: '5000',
-        OK_BUNDLE_PROXY: '0',
+        PS_MCP_AUTOSTART: mode === 'disabled' ? '0' : '1',
+        PS_MCP_SPAWN_TIMEOUT_MS: '5000',
+        PS_BUNDLE_PROXY: '0',
       },
       stderr: 'pipe',
     });
@@ -56,7 +56,7 @@ test.each(['disabled', 'failed-start'])(
       expect(result.content).toEqual([
         expect.objectContaining({
           type: 'text',
-          text: expect.stringContaining('Run `ok start` in the target project'),
+          text: expect.stringContaining('Run `ps start` in the target project'),
         }),
       ]);
       expect(result.content).toEqual([
@@ -65,7 +65,7 @@ test.each(['disabled', 'failed-start'])(
       expect(result.content).toEqual([
         expect.objectContaining({
           text: expect.stringContaining(
-            'Do not fall back to native file edits for OpenKnowledge content',
+            'Do not fall back to native file edits for Palimpsest content',
           ),
         }),
       ]);
@@ -79,7 +79,7 @@ test.each(['disabled', 'failed-start'])(
         ]);
       }
       expect(existsSync(join(project, 'draft.md'))).toBe(false);
-      expect(existsSync(join(project, '.ok/local/server.lock'))).toBe(false);
+      expect(existsSync(join(project, '.ps/local/server.lock'))).toBe(false);
     } finally {
       await client.close();
       await transport.close();

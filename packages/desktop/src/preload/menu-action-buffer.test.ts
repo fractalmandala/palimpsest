@@ -37,8 +37,8 @@ async function loadBridge(): Promise<MenuBridge> {
   channelListeners.clear();
   vi.resetModules();
   await import('./index.ts');
-  const bridge = exposed.get('okDesktop');
-  if (bridge === undefined) throw new Error('preload did not expose okDesktop');
+  const bridge = exposed.get('psDesktop');
+  if (bridge === undefined) throw new Error('preload did not expose psDesktop');
   return bridge as unknown as MenuBridge;
 }
 

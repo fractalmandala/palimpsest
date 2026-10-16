@@ -1,4 +1,4 @@
-import { parseWikiLink } from '@inkeep/open-knowledge-core/extensions/wiki-link';
+import { parseWikiLink } from '@palimpsest/core/extensions/wiki-link';
 
 export type PropertyInlineSegment =
   | { type: 'text'; value: string }

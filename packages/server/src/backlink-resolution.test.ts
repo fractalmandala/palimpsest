@@ -1,13 +1,13 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { LOCAL_DIR, OK_DIR, skillLiveDocName } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR, PS_DIR, skillLiveDocName } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { BacklinkIndex } from './backlink-index.ts';
 
 const roots: string[] = [];
 function createIndex(): { index: BacklinkIndex; projectDir: string } {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-resolved-links-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-resolved-links-'));
   roots.push(projectDir);
   return { index: new BacklinkIndex({ projectDir, contentDir: projectDir }), projectDir };
 }
@@ -193,7 +193,7 @@ describe('resolved document relationships', () => {
       await index.saveToDisk();
       snapshots.push(
         readFileSync(
-          join(projectDir, OK_DIR, LOCAL_DIR, 'cache', 'main', 'backlinks.json'),
+          join(projectDir, PS_DIR, LOCAL_DIR, 'cache', 'main', 'backlinks.json'),
           'utf8',
         ),
       );
@@ -343,7 +343,7 @@ describe('resolved document relationships', () => {
 
   test('versioned raw-key snapshots query and reconcile without changing their persisted keys', async () => {
     const { index, projectDir } = createIndex();
-    const cache = join(projectDir, OK_DIR, LOCAL_DIR, 'cache/main/backlinks.json');
+    const cache = join(projectDir, PS_DIR, LOCAL_DIR, 'cache/main/backlinks.json');
     mkdirSync(dirname(cache), { recursive: true });
     writeFileSync(
       cache,

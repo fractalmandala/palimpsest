@@ -2,13 +2,13 @@ import {
   DESKTOP_PRODUCTS,
   defaultToDevChannel,
   resolveDesktopProductName,
-} from '@inkeep/open-knowledge-core/constants/product';
+} from '@palimpsest/core/constants/product';
 
 export function applyUnpackagedDevChannel(
   env: Record<string, string | undefined>,
   isPackaged: boolean,
 ): void {
-  if (isPackaged || env.OK_DESKTOP_E2E_SMOKE === '1') return;
+  if (isPackaged || env.PS_DESKTOP_E2E_SMOKE === '1') return;
   defaultToDevChannel(env);
 }
 

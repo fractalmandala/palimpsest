@@ -12,7 +12,7 @@ import { bindTestServerLock, bindTestUiServerLock } from './preview-url-test-hel
 import type { ServerInstance } from './shared.ts';
 
 beforeEach(() => {
-  vi.stubEnv('OK_CHANNEL', 'stable');
+  vi.stubEnv('PS_CHANNEL', 'stable');
 });
 
 afterEach(() => {
@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 const ownedDirectories: string[] = [];
-function temporaryProject(prefix = 'ok-get-preview-url-'): string {
+function temporaryProject(prefix = 'ps-get-preview-url-'): string {
   const dir = mkdtempSync(join(tmpdir(), prefix));
   ownedDirectories.push(dir);
   return dir;
@@ -113,16 +113,16 @@ describe('preview_url tool — UI running', () => {
   });
 
   describe('isHostedAgent steer (desktop terminal or in-app agent panel)', () => {
-    test('document: response leads with `ok open <doc>` and tells the agent not to navigate the URL', async () => {
+    test('document: response leads with `ps open <doc>` and tells the agent not to navigate the URL', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ document: 'specs/foo/SPEC' });
       const text = result.content[0]?.text ?? '';
-      expect(text).toContain('ok open specs/foo/SPEC');
+      expect(text).toContain('ps open specs/foo/SPEC');
       expect(text).toMatch(/Don't navigate the URL|reference only/);
       expect(result.structuredContent?.running).toBe(true);
-      expect(result.structuredContent?.okOpenCommand).toBe('ok open specs/foo/SPEC');
+      expect(result.structuredContent?.psOpenCommand).toBe('ps open specs/foo/SPEC');
     });
 
     test('document: steer tells the agent not to paste the URL into its reply', async () => {
@@ -133,42 +133,42 @@ describe('preview_url tool — UI running', () => {
       expect(result.content[0]?.text ?? '').toContain('paste the URL into your reply');
     });
 
-    test('folder: steers to `ok open <folder>`', async () => {
+    test('folder: steers to `ps open <folder>`', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ folder: 'specs/foo' });
-      expect(result.content[0]?.text ?? '').toContain('ok open specs/foo');
-      expect(result.structuredContent?.okOpenCommand).toBe('ok open specs/foo');
+      expect(result.content[0]?.text ?? '').toContain('ps open specs/foo');
+      expect(result.structuredContent?.psOpenCommand).toBe('ps open specs/foo');
     });
 
-    test('skill default scope (project): steers to `ok open <name> --skill` (no --scope)', async () => {
+    test('skill default scope (project): steers to `ps open <name> --skill` (no --scope)', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ skill: { name: 'trip-log' } });
-      expect(result.content[0]?.text ?? '').toContain('ok open trip-log --skill');
+      expect(result.content[0]?.text ?? '').toContain('ps open trip-log --skill');
       expect(result.content[0]?.text ?? '').not.toContain('--scope');
-      expect(result.structuredContent?.okOpenCommand).toBe('ok open trip-log --skill');
+      expect(result.structuredContent?.psOpenCommand).toBe('ps open trip-log --skill');
     });
 
-    test('skill --scope global: steers to `ok open <name> --skill --scope global`', async () => {
+    test('skill --scope global: steers to `ps open <name> --skill --scope global`', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ skill: { name: 'trip-log', scope: 'global' } });
-      expect(result.content[0]?.text ?? '').toContain('ok open trip-log --skill --scope global');
-      expect(result.structuredContent?.okOpenCommand).toBe(
-        'ok open trip-log --skill --scope global',
+      expect(result.content[0]?.text ?? '').toContain('ps open trip-log --skill --scope global');
+      expect(result.structuredContent?.psOpenCommand).toBe(
+        'ps open trip-log --skill --scope global',
       );
     });
 
-    test('no target (root): no steer — nothing to `ok open`', async () => {
+    test('no target (root): no steer — nothing to `ps open`', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({});
-      expect(result.content[0]?.text ?? '').not.toContain('ok open');
+      expect(result.content[0]?.text ?? '').not.toContain('ps open');
     });
 
     test('NOT a hosted agent (default): no steer — plain Preview URL', async () => {
@@ -176,42 +176,42 @@ describe('preview_url tool — UI running', () => {
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd);
       const result = await handler({ document: 'specs/foo/SPEC' });
-      expect(result.content[0]?.text ?? '').not.toContain('ok open');
-      expect(result.structuredContent?.okOpenCommand ?? null).toBeNull();
+      expect(result.content[0]?.text ?? '').not.toContain('ps open');
+      expect(result.structuredContent?.psOpenCommand ?? null).toBeNull();
     });
 
-    test('hosted agent + no UI running: steer + okOpenCommand still fire (ok open does not need the UI)', async () => {
+    test('hosted agent + no UI running: steer + psOpenCommand still fire (ps open does not need the UI)', async () => {
       const cwd = temporaryProject();
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ document: 'specs/foo/SPEC' });
       expect(result.structuredContent?.running).toBe(false);
-      expect(result.structuredContent?.okOpenCommand).toBe('ok open specs/foo/SPEC');
-      expect(result.content[0]?.text ?? '').toContain('ok open specs/foo/SPEC');
+      expect(result.structuredContent?.psOpenCommand).toBe('ps open specs/foo/SPEC');
+      expect(result.content[0]?.text ?? '').toContain('ps open specs/foo/SPEC');
       expect(result.content[0]?.text ?? '').toContain('paste the URL into your reply');
     });
 
-    test('document with a space: okOpenCommand shell-quotes the path', async () => {
+    test('document with a space: psOpenCommand shell-quotes the path', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ document: 'notes/My Doc' });
-      expect(result.structuredContent?.okOpenCommand).toBe("ok open 'notes/My Doc'");
+      expect(result.structuredContent?.psOpenCommand).toBe("ps open 'notes/My Doc'");
     });
 
-    test('document with an embedded single quote: okOpenCommand POSIX-escapes it', async () => {
+    test('document with an embedded single quote: psOpenCommand POSIX-escapes it', async () => {
       const cwd = temporaryProject();
       bindTestUiServerLock(cwd);
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ document: "Q&A/what's new" });
-      expect(result.structuredContent?.okOpenCommand).toBe("ok open 'Q&A/what'\\''s new'");
+      expect(result.structuredContent?.psOpenCommand).toBe("ps open 'Q&A/what'\\''s new'");
     });
 
-    test('hosted agent + no UI + folder: okOpenCommand still fires', async () => {
+    test('hosted agent + no UI + folder: psOpenCommand still fires', async () => {
       const cwd = temporaryProject();
       const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
       const result = await handler({ folder: 'specs/foo' });
       expect(result.structuredContent?.running).toBe(false);
-      expect(result.structuredContent?.okOpenCommand).toBe('ok open specs/foo');
+      expect(result.structuredContent?.psOpenCommand).toBe('ps open specs/foo');
     });
   });
 
@@ -273,7 +273,7 @@ describe('preview_url tool — skill target', () => {
 });
 
 describe('preview_url tool — no UI running', () => {
-  test('returns running:false + the ok-start hint when nothing is running', async () => {
+  test('returns running:false + the ps-start hint when nothing is running', async () => {
     const cwd = temporaryProject();
     const handler = captureRegistration(cwd);
     const result = await handler({ document: 'specs/foo/SPEC' });
@@ -282,8 +282,8 @@ describe('preview_url tool — no UI running', () => {
     expect(result.structuredContent?.url).toBeNull();
     expect(result.structuredContent?.baseUrl).toBeNull();
     expect(result.structuredContent?.autoOpen).toBe(true);
-    expect(result.content[0]?.text).toContain('No OpenKnowledge server is running');
-    expect(result.content[0]?.text).toContain('`ok start`');
+    expect(result.content[0]?.text).toContain('No Palimpsest server is running');
+    expect(result.content[0]?.text).toContain('`ps start`');
     expect(result.content[0]?.text).not.toContain('`ok ui`');
   });
 
@@ -305,7 +305,7 @@ describe('preview_url tool — no UI running', () => {
     expect(result.structuredContent?.running).toBe(false);
     expect(result.content[0]?.text).toContain('OK server is running');
     expect(result.content[0]?.text).toContain('Retry in a few seconds');
-    expect(result.content[0]?.text).not.toContain('`ok start`');
+    expect(result.content[0]?.text).not.toContain('`ps start`');
   });
 
   test('--only server (capabilities omit ui): permanent hint, no "Retry" (UI never binds on its own)', async () => {
@@ -316,7 +316,7 @@ describe('preview_url tool — no UI running', () => {
     expect(result.structuredContent?.running).toBe(false);
     expect(result.content[0]?.text).toContain('no preview UI is mounted');
     expect(result.content[0]?.text).toContain('--only server');
-    expect(result.content[0]?.text).toContain('Restart it with plain `ok start`');
+    expect(result.content[0]?.text).toContain('Restart it with plain `ps start`');
     expect(result.content[0]?.text).not.toContain('`ok ui`');
     expect(result.content[0]?.text).not.toContain('Retry');
   });
@@ -373,7 +373,7 @@ describe('preview_url tool — backend demand-ensure', () => {
     const handler = captureRegistration(cwd, BASE_CONFIG, {
       serverUrl: async () => {
         throw new AutoStartDisabledError(
-          'OpenKnowledge server is not running and OK_MCP_AUTOSTART=0 disables auto-start.',
+          'Palimpsest server is not running and PS_MCP_AUTOSTART=0 disables auto-start.',
         );
       },
     });
@@ -381,8 +381,8 @@ describe('preview_url tool — backend demand-ensure', () => {
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent?.running).toBe(false);
     expect(result.structuredContent?.url).toBeNull();
-    expect(result.content[0]?.text).toContain('`ok start`');
-    expect(result.content[0]?.text).toContain('OK_MCP_AUTOSTART=0');
+    expect(result.content[0]?.text).toContain('`ps start`');
+    expect(result.content[0]?.text).toContain('PS_MCP_AUTOSTART=0');
     expect(result.content[0]?.text).not.toContain('`ok ui`');
   });
 
@@ -413,7 +413,7 @@ describe('preview_url tool — backend demand-ensure', () => {
     expect(result.structuredContent?.running).toBe(false);
     expect(result.content[0]?.text).toContain('OK server is running');
     expect(result.content[0]?.text).toContain('Retry in a few seconds');
-    expect(result.content[0]?.text).not.toContain('`ok start`');
+    expect(result.content[0]?.text).not.toContain('`ps start`');
   });
 
   test('spawn failure during demand-ensure surfaces isError', async () => {
@@ -506,7 +506,7 @@ function mockOffCwdDeps(
   candidates: Array<{ contentDir: string; baseUrl: string; alive?: boolean }>,
 ): OffCwdResolverDeps {
   const cands = candidates.map((c) => ({
-    lockDir: `${c.contentDir}/.ok/local`,
+    lockDir: `${c.contentDir}/.ps/local`,
     contentDir: c.contentDir,
     baseUrl: c.baseUrl,
     alive: c.alive ?? true,
@@ -520,7 +520,7 @@ function mockOffCwdDeps(
 
 describe('preview_url tool — file branch (out-of-project)', () => {
   test('resolves a loose file to the session whose contentDir contains it', async () => {
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: mockOffCwdDeps([
         { contentDir: '/loose', baseUrl: 'http://localhost:6001' },
       ]),
@@ -534,19 +534,19 @@ describe('preview_url tool — file branch (out-of-project)', () => {
     expect(result.structuredContent?.autoOpen).toBe(true);
   });
 
-  test('no session for the file → running:false with an ok-open hint', async () => {
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+  test('no session for the file → running:false with an ps-open hint', async () => {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: mockOffCwdDeps([]),
     });
     const result = await handler({ file: '/loose/notes.md' });
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent?.running).toBe(false);
     expect(result.structuredContent?.url).toBeNull();
-    expect(result.content[0]?.text).toContain('ok open /loose/notes.md');
+    expect(result.content[0]?.text).toContain('ps open /loose/notes.md');
   });
 
   test('file is mutually exclusive with document', async () => {
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: mockOffCwdDeps([]),
     });
     const result = await handler({ file: '/loose/notes.md', document: 'specs/foo' });
@@ -559,11 +559,11 @@ describe('preview_url tool — file branch boot-on-demand', () => {
   test('boots a session when none serves the file yet, then resolves its URL', async () => {
     let candidate: { contentDir: string; baseUrl: string } | null = null;
     const liveDeps: OffCwdResolverDeps = {
-      discover: async () => (candidate ? [`${candidate.contentDir}/.ok/local`] : []),
+      discover: async () => (candidate ? [`${candidate.contentDir}/.ps/local`] : []),
       inspect: async () =>
         candidate
           ? {
-              lockDir: `${candidate.contentDir}/.ok/local`,
+              lockDir: `${candidate.contentDir}/.ps/local`,
               contentDir: candidate.contentDir,
               baseUrl: candidate.baseUrl,
               alive: true,
@@ -571,7 +571,7 @@ describe('preview_url tool — file branch boot-on-demand', () => {
           : null,
       realpath: async (p) => p,
     };
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: liveDeps,
       ensureSingleFileSession: async () => {
         candidate = { contentDir: '/loose', baseUrl: 'http://localhost:6010' };
@@ -583,14 +583,14 @@ describe('preview_url tool — file branch boot-on-demand', () => {
     expect(result.structuredContent?.url).toBe('http://localhost:6010/#/new');
   });
 
-  test('boot-on-demand that never registers → running:false + ok-open hint', async () => {
+  test('boot-on-demand that never registers → running:false + ps-open hint', async () => {
     const empty: OffCwdResolverDeps = {
       discover: async () => [],
       inspect: async () => null,
       realpath: async (p) => p,
     };
     let called = false;
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: empty,
       ensureSingleFileSession: async () => {
         called = true;
@@ -600,7 +600,7 @@ describe('preview_url tool — file branch boot-on-demand', () => {
     const result = await handler({ file: '/loose/x.md' });
     expect(called).toBe(true);
     expect(result.structuredContent?.running).toBe(false);
-    expect(result.content[0]?.text).toContain('ok open');
+    expect(result.content[0]?.text).toContain('ps open');
   });
 
   test('no ensureSingleFileSession dep (no spawn authority) → hint, no boot', async () => {
@@ -609,12 +609,12 @@ describe('preview_url tool — file branch boot-on-demand', () => {
       inspect: async () => null,
       realpath: async (p) => p,
     };
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: empty,
     });
     const result = await handler({ file: '/loose/y.md' });
     expect(result.structuredContent?.running).toBe(false);
-    expect(result.content[0]?.text).toContain('ok open');
+    expect(result.content[0]?.text).toContain('ps open');
   });
   test('ensureSingleFileSession rejection → running:false + hint (not a tool error)', async () => {
     const empty: OffCwdResolverDeps = {
@@ -622,7 +622,7 @@ describe('preview_url tool — file branch boot-on-demand', () => {
       inspect: async () => null,
       realpath: async (p) => p,
     };
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: empty,
       ensureSingleFileSession: async () => {
         throw new Error('spawn boom');
@@ -631,10 +631,10 @@ describe('preview_url tool — file branch boot-on-demand', () => {
     const result = await handler({ file: '/loose/z.md' });
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent?.running).toBe(false);
-    expect(result.content[0]?.text).toContain('ok open');
+    expect(result.content[0]?.text).toContain('ps open');
   });
   test('relative file path is rejected (must be absolute)', async () => {
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG);
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG);
     const result = await handler({ file: 'notes.md' });
     expect(result.isError).toBe(true);
     expect(result.content[0]?.text).toContain('absolute');
@@ -645,17 +645,17 @@ describe('preview_url tool — file branch boot-on-demand', () => {
       inspect: async () => null,
       realpath: async (p) => p,
     };
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: empty,
       ensureSingleFileSession: async () => true,
     });
     const result = await handler({ file: '/loose/gone.md' });
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent?.running).toBe(false);
-    expect(result.content[0]?.text).toContain('ok open');
+    expect(result.content[0]?.text).toContain('ps open');
   });
   test('file branch honors a user-scoped autoOpen=false preference', async () => {
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: mockOffCwdDeps([
         { contentDir: '/loose', baseUrl: 'http://127.0.0.1:6020' },
       ]),
@@ -672,64 +672,64 @@ describe('preview_url tool — names the running channel command', () => {
     vi.unstubAllEnvs();
   });
 
-  test('a Beta hosted agent is steered to ok-beta open', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('a Beta hosted agent is steered to ps-beta open', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const cwd = temporaryProject();
     bindTestUiServerLock(cwd);
     const handler = captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true });
 
     const doc = await handler({ document: 'specs/foo/SPEC' });
-    expect(doc.structuredContent?.okOpenCommand).toBe('ok-beta open specs/foo/SPEC');
-    expect(doc.content[0]?.text ?? '').toContain('run `ok-beta open specs/foo/SPEC`');
+    expect(doc.structuredContent?.psOpenCommand).toBe('ps-beta open specs/foo/SPEC');
+    expect(doc.content[0]?.text ?? '').toContain('run `ps-beta open specs/foo/SPEC`');
 
     const skill = await handler({ skill: { name: 'trip-log', scope: 'global' } });
-    expect(skill.structuredContent?.okOpenCommand).toBe(
-      'ok-beta open trip-log --skill --scope global',
+    expect(skill.structuredContent?.psOpenCommand).toBe(
+      'ps-beta open trip-log --skill --scope global',
     );
   });
 
-  test('a Beta server with nothing running says ok-beta start', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('a Beta server with nothing running says ps-beta start', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const handler = captureRegistration(temporaryProject());
     const result = await handler({ document: 'specs/foo/SPEC' });
-    expect(result.content[0]?.text).toContain('Start it with `ok-beta start`');
-    expect(result.content[0]?.text).not.toContain('`ok start`');
+    expect(result.content[0]?.text).toContain('Start it with `ps-beta start`');
+    expect(result.content[0]?.text).not.toContain('`ps start`');
   });
 
-  test('a Beta server without a mounted UI says ok-beta start', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('a Beta server without a mounted UI says ps-beta start', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const cwd = temporaryProject();
     bindTestServerLock(cwd, 4321, ['http', 'ws']);
     const result = await captureRegistration(cwd)({ document: 'specs/foo/SPEC' });
-    expect(result.content[0]?.text).toContain('Restart it with plain `ok-beta start`');
+    expect(result.content[0]?.text).toContain('Restart it with plain `ps-beta start`');
   });
 
-  test('a Beta loose file without a session says ok-beta open', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+  test('a Beta loose file without a session says ps-beta open', async () => {
+    vi.stubEnv('PS_CHANNEL', 'beta');
     const empty: OffCwdResolverDeps = {
       discover: async () => [],
       inspect: async () => null,
       realpath: async (p) => p,
     };
-    const handler = captureRegistration(temporaryProject('ok-pv-'), BASE_CONFIG, {
+    const handler = captureRegistration(temporaryProject('ps-pv-'), BASE_CONFIG, {
       offCwdResolverDeps: empty,
     });
     const result = await handler({ file: '/loose/y.md' });
-    expect(result.content[0]?.text).toContain('`ok-beta open /loose/y.md` starts one');
+    expect(result.content[0]?.text).toContain('`ps-beta open /loose/y.md` starts one');
   });
 
   test('Stable hints stay byte-identical', async () => {
-    vi.stubEnv('OK_CHANNEL', 'stable');
+    vi.stubEnv('PS_CHANNEL', 'stable');
     const cwd = temporaryProject();
     bindTestUiServerLock(cwd);
     const steered = await captureRegistration(cwd, BASE_CONFIG, { isHostedAgent: true })({
       folder: 'specs/foo',
     });
-    expect(steered.structuredContent?.okOpenCommand).toBe('ok open specs/foo');
+    expect(steered.structuredContent?.psOpenCommand).toBe('ps open specs/foo');
 
     const idle = await captureRegistration(temporaryProject())({ document: 'specs/foo/SPEC' });
     expect(idle.content[0]?.text).toContain(
-      'No OpenKnowledge server is running for this project. Start it with `ok start` (also starts the preview UI), or open the project in OK Electron.',
+      'No Palimpsest server is running for this project. Start it with `ps start` (also starts the preview UI), or open the project in OK Electron.',
     );
   });
 });

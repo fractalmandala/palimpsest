@@ -11,7 +11,7 @@ let tmpRoot: string;
 let fakeHome: string;
 
 beforeEach(() => {
-  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-size-probe-descent-'));
+  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-size-probe-descent-'));
   fakeHome = resolve(realpathSync(tmpRoot), 'home');
   mkdirSync(fakeHome, { recursive: true });
 });
@@ -26,8 +26,8 @@ function seedManagedAncestorWithLinkedBulk(bulkFileCount: number): string {
   const picked = resolve(ancestor, 'sub');
   mkdirSync(bulk, { recursive: true });
   mkdirSync(picked, { recursive: true });
-  mkdirSync(resolve(ancestor, '.ok'), { recursive: true });
-  writeFileSync(resolve(ancestor, '.ok/config.yml'), '$schema: x\n');
+  mkdirSync(resolve(ancestor, '.ps'), { recursive: true });
+  writeFileSync(resolve(ancestor, '.ps/config.yml'), '$schema: x\n');
   for (let i = 0; i < bulkFileCount; i += 1) {
     writeFileSync(join(bulk, `f${i}.md`), '# x');
   }
@@ -45,8 +45,8 @@ function seedManagedAncestorWithRealBulk(bulkFileCount: number): string {
   const picked = resolve(ancestor, 'sub');
   mkdirSync(bulk, { recursive: true });
   mkdirSync(picked, { recursive: true });
-  mkdirSync(resolve(ancestor, '.ok'), { recursive: true });
-  writeFileSync(resolve(ancestor, '.ok/config.yml'), '$schema: x\n');
+  mkdirSync(resolve(ancestor, '.ps'), { recursive: true });
+  writeFileSync(resolve(ancestor, '.ps/config.yml'), '$schema: x\n');
   for (let i = 0; i < bulkFileCount; i += 1) {
     writeFileSync(join(bulk, `f${i}.md`), '# x');
   }

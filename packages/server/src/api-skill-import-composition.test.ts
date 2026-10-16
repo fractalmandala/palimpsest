@@ -31,8 +31,8 @@ const markdown = (name: string) =>
   `---\nname: ${name}\ndescription: Import contract\n---\n\n## Bytes\n\nBackslash \\* and <custom>raw</custom>.  \n\n`;
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-import-contract-'));
-  source = mkdtempSync(join(tmpdir(), 'ok-import-contract-source-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-import-contract-'));
+  source = mkdtempSync(join(tmpdir(), 'ps-import-contract-source-'));
   mkdirSync(join(root, '.claude'));
   server = await bootCompositionRig(root);
   await server.ready;
@@ -91,7 +91,7 @@ test('single import preserves bundle bytes, provenance and actor attribution', a
     name,
     alreadyImported: true,
   });
-  expect(existsSync(join(root, '.ok/skills-lock.json'))).toBe(true);
+  expect(existsSync(join(root, '.ps/skills-lock.json'))).toBe(true);
 });
 
 test('bulk import retains request order, deduplication and partial results', async () => {
@@ -128,7 +128,7 @@ test('bulk import retains request order, deduplication and partial results', asy
 });
 
 function multipart(files: Array<{ name: string; data: string | Buffer }>) {
-  const boundary = 'ok-import-contract-boundary';
+  const boundary = 'ps-import-contract-boundary';
   const body = Buffer.concat([
     ...files.flatMap(({ name, data }) => [
       Buffer.from(
@@ -244,8 +244,8 @@ test('archive upload preserves nested bundle bytes and rejects expanded entry li
 });
 
 test('aggregate multipart overflow retains the parser failure in an isolated server process', async () => {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-overflow-contract-'));
-  const home = mkdtempSync(join(tmpdir(), 'ok-overflow-home-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-overflow-contract-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-overflow-home-'));
   const child = fork(
     fileURLToPath(new URL('./skill-upload-process.test-helper.ts', import.meta.url)),
     [contentDir, home],
@@ -300,8 +300,8 @@ test('aggregate multipart overflow retains the parser failure in an isolated ser
 }, 30_000);
 
 test('disconnect during an incomplete multipart request retains staging while the listener stays usable', async () => {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-disconnect-contract-'));
-  const home = mkdtempSync(join(tmpdir(), 'ok-disconnect-home-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-disconnect-contract-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-disconnect-home-'));
   const child = fork(
     fileURLToPath(new URL('./skill-upload-process.test-helper.ts', import.meta.url)),
     [contentDir, home],
@@ -351,7 +351,7 @@ test('disconnect during an incomplete multipart request retains staging while th
           markdown('aborted-contract'),
         ].join('\r\n'),
       );
-      const staged = () => readdirSync(home).filter((name) => name.startsWith('ok-skill-upload-'));
+      const staged = () => readdirSync(home).filter((name) => name.startsWith('ps-skill-upload-'));
       await vi.waitFor(() => expect(staged()).toHaveLength(1));
       const retainedStaging = staged();
       socket.destroy();

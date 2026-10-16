@@ -1,10 +1,10 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
-import type { Config } from '@inkeep/open-knowledge-core/config/schema';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { humanFormat } from '@palimpsest/core/config/errors';
+import type { Config } from '@palimpsest/core/config/schema';
 import {
   CONFIG_DOC_NAME_PROJECT,
   CONFIG_DOC_NAME_USER,
-} from '@inkeep/open-knowledge-core/constants/cc1';
+} from '@palimpsest/core/constants/cc1';
 import { Fragment, type ReactNode, useEffect, useRef, useState } from 'react';
 import type { FieldPath } from 'react-hook-form';
 import { toast } from 'sonner';

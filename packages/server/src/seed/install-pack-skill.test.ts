@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { OPENKNOWLEDGE_SKILLS_REPO, RENAMED_PACK_SKILLS } from '@inkeep/open-knowledge-core';
+import { PALIMPSEST_SKILLS_REPO, RENAMED_PACK_SKILLS } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { readInstalledSkills } from '../installed-skills-marker.ts';
 import {
@@ -20,13 +20,13 @@ import {
 } from './install-pack-skill.ts';
 
 function setUpEditor(proj: string, editorDir: string): void {
-  const platformDir = join(proj, editorDir, 'skills', 'open-knowledge');
+  const platformDir = join(proj, editorDir, 'skills', 'palimpsest');
   mkdirSync(platformDir, { recursive: true });
   writeFileSync(join(platformDir, 'SKILL.md'), '# platform\n');
 }
 
 function tmpProject(): string {
-  return mkdtempSync(join(tmpdir(), 'ok-seed-skill-'));
+  return mkdtempSync(join(tmpdir(), 'ps-seed-skill-'));
 }
 
 function orientationName(packId: string): string {
@@ -42,21 +42,21 @@ describe('installPackSkill', () => {
       'consolidate-notes',
       'research-with-sources',
     ]);
-    expect(resolvePackSkillSources('okf').map(({ name }) => name)).toEqual(['okf-knowledge-base']);
-    expect(RENAMED_PACK_SKILLS['open-knowledge-pack-okf']).toBe('okf-knowledge-base');
+    expect(resolvePackSkillSources('psf').map(({ name }) => name)).toEqual(['psf-knowledge-base']);
+    expect(RENAMED_PACK_SKILLS['open-knowledge-pack-psf']).toBe('psf-knowledge-base');
   });
 
   test('on-demand install reports a newly-authored OKF skill', async () => {
     const proj = tmpProject();
     setUpEditor(proj, '.claude');
 
-    const result = await installPackSkillOnDemand(proj, 'okf');
+    const result = await installPackSkillOnDemand(proj, 'psf');
 
     expect(result).toEqual({
       installedHosts: ['Claude Code'],
-      skills: [{ name: 'okf-knowledge-base', created: true }],
+      skills: [{ name: 'psf-knowledge-base', created: true }],
     });
-    expect(existsSync(join(proj, '.claude', 'skills', 'okf-knowledge-base', 'SKILL.md'))).toBe(
+    expect(existsSync(join(proj, '.claude', 'skills', 'psf-knowledge-base', 'SKILL.md'))).toBe(
       true,
     );
   });
@@ -64,17 +64,17 @@ describe('installPackSkill', () => {
   test('on-demand install recognizes and preserves an existing same-name skill', async () => {
     const proj = tmpProject();
     setUpEditor(proj, '.claude');
-    const skillDir = join(proj, '.claude', 'skills', 'okf-knowledge-base');
+    const skillDir = join(proj, '.claude', 'skills', 'psf-knowledge-base');
     mkdirSync(skillDir, { recursive: true });
     const authored =
-      '---\nname: okf-knowledge-base\ndescription: team guidance\n---\nDo not replace me.\n';
+      '---\nname: psf-knowledge-base\ndescription: team guidance\n---\nDo not replace me.\n';
     writeFileSync(join(skillDir, 'SKILL.md'), authored, 'utf-8');
 
-    const result = await installPackSkillOnDemand(proj, 'okf');
+    const result = await installPackSkillOnDemand(proj, 'psf');
 
     expect(result).toEqual({
       installedHosts: [],
-      skills: [{ name: 'okf-knowledge-base', created: false }],
+      skills: [{ name: 'psf-knowledge-base', created: false }],
     });
     expect(readFileSync(join(skillDir, 'SKILL.md'), 'utf-8')).toBe(authored);
   });
@@ -87,21 +87,21 @@ describe('installPackSkill', () => {
     expect(result.editors).toEqual(['Claude Code']);
     expect(result.conflicts).toEqual([]);
     expect(existsSync(join(proj, '.claude', 'skills', name, 'SKILL.md'))).toBe(true);
-    expect(existsSync(join(proj, '.ok', 'skills', name))).toBe(false);
+    expect(existsSync(join(proj, '.ps', 'skills', name))).toBe(false);
     expect(readInstalledSkills(proj).skills[name]).toBeUndefined();
   });
 
-  test('records skills.sh provenance in .ok/skills-lock.json for reimport', async () => {
+  test('records skills.sh provenance in .ps/skills-lock.json for reimport', async () => {
     const proj = tmpProject();
     setUpEditor(proj, '.claude');
     const name = orientationName('knowledge-base');
     await installPackSkill(proj, 'knowledge-base');
-    const lock = JSON.parse(readFileSync(join(proj, '.ok', 'skills-lock.json'), 'utf-8')) as {
+    const lock = JSON.parse(readFileSync(join(proj, '.ps', 'skills-lock.json'), 'utf-8')) as {
       skills: Record<string, { source: string; skill: string; contentHash: string }>;
     };
     const entry = lock.skills[name];
     expect(entry).toBeDefined();
-    expect(entry.source).toBe(OPENKNOWLEDGE_SKILLS_REPO);
+    expect(entry.source).toBe(PALIMPSEST_SKILLS_REPO);
     expect(entry.skill).toBe(name);
     expect(entry.contentHash).toMatch(/^[a-f0-9]{64}$/);
   });
@@ -139,7 +139,7 @@ describe('installPackSkill', () => {
 
     for (const { name } of sources) {
       expect(existsSync(join(proj, '.claude', 'skills', name, 'SKILL.md'))).toBe(true);
-      expect(existsSync(join(proj, '.ok', 'skills', name))).toBe(false);
+      expect(existsSync(join(proj, '.ps', 'skills', name))).toBe(false);
     }
     const root = sources[0];
     expect(root).toBeDefined();
@@ -156,7 +156,7 @@ describe('installPackSkill', () => {
     expect(result).toEqual({ editors: [], conflicts: [] });
     expect(existsSync(join(proj, '.claude'))).toBe(false);
     expect(existsSync(join(proj, '.agents'))).toBe(false);
-    expect(existsSync(join(proj, '.ok', 'skills', name))).toBe(false);
+    expect(existsSync(join(proj, '.ps', 'skills', name))).toBe(false);
     expect(readInstalledSkills(proj).skills[name]).toBeUndefined();
   });
 
@@ -204,8 +204,8 @@ describe('installPackSkill', () => {
     const outside = tmpProject();
     const name = orientationName('knowledge-base');
     symlinkSync(outside, join(proj, '.claude'));
-    mkdirSync(join(outside, 'skills', 'open-knowledge'), { recursive: true });
-    writeFileSync(join(outside, 'skills', 'open-knowledge', 'SKILL.md'), '# platform\n');
+    mkdirSync(join(outside, 'skills', 'palimpsest'), { recursive: true });
+    writeFileSync(join(outside, 'skills', 'palimpsest', 'SKILL.md'), '# platform\n');
     expect((await installPackSkill(proj, 'knowledge-base')).editors).toEqual([]);
     expect(existsSync(join(outside, 'skills', name))).toBe(false);
     expect(readInstalledSkills(proj).skills[name]).toBeUndefined();
@@ -257,7 +257,7 @@ describe('installPackSkill — an install under the old name is left alone', () 
 
 describe('classifyPresentPackSkill — ours-retrofit', () => {
   test('no lock entry but matching metadata.pack reads as ours', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-classify-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-classify-'));
     writeFileSync(
       join(dir, 'SKILL.md'),
       '---\nname: note-taking\ndescription: "x"\nmetadata:\n  pack: "plain-notes"\n---\n',
@@ -269,7 +269,7 @@ describe('classifyPresentPackSkill — ours-retrofit', () => {
   });
 
   test("another pack's id in the frontmatter is not ours", () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-classify-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-classify-'));
     writeFileSync(
       join(dir, 'SKILL.md'),
       '---\nname: note-taking\nmetadata:\n  pack: "worldbuilding"\n---\n',
@@ -282,7 +282,7 @@ describe('classifyPresentPackSkill — ours-retrofit', () => {
 
   test('an unreadable or absent bundle is undecidable, never ours', () => {
     expect(
-      classifyPresentPackSkill('plain-notes', 'note-taking', join(tmpdir(), 'ok-nope-missing'), {
+      classifyPresentPackSkill('plain-notes', 'note-taking', join(tmpdir(), 'ps-nope-missing'), {
         schema: 1,
         skills: {},
       }),
@@ -294,7 +294,7 @@ describe('classifyPresentPackSkill — ours-retrofit', () => {
       schema: 1 as const,
       skills: {
         'note-taking': {
-          source: 'https://skills.sh/inkeep/open-knowledge-skills/note-taking',
+          source: 'https://skills.sh/fractalmandala/palimpsest-skills/note-taking',
           skill: 'note-taking',
           contentHash: 'h',
           importedAt: '2026-01-01T00:00:00.000Z',
@@ -320,7 +320,7 @@ describe('classifyPresentPackSkill — ours-retrofit', () => {
   });
 
   test('a pack id in the body, not the frontmatter, is not ours', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-classify-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-classify-'));
     writeFileSync(
       join(dir, 'SKILL.md'),
       [

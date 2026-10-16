@@ -14,15 +14,15 @@ describe('the built-in project skill reaches the .agents hub', () => {
   let project: string;
 
   beforeEach(() => {
-    home = mkdtempSync(join(tmpdir(), 'ok-hub-home-'));
-    project = mkdtempSync(join(tmpdir(), 'ok-hub-project-'));
+    home = mkdtempSync(join(tmpdir(), 'ps-hub-home-'));
+    project = mkdtempSync(join(tmpdir(), 'ps-hub-project-'));
   });
   afterEach(() => {
     rmSync(home, { recursive: true, force: true });
     rmSync(project, { recursive: true, force: true });
   });
 
-  const hubSkill = () => join(project, '.agents', 'skills', 'open-knowledge', 'SKILL.md');
+  const hubSkill = () => join(project, '.agents', 'skills', 'palimpsest', 'SKILL.md');
 
   test('the per-editor writer cannot serve a hub reader — the gap this closes', () => {
     expect(writeProjectSkill(EDITOR_TARGETS['lm-studio'], project, { home }).action).toBe(

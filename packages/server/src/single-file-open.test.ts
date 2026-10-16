@@ -29,8 +29,8 @@ function tmp(prefix: string): string {
   return dir;
 }
 function makeProject(root: string, contentDir = '.'): void {
-  mkdirSync(join(root, '.ok'), { recursive: true });
-  writeFileSync(join(root, '.ok', 'config.yml'), `content:\n  dir: ${contentDir}\n`, 'utf-8');
+  mkdirSync(join(root, '.ps'), { recursive: true });
+  writeFileSync(join(root, '.ps', 'config.yml'), `content:\n  dir: ${contentDir}\n`, 'utf-8');
 }
 
 afterEach(() => {
@@ -183,14 +183,14 @@ describe('prepareSingleFileOpen with an explicit project root', () => {
 });
 
 describe('createEphemeralProjectDir', () => {
-  test('synthesizes a throwaway projectDir with a valid .ok/config.yml + .gitignore', () => {
+  test('synthesizes a throwaway projectDir with a valid .ps/config.yml + .gitignore', () => {
     const contentDir = tmp('sfo-content-');
     const projectDir = createEphemeralProjectDir(contentDir);
     cleanups.push(projectDir);
 
-    expect(existsSync(join(projectDir, '.ok', 'config.yml'))).toBe(true);
-    expect(existsSync(join(projectDir, '.ok', '.gitignore'))).toBe(true);
-    const cfg = readFileSync(join(projectDir, '.ok', 'config.yml'), 'utf-8');
+    expect(existsSync(join(projectDir, '.ps', 'config.yml'))).toBe(true);
+    expect(existsSync(join(projectDir, '.ps', '.gitignore'))).toBe(true);
+    const cfg = readFileSync(join(projectDir, '.ps', 'config.yml'), 'utf-8');
     expect(cfg).toContain(JSON.stringify(contentDir));
     expect(basename(projectDir).startsWith(EPHEMERAL_PROJECT_DIR_PREFIX)).toBe(true);
     expect(projectDir).not.toBe(contentDir);
@@ -198,14 +198,14 @@ describe('createEphemeralProjectDir', () => {
 });
 
 describe('seedEphemeralProjectDir', () => {
-  test('seeds .ok/config.yml + .gitignore into an existing dir and returns it', () => {
+  test('seeds .ps/config.yml + .gitignore into an existing dir and returns it', () => {
     const contentDir = tmp('sfo-content-');
     const bareDir = tmp('sfo-bare-');
     const returned = seedEphemeralProjectDir(bareDir, contentDir);
     expect(returned).toBe(bareDir);
-    expect(existsSync(join(bareDir, '.ok', 'config.yml'))).toBe(true);
-    expect(existsSync(join(bareDir, '.ok', '.gitignore'))).toBe(true);
-    expect(readFileSync(join(bareDir, '.ok', 'config.yml'), 'utf-8')).toContain(
+    expect(existsSync(join(bareDir, '.ps', 'config.yml'))).toBe(true);
+    expect(existsSync(join(bareDir, '.ps', '.gitignore'))).toBe(true);
+    expect(readFileSync(join(bareDir, '.ps', 'config.yml'), 'utf-8')).toContain(
       JSON.stringify(contentDir),
     );
   });

@@ -53,7 +53,7 @@ describe('agent writes refused at the session limit say nothing was committed (P
   let extension: ReturnType<typeof createApiExtension>;
 
   beforeEach(async () => {
-    contentDir = mkdtempSync(join(tmpdir(), 'ok-session-capacity-'));
+    contentDir = mkdtempSync(join(tmpdir(), 'ps-session-capacity-'));
     hocuspocus = new Hocuspocus({ quiet: true });
     sessionManager = new AgentSessionManager(hocuspocus, {
       maxSessions: 1,

@@ -72,7 +72,7 @@ export function previousPublishedRelease(tag, tags) {
 }
 
 export function realPublishedReleaseTags(
-  repo = process.env.GITHUB_REPOSITORY || 'inkeep/open-knowledge',
+  repo = process.env.GITHUB_REPOSITORY || 'fractalmandala/palimpsest',
 ) {
   const output = execFileSync(
     'gh',

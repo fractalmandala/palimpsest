@@ -3,9 +3,9 @@ import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet, type EditorView } from '@tiptap/pm/view';
 import type { ResolveConfidence } from '../mode-switch-position-resolver';
 import { FLASH_DURATION_MS } from './flash-shared';
-import { clampFlashRange, OK_LANDING_FLASH_CLASS } from './landing-flash-shared';
+import { clampFlashRange, PS_LANDING_FLASH_CLASS } from './landing-flash-shared';
 
-export const landingFlashKey = new PluginKey<DecorationSet>('okLandingFlash');
+export const landingFlashKey = new PluginKey<DecorationSet>('psLandingFlash');
 
 interface LandingFlashMeta {
   add?: { from: number; to: number };
@@ -25,7 +25,7 @@ export function createLandingFlashPlugin(): Plugin<DecorationSet> {
         if (meta?.clear) next = DecorationSet.empty;
         if (meta?.add && meta.add.to > meta.add.from) {
           next = DecorationSet.create(tr.doc, [
-            Decoration.inline(meta.add.from, meta.add.to, { class: OK_LANDING_FLASH_CLASS }),
+            Decoration.inline(meta.add.from, meta.add.to, { class: PS_LANDING_FLASH_CLASS }),
           ]);
         }
         return next;
@@ -70,7 +70,7 @@ export function flashWysiwygLanding(
 }
 
 export const LandingFlash = Extension.create({
-  name: 'okLandingFlash',
+  name: 'psLandingFlash',
   addProseMirrorPlugins() {
     return [createLandingFlashPlugin()];
   },

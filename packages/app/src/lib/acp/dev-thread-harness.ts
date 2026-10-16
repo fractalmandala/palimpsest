@@ -5,7 +5,7 @@ import type {
   ThreadInfo,
   ThreadServerFrame,
   ThreadStatus,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
 import type { AgentThreadClient } from './thread-client';
 
 interface DevThreadOptions {

@@ -1,18 +1,18 @@
-import { ProblemDetailsSchema } from '@inkeep/open-knowledge-core/schemas/api';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import type {
-  OkPackId,
-  OkScaffoldApplyResult,
-  OkScaffoldPlan,
-  OkSeedApplyResult,
-  OkSeedError,
-  OkSeedListPacksResult,
-  OkSeedPackInfo,
-  OkSeedPlanResult,
+  PsPackId,
+  PsScaffoldApplyResult,
+  PsScaffoldPlan,
+  PsSeedApplyResult,
+  PsSeedError,
+  PsSeedListPacksResult,
+  PsSeedPackInfo,
+  PsSeedPlanResult,
 } from '@/lib/desktop-bridge-types';
 import { emitSkillsChanged } from '@/lib/documents-events';
 
-async function translateSeedError(res: Response): Promise<OkSeedError> {
+async function translateSeedError(res: Response): Promise<PsSeedError> {
   const body = (await res.json().catch(() => null)) as unknown;
   const parsed = ProblemDetailsSchema.safeParse(body);
   if (!parsed.success) {
@@ -34,35 +34,35 @@ async function translateSeedError(res: Response): Promise<OkSeedError> {
 
 interface SeedPlanOptions {
   rootDir?: string;
-  packId?: OkPackId;
+  packId?: PsPackId;
   preview?: { skillsInstallable: boolean };
 }
 interface SeedApplyOptions {
-  packId?: OkPackId;
+  packId?: PsPackId;
 }
 
 interface SeedClientShape {
-  plan: (options?: SeedPlanOptions) => Promise<OkSeedPlanResult>;
-  apply: (plan: OkScaffoldPlan, options?: SeedApplyOptions) => Promise<OkSeedApplyResult>;
-  listPacks: () => Promise<OkSeedListPacksResult>;
+  plan: (options?: SeedPlanOptions) => Promise<PsSeedPlanResult>;
+  apply: (plan: PsScaffoldPlan, options?: SeedApplyOptions) => Promise<PsSeedApplyResult>;
+  listPacks: () => Promise<PsSeedListPacksResult>;
 }
 
 export function seedClient(): SeedClientShape {
-  const okDesktop = typeof window !== 'undefined' ? window.okDesktop : undefined;
-  if (okDesktop?.seed) {
-    const desktopApply = okDesktop.seed.apply;
+  const psDesktop = typeof window !== 'undefined' ? window.psDesktop : undefined;
+  if (psDesktop?.seed) {
+    const desktopApply = psDesktop.seed.apply;
     return {
-      plan: okDesktop.seed.plan,
+      plan: psDesktop.seed.plan,
       apply: async (plan, options) => {
         const result = await desktopApply(plan, options);
         if (result.ok) emitSkillsChanged();
         return result;
       },
-      listPacks: okDesktop.seed.listPacks,
+      listPacks: psDesktop.seed.listPacks,
     };
   }
   return {
-    plan: async (options?: SeedPlanOptions): Promise<OkSeedPlanResult> => {
+    plan: async (options?: SeedPlanOptions): Promise<PsSeedPlanResult> => {
       const params = new URLSearchParams();
       if (options?.rootDir) params.set('rootDir', options.rootDir);
       if (options?.packId) params.set('packId', options.packId);
@@ -71,13 +71,13 @@ export function seedClient(): SeedClientShape {
       if (!res.ok) {
         return { ok: false, error: await translateSeedError(res) };
       }
-      const body = (await res.json().catch(() => null)) as { plan?: OkScaffoldPlan } | null;
+      const body = (await res.json().catch(() => null)) as { plan?: PsScaffoldPlan } | null;
       if (!body?.plan) {
         return { ok: false, error: { kind: 'internal', message: t`Malformed plan response` } };
       }
       return { ok: true, plan: body.plan };
     },
-    apply: async (plan: OkScaffoldPlan, options?: SeedApplyOptions): Promise<OkSeedApplyResult> => {
+    apply: async (plan: PsScaffoldPlan, options?: SeedApplyOptions): Promise<PsSeedApplyResult> => {
       const res = await fetch('/api/seed/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,7 +90,7 @@ export function seedClient(): SeedClientShape {
         return { ok: false, error: await translateSeedError(res) };
       }
       const body = (await res.json().catch(() => null)) as {
-        result?: OkScaffoldApplyResult;
+        result?: PsScaffoldApplyResult;
       } | null;
       if (!body?.result) {
         return { ok: false, error: { kind: 'internal', message: t`Malformed apply response` } };
@@ -98,12 +98,12 @@ export function seedClient(): SeedClientShape {
       emitSkillsChanged();
       return { ok: true, result: body.result };
     },
-    listPacks: async (): Promise<OkSeedListPacksResult> => {
+    listPacks: async (): Promise<PsSeedListPacksResult> => {
       const res = await fetch('/api/seed/packs');
       if (!res.ok) {
         return { ok: false, error: { kind: 'internal', message: `HTTP ${res.status}` } };
       }
-      const body = (await res.json().catch(() => null)) as { packs?: OkSeedPackInfo[] } | null;
+      const body = (await res.json().catch(() => null)) as { packs?: PsSeedPackInfo[] } | null;
       if (!body || !Array.isArray(body.packs)) {
         return {
           ok: false,

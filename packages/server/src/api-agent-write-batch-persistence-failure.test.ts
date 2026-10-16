@@ -7,7 +7,7 @@ import { Hocuspocus } from '@hocuspocus/server';
 import {
   DEFAULT_LINKS_VALIDATION,
   DEFAULT_SUPPRESS_LOG_LINK_ADVISORIES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   AGENT_WRITE_ORIGIN,
@@ -18,9 +18,9 @@ import { createDerivedDocumentIndexApiPortStub } from './api-extension.test-help
 import { createApiExtension } from './api-extension.ts';
 import {
   DocumentDurabilityState,
-  OK_DOC_REMOVED,
-  OK_STORE_DISCARDED,
-  OK_STORE_REFUSED,
+  PS_DOC_REMOVED,
+  PS_STORE_DISCARDED,
+  PS_STORE_REFUSED,
 } from './document-durability-state.ts';
 
 interface CapturedResponse {
@@ -56,7 +56,7 @@ let sessionManager: AgentSessionManager;
 let durabilityState: DocumentDurabilityState;
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-batch-refusal-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-batch-refusal-'));
   contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   hocuspocus = new Hocuspocus({ quiet: true });
@@ -111,7 +111,7 @@ describe('agent-write-batch — store-refused flush failure rendering', () => {
     }, AGENT_WRITE_ORIGIN);
 
     durabilityState.recordStoreFailure(docName, {
-      code: OK_STORE_REFUSED,
+      code: PS_STORE_REFUSED,
       message: `duplication tripwire baseline unavailable for ${docName}; store refused (fail-closed)`,
     });
 
@@ -141,7 +141,7 @@ describe('agent-write-batch — store-refused flush failure rendering', () => {
   test('a doc-removed flush failure keeps the doc-removed contract on the batch endpoint', async () => {
     const docName = 'batch-doc-removed';
     durabilityState.recordStoreFailure(docName, {
-      code: OK_DOC_REMOVED,
+      code: PS_DOC_REMOVED,
       message: 'the document is no longer on disk',
     });
 
@@ -162,7 +162,7 @@ describe('agent-write-batch — store-refused flush failure rendering', () => {
   test('a store discarded by a branch switch reports branch-switched on the batch endpoint', async () => {
     const docName = 'batch-branch-switched';
     durabilityState.recordStoreFailure(docName, {
-      code: OK_STORE_DISCARDED,
+      code: PS_STORE_DISCARDED,
       message: `A Git branch switch discarded the pending save of ${docName}`,
     });
 

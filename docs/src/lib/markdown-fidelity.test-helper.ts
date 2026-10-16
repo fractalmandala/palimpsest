@@ -162,7 +162,7 @@ export const FIDELITY_FIXTURES: readonly FidelityFixture[] = [
   },
   {
     name: 'a block that reached the four-space column',
-    markdown: 'Run the installer:\n\n    ok init --here\n',
+    markdown: 'Run the installer:\n\n    ps init --here\n',
     expect: ['indented-code'],
   },
   {
@@ -215,7 +215,7 @@ export const FIDELITY_FIXTURES: readonly FidelityFixture[] = [
   {
     name: 'an autolink and an HTML comment, which an MDX parser rejects outright',
     markdown:
-      'Download it from <https://openknowledge.ai/download>.\n\n<!-- linux-arm64: no published build -->\n',
+      'Download it from <https://github.com/fractalmandala/palimpsest/download>.\n\n<!-- linux-arm64: no published build -->\n',
     expect: [],
   },
 ];

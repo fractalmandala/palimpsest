@@ -9,9 +9,9 @@ import {
   SkillInstallStateSuccessSchema,
   SkillsInstalledSuccessSchema,
   TemplatesListSuccessSchema,
-} from '@inkeep/open-knowledge-core';
-import { resolveProjectIdentity } from '@inkeep/open-knowledge-core/shadow-repo-layout';
-import type { enumerateInstalledSkills } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import { resolveProjectIdentity } from '@palimpsest/core/shadow-repo-layout';
+import type { enumerateInstalledSkills } from '@palimpsest/core/skills-catalog';
 import type { CommentService } from '../comments/comment-service.ts';
 import { resolveProjectTemplates } from '../content/templates-resolver.ts';
 import { scanGlobalInPlaceSkillsAsync, scanInPlaceSkills } from '../in-place-skills.ts';

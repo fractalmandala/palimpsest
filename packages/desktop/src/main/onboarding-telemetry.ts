@@ -1,5 +1,5 @@
-import type { CreateNewBannerKind } from '@inkeep/open-knowledge-core';
-import { withSpanSync } from '@inkeep/open-knowledge-server';
+import type { CreateNewBannerKind } from '@palimpsest/core';
+import { withSpanSync } from '@palimpsest/server';
 import type { EntryPoint } from '../shared/entry-point.ts';
 import type { HandoffOutcome } from './share-handoff.ts';
 

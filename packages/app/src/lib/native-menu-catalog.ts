@@ -1,4 +1,4 @@
-import type { NativeMenuLabelKey } from '@inkeep/open-knowledge-core/constants/native-menu-labels';
+import type { NativeMenuLabelKey } from '@palimpsest/core/constants/native-menu-labels';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
@@ -60,5 +60,5 @@ export const NATIVE_MENU_MESSAGES = {
 export const MENU_LABEL_TEXT_MESSAGES: readonly MessageDescriptor[] = [
   msg`Install for Claude Chat & Cowork (desktop app)`,
   msg`New Terminal Window`,
-  msg`Uninstall OpenKnowledge`,
+  msg`Uninstall Palimpsest`,
 ];

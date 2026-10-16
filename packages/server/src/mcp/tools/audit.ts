@@ -1,4 +1,4 @@
-import { BrokenLinkSuppressionSchema, validationCoverageLines } from '@inkeep/open-knowledge-core';
+import { BrokenLinkSuppressionSchema, validationCoverageLines } from '@palimpsest/core';
 import { z } from 'zod';
 import {
   formatAuditBrokenLinkSuppressionLine,
@@ -26,7 +26,7 @@ import {
 
 export const DESCRIPTION = [
   'Read-only validation of markdownlint, frontmatter, OKF and broken internal links. Requires the Hocuspocus server. No args scans all in-scope .md/.mdx; `path` narrows to file/folder. `links` is the navigation/graph tool.',
-  'ran names selected `markdownlint`, `frontmatter`, `okf`, `links`. A family absent from `ran` was not checked. A selected family remains in ran if degraded; warnings explain why and it may still have contributed findings. okf covers document and project-tree OKF checks here.',
+  'ran names selected `markdownlint`, `frontmatter`, `psf`, `links`. A family absent from `ran` was not checked. A selected family remains in ran if degraded; warnings explain why and it may still have contributed findings. psf covers document and project-tree OKF checks here.',
   "Broken links are reported under the source doc. Default-on validation.suppressLogLinkAdvisories omits links inside lowercase log.md/log.mdx at any depth; LOG.md is ordinary. brokenLinkSuppression reports reason reserved-log-policy and count without paths/hrefs. Logs are append-only history: never rewrite old entries to clear links. links({kind:'dead'}) reads raw state.",
   'Diagnostics carry source, code, message, 0-based LSP range (link columns approximate) and severity. Broken links default to warning; validation.links can raise/hide them. Only problematic files are listed; fileCount/errorCount/warningCount reflect full scan. Output is capped at 10 files × 10 diagnostics each and project-wide at 10 warnings; omittedWarningCount reports dropped warnings. Narrow path reduces competing files; per-file caps still apply. Follow runtime hints for document lint and raw dead links; project-tree OKF findings remain capped.',
   'Nothing is modified. Auto-fix document lint with lint({document,fix:true}); fix broken links with edit/write.',

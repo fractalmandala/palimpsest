@@ -75,13 +75,13 @@ function linesOf(path: string): string[] {
 }
 
 async function runVerdictCases(cases: string[], retries: number): Promise<VerdictRun> {
-  const runDir = mkdtempSync(join(tmpdir(), 'ok-boot-verdict-'));
+  const runDir = mkdtempSync(join(tmpdir(), 'ps-boot-verdict-'));
   runDirs.push(runDir);
   const childTmp = join(runDir, 'tmp');
   mkdirSync(childTmp);
   const env = createNestedPlaywrightEnv({
-    OK_BOOT_VERDICT_RUN_DIR: runDir,
-    OK_BOOT_VERDICT_LIVENESS_BOUND_MS: String(PLAYWRIGHT_RUN_LIVENESS_BOUND_MS),
+    PS_BOOT_VERDICT_RUN_DIR: runDir,
+    PS_BOOT_VERDICT_LIVENESS_BOUND_MS: String(PLAYWRIGHT_RUN_LIVENESS_BOUND_MS),
     NODE_OPTIONS: `--import=${REFUSE_PID_SIGNALS}`,
     TMPDIR: childTmp,
     PLAYWRIGHT_HTML_OUTPUT_DIR: join(runDir, 'html-report'),
@@ -289,7 +289,7 @@ function settledRun(settled: PromiseSettledResult<VerdictRun>): VerdictRun {
 }
 
 beforeAll(async () => {
-  const outerReportDir = mkdtempSync(join(tmpdir(), 'ok-boot-verdict-outer-'));
+  const outerReportDir = mkdtempSync(join(tmpdir(), 'ps-boot-verdict-outer-'));
   runDirs.push(outerReportDir);
   vi.stubEnv(
     'PLAYWRIGHT_JSON_OUTPUT_FILE',

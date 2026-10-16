@@ -56,13 +56,13 @@ describe('ok ui tombstone', () => {
         `,
       ],
       cwd: CLI_PACKAGE_ROOT,
-      env: { ...process.env, NO_COLOR: '1', OK_CHANNEL: 'stable' },
+      env: { ...process.env, NO_COLOR: '1', PS_CHANNEL: 'stable' },
     });
 
     const stderr = result.stderr.toString();
     expect(result.exitCode).toBe(1);
     expect(stderr).toContain('`ok ui` was removed');
-    expect(stderr).toContain('ok start');
+    expect(stderr).toContain('ps start');
     expect(stderr).not.toContain('too many arguments');
   }, 30_000);
 });
@@ -81,7 +81,7 @@ function runCliSource(args: readonly string[], channel: 'stable' | 'beta') {
       `,
     ],
     cwd: CLI_PACKAGE_ROOT,
-    env: { ...process.env, NO_COLOR: '1', OK_CHANNEL: channel },
+    env: { ...process.env, NO_COLOR: '1', PS_CHANNEL: channel },
   });
 }
 
@@ -90,31 +90,31 @@ describe('CLI names the running channel command', () => {
     const result = runCliSource(['--help'], 'stable');
     const stdout = result.stdout.toString();
     expect(result.exitCode).toBe(0);
-    expect(stdout).toContain('Usage: open-knowledge [options] [file | command]');
+    expect(stdout).toContain('Usage: palimpsest [options] [file | command]');
     expect(stdout).toContain(
       '  ok notes.md              Open a single markdown file in the editor',
     );
     expect(stdout).toContain(
-      '  ok open ./start.md       Open a file whose name collides with a subcommand',
+      '  ps open ./start.md       Open a file whose name collides with a subcommand',
     );
   }, 30_000);
 
-  test('Beta --help names open-knowledge-beta and ok-beta', () => {
+  test('Beta --help names palimpsest-beta and ps-beta', () => {
     const result = runCliSource(['--help'], 'beta');
     const stdout = result.stdout.toString();
     expect(result.exitCode).toBe(0);
-    expect(stdout).toContain('Usage: open-knowledge-beta [options] [file | command]');
+    expect(stdout).toContain('Usage: palimpsest-beta [options] [file | command]');
     expect(stdout).toContain(
-      '  ok-beta notes.md              Open a single markdown file in the editor',
+      '  ps-beta notes.md              Open a single markdown file in the editor',
     );
     expect(stdout).not.toMatch(/^ {2}ok /m);
   }, 30_000);
 
-  test('Beta `ui` tombstone points at ok-beta start', () => {
+  test('Beta `ui` tombstone points at ps-beta start', () => {
     const result = runCliSource(['ui'], 'beta');
     expect(result.exitCode).toBe(1);
     expect(result.stderr.toString()).toContain(
-      '`ok-beta ui` was removed — the editor UI is served by the project server. Run `ok-beta start` instead.',
+      '`ps-beta ui` was removed — the editor UI is served by the project server. Run `ps-beta start` instead.',
     );
   }, 30_000);
 });
@@ -151,16 +151,16 @@ describe('committed project-local key startup warning', () => {
   let projectDir: string;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-committed-bind-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), 'server:\n  bind:\n    - 0.0.0.0\n');
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-committed-bind-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), 'server:\n  bind:\n    - 0.0.0.0\n');
   });
 
   afterEach(() => {
     rmSync(projectDir, { recursive: true, force: true });
   });
 
-  test('the preAction hook names a committed server.bind as ignored and points at the OK_BIND fix', () => {
+  test('the preAction hook names a committed server.bind as ignored and points at the PS_BIND fix', () => {
     const result = Bun.spawnSync({
       cmd: [
         'node',
@@ -186,8 +186,8 @@ describe('committed project-local key startup warning', () => {
 
     const stderr = result.stderr.toString();
     expect(stderr).toContain('server.bind is a per-machine (project-local) setting');
-    expect(stderr).toContain('.ok/local/config.yml');
-    expect(stderr).toContain('OK_BIND');
+    expect(stderr).toContain('.ps/local/config.yml');
+    expect(stderr).toContain('PS_BIND');
     expect(stderr).not.toContain('ExposureConsentError');
   }, 30_000);
 });

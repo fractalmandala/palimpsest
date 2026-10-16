@@ -53,7 +53,7 @@ describe('update-notices-store install-time runtime wiring', () => {
       configurable: true,
       value: testWindow,
     });
-    Object.defineProperty(testWindow, 'okDesktop', {
+    Object.defineProperty(testWindow, 'psDesktop', {
       configurable: true,
       value: bridge,
     });

@@ -11,7 +11,7 @@ import {
   type WindowsOsStateOptions,
 } from './windows-os-state.test-helper.ts';
 
-export const PTY_STARTUP_WORKER_CONTEXT = 'ok-pty-startup-worker-trace-v1';
+export const PTY_STARTUP_WORKER_CONTEXT = 'ps-pty-startup-worker-trace-v1';
 
 const NATIVE_BYTES = 0;
 const WORKER_SUBMITTED_BYTES = 1;
@@ -26,7 +26,7 @@ const CAPTURE_INSTALLED = 9;
 const COUNTER_LENGTH = 11;
 
 interface WorkerTraceContext {
-  tag: 'ok-pty-startup-worker-trace-v1';
+  tag: 'ps-pty-startup-worker-trace-v1';
   traceId: number;
   attempt: number;
   startedAt: number;
@@ -125,7 +125,7 @@ export function createPtyStartupWorkerContext(
   outputFd?: number,
 ): WorkerTraceContext {
   return {
-    tag: 'ok-pty-startup-worker-trace-v1',
+    tag: 'ps-pty-startup-worker-trace-v1',
     traceId: context.traceId,
     attempt: context.attempt,
     startedAt: context.startedAt,

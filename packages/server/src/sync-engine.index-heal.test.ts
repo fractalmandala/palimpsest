@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { LOCAL_DIR, type SyncMode } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR, type SyncMode } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -52,14 +52,14 @@ function captureSyncLogs(): { entries: CapturedLog[]; restore: () => void } {
 
 let tmpDir = '';
 let projectDir = '';
-let okDir = '';
+let psDir = '';
 
 beforeEach(() => {
   tmpDir = mkdtempSync(join(tmpdir(), 'sync-engine-index-heal-'));
   projectDir = join(tmpDir, 'project');
-  okDir = join(projectDir, '.ok', LOCAL_DIR);
+  psDir = join(projectDir, '.ps', LOCAL_DIR);
   mkdirSync(projectDir, { recursive: true });
-  mkdirSync(okDir, { recursive: true });
+  mkdirSync(psDir, { recursive: true });
 });
 
 afterEach(() => {
@@ -75,7 +75,7 @@ function lockPath(): string {
 }
 
 function statePath(): string {
-  return join(okDir, 'sync-state.json');
+  return join(psDir, 'sync-state.json');
 }
 
 async function projectWithBareOrigin() {
@@ -761,9 +761,9 @@ describe('SyncEngine index-lock paused reason', () => {
     const config = (marker: string) =>
       `${JSON.stringify({
         theme: 'keep',
-        mcpServers: { other: { command: 'keep-me' }, 'open-knowledge': entry(marker) },
+        mcpServers: { other: { command: 'keep-me' }, 'palimpsest': entry(marker) },
       })}\n`;
-    writeFileSync(join(projectDir, '.mcp.json'), config('# ok-mcp-v2'), 'utf-8');
+    writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v2'), 'utf-8');
     await git.add('.mcp.json');
     await git.commit('mcp base');
 
@@ -780,8 +780,8 @@ describe('SyncEngine index-lock paused reason', () => {
       await internal.persistReconciledMcpEntries([
         {
           path: '.mcp.json',
-          raw: config('# ok-mcp-v99'),
-          winnerEntry: entry('# ok-mcp-v99'),
+          raw: config('# ps-mcp-v99'),
+          winnerEntry: entry('# ps-mcp-v99'),
         },
       ]);
 

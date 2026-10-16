@@ -6,7 +6,7 @@
 
 import { scopedStorageKey } from '@/lib/storage-scope';
 
-const REPLAY_OUTBOX_DB_PREFIX = 'ok-replay-outbox';
+const REPLAY_OUTBOX_DB_PREFIX = 'ps-replay-outbox';
 const ENTRY_STORE_NAME = 'entry';
 const ENTRY_KEY = 'buffer';
 

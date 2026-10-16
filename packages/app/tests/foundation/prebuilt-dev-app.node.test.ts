@@ -13,10 +13,10 @@ import {
   workerServingFromEnv,
 } from '../stress/_helpers/prebuilt/prebuilt-serving';
 
-const OK_TREE: Readonly<Record<string, string>> = {
-  'package.json': '{"name":"open-knowledge"}\n',
+const PS_TREE: Readonly<Record<string, string>> = {
+  'package.json': '{"name":"palimpsest"}\n',
   'pnpm-lock.yaml': "lockfileVersion: '9.0'\n",
-  'packages/app/package.json': '{"name":"@inkeep/open-knowledge-app"}\n',
+  'packages/app/package.json': '{"name":"@palimpsest/app"}\n',
   'packages/app/index.html': '<!doctype html><div id="root"></div>\n',
   'packages/app/src/App.tsx': 'export const App = () => null;\n',
   'packages/core/src/index.ts': 'export const core = 1;\n',
@@ -39,9 +39,9 @@ function scratch(prefix: string): string {
   return root;
 }
 
-function okTree(): string {
-  const root = scratch('ok-prebuilt-tree-');
-  for (const [path, content] of Object.entries(OK_TREE)) write(root, path, content);
+function psTree(): string {
+  const root = scratch('ps-prebuilt-tree-');
+  for (const [path, content] of Object.entries(PS_TREE)) write(root, path, content);
   return root;
 }
 
@@ -50,14 +50,14 @@ function write(root: string, path: string, content: string): void {
   writeFileSync(join(root, path), content);
 }
 
-function bundler(okRoot: string) {
+function bundler(psRoot: string) {
   const builds: string[] = [];
   return {
     builds,
     build: async (distDir: string) => {
       builds.push(distDir);
       mkdirSync(distDir, { recursive: true });
-      const app = readFileSync(join(okRoot, 'packages/app/src/App.tsx'), 'utf8');
+      const app = readFileSync(join(psRoot, 'packages/app/src/App.tsx'), 'utf8');
       writeFileSync(join(distDir, 'index.html'), `<!doctype html><script>${app}</script>\n`);
     },
   };
@@ -69,12 +69,12 @@ afterEach(() => {
 
 describe('the prebuilt DEV app output', () => {
   test('a first run builds it once and a later run with the same inputs serves that build', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { builds, build } = bundler(okRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { builds, build } = bundler(psRoot);
 
-    const first = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
-    const second = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const first = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
+    const second = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(first.built).toBe(true);
     expect(first.decision).toEqual({ serve: false, reason: 'missing' });
@@ -87,13 +87,13 @@ describe('the prebuilt DEV app output', () => {
   });
 
   test('a server edit refuses the earlier build, names the file and serves a new build', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { builds, build } = bundler(okRoot);
-    const before = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { builds, build } = bundler(psRoot);
+    const before = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
-    write(okRoot, 'packages/server/src/index.ts', 'export const server = 2;\n');
-    const after = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    write(psRoot, 'packages/server/src/index.ts', 'export const server = 2;\n');
+    const after = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(after.decision).toEqual({
       serve: false,
@@ -107,25 +107,25 @@ describe('the prebuilt DEV app output', () => {
   });
 
   test('an app edit is served from a build that contains it', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { build } = bundler(okRoot);
-    await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { build } = bundler(psRoot);
+    await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => "edited";\n');
-    const after = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => "edited";\n');
+    const after = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(readFileSync(join(after.distDir, 'index.html'), 'utf8')).toContain('"edited"');
   });
 
   test('a changed build option refuses the earlier build and names the option', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { build } = bundler(okRoot);
-    await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { build } = bundler(psRoot);
+    await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     const after = await resolvePrebuiltDevApp({
-      okRoot,
+      psRoot,
       outRoot,
       options: { ...OPTIONS, mode: 'production' },
       build,
@@ -141,18 +141,18 @@ describe('the prebuilt DEV app output', () => {
   });
 
   test('a failed build records nothing, so the next run builds again', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { builds, build } = bundler(okRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { builds, build } = bundler(psRoot);
     const failing = async (distDir: string) => {
       await build(distDir);
       throw new Error('vite build exited 1');
     };
 
     await expect(
-      resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build: failing }),
+      resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build: failing }),
     ).rejects.toThrow('vite build exited 1');
-    const retried = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const retried = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(retried.built).toBe(true);
     expect(retried.decision).toEqual({ serve: false, reason: 'missing' });
@@ -160,30 +160,30 @@ describe('the prebuilt DEV app output', () => {
   });
 
   test('a build that writes no index.html is refused and not served later', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { builds, build } = bundler(okRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { builds, build } = bundler(psRoot);
     const empty = async (distDir: string) => {
       mkdirSync(distDir, { recursive: true });
     };
 
     await expect(
-      resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build: empty }),
+      resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build: empty }),
     ).rejects.toThrow('wrote no index.html');
-    const retried = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const retried = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(retried.built).toBe(true);
     expect(builds).toHaveLength(1);
   });
 
   test('an unreadable build manifest is not served and the app is rebuilt in its place', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { builds, build } = bundler(okRoot);
-    const first = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { builds, build } = bundler(psRoot);
+    const first = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     writeFileSync(join(first.outputDir, 'prebuilt-manifest.json'), '{"digest":');
-    const second = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const second = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(second.built).toBe(true);
     expect(second.outputDir).toBe(first.outputDir);
@@ -191,17 +191,17 @@ describe('the prebuilt DEV app output', () => {
   });
 
   test('two runs building the same inputs at once both serve the build that landed first', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { builds, build } = bundler(okRoot);
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { builds, build } = bundler(psRoot);
     let overtaken: Promise<unknown> | undefined;
     const slow = async (distDir: string) => {
-      overtaken = resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+      overtaken = resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
       await overtaken;
       await build(distDir);
     };
 
-    const late = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build: slow });
+    const late = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build: slow });
     const early = await overtaken;
 
     expect(late.built).toBe(false);
@@ -211,15 +211,15 @@ describe('the prebuilt DEV app output', () => {
   });
 
   test('a new build keeps the one it replaces and discards older ones', async () => {
-    const okRoot = okTree();
-    const outRoot = scratch('ok-prebuilt-out-');
-    const { build } = bundler(okRoot);
-    const oldest = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    const psRoot = psTree();
+    const outRoot = scratch('ps-prebuilt-out-');
+    const { build } = bundler(psRoot);
+    const oldest = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
     oldest.use.release();
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
-    const previous = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
-    write(okRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
-    const current = await resolvePrebuiltDevApp({ okRoot, outRoot, options: OPTIONS, build });
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 2;\n');
+    const previous = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
+    write(psRoot, 'packages/app/src/App.tsx', 'export const App = () => 3;\n');
+    const current = await resolvePrebuiltDevApp({ psRoot, outRoot, options: OPTIONS, build });
 
     expect(existsSync(current.distDir)).toBe(true);
     expect(existsSync(previous.distDir)).toBe(true);
@@ -233,52 +233,52 @@ describe('the serving mode a worker starts', () => {
   });
 
   test('a fresh prebuilt app is served by vite preview from its own directory', async () => {
-    const okRoot = okTree();
+    const psRoot = psTree();
     const app = await resolvePrebuiltDevApp({
-      okRoot,
-      outRoot: scratch('ok-prebuilt-out-'),
+      psRoot,
+      outRoot: scratch('ps-prebuilt-out-'),
       options: OPTIONS,
-      build: bundler(okRoot).build,
+      build: bundler(psRoot).build,
     });
     const serving = prebuiltServingFrom({
       [E2E_SERVING_ENV]: 'prebuilt',
       [PREBUILT_APP_ENV]: app.outputDir,
     });
 
-    expect(prebuiltServerCommand('::1', serving, okRoot)).toEqual({
+    expect(prebuiltServerCommand('::1', serving, psRoot)).toEqual({
       args: ['exec', 'vite', 'preview', '--config', 'vite.prebuilt-dev.ts', '--host', '::1'],
-      env: { OK_TEST_PREBUILT_OUT_DIR: app.distDir },
+      env: { PS_TEST_PREBUILT_OUT_DIR: app.distDir },
     });
   });
 
   test('a core edit after the build makes a worker refuse the prebuilt app and name the file', async () => {
-    const okRoot = okTree();
+    const psRoot = psTree();
     const app = await resolvePrebuiltDevApp({
-      okRoot,
-      outRoot: scratch('ok-prebuilt-out-'),
+      psRoot,
+      outRoot: scratch('ps-prebuilt-out-'),
       options: OPTIONS,
-      build: bundler(okRoot).build,
+      build: bundler(psRoot).build,
     });
     const serving = prebuiltServingFrom({
       [E2E_SERVING_ENV]: 'prebuilt',
       [PREBUILT_APP_ENV]: app.outputDir,
     });
 
-    write(okRoot, 'packages/core/src/index.ts', 'export const core = 2;\n');
+    write(psRoot, 'packages/core/src/index.ts', 'export const core = 2;\n');
 
-    expect(() => prebuiltServerCommand('127.0.0.1', serving, okRoot)).toThrow(
+    expect(() => prebuiltServerCommand('127.0.0.1', serving, psRoot)).toThrow(
       `the prebuilt DEV app at ${app.outputDir} is stale, because packages/core/src/index.ts changed since it was built`,
     );
   });
 
   test('a prebuilt directory without a build manifest is refused', () => {
-    const outputDir = scratch('ok-prebuilt-unbuilt-');
+    const outputDir = scratch('ps-prebuilt-unbuilt-');
     const serving = prebuiltServingFrom({
       [E2E_SERVING_ENV]: 'prebuilt',
       [PREBUILT_APP_ENV]: outputDir,
     });
 
-    expect(() => prebuiltServerCommand('127.0.0.1', serving, okTree())).toThrow(
+    expect(() => prebuiltServerCommand('127.0.0.1', serving, psTree())).toThrow(
       `the prebuilt DEV app at ${outputDir} has no build manifest`,
     );
   });

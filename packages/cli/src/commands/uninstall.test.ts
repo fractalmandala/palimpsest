@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
-import { SHARED_OK_ENTRIES } from '@inkeep/open-knowledge-core';
+import { SHARED_OK_ENTRIES } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { ensurePiBridge } from './pi-acp-bridge.ts';
 import {
@@ -19,11 +19,11 @@ function write(path: string, content: string): void {
 
 describe('detectInstallMethods', () => {
   test('detects an app bundle, npm-global, and npx', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-detect-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-detect-'));
     try {
-      const userApp = join(home, 'Applications', 'OpenKnowledge.app');
+      const userApp = join(home, 'Applications', 'Palimpsest.app');
       const npmStub = (args: string[]) =>
-        args.includes('@inkeep/open-knowledge') ? '@inkeep/open-knowledge@1.2.3\n' : null;
+        args.includes('@palimpsest/cli') ? '@palimpsest/cli@1.2.3\n' : null;
       const methods = detectInstallMethods(
         home,
         '/Users/x/.npm/_npx/abcd/node_modules/.bin/ok',
@@ -46,8 +46,8 @@ describe('detectInstallMethods', () => {
   test('reports Stable and Beta app bundles separately on macOS', () => {
     const home = '/Users/jane';
     const installed = new Set([
-      '/Applications/OpenKnowledge.app',
-      join(home, 'Applications', 'OpenKnowledge Beta.app'),
+      '/Applications/Palimpsest.app',
+      join(home, 'Applications', 'Palimpsest Beta.app'),
     ]);
     const methods = detectInstallMethods(
       home,
@@ -58,16 +58,16 @@ describe('detectInstallMethods', () => {
     );
     expect(methods).toHaveLength(2);
     expect(methods.map((method) => method.label)).toEqual([
-      'OpenKnowledge (/Applications/OpenKnowledge.app)',
-      'OpenKnowledge Beta (/Users/jane/Applications/OpenKnowledge Beta.app)',
+      'Palimpsest (/Applications/Palimpsest.app)',
+      'Palimpsest Beta (/Users/jane/Applications/Palimpsest Beta.app)',
     ]);
   });
 
   test('a Beta CLI lists the same Stable and Beta apps as a Stable CLI', () => {
     const home = '/Users/jane';
     const installed = new Set([
-      '/Applications/OpenKnowledge.app',
-      '/Applications/OpenKnowledge Beta.app',
+      '/Applications/Palimpsest.app',
+      '/Applications/Palimpsest Beta.app',
     ]);
     const labels = (execPath: string) =>
       detectInstallMethods(
@@ -78,12 +78,12 @@ describe('detectInstallMethods', () => {
         { platform: 'darwin', env: {}, execPath },
       ).map((method) => method.label);
     const expected = [
-      'OpenKnowledge (/Applications/OpenKnowledge.app)',
-      'OpenKnowledge Beta (/Applications/OpenKnowledge Beta.app)',
+      'Palimpsest (/Applications/Palimpsest.app)',
+      'Palimpsest Beta (/Applications/Palimpsest Beta.app)',
     ];
     expect(labels('/usr/local/bin/node')).toEqual(expected);
     expect(
-      labels('/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta'),
+      labels('/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta'),
     ).toEqual(expected);
   });
 
@@ -92,8 +92,8 @@ describe('detectInstallMethods', () => {
     const exe = join(
       localAppData,
       'Programs',
-      '@inkeepopen-knowledge-desktop',
-      'OpenKnowledge.exe',
+      '@palimpsestdesktop',
+      'Palimpsest.exe',
     );
     const methods = detectInstallMethods(
       'C:\\Users\\Jane',
@@ -112,8 +112,8 @@ describe('detectInstallMethods', () => {
   test('reports Stable and Beta Windows installs separately', () => {
     const localAppData = 'C:\\Users\\Jane\\AppData\\Local';
     const installed = new Set([
-      join(localAppData, 'Programs', '@inkeepopen-knowledge-desktop', 'OpenKnowledge.exe'),
-      join(localAppData, 'Programs', 'openknowledge-beta-desktop', 'OpenKnowledge Beta.exe'),
+      join(localAppData, 'Programs', '@palimpsestdesktop', 'Palimpsest.exe'),
+      join(localAppData, 'Programs', 'palimpsest-beta-desktop', 'Palimpsest Beta.exe'),
     ]);
     const methods = detectInstallMethods(
       'C:\\Users\\Jane',
@@ -124,8 +124,8 @@ describe('detectInstallMethods', () => {
     );
     expect(methods).toHaveLength(2);
     expect(methods.map((method) => method.label)).toEqual([
-      expect.stringContaining('OpenKnowledge ('),
-      expect.stringContaining('OpenKnowledge Beta ('),
+      expect.stringContaining('Palimpsest ('),
+      expect.stringContaining('Palimpsest Beta ('),
     ]);
   });
 
@@ -134,12 +134,12 @@ describe('detectInstallMethods', () => {
       '/home/jane',
       undefined,
       () => null,
-      (p) => p === '/opt/OpenKnowledge/openknowledge',
+      (p) => p === '/opt/Palimpsest/palimpsest',
       { platform: 'linux', queryPackageDatabase: () => null },
     );
     expect(methods.map((m) => m.method)).toEqual(['app']);
     expect(methods[0]?.instruction).toBe(
-      'Remove with your package manager: sudo apt remove openknowledge (Debian/Ubuntu), sudo dnf remove openknowledge (Fedora/RHEL) or sudo zypper remove openknowledge (openSUSE)',
+      'Remove with your package manager: sudo apt remove palimpsest (Debian/Ubuntu), sudo dnf remove palimpsest (Fedora/RHEL) or sudo zypper remove palimpsest (openSUSE)',
     );
   });
 
@@ -148,15 +148,15 @@ describe('detectInstallMethods', () => {
       '/home/jane',
       undefined,
       () => null,
-      (path) => path === '/opt/OpenKnowledge Beta/openknowledge-beta',
+      (path) => path === '/opt/Palimpsest Beta/palimpsest-beta',
       { platform: 'linux', queryPackageDatabase: () => null },
     );
     expect(methods).toEqual([
       {
         method: 'app',
-        label: 'OpenKnowledge Beta (/opt/OpenKnowledge Beta)',
+        label: 'Palimpsest Beta (/opt/Palimpsest Beta)',
         instruction:
-          'Remove with your package manager: sudo apt remove openknowledge-beta (Debian/Ubuntu), sudo dnf remove openknowledge-beta (Fedora/RHEL) or sudo zypper remove openknowledge-beta (openSUSE)',
+          'Remove with your package manager: sudo apt remove palimpsest-beta (Debian/Ubuntu), sudo dnf remove palimpsest-beta (Fedora/RHEL) or sudo zypper remove palimpsest-beta (openSUSE)',
       },
     ]);
   });
@@ -164,33 +164,33 @@ describe('detectInstallMethods', () => {
   test.each([
     {
       installed: 'a Beta deb from before the rename',
-      executable: '/opt/OpenKnowledge Beta/openknowledge-beta',
-      dpkg: 'openknowledge-beta-desktop: /opt/OpenKnowledge Beta/openknowledge-beta\n',
+      executable: '/opt/Palimpsest Beta/palimpsest-beta',
+      dpkg: 'palimpsest-beta-desktop: /opt/Palimpsest Beta/palimpsest-beta\n',
       rpm: null,
-      instruction: 'sudo apt remove openknowledge-beta-desktop',
+      instruction: 'sudo apt remove palimpsest-beta-desktop',
     },
     {
       installed: 'a renamed Beta deb',
-      executable: '/opt/OpenKnowledge Beta/openknowledge-beta',
-      dpkg: 'openknowledge-beta: /opt/OpenKnowledge Beta/openknowledge-beta\n',
+      executable: '/opt/Palimpsest Beta/palimpsest-beta',
+      dpkg: 'palimpsest-beta: /opt/Palimpsest Beta/palimpsest-beta\n',
       rpm: null,
-      instruction: 'sudo apt remove openknowledge-beta',
+      instruction: 'sudo apt remove palimpsest-beta',
     },
     {
       installed: 'a Stable rpm from before the rename',
-      executable: '/opt/OpenKnowledge/openknowledge',
+      executable: '/opt/Palimpsest/palimpsest',
       dpkg: null,
-      rpm: 'OpenKnowledge\n',
+      rpm: 'Palimpsest\n',
       instruction:
-        'sudo dnf remove OpenKnowledge (Fedora/RHEL) or sudo zypper remove OpenKnowledge (openSUSE)',
+        'sudo dnf remove Palimpsest (Fedora/RHEL) or sudo zypper remove Palimpsest (openSUSE)',
     },
     {
       installed: 'a renamed Stable rpm',
-      executable: '/opt/OpenKnowledge/openknowledge',
+      executable: '/opt/Palimpsest/palimpsest',
       dpkg: null,
-      rpm: 'openknowledge\n',
+      rpm: 'palimpsest\n',
       instruction:
-        'sudo dnf remove openknowledge (Fedora/RHEL) or sudo zypper remove openknowledge (openSUSE)',
+        'sudo dnf remove palimpsest (Fedora/RHEL) or sudo zypper remove palimpsest (openSUSE)',
     },
   ])('names the package that owns $installed', ({ executable, dpkg, rpm, instruction }) => {
     const queries: string[][] = [];
@@ -217,7 +217,7 @@ describe('detectInstallMethods', () => {
   });
 
   test('returns nothing when no install is detected', () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-detect-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-detect-'));
     try {
       expect(
         detectInstallMethods(
@@ -235,11 +235,11 @@ describe('detectInstallMethods', () => {
 
 describe('resolveRecentDeinitProjects', () => {
   function twoProjects(): { home: string; a: string; b: string } {
-    const home = mkdtempSync(join(tmpdir(), 'ok-recent-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-recent-'));
     const a = join(home, 'projA');
     const b = join(home, 'projB');
-    write(join(a, '.ok', 'config.yml'), 'x\n');
-    write(join(b, '.ok', 'config.yml'), 'x\n');
+    write(join(a, '.ps', 'config.yml'), 'x\n');
+    write(join(b, '.ps', 'config.yml'), 'x\n');
     return { home, a, b };
   }
 
@@ -339,7 +339,7 @@ describe('resolveRecentDeinitProjects', () => {
 
 describe('runUninstall', () => {
   test('uses its explicit environment to clean Pi trust for selected projects', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-pi-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-pi-'));
     const cwd = join(home, 'project');
     const agentDir = join(home, 'custom-pi');
     const trustPath = join(agentDir, 'trust.json');
@@ -348,7 +348,7 @@ describe('runUninstall', () => {
     const env = { PI_CODING_AGENT_DIR: agentDir };
     const defaultTrust = `${JSON.stringify({ [cwd]: true })}\n`;
     try {
-      write(join(cwd, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+      write(join(cwd, '.ps', 'config.yml'), 'content:\n  dir: .\n');
       write(defaultTrustPath, defaultTrust);
       write(trustPath, JSON.stringify({ [unrelated]: true }));
       await ensurePiBridge(cwd, { mode: 'published' }, home, env);
@@ -373,7 +373,7 @@ describe('runUninstall', () => {
       });
 
       expect(result.status).toBe('done');
-      expect(existsSync(join(cwd, '.pi', 'extensions', 'open-knowledge.ts'))).toBe(false);
+      expect(existsSync(join(cwd, '.pi', 'extensions', 'palimpsest.ts'))).toBe(false);
       expect(JSON.parse(readFileSync(trustPath, 'utf8'))).toEqual({ [unrelated]: true });
       expect(readFileSync(defaultTrustPath, 'utf8')).toBe(defaultTrust);
     } finally {
@@ -382,10 +382,10 @@ describe('runUninstall', () => {
   });
 
   test.each([
-    ['/usr/local/bin/node', 'The openknowledge:// URL scheme'],
-    ['/opt/OpenKnowledge Beta/openknowledge-beta', 'The openknowledge-beta:// URL scheme'],
+    ['/usr/local/bin/node', 'The palimpsest:// URL scheme'],
+    ['/opt/Palimpsest Beta/palimpsest-beta', 'The palimpsest-beta:// URL scheme'],
   ])('names the URL scheme of the CLI that ran (%s)', async (execPath, note) => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-scheme-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-scheme-'));
     try {
       const result = await runUninstall({
         home,
@@ -414,9 +414,9 @@ describe('runUninstall', () => {
   });
 
   test('dry-run renders the plan + binary instructions, removing nothing', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-cmd-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
-      write(join(home, '.ok', 'auth.yml'), 'x\n');
+      write(join(home, '.ps', 'auth.yml'), 'x\n');
       const result = await runUninstall({
         home,
         platform: 'darwin',
@@ -432,14 +432,14 @@ describe('runUninstall', () => {
       expect(result.status).toBe('dry-run');
       expect(result.message).toContain('Would remove');
       expect(result.message).toContain('Move to Trash');
-      expect(existsSync(join(home, '.ok'))).toBe(true);
+      expect(existsSync(join(home, '.ps'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test('refuses to run non-interactively without --yes', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-cmd-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
       const result = await runUninstall({
         home,
@@ -456,9 +456,9 @@ describe('runUninstall', () => {
   });
 
   test('empty prompt input aborts and removes nothing', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-cmd-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
-      write(join(home, '.ok', 'auth.yml'), 'x\n');
+      write(join(home, '.ps', 'auth.yml'), 'x\n');
       const result = await runUninstall({
         home,
         platform: 'darwin',
@@ -468,23 +468,23 @@ describe('runUninstall', () => {
         deps: { discoverLockDirs: async () => [] },
       });
       expect(result.status).toBe('cancelled');
-      expect(existsSync(join(home, '.ok'))).toBe(true);
+      expect(existsSync(join(home, '.ps'))).toBe(true);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
   });
 
   test('reports failed + exit 1 when an op fails (e.g. a server won’t stop)', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-cmd-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
-      write(join(home, '.ok', 'auth.yml'), 'x\n');
+      write(join(home, '.ps', 'auth.yml'), 'x\n');
       const result = await runUninstall({
         home,
         platform: 'darwin',
         cwd: home,
         yes: true,
         deps: {
-          discoverLockDirs: async () => ['/some/proj/.ok/local'],
+          discoverLockDirs: async () => ['/some/proj/.ps/local'],
           detectInstallMethods: () => [],
           runRemovalDeps: {
             clearToken: async () => ({ touched: [] }),
@@ -501,7 +501,7 @@ describe('runUninstall', () => {
   });
 
   test('--json without --yes is rejected (no interactive prompt possible)', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-cmd-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
       const result = await runUninstall({
         home,
@@ -518,9 +518,9 @@ describe('runUninstall', () => {
   });
 
   test('--yes success path runs the removal and reports done (creds stubbed)', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-cmd-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
-      write(join(home, '.ok', 'auth.yml'), 'x\n');
+      write(join(home, '.ps', 'auth.yml'), 'x\n');
       write(join(home, '.agents', 'skills', 'open-knowledge-discovery', 'SKILL.md'), '# d\n');
       const result = await runUninstall({
         home,
@@ -540,7 +540,7 @@ describe('runUninstall', () => {
       expect(result.status).toBe('done');
       expect(result.exitCode).toBe(0);
       expect(result.message).toContain('Removed');
-      expect(existsSync(join(home, '.ok', 'auth.yml'))).toBe(false);
+      expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
       expect(existsSync(join(home, '.agents', 'skills', 'open-knowledge-discovery'))).toBe(false);
     } finally {
       rmSync(home, { recursive: true, force: true });
@@ -550,16 +550,16 @@ describe('runUninstall', () => {
 
 describe('runUninstall attached-client disclosure', () => {
   test('names attached clients in the plan without adding a gate', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-clients-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-clients-'));
     try {
-      write(join(home, '.ok', 'auth.yml'), 'x\n');
+      write(join(home, '.ps', 'auth.yml'), 'x\n');
       const result = await runUninstall({
         home,
         platform: 'darwin',
         cwd: home,
         dryRun: true,
         deps: {
-          discoverLockDirs: async () => ['/some/proj/.ok/local'],
+          discoverLockDirs: async () => ['/some/proj/.ps/local'],
           detectInstallMethods: () => [],
           probeClients: async () => 1,
         },
@@ -575,9 +575,9 @@ describe('runUninstall attached-client disclosure', () => {
   });
 
   test('--json --dry-run carries the probe result', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-clients-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-clients-'));
     try {
-      write(join(home, '.ok', 'auth.yml'), 'x\n');
+      write(join(home, '.ps', 'auth.yml'), 'x\n');
       const result = await runUninstall({
         home,
         platform: 'darwin',
@@ -585,7 +585,7 @@ describe('runUninstall attached-client disclosure', () => {
         dryRun: true,
         json: true,
         deps: {
-          discoverLockDirs: async () => ['/some/proj/.ok/local'],
+          discoverLockDirs: async () => ['/some/proj/.ps/local'],
           detectInstallMethods: () => [],
           probeClients: async () => 1,
         },
@@ -601,7 +601,7 @@ describe('runUninstall attached-client disclosure', () => {
   });
 
   test('--json --dry-run reports an empty probe result when nothing is attached', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-clients-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-clients-'));
     try {
       const result = await runUninstall({
         home,
@@ -610,7 +610,7 @@ describe('runUninstall attached-client disclosure', () => {
         dryRun: true,
         json: true,
         deps: {
-          discoverLockDirs: async () => ['/some/proj/.ok/local'],
+          discoverLockDirs: async () => ['/some/proj/.ps/local'],
           detectInstallMethods: () => [],
           probeClients: async () => null,
         },
@@ -622,7 +622,7 @@ describe('runUninstall attached-client disclosure', () => {
   });
 
   test('silent when nothing is attached', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninst-clients-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninst-clients-'));
     try {
       const result = await runUninstall({
         home,
@@ -630,7 +630,7 @@ describe('runUninstall attached-client disclosure', () => {
         cwd: home,
         dryRun: true,
         deps: {
-          discoverLockDirs: async () => ['/some/proj/.ok/local'],
+          discoverLockDirs: async () => ['/some/proj/.ps/local'],
           detectInstallMethods: () => [],
           probeClients: async () => null,
         },
@@ -645,7 +645,7 @@ describe('runUninstall attached-client disclosure', () => {
 test.each([false, true])(
   'unreadable editor configuration reports incomplete uninstall (json=%s)',
   async (json) => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-uninstall-incomplete-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-uninstall-incomplete-'));
     try {
       write(join(home, '.cursor', 'mcp.json'), '{broken json');
       const result = await runUninstall({
@@ -675,7 +675,7 @@ test.each([false, true])(
         ).toBe(true);
       else
         expect(result.message).not.toContain(
-          "OpenKnowledge's files have been removed from this machine.",
+          "Palimpsest's files have been removed from this machine.",
         );
       expect(existsSync(join(home, '.cursor', 'mcp.json'))).toBe(true);
     } finally {
@@ -690,17 +690,17 @@ describe('uninstallCommand', () => {
   });
 
   test('building the command never resolves the channel', () => {
-    vi.stubEnv('OK_CHANNEL', 'bogus');
+    vi.stubEnv('PS_CHANNEL', 'bogus');
     const command = uninstallCommand();
-    expect(command.description()).toContain('~/.ok (~/.ok-beta on Beta)');
+    expect(command.description()).toContain('~/.ps (~/.ps-beta on Beta)');
     const kept =
-      '~/.ok/machine-id, ~/.ok/skills-lock.json, ~/.ok/local/installed-skills.json, ~/.ok/local/skill-placements.json, ~/.ok/local/skill-move-retained.json, ~/.ok/local/server-authority.sqlite, ~/.ok/local/server-authority.sqlite-journal, ~/.ok/local/server-authority-leases';
+      '~/.ps/machine-id, ~/.ps/skills-lock.json, ~/.ps/local/installed-skills.json, ~/.ps/local/skill-placements.json, ~/.ps/local/skill-move-retained.json, ~/.ps/local/server-authority.sqlite, ~/.ps/local/server-authority.sqlite-journal, ~/.ps/local/server-authority-leases';
     expect(command.description()).toContain(`always keeps ${kept}, shared by every channel.`);
     expect(command.options.find((o) => o.long === '--purge-content')?.description).toBe(
-      `Also remove user-authored content (~/.ok/skills, shared by every channel); still keeps ${kept}`,
+      `Also remove user-authored content (~/.ps/skills, shared by every channel); still keeps ${kept}`,
     );
     for (const entry of SHARED_OK_ENTRIES) {
-      expect(command.description()).toContain(`~/.ok/${entry}`);
+      expect(command.description()).toContain(`~/.ps/${entry}`);
     }
   });
 });

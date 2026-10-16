@@ -134,8 +134,8 @@ test('the CLI delivers through HTTP, persists success, suppresses repeats and re
 });
 
 describe('the alarm hands the acknowledgement from the job that restores it to the job that pages', () => {
-  const OK_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-  const { jobs } = parse(readFileSync(join(OK_ROOT, '.github', 'workflows', 'select-beta-to-promote.yml'), 'utf8'));
+  const PS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+  const { jobs } = parse(readFileSync(join(PS_ROOT, '.github', 'workflows', 'select-beta-to-promote.yml'), 'utf8'));
   const stepRun = (job, name) => {
     const found = jobs[job].steps.filter((step) => step.name === name);
     if (found.length !== 1) throw new Error(`select-beta-to-promote.yml#${job} has ${found.length} steps named ${name}`);
@@ -203,7 +203,7 @@ describe('the alarm hands the acknowledgement from the job that restores it to t
         'bash',
         ['--noprofile', '--norc', '-eo', 'pipefail', file],
         {
-          cwd: OK_ROOT,
+          cwd: PS_ROOT,
           timeout: 20_000,
           env: { ...base, PATH: `${dirname(process.execPath)}:${base.PATH}`, GITHUB_OUTPUT: output, ...env },
         },
@@ -218,7 +218,7 @@ describe('the alarm hands the acknowledgement from the job that restores it to t
     const res = await runStep(page, {
       SLACK_RELEASES_WEBHOOK_URL: webhook,
       GITHUB_SERVER_URL: 'https://github.com',
-      GITHUB_REPOSITORY: 'inkeep/open-knowledge',
+      GITHUB_REPOSITORY: 'fractalmandala/palimpsest',
       GITHUB_RUN_ID: '1',
       REASONS: alarm.reasons,
       ALERT_INCIDENT: alarm.incident,

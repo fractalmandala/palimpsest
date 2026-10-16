@@ -7,8 +7,8 @@ import {
   DESKTOP_PRODUCTS,
   desktopWindowsExecutableName,
   desktopWindowsInstallDirNames,
-} from '@inkeep/open-knowledge-core';
-import { findEnclosingProjectRoot, withHiddenWindowsConsole } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { findEnclosingProjectRoot, withHiddenWindowsConsole } from '@palimpsest/server';
 import checkbox from '@inquirer/checkbox';
 import { Command } from 'commander';
 import { PACKAGE_VERSION } from '../constants.ts';
@@ -116,12 +116,12 @@ export function detectInstallMethods(
     }
   }
 
-  const npmOut = runNpmLs(['ls', '-g', '--depth=0', '@inkeep/open-knowledge']);
-  if (npmOut?.includes('@inkeep/open-knowledge@')) {
+  const npmOut = runNpmLs(['ls', '-g', '--depth=0', '@palimpsest/cli']);
+  if (npmOut?.includes('@palimpsest/cli@')) {
     methods.push({
       method: 'npm-global',
       label: 'npm global install',
-      instruction: 'npm uninstall -g @inkeep/open-knowledge',
+      instruction: 'npm uninstall -g @palimpsest/cli',
     });
   }
 
@@ -184,20 +184,20 @@ function formatInstallInstructions(
 ): string {
   const lines: string[] = [
     warning(CALLOUT_RULE),
-    accent('  One more step — remove the OpenKnowledge app itself'),
-    dim("  (OpenKnowledge can't delete its own running binary — do this by hand.)"),
+    accent('  One more step — remove the Palimpsest app itself'),
+    dim("  (Palimpsest can't delete its own running binary — do this by hand.)"),
     '',
   ];
   if (methods.length === 0) {
     const appFallback =
       platform === 'win32'
-        ? 'uninstall from Settings → Apps → Installed apps → OpenKnowledge'
+        ? 'uninstall from Settings → Apps → Installed apps → Palimpsest'
         : platform === 'linux'
-          ? 'remove the openknowledge package with your package manager (apt / dnf)'
-          : 'move /Applications/OpenKnowledge.app to the Trash';
+          ? 'remove the palimpsest package with your package manager (apt / dnf)'
+          : 'move /Applications/Palimpsest.app to the Trash';
     lines.push(dim('  Install method not detected. If you installed it, remove it via:'));
     lines.push(`    ${info('OK Desktop')} — ${appFallback}`);
-    lines.push(`    ${info('npm global')} — npm uninstall -g @inkeep/open-knowledge`);
+    lines.push(`    ${info('npm global')} — npm uninstall -g @palimpsest/cli`);
     lines.push(`    ${info('npx')} — nothing to remove (runs from a temporary cache)`);
   } else {
     for (const m of methods) {
@@ -220,7 +220,7 @@ function projectRootFromLockDir(lockDir: string): string {
 }
 
 function isDeinitableProject(dir: string): boolean {
-  return existsSync(join(dir, '.ok'));
+  return existsSync(join(dir, '.ps'));
 }
 
 export interface ResolveRecentProjectsInput {
@@ -279,8 +279,8 @@ export async function resolveRecentDeinitProjects(
 async function defaultProjectCheckbox(candidates: ProjectCandidate[]): Promise<string[]> {
   return checkbox({
     message:
-      'Also remove OpenKnowledge from these projects? (space to toggle; none selected by default)\n' +
-      "  Removes each project's .ok/ config, editor MCP entries, and OK edit-history\n" +
+      'Also remove Palimpsest from these projects? (space to toggle; none selected by default)\n' +
+      "  Removes each project's .ps/ config, editor MCP entries, and OK edit-history\n" +
       `  (.git/ok/). Your markdown content is kept — \`${currentCliCommandName()} start\` re-adds OK later.\n`,
     required: false,
     theme: { icon: { checked: '[x]', unchecked: '[ ]' } },
@@ -378,7 +378,7 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<Uninsta
 
   const fallbackNote = dim(
     'Individual projects are only removed when you select them (or pass --all-projects). ' +
-      `To remove OpenKnowledge from one project, run \`${currentCliCommandName()} deinit\` inside it.`,
+      `To remove Palimpsest from one project, run \`${currentCliCommandName()} deinit\` inside it.`,
   );
   const binaryBlock = (): string =>
     formatInstallInstructions(
@@ -423,7 +423,7 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<Uninsta
       };
     }
     process.stderr.write(
-      `${accent('This will remove OpenKnowledge from your machine:')}\n\n${formatRemovalPlan(plan)}${attachedBlock}\n\n${warning('This cannot be undone.')}\n\n`,
+      `${accent('This will remove Palimpsest from your machine:')}\n\n${formatRemovalPlan(plan)}${attachedBlock}\n\n${warning('This cannot be undone.')}\n\n`,
     );
     const confirmed = await confirmDestructive(
       `${accent('Remove all of the above?')} ${dim('[y/N] ')}`,
@@ -462,7 +462,7 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<Uninsta
   if (!opts.json) {
     parts.push('', fallbackNote, urlSchemeNote(env, execPath));
     if (outcome.failed.length === 0) {
-      parts.push('', success("OpenKnowledge's files have been removed from this machine."));
+      parts.push('', success("Palimpsest's files have been removed from this machine."));
     }
     parts.push('', binaryBlock());
   }
@@ -478,7 +478,7 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<Uninsta
 export function uninstallCommand(): Command {
   return new Command('uninstall')
     .description(
-      `Remove OpenKnowledge from your machine — credentials, PATH entries, editor MCP configs, skill bundles, app data, and ~/${DESKTOP_PRODUCTS.stable.userHomeDirName} (~/${DESKTOP_PRODUCTS.beta.userHomeDirName} on Beta). Keeps your markdown content and your authored skills (~/.ok/skills) unless --purge-content, and always keeps ${sharedOkEntriesList(true)}, shared by every channel. Detects the app install and prints how to remove it; never self-deletes.`,
+      `Remove Palimpsest from your machine — credentials, PATH entries, editor MCP configs, skill bundles, app data, and ~/${DESKTOP_PRODUCTS.stable.userHomeDirName} (~/${DESKTOP_PRODUCTS.beta.userHomeDirName} on Beta). Keeps your markdown content and your authored skills (~/.ps/skills) unless --purge-content, and always keeps ${sharedOkEntriesList(true)}, shared by every channel. Detects the app install and prints how to remove it; never self-deletes.`,
     )
     .option(
       '-y, --yes',
@@ -488,7 +488,7 @@ export function uninstallCommand(): Command {
     .option('--json', 'Emit a machine-readable plan/outcome (requires --yes or --dry-run)')
     .option(
       '--purge-content',
-      `Also remove user-authored content (~/.ok/skills, shared by every channel); still keeps ${sharedOkEntriesList(true)}`,
+      `Also remove user-authored content (~/.ps/skills, shared by every channel); still keeps ${sharedOkEntriesList(true)}`,
     )
     .option(
       '--all-projects',

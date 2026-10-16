@@ -5,7 +5,7 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { DESKTOP_PRODUCTS, resolveDesktopProductName } from '@inkeep/open-knowledge-core';
+import { DESKTOP_PRODUCTS, resolveDesktopProductName } from '@palimpsest/core';
 import shellQuote from 'shell-quote';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -99,22 +99,22 @@ describe('buildGitEnv', () => {
     });
   });
 
-  test('emits OK_GH_TOKEN/OK_GH_TOKEN_HOST only when a relay token is supplied', () => {
+  test('emits PS_GH_TOKEN/PS_GH_TOKEN_HOST only when a relay token is supplied', () => {
     const without = buildGitEnv();
-    expect('OK_GH_TOKEN' in without).toBe(false);
-    expect('OK_GH_TOKEN_HOST' in without).toBe(false);
+    expect('PS_GH_TOKEN' in without).toBe(false);
+    expect('PS_GH_TOKEN_HOST' in without).toBe(false);
 
     const withToken = buildGitEnv({ token: 'gho_relayed', host: 'github.com' });
-    expect(withToken.OK_GH_TOKEN).toBe('gho_relayed');
-    expect(withToken.OK_GH_TOKEN_HOST).toBe('github.com');
+    expect(withToken.PS_GH_TOKEN).toBe('gho_relayed');
+    expect(withToken.PS_GH_TOKEN_HOST).toBe('github.com');
   });
 
-  test('emits OK_GH_TOKEN_LOGIN only when the relay names its account', () => {
+  test('emits PS_GH_TOKEN_LOGIN only when the relay names its account', () => {
     const named = buildGitEnv({ token: 'gho_relayed', host: 'github.com', login: 'alice' });
-    expect(named.OK_GH_TOKEN_LOGIN).toBe('alice');
+    expect(named.PS_GH_TOKEN_LOGIN).toBe('alice');
 
     const anonymous = buildGitEnv({ token: 'gho_relayed', host: 'github.com' });
-    expect('OK_GH_TOKEN_LOGIN' in anonymous).toBe(false);
+    expect('PS_GH_TOKEN_LOGIN' in anonymous).toBe(false);
   });
 });
 
@@ -127,7 +127,7 @@ describe('createGitInstance (credential.helper config)', () => {
   }
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-git-handle-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-git-handle-test-'));
     execSync('git init -q', { cwd: tmpDir });
     configureTestGitRepository(tmpDir);
   });
@@ -138,7 +138,7 @@ describe('createGitInstance (credential.helper config)', () => {
 
   test('accepts credential.helper config without throwing', async () => {
     const handle = createGitInstance(tmpDir, {
-      credentialConfig: buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: true }),
+      credentialConfig: buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true }),
     });
     const version = await handle.git.raw(['--version']);
     expect(version).toContain('git version');
@@ -183,7 +183,7 @@ describe('createGitInstance (credential.helper config)', () => {
 
   test('keeps pinning credential.interactive off alongside credential.helper config', async () => {
     const handle = createGitInstance(tmpDir, {
-      credentialConfig: buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: true }),
+      credentialConfig: buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true }),
     });
     expect((await handle.git.raw(['config', '--get', 'credential.interactive'])).trim()).toBe(
       'false',
@@ -196,8 +196,8 @@ describe('createGitInstance under a process environment carrying GIT_CONFIG_COUN
   let isolatedHome: string;
 
   beforeEach(() => {
-    repoDir = mkdtempSync(join(tmpdir(), 'ok-git-handle-envcount-'));
-    isolatedHome = mkdtempSync(join(tmpdir(), 'ok-git-handle-envcount-home-'));
+    repoDir = mkdtempSync(join(tmpdir(), 'ps-git-handle-envcount-'));
+    isolatedHome = mkdtempSync(join(tmpdir(), 'ps-git-handle-envcount-home-'));
     vi.stubEnv('HOME', isolatedHome);
     vi.stubEnv('USERPROFILE', isolatedHome);
     vi.stubEnv('XDG_CONFIG_HOME', join(isolatedHome, '.config'));
@@ -216,7 +216,7 @@ describe('createGitInstance under a process environment carrying GIT_CONFIG_COUN
 
   test('server git runs instead of meeting simple-git refusing GIT_CONFIG_COUNT', async () => {
     const handle = createGitInstance(repoDir, {
-      credentialConfig: buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: true }),
+      credentialConfig: buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true }),
     });
 
     await expect(handle.git.raw(['rev-parse', '--is-inside-work-tree'])).resolves.toBe('true\n');
@@ -230,8 +230,8 @@ describe.skipIf(process.platform === 'win32')(
     let isolatedHome: string;
 
     beforeEach(() => {
-      repoDir = mkdtempSync(join(tmpdir(), 'ok-sync-cred-repo-'));
-      isolatedHome = mkdtempSync(join(tmpdir(), 'ok-sync-cred-home-'));
+      repoDir = mkdtempSync(join(tmpdir(), 'ps-sync-cred-repo-'));
+      isolatedHome = mkdtempSync(join(tmpdir(), 'ps-sync-cred-home-'));
       execSync('git init -q', { cwd: repoDir });
       configureTestGitRepository(repoDir);
     });
@@ -253,34 +253,34 @@ describe.skipIf(process.platform === 'win32')(
       execSync("git config credential.helper '!/ambient/stub'", { cwd: repoDir });
 
       const handle = createGitInstance(repoDir, {
-        credentialConfig: buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: true }),
+        credentialConfig: buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true }),
       });
       isolateAmbientGitConfig(handle);
 
       const raw = await handle.git.raw(['config', '-z', '--get-all', 'credential.helper']);
       const entries = raw.split('\0').slice(0, -1);
-      expect(entries).toEqual(['!/ambient/stub', '', '!open-knowledge auth git-credential']);
+      expect(entries).toEqual(['!/ambient/stub', '', '!palimpsest auth git-credential']);
     });
 
     test('non-GitHub origin keeps its ambient helper and gets no reset', async () => {
       execSync("git config credential.helper '!/ambient/stub'", { cwd: repoDir });
 
       const handle = createGitInstance(repoDir, {
-        credentialConfig: buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: false }),
+        credentialConfig: buildSyncCredentialConfig(['palimpsest'], { resetAmbient: false }),
       });
       isolateAmbientGitConfig(handle);
 
       const raw = await handle.git.raw(['config', '-z', '--get-all', 'credential.helper']);
       const values = raw.split('\0').slice(0, -1);
 
-      expect(values).toEqual(['!/ambient/stub', '!open-knowledge auth git-credential']);
+      expect(values).toEqual(['!/ambient/stub', '!palimpsest auth git-credential']);
     });
 
     test('with an ambient helper configured, git sends `get` to OK helper only', async () => {
       const ambientLog = join(isolatedHome, 'ambient.log');
-      const okLog = join(isolatedHome, 'ok.log');
+      const psLog = join(isolatedHome, 'ok.log');
       const ambientHelper = join(isolatedHome, 'ambient-helper.sh');
-      const okCli = join(isolatedHome, 'ok-cli.sh');
+      const psCli = join(isolatedHome, 'ps-cli.sh');
 
       const stubScript = (log: string, user: string): string =>
         [
@@ -293,13 +293,13 @@ describe.skipIf(process.platform === 'win32')(
           '',
         ].join('\n');
       writeFileSync(ambientHelper, stubScript(ambientLog, 'ambient'), { mode: 0o755 });
-      writeFileSync(okCli, stubScript(okLog, 'ok'), { mode: 0o755 });
+      writeFileSync(psCli, stubScript(psLog, 'ok'), { mode: 0o755 });
 
       execSync(`git config credential.helper '!${ambientHelper}'`, { cwd: repoDir });
 
       const server: HttpServer = createHttpServer((req, res) => {
         req.resume();
-        res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="ok-test"' });
+        res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="ps-test"' });
         res.end('auth required');
       });
       await new Promise<void>((resolvePromise) => server.listen(0, '127.0.0.1', resolvePromise));
@@ -309,7 +309,7 @@ describe.skipIf(process.platform === 'win32')(
         execSync(`git remote add origin http://127.0.0.1:${port}/repo.git`, { cwd: repoDir });
 
         const handle = createGitInstance(repoDir, {
-          credentialConfig: buildSyncCredentialConfig([okCli], { resetAmbient: true }),
+          credentialConfig: buildSyncCredentialConfig([psCli], { resetAmbient: true }),
           timeoutMs: 15_000,
         });
         isolateAmbientGitConfig(handle);
@@ -322,7 +322,7 @@ describe.skipIf(process.platform === 'win32')(
                 .split('\n')
                 .filter((line) => line !== '')
             : [];
-        expect(callsIn(okLog)).toContain('auth git-credential get');
+        expect(callsIn(psLog)).toContain('auth git-credential get');
         expect(callsIn(ambientLog)).toEqual([]);
       } finally {
         await new Promise<void>((resolvePromise) => {
@@ -398,24 +398,24 @@ describe('buildSyncCredentialConfig()', () => {
   };
 
   test('packaged macOS bundle path survives the shell as one intact token', () => {
-    const bundlePath = '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
+    const bundlePath = '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
     const config = buildSyncCredentialConfig([bundlePath], { resetAmbient: true });
     expect(argvFromHelper(config)).toEqual([bundlePath, 'auth', 'git-credential']);
   });
 
   test('bare command (dev default) stays unquoted', () => {
-    const config = buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: true });
+    const config = buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true });
     expect(config).toEqual([
       'credential.helper=',
-      'credential.helper=!open-knowledge auth git-credential',
+      'credential.helper=!palimpsest auth git-credential',
     ]);
-    expect(argvFromHelper(config)).toEqual(['open-knowledge', 'auth', 'git-credential']);
+    expect(argvFromHelper(config)).toEqual(['palimpsest', 'auth', 'git-credential']);
   });
 
   test('undefined / empty argv falls back to the bare CLI name', () => {
     const expected = [
       'credential.helper=',
-      'credential.helper=!open-knowledge auth git-credential',
+      'credential.helper=!palimpsest auth git-credential',
     ];
     expect(buildSyncCredentialConfig(undefined, { resetAmbient: true })).toEqual(expected);
     expect(buildSyncCredentialConfig([], { resetAmbient: true })).toEqual(expected);
@@ -427,37 +427,37 @@ describe('buildSyncCredentialConfig()', () => {
     expect(argvFromHelper(config)).toEqual([...argv, 'auth', 'git-credential']);
   });
 
-  test('Beta channel from OK_CHANNEL under a node execPath pins OK_CHANNEL=beta into the helper', () => {
-    withEnvEntries({ OK_CHANNEL: 'beta' }, () => {
+  test('Beta channel from PS_CHANNEL under a node execPath pins PS_CHANNEL=beta into the helper', () => {
+    withEnvEntries({ PS_CHANNEL: 'beta' }, () => {
       const argv = ['/usr/local/bin/node', '/opt/ok/cli.mjs'];
       const config = buildSyncCredentialConfig(argv, { resetAmbient: true });
       const helper = config.at(-1)?.slice('credential.helper=!'.length) ?? '';
       const parsed = shellQuote.parse(helper);
-      expect(parsed).toEqual(['OK_CHANNEL=beta', ...argv, 'auth', 'git-credential']);
-      const helperEnv = { OK_CHANNEL: String(parsed[0]).split('=')[1] };
+      expect(parsed).toEqual(['PS_CHANNEL=beta', ...argv, 'auth', 'git-credential']);
+      const helperEnv = { PS_CHANNEL: String(parsed[0]).split('=')[1] };
       expect(DESKTOP_PRODUCTS[resolveDesktopProductName(helperEnv, argv[0])].keyringService).toBe(
-        'open-knowledge-beta',
+        'palimpsest-beta',
       );
     });
   });
 
   test('dev channel pins dev only on the CLI the host supplies, never on the CLI on PATH', () => {
-    withEnvEntries({ OK_CHANNEL: 'dev' }, () => {
+    withEnvEntries({ PS_CHANNEL: 'dev' }, () => {
       const argv = ['/usr/local/bin/node', '/src/ok/packages/cli/dist/cli.mjs'];
       expect(argvFromHelper(buildSyncCredentialConfig(argv, { resetAmbient: true }))).toEqual([
-        'OK_CHANNEL=dev',
+        'PS_CHANNEL=dev',
         ...argv,
         'auth',
         'git-credential',
       ]);
       expect(buildSyncCredentialConfig(undefined, { resetAmbient: true }).at(-1)).toBe(
-        'credential.helper=!open-knowledge auth git-credential',
+        'credential.helper=!palimpsest auth git-credential',
       );
     });
   });
 
   test('Stable channel keeps the helper unpinned', () => {
-    withEnvEntries({ OK_CHANNEL: undefined }, () => {
+    withEnvEntries({ PS_CHANNEL: undefined }, () => {
       const config = buildSyncCredentialConfig(['/usr/local/bin/node', '/opt/ok/cli.mjs'], {
         resetAmbient: true,
       });
@@ -468,7 +468,7 @@ describe('buildSyncCredentialConfig()', () => {
   });
 
   test('embedded single quote in the path round-trips safely', () => {
-    const argv = ["/Users/o'brien/OpenKnowledge.app/cli.sh"];
+    const argv = ["/Users/o'brien/Palimpsest.app/cli.sh"];
     const config = buildSyncCredentialConfig(argv, { resetAmbient: true });
     expect(argvFromHelper(config)).toEqual([...argv, 'auth', 'git-credential']);
   });
@@ -482,13 +482,13 @@ describe('buildSyncCredentialConfig() — ambient helper neutralization', () => 
 
   test("emits an empty credential.helper reset before OK's own helper", () => {
     const values = credentialHelperValues(
-      buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: true }),
+      buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true }),
     );
-    expect(values).toEqual(['', '!open-knowledge auth git-credential']);
+    expect(values).toEqual(['', '!palimpsest auth git-credential']);
   });
 
   test('packaged bundle path keeps the reset ahead of the escaped helper', () => {
-    const bundlePath = '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh';
+    const bundlePath = '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
     const values = credentialHelperValues(
       buildSyncCredentialConfig([bundlePath], { resetAmbient: true }),
     );
@@ -498,8 +498,8 @@ describe('buildSyncCredentialConfig() — ambient helper neutralization', () => 
 
   test('resetAmbient:false omits the reset, preserving the ambient chain', () => {
     const values = credentialHelperValues(
-      buildSyncCredentialConfig(['open-knowledge'], { resetAmbient: false }),
+      buildSyncCredentialConfig(['palimpsest'], { resetAmbient: false }),
     );
-    expect(values).toEqual(['!open-knowledge auth git-credential']);
+    expect(values).toEqual(['!palimpsest auth git-credential']);
   });
 });

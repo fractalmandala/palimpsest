@@ -25,7 +25,7 @@ describe('resolveUpstreamChanges', () => {
   }
 
   beforeEach(async () => {
-    dir = mkdtempSync(resolve(tmpdir(), 'ok-upstream-changes-'));
+    dir = mkdtempSync(resolve(tmpdir(), 'ps-upstream-changes-'));
     git = simpleGit(dir);
     await git.init(['-b', 'main']);
     configureTestGitRepository(dir);

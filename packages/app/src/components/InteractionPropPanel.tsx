@@ -101,7 +101,7 @@ export const InteractionPropPanel: FC<InteractionPropPanelProps> = ({
           }
         }}
         className={cn(
-          'ok-interaction-prop-panel pointer-events-auto p-3',
+          'ps-interaction-prop-panel pointer-events-auto p-3',
           layout === 'wide' ? 'w-[min(720px,calc(100%-1rem))]' : 'w-80',
           className,
         )}

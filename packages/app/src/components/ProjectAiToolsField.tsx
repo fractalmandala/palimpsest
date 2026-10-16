@@ -4,7 +4,7 @@ import {
   type EditorId,
   RESERVED_PROJECT_SKILL_NAME,
   STABLE_EDITOR_PROJECT_CONFIG_PATH,
-} from '@inkeep/open-knowledge-core/constants/editors';
+} from '@palimpsest/core/constants/editors';
 import { i18n } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
@@ -89,7 +89,7 @@ export function ProjectAiToolsField({
               className="flex min-w-0 flex-1 items-center gap-1.5 pe-28 text-sm font-medium text-foreground"
               data-testid={`${testIdPrefix}-title`}
             >
-              <Trans comment="Checkbox that wires the OpenKnowledge MCP into every detected AI tool for the project">
+              <Trans comment="Checkbox that wires the Palimpsest MCP into every detected AI tool for the project">
                 Connect your AI tools to this project
               </Trans>
             </span>
@@ -101,7 +101,7 @@ export function ProjectAiToolsField({
           >
             {}
             <Trans comment="Subtext under the project AI-tools checkbox">
-              Adds an OpenKnowledge MCP entry and the project skill to{' '}
+              Adds an Palimpsest MCP entry and the project skill to{' '}
               <span className="font-medium text-foreground">{toolList}</span>, so your agents can
               read and edit your files.
             </Trans>

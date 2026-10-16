@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
-import { okVitestBase } from '../../test-support/vitest.base';
+import { psVitestBase } from '../../test-support/vitest.base';
 
 /**
  * Vitest config for packages/desktop.
@@ -23,13 +23,13 @@ const lumeQaExcludeFor = (platform: string, optIn: string | undefined): string[]
   platform === 'darwin' && optIn === '1' ? [] : ['tests/lume-qa/**'];
 
 export default defineConfig({
-  ...okVitestBase,
+  ...psVitestBase,
   test: {
-    ...okVitestBase.test,
+    ...psVitestBase.test,
     include: ['**/*.test.ts?(x)', '**/*.test.mjs'],
     exclude: [
-      ...okVitestBase.test.exclude,
-      ...lumeQaExcludeFor(process.platform, process.env.OK_LUME_QA_SUITES),
+      ...psVitestBase.test.exclude,
+      ...lumeQaExcludeFor(process.platform, process.env.PS_LUME_QA_SUITES),
       'out/**',
       'dist-desktop/**',
       '.variant-build/**',

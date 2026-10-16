@@ -6,7 +6,7 @@ import { readCanonicalGitHubRemoteUrl } from './git-remote.ts';
 
 describe('readCanonicalGitHubRemoteUrl (filesystem round-trip)', () => {
   function withTempProject(setup: (projectDir: string) => void): string | null {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-git-remote-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-git-remote-'));
     try {
       setup(projectDir);
       return readCanonicalGitHubRemoteUrl(projectDir);
@@ -20,10 +20,10 @@ describe('readCanonicalGitHubRemoteUrl (filesystem round-trip)', () => {
       mkdirSync(join(projectDir, '.git'));
       writeFileSync(
         join(projectDir, '.git', 'config'),
-        '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+        '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
       );
     });
-    expect(result).toBe('https://github.com/inkeep/open-knowledge.git');
+    expect(result).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
   test('canonicalizes an SSH origin to the https form', () => {
@@ -31,10 +31,10 @@ describe('readCanonicalGitHubRemoteUrl (filesystem round-trip)', () => {
       mkdirSync(join(projectDir, '.git'));
       writeFileSync(
         join(projectDir, '.git', 'config'),
-        '[remote "origin"]\n\turl = git@github.com:inkeep/open-knowledge.git\n',
+        '[remote "origin"]\n\turl = git@github.com:fractalmandala/palimpsest.git\n',
       );
     });
-    expect(result).toBe('https://github.com/inkeep/open-knowledge.git');
+    expect(result).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
   test('returns a host-qualified canonical url for a GHES origin', () => {
@@ -58,7 +58,7 @@ describe('readCanonicalGitHubRemoteUrl (filesystem round-trip)', () => {
       mkdirSync(join(projectDir, '.git'));
       writeFileSync(
         join(projectDir, '.git', 'config'),
-        '[remote "origin"]\n\turl = https://gitlab.com/inkeep/open-knowledge.git\n',
+        '[remote "origin"]\n\turl = https://gitlab.com/fractalmandala/palimpsest.git\n',
       );
     });
     expect(result).toBeNull();
@@ -80,11 +80,11 @@ describe('readCanonicalGitHubRemoteUrl (filesystem round-trip)', () => {
         [
           '[remote "origin"]',
           '\turl =',
-          '\turl = https://github.com/inkeep/open-knowledge.git',
+          '\turl = https://github.com/fractalmandala/palimpsest.git',
         ].join('\n'),
       );
     });
-    expect(result).toBe('https://github.com/inkeep/open-knowledge.git');
+    expect(result).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
   test('does not throw when .git/config is unreadable', () => {
@@ -96,16 +96,16 @@ describe('readCanonicalGitHubRemoteUrl (filesystem round-trip)', () => {
 
   test('follows worktree `.git` pointer file to read the linked gitdir config', () => {
     const result = withTempProject((projectDir) => {
-      const primaryDir = join(projectDir, '..', 'ok-git-remote-primary-');
+      const primaryDir = join(projectDir, '..', 'ps-git-remote-primary-');
       const primaryGitDir = `${primaryDir}-gitdir`;
       mkdirSync(primaryGitDir, { recursive: true });
       writeFileSync(
         join(primaryGitDir, 'config'),
-        '[remote "origin"]\n\turl = https://github.com/inkeep/open-knowledge.git\n',
+        '[remote "origin"]\n\turl = https://github.com/fractalmandala/palimpsest.git\n',
       );
       writeFileSync(join(projectDir, '.git'), `gitdir: ${primaryGitDir}\n`);
     });
-    expect(result).toBe('https://github.com/inkeep/open-knowledge.git');
+    expect(result).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
   test('returns null when worktree pointer file targets a missing gitdir', () => {

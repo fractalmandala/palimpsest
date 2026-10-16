@@ -17,13 +17,13 @@ describe('desktop self-uninstall helpers', () => {
   test('resolves only packaged macOS .app exec paths', () => {
     expect(
       resolveAppBundleFromExecPath(
-        '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         'darwin',
       ),
-    ).toBe('/Applications/OpenKnowledge.app');
+    ).toBe('/Applications/Palimpsest.app');
     expect(
       resolveAppBundleFromExecPath(
-        '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         'linux',
       ),
     ).toBeNull();
@@ -31,26 +31,26 @@ describe('desktop self-uninstall helpers', () => {
   });
 
   test('allows only the canonical Applications install locations', () => {
-    expect(isSupportedApplicationsBundle('/Applications/OpenKnowledge.app', '/Users/alice')).toBe(
+    expect(isSupportedApplicationsBundle('/Applications/Palimpsest.app', '/Users/alice')).toBe(
       true,
     );
     expect(
-      isSupportedApplicationsBundle('/Users/alice/Applications/OpenKnowledge.app', '/Users/alice'),
+      isSupportedApplicationsBundle('/Users/alice/Applications/Palimpsest.app', '/Users/alice'),
     ).toBe(true);
     expect(
-      isSupportedApplicationsBundle('/Volumes/OpenKnowledge/OpenKnowledge.app', '/Users/alice'),
+      isSupportedApplicationsBundle('/Volumes/Palimpsest/Palimpsest.app', '/Users/alice'),
     ).toBe(false);
     expect(
-      isSupportedApplicationsBundle('/Applications/OpenKnowledge Beta.app', '/Users/alice'),
+      isSupportedApplicationsBundle('/Applications/Palimpsest Beta.app', '/Users/alice'),
     ).toBe(false);
   });
 
-  test('collects open, recent, and running project candidates with .ok markers only', () => {
+  test('collects open, recent, and running project candidates with .ps markers only', () => {
     const candidates = collectDesktopUninstallProjectCandidates({
       openProjectPaths: ['/work/open', '/work/dupe'],
       recentProjects: [{ path: '/work/recent' }, { path: '/work/dupe' }, { path: '/work/missing' }],
-      lockDirs: ['/work/running/.ok/local', '/work/dupe/.ok/local'],
-      exists: (path) => !path.includes('missing') && path.endsWith(join('.ok')),
+      lockDirs: ['/work/running/.ps/local', '/work/dupe/.ps/local'],
+      exists: (path) => !path.includes('missing') && path.endsWith(join('.ps')),
     });
 
     expect(candidates).toEqual([
@@ -95,37 +95,37 @@ describe('desktop self-uninstall helpers', () => {
 
   test('builds a cleanup script that deinitializes selected projects before global uninstall', () => {
     const script = buildDesktopUninstallCleanupScript({
-      cliPath: "/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok's.sh",
+      cliPath: "/Applications/Palimpsest.app/Contents/Resources/cli/bin/ok's.sh",
       projectPaths: ['/work/a', "/work/quote's"],
-      logPath: '/Users/alice/Library/Logs/OpenKnowledge/uninstall.log',
+      logPath: '/Users/alice/Library/Logs/Palimpsest/uninstall.log',
     });
 
     expect(script).toContain("set -- '/work/a' '/work/quote'\\''s'");
-    expect(script).toContain('"$OK_CLI" deinit --yes "$project"');
-    expect(script).toContain('"$OK_CLI" uninstall --yes');
+    expect(script).toContain('"$PS_CLI" deinit --yes "$project"');
+    expect(script).toContain('"$PS_CLI" uninstall --yes');
     expect(script).not.toContain('osascript');
     expect(script).not.toContain('Finder');
     expect(script).toContain(
-      "OK_CLI='/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok'\\''s.sh'",
+      "PS_CLI='/Applications/Palimpsest.app/Contents/Resources/cli/bin/ok'\\''s.sh'",
     );
   });
 
   test('a zero-project cleanup script skips deinit but still uninstalls globally', () => {
     const script = buildDesktopUninstallCleanupScript({
-      cliPath: '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh',
+      cliPath: '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh',
       projectPaths: [],
-      logPath: '/Users/alice/Library/Logs/OpenKnowledge/uninstall.log',
+      logPath: '/Users/alice/Library/Logs/Palimpsest/uninstall.log',
     });
 
     expect(script).toContain('No project deinit paths selected.');
     expect(script).not.toContain('deinit --yes');
-    expect(script).toContain('"$OK_CLI" uninstall --yes');
+    expect(script).toContain('"$PS_CLI" uninstall --yes');
   });
 
   test('default log path lives outside app data and is timestamped safely', () => {
     expect(
       defaultDesktopUninstallLogPath('/Users/alice', new Date('2026-07-08T01:02:03.004Z')),
-    ).toBe('/Users/alice/Library/Logs/OpenKnowledge/uninstall-2026-07-08T01-02-03-004Z.log');
+    ).toBe('/Users/alice/Library/Logs/Palimpsest/uninstall-2026-07-08T01-02-03-004Z.log');
   });
 
   test('reads the cleanup log for display, tail-truncating oversized logs', () => {
@@ -153,11 +153,11 @@ describe('desktop self-uninstall helpers', () => {
   test('failure notice embeds the log and still names the saved file', () => {
     const notice = desktopUninstallFailureNotice({
       error: 'cleanup process exited with code 1',
-      logPath: '/Users/alice/Library/Logs/OpenKnowledge/uninstall.log',
+      logPath: '/Users/alice/Library/Logs/Palimpsest/uninstall.log',
       logText: 'Could not remove:\n  ✗ Remove .claude/skills/pack/',
     });
     expect(notice.log).toContain('✗ Remove .claude/skills/pack/');
-    expect(notice.footnote).toContain('/Users/alice/Library/Logs/OpenKnowledge/uninstall.log');
+    expect(notice.footnote).toContain('/Users/alice/Library/Logs/Palimpsest/uninstall.log');
 
     const noLog = desktopUninstallFailureNotice({
       error: 'cleanup process exited with code 1',

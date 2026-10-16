@@ -3,7 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { formatOkActor, type OkActorEntry } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { formatOkActor, type PsActorEntry } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -18,7 +18,7 @@ import {
 import { readShadowLog } from './shadow-log.ts';
 
 function wipBody(subject: string, writerId: string, displayName: string): string {
-  const actor: OkActorEntry = {
+  const actor: PsActorEntry = {
     v: 1,
     writer_id: writerId,
     principal: null,
@@ -37,7 +37,7 @@ function wipBody(subject: string, writerId: string, displayName: string): string
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-shadow-log-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-shadow-log-test-'));
 });
 
 afterEach(async () => {
@@ -223,7 +223,7 @@ describe('readShadowLog — FR14 summaries carry through (US-007)', () => {
     const body = [
       'WIP auto-save 2026-04-21T00:00:00.000Z',
       '',
-      'ok-contributors: {"v":1,"id":"agent-c","name":"Claude","colorSeed":"seed","docs":["content/auth"],"summaries":["Fixed token-refresh race","Added unit test"]}',
+      'ps-contributors: {"v":1,"id":"agent-c","name":"Claude","colorSeed":"seed","docs":["content/auth"],"summaries":["Fixed token-refresh race","Added unit test"]}',
     ].join('\n');
 
     await commitWip(shadow, writer, contentDir, body, branch);
@@ -250,7 +250,7 @@ describe('readShadowLog — FR14 summaries carry through (US-007)', () => {
     const body = [
       'WIP auto-save 2026-04-10T00:00:00.000Z',
       '',
-      'ok-contributors: {"v":1,"id":"agent-legacy","name":"Legacy","colorSeed":"x","docs":["content/auth"]}',
+      'ps-contributors: {"v":1,"id":"agent-legacy","name":"Legacy","colorSeed":"x","docs":["content/auth"]}',
     ].join('\n');
 
     await commitWip(shadow, writer, contentDir, body, branch);

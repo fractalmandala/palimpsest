@@ -1,5 +1,5 @@
-import { DEV_FALLBACK_CLI_REFUSAL, OkCliCommand } from '@inkeep/open-knowledge-core';
-import type { AuthReposResponse, AuthStatusResponse } from '@inkeep/open-knowledge-server';
+import { DEV_FALLBACK_CLI_REFUSAL, PsCliCommand } from '@palimpsest/core';
+import type { AuthReposResponse, AuthStatusResponse } from '@palimpsest/server';
 import { describe, expect, test, vi } from 'vitest';
 
 const statusCalls: Array<{ host: string | undefined; resolve: (r: AuthStatusResponse) => void }> =
@@ -9,7 +9,7 @@ const reposCalls: Array<{ host: string | undefined; resolve: (r: AuthReposRespon
 const cloneSpawn = vi.fn(() => ({ done: Promise.resolve(), cancel: () => {} }));
 const deviceFlowSpawn = vi.fn(() => ({ done: Promise.resolve(), cancel: () => {} }));
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   runAuthStatusSubprocess: ({ host }: { host?: string }) =>
     new Promise<AuthStatusResponse>((resolve) => {
       statusCalls.push({ host, resolve });
@@ -28,7 +28,7 @@ const { createLocalOpState, handleAuthRepos, handleAuthStart, handleAuthStatus, 
 
 function makeDeps() {
   return {
-    resolveOkCli: () => OkCliCommand.resolve({ host: { cliArgs: ['open-knowledge'] }, env: {} }),
+    resolveOkCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
     logFailure: vi.fn(),
     state: createLocalOpState(),
   };
@@ -156,7 +156,7 @@ describe('handleAuthStart on a dev build without its workspace CLI', () => {
     deviceFlowSpawn.mockClear();
     const deps = {
       ...makeDeps(),
-      resolveOkCli: () => OkCliCommand.resolve({ env: { OK_CHANNEL: 'dev' } }),
+      resolveOkCli: () => PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
     };
     const sender = { send: vi.fn(), isDestroyed: () => false };
     expect(handleAuthStart(deps, sender)).toEqual({ ok: false, error: DEV_FALLBACK_CLI_REFUSAL });
@@ -169,9 +169,9 @@ describe('handleAuthStart on a dev build without its workspace CLI', () => {
     const deps = {
       ...makeDeps(),
       resolveOkCli: () =>
-        OkCliCommand.resolve({
+        PsCliCommand.resolve({
           host: { cliArgs: ['node', '/src/cli.mjs'] },
-          env: { OK_CHANNEL: 'dev' },
+          env: { PS_CHANNEL: 'dev' },
         }),
     };
     const sender = { send: vi.fn(), isDestroyed: () => false };
@@ -185,7 +185,7 @@ describe('handleCloneStart on a dev build without its workspace CLI', () => {
     cloneSpawn.mockClear();
     const deps = {
       ...makeDeps(),
-      resolveOkCli: () => OkCliCommand.resolve({ env: { OK_CHANNEL: 'dev' } }),
+      resolveOkCli: () => PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
     };
     const sender = { send: vi.fn(), isDestroyed: () => false };
     expect(

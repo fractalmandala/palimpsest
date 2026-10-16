@@ -6,7 +6,7 @@ import {
   SavedThemeSaveSuccessSchema,
   SavedThemesListSuccessSchema,
   SavedThemeUpdateSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -157,7 +157,7 @@ describe('fetchSavedThemes', () => {
       truncated: false,
     });
     expect(JSON.parse(String(warn.mock.calls[0]?.[0]))).toEqual({
-      event: 'ok-saved-theme-request-failed',
+      event: 'ps-saved-theme-request-failed',
       action: 'list',
       result: 'request-error',
       errorName: 'Error',
@@ -175,7 +175,7 @@ describe('fetchSavedThemes', () => {
       truncated: false,
     });
     expect(JSON.parse(String(warn.mock.calls[0]?.[0]))).toEqual({
-      event: 'ok-saved-theme-request-failed',
+      event: 'ps-saved-theme-request-failed',
       action: 'list',
       result: 'http-error',
       status: 500,
@@ -278,7 +278,7 @@ describe('saveSavedTheme', () => {
 
     expect(result).toEqual({ ok: false, reason: 'unexpected' });
     expect(JSON.parse(String(warn.mock.calls[0]?.[0]))).toEqual({
-      event: 'ok-saved-theme-request-failed',
+      event: 'ps-saved-theme-request-failed',
       action: 'save',
       result: 'request-error',
       errorName: 'Error',
@@ -344,7 +344,7 @@ describe('updateSavedTheme', () => {
       ),
     ).toEqual({ ok: false, reason: 'unexpected' });
     expect(JSON.parse(String(warn.mock.calls[0]?.[0]))).toEqual({
-      event: 'ok-saved-theme-request-failed',
+      event: 'ps-saved-theme-request-failed',
       action: 'update',
       result: 'request-error',
       errorName: 'Error',
@@ -403,7 +403,7 @@ describe('deleteSavedTheme', () => {
 
     expect(result).toEqual({ ok: false, reason: 'unexpected' });
     expect(JSON.parse(String(warn.mock.calls[0]?.[0]))).toEqual({
-      event: 'ok-saved-theme-request-failed',
+      event: 'ps-saved-theme-request-failed',
       action: 'delete',
       result: 'request-error',
       errorName: 'Error',

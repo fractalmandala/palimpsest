@@ -18,8 +18,8 @@ const recordAlpha = () =>
   });
 
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'ok-placements-'));
-  ledgerPath = join(base, '.ok', 'local', 'skill-placements.json');
+  base = mkdtempSync(join(tmpdir(), 'ps-placements-'));
+  ledgerPath = join(base, '.ps', 'local', 'skill-placements.json');
 });
 
 afterEach(() => {

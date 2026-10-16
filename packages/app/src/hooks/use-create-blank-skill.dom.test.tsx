@@ -28,7 +28,7 @@ vi.mock('@/lib/skills-api', () => ({
         ok: true as const,
         created: true,
         warnings: [],
-        path: `.ok/skills/${input.name}`,
+        path: `.ps/skills/${input.name}`,
       }
     );
   },

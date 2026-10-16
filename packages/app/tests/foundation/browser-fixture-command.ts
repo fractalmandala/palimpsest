@@ -33,7 +33,7 @@ function readReport(path: string): BrowserFixtureFile[] | null {
 export const runBrowserFixture: BrowserCommand<[BrowserFixtureRequest]> = (_context, request) => {
   const filePaths = fixtureFilePaths(request.files);
   const deadlineMs = fixtureDeadlineMs(request);
-  const reportDir = mkdtempSync(join(tmpdir(), 'ok-browser-fixture-'));
+  const reportDir = mkdtempSync(join(tmpdir(), 'ps-browser-fixture-'));
   const reportPath = join(reportDir, 'report.json');
   return new Promise<BrowserFixtureRun>((resolveRun, rejectRun) => {
     let stopped = false;

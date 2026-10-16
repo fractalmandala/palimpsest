@@ -185,7 +185,7 @@ vi.doMock('@/lib/config-provider', () => ({
 }));
 
 vi.doMock('@/lib/use-workspace', () => ({
-  useWorkspace: () => ({ contentDir: '/tmp/open-knowledge', pathSeparator: '/' }),
+  useWorkspace: () => ({ contentDir: '/tmp/palimpsest', pathSeparator: '/' }),
 }));
 
 vi.doMock('sonner', () => ({
@@ -203,7 +203,7 @@ describe('FileSidebar project-root Share', () => {
     hasRemote = true;
     lastShareInput = undefined;
     runShareActionMock.mockClear();
-    Object.defineProperty(window, 'okDesktop', { configurable: true, value: undefined });
+    Object.defineProperty(window, 'psDesktop', { configurable: true, value: undefined });
   });
 
   afterEach(() => {

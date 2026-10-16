@@ -52,17 +52,17 @@ export function deriveAutoInstanceName(ctx: GitInstanceContext): string | null {
 }
 
 export function resolveEffectiveInstanceName(
-  env: { readonly OK_INSTANCE?: string; readonly OK_AUTO_INSTANCE?: string },
+  env: { readonly PS_INSTANCE?: string; readonly PS_AUTO_INSTANCE?: string },
   appDir: string,
   opts: {
     readonly readGit?: (dir: string) => GitInstanceContext;
     readonly autoDeriveEnabled?: boolean;
   } = {},
 ): { name: string; source: 'env' | 'git' } | null {
-  const explicit = env.OK_INSTANCE?.trim();
+  const explicit = env.PS_INSTANCE?.trim();
   if (explicit) return { name: explicit, source: 'env' };
   if (opts.autoDeriveEnabled === false) return null;
-  if (/^(0|false|off)$/i.test(env.OK_AUTO_INSTANCE ?? '')) return null;
+  if (/^(0|false|off)$/i.test(env.PS_AUTO_INSTANCE ?? '')) return null;
   const readGit = opts.readGit ?? readGitInstanceContext;
   const derived = deriveAutoInstanceName(readGit(appDir));
   return derived ? { name: derived, source: 'git' } : null;

@@ -8,7 +8,7 @@ import {
   isBranchNotFoundGitError,
   isLoginFixableGitAuthError,
   shellSingleQuote,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   assertCheckoutSymlinksSafe,
   assertGitAvailable,
@@ -22,13 +22,13 @@ import {
   resolveGitHubAccountFromUrl,
   sameGitHubLogin,
   UnsafeIncomingSymlinkError,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import simpleGit, { GitPluginError, type SimpleGitOptions } from 'simple-git';
 import type { GhDetectResult } from '../auth/gh-detect.ts';
 import { type ResolvedAuth, resolveAuth } from '../auth/resolve-auth.ts';
 import { makeLazyTokenStore, type TokenStore } from '../auth/token-store.ts';
-import { OK_DIR } from '../constants.ts';
+import { PS_DIR } from '../constants.ts';
 import { parseGitUrl } from '../github/url.ts';
 import { isGitHubRepoPublic } from '../github/visibility.ts';
 import { addOkPathsToGitExclude } from '../sharing/git-exclude.ts';
@@ -74,14 +74,14 @@ export function buildCloneAuthEnv(
 ): Record<string, string> {
   const env = buildCloneEnv(sourceEnv);
   if (resolved.relayToken) {
-    env.OK_GH_TOKEN = resolved.relayToken.token;
-    env.OK_GH_TOKEN_HOST = resolved.relayToken.host;
-    if (resolved.relayToken.login) env.OK_GH_TOKEN_LOGIN = resolved.relayToken.login;
-    else delete env.OK_GH_TOKEN_LOGIN;
+    env.PS_GH_TOKEN = resolved.relayToken.token;
+    env.PS_GH_TOKEN_HOST = resolved.relayToken.host;
+    if (resolved.relayToken.login) env.PS_GH_TOKEN_LOGIN = resolved.relayToken.login;
+    else delete env.PS_GH_TOKEN_LOGIN;
   } else {
-    delete env.OK_GH_TOKEN;
-    delete env.OK_GH_TOKEN_HOST;
-    delete env.OK_GH_TOKEN_LOGIN;
+    delete env.PS_GH_TOKEN;
+    delete env.PS_GH_TOKEN_HOST;
+    delete env.PS_GH_TOKEN_LOGIN;
   }
   return env;
 }
@@ -356,7 +356,7 @@ export async function runClone(
 export function ensureOkExcludedFromGit(
   projectDir: string,
 ): 'appended' | 'already-present' | 'no-exclude' {
-  const result = addOkPathsToGitExclude(projectDir, [`${OK_DIR}/`]);
+  const result = addOkPathsToGitExclude(projectDir, [`${PS_DIR}/`]);
   if (result.kind === 'no-exclude') return 'no-exclude';
   if (result.kind === 'refused-tracked') return 'already-present';
   if (result.appended.length > 0) return 'appended';

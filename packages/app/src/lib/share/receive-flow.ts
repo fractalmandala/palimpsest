@@ -1,11 +1,11 @@
 import {
   canonicalGitHubRemoteUrl as _canonicalGitHubRemoteUrl,
   type ExpectedShareRepo,
-} from '@inkeep/open-knowledge-core/sharing';
+} from '@palimpsest/core/sharing';
 import { t } from '@lingui/core/macro';
 import type {
   CheckTargetExistsResult,
-  OkShareReceivedPayload,
+  PsShareReceivedPayload,
   ShareFolderValidationResult,
 } from '@/lib/desktop-bridge-types';
 import type { VerdictCellKind, WorktreeCheckoutSideEffectReason } from './branch-switch-flow';
@@ -14,7 +14,7 @@ export {
   type BranchMatchOutcome,
   canonicalGitHubRemoteUrl,
   type ExpectedShareRepo,
-} from '@inkeep/open-knowledge-core/sharing';
+} from '@palimpsest/core/sharing';
 
 export function buildCloneUrl(expected: ExpectedShareRepo): string {
   return _canonicalGitHubRemoteUrl(expected);
@@ -53,11 +53,11 @@ export type ReceiveErrorPresentation =
   | { readonly kind: 'invalid'; readonly message: string }
   | null;
 
-export function presentReceiveError(payload: OkShareReceivedPayload): ReceiveErrorPresentation {
+export function presentReceiveError(payload: PsShareReceivedPayload): ReceiveErrorPresentation {
   if (payload.kind === 'unsupported-version') {
     return {
       kind: 'unsupported-version',
-      message: t`Update OpenKnowledge to open this share.`,
+      message: t`Update Palimpsest to open this share.`,
     };
   }
   if (payload.kind === 'invalid') {

@@ -2,7 +2,7 @@ import type {
   UninstallDispatchResult,
   UninstallIntent,
   UninstallScreenSpec,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { getLogger } from './desktop-logger.ts';
 import { normalizeDesktopUninstallFeedbackAnswers } from './desktop-uninstall.ts';
 

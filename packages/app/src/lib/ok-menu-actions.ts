@@ -1,6 +1,6 @@
-import type { OkMenuAction } from './desktop-bridge-types';
+import type { PsMenuAction } from './desktop-bridge-types';
 
-export const OK_MENU_ACTIONS = [
+export const PS_MENU_ACTIONS = [
   'new-doc',
   'new-folder',
   'new-project',
@@ -23,7 +23,7 @@ export const OK_MENU_ACTIONS = [
   'copy-full-path',
   'copy-relative-path',
   'toggle-show-hidden-files',
-  'toggle-show-ok-folders',
+  'toggle-show-ps-folders',
   'toggle-show-only-markdown-files',
   'toggle-show-skills-section',
   'expand-all-tree',
@@ -39,10 +39,10 @@ export const OK_MENU_ACTIONS = [
   'switch-worktree',
   'report-bug',
   'send-feedback',
-] as const satisfies readonly OkMenuAction[];
+] as const satisfies readonly PsMenuAction[];
 
-type _MenuActionDrift = Exclude<OkMenuAction, (typeof OK_MENU_ACTIONS)[number]>;
+type _MenuActionDrift = Exclude<PsMenuAction, (typeof PS_MENU_ACTIONS)[number]>;
 const _menuActionDriftGuard: [_MenuActionDrift] extends [never]
   ? true
-  : ['OK_MENU_ACTIONS is missing an OkMenuAction id', _MenuActionDrift] = true;
+  : ['PS_MENU_ACTIONS is missing an PsMenuAction id', _MenuActionDrift] = true;
 void _menuActionDriftGuard;

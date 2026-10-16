@@ -20,7 +20,7 @@ import {
 
 let root: string;
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-authority-policy-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-authority-policy-')));
 });
 afterEach(() => {
   vi.restoreAllMocks();
@@ -29,8 +29,8 @@ afterEach(() => {
 
 test('an unreadable marker does not abandon sibling project exclusions', () => {
   for (const name of ['first', 'second']) {
-    mkdirSync(join(root, name, '.ok'), { recursive: true });
-    writeFileSync(join(root, name, '.ok', 'config.yml'), '');
+    mkdirSync(join(root, name, '.ps'), { recursive: true });
+    writeFileSync(join(root, name, '.ps', 'config.yml'), '');
   }
   const probe = projectRoots.isProjectRoot;
   let unreadable: string | undefined;
@@ -50,10 +50,10 @@ test('an unreadable marker does not abandon sibling project exclusions', () => {
 
 test('removing a nested marker never expands a captured epoch', () => {
   const child = join(root, 'nested');
-  mkdirSync(join(child, '.ok'), { recursive: true });
-  writeFileSync(join(child, '.ok', 'config.yml'), '');
+  mkdirSync(join(child, '.ps'), { recursive: true });
+  writeFileSync(join(child, '.ps', 'config.yml'), '');
   const scope = snapshotServerContentScope(root);
-  unlinkSync(join(child, '.ok', 'config.yml'));
+  unlinkSync(join(child, '.ps', 'config.yml'));
   expect(() => assertServerContentPath(scope, join(child, 'new.md'))).toThrow(/nested project/i);
   expect(() => assertServerContentSubtree(scope, root)).toThrow(/nested project/i);
   expect(() => assertServerContentPath(scope, join(root, 'own.md'))).not.toThrow();
@@ -63,8 +63,8 @@ test.each(['build', 'vendor', 'node_modules', '.cache'])(
   'marked projects inside %s are excluded even when ingestion skips that directory',
   (directory) => {
     const child = join(root, directory, 'nested');
-    mkdirSync(join(child, '.ok'), { recursive: true });
-    writeFileSync(join(child, '.ok', 'config.yml'), '');
+    mkdirSync(join(child, '.ps'), { recursive: true });
+    writeFileSync(join(child, '.ps', 'config.yml'), '');
     expect(snapshotServerContentScope(root)).toMatchObject({ kind: 'tree', excluded: [child] });
   },
 );

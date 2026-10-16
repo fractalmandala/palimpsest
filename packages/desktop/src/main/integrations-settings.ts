@@ -3,7 +3,7 @@ import {
   EMPTY_DETECTION_SNAPSHOT,
   EMPTY_PROBE_SNAPSHOT,
   TERMINAL_CLI_IDS,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 import type {
   AgentIntegrationsApplyRequest,
@@ -156,8 +156,8 @@ export function detectedEditorsFromProbes(probes: EditorPresenceProbes): Set<Mcp
 export function testPinnedSchemeHandlers(
   env: Readonly<Record<string, string | undefined>>,
 ): ReadonlySet<string> | null {
-  if (env.OK_DESKTOP_E2E_SMOKE !== '1') return null;
-  const raw = env.OK_DESKTOP_TEST_SCHEME_HANDLERS;
+  if (env.PS_DESKTOP_E2E_SMOKE !== '1') return null;
+  const raw = env.PS_DESKTOP_TEST_SCHEME_HANDLERS;
   if (raw === undefined) return null;
   return new Set(
     raw
@@ -306,7 +306,7 @@ export function registerIntegrationsSettings(
         default:
           return {
             ok: false,
-            error: `Couldn't add OpenKnowledge to ${label}${result.error ? ` (${result.error})` : ''}.`,
+            error: `Couldn't add Palimpsest to ${label}${result.error ? ` (${result.error})` : ''}.`,
           };
       }
     }
@@ -325,7 +325,7 @@ export function registerIntegrationsSettings(
       case 'left-foreign':
         return {
           ok: false,
-          error: `The ${currentMcpServerName()} entry in ${label} isn't one OpenKnowledge wrote — it was left unchanged. Remove it manually if you no longer want it.`,
+          error: `The ${currentMcpServerName()} entry in ${label} isn't one Palimpsest wrote — it was left unchanged. Remove it manually if you no longer want it.`,
         };
       case 'declined':
         return {

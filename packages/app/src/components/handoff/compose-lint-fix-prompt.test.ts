@@ -1,4 +1,4 @@
-import type { LintDiagnostic } from '@inkeep/open-knowledge-core';
+import type { LintDiagnostic } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   composeFixAllProblemsTerminalPaste,

@@ -14,8 +14,8 @@ import {
   productionShellLaunch,
 } from '../production-shell-server.ts';
 
-export const E2E_SERVING_ENV = 'OK_TEST_E2E_SERVING';
-export const PREBUILT_APP_ENV = 'OK_TEST_PREBUILT_APP';
+export const E2E_SERVING_ENV = 'PS_TEST_E2E_SERVING';
+export const PREBUILT_APP_ENV = 'PS_TEST_PREBUILT_APP';
 export const PREBUILT_MANIFEST_FILE = 'prebuilt-manifest.json';
 
 export const E2E_SERVING_MODES = ['dev-server', 'prebuilt'] as const;
@@ -154,11 +154,11 @@ export function describePrebuiltRefusal(outputDir: string, decision: UnservedDec
 export function prebuiltServerCommand(
   host: string,
   serving: PrebuiltServing,
-  okRoot: string,
+  psRoot: string,
 ): PrebuiltServerCommand {
   const decision = prebuiltServingDecision(
     readPrebuiltManifest(join(serving.outputDir, PREBUILT_MANIFEST_FILE)),
-    prebuiltManifest(okRoot, PREBUILT_BUILD_OPTIONS),
+    prebuiltManifest(psRoot, PREBUILT_BUILD_OPTIONS),
   );
   if (!decision.serve) throw new Error(describePrebuiltRefusal(serving.outputDir, decision));
   return {

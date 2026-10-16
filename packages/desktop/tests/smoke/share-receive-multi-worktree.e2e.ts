@@ -10,7 +10,7 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
 function userDataDirFor(tmpHome: string): string {
@@ -40,13 +40,13 @@ function setupMultiWorktree(): MultiWorktreeFixture {
   configureTestGitRepository(mainRepo);
   gitSync(mainRepo, 'config', 'user.email', 'test@example.com');
   gitSync(mainRepo, 'config', 'user.name', 'Test');
-  gitSync(mainRepo, 'remote', 'add', 'origin', 'https://github.com/inkeep/open-knowledge.git');
+  gitSync(mainRepo, 'remote', 'add', 'origin', 'https://github.com/fractalmandala/palimpsest.git');
   writeFileSync(join(mainRepo, 'README.md'), '# main\n');
   gitSync(mainRepo, 'add', 'README.md');
   gitSync(mainRepo, 'commit', '-m', 'initial');
-  mkdirSync(join(mainRepo, '.ok'), { recursive: true });
+  mkdirSync(join(mainRepo, '.ps'), { recursive: true });
   writeFileSync(
-    join(mainRepo, '.ok', 'config.yml'),
+    join(mainRepo, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
 
@@ -58,9 +58,9 @@ function setupMultiWorktree(): MultiWorktreeFixture {
   writeFileSync(join(featBarWorktree, 'docs', 'x.md'), '# feat-bar/docs/x\n');
   gitSync(featBarWorktree, 'add', 'docs/x.md');
   gitSync(featBarWorktree, 'commit', '-m', 'add feat-bar/docs/x.md');
-  mkdirSync(join(featBarWorktree, '.ok'), { recursive: true });
+  mkdirSync(join(featBarWorktree, '.ps'), { recursive: true });
   writeFileSync(
-    join(featBarWorktree, '.ok', 'config.yml'),
+    join(featBarWorktree, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
 
@@ -75,7 +75,7 @@ function setupMultiWorktree(): MultiWorktreeFixture {
 }
 
 test.describe('share-receive multi-worktree smoke (US-014 / J1 silent dispatch)', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Deep-link URL scheme is macOS-only in v0.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -93,13 +93,13 @@ test.describe('share-receive multi-worktree smoke (US-014 / J1 silent dispatch)'
           path: fixture.mainRepo,
           name: 'main',
           lastOpenedAt: new Date().toISOString(),
-          gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+          gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
         },
         {
           path: fixture.featBarWorktree,
           name: 'feat-bar',
           lastOpenedAt: new Date(Date.now() - 1000).toISOString(),
-          gitRemoteUrl: 'https://github.com/inkeep/open-knowledge.git',
+          gitRemoteUrl: 'https://github.com/fractalmandala/palimpsest.git',
         },
       ],
       projectSessions: {},
@@ -122,8 +122,8 @@ test.describe('share-receive multi-worktree smoke (US-014 / J1 silent dispatch)'
     const firstWindow = await app.firstWindow({ timeout: 15_000 });
     expect(firstWindow).toBeDefined();
 
-    const githubBlobUrl = 'https://github.com/inkeep/open-knowledge/blob/feat-bar/docs/x.md';
-    const shareUrl = `openknowledge://share?url=${encodeURIComponent(githubBlobUrl)}`;
+    const githubBlobUrl = 'https://github.com/fractalmandala/palimpsest/blob/feat-bar/docs/x.md';
+    const shareUrl = `palimpsest://share?url=${encodeURIComponent(githubBlobUrl)}`;
     execSync(`open -g "${shareUrl}"`, { stdio: 'pipe' });
 
     await expect(async () => {
@@ -131,9 +131,9 @@ test.describe('share-receive multi-worktree smoke (US-014 / J1 silent dispatch)'
         const projectPath = await page
           .evaluate(() => {
             const win = window as unknown as {
-              okDesktop?: { config: { projectPath: string } };
+              psDesktop?: { config: { projectPath: string } };
             };
-            return win.okDesktop?.config.projectPath ?? '';
+            return win.psDesktop?.config.projectPath ?? '';
           })
           .catch(() => '');
         if (projectPath === fixture.featBarWorktree) return;

@@ -3,7 +3,7 @@ import {
   type EditorMcpTarget,
   type McpDeclineReason,
   type McpEntryClassification,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 import { describe, expect, test } from 'vitest';
 import type { McpWiringEditorId } from '../shared/ipc-channels.ts';
 import {
@@ -11,11 +11,11 @@ import {
   type ProjectMcpReclaimCliSurface,
 } from './project-mcp-reclaim.ts';
 
-const EXE = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+const EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
 const CHAIN_ENTRY = buildManagedServerEntry({ mode: 'published' });
 const KNOWN_OLDER_ENTRY = {
   command: '/bin/sh',
-  args: ['-l', '-c', '# ok-mcp-v1\nexit 127'],
+  args: ['-l', '-c', '# ps-mcp-v1\nexit 127'],
 };
 
 function fakeTarget(id: McpWiringEditorId, projectConfigPath?: string): EditorMcpTarget {
@@ -24,7 +24,7 @@ function fakeTarget(id: McpWiringEditorId, projectConfigPath?: string): EditorMc
     label: id,
     format: 'json',
     topLevelKey: 'mcpServers',
-    serverName: () => 'open-knowledge',
+    serverName: () => 'palimpsest',
     configPath: () => `/home/${id}/config.json`,
     buildEntry: () => CHAIN_ENTRY,
     scope: 'global',
@@ -79,7 +79,7 @@ describe('checkAndRepairProjectMcpOnProjectOpen', () => {
     const { cli } = buildCli({});
     const r = await checkAndRepairProjectMcpOnProjectOpen({
       projectDir: '/p',
-      executablePath: '/tmp/.mount_okXYZ/openknowledge',
+      executablePath: '/tmp/.mount_okXYZ/palimpsest',
       isPackaged: true,
       platform: 'linux',
       env: { APPIMAGE: '/home/u/OK.AppImage' },
@@ -103,8 +103,8 @@ describe('checkAndRepairProjectMcpOnProjectOpen', () => {
   });
 
   for (const [platform, exe] of [
-    ['linux', '/opt/OpenKnowledge/openknowledge'],
-    ['win32', 'C:\\Users\\u\\AppData\\Local\\Programs\\OpenKnowledge\\OpenKnowledge.exe'],
+    ['linux', '/opt/Palimpsest/palimpsest'],
+    ['win32', 'C:\\Users\\u\\AppData\\Local\\Programs\\Palimpsest\\Palimpsest.exe'],
   ] as const) {
     test(`${platform} packaged install runs the repair cycle to done`, async () => {
       const { cli } = buildCli({
@@ -232,7 +232,7 @@ describe('checkAndRepairProjectMcpOnProjectOpen', () => {
           kind: 'present',
           entry: {
             command: '/bin/sh',
-            args: ['-l', '-c', '# ok-mcp-v99\nfuture launcher body'],
+            args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
             env: { NODE_OPTIONS: '--require ./payload.cjs' },
           },
         },
@@ -334,7 +334,7 @@ describe('checkAndRepairProjectMcpOnProjectOpen', () => {
         target: fakeTarget('claude' as McpWiringEditorId, '/p/.mcp.json'),
         classification: {
           kind: 'present',
-          entry: { command: '/bin/sh', args: ['-l', '-c', '# ok-mcp-v99\nfuture body'] },
+          entry: { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v99\nfuture body'] },
         },
       },
     });
@@ -474,7 +474,7 @@ describe('checkAndRepairProjectMcpOnProjectOpen', () => {
       editorId: 'claude',
       configPath: '/p/.mcp.json',
       priorCommand: '/bin/sh',
-      priorArgs: ['-l', '-c', '# ok-mcp-v1\nexit 127'],
+      priorArgs: ['-l', '-c', '# ps-mcp-v1\nexit 127'],
     });
   });
 

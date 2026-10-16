@@ -39,8 +39,8 @@ export function validatePackageSurface(packageJson, packEntries) {
   if (typeof packageJson.description !== 'string' || packageJson.description.trim().length < 40) {
     errors.push('package description must be at least 40 characters');
   }
-  if (packageJson.homepage !== 'https://openknowledge.ai') {
-    errors.push('package homepage must be https://openknowledge.ai');
+  if (packageJson.homepage !== 'https://github.com/fractalmandala/palimpsest') {
+    errors.push('package homepage must be https://github.com/fractalmandala/palimpsest');
   }
 
   const keywords = new Set(Array.isArray(packageJson.keywords) ? packageJson.keywords : []);

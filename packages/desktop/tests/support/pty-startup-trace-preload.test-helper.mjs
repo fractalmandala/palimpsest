@@ -3,7 +3,7 @@ import { writeSync } from 'node:fs';
 import net from 'node:net';
 import { getEnvironmentData, isMainThread, parentPort, workerData } from 'node:worker_threads';
 
-const key = 'ok-pty-startup-worker-trace-v1';
+const key = 'ps-pty-startup-worker-trace-v1';
 const context = getEnvironmentData(key);
 const pipeName = workerData?.conoutPipeName;
 

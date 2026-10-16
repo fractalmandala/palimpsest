@@ -1,11 +1,11 @@
 import type {
-  OkBugReportCrashDetectedEvent,
-  OkBugReportCreateResult,
-  OkBugReportScreenshot,
-  OkBugReportSendResult,
+  PsBugReportCrashDetectedEvent,
+  PsBugReportCreateResult,
+  PsBugReportScreenshot,
+  PsBugReportSendResult,
   ReportBundleSummary,
-} from '@inkeep/open-knowledge-core';
-import type { OkBugReportSendInput } from '@inkeep/open-knowledge-core/desktop-bridge';
+} from '@palimpsest/core';
+import type { PsBugReportSendInput } from '@palimpsest/core/desktop-bridge';
 import { act, cleanup, createEvent, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -46,7 +46,7 @@ if (globalWithDomShims.ResizeObserver === undefined) {
   globalWithDomShims.ResizeObserver = NoopResizeObserver;
 }
 
-const ZIP_PATH = '/Users/tester/.ok/bug-reports/2026-07-10T00-00-00-bugreport.zip';
+const ZIP_PATH = '/Users/tester/.ps/bug-reports/2026-07-10T00-00-00-bugreport.zip';
 const SUMMARY: ReportBundleSummary = {
   level: 'standard',
   systemWide: false,
@@ -56,13 +56,13 @@ const SUMMARY: ReportBundleSummary = {
   redactedLineCount: 0,
   generatedAt: '2026-07-10T00:00:00.000Z',
 };
-const CREATE_OK: OkBugReportCreateResult = {
+const CREATE_OK: PsBugReportCreateResult = {
   ok: true,
   zipPath: ZIP_PATH,
   zipSizeBytes: 7130316,
   summary: SUMMARY,
 };
-const SCREENSHOT: OkBugReportScreenshot = {
+const SCREENSHOT: PsBugReportScreenshot = {
   dataUrl:
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
   width: 1200,
@@ -78,7 +78,7 @@ type CreateRequest = {
   agentChatThreadId?: string;
   crashEventId?: string;
 };
-type SendRequest = OkBugReportSendInput;
+type SendRequest = PsBugReportSendInput;
 
 interface BridgeLog {
   createCalls: CreateRequest[];
@@ -92,9 +92,9 @@ interface BridgeLog {
 
 function installBridge(
   handlers: {
-    create?: (request: CreateRequest) => Promise<OkBugReportCreateResult>;
-    send?: (request: SendRequest) => Promise<OkBugReportSendResult>;
-    captureScreenshot?: () => Promise<OkBugReportScreenshot | null>;
+    create?: (request: CreateRequest) => Promise<PsBugReportCreateResult>;
+    send?: (request: SendRequest) => Promise<PsBugReportSendResult>;
+    captureScreenshot?: () => Promise<PsBugReportScreenshot | null>;
     crashDumpAvailability?: () => Promise<{ available: boolean }>;
     platform?: string;
     cliCommandName?: string;
@@ -158,14 +158,14 @@ function installBridge(
     },
   };
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', { configurable: true, writable: true, value: bridge });
+    Object.defineProperty(host, 'psDesktop', { configurable: true, writable: true, value: bridge });
   }
   return log;
 }
 
 function clearBridge() {
   for (const host of [window, globalThis] as unknown as Array<Record<string, unknown>>) {
-    Object.defineProperty(host, 'okDesktop', {
+    Object.defineProperty(host, 'psDesktop', {
       configurable: true,
       writable: true,
       value: undefined,
@@ -199,7 +199,7 @@ async function renderDialog(
   props: {
     systemWide?: boolean;
     crashContext?: import('./ReportBugDialogBody').ReportBugCrashContext;
-    crashInvite?: OkBugReportCrashDetectedEvent;
+    crashInvite?: PsBugReportCrashDetectedEvent;
     agentChat?: { threadId: string };
   } = {},
   options: { statefulOpen?: boolean } = {},
@@ -282,7 +282,7 @@ describe('ReportBugDialog', () => {
     expect(logsCheckbox.getAttribute('aria-checked')).toBe('true');
     expect(logsCheckbox.hasAttribute('disabled')).toBe(true);
     expect(
-      screen.getByText('OpenKnowledge logs, including activity across projects.'),
+      screen.getByText('Palimpsest logs, including activity across projects.'),
     ).not.toBeNull();
 
     const checkbox = screen.getByRole('checkbox', { name: 'Detailed diagnostics' });
@@ -300,7 +300,7 @@ describe('ReportBugDialog', () => {
     ).not.toBeNull();
     expect(
       screen.getByText(
-        "It also adds the crash reports macOS recorded for OpenKnowledge and its helper processes, never another app's report, though ours do name the processes they were running alongside. Each one carries machine details macOS puts in every report: your account uid, the Mac model, and the name of the process that launched the app. On a managed machine, that launching process can be internal tooling. The identifiers that would link the bug reports you file to each other are replaced first, so a collected report is not byte-identical to the one macOS wrote.",
+        "It also adds the crash reports macOS recorded for Palimpsest and its helper processes, never another app's report, though ours do name the processes they were running alongside. Each one carries machine details macOS puts in every report: your account uid, the Mac model, and the name of the process that launched the app. On a managed machine, that launching process can be internal tooling. The identifiers that would link the bug reports you file to each other are replaced first, so a collected report is not byte-identical to the one macOS wrote.",
         { exact: false },
       ),
     ).not.toBeNull();
@@ -330,7 +330,7 @@ describe('ReportBugDialog', () => {
 
   test.each([
     ['darwin', /low-memory reports macOS wrote/],
-    ['linux', /out-of-memory kills of OpenKnowledge that the system journal recorded/],
+    ['linux', /out-of-memory kills of Palimpsest that the system journal recorded/],
     ['win32', /crash and hang records Windows logged/],
   ])('shows only the %s operating-system records sentence', async (platform, own) => {
     installBridge({ platform });
@@ -339,7 +339,7 @@ describe('ReportBugDialog', () => {
 
     const sentences = [
       /low-memory reports macOS wrote/,
-      /out-of-memory kills of OpenKnowledge that the system journal recorded/,
+      /out-of-memory kills of Palimpsest that the system journal recorded/,
       /crash and hang records Windows logged/,
     ];
     for (const sentence of sentences) {
@@ -354,7 +354,7 @@ describe('ReportBugDialog', () => {
 
     expect(
       screen.getByText(
-        'OpenKnowledge logs across projects. No project is open, so project server logs are not included.',
+        'Palimpsest logs across projects. No project is open, so project server logs are not included.',
       ),
     ).not.toBeNull();
   });
@@ -373,7 +373,7 @@ describe('ReportBugDialog', () => {
     expect(screen.getByText(/6\.8 MB · secrets redacted · 2 files/)).not.toBeNull();
     expect(
       screen.getByText(
-        'Sent privately to the OpenKnowledge team, along with your note and app version. Never posted publicly.',
+        'Sent privately to the Palimpsest team, along with your note and app version. Never posted publicly.',
       ),
     ).not.toBeNull();
 
@@ -403,7 +403,7 @@ describe('ReportBugDialog', () => {
   });
 
   test('Send hands the reviewed zip to the background send manager and closes the dialog', async () => {
-    const send = deferred<OkBugReportSendResult>();
+    const send = deferred<PsBugReportSendResult>();
     const log = installBridge({ send: () => send.promise });
     const { openChangeCalls } = await renderDialog({}, { statefulOpen: true });
     await createReport('upload me');
@@ -448,7 +448,7 @@ describe('ReportBugDialog', () => {
       {
         ok: false as const,
         reason: 'send-failed' as const,
-        fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=OpenKnowledge%20bug' },
+        fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Palimpsest%20bug' },
       },
     ],
     [
@@ -456,7 +456,7 @@ describe('ReportBugDialog', () => {
       {
         ok: false as const,
         reason: 'email-draft' as const,
-        fallback: { mailtoUrl: 'mailto:support@inkeep.com?subject=OpenKnowledge%20bug' },
+        fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Palimpsest%20bug' },
       },
     ],
   ])(
@@ -577,7 +577,7 @@ describe('ReportBugDialog', () => {
     const log = installBridge();
     const frames = Array.from(
       { length: 27 },
-      (_, i) => `    at Component${i} (/Users/someone/OpenKnowledge.app/bundle.js:1:${i})`,
+      (_, i) => `    at Component${i} (/Users/someone/Palimpsest.app/bundle.js:1:${i})`,
     );
     await renderDialog({
       crashContext: {
@@ -626,10 +626,10 @@ describe('ReportBugDialog', () => {
     expect(screen.getByRole('heading', { name: 'Report a bug' })).not.toBeNull();
   });
 
-  test('the CLI fallback names ok-beta bug-report on Beta', async () => {
+  test('the CLI fallback names ps-beta bug-report on Beta', async () => {
     installBridge({
       create: () => Promise.resolve({ ok: false, error: 'zip destination not writable' }),
-      cliCommandName: 'ok-beta',
+      cliCommandName: 'ps-beta',
     });
     await renderDialog();
 
@@ -637,11 +637,11 @@ describe('ReportBugDialog', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toContain(
-      'You can also create one from a terminal with ok-beta bug-report.',
+      'You can also create one from a terminal with ps-beta bug-report.',
     );
   });
 
-  const BOOT_INVITE: OkBugReportCrashDetectedEvent = {
+  const BOOT_INVITE: PsBugReportCrashDetectedEvent = {
     eventId: 'boot:1751871600000',
     kind: 'boot',
     context: { dirtyShutdown: true, newMinidumps: 1 },
@@ -652,7 +652,7 @@ describe('ReportBugDialog', () => {
     installBridge();
     await renderDialog({ crashInvite: BOOT_INVITE });
 
-    expect(screen.getByText('OpenKnowledge quit unexpectedly last time.')).not.toBeNull();
+    expect(screen.getByText('Palimpsest quit unexpectedly last time.')).not.toBeNull();
     expect(
       screen.getByText('A report helps us find the cause. Nothing is sent until you review it.'),
     ).not.toBeNull();
@@ -861,7 +861,7 @@ describe('ReportBugDialog', () => {
     });
 
     expect(screen.queryByRole('checkbox', { name: 'Crash dump' })).toBeNull();
-    expect(screen.getByText('OpenKnowledge quit unexpectedly last time.')).not.toBeNull();
+    expect(screen.getByText('Palimpsest quit unexpectedly last time.')).not.toBeNull();
 
     await userEvent.click(screen.getByRole('button', { name: 'Create report' }));
     await screen.findByRole('heading', { name: 'Review your report' });
@@ -1187,7 +1187,7 @@ describe('ReportBugDialog', () => {
     let markerAtCapture: { left: string; top: string } | null = null;
     const log = installBridge({
       captureScreenshot: () => {
-        const marker = document.querySelector<HTMLElement>('.ok-pointer-marker');
+        const marker = document.querySelector<HTMLElement>('.ps-pointer-marker');
         markerAtCapture = marker && { left: marker.style.left, top: marker.style.top };
         return Promise.resolve(SCREENSHOT);
       },
@@ -1202,7 +1202,7 @@ describe('ReportBugDialog', () => {
     await screen.findByRole('dialog');
     expect(log.screenshotCalls).toBe(1);
     expect(markerAtCapture).toEqual({ left: '420px', top: '260px' });
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
   });
 
   test('with the pointer never moved, the capture runs with no marker and nothing else changes', async () => {
@@ -1211,7 +1211,7 @@ describe('ReportBugDialog', () => {
     let markersAtCapture = -1;
     const log = installBridge({
       captureScreenshot: () => {
-        markersAtCapture = document.querySelectorAll('.ok-pointer-marker').length;
+        markersAtCapture = document.querySelectorAll('.ps-pointer-marker').length;
         return Promise.resolve(SCREENSHOT);
       },
     });
@@ -1248,21 +1248,21 @@ describe('ReportBugDialog', () => {
     let markersAtCapture = -1;
     installBridge({
       captureScreenshot: () => {
-        markersAtCapture = document.querySelectorAll('.ok-pointer-marker').length;
+        markersAtCapture = document.querySelectorAll('.ps-pointer-marker').length;
         return Promise.reject(new Error('capture failed'));
       },
     });
     await renderDialog();
 
     expect(markersAtCapture).toBe(1);
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
   });
 
   test('closing before the capture resolves takes the marker with it', async () => {
     stopPointerTracking = installPointerPositionTracker();
     movePointerTo(80, 90);
 
-    const pending = deferred<OkBugReportScreenshot>();
+    const pending = deferred<PsBugReportScreenshot>();
     installBridge({ captureScreenshot: () => pending.promise });
     const { ReportBugDialog } = await import('./ReportBugDialog');
     const { rerender } = render(
@@ -1272,14 +1272,14 @@ describe('ReportBugDialog', () => {
     );
 
     await waitFrames(3);
-    expect(document.querySelectorAll('.ok-pointer-marker')).toHaveLength(1);
+    expect(document.querySelectorAll('.ps-pointer-marker')).toHaveLength(1);
 
     rerender(
       <TooltipProvider>
         <ReportBugDialog open={false} onOpenChange={() => {}} />
       </TooltipProvider>,
     );
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
 
     pending.resolve(SCREENSHOT);
     await waitFrames(1);
@@ -1289,7 +1289,7 @@ describe('ReportBugDialog', () => {
     stopPointerTracking = installPointerPositionTracker();
     movePointerTo(140, 200);
 
-    const pending = deferred<OkBugReportScreenshot>();
+    const pending = deferred<PsBugReportScreenshot>();
     const log = installBridge({ captureScreenshot: () => pending.promise });
     const { ReportBugDialog } = await import('./ReportBugDialog');
     render(
@@ -1300,7 +1300,7 @@ describe('ReportBugDialog', () => {
 
     await screen.findByRole('dialog', {}, { timeout: 3000 });
     expect(screen.queryByRole('checkbox', { name: 'Screenshot' })).toBeNull();
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
 
     pending.resolve(SCREENSHOT);
     await waitFrames(3);
@@ -1340,7 +1340,7 @@ describe('ReportBugDialog', () => {
       }
     });
 
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
     expect(log.screenshotCalls).toBe(0);
   });
 
@@ -1352,7 +1352,7 @@ describe('ReportBugDialog', () => {
     await renderDialog({ crashInvite: BOOT_INVITE });
 
     expect(log.screenshotCalls).toBe(0);
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
   });
 
   test('a launcher-borne capture draws no marker — the row it would mark is gone', async () => {
@@ -1366,7 +1366,7 @@ describe('ReportBugDialog', () => {
     let markersAtCapture = -1;
     const log = installBridge({
       captureScreenshot: () => {
-        markersAtCapture = document.querySelectorAll('.ok-pointer-marker').length;
+        markersAtCapture = document.querySelectorAll('.ps-pointer-marker').length;
         return Promise.resolve(SCREENSHOT);
       },
     });
@@ -1383,7 +1383,7 @@ describe('ReportBugDialog', () => {
 
     expect(log.screenshotCalls).toBe(1);
     expect(markersAtCapture).toBe(0);
-    expect(document.querySelector('.ok-pointer-marker')).toBeNull();
+    expect(document.querySelector('.ps-pointer-marker')).toBeNull();
   });
 
   test('the capture waits for the launcher (⌘K palette) to clear before revealing', async () => {
@@ -1433,7 +1433,7 @@ describe('ReportBugDialog', () => {
 
     expect(log.screenshotCalls).toBe(0);
     expect(screen.queryByRole('checkbox', { name: 'Screenshot' })).toBeNull();
-    expect(screen.getByText('OpenKnowledge quit unexpectedly last time.')).not.toBeNull();
+    expect(screen.getByText('Palimpsest quit unexpectedly last time.')).not.toBeNull();
   });
 });
 

@@ -27,7 +27,7 @@ const post = (path: string, body: Record<string, unknown>) =>
   });
 
 function retentionLedger(): Record<string, Record<string, unknown>> {
-  const path = join(fixtureRoot, 'home', '.ok', 'local', 'skill-move-retained.json');
+  const path = join(fixtureRoot, 'home', '.ps', 'local', 'skill-move-retained.json');
   if (!existsSync(path)) return {};
   return JSON.parse(readFileSync(path, 'utf8')).retained;
 }
@@ -41,7 +41,7 @@ function seedSkill(root: string, name: string): string {
 }
 
 beforeAll(async () => {
-  fixtureRoot = mkdtempSync(join(tmpdir(), 'ok-mcp-move-'));
+  fixtureRoot = mkdtempSync(join(tmpdir(), 'ps-mcp-move-'));
   const home = join(fixtureRoot, 'home');
   mkdirSync(join(home, '.claude', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: home });
@@ -151,11 +151,11 @@ describe('MCP cross-scope move', () => {
       expect(existsSync(join(server.contentDir, `.${host}`, 'skills', name))).toBe(false);
     }
     const globalLock = JSON.parse(
-      readFileSync(join(fixtureRoot, 'home', '.ok', 'skills-lock.json'), 'utf8'),
+      readFileSync(join(fixtureRoot, 'home', '.ps', 'skills-lock.json'), 'utf8'),
     );
     expect(globalLock.skills[name].source).toBe(source);
     const projectLock = JSON.parse(
-      readFileSync(join(server.contentDir, '.ok', 'skills-lock.json'), 'utf8'),
+      readFileSync(join(server.contentDir, '.ps', 'skills-lock.json'), 'utf8'),
     );
     expect(projectLock.skills[name]).toBeUndefined();
   });
@@ -175,7 +175,7 @@ describe('MCP cross-scope move', () => {
       (await post('/api/skill/install', { name: fromName, add: ['claude', 'cursor'] })).status,
     ).toBe(200);
     const importedLocalHash = JSON.parse(
-      readFileSync(join(server.contentDir, '.ok', 'skills-lock.json'), 'utf8'),
+      readFileSync(join(server.contentDir, '.ps', 'skills-lock.json'), 'utf8'),
     ).skills[fromName].localHash;
     expect(importedLocalHash).toEqual(expect.any(String));
 
@@ -187,13 +187,13 @@ describe('MCP cross-scope move', () => {
     });
 
     expect(result.isError).toBeUndefined();
-    const globalLock = JSON.parse(readFileSync(join(home, '.ok', 'skills-lock.json'), 'utf8'));
+    const globalLock = JSON.parse(readFileSync(join(home, '.ps', 'skills-lock.json'), 'utf8'));
     expect(globalLock.skills[toName]?.source).toBe(source);
     expect(globalLock.skills[fromName]).toBeUndefined();
     expect(globalLock.skills[toName]?.localHash).toEqual(expect.any(String));
     expect(globalLock.skills[toName]?.localHash).not.toBe(importedLocalHash);
     const installed = JSON.parse(
-      readFileSync(join(home, '.ok', 'local', 'installed-skills.json'), 'utf8'),
+      readFileSync(join(home, '.ps', 'local', 'installed-skills.json'), 'utf8'),
     );
     expect(installed.skills[toName]?.hosts).toEqual(expect.arrayContaining(['claude', 'cursor']));
     expect(installed.skills[fromName]).toBeUndefined();
@@ -535,7 +535,7 @@ describe('MCP cross-scope move', () => {
 
     const response = await post('/api/skill/move-scope', {
       name: fromName,
-      toName: 'open-knowledge',
+      toName: 'palimpsest',
       fromScope: 'project',
       toScope: 'global',
     });
@@ -543,7 +543,7 @@ describe('MCP cross-scope move', () => {
 
     expect(response.status).toBe(400);
     expect(result.moveState).toBe('nothing-written');
-    expect(result.title).toContain('"open-knowledge" is a built-in skill name');
+    expect(result.title).toContain('"palimpsest" is a built-in skill name');
     expect(result.title).not.toContain(fromName);
     expect(existsSync(join(server.contentDir, '.claude', 'skills', fromName, 'SKILL.md'))).toBe(
       true,
@@ -641,7 +641,7 @@ describe('MCP cross-scope move', () => {
     }
     const name = 'retention-write-refused';
     const home = join(fixtureRoot, 'home');
-    const localDir = join(home, '.ok', 'local');
+    const localDir = join(home, '.ps', 'local');
     const ledgerPath = join(localDir, 'skill-move-retained.json');
     const original = seedSkill(server.contentDir, name);
     const source = join(server.contentDir, '.claude', 'skills', name);
@@ -724,7 +724,7 @@ describe('MCP cross-scope move', () => {
       join(elsewhere, 'SKILL.md'),
       `---\nname: ${name}\ndescription: Occupant\n---\n\nElsewhere.\n`,
     );
-    const ledger = join(fixtureRoot, 'home', '.ok', 'local', 'skill-move-retained.json');
+    const ledger = join(fixtureRoot, 'home', '.ps', 'local', 'skill-move-retained.json');
     mkdirSync(dirname(ledger), { recursive: true });
     writeFileSync(
       ledger,
@@ -812,7 +812,7 @@ describe('MCP cross-scope move', () => {
       join(destination, 'SKILL.md'),
       `---\nname: ${name}\ndescription: Occupant\n---\n\nOccupant body.\n`,
     );
-    const ledger = join(fixtureRoot, 'home', '.ok', 'local', 'skill-move-retained.json');
+    const ledger = join(fixtureRoot, 'home', '.ps', 'local', 'skill-move-retained.json');
     mkdirSync(dirname(ledger), { recursive: true });
     writeFileSync(ledger, '{"schema":1,"retained":{"global:');
 

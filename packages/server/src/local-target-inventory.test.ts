@@ -277,7 +277,7 @@ describe('createFileExistsOracle', () => {
   });
 
   function project(): string {
-    const root = mkdtempSync(join(tmpdir(), 'ok-file-exists-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-file-exists-'));
     roots.push(root);
     mkdirSync(join(root, 'Sub'));
     writeFileSync(join(root, 'Sub', 'page.md'), '# Page\n');
@@ -306,7 +306,7 @@ describe('createFileExistsOracle', () => {
   });
 
   test('refuses an existing file outside the content root, directly or through a symlink', () => {
-    const outer = mkdtempSync(join(tmpdir(), 'ok-file-exists-outer-'));
+    const outer = mkdtempSync(join(tmpdir(), 'ps-file-exists-outer-'));
     roots.push(outer);
     const root = join(outer, 'content');
     mkdirSync(root);

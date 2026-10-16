@@ -35,9 +35,9 @@ class FakeSpan {
   }
 }
 
-const actual = await import('@inkeep/open-knowledge-server');
+const actual = await import('@palimpsest/server');
 
-vi.doMock('@inkeep/open-knowledge-server', () => ({
+vi.doMock('@palimpsest/server', () => ({
   ...actual,
   getTracer: () => ({
     startSpan(name: string, _options: unknown, parent?: Context) {

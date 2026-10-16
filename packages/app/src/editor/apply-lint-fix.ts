@@ -2,7 +2,7 @@ import type {
   LintDiagnostic,
   LintPosition,
   LintTextEdit,
-} from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
 import type * as Y from 'yjs';
 import { requestPreviewTabPromotion } from './preview-tab-promotion';
 
@@ -10,7 +10,7 @@ export interface SourceWriteProvider {
   document: Y.Doc;
 }
 
-export const LINT_SOURCE_FIXED_EVENT = 'open-knowledge:lint-source-fixed';
+export const LINT_SOURCE_FIXED_EVENT = 'palimpsest:lint-source-fixed';
 
 const LINT_FIX_ORIGIN = Object.freeze({
   source: 'local' as const,

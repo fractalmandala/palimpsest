@@ -1,4 +1,4 @@
-import { COMMAND_IDENTITIES, MENU_LABELS } from '@inkeep/open-knowledge-core';
+import { COMMAND_IDENTITIES, MENU_LABELS } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   buildWorkspaceEntries,

@@ -42,9 +42,9 @@ interface ApiPort {
 }
 
 async function detectApiPort(page: import('@playwright/test').Page): Promise<ApiPort> {
-  const apiOrigin = await page.evaluate(() => window.okDesktop?.config?.apiOrigin);
+  const apiOrigin = await page.evaluate(() => window.psDesktop?.config?.apiOrigin);
   if (!apiOrigin) {
-    throw new Error(`window.okDesktop.config.apiOrigin was empty (got: ${apiOrigin})`);
+    throw new Error(`window.psDesktop.config.apiOrigin was empty (got: ${apiOrigin})`);
   }
   return { port: Number(new URL(apiOrigin).port) };
 }
@@ -310,26 +310,26 @@ async function setupElectron(
   contentDir: string;
   userDataDir: string;
 }> {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
-  const contentDir = mkdtempSync(join(tmpdir(), `ok-agent-patch-probe-${variantTag}-`));
+  const contentDir = mkdtempSync(join(tmpdir(), `ps-agent-patch-probe-${variantTag}-`));
   console.log(`[PROBE ${variantTag}] content root:`, {
     contentDir,
     realpathSync: realpathSync(contentDir),
     realpathSyncNative: realpathSync.native(contentDir),
     realpathAsync: await realpath(contentDir),
   });
-  const userDataDir = mkdtempSync(join(tmpdir(), `ok-pw-userdata-${variantTag}-`));
+  const userDataDir = mkdtempSync(join(tmpdir(), `ps-pw-userdata-${variantTag}-`));
   const docName = `probe-${variantTag}-${randomUUID().slice(0, 8)}`;
   const initialContent = SEED_MARKDOWN;
 
-  mkdirSync(join(contentDir, '.ok'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), 'content:\n  dir: .\n');
+  mkdirSync(join(contentDir, '.ps'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), 'content:\n  dir: .\n');
   writeFileSync(join(contentDir, `${docName}.md`), initialContent);
 
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(contentDir)}&doc=${encodeURIComponent(docName)}`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(contentDir)}&doc=${encodeURIComponent(docName)}`;
 
   const app = await electron.launch(
     desktopLaunchOptions({

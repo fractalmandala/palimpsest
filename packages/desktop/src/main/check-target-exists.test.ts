@@ -13,7 +13,7 @@ import {
 
 describe('checkTargetExists', () => {
   function makeProject(): string {
-    return mkdtempSync(join(tmpdir(), 'ok-check-target-exists-'));
+    return mkdtempSync(join(tmpdir(), 'ps-check-target-exists-'));
   }
 
   function cleanup(path: string): void {
@@ -199,7 +199,7 @@ describe('checkTargetExists', () => {
     });
 
     test('does not confuse sibling-directory prefix matches with containment', () => {
-      const parent = mkdtempSync(join(tmpdir(), 'ok-check-target-exists-parent-'));
+      const parent = mkdtempSync(join(tmpdir(), 'ps-check-target-exists-parent-'));
       try {
         const project = join(parent, 'proj');
         const sibling = join(parent, 'proj-evil');
@@ -245,7 +245,7 @@ describe('checkTargetExists', () => {
 
 describe('computeShareTargetMissing', () => {
   function makeProject(): string {
-    return mkdtempSync(join(tmpdir(), 'ok-compute-target-missing-'));
+    return mkdtempSync(join(tmpdir(), 'ps-compute-target-missing-'));
   }
 
   function cleanup(path: string): void {
@@ -394,7 +394,7 @@ describe('resolveTargetProbeCoordinate', () => {
 
 describe('checkProjectDirExists', () => {
   function makeTmp(): string {
-    return mkdtempSync(join(tmpdir(), 'ok-check-project-dir-'));
+    return mkdtempSync(join(tmpdir(), 'ps-check-project-dir-'));
   }
   function cleanup(path: string): void {
     try {

@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { OK_DIR } from '@inkeep/open-knowledge-core';
+import { PS_DIR } from '@palimpsest/core';
 import { afterAll, describe, expect, test } from 'vitest';
 import { WebSocket as WsClient } from 'ws';
 import { toBroadcasterKey } from './agent-id.ts';
@@ -25,12 +25,12 @@ async function poll<T>(
 }
 
 async function bootTestServer(): Promise<{ booted: BootedServer; contentDir: string }> {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-keepalive-bootstrap-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-keepalive-bootstrap-'));
   writeFileSync(join(contentDir, 'test-doc.md'), '', 'utf-8');
-  const okDir = join(contentDir, OK_DIR);
-  mkdirSync(okDir, { recursive: true });
-  writeFileSync(join(okDir, 'config.yml'), '', 'utf-8');
-  writeFileSync(join(okDir, '.gitignore'), '', 'utf-8');
+  const psDir = join(contentDir, PS_DIR);
+  mkdirSync(psDir, { recursive: true });
+  writeFileSync(join(psDir, 'config.yml'), '', 'utf-8');
+  writeFileSync(join(psDir, '.gitignore'), '', 'utf-8');
   const booted = await bootServer({
     host: '127.0.0.1',
     contentDir,

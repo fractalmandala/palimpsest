@@ -9,23 +9,23 @@ describe('resolveLocalSinkConfig', () => {
   let projectDir: string;
 
   beforeEach(() => {
-    projectDir = mkdtempSync(join(tmpdir(), 'ok-local-sink-resolver-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), '');
+    projectDir = mkdtempSync(join(tmpdir(), 'ps-local-sink-resolver-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), '');
   });
 
   afterEach(() => {
     rmSync(projectDir, { recursive: true, force: true });
-    delete process.env.OK_DISABLE_LOCAL_SINK;
+    delete process.env.PS_DISABLE_LOCAL_SINK;
   });
 
   function seedProject(value: unknown): void {
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), stringifyYaml(value));
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), stringifyYaml(value));
   }
 
   function seedProjectLocal(value: unknown): void {
-    writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), stringifyYaml(value));
+    writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), stringifyYaml(value));
   }
 
   it('returns the default sink config when no config files set anything', () => {
@@ -39,13 +39,13 @@ describe('resolveLocalSinkConfig', () => {
     expect(resolved.telemetry.attributeDenylist).toContain('cookie');
   });
 
-  it('returns null when OK_DISABLE_LOCAL_SINK=1 — test-only opt-out', () => {
-    process.env.OK_DISABLE_LOCAL_SINK = '1';
+  it('returns null when PS_DISABLE_LOCAL_SINK=1 — test-only opt-out', () => {
+    process.env.PS_DISABLE_LOCAL_SINK = '1';
     expect(resolveLocalSinkConfig({ projectDir })).toBeNull();
   });
 
-  it('returns null when OK_DISABLE_LOCAL_SINK=true', () => {
-    process.env.OK_DISABLE_LOCAL_SINK = 'true';
+  it('returns null when PS_DISABLE_LOCAL_SINK=true', () => {
+    process.env.PS_DISABLE_LOCAL_SINK = 'true';
     expect(resolveLocalSinkConfig({ projectDir })).toBeNull();
   });
 

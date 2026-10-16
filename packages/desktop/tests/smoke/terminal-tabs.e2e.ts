@@ -37,7 +37,7 @@ import {
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const PRIMARY_MODIFIER = process.platform === 'darwin' ? 'Meta' : 'Control';
 const WINDOWS = process.platform === 'win32';
 const SHELL_COMMANDS = terminalSmokeShellCommands();
@@ -49,11 +49,11 @@ interface Seed {
 }
 
 function seed(prefix: string): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-tabs-${prefix}-home-`)));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-tabs-${prefix}-proj-`)));
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
-  writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-tabs-${prefix}-home-`)));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-tabs-${prefix}-proj-`)));
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
+  writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
   seedTerminalShellProfiles(tmpHome, { posixRestrictPath: true });
 
@@ -76,7 +76,7 @@ function seed(prefix: string): Seed {
 }
 
 async function launchApp(s: Seed): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
   return launchDesktopApp(
     electron,
     desktopLaunchOptions({
@@ -86,8 +86,8 @@ async function launchApp(s: Seed): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...terminalSmokeEnvironment(s.tmpHome, { restrictPath: true }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
       },
     }),
     { home: s.tmpHome },
@@ -188,7 +188,7 @@ async function readActiveText(page: Page): Promise<string> {
 }
 
 test.describe('Terminal tabs — live Electron', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -229,7 +229,7 @@ test.describe('Terminal tabs — live Electron', () => {
       .poll(async () => (await readActiveText(page)).trim(), { timeout: 25_000 })
       .not.toBe('');
     const output = await page.evaluate(async () => {
-      const bridge = window.okDesktop;
+      const bridge = window.psDesktop;
       if (!bridge) throw new Error('missing desktop bridge');
       const created = await bridge.terminal.create({ cols: 80, rows: 24 });
       if (!created.ok) throw new Error(created.reason);
@@ -444,7 +444,7 @@ test.describe('Terminal tabs — live Electron', () => {
     await configureDesktopGitRepositories(page, s.projectDir);
     await openTerminal(app, page);
 
-    await typeInActive(page, `${SHELL_COMMANDS.setEnvironment('OK_TABMARK', 'SURVIVED_888')}\r`);
+    await typeInActive(page, `${SHELL_COMMANDS.setEnvironment('PS_TABMARK', 'SURVIVED_888')}\r`);
     if (!WINDOWS) {
       await typeInActive(page, `${SHELL_COMMANDS.output('BEFORE_REORDER_DDD')}\r`);
     }
@@ -476,7 +476,7 @@ test.describe('Terminal tabs — live Electron', () => {
         .poll(() => readActiveText(page), { timeout: 15_000 })
         .toContain('BEFORE_REORDER_DDD');
     }
-    await typeInActive(page, `${SHELL_COMMANDS.readEnvironment('OK_TABMARK', 'mk')}\r`);
+    await typeInActive(page, `${SHELL_COMMANDS.readEnvironment('PS_TABMARK', 'mk')}\r`);
     await expect
       .poll(() => readActiveText(page), { timeout: 15_000 })
       .toContain('mk=[SURVIVED_888]');
@@ -495,7 +495,7 @@ test.describe('Terminal tabs — live Electron', () => {
 
     await typeInActive(
       page,
-      `${SHELL_COMMANDS.setEnvironment('OK_DRAGMARK', 'DRAG_SURVIVED_444')}\r`,
+      `${SHELL_COMMANDS.setEnvironment('PS_DRAGMARK', 'DRAG_SURVIVED_444')}\r`,
     );
     if (!WINDOWS) {
       await typeInActive(page, `${SHELL_COMMANDS.output('BEFORE_DRAG_EEE')}\r`);
@@ -522,7 +522,7 @@ test.describe('Terminal tabs — live Electron', () => {
     if (!WINDOWS) {
       expect(await readActiveText(page)).toContain('BEFORE_DRAG_EEE');
     }
-    await typeInActive(page, `${SHELL_COMMANDS.readEnvironment('OK_DRAGMARK', 'dm')}\r`);
+    await typeInActive(page, `${SHELL_COMMANDS.readEnvironment('PS_DRAGMARK', 'dm')}\r`);
     await expect
       .poll(() => readActiveText(page), { timeout: 15_000 })
       .toContain('dm=[DRAG_SURVIVED_444]');

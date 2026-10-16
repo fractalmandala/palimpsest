@@ -16,7 +16,7 @@ import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { okVitestBase } from '../../../test-support/vitest.base.ts';
+import { psVitestBase } from '../../../test-support/vitest.base.ts';
 import { BUNDLE_IDS, BUNDLE_SKILL_NAME } from '../src/skill-bundles.ts';
 import {
   __testing,
@@ -31,12 +31,12 @@ const { keepDisplacedTree, peerPublished, sweepRuns } = __testing;
 
 const PUBLISH_CYCLES = 6;
 const CONCURRENT_WRITERS = 4;
-const SUITE_TEST_TIMEOUT_MS = okVitestBase.test.testTimeout;
+const SUITE_TEST_TIMEOUT_MS = psVitestBase.test.testTimeout;
 const HANG_GUARD_MS = SUITE_TEST_TIMEOUT_MS - 5_000;
 const WRITER_BARRIER_BOUND_MS = HANG_GUARD_MS;
 const WRITER_PUBLISH_ROUNDS = 3;
 const COMPOSER_PATH = fileURLToPath(new URL('./build-skill-bundles.ts', import.meta.url));
-const STAGING_ROOT_PREFIX = '.ok-skill-publish-';
+const STAGING_ROOT_PREFIX = '.ps-skill-publish-';
 const STALE_STAGING_MTIME = new Date('2001-01-01T00:00:00Z');
 const PERMISSION_BITS_UNENFORCED = process.platform === 'win32' || process.getuid?.() === 0;
 
@@ -345,14 +345,14 @@ describe('the lost-publish-race arbiter', () => {
     failure: unknown;
     expected: boolean;
   }>)('$arm', ({ state, failure, expected }) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-peer-arbiter-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-peer-arbiter-'));
     cleanup.push(root);
 
     expect(peerPublished(makeDestination(root, state), failure)).toBe(expected);
   });
 
   test('the error this platform really raises for an occupied destination is read as a peer publish', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-peer-arbiter-real-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-peer-arbiter-real-'));
     cleanup.push(root);
     const staged = join(root, 'staged');
     mkdirSync(staged, { recursive: true });
@@ -378,7 +378,7 @@ describe('skill-bundle publish atomicity', () => {
   test(
     'no concurrent reader observes a published bundle directory incomplete',
     async () => {
-      const root = mkdtempSync(join(tmpdir(), 'ok-skill-atomic-publish-'));
+      const root = mkdtempSync(join(tmpdir(), 'ps-skill-atomic-publish-'));
       cleanup.push(root);
       const sourceSkills = defaultPaths().skillsDir;
       const paths: SkillBundlePaths = {
@@ -513,7 +513,7 @@ describe('skill-bundle publish atomicity', () => {
   test(
     'concurrent composer processes all succeed and leave one complete published tree',
     async () => {
-      const root = mkdtempSync(join(tmpdir(), 'ok-skill-writer-race-'));
+      const root = mkdtempSync(join(tmpdir(), 'ps-skill-writer-race-'));
       cleanup.push(root);
       const sourceSkills = defaultPaths().skillsDir;
       const distDir = join(root, 'dist', 'assets', 'skills');
@@ -624,7 +624,7 @@ describe('skill-bundle publish atomicity', () => {
         rmSync(join(distDir, 'project', 'references'), { recursive: true, force: true }),
     },
   ])('the agent-plugin artifact is complete when $window', ({ perturb }) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-peer-window-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-peer-window-'));
     cleanup.push(root);
     const sourceSkills = defaultPaths().skillsDir;
     const paths: SkillBundlePaths = {
@@ -641,7 +641,7 @@ describe('skill-bundle publish atomicity', () => {
   });
 
   test('the next build reclaims scratch an interrupted run abandoned and spares scratch still in use', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-stale-staging-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-stale-staging-'));
     cleanup.push(root);
     const paths: SkillBundlePaths = {
       skillsDir: defaultPaths().skillsDir,
@@ -670,7 +670,7 @@ describe('skill-bundle publish atomicity', () => {
   });
 
   test('the displaced tree a stranded publish keeps survives the next build that sweeps beside it', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-kept-tree-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-kept-tree-'));
     cleanup.push(root);
     const paths: SkillBundlePaths = {
       skillsDir: defaultPaths().skillsDir,
@@ -717,7 +717,7 @@ describe('skill-bundle publish atomicity', () => {
   test.skipIf(PERMISSION_BITS_UNENFORCED)(
     'a candidate the sweep cannot finish walking is left alone rather than removed',
     () => {
-      const root = mkdtempSync(join(tmpdir(), 'ok-skill-sealed-staging-'));
+      const root = mkdtempSync(join(tmpdir(), 'ps-skill-sealed-staging-'));
       cleanup.push(root);
       const paths: SkillBundlePaths = {
         skillsDir: defaultPaths().skillsDir,
@@ -762,7 +762,7 @@ describe('skill-bundle publish atomicity', () => {
   test.skipIf(PERMISSION_BITS_UNENFORCED)(
     'a staging parent the sweep cannot list at all is reported rather than passed over in silence',
     () => {
-      const root = mkdtempSync(join(tmpdir(), 'ok-skill-unlistable-parent-'));
+      const root = mkdtempSync(join(tmpdir(), 'ps-skill-unlistable-parent-'));
       cleanup.push(root);
       const paths: SkillBundlePaths = {
         skillsDir: defaultPaths().skillsDir,
@@ -801,7 +801,7 @@ describe('skill-bundle publish atomicity', () => {
   );
 
   test('a keep that cannot move the tree reports it and does not claim the tree was kept', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-keep-failure-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-keep-failure-'));
     cleanup.push(root);
     const absent = join(root, `${STAGING_ROOT_PREFIX}gone-superseded-gone`);
 
@@ -824,7 +824,7 @@ describe('skill-bundle publish atomicity', () => {
   });
 
   test('a bundle whose source SKILL.md is absent still fails the build loudly', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-skill-absent-source-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-skill-absent-source-'));
     cleanup.push(root);
     const skillsDir = join(root, 'skills');
     const distDir = join(root, 'dist', 'assets', 'skills');

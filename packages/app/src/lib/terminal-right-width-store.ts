@@ -1,14 +1,14 @@
 import {
   normalizeTerminalRightWidth,
   PREFERRED_TERMINAL_RIGHT_WIDTH,
-} from '@inkeep/open-knowledge-core/terminal-layout';
+} from '@palimpsest/core/terminal-layout';
 
 export {
   MIN_TERMINAL_RIGHT_WIDTH,
   PREFERRED_TERMINAL_RIGHT_WIDTH,
-} from '@inkeep/open-knowledge-core/terminal-layout';
+} from '@palimpsest/core/terminal-layout';
 
-export const TERMINAL_RIGHT_WIDTH_KEY = 'ok-terminal-right-width-v1';
+export const TERMINAL_RIGHT_WIDTH_KEY = 'ps-terminal-right-width-v1';
 
 export interface TerminalRightWidthStorage {
   getItem(key: string): string | null;

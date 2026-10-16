@@ -1,4 +1,4 @@
-import type { UninstallNoticeScreen as UninstallNoticeSpec } from '@inkeep/open-knowledge-core/uninstall-bridge';
+import type { UninstallNoticeScreen as UninstallNoticeSpec } from '@palimpsest/core/uninstall-bridge';
 import { useLingui } from '@lingui/react/macro';
 import { UninstallNoticeScreen } from './UninstallNoticeScreen';
 
@@ -19,13 +19,13 @@ export function UninstallResultScreen({
       ? {
           title: t`Cleanup didn’t finish`,
           paragraphs: [
-            t`Some files may not have been removed. Open the cleanup log for details. You can reopen OpenKnowledge to try again.`,
+            t`Some files may not have been removed. Open the cleanup log for details. You can reopen Palimpsest to try again.`,
           ],
           confirmLabel: t`Close`,
           logRevealLabel: t`Cleanup log`,
         }
       : {
-          title: t`OpenKnowledge files were removed`,
+          title: t`Palimpsest files were removed`,
           subtitle: t`Almost done. Here's what happened and what's left.`,
           paragraphs: [],
           checklist: [
@@ -35,12 +35,12 @@ export function UninstallResultScreen({
               done: true,
             },
             {
-              label: t`Removed OpenKnowledge files`,
+              label: t`Removed Palimpsest files`,
               detail: t`Settings and integrations were cleaned up.`,
               done: true,
             },
             {
-              label: t`Move OpenKnowledge.app to the Trash`,
+              label: t`Move Palimpsest.app to the Trash`,
               detail: t`Reveal in Finder shows the app so you can drag it to the Trash.`,
               done: false,
             },

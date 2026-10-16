@@ -30,7 +30,7 @@ describe('an owned server whose lifetime owner is lost before it releases', () =
   test(
     'the real lifetime’s loss fails the launch, the release that follows reports the same loss instead of throwing, and nothing the launch created is left',
     async () => {
-      const root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-owned-lost-owner-')));
+      const root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-owned-lost-owner-')));
       scratchDirs.push(root);
       const tmp = join(root, 'tmp');
       mkdirSync(tmp);

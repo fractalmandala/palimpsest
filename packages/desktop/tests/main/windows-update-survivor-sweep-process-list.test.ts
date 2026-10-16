@@ -9,11 +9,11 @@ vi.mock('node:child_process', async (importOriginal) => ({
 
 const execFileSyncMock = vi.mocked(execFileSync);
 
-const INSTALL_TREE = 'C:\\Program Files\\Open Knowledge\\resources';
+const INSTALL_TREE = 'C:\\Program Files\\Palimpsest\\resources';
 const WIN_ENV = { SystemRoot: 'C:\\Windows' };
 const BOM = '\uFEFF';
 
-const OWNED_HOST = String.raw`{"processId":101,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Open Knowledge\\resources\\node-pty\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`;
+const OWNED_HOST = String.raw`{"processId":101,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Palimpsest\\resources\\node-pty\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`;
 
 function sweepProcessListOutput(output: string) {
   execFileSyncMock.mockReturnValue(output);
@@ -85,8 +85,8 @@ describe('sweepWindowsUpdateSurvivors reading a real PowerShell process list', (
   });
 
   test('skips records with a null or absent creation date and sweeps the rest', () => {
-    const nullCreationDate = String.raw`{"processId":102,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Open Knowledge\\resources\\node-pty\\OpenConsole.exe","commandLine":null,"creationDate":null}`;
-    const noCreationDate = String.raw`{"processId":103,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Open Knowledge\\resources\\node-pty\\OpenConsole.exe","commandLine":null}`;
+    const nullCreationDate = String.raw`{"processId":102,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Palimpsest\\resources\\node-pty\\OpenConsole.exe","commandLine":null,"creationDate":null}`;
+    const noCreationDate = String.raw`{"processId":103,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Palimpsest\\resources\\node-pty\\OpenConsole.exe","commandLine":null}`;
 
     const { result, terminated, info, warnings } = sweepProcessListOutput(
       `[${OWNED_HOST},${nullCreationDate},${noCreationDate}]`,
@@ -117,9 +117,9 @@ describe('sweepWindowsUpdateSurvivors reading a real PowerShell process list', (
       '"OpenConsole.exe"',
       '42',
       '[]',
-      String.raw`{"processId":"104","name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Open Knowledge\\resources\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`,
-      String.raw`{"processId":0,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Open Knowledge\\resources\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`,
-      String.raw`{"processId":105,"name":42,"executablePath":"C:\\Program Files\\Open Knowledge\\resources\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`,
+      String.raw`{"processId":"104","name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Palimpsest\\resources\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`,
+      String.raw`{"processId":0,"name":"OpenConsole.exe","executablePath":"C:\\Program Files\\Palimpsest\\resources\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`,
+      String.raw`{"processId":105,"name":42,"executablePath":"C:\\Program Files\\Palimpsest\\resources\\OpenConsole.exe","commandLine":null,"creationDate":"2026-08-25T12:00:00.0000000Z"}`,
     ].join(',');
 
     const { result, terminated, warnings } = sweepProcessListOutput(`[${OWNED_HOST},${garbage}]`);

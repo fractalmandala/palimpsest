@@ -126,7 +126,7 @@ describe('rejectionLoopGuardPlugin', () => {
     expect(stopped).toBe(1);
     expect(prevented).toBe(1);
     expect(warnCalls).toHaveLength(1);
-    expect(warnCalls[0]).toContain('[ok-dev]');
+    expect(warnCalls[0]).toContain('[ps-dev]');
 
     fireWith({ message: 'something else', stack: 'at @vite/client:518' });
     expect(stopped).toBe(2);

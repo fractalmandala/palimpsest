@@ -6,12 +6,12 @@ describe('classifyInstallShape', () => {
   test('darwin bundle → mac-bundle with Contents/Resources wrapper', () => {
     const shape = classifyInstallShape(
       'darwin',
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       {},
     );
     expect(shape).toEqual({
       kind: 'mac-bundle',
-      wrapperPath: '/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh',
+      wrapperPath: '/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh',
     });
   });
 
@@ -21,17 +21,17 @@ describe('classifyInstallShape', () => {
     });
   });
 
-  test('win32 NSIS layout → resources\\cli\\bin\\ok.cmd', () => {
+  test('win32 NSIS layout → resources\\cli\\bin\\ps.cmd', () => {
     const shape = classifyInstallShape(
       'win32',
-      'C:\\Users\\u\\AppData\\Local\\Programs\\OpenKnowledge\\OpenKnowledge.exe',
+      'C:\\Users\\u\\AppData\\Local\\Programs\\Palimpsest\\Palimpsest.exe',
       {},
     );
     expect(shape).toEqual({
       kind: 'windows',
-      installRoot: 'C:\\Users\\u\\AppData\\Local\\Programs\\OpenKnowledge',
+      installRoot: 'C:\\Users\\u\\AppData\\Local\\Programs\\Palimpsest',
       wrapperPath:
-        'C:\\Users\\u\\AppData\\Local\\Programs\\OpenKnowledge\\resources\\cli\\bin\\ok.cmd',
+        'C:\\Users\\u\\AppData\\Local\\Programs\\Palimpsest\\resources\\cli\\bin\\ps.cmd',
     });
   });
 
@@ -41,18 +41,18 @@ describe('classifyInstallShape', () => {
     });
   });
 
-  test('linux deb layout → resources/cli/bin/ok.sh', () => {
-    const shape = classifyInstallShape('linux', '/opt/OpenKnowledge/openknowledge', {});
+  test('linux deb layout → resources/cli/bin/ps.sh', () => {
+    const shape = classifyInstallShape('linux', '/opt/Palimpsest/palimpsest', {});
     expect(shape).toEqual({
       kind: 'linux',
-      installRoot: '/opt/OpenKnowledge',
-      wrapperPath: '/opt/OpenKnowledge/resources/cli/bin/ok.sh',
+      installRoot: '/opt/Palimpsest',
+      wrapperPath: '/opt/Palimpsest/resources/cli/bin/ps.sh',
     });
   });
 
   test('linux AppImage launch (APPIMAGE env) declines persistent integrations', () => {
-    const shape = classifyInstallShape('linux', '/tmp/.mount_OpenKnXYZ/openknowledge', {
-      APPIMAGE: '/home/u/OpenKnowledge-x86_64.AppImage',
+    const shape = classifyInstallShape('linux', '/tmp/.mount_OpenKnXYZ/palimpsest', {
+      APPIMAGE: '/home/u/Palimpsest-x86_64.AppImage',
     });
     expect(shape).toEqual({ kind: 'appimage' });
   });
@@ -65,26 +65,26 @@ describe('classifyInstallShape', () => {
 describe('wrapperPathInBundle per-platform layouts', () => {
   test('darwin default stays byte-identical to the historical mapping', () => {
     expect(
-      wrapperPathInBundle('/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge', 'darwin'),
-    ).toBe('/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh');
+      wrapperPathInBundle('/Applications/Palimpsest.app/Contents/MacOS/Palimpsest', 'darwin'),
+    ).toBe('/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh');
   });
 
   test('win32 maps beside the exe under resources\\', () => {
-    expect(wrapperPathInBundle('C:\\Programs\\OpenKnowledge\\OpenKnowledge.exe', 'win32')).toBe(
-      'C:\\Programs\\OpenKnowledge\\resources\\cli\\bin\\ok.cmd',
+    expect(wrapperPathInBundle('C:\\Programs\\Palimpsest\\Palimpsest.exe', 'win32')).toBe(
+      'C:\\Programs\\Palimpsest\\resources\\cli\\bin\\ps.cmd',
     );
   });
 
   test('linux maps beside the executable under resources/', () => {
-    expect(wrapperPathInBundle('/opt/OpenKnowledge/openknowledge', 'linux')).toBe(
-      '/opt/OpenKnowledge/resources/cli/bin/ok.sh',
+    expect(wrapperPathInBundle('/opt/Palimpsest/palimpsest', 'linux')).toBe(
+      '/opt/Palimpsest/resources/cli/bin/ps.sh',
     );
   });
 });
 
 describe('agentConnectionsAvailability', () => {
   const devExe = '/repo/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron';
-  const packagedExe = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+  const packagedExe = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
 
   test.each([
     ['plain unpackaged build', false, 'darwin', devExe, {}, { available: false, devBuild: true }],
@@ -93,31 +93,31 @@ describe('agentConnectionsAvailability', () => {
       false,
       'darwin',
       devExe,
-      { OK_M6B_FORCE: '1' },
+      { PS_M6B_FORCE: '1' },
       { available: true, devBuild: false },
     ],
     [
-      'unpackaged build locked by OK_RECLAIM_DISABLE',
+      'unpackaged build locked by PS_RECLAIM_DISABLE',
       false,
       'darwin',
       devExe,
-      { OK_RECLAIM_DISABLE: '1' },
+      { PS_RECLAIM_DISABLE: '1' },
       { available: false, devBuild: false },
     ],
     [
-      'unpackaged build forced open but locked by OK_RECLAIM_DISABLE',
+      'unpackaged build forced open but locked by PS_RECLAIM_DISABLE',
       false,
       'darwin',
       devExe,
-      { OK_M6B_FORCE: '1', OK_RECLAIM_DISABLE: '1' },
+      { PS_M6B_FORCE: '1', PS_RECLAIM_DISABLE: '1' },
       { available: false, devBuild: false },
     ],
     [
       'unpackaged build forced open but locked by install shape',
       false,
       'linux',
-      '/tmp/.mount_ok/openknowledge',
-      { OK_M6B_FORCE: '1', APPIMAGE: '/home/u/OK.AppImage' },
+      '/tmp/.mount_ok/palimpsest',
+      { PS_M6B_FORCE: '1', APPIMAGE: '/home/u/OK.AppImage' },
       { available: false, devBuild: false },
     ],
     ['packaged build', true, 'darwin', packagedExe, {}, { available: true, devBuild: false }],
@@ -125,7 +125,7 @@ describe('agentConnectionsAvailability', () => {
       'packaged build in an unsupported shape',
       true,
       'darwin',
-      '/usr/local/bin/OpenKnowledge',
+      '/usr/local/bin/Palimpsest',
       {},
       { available: false, devBuild: false },
     ],

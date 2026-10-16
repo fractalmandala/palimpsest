@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
-import type { EditorId } from '@inkeep/open-knowledge-core';
-import { AGENTS_SKILLS_ROOT, isSkillInstallTarget } from '@inkeep/open-knowledge-core';
-import { parseSkillDir } from '@inkeep/open-knowledge-core/skills-catalog';
+import type { EditorId } from '@palimpsest/core';
+import { AGENTS_SKILLS_ROOT, isSkillInstallTarget } from '@palimpsest/core';
+import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { tracedCpSync, tracedMkdirSync, tracedRmSync } from '../fs-traced.ts';
 import {
   isRefusedOkPlacementRoot,

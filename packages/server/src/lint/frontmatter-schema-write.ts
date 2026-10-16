@@ -9,7 +9,7 @@ import {
   removeSchemaField,
   renameSchemaField,
   type SchemaParentPathSegment,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { tracedUnlinkSync } from '../fs-traced.ts';
 import { isInside, writeFileAtomic } from './fs-safety.ts';
 
@@ -140,7 +140,7 @@ export function deleteFrontmatterSchemaFile(
     return {
       action: 'refused',
       file,
-      reason: 'only *.schema.json files (or .ok/schemas/*.json) can be deleted',
+      reason: 'only *.schema.json files (or .ps/schemas/*.json) can be deleted',
     };
   }
   const abs = resolve(projectDir, file);

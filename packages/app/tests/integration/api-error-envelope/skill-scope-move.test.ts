@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { SkillsListSuccessSchema } from '@inkeep/open-knowledge-core';
+import { SkillsListSuccessSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from '../harness-boot-timeout';
 import { createTestServer, pollUntil, type TestServer } from '../test-harness';
@@ -85,7 +85,7 @@ async function scopeOf(name: string): Promise<string | undefined> {
 }
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-scope-move-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-scope-move-home-'));
   mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);
@@ -197,7 +197,7 @@ describe('E2: atomic /api/skill/move-scope', () => {
     const N = 'atomic-provenance';
     expect((await putSkill('global', N)).status).toBe(200);
 
-    const globalLockPath = join(tmpHome, '.ok', 'skills-lock.json');
+    const globalLockPath = join(tmpHome, '.ps', 'skills-lock.json');
     mkdirSync(dirname(globalLockPath), { recursive: true });
     writeFileSync(
       globalLockPath,
@@ -235,7 +235,7 @@ describe('E2: atomic /api/skill/move-scope', () => {
       skills: Record<string, unknown>;
     };
     const projectLock = JSON.parse(
-      readFileSync(join(server.contentDir, '.ok', 'skills-lock.json'), 'utf-8'),
+      readFileSync(join(server.contentDir, '.ps', 'skills-lock.json'), 'utf-8'),
     ) as { skills: Record<string, { source: string; localHash?: string }> };
     expect(globalLock.skills[N]).toBeUndefined();
     expect(projectLock.skills[N]?.source).toBe('https://github.com/acme/skills');

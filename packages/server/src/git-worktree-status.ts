@@ -2,8 +2,8 @@ import type {
   GitStatusCode,
   GitWorktreeEntry,
   GitWorktreeOpenTarget,
-} from '@inkeep/open-knowledge-core';
-import { GIT_STATUS_CODES } from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
+import { GIT_STATUS_CODES } from '@palimpsest/core';
 import type { SimpleGit } from 'simple-git';
 import { createGitInstance } from './git-handle.ts';
 import {

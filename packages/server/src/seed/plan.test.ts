@@ -9,20 +9,20 @@ import { SeedPrerequisiteError, SeedRootDirError } from './types.ts';
 
 const STARTER_FOLDERS = STARTER_PACKS['knowledge-base'].folders;
 
-describe('planSeed — nested .ok/ era', () => {
+describe('planSeed — nested .ps/ era', () => {
   let projectDir: string;
 
   beforeEach(async () => {
     projectDir = await mkdtemp(join(tmpdir(), 'seed-plan-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
   });
 
   afterEach(async () => {
     await rm(projectDir, { recursive: true, force: true });
   });
 
-  test('throws SeedPrerequisiteError when .ok/config.yml is absent', async () => {
+  test('throws SeedPrerequisiteError when .ps/config.yml is absent', async () => {
     const bare = await mkdtemp(join(tmpdir(), 'seed-bare-'));
     try {
       await expect(planSeed({ projectDir: bare })).rejects.toThrow(SeedPrerequisiteError);
@@ -34,13 +34,13 @@ describe('planSeed — nested .ok/ era', () => {
   test('the missing-config error names the running channel init command', async () => {
     const bare = await mkdtemp(join(tmpdir(), 'seed-bare-'));
     try {
-      vi.stubEnv('OK_CHANNEL', 'stable');
+      vi.stubEnv('PS_CHANNEL', 'stable');
       await expect(planSeed({ projectDir: bare })).rejects.toThrow(
-        'Run `ok init` first to scaffold the tool config.',
+        'Run `ps init` first to scaffold the tool config.',
       );
-      vi.stubEnv('OK_CHANNEL', 'beta');
+      vi.stubEnv('PS_CHANNEL', 'beta');
       await expect(planSeed({ projectDir: bare })).rejects.toThrow(
-        'Run `ok-beta init` first to scaffold the tool config.',
+        'Run `ps-beta init` first to scaffold the tool config.',
       );
     } finally {
       vi.unstubAllEnvs();
@@ -48,11 +48,11 @@ describe('planSeed — nested .ok/ era', () => {
     }
   });
 
-  test('throws SeedPrerequisiteError when .ok/ exists but config.yml is absent', async () => {
+  test('throws SeedPrerequisiteError when .ps/ exists but config.yml is absent', async () => {
     const bare = await mkdtemp(join(tmpdir(), 'seed-sidecar-'));
     try {
-      mkdirSync(join(bare, '.ok'), { recursive: true });
-      writeFileSync(join(bare, '.ok', 'frontmatter.yml'), 'title: x\n', 'utf-8');
+      mkdirSync(join(bare, '.ps'), { recursive: true });
+      writeFileSync(join(bare, '.ps', 'frontmatter.yml'), 'title: x\n', 'utf-8');
       await expect(planSeed({ projectDir: bare })).rejects.toThrow(SeedPrerequisiteError);
     } finally {
       await rm(bare, { recursive: true, force: true });
@@ -70,16 +70,16 @@ describe('planSeed — nested .ok/ era', () => {
     }
   });
 
-  test('plans every starter folder + nested .ok/ + frontmatter.yml + templates/<name>.md', async () => {
+  test('plans every starter folder + nested .ps/ + frontmatter.yml + templates/<name>.md', async () => {
     const plan = await planSeed({ projectDir });
     const createdPaths = new Set(plan.created.map((e) => e.path));
 
     for (const folder of STARTER_FOLDERS) {
       expect(createdPaths.has(folder.path)).toBe(true);
-      expect(createdPaths.has(`${folder.path}/.ok`)).toBe(true);
-      expect(createdPaths.has(`${folder.path}/.ok/frontmatter.yml`)).toBe(true);
-      expect(createdPaths.has(`${folder.path}/.ok/templates`)).toBe(true);
-      expect(createdPaths.has(`${folder.path}/.ok/templates/${folder.starterTemplate}.md`)).toBe(
+      expect(createdPaths.has(`${folder.path}/.ps`)).toBe(true);
+      expect(createdPaths.has(`${folder.path}/.ps/frontmatter.yml`)).toBe(true);
+      expect(createdPaths.has(`${folder.path}/.ps/templates`)).toBe(true);
+      expect(createdPaths.has(`${folder.path}/.ps/templates/${folder.starterTemplate}.md`)).toBe(
         true,
       );
     }
@@ -94,28 +94,28 @@ describe('planSeed — nested .ok/ era', () => {
   test('frontmatter.yml + template entries carry their template id for apply()', async () => {
     const plan = await planSeed({ projectDir });
     for (const folder of STARTER_FOLDERS) {
-      const fmEntry = plan.created.find((e) => e.path === `${folder.path}/.ok/frontmatter.yml`);
-      expect(fmEntry?.template).toBe(`${folder.path}/.ok/frontmatter.yml`);
+      const fmEntry = plan.created.find((e) => e.path === `${folder.path}/.ps/frontmatter.yml`);
+      expect(fmEntry?.template).toBe(`${folder.path}/.ps/frontmatter.yml`);
 
       const tplEntry = plan.created.find(
-        (e) => e.path === `${folder.path}/.ok/templates/${folder.starterTemplate}.md`,
+        (e) => e.path === `${folder.path}/.ps/templates/${folder.starterTemplate}.md`,
       );
-      expect(tplEntry?.template).toBe(`${folder.path}/.ok/templates/${folder.starterTemplate}.md`);
+      expect(tplEntry?.template).toBe(`${folder.path}/.ps/templates/${folder.starterTemplate}.md`);
     }
   });
 
   test('skips entries that already exist on disk', async () => {
-    mkdirSync(join(projectDir, 'external-sources', '.ok'), { recursive: true });
+    mkdirSync(join(projectDir, 'external-sources', '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, 'external-sources', '.ok', 'frontmatter.yml'),
+      join(projectDir, 'external-sources', '.ps', 'frontmatter.yml'),
       'title: User had this already\n',
     );
 
     const plan = await planSeed({ projectDir });
     const skippedPaths = new Set(plan.skipped.map((e) => e.path));
     expect(skippedPaths.has('external-sources')).toBe(true);
-    expect(skippedPaths.has('external-sources/.ok')).toBe(true);
-    expect(skippedPaths.has('external-sources/.ok/frontmatter.yml')).toBe(true);
+    expect(skippedPaths.has('external-sources/.ps')).toBe(true);
+    expect(skippedPaths.has('external-sources/.ps/frontmatter.yml')).toBe(true);
 
     const createdPaths = new Set(plan.created.map((e) => e.path));
     expect(createdPaths.has('research')).toBe(true);
@@ -129,9 +129,9 @@ describe('planSeed — nested .ok/ era', () => {
     expect(createdPaths.has('brain')).toBe(true);
     for (const folder of STARTER_FOLDERS) {
       expect(createdPaths.has(`brain/${folder.path}`)).toBe(true);
-      expect(createdPaths.has(`brain/${folder.path}/.ok/frontmatter.yml`)).toBe(true);
+      expect(createdPaths.has(`brain/${folder.path}/.ps/frontmatter.yml`)).toBe(true);
       expect(
-        createdPaths.has(`brain/${folder.path}/.ok/templates/${folder.starterTemplate}.md`),
+        createdPaths.has(`brain/${folder.path}/.ps/templates/${folder.starterTemplate}.md`),
       ).toBe(true);
     }
     expect(createdPaths.has('brain/log.md')).toBe(true);
@@ -181,26 +181,26 @@ describe('planSeed — codebase-wiki nested paths', () => {
 
   beforeEach(async () => {
     projectDir = await mkdtemp(join(tmpdir(), 'seed-plan-wiki-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), '', 'utf-8');
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
   });
 
   afterEach(async () => {
     await rm(projectDir, { recursive: true, force: true });
   });
 
-  test('plans nested folder + .ok/frontmatter.yml + template entries with slash-bearing template ids', async () => {
+  test('plans nested folder + .ps/frontmatter.yml + template entries with slash-bearing template ids', async () => {
     const plan = await planSeed({ projectDir, packId: 'codebase-wiki' });
     const byPath = new Map(plan.created.map((e) => [e.path, e]));
 
     for (const folder of WIKI_PACK.folders) {
       expect(byPath.has(folder.path)).toBe(true);
-      expect(byPath.get(`${folder.path}/.ok/frontmatter.yml`)?.template).toBe(
-        `${folder.path}/.ok/frontmatter.yml`,
+      expect(byPath.get(`${folder.path}/.ps/frontmatter.yml`)?.template).toBe(
+        `${folder.path}/.ps/frontmatter.yml`,
       );
       expect(
-        byPath.get(`${folder.path}/.ok/templates/${folder.starterTemplate}.md`)?.template,
-      ).toBe(`${folder.path}/.ok/templates/${folder.starterTemplate}.md`);
+        byPath.get(`${folder.path}/.ps/templates/${folder.starterTemplate}.md`)?.template,
+      ).toBe(`${folder.path}/.ps/templates/${folder.starterTemplate}.md`);
     }
   });
 
@@ -238,15 +238,15 @@ describe('planSeed — codebase-wiki nested paths', () => {
       `---\nname: ${oldName}\ndescription: "Plain notes."\n---\n\nBody.\n`,
       'utf-8',
     );
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'skills-lock.json'),
+      join(projectDir, '.ps', 'skills-lock.json'),
       `${JSON.stringify(
         {
           schema: 1,
           skills: {
             [oldName]: {
-              source: 'inkeep/open-knowledge-skills',
+              source: 'fractalmandala/palimpsest-skills',
               skill: oldName,
               contentHash: 'h',
               importedAt: '2026-01-01T00:00:00.000Z',

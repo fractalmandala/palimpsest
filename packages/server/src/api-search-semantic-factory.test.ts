@@ -8,7 +8,7 @@ import {
   CONFIG_DOC_NAME_PROJECT_LOCAL,
   type SemanticProviderErrorReason,
   type SemanticQueryOutcome,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import { EmbeddingDimsMismatchError } from './embeddings/embedder.ts';
 import {
@@ -150,7 +150,7 @@ async function searchAfterCorpusCompletion(search: () => Promise<SearchBody>): P
 }
 
 beforeAll(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-sem-factory-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-sem-factory-'));
   for (const [rel, content] of Object.entries({
     ...SERVED_FILES,
     ...EXCLUDED_FILES,
@@ -160,15 +160,15 @@ beforeAll(async () => {
     mkdirSync(join(abs, '..'), { recursive: true });
     writeFileSync(abs, content, 'utf-8');
   }
-  writeFileSync(join(tmpDir, '.okignore'), 'archive/\n', 'utf-8');
-  mkdirSync(join(tmpDir, '.ok', 'local'), { recursive: true });
+  writeFileSync(join(tmpDir, '.psignore'), 'archive/\n', 'utf-8');
+  mkdirSync(join(tmpDir, '.ps', 'local'), { recursive: true });
   writeFileSync(
-    join(tmpDir, '.ok', 'local', 'config.yml'),
+    join(tmpDir, '.ps', 'local', 'config.yml'),
     'search:\n  semantic:\n    enabled: true\n    maxBatchSize: 2\n    maxBatchChars: 16000\n    docTimeoutMs: 120000\n',
     'utf-8',
   );
   writeFileSync(
-    join(tmpDir, '.ok', 'secrets.yml'),
+    join(tmpDir, '.ps', 'secrets.yml'),
     'OPENAI_API_KEY: sk-test-factory-key\n',
     'utf-8',
   );
@@ -230,7 +230,7 @@ describe('createServer boot — flag-ON semantic search (factory glue)', () => {
     expect(hiddenHit, 'hidden dot-path is searchable').toBeDefined();
     expect(hiddenHit?.signals.vector, 'but a hidden dot-path is never embedded').toBeUndefined();
 
-    expect(existsSync(join(tmpDir, '.ok', 'local', 'embeddings'))).toBe(true);
+    expect(existsSync(join(tmpDir, '.ps', 'local', 'embeddings'))).toBe(true);
     expect(observedLoaderInput?.options).toMatchObject({
       maxBatchSize: 2,
       maxBatchChars: 16_000,
@@ -289,16 +289,16 @@ describe('createServer boot — flag-ON semantic search (factory glue)', () => {
 
 describe('createServer boot — project-local scope enforcement (egress safety)', () => {
   test('enabled in the COMMITTED project config is ignored — project-local only', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-scope-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-scope-'));
     try {
       writeFileSync(
         join(dir, 'note.md'),
         '# Note\n\nThe credential rotation flow re-issues secrets when they expire.\n',
         'utf-8',
       );
-      mkdirSync(join(dir, '.ok'), { recursive: true });
+      mkdirSync(join(dir, '.ps'), { recursive: true });
       writeFileSync(
-        join(dir, '.ok', 'config.yml'),
+        join(dir, '.ps', 'config.yml'),
         'search:\n  semantic:\n    enabled: true\n',
         'utf-8',
       );
@@ -344,12 +344,12 @@ describe('createServer boot — project-local scope enforcement (egress safety)'
 });
 
 test('GET /api/semantic-status exports a warm provider failure reason', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-sem-provider-error-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-sem-provider-error-'));
   try {
     writeFileSync(join(dir, 'note.md'), '# Note\n\nAuthentication retries.\n', 'utf-8');
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
     writeFileSync(
-      join(dir, '.ok', 'local', 'config.yml'),
+      join(dir, '.ps', 'local', 'config.yml'),
       'search:\n  semantic:\n    enabled: true\n    baseUrl: http://localhost:11434/v1\n',
       'utf-8',
     );
@@ -392,12 +392,12 @@ test('GET /api/semantic-status exports a warm provider failure reason', async ()
 });
 
 test('the real search route maps terminal vector-size drift to restart_required', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-sem-dims-drift-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-sem-dims-drift-'));
   try {
     writeFileSync(join(dir, 'note.md'), '# Note\n\nAuthentication retries.\n', 'utf-8');
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
     writeFileSync(
-      join(dir, '.ok', 'local', 'config.yml'),
+      join(dir, '.ps', 'local', 'config.yml'),
       'search:\n  semantic:\n    enabled: true\n    baseUrl: http://localhost:11434/v1\n',
       'utf-8',
     );
@@ -483,14 +483,14 @@ test('the real search route maps terminal vector-size drift to restart_required'
 test.each([120_000, 900_000])(
   'transport fallback warnings occur only on load and reload (initial timeout %i)',
   async (initialTimeout) => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-fallback-reload-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-fallback-reload-'));
     const warn = vi.spyOn(getLogger('server'), 'warn');
     let srv: ServerInstance | undefined;
     let loaderInput: LoadOpenAiEmbedderInput | undefined;
     try {
       writeFileSync(join(dir, 'note.md'), '# Note\n\nAuthentication retries.\n', 'utf-8');
-      mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
-      const localPath = join(dir, '.ok', 'local', 'config.yml');
+      mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
+      const localPath = join(dir, '.ps', 'local', 'config.yml');
       const source = `search:\n  semantic:\n    enabled: true\n    baseUrl: http://localhost:11434/v1\n    model: local-embedding\n    maxBatchSize: 2\n    maxBatchChars: 16000\n    docTimeoutMs: ${initialTimeout}\n`;
       writeFileSync(localPath, source, 'utf-8');
       srv = createServer({
@@ -585,15 +585,15 @@ test.each([120_000, 900_000])(
 );
 
 test('persisted Y.Text transport fallback warns once after the file watcher echo', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-sem-fallback-persist-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-sem-fallback-persist-'));
   const warn = vi.spyOn(getLogger('server'), 'warn');
   const info = vi.spyOn(getLogger('server'), 'info');
   let srv: ServerInstance | undefined;
   let loaderInput: LoadOpenAiEmbedderInput | undefined;
   try {
     writeFileSync(join(dir, 'note.md'), '# Note\n\nAuthentication retries.\n', 'utf-8');
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
-    const localPath = join(dir, '.ok', 'local', 'config.yml');
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
+    const localPath = join(dir, '.ps', 'local', 'config.yml');
     const source =
       'search:\n  semantic:\n    enabled: true\n    baseUrl: http://localhost:11434/v1\n    model: local-embedding\n    maxBatchSize: 2\n    maxBatchChars: 16000\n    docTimeoutMs: 120000\n';
     writeFileSync(localPath, source, 'utf-8');
@@ -686,17 +686,17 @@ test('persisted Y.Text transport fallback warns once after the file watcher echo
 }, 30_000);
 
 test('generated-index settings do not repeat an unrelated project-local fallback warning', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-sem-fallback-generated-index-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-sem-fallback-generated-index-'));
   const warn = vi.spyOn(getLogger('server'), 'warn');
   let srv: ServerInstance | undefined;
   try {
     writeFileSync(join(dir, 'note.md'), '# Note\n', 'utf-8');
-    mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
-    const localPath = join(dir, '.ok', 'local', 'config.yml');
+    mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
+    const localPath = join(dir, '.ps', 'local', 'config.yml');
     writeFileSync(localPath, 'search:\n  semantic:\n    docTimeoutMs: 900000\n', 'utf-8');
     writeFileSync(
-      join(dir, '.ok', 'config.yml'),
-      'contentRules:\n  okf:\n    generate:\n      index: false\n',
+      join(dir, '.ps', 'config.yml'),
+      'contentRules:\n  psf:\n    generate:\n      index: false\n',
       'utf-8',
     );
     srv = createServer({
@@ -738,20 +738,20 @@ test('generated-index settings do not repeat an unrelated project-local fallback
 
 describe('createServer boot — similarityFloor config reaches core ranking', () => {
   test('a high project-local similarityFloor gates out a vector-only match the default would surface', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-floor-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-floor-'));
     try {
       writeFileSync(
         join(dir, 'rotation.md'),
         '# Credential Rotation\n\nThe credential rotation flow re-issues secrets when they expire.\n',
         'utf-8',
       );
-      mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+      mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
       writeFileSync(
-        join(dir, '.ok', 'local', 'config.yml'),
+        join(dir, '.ps', 'local', 'config.yml'),
         'search:\n  semantic:\n    enabled: true\n    similarityFloor: 0.999\n',
         'utf-8',
       );
-      writeFileSync(join(dir, '.ok', 'secrets.yml'), 'OPENAI_API_KEY: sk-test\n', 'utf-8');
+      writeFileSync(join(dir, '.ps', 'secrets.yml'), 'OPENAI_API_KEY: sk-test\n', 'utf-8');
       const shadowRepo = await initShadowRepo(dir);
       const srv = createServer({
         contentDir: dir,
@@ -792,12 +792,12 @@ describe('createServer boot — similarityFloor config reaches core ranking', ()
 
 describe('createServer boot — embeddings key set/clear handlers (Account control)', () => {
   test('set-key writes the secrets file, status flips keyPresent, clear-key removes it', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-sem-setkey-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-sem-setkey-'));
     try {
       writeFileSync(join(dir, 'note.md'), '# Note\n', 'utf-8');
-      mkdirSync(join(dir, '.ok', 'local'), { recursive: true });
+      mkdirSync(join(dir, '.ps', 'local'), { recursive: true });
       writeFileSync(
-        join(dir, '.ok', 'local', 'config.yml'),
+        join(dir, '.ps', 'local', 'config.yml'),
         'search:\n  semantic:\n    enabled: true\n',
         'utf-8',
       );
@@ -815,7 +815,7 @@ describe('createServer boot — embeddings key set/clear handlers (Account contr
         embedderLoader: () => Promise.resolve(createConceptEmbedder({ concepts: CONCEPTS })),
       });
       await srv.ready;
-      const secretsPath = join(dir, '.ok', 'secrets.yml');
+      const secretsPath = join(dir, '.ps', 'secrets.yml');
       try {
         const before = (await callViaServer(srv, 'GET', '/api/semantic-status')) as {
           keyPresent: boolean;

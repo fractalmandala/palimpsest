@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { ClientLogsRequestSchema, ClientLogsSuccessSchema } from '@inkeep/open-knowledge-core';
+import { ClientLogsRequestSchema, ClientLogsSuccessSchema } from '@palimpsest/core';
 import type { AgentRegistryHostSeam } from '../agent-registry-apply.ts';
 import { collectServerHostSnapshot } from '../agent-registry-probes.ts';
 import type { createInstalledAgentsProbe } from '../handoff-api.ts';

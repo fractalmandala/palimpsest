@@ -1,4 +1,4 @@
-import { COMMAND_IDENTITIES } from '@inkeep/open-knowledge-core';
+import { COMMAND_IDENTITIES } from '@palimpsest/core';
 import { cleanup } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { NodeSelection } from '@tiptap/pm/state';

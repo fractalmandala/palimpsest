@@ -4,8 +4,8 @@ import type {
   LintDiagnostic,
   LinterConfig,
   LintPosition,
-} from '@inkeep/open-knowledge-core/markdown/lint';
-import { lintDocument } from '@inkeep/open-knowledge-core/markdown/lint';
+} from '@palimpsest/core/markdown/lint';
+import { lintDocument } from '@palimpsest/core/markdown/lint';
 
 export function createMarkdownLintExtension(config: LinterConfig, docName?: string): Extension {
   if (!config.enabled) return [];

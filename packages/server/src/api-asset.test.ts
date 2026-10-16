@@ -55,7 +55,7 @@ describe('GET /api/asset', () => {
   let harness: Harness;
 
   beforeEach(async () => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-api-asset-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-api-asset-'));
     contentDir = join(tmpDir, 'content');
     mkdirSync(join(contentDir, 'docs'), { recursive: true });
     writeFileSync(join(contentDir, 'docs', 'photo.png'), 'fake-png-bytes');
@@ -179,7 +179,7 @@ describe('GET /api/asset content-filter exclusions', () => {
   let harness: Harness;
 
   beforeEach(async () => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-api-asset-cf-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-api-asset-cf-'));
     contentDir = join(tmpDir, 'content');
     mkdirSync(join(contentDir, 'docs'), { recursive: true });
     mkdirSync(join(contentDir, 'private'), { recursive: true });
@@ -219,7 +219,7 @@ describe('GET /api/asset content-filter exclusions', () => {
     expect(await res.text()).toBe('allowed-bytes');
   });
 
-  test('refuses assets excluded by .gitignore / .okignore as 404', async () => {
+  test('refuses assets excluded by .gitignore / .psignore as 404', async () => {
     const res = await fetch(assetUrl(harness.baseURL, 'private/secret.png'));
     expect(res.status).toBe(404);
     expect(await res.text()).toContain('Asset not found');
@@ -241,7 +241,7 @@ describe('GET /api/asset tracked-file fallback on an exact miss', () => {
   ]);
 
   beforeEach(async () => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-api-asset-tracked-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-api-asset-tracked-'));
     contentDir = join(tmpDir, 'content');
     mkdirSync(join(contentDir, 'docs'), { recursive: true });
     mkdirSync(join(contentDir, 'private'), { recursive: true });

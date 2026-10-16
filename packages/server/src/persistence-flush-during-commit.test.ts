@@ -37,7 +37,7 @@ let contentDir: string;
 let shadow: ShadowHandle;
 
 beforeEach(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-flush-during-commit-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-flush-during-commit-'));
   contentDir = join(tmpDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   shadow = await initShadowRepo(tmpDir);

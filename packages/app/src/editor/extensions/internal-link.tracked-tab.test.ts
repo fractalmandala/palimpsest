@@ -1,4 +1,4 @@
-import { createTargetNamespace } from '@inkeep/open-knowledge-core';
+import { createTargetNamespace } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { assetPathFromHash, hashFromAssetPath } from '@/lib/doc-hash';
 import { assetTabId, filterOpenTabsForKnownTargets } from '../editor-tabs';

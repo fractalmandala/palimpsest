@@ -54,10 +54,10 @@ describe('readUpdaterCacheDirName', () => {
     const yml = [
       'provider: github',
       'owner: inkeep',
-      'repo: open-knowledge',
-      "updaterCacheDirName: '@inkeepopen-knowledge-desktop-updater'",
+      'repo: palimpsest',
+      "updaterCacheDirName: '@palimpsestdesktop-updater'",
     ].join('\n');
-    expect(readUpdaterCacheDirName(yml)).toBe('@inkeepopen-knowledge-desktop-updater');
+    expect(readUpdaterCacheDirName(yml)).toBe('@palimpsestdesktop-updater');
   });
 
   test('returns null when the key is absent', () => {
@@ -84,7 +84,7 @@ describe('readUpdaterCacheDirName', () => {
 describe('reclaimPendingUpdateCache', () => {
   const tempRoots: string[] = [];
   function makeTempRoot(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-updater-cache-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-updater-cache-'));
     tempRoots.push(dir);
     return dir;
   }
@@ -94,13 +94,13 @@ describe('reclaimPendingUpdateCache', () => {
     }
   });
 
-  async function scaffold(root: string, cacheDirName = 'ok-updater') {
+  async function scaffold(root: string, cacheDirName = 'ps-updater') {
     const configPath = join(root, 'resources', 'app-update.yml');
     await mkdir(join(root, 'resources'), { recursive: true });
     await writeFile(configPath, `provider: github\nupdaterCacheDirName: ${cacheDirName}\n`);
     const pendingDir = join(root, 'cache', cacheDirName, 'pending');
     await mkdir(pendingDir, { recursive: true });
-    await writeFile(join(pendingDir, 'OpenKnowledge-Setup-x64.exe'), 'staged-installer-bytes');
+    await writeFile(join(pendingDir, 'Palimpsest-Setup-x64.exe'), 'staged-installer-bytes');
     await writeFile(join(pendingDir, 'update-info.json'), '{}');
     return { configPath, pendingDir };
   }
@@ -120,7 +120,7 @@ describe('reclaimPendingUpdateCache', () => {
     const outcome = await reclaimPendingUpdateCache(linuxDeps(root, configPath));
     expect(outcome).toBe('reclaimed');
     await expect(stat(pendingDir)).rejects.toMatchObject({ code: 'ENOENT' });
-    await expect(stat(join(root, 'cache', 'ok-updater'))).resolves.toBeDefined();
+    await expect(stat(join(root, 'cache', 'ps-updater'))).resolves.toBeDefined();
   });
 
   test('reports nothing-staged when pending/ does not exist', async () => {
@@ -143,7 +143,7 @@ describe('reclaimPendingUpdateCache', () => {
 
     expect(outcome).toBe('failed');
     expect(warn).toHaveBeenCalledWith('failed to inspect staged updater cache', {
-      pendingDir: join(root, 'cache', 'ok-updater', 'pending'),
+      pendingDir: join(root, 'cache', 'ps-updater', 'pending'),
       err: statError,
     });
   });

@@ -4,7 +4,7 @@ import {
   AgentIntegrationsApplySuccessSchema,
   type Principal,
   type StepExecutor,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { makeCaptureRes, parseProblem } from '../composition-rig.test-helper.ts';
 import { buildIngressPolicy, type IngressPolicy } from '../ingress-policy.ts';

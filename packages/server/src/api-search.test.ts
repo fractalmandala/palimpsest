@@ -83,7 +83,7 @@ async function callSearch(contentDir: string, url: string, method = 'GET', body 
 
 describe('GET /api/search', () => {
   test('returns page and folder entity matches for omnibar intent', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       mkdirSync(join(dir, 'architecture'), { recursive: true });
       writeFileSync(join(dir, 'architecture/overview.md'), '# System Overview\n', 'utf-8');
@@ -105,7 +105,7 @@ describe('GET /api/search', () => {
   });
 
   test('ranking param orders the same full_text candidate set: navigation by name, relevance by body', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-ranking-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-ranking-'));
     try {
       writeFileSync(join(dir, 'STORY.md'), '# Collaboration\n\nNotes about teamwork.\n', 'utf-8');
       writeFileSync(
@@ -135,7 +135,7 @@ describe('GET /api/search', () => {
   });
 
   test('returns full-text content matches with snippets', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       writeFileSync(
         join(dir, 'bridge.md'),
@@ -163,7 +163,7 @@ describe('GET /api/search', () => {
   });
 
   test('snippet truncated mid-emoji carries no lone surrogate', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       const content = `# E\n\ncrdt${'a'.repeat(119)}😀 tail text follows here\n`;
       writeFileSync(join(dir, 'emoji.md'), content, 'utf-8');
@@ -180,7 +180,7 @@ describe('GET /api/search', () => {
   });
 
   test('snippet truncated at the start boundary carries no lone low surrogate', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       const content = `# E\n\n😀${'a'.repeat(78)} crdt tail text follows here to pad it out\n`;
       writeFileSync(join(dir, 'emoji-start.md'), content, 'utf-8');
@@ -197,7 +197,7 @@ describe('GET /api/search', () => {
   });
 
   test('supports POST bodies for shared search clients', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       writeFileSync(join(dir, 'release-notes.md'), '# Release Notes\n', 'utf-8');
 
@@ -219,9 +219,9 @@ describe('GET /api/search', () => {
   });
 
   test('indexes project skills under their content-doc path (findable by content)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
-      const skillDir = join(dir, '.ok', 'skills', 'data-pipeline');
+      const skillDir = join(dir, '.ps', 'skills', 'data-pipeline');
       mkdirSync(skillDir, { recursive: true });
       writeFileSync(
         join(skillDir, 'SKILL.md'),
@@ -235,7 +235,7 @@ describe('GET /api/search', () => {
         results?: Array<{ kind: string; path: string }>;
       };
       const skillHits = (body.results ?? []).filter(
-        (r) => r.path === '.ok/skills/data-pipeline/SKILL',
+        (r) => r.path === '.ps/skills/data-pipeline/SKILL',
       );
       expect(skillHits).toHaveLength(1);
     } finally {
@@ -244,7 +244,7 @@ describe('GET /api/search', () => {
   });
 
   test('returns 400 for malformed POST bodies', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       const result = await callSearch(dir, '/api/search', 'POST', '{not json');
 
@@ -257,7 +257,7 @@ describe('GET /api/search', () => {
   });
 
   test('returns 413 for oversized POST bodies', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-'));
     try {
       const result = await callSearch(dir, '/api/search', 'POST', 'x'.repeat(1_048_577));
 
@@ -315,7 +315,7 @@ function resultPaths(captured: CapturedResponse): string[] {
 
 describe('GET /api/search — all-files coverage', () => {
   test('a non-markdown file is returned as a kind:file result with no content snippet', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-files-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-files-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n\nReference body.\n', 'utf-8');
       writeFileSync(join(dir, 'data.csv'), 'a,b\n1,2\n', 'utf-8');
@@ -339,7 +339,7 @@ describe('GET /api/search — all-files coverage', () => {
   });
 
   test('the search corpus is built from the index, not the disk — a file pruned from the index is not searchable (AC4)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-ac4-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-ac4-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       writeFileSync(join(dir, 'present.log'), 'x', 'utf-8');
@@ -361,7 +361,7 @@ describe('GET /api/search — all-files coverage', () => {
   });
 
   test('changing a non-markdown file invalidates the corpus cache (fingerprint covers kind:file)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-fp-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-fp-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       writeFileSync(join(dir, 'first.csv'), 'x', 'utf-8');
@@ -408,7 +408,7 @@ describe('GET /api/search — all-files coverage', () => {
 
 describe('GET /api/search — folder synthesis from all paths', () => {
   test('a folder containing only non-markdown files appears as a folder result (AC2)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-folder-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-folder-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       mkdirSync(join(dir, 'assets'), { recursive: true });
@@ -428,7 +428,7 @@ describe('GET /api/search — folder synthesis from all paths', () => {
   });
 
   test('a partial folder-path query resolves a markdown-free folder (AC16)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-folderpath-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-folderpath-'));
     try {
       writeFileSync(join(dir, 'readme.md'), '# Root\n', 'utf-8');
       const deep = join(dir, 'packages', 'server', 'src');
@@ -459,10 +459,10 @@ describe('GET /api/search — folder synthesis from all paths', () => {
 });
 
 describe('GET /api/search — name-only file tier admission cap (D6)', () => {
-  const KEY = 'OK_SEARCH_MAX_ENTRIES';
+  const KEY = 'PS_SEARCH_MAX_ENTRIES';
 
   test('caps the file tier deepest-first, keeps markdown, and signals truncated (AC6)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-cap-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-cap-'));
     const prev = process.env[KEY];
     process.env[KEY] = '2';
     try {
@@ -503,7 +503,7 @@ describe('GET /api/search — name-only file tier admission cap (D6)', () => {
   });
 
   test('no truncated flag when the file tier is under the cap', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-uncapped-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-uncapped-'));
     const prev = process.env[KEY];
     process.env[KEY] = '1000';
     try {
@@ -522,7 +522,7 @@ describe('GET /api/search — name-only file tier admission cap (D6)', () => {
   });
 
   test('cap tie-break: at equal depth the locale-earlier path wins', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-tiebreak-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-tiebreak-'));
     const prev = process.env[KEY];
     process.env[KEY] = '1';
     try {
@@ -549,7 +549,7 @@ describe('GET /api/search — name-only file tier admission cap (D6)', () => {
   });
 
   test('truncated persists across a corpus-cache hit (same instance, second request)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-truncated-cache-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-truncated-cache-'));
     const prev = process.env[KEY];
     process.env[KEY] = '1';
     try {
@@ -597,7 +597,7 @@ describe('GET /api/search — name-only file tier admission cap (D6)', () => {
 });
 
 describe('getSearchMaxEntries — env parse', () => {
-  const KEY = 'OK_SEARCH_MAX_ENTRIES';
+  const KEY = 'PS_SEARCH_MAX_ENTRIES';
   const cases: Array<[string, number]> = [
     ['0', DEFAULT_SEARCH_MAX_ENTRIES],
     ['-1', DEFAULT_SEARCH_MAX_ENTRIES],
@@ -631,7 +631,7 @@ describe('getSearchMaxEntries — env parse', () => {
 
 describe('GET /api/search — symlink alias handling (D16)', () => {
   test('a symlinked file is findable by either path and appears once (AC17)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-symlink-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-symlink-'));
     try {
       writeFileSync(join(dir, 'data.csv'), 'x', 'utf-8');
       const entry: FileIndexEntry = {
@@ -656,7 +656,7 @@ describe('GET /api/search — symlink alias handling (D16)', () => {
 });
 
 test('a no-generation search cache follows only searchable member-name changes', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-search-members-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-search-members-'));
   try {
     const representative = join(dir, 'amberpilot.csv');
     writeFileSync(representative, 'member bytes\n', 'utf-8');
@@ -723,7 +723,7 @@ test('a no-generation search cache follows only searchable member-name changes',
 
 describe('GET /api/search — operational budget (D15)', () => {
   test('a name-only file entry is searchable without its content being read (AC20)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-noread-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-noread-'));
     try {
       const index = new Map<string, FileIndexEntry>([
         [
@@ -748,7 +748,7 @@ describe('GET /api/search — operational budget (D15)', () => {
   });
 
   test('builds a large all-files corpus within budget (AC18/AC19, measured)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-scale-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-scale-'));
     try {
       const N = 5000;
       const index = new Map<string, FileIndexEntry>();
@@ -786,7 +786,7 @@ describe('GET /api/search — operational budget (D15)', () => {
 
 describe('GET /api/search — dot-path searchability', () => {
   test('a tracked dot-path markdown is searchable (AC3)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-dotpath-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-dotpath-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       mkdirSync(join(dir, '.changeset'), { recursive: true });
@@ -809,7 +809,7 @@ describe('GET /api/search — dot-path searchability', () => {
   });
 
   test('a config synthetic doc stays out of search even with the dot-path filter softened', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-configdoc-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-configdoc-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       mkdirSync(join(dir, '__config__'), { recursive: true });
@@ -841,7 +841,7 @@ describe('GET /api/search — cold-start readiness', () => {
   }
 
   test('answers ready:false with empty results while the boot index is warming, then ready:true with results once the boot gate resolves', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-warming-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-warming-'));
     try {
       mkdirSync(join(dir, 'architecture'), { recursive: true });
       writeFileSync(join(dir, 'architecture/overview.md'), '# System Overview\n', 'utf-8');
@@ -885,7 +885,7 @@ describe('GET /api/search — cold-start readiness', () => {
   });
 
   test('a rejected boot gate flips to ready so search does not warm forever (degraded boot)', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-rejected-gate-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-rejected-gate-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       const fileIndex = buildFileIndex(dir);
@@ -919,7 +919,7 @@ describe('GET /api/search — cold-start readiness', () => {
   });
 
   test('without a boot gate (test/library harness), search is ready immediately', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-nogate-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-nogate-'));
     try {
       writeFileSync(join(dir, 'guide.md'), '# Guide\n', 'utf-8');
       const fileIndex = buildFileIndex(dir);
@@ -955,7 +955,7 @@ describe('GET /api/search — incremental corpus (per-page document cache)', () 
   }
 
   test('reuses an unchanged page across rebuilds, re-reads a changed entry, and prunes deletes', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-incremental-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-incremental-'));
     try {
       const alphaPath = join(dir, 'alpha.md');
       const betaPath = join(dir, 'beta.md');
@@ -996,7 +996,7 @@ describe('GET /api/search — incremental corpus (per-page document cache)', () 
   });
 
   test('a failed read is NOT cached — the page self-heals on the next rebuild', async () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-search-readfail-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-search-readfail-'));
     try {
       const alphaPath = join(dir, 'alpha.md');
       const alphaEntry: FileIndexEntry = {

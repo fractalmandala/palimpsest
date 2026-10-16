@@ -61,21 +61,21 @@ function executableBundle(bundle, executable, identifier) {
 }
 
 function packedApp() {
-  const appOutDir = mkdtempSync(join(tmpdir(), 'ok-after-pack-'));
+  const appOutDir = mkdtempSync(join(tmpdir(), 'ps-after-pack-'));
   roots.push(appOutDir);
   const app = join(appOutDir, 'Fixture.app');
   const frameworks = join(app, 'Contents/Frameworks');
-  executableBundle(app, 'Fixture', 'ai.openknowledge.after-pack-test');
+  executableBundle(app, 'Fixture', 'ai.palimpsest.after-pack-test');
   executableBundle(
     join(frameworks, 'Fixture Helper.app'),
     'Fixture Helper',
-    'ai.openknowledge.after-pack-test.helper',
+    'ai.palimpsest.after-pack-test.helper',
   );
   const serverContents = join(frameworks, 'Fixture Server.app/Contents');
   mkdirSync(serverContents, { recursive: true });
   writeFileSync(
     join(serverContents, 'Info.plist'),
-    infoPlist('Fixture Helper', 'ai.openknowledge.after-pack-test.server'),
+    infoPlist('Fixture Helper', 'ai.palimpsest.after-pack-test.server'),
   );
   const spawnHelper = join(
     app,
@@ -87,8 +87,8 @@ function packedApp() {
   for (const file of [
     'cli/dist/native/index.js',
     'cli/dist/native/native-config.darwin-arm64.node',
-    'app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/native/index.js',
-    'app.asar.unpacked/node_modules/@inkeep/open-knowledge/dist/native/native-config.darwin-arm64.node',
+    'app.asar.unpacked/node_modules/@palimpsest/cli/dist/native/index.js',
+    'app.asar.unpacked/node_modules/@palimpsest/cli/dist/native/native-config.darwin-arm64.node',
     'locales/en/messages.json',
   ]) {
     mkdirSync(dirname(join(resources, file)), { recursive: true });

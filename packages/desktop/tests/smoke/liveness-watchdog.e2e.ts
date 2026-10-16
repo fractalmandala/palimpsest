@@ -27,7 +27,7 @@ interface WitnessRecord {
 }
 
 function readBootBreadcrumbs(tmpHome: string): BootBreadcrumb[] {
-  const logsDir = join(tmpHome, '.ok', 'logs');
+  const logsDir = join(tmpHome, '.ps', 'logs');
   if (!existsSync(logsDir)) return [];
   const lines = readdirSync(logsDir)
     .filter((name) => name.startsWith('desktop.') && name.endsWith('.log'))
@@ -44,7 +44,7 @@ function readBootBreadcrumbs(tmpHome: string): BootBreadcrumb[] {
 }
 
 function readDesktopEvents(tmpHome: string): Array<Record<string, unknown>> {
-  const logsDir = join(tmpHome, '.ok', 'logs');
+  const logsDir = join(tmpHome, '.ps', 'logs');
   if (!existsSync(logsDir)) return [];
   const lines = readdirSync(logsDir)
     .filter((name) => name.startsWith('desktop.') && name.endsWith('.log'))
@@ -124,7 +124,7 @@ async function relaunchAndReadBreadcrumb(
 }
 
 test.describe('liveness watchdog separates a frozen main thread from a dead one (PRD-8439)', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -132,7 +132,7 @@ test.describe('liveness watchdog separates a frozen main thread from a dead one 
     captureStderrFor,
   }) => {
     test.setTimeout(200_000);
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-liveness-frozen-'));
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-liveness-frozen-'));
     const app = await launchIsolated(tmpHome);
     captureStderrFor(app, { cleanupDirs: [tmpHome] });
     await waitForWitnessPings(tmpHome, 1);
@@ -163,7 +163,7 @@ test.describe('liveness watchdog separates a frozen main thread from a dead one 
 
   test('a main thread killed while responsive boots as died', async ({ captureStderrFor }) => {
     test.setTimeout(120_000);
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-liveness-died-'));
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-liveness-died-'));
     const app = await launchIsolated(tmpHome);
     captureStderrFor(app, { cleanupDirs: [tmpHome] });
     await waitForWitnessPings(tmpHome, 2);
@@ -182,7 +182,7 @@ test.describe('liveness watchdog separates a frozen main thread from a dead one 
     captureStderrFor,
   }) => {
     test.setTimeout(200_000);
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-process-crash-chain-'));
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-process-crash-chain-'));
     const utilityEntry = join(tmpHome, 'crash-utility.mjs');
     writeFileSync(
       utilityEntry,

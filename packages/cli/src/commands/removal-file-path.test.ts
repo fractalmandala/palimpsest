@@ -16,7 +16,7 @@ describe('resolveRemovalFilePath', () => {
   let dir: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'ok-removal-file-'));
+    dir = mkdtempSync(join(tmpdir(), 'ps-removal-file-'));
   });
 
   afterEach(() => {

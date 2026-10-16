@@ -6,7 +6,7 @@ import { migrateCommand } from './migrate.ts';
 const makeTempDir = createTempDirFactory(afterAll);
 
 function makeTree(files: Parameters<typeof populateTree>[1]): string {
-  return populateTree(makeTempDir('ok-migrate-'), files);
+  return populateTree(makeTempDir('ps-migrate-'), files);
 }
 
 const ID = '30545f35b5ad80a38049d283dae66763';

@@ -3,14 +3,14 @@ import {
   gitCredentialHostKey,
   isGitHubHost,
   normalizeGitHostname,
-  okUserHomeDisplayPath,
-} from '@inkeep/open-knowledge-core';
+  psUserHomeDisplayPath,
+} from '@palimpsest/core';
 import {
   findEnclosingProjectRoot,
   readDeclaredGitHubHosts,
   readOriginCredentialHost,
   resolveGitHubAuthHost,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { error as errorColor } from '../../ui/colors.ts';
 
 function authProjectDir(): string {
@@ -19,7 +19,7 @@ function authProjectDir(): string {
 }
 
 function declarationRemedy(host: string): string {
-  return `${okUserHomeDisplayPath('global.yml')}:\n\n  git:\n    hosts:\n      ${host}:\n        provider: github\n`;
+  return `${psUserHomeDisplayPath('global.yml')}:\n\n  git:\n    hosts:\n      ${host}:\n        provider: github\n`;
 }
 
 export function tokenCommandLine(host: string): string {

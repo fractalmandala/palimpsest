@@ -24,7 +24,7 @@ function markedForm(english: string): string {
 
 const WRAPPED = 'New file';
 
-const UNWRAPPED_TITLE = 'OpenKnowledge';
+const UNWRAPPED_TITLE = 'Palimpsest';
 
 test.describe('pseudolocale', () => {
   test('marks the copy that went through the catalog and leaves the rest plain', async ({

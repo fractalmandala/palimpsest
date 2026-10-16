@@ -1,5 +1,5 @@
 import type { IncomingMessage } from 'node:http';
-import type { ClientSurfaceReading, ServerRuntimeConfig } from '@inkeep/open-knowledge-core';
+import type { ClientSurfaceReading, ServerRuntimeConfig } from '@palimpsest/core';
 import { isAllowedApiOrigin, isOpaqueOrigin, isSafeMethod } from './api-origin.ts';
 import type { PinoLogger } from './logger.ts';
 import { isAllowedWorkspaceHostHeader, isLoopbackAddress } from './loopback.ts';
@@ -132,7 +132,7 @@ export function isOriginAdmitted(origin: string, policy: IngressPolicy): boolean
 }
 
 export const OPAQUE_ORIGIN_REFUSAL_DETAIL =
-  'Requests from a null origin, and writes from a file: origin, are refused. Send the request from a loopback page, the OpenKnowledge app, or a client that sends no Origin header.';
+  'Requests from a null origin, and writes from a file: origin, are refused. Send the request from a loopback page, the Palimpsest app, or a client that sends no Origin header.';
 
 export type OriginAdmission =
   | { readonly admitted: true; readonly corsGrant: boolean }
@@ -179,7 +179,7 @@ export function warnForwardedHeaderRefusalOnce(
   warnedForwardedHeaderRefusal = true;
   log.warn(
     { handler },
-    '[ingress] refused a request carrying a forwarding header (X-Forwarded-For etc.) — without external-exposure consent, every surface except the /healthz + /readyz probes refuses proxied requests (APIs 403, /collab upgrades dropped). To front this server with a proxy, set server.externalUrl to the public origin in .ok/config.yml (or OK_EXTERNAL_URL) AND consent with server.allowExternal: true in .ok/local/config.yml (or OK_ALLOW_EXTERNAL=1) — the keys live in different files because consent is per-machine and never travels. allowExternal consents to exposure on a server with NO authentication — restrict access at the edge. Removing server.externalUrl does not lift this refusal (it fires on the header, not the URL) and would un-admit that Host/Origin everywhere else. Warned once per process; every refusal is still logged at warn level (HTTP refusals additionally as api.error, counted in ok.api.error.count).',
+    '[ingress] refused a request carrying a forwarding header (X-Forwarded-For etc.) — without external-exposure consent, every surface except the /healthz + /readyz probes refuses proxied requests (APIs 403, /collab upgrades dropped). To front this server with a proxy, set server.externalUrl to the public origin in .ps/config.yml (or PS_EXTERNAL_URL) AND consent with server.allowExternal: true in .ps/local/config.yml (or PS_ALLOW_EXTERNAL=1) — the keys live in different files because consent is per-machine and never travels. allowExternal consents to exposure on a server with NO authentication — restrict access at the edge. Removing server.externalUrl does not lift this refusal (it fires on the header, not the URL) and would un-admit that Host/Origin everywhere else. Warned once per process; every refusal is still logged at warn level (HTTP refusals additionally as api.error, counted in ok.api.error.count).',
   );
 }
 

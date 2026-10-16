@@ -12,8 +12,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { shellSingleQuote } from '@inkeep/open-knowledge-core';
-import { UnsafeIncomingSymlinkError } from '@inkeep/open-knowledge-server';
+import { shellSingleQuote } from '@palimpsest/core';
+import { UnsafeIncomingSymlinkError } from '@palimpsest/server';
 import simpleGit, { GitPluginError, type SimpleGitOptions } from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -75,7 +75,7 @@ function writeCredentialHelper(helperPath: string, reply: string): string {
     [
       "import { appendFileSync, readFileSync } from 'node:fs';",
       'readFileSync(0);',
-      'const call = { argv: process.argv.slice(2), relayToken: process.env.OK_GH_TOKEN ?? null };',
+      'const call = { argv: process.argv.slice(2), relayToken: process.env.PS_GH_TOKEN ?? null };',
       "appendFileSync(process.argv[1] + '.calls', JSON.stringify(call) + '\\n');",
       `if (process.argv.at(-1) === 'get') process.stdout.write(${JSON.stringify(`username=${reply}\npassword=${reply}-secret\n`)});`,
       '',
@@ -136,7 +136,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
   let workspace: string;
 
   beforeEach(() => {
-    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ok-clone-envcfg-')));
+    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ps-clone-envcfg-')));
     vi.stubEnv('HOME', workspace);
     vi.stubEnv('USERPROFILE', workspace);
     vi.stubEnv('XDG_CONFIG_HOME', join(workspace, '.config'));
@@ -156,7 +156,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
     vi.stubEnv('GIT_CONFIG_KEY_0', 'url../.insteadOf');
     vi.stubEnv('GIT_CONFIG_VALUE_0', 'https://127.0.0.1:1/');
     vi.stubEnv('GIT_CONFIG_KEY_1', 'clone.defaultRemoteName');
-    vi.stubEnv('GIT_CONFIG_VALUE_1', 'ok-env-remote');
+    vi.stubEnv('GIT_CONFIG_VALUE_1', 'ps-env-remote');
     const targetDir = join(workspace, 'target');
 
     await expect(
@@ -172,12 +172,12 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
       '# seeded through the environment\n',
     );
     expect(execFileSync('git', ['remote'], { cwd: targetDir, encoding: 'utf-8' }).trim()).toBe(
-      'ok-env-remote',
+      'ps-env-remote',
     );
   });
 
   test("runClone asks the CLI's own credential helper and never an environment-configured one", async () => {
-    const okHelper = writeCredentialHelper(join(workspace, 'ok-cli.mjs'), 'ok');
+    const psHelper = writeCredentialHelper(join(workspace, 'ps-cli.mjs'), 'ok');
     const envHelper = writeCredentialHelper(join(workspace, 'env-helper.mjs'), 'env');
     const server = await startHttpsTokenHost(join(workspace, 'stand-in'));
     for (const [name, value] of Object.entries(
@@ -189,7 +189,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
       vi.stubEnv(name, value);
     }
     const cliEntry = process.argv[1];
-    process.argv[1] = okHelper;
+    process.argv[1] = psHelper;
     try {
       await expect(
         runClone(
@@ -204,7 +204,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
       await server.close();
     }
 
-    expect(helperCalls(okHelper)).toContainEqual({
+    expect(helperCalls(psHelper)).toContainEqual({
       argv: ['auth', 'git-credential', 'get'],
       relayToken: 'ghs_relay_probe',
     });
@@ -212,7 +212,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
   });
 
   test('the stored-token tier asks its own credential helper and never an environment-configured one', async () => {
-    const okHelper = writeCredentialHelper(join(workspace, 'ok-cli.mjs'), 'ok');
+    const psHelper = writeCredentialHelper(join(workspace, 'ps-cli.mjs'), 'ok');
     const envHelper = writeCredentialHelper(join(workspace, 'env-helper.mjs'), 'env');
     const tokenStore = new FileBackend(join(workspace, 'auth.yml'));
     await tokenStore.set(TOKEN_HOST, 'alice', 'ghp_stored_probe', { gitProtocol: 'https' });
@@ -220,7 +220,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
     try {
       const url = server.url;
       const { auth } = await resolveCloneAuth(url, tokenStore, {
-        selfCliArgs: [process.execPath, okHelper],
+        selfCliArgs: [process.execPath, psHelper],
         cwd: workspace,
         _detectGhFn: () => ({ available: false }),
       });
@@ -246,7 +246,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
       await server.close();
     }
 
-    expect(helperCalls(okHelper)).toContainEqual({
+    expect(helperCalls(psHelper)).toContainEqual({
       argv: ['auth', 'git-credential', 'get'],
       relayToken: null,
     });
@@ -267,7 +267,7 @@ describe('clone honours the environment command-scope git config (GIT_CONFIG_COU
         const { auth } = await resolveCloneAuth(
           'https://github.com/o/r',
           new FileBackend(join(dir, 'auth.yml')),
-          { selfCliArgs: ['open-knowledge'], cwd: dir, _detectGhFn: relayTokenGh },
+          { selfCliArgs: ['palimpsest'], cwd: dir, _detectGhFn: relayTokenGh },
         );
         return simpleGit(
           buildCloneGitOptions(dir, auth.gitConfig) as Partial<SimpleGitOptions>,
@@ -421,7 +421,7 @@ describe('ok clone checks symlinks before checking anything out', () => {
   }
 
   beforeEach(() => {
-    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ok-clone-links-')));
+    workspace = realpathSync(mkdtempSync(join(tmpdir(), 'ps-clone-links-')));
     vi.stubEnv('HOME', workspace);
     vi.stubEnv('USERPROFILE', workspace);
     vi.stubEnv('XDG_CONFIG_HOME', join(workspace, '.config'));
@@ -441,7 +441,7 @@ describe('ok clone checks symlinks before checking anything out', () => {
   test('a repository with unsafe links is refused and leaves no clone behind', async () => {
     seedBareRepoWithLinks(join(workspace, 'o', 'r.git'), {
       'notes/leak.md': '../.git/config',
-      'notes/q"uote.md': '../.ok/local/principal.json',
+      'notes/q"uote.md': '../.ps/local/principal.json',
     });
     const url = 'https://127.0.0.1:1/o/r.git';
 
@@ -481,7 +481,7 @@ describe('ok clone checks symlinks before checking anything out', () => {
       printStderr: (text) => printed.push(text),
     });
     expect(printed.join('')).toContain(
-      '"notes/leak.md" (points into private .git or OpenKnowledge state)',
+      '"notes/leak.md" (points into private .git or Palimpsest state)',
     );
     expect(printed.join('')).toContain('"notes/q\\"uote.md"');
   });

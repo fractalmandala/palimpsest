@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 import { parse } from 'yaml';
 import { ciDocuments, rustToolchainSites } from './rust-toolchain-sites.test-helper.mjs';
 
-const OK_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const PS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const WORKFLOW = '.github/workflows/fixture.yml';
 const ACTION = '.github/composite-actions/fixture/action.yml';
 
@@ -25,7 +25,7 @@ const inAction = (step) => [
 const PIN = { RUSTUP_TOOLCHAIN: '1.95.0' };
 
 describe('no workflow or composite action under .github names a Rust toolchain', () => {
-  const documents = ciDocuments(OK_ROOT);
+  const documents = ciDocuments(PS_ROOT);
   const { commands, findings } = rustToolchainSites(documents);
 
   test('the sweep read workflows, composite actions and a toolchain acquisition', () => {
@@ -60,7 +60,7 @@ describe('no workflow or composite action under .github names a Rust toolchain',
   test('no workflow, job or step names one', () => {
     expect(
       findings,
-      'rust-toolchain.toml at the Open Knowledge root declares the toolchain; a job acquires it with a bare `rustup toolchain install` run in the tree it builds',
+      'rust-toolchain.toml at the Palimpsest root declares the toolchain; a job acquires it with a bare `rustup toolchain install` run in the tree it builds',
     ).toEqual([]);
   });
 });

@@ -12,10 +12,10 @@ import { removeTempDirBestEffort } from '../support/temp-dir-cleanup.test-helper
 
 const MANIFEST = `version: 0.72.0-beta.1
 files:
-  - url: OpenKnowledge-Beta-arm64.zip
+  - url: Palimpsest-Beta-arm64.zip
     sha512: abc
     size: 10
-path: OpenKnowledge-Beta-arm64.zip
+path: Palimpsest-Beta-arm64.zip
 sha512: abc
 releaseDate: '2026-10-01T00:00:00.000Z'`;
 
@@ -48,7 +48,7 @@ describe('withMacMinimumSystemVersion', () => {
 
 describe('stampMacUpdateManifests', () => {
   test('stamps every macOS manifest and leaves other platforms alone', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-mac-manifest-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-mac-manifest-'));
     dirs.push(dir);
     writeFileSync(join(dir, 'beta-mac.yml'), MANIFEST);
     writeFileSync(join(dir, 'beta-product-mac.yml'), MANIFEST);
@@ -61,14 +61,14 @@ describe('stampMacUpdateManifests', () => {
   });
 
   test('names the manifest that could not be stamped', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-mac-manifest-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-mac-manifest-'));
     dirs.push(dir);
     writeFileSync(join(dir, 'beta-mac.yml'), '- not\n- a mapping\n');
     expect(() => stampMacUpdateManifests(dir)).toThrow(/^beta-mac\.yml: .*not a YAML mapping/);
   });
 
   test('fails when the build produced no macOS manifest', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-mac-manifest-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-mac-manifest-'));
     dirs.push(dir);
     expect(() => stampMacUpdateManifests(dir)).toThrow(/wrote no macOS update manifest/);
     expect(() => stampMacUpdateManifests(join(dir, 'missing'))).toThrow(

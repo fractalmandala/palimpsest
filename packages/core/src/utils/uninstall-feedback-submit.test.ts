@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from 'vitest';
 import { postUninstallFeedback as barrelPostUninstallFeedback } from '../index.ts';
 import { hasUninstallFeedbackContent, postUninstallFeedback } from './uninstall-feedback-submit.ts';
 
-const SHIPPED_INTAKE_ORIGIN = 'https://openknowledge.ai';
+const SHIPPED_INTAKE_ORIGIN = 'https://github.com/fractalmandala/palimpsest';
 
 const HOST_FACTS = { source: 'cli_uninstall', appVersion: '1.2.3', platform: 'darwin' } as const;
 
@@ -14,12 +14,12 @@ interface SeenRequest {
 }
 
 const realFetch = globalThis.fetch;
-const realOriginEnv = process.env.OK_FEEDBACK_INTAKE_ORIGIN;
+const realOriginEnv = process.env.PS_FEEDBACK_INTAKE_ORIGIN;
 
 afterEach(() => {
   globalThis.fetch = realFetch;
-  if (realOriginEnv === undefined) delete process.env.OK_FEEDBACK_INTAKE_ORIGIN;
-  else process.env.OK_FEEDBACK_INTAKE_ORIGIN = realOriginEnv;
+  if (realOriginEnv === undefined) delete process.env.PS_FEEDBACK_INTAKE_ORIGIN;
+  else process.env.PS_FEEDBACK_INTAKE_ORIGIN = realOriginEnv;
 });
 
 function recordRequests(respond: () => Response | Promise<Response>): SeenRequest[] {
@@ -168,7 +168,7 @@ describe('postUninstallFeedback', () => {
   });
 
   test('targets the loopback intake origin the env names', async () => {
-    process.env.OK_FEEDBACK_INTAKE_ORIGIN = 'http://localhost:4321';
+    process.env.PS_FEEDBACK_INTAKE_ORIGIN = 'http://localhost:4321';
     const seen = recordRequests(() => jsonResponse(200, { reference: 'OK-47' }));
 
     await postUninstallFeedback({ ...HOST_FACTS, reason: 'other' });
@@ -181,7 +181,7 @@ describe('postUninstallFeedback', () => {
     { origin: 'http://feedback.example.com', label: 'plaintext off-box' },
     { origin: 'ftp://localhost:4321', label: 'non-web scheme' },
   ])('refuses to send to an $label origin', async ({ origin }) => {
-    process.env.OK_FEEDBACK_INTAKE_ORIGIN = origin;
+    process.env.PS_FEEDBACK_INTAKE_ORIGIN = origin;
     const seen = recordRequests(() => jsonResponse(200, { reference: 'OK-48' }));
 
     await expect(postUninstallFeedback({ ...HOST_FACTS, reason: 'other' })).resolves.toEqual({
@@ -192,7 +192,7 @@ describe('postUninstallFeedback', () => {
   });
 
   test('sends to an off-box origin over https', async () => {
-    process.env.OK_FEEDBACK_INTAKE_ORIGIN = 'https://staging.example.com';
+    process.env.PS_FEEDBACK_INTAKE_ORIGIN = 'https://staging.example.com';
     const seen = recordRequests(() => jsonResponse(200, { reference: 'OK-49' }));
 
     await postUninstallFeedback({ ...HOST_FACTS, reason: 'other' });

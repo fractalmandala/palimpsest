@@ -11,7 +11,7 @@ const desktopRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 let fixture;
 
 beforeEach(() => {
-  fixture = mkdtempSync(join(tmpdir(), 'ok-windows-icons-'));
+  fixture = mkdtempSync(join(tmpdir(), 'ps-windows-icons-'));
   vi.stubEnv('ELECTRON_BUILDER_ICONS_TOOLSET_DIR', join(fixture, 'unavailable-toolset'));
 });
 
@@ -53,7 +53,7 @@ syncBuiltinESMExports();
     {
       cwd: fixture,
       encoding: 'utf8',
-      env: { ...process.env, OK_DESKTOP_VARIANT: variant, CSC_LINK: '', CSC_KEYCHAIN: '' },
+      env: { ...process.env, PS_DESKTOP_VARIANT: variant, CSC_LINK: '', CSC_KEYCHAIN: '' },
     },
   );
   expect(result.status, result.stderr).toBe(0);

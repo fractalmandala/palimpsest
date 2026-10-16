@@ -213,7 +213,7 @@ beforeAll(async () => {
             warningCount: 0,
             warnings: Array.from({ length: AUDIT_WARNING_CAP + 5 }, (_, i) =>
               i === AUDIT_WARNING_CAP + 4
-                ? 'source family "okf" validation failed: EACCES'
+                ? 'source family "psf" validation failed: EACCES'
                 : `could not read dir-${i}: EACCES`,
             ),
           });
@@ -241,7 +241,7 @@ afterAll(() => {
 });
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-audit-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-audit-test-'));
   seenRequests.length = 0;
 });
 
@@ -435,7 +435,7 @@ describe('audit — degradation visibility', () => {
     const result = await getTool().handler({ path: 'many-warnings' });
     const s = result.structuredContent as { warnings?: string[]; omittedWarningCount?: number };
     expect(s.warnings).toHaveLength(AUDIT_WARNING_CAP);
-    expect(s.warnings?.[0]).toBe('source family "okf" validation failed: EACCES');
+    expect(s.warnings?.[0]).toBe('source family "psf" validation failed: EACCES');
     expect(s.omittedWarningCount).toBe(5);
     expect(result.content[0]?.text ?? '').toContain('… and 5 more warnings');
   });

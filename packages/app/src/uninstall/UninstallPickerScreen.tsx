@@ -1,4 +1,4 @@
-import type { UninstallProjectRow } from '@inkeep/open-knowledge-core/uninstall-bridge';
+import type { UninstallProjectRow } from '@palimpsest/core/uninstall-bridge';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -57,7 +57,7 @@ function ProjectRow({
         className="mt-0.5"
         checked={checked}
         onCheckedChange={(next) => onCheckedChange(next === true)}
-        aria-label={t`Remove OpenKnowledge from ${project.path}`}
+        aria-label={t`Remove Palimpsest from ${project.path}`}
       />
       <Label htmlFor={checkboxId} className="min-w-0 flex-col items-start gap-0.5 font-normal">
         <span className="w-full truncate font-medium text-sm">
@@ -122,24 +122,24 @@ export function UninstallPickerScreen({
     >
       <header className="shrink-0 px-6 pt-5 pb-3.5 space-y-4">
         <h1 id={titleId} className="font-medium leading-none text-base">
-          <Trans>Uninstall OpenKnowledge?</Trans>
+          <Trans>Uninstall Palimpsest?</Trans>
         </h1>
         <p id={descriptionId} className="text-sm text-muted-foreground">
           <Trans>
-            This removes OpenKnowledge’s settings and integrations from your Mac and any projects
+            This removes Palimpsest’s settings and integrations from your Mac and any projects
             you select below, but keeps your markdown content and authored skills.
           </Trans>
         </p>
       </header>
 
       <section
-        aria-label={t`Detected OpenKnowledge projects`}
+        aria-label={t`Detected Palimpsest projects`}
         className="flex min-h-0 flex-1 flex-col px-6 py-3.5"
       >
         {projects.length === 0 ? (
           <div className="rounded-lg border border-border p-4">
             <p className="text-muted-foreground text-sm">
-              <Trans>No active or recent OpenKnowledge projects were found.</Trans>
+              <Trans>No active or recent Palimpsest projects were found.</Trans>
             </p>
           </div>
         ) : (
@@ -195,7 +195,7 @@ export function UninstallPickerScreen({
           variant="destructive"
           onClick={() => onConfirm([...selected].sort((left, right) => left - right))}
         >
-          <Trans>Uninstall OpenKnowledge</Trans>
+          <Trans>Uninstall Palimpsest</Trans>
         </Button>
       </footer>
     </div>

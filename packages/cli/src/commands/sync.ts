@@ -5,7 +5,7 @@ import {
   currentCliCommandName,
   isGitHubHost,
   normalizeGitHostname,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   assertIncomingSymlinksSafe,
   assertMergeNameResolvesTo,
@@ -17,7 +17,7 @@ import {
   SYMLINK_MERGE_MIN_GIT_LABEL,
   UnsafeIncomingSymlinkError,
   type UnsafeSymlinkReason,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command } from 'commander';
 import simpleGit, { type SimpleGit } from 'simple-git';
 import type { GhDetectResult } from '../auth/gh-detect.ts';
@@ -158,8 +158,8 @@ function describeSignInUsed(
   const { host } = signIn;
   const viaGh = signIn.tier === 'A';
   const used = viaGh
-    ? `The ${command} offered the GitHub CLI's sign-in for ${host}, which OpenKnowledge relays in place of your git credential helpers for that host; a ~/.netrc entry or a password in the remote URL is used before it.`
-    : `The ${command} offered OpenKnowledge's GitHub sign-in for ${host} in place of your git credential helpers for that host; a ~/.netrc entry or a password in the remote URL is used before it.`;
+    ? `The ${command} offered the GitHub CLI's sign-in for ${host}, which Palimpsest relays in place of your git credential helpers for that host; a ~/.netrc entry or a password in the remote URL is used before it.`
+    : `The ${command} offered Palimpsest's GitHub sign-in for ${host} in place of your git credential helpers for that host; a ~/.netrc entry or a password in the remote URL is used before it.`;
   switch (failure.subclass) {
     case 'no-credential':
     case '401':

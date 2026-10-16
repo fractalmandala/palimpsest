@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import { useEffect, useRef, useState } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { requestActiveTerminalInput } from './handoff/terminal-input-events';
 import { subscribeToTerminalLaunchRequests } from './handoff/terminal-launch-events';
 
@@ -64,7 +64,7 @@ function ReloadHarness({
   terminalRestoreRevealNonce = 0,
   launch = null,
 }: {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   visible: boolean;
   terminalRestoreRevealNonce?: number;
   launch?: { prompt: string; cli: string; nonce: number } | null;
@@ -130,11 +130,11 @@ function makeSurvivingMainBridge(
       setMeta,
       setOrder,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return { bridge, create, input, listLive, setMeta, setOrder };
 }
 
-function renderDock(bridge: OkDesktopBridge, visible: boolean) {
+function renderDock(bridge: PsDesktopBridge, visible: boolean) {
   return render(<ReloadHarness bridge={bridge} visible={visible} />);
 }
 
@@ -217,7 +217,7 @@ describe('issue #351 — the terminal dock rehydrates surviving sessions after a
     await waitFor(() => expect(setMeta).toHaveBeenCalledWith('pty-1', { customLabel: 'deploy' }));
   });
 
-  function dockUi(bridge: OkDesktopBridge, visible: boolean) {
+  function dockUi(bridge: PsDesktopBridge, visible: boolean) {
     return <ReloadHarness bridge={bridge} visible={visible} />;
   }
 
@@ -249,7 +249,7 @@ describe('issue #351 — the terminal dock rehydrates surviving sessions after a
         snapshotSessions: listLive,
         restoreSessions: listLive,
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
     const { rerender } = render(dockUi(bridge, false));
     await waitFor(() => expect(listLive).toHaveBeenCalled());
     await act(async () => {});
@@ -279,7 +279,7 @@ describe('issue #351 — the terminal dock rehydrates surviving sessions after a
           },
         })),
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     const { rerender } = render(
       <ReloadHarness bridge={bridge} visible={false} terminalRestoreRevealNonce={0} />,

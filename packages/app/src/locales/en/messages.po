@@ -40,8 +40,8 @@ msgstr "… earlier output trimmed"
 msgid ".myteam/skills"
 msgstr ".myteam/skills"
 
-msgid ".ok folders"
-msgstr ".ok folders"
+msgid ".ps folders"
+msgstr ".ps folders"
 
 msgid "\"{0}\""
 msgstr "\"{0}\""
@@ -208,8 +208,8 @@ msgstr "{0} +{rest} more"
 msgid "{0} × {label}"
 msgstr "{0} × {label}"
 
-msgid "{0} acts without asking — OpenKnowledge can't add permission prompts for it"
-msgstr "{0} acts without asking — OpenKnowledge can't add permission prompts for it"
+msgid "{0} acts without asking — Palimpsest can't add permission prompts for it"
+msgstr "{0} acts without asking — Palimpsest can't add permission prompts for it"
 
 msgid "{0} added, {1} removed"
 msgstr "{0} added, {1} removed"
@@ -226,8 +226,8 @@ msgstr "{0} didn't confirm the context window change. Check the conversation bef
 msgid "{0} doesn't offer any settings to adjust"
 msgstr "{0} doesn't offer any settings to adjust"
 
-msgid "{0} has no way to read or edit your documents on its own. Approving writes the Open Knowledge extension to {1} and leaves it there, so this session and later ones in this project have the Open Knowledge tools."
-msgstr "{0} has no way to read or edit your documents on its own. Approving writes the Open Knowledge extension to {1} and leaves it there, so this session and later ones in this project have the Open Knowledge tools."
+msgid "{0} has no way to read or edit your documents on its own. Approving writes the Palimpsest extension to {1} and leaves it there, so this session and later ones in this project have the Palimpsest tools."
+msgstr "{0} has no way to read or edit your documents on its own. Approving writes the Palimpsest extension to {1} and leaves it there, so this session and later ones in this project have the Palimpsest tools."
 
 msgid "{0} hasn't reported its settings yet"
 msgstr "{0} hasn't reported its settings yet"
@@ -336,15 +336,15 @@ msgstr "{addingCount, plural, one {# added} other {# added}} · {removingCount, 
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.claude-desktop.per-tool-approval"
-msgstr "{agent} asks you to approve each OpenKnowledge tool the first time it is used."
+msgstr "{agent} asks you to approve each Palimpsest tool the first time it is used."
 
 #. js-lingui-explicit-id
 msgid "guidance.mcp.session-injection"
-msgstr "{agent} gets OpenKnowledge's tools each time OpenKnowledge launches it; nothing is written to its config."
+msgstr "{agent} gets Palimpsest's tools each time Palimpsest launches it; nothing is written to its config."
 
 #. js-lingui-explicit-id
 msgid "followup.enable-manually"
-msgstr "{agent} keeps project MCP servers off until you turn them on under Customize → MCPs. OpenKnowledge can't see that setting."
+msgstr "{agent} keeps project MCP servers off until you turn them on under Customize → MCPs. Palimpsest can't see that setting."
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.codex.folder-trust"
@@ -356,7 +356,7 @@ msgstr "{agent} loads project extensions only in folders you have trusted; trust
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.copilot.shared-workspace-config"
-msgstr "{agent} reads the workspace MCP config OpenKnowledge writes for {sourceAgent}; removing it for one removes it for both. {agent} loads it only after you confirm folder trust on first launch, and skips it silently in a folder you have not trusted, including under copilot -p, which cannot show the trust prompt."
+msgstr "{agent} reads the workspace MCP config Palimpsest writes for {sourceAgent}; removing it for one removes it for both. {agent} loads it only after you confirm folder trust on first launch, and skips it silently in a folder you have not trusted, including under copilot -p, which cannot show the trust prompt."
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.openclaw.central-store-missing"
@@ -512,20 +512,20 @@ msgstr "{days, plural, one {# day ago} other {# days ago}}"
 msgid "{days}d ago"
 msgstr "{days}d ago"
 
-msgid "{dependent} needs {prerequisite}, and OpenKnowledge cannot safely replace that entry in this file's format."
-msgstr "{dependent} needs {prerequisite}, and OpenKnowledge cannot safely replace that entry in this file's format."
+msgid "{dependent} needs {prerequisite}, and Palimpsest cannot safely replace that entry in this file's format."
+msgstr "{dependent} needs {prerequisite}, and Palimpsest cannot safely replace that entry in this file's format."
 
-msgid "{dependent} needs {prerequisite}, and OpenKnowledge could not find this agent on this machine."
-msgstr "{dependent} needs {prerequisite}, and OpenKnowledge could not find this agent on this machine."
+msgid "{dependent} needs {prerequisite}, and Palimpsest could not find this agent on this machine."
+msgstr "{dependent} needs {prerequisite}, and Palimpsest could not find this agent on this machine."
 
-msgid "{dependent} needs {prerequisite}, and OpenKnowledge does not recognize that entry. Tick {prerequisite} to replace it, then save again."
-msgstr "{dependent} needs {prerequisite}, and OpenKnowledge does not recognize that entry. Tick {prerequisite} to replace it, then save again."
+msgid "{dependent} needs {prerequisite}, and Palimpsest does not recognize that entry. Tick {prerequisite} to replace it, then save again."
+msgstr "{dependent} needs {prerequisite}, and Palimpsest does not recognize that entry. Tick {prerequisite} to replace it, then save again."
 
 msgid "{dependent} needs {prerequisite}, and this agent has no file of that kind on this machine yet. Open the agent once, then try again."
 msgstr "{dependent} needs {prerequisite}, and this agent has no file of that kind on this machine yet. Open the agent once, then try again."
 
-msgid "{dependent} needs {prerequisite}, which OpenKnowledge cannot set up for you. Its setup guide has the manual steps."
-msgstr "{dependent} needs {prerequisite}, which OpenKnowledge cannot set up for you. Its setup guide has the manual steps."
+msgid "{dependent} needs {prerequisite}, which Palimpsest cannot set up for you. Its setup guide has the manual steps."
+msgstr "{dependent} needs {prerequisite}, which Palimpsest cannot set up for you. Its setup guide has the manual steps."
 
 msgid "{descriptorLabel} — render error, source editable below"
 msgstr "{descriptorLabel} — render error, source editable below"
@@ -563,11 +563,11 @@ msgstr "{displayName} CLI, {hint}"
 msgid "{displayName} Desktop"
 msgstr "{displayName} Desktop"
 
-msgid "{displayName} is installed, but OpenKnowledge tools aren't connected to it yet."
-msgstr "{displayName} is installed, but OpenKnowledge tools aren't connected to it yet."
+msgid "{displayName} is installed, but Palimpsest tools aren't connected to it yet."
+msgstr "{displayName} is installed, but Palimpsest tools aren't connected to it yet."
 
-msgid "{docName} is {0}. OpenKnowledge currently opens files up to {1}."
-msgstr "{docName} is {0}. OpenKnowledge currently opens files up to {1}."
+msgid "{docName} is {0}. Palimpsest currently opens files up to {1}."
+msgstr "{docName} is {0}. Palimpsest currently opens files up to {1}."
 
 msgid "{enabledCount}/{0} on"
 msgstr "{enabledCount}/{0} on"
@@ -633,11 +633,11 @@ msgstr "{label} ({0})"
 msgid "{label} already loads \"{0}\" from the {1} plugin. Installing here puts a copy at {2} that {label} uses instead of the plugin's — it stops tracking plugin updates."
 msgstr "{label} already loads \"{0}\" from the {1} plugin. Installing here puts a copy at {2} that {label} uses instead of the plugin's — it stops tracking plugin updates."
 
-msgid "{label} build, v{version}. Its settings and data are kept separate from other OpenKnowledge apps."
-msgstr "{label} build, v{version}. Its settings and data are kept separate from other OpenKnowledge apps."
+msgid "{label} build, v{version}. Its settings and data are kept separate from other Palimpsest apps."
+msgstr "{label} build, v{version}. Its settings and data are kept separate from other Palimpsest apps."
 
-msgid "{label} build. Its settings and data are kept separate from other OpenKnowledge apps."
-msgstr "{label} build. Its settings and data are kept separate from other OpenKnowledge apps."
+msgid "{label} build. Its settings and data are kept separate from other Palimpsest apps."
+msgstr "{label} build. Its settings and data are kept separate from other Palimpsest apps."
 
 msgid "{label} enabled"
 msgstr "{label} enabled"
@@ -870,8 +870,8 @@ msgid "<{descriptorLabel}> failed to render (likely a bad prop). Copy the source
 msgstr "<{descriptorLabel}> failed to render (likely a bad prop). Copy the source to see what went wrong, or delete the block."
 
 #. Warning shown when the user unchecks the PATH toggle on a desktop build with the built-in terminal
-msgid "<0>{cliCommand}</0> won't run in external terminals until you add it later from the File menu. OpenKnowledge's built-in terminal and AI tools keep working."
-msgstr "<0>{cliCommand}</0> won't run in external terminals until you add it later from the File menu. OpenKnowledge's built-in terminal and AI tools keep working."
+msgid "<0>{cliCommand}</0> won't run in external terminals until you add it later from the File menu. Palimpsest's built-in terminal and AI tools keep working."
+msgstr "<0>{cliCommand}</0> won't run in external terminals until you add it later from the File menu. Palimpsest's built-in terminal and AI tools keep working."
 
 #. Warning shown when the user unchecks the PATH toggle on a desktop build without the built-in terminal
 msgid "<0>{cliCommand}</0> won't run in external terminals until you add it later from the File menu. Your AI tools keep working."
@@ -967,8 +967,8 @@ msgstr "A folder named <0>{sanitized}</0> already has files here. Pick a differe
 msgid "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 msgstr "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 
-msgid "A knowledge base that follows Google's Open Knowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
-msgstr "A knowledge base that follows Google's Open Knowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgid "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgstr "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
 
 msgid "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
 msgstr "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
@@ -1163,8 +1163,8 @@ msgstr "Add a property"
 msgid "Add a starter pack"
 msgstr "Add a starter pack"
 
-msgid "Add an access token for a GitLab, Gitea, Bitbucket, Azure DevOps or self-hosted git server. Without one, git uses the credentials it already has saved for that host; with one, OpenKnowledge uses the token instead."
-msgstr "Add an access token for a GitLab, Gitea, Bitbucket, Azure DevOps or self-hosted git server. Without one, git uses the credentials it already has saved for that host; with one, OpenKnowledge uses the token instead."
+msgid "Add an access token for a GitLab, Gitea, Bitbucket, Azure DevOps or self-hosted git server. Without one, git uses the credentials it already has saved for that host; with one, Palimpsest uses the token instead."
+msgstr "Add an access token for a GitLab, Gitea, Bitbucket, Azure DevOps or self-hosted git server. Without one, git uses the credentials it already has saved for that host; with one, Palimpsest uses the token instead."
 
 msgid "Add another pattern"
 msgstr "Add another pattern"
@@ -1272,36 +1272,36 @@ msgstr "Added"
 msgid "Adding"
 msgstr "Adding"
 
-msgid "Adds a global OpenKnowledge MCP entry for this agent."
-msgstr "Adds a global OpenKnowledge MCP entry for this agent."
+msgid "Adds a global Palimpsest MCP entry for this agent."
+msgstr "Adds a global Palimpsest MCP entry for this agent."
 
 msgid "Adds a managed block to"
 msgstr "Adds a managed block to"
 
 #. Subtext under the project AI-tools checkbox
-msgid "Adds an OpenKnowledge MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
-msgstr "Adds an OpenKnowledge MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgid "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgstr "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
 
 #. Subtext under the AI-tools MCP checkbox
-msgid "Adds an OpenKnowledge MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
-msgstr "Adds an OpenKnowledge MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgid "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgstr "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
 
-msgid "Adds an OpenKnowledge MCP entry to this project's agent config."
-msgstr "Adds an OpenKnowledge MCP entry to this project's agent config."
+msgid "Adds an Palimpsest MCP entry to this project's agent config."
+msgstr "Adds an Palimpsest MCP entry to this project's agent config."
 
 #. js-lingui-explicit-id
 msgid "guidance.mcp.user-config"
-msgstr "Adds OpenKnowledge to {agent}'s own MCP config, so every project on this machine is reachable."
+msgstr "Adds Palimpsest to {agent}'s own MCP config, so every project on this machine is reachable."
 
 #. js-lingui-explicit-id
 msgid "guidance.mcp.project-config"
-msgstr "Adds OpenKnowledge to the MCP config {agent} reads in this project, so it can read, search, and edit these documents."
+msgstr "Adds Palimpsest to the MCP config {agent} reads in this project, so it can read, search, and edit these documents."
 
 msgid "Adds telemetry, server state, and runtime info when available. Credentials are always removed; document names, if included, appear in cleartext (not redacted)."
 msgstr "Adds telemetry, server state, and runtime info when available. Credentials are always removed; document names, if included, appear in cleartext (not redacted)."
 
-msgid "Adds the OpenKnowledge skill to the <0>Claude Desktop App</0> so it's available in Chat and Cowork sessions."
-msgstr "Adds the OpenKnowledge skill to the <0>Claude Desktop App</0> so it's available in Chat and Cowork sessions."
+msgid "Adds the Palimpsest skill to the <0>Claude Desktop App</0> so it's available in Chat and Cowork sessions."
+msgstr "Adds the Palimpsest skill to the <0>Claude Desktop App</0> so it's available in Chat and Cowork sessions."
 
 msgid "Adds the skill to {rootRel} — also read by {0}"
 msgstr "Adds the skill to {rootRel} — also read by {0}"
@@ -1417,7 +1417,7 @@ msgstr "Almost done. Here's what happened and what's left."
 msgid "Already at {assetContentPath} — reusing."
 msgstr "Already at {assetContentPath} — reusing."
 
-#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an OpenKnowledge MCP entry, which stay as they are while the box is unticked
+#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked
 msgid "Already connected to {replacingToolList}"
 msgstr "Already connected to {replacingToolList}"
 
@@ -1517,11 +1517,11 @@ msgstr "Applies to (globs — leading ! excludes; empty means every doc)"
 msgid "Applies to all projects on this machine, in Claude Code and Codex chats in the Agents panel started after you turn it on. The agent can open pages, click, type, and take screenshots in its own Google Chrome window with a fresh profile. Needs Google Chrome and Node.js installed. Every browser action asks for your approval, with no option to always allow it, unless the agent's own mode or permission settings skip approvals."
 msgstr "Applies to all projects on this machine, in Claude Code and Codex chats in the Agents panel started after you turn it on. The agent can open pages, click, type, and take screenshots in its own Google Chrome window with a fresh profile. Needs Google Chrome and Node.js installed. Every browser action asks for your approval, with no option to always allow it, unless the agent's own mode or permission settings skip approvals."
 
-msgid "Applies to all projects on this machine. Claude and Codex started from the built-in terminal, and any agent in an in-app Agents panel chat, auto-approve OpenKnowledge's read and write tools (Claude also auto-runs \"{cliCommand} open\"). Deleting, moving, sharing, importing or installing skills, other commands, and non-OpenKnowledge file edits still ask. In the terminal, Cursor, OpenCode, and Pi are unaffected. Best-effort per agent."
-msgstr "Applies to all projects on this machine. Claude and Codex started from the built-in terminal, and any agent in an in-app Agents panel chat, auto-approve OpenKnowledge's read and write tools (Claude also auto-runs \"{cliCommand} open\"). Deleting, moving, sharing, importing or installing skills, other commands, and non-OpenKnowledge file edits still ask. In the terminal, Cursor, OpenCode, and Pi are unaffected. Best-effort per agent."
+msgid "Applies to all projects on this machine. Claude and Codex started from the built-in terminal, and any agent in an in-app Agents panel chat, auto-approve Palimpsest's read and write tools (Claude also auto-runs \"{cliCommand} open\"). Deleting, moving, sharing, importing or installing skills, other commands, and non-Palimpsest file edits still ask. In the terminal, Cursor, OpenCode, and Pi are unaffected. Best-effort per agent."
+msgstr "Applies to all projects on this machine. Claude and Codex started from the built-in terminal, and any agent in an in-app Agents panel chat, auto-approve Palimpsest's read and write tools (Claude also auto-runs \"{cliCommand} open\"). Deleting, moving, sharing, importing or installing skills, other commands, and non-Palimpsest file edits still ask. In the terminal, Cursor, OpenCode, and Pi are unaffected. Best-effort per agent."
 
-msgid "Applies to this project on this computer only. Stored in .ok/local, not shared via git."
-msgstr "Applies to this project on this computer only. Stored in .ok/local, not shared via git."
+msgid "Applies to this project on this computer only. Stored in .ps/local, not shared via git."
+msgstr "Applies to this project on this computer only. Stored in .ps/local, not shared via git."
 
 msgid "Applies when you pick this conversation back up"
 msgstr "Applies when you pick this conversation back up"
@@ -1752,8 +1752,8 @@ msgstr "Available in"
 msgid "Available in every project on this machine. Not shared through git."
 msgstr "Available in every project on this machine. Not shared through git."
 
-msgid "Available in the OpenKnowledge desktop app. From a terminal, use<0> {cliCommand} config-sharing status</0> / <1>share</1> / <2>unshare</2>."
-msgstr "Available in the OpenKnowledge desktop app. From a terminal, use<0> {cliCommand} config-sharing status</0> / <1>share</1> / <2>unshare</2>."
+msgid "Available in the Palimpsest desktop app. From a terminal, use<0> {cliCommand} config-sharing status</0> / <1>share</1> / <2>unshare</2>."
+msgstr "Available in the Palimpsest desktop app. From a terminal, use<0> {cliCommand} config-sharing status</0> / <1>share</1> / <2>unshare</2>."
 
 msgid "Back"
 msgstr "Back"
@@ -1847,8 +1847,8 @@ msgstr "Both"
 msgid "Both agents end up reading everything in {keep}."
 msgstr "Both agents end up reading everything in {keep}."
 
-msgid "Both versions are identical. Choosing Accept current leaves OpenKnowledge's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off."
-msgstr "Both versions are identical. Choosing Accept current leaves OpenKnowledge's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off."
+msgid "Both versions are identical. Choosing Accept current leaves Palimpsest's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off."
+msgstr "Both versions are identical. Choosing Accept current leaves Palimpsest's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off."
 
 msgid "Branch"
 msgstr "Branch"
@@ -1913,8 +1913,8 @@ msgstr "Bug report {0}"
 msgid "Bug report history"
 msgstr "Bug report history"
 
-msgid "Bug reporting needs the OpenKnowledge desktop app."
-msgstr "Bug reporting needs the OpenKnowledge desktop app."
+msgid "Bug reporting needs the Palimpsest desktop app."
+msgstr "Bug reporting needs the Palimpsest desktop app."
 
 msgid "Bugs, crashes, or it felt unreliable"
 msgstr "Bugs, crashes, or it felt unreliable"
@@ -1928,8 +1928,8 @@ msgstr "Build a knowledge wiki about the different types of flightless birds. St
 msgid "Build and keep track of the world behind your story. A home for your characters, places, factions, and the lore that ties them together, so details stay consistent as you write."
 msgstr "Build and keep track of the world behind your story. A home for your characters, places, factions, and the lore that ties them together, so details stay consistent as you write."
 
-msgid "Building <0>openknowledge.skill</0> and opening the Claude Desktop App"
-msgstr "Building <0>openknowledge.skill</0> and opening the Claude Desktop App"
+msgid "Building <0>palimpsest.skill</0> and opening the Claude Desktop App"
+msgstr "Building <0>palimpsest.skill</0> and opening the Claude Desktop App"
 
 msgid "Builds a shareable link to a document or folder"
 msgstr "Builds a shareable link to a document or folder"
@@ -1943,8 +1943,8 @@ msgstr "Bullet List"
 msgid "By meaning"
 msgstr "By meaning"
 
-msgid "By OpenKnowledge"
-msgstr "By OpenKnowledge"
+msgid "By Palimpsest"
+msgstr "By Palimpsest"
 
 msgid "By tag"
 msgstr "By tag"
@@ -1955,8 +1955,8 @@ msgstr "Cached embeddings belong to the endpoint and model that produced them, s
 msgid "Callouts draw attention to key information."
 msgstr "Callouts draw attention to key information."
 
-msgid "Can't nest projects. An OpenKnowledge project already exists at <0>{rootPath}</0>. Choose a location outside it, or open that project instead."
-msgstr "Can't nest projects. An OpenKnowledge project already exists at <0>{rootPath}</0>. Choose a location outside it, or open that project instead."
+msgid "Can't nest projects. An Palimpsest project already exists at <0>{rootPath}</0>. Choose a location outside it, or open that project instead."
+msgstr "Can't nest projects. An Palimpsest project already exists at <0>{rootPath}</0>. Choose a location outside it, or open that project instead."
 
 msgid "Can't share this path."
 msgstr "Can't share this path."
@@ -2021,8 +2021,8 @@ msgstr "Changes save automatically."
 msgid "Changes saved automatically."
 msgstr "Changes saved automatically."
 
-msgid "Changes were saved, but OpenKnowledge could not confirm a connection to {handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again."
-msgstr "Changes were saved, but OpenKnowledge could not confirm a connection to {handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again."
+msgid "Changes were saved, but Palimpsest could not confirm a connection to {handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again."
+msgstr "Changes were saved, but Palimpsest could not confirm a connection to {handoffLabel}. Check the MCP server settings for this app, then select Save changes to check again."
 
 msgid "Character budget per indexing request"
 msgstr "Character budget per indexing request"
@@ -2121,8 +2121,8 @@ msgstr "Checks documents for markdown problems and can fix them"
 msgid "Checks the whole project for markdown problems and broken links"
 msgstr "Checks the whole project for markdown problems and broken links"
 
-msgid "Checks your project against the Open Knowledge Format. Turn it off any time in Settings."
-msgstr "Checks your project against the Open Knowledge Format. Turn it off any time in Settings."
+msgid "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
+msgstr "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
 
 msgid "Choose a skill archive"
 msgstr "Choose a skill archive"
@@ -2151,14 +2151,14 @@ msgstr "Choose what a new chat starts"
 msgid "Choose what a new tab starts"
 msgstr "Choose what a new tab starts"
 
-msgid "Choose what OpenKnowledge sets up for {0}."
-msgstr "Choose what OpenKnowledge sets up for {0}."
+msgid "Choose what Palimpsest sets up for {0}."
+msgstr "Choose what Palimpsest sets up for {0}."
 
-msgid "Choose what OpenKnowledge sets up for {agentLabel}. {agentLabel} only supports global configuration."
-msgstr "Choose what OpenKnowledge sets up for {agentLabel}. {agentLabel} only supports global configuration."
+msgid "Choose what Palimpsest sets up for {agentLabel}. {agentLabel} only supports global configuration."
+msgstr "Choose what Palimpsest sets up for {agentLabel}. {agentLabel} only supports global configuration."
 
-msgid "Choose what OpenKnowledge sets up."
-msgstr "Choose what OpenKnowledge sets up."
+msgid "Choose what Palimpsest sets up."
+msgstr "Choose what Palimpsest sets up."
 
 msgid "Choose where to send these comments"
 msgstr "Choose where to send these comments"
@@ -2166,8 +2166,8 @@ msgstr "Choose where to send these comments"
 msgid "Choose where to send this message"
 msgstr "Choose where to send this message"
 
-msgid "Choose whether this project's OpenKnowledge setup, including its AI-tool connections and the Shared default sync mode, is saved with the project so teammates get it too, or kept only on your computer."
-msgstr "Choose whether this project's OpenKnowledge setup, including its AI-tool connections and the Shared default sync mode, is saved with the project so teammates get it too, or kept only on your computer."
+msgid "Choose whether this project's Palimpsest setup, including its AI-tool connections and the Shared default sync mode, is saved with the project so teammates get it too, or kept only on your computer."
+msgstr "Choose whether this project's Palimpsest setup, including its AI-tool connections and the Shared default sync mode, is saved with the project so teammates get it too, or kept only on your computer."
 
 msgid "Choose which agents appear in agent menus across the app, and set them up to read and update your documents."
 msgstr "Choose which agents appear in agent menus across the app, and set them up to read and update your documents."
@@ -2552,8 +2552,8 @@ msgstr "Connect GitHub"
 msgid "Connect GitHub to continue."
 msgstr "Connect GitHub to continue."
 
-msgid "Connect OpenKnowledge to other tools you use."
-msgstr "Connect OpenKnowledge to other tools you use."
+msgid "Connect Palimpsest to other tools you use."
+msgstr "Connect Palimpsest to other tools you use."
 
 msgid "Connect this project to GitHub to share."
 msgstr "Connect this project to GitHub to share."
@@ -2571,7 +2571,7 @@ msgstr "Connect tools"
 msgid "Connect your AI tools"
 msgstr "Connect your AI tools"
 
-#. Checkbox that wires the OpenKnowledge MCP into every detected AI tool for the project
+#. Checkbox that wires the Palimpsest MCP into every detected AI tool for the project
 msgid "Connect your AI tools to this project"
 msgstr "Connect your AI tools to this project"
 
@@ -2614,8 +2614,8 @@ msgstr "Connection error — try again"
 msgid "Connection lost — keep this tab open, your edits will sync when reconnected"
 msgstr "Connection lost — keep this tab open, your edits will sync when reconnected"
 
-msgid "Connects the agent to OpenKnowledge in every project on this machine."
-msgstr "Connects the agent to OpenKnowledge in every project on this machine."
+msgid "Connects the agent to Palimpsest in every project on this machine."
+msgstr "Connects the agent to Palimpsest in every project on this machine."
 
 msgid "Connects the agent to this project so it can read, search, and edit your documents."
 msgstr "Connects the agent to this project so it can read, search, and edit your documents."
@@ -2896,8 +2896,8 @@ msgstr "Couldn't clear the key — please try again."
 msgid "Couldn't complete semantic search — retry"
 msgstr "Couldn't complete semantic search — retry"
 
-msgid "Couldn't connect to the agent service. Make sure the OpenKnowledge server is running and up to date (restart it if it was already running), then try again."
-msgstr "Couldn't connect to the agent service. Make sure the OpenKnowledge server is running and up to date (restart it if it was already running), then try again."
+msgid "Couldn't connect to the agent service. Make sure the Palimpsest server is running and up to date (restart it if it was already running), then try again."
+msgstr "Couldn't connect to the agent service. Make sure the Palimpsest server is running and up to date (restart it if it was already running), then try again."
 
 msgid "Couldn't construct the share URL. Try Done and re-share."
 msgstr "Couldn't construct the share URL. Try Done and re-share."
@@ -2971,8 +2971,8 @@ msgstr "Couldn't install {skillName}: {0}"
 msgid "Couldn't install from {0}: {1}"
 msgstr "Couldn't install from {0}: {1}"
 
-msgid "Couldn't install OpenKnowledge skill — {message}"
-msgstr "Couldn't install OpenKnowledge skill — {message}"
+msgid "Couldn't install Palimpsest skill — {message}"
+msgstr "Couldn't install Palimpsest skill — {message}"
 
 msgid "Couldn't install skill: {0}"
 msgstr "Couldn't install skill: {0}"
@@ -3004,8 +3004,8 @@ msgstr "Couldn't load starter packs: {error}"
 msgid "Couldn't load templates"
 msgstr "Couldn't load templates"
 
-msgid "Couldn't load the OpenKnowledge skills. Try again."
-msgstr "Couldn't load the OpenKnowledge skills. Try again."
+msgid "Couldn't load the Palimpsest skills. Try again."
+msgstr "Couldn't load the Palimpsest skills. Try again."
 
 msgid "Couldn't load the version preview. You can still choose how to resolve it below."
 msgstr "Couldn't load the version preview. You can still choose how to resolve it below."
@@ -3094,11 +3094,11 @@ msgstr "Couldn't reach the embeddings provider — retry"
 msgid "Couldn't reach the endpoint. Check the URL and that the server is up."
 msgstr "Couldn't reach the endpoint. Check the URL and that the server is up."
 
-msgid "Couldn't reach the Open Knowledge server to upload {fileName}."
-msgstr "Couldn't reach the Open Knowledge server to upload {fileName}."
+msgid "Couldn't reach the Palimpsest server to upload {fileName}."
+msgstr "Couldn't reach the Palimpsest server to upload {fileName}."
 
-msgid "Couldn't reach the OpenKnowledge server, so sync options are hidden. They appear here as soon as the sync status loads; closing and reopening Settings also retries."
-msgstr "Couldn't reach the OpenKnowledge server, so sync options are hidden. They appear here as soon as the sync status loads; closing and reopening Settings also retries."
+msgid "Couldn't reach the Palimpsest server, so sync options are hidden. They appear here as soon as the sync status loads; closing and reopening Settings also retries."
+msgstr "Couldn't reach the Palimpsest server, so sync options are hidden. They appear here as soon as the sync status loads; closing and reopening Settings also retries."
 
 msgid "Couldn't read {fileName}."
 msgstr "Couldn't read {fileName}."
@@ -3154,8 +3154,8 @@ msgstr "Couldn't resolve the conflict for {filePath}."
 msgid "Couldn't resolve the fork: {0}"
 msgstr "Couldn't resolve the fork: {0}"
 
-msgid "Couldn't restart the server — another process owns it. Quit other OpenKnowledge windows for this project, then try again."
-msgstr "Couldn't restart the server — another process owns it. Quit other OpenKnowledge windows for this project, then try again."
+msgid "Couldn't restart the server — another process owns it. Quit other Palimpsest windows for this project, then try again."
+msgstr "Couldn't restart the server — another process owns it. Quit other Palimpsest windows for this project, then try again."
 
 msgid "Couldn't restart the server — it's running under a different account. Restart your computer to clear it, then reopen this project."
 msgstr "Couldn't restart the server — it's running under a different account. Restart your computer to clear it, then reopen this project."
@@ -3178,8 +3178,8 @@ msgstr "Couldn’t restore {0}. Try again."
 msgid "Couldn't resume this chat: {0}"
 msgstr "Couldn't resume this chat: {0}"
 
-msgid "Couldn't run the test. Check that OpenKnowledge is still running."
-msgstr "Couldn't run the test. Check that OpenKnowledge is still running."
+msgid "Couldn't run the test. Check that Palimpsest is still running."
+msgstr "Couldn't run the test. Check that Palimpsest is still running."
 
 msgid "Couldn’t save changes. Try editing a color again."
 msgstr "Couldn’t save changes. Try editing a color again."
@@ -3262,8 +3262,8 @@ msgstr "Couldn't update from {0}: {1}"
 msgid "Couldn't verify that {displayName} ({bin}) is available, so this is a plain shell. You can still run {bin} yourself."
 msgstr "Couldn't verify that {displayName} ({bin}) is available, so this is a plain shell. You can still run {bin} yourself."
 
-msgid "Couldn't write the Open Knowledge extension. This thread has no Open Knowledge tools."
-msgstr "Couldn't write the Open Knowledge extension. This thread has no Open Knowledge tools."
+msgid "Couldn't write the Palimpsest extension. This thread has no Palimpsest tools."
+msgstr "Couldn't write the Palimpsest extension. This thread has no Palimpsest tools."
 
 msgid "Count skill installs publicly"
 msgstr "Count skill installs publicly"
@@ -3298,8 +3298,8 @@ msgstr "Create a new branch, or check out an existing one, in its own window."
 msgid "Create a new list item from the current list item."
 msgstr "Create a new list item from the current list item."
 
-msgid "Create a new OpenKnowledge project in the folder of your choice."
-msgstr "Create a new OpenKnowledge project in the folder of your choice."
+msgid "Create a new Palimpsest project in the folder of your choice."
+msgstr "Create a new Palimpsest project in the folder of your choice."
 
 msgid "Create a new spec file for my user story"
 msgstr "Create a new spec file for my user story"
@@ -3421,8 +3421,8 @@ msgstr "Custom theme"
 msgid "Customize how the editor looks and behaves."
 msgstr "Customize how the editor looks and behaves."
 
-msgid "Customize your OpenKnowledge experience."
-msgstr "Customize your OpenKnowledge experience."
+msgid "Customize your Palimpsest experience."
+msgstr "Customize your Palimpsest experience."
 
 msgid "Cut"
 msgstr "Cut"
@@ -3615,8 +3615,8 @@ msgstr "Details"
 msgid "Detected in {0}"
 msgstr "Detected in {0}"
 
-msgid "Detected OpenKnowledge projects"
-msgstr "Detected OpenKnowledge projects"
+msgid "Detected Palimpsest projects"
+msgstr "Detected Palimpsest projects"
 
 msgid "Detecting"
 msgstr "Detecting"
@@ -4083,8 +4083,8 @@ msgstr "Enable Auto (Pull only)?"
 msgid "Enable indexes"
 msgstr "Enable indexes"
 
-msgid "Enable Open Knowledge tools for {0}?"
-msgstr "Enable Open Knowledge tools for {0}?"
+msgid "Enable Palimpsest tools for {0}?"
+msgstr "Enable Palimpsest tools for {0}?"
 
 msgid "Enable plugins"
 msgstr "Enable plugins"
@@ -4110,8 +4110,8 @@ msgstr "Enable Themes"
 msgid "Enabling index generation"
 msgstr "Enabling index generation"
 
-msgid "Enabling Open Knowledge tools"
-msgstr "Enabling Open Knowledge tools"
+msgid "Enabling Palimpsest tools"
+msgstr "Enabling Palimpsest tools"
 
 msgid "Ended"
 msgstr "Ended"
@@ -4600,8 +4600,8 @@ msgstr "File is too large ({sizeKb} KB) — each attachment is capped at {limitK
 msgid "File name"
 msgstr "File name"
 
-msgid "File name (created in .ok/schemas/)"
-msgstr "File name (created in .ok/schemas/)"
+msgid "File name (created in .ps/schemas/)"
+msgstr "File name (created in .ps/schemas/)"
 
 msgid "File not found"
 msgstr "File not found"
@@ -4609,8 +4609,8 @@ msgstr "File not found"
 msgid "File saved & Claude Desktop App opened"
 msgstr "File saved & Claude Desktop App opened"
 
-msgid "File saves to <0>~/Downloads/openknowledge.skill</0>."
-msgstr "File saves to <0>~/Downloads/openknowledge.skill</0>."
+msgid "File saves to <0>~/Downloads/palimpsest.skill</0>."
+msgstr "File saves to <0>~/Downloads/palimpsest.skill</0>."
 
 msgid "File sidebar"
 msgstr "File sidebar"
@@ -4902,8 +4902,8 @@ msgstr "GitHub CLI"
 msgid "GitHub connection expired. Connect again to continue."
 msgstr "GitHub connection expired. Connect again to continue."
 
-msgid "GitHub denied the request. You may need to authorize OpenKnowledge for {owner} in your browser."
-msgstr "GitHub denied the request. You may need to authorize OpenKnowledge for {owner} in your browser."
+msgid "GitHub denied the request. You may need to authorize Palimpsest for {owner} in your browser."
+msgstr "GitHub denied the request. You may need to authorize Palimpsest for {owner} in your browser."
 
 msgid "GitHub Enterprise Server hosts"
 msgstr "GitHub Enterprise Server hosts"
@@ -4940,8 +4940,8 @@ msgid "Global outside text fields"
 msgstr "Global outside text fields"
 
 #. Description under the AI-tools section label in the first-launch dialog
-msgid "Globally install the OpenKnowledge skills and MCP to let the agents you already use read and update your projects."
-msgstr "Globally install the OpenKnowledge skills and MCP to let the agents you already use read and update your projects."
+msgid "Globally install the Palimpsest skills and MCP to let the agents you already use read and update your projects."
+msgstr "Globally install the Palimpsest skills and MCP to let the agents you already use read and update your projects."
 
 msgid "Go back"
 msgstr "Go back"
@@ -5034,12 +5034,12 @@ msgstr "Hello, world!"
 msgid "Help"
 msgstr "Help"
 
-msgid "Help me understand the conflict in {filePath}. Explain what I should compare in the OpenKnowledge Conflict view; I will choose and apply the resolution there."
-msgstr "Help me understand the conflict in {filePath}. Explain what I should compare in the OpenKnowledge Conflict view; I will choose and apply the resolution there."
+msgid "Help me understand the conflict in {filePath}. Explain what I should compare in the Palimpsest Conflict view; I will choose and apply the resolution there."
+msgstr "Help me understand the conflict in {filePath}. Explain what I should compare in the Palimpsest Conflict view; I will choose and apply the resolution there."
 
 #. Subtext under the discovery-skill checkbox
-msgid "Help your agents discover and use OpenKnowledge in any project."
-msgstr "Help your agents discover and use OpenKnowledge in any project."
+msgid "Help your agents discover and use Palimpsest in any project."
+msgstr "Help your agents discover and use Palimpsest in any project."
 
 msgid "Helps coding agents choose OKF document types, preserve provenance, and avoid inventing unsupported metadata."
 msgstr "Helps coding agents choose OKF document types, preserve provenance, and avoid inventing unsupported metadata."
@@ -5179,14 +5179,14 @@ msgstr "Hosting is on. The server is running on port {boundPort}. Reach it throu
 msgid "Hotkeys"
 msgstr "Hotkeys"
 
-msgid "How do you like OpenKnowledge?"
-msgstr "How do you like OpenKnowledge?"
+msgid "How do you like Palimpsest?"
+msgstr "How do you like Palimpsest?"
 
 msgid "How does sharing work?"
 msgstr "How does sharing work?"
 
-msgid "How long OpenKnowledge waits for each embedding request while indexing. Search requests use a fixed 8-second timeout per attempt, unchanged by this setting."
-msgstr "How long OpenKnowledge waits for each embedding request while indexing. Search requests use a fixed 8-second timeout per attempt, unchanged by this setting."
+msgid "How long Palimpsest waits for each embedding request while indexing. Search requests use a fixed 8-second timeout per attempt, unchanged by this setting."
+msgstr "How long Palimpsest waits for each embedding request while indexing. Search requests use a fixed 8-second timeout per attempt, unchanged by this setting."
 
 msgid "How missing project-local documents, files, and images are reported in Problems, editor diagnostics, audits, and agent tools."
 msgstr "How missing project-local documents, files, and images are reported in Problems, editor diagnostics, audits, and agent tools."
@@ -5203,11 +5203,11 @@ msgstr "How to set up"
 msgid "How to set up {rowLabel}"
 msgstr "How to set up {rowLabel}"
 
-msgid "How to set up new projects with OpenKnowledge."
-msgstr "How to set up new projects with OpenKnowledge."
+msgid "How to set up new projects with Palimpsest."
+msgstr "How to set up new projects with Palimpsest."
 
-msgid "How to use OpenKnowledge and its MCP tools."
-msgstr "How to use OpenKnowledge and its MCP tools."
+msgid "How to use Palimpsest and its MCP tools."
+msgstr "How to use Palimpsest and its MCP tools."
 
 msgid "How to write a new skill and install it."
 msgstr "How to write a new skill and install it."
@@ -5247,21 +5247,21 @@ msgstr "Identical in both — {pick} still reads them."
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.lm-studio.config-path-mismatch"
-msgstr "If {agent} shows no OpenKnowledge tools, check that its MCP config path in its settings matches the file OpenKnowledge wrote."
+msgstr "If {agent} shows no Palimpsest tools, check that its MCP config path in its settings matches the file Palimpsest wrote."
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.cursor.project-entry-not-loaded"
-msgstr "If {agent} shows no OpenKnowledge tools, open Customize → MCPs, pick {server} and switch on its .cursor/mcp.json source; {agent} leaves project servers off until you do."
+msgstr "If {agent} shows no Palimpsest tools, open Customize → MCPs, pick {server} and switch on its .cursor/mcp.json source; {agent} leaves project servers off until you do."
 
 #. js-lingui-explicit-id
 msgid "troubleshooting.claude.project-entry-not-approved"
-msgstr "If {agent} shows no OpenKnowledge tools, run it in this project and approve the OpenKnowledge server once."
+msgstr "If {agent} shows no Palimpsest tools, run it in this project and approve the Palimpsest server once."
 
 msgid "If an update arrives for something you are editing, you choose which version to keep, like a merge conflict."
 msgstr "If an update arrives for something you are editing, you choose which version to keep, like a merge conflict."
 
-msgid "If you use a GitHub Enterprise Server, add its host here so OpenKnowledge can sign in, check push permission, and create share links for repositories hosted there."
-msgstr "If you use a GitHub Enterprise Server, add its host here so OpenKnowledge can sign in, check push permission, and create share links for repositories hosted there."
+msgid "If you use a GitHub Enterprise Server, add its host here so Palimpsest can sign in, check push permission, and create share links for repositories hosted there."
+msgstr "If you use a GitHub Enterprise Server, add its host here so Palimpsest can sign in, check push permission, and create share links for repositories hosted there."
 
 msgid "Ignore broken links in log.md"
 msgstr "Ignore broken links in log.md"
@@ -5299,8 +5299,8 @@ msgstr "Image target \"{shown}\" could not be resolved to a project-local file."
 msgid "Image target \"{shown}\" does not resolve to an existing file."
 msgstr "Image target \"{shown}\" does not resolve to an existing file."
 
-msgid "Image target \"{shown}\" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a \"!\" rule in .okignore."
-msgstr "Image target \"{shown}\" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a \"!\" rule in .okignore."
+msgid "Image target \"{shown}\" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a \"!\" rule in .psignore."
+msgstr "Image target \"{shown}\" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a \"!\" rule in .psignore."
 
 msgid "Images aren't redacted."
 msgstr "Images aren't redacted."
@@ -5338,8 +5338,8 @@ msgstr "In a log document: entry headings lead with an ISO YYYY-MM-DD date, newe
 msgid "In a subfolder"
 msgstr "In a subfolder"
 
-msgid "In an agent chat, hovering a link to a GitHub pull request or issue asks GitHub for its status, signed in as you when OpenKnowledge can use your GitHub sign-in."
-msgstr "In an agent chat, hovering a link to a GitHub pull request or issue asks GitHub for its status, signed in as you when OpenKnowledge can use your GitHub sign-in."
+msgid "In an agent chat, hovering a link to a GitHub pull request or issue asks GitHub for its status, signed in as you when Palimpsest can use your GitHub sign-in."
+msgstr "In an agent chat, hovering a link to a GitHub pull request or issue asks GitHub for its status, signed in as you when Palimpsest can use your GitHub sign-in."
 
 msgid "In an index document: entries sit under a section heading and each one carries a link. Prose around the lists is fine."
 msgstr "In an index document: entries sit under a section heading and each one carries a link. Prose around the lists is fine."
@@ -5347,11 +5347,11 @@ msgstr "In an index document: entries sit under a section heading and each one c
 msgid "In app"
 msgstr "In app"
 
-msgid "In Git projects, Open Knowledge adds a scoped rule to the repository-root .gitattributes file so concurrent index changes combine."
-msgstr "In Git projects, Open Knowledge adds a scoped rule to the repository-root .gitattributes file so concurrent index changes combine."
+msgid "In Git projects, Palimpsest adds a scoped rule to the repository-root .gitattributes file so concurrent index changes combine."
+msgstr "In Git projects, Palimpsest adds a scoped rule to the repository-root .gitattributes file so concurrent index changes combine."
 
-msgid "In Git projects, Open Knowledge also adds a scoped .gitattributes rule so concurrent index changes combine before the next rebuild."
-msgstr "In Git projects, Open Knowledge also adds a scoped .gitattributes rule so concurrent index changes combine before the next rebuild."
+msgid "In Git projects, Palimpsest also adds a scoped .gitattributes rule so concurrent index changes combine before the next rebuild."
+msgstr "In Git projects, Palimpsest also adds a scoped .gitattributes rule so concurrent index changes combine before the next rebuild."
 
 msgid "In the Claude Desktop App"
 msgstr "In the Claude Desktop App"
@@ -5392,11 +5392,11 @@ msgstr "Index documents carry no frontmatter, except the one at your knowledge b
 msgid "Index maintenance is paused because another Git attribute controls index.md. Update .gitattributes so the scoped index.md paths use merge=union, then try again."
 msgstr "Index maintenance is paused because another Git attribute controls index.md. Update .gitattributes so the scoped index.md paths use merge=union, then try again."
 
-msgid "Index maintenance is paused because Open Knowledge could not confirm the required Git merge rule. Check Git and .gitattributes, then try again."
-msgstr "Index maintenance is paused because Open Knowledge could not confirm the required Git merge rule. Check Git and .gitattributes, then try again."
+msgid "Index maintenance is paused because Palimpsest could not confirm the required Git merge rule. Check Git and .gitattributes, then try again."
+msgstr "Index maintenance is paused because Palimpsest could not confirm the required Git merge rule. Check Git and .gitattributes, then try again."
 
-msgid "Index maintenance stayed off because Open Knowledge could not reach the project server. Try again when the project reconnects."
-msgstr "Index maintenance stayed off because Open Knowledge could not reach the project server. Try again when the project reconnects."
+msgid "Index maintenance stayed off because Palimpsest could not reach the project server. Try again when the project reconnects."
+msgstr "Index maintenance stayed off because Palimpsest could not reach the project server. Try again when the project reconnects."
 
 msgid "Index maintenance stayed off because the project setting could not be saved. Check the project file permissions, then try again."
 msgstr "Index maintenance stayed off because the project setting could not be saved. Check the project file permissions, then try again."
@@ -5440,8 +5440,8 @@ msgstr "Initialize starter pack"
 msgid "Initialized {0} but could not open it."
 msgstr "Initialized {0} but could not open it."
 
-msgid "Initialized OpenKnowledge at {gitRoot} — opened parent of {subPath} because it contains a .git folder"
-msgstr "Initialized OpenKnowledge at {gitRoot} — opened parent of {subPath} because it contains a .git folder"
+msgid "Initialized Palimpsest at {gitRoot} — opened parent of {subPath} because it contains a .git folder"
+msgstr "Initialized Palimpsest at {gitRoot} — opened parent of {subPath} because it contains a .git folder"
 
 msgid "Initializing project"
 msgstr "Initializing project"
@@ -5488,8 +5488,8 @@ msgstr "Insert row below"
 msgid "Insert, delete, move, copy, and indent source editor lines through CodeMirror's default keymap."
 msgstr "Insert, delete, move, copy, and indent source editor lines through CodeMirror's default keymap."
 
-msgid "Inside this repository's OpenKnowledge worktrees folder"
-msgstr "Inside this repository's OpenKnowledge worktrees folder"
+msgid "Inside this repository's Palimpsest worktrees folder"
+msgstr "Inside this repository's Palimpsest worktrees folder"
 
 msgid "Install"
 msgstr "Install"
@@ -5509,7 +5509,7 @@ msgstr "install a skill here first"
 msgid "Install failed: {0}"
 msgstr "Install failed: {0}"
 
-#. Dialog title — installing the OpenKnowledge skill into the Claude Desktop App
+#. Dialog title — installing the Palimpsest skill into the Claude Desktop App
 msgid "Install for Claude Chat & Cowork"
 msgstr "Install for Claude Chat & Cowork"
 
@@ -5543,9 +5543,9 @@ msgstr "Install on"
 msgid "Install on all agents"
 msgstr "Install on all agents"
 
-#. Checkbox that wires the OpenKnowledge MCP into every detected AI tool
-msgid "Install OpenKnowledge in your AI tools"
-msgstr "Install OpenKnowledge in your AI tools"
+#. Checkbox that wires the Palimpsest MCP into every detected AI tool
+msgid "Install Palimpsest in your AI tools"
+msgstr "Install Palimpsest in your AI tools"
 
 msgid "Install skill"
 msgstr "Install skill"
@@ -5599,11 +5599,11 @@ msgstr "Installs for all your projects"
 msgid "Installs into this project"
 msgstr "Installs into this project"
 
-msgid "Installs the OpenKnowledge discovery skill for this agent."
-msgstr "Installs the OpenKnowledge discovery skill for this agent."
+msgid "Installs the Palimpsest discovery skill for this agent."
+msgstr "Installs the Palimpsest discovery skill for this agent."
 
-msgid "Installs the OpenKnowledge project skill for this agent."
-msgstr "Installs the OpenKnowledge project skill for this agent."
+msgid "Installs the Palimpsest project skill for this agent."
+msgstr "Installs the Palimpsest project skill for this agent."
 
 msgid "Installs the skill to {path} — the first location holds its own copy"
 msgstr "Installs the skill to {path} — the first location holds its own copy"
@@ -5641,23 +5641,23 @@ msgstr "Invalid share URL."
 msgid "Invalid YAML"
 msgstr "Invalid YAML"
 
-msgid "It also adds any display-connection errors OpenKnowledge wrote to your user journal in the past week, each message cut to 200 characters."
-msgstr "It also adds any display-connection errors OpenKnowledge wrote to your user journal in the past week, each message cut to 200 characters."
+msgid "It also adds any display-connection errors Palimpsest wrote to your user journal in the past week, each message cut to 200 characters."
+msgstr "It also adds any display-connection errors Palimpsest wrote to your user journal in the past week, each message cut to 200 characters."
 
-msgid "It also adds the crash and hang records Windows logged for OpenKnowledge in the past week, without file paths, and the times of every shutdown, restart, power loss, and low-memory warning on this computer in that week, whatever caused them."
-msgstr "It also adds the crash and hang records Windows logged for OpenKnowledge in the past week, without file paths, and the times of every shutdown, restart, power loss, and low-memory warning on this computer in that week, whatever caused them."
+msgid "It also adds the crash and hang records Windows logged for Palimpsest in the past week, without file paths, and the times of every shutdown, restart, power loss, and low-memory warning on this computer in that week, whatever caused them."
+msgstr "It also adds the crash and hang records Windows logged for Palimpsest in the past week, without file paths, and the times of every shutdown, restart, power loss, and low-memory warning on this computer in that week, whatever caused them."
 
-msgid "It also adds the crash reports macOS recorded for OpenKnowledge and its helper processes, never another app's report, though ours do name the processes they were running alongside. Each one carries machine details macOS puts in every report: your account uid, the Mac model, and the name of the process that launched the app. On a managed machine, that launching process can be internal tooling. The identifiers that would link the bug reports you file to each other are replaced first, so a collected report is not byte-identical to the one macOS wrote."
-msgstr "It also adds the crash reports macOS recorded for OpenKnowledge and its helper processes, never another app's report, though ours do name the processes they were running alongside. Each one carries machine details macOS puts in every report: your account uid, the Mac model, and the name of the process that launched the app. On a managed machine, that launching process can be internal tooling. The identifiers that would link the bug reports you file to each other are replaced first, so a collected report is not byte-identical to the one macOS wrote."
+msgid "It also adds the crash reports macOS recorded for Palimpsest and its helper processes, never another app's report, though ours do name the processes they were running alongside. Each one carries machine details macOS puts in every report: your account uid, the Mac model, and the name of the process that launched the app. On a managed machine, that launching process can be internal tooling. The identifiers that would link the bug reports you file to each other are replaced first, so a collected report is not byte-identical to the one macOS wrote."
+msgstr "It also adds the crash reports macOS recorded for Palimpsest and its helper processes, never another app's report, though ours do name the processes they were running alongside. Each one carries machine details macOS puts in every report: your account uid, the Mac model, and the name of the process that launched the app. On a managed machine, that launching process can be internal tooling. The identifiers that would link the bug reports you file to each other are replaced first, so a collected report is not byte-identical to the one macOS wrote."
 
-msgid "It also adds the low-memory reports macOS wrote in the past week that list OpenKnowledge's processes, with each one's memory use and whether macOS ended it."
-msgstr "It also adds the low-memory reports macOS wrote in the past week that list OpenKnowledge's processes, with each one's memory use and whether macOS ended it."
+msgid "It also adds the low-memory reports macOS wrote in the past week that list Palimpsest's processes, with each one's memory use and whether macOS ended it."
+msgstr "It also adds the low-memory reports macOS wrote in the past week that list Palimpsest's processes, with each one's memory use and whether macOS ended it."
 
-msgid "It also adds the out-of-memory kills of OpenKnowledge that the system journal recorded in the past week, without the machine name, account id, or folder paths."
-msgstr "It also adds the out-of-memory kills of OpenKnowledge that the system journal recorded in the past week, without the machine name, account id, or folder paths."
+msgid "It also adds the out-of-memory kills of Palimpsest that the system journal recorded in the past week, without the machine name, account id, or folder paths."
+msgstr "It also adds the out-of-memory kills of Palimpsest that the system journal recorded in the past week, without the machine name, account id, or folder paths."
 
-msgid "It also marks {0} as trusted, which is what makes the extension load. That trust covers the whole folder — {1} will load every extension in it, not only Open Knowledge's — and both stay until you remove Open Knowledge from this project."
-msgstr "It also marks {0} as trusted, which is what makes the extension load. That trust covers the whole folder — {1} will load every extension in it, not only Open Knowledge's — and both stay until you remove Open Knowledge from this project."
+msgid "It also marks {0} as trusted, which is what makes the extension load. That trust covers the whole folder — {1} will load every extension in it, not only Palimpsest's — and both stay until you remove Palimpsest from this project."
+msgstr "It also marks {0} as trusted, which is what makes the extension load. That trust covers the whole folder — {1} will load every extension in it, not only Palimpsest's — and both stay until you remove Palimpsest from this project."
 
 msgid "It didn't fit into my workflow"
 msgstr "It didn't fit into my workflow"
@@ -5740,8 +5740,8 @@ msgstr "Keep track of the people and companies you work with and the meetings yo
 msgid "keeps the skills"
 msgstr "keeps the skills"
 
-msgid "Keeps your knowledge base aligned with the Open Knowledge Format."
-msgstr "Keeps your knowledge base aligned with the Open Knowledge Format."
+msgid "Keeps your knowledge base aligned with the Palimpsest Format."
+msgstr "Keeps your knowledge base aligned with the Palimpsest Format."
 
 msgid "Kept both — \"{0}\" is its own skill now"
 msgstr "Kept both — \"{0}\" is its own skill now"
@@ -5777,8 +5777,8 @@ msgid "Latest edit"
 msgstr "Latest edit"
 
 #. Subtext under the terminal toggle explaining what the ok command gives you
-msgid "Launch OpenKnowledge from any terminal — <0>{cliCommand}</0> opens a project, <1>{cliCommand} init</1> connects your agents."
-msgstr "Launch OpenKnowledge from any terminal — <0>{cliCommand}</0> opens a project, <1>{cliCommand} init</1> connects your agents."
+msgid "Launch Palimpsest from any terminal — <0>{cliCommand}</0> opens a project, <1>{cliCommand} init</1> connects your agents."
+msgstr "Launch Palimpsest from any terminal — <0>{cliCommand}</0> opens a project, <1>{cliCommand} init</1> connects your agents."
 
 msgid "Layout"
 msgstr "Layout"
@@ -5804,8 +5804,8 @@ msgstr "Leave these comments out of this message"
 msgid "Let agent chats use a browser"
 msgstr "Let agent chats use a browser"
 
-msgid "Let agents use OpenKnowledge without asking"
-msgstr "Let agents use OpenKnowledge without asking"
+msgid "Let agents use Palimpsest without asking"
+msgstr "Let agents use Palimpsest without asking"
 
 msgid "Let Tab leave the source editor instead of indenting."
 msgstr "Let Tab leave the source editor instead of indenting."
@@ -5864,8 +5864,8 @@ msgstr "Link target \"{shown}\" does not resolve to an existing document."
 msgid "Link target \"{shown}\" does not resolve to an existing file."
 msgstr "Link target \"{shown}\" does not resolve to an existing file."
 
-msgid "Link target \"{shown}\" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a \"!\" rule in .okignore."
-msgstr "Link target \"{shown}\" exists but is excluded by .gitignore or .okignore. Re-include it, or its folder, with a \"!\" rule in .okignore."
+msgid "Link target \"{shown}\" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a \"!\" rule in .psignore."
+msgstr "Link target \"{shown}\" exists but is excluded by .gitignore or .psignore. Re-include it, or its folder, with a \"!\" rule in .psignore."
 
 msgid "Link the selected text, or edit the link under the caret."
 msgstr "Link the selected text, or edit the link under the caret."
@@ -5969,8 +5969,8 @@ msgstr "Loading headings for {pageTarget}"
 msgid "Loading image"
 msgstr "Loading image"
 
-msgid "Loading OpenKnowledge skills"
-msgstr "Loading OpenKnowledge skills"
+msgid "Loading Palimpsest skills"
+msgstr "Loading Palimpsest skills"
 
 msgid "Loading pages"
 msgstr "Loading pages"
@@ -6113,8 +6113,8 @@ msgstr "Manage hidden files in Settings → Ignore patterns."
 msgid "Manage skill folders"
 msgstr "Manage skill folders"
 
-msgid "Manage the accounts and access tokens OpenKnowledge uses to connect to your git hosts."
-msgstr "Manage the accounts and access tokens OpenKnowledge uses to connect to your git hosts."
+msgid "Manage the accounts and access tokens Palimpsest uses to connect to your git hosts."
+msgstr "Manage the accounts and access tokens Palimpsest uses to connect to your git hosts."
 
 msgid "Managing agent connections is unavailable in this build."
 msgstr "Managing agent connections is unavailable in this build."
@@ -6306,8 +6306,8 @@ msgstr "Move block"
 msgid "Move down"
 msgstr "Move down"
 
-msgid "Move OpenKnowledge.app to the Trash"
-msgstr "Move OpenKnowledge.app to the Trash"
+msgid "Move Palimpsest.app to the Trash"
+msgstr "Move Palimpsest.app to the Trash"
 
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "Move or rename this file inside the skill — the path stays under references/ or scripts/."
@@ -6462,8 +6462,8 @@ msgstr "Navigation history"
 msgid "Needs you to sign in"
 msgstr "Needs you to sign in"
 
-msgid "Nested .okignore error in {path}"
-msgstr "Nested .okignore error in {path}"
+msgid "Nested .psignore error in {path}"
+msgstr "Nested .psignore error in {path}"
 
 msgid "Nested fields"
 msgstr "Nested fields"
@@ -6600,8 +6600,8 @@ msgstr "Next tab"
 msgid "No <0>.markdownlint.*</0> file yet — every rule runs on the same defaults as the VS Code markdownlint extension: all on, except line length."
 msgstr "No <0>.markdownlint.*</0> file yet — every rule runs on the same defaults as the VS Code markdownlint extension: all on, except line length."
 
-msgid "No active or recent OpenKnowledge projects were found."
-msgstr "No active or recent OpenKnowledge projects were found."
+msgid "No active or recent Palimpsest projects were found."
+msgstr "No active or recent Palimpsest projects were found."
 
 msgid "No agent folders yet"
 msgstr "No agent folders yet"
@@ -6942,8 +6942,8 @@ msgstr "Not connected to GitHub."
 msgid "Not detected on this machine"
 msgstr "Not detected on this machine"
 
-msgid "Not detected on this machine · OpenKnowledge files present"
-msgstr "Not detected on this machine · OpenKnowledge files present"
+msgid "Not detected on this machine · Palimpsest files present"
+msgstr "Not detected on this machine · Palimpsest files present"
 
 msgid "Not great"
 msgstr "Not great"
@@ -6954,8 +6954,8 @@ msgstr "Not in sidebar"
 msgid "Not installed"
 msgstr "Not installed"
 
-msgid "Not installed · OpenKnowledge files present"
-msgstr "Not installed · OpenKnowledge files present"
+msgid "Not installed · Palimpsest files present"
+msgstr "Not installed · Palimpsest files present"
 
 msgid "Not installed in this project yet."
 msgstr "Not installed in this project yet."
@@ -7070,8 +7070,8 @@ msgstr "On selected text in <0>{address}</0>"
 msgid "On the root index, okf_version is written as a quoted string like \"0.2\". Unquoted, YAML reads it as a number and 0.10 silently becomes 0.1."
 msgstr "On the root index, okf_version is written as a quoted string like \"0.2\". Unquoted, YAML reads it as a number and 0.10 silently becomes 0.1."
 
-msgid "One pattern per line — appended to <0>.okignore</0>."
-msgstr "One pattern per line — appended to <0>.okignore</0>."
+msgid "One pattern per line — appended to <0>.psignore</0>."
+msgstr "One pattern per line — appended to <0>.psignore</0>."
 
 msgid "Only collaborators"
 msgstr "Only collaborators"
@@ -7242,35 +7242,35 @@ msgstr "Open in worktree"
 msgid "Open it there"
 msgstr "Open it there"
 
-msgid "Open Knowledge could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Open Knowledge could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
 
-msgid "Open Knowledge creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Open Knowledge creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
 
-msgid "Open Knowledge Format guidance"
-msgstr "Open Knowledge Format guidance"
+msgid "Palimpsest Format guidance"
+msgstr "Palimpsest Format guidance"
 
-msgid "Open Knowledge maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Open Knowledge maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
 
-msgid "Open Knowledge rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "Open Knowledge rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
 
-msgid "Open Knowledge tools are available in this thread."
-msgstr "Open Knowledge tools are available in this thread."
+msgid "Palimpsest tools are available in this thread."
+msgstr "Palimpsest tools are available in this thread."
 
-msgid "Open Knowledge tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "Open Knowledge tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
 
-msgid "Open Knowledge tools are unavailable: a file Open Knowledge didn't write is already at {bridgePath}."
-msgstr "Open Knowledge tools are unavailable: a file Open Knowledge didn't write is already at {bridgePath}."
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
 
-msgid "Open Knowledge tools are unavailable: something is already at {bridgePath} but couldn't be read, so Open Knowledge left it alone."
-msgstr "Open Knowledge tools are unavailable: something is already at {bridgePath} but couldn't be read, so Open Knowledge left it alone."
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
 
-msgid "Open Knowledge's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Open Knowledge's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
 
 msgid "Open link"
 msgstr "Open link"
@@ -7365,8 +7365,8 @@ msgstr "Open, navigate, accept, or dismiss CodeMirror completion suggestions."
 msgid "Opened by {author}"
 msgstr "Opened by {author}"
 
-msgid "Opened existing OpenKnowledge project at {ancestorPath}"
-msgstr "Opened existing OpenKnowledge project at {ancestorPath}"
+msgid "Opened existing Palimpsest project at {ancestorPath}"
+msgstr "Opened existing Palimpsest project at {ancestorPath}"
 
 msgid "Opened on branch {branch}"
 msgstr "Opened on branch {branch}"
@@ -7380,194 +7380,194 @@ msgstr "Opening worktree"
 msgid "Opening..."
 msgstr "Opening..."
 
-msgid "OpenKnowledge"
-msgstr "OpenKnowledge"
+msgid "Palimpsest"
+msgstr "Palimpsest"
 
-msgid "OpenKnowledge can't sign in to GitHub for this project."
-msgstr "OpenKnowledge can't sign in to GitHub for this project."
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest can't sign in to GitHub for this project."
 
-msgid "OpenKnowledge checked {subject}"
-msgstr "OpenKnowledge checked {subject}"
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest checked {subject}"
 
-msgid "OpenKnowledge checked the project"
-msgstr "OpenKnowledge checked the project"
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest checked the project"
 
-msgid "OpenKnowledge checks for and downloads updates in the background."
-msgstr "OpenKnowledge checks for and downloads updates in the background."
+msgid "Palimpsest checks for and downloads updates in the background."
+msgstr "Palimpsest checks for and downloads updates in the background."
 
-msgid "OpenKnowledge could not find this agent on this machine."
-msgstr "OpenKnowledge could not find this agent on this machine."
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest could not find this agent on this machine."
 
-msgid "OpenKnowledge couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "OpenKnowledge couldn't finish setting up this project. The worktree was created but not opened."
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
 
-msgid "OpenKnowledge couldn't read terminal.shell in .ok/local/config.yml. Using an available Windows shell instead."
-msgstr "OpenKnowledge couldn't read terminal.shell in .ok/local/config.yml. Using an available Windows shell instead."
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
 
-msgid "OpenKnowledge couldn't write launch settings under .ok/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve OpenKnowledge."
-msgstr "OpenKnowledge couldn't write launch settings under .ok/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve OpenKnowledge."
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
 
-msgid "OpenKnowledge couldn't write launch settings under .ok/local/terminal this time. Check that the folder is writable. Claude will ask you to approve OpenKnowledge."
-msgstr "OpenKnowledge couldn't write launch settings under .ok/local/terminal this time. Check that the folder is writable. Claude will ask you to approve OpenKnowledge."
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
 
-msgid "OpenKnowledge created a share link"
-msgstr "OpenKnowledge created a share link"
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest created a share link"
 
-msgid "OpenKnowledge created a share link for {subject}"
-msgstr "OpenKnowledge created a share link for {subject}"
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest created a share link for {subject}"
 
-msgid "OpenKnowledge deleted {subject}"
-msgstr "OpenKnowledge deleted {subject}"
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest deleted {subject}"
 
-msgid "OpenKnowledge deleted a document"
-msgstr "OpenKnowledge deleted a document"
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest deleted a document"
 
-msgid "OpenKnowledge discovery skill"
-msgstr "OpenKnowledge discovery skill"
+msgid "Palimpsest discovery skill"
+msgstr "Palimpsest discovery skill"
 
-msgid "OpenKnowledge does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "OpenKnowledge does not recognize this entry, and cannot safely replace it in this file's format."
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
 
-msgid "OpenKnowledge does not recognize this entry. Turning it on replaces it."
-msgstr "OpenKnowledge does not recognize this entry. Turning it on replaces it."
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest does not recognize this entry. Turning it on replaces it."
 
-msgid "OpenKnowledge doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "OpenKnowledge doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
+msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
+msgstr "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
 
-msgid "OpenKnowledge edited {subject}"
-msgstr "OpenKnowledge edited {subject}"
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest edited {subject}"
 
-msgid "OpenKnowledge edited a document"
-msgstr "OpenKnowledge edited a document"
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest edited a document"
 
-msgid "OpenKnowledge files were removed"
-msgstr "OpenKnowledge files were removed"
+msgid "Palimpsest files were removed"
+msgstr "Palimpsest files were removed"
 
-msgid "OpenKnowledge has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "OpenKnowledge has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
 
-msgid "OpenKnowledge imported {source}"
-msgstr "OpenKnowledge imported {source}"
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest imported {source}"
 
-msgid "OpenKnowledge imported a skill"
-msgstr "OpenKnowledge imported a skill"
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest imported a skill"
 
-msgid "OpenKnowledge initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ok/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "OpenKnowledge initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ok/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
 
-msgid "OpenKnowledge installed {subject}"
-msgstr "OpenKnowledge installed {subject}"
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest installed {subject}"
 
-msgid "OpenKnowledge installed a skill"
-msgstr "OpenKnowledge installed a skill"
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest installed a skill"
 
-msgid "OpenKnowledge integrations checked."
-msgstr "OpenKnowledge integrations checked."
+msgid "Palimpsest integrations checked."
+msgstr "Palimpsest integrations checked."
 
-msgid "OpenKnowledge is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "OpenKnowledge is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
 
-msgid "OpenKnowledge is using this GitHub account."
-msgstr "OpenKnowledge is using this GitHub account."
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest is using this GitHub account."
 
-msgid "OpenKnowledge keeps retrying and shows them as soon as the file can be read."
-msgstr "OpenKnowledge keeps retrying and shows them as soon as the file can be read."
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest keeps retrying and shows them as soon as the file can be read."
 
-msgid "OpenKnowledge left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "OpenKnowledge left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
 
-msgid "OpenKnowledge listed the installed skills"
-msgstr "OpenKnowledge listed the installed skills"
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest listed the installed skills"
 
-msgid "OpenKnowledge logs across projects. No project is open, so project server logs are not included."
-msgstr "OpenKnowledge logs across projects. No project is open, so project server logs are not included."
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "Palimpsest logs across projects. No project is open, so project server logs are not included."
 
-msgid "OpenKnowledge logs, including activity across projects."
-msgstr "OpenKnowledge logs, including activity across projects."
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Palimpsest logs, including activity across projects."
 
-msgid "OpenKnowledge looked at the link graph"
-msgstr "OpenKnowledge looked at the link graph"
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest looked at the link graph"
 
-msgid "OpenKnowledge looked up links for {subject}"
-msgstr "OpenKnowledge looked up links for {subject}"
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest looked up links for {subject}"
 
-msgid "OpenKnowledge looked up the authoring palette"
-msgstr "OpenKnowledge looked up the authoring palette"
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest looked up the authoring palette"
 
-msgid "OpenKnowledge moved {subject} to {destination}"
-msgstr "OpenKnowledge moved {subject} to {destination}"
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest moved {subject} to {destination}"
 
-msgid "OpenKnowledge moved a document"
-msgstr "OpenKnowledge moved a document"
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest moved a document"
 
-msgid "OpenKnowledge on GitHub"
-msgstr "OpenKnowledge on GitHub"
+msgid "Palimpsest on GitHub"
+msgstr "Palimpsest on GitHub"
 
-msgid "OpenKnowledge on this computer changed to a different build, but this tab is still running the old one."
-msgstr "OpenKnowledge on this computer changed to a different build, but this tab is still running the old one."
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
 
-msgid "OpenKnowledge on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "OpenKnowledge on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
 
-msgid "OpenKnowledge opened the live preview"
-msgstr "OpenKnowledge opened the live preview"
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest opened the live preview"
 
-msgid "OpenKnowledge quit unexpectedly last time."
-msgstr "OpenKnowledge quit unexpectedly last time."
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Palimpsest quit unexpectedly last time."
 
-msgid "OpenKnowledge ran {command}"
-msgstr "OpenKnowledge ran {command}"
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest ran {command}"
 
-msgid "OpenKnowledge ran {tool}"
-msgstr "OpenKnowledge ran {tool}"
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest ran {tool}"
 
-msgid "OpenKnowledge ran a command"
-msgstr "OpenKnowledge ran a command"
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest ran a command"
 
-msgid "OpenKnowledge read the edit history"
-msgstr "OpenKnowledge read the edit history"
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest read the edit history"
 
-msgid "OpenKnowledge read the history of {subject}"
-msgstr "OpenKnowledge read the history of {subject}"
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest read the history of {subject}"
 
-msgid "OpenKnowledge read the project settings"
-msgstr "OpenKnowledge read the project settings"
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest read the project settings"
 
-msgid "OpenKnowledge read the setting {key}"
-msgstr "OpenKnowledge read the setting {key}"
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest read the setting {key}"
 
-msgid "OpenKnowledge restored an earlier version"
-msgstr "OpenKnowledge restored an earlier version"
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest restored an earlier version"
 
-msgid "OpenKnowledge restored an earlier version of {subject}"
-msgstr "OpenKnowledge restored an earlier version of {subject}"
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest restored an earlier version of {subject}"
 
-msgid "OpenKnowledge saved a checkpoint"
-msgstr "OpenKnowledge saved a checkpoint"
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest saved a checkpoint"
 
-msgid "OpenKnowledge searched for {query}"
-msgstr "OpenKnowledge searched for {query}"
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest searched for {query}"
 
-msgid "OpenKnowledge searched the knowledge base"
-msgstr "OpenKnowledge searched the knowledge base"
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest searched the knowledge base"
 
-msgid "OpenKnowledge skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "OpenKnowledge skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
 
-msgid "OpenKnowledge stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "OpenKnowledge stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
 
-msgid "OpenKnowledge will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "OpenKnowledge will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
 
-msgid "OpenKnowledge will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "OpenKnowledge will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
 
-msgid "OpenKnowledge wrote a document"
-msgstr "OpenKnowledge wrote a document"
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest wrote a document"
 
-msgid "OpenKnowledge wrote to {subject}"
-msgstr "OpenKnowledge wrote to {subject}"
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest wrote to {subject}"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "Opens a folder picker to choose where to clone the repository."
@@ -7642,11 +7642,11 @@ msgstr "Outline"
 msgid "Outside any block"
 msgstr "Outside any block"
 
-msgid "Outside this repository's OpenKnowledge worktrees folder"
-msgstr "Outside this repository's OpenKnowledge worktrees folder"
+msgid "Outside this repository's Palimpsest worktrees folder"
+msgstr "Outside this repository's Palimpsest worktrees folder"
 
-msgid "Outside what Open Knowledge commits."
-msgstr "Outside what Open Knowledge commits."
+msgid "Outside what Palimpsest commits."
+msgstr "Outside what Palimpsest commits."
 
 msgid "over the {budgetLabel} token budget"
 msgstr "over the {budgetLabel} token budget"
@@ -7838,8 +7838,8 @@ msgstr "Personal access token"
 msgid "Personal to this device. Applies to every project you open here and is never shared with collaborators."
 msgstr "Personal to this device. Applies to every project you open here and is never shared with collaborators."
 
-msgid "Pick <0>openknowledge.skill</0> from your <1>Downloads</1> folder. It enables automatically."
-msgstr "Pick <0>openknowledge.skill</0> from your <1>Downloads</1> folder. It enables automatically."
+msgid "Pick <0>palimpsest.skill</0> from your <1>Downloads</1> folder. It enables automatically."
+msgstr "Pick <0>palimpsest.skill</0> from your <1>Downloads</1> folder. It enables automatically."
 
 msgid "Pick a folder to merge INTO {display}. That folder becomes a symlink to this one, so its agent reads everything placed here. This folder stays real. Conflicting skills abort the merge."
 msgstr "Pick a folder to merge INTO {display}. That folder becomes a symlink to this one, so its agent reads everything placed here. This folder stays real. Conflicting skills abort the merge."
@@ -7940,14 +7940,14 @@ msgstr "Preparing search"
 msgid "Preparing share URL..."
 msgstr "Preparing share URL..."
 
-msgid "Preparing to uninstall OpenKnowledge"
-msgstr "Preparing to uninstall OpenKnowledge"
+msgid "Preparing to uninstall Palimpsest"
+msgstr "Preparing to uninstall Palimpsest"
 
-msgid "Present a document as a slide deck in its own window. Add <0>slides: true</0> to a document's frontmatter, then open it with the Slidev action. Rendering is handled by the Slidev CLI, which OpenKnowledge does not bundle."
-msgstr "Present a document as a slide deck in its own window. Add <0>slides: true</0> to a document's frontmatter, then open it with the Slidev action. Rendering is handled by the Slidev CLI, which OpenKnowledge does not bundle."
+msgid "Present a document as a slide deck in its own window. Add <0>slides: true</0> to a document's frontmatter, then open it with the Slidev action. Rendering is handled by the Slidev CLI, which Palimpsest does not bundle."
+msgstr "Present a document as a slide deck in its own window. Add <0>slides: true</0> to a document's frontmatter, then open it with the Slidev action. Rendering is handled by the Slidev CLI, which Palimpsest does not bundle."
 
-msgid "Present a document as a slide deck in its own window. Works in the OpenKnowledge desktop app only, and needs the Slidev CLI, which you install separately. When on, it appears under Plugins in the sidebar."
-msgstr "Present a document as a slide deck in its own window. Works in the OpenKnowledge desktop app only, and needs the Slidev CLI, which you install separately. When on, it appears under Plugins in the sidebar."
+msgid "Present a document as a slide deck in its own window. Works in the Palimpsest desktop app only, and needs the Slidev CLI, which you install separately. When on, it appears under Plugins in the sidebar."
+msgstr "Present a document as a slide deck in its own window. Works in the Palimpsest desktop app only, and needs the Slidev CLI, which you install separately. When on, it appears under Plugins in the sidebar."
 
 msgid "Press <0>Space</0> or tap the blob to start"
 msgstr "Press <0>Space</0> or tap the blob to start"
@@ -8164,15 +8164,15 @@ msgstr "Pushing"
 
 #. js-lingui-explicit-id
 msgid "guidance.skill.user"
-msgstr "Puts the OpenKnowledge discovery skill in {agent}'s machine-wide skills folder, so it can find OpenKnowledge in any project."
+msgstr "Puts the Palimpsest discovery skill in {agent}'s machine-wide skills folder, so it can find Palimpsest in any project."
 
 #. js-lingui-explicit-id
 msgid "guidance.skill.project"
-msgstr "Puts the OpenKnowledge skill in {agent}'s skills folder for this project, so its edits stay attributed."
+msgstr "Puts the Palimpsest skill in {agent}'s skills folder for this project, so its edits stay attributed."
 
 #. js-lingui-explicit-id
 msgid "guidance.skill.central-store"
-msgstr "Puts the OpenKnowledge skill in the central skills store {agent} reads."
+msgstr "Puts the Palimpsest skill in the central skills store {agent} reads."
 
 msgid "Puzzling…"
 msgstr "Puzzling…"
@@ -8258,8 +8258,8 @@ msgstr "Reads the link graph: what links to what"
 msgid "Reads the version history of a document or skill, or a folder's activity"
 msgstr "Reads the version history of a document or skill, or a folder's activity"
 
-msgid "Reads this project's OpenKnowledge settings"
-msgstr "Reads this project's OpenKnowledge settings"
+msgid "Reads this project's Palimpsest settings"
+msgstr "Reads this project's Palimpsest settings"
 
 msgid "Ready"
 msgstr "Ready"
@@ -8354,7 +8354,7 @@ msgstr "Reflecting…"
 msgid "Reinstall"
 msgstr "Reinstall"
 
-#. Dialog title — installing the OpenKnowledge skill into the Claude Desktop App
+#. Dialog title — installing the Palimpsest skill into the Claude Desktop App
 msgid "Reinstall for Claude Chat & Cowork"
 msgstr "Reinstall for Claude Chat & Cowork"
 
@@ -8454,17 +8454,17 @@ msgstr "Remove item {0}"
 msgid "Remove link"
 msgstr "Remove link"
 
-msgid "Remove OpenKnowledge from {0}"
-msgstr "Remove OpenKnowledge from {0}"
+msgid "Remove Palimpsest from {0}"
+msgstr "Remove Palimpsest from {0}"
 
-msgid "Remove OpenKnowledge from {0}?"
-msgstr "Remove OpenKnowledge from {0}?"
+msgid "Remove Palimpsest from {0}?"
+msgstr "Remove Palimpsest from {0}?"
 
-msgid "Remove OpenKnowledge from {rowLabel}"
-msgstr "Remove OpenKnowledge from {rowLabel}"
+msgid "Remove Palimpsest from {rowLabel}"
+msgstr "Remove Palimpsest from {rowLabel}"
 
-msgid "Remove OpenKnowledge?"
-msgstr "Remove OpenKnowledge?"
+msgid "Remove Palimpsest?"
+msgstr "Remove Palimpsest?"
 
 msgid "Remove property"
 msgstr "Remove property"
@@ -8487,8 +8487,8 @@ msgstr "Removed \"{0}\" from every other location — its source folder still lo
 msgid "Removed \"{projectName}\" from recent projects. Its folder no longer exists."
 msgstr "Removed \"{projectName}\" from recent projects. Its folder no longer exists."
 
-msgid "Removed OpenKnowledge files"
-msgstr "Removed OpenKnowledge files"
+msgid "Removed Palimpsest files"
+msgstr "Removed Palimpsest files"
 
 msgid "Removes it for {0} and {1}. {addingCount, plural, one {# added} other {# added}} · {removingCount, plural, one {# removed} other {# removed}}"
 msgstr "Removes it for {0} and {1}. {addingCount, plural, one {# added} other {# added}} · {removingCount, plural, one {# removed} other {# removed}}"
@@ -8499,8 +8499,8 @@ msgstr "Removes it for {0} and {1}. {removingCount, plural, one {# removed} othe
 msgid "Removing"
 msgstr "Removing"
 
-msgid "Removing OpenKnowledge files…"
-msgstr "Removing OpenKnowledge files…"
+msgid "Removing Palimpsest files…"
+msgstr "Removing Palimpsest files…"
 
 msgid "Rename"
 msgstr "Rename"
@@ -8610,11 +8610,11 @@ msgstr "Replace these symlinks with independent copies?"
 msgid "Replaces the existing {server} entry in this file. Other servers in the file are left alone."
 msgstr "Replaces the existing {server} entry in this file. Other servers in the file are left alone."
 
-msgid "Replaces the existing OpenKnowledge entry in {0}"
-msgstr "Replaces the existing OpenKnowledge entry in {0}"
+msgid "Replaces the existing Palimpsest entry in {0}"
+msgstr "Replaces the existing Palimpsest entry in {0}"
 
-msgid "Replaces the OpenKnowledge entry each of them already has."
-msgstr "Replaces the OpenKnowledge entry each of them already has."
+msgid "Replaces the Palimpsest entry each of them already has."
+msgstr "Replaces the Palimpsest entry each of them already has."
 
 msgid "Report a bug"
 msgstr "Report a bug"
@@ -8737,8 +8737,8 @@ msgstr "Restart server"
 msgid "Restart terminal"
 msgstr "Restart terminal"
 
-msgid "Restart this terminal session to use the newly installed OpenKnowledge tools."
-msgstr "Restart this terminal session to use the newly installed OpenKnowledge tools."
+msgid "Restart this terminal session to use the newly installed Palimpsest tools."
+msgstr "Restart this terminal session to use the newly installed Palimpsest tools."
 
 msgid "Restart with this app's version"
 msgstr "Restart with this app's version"
@@ -8749,8 +8749,8 @@ msgstr "Restarted — now running v{appRuntime}."
 msgid "Restarting"
 msgstr "Restarting"
 
-msgid "Restarting closes this project's server. Connected agents (Claude Code, Codex, Cursor) will see their OpenKnowledge MCP connection close unexpectedly — you may need to restart the agent, or toggle its OpenKnowledge MCP server off and on, to reconnect."
-msgstr "Restarting closes this project's server. Connected agents (Claude Code, Codex, Cursor) will see their OpenKnowledge MCP connection close unexpectedly — you may need to restart the agent, or toggle its OpenKnowledge MCP server off and on, to reconnect."
+msgid "Restarting closes this project's server. Connected agents (Claude Code, Codex, Cursor) will see their Palimpsest MCP connection close unexpectedly — you may need to restart the agent, or toggle its Palimpsest MCP server off and on, to reconnect."
+msgstr "Restarting closes this project's server. Connected agents (Claude Code, Codex, Cursor) will see their Palimpsest MCP connection close unexpectedly — you may need to restart the agent, or toggle its Palimpsest MCP server off and on, to reconnect."
 
 msgid "Restarting the server is only available in the desktop app."
 msgstr "Restarting the server is only available in the desktop app."
@@ -8881,8 +8881,8 @@ msgstr "Run"
 msgid "Run a project audit from the Problems panel."
 msgstr "Run a project audit from the Problems panel."
 
-msgid "Run a real terminal docked inside OpenKnowledge, starting in this project's folder."
-msgstr "Run a real terminal docked inside OpenKnowledge, starting in this project's folder."
+msgid "Run a real terminal docked inside Palimpsest, starting in this project's folder."
+msgstr "Run a real terminal docked inside Palimpsest, starting in this project's folder."
 
 msgid "Run in terminal"
 msgstr "Run in terminal"
@@ -8944,14 +8944,14 @@ msgstr "Saved to"
 msgid "Saved with the project for your team."
 msgstr "Saved with the project for your team."
 
-msgid "Saved. Restart OpenKnowledge to apply the change."
-msgstr "Saved. Restart OpenKnowledge to apply the change."
+msgid "Saved. Restart Palimpsest to apply the change."
+msgstr "Saved. Restart Palimpsest to apply the change."
 
 msgid "Saves a restore point for every document in the project"
 msgstr "Saves a restore point for every document in the project"
 
-msgid "Saves the file to <0>~/Downloads/openknowledge.skill</0> and opens the Claude Desktop App. Requires Node.js or Bun on your PATH."
-msgstr "Saves the file to <0>~/Downloads/openknowledge.skill</0> and opens the Claude Desktop App. Requires Node.js or Bun on your PATH."
+msgid "Saves the file to <0>~/Downloads/palimpsest.skill</0> and opens the Claude Desktop App. Requires Node.js or Bun on your PATH."
+msgstr "Saves the file to <0>~/Downloads/palimpsest.skill</0> and opens the Claude Desktop App. Requires Node.js or Bun on your PATH."
 
 msgid "Saving"
 msgstr "Saving"
@@ -9259,8 +9259,8 @@ msgstr "Sending…"
 msgid "Sent"
 msgstr "Sent"
 
-msgid "Sent privately to the OpenKnowledge team, along with your note and app version. Never posted publicly."
-msgstr "Sent privately to the OpenKnowledge team, along with your note and app version. Never posted publicly."
+msgid "Sent privately to the Palimpsest team, along with your note and app version. Never posted publicly."
+msgstr "Sent privately to the Palimpsest team, along with your note and app version. Never posted publicly."
 
 msgid "Sent to <0>{endpointHost}</0> to embed your content. Stored on this machine only (in <1>{secretsPath}</1>), never in the project."
 msgstr "Sent to <0>{endpointHost}</0> to embed your content. Stored on this machine only (in <1>{secretsPath}</1>), never in the project."
@@ -9334,11 +9334,11 @@ msgstr "Set identity"
 msgid "Set it up on its own page under Plugins."
 msgstr "Set it up on its own page under Plugins."
 
-msgid "Set up OpenKnowledge integrations"
-msgstr "Set up OpenKnowledge integrations"
+msgid "Set up Palimpsest integrations"
+msgstr "Set up Palimpsest integrations"
 
-msgid "Set up OpenKnowledge integrations…"
-msgstr "Set up OpenKnowledge integrations…"
+msgid "Set up Palimpsest integrations…"
+msgstr "Set up Palimpsest integrations…"
 
 msgid "Set up syncing"
 msgstr "Set up syncing"
@@ -9380,8 +9380,8 @@ msgstr "Setup"
 msgid "Setup files include: <0>.ok/</0>, AI-tool MCP configs (<1>.mcp.json</1> and per-tool files). Your skills are not covered — they follow git like any other file in the project.<2/><3>Shared</3> commits them to git, so anyone who clones the repo gets the same setup. <4/><5>Only me</5> keeps them out of git (via <6>.git/info/exclude</6>)."
 msgstr "Setup files include: <0>.ok/</0>, AI-tool MCP configs (<1>.mcp.json</1> and per-tool files). Your skills are not covered — they follow git like any other file in the project.<2/><3>Shared</3> commits them to git, so anyone who clones the repo gets the same setup. <4/><5>Only me</5> keeps them out of git (via <6>.git/info/exclude</6>)."
 
-msgid "Setup OpenKnowledge in this folder?"
-msgstr "Setup OpenKnowledge in this folder?"
+msgid "Setup Palimpsest in this folder?"
+msgstr "Setup Palimpsest in this folder?"
 
 msgid "Share"
 msgstr "Share"
@@ -9435,8 +9435,8 @@ msgstr "Ship the editor with a"
 msgid "Show"
 msgstr "Show"
 
-msgid "Show .ok folders"
-msgstr "Show .ok folders"
+msgid "Show .ps folders"
+msgstr "Show .ps folders"
 
 msgid "Show {0} more"
 msgstr "Show {0} more"
@@ -9640,9 +9640,9 @@ msgid "Skills from {0}/{1}."
 msgstr "Skills from {0}/{1}."
 
 #. Heading above the project's own skill row, in Settings → This project → Skills Studio
-#. Heading above the rows for the skills OpenKnowledge ships, in Settings → Skills Studio
-msgid "Skills from OpenKnowledge"
-msgstr "Skills from OpenKnowledge"
+#. Heading above the rows for the skills Palimpsest ships, in Settings → Skills Studio
+msgid "Skills from Palimpsest"
+msgstr "Skills from Palimpsest"
 
 msgid "Skills reassigned"
 msgstr "Skills reassigned"
@@ -9654,8 +9654,8 @@ msgid "Skills Studio"
 msgstr "Skills Studio"
 
 #. First-visit explanation of what the Skills Studio settings page is for
-msgid "Skills teach your AI tools repeatable tasks. Install the ones OpenKnowledge ships, or write your own in the editor's Skills sidebar."
-msgstr "Skills teach your AI tools repeatable tasks. Install the ones OpenKnowledge ships, or write your own in the editor's Skills sidebar."
+msgid "Skills teach your AI tools repeatable tasks. Install the ones Palimpsest ships, or write your own in the editor's Skills sidebar."
+msgstr "Skills teach your AI tools repeatable tasks. Install the ones Palimpsest ships, or write your own in the editor's Skills sidebar."
 
 msgid "Skills teach your AI tools repeatable tasks. Write your own in the editor's Skills sidebar; this page is where they get switched on and shared."
 msgstr "Skills teach your AI tools repeatable tasks. Write your own in the editor's Skills sidebar; this page is where they get switched on and shared."
@@ -9682,8 +9682,8 @@ msgstr "Skip for now"
 msgid "Skipped downloading {0}."
 msgstr "Skipped downloading {0}."
 
-msgid "Skipped enabling Open Knowledge tools. This thread runs without them."
-msgstr "Skipped enabling Open Knowledge tools. This thread runs without them."
+msgid "Skipped enabling Palimpsest tools. This thread runs without them."
+msgstr "Skipped enabling Palimpsest tools. This thread runs without them."
 
 msgid "Slash command menu"
 msgstr "Slash command menu"
@@ -9700,8 +9700,8 @@ msgstr "Slidev"
 msgid "Slidev couldn't render this document."
 msgstr "Slidev couldn't render this document."
 
-msgid "Slidev decks open in the OpenKnowledge desktop app only."
-msgstr "Slidev decks open in the OpenKnowledge desktop app only."
+msgid "Slidev decks open in the Palimpsest desktop app only."
+msgstr "Slidev decks open in the Palimpsest desktop app only."
 
 msgid "Slidev found in this project. Decks will use the project's version."
 msgstr "Slidev found in this project. Decks will use the project's version."
@@ -9736,8 +9736,8 @@ msgstr "Some edits haven't reached the server yet, so the tab didn't reload. You
 msgid "Some files are not listed — the working tree has too many changes."
 msgstr "Some files are not listed — the working tree has too many changes."
 
-msgid "Some files may not have been removed. Open the cleanup log for details. You can reopen OpenKnowledge to try again."
-msgstr "Some files may not have been removed. Open the cleanup log for details. You can reopen OpenKnowledge to try again."
+msgid "Some files may not have been removed. Open the cleanup log for details. You can reopen Palimpsest to try again."
+msgstr "Some files may not have been removed. Open the cleanup log for details. You can reopen Palimpsest to try again."
 
 msgid "Some saved themes aren’t shown because the theme folder exceeds the scan limit."
 msgstr "Some saved themes aren’t shown because the theme folder exceeds the scan limit."
@@ -9866,8 +9866,8 @@ msgstr "Start a new chat"
 msgid "Start a new chat ({0})"
 msgstr "Start a new chat ({0})"
 
-msgid "Start a new OpenKnowledge project."
-msgstr "Start a new OpenKnowledge project."
+msgid "Start a new Palimpsest project."
+msgstr "Start a new Palimpsest project."
 
 msgid "Start an agent"
 msgstr "Start an agent"
@@ -10248,14 +10248,14 @@ msgstr "Terminal settings not loaded yet — try again in a moment."
 msgid "Terminal settings not yet loaded — try again in a moment"
 msgstr "Terminal settings not yet loaded — try again in a moment"
 
-msgid "terminal.shell in .ok/local/config.yml must be a string. Using an available Windows shell instead."
-msgstr "terminal.shell in .ok/local/config.yml must be a string. Using an available Windows shell instead."
+msgid "terminal.shell in .ps/local/config.yml must be a string. Using an available Windows shell instead."
+msgstr "terminal.shell in .ps/local/config.yml must be a string. Using an available Windows shell instead."
 
-msgid "terminal.shell in .ok/local/config.yml must be an absolute Windows path. Using an available Windows shell instead."
-msgstr "terminal.shell in .ok/local/config.yml must be an absolute Windows path. Using an available Windows shell instead."
+msgid "terminal.shell in .ps/local/config.yml must be an absolute Windows path. Using an available Windows shell instead."
+msgstr "terminal.shell in .ps/local/config.yml must be an absolute Windows path. Using an available Windows shell instead."
 
-msgid "terminal.shell in .ok/local/config.yml supports PowerShell, cmd.exe, or Git Bash for OpenKnowledge-managed launches and dropped-file paths. This shell opens a plain terminal only; agent and command launches do not run in it."
-msgstr "terminal.shell in .ok/local/config.yml supports PowerShell, cmd.exe, or Git Bash for OpenKnowledge-managed launches and dropped-file paths. This shell opens a plain terminal only; agent and command launches do not run in it."
+msgid "terminal.shell in .ps/local/config.yml supports PowerShell, cmd.exe, or Git Bash for Palimpsest-managed launches and dropped-file paths. This shell opens a plain terminal only; agent and command launches do not run in it."
+msgstr "terminal.shell in .ps/local/config.yml supports PowerShell, cmd.exe, or Git Bash for Palimpsest-managed launches and dropped-file paths. This shell opens a plain terminal only; agent and command launches do not run in it."
 
 msgid "Test connection"
 msgstr "Test connection"
@@ -10266,8 +10266,8 @@ msgstr "Testing"
 msgid "Text"
 msgstr "Text"
 
-msgid "Thanks for giving OpenKnowledge a try."
-msgstr "Thanks for giving OpenKnowledge a try."
+msgid "Thanks for giving Palimpsest a try."
+msgstr "Thanks for giving Palimpsest a try."
 
 msgid "Thanks for subscribing. Watch your inbox for product updates."
 msgstr "Thanks for subscribing. Watch your inbox for product updates."
@@ -10299,11 +10299,11 @@ msgstr "That doesn’t parse as YAML or JSON."
 msgid "That endpoint can't be used. Enter an https:// URL — http:// is only allowed for loopback endpoints."
 msgstr "That endpoint can't be used. Enter an https:// URL — http:// is only allowed for loopback endpoints."
 
-msgid "That folder already holds code Open Knowledge didn't write, which the same trust would let {0} run: {otherExtensions}."
-msgstr "That folder already holds code Open Knowledge didn't write, which the same trust would let {0} run: {otherExtensions}."
+msgid "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
+msgstr "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
 
-msgid "That folder isn't an OpenKnowledge project yet. Initialize it and open?"
-msgstr "That folder isn't an OpenKnowledge project yet. Initialize it and open?"
+msgid "That folder isn't an Palimpsest project yet. Initialize it and open?"
+msgstr "That folder isn't an Palimpsest project yet. Initialize it and open?"
 
 msgid "That host is already in the list."
 msgstr "That host is already in the list."
@@ -10339,8 +10339,8 @@ msgstr "The {editor} version is now the source"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "The {targetNoun} could not be opened — try navigating to it manually."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
-msgstr "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgstr "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
 
 msgid "The agent is working"
 msgstr "The agent is working"
@@ -10372,8 +10372,8 @@ msgstr "The agent ran out of memory."
 msgid "The agent's installation is missing files (a module could not be found). Reinstalling the agent usually fixes this."
 msgstr "The agent's installation is missing files (a module could not be found). Reinstalling the agent usually fixes this."
 
-msgid "The agent's OpenKnowledge tools couldn't reach the server. Ask the agent to try again, and if it keeps failing, start a new chat."
-msgstr "The agent's OpenKnowledge tools couldn't reach the server. Ask the agent to try again, and if it keeps failing, start a new chat."
+msgid "The agent's Palimpsest tools couldn't reach the server. Ask the agent to try again, and if it keeps failing, start a new chat."
+msgstr "The agent's Palimpsest tools couldn't reach the server. Ask the agent to try again, and if it keeps failing, start a new chat."
 
 msgid "The agent's persona, values, and voice."
 msgstr "The agent's persona, values, and voice."
@@ -10396,8 +10396,8 @@ msgstr "The board viewer failed to load. Check your connection and try again."
 msgid "The board's content is not a valid Excalidraw scene."
 msgstr "The board's content is not a valid Excalidraw scene."
 
-msgid "The browser isn't available in this chat because it couldn't be set up. OpenKnowledge's log has the details."
-msgstr "The browser isn't available in this chat because it couldn't be set up. OpenKnowledge's log has the details."
+msgid "The browser isn't available in this chat because it couldn't be set up. Palimpsest's log has the details."
+msgstr "The browser isn't available in this chat because it couldn't be set up. Palimpsest's log has the details."
 
 msgid "The browser isn't available in this chat because no Node.js install that can start it was found. Install Node.js, then start a new chat."
 msgstr "The browser isn't available in this chat because no Node.js install that can start it was found. Install Node.js, then start a new chat."
@@ -10429,8 +10429,8 @@ msgstr "The desktop app isn't responding. Refresh and try again."
 msgid "the doc {0}"
 msgstr "the doc {0}"
 
-msgid "The embeddings provider's vector size kept changing. Semantic search is off until OpenKnowledge restarts."
-msgstr "The embeddings provider's vector size kept changing. Semantic search is off until OpenKnowledge restarts."
+msgid "The embeddings provider's vector size kept changing. Semantic search is off until Palimpsest restarts."
+msgstr "The embeddings provider's vector size kept changing. Semantic search is off until Palimpsest restarts."
 
 msgid "The endpoint answered, but not with an OpenAI-compatible embeddings response. Check the base URL."
 msgstr "The endpoint answered, but not with an OpenAI-compatible embeddings response. Check the base URL."
@@ -10444,8 +10444,8 @@ msgstr "The file is in your {trashNoun}; the file-watcher will reconcile."
 msgid "The file on disk, and the id agents use."
 msgstr "The file on disk, and the id agents use."
 
-msgid "The file was restored to an older version. Current is the version OpenKnowledge protected. Incoming is the restored version. Choose which version to keep, then apply your changes."
-msgstr "The file was restored to an older version. Current is the version OpenKnowledge protected. Incoming is the restored version. Choose which version to keep, then apply your changes."
+msgid "The file was restored to an older version. Current is the version Palimpsest protected. Incoming is the restored version. Choose which version to keep, then apply your changes."
+msgstr "The file was restored to an older version. Current is the version Palimpsest protected. Incoming is the restored version. Choose which version to keep, then apply your changes."
 
 msgid "The file was restored to an older version. Open it to choose which version to keep."
 msgstr "The file was restored to an older version. Open it to choose which version to keep."
@@ -10459,14 +10459,14 @@ msgstr "The folders and templates are already here, so there's nothing to add."
 msgid "The formula <0>c = √(a² + b²)</0> renders inline."
 msgstr "The formula <0>c = √(a² + b²)</0> renders inline."
 
-msgid "The index files stay in place. Open Knowledge removes only the Git rule it added."
-msgstr "The index files stay in place. Open Knowledge removes only the Git rule it added."
+msgid "The index files stay in place. Palimpsest removes only the Git rule it added."
+msgstr "The index files stay in place. Palimpsest removes only the Git rule it added."
 
 msgid "The interface is still in the language you were reading. Check your connection, then reload to try again."
 msgstr "The interface is still in the language you were reading. Check your connection, then reload to try again."
 
-msgid "The language OpenKnowledge speaks; System follows your operating system. Your own notes stay in the language you wrote them in."
-msgstr "The language OpenKnowledge speaks; System follows your operating system. Your own notes stay in the language you wrote them in."
+msgid "The language Palimpsest speaks; System follows your operating system. Your own notes stay in the language you wrote them in."
+msgstr "The language Palimpsest speaks; System follows your operating system. Your own notes stay in the language you wrote them in."
 
 msgid "The menu label agents pick this template by (required)."
 msgstr "The menu label agents pick this template by (required)."
@@ -10477,20 +10477,20 @@ msgstr "The model id your endpoint serves. Its vector size is detected automatic
 msgid "the open agent"
 msgstr "the open agent"
 
-msgid "The OpenKnowledge project is missing at this checkout path."
-msgstr "The OpenKnowledge project is missing at this checkout path."
+msgid "The Palimpsest project is missing at this checkout path."
+msgstr "The Palimpsest project is missing at this checkout path."
 
-msgid "The OpenKnowledge project path on this branch cannot be read. The worktree was created but not opened."
-msgstr "The OpenKnowledge project path on this branch cannot be read. The worktree was created but not opened."
+msgid "The Palimpsest project path on this branch cannot be read. The worktree was created but not opened."
+msgstr "The Palimpsest project path on this branch cannot be read. The worktree was created but not opened."
 
-msgid "The OpenKnowledge project path on this branch leaves the worktree. The worktree was created but not opened."
-msgstr "The OpenKnowledge project path on this branch leaves the worktree. The worktree was created but not opened."
+msgid "The Palimpsest project path on this branch leaves the worktree. The worktree was created but not opened."
+msgstr "The Palimpsest project path on this branch leaves the worktree. The worktree was created but not opened."
 
-msgid "The OpenKnowledge server took too long to answer, and the change may still have gone through. Ask the agent to check before trying again."
-msgstr "The OpenKnowledge server took too long to answer, and the change may still have gone through. Ask the agent to check before trying again."
+msgid "The Palimpsest server took too long to answer, and the change may still have gone through. Ask the agent to check before trying again."
+msgstr "The Palimpsest server took too long to answer, and the change may still have gone through. Ask the agent to check before trying again."
 
-msgid "The OpenKnowledge server took too long to answer. Ask the agent to try again."
-msgstr "The OpenKnowledge server took too long to answer. Ask the agent to try again."
+msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
+msgstr "The Palimpsest server took too long to answer. Ask the agent to try again."
 
 msgid "The original text was deleted."
 msgstr "The original text was deleted."
@@ -10528,8 +10528,8 @@ msgstr "The provider rejected the request (HTTP {0}). Check the API key and the 
 msgid "The provider rejected the request. Check the API key and the model id."
 msgstr "The provider rejected the request. Check the API key and the model id."
 
-msgid "The provider's vector size kept changing. Restart OpenKnowledge before searching by meaning again."
-msgstr "The provider's vector size kept changing. Restart OpenKnowledge before searching by meaning again."
+msgid "The provider's vector size kept changing. Restart Palimpsest before searching by meaning again."
+msgstr "The provider's vector size kept changing. Restart Palimpsest before searching by meaning again."
 
 msgid "The public URL your tunnel serves (for example your Tailscale https://…ts.net address). The server admits requests for this host and advertises it in the URLs it issues."
 msgstr "The public URL your tunnel serves (for example your Tailscale https://…ts.net address). The server admits requests for this host and advertises it in the URLs it issues."
@@ -10543,8 +10543,8 @@ msgstr "The repository was moved, renamed, or deleted."
 msgid "The repository's original clone directory"
 msgstr "The repository's original clone directory"
 
-msgid "The request to enable Open Knowledge tools timed out. This thread runs without them."
-msgstr "The request to enable Open Knowledge tools timed out. This thread runs without them."
+msgid "The request to enable Palimpsest tools timed out. This thread runs without them."
+msgstr "The request to enable Palimpsest tools timed out. This thread runs without them."
 
 msgid "The schema file does not exist or failed to load — adding a field creates it."
 msgstr "The schema file does not exist or failed to load — adding a field creates it."
@@ -10585,8 +10585,8 @@ msgstr "The source folder itself does not move."
 msgid "The stored token is missing the permissions this host needs to push."
 msgstr "The stored token is missing the permissions this host needs to push."
 
-msgid "The sync mode teammates start with the first time they open this project. It's saved in the project's OpenKnowledge settings, so it only reaches them when Config sharing below is set to Shared."
-msgstr "The sync mode teammates start with the first time they open this project. It's saved in the project's OpenKnowledge settings, so it only reaches them when Config sharing below is set to Shared."
+msgid "The sync mode teammates start with the first time they open this project. It's saved in the project's Palimpsest settings, so it only reaches them when Config sharing below is set to Shared."
+msgstr "The sync mode teammates start with the first time they open this project. It's saved in the project's Palimpsest settings, so it only reaches them when Config sharing below is set to Shared."
 
 msgid "The template's filename (without `.md`)."
 msgstr "The template's filename (without `.md`)."
@@ -10624,8 +10624,8 @@ msgstr "The terminal session ended."
 msgid "The terminal stopped unexpectedly."
 msgstr "The terminal stopped unexpectedly."
 
-msgid "The terminal.shell executable in .ok/local/config.yml was not found. Using an available Windows shell instead."
-msgstr "The terminal.shell executable in .ok/local/config.yml was not found. Using an available Windows shell instead."
+msgid "The terminal.shell executable in .ps/local/config.yml was not found. Using an available Windows shell instead."
+msgstr "The terminal.shell executable in .ps/local/config.yml was not found. Using an available Windows shell instead."
 
 msgid "The token needs the repo and read:user scopes."
 msgstr "The token needs the repo and read:user scopes."
@@ -10678,9 +10678,9 @@ msgstr "These links remain visible in Links and are not part of the repair queue
 msgid "These rules come from your project's <0>{configFile}</0> file, which fully governs linting for this project. Turn rules on or off and edit their options here; changes write back to the file."
 msgstr "These rules come from your project's <0>{configFile}</0> file, which fully governs linting for this project. Turn rules on or off and edit their options here; changes write back to the file."
 
-#. Says what the OpenKnowledge-authored skills are for, and where installing one puts it
-msgid "These teach your AI tools how to work with OpenKnowledge. Installing one adds it to every AI tool on this machine."
-msgstr "These teach your AI tools how to work with OpenKnowledge. Installing one adds it to every AI tool on this machine."
+#. Says what the Palimpsest-authored skills are for, and where installing one puts it
+msgid "These teach your AI tools how to work with Palimpsest. Installing one adds it to every AI tool on this machine."
+msgstr "These teach your AI tools how to work with Palimpsest. Installing one adds it to every AI tool on this machine."
 
 msgid "They run without asking while this chat is open"
 msgstr "They run without asking while this chat is open"
@@ -10736,8 +10736,8 @@ msgstr "This agent doesn't offer slash commands"
 msgid "This agent doesn't offer slash commands — your message will be sent as plain text"
 msgstr "This agent doesn't offer slash commands — your message will be sent as plain text"
 
-msgid "This agent gives OpenKnowledge no way to set this up for you. Its setup guide has the manual steps."
-msgstr "This agent gives OpenKnowledge no way to set this up for you. Its setup guide has the manual steps."
+msgid "This agent gives Palimpsest no way to set this up for you. Its setup guide has the manual steps."
+msgstr "This agent gives Palimpsest no way to set this up for you. Its setup guide has the manual steps."
 
 msgid "This agent has no file of this kind on this machine yet. Open the agent once, then check again."
 msgstr "This agent has no file of this kind on this machine yet. Open the agent once, then check again."
@@ -10745,23 +10745,23 @@ msgstr "This agent has no file of this kind on this machine yet. Open the agent 
 msgid "This agent hasn't announced its commands yet"
 msgstr "This agent hasn't announced its commands yet"
 
-msgid "This agent runs through {0}, which is installed but won't run — its {1} looks broken. Open Knowledge can download a private copy of {2} {3} (about {4} MB from {5}) that won't touch the rest of your system."
-msgstr "This agent runs through {0}, which is installed but won't run — its {1} looks broken. Open Knowledge can download a private copy of {2} {3} (about {4} MB from {5}) that won't touch the rest of your system."
+msgid "This agent runs through {0}, which is installed but won't run — its {1} looks broken. Palimpsest can download a private copy of {2} {3} (about {4} MB from {5}) that won't touch the rest of your system."
+msgstr "This agent runs through {0}, which is installed but won't run — its {1} looks broken. Palimpsest can download a private copy of {2} {3} (about {4} MB from {5}) that won't touch the rest of your system."
 
-msgid "This agent runs through {0}, which isn't installed. Open Knowledge can download a private copy of {1} {2} (about {3} MB from {4}) that won't touch the rest of your system."
-msgstr "This agent runs through {0}, which isn't installed. Open Knowledge can download a private copy of {1} {2} (about {3} MB from {4}) that won't touch the rest of your system."
+msgid "This agent runs through {0}, which isn't installed. Palimpsest can download a private copy of {1} {2} (about {3} MB from {4}) that won't touch the rest of your system."
+msgstr "This agent runs through {0}, which isn't installed. Palimpsest can download a private copy of {1} {2} (about {3} MB from {4}) that won't touch the rest of your system."
 
 msgid "This also installs the pack's {packSkillCount, plural, one {# skill} other {# skills}}."
 msgstr "This also installs the pack's {packSkillCount, plural, one {# skill} other {# skills}}."
 
-msgid "This branch does not contain this OpenKnowledge project. The worktree was created but not opened."
-msgstr "This branch does not contain this OpenKnowledge project. The worktree was created but not opened."
+msgid "This branch does not contain this Palimpsest project. The worktree was created but not opened."
+msgstr "This branch does not contain this Palimpsest project. The worktree was created but not opened."
 
 msgid "This branch is checked out in:"
 msgstr "This branch is checked out in:"
 
-msgid "This branch redirects an OpenKnowledge setup path outside the worktree. The worktree was created but not opened."
-msgstr "This branch redirects an OpenKnowledge setup path outside the worktree. The worktree was created but not opened."
+msgid "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
+msgstr "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
 
 #. Toast after first-launch setup ends without connecting AI tools; agentConnectionsLabel is the Settings sidebar pane name
 msgid "This can be configured in Settings > {agentConnectionsLabel}"
@@ -10797,11 +10797,11 @@ msgstr "This could not be set up because the MCP server entry it needs was not w
 msgid "This deletes the MCP server entries and skill files listed below. The agent will lose access to your documents until you add it again."
 msgstr "This deletes the MCP server entries and skill files listed below. The agent will lose access to your documents until you add it again."
 
-msgid "This development build can't connect agents, so it won't change the agent setup of your installed OpenKnowledge app."
-msgstr "This development build can't connect agents, so it won't change the agent setup of your installed OpenKnowledge app."
+msgid "This development build can't connect agents, so it won't change the agent setup of your installed Palimpsest app."
+msgstr "This development build can't connect agents, so it won't change the agent setup of your installed Palimpsest app."
 
-msgid "This disconnects {0} from OpenKnowledge."
-msgstr "This disconnects {0} from OpenKnowledge."
+msgid "This disconnects {0} from Palimpsest."
+msgstr "This disconnects {0} from Palimpsest."
 
 msgid "This doc"
 msgstr "This doc"
@@ -10827,8 +10827,8 @@ msgstr "This document was deleted"
 msgid "This endpoint ignored the vector size you configured. Remove <0>search.semantic.dimensions</0> to use the model's own size."
 msgstr "This endpoint ignored the vector size you configured. Remove <0>search.semantic.dimensions</0> to use the model's own size."
 
-msgid "This entry changed after OpenKnowledge wrote it. Turning it on replaces it."
-msgstr "This entry changed after OpenKnowledge wrote it. Turning it on replaces it."
+msgid "This entry changed after Palimpsest wrote it. Turning it on replaces it."
+msgstr "This entry changed after Palimpsest wrote it. Turning it on replaces it."
 
 msgid "This field carries additional schema keywords the editor does not show — they are preserved on save."
 msgstr "This field carries additional schema keywords the editor does not show — they are preserved on save."
@@ -10884,8 +10884,8 @@ msgstr "This folder isn't on GitHub yet. The link won't work until it's pushed."
 msgid "This GitHub URL can't be shared."
 msgstr "This GitHub URL can't be shared."
 
-msgid "This is a preview of {boldName} — a built-in skill shipped with Open Knowledge. It's read-only."
-msgstr "This is a preview of {boldName} — a built-in skill shipped with Open Knowledge. It's read-only."
+msgid "This is a preview of {boldName} — a built-in skill shipped with Palimpsest. It's read-only."
+msgstr "This is a preview of {boldName} — a built-in skill shipped with Palimpsest. It's read-only."
 
 msgid "This is a preview of {boldName} — one of {0} skills at this source. Install it into your agents."
 msgstr "This is a preview of {boldName} — one of {0} skills at this source. Install it into your agents."
@@ -10933,8 +10933,8 @@ msgid "This one needs to see your files, not just the open document, so it appea
 msgstr "This one needs to see your files, not just the open document, so it appears when you run a project audit rather than while you type."
 
 #. Says what the project skill is for, then the thing that makes it different from the user-scope ones: it is committed to the repo
-msgid "This one teaches your AI tools how to work with OpenKnowledge. It lives in the project folder, so it installs for everyone who opens the project."
-msgstr "This one teaches your AI tools how to work with OpenKnowledge. It lives in the project folder, so it installs for everyone who opens the project."
+msgid "This one teaches your AI tools how to work with Palimpsest. It lives in the project folder, so it installs for everyone who opens the project."
+msgstr "This one teaches your AI tools how to work with Palimpsest. It lives in the project folder, so it installs for everyone who opens the project."
 
 msgid "This option cannot be changed automatically."
 msgstr "This option cannot be changed automatically."
@@ -10954,8 +10954,8 @@ msgstr "This page is no longer at this path."
 msgid "This page references no local files or images."
 msgstr "This page references no local files or images."
 
-msgid "This path is on an external volume (/Volumes/...). OpenKnowledge will lose track of files when the drive ejects."
-msgstr "This path is on an external volume (/Volumes/...). OpenKnowledge will lose track of files when the drive ejects."
+msgid "This path is on an external volume (/Volumes/...). Palimpsest will lose track of files when the drive ejects."
+msgstr "This path is on an external volume (/Volumes/...). Palimpsest will lose track of files when the drive ejects."
 
 msgid "This permanently deletes {deleteTarget} from the project and removes its mapping from config.yml."
 msgstr "This permanently deletes {deleteTarget} from the project and removes its mapping from config.yml."
@@ -10987,11 +10987,11 @@ msgstr "This project has no git repository — sharing mode does not apply. Init
 msgid "This project has no GitHub remote."
 msgstr "This project has no GitHub remote."
 
-msgid "This project is running a different, incompatible build of OpenKnowledge than this app (v{0})."
-msgstr "This project is running a different, incompatible build of OpenKnowledge than this app (v{0})."
+msgid "This project is running a different, incompatible build of Palimpsest than this app (v{0})."
+msgstr "This project is running a different, incompatible build of Palimpsest than this app (v{0})."
 
-msgid "This project is running an older version of OpenKnowledge (v{0}) than this app (v{1})."
-msgstr "This project is running an older version of OpenKnowledge (v{0}) than this app (v{1})."
+msgid "This project is running an older version of Palimpsest (v{0}) than this app (v{1})."
+msgstr "This project is running an older version of Palimpsest (v{0}) than this app (v{1})."
 
 msgid "This project isn't a git repository, so worktrees aren't available."
 msgstr "This project isn't a git repository, so worktrees aren't available."
@@ -10999,14 +10999,14 @@ msgstr "This project isn't a git repository, so worktrees aren't available."
 msgid "This project lives only on this computer. Connect it to GitHub to back it up and share it with other people."
 msgstr "This project lives only on this computer. Connect it to GitHub to back it up and share it with other people."
 
-msgid "This project's running server doesn't support live editing. Restart OpenKnowledge to fix."
-msgstr "This project's running server doesn't support live editing. Restart OpenKnowledge to fix."
+msgid "This project's running server doesn't support live editing. Restart Palimpsest to fix."
+msgstr "This project's running server doesn't support live editing. Restart Palimpsest to fix."
 
 msgid "This project's server (v{0}) is newer than this app (v{1})."
 msgstr "This project's server (v{0}) is newer than this app (v{1})."
 
-msgid "This removes OpenKnowledge’s settings and integrations from your Mac and any projects you select below, but keeps your markdown content and authored skills."
-msgstr "This removes OpenKnowledge’s settings and integrations from your Mac and any projects you select below, but keeps your markdown content and authored skills."
+msgid "This removes Palimpsest’s settings and integrations from your Mac and any projects you select below, but keeps your markdown content and authored skills."
+msgstr "This removes Palimpsest’s settings and integrations from your Mac and any projects you select below, but keeps your markdown content and authored skills."
 
 msgid "This report is already on its way. Its result will appear in your bug report history."
 msgstr "This report is already on its way. Its result will appear in your bug report history."
@@ -11038,8 +11038,8 @@ msgstr "This setting is per-machine and isn't shared with collaborators. It need
 msgid "This setup is shared with {peers} through <0>{path}</0>. Removing it here removes it for {peers} too."
 msgstr "This setup is shared with {peers} through <0>{path}</0>. Removing it here removes it for {peers} too."
 
-msgid "This setup is shared with {peers}, and OpenKnowledge cannot change it from here. Unlink the folder in Skills Studio first."
-msgstr "This setup is shared with {peers}, and OpenKnowledge cannot change it from here. Unlink the folder in Skills Studio first."
+msgid "This setup is shared with {peers}, and Palimpsest cannot change it from here. Unlink the folder in Skills Studio first."
+msgstr "This setup is shared with {peers}, and Palimpsest cannot change it from here. Unlink the folder in Skills Studio first."
 
 msgid "This setup is shared with {peers}. Removing it here removes it for {peers} too."
 msgstr "This setup is shared with {peers}. Removing it here removes it for {peers} too."
@@ -11053,8 +11053,8 @@ msgstr "This source bundles several skills — choose the one to import."
 msgid "This tab couldn't confirm that your edits are saved, so it didn't reload. Your edits are still here."
 msgstr "This tab couldn't confirm that your edits are saved, so it didn't reload. Your edits are still here."
 
-msgid "This tab is still reconnecting to OpenKnowledge, so it didn't reload. Try again in a moment."
-msgstr "This tab is still reconnecting to OpenKnowledge, so it didn't reload. Try again in a moment."
+msgid "This tab is still reconnecting to Palimpsest, so it didn't reload. Try again in a moment."
+msgstr "This tab is still reconnecting to Palimpsest, so it didn't reload. Try again in a moment."
 
 msgid "This template lives in a parent folder — deleting it affects every folder beneath it that doesn't define its own version."
 msgstr "This template lives in a parent folder — deleting it affects every folder beneath it that doesn't define its own version."
@@ -11102,8 +11102,8 @@ msgstr "title"
 msgid "Title"
 msgstr "Title"
 
-msgid "To connect AI tools without a project, use File > Set up OpenKnowledge integrations…"
-msgstr "To connect AI tools without a project, use File > Set up OpenKnowledge integrations…"
+msgid "To connect AI tools without a project, use File > Set up Palimpsest integrations…"
+msgstr "To connect AI tools without a project, use File > Set up Palimpsest integrations…"
 
 msgid "To do"
 msgstr "To do"
@@ -11224,11 +11224,11 @@ msgstr "Tracked in git — updates flow through your repo (pull or CI), not auto
 msgid "Trash"
 msgstr "Trash"
 
-msgid "Traverse OpenKnowledge navigation history backward."
-msgstr "Traverse OpenKnowledge navigation history backward."
+msgid "Traverse Palimpsest navigation history backward."
+msgstr "Traverse Palimpsest navigation history backward."
 
-msgid "Traverse OpenKnowledge navigation history forward."
-msgstr "Traverse OpenKnowledge navigation history forward."
+msgid "Traverse Palimpsest navigation history forward."
+msgstr "Traverse Palimpsest navigation history forward."
 
 msgid "Tree view options"
 msgstr "Tree view options"
@@ -11281,14 +11281,14 @@ msgstr "Turning it off"
 msgid "Turning it over…"
 msgstr "Turning it over…"
 
-msgid "Turning off index maintenance failed because Open Knowledge could not reach the project server. Try again when the project reconnects."
-msgstr "Turning off index maintenance failed because Open Knowledge could not reach the project server. Try again when the project reconnects."
+msgid "Turning off index maintenance failed because Palimpsest could not reach the project server. Try again when the project reconnects."
+msgstr "Turning off index maintenance failed because Palimpsest could not reach the project server. Try again when the project reconnects."
 
-msgid "Turning off index maintenance failed because Open Knowledge could not update the Git merge rule. Check Git and .gitattributes, then try again."
-msgstr "Turning off index maintenance failed because Open Knowledge could not update the Git merge rule. Check Git and .gitattributes, then try again."
+msgid "Turning off index maintenance failed because Palimpsest could not update the Git merge rule. Check Git and .gitattributes, then try again."
+msgstr "Turning off index maintenance failed because Palimpsest could not update the Git merge rule. Check Git and .gitattributes, then try again."
 
-msgid "Turning off index maintenance failed because the Open Knowledge section of .gitattributes was edited or is incomplete. Remove that section, then try again."
-msgstr "Turning off index maintenance failed because the Open Knowledge section of .gitattributes was edited or is incomplete. Remove that section, then try again."
+msgid "Turning off index maintenance failed because the Palimpsest section of .gitattributes was edited or is incomplete. Remove that section, then try again."
+msgstr "Turning off index maintenance failed because the Palimpsest section of .gitattributes was edited or is incomplete. Remove that section, then try again."
 
 msgid "Turning off index maintenance failed because the project setting could not be saved. Check the project file permissions, then try again."
 msgstr "Turning off index maintenance failed because the project setting could not be saved. Check the project file permissions, then try again."
@@ -11371,11 +11371,11 @@ msgstr "Undo your resolutions to change this."
 msgid "Undo, redo, or step through selection changes in the Edit source pane or a code-shaped property field."
 msgstr "Undo, redo, or step through selection changes in the Edit source pane or a code-shaped property field."
 
-msgid "Uninstall OpenKnowledge"
-msgstr "Uninstall OpenKnowledge"
+msgid "Uninstall Palimpsest"
+msgstr "Uninstall Palimpsest"
 
-msgid "Uninstall OpenKnowledge?"
-msgstr "Uninstall OpenKnowledge?"
+msgid "Uninstall Palimpsest?"
+msgstr "Uninstall Palimpsest?"
 
 msgid "Uninstalled \"{0}\" from {1}"
 msgstr "Uninstalled \"{0}\" from {1}"
@@ -11471,8 +11471,8 @@ msgstr "Update failed: {0}"
 msgid "Update from source"
 msgstr "Update from source"
 
-msgid "Update OpenKnowledge to open this share."
-msgstr "Update OpenKnowledge to open this share."
+msgid "Update Palimpsest to open this share."
+msgstr "Update Palimpsest to open this share."
 
 msgid "Update the destination and optional section anchor."
 msgstr "Update the destination and optional section anchor."
@@ -11624,8 +11624,8 @@ msgstr "User plugins are personal to this device — turn them on or off here. E
 msgid "Username"
 msgstr "Username"
 
-msgid "Using the <0>OK_EMBEDDINGS_API_KEY</0> environment variable (managed outside OpenKnowledge)."
-msgstr "Using the <0>OK_EMBEDDINGS_API_KEY</0> environment variable (managed outside OpenKnowledge)."
+msgid "Using the <0>PS_EMBEDDINGS_API_KEY</0> environment variable (managed outside Palimpsest)."
+msgstr "Using the <0>PS_EMBEDDINGS_API_KEY</0> environment variable (managed outside Palimpsest)."
 
 msgid "Validate document frontmatter against JSON Schema files, scoped to doc sets by glob."
 msgstr "Validate document frontmatter against JSON Schema files, scoped to doc sets by glob."
@@ -11745,8 +11745,8 @@ msgstr "We couldn't check your GitHub connection."
 msgid "We couldn't clone this repository."
 msgstr "We couldn't clone this repository."
 
-msgid "We'll build <0>openknowledge.skill</0>, save it to <1>~/Downloads</1>, and open the Claude Desktop App for you."
-msgstr "We'll build <0>openknowledge.skill</0>, save it to <1>~/Downloads</1>, and open the Claude Desktop App for you."
+msgid "We'll build <0>palimpsest.skill</0>, save it to <1>~/Downloads</1>, and open the Claude Desktop App for you."
+msgstr "We'll build <0>palimpsest.skill</0>, save it to <1>~/Downloads</1>, and open the Claude Desktop App for you."
 
 msgid "We'll create a repository and start syncing — no terminal needed."
 msgstr "We'll create a repository and start syncing — no terminal needed."
@@ -11757,8 +11757,8 @@ msgstr "We’ll create a safe theme ID from this name."
 msgid "We've filed it with the team and attached your logs."
 msgstr "We've filed it with the team and attached your logs."
 
-msgid "Welcome to OpenKnowledge"
-msgstr "Welcome to OpenKnowledge"
+msgid "Welcome to Palimpsest"
+msgstr "Welcome to Palimpsest"
 
 #. Button on each setup row that opens the list of files that row writes to
 msgid "What changes?"
@@ -11806,8 +11806,8 @@ msgstr "What were you doing?"
 msgid "What would you like to create?"
 msgstr "What would you like to create?"
 
-msgid "What you share is sent to the OpenKnowledge team."
-msgstr "What you share is sent to the OpenKnowledge team."
+msgid "What you share is sent to the Palimpsest team."
+msgstr "What you share is sent to the Palimpsest team."
 
 msgid "What's included"
 msgstr "What's included"
@@ -11916,7 +11916,7 @@ msgstr "Wrap long lines in the markdown source editor."
 
 #. js-lingui-explicit-id
 msgid "guidance.mcp.managed-file"
-msgstr "Writes a small bridge file {agent} loads from this project to reach OpenKnowledge."
+msgstr "Writes a small bridge file {agent} loads from this project to reach Palimpsest."
 
 msgid "Writes an entry to"
 msgstr "Writes an entry to"
@@ -11924,11 +11924,11 @@ msgstr "Writes an entry to"
 msgid "writing"
 msgstr "writing"
 
-msgid "Writing this file failed. Check the OpenKnowledge log for the reason."
-msgstr "Writing this file failed. Check the OpenKnowledge log for the reason."
+msgid "Writing this file failed. Check the Palimpsest log for the reason."
+msgstr "Writing this file failed. Check the Palimpsest log for the reason."
 
-msgid "Wrote the Open Knowledge extension, but couldn't mark the folder trusted, so it won't load. This thread has no Open Knowledge tools."
-msgstr "Wrote the Open Knowledge extension, but couldn't mark the folder trusted, so it won't load. This thread has no Open Knowledge tools."
+msgid "Wrote the Palimpsest extension, but couldn't mark the folder trusted, so it won't load. This thread has no Palimpsest tools."
+msgstr "Wrote the Palimpsest extension, but couldn't mark the folder trusted, so it won't load. This thread has no Palimpsest tools."
 
 msgid "YAML or JSON, in either base16 layout."
 msgstr "YAML or JSON, in either base16 layout."
@@ -11991,11 +11991,11 @@ msgstr "You edited this skill locally and the source has new changes. Taking ups
 msgid "You modified <0>{filePath}</0> locally, but it was deleted upstream."
 msgstr "You modified <0>{filePath}</0> locally, but it was deleted upstream."
 
-msgid "You picked ~/Desktop. OpenKnowledge will index everything on your desktop."
-msgstr "You picked ~/Desktop. OpenKnowledge will index everything on your desktop."
+msgid "You picked ~/Desktop. Palimpsest will index everything on your desktop."
+msgstr "You picked ~/Desktop. Palimpsest will index everything on your desktop."
 
-msgid "You picked ~/Documents. OpenKnowledge will index every markdown file under it. If you only want to manage a sub-folder, choose a smaller scope."
-msgstr "You picked ~/Documents. OpenKnowledge will index every markdown file under it. If you only want to manage a sub-folder, choose a smaller scope."
+msgid "You picked ~/Documents. Palimpsest will index every markdown file under it. If you only want to manage a sub-folder, choose a smaller scope."
+msgstr "You picked ~/Documents. Palimpsest will index every markdown file under it. If you only want to manage a sub-folder, choose a smaller scope."
 
 msgid "You picked ~/Downloads. Files there are usually transient — consider a stable folder instead."
 msgstr "You picked ~/Downloads. Files there are usually transient — consider a stable folder instead."
@@ -12015,8 +12015,8 @@ msgstr "You're subscribed!"
 msgid "you@company.com"
 msgstr "you@company.com"
 
-msgid "Your agents still load this skill, but OpenKnowledge can't open or edit it: it won't index a file that git is set to ignore, because syncing it would fail. Adding one line to {gitignorePath} makes it editable here."
-msgstr "Your agents still load this skill, but OpenKnowledge can't open or edit it: it won't index a file that git is set to ignore, because syncing it would fail. Adding one line to {gitignorePath} makes it editable here."
+msgid "Your agents still load this skill, but Palimpsest can't open or edit it: it won't index a file that git is set to ignore, because syncing it would fail. Adding one line to {gitignorePath} makes it editable here."
+msgstr "Your agents still load this skill, but Palimpsest can't open or edit it: it won't index a file that git is set to ignore, because syncing it would fail. Adding one line to {gitignorePath} makes it editable here."
 
 msgid "Your change is still being saved — run the test again in a moment."
 msgstr "Your change is still being saved — run the test again in a moment."

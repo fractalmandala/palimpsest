@@ -13,12 +13,12 @@ import {
   EnvVarError,
   IDLE_SHUTDOWN_DURATION_RE,
   idleShutdownToMs,
-  OK_DIR,
+  PS_DIR,
   resolveEnvConfigLayer,
   resolveServerRuntimeConfig,
   type ServerRuntimeConfig,
-} from '@inkeep/open-knowledge-core';
-import { readConfigSafely, resolveConfigPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import {
   type BootedServer,
   type Config,
@@ -28,7 +28,7 @@ import {
   type PinoLogger,
   prepareSingleFileOpen,
   type ServerExitReason,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { Command, InvalidArgumentError, Option } from 'commander';
 import { makeLazyEmbeddingsKeyStore } from '../auth/embeddings-key-store.ts';
 import { detectGh, detectGhAccounts } from '../auth/gh-detect.ts';
@@ -105,11 +105,11 @@ export function isLoopbackHost(host: string): boolean {
 
 export function shouldWarnHostOverridesMultiBind(input: {
   flagBindSet: boolean;
-  okBindSet: boolean;
+  psBindSet: boolean;
   hostEnvSet: boolean;
   fileBindCount: number;
 }): boolean {
-  return !input.flagBindSet && !input.okBindSet && input.hostEnvSet && input.fileBindCount > 1;
+  return !input.flagBindSet && !input.psBindSet && input.hostEnvSet && input.fileBindCount > 1;
 }
 
 export function shouldOpenBrowser(input: {
@@ -156,13 +156,13 @@ export function deriveServerProcessTitle(cwd: string): string {
   return `open-knowledge-server ${projectName}`;
 }
 
-export class OkDirMissingError extends Error {
+export class PsDirMissingError extends Error {
   readonly cwd: string;
   constructor(cwd: string) {
     super(
       `This directory isn't set up yet. Run \`${currentCliCommandName()} init\` first, then \`${currentCliCommandName()} start\` again.`,
     );
-    this.name = 'OkDirMissingError';
+    this.name = 'PsDirMissingError';
     this.cwd = cwd;
   }
 }
@@ -344,7 +344,7 @@ export async function bootStartServer(opts: BootStartServerOptions): Promise<Boo
     resolveLockDir,
     seedEphemeralProjectDir,
     waitForServerLockDrain,
-  } = await import('@inkeep/open-knowledge-server');
+  } = await import('@palimpsest/server');
 
   const log = opts.log ?? getLogger('start');
 
@@ -363,7 +363,7 @@ export async function bootStartServer(opts: BootStartServerOptions): Promise<Boo
       if (!isReapableEphemeralProjectDir(ephemeralProjectDir)) {
         throw new EphemeralProjectDirNotThrowawayError(ephemeralProjectDir);
       }
-      if (!existsSync(resolve(ephemeralProjectDir, OK_DIR, 'config.yml'))) {
+      if (!existsSync(resolve(ephemeralProjectDir, PS_DIR, 'config.yml'))) {
         seedEphemeralProjectDir(ephemeralProjectDir, ephemeralContentDir);
       }
     } else {
@@ -376,7 +376,7 @@ export async function bootStartServer(opts: BootStartServerOptions): Promise<Boo
     if (!isReapableEphemeralProjectDir(ephemeralProjectDir)) {
       log.warn(
         { ephemeralProjectDir },
-        '[start] refusing to reap self-provisioned ephemeral dir: no longer resolves to an ok-ephemeral-* temp dir',
+        '[start] refusing to reap self-provisioned ephemeral dir: no longer resolves to an ps-ephemeral-* temp dir',
       );
       return;
     }
@@ -393,10 +393,10 @@ export async function bootStartServer(opts: BootStartServerOptions): Promise<Boo
 
   if (!ephemeral) {
     if (!skipAutoInit && !isProjectRoot(cwd)) {
-      throw new OkDirMissingError(cwd);
+      throw new PsDirMissingError(cwd);
     }
 
-    const reclaimDisableEnv = process.env.OK_RECLAIM_DISABLE ?? null;
+    const reclaimDisableEnv = process.env.PS_RECLAIM_DISABLE ?? null;
 
     const reclaimEventLogger = (event: { event: string; severity: 'info' | 'warn' }) => {
       if (event.severity === 'info') log.debug({ event }, '[start] reclaim sweep event');
@@ -580,16 +580,16 @@ function parseStartMode(value: string): StartMode {
 }
 
 export function resolveStartConsoleLevel(env: {
-  OK_CONSOLE_LEVEL?: string | undefined;
+  PS_CONSOLE_LEVEL?: string | undefined;
   LOG_LEVEL?: string | undefined;
 }): string | null {
-  if (env.OK_CONSOLE_LEVEL !== undefined || env.LOG_LEVEL !== undefined) return null;
+  if (env.PS_CONSOLE_LEVEL !== undefined || env.LOG_LEVEL !== undefined) return null;
   return 'warn';
 }
 
 export function formatShutdownNotice(signal: NodeJS.Signals): string[] {
   const lines = [
-    'Stopping OpenKnowledge…',
+    'Stopping Palimpsest…',
     'Saving pending changes and releasing the server lock — this can take a few seconds.',
   ];
   if (signal === 'SIGINT') {
@@ -601,7 +601,7 @@ export function formatShutdownNotice(signal: NodeJS.Signals): string[] {
 export async function runStartCommand(configArg: Config, opts: StartCommandOptions): Promise<void> {
   const config = resolveStartConfig(configArg, opts.singleFile);
   const startConsoleLevel = resolveStartConsoleLevel(process.env);
-  if (startConsoleLevel !== null) process.env.OK_CONSOLE_LEVEL = startConsoleLevel;
+  if (startConsoleLevel !== null) process.env.PS_CONSOLE_LEVEL = startConsoleLevel;
 
   const { renderBanner } = await import('../ui/banner.ts');
   const { accent, dim, error, warning } = await import('../ui/colors.ts');
@@ -625,25 +625,25 @@ export async function runStartCommand(configArg: Config, opts: StartCommandOptio
   }
   const envConfig = applyConfigOverlay(config, envLayer.layer) as Config;
 
-  const okBindSet = envLayer.overrides.some((o) => o.envVar === 'OK_BIND');
+  const psBindSet = envLayer.overrides.some((o) => o.envVar === 'PS_BIND');
   const flagBind = opts.bind !== undefined && opts.bind.length > 0 ? opts.bind : undefined;
   const hostEnvRaw = process.env.HOST;
   const hostEnv = hostEnvRaw !== undefined && hostEnvRaw.trim() !== '' ? hostEnvRaw : undefined;
   const envFileRuntime = resolveServerRuntimeConfig(envConfig);
   const requestedBind =
-    flagBind ?? (okBindSet || hostEnv === undefined ? [...envFileRuntime.bind] : [hostEnv]);
+    flagBind ?? (psBindSet || hostEnv === undefined ? [...envFileRuntime.bind] : [hostEnv]);
 
   if (
     shouldWarnHostOverridesMultiBind({
       flagBindSet: flagBind !== undefined,
-      okBindSet,
+      psBindSet,
       hostEnvSet: hostEnv !== undefined,
       fileBindCount: envFileRuntime.bind.length,
     })
   ) {
     console.warn(
       warning(
-        `[config] HOST=${hostEnv} overrides server.bind — dropping the file-configured addresses (${envFileRuntime.bind.join(', ')}). Use OK_BIND with a space-separated list to keep multiple binds.`,
+        `[config] HOST=${hostEnv} overrides server.bind — dropping the file-configured addresses (${envFileRuntime.bind.join(', ')}). Use PS_BIND with a space-separated list to keep multiple binds.`,
       ),
     );
   }
@@ -692,7 +692,7 @@ export async function runStartCommand(configArg: Config, opts: StartCommandOptio
   const reactShellDistDir = shell.dir;
   if (shell.missingBundle) {
     console.warn(
-      'bundled web UI not found — serving /api and /mcp only. Reinstall @inkeep/open-knowledge, or build packages/app in a source checkout.',
+      'bundled web UI not found — serving /api and /mcp only. Reinstall @palimpsest/cli, or build packages/app in a source checkout.',
     );
   }
 
@@ -715,7 +715,7 @@ export async function runStartCommand(configArg: Config, opts: StartCommandOptio
       ...(opts.terminalAuth === true ? { terminalAuthAvailable: true } : {}),
     });
   } catch (err) {
-    if (err instanceof OkDirMissingError) {
+    if (err instanceof PsDirMissingError) {
       console.error(error(err.message));
       process.exit(1);
     }
@@ -725,7 +725,7 @@ export async function runStartCommand(configArg: Config, opts: StartCommandOptio
       process.exit(1);
     }
 
-    const serverModule = await import('@inkeep/open-knowledge-server');
+    const serverModule = await import('@palimpsest/server');
     if (
       err instanceof serverModule.GitNotAvailableError ||
       err instanceof serverModule.GitTooOldError
@@ -828,7 +828,7 @@ export async function runStartCommand(configArg: Config, opts: StartCommandOptio
 
   console.log(
     renderBanner({
-      name: 'open-knowledge',
+      name: 'palimpsest',
       version: PACKAGE_VERSION,
       localUrl,
       networkUrl,
@@ -922,8 +922,8 @@ export async function resolveServerReuse(
 export function formatServerReuseNotice(info: ServerReuseInfo): string[] {
   const holder =
     info.kind === 'mcp-spawned'
-      ? 'An MCP-spawned OpenKnowledge server is already running on this project'
-      : 'OpenKnowledge is already running on this project';
+      ? 'An MCP-spawned Palimpsest server is already running on this project'
+      : 'Palimpsest is already running on this project';
   return [
     `${holder} (pid ${info.pid}).`,
     `  ${info.url}`,
@@ -933,7 +933,7 @@ export function formatServerReuseNotice(info: ServerReuseInfo): string[] {
 
 export function isServerLockCollision(
   err: unknown,
-  serverModule: typeof import('@inkeep/open-knowledge-server'),
+  serverModule: typeof import('@palimpsest/server'),
   cwd: string,
 ): boolean {
   const lockErr = serverModule.ServerLockCollisionError;
@@ -952,7 +952,7 @@ export function isServerLockCollision(
 export function tryDescribeLockCollision(
   err: unknown,
   cwd: string,
-  serverModule: typeof import('@inkeep/open-knowledge-server'),
+  serverModule: typeof import('@palimpsest/server'),
 ): string | null {
   const authorityErr = serverModule.ServerAuthorityCollisionError;
   if (authorityErr !== undefined && err instanceof authorityErr) return err.message;
@@ -967,7 +967,7 @@ export function tryDescribeLockCollision(
     if (meta?.kind === 'mcp-spawned') {
       return `An MCP-spawned server holds this lock; it should release on idle-shutdown (~30 min). Or run \`${command} stop\`.`;
     }
-    return `OpenKnowledge server is already running on this project — check \`${command} status\` or \`${command} stop\`.`;
+    return `Palimpsest server is already running on this project — check \`${command} status\` or \`${command} stop\`.`;
   } catch {
     return null;
   }
@@ -975,7 +975,7 @@ export function tryDescribeLockCollision(
 
 export function startCommand(getConfig: () => Config): Command {
   const cmd = new Command('start')
-    .description('Start the OpenKnowledge server (UI + API + MCP + collab on one port)')
+    .description('Start the Palimpsest server (UI + API + MCP + collab on one port)')
     .option('-p, --port <port>', 'Server port', undefined)
     .option(
       '--bind <address>',
@@ -1011,7 +1011,7 @@ export function startCommand(getConfig: () => Config): Command {
     .addOption(
       new Option(
         '--project-dir <dir>',
-        'Throwaway project root for --single-file (where ephemeral .ok/ state lives)',
+        'Throwaway project root for --single-file (where ephemeral .ps/ state lives)',
       ).hideHelp(),
     )
     .addOption(
@@ -1022,7 +1022,7 @@ export function startCommand(getConfig: () => Config): Command {
     )
     .option(
       '--external-url <url>',
-      'Canonical external origin clients dial (sets server.externalUrl for this run) — its host joins the Host/Origin allowlists (CORS + external-Host admission). External exposure additionally requires consent (OK_ALLOW_EXTERNAL=1 or server.allowExternal).',
+      'Canonical external origin clients dial (sets server.externalUrl for this run) — its host joins the Host/Origin allowlists (CORS + external-Host admission). External exposure additionally requires consent (PS_ALLOW_EXTERNAL=1 or server.allowExternal).',
       parseExternalUrlFlag,
     )
     .action(async (opts: StartCommandOptions) => {
@@ -1049,7 +1049,7 @@ export function startCommand(getConfig: () => Config): Command {
         if (opts.openBrowser === false) ignored.push('--no-open-browser');
         if (opts.externalUrl !== undefined) ignored.push('--external-url');
         if (ignored.length > 0) {
-          const logLevel = process.env.OK_LOG_LEVEL ?? 'info';
+          const logLevel = process.env.PS_LOG_LEVEL ?? 'info';
           if (logLevel === 'debug' || logLevel === 'trace') {
             console.error(`--mode=app: ignoring ${ignored.join(', ')}`);
           }

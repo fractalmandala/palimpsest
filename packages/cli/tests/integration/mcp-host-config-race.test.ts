@@ -77,7 +77,7 @@ describe('mcp host config — concurrent-write race', () => {
     timeout: 0,
   }, async ({ signal }) => {
     const N = 20;
-    const expectedKeys = Array.from({ length: N }, (_, i) => `ok-writer-${i}`);
+    const expectedKeys = Array.from({ length: N }, (_, i) => `ps-writer-${i}`);
 
     writers = runConfigWriters(configPath, expectedKeys, {
       signal: AbortSignal.any([signal, controller.signal]),

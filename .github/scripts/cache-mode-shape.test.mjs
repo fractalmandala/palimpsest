@@ -13,8 +13,8 @@ import {
 } from './cache-mode-shape.test-helper.mjs';
 import { credentialReasons } from './workflow-credentials.test-helper.mjs';
 
-const OK_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const WORKFLOWS = join(OK_ROOT, '.github', 'workflows');
+const PS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const WORKFLOWS = join(PS_ROOT, '.github', 'workflows');
 
 const SHIPS = [
   'desktop-release.yml#build-linux',
@@ -48,7 +48,7 @@ const credentialed = allJobs.filter(
   ({ workflow, job }) => credentialReasons(workflow, job).length > 0,
 );
 
-describe('credentialed jobs in public/open-knowledge/.github/workflows declare the narrowest cache-mode their cache operations need', () => {
+describe('credentialed jobs in public/palimpsest/.github/workflows declare the narrowest cache-mode their cache operations need', () => {
   test('the credentialed jobs and their modes are exactly these', () => {
     expect(
       Object.fromEntries(
@@ -97,7 +97,7 @@ describe('credentialed jobs in public/open-knowledge/.github/workflows declare t
     },
   );
 
-  test('no credentialed job touches an ok-pnpm-store- cache key', () => {
+  test('no credentialed job touches an ps-pnpm-store- cache key', () => {
     for (const { label, job } of credentialed) {
       const storeSteps = (job.steps ?? []).filter((step) =>
         /ok-pnpm-store-/.test(JSON.stringify(step.with ?? {})),
@@ -120,7 +120,7 @@ describe('credentialed jobs in public/open-knowledge/.github/workflows declare t
   });
 });
 
-describe('jobs in public/open-knowledge/.github/workflows that build what ships restore nothing from the Actions cache', () => {
+describe('jobs in public/palimpsest/.github/workflows that build what ships restore nothing from the Actions cache', () => {
   test.each(SHIPS)(
     '%s declares cache-mode none, touches no cache and turns every setup cache off',
     (label) => {
@@ -131,7 +131,7 @@ describe('jobs in public/open-knowledge/.github/workflows that build what ships 
   );
 });
 
-describe('QA desktop build jobs in public/open-knowledge/.github/workflows, which can produce production-signed installers, restore nothing from the Actions cache', () => {
+describe('QA desktop build jobs in public/palimpsest/.github/workflows, which can produce production-signed installers, restore nothing from the Actions cache', () => {
   test.each(QA_BUILDS)(
     '%s declares cache-mode none, touches no cache and turns every setup cache off',
     (label) => {

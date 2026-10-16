@@ -39,7 +39,7 @@ function gitConfigGet(
 }
 
 function setupRepo(): { tmp: string; main: string; linked: string } {
-  const tmp = mkdtempSync(join(tmpdir(), 'ok-git-identity-wt-'));
+  const tmp = mkdtempSync(join(tmpdir(), 'ps-git-identity-wt-'));
   const main = join(tmp, 'repo');
   const linked = join(tmp, 'wt');
 

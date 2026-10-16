@@ -1,9 +1,9 @@
-import type { OkSlidesOpenResult, OkSlidesStatusResult } from '../shared/ipc-channels.ts';
+import type { PsSlidesOpenResult, PsSlidesStatusResult } from '../shared/ipc-channels.ts';
 import type { IpcInvoker } from '../shared/ipc-invoke.ts';
 
 export interface SlidesBridge {
-  status(): Promise<OkSlidesStatusResult>;
-  open(docPath: string): Promise<OkSlidesOpenResult>;
+  status(): Promise<PsSlidesStatusResult>;
+  open(docPath: string): Promise<PsSlidesOpenResult>;
 }
 
 export function createSlidesBridge(invoke: IpcInvoker): SlidesBridge {

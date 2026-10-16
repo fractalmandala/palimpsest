@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
-import { isGitHubHost } from '@inkeep/open-knowledge-core';
+import { isGitHubHost } from '@palimpsest/core';
 import password from '@inquirer/password';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { FileBackend } from '../../auth/token-store.ts';
@@ -27,7 +27,7 @@ describe('runTokenPaste', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-auth-token-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-auth-token-'));
     vi.stubEnv('HOME', tmpDir);
     vi.stubEnv('USERPROFILE', tmpDir);
     vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
@@ -239,9 +239,9 @@ describe('runTokenPaste', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('the GitHub-host refusal names the %s auth pat command', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     try {
       const result = await runTokenPaste(
         { host: 'github.com', username: 'mallory', json: false },
@@ -282,7 +282,7 @@ describe('tokenCommand', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'ok-auth-token-command-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'ps-auth-token-command-'));
     vi.stubEnv('HOME', tmpDir);
     vi.stubEnv('USERPROFILE', tmpDir);
     vi.spyOn(process.stdout, 'write').mockImplementation(() => true);

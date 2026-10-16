@@ -1,5 +1,5 @@
-import type { LanguagePreference } from '@inkeep/open-knowledge-core';
-import type { OkThemeSource } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { LanguagePreference } from '@palimpsest/core';
+import type { PsThemeSource } from '@palimpsest/core/desktop-bridge';
 import { BOOT_HEARTBEAT_EVENTS } from '../shared/boot-narration.ts';
 import { registerPendingDelivery } from '../shared/ipc-send.ts';
 import {
@@ -55,7 +55,7 @@ interface NavigatorDeps extends BootHeartbeatDeps {
   appVersion: string;
   productName?: string;
   languagePreference: LanguagePreference;
-  themePreference: OkThemeSource;
+  themePreference: PsThemeSource;
   showGate: ShowGateRegistry;
   pendingPayload?: ShareNavigatorPayload;
 }
@@ -72,7 +72,7 @@ export function createNavigatorWindow(deps: NavigatorDeps): BrowserWindowLike {
       `--ok-${LANGUAGE_PREFERENCE_ARG_NAME}=${deps.languagePreference}`,
       `--ok-${THEME_PREFERENCE_ARG_NAME}=${deps.themePreference}`,
     ],
-    title: deps.productName ?? 'OpenKnowledge',
+    title: deps.productName ?? 'Palimpsest',
   });
   const disposeShowGate = deps.showGate.register(window, { kind: 'navigator' });
   window.on('closed', () => {

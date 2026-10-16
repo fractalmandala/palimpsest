@@ -23,7 +23,7 @@ describe('fixed cross-version corpus', () => {
       bounds.maxV2SharedUrlUtf8Bytes,
     );
     expect(
-      new TextEncoder().encode(`openknowledge://share?token=${bounds.maxCase.token}`),
+      new TextEncoder().encode(`palimpsest://share?token=${bounds.maxCase.token}`),
     ).toHaveLength(bounds.maxV2CustomUriChars);
     expect(bounds.overLimitToken).toHaveLength(bounds.maxV2TokenChars + 1);
   });

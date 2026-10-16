@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { LinkPreviewMetadata } from '@inkeep/open-knowledge-core';
+import type { LinkPreviewMetadata } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   LinkPreviewCache,
@@ -12,7 +12,7 @@ import {
 
 let dir: string;
 beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), 'ok-linkpreview-cache-'));
+  dir = mkdtempSync(join(tmpdir(), 'ps-linkpreview-cache-'));
 });
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });

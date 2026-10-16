@@ -9,33 +9,33 @@ import { expect, test } from './_helpers/smoke-test';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MAIN_ENTRY = resolve(__dirname, '..', '..', 'out', 'main', 'index.js');
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 const BUILD_EXISTS = existsSync(MAIN_ENTRY);
 
 test.describe('Skill scope round-trip', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Deep-link project open is macOS-only in v0.');
   test.skip(!BUILD_EXISTS, `Main build missing at ${MAIN_ENTRY} — run "pnpm run build:desktop".`);
 
   test('project -> global -> project keeps the sidebar row clickable in one session', async ({
     captureStderrFor,
   }) => {
-    const tmpHome = mkdtempSync(join(tmpdir(), 'ok-scope-roundtrip-home-'));
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-scope-roundtrip-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
-    writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
+    const tmpHome = mkdtempSync(join(tmpdir(), 'ps-scope-roundtrip-home-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-scope-roundtrip-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
+    writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
     writeFileSync(join(projectDir, 'note.md'), '# Note\n');
     mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
     mkdirSync(join(projectDir, '.claude', 'skills'), { recursive: true });
 
     const userDataDir = join(tmpHome, 'electron-userdata');
     mkdirSync(userDataDir, { recursive: true });
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=note`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=note`;
 
     const app = await electron.launch({
       args: [MAIN_ENTRY, deepLink, `--user-data-dir=${userDataDir}`],
-      env: { ...process.env, HOME: tmpHome, OK_M6B_FORCE: '1' },
+      env: { ...process.env, HOME: tmpHome, PS_M6B_FORCE: '1' },
       timeout: 30_000,
     });
     captureStderrFor(app, { home: tmpHome, cleanupDirs: [projectDir, tmpHome] });
@@ -53,7 +53,7 @@ test.describe('Skill scope round-trip', () => {
     })();
     await configureDesktopGitRepositories(page, projectDir);
 
-    const lockPath = join(projectDir, '.ok', 'local', 'server.lock');
+    const lockPath = join(projectDir, '.ps', 'local', 'server.lock');
     await expect(() => {
       expect(existsSync(lockPath)).toBe(true);
     }).toPass({ timeout: 15_000 });

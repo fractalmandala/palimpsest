@@ -452,7 +452,7 @@ function resetState() {
   ]) {
     fn.mockClear();
   }
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: undefined,
   });
@@ -694,10 +694,10 @@ describe('EditorTabs runtime behavior', () => {
     const skill = {
       scope: 'project',
       name: 'release-notes',
-      path: '.ok/skills/release-notes/SKILL.md',
+      path: '.ps/skills/release-notes/SKILL.md',
       managed: false,
     };
-    const skillTabId = '.ok/skills/release-notes/SKILL';
+    const skillTabId = '.ps/skills/release-notes/SKILL';
     activeDocName = skillTabId;
     activeTabId = skillTabId;
     openTabs = [skillTabId];
@@ -719,10 +719,10 @@ describe('EditorTabs runtime behavior', () => {
     const skill = {
       scope: 'project',
       name: 'release-notes',
-      path: '.ok/skills/release-notes/SKILL.md',
+      path: '.ps/skills/release-notes/SKILL.md',
       managed: true,
     };
-    const skillTabId = '.ok/skills/release-notes/SKILL';
+    const skillTabId = '.ps/skills/release-notes/SKILL';
     activeDocName = skillTabId;
     activeTabId = skillTabId;
     openTabs = [skillTabId];
@@ -864,7 +864,7 @@ describe('EditorTabs runtime behavior', () => {
   });
 
   test('Electron host makes tab-strip backgrounds draggable while controls opt out', async () => {
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: {},
     });
@@ -1446,7 +1446,7 @@ describe('EditorTabs runtime behavior', () => {
 
     cleanup();
     const openNoteWindow = vi.fn(async () => ({ ok: true as const, outcome: 'created' as const }));
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: { noteWindow: { open: openNoteWindow } },
     });
@@ -1465,7 +1465,7 @@ describe('EditorTabs runtime behavior', () => {
 
   test('popping a tab out leaves the origin tab list untouched', async () => {
     const openNoteWindow = vi.fn(async () => ({ ok: true as const, outcome: 'created' as const }));
-    Object.defineProperty(window, 'okDesktop', {
+    Object.defineProperty(window, 'psDesktop', {
       configurable: true,
       value: { noteWindow: { open: openNoteWindow } },
     });

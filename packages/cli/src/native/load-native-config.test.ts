@@ -4,9 +4,9 @@ import { describeNativeFailure, requireNativeConfigModule } from './load-native-
 
 function withCapturedStderr(fn: () => void): string {
   const original = process.stderr.write.bind(process.stderr);
-  const priorEnv = process.env.OK_DEBUG_NATIVE;
+  const priorEnv = process.env.PS_DEBUG_NATIVE;
   let captured = '';
-  process.env.OK_DEBUG_NATIVE = '1';
+  process.env.PS_DEBUG_NATIVE = '1';
   // biome-ignore lint/suspicious/noExplicitAny: minimal stderr.write spy for the test.
   process.stderr.write = ((chunk: any) => {
     captured += String(chunk);
@@ -16,8 +16,8 @@ function withCapturedStderr(fn: () => void): string {
     fn();
   } finally {
     process.stderr.write = original;
-    if (priorEnv === undefined) delete process.env.OK_DEBUG_NATIVE;
-    else process.env.OK_DEBUG_NATIVE = priorEnv;
+    if (priorEnv === undefined) delete process.env.PS_DEBUG_NATIVE;
+    else process.env.PS_DEBUG_NATIVE = priorEnv;
   }
   return captured;
 }
@@ -58,7 +58,7 @@ describe('requireNativeConfigModule resolution order', () => {
     const mod = requireNativeConfigModule({
       moduleUrl: BUNDLED_MODULE_URL,
       requireModule: (id) => {
-        if (id === '@inkeep/open-knowledge-native-config') return SENTINEL_WORKSPACE;
+        if (id === '@palimpsest/native-config') return SENTINEL_WORKSPACE;
         throw new Error(`MODULE_NOT_FOUND: ${id}`);
       },
     });
@@ -93,7 +93,7 @@ describe('requireNativeConfigModule resolution order', () => {
   });
 });
 
-describe('broken-binary diagnostic (OK_DEBUG_NATIVE)', () => {
+describe('broken-binary diagnostic (PS_DEBUG_NATIVE)', () => {
   test('surfaces a present-but-broken binary, distinct from the silent no-binary case', () => {
     const captured = withCapturedStderr(() => {
       const mod = requireNativeConfigModule({
@@ -108,7 +108,7 @@ describe('broken-binary diagnostic (OK_DEBUG_NATIVE)', () => {
     expect(captured).toContain('dlopen failed');
   });
 
-  test('stays silent for the no-binary case even under OK_DEBUG_NATIVE', () => {
+  test('stays silent for the no-binary case even under PS_DEBUG_NATIVE', () => {
     const captured = withCapturedStderr(() => {
       const mod = requireNativeConfigModule({
         moduleUrl: BROKEN_BINARY_URL,

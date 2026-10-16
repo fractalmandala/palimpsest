@@ -1,8 +1,8 @@
-import type { OkMenuAction, OkMenuActionOrigin } from './desktop-bridge-types';
+import type { PsMenuAction, PsMenuActionOrigin } from './desktop-bridge-types';
 
-type Listener = (action: OkMenuAction, origin: OkMenuActionOrigin) => void;
+type Listener = (action: PsMenuAction, origin: PsMenuActionOrigin) => void;
 
-const LAUNCHER_FREE_ORIGIN: OkMenuActionOrigin = Object.freeze({ launcherBorne: false });
+const LAUNCHER_FREE_ORIGIN: PsMenuActionOrigin = Object.freeze({ launcherBorne: false });
 
 const listeners = new Set<Listener>();
 
@@ -10,7 +10,7 @@ let bridgeForwarderUnsubscribe: (() => void) | null = null;
 
 function ensureBridgeForwarder(): void {
   if (bridgeForwarderUnsubscribe !== null) return;
-  const bridge = typeof window !== 'undefined' ? window.okDesktop : undefined;
+  const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   if (bridge == null || typeof bridge.onMenuAction !== 'function') return;
   bridgeForwarderUnsubscribe = bridge.onMenuAction((action, origin) => {
     emitLocalMenuAction(action, origin);
@@ -34,8 +34,8 @@ export function subscribeLocalMenuAction(cb: Listener): () => void {
 }
 
 export function emitLocalMenuAction(
-  action: OkMenuAction,
-  origin: OkMenuActionOrigin = LAUNCHER_FREE_ORIGIN,
+  action: PsMenuAction,
+  origin: PsMenuActionOrigin = LAUNCHER_FREE_ORIGIN,
 ): void {
   for (const cb of listeners) {
     try {

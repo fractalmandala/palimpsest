@@ -1,9 +1,9 @@
 import type {
-  OkSpellcheckEnabledSetResult,
-  OkSpellingLanguagesQueryResult,
-  OkSpellingLanguagesSetResult,
-  OkSpellingLanguagesState,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsSpellcheckEnabledSetResult,
+  PsSpellingLanguagesQueryResult,
+  PsSpellingLanguagesSetResult,
+  PsSpellingLanguagesState,
+} from '@palimpsest/core/desktop-bridge';
 
 export type SpellcheckLanguagesOperation = 'query' | 'set-languages' | 'set-enabled';
 
@@ -18,7 +18,7 @@ export interface SpellcheckLanguagesDeps {
   readonly reportFailure?: (operation: SpellcheckLanguagesOperation, err: unknown) => void;
 }
 
-function readState(deps: SpellcheckLanguagesDeps): OkSpellingLanguagesState {
+function readState(deps: SpellcheckLanguagesDeps): PsSpellingLanguagesState {
   return {
     available: [...deps.availableLanguages()],
     selected: [...deps.selectedLanguages()],
@@ -28,7 +28,7 @@ function readState(deps: SpellcheckLanguagesDeps): OkSpellingLanguagesState {
 
 export function querySpellingLanguages(
   deps: SpellcheckLanguagesDeps,
-): OkSpellingLanguagesQueryResult {
+): PsSpellingLanguagesQueryResult {
   try {
     return { kind: 'spelling-languages-query', ok: true, state: readState(deps) };
   } catch (err) {
@@ -40,7 +40,7 @@ export function querySpellingLanguages(
 export function replaceSpellingLanguages(
   deps: SpellcheckLanguagesDeps,
   languages: unknown,
-): OkSpellingLanguagesSetResult {
+): PsSpellingLanguagesSetResult {
   if (!Array.isArray(languages) || !languages.every((code) => typeof code === 'string')) {
     return { kind: 'spelling-languages-set', ok: false, reason: 'invalid-request' };
   }
@@ -66,7 +66,7 @@ export function replaceSpellingLanguages(
 export function setSpellcheckEnabled(
   deps: SpellcheckLanguagesDeps,
   enabled: unknown,
-): OkSpellcheckEnabledSetResult {
+): PsSpellcheckEnabledSetResult {
   if (typeof enabled !== 'boolean') {
     return { kind: 'spellcheck-enabled-set', ok: false, reason: 'invalid-request' };
   }

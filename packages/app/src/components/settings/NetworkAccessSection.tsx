@@ -1,5 +1,5 @@
-import { humanFormat } from '@inkeep/open-knowledge-core/config/errors';
-import { DEFAULT_TUNNEL_PORT } from '@inkeep/open-knowledge-core/config/schema';
+import { humanFormat } from '@palimpsest/core/config/errors';
+import { DEFAULT_TUNNEL_PORT } from '@palimpsest/core/config/schema';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
 import { useConfigContext } from '@/lib/config-provider';
 import { restartCollabServer } from '@/lib/restart-collab-server';
 import { SettingsSectionHeader } from './SettingsSectionHeader';
@@ -76,7 +76,7 @@ export function NetworkAccessSection() {
     projectSynced && projectLocalSynced && projectBinding !== null && projectLocalBinding !== null;
 
   const boundPort = (() => {
-    const apiOrigin = window.okDesktop?.config?.apiOrigin;
+    const apiOrigin = window.psDesktop?.config?.apiOrigin;
     if (!apiOrigin) return null;
     try {
       const p = new URL(apiOrigin).port;
@@ -90,7 +90,7 @@ export function NetworkAccessSection() {
   const effectivePortMode: PortMode = expose ? 'fixed' : portMode;
 
   useEffect(() => {
-    const probe = window.okDesktop?.remoteAccess?.probePort;
+    const probe = window.psDesktop?.remoteAccess?.probePort;
     const raw = portDraft.trim();
     const port = Number(raw);
     const valid = effectivePortMode === 'fixed' && /^\d+$/.test(raw) && port >= 1 && port <= 65535;
@@ -207,7 +207,7 @@ export function NetworkAccessSection() {
       );
     }
 
-    const bridge = window.okDesktop;
+    const bridge = window.psDesktop;
     if (!bridge) {
       toast.error(t`Restarting the server is only available in the desktop app.`);
       setApplying(false);
@@ -229,7 +229,7 @@ export function NetworkAccessSection() {
           '[remote-access] restart IPC failed (config committed, server not restarted):',
           err,
         );
-        const cliCommand = okCliCommandName();
+        const cliCommand = psCliCommandName();
         toast.error(
           t`Couldn't restart the server. Run ${cliCommand} start in this folder to retry.`,
         );

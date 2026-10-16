@@ -1,17 +1,17 @@
 import type {
-  OkUninstallBridge,
+  PsUninstallBridge,
   UninstallDispatchResult,
   UninstallScreenSpec,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { UninstallApp } from './UninstallApp';
 
 function stubBridge(ready: () => Promise<UninstallDispatchResult>): void {
-  window.okUninstall = {
+  window.psUninstall = {
     ready,
     send: (): Promise<UninstallDispatchResult> => Promise.resolve({ kind: 'accepted' }),
-  } satisfies OkUninstallBridge;
+  } satisfies PsUninstallBridge;
 }
 
 const sendsScreen = (spec: UninstallScreenSpec) => (): Promise<UninstallDispatchResult> =>
@@ -20,13 +20,13 @@ const sendsScreen = (spec: UninstallScreenSpec) => (): Promise<UninstallDispatch
 describe('UninstallApp routing', () => {
   afterEach(() => {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
   });
 
   test('mounts the picker for a picker screen', async () => {
     stubBridge(sendsScreen({ kind: 'picker', projects: [] }));
     render(<UninstallApp />);
-    expect(await screen.findByRole('heading', { name: 'Uninstall OpenKnowledge?' })).toBeDefined();
+    expect(await screen.findByRole('heading', { name: 'Uninstall Palimpsest?' })).toBeDefined();
   });
 
   test('mounts the survey for a survey screen', async () => {
@@ -39,14 +39,14 @@ describe('UninstallApp routing', () => {
     stubBridge(sendsScreen({ kind: 'progress' }));
     render(<UninstallApp />);
     expect(
-      await screen.findByRole('heading', { name: 'Removing OpenKnowledge files…' }),
+      await screen.findByRole('heading', { name: 'Removing Palimpsest files…' }),
     ).toBeDefined();
   });
 
   test('keeps progress mounted until cleanup supplies a result, then replaces it', async () => {
     let complete = false;
     const send = vi.fn(async (): Promise<UninstallDispatchResult> => ({ kind: 'accepted' }));
-    window.okUninstall = {
+    window.psUninstall = {
       ready: async () => ({
         kind: 'screen',
         screen: complete
@@ -111,7 +111,7 @@ test('a failed progress bridge becomes dismissible without claiming cleanup fini
   } finally {
     cleanup();
     close.mockRestore();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
   }
 });
 
@@ -129,7 +129,7 @@ test('a progress result wait has a deadline even while main keeps answering prog
     expect(screen.queryByRole('status')).toBeNull();
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
     vi.useRealTimers();
   }
 });
@@ -148,7 +148,7 @@ test('does not poll a progress window that will be closed by the original app', 
     expect(ready).toHaveBeenCalledOnce();
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
     vi.useRealTimers();
   }
 });
@@ -168,11 +168,11 @@ test('a transient progress timeout retries and still displays the completed resu
     await act(async () => {
       await vi.advanceTimersByTimeAsync(6000);
     });
-    expect(screen.getByRole('heading', { name: 'OpenKnowledge files were removed' })).toBeDefined();
+    expect(screen.getByRole('heading', { name: 'Palimpsest files were removed' })).toBeDefined();
     expect(screen.queryByText('Unable to show the cleanup result')).toBeNull();
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
     vi.useRealTimers();
   }
 });
@@ -185,7 +185,7 @@ test('an unavailable result does not instruct the user to use a missing log acti
     expect(screen.queryByText(/Check the cleanup log/)).toBeNull();
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
   }
 });
 
@@ -212,16 +212,16 @@ test('successful progress responses reset the transient failure budget', async (
     await act(async () => {
       await vi.advanceTimersByTimeAsync(2000);
     });
-    expect(screen.getByRole('heading', { name: 'OpenKnowledge files were removed' })).toBeDefined();
+    expect(screen.getByRole('heading', { name: 'Palimpsest files were removed' })).toBeDefined();
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
     vi.useRealTimers();
   }
 });
 
 test('a missing bridge is terminal immediately', async () => {
-  window.okUninstall = undefined;
+  window.psUninstall = undefined;
   try {
     await act(async () => {
       render(<UninstallApp />);
@@ -254,7 +254,7 @@ test('three consecutive progress failures stop polling', async () => {
     expect(ready).toHaveBeenCalledTimes(4);
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
     vi.useRealTimers();
   }
 });
@@ -272,6 +272,6 @@ test('an unexpected protocol response is terminal without retrying', async () =>
     expect(ready).toHaveBeenCalledOnce();
   } finally {
     cleanup();
-    window.okUninstall = undefined;
+    window.psUninstall = undefined;
   }
 });

@@ -116,7 +116,7 @@ export default async function afterPack(context) {
   if (!existsSync(electronHelperStub)) {
     throw new Error(
       `[afterPack] Electron Helper stub not found at ${electronHelperStub}. ` +
-        `Cannot clone it into the OpenKnowledge Server helper bundle.`,
+        `Cannot clone it into the Palimpsest Server helper bundle.`,
     );
   }
   const serverHelperMacOsDir = dirname(serverHelperBinary);
@@ -165,7 +165,7 @@ export default async function afterPack(context) {
     );
   }
   console.log(
-    `[afterPack] cloned Electron Helper stub into OpenKnowledge Server.app MacOS slot at ${serverHelperBinary}`,
+    `[afterPack] cloned Electron Helper stub into Palimpsest Server.app MacOS slot at ${serverHelperBinary}`,
   );
 
   const resourcesDir = join(appOutDir, `${appName}.app`, 'Contents', 'Resources');

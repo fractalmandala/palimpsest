@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { ensureProjectGit } from '@inkeep/open-knowledge-server';
+import { ensureProjectGit } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -79,7 +79,7 @@ async function setupGitRepoWithBranches(
 
 describe('T5: Branch switch while tab open', () => {
   test('REPRO: tab synced to main, switch to feature — content settles to B without bleed', async () => {
-    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-branch-switch-')));
+    const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-branch-switch-')));
     await setupGitRepoWithBranches(contentDir, 'test-doc', CONTENT_A, CONTENT_B);
 
     const server = await createInspectableServer({
@@ -207,10 +207,10 @@ describe('T5: Branch switch while tab open', () => {
     expect((diskAfter.match(/\[\[feature-sibling\]\]/g) ?? []).length).toBe(1);
     expect((diskAfter.match(/\[\[main-sibling\]\]/g) ?? []).length).toBe(0);
 
-    const ystateDir = join(contentDir, '.ok', 'local', 'ystate');
+    const ystateDir = join(contentDir, '.ps', 'local', 'ystate');
     expect(existsSync(ystateDir)).toBe(false);
 
-    const expectedDbName = `ok-ydoc:main:${serverInstanceId}:test-doc`;
+    const expectedDbName = `ps-ydoc:main:${serverInstanceId}:test-doc`;
     await pollUntil(() => deletedDbs.includes(expectedDbName), 10_000, 50);
     expect(deletedDbs).toContain(expectedDbName);
   }, 45_000);

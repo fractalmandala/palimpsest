@@ -1,4 +1,4 @@
-import { CodeBlockFidelity as BaseCodeBlockFidelity } from '@inkeep/open-knowledge-core/extensions/code-block-fidelity';
+import { CodeBlockFidelity as BaseCodeBlockFidelity } from '@palimpsest/core/extensions/code-block-fidelity';
 import { textblockTypeInputRule } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import gherkinGrammar from 'highlight.js/lib/languages/gherkin';

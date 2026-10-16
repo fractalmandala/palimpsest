@@ -2,7 +2,7 @@ import { Trans } from '@lingui/react/macro';
 import { MultiFileDiff } from '@pierre/diffs/react';
 import type * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { okPierreTheme } from '@/lib/pierre-theme';
+import { psPierreTheme } from '@/lib/pierre-theme';
 
 interface ActivityPanelDiffViewProps {
   before: string;
@@ -92,7 +92,7 @@ export function ActivityPanelDiffView({
             diffStyle: 'unified',
             overflow: 'wrap',
             maxLineDiffLength: MAX_LINE_DIFF_LENGTH,
-            theme: okPierreTheme(),
+            theme: psPierreTheme(),
             parseDiffOptions: PARSE_DIFF_OPTIONS,
             disableFileHeader: true,
             diffIndicators: 'classic',

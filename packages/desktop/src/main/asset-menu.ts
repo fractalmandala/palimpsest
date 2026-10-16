@@ -1,4 +1,4 @@
-import { menuLabelForPlatform, NATIVE_MENU_LABELS } from '@inkeep/open-knowledge-core';
+import { menuLabelForPlatform, NATIVE_MENU_LABELS } from '@palimpsest/core';
 import type { BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
 import { getLogger } from './desktop-logger.ts';
 import { type MenuTranslator, translateEnglish } from './menu-translator.ts';

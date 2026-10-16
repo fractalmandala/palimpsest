@@ -11,7 +11,7 @@ function settingsSectionHash(sectionId: string): string {
   return `#settings/${sectionId}`;
 }
 
-const SECTION_INTENT_EVENT = 'open-knowledge:settings-section-intent';
+const SECTION_INTENT_EVENT = 'palimpsest:settings-section-intent';
 
 export function subscribeToSettingsSection(onSection: (sectionId: string) => void): () => void {
   if (typeof window === 'undefined') return () => {};

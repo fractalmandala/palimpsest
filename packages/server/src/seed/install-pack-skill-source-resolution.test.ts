@@ -12,8 +12,8 @@ describe('resolvePackSkillSources', () => {
   });
 
   test('resolves against the running server bundle, not a co-installed desktop', () => {
-    resolvePackSkillSources('okf');
+    resolvePackSkillSources('psf');
 
-    expect(listPackSkillSources).toHaveBeenCalledWith('okf', { checkDesktop: false });
+    expect(listPackSkillSources).toHaveBeenCalledWith('psf', { checkDesktop: false });
   });
 });

@@ -58,7 +58,7 @@ export function replaceParagraphs(document: Y.Doc, paragraphs: string[]): void {
 }
 
 export async function createReceiptFixture(initial = 'initial\n') {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-publication-receipt-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-publication-receipt-')));
   const docName = 'receipt';
   const docPath = join(contentDir, `${docName}.md`);
   const documents = new Set<Document>();

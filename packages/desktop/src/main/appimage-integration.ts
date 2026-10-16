@@ -13,12 +13,12 @@ export function buildAppImageHandlerDesktopEntry(appImagePath: string): string {
   return [
     '[Desktop Entry]',
     'Type=Application',
-    'Name=OpenKnowledge URL Handler',
+    'Name=Palimpsest URL Handler',
     `Exec=${quoteExecArg(appImagePath)} %U`,
     'Terminal=false',
     'NoDisplay=true',
-    'MimeType=x-scheme-handler/openknowledge;',
-    'StartupWMClass=OpenKnowledge',
+    'MimeType=x-scheme-handler/palimpsest;',
+    'StartupWMClass=Palimpsest',
     '',
   ].join('\n');
 }
@@ -72,7 +72,7 @@ export async function registerAppImageDeepLinks(
 
   for (const [cmd, args] of [
     ['update-desktop-database', [applicationsDir]],
-    ['xdg-mime', ['default', APPIMAGE_HANDLER_DESKTOP_NAME, 'x-scheme-handler/openknowledge']],
+    ['xdg-mime', ['default', APPIMAGE_HANDLER_DESKTOP_NAME, 'x-scheme-handler/palimpsest']],
   ] as const) {
     execFileFn(cmd, [...args], (err) => {
       if (err) {
@@ -86,7 +86,7 @@ export async function registerAppImageDeepLinks(
 
   deps.log?.info(
     { desktopFilePath, appImagePath },
-    '[appimage-integration] openknowledge:// handler entry written',
+    '[appimage-integration] palimpsest:// handler entry written',
   );
   return { status: 'registered', desktopFilePath };
 }

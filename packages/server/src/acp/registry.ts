@@ -5,7 +5,7 @@ import {
   ACP_AGENT_EDITOR_ID_MAP,
   ACP_FEATURED_AGENT_IDS,
   type EditorId,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { PinoLogger } from '../logger.ts';
 
 const ACP_REGISTRY_URL = 'https://cdn.agentclientprotocol.com/registry/v1/latest/registry.json';

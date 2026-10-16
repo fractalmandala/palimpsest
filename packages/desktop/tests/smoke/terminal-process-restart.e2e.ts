@@ -44,7 +44,7 @@ import {
 } from './_helpers/terminal-tabs.test-helper';
 
 const TARGET = resolveDesktopTarget();
-const ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const PRIMARY_MODIFIER = process.platform === 'darwin' ? 'Meta' : 'Control';
 const QUIT_SAMPLES = process.platform === 'win32' ? 50 : 1;
 const SECOND_TAB_LABEL = process.platform === 'win32' ? 'process second' : 'Terminal 2';
@@ -56,11 +56,11 @@ interface RestartSeed {
 }
 
 function seedRestartProfile(): RestartSeed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ok-terminal-restart-home-')));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-terminal-restart-project-')));
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
-  writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), 'ps-terminal-restart-home-')));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-terminal-restart-project-')));
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
+  writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
   writeFileSync(join(projectDir, 'start.md'), '# Terminal restart\n');
   seedTerminalShellProfiles(tmpHome, { posixRestrictPath: true });
   const userDataDir = userDataDirFor(tmpHome);
@@ -82,7 +82,7 @@ function seedRestartProfile(): RestartSeed {
 }
 
 async function launchRestartProfile(seed: RestartSeed): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(seed.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(seed.projectDir)}&doc=start`;
   return electron.launch(
     desktopLaunchOptions({
       target: TARGET,
@@ -93,8 +93,8 @@ async function launchRestartProfile(seed: RestartSeed): Promise<ElectronApplicat
           restrictPath: true,
           pinPosixZsh: true,
         }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
       },
     }),
   );
@@ -133,7 +133,7 @@ async function dispatchRendererMenuAction(
   action: 'move-terminal' | 'toggle-terminal',
 ): Promise<void> {
   await page.evaluate(async (menuAction) => {
-    const menu = window.okDesktop?.menu;
+    const menu = window.psDesktop?.menu;
     if (!menu) throw new Error('renderer menu bridge is unavailable');
     await menu.dispatch({ kind: 'menu-action', action: menuAction });
   }, action);
@@ -191,7 +191,7 @@ async function arrangeTabsInRightColumn(
 
 async function applyPersistedRightTerminalWidth(page: Page, width: number): Promise<number> {
   await page.evaluate((nextWidth) => {
-    localStorage.setItem('ok-terminal-right-width-v1', String(nextWidth));
+    localStorage.setItem('ps-terminal-right-width-v1', String(nextWidth));
   }, width);
   await page.reload({ waitUntil: 'domcontentloaded' });
   const restore = settleBudget('restored right Terminal width', { timeout: 20_000 });
@@ -240,7 +240,7 @@ async function quitAndCollectCrashDumps(
 }
 
 test.describe('terminal process restart', () => {
-  test.skip(!ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1');
+  test.skip(!ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 

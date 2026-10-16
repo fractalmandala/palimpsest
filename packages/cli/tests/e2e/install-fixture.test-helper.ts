@@ -8,12 +8,12 @@ import YAML from 'yaml';
 import { z } from 'zod';
 
 const execute = promisify(execFile);
-export const PARENT = 'ok-cli-fixture-parent';
-export const LEAF = 'ok-cli-fixture-leaf';
-export const PEER = 'ok-cli-fixture-peer';
+export const PARENT = 'ps-cli-fixture-parent';
+export const LEAF = 'ps-cli-fixture-leaf';
+export const PEER = 'ps-cli-fixture-peer';
 
 export async function createInstallFixture(optionalParent = false) {
-  const root = mkdtempSync(join(tmpdir(), 'ok-cli-graph-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-cli-graph-'));
   const packageDir = join(root, 'packages', 'cli');
   const packDest = join(root, 'pack');
   const installPrefix = join(root, 'install');
@@ -135,7 +135,7 @@ export async function createInstallFixture(optionalParent = false) {
       }),
     );
     const manifest = {
-      name: '@inkeep/open-knowledge',
+      name: '@palimpsest/cli',
       version: '1.0.0',
       type: 'module',
       bin: { ok: 'dist/cli.mjs' },

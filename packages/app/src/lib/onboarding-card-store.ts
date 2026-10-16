@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-export const ONBOARDING_CARD_STORAGE_KEY = 'ok-onboarding-card-v1';
+export const ONBOARDING_CARD_STORAGE_KEY = 'ps-onboarding-card-v1';
 
 type OnboardingStep = 'file' | 'askedAi';
 

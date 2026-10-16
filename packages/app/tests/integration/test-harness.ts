@@ -31,7 +31,7 @@ import {
   type SyncMode,
   sharedExtensions,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 
 export { type BridgeInvariantViolation, BridgeInvariantViolationError, type InvariantViolation };
 
@@ -46,7 +46,7 @@ import {
   OBSERVER_SYNC_ORIGIN,
   type ServerInstance,
   type ServerOptions,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { getSchema } from '@tiptap/core';
 import { yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
@@ -116,7 +116,7 @@ export async function createTestServer(options: CreateTestServerOptions = {}): P
   const contentDir =
     options.contentDir !== undefined
       ? realpathSync(options.contentDir)
-      : realpathSync(mkdtempSync(join(tmpdir(), 'ok-test-')));
+      : realpathSync(mkdtempSync(join(tmpdir(), 'ps-test-')));
   const createdProjectDir = ephemeral && options.projectDir === undefined;
   let ownedHomeDir: string | null = null;
   let projectDir: string | undefined;
@@ -124,7 +124,7 @@ export async function createTestServer(options: CreateTestServerOptions = {}): P
   let srv: ServerInstance;
   try {
     if (options.configHomedirOverride === undefined) {
-      ownedHomeDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-test-home-')));
+      ownedHomeDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-test-home-')));
     }
     const homeOverride = options.configHomedirOverride ?? (ownedHomeDir as string);
 
@@ -135,7 +135,7 @@ export async function createTestServer(options: CreateTestServerOptions = {}): P
     projectDir = options.projectDir
       ? realpathSync(options.projectDir)
       : ephemeral
-        ? realpathSync(mkdtempSync(join(tmpdir(), 'ok-ephemeral-test-')))
+        ? realpathSync(mkdtempSync(join(tmpdir(), 'ps-ephemeral-test-')))
         : contentDir;
 
     if (!ephemeral) {
@@ -144,13 +144,13 @@ export async function createTestServer(options: CreateTestServerOptions = {}): P
       }
 
       if (options.contentDir === undefined) {
-        mkdirSync(join(contentDir, '.ok'), { recursive: true });
+        mkdirSync(join(contentDir, '.ps'), { recursive: true });
         const seedConfig =
           options.seedProjectConfigYml ??
           (options.markdownlintEnabled
             ? 'contentRules:\n  markdownlint:\n    enabled: true\n'
             : '');
-        writeFileSync(join(contentDir, '.ok', 'config.yml'), seedConfig, 'utf-8');
+        writeFileSync(join(contentDir, '.ps', 'config.yml'), seedConfig, 'utf-8');
       }
 
       if (options.contentDir === undefined && (options.seedSkillHostRoot ?? true)) {
@@ -402,7 +402,7 @@ export async function assertIDBEmpty(
   branch: string = 'main',
 ): Promise<void> {
   if (typeof indexedDB === 'undefined') return;
-  const dbName = `ok-ydoc:${branch}:${serverInstanceId}:${docName}`;
+  const dbName = `ps-ydoc:${branch}:${serverInstanceId}:${docName}`;
   const dbs = await indexedDB.databases();
   const info = dbs.find((d) => d.name === dbName);
   if (info === undefined) return;
@@ -1100,7 +1100,7 @@ export async function createInspectableServer(
   const contentDir =
     options.contentDir !== undefined
       ? realpathSync(options.contentDir)
-      : realpathSync(mkdtempSync(join(tmpdir(), 'ok-restartable-')));
+      : realpathSync(mkdtempSync(join(tmpdir(), 'ps-restartable-')));
 
   if (options.contentDir === undefined) {
     writeFileSync(join(contentDir, 'test-doc.md'), '', 'utf-8');
@@ -1437,12 +1437,12 @@ export async function createSyncWiredTestServer(
   const mode = options.mode ?? 'full';
   const originSeed = options.originSeed ?? { 'guide.md': '# Guide\n\nseed content\n' };
 
-  const originDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-sync-origin-')));
+  const originDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-sync-origin-')));
   await runGit(originDir, ['init', '--bare']);
   configureTestGitRepository(originDir);
   await runGit(originDir, ['symbolic-ref', 'HEAD', 'refs/heads/main']);
 
-  const authorDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-sync-author-')));
+  const authorDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-sync-author-')));
   await runGit(authorDir, ['init', '--initial-branch=main']);
   configureTestGitRepository(authorDir);
   await runGit(authorDir, ['config', 'user.email', 'author@example.com']);
@@ -1453,7 +1453,7 @@ export async function createSyncWiredTestServer(
   await runGit(authorDir, ['commit', '-m', 'seed origin']);
   await runGit(authorDir, ['push', 'origin', 'main']);
 
-  const cloneParent = realpathSync(mkdtempSync(join(tmpdir(), 'ok-sync-clone-')));
+  const cloneParent = realpathSync(mkdtempSync(join(tmpdir(), 'ps-sync-clone-')));
   const clonePath = join(cloneParent, 'content');
   await runGit(cloneParent, ['clone', originDir, clonePath]);
   configureTestGitRepository(clonePath);
@@ -1461,10 +1461,10 @@ export async function createSyncWiredTestServer(
   await runGit(contentDir, ['config', 'user.email', 'follower@example.com']);
   await runGit(contentDir, ['config', 'user.name', 'Follower']);
 
-  mkdirSync(join(contentDir, '.ok', LOCAL_DIR), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'config.yml'), options.projectConfigYml ?? '', 'utf-8');
+  mkdirSync(join(contentDir, '.ps', LOCAL_DIR), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'config.yml'), options.projectConfigYml ?? '', 'utf-8');
   writeFileSync(
-    join(contentDir, '.ok', LOCAL_DIR, 'config.yml'),
+    join(contentDir, '.ps', LOCAL_DIR, 'config.yml'),
     `autoSync:\n  mode: ${mode}\n`,
     'utf-8',
   );

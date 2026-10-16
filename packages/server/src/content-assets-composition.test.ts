@@ -43,7 +43,7 @@ function wire(path: string, headers: Record<string, string> = {}) {
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(resolve(tmpdir(), 'ok-native-content-'));
+  root = mkdtempSync(resolve(tmpdir(), 'ps-native-content-'));
   const content = resolve(root, 'content');
   const dist = resolve(root, 'dist');
   for (const base of [content, dist]) {
@@ -64,7 +64,7 @@ beforeAll(async () => {
   writeFileSync(resolve(content, 'docs', 'page.html'), '<h1>content HTML</h1>');
   writeFileSync(resolve(content, 'docs', 'large.png'), binary);
   writeFileSync(resolve(content, 'docs', 'ignored.txt'), 'ignored text readable by explicit API');
-  writeFileSync(resolve(content, '.okignore'), 'docs/ignored.txt\n');
+  writeFileSync(resolve(content, '.psignore'), 'docs/ignored.txt\n');
   const createHttpApp = httpApp.createHttpApp;
   const composition = vi.spyOn(httpApp, 'createHttpApp').mockImplementation((options) =>
     createHttpApp({

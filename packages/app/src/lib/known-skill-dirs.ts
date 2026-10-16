@@ -1,4 +1,4 @@
-import type { SkillsListEntry } from '@inkeep/open-knowledge-core/schemas/api';
+import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 
 let knownDirs: ReadonlySet<string> = new Set();
 

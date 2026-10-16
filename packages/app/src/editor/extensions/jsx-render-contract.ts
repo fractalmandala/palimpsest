@@ -1,4 +1,4 @@
-import { incrementJsxRenderFailure } from '@inkeep/open-knowledge-core/metrics/parse-health';
+import { incrementJsxRenderFailure } from '@palimpsest/core/metrics/parse-health';
 import type { Editor } from '@tiptap/core';
 import type { Node as PmNode } from '@tiptap/pm/model';
 import type { ErrorInfo } from 'react';

@@ -158,8 +158,8 @@ describe('createSubscribeCardStore', () => {
 });
 
 describe('newsletter state saved by earlier releases', () => {
-  test('the storage key is still ok-subscribe-card-v1', () => {
-    expect(SUBSCRIBE_CARD_STORAGE_KEY).toBe('ok-subscribe-card-v1');
+  test('the storage key is still ps-subscribe-card-v1', () => {
+    expect(SUBSCRIBE_CARD_STORAGE_KEY).toBe('ps-subscribe-card-v1');
   });
 
   test('offers used up across three versions read back unchanged and stay ineligible', () => {
@@ -168,7 +168,7 @@ describe('newsletter state saved by earlier releases', () => {
       dismissed: false,
       shownVersions: ['0.9.0', '1.0.0', '1.1.0'],
     };
-    const s = memoryStorage({ 'ok-subscribe-card-v1': JSON.stringify(stored) });
+    const s = memoryStorage({ 'ps-subscribe-card-v1': JSON.stringify(stored) });
     const read = readPersistedState(s);
     expect(read).toEqual(stored);
     expect(isSubscribeCombinedEligible(read, '1.2.0')).toBe(false);
@@ -176,7 +176,7 @@ describe('newsletter state saved by earlier releases', () => {
 
   test('a subscribed and dismissed newsletter state reads back with both flags set', () => {
     const stored = { subscribed: true, dismissed: true, shownVersions: ['1.0.0'] };
-    const s = memoryStorage({ 'ok-subscribe-card-v1': JSON.stringify(stored) });
+    const s = memoryStorage({ 'ps-subscribe-card-v1': JSON.stringify(stored) });
     const read = readPersistedState(s);
     expect(read).toEqual(stored);
     expect(read.subscribed).toBe(true);

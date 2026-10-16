@@ -1,13 +1,13 @@
 /** WYSIWYG paste/drop dispatcher — 5-branch router per precedent #19(b). */
 
-import type { MarkdownManager } from '@inkeep/open-knowledge-core/markdown';
-import { htmlToMdast, mdastToMarkdown } from '@inkeep/open-knowledge-core/markdown/html-to-mdast';
+import type { MarkdownManager } from '@palimpsest/core/markdown';
+import { htmlToMdast, mdastToMarkdown } from '@palimpsest/core/markdown/html-to-mdast';
 import type { JSONContent } from '@tiptap/core';
 import { Fragment, type Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { type EditorState, TextSelection, type Transaction } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { PREVENT_AUTOLINK_META } from '../gfm-autolink-plugin.ts';
-import { OK_INTERNAL_CLIPBOARD_MIME } from './comment-scrub.ts';
+import { PS_INTERNAL_CLIPBOARD_MIME } from './comment-scrub.ts';
 import { type ClipboardSource, detectSource } from './detect-source.ts';
 import {
   type ClipboardBranch,
@@ -90,7 +90,7 @@ function handleDropOrPaste(
     }
   }
 
-  const internal = dt.getData(OK_INTERNAL_CLIPBOARD_MIME);
+  const internal = dt.getData(PS_INTERNAL_CLIPBOARD_MIME);
   if (internal && tryBranchMarkdown(view, internal, deps, 'internal', source)) {
     logSourceDetected({ view: 'wysiwyg', branch: 'internal', source });
     logIfSlow(start, { op: surface, view: 'wysiwyg', branch: 'internal', source });

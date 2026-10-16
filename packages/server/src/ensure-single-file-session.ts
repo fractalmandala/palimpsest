@@ -2,7 +2,7 @@ import { type SpawnOptions, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { realpath as fsRealpath } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { sleep as defaultSleep } from '@inkeep/open-knowledge-core';
+import { sleep as defaultSleep } from '@palimpsest/core';
 import { withHiddenWindowsConsole } from './child-process-windows-hide.ts';
 import { isSupportedDocFile } from './doc-extensions.ts';
 import { createOffCwdResolverDeps, resolveOffCwdTarget } from './off-cwd-resolver.ts';
@@ -78,7 +78,7 @@ export function createEnsureSingleFileSession(): (absFile: string) => Promise<bo
       }
       const env: NodeJS.ProcessEnv = {
         ...process.env,
-        OK_SINGLE_FILE_NO_OPEN: '1',
+        PS_SINGLE_FILE_NO_OPEN: '1',
         ELECTRON_RUN_AS_NODE: '1',
       };
       const child = spawn(

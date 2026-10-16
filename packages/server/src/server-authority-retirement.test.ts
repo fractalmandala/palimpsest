@@ -10,11 +10,11 @@ import { tracedAtomicFs } from './fs-traced.ts';
 test.each(['stalled', 'completes'] as const)(
   'a %s HTTP mutation respects the pre-flush shutdown budget',
   async (outcome) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-stalled-mutation-'));
-    const replacementProject = mkdtempSync(join(tmpdir(), 'ok-stalled-replacement-'));
-    mkdirSync(join(replacementProject, '.ok'));
-    writeFileSync(join(replacementProject, '.ok', 'config.yml'), '');
-    writeFileSync(join(replacementProject, '.ok', '.gitignore'), '*\n');
+    const root = mkdtempSync(join(tmpdir(), 'ps-stalled-mutation-'));
+    const replacementProject = mkdtempSync(join(tmpdir(), 'ps-stalled-replacement-'));
+    mkdirSync(join(replacementProject, '.ps'));
+    writeFileSync(join(replacementProject, '.ps', 'config.yml'), '');
+    writeFileSync(join(replacementProject, '.ps', '.gitignore'), '*\n');
     writeFileSync(join(root, 'note.md'), '# Before\n');
     writeFileSync(join(root, 'live.md'), '# Live\n');
     const staged = Promise.withResolvers<void>();
@@ -110,13 +110,13 @@ test.each(['stalled', 'completes'] as const)(
 );
 
 test('a pending document load retains ownership until it settles and retires', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-loading-authority-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-loading-authority-'));
   const contentDir = join(root, 'content');
   const replacementProject = join(root, 'replacement');
   mkdirSync(contentDir);
-  mkdirSync(join(replacementProject, '.ok'), { recursive: true });
-  writeFileSync(join(replacementProject, '.ok', 'config.yml'), '');
-  writeFileSync(join(replacementProject, '.ok', '.gitignore'), '');
+  mkdirSync(join(replacementProject, '.ps'), { recursive: true });
+  writeFileSync(join(replacementProject, '.ps', 'config.yml'), '');
+  writeFileSync(join(replacementProject, '.ps', '.gitignore'), '');
   writeFileSync(join(contentDir, 'note.md'), '# Before\n');
   const entered = Promise.withResolvers<void>();
   const release = Promise.withResolvers<void>();
@@ -175,13 +175,13 @@ test('a pending document load retains ownership until it settles and retires', a
 test.each(['internal', 'http'] as const)(
   'retirement protects a replacement from a staged %s conflict write',
   async (entry) => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-retirement-authority-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-retirement-authority-'));
     const contentDir = join(root, 'content');
     const replacementProject = join(root, 'replacement');
     for (const project of [root, replacementProject]) {
-      mkdirSync(join(project, '.ok'), { recursive: true });
-      writeFileSync(join(project, '.ok', 'config.yml'), '');
-      writeFileSync(join(project, '.ok', '.gitignore'), '');
+      mkdirSync(join(project, '.ps'), { recursive: true });
+      writeFileSync(join(project, '.ps', 'config.yml'), '');
+      writeFileSync(join(project, '.ps', '.gitignore'), '');
     }
     mkdirSync(contentDir);
     writeFileSync(join(contentDir, 'note.md'), '# Before\n');

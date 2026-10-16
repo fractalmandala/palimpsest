@@ -62,19 +62,19 @@ function seedThemeHome(
     colorThemeDark: 'saved-personal-dark',
   },
 ): SeededThemeHome {
-  const tmpHome = mkdtempSync(join(tmpdir(), 'ok-saved-theme-paint-home-'));
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-saved-theme-paint-project-'));
-  mkdirSync(join(projectDir, '.ok'), { recursive: true });
+  const tmpHome = mkdtempSync(join(tmpdir(), 'ps-saved-theme-paint-home-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-saved-theme-paint-project-'));
+  mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(
-    join(projectDir, '.ok', 'config.yml'),
+    join(projectDir, '.ps', 'config.yml'),
     "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
   );
   writeFileSync(join(projectDir, 'paint.md'), '# Saved theme paint\n');
 
-  const okDir = join(tmpHome, '.ok');
-  const themesDir = join(okDir, 'themes');
+  const psDir = join(tmpHome, '.ps');
+  const themesDir = join(psDir, 'themes');
   mkdirSync(themesDir, { recursive: true });
-  writeFileSync(join(okDir, 'global.yml'), stringify({ appearance }));
+  writeFileSync(join(psDir, 'global.yml'), stringify({ appearance }));
   writeFileSync(
     join(themesDir, 'personal-light.yaml'),
     savedThemeYaml('Personal Light', 'light', LIGHT_BACKGROUND),
@@ -111,7 +111,7 @@ async function launchApp(tmpHome: string): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
       },
       timeout: 30_000,
     }),
@@ -124,7 +124,7 @@ async function findEditorWindow(app: ElectronApplication): Promise<Page> {
       async () => {
         for (const page of app.windows()) {
           const mode = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (mode === 'editor') return true;
         }
@@ -135,7 +135,7 @@ async function findEditorWindow(app: ElectronApplication): Promise<Page> {
     .toBe(true);
 
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'editor') return page;
   }
   throw new Error('editor window vanished between poll resolution and read');
@@ -161,7 +161,7 @@ async function readPaintedBackground(page: Page): Promise<{
 }
 
 test.describe('saved theme paint smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 

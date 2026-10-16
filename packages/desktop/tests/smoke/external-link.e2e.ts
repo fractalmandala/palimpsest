@@ -7,21 +7,21 @@ import { desktopLaunchOptions, resolveDesktopTarget } from './_helpers/launch-de
 import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
 test.describe('external-link safety-net delegation', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'Smoke uses open(1) for the deep-link drive — macOS-only.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('window.open(https://...) routes to shell.openExternal via safety net', async ({
     captureStderrFor,
   }) => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-external-link-'));
-    mkdirSync(join(projectDir, '.ok'), { recursive: true });
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-external-link-'));
+    mkdirSync(join(projectDir, '.ps'), { recursive: true });
     writeFileSync(
-      join(projectDir, '.ok', 'config.yml'),
+      join(projectDir, '.ps', 'config.yml'),
       "content:\n  dir: '.'\n  include: ['**/*.md']\n  exclude: []\n",
     );
     writeFileSync(
@@ -36,7 +36,7 @@ test.describe('external-link safety-net delegation', () => {
         timeout: 30_000,
         env: {
           ...process.env,
-          OK_TEST_OPEN_PROJECT: projectDir,
+          PS_TEST_OPEN_PROJECT: projectDir,
         },
       }),
     );
@@ -57,7 +57,7 @@ test.describe('external-link safety-net delegation', () => {
 
     const _firstWindow = await app.firstWindow({ timeout: 15_000 });
     const { execSync } = await import('node:child_process');
-    const deepLink = `openknowledge://open?project=${encodeURIComponent(projectDir)}&doc=doc`;
+    const deepLink = `palimpsest://open?project=${encodeURIComponent(projectDir)}&doc=doc`;
     execSync(`open -g "${deepLink}"`, { stdio: 'pipe' });
 
     let editorPage: import('@playwright/test').Page | undefined;
@@ -76,7 +76,7 @@ test.describe('external-link safety-net delegation', () => {
     await configureDesktopGitRepositories(editorPage, projectDir);
 
     await editorPage.evaluate(() => {
-      window.open('https://github.com/inkeep/open-knowledge', '_blank', 'noopener,noreferrer');
+      window.open('https://github.com/fractalmandala/palimpsest', '_blank', 'noopener,noreferrer');
     });
 
     await expect(async () => {
@@ -84,14 +84,14 @@ test.describe('external-link safety-net delegation', () => {
         const g = globalThis as unknown as { __okExternalCalls?: string[] };
         return g.__okExternalCalls ?? [];
       });
-      expect(calls).toContain('https://github.com/inkeep/open-knowledge');
+      expect(calls).toContain('https://github.com/fractalmandala/palimpsest');
     }).toPass({ timeout: 15_000 });
 
     await editorPage.evaluate(async () => {
       type Bridge = { shell: { openExternal: (url: string) => Promise<void> } };
-      const bridge = (window as unknown as { okDesktop?: Bridge }).okDesktop;
+      const bridge = (window as unknown as { psDesktop?: Bridge }).psDesktop;
       if (!bridge?.shell?.openExternal) {
-        throw new Error('window.okDesktop.shell.openExternal missing — bridge not loaded');
+        throw new Error('window.psDesktop.shell.openExternal missing — bridge not loaded');
       }
       await bridge.shell.openExternal('https://docs.example.com/help');
     });

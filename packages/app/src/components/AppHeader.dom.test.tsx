@@ -1,4 +1,4 @@
-import { getParseHealth, resetParseHealth } from '@inkeep/open-knowledge-core';
+import { getParseHealth, resetParseHealth } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ComponentProps, ReactNode } from 'react';
@@ -107,7 +107,7 @@ function setElectronHost(
   enabled: boolean,
   { platform, channel = 'latest', instanceLabel, menu }: DesktopHostOptions = {},
 ) {
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: enabled
       ? {

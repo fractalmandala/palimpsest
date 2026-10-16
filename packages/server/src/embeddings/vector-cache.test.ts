@@ -11,7 +11,7 @@ function vec(...xs: number[]): Float32Array {
 
 let dir: string;
 beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), 'ok-veccache-'));
+  dir = mkdtempSync(join(tmpdir(), 'ps-veccache-'));
 });
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });

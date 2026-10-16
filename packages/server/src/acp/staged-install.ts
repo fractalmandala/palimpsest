@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { readdir, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import { FileLockTimeoutError, withFileLock } from '@inkeep/open-knowledge-core/server';
+import { FileLockTimeoutError, withFileLock } from '@palimpsest/core/server';
 import { tracedMkdir, tracedRename, tracedRm } from '../fs-traced.ts';
 import type { PinoLogger } from '../logger.ts';
 

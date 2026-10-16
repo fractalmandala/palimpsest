@@ -9,7 +9,7 @@ import {
   defaultBugReportZipPath,
   type LanguageMetadata,
   redactContent,
-} from '@inkeep/open-knowledge';
+} from '@palimpsest/cli';
 import {
   BUG_REPORT_ATTACHMENT_CONTENT_TYPES,
   BUG_REPORT_ATTACHMENT_EXTENSIONS,
@@ -21,19 +21,19 @@ import {
   isReportIdShape,
   MAX_BUG_REPORT_ATTACHMENTS,
   MAX_BUG_REPORT_ATTACHMENTS_TOTAL_BYTES,
-  type OkBugReportCrashAckResult,
-  type OkBugReportCrashDumpAvailability,
-  type OkBugReportCreateResult,
-  type OkBugReportScreenshot,
-  type OkBugReportSendMetadata,
-  type OkBugReportSendResult,
-  type OkImageAttachmentContentType,
+  type PsBugReportCrashAckResult,
+  type PsBugReportCrashDumpAvailability,
+  type PsBugReportCreateResult,
+  type PsBugReportScreenshot,
+  type PsBugReportSendMetadata,
+  type PsBugReportSendResult,
+  type PsImageAttachmentContentType,
   type ReportBundleLevel,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type {
-  OkBugReportAttachmentInput,
-  OkBugReportSendInput,
-} from '@inkeep/open-knowledge-core/desktop-bridge';
+  PsBugReportAttachmentInput,
+  PsBugReportSendInput,
+} from '@palimpsest/core/desktop-bridge';
 import {
   type AgentChatMetadataOutcome,
   type AgentChatStageOutcome,
@@ -55,57 +55,57 @@ import {
 import { isPathWithinProject } from '../path-containment.ts';
 import type { UpdateChannel } from '../state-store.ts';
 
-export interface OkBugReportCreateRequest {
+export interface PsBugReportCreateRequest {
   kind: 'create';
   level: ReportBundleLevel;
   note?: string;
   includeCrashDump?: boolean;
   includeScreenshot?: boolean;
-  attachments?: OkBugReportAttachmentInput[];
+  attachments?: PsBugReportAttachmentInput[];
   agentChatThreadId?: string;
   crashEventId?: string;
 }
 
-interface OkBugReportCaptureScreenshotRequest {
+interface PsBugReportCaptureScreenshotRequest {
   kind: 'capture-screenshot';
 }
 
-interface OkBugReportListRequest {
+interface PsBugReportListRequest {
   kind: 'list';
 }
 
-interface OkBugReportDeleteRequest {
+interface PsBugReportDeleteRequest {
   kind: 'delete';
   id: string;
 }
 
-export type OkBugReportSendRequest = OkBugReportSendInput & { kind: 'send' };
+export type PsBugReportSendRequest = PsBugReportSendInput & { kind: 'send' };
 
-export interface OkBugReportCrashAckRequest {
+export interface PsBugReportCrashAckRequest {
   kind: 'crash-ack';
   eventId: string;
 }
 
-interface OkBugReportCrashDumpAvailabilityRequest {
+interface PsBugReportCrashDumpAvailabilityRequest {
   kind: 'crash-dump-availability';
 }
 
-export interface OkAssetUploadRequestMessage {
+export interface PsAssetUploadRequestMessage {
   kind: 'upload-image';
-  contentType: OkImageAttachmentContentType;
+  contentType: PsImageAttachmentContentType;
   bytes: Uint8Array;
   filename: string;
 }
 
-export type OkBugReportRequest =
-  | OkBugReportCreateRequest
-  | OkAssetUploadRequestMessage
-  | OkBugReportSendRequest
-  | OkBugReportCrashAckRequest
-  | OkBugReportCaptureScreenshotRequest
-  | OkBugReportCrashDumpAvailabilityRequest
-  | OkBugReportListRequest
-  | OkBugReportDeleteRequest;
+export type PsBugReportRequest =
+  | PsBugReportCreateRequest
+  | PsAssetUploadRequestMessage
+  | PsBugReportSendRequest
+  | PsBugReportCrashAckRequest
+  | PsBugReportCaptureScreenshotRequest
+  | PsBugReportCrashDumpAvailabilityRequest
+  | PsBugReportListRequest
+  | PsBugReportDeleteRequest;
 
 interface BugReportDesktopMeta {
   version: string;
@@ -133,7 +133,7 @@ export interface BugReportCreateDeps {
 }
 
 export interface StagedAttachment {
-  contentType: OkImageAttachmentContentType;
+  contentType: PsImageAttachmentContentType;
   bytes: Buffer;
 }
 
@@ -156,7 +156,7 @@ function scrubNoteForSidecar(note: string | undefined): string | undefined {
 
 export function isValidAttachmentContentType(
   value: unknown,
-): value is OkImageAttachmentContentType {
+): value is PsImageAttachmentContentType {
   return (
     typeof value === 'string' &&
     (BUG_REPORT_ATTACHMENT_CONTENT_TYPES as readonly string[]).includes(value)
@@ -167,7 +167,7 @@ function isAttachmentBytes(value: unknown): value is Uint8Array {
   return value instanceof Uint8Array;
 }
 
-function isValidAttachments(value: unknown): value is OkBugReportAttachmentInput[] | undefined {
+function isValidAttachments(value: unknown): value is PsBugReportAttachmentInput[] | undefined {
   if (value === undefined) return true;
   if (!Array.isArray(value) || value.length > MAX_BUG_REPORT_ATTACHMENTS) return false;
   let total = 0;
@@ -180,7 +180,7 @@ function isValidAttachments(value: unknown): value is OkBugReportAttachmentInput
   return total <= MAX_BUG_REPORT_ATTACHMENTS_TOTAL_BYTES;
 }
 
-function isCreateRequest(request: unknown): request is OkBugReportCreateRequest {
+function isCreateRequest(request: unknown): request is PsBugReportCreateRequest {
   if (typeof request !== 'object' || request === null) return false;
   const r = request as Record<string, unknown>;
   return (
@@ -248,7 +248,7 @@ type MinidumpSelection =
 
 function selectMinidump(
   deps: BugReportCreateDeps,
-  request: OkBugReportCreateRequest,
+  request: PsBugReportCreateRequest,
 ): MinidumpSelection {
   if (request.includeCrashDump !== true) return { status: 'not-requested' };
   if (request.crashEventId !== undefined) {
@@ -388,8 +388,8 @@ async function stageAgentChat(
 
 export async function handleBugReportCreate(
   deps: BugReportCreateDeps,
-  request: OkBugReportCreateRequest,
-): Promise<OkBugReportCreateResult> {
+  request: PsBugReportCreateRequest,
+): Promise<PsBugReportCreateResult> {
   if (!isCreateRequest(request)) {
     logIpcError({
       event: 'ipc.error',
@@ -470,13 +470,13 @@ export async function handleBugReportCreate(
   const agentChatTmpPaths: string[] = [];
   try {
     if (screenshotBytes !== null) {
-      screenshotTmpPath = join(tmpdir(), `ok-bugreport-screenshot-${randomUUID()}.png`);
+      screenshotTmpPath = join(tmpdir(), `ps-bugreport-screenshot-${randomUUID()}.png`);
       await writeFile(screenshotTmpPath, screenshotBytes, { mode: 0o600 });
       extraFiles.push({ sourcePath: screenshotTmpPath, zipName: BUG_REPORT_SCREENSHOT_ZIP_NAME });
     }
     for (const [index, attachment] of stagedAttachments.entries()) {
       const extension = BUG_REPORT_ATTACHMENT_EXTENSIONS[attachment.contentType];
-      const tmpPath = join(tmpdir(), `ok-bugreport-attachment-${randomUUID()}.${extension}`);
+      const tmpPath = join(tmpdir(), `ps-bugreport-attachment-${randomUUID()}.${extension}`);
       await writeFile(tmpPath, attachment.bytes, { mode: 0o600 });
       attachmentTmpPaths.push(tmpPath);
       extraFiles.push({
@@ -621,7 +621,7 @@ export interface CaptureScreenshotDeps {
 
 export async function handleBugReportCaptureScreenshot(
   deps: CaptureScreenshotDeps,
-): Promise<OkBugReportScreenshot | null> {
+): Promise<PsBugReportScreenshot | null> {
   const dropExisting = () => {
     const existing = deps.store.get(deps.senderId);
     if (existing !== undefined) {
@@ -728,9 +728,9 @@ export function createBugReportScreenshotHold(
   };
 }
 
-const SUPPORT_EMAIL = 'support@inkeep.com';
+const SUPPORT_EMAIL = 'https://github.com/fractalmandala/palimpsest/issues';
 
-export const DEFAULT_BUG_REPORT_INTAKE_URL = 'https://openknowledge.ai';
+export const DEFAULT_BUG_REPORT_INTAKE_URL = 'https://github.com/fractalmandala/palimpsest';
 
 export function resolveBugReportIntakeUrl(args: { envUrl: string | undefined }): string {
   const trimmed = args.envUrl?.trim();
@@ -810,7 +810,7 @@ function isValidContactEmail(email: unknown): boolean {
   );
 }
 
-function isSendRequest(request: unknown): request is OkBugReportSendRequest {
+function isSendRequest(request: unknown): request is PsBugReportSendRequest {
   if (typeof request !== 'object' || request === null) return false;
   const r = request as Record<string, unknown>;
   if (r.kind !== 'send' || typeof r.zipPath !== 'string') return false;
@@ -831,10 +831,10 @@ function isSendRequest(request: unknown): request is OkBugReportSendRequest {
 function buildBugReportMailto(args: {
   appVersion: string;
   platform: string;
-  metadata?: OkBugReportSendMetadata;
+  metadata?: PsBugReportSendMetadata;
   zipPath?: string;
 }): string {
-  const subject = `OpenKnowledge bug report (v${args.appVersion})`;
+  const subject = `Palimpsest bug report (v${args.appVersion})`;
   const lines: string[] = [];
   if (args.metadata?.note) lines.push(args.metadata.note, '');
   if (args.zipPath) lines.push('Please attach the report file saved at:', args.zipPath, '');
@@ -849,7 +849,7 @@ function buildBugReportMailto(args: {
   return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-interface BugReportWireMetadata extends OkBugReportSendMetadata {
+interface BugReportWireMetadata extends PsBugReportSendMetadata {
   appVersion: string;
   platform: string;
 }
@@ -945,7 +945,7 @@ const logAttachmentSkip = logImageUploadSkip('uploadImageAsset', 'attachment-upl
 
 export interface ImageAssetUpload {
   bytes: Uint8Array;
-  contentType: OkImageAttachmentContentType;
+  contentType: PsImageAttachmentContentType;
   filename: string;
 }
 
@@ -1239,8 +1239,8 @@ async function runSidecarHook(hook: Promise<unknown> | undefined): Promise<void>
 
 export async function handleBugReportSend(
   deps: BugReportSendDeps,
-  request: OkBugReportSendRequest,
-): Promise<OkBugReportSendResult> {
+  request: PsBugReportSendRequest,
+): Promise<PsBugReportSendResult> {
   const hostFacts = { appVersion: deps.appVersion, platform: deps.platform };
   if (!isSendRequest(request)) {
     logIpcError({
@@ -1314,7 +1314,7 @@ export async function handleBugReportSend(
   }
   const scrubbedNote =
     request.metadata.note === undefined ? undefined : redactContent(request.metadata.note).redacted;
-  const metadata: OkBugReportSendMetadata = {
+  const metadata: PsBugReportSendMetadata = {
     level: request.metadata.level,
     systemWide: request.metadata.systemWide,
     projectSlug: request.metadata.projectSlug,
@@ -1421,7 +1421,7 @@ export interface BugReportCrashAckDeps {
   ackCrashEvent(eventId: string): void;
 }
 
-function isCrashAckRequest(request: unknown): request is OkBugReportCrashAckRequest {
+function isCrashAckRequest(request: unknown): request is PsBugReportCrashAckRequest {
   if (typeof request !== 'object' || request === null) return false;
   const r = request as Record<string, unknown>;
   return r.kind === 'crash-ack' && isCrashEventId(r.eventId);
@@ -1429,8 +1429,8 @@ function isCrashAckRequest(request: unknown): request is OkBugReportCrashAckRequ
 
 export function handleBugReportCrashAck(
   deps: BugReportCrashAckDeps,
-  request: OkBugReportCrashAckRequest,
-): OkBugReportCrashAckResult {
+  request: PsBugReportCrashAckRequest,
+): PsBugReportCrashAckResult {
   if (!isCrashAckRequest(request)) {
     logIpcError({
       event: 'ipc.error',
@@ -1447,7 +1447,7 @@ export function handleBugReportCrashAck(
 export function handleBugReportCrashDumpAvailability(deps: {
   newestMinidumpForReport?: () => MinidumpReportLookup;
   logger?: BundleLogger;
-}): OkBugReportCrashDumpAvailability {
+}): PsBugReportCrashDumpAvailability {
   try {
     return { available: (deps.newestMinidumpForReport?.() ?? NO_MINIDUMP_LOOKUP).path !== null };
   } catch (err) {

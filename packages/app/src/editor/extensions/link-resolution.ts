@@ -1,8 +1,8 @@
 import {
   classifyMarkdownHref,
   resolveAssetProjectPath,
-} from '@inkeep/open-knowledge-core/utils/link-targets';
-import { resolveName } from '@inkeep/open-knowledge-core/utils/target-namespace';
+} from '@palimpsest/core/utils/link-targets';
+import { resolveName } from '@palimpsest/core/utils/target-namespace';
 import { resolveLinkTargetIntent } from '../../components/link-target-intent';
 import { isLinkValidationVisible } from '../link-validation-policy';
 import type { PageListCacheSnapshot } from '../page-list-cache';

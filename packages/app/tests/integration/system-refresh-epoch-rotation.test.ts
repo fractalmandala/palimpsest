@@ -30,7 +30,7 @@ function countRecycleBegins(calls: readonly unknown[][]): number {
     const first = call[0];
     if (typeof first !== 'string') return false;
     try {
-      return (JSON.parse(first) as { event?: string }).event === 'ok-pool-mismatch-recycle-begin';
+      return (JSON.parse(first) as { event?: string }).event === 'ps-pool-mismatch-recycle-begin';
     } catch {
       return false;
     }

@@ -9,7 +9,7 @@ let tmpRoot: string;
 let booted: BootedServer;
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-runtime-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-runtime-'));
   booted = await bootCompositionRig(tmpRoot);
   await booted.ready;
 }, 60_000);

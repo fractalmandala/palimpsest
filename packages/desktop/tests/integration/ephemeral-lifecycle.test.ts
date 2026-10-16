@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { createEphemeralProjectDir, isProcessAlive } from '@inkeep/open-knowledge-server';
+import { createEphemeralProjectDir, isProcessAlive } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { configureProjectGitRepositories } from '../support/git-fixture.test-helper.ts';
 
@@ -52,7 +52,7 @@ describe('ephemeral single-file lifecycle (real CLI)', () => {
   let server: ChildProcess | null = null;
 
   beforeEach(async () => {
-    userDir = await mkdtemp(resolve(tmpdir(), 'ok-ephemeral-it-'));
+    userDir = await mkdtemp(resolve(tmpdir(), 'ps-ephemeral-it-'));
     notesDir = join(userDir, 'notes');
     mkdirSync(notesDir, { recursive: true });
     filePath = join(notesDir, 'todo.md');
@@ -95,7 +95,7 @@ describe('ephemeral single-file lifecycle (real CLI)', () => {
         '--no-color',
       ],
       {
-        env: { ...process.env, OK_LOCK_KIND: 'interactive', NODE_ENV: 'test' },
+        env: { ...process.env, PS_LOCK_KIND: 'interactive', NODE_ENV: 'test' },
         detached: true,
         stdio: 'ignore',
         cwd: tempProjectDir,
@@ -105,7 +105,7 @@ describe('ephemeral single-file lifecycle (real CLI)', () => {
     server = child;
     expect(child.pid).toBeDefined();
 
-    const lockDir = join(tempProjectDir, '.ok', 'local');
+    const lockDir = join(tempProjectDir, '.ps', 'local');
     const lock = await waitForLock(lockDir);
 
     expect(lock.worktreeRoot).toBe(tempProjectDir);

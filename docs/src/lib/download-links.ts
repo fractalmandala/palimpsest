@@ -1,23 +1,23 @@
 import { z } from 'zod';
 
-const RELEASES_API_URL = 'https://api.github.com/repos/inkeep/open-knowledge/releases?per_page=100';
+const RELEASES_API_URL = 'https://api.github.com/repos/fractalmandala/palimpsest/releases?per_page=100';
 
-export const DMG_ASSET_NAME = 'OpenKnowledge-arm64.dmg';
-export const BETA_DMG_ASSET_NAME = 'OpenKnowledge-Beta-arm64.dmg';
+export const DMG_ASSET_NAME = 'Palimpsest-arm64.dmg';
+export const BETA_DMG_ASSET_NAME = 'Palimpsest-Beta-arm64.dmg';
 
-export const STABLE_DMG_URL = `https://github.com/inkeep/open-knowledge/releases/latest/download/${DMG_ASSET_NAME}`;
+export const STABLE_DMG_URL = `https://github.com/fractalmandala/palimpsest/releases/latest/download/${DMG_ASSET_NAME}`;
 
-const RELEASE_ASSET_BASE = 'https://github.com/inkeep/open-knowledge/releases/latest/download';
-export const STABLE_WINDOWS_SETUP_X64_URL = `${RELEASE_ASSET_BASE}/OpenKnowledge-Setup-x64.exe`;
-export const STABLE_WINDOWS_SETUP_ARM64_URL = `${RELEASE_ASSET_BASE}/OpenKnowledge-Setup-arm64.exe`;
-export const LINUX_DEB_X64_URL = `${RELEASE_ASSET_BASE}/OpenKnowledge-amd64.deb`;
-export const LINUX_DEB_ARM64_URL = `${RELEASE_ASSET_BASE}/OpenKnowledge-arm64.deb`;
-export const LINUX_RPM_X64_URL = `${RELEASE_ASSET_BASE}/OpenKnowledge-x86_64.rpm`;
-export const LINUX_RPM_ARM64_URL = `${RELEASE_ASSET_BASE}/OpenKnowledge-aarch64.rpm`;
+const RELEASE_ASSET_BASE = 'https://github.com/fractalmandala/palimpsest/releases/latest/download';
+export const STABLE_WINDOWS_SETUP_X64_URL = `${RELEASE_ASSET_BASE}/Palimpsest-Setup-x64.exe`;
+export const STABLE_WINDOWS_SETUP_ARM64_URL = `${RELEASE_ASSET_BASE}/Palimpsest-Setup-arm64.exe`;
+export const LINUX_DEB_X64_URL = `${RELEASE_ASSET_BASE}/Palimpsest-amd64.deb`;
+export const LINUX_DEB_ARM64_URL = `${RELEASE_ASSET_BASE}/Palimpsest-arm64.deb`;
+export const LINUX_RPM_X64_URL = `${RELEASE_ASSET_BASE}/Palimpsest-x86_64.rpm`;
+export const LINUX_RPM_ARM64_URL = `${RELEASE_ASSET_BASE}/Palimpsest-aarch64.rpm`;
 
-export const RELEASES_PAGE_URL = 'https://github.com/inkeep/open-knowledge/releases';
+export const RELEASES_PAGE_URL = 'https://github.com/fractalmandala/palimpsest/releases';
 
-const ASSET_URL_PREFIX = 'https://github.com/inkeep/open-knowledge/releases/download/';
+const ASSET_URL_PREFIX = 'https://github.com/fractalmandala/palimpsest/releases/download/';
 
 const BETA_TAG_PATTERN = /^v(\d+)\.(\d+)\.(\d+)-beta\.(\d+)$/;
 
@@ -109,7 +109,7 @@ export function createBetaResolver(
         signal: AbortSignal.timeout(5_000),
         headers: {
           accept: 'application/vnd.github+json',
-          'user-agent': 'openknowledge.ai download redirect',
+          'user-agent': 'palimpsest.ai download redirect',
         },
       });
       if (!res.ok) {

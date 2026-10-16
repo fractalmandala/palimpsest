@@ -1,5 +1,5 @@
-import type { LintDiagnostic, LinterConfig } from '@inkeep/open-knowledge-core';
-import { DEFAULT_LINTER_CONFIG } from '@inkeep/open-knowledge-core';
+import type { LintDiagnostic, LinterConfig } from '@palimpsest/core';
+import { DEFAULT_LINTER_CONFIG } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { AuditCache } from './audit-cache.ts';
 

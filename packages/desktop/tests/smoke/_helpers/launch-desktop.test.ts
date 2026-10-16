@@ -8,7 +8,7 @@ import {
   idleShutdownToMs,
   resolveEnvConfigLayer,
   resolveServerRuntimeConfig,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { isTestOnlySourceFile } from '../../../../../test-support/test-only-source-file.mjs';
 import { SPAWN_STARTUP_DEADLINE_MS } from '../../../src/shared/boot-narration.ts';
@@ -33,8 +33,8 @@ const unpackaged = {
 };
 const packaged = {
   mode: 'packaged' as const,
-  appPath: '/mnt/OpenKnowledge.app',
-  targetPath: '/mnt/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+  appPath: '/mnt/Palimpsest.app',
+  targetPath: '/mnt/Palimpsest.app/Contents/MacOS/Palimpsest',
   exists: true,
   missingReason: 'x',
 };
@@ -53,12 +53,12 @@ describe('resolveDesktopTarget', () => {
 
   it('resolves the bundle executable when the override names an .app', () => {
     const target = resolveDesktopTarget({
-      env: { [PACKAGED_APP_ENV]: '/mnt/OpenKnowledge.app' },
+      env: { [PACKAGED_APP_ENV]: '/mnt/Palimpsest.app' },
       platform: 'darwin',
     });
     expect(target.mode).toBe('packaged');
-    expect(target.appPath).toBe('/mnt/OpenKnowledge.app');
-    expect(target.targetPath).toBe('/mnt/OpenKnowledge.app/Contents/MacOS/OpenKnowledge');
+    expect(target.appPath).toBe('/mnt/Palimpsest.app');
+    expect(target.targetPath).toBe('/mnt/Palimpsest.app/Contents/MacOS/Palimpsest');
   });
 
   it('falls back to the local packaged build for packaged-only suites', () => {
@@ -79,7 +79,7 @@ describe('resolveDesktopTarget', () => {
     });
     expect(target.mode).toBe('packaged');
     expect(target.appPath).toBe(join(DESKTOP_ROOT, 'dist-desktop', directory));
-    expect(target.targetPath).toBe(join(DESKTOP_ROOT, 'dist-desktop', directory, 'openknowledge'));
+    expect(target.targetPath).toBe(join(DESKTOP_ROOT, 'dist-desktop', directory, 'palimpsest'));
   });
 
   it('resolves a Linux unpacked directory override to its packaged executable', () => {
@@ -90,17 +90,17 @@ describe('resolveDesktopTarget', () => {
       arch: 'x64',
     });
     expect(target.appPath).toBe('/mnt/linux-unpacked');
-    expect(target.targetPath).toBe('/mnt/linux-unpacked/openknowledge');
+    expect(target.targetPath).toBe('/mnt/linux-unpacked/palimpsest');
     expect(target.exists).toBe(false);
   });
 
   it('lets the override win over the packaged-only fallback', () => {
     const target = resolveDesktopTarget({
-      env: { [PACKAGED_APP_ENV]: '/mnt/OpenKnowledge.app' },
+      env: { [PACKAGED_APP_ENV]: '/mnt/Palimpsest.app' },
       requirePackaged: true,
       platform: 'darwin',
     });
-    expect(target.appPath).toBe('/mnt/OpenKnowledge.app');
+    expect(target.appPath).toBe('/mnt/Palimpsest.app');
   });
 
   it('reports a mode-appropriate skip reason', () => {
@@ -114,7 +114,7 @@ describe('resolveDesktopTarget', () => {
   });
 
   it('probes the target when existence is read, not when the target resolves', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-launch-target-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-launch-target-'));
     try {
       const target = resolveDesktopTarget({
         env: { [PACKAGED_APP_ENV]: join(root, 'Absent.app') },
@@ -132,8 +132,8 @@ describe('resolveDesktopTarget', () => {
 
 describe('executableForAppBundle', () => {
   it('derives Contents/MacOS/<name> from the bundle name', () => {
-    expect(executableForAppBundle('/Applications/OpenKnowledge.app')).toBe(
-      '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+    expect(executableForAppBundle('/Applications/Palimpsest.app')).toBe(
+      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
     );
   });
 });
@@ -147,7 +147,7 @@ describe('desktopLaunchOptions', () => {
 
   it('packaged: executablePath is set and the main entry is omitted from args', () => {
     const opts = desktopLaunchOptions({ target: packaged, args: ['--user-data-dir=/tmp/u'] });
-    expect(opts.executablePath).toBe('/mnt/OpenKnowledge.app/Contents/MacOS/OpenKnowledge');
+    expect(opts.executablePath).toBe('/mnt/Palimpsest.app/Contents/MacOS/Palimpsest');
     expect(opts.args).toEqual(['--user-data-dir=/tmp/u']);
     expect(opts.args).not.toContain(UNPACKAGED_MAIN_ENTRY);
     expect(opts.args.some((a) => a.endsWith('out/main/index.js'))).toBe(false);
@@ -156,26 +156,26 @@ describe('desktopLaunchOptions', () => {
   it('inherits the parent environment when the caller supplies none', () => {
     const opts = desktopLaunchOptions({ target: unpackaged });
     expect(opts.env?.PATH).toBe(process.env.PATH);
-    expect(opts.env?.OK_DESKTOP_E2E_SMOKE).toBe(process.env.OK_DESKTOP_E2E_SMOKE);
+    expect(opts.env?.PS_DESKTOP_E2E_SMOKE).toBe(process.env.PS_DESKTOP_E2E_SMOKE);
   });
 
   it('pins the interface language to English on every launch', () => {
-    expect(desktopLaunchOptions({ target: unpackaged }).env?.OK_LANG).toBe('en');
-    expect(desktopLaunchOptions({ target: packaged }).env?.OK_LANG).toBe('en');
-    expect(desktopLaunchOptions({ target: unpackaged, env: { OK_LANG: 'es' } }).env?.OK_LANG).toBe(
+    expect(desktopLaunchOptions({ target: unpackaged }).env?.PS_LANG).toBe('en');
+    expect(desktopLaunchOptions({ target: packaged }).env?.PS_LANG).toBe('en');
+    expect(desktopLaunchOptions({ target: unpackaged, env: { PS_LANG: 'es' } }).env?.PS_LANG).toBe(
       'en',
     );
   });
 
   it('opts the unpackaged build into claiming the URL scheme so open -g deep links reach it', () => {
-    expect(desktopLaunchOptions({ target: unpackaged }).env?.OK_DEV_PROTOCOL).toBe('1');
+    expect(desktopLaunchOptions({ target: unpackaged }).env?.PS_DEV_PROTOCOL).toBe('1');
   });
 
   it('passes a supplied env through, over the inherited copy', () => {
-    const env = { HOME: '/tmp/home', OK_DESKTOP_E2E_SMOKE: '1' };
+    const env = { HOME: '/tmp/home', PS_DESKTOP_E2E_SMOKE: '1' };
     const opts = desktopLaunchOptions({ target: unpackaged, env });
     expect(opts.env?.HOME).toBe('/tmp/home');
-    expect(opts.env?.OK_DESKTOP_E2E_SMOKE).toBe('1');
+    expect(opts.env?.PS_DESKTOP_E2E_SMOKE).toBe('1');
   });
 
   it('defaults the timeout to 30s and lets a caller override it', () => {
@@ -197,7 +197,7 @@ function idleThresholdTheServerDerivesFrom(
 ): number | null | string {
   let layer: Record<string, unknown>;
   try {
-    layer = resolveEnvConfigLayer({ OK_IDLE_SHUTDOWN: env?.OK_IDLE_SHUTDOWN }).layer;
+    layer = resolveEnvConfigLayer({ PS_IDLE_SHUTDOWN: env?.PS_IDLE_SHUTDOWN }).layer;
   } catch (error) {
     return `rejected by the server's env layer: ${error instanceof Error ? error.message : String(error)}`;
   }
@@ -220,10 +220,10 @@ describe("desktopLaunchOptions — a packaged launch bounds its detached server'
   ])(
     "the server's own config parsing turns a packaged launch's env into exactly the exported lifetime bound when %s",
     (_case, parent, supplied) => {
-      vi.stubEnv('OK_IDLE_SHUTDOWN', parent);
+      vi.stubEnv('PS_IDLE_SHUTDOWN', parent);
       const opts = desktopLaunchOptions({
         target: packaged,
-        env: supplied === undefined ? {} : { OK_IDLE_SHUTDOWN: supplied },
+        env: supplied === undefined ? {} : { PS_IDLE_SHUTDOWN: supplied },
       });
       expect({
         lifetimeBoundIsExported: typeof PACKAGED_SMOKE_SERVER_IDLE_SHUTDOWN_MS === 'number',
@@ -236,15 +236,15 @@ describe("desktopLaunchOptions — a packaged launch bounds its detached server'
   );
 
   it('an unpackaged launch sets no idle shutdown of its own, while a packaged launch from the same env sets one', () => {
-    vi.stubEnv('OK_IDLE_SHUTDOWN', undefined);
+    vi.stubEnv('PS_IDLE_SHUTDOWN', undefined);
     const supplied = { HOME: '/tmp/home' };
 
     expect({
       packagedLaunchSetsOne:
-        desktopLaunchOptions({ target: packaged, env: supplied }).env?.OK_IDLE_SHUTDOWN !==
+        desktopLaunchOptions({ target: packaged, env: supplied }).env?.PS_IDLE_SHUTDOWN !==
         undefined,
       unpackagedLaunchSetsOne:
-        desktopLaunchOptions({ target: unpackaged, env: supplied }).env?.OK_IDLE_SHUTDOWN !==
+        desktopLaunchOptions({ target: unpackaged, env: supplied }).env?.PS_IDLE_SHUTDOWN !==
         undefined,
     }).toEqual({ packagedLaunchSetsOne: true, unpackagedLaunchSetsOne: false });
   });

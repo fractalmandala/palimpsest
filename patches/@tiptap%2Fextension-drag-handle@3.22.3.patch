@@ -9,7 +9,7 @@ index 123e40d63bca06f42e7873261864227330926149..6330df84874afcd0b19bac6193e68a2a
 +  // Force content-visibility:visible on the wrapper and any cloned descendants
 +  // that inherited `content-visibility: auto` (via cloneElement's computed-style
 +  // copy). Off-screen `content-visibility: auto` makes Chrome skip painting,
-+  // which produces a blank drag-image snapshot. `OK`'s `.ok-chunk-wrapper`
++  // which produces a blank drag-image snapshot. `OK`'s `.ps-chunk-wrapper`
 +  // applies this property as a viewport-virtualization perf optimization, so
 +  // every drag preview hits this path unless we override.
 +  wrapper.style.contentVisibility = "visible";
@@ -63,7 +63,7 @@ index d50c956280b83ae3e0ad2cea93a6caf5af073ac3..2f991c99b5b7ee8c7e27dadec19392fc
 +  // Force content-visibility:visible on the wrapper and any cloned descendants
 +  // that inherited `content-visibility: auto` (via cloneElement's computed-style
 +  // copy). Off-screen `content-visibility: auto` makes Chrome skip painting,
-+  // which produces a blank drag-image snapshot. `OK`'s `.ok-chunk-wrapper`
++  // which produces a blank drag-image snapshot. `OK`'s `.ps-chunk-wrapper`
 +  // applies this property as a viewport-virtualization perf optimization, so
 +  // every drag preview hits this path unless we override.
 +  wrapper.style.contentVisibility = "visible";

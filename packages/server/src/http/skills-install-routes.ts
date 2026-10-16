@@ -10,9 +10,9 @@ import {
   type SkillInstallWarningCode,
   skillLiveDocName,
   USER_SKILL_EDITOR_IDS,
-} from '@inkeep/open-knowledge-core';
-import type { SkillHostId } from '@inkeep/open-knowledge-core/skills-catalog';
-import { parseSkillsLock, SKILLS_LOCK_REL } from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core';
+import type { SkillHostId } from '@palimpsest/core/skills-catalog';
+import { parseSkillsLock, SKILLS_LOCK_REL } from '@palimpsest/core/skills-catalog';
 import type { ContentFilter } from '../content-filter.ts';
 import type { StoreFailure } from '../document-durability-state.ts';
 import { scanGlobalInPlaceSkills, scanInPlaceSkills } from '../in-place-skills.ts';
@@ -254,7 +254,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
               res,
               400,
               'urn:ok:error:invalid-request',
-              'This skill still lives in the legacy .ok/skills store — promote a real location first (`source`) before using add/remove.',
+              'This skill still lives in the legacy .ps/skills store — promote a real location first (`source`) before using add/remove.',
               { handler: 'skill-install', detail: 'STORE_BACKED_ADDITIVE' },
             );
             return;
@@ -358,7 +358,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 res,
                 400,
                 'urn:ok:error:invalid-request',
-                'Placement path must be a project-relative directory outside .ok/.',
+                'Placement path must be a project-relative directory outside .ps/.',
                 { handler: 'skill-install', detail: 'PLACE_PATH_INVALID' },
               );
             } else {
@@ -489,7 +489,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
               res,
               400,
               'urn:ok:error:invalid-request',
-              'This skill still lives in the legacy .ok/skills store — promote a real location first (`source`) before converting one.',
+              'This skill still lives in the legacy .ps/skills store — promote a real location first (`source`) before converting one.',
               { handler: 'skill-install', detail: 'STORE_BACKED_CONVERT' },
             );
             return;
@@ -597,7 +597,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
         }
         if (validity.hasScripts) {
           warnings.push(
-            'This skill includes executable `scripts/`. After you install it, the AI agent in your editor (Claude, Cursor, Codex) can run them — Open Knowledge itself never runs anything. Review the scripts before sharing.',
+            'This skill includes executable `scripts/`. After you install it, the AI agent in your editor (Claude, Cursor, Codex) can run them — Palimpsest itself never runs anything. Review the scripts before sharing.',
           );
           warningCodes.push('scripts-present');
         }

@@ -42,9 +42,9 @@ if apparmor_status --enabled > /dev/null 2>&1; then
   fi
 fi
 
-OK_WRAPPER='/opt/${sanitizedProductName}/resources/cli/bin/ok.sh'
-if [ -f "$OK_WRAPPER" ]; then
-    chmod 0755 "$OK_WRAPPER" || true
-    ln -sf "$OK_WRAPPER" /usr/bin/ok
-    ln -sf "$OK_WRAPPER" /usr/bin/open-knowledge
+PS_WRAPPER='/opt/${sanitizedProductName}/resources/cli/bin/ps.sh'
+if [ -f "$PS_WRAPPER" ]; then
+    chmod 0755 "$PS_WRAPPER" || true
+    ln -sf "$PS_WRAPPER" /usr/bin/ok
+    ln -sf "$PS_WRAPPER" /usr/bin/palimpsest
 fi

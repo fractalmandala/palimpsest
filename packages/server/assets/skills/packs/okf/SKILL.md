@@ -1,17 +1,17 @@
 ---
-name: okf-knowledge-base
-description: "Open Knowledge Format (OKF) v0.2 guidance. Use when creating, reading, reviewing, or maintaining an OKF bundle; responding to OpenKnowledge `okf` plugin warnings; or choosing types, provenance, links, indexes, or logs."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. The optional `okf` plugin provides continuous conformance feedback."
+name: psf-knowledge-base
+description: "Palimpsest Format (OKF) v0.2 guidance. Use when creating, reading, reviewing, or maintaining an OKF bundle; responding to Palimpsest `psf` plugin warnings; or choosing types, provenance, links, indexes, or logs."
+compatibility: "Any agent host with the Palimpsest MCP server configured. The optional `psf` plugin provides continuous conformance feedback."
 # This skill may live inside an OKF bundle, so it carries the required type.
 type: Document
 metadata:
-  plugin: "okf"
+  plugin: "psf"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
-# Open Knowledge Format (OKF)
+# Palimpsest Format (OKF)
 
-[OKF v0.2](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md) is a portable format for agent-readable knowledge: Markdown files, YAML frontmatter, and standard links. The `/open-knowledge` skill governs tool use; this skill covers OKF semantics.
+[OKF v0.2](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md) is a portable format for agent-readable knowledge: Markdown files, YAML frontmatter, and standard links. The `/palimpsest` skill governs tool use; this skill covers OKF semantics.
 
 ## Core rules
 
@@ -44,14 +44,14 @@ metadata:
 - Add a truthful dated `log.md` entry after durable changes when the bundle uses a log.
 - Read legacy `timestamp` and body citations, but prefer v0.2 `generated.at` and `sources` when updating a concept. Never invent provenance while migrating.
 
-## OpenKnowledge's `okf` plugin
+## Palimpsest's `psf` plugin
 
 The optional project plugin provides continuous portability feedback without blocking writes:
 
 - Write-time warnings and project audits check structure, frontmatter, reserved files, links, and `.mdx` use.
-- `.ok/okf/*.schema.json` contains the precise field contracts. Read these generated files instead of guessing; do not edit them.
+- `.ps/psf/*.schema.json` contains the precise field contracts. Read these generated files instead of guessing; do not edit them.
 - Deterministic lint findings establish conformance. Agent judgment still establishes whether metadata is true and useful.
-- Optional index generation maintains `index.md` files. Generated indexes are machine-owned: never edit them, because OpenKnowledge replaces their contents.
+- Optional index generation maintains `index.md` files. Generated indexes are machine-owned: never edit them, because Palimpsest replaces their contents.
 - `log.md` remains authored, not generated.
 
-The plugin is off by default and each rule can be disabled. Its value is early warning when OpenKnowledge-native content would be misread by another OKF consumer.
+The plugin is off by default and each rule can be disabled. Its value is early warning when Palimpsest-native content would be misread by another OKF consumer.

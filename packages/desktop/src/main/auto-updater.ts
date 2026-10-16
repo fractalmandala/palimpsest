@@ -1,10 +1,10 @@
 import type { OutgoingHttpHeaders } from 'node:http';
-import { MANUAL_CHECK_WATCHDOG_MS } from '@inkeep/open-knowledge-core';
+import { MANUAL_CHECK_WATCHDOG_MS } from '@palimpsest/core';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 import type {
-  OkUpdateDispatchRequest,
-  OkUpdateDispatchResult,
-  OkUpdateSetModeFailure,
+  PsUpdateDispatchRequest,
+  PsUpdateDispatchResult,
+  PsUpdateSetModeFailure,
 } from '../shared/ipc-channels.ts';
 import type { EventChannels } from '../shared/ipc-events.ts';
 import { createHandler } from '../shared/ipc-handler.ts';
@@ -17,14 +17,14 @@ import {
 } from './linux-install-fallback.ts';
 import {
   type AppState,
-  type OkUpdateMode,
+  type PsUpdateMode,
   resolveUpdateMode,
   type UpdateChannel,
 } from './state-store.ts';
 import type { WindowsUpdateSurvivorSweepResult } from './windows-update-survivor-sweep.ts';
 
 const GITHUB_OWNER = 'inkeep';
-const GITHUB_REPO = 'open-knowledge';
+const GITHUB_REPO = 'palimpsest';
 
 export interface UpdaterLike {
   autoDownload: boolean;
@@ -230,7 +230,7 @@ export const UPDATE_CHECK_FAILED_MESSAGE = 'The update check failed. Try again i
 
 export const UPDATE_DOWNLOAD_FAILED_MESSAGE = 'Try Check for updates… again in a few minutes.';
 
-export const UPDATE_CHECK_WEDGED_MESSAGE = `OpenKnowledge is still waiting on the update server and will not check again until it restarts. Restart the app, or download the latest build from ${STUCK_HINT_DOWNLOAD_URL}.`;
+export const UPDATE_CHECK_WEDGED_MESSAGE = `Palimpsest is still waiting on the update server and will not check again until it restarts. Restart the app, or download the latest build from ${STUCK_HINT_DOWNLOAD_URL}.`;
 
 export const RELAUNCH_REFRESH_CHECK_MS = 4_000;
 
@@ -442,7 +442,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     logger = DEFAULT_LOGGER,
   } = opts;
 
-  const readUpdateMode = (): OkUpdateMode => resolveUpdateMode(readState().updateMode).mode;
+  const readUpdateMode = (): PsUpdateMode => resolveUpdateMode(readState().updateMode).mode;
   const updatesOff = (): boolean => readUpdateMode() === 'off';
   let autoInstallSuppressed = false;
   const applyAutoInstallOnQuit = (): void => {
@@ -494,7 +494,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       'x-ok-channel': configuredProxyFeed.channel,
     };
     usingProxyFeed = true;
-    logger.info('setFeedURL (proxy) — updater feed pointed at the openknowledge.ai proxy', {
+    logger.info('setFeedURL (proxy) — updater feed pointed at the palimpsest.ai proxy', {
       channel: configuredProxyFeed.channel,
     });
   }
@@ -1551,7 +1551,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
 
   const setUpdateMode = (
     requested: unknown,
-  ): { ok: true; mode: OkUpdateMode } | { ok: false; reason: OkUpdateSetModeFailure } => {
+  ): { ok: true; mode: PsUpdateMode } | { ok: false; reason: PsUpdateSetModeFailure } => {
     if (requested !== 'auto' && requested !== 'off') {
       logger.warn('set-mode refused an unrecognized mode', { requested });
       return { ok: false, reason: 'unrecognized-mode' };
@@ -1592,8 +1592,8 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
   };
 
   const dispatchUpdate = async (
-    request: OkUpdateDispatchRequest,
-  ): Promise<OkUpdateDispatchResult> => {
+    request: PsUpdateDispatchRequest,
+  ): Promise<PsUpdateDispatchResult> => {
     switch (request?.kind) {
       case 'relaunch-now':
         await relaunchNow();
@@ -1624,8 +1624,8 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     'ok:update:dispatch',
     (
       _event: IpcMainInvokeEvent,
-      request: OkUpdateDispatchRequest,
-    ): Promise<OkUpdateDispatchResult> => dispatchUpdate(request),
+      request: PsUpdateDispatchRequest,
+    ): Promise<PsUpdateDispatchResult> => dispatchUpdate(request),
   );
 
   const currentVersion = getAppVersion();
@@ -1942,7 +1942,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     }
   } else {
     logger.info(
-      'skipping checkForUpdates — app.isPackaged=false and OK_UPDATER_FORCE_DEV unset (handlers remain wired for tests + IPC)',
+      'skipping checkForUpdates — app.isPackaged=false and PS_UPDATER_FORCE_DEV unset (handlers remain wired for tests + IPC)',
     );
     onDispatch?.('skipped-dev-mode');
   }

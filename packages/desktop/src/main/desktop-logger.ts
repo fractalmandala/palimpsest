@@ -1,10 +1,10 @@
 import { mkdirSync, openSync, readdirSync, statSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import pino from 'pino';
 
 export function desktopLogDirectory(): string {
-  return join(okUserHomeDir(), 'logs');
+  return join(psUserHomeDir(), 'logs');
 }
 const MAX_AGE_DAYS = 7;
 const MAX_DIR_SIZE_BYTES = 45 * 1024 * 1024;
@@ -23,7 +23,7 @@ const REDACT_PATHS = [
 ];
 
 function resolveLogLevel(): string {
-  const envLevel = process.env.OK_LOG_LEVEL ?? process.env.LOG_LEVEL;
+  const envLevel = process.env.PS_LOG_LEVEL ?? process.env.LOG_LEVEL;
   if (envLevel) {
     const allowed = ['fatal', 'error', 'warn', 'info', 'debug'];
     const normalized = envLevel.toLowerCase();

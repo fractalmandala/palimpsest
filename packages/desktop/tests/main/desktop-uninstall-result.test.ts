@@ -7,7 +7,7 @@ import {
 } from '../../src/main/desktop-uninstall-result.ts';
 
 const success = {
-  title: 'OpenKnowledge files were removed',
+  title: 'Palimpsest files were removed',
   text: 'Removed settings.',
   actionLabel: 'Reveal in Finder',
 } as const;
@@ -45,11 +45,11 @@ describe('uninstall completion window', () => {
   test('launches the packaged entry or the explicit development app', () => {
     expect(
       desktopUninstallResultCommand(
-        '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge',
+        '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
         true,
         '/app.asar',
       ),
-    ).toEqual(['/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge']);
+    ).toEqual(['/Applications/Palimpsest.app/Contents/MacOS/Palimpsest']);
     expect(desktopUninstallResultCommand('/dev/Electron', false, '/work/desktop')).toEqual([
       '/dev/Electron',
       '/work/desktop',

@@ -33,7 +33,7 @@ import {
 const makeTempDir = createTempDirFactory(afterAll);
 
 function comparatorEnv(): NodeJS.ProcessEnv {
-  const temporary = createSocketPathOverflowingTempDir(makeTempDir('ok-perf-comparator-'));
+  const temporary = createSocketPathOverflowingTempDir(makeTempDir('ps-perf-comparator-'));
   return { ...process.env, TMPDIR: temporary, TMP: temporary, TEMP: temporary };
 }
 

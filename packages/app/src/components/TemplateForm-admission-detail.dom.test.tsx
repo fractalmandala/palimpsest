@@ -16,7 +16,7 @@ let server: BootedServer;
 let sequence = 0;
 
 function templatePath(name: string) {
-  return join(root, 'templates', '.ok', 'templates', `${name}.md`);
+  return join(root, 'templates', '.ps', 'templates', `${name}.md`);
 }
 
 async function refusal(method: 'PUT' | 'POST', name: string, toName: string) {
@@ -48,8 +48,8 @@ async function refusal(method: 'PUT' | 'POST', name: string, toName: string) {
 }
 
 beforeAll(async () => {
-  root = mkdtempSync(join(tmpdir(), 'ok-template-renderer-detail-'));
-  mkdirSync(join(root, 'templates', '.ok', 'templates'), { recursive: true });
+  root = mkdtempSync(join(tmpdir(), 'ps-template-renderer-detail-'));
+  mkdirSync(join(root, 'templates', '.ps', 'templates'), { recursive: true });
   server = await bootCompositionRig(root);
   await server.ready;
   vi.stubGlobal('fetch', ((input: string | URL | Request, init?: RequestInit) =>

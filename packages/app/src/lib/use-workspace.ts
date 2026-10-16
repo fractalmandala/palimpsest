@@ -1,4 +1,4 @@
-import { WorkspaceSuccessSchema } from '@inkeep/open-knowledge-core/schemas/api';
+import { WorkspaceSuccessSchema } from '@palimpsest/core/schemas/api';
 import { useEffect, useState } from 'react';
 import type { Workspace } from './workspace-paths';
 
@@ -7,7 +7,7 @@ export function useWorkspace(): Workspace | null {
 
   useEffect(() => {
     if (workspace !== null) return;
-    if (window.okDesktop) return;
+    if (window.psDesktop) return;
 
     let active = true;
     fetch('/api/workspace')
@@ -37,10 +37,10 @@ export function resolveSyncWorkspace(
   windowLike: Window | undefined = typeof window === 'undefined' ? undefined : window,
 ): Workspace | null {
   if (!windowLike) return null;
-  const okDesktop = windowLike.okDesktop;
-  if (!okDesktop) return null;
+  const psDesktop = windowLike.psDesktop;
+  if (!psDesktop) return null;
   return {
-    contentDir: okDesktop.config.projectPath,
-    pathSeparator: okDesktop.platform === 'win32' ? '\\' : '/',
+    contentDir: psDesktop.config.projectPath,
+    pathSeparator: psDesktop.platform === 'win32' ? '\\' : '/',
   };
 }

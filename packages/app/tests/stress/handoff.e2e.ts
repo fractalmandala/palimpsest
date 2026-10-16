@@ -1,5 +1,5 @@
 import { realpathSync } from 'node:fs';
-import { AGENT_REGISTRY, type HostSnapshot } from '@inkeep/open-knowledge-core';
+import { AGENT_REGISTRY, type HostSnapshot } from '@palimpsest/core';
 import type { Page } from '@playwright/test';
 import { expect, test, waitForActiveProviderSynced } from './_helpers';
 import {
@@ -63,7 +63,7 @@ async function enableDesktopTargets(page: Page, targetIds: readonly string[]): P
   await page.addInitScript((ids: readonly string[]) => {
     const overrides: Record<string, boolean> = {};
     for (const id of ids) overrides[`desktop:${id}`] = true;
-    window.localStorage.setItem('ok-acp-enabled-agents-v1', JSON.stringify(overrides));
+    window.localStorage.setItem('ps-acp-enabled-agents-v1', JSON.stringify(overrides));
   }, targetIds);
 }
 
@@ -74,7 +74,7 @@ async function registerInAppAgents(
   await page.addInitScript((list: ReadonlyArray<{ source: string; id: string }>) => {
     const first = list[0];
     window.localStorage.setItem(
-      'ok-acp-registered-agents-v1',
+      'ps-acp-registered-agents-v1',
       JSON.stringify({ agents: list, defaultKey: first ? `${first.source}:${first.id}` : null }),
     );
   }, agents);

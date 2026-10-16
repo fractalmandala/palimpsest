@@ -1,4 +1,4 @@
-import type { CopyImageRequest, CopyImageResult } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { CopyImageRequest, CopyImageResult } from '@palimpsest/core/desktop-bridge';
 
 export type CopyImageOutcome =
   | { ok: true; via: 'desktop' | 'browser'; desktopFailure?: CopyImageDesktopFailure }
@@ -67,7 +67,7 @@ async function copyImageInBrowser(
 }
 
 function browserCopyImageEnv(): CopyImageEnv {
-  const desktop = typeof window === 'undefined' ? undefined : window.okDesktop?.clipboard;
+  const desktop = typeof window === 'undefined' ? undefined : window.psDesktop?.clipboard;
   const clipboard = typeof navigator === 'undefined' ? undefined : navigator.clipboard;
   return {
     desktopCopyImage: desktop ? (request) => desktop.copyImage(request) : null,

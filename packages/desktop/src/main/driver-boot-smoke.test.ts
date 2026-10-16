@@ -109,18 +109,18 @@ describe('isDriverBootSmokeMode (US-006 AC8 gate)', () => {
   test('true only when both env vars are set to 1', () => {
     expect(
       isDriverBootSmokeMode({
-        OK_DEBUG_KEYRING_SMOKE: '1',
-        OK_DEBUG_KEYRING_SMOKE_EXIT: '1',
+        PS_DEBUG_KEYRING_SMOKE: '1',
+        PS_DEBUG_KEYRING_SMOKE_EXIT: '1',
       }),
     ).toBe(true);
   });
 
   test('false when only SMOKE=1 (dev-mode auto-smoke, not driver mode)', () => {
-    expect(isDriverBootSmokeMode({ OK_DEBUG_KEYRING_SMOKE: '1' })).toBe(false);
+    expect(isDriverBootSmokeMode({ PS_DEBUG_KEYRING_SMOKE: '1' })).toBe(false);
   });
 
   test('false when only EXIT=1 (meaningless without SMOKE=1)', () => {
-    expect(isDriverBootSmokeMode({ OK_DEBUG_KEYRING_SMOKE_EXIT: '1' })).toBe(false);
+    expect(isDriverBootSmokeMode({ PS_DEBUG_KEYRING_SMOKE_EXIT: '1' })).toBe(false);
   });
 
   test('false on empty env (default user launch — Navigator opens, no utility)', () => {
@@ -130,8 +130,8 @@ describe('isDriverBootSmokeMode (US-006 AC8 gate)', () => {
   test('false when vars are truthy-but-not-literal-"1"', () => {
     expect(
       isDriverBootSmokeMode({
-        OK_DEBUG_KEYRING_SMOKE: 'true',
-        OK_DEBUG_KEYRING_SMOKE_EXIT: 'true',
+        PS_DEBUG_KEYRING_SMOKE: 'true',
+        PS_DEBUG_KEYRING_SMOKE_EXIT: 'true',
       }),
     ).toBe(false);
   });

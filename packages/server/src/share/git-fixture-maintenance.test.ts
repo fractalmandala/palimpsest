@@ -15,7 +15,7 @@ test.each(['sender', 'receiver', 'origin'] as const)(
   '%s fixture finishes Git operations without automatic maintenance',
   (kind) => {
     const triangle = createGitTriangle();
-    const traceDir = mkdtempSync(join(tmpdir(), 'ok-git-fixture-trace-'));
+    const traceDir = mkdtempSync(join(tmpdir(), 'ps-git-fixture-trace-'));
     try {
       const repository =
         kind === 'sender'

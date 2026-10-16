@@ -67,7 +67,7 @@ async function moveCrossScope(
 }
 
 beforeAll(async () => {
-  tmpHome = mkdtempSync(join(tmpdir(), 'ok-xscope-uninstall-home-'));
+  tmpHome = mkdtempSync(join(tmpdir(), 'ps-xscope-uninstall-home-'));
   mkdirSync(join(tmpHome, '.agents', 'skills'), { recursive: true });
   server = await createTestServer({ configHomedirOverride: tmpHome });
 }, HARNESS_BOOT_TIMEOUT_MS);

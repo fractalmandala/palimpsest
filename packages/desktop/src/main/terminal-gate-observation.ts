@@ -1,5 +1,5 @@
-import { agentIdForTerminalCli, type HostSnapshot } from '@inkeep/open-knowledge-core';
-import { observeReadiness, type ReadinessObservationLogger } from '@inkeep/open-knowledge-server';
+import { agentIdForTerminalCli, type HostSnapshot } from '@palimpsest/core';
+import { observeReadiness, type ReadinessObservationLogger } from '@palimpsest/server';
 
 export interface TerminalGateObservationOptions {
   readonly launchCli: string;

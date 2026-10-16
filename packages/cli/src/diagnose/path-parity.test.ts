@@ -3,7 +3,7 @@ import {
   logsPreviousPath as serverLogsPreviousPath,
   spansCurrentPath as serverSpansCurrentPath,
   spansPreviousPath as serverSpansPreviousPath,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { describe, expect, test } from 'vitest';
 import {
   lossCaptureCurrentPath as serverLossCaptureCurrentPath,

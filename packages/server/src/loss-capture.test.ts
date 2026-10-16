@@ -22,7 +22,7 @@ import {
 let projectDir: string;
 
 beforeEach(() => {
-  projectDir = mkdtempSync(join(tmpdir(), 'ok-loss-capture-'));
+  projectDir = mkdtempSync(join(tmpdir(), 'ps-loss-capture-'));
 });
 
 afterEach(() => {
@@ -43,7 +43,7 @@ function readAllRetained(): LossCaptureEvent[] {
 }
 
 describe('LossCaptureRing.record', () => {
-  it('writes a content-free event line under .ok/local/loss-capture/', async () => {
+  it('writes a content-free event line under .ps/local/loss-capture/', async () => {
     const ring = new LossCaptureRing({ projectDir, maxBytes: 1_000_000, now: () => 4242 });
     await ring.record({
       event: LOSS_EVENT_GUARD_DEFER,
@@ -56,7 +56,7 @@ describe('LossCaptureRing.record', () => {
     await ring.drain();
 
     const currentPath = lossCaptureCurrentPath(projectDir);
-    expect(currentPath.endsWith(join('.ok', 'local', 'loss-capture', 'loss-current.jsonl'))).toBe(
+    expect(currentPath.endsWith(join('.ps', 'local', 'loss-capture', 'loss-current.jsonl'))).toBe(
       true,
     );
     expect(existsSync(currentPath)).toBe(true);

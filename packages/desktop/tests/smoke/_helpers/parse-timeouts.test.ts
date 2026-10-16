@@ -661,7 +661,7 @@ describe('a test title holding another quote kind is audited once, and whole', (
   const TITLES = [
     {
       holding: 'an embedded backtick',
-      header: 'test("runs `ok start` against a fresh home", async () => {',
+      header: 'test("runs `ps start` against a fresh home", async () => {',
       endsWith: /against a fresh home$/,
     },
     {
@@ -856,14 +856,14 @@ describe('sumOfDeclaredBoundsMs reads the running test out of its own spec', () 
     );
   });
 
-  test('takes the packaged path when OK_DESKTOP_PACKAGED_APP names a bundle', () => {
-    vi.stubEnv(PACKAGED_APP_ENV, join(fixtureRoot, 'OpenKnowledge.app'));
+  test('takes the packaged path when PS_DESKTOP_PACKAGED_APP names a bundle', () => {
+    vi.stubEnv(PACKAGED_APP_ENV, join(fixtureRoot, 'Palimpsest.app'));
     expect(sumOfDeclaredBoundsMs(declared)).toBe(
       readinessGiveUpBoundMs({ path: 'packaged' }) + STEP_TIMEOUT_MS,
     );
   });
 
-  test('takes the fork path when OK_DESKTOP_PACKAGED_APP names none', () => {
+  test('takes the fork path when PS_DESKTOP_PACKAGED_APP names none', () => {
     vi.stubEnv(PACKAGED_APP_ENV, '');
     expect(sumOfDeclaredBoundsMs(declared)).toBe(
       readinessGiveUpBoundMs({ path: 'fork' }) + STEP_TIMEOUT_MS,
@@ -960,13 +960,13 @@ describe('the path a charge is scored on never comes from the environment the gu
   ];
 
   for (const { through, chargesMs } of UNTIERED_CHARGES) {
-    test(`${through} charges a wait on no named path the fork path's give-up bound when OK_DESKTOP_PACKAGED_APP names a bundle`, () => {
-      vi.stubEnv(PACKAGED_APP_ENV, join(fixtureRoot, 'OpenKnowledge.app'));
+    test(`${through} charges a wait on no named path the fork path's give-up bound when PS_DESKTOP_PACKAGED_APP names a bundle`, () => {
+      vi.stubEnv(PACKAGED_APP_ENV, join(fixtureRoot, 'Palimpsest.app'));
       expect(chargesMs()).toEqual([readinessGiveUpBoundMs({ path: 'fork' })]);
     });
   }
 
-  test('the per-test budget of a derived outer is its sum on the path it is scored on, when OK_DESKTOP_PACKAGED_APP names none', () => {
+  test('the per-test budget of a derived outer is its sum on the path it is scored on, when PS_DESKTOP_PACKAGED_APP names none', () => {
     vi.stubEnv(PACKAGED_APP_ENV, '');
     const lines = [
       "test('derives its outer from its own sum', async () => {",

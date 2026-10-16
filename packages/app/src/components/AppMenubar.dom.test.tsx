@@ -19,7 +19,7 @@ function installBridge(
   const dispatch = vi.fn((request: { kind: string }) =>
     Promise.resolve(request.kind === 'query' ? (options.queryResult ?? null) : undefined),
   );
-  (window as unknown as { okDesktop?: unknown }).okDesktop = {
+  (window as unknown as { psDesktop?: unknown }).psDesktop = {
     platform,
     config: { mode, ptyAvailable: options.ptyAvailable ?? false },
     menu: { dispatch },
@@ -49,7 +49,7 @@ describe('AppMenubar Help menu', () => {
 
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('returns null on darwin, where the native menu bar owns Help', async () => {
@@ -99,7 +99,7 @@ describe('AppMenubar Help menu', () => {
 
     expect(screen.getByRole('menuitem', { name: /^Report a bug…/ })).not.toBeNull();
     expect(screen.getByRole('menuitem', { name: 'Send feedback…' })).not.toBeNull();
-    expect(screen.getByRole('menuitem', { name: 'OpenKnowledge on GitHub' })).not.toBeNull();
+    expect(screen.getByRole('menuitem', { name: 'Palimpsest on GitHub' })).not.toBeNull();
   });
 
   test('lists the resource links after GitHub and ends with About', async () => {
@@ -110,12 +110,12 @@ describe('AppMenubar Help menu', () => {
       .getAllByRole('menuitem')
       .map((item) => item.textContent);
     expect(labels).toEqual([
-      'OpenKnowledge on GitHub',
+      'Palimpsest on GitHub',
       'Documentation',
       'Join us on Discord',
       'Report a bug…Ctrl+Shift+D',
       'Send feedback…',
-      'About OpenKnowledge',
+      'About Palimpsest',
     ]);
   });
 
@@ -132,7 +132,7 @@ describe('AppMenubar Help menu', () => {
   });
 
   test.each([
-    ['win32', 'About OpenKnowledge'],
+    ['win32', 'About Palimpsest'],
     ['linux', 'About'],
   ] as const)('About on %s reads "%s" and dispatches the about role', async (platform, name) => {
     const dispatch = installBridge(platform);
@@ -151,7 +151,7 @@ describe('AppMenubar View navigation history', () => {
 
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('does not add a standalone Go menu on Windows/Linux', async () => {
@@ -232,7 +232,7 @@ describe('AppMenubar View terminal toggle', () => {
 
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('Linux shows the terminal toggle and dispatches it through the shared menu action', async () => {
@@ -284,8 +284,8 @@ describe('AppMenubar View terminal toggle', () => {
 
   test('a single-file window offers no editor toggle', async () => {
     const dispatch = installBridge('win32', 'editor', { queryResult: snapshot(false) });
-    const bridge = (window as unknown as { okDesktop: { config: Record<string, unknown> } })
-      .okDesktop;
+    const bridge = (window as unknown as { psDesktop: { config: Record<string, unknown> } })
+      .psDesktop;
     bridge.config.singleFile = true;
     await openMenu('View');
     await screen.findByRole('menuitem', { name: /document panel/ });
@@ -319,7 +319,7 @@ describe('AppMenubar View terminal toggle', () => {
 describe('AppMenubar drag-suspension attributes', () => {
   afterEach(() => {
     cleanup();
-    (window as unknown as { okDesktop?: unknown }).okDesktop = undefined;
+    (window as unknown as { psDesktop?: unknown }).psDesktop = undefined;
   });
 
   test('open menu content matches the globals.css drag-suspension selector', async () => {

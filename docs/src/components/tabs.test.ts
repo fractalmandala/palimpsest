@@ -54,10 +54,10 @@ describe('slugifyTabId', () => {
 
 describe('composeTabId (groupId-prefix URL composition)', () => {
   test('groupId + label → prefixed slug (the docs quickstart shape)', () => {
-    expect(composeTabId('Desktop app', 'ok-install')).toBe('ok-install-desktop-app');
-    expect(composeTabId('Web app', 'ok-install')).toBe('ok-install-web-app');
-    expect(composeTabId('Web app (Linux, Windows, Intel Mac)', 'ok-install')).toBe(
-      'ok-install-web-app-linux-windows-intel-mac',
+    expect(composeTabId('Desktop app', 'ps-install')).toBe('ps-install-desktop-app');
+    expect(composeTabId('Web app', 'ps-install')).toBe('ps-install-web-app');
+    expect(composeTabId('Web app (Linux, Windows, Intel Mac)', 'ps-install')).toBe(
+      'ps-install-web-app-linux-windows-intel-mac',
     );
   });
 
@@ -71,10 +71,10 @@ describe('composeTabId (groupId-prefix URL composition)', () => {
   });
 
   test('label missing or unslugable → null (caller falls back to positional id)', () => {
-    expect(composeTabId(undefined, 'ok-install')).toBeNull();
-    expect(composeTabId('', 'ok-install')).toBeNull();
-    expect(composeTabId('   ', 'ok-install')).toBeNull();
-    expect(composeTabId('!!!', 'ok-install')).toBeNull();
+    expect(composeTabId(undefined, 'ps-install')).toBeNull();
+    expect(composeTabId('', 'ps-install')).toBeNull();
+    expect(composeTabId('   ', 'ps-install')).toBeNull();
+    expect(composeTabId('!!!', 'ps-install')).toBeNull();
   });
 
   test('groupId that slugs to empty falls back to bare label (not "-label")', () => {
@@ -82,8 +82,8 @@ describe('composeTabId (groupId-prefix URL composition)', () => {
   });
 
   test('idempotent — composeTabId(composeTabId(label), groupId) preserves the result when re-fed', () => {
-    const composed = composeTabId('macOS app', 'ok-install');
-    expect(composed).toBe('ok-install-macos-app');
+    const composed = composeTabId('macOS app', 'ps-install');
+    expect(composed).toBe('ps-install-macos-app');
     expect(slugifyTabId(composed ?? '')).toBe(composed);
   });
 });

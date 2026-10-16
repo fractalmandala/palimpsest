@@ -8,7 +8,7 @@ import { scanSkillFolderStates, skillFolderStateForWire } from './skill-folder-s
 let base: string;
 
 beforeEach(() => {
-  base = mkdtempSync(join(tmpdir(), 'ok-skill-folder-state-'));
+  base = mkdtempSync(join(tmpdir(), 'ps-skill-folder-state-'));
 });
 afterEach(() => {
   rmSync(base, { recursive: true, force: true });
@@ -35,7 +35,7 @@ describe('scanSkillFolderStates identity', () => {
   });
 
   test('roots aliased to different places outside the base do not share a `real`', () => {
-    const elsewhere = mkdtempSync(join(tmpdir(), 'ok-elsewhere-'));
+    const elsewhere = mkdtempSync(join(tmpdir(), 'ps-elsewhere-'));
     mkdirSync(join(elsewhere, 'a'), { recursive: true });
     mkdirSync(join(elsewhere, 'b'), { recursive: true });
     mkdirSync(join(base, '.codex'), { recursive: true });

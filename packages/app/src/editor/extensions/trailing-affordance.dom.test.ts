@@ -1,4 +1,4 @@
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { Schema } from '@tiptap/pm/model';
 import { EditorState, TextSelection } from '@tiptap/pm/state';
@@ -8,7 +8,7 @@ import { OPT_OUT_ATTR } from '../clipboard/index.ts';
 import {
   appendTrailingParagraph,
   docNeedsTrailingAffordance,
-  OK_TRAILING_AFFORDANCE_CLASS,
+  PS_TRAILING_AFFORDANCE_CLASS,
   renderHint,
   trailingAffordanceKey,
   trailingAffordancePlugin,
@@ -141,7 +141,7 @@ describe('hint decoration', () => {
 describe('renderHint', () => {
   test('is inert chrome — non-editable, hidden from AT, omitted from copies', () => {
     const el = renderHint();
-    expect(el.classList.contains(OK_TRAILING_AFFORDANCE_CLASS)).toBe(true);
+    expect(el.classList.contains(PS_TRAILING_AFFORDANCE_CLASS)).toBe(true);
     expect(el.getAttribute('contenteditable')).toBe('false');
     expect(el.getAttribute('aria-hidden')).toBe('true');
     expect(el.getAttribute(OPT_OUT_ATTR)).toBe('true');
@@ -149,7 +149,7 @@ describe('renderHint', () => {
 
   test('renders a single plus glyph', () => {
     const el = renderHint();
-    const plus = el.querySelector(`.${OK_TRAILING_AFFORDANCE_CLASS}-plus`);
+    const plus = el.querySelector(`.${PS_TRAILING_AFFORDANCE_CLASS}-plus`);
     expect(plus).not.toBeNull();
     expect(plus?.querySelector('svg')).not.toBeNull();
   });
@@ -258,7 +258,7 @@ describe('trailing zone interaction', () => {
   }
 
   function glyphIn(view: ReturnType<typeof stubView>): Element {
-    const glyph = view.dom.querySelector(`.${OK_TRAILING_AFFORDANCE_CLASS}-plus`);
+    const glyph = view.dom.querySelector(`.${PS_TRAILING_AFFORDANCE_CLASS}-plus`);
     expect(glyph).not.toBeNull();
     // biome-ignore lint/style/noNonNullAssertion: asserted non-null above.
     return glyph!;

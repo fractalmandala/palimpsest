@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { markdownRewrite } from './lib/accept-negotiation';
 import { markdownHandlerForPage } from './lib/markdown-routes';
 
-const APEX_HOST = 'openknowledge.ai';
+const APEX_HOST = 'palimpsest.ai';
 const WWW_HOST = `www.${APEX_HOST}`;
 
 export function proxy(request: NextRequest): NextResponse {

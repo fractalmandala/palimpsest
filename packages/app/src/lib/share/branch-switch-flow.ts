@@ -1,9 +1,9 @@
-import type { WorktreeCreateResult } from '@inkeep/open-knowledge-core/git/worktree-selector-model';
+import type { WorktreeCreateResult } from '@palimpsest/core/git/worktree-selector-model';
 import type {
   BranchInfoResponse,
   CheckoutResponse,
   ShareTargetStatusResponse,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 
 export type BranchSwitchVariant =
   | {

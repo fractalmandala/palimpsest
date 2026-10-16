@@ -138,10 +138,10 @@ describe('readPersistedMode — localStorage read with validation', () => {
     expect(storage.getItem).toHaveBeenCalledTimes(1);
   });
 
-  test('uses the correct storage key (ok-editor-mode-v1 — storage-key rename is 1-way door)', () => {
+  test('uses the correct storage key (ps-editor-mode-v1 — storage-key rename is 1-way door)', () => {
     const storage = storageWith(null);
     readPersistedMode(storage);
-    expect(storage.getItem).toHaveBeenCalledWith('ok-editor-mode-v1');
+    expect(storage.getItem).toHaveBeenCalledWith('ps-editor-mode-v1');
   });
 });
 
@@ -225,7 +225,7 @@ describe('persistMode — localStorage write with error swallow + warn logging',
     const ok = persistMode('source', storage);
     expect(ok).toBe(true);
     expect(storage.setItem).toHaveBeenCalledTimes(1);
-    expect(storage.setItem).toHaveBeenCalledWith('ok-editor-mode-v1', 'source');
+    expect(storage.setItem).toHaveBeenCalledWith('ps-editor-mode-v1', 'source');
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
@@ -233,7 +233,7 @@ describe('persistMode — localStorage write with error swallow + warn logging',
     const storage = storageWith(null);
     const ok = persistMode('wysiwyg', storage);
     expect(ok).toBe(true);
-    expect(storage.setItem).toHaveBeenCalledWith('ok-editor-mode-v1', 'wysiwyg');
+    expect(storage.setItem).toHaveBeenCalledWith('ps-editor-mode-v1', 'wysiwyg');
   });
 
   test('returns false and logs warn when setItem throws (FR-7, privacy-mode / quota)', () => {

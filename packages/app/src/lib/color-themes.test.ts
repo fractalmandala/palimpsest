@@ -7,7 +7,7 @@ import {
   resolveLeafSchema,
   SIDEBAR_BG_DARK,
   SIDEBAR_BG_LIGHT,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   base16ToTokens,

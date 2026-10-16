@@ -1,12 +1,12 @@
 import {
   stripFrontmatter,
   unwrapFrontmatterFences,
-} from '@inkeep/open-knowledge-core/extensions/frontmatter';
+} from '@palimpsest/core/extensions/frontmatter';
 import {
   canonicalTemplateName,
   TEMPLATE_NAME_REGEX,
   templateRenameTarget,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { X } from 'lucide-react';

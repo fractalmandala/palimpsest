@@ -19,7 +19,7 @@ afterEach(async () => {
 
 describe('Managed rename — crash recovery via boot-time initAsync (QA-006)', () => {
   test('mid-folder-rename crash → restart restores pre-rename state and prunes empty ancestor dirs', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-crash-recovery-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-crash-recovery-'));
     cleanups.push(() => rmSync(contentDir, { recursive: true, force: true }));
 
     const preRenameArticlesA = '# Articles A\n\nBody of A.\n';
@@ -55,7 +55,7 @@ describe('Managed rename — crash recovery via boot-time initAsync (QA-006)', (
         { docName: 'docs/index', content: preRenameDocsIndex },
       ],
     });
-    mkdirSync(join(contentDir, '.ok'), { recursive: true });
+    mkdirSync(join(contentDir, '.ps'), { recursive: true });
     writeManagedRenameJournal(contentDir, journal);
 
     expect(existsSync(managedRenameJournalPath(contentDir))).toBe(true);
@@ -80,7 +80,7 @@ describe('Managed rename — crash recovery via boot-time initAsync (QA-006)', (
   }, 30_000);
 
   test('subsequent rename attempt on the same source succeeds after recovery', async () => {
-    const contentDir = mkdtempSync(join(tmpdir(), 'ok-crash-retry-'));
+    const contentDir = mkdtempSync(join(tmpdir(), 'ps-crash-retry-'));
     cleanups.push(() => rmSync(contentDir, { recursive: true, force: true }));
 
     mkdirSync(join(contentDir, 'articles'), { recursive: true });
@@ -101,7 +101,7 @@ describe('Managed rename — crash recovery via boot-time initAsync (QA-006)', (
       affectedDocs: [{ from: 'articles/a', to: 'essays/a' }],
       snapshots: [{ docName: 'articles/a', content: '# A\n' }],
     });
-    mkdirSync(join(contentDir, '.ok'), { recursive: true });
+    mkdirSync(join(contentDir, '.ps'), { recursive: true });
     writeManagedRenameJournal(contentDir, journal);
 
     const server = await createRestartableServer({ contentDir });

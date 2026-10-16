@@ -15,7 +15,7 @@ import {
 } from './_helpers';
 
 const WYSIWYG = '.ProseMirror:not(.composer-prosemirror)';
-const CHUNK_WRAPPER = `${WYSIWYG} .ok-chunk-wrapper`;
+const CHUNK_WRAPPER = `${WYSIWYG} .ps-chunk-wrapper`;
 
 function docName(label: string): string {
   return `landing-helpers-${label}-${randomUUID().slice(0, 8)}`;

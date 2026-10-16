@@ -5,7 +5,7 @@ import {
   createBasenameIndex,
   createTargetNamespace,
   createWikiAssetResolver,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { ContentFilter } from './content-filter.ts';
 import { stripDocExtension } from './doc-extensions.ts';
 import {

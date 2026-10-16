@@ -3,48 +3,48 @@ import { describe, expect, test, vi } from 'vitest';
 import { buildShellEnv } from '../utility/pty-host.ts';
 import {
   composeOkChildEnv,
-  okChildEnvOptions,
-  okChildHome,
-  okManagedBinDirs,
-  okPackagedCliBinDir,
-} from './ok-child-env.ts';
+  psChildEnvOptions,
+  psChildHome,
+  psManagedBinDirs,
+  psPackagedCliBinDir,
+} from './ps-child-env.ts';
 
 vi.mock('node:os', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:os')>();
   return { ...actual, homedir: vi.fn(actual.homedir) };
 });
 
-const WIN_CLI_BIN = 'C:\\Program Files\\Open Knowledge\\resources\\cli\\bin';
+const WIN_CLI_BIN = 'C:\\Program Files\\Palimpsest\\resources\\cli\\bin';
 
-describe('okPackagedCliBinDir', () => {
+describe('psPackagedCliBinDir', () => {
   test('is the packaged cli bin under resourcesPath on win32', () => {
-    expect(okPackagedCliBinDir('win32', 'C:\\Program Files\\Open Knowledge\\resources')).toBe(
+    expect(psPackagedCliBinDir('win32', 'C:\\Program Files\\Palimpsest\\resources')).toBe(
       WIN_CLI_BIN,
     );
   });
 
   test('is undefined off win32', () => {
     expect(
-      okPackagedCliBinDir('darwin', '/Applications/OK.app/Contents/Resources'),
+      psPackagedCliBinDir('darwin', '/Applications/OK.app/Contents/Resources'),
     ).toBeUndefined();
-    expect(okPackagedCliBinDir('linux', '/opt/ok/resources')).toBeUndefined();
+    expect(psPackagedCliBinDir('linux', '/opt/ok/resources')).toBeUndefined();
   });
 
   test('is undefined when resourcesPath is absent, so it is safe outside Electron', () => {
-    expect(okPackagedCliBinDir('win32', undefined)).toBeUndefined();
-    expect(okPackagedCliBinDir('win32', '')).toBeUndefined();
+    expect(psPackagedCliBinDir('win32', undefined)).toBeUndefined();
+    expect(psPackagedCliBinDir('win32', '')).toBeUndefined();
   });
 });
 
-describe('okManagedBinDirs', () => {
+describe('psManagedBinDirs', () => {
   test.each([
-    ['darwin' as const, { home: '/Users/alice' }, ['/Users/alice/.ok/bin']],
-    ['linux' as const, { home: '/home/alice' }, ['/home/alice/.ok/bin']],
+    ['darwin' as const, { home: '/Users/alice' }, ['/Users/alice/.ps/bin']],
+    ['linux' as const, { home: '/home/alice' }, ['/home/alice/.ps/bin']],
     ['darwin' as const, {}, []],
     ['win32' as const, { cliBinDir: WIN_CLI_BIN }, [WIN_CLI_BIN]],
     ['win32' as const, { home: 'C:\\Users\\alice' }, []],
   ])('%s %o', (platform, options, expected) => {
-    expect(okManagedBinDirs({ platform, ...options })).toEqual(expected);
+    expect(psManagedBinDirs({ platform, ...options })).toEqual(expected);
   });
 });
 
@@ -54,15 +54,15 @@ describe('composeOkChildEnv PATH grant', () => {
       { PATH: '/usr/bin:/bin' },
       { platform: 'darwin', home: '/Users/alice' },
     );
-    expect(env.PATH).toBe('/Users/alice/.ok/bin:/usr/bin:/bin');
+    expect(env.PATH).toBe('/Users/alice/.ps/bin:/usr/bin:/bin');
   });
 
   test('leaves an already-present entry where it is rather than moving it to the front', () => {
     const env = composeOkChildEnv(
-      { PATH: '/opt/x:/Users/alice/.ok/bin:/usr/bin' },
+      { PATH: '/opt/x:/Users/alice/.ps/bin:/usr/bin' },
       { platform: 'darwin', home: '/Users/alice' },
     );
-    expect(env.PATH).toBe('/opt/x:/Users/alice/.ok/bin:/usr/bin');
+    expect(env.PATH).toBe('/opt/x:/Users/alice/.ps/bin:/usr/bin');
   });
 
   test('leaves PATH untouched when there is no home to resolve against', () => {
@@ -77,7 +77,7 @@ describe('composeOkChildEnv PATH grant', () => {
     );
     expect(env.Path).toBe(`${WIN_CLI_BIN};C:\\Windows\\System32;C:\\Tools`);
     expect(env.PATH).toBeUndefined();
-    expect(env.Path).not.toContain('.ok');
+    expect(env.Path).not.toContain('.ps');
   });
 
   test('dedupes case-insensitively on win32', () => {
@@ -90,17 +90,17 @@ describe('composeOkChildEnv PATH grant', () => {
 
   test('seeds PATH when the parent carries none', () => {
     const env = composeOkChildEnv({}, { platform: 'darwin', home: '/Users/alice' });
-    expect(env.PATH).toBe('/Users/alice/.ok/bin');
+    expect(env.PATH).toBe('/Users/alice/.ps/bin');
   });
 });
 
 describe('composeOkChildEnv', () => {
   test('keeps the dev channel away from a terminal, whose ok on PATH may predate it', () => {
     const env = composeOkChildEnv(
-      { PATH: '/usr/bin', OK_CHANNEL: 'dev' },
+      { PATH: '/usr/bin', PS_CHANNEL: 'dev' },
       { platform: 'darwin', home: '/Users/alice' },
     );
-    expect(env.OK_CHANNEL).toBeUndefined();
+    expect(env.PS_CHANNEL).toBeUndefined();
   });
 
   test('drops the dev channel under the differently cased key a Windows environment can carry', () => {
@@ -108,15 +108,15 @@ describe('composeOkChildEnv', () => {
       { Path: 'C:\\Windows', Ok_Channel: 'dev' },
       { platform: 'win32', cliBinDir: 'C:\\ok\\bin' },
     );
-    expect(Object.keys(env).filter((key) => key.toUpperCase() === 'OK_CHANNEL')).toEqual([]);
+    expect(Object.keys(env).filter((key) => key.toUpperCase() === 'PS_CHANNEL')).toEqual([]);
   });
 
   test('passes a shipped channel through, since every released CLI knows it', () => {
     const env = composeOkChildEnv(
-      { PATH: '/usr/bin', OK_CHANNEL: 'beta' },
+      { PATH: '/usr/bin', PS_CHANNEL: 'beta' },
       { platform: 'darwin', home: '/Users/alice' },
     );
-    expect(env.OK_CHANNEL).toBe('beta');
+    expect(env.PS_CHANNEL).toBe('beta');
   });
 
   test('strips OK and Electron markers, drops undefined, and grants the OK-managed bin dir', () => {
@@ -124,11 +124,11 @@ describe('composeOkChildEnv', () => {
       {
         PATH: '/usr/bin',
         HOME: '/Users/x',
-        OK_ELECTRON_PROTOCOL_HOST: '1',
-        OK_LOCK_KIND: 'interactive',
+        PS_ELECTRON_PROTOCOL_HOST: '1',
+        PS_LOCK_KIND: 'interactive',
         ELECTRON_RUN_AS_NODE: '1',
-        OK_DESKTOP_TERMINAL: '1',
-        OK_HOSTED_AGENT: '1',
+        PS_DESKTOP_TERMINAL: '1',
+        PS_HOSTED_AGENT: '1',
         GDK_PIXBUF_MODULEDIR: '/app/lib/gdk-pixbuf',
         GDK_PIXBUF_MODULE_FILE: '/app/lib/loaders.cache',
         ELECTRON_TRASH: 'gio',
@@ -138,7 +138,7 @@ describe('composeOkChildEnv', () => {
       { platform: 'darwin', home: '/Users/x' },
     );
     expect(env).toEqual({
-      PATH: '/Users/x/.ok/bin:/usr/bin',
+      PATH: '/Users/x/.ps/bin:/usr/bin',
       HOME: '/Users/x',
       ELECTRON_TRASH: 'gio',
       GDK_THEME: 'Adwaita',
@@ -150,20 +150,20 @@ describe('composeOkChildEnv', () => {
       { PATH: '/usr/bin', HOME: '/Users/x' },
       { platform: 'darwin', home: '/Users/x' },
     );
-    expect(Object.keys(env).some((key) => key.startsWith('OK_DESKTOP_TERMINAL'))).toBe(false);
+    expect(Object.keys(env).some((key) => key.startsWith('PS_DESKTOP_TERMINAL'))).toBe(false);
   });
 
   test('drops an inherited hosted-agent marker instead of passing it to the child', () => {
     const env = composeOkChildEnv(
-      { PATH: '/usr/bin', HOME: '/Users/x', OK_DESKTOP_TERMINAL: '1', OK_HOSTED_AGENT: '1' },
+      { PATH: '/usr/bin', HOME: '/Users/x', PS_DESKTOP_TERMINAL: '1', PS_HOSTED_AGENT: '1' },
       { platform: 'darwin', home: '/Users/x' },
     );
-    expect(env.OK_DESKTOP_TERMINAL).toBeUndefined();
-    expect(env.OK_HOSTED_AGENT).toBeUndefined();
+    expect(env.PS_DESKTOP_TERMINAL).toBeUndefined();
+    expect(env.PS_HOSTED_AGENT).toBeUndefined();
   });
 });
 
-describe('okChildHome', () => {
+describe('psChildHome', () => {
   test('warns when a terminal cannot grant a managed home', () => {
     vi.mocked(homedir).mockReturnValueOnce('');
     const logger = { warn: vi.fn() };
@@ -177,22 +177,22 @@ describe('okChildHome', () => {
 
   test('normalizes an empty resolved home to absence', () => {
     vi.mocked(homedir).mockReturnValueOnce('');
-    expect(okChildHome({ HOME: '' })).toBeUndefined();
+    expect(psChildHome({ HOME: '' })).toBeUndefined();
   });
 
   test('returns absence when the operating system cannot resolve home', () => {
     vi.mocked(homedir).mockImplementationOnce(() => {
       throw new Error('no passwd entry');
     });
-    expect(okChildHome({})).toBeUndefined();
+    expect(psChildHome({})).toBeUndefined();
   });
 
   test('prefers the parent env HOME, which is what the terminal producer passes', () => {
-    expect(okChildHome({ HOME: '/Users/alice' })).toBe('/Users/alice');
+    expect(psChildHome({ HOME: '/Users/alice' })).toBe('/Users/alice');
   });
 
   test('falls back to the resolved home when the parent env carries none', () => {
-    expect(okChildHome({})).toBe(homedir());
+    expect(psChildHome({})).toBe(homedir());
   });
 });
 
@@ -201,7 +201,7 @@ describe('the terminal producer and the probe consumers derive the same home', (
     ['a parent env with HOME set', { PATH: '/usr/bin', HOME: '/Users/alice' }],
     ['a parent env with no HOME at all', { PATH: '/usr/bin' }],
   ])('%s yields one leading PATH entry for both sides', (_label, parentEnv) => {
-    const options = okChildEnvOptions(parentEnv, { platform: 'darwin' });
+    const options = psChildEnvOptions(parentEnv, { platform: 'darwin' });
     const consumer = composeOkChildEnv(parentEnv, options);
     const { env: producer } = buildShellEnv(parentEnv, { platform: 'darwin' });
     expect((producer.PATH ?? '').split(':')[0]).toBe((consumer.PATH ?? '').split(':')[0]);

@@ -28,7 +28,7 @@ let supervisor: RunningSupervisor | undefined;
 
 test.beforeEach(async () => {
   test.setTimeout(480_000);
-  scratch = mkdtempSync(join(tmpdir(), 'ok-reuse-e2e-'));
+  scratch = mkdtempSync(join(tmpdir(), 'ps-reuse-e2e-'));
   supervisor = await startSupervisor(scratch);
 });
 

@@ -438,9 +438,9 @@ describe('QA canary — cold-reopen / concurrent-peer / idempotence (Observer-A 
   });
 });
 
-const OK_ROOT = join(import.meta.dirname, '..', '..', '..', '..');
-const GITHUB_DOC = join(OK_ROOT, 'docs', 'content', 'features', 'git', 'github.mdx');
-const QUICKSTART = join(OK_ROOT, 'docs', 'content', 'get-started', 'quickstart.mdx');
+const PS_ROOT = join(import.meta.dirname, '..', '..', '..', '..');
+const GITHUB_DOC = join(PS_ROOT, 'docs', 'content', 'features', 'git', 'github.mdx');
+const QUICKSTART = join(PS_ROOT, 'docs', 'content', 'get-started', 'quickstart.mdx');
 
 describe('QA canary — real repo docs with <Steps>', () => {
   test('git/github.mdx loads byte-clean through the bridge (frontmatter + Steps intact)', async () => {

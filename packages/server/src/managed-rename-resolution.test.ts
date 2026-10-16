@@ -3,7 +3,7 @@ import {
   resolveSkillBundleWikiTarget,
   resolveWikiLinkTargetDocName,
   skillLiveDocName,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { applyRenameMap } from './apply-managed-rename.ts';
 import { matchWikiLinks } from './link-syntax.ts';

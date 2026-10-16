@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import {
   readDockRestoreState,
   readWebDockSessionOrder,
@@ -33,7 +33,7 @@ function makeDesktopBridge(
       }),
       setDockState,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return { bridge, store, setDockState };
 }
 
@@ -85,13 +85,13 @@ describe('web backend (localStorage)', () => {
   });
 
   test('a corrupt record reads null rather than throwing into the mount seed', () => {
-    localStorageStub.setItem('ok-dock-session-order-v1', 'not json');
+    localStorageStub.setItem('ps-dock-session-order-v1', 'not json');
     expect(readWebDockSessionOrder('terminal')).toBeNull();
   });
 
   test('non-string keys are dropped rather than restored as junk tabs', () => {
     localStorageStub.setItem(
-      'ok-agent-session-order-v1',
+      'ps-agent-session-order-v1',
       JSON.stringify({ order: ['thread-a', 7, null], activeKey: 42 }),
     );
     expect(readWebDockSessionOrder('agents')).toEqual({ order: ['thread-a'], activeKey: null });
@@ -123,7 +123,7 @@ describe('desktop backend (bridge)', () => {
         activeOrdinal: 1,
       },
     }));
-    const bridge = { terminal: { getDockState } } as unknown as OkDesktopBridge;
+    const bridge = { terminal: { getDockState } } as unknown as PsDesktopBridge;
 
     await expect(readDockRestoreState(bridge, 'terminal')).resolves.toEqual({
       sessionOrder: { order: ['pty-1'], activeKey: 'pty-1' },
@@ -164,7 +164,7 @@ describe('desktop backend (bridge)', () => {
       terminal: {
         setDockState: async () => ({ ok: false as const, reason: 'ipc-unavailable' as const }),
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     writeDockSessionOrder(bridge, 'terminal', { order: ['pty-1'], activeKey: 'pty-1' });
     await vi.waitFor(() => expect(warn).toHaveBeenCalledOnce());
@@ -196,7 +196,7 @@ describe('desktop backend (bridge)', () => {
           throw new Error('ipc torn down mid-reload');
         },
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     await expect(readDockRestoreState(bridge, 'terminal')).resolves.toEqual({
       sessionOrder: null,
@@ -211,7 +211,7 @@ describe('desktop backend (bridge)', () => {
         list: async () => [],
         getDockState: async () => ({ terminalSnapshot: { tabs: [], activeOrdinal: null } }),
       },
-    } as unknown as OkDesktopBridge;
+    } as unknown as PsDesktopBridge;
 
     await expect(readDockRestoreState(bridge, 'terminal')).resolves.toEqual({
       sessionOrder: null,
@@ -222,7 +222,7 @@ describe('desktop backend (bridge)', () => {
 
   test('a live terminal bridge without dock-state capability ignores stale web order', async () => {
     writeDockSessionOrder(null, 'terminal', { order: ['stale-pty'], activeKey: 'stale-pty' });
-    const bridge = { terminal: { list: async () => [] } } as unknown as OkDesktopBridge;
+    const bridge = { terminal: { list: async () => [] } } as unknown as PsDesktopBridge;
 
     await expect(readDockRestoreState(bridge, 'terminal')).resolves.toEqual({
       sessionOrder: null,
@@ -238,10 +238,10 @@ describe('desktop backend (bridge)', () => {
   });
 
   test('a bridge with no dock-state methods falls back to the web backend', async () => {
-    const sessionOnly = { editor: {} } as unknown as OkDesktopBridge;
+    const sessionOnly = { editor: {} } as unknown as PsDesktopBridge;
     writeDockSessionOrder(sessionOnly, 'terminal', { order: ['pty-1'], activeKey: 'pty-1' });
 
-    expect(localStorageStub.getItem('ok-dock-session-order-v1')).not.toBeNull();
+    expect(localStorageStub.getItem('ps-dock-session-order-v1')).not.toBeNull();
     await expect(readDockRestoreState(sessionOnly, 'terminal')).resolves.toMatchObject({
       sessionOrder: { order: ['pty-1'], activeKey: 'pty-1' },
     });

@@ -1,4 +1,4 @@
-const PREFERRED_SESSION_EVENT = 'open-knowledge:new-preferred-session';
+const PREFERRED_SESSION_EVENT = 'palimpsest:new-preferred-session';
 
 export function requestPreferredSession(
   target: Pick<Window, 'dispatchEvent'> | EventTarget = typeof window === 'undefined'

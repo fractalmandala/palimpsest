@@ -1,4 +1,4 @@
-import { createFileLogger, findEnclosingProjectRoot } from '@inkeep/open-knowledge-server';
+import { createFileLogger, findEnclosingProjectRoot } from '@palimpsest/server';
 import type { Logger as PinoLoggerInstance } from 'pino';
 
 let cliLogger: PinoLoggerInstance | undefined;

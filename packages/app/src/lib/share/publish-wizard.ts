@@ -6,12 +6,12 @@ import type {
   SharePublishRequest,
   SharePublishResponse,
   SharePublishVisibility,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import {
   SharePublishNameCheckResponseSchema,
   SharePublishOwnersResponseSchema,
   SharePublishResponseSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 
 const SHARE_PUBLISH_OWNERS_PATH = '/api/share/publish/owners';
@@ -60,7 +60,7 @@ export function presentPublishError(
       };
     case 'saml-sso':
       return {
-        banner: t`GitHub denied the request. You may need to authorize OpenKnowledge for ${owner} in your browser.`,
+        banner: t`GitHub denied the request. You may need to authorize Palimpsest for ${owner} in your browser.`,
         next: { kind: 'authorize-org', authorizeUrl: buildSamlSsoAuthorizeUrl(owner) },
       };
     case 'push-failed':

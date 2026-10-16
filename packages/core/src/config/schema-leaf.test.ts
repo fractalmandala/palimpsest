@@ -10,7 +10,7 @@ describe('resolveLeafSchema', () => {
   });
 
   test('resolves boolean content-rule entries without inventing leaf metadata', () => {
-    const path = ['contentRules', 'okf', 'rules', 'custom-rule'];
+    const path = ['contentRules', 'psf', 'rules', 'custom-rule'];
     expect(resolveLeafSchema(ConfigSchema, path)?.safeParse(true).success).toBe(true);
     expect(resolveLeafSchema(ConfigSchema, path)?.safeParse('true').success).toBe(false);
     expect(getLeafFieldMeta(ConfigSchema, path)).toBeUndefined();

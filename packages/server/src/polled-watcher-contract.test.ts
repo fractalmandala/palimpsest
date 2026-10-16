@@ -87,7 +87,7 @@ let harness: ForkedWatcherProcess | undefined;
 const madeUnreadable: string[] = [];
 
 beforeEach(() => {
-  fixture = mkdtempSync(join(tmpdir(), 'ok-polled-contract-'));
+  fixture = mkdtempSync(join(tmpdir(), 'ps-polled-contract-'));
 });
 afterEach(async () => {
   await harness?.close();
@@ -111,12 +111,12 @@ function watchedFile(entry: WatcherEntry, scenario: ReadinessScenario): WatchedF
       ? { watch: [skillsRoot()], target: leaf('demo') }
       : entry === 'config'
         ? {
-            watch: [join(project, '.ok', 'config.yml')],
-            target: join(project, '.ok', 'config.yml'),
+            watch: [join(project, '.ps', 'config.yml')],
+            target: join(project, '.ps', 'config.yml'),
           }
         : {
-            watch: [join(project, '.okignore'), join(project, '.gitignore')],
-            target: join(project, '.okignore'),
+            watch: [join(project, '.psignore'), join(project, '.gitignore')],
+            target: join(project, '.psignore'),
           };
   mkdirSync(dirname(file.target), { recursive: true });
   if (entry === 'multi-config') write(join(project, '.gitignore'), 'dist/\n');

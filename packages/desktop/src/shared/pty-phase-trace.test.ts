@@ -14,7 +14,7 @@ test.each([undefined, '0'])(
     const now = vi.spyOn(performance, 'now');
     const wall = vi.spyOn(Date, 'now');
     const write = vi.fn();
-    const trace = createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: flag }, 'main', write);
+    const trace = createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: flag }, 'main', write);
     const utility = Object.assign(new EventEmitter(), { pid: undefined as number | undefined });
     expect(observePtyFork(trace, 7, 1, () => utility)).toBe(utility);
     expect(utility.eventNames()).toEqual([]);
@@ -27,7 +27,7 @@ test.each([undefined, '0'])(
 
 test('records utility creation, owned process identity and exit without an error listener', () => {
   const records: PtyPhaseRecord[] = [];
-  const trace = createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'main', (record) =>
+  const trace = createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'main', (record) =>
     records.push(record),
   );
   const utility = Object.assign(new EventEmitter(), { pid: undefined as number | undefined });
@@ -54,7 +54,7 @@ test('records utility creation, owned process identity and exit without an error
 
 test('bounds an enabled trace with an explicit limit record', () => {
   const records: PtyPhaseRecord[] = [];
-  const trace = createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
+  const trace = createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'utility', (record) =>
     records.push(record),
   );
   for (let index = 0; index < 1000; index += 1) trace?.mark('message-received', 'point');
@@ -67,11 +67,11 @@ test('bounds an enabled trace with an explicit limit record', () => {
 });
 
 test('a failed diagnostic write cannot replace an operation error', () => {
-  const root = mkdtempSync(join(tmpdir(), 'ok-phase-write-'));
+  const root = mkdtempSync(join(tmpdir(), 'ps-phase-write-'));
   const fd = openSync(join(root, 'closed.log'), 'w');
   closeSync(fd);
   try {
-    const trace = createPtyPhaseTrace({ OK_PTY_PHASE_TRACE: '1' }, 'main', () => {
+    const trace = createPtyPhaseTrace({ PS_PTY_PHASE_TRACE: '1' }, 'main', () => {
       writeSync(fd, 'unwritable');
     });
     let original: unknown;

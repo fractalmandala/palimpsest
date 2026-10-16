@@ -5,7 +5,7 @@ import {
   SKILL_MOVE_STATE_CODES,
   SKILL_RETENTION_LEDGER_CODES,
   SKILL_SOURCE_STATE_CODES,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { z } from 'zod';
 import { SUPPORTED_DOC_EXTENSIONS } from '../../doc-extensions.ts';
 import type { AgentIdentity } from '../agent-identity.ts';
@@ -40,7 +40,7 @@ export const DROPPED_LOCATIONS_DESCRIPTION =
   'Skill cross-level move only: locations the skill occupied at the source that the move did not automatically re-project at the destination — the `agents` hub, custom roots, and any editor with no skills root at that level — as `install` location ids. On a SUCCESS they were removed at the source and not re-created at the destination, and the ones the destination level can place (the `agents` hub and custom roots) go back with `install` as `add`, together with `scope` set to the DESTINATION level; an editor with no skills root there cannot be placed at all — `install` accepts its id and projects nothing, so the move\'s own success text names the equivalent (an editor that reads the `agents` hub at that level takes `add: ["agents"]` instead) or states that no destination-level placement exists. Custom roots resolve against that level\'s base — your home directory at the Global level, the project directory at the Project level — not wherever the root lived before the move. On a FAILURE this is instead the set of source-side placements this call had already removed, and whether the skill moved is what `moveState` says: on `nothing-written`, `destination-removed`, `destination-stray` and the two retained states the source is still there, so do not pass these to `install` at the DESTINATION level — re-add them at the SOURCE level, and retry the move only once that state is resolved. On `destination-unreadable` and `partially-applied` the source removal may already have run, so inspect both locations before re-adding anywhere.';
 
 const DESCRIPTION = [
-  'For .md/.mdx inspection before or after a move in a project with .ok/, use exec; native Read/Grep/Glob omit wiki context.',
+  'For .md/.mdx inspection before or after a move in a project with .ps/, use exec; native Read/Grep/Glob omit wiki context.',
   'Move/rename a document, folder or asset with `{from, to}`, a template with `{template: {from, to}}`, or a skill with `{skill: {from, to, scope?, toScope?}}`. Choose one form. Requires the Hocuspocus server. Document/folder/asset kind is auto-detected.',
   "Paths: docs accept optional .md/.mdx; folders are relative with no leading/trailing slash; assets include the extension. Templates use '<folder>/<name>'; inherited templates cannot move (move their local copy or owning folder). Template moves rewrite no inbound links.",
   'Links to the moved document keep pointing to it. The old path stops existing; do not leave a redirect or stub.',
@@ -163,7 +163,7 @@ export function register(server: ServerInstance, deps: MoveDeps): void {
           .object({ from: z.string(), to: z.string() })
           .optional()
           .describe(
-            'Move/rename a TEMPLATE instead: `{ from: "<folder>/<name>", to: "<folder>/<name>" }`. Nested because a flat path cannot disambiguate a template under `.ok/templates/` from a same-named doc. Mutually exclusive with flat `from`/`to`.',
+            'Move/rename a TEMPLATE instead: `{ from: "<folder>/<name>", to: "<folder>/<name>" }`. Nested because a flat path cannot disambiguate a template under `.ps/templates/` from a same-named doc. Mutually exclusive with flat `from`/`to`.',
           ),
         skill: z
           .object({
@@ -300,7 +300,7 @@ export function register(server: ServerInstance, deps: MoveDeps): void {
         const fromLabel = typeof result.from === 'string' ? result.from : args.template.from;
         const toLabel = typeof result.to === 'string' ? result.to : args.template.to;
         return textPlusStructured(
-          `${committed ? 'Renamed' : 'Moved'} template ${fromLabel} → ${toLabel}.${committed ? '' : ' (Untracked `.ok/` — moved on disk without git history.)'}`,
+          `${committed ? 'Renamed' : 'Moved'} template ${fromLabel} → ${toLabel}.${committed ? '' : ' (Untracked `.ps/` — moved on disk without git history.)'}`,
           { ok: true, kind: 'template', committed },
         );
       }
@@ -345,7 +345,7 @@ export function register(server: ServerInstance, deps: MoveDeps): void {
         const split = resolveTemplatePath(args.from);
         if (
           split.ok &&
-          existsSync(join(contentDir, split.folder, '.ok', 'templates', `${split.name}.md`))
+          existsSync(join(contentDir, split.folder, '.ps', 'templates', `${split.name}.md`))
         ) {
           return textResult(
             `Error: \`${args.from}\` is a template, not a doc/folder/asset. Move it with \`move({ template: { from: "${args.from}", to: "<folder>/<newName>" } })\`.`,

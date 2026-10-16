@@ -15,7 +15,7 @@ describe('resolveUiInfo ⇔ resolveUiRedirectPort agreement', () => {
   const dirs: string[] = [];
 
   function makeLockDir(): string {
-    const dir = mkdtempSync(join(tmpdir(), 'ok-ui-agree-'));
+    const dir = mkdtempSync(join(tmpdir(), 'ps-ui-agree-'));
     dirs.push(dir);
     return dir;
   }

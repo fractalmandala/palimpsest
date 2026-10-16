@@ -1,4 +1,4 @@
-import type { OkAboutInfo } from '@inkeep/open-knowledge-core/desktop-bridge';
+import type { PsAboutInfo } from '@palimpsest/core/desktop-bridge';
 import { releasesPageUrl, releaseUrlFor } from '../shared/release-links.ts';
 
 export function buildAboutInfo({
@@ -9,7 +9,7 @@ export function buildAboutInfo({
   version: string;
   variant: { readonly name: string; readonly productName: string };
   updateChecksAvailable: boolean;
-}): OkAboutInfo {
+}): PsAboutInfo {
   const releasesUrl = releasesPageUrl(variant);
   return {
     productName: variant.productName,

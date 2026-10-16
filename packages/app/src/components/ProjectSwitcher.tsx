@@ -22,7 +22,7 @@ import {
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { useCurrentBranch } from '@/hooks/use-current-branch';
 import { useWorktrees } from '@/hooks/use-worktrees';
-import type { OkDesktopBridge, RecentProjectEntry } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, RecentProjectEntry } from '@/lib/desktop-bridge-types';
 import { runWithToast as runWithToastBase } from '@/lib/error-state';
 import { subscribeLocalMenuAction } from '@/lib/local-menu-action-bus';
 import { CreateProjectDialog } from './CreateProjectDialog';
@@ -39,7 +39,7 @@ export const runWithToast = (
 const SELECT_GUARD_MS = 350;
 
 interface ProjectSwitcherProps {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
 }
 
 export function ProjectSwitcher({ bridge }: ProjectSwitcherProps) {
@@ -54,7 +54,7 @@ export function ProjectSwitcher({ bridge }: ProjectSwitcherProps) {
   const branch = useCurrentBranch();
   const worktreeModel = useWorktrees();
 
-  const isElectronHost = typeof window !== 'undefined' && window.okDesktop != null;
+  const isElectronHost = typeof window !== 'undefined' && window.psDesktop != null;
   const sawPointerDownRef = useRef(false);
   const withinOpenGuardRef = useRef(false);
   const openGuardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

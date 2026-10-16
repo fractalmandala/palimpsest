@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { parseCheckpoint } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { parseCheckpoint } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -18,7 +18,7 @@ let shadow: ShadowHandle;
 let liveWriters: Set<string>;
 
 beforeEach(async () => {
-  tmpDir = makeTempDir('ok-consolidate-test-');
+  tmpDir = makeTempDir('ps-consolidate-test-');
   projectRoot = resolve(tmpDir, 'project');
   contentDir = resolve(projectRoot, 'content/docs');
   mkdirSync(contentDir, { recursive: true });
@@ -47,7 +47,7 @@ async function commitAs(writerId: string, content: string) {
   writeFileSync(resolve(contentDir, 'intro.md'), content);
   await commitWip(
     shadow,
-    { id: writerId, name: writerId, email: `${writerId}@openknowledge.local` },
+    { id: writerId, name: writerId, email: `${writerId}@palimpsest.local` },
     'content/docs',
     `wip: ${writerId}`,
   );

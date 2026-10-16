@@ -11,8 +11,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { TERMINAL_CLI_IDS, TERMINAL_CLIS } from '@inkeep/open-knowledge-core';
-import { isValidLockPid } from '@inkeep/open-knowledge-server';
+import { TERMINAL_CLI_IDS, TERMINAL_CLIS } from '@palimpsest/core';
+import { isValidLockPid } from '@palimpsest/server';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 
 const desktopLog = vi.hoisted(() => ({
@@ -53,19 +53,19 @@ import {
   MINIMAL_PARENT_PATH,
   RC_FILES,
   RC_WITHOUT_MANAGED_BLOCK,
-} from '../support/ok-bin-scratch-home.test-helper.ts';
+} from '../support/ps-bin-scratch-home.test-helper.ts';
 
 const SENTINEL_EXIT_CODE = 42;
 const SLIDEV_BIN = 'slidev';
 const TERMINAL_CLI_BINS = TERMINAL_CLI_IDS.map((cli) => TERMINAL_CLIS[cli].bin);
-const FIXTURE_ONLY_BIN = `ok-probe-fixture-${randomUUID()}`;
+const FIXTURE_ONLY_BIN = `ps-probe-fixture-${randomUUID()}`;
 const CHILD_PATH_RECORD = "child's-path";
 const BIN_ON_THE_BARE_PARENT_PATH = 'ls';
 const LAUNCH_EXIT_TIMEOUT_MS = 20_000;
 const LAUNCH_TIMED_OUT = -1;
 
 const WHY_THIS_PAIRS_WITH_PTY_HOST =
-  'Pairs with "prepends ~/.ok/bin to the child PATH so ok resolves regardless of rc consent" in ' +
+  'Pairs with "prepends ~/.ps/bin to the child PATH so ok resolves regardless of rc consent" in ' +
   'packages/desktop/tests/utility/pty-host.test.ts. That test pins the producer (buildShellEnv). ' +
   'This file pins the consumers. The asserted directory is read back out of buildShellEnv rather ' +
   'than written as a literal, so the two halves cannot drift apart silently.';
@@ -100,7 +100,7 @@ function recordingProbeSpawn(inner: ProbeSpawn, probedArgv: string[][]): ProbeSp
 }
 
 describe.skipIf(process.platform === 'win32')(
-  'the CLI-presence probes and the Slidev launch run with ~/.ok/bin on their PATH',
+  'the CLI-presence probes and the Slidev launch run with ~/.ps/bin on their PATH',
   () => {
     let scratchHome: string;
     let recordDir: string;
@@ -114,7 +114,7 @@ describe.skipIf(process.platform === 'win32')(
       recordDir = createRecordDir();
       childPathRecord = join(recordDir, CHILD_PATH_RECORD);
       scratchHome = createScratchHomeWithOkBin({
-        prefix: 'ok-bin-child-path-',
+        prefix: 'ps-bin-child-path-',
         bins: [SLIDEV_BIN, ...TERMINAL_CLI_BINS, FIXTURE_ONLY_BIN],
         exitCode: SENTINEL_EXIT_CODE,
         recordPath: childPathRecord,
@@ -148,7 +148,7 @@ describe.skipIf(process.platform === 'win32')(
       return buildShellEnv(process.env, { platform: process.platform }).env;
     }
 
-    function okBinGrantedToOwnShells(): string {
+    function psBinGrantedToOwnShells(): string {
       return (appGrantedShellEnv().PATH ?? '').split(':')[0] ?? '';
     }
 
@@ -169,13 +169,13 @@ describe.skipIf(process.platform === 'win32')(
       ).toBe(0);
     }
 
-    test('the PATH OK Desktop grants its own shells leads with ~/.ok/bin', () => {
-      expect(okBinGrantedToOwnShells(), WHY_THIS_PAIRS_WITH_PTY_HOST).toBe(
-        join(scratchHome, '.ok', 'bin'),
+    test('the PATH OK Desktop grants its own shells leads with ~/.ps/bin', () => {
+      expect(psBinGrantedToOwnShells(), WHY_THIS_PAIRS_WITH_PTY_HOST).toBe(
+        join(scratchHome, '.ps', 'bin'),
       );
     });
 
-    test('a probe child inheriting the bare app environment misses a ~/.ok/bin CLI the production seam resolves', async () => {
+    test('a probe child inheriting the bare app environment misses a ~/.ps/bin CLI the production seam resolves', async () => {
       expect(
         await runLoginShellProbe(
           realProbeSpawn,
@@ -190,7 +190,7 @@ describe.skipIf(process.platform === 'win32')(
       expect(await probeThroughBareEnv(FIXTURE_ONLY_BIN)).not.toBe(0);
     });
 
-    test('every CLI-presence detection site reports a ~/.ok/bin CLI present, through one probe-spawn seam', async () => {
+    test('every CLI-presence detection site reports a ~/.ps/bin CLI present, through one probe-spawn seam', async () => {
       const probedArgv: string[][] = [];
       const probeSpawn = recordingProbeSpawn(realProbeSpawn, probedArgv);
       const platform = process.platform;
@@ -240,10 +240,10 @@ describe.skipIf(process.platform === 'win32')(
         await expectBareEnvAdapterWorks();
         if ((await probeThroughBareEnv(SLIDEV_BIN)) === 0) {
           throw new Error(
-            'the scratch HOME is compromised: a slidev outside ~/.ok/bin is already reachable from the bare app environment',
+            'the scratch HOME is compromised: a slidev outside ~/.ps/bin is already reachable from the bare app environment',
           );
         }
-        const projectRoot = mkdtempSync(join(tmpdir(), 'ok-bin-child-path-deck-'));
+        const projectRoot = mkdtempSync(join(tmpdir(), 'ps-bin-child-path-deck-'));
         const child = realSpawnSlidev(
           { docPath: join(projectRoot, 'slides.md'), shell, source: 'global', projectRoot },
           await findFreePort(),
@@ -262,12 +262,12 @@ describe.skipIf(process.platform === 'win32')(
         if (launched?.isAlive() === true) await launched.signal('SIGKILL');
       });
 
-      test('runs the slidev installed in ~/.ok/bin', () => {
+      test('runs the slidev installed in ~/.ps/bin', () => {
         expect(
           launchExitCode,
           launchExitCode === LAUNCH_TIMED_OUT
-            ? 'the launched slidev never exited: it resolved to something other than the ~/.ok/bin sentinel'
-            : 'the launched slidev is not the ~/.ok/bin sentinel',
+            ? 'the launched slidev never exited: it resolved to something other than the ~/.ps/bin sentinel'
+            : 'the launched slidev is not the ~/.ps/bin sentinel',
         ).toBe(SENTINEL_EXIT_CODE);
       });
 
@@ -278,10 +278,10 @@ describe.skipIf(process.platform === 'win32')(
         ).toBe(true);
       });
 
-      test('runs with ~/.ok/bin on its PATH', () => {
+      test('runs with ~/.ps/bin on its PATH', () => {
         const recorded = readFileSync(childPathRecord, 'utf8');
         expect(recorded.split(':'), WHY_THIS_PAIRS_WITH_PTY_HOST).toContain(
-          okBinGrantedToOwnShells(),
+          psBinGrantedToOwnShells(),
         );
       });
 
@@ -334,7 +334,7 @@ const FISH_CONTAINMENT_TIMEOUT_MS =
 
 describe.skipIf(!existsSync('/bin/bash'))('Slidev launch process-group containment', () => {
   test('the launched deck shares the spawned shell process group, so the group kill reaches it', async (ctx) => {
-    const deckDir = mkdtempSync(join(tmpdir(), 'ok-pgid-'));
+    const deckDir = mkdtempSync(join(tmpdir(), 'ps-pgid-'));
     try {
       const invocation = buildSlidevInvocation(
         {
@@ -345,7 +345,7 @@ describe.skipIf(!existsSync('/bin/bash'))('Slidev launch process-group containme
         },
         4300,
         'linux',
-        [join(deckDir, '.ok', 'bin')],
+        [join(deckDir, '.ps', 'bin')],
       );
       const shipped = `${invocation.args.at(-1)?.replace(/slidev .*$/, '/bin/sleep 60')}; :`;
       const mutated = shipped.replace('set +m; ', '');
@@ -420,7 +420,7 @@ describe('Slidev launch process-group containment on fish', () => {
         return;
       }
       const fish = FISH_SHELL;
-      const deckDir = mkdtempSync(join(tmpdir(), 'ok-pgid-fish-'));
+      const deckDir = mkdtempSync(join(tmpdir(), 'ps-pgid-fish-'));
       try {
         mkdirSync(join(deckDir, '.config', 'fish'), { recursive: true });
         writeFileSync(
@@ -437,7 +437,7 @@ describe('Slidev launch process-group containment on fish', () => {
           },
           4300,
           'linux',
-          [join(deckDir, '.ok', 'bin')],
+          [join(deckDir, '.ps', 'bin')],
         );
         const shipped = `${invocation.args.at(-1)?.replace(/slidev .*$/, '/bin/sleep 60')}; true`;
         const mutated = shipped.replace('status job-control none; ', '');
@@ -507,7 +507,7 @@ describe('Slidev launch process-group containment on fish', () => {
 
 describe.skipIf(!existsSync('/bin/bash'))('Slidev bashrc function detect-and-launch parity', () => {
   test('a slidev function defined only in ~/.bashrc is both detected and launchable', async () => {
-    const home = createScratchHomeWithOkBin({ prefix: 'ok-bashrc-fn-', bins: [] });
+    const home = createScratchHomeWithOkBin({ prefix: 'ps-bashrc-fn-', bins: [] });
     const previousHome = process.env.HOME;
     const previousPath = process.env.PATH;
     try {
@@ -562,7 +562,7 @@ describe.skipIf(!existsSync('/bin/bash'))('Slidev bashrc function detect-and-lau
 describe.skipIf(process.platform === 'win32')('Slidev shell startup PATH replacement', () => {
   test('reasserts the managed CLI path for detection and launch after shell startup', async () => {
     const home = createScratchHomeWithOkBin({
-      prefix: 'ok-bin-login-reset-',
+      prefix: 'ps-bin-login-reset-',
       bins: ['slidev'],
       exitCode: SENTINEL_EXIT_CODE,
     });
@@ -609,7 +609,7 @@ describe.skipIf(process.platform === 'win32')('Slidev shell startup PATH replace
         },
         4300,
         'linux',
-        [join(home, '.ok', 'bin')],
+        [join(home, '.ps', 'bin')],
       );
       expect(invocation.mode).toBe('interactive-shell');
       const child = spawnSync(invocation.file, [...invocation.args], {

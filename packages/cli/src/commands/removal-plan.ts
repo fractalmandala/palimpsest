@@ -2,22 +2,22 @@ import { lstatSync, readdirSync, readFileSync, rmSync, unlinkSync } from 'node:f
 import { basename, join, relative, resolve, sep } from 'node:path';
 import {
   currentDesktopProduct,
-  OK_DIR,
-  OK_USER_HOME_AUTH_FILE,
-  OK_USER_HOME_SECRETS_FILE,
+  PS_DIR,
+  PS_USER_HOME_AUTH_FILE,
+  PS_USER_HOME_SECRETS_FILE,
   PROJECT_SKILL_PROJECTION_PATHS,
   resolveDesktopProductName,
   SHARED_OK_ENTRIES,
   SKILLS_STORE_DIRNAME,
-} from '@inkeep/open-knowledge-core';
-import { atomicWriteFileSync, okUserHomeDir } from '@inkeep/open-knowledge-core/server';
-import { resolveShadowDir } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core';
+import { atomicWriteFileSync, psUserHomeDir } from '@palimpsest/core/server';
+import { resolveShadowDir } from '@palimpsest/core/shadow-repo-layout';
 import {
   createProbeFailureReporter,
   type LockProcessScan,
   resolveLockDir,
   scanLockProcesses,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 import { clearAllEmbeddingsKeys } from '../auth/embeddings-key-store.ts';
 import { clearTokenFromAllBackends } from '../auth/token-store.ts';
 import {
@@ -114,7 +114,7 @@ function sharedOkEntriesKept(purgeContent: boolean): string[] {
 
 export function sharedOkEntriesList(purgeContent: boolean): string {
   return sharedOkEntriesKept(purgeContent)
-    .map((entry) => `~/${OK_DIR}/${entry}`)
+    .map((entry) => `~/${PS_DIR}/${entry}`)
     .join(', ');
 }
 
@@ -134,7 +134,7 @@ export function deinitOps(
   const ops: RemovalOp[] = [];
 
   const lockDirs = [resolveLockDir(projectRoot)];
-  const legacyLockDir = join(projectRoot, '.ok');
+  const legacyLockDir = join(projectRoot, '.ps');
   if (resolveRemovalFilePath(join(legacyLockDir, 'server.lock')).kind !== 'not-present') {
     lockDirs.push(legacyLockDir);
   }
@@ -209,7 +209,7 @@ export function deinitOps(
     });
   } catch {}
 
-  const projectStatePath = join(projectRoot, '.ok');
+  const projectStatePath = join(projectRoot, '.ps');
   ops.sort(
     (left, right) =>
       Number(left.kind === 'remove-path' && left.path === projectStatePath) -
@@ -258,13 +258,13 @@ export function buildUninstallPlan(input: UninstallPlanInput): RemovalPlan {
   ops.push({
     kind: 'keychain-token',
     group: 'Credentials',
-    label: `Remove the GitHub credential (${host}) from the OS keychain + ${OK_USER_HOME_AUTH_FILE}`,
+    label: `Remove the GitHub credential (${host}) from the OS keychain + ${PS_USER_HOME_AUTH_FILE}`,
     host,
   });
   ops.push({
     kind: 'embeddings-key',
     group: 'Credentials',
-    label: `Remove all embeddings API keys (${OK_USER_HOME_SECRETS_FILE})`,
+    label: `Remove all embeddings API keys (${PS_USER_HOME_SECRETS_FILE})`,
   });
 
   ops.push(...pathRevertOps(marker, home));
@@ -309,15 +309,15 @@ export function buildUninstallPlan(input: UninstallPlanInput): RemovalPlan {
   );
 
   const { userHomeDirName } = currentDesktopProduct();
-  if (userHomeDirName === OK_DIR) {
+  if (userHomeDirName === PS_DIR) {
     ops.push({
       kind: 'remove-path',
       group: 'Global directory',
       requiresSuccessfulCleanup: true,
       label: purgeContent
-        ? `Remove ~/${OK_DIR} (including user-authored skills; keeping ${sharedOkEntriesList(true)}, shared by every channel)`
-        : `Remove ~/${OK_DIR} (keeping ${sharedOkEntriesList(false)}, shared by every channel)`,
-      path: okUserHomeDir(home),
+        ? `Remove ~/${PS_DIR} (including user-authored skills; keeping ${sharedOkEntriesList(true)}, shared by every channel)`
+        : `Remove ~/${PS_DIR} (keeping ${sharedOkEntriesList(false)}, shared by every channel)`,
+      path: psUserHomeDir(home),
       preserve: sharedOkEntriesKept(purgeContent),
     });
   } else {
@@ -327,16 +327,16 @@ export function buildUninstallPlan(input: UninstallPlanInput): RemovalPlan {
       requiresSuccessfulCleanup: true,
       label: purgeContent
         ? `Remove ~/${userHomeDirName}`
-        : `Remove ~/${userHomeDirName} (keeping ~/${OK_DIR}/${SKILLS_STORE_DIRNAME}, shared by every channel)`,
-      path: okUserHomeDir(home),
+        : `Remove ~/${userHomeDirName} (keeping ~/${PS_DIR}/${SKILLS_STORE_DIRNAME}, shared by every channel)`,
+      path: psUserHomeDir(home),
     });
     if (purgeContent) {
       ops.push({
         kind: 'remove-path',
         group: 'Global directory',
         requiresSuccessfulCleanup: true,
-        label: `Remove ~/${OK_DIR}/${SKILLS_STORE_DIRNAME} (user-authored skills, shared by every channel)`,
-        path: join(home, OK_DIR, SKILLS_STORE_DIRNAME),
+        label: `Remove ~/${PS_DIR}/${SKILLS_STORE_DIRNAME} (user-authored skills, shared by every channel)`,
+        path: join(home, PS_DIR, SKILLS_STORE_DIRNAME),
       });
     }
   }
@@ -399,7 +399,7 @@ export function applicationDataOps(
     ops.push({
       kind: 'remove-path',
       group: 'Application data',
-      label: `Remove ${tildify(legacy, home)} (only if it is OpenKnowledge's)`,
+      label: `Remove ${tildify(legacy, home)} (only if it is Palimpsest's)`,
       path: legacy,
       requireOurState: true,
     });
@@ -646,13 +646,13 @@ async function executeOp(op: RemovalOp, deps: ResolvedDeps): Promise<RemovalOpRe
               return {
                 op,
                 status: 'failed',
-                detail: `Pi bridge configuration left untouched (missing symlink target); Pi's separate folder trust grant has not been checked or removed. Restore the missing target of the OpenKnowledge bridge symlink at ${configPath}, or repoint that symlink to the intended bridge file, then retry cleanup`,
+                detail: `Pi bridge configuration left untouched (missing symlink target); Pi's separate folder trust grant has not been checked or removed. Restore the missing target of the Palimpsest bridge symlink at ${configPath}, or repoint that symlink to the intended bridge file, then retry cleanup`,
               };
             }
             return {
               op,
               status: 'skipped',
-              detail: `left the dangling configuration symlink untouched; no target file contains an OpenKnowledge entry to remove: ${configPath}`,
+              detail: `left the dangling configuration symlink untouched; no target file contains an Palimpsest entry to remove: ${configPath}`,
             };
           }
           return {
@@ -680,7 +680,7 @@ async function executeOp(op: RemovalOp, deps: ResolvedDeps): Promise<RemovalOpRe
             return {
               op,
               status: 'skipped',
-              detail: `left the dangling configuration symlink untouched; no target file contains an OpenKnowledge entry to remove: ${join(op.projectRoot, '.claude', 'launch.json')}`,
+              detail: `left the dangling configuration symlink untouched; no target file contains an Palimpsest entry to remove: ${join(op.projectRoot, '.claude', 'launch.json')}`,
             };
           }
           return {
@@ -741,7 +741,7 @@ function configurationDeclineDetail(reason: McpConfigDeclineReason): string {
     case 'duplicate-container':
       return 'configuration left untouched (duplicate server configuration blocks); combine the duplicate blocks while preserving their settings, then retry cleanup';
     case 'no-native-writer':
-      return 'configuration left untouched (this install has no format-preserving TOML writer); remove the OpenKnowledge entry manually or reinstall OpenKnowledge, then retry cleanup';
+      return 'configuration left untouched (this install has no format-preserving TOML writer); remove the Palimpsest entry manually or reinstall Palimpsest, then retry cleanup';
     case 'unparseable':
       return 'configuration left untouched (unparseable); repair it and retry cleanup';
     default: {
@@ -753,7 +753,7 @@ function configurationDeclineDetail(reason: McpConfigDeclineReason): string {
 
 function executeRemovePath(op: Extract<RemovalOp, { kind: 'remove-path' }>): RemovalOpResult {
   if (op.requireOurState && !stateDirIsOurs(op.path)) {
-    return { op, status: 'skipped', detail: 'not verified as OpenKnowledge — left untouched' };
+    return { op, status: 'skipped', detail: 'not verified as Palimpsest — left untouched' };
   }
   if (op.containWithin) {
     assertProjectRemovalSafe(op.path, op.containWithin);

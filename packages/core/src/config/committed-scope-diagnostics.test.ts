@@ -12,11 +12,11 @@ function paths(value: unknown): string[] {
 }
 
 describe('detectCommittedProjectLocalKeys', () => {
-  test('flags a committed server.bind — the clone-breaking case — with the OK_BIND fix', () => {
+  test('flags a committed server.bind — the clone-breaking case — with the PS_BIND fix', () => {
     const findings = detectCommittedProjectLocalKeys({ value: { server: { bind: ['0.0.0.0'] } } });
     expect(findings).toHaveLength(1);
     expect(findings[0]?.path).toEqual(['server', 'bind']);
-    expect(findings[0]?.envVar).toBe('OK_BIND');
+    expect(findings[0]?.envVar).toBe('PS_BIND');
   });
 
   test('flags a committed loopback bind too — placement, not value, is the fault', () => {
@@ -29,7 +29,7 @@ describe('detectCommittedProjectLocalKeys', () => {
     });
     expect(findings).toHaveLength(1);
     expect(findings[0]?.path).toEqual(['server', 'allowExternal']);
-    expect(findings[0]?.envVar).toBe('OK_ALLOW_EXTERNAL');
+    expect(findings[0]?.envVar).toBe('PS_ALLOW_EXTERNAL');
   });
 
   test('flags a project-local leaf with no env surface, and omits envVar', () => {
@@ -86,44 +86,44 @@ describe('detectCommittedProjectLocalKeys', () => {
     const doc = parseDocument(source);
     const findings = detectCommittedProjectLocalKeys({
       value: doc.toJSON(),
-      file: '/tmp/.ok/config.yml',
+      file: '/tmp/.ps/config.yml',
       source,
       doc,
     });
     expect(findings).toHaveLength(1);
-    expect(findings[0]?.source?.file).toBe('/tmp/.ok/config.yml');
+    expect(findings[0]?.source?.file).toBe('/tmp/.ps/config.yml');
     expect(findings[0]?.source?.line).toBeGreaterThanOrEqual(1);
   });
 });
 
 describe('formatIgnoredCommittedKey', () => {
   test('names the key, says it is ignored, and points at the per-machine fix + env var', () => {
-    const msg = formatIgnoredCommittedKey({ path: ['server', 'bind'], envVar: 'OK_BIND' });
+    const msg = formatIgnoredCommittedKey({ path: ['server', 'bind'], envVar: 'PS_BIND' });
     expect(msg).toContain('server.bind');
     expect(msg).toContain('ignored');
-    expect(msg).toContain('.ok/local/config.yml');
-    expect(msg).toContain('OK_BIND');
+    expect(msg).toContain('.ps/local/config.yml');
+    expect(msg).toContain('PS_BIND');
   });
 
   test('omits the env hint when the leaf has no env surface', () => {
     const msg = formatIgnoredCommittedKey({ path: ['autoSync', 'mode'] });
     expect(msg).toContain('autoSync.mode');
-    expect(msg).toContain('.ok/local/config.yml');
+    expect(msg).toContain('.ps/local/config.yml');
     expect(msg).not.toContain('OK_');
   });
 
   test('prefixes file:line:column when the finding was source-located', () => {
     const msg = formatIgnoredCommittedKey({
       path: ['server', 'bind'],
-      envVar: 'OK_BIND',
-      source: { file: '/repo/.ok/config.yml', line: 3, column: 5 },
+      envVar: 'PS_BIND',
+      source: { file: '/repo/.ps/config.yml', line: 3, column: 5 },
     });
-    expect(msg.startsWith('/repo/.ok/config.yml:3:5: ')).toBe(true);
+    expect(msg.startsWith('/repo/.ps/config.yml:3:5: ')).toBe(true);
     expect(msg).toContain('server.bind');
   });
 
   test('omits the location prefix when no source is attached', () => {
-    const msg = formatIgnoredCommittedKey({ path: ['server', 'bind'], envVar: 'OK_BIND' });
+    const msg = formatIgnoredCommittedKey({ path: ['server', 'bind'], envVar: 'PS_BIND' });
     expect(msg.startsWith('server.bind')).toBe(true);
   });
 });

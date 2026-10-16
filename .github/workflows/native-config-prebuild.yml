@@ -1,6 +1,6 @@
 name: native-config prebuild
 
-# Cross-platform prebuild matrix for the `@inkeep/open-knowledge-native-config`
+# Cross-platform prebuild matrix for the `@palimpsest/native-config`
 # napi-rs addon (the toml_edit parse + format-preserving Codex TOML edit engine).
 # Builds one `.node` per target so the published CLI can bundle all of them into
 # `packages/cli/dist/native/` (Option 3 — bundle into the CLI tarball; see
@@ -35,7 +35,7 @@ on:
       - ".github/workflows/native-config-prebuild.yml"
 
 # Per-ref isolation — a new push to the same branch cancels the in-flight run.
-# Deliberately NOT the `ok-release-cadence` group (that serializes beta/stable
+# Deliberately NOT the `ps-release-cadence` group (that serializes beta/stable
 # cuts); this prebuild is independent of the release pipeline.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -122,7 +122,7 @@ jobs:
           mismatched=""
           for base in $mirrors https://ziglang.org/download/0.14.1; do
             if ! curl -fsSL --connect-timeout 10 --speed-limit 1000000 --speed-time 15 --max-time 120 \
-              -o "$tarball" "$base/$ZIG_TARBALL?source=open-knowledge-native-config-prebuild"; then
+              -o "$tarball" "$base/$ZIG_TARBALL?source=palimpsest-native-config-prebuild"; then
               echo "$base did not finish serving $ZIG_TARBALL"
               continue
             fi

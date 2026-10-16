@@ -13,22 +13,22 @@ import { numberedScrollLine } from './terminal-scrollback';
 import { terminalSmokeShellCommands } from './terminal-smoke-shell';
 
 const POWERSHELL_BANNER = 'PowerShell 7.6.6';
-const POWERSHELL_PROMPT = 'PS C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ok-term-proj> ';
+const POWERSHELL_PROMPT = 'PS C:\\Users\\runneradmin\\AppData\\Local\\Temp\\ps-term-proj> ';
 const POWERSHELL_PROMPT_TEXT_REDRAW = '> ';
 const POWERSHELL_CONTINUATION_PROMPT = '>> ';
 const POWERSHELL_PROFILE_LOAD_TIME = 'Loading personal and system profiles took 2840ms.';
 const POWERSHELL_UNTERMINATED_LINE = `${POWERSHELL_PROMPT}852f747a1bbfdb530ad50b962_$((6*7))_READY"`;
 const POWERSHELL_ARITHMETIC_WRITE = /^Write-Output "([^"]*)\$\(\((\d+)\*(\d+)\)\)([^"]*)"$/u;
 
-const EARLIER_CALL_TOKEN = 'OK_INPUT_READY_49ddbe43af6c4863836fdea9d02fa945';
+const EARLIER_CALL_TOKEN = 'PS_INPUT_READY_49ddbe43af6c4863836fdea9d02fa945';
 const EARLIER_CALL_ECHO_AND_MARKER = [
   `${POWERSHELL_PROMPT}Write-Output "${EARLIER_CALL_TOKEN}_$((6*7))_READY"`,
   `${EARLIER_CALL_TOKEN}_42_READY`,
 ];
 const RELOAD_REPLAY = [
   ...EARLIER_CALL_ECHO_AND_MARKER,
-  `${POWERSHELL_PROMPT}$env:OK_RELOAD_MARKER='OKRELOAD_SURVIVED_351'`,
-  `${POWERSHELL_PROMPT}Write-Output "before=[$env:OK_RELOAD_MARKER]"`,
+  `${POWERSHELL_PROMPT}$env:PS_RELOAD_MARKER='OKRELOAD_SURVIVED_351'`,
+  `${POWERSHELL_PROMPT}Write-Output "before=[$env:PS_RELOAD_MARKER]"`,
   'before=[OKRELOAD_SURVIVED_351]',
 ];
 
@@ -1086,7 +1086,7 @@ interface StartupDiagnosticsFixture {
 }
 
 function seedBootLog(lines: readonly string[]): string {
-  const home = makeDiagnosticsHome('ok-terminal-diagnostics-');
+  const home = makeDiagnosticsHome('ps-terminal-diagnostics-');
   const dir = bootLogDirFor(home);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'desktop.2026-10-14.log'), `${lines.join('\n')}\n`, 'utf8');

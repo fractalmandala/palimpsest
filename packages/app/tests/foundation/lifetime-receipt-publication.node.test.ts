@@ -52,9 +52,9 @@ describe('lifetime receipt publication', () => {
   });
 
   it('exposes the receipt only after its contents are complete', async () => {
-    publication.runDir = mkdtempSync(join(tmpdir(), 'ok-lifetime-publication-'));
-    vi.stubEnv('OK_PORT_OWNERSHIP_RUN_DIR', publication.runDir);
-    vi.stubEnv('OK_PORT_OWNERSHIP_CALLER', 'lifetime-normal');
+    publication.runDir = mkdtempSync(join(tmpdir(), 'ps-lifetime-publication-'));
+    vi.stubEnv('PS_PORT_OWNERSHIP_RUN_DIR', publication.runDir);
+    vi.stubEnv('PS_PORT_OWNERSHIP_CALLER', 'lifetime-normal');
     await lifetimeGlobalSetup();
 
     expect(publication.observations).toEqual([undefined]);

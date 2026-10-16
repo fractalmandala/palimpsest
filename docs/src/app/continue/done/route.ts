@@ -10,7 +10,7 @@ export function GET(_request: NextRequest): NextResponse {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-<title>OpenKnowledge</title>
+<title>Palimpsest</title>
 <style>
   :root { color-scheme: light dark; }
   body { margin: 0; min-height: 100vh; display: grid; place-items: center;
@@ -24,7 +24,7 @@ export function GET(_request: NextRequest): NextResponse {
 </head>
 <body>
 <div class="card" data-testid="continue-done">
-<h1>Opening in OpenKnowledge…</h1>
+<h1>Opening in Palimpsest…</h1>
 <p>You can close this tab and return to the app.</p>
 </div>
 </body>

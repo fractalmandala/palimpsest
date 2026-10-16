@@ -3,7 +3,7 @@
  * the equivalent pin for *classification*.
  */
 
-import { createTargetNamespace } from '@inkeep/open-knowledge-core';
+import { createTargetNamespace } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   extractMarkdownLinksFromMarkdown,

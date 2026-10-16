@@ -74,7 +74,7 @@ export function SpellcheckLanguagesRow() {
 
   useEffect(() => {
     if (!isSpellcheckLanguageSelectionAvailable()) return;
-    const spellcheck = window.okDesktop?.spellcheck;
+    const spellcheck = window.psDesktop?.spellcheck;
     if (!spellcheck) {
       setState({ status: 'error' });
       return;
@@ -107,7 +107,7 @@ export function SpellcheckLanguagesRow() {
   if (!isSpellcheckLanguageSelectionAvailable()) return null;
 
   async function submitSelection(languages: readonly string[]): Promise<void> {
-    const spellcheck = window.okDesktop?.spellcheck;
+    const spellcheck = window.psDesktop?.spellcheck;
     if (!spellcheck) return;
     setSavedTick(false);
     if (savedTickTimerRef.current) clearTimeout(savedTickTimerRef.current);

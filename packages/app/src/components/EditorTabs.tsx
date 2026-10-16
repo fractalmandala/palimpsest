@@ -1,10 +1,10 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { useDndContext } from '@dnd-kit/core';
 import { horizontalListSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable';
-import { isEditableTextDocFile } from '@inkeep/open-knowledge-core/constants/code-languages';
+import { isEditableTextDocFile } from '@palimpsest/core/constants/code-languages';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   AlertTriangle,
@@ -313,7 +313,7 @@ function EditorTabContextMenu({
   const canMoveToNewPane = canSplit && openTabs.length > 1;
   const parsedTab = parseEditorTabId(tabId);
   const popOutDocName =
-    parsedTab.kind === 'doc' && target && typeof window !== 'undefined' && window.okDesktop
+    parsedTab.kind === 'doc' && target && typeof window !== 'undefined' && window.psDesktop
       ? parsedTab.docName
       : null;
 
@@ -781,7 +781,7 @@ export function EditorTabs({
     };
   }, []);
 
-  const isElectronHost = typeof window !== 'undefined' && window.okDesktop != null;
+  const isElectronHost = typeof window !== 'undefined' && window.psDesktop != null;
   const newTabIdSet = new Set(newTabIds);
 
   function closeVisibleTabs(tabIds: readonly string[]) {

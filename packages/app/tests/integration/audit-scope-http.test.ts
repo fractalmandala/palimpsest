@@ -9,7 +9,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { ProblemDetailsSchema, ValidationAuditResponseSchema } from '@inkeep/open-knowledge-core';
+import { ProblemDetailsSchema, ValidationAuditResponseSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import {
   AUDIT_EMPTY_SCOPE_WARNING,
@@ -47,10 +47,10 @@ const flightObserver = vi.spyOn(singleFlight, 'createSingleFlight').mockImplemen
 });
 
 beforeAll(async () => {
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-scope-http-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-scope-http-')));
   const seeds = {
-    '.ok/config.yml':
-      'contentRules:\n  markdownlint:\n    enabled: true\n  okf:\n    enabled: true\n',
+    '.ps/config.yml':
+      'contentRules:\n  markdownlint:\n    enabled: true\n  psf:\n    enabled: true\n',
     '.gitignore': 'ignored/\nparity/ignored.txt\n',
     'guides/solo.md': '# Solo\n\nA\ttab.\n\nSee [[scope-solo-ghost]].\n',
     'guides/second.mdx': '# Second\n\nA\ttab.\n\nSee [[scope-second-ghost]].\n',
@@ -73,7 +73,7 @@ beforeAll(async () => {
     writeFileSync(join(contentDir, path), body);
   }
   mkdirSync(join(contentDir, 'empty'));
-  outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-scope-outside-')));
+  outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-scope-outside-')));
   writeFileSync(join(outsideDir, 'secret.txt'), 'Private fixture.\n');
   symlinkSync(outsideDir, join(contentDir, 'escape'));
   symlinkSync(join(contentDir, 'loop'), join(contentDir, 'loop'));
@@ -173,7 +173,7 @@ describe('scope parity through HTTP and registered MCP tools', () => {
         ).toContain('scope-mdx-ghost');
       expect(full.files.map((file) => file.file)).toEqual([explicit]);
       expect(full.ran).toEqual(
-        name === 'audit' ? ['markdownlint', 'okf', 'links'] : ['markdownlint', 'okf'],
+        name === 'audit' ? ['markdownlint', 'psf', 'links'] : ['markdownlint', 'psf'],
       );
       expect(full.files[0]?.diagnostics.some((diagnostic) => diagnostic.code === 'MD010')).toBe(
         true,
@@ -281,7 +281,7 @@ describe('scope parity through HTTP and registered MCP tools', () => {
         expect(body.files).toEqual([]);
         expect(body.errorCount).toBe(0);
         expect(body.warningCount).toBe(0);
-        expect(body.ran).toEqual(endpoint === '/api/audit' ? ['links', 'okf'] : []);
+        expect(body.ran).toEqual(endpoint === '/api/audit' ? ['links', 'psf'] : []);
         expect(body.warnings).toEqual([expect.stringContaining(warning)]);
       }
       const response = await fetch(`${server.baseUrl}${endpoint}?path=..%2Foutside`);

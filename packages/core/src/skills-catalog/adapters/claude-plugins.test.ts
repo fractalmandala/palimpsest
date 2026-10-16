@@ -16,7 +16,7 @@ import { enumerateClaudePlugins } from './claude-plugins.ts';
 let root: string;
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'ok-claude-plugins-'));
+  root = mkdtempSync(join(tmpdir(), 'ps-claude-plugins-'));
 });
 afterEach(() => {
   vi.restoreAllMocks();

@@ -9,7 +9,7 @@ import {
   type BugReportSendOperation,
   bugReportSendManager,
 } from '@/lib/bug-report-send-manager';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { scheduleClipboardWrite } from '@/lib/share/clipboard-adapter';
 
 const RESOLVED_AUTO_DISMISS_MS = 8_000;
@@ -33,7 +33,7 @@ interface RenderedLayout {
 
 export interface InstallBugReportSendToastsOptions {
   readonly manager?: BugReportSendManager;
-  readonly bridge?: OkDesktopBridge;
+  readonly bridge?: PsDesktopBridge;
 }
 
 let attachedToSingleton = false;

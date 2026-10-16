@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { DEFAULT_LINTER_CONFIG, type LinterConfig } from '@inkeep/open-knowledge-core';
+import { DEFAULT_LINTER_CONFIG, type LinterConfig } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { auditProject } from './audit.ts';
 import { AuditCache } from './audit-cache.ts';
@@ -27,7 +27,7 @@ function write(path: string, body = TABBED): void {
 }
 
 beforeEach(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'ok-audit-scope-')));
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-audit-scope-')));
 });
 
 afterEach(() => {
@@ -250,7 +250,7 @@ describe('server scope admission and coverage', () => {
     expect(audit.warnings).toEqual([expect.stringContaining('could not read')]);
   });
 
-  test.each(['.gitignore', '.okignore'])(
+  test.each(['.gitignore', '.psignore'])(
     'lints explicitly requested files excluded by %s',
     async (ignoreFile) => {
       write(ignoreFile, 'ignored/\n');
@@ -278,7 +278,7 @@ describe('server scope admission and coverage', () => {
   test('a resolved file scope never reports project-wide unmatched schema globs', async () => {
     write('notes/a.md', '# A\n');
     write(
-      '.ok/schemas/doc.schema.json',
+      '.ps/schemas/doc.schema.json',
       JSON.stringify({ $schema: 'http://json-schema.org/draft-07/schema#', type: 'object' }),
     );
     const config: LinterConfig = {
@@ -287,12 +287,12 @@ describe('server scope admission and coverage', () => {
         ...baseConfig.plugins,
         frontmatter: {
           enabled: true,
-          schemas: [{ file: '.ok/schemas/doc.schema.json', appliesTo: ['specs/**'] }],
+          schemas: [{ file: '.ps/schemas/doc.schema.json', appliesTo: ['specs/**'] }],
         },
       },
     };
     const unmatched =
-      'unmatched appliesTo glob "specs/**" — matches no docs in this project (frontmatter mapping for .ok/schemas/doc.schema.json)';
+      'unmatched appliesTo glob "specs/**" — matches no docs in this project (frontmatter mapping for .ps/schemas/doc.schema.json)';
     const whole = await auditProject({ projectDir: root, contentDir: root, baseConfig: config });
     expect(whole.warnings).toContain(unmatched);
     const resolution = resolveAuditScope('notes/a.md', root);

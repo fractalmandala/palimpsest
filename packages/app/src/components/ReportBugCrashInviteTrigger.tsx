@@ -1,9 +1,9 @@
 import { useSyncExternalStore } from 'react';
 import { ReportBugDialog } from '@/components/ReportBugDialog';
 import { crashInviteStore } from '@/lib/crash-invite-store';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
-export function ReportBugCrashInviteTrigger({ bridge }: { bridge: OkDesktopBridge }) {
+export function ReportBugCrashInviteTrigger({ bridge }: { bridge: PsDesktopBridge }) {
   const invite = useSyncExternalStore(crashInviteStore.subscribe, crashInviteStore.getSnapshot);
 
   if (invite === null) return null;

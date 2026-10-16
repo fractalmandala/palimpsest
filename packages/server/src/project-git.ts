@@ -30,8 +30,8 @@ export interface EnsureProjectGitResult {
   repaired?: boolean;
 }
 
-const FALLBACK_COMMIT_NAME = 'Open Knowledge';
-const FALLBACK_COMMIT_EMAIL = 'noreply@openknowledge.local';
+const FALLBACK_COMMIT_NAME = 'Palimpsest';
+const FALLBACK_COMMIT_EMAIL = 'noreply@palimpsest.local';
 
 async function hasCommitterIdentity(gitBin: string, cwd: string): Promise<boolean> {
   try {

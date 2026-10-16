@@ -1,7 +1,7 @@
 import { statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import type { McpServerStdio } from '@agentclientprotocol/sdk';
-import { asRecord, stringField } from '@inkeep/open-knowledge-core/acp/tool-call-input';
+import { asRecord, stringField } from '@palimpsest/core/acp/tool-call-input';
 import { tracedMkdir, tracedRm, tracedWriteFile } from '../fs-traced.ts';
 import { resolveOnPath } from '../git-preflight.ts';
 import { runBrowserRelay } from './browser-relay.ts';
@@ -10,7 +10,7 @@ import { isMintedThreadId } from './thread-persistence.ts';
 
 export const AGENT_BROWSER_MCP_PACKAGE = '@playwright/mcp@0.0.82';
 
-const AGENT_BROWSER_SERVER_NAME = 'ok-browser';
+const AGENT_BROWSER_SERVER_NAME = 'ps-browser';
 
 const CODEX_AGENT_ID = 'codex-acp';
 
@@ -305,7 +305,7 @@ export async function prepareAgentBrowserFolders(
   threadId: string,
 ): Promise<AgentBrowserFolders> {
   const chat = agentBrowserPath(root, threadId);
-  if (chat === null) throw new Error('browser folders need a chat id OpenKnowledge minted');
+  if (chat === null) throw new Error('browser folders need a chat id Palimpsest minted');
   const folders = { npm: join(chat, 'npm'), files: join(chat, 'files') };
   await tracedMkdir(dirname(chat), { recursive: true, mode: 0o700 });
   await tracedMkdir(chat, { recursive: true, mode: 0o700 });

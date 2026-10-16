@@ -1,19 +1,19 @@
-import type { OkBugReportCrashDetectedEvent } from '@inkeep/open-knowledge-core';
+import type { PsBugReportCrashDetectedEvent } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 import { createCrashInviteStore } from './crash-invite-store';
 
 function fakeBridge(): {
-  bridge: OkDesktopBridge;
-  emit: (event: OkBugReportCrashDetectedEvent) => void;
+  bridge: PsDesktopBridge;
+  emit: (event: PsBugReportCrashDetectedEvent) => void;
   subscribers: () => number;
 } {
-  const subs: ((event: OkBugReportCrashDetectedEvent) => void)[] = [];
+  const subs: ((event: PsBugReportCrashDetectedEvent) => void)[] = [];
   const bridge = {
     bugReport: {
-      onCrashDetected: (cb: (event: OkBugReportCrashDetectedEvent) => void) => {
+      onCrashDetected: (cb: (event: PsBugReportCrashDetectedEvent) => void) => {
         subs.push(cb);
         return () => {
           const idx = subs.indexOf(cb);
@@ -21,7 +21,7 @@ function fakeBridge(): {
         };
       },
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
   return {
     bridge,
     emit: (event) => {
@@ -31,7 +31,7 @@ function fakeBridge(): {
   };
 }
 
-const crashEvent: OkBugReportCrashDetectedEvent = {
+const crashEvent: PsBugReportCrashDetectedEvent = {
   eventId: 'crash:render:1751871600000:0',
   kind: 'render-process-gone',
   context: { reason: 'crashed', exitCode: 5 },
@@ -47,7 +47,7 @@ describe('createCrashInviteStore — install', () => {
 
   test('no-ops without throwing when the bridge omits the bugReport surface', () => {
     const store = createCrashInviteStore();
-    const partialBridge = {} as unknown as OkDesktopBridge;
+    const partialBridge = {} as unknown as PsDesktopBridge;
     let result: (() => void) | undefined;
     expect(() => {
       result = store.install({ bridge: partialBridge });

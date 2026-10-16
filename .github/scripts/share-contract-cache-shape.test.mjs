@@ -16,13 +16,13 @@ describe('share contract corpus cache wiring', () => {
 
   test('the static docs manifest deployment identity invalidates the docs build cache', () => {
     const turbo = JSON.parse(readFileSync(join(REPO_ROOT, 'turbo.json'), 'utf8'));
-    const docsBuild = turbo.tasks['@inkeep/open-knowledge-docs#build'];
+    const docsBuild = turbo.tasks['@palimpsest/docs#build'];
 
     expect(docsBuild.env).toEqual([
       'VERCEL_GIT_COMMIT_SHA',
       'GITHUB_SHA',
       'VERCEL_ENV',
-      'OK_ALLOW_BLOGLESS_LLMS_TXT',
+      'PS_ALLOW_BLOGLESS_LLMS_TXT',
       'CI',
       'VERCEL',
     ]);

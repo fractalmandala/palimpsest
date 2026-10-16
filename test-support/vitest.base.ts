@@ -11,7 +11,7 @@ const boundedMaxForks =
 const IMPORT_META_DIR = /import\.meta\.dir(?![\w$])/g;
 
 export const importMetaDirPlugin: Plugin = {
-  name: 'ok-bun-import-meta-dir',
+  name: 'ps-bun-import-meta-dir',
   enforce: 'pre',
   transform(code: string) {
     if (!code.includes('import.meta')) return null;
@@ -25,7 +25,7 @@ const bunGlobalShimPath = fileURLToPath(new URL('./bun-global-shim.ts', import.m
 
 const noNetConnectPath = fileURLToPath(new URL('./no-net-connect.ts', import.meta.url));
 
-export const okVitestBase = {
+export const psVitestBase = {
   plugins: [importMetaDirPlugin, vitestRunEvidence()],
   resolve: {
     conditions: ['development'],

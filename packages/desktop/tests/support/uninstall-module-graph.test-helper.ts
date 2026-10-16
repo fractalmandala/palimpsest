@@ -73,7 +73,7 @@ export function findForbiddenModules(
   return hits;
 }
 
-const PROBE_ENTRY = 'virtual:ok-uninstall-graph-probe';
+const PROBE_ENTRY = 'virtual:ps-uninstall-graph-probe';
 const RESOLVED_PROBE_ENTRY = `\0${PROBE_ENTRY}`;
 
 function probeEntryPlugin(entryImports: readonly string[]): Plugin {

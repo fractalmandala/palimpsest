@@ -9,7 +9,7 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const DARWIN = process.platform === 'darwin';
 
 async function findWindowByPath(
@@ -40,7 +40,7 @@ async function launchSurveyPreview(
     desktopLaunchOptions({
       target: TARGET,
       args: [`--user-data-dir=${join(home, 'electron-userdata')}`],
-      env: { ...process.env, OK_UNINSTALL_UI_PREVIEW: 'survey' },
+      env: { ...process.env, PS_UNINSTALL_UI_PREVIEW: 'survey' },
       timeout: 30_000,
     }),
   );
@@ -48,12 +48,12 @@ async function launchSurveyPreview(
 }
 
 test.describe('uninstall churn survey smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!DARWIN, 'The uninstall flow is darwin-only.');
   test.skip(!TARGET.exists, TARGET.missingReason);
 
   test('carries a filled-in survey back to main as answers', async ({ captureStderrFor }) => {
-    const { app, home } = await launchSurveyPreview('ok-uninstall-survey-');
+    const { app, home } = await launchSurveyPreview('ps-uninstall-survey-');
     captureStderrFor(app, { cleanupDirs: [home] });
     await expectCaptureHomeMatchesProcess(app);
 
@@ -61,7 +61,7 @@ test.describe('uninstall churn survey smoke', () => {
     const survey = await findWindowByPath(app, '/uninstall.html');
 
     await expect(
-      survey.getByRole('heading', { name: 'Thanks for giving OpenKnowledge a try.' }),
+      survey.getByRole('heading', { name: 'Thanks for giving Palimpsest a try.' }),
     ).toBeVisible();
 
     await survey.getByRole('radio', { name: 'Bugs, crashes, or it felt unreliable' }).click();
@@ -88,14 +88,14 @@ test.describe('uninstall churn survey smoke', () => {
   test('closing the survey window continues rather than cancelling', async ({
     captureStderrFor,
   }) => {
-    const { app, home } = await launchSurveyPreview('ok-uninstall-survey-close-');
+    const { app, home } = await launchSurveyPreview('ps-uninstall-survey-close-');
     captureStderrFor(app, { cleanupDirs: [home] });
     await expectCaptureHomeMatchesProcess(app);
 
     await app.firstWindow({ timeout: 20_000 });
     const survey = await findWindowByPath(app, '/uninstall.html');
     await expect(
-      survey.getByRole('heading', { name: 'Thanks for giving OpenKnowledge a try.' }),
+      survey.getByRole('heading', { name: 'Thanks for giving Palimpsest a try.' }),
     ).toBeVisible();
 
     const closed = survey.waitForEvent('close', { timeout: 15_000 });
@@ -107,7 +107,7 @@ test.describe('uninstall churn survey smoke', () => {
   });
 
   test('skipping continues with nothing filed', async ({ captureStderrFor }) => {
-    const { app, home } = await launchSurveyPreview('ok-uninstall-survey-skip-');
+    const { app, home } = await launchSurveyPreview('ps-uninstall-survey-skip-');
     captureStderrFor(app, { cleanupDirs: [home] });
     await expectCaptureHomeMatchesProcess(app);
 

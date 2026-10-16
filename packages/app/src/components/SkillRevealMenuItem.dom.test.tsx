@@ -14,10 +14,10 @@ const showItemInFolder = vi.fn();
 
 function setBridge(platform: 'darwin' | 'win32' | 'linux' | null) {
   if (platform === null) {
-    Reflect.deleteProperty(window, 'okDesktop');
+    Reflect.deleteProperty(window, 'psDesktop');
     return;
   }
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     configurable: true,
     value: { platform, shell: { showItemInFolder } },
   });

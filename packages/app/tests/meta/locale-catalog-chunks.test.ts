@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { FALLBACK_LOCALE, SUPPORTED_LOCALES } from '@inkeep/open-knowledge-core';
+import { FALLBACK_LOCALE, SUPPORTED_LOCALES } from '@palimpsest/core';
 import { build, type Plugin, type RollupOutput } from 'vite';
 import { beforeAll, describe, expect, test } from 'vitest';
 
@@ -12,7 +12,7 @@ const DEV_PSEUDO_LOCALE = fileURLToPath(
 
 const PSEUDO_LOCALE = 'pseudo';
 
-const PROBE_ENTRY = 'virtual:ok-locale-chunk-probe';
+const PROBE_ENTRY = 'virtual:ps-locale-chunk-probe';
 const RESOLVED_PROBE_ENTRY = `\0${PROBE_ENTRY}`;
 
 const PROBE_SOURCE = [

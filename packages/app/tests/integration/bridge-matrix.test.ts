@@ -425,8 +425,8 @@ describe('initial sync and test isolation', () => {
     }
   });
 
-  test('test-reset truncates accumulated .okignore patterns by default', async () => {
-    const okignorePath = join(server.contentDir, '.okignore');
+  test('test-reset truncates accumulated .psignore patterns by default', async () => {
+    const okignorePath = join(server.contentDir, '.psignore');
     writeFileSync(okignorePath, '/leftover-from-earlier-test.md\nstale-pattern/\n', 'utf-8');
 
     await testReset(server.port);
@@ -436,12 +436,12 @@ describe('initial sync and test isolation', () => {
     expect(after).toBe('');
   });
 
-  test('test-reset preserves .okignore when reset-okignore=false is passed', async () => {
-    const okignorePath = join(server.contentDir, '.okignore');
+  test('test-reset preserves .psignore when reset-psignore=false is passed', async () => {
+    const okignorePath = join(server.contentDir, '.psignore');
     const seeded = '/keep-me-on-reset.md\n';
     writeFileSync(okignorePath, seeded, 'utf-8');
 
-    const res = await fetch(`http://127.0.0.1:${server.port}/api/test-reset?reset-okignore=false`, {
+    const res = await fetch(`http://127.0.0.1:${server.port}/api/test-reset?reset-psignore=false`, {
       method: 'POST',
     });
     expect(res.ok).toBe(true);

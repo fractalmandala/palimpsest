@@ -5,8 +5,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { SERVER_EXIT_LOG } from '@inkeep/open-knowledge-core';
-import { getLocalDir, isProcessAlive } from '@inkeep/open-knowledge-server';
+import { SERVER_EXIT_LOG } from '@palimpsest/core';
+import { getLocalDir, isProcessAlive } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { attachServerExitObserver } from '../../src/main/server-exit-observer.ts';
 import {
@@ -63,11 +63,11 @@ describe('detached-server lifecycle integration', () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-detached-lifecycle-'));
-    const okDir = resolve(tmpDir, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-detached-lifecycle-'));
+    const psDir = resolve(tmpDir, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
   });
 
   afterEach(async () => {
@@ -80,12 +80,12 @@ describe('detached-server lifecycle integration', () => {
         `CLI dist not built at ${CLI_MJS_PATH}. Run 'pnpm build' from packages/cli first.`,
       );
     }
-    const lockDir = resolve(tmpDir, '.ok', 'local');
+    const lockDir = resolve(tmpDir, '.ps', 'local');
 
     const child = spawn(process.execPath, [CLI_MJS_PATH, 'start', '--port', '0'], {
       env: {
         ...process.env,
-        OK_LOCK_KIND: 'interactive',
+        PS_LOCK_KIND: 'interactive',
         NODE_ENV: 'test',
       },
       detached: true,

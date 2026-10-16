@@ -37,7 +37,7 @@ let contentDir: string;
 let shadow: ShadowHandle;
 
 beforeEach(async () => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rename-backfill-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rename-backfill-'));
   contentDir = join(tmpDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   shadow = await initShadowRepo(tmpDir);

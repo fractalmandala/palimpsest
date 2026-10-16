@@ -1,6 +1,6 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/inkeep/open-knowledge/blob/main/lint-plugins/ok-rules/README.md#no-physical-direction-utility
+// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { graphemePrefix, graphemeSuffix } from '@inkeep/open-knowledge-core/utils/grapheme-clip';
+import { graphemePrefix, graphemeSuffix } from '@palimpsest/core/utils/grapheme-clip';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { MessageSquare, X } from 'lucide-react';
 import { setPropertiesCollapsed } from '@/components/properties-collapsed-store';

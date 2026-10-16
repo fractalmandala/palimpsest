@@ -7,7 +7,7 @@ const GeneratedIndexSettingsStatusSchema = z.object({
   active: z.boolean(),
   git: z.object({
     state: z.enum(['not-applicable', 'ready', 'missing', 'conflict', 'unavailable']),
-    ownership: z.enum(['open-knowledge', 'existing']).optional(),
+    ownership: z.enum(['palimpsest', 'existing']).optional(),
   }),
   applied: z.boolean().optional(),
   reason: z.enum(['git-conflict', 'git-unavailable', 'config-write']).optional(),
@@ -33,7 +33,7 @@ async function requestStatus(init?: RequestInit): Promise<{
     const response = await fetch('/api/generated-index/settings', init);
     const parsed = await parseServerResponse(
       response,
-      'Open Knowledge could not update index generation.',
+      'Palimpsest could not update index generation.',
     );
     if (!parsed.ok) return { status: null, issue: 'connection' };
     const status = parseSuccessOrWarn(

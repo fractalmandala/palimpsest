@@ -132,13 +132,13 @@ async function serveOrBuild(
 }
 
 export async function resolvePrebuiltDevApp(request: {
-  readonly okRoot: string;
+  readonly psRoot: string;
   readonly outRoot: string;
   readonly options: BuildOptions;
   readonly build: BuildPrebuiltDist;
 }): Promise<PrebuiltDevApp> {
-  const { okRoot, outRoot, options, build } = request;
-  const manifest = prebuiltManifest(okRoot, options);
+  const { psRoot, outRoot, options, build } = request;
+  const manifest = prebuiltManifest(psRoot, options);
   const use = holdPrebuiltBuildUse(outRoot, manifest.digest);
   try {
     return await serveOrBuild(outRoot, manifest, build, use);

@@ -72,7 +72,7 @@ touch "$SCENARIO_B/.husky/pre-commit" "$SCENARIO_B/.husky/pre-push"
 run_scenario "standalone-worktree" "$SCENARIO_B" "yes"
 
 SCENARIO_C_PARENT="$TEST_TMPDIR/monorepo"
-SCENARIO_C="$SCENARIO_C_PARENT/public/open-knowledge"
+SCENARIO_C="$SCENARIO_C_PARENT/public/palimpsest"
 mkdir -p "$SCENARIO_C_PARENT/.git" "$SCENARIO_C/.husky"
 touch "$SCENARIO_C/.husky/pre-commit" "$SCENARIO_C/.husky/pre-push"
 run_scenario "monorepo-subdirectory" "$SCENARIO_C" "no"

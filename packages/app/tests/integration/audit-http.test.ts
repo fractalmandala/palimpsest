@@ -7,7 +7,7 @@ import {
   ValidationAuditCountsResponseSchema,
   type ValidationAuditResponse,
   ValidationAuditResponseSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import {
@@ -36,17 +36,17 @@ function api(pathAndQuery: string): string {
 }
 
 describe('GET /api/audit', () => {
-  test('okf enabled reaches ran through the real config lift', async () => {
-    const okfServer = await createTestServer({
-      seedProjectConfigYml: 'contentRules:\n  okf:\n    enabled: true\nvalidation:\n  links: off\n',
+  test('psf enabled reaches ran through the real config lift', async () => {
+    const psfServer = await createTestServer({
+      seedProjectConfigYml: 'contentRules:\n  psf:\n    enabled: true\nvalidation:\n  links: off\n',
     });
     try {
-      const res = await fetch(`http://127.0.0.1:${okfServer.port}/api/audit`);
+      const res = await fetch(`http://127.0.0.1:${psfServer.port}/api/audit`);
       expect(res.status).toBe(200);
       const body = ValidationAuditResponseSchema.parse(await res.json());
-      expect(body.ran).toEqual(['okf']);
+      expect(body.ran).toEqual(['psf']);
     } finally {
-      await okfServer.cleanup();
+      await psfServer.cleanup();
     }
   });
 

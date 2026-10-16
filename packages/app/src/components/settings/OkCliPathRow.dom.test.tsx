@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import type {
-  OkIntegrationsSetRequest,
-  OkIntegrationsSetResult,
-  OkIntegrationsStatus,
+  PsIntegrationsSetRequest,
+  PsIntegrationsSetResult,
+  PsIntegrationsStatus,
 } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
@@ -21,30 +21,30 @@ vi.doMock('sonner', () => ({
   toast: { error: toastError, info: vi.fn(() => {}), success: vi.fn(() => {}) },
 }));
 
-const { OkCliPathRow } = await import('./OkCliPathRow');
+const { PsCliPathRow } = await import('./PsCliPathRow');
 const { TooltipProvider } = await import('@/components/ui/tooltip');
 
-function statusWith(path: OkIntegrationsStatus['path']): OkIntegrationsStatus {
+function statusWith(path: PsIntegrationsStatus['path']): PsIntegrationsStatus {
   return { available: true, editors: [], skills: [], path };
 }
 
 function installBridge(
-  status: OkIntegrationsStatus,
-  setResult?: (request: OkIntegrationsSetRequest) => OkIntegrationsSetResult,
+  status: PsIntegrationsStatus,
+  setResult?: (request: PsIntegrationsSetRequest) => PsIntegrationsSetResult,
   cliCommandName: string | null = null,
 ) {
-  const setCalls: OkIntegrationsSetRequest[] = [];
+  const setCalls: PsIntegrationsSetRequest[] = [];
   const bridge = {
     cliCommandName,
     integrations: {
       status: async () => status,
-      setComponent: async (request: OkIntegrationsSetRequest) => {
+      setComponent: async (request: PsIntegrationsSetRequest) => {
         setCalls.push(request);
         return setResult ? setResult(request) : { ok: true as const, status };
       },
     },
   };
-  Object.defineProperty(window, 'okDesktop', {
+  Object.defineProperty(window, 'psDesktop', {
     value: bridge,
     configurable: true,
     writable: true,
@@ -55,7 +55,7 @@ function installBridge(
 function renderRow() {
   return render(
     <TooltipProvider>
-      <OkCliPathRow />
+      <PsCliPathRow />
     </TooltipProvider>,
   );
 }
@@ -64,19 +64,19 @@ afterEach(() => {
   cleanup();
   toastError.mockClear();
   // biome-ignore lint/suspicious/noExplicitAny: test-only global teardown.
-  (window as any).okDesktop = undefined;
+  (window as any).psDesktop = undefined;
 });
 
-describe('OkCliPathRow', () => {
+describe('PsCliPathRow', () => {
   test('reflects the installed state on disk and names the file it manages', async () => {
     installBridge(
       statusWith({ shellDetected: true, rcFilesToTouch: ['~/.zshrc'], installed: true }),
     );
     renderRow();
 
-    const checkbox = await screen.findByTestId('ok-cli-path-checkbox');
+    const checkbox = await screen.findByTestId('ps-cli-path-checkbox');
     expect(checkbox.getAttribute('data-state')).toBe('checked');
-    expect(screen.getByTestId('ok-cli-path-status').textContent).toContain('~/.zshrc');
+    expect(screen.getByTestId('ps-cli-path-status').textContent).toContain('~/.zshrc');
   });
 
   test('names the ok command when main sent the Stable command or none', async () => {
@@ -87,7 +87,7 @@ describe('OkCliPathRow', () => {
     );
     renderRow();
 
-    expect((await screen.findByTestId('ok-cli-path-row')).textContent).toContain(
+    expect((await screen.findByTestId('ps-cli-path-row')).textContent).toContain(
       'Add the ok command to your terminal',
     );
   });
@@ -96,12 +96,12 @@ describe('OkCliPathRow', () => {
     installBridge(
       statusWith({ shellDetected: true, rcFilesToTouch: ['~/.zshrc'], installed: false }),
       undefined,
-      'ok-beta',
+      'ps-beta',
     );
     renderRow();
 
-    expect((await screen.findByTestId('ok-cli-path-row')).textContent).toContain(
-      'Add the ok-beta command to your terminal',
+    expect((await screen.findByTestId('ps-cli-path-row')).textContent).toContain(
+      'Add the ps-beta command to your terminal',
     );
   });
 
@@ -111,7 +111,7 @@ describe('OkCliPathRow', () => {
     );
     renderRow();
 
-    await userEvent.click(await screen.findByTestId('ok-cli-path-checkbox'));
+    await userEvent.click(await screen.findByTestId('ps-cli-path-checkbox'));
 
     await waitFor(() => expect(setCalls).toHaveLength(1));
     expect(setCalls[0]).toEqual({ component: { kind: 'path' }, enabled: true });
@@ -123,7 +123,7 @@ describe('OkCliPathRow', () => {
     );
     renderRow();
 
-    await userEvent.click(await screen.findByTestId('ok-cli-path-checkbox'));
+    await userEvent.click(await screen.findByTestId('ps-cli-path-checkbox'));
 
     await waitFor(() => expect(setCalls).toHaveLength(1));
     expect(setCalls[0]).toEqual({ component: { kind: 'path' }, enabled: false });
@@ -138,20 +138,20 @@ describe('OkCliPathRow', () => {
     installBridge(status, () => ({ ok: false as const, error: 'rc file is read-only', status }));
     renderRow();
 
-    await userEvent.click(await screen.findByTestId('ok-cli-path-checkbox'));
+    await userEvent.click(await screen.findByTestId('ps-cli-path-checkbox'));
 
     await waitFor(() => expect(toastError).toHaveBeenCalledWith('rc file is read-only'));
   });
 
   test('renders nothing without the desktop bridge', async () => {
     renderRow();
-    await waitFor(() => expect(screen.queryByTestId('ok-cli-path-row')).toBeNull());
+    await waitFor(() => expect(screen.queryByTestId('ps-cli-path-row')).toBeNull());
   });
 
   test('renders nothing when there is no shell to add it to and nothing installed', async () => {
     installBridge(statusWith({ shellDetected: false, rcFilesToTouch: [], installed: false }));
     renderRow();
-    await waitFor(() => expect(screen.queryByTestId('ok-cli-path-row')).toBeNull());
+    await waitFor(() => expect(screen.queryByTestId('ps-cli-path-row')).toBeNull());
   });
 
   test('still offers removal when the shell went away but the block did not', async () => {
@@ -160,7 +160,7 @@ describe('OkCliPathRow', () => {
     );
     renderRow();
 
-    const checkbox = await screen.findByTestId('ok-cli-path-checkbox');
+    const checkbox = await screen.findByTestId('ps-cli-path-checkbox');
     expect(checkbox.getAttribute('data-state')).toBe('checked');
   });
 });

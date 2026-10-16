@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { hostname, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { LOCAL_DIR } from '@inkeep/open-knowledge-core';
+import { LOCAL_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   acquireServerLock,
@@ -32,8 +32,8 @@ let lockDir: string;
 let lockPath: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-server-lock-test-'));
-  lockDir = resolve(tmpDir, '.ok', LOCAL_DIR);
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-server-lock-test-'));
+  lockDir = resolve(tmpDir, '.ps', LOCAL_DIR);
   lockPath = resolve(lockDir, 'server.lock');
 });
 

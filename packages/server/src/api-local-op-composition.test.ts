@@ -46,8 +46,8 @@ function releaseGatedDeviceFlowCli(): string[] {
 }
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-local-op-native-'));
-  homeScratch = realpathSync(mkdtempSync(join(homedir(), '.ok-local-op-native-')));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-local-op-native-'));
+  homeScratch = realpathSync(mkdtempSync(join(homedir(), '.ps-local-op-native-')));
   const contentDir = mkdtempSync(resolve(tmpRoot, 'content-'));
   sigtermMarker = join(tmpRoot, 'sigterm');
   completedMarker = join(tmpRoot, 'completed');
@@ -114,7 +114,7 @@ describe('local-op group over the composed listener — served natively', () => 
     expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:not-found');
   });
 
-  test('a POST reaches the real handler (ok-init gates on absolute-path discipline, then git-worktree shape)', async () => {
+  test('a POST reaches the real handler (ps-init gates on absolute-path discipline, then git-worktree shape)', async () => {
     const relative = await fetch(`http://127.0.0.1:${server.port}/api/local-op/ok-init`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -39,7 +39,7 @@ function expectWarnings(result: { warnings: string[]; warningCodes: string[] }):
 }
 
 beforeAll(async () => {
-  sourceRoot = mkdtempSync(join(tmpdir(), 'ok-warning-contract-'));
+  sourceRoot = mkdtempSync(join(tmpdir(), 'ps-warning-contract-'));
   server = await createTestServer();
 }, HARNESS_BOOT_TIMEOUT_MS);
 

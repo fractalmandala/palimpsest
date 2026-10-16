@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { DEFAULT_SERVER_HOST, formatSpawnAttemptHeader } from '@inkeep/open-knowledge-core';
+import { DEFAULT_SERVER_HOST, formatSpawnAttemptHeader } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { failedOpenHolder, promptHolderStop } from '../../src/main/holder-stop-prompt.ts';
 import { resolveLocalOpCliInvocation } from '../../src/main/local-op-cli-invocation.ts';
@@ -225,12 +225,12 @@ describe('WindowManager', () => {
     env = buildEnv();
   });
 
-  test('createProjectWindow sets BrowserWindow title to "<projectName> — OpenKnowledge" (spawn path)', async () => {
+  test('createProjectWindow sets BrowserWindow title to "<projectName> — Palimpsest" (spawn path)', async () => {
     const wm = new WindowManager(env.deps);
     const promise = wm.createProjectWindow({ projectPath: '/tmp/dragon-wiki' });
     env.utilities[0]?.fire({ type: 'ready', port: 52010, apiOrigin: 'http://localhost:52010' });
     await promise;
-    expect(env.createWindowOpts[0]?.title).toBe('dragon-wiki — OpenKnowledge');
+    expect(env.createWindowOpts[0]?.title).toBe('dragon-wiki — Palimpsest');
   });
 
   test('createProjectWindow threads project identity to the window seam (spawn path)', async () => {
@@ -273,12 +273,12 @@ describe('WindowManager', () => {
 
     expect(env.utilities.length).toBe(1);
     expect(env.forkUtilityOpts).toEqual([
-      { windowLifecycleBound: true, serviceName: 'OpenKnowledge Project Server 1' },
+      { windowLifecycleBound: true, serviceName: 'Palimpsest Project Server 1' },
     ]);
     expect(env.logEntries).toContainEqual({
       payload: {
         event: 'desktop-project-server-forked',
-        name: 'OpenKnowledge Project Server 1',
+        name: 'Palimpsest Project Server 1',
         projectPath: '/tmp/test-project',
       },
       message: '[window-manager] project server utility forked',
@@ -287,7 +287,7 @@ describe('WindowManager', () => {
     expect(marker).toBeDefined();
     expect(
       Buffer.from(marker?.slice('--ok-lock-dir-b64='.length) ?? '', 'base64url').toString('utf8'),
-    ).toBe('/tmp/test-project/.ok/local');
+    ).toBe('/tmp/test-project/.ps/local');
     const utility = env.utilities[0];
     if (!utility) throw new Error('utility not forked');
     expect(utility.postMessage).toHaveBeenCalledWith({
@@ -317,7 +317,7 @@ describe('WindowManager', () => {
     const secondPromise = wm.createProjectWindow({ projectPath: '/tmp/second-project' });
     expect(env.forkUtilityOpts[1]).toEqual({
       windowLifecycleBound: true,
-      serviceName: 'OpenKnowledge Project Server 2',
+      serviceName: 'Palimpsest Project Server 2',
     });
     env.utilities[1]?.fire({
       type: 'ready',
@@ -359,7 +359,7 @@ describe('WindowManager', () => {
 
   test('createProjectWindow forwards the resolved local-op CLI argv into the utility init IPC payload', async () => {
     const wm = new WindowManager(env.deps);
-    const expectedCliArgs = ['/Applications/OpenKnowledge.app/Contents/Resources/cli/bin/ok.sh'];
+    const expectedCliArgs = ['/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh'];
     const promise = wm.createProjectWindow({
       projectPath: '/tmp/cli-args-plumbed',
       localOpCliInvocation: { cliArgs: expectedCliArgs },
@@ -600,7 +600,7 @@ describe('WindowManager', () => {
     const promise = wm.createProjectWindow({ projectPath: '/tmp/clean-run' });
     expect(env.utilities.length).toBe(0);
     await wait(5);
-    expect(runClean).toHaveBeenCalledWith({ lockDir: '/tmp/clean-run/.ok/local' });
+    expect(runClean).toHaveBeenCalledWith({ lockDir: '/tmp/clean-run/.ps/local' });
     env.utilities[0]?.fire({ type: 'ready', port: 51006, apiOrigin: 'http://localhost:51006' });
     await promise;
   });
@@ -831,7 +831,7 @@ describe('WindowManager', () => {
           errKind: 'other-channel-holder',
           holderChannel: 'stable',
           message:
-            'OpenKnowledge (Stable) is serving this project (pid 65792). Only one OpenKnowledge app can edit a project at a time.',
+            'Palimpsest (Stable) is serving this project (pid 65792). Only one Palimpsest app can edit a project at a time.',
         });
         expect(killProbe).not.toHaveBeenCalled();
         expect(env.utilities.length).toBe(0);
@@ -891,10 +891,10 @@ describe('WindowManager', () => {
           isProcessAlive: (pid) => !killed.has(pid),
           probeWsUpgrade,
         });
-        const projectPath = mkdtempSync(join(tmpdir(), 'ok-other-channel-stop-'));
-        mkdirSync(join(projectPath, '.ok', 'local'), { recursive: true });
+        const projectPath = mkdtempSync(join(tmpdir(), 'ps-other-channel-stop-'));
+        mkdirSync(join(projectPath, '.ps', 'local'), { recursive: true });
         writeFileSync(
-          join(projectPath, '.ok', 'local', 'server.lock'),
+          join(projectPath, '.ps', 'local', 'server.lock'),
           JSON.stringify(lockOnDisk),
           'utf-8',
         );
@@ -1019,10 +1019,10 @@ describe('WindowManager', () => {
         env.deps.spawnDetachedServer = () => Promise.resolve({ pid: 22020 });
         env.deps.spawnLockPollDeadlineMs = 50;
         env.deps.spawnLockProgressDeadlineMs = 50;
-        const projectPath = mkdtempSync(join(tmpdir(), 'ok-other-channel-stale-'));
-        mkdirSync(join(projectPath, '.ok', 'local'), { recursive: true });
+        const projectPath = mkdtempSync(join(tmpdir(), 'ps-other-channel-stale-'));
+        mkdirSync(join(projectPath, '.ps', 'local'), { recursive: true });
         writeFileSync(
-          join(projectPath, '.ok', 'local', 'server.lock'),
+          join(projectPath, '.ps', 'local', 'server.lock'),
           JSON.stringify(stableLock),
           'utf-8',
         );
@@ -1090,9 +1090,9 @@ describe('WindowManager', () => {
             .map((p) => p.holderChannel),
         ).toEqual(['stable']);
         expect(run.dialog?.detail).toContain(
-          "OpenKnowledge (Stable) holds this project's server lock (pid 65792)",
+          "Palimpsest (Stable) holds this project's server lock (pid 65792)",
         );
-        expect(run.dialog?.detail).toContain('This OpenKnowledge (Stable) server keeps running');
+        expect(run.dialog?.detail).toContain('This Palimpsest (Stable) server keeps running');
         expect(run.dialog?.defaultId).toBe(1);
         expect(run.stopTargets).toEqual([{ pid: 65792, channel: 'stable' }]);
         expect({ result: run.result, reopens: run.reopens }).toEqual({
@@ -1105,7 +1105,7 @@ describe('WindowManager', () => {
       test('Stop Server & Retry signals nothing when another holder took the lock while the dialog was open', async () => {
         const run = await openThenStopStaleStableHolder((projectPath) => {
           writeFileSync(
-            join(projectPath, '.ok', 'local', 'server.lock'),
+            join(projectPath, '.ps', 'local', 'server.lock'),
             JSON.stringify({ ...stableLock, pid: 70001 }),
             'utf-8',
           );
@@ -1174,8 +1174,8 @@ describe('WindowManager', () => {
           }),
         ).toEqual({
           detail:
-            'This OpenKnowledge (Stable) server keeps running after any window showing the project closes, so the project stays busy until the server stops. OpenKnowledge Beta can stop it now and open the project here. Every window, editor, or agent connected to it loses its connection to this project.',
-          button: 'Stop OpenKnowledge (Stable) Server & Open Here',
+            'This Palimpsest (Stable) server keeps running after any window showing the project closes, so the project stays busy until the server stops. Palimpsest Beta can stop it now and open the project here. Every window, editor, or agent connected to it loses its connection to this project.',
+          button: 'Stop Palimpsest (Stable) Server & Open Here',
         });
         expect(
           otherChannelStopOffer({
@@ -1185,8 +1185,8 @@ describe('WindowManager', () => {
           }),
         ).toEqual({
           detail:
-            'An agent or editor started this OpenKnowledge Beta server over MCP. It does not stop when that session ends: it stops on its own once nothing has had the project open for a while (30 minutes by default). OpenKnowledge (Stable) can stop it now and open the project here. Whatever the agent or editor is doing right now is interrupted, and its next request reaches the server opened here.',
-          button: 'Stop OpenKnowledge Beta Server & Open Here',
+            'An agent or editor started this Palimpsest Beta server over MCP. It does not stop when that session ends: it stops on its own once nothing has had the project open for a while (30 minutes by default). Palimpsest (Stable) can stop it now and open the project here. Whatever the agent or editor is doing right now is interrupted, and its next request reaches the server opened here.',
+          button: 'Stop Palimpsest Beta Server & Open Here',
         });
       });
 
@@ -1213,7 +1213,7 @@ describe('WindowManager', () => {
           kind: 'refused',
           errKind: 'other-channel-holder',
           holderChannel: 'cloud',
-          message: expect.stringMatching(/^OpenKnowledge \(cloud\) is serving this project/),
+          message: expect.stringMatching(/^Palimpsest \(cloud\) is serving this project/),
         });
       });
 
@@ -1227,7 +1227,7 @@ describe('WindowManager', () => {
           errKind: 'other-channel-holder',
           holderChannel: 'dev',
           message:
-            'OpenKnowledge Dev is serving this project (pid 65792). Only one OpenKnowledge app can edit a project at a time.',
+            'Palimpsest Dev is serving this project (pid 65792). Only one Palimpsest app can edit a project at a time.',
         });
 
         env.deps.selfChannel = 'dev';
@@ -1269,7 +1269,7 @@ describe('WindowManager', () => {
       expect(ctx.port).toBe(59534);
       expect(ctx.apiOrigin).toBe('http://localhost:59534');
       expect(env.windows.length).toBe(1);
-      expect(env.createWindowOpts[0]?.title).toBe('dragon — OpenKnowledge');
+      expect(env.createWindowOpts[0]?.title).toBe('dragon — Palimpsest');
       expect(env.createWindowOpts[0]?.projectPath).toBe(ctx.projectPath);
     });
 
@@ -1614,7 +1614,7 @@ describe('WindowManager', () => {
       const ctx = wm.getContextForBrowserWindow(env.windows[0] as BrowserWindowLike);
       expect(ctx?.port).toBe(60222);
       expect(removeServerLock).toHaveBeenCalledTimes(1);
-      expect(removeServerLock.mock.calls[0]?.[0]).toMatch(/[/\\]\.ok[/\\]local$/);
+      expect(removeServerLock.mock.calls[0]?.[0]).toMatch(/[/\\]\.ps[/\\]local$/);
       expect(removeServerLock.mock.calls[0]?.[0]).toContain('/tmp/dragon');
       expect(removeServerLock.mock.calls[0]?.[1]).toEqual({ pid: STALE_PID });
     });
@@ -2441,7 +2441,7 @@ describe('WindowManager', () => {
         expect(ctx.port).toBe(60111);
         expect(ctx.apiOrigin).toBe('http://localhost:60111');
         expect(env.windows.length).toBe(1);
-        expect(env.createWindowOpts[0]?.title).toBe('spawned-project — OpenKnowledge');
+        expect(env.createWindowOpts[0]?.title).toBe('spawned-project — Palimpsest');
       });
 
       test('spawned pid is tracked for stopAllOwnedServers (US-008)', async () => {
@@ -2609,16 +2609,16 @@ describe('WindowManager', () => {
       });
 
       function projectWithSpawnErrorLog(contents: string): string {
-        const root = mkdtempSync(join(tmpdir(), 'ok-spawn-stderr-'));
+        const root = mkdtempSync(join(tmpdir(), 'ps-spawn-stderr-'));
         spawnStderrRoots.push(root);
-        mkdirSync(join(root, '.ok', 'local'), { recursive: true });
-        writeFileSync(join(root, '.ok', 'local', 'last-spawn-error.log'), contents);
+        mkdirSync(join(root, '.ps', 'local'), { recursive: true });
+        writeFileSync(join(root, '.ps', 'local', 'last-spawn-error.log'), contents);
         return root;
       }
 
       test('a still-running child frames its output as probably not the cause', async () => {
         enableSyncTimers();
-        const advisory = '[ok] Removed key at .ok/config.yml:5:19: appearance.sidebar.showAllFiles';
+        const advisory = '[ok] Removed key at .ps/config.yml:5:19: appearance.sidebar.showAllFiles';
         const projectPath = projectWithSpawnErrorLog(advisory);
         env.deps.readServerLock = () => null;
         env.deps.isProcessAlive = () => true;
@@ -2641,7 +2641,7 @@ describe('WindowManager', () => {
 
       test('an exited child keeps its stderr labelled as stderr', async () => {
         enableSyncTimers();
-        const projectPath = projectWithSpawnErrorLog('Error: EACCES on .ok/local\n');
+        const projectPath = projectWithSpawnErrorLog('Error: EACCES on .ps/local\n');
         env.deps.readServerLock = () => null;
         env.deps.isProcessAlive = () => false;
         env.deps.hostname = () => 'my-host';
@@ -2665,7 +2665,7 @@ describe('WindowManager', () => {
         enableSyncTimers();
         const projectPath = projectWithSpawnErrorLog(
           `${formatSpawnAttemptHeader(new Date('2026-08-25T10:00:00.000Z'), 4242)}` +
-            'Error: EACCES on .ok/local\n' +
+            'Error: EACCES on .ps/local\n' +
             `${formatSpawnAttemptHeader(new Date('2026-08-25T11:00:00.000Z'), 4243)}`,
         );
         env.deps.readServerLock = () => null;
@@ -3298,7 +3298,7 @@ describe('WindowManager', () => {
 
     describe('forceStopConflictingServer (dialog "Stop Server & Retry")', () => {
       const ownedDirectories: string[] = [];
-      function temporaryProject(prefix = 'ok-force-stop-'): string {
+      function temporaryProject(prefix = 'ps-force-stop-'): string {
         const dir = mkdtempSync(join(tmpdir(), prefix));
         ownedDirectories.push(dir);
         return dir;
@@ -3310,7 +3310,7 @@ describe('WindowManager', () => {
       });
       function seedRawLock(pid: number, overrides?: { port?: number }): string {
         const projectPath = temporaryProject();
-        const lockDir = join(projectPath, '.ok', 'local');
+        const lockDir = join(projectPath, '.ps', 'local');
         mkdirSync(lockDir, { recursive: true });
         writeFileSync(
           join(lockDir, 'server.lock'),
@@ -3350,7 +3350,7 @@ describe('WindowManager', () => {
         env.deps.killProbe = (pid) => {
           killCalls.push(pid);
         };
-        const projectPath = temporaryProject('ok-force-stop-empty-');
+        const projectPath = temporaryProject('ps-force-stop-empty-');
 
         const wm = new WindowManager(env.deps);
         const outcome = await wm.forceStopConflictingServer(projectPath);
@@ -3394,13 +3394,13 @@ describe('WindowManager', () => {
 
         expect(outcome).toEqual({ ok: true });
         expect(removeServerLock).toHaveBeenCalledTimes(1);
-        expect(removeServerLock.mock.calls[0]?.[0]).toBe(join(projectPath, '.ok', 'local'));
+        expect(removeServerLock.mock.calls[0]?.[0]).toBe(join(projectPath, '.ps', 'local'));
         expect(removeServerLock.mock.calls[0]?.[1]).toEqual({ pid: 64323 });
       });
 
       test('the guarded unlink breaks only the holder it was told about', () => {
         const projectPath = seedRawLock(70001);
-        const lockDir = join(projectPath, '.ok', 'local');
+        const lockDir = join(projectPath, '.ps', 'local');
         const lockPath = join(lockDir, 'server.lock');
 
         expect(breakServerLockHeldBy(lockDir, { pid: 69999 })).toBe(false);
@@ -3572,7 +3572,7 @@ describe('WindowManager', () => {
         await wm.createProjectWindow({ projectPath: '/tmp/dragon' });
 
         expect(ka.calls).toHaveLength(1);
-        expect(ka.calls[0]?.lockDir).toBe('/tmp/dragon/.ok/local');
+        expect(ka.calls[0]?.lockDir).toBe('/tmp/dragon/.ps/local');
         expect(ka.handles[0]?.closed).toBe(false);
       });
 
@@ -3633,8 +3633,8 @@ describe('WindowManager', () => {
       test('SIGTERMs every spawned detached pid; clears the tracking map', async () => {
         enableSyncTimers();
         const lockByCwd = new Map<string, ServerLockMetadataLike>();
-        lockByCwd.set('/tmp/proj-a/.ok/local', { ...spawnedLock, pid: 91001 });
-        lockByCwd.set('/tmp/proj-b/.ok/local', { ...spawnedLock, pid: 91002 });
+        lockByCwd.set('/tmp/proj-a/.ps/local', { ...spawnedLock, pid: 91001 });
+        lockByCwd.set('/tmp/proj-b/.ps/local', { ...spawnedLock, pid: 91002 });
         let readCounts = new Map<string, number>();
         env.deps.readServerLock = (lockDir) => {
           const n = (readCounts.get(lockDir) ?? 0) + 1;
@@ -5381,8 +5381,8 @@ describe.each(FORK_PATH_STARTUP_BUDGETS)(
 );
 
 describe('WindowManager — local-op CLI invocation threading', () => {
-  const WIN_EXE = 'C:\\Program Files\\OpenKnowledge\\OpenKnowledge.exe';
-  const WIN_RESOURCES = 'C:\\Program Files\\OpenKnowledge\\resources';
+  const WIN_EXE = 'C:\\Program Files\\Palimpsest\\Palimpsest.exe';
+  const WIN_RESOURCES = 'C:\\Program Files\\Palimpsest\\resources';
 
   const spawnedLock: ServerLockMetadataLike = {
     pid: 88001,
@@ -5401,7 +5401,7 @@ describe('WindowManager — local-op CLI invocation threading', () => {
       execPath: WIN_EXE,
       resourcesPath: WIN_RESOURCES,
       parentEnv: {},
-      workspaceCliEntry: 'C:\\src\\open-knowledge\\packages\\cli\\dist\\cli.mjs',
+      workspaceCliEntry: 'C:\\src\\palimpsest\\packages\\cli\\dist\\cli.mjs',
       workspaceCliBuilt: true,
     });
   }

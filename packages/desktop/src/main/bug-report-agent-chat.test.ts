@@ -24,7 +24,7 @@ const threadId = '0f5c0c0b-f439-4e49-84d6-6a6a97d675c6';
 const token = `gho_${'a'.repeat(36)}`;
 let dirs: string[] = [];
 function tmp(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-agent-chat-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-agent-chat-'));
   dirs.push(dir);
   return dir;
 }
@@ -74,10 +74,10 @@ describe('defaultAgentChatThreadDirs', () => {
     const home = join(tmpdir(), 'home');
     const project = join(tmpdir(), 'project');
     expect(defaultAgentChatThreadDirs(project, home)).toEqual([
-      join(home, '.ok', 'threads'),
-      join(project, '.ok', 'local', 'threads'),
+      join(home, '.ps', 'threads'),
+      join(project, '.ps', 'local', 'threads'),
     ]);
-    expect(defaultAgentChatThreadDirs(null, home)).toEqual([join(home, '.ok', 'threads')]);
+    expect(defaultAgentChatThreadDirs(null, home)).toEqual([join(home, '.ps', 'threads')]);
   });
 });
 

@@ -8,16 +8,16 @@ const coreBridge = join(packagesRoot, 'core', 'src', 'desktop-bridge.ts');
 const appShim = join(packagesRoot, 'app', 'src', 'lib', 'desktop-bridge-types.ts');
 const desktopShim = join(packagesRoot, 'desktop', 'src', 'shared', 'bridge-contract.ts');
 const ipcChannels = join(packagesRoot, 'desktop', 'src', 'shared', 'ipc-channels.ts');
-const coreLeaf = '@inkeep/open-knowledge-core/desktop-bridge';
+const coreLeaf = '@palimpsest/core/desktop-bridge';
 const ipcTypeAliases = [
-  ['OkEditorActiveTargetSnapshot', 'EditorActiveTargetSnapshot'],
-  ['OkEditorViewMenuStateSnapshot', 'EditorViewMenuStateSnapshot'],
-  ['OkMenuDispatchRole', 'MenuDispatchRole'],
-  ['OkMenuDispatchCommand', 'MenuDispatchCommand'],
-  ['OkMenuDispatchRequest', 'MenuDispatchRequest'],
-  ['OkMenuRendererSnapshot', 'MenuRendererSnapshot'],
+  ['PsEditorActiveTargetSnapshot', 'EditorActiveTargetSnapshot'],
+  ['PsEditorViewMenuStateSnapshot', 'EditorViewMenuStateSnapshot'],
+  ['PsMenuDispatchRole', 'MenuDispatchRole'],
+  ['PsMenuDispatchCommand', 'MenuDispatchCommand'],
+  ['PsMenuDispatchRequest', 'MenuDispatchRequest'],
+  ['PsMenuRendererSnapshot', 'MenuRendererSnapshot'],
 ] as const;
-const ipcTypeReexports = ['OkSharingStatusResult', 'OkSharingSetModeResult'] as const;
+const ipcTypeReexports = ['PsSharingStatusResult', 'PsSharingSetModeResult'] as const;
 
 const projectOptions = {
   skipFileDependencyResolution: true,
@@ -82,7 +82,7 @@ describe('desktop host contract single source', () => {
     const bridgeDeclarations = contractSources.flatMap((sourceFile) =>
       sourceFile
         .getDescendantsOfKind(SyntaxKind.InterfaceDeclaration)
-        .filter((declaration) => declaration.getName() === 'OkDesktopBridge'),
+        .filter((declaration) => declaration.getName() === 'PsDesktopBridge'),
     );
 
     expect(

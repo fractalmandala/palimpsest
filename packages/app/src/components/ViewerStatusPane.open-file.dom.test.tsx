@@ -17,7 +17,7 @@ type OpenAssetSpy = ReturnType<typeof vi.fn>;
 
 function installDesktopBridge(): OpenAssetSpy {
   const openAsset = vi.fn(async (_: string) => ({ ok: true }) as const);
-  (window as unknown as { okDesktop: unknown }).okDesktop = {
+  (window as unknown as { psDesktop: unknown }).psDesktop = {
     shell: { openAsset, revealAsset: vi.fn(async (_: string) => ({ ok: true }) as const) },
   };
   return openAsset;
@@ -43,7 +43,7 @@ describe('viewer error pane — "Open file" handoff', () => {
   afterEach(() => {
     cleanup();
     globalThis.fetch = originalFetch;
-    delete (window as unknown as { okDesktop?: unknown }).okDesktop;
+    delete (window as unknown as { psDesktop?: unknown }).psDesktop;
   });
 
   test('413 offers the handoff, and it is not an anchor into /api/*', async () => {

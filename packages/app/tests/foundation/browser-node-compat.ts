@@ -28,7 +28,7 @@ const CI_READ = /\bprocess\.env\.CI\b(?![\w$])/g;
 export function browserCiValue(env: Readonly<Record<string, string | undefined>>): Plugin {
   const literal = env.CI === undefined ? 'undefined' : JSON.stringify(env.CI);
   return {
-    name: 'ok-browser-ci-value',
+    name: 'ps-browser-ci-value',
     enforce: 'pre',
     transform(code, id) {
       if (!isBrowserTestModule(id) || !code.includes('process.env.CI')) return null;
@@ -121,7 +121,7 @@ function answerFileBridge(
 
 export function browserNodeSubstitutes(roots: readonly string[]): Plugin {
   return {
-    name: 'ok-browser-node-substitutes',
+    name: 'ps-browser-node-substitutes',
     enforce: 'pre',
     resolveId(source, importer) {
       return nodeSubstituteFor(source, importer);

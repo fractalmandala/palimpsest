@@ -16,7 +16,7 @@ function git(args: readonly string[], cwd = repo): string {
 }
 
 beforeAll(() => {
-  repo = mkdtempSync(join(tmpdir(), 'ok-git-pathspec-'));
+  repo = mkdtempSync(join(tmpdir(), 'ps-git-pathspec-'));
   git(['init', '--initial-branch=main']);
   configureTestGitRepository(repo);
   git(['config', 'user.email', 'test@example.com']);

@@ -1,5 +1,5 @@
-import { toDesktopAssetHref } from '@inkeep/open-knowledge-core/utils/asset-href';
-import { parsePdfAnchor } from '@inkeep/open-knowledge-core/utils/pdf-anchor';
+import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
+import { parsePdfAnchor } from '@palimpsest/core/utils/pdf-anchor';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Check, ChevronDown, PanelLeft, ZoomIn, ZoomOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -282,12 +282,12 @@ export function Pdf(props: PdfProps) {
     if (!layoutMenuOpen) return;
     const onMouseDown = (e: MouseEvent) => {
       const target = e.target as Node | null;
-      const root = containerRef.current?.closest('.ok-pdf');
+      const root = containerRef.current?.closest('.ps-pdf');
       if (!root || !target || !root.contains(target)) {
         setLayoutMenuOpen(false);
         return;
       }
-      const menu = root.querySelector('.ok-pdf-layout-menu');
+      const menu = root.querySelector('.ps-pdf-layout-menu');
       if (menu && !menu.contains(target)) setLayoutMenuOpen(false);
     };
     document.addEventListener('mousedown', onMouseDown);
@@ -326,23 +326,23 @@ export function Pdf(props: PdfProps) {
   };
 
   return (
-    <div className="ok-pdf" style={{ height: heightStyle }}>
-      <div className="ok-pdf-toolbar" contentEditable={false}>
+    <div className="ps-pdf" style={{ height: heightStyle }}>
+      <div className="ps-pdf-toolbar" contentEditable={false}>
         <button
           type="button"
           onClick={() => setShowThumbs((v) => !v)}
           aria-label={showThumbs ? t`Hide thumbnails` : t`Show thumbnails`}
           aria-pressed={showThumbs}
-          className="ok-pdf-btn"
+          className="ps-pdf-btn"
           title={t`Toggle thumbnails`}
         >
           <PanelLeft size={14} aria-hidden="true" />
         </button>
-        <span className="ok-pdf-title">{props.title ?? 'PDF'}</span>
+        <span className="ps-pdf-title">{props.title ?? 'PDF'}</span>
         {totalPages > 0 && (
-          <div className="ok-pdf-controls">
+          <div className="ps-pdf-controls">
             <form
-              className="ok-pdf-page-form"
+              className="ps-pdf-page-form"
               onSubmit={(e) => {
                 e.preventDefault();
                 submitPageInput();
@@ -352,30 +352,30 @@ export function Pdf(props: PdfProps) {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                className="ok-pdf-page-input"
+                className="ps-pdf-page-input"
                 value={pageInputValue}
                 onChange={(e) => setPageInputValue(e.target.value.replace(/[^0-9]/g, ''))}
                 onBlur={submitPageInput}
                 aria-label={t`Page number`}
               />
             </form>
-            <span className="ok-pdf-page-of">
+            <span className="ps-pdf-page-of">
               <Trans>of {totalPages}</Trans>
             </span>
 
-            <span className="ok-pdf-divider" aria-hidden="true" />
+            <span className="ps-pdf-divider" aria-hidden="true" />
 
             <button
               type="button"
               onClick={zoomOut}
               disabled={zoomScale <= ZOOM_MIN}
               aria-label={t`Zoom out`}
-              className="ok-pdf-btn"
+              className="ps-pdf-btn"
               title={t`Zoom out`}
             >
               <ZoomOut size={14} aria-hidden="true" />
             </button>
-            <span className="ok-pdf-zoom-display" aria-live="polite">
+            <span className="ps-pdf-zoom-display" aria-live="polite">
               {Math.round(zoomScale * 100)}%
             </span>
             <button
@@ -383,28 +383,28 @@ export function Pdf(props: PdfProps) {
               onClick={zoomIn}
               disabled={zoomScale >= ZOOM_MAX}
               aria-label={t`Zoom in`}
-              className="ok-pdf-btn"
+              className="ps-pdf-btn"
               title={t`Zoom in`}
             >
               <ZoomIn size={14} aria-hidden="true" />
             </button>
 
-            <span className="ok-pdf-divider" aria-hidden="true" />
+            <span className="ps-pdf-divider" aria-hidden="true" />
 
-            <div className="ok-pdf-layout-menu">
+            <div className="ps-pdf-layout-menu">
               <button
                 type="button"
                 onClick={() => setLayoutMenuOpen((v) => !v)}
                 aria-label={t`Layout options`}
                 aria-haspopup="menu"
                 aria-expanded={layoutMenuOpen}
-                className="ok-pdf-btn"
+                className="ps-pdf-btn"
                 title={t`Layout`}
               >
                 <ChevronDown size={14} aria-hidden="true" />
               </button>
               {layoutMenuOpen && (
-                <div role="menu" className="ok-pdf-menu">
+                <div role="menu" className="ps-pdf-menu">
                   <LayoutMenuItem
                     label={t`Fit width`}
                     active={layoutMode === 'fit-width'}
@@ -415,7 +415,7 @@ export function Pdf(props: PdfProps) {
                     active={layoutMode === 'fit-height'}
                     onSelect={() => selectLayout('fit-height')}
                   />
-                  <hr className="ok-pdf-menu-divider" />
+                  <hr className="ps-pdf-menu-divider" />
                   <LayoutMenuItem
                     label={t`Single page`}
                     active={layoutMode === 'single'}
@@ -438,16 +438,16 @@ export function Pdf(props: PdfProps) {
         )}
       </div>
 
-      <div className="ok-pdf-body">
+      <div className="ps-pdf-body">
         {showThumbs && (
-          <aside className="ok-pdf-sidebar" aria-label={t`Page thumbnails`}>
+          <aside className="ps-pdf-sidebar" aria-label={t`Page thumbnails`}>
             {pages.map((info, i) => {
               const { pageNumber } = info;
               return (
                 <button
                   type="button"
                   key={pageNumber}
-                  className="ok-pdf-thumb"
+                  className="ps-pdf-thumb"
                   data-active={currentPage === pageNumber || undefined}
                   onClick={() => goToPage(pageNumber)}
                   aria-label={t`Jump to page ${pageNumber}`}
@@ -456,22 +456,22 @@ export function Pdf(props: PdfProps) {
                     ref={(el) => {
                       thumbRefs.current[i] = el;
                     }}
-                    className="ok-pdf-thumb-canvas"
+                    className="ps-pdf-thumb-canvas"
                   />
-                  <span className="ok-pdf-thumb-num">{pageNumber}</span>
+                  <span className="ps-pdf-thumb-num">{pageNumber}</span>
                 </button>
               );
             })}
           </aside>
         )}
-        <div className="ok-pdf-pages" ref={containerRef} data-layout={layoutMode}>
+        <div className="ps-pdf-pages" ref={containerRef} data-layout={layoutMode}>
           {loading && (
-            <div className="ok-pdf-loading">
+            <div className="ps-pdf-loading">
               <Trans>Loading PDF</Trans>
             </div>
           )}
           {error && (
-            <div className="ok-pdf-error">
+            <div className="ps-pdf-error">
               <Trans>Failed to load PDF: {error}</Trans>
             </div>
           )}
@@ -484,7 +484,7 @@ export function Pdf(props: PdfProps) {
                 ref={(el) => {
                   pageRefs.current[i] = el;
                 }}
-                className="ok-pdf-page"
+                className="ps-pdf-page"
                 aria-label={t`Page ${pageNumber}`}
               />
             );
@@ -507,11 +507,11 @@ function LayoutMenuItem(props: LayoutMenuItemProps) {
       type="button"
       role="menuitemradio"
       aria-checked={props.active}
-      className="ok-pdf-menu-item"
+      className="ps-pdf-menu-item"
       data-active={props.active || undefined}
       onClick={props.onSelect}
     >
-      <span className="ok-pdf-menu-check" aria-hidden="true">
+      <span className="ps-pdf-menu-check" aria-hidden="true">
         {props.active && <Check size={14} />}
       </span>
       {props.label}

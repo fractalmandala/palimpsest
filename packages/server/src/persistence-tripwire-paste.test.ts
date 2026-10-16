@@ -19,8 +19,8 @@ import { configureTestGitRepository } from '../../../test-support/configure-git-
 import { composeAndWriteRawBody } from './bridge-intake.ts';
 import {
   DocumentDurabilityState,
-  OK_PATH_UNRESOLVABLE,
-  OK_STORE_REFUSED,
+  PS_PATH_UNRESOLVABLE,
+  PS_STORE_REFUSED,
 } from './document-durability-state.ts';
 import { expectStable } from './expect-stable.test-helper.ts';
 import { getLogger } from './logger.ts';
@@ -115,7 +115,7 @@ function liveChildren(frag: Y.XmlFragment): unknown[] {
 function blockedEvents(warnSpy: { mock: { calls: unknown[][] } }): string[] {
   return warnSpy.mock.calls
     .map((call) => String(call[0] ?? ''))
-    .filter((s) => s.includes('"event":"ok-persistence-duplication-blocked"'));
+    .filter((s) => s.includes('"event":"ps-persistence-duplication-blocked"'));
 }
 
 describe('persistence tripwire vs a whole-document paste', () => {
@@ -139,7 +139,7 @@ describe('persistence tripwire vs a whole-document paste', () => {
   });
 
   test('select-all copy paste after a settled write survives and reaches disk', async () => {
-    rig = await setupRig('ok-tripwire-paste-');
+    rig = await setupRig('ps-tripwire-paste-');
     const docName = 'Untitled';
     const docPath = join(rig.tmpDir, `${docName}.md`);
     writeFileSync(docPath, '', 'utf-8');
@@ -200,7 +200,7 @@ describe('persistence tripwire vs a whole-document paste', () => {
 
       const spared = warnSpy.mock.calls
         .map((call) => String(call[0] ?? ''))
-        .filter((s) => s.includes('"event":"ok-persistence-duplication-spared"'));
+        .filter((s) => s.includes('"event":"ps-persistence-duplication-spared"'));
       expect(spared).toHaveLength(1);
       const sparedPayload = JSON.parse(spared[0] ?? '{}') as Record<string, unknown>;
       expect(new Set(Object.keys(sparedPayload))).toEqual(
@@ -225,7 +225,7 @@ describe('persistence tripwire vs a whole-document paste', () => {
   }, 30_000);
 
   test('a doubling with no settled write behind it still blocks, resets, and checkpoints', async () => {
-    rig = await setupRig('ok-tripwire-incident-');
+    rig = await setupRig('ps-tripwire-incident-');
     const docName = 'incident-changeset-readme';
     const docPath = join(rig.tmpDir, `${docName}.md`);
     const baseMarkdown = loadFixture('incident-changeset-readme-doubled.base.md');
@@ -259,7 +259,7 @@ describe('persistence tripwire vs a whole-document paste', () => {
       expect(serverDoc.getXmlFragment('default').length).toBe(baseChildren * 2);
 
       await waitWithinTestBudget(
-        'an ok-persistence-duplication-blocked warning to be logged',
+        'an ps-persistence-duplication-blocked warning to be logged',
         () => blockedEvents(warnSpy).length > 0,
         { timeoutMs: 8_000 },
       );
@@ -339,7 +339,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('a doubling with no settled write still blocks, resets from disk, and checkpoints when the base is absent', async () => {
-    rig = await setupRig('ok-tripwire-absent-base-');
+    rig = await setupRig('ps-tripwire-absent-base-');
     const docName = 'absent-base-tripwire';
     const docPath = join(rig.tmpDir, `${docName}.md`);
     const baseMarkdown = loadFixture('incident-changeset-readme-doubled.base.md');
@@ -412,7 +412,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
   }, 40_000);
 
   test('a doubling with a settled write behind it is still spared when the base is absent', async () => {
-    rig = await setupRig('ok-tripwire-absent-spare-');
+    rig = await setupRig('ps-tripwire-absent-spare-');
     const docName = 'absent-base-spare';
     const docPath = join(rig.tmpDir, `${docName}.md`);
     const baseMarkdown = loadFixture('incident-changeset-readme-doubled.base.md');
@@ -470,7 +470,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
       expect(getMetrics().persistenceDuplicationSpared).toBe(1);
       const spared = warnSpy.mock.calls
         .map((call) => String(call[0] ?? ''))
-        .filter((s) => s.includes('"event":"ok-persistence-duplication-spared"'));
+        .filter((s) => s.includes('"event":"ps-persistence-duplication-spared"'));
       expect(spared).toHaveLength(1);
 
       await waitWithinTestBudget(
@@ -493,8 +493,8 @@ describe('persistence tripwire with an absent reconciled base', () => {
   }, 40_000);
 
   test('a symlink-escaping disk baseline skips the store fail-closed instead of allowing a doubled write', async () => {
-    rig = await setupRig('ok-tripwire-baseline-unavailable-');
-    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-tripwire-outside-')));
+    rig = await setupRig('ps-tripwire-baseline-unavailable-');
+    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-tripwire-outside-')));
     const secretPath = join(outsideDir, 'secret.md');
     const secretContent = '# SECRET\n\nThis content lives outside the content root.\n';
     writeFileSync(secretPath, secretContent, 'utf-8');
@@ -539,8 +539,8 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('an agent-triggered store refused for an escaping baseline reports the escape as an unresolvable path', async () => {
-    rig = await setupRig('ok-tripwire-refusal-channel-');
-    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-tripwire-outside-')));
+    rig = await setupRig('ps-tripwire-refusal-channel-');
+    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-tripwire-outside-')));
     const secretPath = join(outsideDir, 'secret.md');
     const secretContent = '# SECRET\n\nThis content lives outside the content root.\n';
     writeFileSync(secretPath, secretContent, 'utf-8');
@@ -571,7 +571,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
 
       const failure = durabilityState.takeStoreFailure(docName);
       expect(failure).not.toBeNull();
-      expect(failure?.code).toBe(OK_PATH_UNRESOLVABLE);
+      expect(failure?.code).toBe(PS_PATH_UNRESOLVABLE);
       expect(durabilityState.isStoreRefused(docName)).toBe(true);
       expect(readFileSync(secretPath, 'utf-8')).toBe(secretContent);
     } finally {
@@ -580,7 +580,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('an agent-triggered store refused for an unreadable baseline stays a retryable store refusal', async () => {
-    rig = await setupRig('ok-tripwire-refusal-unreadable-');
+    rig = await setupRig('ps-tripwire-refusal-unreadable-');
     const docName = 'refusal-unreadable';
     const docPath = join(rig.tmpDir, `${docName}.md`);
     mkdirSync(docPath);
@@ -608,14 +608,14 @@ describe('persistence tripwire with an absent reconciled base', () => {
 
     const failure = durabilityState.takeStoreFailure(docName);
     expect(failure).not.toBeNull();
-    expect(failure?.code).toBe(OK_STORE_REFUSED);
+    expect(failure?.code).toBe(PS_STORE_REFUSED);
     expect(durabilityState.isStoreRefused(docName)).toBe(true);
     expect(statSync(docPath).isDirectory()).toBe(true);
   });
 
   test('a background store refused fail-closed records no store failure for a later caller to misattribute', async () => {
-    rig = await setupRig('ok-tripwire-refusal-background-');
-    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-tripwire-outside-')));
+    rig = await setupRig('ps-tripwire-refusal-background-');
+    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-tripwire-outside-')));
     const secretPath = join(outsideDir, 'secret.md');
     const secretContent = '# SECRET\n\nThis content lives outside the content root.\n';
     writeFileSync(secretPath, secretContent, 'utf-8');
@@ -650,8 +650,8 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('a refused doc that stores successfully after the baseline is repaired clears the refused mark', async () => {
-    rig = await setupRig('ok-tripwire-refusal-recovery-');
-    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-tripwire-outside-')));
+    rig = await setupRig('ps-tripwire-refusal-recovery-');
+    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-tripwire-outside-')));
     const secretPath = join(outsideDir, 'secret.md');
     const secretContent = '# SECRET\n\nThis content lives outside the content root.\n';
     writeFileSync(secretPath, secretContent, 'utf-8');
@@ -710,8 +710,8 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('a store whose markdown matches an adopted reconciled base clears the refused mark through the early-return path', async () => {
-    rig = await setupRig('ok-tripwire-refusal-earlyclear-');
-    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ok-tripwire-outside-')));
+    rig = await setupRig('ps-tripwire-refusal-earlyclear-');
+    const outsideDir = await realpath(mkdtempSync(join(tmpdir(), 'ps-tripwire-outside-')));
     const secretPath = join(outsideDir, 'secret.md');
     const secretContent = '# SECRET\n\nThis content lives outside the content root.\n';
     writeFileSync(secretPath, secretContent, 'utf-8');
@@ -767,7 +767,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('a first store of a never-observed doc skips the missing-baseline counter and recreates the file', async () => {
-    rig = await setupRig('ok-tripwire-baseline-missing-');
+    rig = await setupRig('ps-tripwire-baseline-missing-');
     const docName = 'baseline-missing';
     const doubledMarkdown = loadFixture('incident-changeset-readme-doubled.candidate.md');
 
@@ -805,7 +805,7 @@ describe('persistence tripwire with an absent reconciled base', () => {
   });
 
   test('a lost baseline on a doc the server observed on disk is counted, and the deleted file is not recreated', async () => {
-    rig = await setupRig('ok-tripwire-baseline-lost-');
+    rig = await setupRig('ps-tripwire-baseline-lost-');
     const docName = 'baseline-lost';
     const seeded = '# Baseline lost\n\nOriginal on-disk body.\n';
     writeFileSync(join(rig.tmpDir, `${docName}.md`), seeded, 'utf-8');

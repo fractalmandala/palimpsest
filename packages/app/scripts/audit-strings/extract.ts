@@ -29,7 +29,7 @@ const USER_FACING_ATTRS = new Set([
   'ctaLabel',
   'confirmLabel',
   'cancelLabel',
-  'okLabel',
+  'psLabel',
   'submitLabel',
   'buttonLabel',
   'actionLabel',

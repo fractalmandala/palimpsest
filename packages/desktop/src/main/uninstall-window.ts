@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import type { SupportedLocale } from '@inkeep/open-knowledge-core';
+import type { SupportedLocale } from '@palimpsest/core';
 
 export type UninstallWindowTheme = 'light' | 'dark';
 

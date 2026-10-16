@@ -1,7 +1,7 @@
 import { existsSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { delimiter } from 'node:path';
-import { augmentGitSpawnPath } from '@inkeep/open-knowledge-core';
+import { augmentGitSpawnPath } from '@palimpsest/core';
 
 let cachedPath: string | null = null;
 

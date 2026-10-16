@@ -25,7 +25,7 @@ async function bootHandler(
   config: Config,
   handlerOptions: Partial<Pick<McpHttpHandlerOptions, 'log' | 'maxSessions' | 'sessionTtlMs'>> = {},
 ): Promise<SessionHarness> {
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-http-cfg-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-http-cfg-'));
   let handler: McpHttpHandler | null = null;
   let httpServer: HttpServer | null = null;
   let port = 0;
@@ -244,7 +244,7 @@ test('PRD-6659: tools/call write with an invalid position returns field name + a
 
 test('forwarded connectionId header reaches /api/agent-write-md as agentId', async () => {
   const config: Config = ConfigSchema.parse({});
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-http-cid-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-http-cid-'));
   let handler: McpHttpHandler | null = null;
   let httpServer: HttpServer | null = null;
   let port = 0;
@@ -363,7 +363,7 @@ test('forwarded connectionId header reaches /api/agent-write-md as agentId', asy
 
 test('invalid connectionId header is ignored — session falls back to a fresh UUID', async () => {
   const config: Config = ConfigSchema.parse({});
-  const contentDir = mkdtempSync(join(tmpdir(), 'ok-mcp-http-cid-bad-'));
+  const contentDir = mkdtempSync(join(tmpdir(), 'ps-mcp-http-cid-bad-'));
   let handler: McpHttpHandler | null = null;
   let httpServer: HttpServer | null = null;
   let port = 0;
@@ -538,16 +538,16 @@ async function previewUrlOkOpenCommand(
   });
   expect(call.status).toBe(200);
   const body = (await call.json()) as {
-    result?: { structuredContent?: { okOpenCommand?: unknown } };
+    result?: { structuredContent?: { psOpenCommand?: unknown } };
   };
-  return body.result?.structuredContent?.okOpenCommand ?? null;
+  return body.result?.structuredContent?.psOpenCommand ?? null;
 }
 
-test('hosted-agent header reaches preview_url as the ok open steer', async () => {
+test('hosted-agent header reaches preview_url as the ps open steer', async () => {
   const harness = await bootHandler(ConfigSchema.parse({}));
   openHarnesses.push(harness);
   expect(await previewUrlOkOpenCommand(harness.port, { [MCP_HOSTED_AGENT_HEADER]: '1' })).toBe(
-    'ok open specs/foo/SPEC',
+    'ps open specs/foo/SPEC',
   );
 });
 

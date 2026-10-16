@@ -2,7 +2,7 @@ import { existsSync, lstatSync, readFileSync, realpathSync, statSync } from 'nod
 import { realpath } from 'node:fs/promises';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import type { Extension } from '@hocuspocus/server';
-import type { MarkdownManager } from '@inkeep/open-knowledge-core';
+import type { MarkdownManager } from '@palimpsest/core';
 import {
   addsBlankLines,
   BridgeInvariantViolationError,
@@ -17,14 +17,14 @@ import {
   pendingContentLines,
   prependFrontmatter,
   stripFrontmatter,
-} from '@inkeep/open-knowledge-core';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+} from '@palimpsest/core';
+import { atomicTempPath } from '@palimpsest/core/server';
 import {
   composeCommitSubject,
   formatOkActor,
   formatWipSubject,
-  type OkActorEntry,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+  type PsActorEntry,
+} from '@palimpsest/core/shadow-repo-layout';
 import type { JSONContent } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
@@ -70,9 +70,9 @@ import {
   type DeferredStoreOutcome,
   type DeferredStoreSettlement,
   DocumentDurabilityState,
-  OK_DOC_REMOVED,
-  OK_PATH_UNRESOLVABLE,
-  OK_STORE_REFUSED,
+  PS_DOC_REMOVED,
+  PS_PATH_UNRESOLVABLE,
+  PS_STORE_REFUSED,
   type StoreFailure,
   type StoreFailureRemoval,
 } from './document-durability-state.ts';
@@ -160,7 +160,7 @@ export class DocumentOpenSizeLimitError extends Error {
 
   constructor(docName: string, size: number, limit = DOCUMENT_OPEN_BYTE_LIMIT) {
     super(
-      `Document "${docName}" is ${formatFileSize(size)}; OpenKnowledge opens documents up to ${formatFileSize(limit)}.`,
+      `Document "${docName}" is ${formatFileSize(size)}; Palimpsest opens documents up to ${formatFileSize(limit)}.`,
     );
     this.name = 'DocumentOpenSizeLimitError';
     this.docName = docName;
@@ -190,7 +190,7 @@ export function resolveWriterFromOrigin(
       return {
         id: `agent-${sessionId}`,
         name: `Agent (${sessionId.slice(0, 8)})`,
-        email: `agent-${sessionId}@openknowledge.local`,
+        email: `agent-${sessionId}@palimpsest.local`,
       };
     }
 
@@ -217,7 +217,7 @@ export function resolveWriterFromOrigin(
       return {
         id: principalId,
         name: 'Local User',
-        email: `${principalId}@openknowledge.local`,
+        email: `${principalId}@palimpsest.local`,
       };
     }
     return SERVICE_WRITER;
@@ -521,7 +521,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
       const branch = getCurrentBranch?.() ?? 'main';
 
       if (snapshot.size === 0) {
-        const serviceActorEntry: OkActorEntry = {
+        const serviceActorEntry: PsActorEntry = {
           v: 1,
           writer_id: SERVICE_WRITER.id,
           principal: null,
@@ -590,13 +590,13 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
         const writer: WriterIdentity = {
           id: writerId,
           name: entry.displayName,
-          email: `${writerId}@openknowledge.local`,
+          email: `${writerId}@palimpsest.local`,
         };
         const docs = [...entry.docs];
         const a = entry.actor;
         const summaries = [...entry.summaries];
         const previousPaths = [...entry.previousPaths];
-        const actorEntry: OkActorEntry = {
+        const actorEntry: PsActorEntry = {
           v: 1,
           writer_id: writerId,
           principal: a?.principalId ?? null,
@@ -1263,7 +1263,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
       documentName,
       pathIsUnrepairable
         ? {
-            code: OK_PATH_UNRESOLVABLE,
+            code: PS_PATH_UNRESOLVABLE,
             message: `the path for ${documentName} could not be resolved inside the content directory${
               errno === undefined ? '' : ` (${errno})`
             }`,
@@ -1296,18 +1296,18 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
         documentName,
         frozen?.removal?.kind === 'path-occupied'
           ? {
-              code: OK_DOC_REMOVED,
+              code: PS_DOC_REMOVED,
               message: `${documentName} was ${frozen.status === 'renamed' ? 'renamed' : 'deleted'} on disk and the file now at its path has not been loaded into it, so the store was refused rather than overwriting that file`,
               removal: frozen.removal,
             }
           : frozen?.removal?.kind === 'renamed'
             ? {
-                code: OK_DOC_REMOVED,
+                code: PS_DOC_REMOVED,
                 message: `${documentName} was renamed to ${frozen.removal.renamedTo} on disk, so the store was refused rather than recreating the file under its old name`,
                 removal: frozen.removal,
               }
             : {
-                code: OK_DOC_REMOVED,
+                code: PS_DOC_REMOVED,
                 message: `${documentName} is no longer on disk, so the store was refused rather than recreating the removed file`,
               },
       );
@@ -1568,7 +1568,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
               case 'read-failed':
                 if (agentTriggeredStore) {
                   durabilityState.recordStoreFailure(documentName, {
-                    code: OK_STORE_REFUSED,
+                    code: PS_STORE_REFUSED,
                     message: refusal.message,
                   });
                 }
@@ -1597,7 +1597,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
             incrementPersistenceDuplicationSpared();
             console.warn(
               JSON.stringify({
-                event: 'ok-persistence-duplication-spared',
+                event: 'ps-persistence-duplication-spared',
                 'doc.name': documentName,
                 candidateBytes: markdown.length,
                 baseBytes: duplicationBaseline.length,
@@ -1617,7 +1617,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
             const fragmentChildren = document.getXmlFragment('default').length;
             console.warn(
               JSON.stringify({
-                event: 'ok-persistence-duplication-blocked',
+                event: 'ps-persistence-duplication-blocked',
                 'doc.name': documentName,
                 candidateBytes: markdown.length,
                 baseBytes: duplicationBaseline.length,
@@ -1774,7 +1774,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
 
         if (
           process.env.NODE_ENV === 'test' &&
-          process.env.OK_TEST_STORE_DIVERGENCE === documentName
+          process.env.PS_TEST_STORE_DIVERGENCE === documentName
         ) {
           await tracedWriteFile(canonicalPath, '# NATIVE\n\nnative-divergence-injected\n', 'utf-8');
         }
@@ -1877,9 +1877,9 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
 
         const tmpPath = atomicTempPath(canonicalPath);
         try {
-          if (process.env.NODE_ENV === 'test' && process.env.OK_TEST_STORE_FAULT === documentName) {
+          if (process.env.NODE_ENV === 'test' && process.env.PS_TEST_STORE_FAULT === documentName) {
             const faultErr = new Error(
-              `OK_TEST_STORE_FAULT: simulated disk failure for ${documentName}`,
+              `PS_TEST_STORE_FAULT: simulated disk failure for ${documentName}`,
             ) as NodeJS.ErrnoException;
             faultErr.code = 'ENOSPC';
             throw faultErr;
@@ -2080,7 +2080,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
               });
             } catch (err) {
               outcome = { kind: 'failed', failure: toStoreFailure(err) };
-              const verbose = process.env.OK_TELEMETRY_VERBOSE === '1';
+              const verbose = process.env.PS_TELEMETRY_VERBOSE === '1';
               let rawMessage = '';
               try {
                 rawMessage = String((err as { message?: unknown } | null)?.message ?? '');

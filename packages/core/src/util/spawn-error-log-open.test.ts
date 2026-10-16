@@ -17,7 +17,7 @@ import { openSpawnErrorLog } from './spawn-error-log-open.ts';
 const scratchDirs: string[] = [];
 
 function scratchPath(): string {
-  const dir = mkdtempSync(join(tmpdir(), 'ok-spawn-log-'));
+  const dir = mkdtempSync(join(tmpdir(), 'ps-spawn-log-'));
   scratchDirs.push(dir);
   return join(dir, 'last-spawn-error.log');
 }

@@ -2,17 +2,17 @@ import { plural, t } from '@lingui/core/macro';
 import { filePathToDocName } from '@/lib/doc-hash';
 import type { DocProblemCounts } from '@/lib/validation-store';
 
-export const OK_PROBLEM_ROW_ATTR = 'data-ok-problem';
-export const OK_PROBLEM_BADGE_ATTR = 'data-ok-problem-badge';
+export const PS_PROBLEM_ROW_ATTR = 'data-ok-problem';
+export const PS_PROBLEM_BADGE_ATTR = 'data-ok-problem-badge';
 
 export const FILE_TREE_PROBLEM_CSS = `
-  [data-type='item'][${OK_PROBLEM_ROW_ATTR}='warning'] [data-item-section='content'] {
+  [data-type='item'][${PS_PROBLEM_ROW_ATTR}='warning'] [data-item-section='content'] {
     color: var(--ok-tree-problem-warning, oklch(70% 0.15 75));
   }
-  [data-type='item'][${OK_PROBLEM_ROW_ATTR}='error'] [data-item-section='content'] {
+  [data-type='item'][${PS_PROBLEM_ROW_ATTR}='error'] [data-item-section='content'] {
     color: var(--ok-tree-problem-error, oklch(55% 0.15 25));
   }
-  [${OK_PROBLEM_BADGE_ATTR}] {
+  [${PS_PROBLEM_BADGE_ATTR}] {
     display: inline-block;
     margin-left: 0.375rem;
     margin-right: 0.25rem;
@@ -32,7 +32,7 @@ export const FILE_TREE_PROBLEM_CSS = `
     color: var(--ok-tree-problem-warning, oklch(70% 0.15 75));
     background: color-mix(in oklab, currentColor 14%, transparent);
   }
-  [data-type='item'][${OK_PROBLEM_ROW_ATTR}='error'] [${OK_PROBLEM_BADGE_ATTR}] {
+  [data-type='item'][${PS_PROBLEM_ROW_ATTR}='error'] [${PS_PROBLEM_BADGE_ATTR}] {
     color: var(--ok-tree-problem-error, oklch(55% 0.15 25));
   }
   /* The painted chip is sized for a two-character count and lands ~24x16, under
@@ -41,10 +41,10 @@ export const FILE_TREE_PROBLEM_CSS = `
      chip, on the operable variant only — an inert badge is not a target and
      keeps its old footprint. Inset covers the row's full height, which also
      clears the 24px-diameter circle the spacing exception measures. */
-  [${OK_PROBLEM_BADGE_ATTR}][role='button'] {
+  [${PS_PROBLEM_BADGE_ATTR}][role='button'] {
     position: relative;
   }
-  [${OK_PROBLEM_BADGE_ATTR}][role='button']::after {
+  [${PS_PROBLEM_BADGE_ATTR}][role='button']::after {
     content: '';
     position: absolute;
     inset: -5px -1px;
@@ -55,11 +55,11 @@ export const FILE_TREE_PROBLEM_CSS = `
      all. Stepping the tint up is the whole affordance, so it is a state change
      rather than a transition and has nothing for reduced motion to suppress. */
   @media (hover: hover) {
-    [${OK_PROBLEM_BADGE_ATTR}][role='button']:hover {
+    [${PS_PROBLEM_BADGE_ATTR}][role='button']:hover {
       background: color-mix(in oklab, currentColor 28%, transparent);
     }
   }
-  [${OK_PROBLEM_BADGE_ATTR}][role='button']:active {
+  [${PS_PROBLEM_BADGE_ATTR}][role='button']:active {
     background: color-mix(in oklab, currentColor 38%, transparent);
   }
   /* The tree publishes its focus-ring tokens on the shadow host, so borrowing
@@ -67,7 +67,7 @@ export const FILE_TREE_PROBLEM_CSS = `
      theme. Only width and color carry over: the tree's offset token is
      negative because a row paints its ring inset on a ::before, and inset on
      a chip this small would land the ring on top of the digit. */
-  [${OK_PROBLEM_BADGE_ATTR}]:focus-visible {
+  [${PS_PROBLEM_BADGE_ATTR}]:focus-visible {
     outline: var(--trees-focus-ring-width, 2px) solid
       var(--trees-focus-ring-color, currentColor);
     outline-offset: 1px;
@@ -79,10 +79,10 @@ export const FILE_TREE_PROBLEM_CSS = `
      weight rather than a hue the palette refuses to honor. Same contract the
      drop-target affordances keep in FILE_TREE_UNSAFE_CSS. */
   @media (forced-colors: active) {
-    [${OK_PROBLEM_BADGE_ATTR}] {
+    [${PS_PROBLEM_BADGE_ATTR}] {
       border: 1px solid CanvasText;
     }
-    [data-type='item'][${OK_PROBLEM_ROW_ATTR}='error'] [${OK_PROBLEM_BADGE_ATTR}] {
+    [data-type='item'][${PS_PROBLEM_ROW_ATTR}='error'] [${PS_PROBLEM_BADGE_ATTR}] {
       border-width: 3px;
     }
   }
@@ -107,16 +107,16 @@ export function applyProblemIndicators(
       continue;
     }
     const severity = entry.errorCount > 0 ? 'error' : 'warning';
-    if (row.getAttribute(OK_PROBLEM_ROW_ATTR) !== severity) {
-      row.setAttribute(OK_PROBLEM_ROW_ATTR, severity);
+    if (row.getAttribute(PS_PROBLEM_ROW_ATTR) !== severity) {
+      row.setAttribute(PS_PROBLEM_ROW_ATTR, severity);
     }
     upsertProblemBadge(row, treePath, entry, onActivate);
   }
 }
 
 function clearProblemIndicators(row: HTMLElement): void {
-  if (row.hasAttribute(OK_PROBLEM_ROW_ATTR)) row.removeAttribute(OK_PROBLEM_ROW_ATTR);
-  const badge = row.querySelector(`[${OK_PROBLEM_BADGE_ATTR}]`);
+  if (row.hasAttribute(PS_PROBLEM_ROW_ATTR)) row.removeAttribute(PS_PROBLEM_ROW_ATTR);
+  const badge = row.querySelector(`[${PS_PROBLEM_BADGE_ATTR}]`);
   if (!badge) return;
   const treeRoot = row.getRootNode();
   if (treeRoot instanceof ShadowRoot && treeRoot.activeElement === badge) row.focus();
@@ -158,10 +158,10 @@ function upsertProblemBadge(
 ): void {
   const total = counts.errorCount + counts.warningCount;
   const label = total > 99 ? '99+' : String(total);
-  let badge = row.querySelector<HTMLSpanElement>(`[${OK_PROBLEM_BADGE_ATTR}]`);
+  let badge = row.querySelector<HTMLSpanElement>(`[${PS_PROBLEM_BADGE_ATTR}]`);
   if (!badge) {
     badge = row.ownerDocument.createElement('span');
-    badge.setAttribute(OK_PROBLEM_BADGE_ATTR, '');
+    badge.setAttribute(PS_PROBLEM_BADGE_ATTR, '');
     const actionSection = row.querySelector('[data-item-section="action"]');
     if (actionSection) {
       actionSection.before(badge);

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { sweepWindowsUpdateSurvivors } from '../../src/main/windows-update-survivor-sweep.ts';
 
-const INSTALL_TREE = 'C:\\Program Files\\Open Knowledge\\resources';
+const INSTALL_TREE = 'C:\\Program Files\\Palimpsest\\resources';
 const CREATED = '2026-08-25T12:00:00.0000000Z';
 
 describe('sweepWindowsUpdateSurvivors', () => {

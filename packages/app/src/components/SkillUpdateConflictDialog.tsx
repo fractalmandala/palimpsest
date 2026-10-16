@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { okPierreTheme } from '@/lib/pierre-theme';
+import { psPierreTheme } from '@/lib/pierre-theme';
 
 export function SkillUpdateConflictDialog({
   open,
@@ -50,7 +50,7 @@ export function SkillUpdateConflictDialog({
             className="pierre-diff"
             oldFile={{ name: skillName, contents: localBody }}
             newFile={{ name: skillName, contents: upstreamBody }}
-            options={{ overflow: 'wrap', diffStyle: 'unified', theme: okPierreTheme() }}
+            options={{ overflow: 'wrap', diffStyle: 'unified', theme: psPierreTheme() }}
           />
         </DialogBody>
         <DialogFooter>

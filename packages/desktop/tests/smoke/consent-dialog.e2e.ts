@@ -30,10 +30,10 @@ import { expect, test } from './_helpers/smoke-test';
 
 const TARGET = resolveDesktopTarget();
 
-const DESKTOP_PRODUCT_NAME = '@inkeep/open-knowledge-desktop';
+const DESKTOP_PRODUCT_NAME = '@palimpsest/desktop';
 
 function seedTmpHome(prefix: string): string {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-consent-dialog-${prefix}-`)));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-consent-dialog-${prefix}-`)));
   const userDataDir = join(tmpHome, 'Library', 'Application Support', DESKTOP_PRODUCT_NAME);
   mkdirSync(userDataDir, { recursive: true });
   writeFileSync(
@@ -51,14 +51,14 @@ function seedTmpHome(prefix: string): string {
 }
 
 function seedFreshNonGitProject(prefix: string): string {
-  return realpathSync(mkdtempSync(join(tmpdir(), `ok-consent-${prefix}-fresh-`)));
+  return realpathSync(mkdtempSync(join(tmpdir(), `ps-consent-${prefix}-fresh-`)));
 }
 
 function seedGitRepoWithSubFolder(
   tmpHome: string,
   prefix: string,
 ): { repoRoot: string; subFolder: string } {
-  const repoRoot = join(tmpHome, `ok-consent-${prefix}-git`);
+  const repoRoot = join(tmpHome, `ps-consent-${prefix}-git`);
   mkdirSync(repoRoot, { recursive: true });
   execSync('git init -q', { cwd: repoRoot });
   configureTestGitRepository(repoRoot);
@@ -82,8 +82,8 @@ async function launchApp(tmpHome: string, opts: LaunchOpts = {}): Promise<Electr
       env: {
         ...process.env,
         ...homeEnv(tmpHome),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        ...(opts.pickedPath !== undefined ? { OK_DESKTOP_TEST_PICKED_PATH: opts.pickedPath } : {}),
+        PS_DESKTOP_E2E_SMOKE: '1',
+        ...(opts.pickedPath !== undefined ? { PS_DESKTOP_TEST_PICKED_PATH: opts.pickedPath } : {}),
       },
     }),
     { home: tmpHome },
@@ -115,7 +115,7 @@ function trackForCleanup(...paths: string[]): void {
 }
 
 test.describe('Consent-dialog smoke', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PLATFORM_SUPPORTED, PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
 
@@ -151,7 +151,7 @@ test.describe('Consent-dialog smoke', () => {
 
     const editor = await findWindowByMode(app, 'editor');
     await expect
-      .poll(() => existsSync(join(projectDir, '.ok', 'config.yml')), { timeout: 15_000 })
+      .poll(() => existsSync(join(projectDir, '.ps', 'config.yml')), { timeout: 15_000 })
       .toBe(true);
     await configureDesktopGitRepositories(editor, projectDir);
   });
@@ -183,7 +183,7 @@ test.describe('Consent-dialog smoke', () => {
     await expect(contentDirInput).toHaveValue('.', { timeout: 15_000 });
   });
 
-  test('Pick Existing on a sub-folder of a git repo lands .ok/ at the git root', async ({
+  test('Pick Existing on a sub-folder of a git repo lands .ps/ at the git root', async ({
     captureStderrFor,
   }) => {
     test.setTimeout(sumOfDeclaredBoundsMs(test.info()));
@@ -206,11 +206,11 @@ test.describe('Consent-dialog smoke', () => {
 
     const editor = await findWindowByMode(app, 'editor');
     await expect
-      .poll(() => existsSync(join(repoRoot, '.ok', 'config.yml')), { timeout: 15_000 })
+      .poll(() => existsSync(join(repoRoot, '.ps', 'config.yml')), { timeout: 15_000 })
       .toBe(true);
-    expect(existsSync(join(subFolder, '.ok', 'config.yml'))).toBe(false);
+    expect(existsSync(join(subFolder, '.ps', 'config.yml'))).toBe(false);
 
-    const cfg = readFileSync(join(repoRoot, '.ok', 'config.yml'), 'utf8');
+    const cfg = readFileSync(join(repoRoot, '.ps', 'config.yml'), 'utf8');
     expect(cfg).not.toMatch(/^\s*dir:\s*docs/m);
     expect(cfg).toMatch(/^# content:/m);
     await configureDesktopGitRepositories(editor, repoRoot);

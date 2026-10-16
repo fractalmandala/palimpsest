@@ -1,5 +1,5 @@
 import { homedir } from 'node:os';
-import { classifyMcpLauncherEntry } from '@inkeep/open-knowledge-core';
+import { classifyMcpLauncherEntry } from '@palimpsest/core';
 import {
   ALL_EDITOR_IDS,
   canonicalEntryFor,

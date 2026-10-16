@@ -1,13 +1,13 @@
 import {
   type HandoffHostPlatform,
   isHandoffTargetSupportedOn,
-} from '@inkeep/open-knowledge-core/agent-registry';
-import type { TargetData } from '@inkeep/open-knowledge-core/handoff';
+} from '@palimpsest/core/agent-registry';
+import type { TargetData } from '@palimpsest/core/handoff';
 
 export {
   KNOWN_HANDOFF_TARGETS as KNOWN_TARGETS,
   VISIBLE_HANDOFF_TARGETS as VISIBLE_TARGETS,
-} from '@inkeep/open-knowledge-core/agent-registry';
+} from '@palimpsest/core/agent-registry';
 
 export function isTargetOfferedOnHost(
   target: Pick<TargetData, 'platforms'>,

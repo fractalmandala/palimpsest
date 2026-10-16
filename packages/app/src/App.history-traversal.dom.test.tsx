@@ -44,9 +44,9 @@ const SKILL_PREVIEW_TARGET = previewTarget(SKILL_PREVIEW);
 
 const EXPLORE_PREVIEW: SkillPreviewHashTarget = {
   flavor: 'explore',
-  source: 'inkeep/open-knowledge-skills',
+  source: 'fractalmandala/palimpsest-skills',
   name: 'trip-log',
-  subtitle: 'inkeep/open-knowledge-skills',
+  subtitle: 'fractalmandala/palimpsest-skills',
   level: 'project',
 };
 

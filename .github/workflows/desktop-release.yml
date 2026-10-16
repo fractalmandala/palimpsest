@@ -1,6 +1,6 @@
 name: Desktop release
 
-# Builds + signs + publishes EVERY desktop installer for an Open Knowledge
+# Builds + signs + publishes EVERY desktop installer for an Palimpsest
 # release — macOS DMG/ZIP, Windows NSIS x64/arm64, Linux deb/rpm x64/arm64 —
 # then promotes the GitHub Release from draft → published so it appears in
 # the .atom feed.
@@ -197,8 +197,8 @@ jobs:
             {
               echo "channel=beta"
               echo "variant=beta"
-              echo "product_name=OpenKnowledge Beta"
-              echo "artifact_name=OpenKnowledge-Beta"
+              echo "product_name=Palimpsest Beta"
+              echo "artifact_name=Palimpsest-Beta"
               echo "version=$VERSION"
             } >> "$GITHUB_OUTPUT"
             echo "::notice::Building BETA channel from tag $RELEASE_TAG"
@@ -217,8 +217,8 @@ jobs:
             {
               echo "channel=latest"
               echo "variant=stable"
-              echo "product_name=OpenKnowledge"
-              echo "artifact_name=OpenKnowledge"
+              echo "product_name=Palimpsest"
+              echo "artifact_name=Palimpsest"
               echo "version=$VERSION"
             } >> "$GITHUB_OUTPUT"
             echo "::notice::Building LATEST channel from tag $RELEASE_TAG"
@@ -461,7 +461,7 @@ jobs:
 
       - name: Build workspace (produces packages/cli/dist for extraResources)
         run: |
-          pnpm exec turbo run build --filter=@inkeep/open-knowledge --cache=local:,remote:
+          pnpm exec turbo run build --filter=@palimpsest/cli --cache=local:,remote:
 
       - name: Assert the native-config binary set
         env:
@@ -479,10 +479,10 @@ jobs:
       #
       # core/server dist are load-bearing: `build:desktop` (electron-vite) in
       # the packaging jobs bundles the desktop main process + app renderer
-      # source, which import `@inkeep/open-knowledge-core` and
-      # `@inkeep/open-knowledge-server`. Those resolve via `exports` to
+      # source, which import `@palimpsest/core` and
+      # `@palimpsest/server`. Those resolve via `exports` to
       # `./dist/index.mjs`; without the built dist here, electron-vite fails
-      # with "Rolldown failed to resolve import @inkeep/open-knowledge-core".
+      # with "Rolldown failed to resolve import @palimpsest/core".
       # The packaging jobs can't rebuild them (the Windows job's default shell
       # can't run the CLI build chain's `cp -r` bash-isms), so prepare builds
       # everything once and ships the dist forward.
@@ -512,11 +512,11 @@ jobs:
       matrix:
         variant: ${{ fromJSON(contains(github.event.client_payload.release_tag || inputs.release_tag, '-beta.') && '["legacy-beta","beta"]' || '["stable"]') }}
     env:
-      OK_DESKTOP_VARIANT: ${{ matrix.variant }}
+      PS_DESKTOP_VARIANT: ${{ matrix.variant }}
     # macos-26 = Apple Silicon (Tahoe) with Xcode 26.x preinstalled. Apple
     # Silicon is required for the Universal DMG lipo merge (arm64 + x64 →
     # universal) per parent SPEC D29. Xcode 26+ is required because
-    # electron-builder compiles `build/okglass.icon` → `Assets.car` via
+    # electron-builder compiles `build/psglass.icon` → `Assets.car` via
     # `actool`, which only ships with Xcode 26+.
     runs-on: macos-26
     cache-mode: none
@@ -564,10 +564,10 @@ jobs:
               echo "variant=beta"
               echo "version=$VERSION"
             } >> "$GITHUB_OUTPUT"
-            if [[ "$OK_DESKTOP_VARIANT" == "beta" ]]; then
+            if [[ "$PS_DESKTOP_VARIANT" == "beta" ]]; then
               echo "channel=beta-product" >> "$GITHUB_OUTPUT"
             fi
-            echo "variant=$OK_DESKTOP_VARIANT" >> "$GITHUB_OUTPUT"
+            echo "variant=$PS_DESKTOP_VARIANT" >> "$GITHUB_OUTPUT"
           elif [[ "$VERSION" == *-* ]]; then
             echo "::error::Unsupported prerelease ID in tag $RELEASE_TAG — this public publisher accepts only -beta.N (prepare's twin step carries the full diagnostics)."
             exit 1
@@ -638,7 +638,7 @@ jobs:
 
       - name: Build workspace (produces packages/cli/dist/public for extraResources)
         run: |
-          pnpm exec turbo run build --filter=@inkeep/open-knowledge --cache=local:,remote:
+          pnpm exec turbo run build --filter=@palimpsest/cli --cache=local:,remote:
 
       - name: Assert the native-config binary set
         run: |
@@ -692,9 +692,9 @@ jobs:
         working-directory: packages/desktop
         run: |
           set -euo pipefail
-          PROFILE_PATH="build/embedded.${OK_DESKTOP_VARIANT}.provisionprofile"
+          PROFILE_PATH="build/embedded.${PS_DESKTOP_VARIANT}.provisionprofile"
           if [[ ! -f "$PROFILE_PATH" ]]; then
-            echo "::error::The committed ${OK_DESKTOP_VARIANT} Developer ID provisioning profile is missing."
+            echo "::error::The committed ${PS_DESKTOP_VARIANT} Developer ID provisioning profile is missing."
             exit 1
           fi
           security cms -D -i "$PROFILE_PATH" >/dev/null
@@ -988,8 +988,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/historical-upgrade"
           git fetch --no-tags --depth=1 origin "$WORKFLOW_SHA"
           git restore --source "$WORKFLOW_SHA" --worktree .github/scripts/smoke-historical-upgrade.mjs .github/scripts/dmg-mount.mjs
-          gh release download "$SOURCE_TAG" --pattern 'OpenKnowledge-arm64.dmg' --dir "$RUNNER_TEMP/historical-upgrade"
-          node .github/scripts/smoke-historical-upgrade.mjs "$RUNNER_TEMP/historical-upgrade/OpenKnowledge-arm64.dmg" "$UPDATER_CHANNEL"
+          gh release download "$SOURCE_TAG" --pattern 'Palimpsest-arm64.dmg' --dir "$RUNNER_TEMP/historical-upgrade"
+          node .github/scripts/smoke-historical-upgrade.mjs "$RUNNER_TEMP/historical-upgrade/Palimpsest-arm64.dmg" "$UPDATER_CHANNEL"
 
       # FR5b — smoke the signed DMG before anything about this release becomes
       # visible or installable. Under the fan-in topology this job failing on
@@ -1080,7 +1080,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-desktop-release-macos-${{ matrix.variant }}-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-desktop-release-macos-${{ matrix.variant }}-attempt${{ github.run_attempt }}
           path: packages/desktop/test-results/desktop-smoke-packaged-results.json
           retention-days: 14
           if-no-files-found: warn
@@ -1097,8 +1097,8 @@ jobs:
     environment: release-signing
     timeout-minutes: 45
     env:
-      OK_DESKTOP_VARIANT: ${{ matrix.variant }}
-      OK_DESKTOP_PRODUCT_NAME: ${{ matrix.variant == 'beta' && 'OpenKnowledge Beta' || 'OpenKnowledge' }}
+      PS_DESKTOP_VARIANT: ${{ matrix.variant }}
+      PS_DESKTOP_PRODUCT_NAME: ${{ matrix.variant == 'beta' && 'Palimpsest Beta' || 'Palimpsest' }}
       UPDATER_CHANNEL: ${{ matrix.variant == 'beta' && 'beta-product' || needs.prepare.outputs.channel }}
     permissions:
       # See build-macos — packaging jobs are read-only by design.
@@ -1314,9 +1314,9 @@ jobs:
               throw "Signed release produced no $($package.Arch) outer package at $($package.Path)."
             }
 
-            $appExecutable = Join-Path $package.Path "$env:OK_DESKTOP_PRODUCT_NAME.exe"
+            $appExecutable = Join-Path $package.Path "$env:PS_DESKTOP_PRODUCT_NAME.exe"
             if (-not (Test-Path -LiteralPath $appExecutable -PathType Leaf)) {
-              throw "Signed $($package.Arch) release package has no $env:OK_DESKTOP_PRODUCT_NAME.exe."
+              throw "Signed $($package.Arch) release package has no $env:PS_DESKTOP_PRODUCT_NAME.exe."
             }
             $signature = Get-AuthenticodeSignature $appExecutable
             if ($signature.Status -ne 'Valid') {
@@ -1361,16 +1361,16 @@ jobs:
         if: success() && steps.winterm.outputs.ships == 'true'
         working-directory: packages/desktop
         env:
-          OK_WIN_PACKAGE_DIR: dist-desktop/win-unpacked
-          OK_WIN_PACKAGE_REQUIRED: "1"
+          PS_WIN_PACKAGE_DIR: dist-desktop/win-unpacked
+          PS_WIN_PACKAGE_REQUIRED: "1"
         run: pnpm exec vitest run tests/unit/windows-package-native-guards.test.ts
 
       - name: Assert Windows arm64 terminal native package compatibility
         if: success() && steps.winterm.outputs.ships == 'true'
         working-directory: packages/desktop
         env:
-          OK_WIN_PACKAGE_DIR: dist-desktop/win-arm64-unpacked
-          OK_WIN_PACKAGE_REQUIRED: "1"
+          PS_WIN_PACKAGE_DIR: dist-desktop/win-arm64-unpacked
+          PS_WIN_PACKAGE_REQUIRED: "1"
         run: pnpm exec vitest run tests/unit/windows-package-native-guards.test.ts
 
       # Fail before staging an installer that cannot start. An asar packed
@@ -1426,7 +1426,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-desktop-release-windows-${{ matrix.variant }}-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-desktop-release-windows-${{ matrix.variant }}-attempt${{ github.run_attempt }}
           path: packages/desktop/test-results/vitest-*.json
           retention-days: 14
           if-no-files-found: warn
@@ -1444,7 +1444,7 @@ jobs:
     cache-mode: none
     timeout-minutes: 45
     env:
-      OK_DESKTOP_VARIANT: ${{ matrix.variant }}
+      PS_DESKTOP_VARIANT: ${{ matrix.variant }}
       UPDATER_CHANNEL: ${{ matrix.variant == 'beta' && 'beta-product' || needs.prepare.outputs.channel }}
     permissions:
       # See build-macos — packaging jobs are read-only by design.
@@ -1621,7 +1621,7 @@ jobs:
       - name: Assert Linux terminal native package compatibility
         working-directory: packages/desktop
         env:
-          OK_LINUX_PACKAGE_DIR: dist-desktop/${{ matrix.unpacked_dir }}
+          PS_LINUX_PACKAGE_DIR: dist-desktop/${{ matrix.unpacked_dir }}
         run: pnpm exec vitest run tests/unit/linux-package-native-guards.test.ts tests/unit/linux-package-terminal-spawn.test.ts
 
       # Fail before staging an installer that cannot start (see the Windows
@@ -1687,7 +1687,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ok-per-test-results-desktop-release-linux-${{ matrix.arch }}-${{ matrix.variant }}-attempt${{ github.run_attempt }}
+          name: ps-per-test-results-desktop-release-linux-${{ matrix.arch }}-${{ matrix.variant }}-attempt${{ github.run_attempt }}
           path: packages/desktop/test-results/vitest-*.json
           retention-days: 14
           if-no-files-found: warn
@@ -1763,7 +1763,7 @@ jobs:
             local family
             local families=("${ARTIFACT_NAME}:${CHANNEL}")
             if [[ "$CHANNEL" == "beta" ]]; then
-              families=("OpenKnowledge:beta" "OpenKnowledge-Beta:beta-product")
+              families=("Palimpsest:beta" "Palimpsest-Beta:beta-product")
             fi
             for family in "${families[@]}"; do
               local artifact="${family%:*}"
@@ -1789,12 +1789,12 @@ jobs:
             done
           }
           {
-            echo "EXPECTED_ASSETS<<OK_INVENTORY_EOF"
+            echo "EXPECTED_ASSETS<<PS_INVENTORY_EOF"
             inventory "$REQUIRED"
-            echo "OK_INVENTORY_EOF"
-            echo "ALLOWED_ASSETS<<OK_ALLOWED_EOF"
+            echo "PS_INVENTORY_EOF"
+            echo "ALLOWED_ASSETS<<PS_ALLOWED_EOF"
             inventory "mac,windows,linux"
-            echo "OK_ALLOWED_EOF"
+            echo "PS_ALLOWED_EOF"
           } >> "$GITHUB_ENV"
 
       - name: Assert the complete cross-platform inventory
@@ -1898,7 +1898,7 @@ jobs:
   finalize:
     needs: [prepare, build-macos, publish-assets]
     concurrency:
-      group: ${{ needs.prepare.outputs.channel == 'latest' && 'ok-stable-publication' || format('desktop-finalize-{0}', github.run_id) }}
+      group: ${{ needs.prepare.outputs.channel == 'latest' && 'ps-stable-publication' || format('desktop-finalize-{0}', github.run_id) }}
       cancel-in-progress: false
     outputs:
       published: ${{ steps.publish.outputs.published }}
@@ -2038,13 +2038,13 @@ jobs:
         id: docs-bridge
         if: success() && needs.prepare.outputs.channel == 'latest'
         env:
-          OK_RELEASE_BRIDGE_APP_ID: ${{ secrets.OK_RELEASE_BRIDGE_APP_ID }}
+          PS_RELEASE_BRIDGE_APP_ID: ${{ secrets.PS_RELEASE_BRIDGE_APP_ID }}
         run: |
-          if [[ -n "${OK_RELEASE_BRIDGE_APP_ID:-}" ]]; then
+          if [[ -n "${PS_RELEASE_BRIDGE_APP_ID:-}" ]]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::OK_RELEASE_BRIDGE_APP_ID not set; skipping the docs changelog refresh for ${RELEASE_TAG}. The changelog picks it up on the next docs deploy."
+            echo "::notice::PS_RELEASE_BRIDGE_APP_ID not set; skipping the docs changelog refresh for ${RELEASE_TAG}. The changelog picks it up on the next docs deploy."
           fi
 
       - name: Mint docs refresh token (bridge App)
@@ -2054,7 +2054,7 @@ jobs:
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           client-id: Iv23lii4qS2FAc6tkzfI
-          private-key: ${{ secrets.OK_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
+          private-key: ${{ secrets.PS_RELEASE_BRIDGE_APP_PRIVATE_KEY }}
           owner: inkeep
           repositories: agents-private
 
@@ -2066,11 +2066,11 @@ jobs:
           set -uo pipefail
           SELF_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           payload=$(jq -nc --arg tag "$RELEASE_TAG" --arg by "$SELF_URL" \
-            '{event_type: "ok-stable-published", client_payload: {release_tag: $tag, dispatched_by: $by}}')
+            '{event_type: "ps-stable-published", client_payload: {release_tag: $tag, dispatched_by: $by}}')
           if gh api -X POST "repos/inkeep/agents-private/dispatches" --input - <<<"$payload" >/dev/null; then
-            echo "Dispatched ok-stable-published to agents-private for ${RELEASE_TAG}; the docs changelog rebuilds there."
+            echo "Dispatched ps-stable-published to agents-private for ${RELEASE_TAG}; the docs changelog rebuilds there."
           else
-            echo "::warning::Could not dispatch ok-stable-published for ${RELEASE_TAG}; the docs changelog refreshes on the next docs deploy, or run public-open-knowledge-docs-changelog-deploy.yml by hand."
+            echo "::warning::Could not dispatch ps-stable-published for ${RELEASE_TAG}; the docs changelog refreshes on the next docs deploy, or run public-open-knowledge-docs-changelog-deploy.yml by hand."
           fi
 
       # FR5b — the npm stable publish sits downstream of the DMG smoke gate
@@ -2178,10 +2178,10 @@ jobs:
               --arg version "$VERSION" \
               --arg release_url "$RELEASE_URL" \
               '{
-                text: ("OpenKnowledge \($version) released — " + $release_url),
+                text: ("Palimpsest \($version) released — " + $release_url),
                 blocks: [
                   { type: "header",
-                    text: { type: "plain_text", text: "🎉 OpenKnowledge \($version) released", emoji: true } },
+                    text: { type: "plain_text", text: "🎉 Palimpsest \($version) released", emoji: true } },
                   { type: "section",
                     text: { type: "mrkdwn",
                             text: ("*<\($release_url)|Release notes & downloads>*") } }
@@ -2214,7 +2214,7 @@ jobs:
           # Discord renders no markdown tables; strip the marker-delimited
           # Downloads block (the release page keeps it — the embed links
           # there).
-          NOTES="$(printf '%s' "$NOTES" | sed -e '/<!-- ok-downloads:start -->/,/<!-- ok-downloads:end -->/d' -e '/^<!-- ok-notes-source: .* -->$/d')"
+          NOTES="$(printf '%s' "$NOTES" | sed -e '/<!-- ps-downloads:start -->/,/<!-- ps-downloads:end -->/d' -e '/^<!-- ps-notes-source: .* -->$/d')"
           NOTES_LIMIT=3500
           if [[ "${#NOTES}" -gt "$NOTES_LIMIT" ]]; then
             NOTES="${NOTES:0:$NOTES_LIMIT}…"
@@ -2224,11 +2224,11 @@ jobs:
             --arg release_url "$RELEASE_URL" \
             --arg notes "$NOTES" \
             '{
-              username: "OpenKnowledge",
+              username: "Palimpsest",
               allowed_mentions: { parse: [] },
-              content: ("🎉 OpenKnowledge \($version) released — " + $release_url),
+              content: ("🎉 Palimpsest \($version) released — " + $release_url),
               embeds: [
-                { title: ("OpenKnowledge \($version) released"),
+                { title: ("Palimpsest \($version) released"),
                   url: $release_url,
                   color: 3638527,
                   description: (
@@ -2333,7 +2333,7 @@ jobs:
       # release. Without this a blocked release is silent: the Release simply
       # never appears and nobody learns why until someone goes looking. The
       # alert is deliberately loud and visually unlike the routine
-      # "🎉 OpenKnowledge X.Y.Z released" post that lands in the same channel.
+      # "🎉 Palimpsest X.Y.Z released" post that lands in the same channel.
       #
       # Stable only, matching the smoke gate's own scope. A failed beta cut
       # keeps the STUCK-DRAFT warning below; paging the release channel for

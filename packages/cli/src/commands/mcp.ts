@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
-import type { Config } from '@inkeep/open-knowledge-server';
+import type { Config } from '@palimpsest/server';
 import { Command } from 'commander';
 import {
   emitBundleProxyEvent,
@@ -21,7 +21,7 @@ export function mcpCommand(getConfig: () => Config): Command {
     )
     .option(
       '--no-bundle-proxy',
-      'Run the npm-fetched MCP server in-process instead of proxying to the Desktop app bundle (macOS-only proxy; no-op elsewhere; equivalent: OK_BUNDLE_PROXY=0)',
+      'Run the npm-fetched MCP server in-process instead of proxying to the Desktop app bundle (macOS-only proxy; no-op elsewhere; equivalent: PS_BUNDLE_PROXY=0)',
     )
     .action(async (opts: { port?: string; bundleProxy?: boolean }) => {
       try {
@@ -29,12 +29,12 @@ export function mcpCommand(getConfig: () => Config): Command {
         const startupCwd = process.cwd();
 
         if (opts.port !== undefined) {
-          const timeoutMs = parseSpawnTimeoutEnv(process.env.OK_MCP_SPAWN_TIMEOUT_MS);
+          const timeoutMs = parseSpawnTimeoutEnv(process.env.PS_MCP_SPAWN_TIMEOUT_MS);
           await startMcpShim({
             lockDir: '',
             contentDir: '',
             portOverride: opts.port,
-            envAutoStart: process.env.OK_MCP_AUTOSTART,
+            envAutoStart: process.env.PS_MCP_AUTOSTART,
             timeoutMs,
           });
           return;
@@ -60,7 +60,7 @@ export function mcpCommand(getConfig: () => Config): Command {
               stderr: process.stderr,
               mode: 'fallback-absent',
               bundlePath: null,
-              reason: 'no installed OpenKnowledge.app bundle found',
+              reason: 'no installed Palimpsest.app bundle found',
             });
           } else {
             try {

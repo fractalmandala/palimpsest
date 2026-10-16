@@ -2,11 +2,11 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import {
   isOkfRuleEnabled,
-  OKF_FRONTMATTER_REGISTRY,
-  OKF_SCHEMA_DIR,
+  PSF_FRONTMATTER_REGISTRY,
+  PSF_SCHEMA_DIR,
   type OkfRuleToggles,
   renderOkfSchemaFiles,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   tracedMkdirSync,
   tracedRmdirSync,
@@ -15,10 +15,10 @@ import {
 } from '../fs-traced.ts';
 import { getLogger } from '../logger.ts';
 
-const IGNORE_LINE = 'okf/';
+const IGNORE_LINE = 'psf/';
 
 const IGNORE_BLOCK = `
-# .ok/okf/ holds the OKF lint plugin's schemas, rendered from the plugin on
+# .ps/psf/ holds the OKF lint plugin's schemas, rendered from the plugin on
 # boot so agents can read the contract they are told governs a document. A
 # generated artifact — regenerated whenever the plugin's copy changes, and
 # never read back — so it is not committed.
@@ -26,15 +26,15 @@ ${IGNORE_LINE}
 `;
 
 function ensureGitignored(projectDir: string): void {
-  const ignorePath = join(projectDir, '.ok', '.gitignore');
+  const ignorePath = join(projectDir, '.ps', '.gitignore');
   let current: string;
   try {
     current = readFileSync(ignorePath, 'utf8');
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      getLogger('okf-schemas').warn(
+      getLogger('psf-schemas').warn(
         { err: error, projectDir },
-        '[okf] could not read .ok/.gitignore; generated schemas may show as untracked',
+        '[psf] could not read .ps/.gitignore; generated schemas may show as untracked',
       );
     }
     return;
@@ -42,9 +42,9 @@ function ensureGitignored(projectDir: string): void {
   const alreadyIgnored = current.split('\n').some((line) => line.trim() === IGNORE_LINE);
   if (alreadyIgnored) return;
   tracedWriteFileSync(ignorePath, `${current.replace(/\n*$/, '\n')}${IGNORE_BLOCK}`, 'utf8');
-  getLogger('okf-schemas').debug(
+  getLogger('psf-schemas').debug(
     { projectDir },
-    '[okf] added okf/ to .ok/.gitignore so generated schemas stay uncommitted',
+    '[psf] added psf/ to .ps/.gitignore so generated schemas stay uncommitted',
   );
 }
 
@@ -55,20 +55,20 @@ export interface OkfSchemaState {
 
 const appliedSignatures = new Map<string, string>();
 
-function schemaSignature(okf: OkfSchemaState | undefined): string {
-  if (okf?.enabled !== true) return 'off';
-  const disabled = OKF_FRONTMATTER_REGISTRY.filter(
-    (entry) => !isOkfRuleEnabled(okf.rules, entry.id),
+function schemaSignature(psf: OkfSchemaState | undefined): string {
+  if (psf?.enabled !== true) return 'off';
+  const disabled = PSF_FRONTMATTER_REGISTRY.filter(
+    (entry) => !isOkfRuleEnabled(psf.rules, entry.id),
   ).map((entry) => entry.id);
   return `on:${disabled.sort().join(',')}`;
 }
 
-export function ensureOkfSchemaFiles(projectDir: string, okf: OkfSchemaState | undefined): void {
-  const signature = schemaSignature(okf);
+export function ensureOkfSchemaFiles(projectDir: string, psf: OkfSchemaState | undefined): void {
+  const signature = schemaSignature(psf);
   if (appliedSignatures.get(projectDir) === signature) return;
   appliedSignatures.set(projectDir, signature);
-  if (okf?.enabled === true) {
-    writeOkfSchemaFiles(projectDir, okf.rules);
+  if (psf?.enabled === true) {
+    writeOkfSchemaFiles(projectDir, psf.rules);
   } else {
     removeOkfSchemaFiles(projectDir);
   }
@@ -82,7 +82,7 @@ export function writeOkfSchemaFiles(projectDir: string, rules?: OkfRuleToggles):
   const files = renderOkfSchemaFiles();
   const written: string[] = [];
   try {
-    tracedMkdirSync(join(projectDir, OKF_SCHEMA_DIR), { recursive: true });
+    tracedMkdirSync(join(projectDir, PSF_SCHEMA_DIR), { recursive: true });
     for (const file of files) {
       const abs = join(projectDir, file.path);
       if (!isOkfRuleEnabled(rules, file.ruleId)) {
@@ -103,9 +103,9 @@ export function writeOkfSchemaFiles(projectDir: string, rules?: OkfRuleToggles):
     }
     ensureGitignored(projectDir);
   } catch (error) {
-    getLogger('okf-schemas').warn(
+    getLogger('psf-schemas').warn(
       { err: error, projectDir },
-      '[okf] could not write schema files; the plugin still validates from its own copy',
+      '[psf] could not write schema files; the plugin still validates from its own copy',
     );
     return [];
   }
@@ -117,13 +117,13 @@ function removeOkfSchemaFiles(projectDir: string): void {
     for (const file of renderOkfSchemaFiles()) {
       tracedRmSync(join(projectDir, file.path), { force: true });
     }
-    tracedRmdirSync(join(projectDir, OKF_SCHEMA_DIR));
+    tracedRmdirSync(join(projectDir, PSF_SCHEMA_DIR));
   } catch (error) {
     const code = (error as NodeJS.ErrnoException).code;
     if (code !== 'ENOENT' && code !== 'ENOTEMPTY') {
-      getLogger('okf-schemas').warn(
+      getLogger('psf-schemas').warn(
         { err: error, projectDir },
-        '[okf] could not remove generated schema files',
+        '[psf] could not remove generated schema files',
       );
     }
   }

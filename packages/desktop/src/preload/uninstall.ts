@@ -1,11 +1,11 @@
 import type {
-  OkUninstallBridge,
+  PsUninstallBridge,
   UninstallDispatchResult,
   UninstallIntent,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import type { IpcInvoker } from '../shared/ipc-invoke.ts';
 
-export function createUninstallBridge(invoke: IpcInvoker): OkUninstallBridge {
+export function createUninstallBridge(invoke: IpcInvoker): PsUninstallBridge {
   return {
     ready: (): Promise<UninstallDispatchResult> =>
       invoke('ok:uninstall:dispatch', { kind: 'ready' }),

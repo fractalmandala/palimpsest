@@ -8,7 +8,7 @@ describe('normalizeCwd', () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(resolve(tmpdir(), 'ok-normalize-cwd-'));
+    tmpDir = mkdtempSync(resolve(tmpdir(), 'ps-normalize-cwd-'));
   });
 
   afterEach(() => {

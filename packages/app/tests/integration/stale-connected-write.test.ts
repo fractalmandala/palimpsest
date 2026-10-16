@@ -15,7 +15,7 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import {
   MetricsReconciliationSuccessSchema,
   PagesSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import * as fileWatcher from '../../../server/src/file-watcher.ts';
@@ -42,7 +42,7 @@ afterEach(async () => {
 
 test('an already-connected WebSocket edit acknowledged on disk survives a delayed native deletion', async () => {
   resetMetrics();
-  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-ws-delete-adoption-')));
+  const contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-ws-delete-adoption-')));
   const docName = `connected-${randomUUID()}`;
   const filePath = join(contentDir, `${docName}.md`);
   const entered = Promise.withResolvers<void>();
@@ -138,8 +138,8 @@ test('an already-connected WebSocket edit acknowledged on disk survives a delaye
   });
 
   writeFileSync(filePath, ORIGINAL, { flag: 'wx' });
-  mkdirSync(join(contentDir, '.ok', 'templates'), { recursive: true });
-  writeFileSync(join(contentDir, '.ok', 'templates', 'same-original.md'), ORIGINAL, { flag: 'wx' });
+  mkdirSync(join(contentDir, '.ps', 'templates'), { recursive: true });
+  writeFileSync(join(contentDir, '.ps', 'templates', 'same-original.md'), ORIGINAL, { flag: 'wx' });
   server = await createTestServer({ contentDir });
   const running = server;
   originalClient = await createTestClient(running.port, docName, { resetOnCleanup: false });

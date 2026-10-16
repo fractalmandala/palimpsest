@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { prependFrontmatter, stripFrontmatter } from '@inkeep/open-knowledge-core';
+import { prependFrontmatter, stripFrontmatter } from '@palimpsest/core';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -30,7 +30,7 @@ interface Fixture {
 }
 
 async function setupFixture(): Promise<Fixture> {
-  const tmpDir = mkdtempSync(join(tmpdir(), 'ok-a3-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'ps-a3-'));
   const contentDir = tmpDir;
   const git = simpleGit({ baseDir: tmpDir });
   await git.init();

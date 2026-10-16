@@ -7,12 +7,12 @@ import {
   type EditorId,
   SKILL_NAME_REGEX,
   skillRootActivationPath,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import {
   parseSkillDir,
   SKILL_CANONICAL_PRECEDENCE,
   type SkillHostId,
-} from '@inkeep/open-knowledge-core/skills-catalog';
+} from '@palimpsest/core/skills-catalog';
 import { tracedCpSync, tracedMkdirSync, tracedRenameSync, tracedRmSync } from './fs-traced.ts';
 import { removeSkillInstall } from './installed-skills-marker.ts';
 import { getLogger } from './logger.ts';
@@ -99,9 +99,9 @@ export function genuineInPlaceNames(
 ): Set<string> {
   let storeReal: string;
   try {
-    storeReal = realpathSync(resolve(base, '.ok', 'skills'));
+    storeReal = realpathSync(resolve(base, '.ps', 'skills'));
   } catch {
-    storeReal = resolve(base, '.ok', 'skills');
+    storeReal = resolve(base, '.ps', 'skills');
   }
   return new Set(
     entries

@@ -1,16 +1,16 @@
 import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 import type { ShareReceiveCloneController } from '@/components/ShareReceiveDialog';
-import type { OkDesktopBridge, OkLocalOpAuthStatusResponse } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsLocalOpAuthStatusResponse } from '@/lib/desktop-bridge-types';
 import { formatReceiveLog } from '@/lib/share/receive-flow';
 import type { AuthQueryTransport } from '@/lib/transports/auth-query-transport';
 import type { CloneTransport } from '@/lib/transports/clone-transport';
 
 export interface CloneControllerDeps {
-  bridge: OkDesktopBridge;
+  bridge: PsDesktopBridge;
   authQueryTransport: AuthQueryTransport;
   cloneTransport: CloneTransport;
-  openSignIn(): Promise<OkLocalOpAuthStatusResponse | null>;
+  openSignIn(): Promise<PsLocalOpAuthStatusResponse | null>;
 }
 
 function repoNameFromCloneUrl(url: string): string {

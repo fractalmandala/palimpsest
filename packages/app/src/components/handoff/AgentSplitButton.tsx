@@ -1,4 +1,4 @@
-import type { HandoffTarget, TargetData, TerminalCli } from '@inkeep/open-knowledge-core/handoff';
+import type { HandoffTarget, TargetData, TerminalCli } from '@palimpsest/core/handoff';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, Check, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import type { ReactNode } from 'react';

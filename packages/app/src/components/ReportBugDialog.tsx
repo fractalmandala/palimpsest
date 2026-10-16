@@ -1,4 +1,4 @@
-import type { OkBugReportScreenshot } from '@inkeep/open-knowledge-core/logger-types';
+import type { PsBugReportScreenshot } from '@palimpsest/core/logger-types';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { getLastPointerPosition } from '@/lib/pointer-position';
 import type { ReportBugDialogProps } from './ReportBugDialogBody';
@@ -15,7 +15,7 @@ function markPointerPosition(): (() => void) | null {
   const position = getLastPointerPosition();
   if (position === null) return null;
   const marker = document.createElement('div');
-  marker.className = 'ok-pointer-marker';
+  marker.className = 'ps-pointer-marker';
   marker.setAttribute('aria-hidden', 'true');
   marker.style.left = `${position.x}px`;
   marker.style.top = `${position.y}px`;
@@ -30,7 +30,7 @@ interface ReportBugDialogGateProps extends ReportBugDialogProps {
 export function ReportBugDialog({ launcherBorne = false, ...props }: ReportBugDialogGateProps) {
   const [everOpened, setEverOpened] = useState(props.open);
   const [ready, setReady] = useState(false);
-  const [screenshot, setScreenshot] = useState<OkBugReportScreenshot | null>(null);
+  const [screenshot, setScreenshot] = useState<PsBugReportScreenshot | null>(null);
   const [pointerMarked, setPointerMarked] = useState(false);
   const [crashDumpAvailable, setCrashDumpAvailable] = useState(false);
   const openCycleRef = useRef(0);
@@ -46,7 +46,7 @@ export function ReportBugDialog({ launcherBorne = false, ...props }: ReportBugDi
     }
     const cycle = ++openCycleRef.current;
     setCrashDumpAvailable(false);
-    const availability = window.okDesktop?.bugReport?.crashDumpAvailability;
+    const availability = window.psDesktop?.bugReport?.crashDumpAvailability;
     if (props.crashInvite === undefined && typeof availability === 'function') {
       availability()
         .then((result) => {
@@ -57,7 +57,7 @@ export function ReportBugDialog({ launcherBorne = false, ...props }: ReportBugDi
           console.warn('[bug-report] crash-dump availability probe failed:', err);
         });
     }
-    const capture = window.okDesktop?.bugReport?.captureScreenshot;
+    const capture = window.psDesktop?.bugReport?.captureScreenshot;
     if (typeof capture !== 'function' || props.crashInvite !== undefined) {
       setScreenshot(null);
       setReady(true);
@@ -67,7 +67,7 @@ export function ReportBugDialog({ launcherBorne = false, ...props }: ReportBugDi
     let settled = false;
     let removePointerMarker = () => {};
     let marked = false;
-    const settle = (shot: OkBugReportScreenshot | null) => {
+    const settle = (shot: PsBugReportScreenshot | null) => {
       if (settled || openCycleRef.current !== cycle) return;
       settled = true;
       removePointerMarker();

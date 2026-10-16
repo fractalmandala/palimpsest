@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { Hocuspocus } from '@hocuspocus/server';
-import { normalizeBridge } from '@inkeep/open-knowledge-core';
+import { normalizeBridge } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
 import { RECONCILE_TEST_CONFLICTS } from './conflict-authority.test-helper.ts';
@@ -141,7 +141,7 @@ describe('reconcileDiskBeforeAgentWrite — own persistence flush is not foreign
   let durabilityState: DocumentDurabilityState;
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-own-flush-window-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-own-flush-window-')));
     mkdirSync(tmpDir, { recursive: true });
     durabilityState = new DocumentDurabilityState();
     document = new Y.Doc();
@@ -208,17 +208,17 @@ describe('reconcileDiskBeforeAgentWrite — own persistence flush is not foreign
     await loadDocument(persistence, document, docName);
     document.transact(() => replaceDocParagraphs(document, FLUSHED_PARAGRAPHS), BROWSER_ORIGIN);
 
-    const prevFault = process.env.OK_TEST_STORE_FAULT;
-    process.env.OK_TEST_STORE_FAULT = docName;
+    const prevFault = process.env.PS_TEST_STORE_FAULT;
+    process.env.PS_TEST_STORE_FAULT = docName;
     try {
       await expect(storeDocument(persistence, document, docName)).rejects.toThrow(
-        'OK_TEST_STORE_FAULT',
+        'PS_TEST_STORE_FAULT',
       );
     } finally {
       if (prevFault === undefined) {
-        delete process.env.OK_TEST_STORE_FAULT;
+        delete process.env.PS_TEST_STORE_FAULT;
       } else {
-        process.env.OK_TEST_STORE_FAULT = prevFault;
+        process.env.PS_TEST_STORE_FAULT = prevFault;
       }
     }
 
@@ -270,7 +270,7 @@ describe('reconcileDiskBeforeAgentWrite — overlapping own flushes are not fore
   let durabilityState: DocumentDurabilityState;
 
   beforeEach(() => {
-    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-own-flush-overlap-')));
+    tmpDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-own-flush-overlap-')));
     mkdirSync(tmpDir, { recursive: true });
     durabilityState = new DocumentDurabilityState();
     document = new Y.Doc();

@@ -18,23 +18,23 @@ import { readJsoncOrError } from './read-jsonc.mjs';
 
 const makeTempDir = createTempDirFactory(afterAll);
 
-const OK_ROOT = fileURLToPath(new URL('..', import.meta.url));
-const TASK = '@inkeep/open-knowledge-server#test';
+const PS_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const TASK = '@palimpsest/server#test';
 
 function fixtureRootWithout(glob) {
-  const turbo = JSON.parse(readFileSync(join(OK_ROOT, 'turbo.json'), 'utf-8'));
+  const turbo = JSON.parse(readFileSync(join(PS_ROOT, 'turbo.json'), 'utf-8'));
   const inputs = turbo.tasks[TASK].inputs;
   expect(inputs, `fixture precondition: ${glob} must be declared`).toContain(glob);
   turbo.tasks[TASK].inputs = inputs.filter((entry) => entry !== glob);
 
-  const root = makeTempDir('ok-server-inputs-');
+  const root = makeTempDir('ps-server-inputs-');
   writeFileSync(join(root, 'turbo.json'), JSON.stringify(turbo, null, 2));
 
-  for (const [target, readers] of escapingReads(OK_ROOT)) {
+  for (const [target, readers] of escapingReads(PS_ROOT)) {
     for (const reader of readers) {
       const dest = join(root, 'packages/server', reader);
       mkdirSync(dirname(dest), { recursive: true });
-      writeFileSync(dest, readFileSync(join(OK_ROOT, 'packages/server', reader), 'utf-8'));
+      writeFileSync(dest, readFileSync(join(PS_ROOT, 'packages/server', reader), 'utf-8'));
     }
     const targetPath = join(root, target);
     mkdirSync(dirname(targetPath), { recursive: true });
@@ -62,7 +62,7 @@ describe('check-server-test-inputs', () => {
   );
 
   function fixtureRootReading(testFile) {
-    const root = makeTempDir('ok-server-inputs-');
+    const root = makeTempDir('ps-server-inputs-');
     mkdirSync(join(root, 'packages/server/src'), { recursive: true });
     mkdirSync(join(root, 'docs'), { recursive: true });
     writeFileSync(join(root, 'docs/guide.md'), '');
@@ -167,11 +167,11 @@ describe('check-server-test-inputs', () => {
 
 describe('the uncached tier is a root task of its own', () => {
   test('the tier is never cached, and no finite task carries a with sibling', () => {
-    const turbo = JSON.parse(readFileSync(join(OK_ROOT, 'turbo.json'), 'utf-8'));
+    const turbo = JSON.parse(readFileSync(join(PS_ROOT, 'turbo.json'), 'utf-8'));
     const refused = [];
     const members = memberDirs(
-      OK_ROOT,
-      readFileSync(join(OK_ROOT, 'pnpm-workspace.yaml'), 'utf-8'),
+      PS_ROOT,
+      readFileSync(join(PS_ROOT, 'pnpm-workspace.yaml'), 'utf-8'),
       (entry) => refused.push(`unreadable: ${entry}`),
       (pattern) => refused.push(`no member: ${pattern}`),
     );
@@ -179,7 +179,7 @@ describe('the uncached tier is a root task of its own', () => {
       refused,
       'pnpm-workspace.yaml has entries this derivation cannot read or that name no member, so their turbo configs would leave the scan',
     ).toEqual([]);
-    expect(members.map((dir) => relative(OK_ROOT, dir))).toEqual(
+    expect(members.map((dir) => relative(PS_ROOT, dir))).toEqual(
       expect.arrayContaining(['packages/server', 'docs']),
     );
     const configs = [['turbo.json', turbo]];
@@ -188,7 +188,7 @@ describe('the uncached tier is a root task of its own', () => {
         const read = readJsoncOrError(join(dir, name));
         if (read.code === 'ENOENT') continue;
         expect(read.ok, read.reason).toBe(true);
-        configs.push([relative(OK_ROOT, join(dir, name)), read.value]);
+        configs.push([relative(PS_ROOT, join(dir, name)), read.value]);
       }
     }
     const finiteWith = configs.flatMap(([path, config]) =>
@@ -204,7 +204,7 @@ describe('the uncached tier is a root task of its own', () => {
       'turbo 2.11.3 and later stop a `with` task once its parent exits, so a finite parent cuts its sibling short and the run still passes; name the sibling in the turbo run instead, as every whole-suite run names test:uncached',
     ).toEqual([]);
     expect(turbo.tasks['//#test:uncached']).toMatchObject({ cache: false });
-    const pkg = JSON.parse(readFileSync(join(OK_ROOT, 'package.json'), 'utf-8'));
+    const pkg = JSON.parse(readFileSync(join(PS_ROOT, 'package.json'), 'utf-8'));
     expect(pkg.scripts['test:uncached']).toBe('vitest run --config vitest.uncached.config.ts');
   });
 });

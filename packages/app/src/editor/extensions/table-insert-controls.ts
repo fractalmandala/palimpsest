@@ -11,7 +11,7 @@ const PLUS_ICON = `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" wi
 function createBar(orientation: 'column' | 'row', label: string): HTMLButtonElement {
   const bar = document.createElement('button');
   bar.type = 'button';
-  bar.className = `ok-table-insert-bar ok-table-insert-${orientation}`;
+  bar.className = `ps-table-insert-bar ps-table-insert-${orientation}`;
   bar.setAttribute('aria-label', label);
   bar.tabIndex = -1;
   bar.setAttribute(OPT_OUT_ATTR, 'true');
@@ -115,7 +115,7 @@ class TableInsertControlsView {
 
   private addOverlay(wrapper: HTMLElement): void {
     const container = document.createElement('div');
-    container.className = 'ok-table-insert-controls';
+    container.className = 'ps-table-insert-controls';
     container.setAttribute(OPT_OUT_ATTR, 'true');
 
     const colBar = createBar('column', 'Add column');

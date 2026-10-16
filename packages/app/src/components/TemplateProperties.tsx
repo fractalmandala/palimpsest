@@ -3,7 +3,7 @@ import {
   canonicalTemplateName,
   TEMPLATE_NAME_REGEX,
   templateRenameTarget,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FolderGit2, Type } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';

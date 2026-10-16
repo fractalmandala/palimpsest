@@ -147,9 +147,9 @@ describe('M1 smoke', () => {
         ],
       },
       {
-        typeName: 'OkFolderState',
+        typeName: 'PsFolderState',
         canonicalPath: folderStateConstantPath,
-        canonicalRe: /type\s+OkFolderState\s*=([^;]+);/,
+        canonicalRe: /type\s+PsFolderState\s*=([^;]+);/,
         expectedLiteralCount: 3,
         inlineRe: /'free'\s*\|\s*'exists-empty'\s*\|\s*'exists-nonempty'/,
         mirrors: [
@@ -200,7 +200,7 @@ describe('M1 smoke', () => {
           /from\s+['"]\.\/constants\/[\w-]+\.ts['"]/.test(src);
         if (!importsFromCore) {
           offenders.push(
-            `  [${pin.typeName}] ${label} does not import from @inkeep/open-knowledge-core`,
+            `  [${pin.typeName}] ${label} does not import from @palimpsest/core`,
           );
         }
         const typeRe = new RegExp(`\\b${pin.typeName}\\b`);
@@ -218,7 +218,7 @@ describe('M1 smoke', () => {
           'Literal-union consolidation regression:',
           ...offenders,
           '',
-          'Fix: import or re-export the canonical type from @inkeep/open-knowledge-core.',
+          'Fix: import or re-export the canonical type from @palimpsest/core.',
           'See packages/core/src/constants/{editors,folder-state,create-new-banner}.ts for the',
           'canonical declarations.',
         ].join('\n'),
@@ -226,7 +226,7 @@ describe('M1 smoke', () => {
     }
   });
 
-  test('M1 invariant: OkThemeSource literal-union drift catcher', async () => {
+  test('M1 invariant: PsThemeSource literal-union drift catcher', async () => {
     const corePath = join(__dirname, '..', '..', '..', 'core', 'src', 'desktop-bridge.ts');
     const { readFileSync } = await import('node:fs');
 
@@ -240,13 +240,13 @@ describe('M1 smoke', () => {
       return new Set(literals.map((l) => l.slice(1, -1)));
     };
 
-    const coreMembers = extractLiteralUnion(readFileSync(corePath, 'utf-8'), 'OkThemeSource');
+    const coreMembers = extractLiteralUnion(readFileSync(corePath, 'utf-8'), 'PsThemeSource');
     expect(coreMembers.size).toBeGreaterThan(0);
 
     expect(coreMembers.size).toBe(3);
   });
 
-  test('M1 invariant: OkMenuAction literal-union drift catcher', async () => {
+  test('M1 invariant: PsMenuAction literal-union drift catcher', async () => {
     const corePath = join(__dirname, '..', '..', '..', 'core', 'src', 'desktop-bridge.ts');
     const { readFileSync } = await import('node:fs');
 
@@ -260,12 +260,12 @@ describe('M1 smoke', () => {
       return new Set(literals.map((l) => l.slice(1, -1)));
     };
 
-    const coreMembers = extractLiteralUnion(readFileSync(corePath, 'utf-8'), 'OkMenuAction');
+    const coreMembers = extractLiteralUnion(readFileSync(corePath, 'utf-8'), 'PsMenuAction');
     expect(coreMembers.size).toBeGreaterThan(0);
     expect(coreMembers.size).toBe(38);
     expect(coreMembers.has('toggle-editor')).toBe(true);
     expect(coreMembers.has('toggle-show-hidden-files')).toBe(true);
-    expect(coreMembers.has('toggle-show-ok-folders')).toBe(true);
+    expect(coreMembers.has('toggle-show-ps-folders')).toBe(true);
     expect(coreMembers.has('toggle-show-only-markdown-files')).toBe(true);
     expect(coreMembers.has('toggle-show-skills-section')).toBe(true);
     expect(coreMembers.has('new-worktree')).toBe(true);
@@ -277,7 +277,7 @@ describe('M1 smoke', () => {
     expect(coreMembers.has('move-terminal')).toBe(true);
   });
 
-  test('M1 invariant: EntryPoint / OkProjectEntryPoint literal-union drift catcher', async () => {
+  test('M1 invariant: EntryPoint / PsProjectEntryPoint literal-union drift catcher', async () => {
     const desktopPath = join(__dirname, '..', '..', 'src', 'shared', 'entry-point.ts');
     const corePath = join(__dirname, '..', '..', '..', 'core', 'src', 'desktop-bridge.ts');
     const { readFileSync } = await import('node:fs');
@@ -292,7 +292,7 @@ describe('M1 smoke', () => {
     };
 
     const desktopMembers = extractLiteralUnion(readFileSync(desktopPath, 'utf-8'), 'EntryPoint');
-    const coreMembers = extractLiteralUnion(readFileSync(corePath, 'utf-8'), 'OkProjectEntryPoint');
+    const coreMembers = extractLiteralUnion(readFileSync(corePath, 'utf-8'), 'PsProjectEntryPoint');
     expect(desktopMembers.size).toBeGreaterThan(0);
     expect(coreMembers.size).toBeGreaterThan(0);
 
@@ -339,7 +339,7 @@ describe('M1 smoke', () => {
     );
     const coreFields = extractInterfaceFields(
       readFileSync(corePath, 'utf-8'),
-      'OkKeyringSmokeResult',
+      'PsKeyringSmokeResult',
     );
     expect(desktopFields.size).toBeGreaterThan(0);
     expect(coreFields.size).toBeGreaterThan(0);
@@ -351,7 +351,7 @@ describe('M1 smoke', () => {
     if (desktopMinusCore.length + coreMinusDesktop.length > 0) {
       throw new Error(
         [
-          'KeyringSmokeResult / OkKeyringSmokeResult shape drift across the desktop utility and core bridge:',
+          'KeyringSmokeResult / PsKeyringSmokeResult shape drift across the desktop utility and core bridge:',
           `  desktop has but core missing:  [${desktopMinusCore.join(', ')}]`,
           `  core has but desktop missing:  [${coreMinusDesktop.join(', ')}]`,
           '',

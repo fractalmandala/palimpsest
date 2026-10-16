@@ -30,7 +30,7 @@ let gitDir: string;
 
 beforeEach(() => {
   forgetNativeSubscriptions();
-  projectRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ok-parcel-head-release-')));
+  projectRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-parcel-head-release-')));
   gitDir = join(projectRoot, '.git');
   mkdirSync(gitDir);
   writeFileSync(join(gitDir, 'HEAD'), 'ref: refs/heads/main\n', 'utf-8');

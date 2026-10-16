@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, isAbsolute, join } from 'node:path';
-import { OkCliCommand } from '@inkeep/open-knowledge-core';
+import { PsCliCommand } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   __resetResolveOnPathCacheForTests,
@@ -14,10 +14,10 @@ import {
 } from '../git-unusable-setup.test-helper.ts';
 import { type RawCloneEvent, runCloneSubprocess } from './clone-flow.ts';
 
-const okCli = (
+const psCli = (
   cliArgs: readonly string[],
   cliEnv?: Readonly<Record<string, string | undefined>>,
-): OkCliCommand => OkCliCommand.resolve({ host: { cliArgs, cliEnv }, env: {} });
+): PsCliCommand => PsCliCommand.resolve({ host: { cliArgs, cliEnv }, env: {} });
 
 const fixtureCli = (script: string): readonly string[] => [process.execPath, '-e', script];
 const RAW_GIT_FAILURE_CLI = fixtureCli(
@@ -57,7 +57,7 @@ describe('runCloneSubprocess — git-preflight at the clone-setup boundary (#356
         let controller: ReturnType<typeof runCloneSubprocess> | undefined;
         try {
           controller = runCloneSubprocess({
-            cli: okCli(RAW_GIT_FAILURE_CLI),
+            cli: psCli(RAW_GIT_FAILURE_CLI),
             url: 'https://github.com/octocat/hello.git',
             dir,
             timeoutMs: 30_000,
@@ -97,7 +97,7 @@ describe('runCloneSubprocess — clone-child PATH binding (#356)', () => {
     try {
       await withBrokenBareGitOnly(async () => {
         const controller = runCloneSubprocess({
-          cli: okCli(pathCapturingCli(pathFile, dir)),
+          cli: psCli(pathCapturingCli(pathFile, dir)),
           url: 'https://github.com/octocat/hello.git',
           dir,
           timeoutMs: 30_000,
@@ -122,7 +122,7 @@ describe('runCloneSubprocess — clone-child PATH binding (#356)', () => {
     __seedResolveOnPathCacheForTests('git', 'git');
     try {
       const controller = runCloneSubprocess({
-        cli: okCli(pathCapturingCli(pathFile, dir)),
+        cli: psCli(pathCapturingCli(pathFile, dir)),
         url: 'https://github.com/octocat/hello.git',
         dir,
         timeoutMs: 30_000,

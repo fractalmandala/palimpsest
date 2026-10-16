@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { Hocuspocus } from '@hocuspocus/server';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { describe, expect, test } from 'vitest';
 import * as Y from 'yjs';
@@ -69,7 +69,7 @@ async function callAgentPatch(
 }
 
 function setup() {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-prd-6654-e2e-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-prd-6654-e2e-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   const hocuspocus = new Hocuspocus({

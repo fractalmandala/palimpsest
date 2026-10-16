@@ -10,7 +10,7 @@
 # the app already runs without them — but node-liblzma's binding.gyp forces
 # `-Werror`, and Electron's bundled v8 headers trip `-Wcomment` under GCC, so
 # the pass hard-fails. Every native module that actually ships on Linux
-# (@napi-rs/keyring, @inkeep/open-knowledge-native-config, @parcel/watcher) is
+# (@napi-rs/keyring, @palimpsest/native-config, @parcel/watcher) is
 # N-API and loads straight from its prebuilt `.node`.
 #
 # The obvious way to express that — a `beforeBuild` hook returning `false` —

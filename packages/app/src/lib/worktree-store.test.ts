@@ -1,4 +1,4 @@
-import type { WorktreeSelectorModel } from '@inkeep/open-knowledge-core';
+import type { WorktreeSelectorModel } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { createWorktreeStore } from './worktree-store.ts';
 

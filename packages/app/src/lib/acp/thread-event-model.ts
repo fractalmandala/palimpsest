@@ -1,7 +1,7 @@
 import {
   type CodexLegacyAgentIdentity,
   isCodexLegacyWarningUpdate,
-} from '@inkeep/open-knowledge-core/acp/codex-legacy-notice';
+} from '@palimpsest/core/acp/codex-legacy-notice';
 import type {
   BrowserUnavailableReason,
   PermissionOption,
@@ -9,8 +9,8 @@ import type {
   SessionUpdate,
   ThreadEvent,
   ThreadFailureDetail,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { shellCommandFromRawInput } from '@inkeep/open-knowledge-core/acp/tool-call-input';
+} from '@palimpsest/core/acp/thread-protocol';
+import { shellCommandFromRawInput } from '@palimpsest/core/acp/tool-call-input';
 import { t } from '@lingui/core/macro';
 
 type RenderedMessage =
@@ -19,7 +19,7 @@ type RenderedMessage =
       role: 'user';
       text: string;
       messageId: string;
-      attachments?: readonly import('@inkeep/open-knowledge-core/acp/thread-protocol').AttachmentPart[];
+      attachments?: readonly import('@palimpsest/core/acp/thread-protocol').AttachmentPart[];
       sentAt?: number;
     }
   | {

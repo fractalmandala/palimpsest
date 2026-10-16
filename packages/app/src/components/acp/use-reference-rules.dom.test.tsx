@@ -1,4 +1,4 @@
-import { ConfigSchema } from '@inkeep/open-knowledge-core';
+import { ConfigSchema } from '@palimpsest/core';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';

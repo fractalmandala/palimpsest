@@ -3,17 +3,17 @@ import { constants } from 'node:fs';
 import { type FileHandle, lstat, open, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import type { BundleExtraFile } from '@inkeep/open-knowledge';
-import { BUG_REPORT_AGENT_CHAT_ZIP_DIR, redactSecrets } from '@inkeep/open-knowledge-core';
-import type { CodexLegacyAgentIdentity } from '@inkeep/open-knowledge-core/acp/codex-legacy-notice';
-import { okUserHomeDir } from '@inkeep/open-knowledge-core/server';
+import type { BundleExtraFile } from '@palimpsest/cli';
+import { BUG_REPORT_AGENT_CHAT_ZIP_DIR, redactSecrets } from '@palimpsest/core';
+import type { CodexLegacyAgentIdentity } from '@palimpsest/core/acp/codex-legacy-notice';
+import { psUserHomeDir } from '@palimpsest/core/server';
 import {
   acpThreadStoreRoots,
   acpThreadsDir,
   getLocalDir,
   isMintedThreadId,
   streamedChunkOf,
-} from '@inkeep/open-knowledge-server';
+} from '@palimpsest/server';
 
 const AGENT_CHAT_TRANSCRIPT_MAX_BYTES = 4 * 1024 * 1024;
 
@@ -64,7 +64,7 @@ export function defaultAgentChatThreadDirs(
   home: string = homedir(),
 ): string[] {
   return acpThreadStoreRoots(
-    okUserHomeDir(home),
+    psUserHomeDir(home),
     projectDir === null ? null : getLocalDir(projectDir),
   ).map((root) => acpThreadsDir(root));
 }
@@ -520,7 +520,7 @@ export async function stageAgentChatTranscript(opts: {
     text: string,
     scrubbed: BundleExtraFile['scrubbed'],
   ): Promise<void> => {
-    const sourcePath = join(opts.tmpDir, `ok-bugreport-agent-chat-${randomUUID()}-${name}`);
+    const sourcePath = join(opts.tmpDir, `ps-bugreport-agent-chat-${randomUUID()}-${name}`);
     opts.tmpPaths.push(sourcePath);
     await writeFile(sourcePath, text, { mode: 0o600 });
     files.push({ sourcePath, zipName: `${BUG_REPORT_AGENT_CHAT_ZIP_DIR}/${name}`, scrubbed });

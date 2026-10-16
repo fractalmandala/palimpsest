@@ -29,7 +29,7 @@ async function commitAs(name: string, email: string, file: string, body: string)
 
 beforeEach(async () => {
   resetContributorsForTest();
-  dir = mkdtempSync(resolve(tmpdir(), 'ok-upstream-attr-int-'));
+  dir = mkdtempSync(resolve(tmpdir(), 'ps-upstream-attr-int-'));
   git = simpleGit(dir);
   await git.init(['-b', 'main']);
   configureTestGitRepository(dir);

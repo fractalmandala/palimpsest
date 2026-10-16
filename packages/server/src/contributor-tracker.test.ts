@@ -1,4 +1,4 @@
-import { parseContributors } from '@inkeep/open-knowledge-core/shadow-repo-layout';
+import { parseContributors } from '@palimpsest/core/shadow-repo-layout';
 import { beforeEach, describe, expect, test } from 'vitest';
 import {
   contributorCount,
@@ -64,7 +64,7 @@ describe('formatContributorsFrom', () => {
     recordContributor('doc.md', 'agent-claude-1', 'Claude');
     const output = formatContributorsForTest();
     expect(output.startsWith('\n')).toBe(true);
-    expect(output).toContain('ok-contributors:');
+    expect(output).toContain('ps-contributors:');
   });
 
   test('includes v:1 version field', () => {
@@ -240,7 +240,7 @@ describe('recordContributor (summary) — D23 flat array', () => {
     );
     recordContributor('b.md', 'agent-bob', 'Bob');
     const output = formatContributorsForTest();
-    const lines = output.split('\n').filter((l) => l.startsWith('ok-contributors:'));
+    const lines = output.split('\n').filter((l) => l.startsWith('ps-contributors:'));
     expect(lines).toHaveLength(2);
     const aliceLine = lines.find((l) => l.includes('agent-alice'));
     const bobLine = lines.find((l) => l.includes('agent-bob'));

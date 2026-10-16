@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, test } from 'vitest';
 import { reconcileUserGlobalSkillBundles } from './skill-reclaim.ts';
 
-const EXE = '/Applications/OpenKnowledge.app/Contents/MacOS/OpenKnowledge';
+const EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
 
 const cleanupPaths: string[] = [];
 
@@ -28,15 +28,15 @@ afterEach(() => {
 });
 
 function setupBundle(): string {
-  const bundle = mkdtempSync(join(tmpdir(), 'ok-skill-bundle-'));
+  const bundle = mkdtempSync(join(tmpdir(), 'ps-skill-bundle-'));
   cleanupPaths.push(bundle);
-  writeFileSync(join(bundle, 'SKILL.md'), '---\nname: open-knowledge\n---\n# v-new\n');
+  writeFileSync(join(bundle, 'SKILL.md'), '---\nname: palimpsest\n---\n# v-new\n');
   writeFileSync(join(bundle, 'extra.md'), 'extra-new');
   return bundle;
 }
 
 function makeHome(): string {
-  const home = mkdtempSync(join(tmpdir(), 'ok-skill-home-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-skill-home-'));
   cleanupPaths.push(home);
   return home;
 }
@@ -147,7 +147,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       home,
       isPackaged: true,
       platform: 'linux',
-      executablePath: '/tmp/.mount_okXYZ/openknowledge',
+      executablePath: '/tmp/.mount_okXYZ/palimpsest',
       env: { APPIMAGE: '/home/u/OK.AppImage' },
       deps,
     });
@@ -164,7 +164,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       home,
       isPackaged: true,
       platform: 'linux',
-      executablePath: '/opt/OpenKnowledge/openknowledge',
+      executablePath: '/opt/Palimpsest/palimpsest',
       deps,
     });
     expect(r.status).toBe('done');
@@ -263,7 +263,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     const bundle = setupBundle();
     const central = join(home, '.agents', 'skills', 'open-knowledge-discovery');
     mkdirSync(central, { recursive: true });
-    writeFileSync(join(central, 'SKILL.md'), '---\nname: open-knowledge\n---\n# v-old\n');
+    writeFileSync(join(central, 'SKILL.md'), '---\nname: palimpsest\n---\n# v-old\n');
     writeFileSync(join(central, 'orphan.md'), 'stale');
     const deps = makeDeps({ bundle, version: '0.5.0-beta.41' });
     const r = await reconcileUserGlobalSkillBundles({
@@ -345,7 +345,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     const home = makeHome();
     const dest = join(home, '.claude', 'skills', 'open-knowledge-discovery');
     mkdirSync(dest, { recursive: true });
-    writeFileSync(join(dest, 'SKILL.md'), '---\nname: open-knowledge\n---\n# v-old\n');
+    writeFileSync(join(dest, 'SKILL.md'), '---\nname: palimpsest\n---\n# v-old\n');
     const bundle = setupBundle();
     const deps = makeDeps({ bundle, version: '1.2.3' });
     const r = await reconcileUserGlobalSkillBundles({
@@ -363,13 +363,13 @@ describe('reconcileUserGlobalSkillBundles', () => {
     expect(readFileSync(join(dest, 'SKILL.md'), 'utf8')).toContain('v-old');
   });
 
-  test('pre-split open-knowledge dirs are removed at every host before the discovery bundle lands', async () => {
+  test('pre-split palimpsest dirs are removed at every host before the discovery bundle lands', async () => {
     const home = makeHome();
     const legacyHosts = ['.claude', '.cursor', '.agents'] as const;
     for (const hostDir of legacyHosts) {
-      const legacy = join(home, hostDir, 'skills', 'open-knowledge');
+      const legacy = join(home, hostDir, 'skills', 'palimpsest');
       mkdirSync(legacy, { recursive: true });
-      writeFileSync(join(legacy, 'SKILL.md'), '---\nname: open-knowledge\n---\n# legacy\n');
+      writeFileSync(join(legacy, 'SKILL.md'), '---\nname: palimpsest\n---\n# legacy\n');
     }
     const bundle = setupBundle();
     const deps = makeDeps({ bundle, version: '1.2.3' });
@@ -382,7 +382,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     });
     expect(r.status).toBe('done');
     for (const hostDir of legacyHosts) {
-      expect(existsSync(join(home, hostDir, 'skills', 'open-knowledge'))).toBe(false);
+      expect(existsSync(join(home, hostDir, 'skills', 'palimpsest'))).toBe(false);
       expect(
         existsSync(join(home, hostDir, 'skills', 'open-knowledge-discovery', 'SKILL.md')),
       ).toBe(true);
@@ -665,7 +665,7 @@ describe('seed: false', () => {
       home,
       isPackaged: true,
       platform: 'linux',
-      executablePath: '/opt/OpenKnowledge/openknowledge',
+      executablePath: '/opt/Palimpsest/palimpsest',
       deps,
       seed: false,
     });
@@ -675,9 +675,9 @@ describe('seed: false', () => {
     expect(deps.stateWrites).toEqual([]);
   });
 
-  test('reconcile-only still removes the legacy open-knowledge user skill folder', async () => {
+  test('reconcile-only still removes the legacy palimpsest user skill folder', async () => {
     const home = makeHome();
-    const legacy = join(home, '.claude', 'skills', 'open-knowledge');
+    const legacy = join(home, '.claude', 'skills', 'palimpsest');
     mkdirSync(legacy, { recursive: true });
     writeFileSync(join(legacy, 'SKILL.md'), 'legacy');
     const deps = makeDeps({ bundle: setupBundle(), version: '1.0.0' });

@@ -1,7 +1,7 @@
 import {
   DocumentListSuccessSchema,
   type TemplatesListSuccess,
-} from '@inkeep/open-knowledge-core/schemas/api';
+} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Info } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -17,7 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { type AsyncState, useAllTemplates } from '@/hooks/use-folder-config';
 import { useIsEmbedded } from '@/hooks/use-is-embedded';
 import { emitCreateTopLevelFile } from '@/lib/create-file-events';
-import type { OkPackId } from '@/lib/desktop-bridge-types';
+import type { PsPackId } from '@/lib/desktop-bridge-types';
 import { subscribeToDocumentsChanged } from '@/lib/documents-events';
 import { fetchDocumentListShared } from '@/lib/documents-fetch';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,7 @@ export function EmptyEditorState({
 }) {
   const templatesState = useAllTemplates();
   const [seedDialogOpen, setSeedDialogOpen] = useState(false);
-  const [seedDialogInitialPackId, setSeedDialogInitialPackId] = useState<OkPackId | undefined>(
+  const [seedDialogInitialPackId, setSeedDialogInitialPackId] = useState<PsPackId | undefined>(
     undefined,
   );
   const [documentCount, setDocumentCount] = useState<number | null>(null);
@@ -204,7 +204,7 @@ function OnboardingView({
   onRageStreak,
 }: {
   celebrateSignal: number;
-  onPackSelect: (packId: OkPackId) => void;
+  onPackSelect: (packId: PsPackId) => void;
   onRageStreak?: () => void;
 }) {
   const { t } = useLingui();
@@ -231,7 +231,7 @@ function OnboardingView({
         <PackCardGrid
           onPackSelect={onPackSelect}
           onCreateBlankFile={() => emitCreateTopLevelFile()}
-          collapsedPackIds={['okf', 'entity-vault']}
+          collapsedPackIds={['psf', 'entity-vault']}
         />
       </div>
     </div>

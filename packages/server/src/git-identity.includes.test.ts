@@ -28,7 +28,7 @@ describe('resolveGitIdentity with included git config', () => {
       }
     }
 
-    tmp = mkdtempSync(join(tmpdir(), 'ok-git-identity-inc-'));
+    tmp = mkdtempSync(join(tmpdir(), 'ps-git-identity-inc-'));
     repo = join(tmp, 'repo');
     identityFile = join(tmp, 'identity');
     globalFile = join(tmp, 'gitconfig');

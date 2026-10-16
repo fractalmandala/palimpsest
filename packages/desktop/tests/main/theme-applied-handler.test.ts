@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
 import { applyThemeApplied } from '../../src/main/theme-applied-handler.ts';
-import type { OkChromeColors } from '../../src/shared/bridge-contract.ts';
+import type { PsChromeColors } from '../../src/shared/bridge-contract.ts';
 
 interface TraceEvent {
   step: 'fireThemeApplied' | 'applyReducedTransparency' | 'applyChromeColors' | 'warn';
   args?: unknown;
 }
 
-const CHROME: OkChromeColors = { bg: '#282a36', symbol: '#f8f8f2' };
+const CHROME: PsChromeColors = { bg: '#282a36', symbol: '#f8f8f2' };
 
 function makeDeps() {
   const trace: TraceEvent[] = [];
@@ -20,7 +20,7 @@ function makeDeps() {
       applyReducedTransparency: (reduced: boolean) => {
         trace.push({ step: 'applyReducedTransparency', args: { reduced } });
       },
-      applyChromeColors: (chrome: OkChromeColors) => {
+      applyChromeColors: (chrome: PsChromeColors) => {
         trace.push({ step: 'applyChromeColors', args: { chrome } });
       },
       warn: (line: string) => {

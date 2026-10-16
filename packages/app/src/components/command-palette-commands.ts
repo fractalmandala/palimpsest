@@ -3,13 +3,13 @@ import {
   type CommandContext,
   type CommandIdentity,
   evaluateCommandAvailability,
-} from '@inkeep/open-knowledge-core/commands/command-identity';
-import { SHOW_INSTALL_SKILL } from '@inkeep/open-knowledge-core/constants/feature-flags';
+} from '@palimpsest/core/commands/command-identity';
+import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import {
-  OPEN_KNOWLEDGE_DISCORD_URL,
-  OPEN_KNOWLEDGE_DOCS_URL,
-  OPEN_KNOWLEDGE_GITHUB_URL,
-} from '@inkeep/open-knowledge-core/constants/menu-labels';
+  PALIMPSEST_DISCORD_URL,
+  PALIMPSEST_DOCS_URL,
+  PALIMPSEST_GITHUB_URL,
+} from '@palimpsest/core/constants/menu-labels';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
 import {
@@ -55,7 +55,7 @@ import { GithubIcon } from '@/components/icons/github';
 import type { ResolvedNavigationTarget } from '@/components/navigation-targets';
 import { PANE_ICON } from '@/components/pane-icons';
 import { requestSkillsDockExpanded } from '@/components/skills-dock-expanded-store';
-import type { OkDesktopBridge, OkMenuAction } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge, PsMenuAction } from '@/lib/desktop-bridge-types';
 import { i18n } from '@/lib/i18n';
 import type { KeyboardShortcutId } from '@/lib/keyboard-shortcuts';
 import { openDocInNoteWindow } from '@/lib/open-note-window';
@@ -86,12 +86,12 @@ export function projectContextualTargetKind(
 }
 
 export interface PaletteCommandContext {
-  bridge: OkDesktopBridge | null;
+  bridge: PsDesktopBridge | null;
   singleFile: boolean;
   activeDocName: string | null;
   contextualTargetKind: ContextualTargetKind;
   viewMenuState: ViewMenuState;
-  emitMenuAction(action: OkMenuAction): void;
+  emitMenuAction(action: PsMenuAction): void;
   runAction(fn: () => Promise<void> | void, fallback?: string): void;
   openExternalUrl(url: string): void;
   closePalette(): void;
@@ -109,7 +109,7 @@ export type PaletteCommandGroup = 'commands' | 'project' | 'file' | 'view' | 'te
 
 export interface PaletteCommand {
   id: string;
-  menuActionId?: OkMenuAction;
+  menuActionId?: PsMenuAction;
   label(ctx: PaletteCommandContext): string;
   keywords: readonly string[];
   icon: ComponentType<{ className?: string }>;
@@ -166,7 +166,7 @@ const PALETTE_COMMAND_LABELS = {
   agentPanelHide: msg`Hide Agents`,
   agentPanelAskSelection: msg`Ask AI About Selection`,
   showHiddenFiles: msg`Show hidden files`,
-  showOkFolders: msg`Show .ok folders`,
+  showOkFolders: msg`Show .ps folders`,
   showOnlyMarkdownFiles: msg`Show only markdown files`,
   showSkillsSection: msg`Skills section`,
   expandAll: msg`Expand all`,
@@ -174,9 +174,9 @@ const PALETTE_COMMAND_LABELS = {
   newTerminal: msg`New Terminal`,
   killTerminal: msg`Kill Terminal`,
   checkForUpdates: msg`Check for updates`,
-  setUpIntegrations: msg`Set up OpenKnowledge integrations`,
+  setUpIntegrations: msg`Set up Palimpsest integrations`,
   checkSpelling: msg`Check spelling while typing`,
-  openOnGithub: msg`OpenKnowledge on GitHub`,
+  openOnGithub: msg`Palimpsest on GitHub`,
   openDocs: msg`Documentation`,
   joinDiscord: msg`Join us on Discord`,
 } as const satisfies Record<string, MessageDescriptor>;
@@ -248,7 +248,7 @@ const COMMAND_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   'toggle-agent-panel': PANE_ICON.agents,
   'toggle-editor': PANE_ICON.editor,
   'toggle-show-hidden-files': Eye,
-  'toggle-show-ok-folders': Folder,
+  'toggle-show-ps-folders': Folder,
   'toggle-show-only-markdown-files': FileText,
   'toggle-show-skills-section': Sparkles,
   'expand-all-tree': UnfoldVertical,
@@ -348,9 +348,9 @@ const COMMAND_DISPATCH: Record<string, (ctx: PaletteCommandContext) => void> = {
     ctx.runAction(async () => {
       await ctx.bridge?.spellcheck.toggle();
     }),
-  'open-github': (ctx) => ctx.openExternalUrl(OPEN_KNOWLEDGE_GITHUB_URL),
-  'open-docs': (ctx) => ctx.openExternalUrl(OPEN_KNOWLEDGE_DOCS_URL),
-  'open-discord': (ctx) => ctx.openExternalUrl(OPEN_KNOWLEDGE_DISCORD_URL),
+  'open-github': (ctx) => ctx.openExternalUrl(PALIMPSEST_GITHUB_URL),
+  'open-docs': (ctx) => ctx.openExternalUrl(PALIMPSEST_DOCS_URL),
+  'open-discord': (ctx) => ctx.openExternalUrl(PALIMPSEST_DISCORD_URL),
 };
 
 function paletteCoreContext(ctx: PaletteCommandContext): CommandContext {
@@ -395,7 +395,7 @@ function resolvePaletteLabel(cmd: CommandIdentity, ctx: PaletteCommandContext): 
 }
 
 function busDispatch(cmd: CommandIdentity): (ctx: PaletteCommandContext) => void {
-  const action = cmd.menuActionId as OkMenuAction;
+  const action = cmd.menuActionId as PsMenuAction;
   return (ctx) => ctx.emitMenuAction(action);
 }
 
@@ -407,7 +407,7 @@ function toPaletteCommand(cmd: CommandIdentity): PaletteCommand {
   const checkField = cmd.checkField;
   return {
     id: cmd.id,
-    menuActionId: cmd.menuActionId as OkMenuAction | undefined,
+    menuActionId: cmd.menuActionId as PsMenuAction | undefined,
     label: (ctx) => resolvePaletteLabel(cmd, ctx),
     keywords: cmd.keywords,
     icon,

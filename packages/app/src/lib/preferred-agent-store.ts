@@ -1,4 +1,4 @@
-import type { HandoffTarget, InstallState } from '@inkeep/open-knowledge-core/handoff';
+import type { HandoffTarget, InstallState } from '@palimpsest/core/handoff';
 import { VISIBLE_TARGETS } from '@/lib/handoff/targets';
 import {
   loadStickyAgent,
@@ -6,7 +6,7 @@ import {
   saveStickyAgent,
 } from '@/lib/unified-agent-store';
 
-export const PREFERRED_AGENT_KEY = 'ok-preferred-agent-v1';
+export const PREFERRED_AGENT_KEY = 'ps-preferred-agent-v1';
 
 export type PreferredAgentStorage = StickyAgentStorage;
 

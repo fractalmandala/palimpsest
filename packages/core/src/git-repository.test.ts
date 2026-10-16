@@ -81,7 +81,7 @@ describe('inspectGitRepository', () => {
   });
 
   async function makeTemporaryDirectory(): Promise<string> {
-    const path = await mkdtemp(join(tmpdir(), 'ok-git-repository-'));
+    const path = await mkdtemp(join(tmpdir(), 'ps-git-repository-'));
     temporaryDirectories.push(path);
     return path;
   }
@@ -99,7 +99,7 @@ describe('inspectGitRepository', () => {
     writeFileSync(join(gitDir, 'HEAD'), 'ref: refs/heads/feature/deep-inspection\n');
     writeFileSync(
       join(commonDir, 'config'),
-      '[remote "origin"]\n\turl = git@github.com:inkeep/open-knowledge.git\n',
+      '[remote "origin"]\n\turl = git@github.com:fractalmandala/palimpsest.git\n',
     );
 
     const result = inspectGitRepository(projectRoot);
@@ -119,7 +119,7 @@ describe('inspectGitRepository', () => {
     });
     expect(result.repository.readRemoteUrl('origin')).toEqual({
       kind: 'configured',
-      url: 'git@github.com:inkeep/open-knowledge.git',
+      url: 'git@github.com:fractalmandala/palimpsest.git',
     });
   });
 

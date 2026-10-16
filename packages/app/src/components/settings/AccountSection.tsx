@@ -1,5 +1,5 @@
-import type { ConfigBinding } from '@inkeep/open-knowledge-core/config/bind-config-doc';
-import { isGitCredentialHost } from '@inkeep/open-knowledge-core/constants/github';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { isGitCredentialHost } from '@palimpsest/core/constants/github';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useRef, useState } from 'react';
 import { AuthModal } from '@/components/AuthModal';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { type GitSyncStatus, useGitSyncStatus } from '@/hooks/use-git-sync-status';
 import { recordAuthStatus } from '@/lib/auth-state-cache';
-import { okCliCommandName } from '@/lib/channel-cli-copy';
+import { psCliCommandName } from '@/lib/channel-cli-copy';
 import {
   type AuthQueryStatus,
   type AuthQueryTransport,
@@ -96,7 +96,7 @@ export function AccountSection({
         scope="user"
       >
         <Trans>
-          Manage the accounts and access tokens OpenKnowledge uses to connect to your git hosts.
+          Manage the accounts and access tokens Palimpsest uses to connect to your git hosts.
         </Trans>
       </SettingsSectionHeader>
 
@@ -204,7 +204,7 @@ export function hostFromRemoteLabel(label: string): string {
 }
 
 function HostTokenSuccess({ login, host }: { login: string; host: string }) {
-  const cliCommand = okCliCommandName();
+  const cliCommand = psCliCommandName();
   return (
     <p
       role="status"
@@ -318,7 +318,7 @@ function HostTokenForm({
           <Trans>
             Add an access token for a GitLab, Gitea, Bitbucket, Azure DevOps or self-hosted git
             server. Without one, git uses the credentials it already has saved for that host; with
-            one, OpenKnowledge uses the token instead.
+            one, Palimpsest uses the token instead.
           </Trans>
         </p>
       </div>
@@ -459,7 +459,7 @@ function ConnectedRow({
             </Trans>
           </div>
           <p className="text-muted-foreground text-1sm">
-            <Trans>OpenKnowledge is using this GitHub account.</Trans>
+            <Trans>Palimpsest is using this GitHub account.</Trans>
           </p>
         </div>
         <Button

@@ -6,7 +6,7 @@ import {
   truncateOnLineBoundary,
 } from './build-slack-release-payload.mjs';
 
-const RELEASE_URL = 'https://github.com/inkeep/open-knowledge/releases/tag/v0.38.4';
+const RELEASE_URL = 'https://github.com/fractalmandala/palimpsest/releases/tag/v0.38.4';
 
 const SLACK_SECTION_CAP = 3000;
 
@@ -50,22 +50,22 @@ describe('githubMarkdownToSlackMrkdwn', () => {
   });
 
   test('strips the internal consumed-set marker so it never reaches the channel', () => {
-    const out = githubMarkdownToSlackMrkdwn('- a change\n\n<!-- ok-consumed-set: ["x"] -->\n');
+    const out = githubMarkdownToSlackMrkdwn('- a change\n\n<!-- ps-consumed-set: ["x"] -->\n');
     expect(out).toBe('• a change');
-    expect(out).not.toContain('ok-consumed-set');
+    expect(out).not.toContain('ps-consumed-set');
   });
 
   test('strips the Downloads block CONTENT, not just its marker comments', () => {
     const body = [
       '- a change',
       '',
-      '<!-- ok-downloads:start -->',
+      '<!-- ps-downloads:start -->',
       '## Downloads',
       '',
       '| Platform | Architecture | Download |',
       '| --- | --- | --- |',
-      '| Windows | x64 | [OpenKnowledge-Setup-x64.exe](https://example.invalid/x) |',
-      '<!-- ok-downloads:end -->',
+      '| Windows | x64 | [Palimpsest-Setup-x64.exe](https://example.invalid/x) |',
+      '<!-- ps-downloads:end -->',
     ].join('\n');
     const out = githubMarkdownToSlackMrkdwn(body);
     expect(out).toBe('• a change');
@@ -82,14 +82,14 @@ describe('githubMarkdownToSlackMrkdwn', () => {
   });
 
   test('preserves indented continuation paragraphs under a bullet', () => {
-    const md = '- fix: tear down the sibling\n\n  `ok start` spawns a detached process.';
+    const md = '- fix: tear down the sibling\n\n  `ps start` spawns a detached process.';
     expect(githubMarkdownToSlackMrkdwn(md)).toBe(
-      '• fix: tear down the sibling\n\n  `ok start` spawns a detached process.',
+      '• fix: tear down the sibling\n\n  `ps start` spawns a detached process.',
     );
   });
 
   test('leaves backticked code spans intact', () => {
-    expect(githubMarkdownToSlackMrkdwn('run `ok start` now')).toBe('run `ok start` now');
+    expect(githubMarkdownToSlackMrkdwn('run `ps start` now')).toBe('run `ps start` now');
   });
 
   test('returns empty string for empty input', () => {
@@ -159,10 +159,10 @@ describe('buildSlackReleasePayload', () => {
     });
     expect(payload.blocks[0]).toEqual({
       type: 'header',
-      text: { type: 'plain_text', text: '🎉 OpenKnowledge 0.38.4 released', emoji: true },
+      text: { type: 'plain_text', text: '🎉 Palimpsest 0.38.4 released', emoji: true },
     });
     expect(payload.blocks.at(-1).text.text).toBe(`*<${RELEASE_URL}|Release notes & downloads>*`);
-    expect(payload.text).toBe(`OpenKnowledge 0.38.4 released — ${RELEASE_URL}`);
+    expect(payload.text).toBe(`Palimpsest 0.38.4 released — ${RELEASE_URL}`);
   });
 
   test('degrades to the header + link message when notes are unavailable', () => {
@@ -195,9 +195,9 @@ describe('buildSlackReleasePayload', () => {
     const notes = [
       '### Patch Changes',
       '',
-      '- fix: tear down the `ok ui` sibling when `ok start` exits via a signal',
+      '- fix: tear down the `ok ui` sibling when `ps start` exits via a signal',
       '',
-      '  `ok start` spawns a detached `ok ui` process to serve the editor shell.',
+      '  `ps start` spawns a detached `ok ui` process to serve the editor shell.',
       '  See [the runbook](https://example.com/runbook) for the **full** story.',
     ].join('\n');
     const payload = buildSlackReleasePayload({

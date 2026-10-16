@@ -48,7 +48,7 @@ function createRig(
   getLocalTargetInventory?: () => WatcherLocalTargetInventory | null,
   onRecoveredFileTarget?: (relativePath: string, exists: boolean) => void,
 ): Rig {
-  const projectDir = mkdtempSync(join(tmpdir(), 'ok-derived-index-'));
+  const projectDir = mkdtempSync(join(tmpdir(), 'ps-derived-index-'));
   const contentDir = join(projectDir, 'content');
   mkdirSync(contentDir, { recursive: true });
   const signals: string[] = [];
@@ -223,7 +223,7 @@ describe('DerivedDocumentIndex', () => {
     await settleStartup(rig);
     await rig.index.recordDirectDocument('ignored', 'See [[target]]. #hidden\n');
     rig.signals.length = 0;
-    writeFileSync(join(rig.projectDir, '.okignore'), 'content/ignored.md\n');
+    writeFileSync(join(rig.projectDir, '.psignore'), 'content/ignored.md\n');
     const rebuilt = await rig.contentFilter.rebuildIgnorePatterns();
     expect(rebuilt.ok).toBe(true);
 
@@ -546,7 +546,7 @@ describe('DerivedDocumentIndex', () => {
     await settleStartup(rig);
     writeDoc(rig, 'hidden.md', 'See [[target]]. #hidden\n');
     await rig.index.recordDirectDocument('hidden', 'See [[target]]. #hidden\n');
-    writeFileSync(join(rig.projectDir, '.okignore'), 'content/hidden.md\n');
+    writeFileSync(join(rig.projectDir, '.psignore'), 'content/hidden.md\n');
     const rebuilt = await rig.contentFilter.rebuildIgnorePatterns();
     expect(rebuilt.ok).toBe(true);
     rig.signals.length = 0;
@@ -715,7 +715,7 @@ describe('DerivedDocumentIndex', () => {
   });
 
   test('warm startup reports documents deleted while the server was down', async () => {
-    const projectDir = mkdtempSync(join(tmpdir(), 'ok-derived-warm-'));
+    const projectDir = mkdtempSync(join(tmpdir(), 'ps-derived-warm-'));
     const contentDir = join(projectDir, 'content');
     mkdirSync(contentDir, { recursive: true });
     writeFileSync(join(contentDir, 'stale.md'), '# stale\n');

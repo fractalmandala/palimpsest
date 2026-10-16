@@ -1,17 +1,17 @@
 ---
 name: codebase-wiki
-description: "How to work in a Codebase Wiki project (the `codebase-wiki` starter pack): an agent-authored, source-grounded wiki of the surrounding codebase. Read when the project has a `wiki/` knowledge base with `architecture/`, `modules/`, `flows/`, `concepts/`, and `guides/` sections plus `wiki/OVERVIEW.md`, or when asked to generate or refresh a wiki of this codebase. Carries the per-folder rules and freshness + log discipline, summarizes the audience/depth knobs and source-reference convention, and bundles the full generate/refresh procedure in `references/`. Complements the platform `open-knowledge` skill; does not replace it."
-compatibility: "Any agent host with the OpenKnowledge MCP server configured. Installed project-local by `ok seed --pack codebase-wiki` (`ok-beta` for Beta)."
+description: "How to work in a Codebase Wiki project (the `codebase-wiki` starter pack): an agent-authored, source-grounded wiki of the surrounding codebase. Read when the project has a `wiki/` knowledge base with `architecture/`, `modules/`, `flows/`, `concepts/`, and `guides/` sections plus `wiki/OVERVIEW.md`, or when asked to generate or refresh a wiki of this codebase. Carries the per-folder rules and freshness + log discipline, summarizes the audience/depth knobs and source-reference convention, and bundles the full generate/refresh procedure in `references/`. Complements the platform `palimpsest` skill; does not replace it."
+compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack codebase-wiki` (`ps-beta` for Beta)."
 metadata:
   pack: "codebase-wiki"
   author: "Inkeep"
-  repository: "https://github.com/inkeep/open-knowledge-skills"
+  repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Codebase Wiki pack — how to work here
 
 This project holds an **agent-authored wiki of a codebase** — DeepWiki, but living in the repo. A coding agent reads the source and writes a navigable, diagram-rich, source-grounded wiki as markdown under `wiki/`. It is version-controlled and diffable, private by default, human+agent co-editable, renders in OK's live preview, and doubles as durable grounding context for future agent sessions. There is no separate Q&A surface — Q&A is "the OK-grounded agent + `search`".
 
-> This skill is pack guidance. The platform `/open-knowledge` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the wiki workflow on top.
+> This skill is pack guidance. The platform `/palimpsest` skill (read/write/preview/linking/grounding rules) still governs every markdown operation — this layers the wiki workflow on top.
 
 ## The shape
 

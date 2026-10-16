@@ -14,7 +14,7 @@ export interface BuildArtifactCheck {
 
 export const BUILD_COMMAND = 'pnpm run build:desktop';
 
-export const CLI_BUILD_COMMAND = 'pnpm --filter @inkeep/open-knowledge run build';
+export const CLI_BUILD_COMMAND = 'pnpm --filter @palimpsest/cli run build';
 
 const CHECKS: BuildArtifactCheck[] = [
   {
@@ -63,12 +63,12 @@ const CHECKS: BuildArtifactCheck[] = [
     srcs: [resolve(DESKTOP_PKG, 'src/utility/server-entry.ts')],
   },
   {
-    name: '@inkeep/open-knowledge CLI',
+    name: '@palimpsest/cli CLI',
     out: resolve(DESKTOP_PKG, '..', 'cli', 'dist', 'index.mjs'),
     srcs: [],
   },
   {
-    name: '@inkeep/open-knowledge CLI executable',
+    name: '@palimpsest/cli CLI executable',
     out: resolve(DESKTOP_PKG, '..', 'cli', 'dist', 'cli.mjs'),
     srcs: [resolve(DESKTOP_PKG, '..', 'cli', 'src', 'cli.ts')],
   },
@@ -91,9 +91,9 @@ export function evaluateBuild(deps: GuardDeps = {}): GuardVerdict {
   const checks = deps.checks ?? CHECKS;
   const exists = deps.exists ?? existsSync;
   const mtime = deps.mtimeMs ?? ((p: string) => statSync(p).mtimeMs);
-  const smokeEnabled = deps.smokeEnabled ?? process.env.OK_DESKTOP_E2E_SMOKE === '1';
+  const smokeEnabled = deps.smokeEnabled ?? process.env.PS_DESKTOP_E2E_SMOKE === '1';
   const packagedOverride =
-    'packagedOverride' in deps ? deps.packagedOverride : process.env.OK_DESKTOP_PACKAGED_APP;
+    'packagedOverride' in deps ? deps.packagedOverride : process.env.PS_DESKTOP_PACKAGED_APP;
   const packaged = packagedOverride !== undefined && packagedOverride.length > 0;
 
   const missing: { name: string; out: string }[] = [];
@@ -123,7 +123,7 @@ export function formatMissingArtifacts(missing: readonly { name: string; out: st
     '',
     ...missing.map((m) => `  ${m.name}: ${m.out}`),
     '',
-    `Run \`${BUILD_COMMAND}\` from public/open-knowledge before running smoke tests.`,
+    `Run \`${BUILD_COMMAND}\` from public/palimpsest before running smoke tests.`,
     ...(cli ? [`The CLI artifact comes from \`${CLI_BUILD_COMMAND}\`.`] : []),
     '',
     'Why this is a hard failure and not a skip: without these, the app never reaches',
@@ -138,7 +138,7 @@ export function formatStaleArtifacts(stale: readonly string[]): string {
     '',
     ...stale,
     '',
-    `Run \`${BUILD_COMMAND}\` from public/open-knowledge before re-running smoke tests.`,
+    `Run \`${BUILD_COMMAND}\` from public/palimpsest before re-running smoke tests.`,
     '',
     'Why this matters: the smoke harness launches `out/main/index.js` directly.',
     'If `out/` is older than `src/`, tests run against a phantom version of the app',

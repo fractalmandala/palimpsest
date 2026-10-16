@@ -119,7 +119,7 @@ interface ComposedBundle {
 
 const REMOVAL_RETRIES = 3;
 
-const STAGING_ROOT_PREFIX = '.ok-skill-publish-';
+const STAGING_ROOT_PREFIX = '.ps-skill-publish-';
 
 const KEPT_TREE_PREFIX = `${STAGING_ROOT_PREFIX}kept-`;
 
@@ -440,12 +440,12 @@ export function buildAgentPluginArtifact(paths: SkillBundlePaths = defaultPaths(
     }
     const manifest = {
       $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
-      name: 'open-knowledge',
+      name: 'palimpsest',
       description:
-        'OpenKnowledge built-in skills: project workflow, discovery, and skill authoring',
+        'Palimpsest built-in skills: project workflow, discovery, and skill authoring',
       author: { name: 'Inkeep' },
-      repository: 'https://github.com/inkeep/open-knowledge',
-      keywords: ['openknowledge', 'knowledge-base'],
+      repository: 'https://github.com/fractalmandala/palimpsest',
+      keywords: ['palimpsest', 'knowledge-base'],
     };
     writeFileSync(
       join(stageRoot, 'plugin.json'),

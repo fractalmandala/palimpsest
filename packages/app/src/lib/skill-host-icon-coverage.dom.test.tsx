@@ -1,4 +1,4 @@
-import { SkillUserTargetEditorSchema } from '@inkeep/open-knowledge-core';
+import { SkillUserTargetEditorSchema } from '@palimpsest/core';
 import { render } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 import { AgentBrandIcon } from '@/components/AgentIconCluster';

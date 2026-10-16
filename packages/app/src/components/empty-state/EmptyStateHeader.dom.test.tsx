@@ -6,8 +6,8 @@ import {
   expectVisualClassTokensAbsent,
 } from '@/test-utils/visual-contract';
 
-vi.doMock('@/components/OkBlob', () => ({
-  OkBlob: ({
+vi.doMock('@/components/PsBlob', () => ({
+  PsBlob: ({
     celebrateSignal,
     size,
     onRage,
@@ -18,7 +18,7 @@ vi.doMock('@/components/OkBlob', () => ({
   }) => (
     <button
       type="button"
-      data-testid="ok-blob-probe"
+      data-testid="ps-blob-probe"
       data-celebrate-signal={String(celebrateSignal)}
       data-size={String(size)}
       data-has-rage={String(onRage !== undefined)}
@@ -44,10 +44,10 @@ describe('EmptyStateHeader runtime behavior', () => {
 
     expect(screen.getByRole('heading', { level: 2, name: 'Choose a starter' })).toBeTruthy();
     expect(screen.getByText('Pick one')).toBeTruthy();
-    expect(screen.getByTestId('ok-blob-probe').getAttribute('data-celebrate-signal')).toBe('3');
-    expect(screen.getByTestId('ok-blob-probe').getAttribute('data-size')).toBe('64');
+    expect(screen.getByTestId('ps-blob-probe').getAttribute('data-celebrate-signal')).toBe('3');
+    expect(screen.getByTestId('ps-blob-probe').getAttribute('data-size')).toBe('64');
 
-    const root = screen.getByTestId('ok-blob-probe').parentElement;
+    const root = screen.getByTestId('ps-blob-probe').parentElement;
     expectVisualClassTokens(root?.className, [
       'flex',
       'flex-col',
@@ -62,7 +62,7 @@ describe('EmptyStateHeader runtime behavior', () => {
     rerender(<EmptyStateHeader title="Choose a starter" celebrateSignal={4} />);
 
     expect(screen.queryByText('Pick one')).toBeNull();
-    expect(screen.getByTestId('ok-blob-probe').getAttribute('data-celebrate-signal')).toBe('4');
+    expect(screen.getByTestId('ps-blob-probe').getAttribute('data-celebrate-signal')).toBe('4');
   });
 });
 
@@ -75,7 +75,7 @@ describe('EmptyStateHeader rage-streak reveal gate', () => {
   async function mount(onRageStreak?: () => void) {
     const { EmptyStateHeader } = await import('./EmptyStateHeader');
     render(<EmptyStateHeader title="t" celebrateSignal={0} onRageStreak={onRageStreak} />);
-    return screen.getByTestId('ok-blob-probe');
+    return screen.getByTestId('ps-blob-probe');
   }
 
   const CLICK_GAP_MS = 500;

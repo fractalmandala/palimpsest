@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { bootServer, ConfigSchema } from '@inkeep/open-knowledge-server';
+import { bootServer, ConfigSchema } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { removeAllDuringTeardown } from '../stress/_helpers/teardown-fs.ts';
 import { createLinkedWorktree, type LinkedWorktreeHandle } from './worktree-test-harness.ts';
@@ -54,14 +54,14 @@ describe('git worktree remove cleans up the per-worktree shadow (FR6)', () => {
 
 describe('MalformedGitPointerError at boot when .git pointer is stale (FR7)', () => {
   test('bootServer rejects with MalformedGitPointerError when .git points at a missing admin dir', async () => {
-    const projectRoot = mkdtempSync(resolve(tmpdir(), 'ok-stale-pointer-'));
+    const projectRoot = mkdtempSync(resolve(tmpdir(), 'ps-stale-pointer-'));
     adhocDirs.push(projectRoot);
-    const missingTarget = resolve(tmpdir(), 'ok-stale-target-does-not-exist');
+    const missingTarget = resolve(tmpdir(), 'ps-stale-target-does-not-exist');
     writeFileSync(resolve(projectRoot, '.git'), `gitdir: ${missingTarget}\n`);
-    const okDir = resolve(projectRoot, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    const psDir = resolve(projectRoot, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 
     let caught: unknown;
     try {
@@ -106,14 +106,14 @@ describe('MalformedGitPointerError at boot when .git pointer is stale (FR7)', ()
   });
 
   test('recovery: stale pointer → remove orphan .git → retry boot succeeds', async () => {
-    const projectRoot = mkdtempSync(resolve(tmpdir(), 'ok-stale-recover-'));
+    const projectRoot = mkdtempSync(resolve(tmpdir(), 'ps-stale-recover-'));
     adhocDirs.push(projectRoot);
-    const missingTarget = resolve(tmpdir(), 'ok-stale-recover-target-does-not-exist');
+    const missingTarget = resolve(tmpdir(), 'ps-stale-recover-target-does-not-exist');
     writeFileSync(resolve(projectRoot, '.git'), `gitdir: ${missingTarget}\n`);
-    const okDir = resolve(projectRoot, '.ok');
-    mkdirSync(okDir, { recursive: true });
-    writeFileSync(resolve(okDir, 'config.yml'), '', 'utf-8');
-    writeFileSync(resolve(okDir, '.gitignore'), '', 'utf-8');
+    const psDir = resolve(projectRoot, '.ps');
+    mkdirSync(psDir, { recursive: true });
+    writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
+    writeFileSync(resolve(psDir, '.gitignore'), '', 'utf-8');
 
     let firstAttemptError: unknown;
     try {

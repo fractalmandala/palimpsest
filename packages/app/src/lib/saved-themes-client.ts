@@ -11,9 +11,9 @@ import {
   SavedThemesListSuccessSchema,
   SavedThemeUpdateRequestSchema,
   SavedThemeUpdateSuccessSchema,
-} from '@inkeep/open-knowledge-core/schemas/api';
-import type { Base16Scheme } from '@inkeep/open-knowledge-core/theme/base16';
-import { parseSavedThemeId } from '@inkeep/open-knowledge-core/theme/theme-plugins';
+} from '@palimpsest/core/schemas/api';
+import type { Base16Scheme } from '@palimpsest/core/theme/base16';
+import { parseSavedThemeId } from '@palimpsest/core/theme/theme-plugins';
 import {
   createContext,
   createElement,
@@ -124,7 +124,7 @@ function warnSavedThemeRequestFailure(
 ): void {
   console.warn(
     JSON.stringify({
-      event: 'ok-saved-theme-request-failed',
+      event: 'ps-saved-theme-request-failed',
       action,
       result,
       ...(details.status === undefined ? {} : { status: details.status }),

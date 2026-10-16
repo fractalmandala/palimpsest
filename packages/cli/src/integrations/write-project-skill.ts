@@ -16,8 +16,8 @@ import {
   parsePathId,
   RESERVED_PROJECT_SKILL_NAME,
   USER_MCP_GATED_EDITOR_IDS,
-} from '@inkeep/open-knowledge-core';
-import { resolveBundledSkillDir } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { resolveBundledSkillDir } from '@palimpsest/server';
 import { type ParseError, parse as parseJsonc } from 'jsonc-parser';
 import {
   EDITOR_TARGETS,
@@ -93,7 +93,7 @@ export function replaceBundleDir(sourceDir: string, skillPath: string): 'written
   const action = existsSync(skillPath) ? 'overwritten' : 'written';
   if (action === 'written' && existsSync(targetDir)) {
     throw new Error(
-      `Refusing to replace ${targetDir}: it exists but holds no SKILL.md, so it is not a bundle OpenKnowledge wrote. Move it aside and try again.`,
+      `Refusing to replace ${targetDir}: it exists but holds no SKILL.md, so it is not a bundle Palimpsest wrote. Move it aside and try again.`,
     );
   }
   rmSync(targetDir, { recursive: true, force: true });
@@ -125,7 +125,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function configHasOpenKnowledgeEntry(
+function configHasPalimpsestEntry(
   target: EditorMcpTarget,
   cwd: string,
   configPath: string,
@@ -181,13 +181,13 @@ function isProjectSkillPrerequisiteMet(
   if (
     owner !== null &&
     sharedProjectConfig !== undefined &&
-    configHasOpenKnowledgeEntry(owner, cwd, sharedProjectConfig)
+    configHasPalimpsestEntry(owner, cwd, sharedProjectConfig)
   ) {
     return true;
   }
 
   try {
-    return configHasOpenKnowledgeEntry(target, cwd, target.configPath(cwd, options.home));
+    return configHasPalimpsestEntry(target, cwd, target.configPath(cwd, options.home));
   } catch {
     return false;
   }

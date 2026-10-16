@@ -10,8 +10,8 @@ import {
 const PACKAGED: UninstallEntryDeps = {
   devServerUrl: null,
   isPackaged: true,
-  resourcesPath: '/Applications/OpenKnowledge.app/Contents/Resources',
-  mainDir: '/Applications/OpenKnowledge.app/Contents/Resources/app.asar/out/main',
+  resourcesPath: '/Applications/Palimpsest.app/Contents/Resources',
+  mainDir: '/Applications/Palimpsest.app/Contents/Resources/app.asar/out/main',
 };
 
 const UNPACKAGED: UninstallEntryDeps = {
@@ -62,7 +62,7 @@ describe('resolveUninstallEntryTarget', () => {
   it('loads from the copied renderer under Resources in a packaged build', () => {
     expect(resolveUninstallEntryTarget(PACKAGED, 'dark')).toEqual({
       kind: 'file',
-      path: '/Applications/OpenKnowledge.app/Contents/Resources/app/uninstall.html',
+      path: '/Applications/Palimpsest.app/Contents/Resources/app/uninstall.html',
       query: { theme: 'dark' },
     });
   });
@@ -110,7 +110,7 @@ describe('loadUninstallEntry', () => {
       {
         method: 'loadFile',
         args: [
-          '/Applications/OpenKnowledge.app/Contents/Resources/app/uninstall.html',
+          '/Applications/Palimpsest.app/Contents/Resources/app/uninstall.html',
           { query: { theme: 'dark' } },
         ],
       },

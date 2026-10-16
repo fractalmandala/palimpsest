@@ -39,7 +39,7 @@ function makeStubTarget(initialLeft: number): StubTarget {
 function makeStubWrapper(target: StubTarget | null): HTMLElement {
   return {
     querySelector(selector: string) {
-      if (selector === 'img, .ok-embed, .ok-video') return target;
+      if (selector === 'img, .ps-embed, .ps-video') return target;
       return null;
     },
   } as unknown as HTMLElement;
@@ -160,7 +160,7 @@ describe('runWithAlignAnimation', () => {
     installReducedMotionWindow(false);
     const target = makeStubTarget(100);
     const wrapper = makeStubWrapper(target);
-    const inFlight: StubAnimation = { id: 'ok-image-align-flip', cancel: vi.fn(() => {}) };
+    const inFlight: StubAnimation = { id: 'ps-image-align-flip', cancel: vi.fn(() => {}) };
     const unrelated: StubAnimation = { id: 'some-other-anim', cancel: vi.fn(() => {}) };
     let firstCall = true;
     target.getAnimations = () => {
@@ -179,7 +179,7 @@ describe('runWithAlignAnimation', () => {
     expect(target.animateCalls.length).toBe(1);
   });
 
-  test('reassigns the new animation id to ok-image-align-flip so subsequent cancels match', () => {
+  test('reassigns the new animation id to ps-image-align-flip so subsequent cancels match', () => {
     installRafStub();
     installReducedMotionWindow(false);
     const target = makeStubTarget(100);
@@ -195,6 +195,6 @@ describe('runWithAlignAnimation', () => {
     });
     flushRaf();
     expect(returnedAnimation).toBeDefined();
-    expect(returnedAnimation?.id).toBe('ok-image-align-flip');
+    expect(returnedAnimation?.id).toBe('ps-image-align-flip');
   });
 });

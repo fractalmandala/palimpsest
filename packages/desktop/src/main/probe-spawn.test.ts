@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { rmSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { TERMINAL_CLI_IDS, TERMINAL_CLIS } from '@inkeep/open-knowledge-core';
+import { TERMINAL_CLI_IDS, TERMINAL_CLIS } from '@palimpsest/core';
 import {
   afterAll,
   beforeAll,
@@ -18,12 +18,12 @@ import {
   createScratchHomeWithOkBin,
   firstShellOnDisk,
   MINIMAL_PARENT_PATH,
-} from '../../tests/support/ok-bin-scratch-home.test-helper.ts';
-import { okManagedBinDirs } from '../shared/ok-child-env.ts';
+} from '../../tests/support/ps-bin-scratch-home.test-helper.ts';
+import { psManagedBinDirs } from '../shared/ps-child-env.ts';
 import { buildShellEnv } from '../utility/pty-host.ts';
 import { cliProbeArgs, runLoginShellProbe } from './claude-readiness.ts';
 import {
-  okProbeSpawnEnv,
+  psProbeSpawnEnv,
   probeEnvVerdict,
   probeSpawnArgs,
   probeSpawnDetached,
@@ -69,7 +69,7 @@ function compositionRecords(): Record<string, unknown>[] {
 
 const SLIDEV_BIN = 'slidev';
 const TERMINAL_CLI_BINS = TERMINAL_CLI_IDS.map((cli) => TERMINAL_CLIS[cli].bin);
-const FIXTURE_ONLY_BIN = `ok-probe-spawn-fixture-${randomUUID()}`;
+const FIXTURE_ONLY_BIN = `ps-probe-spawn-fixture-${randomUUID()}`;
 
 describe('probeSpawnArgs', () => {
   test('reasserts the managed path in the initialized POSIX shell', () => {
@@ -86,7 +86,7 @@ describe('probeSpawnArgs', () => {
     expect(args.slice(0, -1)).toEqual(['-i', '-c']);
     expect(args.at(-1)).toBe(
       // biome-ignore lint/suspicious/noTemplateCurlyInString: shell parameter expansion in an expected command string, not a JS template placeholder
-      "case \":$PATH:\" in *:'/home/o'\\''brien/.ok/bin':*) ;; *) PATH='/home/o'\\''brien/.ok/bin'\"${PATH:+:$PATH}\" ;; esac; export PATH; command -v codex",
+      "case \":$PATH:\" in *:'/home/o'\\''brien/.ps/bin':*) ;; *) PATH='/home/o'\\''brien/.ps/bin'\"${PATH:+:$PATH}\" ;; esac; export PATH; command -v codex",
     );
   });
 
@@ -95,7 +95,7 @@ describe('probeSpawnArgs', () => {
     expect(
       probeSpawnArgs('/usr/bin/fish', ['-i', '-c', 'command -v codex'], options).args.at(-1),
     ).toBe(
-      "if not contains '/home/o\\'brien/.ok/bin' $PATH; set -gx PATH '/home/o\\'brien/.ok/bin' $PATH; end; command -v codex",
+      "if not contains '/home/o\\'brien/.ps/bin' $PATH; set -gx PATH '/home/o\\'brien/.ps/bin' $PATH; end; command -v codex",
     );
   });
 
@@ -117,7 +117,7 @@ describe('probeSpawnArgs', () => {
       probeSpawnArgs('cmd.exe', windows, {
         platform: 'win32',
         home: 'C:\\Users\\alice',
-        cliBinDir: 'C:\\OpenKnowledge\\cli\\bin',
+        cliBinDir: 'C:\\Palimpsest\\cli\\bin',
       }),
     ).toEqual({ args: windows, reassert: 'skipped-win32', family: undefined });
     const direct = ['--version'];
@@ -371,7 +371,7 @@ describe.skipIf(process.platform === 'win32')('the production CLI-presence probe
 
   beforeAll(() => {
     scratchHome = createScratchHomeWithOkBin({
-      prefix: 'ok-probe-spawn-',
+      prefix: 'ps-probe-spawn-',
       bins: [SLIDEV_BIN, ...TERMINAL_CLI_BINS, FIXTURE_ONLY_BIN],
     });
     previousHome = process.env.HOME;
@@ -392,7 +392,7 @@ describe.skipIf(process.platform === 'win32')('the production CLI-presence probe
     rmSync(scratchHome, { recursive: true, force: true });
   });
 
-  function okBinGrantedToOwnShells(): string {
+  function psBinGrantedToOwnShells(): string {
     return (
       (buildShellEnv(process.env, { platform: process.platform }).env.PATH ?? '').split(':')[0] ??
       ''
@@ -410,17 +410,17 @@ describe.skipIf(process.platform === 'win32')('the production CLI-presence probe
   }
 
   test('leads the probe PATH with the same OK-managed bin dir the app grants its own shells', () => {
-    const env = okProbeSpawnEnv();
-    expect((env.PATH ?? '').split(':')[0]).toBe(okBinGrantedToOwnShells());
+    const env = psProbeSpawnEnv();
+    expect((env.PATH ?? '').split(':')[0]).toBe(psBinGrantedToOwnShells());
     expect(env.PATH).not.toBe(process.env.PATH);
     expect(env).not.toBe(process.env);
   });
 
   test('does not mark the probe child as the OK Desktop terminal', () => {
-    expect(okProbeSpawnEnv().OK_DESKTOP_TERMINAL).toBeUndefined();
+    expect(psProbeSpawnEnv().PS_DESKTOP_TERMINAL).toBeUndefined();
   });
 
-  test('resolves a ~/.ok/bin CLI that the bare app environment cannot reach', async () => {
+  test('resolves a ~/.ps/bin CLI that the bare app environment cannot reach', async () => {
     expect(await probeThroughProductionAdapter(FIXTURE_ONLY_BIN)).toBe(0);
   });
 
@@ -444,13 +444,13 @@ describe.skipIf(process.platform === 'win32')('the production CLI-presence probe
   });
 });
 
-const WIN_CLI_BIN = 'C:\\Program Files\\Open Knowledge\\resources\\cli\\bin';
+const WIN_CLI_BIN = 'C:\\Program Files\\Palimpsest\\resources\\cli\\bin';
 
 describe('probeEnvVerdict', () => {
   test('reports inherited when the app PATH already carries the OK-managed bin dir', () => {
     expect(
       probeEnvVerdict(
-        { PATH: '/Users/alice/.ok/bin:/usr/bin' },
+        { PATH: '/Users/alice/.ps/bin:/usr/bin' },
         { platform: 'darwin', home: '/Users/alice' },
       ),
     ).toBe('inherited');
@@ -478,14 +478,14 @@ describe('probeEnvVerdict', () => {
     ).toBe('inherited');
   });
 
-  test('every verdict is reachable from a real okProbeSpawnEnv parent environment', () => {
+  test('every verdict is reachable from a real psProbeSpawnEnv parent environment', () => {
     const reached = new Set<string>();
     for (const [parent, options] of [
       [{ PATH: '/usr/bin' }, { platform: 'darwin' as const }],
       [{ Path: 'C:\\Windows' }, { platform: 'win32' as const }],
       [{ PATH: '/usr/bin' }, { platform: 'darwin' as const, home: '/Users/alice' }],
       [
-        { PATH: '/Users/alice/.ok/bin:/usr/bin' },
+        { PATH: '/Users/alice/.ps/bin:/usr/bin' },
         { platform: 'darwin' as const, home: '/Users/alice' },
       ],
     ] as const) {
@@ -509,9 +509,9 @@ describe('the probe env composition line', () => {
       vi.mocked(homedir).mockReturnValueOnce('');
       try {
         const mod = await freshProbeSpawn();
-        mod.okProbeSpawnEnv();
+        mod.psProbeSpawnEnv();
         expect(probeLog.warn).toHaveBeenCalledWith(
-          expect.objectContaining({ verdict: 'not-applicable-no-home', okManagedBinDirs: [] }),
+          expect.objectContaining({ verdict: 'not-applicable-no-home', psManagedBinDirs: [] }),
           expect.any(String),
         );
         expect(probeLog.info).not.toHaveBeenCalled();
@@ -533,15 +533,15 @@ describe('the probe env composition line', () => {
 
   test('logs the composition once per run, not once per probe', async () => {
     const mod = await freshProbeSpawn();
-    mod.okProbeSpawnEnv();
-    mod.okProbeSpawnEnv();
-    mod.okProbeSpawnEnv();
+    mod.psProbeSpawnEnv();
+    mod.psProbeSpawnEnv();
+    mod.psProbeSpawnEnv();
     expect(compositionRecords()).toHaveLength(1);
   });
 
   test('names the verdict and the dir it resolved, at info level', async () => {
     const mod = await freshProbeSpawn();
-    mod.okProbeSpawnEnv();
+    mod.psProbeSpawnEnv();
     const [record] = compositionRecords();
     expect(record?.verdict).toBe(
       probeEnvVerdict(process.env, {
@@ -550,8 +550,8 @@ describe('the probe env composition line', () => {
         cliBinDir: undefined,
       }),
     );
-    expect(record?.okManagedBinDirs).toEqual(
-      okManagedBinDirs({ platform: process.platform, home: homedir(), cliBinDir: undefined }),
+    expect(record?.psManagedBinDirs).toEqual(
+      psManagedBinDirs({ platform: process.platform, home: homedir(), cliBinDir: undefined }),
     );
     expect(probeLog.warn).not.toHaveBeenCalled();
   });

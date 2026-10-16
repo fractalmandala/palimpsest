@@ -24,7 +24,7 @@ async function readDoc(docName: string): Promise<string> {
 }
 
 beforeAll(async () => {
-  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ok-room-canon-'));
+  tmpRoot = await mkdtemp(resolve(tmpdir(), 'ps-room-canon-'));
   contentDir = tmpRoot;
   await writeFile(resolve(contentDir, 'notes.md'), '# original\n', 'utf-8');
   await writeFile(resolve(contentDir, 'pair.md'), 'MD-ORIGINAL\n', 'utf-8');

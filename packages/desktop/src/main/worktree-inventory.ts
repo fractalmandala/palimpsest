@@ -9,9 +9,9 @@ import type {
   WorktreeInventoryOpenRequest,
   WorktreeInventoryOpenResult,
   WorktreeInventoryResult,
-} from '@inkeep/open-knowledge-core';
-import { WORKTREES_PARENT_DIR } from '@inkeep/open-knowledge-core';
-import { isProjectRoot } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { WORKTREES_PARENT_DIR } from '@palimpsest/core';
+import { isProjectRoot } from '@palimpsest/server';
 import { isPathWithinProject } from '../shared/path-containment.ts';
 import { type GitWorktreeSnapshotResult, readGitWorktreeSnapshot } from './list-git-worktrees.ts';
 import { classifyRecentGitAsync, type RecentGitInfo } from './worktree-recents.ts';

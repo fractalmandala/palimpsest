@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import type { OkMenuAction, OkMenuActionOrigin } from './desktop-bridge-types';
+import type { PsMenuAction, PsMenuActionOrigin } from './desktop-bridge-types';
 import {
   __resetLocalMenuActionBusForTests,
   emitLocalMenuAction,
@@ -105,7 +105,7 @@ describe('local menu-action bus', () => {
   });
 
   test('an emitter that declares nothing is launcher-free, not unclassified', () => {
-    let seen: OkMenuActionOrigin | undefined;
+    let seen: PsMenuActionOrigin | undefined;
     subscribeLocalMenuAction((_action, origin) => {
       seen = origin;
     });
@@ -116,13 +116,13 @@ describe('local menu-action bus', () => {
   });
 });
 
-type InboundMenuAction = (action: OkMenuAction, origin: OkMenuActionOrigin) => void;
+type InboundMenuAction = (action: PsMenuAction, origin: PsMenuActionOrigin) => void;
 
 describe('local menu-action bus — bridge forwarder', () => {
   const originalWindow = globalThis.window;
 
-  function setDesktop(okDesktop: unknown): void {
-    globalThis.window = { okDesktop } as unknown as Window & typeof globalThis;
+  function setDesktop(psDesktop: unknown): void {
+    globalThis.window = { psDesktop } as unknown as Window & typeof globalThis;
   }
 
   afterEach(() => {

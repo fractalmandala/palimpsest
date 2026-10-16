@@ -18,7 +18,7 @@ import {
   CONFIG_DOC_NAME_USER,
   CONFIG_DOC_NAMES,
   SYSTEM_DOC_NAME,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   CC1Broadcaster,
@@ -75,8 +75,8 @@ describe('isConfigDoc', () => {
     expect(isConfigDoc(CONFIG_DOC_NAME_PROJECT_LOCAL)).toBe(true);
   });
 
-  test('returns true for the well-known okignore config doc', () => {
-    expect(isConfigDoc('__config__/okignore')).toBe(true);
+  test('returns true for the well-known psignore config doc', () => {
+    expect(isConfigDoc('__config__/psignore')).toBe(true);
     expect(isConfigDoc(CONFIG_DOC_NAME_OKIGNORE)).toBe(true);
   });
 
@@ -96,13 +96,13 @@ describe('isConfigDoc', () => {
     expect(isConfigDoc('__local__/project.yml')).toBe(false);
     expect(isConfigDoc('__local__/')).toBe(false);
     expect(isConfigDoc('a__local__/project')).toBe(false);
-    expect(isConfigDoc('__config__/okignore.md')).toBe(false);
-    expect(isConfigDoc('__config__/okignore/')).toBe(false);
+    expect(isConfigDoc('__config__/psignore.md')).toBe(false);
+    expect(isConfigDoc('__config__/psignore/')).toBe(false);
   });
 
   test('CONFIG_DOC_NAMES contains exactly the four well-known names', () => {
     expect([...CONFIG_DOC_NAMES].sort()).toEqual([
-      '__config__/okignore',
+      '__config__/psignore',
       '__config__/project',
       '__local__/project',
       '__user__/config.yml',
@@ -498,7 +498,7 @@ describe('CC1Broadcaster', () => {
 
   test('emitConfigIgnoreNestedError publishes payload with path + error + seq=1', () => {
     broadcaster.emitConfigIgnoreNestedError(
-      'subdir/.okignore',
+      'subdir/.psignore',
       'failed to read nested ignore file',
     );
     expect(broadcasts).toHaveLength(1);
@@ -507,20 +507,20 @@ describe('CC1Broadcaster', () => {
       v: 1,
       ch: CC1_CHANNEL_CONFIG_IGNORE_NESTED_ERROR,
       seq: 1,
-      path: 'subdir/.okignore',
+      path: 'subdir/.psignore',
       error: 'failed to read nested ignore file',
     });
   });
 
   test('emitConfigIgnoreNestedError emits synchronously — no debounce', () => {
-    broadcaster.emitConfigIgnoreNestedError('a/.okignore', 'oops');
+    broadcaster.emitConfigIgnoreNestedError('a/.psignore', 'oops');
     expect(broadcasts).toHaveLength(1);
   });
 
   test('emitConfigIgnoreNestedError seq increments monotonically across calls', () => {
-    broadcaster.emitConfigIgnoreNestedError('a/.okignore', 'one');
-    broadcaster.emitConfigIgnoreNestedError('b/.okignore', 'two');
-    broadcaster.emitConfigIgnoreNestedError('c/.okignore', 'three');
+    broadcaster.emitConfigIgnoreNestedError('a/.psignore', 'one');
+    broadcaster.emitConfigIgnoreNestedError('b/.psignore', 'two');
+    broadcaster.emitConfigIgnoreNestedError('c/.psignore', 'three');
     expect(broadcasts).toHaveLength(3);
     const seqs = broadcasts.map(
       (b) => CC1ConfigIgnoreNestedErrorPayloadSchema.parse(JSON.parse(b)).seq,
@@ -530,15 +530,15 @@ describe('CC1Broadcaster', () => {
 
   test('emitConfigIgnoreNestedError graceful no-op when __system__ document missing', () => {
     mockHocuspocus.documents.clear();
-    broadcaster.emitConfigIgnoreNestedError('a/.okignore', 'oops');
+    broadcaster.emitConfigIgnoreNestedError('a/.psignore', 'oops');
     expect(broadcasts).toHaveLength(0);
   });
 
   test('emitConfigIgnoreNestedError seq independent from other channels', async () => {
     broadcaster.signal('files');
     await wait(120);
-    broadcaster.emitConfigIgnoreNestedError('a/.okignore', 'first ignore error');
-    broadcaster.emitConfigIgnoreNestedError('b/.okignore', 'second ignore error');
+    broadcaster.emitConfigIgnoreNestedError('a/.psignore', 'first ignore error');
+    broadcaster.emitConfigIgnoreNestedError('b/.psignore', 'second ignore error');
 
     expect(broadcasts).toHaveLength(3);
     const derived = CC1DerivedViewPayloadSchema.parse(JSON.parse(broadcasts[0]));
@@ -550,15 +550,15 @@ describe('CC1Broadcaster', () => {
   });
 
   test('emitConfigIgnoreNestedError updates cc1LastSeq metric for the nested-error channel', () => {
-    broadcaster.emitConfigIgnoreNestedError('a/.okignore', 'one');
-    broadcaster.emitConfigIgnoreNestedError('b/.okignore', 'two');
+    broadcaster.emitConfigIgnoreNestedError('a/.psignore', 'one');
+    broadcaster.emitConfigIgnoreNestedError('b/.psignore', 'two');
     const m = getMetrics();
     expect(m.cc1LastSeq[CC1_CHANNEL_CONFIG_IGNORE_NESTED_ERROR]).toBe(2);
     expect(m.cc1BroadcastCount).toBe(2);
   });
 
   test('emitConfigIgnoreNestedError carries the supplied path and error verbatim', () => {
-    const path = 'deeply/nested/folder/.okignore';
+    const path = 'deeply/nested/folder/.psignore';
     const error = 'EACCES: permission denied';
     broadcaster.emitConfigIgnoreNestedError(path, error);
     const payload = CC1ConfigIgnoreNestedErrorPayloadSchema.parse(JSON.parse(broadcasts[0]));
@@ -582,9 +582,9 @@ describe('isLinkIndexExcludedDoc', () => {
 
   test('admits managed-artifact skills and template content docs as link-index sources', () => {
     expect(isLinkIndexExcludedDoc('__skill__/project/my-skill')).toBe(false);
-    expect(isLinkIndexExcludedDoc('.ok/templates/daily')).toBe(false);
-    expect(isLinkIndexExcludedDoc('docs/.ok/templates/meeting')).toBe(false);
-    expect(isLinkIndexExcludedDoc('a/b/c/.ok/templates/note')).toBe(false);
+    expect(isLinkIndexExcludedDoc('.ps/templates/daily')).toBe(false);
+    expect(isLinkIndexExcludedDoc('docs/.ps/templates/meeting')).toBe(false);
+    expect(isLinkIndexExcludedDoc('a/b/c/.ps/templates/note')).toBe(false);
     expect(isLinkIndexExcludedDoc('__template__/docs/my-template')).toBe(false);
   });
 
@@ -601,7 +601,7 @@ describe('isProblemsPlaneExcludedDoc', () => {
       true,
     );
     expect(isProblemsPlaneExcludedDoc('.github/skills/record-a-decision/SKILL')).toBe(true);
-    expect(isProblemsPlaneExcludedDoc('.ok/skills/record-a-decision/SKILL')).toBe(true);
+    expect(isProblemsPlaneExcludedDoc('.ps/skills/record-a-decision/SKILL')).toBe(true);
     expect(isProblemsPlaneExcludedDoc('.claude/skills/record-a-decision/scripts/notes')).toBe(true);
   });
 
@@ -622,9 +622,9 @@ describe('isProblemsPlaneExcludedDoc', () => {
   });
 
   test('keeps folder-local templates, which are authored content under a dot dir', () => {
-    expect(isProblemsPlaneExcludedDoc('.ok/templates/daily')).toBe(false);
-    expect(isProblemsPlaneExcludedDoc('docs/.ok/templates/meeting')).toBe(false);
-    expect(isProblemsPlaneExcludedDoc('a/b/c/.ok/templates/note')).toBe(false);
+    expect(isProblemsPlaneExcludedDoc('.ps/templates/daily')).toBe(false);
+    expect(isProblemsPlaneExcludedDoc('docs/.ps/templates/meeting')).toBe(false);
+    expect(isProblemsPlaneExcludedDoc('a/b/c/.ps/templates/note')).toBe(false);
   });
 
   test('keeps ordinary documents, including a visible-path skills root', () => {

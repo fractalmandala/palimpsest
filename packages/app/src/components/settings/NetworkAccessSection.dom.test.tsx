@@ -84,12 +84,12 @@ beforeEach(() => {
   restartCalls.length = 0;
   toastErrors.length = 0;
   restartImpl = async () => ({ ok: true });
-  (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {};
+  (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {};
 });
 
 afterEach(() => {
   cleanup();
-  (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = undefined;
+  (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = undefined;
 });
 
 describe('NetworkAccessSection', () => {
@@ -108,7 +108,7 @@ describe('NetworkAccessSection', () => {
 
   test('shows a hosting-active indicator when exposure is enabled and the port is bound', () => {
     projectLocalConfig = { server: { allowExternal: true } };
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:24550' },
     };
     render(<NetworkAccessSection />);
@@ -187,7 +187,7 @@ describe('NetworkAccessSection', () => {
 
   test('a pinned port the server did not bind surfaces a warning and re-enables apply', async () => {
     projectConfig = { server: { port: 24550 } };
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:51234' },
     };
     render(<NetworkAccessSection />);
@@ -200,7 +200,7 @@ describe('NetworkAccessSection', () => {
 
   test('no warning when the bound port matches the configured port', () => {
     projectConfig = { server: { port: 24550 } };
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:24550' },
     };
     render(<NetworkAccessSection />);
@@ -208,7 +208,7 @@ describe('NetworkAccessSection', () => {
   });
 
   test('preflight probe flags a typed fixed port that is already in use', async () => {
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:24550' },
       remoteAccess: { probePort: async () => false },
     };
@@ -225,7 +225,7 @@ describe('NetworkAccessSection', () => {
   });
 
   test('preflight probe confirms a free typed fixed port', async () => {
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:24550' },
       remoteAccess: { probePort: async () => true },
     };
@@ -241,7 +241,7 @@ describe('NetworkAccessSection', () => {
   });
 
   test('a stale port verdict clears immediately when the draft changes', async () => {
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:24550' },
       remoteAccess: { probePort: async (p: number) => p === 24580 },
     };
@@ -262,7 +262,7 @@ describe('NetworkAccessSection', () => {
   });
 
   test('the port we are already bound to counts as available even when the probe says taken', async () => {
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:24560' },
       remoteAccess: { probePort: async () => false },
     };
@@ -388,11 +388,11 @@ describe('NetworkAccessSection', () => {
 
   test.each([
     [undefined, 'ok'],
-    ['ok-beta', 'ok-beta'],
+    ['ps-beta', 'ps-beta'],
   ])(
     'the restart IPC failure toast names the running channel CLI (%s)',
     async (cliCommandName, command) => {
-      (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+      (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
         cliCommandName,
       };
       restartImpl = () => Promise.reject(new Error('unexpected main-side error'));
@@ -448,7 +448,7 @@ describe('NetworkAccessSection', () => {
   test('disabling exposure is never blocked by a taken fixed port (recovery path)', async () => {
     projectLocalConfig = { server: { allowExternal: true } };
     projectConfig = { server: { externalUrl: 'https://box.example.com', port: 24550 } };
-    (globalThis as unknown as { window: { okDesktop?: unknown } }).window.okDesktop = {
+    (globalThis as unknown as { window: { psDesktop?: unknown } }).window.psDesktop = {
       config: { apiOrigin: 'http://localhost:51234' },
       remoteAccess: { probePort: async () => false },
     };

@@ -18,7 +18,7 @@ describe('PTY host — real shell I/O (Node runtime)', () => {
   test.skipIf(!TERMINAL_PLATFORM)(
     'real interactive shell round-trips commands, strips env markers, survives a kill, and reports a bad shell',
     async () => {
-      const outputDir = mkdtempSync(join(tmpdir(), 'ok-real-pty-wrapper-'));
+      const outputDir = mkdtempSync(join(tmpdir(), 'ps-real-pty-wrapper-'));
       try {
         const output = await runHarness(outputDir);
         for (const line of output
@@ -37,9 +37,9 @@ describe('PTY host — real shell I/O (Node runtime)', () => {
   test.skipIf(!TERMINAL_PLATFORM)(
     'refuses every scenario a spent budget cannot cover, rather than running into the hard timeout',
     async () => {
-      const outputDir = mkdtempSync(join(tmpdir(), 'ok-real-pty-budget-'));
+      const outputDir = mkdtempSync(join(tmpdir(), 'ps-real-pty-budget-'));
       try {
-        const failure = await runHarness(outputDir, { OK_PTY_HARNESS_BUDGET_MS: '1' }).then(
+        const failure = await runHarness(outputDir, { PS_PTY_HARNESS_BUDGET_MS: '1' }).then(
           () => null,
           (error: unknown) => (error as Error).message,
         );

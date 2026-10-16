@@ -11,7 +11,7 @@ import {
   type LifecycleStatus,
   PageHeadingsSuccessSchema,
   PagesSuccessSchema,
-} from '@inkeep/open-knowledge-core';
+} from '@palimpsest/core';
 import { collectReferencedAssets } from '../asset-references.ts';
 import { isConfigDoc, isSystemDoc } from '../cc1-broadcast.ts';
 import type { ConflictAuthority } from '../conflict-authority.ts';

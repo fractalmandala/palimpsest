@@ -2,7 +2,7 @@ export type BundleId = 'discovery' | 'project' | 'write-skill';
 
 export const BUNDLE_SKILL_NAME: Record<BundleId, string> = {
   discovery: 'open-knowledge-discovery',
-  project: 'open-knowledge',
+  project: 'palimpsest',
   'write-skill': 'open-knowledge-write-skill',
 };
 

@@ -65,14 +65,14 @@ describe('buildPreviewThemeMessage', () => {
     const message = buildPreviewThemeMessage('dark', withPalette({ '--primary': '#bd93f9' })) as
       | Record<string, unknown>
       | undefined;
-    expect(message?.okPreviewTheme).toBe('dark');
-    expect((message?.okPreviewTokens as Record<string, string> | undefined)?.['--primary']).toBe(
+    expect(message?.psPreviewTheme).toBe('dark');
+    expect((message?.psPreviewTokens as Record<string, string> | undefined)?.['--primary']).toBe(
       '#bd93f9',
     );
   });
 
   test('carries an empty token map under the default theme', () => {
     const message = buildPreviewThemeMessage('light', NO_PALETTE) as Record<string, unknown>;
-    expect(message.okPreviewTokens).toEqual({});
+    expect(message.psPreviewTokens).toEqual({});
   });
 });

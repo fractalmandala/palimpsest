@@ -2,9 +2,9 @@ import {
   clampToCodeUnits,
   mapControlCharactersToSpace,
   stripInvisibleCharacters,
-} from '@inkeep/open-knowledge-core/bug-report-sidecar/note-content';
+} from '@palimpsest/core/bug-report-sidecar/note-content';
 
-const SUPPORT_EMAIL = 'support@inkeep.com';
+const SUPPORT_EMAIL = 'https://github.com/fractalmandala/palimpsest/issues';
 
 export function supportMailtoUrl(subject: string): string {
   return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`;

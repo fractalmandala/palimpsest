@@ -14,7 +14,7 @@ const MAIN: BuildArtifactCheck = {
 };
 
 const CLI: BuildArtifactCheck = {
-  name: '@inkeep/open-knowledge CLI',
+  name: '@palimpsest/cli CLI',
   out: '/pkg/../cli/dist/index.mjs',
   srcs: [],
 };
@@ -59,7 +59,7 @@ describe('evaluateBuild — missing-artifact polarity', () => {
       exists: () => false,
       mtimeMs: () => 0,
       smokeEnabled: true,
-      packagedOverride: '/Applications/OpenKnowledge.app',
+      packagedOverride: '/Applications/Palimpsest.app',
     });
     expect(verdict.missing).toEqual([]);
   });
@@ -100,15 +100,15 @@ describe('runBuildGuard', () => {
         smokeEnabled: true,
         packagedOverride: undefined,
       }),
-    ).toThrow(/@inkeep\/open-knowledge CLI/);
+    ).toThrow(/@inkeep\/palimpsest CLI/);
   });
 
   it('names the CLI build command only when the CLI artifact is the missing one', () => {
     expect(formatMissingArtifacts([{ name: CLI.name, out: CLI.out }])).toContain(
-      'pnpm --filter @inkeep/open-knowledge run build',
+      'pnpm --filter @palimpsest/cli run build',
     );
     expect(formatMissingArtifacts([{ name: 'main', out: MAIN.out }])).not.toContain(
-      'pnpm --filter @inkeep/open-knowledge run build',
+      'pnpm --filter @palimpsest/cli run build',
     );
   });
 
@@ -151,14 +151,14 @@ describe('the packaged escape hatch answers both branches the same way', () => {
         exists: () => true,
         mtimeMs: (p) => (p === MAIN.out ? 100 : 200),
         smokeEnabled: true,
-        packagedOverride: '/Applications/OpenKnowledge.app',
+        packagedOverride: '/Applications/Palimpsest.app',
       }),
     ).toEqual({ missing: [], stale: [] });
   });
 
   it('an explicit undefined override means not-packaged, whatever the ambient env says', () => {
-    const previous = process.env.OK_DESKTOP_PACKAGED_APP;
-    process.env.OK_DESKTOP_PACKAGED_APP = '/Applications/OpenKnowledge.app';
+    const previous = process.env.PS_DESKTOP_PACKAGED_APP;
+    process.env.PS_DESKTOP_PACKAGED_APP = '/Applications/Palimpsest.app';
     try {
       expect(
         evaluateBuild({
@@ -170,8 +170,8 @@ describe('the packaged escape hatch answers both branches the same way', () => {
         }).missing,
       ).toHaveLength(1);
     } finally {
-      if (previous === undefined) delete process.env.OK_DESKTOP_PACKAGED_APP;
-      else process.env.OK_DESKTOP_PACKAGED_APP = previous;
+      if (previous === undefined) delete process.env.PS_DESKTOP_PACKAGED_APP;
+      else process.env.PS_DESKTOP_PACKAGED_APP = previous;
     }
   });
 });
@@ -187,7 +187,7 @@ describe('the real CHECKS list, not an injected one', () => {
     const cli = verdict.missing.find((m) => m.name.includes('CLI'));
     expect(cli?.out).toMatch(/cli[/\\]dist[/\\]index\.mjs$/);
     const cliExecutable = verdict.missing.find(
-      (m) => m.name === '@inkeep/open-knowledge CLI executable',
+      (m) => m.name === '@palimpsest/cli CLI executable',
     );
     expect(cliExecutable?.out).toMatch(/cli[/\\]dist[/\\]cli\.mjs$/);
     expect(verdict.missing.map((m) => m.name)).toEqual([
@@ -197,8 +197,8 @@ describe('the real CHECKS list, not an injected one', () => {
       'preload',
       'renderer',
       'utility server entry',
-      '@inkeep/open-knowledge CLI',
-      '@inkeep/open-knowledge CLI executable',
+      '@palimpsest/cli CLI',
+      '@palimpsest/cli CLI executable',
     ]);
   });
 });

@@ -1,10 +1,10 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type {
-  OkDesktopBridge,
-  OkFindEnclosingGitRootResult,
-  OkFindEnclosingProjectRootResult,
-  OkFolderState,
+  PsDesktopBridge,
+  PsFindEnclosingGitRootResult,
+  PsFindEnclosingProjectRootResult,
+  PsFolderState,
 } from '@/lib/desktop-bridge-types';
 import { CreateProjectDialog } from './CreateProjectDialog';
 
@@ -36,21 +36,21 @@ const ASYNC_TIMEOUT_MS = 2000;
 
 const PARENT = '/Users/test/Projects';
 const PROJECT_NAME = 'Andrew Brain';
-const FIRST_GIT_RESULT: OkFindEnclosingGitRootResult = {
+const FIRST_GIT_RESULT: PsFindEnclosingGitRootResult = {
   gitRoot: '/Users/test',
   distance: 1,
 };
 
 interface ProgrammableBridgeStub {
-  bridge: OkDesktopBridge;
-  setEnclosingGitResult(result: OkFindEnclosingGitRootResult | null): void;
+  bridge: PsDesktopBridge;
+  setEnclosingGitResult(result: PsFindEnclosingGitRootResult | null): void;
   setRemoveGitFolderImpl(impl: (gitRoot: string) => Promise<void>): void;
   setPickedParent(picked: string | null): void;
   setFindEnclosingProjectRootImpl(
-    impl: (path: string) => Promise<OkFindEnclosingProjectRootResult | null>,
+    impl: (path: string) => Promise<PsFindEnclosingProjectRootResult | null>,
   ): void;
   setFindEnclosingGitRootImpl(
-    impl: (path: string) => Promise<OkFindEnclosingGitRootResult | null>,
+    impl: (path: string) => Promise<PsFindEnclosingGitRootResult | null>,
   ): void;
   readonly findGitCalls: ReadonlyArray<string>;
   readonly folderStateCalls: ReadonlyArray<string>;
@@ -59,19 +59,19 @@ interface ProgrammableBridgeStub {
 }
 
 function makeStubBridge(
-  initialGit: OkFindEnclosingGitRootResult | null,
+  initialGit: PsFindEnclosingGitRootResult | null,
   initialPickedParent: string | null,
 ): ProgrammableBridgeStub {
   const findGitCalls: string[] = [];
   const folderStateCalls: string[] = [];
   const removeGitCalls: string[] = [];
   const openFolderCalls: number[] = [];
-  let currentGitResult: OkFindEnclosingGitRootResult | null = initialGit;
+  let currentGitResult: PsFindEnclosingGitRootResult | null = initialGit;
   let currentPickedParent: string | null = initialPickedParent;
   let removeGitImpl: (gitRoot: string) => Promise<void> = async () => undefined;
-  let findEnclosingProjectImpl: (path: string) => Promise<OkFindEnclosingProjectRootResult | null> =
+  let findEnclosingProjectImpl: (path: string) => Promise<PsFindEnclosingProjectRootResult | null> =
     async () => null;
-  let findEnclosingGitImpl: (path: string) => Promise<OkFindEnclosingGitRootResult | null> = async (
+  let findEnclosingGitImpl: (path: string) => Promise<PsFindEnclosingGitRootResult | null> = async (
     path,
   ) => {
     findGitCalls.push(path);
@@ -81,7 +81,7 @@ function makeStubBridge(
   const bridge = {
     fs: {
       defaultProjectsRoot: async (): Promise<string> => PARENT,
-      folderState: async (path: string): Promise<OkFolderState> => {
+      folderState: async (path: string): Promise<PsFolderState> => {
         folderStateCalls.push(path);
         return 'free';
       },
@@ -112,7 +112,7 @@ function makeStubBridge(
       createNew: async () => undefined,
       open: async () => undefined,
     },
-  } as unknown as OkDesktopBridge;
+  } as unknown as PsDesktopBridge;
 
   return {
     bridge,
@@ -486,10 +486,10 @@ describe('CreateProjectDialog cascade staleness (Tier-3 mount)', () => {
     );
 
     let probeCallCount = 0;
-    let resolveDeferred: (value: OkFindEnclosingGitRootResult | null) => void = () => {};
+    let resolveDeferred: (value: PsFindEnclosingGitRootResult | null) => void = () => {};
     stub.setFindEnclosingGitRootImpl((_path) => {
       probeCallCount += 1;
-      return new Promise<OkFindEnclosingGitRootResult | null>((r) => {
+      return new Promise<PsFindEnclosingGitRootResult | null>((r) => {
         resolveDeferred = r;
       });
     });
@@ -546,10 +546,10 @@ describe('CreateProjectDialog cascade staleness (Tier-3 mount)', () => {
       if (typeof pollingCallback !== 'function') return;
 
       let probeCallCount = 0;
-      let resolveDeferred: (value: OkFindEnclosingGitRootResult | null) => void = () => {};
+      let resolveDeferred: (value: PsFindEnclosingGitRootResult | null) => void = () => {};
       stub.setFindEnclosingGitRootImpl((_path) => {
         probeCallCount += 1;
-        return new Promise<OkFindEnclosingGitRootResult | null>((r) => {
+        return new Promise<PsFindEnclosingGitRootResult | null>((r) => {
           resolveDeferred = r;
         });
       });

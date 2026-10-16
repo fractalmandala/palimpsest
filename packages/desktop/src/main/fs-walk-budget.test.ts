@@ -12,7 +12,7 @@ import {
 import { readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { previewContent } from '@inkeep/open-knowledge';
+import { previewContent } from '@palimpsest/cli';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { type TraversalEntry, walkExceedsCap } from './fs-walk-budget.ts';
 
@@ -20,7 +20,7 @@ let tmpRoot: string;
 let fixtureRoot: string;
 
 beforeEach(() => {
-  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ok-walk-budget-descent-'));
+  tmpRoot = mkdtempSync(resolve(tmpdir(), 'ps-walk-budget-descent-'));
   fixtureRoot = realpathSync(tmpRoot);
 });
 

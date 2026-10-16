@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import type { OkDesktopBridge } from '@/lib/desktop-bridge-types';
+import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 let relaunchInFlight = false;
 const listeners = new Set<() => void>();
@@ -27,7 +27,7 @@ export function subscribeRelaunchInFlight(listener: () => void): () => void {
 }
 
 export function attachRelaunchStateSubscribers(
-  bridge: Pick<OkDesktopBridge, 'onUpdateRelaunching' | 'onUpdateRelaunchFailed'>,
+  bridge: Pick<PsDesktopBridge, 'onUpdateRelaunching' | 'onUpdateRelaunchFailed'>,
 ): () => void {
   const offs = [
     bridge.onUpdateRelaunching(() => setInFlight(true)),
@@ -41,7 +41,7 @@ export function attachRelaunchStateSubscribers(
 export function installRelaunchStateBridge(): void {
   if (attached) return;
   if (typeof window === 'undefined') return;
-  const bridge = window.okDesktop;
+  const bridge = window.psDesktop;
   if (!bridge) return;
   attached = true;
   attachRelaunchStateSubscribers(bridge);

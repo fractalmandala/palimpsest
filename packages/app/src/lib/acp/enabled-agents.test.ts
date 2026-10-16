@@ -19,7 +19,7 @@ import {
   terminalEnabledKey,
 } from './enabled-agents';
 
-const STORAGE_KEY = 'ok-acp-enabled-agents-v1';
+const STORAGE_KEY = 'ps-acp-enabled-agents-v1';
 
 function overrides(): Record<string, boolean> {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}');

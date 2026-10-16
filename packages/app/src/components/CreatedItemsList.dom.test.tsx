@@ -3,7 +3,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import type { OkScaffoldPlan, OkSeedPackInfo } from '@/lib/desktop-bridge-types';
+import type { PsScaffoldPlan, PsSeedPackInfo } from '@/lib/desktop-bridge-types';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';
 
 vi.doMock('@lingui/react/macro', () => ({
@@ -20,7 +20,7 @@ vi.doMock('@lingui/core/macro', () => ({
     (value === 1 ? options.one : options.other).replace('#', String(value)),
 }));
 
-function pack(folders: Array<{ path: string; summary: string }>): OkSeedPackInfo {
+function pack(folders: Array<{ path: string; summary: string }>): PsSeedPackInfo {
   return {
     id: 'knowledge-base',
     name: 'Knowledge base',
@@ -30,7 +30,7 @@ function pack(folders: Array<{ path: string; summary: string }>): OkSeedPackInfo
   };
 }
 
-async function renderList(plan: OkScaffoldPlan, selectedPack: OkSeedPackInfo) {
+async function renderList(plan: PsScaffoldPlan, selectedPack: PsSeedPackInfo) {
   const { CreatedItemsList } = await import('./CreatedItemsList');
   render(
     <TooltipProvider>
@@ -48,13 +48,13 @@ describe('CreatedItemsList — cards + count derivation', () => {
   afterEach(cleanup);
 
   test('subfolder mode: the parent folder gets no card and the count matches the cards', async () => {
-    const plan: OkScaffoldPlan = {
+    const plan: PsScaffoldPlan = {
       created: [
         { kind: 'folder', path: 'brain' },
         { kind: 'folder', path: 'brain/external-sources' },
         { kind: 'folder', path: 'brain/research' },
         { kind: 'folder', path: 'brain/articles' },
-        { kind: 'file', path: 'brain/external-sources/.ok/templates/clip.md' },
+        { kind: 'file', path: 'brain/external-sources/.ps/templates/clip.md' },
       ],
       skipped: [],
       warnings: [],
@@ -74,10 +74,10 @@ describe('CreatedItemsList — cards + count derivation', () => {
   });
 
   test('a fully-present folder (not in created) is dropped from cards and the count', async () => {
-    const plan: OkScaffoldPlan = {
+    const plan: PsScaffoldPlan = {
       created: [
         { kind: 'folder', path: 'notes' },
-        { kind: 'file', path: 'notes/.ok/templates/note.md' },
+        { kind: 'file', path: 'notes/.ps/templates/note.md' },
       ],
       skipped: [],
       warnings: [],
@@ -96,8 +96,8 @@ describe('CreatedItemsList — cards + count derivation', () => {
   });
 
   test('template-only reinstall (no folder entry) still shows the folder card', async () => {
-    const plan: OkScaffoldPlan = {
-      created: [{ kind: 'file', path: 'notes/.ok/templates/note.md' }],
+    const plan: PsScaffoldPlan = {
+      created: [{ kind: 'file', path: 'notes/.ps/templates/note.md' }],
       skipped: [],
       warnings: [],
     };
@@ -107,11 +107,11 @@ describe('CreatedItemsList — cards + count derivation', () => {
     expect(folderCountText()).toBe('1 folder');
   });
 
-  test('template files under .ok/ do not render as file cards', async () => {
-    const plan: OkScaffoldPlan = {
+  test('template files under .ps/ do not render as file cards', async () => {
+    const plan: PsScaffoldPlan = {
       created: [
         { kind: 'folder', path: 'notes' },
-        { kind: 'file', path: 'notes/.ok/templates/note.md' },
+        { kind: 'file', path: 'notes/.ps/templates/note.md' },
         { kind: 'file', path: 'log.md' },
       ],
       skipped: [],
@@ -126,11 +126,11 @@ describe('CreatedItemsList — cards + count derivation', () => {
 
 describe('CreatedItemsList — required plugins', () => {
   test('a pending required plugin renders with its label and an undo pointer', async () => {
-    const plan: OkScaffoldPlan = {
+    const plan: PsScaffoldPlan = {
       created: [],
       skipped: [],
       warnings: [],
-      requiredPlugins: [{ id: 'okf', pending: true }],
+      requiredPlugins: [{ id: 'psf', pending: true }],
     };
     await renderList(plan, pack([]));
 
@@ -139,11 +139,11 @@ describe('CreatedItemsList — required plugins', () => {
   });
 
   test('an already-enabled required plugin renders no row', async () => {
-    const plan: OkScaffoldPlan = {
+    const plan: PsScaffoldPlan = {
       created: [{ kind: 'file', path: 'log.md' }],
       skipped: [],
       warnings: [],
-      requiredPlugins: [{ id: 'okf', pending: false }],
+      requiredPlugins: [{ id: 'psf', pending: false }],
     };
     await renderList(plan, pack([]));
 

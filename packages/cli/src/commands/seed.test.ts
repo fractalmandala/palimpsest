@@ -11,9 +11,9 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
-import { STARTER_PACKS } from '@inkeep/open-knowledge-server';
+import { STARTER_PACKS } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { CONFIG_FILENAME, OK_DIR } from '../constants.ts';
+import { CONFIG_FILENAME, PS_DIR } from '../constants.ts';
 import { runSeed } from './seed.ts';
 
 const STARTER_FOLDERS = STARTER_PACKS['knowledge-base'].folders;
@@ -21,7 +21,7 @@ const STARTER_FOLDERS = STARTER_PACKS['knowledge-base'].folders;
 let testDir: string;
 
 beforeEach(() => {
-  testDir = mkdtempSync(join(tmpdir(), 'ok-seed-cmd-test-'));
+  testDir = mkdtempSync(join(tmpdir(), 'ps-seed-cmd-test-'));
 });
 
 afterEach(() => {
@@ -29,8 +29,8 @@ afterEach(() => {
 });
 
 function scaffoldOkDir(dir: string, configYml = 'content:\n  dir: .\n'): void {
-  mkdirSync(join(dir, OK_DIR), { recursive: true });
-  writeFileSync(join(dir, OK_DIR, CONFIG_FILENAME), configYml, 'utf-8');
+  mkdirSync(join(dir, PS_DIR), { recursive: true });
+  writeFileSync(join(dir, PS_DIR, CONFIG_FILENAME), configYml, 'utf-8');
 }
 
 function yes(): NodeJS.ReadableStream {
@@ -53,7 +53,7 @@ describe('runSeed — happy path', () => {
     }
     expect(existsSync(join(testDir, 'log.md'))).toBe(true);
     for (const folder of STARTER_FOLDERS) {
-      const fmPath = join(testDir, folder.path, '.ok', 'frontmatter.yml');
+      const fmPath = join(testDir, folder.path, '.ps', 'frontmatter.yml');
       expect(existsSync(fmPath)).toBe(true);
       expect(readFileSync(fmPath, 'utf-8')).toContain(folder.title);
     }
@@ -103,14 +103,14 @@ describe('runSeed — --dry-run', () => {
     }
   });
 
-  test('previews in an uninitialized dir without requiring `ok init`', async () => {
+  test('previews in an uninitialized dir without requiring `ps init`', async () => {
     const result = await runSeed({ cwd: testDir, pack: 'knowledge-base', dryRun: true });
     expect(result.status).toBe('dry-run');
     expect(result.exitCode).toBe(0);
     for (const folder of STARTER_FOLDERS) {
       expect(existsSync(join(testDir, folder.path))).toBe(false);
     }
-    expect(existsSync(join(testDir, OK_DIR, CONFIG_FILENAME))).toBe(false);
+    expect(existsSync(join(testDir, PS_DIR, CONFIG_FILENAME))).toBe(false);
   });
 
   test('returns no-op (not dry-run) when the directory is already fully seeded', async () => {
@@ -138,7 +138,7 @@ describe('runSeed — no-op', () => {
     mkdirSync(join(testDir, '.claude'), { recursive: true });
     await runSeed({ cwd: testDir, yes: true });
     rmSync(join(testDir, '.claude', 'skills'), { recursive: true, force: true });
-    rmSync(join(testDir, OK_DIR, 'skills'), { recursive: true, force: true });
+    rmSync(join(testDir, PS_DIR, 'skills'), { recursive: true, force: true });
 
     const preview = await runSeed({ cwd: testDir, dryRun: true });
     expect(preview.status).not.toBe('no-op');
@@ -166,7 +166,7 @@ describe('runSeed — no-op', () => {
 
   test('an agent folder symlinked outside the project gets the symlink-specific guidance', async () => {
     scaffoldOkDir(testDir);
-    const outside = mkdtempSync(join(tmpdir(), 'ok-seed-outside-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-seed-outside-'));
     try {
       symlinkSync(outside, join(testDir, '.claude'));
       mkdirSync(join(outside, 'skills'), { recursive: true });
@@ -188,17 +188,17 @@ describe('runSeed — refusal notes name the running channel CLI', () => {
 
   test.each([
     ['stable', 'ok'],
-    ['beta', 'ok-beta'],
+    ['beta', 'ps-beta'],
   ])('%s: both refusal notes name %s seed', async (channel, command) => {
-    vi.stubEnv('OK_CHANNEL', channel);
+    vi.stubEnv('PS_CHANNEL', channel);
     scaffoldOkDir(testDir);
     const noFolder = await runSeed({ cwd: testDir, yes: true });
     expect(noFolder.message).toContain(
       `Create the folder your agent uses, then run \`${command} seed\` again to install them.`,
     );
 
-    const escaped = mkdtempSync(join(tmpdir(), 'ok-seed-escaped-'));
-    const outside = mkdtempSync(join(tmpdir(), 'ok-seed-outside-'));
+    const escaped = mkdtempSync(join(tmpdir(), 'ps-seed-escaped-'));
+    const outside = mkdtempSync(join(tmpdir(), 'ps-seed-outside-'));
     try {
       scaffoldOkDir(escaped);
       symlinkSync(outside, join(escaped, '.claude'));
@@ -215,11 +215,11 @@ describe('runSeed — refusal notes name the running channel CLI', () => {
 });
 
 describe('runSeed — prerequisite', () => {
-  test('exits 1 when .ok/ is absent', async () => {
+  test('exits 1 when .ps/ is absent', async () => {
     const result = await runSeed({ cwd: testDir });
     expect(result.status).toBe('prerequisite-missing');
     expect(result.exitCode).toBe(1);
-    expect(result.message).toContain('ok init');
+    expect(result.message).toContain('ps init');
   });
 });
 
@@ -234,7 +234,7 @@ describe('runSeed — --root', () => {
     }
     expect(existsSync(join(testDir, 'brain', 'log.md'))).toBe(true);
     for (const folder of STARTER_FOLDERS) {
-      const fmPath = join(testDir, 'brain', folder.path, '.ok', 'frontmatter.yml');
+      const fmPath = join(testDir, 'brain', folder.path, '.ps', 'frontmatter.yml');
       expect(existsSync(fmPath)).toBe(true);
     }
   });
@@ -275,8 +275,8 @@ describe('runSeed — --root', () => {
     for (const folder of STARTER_FOLDERS) {
       expect(existsSync(join(testDir, 'work', folder.path))).toBe(true);
       expect(existsSync(join(testDir, 'personal', folder.path))).toBe(true);
-      expect(existsSync(join(testDir, 'work', folder.path, '.ok', 'frontmatter.yml'))).toBe(true);
-      expect(existsSync(join(testDir, 'personal', folder.path, '.ok', 'frontmatter.yml'))).toBe(
+      expect(existsSync(join(testDir, 'work', folder.path, '.ps', 'frontmatter.yml'))).toBe(true);
+      expect(existsSync(join(testDir, 'personal', folder.path, '.ps', 'frontmatter.yml'))).toBe(
         true,
       );
     }

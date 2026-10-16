@@ -4,7 +4,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { atomicTempPath } from '@inkeep/open-knowledge-core/server';
+import { atomicTempPath } from '@palimpsest/core/server';
 import {
   CHECKPOINT_KIND_REGISTRY,
   CHECKPOINT_KINDS,
@@ -12,7 +12,7 @@ import {
   formatCheckpointBodyLine,
   parseCheckpoint,
   parseOkActor,
-} from '@inkeep/open-knowledge-core/shadow-repo-layout';
+} from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -60,7 +60,7 @@ vi.mock('./fs-traced.ts', async (importOriginal) => {
 let tmpDir: string;
 
 beforeEach(async () => {
-  tmpDir = await mkdtemp(resolve(tmpdir(), 'ok-shadow-test-'));
+  tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-shadow-test-'));
 });
 
 afterEach(async () => {
@@ -89,7 +89,7 @@ describe('initShadowRepo', () => {
     expect(worktree).toBe(projectRoot);
 
     const userName = (await sg.raw('config', 'user.name')).trim();
-    expect(userName).toBe('openknowledge');
+    expect(userName).toBe('palimpsest');
   });
 
   test('does not modify .gitignore (shadow is inside .git/ already)', async () => {
@@ -172,7 +172,7 @@ describe('initShadowRepo', () => {
     expect((await initShadowRepo(other)).gitDir).not.toBe(legacyDir);
   });
 
-  test('R9 rename shim: legacy .git/openknowledge/ is renamed to .git/ok/', async () => {
+  test('R9 rename shim: legacy .git/palimpsest/ is renamed to .git/ok/', async () => {
     const projectRoot = resolve(tmpDir, 'legacy');
     mkdirSync(projectRoot, { recursive: true });
 
@@ -182,7 +182,7 @@ describe('initShadowRepo', () => {
     await git.raw('config', 'user.name', 'Test');
     await git.raw('config', 'user.email', 'test@test.com');
 
-    const legacyDir = resolve(projectRoot, '.git/openknowledge');
+    const legacyDir = resolve(projectRoot, '.git/palimpsest');
     mkdirSync(legacyDir, { recursive: true });
     await git.raw('init', '--bare', legacyDir);
     configureTestGitRepository(legacyDir);
@@ -209,7 +209,7 @@ describe('initShadowRepo', () => {
     await git.raw('config', 'user.name', 'Test');
     await git.raw('config', 'user.email', 'test@test.com');
 
-    const legacyDir = resolve(projectRoot, '.git/openknowledge');
+    const legacyDir = resolve(projectRoot, '.git/palimpsest');
     const newDir = resolve(projectRoot, '.git/ok');
     mkdirSync(legacyDir, { recursive: true });
     mkdirSync(newDir, { recursive: true });
@@ -437,7 +437,7 @@ describe('commitWip', () => {
     expect(authorEmail).toBe(writer.email);
 
     const committerName = (await sg.raw('log', '-1', '--format=%cn', sha)).trim();
-    expect(committerName).toBe('openknowledge');
+    expect(committerName).toBe('palimpsest');
   });
 
   test('second commit parents the first', async () => {
@@ -480,7 +480,7 @@ describe('commitWip', () => {
     const agent: WriterIdentity = {
       id: 'agent-cursor',
       name: 'cursor-agent',
-      email: 'cursor@openknowledge.local',
+      email: 'cursor@palimpsest.local',
     };
 
     writeFileSync(resolve(contentDir, 'intro.md'), '# Hello from human\n');
@@ -587,7 +587,7 @@ describe('commitUpstreamImport', () => {
     expect(authorName).toBe('Git (upstream)');
   });
 
-  test('commit body carries ok-actor: line (US-015)', async () => {
+  test('commit body carries ps-actor: line (US-015)', async () => {
     writeFileSync(resolve(contentDir, 'api.md'), '# API\n');
 
     const sha = await commitUpstreamImport(shadow, 'content/docs', 'aabb0011', 'ccdd2233');
@@ -631,7 +631,7 @@ describe('safetyCheckpoint', () => {
     expect(subject).toBe('checkpoint: pre-rollback');
   });
 
-  test('commit body carries ok-actor: line (US-015)', async () => {
+  test('commit body carries ps-actor: line (US-015)', async () => {
     writeFileSync(resolve(contentDir, 'intro.md'), '# Hello\n');
 
     const sha = await safetyCheckpoint(shadow, 'content/docs', { action: 'rollback', context: {} });
@@ -641,7 +641,7 @@ describe('safetyCheckpoint', () => {
     const actor = parseOkActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
-    expect(actor?.display_name).toBe('OpenKnowledge (service)');
+    expect(actor?.display_name).toBe('Palimpsest (service)');
   });
 });
 
@@ -694,7 +694,7 @@ describe('parkBranch', () => {
     expect(sha).toBeNull();
   });
 
-  test('commit body carries ok-actor: line (US-015)', async () => {
+  test('commit body carries ps-actor: line (US-015)', async () => {
     const docs: ParkableDoc[] = [
       { docName: 'intro', markdown: '# Hello\n', diskSnapshot: '# Hello\n' },
     ];
@@ -706,7 +706,7 @@ describe('parkBranch', () => {
     const actor = parseOkActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
-    expect(actor?.display_name).toBe('OpenKnowledge (service)');
+    expect(actor?.display_name).toBe('Palimpsest (service)');
     expect(actor?.docs).toContain('intro');
   });
 
@@ -787,7 +787,7 @@ describe('saveVersion', () => {
   const agent: WriterIdentity = {
     id: 'agent-cursor',
     name: 'cursor-agent',
-    email: 'cursor@openknowledge.local',
+    email: 'cursor@palimpsest.local',
   };
 
   beforeEach(async () => {
@@ -875,7 +875,7 @@ describe('saveVersion', () => {
     expect(authorEmails).toContain(agent.email);
   });
 
-  test('checkpoint commit carries ok-actor: body line (US-015)', async () => {
+  test('checkpoint commit carries ps-actor: body line (US-015)', async () => {
     writeFileSync(resolve(contentDir, 'intro.md'), '# v1\n');
     const result = await saveVersion(shadow, 'content/docs', [human]);
 
@@ -888,7 +888,7 @@ describe('saveVersion', () => {
     const actor = parseOkActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
-    expect(actor?.display_name).toBe('OpenKnowledge (service)');
+    expect(actor?.display_name).toBe('Palimpsest (service)');
   });
 
   test('checkpoint falls back to latest checkpoint when no WIP activity', async () => {
@@ -1186,15 +1186,15 @@ describe('saveInMemoryCheckpoint (bridge-correctness SPEC §6 R7a)', () => {
       ).trim();
       const body =
         'checkpoint: Legacy rescue\n\n' +
-        'ok-checkpoint-v1: {"kind":"external-change-rescue","metadata":{"incomingDiskSha":"abc123"}}';
+        'ps-checkpoint-v1: {"kind":"external-change-rescue","metadata":{"incomingDiskSha":"abc123"}}';
       const sha = (
         await sg
           .env({
             GIT_DIR: shadow.gitDir,
-            GIT_AUTHOR_NAME: 'openknowledge',
-            GIT_AUTHOR_EMAIL: 'noreply@openknowledge.local',
-            GIT_COMMITTER_NAME: 'openknowledge',
-            GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+            GIT_AUTHOR_NAME: 'palimpsest',
+            GIT_AUTHOR_EMAIL: 'noreply@palimpsest.local',
+            GIT_COMMITTER_NAME: 'palimpsest',
+            GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
           })
           .raw('commit-tree', treeSha, '-m', body)
       ).trim();
@@ -1264,15 +1264,15 @@ describe('saveInMemoryCheckpoint (bridge-correctness SPEC §6 R7a)', () => {
     }
   });
 
-  test('parseContributors tolerates sibling ok-checkpoint-v1 body lines (Q7)', async () => {
+  test('parseContributors tolerates sibling ps-checkpoint-v1 body lines (Q7)', async () => {
     const body = [
       'checkpoint: Before concurrent merge @ t',
       '',
-      'ok-contributors: {"id":"human-a","name":"Alice","docs":["intro.md"]}',
-      'ok-checkpoint-v1: {"kind":"bridge-merge-loss","docName":"intro.md","size":16,"metadata":{"lostSubstrings":["x"]}}',
+      'ps-contributors: {"id":"human-a","name":"Alice","docs":["intro.md"]}',
+      'ps-checkpoint-v1: {"kind":"bridge-merge-loss","docName":"intro.md","size":16,"metadata":{"lostSubstrings":["x"]}}',
     ].join('\n');
 
-    const { parseContributors } = await import('@inkeep/open-knowledge-core/shadow-repo-layout');
+    const { parseContributors } = await import('@palimpsest/core/shadow-repo-layout');
     const contributors = parseContributors(body);
     expect(contributors).toHaveLength(1);
     expect(contributors[0]?.id).toBe('human-a');
@@ -1467,10 +1467,10 @@ describe('gcCheckpointRefs (bridge-correctness SPEC §6 R7 + review iteration 5)
         .env({
           GIT_DIR: s.gitDir,
           GIT_AUTHOR_NAME: 'openknowledge-service',
-          GIT_AUTHOR_EMAIL: 'service@openknowledge.local',
+          GIT_AUTHOR_EMAIL: 'service@palimpsest.local',
           GIT_AUTHOR_DATE: date,
           GIT_COMMITTER_NAME: 'openknowledge-service',
-          GIT_COMMITTER_EMAIL: 'service@openknowledge.local',
+          GIT_COMMITTER_EMAIL: 'service@palimpsest.local',
           GIT_COMMITTER_DATE: date,
         })
         .raw('commit-tree', emptyTreeSha, '-m', body)
@@ -1738,7 +1738,7 @@ describe('checkpoint chain anchoring', () => {
   const WRITER: WriterIdentity = {
     id: 'agent-a',
     name: 'Agent A',
-    email: 'a@openknowledge.local',
+    email: 'a@palimpsest.local',
   };
 
   beforeEach(async () => {
@@ -1848,10 +1848,10 @@ describe('checkpoint chain anchoring', () => {
       await sg
         .env({
           GIT_DIR: shadow.gitDir,
-          GIT_AUTHOR_NAME: 'openknowledge',
-          GIT_AUTHOR_EMAIL: 'noreply@openknowledge.local',
-          GIT_COMMITTER_NAME: 'openknowledge',
-          GIT_COMMITTER_EMAIL: 'noreply@openknowledge.local',
+          GIT_AUTHOR_NAME: 'palimpsest',
+          GIT_AUTHOR_EMAIL: 'noreply@palimpsest.local',
+          GIT_COMMITTER_NAME: 'palimpsest',
+          GIT_COMMITTER_EMAIL: 'noreply@palimpsest.local',
           GIT_AUTHOR_DATE: at(3),
           GIT_COMMITTER_DATE: at(3),
         })
@@ -1996,7 +1996,7 @@ const STOCK_GIT_EXCLUDE = `# git ls-files --others --exclude-from=.git/info/excl
 # Lines that start with '#' are comments.
 `;
 
-describe('shadow repo excludes OpenKnowledge machine-local state', () => {
+describe('shadow repo excludes Palimpsest machine-local state', () => {
   let projectRoot: string;
   let shadow: ShadowHandle;
 
@@ -2008,8 +2008,8 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
 
   beforeEach(async () => {
     projectRoot = resolve(tmpDir, 'project');
-    mkdirSync(resolve(projectRoot, '.ok/local/cache/main'), { recursive: true });
-    mkdirSync(resolve(projectRoot, '.ok/worktrees/feature'), { recursive: true });
+    mkdirSync(resolve(projectRoot, '.ps/local/cache/main'), { recursive: true });
+    mkdirSync(resolve(projectRoot, '.ps/worktrees/feature'), { recursive: true });
 
     const git = simpleGit(projectRoot);
     await git.init();
@@ -2018,14 +2018,14 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     await git.raw('config', 'user.email', 'test@test.com');
 
     writeFileSync(resolve(projectRoot, 'intro.md'), '# Hello\n');
-    writeFileSync(resolve(projectRoot, '.ok/config.yml'), 'content:\n  dir: .\n');
+    writeFileSync(resolve(projectRoot, '.ps/config.yml'), 'content:\n  dir: .\n');
     writeFileSync(
-      resolve(projectRoot, '.ok/local/principal.json'),
+      resolve(projectRoot, '.ps/local/principal.json'),
       '{"email":"ada@example.com"}\n',
     );
-    writeFileSync(resolve(projectRoot, '.ok/local/server.lock'), '{"pid":1}\n');
-    writeFileSync(resolve(projectRoot, '.ok/local/cache/main/backlinks.json'), '{}\n');
-    writeFileSync(resolve(projectRoot, '.ok/worktrees/feature/scratch.md'), '# scratch\n');
+    writeFileSync(resolve(projectRoot, '.ps/local/server.lock'), '{"pid":1}\n');
+    writeFileSync(resolve(projectRoot, '.ps/local/cache/main/backlinks.json'), '{}\n');
+    writeFileSync(resolve(projectRoot, '.ps/worktrees/feature/scratch.md'), '# scratch\n');
 
     shadow = await initShadowRepo(projectRoot);
   });
@@ -2111,7 +2111,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .filter((path) => path.length > 0);
   }
 
-  test('the shadow does not see .ok/local or .ok/worktrees as content', async () => {
+  test('the shadow does not see .ps/local or .ps/worktrees as content', async () => {
     const sg = shadowGit(shadow);
     const status = await sg.raw('status', '--porcelain', '--untracked-files=all');
     const paths = status
@@ -2120,9 +2120,9 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .filter((p) => p.length > 0);
 
     expect(paths).toContain('intro.md');
-    expect(paths).toContain('.ok/config.yml');
-    expect(paths.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
-    expect(paths.filter((p) => p.startsWith('.ok/worktrees/'))).toEqual([]);
+    expect(paths).toContain('.ps/config.yml');
+    expect(paths.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
+    expect(paths.filter((p) => p.startsWith('.ps/worktrees/'))).toEqual([]);
   });
 
   test('a checkpoint keeps machine-local state out of version history', async () => {
@@ -2134,15 +2134,15 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .filter((p) => p.length > 0);
 
     expect(tree).toContain('intro.md');
-    expect(tree).toContain('.ok/config.yml');
-    expect(tree.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
-    expect(tree.filter((p) => p.startsWith('.ok/worktrees/'))).toEqual([]);
+    expect(tree).toContain('.ps/config.yml');
+    expect(tree.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
+    expect(tree.filter((p) => p.startsWith('.ps/worktrees/'))).toEqual([]);
   });
 
-  test('a nested content dir keeps its own .ok/local out of the staged tree', async () => {
-    mkdirSync(resolve(projectRoot, 'docs/.ok/local'), { recursive: true });
+  test('a nested content dir keeps its own .ps/local out of the staged tree', async () => {
+    mkdirSync(resolve(projectRoot, 'docs/.ps/local'), { recursive: true });
     writeFileSync(resolve(projectRoot, 'docs/note.md'), '# note\n');
-    writeFileSync(resolve(projectRoot, 'docs/.ok/local/comments.json'), '{}\n');
+    writeFileSync(resolve(projectRoot, 'docs/.ps/local/comments.json'), '{}\n');
 
     const result = await saveVersion(shadow, 'docs', [writer]);
     const sg = shadowGit(shadow);
@@ -2152,10 +2152,10 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .filter((p) => p.length > 0);
 
     expect(tree).toContain('docs/note.md');
-    expect(tree.filter((p) => p.startsWith('docs/.ok/local/'))).toEqual([]);
+    expect(tree.filter((p) => p.startsWith('docs/.ps/local/'))).toEqual([]);
   });
 
-  test('legacy machine-local files at the .ok root stay out of a checkpoint', async () => {
+  test('legacy machine-local files at the .ps root stay out of a checkpoint', async () => {
     const legacyRootFiles = [
       'principal.json',
       'state.json',
@@ -2167,11 +2167,11 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     ];
     const legacyRootDirs = ['local', 'worktrees', 'cache', 'tmp'];
     for (const name of legacyRootFiles) {
-      writeFileSync(resolve(projectRoot, '.ok', name), '{"legacy":true}\n');
+      writeFileSync(resolve(projectRoot, '.ps', name), '{"legacy":true}\n');
     }
     for (const name of legacyRootDirs) {
-      mkdirSync(resolve(projectRoot, '.ok', name), { recursive: true });
-      writeFileSync(resolve(projectRoot, '.ok', name, 'residue.json'), '{}\n');
+      mkdirSync(resolve(projectRoot, '.ps', name), { recursive: true });
+      writeFileSync(resolve(projectRoot, '.ps', name, 'residue.json'), '{}\n');
     }
 
     const result = await saveVersion(shadow, '.', [writer]);
@@ -2181,13 +2181,13 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .map((p) => p.trim())
       .filter((p) => p.length > 0);
 
-    expect(tree).toContain('.ok/config.yml');
+    expect(tree).toContain('.ps/config.yml');
     expect(tree).toContain('intro.md');
     for (const name of legacyRootFiles) {
-      expect(tree).not.toContain(`.ok/${name}`);
+      expect(tree).not.toContain(`.ps/${name}`);
     }
     for (const name of legacyRootDirs) {
-      expect(tree.filter((p) => p.startsWith(`.ok/${name}/`))).toEqual([]);
+      expect(tree.filter((p) => p.startsWith(`.ps/${name}/`))).toEqual([]);
     }
   });
 
@@ -2207,7 +2207,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
   });
 
   test('an in-flight skill write is not staged into a checkpoint', async () => {
-    const skillsRoot = resolve(projectRoot, '.ok/skills');
+    const skillsRoot = resolve(projectRoot, '.ps/skills');
     const skillFile = resolve(skillsRoot, 'trip-log/SKILL.md');
     fsTracedRecorder.renameSources.length = 0;
 
@@ -2232,18 +2232,18 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .map((p) => p.trim())
       .filter((p) => p.length > 0);
 
-    expect(tree).toContain('.ok/skills/trip-log/SKILL.md');
-    expect(tree.filter((p) => p.startsWith('.ok/skills/trip-log/SKILL.md.'))).toEqual([]);
+    expect(tree).toContain('.ps/skills/trip-log/SKILL.md');
+    expect(tree.filter((p) => p.startsWith('.ps/skills/trip-log/SKILL.md.'))).toEqual([]);
   });
 
   test('a WIP commit drops machine-local paths a previous build had staged', async () => {
     const agentWriter: WriterIdentity = {
       id: 'agent-cursor',
       name: 'cursor-agent',
-      email: 'cursor@openknowledge.local',
+      email: 'cursor@palimpsest.local',
     };
     await seedStaleWipRef(shadow, agentWriter.id);
-    expect(await wipTreePaths(shadow, agentWriter.id)).toContain('.ok/local/principal.json');
+    expect(await wipTreePaths(shadow, agentWriter.id)).toContain('.ps/local/principal.json');
 
     const reinit = await initShadowRepo(projectRoot);
     writeFileSync(resolve(projectRoot, 'intro.md'), '# Hello again\n');
@@ -2251,34 +2251,34 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     const freshTree = await wipTreePaths(reinit, agentWriter.id);
 
     expect(freshTree).toContain('intro.md');
-    expect(freshTree.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
+    expect(freshTree.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
   });
 
   test('paths that only share a prefix with a machine-local name stay in a checkpoint', async () => {
-    mkdirSync(resolve(projectRoot, 'docs/.ok'), { recursive: true });
-    writeFileSync(resolve(projectRoot, '.ok/state.json'), '{"machine":true}\n');
-    writeFileSync(resolve(projectRoot, '.ok/state.jsonl'), '{"content":true}\n');
-    writeFileSync(resolve(projectRoot, '.ok/principal.json'), '{"machine":true}\n');
-    writeFileSync(resolve(projectRoot, '.ok/principal.json.bak'), '{"content":true}\n');
-    writeFileSync(resolve(projectRoot, 'docs/.ok/server.lock'), '{"machine":true}\n');
-    writeFileSync(resolve(projectRoot, 'docs/.ok/server.lock.disabled'), '{"content":true}\n');
+    mkdirSync(resolve(projectRoot, 'docs/.ps'), { recursive: true });
+    writeFileSync(resolve(projectRoot, '.ps/state.json'), '{"machine":true}\n');
+    writeFileSync(resolve(projectRoot, '.ps/state.jsonl'), '{"content":true}\n');
+    writeFileSync(resolve(projectRoot, '.ps/principal.json'), '{"machine":true}\n');
+    writeFileSync(resolve(projectRoot, '.ps/principal.json.bak'), '{"content":true}\n');
+    writeFileSync(resolve(projectRoot, 'docs/.ps/server.lock'), '{"machine":true}\n');
+    writeFileSync(resolve(projectRoot, 'docs/.ps/server.lock.disabled'), '{"content":true}\n');
 
     const result = await saveVersion(shadow, '.', [writer]);
     const tree = await checkpointTreePaths(result.checkpointRef);
 
-    expect(tree).toContain('.ok/state.jsonl');
-    expect(tree).toContain('.ok/principal.json.bak');
-    expect(tree).toContain('docs/.ok/server.lock.disabled');
-    expect(tree).not.toContain('.ok/state.json');
-    expect(tree).not.toContain('.ok/principal.json');
-    expect(tree).not.toContain('docs/.ok/server.lock');
+    expect(tree).toContain('.ps/state.jsonl');
+    expect(tree).toContain('.ps/principal.json.bak');
+    expect(tree).toContain('docs/.ps/server.lock.disabled');
+    expect(tree).not.toContain('.ps/state.json');
+    expect(tree).not.toContain('.ps/principal.json');
+    expect(tree).not.toContain('docs/.ps/server.lock');
   });
 
   test('a staged path whose name begins with a dash is still dropped', async () => {
     const agentWriter: WriterIdentity = {
       id: 'agent-dash',
       name: 'dash-agent',
-      email: 'dash@openknowledge.local',
+      email: 'dash@palimpsest.local',
     };
     const leadingDash = `-lead.md${atomicTempPath('x').slice(1)}`;
     writeFileSync(resolve(projectRoot, leadingDash), '# half written\n');
@@ -2297,29 +2297,29 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     const agentWriter: WriterIdentity = {
       id: 'agent-bulk',
       name: 'bulk-agent',
-      email: 'bulk@openknowledge.local',
+      email: 'bulk@palimpsest.local',
     };
     const leaf = 'q'.repeat(160);
-    const threadsDir = resolve(projectRoot, '.ok/local/threads');
+    const threadsDir = resolve(projectRoot, '.ps/local/threads');
     mkdirSync(threadsDir, { recursive: true });
     const bulk = Array.from(
       { length: 8_000 },
       (_unused, i) => `${String(i).padStart(6, '0')}-${leaf}.ndjson`,
     );
     for (const name of bulk) writeFileSync(resolve(threadsDir, name), '{}\n');
-    const argvBytes = bulk.reduce((acc, name) => acc + `.ok/local/threads/${name}`.length + 1, 0);
+    const argvBytes = bulk.reduce((acc, name) => acc + `.ps/local/threads/${name}`.length + 1, 0);
     expect(argvBytes).toBeGreaterThan(1_500_000);
 
     await seedStaleWipRef(shadow, agentWriter.id);
     const staleTree = await wipTreePaths(shadow, agentWriter.id);
-    expect(staleTree.filter((p) => p.startsWith('.ok/local/threads/'))).toHaveLength(8_000);
+    expect(staleTree.filter((p) => p.startsWith('.ps/local/threads/'))).toHaveLength(8_000);
 
     const reinit = await initShadowRepo(projectRoot);
     await commitWip(reinit, agentWriter, '.', 'WIP: post-upgrade');
     const freshTree = await wipTreePaths(reinit, agentWriter.id);
 
     expect(freshTree).toContain('intro.md');
-    expect(freshTree.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
+    expect(freshTree.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
   }, 120_000);
 
   test('a repair the index sweep cannot run does not abort initialization, but degrades the shadow', async () => {
@@ -2350,7 +2350,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
   test('an index sweep blocked partway reports how many machine-local entries it left staged', async () => {
     const fanoutIndex = seedStaleFanoutIndex(shadow);
     const machineLocalStaged = indexPaths(shadow, fanoutIndex).filter(
-      (path) => path.startsWith('.ok/local/') || path.startsWith('.ok/worktrees/'),
+      (path) => path.startsWith('.ps/local/') || path.startsWith('.ps/worktrees/'),
     );
     expect(machineLocalStaged.length).toBeGreaterThan(0);
     writeFileSync(`${fanoutIndex}.lock`, '');
@@ -2366,7 +2366,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       expect(getMetrics().shadowExcludeIndexEntriesDropped).toBe(0);
       expect(
         indexPaths(reinit, fanoutIndex).filter(
-          (path) => path.startsWith('.ok/local/') || path.startsWith('.ok/worktrees/'),
+          (path) => path.startsWith('.ps/local/') || path.startsWith('.ps/worktrees/'),
         ),
       ).toEqual(machineLocalStaged);
       const warnings = warnSpy.mock.calls.map((call) => String(call[1] ?? ''));
@@ -2396,9 +2396,9 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     const tree = await checkpointTreePaths(result.checkpointRef);
 
     expect(tree).toContain('intro.md');
-    expect(tree).toContain('.ok/config.yml');
-    expect(tree.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
-    expect(tree.filter((p) => p.startsWith('.ok/worktrees/'))).toEqual([]);
+    expect(tree).toContain('.ps/config.yml');
+    expect(tree.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
+    expect(tree.filter((p) => p.startsWith('.ps/worktrees/'))).toEqual([]);
   });
 
   test('a shadow whose exclude file cannot be written reports itself degraded', async () => {
@@ -2504,7 +2504,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     const agentWriter: WriterIdentity = {
       id: 'agent-metrics',
       name: 'metrics-agent',
-      email: 'metrics@openknowledge.local',
+      email: 'metrics@palimpsest.local',
     };
     await seedStaleWipRef(shadow, agentWriter.id);
     const reinit = await initShadowRepo(projectRoot);
@@ -2517,7 +2517,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
 
   test('re-initializing drops a fan-out index that already staged machine-local state', async () => {
     const fanoutIndex = seedStaleFanoutIndex(shadow);
-    expect(indexPaths(shadow, fanoutIndex)).toContain('.ok/local/principal.json');
+    expect(indexPaths(shadow, fanoutIndex)).toContain('.ps/local/principal.json');
 
     const reinit = await initShadowRepo(projectRoot);
     const freshTree = await buildWipTree(reinit, '.');
@@ -2528,7 +2528,7 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
       .filter((p) => p.length > 0);
 
     expect(freshNames).toContain('intro.md');
-    expect(freshNames.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
+    expect(freshNames.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
   });
 
   test('a fan-out WIP tree stays clean even when the shadow exclude file is gone', async () => {
@@ -2538,8 +2538,8 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     const names = await checkpointTreePaths(tree);
 
     expect(names).toContain('intro.md');
-    expect(names.filter((p) => p.startsWith('.ok/local/'))).toEqual([]);
-    expect(names.filter((p) => p.startsWith('.ok/worktrees/'))).toEqual([]);
+    expect(names.filter((p) => p.startsWith('.ps/local/'))).toEqual([]);
+    expect(names.filter((p) => p.startsWith('.ps/worktrees/'))).toEqual([]);
   });
 
   test('re-initializing an existing shadow restores the exclusions', async () => {
@@ -2549,6 +2549,6 @@ describe('shadow repo excludes OpenKnowledge machine-local state', () => {
     const sg = shadowGit(reinit);
     const status = await sg.raw('status', '--porcelain', '--untracked-files=all');
 
-    expect(status).not.toContain('.ok/local/');
+    expect(status).not.toContain('.ps/local/');
   });
 });

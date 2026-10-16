@@ -51,7 +51,7 @@ describe('createServer() — shadow mutator drain on destroy', () => {
   const delay = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
   beforeEach(async () => {
-    projectDir = await mkdtemp(join(tmpdir(), 'ok-shadow-drain-'));
+    projectDir = await mkdtemp(join(tmpdir(), 'ps-shadow-drain-'));
     const git = simpleGit(projectDir);
     await git.init(['--initial-branch=main']);
     configureTestGitRepository(projectDir);

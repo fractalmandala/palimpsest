@@ -6,8 +6,8 @@ import {
   isGitWorkingTree,
   type RecentProjectEntry,
   selectCandidate,
-} from '@inkeep/open-knowledge-core';
-import { isProjectRoot } from '@inkeep/open-knowledge-server';
+} from '@palimpsest/core';
+import { isProjectRoot } from '@palimpsest/server';
 import { listGitWorktrees } from './list-git-worktrees.ts';
 import { type ResolvedGitDirKind, readGitDirKind } from './read-git-dir-kind.ts';
 import { readHeadBranch } from './read-head-branch.ts';

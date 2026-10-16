@@ -96,18 +96,18 @@ jobs:
       - name: Sync public PR into agents-private
         env:
           INTERNAL_BASE_REF: main
-          INTERNAL_BRANCH_PREFIX: public-pr/open-knowledge
+          INTERNAL_BRANCH_PREFIX: public-pr/palimpsest
           INTERNAL_REPO: inkeep/agents-private
           INTERNAL_REPO_DIR: ${{ github.workspace }}/agents-private
           INTERNAL_TOKEN: ${{ steps.app-token.outputs.token }}
-          MONOREPO_PATH_PREFIX: public/open-knowledge
+          MONOREPO_PATH_PREFIX: public/palimpsest
           PUBLIC_PR_ACTION: ${{ github.event.action }}
           PUBLIC_PR_NUMBER: ${{ github.event.pull_request.number }}
           PUBLIC_REPO: ${{ github.repository }}
           PUBLIC_TOKEN: ${{ github.token }}
           # Only the 4 root-level overlay-mapped files need explicit rewrites.
           # Workflow + script files now live in-tree at
-          # public/open-knowledge/.github/, so MONOREPO_PATH_PREFIX maps them
+          # public/palimpsest/.github/, so MONOREPO_PATH_PREFIX maps them
           # correctly without an entry here. Stale entries pointing at the
           # deleted overlay .github/ paths would route bridged PR diffs to
           # non-existent locations.
@@ -119,13 +119,13 @@ jobs:
               ".gitignore": "copybara/public-open-knowledge-overlay/.gitignore"
             }
           # Drop pre-cutover internal-only paths from the bridged diff. Old
-          # `inkeep/open-knowledge-legacy` branches predate the agents-private cutover
+          # `fractalmandala/palimpsest-legacy` branches predate the agents-private cutover
           # and contain reports/specs/etc. that the public mirror no longer
           # exports; bridging those paths back through this workflow would
           # re-introduce content that is already authoritative on
           # agents-private under different intent.
           BRIDGE_EXCLUDED_PATHS: >-
-            [".codex/", ".claude/", ".cursor/", ".openhands/", ".ok/",
+            [".codex/", ".claude/", ".cursor/", ".openhands/", ".ps/",
              "specs/", "reports/", "projects/", "stories/", "strategy/",
              "private/", "ARCHITECTURE.md", "PRECEDENTS.md"]
         run: node .github/scripts/bridge-public-pr-to-monorepo.mjs sync
@@ -163,7 +163,7 @@ jobs:
 
       - name: Handle public PR closure
         env:
-          INTERNAL_BRANCH_PREFIX: public-pr/open-knowledge
+          INTERNAL_BRANCH_PREFIX: public-pr/palimpsest
           INTERNAL_REPO: inkeep/agents-private
           INTERNAL_TOKEN: ${{ steps.app-token.outputs.token }}
           PUBLIC_PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -204,7 +204,7 @@ jobs:
           permission-statuses: write
       - name: Refresh CLA status on the imported head
         env:
-          INTERNAL_BRANCH_PREFIX: public-pr/open-knowledge
+          INTERNAL_BRANCH_PREFIX: public-pr/palimpsest
           INTERNAL_REPO: inkeep/agents-private
           INTERNAL_TOKEN: ${{ steps.app-token.outputs.token }}
           PUBLIC_REPO: ${{ github.repository }}

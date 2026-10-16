@@ -39,7 +39,7 @@ import {
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const driverPath = join(scriptDir, 'smoke-terminal-package-cdp.py');
 const harnessPath = join(scriptDir, 'smoke-windows-terminal-package.mjs');
-const pythonBin = process.env.OK_PYTHON ?? (process.platform === 'win32' ? 'python' : 'python3');
+const pythonBin = process.env.PS_PYTHON ?? (process.platform === 'win32' ? 'python' : 'python3');
 const DEAD_CDP_LIST_URL = 'http://127.0.0.1:9/json/list';
 
 function runPython(args, env) {
@@ -56,7 +56,7 @@ function runPython(args, env) {
   } catch (error) {
     if (error.code === 'ENOENT') {
       throw new Error(
-        `no python interpreter at ${pythonBin}; the harness resolves env.OK_PYTHON ?? 'python', set OK_PYTHON to match`,
+        `no python interpreter at ${pythonBin}; the harness resolves env.PS_PYTHON ?? 'python', set PS_PYTHON to match`,
       );
     }
     return { code: error.status ?? 1, output: `${error.stdout ?? ''}${error.stderr ?? ''}` };
@@ -132,7 +132,7 @@ const SPENT_ON_CONNECT_STUB = [
 ].join('\n');
 
 function stubRootWithModule(source) {
-  const stubRoot = mkdtempSync(join(tmpdir(), 'ok-cdp-driver-stub-'));
+  const stubRoot = mkdtempSync(join(tmpdir(), 'ps-cdp-driver-stub-'));
   fixtures.push(stubRoot);
   writeFileSync(join(stubRoot, 'websocket.py'), source);
   return stubRoot;
@@ -174,8 +174,8 @@ function ptyEchoSnippet(trace = false) {
     "sys.stdout.write(seen['e'])",
   ].join('\n');
   const run = runPython(['-c', extractor], {
-    OK_SMOKE_ECHO_DEADLINE_MS: '10500',
-    OK_PTY_PHASE_TRACE: trace ? '1' : '',
+    PS_SMOKE_ECHO_DEADLINE_MS: '10500',
+    PS_PTY_PHASE_TRACE: trace ? '1' : '',
   });
   if (run.code !== 0) throw new Error(`snippet extraction failed: ${run.output}`);
   return run.output;
@@ -215,7 +215,7 @@ function stubRenderer({ duringStart = [] } = {}) {
         notice: channels.notice.length,
       },
     }),
-    okDesktop: {
+    psDesktop: {
       config: { ptyAvailable: true },
       platform: 'win32',
       terminal: {
@@ -316,7 +316,7 @@ const YESTERDAY_AFTER_LAUNCH = '2026-09-23T23:59:30.000Z';
 const AFTER_LAUNCH = '2026-09-24T00:00:30.000Z';
 
 function logsDirOf(home) {
-  return join(home, '.ok', 'logs');
+  return join(home, '.ps', 'logs');
 }
 
 function writeLogFile(logsDir, name, lines) {
@@ -324,7 +324,7 @@ function writeLogFile(logsDir, name, lines) {
 }
 
 function homeWithLogs(lines, previousDayLines = null) {
-  const home = mkdtempSync(join(tmpdir(), 'ok-win-pty-home-'));
+  const home = mkdtempSync(join(tmpdir(), 'ps-win-pty-home-'));
   fixtures.push(home);
   const logsDir = logsDirOf(home);
   mkdirSync(logsDir, { recursive: true });
@@ -334,23 +334,23 @@ function homeWithLogs(lines, previousDayLines = null) {
 }
 
 const CONPTY_INIT = '\u001b[1t\u001b[c';
-const MARKER_LINE = 'OK_PACKAGED_PTY_ECHO\r\n';
+const MARKER_LINE = 'PS_PACKAGED_PTY_ECHO\r\n';
 const RENDERER_TIMER_MS = 500;
 const OVERSIZED_TERMINAL_LOG_LINES = 400;
 
 describe('packaged Windows terminal smoke driver', () => {
   test('seeds deterministic project-local terminal config for the packaged app', () => {
-    const root = mkdtempSync(join(tmpdir(), 'ok-win-pty-smoke-test-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-win-pty-smoke-test-'));
     fixtures.push(root);
     const { projectDir, userDataDir } = seedWindowsPtySmokeProject(
       root,
       'C:\\Windows\\System32\\cmd.exe',
     );
 
-    expect(readFileSync(join(projectDir, '.ok', 'config.yml'), 'utf8')).toBe(
+    expect(readFileSync(join(projectDir, '.ps', 'config.yml'), 'utf8')).toBe(
       "content:\n  dir: '.'\n",
     );
-    expect(readFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'utf8')).toBe(
+    expect(readFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'utf8')).toBe(
       'terminal:\n  enabled: true\n  shell: "C:\\\\Windows\\\\System32\\\\cmd.exe"\n',
     );
     expect(readFileSync(join(projectDir, 'start.md'), 'utf8')).toContain('Windows terminal');
@@ -370,7 +370,7 @@ describe('packaged Windows terminal smoke driver', () => {
     expect(args).toContain('--remote-debugging-port=9222');
     expect(args).toContain('--user-data-dir=C:\\Temp\\User Data');
     expect(args.at(-1)).toBe(
-      'openknowledge://open?project=C%3A%5CTemp%5CProject%20With%20Spaces&doc=start',
+      'palimpsest://open?project=C%3A%5CTemp%5CProject%20With%20Spaces&doc=start',
     );
   });
 
@@ -383,10 +383,10 @@ describe('packaged Windows terminal smoke driver', () => {
   test('requires the CDP driver to exercise its Windows branch', () => {
     expect(windowsPtyDriverEnv({ SENTINEL: 'preserved' })).toEqual({
       SENTINEL: 'preserved',
-      OK_PTY_PHASE_TRACE: '1',
-      OK_SMOKE_EXPECT_PLATFORM: 'win32',
-      OK_SMOKE_DISCOVERY_DEADLINE_MS: String(packagedDiscoveryDeadlineMs()),
-      OK_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS),
+      PS_PTY_PHASE_TRACE: '1',
+      PS_SMOKE_EXPECT_PLATFORM: 'win32',
+      PS_SMOKE_DISCOVERY_DEADLINE_MS: String(packagedDiscoveryDeadlineMs()),
+      PS_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS),
     });
   });
 
@@ -405,19 +405,19 @@ describe('packaged Windows terminal smoke driver', () => {
   });
 
   test('spawns the packaged app at a log level that keeps the records its failure path reads back', async () => {
-    const home = mkdtempSync(join(tmpdir(), 'ok-win-pty-logger-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-win-pty-logger-home-'));
     fixtures.push(home);
     const spawned = windowsPackageAppEnv({
       NODE_ENV: 'test',
       LOG_LEVEL: 'error',
-      OK_LOG_LEVEL: 'error',
+      PS_LOG_LEVEL: 'error',
       HOME: home,
       USERPROFILE: home,
     });
 
     vi.resetModules();
     for (const [key, value] of Object.entries(spawned)) {
-      if (key !== 'OK_DESKTOP_E2E_SMOKE') vi.stubEnv(key, value);
+      if (key !== 'PS_DESKTOP_E2E_SMOKE') vi.stubEnv(key, value);
     }
     try {
       const { getRootDesktopLogger } = await import('../src/main/desktop-logger.ts');
@@ -520,8 +520,8 @@ describe('packaged Windows terminal smoke driver', () => {
       const stubRoot = stubRootWith('raise OSError');
       const { code, output } = runPython([driverPath], {
         PYTHONPATH: stubRoot,
-        OK_SMOKE_ECHO_DEADLINE_MS: budget,
-        OK_SMOKE_CDP_LIST_URL: DEAD_CDP_LIST_URL,
+        PS_SMOKE_ECHO_DEADLINE_MS: budget,
+        PS_SMOKE_CDP_LIST_URL: DEAD_CDP_LIST_URL,
       });
       expect(code).toBe(1);
       expect(output).toContain('ERROR: packaged PTY smoke misconfigured:');
@@ -543,7 +543,7 @@ describe('packaged Windows terminal smoke driver', () => {
           'print(f"RENDERER_TIMER={m.renderer_echo_timeout_ms()}")',
         ].join('\n'),
       ],
-      { PYTHONPATH: stubRoot, OK_SMOKE_ECHO_DEADLINE_MS: '10001' },
+      { PYTHONPATH: stubRoot, PS_SMOKE_ECHO_DEADLINE_MS: '10001' },
     );
     expect(code).toBe(0);
     expect(output).toMatch(/RENDERER_TIMER=1(?![0-9])/);
@@ -564,7 +564,7 @@ describe('packaged Windows terminal smoke driver', () => {
           '    print(error)',
         ].join('\n'),
       ],
-      { PYTHONPATH: stubRoot, OK_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS) },
+      { PYTHONPATH: stubRoot, PS_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS) },
     );
     expect(code).toBe(0);
     expect(output).toMatch(
@@ -590,8 +590,8 @@ describe('packaged Windows terminal smoke driver', () => {
     const stubRoot = stubRootWith('raise OSError');
     const { code, output } = runPython([driverPath], {
       PYTHONPATH: stubRoot,
-      OK_SMOKE_DISCOVERY_DEADLINE_MS: '1200',
-      OK_SMOKE_CDP_LIST_URL: DEAD_CDP_LIST_URL,
+      PS_SMOKE_DISCOVERY_DEADLINE_MS: '1200',
+      PS_SMOKE_CDP_LIST_URL: DEAD_CDP_LIST_URL,
     });
     expect(code).not.toBe(0);
     expect(output).toContain('the debug endpoint never answered');
@@ -684,7 +684,7 @@ describe('packaged Windows terminal smoke driver', () => {
 
   test('names the preload member it could not subscribe to, instead of leaving the driver waiting on the socket', async () => {
     const renderer = stubRenderer();
-    delete renderer.okDesktop.terminal.onExit;
+    delete renderer.psDesktop.terminal.onExit;
     const STILL_PENDING = Symbol('still pending');
 
     const settled = await Promise.race([
@@ -817,8 +817,8 @@ describe('packaged Windows terminal smoke driver', () => {
         ].join('\n'),
       ],
       {
-        OK_SMOKE_EXPECT_PLATFORM: 'win32',
-        OK_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS),
+        PS_SMOKE_EXPECT_PLATFORM: 'win32',
+        PS_SMOKE_ECHO_DEADLINE_MS: String(PACKAGED_PTY_ECHO_BUDGET_MS),
       },
     );
 
@@ -877,7 +877,7 @@ describe('packaged Windows terminal smoke driver', () => {
 
   test('says it looked and where when the logs directory is not there', async () => {
     const read = await terminalSubsystemLogReader();
-    const absent = join(tmpdir(), `ok-win-pty-home-absent-${process.pid}`);
+    const absent = join(tmpdir(), `ps-win-pty-home-absent-${process.pid}`);
     expect(existsSync(absent)).toBe(false);
 
     const surfaced = read(LAUNCHED_AT, absent);
@@ -896,7 +896,7 @@ describe('packaged Windows terminal smoke driver', () => {
         event: 'theme-source-set',
       }),
     ]);
-    const absent = join(tmpdir(), `ok-win-pty-home-absent-${process.pid}`);
+    const absent = join(tmpdir(), `ps-win-pty-home-absent-${process.pid}`);
 
     const surfaced = read(LAUNCHED_AT, home);
 
@@ -1020,9 +1020,9 @@ describe('packaged Windows terminal smoke driver', () => {
 
   test('says what it looked at and where when the logs path cannot be listed', async () => {
     const read = await terminalSubsystemLogReader();
-    const home = mkdtempSync(join(tmpdir(), 'ok-win-pty-home-'));
+    const home = mkdtempSync(join(tmpdir(), 'ps-win-pty-home-'));
     fixtures.push(home);
-    mkdirSync(join(home, '.ok'));
+    mkdirSync(join(home, '.ps'));
     const notADirectory = logsDirOf(home);
     writeFileSync(notADirectory, 'a path that exists, is readable, and is not a directory\n');
     expect(
@@ -1098,7 +1098,7 @@ describe('packaged Windows terminal smoke driver', () => {
     const home = homeWithLogs([earlierSession, thisLaunch]);
     const packageDir = join(home, 'win-unpacked');
     mkdirSync(packageDir);
-    writeFileSync(join(packageDir, 'OpenKnowledge.exe'), 'fixture');
+    writeFileSync(join(packageDir, 'Palimpsest.exe'), 'fixture');
     vi.resetModules();
     vi.doMock('node:child_process', async (importOriginal) => ({
       ...(await importOriginal()),
@@ -1158,7 +1158,7 @@ describe('packaged Windows terminal smoke driver', () => {
     try {
       expect(
         homedir(),
-        'the home directory has to resolve to the fixture before the reader is called, or calling it without one reads whatever this machine has in its own ~/.ok/logs',
+        'the home directory has to resolve to the fixture before the reader is called, or calling it without one reads whatever this machine has in its own ~/.ps/logs',
       ).toBe(fakeHome);
 
       expect(read(LAUNCHED_AT)).toContain(hostLine);
@@ -1221,12 +1221,12 @@ test.each([false, true])(
   async (enabled) => {
     const window = stubRenderer();
     let deliver;
-    const subscribe = window.okDesktop.terminal.onData;
-    window.okDesktop.terminal.onData = (listener) => {
+    const subscribe = window.psDesktop.terminal.onData;
+    window.psDesktop.terminal.onData = (listener) => {
       deliver = listener;
       return subscribe(listener);
     };
-    window.okDesktop.terminal.start = async () => {
+    window.psDesktop.terminal.start = async () => {
       deliver({ ptyId: STUB_PTY_ID, data: MARKER_LINE });
       return { ok: true };
     };
@@ -1273,7 +1273,7 @@ test('does not refresh the echo budget to collect a renderer trace or replace it
         "print('CALLS=' + str(len(calls)))",
       ].join('\n'),
     ],
-    { OK_PTY_PHASE_TRACE: '1', OK_SMOKE_ECHO_DEADLINE_MS: '30000' },
+    { PS_PTY_PHASE_TRACE: '1', PS_SMOKE_ECHO_DEADLINE_MS: '30000' },
   );
   expect(result.code).toBe(0);
   expect(result.output).toContain('CALLS=1');
@@ -1303,12 +1303,12 @@ test.each([
   async ({ replies, survivors, rendererSpans, unavailable }) => {
     const window = stubRenderer();
     let deliver;
-    const subscribe = window.okDesktop.terminal.onData;
-    window.okDesktop.terminal.onData = (listener) => {
+    const subscribe = window.psDesktop.terminal.onData;
+    window.psDesktop.terminal.onData = (listener) => {
       deliver = listener;
       return subscribe(listener);
     };
-    window.okDesktop.terminal.start = async () => {
+    window.psDesktop.terminal.start = async () => {
       deliver({ ptyId: STUB_PTY_ID, data: MARKER_LINE });
       return { ok: true };
     };
@@ -1345,7 +1345,7 @@ test.each([
     expect(driver.error).toBeUndefined();
     expect(driver.status, driver.stderr).toBe(0);
 
-    const root = mkdtempSync(join(tmpdir(), 'ok-renderer-envelope-'));
+    const root = mkdtempSync(join(tmpdir(), 'ps-renderer-envelope-'));
     fixtures.push(root);
     const logDir = join(root, 'logs');
     const logPath = join(root, 'stdio.log');

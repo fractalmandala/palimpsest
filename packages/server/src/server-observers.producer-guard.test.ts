@@ -2,7 +2,7 @@ import { mkdirSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { MarkdownManager, sharedExtensions } from '@inkeep/open-knowledge-core';
+import { MarkdownManager, sharedExtensions } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { updateYFragment, yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import simpleGit from 'simple-git';
@@ -200,7 +200,7 @@ describe('Producer guard (FR6) — dev/test posture throws (M2)', () => {
 });
 
 describe('Producer guard (FR6) — packaged posture logs + checkpoints, never throws/corrects (QA-010)', () => {
-  const SAVED_ENV = ['NODE_ENV', 'OK_RETHROW_BRIDGE_LOSS'] as const;
+  const SAVED_ENV = ['NODE_ENV', 'PS_RETHROW_BRIDGE_LOSS'] as const;
   let savedEnv: Partial<Record<(typeof SAVED_ENV)[number], string | undefined>>;
   let projectRoot: string;
   let shadow: ShadowHandle;
@@ -209,9 +209,9 @@ describe('Producer guard (FR6) — packaged posture logs + checkpoints, never th
     savedEnv = {};
     for (const key of SAVED_ENV) savedEnv[key] = process.env[key];
     process.env.NODE_ENV = 'production';
-    delete process.env.OK_RETHROW_BRIDGE_LOSS;
+    delete process.env.PS_RETHROW_BRIDGE_LOSS;
 
-    projectRoot = await mkdtemp(resolve(tmpdir(), 'ok-producer-guard-'));
+    projectRoot = await mkdtemp(resolve(tmpdir(), 'ps-producer-guard-'));
     mkdirSync(resolve(projectRoot, 'content'), { recursive: true });
     const git = simpleGit(projectRoot);
     await git.init();
@@ -449,7 +449,7 @@ describe('Producer guard (FR6) — packaged posture logs + checkpoints, never th
     const losing = makeContentLosingManager(LOSS_SENTINEL);
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const logWarn = vi.spyOn(getLogger('server-observers'), 'warn');
-    const brokenRoot = await mkdtemp(resolve(tmpdir(), 'ok-producer-guard-broken-'));
+    const brokenRoot = await mkdtemp(resolve(tmpdir(), 'ps-producer-guard-broken-'));
     mkdirSync(resolve(brokenRoot, 'content'), { recursive: true });
     const brokenGit = simpleGit(brokenRoot);
     await brokenGit.init();

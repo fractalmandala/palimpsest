@@ -4,7 +4,7 @@ import { expect, test, waitForActiveProviderSynced as waitForProvider } from './
 
 const sourceToggle = (page: Page) => page.getByRole('radio', { name: 'Markdown source' });
 
-const STORAGE_KEY = 'ok-editor-mode-v1';
+const STORAGE_KEY = 'ps-editor-mode-v1';
 
 async function expectSourceMounted(page: Page, timeout = 10_000): Promise<void> {
   await expect(page.locator('.cm-editor').first()).toBeVisible({ timeout });

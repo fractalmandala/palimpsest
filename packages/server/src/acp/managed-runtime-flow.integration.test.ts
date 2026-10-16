@@ -15,8 +15,8 @@ import { join, relative } from 'node:path';
 import type {
   ThreadEvent,
   ThreadServerFrame,
-} from '@inkeep/open-knowledge-core/acp/thread-protocol';
-import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@inkeep/open-knowledge-core/acp/thread-protocol';
+} from '@palimpsest/core/acp/thread-protocol';
+import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 const BLOCKING_CONSENT_BUDGET_MS = Math.floor(THREAD_REOPEN_OP_TIMEOUT_MS / 2);
@@ -269,7 +269,7 @@ describe('package admission after runtime preparation', () => {
             .map((line) => JSON.parse(line));
           expect(probes[0]).toMatchObject({
             args: expect.arrayContaining(['pack', '--dry-run', '--ignore-scripts', '--json']),
-            cwd: join(home, '.ok', 'acp-npx-cwd'),
+            cwd: join(home, '.ps', 'acp-npx-cwd'),
             before: '1970-01-01',
           });
           if (source !== 'managed') expect(probes[0].executable).toBe(npmScript);
@@ -591,7 +591,7 @@ describe('managed-runtime consent + download flow', () => {
     expect(
       expiredEvent?.detail,
       'offering the download again would contradict the sentence reporting that the offer lapsed',
-    ).not.toContain('let Open Knowledge download a private compatible copy');
+    ).not.toContain('let Palimpsest download a private compatible copy');
   }, 30_000);
 
   test.skipIf(process.platform === 'win32')(
@@ -760,7 +760,7 @@ describe('interpreter health probe', () => {
       (e): e is Extract<ThreadEvent, { kind: 'status' }> =>
         e.kind === 'status' && e.status === 'error',
     );
-    expect(errEvent?.detail).toContain('Update Open Knowledge');
+    expect(errEvent?.detail).toContain('Update Palimpsest');
     expect(errEvent?.detail).not.toContain('antivirus');
     expect(errEvent?.detail).not.toContain('security policy');
     expect(errEvent?.detail).not.toContain('unsupported CPU');

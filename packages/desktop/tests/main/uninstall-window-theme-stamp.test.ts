@@ -41,8 +41,8 @@ function entrySearchFor(theme: 'light' | 'dark'): string {
     {
       devServerUrl: null,
       isPackaged: true,
-      resourcesPath: '/Applications/OpenKnowledge.app/Contents/Resources',
-      mainDir: '/Applications/OpenKnowledge.app/Contents/Resources/app.asar/out/main',
+      resourcesPath: '/Applications/Palimpsest.app/Contents/Resources',
+      mainDir: '/Applications/Palimpsest.app/Contents/Resources/app.asar/out/main',
     },
     theme,
   );

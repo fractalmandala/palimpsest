@@ -71,7 +71,7 @@ function entry(overrides: Partial<RenameLogEntry> = {}): RenameLogEntry {
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'ok-rollback-rename-'));
+  tmpDir = mkdtempSync(join(tmpdir(), 'ps-rollback-rename-'));
   swapContributors();
   resetRenameLogIndexCache();
 });

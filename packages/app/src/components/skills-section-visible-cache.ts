@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'ok-skills-section-visible-v1';
+const STORAGE_KEY = 'ps-skills-section-visible-v1';
 
 function storage(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> | null {
   if (typeof window === 'undefined') return null;

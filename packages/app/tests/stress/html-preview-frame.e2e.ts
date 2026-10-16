@@ -33,7 +33,7 @@ test('html preview code blocks run scripts, size the frame, report blocked reque
   const frame = page.frameLocator('iframe[title="HTML preview"]');
   await expect(frame.locator('#probe')).toHaveText('ran');
 
-  const preview = page.locator('.ok-codeblock-preview');
+  const preview = page.locator('.ps-codeblock-preview');
   const previewHeight = async () => (await preview.boundingBox())?.height ?? 0;
   await expect.poll(previewHeight, { timeout: 10_000 }).toBeGreaterThan(290);
   await expect.poll(previewHeight, { timeout: 10_000 }).toBeLessThan(400);
@@ -96,7 +96,7 @@ test('the preview frame page ignores documents posted by a parent on another ori
     await page.evaluate(() => {
       document
         .querySelector('iframe')
-        ?.contentWindow?.postMessage({ okPreviewDocument: '<p id="written">written</p>' }, '*');
+        ?.contentWindow?.postMessage({ psPreviewDocument: '<p id="written">written</p>' }, '*');
     });
 
     await expect

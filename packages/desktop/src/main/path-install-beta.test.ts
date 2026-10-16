@@ -10,9 +10,9 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { pathShimBlockLabel, pathShimFishConfFileName } from '@inkeep/open-knowledge-core';
+import { pathShimBlockLabel, pathShimFishConfFileName } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
-import { okManagedBinDirs } from '../shared/ok-child-env.ts';
+import { psManagedBinDirs } from '../shared/ps-child-env.ts';
 
 vi.mock('../shared/desktop-variant.ts', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../shared/desktop-variant.ts')>();
@@ -25,18 +25,18 @@ import {
   removePathShimFromRcFiles,
 } from './path-install.ts';
 
-const BETA_EXE = '/Applications/OpenKnowledge Beta.app/Contents/MacOS/OpenKnowledge Beta';
-const BETA_WRAPPER = '/Applications/OpenKnowledge Beta.app/Contents/Resources/cli/bin/ok.sh';
+const BETA_EXE = '/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta';
+const BETA_WRAPPER = '/Applications/Palimpsest Beta.app/Contents/Resources/cli/bin/ps.sh';
 
 function home(): string {
-  return mkdtempSync(join(tmpdir(), 'ok-beta-path-install-'));
+  return mkdtempSync(join(tmpdir(), 'ps-beta-path-install-'));
 }
 
 describe('Beta CLI path install', () => {
   test('isolates marker, shims, environment, and rc block from Stable', async () => {
     const userHome = home();
     const zshrc = join(userHome, '.zshrc');
-    const stableBlock = '# >>> open-knowledge cli >>>\nstable\n# <<< open-knowledge cli <<<\n';
+    const stableBlock = '# >>> palimpsest cli >>>\nstable\n# <<< palimpsest cli <<<\n';
     writeFileSync(zshrc, stableBlock);
 
     const result = await ensureCliOnPath({
@@ -52,16 +52,16 @@ describe('Beta CLI path install', () => {
 
     expect(result.status).toBe('installed');
     if (result.status === 'installed') {
-      expect(result.summary).toBe('Added ok-beta to your PATH — managed block in ~/.zshrc.');
+      expect(result.summary).toBe('Added ps-beta to your PATH — managed block in ~/.zshrc.');
     }
-    const betaRoot = join(userHome, '.ok-beta');
+    const betaRoot = join(userHome, '.ps-beta');
     expect(pathInstallMarkerPath(userHome)).toBe(join(betaRoot, 'path-install.json'));
-    expect(readlinkSync(join(betaRoot, 'bin', 'ok-beta'))).toBe(BETA_WRAPPER);
-    expect(readlinkSync(join(betaRoot, 'bin', 'open-knowledge-beta'))).toBe(BETA_WRAPPER);
-    expect(readFileSync(join(betaRoot, 'env.sh'), 'utf8')).toContain('$' + '{HOME}/.ok-beta/bin');
+    expect(readlinkSync(join(betaRoot, 'bin', 'ps-beta'))).toBe(BETA_WRAPPER);
+    expect(readlinkSync(join(betaRoot, 'bin', 'palimpsest-beta'))).toBe(BETA_WRAPPER);
+    expect(readFileSync(join(betaRoot, 'env.sh'), 'utf8')).toContain('$' + '{HOME}/.ps-beta/bin');
     const installedRc = readFileSync(zshrc, 'utf8');
     expect(installedRc).toContain(stableBlock);
-    expect(installedRc).toContain('# >>> open-knowledge beta cli >>>');
+    expect(installedRc).toContain('# >>> palimpsest beta cli >>>');
 
     expect(
       removePathShimFromRcFiles({
@@ -72,24 +72,24 @@ describe('Beta CLI path install', () => {
     ).toMatchObject({ status: 'removed' });
     const removedRc = readFileSync(zshrc, 'utf8');
     expect(removedRc).toContain(stableBlock);
-    expect(removedRc).not.toContain('open-knowledge beta cli');
-    expect(existsSync(join(userHome, '.ok', 'path-install.json'))).toBe(false);
-    expect(existsSync(join(userHome, '.ok'))).toBe(false);
+    expect(removedRc).not.toContain('palimpsest beta cli');
+    expect(existsSync(join(userHome, '.ps', 'path-install.json'))).toBe(false);
+    expect(existsSync(join(userHome, '.ps'))).toBe(false);
   });
 
-  test('moves an existing Beta install off ~/.ok/variants/beta and rewrites its rc block', async () => {
+  test('moves an existing Beta install off ~/.ps/variants/beta and rewrites its rc block', async () => {
     const userHome = home();
-    const legacyRoot = join(userHome, '.ok', 'variants', 'beta');
+    const legacyRoot = join(userHome, '.ps', 'variants', 'beta');
     const zshrc = join(userHome, '.zshrc');
     const bashProfile = join(userHome, '.bash_profile');
     const legacyBlock =
-      '# >>> open-knowledge beta cli >>>\n[ -f "$HOME/.ok/variants/beta/env.sh" ] && . "$HOME/.ok/variants/beta/env.sh"\n# <<< open-knowledge beta cli <<<\n';
-    const stableBlock = '# >>> open-knowledge cli >>>\nstable\n# <<< open-knowledge cli <<<\n';
+      '# >>> palimpsest beta cli >>>\n[ -f "$HOME/.ps/variants/beta/env.sh" ] && . "$HOME/.ps/variants/beta/env.sh"\n# <<< palimpsest beta cli <<<\n';
+    const stableBlock = '# >>> palimpsest cli >>>\nstable\n# <<< palimpsest cli <<<\n';
     writeFileSync(zshrc, `${stableBlock}${legacyBlock}`);
     writeFileSync(bashProfile, 'export A=1\n');
     mkdirSync(join(legacyRoot, 'bin'), { recursive: true });
-    symlinkSync(BETA_WRAPPER, join(legacyRoot, 'bin', 'ok-beta'));
-    writeFileSync(join(userHome, '.ok', 'machine-id'), 'stable-id\n');
+    symlinkSync(BETA_WRAPPER, join(legacyRoot, 'bin', 'ps-beta'));
+    writeFileSync(join(userHome, '.ps', 'machine-id'), 'stable-id\n');
     writeFileSync(
       join(legacyRoot, 'path-install.json'),
       JSON.stringify({
@@ -122,18 +122,18 @@ describe('Beta CLI path install', () => {
     });
 
     expect(result.status).toBe('installed');
-    const betaRoot = join(userHome, '.ok-beta');
-    expect(readlinkSync(join(betaRoot, 'bin', 'ok-beta'))).toBe(BETA_WRAPPER);
+    const betaRoot = join(userHome, '.ps-beta');
+    expect(readlinkSync(join(betaRoot, 'bin', 'ps-beta'))).toBe(BETA_WRAPPER);
     const marker = JSON.parse(readFileSync(join(betaRoot, 'path-install.json'), 'utf8'));
     expect(marker.rcOptOuts).toEqual([bashProfile]);
     expect(marker.consent.status).toBe('granted');
     const rc = readFileSync(zshrc, 'utf8');
     expect(rc).toContain(stableBlock);
-    expect(rc).toContain('$HOME/.ok-beta/env.sh');
+    expect(rc).toContain('$HOME/.ps-beta/env.sh');
     expect(rc).not.toContain('variants/beta');
     expect(readFileSync(bashProfile, 'utf8')).toBe('export A=1\n');
     expect(existsSync(legacyRoot)).toBe(false);
-    expect(readFileSync(join(userHome, '.ok', 'machine-id'), 'utf8')).toBe('stable-id\n');
+    expect(readFileSync(join(userHome, '.ps', 'machine-id'), 'utf8')).toBe('stable-id\n');
   });
 });
 
@@ -158,11 +158,11 @@ function fsWith(overrides: Partial<FsOps>): FsOps {
 }
 
 function seedLegacyBetaInstall(userHome: string): { legacyRoot: string; zshrc: string } {
-  const legacyRoot = join(userHome, '.ok', 'variants', 'beta');
+  const legacyRoot = join(userHome, '.ps', 'variants', 'beta');
   const zshrc = join(userHome, '.zshrc');
   writeFileSync(
     zshrc,
-    '# >>> open-knowledge beta cli >>>\n[ -f "$HOME/.ok/variants/beta/env.sh" ] && . "$HOME/.ok/variants/beta/env.sh"\n# <<< open-knowledge beta cli <<<\n',
+    '# >>> palimpsest beta cli >>>\n[ -f "$HOME/.ps/variants/beta/env.sh" ] && . "$HOME/.ps/variants/beta/env.sh"\n# <<< palimpsest beta cli <<<\n',
   );
   mkdirSync(join(legacyRoot, 'bin'), { recursive: true });
   writeFileSync(
@@ -204,8 +204,8 @@ describe('Beta fish shim', () => {
   test('installs and removes the Beta fish file named by the shared layout', async () => {
     const userHome = home();
     const confD = join(userHome, '.config', 'fish', 'conf.d');
-    const fishFile = join(confD, 'open-knowledge-beta.fish');
-    expect(pathShimFishConfFileName('beta')).toBe('open-knowledge-beta.fish');
+    const fishFile = join(confD, 'palimpsest-beta.fish');
+    expect(pathShimFishConfFileName('beta')).toBe('palimpsest-beta.fish');
 
     const result = await launch(userHome, {
       env: { HOME: userHome, SHELL: '/usr/bin/fish' },
@@ -213,11 +213,11 @@ describe('Beta fish shim', () => {
     });
 
     expect(result.status).toBe('installed');
-    expect(nodeFs.readdirSync(confD)).toEqual(['open-knowledge-beta.fish']);
+    expect(nodeFs.readdirSync(confD)).toEqual(['palimpsest-beta.fish']);
     const fish = readFileSync(fishFile, 'utf8');
     expect(fish).toContain(`# >>> ${pathShimBlockLabel('beta')} >>>`);
-    expect(fish).toContain('# >>> open-knowledge beta cli >>>');
-    expect(fish).toContain('$HOME/.ok-beta/bin');
+    expect(fish).toContain('# >>> palimpsest beta cli >>>');
+    expect(fish).toContain('$HOME/.ps-beta/bin');
 
     expect(
       removePathShimFromRcFiles({
@@ -270,7 +270,7 @@ describe('Beta legacy home cleanup', () => {
     expect(rmCalls).toEqual([legacyRoot]);
     expect(existsSync(legacyRoot)).toBe(false);
     expect(events.map((e) => e.event)).toContain('path-install-legacy-home-removed');
-    expect(readFileSync(join(userHome, '.zshrc'), 'utf8')).toContain('$HOME/.ok-beta/env.sh');
+    expect(readFileSync(join(userHome, '.zshrc'), 'utf8')).toContain('$HOME/.ps-beta/env.sh');
   });
 
   test('the current marker wins over a leftover legacy marker, and the legacy home is cleared', async () => {
@@ -280,7 +280,7 @@ describe('Beta legacy home cleanup', () => {
       consentDecision: { status: 'granted', at: '2026-09-23T00:00:00.000Z' },
     });
     expect(installed.status).toBe('installed');
-    const legacyRoot = join(userHome, '.ok', 'variants', 'beta');
+    const legacyRoot = join(userHome, '.ps', 'variants', 'beta');
     mkdirSync(legacyRoot, { recursive: true });
     writeFileSync(
       join(legacyRoot, 'path-install.json'),
@@ -288,7 +288,7 @@ describe('Beta legacy home cleanup', () => {
         version: 1,
         installedAt: '2020-01-01T00:00:00.000Z',
         bundleVersion: 'legacy',
-        bundleWrapperPath: '/stale/ok.sh',
+        bundleWrapperPath: '/stale/ps.sh',
         binDir: join(legacyRoot, 'bin'),
         envShimPath: join(legacyRoot, 'env.sh'),
         rcFiles: [],
@@ -334,10 +334,10 @@ describe('Beta legacy home cleanup', () => {
 
 function seedStuckBetaInstall(userHome: string): { legacyRoot: string; zshrc: string } {
   const seeded = seedLegacyBetaInstall(userHome);
-  const bin = join(userHome, '.ok-beta', 'bin');
+  const bin = join(userHome, '.ps-beta', 'bin');
   mkdirSync(bin, { recursive: true });
-  symlinkSync(BETA_WRAPPER, join(bin, 'ok-beta'));
-  symlinkSync(BETA_WRAPPER, join(bin, 'open-knowledge-beta'));
+  symlinkSync(BETA_WRAPPER, join(bin, 'ps-beta'));
+  symlinkSync(BETA_WRAPPER, join(bin, 'palimpsest-beta'));
   return seeded;
 }
 
@@ -350,7 +350,7 @@ describe('Beta install interrupted after the new links were created', () => {
       logger: { event: () => {} },
       spawn: async () => ({
         code: 0,
-        stdout: `/usr/bin:/bin:${join(userHome, '.ok-beta', 'bin')}`,
+        stdout: `/usr/bin:/bin:${join(userHome, '.ps-beta', 'bin')}`,
         stderr: '',
       }),
     });
@@ -359,7 +359,7 @@ describe('Beta install interrupted after the new links were created', () => {
     expect(existsSync(pathInstallMarkerPath(userHome))).toBe(true);
     expect(existsSync(legacyRoot)).toBe(false);
     const rc = readFileSync(zshrc, 'utf8');
-    expect(rc).toContain('$HOME/.ok-beta/env.sh');
+    expect(rc).toContain('$HOME/.ps-beta/env.sh');
     expect(rc).not.toContain('variants/beta');
   });
 
@@ -395,7 +395,7 @@ describe('Beta install interrupted after the new links were created', () => {
 
 describe('Beta installer and runtime agree on the bin dir', () => {
   test('the marker, env.sh and rc block all name the dir the runtime puts on PATH', async () => {
-    vi.stubEnv('OK_CHANNEL', 'beta');
+    vi.stubEnv('PS_CHANNEL', 'beta');
     try {
       const userHome = home();
       writeFileSync(join(userHome, '.zshrc'), '');
@@ -404,14 +404,14 @@ describe('Beta installer and runtime agree on the bin dir', () => {
         consentDecision: { status: 'granted', at: '2026-09-23T00:00:00.000Z' },
       });
       if (result.status !== 'installed') throw new Error(`unexpected ${result.status}`);
-      const runtimeBin = okManagedBinDirs({ platform: 'darwin', home: userHome })[0];
-      expect(runtimeBin).toBe(join(userHome, '.ok-beta', 'bin'));
+      const runtimeBin = psManagedBinDirs({ platform: 'darwin', home: userHome })[0];
+      expect(runtimeBin).toBe(join(userHome, '.ps-beta', 'bin'));
       expect(result.marker.binDir).toBe(runtimeBin);
       const relative = runtimeBin?.slice(userHome.length);
       expect(readFileSync(result.marker.envShimPath, 'utf8')).toContain(`"$\{HOME}${relative}"`);
       expect(
         readFileSync(
-          join(userHome, '.config', 'fish', 'conf.d', 'open-knowledge-beta.fish'),
+          join(userHome, '.config', 'fish', 'conf.d', 'palimpsest-beta.fish'),
           'utf8',
         ),
       ).toContain(`"$HOME${relative}"`);
@@ -422,13 +422,13 @@ describe('Beta installer and runtime agree on the bin dir', () => {
 });
 
 describe('Beta PATH install summary', () => {
-  test('names ok-beta when it removes leftover symlinks', async () => {
+  test('names ps-beta when it removes leftover symlinks', async () => {
     const userHome = home();
     const bin = join(userHome, 'bin');
     mkdirSync(bin);
-    symlinkSync(BETA_WRAPPER, join(bin, 'ok-beta'));
+    symlinkSync(BETA_WRAPPER, join(bin, 'ps-beta'));
     const markerPath = pathInstallMarkerPath(userHome);
-    mkdirSync(join(userHome, '.ok-beta'), { recursive: true });
+    mkdirSync(join(userHome, '.ps-beta'), { recursive: true });
     writeFileSync(
       markerPath,
       JSON.stringify({
@@ -436,13 +436,13 @@ describe('Beta PATH install summary', () => {
         installedAt: '2026-09-23T00:00:00.000Z',
         bundleVersion: '0.77.7-beta.0',
         bundleWrapperPath: BETA_WRAPPER,
-        binDir: join(userHome, '.ok-beta', 'bin'),
-        envShimPath: join(userHome, '.ok-beta', 'env.sh'),
+        binDir: join(userHome, '.ps-beta', 'bin'),
+        envShimPath: join(userHome, '.ps-beta', 'env.sh'),
         rcFiles: [],
         pathDiscovery: null,
         extraSymlinks: [
           {
-            path: join(bin, 'ok-beta'),
+            path: join(bin, 'ps-beta'),
             target: BETA_WRAPPER,
             createdAt: '2026-09-23T00:00:00.000Z',
             kind: 'created',
@@ -455,7 +455,7 @@ describe('Beta PATH install summary', () => {
 
     if (result.status !== 'installed') throw new Error(`unexpected ${result.status}`);
     expect(result.summary).toBe(
-      'Removed 1 leftover ok-beta symlink(s) created by an older version.',
+      'Removed 1 leftover ps-beta symlink(s) created by an older version.',
     );
   });
 });

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { parseSkillsShPublisherPage } from './publisher.ts';
 
-const OURS = 'inkeep/open-knowledge-skills';
+const OURS = 'fractalmandala/palimpsest-skills';
 
 function row(owner: string, skill: string, installs: string): string {
   return (

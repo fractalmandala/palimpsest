@@ -23,7 +23,7 @@ import {
 
 const TARGET = resolveDesktopTarget();
 
-const SMOKE_ENABLED = process.env.OK_DESKTOP_E2E_SMOKE === '1';
+const SMOKE_ENABLED = process.env.PS_DESKTOP_E2E_SMOKE === '1';
 const SHELL_COMMANDS = terminalSmokeShellCommands();
 
 interface Seed {
@@ -34,11 +34,11 @@ interface Seed {
 }
 
 function seed(prefix: string): Seed {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-termlink-${prefix}-home-`)));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-termlink-${prefix}-proj-`)));
-  mkdirSync(join(projectDir, '.ok', 'local'), { recursive: true });
-  writeFileSync(join(projectDir, '.ok', 'config.yml'), "content:\n  dir: '.'\n");
-  writeFileSync(join(projectDir, '.ok', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-termlink-${prefix}-home-`)));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-termlink-${prefix}-proj-`)));
+  mkdirSync(join(projectDir, '.ps', 'local'), { recursive: true });
+  writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
+  writeFileSync(join(projectDir, '.ps', 'local', 'config.yml'), 'terminal:\n  enabled: true\n');
   writeFileSync(join(projectDir, 'start.md'), '# Start\n\nSeed document.\n');
   writeFileSync(join(projectDir, 'notes.md'), '# Notes\n\nClickable link target.\n');
 
@@ -66,7 +66,7 @@ function seed(prefix: string): Seed {
 }
 
 async function launchApp(s: Seed): Promise<ElectronApplication> {
-  const deepLink = `openknowledge://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
+  const deepLink = `palimpsest://open?project=${encodeURIComponent(s.projectDir)}&doc=start`;
   return electron.launch(
     desktopLaunchOptions({
       target: TARGET,
@@ -75,8 +75,8 @@ async function launchApp(s: Seed): Promise<ElectronApplication> {
       env: {
         ...process.env,
         ...terminalSmokeEnvironment(s.tmpHome, { pathPrefix: s.pathPrefix }),
-        OK_DESKTOP_E2E_SMOKE: '1',
-        OK_RECLAIM_DISABLE: '1',
+        PS_DESKTOP_E2E_SMOKE: '1',
+        PS_RECLAIM_DISABLE: '1',
       },
     }),
   );
@@ -92,7 +92,7 @@ async function findEditorWindowWithin20s(app: ElectronApplication): Promise<Page
       async () => {
         for (const page of app.windows()) {
           const mode = await page
-            .evaluate(() => window.okDesktop?.config?.mode)
+            .evaluate(() => window.psDesktop?.config?.mode)
             .catch(() => undefined);
           if (mode === 'editor') return true;
         }
@@ -103,7 +103,7 @@ async function findEditorWindowWithin20s(app: ElectronApplication): Promise<Page
     .toBe(true);
 
   for (const page of app.windows()) {
-    const mode = await page.evaluate(() => window.okDesktop?.config?.mode).catch(() => undefined);
+    const mode = await page.evaluate(() => window.psDesktop?.config?.mode).catch(() => undefined);
     if (mode === 'editor') return page;
   }
   throw new Error('editor window vanished between poll resolution and read');
@@ -192,7 +192,7 @@ function track(...paths: string[]): void {
 }
 
 test.describe('Terminal clickable links — live Electron', () => {
-  test.skip(!SMOKE_ENABLED, 'Set OK_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
+  test.skip(!SMOKE_ENABLED, 'Set PS_DESKTOP_E2E_SMOKE=1 to run Electron smoke tests.');
   test.skip(!PTY_PLATFORM_SUPPORTED, PTY_PLATFORM_SKIP_REASON);
   test.skip(!TARGET.exists, TARGET.missingReason);
   test.afterAll(() => {
@@ -212,10 +212,10 @@ test.describe('Terminal clickable links — live Electron', () => {
     await openRunningTerminal(app, page);
 
     const url = 'https://ok-smoke.example/link';
-    await runInTerminal(page, SHELL_COMMANDS.output(url), 'ok-smoke.example');
+    await runInTerminal(page, SHELL_COMMANDS.output(url), 'ps-smoke.example');
 
     await expect(async () => {
-      await clickTerminalLink(page, 'ok-smoke.example');
+      await clickTerminalLink(page, 'ps-smoke.example');
       expect(await readOpenedExternal(app)).toContain(url);
     }).toPass({ timeout: 20_000 });
   });

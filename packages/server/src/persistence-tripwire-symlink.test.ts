@@ -48,8 +48,8 @@ describe('tripwire reset symlink-escape', () => {
   const secretContent = '# SECRET\n\nThis content lives outside the content root.\n';
 
   beforeEach(() => {
-    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-tripwire-symlink-')));
-    outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ok-tripwire-outside-')));
+    contentDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-tripwire-symlink-')));
+    outsideDir = realpathSync(mkdtempSync(join(tmpdir(), 'ps-tripwire-outside-')));
     secretPath = join(outsideDir, 'secret.md');
     writeFileSync(secretPath, secretContent, 'utf-8');
     durabilityState = new DocumentDurabilityState();
@@ -103,10 +103,10 @@ describe('tripwire reset symlink-escape', () => {
     const baseMarkdown = loadFixture('incident-changeset-readme-doubled.base.md');
     const doubledMarkdown = loadFixture('incident-changeset-readme-doubled.candidate.md');
 
-    mkdirSync(join(contentDir, '.ok', 'local'), { recursive: true });
-    const principalPath = join(contentDir, '.ok', 'local', 'principal.json');
+    mkdirSync(join(contentDir, '.ps', 'local'), { recursive: true });
+    const principalPath = join(contentDir, '.ps', 'local', 'principal.json');
     writeFileSync(principalPath, secretContent, 'utf-8');
-    symlinkSync('.ok/local/principal.json', join(contentDir, `${docName}.md`));
+    symlinkSync('.ps/local/principal.json', join(contentDir, `${docName}.md`));
 
     const persistence = createPersistenceExtension({
       contentDir,
