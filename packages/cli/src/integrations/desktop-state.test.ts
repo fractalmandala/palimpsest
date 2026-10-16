@@ -57,7 +57,7 @@ describe('desktopUserDataDir', () => {
 });
 
 describe('desktopUpdaterCacheDir', () => {
-  test('matches electron-updater cache paths per platform', () => {
+  test('matches legacy updater cache paths per platform', () => {
     expect(desktopUpdaterCacheDir({ home: '/Users/x', platformName: 'darwin', env: {} })).toBe(
       `/Users/x/Library/Caches/${DESKTOP_UPDATER_CACHE_DIR_NAME}`,
     );
