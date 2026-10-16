@@ -29,8 +29,8 @@ describe('prewarm-correlation', () => {
     expect(matched).toBe(true);
     expect(__peekPrewarmRecord('doc-a')).toBeUndefined();
     const c = getCollector();
-    expect(c?.counters['ok/sidebar/prewarm']?.byProp.hit?.true).toBe(1);
-    const clickedMark = c?.marks.toArray().find((m) => m.name === 'ok/sidebar/prewarm-clicked');
+    expect(c?.counters['ps/sidebar/prewarm']?.byProp.hit?.true).toBe(1);
+    const clickedMark = c?.marks.toArray().find((m) => m.name === 'ps/sidebar/prewarm-clicked');
     expect(clickedMark?.properties).toEqual({
       docName: 'doc-a',
       t: 1_500,
@@ -44,7 +44,7 @@ describe('prewarm-correlation', () => {
     expect(matched).toBe(false);
     expect(__peekPrewarmRecord('doc-a')).toEqual({ poolEventId: 'event-a', emittedAt: 1_000 });
     const c = getCollector();
-    expect(c?.counters['ok/sidebar/prewarm']?.byProp.hit?.true).toBeUndefined();
+    expect(c?.counters['ps/sidebar/prewarm']?.byProp.hit?.true).toBeUndefined();
   });
 
   test('consumePrewarmClick rejects when TTL expired (>= 5000 ms by default)', () => {
@@ -71,18 +71,18 @@ describe('prewarm-correlation', () => {
 
   test('recordPrewarm emits hit:false when overwriting a prior record', () => {
     recordPrewarm('doc-a', 'event-1', 1_000);
-    expect(getCollector()?.counters['ok/sidebar/prewarm']?.byProp.hit?.false).toBeUndefined();
+    expect(getCollector()?.counters['ps/sidebar/prewarm']?.byProp.hit?.false).toBeUndefined();
 
     recordPrewarm('doc-a', 'event-2', 1_500);
-    expect(getCollector()?.counters['ok/sidebar/prewarm']?.byProp.hit?.false).toBe(1);
+    expect(getCollector()?.counters['ps/sidebar/prewarm']?.byProp.hit?.false).toBe(1);
 
     recordPrewarm('doc-a', 'event-3', 2_000);
-    expect(getCollector()?.counters['ok/sidebar/prewarm']?.byProp.hit?.false).toBe(2);
+    expect(getCollector()?.counters['ps/sidebar/prewarm']?.byProp.hit?.false).toBe(2);
   });
 
   test('recordPrewarm does not emit hit:false on the first record for a docName', () => {
     recordPrewarm('doc-a', 'event-1', 1_000);
     recordPrewarm('doc-b', 'event-2', 1_500);
-    expect(getCollector()?.counters['ok/sidebar/prewarm']?.byProp.hit?.false).toBeUndefined();
+    expect(getCollector()?.counters['ps/sidebar/prewarm']?.byProp.hit?.false).toBeUndefined();
   });
 });

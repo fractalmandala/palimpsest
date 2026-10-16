@@ -513,19 +513,19 @@ msgid "{days}d ago"
 msgstr "{days} hr lalu"
 
 msgid "{dependent} needs {prerequisite}, and Palimpsest cannot safely replace that entry in this file's format."
-msgstr "{dependent} memerlukan {prerequisite}, dan Palimpsest tidak dapat mengganti entri tersebut dengan aman dalam format file ini."
+msgstr "{dependent} memerlukan {prerequisite}, da Palimpsest tidak dapat mengganti entri tersebut dengan aman dalam format file ini."
 
 msgid "{dependent} needs {prerequisite}, and Palimpsest could not find this agent on this machine."
-msgstr "{dependent} memerlukan {prerequisite}, dan Palimpsest tidak menemukan agen ini di mesin ini."
+msgstr "{dependent} memerlukan {prerequisite}, da Palimpsest tidak menemukan agen ini di mesin ini."
 
 msgid "{dependent} needs {prerequisite}, and Palimpsest does not recognize that entry. Tick {prerequisite} to replace it, then save again."
-msgstr "{dependent} memerlukan {prerequisite}, dan Palimpsest tidak mengenali entri tersebut. Centang {prerequisite} untuk menggantinya, lalu simpan lagi."
+msgstr "{dependent} memerlukan {prerequisite}, da Palimpsest tidak mengenali entri tersebut. Centang {prerequisite} untuk menggantinya, lalu simpan lagi."
 
 msgid "{dependent} needs {prerequisite}, and this agent has no file of that kind on this machine yet. Open the agent once, then try again."
 msgstr "{dependent} memerlukan {prerequisite}, dan agen ini belum memiliki file jenis itu di mesin ini. Buka agen sekali, lalu coba lagi."
 
 msgid "{dependent} needs {prerequisite}, which Palimpsest cannot set up for you. Its setup guide has the manual steps."
-msgstr "{dependent} memerlukan {prerequisite}, yang tidak dapat disiapkan Palimpsest untuk Anda. Panduan penyiapannya berisi langkah-langkah manual."
+msgstr "{dependent} memerlukan {prerequisite}, yang tidak dapat disiapka Palimpsest untuk Anda. Panduan penyiapannya berisi langkah-langkah manual."
 
 msgid "{descriptorLabel} — render error, source editable below"
 msgstr "{descriptorLabel} — galat render, sumber bisa disunting di bawah"
@@ -963,7 +963,7 @@ msgstr "Folder bernama <0>{sanitized}</0> sudah punya berkas di sini. Pilih nama
 msgid "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 msgstr "Kuncinya sudah disetel, tetapi penyedia embedding menolaknya atau tidak dapat dihubungi — pencarian kembali ke pencocokan kata kunci. Gunakan <0>Uji koneksi</0> di Endpoint khusus untuk melihat apa yang salah."
 
-msgid "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgid "A knowledge base that follows Google's OpenKnowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
 msgstr "Basis pengetahuan yang mengikuti Palimpsest Format dari Google, cara bersama untuk menata apa yang Anda tahu. Pilih ini jika Anda ingin catatan Anda bekerja baik dengan alat lain yang memahami format tersebut."
 
 msgid "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
@@ -1275,29 +1275,29 @@ msgid "Adds a managed block to"
 msgstr "Menambahkan blok terkelola ke"
 
 #. Subtext under the project AI-tools checkbox
-msgid "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
 msgstr "Menambahkan entri MCP Palimpsest dan keterampilan proyek ke <0>{toolList}</0> agar agen Anda dapat membaca dan mengedit berkas Anda."
 
 #. Subtext under the AI-tools MCP checkbox
-msgid "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
 msgstr "Menambahkan entri MCP Palimpsest ke <0>{connectToolList}</0> agar agen Anda dapat membaca dan mengedit berkas Anda."
 
-msgid "Adds an Palimpsest MCP entry to this project's agent config."
+msgid "Adds a Palimpsest MCP entry to this project's agent config."
 msgstr "Menambahkan entri MCP Palimpsest ke konfigurasi agen proyek ini."
 
 #. js-lingui-explicit-id
 msgid "guidance.mcp.user-config"
-msgstr "Menambahkan Palimpsest ke konfigurasi MCP milik {agent}, sehingga semua proyek di mesin ini dapat dijangkau."
+msgstr "Menambahka Palimpsest ke konfigurasi MCP milik {agent}, sehingga semua proyek di mesin ini dapat dijangkau."
 
 #. js-lingui-explicit-id
 msgid "guidance.mcp.project-config"
-msgstr "Menambahkan Palimpsest ke konfigurasi MCP yang dibaca {agent} di proyek ini, sehingga ia dapat membaca, mencari, dan mengedit dokumen-dokumen ini."
+msgstr "Menambahka Palimpsest ke konfigurasi MCP yang dibaca {agent} di proyek ini, sehingga ia dapat membaca, mencari, dan mengedit dokumen-dokumen ini."
 
 msgid "Adds telemetry, server state, and runtime info when available. Credentials are always removed; document names, if included, appear in cleartext (not redacted)."
 msgstr "Menambahkan telemetri, keadaan server, dan info runtime bila tersedia. Kredensial selalu dihapus; nama dokumen, jika disertakan, muncul sebagai teks biasa (tidak disunting)."
 
 msgid "Adds the Palimpsest skill to the <0>Claude Desktop App</0> so it's available in Chat and Cowork sessions."
-msgstr "Menambahkan keterampilan Palimpsest ke <0>aplikasi Claude Desktop</0> agar tersedia di sesi Chat dan Cowork."
+msgstr "Menambahkan keterampila Palimpsest ke <0>aplikasi Claude Desktop</0> agar tersedia di sesi Chat dan Cowork."
 
 msgid "Adds the skill to {rootRel} — also read by {0}"
 msgstr "Menambahkan keterampilan ke {rootRel} — juga dibaca oleh {0}"
@@ -1413,7 +1413,7 @@ msgstr "Hampir selesai. Berikut yang sudah dilakukan dan yang masih perlu dilaku
 msgid "Already at {assetContentPath} — reusing."
 msgstr "Sudah ada di {assetContentPath} — memakai ulang."
 
-#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked
+#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have a Palimpsest MCP entry, which stay as they are while the box is unticked
 msgid "Already connected to {replacingToolList}"
 msgstr "Sudah terhubung ke: {replacingToolList}"
 
@@ -1844,7 +1844,7 @@ msgid "Both agents end up reading everything in {keep}."
 msgstr "Kedua agen akhirnya membaca semua yang ada di {keep}."
 
 msgid "Both versions are identical. Choosing Accept current leaves Palimpsest's protection on, so another save of the older version is refused again. Choosing Accept incoming turns that protection off."
-msgstr "Kedua versi identik. Memilih Terima yang sekarang membuat perlindungan Palimpsest tetap aktif, sehingga penyimpanan versi lama berikutnya akan ditolak lagi. Memilih Terima yang masuk menonaktifkan perlindungan tersebut."
+msgstr "Kedua versi identik. Memilih Terima yang sekarang membuat perlindunga Palimpsest tetap aktif, sehingga penyimpanan versi lama berikutnya akan ditolak lagi. Memilih Terima yang masuk menonaktifkan perlindungan tersebut."
 
 msgid "Branch"
 msgstr "Cabang"
@@ -2117,7 +2117,7 @@ msgstr "Memeriksa dokumen untuk masalah markdown dan bisa memperbaikinya"
 msgid "Checks the whole project for markdown problems and broken links"
 msgstr "Memeriksa seluruh proyek untuk masalah markdown dan tautan rusak"
 
-msgid "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
+msgid "Checks your project against the OpenKnowledge Format. Turn it off any time in Settings."
 msgstr "Periksa proyek Anda terhadap Palimpsest Format. Matikan kapan saja di Pengaturan."
 
 msgid "Choose a skill archive"
@@ -2148,13 +2148,13 @@ msgid "Choose what a new tab starts"
 msgstr "Pilih apa yang dimulai tab baru"
 
 msgid "Choose what Palimpsest sets up for {0}."
-msgstr "Pilih apa yang disiapkan Palimpsest untuk {0}."
+msgstr "Pilih apa yang disiapka Palimpsest untuk {0}."
 
 msgid "Choose what Palimpsest sets up for {agentLabel}. {agentLabel} only supports global configuration."
-msgstr "Pilih apa yang disiapkan Palimpsest untuk {agentLabel}. {agentLabel} hanya mendukung konfigurasi global."
+msgstr "Pilih apa yang disiapka Palimpsest untuk {agentLabel}. {agentLabel} hanya mendukung konfigurasi global."
 
 msgid "Choose what Palimpsest sets up."
-msgstr "Pilih apa yang disiapkan Palimpsest."
+msgstr "Pilih apa yang disiapka Palimpsest."
 
 msgid "Choose where to send these comments"
 msgstr "Pilih ke mana komentar ini dikirim"
@@ -2163,7 +2163,7 @@ msgid "Choose where to send this message"
 msgstr "Pilih ke mana pesan ini dikirim"
 
 msgid "Choose whether this project's Palimpsest setup, including its AI-tool connections and the Shared default sync mode, is saved with the project so teammates get it too, or kept only on your computer."
-msgstr "Pilih apakah penyiapan Palimpsest proyek ini, termasuk koneksi alat AI-nya dan mode sinkronisasi Bawaan bersama, disimpan bersama proyek agar rekan tim juga mendapatkannya, atau disimpan hanya di komputer Anda."
+msgstr "Pilih apakah penyiapa Palimpsest proyek ini, termasuk koneksi alat AI-nya dan mode sinkronisasi Bawaan bersama, disimpan bersama proyek agar rekan tim juga mendapatkannya, atau disimpan hanya di komputer Anda."
 
 msgid "Choose which agents appear in agent menus across the app, and set them up to read and update your documents."
 msgstr "Pilih agen mana yang muncul di menu agen di seluruh aplikasi, lalu siapkan agar mereka dapat membaca dan memperbarui dokumen Anda."
@@ -2549,7 +2549,7 @@ msgid "Connect GitHub to continue."
 msgstr "Hubungkan GitHub untuk melanjutkan."
 
 msgid "Connect Palimpsest to other tools you use."
-msgstr "Hubungkan Palimpsest dengan alat lain yang Anda pakai."
+msgstr "Hubungka Palimpsest dengan alat lain yang Anda pakai."
 
 msgid "Connect this project to GitHub to share."
 msgstr "Hubungkan proyek ini ke GitHub untuk membagikannya."
@@ -2968,7 +2968,7 @@ msgid "Couldn't install from {0}: {1}"
 msgstr "Tidak bisa memasang dari {0}: {1}"
 
 msgid "Couldn't install Palimpsest skill — {message}"
-msgstr "Tidak dapat memasang keterampilan Palimpsest: {message}"
+msgstr "Tidak dapat memasang keterampila Palimpsest: {message}"
 
 msgid "Couldn't install skill: {0}"
 msgstr "Keterampilan tidak bisa dipasang: {0}"
@@ -3001,7 +3001,7 @@ msgid "Couldn't load templates"
 msgstr "Templat tidak bisa dimuat"
 
 msgid "Couldn't load the Palimpsest skills. Try again."
-msgstr "Keterampilan Palimpsest tidak dapat dimuat. Coba lagi."
+msgstr "Keterampila Palimpsest tidak dapat dimuat. Coba lagi."
 
 msgid "Couldn't load the version preview. You can still choose how to resolve it below."
 msgstr "Pratinjau versinya tidak bisa dimuat. Anda tetap bisa memilih cara menyelesaikannya di bawah."
@@ -3175,7 +3175,7 @@ msgid "Couldn't resume this chat: {0}"
 msgstr "Tidak dapat melanjutkan obrolan ini: {0}"
 
 msgid "Couldn't run the test. Check that Palimpsest is still running."
-msgstr "Pengujiannya tidak bisa dijalankan. Pastikan Palimpsest masih berjalan."
+msgstr "Pengujiannya tidak bisa dijalankan. Pastika Palimpsest masih berjalan."
 
 msgid "Couldn’t save changes. Try editing a color again."
 msgstr "Perubahan tidak dapat disimpan. Coba sunting warna lagi."
@@ -3418,7 +3418,7 @@ msgid "Customize how the editor looks and behaves."
 msgstr "Sesuaikan tampilan dan perilaku penyunting."
 
 msgid "Customize your Palimpsest experience."
-msgstr "Sesuaikan pengalaman Palimpsest Anda."
+msgstr "Sesuaikan pengalama Palimpsest Anda."
 
 msgid "Cut"
 msgstr "Potong"
@@ -4899,7 +4899,7 @@ msgid "GitHub connection expired. Connect again to continue."
 msgstr "Koneksi GitHub kedaluwarsa. Hubungkan lagi untuk melanjutkan."
 
 msgid "GitHub denied the request. You may need to authorize Palimpsest for {owner} in your browser."
-msgstr "GitHub menolak permintaan ini. Anda mungkin perlu mengizinkan Palimpsest untuk {owner} di peramban Anda."
+msgstr "GitHub menolak permintaan ini. Anda mungkin perlu mengizinka Palimpsest untuk {owner} di peramban Anda."
 
 msgid "GitHub Enterprise Server hosts"
 msgstr "Host GitHub Enterprise Server"
@@ -5035,7 +5035,7 @@ msgstr "Bantu saya memahami konflik dalam {filePath}. Jelaskan apa yang perlu sa
 
 #. Subtext under the discovery-skill checkbox
 msgid "Help your agents discover and use Palimpsest in any project."
-msgstr "Bantu agen Anda menemukan dan menggunakan Palimpsest di proyek mana pun."
+msgstr "Bantu agen Anda menemukan dan menggunaka Palimpsest di proyek mana pun."
 
 msgid "Helps coding agents choose OKF document types, preserve provenance, and avoid inventing unsupported metadata."
 msgstr "Membantu agen pengkodean memilih jenis dokumen OKF, mempertahankan asal, dan menghindari penemuan metadata yang tidak didukung."
@@ -5200,10 +5200,10 @@ msgid "How to set up {rowLabel}"
 msgstr "Cara menyiapkan {rowLabel}"
 
 msgid "How to set up new projects with Palimpsest."
-msgstr "Cara menyiapkan proyek baru dengan Palimpsest."
+msgstr "Cara menyiapkan proyek baru denga Palimpsest."
 
 msgid "How to use Palimpsest and its MCP tools."
-msgstr "Cara menggunakan Palimpsest dan alat MCP-nya."
+msgstr "Cara menggunaka Palimpsest dan alat MCP-nya."
 
 msgid "How to write a new skill and install it."
 msgstr "Cara menulis keterampilan baru dan memasangnya."
@@ -5596,7 +5596,7 @@ msgid "Installs into this project"
 msgstr "Terpasang ke proyek ini"
 
 msgid "Installs the Palimpsest discovery skill for this agent."
-msgstr "Menginstal keterampilan penemuan Palimpsest untuk agen ini."
+msgstr "Menginstal keterampilan penemua Palimpsest untuk agen ini."
 
 msgid "Installs the Palimpsest project skill for this agent."
 msgstr "Menginstal keterampilan proyek Palimpsest untuk agen ini."
@@ -5650,7 +5650,7 @@ msgid "It also adds the low-memory reports macOS wrote in the past week that lis
 msgstr "Ini juga menambahkan laporan memori rendah yang ditulis macOS dalam seminggu terakhir yang mencantumkan proses Palimpsest, beserta penggunaan memori masing-masing dan apakah macOS menghentikannya."
 
 msgid "It also adds the out-of-memory kills of Palimpsest that the system journal recorded in the past week, without the machine name, account id, or folder paths."
-msgstr "Ini juga menambahkan penghentian Palimpsest karena kehabisan memori yang dicatat jurnal sistem dalam seminggu terakhir, tanpa nama mesin, ID akun, atau jalur folder."
+msgstr "Ini juga menambahkan penghentia Palimpsest karena kehabisan memori yang dicatat jurnal sistem dalam seminggu terakhir, tanpa nama mesin, ID akun, atau jalur folder."
 
 msgid "It also marks {0} as trusted, which is what makes the extension load. That trust covers the whole folder — {1} will load every extension in it, not only Palimpsest's — and both stay until you remove Palimpsest from this project."
 msgstr "Ini juga menandai {0} sebagai tepercaya, yang membuat ekstensi itu dimuat. Kepercayaan itu mencakup seluruh folder: {1} akan memuat setiap ekstensi di dalamnya, bukan hanya milik Palimpsest, dan keduanya tetap ada sampai Anda menghapus Palimpsest dari proyek ini."
@@ -5736,8 +5736,8 @@ msgstr "Catat orang dan perusahaan yang bekerja dengan Anda serta pertemuan yang
 msgid "keeps the skills"
 msgstr "menyimpan keterampilan"
 
-msgid "Keeps your knowledge base aligned with the Palimpsest Format."
-msgstr "Menjaga basis pengetahuan Anda tetap selaras dengan Palimpsest Format."
+msgid "Keeps your knowledge base aligned with the OpenKnowledge Format."
+msgstr "Menjaga basis pengetahuan Anda tetap selaras denga Palimpsest Format."
 
 msgid "Kept both — \"{0}\" is its own skill now"
 msgstr "Keduanya disimpan — \"{0}\" kini menjadi keterampilan tersendiri"
@@ -5774,7 +5774,7 @@ msgstr "Suntingan terakhir"
 
 #. Subtext under the terminal toggle explaining what the ok command gives you
 msgid "Launch Palimpsest from any terminal — <0>{cliCommand}</0> opens a project, <1>{cliCommand} init</1> connects your agents."
-msgstr "Jalankan Palimpsest dari terminal mana pun — <0>{cliCommand}</0> membuka proyek, <1>{cliCommand} init</1> menghubungkan agen Anda."
+msgstr "Jalanka Palimpsest dari terminal mana pun — <0>{cliCommand}</0> membuka proyek, <1>{cliCommand} init</1> menghubungkan agen Anda."
 
 msgid "Layout"
 msgstr "Tata letak"
@@ -5966,7 +5966,7 @@ msgid "Loading image"
 msgstr "Memuat gambar"
 
 msgid "Loading Palimpsest skills"
-msgstr "Memuat keterampilan Palimpsest"
+msgstr "Memuat keterampila Palimpsest"
 
 msgid "Loading pages"
 msgstr "Memuat halaman"
@@ -6303,7 +6303,7 @@ msgid "Move down"
 msgstr "Turunkan"
 
 msgid "Move Palimpsest.app to the Trash"
-msgstr "Pindahkan Palimpsest.app ke Tong Sampah"
+msgstr "Pindahka Palimpsest.app ke Tong Sampah"
 
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "Pindahkan atau ganti nama berkas ini di dalam keterampilan — jalurnya tetap di bawah references/ atau scripts/."
@@ -7244,7 +7244,7 @@ msgstr "Palimpsest tidak dapat menjangkau server proyek untuk memeriksa pemeliha
 msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
 msgstr "Palimpsest membuat dan memelihara file navigasi bernama index.md di setiap folder yang berisi Markdown."
 
-msgid "Palimpsest Format guidance"
+msgid "OpenKnowledge Format guidance"
 msgstr "Palimpsest Format bimbingan"
 
 msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
@@ -7419,7 +7419,7 @@ msgid "Palimpsest deleted a document"
 msgstr "Palimpsest menghapus sebuah dokumen"
 
 msgid "Palimpsest discovery skill"
-msgstr "Keterampilan penemuan Palimpsest"
+msgstr "Keterampilan penemua Palimpsest"
 
 msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
 msgstr "Palimpsest tidak mengenali entri ini, dan tidak dapat menggantinya dengan aman dalam format file ini."
@@ -7548,7 +7548,7 @@ msgid "Palimpsest searched the knowledge base"
 msgstr "Palimpsest mencari di basis pengetahuan"
 
 msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "Keterampilan Palimpsest disimpan. Unggah di Claude Desktop, lalu klik Cowork lagi."
+msgstr "Keterampila Palimpsest disimpan. Unggah di Claude Desktop, lalu klik Cowork lagi."
 
 msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
 msgstr "Palimpsest menyimpan konfigurasi dan berkas internalnya di dalam direktori <0>.ok</0> yang baru dibuat di folder akar proyek Anda."
@@ -7940,7 +7940,7 @@ msgid "Preparing to uninstall Palimpsest"
 msgstr "Bersiap mencopot Palimpsest"
 
 msgid "Present a document as a slide deck in its own window. Add <0>slides: true</0> to a document's frontmatter, then open it with the Slidev action. Rendering is handled by the Slidev CLI, which Palimpsest does not bundle."
-msgstr "Tampilkan dokumen sebagai dek slide di jendela tersendiri. Tambahkan <0>slides: true</0> ke frontmatter dokumen, lalu buka dengan aksi Slidev. Perenderan ditangani oleh CLI Slidev, yang tidak disertakan Palimpsest."
+msgstr "Tampilkan dokumen sebagai dek slide di jendela tersendiri. Tambahkan <0>slides: true</0> ke frontmatter dokumen, lalu buka dengan aksi Slidev. Perenderan ditangani oleh CLI Slidev, yang tidak disertaka Palimpsest."
 
 msgid "Present a document as a slide deck in its own window. Works in the Palimpsest desktop app only, and needs the Slidev CLI, which you install separately. When on, it appears under Plugins in the sidebar."
 msgstr "Tampilkan dokumen sebagai dek slide di jendela tersendiri. Hanya berfungsi di aplikasi desktop Palimpsest dan memerlukan CLI Slidev yang dipasang terpisah. Saat aktif, muncul di Plugins pada bilah sisi."
@@ -8160,15 +8160,15 @@ msgstr "Melakukan push"
 
 #. js-lingui-explicit-id
 msgid "guidance.skill.user"
-msgstr "Menempatkan keterampilan penemuan Palimpsest di folder keterampilan global {agent}, sehingga ia dapat menemukan Palimpsest di proyek mana pun."
+msgstr "Menempatkan keterampilan penemua Palimpsest di folder keterampilan global {agent}, sehingga ia dapat menemuka Palimpsest di proyek mana pun."
 
 #. js-lingui-explicit-id
 msgid "guidance.skill.project"
-msgstr "Menempatkan keterampilan Palimpsest di folder keterampilan {agent} untuk proyek ini, sehingga suntingannya tetap teratribusi."
+msgstr "Menempatkan keterampila Palimpsest di folder keterampilan {agent} untuk proyek ini, sehingga suntingannya tetap teratribusi."
 
 #. js-lingui-explicit-id
 msgid "guidance.skill.central-store"
-msgstr "Menempatkan keterampilan Palimpsest di penyimpanan keterampilan pusat yang dibaca {agent}."
+msgstr "Menempatkan keterampila Palimpsest di penyimpanan keterampilan pusat yang dibaca {agent}."
 
 msgid "Puzzling…"
 msgstr "Memecahkan teka-teki…"
@@ -8255,7 +8255,7 @@ msgid "Reads the version history of a document or skill, or a folder's activity"
 msgstr "Membaca riwayat versi dokumen atau keterampilan, atau aktivitas folder"
 
 msgid "Reads this project's Palimpsest settings"
-msgstr "Membaca pengaturan Palimpsest proyek ini"
+msgstr "Membaca pengatura Palimpsest proyek ini"
 
 msgid "Ready"
 msgstr "Siap"
@@ -9377,7 +9377,7 @@ msgid "Setup files include: <0>.ok/</0>, AI-tool MCP configs (<1>.mcp.json</1> a
 msgstr "Berkas penyiapan mencakup: <0>.ok/</0>, konfigurasi MCP alat AI (<1>.mcp.json</1> dan berkas tiap alat). Keterampilan Anda tidak termasuk: semuanya mengikuti git seperti berkas lain di proyek ini.<2/><3>Dibagikan</3> melakukan commit ke git, jadi siapa pun yang mengkloning repo mendapat penyiapan yang sama. <4/><5>Hanya saya</5> menahannya keluar dari git (lewat <6>.git/info/exclude</6>)."
 
 msgid "Setup Palimpsest in this folder?"
-msgstr "Siapkan Palimpsest di folder ini?"
+msgstr "Siapka Palimpsest di folder ini?"
 
 msgid "Share"
 msgstr "Bagikan"
@@ -9651,7 +9651,7 @@ msgstr "Studio Keterampilan"
 
 #. First-visit explanation of what the Skills Studio settings page is for
 msgid "Skills teach your AI tools repeatable tasks. Install the ones Palimpsest ships, or write your own in the editor's Skills sidebar."
-msgstr "Keterampilan mengajarkan tugas berulang kepada alat AI Anda. Pasang keterampilan bawaan Palimpsest, atau tulis milik Anda di bilah sisi Keterampilan pada editor."
+msgstr "Keterampilan mengajarkan tugas berulang kepada alat AI Anda. Pasang keterampilan bawaa Palimpsest, atau tulis milik Anda di bilah sisi Keterampilan pada editor."
 
 msgid "Skills teach your AI tools repeatable tasks. Write your own in the editor's Skills sidebar; this page is where they get switched on and shared."
 msgstr "Keterampilan mengajarkan tugas berulang kepada alat AI Anda. Tulis milik Anda di bilah sisi Keterampilan pada editor; halaman ini tempat keterampilan diaktifkan dan dibagikan."
@@ -10298,7 +10298,7 @@ msgstr "Endpoint itu tidak bisa dipakai. Masukkan URL https:// — http:// hanya
 msgid "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
 msgstr "Folder itu sudah berisi kode yang tidak ditulis Palimpsest, dan kepercayaan yang sama akan mengizinkan {0} menjalankannya: {otherExtensions}."
 
-msgid "That folder isn't an Palimpsest project yet. Initialize it and open?"
+msgid "That folder isn't a Palimpsest project yet. Initialize it and open?"
 msgstr "Folder itu belum menjadi proyek Palimpsest. Inisialisasi lalu buka?"
 
 msgid "That host is already in the list."
@@ -10335,7 +10335,7 @@ msgstr "Versi {editor} kini menjadi sumbernya"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "{targetNoun} tidak dapat dibuka — coba menuju ke sana secara manual."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
 msgstr "<0>type</0> yang didapat setiap dokumen yang dibuat dari templat ini (mis. <1>research-note</1>). Menjaga dokumen baru tetap sesuai Palimpsest Format."
 
 msgid "The agent is working"
@@ -10462,7 +10462,7 @@ msgid "The interface is still in the language you were reading. Check your conne
 msgstr "Antarmuka masih dalam bahasa yang tadi Anda baca. Periksa koneksi Anda, lalu muat ulang untuk mencoba lagi."
 
 msgid "The language Palimpsest speaks; System follows your operating system. Your own notes stay in the language you wrote them in."
-msgstr "Bahasa yang digunakan Palimpsest; Sistem mengikuti sistem operasi Anda. Catatan Anda sendiri tetap dalam bahasa saat Anda menulisnya."
+msgstr "Bahasa yang digunaka Palimpsest; Sistem mengikuti sistem operasi Anda. Catatan Anda sendiri tetap dalam bahasa saat Anda menulisnya."
 
 msgid "The menu label agents pick this template by (required)."
 msgstr "Label menu yang dipakai agen untuk memilih templat ini (wajib)."
@@ -10582,7 +10582,7 @@ msgid "The stored token is missing the permissions this host needs to push."
 msgstr "Token yang tersimpan tidak memiliki izin yang dibutuhkan host ini untuk melakukan push."
 
 msgid "The sync mode teammates start with the first time they open this project. It's saved in the project's Palimpsest settings, so it only reaches them when Config sharing below is set to Shared."
-msgstr "Mode sinkronisasi yang digunakan rekan tim saat pertama kali membuka proyek ini. Mode ini disimpan di pengaturan Palimpsest proyek, jadi hanya sampai ke mereka jika Berbagi konfigurasi di bawah diatur ke Dibagikan."
+msgstr "Mode sinkronisasi yang digunakan rekan tim saat pertama kali membuka proyek ini. Mode ini disimpan di pengatura Palimpsest proyek, jadi hanya sampai ke mereka jika Berbagi konfigurasi di bawah diatur ke Dibagikan."
 
 msgid "The template's filename (without `.md`)."
 msgstr "Nama berkas templatnya (tanpa `.md`)."
@@ -10676,7 +10676,7 @@ msgstr "Aturan-aturan ini berasal dari berkas <0>{configFile}</0> proyek Anda, y
 
 #. Says what the Palimpsest-authored skills are for, and where installing one puts it
 msgid "These teach your AI tools how to work with Palimpsest. Installing one adds it to every AI tool on this machine."
-msgstr "Keterampilan ini mengajarkan alat AI Anda cara bekerja dengan Palimpsest. Memasang satu akan menambahkannya ke setiap alat AI di mesin ini."
+msgstr "Keterampilan ini mengajarkan alat AI Anda cara bekerja denga Palimpsest. Memasang satu akan menambahkannya ke setiap alat AI di mesin ini."
 
 msgid "They run without asking while this chat is open"
 msgstr "Perintah tersebut berjalan tanpa bertanya selama obrolan ini terbuka"
@@ -10756,8 +10756,8 @@ msgstr "Branch ini tidak berisi proyek Palimpsest ini. Worktree dibuat, tetapi t
 msgid "This branch is checked out in:"
 msgstr "Cabang ini sedang dipakai di:"
 
-msgid "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
-msgstr "Branch ini mengarahkan jalur penyiapan Palimpsest ke luar worktree. Worktree dibuat, tetapi tidak dibuka."
+msgid "This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened."
+msgstr "Branch ini mengarahkan jalur penyiapa Palimpsest ke luar worktree. Worktree dibuat, tetapi tidak dibuka."
 
 #. Toast after first-launch setup ends without connecting AI tools; agentConnectionsLabel is the Settings sidebar pane name
 msgid "This can be configured in Settings > {agentConnectionsLabel}"
@@ -10930,7 +10930,7 @@ msgstr "Yang ini perlu melihat file Anda, bukan hanya dokumen yang terbuka, sehi
 
 #. Says what the project skill is for, then the thing that makes it different from the user-scope ones: it is committed to the repo
 msgid "This one teaches your AI tools how to work with Palimpsest. It lives in the project folder, so it installs for everyone who opens the project."
-msgstr "Yang ini mengajarkan alat AI Anda cara bekerja dengan Palimpsest. Keterampilan ini berada di folder proyek, jadi terpasang untuk semua orang yang membuka proyek."
+msgstr "Yang ini mengajarkan alat AI Anda cara bekerja denga Palimpsest. Keterampilan ini berada di folder proyek, jadi terpasang untuk semua orang yang membuka proyek."
 
 msgid "This option cannot be changed automatically."
 msgstr "Opsi ini tidak dapat diubah secara otomatis."
@@ -11035,7 +11035,7 @@ msgid "This setup is shared with {peers} through <0>{path}</0>. Removing it here
 msgstr "Konfigurasi ini dibagikan dengan {peers} melalui <0>{path}</0>. Menghapusnya di sini juga menghapusnya untuk {peers}."
 
 msgid "This setup is shared with {peers}, and Palimpsest cannot change it from here. Unlink the folder in Skills Studio first."
-msgstr "Penyiapan ini dibagikan dengan {peers}, dan Palimpsest tidak dapat mengubahnya dari sini. Lepaskan tautan folder di Skills Studio terlebih dahulu."
+msgstr "Penyiapan ini dibagikan dengan {peers}, da Palimpsest tidak dapat mengubahnya dari sini. Lepaskan tautan folder di Skills Studio terlebih dahulu."
 
 msgid "This setup is shared with {peers}. Removing it here removes it for {peers} too."
 msgstr "Konfigurasi ini dibagikan dengan {peers}. Menghapusnya di sini juga menghapusnya untuk {peers}."
@@ -11284,7 +11284,7 @@ msgid "Turning off index maintenance failed because Palimpsest could not update 
 msgstr "Gagal menonaktifkan pemeliharaan indeks karena Palimpsest tidak dapat memperbarui aturan penggabungan Git. Periksa Git dan .gitattributes, lalu coba lagi."
 
 msgid "Turning off index maintenance failed because the Palimpsest section of .gitattributes was edited or is incomplete. Remove that section, then try again."
-msgstr "Gagal menonaktifkan pemeliharaan indeks karena bagian Palimpsest di .gitattributes telah diedit atau tidak lengkap. Hapus bagian tersebut, lalu coba lagi."
+msgstr "Gagal menonaktifkan pemeliharaan indeks karena bagia Palimpsest di .gitattributes telah diedit atau tidak lengkap. Hapus bagian tersebut, lalu coba lagi."
 
 msgid "Turning off index maintenance failed because the project setting could not be saved. Check the project file permissions, then try again."
 msgstr "Gagal menonaktifkan pemeliharaan indeks karena pengaturan proyek tidak dapat disimpan. Periksa izin file proyek, lalu coba lagi."

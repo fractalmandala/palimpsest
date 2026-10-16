@@ -2,7 +2,7 @@ import type { Editor } from '@tiptap/core';
 import { describe, expect, test, vi } from 'vitest';
 
 const LONG =
-  'Use when triaging an Palimpsest ticket in Linear, whatever its shape or origin. ' +
+  'Use when triaging a Palimpsest ticket in Linear, whatever its shape or origin. ' +
   'Owns every kind of ticket: defect, feature request, question, sentiment.';
 
 const SHORT_FIRST =
@@ -120,7 +120,7 @@ describe('getSkillReferenceItems', () => {
 
     expect(wordy?.description?.length).toBeLessThanOrEqual(105);
     expect(wordy?.description).not.toContain('Owns every kind of ticket');
-    expect(wordy?.description?.startsWith('Use when triaging an Palimpsest ticket')).toBe(true);
+    expect(wordy?.description?.startsWith('Use when triaging a Palimpsest ticket')).toBe(true);
   });
 
   test('a doc that is not a skill bundle offers no skill references', () => {

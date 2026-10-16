@@ -5,14 +5,14 @@ export const LANGUAGE_PREFERENCE_ARG_NAME = 'language-preference';
 export const MCP_SERVER_NAME_ARG_NAME = 'mcp-server-name';
 export const THEME_PREFERENCE_ARG_NAME = 'theme-preference';
 
-export function resolveOkDesktopMode(raw: string | undefined): PsDesktopConfig['mode'] {
+export function resolvePsDesktopMode(raw: string | undefined): PsDesktopConfig['mode'] {
   if (raw === 'navigator') return 'navigator';
   if (raw === 'terminal') return 'terminal';
   if (raw === 'note') return 'note';
   return 'editor';
 }
 
-export function resolveOkThemePreference(raw: string | undefined): PsThemeSource | undefined {
+export function resolvePsThemePreference(raw: string | undefined): PsThemeSource | undefined {
   if (raw === undefined) return undefined;
   if (raw === 'light' || raw === 'dark') return raw;
   return 'system';

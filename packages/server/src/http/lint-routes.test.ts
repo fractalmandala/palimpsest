@@ -47,7 +47,7 @@ describe('audit routes with a missing content directory', () => {
       expect(rootResponse.captured.status).toBe(404);
       expect(rootResponse.captured.headers['content-type']).toContain('application/problem+json');
       expect(JSON.parse(rootResponse.captured.body)).toMatchObject({
-        type: 'urn:ok:error:not-found',
+        type: 'urn:ps:error:not-found',
         status: 404,
         title: expect.stringContaining('Set content.dir to an existing directory.'),
       });
@@ -55,7 +55,7 @@ describe('audit routes with a missing content directory', () => {
       await dispatch(makeSyntheticReq({ url: `${routePath}?path=.` }), dotResponse.res);
       expect(dotResponse.captured.status).toBe(400);
       expect(JSON.parse(dotResponse.captured.body)).toMatchObject({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         status: 400,
         title: 'Invalid path.',
       });
@@ -64,7 +64,7 @@ describe('audit routes with a missing content directory', () => {
       await dispatch(makeSyntheticReq({ url: `${routePath}?path=child` }), res);
       expect(captured.status).toBe(404);
       expect(JSON.parse(captured.body)).toMatchObject({
-        type: 'urn:ok:error:not-found',
+        type: 'urn:ps:error:not-found',
         title: expect.stringContaining('Use an existing file or directory'),
       });
     },

@@ -56,7 +56,7 @@ describe('methodRouter', () => {
     expect(writeHeadCalls[0]?.headers.Allow).toBe('GET, PUT, POST, DELETE');
     expect(writeHeadCalls[0]?.headers['Content-Type']).toBe('application/problem+json');
     const body = JSON.parse(endCalls[0] ?? '{}') as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:method-not-allowed');
+    expect(body.type).toBe('urn:ps:error:method-not-allowed');
     expect(body.title).toBe('Method not allowed.');
     expect(body.status).toBe(405);
   });

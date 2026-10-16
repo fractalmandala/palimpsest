@@ -12,7 +12,7 @@ let _gcLatch: Counter | null = null;
 let _consolidation: Counter | null = null;
 
 function runDurationHist(): Histogram {
-  _runDuration ||= getMeter().createHistogram('ok.shadow.maintenance.run_duration_ms', {
+  _runDuration ||= getMeter().createHistogram('ps.shadow.maintenance.run_duration_ms', {
     description:
       'Wall-clock duration of one maintenance op. Bounded labels: op ∈ {gc, consolidation, reap}, outcome ∈ {ok, skipped, error}.',
     unit: 'ms',
@@ -21,7 +21,7 @@ function runDurationHist(): Histogram {
 }
 
 function gcLatchCounter(): Counter {
-  _gcLatch ||= getMeter().createCounter('ok.shadow.maintenance.gc_latch_total', {
+  _gcLatch ||= getMeter().createCounter('ps.shadow.maintenance.gc_latch_total', {
     description:
       'Distinct gc.log latch EPISODES (counted on the absent→present transition, not per observation, so one persistent ~1-day latch counts once). A latch means auto-gc is silently disabled until it self-expires; a nonzero rate means a repo is re-degrading invisibly.',
   });
@@ -29,7 +29,7 @@ function gcLatchCounter(): Counter {
 }
 
 function consolidationCounter(): Counter {
-  _consolidation ||= getMeter().createCounter('ok.shadow.maintenance.consolidation_total', {
+  _consolidation ||= getMeter().createCounter('ps.shadow.maintenance.consolidation_total', {
     description:
       'Auto-consolidation runs that folded ≥1 dead chain. Bounded label: trigger ∈ {dead-chain, session-close, boot, ttl}. Width before/after ride the structured log, not metric labels.',
   });

@@ -167,9 +167,9 @@ describe('resolveFrontmatterSchemas — loading', () => {
   });
 
   test('an invalid appliesTo glob surfaces as a problem while the schema still loads', () => {
-    write('ok.json', GOOD_SCHEMA);
+    write('ps.json', GOOD_SCHEMA);
     const { entries, problems } = resolveFrontmatterSchemas(projectDir, [
-      { appliesTo: ['docs/**', 'docs/['], file: 'ok.json' },
+      { appliesTo: ['docs/**', 'docs/['], file: 'ps.json' },
     ]);
     expect(problems).toHaveLength(1);
     expect(problems[0]).toContain('invalid appliesTo glob');
@@ -178,9 +178,9 @@ describe('resolveFrontmatterSchemas — loading', () => {
   });
 
   test('a suspicious glob surfaces an advisory problem; disabled mappings stay silent', () => {
-    write('ok.json', GOOD_SCHEMA);
+    write('ps.json', GOOD_SCHEMA);
     const { problems } = resolveFrontmatterSchemas(projectDir, [
-      { appliesTo: ['docs/', 'notes/**/*.md'], file: 'ok.json' },
+      { appliesTo: ['docs/', 'notes/**/*.md'], file: 'ps.json' },
     ]);
     expect(problems).toHaveLength(2);
     expect(problems[0]).toContain('suspicious appliesTo glob');
@@ -188,7 +188,7 @@ describe('resolveFrontmatterSchemas — loading', () => {
     expect(problems[1]).toContain('extension');
 
     const silent = resolveFrontmatterSchemas(projectDir, [
-      { appliesTo: ['docs/'], file: 'ok.json', enabled: false },
+      { appliesTo: ['docs/'], file: 'ps.json', enabled: false },
     ]);
     expect(silent.problems).toEqual([]);
   });

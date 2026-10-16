@@ -672,7 +672,7 @@ describe('runMigrate', () => {
   test('content.include is stripped without writing .psignore', async () => {
     const wsPath = projectConfigPath(project.cwd);
     writeConfigYaml(wsPath, 'content:\n  dir: .\n  include:\n    - "docs/**/*.md"\n');
-    const okignorePath = join(project.cwd, '.psignore');
+    const psignorePath = join(project.cwd, '.psignore');
     const outcome = await runMigrate({
       cwd: project.cwd,
       scope: 'project',
@@ -683,7 +683,7 @@ describe('runMigrate', () => {
     const migrated = readFileSync(wsPath, 'utf-8');
     expect(migrated).not.toContain('include:');
     expect(migrated).toContain('dir: .');
-    expect(existsSync(okignorePath)).toBe(false);
+    expect(existsSync(psignorePath)).toBe(false);
     const wsOutcome = outcome.outcomes.find((o) => o.scope === 'project');
     expect(wsOutcome?.removed).toContain('content.include');
   });

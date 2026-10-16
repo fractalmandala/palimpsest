@@ -293,7 +293,7 @@ describe('generated-index git attributes', () => {
     ).toEqual({ state: 'ready', ownership: 'palimpsest' });
   });
 
-  test('accepts and removes an Palimpsest block checked out with CRLF endings', async () => {
+  test('accepts and removes a Palimpsest block checked out with CRLF endings', async () => {
     const { projectDir, contentDir } = makeProject();
     const attributesPath = join(projectDir, '.gitattributes');
     const enabled = await updateGeneratedIndexGitAttributes({

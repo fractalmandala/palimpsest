@@ -38,7 +38,7 @@ import { useSingleFileMode } from '@/lib/single-file-mode';
 import { CodeMirrorPropInput } from './CodeMirrorPropInput.tsx';
 
 function advancedOpenStateKey(descriptorName: string): string {
-  return `ok.propPanel.advanced.${descriptorName}`;
+  return `ps.propPanel.advanced.${descriptorName}`;
 }
 
 export function readAdvancedOpenState(descriptorName: string): boolean {

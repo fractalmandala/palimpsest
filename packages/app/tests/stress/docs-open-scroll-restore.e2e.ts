@@ -105,11 +105,11 @@ test.describe('docs-open-scroll-restore — F1 RED (deterministic via portal-app
       .toBeGreaterThan(scrollBeforeNav - 50);
 
     const phase2SuccessMarkCount = await page.evaluate(
-      () => performance.getEntriesByName('ok/scroll-restore/phase2-success').length,
+      () => performance.getEntriesByName('ps/scroll-restore/phase2-success').length,
     );
     expect(
       phase2SuccessMarkCount,
-      'ok/scroll-restore/phase2-success mark not emitted — rAF-poll did not execute the restore. STEP 8 may have passed via Phase 1 sync write or some other mechanism; this test is specifically scoped to the rAF-poll path.',
+      'ps/scroll-restore/phase2-success mark not emitted — rAF-poll did not execute the restore. STEP 8 may have passed via Phase 1 sync write or some other mechanism; this test is specifically scoped to the rAF-poll path.',
     ).toBeGreaterThan(0);
   });
 });

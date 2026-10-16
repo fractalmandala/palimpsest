@@ -259,7 +259,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ok:error:invalid-request' });
+    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ps:error:invalid-request' });
     expect(storeFiles()).toEqual([]);
   });
 
@@ -284,7 +284,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
     });
     expect(res.status).toBe(409);
     expect(res.headers['Content-Type']).toBe('application/problem+json');
-    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ok:error:theme-name-taken' });
+    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ps:error:theme-name-taken' });
     expect(storeFiles()).toEqual(['dup.yaml']);
   });
 
@@ -296,7 +296,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
     });
     expect(res.status).toBe(400);
     expect(JSON.parse(res.body)).toMatchObject({
-      type: 'urn:ok:error:theme-name-invalid',
+      type: 'urn:ps:error:theme-name-invalid',
       detail: 'too-long',
     });
     expect(storeFiles()).toEqual([]);
@@ -308,7 +308,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
       scheme: { name: 'Partial', variant: 'dark', palette: { base00: '#000000' } },
     });
     expect(res.status).toBe(400);
-    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ok:error:invalid-request' });
+    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ps:error:invalid-request' });
     expect(storeFiles()).toEqual([]);
   });
 
@@ -355,7 +355,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
           status: 503,
           headers: expect.objectContaining({ 'Retry-After': '5' }),
           body: expect.objectContaining({
-            type: 'urn:ok:error:concurrent-operation',
+            type: 'urn:ps:error:concurrent-operation',
             detail: 'lock-timeout',
           }),
         }),
@@ -406,7 +406,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
     });
 
     expect(res.status).toBe(404);
-    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ok:error:not-found' });
+    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ps:error:not-found' });
     expect(storeFiles()).toEqual([]);
   });
 
@@ -422,7 +422,7 @@ describe('/api/saved-themes + /api/saved-theme', () => {
 
     expect(res.status).toBe(409);
     expect(JSON.parse(res.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'The saved theme id conflicts with a file that cannot be safely updated.',
       detail: 'unsafe-target',
     });
@@ -470,12 +470,12 @@ describe('/api/saved-themes + /api/saved-theme', () => {
   test('DELETE with a missing id is a 400', async () => {
     const res = await dispatch('/api/saved-theme', 'DELETE');
     expect(res.status).toBe(400);
-    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ok:error:invalid-request' });
+    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ps:error:invalid-request' });
   });
 
   test('an unsupported method on /api/saved-theme is a 405', async () => {
     const res = await dispatch('/api/saved-theme', 'GET');
     expect(res.status).toBe(405);
-    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ok:error:method-not-allowed' });
+    expect(JSON.parse(res.body)).toMatchObject({ type: 'urn:ps:error:method-not-allowed' });
   });
 });

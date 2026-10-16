@@ -213,7 +213,7 @@ describe('runPublishFlow (error branches)', () => {
       body: { owner: 'inkeep', name: 'palimpsest', visibility: 'public' },
       ownerKind: 'org',
       deps: {
-        ensureOkScaffold: () => {},
+        ensurePsScaffold: () => {},
         gitFactory: () =>
           ({
             init: async () => {},
@@ -257,7 +257,7 @@ describe('runPublishFlow (error branches)', () => {
         projectDir: tmpDir,
         body: { owner: 'alice', name: 'palimpsest', visibility: 'private' },
         ownerKind: 'user',
-        deps: { ensureOkScaffold: () => {} },
+        deps: { ensurePsScaffold: () => {} },
       });
       expect(result.kind).toBe('ok');
       if (result.kind === 'ok') {
@@ -283,12 +283,12 @@ describe('runPublishFlow (error branches)', () => {
       projectDir: tmpDir,
       body: { owner: 'alice', name: 'foo', visibility: 'private' },
       ownerKind: 'user',
-      deps: { ensureOkScaffold: () => {} },
+      deps: { ensurePsScaffold: () => {} },
     });
     expect(result).toEqual({ kind: 'error', code: 'name-conflict' });
   });
 
-  test('init-failed when ensureOkScaffold throws', async () => {
+  test('init-failed when ensurePsScaffold throws', async () => {
     const result = await runPublishFlow({
       octokit: makeFakeOctokit({ authLogin: 'alice' }),
       token: 'tok',
@@ -296,7 +296,7 @@ describe('runPublishFlow (error branches)', () => {
       body: { owner: 'alice', name: 'foo', visibility: 'private' },
       ownerKind: 'user',
       deps: {
-        ensureOkScaffold: () => {
+        ensurePsScaffold: () => {
           throw new Error('symlink-blocked');
         },
       },
@@ -339,7 +339,7 @@ describe('runPublishFlow (e2e against bare repo)', () => {
       body: { owner: 'alice', name: 'demo', visibility: 'private' },
       ownerKind: 'user',
       deps: {
-        ensureOkScaffold: (dir) => {
+        ensurePsScaffold: (dir) => {
           mkdirSync(join(dir, '.ps'), { recursive: true });
           writeFileSync(join(dir, '.ps', '.gitignore'), 'local/\n', 'utf-8');
         },
@@ -413,7 +413,7 @@ describe('runPublishFlow (e2e against bare repo)', () => {
         projectDir,
         body: { owner: 'alice', name: 'demo', visibility: 'private' },
         ownerKind: 'user',
-        deps: { ensureOkScaffold: () => {} },
+        deps: { ensurePsScaffold: () => {} },
       });
       expect(result.kind).toBe('ok');
       const log = execSync('git log --format="%an <%ae>"', {

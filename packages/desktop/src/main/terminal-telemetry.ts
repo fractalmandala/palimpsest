@@ -1,15 +1,15 @@
 import { withSpanSync } from '@palimpsest/server';
 
-function platformAttributes(): { 'ok.platform': NodeJS.Platform } {
-  return { 'ok.platform': process.platform };
+function platformAttributes(): { 'ps.platform': NodeJS.Platform } {
+  return { 'ps.platform': process.platform };
 }
 
 export function recordShellExit(info: { crashed: boolean }): void {
   withSpanSync(
-    'ok.desktop.shellExit',
+    'ps.desktop.shellExit',
     {
       attributes: {
-        'ok.desktop.shell_crashed': info.crashed,
+        'ps.desktop.shell_crashed': info.crashed,
         ...platformAttributes(),
       },
     },
@@ -18,15 +18,15 @@ export function recordShellExit(info: { crashed: boolean }): void {
 }
 
 export function recordTerminalSession(): void {
-  withSpanSync('ok.desktop.terminalSession', { attributes: platformAttributes() }, () => undefined);
+  withSpanSync('ps.desktop.terminalSession', { attributes: platformAttributes() }, () => undefined);
 }
 
 export function recordConcurrentSessions(info: { count: number }): void {
   withSpanSync(
-    'ok.desktop.terminalConcurrentSessions',
+    'ps.desktop.terminalConcurrentSessions',
     {
       attributes: {
-        'ok.desktop.concurrent_sessions': info.count,
+        'ps.desktop.concurrent_sessions': info.count,
         ...platformAttributes(),
       },
     },
@@ -36,7 +36,7 @@ export function recordConcurrentSessions(info: { count: number }): void {
 
 export function recordTerminalWindowOpened(): void {
   withSpanSync(
-    'ok.desktop.terminalWindowOpened',
+    'ps.desktop.terminalWindowOpened',
     { attributes: platformAttributes() },
     () => undefined,
   );

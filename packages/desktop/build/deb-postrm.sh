@@ -15,7 +15,7 @@ fi
 
 rm -f '/etc/apparmor.d/${executable}-userns' '/etc/apparmor.d/${executable}'
 
-for link in /usr/bin/ok /usr/bin/palimpsest; do
+for link in /usr/bin/ps /usr/bin/palimpsest /usr/bin/ok /usr/bin/open-knowledge; do
   if [ -L "$link" ]; then
     target=$(readlink "$link")
     case "$target" in

@@ -776,7 +776,7 @@ describe('TipTap cache — undoManager.restore cleanup on destroy', () => {
   });
 
   test('cleanup is resilient when editor.destroy() throws', () => {
-    performance.clearMeasures('ok/cache/park-destroy-failed');
+    performance.clearMeasures('ps/cache/park-destroy-failed');
     const h = makeTiptapHarness('doc-a');
     const undoManager = attachStubUndoManager(h.editor);
     (h.editor as unknown as { destroy: () => void }).destroy = () => {
@@ -798,7 +798,7 @@ describe('TipTap cache — undoManager.restore cleanup on destroy', () => {
     expect(() => parkTiptapEditor(entry)).not.toThrow();
     expect(h.spies.destroyCalls).toBe(1);
     expect(undoManager.restore).toBeUndefined();
-    const failure = performance.getEntriesByName('ok/cache/park-destroy-failed').at(-1) as
+    const failure = performance.getEntriesByName('ps/cache/park-destroy-failed').at(-1) as
       | (PerformanceMeasure & {
           detail?: { devtools?: { properties?: Array<[string, string]> } };
         })
@@ -1282,7 +1282,7 @@ describe('CM6 cache — undoManager teardown', () => {
   });
 
   test('uncached park continues through undo-manager cleanup and marks a view teardown failure', () => {
-    performance.clearMeasures('ok/cache/park-destroy-failed');
+    performance.clearMeasures('ps/cache/park-destroy-failed');
     const h = makeCmHarness('cm-view-uncached-failure');
     const { undoManager, calls } = makeFakeCmUndoManager();
     const entry: CmCacheEntry = {
@@ -1309,7 +1309,7 @@ describe('CM6 cache — undoManager teardown', () => {
 
     expect(calls).toEqual(['clear', 'destroy']);
     expect(entry.undoManager).toBeUndefined();
-    const failure = performance.getEntriesByName('ok/cache/park-destroy-failed').at(-1) as
+    const failure = performance.getEntriesByName('ps/cache/park-destroy-failed').at(-1) as
       | (PerformanceMeasure & {
           detail?: { devtools?: { properties?: Array<[string, string]> } };
         })
@@ -2127,7 +2127,7 @@ describe('telemetry marks', () => {
       container: makeNode() as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    const hits = performance.getEntriesByName('ok/cache/hit');
+    const hits = performance.getEntriesByName('ps/cache/hit');
     expect(hits.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -2138,7 +2138,7 @@ describe('telemetry marks', () => {
       container: h.container as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    const misses = performance.getEntriesByName('ok/cache/miss');
+    const misses = performance.getEntriesByName('ps/cache/miss');
     expect(misses.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -2150,7 +2150,7 @@ describe('telemetry marks', () => {
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
     evictTiptapEditor(h.docName);
-    const evicts = performance.getEntriesByName('ok/cache/evict');
+    const evicts = performance.getEntriesByName('ps/cache/evict');
     expect(evicts.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -2163,11 +2163,11 @@ describe('telemetry marks', () => {
     });
     setActivityMountList(['doc-a']);
     await Promise.resolve();
-    const connects = performance.getEntriesByName('ok/cache/connect');
+    const connects = performance.getEntriesByName('ps/cache/connect');
     expect(connects.length).toBeGreaterThanOrEqual(1);
 
     setActivityMountList([]);
-    const disconnects = performance.getEntriesByName('ok/cache/disconnect');
+    const disconnects = performance.getEntriesByName('ps/cache/disconnect');
     expect(disconnects.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -2195,13 +2195,13 @@ describe('telemetry marks', () => {
         provider: rejectingProvider,
       }),
     });
-    performance.clearMarks('ok/cache/connect');
-    performance.clearMarks('ok/cache/connect-failed');
+    performance.clearMarks('ps/cache/connect');
+    performance.clearMarks('ps/cache/connect-failed');
     setActivityMountList(['doc-reject']);
     await Promise.resolve();
     await Promise.resolve();
-    const connects = performance.getEntriesByName('ok/cache/connect');
-    const failed = performance.getEntriesByName('ok/cache/connect-failed');
+    const connects = performance.getEntriesByName('ps/cache/connect');
+    const failed = performance.getEntriesByName('ps/cache/connect-failed');
     expect(failed.length).toBeGreaterThanOrEqual(1);
     expect(connects.length).toBe(0);
   });
@@ -2214,7 +2214,7 @@ describe('telemetry marks', () => {
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
       sizeStats: { viewCount: 10, bytes: 5_000 },
     });
-    const stats = performance.getEntriesByName('ok/cold/editor-mount-stats');
+    const stats = performance.getEntriesByName('ps/cold/editor-mount-stats');
     expect(stats.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -2227,7 +2227,7 @@ describe('telemetry marks', () => {
       sizeStats: { viewCount: 10, bytes: 5_000 },
     });
     try {
-      performance.clearMeasures('ok/cold/editor-mount-stats');
+      performance.clearMeasures('ps/cold/editor-mount-stats');
     } catch {}
     mountTiptapEditor({
       docName: h.docName,
@@ -2235,7 +2235,7 @@ describe('telemetry marks', () => {
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
       sizeStats: { viewCount: 10, bytes: 5_000 },
     });
-    const stats = performance.getEntriesByName('ok/cold/editor-mount-stats');
+    const stats = performance.getEntriesByName('ps/cold/editor-mount-stats');
     expect(stats.length).toBeGreaterThanOrEqual(1);
   });
 });
@@ -2244,10 +2244,10 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
   beforeEach(() => {
     __resetCacheForTests();
     try {
-      performance.clearMarks('ok/cache/reparent-start');
-      performance.clearMarks('ok/cache/reparent-end');
-      performance.clearMeasures('ok/cache/reparent-start');
-      performance.clearMeasures('ok/cache/reparent-end');
+      performance.clearMarks('ps/cache/reparent-start');
+      performance.clearMarks('ps/cache/reparent-end');
+      performance.clearMeasures('ps/cache/reparent-start');
+      performance.clearMeasures('ps/cache/reparent-end');
     } catch {}
   });
   afterEach(() => __resetCacheForTests());
@@ -2260,16 +2260,16 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
     try {
-      performance.clearMeasures('ok/cache/reparent-start');
-      performance.clearMeasures('ok/cache/reparent-end');
+      performance.clearMeasures('ps/cache/reparent-start');
+      performance.clearMeasures('ps/cache/reparent-end');
     } catch {}
     mountTiptapEditor({
       docName: h.docName,
       container: makeNode() as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    const starts = performance.getEntriesByName('ok/cache/reparent-start');
-    const ends = performance.getEntriesByName('ok/cache/reparent-end');
+    const starts = performance.getEntriesByName('ps/cache/reparent-start');
+    const ends = performance.getEntriesByName('ps/cache/reparent-end');
     expect(starts.length).toBeGreaterThanOrEqual(1);
     expect(ends.length).toBeGreaterThanOrEqual(1);
     const firstStart = starts[0]?.startTime ?? 0;
@@ -2284,8 +2284,8 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       container: h.container as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    expect(performance.getEntriesByName('ok/cache/reparent-start').length).toBe(0);
-    expect(performance.getEntriesByName('ok/cache/reparent-end').length).toBe(0);
+    expect(performance.getEntriesByName('ps/cache/reparent-start').length).toBe(0);
+    expect(performance.getEntriesByName('ps/cache/reparent-end').length).toBe(0);
   });
 
   test('TipTap kill-switch / __uncached path does NOT emit reparent marks', () => {
@@ -2296,8 +2296,8 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
       sizeStats: { viewCount: 100, bytes: 1_000_000 },
     });
-    expect(performance.getEntriesByName('ok/cache/reparent-start').length).toBe(0);
-    expect(performance.getEntriesByName('ok/cache/reparent-end').length).toBe(0);
+    expect(performance.getEntriesByName('ps/cache/reparent-start').length).toBe(0);
+    expect(performance.getEntriesByName('ps/cache/reparent-end').length).toBe(0);
   });
 
   test('CM6 cache-hit emits both ok/cache/reparent-start and ok/cache/reparent-end', () => {
@@ -2308,16 +2308,16 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
     try {
-      performance.clearMeasures('ok/cache/reparent-start');
-      performance.clearMeasures('ok/cache/reparent-end');
+      performance.clearMeasures('ps/cache/reparent-start');
+      performance.clearMeasures('ps/cache/reparent-end');
     } catch {}
     mountCmEditor({
       docName: h.docName,
       container: makeNode() as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    const starts = performance.getEntriesByName('ok/cache/reparent-start');
-    const ends = performance.getEntriesByName('ok/cache/reparent-end');
+    const starts = performance.getEntriesByName('ps/cache/reparent-start');
+    const ends = performance.getEntriesByName('ps/cache/reparent-end');
     expect(starts.length).toBeGreaterThanOrEqual(1);
     expect(ends.length).toBeGreaterThanOrEqual(1);
   });
@@ -2329,8 +2329,8 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       container: h.container as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    expect(performance.getEntriesByName('ok/cache/reparent-start').length).toBe(0);
-    expect(performance.getEntriesByName('ok/cache/reparent-end').length).toBe(0);
+    expect(performance.getEntriesByName('ps/cache/reparent-start').length).toBe(0);
+    expect(performance.getEntriesByName('ps/cache/reparent-end').length).toBe(0);
   });
 
   test('reparent marks fire BEFORE ok/cache/hit (semantic ordering)', () => {
@@ -2341,18 +2341,18 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
     try {
-      performance.clearMeasures('ok/cache/reparent-start');
-      performance.clearMeasures('ok/cache/reparent-end');
-      performance.clearMeasures('ok/cache/hit');
+      performance.clearMeasures('ps/cache/reparent-start');
+      performance.clearMeasures('ps/cache/reparent-end');
+      performance.clearMeasures('ps/cache/hit');
     } catch {}
     mountTiptapEditor({
       docName: h.docName,
       container: makeNode() as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    const start = performance.getEntriesByName('ok/cache/reparent-start')[0];
-    const end = performance.getEntriesByName('ok/cache/reparent-end')[0];
-    const hit = performance.getEntriesByName('ok/cache/hit')[0];
+    const start = performance.getEntriesByName('ps/cache/reparent-start')[0];
+    const end = performance.getEntriesByName('ps/cache/reparent-end')[0];
+    const hit = performance.getEntriesByName('ps/cache/hit')[0];
     expect(start).toBeDefined();
     expect(end).toBeDefined();
     expect(hit).toBeDefined();
@@ -2370,14 +2370,14 @@ describe('US-001 (cap-calibration-probes): cache-hit reparent span marks', () =>
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
     try {
-      performance.clearMeasures('ok/cache/hit');
+      performance.clearMeasures('ps/cache/hit');
     } catch {}
     mountTiptapEditor({
       docName: h.docName,
       container: makeNode() as unknown as HTMLElement,
       factory: h.factory as unknown as (el: HTMLElement) => ReturnType<typeof h.factory>,
     });
-    expect(performance.getEntriesByName('ok/cache/hit').length).toBeGreaterThanOrEqual(1);
+    expect(performance.getEntriesByName('ps/cache/hit').length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -2900,7 +2900,7 @@ describe('captureRenameSnapshots', () => {
     captureRenameSnapshots([{ fromDocName: h.docName, toDocName: 'to-doc' }]);
 
     expect(__consumeRenameSnapshot('to-doc')).toBeNull();
-    const emptyMarks = performance.getEntriesByName('ok/cache/snapshot-skipped-empty');
+    const emptyMarks = performance.getEntriesByName('ps/cache/snapshot-skipped-empty');
     expect(emptyMarks.length).toBeGreaterThanOrEqual(1);
   });
 

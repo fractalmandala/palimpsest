@@ -227,7 +227,7 @@ test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
       await app.evaluate(
         ({ BrowserWindow }, payload) => {
           for (const w of BrowserWindow.getAllWindows()) {
-            w.webContents.send('ok:onboarding:toast', payload);
+            w.webContents.send('ps:onboarding:toast', payload);
           }
         },
         {

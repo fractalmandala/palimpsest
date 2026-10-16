@@ -89,7 +89,7 @@ describe.skipIf(process.platform === 'win32' || !existsSync(PRINTF))(
         ctx.skip(!existsSync(shell), `${shell} is not installed`);
         const launch = buildPosixCliLaunch('claude', HOSTILE_PROMPT, {
           mcpPreApprove: true,
-          autoApproveOkTools: true,
+          autoApprovePsTools: true,
           mcpServerName: 'palimpsest',
         });
         const { cwd, run } = runLaunch(shell, {

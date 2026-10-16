@@ -317,7 +317,7 @@ test.describe('handoff — 9-cell matrix', () => {
         status: 422,
         contentType: 'application/problem+json',
         body: JSON.stringify({
-          type: 'urn:ok:error:handoff-target-not-installed',
+          type: 'urn:ps:error:handoff-target-not-installed',
           title: 'Cursor CLI not found on this machine.',
           status: 422,
           target: 'cursor',

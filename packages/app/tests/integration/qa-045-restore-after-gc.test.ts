@@ -123,7 +123,7 @@ describe('restore after checkpoint GC', () => {
     expect(rbRes.status).toBeLessThan(500);
     const problem = (await rbRes.json()) as { type?: string };
     expect(typeof problem.type).toBe('string');
-    expect(problem.type?.startsWith('urn:ok:error:')).toBe(true);
+    expect(problem.type?.startsWith('urn:ps:error:')).toBe(true);
 
     const after = readTestDoc(server.contentDir, docName);
     expect(after).toBe(before);

@@ -172,7 +172,7 @@ export function CreatedItemsList({
     description: t`Guides your AI agents on how to work here.`,
   }));
   const pluginDescriptions: Partial<Record<LintPluginId, string>> = {
-    psf: t`Checks your project against the Palimpsest Format. Turn it off any time in Settings.`,
+    psf: t`Checks your project against the OpenKnowledge Format. Turn it off any time in Settings.`,
   };
   const pluginRows: PreviewRow[] = pendingPlugins.map((plugin) => ({
     key: `plugin:${plugin.id}`,

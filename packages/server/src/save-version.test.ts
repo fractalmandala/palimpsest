@@ -132,7 +132,7 @@ describe('PRD-6716: save-version + rollback do not mutate parent git', () => {
     const sessionManager = new AgentSessionManager(hocuspocus);
 
     const headBefore = (await git.raw(['rev-parse', 'HEAD'])).trim();
-    const tagsBefore = (await git.tags(['--list', 'ok/v*'])).all;
+    const tagsBefore = (await git.tags(['--list', 'ps/v*'])).all;
     const statusBefore = (await git.raw(['status', '--porcelain'])).trim();
 
     try {
@@ -160,7 +160,7 @@ describe('PRD-6716: save-version + rollback do not mutate parent git', () => {
       expect(captured.parsed.versionTag).toBeUndefined();
 
       const headAfter = (await git.raw(['rev-parse', 'HEAD'])).trim();
-      const tagsAfter = (await git.tags(['--list', 'ok/v*'])).all;
+      const tagsAfter = (await git.tags(['--list', 'ps/v*'])).all;
       const statusAfter = (await git.raw(['status', '--porcelain'])).trim();
 
       expect(headAfter).toBe(headBefore);

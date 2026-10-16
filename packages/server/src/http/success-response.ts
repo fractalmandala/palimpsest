@@ -29,7 +29,7 @@ export function successResponse(
       'successResponse called after headers already sent — suppressed',
     );
     apiErrorCounter().add(1, {
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       ...(options.handler ? { handler: options.handler } : {}),
     });
     return;
@@ -47,7 +47,7 @@ export function successResponse(
       },
       'successResponse produced an invalid body for the supplied schema — emitting fallback',
     );
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
       handler: options.handler,
     });
     return;
@@ -70,7 +70,7 @@ export function successResponse(
       },
       'successResponse parsed body is not JSON-serializable — emitting fallback',
     );
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
       handler: options.handler,
     });
     return;

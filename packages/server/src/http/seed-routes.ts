@@ -37,7 +37,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
   async function handleSeedPlan(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!checkLocalOpSecurity(req, res, { handler: 'seed-plan' })) return;
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'seed-plan',
         extraHeaders: { Allow: 'GET' },
       });
@@ -48,7 +48,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
     const rawPackId = url.searchParams.get('packId');
     const packId = coercePackId(rawPackId);
     if (rawPackId !== null && rawPackId !== '' && packId === undefined) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unknown packId.', {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unknown packId.', {
         handler: 'seed-plan',
         detail: `Pack id "${rawPackId}" is not registered.`,
       });
@@ -62,21 +62,21 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           422,
-          'urn:ok:error:seed-prerequisite-missing',
+          'urn:ps:error:seed-prerequisite-missing',
           'Seed prerequisite missing.',
           { handler: 'seed-plan', cause: err },
         );
         return;
       }
       if (err instanceof SeedRootDirError) {
-        errorResponse(res, 400, 'urn:ok:error:seed-invalid-root', 'Invalid seed root directory.', {
+        errorResponse(res, 400, 'urn:ps:error:seed-invalid-root', 'Invalid seed root directory.', {
           handler: 'seed-plan',
           detail: 'The provided root directory is not within the workspace content directory.',
           cause: err,
         });
         return;
       }
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'seed-plan',
         cause: err,
       });
@@ -88,7 +88,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
     async (_req, res, body) => {
       const planValue = body.plan;
       if (!planValue || typeof planValue !== 'object') {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid plan payload.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid plan payload.', {
           handler: 'seed-apply',
         });
         return;
@@ -98,7 +98,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
       const rawPackId = looseBody.packId;
       const packId = coercePackId(rawPackId);
       if (typeof rawPackId === 'string' && rawPackId.length > 0 && packId === undefined) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unknown packId.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unknown packId.', {
           handler: 'seed-apply',
           detail: `Pack id "${rawPackId}" is not registered.`,
         });
@@ -111,7 +111,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to apply seed plan.',
           {
             handler: 'seed-apply',
@@ -132,7 +132,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
     async (_req, res, body) => {
       const packId = coercePackId(body.packId);
       if (packId === undefined) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unknown packId.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unknown packId.', {
           handler: 'seed-install-pack-skill',
           detail: `Pack id "${body.packId}" is not registered.`,
         });
@@ -147,7 +147,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to install pack skill.',
           { handler: 'seed-install-pack-skill', cause: err },
         );
@@ -164,7 +164,7 @@ export function createSeedRoutes(deps: SeedRouteDeps): ApiRouteGroup {
   async function handleSeedPacks(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!checkLocalOpSecurity(req, res, { handler: 'seed-packs' })) return;
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'seed-packs',
         extraHeaders: { Allow: 'GET' },
       });

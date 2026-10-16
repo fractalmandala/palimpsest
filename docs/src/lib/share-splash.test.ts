@@ -385,7 +385,7 @@ describe('buildSplashViewModel — shell-injection guard', () => {
     expect(buildSplashViewModel(encodeV1(url)).kind).toBe('invalid');
   });
 
-  test('rejects a leading-dash branch (option injection into ok clone)', () => {
+  test('rejects a leading-dash branch (option injection into ps clone)', () => {
     const url = 'https://github.com/inkeep/playbooks/blob/-rf/readme.md';
     expect(buildSplashViewModel(encodeV1(url)).kind).toBe('invalid');
   });
@@ -401,7 +401,7 @@ describe('buildSplashViewModel — shell-injection guard', () => {
     expect(view.kind).toBe('ok');
     if (view.kind === 'ok') {
       expect(view.branch).toBe('release/1.2.3');
-      expect(buildCloneCommand(view)).toBe('ok clone inkeep/playbooks -b release/1.2.3');
+      expect(buildCloneCommand(view)).toBe('ps clone inkeep/playbooks -b release/1.2.3');
     }
   });
 
@@ -411,7 +411,7 @@ describe('buildSplashViewModel — shell-injection guard', () => {
     expect(view.kind).toBe('ok');
     if (view.kind === 'ok') {
       expect(view.branch).toBe('release+candidate');
-      expect(buildCloneCommand(view)).toBe('ok clone inkeep/playbooks -b release+candidate');
+      expect(buildCloneCommand(view)).toBe('ps clone inkeep/playbooks -b release+candidate');
     }
   });
 
@@ -421,7 +421,7 @@ describe('buildSplashViewModel — shell-injection guard', () => {
     expect(view.kind).toBe('ok');
     if (view.kind === 'ok') {
       expect(view.branch).toBe('feat;x');
-      expect(buildCloneCommand(view)).toBe("ok clone inkeep/playbooks -b 'feat;x'");
+      expect(buildCloneCommand(view)).toBe("ps clone inkeep/playbooks -b 'feat;x'");
     }
   });
 
@@ -460,54 +460,54 @@ describe('SPLASH_INSTALL_COMMAND', () => {
 describe('buildCloneCommand', () => {
   test('emits `ok clone <owner>/<repo> -b <branch>` using owner/repo shorthand', () => {
     expect(buildCloneCommand({ owner: 'inkeep', repo: 'playbooks', branch: 'main' })).toBe(
-      'ok clone inkeep/playbooks -b main',
+      'ps clone inkeep/playbooks -b main',
     );
   });
 
   test('always emits -b on a default branch (main) — CLI default-fallback covers a deleted ref', () => {
     expect(buildCloneCommand({ owner: 'o', repo: 'r', branch: 'main' })).toBe(
-      'ok clone o/r -b main',
+      'ps clone o/r -b main',
     );
   });
 
   test('always emits -b on master', () => {
     expect(buildCloneCommand({ owner: 'o', repo: 'r', branch: 'master' })).toBe(
-      'ok clone o/r -b master',
+      'ps clone o/r -b master',
     );
   });
 
   test('always emits -b on a feature branch', () => {
     expect(buildCloneCommand({ owner: 'inkeep', repo: 'playbooks', branch: 'feat-x' })).toBe(
-      'ok clone inkeep/playbooks -b feat-x',
+      'ps clone inkeep/playbooks -b feat-x',
     );
   });
 
   test('preserves a slash-bearing branch name verbatim (off-argv, not a URL)', () => {
     expect(buildCloneCommand({ owner: 'o', repo: 'r', branch: 'feat/share' })).toBe(
-      'ok clone o/r -b feat/share',
+      'ps clone o/r -b feat/share',
     );
   });
 
   test('contains no `ok auth login` line — auth surfaces at clone-failure time', () => {
     const cmd = buildCloneCommand({ owner: 'o', repo: 'r', branch: 'main' });
-    expect(cmd).not.toContain('ok auth login');
+    expect(cmd).not.toContain('ps auth login');
   });
 
   test('POSIX-single-quotes a shell-unsafe but valid ref so the pasted command is inert', () => {
     expect(buildCloneCommand({ owner: 'o', repo: 'r', branch: 'feat;x' })).toBe(
-      "ok clone o/r -b 'feat;x'",
+      "ps clone o/r -b 'feat;x'",
     );
   });
 
   test('renders a `+`-bearing ref unquoted (release+candidate)', () => {
     expect(buildCloneCommand({ owner: 'o', repo: 'r', branch: 'release+candidate' })).toBe(
-      'ok clone o/r -b release+candidate',
+      'ps clone o/r -b release+candidate',
     );
   });
 
   test('POSIX-single-quotes a branch containing a literal single quote', () => {
     expect(buildCloneCommand({ owner: 'o', repo: 'r', branch: "feat'x" })).toBe(
-      "ok clone o/r -b 'feat'\\''x'",
+      "ps clone o/r -b 'feat'\\''x'",
     );
   });
 });

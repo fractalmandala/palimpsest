@@ -16,7 +16,7 @@ const base = () => `http://127.0.0.1:${server.port}`;
 
 const GLOBAL_BUILTINS = [
   {
-    name: 'open-knowledge-discovery',
+    name: 'palimpsest-discovery',
     description: 'What Palimpsest is and how to install it.',
   },
   {
@@ -115,7 +115,7 @@ describe('built-in global palimpsest skills: read-only surfacing', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         scope: 'project',
-        name: 'open-knowledge-discovery',
+        name: 'palimpsest-discovery',
         targets: ['claude'],
       }),
     });
@@ -127,7 +127,7 @@ describe('built-in global palimpsest skills: read-only surfacing', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: 'open-knowledge-discovery',
+        name: 'palimpsest-discovery',
         fromScope: 'global',
         toScope: 'project',
       }),
@@ -147,7 +147,7 @@ describe('built-in global palimpsest skills: read-only surfacing', () => {
   });
 
   test('GET /api/skill?scope=global serves the body read-only', async () => {
-    const res = await fetch(`${base()}/api/skill?name=open-knowledge-discovery&scope=global`);
+    const res = await fetch(`${base()}/api/skill?name=palimpsest-discovery&scope=global`);
     expect(res.status).toBe(200);
     const parsed = SkillGetSuccessSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);

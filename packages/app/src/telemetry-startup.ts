@@ -12,7 +12,7 @@ export function initStartupTrace(): void {
     if (!traceparent) return;
 
     const parentCtx = propagation.extract(context.active(), { traceparent });
-    const span = getAppTracer().startSpan('ok.app-startup', undefined, parentCtx);
+    const span = getAppTracer().startSpan('ps.app-startup', undefined, parentCtx);
     startupSpan = span;
 
     onFirstContent((firstContentMs) => {

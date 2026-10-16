@@ -208,7 +208,7 @@ let duplicateGate: Promise<void> | null = null;
 let duplicateFetchError: Error | null = null;
 let fetchCalls: FetchCall[] = [];
 let extraDocuments: FileEntry[] = [];
-let okignoreBindingMock: {
+let psignoreBindingMock: {
   current: () => string;
   patch: ReturnType<typeof vi.fn>;
 } | null = null;
@@ -323,7 +323,7 @@ vi.doMock('./ui/sidebar', () => ({
 
 vi.doMock('@/lib/config-provider', () => ({
   useConfigContext: () => ({
-    okignoreBinding: okignoreBindingMock,
+    psignoreBinding: psignoreBindingMock,
     projectLocalBinding: projectLocalBindingMock,
     merged: mergedConfigMock,
   }),
@@ -480,7 +480,7 @@ describe('FileTree duplicate action runtime behavior', () => {
     duplicateFetchError = null;
     fetchCalls = [];
     extraDocuments = [];
-    okignoreBindingMock = null;
+    psignoreBindingMock = null;
     projectLocalBindingMock = null;
     mergedConfigMock = null;
     deleteConfirmationProps = null;
@@ -531,7 +531,7 @@ describe('FileTree duplicate action runtime behavior', () => {
   });
 
   test('file context-menu Hide appends an anchored psignore pattern and shows reversible copy', async () => {
-    okignoreBindingMock = {
+    psignoreBindingMock = {
       current: () => '',
       patch: vi.fn(() => ({ ok: true })),
     };
@@ -545,7 +545,7 @@ describe('FileTree duplicate action runtime behavior', () => {
     await user.click(hide);
 
     expect(closeMenuMock).toHaveBeenCalled();
-    expect(okignoreBindingMock.patch).toHaveBeenCalledWith('/notes/source.mdx\n');
+    expect(psignoreBindingMock.patch).toHaveBeenCalledWith('/notes/source.mdx\n');
     expect(toastSuccessMock).toHaveBeenCalledWith('Hidden “source”', {
       description: 'Manage hidden files in Settings → Ignore patterns.',
       duration: 5000,
@@ -559,7 +559,7 @@ describe('FileTree duplicate action runtime behavior', () => {
     );
     cleanup();
 
-    okignoreBindingMock = {
+    psignoreBindingMock = {
       current: () => '/notes/source.mdx\n',
       patch: vi.fn(() => ({ ok: true })),
     };
@@ -569,7 +569,7 @@ describe('FileTree duplicate action runtime behavior', () => {
     await user.click(await screen.findByTestId('file-tree-menu-hide'));
 
     expect(closeMenuMock).toHaveBeenCalled();
-    expect(okignoreBindingMock.patch).not.toHaveBeenCalled();
+    expect(psignoreBindingMock.patch).not.toHaveBeenCalled();
     expect(toastSuccessMock).not.toHaveBeenCalledWith('Hidden “source”', expect.anything());
   });
 
@@ -609,7 +609,7 @@ describe('FileTree duplicate action runtime behavior', () => {
 
   test('folder context menu exposes runtime order, subtree actions, and folder hide', async () => {
     menuItem = { kind: 'directory', path: 'notes/' };
-    okignoreBindingMock = {
+    psignoreBindingMock = {
       current: () => '',
       patch: vi.fn(() => ({ ok: true })),
     };
@@ -636,7 +636,7 @@ describe('FileTree duplicate action runtime behavior', () => {
     expect(model.getItem('notes/')?.isExpanded()).toBe(true);
 
     await user.click(screen.getByTestId('file-tree-menu-hide'));
-    expect(okignoreBindingMock.patch).toHaveBeenCalledWith('/notes/\n');
+    expect(psignoreBindingMock.patch).toHaveBeenCalledWith('/notes/\n');
     expect(toastSuccessMock).toHaveBeenCalledWith('Hidden folder “notes”', {
       description: 'Manage hidden files in Settings → Ignore patterns.',
       duration: 5000,
@@ -660,7 +660,7 @@ describe('FileTree duplicate action runtime behavior', () => {
 
   test('.ps file row menu keeps read-only actions and drops every mutate action', async () => {
     menuItem = { kind: 'file', path: '.ps/templates/greeting.md' };
-    okignoreBindingMock = {
+    psignoreBindingMock = {
       current: () => '',
       patch: vi.fn(() => ({ ok: true })),
     };
@@ -677,7 +677,7 @@ describe('FileTree duplicate action runtime behavior', () => {
 
   test('.ps folder row menu drops create and mutate sections, keeps path/tree actions', async () => {
     menuItem = { kind: 'directory', path: '.ps/' };
-    okignoreBindingMock = {
+    psignoreBindingMock = {
       current: () => '',
       patch: vi.fn(() => ({ ok: true })),
     };
@@ -728,7 +728,7 @@ describe('FileTree duplicate action runtime behavior', () => {
   test('duplicate error responses show the server problem title and do not reconcile', async () => {
     duplicateStatus = 409;
     duplicateResponse = {
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       title: 'A file at the duplicate destination already exists.',
       status: 409,
       instance: 'urn:uuid:00000000-0000-4000-8000-000000000000',
@@ -1068,7 +1068,7 @@ describe('FileTree duplicate action runtime behavior', () => {
     expect(deleteConfirmationProps).toBeNull();
   });
 
-  test('Delete on a mixed selection confirms only the non-.ok targets', async () => {
+  test('Delete on a mixed selection confirms only the non-.ps targets', async () => {
     renderFileTree();
     await screen.findByRole('menuitem', { name: /duplicate/i });
 

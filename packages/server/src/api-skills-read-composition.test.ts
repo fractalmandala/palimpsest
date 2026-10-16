@@ -103,7 +103,7 @@ describe('skills-read inline gate — observable only at the handler layer', () 
       origin: 'https://evil.example.com',
     });
     expect(out.status).toBe(403);
-    expect(out.body.type).toBe('urn:ok:error:invalid-origin');
+    expect(out.body.type).toBe('urn:ps:error:invalid-origin');
     expect(out.body.title).toBe('Origin header is not a permitted loopback origin.');
   });
 });

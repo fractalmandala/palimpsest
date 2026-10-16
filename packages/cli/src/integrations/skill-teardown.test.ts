@@ -37,16 +37,16 @@ describe('userGlobalSkillBundleTargets', () => {
       }
     }
     expect(targets.map((target) => target.path)).toContain(
-      join(HOME, '.pi', 'agent', 'skills', 'open-knowledge-discovery'),
+      join(HOME, '.pi', 'agent', 'skills', 'palimpsest-discovery'),
     );
     expect(targets.map((target) => target.path)).toContain(
-      join(HOME, '.copilot', 'skills', 'open-knowledge-discovery'),
+      join(HOME, '.copilot', 'skills', 'palimpsest-discovery'),
     );
   });
 
   test('includes both built-in bundles by name (discovery + write-skill)', () => {
     const paths = userGlobalSkillBundleTargets(HOME).map((t) => t.path);
-    expect(paths.some((p) => p.endsWith('/open-knowledge-discovery'))).toBe(true);
+    expect(paths.some((p) => p.endsWith('/palimpsest-discovery'))).toBe(true);
     expect(paths.some((p) => p.endsWith('/open-knowledge-write-skill'))).toBe(true);
   });
 
@@ -75,9 +75,9 @@ describe('legacy fan-out sweep', () => {
 
   test('removes OK skill dirs left in hosts OK never supported', () => {
     const home = tmpHome();
-    const zencoder = plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    const zencoder = plantSkill(home, '.zencoder', 'palimpsest-discovery');
     const terramind = plantSkill(home, '.terramind', 'open-knowledge-write-skill');
-    const tabnine = plantSkill(home, join('.tabnine', 'agent'), 'open-knowledge-discovery');
+    const tabnine = plantSkill(home, join('.tabnine', 'agent'), 'palimpsest-discovery');
     const rovodev = plantSkill(home, '.rovodev', 'palimpsest');
 
     const removed = sweep(home);
@@ -88,9 +88,9 @@ describe('legacy fan-out sweep', () => {
     }
   });
 
-  test("prunes the agent home once OK's skill was the only thing in it", () => {
+  test("prunes the agent home once Palimpsest's skill was the only thing in it", () => {
     const home = tmpHome();
-    plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    plantSkill(home, '.zencoder', 'palimpsest-discovery');
 
     sweep(home);
 
@@ -99,7 +99,7 @@ describe('legacy fan-out sweep', () => {
 
   test('prunes a nested agent home up to its hardcoded root', () => {
     const home = tmpHome();
-    plantSkill(home, join('.tabnine', 'agent'), 'open-knowledge-discovery');
+    plantSkill(home, join('.tabnine', 'agent'), 'palimpsest-discovery');
 
     sweep(home);
 
@@ -108,7 +108,7 @@ describe('legacy fan-out sweep', () => {
 
   test('never removes the shared ~/.config, only the tool folder inside it', () => {
     const home = tmpHome();
-    plantSkill(home, join('.config', 'goose'), 'open-knowledge-discovery');
+    plantSkill(home, join('.config', 'goose'), 'palimpsest-discovery');
 
     sweep(home);
 
@@ -118,19 +118,19 @@ describe('legacy fan-out sweep', () => {
 
   test("keeps an agent home that still holds anything of the tool's own", () => {
     const home = tmpHome();
-    plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    plantSkill(home, '.zencoder', 'palimpsest-discovery');
     writeFileSync(join(home, '.zencoder', 'config.json'), '{}', 'utf-8');
 
     sweep(home);
 
     expect(existsSync(join(home, '.zencoder'))).toBe(true);
     expect(existsSync(join(home, '.zencoder', 'config.json'))).toBe(true);
-    expect(existsSync(join(home, '.zencoder', 'skills', 'open-knowledge-discovery'))).toBe(false);
+    expect(existsSync(join(home, '.zencoder', 'skills', 'palimpsest-discovery'))).toBe(false);
   });
 
   test('keeps a sibling skill the user owns — and therefore the dirs holding it', () => {
     const home = tmpHome();
-    plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    plantSkill(home, '.zencoder', 'palimpsest-discovery');
     const mine = plantSkill(home, '.zencoder', 'my-own-skill');
     const lookalike = plantSkill(home, '.zencoder', 'open-knowledgeable-notes');
 
@@ -144,9 +144,9 @@ describe('legacy fan-out sweep', () => {
   test('never touches a host OK still installs to', () => {
     const home = tmpHome();
     const live = HOSTS_WITH_USER_SKILL_DIR.map((h) =>
-      plantSkill(home, h.hostDir, 'open-knowledge-discovery'),
+      plantSkill(home, h.hostDir, 'palimpsest-discovery'),
     );
-    const central = plantSkill(home, '.agents', 'open-knowledge-discovery');
+    const central = plantSkill(home, '.agents', 'palimpsest-discovery');
 
     const removed = sweep(home);
 
@@ -158,7 +158,7 @@ describe('legacy fan-out sweep', () => {
 
   test('plan lists every path before anything is deleted', () => {
     const home = tmpHome();
-    const skill = plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    const skill = plantSkill(home, '.zencoder', 'palimpsest-discovery');
 
     const plan = planLegacyFanoutSweep(home);
 
@@ -169,7 +169,7 @@ describe('legacy fan-out sweep', () => {
 
   test('emptyDirs are deepest-first so rmdir can succeed in order', () => {
     const home = tmpHome();
-    plantSkill(home, join('.tabnine', 'agent'), 'open-knowledge-discovery');
+    plantSkill(home, join('.tabnine', 'agent'), 'palimpsest-discovery');
 
     const { emptyDirs } = planLegacyFanoutSweep(home);
 
@@ -182,7 +182,7 @@ describe('legacy fan-out sweep', () => {
 
   test('a dir that gained content between plan and apply survives', () => {
     const home = tmpHome();
-    plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    plantSkill(home, '.zencoder', 'palimpsest-discovery');
     const plan = planLegacyFanoutSweep(home);
     writeFileSync(join(home, '.zencoder', 'config.json'), '{}', 'utf-8');
 
@@ -226,7 +226,7 @@ describe('legacy fan-out sweep', () => {
 
   test('is idempotent — the second run finds nothing', () => {
     const home = tmpHome();
-    plantSkill(home, '.zencoder', 'open-knowledge-discovery');
+    plantSkill(home, '.zencoder', 'palimpsest-discovery');
 
     expect(sweep(home).length).toBeGreaterThan(0);
     expect(sweep(home)).toEqual([]);
@@ -238,7 +238,7 @@ describe('legacy fan-out sweep — refuses unsafe inputs', () => {
     return mkdtempSync(join(tmpdir(), 'ps-legacy-guard-'));
   }
   function plantSkill(home: string, relDir: string): string {
-    const dir = join(home, relDir, 'skills', 'open-knowledge-discovery');
+    const dir = join(home, relDir, 'skills', 'palimpsest-discovery');
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'SKILL.md'), '# stale\n', 'utf-8');
     return dir;
@@ -262,7 +262,7 @@ describe('legacy fan-out sweep — refuses unsafe inputs', () => {
     process.chdir(box);
     try {
       expect(() => planLegacyFanoutSweep('')).toThrow();
-      expect(existsSync(join(box, '.zencoder', 'skills', 'open-knowledge-discovery'))).toBe(true);
+      expect(existsSync(join(box, '.zencoder', 'skills', 'palimpsest-discovery'))).toBe(true);
     } finally {
       process.chdir(prev);
     }
@@ -271,7 +271,7 @@ describe('legacy fan-out sweep — refuses unsafe inputs', () => {
   test('a symlinked agent home is skipped entirely', () => {
     const box = tmpHome();
     const target = join(box, 'precious');
-    mkdirSync(join(target, 'skills', 'open-knowledge-discovery'), { recursive: true });
+    mkdirSync(join(target, 'skills', 'palimpsest-discovery'), { recursive: true });
     writeFileSync(join(target, 'thesis.txt'), 'mine\n', 'utf-8');
     const home = join(box, 'home');
     mkdirSync(home, { recursive: true });
@@ -282,14 +282,14 @@ describe('legacy fan-out sweep — refuses unsafe inputs', () => {
 
     expect(plan.skillDirs).toEqual([]);
     expect(existsSync(join(target, 'thesis.txt'))).toBe(true);
-    expect(existsSync(join(target, 'skills', 'open-knowledge-discovery'))).toBe(true);
+    expect(existsSync(join(target, 'skills', 'palimpsest-discovery'))).toBe(true);
   });
 
   test('a symlinked skills/ dir is skipped — no delete through the link', () => {
     const box = tmpHome();
     const docs = join(box, 'Documents');
-    mkdirSync(join(docs, 'open-knowledge-discovery'), { recursive: true });
-    writeFileSync(join(docs, 'open-knowledge-discovery', 'notes.md'), 'mine\n', 'utf-8');
+    mkdirSync(join(docs, 'palimpsest-discovery'), { recursive: true });
+    writeFileSync(join(docs, 'palimpsest-discovery', 'notes.md'), 'mine\n', 'utf-8');
     const home = join(box, 'home');
     mkdirSync(join(home, '.zencoder'), { recursive: true });
     symlinkSync(docs, join(home, '.zencoder', 'skills'));
@@ -298,7 +298,7 @@ describe('legacy fan-out sweep — refuses unsafe inputs', () => {
     applyLegacyFanoutSweep(home, plan);
 
     expect(plan.skillDirs).toEqual([]);
-    expect(existsSync(join(docs, 'open-knowledge-discovery', 'notes.md'))).toBe(true);
+    expect(existsSync(join(docs, 'palimpsest-discovery', 'notes.md'))).toBe(true);
   });
 
   test('a skill dir swapped for a symlink between plan and apply is not followed', () => {
@@ -378,7 +378,7 @@ describe('legacy fan-out host table — static integrity', () => {
   test('every planned path is inside home and never home itself', () => {
     const home = mkdtempSync(join(tmpdir(), 'ps-legacy-table-'));
     for (const rel of ['.zencoder', '.tabnine/agent', '.config/goose', '.config/kimchi/harness']) {
-      const dir = join(home, rel, 'skills', 'open-knowledge-discovery');
+      const dir = join(home, rel, 'skills', 'palimpsest-discovery');
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), '# x\n', 'utf-8');
     }
@@ -393,7 +393,7 @@ describe('legacy fan-out host table — static integrity', () => {
   test('shared XDG roots are never planned for removal', () => {
     const home = mkdtempSync(join(tmpdir(), 'ps-legacy-xdg-'));
     for (const rel of ['.config/goose', '.config/crush', '.config/kimchi/harness']) {
-      const dir = join(home, rel, 'skills', 'open-knowledge-discovery');
+      const dir = join(home, rel, 'skills', 'palimpsest-discovery');
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), '# x\n', 'utf-8');
     }
@@ -407,7 +407,7 @@ describe('legacy fan-out host table — static integrity', () => {
 
   test('no legacy host escapes home via .. and every pruneRoot is an ancestor', () => {
     const home = mkdtempSync(join(tmpdir(), 'ps-legacy-esc-'));
-    const dir = join(home, '.zencoder', 'skills', 'open-knowledge-discovery');
+    const dir = join(home, '.zencoder', 'skills', 'palimpsest-discovery');
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'SKILL.md'), '# x\n', 'utf-8');
     const plan = planLegacyFanoutSweep(home);
@@ -427,7 +427,7 @@ describe('userGlobalSkillBundleTargets / removeUserGlobalSkillBundle — home gu
 
   test('a relative home cannot delete a matching tree in the cwd', () => {
     const box = mkdtempSync(join(tmpdir(), 'ps-teardown-cwd-'));
-    const victim = join(box, '.agents', 'skills', 'open-knowledge-discovery');
+    const victim = join(box, '.agents', 'skills', 'palimpsest-discovery');
     mkdirSync(victim, { recursive: true });
     writeFileSync(join(victim, 'SKILL.md'), '# x\n', 'utf-8');
     const prev = process.cwd();

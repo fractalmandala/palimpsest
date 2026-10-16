@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import type { SkillProvenance } from './schema.ts';
 import {
-  catalogRawScopeToOkScope,
+  catalogRawScopeToPsScope,
   isDetectedSkillInProject,
   isSkillOutsideOpenProject,
 } from './scope.ts';
 
-describe('catalogRawScopeToOkScope', () => {
+describe('catalogRawScopeToPsScope', () => {
   it('maps Claude project-bound scopes to project', () => {
-    expect(catalogRawScopeToOkScope('project')).toBe('project');
-    expect(catalogRawScopeToOkScope('local')).toBe('project');
+    expect(catalogRawScopeToPsScope('project')).toBe('project');
+    expect(catalogRawScopeToPsScope('local')).toBe('project');
   });
 
   it('maps user-global / unknown / absent scopes to global', () => {
-    expect(catalogRawScopeToOkScope('user')).toBe('global');
-    expect(catalogRawScopeToOkScope('something-else')).toBe('global');
-    expect(catalogRawScopeToOkScope(undefined)).toBe('global');
+    expect(catalogRawScopeToPsScope('user')).toBe('global');
+    expect(catalogRawScopeToPsScope('something-else')).toBe('global');
+    expect(catalogRawScopeToPsScope(undefined)).toBe('global');
   });
 });
 

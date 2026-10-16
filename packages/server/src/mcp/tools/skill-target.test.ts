@@ -92,7 +92,7 @@ describe('moveSkill — a same-level rename collision surfaces the RFC 9457 deta
     globalThis.fetch = (async () =>
       new Response(
         JSON.stringify({
-          type: 'urn:ok:error:conflict',
+          type: 'urn:ps:error:conflict',
           title: 'A skill named "fishing-log" already exists.',
           status: 409,
           detail:
@@ -178,7 +178,7 @@ describe('moveSkillCrossScope — delegates to the canonical /api/skill/move-sco
       mockFetch(() => ({
         ok: false,
         status: 409,
-        type: 'urn:ok:error:doc-already-exists',
+        type: 'urn:ps:error:doc-already-exists',
         error: 'A global skill named "trip-log" already exists.',
         detail,
         moveState: 'nothing-written',

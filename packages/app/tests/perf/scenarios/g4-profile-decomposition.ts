@@ -108,7 +108,7 @@ async function readUserMarks(page: import('@playwright/test').Page): Promise<Use
     const entries = performance.getEntriesByType('measure');
     const out: Array<{ name: string; startTime: number; duration: number }> = [];
     for (const e of entries) {
-      if (typeof e.name === 'string' && e.name.startsWith('ok/')) {
+      if (typeof e.name === 'string' && e.name.startsWith('ps/')) {
         out.push({ name: e.name, startTime: e.startTime, duration: e.duration });
       }
     }
@@ -202,18 +202,18 @@ export default defineScenario({
 
     const perExtensionCost = sumByPrefix(
       marks.filter((m) => m.name.endsWith('-on-create')),
-      'ok/cold/ext-',
+      'ps/cold/ext-',
     );
-    const perDecorationCost = sumByPrefix(marks, 'ok/cold/decoration-');
-    const perNodeViewCost = sumByPrefix(marks, 'ok/cold/nodeview-factory-');
+    const perDecorationCost = sumByPrefix(marks, 'ps/cold/decoration-');
+    const perNodeViewCost = sumByPrefix(marks, 'ps/cold/nodeview-factory-');
     ctx.recordMetric('perExtensionCostJson', JSON.stringify(perExtensionCost));
     ctx.recordMetric('perDecorationCostJson', JSON.stringify(perDecorationCost));
     ctx.recordMetric('perNodeViewCostJson', JSON.stringify(perNodeViewCost));
 
-    const idbAttach = lastMarkByName(marks, 'ok/pool/idb-attach');
-    const syncedAfterIdb = lastMarkByName(marks, 'ok/pool/synced-after-idb');
-    const editorMount = lastMarkByName(marks, 'ok/cold/editor-mount');
-    const editorCreateView = lastMarkByName(marks, 'ok/cold/editor-create-view');
+    const idbAttach = lastMarkByName(marks, 'ps/pool/idb-attach');
+    const syncedAfterIdb = lastMarkByName(marks, 'ps/pool/synced-after-idb');
+    const editorMount = lastMarkByName(marks, 'ps/cold/editor-mount');
+    const editorCreateView = lastMarkByName(marks, 'ps/cold/editor-create-view');
     const idbHydrateMs =
       syncedAfterIdb && idbAttach
         ? Math.round(
@@ -227,9 +227,9 @@ export default defineScenario({
           ) / 100
         : null;
     const pmBuildMs =
-      totalDurationByName(marks, 'ok/cold/editor-create-view') +
-      totalDurationByName(marks, 'ok/cold/pm-update-state') +
-      totalDurationByName(marks, 'ok/cold/pm-set-props');
+      totalDurationByName(marks, 'ps/cold/editor-create-view') +
+      totalDurationByName(marks, 'ps/cold/pm-update-state') +
+      totalDurationByName(marks, 'ps/cold/pm-set-props');
     const idbAttachAtMs = idbAttach ? Math.round(idbAttach.startTime * 100) / 100 : null;
     ctx.recordMetric('idbAttachAtMs', idbAttachAtMs);
     ctx.recordMetric('idbHydrateMs', idbHydrateMs);

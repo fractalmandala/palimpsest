@@ -379,7 +379,7 @@ function buildEditorOptions(args: BuildEditorOptionsArgs): Partial<EditorOptions
       if (start == null) return;
       const now = performance.now();
       mark(
-        'ok/editor/create-tiptap',
+        'ps/editor/create-tiptap',
         {
           docName: provider.configuration.name ?? 'unknown',
           ytextLength: provider.document.getText('source').length,
@@ -482,7 +482,7 @@ export const TiptapEditor: FC<TiptapEditorProps> = ({
         clipboard,
         ctorStart,
         onWedged: ({ externalSeq, appliedSeq }) => {
-          mark('ok/editor/binding-wedge-recycle', { docName, externalSeq, appliedSeq });
+          mark('ps/editor/binding-wedge-recycle', { docName, externalSeq, appliedSeq });
           recycleDocument(docName);
         },
       }),
@@ -759,7 +759,7 @@ const TiptapEditorChrome: FC<TiptapEditorChromeProps> = ({
           console.warn(
             JSON.stringify({ event: 'ps-editor-selection-restore-failed', docName, message }),
           );
-          mark('ok/editor/selection-restore-failed', { docName, message });
+          mark('ps/editor/selection-restore-failed', { docName, message });
         }
       }
       clearRenameSnapshot(docName);

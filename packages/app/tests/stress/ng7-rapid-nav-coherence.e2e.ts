@@ -52,9 +52,9 @@ test.describe('NG7 Pattern D — rapid-nav coherence', () => {
     await page.waitForFunction(
       ({ targetDoc, since }) => {
         const isMountSettle = (entry: PerformanceEntry) =>
-          entry.name === 'ok/mount/resolve' ||
-          entry.name === 'ok/mount/reject' ||
-          entry.name === 'ok/cache/hit';
+          entry.name === 'ps/mount/resolve' ||
+          entry.name === 'ps/mount/reject' ||
+          entry.name === 'ps/cache/hit';
         return performance
           .getEntriesByType('measure')
           .filter(isMountSettle)
@@ -72,9 +72,9 @@ test.describe('NG7 Pattern D — rapid-nav coherence', () => {
     const aSettleMarks = await page.evaluate(
       ({ targetDoc, since }) => {
         const isMountSettle = (entry: PerformanceEntry) =>
-          entry.name === 'ok/mount/resolve' ||
-          entry.name === 'ok/mount/reject' ||
-          entry.name === 'ok/cache/hit';
+          entry.name === 'ps/mount/resolve' ||
+          entry.name === 'ps/mount/reject' ||
+          entry.name === 'ps/cache/hit';
         return performance
           .getEntriesByType('measure')
           .filter(isMountSettle)
@@ -95,9 +95,9 @@ test.describe('NG7 Pattern D — rapid-nav coherence', () => {
     const validReasons = new Set([undefined, 'aborted']);
     for (const m of aSettleMarks) {
       const isValid =
-        m.name === 'ok/mount/resolve' ||
-        m.name === 'ok/cache/hit' ||
-        (m.name === 'ok/mount/reject' && validReasons.has(m.reason));
+        m.name === 'ps/mount/resolve' ||
+        m.name === 'ps/cache/hit' ||
+        (m.name === 'ps/mount/reject' && validReasons.has(m.reason));
       expect(isValid, `unexpected mount-promise settle for ${docA}: ${JSON.stringify(m)}`).toBe(
         true,
       );

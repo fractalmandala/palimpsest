@@ -50,7 +50,7 @@ describe('delete-path envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('unknown kind emits urn:ok:error:invalid-request', async () => {
+  test('unknown kind emits urn:ps:error:invalid-request', async () => {
     const res = await postDelete({ kind: 'symlink', path: 'foo' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -59,11 +59,11 @@ describe('delete-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('non-existent target emits urn:ok:error:doc-not-found', async () => {
+  test('non-existent target emits urn:ps:error:doc-not-found', async () => {
     const res = await postDelete({
       kind: 'file',
       path: `missing-${crypto.randomUUID().slice(0, 8)}`,
@@ -73,7 +73,7 @@ describe('delete-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-not-found');
     }
   });
 
@@ -85,7 +85,7 @@ describe('delete-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

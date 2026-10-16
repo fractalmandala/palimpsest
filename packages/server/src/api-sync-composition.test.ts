@@ -72,7 +72,7 @@ describe('sync group over the composed listener — served natively', () => {
         headers: { Host: 'evil.example' },
       });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 

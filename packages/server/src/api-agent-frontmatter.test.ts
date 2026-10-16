@@ -259,7 +259,7 @@ describe('POST /api/agent-write-md (write_document) — frontmatter handling', (
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-malformed');
       expect(parsed.parseError).toContain('byte 0');
       expect(parsed.detail).toContain('blank line');
       expect(parsed.detail).not.toContain('Quote string values');
@@ -289,7 +289,7 @@ describe('POST /api/agent-write-md (write_document) — frontmatter handling', (
       );
 
       expect(response.status).toBe(400);
-      expect(JSON.parse(response.body).type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(JSON.parse(response.body).type).toBe('urn:ps:error:frontmatter-malformed');
       expect(session.dc.document.getText('source').toString()).toBe('');
     } finally {
       await cleanup();
@@ -508,7 +508,7 @@ describe('POST /api/agent-patch (edit_document) — frontmatter rejection', () =
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-edit-not-supported');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-edit-not-supported');
       expect(parsed.title).toContain('Frontmatter edits are not supported');
       expect(parsed.title).toContain('edit(');
 
@@ -613,7 +613,7 @@ describe('POST /api/agent-patch (edit_document) — frontmatter rejection', () =
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-edit-not-supported');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-edit-not-supported');
       expect(parsed.title).toContain(
         "would turn the replacement text into the document's frontmatter",
       );
@@ -642,7 +642,7 @@ describe('POST /api/agent-patch (edit_document) — frontmatter rejection', () =
       });
 
       expect(response.status).toBe(400);
-      expect(JSON.parse(response.body).type).toBe('urn:ok:error:frontmatter-edit-not-supported');
+      expect(JSON.parse(response.body).type).toBe('urn:ps:error:frontmatter-edit-not-supported');
       expect(session.dc.document.getText('source').toString()).toBe(original);
     } finally {
       await cleanup();
@@ -731,7 +731,7 @@ describe('POST /api/agent-patch (edit_document) — frontmatter rejection', () =
 
       expect(response.status).toBe(404);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:target-not-found');
+      expect(parsed.type).toBe('urn:ps:error:target-not-found');
       expect(parsed.status).toBe(404);
       expect(parsed.title).not.toContain('Frontmatter edits are not supported');
     } finally {
@@ -844,7 +844,7 @@ describe('byte-0 promotion refusal reaches every write surface', () => {
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-malformed');
       expect(parsed.parseError).toContain('byte 0');
       expect(parsed.detail).toContain('blank line');
       expect(parsed.detail).not.toContain('Quote string values');
@@ -879,7 +879,7 @@ describe('byte-0 promotion refusal reaches every write surface', () => {
       expect(response.status).toBe(200);
       const parsed = JSON.parse(response.body);
       const entry = parsed.results[0];
-      expect(entry.error.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(entry.error.type).toBe('urn:ps:error:frontmatter-malformed');
       expect(entry.error.detail).toContain('blank line');
       expect(entry.error.detail).not.toContain('Quote string values');
 
@@ -954,7 +954,7 @@ describe('POST /api/agent-write-md (write_document) — malformed-FM refusal (PR
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-malformed');
       expect(parsed.title).toBe('Frontmatter YAML is malformed.');
       expect(parsed.file).toBe('test-doc.md');
       expect(typeof parsed.parseError).toBe('string');
@@ -1138,7 +1138,7 @@ describe('POST /api/agent-write-md (write_document) — malformed-FM refusal (PR
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-malformed');
 
       expect(fmMap(session.dc.document)).toEqual({ title: 'Clean Start' });
     } finally {
@@ -1162,7 +1162,7 @@ describe('POST /api/agent-write-md (write_document) — malformed-FM refusal (PR
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-malformed');
       expect(parsed.parseError).toBe('top-level value is not a mapping');
       expect(session.dc.document.getText('source').toString()).toBe('');
     } finally {
@@ -1344,7 +1344,7 @@ describe('POST /api/agent-write-md (write_document) — nested frontmatter accep
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:frontmatter-malformed');
+      expect(parsed.type).toBe('urn:ps:error:frontmatter-malformed');
       expect(session.dc.document.getText('source').toString()).toBe('');
     } finally {
       await cleanup();
@@ -1712,7 +1712,7 @@ describe('POST /api/frontmatter-patch — nested value acceptance (PRD-6947)', (
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.type).toBe('urn:ps:error:invalid-request');
       expect(ytextFm(session.dc.document)).toBe(beforeFm);
     } finally {
       await cleanup();
@@ -1743,7 +1743,7 @@ describe('POST /api/frontmatter-patch — nested value acceptance (PRD-6947)', (
 
       expect(response.status).toBe(400);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:invalid-frontmatter-patch');
+      expect(parsed.type).toBe('urn:ps:error:invalid-frontmatter-patch');
       expect(parsed.fieldErrors).toBeDefined();
       expect(parsed.fieldErrors.frontmatter).toContain('reserved');
       expect(ytextFm(session.dc.document)).toBe(beforeFm);

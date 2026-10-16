@@ -32,7 +32,7 @@ publicHoistPattern:
 minimumReleaseAge: 4320
 minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
-  - '@inkeep/*'
+  - '@palimpsest/*'
   - '@visimer/*'
 
 # Bootstrap is explicit; running a script must not trigger an implicit install.

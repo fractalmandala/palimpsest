@@ -12,7 +12,7 @@ vi.mock('../../src/main/desktop-logger.ts', () => ({ getLogger }));
 import {
   applyThemeSource,
   emitThemeSourceRecord,
-  isOkThemeSource,
+  isPsThemeSource,
   type ThemeSourceRecord,
 } from '../../src/main/theme-handler.ts';
 import type { PsThemeSource } from '../../src/shared/bridge-contract.ts';
@@ -256,25 +256,25 @@ describe('emitThemeSourceRecord dual sink', () => {
   });
 });
 
-describe('isOkThemeSource type predicate', () => {
+describe('isPsThemeSource type predicate', () => {
   test.each([['system'], ['light'], ['dark']])(
     'accepts canonical PsThemeSource value: %s',
     (value) => {
-      expect(isOkThemeSource(value)).toBe(true);
+      expect(isPsThemeSource(value)).toBe(true);
     },
   );
 
   test.each([['auto'], ['Light'], [''], ['SYSTEM'], ['system ']])(
     'rejects out-of-range string: %s',
     (value) => {
-      expect(isOkThemeSource(value)).toBe(false);
+      expect(isPsThemeSource(value)).toBe(false);
     },
   );
 
   test.each([[null], [undefined], [42], [true], [{}], [['system']]])(
     'rejects non-string input: %p',
     (value) => {
-      expect(isOkThemeSource(value)).toBe(false);
+      expect(isPsThemeSource(value)).toBe(false);
     },
   );
 });

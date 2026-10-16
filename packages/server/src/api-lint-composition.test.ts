@@ -96,7 +96,7 @@ describe('lint group over the composed listener — served natively', () => {
       expect(refused.status, `${path}: ${refused.body}`).toBe(403);
       expect(refused.headers['x-request-id']).toBeUndefined();
       expect(refused.headers['access-control-allow-origin']).toBeUndefined();
-      expect(parseProblem(refused.body).type).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(refused.body).type).toBe('urn:ps:error:host-not-allowed');
 
       const origin = await rawRequest(external.port, path, {
         method: 'PATCH',
@@ -111,7 +111,7 @@ describe('lint group over the composed listener — served natively', () => {
       expect(origin.status, `${path}: ${origin.body}`).toBe(403);
       expect(origin.headers['x-request-id']).toBe('origin-refusal');
       expect(origin.headers['access-control-allow-origin']).toBeUndefined();
-      expect(parseProblem(origin.body).type).toBe('urn:ok:error:invalid-origin');
+      expect(parseProblem(origin.body).type).toBe('urn:ps:error:invalid-origin');
 
       const wrongMethod = await rawRequest(external.port, path, {
         method: 'PATCH',

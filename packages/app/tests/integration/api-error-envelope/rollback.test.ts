@@ -24,7 +24,7 @@ async function postRollback(body: Record<string, unknown>): Promise<Response> {
 }
 
 describe('rollback envelope (RFC 9457)', () => {
-  test('missing commitSha emits urn:ok:error:invalid-request', async () => {
+  test('missing commitSha emits urn:ps:error:invalid-request', async () => {
     const res = await postRollback({ docName: 'foo' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -33,23 +33,23 @@ describe('rollback envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('non-SHA commitSha emits urn:ok:error:invalid-request (schema regex)', async () => {
+  test('non-SHA commitSha emits urn:ps:error:invalid-request (schema regex)', async () => {
     const res = await postRollback({ docName: 'foo', commitSha: 'not-a-sha' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('non-existent SHA in shadow repo emits urn:ok:error:doc-not-found', async () => {
+  test('non-existent SHA in shadow repo emits urn:ps:error:doc-not-found', async () => {
     const res = await postRollback({ docName: 'test-doc', commitSha: 'a'.repeat(40) });
     expect(res.status).toBe(404);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -58,11 +58,11 @@ describe('rollback envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-not-found');
     }
   });
 
-  test('non-string summary emits urn:ok:error:invalid-request', async () => {
+  test('non-string summary emits urn:ps:error:invalid-request', async () => {
     const res = await postRollback({
       docName: 'foo',
       commitSha: 'a'.repeat(40),
@@ -73,7 +73,7 @@ describe('rollback envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -85,7 +85,7 @@ describe('rollback envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

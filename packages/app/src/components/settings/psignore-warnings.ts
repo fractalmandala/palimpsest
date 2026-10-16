@@ -1,16 +1,16 @@
-type OkignoreWarningCode =
+type PsignoreWarningCode =
   | 'trailing-backslash'
   | 'unmatched-bracket'
   | 'lone-bang'
   | 'leading-whitespace'
   | 'embedded-newline';
 
-export interface OkignoreWarning {
-  readonly code: OkignoreWarningCode;
+export interface PsignoreWarning {
+  readonly code: PsignoreWarningCode;
   readonly message: string;
 }
 
-export const WARNING_MESSAGES: Readonly<Record<OkignoreWarningCode, string>> = {
+export const WARNING_MESSAGES: Readonly<Record<PsignoreWarningCode, string>> = {
   'trailing-backslash': "Trailing backslash — line continuation isn't supported.",
   'unmatched-bracket': 'Unmatched [ — character class is open.',
   'lone-bang': 'Lone ! — negation needs a pattern after it.',
@@ -18,8 +18,8 @@ export const WARNING_MESSAGES: Readonly<Record<OkignoreWarningCode, string>> = {
   'embedded-newline': 'Embedded line break — the row spans multiple lines.',
 };
 
-export function checkHeuristicWarnings(line: string): OkignoreWarning[] {
-  const warnings: OkignoreWarning[] = [];
+export function checkHeuristicWarnings(line: string): PsignoreWarning[] {
+  const warnings: PsignoreWarning[] = [];
   if (line.length === 0) return warnings;
   if (line.trimStart().startsWith('#')) return warnings;
 

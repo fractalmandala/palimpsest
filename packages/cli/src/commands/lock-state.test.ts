@@ -206,7 +206,7 @@ describe('inspectLock', () => {
     }
   });
 
-  test('peeks do not mutate filesystem (dead pid lock remains for ok clean)', () => {
+  test('peeks do not mutate filesystem (dead pid lock remains for ps clean)', () => {
     const dir = freshLockDir();
     writeFileSync(
       join(dir, 'server.lock'),

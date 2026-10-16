@@ -191,7 +191,7 @@ describe('FR7 + FR9: mutating handlers refuse with RFC 9457 slim 409 during conf
     expect(res.status).toBe(409);
     expect(res.headers.get('content-type')).toContain('application/problem+json');
     const body = (await res.json()) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+    expect(body.type).toBe('urn:ps:error:doc-in-conflict');
     expect(body.title).toBe('Document is in conflict.');
     expect(body.status).toBe(409);
     expect(body.file).toBe(expectedFile);

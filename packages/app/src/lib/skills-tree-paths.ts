@@ -1,6 +1,6 @@
 import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
 import type { CatalogSkill } from '@palimpsest/core/skills-catalog/schema';
-import { catalogRawScopeToOkScope } from '@palimpsest/core/skills-catalog/scope';
+import { catalogRawScopeToPsScope } from '@palimpsest/core/skills-catalog/scope';
 import {
   bucketForDetected,
   bucketForSkill,
@@ -14,7 +14,7 @@ export const EMPTY_SCOPE_SENTINEL = '__ok_empty_scope__';
 
 const PS_OWN_SKILLS: ReadonlySet<string> = new Set([
   'palimpsest',
-  'open-knowledge-discovery',
+  'palimpsest-discovery',
   'open-knowledge-write-skill',
 ]);
 
@@ -27,7 +27,7 @@ function isManagedDuplicate(s: CatalogSkill, managedNames: ReadonlySet<string>):
 }
 
 export function detectedId(s: CatalogSkill): string {
-  return `${catalogRawScopeToOkScope(s.provenance.scope)}::${s.name}`;
+  return `${catalogRawScopeToPsScope(s.provenance.scope)}::${s.name}`;
 }
 
 export interface SkillsTreePathsInput {
@@ -147,7 +147,7 @@ export function buildSkillsTreePaths({
     const managedNamesForCount = new Set(skills.map((s) => s.name));
     for (const d of detected ?? []) {
       if (isManagedDuplicate(d, managedNamesForCount) || PS_OWN_SKILLS.has(d.name)) continue;
-      bump(catalogRawScopeToOkScope(d.provenance.scope), bucketForDetected(d));
+      bump(catalogRawScopeToPsScope(d.provenance.scope), bucketForDetected(d));
     }
   }
 
@@ -162,7 +162,7 @@ export function buildSkillsTreePaths({
   }
   for (const d of detected ?? []) {
     if (PS_OWN_SKILLS.has(d.name)) continue;
-    const scope = catalogRawScopeToOkScope(d.provenance.scope);
+    const scope = catalogRawScopeToPsScope(d.provenance.scope);
     if (!rendersAtScopeLevel(scope, bucketForDetected(d))) continue;
     skillSegmentsByScope.get(scope)?.add(skillDisplayName(d.name));
   }
@@ -318,7 +318,7 @@ export function buildSkillsTreePaths({
   const detectedByPrefix = new Map<string, CatalogSkill>();
   for (const s of detected ?? []) {
     if (isManagedDuplicate(s, managedNames) || PS_OWN_SKILLS.has(s.name)) continue;
-    const scope = catalogRawScopeToOkScope(s.provenance.scope);
+    const scope = catalogRawScopeToPsScope(s.provenance.scope);
     const used = usedSegments.get(scope);
     if (!used) continue;
     const pinned = isPinnedName(scope, s.name);

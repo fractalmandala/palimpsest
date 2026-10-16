@@ -46,7 +46,7 @@ interface ProblemError extends Error {
   type?: string;
 }
 
-const CONCURRENT_OVERWRITE_REFUSED_TYPE: ProblemType = 'urn:ok:error:concurrent-overwrite-refused';
+const CONCURRENT_OVERWRITE_REFUSED_TYPE: ProblemType = 'urn:ps:error:concurrent-overwrite-refused';
 
 export function isConcurrentOverwriteRefusal(error: unknown): boolean {
   if (!(error instanceof Error)) return false;

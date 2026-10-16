@@ -109,13 +109,13 @@ describe('PrincipalSuccessSchema', () => {
 describe('ProblemTypeSchema', () => {
   test('accepts the seeded upload-side URN tokens', () => {
     const tokens = [
-      'urn:ok:error:malformed-upload',
-      'urn:ok:error:collision-exhaustion',
-      'urn:ok:error:storage-full',
-      'urn:ok:error:storage-readonly',
-      'urn:ok:error:storage-error',
-      'urn:ok:error:no-file-received',
-      'urn:ok:error:path-escape',
+      'urn:ps:error:malformed-upload',
+      'urn:ps:error:collision-exhaustion',
+      'urn:ps:error:storage-full',
+      'urn:ps:error:storage-readonly',
+      'urn:ps:error:storage-error',
+      'urn:ps:error:no-file-received',
+      'urn:ps:error:path-escape',
     ];
     for (const t of tokens) {
       const result = ProblemTypeSchema.safeParse(t);
@@ -125,10 +125,10 @@ describe('ProblemTypeSchema', () => {
 
   test('accepts the cross-handler shared URN tokens', () => {
     const tokens = [
-      'urn:ok:error:method-not-allowed',
-      'urn:ok:error:invalid-request',
-      'urn:ok:error:internal-server-error',
-      'urn:ok:error:derived-index-unavailable',
+      'urn:ps:error:method-not-allowed',
+      'urn:ps:error:invalid-request',
+      'urn:ps:error:internal-server-error',
+      'urn:ps:error:derived-index-unavailable',
     ];
     for (const t of tokens) {
       const result = ProblemTypeSchema.safeParse(t);
@@ -137,7 +137,7 @@ describe('ProblemTypeSchema', () => {
   });
 
   test('accepts the local-op security gate URN tokens', () => {
-    const tokens = ['urn:ok:error:loopback-required', 'urn:ok:error:invalid-origin'];
+    const tokens = ['urn:ps:error:loopback-required', 'urn:ps:error:invalid-origin'];
     for (const t of tokens) {
       const result = ProblemTypeSchema.safeParse(t);
       expect(result.success).toBe(true);
@@ -146,12 +146,12 @@ describe('ProblemTypeSchema', () => {
 
   test('accepts the local-op clone URN tokens (US-005)', () => {
     const tokens = [
-      'urn:ok:error:url-not-allowed',
-      'urn:ok:error:dir-outside-home',
-      'urn:ok:error:concurrent-operation',
-      'urn:ok:error:clone-failed',
-      'urn:ok:error:clone-timeout',
-      'urn:ok:error:server-start-failed',
+      'urn:ps:error:url-not-allowed',
+      'urn:ps:error:dir-outside-home',
+      'urn:ps:error:concurrent-operation',
+      'urn:ps:error:clone-failed',
+      'urn:ps:error:clone-timeout',
+      'urn:ps:error:server-start-failed',
     ];
     for (const t of tokens) {
       const result = ProblemTypeSchema.safeParse(t);
@@ -170,14 +170,14 @@ describe('ProblemTypeSchema', () => {
   });
 
   test('rejects undeclared URN tokens (closed by policy)', () => {
-    const result = ProblemTypeSchema.safeParse('urn:ok:error:undeclared-token');
+    const result = ProblemTypeSchema.safeParse('urn:ps:error:undeclared-token');
     expect(result.success).toBe(false);
   });
 });
 
 describe('ProblemDetailsSchema', () => {
   const validProblem = {
-    type: 'urn:ok:error:malformed-upload' as const,
+    type: 'urn:ps:error:malformed-upload' as const,
     title: 'The uploaded multipart payload is malformed.',
     status: 400,
   };
@@ -186,7 +186,7 @@ describe('ProblemDetailsSchema', () => {
     const result = ProblemDetailsSchema.safeParse(validProblem);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.type).toBe('urn:ok:error:malformed-upload');
+      expect(result.data.type).toBe('urn:ps:error:malformed-upload');
       expect(result.data.title).toBe('The uploaded multipart payload is malformed.');
       expect(result.data.status).toBe(400);
     }
@@ -265,7 +265,7 @@ describe('ProblemDetailsSchema', () => {
   test('fails when type is not a registered URN token', () => {
     const result = ProblemDetailsSchema.safeParse({
       ...validProblem,
-      type: 'urn:ok:error:fictional-token',
+      type: 'urn:ps:error:fictional-token',
     });
     expect(result.success).toBe(false);
   });
@@ -463,7 +463,7 @@ describe('StreamingProblemEventSchema (US-005, D36 c)', () => {
     const result = StreamingProblemEventSchema.safeParse({
       type: 'error',
       problem: {
-        type: 'urn:ok:error:clone-failed',
+        type: 'urn:ps:error:clone-failed',
         title: 'Clone subprocess exited with non-zero status.',
         status: 500,
         instance: 'urn:uuid:01234567-89ab-4def-8123-456789abcdef',
@@ -477,7 +477,7 @@ describe('StreamingProblemEventSchema (US-005, D36 c)', () => {
     const result = StreamingProblemEventSchema.safeParse({
       type: 'error',
       problem: {
-        type: 'urn:ok:error:clone-timeout',
+        type: 'urn:ps:error:clone-timeout',
         title: 'Clone timed out after 10 minutes.',
         status: 504,
       },
@@ -488,7 +488,7 @@ describe('StreamingProblemEventSchema (US-005, D36 c)', () => {
   test('fails when outer type is not "error" (streaming protocol discriminator)', () => {
     const result = StreamingProblemEventSchema.safeParse({
       type: 'progress',
-      problem: { type: 'urn:ok:error:clone-failed', title: 'foo', status: 500 },
+      problem: { type: 'urn:ps:error:clone-failed', title: 'foo', status: 500 },
     });
     expect(result.success).toBe(false);
   });
@@ -501,7 +501,7 @@ describe('StreamingProblemEventSchema (US-005, D36 c)', () => {
   test('fails when problem field has invalid URN type', () => {
     const result = StreamingProblemEventSchema.safeParse({
       type: 'error',
-      problem: { type: 'urn:ok:error:fictional-token', title: 'foo', status: 500 },
+      problem: { type: 'urn:ps:error:fictional-token', title: 'foo', status: 500 },
     });
     expect(result.success).toBe(false);
   });

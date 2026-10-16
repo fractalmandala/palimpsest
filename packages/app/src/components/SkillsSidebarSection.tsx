@@ -3,7 +3,7 @@ import { humanFormat } from '@palimpsest/core/config/errors';
 import { externalSkillLiveDocName } from '@palimpsest/core/constants/cc1';
 import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
 import type { CatalogSkill } from '@palimpsest/core/skills-catalog/schema';
-import { catalogRawScopeToOkScope } from '@palimpsest/core/skills-catalog/scope';
+import { catalogRawScopeToPsScope } from '@palimpsest/core/skills-catalog/scope';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -315,7 +315,7 @@ export function SkillsSidebarSection({ dockExpanded = false }: { dockExpanded?: 
         source,
         name: s.name,
         subtitle: s.sourceHarness ?? '',
-        level: catalogRawScopeToOkScope(s.provenance.scope),
+        level: catalogRawScopeToPsScope(s.provenance.scope),
         ...(rel !== undefined ? { path: sub } : {}),
       });
       return;
@@ -348,7 +348,7 @@ export function SkillsSidebarSection({ dockExpanded = false }: { dockExpanded?: 
     isFileActive,
     isDetectedActive: (s) =>
       activeDocName === externalSkillLiveDocName(s.name) ||
-      isPreviewActiveFor(s.name, catalogRawScopeToOkScope(s.provenance.scope)),
+      isPreviewActiveFor(s.name, catalogRawScopeToPsScope(s.provenance.scope)),
     showSkillGroups,
     pinnedByScope,
   });

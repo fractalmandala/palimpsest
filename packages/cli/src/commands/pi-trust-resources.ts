@@ -44,7 +44,7 @@ function readablePathExists(path: string): boolean {
 }
 
 function isOwnedSkillName(name: string): boolean {
-  return name === 'palimpsest' || name.startsWith('open-knowledge-');
+  return name === 'palimpsest' || name.startsWith('palimpsest-');
 }
 
 export function inspectPiTrustResources(

@@ -1,4 +1,4 @@
-import type { LinterConfig, OkfRuleId } from '@palimpsest/core';
+import type { LinterConfig, PsfRuleId } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { enumConstraintsForDoc } from './frontmatter-enum-constraints.ts';
 
@@ -31,7 +31,7 @@ const DOC_SCHEMA = {
 };
 
 function configWithOkf(
-  psf: { enabled: boolean; rules?: Partial<Record<OkfRuleId, boolean>> },
+  psf: { enabled: boolean; rules?: Partial<Record<PsfRuleId, boolean>> },
   frontmatter: { enabled: boolean; schemas: Parameters<typeof configWith>[0] } = {
     enabled: false,
     schemas: [],

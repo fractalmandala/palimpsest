@@ -188,7 +188,7 @@ describe('older own-write observations', () => {
     const response = await post('Final\n');
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:doc-in-conflict',
+      type: 'urn:ps:error:doc-in-conflict',
       conflict: { kind: 'reconcile', reason: 'stale-external-write' },
     });
     expect(readFileSync(file, 'utf8')).toBe(external);
@@ -212,7 +212,7 @@ describe('older own-write observations', () => {
     const response = await post('Final\n');
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:doc-in-conflict',
+      type: 'urn:ps:error:doc-in-conflict',
       conflict: { kind: 'reconcile', reason: 'stale-external-write' },
     });
     expect(readFileSync(file, 'utf8')).toBe('Before\n');
@@ -265,7 +265,7 @@ describe('older own-write observations', () => {
     const response = await post('Final\n');
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:doc-in-conflict',
+      type: 'urn:ps:error:doc-in-conflict',
       conflict: { kind: 'reconcile', reason: 'stale-external-write' },
     });
     expect(readFileSync(file, 'utf8')).toBe('Before\n');
@@ -315,7 +315,7 @@ describe('older own-write observations', () => {
     const response = await post('Final\n');
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:doc-in-conflict',
+      type: 'urn:ps:error:doc-in-conflict',
       conflict: { kind: 'reconcile', reason: 'stale-external-write' },
     });
     expect(readFileSync(file, 'utf8')).toBe(acknowledged);
@@ -426,7 +426,7 @@ describe('older own-write observations', () => {
     const response = await post('Final\n');
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:doc-in-conflict',
+      type: 'urn:ps:error:doc-in-conflict',
       conflict: { kind: 'reconcile', reason: 'stale-external-write' },
     });
     expect(readFileSync(file, 'utf8')).toBe('Before\n');

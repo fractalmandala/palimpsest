@@ -73,8 +73,8 @@ function seedHome(home: string): void {
     JSON.stringify({ theirData: true }),
   );
   write(join(home, 'Library', 'Caches', DESKTOP_UPDATER_CACHE_DIR_NAME, 'pending.zip'), 'x');
-  write(join(home, '.agents', 'skills', 'open-knowledge-discovery', 'SKILL.md'), '# d\n');
-  write(join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md'), '# d\n');
+  write(join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md'), '# d\n');
+  write(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'), '# d\n');
   write(join(home, '.agents', 'skills', 'open-knowledge-write-skill', 'SKILL.md'), '# w\n');
   write(join(home, '.agents', 'skills', 'someone-elses-skill', 'SKILL.md'), '# theirs\n');
   write(
@@ -92,8 +92,8 @@ function seedHome(home: string): void {
 }
 
 function markerFor(home: string): UninstallPlanInput['marker'] {
-  const extraTarget = join(home, '.ps', 'bin', 'ok');
-  const extraLink = join(home, '.local', 'bin', 'ok');
+  const extraTarget = join(home, '.ps', 'bin', 'ps');
+  const extraLink = join(home, '.local', 'bin', 'ps');
   mkdirSync(dirname(extraTarget), { recursive: true });
   writeFileSync(extraTarget, 'wrapper');
   mkdirSync(dirname(extraLink), { recursive: true });
@@ -419,8 +419,8 @@ describe('runRemoval — uninstall end to end', () => {
         false,
       );
 
-      expect(existsSync(join(home, '.agents', 'skills', 'open-knowledge-discovery'))).toBe(false);
-      expect(existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery'))).toBe(false);
+      expect(existsSync(join(home, '.agents', 'skills', 'palimpsest-discovery'))).toBe(false);
+      expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery'))).toBe(false);
       expect(existsSync(join(home, '.agents', 'skills', 'open-knowledge-write-skill'))).toBe(false);
       expect(existsSync(join(home, '.agents', 'skills', 'someone-elses-skill'))).toBe(true);
 
@@ -436,7 +436,7 @@ describe('runRemoval — uninstall end to end', () => {
         false,
       );
 
-      expect(existsSync(join(home, '.local', 'bin', 'ok'))).toBe(false);
+      expect(existsSync(join(home, '.local', 'bin', 'ps'))).toBe(false);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }
@@ -552,7 +552,7 @@ describe('pi trust revocation surfaces through the removal plan', () => {
     return {
       kind: 'mcp-entry' as const,
       group: 'Editor integrations',
-      label: "Remove OK's Pi bridge",
+      label: "Remove Palimpsest's Pi bridge",
       editorId: 'pi' as const,
       scope: 'project' as const,
       cwd,

@@ -42,7 +42,7 @@ export function admitRequestSurface(
     errorResponse(
       res,
       403,
-      'urn:ok:error:host-not-allowed',
+      'urn:ps:error:host-not-allowed',
       'Proxied request refused: this server has not consented to external exposure. Set PS_EXTERNAL_URL to the public origin and PS_ALLOW_EXTERNAL=1 (or server.externalUrl + server.allowExternal in config), then restart the server.',
       { handler },
     );
@@ -51,7 +51,7 @@ export function admitRequestSurface(
   if (policy.allowExternal) {
     const host = Array.isArray(req.headers.host) ? req.headers.host[0] : req.headers.host;
     if (!isPeerAdmitted(req.socket.remoteAddress, policy) || !isHostAdmitted(host, policy)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler,
       });
       return false;
@@ -118,7 +118,7 @@ function writeHealthResponse(
   health: HealthProvider | undefined,
 ): void {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: 'health',
       extraHeaders: { Allow: 'GET, HEAD' },
     });
@@ -152,7 +152,7 @@ export function createHttpApp(opts: CreateHttpAppOptions): HttpAppHandle {
     const res = c.env.outgoing;
     opts.log.error({ err }, 'Unhandled router handler error');
     if (!res.headersSent && !res.writableEnded && !res.destroyed) {
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'http-app',
         cause: err,
       });
@@ -215,7 +215,7 @@ export function createHttpApp(opts: CreateHttpAppOptions): HttpAppHandle {
             errorResponse(
               res,
               500,
-              'urn:ok:error:internal-server-error',
+              'urn:ps:error:internal-server-error',
               'Internal server error.',
               {
                 handler: 'native-api-catch',

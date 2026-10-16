@@ -42,7 +42,7 @@ export function beginSendTrace(
   try {
     const parent =
       traceparent === undefined ? ROOT_CONTEXT : propagation.extract(ROOT_CONTEXT, { traceparent });
-    const span = getTracer().startSpan('ok.bug-report.send', undefined, parent);
+    const span = getTracer().startSpan('ps.bug-report.send', undefined, parent);
     if (!span.isRecording()) {
       span.end();
       return NOOP_TRACE;
@@ -65,7 +65,7 @@ function createHandle(span: Span, sendContext: Context): BugReportSendTrace {
       if (ended) return;
       try {
         const child = getTracer().startSpan(
-          `ok.bug-report.${name}`,
+          `ps.bug-report.${name}`,
           { startTime: startMs },
           sendContext,
         );
@@ -78,7 +78,7 @@ function createHandle(span: Span, sendContext: Context): BugReportSendTrace {
       ended = true;
       try {
         if (attributes) span.setAttributes(attributes);
-        span.setAttribute('ok.bug_report.outcome', outcome);
+        span.setAttribute('ps.bug_report.outcome', outcome);
         span.setStatus({
           code: outcome === 'upload-failed' ? SpanStatusCode.ERROR : SpanStatusCode.OK,
         });

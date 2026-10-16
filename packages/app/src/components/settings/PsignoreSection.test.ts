@@ -4,12 +4,12 @@ import {
   parseRows,
   readShowAdvanced,
   writeShowAdvanced,
-} from './OkignoreSection';
+} from './PsignoreSection';
 
-describe('OkignoreSection module', () => {
+describe('PsignoreSection module', () => {
   test('loads the component and exported helpers', async () => {
-    const mod = await import('./OkignoreSection');
-    expect(typeof mod.OkignoreSection).toBe('function');
+    const mod = await import('./PsignoreSection');
+    expect(typeof mod.PsignoreSection).toBe('function');
     expect(typeof mod.parseRows).toBe('function');
     expect(typeof mod.derivePreviewPaths).toBe('function');
     expect(typeof mod.readShowAdvanced).toBe('function');

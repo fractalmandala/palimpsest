@@ -41,10 +41,10 @@
     -->
     <key>com.apple.security.device.audio-input</key>
     <true/>
-    <key>com.apple.developer.associated-domains</key>
-    <array>
-        <string>applinks:palimpsest.ai</string>
-        <string>applinks:www.palimpsest.ai</string>
-    </array>
+    <!-- FORK TODO: associated-domains removed — the fork has no docs/site domain
+    yet, and the upstream applinks entries were stripped in the rebrand.
+    Re-add an applinks: entry here (plus a matching provisioning profile)
+    when Universal Links / share-splash hosting exists for Palimpsest.
+    Unsigned/local builds already strip this block via createLocalEntitlements. -->
 </dict>
 </plist>

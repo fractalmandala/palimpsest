@@ -259,7 +259,7 @@ describe('LinksPanel Local files section', () => {
       ok: false,
       status: 503,
       body: {
-        type: 'urn:ok:error:derived-index-unavailable',
+        type: 'urn:ps:error:derived-index-unavailable',
         title: 'Local file index is not ready',
         status: 503,
       },
@@ -273,7 +273,7 @@ describe('LinksPanel Local files section', () => {
       ok: false,
       status: 503,
       body: {
-        type: 'urn:ok:error:backlink-index-not-configured',
+        type: 'urn:ps:error:backlink-index-not-configured',
         title: 'Backlink index is not ready',
         status: 503,
       },
@@ -292,7 +292,7 @@ describe('LinksPanel Local files section', () => {
       ok: false,
       status: 503,
       body: {
-        type: 'urn:ok:error:derived-index-unavailable',
+        type: 'urn:ps:error:derived-index-unavailable',
         title: 'Local file index is not ready',
         status: 503,
       },

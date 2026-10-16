@@ -247,7 +247,7 @@ vi.doMock('./ui/sidebar', () => ({
 }));
 
 vi.doMock('@/lib/config-provider', () => ({
-  useConfigContext: () => ({ okignoreBinding: null, projectLocalBinding: null, merged: null }),
+  useConfigContext: () => ({ psignoreBinding: null, projectLocalBinding: null, merged: null }),
 }));
 
 vi.doMock('./handoff/useInstalledAgents', () => ({

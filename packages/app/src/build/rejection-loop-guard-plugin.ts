@@ -10,7 +10,7 @@ const GUARD_SCRIPT_PATH = resolve(
 export function rejectionLoopGuardPlugin(): Plugin {
   const guardScript = readFileSync(GUARD_SCRIPT_PATH, 'utf-8');
   return {
-    name: 'ok:rejection-loop-guard',
+    name: 'ps:rejection-loop-guard',
     apply: 'serve',
     transformIndexHtml: {
       order: 'pre',

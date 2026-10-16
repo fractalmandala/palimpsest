@@ -3,11 +3,11 @@ name: open-knowledge-write-skill
 description: "Use when the user wants to create, author, write, or design a new Agent Skill (a SKILL.md) — for Palimpsest or for their editors — including requests like 'help me write a skill', 'make a skill that…', 'turn this workflow into a skill', or improving an existing skill's triggering and discipline. Also use when capturing reusable agent guidance that should live as an installable skill rather than a one-off prompt. Covers choosing scope (project vs global), authoring inside a plugin or skills-distribution repo (write in the repo's own layout, never install), the SKILL.md frontmatter contract, progressive-disclosure structure, evaluating the skill, and installing it into the user's editors."
 compatibility: "Palimpsest project recommended (uses the `write` / `edit` / `install` MCP verbs). Authoring + validation are pure file ops; live preview + eval want a running server (`ps start`, or `ps-beta start` for Beta)."
 metadata:
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 
-# Writing an Palimpsest skill
+# Writing a Palimpsest skill
 
 You are helping the user author an **Agent Skill** — a `SKILL.md` file (plus
 optional `references/` and `scripts/`) that teaches an AI agent how to do a
@@ -227,7 +227,7 @@ on pull.
 ## Reminders
 
 - Prefer ONE good skill over many overlapping ones; split only when triggers diverge. (The Stage 1 gate is where you ENFORCE this — don't leave overlap to discover later.)
-- Scope is the only placement decision — don't fold harness/format/toolchain assumptions into it, and don't bake one into the scope question's wording. You are authoring an Palimpsest skill: create it with `write({ skill })` — it lands as a real folder at the project's default skill home with attribution and versioning — and fan it out with `install`; don't hand-scatter copies across editor dirs, because `install` owns fan-out; recorded, unedited copies refresh on watcher/startup sync (a hand-edited copy forks and stops refreshing). If you load this flow, author through it.
+- Scope is the only placement decision — don't fold harness/format/toolchain assumptions into it, and don't bake one into the scope question's wording. You are authoring a Palimpsest skill: create it with `write({ skill })` — it lands as a real folder at the project's default skill home with attribution and versioning — and fan it out with `install`; don't hand-scatter copies across editor dirs, because `install` owns fan-out; recorded, unedited copies refresh on watcher/startup sync (a hand-edited copy forks and stops refreshing). If you load this flow, author through it.
 - Ground claims about how skills behave (versioning, install targets, scope semantics) in this guide or the tool descriptions — don't assert system facts from assumption.
 - Avoid blanket ALWAYS/NEVER rules without a stated reason — they read as noise and
   get ignored. Explain the why.

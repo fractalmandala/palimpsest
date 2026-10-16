@@ -33,7 +33,7 @@ describe('computeDevApiConfigResponse', () => {
     expect(body.port).toBe(0);
   });
 
-  test('response headers match ok ui contract', () => {
+  test('response headers match ps ui contract', () => {
     const res = computeDevApiConfigResponse('GET', 5173);
     expect(res?.headers).toEqual({
       'Content-Type': 'application/json',

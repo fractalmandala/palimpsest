@@ -101,7 +101,7 @@ describe('server-lock check', () => {
     const result = await def.run({ cwd });
     expect(result.status).toBe('warn');
     expect(result.summary).toContain('999999');
-    expect(result.remediation).toContain('ok clean');
+    expect(result.remediation).toContain('ps clean');
   });
 
   test('warns on corrupt lockfile', async () => {
@@ -133,7 +133,7 @@ describe('server-lock remediation names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: live and dead locks name %s stop and clean', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

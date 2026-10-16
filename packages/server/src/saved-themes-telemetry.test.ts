@@ -14,12 +14,12 @@ import { savedThemesDir, scanSavedThemes } from './saved-themes-store.ts';
 import { __resetSavedThemesTelemetryForTests } from './saved-themes-telemetry.ts';
 import { deleteSavedTheme, saveSavedTheme } from './saved-themes-write.ts';
 
-const SAVE_METRIC = 'ok.saved_themes.save_total';
-const DELETE_METRIC = 'ok.saved_themes.delete_total';
-const SCAN_METRIC = 'ok.saved_themes.scan_total';
-const PARSE_METRIC = 'ok.saved_themes.parse_total';
-const PARSE_FAILURE_METRIC = 'ok.saved_themes.parse_failure_total';
-const USABLE_COUNT_METRIC = 'ok.saved_themes.usable_count';
+const SAVE_METRIC = 'ps.saved_themes.save_total';
+const DELETE_METRIC = 'ps.saved_themes.delete_total';
+const SCAN_METRIC = 'ps.saved_themes.scan_total';
+const PARSE_METRIC = 'ps.saved_themes.parse_total';
+const PARSE_FAILURE_METRIC = 'ps.saved_themes.parse_failure_total';
+const USABLE_COUNT_METRIC = 'ps.saved_themes.usable_count';
 
 function scheme(): Base16Scheme {
   return {

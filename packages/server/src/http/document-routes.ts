@@ -158,7 +158,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
         const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
         const rawDocName = url.searchParams.get('docName') || 'test-doc';
         if (!isSafeDocName(rawDocName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'document-read',
           });
           return;
@@ -168,7 +168,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${docName}' is a reserved document name.`,
             { handler: 'document-read' },
           );
@@ -193,7 +193,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
         }
 
         if (!existsSync(filePath)) {
-          errorResponse(res, 404, 'urn:ok:error:doc-not-found', `Document not found: ${docName}.`, {
+          errorResponse(res, 404, 'urn:ps:error:doc-not-found', `Document not found: ${docName}.`, {
             handler: 'document-read',
           });
           return;
@@ -206,7 +206,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
             errorResponse(
               res,
               500,
-              'urn:ok:error:doc-not-available',
+              'urn:ps:error:doc-not-available',
               'Document is not available.',
               { handler: 'document-read' },
             );
@@ -224,7 +224,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
           await dc.disconnect();
         }
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read document.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read document.', {
           handler: 'document-read',
           cause: e,
         });
@@ -259,7 +259,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'Invalid directory parameter.',
               {
                 handler: 'document-list',
@@ -326,7 +326,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
             if (!res.writableEnded && !res.destroyed) {
               writeStreamError(
                 500,
-                'urn:ok:error:internal-server-error',
+                'urn:ps:error:internal-server-error',
                 'Failed to list documents (showAll stream).',
                 { cause: err },
               );
@@ -343,7 +343,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
         }
 
         if (showAll && contentFilter) {
-          const key = `showAll:${showAllMaxDepth === 1 ? 'd1:' : ''}${showOk ? 'ok:' : ''}${dir ?? ''}`;
+          const key = `showAll:${showAllMaxDepth === 1 ? 'd1:' : ''}${showOk ? 'ps:' : ''}${dir ?? ''}`;
           let entry = showAllInflight.get(key);
           if (!entry) {
             const controller = new AbortController();
@@ -410,7 +410,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
             errorResponse(
               res,
               500,
-              'urn:ok:error:internal-server-error',
+              'urn:ps:error:internal-server-error',
               'Failed to list documents (showAll mode).',
               { handler: 'document-list', cause: e },
             );
@@ -662,7 +662,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
           { handler: 'document-list' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to list documents.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to list documents.', {
           handler: 'document-list',
           cause: e,
         });
@@ -681,27 +681,27 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Missing docName query parameter.',
             { handler: 'page-headings' },
           );
           return;
         }
         if (!isSafeDocName(docName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'page-headings',
           });
           return;
         }
         const filePath = resolveDocPath(docName);
         if (!filePath) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'page-headings',
           });
           return;
         }
         if (!existsSync(filePath)) {
-          errorResponse(res, 404, 'urn:ok:error:doc-not-found', 'Page not found.', {
+          errorResponse(res, 404, 'urn:ps:error:doc-not-found', 'Page not found.', {
             handler: 'page-headings',
           });
           return;
@@ -716,7 +716,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
           { handler: 'page-headings' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read headings.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read headings.', {
           handler: 'page-headings',
           cause: e,
         });
@@ -761,7 +761,7 @@ export function createDocumentRoutes(deps: DocumentRouteDeps): DocumentRoutes {
         pages.sort((a, b) => a.docName.localeCompare(b.docName));
         successResponse(res, 200, PagesSuccessSchema, { pages }, { handler: 'pages' });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to list pages.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to list pages.', {
           handler: 'pages',
           cause: e,
         });

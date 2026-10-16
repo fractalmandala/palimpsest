@@ -65,7 +65,7 @@ describe('local-op-auth-repos envelope (RFC 9457 + streaming, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.instance).toBeDefined();
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
@@ -78,7 +78,7 @@ describe('local-op-auth-repos envelope (RFC 9457 + streaming, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -92,7 +92,7 @@ describe('local-op-auth-repos envelope (RFC 9457 + streaming, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 
@@ -115,7 +115,7 @@ describe('local-op-auth-repos envelope (RFC 9457 + streaming, US-012)', () => {
       expect(eventParsed.success).toBe(true);
       if (eventParsed.success) {
         expect(eventParsed.data.type).toBe('error');
-        expect(eventParsed.data.problem.type).toBe('urn:ok:error:auth-failed');
+        expect(eventParsed.data.problem.type).toBe('urn:ps:error:auth-failed');
         expect(eventParsed.data.problem.status).toBe(500);
         expect(eventParsed.data.problem.title.length).toBeGreaterThan(0);
         expect(eventParsed.data.problem.instance).toBeDefined();

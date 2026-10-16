@@ -39,7 +39,7 @@ const stubGitTopLevel =
     return null;
   };
 
-const writeOkConfig = (dir: string): void => {
+const writePsConfig = (dir: string): void => {
   mkdirSync(resolve(dir, '.ps'), { recursive: true });
   writeFileSync(resolve(dir, '.ps/config.yml'), '$schema: x\n');
 };
@@ -48,7 +48,7 @@ describe('resolveProjectRoot — ancestor walk wins', () => {
   test('returns cwd as projectRoot when .ps/config.yml is at cwd', () => {
     const project = resolve(fakeHome, 'project');
     mkdirSync(project, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
 
     const result: ResolveProjectRootResult = resolveProjectRoot(project, {
       homeDir: fakeHome,
@@ -67,7 +67,7 @@ describe('resolveProjectRoot — ancestor walk wins', () => {
     const project = resolve(fakeHome, 'project');
     const sub = resolve(project, 'sub');
     mkdirSync(sub, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
 
     const result = resolveProjectRoot(sub, {
       homeDir: fakeHome,
@@ -85,7 +85,7 @@ describe('resolveProjectRoot — ancestor walk wins', () => {
     const project = resolve(fakeHome, 'project');
     const sub = resolve(project, ...segments);
     mkdirSync(sub, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
 
     const result = resolveProjectRoot(sub, {
       homeDir: fakeHome,
@@ -98,7 +98,7 @@ describe('resolveProjectRoot — ancestor walk wins', () => {
   });
 
   test('walk excludes home itself — picking home does not match home/.ps/', () => {
-    writeOkConfig(fakeHome);
+    writePsConfig(fakeHome);
 
     const result = resolveProjectRoot(fakeHome, {
       homeDir: fakeHome,
@@ -116,7 +116,7 @@ describe('resolveProjectRoot — ancestor walk wins', () => {
     const api = resolve(docs, 'api');
     mkdirSync(api, { recursive: true });
     mkdirSync(resolve(repo, '.git'));
-    writeOkConfig(docs);
+    writePsConfig(docs);
 
     const result = resolveProjectRoot(api, {
       homeDir: fakeHome,
@@ -243,7 +243,7 @@ describe('resolveProjectRoot — depth bound', () => {
     const segments = Array.from({ length: 31 }, (_, i) => `l${i}`);
     const leaf = resolve(fakeHome, ...segments);
     mkdirSync(leaf, { recursive: true });
-    writeOkConfig(resolve(fakeHome, segments[0]));
+    writePsConfig(resolve(fakeHome, segments[0]));
 
     const result = resolveProjectRoot(leaf, {
       homeDir: fakeHome,
@@ -259,7 +259,7 @@ describe('resolveProjectRoot — symlink canonicalization', () => {
     const project = resolve(fakeHome, 'project');
     const realSub = resolve(project, 'sub');
     mkdirSync(realSub, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
 
     const result = resolveProjectRoot(realpathSync(realSub), {
       homeDir: fakeHome,

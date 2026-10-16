@@ -39,7 +39,7 @@ describe('agent-write envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('reserved docname emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved docname emits urn:ps:error:reserved-doc-name', async () => {
     const res = await postWrite({ docName: '__system__', content: 'should reject' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -48,7 +48,7 @@ describe('agent-write envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
       expect(parsed.data.status).toBe(400);
       expect(parsed.data.title.length).toBeGreaterThan(0);
       expect(parsed.data.instance).toBeDefined();
@@ -57,7 +57,7 @@ describe('agent-write envelope (RFC 9457)', () => {
     }
   });
 
-  test('unsafe docName emits urn:ok:error:invalid-request (pre-identity, body-shape)', async () => {
+  test('unsafe docName emits urn:ps:error:invalid-request (pre-identity, body-shape)', async () => {
     const res = await postWrite({ docName: '../etc/passwd' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -66,7 +66,7 @@ describe('agent-write envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
     }
   });
@@ -80,7 +80,7 @@ describe('agent-write envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -94,7 +94,7 @@ describe('agent-write envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
       expect(parsed.data.status).toBe(405);
     }
   });

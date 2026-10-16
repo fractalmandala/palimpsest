@@ -20,7 +20,7 @@ export function methodRouter(
       await handler(req, res);
       return;
     }
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: options.handler,
       extraHeaders: { Allow: allow },
     });

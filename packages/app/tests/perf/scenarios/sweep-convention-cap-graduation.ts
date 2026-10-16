@@ -376,10 +376,10 @@ export async function driveSweepCycle(opts: SweepCycleOptions): Promise<CycleOut
           };
           const buf = g.__ok_perf?.marks?.toArray?.() ?? [];
           for (const m of buf) {
-            if (m.name === 'ok/sync/resolve' && m.properties?.warm === false) {
+            if (m.name === 'ps/sync/resolve' && m.properties?.warm === false) {
               return 'resolve';
             }
-            if (m.name === 'ok/sync/reject') {
+            if (m.name === 'ps/sync/reject') {
               return 'reject';
             }
           }
@@ -409,15 +409,15 @@ export async function driveSweepCycle(opts: SweepCycleOptions): Promise<CycleOut
         for (const m of buf) {
           const props = m.properties;
           if (!props) continue;
-          if (m.name === 'ok/sync/resolve' && props.warm === false) {
+          if (m.name === 'ps/sync/resolve' && props.warm === false) {
             const elapsed = Number(props.elapsedMs);
             if (Number.isFinite(elapsed)) syncCold = elapsed;
           }
-          if (m.name === 'ok/sync/reject') {
+          if (m.name === 'ps/sync/reject') {
             const reason = props.reason;
             if (typeof reason === 'string') rejectReason = reason;
           }
-          if (m.name === 'ok/mount/resolve') {
+          if (m.name === 'ps/mount/resolve') {
             const elapsed = Number(props.elapsedMs);
             if (Number.isFinite(elapsed)) mountCold = elapsed;
           }
@@ -554,7 +554,7 @@ async function captureColdThenWarmInOneContext(input: {
 
     const coldElapsed = await drainElapsedForMark(
       page,
-      'ok/sync/resolve',
+      'ps/sync/resolve',
       false,
       SLOW_3G_WARM_PATH_PER_CYCLE_TIMEOUT_MS,
     );
@@ -577,7 +577,7 @@ async function captureColdThenWarmInOneContext(input: {
 
     const warmElapsed = await drainElapsedForMark(
       page,
-      'ok/sync/resolve',
+      'ps/sync/resolve',
       true,
       SLOW_3G_WARM_PATH_PER_CYCLE_TIMEOUT_MS,
     );

@@ -17,8 +17,8 @@ describe('canonicalGitHubRemoteUrl', () => {
 
   test('preserves casing in the canonical form', () => {
     expect(
-      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'Inkeep', repo: 'Palimpsest' }),
-    ).toBe('https://github.com/Inkeep/Palimpsest.git');
+      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'Example', repo: 'Palimpsest' }),
+    ).toBe('https://github.com/Example/Palimpsest.git');
   });
 
   test('carries an enterprise host into the canonical form', () => {
@@ -61,7 +61,7 @@ describe('findRecentProjectsForRepo', () => {
   test('matches case-insensitively on owner and repo segments', () => {
     const r = recent({
       path: '/x',
-      gitRemoteUrl: 'https://github.com/Inkeep/Palimpsest.git',
+      gitRemoteUrl: 'https://github.com/Example/Palimpsest.git',
     });
     expect(findRecentProjectsForRepo([r], expected).map((m) => m.path)).toEqual(['/x']);
   });

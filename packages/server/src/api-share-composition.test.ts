@@ -63,7 +63,7 @@ describe('share group over the composed listener — served natively', () => {
       `http://127.0.0.1:${server.port}/api/share/publish/name-check?owner=-bad-&name=x`,
     );
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
     expect(res.headers.get('x-request-id')).not.toBeNull();
   });
 
@@ -74,7 +74,7 @@ describe('share group over the composed listener — served natively', () => {
       body: JSON.stringify({ owner: '-bad-', name: 'x', visibility: 'private' }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('target-status refuses a malformed path with its own 400 before any git op', async () => {
@@ -84,7 +84,7 @@ describe('share group over the composed listener — served natively', () => {
       body: JSON.stringify({ branch: 'main', path: '../escape.md', kind: 'doc' }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('a rebound Host is refused on every route (shared gate survives the lift)', async () => {
@@ -94,7 +94,7 @@ describe('share group over the composed listener — served natively', () => {
         headers: { Host: 'evil.example' },
       });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 

@@ -291,7 +291,7 @@ function NavigationHandler() {
           window.location.replace(hashFromDocName(assetPath));
           return;
         }
-        mark('ok/nav/hash-change', { docName: null, kind: 'asset' });
+        mark('ps/nav/hash-change', { docName: null, kind: 'asset' });
         openHashTarget({
           kind: 'asset',
           target: assetPath,
@@ -302,7 +302,7 @@ function NavigationHandler() {
       }
       const skillFile = skillFileFromHash(window.location.hash);
       if (skillFile) {
-        mark('ok/nav/hash-change', { docName: null, kind: 'skill-file' });
+        mark('ps/nav/hash-change', { docName: null, kind: 'skill-file' });
         openHashTarget({
           kind: 'skill-file',
           target: `${skillFile.scope}/${skillFile.name}${skillFile.host ? `:${skillFile.host}` : ''}/${skillFile.path}`,
@@ -319,13 +319,13 @@ function NavigationHandler() {
           return;
         }
         if (isSurfaceHashRepeat) return;
-        mark('ok/nav/hash-change', { docName: null, kind: 'skills' });
+        mark('ps/nav/hash-change', { docName: null, kind: 'skills' });
         openTargetTransition({ kind: 'skills', target: 'skills' }, { deliberate });
         return;
       }
       const skillPreview = skillPreviewFromHash(window.location.hash);
       if (skillPreview) {
-        mark('ok/nav/hash-change', { docName: null, kind: 'skill-preview' });
+        mark('ps/nav/hash-change', { docName: null, kind: 'skill-preview' });
         openHashTarget({
           kind: 'skill-preview',
           target: `${skillPreview.flavor}/${skillPreview.source}/${skillPreview.name}`,
@@ -339,7 +339,7 @@ function NavigationHandler() {
         return;
       }
       if (isContentRootHash(window.location.hash)) {
-        mark('ok/nav/hash-change', { docName: null, kind: 'folder' });
+        mark('ps/nav/hash-change', { docName: null, kind: 'folder' });
         openHashTarget({ kind: 'folder', target: '', folderPath: '' });
         return;
       }
@@ -350,12 +350,12 @@ function NavigationHandler() {
           return;
         }
         if (isSurfaceHashRepeat) return;
-        mark('ok/nav/hash-change', { docName: null, kind: 'clear' });
+        mark('ps/nav/hash-change', { docName: null, kind: 'clear' });
         clearTarget();
         return;
       }
       if (loading) {
-        mark('ok/nav/hash-change', { docName, kind: 'deferred-loading' });
+        mark('ps/nav/hash-change', { docName, kind: 'deferred-loading' });
         return;
       }
       const resolved =
@@ -367,11 +367,11 @@ function NavigationHandler() {
           pagesByBasename,
         });
       if (resolved.kind === 'missing' && /\/+$/.test(docName.trim())) {
-        mark('ok/nav/hash-change', { docName, kind: 'deferred-missing-folder' });
+        mark('ps/nav/hash-change', { docName, kind: 'deferred-missing-folder' });
         return;
       }
       const target = withLargeFileOpenGuard(downgradeFolderIndexForHashNav(resolved), pageMeta);
-      mark('ok/nav/hash-change', { docName, kind: target.kind });
+      mark('ps/nav/hash-change', { docName, kind: target.kind });
       openHashTarget(target);
     }
     window.addEventListener('popstate', onPopState);

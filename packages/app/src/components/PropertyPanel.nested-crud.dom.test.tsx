@@ -63,7 +63,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
     const provider = makeProvider('nested-edit-leaf-doc');
     seedYTextFm(
       provider,
-      '---\nname: skill\nmetadata:\n  version: "1.0.0"\n  author: Inkeep\n---\n',
+      '---\nname: skill\nmetadata:\n  version: "1.0.0"\n  author: Example\n---\n',
     );
     renderPanel(provider);
 
@@ -83,7 +83,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
     const map = readPanelMap(provider);
     expect(map).toEqual({
       name: 'skill',
-      metadata: { version: '2.0.0', author: 'Inkeep' },
+      metadata: { version: '2.0.0', author: 'Example' },
     });
   });
 
@@ -91,7 +91,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
     const provider = makeProvider('nested-delete-leaf-doc');
     seedYTextFm(
       provider,
-      '---\nmetadata:\n  version: "1.0.0"\n  author: Inkeep\n  license: MIT\n---\n',
+      '---\nmetadata:\n  version: "1.0.0"\n  author: Example\n  license: MIT\n---\n',
     );
     renderPanel(provider);
 
@@ -106,7 +106,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
 
     const map = readPanelMap(provider);
     expect(map).toEqual({
-      metadata: { author: 'Inkeep', license: 'MIT' },
+      metadata: { author: 'Example', license: 'MIT' },
     });
   });
 
@@ -114,7 +114,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
     const provider = makeProvider('nested-rename-leaf-doc');
     seedYTextFm(
       provider,
-      '---\nmetadata:\n  version: "1.0.0"\n  author: Inkeep\n  license: MIT\n---\n',
+      '---\nmetadata:\n  version: "1.0.0"\n  author: Example\n  license: MIT\n---\n',
     );
     renderPanel(provider);
 
@@ -136,7 +136,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
 
     const map = readPanelMap(provider);
     expect(map).toEqual({
-      metadata: { version: '1.0.0', maintainer: 'Inkeep', license: 'MIT' },
+      metadata: { version: '1.0.0', maintainer: 'Example', license: 'MIT' },
     });
     const fenced = provider.document.getText('source').toString();
     const versionIdx = fenced.indexOf('version:');
@@ -148,7 +148,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
 
   test('adding a nested key uses binding.patchPath (preserves siblings)', async () => {
     const provider = makeProvider('nested-add-leaf-doc');
-    seedYTextFm(provider, '---\nmetadata:\n  version: "1.0.0"\n  author: Inkeep\n---\n');
+    seedYTextFm(provider, '---\nmetadata:\n  version: "1.0.0"\n  author: Example\n---\n');
     renderPanel(provider);
 
     const addTrigger = document.querySelector(
@@ -174,7 +174,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
 
     const map = readPanelMap(provider);
     expect(map).toEqual({
-      metadata: { version: '1.0.0', author: 'Inkeep', license: 'MIT' },
+      metadata: { version: '1.0.0', author: 'Example', license: 'MIT' },
     });
   });
 
@@ -240,7 +240,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
 
   test('nested rename to an existing sibling shows duplicate-name error and does not mutate', async () => {
     const provider = makeProvider('nested-rename-dup-doc');
-    seedYTextFm(provider, '---\nmetadata:\n  version: "1.0.0"\n  author: Inkeep\n---\n');
+    seedYTextFm(provider, '---\nmetadata:\n  version: "1.0.0"\n  author: Example\n---\n');
     renderPanel(provider);
 
     const versionNameButton = document.querySelector(
@@ -261,7 +261,7 @@ describe('PropertyPanel — nested CRUD (US-007)', () => {
     expect(errorEl.textContent ?? '').toContain('author');
     const map = readPanelMap(provider);
     expect(map).toEqual({
-      metadata: { version: '1.0.0', author: 'Inkeep' },
+      metadata: { version: '1.0.0', author: 'Example' },
     });
   });
 });

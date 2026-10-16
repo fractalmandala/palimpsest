@@ -113,7 +113,7 @@ describe('startLanding — dispatch and settle', () => {
     vi.advanceTimersByTime(150);
 
     expect(outcomes).toEqual([{ status: 'landed', delta: 0 }]);
-    const landMark = markNamed('ok/landing/land');
+    const landMark = markNamed('ps/landing/land');
     expect(landMark?.properties?.grade).toBe('exact');
     expect(landMark?.properties?.delta).toBe(0);
     expect(isScrollRestoreSuppressed('doc')).toBe(false);
@@ -212,7 +212,7 @@ describe('startLanding — dispatch and settle', () => {
       placement: 'top',
       transition: { from: 'wysiwyg', to: 'source' },
     });
-    const transitionMark = markNamed('ok/mode-switch/transition');
+    const transitionMark = markNamed('ps/mode-switch/transition');
     expect(transitionMark?.properties?.from).toBe('wysiwyg');
     expect(transitionMark?.properties?.to).toBe('source');
   });
@@ -292,7 +292,7 @@ describe('startLanding — cancel and abandon', () => {
 
     expect(outcomes.some((o) => o.status === 'abandoned')).toBe(true);
     expect(outcomes.some((o) => o.status === 'landed')).toBe(false);
-    const abandonMark = markNamed('ok/landing/abandoned');
+    const abandonMark = markNamed('ps/landing/abandoned');
     expect(typeof abandonMark?.properties?.target).toBe('number');
     expect(typeof abandonMark?.properties?.delta).toBe('number');
     expect(isScrollRestoreSuppressed('doc')).toBe(false);

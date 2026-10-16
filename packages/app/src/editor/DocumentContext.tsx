@@ -1177,14 +1177,14 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
   }
 
   const openDocument = (docName: string) => {
-    mark('ok/nav/open-document', { docName, transition: false });
+    mark('ps/nav/open-document', { docName, transition: false });
     openTargetWithOptions(
       { kind: 'doc', target: docName, docName },
       { disposition: 'permanent', consumeActiveNewTab: true },
     );
   };
   const openDocumentTransition = (docName: string) => {
-    mark('ok/nav/open-document', { docName, transition: false });
+    mark('ps/nav/open-document', { docName, transition: false });
     openDocument(docName);
   };
 
@@ -1301,7 +1301,7 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
   };
   const openTargetTransition = (target: ResolvedNavigationTarget, options?: OpenTargetOptions) => {
     const docName = docNameForNavigationTarget(target);
-    mark('ok/nav/open-target', { docName, kind: target.kind, transition: false });
+    mark('ps/nav/open-target', { docName, kind: target.kind, transition: false });
     openTargetWithOptions(target, options);
   };
 

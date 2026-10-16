@@ -335,7 +335,7 @@ describe('asset-serve middleware (narrow integration)', () => {
       const res = await getWithHost('/docs/photo.png', 'evil.example.com');
       expect(res.status).toBe(403);
       expect((JSON.parse(res.body) as { type?: string }).type).toBe(
-        'urn:ok:error:host-not-allowed',
+        'urn:ps:error:host-not-allowed',
       );
     });
 
@@ -343,7 +343,7 @@ describe('asset-serve middleware (narrow integration)', () => {
       const res = await getWithHost('/docs/guide.md', 'evil.example.com');
       expect(res.status).toBe(403);
       expect((JSON.parse(res.body) as { type?: string }).type).toBe(
-        'urn:ok:error:host-not-allowed',
+        'urn:ps:error:host-not-allowed',
       );
     });
 

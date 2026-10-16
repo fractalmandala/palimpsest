@@ -29,7 +29,7 @@ describe('backlinks envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('missing docName query param emits urn:ok:error:invalid-request', async () => {
+  test('missing docName query param emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/backlinks`);
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -38,12 +38,12 @@ describe('backlinks envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('docName');
     }
   });
 
-  test('unsafe docName emits urn:ok:error:invalid-request', async () => {
+  test('unsafe docName emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/backlinks?docName=${encodeURIComponent('../etc')}`,
     );
@@ -54,7 +54,7 @@ describe('backlinks envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -67,7 +67,7 @@ describe('backlinks envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

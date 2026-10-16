@@ -21,7 +21,7 @@ import {
 import { emitUpdateEvent, installUpdateEventOverlay } from './fixtures/update-event-overlay';
 
 const WEB_EDITOR_VISIBLE_KEY = 'ps-editor-visible-v1';
-const PAGE_LIST_READY_MEASURE = 'ok/startup/page-list-ready';
+const PAGE_LIST_READY_MEASURE = 'ps/startup/page-list-ready';
 const VERSION = '9.9.9';
 const RELEASE_URL = 'https://github.com/fractalmandala/palimpsest/changelog';
 const WIDE = { width: 1440, height: 900 } as const;

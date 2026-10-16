@@ -117,11 +117,11 @@ describe('FR9 telemetry completeness — every instrument emits with bounded att
     recordConsolidation('dead-chain');
     await h.flush();
 
-    expect(points(h, 'ok.timeline.query_duration_ms').length).toBeGreaterThan(0);
-    expect(points(h, 'ok.timeline.coalesced_total').length).toBeGreaterThan(0);
-    expect(points(h, 'ok.shadow.maintenance.run_duration_ms').length).toBeGreaterThan(0);
-    expect(points(h, 'ok.shadow.maintenance.gc_latch_total').length).toBeGreaterThan(0);
-    expect(points(h, 'ok.shadow.maintenance.consolidation_total').length).toBeGreaterThan(0);
+    expect(points(h, 'ps.timeline.query_duration_ms').length).toBeGreaterThan(0);
+    expect(points(h, 'ps.timeline.coalesced_total').length).toBeGreaterThan(0);
+    expect(points(h, 'ps.shadow.maintenance.run_duration_ms').length).toBeGreaterThan(0);
+    expect(points(h, 'ps.shadow.maintenance.gc_latch_total').length).toBeGreaterThan(0);
+    expect(points(h, 'ps.shadow.maintenance.consolidation_total').length).toBeGreaterThan(0);
 
     const allowed: Record<string, Set<string>> = {
       width_bucket: new Set(['0', '1', '2-5', '6-20', '21-50', '50+']),
@@ -134,11 +134,11 @@ describe('FR9 telemetry completeness — every instrument emits with bounded att
       trigger: new Set(['dead-chain', 'session-close', 'boot', 'ttl']),
     };
     for (const name of [
-      'ok.timeline.query_duration_ms',
-      'ok.timeline.coalesced_total',
-      'ok.shadow.maintenance.run_duration_ms',
-      'ok.shadow.maintenance.gc_latch_total',
-      'ok.shadow.maintenance.consolidation_total',
+      'ps.timeline.query_duration_ms',
+      'ps.timeline.coalesced_total',
+      'ps.shadow.maintenance.run_duration_ms',
+      'ps.shadow.maintenance.gc_latch_total',
+      'ps.shadow.maintenance.consolidation_total',
     ]) {
       for (const p of points(h, name)) {
         for (const [k, v] of Object.entries(p.attributes)) {
@@ -203,9 +203,9 @@ describe('PRD-6972 incident replay — storyline from telemetry + diagnose reade
     recordGcLatch();
     await h.flush();
 
-    const query = points(h, 'ok.timeline.query_duration_ms');
-    const coalesced = points(h, 'ok.timeline.coalesced_total');
-    const gcLatch = points(h, 'ok.shadow.maintenance.gc_latch_total');
+    const query = points(h, 'ps.timeline.query_duration_ms');
+    const coalesced = points(h, 'ps.timeline.coalesced_total');
+    const gcLatch = points(h, 'ps.shadow.maintenance.gc_latch_total');
 
     const reconstruction = {
       walkSaturated: query.some((p) => String(p.attributes.capped) === 'true'),
@@ -239,7 +239,7 @@ describe('gc.log latch counter measures distinct episodes, not observations', ()
   let shadow: ShadowHandle;
   const gcLogPath = (): string => resolve(shadow.gitDir, 'gc.log');
   const gcLatchTotal = (): number =>
-    points(h, 'ok.shadow.maintenance.gc_latch_total').reduce((n, p) => n + (p.value ?? 0), 0);
+    points(h, 'ps.shadow.maintenance.gc_latch_total').reduce((n, p) => n + (p.value ?? 0), 0);
 
   beforeEach(async () => {
     h = setupHarness();

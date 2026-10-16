@@ -28,8 +28,8 @@ interface LandingMark {
   target?: number;
 }
 
-const LAND_MARK = 'ok/landing/land';
-const ABANDON_MARK = 'ok/landing/abandoned';
+const LAND_MARK = 'ps/landing/land';
+const ABANDON_MARK = 'ps/landing/abandoned';
 
 export async function landingMarkCount(page: Page): Promise<number> {
   return page.evaluate(

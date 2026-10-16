@@ -161,7 +161,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
           },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'server-info',
           cause: e,
         });
@@ -219,7 +219,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
       const empty = (reason: string) =>
         successResponse(res, 200, AcpModelsSuccessSchema, { agentId, candidates: [], reason });
       if (agentId === '') {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'An agent id is required.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'An agent id is required.', {
           handler: 'acp-models',
         });
         return;
@@ -280,7 +280,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
     EmptyRequestSchema,
     async (_req, res) => {
       if (acpRegistry === undefined) {
-        errorResponse(res, 404, 'urn:ok:error:not-found', 'ACP catalog unavailable.', {
+        errorResponse(res, 404, 'urn:ps:error:not-found', 'ACP catalog unavailable.', {
           handler: 'acp-catalog',
         });
         return;
@@ -338,7 +338,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
         errorResponse(
           res,
           502,
-          'urn:ok:error:registry-unreachable',
+          'urn:ps:error:registry-unreachable',
           'Agent registry unreachable.',
           {
             handler: 'acp-catalog',
@@ -352,19 +352,19 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
 
   async function handlePrincipal(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!isRoutePeerAdmitted(req.socket.remoteAddress)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'principal',
       });
       return;
     }
     if (!isAllowedWorkspaceHostHeader(req.headers.host)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'principal',
       });
       return;
     }
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'principal',
         extraHeaders: { Allow: 'GET' },
       });
@@ -372,7 +372,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
     }
     const principal = getPrincipal?.() ?? null;
     if (!principal) {
-      errorResponse(res, 404, 'urn:ok:error:principal-not-available', 'Principal not available.', {
+      errorResponse(res, 404, 'urn:ps:error:principal-not-available', 'Principal not available.', {
         handler: 'principal',
       });
       return;
@@ -382,19 +382,19 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
 
   async function handleEmbedDetect(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!isRoutePeerAdmitted(req.socket.remoteAddress)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'embed-detect',
       });
       return;
     }
     if (!isAllowedWorkspaceHostHeader(req.headers.host)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'embed-detect',
       });
       return;
     }
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'embed-detect',
         extraHeaders: { Allow: 'GET' },
       });
@@ -416,19 +416,19 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
 
   async function handleWorkspace(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!isRoutePeerAdmitted(req.socket.remoteAddress)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'workspace',
       });
       return;
     }
     if (!isAllowedWorkspaceHostHeader(req.headers.host)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'workspace',
       });
       return;
     }
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'workspace',
         extraHeaders: { Allow: 'GET' },
       });
@@ -452,7 +452,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Workspace realpath failed.',
           { handler: 'workspace', detail: code ?? undefined, cause: err },
         );
@@ -485,7 +485,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
           { err: e, requestId: getRequestId(req) },
           '[installed-agents] route wrapper failed',
         );
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'installed-agents',
           cause: e,
         });
@@ -513,14 +513,14 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
           extraHeaders: { 'Cache-Control': 'no-store' },
         });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'api-config',
           cause: e,
         });
       }
       return;
     }
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: 'api-config',
       extraHeaders: { Allow: 'GET, HEAD' },
     });
@@ -543,14 +543,14 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
           extraHeaders: { 'Cache-Control': 'no-store' },
         });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'api-config-diagnostics',
           cause: e,
         });
       }
       return;
     }
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: 'api-config-diagnostics',
       extraHeaders: { Allow: 'GET, HEAD' },
     });
@@ -614,7 +614,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
           { handler: 'semantic-status', extraHeaders: { 'Cache-Control': 'no-store' } },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'semantic-status',
           cause: e,
         });
@@ -721,7 +721,7 @@ export function createConfigSystemRoutes(deps: ConfigSystemRouteDeps): ConfigSys
           extraHeaders: { 'Cache-Control': 'no-store' },
         });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'rescue-list',
           cause: e,
         });

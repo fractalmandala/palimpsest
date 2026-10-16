@@ -54,12 +54,12 @@ describe('skillOriginUrl', () => {
         {
           source: 'fractalmandala/palimpsest-skills',
           publisher: 'inkeep',
-          skill: 'open-knowledge-discovery',
+          skill: 'palimpsest-discovery',
           importedAt: '2026-07-30T12:00:00.000Z',
         },
-        'open-knowledge-discovery',
+        'palimpsest-discovery',
       ),
-    ).toBe('https://www.skills.sh/fractalmandala/palimpsest-skills/open-knowledge-discovery');
+    ).toBe('https://www.skills.sh/fractalmandala/palimpsest-skills/palimpsest-discovery');
   });
 
   test('uses the /site/ shape for a website-catalog source', () => {

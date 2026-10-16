@@ -60,7 +60,7 @@ describe('link/graph group over the composed listener — served natively', () =
     const empty = await fetch(`http://127.0.0.1:${normal.port}/api/tags/`);
     expect(empty.status).toBe(404);
     expect(empty.headers.get('content-type')).toBe('application/problem+json');
-    expect(((await empty.json()) as { type?: string }).type).toBe('urn:ok:error:not-found');
+    expect(((await empty.json()) as { type?: string }).type).toBe('urn:ps:error:not-found');
   });
 
   test('method gate holds on the native mount (POST answers 405 + Allow: GET)', async () => {
@@ -75,7 +75,7 @@ describe('link/graph group over the composed listener — served natively', () =
     });
     expect(res.status).toBe(403);
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:invalid-origin');
+    expect(body.type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('allowed browser Origin gets CORS reflection on a ported route', async () => {
@@ -102,7 +102,7 @@ describe('link/graph group over the composed listener — served natively', () =
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.detail ?? body.title).toContain('Proxied request refused');
   });
 
@@ -111,7 +111,7 @@ describe('link/graph group over the composed listener — served natively', () =
       headers: { Host: 'evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('ephemeral mode Host-gates the ported reads too', async () => {
@@ -119,6 +119,6 @@ describe('link/graph group over the composed listener — served natively', () =
       headers: { Host: 'evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 });

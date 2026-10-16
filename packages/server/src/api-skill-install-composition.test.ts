@@ -203,7 +203,7 @@ test.each(['convert', 'unplace'] as const)(
     });
     expect(response.status, response.body).toBe(409);
     expect(JSON.parse(response.body)).toMatchObject({
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       title:
         operation === 'convert'
           ? 'This copy differs from the current source and was preserved. Inspect both versions before replacing or converting it.'

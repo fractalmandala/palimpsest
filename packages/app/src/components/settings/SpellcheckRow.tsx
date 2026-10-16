@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { SavedIndicator } from './field-controls';
-import { isOkDesktopHost } from './settings-host-gates';
+import { isPsDesktopHost } from './settings-host-gates';
 
 type SpellcheckReadState =
   | { readonly status: 'loading' }
@@ -29,7 +29,7 @@ export function SpellcheckRow() {
   );
 
   useEffect(() => {
-    if (!isOkDesktopHost()) return;
+    if (!isPsDesktopHost()) return;
     const menu = window.psDesktop?.menu;
     if (!menu) {
       setState({ status: 'error' });
@@ -53,7 +53,7 @@ export function SpellcheckRow() {
     };
   }, []);
 
-  if (!isOkDesktopHost()) return null;
+  if (!isPsDesktopHost()) return null;
 
   async function requestEnabled(enabled: boolean): Promise<void> {
     const spellcheck = window.psDesktop?.spellcheck;

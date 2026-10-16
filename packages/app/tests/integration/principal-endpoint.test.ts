@@ -36,7 +36,7 @@ describe('GET /api/principal', () => {
     expect(res.status).toBe(403);
     expect(res.headers.get('content-type')).toContain('application/problem+json');
     const body = (await res.json()) as { type: string; status: number };
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.status).toBe(403);
   });
 
@@ -54,7 +54,7 @@ describe('GET /api/principal', () => {
     expect(postRes.status).toBe(403);
     const getBody = (await getRes.json()) as { type: string };
     const postBody = (await postRes.json()) as { type: string };
-    expect(getBody.type).toBe('urn:ok:error:host-not-allowed');
-    expect(postBody.type).toBe('urn:ok:error:host-not-allowed');
+    expect(getBody.type).toBe('urn:ps:error:host-not-allowed');
+    expect(postBody.type).toBe('urn:ps:error:host-not-allowed');
   });
 });

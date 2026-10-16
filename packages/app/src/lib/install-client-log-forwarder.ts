@@ -8,7 +8,7 @@ import {
 import { scrubSecrets } from '@palimpsest/core/logging/secret-scrub';
 import type { ClientLogEntry } from '@palimpsest/core/schemas/api';
 
-const FORWARDER_MARKER = Symbol.for('ok.client.logForwarder');
+const FORWARDER_MARKER = Symbol.for('ps.client.logForwarder');
 
 const DEFAULT_FLUSH_INTERVAL_MS = 2000;
 

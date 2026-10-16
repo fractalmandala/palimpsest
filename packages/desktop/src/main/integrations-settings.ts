@@ -373,7 +373,7 @@ export function registerIntegrationsSettings(
       if (!result.ok) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:integrations:dispatch',
+          channel: 'ps:integrations:dispatch',
           reason: 'set-component-refused',
           handler: 'integrationsDispatch',
           cause: { component: request?.component?.kind ?? 'unknown', error: result.error },
@@ -394,7 +394,7 @@ export function registerIntegrationsSettings(
       if (applyBatch === undefined) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:integrations:dispatch',
+          channel: 'ps:integrations:dispatch',
           reason: 'apply-batch-unwired',
           handler: 'integrationsDispatch',
         });
@@ -412,7 +412,7 @@ export function registerIntegrationsSettings(
   }
 
   const register = createHandler(ipcMain as IpcMain);
-  register('ok:integrations:dispatch', async (event, request) => {
+  register('ps:integrations:dispatch', async (event, request) => {
     if (request?.kind === 'set') return dispatchSet(request);
     if (request?.kind === 'apply-batch') return dispatchApplyBatch(event, request);
     return computeStatus();
@@ -424,7 +424,7 @@ export function registerIntegrationsSettings(
       if (destroyed) return;
       destroyed = true;
       try {
-        ipcMain.removeHandler('ok:integrations:dispatch');
+        ipcMain.removeHandler('ps:integrations:dispatch');
       } catch (err) {
         logger.warn('removeHandler(ok:integrations:dispatch) threw', {
           err,

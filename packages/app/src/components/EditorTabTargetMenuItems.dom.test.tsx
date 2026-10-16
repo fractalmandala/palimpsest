@@ -65,7 +65,7 @@ vi.doMock('@/lib/use-workspace', () => ({
 }));
 
 vi.doMock('@/lib/config-provider', () => ({
-  useConfigContext: () => ({ okignoreBinding: { current: () => '', patch: vi.fn() } }),
+  useConfigContext: () => ({ psignoreBinding: { current: () => '', patch: vi.fn() } }),
 }));
 
 vi.doMock('@/hooks/use-git-sync-status', () => ({
@@ -147,7 +147,7 @@ describe('EditorTabTargetMenuItems — template doc tab', () => {
 });
 
 describe('EditorTabTargetMenuItems — ordinary doc control', () => {
-  test('the same actions DO appear for a non-.ok doc, proving the gate is the .ps shape', () => {
+  test('the same actions DO appear for a non-.ps doc, proving the gate is the .ps shape', () => {
     renderMenu(docTarget('docs/note'));
     for (const label of PS_GATED_ACTIONS) {
       expect(screen.getByRole('menuitem', { name: label })).toBeTruthy();

@@ -92,8 +92,8 @@ export type {
   ConfigBindingPatchResult,
 } from '@palimpsest/core/config/bind-config-doc';
 export type {
-  bindOkignoreDoc,
-  OkignoreBinding,
+  bindPsignoreDoc,
+  PsignoreBinding,
 } from '@palimpsest/core/config/bind-psignore-doc';
 export type {
   ConfigIssue,
@@ -408,8 +408,8 @@ export type {
 } from '@palimpsest/core/markdown/html-to-mdast';
 export type {
   AppliesToPatternSummary,
-  assertNeverOkfRuleGroupId,
-  assertNeverOkfRuleId,
+  assertNeverPsfRuleGroupId,
+  assertNeverPsfRuleId,
   compileAppliesTo,
   countDiagnosticsBySource,
   DEFAULT_LINKS_VALIDATION,
@@ -426,7 +426,7 @@ export type {
   isFrontmatterSchemaAsset,
   isFrontmatterScoped,
   isMarkdownlintJsonConfig,
-  isOkfRuleEnabled,
+  isPsfRuleEnabled,
   LINT_PLUGINS,
   LinksValidationSetting,
   LintConfigResponse,
@@ -445,8 +445,8 @@ export type {
   MarkdownlintRuleWriteValue,
   PSF_RULE_GROUPS,
   PSF_RULE_IDS,
-  OkfRuleGroupId,
-  OkfRuleId,
+  PsfRuleGroupId,
+  PsfRuleId,
   PersistedLinterConfig,
   RULE_DISPLAY_CATEGORIES,
   RuleCatalogEntry,
@@ -688,7 +688,7 @@ export type {
   SkillsInstalledSuccess,
   SkillsSearchSuccess,
 } from '@palimpsest/core/skills-catalog/schema';
-export type { catalogRawScopeToOkScope } from '@palimpsest/core/skills-catalog/scope';
+export type { catalogRawScopeToPsScope } from '@palimpsest/core/skills-catalog/scope';
 export type {
   ALWAYS_ON_TOKEN_BUDGET,
   estimateSkillCost,

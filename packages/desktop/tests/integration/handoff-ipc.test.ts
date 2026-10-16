@@ -47,7 +47,7 @@ function setupRig() {
   return { handle, invoke };
 }
 
-describe("'ok:shell:open-external' routes v0 schemes through the allowlist", () => {
+describe("'ps:shell:open-external' routes v0 schemes through the allowlist", () => {
   const ALLOWED_PAYLOADS: ReadonlyArray<[label: string, url: string]> = [
     [
       'Claude Cowork',
@@ -65,7 +65,7 @@ describe("'ok:shell:open-external' routes v0 schemes through the allowlist", () 
     test(`passes ${label} URL through to shell.openExternal`, async () => {
       const { handle, invoke } = setupRig();
       const openExternal = vi.fn((_url: string) => Promise.resolve());
-      handle('ok:shell:open-external', async (_event, requested) => {
+      handle('ps:shell:open-external', async (_event, requested) => {
         const check = checkOutboundUrl(requested);
         if (!check.ok) {
           throw new Error(`shell.openExternal blocked: ${check.reason}`);
@@ -74,7 +74,7 @@ describe("'ok:shell:open-external' routes v0 schemes through the allowlist", () 
         return undefined;
       });
 
-      const result = await invoke('ok:shell:open-external', url);
+      const result = await invoke('ps:shell:open-external', url);
       expect(result).toBeUndefined();
       expect(openExternal).toHaveBeenCalledTimes(1);
       expect(openExternal).toHaveBeenCalledWith(url);
@@ -91,7 +91,7 @@ describe("'ok:shell:open-external' routes v0 schemes through the allowlist", () 
     test(`rejects ${label} — allowlist gate runs before shell.openExternal`, async () => {
       const { handle, invoke } = setupRig();
       const openExternal = vi.fn((_url: string) => Promise.resolve());
-      handle('ok:shell:open-external', async (_event, requested) => {
+      handle('ps:shell:open-external', async (_event, requested) => {
         const check = checkOutboundUrl(requested);
         if (!check.ok) {
           throw new Error(`shell.openExternal blocked: ${check.reason}`);
@@ -100,7 +100,7 @@ describe("'ok:shell:open-external' routes v0 schemes through the allowlist", () 
         return undefined;
       });
 
-      await expect(invoke('ok:shell:open-external', url)).rejects.toThrow(
+      await expect(invoke('ps:shell:open-external', url)).rejects.toThrow(
         /shell\.openExternal blocked/,
       );
       expect(openExternal).not.toHaveBeenCalled();
@@ -108,10 +108,10 @@ describe("'ok:shell:open-external' routes v0 schemes through the allowlist", () 
   }
 });
 
-describe("'ok:shell:detect-protocol' round-trips install state", () => {
+describe("'ps:shell:detect-protocol' round-trips install state", () => {
   test('registered scheme returns {installed:true, displayName}', async () => {
     const { handle, invoke } = setupRig();
-    handle('ok:shell:detect-protocol', async (_event, scheme) => {
+    handle('ps:shell:detect-protocol', async (_event, scheme) => {
       return detectProtocolImpl(
         {
           platform: 'darwin',
@@ -124,13 +124,13 @@ describe("'ok:shell:detect-protocol' round-trips install state", () => {
       );
     });
 
-    const result = await invoke('ok:shell:detect-protocol', 'claude');
+    const result = await invoke('ps:shell:detect-protocol', 'claude');
     expect(result).toEqual({ installed: true, displayName: 'Claude' });
   });
 
   test('unregistered scheme returns {installed:false} when Electron throws', async () => {
     const { handle, invoke } = setupRig();
-    handle('ok:shell:detect-protocol', async (_event, scheme) => {
+    handle('ps:shell:detect-protocol', async (_event, scheme) => {
       return detectProtocolImpl(
         {
           platform: 'darwin',
@@ -143,14 +143,14 @@ describe("'ok:shell:detect-protocol' round-trips install state", () => {
       );
     });
 
-    const result = await invoke('ok:shell:detect-protocol', 'codex');
+    const result = await invoke('ps:shell:detect-protocol', 'codex');
     expect(result).toEqual({ installed: false });
   });
 
   test('shell-injection-style scheme strings are rejected at the handler guard', async () => {
     const { handle, invoke } = setupRig();
     let electronCalled = 0;
-    handle('ok:shell:detect-protocol', async (_event, scheme) => {
+    handle('ps:shell:detect-protocol', async (_event, scheme) => {
       return detectProtocolImpl(
         {
           platform: 'linux',
@@ -167,18 +167,18 @@ describe("'ok:shell:detect-protocol' round-trips install state", () => {
       );
     });
 
-    const result = await invoke('ok:shell:detect-protocol', '$(touch pwned)');
+    const result = await invoke('ps:shell:detect-protocol', '$(touch pwned)');
     expect(result).toEqual({ installed: false });
     expect(electronCalled).toBe(0);
   });
 });
 
-describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
+describe("'ps:shell:spawn-cursor' round-trips spawn outcomes", () => {
   test('valid path + successful spawn resolves to {ok:true}', async () => {
     const { handle, invoke } = setupRig();
     let spawnedExec: string | null = null;
     let spawnedArgs: ReadonlyArray<string> | null = null;
-    handle('ok:shell:spawn-cursor', async (_event, path) => {
+    handle('ps:shell:spawn-cursor', async (_event, path) => {
       return spawnCursorImpl(
         {
           platform: 'darwin',
@@ -197,7 +197,7 @@ describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
       );
     });
 
-    const result = await invoke('ok:shell:spawn-cursor', '/Users/x/project');
+    const result = await invoke('ps:shell:spawn-cursor', '/Users/x/project');
     expect(result).toEqual({ ok: true });
     expect(spawnedExec).toBe('/Applications/Cursor.app/Contents/MacOS/Cursor');
     expect(spawnedArgs).toEqual(['/Users/x/project']);
@@ -207,7 +207,7 @@ describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
     const { handle, invoke } = setupRig();
     let spawnCalled = 0;
     let resolveCalled = 0;
-    handle('ok:shell:spawn-cursor', async (_event, path) => {
+    handle('ps:shell:spawn-cursor', async (_event, path) => {
       return spawnCursorImpl(
         {
           platform: 'darwin',
@@ -225,7 +225,7 @@ describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
       );
     });
 
-    const result = await invoke('ok:shell:spawn-cursor', '');
+    const result = await invoke('ps:shell:spawn-cursor', '');
     expect(result).toEqual({ ok: false, reason: 'invalid-path' });
     expect(spawnCalled).toBe(0);
     expect(resolveCalled).toBe(0);
@@ -233,7 +233,7 @@ describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
 
   test('relative path resolves to {ok:false, reason:"invalid-path"}', async () => {
     const { handle, invoke } = setupRig();
-    handle('ok:shell:spawn-cursor', async (_event, path) => {
+    handle('ps:shell:spawn-cursor', async (_event, path) => {
       return spawnCursorImpl(
         {
           platform: 'darwin',
@@ -245,13 +245,13 @@ describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
       );
     });
 
-    const result = await invoke('ok:shell:spawn-cursor', './project');
+    const result = await invoke('ps:shell:spawn-cursor', './project');
     expect(result).toEqual({ ok: false, reason: 'invalid-path' });
   });
 
   test('spawn timeout propagates through the wire as {ok:false, reason:"timeout"}', async () => {
     const { handle, invoke } = setupRig();
-    handle('ok:shell:spawn-cursor', async (_event, path) => {
+    handle('ps:shell:spawn-cursor', async (_event, path) => {
       return spawnCursorImpl(
         {
           platform: 'darwin',
@@ -266,16 +266,16 @@ describe("'ok:shell:spawn-cursor' round-trips spawn outcomes", () => {
       );
     });
 
-    const result = await invoke('ok:shell:spawn-cursor', '/Users/x/project');
+    const result = await invoke('ps:shell:spawn-cursor', '/Users/x/project');
     expect(result).toEqual({ ok: false, reason: 'timeout' });
   });
 });
 
-describe("'ok:shell:show-item-in-folder' round-trips reveal outcomes", () => {
+describe("'ps:shell:show-item-in-folder' round-trips reveal outcomes", () => {
   test('valid path within project invokes shell.showItemInFolder', async () => {
     const { handle, invoke } = setupRig();
     const calls: string[] = [];
-    handle('ok:shell:show-item-in-folder', async (_event, path) => {
+    handle('ps:shell:show-item-in-folder', async (_event, path) => {
       showItemInFolderImpl(
         {
           platform: 'darwin',
@@ -287,7 +287,7 @@ describe("'ok:shell:show-item-in-folder' round-trips reveal outcomes", () => {
       return undefined;
     });
 
-    const result = await invoke('ok:shell:show-item-in-folder', '/Users/x/project/specs/foo.md');
+    const result = await invoke('ps:shell:show-item-in-folder', '/Users/x/project/specs/foo.md');
     expect(result).toBeUndefined();
     expect(calls).toEqual(['/Users/x/project/specs/foo.md']);
   });
@@ -295,7 +295,7 @@ describe("'ok:shell:show-item-in-folder' round-trips reveal outcomes", () => {
   test('undefined projectPath (Navigator window) refuses every path silently', async () => {
     const { handle, invoke } = setupRig();
     const calls: string[] = [];
-    handle('ok:shell:show-item-in-folder', async (_event, path) => {
+    handle('ps:shell:show-item-in-folder', async (_event, path) => {
       showItemInFolderImpl(
         {
           platform: 'darwin',
@@ -307,7 +307,7 @@ describe("'ok:shell:show-item-in-folder' round-trips reveal outcomes", () => {
       return undefined;
     });
 
-    const result = await invoke('ok:shell:show-item-in-folder', '/Users/x/project/specs/foo.md');
+    const result = await invoke('ps:shell:show-item-in-folder', '/Users/x/project/specs/foo.md');
     expect(result).toBeUndefined();
     expect(calls).toEqual([]);
   });
@@ -315,7 +315,7 @@ describe("'ok:shell:show-item-in-folder' round-trips reveal outcomes", () => {
   test('path outside project tree refuses silently', async () => {
     const { handle, invoke } = setupRig();
     const calls: string[] = [];
-    handle('ok:shell:show-item-in-folder', async (_event, path) => {
+    handle('ps:shell:show-item-in-folder', async (_event, path) => {
       showItemInFolderImpl(
         {
           platform: 'darwin',
@@ -327,18 +327,18 @@ describe("'ok:shell:show-item-in-folder' round-trips reveal outcomes", () => {
       return undefined;
     });
 
-    const result = await invoke('ok:shell:show-item-in-folder', '/Users/x/other/secrets.txt');
+    const result = await invoke('ps:shell:show-item-in-folder', '/Users/x/other/secrets.txt');
     expect(result).toBeUndefined();
     expect(calls).toEqual([]);
   });
 });
 
-describe("'ok:shell:record-handoff' round-trips the stats append", () => {
+describe("'ps:shell:record-handoff' round-trips the stats append", () => {
   test('append success resolves the invoke promise to undefined', async () => {
     const { handle, invoke } = setupRig();
     const appendCalls: Array<{ path: string; content: string }> = [];
     const mkdirCalls: string[] = [];
-    handle('ok:shell:record-handoff', async (_event, line) => {
+    handle('ps:shell:record-handoff', async (_event, line) => {
       await recordHandoffImpl(
         {
           homedir: () => '/Users/test',
@@ -360,7 +360,7 @@ describe("'ok:shell:record-handoff' round-trips the stats append", () => {
       outcome: 'ok',
       ts: '2026-04-22T03:30:00.000Z',
     };
-    const result = await invoke('ok:shell:record-handoff', line);
+    const result = await invoke('ps:shell:record-handoff', line);
     expect(result).toBeUndefined();
     expect(mkdirCalls).toEqual(['/Users/test/.ps']);
     expect(appendCalls).toHaveLength(1);
@@ -371,7 +371,7 @@ describe("'ok:shell:record-handoff' round-trips the stats append", () => {
   test('HOME unwritable (appendFile throws EACCES) resolves to undefined — no wire-level throw', async () => {
     const { handle, invoke } = setupRig();
     const warnings: string[] = [];
-    handle('ok:shell:record-handoff', async (_event, line) => {
+    handle('ps:shell:record-handoff', async (_event, line) => {
       await recordHandoffImpl(
         {
           homedir: () => '/Users/test',
@@ -393,7 +393,7 @@ describe("'ok:shell:record-handoff' round-trips the stats append", () => {
       ts: '2026-04-22T03:31:00.000Z',
       reason: 'not-installed',
     };
-    await expect(invoke('ok:shell:record-handoff', line)).resolves.toBeUndefined();
+    await expect(invoke('ps:shell:record-handoff', line)).resolves.toBeUndefined();
     expect(warnings).toHaveLength(1);
     expect(warnings[0]).toContain('EACCES');
   });
@@ -401,7 +401,7 @@ describe("'ok:shell:record-handoff' round-trips the stats append", () => {
   test('schema carries the optional `reason` field on error rows verbatim', async () => {
     const { handle, invoke } = setupRig();
     let capturedLine: HandoffStatsLine | null = null;
-    handle('ok:shell:record-handoff', async (_event, line) => {
+    handle('ps:shell:record-handoff', async (_event, line) => {
       await recordHandoffImpl(
         {
           homedir: () => '/Users/test',
@@ -422,7 +422,7 @@ describe("'ok:shell:record-handoff' round-trips the stats append", () => {
       ts: '2026-04-22T03:32:00.000Z',
       reason: 'web-host-cursor-unsupported',
     };
-    await invoke('ok:shell:record-handoff', line);
+    await invoke('ps:shell:record-handoff', line);
     expect(capturedLine).toEqual(line);
   });
 });
@@ -431,22 +431,22 @@ describe('wire-level invariants', () => {
   test('unregistered channel rejects the invoke promise', async () => {
     const { invoke } = setupRig();
     await expect(
-      (invoke as unknown as (ch: string) => Promise<unknown>)('ok:shell:does-not-exist'),
+      (invoke as unknown as (ch: string) => Promise<unknown>)('ps:shell:does-not-exist'),
     ).rejects.toThrow(/no handler registered/);
   });
 
   test('duplicate registration on the same channel is refused (defense-in-depth)', () => {
     const { handle } = setupRig();
-    handle('ok:shell:open-external', async () => undefined);
+    handle('ps:shell:open-external', async () => undefined);
     expect(() => {
-      handle('ok:shell:open-external', async () => undefined);
+      handle('ps:shell:open-external', async () => undefined);
     }).toThrow(/duplicate registration/);
   });
 
   test('positional args survive the roundtrip in order', async () => {
     const { handle, invoke } = setupRig();
     let captured: unknown;
-    handle('ok:shell:record-handoff', async (_event, line) => {
+    handle('ps:shell:record-handoff', async (_event, line) => {
       captured = line;
       return undefined;
     });
@@ -457,7 +457,7 @@ describe('wire-level invariants', () => {
       outcome: 'ok',
       ts: '2026-04-22T03:33:00.000Z',
     };
-    await invoke('ok:shell:record-handoff', line);
+    await invoke('ps:shell:record-handoff', line);
     expect(captured).toEqual(line);
   });
 });

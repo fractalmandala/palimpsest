@@ -4,7 +4,7 @@ import type { Config } from '@palimpsest/server';
 import { Command } from 'commander';
 import {
   emitBundleProxyEvent,
-  findBundledOkPath,
+  findBundledPsPath,
   proxyToBundle,
   shouldProxyToBundle,
 } from '../mcp/bundle-proxy.ts';
@@ -54,7 +54,7 @@ export function mcpCommand(getConfig: () => Config): Command {
                   : 'suppressed-platform';
           emitBundleProxyEvent({ stderr: process.stderr, mode, bundlePath: null, reason: null });
         } else {
-          const bundlePath = findBundledOkPath(process.platform, homedir(), { existsSync });
+          const bundlePath = findBundledPsPath(process.platform, homedir(), { existsSync });
           if (bundlePath === null) {
             emitBundleProxyEvent({
               stderr: process.stderr,

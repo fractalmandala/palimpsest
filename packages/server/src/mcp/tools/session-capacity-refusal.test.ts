@@ -48,7 +48,7 @@ const STALE_DETAIL =
 function staleExternalWrite(): Response {
   return Response.json(
     {
-      type: 'urn:ok:error:stale-external-write',
+      type: 'urn:ps:error:stale-external-write',
       title: STALE_TITLE,
       status: 409,
       instance: 'urn:uuid:22222222-3333-4444-8555-666666666666',
@@ -63,7 +63,7 @@ const INVALID_TITLE = 'Frontmatter patch rejected: schema validation failed.';
 function invalidFrontmatterPatch(): Response {
   return Response.json(
     {
-      type: 'urn:ok:error:invalid-frontmatter-patch',
+      type: 'urn:ps:error:invalid-frontmatter-patch',
       title: INVALID_TITLE,
       status: 400,
       instance: 'urn:uuid:33333333-4444-4555-8666-777777777777',

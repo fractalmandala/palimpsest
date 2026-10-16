@@ -139,7 +139,7 @@ describe('GET /api/template — symlinked leaf refusal', () => {
       const result = await getTemplate(dir, 'stolen');
 
       expect(result.status).toBe(400);
-      expect(JSON.parse(result.body).type).toBe('urn:ok:error:symlink-refused');
+      expect(JSON.parse(result.body).type).toBe('urn:ps:error:symlink-refused');
       expect(result.body).not.toContain('PRIVATE-KEY-MATERIAL');
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -156,7 +156,7 @@ describe('GET /api/template — symlinked leaf refusal', () => {
       const result = await getTemplate(dir, 'aliased');
 
       expect(result.status).toBe(400);
-      expect(JSON.parse(result.body).type).toBe('urn:ok:error:symlink-refused');
+      expect(JSON.parse(result.body).type).toBe('urn:ps:error:symlink-refused');
       expect(result.body).not.toContain('In-root but not a template');
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -175,7 +175,7 @@ describe('GET /api/template — symlinked leaf refusal', () => {
       const result = await getTemplate(dir, 'meeting', 'notes/sub');
 
       expect(result.status).toBe(400);
-      expect(JSON.parse(result.body).type).toBe('urn:ok:error:symlink-refused');
+      expect(JSON.parse(result.body).type).toBe('urn:ps:error:symlink-refused');
       expect(result.body).not.toContain('PRIVATE-ANCESTOR-TARGET');
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -194,7 +194,7 @@ describe('GET /api/template — symlinked leaf refusal', () => {
       const result = await getTemplate(dir, 'CLAUDE');
 
       expect(result.status).toBe(400);
-      expect(JSON.parse(result.body).type).toBe('urn:ok:error:symlink-refused');
+      expect(JSON.parse(result.body).type).toBe('urn:ps:error:symlink-refused');
       expect(result.body).not.toContain('IN-ROOT-HIDDEN-CONTENT');
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -231,7 +231,7 @@ describe('GET /api/template — symlinked leaf refusal', () => {
       const result = await getTemplate(dir, 'note', 'notes/sub');
 
       expect(result.status).toBe(400);
-      expect(JSON.parse(result.body).type).toBe('urn:ok:error:symlink-refused');
+      expect(JSON.parse(result.body).type).toBe('urn:ps:error:symlink-refused');
       expect(result.body).not.toContain('ALIASED-OK-DIR');
     } finally {
       rmSync(dir, { recursive: true, force: true });

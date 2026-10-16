@@ -66,7 +66,7 @@ describe('skill envelope (RFC 9457) + CRUD lifecycle', () => {
     });
     expect(res.status).toBe(400);
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
-    expect(parsed.success && parsed.data.type).toBe('urn:ok:error:invalid-request');
+    expect(parsed.success && parsed.data.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('PUT with name ≠ frontmatter.name → 400', async () => {
@@ -77,7 +77,7 @@ describe('skill envelope (RFC 9457) + CRUD lifecycle', () => {
     });
     expect(res.status).toBe(400);
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
-    expect(parsed.success && parsed.data.type).toBe('urn:ok:error:invalid-request');
+    expect(parsed.success && parsed.data.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('PUT with an injected `version` key → 400 (.strict frontmatter purity)', async () => {
@@ -88,7 +88,7 @@ describe('skill envelope (RFC 9457) + CRUD lifecycle', () => {
     });
     expect(res.status).toBe(400);
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
-    expect(parsed.success && parsed.data.type).toBe('urn:ok:error:invalid-request');
+    expect(parsed.success && parsed.data.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('PUT with global scope → 200 (global store at <home>/.ps/skills)', async () => {
@@ -173,6 +173,6 @@ describe('skill envelope (RFC 9457) + CRUD lifecycle', () => {
     expect(res.status).toBe(405);
     expect(res.headers.get('allow')).toBe('GET, PUT, POST, DELETE');
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
-    expect(parsed.success && parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+    expect(parsed.success && parsed.data.type).toBe('urn:ps:error:method-not-allowed');
   });
 });

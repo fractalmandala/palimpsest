@@ -232,7 +232,7 @@ describe('saveSavedTheme', () => {
 
   test('discriminates a taken name from other write failures', async () => {
     const problem = ProblemDetailsSchema.parse({
-      type: 'urn:ok:error:theme-name-taken',
+      type: 'urn:ps:error:theme-name-taken',
       title: 'A saved theme with that name already exists.',
       status: 409,
     });
@@ -246,7 +246,7 @@ describe('saveSavedTheme', () => {
 
   test('carries the server’s specific id-grammar refusal', async () => {
     const problem = ProblemDetailsSchema.parse({
-      type: 'urn:ok:error:theme-name-invalid',
+      type: 'urn:ps:error:theme-name-invalid',
       title: 'That name cannot be used as a theme id.',
       status: 400,
       detail: 'too-long',
@@ -320,7 +320,7 @@ describe('updateSavedTheme', () => {
 
   test('discriminates a missing saved theme from an unexpected write failure', async () => {
     const problem = ProblemDetailsSchema.parse({
-      type: 'urn:ok:error:not-found',
+      type: 'urn:ps:error:not-found',
       title: 'Saved theme not found.',
       status: 404,
     });

@@ -1,7 +1,7 @@
 import { trace } from '@opentelemetry/api';
 import type { ColorThemeSelection } from './color-themes';
 
-const TRACER_NAME = 'open-knowledge-app';
+const TRACER_NAME = 'palimpsest-app';
 
 export type SavedThemePairState = 'different' | 'incomplete' | 'same';
 
@@ -16,7 +16,7 @@ export function recordSavedThemeAssignment(selection: ColorThemeSelection): void
   try {
     trace
       .getTracer(TRACER_NAME)
-      .startSpan('ok.saved_themes.assignment', {
+      .startSpan('ps.saved_themes.assignment', {
         attributes: { 'saved_theme.pair': savedThemePairState(selection) },
       })
       .end();

@@ -29,7 +29,7 @@ const psfConfig: LinterConfig = {
 
 const BODY = '# Heading\n\nSee [[Wiki Target]] here.\n\nSecond paragraph.\n';
 
-async function realOkfDiagnostics(): Promise<{
+async function realPsfDiagnostics(): Promise<{
   frontmatterRequired: LintDiagnostic;
   noWikiLinks: LintDiagnostic;
 }> {
@@ -46,7 +46,7 @@ async function realOkfDiagnostics(): Promise<{
 
 describe('mapDiagnosticsToBlocks with real OKF diagnostics', () => {
   test('skips an OKF frontmatter violation on a doc with NO frontmatter region', async () => {
-    const { frontmatterRequired } = await realOkfDiagnostics();
+    const { frontmatterRequired } = await realPsfDiagnostics();
     expect(frontmatterRequired.frontmatterScope).toBe('missing');
     expect(frontmatterRequired.range.start.line).toBe(0);
 
@@ -55,13 +55,13 @@ describe('mapDiagnosticsToBlocks with real OKF diagnostics', () => {
   });
 
   test('still maps an OKF body-rule violation to its block', async () => {
-    const { noWikiLinks } = await realOkfDiagnostics();
+    const { noWikiLinks } = await realPsfDiagnostics();
     const byBlock = mapDiagnosticsToBlocks(BODY, [noWikiLinks], md);
     expect([...byBlock.keys()]).toEqual([1]);
   });
 
   test('drops only the frontmatter-scoped diagnostic from a mixed OKF set', async () => {
-    const { frontmatterRequired, noWikiLinks } = await realOkfDiagnostics();
+    const { frontmatterRequired, noWikiLinks } = await realPsfDiagnostics();
     const byBlock = mapDiagnosticsToBlocks(BODY, [frontmatterRequired, noWikiLinks], md);
     expect([...byBlock.keys()]).toEqual([1]);
     expect(byBlock.get(1)).toHaveLength(1);
@@ -142,7 +142,7 @@ describe('Problems-row navigation for OKF diagnostics', () => {
   });
 
   test('declines an OKF frontmatter row rather than selecting the first body block', async () => {
-    const { frontmatterRequired } = await realOkfDiagnostics();
+    const { frontmatterRequired } = await realPsfDiagnostics();
     const before = editor?.state.selection.from;
 
     clickProblemsRow(frontmatterRequired);
@@ -152,7 +152,7 @@ describe('Problems-row navigation for OKF diagnostics', () => {
   });
 
   test('still navigates for an OKF body-rule row', async () => {
-    const { noWikiLinks } = await realOkfDiagnostics();
+    const { noWikiLinks } = await realPsfDiagnostics();
 
     clickProblemsRow(noWikiLinks);
 

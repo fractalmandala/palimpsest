@@ -91,7 +91,7 @@ const routingRules = [
     name: 'markdown MCP-only routing',
     anchor: '**Route every in-scope markdown read and write',
     required: [
-      "through OK's MCP tools — never your host's native file tools",
+      "through Palimpsest's MCP tools — never your host's native file tools",
       'Native `Edit` / `sed` / direct `Write`',
       'native reads skip frontmatter, backlinks',
     ],
@@ -194,7 +194,7 @@ const routingRules = [
     required: [
       'resolved `content.dir`',
       '`.gitignore` and `.psignore`',
-      'not excluded is an Palimpsest document',
+      'not excluded is a Palimpsest document',
       "Pass the worktree's absolute path as `cwd`",
     ],
   },

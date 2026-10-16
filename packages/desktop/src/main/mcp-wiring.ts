@@ -619,7 +619,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       });
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'sender-mismatch',
         handler: 'mcpWiringConfirm',
         cause: { capturedSenderId, gotSenderId: event.sender.id },
@@ -650,7 +650,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       logger.error('writeUserMcpConfigs threw — marker not written', { err });
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'write-mcp-configs-threw',
         handler: 'mcpWiringConfirm',
         cause: err,
@@ -685,7 +685,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       logger.info('partial failure — marker not written; dialog will re-fire next boot');
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'partial-write-failure',
         handler: 'mcpWiringConfirm',
         cause: {
@@ -727,7 +727,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
         });
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:mcp-wiring:confirm',
+          channel: 'ps:mcp-wiring:confirm',
           reason: 'path-consent-failed',
           handler: 'mcpWiringConfirm',
           cause: { decision: pathDecision, error: pathResult.error },
@@ -761,7 +761,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
         });
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:mcp-wiring:confirm',
+          channel: 'ps:mcp-wiring:confirm',
           reason: 'skill-consent-failed',
           handler: 'mcpWiringConfirm',
           cause: { error: skillResult.error },
@@ -802,7 +802,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       logger.error('marker write failed', { err });
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'marker-write-failed',
         handler: 'mcpWiringConfirm',
         cause: err,
@@ -823,7 +823,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       });
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:skip',
+        channel: 'ps:mcp-wiring:skip',
         reason: 'sender-mismatch',
         handler: 'mcpWiringSkip',
         cause: { capturedSenderId, gotSenderId: event.sender.id },
@@ -849,7 +849,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       logger.error('skip-marker write failed', { err });
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:skip',
+        channel: 'ps:mcp-wiring:skip',
         reason: 'skip-marker-write-failed',
         handler: 'mcpWiringSkip',
         cause: err,
@@ -866,7 +866,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
 
   const dispatchShowAndBind = (target: McpWiringDispatchTarget): boolean => {
     try {
-      sendToRenderer(target, 'ok:mcp-wiring:show', {
+      sendToRenderer(target, 'ps:mcp-wiring:show', {
         origin: forceShow ? 'reconfigure' : 'first-run',
         detectedEditors: detections,
         pathInstall: pathDescriptor,
@@ -884,7 +884,7 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
     }
     capturedSenderId = target.id;
     try {
-      ipcMain.removeHandler('ok:mcp-wiring:renderer-ready');
+      ipcMain.removeHandler('ps:mcp-wiring:renderer-ready');
     } catch {}
     return true;
   };
@@ -895,9 +895,9 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
   };
 
   const register = createHandler(ipcMain as IpcMain);
-  register('ok:mcp-wiring:confirm', confirmHandler);
-  register('ok:mcp-wiring:skip', skipHandler);
-  register('ok:mcp-wiring:renderer-ready', rendererReadyHandler);
+  register('ps:mcp-wiring:confirm', confirmHandler);
+  register('ps:mcp-wiring:skip', skipHandler);
+  register('ps:mcp-wiring:renderer-ready', rendererReadyHandler);
 
   const immediateDispatched =
     immediateDispatchTarget !== undefined && dispatchShowAndBind(immediateDispatchTarget);
@@ -914,21 +914,21 @@ export function runMcpWiringOnFirstLaunch(opts: RunMcpWiringFirstLaunchOpts): Ru
       if (destroyed) return;
       destroyed = true;
       try {
-        ipcMain.removeHandler('ok:mcp-wiring:confirm');
+        ipcMain.removeHandler('ps:mcp-wiring:confirm');
       } catch (err) {
         logger.warn('removeHandler(confirm) threw', {
           err,
         });
       }
       try {
-        ipcMain.removeHandler('ok:mcp-wiring:skip');
+        ipcMain.removeHandler('ps:mcp-wiring:skip');
       } catch (err) {
         logger.warn('removeHandler(skip) threw', {
           err,
         });
       }
       try {
-        ipcMain.removeHandler('ok:mcp-wiring:renderer-ready');
+        ipcMain.removeHandler('ps:mcp-wiring:renderer-ready');
       } catch (err) {
         logger.warn('removeHandler(renderer-ready) threw', {
           err,

@@ -18,7 +18,7 @@ describe('parseServerResponse', () => {
   test('4xx with RFC 9457 problem+json → {ok: false, title: <RFC title>}', async () => {
     const res = new Response(
       JSON.stringify({
-        type: 'urn:ok:error:doc-already-exists',
+        type: 'urn:ps:error:doc-already-exists',
         title: 'Destination already exists.',
         status: 409,
         instance: 'urn:uuid:00000000-0000-0000-0000-000000000000',

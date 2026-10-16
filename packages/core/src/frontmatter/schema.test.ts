@@ -71,8 +71,8 @@ describe('frontmatterValuesEqual', () => {
   test('structurally-equal nested objects are equal across references', () => {
     expect(
       frontmatterValuesEqual(
-        { version: '1.0.0', author: 'Inkeep' },
-        { version: '1.0.0', author: 'Inkeep' },
+        { version: '1.0.0', author: 'Example' },
+        { version: '1.0.0', author: 'Example' },
       ),
     ).toBe(true);
     expect(frontmatterValuesEqual({ a: 1, b: 2 }, { b: 2, a: 1 })).toBe(true);

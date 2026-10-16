@@ -214,10 +214,10 @@ export async function saveSavedTheme(
 
     const problem = ProblemDetailsSchema.safeParse(body);
     if (!problem.success) return { ok: false, reason: 'unexpected' };
-    if (problem.data.type === 'urn:ok:error:theme-name-taken') {
+    if (problem.data.type === 'urn:ps:error:theme-name-taken') {
       return { ok: false, reason: 'name-taken' };
     }
-    if (problem.data.type === 'urn:ok:error:theme-name-invalid') {
+    if (problem.data.type === 'urn:ps:error:theme-name-invalid') {
       const detail = nameDetail(problem.data);
       return detail
         ? { ok: false, reason: 'name-invalid', detail }
@@ -250,7 +250,7 @@ export async function updateSavedTheme(
       return success.success ? { ok: true, ...success.data } : { ok: false, reason: 'unexpected' };
     }
     const problem = ProblemDetailsSchema.safeParse(body);
-    return problem.success && problem.data.type === 'urn:ok:error:not-found'
+    return problem.success && problem.data.type === 'urn:ps:error:not-found'
       ? { ok: false, reason: 'not-found' }
       : { ok: false, reason: 'unexpected' };
   } catch (error) {

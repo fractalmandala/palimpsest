@@ -32,7 +32,7 @@ afterEach(async () => {
   await rm(tmpDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 });
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -79,7 +79,7 @@ function makeGuidance(): InstallGuidance {
 describe('bootServer git-preflight', () => {
   test('GitNotAvailableError → structured log + stderr + re-throw of typed error', async () => {
     const projectDir = await mkdtemp(resolve(tmpDir, 'state-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const { entries, logger } = createCaptureLogger();
 
@@ -129,7 +129,7 @@ describe('bootServer git-preflight', () => {
 
   test('GitTooOldError → structured log carries detectedVersion + reason=too_old', async () => {
     const projectDir = await mkdtemp(resolve(tmpDir, 'state-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const { entries, logger } = createCaptureLogger();
 
@@ -180,7 +180,7 @@ describe('bootServer git-preflight', () => {
 
   test('non-typed error from preflight propagates unchanged — no log, no stderr', async () => {
     const projectDir = await mkdtemp(resolve(tmpDir, 'state-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const { entries, logger } = createCaptureLogger();
 
@@ -265,7 +265,7 @@ describe('bootServer git-preflight', () => {
 
   test('gitEnabled:false skips the preflight entirely (no-project ephemeral single-file shape)', async () => {
     const projectDir = await mkdtemp(resolve(tmpDir, 'state-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const { entries, logger } = createCaptureLogger();
 
@@ -328,12 +328,12 @@ describe('bootServer git-preflight OTEL emission', () => {
   });
 
   function findPreflightSpan() {
-    return exporter.getFinishedSpans().find((s) => s.name === 'ok.preflight.git.fail');
+    return exporter.getFinishedSpans().find((s) => s.name === 'ps.preflight.git.fail');
   }
 
   test('GitNotAvailableError → ok.preflight.git.fail emitted with reason=not_available', async () => {
     const projectDir = await mkdtemp(resolve(tmpDir, 'state-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const { logger } = createCaptureLogger();
 
@@ -361,14 +361,14 @@ describe('bootServer git-preflight OTEL emission', () => {
 
     const span = findPreflightSpan();
     expect(span).toBeDefined();
-    expect(span?.attributes['ok.platform']).toBe('linux');
-    expect(span?.attributes['ok.preflight.git.reason']).toBe('not_available');
-    expect(span?.attributes['ok.preflight.git.detected_version']).toBe('');
+    expect(span?.attributes['ps.platform']).toBe('linux');
+    expect(span?.attributes['ps.preflight.git.reason']).toBe('not_available');
+    expect(span?.attributes['ps.preflight.git.detected_version']).toBe('');
   });
 
   test('GitTooOldError → ok.preflight.git.fail emitted with reason=too_old + detected version', async () => {
     const projectDir = await mkdtemp(resolve(tmpDir, 'state-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const { logger } = createCaptureLogger();
 
@@ -396,9 +396,9 @@ describe('bootServer git-preflight OTEL emission', () => {
 
     const span = findPreflightSpan();
     expect(span).toBeDefined();
-    expect(span?.attributes['ok.platform']).toBe('linux');
-    expect(span?.attributes['ok.preflight.git.reason']).toBe('too_old');
-    expect(span?.attributes['ok.preflight.git.detected_version']).toBe('2.20.0');
+    expect(span?.attributes['ps.platform']).toBe('linux');
+    expect(span?.attributes['ps.preflight.git.reason']).toBe('too_old');
+    expect(span?.attributes['ps.preflight.git.detected_version']).toBe('2.20.0');
   });
 
   test('preflight success → no ok.preflight.git.* span emitted', async () => {
@@ -435,7 +435,7 @@ describe('bootServer git-preflight OTEL emission', () => {
 
     const preflightSpans = exporter
       .getFinishedSpans()
-      .filter((s) => s.name.startsWith('ok.preflight.git.'));
+      .filter((s) => s.name.startsWith('ps.preflight.git.'));
     expect(preflightSpans).toHaveLength(0);
   });
 });

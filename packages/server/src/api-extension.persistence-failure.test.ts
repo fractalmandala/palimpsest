@@ -43,7 +43,7 @@ describe('respondPersistenceFailure — store-refused', () => {
     expect(writeHeadCalls[0]?.status).toBe(503);
     expect(endCalls).toHaveLength(1);
     const body = JSON.parse(endCalls[0] ?? '{}') as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:store-refused');
+    expect(body.type).toBe('urn:ps:error:store-refused');
     expect(body.title).toBe(
       'Edit applied in memory; disk write refused because the duplication baseline could not be read.',
     );
@@ -61,7 +61,7 @@ describe('respondPersistenceFailure — store-refused', () => {
 
     expect(writeHeadCalls[0]?.status).not.toBe(503);
     const body = JSON.parse(endCalls[0] ?? '{}') as Record<string, unknown>;
-    expect(body.type).not.toBe('urn:ok:error:store-refused');
+    expect(body.type).not.toBe('urn:ps:error:store-refused');
   });
 });
 
@@ -77,7 +77,7 @@ describe('respondPersistenceFailure: store discarded by a branch switch', () => 
 
     expect(writeHeadCalls[0]?.status).toBe(409);
     const body = JSON.parse(endCalls[0] ?? '{}') as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:branch-switched');
+    expect(body.type).toBe('urn:ps:error:branch-switched');
     expect(String(body.title)).toContain('not saved');
     expect(String(body.detail)).toContain('Re-read');
   });

@@ -52,13 +52,13 @@ describe('BuiltinHeaderActions', () => {
 
   test('offers the install control alongside provenance, without New file', () => {
     mockOrigin({ updateAvailable: true });
-    render(<BuiltinHeaderActions scope="global" name="open-knowledge-discovery" />);
+    render(<BuiltinHeaderActions scope="global" name="palimpsest-discovery" />);
     expect(screen.getByTestId('install-control').getAttribute('data-show-new-file')).toBe('false');
   });
 
   test('shows the source link but NO Update button when up to date', () => {
     mockOrigin({ updateAvailable: false });
-    render(<BuiltinHeaderActions scope="global" name="open-knowledge-discovery" />);
+    render(<BuiltinHeaderActions scope="global" name="palimpsest-discovery" />);
     expect(screen.getByRole('link').getAttribute('href')).toBe(
       'https://github.com/fractalmandala/palimpsest-skills',
     );
@@ -67,7 +67,7 @@ describe('BuiltinHeaderActions', () => {
 
   test('shows Update when upstream differs, and clicking it re-pulls', async () => {
     const state = mockOrigin({ updateAvailable: true });
-    render(<BuiltinHeaderActions scope="global" name="open-knowledge-discovery" />);
+    render(<BuiltinHeaderActions scope="global" name="palimpsest-discovery" />);
     const button = screen.getByRole('button', { name: /^update$/i });
     await userEvent.click(button);
     expect(state.reimport).toHaveBeenCalledTimes(1);
@@ -75,7 +75,7 @@ describe('BuiltinHeaderActions', () => {
 
   test('disables the button while a re-pull is in flight', () => {
     mockOrigin({ updateAvailable: true, reimporting: true });
-    render(<BuiltinHeaderActions scope="global" name="open-knowledge-discovery" />);
+    render(<BuiltinHeaderActions scope="global" name="palimpsest-discovery" />);
     expect((screen.getByRole('button', { name: /updating/i }) as HTMLButtonElement).disabled).toBe(
       true,
     );
@@ -83,7 +83,7 @@ describe('BuiltinHeaderActions', () => {
 
   test('omits the link when no source URL resolves', () => {
     mockOrigin({ github: null, updateAvailable: true });
-    render(<BuiltinHeaderActions scope="global" name="open-knowledge-discovery" />);
+    render(<BuiltinHeaderActions scope="global" name="palimpsest-discovery" />);
     expect(screen.queryByRole('link')).toBeNull();
     expect(screen.getByRole('button', { name: /^update$/i })).toBeTruthy();
   });

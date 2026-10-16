@@ -378,7 +378,7 @@ test('UI wiring against routed failures: a wholly failed bulk move reports one s
       status: 409,
       contentType: 'application/json',
       body: JSON.stringify({
-        type: 'urn:ok:error:conflict',
+        type: 'urn:ps:error:conflict',
         title: `A global skill named "${skill}" already exists.`,
         status: 409,
         moveState: 'nothing-written',

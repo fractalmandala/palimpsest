@@ -26,10 +26,10 @@ import {
 describe('Cluster B URN tokens (US-007)', () => {
   test('accepts the four new cluster B URNs', () => {
     for (const token of [
-      'urn:ok:error:doc-not-found',
-      'urn:ok:error:doc-already-exists',
-      'urn:ok:error:doc-not-open',
-      'urn:ok:error:rollback-not-configured',
+      'urn:ps:error:doc-not-found',
+      'urn:ps:error:doc-already-exists',
+      'urn:ps:error:doc-not-open',
+      'urn:ps:error:rollback-not-configured',
     ]) {
       expect(ProblemTypeSchema.safeParse(token).success).toBe(true);
     }

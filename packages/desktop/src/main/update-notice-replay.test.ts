@@ -73,9 +73,9 @@ describe('replayUpdateNoticesOnEveryLoad', () => {
     wc.load();
 
     expect(wc.sent).toEqual([
-      { channel: 'ok:update:downloaded', payload: { version: '1.2.3' } },
-      { channel: 'ok:update:downloaded', payload: { version: '1.2.3' } },
-      { channel: 'ok:update:downloaded', payload: { version: '1.2.3' } },
+      { channel: 'ps:update:downloaded', payload: { version: '1.2.3' } },
+      { channel: 'ps:update:downloaded', payload: { version: '1.2.3' } },
+      { channel: 'ps:update:downloaded', payload: { version: '1.2.3' } },
     ]);
   });
 
@@ -88,7 +88,7 @@ describe('replayUpdateNoticesOnEveryLoad', () => {
     source.pending = null;
     wc.load();
 
-    expect(wc.sent).toEqual([{ channel: 'ok:update:downloaded', payload: { version: '1.2.3' } }]);
+    expect(wc.sent).toEqual([{ channel: 'ps:update:downloaded', payload: { version: '1.2.3' } }]);
   });
 
   test('replays the active release-notes card too', () => {
@@ -100,8 +100,8 @@ describe('replayUpdateNoticesOnEveryLoad', () => {
     wc.load();
 
     expect(wc.sent).toEqual([
-      { channel: 'ok:update:whats-new', payload: whatsNew },
-      { channel: 'ok:update:whats-new', payload: whatsNew },
+      { channel: 'ps:update:whats-new', payload: whatsNew },
+      { channel: 'ps:update:whats-new', payload: whatsNew },
     ]);
   });
 
@@ -163,7 +163,7 @@ describe('deliverUpdateNoticesToLoadedWindows', () => {
     );
 
     expect(loaded.sent).toEqual([
-      { channel: 'ok:update:downloaded', payload: { version: '1.2.3' } },
+      { channel: 'ps:update:downloaded', payload: { version: '1.2.3' } },
     ]);
     expect(loading.sent).toEqual([]);
     expect(blank.sent).toEqual([]);

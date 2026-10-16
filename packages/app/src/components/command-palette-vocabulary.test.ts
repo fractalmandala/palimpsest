@@ -86,7 +86,7 @@ const INTENTS: ReadonlyArray<readonly [string, string]> = [
   ['hidden files', 'toggle-show-hidden-files'],
   ['only markdown', 'toggle-show-only-markdown-files'],
   ['skills section', 'toggle-show-skills-section'],
-  ['show ok folders', 'toggle-show-ps-folders'],
+  ['show ps folders', 'toggle-show-ps-folders'],
   ['show sidebar', 'toggle-sidebar'],
   ['hide document panel', 'toggle-doc-panel'],
   ['hide agents', 'toggle-agent-panel'],

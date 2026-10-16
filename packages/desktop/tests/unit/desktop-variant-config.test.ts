@@ -412,21 +412,24 @@ describe('desktop variant builder config', () => {
     ).toBe('palimpsest-beta:// Software\\Classes\\palimpsest-beta URL:Palimpsest Beta');
     expect(
       createVariantPostInstall(
-        'ln -sf "$PS_WRAPPER" /usr/bin/ok\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest',
+        'ln -sf "$PS_WRAPPER" /usr/bin/ps\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest',
         'beta',
       ),
     ).toContain(
       'ln -sf "$PS_WRAPPER" /usr/bin/ps-beta\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest-beta',
     );
     expect(
-      createVariantPostRemove('for link in /usr/bin/ok /usr/bin/palimpsest; do', 'beta'),
+      createVariantPostRemove(
+        'for link in /usr/bin/ps /usr/bin/palimpsest /usr/bin/ok /usr/bin/open-knowledge; do',
+        'beta',
+      ),
     ).toContain('/usr/bin/ps-beta /usr/bin/palimpsest-beta');
   });
 
   test.each([
     {
       variant: 'stable',
-      links: ['/usr/bin/ok', '/usr/bin/palimpsest'],
+      links: ['/usr/bin/ps', '/usr/bin/palimpsest'],
       exe: "'/opt/Palimpsest/palimpsest'",
     },
     {
@@ -448,7 +451,7 @@ describe('desktop variant builder config', () => {
   test('refuses a post-transaction template with a macro it cannot expand', () => {
     expect(() =>
       createVariantPostTransaction(
-        `ln -sf "$PS_WRAPPER" /usr/bin/ok\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest\n${token('version')}`,
+        `ln -sf "$PS_WRAPPER" /usr/bin/ps\nln -sf "$PS_WRAPPER" /usr/bin/palimpsest\n${token('version')}`,
         'beta',
       ),
     ).toThrow(/\$\{version\}/);
@@ -492,7 +495,7 @@ describe('desktop variant builder config', () => {
 
   test('fails closed when a packaging template loses a required anchor', () => {
     expect(() => createVariantNsisInclude('palimpsest://', 'beta')).toThrow(/registry key/);
-    expect(() => createVariantPostInstall('ln -sf "$PS_WRAPPER" /usr/bin/ok', 'beta')).toThrow(
+    expect(() => createVariantPostInstall('ln -sf "$PS_WRAPPER" /usr/bin/ps', 'beta')).toThrow(
       /palimpsest install command/,
     );
     expect(() => createVariantPostRemove('missing', 'beta')).toThrow(/removal loop/);

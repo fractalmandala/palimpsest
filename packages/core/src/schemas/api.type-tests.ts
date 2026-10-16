@@ -7,10 +7,10 @@ import type {
   UploadRequest,
 } from './api/index.ts';
 
-const _validProblemType: ProblemType = 'urn:ok:error:malformed-upload';
+const _validProblemType: ProblemType = 'urn:ps:error:malformed-upload';
 void _validProblemType;
 
-// @ts-expect-error -- ProblemType is the URN form `urn:ok:error:<kebab>`, not bare kebab.
+// @ts-expect-error -- ProblemType is the URN form `urn:ps:error:<kebab>`, not bare kebab.
 const _bareKebab: ProblemType = 'malformed-upload';
 void _bareKebab;
 
@@ -23,7 +23,7 @@ const _freeFormString: ProblemType = 'something-else';
 void _freeFormString;
 
 const _validProblem: ProblemDetails = {
-  type: 'urn:ok:error:malformed-upload',
+  type: 'urn:ps:error:malformed-upload',
   title: 'The uploaded multipart payload is malformed.',
   status: 400,
 };
@@ -31,14 +31,14 @@ void _validProblem;
 
 // @ts-expect-error -- title is required.
 const _missingTitle: ProblemDetails = {
-  type: 'urn:ok:error:malformed-upload',
+  type: 'urn:ps:error:malformed-upload',
   status: 400,
 };
 void _missingTitle;
 
 // @ts-expect-error -- status is required.
 const _missingStatus: ProblemDetails = {
-  type: 'urn:ok:error:malformed-upload',
+  type: 'urn:ps:error:malformed-upload',
   title: 'oops',
 };
 void _missingStatus;

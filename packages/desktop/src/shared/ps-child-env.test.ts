@@ -2,7 +2,7 @@ import { homedir } from 'node:os';
 import { describe, expect, test, vi } from 'vitest';
 import { buildShellEnv } from '../utility/pty-host.ts';
 import {
-  composeOkChildEnv,
+  composePsChildEnv,
   psChildEnvOptions,
   psChildHome,
   psManagedBinDirs,
@@ -48,9 +48,9 @@ describe('psManagedBinDirs', () => {
   });
 });
 
-describe('composeOkChildEnv PATH grant', () => {
+describe('composePsChildEnv PATH grant', () => {
   test('prepends the OK-managed bin dir on POSIX', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { PATH: '/usr/bin:/bin' },
       { platform: 'darwin', home: '/Users/alice' },
     );
@@ -58,7 +58,7 @@ describe('composeOkChildEnv PATH grant', () => {
   });
 
   test('leaves an already-present entry where it is rather than moving it to the front', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { PATH: '/opt/x:/Users/alice/.ps/bin:/usr/bin' },
       { platform: 'darwin', home: '/Users/alice' },
     );
@@ -66,12 +66,12 @@ describe('composeOkChildEnv PATH grant', () => {
   });
 
   test('leaves PATH untouched when there is no home to resolve against', () => {
-    const env = composeOkChildEnv({ PATH: '/usr/bin' }, { platform: 'linux' });
+    const env = composePsChildEnv({ PATH: '/usr/bin' }, { platform: 'linux' });
     expect(env.PATH).toBe('/usr/bin');
   });
 
   test('writes through the inherited PATH key casing on win32 and never adds the POSIX dir', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { Path: 'C:\\Windows\\System32;C:\\Tools', HOME: 'C:\\Users\\alice' },
       { platform: 'win32', home: 'C:\\Users\\alice', cliBinDir: WIN_CLI_BIN },
     );
@@ -81,7 +81,7 @@ describe('composeOkChildEnv PATH grant', () => {
   });
 
   test('dedupes case-insensitively on win32', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { Path: `C:\\Windows;${WIN_CLI_BIN.toUpperCase()}` },
       { platform: 'win32', cliBinDir: WIN_CLI_BIN },
     );
@@ -89,14 +89,14 @@ describe('composeOkChildEnv PATH grant', () => {
   });
 
   test('seeds PATH when the parent carries none', () => {
-    const env = composeOkChildEnv({}, { platform: 'darwin', home: '/Users/alice' });
+    const env = composePsChildEnv({}, { platform: 'darwin', home: '/Users/alice' });
     expect(env.PATH).toBe('/Users/alice/.ps/bin');
   });
 });
 
-describe('composeOkChildEnv', () => {
-  test('keeps the dev channel away from a terminal, whose ok on PATH may predate it', () => {
-    const env = composeOkChildEnv(
+describe('composePsChildEnv', () => {
+  test('keeps the dev channel away from a terminal, whose ps on PATH may predate it', () => {
+    const env = composePsChildEnv(
       { PATH: '/usr/bin', PS_CHANNEL: 'dev' },
       { platform: 'darwin', home: '/Users/alice' },
     );
@@ -104,7 +104,7 @@ describe('composeOkChildEnv', () => {
   });
 
   test('drops the dev channel under the differently cased key a Windows environment can carry', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { Path: 'C:\\Windows', Ok_Channel: 'dev' },
       { platform: 'win32', cliBinDir: 'C:\\ok\\bin' },
     );
@@ -112,7 +112,7 @@ describe('composeOkChildEnv', () => {
   });
 
   test('passes a shipped channel through, since every released CLI knows it', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { PATH: '/usr/bin', PS_CHANNEL: 'beta' },
       { platform: 'darwin', home: '/Users/alice' },
     );
@@ -120,7 +120,7 @@ describe('composeOkChildEnv', () => {
   });
 
   test('strips OK and Electron markers, drops undefined, and grants the OK-managed bin dir', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       {
         PATH: '/usr/bin',
         HOME: '/Users/x',
@@ -145,8 +145,8 @@ describe('composeOkChildEnv', () => {
     });
   });
 
-  test('does not mark the child as the OK Desktop terminal', () => {
-    const env = composeOkChildEnv(
+  test('does not mark the child as the Palimpsest Desktop terminal', () => {
+    const env = composePsChildEnv(
       { PATH: '/usr/bin', HOME: '/Users/x' },
       { platform: 'darwin', home: '/Users/x' },
     );
@@ -154,7 +154,7 @@ describe('composeOkChildEnv', () => {
   });
 
   test('drops an inherited hosted-agent marker instead of passing it to the child', () => {
-    const env = composeOkChildEnv(
+    const env = composePsChildEnv(
       { PATH: '/usr/bin', HOME: '/Users/x', PS_DESKTOP_TERMINAL: '1', PS_HOSTED_AGENT: '1' },
       { platform: 'darwin', home: '/Users/x' },
     );
@@ -202,7 +202,7 @@ describe('the terminal producer and the probe consumers derive the same home', (
     ['a parent env with no HOME at all', { PATH: '/usr/bin' }],
   ])('%s yields one leading PATH entry for both sides', (_label, parentEnv) => {
     const options = psChildEnvOptions(parentEnv, { platform: 'darwin' });
-    const consumer = composeOkChildEnv(parentEnv, options);
+    const consumer = composePsChildEnv(parentEnv, options);
     const { env: producer } = buildShellEnv(parentEnv, { platform: 'darwin' });
     expect((producer.PATH ?? '').split(':')[0]).toBe((consumer.PATH ?? '').split(':')[0]);
   });

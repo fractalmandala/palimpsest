@@ -221,7 +221,7 @@ describe('buildPiExtensionSource header names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   it.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the managed-file note names %s init and deinit', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

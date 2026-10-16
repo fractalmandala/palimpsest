@@ -159,7 +159,7 @@ describe('web apply through the CLI registry host', () => {
       temporaryHome,
       '.claude',
       'skills',
-      'open-knowledge-discovery',
+      'palimpsest-discovery',
       'SKILL.md',
     );
     const decisionPath = join(temporaryHome, '.ps', 'skill-state.yml');
@@ -175,7 +175,7 @@ describe('web apply through the CLI registry host', () => {
     expect(result.snapshot?.probes.satisfiers[CLAUDE_USER_SKILL]?.state).toBe('satisfied');
     expect((await readFile(skillPath, 'utf8')).length).toBeGreaterThan(0);
     expect((await readFile(decisionPath, 'utf8')).length).toBeGreaterThan(0);
-    expect(await readBundleDecision(temporaryHome, 'open-knowledge-discovery')).toBe(true);
+    expect(await readBundleDecision(temporaryHome, 'palimpsest-discovery')).toBe(true);
     expect(isWithin(temporaryHome, skillPath)).toBe(true);
     expect(isWithin(temporaryHome, decisionPath)).toBe(true);
   });

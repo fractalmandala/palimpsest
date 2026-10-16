@@ -198,8 +198,8 @@ export function composeWithFrontmatter(
 }
 
 const FRONTMATTER_PATCH_REJECTED_BEFORE_APPLY: ReadonlySet<unknown> = new Set<ProblemType>([
-  'urn:ok:error:invalid-request',
-  'urn:ok:error:invalid-frontmatter-patch',
+  'urn:ps:error:invalid-request',
+  'urn:ps:error:invalid-frontmatter-patch',
 ]);
 
 function frontmatterPatchAppliedNothing(result: { [key: string]: unknown }): boolean {
@@ -331,7 +331,7 @@ async function writeOneDoc(
   });
   if (!result.ok) {
     const offsetBasis =
-      result.type === 'urn:ok:error:invalid-request' && result.contentControlAdmission === true
+      result.type === 'urn:ps:error:invalid-request' && result.contentControlAdmission === true
         ? spec.template !== undefined
           ? ' Any markdown offset refers to generated template Markdown after substitution.'
           : hasFrontmatter

@@ -195,7 +195,7 @@ describe('template import never overwrites an existing template', () => {
     expect(res.status).toBe(409);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const problem = ProblemDetailsSchema.parse(await res.json());
-    expect(problem.type).toBe('urn:ok:error:doc-already-exists');
+    expect(problem.type).toBe('urn:ps:error:doc-already-exists');
 
     expect(templateBytes(folder, 'standup')).toBe(before);
     expect(before).toContain(keepMarker);

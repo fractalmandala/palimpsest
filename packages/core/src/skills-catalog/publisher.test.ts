@@ -16,17 +16,17 @@ describe('parseSkillsShPublisherPage', () => {
   test('ranks a publisher’s skills by installs, most first', () => {
     const html =
       row(OURS, 'knowledge-base', '21') +
-      row(OURS, 'open-knowledge-discovery', '478') +
+      row(OURS, 'palimpsest-discovery', '478') +
       row(OURS, 'note-taking', '3');
 
     const ranked = parseSkillsShPublisherPage(html, OURS);
     expect(ranked.map((r) => r.name)).toEqual([
-      'open-knowledge-discovery',
+      'palimpsest-discovery',
       'knowledge-base',
       'note-taking',
     ]);
     expect(ranked[0]).toMatchObject({
-      id: `${OURS}/open-knowledge-discovery`,
+      id: `${OURS}/palimpsest-discovery`,
       source: OURS,
       installs: 478,
       publisher: 'inkeep',

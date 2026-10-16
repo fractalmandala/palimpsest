@@ -39,7 +39,7 @@ describe('/api admission over the composed listener — normal mode', () => {
     expect(res.status).toBe(403);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type?: string; title?: string };
-    expect(body.type).toBe('urn:ok:error:invalid-origin');
+    expect(body.type).toBe('urn:ps:error:invalid-origin');
     expect(body.title).toBe('Origin not allowed.');
   });
 
@@ -57,7 +57,7 @@ describe('/api admission over the composed listener — normal mode', () => {
       headers: { Host: 'evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('mutating route under a rebound Host is refused', async () => {
@@ -68,7 +68,7 @@ describe('/api admission over the composed listener — normal mode', () => {
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('mutating route with loopback Host passes the gate (fails later on payload, not admission)', async () => {
@@ -101,7 +101,7 @@ describe('/api admission over the composed listener — normal mode', () => {
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.detail ?? body.title).toContain('Proxied request refused');
   });
 

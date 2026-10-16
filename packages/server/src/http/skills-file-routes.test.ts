@@ -16,7 +16,7 @@ function buildGroup() {
     getPrincipal: undefined,
     rejectReservedBuiltinSkill: () => false,
     contentDir: '/nonexistent-content',
-    attributeOkArtifactWrite: () => {},
+    attributePsArtifactWrite: () => {},
     signalChannel: undefined,
     checkSkillDocConflictGate: () => false,
     extractAgentIdentity: () => ({
@@ -38,7 +38,7 @@ function buildGroup() {
     extractActorIdentityFromQuery: () => ({ kind: 'invalid-summary' }),
     captureAndCloseDocuments: () => Promise.resolve(new Map()),
     log: loggerFactory.getLogger('test'),
-    commitOkArtifactWrite: () => Promise.resolve(),
+    commitPsArtifactWrite: () => Promise.resolve(),
     recordDerivedMutationsBestEffort: () => Promise.resolve(),
   });
 }

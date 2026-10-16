@@ -55,7 +55,7 @@ describe('IPC channel count ratchet — RequestChannels', () => {
             'The hand-rolled IPC discriminated union is past its scale-match trigger.',
             `Adding a ${REQUEST_CHANNEL_CAP + 1}th channel must coincide with the typed-ipc migration —`,
             'either land the migration spec first, or fold the new payload into an existing',
-            'channel via additive optional fields (the `ok:theme:applied` precedent).',
+            'channel via additive optional fields (the `ps:theme:applied` precedent).',
             '',
             'If the migration has landed: update REQUEST_CHANNEL_CAP in this file AND',
             'TYPED_IPC_MIGRATION_CHANNEL_CAP in src/shared/ipc-channels.ts — the two-surface',

@@ -5,8 +5,7 @@
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/fractalmandala/palimpsest",
   "author": {
-    "name": "Inkeep",
-    "email": "https://github.com/fractalmandala/palimpsest/issues"
+    "name": "Fractal Mandala"
   },
   "private": true,
   "type": "module",

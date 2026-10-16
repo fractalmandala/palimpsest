@@ -59,7 +59,7 @@ describe('folder-config envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('GET path-traversal attempt emits urn:ok:error:invalid-request', async () => {
+  test('GET path-traversal attempt emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/folder-config?path=${encodeURIComponent('../etc')}`,
     );
@@ -70,7 +70,7 @@ describe('folder-config envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -85,7 +85,7 @@ describe('folder-config envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

@@ -177,7 +177,7 @@ describe('scanInPlaceSkills (list projection)', () => {
     expect(skills.find((s) => s.name === 'foo')?.dir).toBe('.claude/skills/foo');
   });
 
-  test("OK's own bundles collapse to one row even when a projection drifted", () => {
+  test("Palimpsest's own bundles collapse to one row even when a projection drifted", () => {
     writeSkill(contentDir, '.claude/skills/palimpsest', '# current');
     writeSkill(contentDir, '.agents/skills/palimpsest', '# stale pre-split copy');
     writeSkill(contentDir, '.claude/skills/mine', '# A');

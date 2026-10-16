@@ -29,7 +29,7 @@ export function catchErrors<Args extends unknown[]>(
       errorResponse(
         res,
         500,
-        'urn:ok:error:internal-server-error',
+        'urn:ps:error:internal-server-error',
         options.title ?? 'Internal server error.',
         { handler: options.handler, cause: err },
       );

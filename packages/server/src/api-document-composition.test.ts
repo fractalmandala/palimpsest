@@ -72,7 +72,7 @@ describe('document/pages group over the composed listener — served natively', 
     const missing = await fetch(`http://127.0.0.1:${server.port}/api/document?docName=nope`);
     expect(missing.status).toBe(404);
     expect(missing.headers.get('content-type')).toBe('application/problem+json');
-    expect(((await missing.json()) as { type?: string }).type).toBe('urn:ok:error:doc-not-found');
+    expect(((await missing.json()) as { type?: string }).type).toBe('urn:ps:error:doc-not-found');
   });
 
   test('document read refuses a doc linked into machine-local Palimpsest state', async () => {
@@ -146,7 +146,7 @@ describe('document/pages group over the composed listener — served natively', 
       headers: { Origin: 'https://evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('any forwarding header trips the proxied-request refusal on a ported route', async () => {
@@ -155,7 +155,7 @@ describe('document/pages group over the composed listener — served natively', 
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.detail ?? body.title).toContain('Proxied request refused');
   });
 
@@ -188,7 +188,7 @@ describe('document/pages group over the composed listener — served natively', 
       headers: { Host: 'evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('ephemeral mode Host-gates the ported reads too', async () => {
@@ -196,7 +196,7 @@ describe('document/pages group over the composed listener — served natively', 
       headers: { Host: 'evil.example' },
     });
     expect(refused.status).toBe(403);
-    expect(parseProblem(refused.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(refused.body).type).toBe('urn:ps:error:host-not-allowed');
 
     const allowed = await rawRequest(ephemeral.port, '/api/documents', {
       headers: { Host: 'localhost' },

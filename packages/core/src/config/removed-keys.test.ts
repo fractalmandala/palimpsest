@@ -169,7 +169,7 @@ describe('removed-key redirects name the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the migrate and start hints name %s', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

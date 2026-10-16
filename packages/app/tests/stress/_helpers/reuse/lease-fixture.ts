@@ -30,7 +30,7 @@ import {
 import { recordRunAbort, runAbortReason } from './reuse-run.ts';
 import { connectLeaseClient, type LeaseClient } from './supervisor-socket.ts';
 
-export const SERVER_LEASE_ANNOTATION = 'ok:server-lease';
+export const SERVER_LEASE_ANNOTATION = 'ps:server-lease';
 
 const SUPERVISOR_CONNECT_MS = 5_000;
 const SUPERVISOR_CALL_MS = 10_000;

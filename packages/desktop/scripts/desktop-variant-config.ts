@@ -214,7 +214,7 @@ export function createVariantPostInstall(source: string, variantName: DesktopVar
   const [shortName, longName] = DESKTOP_VARIANTS[variantName].cliCommandNames;
   const withShortName = replaceRequired(
     source,
-    'ln -sf "$PS_WRAPPER" /usr/bin/ok',
+    'ln -sf "$PS_WRAPPER" /usr/bin/ps',
     `ln -sf "$PS_WRAPPER" /usr/bin/${shortName}`,
     'the /usr/bin/ps install command in build/deb-postinst.sh',
   );
@@ -230,8 +230,8 @@ export function createVariantPostRemove(source: string, variantName: DesktopVari
   const [shortName, longName] = DESKTOP_VARIANTS[variantName].cliCommandNames;
   return replaceRequired(
     source,
-    'for link in /usr/bin/ok /usr/bin/palimpsest; do',
-    `for link in /usr/bin/${shortName} /usr/bin/${longName}; do`,
+    'for link in /usr/bin/ps /usr/bin/palimpsest /usr/bin/ok /usr/bin/open-knowledge; do',
+    `for link in /usr/bin/${shortName} /usr/bin/${longName} /usr/bin/ok /usr/bin/open-knowledge; do`,
     'the Linux CLI removal loop in build/deb-postrm.sh',
   );
 }

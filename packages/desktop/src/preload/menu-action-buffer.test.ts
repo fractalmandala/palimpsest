@@ -43,7 +43,7 @@ async function loadBridge(): Promise<MenuBridge> {
 }
 
 function pushMenuAction(action: string, origin: MenuOrigin = { launcherBorne: false }): void {
-  const listeners = channelListeners.get('ok:menu-action');
+  const listeners = channelListeners.get('ps:menu-action');
   if (listeners === undefined || listeners.size === 0) {
     throw new Error(
       'the preload registered no ok:menu-action listener at load — a menu action arriving before the renderer subscribes would be dropped',
@@ -63,7 +63,7 @@ describe('preload menu-action delivery', () => {
   it('subscribes to the channel at load, before any renderer code runs', async () => {
     await loadBridge();
 
-    expect(channelListeners.get('ok:menu-action')?.size ?? 0).toBeGreaterThan(0);
+    expect(channelListeners.get('ps:menu-action')?.size ?? 0).toBeGreaterThan(0);
   });
 
   it('replays an action that arrived before the renderer subscribed', async () => {

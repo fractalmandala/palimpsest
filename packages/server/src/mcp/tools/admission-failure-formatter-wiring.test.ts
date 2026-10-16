@@ -14,19 +14,19 @@ import { register as registerWrite } from './write.ts';
 const failures = [
   {
     status: 409,
-    type: 'urn:ok:error:doc-in-conflict',
+    type: 'urn:ps:error:doc-in-conflict',
     title: 'Conflict',
     detail: 'Resolve the conflict first.',
   },
   {
     status: 503,
-    type: 'urn:ok:error:too-many-agent-sessions',
+    type: 'urn:ps:error:too-many-agent-sessions',
     title: 'Session limit',
     detail: 'Retry after a session closes.',
   },
   {
     status: 404,
-    type: 'urn:ok:error:not-found',
+    type: 'urn:ps:error:not-found',
     title: 'Missing target',
     detail: 'The target was removed.',
   },
@@ -172,7 +172,7 @@ test.each(['scripts/example.sh', 'assets/example.svg'])(
   async (path) => {
     failure = {
       status: 400,
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Invalid path',
       detail: 'The destination path is invalid.',
     };

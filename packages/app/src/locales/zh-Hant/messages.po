@@ -967,7 +967,7 @@ msgstr "名為 <0>{sanitized}</0> 的資料夾這裡已經有檔案了。請換�
 msgid "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 msgstr "金鑰已設定，但嵌入服務供應商拒絕了它或無法連線——搜尋已退回關鍵字比對。可在「自訂端點」下用<0>測試連線</0>看看是哪裡出了問題。"
 
-msgid "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgid "A knowledge base that follows Google's OpenKnowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
 msgstr "遵循 Google Palimpsest Format 的知識庫，一種整理知識的共通做法。如果你希望自己的筆記能和看得懂這個格式的其他工具好好搭配，請選這個。"
 
 msgid "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
@@ -1279,14 +1279,14 @@ msgid "Adds a managed block to"
 msgstr "加入一個受管理的區塊到"
 
 #. Subtext under the project AI-tools checkbox
-msgid "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
 msgstr "向 <0>{toolList}</0> 新增 Palimpsest 的 MCP 項目與專案技能，讓你的智慧代理可以讀取並編輯你的檔案。"
 
 #. Subtext under the AI-tools MCP checkbox
-msgid "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
 msgstr "向 <0>{connectToolList}</0> 新增 Palimpsest 的 MCP 項目，讓你的智慧代理可以讀取並編輯你的檔案。"
 
-msgid "Adds an Palimpsest MCP entry to this project's agent config."
+msgid "Adds a Palimpsest MCP entry to this project's agent config."
 msgstr "將 Palimpsest MCP 項目新增至此專案的智慧代理設定。"
 
 #. js-lingui-explicit-id
@@ -1417,7 +1417,7 @@ msgstr "即將完成。以下是已完成和尚待完成的事項。"
 msgid "Already at {assetContentPath} — reusing."
 msgstr "已經在 {assetContentPath} 了——直接重複使用。"
 
-#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked
+#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have a Palimpsest MCP entry, which stay as they are while the box is unticked
 msgid "Already connected to {replacingToolList}"
 msgstr "已連接到：{replacingToolList}"
 
@@ -2121,7 +2121,7 @@ msgstr "檢查文件中的 Markdown 問題，並可修正"
 msgid "Checks the whole project for markdown problems and broken links"
 msgstr "檢查整個專案的 Markdown 問題與失效連結"
 
-msgid "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
+msgid "Checks your project against the OpenKnowledge Format. Turn it off any time in Settings."
 msgstr "根據 Palimpsest Format 檢查您的項目。隨時在“設定”中將其關閉。"
 
 msgid "Choose a skill archive"
@@ -5740,7 +5740,7 @@ msgstr "記錄你往來的人和公司，以及你們之間的會面。適合用
 msgid "keeps the skills"
 msgstr "保留這些技能"
 
-msgid "Keeps your knowledge base aligned with the Palimpsest Format."
+msgid "Keeps your knowledge base aligned with the OpenKnowledge Format."
 msgstr "讓您的知識庫與 Palimpsest Format 保持一致。"
 
 msgid "Kept both — \"{0}\" is its own skill now"
@@ -7248,7 +7248,7 @@ msgstr "Palimpsest 無法連線到專案伺服器以檢查索引維護。專案�
 msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
 msgstr "Palimpsest 在包含 Markdown 的每個資料夾中建立並維護名為 index.md 的導覽檔案。"
 
-msgid "Palimpsest Format guidance"
+msgid "OpenKnowledge Format guidance"
 msgstr "Palimpsest Format 指導"
 
 msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
@@ -10302,7 +10302,7 @@ msgstr "無法使用那個端點。請輸入 https:// 的 URL——http:// 只�
 msgid "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
 msgstr "該資料夾中已有並非 Palimpsest 寫入的程式碼，同一份信任會允許 {0} 執行它們：{otherExtensions}。"
 
-msgid "That folder isn't an Palimpsest project yet. Initialize it and open?"
+msgid "That folder isn't a Palimpsest project yet. Initialize it and open?"
 msgstr "那個資料夾還不是 Palimpsest 專案。要初始化並開啟它嗎？"
 
 msgid "That host is already in the list."
@@ -10339,7 +10339,7 @@ msgstr "{editor} 的版本現在成為來源"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "無法開啟{targetNoun}——請試著手動前往。"
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
 msgstr "用這個範本建立的每份文件會得到的 <0>type</0>（例如 <1>research-note</1>）。讓新文件符合 Palimpsest Format。"
 
 msgid "The agent is working"
@@ -10760,7 +10760,7 @@ msgstr "此分支不包含這個 Palimpsest 專案。工作樹已建立，但未
 msgid "This branch is checked out in:"
 msgstr "這個分支已在以下位置簽出："
 
-msgid "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
+msgid "This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened."
 msgstr "此分支將 Palimpsest 設定路徑重新導向到工作樹之外。工作樹已建立，但未開啟。"
 
 #. Toast after first-launch setup ends without connecting AI tools; agentConnectionsLabel is the Settings sidebar pane name

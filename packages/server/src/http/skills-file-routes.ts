@@ -73,7 +73,7 @@ export interface SkillsFileRouteDeps {
   getPrincipal: (() => Principal | null) | undefined;
   rejectReservedBuiltinSkill: (name: string, res: ServerResponse, handler: string) => boolean;
   contentDir: string;
-  attributeOkArtifactWrite: (
+  attributePsArtifactWrite: (
     actor: ReturnType<typeof extractActorIdentity>,
     artifactKey: string,
     subject: string,
@@ -117,7 +117,7 @@ export interface SkillsFileRouteDeps {
     lifecycleStatus: RemovalLifecycleStatus,
   ) => Promise<Map<string, string>>;
   log: PinoLogger;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   recordDerivedMutationsBestEffort: (
     mutations: DerivedDocumentIndexMutation[],
     reason: string,
@@ -170,7 +170,7 @@ function rejectUnadmittedBundleTarget(
   errorResponse(
     res,
     400,
-    'urn:ok:error:invalid-request',
+    'urn:ps:error:invalid-request',
     verdict === 'withheld'
       ? 'Skill file path falls under an entry Palimpsest withholds from skill bundles (.git, node_modules, OK and editor host dirs, OS artifact files).'
       : escapeTitle,
@@ -198,9 +198,9 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
     respondStaleExternalWrite,
     respondPersistenceFailure,
     respondDiskDivergence,
-    attributeOkArtifactWrite,
+    attributePsArtifactWrite,
     psArtifactKey,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     signalChannel,
     extractActorIdentityFromQuery,
     captureAndCloseDocuments,
@@ -265,7 +265,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           ? resolveBuiltinSkillDir(builtinBase, name, scope, builtinHost)
           : null;
         if (rel === '' || rel.includes('\x00')) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid skill file path.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid skill file path.', {
             handler: 'skill-file-get',
           });
           return;
@@ -277,7 +277,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           ? (builtin?.dir ?? null)
           : resolveSkillDirForRead(scope, name, host);
         if (resolvedSkillDir === null && host !== undefined) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-file-get',
             detail: `No skill "${name}" (${scope}) in ${host}.`,
           });
@@ -290,7 +290,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Skill file path escapes the skill dir.',
             {
               handler: 'skill-file-get',
@@ -311,7 +311,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
               )
             : undefined;
           if (sibling === undefined) {
-            errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill file not found.', {
+            errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill file not found.', {
               handler: 'skill-file-get',
               detail: `${rel} not found in skill "${name}" (${scope}).`,
             });
@@ -325,7 +325,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             415,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Skill file is binary — only text bundle files are readable via MCP.',
             { handler: 'skill-file-get' },
           );
@@ -342,7 +342,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to read skill file.',
           {
             handler: 'skill-file-get',
@@ -363,7 +363,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-file-put',
           });
           return;
@@ -375,7 +375,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Invalid skill file path (must name a file inside the skill dir, no `..`).',
             { handler: 'skill-file-put' },
           );
@@ -385,7 +385,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Skill file exceeds the 256 KB per-file cap.',
             { handler: 'skill-file-put' },
           );
@@ -393,7 +393,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         }
         const skillDirAbs = resolveSkillDirForRead(body.scope, body.name);
         if (skillDirAbs === null || !existsSync(join(skillDirAbs, 'SKILL.md'))) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-file-put',
             detail: `Create skill "${body.name}" before adding bundle files.`,
           });
@@ -427,7 +427,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               `Skill "${body.name}" already holds ${BUNDLE_MAX_FILES} bundle files (the cap) — delete one before adding another.`,
               { handler: 'skill-file-put' },
             );
@@ -475,10 +475,10 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
               res,
               status,
               status === 500
-                ? 'urn:ok:error:internal-server-error'
+                ? 'urn:ps:error:internal-server-error'
                 : status === 404
-                  ? 'urn:ok:error:not-found'
-                  : 'urn:ok:error:invalid-request',
+                  ? 'urn:ps:error:not-found'
+                  : 'urn:ps:error:invalid-request',
               status === 500 ? 'Failed to write skill file.' : 'Invalid skill file request.',
               {
                 handler: 'skill-file-put',
@@ -492,12 +492,12 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         }
 
         if (body.scope === 'project') {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('skill', '', body.name),
             `${created ? 'skill-file-create' : 'skill-file-edit'}: ${skillDirRel}/${rel}`,
           );
-          void commitOkArtifactWrite('skill-file-put');
+          void commitPsArtifactWrite('skill-file-put');
         }
         signalChannel?.('files');
         successResponse(
@@ -511,7 +511,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to write skill file.',
           {
             handler: 'skill-file-put',
@@ -540,7 +540,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Invalid skill file path (must name a file inside the skill dir).',
             { handler: 'skill-file-delete' },
           );
@@ -548,7 +548,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         }
         const actor = extractActorIdentityFromQuery(url, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-file-delete',
           });
           return;
@@ -591,7 +591,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             status,
-            status === 500 ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            status === 500 ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             status === 500 ? 'Failed to delete skill file.' : 'Invalid skill file request.',
             {
               handler: 'skill-file-delete',
@@ -602,7 +602,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           return;
         }
         if (result.existed && scope === 'project') {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('skill', '', name),
             `skill-file-delete: ${
@@ -611,7 +611,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
                 : `${name}/${rel}`
             }`,
           );
-          void commitOkArtifactWrite('skill-file-delete');
+          void commitPsArtifactWrite('skill-file-delete');
         }
         if (result.existed) signalChannel?.('files');
         successResponse(
@@ -625,7 +625,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to delete skill file.',
           {
             handler: 'skill-file-delete',
@@ -652,7 +652,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-file-rename',
           });
           return;
@@ -665,7 +665,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Both paths must stay inside the skill dir.',
             { handler: 'skill-file-rename', detail: fromKind === null ? from : to },
           );
@@ -673,7 +673,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         }
         const realDir = resolveSkillDirForRead(body.scope, body.name);
         if (realDir === null) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-file-rename',
           });
           return;
@@ -724,7 +724,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             status,
-            status === 500 ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            status === 500 ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             result.error.message,
             { handler: 'skill-file-rename', detail: result.error.code },
           );
@@ -759,12 +759,12 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
         }
 
         if (body.scope === 'project') {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('skill', '', body.name),
             `skill-file-rename: ${body.name}/${from} -> ${to}`,
           );
-          void commitOkArtifactWrite('skill-file-rename');
+          void commitPsArtifactWrite('skill-file-rename');
         }
         signalChannel?.('files');
         successResponse(
@@ -785,7 +785,7 @@ export function createSkillsFileRoutes(deps: SkillsFileRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Failed to rename skill file.',
             { handler: 'skill-file-rename' },
           );

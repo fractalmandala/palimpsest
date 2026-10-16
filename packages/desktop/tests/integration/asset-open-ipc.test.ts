@@ -48,13 +48,13 @@ function makeResolver(existingPaths: string[]): (path: string) => string {
   };
 }
 
-describe("'ok:shell:open-asset' round-trip", () => {
+describe("'ps:shell:open-asset' round-trip", () => {
   test('happy path: renderer invoke → main handler → shell.openPath fires; result has ok:true', async () => {
     const { handle, invoke } = setupRig();
     const openPath = vi.fn(async (_: string) => '');
     const canonical = `${PROJECT}/notes/meeting.pdf`;
 
-    handle('ok:shell:open-asset', async (_event, relPath) =>
+    handle('ps:shell:open-asset', async (_event, relPath) =>
       openAssetSafely(
         {
           projectPath: PROJECT,
@@ -67,7 +67,7 @@ describe("'ok:shell:open-asset' round-trip", () => {
       ),
     );
 
-    const result = await invoke('ok:shell:open-asset', 'notes/meeting.pdf');
+    const result = await invoke('ps:shell:open-asset', 'notes/meeting.pdf');
     expect(result).toEqual({ ok: true });
     expect(openPath).toHaveBeenCalledWith(canonical);
   });
@@ -76,7 +76,7 @@ describe("'ok:shell:open-asset' round-trip", () => {
     const { handle, invoke } = setupRig();
     const openPath = vi.fn(async (_: string) => '');
 
-    handle('ok:shell:open-asset', async (_event, relPath) =>
+    handle('ps:shell:open-asset', async (_event, relPath) =>
       openAssetSafely(
         {
           projectPath: PROJECT,
@@ -89,7 +89,7 @@ describe("'ok:shell:open-asset' round-trip", () => {
       ),
     );
 
-    const result = await invoke('ok:shell:open-asset', '../../etc/passwd');
+    const result = await invoke('ps:shell:open-asset', '../../etc/passwd');
     expect(result).toEqual({ ok: false, reason: 'path-escape' });
     expect(openPath).not.toHaveBeenCalled();
   });
@@ -99,7 +99,7 @@ describe("'ok:shell:open-asset' round-trip", () => {
     const openPath = vi.fn(async (_: string) => '');
     const canonical = `${PROJECT}/notes/setup.sh`;
 
-    handle('ok:shell:open-asset', async (_event, relPath) =>
+    handle('ps:shell:open-asset', async (_event, relPath) =>
       openAssetSafely(
         {
           projectPath: PROJECT,
@@ -112,7 +112,7 @@ describe("'ok:shell:open-asset' round-trip", () => {
       ),
     );
 
-    const result = await invoke('ok:shell:open-asset', 'notes/setup.sh');
+    const result = await invoke('ps:shell:open-asset', 'notes/setup.sh');
     expect(result).toEqual({ ok: false, reason: 'extension-blocked' });
     expect(openPath).not.toHaveBeenCalled();
   });
@@ -121,7 +121,7 @@ describe("'ok:shell:open-asset' round-trip", () => {
     const { handle, invoke } = setupRig();
     const openPath = vi.fn(async (_: string) => '');
 
-    handle('ok:shell:open-asset', async (_event, relPath) =>
+    handle('ps:shell:open-asset', async (_event, relPath) =>
       openAssetSafely(
         {
           projectPath: PROJECT,
@@ -134,18 +134,18 @@ describe("'ok:shell:open-asset' round-trip", () => {
       ),
     );
 
-    const result = await invoke('ok:shell:open-asset', 'notes/missing.pdf');
+    const result = await invoke('ps:shell:open-asset', 'notes/missing.pdf');
     expect(result).toEqual({ ok: false, reason: 'not-found' });
   });
 });
 
-describe("'ok:shell:reveal-asset' round-trip", () => {
+describe("'ps:shell:reveal-asset' round-trip", () => {
   test('happy path: shell.showItemInFolder fires on canonical path', async () => {
     const { handle, invoke } = setupRig();
     const showItemInFolder = vi.fn((_: string) => {});
     const canonical = `${PROJECT}/notes/meeting.pdf`;
 
-    handle('ok:shell:reveal-asset', async (_event, relPath) =>
+    handle('ps:shell:reveal-asset', async (_event, relPath) =>
       revealAssetSafely(
         {
           projectPath: PROJECT,
@@ -158,7 +158,7 @@ describe("'ok:shell:reveal-asset' round-trip", () => {
       ),
     );
 
-    const result = await invoke('ok:shell:reveal-asset', 'notes/meeting.pdf');
+    const result = await invoke('ps:shell:reveal-asset', 'notes/meeting.pdf');
     expect(result).toEqual({ ok: true });
     expect(showItemInFolder).toHaveBeenCalledWith(canonical);
   });
@@ -168,7 +168,7 @@ describe("'ok:shell:reveal-asset' round-trip", () => {
     const showItemInFolder = vi.fn((_: string) => {});
     const canonical = `${PROJECT}/notes/setup.sh`;
 
-    handle('ok:shell:reveal-asset', async (_event, relPath) =>
+    handle('ps:shell:reveal-asset', async (_event, relPath) =>
       revealAssetSafely(
         {
           projectPath: PROJECT,
@@ -181,19 +181,19 @@ describe("'ok:shell:reveal-asset' round-trip", () => {
       ),
     );
 
-    const result = await invoke('ok:shell:reveal-asset', 'notes/setup.sh');
+    const result = await invoke('ps:shell:reveal-asset', 'notes/setup.sh');
     expect(result).toEqual({ ok: true });
     expect(showItemInFolder).toHaveBeenCalledWith(canonical);
   });
 });
 
-describe("'ok:shell:show-asset-menu' placeholder holds until Commit 5", () => {
+describe("'ps:shell:show-asset-menu' placeholder holds until Commit 5", () => {
   test('invoke resolves undefined; real native-menu construction arrives at Commit 5', async () => {
     const { handle, invoke } = setupRig();
 
-    handle('ok:shell:show-asset-menu', async (_event, _params) => undefined);
+    handle('ps:shell:show-asset-menu', async (_event, _params) => undefined);
 
-    const result = await invoke('ok:shell:show-asset-menu', {
+    const result = await invoke('ps:shell:show-asset-menu', {
       relPath: 'notes/meeting.pdf',
       title: 'meeting.pdf',
       kind: 'asset',

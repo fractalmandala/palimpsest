@@ -91,7 +91,7 @@ describe('reads from an opaque origin on the real server', () => {
     });
     expect(fromNull.status).toBe(403);
     expect(parseProblem(fromNull.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-origin',
+      type: 'urn:ps:error:invalid-origin',
       detail: OPAQUE_ORIGIN_REFUSAL_DETAIL,
     });
     expect(fromNull.body).not.toContain('Private body.');
@@ -161,7 +161,7 @@ describe('writes on the real server take JSON from a site origin only', () => {
       expect(res.status).toBe(415);
       expect(res.headers['content-type']).toBe('application/problem+json');
       const problem = parseProblem(res.body);
-      expect(problem.type).toBe('urn:ok:error:unsupported-media-type');
+      expect(problem.type).toBe('urn:ps:error:unsupported-media-type');
       expect(problem.detail).toContain('Content-Type: application/json');
     }
     expect(existsSync(resolve(contentDir, 'simple-request.md'))).toBe(false);
@@ -188,7 +188,7 @@ describe('writes on the real server take JSON from a site origin only', () => {
         body: 'not json',
       });
       expect(res.status, `${path}: ${res.body}`).toBe(415);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:unsupported-media-type');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:unsupported-media-type');
     }
   });
 
@@ -209,7 +209,7 @@ describe('writes on the real server take JSON from a site origin only', () => {
       body: JSON.stringify({ parentDocName: 'alpha' }),
     });
     expect(json.status).toBe(400);
-    expect(parseProblem(json.body).type).toBe('urn:ok:error:malformed-upload');
+    expect(parseProblem(json.body).type).toBe('urn:ps:error:malformed-upload');
     expect(contentFiles()).toEqual(afterUpload);
   });
 
@@ -224,7 +224,7 @@ describe('writes on the real server take JSON from a site origin only', () => {
         });
         expect(res.status, `${origin} ${contentType}`).toBe(403);
         expect(parseProblem(res.body)).toMatchObject({
-          type: 'urn:ok:error:invalid-origin',
+          type: 'urn:ps:error:invalid-origin',
           detail: OPAQUE_ORIGIN_REFUSAL_DETAIL,
         });
         expectNoCorsGrant(res);
@@ -235,7 +235,7 @@ describe('writes on the real server take JSON from a site origin only', () => {
         body: uploadForm('opaque-upload.png'),
       });
       expect(upload.status, origin).toBe(403);
-      expect(((await upload.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+      expect(((await upload.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
       expectNoCorsGrant(upload);
     }
     expect(existsSync(resolve(contentDir, 'opaque-write.md'))).toBe(false);
@@ -283,7 +283,7 @@ describe('/mcp on the real server', () => {
       });
       expect(init.status, origin).toBe(403);
       expect(parseProblem(init.body)).toMatchObject({
-        type: 'urn:ok:error:invalid-origin',
+        type: 'urn:ps:error:invalid-origin',
         detail: OPAQUE_ORIGIN_REFUSAL_DETAIL,
       });
       expectNoCorsGrant(init);

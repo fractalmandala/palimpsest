@@ -1,6 +1,6 @@
 appId: com.fractalmandala.palimpsest
 productName: Palimpsest
-copyright: Copyright © 2026 Inkeep
+copyright: Copyright © 2026 Fractal Mandala
 
 # Pin the Electron version explicitly — under pnpm's isolated node_modules
 # layout electron-builder's auto-version-detection walks the package manifest
@@ -36,7 +36,7 @@ files:
   - &app-out "out/**/*"
   - &no-renderer "!out/renderer/**"
   - &no-maps "!**/*.map"
-  - "!**/node_modules/@inkeep/*/src/**"
+  - "!**/node_modules/@palimpsest/*/src/**"
   - "!**/node_modules/**/*.{ts,mts,cts,tsx}"
   - "!**/node_modules/@palimpsest/cli/dist/public/**"
   - "!**/node_modules/@palimpsest/native-config/**"
@@ -72,11 +72,11 @@ extraResources:
     to: "locales"
     filter: ["**/messages.json"]
   # M6a: ship the CLI bundle + wrapper so the packaged .app can host
-  # `ok` on PATH via ELECTRON_RUN_AS_NODE=1.
+  # `ps` on PATH via ELECTRON_RUN_AS_NODE=1.
   # Ships the whole bundled CLI, INCLUDING `cli/dist/native/` — the prebuilt
   # native-config loader + `.node` the CLI build copies there (Option 3: bundle
   # the addon into the CLI; reports/native-addon-npm-distribution/REPORT.md). The
-  # spawned `ok` subprocess resolves the addon dist-relative from there.
+  # spawned `ps` subprocess resolves the addon dist-relative from there.
   # The filter must not exclude `.node`/`.js`/`package.json` — guarded by
   # tests/unit/electron-builder-cli-native-deps.test.ts.
   - from: "../cli/dist"
@@ -94,7 +94,7 @@ extraResources:
       - "!**/*.d.mts.map"
       - "!**/*.d.ts"
       - "!**/*.d.ts.map"
-  # The `ok` CLI wrapper ships per-platform (each platform block's
+  # The `ps` CLI wrapper ships per-platform (each platform block's
   # extraResources below): the darwin/.app-layout bash wrapper under `mac`,
   # the linux-layout bash wrapper under `linux`, and the `.cmd`/`.ps1` pair
   # under `win`. All land in `<resources>/cli/bin/` so path-install + the
@@ -299,10 +299,15 @@ mac:
   # secrets per Apple convention (every signed Electron app on macOS commits
   # one — VS Code, Zed, Notion all follow the same pattern).
   #
-  # Profile metadata (verify via `security cms -D -i build/embedded.provisionprofile | plutil -p -`):
-  #   AppIDName: Palimpsest
-  #   TeamIdentifier: 6NZGSG335T
-  #   application-identifier: 6NZGSG335T.com.fractalmandala.palimpsest
+  # FORK TODO (release-blocking): `build/embedded.provisionprofile` is still
+  # Inkeep's upstream Developer-ID profile and MUST be replaced with a profile
+  # issued for this fork's own Apple Developer Team before any signed build.
+  # Until then, only the unsigned path (`build:mac:unsigned`) is usable.
+  #
+  # Committed-profile metadata (verify via `security cms -D -i build/embedded.provisionprofile | plutil -p -`):
+  #   AppIDName: Open Knowledge (upstream)
+  #   TeamIdentifier: 6NZGSG335T (upstream — Inkeep)
+  #   application-identifier: 6NZGSG335T.com.inkeep.open-knowledge (upstream)
   #   com.apple.developer.associated-domains: *  (wildcard — accepts any
   #     applinks: declaration in the binary's entitlements plist)
   #   ExpirationDate: 2044-05-10
@@ -491,7 +496,7 @@ nsis:
   # same contract as `dmg.artifactName` (Palimpsest-arm64.dmg).
   buildUniversalInstaller: false
   artifactName: ${productName}-Setup-${arch}.${ext}
-  # Custom include: HKCU user-PATH append for the bundled `ok` CLI +
+  # Custom include: HKCU user-PATH append for the bundled `ps` CLI +
   # HKCU\Software\Classes palimpsest:// protocol registration (electron-
   # builder's `protocols` key is macOS-Info.plist-only; NSIS gets registry
   # keys here, and the app self-heals via setAsDefaultProtocolClient at
@@ -510,7 +515,7 @@ linux:
   category: Office
   synopsis: Collaborative markdown knowledge base
   # deb only (integration-grade: .desktop protocol registration +
-  # /usr/bin/ok symlink via postinst). electron-builder appends
+  # /usr/bin/ps symlink via postinst). electron-builder appends
   # MimeType=x-scheme-handler/palimpsest to the generated .desktop from
   # the top-level `protocols` key.
   #
@@ -572,7 +577,7 @@ linux:
       filter: ["**/*"]
 
 deb:
-  # /usr/bin/ok symlink + AppArmor userns profile (Ubuntu 24.04+) live in
+  # /usr/bin/ps symlink + AppArmor userns profile (Ubuntu 24.04+) live in
   # the maintainer scripts; removal is symmetric.
   afterInstall: build/deb-postinst.sh
   afterRemove: build/deb-postrm.sh
@@ -674,7 +679,7 @@ protocols:
 # steal the user's default handler (their existing editor keeps the
 # double-click) — we only appear in the Open With list. macOS delivers the pick
 # via the `open-file` Apple Event, which `registerProtocolHandler` routes
-# through the same queue-then-flush spine as `ok <file>` (see main/url-scheme.ts).
+# through the same queue-then-flush spine as `ps <file>` (see main/url-scheme.ts).
 fileAssociations:
   - ext: [md, mdx]
     name: Markdown Document
@@ -683,7 +688,7 @@ fileAssociations:
 
 publish:
   - provider: github
-    owner: inkeep
+    owner: fractalmandala
     repo: palimpsest
     # Stable defaults live here. `scripts/run-electron-builder.mjs` derives the
     # Beta product identity, protocol, icon, CLI integration, and

@@ -40,8 +40,8 @@ function deps(overrides: Partial<EnsureCoworkSkillDeps> = {}): EnsureCoworkSkill
 
 describe('buildCoworkSkillGuardKey', () => {
   test('namespaces and versions the localStorage key', () => {
-    expect(buildCoworkSkillGuardKey('1.2.3')).toBe('ok:skill:cowork:installed:v1.2.3');
-    expect(buildCoworkSkillGuardKey('0.0.0-dev')).toBe('ok:skill:cowork:installed:v0.0.0-dev');
+    expect(buildCoworkSkillGuardKey('1.2.3')).toBe('ps:skill:cowork:installed:v1.2.3');
+    expect(buildCoworkSkillGuardKey('0.0.0-dev')).toBe('ps:skill:cowork:installed:v0.0.0-dev');
   });
 });
 
@@ -58,7 +58,7 @@ describe('ensureCoworkSkillInstalled — first run', () => {
       handoffWarning: undefined,
     });
     expect(installer.install).toHaveBeenCalledTimes(1);
-    expect(storage.snapshot()).toEqual({ 'ok:skill:cowork:installed:v1.2.3': '1' });
+    expect(storage.snapshot()).toEqual({ 'ps:skill:cowork:installed:v1.2.3': '1' });
   });
 
   test('installer ok with handoffWarning: surfaces warning, still sets guard', async () => {
@@ -76,7 +76,7 @@ describe('ensureCoworkSkillInstalled — first run', () => {
       path: '/tmp/palimpsest.skill',
       handoffWarning: "Couldn't open in Claude Desktop",
     });
-    expect(storage.snapshot()).toEqual({ 'ok:skill:cowork:installed:v1.2.3': '1' });
+    expect(storage.snapshot()).toEqual({ 'ps:skill:cowork:installed:v1.2.3': '1' });
   });
 
   test('installer === null: returns host-unsupported, never touches storage', async () => {
@@ -107,7 +107,7 @@ describe('ensureCoworkSkillInstalled — first run', () => {
 
 describe('ensureCoworkSkillInstalled — guard semantics', () => {
   test('guard set for current skillVersion: short-circuits to already-installed (local source)', async () => {
-    const storage = memoryStorage({ 'ok:skill:cowork:installed:v1.2.3': '1' });
+    const storage = memoryStorage({ 'ps:skill:cowork:installed:v1.2.3': '1' });
     const installer = fakeInstaller({ ok: true, path: '/tmp/skill' });
 
     const result = await ensureCoworkSkillInstalled(deps({ storage, installer }));
@@ -117,7 +117,7 @@ describe('ensureCoworkSkillInstalled — guard semantics', () => {
   });
 
   test('guard set for a *different* skillVersion: installer re-runs (auto-invalidation)', async () => {
-    const storage = memoryStorage({ 'ok:skill:cowork:installed:v1.0.0': '1' });
+    const storage = memoryStorage({ 'ps:skill:cowork:installed:v1.0.0': '1' });
     const installer = fakeInstaller({ ok: true, path: '/tmp/skill' });
 
     const result = await ensureCoworkSkillInstalled(
@@ -127,8 +127,8 @@ describe('ensureCoworkSkillInstalled — guard semantics', () => {
     expect(result.kind).toBe('installed-now');
     expect(installer.install).toHaveBeenCalledTimes(1);
     expect(storage.snapshot()).toEqual({
-      'ok:skill:cowork:installed:v1.0.0': '1',
-      'ok:skill:cowork:installed:v1.2.3': '1',
+      'ps:skill:cowork:installed:v1.0.0': '1',
+      'ps:skill:cowork:installed:v1.2.3': '1',
     });
   });
 
@@ -173,11 +173,11 @@ describe('ensureCoworkSkillInstalled — guard semantics', () => {
 
     expect(result.kind).toBe('installed-now');
     expect(installer.install).toHaveBeenCalledTimes(1);
-    expect(storage.snapshot()).toEqual({ 'ok:skill:cowork:installed:v2.0.0': '1' });
+    expect(storage.snapshot()).toEqual({ 'ps:skill:cowork:installed:v2.0.0': '1' });
   });
 
   test('force=true bypasses both server gate and localStorage gate', async () => {
-    const storage = memoryStorage({ 'ok:skill:cowork:installed:v1.2.3': '1' });
+    const storage = memoryStorage({ 'ps:skill:cowork:installed:v1.2.3': '1' });
     const installer = fakeInstaller({ ok: true, path: '/tmp/skill' });
 
     const result = await ensureCoworkSkillInstalled(

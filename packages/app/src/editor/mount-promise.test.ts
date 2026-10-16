@@ -503,7 +503,7 @@ describe('mount-failure error path', () => {
     await expect(promise).rejects.toBe(constructError);
     expect(__getCacheSize('tiptap')).toBe(0);
     const marks = getCollector()?.marks.toArray() ?? [];
-    const rejectMark = marks.find((m) => m.name === 'ok/mount/reject');
+    const rejectMark = marks.find((m) => m.name === 'ps/mount/reject');
     expect(rejectMark?.properties?.reason).toBe('construct-failed');
     expect(rejectMark?.properties?.message).toContain('synthetic construct failure');
   });
@@ -711,11 +711,11 @@ describe('stalled-but-pending observability (D27 LOCKED, precedent 41)', () => {
       expect(__mountPromiseStalledEmitted(h.docName)).toBe(true);
       const collector = getCollector();
       const beforeCount = collector
-        ? collector.marks.toArray().filter((m) => m.name === 'ok/mount/stalled').length
+        ? collector.marks.toArray().filter((m) => m.name === 'ps/mount/stalled').length
         : 0;
       __reapStalledOnVisible(Date.now() + 10_000);
       const afterCount = collector
-        ? collector.marks.toArray().filter((m) => m.name === 'ok/mount/stalled').length
+        ? collector.marks.toArray().filter((m) => m.name === 'ps/mount/stalled').length
         : 0;
       expect(afterCount).toBe(beforeCount);
     } finally {
@@ -758,7 +758,7 @@ describe('D27 no-timer-reject regression guard', () => {
       if (collector) {
         const timeoutRejects = collector.marks
           .toArray()
-          .filter((m) => m.name === 'ok/mount/reject' && m.properties?.reason === 'timeout');
+          .filter((m) => m.name === 'ps/mount/reject' && m.properties?.reason === 'timeout');
         expect(timeoutRejects).toEqual([]);
       }
       expect(__mountPromiseSettled(h.docName)).toBe(false);
@@ -786,7 +786,7 @@ describe('mountId payload (US-006 / FR5 / AC13 — cross-namespace correlation)'
       construct: h.construct,
     });
     const newMarks = collector.marks.toArray().slice(beforeMarks);
-    const mountMarks = newMarks.filter((m) => m.name.startsWith('ok/mount/'));
+    const mountMarks = newMarks.filter((m) => m.name.startsWith('ps/mount/'));
     expect(mountMarks.length).toBeGreaterThan(0);
     for (const m of mountMarks) {
       expect(m.properties?.mountId).toBe('specific-mount-id-7');
@@ -1244,7 +1244,7 @@ describe('unhandled-throw backstop — body must reject, never hang', () => {
 
     expect(consumerRejected).toBe(false);
     const marks = getCollector()?.marks.toArray() ?? [];
-    const postSettleMark = marks.find((m) => m.name === 'ok/mount/post-settle-throw');
+    const postSettleMark = marks.find((m) => m.name === 'ps/mount/post-settle-throw');
     expect(postSettleMark).toBeDefined();
   });
 
@@ -1281,20 +1281,20 @@ describe('unhandled-throw backstop — body must reject, never hang', () => {
     await new Promise<void>((resolve) => setTimeout(resolve, 0));
 
     const marks = getCollector()?.marks.toArray() ?? [];
-    const postSettleMark = marks.find((m) => m.name === 'ok/mount/post-settle-throw');
+    const postSettleMark = marks.find((m) => m.name === 'ps/mount/post-settle-throw');
     expect(postSettleMark).toBeDefined();
     expect(postSettleMark?.properties?.docName).toBe(h.docName);
     expect(postSettleMark?.properties?.message).toContain('synthetic HIT-path DOM failure');
   });
 });
 
-describe('ok/mount/resolve-elapsed-ms histogram (cap-graduation sweep substrate)', () => {
+describe('ps/mount/resolve-elapsed-ms histogram (cap-graduation sweep substrate)', () => {
   beforeEach(() => {
     getCollector()?.reset();
   });
 
   test('histogram bucket name passes validatePerfMarkName', () => {
-    expect(validatePerfMarkName('ok/mount/resolve-elapsed-ms')).toBe(true);
+    expect(validatePerfMarkName('ps/mount/resolve-elapsed-ms')).toBe(true);
   });
 
   test('cache MISS resolve increments the histogram with the measured elapsedMs', async () => {
@@ -1304,7 +1304,7 @@ describe('ok/mount/resolve-elapsed-ms histogram (cap-graduation sweep substrate)
       mountId: 'hist-mid',
       construct: h.construct,
     });
-    const snap = getHistogramSnapshot('ok/mount/resolve-elapsed-ms');
+    const snap = getHistogramSnapshot('ps/mount/resolve-elapsed-ms');
     expect(snap).toBeDefined();
     expect(snap?.count).toBe(1);
     expect(snap?.max).toBeGreaterThanOrEqual(0);
@@ -1323,7 +1323,7 @@ describe('ok/mount/resolve-elapsed-ms histogram (cap-graduation sweep substrate)
     });
     const newMarks = collector.marks.toArray().slice(beforeMarks);
     const histMarks = newMarks.filter(
-      (m) => m.name === 'ok/mount/resolve-elapsed-ms' && m.properties?.docName === 'doc-hist-pair',
+      (m) => m.name === 'ps/mount/resolve-elapsed-ms' && m.properties?.docName === 'doc-hist-pair',
     );
     expect(histMarks.length).toBe(1);
     const props = histMarks[0]?.properties;
@@ -1344,7 +1344,7 @@ describe('ok/mount/resolve-elapsed-ms histogram (cap-graduation sweep substrate)
     });
     const newMarks = collector.marks.toArray().slice(beforeMarks);
     const resolveMarks = newMarks.filter(
-      (m) => m.name === 'ok/mount/resolve' && m.properties?.docName === 'doc-hist-coexist',
+      (m) => m.name === 'ps/mount/resolve' && m.properties?.docName === 'doc-hist-coexist',
     );
     expect(resolveMarks.length).toBe(1);
   });
@@ -1366,7 +1366,7 @@ describe('ok/mount/resolve-elapsed-ms histogram (cap-graduation sweep substrate)
       mountId: 'hit-mid',
       construct: h.construct,
     });
-    const snap = getHistogramSnapshot('ok/mount/resolve-elapsed-ms');
+    const snap = getHistogramSnapshot('ps/mount/resolve-elapsed-ms');
     expect(snap).toBeUndefined();
   });
 });
@@ -1382,7 +1382,7 @@ describe('cold-mount span finalization on reject paths', () => {
 
   test('controller.abort() (explicit cancel) finalizes the cold-mount span', async () => {
     const h = makeHarness('reject-abort');
-    emitColdMountChild('reject-abort-mid', 'ok.provider-pool.open', {}, Date.now(), Date.now() + 1);
+    emitColdMountChild('reject-abort-mid', 'ps.provider-pool.open', {}, Date.now(), Date.now() + 1);
     expect(__coldMountSpanCount()).toBe(1);
 
     const promise = mountTiptapEditorPromise({
@@ -1399,7 +1399,7 @@ describe('cold-mount span finalization on reject paths', () => {
   test('construct() throws → finalizes the cold-mount span', async () => {
     emitColdMountChild(
       'reject-construct-mid',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       {},
       Date.now(),
       Date.now() + 1,
@@ -1422,7 +1422,7 @@ describe('cold-mount span finalization on reject paths', () => {
     h.spies.mountThrows = true;
     emitColdMountChild(
       'reject-mount-fail-mid',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       {},
       Date.now(),
       Date.now() + 1,
@@ -1442,7 +1442,7 @@ describe('cold-mount span finalization on reject paths', () => {
     const h = makeHarness('invalidate-finalizes');
     emitColdMountChild(
       'invalidate-finalizes-mid',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       {},
       Date.now(),
       Date.now() + 1,

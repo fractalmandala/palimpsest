@@ -161,7 +161,7 @@ describe('graph endpoints', () => {
       const countsMissing = JSON.parse(
         (await callRoute(contentDir, '/api/backlink-counts', fileIndex, backlinkIndex)).body,
       ) as { type: string; title: string };
-      expect(countsMissing.type).toBe('urn:ok:error:invalid-request');
+      expect(countsMissing.type).toBe('urn:ps:error:invalid-request');
       expect(countsMissing.title).toContain('Missing docNames');
 
       const forward = JSON.parse(
@@ -253,7 +253,7 @@ describe('graph endpoints', () => {
       );
       expect(missingDocName.status).toBe(400);
       const missingDocNameBody = JSON.parse(missingDocName.body) as { type: string; title: string };
-      expect(missingDocNameBody.type).toBe('urn:ok:error:invalid-request');
+      expect(missingDocNameBody.type).toBe('urn:ps:error:invalid-request');
       expect(missingDocNameBody.title).toContain('docName is required');
 
       const invalidDegrees = await callRoute(
@@ -264,7 +264,7 @@ describe('graph endpoints', () => {
       );
       expect(invalidDegrees.status).toBe(400);
       const invalidDegreesBody = JSON.parse(invalidDegrees.body) as { type: string; title: string };
-      expect(invalidDegreesBody.type).toBe('urn:ok:error:invalid-request');
+      expect(invalidDegreesBody.type).toBe('urn:ps:error:invalid-request');
       expect(invalidDegreesBody.title).toContain('degrees must be');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
@@ -494,7 +494,7 @@ describe('graph endpoints', () => {
       const response = await callRoute(contentDir, '/api/dead-links', fileIndex);
       expect(response.status).toBe(503);
       const body = JSON.parse(response.body) as { type: string; title: string; status: number };
-      expect(body.type).toBe('urn:ok:error:backlink-index-not-configured');
+      expect(body.type).toBe('urn:ps:error:backlink-index-not-configured');
       expect(body.status).toBe(503);
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
@@ -537,7 +537,7 @@ describe('graph endpoints', () => {
         });
         expect(response.status).toBe(503);
         expect(JSON.parse(response.body)).toMatchObject({
-          type: 'urn:ok:error:derived-index-unavailable',
+          type: 'urn:ps:error:derived-index-unavailable',
           title: 'Derived index is shutting down.',
           status: 503,
         });
@@ -573,7 +573,7 @@ describe('graph endpoints', () => {
       );
       expect(response.status).toBe(500);
       expect(JSON.parse(response.body)).toMatchObject({
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         status: 500,
       });
       expect(errorLog).toHaveBeenCalledWith(
@@ -723,7 +723,7 @@ describe('graph endpoints', () => {
 
       expect(response.status).toBe(400);
       const body = JSON.parse(response.body) as { type: string; title: string };
-      expect(body.type).toBe('urn:ok:error:invalid-request');
+      expect(body.type).toBe('urn:ps:error:invalid-request');
       expect(body.title).toContain('Invalid orphan mode');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
@@ -786,7 +786,7 @@ describe('POST /api/test-rescan-backlinks', () => {
       expect(resp.status).toBe(404);
       expect(resp.headers['Content-Type']).toBe('application/problem+json');
       const body = JSON.parse(resp.body);
-      expect(body.type).toBe('urn:ok:error:not-found');
+      expect(body.type).toBe('urn:ps:error:not-found');
       expect(body.title).toBe('API endpoint not found.');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });

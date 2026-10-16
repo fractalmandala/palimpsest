@@ -139,7 +139,7 @@ export default defineScenario({
       const buf: PmMark[] = ring ? ring.toArray() : [];
       return buf
         .filter((m) => m.startTime >= boundary)
-        .filter((m) => m.name === 'ok/cache/reparent-start' || m.name === 'ok/cache/reparent-end')
+        .filter((m) => m.name === 'ps/cache/reparent-start' || m.name === 'ps/cache/reparent-end')
         .filter((m) => m.properties?.kind === 'tiptap')
         .map((m) => ({
           name: m.name,
@@ -149,10 +149,10 @@ export default defineScenario({
     }, revisitStartPerf);
 
     const startMarks = reparentMarks
-      .filter((m) => m.name === 'ok/cache/reparent-start')
+      .filter((m) => m.name === 'ps/cache/reparent-start')
       .sort((a, b) => b.startTime - a.startTime);
     const endMarks = reparentMarks
-      .filter((m) => m.name === 'ok/cache/reparent-end')
+      .filter((m) => m.name === 'ps/cache/reparent-end')
       .sort((a, b) => b.startTime - a.startTime);
 
     if (startMarks.length === 0 || endMarks.length === 0) {

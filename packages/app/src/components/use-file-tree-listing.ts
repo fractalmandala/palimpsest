@@ -28,7 +28,7 @@ interface ListingMessages {
 interface FileTreeListingOptions {
   showHiddenFiles: boolean;
   showOnlyMarkdownFiles: boolean;
-  showOkFolders: boolean;
+  showPsFolders: boolean;
   messages: ListingMessages;
   source?: FileTreeListingSource;
 }
@@ -50,7 +50,7 @@ export interface FileTreeListingHandle {
 export function useFileTreeListing({
   showHiddenFiles,
   showOnlyMarkdownFiles,
-  showOkFolders,
+  showPsFolders,
   messages,
   source = httpFileTreeListingSource,
 }: FileTreeListingOptions): FileTreeListingHandle {
@@ -63,7 +63,7 @@ export function useFileTreeListing({
   const relaunchInFlight = useRelaunchInFlight();
 
   const documentsRef = useRef(documents);
-  const visibilityRef = useRef({ showHiddenFiles, showOnlyMarkdownFiles, showOkFolders });
+  const visibilityRef = useRef({ showHiddenFiles, showOnlyMarkdownFiles, showPsFolders });
   const messagesRef = useRef(messages);
   const expandedFolderPathsRef = useRef<ReadonlySet<string>>(new Set());
   const optimisticAddsRef = useRef<Map<string, number>>(new Map());
@@ -133,7 +133,7 @@ export function useFileTreeListing({
     void source
       .listDepthOne({
         dir: folderPath,
-        showOk: visibility().showOkFolders,
+        showOk: visibility().showPsFolders,
         signal: controller.signal,
         messages: messagesRef.current,
       })
@@ -205,7 +205,7 @@ export function useFileTreeListing({
       const result = await source
         .listDepthOne({
           dir: '',
-          showOk: visibility().showOkFolders,
+          showOk: visibility().showPsFolders,
           signal: controller.signal,
           messages: messagesRef.current,
           onBatch: (batch) => {
@@ -272,8 +272,8 @@ export function useFileTreeListing({
   }, [messages.fallbackErrorTitle, messages.schemaMismatchTitle, source]);
 
   useLayoutEffect(() => {
-    visibilityRef.current = { showHiddenFiles, showOnlyMarkdownFiles, showOkFolders };
-  }, [showHiddenFiles, showOnlyMarkdownFiles, showOkFolders]);
+    visibilityRef.current = { showHiddenFiles, showOnlyMarkdownFiles, showPsFolders };
+  }, [showHiddenFiles, showOnlyMarkdownFiles, showPsFolders]);
 
   const firstVisibilityEffectRunRef = useRef(true);
   // biome-ignore lint/correctness/useExhaustiveDependencies: visibility values are transition triggers; the layout effect owns ref synchronization and this effect schedules through a stable ref.
@@ -283,7 +283,7 @@ export function useFileTreeListing({
       return;
     }
     requestRefreshRef.current?.();
-  }, [showHiddenFiles, showOnlyMarkdownFiles, showOkFolders]);
+  }, [showHiddenFiles, showOnlyMarkdownFiles, showPsFolders]);
 
   const firstRelaunchEffectRunRef = useRef(true);
   // biome-ignore lint/correctness/useExhaustiveDependencies: relaunchInFlight is a transition trigger; the body schedules through a stable ref.

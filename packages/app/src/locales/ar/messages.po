@@ -967,7 +967,7 @@ msgstr "يوجد بالفعل مجلد باسم <0>{sanitized}</0> فيه ملف
 msgid "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 msgstr "المفتاح مضبوط، لكن مزوّد التضمينات رفضه أو تعذّر الوصول إليه — فعاد البحث إلى مطابقة الكلمات المفتاحية. استخدم <0>اختبار الاتصال</0> ضمن «نقطة نهاية مخصصة» لمعرفة الخطأ."
 
-msgid "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgid "A knowledge base that follows Google's OpenKnowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
 msgstr "قاعدة معرفة تتبع تنسيق Google Palimpsest، وهو طريقة مشتركة لتنظيم ما تعرفه. اختر هذا إن أردت أن تعمل ملاحظاتك جيدًا مع أدوات أخرى تفهم التنسيق."
 
 msgid "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
@@ -1279,14 +1279,14 @@ msgid "Adds a managed block to"
 msgstr "يضيف كتلة مُدارة إلى"
 
 #. Subtext under the project AI-tools checkbox
-msgid "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
 msgstr "يضيف إدخال MCP الخاص بـ Palimpsest ومهارة المشروع إلى <0>{toolList}</0>، ليتمكن وكلاؤك من قراءة ملفاتك وتحريرها."
 
 #. Subtext under the AI-tools MCP checkbox
-msgid "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
 msgstr "يضيف إدخال MCP الخاص بـ Palimpsest إلى <0>{connectToolList}</0>، ليتمكن وكلاؤك من قراءة ملفاتك وتحريرها."
 
-msgid "Adds an Palimpsest MCP entry to this project's agent config."
+msgid "Adds a Palimpsest MCP entry to this project's agent config."
 msgstr "يضيف إدخال MCP لـ Palimpsest إلى إعدادات الوكيل الخاصة بهذا المشروع."
 
 #. js-lingui-explicit-id
@@ -1417,7 +1417,7 @@ msgstr "أوشكنا على الانتهاء. إليك ما تم وما تبقى
 msgid "Already at {assetContentPath} — reusing."
 msgstr "موجود بالفعل في {assetContentPath} — يعاد استخدامه."
 
-#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked
+#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have a Palimpsest MCP entry, which stay as they are while the box is unticked
 msgid "Already connected to {replacingToolList}"
 msgstr "متصل بالفعل بـ: {replacingToolList}"
 
@@ -2121,7 +2121,7 @@ msgstr "يفحص المستندات بحثًا عن مشكلات Markdown ويم
 msgid "Checks the whole project for markdown problems and broken links"
 msgstr "يفحص المشروع بأكمله بحثًا عن مشكلات Markdown والروابط المعطلة"
 
-msgid "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
+msgid "Checks your project against the OpenKnowledge Format. Turn it off any time in Settings."
 msgstr "يتحقق من مشروعك مقابل Palimpsest Format. قم بإيقاف تشغيله في أي وقت في الإعدادات."
 
 msgid "Choose a skill archive"
@@ -5740,7 +5740,7 @@ msgstr "تتبّع الأشخاص والشركات التي تعمل معها و
 msgid "keeps the skills"
 msgstr "يحتفظ بالمهارات"
 
-msgid "Keeps your knowledge base aligned with the Palimpsest Format."
+msgid "Keeps your knowledge base aligned with the OpenKnowledge Format."
 msgstr "يحافظ على توافق قاعدة معارفك مع Palimpsest Format."
 
 msgid "Kept both — \"{0}\" is its own skill now"
@@ -7248,7 +7248,7 @@ msgstr "تعذر على Palimpsest الوصول إلى خادم المشروع �
 msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
 msgstr "يقوم Palimpsest بإنشاء ملف تنقل يسمى index.md والحفاظ عليه في كل مجلد يحتوي على Markdown."
 
-msgid "Palimpsest Format guidance"
+msgid "OpenKnowledge Format guidance"
 msgstr "Palimpsest Format التوجيه"
 
 msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
@@ -10302,7 +10302,7 @@ msgstr "لا يمكن استخدام نقطة النهاية تلك. أدخل ر
 msgid "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
 msgstr "يحتوي هذا المجلد بالفعل على شيفرة لم تكتبها Palimpsest وستسمح الثقة نفسها لـ {0} بتشغيلها: {otherExtensions}."
 
-msgid "That folder isn't an Palimpsest project yet. Initialize it and open?"
+msgid "That folder isn't a Palimpsest project yet. Initialize it and open?"
 msgstr "ذلك المجلد ليس مشروع Palimpsest بعد. هل تهيّئه وتفتحه؟"
 
 msgid "That host is already in the list."
@@ -10339,7 +10339,7 @@ msgstr "أصبحت نسخة {editor} هي المصدر"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "تعذّر فتح {targetNoun} — حاول الانتقال إليه يدويًا."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
 msgstr "الـ <0>type</0> الذي يحصل عليه كل مستند يُنشأ من هذا القالب (مثل <1>research-note</1>). يبقي المستندات الجديدة متوافقة مع Palimpsest Format."
 
 msgid "The agent is working"
@@ -10760,7 +10760,7 @@ msgstr "لا يحتوي هذا الفرع على مشروع Palimpsest هذا. �
 msgid "This branch is checked out in:"
 msgstr "هذا الفرع مسحوب في:"
 
-msgid "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
+msgid "This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened."
 msgstr "يعيد هذا الفرع توجيه مسار إعداد Palimpsest إلى خارج شجرة العمل. تم إنشاء شجرة العمل ولكن لم يتم فتحها."
 
 #. Toast after first-launch setup ends without connecting AI tools; agentConnectionsLabel is the Settings sidebar pane name

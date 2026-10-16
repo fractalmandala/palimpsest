@@ -92,8 +92,8 @@ function makeConfigContextValue(
     userSynced: true,
     projectBinding,
     projectLocalBinding: null,
-    okignoreBinding: null,
-    okignoreSynced: true,
+    psignoreBinding: null,
+    psignoreSynced: true,
     userConfig: config,
     projectConfig: config,
     projectSynced: true,
@@ -122,8 +122,8 @@ async function renderPreferences(binding: ConfigBinding) {
         <SettingsDialogBody
           activeId="preferences"
           userBinding={binding}
-          okignoreBinding={null}
-          okignoreSynced={false}
+          psignoreBinding={null}
+          psignoreSynced={false}
         />
       </TooltipProvider>
     </SettingsContextProvider>,
@@ -137,8 +137,8 @@ async function renderProjectPreferences() {
         <SettingsDialogBody
           activeId="project-preferences"
           userBinding={null}
-          okignoreBinding={null}
-          okignoreSynced={false}
+          psignoreBinding={null}
+          psignoreSynced={false}
         />
       </TooltipProvider>
     </SettingsContextProvider>,
@@ -176,7 +176,7 @@ describe('SettingsDialogBody preferences runtime', () => {
     expect(screen.getByText('Open preview when agent edits')).toBeDefined();
     expect(
       screen.getByText(
-        'When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.).',
+        'When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.).',
       ),
     ).toBeDefined();
     const previewField = container.querySelector('[data-field="appearance.preview.autoOpen"]');
@@ -524,8 +524,8 @@ describe('SettingsDialogBody language picker', () => {
       await waitFor(() => {
         expect(spans).toEqual([
           {
-            name: 'ok.language.preferenceChanged',
-            attributes: { 'ok.language.from': 'system', 'ok.language.to': 'es' },
+            name: 'ps.language.preferenceChanged',
+            attributes: { 'ps.language.from': 'system', 'ps.language.to': 'es' },
           },
         ]);
       });
@@ -542,8 +542,8 @@ describe('SettingsDialogBody language picker', () => {
 
       await waitFor(() => {
         expect(spans[0]?.attributes).toEqual({
-          'ok.language.from': 'fr',
-          'ok.language.to': 'system',
+          'ps.language.from': 'fr',
+          'ps.language.to': 'system',
         });
       });
     });
@@ -603,8 +603,8 @@ async function renderPreferencesWithTheme(binding: ConfigBinding) {
           <SettingsDialogBody
             activeId="preferences"
             userBinding={binding}
-            okignoreBinding={null}
-            okignoreSynced={false}
+            psignoreBinding={null}
+            psignoreSynced={false}
           />
           <ThemeProbe />
         </TooltipProvider>
@@ -692,8 +692,8 @@ async function renderThemePluginWithTheme(binding: ConfigBinding) {
             <SettingsDialogBody
               activeId="plugin:theme"
               userBinding={binding}
-              okignoreBinding={null}
-              okignoreSynced={false}
+              psignoreBinding={null}
+              psignoreSynced={false}
             />
             <ThemeProbe />
           </TooltipProvider>

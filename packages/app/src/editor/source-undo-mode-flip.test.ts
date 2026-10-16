@@ -5,7 +5,7 @@ import * as Y from 'yjs';
 import { createSourceUndoFlipTracker, setSourceViewUndoFlipActive } from './source-undo-mode-flip';
 
 const UNTRACKED_ORIGIN = Object.freeze({ kind: 'source-undo-flip-untracked' });
-const FLIP_CLEAR_MARK = 'ok/source-undo/flip-clear';
+const FLIP_CLEAR_MARK = 'ps/source-undo/flip-clear';
 const RIG_DOC_NAME = 'source-undo-flip-unit';
 
 function makeRig() {

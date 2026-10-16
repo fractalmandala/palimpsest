@@ -71,7 +71,7 @@ describe('classifyToolFailure', () => {
     }
   });
 
-  test('says nothing rather than guessing at an Palimpsest error it does not know', () => {
+  test('says nothing rather than guessing at a Palimpsest error it does not know', () => {
     for (const text of ['', 'Error: Document not found', 'exit code 2']) {
       expect({ text, got: classifyToolFailure(psTool(text)) }).toEqual({ text, got: null });
     }

@@ -14,7 +14,7 @@ describe('desktop variant identities', () => {
       artifactName: 'Palimpsest',
       protocolScheme: 'palimpsest',
       updateChannel: 'latest',
-      cliCommandNames: ['ok', 'palimpsest'],
+      cliCommandNames: ['ps', 'palimpsest'],
     });
   });
 

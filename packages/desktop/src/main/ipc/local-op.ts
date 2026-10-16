@@ -49,7 +49,7 @@ interface LocalOpFailure {
 }
 
 export interface LocalOpDeps {
-  resolveOkCli: () => PsCliCommand;
+  resolvePsCli: () => PsCliCommand;
   logFailure: (failure: LocalOpFailure) => void;
   state: LocalOpHandlerState;
 }
@@ -58,7 +58,7 @@ export function handleAuthStart(
   deps: LocalOpDeps,
   sender: SendableWebContents,
 ): { ok: true; streamId: string } | { ok: false; error: string } {
-  const cli = deps.resolveOkCli();
+  const cli = deps.resolvePsCli();
   const refused = cli.refusalFor(['auth', 'login']);
   if (refused !== undefined) return { ok: false, error: refused };
   const streamId = randomUUID();
@@ -81,7 +81,7 @@ export function handleAuthStart(
     onEvent: (event) => {
       if (event.type === 'error') terminalError = event.message;
       if (!sender.isDestroyed?.()) {
-        sendToRenderer(sender, 'ok:local-op:auth:event', { streamId, event });
+        sendToRenderer(sender, 'ps:local-op:auth:event', { streamId, event });
       }
     },
   });
@@ -93,7 +93,7 @@ export function handleAuthStart(
     if (terminalError !== null) {
       deps.logFailure({
         event: 'ipc.error',
-        channel: 'ok:local-op:auth:start',
+        channel: 'ps:local-op:auth:start',
         reason: terminalError,
         handler: 'handleAuthStart',
       });
@@ -124,7 +124,7 @@ export function handleCloneStart(
           : 'dir must be within the user home directory',
     };
   }
-  const cli = deps.resolveOkCli();
+  const cli = deps.resolvePsCli();
   const refused = cli.refusalFor(['clone']);
   if (refused !== undefined) return { ok: false, error: refused };
   const streamId = randomUUID();
@@ -150,7 +150,7 @@ export function handleCloneStart(
     onEvent: (event) => {
       if (event.type === 'error') terminalError = event.message;
       if (sender.isDestroyed?.()) return;
-      sendToRenderer(sender, 'ok:local-op:clone:event', { streamId, event });
+      sendToRenderer(sender, 'ps:local-op:clone:event', { streamId, event });
     },
   });
   deps.state.cloneInFlight = { streamId, controller };
@@ -161,7 +161,7 @@ export function handleCloneStart(
     if (terminalError !== null) {
       deps.logFailure({
         event: 'ipc.error',
-        channel: 'ok:local-op:clone:start',
+        channel: 'ps:local-op:clone:start',
         reason: terminalError,
         handler: 'handleCloneStart',
       });
@@ -211,7 +211,7 @@ export function handleAuthStatus(
     if (!response.authenticated && response.error !== undefined) {
       deps.logFailure({
         event: 'ipc.error',
-        channel: 'ok:local-op:auth:status',
+        channel: 'ps:local-op:auth:status',
         reason: response.error,
         handler: 'handleAuthStatus',
       });
@@ -223,7 +223,7 @@ export function handleAuthStatus(
     host,
     () =>
       runAuthStatusSubprocess({
-        cli: deps.resolveOkCli(),
+        cli: deps.resolvePsCli(),
         host: request?.host,
       }).then(logged),
     (h) =>
@@ -244,7 +244,7 @@ export function handleAuthRepos(
     if (!response.ok && response.authenticated !== false) {
       deps.logFailure({
         event: 'ipc.error',
-        channel: 'ok:local-op:auth:repos',
+        channel: 'ps:local-op:auth:repos',
         reason: response.error,
         handler: 'handleAuthRepos',
       });
@@ -256,7 +256,7 @@ export function handleAuthRepos(
     host,
     () =>
       runAuthReposSubprocess({
-        cli: deps.resolveOkCli(),
+        cli: deps.resolvePsCli(),
         host: request?.host,
       }).then(logged),
     () =>

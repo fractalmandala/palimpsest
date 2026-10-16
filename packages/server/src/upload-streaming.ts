@@ -70,19 +70,19 @@ export function linkTempToFinalWithCollisionRetry(
       } catch {}
 
       if (code === 'ENOSPC' || code === 'EDQUOT') {
-        throw new UploadWriteError('urn:ok:error:storage-full', err);
+        throw new UploadWriteError('urn:ps:error:storage-full', err);
       }
       if (code === 'EROFS' || code === 'EACCES' || code === 'EPERM') {
-        throw new UploadWriteError('urn:ok:error:storage-readonly', err);
+        throw new UploadWriteError('urn:ps:error:storage-readonly', err);
       }
-      throw new UploadWriteError('urn:ok:error:storage-error', err);
+      throw new UploadWriteError('urn:ps:error:storage-error', err);
     }
   }
 
   try {
     tracedUnlinkSync(tempPath);
   } catch {}
-  throw new UploadWriteError('urn:ok:error:collision-exhaustion');
+  throw new UploadWriteError('urn:ps:error:collision-exhaustion');
 }
 
 export function cleanupOrphanUploadTempfiles(

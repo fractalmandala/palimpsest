@@ -2070,7 +2070,7 @@ jobs:
           if gh api -X POST "repos/inkeep/agents-private/dispatches" --input - <<<"$payload" >/dev/null; then
             echo "Dispatched ps-stable-published to agents-private for ${RELEASE_TAG}; the docs changelog rebuilds there."
           else
-            echo "::warning::Could not dispatch ps-stable-published for ${RELEASE_TAG}; the docs changelog refreshes on the next docs deploy, or run public-open-knowledge-docs-changelog-deploy.yml by hand."
+            echo "::warning::Could not dispatch ps-stable-published for ${RELEASE_TAG}; the docs changelog refreshes on the next docs deploy, or run public-palimpsest-docs-changelog-deploy.yml by hand."
           fi
 
       # FR5b — the npm stable publish sits downstream of the DMG smoke gate

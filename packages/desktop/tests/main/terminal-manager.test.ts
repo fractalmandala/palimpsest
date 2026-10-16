@@ -81,14 +81,14 @@ function makeManager(over?: Partial<TerminalManagerDeps>) {
       return u as unknown as PtyUtilityLike;
     },
     sendData: (_wc, payload) => {
-      sent.push({ channel: 'ok:pty:data', payload: payload as unknown as Record<string, unknown> });
+      sent.push({ channel: 'ps:pty:data', payload: payload as unknown as Record<string, unknown> });
     },
     sendExit: (_wc, payload) => {
-      sent.push({ channel: 'ok:pty:exit', payload: payload as unknown as Record<string, unknown> });
+      sent.push({ channel: 'ps:pty:exit', payload: payload as unknown as Record<string, unknown> });
     },
     sendNotice: (_wc, payload) => {
       sent.push({
-        channel: 'ok:pty:notice',
+        channel: 'ps:pty:notice',
         payload: payload as unknown as Record<string, unknown>,
       });
     },
@@ -118,9 +118,9 @@ function makeManager(over?: Partial<TerminalManagerDeps>) {
     }
   };
   const dataPayloads = (): string[] =>
-    sent.filter((s) => s.channel === 'ok:pty:data').map((s) => s.payload.data as string);
+    sent.filter((s) => s.channel === 'ps:pty:data').map((s) => s.payload.data as string);
   const exits = (): Array<Record<string, unknown>> =>
-    sent.filter((s) => s.channel === 'ok:pty:exit').map((s) => s.payload);
+    sent.filter((s) => s.channel === 'ps:pty:exit').map((s) => s.payload);
   const liveTimerCount = (): number => timers.filter((t) => t !== null).length;
   const staleTimerArmed = (): boolean => timers[0] !== null;
   return {
@@ -261,8 +261,8 @@ describe('terminal creation waits for the renderer to subscribe', () => {
     expect(h.sent).toEqual([]);
     expect(h.start()).toEqual({ ok: true, replay: '' });
     expect(h.sent).toEqual([
-      { channel: 'ok:pty:data', payload: { ptyId: 'pty-1', data: 'prompt$ ' } },
-      { channel: 'ok:pty:exit', payload: { ptyId: 'pty-1', exitCode: 0, signal: null } },
+      { channel: 'ps:pty:data', payload: { ptyId: 'pty-1', data: 'prompt$ ' } },
+      { channel: 'ps:pty:exit', payload: { ptyId: 'pty-1', exitCode: 0, signal: null } },
     ]);
     h.runTimers();
     expect(h.sent).toHaveLength(2);
@@ -557,7 +557,7 @@ describe('createTerminalManager — create', () => {
     });
 
     expect(h.sent).toContainEqual({
-      channel: 'ok:pty:notice',
+      channel: 'ps:pty:notice',
       payload: { ptyId: 'pty-1', notice: 'invalid-shell-override', reason: 'not-found' },
     });
   });
@@ -580,7 +580,7 @@ describe('createTerminalManager — create', () => {
     });
 
     expect(h.sent).toContainEqual({
-      channel: 'ok:pty:notice',
+      channel: 'ps:pty:notice',
       payload: { ptyId: 'pty-1', notice: 'shell-resolved', shellFamily: 'bash' },
     });
   });
@@ -605,7 +605,7 @@ describe('createTerminalManager — create', () => {
       });
 
       expect(h.sent).toContainEqual({
-        channel: 'ok:pty:notice',
+        channel: 'ps:pty:notice',
         payload: { ptyId: 'pty-1', notice: 'invalid-shell-override', reason },
       });
     },
@@ -631,7 +631,7 @@ describe('createTerminalManager — create', () => {
       });
 
       expect(h.sent).toContainEqual({
-        channel: 'ok:pty:notice',
+        channel: 'ps:pty:notice',
         payload: { ptyId: 'pty-1', notice: 'shell-resolved', shellFamily },
       });
     },
@@ -657,7 +657,7 @@ describe('createTerminalManager — create', () => {
       });
 
       expect(h.sent).toContainEqual({
-        channel: 'ok:pty:notice',
+        channel: 'ps:pty:notice',
         payload: { ptyId: 'pty-1', notice: 'support-file-degraded', reason },
       });
     },
@@ -692,7 +692,7 @@ describe('createTerminalManager — create', () => {
       reason: 'escaped',
     });
 
-    expect(h.sent.filter((s) => s.channel === 'ok:pty:notice')).toEqual([]);
+    expect(h.sent.filter((s) => s.channel === 'ps:pty:notice')).toEqual([]);
     expect(h.warns.length).toBeGreaterThan(0);
   });
 
@@ -885,7 +885,7 @@ describe('createTerminalManager — exit + crash surfacing', () => {
     });
     h.forked[0]?.emitMessage({ type: 'data', ptyId: 'pty-1', data: 'goodbye' });
     h.forked[0]?.emitMessage({ type: 'exit', ptyId: 'pty-1', exitCode: 0, signal: null });
-    expect(h.sent.map((s) => s.channel)).toEqual(['ok:pty:data', 'ok:pty:exit']);
+    expect(h.sent.map((s) => s.channel)).toEqual(['ps:pty:data', 'ps:pty:exit']);
     expect(h.exits()[0]).toEqual({ ptyId: 'pty-1', exitCode: 0, signal: null });
     const before = h.forked[0]?.posted.length ?? 0;
     h.mgr.input({ windowId: 1, ptyId: 'pty-1', data: 'x' });
@@ -1682,7 +1682,7 @@ describe('createTerminalManager — exit + crash surfacing', () => {
     });
     h.forked[0]?.emitMessage({ type: 'data', ptyId: 'pty-1', data: 'last gasp' });
     h.forked[0]?.emitExit(1);
-    expect(h.sent.map((s) => s.channel)).toEqual(['ok:pty:data', 'ok:pty:exit']);
+    expect(h.sent.map((s) => s.channel)).toEqual(['ps:pty:data', 'ps:pty:exit']);
     expect(h.dataPayloads()).toEqual(['last gasp']);
   });
 
@@ -2405,7 +2405,7 @@ describe('createTerminalManager — concurrent sessions', () => {
   }
   const dataFor = (h: ReturnType<typeof makeManager>, ptyId: string): string[] =>
     h.sent
-      .filter((s) => s.channel === 'ok:pty:data' && s.payload.ptyId === ptyId)
+      .filter((s) => s.channel === 'ps:pty:data' && s.payload.ptyId === ptyId)
       .map((s) => s.payload.data as string);
 
   test('a second create adds a session over the same host without killing the first', () => {

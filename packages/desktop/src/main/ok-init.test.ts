@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
-import { runOkInit } from './ok-init.ts';
+import { runPsInit } from './ok-init.ts';
 
 const execFileAsync = promisify(execFile);
 
@@ -16,7 +16,7 @@ async function git(cwd: string, ...args: string[]): Promise<void> {
   });
 }
 
-describe('runOkInit', () => {
+describe('runPsInit', () => {
   let testRoot: string | null = null;
   afterEach(() => {
     if (testRoot !== null) rmSync(testRoot, { recursive: true, force: true });
@@ -24,7 +24,7 @@ describe('runOkInit', () => {
   });
 
   test('refuses an empty projectPath', async () => {
-    const result = await runOkInit('');
+    const result = await runPsInit('');
     expect(result.ok).toBe(false);
     if (result.ok === false) {
       expect(result.reason).toBe('not-a-git-worktree');
@@ -32,7 +32,7 @@ describe('runOkInit', () => {
   });
 
   test('refuses a relative projectPath', async () => {
-    const result = await runOkInit('relative/path');
+    const result = await runPsInit('relative/path');
     expect(result.ok).toBe(false);
     if (result.ok === false) {
       expect(result.reason).toBe('not-a-git-worktree');
@@ -42,7 +42,7 @@ describe('runOkInit', () => {
 
   test('reports not-a-git-worktree when path has no .git', async () => {
     testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
-    const result = await runOkInit(testRoot);
+    const result = await runPsInit(testRoot);
     expect(result.ok).toBe(false);
     if (result.ok === false) {
       expect(result.reason).toBe('not-a-git-worktree');
@@ -50,7 +50,7 @@ describe('runOkInit', () => {
   });
 
   test('reports not-a-git-worktree when path does not exist', async () => {
-    const result = await runOkInit('/does/not/exist/anywhere');
+    const result = await runPsInit('/does/not/exist/anywhere');
     expect(result.ok).toBe(false);
     if (result.ok === false) {
       expect(result.reason).toBe('not-a-git-worktree');
@@ -62,7 +62,7 @@ describe('runOkInit', () => {
     testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
-    const result = await runOkInit(testRoot);
+    const result = await runPsInit(testRoot);
     expect(result.ok).toBe(true);
     if (result.ok === true) {
       expect(result.projectPath).toBe(testRoot);
@@ -86,7 +86,7 @@ describe('runOkInit', () => {
     const wt = join(testRoot, 'wt-feat');
     await git(mainRepo, 'worktree', 'add', '-b', 'feat', wt);
     configureTestGitRepository(wt);
-    const result = await runOkInit(wt);
+    const result = await runPsInit(wt);
     expect(result.ok).toBe(true);
     if (result.ok === true) {
       expect(result.projectPath).toBe(realpathSync(wt));
@@ -98,12 +98,12 @@ describe('runOkInit', () => {
     testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
-    const first = await runOkInit(testRoot);
+    const first = await runPsInit(testRoot);
     expect(first.ok).toBe(true);
     const configPath = join(testRoot, '.ps', 'config.yml');
     const userMarker = '# user-customized\n';
     writeFileSync(configPath, userMarker);
-    const second = await runOkInit(testRoot);
+    const second = await runPsInit(testRoot);
     expect(second.ok).toBe(true);
     const { readFileSync } = await import('node:fs');
     expect(readFileSync(configPath, 'utf-8')).toBe(userMarker);
@@ -114,9 +114,9 @@ describe('runOkInit', () => {
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
     const [a, b, c] = await Promise.all([
-      runOkInit(testRoot),
-      runOkInit(testRoot),
-      runOkInit(testRoot),
+      runPsInit(testRoot),
+      runPsInit(testRoot),
+      runPsInit(testRoot),
     ]);
     expect(a.ok).toBe(true);
     expect(b.ok).toBe(true);
@@ -128,7 +128,7 @@ describe('runOkInit', () => {
     testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-main-')));
     await git(testRoot, 'init', '--initial-branch=main', '.');
     configureTestGitRepository(testRoot);
-    const result = await runOkInit(testRoot);
+    const result = await runPsInit(testRoot);
     expect(result.ok).toBe(true);
     if (result.ok === true) {
       expect(result.projectPath).toBe(realpathSync(testRoot));

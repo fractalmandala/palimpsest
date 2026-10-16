@@ -7,7 +7,7 @@ import { describe, expect, test } from 'vitest';
 
 const SERVER_PACKAGE_ROOT = resolve(import.meta.dir, '..');
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -18,7 +18,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
   test('subprocess that throws GitNotAvailableError from gitPreflight exits 78 with install guidance on stderr', async () => {
     const projectDir = await mkdtemp(resolve(tmpdir(), 'ps-spawn-preflight-'));
     try {
-      seedOkScaffold(projectDir);
+      seedPsScaffold(projectDir);
 
       const inlineDriver = `
         const { mkdirSync, writeFileSync } = await import('node:fs');
@@ -97,7 +97,7 @@ describe('bootServer() preflight survives the subprocess boundary (FR6 / US-005)
   test('subprocess that throws GitTooOldError exits 78 with too-old message', async () => {
     const projectDir = await mkdtemp(resolve(tmpdir(), 'ps-spawn-preflight-too-old-'));
     try {
-      seedOkScaffold(projectDir);
+      seedPsScaffold(projectDir);
 
       const inlineDriver = `
         const { bootServer } = await import('./src/boot.ts');

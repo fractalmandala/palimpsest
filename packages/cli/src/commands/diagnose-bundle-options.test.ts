@@ -4,7 +4,7 @@ import { diagnoseCommand } from './diagnose.ts';
 
 function bundleCommand(): Command {
   const bundle = diagnoseCommand().commands.find((c) => c.name() === 'bundle');
-  if (bundle === undefined) throw new Error('`bundle` subcommand missing from `ok diagnose`');
+  if (bundle === undefined) throw new Error('`bundle` subcommand missing from `ps diagnose`');
   return bundle;
 }
 
@@ -14,7 +14,7 @@ function parse(argv: string[]): { redact: unknown; unknown: string[] } {
   return { redact: cmd.opts().redact, unknown };
 }
 
-describe('ok diagnose bundle — redaction switch', () => {
+describe('ps diagnose bundle — redaction switch', () => {
   test('redacts when neither spelling is passed', () => {
     expect(parse([])).toEqual({ redact: true, unknown: [] });
   });
@@ -43,11 +43,11 @@ describe('ok diagnose bundle — redaction switch', () => {
   });
 });
 
-describe('ok diagnose bundle --pid help names the running channel CLI', () => {
+describe('ps diagnose bundle --pid help names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: names %s diagnose process', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

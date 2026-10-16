@@ -23,7 +23,7 @@ import { resolveWikiLinkTargetDocName } from '@palimpsest/core/utils/wiki-link-r
 import type { SkillPreviewFlavor } from '@/lib/doc-hash';
 import { normalizeDocNameInput } from '@/lib/doc-paths';
 import { parseProjectSkillContentDocName } from '@/lib/managed-artifact-doc-name';
-import { computeAncestors, hasOkPathSegment } from './file-tree-utils';
+import { computeAncestors, hasPsPathSegment } from './file-tree-utils';
 
 export type ResolvedNavigationTarget =
   | {
@@ -143,7 +143,7 @@ export function psContentNavigationTarget(
   docName: string,
   options: { pages: ReadonlySet<string>; docExt?: string },
 ): ResolvedContentTarget | null {
-  if (!hasOkPathSegment(docName)) return null;
+  if (!hasPsPathSegment(docName)) return null;
   if (parseTemplateContentDocName(docName)) return null;
   if (resolveName(options.pages, docName) !== undefined) return null;
   const assetPath = psReadOnlyAssetPath(docName, options.docExt);

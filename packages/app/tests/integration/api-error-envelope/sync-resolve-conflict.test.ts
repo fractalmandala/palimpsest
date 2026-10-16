@@ -25,7 +25,7 @@ describe('sync-resolve-conflict envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -40,7 +40,7 @@ describe('sync-resolve-conflict envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -55,7 +55,7 @@ describe('sync-resolve-conflict envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -79,7 +79,7 @@ describe('sync-resolve-conflict envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:unresolved-conflict-markers');
+      expect(parsed.data.type).toBe('urn:ps:error:unresolved-conflict-markers');
     }
   });
 
@@ -98,7 +98,7 @@ describe('sync-resolve-conflict envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:no-conflict-tracked');
+      expect(parsed.data.type).toBe('urn:ps:error:no-conflict-tracked');
       expect(parsed.data.detail).toContain('Refresh the conflict list in the Palimpsest app');
       expect(parsed.data.detail).not.toContain('conflicts(');
     }
@@ -112,7 +112,7 @@ describe('sync-resolve-conflict envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

@@ -1,4 +1,4 @@
-import { posixOkManagedBinDir } from './ps-dir.ts';
+import { posixPsManagedBinDir } from './ps-dir.ts';
 import { DESKTOP_PRODUCTS, type DesktopProductName } from './product.ts';
 
 function posixHome(home: string): string {
@@ -10,7 +10,7 @@ export function pathShimHomeDirName(channel: DesktopProductName): string {
 }
 
 export function pathShimBinDir(channel: DesktopProductName, home: string): string {
-  return posixOkManagedBinDir(home, pathShimHomeDirName(channel));
+  return posixPsManagedBinDir(home, pathShimHomeDirName(channel));
 }
 
 export function pathShimMarkerPath(channel: DesktopProductName, home: string): string {

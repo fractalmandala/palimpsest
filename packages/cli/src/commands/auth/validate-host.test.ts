@@ -12,7 +12,7 @@ function hostsYaml(provider: string, ...hostnames: string[]): string {
   return `git:\n  hosts:\n${entries}`;
 }
 
-function writeOkFile(dir: string, file: string, body: string): void {
+function writePsFile(dir: string, file: string, body: string): void {
   mkdirSync(join(dir, '.ps'), { recursive: true });
   writeFileSync(join(dir, '.ps', file), body, 'utf-8');
 }
@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 function declare(...hostnames: string[]): void {
-  writeOkFile(home, 'global.yml', hostsYaml('github', ...hostnames));
+  writePsFile(home, 'global.yml', hostsYaml('github', ...hostnames));
 }
 
 describe('gitHubHostRejection', () => {
@@ -77,7 +77,7 @@ describe('gitHubHostRejection', () => {
     expect(gitHubHostRejection('git.example.internal')).toBe(
       `${errorColor('Error:')} git.example.internal is not a known GitHub host.\n` +
         'To use a GitHub Enterprise Server host, declare it in ~/.ps/global.yml:\n\n  git:\n    hosts:\n      git.example.internal:\n        provider: github\n\n' +
-        'If git.example.internal is not a GitHub host, store an access token for git with:\n\n  ok auth token --host git.example.internal --username <username>\n',
+        'If git.example.internal is not a GitHub host, store an access token for git with:\n\n  ps auth token --host git.example.internal --username <username>\n',
     );
   });
 
@@ -98,7 +98,7 @@ describe('gitHubHostRejection', () => {
   });
 
   test('rejects a host declared with some other provider value', () => {
-    writeOkFile(home, 'global.yml', hostsYaml('gitlab', 'git.example.internal'));
+    writePsFile(home, 'global.yml', hostsYaml('gitlab', 'git.example.internal'));
     expect(gitHubHostRejection('git.example.internal')).not.toBeNull();
   });
 
@@ -110,7 +110,7 @@ describe('gitHubHostRejection', () => {
   );
 
   test("ignores a declaration in the project's .ps/config.yml", () => {
-    writeOkFile(projectDir, 'config.yml', hostsYaml('github', 'ghes.example.com'));
+    writePsFile(projectDir, 'config.yml', hostsYaml('github', 'ghes.example.com'));
     expect(gitHubHostRejection('ghes.example.com')).not.toBeNull();
   });
 });
@@ -151,7 +151,7 @@ describe('resolveAuthHost', () => {
 
   test('default project resolution reads the origin of the enclosing project from a nested cwd', () => {
     seedOrigin(projectDir, 'https://ghes.example.com/team/kb.git');
-    writeOkFile(projectDir, 'config.yml', 'content:\n  dir: .\n');
+    writePsFile(projectDir, 'config.yml', 'content:\n  dir: .\n');
     declare('ghes.example.com');
     const nestedDir = join(projectDir, 'notes', 'nested');
     mkdirSync(nestedDir, { recursive: true });

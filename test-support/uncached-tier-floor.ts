@@ -121,7 +121,7 @@ const INSTALLED = new WeakSet<object>();
 
 export function uncachedTierFloor(): Plugin {
   return {
-    name: 'ok:uncached-tier-floor',
+    name: 'ps:uncached-tier-floor',
     configureVitest({ vitest }) {
       if (INSTALLED.has(vitest)) return;
       INSTALLED.add(vitest);

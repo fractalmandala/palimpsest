@@ -22,9 +22,9 @@ function deliverUpdateNotices(
 ): void {
   if (source === null || webContents.isDestroyed?.() === true) return;
   const pending = source.getPendingUpdate();
-  if (pending) sendToRenderer(webContents, 'ok:update:downloaded', pending);
+  if (pending) sendToRenderer(webContents, 'ps:update:downloaded', pending);
   const whatsNew = source.getActiveWhatsNew();
-  if (whatsNew) sendToRenderer(webContents, 'ok:update:whats-new', whatsNew);
+  if (whatsNew) sendToRenderer(webContents, 'ps:update:whats-new', whatsNew);
 }
 
 const replaying = new WeakSet<UpdateNoticeReplayTarget>();

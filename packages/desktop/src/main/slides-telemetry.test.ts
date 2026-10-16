@@ -58,7 +58,7 @@ describe('recordDeckOpen — span outcome', () => {
     const { recordDeckOpen } = await loadFresh();
     recordDeckOpen({ kind: 'open', ok: true });
     expect(spanCalls).toEqual([
-      { name: 'ok.slides.deckOpen', attributes: { 'ok.slides.outcome': 'ok' } },
+      { name: 'ps.slides.deckOpen', attributes: { 'ps.slides.outcome': 'ok' } },
     ]);
     expect(counterAdds).toEqual([]);
   });
@@ -68,8 +68,8 @@ describe('recordDeckOpen — span outcome', () => {
     recordDeckOpen({ kind: 'open', ok: false, reason: 'timeout' });
     expect(spanCalls).toEqual([
       {
-        name: 'ok.slides.deckOpen',
-        attributes: { 'ok.slides.outcome': 'failure', 'ok.slides.reason': 'timeout' },
+        name: 'ps.slides.deckOpen',
+        attributes: { 'ps.slides.outcome': 'failure', 'ps.slides.reason': 'timeout' },
       },
     ]);
   });
@@ -79,13 +79,13 @@ describe('recordDeckOpen — failure counter distinguishes reasons', () => {
   test('a spawn failure counts under spawn-error, not timeout', async () => {
     const { recordDeckOpen } = await loadFresh();
     recordDeckOpen({ kind: 'open', ok: false, reason: 'spawn-error' });
-    expect(counterAdds).toEqual([{ value: 1, attributes: { 'ok.slides.reason': 'spawn-error' } }]);
+    expect(counterAdds).toEqual([{ value: 1, attributes: { 'ps.slides.reason': 'spawn-error' } }]);
   });
 
   test('a readiness timeout counts under timeout', async () => {
     const { recordDeckOpen } = await loadFresh();
     recordDeckOpen({ kind: 'open', ok: false, reason: 'timeout' });
-    expect(counterAdds).toEqual([{ value: 1, attributes: { 'ok.slides.reason': 'timeout' } }]);
+    expect(counterAdds).toEqual([{ value: 1, attributes: { 'ps.slides.reason': 'timeout' } }]);
   });
 });
 
@@ -111,13 +111,13 @@ describe('recordDeckOpen — lazily-cached instrument', () => {
     for (const f of failures) recordDeckOpen(f);
     expect(createCounterCalls).toBe(1);
     expect(counterAdds).toEqual([
-      { value: 1, attributes: { 'ok.slides.reason': 'timeout' } },
-      { value: 1, attributes: { 'ok.slides.reason': 'exited-early' } },
-      { value: 1, attributes: { 'ok.slides.reason': 'load-failed' } },
-      { value: 1, attributes: { 'ok.slides.reason': 'renderer-failed' } },
-      { value: 1, attributes: { 'ok.slides.reason': 'unsupported-server' } },
-      { value: 1, attributes: { 'ok.slides.reason': 'spawn-error' } },
-      { value: 1, attributes: { 'ok.slides.reason': 'port-error' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'timeout' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'exited-early' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'load-failed' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'renderer-failed' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'unsupported-server' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'spawn-error' } },
+      { value: 1, attributes: { 'ps.slides.reason': 'port-error' } },
     ]);
   });
 });

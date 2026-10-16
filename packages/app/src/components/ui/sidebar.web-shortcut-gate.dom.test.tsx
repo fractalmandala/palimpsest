@@ -16,20 +16,20 @@ function pressSidebarShortcut() {
   });
 }
 
-function setOkDesktop(value: unknown) {
+function setPsDesktop(value: unknown) {
   (window as { psDesktop?: unknown }).psDesktop = value;
 }
 
 describe('SidebarProvider web-mode ⌥⌘S shortcut — Electron gate', () => {
   beforeEach(() => {
     window.innerWidth = 1400;
-    setOkDesktop(undefined);
+    setPsDesktop(undefined);
     window.localStorage.removeItem(SIDEBAR_PINS_KEY);
   });
 
   afterEach(() => {
     cleanup();
-    setOkDesktop(undefined);
+    setPsDesktop(undefined);
     window.localStorage.removeItem(SIDEBAR_PINS_KEY);
   });
 
@@ -47,7 +47,7 @@ describe('SidebarProvider web-mode ⌥⌘S shortcut — Electron gate', () => {
   });
 
   test('Electron host (window.psDesktop set): ⌥⌘S does NOT toggle (native menu owns it)', () => {
-    setOkDesktop({});
+    setPsDesktop({});
     render(
       <SidebarProvider>
         <StateProbe />

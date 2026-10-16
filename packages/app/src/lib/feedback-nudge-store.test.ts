@@ -128,11 +128,11 @@ describe('countUserDocuments', () => {
   });
 
   test('case-insensitive on the .ps segment, matching the file-tree predicate', () => {
-    expect(countUserDocuments(new Set(['.OK/skills/project/SKILL', 'notes']))).toBe(1);
+    expect(countUserDocuments(new Set(['.PS/skills/project/SKILL', 'notes']))).toBe(1);
   });
 
-  test('a doc merely named "ok" is not substrate', () => {
-    expect(countUserDocuments(new Set(['ok', 'ok/notes', 'notes.ok']))).toBe(3);
+  test('a doc merely named "ps" is not substrate', () => {
+    expect(countUserDocuments(new Set(['ps', 'ps/notes', 'notes.ps']))).toBe(3);
   });
 
   test('empty set counts zero', () => {

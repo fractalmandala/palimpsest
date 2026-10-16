@@ -26,7 +26,7 @@ import { toPosix } from '../path-utils.ts';
 import { AuditSupersededError, auditProject, auditScopeWarning, resolveScope } from './audit.ts';
 import type { AuditCache } from './audit-cache.ts';
 import type { AuditScope } from './audit-scope.ts';
-import { createOkfProjectValidator } from './psf-project-validator.ts';
+import { createPsfProjectValidator } from './psf-project-validator.ts';
 import { physicalScopeLinks } from './physical-scope-links.ts';
 
 type DeadLinksResult = Awaited<ReturnType<DerivedDocumentIndexApiPort['getDeadLinks']>>;
@@ -146,7 +146,7 @@ export interface ValidationAuditDeps {
 }
 
 export function createProjectValidators(deps: ValidationAuditDeps): ProjectValidator[] {
-  return [createLintValidator(deps), createLinksValidator(deps), createOkfProjectValidator(deps)];
+  return [createLintValidator(deps), createLinksValidator(deps), createPsfProjectValidator(deps)];
 }
 
 export async function runValidationAudit(

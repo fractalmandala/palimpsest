@@ -67,7 +67,7 @@ command -v npx >/dev/null 2>&1 && exec npx -y ${npxSpec} mcp
 for d in "$HOME/.nvm/versions/node"/*/bin "$HOME/.fnm/node-versions"/*/installation/bin "$HOME/.asdf/installs/nodejs"/*/bin /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/.volta/bin"; do
   [ -f "$d/npx" ] && [ -x "$d/npx" ] && exec "$d/npx" -y ${npxSpec} mcp
 done
-echo "Palimpsest: install OK Desktop or Node.js 24+, then restart your editor" >&2
+echo "Palimpsest: install Palimpsest Desktop or Node.js 24+, then restart your editor" >&2
 exit 127`;
 }
 
@@ -722,7 +722,7 @@ export const EDITOR_TARGETS: Record<EditorId, EditorMcpTarget> & { pi: ManagedFi
     label: EDITOR_LABELS.pi,
     configPath: () => {
       throw new Error(
-        `Pi has no user-global MCP config; OK's integration is the project-scoped bridge extension at ${piExtensionProjectPath(currentDesktopProduct())} (run \`${currentCliCommandName()} init\` in the project).`,
+        `Pi has no user-global MCP config; Palimpsest's integration is the project-scoped bridge extension at ${piExtensionProjectPath(currentDesktopProduct())} (run \`${currentCliCommandName()} init\` in the project).`,
       );
     },
     format: 'file',

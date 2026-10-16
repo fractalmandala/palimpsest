@@ -1000,22 +1000,22 @@ export function unrepairableManagedRuntimeHint(launch: ResolvedLaunch, detail: s
 }
 
 export function incompatibleManagedRuntimeHint(detail: string): string {
-  return `OK's private Node.js runtime is incompatible (${detail}). Update Palimpsest and try again.`;
+  return `Palimpsest's private Node.js runtime is incompatible (${detail}). Update Palimpsest and try again.`;
 }
 
 export function undeletableManagedRuntimeHint(launch: ResolvedLaunch, detail: string): string {
   const runtime = launch.kind === 'uvx' ? 'uv' : 'Node.js';
-  return `OK's own copy of ${runtime} is damaged (${detail}) and couldn't be replaced — another agent may still be using it. Close other agent threads and try again.`;
+  return `Palimpsest's own copy of ${runtime} is damaged (${detail}) and couldn't be replaced — another agent may still be using it. Close other agent threads and try again.`;
 }
 
 export function declinedRepairHint(launch: ResolvedLaunch): string {
   const runtime = launch.kind === 'uvx' ? 'uv' : 'Node.js';
-  return `OK's own copy of ${runtime} is damaged and can't run this agent. Start the agent again to let OK download a fresh copy.`;
+  return `Palimpsest's own copy of ${runtime} is damaged and can't run this agent. Start the agent again to let OK download a fresh copy.`;
 }
 
 export function expiredRepairHint(launch: ResolvedLaunch): string {
   const runtime = launch.kind === 'uvx' ? 'uv' : 'Node.js';
-  return `OK's own copy of ${runtime} is damaged and can't run this agent. The offer to download a fresh copy expired before it was answered — start the agent again to get it back.`;
+  return `Palimpsest's own copy of ${runtime} is damaged and can't run this agent. The offer to download a fresh copy expired before it was answered — start the agent again to get it back.`;
 }
 
 export function expiredFallbackHint(launch: ResolvedLaunch, base: string): string {

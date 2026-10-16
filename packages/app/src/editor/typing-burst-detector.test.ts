@@ -31,7 +31,7 @@ describe('typing-burst-detector', () => {
     await wait(120);
     const settled = getCollector()
       ?.marks.toArray()
-      .filter((m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-burst');
+      .filter((m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-burst');
     expect(settled?.length).toBe(1);
     const props = settled?.[0]?.properties;
     expect(props?.mode).toBe('WYSIWYG');
@@ -53,7 +53,7 @@ describe('typing-burst-detector', () => {
     });
     sampler.recordUserInput(1, 1);
     await wait(120);
-    const snap = getHistogramSnapshot('ok/typing/burst-total-ms');
+    const snap = getHistogramSnapshot('ps/typing/burst-total-ms');
     expect(snap?.count).toBe(1);
     sampler.detach();
   });
@@ -73,7 +73,7 @@ describe('typing-burst-detector', () => {
     await wait(120);
     const settled = getCollector()
       ?.marks.toArray()
-      .filter((m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-multi');
+      .filter((m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-multi');
     expect(settled?.length).toBe(2);
     expect(settled?.[0]?.properties?.charsTyped).toBe(2);
     expect(settled?.[1]?.properties?.charsTyped).toBe(3);
@@ -95,7 +95,7 @@ describe('typing-burst-detector', () => {
     const settled = getCollector()
       ?.marks.toArray()
       .filter(
-        (m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-debounce',
+        (m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-debounce',
       );
     expect(settled?.length).toBe(1);
     expect(settled?.[0]?.properties?.charsTyped).toBe(3);
@@ -113,7 +113,7 @@ describe('typing-burst-detector', () => {
     const settled = getCollector()
       ?.marks.toArray()
       .filter(
-        (m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-cancel',
+        (m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-cancel',
       );
     expect(settled?.length).toBe(1);
     expect(settled?.[0]?.properties?.charsTyped).toBe(1);
@@ -129,7 +129,7 @@ describe('typing-burst-detector', () => {
     const settled = getCollector()
       ?.marks.toArray()
       .filter(
-        (m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-empty-detach',
+        (m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-empty-detach',
       );
     expect(settled?.length ?? 0).toBe(0);
   });
@@ -151,7 +151,7 @@ describe('typing-burst-detector', () => {
     const settled =
       getCollector()
         ?.marks.toArray()
-        .filter((m) => m.name === 'ok/typing/burst-settled') ?? [];
+        .filter((m) => m.name === 'ps/typing/burst-settled') ?? [];
     expect(settled.length).toBe(2);
     const aProps = settled.find((m) => m.properties?.docName === 'doc-a')?.properties;
     const bProps = settled.find((m) => m.properties?.docName === 'doc-b')?.properties;
@@ -174,7 +174,7 @@ describe('typing-burst-detector', () => {
     await wait(120);
     const settled = getCollector()
       ?.marks.toArray()
-      .find((m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-abs');
+      .find((m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-abs');
     expect(settled?.properties?.charsTyped).toBe(8);
     sampler.detach();
   });
@@ -191,7 +191,7 @@ describe('typing-burst-detector', () => {
     const settled = getCollector()
       ?.marks.toArray()
       .filter(
-        (m) => m.name === 'ok/typing/burst-settled' && m.properties?.docName === 'doc-no-chars',
+        (m) => m.name === 'ps/typing/burst-settled' && m.properties?.docName === 'doc-no-chars',
       );
     expect(settled?.length ?? 0).toBe(0);
     sampler.detach();

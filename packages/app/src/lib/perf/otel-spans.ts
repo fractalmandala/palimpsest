@@ -1,7 +1,7 @@
 import type { Attributes, Span } from '@opentelemetry/api';
 import { context, trace } from '@opentelemetry/api';
 
-const TRACER_NAME = 'open-knowledge-app';
+const TRACER_NAME = 'palimpsest-app';
 
 interface ColdMountEntry {
   span: Span;
@@ -40,7 +40,7 @@ export function ensureColdMountSpan(
       }
     }
   }
-  const span = getTracer().startSpan('ok.cold-mount', {
+  const span = getTracer().startSpan('ps.cold-mount', {
     attributes: { 'mount.id': mountId, ...attributes },
     startTime: startTimeMs,
   });

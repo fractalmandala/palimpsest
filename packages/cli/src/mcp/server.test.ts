@@ -296,24 +296,24 @@ describe('resolveStickyProjectDir', () => {
   });
 
   test('throws (via findProjectDir) when explicit cwd has no .ps ancestor', async () => {
-    const noOkDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-no-project-'));
+    const noPsDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-no-project-'));
     try {
       await expect(
-        resolveStickyProjectDir(noOkDir, undefined, async () => undefined),
+        resolveStickyProjectDir(noPsDir, undefined, async () => undefined),
       ).rejects.toThrow(/No Palimpsest project found/);
     } finally {
-      await rm(noOkDir, { recursive: true, force: true });
+      await rm(noPsDir, { recursive: true, force: true });
     }
   });
 
   test('throws (via findProjectDir) when the root guess returns a non-OK path', async () => {
-    const noOkDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-fallback-no-project-'));
+    const noPsDir = await mkdtemp(resolve(tmpdir(), 'ps-mcp-fallback-no-project-'));
     try {
       await expect(
-        resolveStickyProjectDir(undefined, undefined, async () => noOkDir),
+        resolveStickyProjectDir(undefined, undefined, async () => noPsDir),
       ).rejects.toThrow(/No Palimpsest project found/);
     } finally {
-      await rm(noOkDir, { recursive: true, force: true });
+      await rm(noPsDir, { recursive: true, force: true });
     }
   });
 

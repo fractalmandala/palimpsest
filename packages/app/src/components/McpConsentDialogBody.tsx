@@ -410,7 +410,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                         <span className={ROW_SUBTEXT}>
                           {}
                           <Trans comment="Subtext under the AI-tools MCP checkbox">
-                            Adds an Palimpsest MCP entry to{' '}
+                            Adds a Palimpsest MCP entry to{' '}
                             <span className="font-medium text-foreground">{connectToolList}</span>,
                             so your agents can read and edit your files.
                           </Trans>
@@ -421,7 +421,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                             {t({
                               message: `Already connected to ${replacingToolList}`,
                               comment:
-                                'Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked',
+                                'Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have a Palimpsest MCP entry, which stay as they are while the box is unticked',
                             })}
                           </span>
                         )}
@@ -482,7 +482,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                             <Trans comment="Checkbox that installs the user-global discovery skill bundle">
                               Install the{' '}
                               <code className="inline-code text-1sm!">
-                                open-knowledge-discovery
+                                palimpsest-discovery
                               </code>{' '}
                               skill
                             </Trans>

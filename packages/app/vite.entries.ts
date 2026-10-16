@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 /**
  * Shared HTML-entry map for the renderer's Vite configs.
  *
- * **Single source of truth** — `packages/app/vite.config.ts` (web / `ok ui` /
+ * **Single source of truth** — `packages/app/vite.config.ts` (web / `ps ui` /
  * dev path) and `packages/desktop/electron.vite.config.ts` (Electron renderer
  * path) BOTH build their `build.*Options.input` from this map. Same rationale
  * as `vite.dedupe.ts` and `vite.react-babel.ts`: a new entry is declared once

@@ -29,7 +29,7 @@ function writeLaunch(projectRoot: string, value: unknown): string {
 }
 
 describe('removeOwnLaunchEntry', () => {
-  test('surgically removes OK’s entry, preserving a user’s other configuration', () => {
+  test('surgically removes Palimpsest's entry, preserving a user’s other configuration', () => {
     const dir = project();
     try {
       const p = writeLaunch(dir, {
@@ -54,7 +54,7 @@ describe('removeOwnLaunchEntry', () => {
     }
   });
 
-  test('keeps the containing file when OK’s entry was the only configuration', () => {
+  test('keeps the containing file when Palimpsest's entry was the only configuration', () => {
     const dir = project();
     try {
       const p = writeLaunch(dir, {
@@ -118,7 +118,7 @@ describe('removeOwnLaunchEntry', () => {
     }
   });
 
-  test('preserves a leading BOM while surgically removing OK’s entry', () => {
+  test('preserves a leading BOM while surgically removing Palimpsest's entry', () => {
     const dir = project();
     try {
       const p = join(dir, '.claude', 'launch.json');

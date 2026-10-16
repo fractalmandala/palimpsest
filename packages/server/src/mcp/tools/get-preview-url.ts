@@ -35,8 +35,8 @@ import {
 const DESCRIPTION = [
   "Get the full browser URL for this project or a document/folder/skill, or an absolute markdown file outside the project. Opening is demand: auto-starts OK under the normal PS_MCP_AUTOSTART gate and waits briefly for UI; cold calls can take seconds. Other tools return route-only previewUrl paths; use this tool for an openable URL, never guess ports or hunt via the Palimpsest CLI's ps/status.",
   'Choose one: document (extension-less), folder (trailing-slash route), skill:{name,scope?} (project default), or file (absolute .md/.mdx in a loose-file/worktree session). file ignores cwd; other targets use current project. Omit targets for UI root.',
-  "When YOUR host opens URLs, navigate its embedded browser to url; Claude Code Desktop uses preview_start({url}) then navigate({url}). Only a stdio host without a browser tool should open the URL in the system browser. A CLI without a browser can use the Palimpsest CLI's open <doc> for OK Desktop. This tool forces browser access even when Desktop is installed.",
-  "INSIDE OK's terminal/agent panel, use returned psOpenCommand instead; never paste url in the answer. If no UI is reachable, returns url:null, baseUrl:null, running:false, autoOpen plus state-specific recovery text (autostart disabled, no spawn authority or UI timeout). Follow it.",
+  "When YOUR host opens URLs, navigate its embedded browser to url; Claude Code Desktop uses preview_start({url}) then navigate({url}). Only a stdio host without a browser tool should open the URL in the system browser. A CLI without a browser can use the Palimpsest CLI's open <doc> for Palimpsest Desktop. This tool forces browser access even when Desktop is installed.",
+  "INSIDE Palimpsest's terminal/agent panel, use returned psOpenCommand instead; never paste url in the answer. If no UI is reachable, returns url:null, baseUrl:null, running:false, autoOpen plus state-specific recovery text (autostart disabled, no spawn authority or UI timeout). Follow it.",
 ].join('\n');
 
 interface GetPreviewUrlDeps {
@@ -109,24 +109,24 @@ const OutputSchema = outputSchemaWithText({
   autoOpen: z
     .boolean()
     .describe(
-      'User-scoped preview-auto-open preference (`appearance.preview.autoOpen`). When `true`, the agent should route the preview using capability-based routing (in-app browser if available, system browser as fallback). When `false`, the user is managing their own preview view (OK Desktop window, a browser tab they opened, etc.) — the agent must NOT open or refresh any preview UI, and should surface this URL only on direct user ask. Resolved fresh on every call; defaults to `true`.',
+      'User-scoped preview-auto-open preference (`appearance.preview.autoOpen`). When `true`, the agent should route the preview using capability-based routing (in-app browser if available, system browser as fallback). When `false`, the user is managing their own preview view (Palimpsest Desktop window, a browser tab they opened, etc.) — the agent must NOT open or refresh any preview UI, and should surface this URL only on direct user ask. Resolved fresh on every call; defaults to `true`.',
     ),
   psOpenCommand: z
     .string()
     .nullable()
     .optional()
     .describe(
-      'Machine-readable form of the hosted-agent steer: when the calling agent runs inside an Palimpsest surface (the desktop app’s built-in terminal, or its in-app agent panel) AND a doc/folder/skill target was given, the exact Palimpsest CLI `open` command to run to bring it up for the user. Run it INSTEAD of navigating `url`, and do not paste `url` into your reply — the user is already in the app it points at. `null`/absent in every other context (navigate `url` per your host instead).',
+      'Machine-readable form of the hosted-agent steer: when the calling agent runs inside a Palimpsest surface (the desktop app’s built-in terminal, or its in-app agent panel) AND a doc/folder/skill target was given, the exact Palimpsest CLI `open` command to run to bring it up for the user. Run it INSTEAD of navigating `url`, and do not paste `url` into your reply — the user is already in the app it points at. `null`/absent in every other context (navigate `url` per your host instead).',
     ),
 });
 
 const NO_UI_SERVER_RUNNING_MESSAGE =
-  'The OK server is running but no UI has bound for this project yet. Retry in a few seconds, or open the project in OK Electron.';
+  'The OK server is running but no UI has bound for this project yet. Retry in a few seconds, or open the project in Palimpsest Electron.';
 function noUiNoneMountedMessage(): string {
-  return `The OK server is running but no preview UI is mounted (e.g. it was started with \`--only server\`). Restart it with plain \`${currentCliCommandName()} start\` to serve the editor, or open the project in OK Electron.`;
+  return `The OK server is running but no preview UI is mounted (e.g. it was started with \`--only server\`). Restart it with plain \`${currentCliCommandName()} start\` to serve the editor, or open the project in Palimpsest Electron.`;
 }
 function noServerMessage(): string {
-  return `No Palimpsest server is running for this project. Start it with \`${currentCliCommandName()} start\` (also starts the preview UI), or open the project in OK Electron.`;
+  return `No Palimpsest server is running for this project. Start it with \`${currentCliCommandName()} start\` (also starts the preview UI), or open the project in Palimpsest Electron.`;
 }
 const AUTOSTART_DISABLED_NOTE = ' Auto-start is disabled (PS_MCP_AUTOSTART=0).';
 function readUserAutoOpen(): boolean {
@@ -146,7 +146,7 @@ function readUserAutoOpen(): boolean {
 }
 
 function noSingleFileSessionMessage(file: string): string {
-  return `No Palimpsest session is serving ${file} yet. On a host with a terminal, \`${currentCliCommandName()} open ${file}\` starts one; otherwise open ${file} in the OK Desktop app. Then retry.`;
+  return `No Palimpsest session is serving ${file} yet. On a host with a terminal, \`${currentCliCommandName()} open ${file}\` starts one; otherwise open ${file} in the Palimpsest Desktop app. Then retry.`;
 }
 
 function serverExplicitlyLacksUi(lockDir: string): boolean {

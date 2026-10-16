@@ -91,7 +91,7 @@ export function startLanding(params: StartLandingParams): LandingHandle {
   container.style.overflowAnchor = 'none';
 
   if (transition) {
-    mark('ok/mode-switch/transition', { from: transition.from, to: transition.to, grade });
+    mark('ps/mode-switch/transition', { from: transition.from, to: transition.to, grade });
   }
 
   let closed = false;
@@ -154,7 +154,7 @@ export function startLanding(params: StartLandingParams): LandingHandle {
     } finally {
       teardown();
     }
-    mark('ok/landing/land', { grade, delta });
+    mark('ps/landing/land', { grade, delta });
     onOutcome?.({ status: 'landed', delta });
   };
 
@@ -168,7 +168,7 @@ export function startLanding(params: StartLandingParams): LandingHandle {
     } finally {
       teardown();
     }
-    mark('ok/landing/abandoned', { grade, target, delta });
+    mark('ps/landing/abandoned', { grade, target, delta });
     onOutcome?.({ status: 'abandoned', delta });
   };
 

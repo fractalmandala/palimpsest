@@ -31,7 +31,7 @@ import type { ConflictAuthority, RaiseInput } from './conflict-authority.ts';
 import type { Conflict } from './conflict-kinds.ts';
 import { holdsMarkersOnDisk } from './conflict-kinds.ts';
 import type { ContentFilter } from './content-filter.ts';
-import { isShareableOkArtifact } from './content-filter.ts';
+import { isShareablePsArtifact } from './content-filter.ts';
 import { isSupportedDocFile } from './doc-extensions.ts';
 import {
   type ClassifiedError,
@@ -110,12 +110,12 @@ class GitOperationInProgressError extends Error {
   }
 }
 
-class ShareableOkEnumerationError extends Error {
+class ShareablePsEnumerationError extends Error {
   constructor(relDir: string, cause: unknown) {
     super(`Shareable .ps subtree "${relDir}" could not be fully enumerated; sync staging aborted`, {
       cause,
     });
-    this.name = 'ShareableOkEnumerationError';
+    this.name = 'ShareablePsEnumerationError';
   }
 }
 
@@ -200,8 +200,8 @@ interface SyncStatus {
   state: SyncState;
   lastSyncUtc: string | null;
   lastRunUtc: string | null;
-  lastPullOkUtc: string | null;
-  lastPushOkUtc: string | null;
+  lastPullPsUtc: string | null;
+  lastPushPsUtc: string | null;
   lastFetchUtc: string | null;
   lastPushedSha: string | null;
   lastPullUtc: string | null;
@@ -299,8 +299,8 @@ const COMMIT_BLOCKING_MESSAGE = 'Commit local changes before syncing';
 interface PersistedSyncState {
   version: 1;
   lastSyncUtc: string | null;
-  lastPullOkUtc?: string | null;
-  lastPushOkUtc?: string | null;
+  lastPullPsUtc?: string | null;
+  lastPushPsUtc?: string | null;
   lastFetchUtc: string | null;
   lastPushedSha: string | null;
   consecutiveFailures: number;
@@ -397,7 +397,7 @@ export class SyncEngine {
    * artifacts still stage and deletion-track; gather and head listing consult this flag in
    * lock-step (precedent #55).
    */
-  private rootOkOutsideContentWalk: boolean;
+  private rootPsOutsideContentWalk: boolean;
   private pullIntervalSeconds: number;
   private pushIntervalSeconds: number;
   private mode: SyncMode;
@@ -432,12 +432,12 @@ export class SyncEngine {
 
   private lastSyncUtc: string | null = null;
   private get lastRunUtc(): string | null {
-    if (this.lastPullOkUtc === null) return this.lastPushOkUtc;
-    if (this.lastPushOkUtc === null) return this.lastPullOkUtc;
-    return this.lastPullOkUtc > this.lastPushOkUtc ? this.lastPullOkUtc : this.lastPushOkUtc;
+    if (this.lastPullPsUtc === null) return this.lastPushPsUtc;
+    if (this.lastPushPsUtc === null) return this.lastPullPsUtc;
+    return this.lastPullPsUtc > this.lastPushPsUtc ? this.lastPullPsUtc : this.lastPushPsUtc;
   }
-  private lastPullOkUtc: string | null = null;
-  private lastPushOkUtc: string | null = null;
+  private lastPullPsUtc: string | null = null;
+  private lastPushPsUtc: string | null = null;
   private pushCycleLanded = false;
   private fetchOnlyInFlight = false;
   private lastFetchUtc: string | null = null;
@@ -486,7 +486,7 @@ export class SyncEngine {
     this.contentDir = options.contentDir;
     this.contentFilter = options.contentFilter;
     this.contentRoot = options.contentRoot ?? '';
-    this.rootOkOutsideContentWalk = toPosix(
+    this.rootPsOutsideContentWalk = toPosix(
       relative(this.contentDir, join(this.projectDir, PS_DIR)),
     ).startsWith('..');
     this.pullIntervalSeconds = options.pullIntervalSeconds ?? 30;
@@ -658,7 +658,7 @@ export class SyncEngine {
     }
 
     const pullRemainingMs = computeRemainingMs(this.lastFetchUtc, this.pullIntervalSeconds);
-    const pushRemainingMs = computeRemainingMs(this.lastPushOkUtc, this.pushIntervalSeconds);
+    const pushRemainingMs = computeRemainingMs(this.lastPushPsUtc, this.pushIntervalSeconds);
     this.schedulePull(pullRemainingMs > 0 ? pullRemainingMs : undefined);
     this.schedulePush(pushRemainingMs > 0 ? pushRemainingMs : undefined);
     log.info(
@@ -1104,7 +1104,7 @@ export class SyncEngine {
     this.lastPullUtc = new Date().toISOString();
     this.lastPullOutcome = outcome;
     if (outcome === 'succeeded' || outcome === 'up-to-date' || outcome === 'conflict') {
-      this.lastPullOkUtc = new Date().toISOString();
+      this.lastPullPsUtc = new Date().toISOString();
       this.saveStateNow();
     }
     this.cc1Broadcaster?.signal('sync-status');
@@ -1116,8 +1116,8 @@ export class SyncEngine {
       state: this.state,
       lastSyncUtc: this.lastSyncUtc,
       lastRunUtc: this.lastRunUtc,
-      lastPullOkUtc: this.lastPullOkUtc,
-      lastPushOkUtc: this.lastPushOkUtc,
+      lastPullPsUtc: this.lastPullPsUtc,
+      lastPushPsUtc: this.lastPushPsUtc,
       lastFetchUtc: this.lastFetchUtc,
       lastPushedSha: this.lastPushedSha,
       lastPullUtc: this.lastPullUtc,
@@ -2000,7 +2000,7 @@ export class SyncEngine {
     writes: Array<{ path: string; bytes: Buffer }>,
     deletions: string[],
   ): void {
-    const guardOpts = { allowShareableOkArtifact: isShareableOkArtifact };
+    const guardOpts = { allowShareablePsArtifact: isShareablePsArtifact };
     for (const { path, bytes } of writes) {
       const abs = join(this.projectDir, path);
       const target = assertRealpathWithinDir(abs, this.projectDir, guardOpts);
@@ -2290,7 +2290,7 @@ export class SyncEngine {
         return;
       }
       const err = e instanceof Error ? e : new Error(String(e));
-      if (err instanceof ShareableOkEnumerationError) {
+      if (err instanceof ShareablePsEnumerationError) {
         log.warn({ err }, '[sync] push cycle: staging error detail');
       }
       const classified = classifyGitError(err);
@@ -2966,9 +2966,9 @@ export class SyncEngine {
     const refusedDirs = [...refused].filter((p) => p.endsWith('/'));
     const isRefused = (p: string) => refused.has(p) || refusedDirs.some((d) => p.startsWith(d));
     const stageable = probeOk ? files.filter((f) => !isRefused(f.projectRelPath)) : files;
-    const hasOkSegment = (p: string) => p.startsWith(`${PS_DIR}/`) || p.includes(`/${PS_DIR}/`);
-    const forced = probeOk ? stageable.filter((f) => hasOkSegment(f.projectRelPath)) : [];
-    const plain = probeOk ? stageable.filter((f) => !hasOkSegment(f.projectRelPath)) : stageable;
+    const hasPsSegment = (p: string) => p.startsWith(`${PS_DIR}/`) || p.includes(`/${PS_DIR}/`);
+    const forced = probeOk ? stageable.filter((f) => hasPsSegment(f.projectRelPath)) : [];
+    const plain = probeOk ? stageable.filter((f) => !hasPsSegment(f.projectRelPath)) : stageable;
     for (const [addArgs, group] of [
       [['add'], plain],
       [['add', '-f'], forced],
@@ -2983,9 +2983,9 @@ export class SyncEngine {
 
   private gatherContentFilesSync(): ContentFileEntry[] {
     const results: ContentFileEntry[] = [];
-    const failUnreadableOkSubtree = (err: unknown, dir: string) => {
+    const failUnreadablePsSubtree = (err: unknown, dir: string) => {
       const relDir = toPosix(relative(this.projectDir, dir)) || '.';
-      throw new ShareableOkEnumerationError(relDir, err);
+      throw new ShareablePsEnumerationError(relDir, err);
     };
 
     const walk = (
@@ -3010,14 +3010,14 @@ export class SyncEngine {
             this.contentFilter.isDirExcluded(dirRelPath, stagingScope)
           )
             continue;
-          const entersOkSubtree = dirRelPath
+          const entersPsSubtree = dirRelPath
             .split('/')
             .some((segment) => segment.toLowerCase() === PS_DIR);
           walk(
             fullPath,
             filterBase,
             stagingScope,
-            onError ?? (entersOkSubtree ? failUnreadableOkSubtree : undefined),
+            onError ?? (entersPsSubtree ? failUnreadablePsSubtree : undefined),
           );
         } else if (entry.isFile() || entry.isSymbolicLink()) {
           const filterRelPath = toPosix(relative(filterBase, fullPath));
@@ -3036,13 +3036,13 @@ export class SyncEngine {
     if (existsSync(this.contentDir)) {
       walk(this.contentDir, this.contentDir, CONTENT_SYNC_STAGING_SCOPE);
     }
-    if (this.rootOkOutsideContentWalk) {
-      const rootOkDir = join(this.projectDir, PS_DIR);
+    if (this.rootPsOutsideContentWalk) {
+      const rootPsDir = join(this.projectDir, PS_DIR);
       if (
-        existsSync(rootOkDir) &&
+        existsSync(rootPsDir) &&
         !this.contentFilter.isDirExcluded(PS_DIR, PROJECT_SYNC_STAGING_SCOPE)
       ) {
-        walk(rootOkDir, this.projectDir, PROJECT_SYNC_STAGING_SCOPE, failUnreadableOkSubtree);
+        walk(rootPsDir, this.projectDir, PROJECT_SYNC_STAGING_SCOPE, failUnreadablePsSubtree);
       }
     }
     return results;
@@ -3059,11 +3059,11 @@ export class SyncEngine {
     const inContentWalk =
       !contentRelPath.startsWith('..') &&
       !this.contentFilter.isExcluded(contentRelPath, CONTENT_SYNC_STAGING_SCOPE);
-    const inRootOkWalk =
-      this.rootOkOutsideContentWalk &&
+    const inRootPsWalk =
+      this.rootPsOutsideContentWalk &&
       projRelPath.startsWith(`${PS_DIR}/`) &&
       !this.contentFilter.isExcluded(projRelPath, PROJECT_SYNC_STAGING_SCOPE);
-    return inContentWalk || inRootOkWalk;
+    return inContentWalk || inRootPsWalk;
   }
 
   private async listHeadContentPaths(handle: GitHandle, headSha: string): Promise<Set<string>> {
@@ -3540,7 +3540,7 @@ export class SyncEngine {
   }
 
   private markRun(): void {
-    this.lastPushOkUtc = new Date().toISOString();
+    this.lastPushPsUtc = new Date().toISOString();
     this.saveStateNow();
     this.cc1Broadcaster?.signal('sync-status');
   }
@@ -3574,8 +3574,8 @@ export class SyncEngine {
       const data: PersistedSyncState = {
         version: 1,
         lastSyncUtc: this.lastSyncUtc,
-        lastPullOkUtc: this.lastPullOkUtc,
-        lastPushOkUtc: this.lastPushOkUtc,
+        lastPullPsUtc: this.lastPullPsUtc,
+        lastPushPsUtc: this.lastPushPsUtc,
         lastFetchUtc: this.lastFetchUtc,
         lastPushedSha: this.lastPushedSha,
         consecutiveFailures: this.consecutivePullFailures,
@@ -3599,8 +3599,8 @@ export class SyncEngine {
       const data = JSON.parse(raw) as Partial<PersistedSyncState>;
       if (data.version !== 1) return;
       this.lastSyncUtc = data.lastSyncUtc ?? null;
-      this.lastPullOkUtc = data.lastPullOkUtc ?? null;
-      this.lastPushOkUtc = data.lastPushOkUtc ?? null;
+      this.lastPullPsUtc = data.lastPullPsUtc ?? null;
+      this.lastPushPsUtc = data.lastPushPsUtc ?? null;
       this.lastFetchUtc = data.lastFetchUtc ?? null;
       this.lastPushedSha = data.lastPushedSha ?? null;
       this.consecutivePullFailures = data.consecutiveFailures ?? 0;

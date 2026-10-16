@@ -88,7 +88,7 @@ export function mountMcpAndApi(opts: MountMcpAndApiOptions): MountMcpAndApiHandl
       .hooks('onRequest', { request: req, response: res } as any)
       .then(() => {
         if (res.writableEnded || res.headersSent) return;
-        errorResponse(res, 404, 'urn:ok:error:not-found', 'API endpoint not found.', {
+        errorResponse(res, 404, 'urn:ps:error:not-found', 'API endpoint not found.', {
           handler: 'mcp-mount',
           detail: `No handler for ${req.method ?? 'GET'} ${url}`,
         });
@@ -96,7 +96,7 @@ export function mountMcpAndApi(opts: MountMcpAndApiOptions): MountMcpAndApiHandl
       .catch((err) => {
         log.error({ err }, 'Unhandled onRequest error');
         if (!res.writableEnded && !res.headersSent) {
-          errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+          errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
             handler: 'mcp-mount',
             cause: err,
           });

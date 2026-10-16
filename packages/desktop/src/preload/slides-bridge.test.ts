@@ -25,7 +25,7 @@ describe('createSlidesBridge — happy path', () => {
     const bridge = createSlidesBridge(invoke);
 
     await expect(bridge.open('/proj/decks/talk.md')).resolves.toEqual({ kind: 'open', ok: true });
-    expect(invoke).toHaveBeenCalledWith('ok:slides:dispatch', {
+    expect(invoke).toHaveBeenCalledWith('ps:slides:dispatch', {
       kind: 'open',
       docPath: '/proj/decks/talk.md',
     });

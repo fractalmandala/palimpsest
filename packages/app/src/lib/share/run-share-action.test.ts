@@ -184,7 +184,7 @@ describe('requestShareConstructUrl', () => {
       ({
         ok: false,
         status: 500,
-        json: async () => ({ type: 'urn:ok:error:internal-server-error', detail: 'boom' }),
+        json: async () => ({ type: 'urn:ps:error:internal-server-error', detail: 'boom' }),
       }) as unknown as Response) as unknown as typeof fetch;
 
     await expect(

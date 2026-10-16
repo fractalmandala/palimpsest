@@ -11,7 +11,7 @@ export type IndexPublicationMode = 'signal' | 'baseline';
 
 let _rebuildCounter: Counter | null = null;
 function rebuildCounter(): Counter {
-  _rebuildCounter ||= getMeter().createCounter('ok.index.rebuild_total', {
+  _rebuildCounter ||= getMeter().createCounter('ps.index.rebuild_total', {
     description:
       'Count of derived-index rebuild passes. Bounded labels: index.name ∈ {backlink, tag, local-target}, index.mode ∈ {full, reconcile}.',
   });
@@ -20,7 +20,7 @@ function rebuildCounter(): Counter {
 
 let _rebuildDurationHist: Histogram | null = null;
 function rebuildDurationHist(): Histogram {
-  _rebuildDurationHist ||= getMeter().createHistogram('ok.index.rebuild_duration_ms', {
+  _rebuildDurationHist ||= getMeter().createHistogram('ps.index.rebuild_duration_ms', {
     description:
       'Duration of derived-index rebuild passes in milliseconds. Same bounded label pair as ok.index.rebuild_total.',
     unit: 'ms',
@@ -30,7 +30,7 @@ function rebuildDurationHist(): Histogram {
 
 let _updateCounter: Counter | null = null;
 function updateCounter(): Counter {
-  _updateCounter ||= getMeter().createCounter('ok.index.update_total', {
+  _updateCounter ||= getMeter().createCounter('ps.index.update_total', {
     description:
       'Count of incremental derived-index updates. Bounded labels: index.name and index.mode.',
   });
@@ -39,7 +39,7 @@ function updateCounter(): Counter {
 
 let _updateDurationHist: Histogram | null = null;
 function updateDurationHist(): Histogram {
-  _updateDurationHist ||= getMeter().createHistogram('ok.index.update_duration_ms', {
+  _updateDurationHist ||= getMeter().createHistogram('ps.index.update_duration_ms', {
     description: 'Duration of incremental derived-index updates in milliseconds.',
     unit: 'ms',
   });
@@ -48,7 +48,7 @@ function updateDurationHist(): Histogram {
 
 let _occurrenceCountHist: Histogram | null = null;
 function occurrenceCountHist(): Histogram {
-  _occurrenceCountHist ||= getMeter().createHistogram('ok.index.occurrence_count', {
+  _occurrenceCountHist ||= getMeter().createHistogram('ps.index.occurrence_count', {
     description: 'Local-target occurrences processed by an index operation.',
     unit: '{occurrence}',
   });
@@ -57,7 +57,7 @@ function occurrenceCountHist(): Histogram {
 
 let _affectedSourceCountHist: Histogram | null = null;
 function affectedSourceCountHist(): Histogram {
-  _affectedSourceCountHist ||= getMeter().createHistogram('ok.index.affected_source_count', {
+  _affectedSourceCountHist ||= getMeter().createHistogram('ps.index.affected_source_count', {
     description: 'Source documents whose assessment changed during an index operation.',
     unit: '{source}',
   });
@@ -66,7 +66,7 @@ function affectedSourceCountHist(): Histogram {
 
 let _generationLagHist: Histogram | null = null;
 function generationLagHist(): Histogram {
-  _generationLagHist ||= getMeter().createHistogram('ok.index.generation_lag', {
+  _generationLagHist ||= getMeter().createHistogram('ps.index.generation_lag', {
     description: 'Index generations accumulated between consumer publications.',
     unit: '{generation}',
   });
@@ -97,7 +97,7 @@ export async function instrumentIndexRebuild<T>(
   resultAttrs?: (result: T) => Attributes,
 ): Promise<T> {
   return withSpan(
-    'ok.index.rebuild',
+    'ps.index.rebuild',
     { attributes: { 'index.name': name, 'index.mode': mode } },
     async (span) => {
       const start = performance.now();
@@ -125,7 +125,7 @@ export function instrumentIndexUpdate<T>(
   resultAttrs: (result: T) => Attributes,
 ): T {
   const labels = { 'index.name': name, 'index.mode': mode };
-  return withSpanSync('ok.index.update', { attributes: labels }, (span) => {
+  return withSpanSync('ps.index.update', { attributes: labels }, (span) => {
     const start = performance.now();
     try {
       const result = fn();

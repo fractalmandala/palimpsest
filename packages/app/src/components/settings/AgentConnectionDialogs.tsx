@@ -481,7 +481,7 @@ function PartControl({
             disabled
               ? blockedReason()
               : (foreignInfo ?? (
-                  <Trans>Adds an Palimpsest MCP entry to this project's agent config.</Trans>
+                  <Trans>Adds a Palimpsest MCP entry to this project's agent config.</Trans>
                 ))
           }
         />

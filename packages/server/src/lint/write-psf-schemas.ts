@@ -1,11 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import {
-  isOkfRuleEnabled,
+  isPsfRuleEnabled,
   PSF_FRONTMATTER_REGISTRY,
   PSF_SCHEMA_DIR,
-  type OkfRuleToggles,
-  renderOkfSchemaFiles,
+  type PsfRuleToggles,
+  renderPsfSchemaFiles,
 } from '@palimpsest/core';
 import {
   tracedMkdirSync,
@@ -48,44 +48,44 @@ function ensureGitignored(projectDir: string): void {
   );
 }
 
-export interface OkfSchemaState {
+export interface PsfSchemaState {
   readonly enabled?: boolean;
-  readonly rules?: OkfRuleToggles;
+  readonly rules?: PsfRuleToggles;
 }
 
 const appliedSignatures = new Map<string, string>();
 
-function schemaSignature(psf: OkfSchemaState | undefined): string {
+function schemaSignature(psf: PsfSchemaState | undefined): string {
   if (psf?.enabled !== true) return 'off';
   const disabled = PSF_FRONTMATTER_REGISTRY.filter(
-    (entry) => !isOkfRuleEnabled(psf.rules, entry.id),
+    (entry) => !isPsfRuleEnabled(psf.rules, entry.id),
   ).map((entry) => entry.id);
   return `on:${disabled.sort().join(',')}`;
 }
 
-export function ensureOkfSchemaFiles(projectDir: string, psf: OkfSchemaState | undefined): void {
+export function ensurePsfSchemaFiles(projectDir: string, psf: PsfSchemaState | undefined): void {
   const signature = schemaSignature(psf);
   if (appliedSignatures.get(projectDir) === signature) return;
   appliedSignatures.set(projectDir, signature);
   if (psf?.enabled === true) {
-    writeOkfSchemaFiles(projectDir, psf.rules);
+    writePsfSchemaFiles(projectDir, psf.rules);
   } else {
-    removeOkfSchemaFiles(projectDir);
+    removePsfSchemaFiles(projectDir);
   }
 }
 
-export function resetOkfSchemaWriteState(): void {
+export function resetPsfSchemaWriteState(): void {
   appliedSignatures.clear();
 }
 
-export function writeOkfSchemaFiles(projectDir: string, rules?: OkfRuleToggles): string[] {
-  const files = renderOkfSchemaFiles();
+export function writePsfSchemaFiles(projectDir: string, rules?: PsfRuleToggles): string[] {
+  const files = renderPsfSchemaFiles();
   const written: string[] = [];
   try {
     tracedMkdirSync(join(projectDir, PSF_SCHEMA_DIR), { recursive: true });
     for (const file of files) {
       const abs = join(projectDir, file.path);
-      if (!isOkfRuleEnabled(rules, file.ruleId)) {
+      if (!isPsfRuleEnabled(rules, file.ruleId)) {
         tracedRmSync(abs, { force: true });
         continue;
       }
@@ -112,9 +112,9 @@ export function writeOkfSchemaFiles(projectDir: string, rules?: OkfRuleToggles):
   return written;
 }
 
-function removeOkfSchemaFiles(projectDir: string): void {
+function removePsfSchemaFiles(projectDir: string): void {
   try {
-    for (const file of renderOkfSchemaFiles()) {
+    for (const file of renderPsfSchemaFiles()) {
       tracedRmSync(join(projectDir, file.path), { force: true });
     }
     tracedRmdirSync(join(projectDir, PSF_SCHEMA_DIR));

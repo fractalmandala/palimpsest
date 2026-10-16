@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import {
-  applyOkInitOutcome,
+  applyPsInitOutcome,
   applyOpenOutcome,
   type ConsentFlowSeed,
   type ConsentFlowState,
@@ -40,9 +40,9 @@ describe('markInitializing', () => {
   });
 });
 
-describe('applyOkInitOutcome', () => {
+describe('applyPsInitOutcome', () => {
   test('initializing + ok → opening', () => {
-    const result = applyOkInitOutcome(
+    const result = applyPsInitOutcome(
       { phase: 'initializing', seed: SEED },
       { ok: true, projectPath: '/wt/feat-bar' },
     );
@@ -50,7 +50,7 @@ describe('applyOkInitOutcome', () => {
   });
 
   test('initializing + init-failed → error carries reason + message', () => {
-    const result = applyOkInitOutcome(
+    const result = applyPsInitOutcome(
       { phase: 'initializing', seed: SEED },
       { ok: false, reason: 'init-failed', message: 'symlink at .ps/' },
     );
@@ -63,7 +63,7 @@ describe('applyOkInitOutcome', () => {
   });
 
   test('initializing + not-a-git-worktree → error', () => {
-    const result = applyOkInitOutcome(
+    const result = applyPsInitOutcome(
       { phase: 'initializing', seed: SEED },
       { ok: false, reason: 'not-a-git-worktree', message: 'no .git' },
     );
@@ -76,7 +76,7 @@ describe('applyOkInitOutcome', () => {
   });
 
   test('initializing + network-error → error', () => {
-    const result = applyOkInitOutcome(
+    const result = applyPsInitOutcome(
       { phase: 'initializing', seed: SEED },
       { ok: false, reason: 'network-error', message: 'fetch failed' },
     );
@@ -86,7 +86,7 @@ describe('applyOkInitOutcome', () => {
 
   test('non-initializing phase is identity (delayed response after Cancel)', () => {
     const cancelled: ConsentFlowState = { phase: 'cancelled', seed: SEED };
-    const result = applyOkInitOutcome(cancelled, { ok: true, projectPath: '/wt/feat-bar' });
+    const result = applyPsInitOutcome(cancelled, { ok: true, projectPath: '/wt/feat-bar' });
     expect(result).toBe(cancelled);
   });
 });

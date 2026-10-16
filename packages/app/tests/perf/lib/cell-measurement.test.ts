@@ -30,7 +30,7 @@ class MockPage {
   private memoryAbsent = false;
   readonly evaluateCallCount = { count: 0 };
 
-  setOkPerfFixture(state: unknown): void {
+  setPsPerfFixture(state: unknown): void {
     this.psPerf = state;
   }
 
@@ -69,7 +69,7 @@ interface PerfMarkFixture {
   readonly duration: number;
 }
 
-function buildOkPerfFixture(opts: {
+function buildPsPerfFixture(opts: {
   poolHits?: number;
   poolMisses?: number;
   marks?: ReadonlyArray<PerfMarkFixture>;
@@ -82,7 +82,7 @@ function buildOkPerfFixture(opts: {
         false: opts.poolMisses ?? 0,
       },
     };
-    counters['ok/pool/open'] = { byProp };
+    counters['ps/pool/open'] = { byProp };
   }
   const allMarks = opts.marks ?? [];
   return {
@@ -146,15 +146,15 @@ describe('readHeapMb', () => {
 describe('drainSubstrateSignals', () => {
   test('cacheHitCount counts ok/cache/hit ONLY; other substrate marks do not contribute', async () => {
     const page = new MockPage();
-    page.setOkPerfFixture(
-      buildOkPerfFixture({
+    page.setPsPerfFixture(
+      buildPsPerfFixture({
         marks: [
-          { name: 'ok/cache/hit', duration: 0 },
-          { name: 'ok/cache/hit', duration: 0 },
-          { name: 'ok/mount/create', duration: 0 },
-          { name: 'ok/mount/resolve', duration: 0 },
-          { name: 'ok/render/frame', duration: 5 },
-          { name: 'ok/cache/miss', duration: 0 },
+          { name: 'ps/cache/hit', duration: 0 },
+          { name: 'ps/cache/hit', duration: 0 },
+          { name: 'ps/mount/create', duration: 0 },
+          { name: 'ps/mount/resolve', duration: 0 },
+          { name: 'ps/render/frame', duration: 5 },
+          { name: 'ps/cache/miss', duration: 0 },
         ],
       }),
     );
@@ -165,9 +165,9 @@ describe('drainSubstrateSignals', () => {
     expect(drained.cacheMissCount).toBe(1);
   });
 
-  test('reads pool open hit/miss from counters["ok/pool/open"].byProp.hit', async () => {
+  test('reads pool open hit/miss from counters["ps/pool/open"].byProp.hit', async () => {
     const page = new MockPage();
-    page.setOkPerfFixture(buildOkPerfFixture({ poolHits: 7, poolMisses: 3 }));
+    page.setPsPerfFixture(buildPsPerfFixture({ poolHits: 7, poolMisses: 3 }));
     const drained = await drainSubstrateSignals(
       page as unknown as Parameters<typeof drainSubstrateSignals>[0],
     );
@@ -177,14 +177,14 @@ describe('drainSubstrateSignals', () => {
 
   test('computes perFrameJankRate from ok/render/* marks exceeding jankFrameMs', async () => {
     const page = new MockPage();
-    page.setOkPerfFixture(
-      buildOkPerfFixture({
+    page.setPsPerfFixture(
+      buildPsPerfFixture({
         marks: [
-          { name: 'ok/render/frame', duration: 8 },
-          { name: 'ok/render/frame', duration: 12 },
-          { name: 'ok/render/frame', duration: 20 },
-          { name: 'ok/render/frame', duration: 100 },
-          { name: 'ok/render/component', duration: 9 },
+          { name: 'ps/render/frame', duration: 8 },
+          { name: 'ps/render/frame', duration: 12 },
+          { name: 'ps/render/frame', duration: 20 },
+          { name: 'ps/render/frame', duration: 100 },
+          { name: 'ps/render/component', duration: 9 },
         ],
       }),
     );
@@ -196,11 +196,11 @@ describe('drainSubstrateSignals', () => {
 
   test('respects custom jankFrameMs threshold', async () => {
     const page = new MockPage();
-    page.setOkPerfFixture(
-      buildOkPerfFixture({
+    page.setPsPerfFixture(
+      buildPsPerfFixture({
         marks: [
-          { name: 'ok/render/frame', duration: 30 },
-          { name: 'ok/render/frame', duration: 70 },
+          { name: 'ps/render/frame', duration: 30 },
+          { name: 'ps/render/frame', duration: 70 },
         ],
       }),
     );
@@ -213,7 +213,7 @@ describe('drainSubstrateSignals', () => {
 
   test('returns zeros when __ok_perf is absent (production build, or collector not instantiated)', async () => {
     const page = new MockPage();
-    page.setOkPerfFixture(undefined);
+    page.setPsPerfFixture(undefined);
     const drained = await drainSubstrateSignals(
       page as unknown as Parameters<typeof drainSubstrateSignals>[0],
     );
@@ -228,11 +228,11 @@ describe('drainSubstrateSignals', () => {
 
   test('perFrameJankRate is 0 when no render-frame marks are present (avoids 0/0 NaN)', async () => {
     const page = new MockPage();
-    page.setOkPerfFixture(
-      buildOkPerfFixture({
+    page.setPsPerfFixture(
+      buildPsPerfFixture({
         marks: [
-          { name: 'ok/cache/hit', duration: 0 },
-          { name: 'ok/cache/miss', duration: 0 },
+          { name: 'ps/cache/hit', duration: 0 },
+          { name: 'ps/cache/miss', duration: 0 },
         ],
       }),
     );
@@ -347,7 +347,7 @@ describe('measureCell', () => {
   }): Promise<{ cell: CellMeasurement; cdp: MockCdp; page: MockPage }> {
     const cdp = new MockCdp();
     const page = new MockPage();
-    page.setOkPerfFixture(opts.psPerfFixture);
+    page.setPsPerfFixture(opts.psPerfFixture);
     page.setHeapMb(opts.finalHeapMb ?? 0);
     const workload = async (driver: WorkloadDriver) => {
       for (const s of opts.coldMountSamples ?? []) driver.recordColdMountSample(s);
@@ -377,14 +377,14 @@ describe('measureCell', () => {
       tabSwitchFlipSamples: Array.from({ length: 25 }, (_, i) => 30 + i),
       tabSwitchReMountSamples: Array.from({ length: 25 }, (_, i) => 100 + i),
       leakCycleHeapMb: [100, 110, 120, 130, 140, 150, 160, 170, 180, 190],
-      psPerfFixture: buildOkPerfFixture({
+      psPerfFixture: buildPsPerfFixture({
         poolHits: 18,
         poolMisses: 7,
         marks: [
-          ...Array.from({ length: 20 }, () => ({ name: 'ok/cache/hit', duration: 0 })),
-          ...Array.from({ length: 5 }, () => ({ name: 'ok/cache/miss', duration: 0 })),
-          ...Array.from({ length: 90 }, () => ({ name: 'ok/render/frame', duration: 12 })),
-          ...Array.from({ length: 10 }, () => ({ name: 'ok/render/frame', duration: 22 })),
+          ...Array.from({ length: 20 }, () => ({ name: 'ps/cache/hit', duration: 0 })),
+          ...Array.from({ length: 5 }, () => ({ name: 'ps/cache/miss', duration: 0 })),
+          ...Array.from({ length: 90 }, () => ({ name: 'ps/render/frame', duration: 12 })),
+          ...Array.from({ length: 10 }, () => ({ name: 'ps/render/frame', duration: 22 })),
         ],
       }),
       finalHeapMb: 220,
@@ -416,13 +416,13 @@ describe('measureCell', () => {
   test('AC (b): cacheHitRate counts ok/cache/hit ONLY; other substrate marks do not contribute', async () => {
     const { cell } = await runCell({
       warmReopenSamples: [50, 60, 70],
-      psPerfFixture: buildOkPerfFixture({
+      psPerfFixture: buildPsPerfFixture({
         marks: [
-          { name: 'ok/cache/hit', duration: 0 },
-          { name: 'ok/cache/hit', duration: 0 },
-          { name: 'ok/cache/hit', duration: 0 },
-          ...Array.from({ length: 10 }, () => ({ name: 'ok/mount/create', duration: 0 })),
-          { name: 'ok/cache/miss', duration: 0 },
+          { name: 'ps/cache/hit', duration: 0 },
+          { name: 'ps/cache/hit', duration: 0 },
+          { name: 'ps/cache/hit', duration: 0 },
+          ...Array.from({ length: 10 }, () => ({ name: 'ps/mount/create', duration: 0 })),
+          { name: 'ps/cache/miss', duration: 0 },
         ],
       }),
     });
@@ -434,7 +434,7 @@ describe('measureCell', () => {
     const heap = [100, 130, 160, 190, 220, 250, 280, 310, 340, 370, 400];
     const { cell } = await runCell({
       leakCycleHeapMb: heap,
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     expect(cell.tipTapLeakRateMbPerCycle).toBeCloseTo(30, 5);
     expect(cell.watchpoints.leakExceedsCeiling).toBe(true);
@@ -444,7 +444,7 @@ describe('measureCell', () => {
     const heap = [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110];
     const { cell } = await runCell({
       leakCycleHeapMb: heap,
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     expect(cell.tipTapLeakRateMbPerCycle).toBeCloseTo(1, 5);
     expect(cell.watchpoints.leakExceedsCeiling).toBe(false);
@@ -454,7 +454,7 @@ describe('measureCell', () => {
     const heap = [100, 101, 102, 103];
     const { cell } = await runCell({
       leakCycleHeapMb: heap,
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
       options: { leakWatchpointMbPerCycle: 0.5 },
     });
     expect(cell.watchpoints.leakExceedsCeiling).toBe(true);
@@ -463,10 +463,10 @@ describe('measureCell', () => {
   test('cache-error surfacing: warm-reopen samples without any ok/cache/hit raises cell error', async () => {
     const { cell } = await runCell({
       warmReopenSamples: [100, 110, 120, 130],
-      psPerfFixture: buildOkPerfFixture({
+      psPerfFixture: buildPsPerfFixture({
         marks: [
-          { name: 'ok/cache/miss', duration: 0 },
-          { name: 'ok/cache/miss', duration: 0 },
+          { name: 'ps/cache/miss', duration: 0 },
+          { name: 'ps/cache/miss', duration: 0 },
         ],
       }),
     });
@@ -478,8 +478,8 @@ describe('measureCell', () => {
   test('cache-error: stale-watchpoint does NOT trip when no warm-reopen samples were recorded', async () => {
     const { cell } = await runCell({
       coldMountSamples: [200, 210, 220],
-      psPerfFixture: buildOkPerfFixture({
-        marks: [{ name: 'ok/cache/miss', duration: 0 }],
+      psPerfFixture: buildPsPerfFixture({
+        marks: [{ name: 'ps/cache/miss', duration: 0 }],
       }),
     });
     expect(cell.watchpoints.cacheLayerStale).toBe(false);
@@ -489,7 +489,7 @@ describe('measureCell', () => {
   test('workload notes prefixed `error:` are surfaced into errors[]', async () => {
     const { cell } = await runCell({
       notes: ['note: warmup ok', 'error: cell hit MOUNT_STALLED_THRESHOLD_MS at sample 7'],
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     expect(cell.errors).toContain('error: cell hit MOUNT_STALLED_THRESHOLD_MS at sample 7');
     expect(cell.errors).not.toContain('note: warmup ok');
@@ -497,7 +497,7 @@ describe('measureCell', () => {
 
   test('orchestrator calls forceGc twice (pre-workload + final-heap)', async () => {
     const { cdp } = await runCell({
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     const gcCalls = cdp.calls.filter((c) => c.method === 'HeapProfiler.collectGarbage');
     expect(gcCalls.length).toBeGreaterThanOrEqual(2);
@@ -514,7 +514,7 @@ describe('measureCell', () => {
     ];
     const { cell } = await runCell({
       coldMountSamples: samples,
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     expect(cell.coldMountP95Ms).toBeLessThan(200);
     expect(cell.coldMountP95Ms).toBeGreaterThanOrEqual(118);
@@ -524,7 +524,7 @@ describe('measureCell', () => {
     const samples = [1000, 1001, 1002, 1003, 1004, 100, 100, 100, 100, 100];
     const { cell } = await runCell({
       coldMountSamples: samples,
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
       options: { warmupSamplesToDrop: 0 },
     });
     expect(cell.coldMountP95Ms).toBeGreaterThan(900);
@@ -534,7 +534,7 @@ describe('measureCell', () => {
     const samples = [200, 220, 240];
     const { cell } = await runCell({
       coldMountSamples: samples,
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
       options: { warmupSamplesToDrop: 5 },
     });
     expect(cell.coldMountP95Ms).toBeGreaterThan(200);
@@ -542,7 +542,7 @@ describe('measureCell', () => {
 
   test('zero pool events → poolHitRate is 0 (not NaN)', async () => {
     const { cell } = await runCell({
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     expect(cell.poolHitRate).toBe(0);
     expect(Number.isNaN(cell.poolHitRate)).toBe(false);
@@ -550,7 +550,7 @@ describe('measureCell', () => {
 
   test('zero cache events → cacheHitRate is 0 (not NaN)', async () => {
     const { cell } = await runCell({
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
     });
     expect(cell.cacheHitRate).toBe(0);
     expect(Number.isNaN(cell.cacheHitRate)).toBe(false);
@@ -558,7 +558,7 @@ describe('measureCell', () => {
 
   test('AC (d): maxVmPressure is worst observed during window (1→4→2 → max=4)', async () => {
     const { cell } = await runCell({
-      psPerfFixture: buildOkPerfFixture({}),
+      psPerfFixture: buildPsPerfFixture({}),
       options: { pressureIntervalMs: 100 },
     });
     expect([1, 2, 4]).toContain(cell.maxVmPressure);

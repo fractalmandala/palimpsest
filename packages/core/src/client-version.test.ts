@@ -31,7 +31,7 @@ describe('client surface derivation', () => {
     expect([...EMBEDDED_HOSTS].sort()).toEqual(Object.keys(UA_PATTERNS).sort());
   });
 
-  test('the desktop bridge marks the OK Desktop window, whatever the user agent says', () => {
+  test('the desktop bridge marks the Palimpsest Desktop window, whatever the user agent says', () => {
     expect(deriveClientSurface({ hasDesktopBridge: true, embeddedHost: null })).toBe('desktop');
     for (const host of EMBEDDED_HOSTS) {
       expect(deriveClientSurface({ hasDesktopBridge: true, embeddedHost: host })).toBe('desktop');
@@ -55,7 +55,7 @@ describe('client surface derivation', () => {
   });
 
   test('the shared attribute key is ok.client.surface', () => {
-    expect(CLIENT_SURFACE_ATTRIBUTE).toBe('ok.client.surface');
+    expect(CLIENT_SURFACE_ATTRIBUTE).toBe('ps.client.surface');
   });
 });
 

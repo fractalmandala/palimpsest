@@ -68,12 +68,12 @@ function renderSection() {
 }
 
 const discovery: SkillsListEntry = {
-  name: 'open-knowledge-discovery',
+  name: 'palimpsest-discovery',
   description:
     'Read when the user asks what Palimpsest is, wants to install it on a repository. Do NOT load to perform Palimpsest reads/writes.',
   scope: 'global',
-  path: '.claude/skills/open-knowledge-discovery/SKILL.md',
-  absolutePath: '/home/.claude/skills/open-knowledge-discovery/SKILL.md',
+  path: '.claude/skills/palimpsest-discovery/SKILL.md',
+  absolutePath: '/home/.claude/skills/palimpsest-discovery/SKILL.md',
   installed: true,
   hosts: ['claude'],
   managed: true,
@@ -118,16 +118,16 @@ const baseStatus: PsIntegrationsStatus = {
   skills: [
     {
       id: 'discovery',
-      name: 'open-knowledge-discovery',
+      name: 'palimpsest-discovery',
       description: discovery.description ?? '',
       installed: true,
       onboarding: true,
       paths: [
-        '~/.agents/skills/open-knowledge-discovery',
-        '~/.claude/skills/open-knowledge-discovery',
+        '~/.agents/skills/palimpsest-discovery',
+        '~/.claude/skills/palimpsest-discovery',
       ],
       size: { alwaysOn: 140, onTrigger: 1495, onDemand: 0 },
-      sourceDir: '/bundles/open-knowledge-discovery',
+      sourceDir: '/bundles/palimpsest-discovery',
       resolvedHosts: [{ editor: 'claude', skillsRoot: '.claude/skills', custom: false }],
     },
     {
@@ -262,8 +262,8 @@ describe('BuiltInSkillsSection', () => {
     expect(openPreviewSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         flavor: 'builtin',
-        name: 'open-knowledge-discovery',
-        source: '/home/.claude/skills/open-knowledge-discovery',
+        name: 'palimpsest-discovery',
+        source: '/home/.claude/skills/palimpsest-discovery',
         level: 'global',
       }),
     );
@@ -338,7 +338,7 @@ describe('BuiltInSkillsSection', () => {
       expect(within(dialog).getByText('open-knowledge-write-skill')).toBeTruthy();
       expect(within(dialog).getByText('How to write a new skill and install it.')).toBeTruthy();
       expect(within(dialog).getByText('~/.agents/skills/open-knowledge-write-skill')).toBeTruthy();
-      expect(within(dialog).queryByText('open-knowledge-discovery')).toBeNull();
+      expect(within(dialog).queryByText('palimpsest-discovery')).toBeNull();
 
       await userEvent.click(screen.getByTestId('skills-studio-intro-install'));
 
@@ -381,7 +381,7 @@ describe('BuiltInSkillsSection', () => {
 
       const dialog = await screen.findByTestId('skills-studio-intro');
       expect(screen.queryByTestId('skills-studio-intro-install')).toBeNull();
-      expect(within(dialog).queryByText('open-knowledge-discovery')).toBeNull();
+      expect(within(dialog).queryByText('palimpsest-discovery')).toBeNull();
       expect(screen.getByTestId('skills-studio-intro-ack')).toBeTruthy();
     });
 
@@ -415,7 +415,7 @@ describe('BuiltInSkillsSection', () => {
       });
 
       expect(markSpy).toHaveBeenCalledWith(
-        'ok/skill/install',
+        'ps/skill/install',
         expect.objectContaining({ surface: 'skills-studio-intro', mode: 'install', hostCount: 1 }),
       );
     });

@@ -35,7 +35,7 @@ describe('Pi trust dependent resources', () => {
 
   test('ignores only the bridge and owned skill namespaces in the current project', () => {
     for (const skillRoot of [join(cwd, '.pi', 'skills'), join(cwd, '.agents', 'skills')]) {
-      for (const name of ['palimpsest', 'open-knowledge-discovery', 'open-knowledge-custom']) {
+      for (const name of ['palimpsest', 'palimpsest-discovery', 'palimpsest-custom']) {
         mkdirSync(join(skillRoot, name), { recursive: true });
         writeFileSync(join(skillRoot, name, 'keep.txt'), 'owned namespace');
       }
@@ -95,7 +95,7 @@ describe('Pi trust dependent resources', () => {
       kind: 'shared',
       paths: [shared],
     });
-    mkdirSync(join(shared, 'open-knowledge-discovery'));
+    mkdirSync(join(shared, 'palimpsest-discovery'));
     expect(inspectPiTrustResources(cwd, home, bridgePath)).toEqual({
       kind: 'shared',
       paths: [shared],

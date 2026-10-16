@@ -59,7 +59,7 @@ describe('shadow-repo check', () => {
   test('passes when shadow dir exists and HEAD is readable', async () => {
     const cwd = makeProject();
     mkdirSync(join(cwd, '.git'), { recursive: true });
-    const shadowDir = join(cwd, '.git', 'ok');
+    const shadowDir = join(cwd, '.git', 'ps');
     mkdirSync(shadowDir, { recursive: true });
     writeFileSync(join(shadowDir, 'HEAD'), 'ref: refs/wip/local/main\n');
 
@@ -74,7 +74,7 @@ describe('shadow-repo check', () => {
   test('fails when HEAD is missing', async () => {
     const cwd = makeProject();
     mkdirSync(join(cwd, '.git'), { recursive: true });
-    const shadowDir = join(cwd, '.git', 'ok');
+    const shadowDir = join(cwd, '.git', 'ps');
     mkdirSync(shadowDir, { recursive: true });
 
     const def = makeShadowRepoCheck({
@@ -90,7 +90,7 @@ describe('shadow-repo remediation names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: both uninitialized states name %s start', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

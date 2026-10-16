@@ -2,13 +2,13 @@
 
 Use this when (a) the user asks to set up an existing repo that already has content, OR (b) an `exec` directory listing shows content with no folder frontmatter / templates configured. Goal: **extract conventions from existing siblings + activate the link graph, leaving the repo more structured and more navigable than you found it.**
 
-This is the brownfield counterpart to `ok seed` (greenfield). Read the content directory from `config({ key: 'content.dir' })`; paths below are relative to it.
+This is the brownfield counterpart to `ps seed` (greenfield). Read the content directory from `config({ key: 'content.dir' })`; paths below are relative to it.
 
 Use OK primitives only — no new files outside `<folder>/.ps/`, no body rewrites without per-pair user confirmation.
 
 **Seven phases, in order. STOP gates require user confirmation before proceeding. Do not skip or batch ahead.**
 
-**Server requirement.** Phases 1-4 run fs-direct — `exec` (scan + read) and the `write`/`edit` verbs (folder frontmatter + templates) need no running server. Phase 5 (link-graph activation) composes `links` and `search`, which **require the OK Hocuspocus server** — Phase 5 step 0 checks for it and exits cleanly with a `run ps start` instruction if it is down.
+**Server requirement.** Phases 1-4 run fs-direct — `exec` (scan + read) and the `write`/`edit` verbs (folder frontmatter + templates) need no running server. Phase 5 (link-graph activation) composes `links` and `search`, which **require the Palimpsest Hocuspocus server** — Phase 5 step 0 checks for it and exits cleanly with a `run ps start` instruction if it is down.
 
 ---
 
@@ -28,7 +28,7 @@ Use OK primitives only — no new files outside `<folder>/.ps/`, no body rewrite
    - If MOST substantial folders are already configured → set up to exit early at Phase 7 with "already configured."
 
 **Early-exit conditions:**
-- If total `.md` count is **fewer than 5** → STOP. Tell the user "this looks empty — try `ok seed` for a greenfield starter pack, OR write your first doc and come back later." Exit.
+- If total `.md` count is **fewer than 5** → STOP. Tell the user "this looks empty — try `ps seed` for a greenfield starter pack, OR write your first doc and come back later." Exit.
 - If all-greenfield-already (per step 6) → STOP. Exit with "already configured."
 
 ---
@@ -154,7 +154,7 @@ Repeat for every `[KB]` folder.
 
 The largest phase. Uses the `links` tool (every link-graph view) plus `search` and `edit` to apply confirmed link insertions.
 
-0. **Server check (required for this phase).** `links` and `search` need the OK Hocuspocus server. Probe via `links({ kind: "hubs" })`. If the response starts with `"Error: Hocuspocus server is not running"`, STOP — tell the user "the link-graph phase needs the OK server. Start it with `ps start` from a terminal, then resume here (Phases 1-4 are already applied)." Exit cleanly.
+0. **Server check (required for this phase).** `links` and `search` need the Palimpsest Hocuspocus server. Probe via `links({ kind: "hubs" })`. If the response starts with `"Error: Hocuspocus server is not running"`, STOP — tell the user "the link-graph phase needs the Palimpsest server. Start it with `ps start` from a terminal, then resume here (Phases 1-4 are already applied)." Exit cleanly.
 
 Six sub-passes, each with its own STOP gate.
 
@@ -303,7 +303,7 @@ Link-graph activation:
 - **Don't extract templates from a single sibling** — you need at least 2 with a matching heading set (heading-text equality, in order).
 - **Don't bulk-rewrite doc bodies** — every link insertion (5a, 5c, 5d, 5e, 5f) goes through user confirmation via STOP gates.
 - **Don't auto-apply** — every phase has a confirmation gate. You propose; the user disposes.
-- **Don't run if the project has fewer than 5 `.md` files** — exit early; redirect to `ok seed`.
+- **Don't run if the project has fewer than 5 `.md` files** — exit early; redirect to `ps seed`.
 - **Don't run if the project is already fully configured** — exit early with "already configured."
 - **Don't redundantly propose what `.gitignore` covers** in `.psignore`.
 - **Don't attempt nested-pattern detection** — each substantial top-level folder gets its own folder frontmatter; nested sub-patterns (`specs/*/evidence/`) are left for users to set up manually.
@@ -312,7 +312,7 @@ Link-graph activation:
 
 ## Exit conditions (early termination)
 
-- **Empty project** (Phase 1): fewer than 5 `.md` files total → exit with "try `ok seed` instead."
+- **Empty project** (Phase 1): fewer than 5 `.md` files total → exit with "try `ps seed` instead."
 - **All-greenfield-already** (Phase 1 step 6): folder frontmatter exists AND templates exist for every substantial folder → exit with "this project is already configured."
 - **Server down** (Phase 5 step 0): Phases 1-4 already applied fs-direct; surface "the link-graph phase needs `ps start` running" and exit cleanly — resuming picks up at Phase 5.
 - **User aborts at any STOP gate** → exit cleanly, leaving any already-applied proposals in place (apply is per-phase, not all-or-nothing).

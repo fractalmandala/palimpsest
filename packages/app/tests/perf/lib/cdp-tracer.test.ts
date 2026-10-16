@@ -152,9 +152,9 @@ describe('aggregateTrace', () => {
 
   test('user-timing marks counted via cat:blink.user_timing', () => {
     const events: CdpTraceEvent[] = [
-      ev('ok/nav/hash-change', 'blink.user_timing', 0),
-      ev('ok/render/editor-area', 'blink.user_timing', 0),
-      ev('ok/sync/resolve', 'blink.user_timing,other', 0),
+      ev('ps/nav/hash-change', 'blink.user_timing', 0),
+      ev('ps/render/editor-area', 'blink.user_timing', 0),
+      ev('ps/sync/resolve', 'blink.user_timing,other', 0),
     ];
     const s = aggregateTrace(events);
     expect(s.userTimingMarkCount).toBe(3);

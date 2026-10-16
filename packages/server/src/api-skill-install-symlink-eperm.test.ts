@@ -91,7 +91,7 @@ test('without symlink rights, add falls back to a copy and convert-to-link keeps
   const toLink = await install({ name, convert: { target: 'cursor', mode: 'link' } });
   expect(toLink.status, toLink.body).toBe(403);
   expect(JSON.parse(toLink.body)).toMatchObject({
-    type: 'urn:ok:error:links-not-permitted',
+    type: 'urn:ps:error:links-not-permitted',
     title:
       'This system does not allow creating symlinks, so that location was left as a copy. On Windows, creating symlinks needs administrator rights or Developer Mode.',
   });

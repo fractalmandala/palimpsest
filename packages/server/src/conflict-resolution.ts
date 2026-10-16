@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { pathspecArgs } from '@palimpsest/core';
 import type { Conflict, ConflictIo, ResolveStrategy } from './conflict-authority.ts';
 import { ConflictMarkersInContentError } from './conflict-errors.ts';
-import { isShareableOkArtifact } from './content-filter.ts';
+import { isShareablePsArtifact } from './content-filter.ts';
 import { splitNulSeparatedPaths } from './git-paths.ts';
 import { isWithinDir } from './path-utils.ts';
 import { containsUnresolvedConflictBlock } from './reconciliation.ts';
@@ -25,7 +25,7 @@ export function projectAbsPath(projectDir: string, file: string): string {
     throw new Error(`[conflicts] file path escapes project directory: ${file}`);
   }
   return assertRealpathWithinDir(absPath, projectRoot, {
-    allowShareableOkArtifact: isShareableOkArtifact,
+    allowShareablePsArtifact: isShareablePsArtifact,
   });
 }
 

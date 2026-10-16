@@ -418,7 +418,7 @@ describe('AboutSection automatic updates switch', () => {
   test('a refused write reverts the switch and reports the failure', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     installModeBridge('auto', async () => {
-      throw new Error('ok:update:dispatch: set-mode refused (persist-failed)');
+      throw new Error('ps:update:dispatch: set-mode refused (persist-failed)');
     });
     render(<AboutSection />);
 

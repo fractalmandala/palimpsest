@@ -208,7 +208,7 @@ describe('fixLintDoc', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:too-many-agent-sessions',
+            type: 'urn:ps:error:too-many-agent-sessions',
             title: 'Too many agent sessions.',
             status: 503,
           }),
@@ -220,7 +220,7 @@ describe('fixLintDoc', () => {
       ok: false,
       errorDetail: 'Too many agent sessions.',
       status: 503,
-      problemType: 'urn:ok:error:too-many-agent-sessions',
+      problemType: 'urn:ps:error:too-many-agent-sessions',
     });
   });
 
@@ -229,7 +229,7 @@ describe('fixLintDoc', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:disk-divergence',
+            type: 'urn:ps:error:disk-divergence',
             title: 'Document changed on disk.',
             status: 409,
           }),
@@ -241,7 +241,7 @@ describe('fixLintDoc', () => {
       ok: false,
       errorDetail: 'Document changed on disk.',
       status: 409,
-      problemType: 'urn:ok:error:disk-divergence',
+      problemType: 'urn:ps:error:disk-divergence',
     });
   });
 

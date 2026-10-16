@@ -77,7 +77,7 @@ describe('moveSkillScope transport', () => {
     globalThis.fetch = vi.fn().mockResolvedValue(
       new Response(
         JSON.stringify({
-          type: 'urn:ok:error:internal-server-error',
+          type: 'urn:ps:error:internal-server-error',
           title: 'The destination copy could not be read back.',
           status: 500,
           moveState: 'destination-unreadable',

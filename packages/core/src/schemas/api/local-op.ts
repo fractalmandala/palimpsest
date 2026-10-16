@@ -2,20 +2,20 @@ import type { StandardSchemaV1 } from '@standard-schema/spec';
 import { z } from 'zod';
 import { isGitCredentialHost } from '../../constants/github.ts';
 
-export const LocalOpOkInitRequestSchema = z
+export const LocalOpPsInitRequestSchema = z
   .object({
     projectPath: z.string().min(1),
   })
   .loose() satisfies StandardSchemaV1;
-export type LocalOpOkInitRequest = z.infer<typeof LocalOpOkInitRequestSchema>;
+export type LocalOpPsInitRequest = z.infer<typeof LocalOpPsInitRequestSchema>;
 
-export const LocalOpOkInitFailureReasonSchema = z.enum([
+export const LocalOpPsInitFailureReasonSchema = z.enum([
   'not-a-git-worktree',
   'init-failed',
 ]) satisfies StandardSchemaV1;
-export type LocalOpOkInitFailureReason = z.infer<typeof LocalOpOkInitFailureReasonSchema>;
+export type LocalOpPsInitFailureReason = z.infer<typeof LocalOpPsInitFailureReasonSchema>;
 
-export const LocalOpOkInitResponseSchema = z.discriminatedUnion('ok', [
+export const LocalOpPsInitResponseSchema = z.discriminatedUnion('ok', [
   z
     .object({
       ok: z.literal(true),
@@ -25,12 +25,12 @@ export const LocalOpOkInitResponseSchema = z.discriminatedUnion('ok', [
   z
     .object({
       ok: z.literal(false),
-      reason: LocalOpOkInitFailureReasonSchema,
+      reason: LocalOpPsInitFailureReasonSchema,
       message: z.string().min(1),
     })
     .loose(),
 ]) satisfies StandardSchemaV1;
-export type LocalOpOkInitResponse = z.infer<typeof LocalOpOkInitResponseSchema>;
+export type LocalOpPsInitResponse = z.infer<typeof LocalOpPsInitResponseSchema>;
 
 export const LocalOpAuthHostRequestSchema = z
   .object({

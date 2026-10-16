@@ -38,7 +38,7 @@ describe('GET /api/skills/search — both upstreams unavailable', () => {
 
     expect(res.status).toBe(502);
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
   });
 
   test('skills.sh alone failing still degrades to GitHub rather than erroring', async () => {

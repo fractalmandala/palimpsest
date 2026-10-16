@@ -15,7 +15,7 @@ import {
   vi,
 } from 'vitest';
 import {
-  createScratchHomeWithOkBin,
+  createScratchHomeWithPsBin,
   firstShellOnDisk,
   MINIMAL_PARENT_PATH,
 } from '../../tests/support/ps-bin-scratch-home.test-helper.ts';
@@ -370,7 +370,7 @@ describe.skipIf(process.platform === 'win32')('the production CLI-presence probe
   let previousZdotdir: string | undefined;
 
   beforeAll(() => {
-    scratchHome = createScratchHomeWithOkBin({
+    scratchHome = createScratchHomeWithPsBin({
       prefix: 'ps-probe-spawn-',
       bins: [SLIDEV_BIN, ...TERMINAL_CLI_BINS, FIXTURE_ONLY_BIN],
     });
@@ -416,7 +416,7 @@ describe.skipIf(process.platform === 'win32')('the production CLI-presence probe
     expect(env).not.toBe(process.env);
   });
 
-  test('does not mark the probe child as the OK Desktop terminal', () => {
+  test('does not mark the probe child as the Palimpsest Desktop terminal', () => {
     expect(psProbeSpawnEnv().PS_DESKTOP_TERMINAL).toBeUndefined();
   });
 

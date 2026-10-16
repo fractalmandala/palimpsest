@@ -39,15 +39,15 @@ afterEach(async () => {
 
 describe('renderer bug-report send span', () => {
   test('a send records its outcome and exports one span', () => {
-    const span = beginBugReportSendSpan({ 'ok.bug_report.zip_bytes': 1234 });
-    span.end('sent', { 'ok.bug_report.request_seq': 1 });
+    const span = beginBugReportSendSpan({ 'ps.bug_report.zip_bytes': 1234 });
+    span.end('sent', { 'ps.bug_report.request_seq': 1 });
 
     const finished = exporter.getFinishedSpans();
     expect(finished).toHaveLength(1);
-    expect(finished[0].name).toBe('ok.bug-report.send.attempt');
-    expect(finished[0].attributes['ok.bug_report.renderer_outcome']).toBe('sent');
-    expect(finished[0].attributes['ok.bug_report.zip_bytes']).toBe(1234);
-    expect(finished[0].attributes['ok.bug_report.request_seq']).toBe(1);
+    expect(finished[0].name).toBe('ps.bug-report.send.attempt');
+    expect(finished[0].attributes['ps.bug_report.renderer_outcome']).toBe('sent');
+    expect(finished[0].attributes['ps.bug_report.zip_bytes']).toBe(1234);
+    expect(finished[0].attributes['ps.bug_report.request_seq']).toBe(1);
   });
 
   test('concurrent sends inject traceparents that name their own spans', () => {
@@ -65,7 +65,7 @@ describe('renderer bug-report send span', () => {
 
     const finished = exporter.getFinishedSpans();
     const byOutcome = new Map(
-      finished.map((s) => [s.attributes['ok.bug_report.renderer_outcome'], s]),
+      finished.map((s) => [s.attributes['ps.bug_report.renderer_outcome'], s]),
     );
     expect(byOutcome.get('sent')?.spanContext().spanId).toBe(headerA.spanId);
     expect(byOutcome.get('failed')?.spanContext().spanId).toBe(headerB.spanId);
@@ -80,7 +80,7 @@ describe('renderer bug-report send span', () => {
   test('a joined duplicate is recorded, since main never sees it', () => {
     const span = beginBugReportSendSpan();
     span.end('joined');
-    expect(exporter.getFinishedSpans()[0].attributes['ok.bug_report.renderer_outcome']).toBe(
+    expect(exporter.getFinishedSpans()[0].attributes['ps.bug_report.renderer_outcome']).toBe(
       'joined',
     );
   });
@@ -91,6 +91,6 @@ describe('renderer bug-report send span', () => {
     span.end('failed');
     const finished = exporter.getFinishedSpans();
     expect(finished).toHaveLength(1);
-    expect(finished[0].attributes['ok.bug_report.renderer_outcome']).toBe('sent');
+    expect(finished[0].attributes['ps.bug_report.renderer_outcome']).toBe('sent');
   });
 });

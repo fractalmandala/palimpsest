@@ -393,7 +393,7 @@ export async function handleBugReportCreate(
   if (!isCreateRequest(request)) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'invalid-request',
       handler: 'handleBugReportCreate',
     });
@@ -563,7 +563,7 @@ export async function handleBugReportCreate(
   } catch (err) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'bundle-failed',
       handler: 'handleBugReportCreate',
       cause: err,
@@ -931,7 +931,7 @@ function logImageUploadSkip(handler: string, prefix: string) {
   return (reason: string, cause?: unknown): null => {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: `${prefix}: ${reason}`,
       handler,
       ...(cause === undefined ? {} : { cause }),
@@ -1229,7 +1229,7 @@ async function runSidecarHook(hook: Promise<unknown> | undefined): Promise<void>
   } catch (err) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'sidecar-hook-error',
       handler: 'handleBugReportSend',
       cause: err,
@@ -1245,7 +1245,7 @@ export async function handleBugReportSend(
   if (!isSendRequest(request)) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'invalid-request',
       handler: 'handleBugReportSend',
     });
@@ -1258,7 +1258,7 @@ export async function handleBugReportSend(
   if (!isReportIdShape(basename(request.zipPath))) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'zip-path-shape',
       handler: 'handleBugReportSend',
     });
@@ -1271,7 +1271,7 @@ export async function handleBugReportSend(
   if (!isPathWithinProject(request.zipPath, deps.bugReportsRoot, process.platform)) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'zip-path-escape',
       handler: 'handleBugReportSend',
     });
@@ -1288,7 +1288,7 @@ export async function handleBugReportSend(
     if (!isPathWithinProject(canonicalZipPath, canonicalRoot, process.platform)) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'zip-path-escape',
         handler: 'handleBugReportSend',
       });
@@ -1301,7 +1301,7 @@ export async function handleBugReportSend(
   } catch (err) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'zip-unresolvable',
       handler: 'handleBugReportSend',
       cause: err,
@@ -1330,13 +1330,13 @@ export async function handleBugReportSend(
   };
   const reportId = basename(request.zipPath);
   const sendTrace = beginSendTrace(
-    { 'ok.bug_report.include_screenshot': request.includeScreenshot === true },
+    { 'ps.bug_report.include_screenshot': request.includeScreenshot === true },
     request.traceparent,
   );
   if (!deps.intakeBaseUrl) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'intake-unconfigured',
       handler: 'handleBugReportSend',
     });
@@ -1351,7 +1351,7 @@ export async function handleBugReportSend(
     } catch (err) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'sidecar-hook-error',
         handler: 'handleBugReportSend',
         cause: err,
@@ -1360,7 +1360,7 @@ export async function handleBugReportSend(
     if (!gate.proceed) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'send-in-flight',
         handler: 'handleBugReportSend',
       });
@@ -1398,7 +1398,7 @@ export async function handleBugReportSend(
   }
   logIpcError({
     event: 'ipc.error',
-    channel: 'ok:bug-report:dispatch',
+    channel: 'ps:bug-report:dispatch',
     reason: outcome.reason,
     handler: 'handleBugReportSend',
     cause: outcome.cause,
@@ -1434,7 +1434,7 @@ export function handleBugReportCrashAck(
   if (!isCrashAckRequest(request)) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'invalid-request',
       handler: 'handleBugReportCrashAck',
     });

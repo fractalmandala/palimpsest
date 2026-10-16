@@ -185,7 +185,7 @@ describe('POST /api/link-preview anti-proxy gate', () => {
     });
     expect(res.status).toBe(415);
     expect(((await res.json()) as { type?: string }).type).toBe(
-      'urn:ok:error:unsupported-media-type',
+      'urn:ps:error:unsupported-media-type',
     );
     expect(fake.calls).toHaveLength(0);
   });

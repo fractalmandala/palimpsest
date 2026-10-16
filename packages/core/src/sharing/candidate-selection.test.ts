@@ -65,7 +65,7 @@ function makeBridge(opts: StubOptions): CandidateBridgeDeps {
     async readGitDirKind(projectPath) {
       return opts.gitDirKindByPath?.[projectPath] ?? 'absent';
     },
-    async isOkProjectRoot(projectPath) {
+    async isPsProjectRoot(projectPath) {
       return opts.psProjectRoots?.has(projectPath) ?? false;
     },
     async realpath(path) {
@@ -137,7 +137,7 @@ describe('selectCandidate', () => {
     expect(result.kind).toBe('branch-match-non-ok');
     if (result.kind === 'branch-match-non-ok') {
       expect(result.candidate.path).toBe('/wt/feat-bar');
-      expect(result.candidate.hasOkConfig).toBe(false);
+      expect(result.candidate.hasPsConfig).toBe(false);
       expect(result.candidate.source).toBe('worktree-enum');
     }
   });
@@ -343,7 +343,7 @@ describe('selectCandidate', () => {
     expect(result.kind).toBe('branch-match-non-ok');
     if (result.kind === 'branch-match-non-ok') {
       expect(result.candidate.path).toBe('/wt/cli-managed');
-      expect(result.candidate.hasOkConfig).toBe(false);
+      expect(result.candidate.hasPsConfig).toBe(false);
       expect(result.candidate.recent).toBeNull();
       expect(result.anchorRecent).not.toBeNull();
       expect(result.anchorRecent?.name).toBe('host-checkout');

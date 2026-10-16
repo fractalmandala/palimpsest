@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
 import { Command } from 'commander';
 import {
-  addOkPathsToGitExclude,
-  getOkArtifactPaths,
+  addPsPathsToGitExclude,
+  getPsArtifactPaths,
   readSharingMode,
 } from '../../sharing/git-exclude.ts';
 import { accent, success, warning } from '../../ui/colors.ts';
@@ -44,8 +44,8 @@ export function sharingUnshareCommand(): Command {
     .option('--json', 'Output JSON', false)
     .action(async (opts: UnshareOptions) => {
       const projectRoot = resolve(opts.project ?? process.cwd());
-      const paths = getOkArtifactPaths(projectRoot);
-      const result = addOkPathsToGitExclude(projectRoot, paths);
+      const paths = getPsArtifactPaths(projectRoot);
+      const result = addPsPathsToGitExclude(projectRoot, paths);
 
       if (result.kind === 'refused-tracked') {
         if (opts.json) {

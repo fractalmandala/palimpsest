@@ -1,6 +1,6 @@
 export {
   discoverLockDirs,
-  extractOkBinaryPath,
+  extractPsBinaryPath,
   type ProcessUsage,
   processCommand,
   processUsage,

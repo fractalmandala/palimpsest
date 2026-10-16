@@ -75,7 +75,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
   async function handleGitWorktreeStatus(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!checkLocalOpSecurity(req, res, { handler: 'git-worktree-status' })) return;
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'git-worktree-status',
         extraHeaders: { Allow: 'GET' },
       });
@@ -104,7 +104,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
       });
     } catch (e) {
       if (res.writableEnded || res.destroyed) return;
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'git-worktree-status',
         cause: e,
       });
@@ -119,7 +119,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'projectDir is not configured for this server.',
             { handler: BRANCH_INFO_HANDLER_TAG },
           );
@@ -134,7 +134,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'branch query param missing or malformed.',
             { handler: BRANCH_INFO_HANDLER_TAG },
           );
@@ -144,7 +144,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'path query param missing or malformed.',
             { handler: BRANCH_INFO_HANDLER_TAG },
           );
@@ -155,7 +155,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
           handler: BRANCH_INFO_HANDLER_TAG,
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: BRANCH_INFO_HANDLER_TAG,
           cause: err,
         });
@@ -174,7 +174,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
       const bodyObj = body as unknown as Record<string, unknown>;
       const actor = extractActorIdentity(bodyObj, getPrincipal);
       if (actor.kind === 'invalid-summary') {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
           handler: CHECKOUT_HANDLER_TAG,
         });
         return;
@@ -184,7 +184,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'projectDir is not configured for this server.',
           { handler: CHECKOUT_HANDLER_TAG },
         );
@@ -203,7 +203,7 @@ export function createGitRoutes(deps: GitRouteDeps): ApiRouteGroup {
           handler: CHECKOUT_HANDLER_TAG,
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: CHECKOUT_HANDLER_TAG,
           cause: err,
         });

@@ -294,7 +294,7 @@ describe('the user-global discovery bundle', () => {
     mkdirSync(join(home, '.cursor'), { recursive: true });
     mkdirSync(join(home, '.claude'), { recursive: true });
     await run([{ satisfierId: 'claude/skill/user/skill-bundle-copy', desired: 'present' }]);
-    const claudeSkillMd = join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md');
+    const claudeSkillMd = join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md');
     expect(existsSync(claudeSkillMd)).toBe(true);
     const claudeBytesBefore = readFileSync(claudeSkillMd, 'utf8');
 
@@ -304,7 +304,7 @@ describe('the user-global discovery bundle', () => {
 
     expect(actionFor(report, 'cursor/skill/user/skill-bundle-copy')?.action).toBe('written');
     expect(
-      existsSync(join(home, '.cursor', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
     expect(readFileSync(claudeSkillMd, 'utf8')).toBe(claudeBytesBefore);
   });
@@ -334,7 +334,7 @@ describe('the user-global discovery bundle', () => {
 
     await run([{ satisfierId: 'codex/skill/user/skill-bundle-copy', desired: 'present' }]);
 
-    expect(existsSync(join(home, '.codex', 'skills', 'open-knowledge-discovery', 'SKILL.md'))).toBe(
+    expect(existsSync(join(home, '.codex', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
       true,
     );
   });
@@ -353,9 +353,9 @@ describe('the user-global discovery bundle', () => {
     ]);
 
     expect(actionFor(report, 'cursor/skill/user/skill-bundle-copy')?.action).toBe('removed');
-    expect(existsSync(join(home, '.cursor', 'skills', 'open-knowledge-discovery'))).toBe(false);
+    expect(existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery'))).toBe(false);
     expect(
-      existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
   });
 
@@ -374,7 +374,7 @@ describe('the user-global discovery bundle', () => {
     const conflict = report.conflicts.find((entry) => entry.kind === 'unresolved-shared-copy');
     expect(conflict?.agentIds).toEqual(['codex', 'claude']);
     expect(
-      existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
   });
 
@@ -392,7 +392,7 @@ describe('the user-global discovery bundle', () => {
 
     expect(report.conflicts).toEqual([]);
     expect(
-      existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(false);
   });
 });

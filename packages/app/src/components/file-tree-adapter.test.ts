@@ -233,14 +233,14 @@ describe('file-tree-adapter', () => {
     ).toEqual(['docs/']);
   });
 
-  test('includeOkFolders admits .ps folder paths for the revealed tree', () => {
+  test('includePsFolders admits .ps folder paths for the revealed tree', () => {
     const entries = [
       doc('docs/guide'),
       doc('.ps/skills/my-skill/SKILL'),
       { kind: 'folder' as const, path: '.ps/skills/my-skill', size: 0, modified: '' },
       doc('notes/.ps/templates/daily'),
     ];
-    expect(collectTreeFolderPathsFromDocuments(entries, { includeOkFolders: true })).toEqual([
+    expect(collectTreeFolderPathsFromDocuments(entries, { includePsFolders: true })).toEqual([
       '.ps/',
       '.ps/skills/',
       '.ps/skills/my-skill/',

@@ -96,8 +96,8 @@ describe('extraSymlinkStillOurs', () => {
   test('true only when the path is a symlink still pointing at the recorded target', () => {
     const dir = mkdtempSync(join(tmpdir(), 'ps-xsym-'));
     try {
-      const target = join(dir, '.ps', 'bin', 'ok');
-      const link = join(dir, 'ok');
+      const target = join(dir, '.ps', 'bin', 'ps');
+      const link = join(dir, 'ps');
       symlinkSync(target, link);
       expect(extraSymlinkStillOurs(link, target)).toBe(true);
       expect(extraSymlinkStillOurs(link, join(dir, 'somewhere-else'))).toBe(false);

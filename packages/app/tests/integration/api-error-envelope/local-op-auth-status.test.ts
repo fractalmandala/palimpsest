@@ -24,7 +24,7 @@ async function postStatus(body: unknown): Promise<Response> {
 }
 
 describe('local-op-auth-status envelope (RFC 9457, US-012)', () => {
-  test('spawn failure emits urn:ok:error:auth-failed problem+json 500', async () => {
+  test('spawn failure emits urn:ps:error:auth-failed problem+json 500', async () => {
     const res = await postStatus({});
     expect(res.status).toBe(500);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -32,7 +32,7 @@ describe('local-op-auth-status envelope (RFC 9457, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:auth-failed');
+      expect(parsed.data.type).toBe('urn:ps:error:auth-failed');
       expect(parsed.data.status).toBe(500);
     }
   });
@@ -55,18 +55,18 @@ describe('local-op-auth-status envelope (RFC 9457, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('empty host string fails schema with urn:ok:error:invalid-request', async () => {
+  test('empty host string fails schema with urn:ps:error:invalid-request', async () => {
     const res = await postStatus({ host: '' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -80,7 +80,7 @@ describe('local-op-auth-status envelope (RFC 9457, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

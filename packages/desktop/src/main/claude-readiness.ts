@@ -135,7 +135,7 @@ export interface ResolveClaudeReadinessDeps {
   mcpServerName?: string;
 }
 
-function resolveOkToolsAutoApprovable(scopes: {
+function resolvePsToolsAutoApprovable(scopes: {
   projectEntryPresent: boolean;
   projectEntryIsOwn: boolean;
   globalEntryPresent: boolean;
@@ -198,7 +198,7 @@ export async function resolveClaudeReadiness(
   return {
     claude: interpretClaudeProbe(code),
     mcpPreApprovable,
-    psToolsAutoApprovable: resolveOkToolsAutoApprovable({
+    psToolsAutoApprovable: resolvePsToolsAutoApprovable({
       projectEntryPresent,
       projectEntryIsOwn: mcpPreApprovable,
       globalEntryPresent:

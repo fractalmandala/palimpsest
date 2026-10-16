@@ -133,13 +133,13 @@ export function createAssetServeMiddleware(
       return next();
     const peerAddress = req.socket?.remoteAddress;
     if (peerAddress !== undefined && !isPeerAdmitted(peerAddress, ingressPolicy)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'content-asset-gate',
       });
       return;
     }
     if (!isHostAdmitted(req.headers.host, ingressPolicy)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'content-asset-gate',
         detail: HOST_NOT_ADMITTED_REMEDIATION,
       });

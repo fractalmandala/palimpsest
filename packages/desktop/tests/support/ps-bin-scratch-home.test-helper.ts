@@ -8,7 +8,7 @@ export const RC_WITHOUT_MANAGED_BLOCK = '# user rc, with the Palimpsest PATH blo
 
 export const RC_FILES = ['.zshrc', '.zprofile', '.bashrc', '.bash_profile', '.profile'];
 
-export interface ScratchOkHomeOptions {
+export interface ScratchPsHomeOptions {
   readonly prefix: string;
   readonly bins: readonly string[];
   readonly exitCode?: number;
@@ -23,7 +23,7 @@ function sentinelScript(exitCode: number, recordPath: string | undefined): strin
   return `#!/bin/sh\n${record}exit ${exitCode}\n`;
 }
 
-export function createScratchHomeWithOkBin(options: ScratchOkHomeOptions): string {
+export function createScratchHomeWithPsBin(options: ScratchPsHomeOptions): string {
   const home = mkdtempSync(join(tmpdir(), options.prefix));
   const psBin = join(home, '.ps', 'bin');
   mkdirSync(psBin, { recursive: true });

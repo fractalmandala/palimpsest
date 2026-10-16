@@ -2,7 +2,7 @@ import type { ServerResponse } from 'node:http';
 import type { AgentSessionCapacityError } from '../agent-sessions.ts';
 import { errorResponse } from './error-response.ts';
 
-export const AGENT_SESSION_CAPACITY_TYPE = 'urn:ok:error:too-many-agent-sessions';
+export const AGENT_SESSION_CAPACITY_TYPE = 'urn:ps:error:too-many-agent-sessions';
 export const AGENT_SESSION_CAPACITY_TITLE = 'Too many agent sessions.';
 export const AGENT_SESSION_CAPACITY_DETAIL =
   'The server is at its agent session limit, so this write was not applied and is safe to retry.';

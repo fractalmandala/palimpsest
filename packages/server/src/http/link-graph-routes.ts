@@ -72,7 +72,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'backlinks' },
         );
@@ -82,13 +82,13 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         const url = new URL(req.url ?? '', 'http://localhost');
         const docName = url.searchParams.get('docName');
         if (!docName) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing docName parameter.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing docName parameter.', {
             handler: 'backlinks',
           });
           return;
         }
         if (!isSafeDocName(docName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'backlinks',
           });
           return;
@@ -123,7 +123,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'backlink-counts' },
         );
@@ -133,7 +133,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         const url = new URL(req.url ?? '', 'http://localhost');
         const raw = url.searchParams.get('docNames');
         if (!raw) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing docNames parameter.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing docNames parameter.', {
             handler: 'backlink-counts',
           });
           return;
@@ -167,7 +167,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'forward-links' },
         );
@@ -177,13 +177,13 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         const url = new URL(req.url ?? '', 'http://localhost');
         const docName = url.searchParams.get('docName');
         if (!docName) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing docName parameter.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing docName parameter.', {
             handler: 'forward-links',
           });
           return;
         }
         if (!isSafeDocName(docName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'forward-links',
           });
           return;
@@ -241,7 +241,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'link-graph' },
         );
@@ -251,7 +251,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         const url = new URL(req.url ?? '', 'http://localhost');
         const docName = url.searchParams.get('docName');
         if (docName && !isSafeDocName(docName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'link-graph',
           });
           return;
@@ -262,7 +262,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'docName is required when degrees is provided.',
             { handler: 'link-graph' },
           );
@@ -278,7 +278,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'degrees must be a non-negative integer.',
               { handler: 'link-graph' },
             );
@@ -343,7 +343,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'dead-links' },
         );
@@ -353,7 +353,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         const url = new URL(req.url ?? '', 'http://localhost');
         const sourceDocNames = url.searchParams.getAll('sourceDocName');
         if (sourceDocNames.some((docName) => docName.length === 0 || !isSafeDocName(docName))) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid sourceDocName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid sourceDocName.', {
             handler: 'dead-links',
           });
           return;
@@ -400,7 +400,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'orphans' },
         );
@@ -413,7 +413,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Invalid orphan mode. Allowed values: incoming, outgoing, both.',
             { handler: 'orphans' },
           );
@@ -444,7 +444,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:backlink-index-not-configured',
+          'urn:ps:error:backlink-index-not-configured',
           'Backlink index is not configured.',
           { handler: 'hubs' },
         );
@@ -479,13 +479,13 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         const url = new URL(req.url ?? '', 'http://localhost');
         const docName = url.searchParams.get('docName');
         if (!docName) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing docName parameter.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing docName parameter.', {
             handler: 'suggest-links',
           });
           return;
         }
         if (!isSafeDocName(docName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'suggest-links',
           });
           return;
@@ -494,7 +494,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${docName}' is a reserved document name.`,
             { handler: 'suggest-links' },
           );
@@ -509,13 +509,13 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         successResponse(res, 200, SuggestLinksSuccessSchema, result, { handler: 'suggest-links' });
       } catch (error) {
         if (error instanceof SuggestLinksTargetNotFoundError) {
-          errorResponse(res, 404, 'urn:ok:error:doc-not-found', 'Page not found.', {
+          errorResponse(res, 404, 'urn:ps:error:doc-not-found', 'Page not found.', {
             handler: 'suggest-links',
             cause: error,
           });
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to suggest links.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to suggest links.', {
           handler: 'suggest-links',
           cause: error,
         });
@@ -531,7 +531,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           503,
-          'urn:ok:error:tag-index-not-configured',
+          'urn:ps:error:tag-index-not-configured',
           'Tag index not configured.',
           { handler: 'tags-list' },
         );
@@ -556,7 +556,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
     rawName: string,
   ): Promise<void> {
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'tags-for-name',
         extraHeaders: { Allow: 'GET' },
       });
@@ -566,7 +566,7 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
       errorResponse(
         res,
         503,
-        'urn:ok:error:tag-index-not-configured',
+        'urn:ps:error:tag-index-not-configured',
         'Tag index not configured.',
         { handler: 'tags-for-name' },
       );
@@ -576,14 +576,14 @@ export function createLinkGraphRoutes(deps: LinkGraphRouteDeps): ApiRouteGroup {
     try {
       name = decodeURIComponent(rawName);
     } catch (uriErr) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid tag name encoding.', {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid tag name encoding.', {
         handler: 'tags-for-name',
         cause: uriErr,
       });
       return;
     }
     if (!name) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing tag name.', {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing tag name.', {
         handler: 'tags-for-name',
       });
       return;

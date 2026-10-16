@@ -17,7 +17,7 @@ export function TerminalSection() {
   const isOn = enabled !== false;
 
   const { userConfig, userBinding, userSynced } = useConfigContext();
-  const autoApproveOn = userConfig?.agents?.autoApproveOkTools !== false;
+  const autoApproveOn = userConfig?.agents?.autoApprovePsTools !== false;
 
   const [codexNeedsInit, setCodexNeedsInit] = useState(false);
   useEffect(() => {
@@ -57,7 +57,7 @@ export function TerminalSection() {
       toast.error(t`Auto-approve settings not yet loaded — try again in a moment`);
       return;
     }
-    const result = userBinding.patch({ agents: { autoApproveOkTools: next } });
+    const result = userBinding.patch({ agents: { autoApprovePsTools: next } });
     if (!result.ok) {
       const detail = humanFormat(result.error);
       toast.error(t`Failed to update the auto-approve setting — ${detail}`);

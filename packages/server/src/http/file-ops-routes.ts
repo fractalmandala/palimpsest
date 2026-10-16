@@ -109,7 +109,7 @@ function isReservedSyntheticFolderPath(path: string): boolean {
 
 type DuplicatePathFilesystemProblem = {
   status: 500 | 507;
-  type: Extract<ProblemType, 'urn:ok:error:storage-full' | 'urn:ok:error:storage-readonly'>;
+  type: Extract<ProblemType, 'urn:ps:error:storage-full' | 'urn:ps:error:storage-readonly'>;
   title: string;
 };
 
@@ -120,14 +120,14 @@ function classifyDuplicatePathFilesystemProblem(
   if (code === 'ENOSPC' || code === 'EDQUOT') {
     return {
       status: 507,
-      type: 'urn:ok:error:storage-full',
+      type: 'urn:ps:error:storage-full',
       title: 'Could not duplicate path because storage is full.',
     };
   }
   if (code === 'EPERM' || code === 'EACCES' || code === 'EROFS') {
     return {
       status: 500,
-      type: 'urn:ok:error:storage-readonly',
+      type: 'urn:ps:error:storage-readonly',
       title: 'Could not duplicate path because storage is not writable.',
     };
   }
@@ -155,7 +155,7 @@ function readUploadBody(req: IncomingMessage, projectDir: string): Promise<Uploa
     try {
       bb = createMultipartParser(req, { files: 1, fields: 10, fieldSize: 2 * 1024 });
     } catch (err) {
-      reject(new UploadWriteError('urn:ok:error:malformed-upload', err));
+      reject(new UploadWriteError('urn:ps:error:malformed-upload', err));
       return;
     }
 
@@ -236,7 +236,7 @@ function readUploadBody(req: IncomingMessage, projectDir: string): Promise<Uploa
     });
 
     bb.on('error', (err) => {
-      fail('urn:ok:error:malformed-upload', err);
+      fail('urn:ps:error:malformed-upload', err);
     });
 
     bb.on('close', () => {
@@ -257,7 +257,7 @@ function readUploadBody(req: IncomingMessage, projectDir: string): Promise<Uploa
     req.on('close', () => {
       if (settled || pipelineError) return;
       if (!req.complete) {
-        fail('urn:ok:error:malformed-upload', new Error('client disconnected'));
+        fail('urn:ps:error:malformed-upload', new Error('client disconnected'));
       }
     });
 
@@ -273,7 +273,7 @@ export interface FileOpsRouteDeps {
   contentFilter: ContentFilter | undefined;
   signalChannel: ((channel: 'files' | 'lint-config' | 'comments') => void) | undefined;
   conflicts: ConflictAuthority;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   fileOpsService: FileOpsService;
   assetService: AssetService;
   extractAgentIdentity: (body: Record<string, unknown>) => {
@@ -356,7 +356,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
     contentFilter,
     signalChannel,
     conflicts,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     fileOpsService,
     assetService,
     extractAgentIdentity,
@@ -467,7 +467,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         const bodyObj = body as unknown as Record<string, unknown>;
         const actor = extractActorIdentity(bodyObj, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'create-page',
           });
           return;
@@ -478,7 +478,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'path must end with .md or .mdx.',
             { handler: 'create-page' },
           );
@@ -490,7 +490,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           filePath.includes('\x00') ||
           filePath.includes('\\')
         ) {
-          errorResponse(res, 400, 'urn:ok:error:path-escape', 'Invalid path.', {
+          errorResponse(res, 400, 'urn:ps:error:path-escape', 'Invalid path.', {
             handler: 'create-page',
             detail: 'path must not contain .. or start with /',
           });
@@ -505,7 +505,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               400,
-              'urn:ok:error:path-escape',
+              'urn:ps:error:path-escape',
               'path must not escape content directory.',
               { handler: 'create-page', cause: err },
             );
@@ -518,7 +518,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${candidateDocName}' is a reserved document name.`,
             { handler: 'create-page' },
           );
@@ -533,7 +533,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${candidateDocName}' is a reserved document name.`,
             {
               handler: 'create-page',
@@ -554,7 +554,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               `Template name must use ${TEMPLATE_NAME_RULE}.`,
               { handler: 'create-page' },
             );
@@ -573,7 +573,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               `Template "${templateName}" does not resolve for folder "${parentFolder || '(root)'}". Available: ${availableLabel}`,
               { handler: 'create-page' },
             );
@@ -587,7 +587,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               500,
-              'urn:ok:error:internal-server-error',
+              'urn:ps:error:internal-server-error',
               `Failed to read template at ${matched.path}.`,
               { handler: 'create-page', cause: err },
             );
@@ -610,7 +610,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           initialContent,
         });
         if (!createOutcome.ok) {
-          errorResponse(res, 409, 'urn:ok:error:doc-already-exists', 'File already exists.', {
+          errorResponse(res, 409, 'urn:ps:error:doc-already-exists', 'File already exists.', {
             handler: 'create-page',
             cause: createOutcome.cause,
           });
@@ -651,7 +651,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         }
         successResponse(res, 200, CreatePageSuccessSchema, { docName }, { handler: 'create-page' });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to create page.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to create page.', {
           handler: 'create-page',
           cause: e,
         });
@@ -667,7 +667,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         const bodyObj = body as unknown as Record<string, unknown>;
         const actor = extractActorIdentity(bodyObj, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'create-folder',
           });
           return;
@@ -677,7 +677,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'path must be a relative content path.',
             { handler: 'create-folder' },
           );
@@ -687,7 +687,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             '.ps and .git are reserved directories.',
             { handler: 'create-folder' },
           );
@@ -697,7 +697,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Destination folder is excluded by the workspace content config.',
             { handler: 'create-folder' },
           );
@@ -706,7 +706,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
 
         const outcome = fileOpsService.createFolder(folderPath);
         if (!outcome.ok) {
-          errorResponse(res, 409, 'urn:ok:error:doc-already-exists', 'Folder already exists.', {
+          errorResponse(res, 409, 'urn:ps:error:doc-already-exists', 'Folder already exists.', {
             handler: 'create-folder',
           });
           return;
@@ -723,13 +723,13 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:path-escape',
+            'urn:ps:error:path-escape',
             'path must not escape content directory.',
             { handler: 'create-folder', cause: e },
           );
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to create folder.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to create folder.', {
           handler: 'create-folder',
           cause: e,
         });
@@ -745,7 +745,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         const bodyObj = body as unknown as Record<string, unknown>;
         const actor = extractActorIdentity(bodyObj, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'duplicate-path',
           });
           return;
@@ -758,7 +758,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'path must be a relative content path.',
             { handler: 'duplicate-path' },
           );
@@ -773,7 +773,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             'Reserved paths cannot be duplicated.',
             { handler: 'duplicate-path' },
           );
@@ -788,7 +788,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         if (!outcome.ok) {
           switch (outcome.kind) {
             case 'not-found':
-              errorResponse(res, 404, 'urn:ok:error:doc-not-found', `${kind} does not exist.`, {
+              errorResponse(res, 404, 'urn:ps:error:doc-not-found', `${kind} does not exist.`, {
                 handler: 'duplicate-path',
               });
               return;
@@ -796,7 +796,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 `Target path is not a ${kind}.`,
                 { handler: 'duplicate-path' },
               );
@@ -813,7 +813,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 kind === 'file'
                   ? 'Duplicated document destination is excluded by the project content config.'
                   : 'Duplicated folder destination is excluded by the project content config.',
@@ -824,7 +824,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
               errorResponse(
                 res,
                 409,
-                'urn:ok:error:doc-already-exists',
+                'urn:ps:error:doc-already-exists',
                 `A ${kind} at the duplicate destination already exists.`,
                 { handler: 'duplicate-path', cause: outcome.cause },
               );
@@ -876,7 +876,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             409,
-            'urn:ok:error:doc-already-exists',
+            'urn:ps:error:doc-already-exists',
             'All available duplicate name slots are occupied for this path.',
             { handler: 'duplicate-path', cause: e },
           );
@@ -897,13 +897,13 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:path-escape',
+            'urn:ps:error:path-escape',
             'path must not escape content directory.',
             { handler: 'duplicate-path', cause: e },
           );
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to duplicate path.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to duplicate path.', {
           handler: 'duplicate-path',
           cause: e,
         });
@@ -919,7 +919,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         const bodyObj = body as unknown as Record<string, unknown>;
         const actor = extractActorIdentity(bodyObj, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'rename-path',
           });
           return;
@@ -929,7 +929,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Paths must be relative content paths.',
             { handler: 'rename-path' },
           );
@@ -945,7 +945,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             'Reserved document names cannot be renamed.',
             { handler: 'rename-path' },
           );
@@ -960,7 +960,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             '.ps and .git are reserved directories.',
             {
               handler: 'rename-path',
@@ -1038,7 +1038,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             attribution_kind: actor.kind,
           });
 
-          void commitOkArtifactWrite('rename-path');
+          void commitPsArtifactWrite('rename-path');
 
           successResponse(
             res,
@@ -1090,7 +1090,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               `Destination ${operationKind === 'file' ? 'document' : 'folder'} is excluded by the project content config.`,
               { handler: 'rename-path' },
             );
@@ -1126,7 +1126,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             return;
           }
           if (err instanceof ManagedRenameCollisionError) {
-            errorResponse(res, 409, 'urn:ok:error:doc-already-exists', withPeriod(err.message), {
+            errorResponse(res, 409, 'urn:ps:error:doc-already-exists', withPeriod(err.message), {
               handler: 'rename-path',
               extensions: { colliding: err.colliding },
               cause: err,
@@ -1179,7 +1179,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           attribution_kind: actor.kind,
         });
 
-        void commitOkArtifactWrite('rename-path');
+        void commitPsArtifactWrite('rename-path');
 
         successResponse(
           res,
@@ -1214,7 +1214,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'path must be a relative content path.',
             { handler: 'delete-path' },
           );
@@ -1226,7 +1226,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Asset path without an extension matches multiple files.',
             { handler: 'delete-path' },
           );
@@ -1241,7 +1241,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             '.ps and .git are reserved directories.',
             { handler: 'delete-path' },
           );
@@ -1254,7 +1254,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               404,
-              'urn:ok:error:doc-not-found',
+              'urn:ps:error:doc-not-found',
               `${operationKind} does not exist.`,
               { handler: 'delete-path' },
             );
@@ -1262,7 +1262,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               `Target path is not a ${operationKind}.`,
               { handler: 'delete-path' },
             );
@@ -1288,13 +1288,13 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:path-escape',
+            'urn:ps:error:path-escape',
             'path must not escape content directory.',
             { handler: 'delete-path', cause: e },
           );
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to delete path.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to delete path.', {
           handler: 'delete-path',
           cause: e,
         });
@@ -1307,12 +1307,12 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
     TrashCleanupRequestSchema,
     async (_req, res, body) => {
       return withSpan(
-        'ok.fs.trash_cleanup',
+        'ps.fs.trash_cleanup',
         {
           attributes: {
-            'ok.cleanup.kind': body.kind,
-            'ok.cleanup.path': normalizeFsPath(body.path),
-            'ok.cleanup.path.role': classifyFsPath(body.path),
+            'ps.cleanup.kind': body.kind,
+            'ps.cleanup.path': normalizeFsPath(body.path),
+            'ps.cleanup.path.role': classifyFsPath(body.path),
           },
         },
         async () => {
@@ -1320,7 +1320,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             const bodyObj = body as unknown as Record<string, unknown>;
             const actor = extractActorIdentity(bodyObj, getPrincipal);
             if (actor.kind === 'invalid-summary') {
-              errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+              errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
                 handler: 'trash-cleanup',
               });
               return;
@@ -1330,7 +1330,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 'path must be a relative content path.',
                 { handler: 'trash-cleanup' },
               );
@@ -1352,7 +1352,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:reserved-doc-name',
+                'urn:ps:error:reserved-doc-name',
                 `'${path}' is a reserved document name.`,
                 { handler: 'trash-cleanup' },
               );
@@ -1375,7 +1375,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               500,
-              'urn:ok:error:internal-server-error',
+              'urn:ps:error:internal-server-error',
               'Failed to clean up after trash.',
               {
                 handler: 'trash-cleanup',
@@ -1391,7 +1391,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
 
   async function handleUploadAsset(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (req.method !== 'POST') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'upload-asset',
         extraHeaders: { Allow: 'POST' },
       });
@@ -1409,7 +1409,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         });
         return;
       }
-      errorResponse(res, 400, 'urn:ok:error:malformed-upload', 'Failed to parse upload.', {
+      errorResponse(res, 400, 'urn:ps:error:malformed-upload', 'Failed to parse upload.', {
         handler: 'upload-asset',
         cause: e,
       });
@@ -1457,7 +1457,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
 
     if (byteLength === 0) {
       cleanupTempfile();
-      errorResponse(res, 400, 'urn:ok:error:no-file-received', 'No file received.', {
+      errorResponse(res, 400, 'urn:ps:error:no-file-received', 'No file received.', {
         handler: 'upload-asset',
       });
       return;
@@ -1469,7 +1469,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
       parentDocName.startsWith('/')
     ) {
       cleanupTempfile();
-      errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escape detected.', {
+      errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escape detected.', {
         handler: 'upload-asset',
       });
       return;
@@ -1477,7 +1477,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
     const parentDirComponent = dirname(parentDocName);
     if (parentDirComponent !== '.' && !isValidRelativeContentPath(parentDirComponent)) {
       cleanupTempfile();
-      errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escape detected.', {
+      errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escape detected.', {
         handler: 'upload-asset',
       });
       return;
@@ -1490,7 +1490,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
       errorResponse(
         res,
         400,
-        'urn:ok:error:reserved-doc-name',
+        'urn:ps:error:reserved-doc-name',
         '.ps and .git are reserved directories.',
         { handler: 'upload-asset' },
       );
@@ -1538,18 +1538,18 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Server configuration error: invalid attachment folder path.',
           { handler: 'upload-asset', cause: outcome.cause },
         );
         return;
       case 'invalid-attachment-folder':
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid attachment folder path.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid attachment folder path.', {
           handler: 'upload-asset',
         });
         return;
       case 'path-escape':
-        errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escape detected.', {
+        errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escape detected.', {
           handler: 'upload-asset',
           ...(outcome.cause === undefined ? {} : { cause: outcome.cause }),
         });
@@ -1558,7 +1558,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           400,
-          'urn:ok:error:reserved-doc-name',
+          'urn:ps:error:reserved-doc-name',
           '.ps and .git are reserved directories.',
           { handler: 'upload-asset' },
         );
@@ -1568,7 +1568,7 @@ export function createFileOpsRoutes(deps: FileOpsRouteDeps): ApiRouteGroup {
           { err: outcome.cause, destDir: outcome.destDir },
           '[upload] failed to validate destination directory',
         );
-        errorResponse(res, 500, 'urn:ok:error:storage-error', 'Storage error.', {
+        errorResponse(res, 500, 'urn:ps:error:storage-error', 'Storage error.', {
           handler: 'upload-asset',
           cause: outcome.cause,
         });

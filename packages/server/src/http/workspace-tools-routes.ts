@@ -105,7 +105,7 @@ function loopbackJsonGate(handler: string): (req: IncomingMessage, res: ServerRe
     });
     if (verdict.ok) return true;
     if (verdict.reason === 'origin') {
-      errorResponse(res, 403, 'urn:ok:error:invalid-origin', 'Origin not allowed.', { handler });
+      errorResponse(res, 403, 'urn:ps:error:invalid-origin', 'Origin not allowed.', { handler });
     } else {
       respondUnsupportedMediaType(res, handler);
     }
@@ -149,7 +149,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to list saved themes.',
           {
             handler: 'saved-themes-list',
@@ -178,7 +178,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               503,
-              'urn:ok:error:concurrent-operation',
+              'urn:ps:error:concurrent-operation',
               'Saved themes are temporarily busy.',
               {
                 handler: 'saved-theme-save',
@@ -192,7 +192,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               409,
-              'urn:ok:error:theme-name-taken',
+              'urn:ps:error:theme-name-taken',
               'A saved theme with that name already exists.',
               { handler: 'saved-theme-save', detail: body.name },
             );
@@ -201,7 +201,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:theme-name-invalid',
+            'urn:ps:error:theme-name-invalid',
             'That name cannot be used as a theme id.',
             { handler: 'saved-theme-save', detail: result.code },
           );
@@ -215,7 +215,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           { handler: 'saved-theme-save' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to save theme.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to save theme.', {
           handler: 'saved-theme-save',
           cause: e,
         });
@@ -230,7 +230,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
       try {
         const id = parseQuery(req).get('id') ?? '';
         if (id === '') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing theme id.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing theme id.', {
             handler: 'saved-theme-delete',
           });
           return;
@@ -245,7 +245,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               503,
-              'urn:ok:error:concurrent-operation',
+              'urn:ps:error:concurrent-operation',
               'Saved themes are temporarily busy.',
               {
                 handler: 'saved-theme-delete',
@@ -259,7 +259,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           errorResponse(
             res,
             conflict ? 409 : 400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Cannot delete saved theme.',
             {
               handler: 'saved-theme-delete',
@@ -278,7 +278,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           { handler: 'saved-theme-delete' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to delete theme.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to delete theme.', {
           handler: 'saved-theme-delete',
           cause: e,
         });
@@ -302,7 +302,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               503,
-              'urn:ok:error:concurrent-operation',
+              'urn:ps:error:concurrent-operation',
               'Saved themes are temporarily busy.',
               {
                 handler: 'saved-theme-update',
@@ -313,7 +313,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             return;
           }
           if (result.code === 'not-found') {
-            errorResponse(res, 404, 'urn:ok:error:not-found', 'Saved theme not found.', {
+            errorResponse(res, 404, 'urn:ps:error:not-found', 'Saved theme not found.', {
               handler: 'saved-theme-update',
             });
             return;
@@ -323,13 +323,13 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
               result.code === 'ambiguous-id'
                 ? 'Multiple saved theme files claim that id.'
                 : 'The saved theme id conflicts with a file that cannot be safely updated.';
-            errorResponse(res, 409, 'urn:ok:error:invalid-request', message, {
+            errorResponse(res, 409, 'urn:ps:error:invalid-request', message, {
               handler: 'saved-theme-update',
               detail: result.code,
             });
             return;
           }
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Not a saved theme id.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Not a saved theme id.', {
             handler: 'saved-theme-update',
             detail: result.code,
           });
@@ -343,7 +343,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           { handler: 'saved-theme-update' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to update theme.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to update theme.', {
           handler: 'saved-theme-update',
           cause: e,
         });
@@ -410,7 +410,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to read skill targets.',
           { handler: 'skill-targets-get', cause: e },
         );
@@ -430,7 +430,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'Cannot manage skill folders — no project root is resolved for this server.',
               { handler: 'skill-targets-put', detail: 'NO_PROJECT_ROOT' },
             );
@@ -449,7 +449,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
               segs.length === 0 ||
               segs.some((seg) => seg === '..')
             ) {
-              errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid folder path.', {
+              errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid folder path.', {
                 handler: 'skill-targets-put',
                 detail: fa.root,
               });
@@ -484,7 +484,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'Folder and target must be distinct standard skills roots.',
               { handler: 'skill-targets-put', detail: `${fa.root} -> ${target}` },
             );
@@ -494,7 +494,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               `That link would create a folder Palimpsest may not create on this machine: ${roots.join(', ')}.`,
               { handler: 'skill-targets-put', detail: roots.join(', ') },
             );
@@ -560,7 +560,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
             errorResponse(
               res,
               409,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               result.reason === 'conflicts'
                 ? `Cannot link — differing skills exist in both folders: ${result.conflicts.join(', ')}. Resolve them first.`
                 : result.reason === 'stray-entries'
@@ -599,7 +599,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to set skill targets.',
           { handler: 'skill-targets-put', cause: e },
         );
@@ -662,7 +662,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Query is too long (max 200 chars).',
             { handler: 'search-get' },
           );
@@ -700,7 +700,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Query is too long (max 200 chars).',
             { handler: 'search-post' },
           );
@@ -792,7 +792,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           handler: LINK_PREVIEW_HANDLER,
         });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: LINK_PREVIEW_HANDLER,
           cause: e,
         });
@@ -846,7 +846,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
           handler: GITHUB_REFERENCE_HANDLER,
         });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: GITHUB_REFERENCE_HANDLER,
           cause: e,
         });
@@ -863,7 +863,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
     EmptyRequestSchema,
     async (_req, res) => {
       if (!getGeneratedIndexSettingsStatus) {
-        errorResponse(res, 404, 'urn:ok:error:not-found', 'Not found.', {
+        errorResponse(res, 404, 'urn:ps:error:not-found', 'Not found.', {
           handler: 'generated-index-settings-get',
         });
         return;
@@ -886,7 +886,7 @@ export function createWorkspaceToolsRoutes(deps: WorkspaceToolsRouteDeps): ApiRo
     GeneratedIndexSettingsRequestSchema,
     async (_req, res, body) => {
       if (!setGeneratedIndexEnabled) {
-        errorResponse(res, 404, 'urn:ok:error:not-found', 'Not found.', {
+        errorResponse(res, 404, 'urn:ps:error:not-found', 'Not found.', {
           handler: 'generated-index-settings-set',
         });
         return;

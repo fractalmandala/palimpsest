@@ -735,7 +735,7 @@ describe('search MCP tool — error paths', () => {
 
   test('server returns RFC 9457 problem+json → tool reports error', async () => {
     mockFetchProblem(400, {
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Query is too long',
     });
     const { server, registered } = makeFakeServer();

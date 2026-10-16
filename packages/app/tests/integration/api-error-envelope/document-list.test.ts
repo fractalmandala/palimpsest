@@ -54,7 +54,7 @@ describe('document-list envelope (RFC 9457)', () => {
     await pages.body?.cancel();
   });
 
-  test('directory traversal attempt emits urn:ok:error:invalid-request', async () => {
+  test('directory traversal attempt emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/documents?dir=${encodeURIComponent('../etc')}`,
     );
@@ -65,7 +65,7 @@ describe('document-list envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -78,7 +78,7 @@ describe('document-list envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

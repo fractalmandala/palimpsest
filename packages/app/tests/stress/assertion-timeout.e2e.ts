@@ -36,7 +36,7 @@ async function expectDefaultAssertionTimeout(mode: ConfigurationMode): Promise<v
     failure.annotations.find((a) => a.type === ASSERTION_ELAPSED_ANNOTATION)?.description,
   );
   test.info().annotations.push({
-    type: `ok:unmet-assertion-elapsed-ms:${mode}`,
+    type: `ps:unmet-assertion-elapsed-ms:${mode}`,
     description: String(elapsed),
   });
   expect(elapsed, context).toBeGreaterThanOrEqual(ASSERTION_TIMEOUT_MS);

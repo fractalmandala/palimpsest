@@ -101,7 +101,7 @@ describe('POST /api/client-logs', () => {
     );
     expect(res.status).toBe(403);
     const body = (await res.json()) as { type: string; status: number };
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.status).toBe(403);
   });
 });

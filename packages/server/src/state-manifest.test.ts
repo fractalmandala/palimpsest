@@ -16,7 +16,7 @@ import {
 function makeTmp(): { lockDir: string; shadowRepoDir: string; cleanup: () => void } {
   const root = mkdtempSync(join(tmpdir(), 'state-manifest-test-'));
   const lockDir = join(root, '.ps', LOCAL_DIR);
-  const shadowRepoDir = join(root, '.git', 'ok');
+  const shadowRepoDir = join(root, '.git', 'ps');
   return {
     lockDir,
     shadowRepoDir,
@@ -69,7 +69,7 @@ describe('detectProjectShape', () => {
     const root = mkdtempSync(join(tmpdir(), 'state-manifest-shadow-only-'));
     try {
       const lockDir = join(root, '.ps', LOCAL_DIR);
-      const shadowRepoDir = join(root, '.git', 'ok');
+      const shadowRepoDir = join(root, '.git', 'ps');
       const unrelatedSiblingDir = join(root, '.git', 'some-other-tooling-dir');
 
       mkdirSync(unrelatedSiblingDir, { recursive: true });

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { buildShareDescription, buildSplashViewModel } from '@/lib/share-splash';
-import { metaDescription, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/lib/site';
+import { metaDescription, SITE_NAME, SITE_URL } from '@/lib/site';
 import { SplashFallback, SplashShareView } from './splash-share-view';
 
 export const dynamic = 'force-static';
@@ -30,8 +30,6 @@ export async function generateMetadata({ params }: SplashPageProps): Promise<Met
       },
       twitter: {
         card: 'summary_large_image',
-        site: TWITTER_HANDLE,
-        creator: TWITTER_HANDLE,
         title: SITE_NAME,
         description: fallbackDescription,
       },
@@ -53,8 +51,6 @@ export async function generateMetadata({ params }: SplashPageProps): Promise<Met
     },
     twitter: {
       card: 'summary_large_image',
-      site: TWITTER_HANDLE,
-      creator: TWITTER_HANDLE,
       title: view.filename,
       description,
     },

@@ -112,12 +112,12 @@ describe('ProviderPool basics', () => {
     expect(typeof entry?.poolEventId).toBe('string');
     expect(entry?.poolEventId.length).toBeGreaterThan(0);
     const c = getCollector();
-    const counter = c?.counters['ok/pool/open'];
+    const counter = c?.counters['ps/pool/open'];
     expect(counter?.byProp.hit?.false).toBe(1);
     expect(counter?.byProp.hit?.true).toBeUndefined();
     const openMark = c?.marks
       .toArray()
-      .find((m) => m.name === 'ok/pool/open' && m.properties?.docName === entry?.docName);
+      .find((m) => m.name === 'ps/pool/open' && m.properties?.docName === entry?.docName);
     expect(openMark?.properties?.hit).toBe(false);
     expect(openMark?.properties?.poolEventId).toBe(entry?.poolEventId);
   });
@@ -136,14 +136,14 @@ describe('ProviderPool basics', () => {
     expect(second?.poolEventId).toBe(stableId);
     expect((second?.lastAccessedAt ?? 0) >= previousAccessedAt).toBe(true);
     const c = getCollector();
-    const counter = c?.counters['ok/pool/open'];
+    const counter = c?.counters['ps/pool/open'];
     expect(counter?.byProp.hit?.false).toBe(1);
     expect(counter?.byProp.hit?.true).toBe(1);
     const hitMark = c?.marks
       .toArray()
       .find(
         (m) =>
-          m.name === 'ok/pool/open' &&
+          m.name === 'ps/pool/open' &&
           m.properties?.docName === docName &&
           m.properties?.hit === true,
       );
@@ -157,9 +157,9 @@ describe('ProviderPool basics', () => {
     const result = pool.open('__system__');
     expect(result).toBeNull();
     const c = getCollector();
-    const openMarks = c?.marks.toArray().filter((m) => m.name === 'ok/pool/open') ?? [];
+    const openMarks = c?.marks.toArray().filter((m) => m.name === 'ps/pool/open') ?? [];
     expect(openMarks.length).toBe(0);
-    expect(c?.counters['ok/pool/open']).toBeUndefined();
+    expect(c?.counters['ps/pool/open']).toBeUndefined();
   });
 
   test('peek() returns the entry without affecting LRU or emitting marks', () => {
@@ -190,7 +190,7 @@ describe('ProviderPool basics', () => {
     expect(typeof entry?.poolEventId).toBe('string');
     expect(entry?.poolEventId.length).toBeGreaterThan(0);
     const c = getCollector();
-    const counter = c?.counters['ok/pool/open'];
+    const counter = c?.counters['ps/pool/open'];
     expect(counter?.byProp.hit?.false).toBe(1);
   });
 

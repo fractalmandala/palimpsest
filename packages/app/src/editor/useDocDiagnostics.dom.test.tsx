@@ -33,7 +33,7 @@ const enabled: LinterConfig = {
   },
 };
 
-const markdownAndOkfEnabled: LinterConfig = {
+const markdownAndPsfEnabled: LinterConfig = {
   ...enabled,
   plugins: {
     ...enabled.plugins,
@@ -86,7 +86,7 @@ describe('useDocDiagnostics', () => {
       const editableTextProvider = fakeProvider(source, docName).provider;
       const { result, rerender } = renderHook(
         ({ provider }: { provider: HocuspocusProvider }) =>
-          useDocDiagnostics(provider, markdownAndOkfEnabled),
+          useDocDiagnostics(provider, markdownAndPsfEnabled),
         { initialProps: { provider: markdownProvider } },
       );
 

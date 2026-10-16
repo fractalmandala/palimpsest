@@ -16,7 +16,7 @@ const RUN_CONFIG = fileURLToPath(new URL('./reuse-run.config.ts', import.meta.ur
 const CASE_FILE = fileURLToPath(new URL('./leased-server.reuse-case.ts', import.meta.url));
 const SUPERVISOR_READY_MS = 30_000;
 
-export const CASE_SERVER_ANNOTATION = 'ok:reuse-case-server';
+export const CASE_SERVER_ANNOTATION = 'ps:reuse-case-server';
 const SUPERVISOR_EXIT_MS = 60_000;
 
 type SupervisorExit = { code: number | null; signal: NodeJS.Signals | null };

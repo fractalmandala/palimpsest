@@ -3107,7 +3107,7 @@ describe('handleBugReportSend — structured failure diagnostics', () => {
 
   function dispatchFailure(lines: Record<string, unknown>[]): Record<string, unknown> {
     const line = lines.find(
-      (l) => l.channel === 'ok:bug-report:dispatch' && l.handler === 'handleBugReportSend',
+      (l) => l.channel === 'ps:bug-report:dispatch' && l.handler === 'handleBugReportSend',
     );
     if (line === undefined) throw new Error('no dispatch failure line was logged');
     return line;
@@ -3193,7 +3193,7 @@ describe('handleBugReportSend — transport phase spans', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(startedSpanNames).toContain('ok.bug-report.mint');
+    expect(startedSpanNames).toContain('ps.bug-report.mint');
   });
 
   test('a successful send records all three transport phases', async () => {
@@ -3204,10 +3204,10 @@ describe('handleBugReportSend — transport phase spans', () => {
 
     expect(startedSpanNames).toEqual(
       expect.arrayContaining([
-        'ok.bug-report.send',
-        'ok.bug-report.mint',
-        'ok.bug-report.upload',
-        'ok.bug-report.complete',
+        'ps.bug-report.send',
+        'ps.bug-report.mint',
+        'ps.bug-report.upload',
+        'ps.bug-report.complete',
       ]),
     );
   });

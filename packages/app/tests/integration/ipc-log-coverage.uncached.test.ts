@@ -155,7 +155,7 @@ function isChannelRegistrationCall(node: Node): boolean {
   ) {
     return false;
   }
-  return firstArg.getLiteralText().startsWith('ok:');
+  return firstArg.getLiteralText().startsWith('ps:');
 }
 
 function collectHandlerBodies(sf: SourceFile): Node[] {

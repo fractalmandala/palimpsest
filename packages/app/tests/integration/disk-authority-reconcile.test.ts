@@ -259,7 +259,7 @@ describe('PRD-6832 β L1: agent write reconciles a newer out-of-band disk edit',
       });
       expect(res.status).toBe(409);
       const body = (await res.json()) as { type?: string };
-      expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+      expect(body.type).toBe('urn:ps:error:doc-in-conflict');
 
       expect(serverYtext()).toContain('crdt-version');
       expect(serverYtext()).not.toContain('agent-line');
@@ -306,7 +306,7 @@ describe('PRD-6832 β L1: agent write reconciles a newer out-of-band disk edit',
       });
       expect(res.status).toBe(409);
       const body = (await res.json()) as { type?: string };
-      expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+      expect(body.type).toBe('urn:ps:error:doc-in-conflict');
 
       expect(serverYtext()).not.toContain('<<<<<<<');
       expect(serverYtext()).toContain('crdt-unflushed-line');

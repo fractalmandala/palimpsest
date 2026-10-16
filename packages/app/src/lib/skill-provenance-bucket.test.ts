@@ -142,9 +142,9 @@ describe('bucketForSkill — plugin identity', () => {
       path: '.agents/skills/linux-vm/SKILL.md',
       installed: true,
       hosts: ['agents'],
-      plugin: { name: 'ok', marketplace: 'inkeep-agents-private', provider: 'claude' },
+      plugin: { name: 'ps', marketplace: 'inkeep-agents-private', provider: 'claude' },
     } as never);
-    expect(bucket).toEqual({ kind: 'plugin', id: 'ok', publisher: null, url: null });
+    expect(bucket).toEqual({ kind: 'plugin', id: 'ps', publisher: null, url: null });
   });
 
   test('identity beats origin when both are present', () => {
@@ -154,10 +154,10 @@ describe('bucketForSkill — plugin identity', () => {
       path: '.agents/skills/x/SKILL.md',
       installed: true,
       hosts: [],
-      plugin: { name: 'ok', marketplace: 'm', provider: 'claude' },
+      plugin: { name: 'ps', marketplace: 'm', provider: 'claude' },
       origin: { source: 'someone/repo', importedAt: '2026-01-01T00:00:00.000Z' },
     } as never);
     expect(bucket?.kind).toBe('plugin');
-    expect(bucket?.id).toBe('ok');
+    expect(bucket?.id).toBe('ps');
   });
 });

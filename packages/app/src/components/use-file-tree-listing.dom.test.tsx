@@ -75,13 +75,13 @@ function createListingSource() {
 interface ListingVisibility {
   showHiddenFiles: boolean;
   showOnlyMarkdownFiles: boolean;
-  showOkFolders: boolean;
+  showPsFolders: boolean;
 }
 
 const defaultVisibility: ListingVisibility = {
   showHiddenFiles: false,
   showOnlyMarkdownFiles: false,
-  showOkFolders: false,
+  showPsFolders: false,
 };
 
 function renderListing(
@@ -191,7 +191,7 @@ describe('useFileTreeListing', () => {
     rerender({
       showHiddenFiles: true,
       showOnlyMarkdownFiles: true,
-      showOkFolders: true,
+      showPsFolders: true,
     });
     await waitFor(() => expect(pending).toHaveLength(4));
     expect(pending[3]?.request.showOk).toBe(true);

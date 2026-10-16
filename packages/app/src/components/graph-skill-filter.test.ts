@@ -136,7 +136,7 @@ describe('filterGraphSkillNodes', () => {
     const result = filterGraphSkillNodes(
       graph(
         [
-          builtinDoc('g', '__skill__/global/open-knowledge-discovery'),
+          builtinDoc('g', '__skill__/global/palimpsest-discovery'),
           builtinDoc('p', '.claude/skills/palimpsest/SKILL'),
         ],
         [],
@@ -166,7 +166,7 @@ describe('filterGraphSkillNodes', () => {
       graph(
         [
           builtinDoc('b', BUILTIN_SKILL),
-          builtinDoc('d', '__skill__/global/open-knowledge-discovery'),
+          builtinDoc('d', '__skill__/global/palimpsest-discovery'),
         ],
         [
           { source: 'b', target: 'd' },

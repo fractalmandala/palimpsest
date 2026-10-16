@@ -24,12 +24,12 @@ function buildGroup(overrides: Partial<Deps> = {}) {
     log: loggerFactory.getLogger('test'),
     shadowRef,
     flushGitCommit: undefined,
-    commitOkArtifactWrite: () => Promise.resolve(),
+    commitPsArtifactWrite: () => Promise.resolve(),
     getCurrentBranch: undefined,
     validateFolderRel: (_raw, res) => {
       res.writeHead(400, { 'Content-Type': 'application/problem+json' });
       res.end(
-        JSON.stringify({ type: 'urn:ok:error:invalid-request', title: ADMITTED, status: 400 }),
+        JSON.stringify({ type: 'urn:ps:error:invalid-request', title: ADMITTED, status: 400 }),
       );
       return null;
     },
@@ -154,7 +154,7 @@ describe('GET /api/history branch admission — names the shared contract reject
       const outcome = await getHistoryForBranch(branch);
       expect(outcome.admitted).toBe(false);
       expect(outcome.status).toBe(400);
-      expect(outcome.type).toBe('urn:ok:error:invalid-request');
+      expect(outcome.type).toBe('urn:ps:error:invalid-request');
       expect(outcome.contentType).toBe('application/problem+json');
     },
   );
@@ -163,7 +163,7 @@ describe('GET /api/history branch admission — names the shared contract reject
     const outcome = await getHistory('docName=alpha', { getCurrentBranch: () => '-oInject' });
     expect(outcome.admitted).toBe(false);
     expect(outcome.status).toBe(400);
-    expect(outcome.type).toBe('urn:ok:error:invalid-request');
+    expect(outcome.type).toBe('urn:ps:error:invalid-request');
   });
 });
 
@@ -236,7 +236,7 @@ describe('GET /api/history/:sha settles pending history only for a pending renam
     const { table } = buildGroup({
       shadowRef: { current: shadow },
       safeDocPath: (docName) => ({ path: `${docName}.md` }),
-      commitOkArtifactWrite: (context) => {
+      commitPsArtifactWrite: (context) => {
         contexts.push(context);
         return Promise.resolve();
       },

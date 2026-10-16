@@ -1030,7 +1030,7 @@ describe('runInit', () => {
       expect(result.skillInstall).toBe('installed');
       const output = formatInitResult(result, testDir);
       expect(output).toContain('User-global skills:');
-      expect(output).toContain('open-knowledge-discovery');
+      expect(output).toContain('palimpsest-discovery');
       expect(output).toContain('installed for');
       expect(output).not.toContain('detected agent hosts');
     });
@@ -1121,7 +1121,7 @@ describe('runInit', () => {
       expect(result.mcpAction).toBe('written');
       const output = formatInitResult(result, testDir);
       expect(output).toContain('install failed');
-      expect(output).toContain('ok repair-skills');
+      expect(output).toContain('ps repair-skills');
       expect(output).not.toContain('npx skills');
     });
 
@@ -1159,20 +1159,20 @@ describe('runInit', () => {
         },
       });
       expect(installed).toEqual([]);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-discovery')).toBeNull();
+      expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBeNull();
       expect(await readBundleDecision(fakeHome, 'open-knowledge-write-skill')).toBeNull();
     });
 
     it('--no-skills leaves bundles another project already installed on disk', async () => {
       const central = join(fakeHome, '.agents', 'skills');
-      for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+      for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
         mkdirSync(join(central, name), { recursive: true });
         writeFileSync(join(central, name, 'SKILL.md'), '# Installed earlier\n');
       }
 
       await runInitForTest({ skills: false, installUserSkill: async () => 'installed' });
 
-      for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+      for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
         expect(existsSync(join(central, name, 'SKILL.md'))).toBe(true);
         expect(await readBundleDecision(fakeHome, name)).toBeNull();
       }
@@ -1193,12 +1193,12 @@ describe('runInit', () => {
         },
       });
       expect(installed).toEqual(['discovery']);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-discovery')).toBe(true);
+      expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBe(true);
       expect(await readBundleDecision(fakeHome, 'open-knowledge-write-skill')).toBeNull();
     });
 
     it('a default run honors a recorded machine-wide opt-out instead of overwriting it', async () => {
-      await writeBundleDecision(fakeHome, 'open-knowledge-discovery', false);
+      await writeBundleDecision(fakeHome, 'palimpsest-discovery', false);
       const installed: (string | undefined)[] = [];
       const result = await runInitForTest({
         skills: undefined,
@@ -1208,10 +1208,10 @@ describe('runInit', () => {
         },
       });
       expect(installed).toEqual([]);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-discovery')).toBe(false);
+      expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBe(false);
       expect(result.skillInstall).toBe('opted-out');
       const section = userGlobalSection(formatInitResult(result, testDir));
-      expect(section).toContain('open-knowledge-discovery');
+      expect(section).toContain('palimpsest-discovery');
       expect(section).toContain('turned off on this machine');
       expect(section).toContain('ps init --skills discovery');
       expect(section).not.toContain('--no-skills');
@@ -1235,13 +1235,13 @@ describe('runInit', () => {
         { bundleId: 'discovery', result: 'decision-read-failed' },
       ]);
       const section = userGlobalSection(formatInitResult(result, testDir));
-      expect(section).toContain('open-knowledge-discovery');
+      expect(section).toContain('palimpsest-discovery');
       expect(section).toContain('could not read whether it is turned off');
       expect(section).not.toContain('installed for');
     });
 
     it('a default run whose decision read fails leaves a recorded opt-out unchanged', async () => {
-      await writeBundleDecision(fakeHome, 'open-knowledge-discovery', false);
+      await writeBundleDecision(fakeHome, 'palimpsest-discovery', false);
       vi.mocked(readBundleDecision).mockRejectedValueOnce(new Error('EIO: decision read failed'));
       const installed: (string | undefined)[] = [];
       const result = await runInitForTest({
@@ -1253,11 +1253,11 @@ describe('runInit', () => {
       });
       expect(result.skillInstall).toBe('decision-read-failed');
       expect(installed).toEqual([]);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-discovery')).toBe(false);
+      expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBe(false);
     });
 
     it('naming a bundle with --skills installs it over a recorded opt-out', async () => {
-      await writeBundleDecision(fakeHome, 'open-knowledge-discovery', false);
+      await writeBundleDecision(fakeHome, 'palimpsest-discovery', false);
       const installed: (string | undefined)[] = [];
       await runInitForTest({
         skills: 'discovery',
@@ -1267,7 +1267,7 @@ describe('runInit', () => {
         },
       });
       expect(installed).toEqual(['discovery']);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-discovery')).toBe(true);
+      expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBe(true);
     });
 
     it('installs every enabled bundle with force so the shared cli-hosts version key cannot skip the second', async () => {
@@ -1349,7 +1349,7 @@ describe('runInit', () => {
       });
       const section = userGlobalSection(formatInitResult(result, testDir));
       const lines = section.split('\n');
-      const discovery = lines.find((l) => l.includes('open-knowledge-discovery'));
+      const discovery = lines.find((l) => l.includes('palimpsest-discovery'));
       const writeSkill = lines.find((l) => l.includes('open-knowledge-write-skill'));
       expect(discovery).toContain('already installed at current version');
       expect(discovery).not.toContain('installed for');
@@ -1365,7 +1365,7 @@ describe('runInit', () => {
           opts?.bundleId === 'write-skill' ? 'failed' : 'installed',
       });
       const lines = userGlobalSection(formatInitResult(result, testDir)).split('\n');
-      expect(lines.find((l) => l.includes('open-knowledge-discovery'))).not.toContain('failed');
+      expect(lines.find((l) => l.includes('palimpsest-discovery'))).not.toContain('failed');
       expect(lines.find((l) => l.includes('open-knowledge-write-skill'))).toContain(
         'install failed',
       );
@@ -1832,19 +1832,19 @@ describe('runInit', () => {
     it('--no-mcp still shows how to add starter content, without the editor steps', async () => {
       const result = await runInitForTest({ mcp: false });
       const output = formatInitResult(result, testDir);
-      expect(output).toContain('ok seed --list-packs');
+      expect(output).toContain('ps seed --list-packs');
       expect(output).toContain('scaffold an empty repo');
       expect(output).not.toContain('Open your editor');
       expect(output).not.toContain('Approve the MCP server');
     });
 
-    it('does not suggest ok seed when content scaffolding failed', async () => {
+    it('does not suggest ps seed when content scaffolding failed', async () => {
       writeFileSync(join(testDir, '.ps'), 'not a directory\n', 'utf-8');
       const result = await runInitForTest({ editors: ['claude'] });
       expect(result.contentScaffoldFailed).toBe(true);
       const output = formatInitResult(result, testDir);
       expect(output).toContain('Content scaffolding failed');
-      expect(output).not.toContain('ok seed');
+      expect(output).not.toContain('ps seed');
       expect(output).not.toMatch(/\n\n$/);
     });
 
@@ -1854,7 +1854,7 @@ describe('runInit', () => {
       expect(output).toContain('Open your editor');
       expect(output).toContain('Approve the MCP server');
       expect(output).toContain('  3. Ask your agent');
-      expect(output).not.toContain('ok seed');
+      expect(output).not.toContain('ps seed');
     });
 
     const allocOutsideTestDir = (suffix: string): string =>
@@ -2299,7 +2299,7 @@ describe('runInit — refuses the home directory as a project root', () => {
       expect(process.exitCode).toBe(64);
       const printed = stderrSpy.mock.calls.map((call) => String(call[0])).join('');
       expect(printed).toContain(
-        'Refusing to set up an Palimpsest project in your home directory',
+        'Refusing to set up a Palimpsest project in your home directory',
       );
       expect(printed).not.toContain('at runInit');
     } finally {
@@ -2792,7 +2792,7 @@ describe('writeEditorMcpConfig — TOML fallback declines a present config', () 
     expect(readdirSync(dirname(path)).some((n) => n.includes('.broken-'))).toBe(false);
   });
 
-  it('still creates OK’s entry into a blank config on the fallback (nothing to preserve)', () => {
+  it('still creates Palimpsest's entry into a blank config on the fallback (nothing to preserve)', () => {
     const path = EDITOR_TARGETS.codex.configPath('', fakeHome);
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, '   \n', 'utf-8');

@@ -1,7 +1,7 @@
 import { existsSync, promises as fsPromises, realpathSync } from 'node:fs';
 import { basename, isAbsolute, join, resolve } from 'node:path';
 
-const REJECT_PREFIX = 'ok:fs:remove-git-folder rejected:';
+const REJECT_PREFIX = 'ps:fs:remove-git-folder rejected:';
 
 interface RemoveGitFolderDeps {
   readonly allowedGitRoots: ReadonlySet<string>;

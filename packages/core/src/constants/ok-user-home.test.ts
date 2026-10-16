@@ -1,7 +1,7 @@
 import { join, relative, resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resolveConfigPath } from '../config/write-config-patch.ts';
-import { posixOkManagedBinDir } from './ps-dir.ts';
+import { posixPsManagedBinDir } from './ps-dir.ts';
 import { psUserHomeDir } from './ps-user-home.ts';
 
 const HOME = '/Users/someone';
@@ -14,14 +14,14 @@ describe('per-channel user home', () => {
   it('keeps Stable on ~/.ps exactly as before', () => {
     vi.stubEnv('PS_CHANNEL', 'stable');
     expect(psUserHomeDir(HOME)).toBe(join(HOME, '.ps'));
-    expect(posixOkManagedBinDir(HOME)).toBe('/Users/someone/.ps/bin');
+    expect(posixPsManagedBinDir(HOME)).toBe('/Users/someone/.ps/bin');
     expect(resolveConfigPath('user', '/project', HOME)).toBe(resolve(HOME, '.ps', 'global.yml'));
   });
 
   it('gives Beta a sibling ~/.ps-beta root for its home, PATH shims, and user config', () => {
     vi.stubEnv('PS_CHANNEL', 'beta');
     expect(psUserHomeDir(HOME)).toBe(join(HOME, '.ps-beta'));
-    expect(posixOkManagedBinDir(HOME)).toBe('/Users/someone/.ps-beta/bin');
+    expect(posixPsManagedBinDir(HOME)).toBe('/Users/someone/.ps-beta/bin');
     expect(resolveConfigPath('user', '/project', HOME)).toBe(
       resolve(HOME, '.ps-beta', 'global.yml'),
     );

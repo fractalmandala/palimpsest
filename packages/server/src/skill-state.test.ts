@@ -36,22 +36,22 @@ describe('per-bundle opt-in decisions', () => {
 
   test('readBundleDecision returns null when the file / entry is absent', async () => {
     const home = freshHome();
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBeNull();
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBeNull();
   });
 
   test('writeBundleDecision round-trips and preserves other bundles + targets', async () => {
     const home = freshHome();
     await writeTargetVersion(home, 'cli-hosts', '1.2.3', 'cli-start');
 
-    await writeBundleDecision(home, 'open-knowledge-discovery', true);
+    await writeBundleDecision(home, 'palimpsest-discovery', true);
     await writeBundleDecision(home, 'open-knowledge-write-skill', false);
 
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBe(true);
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(true);
     expect(await readBundleDecision(home, 'open-knowledge-write-skill')).toBe(false);
     expect(await readTargetVersion(home, 'cli-hosts')).toBe('1.2.3');
 
-    await writeBundleDecision(home, 'open-knowledge-discovery', false);
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBe(false);
+    await writeBundleDecision(home, 'palimpsest-discovery', false);
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(false);
     expect(await readBundleDecision(home, 'open-knowledge-write-skill')).toBe(false);
   });
 });

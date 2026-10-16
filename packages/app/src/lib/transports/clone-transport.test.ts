@@ -137,7 +137,7 @@ describe('httpCloneTransport — a refused request', () => {
     expect(
       await firstEventFor(
         {
-          type: 'urn:ok:error:clone-failed',
+          type: 'urn:ps:error:clone-failed',
           title: 'This dev build has no built CLI.',
           detail: DEV_FALLBACK_CLI_REFUSAL,
         },
@@ -149,7 +149,7 @@ describe('httpCloneTransport — a refused request', () => {
   test('keeps the title when the problem carries no detail', async () => {
     expect(
       await firstEventFor(
-        { type: 'urn:ok:error:url-not-allowed', title: 'URL protocol is not allowed for clone.' },
+        { type: 'urn:ps:error:url-not-allowed', title: 'URL protocol is not allowed for clone.' },
         400,
       ),
     ).toEqual({ type: 'error', message: 'Clone failed: URL protocol is not allowed for clone.' });

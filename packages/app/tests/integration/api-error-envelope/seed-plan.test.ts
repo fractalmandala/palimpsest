@@ -35,7 +35,7 @@ describe('seed-plan envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:seed-invalid-root');
+      expect(parsed.data.type).toBe('urn:ps:error:seed-invalid-root');
       expect(parsed.data.status).toBe(400);
       expect(typeof parsed.data.detail).toBe('string');
     }
@@ -49,7 +49,7 @@ describe('seed-plan envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

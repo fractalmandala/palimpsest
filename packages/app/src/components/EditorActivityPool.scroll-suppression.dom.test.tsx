@@ -82,7 +82,7 @@ function reclampToCurrentHeight(el: HTMLElement) {
 function crossModeMark(): { properties?: Record<string, unknown> } | undefined {
   return getCollector()
     ?.marks.toArray()
-    .find((m) => m.name === 'ok/scroll-restore/cross-mode');
+    .find((m) => m.name === 'ps/scroll-restore/cross-mode');
 }
 
 function breadcrumbLines(info: { mock: { calls: unknown[][] } }): Array<Record<string, unknown>> {
@@ -135,7 +135,7 @@ describe('ScrollPreservingContainer scroll-restore suppression', () => {
       const lines = breadcrumbLines(info);
       expect(lines).toEqual([
         {
-          event: 'ok/scroll-restore/phase1-success',
+          event: 'ps/scroll-restore/phase1-success',
           docName: 'doc-geo',
           target: 500,
           elapsedMs: expect.any(Number),
@@ -194,7 +194,7 @@ describe('ScrollPreservingContainer cross-mode re-activation floor', () => {
       const lines = breadcrumbLines(info);
       expect(lines).toEqual([
         {
-          event: 'ok/scroll-restore/cross-mode',
+          event: 'ps/scroll-restore/cross-mode',
           docName: 'doc-x',
           savedMode: 'source',
           mode: 'wysiwyg',
@@ -262,7 +262,7 @@ describe('ScrollPreservingContainer restore-outcome marks', () => {
       scroller.dispatchEvent(new WheelEvent('wheel'));
       expect(breadcrumbLines(info)).toEqual([
         {
-          event: 'ok/scroll-restore/yielded',
+          event: 'ps/scroll-restore/yielded',
           docName: 'doc-yield-user',
           reason: 'user',
           elapsedMs: expect.any(Number),
@@ -284,14 +284,14 @@ describe('ScrollPreservingContainer restore-outcome marks', () => {
       vi.advanceTimersByTime(ONE_FRAME_MS);
       expect(breadcrumbLines(info)).toEqual([
         {
-          event: 'ok/scroll-restore/superseded',
+          event: 'ps/scroll-restore/superseded',
           docName: 'doc-yield-landing',
           holder: 'landing',
           elapsedMs: expect.any(Number),
           finalScrollTop: 0,
         },
         {
-          event: 'ok/scroll-restore/yielded',
+          event: 'ps/scroll-restore/yielded',
           docName: 'doc-yield-landing',
           reason: 'landing',
           elapsedMs: expect.any(Number),
@@ -313,7 +313,7 @@ describe('ScrollPreservingContainer restore-outcome marks', () => {
       vi.advanceTimersByTime(ONE_FRAME_MS);
       expect(breadcrumbLines(info)).toEqual([
         {
-          event: 'ok/scroll-restore/yielded',
+          event: 'ps/scroll-restore/yielded',
           docName: 'doc-yield-external',
           reason: 'external',
           elapsedMs: expect.any(Number),
@@ -337,7 +337,7 @@ describe('ScrollPreservingContainer restore-outcome marks', () => {
       vi.advanceTimersByTime(RESTORE_BACKSTOP_MS);
       expect(breadcrumbLines(info)).toEqual([
         {
-          event: 'ok/scroll-restore/abandoned',
+          event: 'ps/scroll-restore/abandoned',
           docName: 'doc-abandon',
           target: 500,
           anchorMeasurable: true,
@@ -371,7 +371,7 @@ describe('ScrollPreservingContainer restore-outcome marks', () => {
 
       expect(breadcrumbLines(info)).toEqual([
         {
-          event: 'ok/scroll-restore/phase1-success',
+          event: 'ps/scroll-restore/phase1-success',
           docName: 'doc-phase2',
           target: 500,
           elapsedMs: expect.any(Number),
@@ -380,7 +380,7 @@ describe('ScrollPreservingContainer restore-outcome marks', () => {
           clientHeight: 0,
         },
         {
-          event: 'ok/scroll-restore/phase2-success',
+          event: 'ps/scroll-restore/phase2-success',
           docName: 'doc-phase2',
           target: 500,
           elapsedMs: expect.any(Number),

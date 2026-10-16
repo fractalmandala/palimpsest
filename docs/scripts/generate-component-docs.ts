@@ -50,7 +50,7 @@ $$`,
   MermaidFence: {
     language: 'mermaid',
     code: `graph LR
-    Author((Author)) --> Editor[OK Editor]
+    Author((Author)) --> Editor[Palimpsest Editor]
     Editor -- CRDT --> Server[(Hocuspocus)]
     Server --> Agent{{AI Agent}}
     Agent --> Editor`,
@@ -247,7 +247,7 @@ const PREVIEWS: Partial<Record<string, string>> = {
 </ComponentPreview>`,
   MermaidFence: `<ComponentPreview>
   <Mermaid chart={\`graph LR
-    Author((Author)) --> Editor[OK Editor]
+    Author((Author)) --> Editor[Palimpsest Editor]
     Editor -- CRDT --> Server[(Hocuspocus)]
     Server --> Agent{{AI Agent}}
     Agent --> Editor\`} />

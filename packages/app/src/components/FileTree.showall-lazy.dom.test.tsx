@@ -197,7 +197,7 @@ vi.doMock('./ui/sidebar', () => ({
 }));
 vi.doMock('@/lib/config-provider', () => ({
   useConfigContext: () => ({
-    okignoreBinding: null,
+    psignoreBinding: null,
     projectLocalBinding: null,
     merged: mergedConfig,
   }),
@@ -1402,7 +1402,7 @@ describe('FileTree show-ps-folders visibility', () => {
   let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
   const SHOW_OK_DEPTH1_URL = '/api/documents?showAll=true&showOk=true&dir=&depth=1';
-  const lazyOkDirUrl = (dir: string) =>
+  const lazyPsDirUrl = (dir: string) =>
     `/api/documents?showAll=true&showOk=true&dir=${encodeURIComponent(dir)}&depth=1`;
 
   beforeEach(() => {
@@ -1424,7 +1424,7 @@ describe('FileTree show-ps-folders visibility', () => {
   });
 
   test('show-ok ON requests the listing with showOk=true and renders .ps rows', async () => {
-    mergedConfig = { appearance: { sidebar: { showOkFolders: true } } };
+    mergedConfig = { appearance: { sidebar: { showPsFolders: true } } };
     responseByUrl.set(SHOW_OK_DEPTH1_URL, () =>
       jsonResponse({
         documents: [docEntry('README'), folderEntry('.ps', true)],
@@ -1466,14 +1466,14 @@ describe('FileTree show-ps-folders visibility', () => {
   });
 
   test('expanding a revealed .ps folder lazy-fetches its children with showOk=true', async () => {
-    mergedConfig = { appearance: { sidebar: { showOkFolders: true } } };
+    mergedConfig = { appearance: { sidebar: { showPsFolders: true } } };
     responseByUrl.set(SHOW_OK_DEPTH1_URL, () =>
       jsonResponse({
         documents: [docEntry('README'), folderEntry('.ps', true)],
         truncated: false,
       }),
     );
-    responseByUrl.set(lazyOkDirUrl('.ps'), () =>
+    responseByUrl.set(lazyPsDirUrl('.ps'), () =>
       jsonResponse({
         documents: [folderEntry('.ps/templates', true), assetEntry('.ps/config.yml')],
         truncated: false,
@@ -1486,7 +1486,7 @@ describe('FileTree show-ps-folders visibility', () => {
 
     await waitFor(() => expect(model.items.has('.ps/templates/')).toBe(true));
     expect(model.items.has('.ps/config.yml')).toBe(true);
-    expect(fetchUrls).toContain(lazyOkDirUrl('.ps'));
+    expect(fetchUrls).toContain(lazyPsDirUrl('.ps'));
   });
 
   test('flipping show-ok refetches through the scheduler and preserves expansion state', async () => {
@@ -1504,7 +1504,7 @@ describe('FileTree show-ps-folders visibility', () => {
         truncated: false,
       }),
     );
-    responseByUrl.set(lazyOkDirUrl('team'), () =>
+    responseByUrl.set(lazyPsDirUrl('team'), () =>
       jsonResponse({ documents: [docEntry('team/notes')], truncated: false }),
     );
     const view = render(<FileTree />);
@@ -1512,13 +1512,13 @@ describe('FileTree show-ps-folders visibility', () => {
     model.getItem('team/')?.expand();
     await waitFor(() => expect(model.items.has('team/notes.md')).toBe(true));
 
-    mergedConfig = { appearance: { sidebar: { showOkFolders: true } } };
+    mergedConfig = { appearance: { sidebar: { showPsFolders: true } } };
     view.rerender(<FileTree />);
 
     await waitFor(() => expect(model.items.has('.ps/')).toBe(true));
     expect(model.getItem('team/')?.isExpanded()).toBe(true);
 
-    mergedConfig = { appearance: { sidebar: { showOkFolders: false } } };
+    mergedConfig = { appearance: { sidebar: { showPsFolders: false } } };
     view.rerender(<FileTree />);
     await waitFor(() => expect(model.items.has('.ps/')).toBe(false));
     expect(model.items.has('README.md')).toBe(true);
@@ -1526,14 +1526,14 @@ describe('FileTree show-ps-folders visibility', () => {
   });
 
   test('an expanded .ps folder stays expanded across a refresh cycle', async () => {
-    mergedConfig = { appearance: { sidebar: { showOkFolders: true } } };
+    mergedConfig = { appearance: { sidebar: { showPsFolders: true } } };
     responseByUrl.set(SHOW_OK_DEPTH1_URL, () =>
       jsonResponse({
         documents: [docEntry('README'), folderEntry('.ps', true)],
         truncated: false,
       }),
     );
-    responseByUrl.set(lazyOkDirUrl('.ps'), () =>
+    responseByUrl.set(lazyPsDirUrl('.ps'), () =>
       jsonResponse({ documents: [folderEntry('.ps/templates', true)], truncated: false }),
     );
     render(<FileTree />);

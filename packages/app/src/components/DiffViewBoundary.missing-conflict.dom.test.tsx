@@ -39,7 +39,7 @@ const { Toaster, toast } = await import('sonner');
 
 const FILE = 'notes/roadmap.md';
 const DOC = 'notes/roadmap';
-const MISSING_TYPE = 'urn:ok:error:no-conflict-tracked';
+const MISSING_TYPE = 'urn:ps:error:no-conflict-tracked';
 const MISSING_DETAIL =
   'This file has no tracked conflict — it may have been resolved by another session, or the path may be stale. Refresh the conflict list in the Palimpsest app before retrying.';
 const FIRST_CONFLICT: ConflictEntryWire = {

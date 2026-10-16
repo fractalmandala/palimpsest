@@ -290,7 +290,7 @@ describe('handleRollback — actor identity routing (D22-A, FR7b, D-A10)', () =>
     );
     expect(response.status).toBe(400);
     const parsed = JSON.parse(response.body) as Record<string, unknown>;
-    expect(parsed.type).toBe('urn:ok:error:invalid-request');
+    expect(parsed.type).toBe('urn:ps:error:invalid-request');
     expect(typeof parsed.title).toBe('string');
     expect(formatContributorsForTest()).toBe('');
   });

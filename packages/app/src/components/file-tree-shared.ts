@@ -79,7 +79,7 @@ export interface PsFileTreeOptionsInput {
   readonly unsafeCSS?: string;
 }
 
-export function buildOkFileTreeOptions(input: PsFileTreeOptionsInput): FileTreeOptions {
+export function buildPsFileTreeOptions(input: PsFileTreeOptionsInput): FileTreeOptions {
   const spriteSheet = `<svg data-icon-sprite aria-hidden="true" width="0" height="0">${input.extraSpriteSymbols ?? ''}${MARKDOWN_FILE_ICON_SYMBOL}</svg>`;
   const markdownIcon = { name: MARKDOWN_FILE_ICON_ID, viewBox: MARKDOWN_FILE_ICON_VIEWBOX };
   return {

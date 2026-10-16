@@ -29,7 +29,7 @@ const PS_PROCESS_PATTERNS: RegExp[] = [
   /(^|\s)--ok-project-path=/,
 ];
 
-function isOkProcess(command: string): boolean {
+function isPsProcess(command: string): boolean {
   return PS_PROCESS_PATTERNS.some((re) => re.test(command));
 }
 
@@ -75,7 +75,7 @@ function parsePgrepOutput(output: string): PsProcessEntry[] {
     const pidStr = trimmed.slice(0, spaceIdx);
     const command = trimmed.slice(spaceIdx + 1);
     const pid = Number.parseInt(pidStr, 10);
-    if (!Number.isNaN(pid) && isOkProcess(command)) {
+    if (!Number.isNaN(pid) && isPsProcess(command)) {
       entries.push({ pid, command });
     }
   }
@@ -182,7 +182,7 @@ async function readPsEntries(args: string[]): Promise<PsProcessEntry[]> {
     if (spaceIdx === -1) return;
     const pid = Number.parseInt(trimmed.slice(0, spaceIdx), 10);
     const command = trimmed.slice(spaceIdx + 1).trim();
-    if (!Number.isNaN(pid) && isOkProcess(command)) entries.push({ pid, command });
+    if (!Number.isNaN(pid) && isPsProcess(command)) entries.push({ pid, command });
   });
   if (result.code !== 0 || result.signal) {
     throw new PsListingError(result);
@@ -191,7 +191,7 @@ async function readPsEntries(args: string[]): Promise<PsProcessEntry[]> {
   return entries;
 }
 
-async function findOkProcessEntries(strict = false): Promise<PsProcessEntry[]> {
+async function findPsProcessEntries(strict = false): Promise<PsProcessEntry[]> {
   const failures: string[] = [];
   const unix = process.platform === 'darwin' || process.platform === 'linux';
   if (!unix) {
@@ -243,15 +243,17 @@ async function findOkProcessEntries(strict = false): Promise<PsProcessEntry[]> {
   return [];
 }
 
-export async function findOkProcessPids(): Promise<number[]> {
-  return (await findOkProcessEntries()).map((e) => e.pid);
+export async function findPsProcessPids(): Promise<number[]> {
+  return (await findPsProcessEntries()).map((e) => e.pid);
 }
 
-export function extractOkBinaryPath(command: string): string | null {
+export function extractPsBinaryPath(command: string): string | null {
   const tokens = command.trim().split(/\s+/).filter(Boolean);
   for (const token of tokens) {
     if (token.startsWith('@')) continue;
     const base = basename(token);
+    // 'ok' matches the upstream OpenKnowledge CLI this fork replaces, so a
+    // machine running both surfaces the conflict instead of hiding it.
     if (base === 'palimpsest' || base === 'ok') return token;
     if (
       token.endsWith('/packages/cli/src/cli.ts') ||
@@ -497,7 +499,7 @@ function addLockDirsUnderCwd(candidateDirs: Set<string>, cwd: string): void {
 export async function discoverLockDirs(): Promise<string[]> {
   const candidateDirs = new Set<string>();
 
-  const psEntries = await findOkProcessEntries();
+  const psEntries = await findPsProcessEntries();
   const psCwds = readPidCwds(psEntries.map((entry) => entry.pid));
   const cwds = psEntries.map((entry) => psCwds.get(entry.pid) ?? null);
 
@@ -574,7 +576,7 @@ export async function scanLockProcesses(
   const scan: LockProcessScan = { candidates: [], unavailable: [] };
   let entries: PsProcessEntry[];
   try {
-    entries = await findOkProcessEntries(true);
+    entries = await findPsProcessEntries(true);
   } catch (error) {
     scan.unavailable.push(error instanceof Error ? error.message : String(error));
     return scan;

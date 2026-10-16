@@ -170,7 +170,7 @@ describe('folder delete enumerates descendant docs from disk', () => {
     });
 
     expect(status).toBe(409);
-    expect(structured.type).toBe('urn:ok:error:doc-in-conflict');
+    expect(structured.type).toBe('urn:ps:error:doc-in-conflict');
 
     expect(existsSync(join(contentDir, 'del-folder/page.mdx'))).toBe(true);
     expect(closedDocs).toEqual([]);
@@ -210,7 +210,7 @@ describe('folder duplicate conflict gate enumerates from disk', () => {
     });
 
     expect(status).toBe(409);
-    expect(structured.type).toBe('urn:ok:error:doc-in-conflict');
+    expect(structured.type).toBe('urn:ps:error:doc-in-conflict');
 
     expect(countDocFiles(contentDir)).toBe(1);
   });
@@ -247,7 +247,7 @@ describe('folder duplicate conflict gate enumerates from disk', () => {
     });
 
     expect(status).toBe(409);
-    expect(structured.type).toBe('urn:ok:error:doc-in-conflict');
+    expect(structured.type).toBe('urn:ps:error:doc-in-conflict');
     expect(countDocFiles(contentDir)).toBe(1);
   });
 });

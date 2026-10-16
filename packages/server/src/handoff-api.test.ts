@@ -154,7 +154,7 @@ describe('handleInstalledAgents', () => {
     expect(mock.writeHead.headers?.['Content-Type']).toBe('application/problem+json');
     expect(mock.writeHead.headers?.Allow).toBe('GET');
     const body = JSON.parse(mock.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:method-not-allowed');
+    expect(body.type).toBe('urn:ps:error:method-not-allowed');
     expect(body.status).toBe(405);
     expect(typeof body.title).toBe('string');
   });
@@ -182,7 +182,7 @@ describe('handleInstalledAgents', () => {
     expect(mock.writeHead.status).toBe(500);
     expect(mock.writeHead.headers?.['Content-Type']).toBe('application/problem+json');
     const body = JSON.parse(mock.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.status).toBe(500);
   });
 
@@ -504,7 +504,7 @@ describe('GET /api/installed-agents (integration — real HTTP + real createApiE
     expect(res.headers.get('Content-Type')).toBe('application/problem+json');
     expect(res.headers.get('Allow')).toBe('GET');
     const body = (await res.json()) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:method-not-allowed');
+    expect(body.type).toBe('urn:ps:error:method-not-allowed');
     expect(body.status).toBe(405);
     expect(typeof body.title).toBe('string');
   });
@@ -520,7 +520,7 @@ describe('GET /api/installed-agents (integration — real HTTP + real createApiE
     expect(res.status).toBe(403);
     expect(res.headers.get('Content-Type')).toBe('application/problem+json');
     const body = (await res.json()) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:invalid-origin');
+    expect(body.type).toBe('urn:ps:error:invalid-origin');
     expect(body.status).toBe(403);
   });
 
@@ -561,7 +561,7 @@ describe('GET /api/installed-agents (integration — real HTTP + real createApiE
     const res = await getWithHostHeader(port, '/api/installed-agents', 'evil.example:5173');
     expect(res.status).toBe(403);
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(probeCalls).toEqual({});
   });
 

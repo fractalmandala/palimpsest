@@ -140,7 +140,7 @@ describe('install MCP tool', () => {
       return body.convert
         ? new Response(
             JSON.stringify({
-              type: 'urn:ok:error:doc-already-exists',
+              type: 'urn:ps:error:doc-already-exists',
               title: 'That copy was hand-edited.',
               detail: 'Remove .cursor/skills/trip-log manually if you mean it.',
             }),

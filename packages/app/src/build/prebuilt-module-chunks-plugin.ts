@@ -4,7 +4,7 @@ import { PREBUILT_MODULE_CHUNKS } from './prebuilt-dev-contract';
 
 export function prebuiltModuleChunksPlugin(appRoot: string): Plugin {
   return {
-    name: 'ok:prebuilt-module-chunks',
+    name: 'ps:prebuilt-module-chunks',
     apply: 'build',
     generateBundle(_options, bundle) {
       const chunks = new Map<string, string>();

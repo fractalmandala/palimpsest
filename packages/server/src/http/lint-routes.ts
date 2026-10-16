@@ -114,7 +114,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
     errorResponse(
       res,
       409,
-      'urn:ok:error:audit-superseded',
+      'urn:ps:error:audit-superseded',
       'The lint configuration or branch changed while the audit was running; re-run it.',
       { handler },
     );
@@ -127,7 +127,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         const url = new URL(req.url ?? '', 'http://localhost');
         const docName = url.searchParams.get('doc');
         if (docName !== null && (docName === '' || !isSafeDocName(docName))) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid doc.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid doc.', {
             handler: 'lint-config',
           });
           return;
@@ -154,7 +154,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to resolve lint config.',
           {
             handler: 'lint-config',
@@ -208,7 +208,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to list frontmatter schemas.',
           { handler: 'frontmatter-schemas-list', cause: e },
         );
@@ -224,14 +224,14 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         const url = new URL(req.url ?? '', 'http://localhost');
         const docName = url.searchParams.get('doc') ?? '';
         if (docName === '' || !isSafeDocName(docName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing or invalid doc.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing or invalid doc.', {
             handler: 'lint',
           });
           return;
         }
         const docRelPath = resolveDocFilePath(contentDir, docName);
         if (docRelPath === null) {
-          errorResponse(res, 404, 'urn:ok:error:doc-not-found', 'Document not found.', {
+          errorResponse(res, 404, 'urn:ps:error:doc-not-found', 'Document not found.', {
             handler: 'lint',
           });
           return;
@@ -256,12 +256,12 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         );
       } catch (e) {
         if (isContainmentRejection(e)) {
-          errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escape detected.', {
+          errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escape detected.', {
             handler: 'lint',
           });
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to lint document.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to lint document.', {
           handler: 'lint',
           cause: e,
         });
@@ -278,7 +278,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         const rawTarget = url.searchParams.get('path');
         let target = rawTarget === null || rawTarget === '' ? undefined : rawTarget;
         if (target !== undefined && !isValidRelativeContentPath(target)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid path.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid path.', {
             handler: 'lint-audit',
           });
           return;
@@ -290,7 +290,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         ) {
           const resolution = resolveAuditScope(target, contentDir);
           if (!resolution.ok) {
-            errorResponse(res, 404, 'urn:ok:error:not-found', resolution.title, {
+            errorResponse(res, 404, 'urn:ps:error:not-found', resolution.title, {
               handler: 'lint-audit',
             });
             return;
@@ -315,7 +315,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
           respondAuditSuperseded(res, 'lint-audit');
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to audit project.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to audit project.', {
           handler: 'lint-audit',
           cause: e,
         });
@@ -332,7 +332,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         const rawTarget = url.searchParams.get('path');
         let target = rawTarget === null || rawTarget === '' ? undefined : rawTarget;
         if (target !== undefined && !isValidRelativeContentPath(target)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid path.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid path.', {
             handler: 'audit',
           });
           return;
@@ -341,7 +341,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         const docParam = rawDoc === null || rawDoc === '' ? undefined : rawDoc;
         if (docParam !== undefined) {
           if (target !== undefined || !isValidRelativeContentPath(docParam)) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid doc.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid doc.', {
               handler: 'audit',
             });
             return;
@@ -357,7 +357,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
         ) {
           const resolution = resolveAuditScope(target, contentDir);
           if (!resolution.ok) {
-            errorResponse(res, 404, 'urn:ok:error:not-found', resolution.title, {
+            errorResponse(res, 404, 'urn:ps:error:not-found', resolution.title, {
               handler: 'audit',
             });
             return;
@@ -402,7 +402,7 @@ export function createLintRoutes(deps: LintRouteDeps): LintRoutes {
           respondAuditSuperseded(res, 'audit');
           return;
         }
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to audit project.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to audit project.', {
           handler: 'audit',
           cause: e,
         });

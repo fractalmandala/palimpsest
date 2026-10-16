@@ -18,7 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { OkignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
+import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import {
   type ConfigValidationError,
   humanFormat,
@@ -43,17 +43,17 @@ import {
   findPatternIndex,
   listPatterns,
   type PatternLine,
-  parseOkignoreDoc,
+  parsePsignoreDoc,
   removePatternAt,
   reorderPatterns,
-  serializeOkignoreDoc,
+  serializePsignoreDoc,
 } from './psignore-doc';
 import { countMatches } from './psignore-preview';
-import { checkHeuristicWarnings, type OkignoreWarning } from './psignore-warnings';
+import { checkHeuristicWarnings, type PsignoreWarning } from './psignore-warnings';
 import { SettingsSectionHeader } from './SettingsSectionHeader';
 
-interface OkignoreSectionProps {
-  binding: OkignoreBinding | null;
+interface PsignoreSectionProps {
+  binding: PsignoreBinding | null;
   synced: boolean;
 }
 
@@ -66,14 +66,14 @@ const REJECTION_FLASH_MS = 600;
 const RAW_TEXT_COMMIT_MS = 400;
 const SHOW_ADVANCED_LS_KEY = 'psignore-show-advanced';
 
-export function OkignoreSection({ binding, synced }: OkignoreSectionProps) {
+export function PsignoreSection({ binding, synced }: PsignoreSectionProps) {
   if (binding === null || !synced) {
-    return <OkignoreSectionSkeleton />;
+    return <PsignoreSectionSkeleton />;
   }
-  return <OkignoreSectionBody binding={binding} />;
+  return <PsignoreSectionBody binding={binding} />;
 }
 
-function OkignoreSectionSkeleton() {
+function PsignoreSectionSkeleton() {
   return (
     <section
       aria-labelledby="settings-psignore-title"
@@ -102,7 +102,7 @@ interface RejectionState {
   ts: number;
 }
 
-function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
+function PsignoreSectionBody({ binding }: { binding: PsignoreBinding }) {
   const { t } = useLingui();
   const [text, setText] = useState(() => binding.current());
 
@@ -115,7 +115,7 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
   const { pages, pageMeta, assetPaths } = usePageList();
   const filePaths = derivePreviewPaths(pages, pageMeta, assetPaths);
 
-  const doc = parseOkignoreDoc(text);
+  const doc = parsePsignoreDoc(text);
   const patterns = listPatterns(doc);
   const isEmpty = patterns.length === 0;
 
@@ -151,7 +151,7 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
 
   useEffect(() => {
     return binding.subscribeRejection(({ error }) => {
-      const detail = pickOkignoreDetail(error);
+      const detail = pickPsignoreDetail(error);
       const message = detail?.detail ?? humanFormat(error);
       setRejection({ message, lineNumber: detail?.lineNumber, ts: Date.now() });
       if (rejectionTimerRef.current) clearTimeout(rejectionTimerRef.current);
@@ -180,15 +180,15 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
     if (!current) return;
     if (trimmed === current.text) return;
     if (trimmed.length === 0) {
-      commit(serializeOkignoreDoc(removePatternAt(doc, patternIndex)));
+      commit(serializePsignoreDoc(removePatternAt(doc, patternIndex)));
       return;
     }
-    commit(serializeOkignoreDoc(editPatternAt(doc, patternIndex, trimmed)));
+    commit(serializePsignoreDoc(editPatternAt(doc, patternIndex, trimmed)));
     triggerFlash(rowFlashKey(trimmed, patternIndex));
   };
 
   const handleRemove = (patternIndex: number) => {
-    commit(serializeOkignoreDoc(removePatternAt(doc, patternIndex)));
+    commit(serializePsignoreDoc(removePatternAt(doc, patternIndex)));
   };
 
   const handleAdd = (newPatternText: string) => {
@@ -199,7 +199,7 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
       triggerFlash(rowFlashKey(trimmed, existingIndex));
       return;
     }
-    commit(serializeOkignoreDoc(appendPattern(doc, trimmed)));
+    commit(serializePsignoreDoc(appendPattern(doc, trimmed)));
     triggerFlash(rowFlashKey(trimmed, patterns.length));
   };
 
@@ -210,7 +210,7 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
     const fromIndex = sortIdToIndex(activeId);
     const toIndex = sortIdToIndex(overId);
     if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return;
-    commit(serializeOkignoreDoc(reorderPatterns(doc, fromIndex, toIndex)));
+    commit(serializePsignoreDoc(reorderPatterns(doc, fromIndex, toIndex)));
   };
 
   const sensors = useSensors(
@@ -250,15 +250,15 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
       </SettingsSectionHeader>
       {rejection !== null ? <RejectionBanner rejection={rejection} /> : null}
       {showAdvanced ? (
-        <OkignoreAdvancedEditor binding={binding} text={text} />
+        <PsignoreAdvancedEditor binding={binding} text={text} />
       ) : isEmpty ? (
-        <OkignoreEmptyState
+        <PsignoreEmptyState
           onAdd={handleAdd}
           rejectionFlashKey={rejectionFlashKey}
           filePaths={filePaths}
         />
       ) : (
-        <OkignorePatternList
+        <PsignorePatternList
           patterns={patterns}
           sensors={sensors}
           onDragEnd={handleDragEnd}
@@ -280,7 +280,7 @@ function OkignoreSectionBody({ binding }: { binding: OkignoreBinding }) {
   );
 }
 
-function OkignoreAdvancedEditor({ binding, text }: { binding: OkignoreBinding; text: string }) {
+function PsignoreAdvancedEditor({ binding, text }: { binding: PsignoreBinding; text: string }) {
   const { t } = useLingui();
   const [draft, setDraft] = useState(text);
   const lastSyncedRef = useRef(text);
@@ -393,7 +393,7 @@ function RejectionBanner({ rejection }: { rejection: RejectionState }) {
   );
 }
 
-function OkignoreEmptyState({
+function PsignoreEmptyState({
   onAdd,
   rejectionFlashKey,
   filePaths,
@@ -421,7 +421,7 @@ function OkignoreEmptyState({
   );
 }
 
-function OkignorePatternList({
+function PsignorePatternList({
   patterns,
   sensors,
   onDragEnd,
@@ -688,7 +688,7 @@ function AddPatternRow({
   );
 }
 
-function WarningIndicator({ warnings }: { warnings: OkignoreWarning[] }) {
+function WarningIndicator({ warnings }: { warnings: PsignoreWarning[] }) {
   const { t } = useLingui();
   if (warnings.length === 0) {
     return (
@@ -748,7 +748,7 @@ function SavedIndicator({ visible }: { visible: boolean }) {
 }
 
 export function parseRows(text: string): string[] {
-  return listPatterns(parseOkignoreDoc(text)).map((p) => p.text);
+  return listPatterns(parsePsignoreDoc(text)).map((p) => p.text);
 }
 
 function indexToSortId(patternIndex: number): string {
@@ -766,7 +766,7 @@ function rowFlashKey(text: string, patternIndex: number): string {
   return `${patternIndex}::${text}`;
 }
 
-function pickOkignoreDetail(
+function pickPsignoreDetail(
   error: ConfigValidationError,
 ): { detail: string; lineNumber?: number } | null {
   if (!isKnownConfigError(error)) return null;
@@ -774,8 +774,8 @@ function pickOkignoreDetail(
   return { detail: error.detail, lineNumber: error.lineNumber };
 }
 
-function useDebouncedHeuristicWarnings(input: string): OkignoreWarning[] {
-  const [warnings, setWarnings] = useState<OkignoreWarning[]>(() =>
+function useDebouncedHeuristicWarnings(input: string): PsignoreWarning[] {
+  const [warnings, setWarnings] = useState<PsignoreWarning[]>(() =>
     input.length === 0 ? [] : checkHeuristicWarnings(input),
   );
   useEffect(() => {
@@ -869,7 +869,7 @@ export function writeShowAdvanced(next: boolean): void {
     globalThis.localStorage?.setItem(SHOW_ADVANCED_LS_KEY, next ? 'true' : 'false');
   } catch (e) {
     console.debug(
-      '[OkignoreSection] localStorage unavailable; advanced toggle will not persist:',
+      '[PsignoreSection] localStorage unavailable; advanced toggle will not persist:',
       e,
     );
   }

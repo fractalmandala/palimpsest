@@ -23,7 +23,7 @@ import {
   describeAttachedClients,
   type RunRemovalDeps,
   runRemoval,
-  sharedOkEntriesList,
+  sharedPsEntriesList,
 } from './removal-plan.ts';
 import {
   formatRemovalOutcome,
@@ -196,7 +196,7 @@ function formatInstallInstructions(
           ? 'remove the palimpsest package with your package manager (apt / dnf)'
           : 'move /Applications/Palimpsest.app to the Trash';
     lines.push(dim('  Install method not detected. If you installed it, remove it via:'));
-    lines.push(`    ${info('OK Desktop')} — ${appFallback}`);
+    lines.push(`    ${info('Palimpsest Desktop')} — ${appFallback}`);
     lines.push(`    ${info('npm global')} — npm uninstall -g @palimpsest/cli`);
     lines.push(`    ${info('npx')} — nothing to remove (runs from a temporary cache)`);
   } else {
@@ -478,7 +478,7 @@ export async function runUninstall(opts: UninstallOptions = {}): Promise<Uninsta
 export function uninstallCommand(): Command {
   return new Command('uninstall')
     .description(
-      `Remove Palimpsest from your machine — credentials, PATH entries, editor MCP configs, skill bundles, app data, and ~/${DESKTOP_PRODUCTS.stable.userHomeDirName} (~/${DESKTOP_PRODUCTS.beta.userHomeDirName} on Beta). Keeps your markdown content and your authored skills (~/.ps/skills) unless --purge-content, and always keeps ${sharedOkEntriesList(true)}, shared by every channel. Detects the app install and prints how to remove it; never self-deletes.`,
+      `Remove Palimpsest from your machine — credentials, PATH entries, editor MCP configs, skill bundles, app data, and ~/${DESKTOP_PRODUCTS.stable.userHomeDirName} (~/${DESKTOP_PRODUCTS.beta.userHomeDirName} on Beta). Keeps your markdown content and your authored skills (~/.ps/skills) unless --purge-content, and always keeps ${sharedPsEntriesList(true)}, shared by every channel. Detects the app install and prints how to remove it; never self-deletes.`,
     )
     .option(
       '-y, --yes',
@@ -488,7 +488,7 @@ export function uninstallCommand(): Command {
     .option('--json', 'Emit a machine-readable plan/outcome (requires --yes or --dry-run)')
     .option(
       '--purge-content',
-      `Also remove user-authored content (~/.ps/skills, shared by every channel); still keeps ${sharedOkEntriesList(true)}`,
+      `Also remove user-authored content (~/.ps/skills, shared by every channel); still keeps ${sharedPsEntriesList(true)}`,
     )
     .option(
       '--all-projects',

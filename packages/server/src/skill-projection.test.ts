@@ -99,13 +99,13 @@ describe('validateSkillForInstall', () => {
 
   test('rejects reserved palimpsest* prefix unless allowed', () => {
     const dir = makeSkill(
-      'open-knowledge-mine',
+      'palimpsest-mine',
       '# x',
-      'name: open-knowledge-mine\ndescription: d',
+      'name: palimpsest-mine\ndescription: d',
     );
-    expect(validateSkillForInstall(dir, 'open-knowledge-mine').ok).toBe(false);
+    expect(validateSkillForInstall(dir, 'palimpsest-mine').ok).toBe(false);
     expect(
-      validateSkillForInstall(dir, 'open-knowledge-mine', { allowReservedName: true }).ok,
+      validateSkillForInstall(dir, 'palimpsest-mine', { allowReservedName: true }).ok,
     ).toBe(true);
   });
 

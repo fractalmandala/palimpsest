@@ -328,7 +328,7 @@ describe('lint fix live-write preservation', () => {
         summary: 'Failed durability',
       });
       expect(response.status).toBe(507);
-      expect(await response.json()).toMatchObject({ type: 'urn:ok:error:storage-full' });
+      expect(await response.json()).toMatchObject({ type: 'urn:ps:error:storage-full' });
       expect(session.dc.document.getText('source').toString()).not.toContain('\t');
       expect(readFileSync(file, 'utf-8')).toBe(TABBED_BODY);
       expect(origins).toContain(session.origin);
@@ -449,7 +449,7 @@ describe('lint fix live-write preservation', () => {
       summary: 'Divergent durability',
     });
     expect(response.status).toBe(409);
-    expect(await response.json()).toMatchObject({ type: 'urn:ok:error:disk-divergence' });
+    expect(await response.json()).toMatchObject({ type: 'urn:ps:error:disk-divergence' });
 
     await pollUntil(() => readFileSync(file, 'utf-8').includes('native-divergence-injected'));
     await pollUntil(() =>
@@ -512,7 +512,7 @@ describe('lint fix live-write preservation', () => {
         summary: 'Retain stale-race fix',
       });
       expect(response.status).toBe(409);
-      expect(await response.json()).toMatchObject({ type: 'urn:ok:error:stale-external-write' });
+      expect(await response.json()).toMatchObject({ type: 'urn:ps:error:stale-external-write' });
       expect(readFileSync(file, 'utf-8')).toBe(stale);
       expect(state.ytext.toString()).not.toContain('\t');
       expect(state.ytext.toString()).toContain('Acknowledged before lint.');
@@ -538,27 +538,27 @@ describe('lint fix live-write preservation', () => {
   });
 
   test.each([
-    { name: 'missing document', body: {}, type: 'urn:ok:error:invalid-request' },
-    { name: 'empty document', body: { docName: '' }, type: 'urn:ok:error:invalid-request' },
+    { name: 'missing document', body: {}, type: 'urn:ps:error:invalid-request' },
+    { name: 'empty document', body: { docName: '' }, type: 'urn:ps:error:invalid-request' },
     {
       name: 'system document',
       body: { docName: '__system__' },
-      type: 'urn:ok:error:reserved-doc-name',
+      type: 'urn:ps:error:reserved-doc-name',
     },
     {
       name: 'config document',
       body: { docName: '__config__/project' },
-      type: 'urn:ok:error:reserved-doc-name',
+      type: 'urn:ps:error:reserved-doc-name',
     },
     {
       name: 'unknown document',
       body: { docName: `missing-${randomUUID()}` },
-      type: 'urn:ok:error:doc-not-found',
+      type: 'urn:ps:error:doc-not-found',
     },
   ])('retains the ordered 400 or 404 problem for a $name', async ({ body, type }) => {
     server = await createTestServer({ markdownlintEnabled: true });
     const response = await postFix(body);
-    expect(response.status).toBe(type === 'urn:ok:error:doc-not-found' ? 404 : 400);
+    expect(response.status).toBe(type === 'urn:ps:error:doc-not-found' ? 404 : 400);
     expect(await response.json()).toMatchObject({ type });
     expect(contributors()).toEqual([]);
   });
@@ -594,7 +594,7 @@ describe('lint fix live-write preservation', () => {
     });
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:doc-in-conflict',
+      type: 'urn:ps:error:doc-in-conflict',
       conflict: { kind: 'reconcile', reason: 'disk-markers' },
       resolutionOptions: ['mine', 'content', 'delete'],
     });
@@ -660,7 +660,7 @@ describe('lint fix live-write preservation', () => {
 
       const response = await request;
       expect(response.status).toBe(400);
-      expect(await response.json()).toMatchObject({ type: 'urn:ok:error:frontmatter-malformed' });
+      expect(await response.json()).toMatchObject({ type: 'urn:ps:error:frontmatter-malformed' });
       const state = getServerState(server, docName);
       if (state === null) throw new Error('Expected the live malformed-frontmatter document');
       expect(state.ytext.toString()).toContain('title: Valid now');

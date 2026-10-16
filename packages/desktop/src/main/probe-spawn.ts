@@ -1,9 +1,9 @@
 import type { ChildProcess } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import {
-  composeOkChildEnv,
-  hasNoResolvableOkHome,
-  hasOkManagedBinDirsOnPath,
+  composePsChildEnv,
+  hasNoResolvablePsHome,
+  hasPsManagedBinDirsOnPath,
   type PsManagedBinDirsOptions,
   psChildEnvOptionsFromProcess,
   psChildPathEntries,
@@ -58,9 +58,9 @@ export function probeEnvVerdict(
   options: PsManagedBinDirsOptions,
 ): ProbeEnvVerdict {
   if (psManagedBinDirs(options).length === 0) {
-    return hasNoResolvableOkHome(options) ? 'not-applicable-no-home' : 'not-applicable';
+    return hasNoResolvablePsHome(options) ? 'not-applicable-no-home' : 'not-applicable';
   }
-  return hasOkManagedBinDirsOnPath(parentEnv, options) ? 'inherited' : 'injected';
+  return hasPsManagedBinDirsOnPath(parentEnv, options) ? 'inherited' : 'injected';
 }
 
 let probeEnvCompositionLogged = false;
@@ -90,7 +90,7 @@ export function psProbeSpawnEnv(
   argv?: ProbeSpawnArgv,
 ): Record<string, string> {
   logProbeEnvComposition(process.env, options, argv);
-  return composeOkChildEnv(process.env, options);
+  return composePsChildEnv(process.env, options);
 }
 
 export function probeSpawnArgs(

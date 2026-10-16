@@ -67,7 +67,7 @@ describe('upload-asset envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
       expect(parsed.data.title.length).toBeGreaterThan(0);
       expect(parsed.data.instance).toBeDefined();
@@ -78,7 +78,7 @@ describe('upload-asset envelope (RFC 9457)', () => {
     }
   });
 
-  test('path-escape attempt emits urn:ok:error:path-escape', async () => {
+  test('path-escape attempt emits urn:ps:error:path-escape', async () => {
     const form = new FormData();
     form.append('parentDocName', '../../etc/passwd.md');
     form.append('file', new Blob([pngFixture()]), 'escape.png');
@@ -91,7 +91,7 @@ describe('upload-asset envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:path-escape');
+      expect(parsed.data.type).toBe('urn:ps:error:path-escape');
       expect(parsed.data.status).toBe(400);
     }
   });
@@ -106,7 +106,7 @@ describe('upload-asset envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
       expect(parsed.data.status).toBe(405);
     }
   });

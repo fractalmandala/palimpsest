@@ -18,7 +18,7 @@ import {
   buildCloneGitOptions,
   cloneWithBranchFallback,
   emitCloneFailure,
-  ensureOkExcludedFromGit,
+  ensurePsExcludedFromGit,
   formatCloneAuthFailure,
   formatDeclaredMissWarning,
   handleCloneFailure,
@@ -418,7 +418,7 @@ describe('handleCloneFailure', () => {
     });
     expect(resolvedHost).toBe('github.com');
     expect(c.stderr.join('')).toContain('@alice');
-    expect(c.stderr.join('')).not.toContain('ok auth login');
+    expect(c.stderr.join('')).not.toContain('ps auth login');
   });
 
   test('non-403 auth failure does not resolve the principal (skips keyring init)', async () => {
@@ -437,7 +437,7 @@ describe('handleCloneFailure', () => {
       },
     });
     expect(called).toBe(false);
-    expect(c.stderr.join('')).toContain('ok auth login');
+    expect(c.stderr.join('')).toContain('ps auth login');
   });
 
   test('--json keeps the raw {type:error,message} wire shape and skips principal resolution', async () => {
@@ -695,7 +695,7 @@ describe('shouldSkipAuthForPublicRepo', () => {
   });
 });
 
-describe('ensureOkExcludedFromGit', () => {
+describe('ensurePsExcludedFromGit', () => {
   let testDir: string;
 
   beforeEach(() => {
@@ -713,7 +713,7 @@ describe('ensureOkExcludedFromGit', () => {
 
   it('returns "no-exclude" when .git/info/exclude does not exist', () => {
     rmSync(join(testDir, '.git'), { recursive: true, force: true });
-    expect(ensureOkExcludedFromGit(testDir)).toBe('no-exclude');
+    expect(ensurePsExcludedFromGit(testDir)).toBe('no-exclude');
   });
 
   it('appends PS_DIR/ to a fresh exclude file with default git template', () => {
@@ -727,7 +727,7 @@ describe('ensureOkExcludedFromGit', () => {
 `;
     writeFileSync(excludePath, defaultTemplate, 'utf-8');
 
-    expect(ensureOkExcludedFromGit(testDir)).toBe('appended');
+    expect(ensurePsExcludedFromGit(testDir)).toBe('appended');
     const after = readFileSync(excludePath, 'utf-8');
     expect(after).toContain(`${PS_DIR}/`);
     expect(after.startsWith(defaultTemplate)).toBe(true);
@@ -737,7 +737,7 @@ describe('ensureOkExcludedFromGit', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
     writeFileSync(excludePath, '', 'utf-8');
 
-    expect(ensureOkExcludedFromGit(testDir)).toBe('appended');
+    expect(ensurePsExcludedFromGit(testDir)).toBe('appended');
     expect(readFileSync(excludePath, 'utf-8')).toBe(`${PS_DIR}/\n`);
   });
 
@@ -745,7 +745,7 @@ describe('ensureOkExcludedFromGit', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
     writeFileSync(excludePath, '*.tmp', 'utf-8');
 
-    expect(ensureOkExcludedFromGit(testDir)).toBe('appended');
+    expect(ensurePsExcludedFromGit(testDir)).toBe('appended');
     expect(readFileSync(excludePath, 'utf-8')).toBe(`*.tmp\n${PS_DIR}/\n`);
   });
 
@@ -753,7 +753,7 @@ describe('ensureOkExcludedFromGit', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
     writeFileSync(excludePath, `${PS_DIR}/\n`, 'utf-8');
 
-    expect(ensureOkExcludedFromGit(testDir)).toBe('already-present');
+    expect(ensurePsExcludedFromGit(testDir)).toBe('already-present');
     expect(readFileSync(excludePath, 'utf-8')).toBe(`${PS_DIR}/\n`);
   });
 
@@ -761,7 +761,7 @@ describe('ensureOkExcludedFromGit', () => {
     const excludePath = join(testDir, '.git', 'info', 'exclude');
     for (const variant of [PS_DIR, `/${PS_DIR}`, `/${PS_DIR}/`]) {
       writeFileSync(excludePath, `${variant}\n`, 'utf-8');
-      expect(ensureOkExcludedFromGit(testDir)).toBe('already-present');
+      expect(ensurePsExcludedFromGit(testDir)).toBe('already-present');
     }
   });
 
@@ -797,7 +797,7 @@ describe('ensureOkExcludedFromGit', () => {
       const dotGit = readFileSync(join(linkedDir, '.git'), 'utf-8');
       expect(dotGit.startsWith('gitdir:')).toBe(true);
 
-      const result = ensureOkExcludedFromGit(linkedDir);
+      const result = ensurePsExcludedFromGit(linkedDir);
       expect(result).toBe('appended');
 
       const mainExclude = readFileSync(join(mainRepoDir, '.git', 'info', 'exclude'), 'utf-8');
@@ -1025,7 +1025,7 @@ describe('formatCloneAuthFailure', () => {
     expect(out).not.toBeNull();
     expect(out).not.toContain('s3cretpw');
     expect(out).toContain(
-      '2. Then re-run: ok clone https://alice@github.com/inkeep/playbooks -b feat-x',
+      '2. Then re-run: ps clone https://alice@github.com/inkeep/playbooks -b feat-x',
     );
   });
 
@@ -1048,7 +1048,7 @@ describe('formatCloneAuthFailure', () => {
     });
     expect(out).not.toBeNull();
     expect(out).not.toContain(tok);
-    expect(out).toContain('ok clone https://github.com/o/r');
+    expect(out).toContain('ps clone https://github.com/o/r');
   });
 
   test('a token paired with a placeholder password is dropped, not promoted to the username', () => {
@@ -1077,7 +1077,7 @@ describe('formatCloneAuthFailure', () => {
       url: 'https://Alice-B_c@github.com/o/r',
       branch: null,
     });
-    expect(out).toContain('ok clone https://Alice-B_c@github.com/o/r');
+    expect(out).toContain('ps clone https://Alice-B_c@github.com/o/r');
   });
 
   test('returns null for non-auth errors so the caller falls through to the raw git error', () => {
@@ -1105,8 +1105,8 @@ describe('formatCloneAuthFailure', () => {
     expect(out).not.toBeNull();
     expect(out).toContain("Couldn't clone https://github.com/inkeep/playbooks");
     expect(out).toContain('authentication is required');
-    expect(out).toContain('1. Run: ok auth login');
-    expect(out).toContain('2. Then re-run: ok clone https://github.com/inkeep/playbooks -b feat-x');
+    expect(out).toContain('1. Run: ps auth login');
+    expect(out).toContain('2. Then re-run: ps clone https://github.com/inkeep/playbooks -b feat-x');
   });
 
   test('login-fixable reconstruction omits -b when no branch was supplied', () => {
@@ -1125,8 +1125,8 @@ describe('formatCloneAuthFailure', () => {
       url: 'inkeep/playbooks',
       branch: 'main',
     });
-    expect(out).toContain('1. Run: ok auth login');
-    expect(out).toContain('2. Then re-run: ok clone inkeep/playbooks -b main');
+    expect(out).toContain('1. Run: ps auth login');
+    expect(out).toContain('2. Then re-run: ps clone inkeep/playbooks -b main');
   });
 
   test('login-fixable (unknown-auth) → 2-step recovery', () => {
@@ -1135,7 +1135,7 @@ describe('formatCloneAuthFailure', () => {
       url: 'inkeep/playbooks',
       branch: 'main',
     });
-    expect(out).toContain('1. Run: ok auth login');
+    expect(out).toContain('1. Run: ps auth login');
   });
 
   test('403 → access-denied hint without the login instruction', () => {
@@ -1146,7 +1146,7 @@ describe('formatCloneAuthFailure', () => {
     });
     expect(out).toContain('Access denied when cloning https://github.com/o/private');
     expect(out).toContain('Check that your account has access');
-    expect(out).not.toContain('ok auth login');
+    expect(out).not.toContain('ps auth login');
   });
 
   test('403 + known principal → "signed in as @user" hint', () => {
@@ -1169,12 +1169,12 @@ describe('formatCloneAuthFailure', () => {
     expect(out).toContain('Repository not found when cloning https://github.com/o/private');
     expect(out).toContain('may not exist');
     expect(out).toContain('may not have access');
-    expect(out).not.toContain('ok auth login');
-    expect(out).not.toContain('ok auth pat');
+    expect(out).not.toContain('ps auth login');
+    expect(out).not.toContain('ps auth pat');
     expect(out).not.toContain('scope');
   });
 
-  test('scope-mismatch → actionable PAT recovery (ok auth pat + re-run), not ok auth login', () => {
+  test('scope-mismatch → actionable PAT recovery (ps auth pat + re-run), not ps auth login', () => {
     const out = formatCloneAuthFailure({
       error: new Error('insufficient scopes'),
       url: 'inkeep/private-repo',
@@ -1182,13 +1182,13 @@ describe('formatCloneAuthFailure', () => {
     });
     expect(out).toContain('missing required OAuth scopes');
     expect(out).toContain('repo');
-    expect(out).not.toContain('ok auth login');
-    expect(out).toContain('ok auth pat');
+    expect(out).not.toContain('ps auth login');
+    expect(out).toContain('ps auth pat');
     expect(out).toContain('https://github.com/settings/tokens');
-    expect(out).toContain('re-run: ok clone inkeep/private-repo -b main');
+    expect(out).toContain('re-run: ps clone inkeep/private-repo -b main');
   });
 
-  test('ssh-auth → SSH transport hint, never the ok auth login recovery', () => {
+  test('ssh-auth → SSH transport hint, never the ps auth login recovery', () => {
     for (const message of ['Permission denied (publickey).', 'Host key verification failed.']) {
       const out = formatCloneAuthFailure({
         error: new Error(message),
@@ -1197,7 +1197,7 @@ describe('formatCloneAuthFailure', () => {
       });
       expect(out).not.toBeNull();
       expect(out).toContain('SSH');
-      expect(out).not.toContain('ok auth login');
+      expect(out).not.toContain('ps auth login');
     }
   });
 
@@ -1305,7 +1305,7 @@ describe('formatCloneAuthFailure credential redaction', () => {
       url: `https://alice:my ${TOKEN}@github.com/o/r.git`,
       branch: 'main',
     });
-    expect(out).toContain('ok clone');
+    expect(out).toContain('ps clone');
     expect(out).not.toContain(TOKEN);
     expect(out).not.toContain('ghp_');
   });
@@ -1418,8 +1418,8 @@ describe('emitCloneFailure', () => {
       printStderr: c.printStderr,
     });
     expect(c.emitted).toHaveLength(0);
-    expect(c.stderr.join('')).toContain('1. Run: ok auth login');
-    expect(c.stderr.join('')).toContain('2. Then re-run: ok clone inkeep/playbooks -b main');
+    expect(c.stderr.join('')).toContain('1. Run: ps auth login');
+    expect(c.stderr.join('')).toContain('2. Then re-run: ps clone inkeep/playbooks -b main');
   });
 
   test('interactive + 403: prints the hint, no login instruction', () => {
@@ -1433,7 +1433,7 @@ describe('emitCloneFailure', () => {
     });
     const out = c.stderr.join('');
     expect(out).toContain('Access denied when cloning inkeep/private');
-    expect(out).not.toContain('ok auth login');
+    expect(out).not.toContain('ps auth login');
   });
 
   test("interactive + non-auth: falls through to today's ✗ <message> line", () => {
@@ -1529,7 +1529,7 @@ describe('formatCloneAuthFailure names the running channel command', () => {
   });
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

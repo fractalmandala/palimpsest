@@ -381,7 +381,7 @@ export function toolRunLabel(call: { title: string; toolKind: string; rawInput: 
 
 export function toolRunKey(call: { title: string; toolKind: string; rawInput: unknown }): string {
   const tool = palimpsestToolName(call);
-  if (tool !== null) return `ok:${tool}`;
+  if (tool !== null) return `ps:${tool}`;
   const match = MCP_TITLE.exec(call.title.trim());
   const server = match?.[2];
   const mcpTool = match?.[3];

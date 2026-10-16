@@ -81,7 +81,7 @@ describe('handleSpawnCursor — method gate', () => {
   test('rejects non-POST methods with 405 method-not-allowed problem+json + Allow: POST', async () => {
     const { res, captured } = makeRes();
     await handleSpawnCursor(makeReq('GET'), res, makeDeps());
-    expectProblem(captured, 405, 'urn:ok:error:method-not-allowed');
+    expectProblem(captured, 405, 'urn:ps:error:method-not-allowed');
     expect(captured.headers.Allow).toBe('POST');
   });
 });
@@ -90,25 +90,25 @@ describe('handleSpawnCursor — body validation', () => {
   test('malformed JSON → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleSpawnCursor(makeReq('POST', 'not-json{{'), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('missing path field → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleSpawnCursor(makeReq('POST', {}), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('empty path string → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleSpawnCursor(makeReq('POST', { path: '' }), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('non-string path → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleSpawnCursor(makeReq('POST', { path: 42 }), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 });
 
@@ -121,7 +121,7 @@ describe('handleSpawnCursor — path containment', () => {
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 403, 'urn:ok:error:path-escape');
+    expectProblem(captured, 403, 'urn:ps:error:path-escape');
     expect(spawnDetached).not.toHaveBeenCalled();
   });
 
@@ -133,7 +133,7 @@ describe('handleSpawnCursor — path containment', () => {
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 403, 'urn:ok:error:path-escape');
+    expectProblem(captured, 403, 'urn:ps:error:path-escape');
     expect(spawnDetached).not.toHaveBeenCalled();
   });
 
@@ -144,7 +144,7 @@ describe('handleSpawnCursor — path containment', () => {
       res,
       makeDeps(),
     );
-    expectProblem(captured, 403, 'urn:ok:error:path-escape');
+    expectProblem(captured, 403, 'urn:ps:error:path-escape');
   });
 
   test('accepts contentDir itself → 200 success body', async () => {
@@ -173,7 +173,7 @@ describe('handleSpawnCursor — binary resolution', () => {
       res,
       makeDeps({ resolveCursorBinary: async () => null, spawnDetached }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:cursor-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:cursor-not-installed');
     expect(spawnDetached).not.toHaveBeenCalled();
   });
 });
@@ -231,7 +231,7 @@ describe('handleSpawnCursor — spawn dispatch', () => {
         spawnDetached: async () => ({ ok: false, reason: 'spawn-error' }) as SpawnCursorOutcome,
       }),
     );
-    expectProblem(captured, 502, 'urn:ok:error:cursor-spawn-failed');
+    expectProblem(captured, 502, 'urn:ps:error:cursor-spawn-failed');
   });
 
   test('timeout reason → 504 cursor-spawn-timeout problem+json', async () => {
@@ -243,7 +243,7 @@ describe('handleSpawnCursor — spawn dispatch', () => {
         spawnDetached: async () => ({ ok: false, reason: 'timeout' }) as SpawnCursorOutcome,
       }),
     );
-    expectProblem(captured, 504, 'urn:ok:error:cursor-spawn-timeout');
+    expectProblem(captured, 504, 'urn:ps:error:cursor-spawn-timeout');
   });
 
   test('spawn returns not-installed reason → 422 cursor-not-installed problem+json', async () => {
@@ -255,7 +255,7 @@ describe('handleSpawnCursor — spawn dispatch', () => {
         spawnDetached: async () => ({ ok: false, reason: 'not-installed' }) as SpawnCursorOutcome,
       }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:cursor-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:cursor-not-installed');
   });
 
   test('spawn returns invalid-path reason → 403 path-escape problem+json', async () => {
@@ -267,7 +267,7 @@ describe('handleSpawnCursor — spawn dispatch', () => {
         spawnDetached: async () => ({ ok: false, reason: 'invalid-path' }) as SpawnCursorOutcome,
       }),
     );
-    expectProblem(captured, 403, 'urn:ok:error:path-escape');
+    expectProblem(captured, 403, 'urn:ps:error:path-escape');
   });
 });
 

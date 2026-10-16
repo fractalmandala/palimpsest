@@ -63,7 +63,7 @@ describe('resolveBundledNativeDirInDir', () => {
 });
 
 describe('loadAndRoundTrip', () => {
-  test('ok:true when the binding round-trips parse/upsert/symlink', () => {
+  test('ps:true when the binding round-trips parse/upsert/symlink', () => {
     const fakeBinding = {
       parseTomlToJson: () => '{"probe":1}',
       upsertMcpServer: () => ({
@@ -81,7 +81,7 @@ describe('loadAndRoundTrip', () => {
     expect(result.backend).toBe('native');
   });
 
-  test('ok:false when the loader throws', () => {
+  test('ps:false when the loader throws', () => {
     const result = loadAndRoundTrip('/bundle/native', {
       requireModule: () => {
         throw new Error('Cannot find native binding');
@@ -91,7 +91,7 @@ describe('loadAndRoundTrip', () => {
     expect(result.error).toContain('native binding');
   });
 
-  test('ok:false when a binding fn returns the wrong shape', () => {
+  test('ps:false when a binding fn returns the wrong shape', () => {
     const fakeBinding = {
       parseTomlToJson: () => '{"probe":1}',
       upsertMcpServer: () => ({ changed: true }),

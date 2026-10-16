@@ -68,7 +68,7 @@ export function respondUnsupportedMediaType(
   res: ServerResponse,
   handler: string | undefined,
 ): void {
-  errorResponse(res, 415, 'urn:ok:error:unsupported-media-type', 'Request body must be JSON.', {
+  errorResponse(res, 415, 'urn:ps:error:unsupported-media-type', 'Request body must be JSON.', {
     handler,
     detail: 'Send the request body as JSON with the header Content-Type: application/json.',
   });
@@ -132,7 +132,7 @@ export function validateBody<T>(
   const detail = contentControlAdmission
     ? `${issues} Offsets count the full submitted field after caller composition, including any frontmatter.`
     : issues;
-  errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Request body is invalid.', {
+  errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Request body is invalid.', {
     handler: options.handler,
     detail,
     ...(contentControlAdmission ? { extensions: { contentControlAdmission: true } } : {}),
@@ -153,7 +153,7 @@ export function withValidation<T>(
 ): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
   return async (req, res) => {
     if (options.method !== undefined && req.method !== options.method) {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: options.handler,
         extraHeaders: { Allow: options.method },
       });
@@ -164,7 +164,7 @@ export function withValidation<T>(
       const gateOk = options.preBodyGate(req, res);
       if (!gateOk) {
         if (!res.headersSent && !res.writableEnded && !res.destroyed) {
-          errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+          errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
             handler: options.handler,
             cause: new Error('preBodyGate returned false without writing a response'),
           });
@@ -189,14 +189,14 @@ export function withValidation<T>(
         return;
       }
       if (err instanceof PayloadTooLargeError) {
-        errorResponse(res, 413, 'urn:ok:error:payload-too-large', 'Payload too large.', {
+        errorResponse(res, 413, 'urn:ps:error:payload-too-large', 'Payload too large.', {
           handler: options.handler,
           cause: err,
         });
         return;
       }
       if (err instanceof RequestBodyTimeoutError) {
-        errorResponse(res, 408, 'urn:ok:error:request-timeout', 'Request body read timed out.', {
+        errorResponse(res, 408, 'urn:ps:error:request-timeout', 'Request body read timed out.', {
           handler: options.handler,
           cause: err,
         });
@@ -205,7 +205,7 @@ export function withValidation<T>(
       errorResponse(
         res,
         500,
-        'urn:ok:error:internal-server-error',
+        'urn:ps:error:internal-server-error',
         'Failed to read request body.',
         {
           handler: options.handler,
@@ -219,7 +219,7 @@ export function withValidation<T>(
     try {
       parsed = raw.length === 0 ? {} : JSON.parse(raw.toString('utf8'));
     } catch (err) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Request body is not valid JSON.', {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Request body is not valid JSON.', {
         handler: options.handler,
         cause: err,
       });

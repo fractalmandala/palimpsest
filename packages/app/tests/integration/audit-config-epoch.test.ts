@@ -103,7 +103,7 @@ describe('GET /api/audit across a lint-config change', () => {
         const firstRes = await first;
         expect(firstRes.status).toBe(409);
         const problem = (await firstRes.json()) as { type?: string };
-        expect(problem.type).toBe('urn:ok:error:audit-superseded');
+        expect(problem.type).toBe('urn:ps:error:audit-superseded');
       } finally {
         auditBarrier?.dispose();
         rmSync(folder, { recursive: true, force: true });
@@ -168,7 +168,7 @@ describe('GET /api/audit across a lint-config change', () => {
         const firstRes = await first;
         expect(firstRes.status).toBe(409);
         const problem = (await firstRes.json()) as { type?: string };
-        expect(problem.type).toBe('urn:ok:error:audit-superseded');
+        expect(problem.type).toBe('urn:ps:error:audit-superseded');
 
         let after: Response | undefined;
         await pollUntil(
@@ -233,7 +233,7 @@ describe('GET /api/audit across a lint-config change', () => {
         const firstRes = await first;
         expect(firstRes.status).toBe(409);
         const problem = (await firstRes.json()) as { type?: string };
-        expect(problem.type).toBe('urn:ok:error:audit-superseded');
+        expect(problem.type).toBe('urn:ps:error:audit-superseded');
 
         const after = await auditScope(scope);
         expect(after.status).toBe(200);

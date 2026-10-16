@@ -84,7 +84,7 @@ export function installServerWorkloadGauges(): void {
   }
 
   if (!cachedLoadedDocsGauge) {
-    const gauge = getMeter().createObservableGauge('ok.server.docs.loaded', {
+    const gauge = getMeter().createObservableGauge('ps.server.docs.loaded', {
       description:
         'Server-side Y.Docs currently resident in memory (includes synthetic system/config docs).',
       unit: '{documents}',
@@ -102,7 +102,7 @@ export function installServerWorkloadGauges(): void {
   }
 
   if (!cachedQueueDepthGauge) {
-    const gauge = getMeter().createObservableGauge('ok.persistence.queue.depth', {
+    const gauge = getMeter().createObservableGauge('ps.persistence.queue.depth', {
       description:
         'Pending persistence stores by queue. Bounded labels: queue ∈ {branch_deferred, quiescence_deferred}.',
       unit: '{documents}',
@@ -124,7 +124,7 @@ export function installServerWorkloadGauges(): void {
   }
 
   if (!cachedDrainBacklogGauge) {
-    const gauge = getMeter().createObservableGauge('ok.bridge.drain_backlog', {
+    const gauge = getMeter().createObservableGauge('ps.bridge.drain_backlog', {
       description:
         'Docs whose bridge observers hold an un-settled dirty flag at sample time (settlement is synchronous per drain, so a sustained non-zero value indicates a stuck drain).',
       unit: '{documents}',
@@ -142,7 +142,7 @@ export function installServerWorkloadGauges(): void {
   }
 
   if (!cachedConnectionsGauge) {
-    const gauge = getMeter().createObservableGauge('ok.ws.connections.active', {
+    const gauge = getMeter().createObservableGauge('ps.ws.connections.active', {
       description:
         'Live collab connections. Bounded labels: kind ∈ {websocket, direct}. websocket = deduplicated client sockets; direct = in-process DirectConnections (agent sessions + server-held system/config docs).',
       unit: '{connections}',
@@ -164,12 +164,12 @@ export function installServerWorkloadGauges(): void {
   }
 
   if (!cachedSessionsActiveGauge || !cachedSessionsLimitGauge) {
-    const activeGauge = getMeter().createObservableGauge('ok.sessions.active', {
+    const activeGauge = getMeter().createObservableGauge('ps.sessions.active', {
       description:
         'Live (docName, agentId) agent sessions. Pinned at ok.sessions.limit means new sessions are being refused with 503s.',
       unit: '{sessions}',
     });
-    const limitGauge = getMeter().createObservableGauge('ok.sessions.limit', {
+    const limitGauge = getMeter().createObservableGauge('ps.sessions.limit', {
       description:
         'Hard cap on live agent sessions (summed across server instances in this process).',
       unit: '{sessions}',

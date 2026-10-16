@@ -56,7 +56,7 @@ describe('/healthz', () => {
     const res = await rawRequest(booted.port, '/healthz', { method: 'POST' });
     expect(res.status).toBe(405);
     expect(res.headers.allow).toBe('GET, HEAD');
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:method-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:method-not-allowed');
   });
 
   test('query strings do not break the exact match', async () => {
@@ -214,7 +214,7 @@ describe('/readyz provider states (mounted harness)', () => {
       expect(res.status).toBe(500);
       expect(res.headers.get('content-type')).toBe('application/problem+json');
       const body = (await res.json()) as { type: string };
-      expect(body.type).toBe('urn:ok:error:internal-server-error');
+      expect(body.type).toBe('urn:ps:error:internal-server-error');
     } finally {
       await mount.shutdown();
       await new Promise<void>((r) => mount.wss.close(() => r()));

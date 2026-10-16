@@ -41,7 +41,7 @@ describe('link-graph envelope (RFC 9457)', () => {
     expect(parsed.success).toBe(true);
   });
 
-  test('unsafe docName emits urn:ok:error:invalid-request', async () => {
+  test('unsafe docName emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/link-graph?docName=${encodeURIComponent('../etc')}`,
     );
@@ -51,11 +51,11 @@ describe('link-graph envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('degrees without docName emits urn:ok:error:invalid-request', async () => {
+  test('degrees without docName emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/link-graph?degrees=1`);
     expect(res.status).toBe(400);
 
@@ -63,12 +63,12 @@ describe('link-graph envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('docName is required');
     }
   });
 
-  test('negative degrees emits urn:ok:error:invalid-request', async () => {
+  test('negative degrees emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/link-graph?docName=any-doc&degrees=-1`,
     );
@@ -78,7 +78,7 @@ describe('link-graph envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('non-negative');
     }
   });
@@ -92,7 +92,7 @@ describe('link-graph envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

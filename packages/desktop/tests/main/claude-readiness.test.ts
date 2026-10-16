@@ -418,7 +418,7 @@ describe('probe verdict observability (an UNKNOWN must leave a trace)', () => {
 });
 
 describe('resolveClaudeReadiness', () => {
-  test("claude present + mcp wired + project entry is OK's own → pre-approvable", async () => {
+  test("claude present + mcp wired + project entry is Palimpsest's own → pre-approvable", async () => {
     const r = await resolveClaudeReadiness({
       probeClaude: () => Promise.resolve(0),
       classifyMcpEntry: () => 'present',

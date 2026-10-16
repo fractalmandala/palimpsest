@@ -13,7 +13,7 @@ export const MENU_LABELS = {
   fullPath: 'Full path',
   relativePath: 'Relative path',
   showHiddenFiles: 'Show hidden files',
-  showOkFolders: 'Show .ps folders',
+  showPsFolders: 'Show .ps folders',
   showOnlyMarkdownFiles: 'Show only markdown files',
   showSkillsSection: 'Skills section',
   expandAll: 'Expand all',

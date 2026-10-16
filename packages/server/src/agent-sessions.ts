@@ -551,7 +551,7 @@ export class AgentSessionCapacityError extends Error {
 
 let _evictionCounter: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null = null;
 function evictionCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
-  _evictionCounter ||= getMeter().createCounter('ok.sessions.evictions_total', {
+  _evictionCounter ||= getMeter().createCounter('ps.sessions.evictions_total', {
     description:
       'Agent sessions evicted (LRU-idle) under capacity pressure to admit a new session. Sustained growth alongside ok.sessions.active pinned at ok.sessions.limit means the working set exceeds the cap.',
     unit: '{sessions}',

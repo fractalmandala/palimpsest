@@ -49,7 +49,7 @@ describe('HotkeysSection host awareness', () => {
     expect(screen.queryByTestId('settings-hotkey-report-bug')).toBeNull();
   });
 
-  test('keeps every other row on web, including the OK Desktop-scoped ones', () => {
+  test('keeps every other row on web, including the Palimpsest Desktop-scoped ones', () => {
     renderUnderHost(false);
 
     for (const id of ['new-folder', 'toggle-terminal-panel', 'navigate-back']) {

@@ -300,12 +300,12 @@ describe('resolveTemplatesAvailable', () => {
     const outside = await mkdtemp(join(tmpdir(), 'tpl-outside-'));
     try {
       writeFileSync(join(outside, 'secret.txt'), 'TOP SECRET');
-      writeTemplate('notes', 'ok', withFm('OK', 'In-root template.'));
+      writeTemplate('notes', 'ps', withFm('PS', 'In-root template.'));
       const tplDir = join(projectDir, 'notes', '.ps', 'templates');
       symlinkSync(join(outside, 'secret.txt'), join(tplDir, 'leak.md'), 'file');
 
       const tpls = resolveTemplatesAvailable(projectDir, 'notes');
-      expect(tpls.map((t) => t.name).sort()).toEqual(['ok']);
+      expect(tpls.map((t) => t.name).sort()).toEqual(['ps']);
     } finally {
       await rm(outside, { recursive: true, force: true });
     }
@@ -315,7 +315,7 @@ describe('resolveTemplatesAvailable', () => {
     const psLocal = join(projectDir, '.ps', 'local');
     mkdirSync(psLocal, { recursive: true });
     writeFileSync(join(psLocal, 'last-spawn-error.log'), 'stack trace with secrets');
-    writeTemplate('notes', 'ok', withFm('OK', 'In-root template.'));
+    writeTemplate('notes', 'ps', withFm('PS', 'In-root template.'));
     symlinkSync(
       join(psLocal, 'last-spawn-error.log'),
       join(projectDir, 'notes', '.ps', 'templates', 'leak.md'),
@@ -323,7 +323,7 @@ describe('resolveTemplatesAvailable', () => {
     );
 
     const tpls = resolveTemplatesAvailable(projectDir, 'notes');
-    expect(tpls.map((t) => t.name).sort()).toEqual(['ok']);
+    expect(tpls.map((t) => t.name).sort()).toEqual(['ps']);
   });
 
   test('a templates DIRECTORY symlinked out of the project drops all its entries', async () => {

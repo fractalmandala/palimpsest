@@ -25,7 +25,7 @@ import {
 import type { Conflict, ResolveStrategy } from '../conflict-kinds.ts';
 import { strategiesFor } from '../conflict-kinds.ts';
 import { selectReconcileOurs } from '../conflict-resolution.ts';
-import { isShareableOkArtifact } from '../content-filter.ts';
+import { isShareablePsArtifact } from '../content-filter.ts';
 import { stripDocExtension } from '../doc-extensions.ts';
 import { claimExternalChange, releaseExternalChangeClaim } from '../external-change-attribution.ts';
 import { extractActorIdentity } from '../extract-actor-identity.ts';
@@ -107,7 +107,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
   async function handleSyncStatus(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!checkLocalOpSecurity(req, res, { handler: 'sync-status' })) return;
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'sync-status',
         extraHeaders: { Allow: 'GET' },
       });
@@ -143,7 +143,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
         handler: 'sync-status',
       });
     } catch (e) {
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'sync-status',
         cause: e,
       });
@@ -155,7 +155,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
     async (_req, res, body) => {
       const engine = getSyncEngine?.();
       if (!engine) {
-        errorResponse(res, 503, 'urn:ok:error:sync-not-active', 'Sync engine not active.', {
+        errorResponse(res, 503, 'urn:ps:error:sync-not-active', 'Sync engine not active.', {
           handler: 'sync-trigger',
         });
         return;
@@ -173,7 +173,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
         if (!checkLocalOpSecurity(req, res, { handler: 'sync-trigger' })) return false;
         const engine = getSyncEngine?.();
         if (!engine) {
-          errorResponse(res, 503, 'urn:ok:error:sync-not-active', 'Sync engine not active.', {
+          errorResponse(res, 503, 'urn:ps:error:sync-not-active', 'Sync engine not active.', {
             handler: 'sync-trigger',
           });
           return false;
@@ -188,7 +188,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
     async (_req, res, _body) => {
       const engine = getSyncEngine?.();
       if (!engine) {
-        errorResponse(res, 503, 'urn:ok:error:sync-not-active', 'Sync engine not active.', {
+        errorResponse(res, 503, 'urn:ps:error:sync-not-active', 'Sync engine not active.', {
           handler: 'sync-resolve-blocking',
         });
         return;
@@ -197,7 +197,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           409,
-          'urn:ok:error:no-blocking-changes',
+          'urn:ps:error:no-blocking-changes',
           'No local changes are blocking a merge.',
           {
             handler: 'sync-resolve-blocking',
@@ -219,7 +219,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
           log.error({ err }, '[sync] resolve-blocking follow-up sync failed');
         });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'sync-resolve-blocking',
           cause: e,
         });
@@ -236,7 +236,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
   async function handleSyncConflicts(req: IncomingMessage, res: ServerResponse): Promise<void> {
     if (!checkLocalOpSecurity(req, res, { handler: 'sync-conflicts' })) return;
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'sync-conflicts',
         extraHeaders: { Allow: 'GET' },
       });
@@ -253,7 +253,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
         },
       );
     } catch (e) {
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'sync-conflicts',
         cause: e,
       });
@@ -298,7 +298,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
       } catch (e) {
         if (claimedDocName) releaseExternalChangeClaim(claimedDocName);
         if (e instanceof SymlinkEscapeError) {
-          errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escape detected.', {
+          errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escape detected.', {
             handler: 'sync-resolve-conflict',
           });
           return;
@@ -307,7 +307,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             404,
-            'urn:ok:error:no-conflict-tracked',
+            'urn:ps:error:no-conflict-tracked',
             'No conflict is tracked for this path.',
             {
               handler: 'sync-resolve-conflict',
@@ -331,7 +331,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             422,
-            'urn:ok:error:unresolved-conflict-markers',
+            'urn:ps:error:unresolved-conflict-markers',
             strategyNotOffered
               ? 'Strategy not offered for this conflict.'
               : 'Resolution still contains conflict markers.',
@@ -349,7 +349,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to resolve conflict.',
           {
             handler: 'sync-resolve-conflict',
@@ -376,7 +376,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
   ): Promise<void> {
     if (!checkLocalOpSecurity(req, res, { handler: 'sync-conflict-content' })) return;
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'sync-conflict-content',
         extraHeaders: { Allow: 'GET' },
       });
@@ -386,7 +386,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
       errorResponse(
         res,
         503,
-        'urn:ok:error:project-repo-not-configured',
+        'urn:ps:error:project-repo-not-configured',
         'Project repo not configured.',
         { handler: 'sync-conflict-content' },
       );
@@ -398,7 +398,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
       errorResponse(
         res,
         400,
-        'urn:ok:error:invalid-request',
+        'urn:ps:error:invalid-request',
         'Missing required query param: file.',
         {
           handler: 'sync-conflict-content',
@@ -407,7 +407,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
       return;
     }
     if (file.includes('..') || file.startsWith('/')) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid file path.', {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid file path.', {
         handler: 'sync-conflict-content',
       });
       return;
@@ -417,7 +417,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
       errorResponse(
         res,
         404,
-        'urn:ok:error:no-conflict-tracked',
+        'urn:ps:error:no-conflict-tracked',
         'No conflict is tracked for this path.',
         {
           handler: 'sync-conflict-content',
@@ -500,7 +500,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
             }
           } else {
             assertRealpathWithinDir(join(projectDir, file), projectDir, {
-              allowShareableOkArtifact: isShareableOkArtifact,
+              allowShareablePsArtifact: isShareablePsArtifact,
             });
             try {
               ours = readFileSync(join(projectDir, file), 'utf-8');
@@ -534,7 +534,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Failed to read conflict content.',
             { handler: 'sync-conflict-content', cause: e },
           );
@@ -605,7 +605,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Failed to read conflict content.',
             {
               handler: 'sync-conflict-content',
@@ -621,7 +621,7 @@ export function createSyncRoutes(deps: SyncRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to read conflict content.',
           {
             handler: 'sync-conflict-content',

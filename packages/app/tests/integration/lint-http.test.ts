@@ -188,9 +188,9 @@ describe('POST /api/lint/fix', () => {
   test('a clean doc is a no-op: fixedCount 0, no remaining diagnostics', async () => {
     const folder = join(server.contentDir, 'lint-fix-clean');
     mkdirSync(folder, { recursive: true });
-    writeFileSync(join(folder, 'ok.md'), '# Clean\n\nNo problems here.\n', 'utf-8');
+    writeFileSync(join(folder, 'ps.md'), '# Clean\n\nNo problems here.\n', 'utf-8');
     try {
-      const res = await postFix('lint-fix-clean/ok');
+      const res = await postFix('lint-fix-clean/ps');
       expect(res.status).toBe(200);
       const body = LintFixResultSchema.parse(await res.json());
       expect(body.fixedCount).toBe(0);

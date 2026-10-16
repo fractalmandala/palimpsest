@@ -58,7 +58,7 @@ async function readNdjsonEvents(res: Response): Promise<unknown[]> {
 }
 
 describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => {
-  test('pre-stream: malformed body emits problem+json 400 with urn:ok:error:invalid-request', async () => {
+  test('pre-stream: malformed body emits problem+json 400 with urn:ps:error:invalid-request', async () => {
     const res = await postClone('not-valid-json{');
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -67,7 +67,7 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
       expect(parsed.data.title.length).toBeGreaterThan(0);
       expect(parsed.data.instance).toBeDefined();
@@ -85,12 +85,12 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.detail ?? '').toMatch(/url/i);
     }
   });
 
-  test('pre-stream: blocked URL protocol emits urn:ok:error:url-not-allowed', async () => {
+  test('pre-stream: blocked URL protocol emits urn:ps:error:url-not-allowed', async () => {
     const res = await postClone({ url: 'file:///etc/passwd', dir: '~/Documents/test' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -99,12 +99,12 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:url-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:url-not-allowed');
       expect(parsed.data.status).toBe(400);
     }
   });
 
-  test('pre-stream: dir outside home emits urn:ok:error:dir-outside-home', async () => {
+  test('pre-stream: dir outside home emits urn:ps:error:dir-outside-home', async () => {
     const res = await postClone({ url: 'https://github.com/owner/repo', dir: '/etc/repo' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -113,7 +113,7 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:dir-outside-home');
+      expect(parsed.data.type).toBe('urn:ps:error:dir-outside-home');
       expect(parsed.data.status).toBe(400);
     }
   });
@@ -130,7 +130,7 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
       expect(parsed.data.status).toBe(405);
     }
   });
@@ -157,7 +157,7 @@ describe('local-op-clone envelope (RFC 9457 + streaming, US-005, D36 c)', () => 
       expect(eventParsed.success).toBe(true);
       if (eventParsed.success) {
         expect(eventParsed.data.type).toBe('error');
-        expect(eventParsed.data.problem.type).toBe('urn:ok:error:clone-failed');
+        expect(eventParsed.data.problem.type).toBe('urn:ps:error:clone-failed');
         expect(eventParsed.data.problem.status).toBe(500);
         expect(eventParsed.data.problem.title.length).toBeGreaterThan(0);
         expect(eventParsed.data.problem.instance).toBeDefined();

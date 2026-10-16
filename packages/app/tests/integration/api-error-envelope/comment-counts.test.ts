@@ -39,7 +39,7 @@ describe('comment-counts envelope (RFC 9457)', () => {
     if (parsed.success) expect(parsed.data.counts).toEqual({});
   });
 
-  test('neither param emits urn:ok:error:invalid-request', async () => {
+  test('neither param emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/comment-counts`);
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -47,7 +47,7 @@ describe('comment-counts envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('docNames');
     }
   });
@@ -61,7 +61,7 @@ describe('comment-counts envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('prefix');
     }
   });
@@ -111,7 +111,7 @@ describe('comment-counts envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

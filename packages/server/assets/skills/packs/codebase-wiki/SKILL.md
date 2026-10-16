@@ -4,7 +4,7 @@ description: "How to work in a Codebase Wiki project (the `codebase-wiki` starte
 compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack codebase-wiki` (`ps-beta` for Beta)."
 metadata:
   pack: "codebase-wiki"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Codebase Wiki pack — how to work here

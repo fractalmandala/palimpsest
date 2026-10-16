@@ -11,7 +11,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { createContentFilter, isShareableOkArtifact } from './content-filter.ts';
+import { createContentFilter, isShareablePsArtifact } from './content-filter.ts';
 import {
   type DiskEvent,
   getWatcherDecisionRingSnapshot,
@@ -405,8 +405,8 @@ test('a settle fence reaches no consumer of .ps files, while a template edit in 
     'schemas',
     'templates',
   ]);
-  expect(isShareableOkArtifact(`.ps/${fence}`)).toBe(false);
-  expect(isShareableOkArtifact('.ps/config.yml')).toBe(true);
+  expect(isShareablePsArtifact(`.ps/${fence}`)).toBe(false);
+  expect(isShareablePsArtifact('.ps/config.yml')).toBe(true);
 });
 
 test('a chokidar watcher refuses to settle, since it cannot order its batches', async () => {

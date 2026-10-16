@@ -229,7 +229,7 @@ describe('scope parity through HTTP and registered MCP tools', () => {
         );
         expect(response.status).toBe(404);
         expect(ProblemDetailsSchema.parse(await response.json())).toMatchObject({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           status: 404,
           title: auditScopeNotFoundTitle(path),
         });
@@ -307,7 +307,7 @@ describe('scope parity through HTTP and registered MCP tools', () => {
         );
         expect(response.status).toBe(404);
         expect(ProblemDetailsSchema.parse(await response.json())).toMatchObject({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           status: 404,
           title: auditScopeNotFoundTitle(path),
         });

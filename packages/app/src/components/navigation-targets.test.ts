@@ -581,7 +581,7 @@ describe('resolveNavigationTarget .ps guard', () => {
     });
   });
 
-  test('non-.ok misses keep the create-mode missing resolution', () => {
+  test('non-.ps misses keep the create-mode missing resolution', () => {
     expect(resolveNavigationTarget('brand-new/idea', options)).toEqual({
       kind: 'missing',
       target: 'brand-new/idea',

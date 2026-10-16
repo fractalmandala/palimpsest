@@ -15,7 +15,7 @@ import {
   fakeChildProcess,
   type FakeChildProcessInput as Output,
 } from './process-scan.test-helper.ts';
-import { discoverLockDirs, findOkProcessPids, scanLockProcesses } from './process-scan.ts';
+import { discoverLockDirs, findPsProcessPids, scanLockProcesses } from './process-scan.ts';
 
 const originalPlatform = process.platform;
 const fixturePid = 24680;
@@ -135,7 +135,7 @@ describe('process listing producers', () => {
       return { stdout: ['PID COMMAND\n', `${wide ? row : row.slice(0, displayWidth)}\n`] };
     });
 
-    expect(await findOkProcessPids()).toEqual([fixturePid]);
+    expect(await findPsProcessPids()).toEqual([fixturePid]);
     expect(await scanLockProcesses()).toEqual({
       candidates: [{ lockDir, pid: fixturePid, source: 'lock-dir-argument' }],
       unavailable: [],
@@ -245,7 +245,7 @@ describe('BusyBox process listing', () => {
       };
       provideBusyBox([shell, ordinary, lookalike, marked], reject);
 
-      expect(await findOkProcessPids()).toEqual([fixturePid]);
+      expect(await findPsProcessPids()).toEqual([fixturePid]);
       expect(await discoverLockDirs()).toEqual([lockDir]);
       expect(await scanLockProcesses(() => ({ onProbeFailure: () => {} }))).toEqual({
         candidates: [{ lockDir, pid: fixturePid, source: 'lock-dir-argument' }],
@@ -259,7 +259,7 @@ describe('BusyBox process listing', () => {
     async (_libc, reject) => {
       provideBusyBox([shell, ordinary], reject);
 
-      expect(await findOkProcessPids()).toEqual([]);
+      expect(await findPsProcessPids()).toEqual([]);
       expect(await discoverLockDirs()).toEqual([]);
       expect(await scanLockProcesses(() => ({ onProbeFailure: () => {} }))).toEqual({
         candidates: [],
@@ -278,7 +278,7 @@ describe('process format failures', () => {
       return { stdout: ['PID ARGS\n13579 open-knowledge-server --fixture-control=notes\n'] };
     });
 
-    expect(await findOkProcessPids()).toEqual([]);
+    expect(await findPsProcessPids()).toEqual([]);
     const scan = await scanLockProcesses();
     expect(scan.candidates).toEqual([]);
     expect(scan.unavailable).toEqual([expect.stringContaining('process table unreadable')]);
@@ -338,7 +338,7 @@ describe('process listing diagnostics', () => {
     expect(scan.unavailable[0]).toContain(code);
     expect(scan.unavailable[0]).toContain('could not start producer');
     expect(scan.unavailable[0]).not.toContain('pgrep');
-    expect(await findOkProcessPids()).toEqual([]);
+    expect(await findPsProcessPids()).toEqual([]);
   });
 
   it('retains the ps output read error after receiving a matching row', async () => {
@@ -356,7 +356,7 @@ describe('process listing diagnostics', () => {
     expect(scan.unavailable).toEqual([expect.stringMatching(/ps.*EIO/)]);
     expect(scan.unavailable[0]).toContain('output read failed');
     expect(scan.unavailable[0]).not.toContain('pgrep');
-    expect(await findOkProcessPids()).toEqual([]);
+    expect(await findPsProcessPids()).toEqual([]);
   });
 
   it('retains the ps exit status when enumeration fails', async () => {
@@ -387,7 +387,7 @@ describe('process listing diagnostics', () => {
     expect(scan.unavailable).toHaveLength(1);
     expect(attempts).not.toHaveLength(0);
     for (const args of attempts) expect(scan.unavailable[0]).toContain(rejection(args));
-    expect(await findOkProcessPids()).toEqual([]);
+    expect(await findPsProcessPids()).toEqual([]);
   });
 
   it('retains the ps termination signal when enumeration stops', async () => {

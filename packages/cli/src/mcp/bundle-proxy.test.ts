@@ -2,7 +2,7 @@ import { EventEmitter } from 'node:events';
 import { describe, expect, test } from 'vitest';
 import {
   emitBundleProxyEvent,
-  findBundledOkPath,
+  findBundledPsPath,
   proxyToBundle,
   shouldProxyToBundle,
 } from './bundle-proxy.ts';
@@ -13,28 +13,28 @@ const userBetaBundle =
   '/Users/alice/Applications/Palimpsest Beta.app/Contents/Resources/cli/bin/ps.sh';
 const systemBetaBundle = '/Applications/Palimpsest Beta.app/Contents/Resources/cli/bin/ps.sh';
 
-describe('findBundledOkPath', () => {
+describe('findBundledPsPath', () => {
   test('returns the user-local bundle before /Applications', () => {
     const seen = new Set([userBundle, systemBundle]);
-    expect(findBundledOkPath('darwin', '/Users/alice', { existsSync: (p) => seen.has(p) })).toBe(
+    expect(findBundledPsPath('darwin', '/Users/alice', { existsSync: (p) => seen.has(p) })).toBe(
       userBundle,
     );
   });
 
   test('returns the system bundle when it is the only candidate', () => {
     expect(
-      findBundledOkPath('darwin', '/Users/alice', { existsSync: (p) => p === systemBundle }),
+      findBundledPsPath('darwin', '/Users/alice', { existsSync: (p) => p === systemBundle }),
     ).toBe(systemBundle);
   });
 
   test('returns Beta from user or system Applications when Stable is absent', () => {
     expect(
-      findBundledOkPath('darwin', '/Users/alice', {
+      findBundledPsPath('darwin', '/Users/alice', {
         existsSync: (p) => p === userBetaBundle,
       }),
     ).toBe(userBetaBundle);
     expect(
-      findBundledOkPath('darwin', '/Users/alice', {
+      findBundledPsPath('darwin', '/Users/alice', {
         existsSync: (p) => p === systemBetaBundle,
       }),
     ).toBe(systemBetaBundle);
@@ -42,14 +42,14 @@ describe('findBundledOkPath', () => {
 
   test('prefers Stable across install locations when both products exist', () => {
     const seen = new Set([systemBundle, userBetaBundle]);
-    expect(findBundledOkPath('darwin', '/Users/alice', { existsSync: (p) => seen.has(p) })).toBe(
+    expect(findBundledPsPath('darwin', '/Users/alice', { existsSync: (p) => seen.has(p) })).toBe(
       systemBundle,
     );
   });
 
   test('returns null for absent bundles and non-macOS platforms', () => {
-    expect(findBundledOkPath('darwin', '/Users/alice', { existsSync: () => false })).toBeNull();
-    expect(findBundledOkPath('linux', '/Users/alice', { existsSync: () => true })).toBeNull();
+    expect(findBundledPsPath('darwin', '/Users/alice', { existsSync: () => false })).toBeNull();
+    expect(findBundledPsPath('linux', '/Users/alice', { existsSync: () => true })).toBeNull();
   });
 });
 

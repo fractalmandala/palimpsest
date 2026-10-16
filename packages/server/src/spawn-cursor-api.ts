@@ -54,7 +54,7 @@ export async function handleSpawnCursor(
   deps: HandleSpawnCursorDeps,
 ): Promise<void> {
   if (req.method !== 'POST') {
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: HANDLER,
       extraHeaders: { Allow: 'POST' },
     });
@@ -73,20 +73,20 @@ export async function handleSpawnCursor(
       return;
     }
     if (err instanceof PayloadTooLargeError) {
-      errorResponse(res, 413, 'urn:ok:error:payload-too-large', 'Payload too large.', {
+      errorResponse(res, 413, 'urn:ps:error:payload-too-large', 'Payload too large.', {
         handler: HANDLER,
         cause: err,
       });
       return;
     }
     if (err instanceof RequestBodyTimeoutError) {
-      errorResponse(res, 408, 'urn:ok:error:request-timeout', 'Request body read timed out.', {
+      errorResponse(res, 408, 'urn:ps:error:request-timeout', 'Request body read timed out.', {
         handler: HANDLER,
         cause: err,
       });
       return;
     }
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read request body.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read request body.', {
       handler: HANDLER,
       cause: err,
     });
@@ -97,7 +97,7 @@ export async function handleSpawnCursor(
   try {
     parsed = JSON.parse(body.toString('utf-8')) as { path?: unknown };
   } catch (err) {
-    errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Malformed JSON body.', {
+    errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Malformed JSON body.', {
       handler: HANDLER,
       cause: err,
     });
@@ -106,14 +106,14 @@ export async function handleSpawnCursor(
 
   const userPath = typeof parsed.path === 'string' ? parsed.path : '';
   if (!userPath) {
-    errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing or empty `path` field.', {
+    errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing or empty `path` field.', {
       handler: HANDLER,
     });
     return;
   }
 
   if (!isPathWithinDir(userPath, deps.contentDir, deps.platform)) {
-    errorResponse(res, 403, 'urn:ok:error:path-escape', 'Path escapes the content directory.', {
+    errorResponse(res, 403, 'urn:ps:error:path-escape', 'Path escapes the content directory.', {
       handler: HANDLER,
     });
     return;
@@ -125,7 +125,7 @@ export async function handleSpawnCursor(
     errorResponse(
       res,
       422,
-      'urn:ok:error:cursor-not-installed',
+      'urn:ps:error:cursor-not-installed',
       'Cursor CLI not found on this machine.',
       { handler: HANDLER },
     );
@@ -148,7 +148,7 @@ export async function handleSpawnCursor(
       errorResponse(
         res,
         422,
-        'urn:ok:error:cursor-not-installed',
+        'urn:ps:error:cursor-not-installed',
         'Cursor CLI not found on this machine.',
         { handler: HANDLER },
       );
@@ -157,18 +157,18 @@ export async function handleSpawnCursor(
       errorResponse(
         res,
         504,
-        'urn:ok:error:cursor-spawn-timeout',
+        'urn:ps:error:cursor-spawn-timeout',
         'Cursor spawn exceeded the deadline.',
         { handler: HANDLER },
       );
       return;
     case 'spawn-error':
-      errorResponse(res, 502, 'urn:ok:error:cursor-spawn-failed', 'Cursor spawn failed.', {
+      errorResponse(res, 502, 'urn:ps:error:cursor-spawn-failed', 'Cursor spawn failed.', {
         handler: HANDLER,
       });
       return;
     case 'invalid-path':
-      errorResponse(res, 403, 'urn:ok:error:path-escape', 'Path escapes the content directory.', {
+      errorResponse(res, 403, 'urn:ps:error:path-escape', 'Path escapes the content directory.', {
         handler: HANDLER,
       });
       return;

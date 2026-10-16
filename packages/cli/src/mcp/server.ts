@@ -139,7 +139,7 @@ export async function resolveStickyProjectDir(
 }
 
 const CWD_REQUIRED_MESSAGE =
-  '`cwd` is required for tool calls against the global MCP server. Pass an absolute path inside an Palimpsest project, or have the MCP client advertise a single root.';
+  '`cwd` is required for tool calls against the global MCP server. Pass an absolute path inside a Palimpsest project, or have the MCP client advertise a single root.';
 
 export async function startGlobalMcpServer(
   opts: StartGlobalMcpServerOptions,

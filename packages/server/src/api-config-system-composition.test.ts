@@ -203,7 +203,7 @@ describe('config-system group over the composed listener — served natively', (
     expect([200, 404]).toContain(res.status);
     if (res.status === 404) {
       expect(((await res.json()) as { type?: string }).type).toBe(
-        'urn:ok:error:principal-not-available',
+        'urn:ps:error:principal-not-available',
       );
     }
   });
@@ -221,7 +221,7 @@ describe('config-system inline gates — observable only at the handler layer', 
     for (const path of ['/api/principal', '/api/workspace', '/api/__embed-detect']) {
       const out = await dispatch(buildConfigSystemRoutes(), path, { host: 'evil.example' });
       expect(out.status, path).toBe(403);
-      expect(out.body.type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(out.body.type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -235,7 +235,7 @@ describe('config-system inline gates — observable only at the handler layer', 
         },
       );
       expect(out.status, path).toBe(403);
-      expect(out.body.type, path).toBe('urn:ok:error:loopback-required');
+      expect(out.body.type, path).toBe('urn:ps:error:loopback-required');
     }
   });
 
@@ -246,7 +246,7 @@ describe('config-system inline gates — observable only at the handler layer', 
         host: 'evil.example',
       });
       expect(out.status, path).toBe(403);
-      expect(out.body.type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(out.body.type, path).toBe('urn:ps:error:host-not-allowed');
       expect(out.allow, path).toBeUndefined();
     }
   });
@@ -266,7 +266,7 @@ describe('config-system inline gates — observable only at the handler layer', 
       origin: 'https://evil.example.com',
     });
     expect(out.status).toBe(403);
-    expect(out.body.type).toBe('urn:ok:error:invalid-origin');
+    expect(out.body.type).toBe('urn:ps:error:invalid-origin');
     expect(out.body.title).toBe('Origin header is not a permitted loopback origin.');
     expect(probes).toBe(0);
   });

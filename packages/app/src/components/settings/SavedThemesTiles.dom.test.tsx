@@ -397,7 +397,7 @@ describe('SavedThemesTiles', () => {
       failure: 'name conflict',
       status: 409,
       body: ProblemDetailsSchema.parse({
-        type: 'urn:ok:error:theme-name-taken',
+        type: 'urn:ps:error:theme-name-taken',
         title: 'A saved theme with that name already exists.',
         status: 409,
       }),
@@ -485,7 +485,7 @@ describe('SavedThemesTiles', () => {
       if (init?.method === 'POST') {
         return Response.json(
           ProblemDetailsSchema.parse({
-            type: 'urn:ok:error:theme-name-taken',
+            type: 'urn:ps:error:theme-name-taken',
             title: 'A saved theme with that name already exists.',
             status: 409,
           }),
@@ -514,7 +514,7 @@ describe('SavedThemesTiles', () => {
       if (init?.method === 'POST') {
         return Response.json(
           ProblemDetailsSchema.parse({
-            type: 'urn:ok:error:theme-name-invalid',
+            type: 'urn:ps:error:theme-name-invalid',
             title: 'The saved theme name is invalid.',
             status: 400,
             detail: 'invalid-chars',

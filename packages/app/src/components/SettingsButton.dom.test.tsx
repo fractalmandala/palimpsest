@@ -148,8 +148,8 @@ describe('settings body loading on render and on intent', () => {
       <SettingsDialogBodyLazy
         activeId="psignore"
         userBinding={null}
-        okignoreBinding={null}
-        okignoreSynced={false}
+        psignoreBinding={null}
+        psignoreSynced={false}
       />,
     );
 

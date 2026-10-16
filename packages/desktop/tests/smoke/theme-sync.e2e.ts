@@ -167,17 +167,17 @@ test.describe('chrome-modernization theme-sync smoke', () => {
       const g = globalThis as unknown as Record<string, unknown>;
       const themeAppliedCalls: Array<{ opts: unknown; at: number }> = [];
       g.__okThemeAppliedCalls = themeAppliedCalls;
-      ipcMain.removeHandler('ok:theme:applied');
+      ipcMain.removeHandler('ps:theme:applied');
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- E2E test scaffolding — installs mock IPC handler inside the Electron process under test
-      ipcMain.handle('ok:theme:applied', async (_event, opts) => {
+      ipcMain.handle('ps:theme:applied', async (_event, opts) => {
         themeAppliedCalls.push({ opts, at: Date.now() });
         return undefined;
       });
 
-      ipcMain.removeHandler('ok:theme:set-source');
+      ipcMain.removeHandler('ps:theme:set-source');
       let alreadyThrew = false;
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- E2E test scaffolding — installs mock IPC handler inside the Electron process under test
-      ipcMain.handle('ok:theme:set-source', async (_e, _args) => {
+      ipcMain.handle('ps:theme:set-source', async (_e, _args) => {
         if (!alreadyThrew) {
           alreadyThrew = true;
           throw new Error('synthetic rejection — testing .finally() contract');

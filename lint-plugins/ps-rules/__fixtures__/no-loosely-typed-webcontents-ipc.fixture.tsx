@@ -16,12 +16,12 @@ declare const webContents: WebContents;
 declare const listener: () => void;
 
 // === Positive cases — one per banned primitive ===
-webContents.send('ok:test-channel', { payload: 1 });
-ipcMain.handle('ok:test-channel', async () => 'result');
-ipcMain.on('ok:test-channel', () => {});
-void ipcRenderer.invoke('ok:test-channel');
-ipcRenderer.on('ok:test-channel', () => {});
-ipcRenderer.once('ok:test-channel', () => {});
+webContents.send('ps:test-channel', { payload: 1 });
+ipcMain.handle('ps:test-channel', async () => 'result');
+ipcMain.on('ps:test-channel', () => {});
+void ipcRenderer.invoke('ps:test-channel');
+ipcRenderer.on('ps:test-channel', () => {});
+ipcRenderer.once('ps:test-channel', () => {});
 
 // === Negative cases — adjacent method calls on the same objects ===
 // These exercise the precision of the rule. If a future widening
@@ -33,10 +33,10 @@ webContents.openDevTools();
 
 // (2) Different method on ipcMain (the legitimate teardown counterpart
 //     to `handle`). Real production code uses this; it must not fire.
-ipcMain.removeHandler('ok:test-channel');
+ipcMain.removeHandler('ps:test-channel');
 
 // (3) Different method on ipcRenderer (the legitimate unsubscribe).
-ipcRenderer.removeListener('ok:test-channel', listener);
+ipcRenderer.removeListener('ps:test-channel', listener);
 
 // (4) Bare-function call with the same NAME — unrelated to electron IPC.
 //     Tests that the pattern is scoped to the member-call shape, not any

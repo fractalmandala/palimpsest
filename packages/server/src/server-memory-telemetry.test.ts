@@ -13,9 +13,9 @@ import {
   installServerRuntimeGauges,
 } from './server-memory-telemetry.ts';
 
-const METRIC = 'ok.server.memory.usage_megabytes';
-const EVENT_LOOP_METRIC = 'ok.server.event_loop.delay_ms';
-const CPU_METRIC = 'ok.server.cpu.utilization';
+const METRIC = 'ps.server.memory.usage_megabytes';
+const EVENT_LOOP_METRIC = 'ps.server.event_loop.delay_ms';
+const CPU_METRIC = 'ps.server.cpu.utilization';
 
 describe('installServerMemoryGauge — no-op meter (OTel disabled)', () => {
   test('does not throw and is idempotent with the default no-op meter', () => {

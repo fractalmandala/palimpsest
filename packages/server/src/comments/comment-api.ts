@@ -327,13 +327,13 @@ function authorFromActor(actor: ReturnType<typeof extractActorIdentity>): string
 }
 
 function badRequest(res: ServerResponse, message: string): void {
-  errorResponse(res, 400, 'urn:ok:error:invalid-request', message, { handler: HANDLER });
+  errorResponse(res, 400, 'urn:ps:error:invalid-request', message, { handler: HANDLER });
 }
 function notFound(res: ServerResponse, message: string): void {
-  errorResponse(res, 404, 'urn:ok:error:not-found', message, { handler: HANDLER });
+  errorResponse(res, 404, 'urn:ps:error:not-found', message, { handler: HANDLER });
 }
 function internalError(res: ServerResponse, cause: unknown, message: string): void {
-  errorResponse(res, 500, 'urn:ok:error:internal-server-error', message, {
+  errorResponse(res, 500, 'urn:ps:error:internal-server-error', message, {
     handler: HANDLER,
     cause,
   });

@@ -18,7 +18,7 @@ export {
   type SkillPlacement,
 } from './skill-placements-store.ts';
 
-export function isRefusedOkPlacementRoot(rootRel: string): boolean {
+export function isRefusedPsPlacementRoot(rootRel: string): boolean {
   const underOk = rootRel === '.ps' || rootRel.startsWith('.ps/');
   return underOk && rootRel !== LEGACY_SKILL_STORE_ROOT;
 }

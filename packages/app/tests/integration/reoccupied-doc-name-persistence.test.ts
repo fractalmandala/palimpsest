@@ -200,7 +200,7 @@ describe('a document name re-occupied after an on-disk rename keeps persisting e
     const write = await writeAsAgent(server.port, 'Gone', '# Written to the old name\n');
     expect(write.status).toBe(409);
     expect(write.body).toMatchObject({
-      type: 'urn:ok:error:doc-removed',
+      type: 'urn:ps:error:doc-removed',
       title: 'Edit applied in memory; disk write refused because the document was renamed.',
       detail: expect.stringContaining('re-read the document at Gone-moved'),
     });

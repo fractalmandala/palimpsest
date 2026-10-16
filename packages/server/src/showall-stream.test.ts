@@ -546,7 +546,7 @@ describe('streamShowAllEntries — symlinked directories', () => {
 });
 
 describe('streamShowAllEntries — showOk reveal', () => {
-  function makeOkFixture(): string {
+  function makePsFixture(): string {
     const dir = realpathSync(makeTempDir('ps-showall-showok-'));
     writeFileSync(join(dir, 'note.md'), '# note\n');
     mkdirSync(join(dir, '.ps', 'templates'), { recursive: true });
@@ -567,7 +567,7 @@ describe('streamShowAllEntries — showOk reveal', () => {
   }
 
   test('showOk surfaces .ps rows in place, excluding worktrees and local at every depth', async () => {
-    const dir = makeOkFixture();
+    const dir = makePsFixture();
     const { entries, truncated } = await drain(
       streamShowAllEntries({ ...streamOptsFor(dir, 50_000), showOk: true }),
     );
@@ -593,7 +593,7 @@ describe('streamShowAllEntries — showOk reveal', () => {
   });
 
   test('without showOk the same fixture yields no .ps rows (default unchanged)', async () => {
-    const dir = makeOkFixture();
+    const dir = makePsFixture();
     const { entries } = await drain(streamShowAllEntries(streamOptsFor(dir, 50_000)));
     const paths = entries.map(entryPath);
     expect(paths.some((p) => p === '.ps' || p.includes('.ps/') || p.endsWith('/.ps'))).toBe(false);
@@ -602,7 +602,7 @@ describe('streamShowAllEntries — showOk reveal', () => {
   });
 
   test('maxDepth=1 with showOk yields the .ps folder and its probe sees admitted children', async () => {
-    const dir = makeOkFixture();
+    const dir = makePsFixture();
     const { entries } = await drain(
       streamShowAllEntries({ ...streamOptsFor(dir, 50_000), showOk: true, maxDepth: 1 }),
     );
@@ -612,7 +612,7 @@ describe('streamShowAllEntries — showOk reveal', () => {
   });
 
   test('dirFilter=.ps with showOk lists the .ps children lazily, minus the excluded pair', async () => {
-    const dir = makeOkFixture();
+    const dir = makePsFixture();
     const { entries } = await drain(
       streamShowAllEntries({
         ...streamOptsFor(dir, 50_000),

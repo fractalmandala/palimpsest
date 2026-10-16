@@ -27,7 +27,7 @@ import {
   shareTargetPath,
 } from '@/lib/desktop-bridge-types';
 import {
-  applyOkInitOutcome,
+  applyPsInitOutcome,
   applyOpenOutcome,
   type ConsentFlowState,
   initialConsentFlowState,
@@ -351,7 +351,7 @@ function ShareReceiveDialogInner({
           setConsentState((prev) =>
             prev === null
               ? prev
-              : applyOkInitOutcome(prev, { ok: true, projectPath: outcome.projectPath }),
+              : applyPsInitOutcome(prev, { ok: true, projectPath: outcome.projectPath }),
           );
           try {
             await bridge.project.open({
@@ -384,7 +384,7 @@ function ShareReceiveDialogInner({
         const reason: 'not-a-git-worktree' | 'init-failed' = outcome.reason;
         const message = outcome.message || 'Initialization failed.';
         setConsentState((prev) =>
-          prev === null ? prev : applyOkInitOutcome(prev, { ok: false, reason, message }),
+          prev === null ? prev : applyPsInitOutcome(prev, { ok: false, reason, message }),
         );
         toast.error(message);
       })
@@ -393,7 +393,7 @@ function ShareReceiveDialogInner({
         setConsentState((prev) =>
           prev === null
             ? prev
-            : applyOkInitOutcome(prev, { ok: false, reason: 'network-error', message }),
+            : applyPsInitOutcome(prev, { ok: false, reason: 'network-error', message }),
         );
         toast.error(t`Could not initialize ${seed.candidatePath}.`);
       });
@@ -469,7 +469,7 @@ function ShareReceiveDialogInner({
               </p>
             ) : null}
             <p className="mt-3 text-sm text-muted-foreground">
-              <Trans>That folder isn't an Palimpsest project yet. Initialize it and open?</Trans>
+              <Trans>That folder isn't a Palimpsest project yet. Initialize it and open?</Trans>
             </p>
             {consentState.phase === 'error' ? (
               <p

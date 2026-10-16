@@ -1,4 +1,4 @@
-import type { ConfigBinding, OkignoreBinding } from '@palimpsest/core';
+import type { ConfigBinding, PsignoreBinding } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -35,8 +35,8 @@ if (typeof HTMLElement.prototype.scrollIntoView !== 'function') {
 interface BodyProps {
   activeId: string;
   userBinding: ConfigBinding | null;
-  okignoreBinding: OkignoreBinding | null;
-  okignoreSynced: boolean;
+  psignoreBinding: PsignoreBinding | null;
+  psignoreSynced: boolean;
   markdownlintRuleQuery?: { query: string; nonce: number } | null;
 }
 const probeProps: BodyProps[] = [];
@@ -111,8 +111,8 @@ vi.doMock('@/lib/config-provider', () => ({
     userSynced: true,
     projectBinding: null,
     projectLocalBinding: null,
-    okignoreBinding: null,
-    okignoreSynced: false,
+    psignoreBinding: null,
+    psignoreSynced: false,
     userConfig: null,
     projectConfig: mockProjectConfig,
     projectLocalConfig: null,

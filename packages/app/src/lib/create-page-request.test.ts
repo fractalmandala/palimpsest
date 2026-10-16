@@ -45,7 +45,7 @@ describe('createPageRequest', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:doc-already-exists',
+            type: 'urn:ps:error:doc-already-exists',
             title: 'A file named untitled already exists',
           }),
           { status: 409, headers: { 'content-type': 'application/problem+json' } },

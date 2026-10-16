@@ -4,7 +4,7 @@
 
 ## The layer model
 
-Three of the layers correspond to [Karpathy's three-layer knowledge-base pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): **ingest** (raw sources, immutable) → **research** (wiki, provisional) → **consolidate** (wiki, canonical). Onboarding an existing repo operates one level up, at the project-metadata layer, and is the brownfield counterpart to the greenfield `ok seed` CLI.
+Three of the layers correspond to [Karpathy's three-layer knowledge-base pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): **ingest** (raw sources, immutable) → **research** (wiki, provisional) → **consolidate** (wiki, canonical). Onboarding an existing repo operates one level up, at the project-metadata layer, and is the brownfield counterpart to the greenfield `ps seed` CLI.
 
 Typical day-2 flow: user shares a URL → ingest (preserve) → user asks "now research this" → research (provisional article; ingests more sources as needed) → decision lands → consolidate (canonical article, supersedes the research).
 
@@ -21,7 +21,7 @@ Read the relevant procedure and execute its numbered steps with the OK verbs; do
 
 **Do not chain silently.** After ingest, ask the user whether to proceed to research. After research, let the user decide whether the findings are ready to consolidate. Each procedure completes on its own terms — the user drives the transitions.
 
-**Project scaffolding — two paths.** **Empty repo:** run `ok seed` once from a terminal (scaffolds the layout + seeds `log.md` + folder defaults). **Existing content:** work through `onboard-existing-repo.md`. Neither is required; the layer procedures work against any folder structure. Only mention each when explicitly relevant.
+**Project scaffolding — two paths.** **Empty repo:** run `ps seed` once from a terminal (scaffolds the layout + seeds `log.md` + folder defaults). **Existing content:** work through `onboard-existing-repo.md`. Neither is required; the layer procedures work against any folder structure. Only mention each when explicitly relevant.
 
 ## Starter packs — reference for inspiration
 
@@ -34,7 +34,7 @@ The `ok` CLI (a Bash surface beside the MCP tools; other verbs `ps start` / `ps 
 - `worldbuilding` — fiction story wiki
 - `writing-pipeline` — drafts → published
 - `entity-vault` — people / companies / meetings (personal CRM)
-- `psf` — Palimpsest Format–conformant base
+- `psf` — OpenKnowledge Format–conformant base
 
 A pack that ships skills installs them project-local when seeded. Those skills are where the pack's procedures live; a pack may ship one skill or several.
 

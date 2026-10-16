@@ -14,7 +14,7 @@ test.use({
   workerServerEnv: { PS_TEST_OKF_RECOMMENDED_SKILL: 'isolated-content-v1' },
 });
 
-async function openOkfSettings(page: Page): Promise<void> {
+async function openPsfSettings(page: Page): Promise<void> {
   await openProjectPluginsPanel(page);
   await setPluginEnabled(page, 'psf', true);
   await openSettingsSection(page, 'plugin:psf', 'settings-plugin-psf');
@@ -32,7 +32,7 @@ test('installs the recommended skill through the real endpoint and recognizes it
     'utf-8',
   );
 
-  await openOkfSettings(page);
+  await openPsfSettings(page);
   const card = page.getByTestId('settings-psf-recommended-skill');
   await expect(card).toBeVisible();
   await card.getByRole('button', { name: 'Install skill' }).click();

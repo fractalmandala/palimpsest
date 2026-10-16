@@ -32,7 +32,7 @@ function git(directory: string, args: string[]): string {
 }
 
 function createShadow(projectDir: string): string {
-  const shadowDir = join(projectDir, '.git', 'ok');
+  const shadowDir = join(projectDir, '.git', 'ps');
   git(projectDir, ['init', '--bare', shadowDir]);
   configureTestGitRepository(shadowDir);
   git(shadowDir, ['config', '--unset', 'core.bare']);

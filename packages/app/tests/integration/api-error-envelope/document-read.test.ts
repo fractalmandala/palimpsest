@@ -31,7 +31,7 @@ describe('document-read envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('unsafe docName emits urn:ok:error:invalid-request', async () => {
+  test('unsafe docName emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/document?docName=${encodeURIComponent('../../etc/passwd')}`,
     );
@@ -42,13 +42,13 @@ describe('document-read envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('reserved system docName emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved system docName emits urn:ps:error:reserved-doc-name', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/document?docName=__system__`);
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -57,7 +57,7 @@ describe('document-read envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
   });
 
@@ -70,7 +70,7 @@ describe('document-read envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

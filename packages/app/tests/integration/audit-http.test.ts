@@ -177,7 +177,7 @@ describe('GET /api/audit', () => {
       const res = await fetch(api(`/api/audit?path=${encodeURIComponent(bad)}`));
       expect(res.status).toBe(400);
       const body = (await res.json()) as { type?: string };
-      expect(body.type).toBe('urn:ok:error:invalid-request');
+      expect(body.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -186,7 +186,7 @@ describe('GET /api/audit', () => {
       const res = await fetch(api(`/api/audit?doc=${encodeURIComponent(bad)}`));
       expect(res.status).toBe(400);
       const body = (await res.json()) as { type?: string };
-      expect(body.type).toBe('urn:ok:error:invalid-request');
+      expect(body.type).toBe('urn:ps:error:invalid-request');
     }
     const both = await fetch(api('/api/audit?doc=a&path=b.md'));
     expect(both.status).toBe(400);

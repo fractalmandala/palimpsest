@@ -31,7 +31,7 @@ describe('project SKILL.md starter-pack awareness list', () => {
 
   test('points the agent at the reference ladder (--list-packs → --dry-run)', () => {
     const skill = readSkillBundle();
-    expect(skill).toContain('ok seed --list-packs');
+    expect(skill).toContain('ps seed --list-packs');
     expect(skill).toContain('--dry-run');
   });
 });

@@ -42,7 +42,7 @@ import {
   HOSTS_WITH_USER_SKILL_DIR,
 } from './editors.ts';
 
-const USER_SKILL_DIR_NAME = 'open-knowledge-discovery';
+const USER_SKILL_DIR_NAME = 'palimpsest-discovery';
 const PROJECT_SKILL_DIR_NAME = 'palimpsest';
 const CENTRAL_USER_SKILL_REL = ['.agents', 'skills', USER_SKILL_DIR_NAME] as const;
 

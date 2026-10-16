@@ -57,7 +57,7 @@ const PLUGIN_AS_MODULE = new RegExp(
     'lint/plugin/',
     'import plugin',
     'plugin\\.rules',
-    '(?:`ok`|`\\.private\\.`) plugins?',
+    '(?:`ps`|`\\.private\\.`) plugins?',
     'PLUGIN_NAME',
   ].join('|'),
   'gi',

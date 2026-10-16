@@ -209,7 +209,7 @@ describe('promptUninstallFeedback submission', () => {
   });
 });
 
-describe('ok uninstall feedback step', () => {
+describe('ps uninstall feedback step', () => {
   function uninstallFixture(): { home: string; cleanup: () => void } {
     const home = mkdtempSync(join(tmpdir(), 'ps-uninst-fb-'));
     write(join(home, '.ps', 'auth.yml'), 'x\n');

@@ -23,8 +23,8 @@ import {
   LocalOpEmbeddingsSetKeyRequestSchema,
   type LocalOpEmbeddingsTestResponse,
   LocalOpEmbeddingsTestResponseSchema,
-  LocalOpOkInitRequestSchema,
-  LocalOpOkInitResponseSchema,
+  LocalOpPsInitRequestSchema,
+  LocalOpPsInitResponseSchema,
   PsCliCommand,
   psUserHomeDisplayPath,
   type ProblemType,
@@ -165,7 +165,7 @@ export function createLocalOpRoutes(
     body: LocalOpCloneRequest,
   ): Promise<void> {
     const { url, dir, branch } = body;
-    if (rejectDevFallback(res, HANDLE_LOCAL_OP_CLONE, 'urn:ok:error:clone-failed', ['clone'])) {
+    if (rejectDevFallback(res, HANDLE_LOCAL_OP_CLONE, 'urn:ps:error:clone-failed', ['clone'])) {
       return;
     }
 
@@ -173,7 +173,7 @@ export function createLocalOpRoutes(
       errorResponse(
         res,
         400,
-        'urn:ok:error:url-not-allowed',
+        'urn:ps:error:url-not-allowed',
         'URL protocol is not allowed for clone.',
         { handler: HANDLE_LOCAL_OP_CLONE, cause: new Error(`url=${url}`) },
       );
@@ -183,7 +183,7 @@ export function createLocalOpRoutes(
       errorResponse(
         res,
         400,
-        'urn:ok:error:dir-outside-home',
+        'urn:ps:error:dir-outside-home',
         'Clone destination must be within the user home directory.',
         { handler: HANDLE_LOCAL_OP_CLONE, cause: new Error(`dir=${dir}`) },
       );
@@ -194,7 +194,7 @@ export function createLocalOpRoutes(
       errorResponse(
         res,
         429,
-        'urn:ok:error:concurrent-operation',
+        'urn:ps:error:concurrent-operation',
         'A clone operation is already in progress.',
         { handler: HANDLE_LOCAL_OP_CLONE, extraHeaders: { 'Retry-After': '30' } },
       );
@@ -228,7 +228,7 @@ export function createLocalOpRoutes(
             { url, dir, refusedSymlinkPaths: event.refusedSymlinkPaths ?? [] },
             '[local-op/clone] clone refused: the repository has unsafe symlinks',
           );
-          writeStreamError(500, 'urn:ok:error:clone-failed', event.message);
+          writeStreamError(500, 'urn:ps:error:clone-failed', event.message);
           return;
         }
         if (event.type === 'error') {
@@ -239,7 +239,7 @@ export function createLocalOpRoutes(
             );
           }
           const classification = classifyCloneError(event.message ?? '');
-          writeStreamError(500, 'urn:ok:error:clone-failed', classification.title, {
+          writeStreamError(500, 'urn:ps:error:clone-failed', classification.title, {
             detail: classification.detail || undefined,
             cause: event.message
               ? new Error(redactShareSubprocessStderr(event.message))
@@ -268,7 +268,7 @@ export function createLocalOpRoutes(
             } else {
               writeStreamError(
                 500,
-                'urn:ok:error:server-start-failed',
+                'urn:ps:error:server-start-failed',
                 'Cloned successfully but failed to start the project server.',
                 { cause: new Error(result.error) },
               );
@@ -279,7 +279,7 @@ export function createLocalOpRoutes(
         if (!res.writableEnded && !res.destroyed) {
           writeStreamError(
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Unexpected error during clone post-processing.',
             { cause: err },
           );
@@ -383,8 +383,8 @@ export function createLocalOpRoutes(
   }
 
   const HANDLE_LOCAL_OP_OK_INIT = 'local-op-ok-init';
-  const handleLocalOpOkInit = withValidation(
-    LocalOpOkInitRequestSchema,
+  const handleLocalOpPsInit = withValidation(
+    LocalOpPsInitRequestSchema,
     async (_req, res, body) => {
       const { projectPath } = body;
 
@@ -392,7 +392,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'projectPath must be an absolute path.',
           {
             handler: HANDLE_LOCAL_OP_OK_INIT,
@@ -409,7 +409,7 @@ export function createLocalOpRoutes(
         successResponse(
           res,
           200,
-          LocalOpOkInitResponseSchema,
+          LocalOpPsInitResponseSchema,
           {
             ok: false,
             reason: 'not-a-git-worktree',
@@ -424,7 +424,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           400,
-          'urn:ok:error:dir-outside-home',
+          'urn:ps:error:dir-outside-home',
           'projectPath must be within the user home directory.',
           {
             handler: HANDLE_LOCAL_OP_OK_INIT,
@@ -443,7 +443,7 @@ export function createLocalOpRoutes(
         successResponse(
           res,
           200,
-          LocalOpOkInitResponseSchema,
+          LocalOpPsInitResponseSchema,
           {
             ok: false,
             reason: 'not-a-git-worktree',
@@ -462,7 +462,7 @@ export function createLocalOpRoutes(
         successResponse(
           res,
           200,
-          LocalOpOkInitResponseSchema,
+          LocalOpPsInitResponseSchema,
           { ok: true, projectPath: canonicalPath },
           { handler: HANDLE_LOCAL_OP_OK_INIT },
         );
@@ -473,7 +473,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An ps-init operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_OK_INIT, extraHeaders: { 'Retry-After': '2' } },
         );
@@ -491,7 +491,7 @@ export function createLocalOpRoutes(
         successResponse(
           res,
           200,
-          LocalOpOkInitResponseSchema,
+          LocalOpPsInitResponseSchema,
           { ok: true, projectPath: canonicalPath },
           { handler: HANDLE_LOCAL_OP_OK_INIT },
         );
@@ -504,7 +504,7 @@ export function createLocalOpRoutes(
         successResponse(
           res,
           200,
-          LocalOpOkInitResponseSchema,
+          LocalOpPsInitResponseSchema,
           { ok: false, reason: 'init-failed', message },
           { handler: HANDLE_LOCAL_OP_OK_INIT },
         );
@@ -551,7 +551,7 @@ export function createLocalOpRoutes(
     errorResponse(
       res,
       409,
-      'urn:ok:error:non-github-origin',
+      'urn:ps:error:non-github-origin',
       'GitHub sign-in is unavailable for this host.',
       {
         handler,
@@ -574,7 +574,7 @@ export function createLocalOpRoutes(
   function rejectShuttingDown(res: ServerResponse, handler: string, err?: unknown): boolean {
     if (!subprocessLifetime.stopped) return false;
     if (err !== undefined) log.debug({ err, handler }, '[local-op] error after server shutdown');
-    errorResponse(res, 503, 'urn:ok:error:auth-failed', 'The server is shutting down.', {
+    errorResponse(res, 503, 'urn:ps:error:auth-failed', 'The server is shutting down.', {
       handler,
     });
     return true;
@@ -607,7 +607,7 @@ export function createLocalOpRoutes(
             handler,
           }),
         );
-        errorResponse(res, 429, 'urn:ok:error:concurrent-operation', concurrentMessage, {
+        errorResponse(res, 429, 'urn:ps:error:concurrent-operation', concurrentMessage, {
           handler,
           extraHeaders: { 'Retry-After': '5' },
         });
@@ -654,7 +654,7 @@ export function createLocalOpRoutes(
     const flow = makeFlow((event: AuthEvent) => {
       if (subprocessLifetime.stopped) return;
       if (event.type === 'error') {
-        writeStreamError(500, 'urn:ok:error:auth-failed', streamErrorMessage, {
+        writeStreamError(500, 'urn:ps:error:auth-failed', streamErrorMessage, {
           cause: event.message ? new Error(event.message) : undefined,
         });
         return;
@@ -669,7 +669,7 @@ export function createLocalOpRoutes(
       notifyDisplaced: () => {
         stopHeartbeat();
         if (res.writableEnded || res.destroyed) return;
-        writeStreamError(409, 'urn:ok:error:concurrent-operation', DISPLACED_STREAM_MESSAGE);
+        writeStreamError(409, 'urn:ps:error:concurrent-operation', DISPLACED_STREAM_MESSAGE);
       },
     };
     inFlight.current = slot;
@@ -724,7 +724,7 @@ export function createLocalOpRoutes(
     const host = resolveAuthHost(res, HANDLE_LOCAL_OP_AUTH_LOGIN, body.host);
     if (host === null) return;
     if (
-      rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_LOGIN, 'urn:ok:error:auth-failed', [
+      rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_LOGIN, 'urn:ps:error:auth-failed', [
         'auth',
         'login',
       ])
@@ -765,7 +765,7 @@ export function createLocalOpRoutes(
           errorResponse(
             res,
             400,
-            'urn:ok:error:auth-failed',
+            'urn:ps:error:auth-failed',
             'The GitHub CLI (gh) is not installed.',
             { handler: HANDLE_LOCAL_OP_AUTH_GH_LOGIN },
           );
@@ -846,7 +846,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An auth status operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_AUTH_STATUS, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -935,7 +935,7 @@ export function createLocalOpRoutes(
         }
       } catch (err) {
         if (rejectShuttingDown(res, HANDLE_LOCAL_OP_AUTH_STATUS, err)) return;
-        errorResponse(res, 500, 'urn:ok:error:auth-failed', 'Auth status check failed.', {
+        errorResponse(res, 500, 'urn:ps:error:auth-failed', 'Auth status check failed.', {
           handler: HANDLE_LOCAL_OP_AUTH_STATUS,
           cause: err,
         });
@@ -960,7 +960,7 @@ export function createLocalOpRoutes(
       const host = resolveAuthHost(res, HANDLE_LOCAL_OP_AUTH_PAT, body.host);
       if (host === null) return;
       if (
-        rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_PAT, 'urn:ok:error:auth-failed', [
+        rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_PAT, 'urn:ps:error:auth-failed', [
           'auth',
           'pat',
         ])
@@ -972,7 +972,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An auth operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_AUTH_PAT, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -999,13 +999,13 @@ export function createLocalOpRoutes(
             { handler: HANDLE_LOCAL_OP_AUTH_PAT },
           );
         } else {
-          errorResponse(res, 400, 'urn:ok:error:auth-failed', result.error, {
+          errorResponse(res, 400, 'urn:ps:error:auth-failed', result.error, {
             handler: HANDLE_LOCAL_OP_AUTH_PAT,
           });
         }
       } catch (err) {
         if (rejectShuttingDown(res, HANDLE_LOCAL_OP_AUTH_PAT, err)) return;
-        errorResponse(res, 500, 'urn:ok:error:auth-failed', 'Storing the token failed.', {
+        errorResponse(res, 500, 'urn:ps:error:auth-failed', 'Storing the token failed.', {
           handler: HANDLE_LOCAL_OP_AUTH_PAT,
           cause: err,
         });
@@ -1028,7 +1028,7 @@ export function createLocalOpRoutes(
     async (_req, res, body) => {
       if (rejectShuttingDown(res, HANDLE_LOCAL_OP_AUTH_TOKEN)) return;
       if (
-        rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_TOKEN, 'urn:ok:error:auth-failed', [
+        rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_TOKEN, 'urn:ps:error:auth-failed', [
           'auth',
           'token',
         ])
@@ -1039,7 +1039,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An auth operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_AUTH_TOKEN, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -1066,13 +1066,13 @@ export function createLocalOpRoutes(
             { handler: HANDLE_LOCAL_OP_AUTH_TOKEN },
           );
         } else {
-          errorResponse(res, 400, 'urn:ok:error:auth-failed', result.error, {
+          errorResponse(res, 400, 'urn:ps:error:auth-failed', result.error, {
             handler: HANDLE_LOCAL_OP_AUTH_TOKEN,
           });
         }
       } catch (err) {
         if (rejectShuttingDown(res, HANDLE_LOCAL_OP_AUTH_TOKEN, err)) return;
-        errorResponse(res, 500, 'urn:ok:error:auth-failed', 'Storing the token failed.', {
+        errorResponse(res, 500, 'urn:ps:error:auth-failed', 'Storing the token failed.', {
           handler: HANDLE_LOCAL_OP_AUTH_TOKEN,
           cause: err,
         });
@@ -1113,7 +1113,7 @@ export function createLocalOpRoutes(
       errorResponse(
         res,
         429,
-        'urn:ok:error:concurrent-operation',
+        'urn:ps:error:concurrent-operation',
         'An auth repos operation is already in progress.',
         { handler: HANDLE_LOCAL_OP_AUTH_REPOS, extraHeaders: { 'Retry-After': '5' } },
       );
@@ -1166,7 +1166,7 @@ export function createLocalOpRoutes(
       if (!res.writableEnded) {
         writeStreamError(
           500,
-          'urn:ok:error:auth-failed',
+          'urn:ps:error:auth-failed',
           `Auth repos subprocess timed out after ${LOCAL_OP_TIMEOUT_MS}ms.`,
         );
       }
@@ -1190,7 +1190,7 @@ export function createLocalOpRoutes(
           const detail = typeof evt.message === 'string' ? evt.message : undefined;
           writeStreamError(
             500,
-            'urn:ok:error:auth-failed',
+            'urn:ps:error:auth-failed',
             'Auth repos subprocess reported an error.',
             { detail },
           );
@@ -1216,7 +1216,7 @@ export function createLocalOpRoutes(
         if (code !== 0 && !res.writableEnded) {
           writeStreamError(
             500,
-            'urn:ok:error:auth-failed',
+            'urn:ps:error:auth-failed',
             `Auth repos subprocess exited with code ${code}.`,
           );
         }
@@ -1232,7 +1232,7 @@ export function createLocalOpRoutes(
         if (!res.writableEnded) {
           writeStreamError(
             500,
-            'urn:ok:error:auth-failed',
+            'urn:ps:error:auth-failed',
             'Failed to spawn the auth repos subprocess.',
             { cause: err },
           );
@@ -1260,7 +1260,7 @@ export function createLocalOpRoutes(
       const host = body.host ?? resolveAuthHost(res, HANDLE_LOCAL_OP_AUTH_SIGNOUT, undefined);
       if (host === null) return;
       if (
-        rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_SIGNOUT, 'urn:ok:error:auth-failed', [
+        rejectDevFallback(res, HANDLE_LOCAL_OP_AUTH_SIGNOUT, 'urn:ps:error:auth-failed', [
           'auth',
           'signout',
         ])
@@ -1272,7 +1272,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An auth signout operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_AUTH_SIGNOUT, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -1336,7 +1336,7 @@ export function createLocalOpRoutes(
         );
       } catch (err) {
         if (rejectShuttingDown(res, HANDLE_LOCAL_OP_AUTH_SIGNOUT, err)) return;
-        errorResponse(res, 500, 'urn:ok:error:auth-failed', 'Auth signout failed.', {
+        errorResponse(res, 500, 'urn:ps:error:auth-failed', 'Auth signout failed.', {
           handler: HANDLE_LOCAL_OP_AUTH_SIGNOUT,
           cause: err,
         });
@@ -1363,7 +1363,7 @@ export function createLocalOpRoutes(
       const email = body.email.trim();
 
       if (!projectDir) {
-        errorResponse(res, 503, 'urn:ok:error:no-project-dir', 'No project directory configured.', {
+        errorResponse(res, 503, 'urn:ps:error:no-project-dir', 'No project directory configured.', {
           handler: HANDLE_LOCAL_OP_AUTH_SET_IDENTITY,
         });
         return;
@@ -1373,7 +1373,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'A set-identity operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_AUTH_SET_IDENTITY, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -1395,7 +1395,7 @@ export function createLocalOpRoutes(
           },
         );
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Set-identity failed.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Set-identity failed.', {
           handler: HANDLE_LOCAL_OP_AUTH_SET_IDENTITY,
           cause: err,
         });
@@ -1429,7 +1429,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An embeddings key operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_EMBEDDINGS_SET_KEY, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -1450,7 +1450,7 @@ export function createLocalOpRoutes(
           },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to store the key.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to store the key.', {
           handler: HANDLE_LOCAL_OP_EMBEDDINGS_SET_KEY,
           cause: e,
         });
@@ -1473,7 +1473,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'An embeddings key operation is already in progress.',
           { handler: HANDLE_LOCAL_OP_EMBEDDINGS_CLEAR_KEY, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -1494,7 +1494,7 @@ export function createLocalOpRoutes(
           },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to clear the key.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to clear the key.', {
           handler: HANDLE_LOCAL_OP_EMBEDDINGS_CLEAR_KEY,
           cause: e,
         });
@@ -1520,7 +1520,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'A connection test is already in progress.',
           { handler: HANDLE_LOCAL_OP_EMBEDDINGS_TEST, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -1558,7 +1558,7 @@ export function createLocalOpRoutes(
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to test the embeddings endpoint.',
           { handler: HANDLE_LOCAL_OP_EMBEDDINGS_TEST, cause: e },
         );
@@ -1576,7 +1576,7 @@ export function createLocalOpRoutes(
 
   const routes = {
     '/api/local-op/clone': handleLocalOpClone,
-    '/api/local-op/ok-init': handleLocalOpOkInit,
+    '/api/local-op/ok-init': handleLocalOpPsInit,
     '/api/local-op/auth/login': handleLocalOpAuthLogin,
     '/api/local-op/auth/status': handleLocalOpAuthStatus,
     '/api/local-op/auth/pat': handleLocalOpAuthPat,

@@ -104,14 +104,14 @@ describe('GET /api/asset-text', () => {
     const res = await fetch(`${harness.baseURL}/api/asset-text`);
     expect(res.status).toBe(400);
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('nonexistent file is a 404 asset-not-found', async () => {
     const res = await fetch(assetTextUrl(harness.baseURL, 'docs/nope.txt'));
     expect(res.status).toBe(404);
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:asset-not-found');
+    expect(body.type).toBe('urn:ps:error:asset-not-found');
   });
 
   test('a directory is a 404, not a listing', async () => {
@@ -123,7 +123,7 @@ describe('GET /api/asset-text', () => {
     const res = await fetch(assetTextUrl(harness.baseURL, 'docs/escape.txt'));
     expect(res.status).toBe(400);
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('non-canonical traversal spelling is a 400 even when it stays inside', async () => {
@@ -135,7 +135,7 @@ describe('GET /api/asset-text', () => {
     const res = await fetch(assetTextUrl(harness.baseURL, 'docs/huge.log'));
     expect(res.status).toBe(413);
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:payload-too-large');
+    expect(body.type).toBe('urn:ps:error:payload-too-large');
   });
 
   test('non-GET is a 405', async () => {

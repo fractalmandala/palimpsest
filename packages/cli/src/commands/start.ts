@@ -748,7 +748,7 @@ export async function runStartCommand(configArg: Config, opts: StartCommandOptio
     }
 
     if (
-      err instanceof serverModule.MissingOkConfigError ||
+      err instanceof serverModule.MissingPsConfigError ||
       err instanceof serverModule.DocumentDurabilityStateError
     ) {
       console.error(error(err.message));

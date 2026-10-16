@@ -114,7 +114,7 @@ describe('skill-install surfaces every flush outcome instead of installing over 
       respondPersistenceFailure: (res, failure, handler) => {
         seen.push({ failure, handler });
         res.writeHead(409, { 'Content-Type': 'application/problem+json' });
-        res.end(JSON.stringify({ type: 'urn:ok:error:doc-removed' }));
+        res.end(JSON.stringify({ type: 'urn:ps:error:doc-removed' }));
       },
     });
     expect(seen).toEqual([
@@ -134,7 +134,7 @@ describe('skill-install surfaces every flush outcome instead of installing over 
       respondDiskDivergence: (res, handler) => {
         seen.push(handler);
         res.writeHead(409, { 'Content-Type': 'application/problem+json' });
-        res.end(JSON.stringify({ type: 'urn:ok:error:disk-divergence' }));
+        res.end(JSON.stringify({ type: 'urn:ps:error:disk-divergence' }));
       },
     });
     expect(seen).toEqual(['skill-install']);

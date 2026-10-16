@@ -41,7 +41,7 @@ afterEach(() => {
 describe('linkEditorSkillFolder (merge-then-swap)', () => {
   test('a dangling per-skill symlink never blocks the link', () => {
     writeSkill(base, '.codex/skills/real', '# A');
-    symlinkSync(join(base, 'gone-away'), join(base, '.codex/skills/open-knowledge-discovery'));
+    symlinkSync(join(base, 'gone-away'), join(base, '.codex/skills/palimpsest-discovery'));
 
     const preview = previewEditorFolderLink({
       base,
@@ -51,7 +51,7 @@ describe('linkEditorSkillFolder (merge-then-swap)', () => {
     });
     expect(preview.kind).toBe('plan');
     if (preview.kind !== 'plan') return;
-    expect(preview.plan.removes).toEqual(['open-knowledge-discovery']);
+    expect(preview.plan.removes).toEqual(['palimpsest-discovery']);
 
     const r = linkEditorSkillFolder({
       base,

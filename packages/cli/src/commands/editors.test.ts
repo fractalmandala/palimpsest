@@ -479,7 +479,7 @@ describe('CHAIN_V2', () => {
 
   it('emits the documented stderr message and exit 127 on miss', () => {
     expect(CHAIN_V2).toContain(
-      '"Palimpsest: install OK Desktop or Node.js 24+, then restart your editor"',
+      '"Palimpsest: install Palimpsest Desktop or Node.js 24+, then restart your editor"',
     );
     expect(CHAIN_V2).toContain('>&2');
     expect(CHAIN_V2.trimEnd().endsWith('exit 127')).toBe(true);
@@ -735,11 +735,11 @@ describe('CHAIN_WIN_V1', () => {
 
   it('probes the npm-global ps.cmd shim, then PATH ps.cmd, before any npx fallback', () => {
     const shimIdx = CHAIN_WIN_V1.indexOf("Join-Path $env:APPDATA 'npm\\ps.cmd'");
-    const pathOkIdx = CHAIN_WIN_V1.indexOf('Get-Command ps.cmd');
+    const pathPsIdx = CHAIN_WIN_V1.indexOf('Get-Command ps.cmd');
     const npxIdx = CHAIN_WIN_V1.indexOf('Get-Command npx.cmd');
     expect(shimIdx).toBeGreaterThanOrEqual(0);
-    expect(pathOkIdx).toBeGreaterThan(shimIdx);
-    expect(npxIdx).toBeGreaterThan(pathOkIdx);
+    expect(pathPsIdx).toBeGreaterThan(shimIdx);
+    expect(npxIdx).toBeGreaterThan(pathPsIdx);
   });
 
   it('contains zero double-quote characters (spawn-time argument-quoting robustness)', () => {

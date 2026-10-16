@@ -14,7 +14,7 @@ afterAll(async () => {
 });
 
 describe('unmatched /api/* route fallback (RFC 9457)', () => {
-  test('unrecognized GET path emits 404 urn:ok:error:not-found problem+json', async () => {
+  test('unrecognized GET path emits 404 urn:ps:error:not-found problem+json', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/does-not-exist`);
     expect(res.status).toBe(404);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -23,7 +23,7 @@ describe('unmatched /api/* route fallback (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:not-found');
       expect(parsed.data.status).toBe(404);
       expect(parsed.data.title.length).toBeGreaterThan(0);
     }
@@ -41,7 +41,7 @@ describe('unmatched /api/* route fallback (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:not-found');
     }
   });
 
@@ -51,7 +51,7 @@ describe('unmatched /api/* route fallback (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:not-found');
     }
   });
 });

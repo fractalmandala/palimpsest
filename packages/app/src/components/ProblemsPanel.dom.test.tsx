@@ -1436,7 +1436,7 @@ describe('ProblemsPanel — project scope', () => {
         ok: false,
         errorDetail: 'Too many agent sessions',
         status: 503,
-        problemType: 'urn:ok:error:too-many-agent-sessions',
+        problemType: 'urn:ps:error:too-many-agent-sessions',
       },
       { ok: true },
     ];

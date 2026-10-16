@@ -11,7 +11,7 @@ export function beginRoot(): boolean {
   if (process.env.OTEL_SDK_DISABLED !== 'false') return false;
   try {
     initTelemetry();
-    const span = getTracer().startSpan('ok.app-startup');
+    const span = getTracer().startSpan('ps.app-startup');
     if (!span.isRecording()) {
       span.end();
       return false;

@@ -93,7 +93,7 @@ export function linkResolutionDecorationPlugin(
     },
     view(view) {
       mark(
-        'ok/render/decoration-merge',
+        'ps/render/decoration-merge',
         { markTypes: Array.from(markTypeSet).join(',') },
         { startTime: performance.now(), duration: 0 },
       );

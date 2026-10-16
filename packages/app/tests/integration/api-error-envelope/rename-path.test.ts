@@ -51,7 +51,7 @@ describe('rename-path envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('unknown kind emits urn:ok:error:invalid-request', async () => {
+  test('unknown kind emits urn:ps:error:invalid-request', async () => {
     const res = await postRenamePath({ kind: 'symlink', fromPath: 'a', toPath: 'b' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -60,11 +60,11 @@ describe('rename-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('source doesn’t exist emits urn:ok:error:doc-not-found', async () => {
+  test('source doesn’t exist emits urn:ps:error:doc-not-found', async () => {
     const res = await postRenamePath({
       kind: 'file',
       fromPath: `missing-${crypto.randomUUID().slice(0, 8)}`,
@@ -75,11 +75,11 @@ describe('rename-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-not-found');
     }
   });
 
-  test('destination already exists emits urn:ok:error:doc-already-exists', async () => {
+  test('destination already exists emits urn:ps:error:doc-already-exists', async () => {
     const id = crypto.randomUUID().slice(0, 8);
     const srcPath = `rp-conflict-src-${id}.md`;
     const dstPath = `rp-conflict-dst-${id}.md`;
@@ -97,7 +97,7 @@ describe('rename-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-already-exists');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-already-exists');
       expect(parsed.data.status).toBe(409);
     }
   });
@@ -110,7 +110,7 @@ describe('rename-path envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

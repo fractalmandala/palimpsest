@@ -1,5 +1,5 @@
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
-import type { OkignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
+import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { TriangleAlert } from 'lucide-react';
 import { type ComponentType, lazy } from 'react';
@@ -45,8 +45,8 @@ const UserPluginsManageSection = lazySection(
 const NetworkAccessSection = lazySection(
   async () => (await import('./NetworkAccessSection')).NetworkAccessSection,
 );
-const OkignoreSection = lazySection(
-  async () => (await import('./OkignoreSection')).OkignoreSection,
+const PsignoreSection = lazySection(
+  async () => (await import('./PsignoreSection')).PsignoreSection,
 );
 const ProjectTemplatesSection = lazySection(
   async () => (await import('./ProjectTemplatesSection')).ProjectTemplatesSection,
@@ -131,8 +131,8 @@ interface SettingsDialogBodyProps {
   activeId: string;
   userBinding: ConfigBinding | null;
   userLoadFailed?: boolean;
-  okignoreBinding: OkignoreBinding | null;
-  okignoreSynced: boolean;
+  psignoreBinding: PsignoreBinding | null;
+  psignoreSynced: boolean;
   markdownlintRuleQuery?: { query: string; nonce: number } | null;
 }
 
@@ -140,8 +140,8 @@ export function SettingsDialogBody({
   activeId,
   userBinding,
   userLoadFailed = false,
-  okignoreBinding,
-  okignoreSynced,
+  psignoreBinding,
+  psignoreSynced,
   markdownlintRuleQuery,
 }: SettingsDialogBodyProps) {
   const { t } = useLingui();
@@ -251,7 +251,7 @@ export function SettingsDialogBody({
     return <SkillsManagerSection scope="global" />;
   }
   if (activeId === 'psignore') {
-    return <OkignoreSection binding={okignoreBinding} synced={okignoreSynced} />;
+    return <PsignoreSection binding={psignoreBinding} synced={psignoreSynced} />;
   }
   if (activeId === 'network-access') {
     return <NetworkAccessSection />;

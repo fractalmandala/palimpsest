@@ -88,7 +88,7 @@ describe('resolveBundledSkillDir', () => {
     expect(dirname(d)).toBe(dirname(p));
   });
 
-  test('a co-installed OK Desktop wins on macOS when checkDesktop is on (AC4)', () => {
+  test('a co-installed Palimpsest Desktop wins on macOS when checkDesktop is on (AC4)', () => {
     const home = mkdtempSync(join(tmpdir(), 'ps-resolver-'));
     try {
       const simulated = desktopSkillDir(join(home, 'Applications'), 'discovery');

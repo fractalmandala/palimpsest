@@ -30,7 +30,7 @@ describe('backlink-counts envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('missing docNames query param emits urn:ok:error:invalid-request', async () => {
+  test('missing docNames query param emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/backlink-counts`);
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -39,7 +39,7 @@ describe('backlink-counts envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('docNames');
     }
   });
@@ -55,7 +55,7 @@ describe('backlink-counts envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

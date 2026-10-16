@@ -19,7 +19,7 @@ const NEVER_TRANSLATED = [
   'Claude Agent',
   'Claude Code',
   'Claude CLI',
-  'OK Desktop',
+  'Palimpsest Desktop',
   'CodeMirror',
   'Codex CLI',
   'Antigravity',

@@ -32,7 +32,7 @@ import { subscribeToSettingsSection } from '@/lib/use-settings-route';
 import { cn } from '@/lib/utils';
 import { LINT_PLUGIN_META } from './lint-plugin-meta';
 import {
-  isOkDesktopHost as isOkDesktopHostGate,
+  isPsDesktopHost as isPsDesktopHostGate,
   isSpellcheckLanguageSelectionAvailable,
   isTerminalSettingsAvailable,
 } from './settings-host-gates';
@@ -155,8 +155,8 @@ function SettingsDialogFrame({
     userBinding,
     userSynced,
     userLoadFailed,
-    okignoreBinding,
-    okignoreSynced,
+    psignoreBinding,
+    psignoreSynced,
     projectConfig,
     merged,
   } = config;
@@ -242,7 +242,7 @@ function SettingsDialogFrame({
     };
   }, [fieldFlash]);
 
-  const isOkDesktopHost = isOkDesktopHostGate();
+  const isPsDesktopHost = isPsDesktopHostGate();
   const terminalSettingsAvailable = isTerminalSettingsAvailable();
   const spellcheckLanguagesAvailable = isSpellcheckLanguageSelectionAvailable();
 
@@ -284,7 +284,7 @@ function SettingsDialogFrame({
           label: t`Preferences`,
           userScope: true,
           subsections: [
-            ...(isOkDesktopHost
+            ...(isPsDesktopHost
               ? [
                   {
                     id: 'spellcheck',
@@ -392,7 +392,7 @@ function SettingsDialogFrame({
         },
         { id: 'plugins-manage', label: t`Plugins` },
         ...(isFileProtocolRenderer ? [] : [{ id: 'link-previews', label: t`Link previews` }]),
-        ...(isOkDesktopHost ? [{ id: 'network-access', label: t`Remote control` }] : []),
+        ...(isPsDesktopHost ? [{ id: 'network-access', label: t`Remote control` }] : []),
         { id: 'project-templates', label: t`Templates` },
         { id: 'skills', label: t`Skills Studio` },
         { id: 'psignore', label: t`Ignore patterns` },
@@ -419,7 +419,7 @@ function SettingsDialogFrame({
           ? [{ id: 'claude-desktop', label: t`Claude Desktop` }]
           : [],
     },
-    ...(isOkDesktopHost
+    ...(isPsDesktopHost
       ? ([
           {
             id: 'app',
@@ -513,8 +513,8 @@ function SettingsDialogFrame({
                 activeId={shownId}
                 userBinding={userSynced ? userBinding : null}
                 userLoadFailed={userLoadFailed === true}
-                okignoreBinding={okignoreBinding}
-                okignoreSynced={okignoreSynced}
+                psignoreBinding={psignoreBinding}
+                psignoreSynced={psignoreSynced}
                 markdownlintRuleQuery={ruleQuery}
               />
             </Suspense>

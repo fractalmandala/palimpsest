@@ -2,7 +2,7 @@ import { ProblemDetailsSchema, type ProblemType } from '@palimpsest/core/schemas
 
 type ResolveStrategy = 'mine' | 'theirs' | 'content' | 'delete';
 
-const NO_CONFLICT_TRACKED = 'urn:ok:error:no-conflict-tracked' satisfies ProblemType;
+const NO_CONFLICT_TRACKED = 'urn:ps:error:no-conflict-tracked' satisfies ProblemType;
 
 export type ResolveConflictResult =
   | { ok: true }

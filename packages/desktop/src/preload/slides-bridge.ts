@@ -9,16 +9,16 @@ export interface SlidesBridge {
 export function createSlidesBridge(invoke: IpcInvoker): SlidesBridge {
   return {
     status: async () => {
-      const result = await invoke('ok:slides:dispatch', { kind: 'status' });
+      const result = await invoke('ps:slides:dispatch', { kind: 'status' });
       if (result.kind !== 'status') {
-        throw new Error('ok:slides:dispatch: expected status result');
+        throw new Error('ps:slides:dispatch: expected status result');
       }
       return result;
     },
     open: async (docPath: string) => {
-      const result = await invoke('ok:slides:dispatch', { kind: 'open', docPath });
+      const result = await invoke('ps:slides:dispatch', { kind: 'open', docPath });
       if (result.kind !== 'open') {
-        throw new Error('ok:slides:dispatch: expected open result');
+        throw new Error('ps:slides:dispatch: expected open result');
       }
       return result;
     },

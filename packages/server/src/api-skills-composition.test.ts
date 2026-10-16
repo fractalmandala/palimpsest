@@ -68,7 +68,7 @@ describe('skills contracts over the composed listener', () => {
     expect(res.headers.allow).toBeUndefined();
     expect(res.headers['content-type']).toBe('application/problem+json');
     expect(parseProblem(res.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Use POST to upload a skill.',
     });
   });
@@ -86,7 +86,7 @@ describe('skills contracts over the composed listener', () => {
     await extension.onRequest({ request, response: res });
     expect(captured.status).toBe(403);
     expect(parseProblem(captured.body)).toMatchObject({
-      type: 'urn:ok:error:loopback-required',
+      type: 'urn:ps:error:loopback-required',
       title: 'Local-op endpoints require a loopback connection.',
     });
     expect(request.readableEnded).toBe(false);
@@ -101,7 +101,7 @@ describe('skills contracts over the composed listener', () => {
         body: '{}',
       });
       expect(res.status, `${path}: ${res.body}`).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:invalid-origin');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:invalid-origin');
       expect(res.headers['access-control-allow-origin'], path).toBeUndefined();
     }
     for (const path of ['/api/skill/install', '/api/skill/import']) {
@@ -111,7 +111,7 @@ describe('skills contracts over the composed listener', () => {
         body: '{}',
       });
       expect(loopback.status, `${path}: ${loopback.body}`).toBe(400);
-      expect(parseProblem(loopback.body).type, path).toBe('urn:ok:error:invalid-request');
+      expect(parseProblem(loopback.body).type, path).toBe('urn:ps:error:invalid-request');
       expect(parseProblem(loopback.body).title, path).toBe('Request body is invalid.');
     }
   });
@@ -139,7 +139,7 @@ describe('skills contracts over the composed listener', () => {
       });
       expect(handoff.status).toBe(400);
       expect(parseProblem(handoff.body)).toMatchObject({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         title: 'Request body is not valid JSON.',
       });
       const catalog = await rawRequest(external.port, '/api/skill/install', {
@@ -185,13 +185,13 @@ describe('skills contracts over the composed listener', () => {
       body: JSON.stringify({ name: 'oversized', body: 'x'.repeat(1_048_576) }),
     });
     expect(res.status).toBe(413);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:payload-too-large');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:payload-too-large');
   });
 
   test.each(['GET', 'DELETE'])('skill %s parses scope from the query', async (method) => {
     const res = await rawRequest(server.port, '/api/skill?name=missing&scope=invalid', { method });
     expect(res.status).toBe(400);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:invalid-request');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:invalid-request');
     expect(parseProblem(res.body).title).toContain('scope');
   });
 
@@ -207,7 +207,7 @@ describe('skills contracts over the composed listener', () => {
       expect(res.headers['x-request-id']).toBe('skills-json-contract');
       expect(res.headers['content-type']).toBe('application/problem+json');
       expect(parseProblem(res.body)).toMatchObject({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         title: 'Request body is not valid JSON.',
       });
     },
@@ -225,7 +225,7 @@ describe('skills contracts over the composed listener', () => {
       expect(res.headers['content-type']).toBe('application/problem+json');
       expect(res.headers['x-request-id']).toBe('skills-method-contract');
       expect(parseProblem(res.body)).toMatchObject({
-        type: 'urn:ok:error:method-not-allowed',
+        type: 'urn:ps:error:method-not-allowed',
         status: 405,
       });
     },

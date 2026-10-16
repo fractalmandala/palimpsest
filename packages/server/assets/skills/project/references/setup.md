@@ -1,6 +1,6 @@
 # Setting up Palimpsest
 
-This repository is an Palimpsest (OK) project: its `.md` / `.mdx` files are CRDT documents, and agents work with them through the Palimpsest MCP server. If your agent's `mcp__palimpsest*` tools aren't available, the project just isn't connected on this machine yet. Connect it at whatever depth you need — each rung adds capability, and you can stop at the first one that covers your task.
+This repository is a Palimpsest (OK) project: its `.md` / `.mdx` files are CRDT documents, and agents work with them through the Palimpsest MCP server. If your agent's `mcp__palimpsest*` tools aren't available, the project just isn't connected on this machine yet. Connect it at whatever depth you need — each rung adds capability, and you can stop at the first one that covers your task.
 
 **Canonical, always-current instructions:** <https://github.com/fractalmandala/palimpsest/tree/main/docs/content The rungs below are a quick orientation; the docs are authoritative (release channels and download links move, so this file deliberately points there rather than pinning them).
 
@@ -23,7 +23,7 @@ ps start
 
 ## Rung 3 — Desktop app, optional
 
-For a native editor with the file tree, property panel, and built-in preview, install the OK Desktop app. The quickstart link above has the current download — it tracks the latest release, so grab it there rather than from a pinned URL.
+For a native editor with the file tree, property panel, and built-in preview, install the Palimpsest Desktop app. The quickstart link above has the current download — it tracks the latest release, so grab it there rather than from a pinned URL.
 
 ## Tool visibility — before you conclude the MCP is missing
 

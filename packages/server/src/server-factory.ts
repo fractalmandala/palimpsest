@@ -113,7 +113,7 @@ import {
 import {
   type ContentFilter,
   createContentFilter,
-  isShareableOkArtifact,
+  isShareablePsArtifact,
 } from './content-filter.ts';
 import { isWithinContentDir, safeContentPath } from './content-path.ts';
 import { dropPendingDocs, recordContributor } from './contributor-tracker.ts';
@@ -204,7 +204,7 @@ import {
   isPeerAdmitted,
 } from './ingress-policy.ts';
 import type { LinkAdvisoryPolicy } from './link-advisory-policy.ts';
-import { ensureOkfSchemaFiles } from './lint/write-psf-schemas.ts';
+import { ensurePsfSchemaFiles } from './lint/write-psf-schemas.ts';
 import { createLiveDerivedIndexExtension } from './live-derived-index.ts';
 import { wikiFilePath } from './local-target-assessment.ts';
 import {
@@ -883,7 +883,7 @@ export function createServer(options: ServerOptions): ServerInstance {
     });
     const persisted = project.value.contentRules as PersistedLinterConfig | undefined;
     const base = persisted ? toEffectiveBase(persisted) : DEFAULT_LINTER_CONFIG;
-    ensureOkfSchemaFiles(projectDir, base.plugins.psf);
+    ensurePsfSchemaFiles(projectDir, base.plugins.psf);
     return base;
   }
 
@@ -1066,7 +1066,7 @@ export function createServer(options: ServerOptions): ServerInstance {
   };
   const scopedAtomicFs = contentScopedAtomicFs(assertContentPath);
   function assertConflictContentPath(path: string): void {
-    assertRealpathWithinDir(path, projectDir, { allowShareableOkArtifact: isShareableOkArtifact });
+    assertRealpathWithinDir(path, projectDir, { allowShareablePsArtifact: isShareablePsArtifact });
     const canonical = canonicalContentPath(path);
     const projectPath = toPosix(relative(canonicalContentPath(projectDir), canonical));
     if (
@@ -1075,7 +1075,7 @@ export function createServer(options: ServerOptions): ServerInstance {
         { kind: 'tree', path: authorityScope.path, excluded: [] },
         canonical,
       ) &&
-      isShareableOkArtifact(projectPath)
+      isShareablePsArtifact(projectPath)
     )
       return;
     assertContentPath(canonical);
@@ -4464,7 +4464,7 @@ export function createServer(options: ServerOptions): ServerInstance {
     }
 
     try {
-      const okignorePath = resolve(contentDir, '.psignore');
+      const psignorePath = resolve(contentDir, '.psignore');
       const gitignorePath = resolve(projectDir, '.gitignore');
       let gitInfoExcludePath: string | null = null;
       try {
@@ -4484,18 +4484,18 @@ export function createServer(options: ServerOptions): ServerInstance {
         }
       } catch {}
       const ignorePaths = gitInfoExcludePath
-        ? [okignorePath, gitignorePath, gitInfoExcludePath]
-        : [okignorePath, gitignorePath];
+        ? [psignorePath, gitignorePath, gitInfoExcludePath]
+        : [psignorePath, gitignorePath];
       const ignoreLog = log;
       ignoreLog.info(
-        { okignorePath, gitignorePath, gitInfoExcludePath, ephemeral },
+        { psignorePath, gitignorePath, gitInfoExcludePath, ephemeral },
         '[ignore-watcher] starting multi-path watcher for .psignore + .gitignore (+ .git/info/exclude when present)',
       );
       const ignoreCleanup = ephemeral
         ? null
         : await startMultiPathConfigFileWatcher(ignorePaths, (changedPath, content) => {
             void (async () => {
-              if (changedPath === okignorePath) {
+              if (changedPath === psignorePath) {
                 try {
                   const document = hocuspocus.documents.get(CONFIG_DOC_NAME_OKIGNORE) ?? null;
                   const outcome = applyExternalConfigChange(
@@ -4547,7 +4547,7 @@ export function createServer(options: ServerOptions): ServerInstance {
         configFileWatcherCleanups.push({ docName: '__ignore-files__', cleanup: ignoreCleanup });
         configFileWatcherResyncs.set(CONFIG_DOC_NAME_OKIGNORE, ignoreCleanup.resync);
         ignoreLog.info(
-          { okignorePath, gitignorePath },
+          { psignorePath, gitignorePath },
           '[ignore-watcher] multi-path watcher started',
         );
       }
@@ -4567,7 +4567,7 @@ export function createServer(options: ServerOptions): ServerInstance {
 
     const indexesStartMono = performance.now();
     try {
-      await withSpan('ok.boot.indexes', undefined, async () => {
+      await withSpan('ps.boot.indexes', undefined, async () => {
         const deletedDocNames = await derivedIndexStartup.offlineDeletionsReady;
         let tombstonedOffline = 0;
         for (const deletedDocName of deletedDocNames) {
@@ -4638,7 +4638,7 @@ export function createServer(options: ServerOptions): ServerInstance {
             }
           }, IN_PLACE_RESCAN_DEBOUNCE_MS);
         };
-        watcher = await withSpan('ok.boot.seed-walk', undefined, async () =>
+        watcher = await withSpan('ps.boot.seed-walk', undefined, async () =>
           startWatcher(canonicalContentDir, onDiskEvent, contentFilter, {
             onRawBatch,
             onRecoveryComplete: () => derivedDocumentIndex.recordInventoryReconciled(),

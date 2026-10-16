@@ -52,7 +52,7 @@ describe('createMcpDispatch rejected-handle error surface', () => {
     expect(res.status).toBe(500);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type?: string; status?: number };
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.status).toBe(500);
   });
 

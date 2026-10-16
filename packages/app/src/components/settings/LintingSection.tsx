@@ -4,17 +4,17 @@ import type { ConfigPatch } from '@palimpsest/core/config/schema';
 import { PALIMPSEST_SKILLS_REPO } from '@palimpsest/core/constants/skills';
 import {
   type AppliesToPatternSummary,
-  assertNeverOkfRuleGroupId,
-  assertNeverOkfRuleId,
+  assertNeverPsfRuleGroupId,
+  assertNeverPsfRuleId,
   type FrontmatterSchemaMapping,
   findZeroMatchAppliesToPatterns,
   isFrontmatterSchemaAsset,
-  isOkfRuleEnabled,
+  isPsfRuleEnabled,
   type LintPluginId,
   PSF_RULE_GROUPS,
   PSF_RULE_IDS,
-  type OkfRuleGroupId,
-  type OkfRuleId,
+  type PsfRuleGroupId,
+  type PsfRuleId,
   summarizeAppliesTo,
 } from '@palimpsest/core/markdown/lint';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
@@ -129,7 +129,7 @@ function PluginManageDescription({ id }: { id: LintPluginId }) {
         </Trans>
       );
     case 'psf':
-      return <Trans>Keeps your knowledge base aligned with the Palimpsest Format.</Trans>;
+      return <Trans>Keeps your knowledge base aligned with the OpenKnowledge Format.</Trans>;
   }
 }
 
@@ -346,7 +346,7 @@ export function MarkdownlintPluginSection({
   );
 }
 
-function OkfRuleDescription({ id }: { id: OkfRuleId }) {
+function PsfRuleDescription({ id }: { id: PsfRuleId }) {
   switch (id) {
     case 'no-wiki-links':
       return (
@@ -426,11 +426,11 @@ function OkfRuleDescription({ id }: { id: OkfRuleId }) {
         </Trans>
       );
     default:
-      return assertNeverOkfRuleId(id);
+      return assertNeverPsfRuleId(id);
   }
 }
 
-function OkfGroupLabel({ id }: { id: OkfRuleGroupId }) {
+function PsfGroupLabel({ id }: { id: PsfRuleGroupId }) {
   switch (id) {
     case 'structure':
       return <Trans>Document structure</Trans>;
@@ -439,11 +439,11 @@ function OkfGroupLabel({ id }: { id: OkfRuleGroupId }) {
     case 'project':
       return <Trans>Project</Trans>;
     default:
-      return assertNeverOkfRuleGroupId(id);
+      return assertNeverPsfRuleGroupId(id);
   }
 }
 
-function OkfGroupNote({ id }: { id: OkfRuleGroupId }) {
+function PsfGroupNote({ id }: { id: PsfRuleGroupId }) {
   if (id !== 'project') return null;
   return (
     <p className="text-sm text-muted-foreground">
@@ -455,7 +455,7 @@ function OkfGroupNote({ id }: { id: OkfRuleGroupId }) {
   );
 }
 
-function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: string }) {
+function PsfRecommendedSkillCard({ packId, name }: { packId: string; name: string }) {
   const { t } = useLingui();
   const skills = useSkills();
   const openSkill = useOpenSkill();
@@ -497,7 +497,7 @@ function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: strin
       <Card size="sm" data-testid="settings-psf-recommended-skill">
         <CardHeader>
           <CardTitle>
-            <Trans>Palimpsest Format guidance</Trans>
+            <Trans>OpenKnowledge Format guidance</Trans>
           </CardTitle>
           <CardDescription>{description}</CardDescription>
           {status === 'installed' ? (
@@ -554,11 +554,11 @@ function OkfRecommendedSkillCard({ packId, name }: { packId: string; name: strin
   );
 }
 
-export function OkfPluginSection() {
+export function PsfPluginSection() {
   const { t } = useLingui();
   const { contentRules, bindingReady, write } = useLinterConfig();
   const rules = contentRules?.psf?.rules;
-  const enabledCount = PSF_RULE_IDS.filter((id) => isOkfRuleEnabled(rules, id)).length;
+  const enabledCount = PSF_RULE_IDS.filter((id) => isPsfRuleEnabled(rules, id)).length;
   const generateIndex = contentRules?.psf?.generate?.index === true;
   const generatedIndexSettings = useGeneratedIndexSettings();
   const generateIndexEnabled = generatedIndexSettings.status?.enabled ?? generateIndex;
@@ -580,8 +580,8 @@ export function OkfPluginSection() {
     setConfirmingGenerateIndex(false);
   }
 
-  function toggleRule(id: OkfRuleId, next: boolean): void {
-    const rules: Partial<Record<OkfRuleId, boolean | null>> = {};
+  function toggleRule(id: PsfRuleId, next: boolean): void {
+    const rules: Partial<Record<PsfRuleId, boolean | null>> = {};
     rules[id] = next ? null : false;
     if (write({ psf: { rules } })) {
       emitLintConfigChanged();
@@ -601,7 +601,7 @@ export function OkfPluginSection() {
         beta={pluginIsBeta('psf')}
         docUrl={pluginDocUrl('psf')}
       >
-        <Trans>Keeps your knowledge base aligned with the Palimpsest Format.</Trans>
+        <Trans>Keeps your knowledge base aligned with the OpenKnowledge Format.</Trans>
       </SettingsSectionHeader>
 
       {recommendedSkills.length > 0 ? (
@@ -610,7 +610,7 @@ export function OkfPluginSection() {
             <Trans>Recommended agent skill</Trans>
           </h4>
           {recommendedSkills.map((skill) => (
-            <OkfRecommendedSkillCard key={skill.name} packId={skill.packId} name={skill.name} />
+            <PsfRecommendedSkillCard key={skill.name} packId={skill.packId} name={skill.name} />
           ))}
         </div>
       ) : null}
@@ -775,12 +775,12 @@ export function OkfPluginSection() {
             data-testid={`settings-psf-rule-group-${group.id}`}
           >
             <h5 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              <OkfGroupLabel id={group.id} />
+              <PsfGroupLabel id={group.id} />
             </h5>
-            <OkfGroupNote id={group.id} />
+            <PsfGroupNote id={group.id} />
             <div className="divide-y rounded-md border">
               {group.ids.map((id) => {
-                const on = isOkfRuleEnabled(rules, id);
+                const on = isPsfRuleEnabled(rules, id);
                 return (
                   <div key={id} className="flex items-center justify-between gap-3 px-3 py-2">
                     <div className="min-w-0">
@@ -791,7 +791,7 @@ export function OkfPluginSection() {
                         {id}
                       </Label>
                       <p className="text-sm text-muted-foreground">
-                        <OkfRuleDescription id={id} />
+                        <PsfRuleDescription id={id} />
                       </p>
                     </div>
                     <Switch

@@ -61,7 +61,7 @@ describe('seed-install-pack-skill envelope', () => {
     expect(res.status).toBe(400);
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
-    if (parsed.success) expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+    if (parsed.success) expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('method-not-allowed on GET advertises POST', async () => {

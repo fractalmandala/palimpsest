@@ -345,7 +345,7 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
         expect(existsSync(join(project, 'missing-content'))).toBe(false);
         expect(result.code, result.stderr).toBe(1);
         expect(ProblemDetailsSchema.parse(JSON.parse(result.stdout))).toMatchObject({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           status: 404,
           title: expect.stringContaining('Set content.dir to an existing directory.'),
         });
@@ -380,7 +380,7 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
       res.writeHead(404, { 'content-type': 'application/problem+json' });
       res.end(
         JSON.stringify({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           status: 404,
           title: `Content directory ${JSON.stringify(contentDir)} was not found. Set content.dir to an existing directory.`,
           instance: 'urn:uuid:00000000-0000-4000-8000-000000000001',
@@ -404,7 +404,7 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
         const result = await cli(project, args);
         expect(result.code, result.stderr).toBe(1);
         expect(ProblemDetailsSchema.parse(JSON.parse(result.stdout))).toMatchObject({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           status: 404,
           title: expect.stringContaining('Set content.dir to an existing directory.'),
         });
@@ -472,7 +472,7 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
         ]);
         expect(result.code, result.stderr).toBe(1);
         expect(ProblemDetailsSchema.parse(JSON.parse(result.stdout))).toMatchObject({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           title: auditScopeNotFoundTitle(path),
           status: 404,
         });
@@ -498,7 +498,7 @@ describe('CLI scope parity across real process, HTTP and MCP boundaries', () => 
         expect(result.code, result.stderr).toBe(1);
         expect(result.stdout.trim(), result.stderr).not.toBe('');
         expect(ProblemDetailsSchema.parse(JSON.parse(result.stdout))).toMatchObject({
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           status: 404,
           title: auditScopeNotFoundTitle(path),
         });

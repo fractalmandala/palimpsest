@@ -1,5 +1,5 @@
 import type { BrokenLinkReason } from '../../schemas/api/agent-write.ts';
-import type { OkfRuleId } from './psf-rule-meta.ts';
+import type { PsfRuleId } from './psf-rule-meta.ts';
 
 export const LINT_PLUGIN_IDS = ['markdownlint', 'frontmatter', 'psf'] as const;
 export type LintPluginId = (typeof LINT_PLUGIN_IDS)[number];
@@ -118,9 +118,9 @@ export interface FrontmatterSlice {
   schemas: ResolvedFrontmatterSchemaEntry[];
 }
 
-export interface OkfSlice {
+export interface PsfSlice {
   enabled: boolean;
-  rules?: Partial<Record<OkfRuleId, boolean>>;
+  rules?: Partial<Record<PsfRuleId, boolean>>;
   generate?: { index?: boolean };
 }
 

@@ -344,7 +344,7 @@ describe('POST /api/trash/cleanup — validation', () => {
     const result = await callApi(dir, { kind: 'file', path: '/etc/passwd' });
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as { type: string };
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('rejects path with traversal segment', async () => {
@@ -358,7 +358,7 @@ describe('POST /api/trash/cleanup — validation', () => {
     const result = await callApi(dir, { kind: 'file', path: '__system__' });
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as { type: string };
-    expect(body.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(body.type).toBe('urn:ps:error:reserved-doc-name');
   });
 
   test('rejects invalid kind (Zod fails on enum)', async () => {
@@ -379,7 +379,7 @@ describe('POST /api/trash/cleanup — validation', () => {
     const result = await callApi(dir, { kind: 'file', path: 'x', summary: 42 });
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as { type: string; detail?: string };
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
   });
 });
 

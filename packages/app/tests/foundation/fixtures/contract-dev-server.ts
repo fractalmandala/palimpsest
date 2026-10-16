@@ -25,9 +25,9 @@ if (request === undefined) {
   throw new Error(`the contract dev server needs ${TEST_SERVER_STARTUP_ENV}`);
 }
 
-const RESTART_PORT = Symbol.for('ok:contract-server:restart-port');
-const GENERATION = Symbol.for('ok:contract-server:generation');
-const EXCLUSIVE_RESOURCE_HELD = Symbol.for('ok:contract-server:exclusive-resource-held');
+const RESTART_PORT = Symbol.for('ps:contract-server:restart-port');
+const GENERATION = Symbol.for('ps:contract-server:generation');
+const EXCLUSIVE_RESOURCE_HELD = Symbol.for('ps:contract-server:exclusive-resource-held');
 const contractProcess = globalThis as {
   [RESTART_PORT]?: number;
   [GENERATION]?: number;
@@ -46,7 +46,7 @@ const EMPTY_SERVER_RESET_RESIDUE = {
 function contractControl(): Plugin {
   let forged = false;
   return {
-    name: 'ok:contract-server-control',
+    name: 'ps:contract-server-control',
     apply: 'serve',
     configureServer(server) {
       const generation = (contractProcess[GENERATION] ?? 0) + 1;
@@ -89,7 +89,7 @@ function contractReadiness(): Plugin {
   const hocuspocus = new Hocuspocus({ quiet: true });
   const sockets = new WebSocketServer({ noServer: true });
   return {
-    name: 'ok:contract-server-readiness',
+    name: 'ps:contract-server-readiness',
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use(CONTRACT_SERVER_FAIL_READINESS_PATH, (req, res) => {
@@ -143,7 +143,7 @@ function contractReadiness(): Plugin {
 
 function contractExclusiveResource(): Plugin {
   return {
-    name: 'ok:contract-server-exclusive-resource',
+    name: 'ps:contract-server-exclusive-resource',
     apply: 'serve',
     configureServer(server) {
       if (contractProcess[EXCLUSIVE_RESOURCE_HELD] === true) {

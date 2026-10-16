@@ -22,7 +22,7 @@ const PROBE_SOURCE = [
 ].join('\n');
 
 const probeEntryPlugin: Plugin = {
-  name: 'ok:locale-chunk-probe',
+  name: 'ps:locale-chunk-probe',
   resolveId(id) {
     return id === PROBE_ENTRY ? RESOLVED_PROBE_ENTRY : null;
   },

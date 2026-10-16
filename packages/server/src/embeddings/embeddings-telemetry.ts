@@ -22,7 +22,7 @@ let _queryTotal: Counter | null = null;
 let _queryEmbedDuration: Histogram | null = null;
 
 function tokensCounter(): Counter {
-  _tokens ||= getMeter().createCounter('ok.embeddings.tokens_total', {
+  _tokens ||= getMeter().createCounter('ps.embeddings.tokens_total', {
     description:
       'Embeddings tokens billed, by role. Bounded label: role ∈ {query, document}. Makes spend legible; never includes content.',
   });
@@ -30,7 +30,7 @@ function tokensCounter(): Counter {
 }
 
 function errorsCounter(): Counter {
-  _errors ||= getMeter().createCounter('ok.embeddings.provider_errors_total', {
+  _errors ||= getMeter().createCounter('ps.embeddings.provider_errors_total', {
     description:
       'Embeddings provider failures, by reason. Bounded label: reason ∈ {rate_limit, timeout, http_error, network, dims_mismatch, malformed_response}.',
   });
@@ -38,7 +38,7 @@ function errorsCounter(): Counter {
 }
 
 function requestDurationHist(): Histogram {
-  _requestDuration ||= getMeter().createHistogram('ok.embeddings.request_duration_ms', {
+  _requestDuration ||= getMeter().createHistogram('ps.embeddings.request_duration_ms', {
     description: 'Wall-clock duration of one embeddings API request. Bounded label: role.',
     unit: 'ms',
   });
@@ -46,7 +46,7 @@ function requestDurationHist(): Histogram {
 }
 
 function queryTotalCounter(): Counter {
-  _queryTotal ||= getMeter().createCounter('ok.search.semantic_query_total', {
+  _queryTotal ||= getMeter().createCounter('ps.search.semantic_query_total', {
     description:
       'Semantic-requested searches, by outcome and caller surface. Bounded labels: outcome ∈ {applied, no_match, warming, incapable, provider_error}, source ∈ {omnibar, mcp, http}. The omnibar/mcp split separates interactive cost from agent cost.',
   });
@@ -54,7 +54,7 @@ function queryTotalCounter(): Counter {
 }
 
 function queryEmbedDurationHist(): Histogram {
-  _queryEmbedDuration ||= getMeter().createHistogram('ok.search.semantic_query_embed_ms', {
+  _queryEmbedDuration ||= getMeter().createHistogram('ps.search.semantic_query_embed_ms', {
     description: 'Wall-clock latency of the per-query embed on the semantic search path.',
     unit: 'ms',
   });

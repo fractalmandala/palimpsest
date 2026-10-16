@@ -49,7 +49,7 @@ export function createContentDispatch({
       } catch (err) {
         log.error({ err }, `Unhandled ${label} middleware error`);
         if (!res.writableEnded && !res.headersSent) {
-          errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+          errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
             handler: 'mcp-mount',
             cause: err,
           });
@@ -61,13 +61,13 @@ export function createContentDispatch({
     const runContent = (onMiss: () => void): void => {
       if (ephemeral === true && contentAssetMiddleware !== undefined) {
         if (!isPeerAdmitted(req.socket.remoteAddress, ingressPolicy)) {
-          errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+          errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
             handler: 'content-asset-gate',
           });
           return;
         }
         if (!isHostAdmitted(req.headers.host, ingressPolicy)) {
-          errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+          errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
             handler: 'content-asset-gate',
             detail: HOST_NOT_ADMITTED_REMEDIATION,
           });
@@ -84,7 +84,7 @@ export function createContentDispatch({
         reactShellMiddleware === undefined
           ? `This server is running without the web UI. Restart it with plain \`${currentCliCommandName()} start\` to serve the editor. `
           : '';
-      errorResponse(res, 404, 'urn:ok:error:not-found', 'Not found.', {
+      errorResponse(res, 404, 'urn:ps:error:not-found', 'Not found.', {
         handler: 'mcp-mount',
         detail: `${uiHint}No handler for ${url ?? '/'}`,
       });
@@ -101,7 +101,7 @@ export function createContentDispatch({
       runContent(() => runShell(notFound));
       return;
     }
-    errorResponse(res, 404, 'urn:ok:error:not-found', 'Not found.', {
+    errorResponse(res, 404, 'urn:ps:error:not-found', 'Not found.', {
       handler: 'mcp-mount',
       detail: `This server is running without the web UI. Restart it with plain \`${currentCliCommandName()} start\` to serve the editor. No handler for ${url ?? '/'}`,
     });

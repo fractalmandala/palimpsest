@@ -34,15 +34,15 @@ describe('M3 update-listener subscribe/unsubscribe pattern', () => {
   test('onUpdateDownloaded subscription registers on correct channel', () => {
     const ipc = makeFakeIpc();
     const cb = vi.fn(() => {});
-    createUpdateSubscription(ipc, 'ok:update:downloaded', cb);
+    createUpdateSubscription(ipc, 'ps:update:downloaded', cb);
     expect(ipc.on).toHaveBeenCalledTimes(1);
-    expect(ipc.on.mock.calls[0]?.[0]).toBe('ok:update:downloaded');
+    expect(ipc.on.mock.calls[0]?.[0]).toBe('ps:update:downloaded');
   });
 
   test('unsubscribe closure detaches the listener by reference identity', () => {
     const ipc = makeFakeIpc();
     const cb = vi.fn(() => {});
-    const unsubscribe = createUpdateSubscription(ipc, 'ok:update:downloaded', cb);
+    const unsubscribe = createUpdateSubscription(ipc, 'ps:update:downloaded', cb);
 
     const registeredWrapper = ipc.on.mock.calls[0]?.[1];
     expect(registeredWrapper).toBeDefined();
@@ -50,7 +50,7 @@ describe('M3 update-listener subscribe/unsubscribe pattern', () => {
     unsubscribe();
 
     expect(ipc.removeListener).toHaveBeenCalledTimes(1);
-    expect(ipc.removeListener.mock.calls[0]?.[0]).toBe('ok:update:downloaded');
+    expect(ipc.removeListener.mock.calls[0]?.[0]).toBe('ps:update:downloaded');
     expect(ipc.removeListener.mock.calls[0]?.[1]).toBe(registeredWrapper);
   });
 
@@ -59,7 +59,7 @@ describe('M3 update-listener subscribe/unsubscribe pattern', () => {
     const cb = vi.fn(() => {});
     const unsubscribe = createUpdateSubscription<{ version: string }>(
       ipc,
-      'ok:update:downloaded',
+      'ps:update:downloaded',
       cb,
     );
     const registeredWrapper = ipc.on.mock.calls[0]?.[1] as FakeListener | undefined;
@@ -70,18 +70,18 @@ describe('M3 update-listener subscribe/unsubscribe pattern', () => {
 
     unsubscribe();
 
-    expect(ipc.removeListener).toHaveBeenCalledWith('ok:update:downloaded', registeredWrapper);
+    expect(ipc.removeListener).toHaveBeenCalledWith('ps:update:downloaded', registeredWrapper);
   });
 
   test('all update listeners follow the same pattern (channel-name parametric)', () => {
     const channels = [
-      'ok:update:downloaded',
-      'ok:update:relaunching',
-      'ok:update:relaunch-failed',
-      'ok:update:whats-new',
-      'ok:update:whats-new-dismissed',
-      'ok:update:stuck-hint',
-      'ok:update:manual-check',
+      'ps:update:downloaded',
+      'ps:update:relaunching',
+      'ps:update:relaunch-failed',
+      'ps:update:whats-new',
+      'ps:update:whats-new-dismissed',
+      'ps:update:stuck-hint',
+      'ps:update:manual-check',
     ] as const;
     for (const channel of channels) {
       const ipc = makeFakeIpc();
@@ -96,13 +96,13 @@ describe('M3 update-listener subscribe/unsubscribe pattern', () => {
   test('manual-check payload is delivered and unsubscribed by wrapper identity', () => {
     const ipc = makeFakeIpc();
     const cb = vi.fn<(info: { phase: 'started' | 'settled' }) => void>(() => {});
-    const unsubscribe = createUpdateSubscription(ipc, 'ok:update:manual-check', cb);
+    const unsubscribe = createUpdateSubscription(ipc, 'ps:update:manual-check', cb);
     const registeredWrapper = ipc.on.mock.calls[0]?.[1] as FakeListener | undefined;
 
     registeredWrapper?.(null, { phase: 'started' });
     expect(cb).toHaveBeenCalledWith({ phase: 'started' });
 
     unsubscribe();
-    expect(ipc.removeListener).toHaveBeenCalledWith('ok:update:manual-check', registeredWrapper);
+    expect(ipc.removeListener).toHaveBeenCalledWith('ps:update:manual-check', registeredWrapper);
   });
 });

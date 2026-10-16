@@ -282,7 +282,7 @@ describe('createAgentIntegrationsRoutes table', () => {
     expect(handled).toBe(true);
     expect(captured.status, captured.body).toBe(403);
     expect(parseProblem(captured.body)).toMatchObject({
-      type: 'urn:ok:error:loopback-required',
+      type: 'urn:ps:error:loopback-required',
       title: 'Local-op endpoints require a loopback connection.',
     });
     expect(gateCalls).toBe(1);
@@ -323,7 +323,7 @@ describe('createAgentIntegrationsRoutes table', () => {
     expect(handled).toBe(true);
     expect(captured.status, captured.body).toBe(400);
     expect(parseProblem(captured.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Request body is invalid.',
     });
     expect(principalReads).toBe(0);

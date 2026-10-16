@@ -1,5 +1,5 @@
 <p>
-  <a  href="https://github.com/fractalmandala/palimpsest"><picture>
+  <a href="https://github.com/fractalmandala/palimpsest"><picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/ps-wordmark-dark.svg">
     <img src="assets/ps-wordmark.svg" alt="Palimpsest" width="260">
   </picture></a>
@@ -11,15 +11,11 @@
 </p>
 
 <div >
-  <a href="https://github.com/fractalmandala/palimpsest">website</a>
+  <a href="https://github.com/fractalmandala/palimpsest">repository</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/fractalmandala/palimpsest/download">desktop app</a>
+  <a href="https://github.com/fractalmandala/palimpsest/releases">desktop app</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/fractalmandala/palimpsest/tree/main/docs/content">web UI + cli</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://x.com/Palimpsest">𝕏</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://discord.gg/VRKk2EaGHN">discord</a>
+  <a href="https://github.com/fractalmandala/palimpsest/tree/main/docs/content">docs</a>
 </div>
 
 <br/>
@@ -31,11 +27,13 @@
   style="border-radius: 10px"
 />
 
+> **Fork notice:** Palimpsest is an independent fork of [OpenKnowledge](https://github.com/inkeep/open-knowledge) by [Inkeep](https://inkeep.com). See [NOTICE.md](./NOTICE.md) for the upstream acknowledgement and license terms. Brand assets (logo, wordmark, hero image) are being replaced — see [assets/brand/](./assets/brand/).
+
 # Features
 
 Highlights:
-- Full true **WYSIWYG** so that editing markdown files feels like editing a Google Doc or Notion page. 
-- **Desktop app** (macOS, Windows, Linux) and **web UI** with file navigator, search, tabs, graph wiki link viewer, and more. 
+- Full true **WYSIWYG** so that editing markdown files feels like editing a Google Doc or Notion page.
+- **Desktop app** (macOS, Windows, Linux) and **web UI** with file navigator, search, tabs, graph wiki link viewer, and more.
 - Integrated **side-by-side AI-editing** with **Claude, Codex, OpenCode, Pi and others**. Can be used with any harness/agent via MCP/CLI.
 - Out-of-the-box **MCP**, **skills**, and **agentic search** for LLM Wikis, second brains, and knowledge graphs.
 - No-code **Team sharing** and **Auto-sync** powered by git/GitHub under the hood.
@@ -43,7 +41,7 @@ Highlights:
 
 ## Install
 
-**Desktop app** — download it from [palimpsest.ai/download](https://github.com/fractalmandala/palimpsest/download) (or grab an installer from the [latest release](https://github.com/fractalmandala/palimpsest/releases/latest)):
+**Desktop app** — download it from the [latest release](https://github.com/fractalmandala/palimpsest/releases/latest):
 
 - **macOS** (Apple Silicon): open the DMG and drag **Palimpsest** to **Applications**.
 - **Windows 10+** (x64 / Arm64): run the Setup installer — per-user, no admin prompt.
@@ -55,14 +53,16 @@ Highlights:
 npm install -g @palimpsest/cli
 cd your-project
 ps init          # scaffold the project + wire up your AI editors (Claude Code, Claude Desktop, Cursor, Codex, OpenCode, OpenClaw)
-ps start --open  # serve the web editor and open it in your browser
+ps start         # serve the web editor and open it in your browser (pass --no-open-browser to skip)
 ```
+
+The `palimpsest` command is also installed as an alias of `ps`.
 
 ## Usage
 
-Use Palimpsest by opening any existing folder on your computer that contains markdown or mdx files. The app can be used with existing codebases, wikis, Obsidian vaults, etc. 
+Use Palimpsest by opening any existing folder on your computer that contains markdown or mdx files. The app can be used with existing codebases, wikis, Obsidian vaults, etc.
 
-Think of it as Notion meets VS Code. 
+Think of it as Notion meets VS Code.
 
 You can use it simply as a rich, WYSIWYG markdown editor to start. For existing files or plain notes/docs.
 
@@ -70,9 +70,9 @@ To get more complex, you can use the starter packs to create LLM Wikis, second b
 
 Either way, the app will walk you through installing the MCP and skills for agent harnesses detected on your computer. These are designed to help agents with enriched search + authoring of documents.
 
-Git/GitHub based sync and sharing can optionally be enabled. 
+Git/GitHub based sync and sharing can optionally be enabled.
 
-Docs for general usage: <https://github.com/fractalmandala/palimpsest/docs>.
+Docs for general usage: <https://github.com/fractalmandala/palimpsest/tree/main/docs/content>.
 
 ## Contributions
 
@@ -82,16 +82,12 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ## License
 
-Palimpsest is licensed under [GNU General Public License v3.0 or later](./LICENSE), an OSI-Approved open source license.
+Palimpsest is licensed under [GNU General Public License v3.0 or later](./LICENSE), an OSI-Approved open source license, inherited from its upstream project.
 
 ## Community & Support
 
-Feel free to <a href="https://github.com/fractalmandala/palimpsest/issues/new/choose">file an issue</a> or ask questions on the <a href="https://discord.gg/VRKk2EaGHN">Discord</a> community. We're always looking for ideas and requests.
+Feel free to <a href="https://github.com/fractalmandala/palimpsest/issues/new/choose">file an issue</a>. We're always looking for ideas and requests.
 
 <p>
   ⭐️ If you'd like to support this project, consider <a href="https://github.com/fractalmandala/palimpsest">starring the repo</a> ⭐️
-</p>
-
-<p>
-  🔔 Follow us on <a href="https://x.com/Palimpsest">𝕏</a> for product updates. 🔔
 </p>

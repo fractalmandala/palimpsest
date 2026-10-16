@@ -922,7 +922,7 @@ describe('CommandPalette DOM behavior', () => {
     fireEvent.click(screen.getByTestId('command-palette-worktree-feature-x'));
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        'This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened.',
+        'This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened.',
       ),
     );
     expect(refreshWorktreesMock).toHaveBeenCalledTimes(1);

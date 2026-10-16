@@ -1,13 +1,13 @@
 import { realpathSync } from 'node:fs';
 import { basename, isAbsolute } from 'node:path';
 
-import type { LocalOpOkInitResponse } from '@palimpsest/core';
+import type { LocalOpPsInitResponse } from '@palimpsest/core';
 import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
 import { initContent, isProjectRoot } from '@palimpsest/server';
 
-const inFlight = new Map<string, Promise<LocalOpOkInitResponse>>();
+const inFlight = new Map<string, Promise<LocalOpPsInitResponse>>();
 
-export async function runOkInit(projectPath: string): Promise<LocalOpOkInitResponse> {
+export async function runPsInit(projectPath: string): Promise<LocalOpPsInitResponse> {
   if (typeof projectPath !== 'string' || projectPath.length === 0) {
     return {
       ok: false,
@@ -59,7 +59,7 @@ export async function runOkInit(projectPath: string): Promise<LocalOpOkInitRespo
     return existing;
   }
 
-  const task = (async (): Promise<LocalOpOkInitResponse> => {
+  const task = (async (): Promise<LocalOpPsInitResponse> => {
     try {
       initContent(canonicalPath);
       console.warn(`[ps-init] action=init project=${basename(canonicalPath)} result=success`);

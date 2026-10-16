@@ -8,7 +8,7 @@ import { enumerateAgentPluginsRoot } from './plugin-providers/manifest-providers
 import { enumeratePluginProvider } from './plugin-providers/registry.ts';
 import type { CatalogSkill, PsPack } from './schema.ts';
 import { PS_PACK_SCHEMA_VERSION } from './schema.ts';
-import { catalogRawScopeToOkScope, isDetectedSkillInProject } from './scope.ts';
+import { catalogRawScopeToPsScope, isDetectedSkillInProject } from './scope.ts';
 
 export interface EnumerateOptions {
   home?: string;
@@ -70,7 +70,7 @@ function dedupeSkills(
 ): CatalogSkill[] {
   const byIdentity = new Map<string, { winner: RawSkill; harnesses: Set<string> }>();
   for (const s of raw) {
-    const scope = catalogRawScopeToOkScope(s.provenance.scope);
+    const scope = catalogRawScopeToPsScope(s.provenance.scope);
     const projectPath = scope === 'project' ? (s.provenance.projectPath ?? '') : '';
     const key = `${scope}\0${projectPath}\0${s.name}\0${contentIdentity(s, hashOf)}`;
     const cur = byIdentity.get(key);
@@ -86,8 +86,8 @@ function dedupeSkills(
     .sort(
       (a, b) =>
         a.name.localeCompare(b.name) ||
-        catalogRawScopeToOkScope(a.provenance.scope).localeCompare(
-          catalogRawScopeToOkScope(b.provenance.scope),
+        catalogRawScopeToPsScope(a.provenance.scope).localeCompare(
+          catalogRawScopeToPsScope(b.provenance.scope),
         ) ||
         a.home.localeCompare(b.home),
     );
@@ -184,7 +184,7 @@ function enumerateProjectHarnessSkills(projectDir: string): SkillBundle[] {
   for (const h of projectHarnessHomes(projectDir)) {
     try {
       for (const bundle of enumerateSkillDir(h.dir, h.harness)) {
-        const skills = bundle.skills.filter((s) => !isOkOwnedProjection(s, psSkillsRoot));
+        const skills = bundle.skills.filter((s) => !isPsOwnedProjection(s, psSkillsRoot));
         if (skills.length === 0) continue;
         out.push({ ...bundle, skills: skills.map((s) => stampProjectScope(s, projectDir)) });
       }
@@ -203,7 +203,7 @@ function stampProjectScope(s: RawSkill, projectDir: string): RawSkill {
   return { ...s, provenance: { ...s.provenance, scope: 'project', projectPath: projectDir } };
 }
 
-function isOkOwnedProjection(s: RawSkill, psSkillsRoot: string): boolean {
+function isPsOwnedProjection(s: RawSkill, psSkillsRoot: string): boolean {
   if (s.name.startsWith(PS_OWNED_SKILL_PREFIX)) return true;
   const real = realOrSelf(s.home);
   return real === psSkillsRoot || real.startsWith(psSkillsRoot + sep);

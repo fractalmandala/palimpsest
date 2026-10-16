@@ -121,7 +121,7 @@ describe('onRequest request identity + access log', () => {
       origin: 'https://evil.example.com',
     });
     expect(captured.status).toBe(403);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:invalid-origin');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:invalid-origin');
     expect(captured.setHeaders['x-request-id']).toMatch(UUID_RE);
   });
 
@@ -225,7 +225,7 @@ describe('onRequest request identity + access log', () => {
       const surfaces = exporter
         .getFinishedSpans()
         .filter((span) => span.name.startsWith('HTTP '))
-        .map((span) => span.attributes['ok.client.surface']);
+        .map((span) => span.attributes['ps.client.surface']);
       expect(surfaces).toEqual(['embedded:codex', 'unknown', undefined]);
     } finally {
       await provider.shutdown();

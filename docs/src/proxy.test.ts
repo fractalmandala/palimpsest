@@ -7,64 +7,53 @@ function run(host: string, pathAndQuery: string) {
   return proxy(req);
 }
 
-const APEX = 'palimpsest.ai';
-const WWW = 'www.palimpsest.ai';
+// FORK: no canonical docs host exists, so the proxy performs no host
+// canonicalization — every host passes through to negotiation below.
+const HOST = 'example.com';
 const AASA = '/.well-known/apple-app-site-association';
 
-describe('proxy: www -> apex canonicalization', () => {
-  test('www + AASA passes through (no redirect) so Apple gets a direct 200', () => {
-    const res = run(WWW, AASA);
+describe('proxy: no host canonicalization', () => {
+  test('AASA passes through (no redirect) so Apple gets a direct 200', () => {
+    const res = run(HOST, AASA);
     expect(res.headers.get('location')).toBeNull();
     expect(res.status).toBe(200);
   });
 
-  test('the whole /.well-known/* prefix is excluded on www, not just AASA', () => {
-    const res = run(WWW, '/.well-known/assetlinks.json');
+  test('the whole /.well-known/* prefix is excluded, not just AASA', () => {
+    const res = run(HOST, '/.well-known/assetlinks.json');
     expect(res.headers.get('location')).toBeNull();
     expect(res.status).toBe(200);
   });
 
-  test('www + a normal page redirects 308 to apex', () => {
-    const res = run(WWW, '/docs/get-started/quickstart');
-    expect(res.status).toBe(308);
-    expect(res.headers.get('location')).toBe(`https://${APEX}/docs/get-started/quickstart`);
-  });
-
-  test('www + root redirects 308 to apex root', () => {
-    const res = run(WWW, '/');
-    expect(res.status).toBe(308);
-    expect(res.headers.get('location')).toBe(`https://${APEX}/`);
-  });
-
-  test('www redirect preserves the query string', () => {
-    const res = run(WWW, '/d/abc123?ref=slack');
-    expect(res.status).toBe(308);
-    expect(res.headers.get('location')).toBe(`https://${APEX}/d/abc123?ref=slack`);
-  });
-
-  test('apex + a normal page is untouched (no redirect)', () => {
-    const res = run(APEX, '/docs/get-started/quickstart');
+  test('a normal page is untouched (no redirect)', () => {
+    const res = run(HOST, '/docs/get-started/quickstart');
     expect(res.headers.get('location')).toBeNull();
     expect(res.status).toBe(200);
   });
 
-  test('apex + AASA is untouched (the working host stays working)', () => {
-    const res = run(APEX, AASA);
+  test('root is untouched (no redirect)', () => {
+    const res = run(HOST, '/');
     expect(res.headers.get('location')).toBeNull();
     expect(res.status).toBe(200);
   });
 
-  test('preview/other hosts are not canonicalized to apex', () => {
-    const res = run('open-knowledge-git-feat.vercel.app', '/docs');
+  test('query strings pass through with the page', () => {
+    const res = run(HOST, '/d/abc123?ref=slack');
+    expect(res.headers.get('location')).toBeNull();
+    expect(res.status).toBe(200);
+  });
+
+  test('preview/other hosts pass through untouched', () => {
+    const res = run('palimpsest-git-feat.vercel.app', '/docs');
     expect(res.headers.get('location')).toBeNull();
     expect(res.status).toBe(200);
   });
 });
 
 function negotiate(pathAndQuery: string, accept?: string) {
-  const headers: Record<string, string> = { host: APEX };
+  const headers: Record<string, string> = { host: HOST };
   if (accept !== undefined) headers.accept = accept;
-  const res = proxy(new NextRequest(`https://${APEX}${pathAndQuery}`, { headers }));
+  const res = proxy(new NextRequest(`https://${HOST}${pathAndQuery}`, { headers }));
   const rewrite = res.headers.get('x-middleware-rewrite');
   return {
     status: res.status,
@@ -130,18 +119,18 @@ describe('proxy: Accept negotiation', () => {
     },
   );
 
-  test('host canonicalization wins over negotiation', () => {
+  test('negotiation applies on any host (no canonicalization to win)', () => {
     const res = proxy(
-      new NextRequest(`https://${WWW}/docs/overview`, { headers: { host: WWW, accept: MARKDOWN } }),
+      new NextRequest(`https://${HOST}/docs/overview`, { headers: { host: HOST, accept: MARKDOWN } }),
     );
-    expect(res.status).toBe(308);
-    expect(res.headers.get('location')).toBe(`https://${APEX}/docs/overview`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('location')).toBeNull();
   });
 
   test('the page a browser falls through to carries no Vary from the proxy', () => {
     const res = proxy(
-      new NextRequest(`https://${APEX}/docs/overview`, {
-        headers: { host: APEX, accept: BROWSER_ACCEPT },
+      new NextRequest(`https://${HOST}/docs/overview`, {
+        headers: { host: HOST, accept: BROWSER_ACCEPT },
       }),
     );
     expect(res.headers.get('x-middleware-rewrite')).toBeNull();

@@ -1401,7 +1401,7 @@ describe('WindowManager', () => {
 
     function driftSends(w: ReturnType<typeof makeWindow>): unknown[] {
       return (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-version-drift',
+        (c: unknown[]) => c[0] === 'ps:server-version-drift',
       );
     }
 
@@ -1522,7 +1522,7 @@ describe('WindowManager', () => {
       newWindow.fireDidFinishLoad();
       const restartedSends = (
         newWindow.webContents.send as ReturnType<typeof vi.fn>
-      ).mock.calls.filter((c: unknown[]) => c[0] === 'ok:server-restarted');
+      ).mock.calls.filter((c: unknown[]) => c[0] === 'ps:server-restarted');
       expect(restartedSends.length).toBe(1);
       expect((restartedSends[0] as unknown[])[1]).toEqual({ appRuntime: '0.8.2' });
     });
@@ -2043,7 +2043,7 @@ describe('WindowManager', () => {
       w.fireDomReady();
       w.fireDidFinishLoad();
       const lifecycleSends = (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-restarted',
+        (c: unknown[]) => c[0] === 'ps:server-restarted',
       );
       expect(lifecycleSends.length).toBe(0);
     });
@@ -2062,7 +2062,7 @@ describe('WindowManager', () => {
       if (!w) throw new Error('no window created');
       w.fireDidFinishLoad();
       const lifecycleSends = (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-restarted',
+        (c: unknown[]) => c[0] === 'ps:server-restarted',
       );
       expect(lifecycleSends.length).toBe(0);
     });
@@ -2107,7 +2107,7 @@ describe('WindowManager', () => {
       expect(driftSends(w).length).toBe(0);
       w.fireDidFinishLoad();
       const restartedSends = (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-restarted',
+        (c: unknown[]) => c[0] === 'ps:server-restarted',
       );
       expect(restartedSends.length).toBe(0);
     });
@@ -2184,7 +2184,7 @@ describe('WindowManager', () => {
       expect(driftSends(w).length).toBe(1);
       w.fireDidFinishLoad();
       const restartedSends = (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-restarted',
+        (c: unknown[]) => c[0] === 'ps:server-restarted',
       );
       expect(restartedSends.length).toBe(0);
     });
@@ -2212,7 +2212,7 @@ describe('WindowManager', () => {
       expect(driftSends(w).length).toBe(1);
       w.fireDidFinishLoad();
       const restartedSends = (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-restarted',
+        (c: unknown[]) => c[0] === 'ps:server-restarted',
       );
       expect(restartedSends.length).toBe(0);
     });
@@ -2261,7 +2261,7 @@ describe('WindowManager', () => {
       if (!w) throw new Error('no window created');
       w.fireDidFinishLoad();
       const restartedSends = (w.webContents.send as ReturnType<typeof vi.fn>).mock.calls.filter(
-        (c: unknown[]) => c[0] === 'ok:server-restarted',
+        (c: unknown[]) => c[0] === 'ps:server-restarted',
       );
       expect(restartedSends.length).toBe(0);
     });
@@ -4070,7 +4070,7 @@ describe('WindowManager — pendingDeepLinkTarget dom-ready gate (M4 US-007 / Fi
     expect((window.webContents.send as ReturnType<typeof vi.fn>).mock.calls.length).toBe(0);
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    const deepLinkCall = sendCalls.find((c) => c[0] === 'ok:deep-link');
+    const deepLinkCall = sendCalls.find((c) => c[0] === 'ps:deep-link');
     expect(deepLinkCall).toBeDefined();
     expect(deepLinkCall?.[1]).toEqual({
       doc: 'notes/meeting',
@@ -4090,7 +4090,7 @@ describe('WindowManager — pendingDeepLinkTarget dom-ready gate (M4 US-007 / Fi
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    expect(sendCalls.find((c) => c[0] === 'ok:deep-link')).toBeUndefined();
+    expect(sendCalls.find((c) => c[0] === 'ps:deep-link')).toBeUndefined();
   });
 
   test('attach path: pendingDeepLinkTarget also fires on dom-ready', async () => {
@@ -4119,7 +4119,7 @@ describe('WindowManager — pendingDeepLinkTarget dom-ready gate (M4 US-007 / Fi
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    const deepLinkCall = sendCalls.find((c) => c[0] === 'ok:deep-link');
+    const deepLinkCall = sendCalls.find((c) => c[0] === 'ps:deep-link');
     expect(deepLinkCall).toBeDefined();
     expect(deepLinkCall?.[1]).toEqual({
       doc: 'attached/note',
@@ -4143,7 +4143,7 @@ describe('WindowManager — pendingDeepLinkTarget dom-ready gate (M4 US-007 / Fi
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    const deepLinkCall = sendCalls.find((c) => c[0] === 'ok:deep-link');
+    const deepLinkCall = sendCalls.find((c) => c[0] === 'ps:deep-link');
     expect(deepLinkCall?.[1]).toEqual({
       doc: 'docs/page.md',
       kind: 'doc',
@@ -4178,7 +4178,7 @@ describe('WindowManager — pendingDeepLinkTarget dom-ready gate (M4 US-007 / Fi
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    const deepLinkCall = sendCalls.find((c) => c[0] === 'ok:deep-link');
+    const deepLinkCall = sendCalls.find((c) => c[0] === 'ps:deep-link');
     expect(deepLinkCall?.[1]).toEqual({
       doc: 'attached/note',
       kind: 'doc',
@@ -4200,7 +4200,7 @@ describe('WindowManager — pendingDeepLinkTarget dom-ready gate (M4 US-007 / Fi
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    const deepLinkCall = sendCalls.find((c) => c[0] === 'ok:deep-link');
+    const deepLinkCall = sendCalls.find((c) => c[0] === 'ps:deep-link');
     expect(deepLinkCall?.[1]).toEqual({
       doc: 'docs',
       kind: 'folder',
@@ -4264,13 +4264,13 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
 
     expect(
       (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls.find(
-        (c) => c[0] === 'ok:share:received',
+        (c) => c[0] === 'ps:share:received',
       ),
     ).toBeUndefined();
 
     window.fireDomReady();
     const shareCall = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls.find(
-      (c) => c[0] === 'ok:share:received',
+      (c) => c[0] === 'ps:share:received',
     );
     expect(shareCall).toBeDefined();
     expect(shareCall?.[1]).toEqual({
@@ -4297,7 +4297,7 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const sendCalls = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    expect(sendCalls.find((c) => c[0] === 'ok:share:received')).toBeUndefined();
+    expect(sendCalls.find((c) => c[0] === 'ps:share:received')).toBeUndefined();
   });
 
   test('attach path: pendingShareBranchSwitch also fires on dom-ready', async () => {
@@ -4358,7 +4358,7 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
     if (!window) throw new Error('expected window to be created');
     window.fireDomReady();
     const shareCall = (window.webContents.send as ReturnType<typeof vi.fn>).mock.calls.find(
-      (c) => c[0] === 'ok:share:received',
+      (c) => c[0] === 'ps:share:received',
     );
     expect(shareCall).toBeDefined();
     expect(shareCall?.[1]).toEqual({

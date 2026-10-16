@@ -12,7 +12,7 @@ const lstatSyncMock = vi.fn();
 
 let scanLockProcesses: typeof import('./process-scan.ts').scanLockProcesses;
 let discoverLockDirs: typeof import('./process-scan.ts').discoverLockDirs;
-let findOkProcessPids: typeof import('./process-scan.ts').findOkProcessPids;
+let findPsProcessPids: typeof import('./process-scan.ts').findPsProcessPids;
 let readPidCwds: typeof import('./process-scan.ts').readPidCwds;
 let isDefunctProcess: typeof import('./process-scan.ts').isDefunctProcess;
 let isLockProcessRunning: typeof import('./process-scan.ts').isLockProcessRunning;
@@ -48,7 +48,7 @@ beforeAll(async () => {
   ({
     scanLockProcesses,
     discoverLockDirs,
-    findOkProcessPids,
+    findPsProcessPids,
     readPidCwds,
     isDefunctProcess,
     isLockProcessRunning,
@@ -83,7 +83,7 @@ function makeSpawnResult(overrides: Partial<SpawnSyncReturns<string>>): SpawnSyn
   };
 }
 
-describe('findOkProcessPids with Windows Unix tools', () => {
+describe('findPsProcessPids with Windows Unix tools', () => {
   let spawnSyncSpy: typeof spawnSyncMock;
 
   beforeEach(() => {
@@ -105,7 +105,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       }),
     );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([12345]);
     const [cmd, args] = spawnSyncSpy.mock.calls[0] as [string, string[]];
     expect(cmd).toBe('pgrep');
@@ -121,7 +121,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       }),
     );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([54321]);
   });
 
@@ -134,7 +134,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       }),
     );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([24680]);
   });
 
@@ -147,7 +147,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       }),
     );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([5816]);
   });
 
@@ -160,7 +160,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
       }),
     );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([5817]);
   });
 
@@ -178,7 +178,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
         }),
       );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([99999]);
 
     const calls = spawnSyncSpy.mock.calls as [string, string[]][];
@@ -189,7 +189,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
   it('returns empty array when pgrep exits 1 (no matches) — does NOT fall back to ps', async () => {
     spawnSyncSpy.mockReturnValue(makeSpawnResult({ stdout: '', status: 1 }));
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([]);
     expect(spawnSyncSpy.mock.calls.length).toBe(1);
   });
@@ -205,7 +205,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
         }),
       );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toEqual([12345]);
     expect(spawnSyncSpy.mock.calls.map((call) => call[0])).toEqual(['pgrep', 'ps']);
   });
@@ -226,7 +226,7 @@ describe('findOkProcessPids with Windows Unix tools', () => {
         }),
       );
 
-    const pids = await findOkProcessPids();
+    const pids = await findPsProcessPids();
     expect(pids).toContain(222);
     expect(pids).toContain(333);
     expect(pids).not.toContain(111);
@@ -394,7 +394,7 @@ describe('discoverLockDirs', () => {
     expect(calls[2]?.[0]).toBe('lsof');
   });
 
-  it('returns empty array when no ok processes and no lock dirs exist', async () => {
+  it('returns empty array when no ps processes and no lock dirs exist', async () => {
     spawnSyncSpy
       .mockReturnValueOnce(makeSpawnResult({ stdout: 'PID COMMAND\n', status: 0 }))
       .mockReturnValueOnce(makeSpawnResult({ stdout: 'COMMAND PID USER\n', status: 0 }));
@@ -933,7 +933,7 @@ describe('lock recovery process evidence', () => {
       });
     }
   });
-  it('keeps listener provenance without asserting the process is an Palimpsest server', async () => {
+  it('keeps listener provenance without asserting the process is a Palimpsest server', async () => {
     spawnSyncMock
       .mockReturnValueOnce(makeSpawnResult({ stdout: 'PID COMMAND\n', status: 0 }))
       .mockReturnValueOnce(

@@ -39,7 +39,7 @@ function outsideTheTier(): Error {
   );
 }
 
-export function lintOkRulesFixture(fixtureRel: string): PsRulesFixtureDiagnostic[] {
+export function lintPsRulesFixture(fixtureRel: string): PsRulesFixtureDiagnostic[] {
   const lint: PsRulesFixtureLint | undefined = inject('psRulesFixtureLint');
   if (lint === undefined) throw outsideTheTier();
   if ('error' in lint) throw new Error(lint.error);

@@ -32,9 +32,9 @@ export type SkillReimportOutcome =
       ok: false;
       status: 400 | 404 | 422 | 500;
       urn:
-        | 'urn:ok:error:invalid-request'
-        | 'urn:ok:error:not-found'
-        | 'urn:ok:error:internal-server-error';
+        | 'urn:ps:error:invalid-request'
+        | 'urn:ps:error:not-found'
+        | 'urn:ps:error:internal-server-error';
       title: string;
       detail?: string;
       cause?: unknown;
@@ -50,8 +50,8 @@ export interface SkillReimportDeps {
     name: string,
   ) => { root: string; dirRel: string; realDir: string | null };
   parseFrontmatterDoc: (raw: string) => { frontmatter: Record<string, unknown>; body: string };
-  attributeOkArtifactWrite: (actor: ActorIdentity, keyPath: string, summary: string) => void;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  attributePsArtifactWrite: (actor: ActorIdentity, keyPath: string, summary: string) => void;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   shadowHeadSha: (writerId?: string, verifyPathRel?: string) => Promise<string | undefined>;
   artifactWriterId: (actor: ActorIdentity) => string | undefined;
   skillArtifactKey: (name: string) => string;
@@ -156,7 +156,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
         return {
           ok: false,
           status: 404,
-          urn: 'urn:ok:error:not-found',
+          urn: 'urn:ps:error:not-found',
           title: 'Skill is not installed.',
           detail: 'SKILL_ABSENT',
         };
@@ -167,7 +167,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Skill bundle exceeds import limits.',
           detail: oversize,
         };
@@ -177,7 +177,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
         return {
           ok: false,
           status: 422,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Source has no readable skill.',
         };
       }
@@ -186,7 +186,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Skill bundle exceeds import limits.',
           detail: limitError,
         };
@@ -260,7 +260,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Failed to write skill.',
           detail: wr.error.code,
           cause: new Error(wr.error.message),
@@ -280,7 +280,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
           return {
             ok: false,
             status: 500,
-            urn: 'urn:ok:error:internal-server-error',
+            urn: 'urn:ps:error:internal-server-error',
             title: 'Failed to write the complete refreshed skill bundle.',
             detail: `${f.relPath}: ${br.error.code}`,
             cause: new Error(br.error.message),
@@ -293,7 +293,7 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
           return {
             ok: false,
             status: 500,
-            urn: 'urn:ok:error:internal-server-error',
+            urn: 'urn:ps:error:internal-server-error',
             title: 'Failed to reconcile files removed upstream.',
             detail: `${relPath}: ${deleted.error.code}`,
             cause: new Error(deleted.error.message),
@@ -302,12 +302,12 @@ export function createSkillReimportService(deps: SkillReimportDeps): SkillReimpo
       }
 
       if (scope === 'project') {
-        deps.attributeOkArtifactWrite(
+        deps.attributePsArtifactWrite(
           actor,
           deps.skillArtifactKey(name),
           `skill-reimport: ${entry.source} -> ${skillDirRel}`,
         );
-        await deps.commitOkArtifactWrite('skill-reimport');
+        await deps.commitPsArtifactWrite('skill-reimport');
       }
 
       const reimportLocalHash = parseSkillDir(resolve(skillsRoot, name))?.contentHash;

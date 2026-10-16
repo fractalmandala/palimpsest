@@ -41,7 +41,7 @@ describe('create-page envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('missing path emits urn:ok:error:invalid-request', async () => {
+  test('missing path emits urn:ps:error:invalid-request', async () => {
     const res = await postCreate({});
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -50,30 +50,30 @@ describe('create-page envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('unsupported extension emits urn:ok:error:invalid-request', async () => {
+  test('unsupported extension emits urn:ps:error:invalid-request', async () => {
     const res = await postCreate({ path: 'no-ext.txt' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('reserved docname emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved docname emits urn:ps:error:reserved-doc-name', async () => {
     const res = await postCreate({ path: '__system__.md' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
   });
 
@@ -85,7 +85,7 @@ describe('create-page envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
     expect(existsSync(join(server.contentDir, '.ps', relPath))).toBe(false);
   });
@@ -97,23 +97,23 @@ describe('create-page envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
     expect(existsSync(join(server.contentDir, '.ps', 'local', 'sneaky.md'))).toBe(false);
   });
 
-  test('path traversal emits urn:ok:error:path-escape', async () => {
+  test('path traversal emits urn:ps:error:path-escape', async () => {
     const res = await postCreate({ path: '../escape.md' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:path-escape');
+      expect(parsed.data.type).toBe('urn:ps:error:path-escape');
     }
   });
 
-  test('duplicate path emits urn:ok:error:doc-already-exists', async () => {
+  test('duplicate path emits urn:ps:error:doc-already-exists', async () => {
     const path = `dup-${crypto.randomUUID().slice(0, 8)}.md`;
     const first = await postCreate({ path });
     expect(first.status).toBe(200);
@@ -126,7 +126,7 @@ describe('create-page envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-already-exists');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-already-exists');
       expect(parsed.data.status).toBe(409);
     }
   });
@@ -139,7 +139,7 @@ describe('create-page envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

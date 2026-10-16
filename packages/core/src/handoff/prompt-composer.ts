@@ -40,7 +40,7 @@ function sanitizePathForAtMention(path: string): string {
 }
 
 export const PS_PROJECT_SKILL_POINTER =
-  "This is an Palimpsest project: load the `palimpsest` skill and use the Palimpsest MCP tools for all markdown — don't probe for `.ps/` or use native file tools on `.md` / `.mdx`.";
+  "This is a Palimpsest project: load the `palimpsest` skill and use the Palimpsest MCP tools for all markdown — don't probe for `.ps/` or use native file tools on `.md` / `.mdx`.";
 
 export function withSkillPointer(directive: string): string {
   return `${PS_PROJECT_SKILL_POINTER} ${directive}`;

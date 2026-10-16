@@ -6,8 +6,8 @@ import { afterEach, describe, expect, test } from 'vitest';
 import { reconcileUserGlobalSkillBundles } from './skill-reclaim.ts';
 
 const EXE = '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest';
-const BUNDLES = [{ id: 'discovery', name: 'open-knowledge-discovery' }] as const;
-const NAME = 'open-knowledge-discovery';
+const BUNDLES = [{ id: 'discovery', name: 'palimpsest-discovery' }] as const;
+const NAME = 'palimpsest-discovery';
 
 const HOSTS: Array<[string, string]> = [
   ['.claude', '.claude/skills'],

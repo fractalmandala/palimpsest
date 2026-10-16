@@ -285,7 +285,7 @@ describe('PropertyPanel nested-value rendering', () => {
     const provider = makeProvider('nested-skill-doc');
     seedYTextFm(
       provider,
-      '---\nname: my-skill\ndescription: A skill\nmetadata:\n  version: "1.0"\n  author: Inkeep\n  repository: github.com/inkeep/x\n---\n',
+      '---\nname: my-skill\ndescription: A skill\nmetadata:\n  version: "1.0"\n  author: Example\n  repository: github.com/example/x\n---\n',
     );
     const html = renderPanel(provider);
     expect(html).not.toContain('data-testid="property-panel-yaml-error"');
@@ -298,7 +298,7 @@ describe('PropertyPanel nested-value rendering', () => {
     const provider = makeProvider('nested-object-doc');
     seedYTextFm(
       provider,
-      '---\nname: my-skill\nmetadata:\n  version: "1.0"\n  author: Inkeep\n---\n',
+      '---\nname: my-skill\nmetadata:\n  version: "1.0"\n  author: Example\n---\n',
     );
     const html = renderPanel(provider);
     expect(html).toContain('data-testid="object-widget"');
@@ -362,7 +362,7 @@ describe('PropertyPanel nested-value rendering', () => {
 describe('PropertyPanel ObjectWidget recursive rendering', () => {
   test('object value renders an expandable Collapsible with an accessible trigger', () => {
     const provider = makeProvider('object-widget-trigger-doc');
-    seedYTextFm(provider, '---\nmetadata:\n  version: "1.0"\n  author: Inkeep\n---\n');
+    seedYTextFm(provider, '---\nmetadata:\n  version: "1.0"\n  author: Example\n---\n');
     const html = renderPanel(provider);
     expect(html).toMatch(/data-testid="object-widget-trigger"[^>]*data-key="metadata"/);
     expect(html).toMatch(
@@ -375,7 +375,7 @@ describe('PropertyPanel ObjectWidget recursive rendering', () => {
     const provider = makeProvider('object-widget-children-doc');
     seedYTextFm(
       provider,
-      '---\nmetadata:\n  version: "1.0"\n  author: Inkeep\n  repository: github.com/x\n---\n',
+      '---\nmetadata:\n  version: "1.0"\n  author: Example\n  repository: github.com/x\n---\n',
     );
     const html = renderPanel(provider);
     expect(html).toMatch(/data-testid="property-row"[^>]*data-key="version"/);

@@ -8,11 +8,11 @@ import { fixMarkdownText, runMarkdownlint } from './markdownlint-runner.ts';
 import {
   PSF_FRONTMATTER_ONLY_TOGGLES,
   psfAdvertisedSchemaMappings,
-  runOkfFrontmatterRules,
-  selectOkfFrontmatterSchemas,
+  runPsfFrontmatterRules,
+  selectPsfFrontmatterSchemas,
 } from './psf-frontmatter/registry.ts';
-import { selectEnabledOkfRules } from './psf-rules.ts';
-import { runOkfRules } from './psf-runner.ts';
+import { selectEnabledPsfRules } from './psf-rules.ts';
+import { runPsfRules } from './psf-runner.ts';
 import {
   type FrontmatterSchemaMapping,
   type FrontmatterSlice,
@@ -20,7 +20,7 @@ import {
   type LintPluginId,
   MARKDOWNLINT_RULE_SEVERITIES,
   type MarkdownlintSlice,
-  type OkfSlice,
+  type PsfSlice,
 } from './types.ts';
 
 const MarkdownlintRuleSettingSchema = z.union([
@@ -89,7 +89,7 @@ const frontmatterPlugin: LintPlugin<'frontmatter', FrontmatterSlice> = {
   },
 };
 
-const psfPlugin: LintPlugin<'psf', OkfSlice> = {
+const psfPlugin: LintPlugin<'psf', PsfSlice> = {
   id: 'psf',
   sliceSchema: z.object({
     enabled: z.boolean(),
@@ -99,12 +99,12 @@ const psfPlugin: LintPlugin<'psf', OkfSlice> = {
   defaultSlice: { enabled: false },
   async lint(text, slice, ctx) {
     return [
-      ...runOkfRules(text, selectEnabledOkfRules(slice.rules), ctx.docName),
-      ...runOkfFrontmatterRules(text, slice.rules, ctx.docName),
+      ...runPsfRules(text, selectEnabledPsfRules(slice.rules), ctx.docName),
+      ...runPsfFrontmatterRules(text, slice.rules, ctx.docName),
     ];
   },
   frontmatter: {
-    schemasForDoc: (slice, docName) => selectOkfFrontmatterSchemas(slice.rules, docName),
+    schemasForDoc: (slice, docName) => selectPsfFrontmatterSchemas(slice.rules, docName),
     narrowSliceToFrontmatter: (slice) => ({
       ...slice,
       rules: { ...slice.rules, ...PSF_FRONTMATTER_ONLY_TOGGLES },

@@ -4,7 +4,7 @@ import { errorResponse } from './http/error-response.ts';
 import { getLogger } from './logger.ts';
 import { incrementConcurrentOverwriteRefused } from './metrics.ts';
 
-export const CONCURRENT_OVERWRITE_REFUSED_TYPE = 'urn:ok:error:concurrent-overwrite-refused';
+export const CONCURRENT_OVERWRITE_REFUSED_TYPE = 'urn:ps:error:concurrent-overwrite-refused';
 export const CONCURRENT_OVERWRITE_REFUSED_TITLE = 'Concurrent overwrite refused.';
 export const CONCURRENT_OVERWRITE_REFUSED_DETAIL =
   'Another writer changed this document recently. Wait a few seconds and retry.';

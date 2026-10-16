@@ -85,7 +85,7 @@ export interface PsCmThemeOptions {
   gutterBackground?: string;
 }
 
-function createOkCmTheme(options: PsCmThemeOptions): Extension {
+function createPsCmTheme(options: PsCmThemeOptions): Extension {
   const background = options.background ?? 'transparent';
   const gutterBackground = options.gutterBackground ?? 'transparent';
   return EditorView.theme(
@@ -126,5 +126,5 @@ function createOkCmTheme(options: PsCmThemeOptions): Extension {
 }
 
 export function psCmTheme(options: PsCmThemeOptions): Extension[] {
-  return [createOkCmTheme(options), syntaxHighlighting(psSyntaxHighlight, { fallback: true })];
+  return [createPsCmTheme(options), syntaxHighlighting(psSyntaxHighlight, { fallback: true })];
 }

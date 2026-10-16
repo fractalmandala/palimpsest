@@ -54,7 +54,7 @@ onTelemetryShutdown(() => {
 });
 
 function recordDispatch(mode: DispatchMode): void {
-  dispatchCounter ||= getMeter().createCounter('ok.parse_pool.dispatch_total', {
+  dispatchCounter ||= getMeter().createCounter('ps.parse_pool.dispatch_total', {
     description:
       'Bridge-intake parse precompute dispatches by mode: offload (worker parse used) vs the inline-* fallback reasons (small doc, pool unavailable, queue saturated, task timeout, worker error).',
   });
@@ -62,7 +62,7 @@ function recordDispatch(mode: DispatchMode): void {
 }
 
 function recordTaskLatency(ms: number): void {
-  taskLatencyHistogram ||= getMeter().createHistogram('ok.parse_pool.task_ms', {
+  taskLatencyHistogram ||= getMeter().createHistogram('ps.parse_pool.task_ms', {
     description:
       'Wall-clock latency of a completed parse-pool offload (both passes for embed-bearing docs), in milliseconds.',
     unit: 'ms',
@@ -74,14 +74,14 @@ function installGauges(): void {
   if (gaugesInstalled) return;
   gaugesInstalled = true;
   getMeter()
-    .createObservableGauge('ok.parse_pool.queue_depth', {
+    .createObservableGauge('ps.parse_pool.queue_depth', {
       description: 'Parse-pool tasks waiting for a free worker.',
     })
     .addCallback((result) => {
       result.observe(queue.length);
     });
   getMeter()
-    .createObservableGauge('ok.parse_pool.workers', {
+    .createObservableGauge('ps.parse_pool.workers', {
       description: 'Live parse-pool worker threads.',
     })
     .addCallback((result) => {

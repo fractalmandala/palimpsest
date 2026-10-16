@@ -28,7 +28,7 @@ describe('skillClusterHosts — plugin provider', () => {
       path: '.agents/skills/linux-vm/SKILL.md',
       installed: true,
       hosts: ['agents'],
-      plugin: { name: 'ok', marketplace: 'inkeep-agents-private', provider: 'claude' },
+      plugin: { name: 'ps', marketplace: 'inkeep-agents-private', provider: 'claude' },
     } as never);
     expect(hosts).toContain('claude');
     expect(hosts).toContain('agents');
@@ -54,8 +54,8 @@ describe('skillClusterHosts — plugin provider', () => {
   test('a global copy at a user-only host (antigravity) stays in the cluster', () => {
     const hosts = skillClusterHosts({
       scope: 'global',
-      name: 'open-knowledge-discovery',
-      path: '.agents/skills/open-knowledge-discovery/SKILL.md',
+      name: 'palimpsest-discovery',
+      path: '.agents/skills/palimpsest-discovery/SKILL.md',
       installed: true,
       hosts: ['agents', 'claude', 'antigravity'],
     } as never);

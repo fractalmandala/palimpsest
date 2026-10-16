@@ -82,13 +82,13 @@ export interface SkillsRecoveryRouteDeps {
   projectDir: string | undefined;
   skillsHome: string;
   projectSkillDirRel: (name: string) => string;
-  attributeOkArtifactWrite: SkillReimportDeps['attributeOkArtifactWrite'];
+  attributePsArtifactWrite: SkillReimportDeps['attributePsArtifactWrite'];
   psArtifactKey: (
     kind: 'template' | 'folder-frontmatter' | 'folder' | 'skill',
     folder: string,
     name?: string,
   ) => string;
-  commitOkArtifactWrite: SkillReimportDeps['commitOkArtifactWrite'];
+  commitPsArtifactWrite: SkillReimportDeps['commitPsArtifactWrite'];
   signalChannel: ((channel: 'files' | 'lint-config' | 'comments') => void) | undefined;
   bumpSkillsCatalogGen: () => void;
   contentFilter: ContentFilter | undefined;
@@ -113,9 +113,9 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
     projectDir,
     skillsHome,
     projectSkillDirRel,
-    attributeOkArtifactWrite,
+    attributePsArtifactWrite,
     psArtifactKey,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     signalChannel,
     bumpSkillsCatalogGen,
     contentFilter,
@@ -135,11 +135,11 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
     handler: 'skill-restore' | 'skill-revert',
   ): void {
     const map = {
-      'no-shadow': [409, 'urn:ok:error:shadow-not-configured'],
-      'version-not-found': [404, 'urn:ok:error:not-found'],
-      'skill-absent': [404, 'urn:ok:error:not-found'],
-      'io-error': [500, 'urn:ok:error:storage-error'],
-      'path-escape': [500, 'urn:ok:error:path-escape'],
+      'no-shadow': [409, 'urn:ps:error:shadow-not-configured'],
+      'version-not-found': [404, 'urn:ps:error:not-found'],
+      'skill-absent': [404, 'urn:ps:error:not-found'],
+      'io-error': [500, 'urn:ps:error:storage-error'],
+      'path-escape': [500, 'urn:ps:error:path-escape'],
     } as const;
     const [status, typeUri] = map[result.code];
     errorResponse(res, status, typeUri, result.error, { handler, detail: result.code });
@@ -197,7 +197,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-restore',
           });
           return;
@@ -208,7 +208,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Global skills are unversioned — there is no version history to restore from.',
             { handler: 'skill-restore', detail: 'GLOBAL_SCOPE_UNVERSIONED' },
           );
@@ -220,7 +220,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:shadow-not-configured',
+            'urn:ps:error:shadow-not-configured',
             'No version history available to restore from.',
             {
               handler: 'skill-restore',
@@ -251,12 +251,12 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           );
         }
 
-        attributeOkArtifactWrite(
+        attributePsArtifactWrite(
           actor,
           psArtifactKey('skill', '', body.name),
           `skill-restore: ${body.name} @ ${body.version.slice(0, 8)}`,
         );
-        await commitOkArtifactWrite('skill-restore');
+        await commitPsArtifactWrite('skill-restore');
         signalChannel?.('files');
         bumpSkillsCatalogGen();
         contentFilter?.refreshInPlaceSkillDirs();
@@ -275,7 +275,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           { handler: 'skill-restore' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to restore skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to restore skill.', {
           handler: 'skill-restore',
           cause: e,
         });
@@ -290,7 +290,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
       let cleanup: () => void = () => {};
       try {
         if (body.scope === 'project' && !projectDir) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project root resolved.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project root resolved.', {
             handler: 'skill-reimport',
             detail: 'NO_PROJECT_ROOT',
           });
@@ -301,7 +301,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-reimport',
           });
           return;
@@ -318,7 +318,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           reimportRealDir === null ||
           !existsSync(resolve(reimportBase, skillDirRel, 'SKILL.md'))
         ) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill is not installed.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill is not installed.', {
             handler: 'skill-reimport',
             detail: 'SKILL_ABSENT',
           });
@@ -339,7 +339,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'This skill has no recorded import source to update from.',
             { handler: 'skill-reimport', detail: 'NOT_IMPORTED' },
           );
@@ -394,7 +394,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'The recorded import source is no longer a valid source.',
               { handler: 'skill-reimport', detail: entry.source },
             );
@@ -414,7 +414,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
             errorResponse(
               res,
               404,
-              'urn:ok:error:not-found',
+              'urn:ps:error:not-found',
               'Could not locate this skill in its source anymore.',
               { handler: 'skill-reimport', detail: dirs.map((d) => d.name).join(', ') },
             );
@@ -423,7 +423,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           acquiredDir = pick.dir;
         } catch (e) {
           if (e instanceof SkillFetchError) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not fetch source.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not fetch source.', {
               handler: 'skill-reimport',
               cause: e,
             });
@@ -432,7 +432,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           throw e;
         }
         if (!acquiredDir) {
-          errorResponse(res, 422, 'urn:ok:error:invalid-request', 'Source has no readable skill.', {
+          errorResponse(res, 422, 'urn:ps:error:invalid-request', 'Source has no readable skill.', {
             handler: 'skill-reimport',
           });
           return;
@@ -453,7 +453,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
 
         respondSkillReimport(res, outcome);
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to reimport skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to reimport skill.', {
           handler: 'skill-reimport',
           cause: e,
         });
@@ -469,7 +469,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
     async (_req, res, body) => {
       try {
         if (body.scope === 'project' && !projectDir) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project root resolved.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project root resolved.', {
             handler: 'skills-reimport-bulk',
             detail: 'NO_PROJECT_ROOT',
           });
@@ -480,7 +480,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skills-reimport-bulk',
           });
           return;
@@ -682,7 +682,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           );
         }
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to update skills.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to update skills.', {
           handler: 'skills-reimport-bulk',
           cause: e,
         });
@@ -696,7 +696,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
     async (_req, res, body) => {
       try {
         if (!projectDir) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project root resolved.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project root resolved.', {
             handler: 'skill-revert',
             detail: 'NO_PROJECT_ROOT',
           });
@@ -707,7 +707,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-revert',
           });
           return;
@@ -718,7 +718,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Global skills are unversioned — there is nothing to revert to.',
             { handler: 'skill-revert', detail: 'GLOBAL_SCOPE' },
           );
@@ -732,7 +732,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'This skill has no recorded install baseline to revert to.',
             { handler: 'skill-revert', detail: 'NO_BASELINE' },
           );
@@ -743,7 +743,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:shadow-not-configured',
+            'urn:ps:error:shadow-not-configured',
             'No version history available to revert from.',
             { handler: 'skill-revert', detail: 'NO_SHADOW_REPO' },
           );
@@ -763,12 +763,12 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           return;
         }
 
-        attributeOkArtifactWrite(
+        attributePsArtifactWrite(
           actor,
           psArtifactKey('skill', '', body.name),
           `skill-revert: ${body.name} @ ${entry.baselineRef.slice(0, 8)}`,
         );
-        await commitOkArtifactWrite('skill-revert');
+        await commitPsArtifactWrite('skill-revert');
 
         const revertRoot = resolve(contentDir, projectSkillDirRel(body.name), '..');
         const revertedLocalHash = localSkillHash(revertRoot, body.name);
@@ -803,7 +803,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           { handler: 'skill-revert' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to revert skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to revert skill.', {
           handler: 'skill-revert',
           cause: e,
         });

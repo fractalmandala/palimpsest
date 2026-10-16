@@ -516,7 +516,7 @@ test('inactive MCP sessions expire and return 404 on later use', async () => {
   expect(await expired.text()).toContain('MCP session not found');
 });
 
-async function previewUrlOkOpenCommand(
+async function previewUrlPsOpenCommand(
   port: number,
   extraHeaders: Record<string, string> = {},
 ): Promise<unknown> {
@@ -546,7 +546,7 @@ async function previewUrlOkOpenCommand(
 test('hosted-agent header reaches preview_url as the ps open steer', async () => {
   const harness = await bootHandler(ConfigSchema.parse({}));
   openHarnesses.push(harness);
-  expect(await previewUrlOkOpenCommand(harness.port, { [MCP_HOSTED_AGENT_HEADER]: '1' })).toBe(
+  expect(await previewUrlPsOpenCommand(harness.port, { [MCP_HOSTED_AGENT_HEADER]: '1' })).toBe(
     'ps open specs/foo/SPEC',
   );
 });
@@ -554,5 +554,5 @@ test('hosted-agent header reaches preview_url as the ps open steer', async () =>
 test('without the header the same server keeps the plain-URL behavior', async () => {
   const harness = await bootHandler(ConfigSchema.parse({}));
   openHarnesses.push(harness);
-  expect(await previewUrlOkOpenCommand(harness.port)).toBeNull();
+  expect(await previewUrlPsOpenCommand(harness.port)).toBeNull();
 });

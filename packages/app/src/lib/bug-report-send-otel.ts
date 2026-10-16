@@ -1,8 +1,8 @@
 import { type Context, propagation, ROOT_CONTEXT, type Span, trace } from '@opentelemetry/api';
 
-const TRACER_NAME = 'open-knowledge-app';
+const TRACER_NAME = 'palimpsest-app';
 
-const SPAN_NAME = 'ok.bug-report.send.attempt';
+const SPAN_NAME = 'ps.bug-report.send.attempt';
 
 type RendererSendOutcome = 'sent' | 'email-drafted' | 'failed' | 'joined';
 
@@ -54,7 +54,7 @@ function createSpanHandle(span: Span, spanContext: Context): BugReportSendSpan {
       ended = true;
       try {
         if (attributes) span.setAttributes(attributes);
-        span.setAttribute('ok.bug_report.renderer_outcome', outcome);
+        span.setAttribute('ps.bug_report.renderer_outcome', outcome);
         span.end();
       } catch {}
     },

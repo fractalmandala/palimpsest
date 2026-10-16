@@ -63,13 +63,13 @@ describe('folder-template group over the composed listener — served natively',
       `http://127.0.0.1:${server.port}/api/folder-config?path=${encodeURIComponent('../escape')}`,
     );
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('GET /api/template walks leaf → root and 404s an absent template', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/template?name=absent&folder=`);
     expect(res.status).toBe(404);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:template-not-found');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:template-not-found');
   });
 
   test('template name validation survives the lift (bad name → 400)', async () => {
@@ -77,7 +77,7 @@ describe('folder-template group over the composed listener — served natively',
       `http://127.0.0.1:${server.port}/api/template?name=${encodeURIComponent('bad.name')}&folder=`,
     );
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('PUT /api/template refuses a folder that symlinks out of the content root', async () => {
@@ -94,7 +94,7 @@ describe('folder-template group over the composed listener — served natively',
       }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
     expect(existsSync(resolve(outside, 'sub', '.ps', 'templates', 'planted.md'))).toBe(false);
   });
 
@@ -113,7 +113,7 @@ describe('folder-template group over the composed listener — served natively',
       }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:symlink-refused');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:symlink-refused');
     expect(existsSync(resolve(outside, 'planted.md'))).toBe(false);
   });
 
@@ -136,7 +136,7 @@ describe('folder-template group over the composed listener — served natively',
       }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:symlink-refused');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:symlink-refused');
     expect(existsSync(resolve(contentDir, 'inroot-target', 'planted.md'))).toBe(false);
   });
 
@@ -157,7 +157,7 @@ describe('folder-template group over the composed listener — served natively',
       }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:symlink-refused');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:symlink-refused');
     expect(lstatSync(leaf).isSymbolicLink()).toBe(true);
     expect(readFileSync(resolve(contentDir, '.claude', 'CLAUDE.md'), 'utf-8')).toBe('# victim\n');
   });
@@ -173,7 +173,7 @@ describe('folder-template group over the composed listener — served natively',
       { method: 'DELETE' },
     );
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:symlink-refused');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:symlink-refused');
     expect(readFileSync(victim, 'utf-8')).toBe('# keep me\n');
   });
 
@@ -190,7 +190,7 @@ describe('folder-template group over the composed listener — served natively',
       body: JSON.stringify({ sourcePath: 'alpha', targetFolder: 'tpl-import', name: 'alpha' }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:symlink-refused');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:symlink-refused');
     expect(lstatSync(leaf).isSymbolicLink()).toBe(true);
     expect(readFileSync(victim, 'utf-8')).toBe('# victim agent definition\n');
   });
@@ -215,7 +215,7 @@ describe('folder-template group over the composed listener — served natively',
         });
         expect(res.status).toBe(500);
         const body = (await res.json()) as { type?: string; detail?: string };
-        expect(body.type).toBe('urn:ok:error:internal-server-error');
+        expect(body.type).toBe('urn:ps:error:internal-server-error');
         expect(body.detail).toBe('EACCES');
       } finally {
         chmodSync(ancestorOk, 0o755);
@@ -230,7 +230,7 @@ describe('folder-template group over the composed listener — served natively',
       body: JSON.stringify({}),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('all three paths refuse a rebound Host before the verb check (403, no Allow leak)', async () => {
@@ -238,7 +238,7 @@ describe('folder-template group over the composed listener — served natively',
       const res = await rawRequest(server.port, path, { headers: { Host: 'evil.example' } });
       expect(res.status, path).toBe(403);
       expect(res.headers.allow, path).toBeUndefined();
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -247,7 +247,7 @@ describe('folder-template group over the composed listener — served natively',
       headers: { Origin: 'https://evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('sibling native groups still answer on the same server (multi-group dispatch)', async () => {

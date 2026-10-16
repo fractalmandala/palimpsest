@@ -290,7 +290,7 @@ describe('CreateProjectDialog starter-pack configurator', () => {
 
   test('a rejected preview request also leaves the project creatable', async () => {
     const { bridge, createNewCalls } = makeBridge();
-    planRejection = new Error("Error invoking remote method 'ok:seed:plan': read ECONNRESET");
+    planRejection = new Error("Error invoking remote method 'ps:seed:plan': read ECONNRESET");
     await renderDialogAtReview(bridge, 'knowledge-base');
 
     const alert = await screen.findByTestId('create-pack-preview-error');

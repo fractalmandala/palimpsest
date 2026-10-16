@@ -230,7 +230,7 @@ async function runPatchMode() {
       const result = await agentPatch(find, replace);
       if (result.ok) {
         console.log(`    OK — patch applied`);
-      } else if (result.type === 'urn:ok:error:target-not-found') {
+      } else if (result.type === 'urn:ps:error:target-not-found') {
         console.log(`    not found — skipping`);
       } else {
         console.error(`    FAIL — ${result.error ?? 'unknown error'}`);

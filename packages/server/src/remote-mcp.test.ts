@@ -280,7 +280,7 @@ describe('remote enabled — trust-the-tunnel admission', () => {
     expect(mcp.status).toBe(403);
     const api = await raw(rig.port, { path: '/api/pages', headers: { host: 'evil.example.com' } });
     expect(api.status).toBe(403);
-    expect(api.body).toContain('urn:ok:error:host-not-allowed');
+    expect(api.body).toContain('urn:ps:error:host-not-allowed');
   });
 
   test('non-/mcp surfaces are reachable under the tunnel Host (one gate for everything)', async () => {

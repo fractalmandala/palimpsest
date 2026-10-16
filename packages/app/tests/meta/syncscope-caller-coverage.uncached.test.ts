@@ -245,7 +245,7 @@ function assertConflictPartition(source: string, filter: string): void {
     .getMethodOrThrow('isExcluded')
     .getSymbolOrThrow();
   for (const [method, target, banned] of [
-    [predicate, excluded, ['isShareableOkArtifact', 'SYNC_STAGING_SCOPE', 'syncScope']],
+    [predicate, excluded, ['isShareablePsArtifact', 'SYNC_STAGING_SCOPE', 'syncScope']],
     [handler, predicate.getSymbolOrThrow(), ['SYNC_STAGING_SCOPE', 'syncScope']],
   ] as const) {
     expect(method.getBody()).toBeDefined();
@@ -291,10 +291,10 @@ export type ContentFilterSyncReadOpts = {
   syncScope: { pathBase: 'content' | 'project' };
 };
 export interface ContentFilter { isExcluded(path: string): boolean; }
-export function isShareableOkArtifact(path: string) { return false; }
+export function isShareablePsArtifact(path: string) { return false; }
 `;
 const ENGINE_FIXTURE = `
-import { type ContentFilter, isShareableOkArtifact as artifact } from './content-filter';
+import { type ContentFilter, isShareablePsArtifact as artifact } from './content-filter';
 const CONTENT_SYNC_STAGING_SCOPE = { syncScope: { pathBase: 'content' } };
 const scopeAlias = CONTENT_SYNC_STAGING_SCOPE;
 export class SyncEngine {

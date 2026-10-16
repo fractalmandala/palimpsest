@@ -39,7 +39,7 @@ import type {
   ReportBundleLevel,
 } from './logger-types.ts';
 import type { LintPluginId } from './markdown/lint/types.ts';
-import type { LocalOpOkInitResponse } from './schemas/api/local-op.ts';
+import type { LocalOpPsInitResponse } from './schemas/api/local-op.ts';
 import type {
   BranchInfoResponse,
   CheckoutResponse,
@@ -745,7 +745,7 @@ export type PsEditorActiveTargetSnapshot =
 
 export interface PsEditorViewMenuStateSnapshot {
   readonly showHiddenFiles: boolean;
-  readonly showOkFolders: boolean;
+  readonly showPsFolders: boolean;
   readonly showOnlyMarkdownFiles: boolean;
   readonly showSkillsSection: boolean;
   readonly canExpandAll: boolean;
@@ -1288,7 +1288,7 @@ export interface PsDesktopBridge {
       branch: string;
       timeoutMs: number;
     }): Promise<{ ok: true } | { ok: false; reason: 'timeout' | 'project-not-open' }>;
-    psInit(request: { projectPath: string }): Promise<LocalOpOkInitResponse>;
+    psInit(request: { projectPath: string }): Promise<LocalOpPsInitResponse>;
     close(): Promise<void>;
   };
 

@@ -276,9 +276,9 @@ describe('pluginCoverageOf — plugin identity', () => {
       pluginCoverageOf({
         scope: 'project',
         name: 'linux-vm',
-        plugin: { name: 'ok', marketplace: 'inkeep-agents-private', provider: 'claude' },
+        plugin: { name: 'ps', marketplace: 'inkeep-agents-private', provider: 'claude' },
       }),
-    ).toEqual({ editor: 'claude', plugin: 'ok' });
+    ).toEqual({ editor: 'claude', plugin: 'ps' });
   });
 });
 
@@ -286,9 +286,9 @@ describe('global-scope vocabulary', () => {
   it('a global skill offers the user-only hosts a global install can write', () => {
     const rows = derive({
       scope: 'global',
-      name: 'open-knowledge-discovery',
+      name: 'palimpsest-discovery',
       hosts: ['agents', 'claude', 'antigravity'],
-      path: '.agents/skills/open-knowledge-discovery/SKILL.md',
+      path: '.agents/skills/palimpsest-discovery/SKILL.md',
       installableEditors: ['claude', 'cursor', 'antigravity'],
     }).rows;
     expect(rows).toContain('antigravity');

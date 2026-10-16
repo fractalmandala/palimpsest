@@ -128,7 +128,7 @@ function levenshtein(a: string, b: string): number {
   return prev[b.length] as number;
 }
 
-function diagnoseUnknownOkVar(
+function diagnoseUnknownPsVar(
   envVar: string,
   mechanicalTable: ReadonlyMap<string, readonly string[]>,
 ): EnvDiagnostic | null {
@@ -192,7 +192,7 @@ export function resolveEnvConfigLayer(env: Record<string, string | undefined>): 
   for (const envVar of Object.keys(env)) {
     if (!envVar.startsWith('OK_') || RECOGNIZED_ENV_VARS.has(envVar)) continue;
     if (env[envVar] === undefined) continue;
-    const diagnostic = diagnoseUnknownOkVar(envVar, mechanicalTable);
+    const diagnostic = diagnoseUnknownPsVar(envVar, mechanicalTable);
     if (diagnostic !== null) diagnostics.push(diagnostic);
   }
 

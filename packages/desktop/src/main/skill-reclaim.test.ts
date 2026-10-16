@@ -77,7 +77,7 @@ interface FakeDeps {
   removals: string[];
 }
 
-const DISCOVERY_ONLY_BUNDLES = [{ id: 'discovery', name: 'open-knowledge-discovery' }] as const;
+const DISCOVERY_ONLY_BUNDLES = [{ id: 'discovery', name: 'palimpsest-discovery' }] as const;
 
 function makeDeps(opts: {
   bundle: string;
@@ -169,7 +169,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     });
     expect(r.status).toBe('done');
     expect(
-      existsSync(join(home, '.agents', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
   });
 
@@ -184,7 +184,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       executablePath: EXE,
       deps,
     });
-    const central = join(home, '.agents', 'skills', 'open-knowledge-discovery', 'SKILL.md');
+    const central = join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md');
     expect(existsSync(central)).toBe(false);
     expect(existsSync(join(home, '.agents'))).toBe(false);
   });
@@ -203,14 +203,14 @@ describe('reconcileUserGlobalSkillBundles', () => {
     });
 
     expect(
-      existsSync(join(home, '.pi', 'agent', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.pi', 'agent', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
     expect(existsSync(join(home, '.agents'))).toBe(false);
   });
 
   test('grandfathers a bundle installed only in a concrete Pi root', async () => {
     const home = makeHome();
-    const skillDir = join(home, '.pi', 'agent', 'skills', 'open-knowledge-discovery');
+    const skillDir = join(home, '.pi', 'agent', 'skills', 'palimpsest-discovery');
     mkdirSync(skillDir, { recursive: true });
     writeFileSync(join(skillDir, 'SKILL.md'), '# existing');
     const bundle = setupBundle();
@@ -224,7 +224,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     });
 
     expect(deps.decisionWrites).toEqual([
-      { bundleName: 'open-knowledge-discovery', enabled: true },
+      { bundleName: 'palimpsest-discovery', enabled: true },
     ]);
     expect(existsSync(join(home, '.agents'))).toBe(false);
   });
@@ -237,7 +237,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     const deps = {
       ...makeDeps({ bundle, version: '1.0.0' }),
       userGlobalBundles: [
-        { id: 'discovery', name: 'open-knowledge-discovery' },
+        { id: 'discovery', name: 'palimpsest-discovery' },
         { id: 'write-skill', name: 'open-knowledge-write-skill' },
       ],
     };
@@ -249,7 +249,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       deps,
     });
     expect(r.status).toBe('done');
-    for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
       expect(existsSync(join(home, '.agents', 'skills', name, 'SKILL.md'))).toBe(true);
       expect(existsSync(join(home, '.claude', 'skills', name, 'SKILL.md'))).toBe(true);
     }
@@ -261,7 +261,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
   test('seed-if-absent: existing central store is left untouched (no overwrite)', async () => {
     const home = makeHome();
     const bundle = setupBundle();
-    const central = join(home, '.agents', 'skills', 'open-knowledge-discovery');
+    const central = join(home, '.agents', 'skills', 'palimpsest-discovery');
     mkdirSync(central, { recursive: true });
     writeFileSync(join(central, 'SKILL.md'), '---\nname: palimpsest\n---\n# v-old\n');
     writeFileSync(join(central, 'orphan.md'), 'stale');
@@ -302,9 +302,9 @@ describe('reconcileUserGlobalSkillBundles', () => {
       expect(cursor?.status).toBe('skipped-host-absent');
     }
     expect(
-      existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
-    expect(existsSync(join(home, '.cursor', 'skills', 'open-knowledge-discovery'))).toBe(false);
+    expect(existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery'))).toBe(false);
   });
 
   test('codex installs to its own .codex host dir, distinct from the .agents central store', async () => {
@@ -343,7 +343,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
 
   test('seed-if-absent: existing per-host SKILL.md is left untouched (no force-write)', async () => {
     const home = makeHome();
-    const dest = join(home, '.claude', 'skills', 'open-knowledge-discovery');
+    const dest = join(home, '.claude', 'skills', 'palimpsest-discovery');
     mkdirSync(dest, { recursive: true });
     writeFileSync(join(dest, 'SKILL.md'), '---\nname: palimpsest\n---\n# v-old\n');
     const bundle = setupBundle();
@@ -384,7 +384,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     for (const hostDir of legacyHosts) {
       expect(existsSync(join(home, hostDir, 'skills', 'palimpsest'))).toBe(false);
       expect(
-        existsSync(join(home, hostDir, 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+        existsSync(join(home, hostDir, 'skills', 'palimpsest-discovery', 'SKILL.md')),
       ).toBe(true);
     }
   });
@@ -427,7 +427,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
     const deps = {
       ...makeDeps({ bundle, version: '4.5.6' }),
       userGlobalBundles: [
-        { id: 'discovery', name: 'open-knowledge-discovery' },
+        { id: 'discovery', name: 'palimpsest-discovery' },
         { id: 'write-skill', name: 'open-knowledge-write-skill' },
       ],
     };
@@ -464,7 +464,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
 
     expect(r.status).toBe('done');
     expect(
-      existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
     const writeSkillEvents = deps.events.filter((e) => e.bundle === 'write-skill');
     expect(writeSkillEvents).toHaveLength(1);
@@ -534,7 +534,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
 });
 
 describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
-  const DISCOVERY_DIR = ['.agents', 'skills', 'open-knowledge-discovery'] as const;
+  const DISCOVERY_DIR = ['.agents', 'skills', 'palimpsest-discovery'] as const;
 
   function seedCentral(home: string): void {
     const dir = join(home, ...DISCOVERY_DIR);
@@ -589,7 +589,7 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
     expect(r.status).toBe('done');
     expect(existsSync(join(home, ...DISCOVERY_DIR, 'SKILL.md'))).toBe(true);
     expect(deps.decisionWrites).toEqual([
-      { bundleName: 'open-knowledge-discovery', enabled: true },
+      { bundleName: 'palimpsest-discovery', enabled: true },
     ]);
     expect(deps.removals).toEqual([]);
   });
@@ -606,12 +606,12 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
         bundle: setupBundle(),
         version: '1.0.0',
         bundleDecision: {
-          'open-knowledge-discovery': true,
+          'palimpsest-discovery': true,
           'open-knowledge-write-skill': false,
         },
       }),
       userGlobalBundles: [
-        { id: 'discovery', name: 'open-knowledge-discovery' },
+        { id: 'discovery', name: 'palimpsest-discovery' },
         { id: 'write-skill', name: 'open-knowledge-write-skill' },
       ],
     };
@@ -626,12 +626,12 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
     expect(deps.removals).toEqual(['write-skill']);
     const installed = deps.events.filter((e) => e.outcome === 'installed').map((e) => e.bundle);
     expect(installed).toEqual(['discovery']);
-    expect(deps.reports).toEqual([{ skills: ['open-knowledge-discovery'], scope: undefined }]);
+    expect(deps.reports).toEqual([{ skills: ['palimpsest-discovery'], scope: undefined }]);
   });
 
   test('a launch that installs nothing new reports nothing', async () => {
     const home = makeHome();
-    for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
       const dir = join(home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -639,7 +639,7 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
     const deps = {
       ...makeDeps({ bundle: setupBundle(), version: '1.0.0' }),
       userGlobalBundles: [
-        { id: 'discovery', name: 'open-knowledge-discovery' },
+        { id: 'discovery', name: 'palimpsest-discovery' },
         { id: 'write-skill', name: 'open-knowledge-write-skill' },
       ],
     };
@@ -671,7 +671,7 @@ describe('seed: false', () => {
     });
     expect(r.status).toBe('skipped');
     if (r.status === 'skipped') expect(r.reason).toBe('reconcile-only');
-    expect(existsSync(join(home, '.claude', 'skills', 'open-knowledge-discovery'))).toBe(false);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery'))).toBe(false);
     expect(deps.stateWrites).toEqual([]);
   });
 
@@ -695,7 +695,7 @@ describe('seed: false', () => {
 
   test('reconcile-only still removes a bundle the user declined', async () => {
     const home = makeHome();
-    const dir = join(home, '.agents', 'skills', 'open-knowledge-discovery');
+    const dir = join(home, '.agents', 'skills', 'palimpsest-discovery');
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
     const deps = makeDeps({ bundle: setupBundle(), bundleDecision: false });

@@ -123,7 +123,7 @@ export async function runDesktopUninstallResultWindow(
       app.focus({ steal: true });
       reportProgressReady();
     });
-    createHandler(ipcMain)('ok:uninstall:dispatch', (event, request) => {
+    createHandler(ipcMain)('ps:uninstall:dispatch', (event, request) => {
       if (event.sender.id !== win.webContents.id)
         return { kind: 'refused', reason: 'unknown-window' };
       switch (request?.kind) {

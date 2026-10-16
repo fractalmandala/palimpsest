@@ -43,7 +43,7 @@ let projectBindingPatchCalls: unknown[] = [];
 let syncModeWriterCalls: string[] = [];
 let syncModeSelectCalls: string[] = [];
 let syncDefaultWriterCalls: Array<boolean | string | null> = [];
-let okignoreProps: Array<{ binding: unknown; synced: boolean }> = [];
+let psignoreProps: Array<{ binding: unknown; synced: boolean }> = [];
 let installDialogProps: Array<{
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -256,9 +256,9 @@ vi.doMock('@/components/InstallInClaudeDesktopDialog', () => ({
   },
 }));
 
-vi.doMock('./OkignoreSection', () => ({
-  OkignoreSection: (props: { binding: unknown; synced: boolean }) => {
-    okignoreProps.push(props);
+vi.doMock('./PsignoreSection', () => ({
+  PsignoreSection: (props: { binding: unknown; synced: boolean }) => {
+    psignoreProps.push(props);
     return <div data-testid="psignore-section">psignore synced: {String(props.synced)}</div>;
   },
 }));
@@ -347,8 +347,8 @@ async function renderBody(
   props: {
     activeId: string;
     userBinding?: unknown;
-    okignoreBinding?: unknown;
-    okignoreSynced?: boolean;
+    psignoreBinding?: unknown;
+    psignoreSynced?: boolean;
   } = { activeId: 'sync' },
 ) {
   const { SettingsDialogBody } = await import('./SettingsDialogBody');
@@ -357,8 +357,8 @@ async function renderBody(
       <SettingsDialogBody
         activeId={props.activeId}
         userBinding={(props.userBinding ?? null) as never}
-        okignoreBinding={(props.okignoreBinding ?? null) as never}
-        okignoreSynced={props.okignoreSynced ?? false}
+        psignoreBinding={(props.psignoreBinding ?? null) as never}
+        psignoreSynced={props.psignoreSynced ?? false}
       />
     </TooltipProvider>,
   );
@@ -382,7 +382,7 @@ describe('SettingsDialogBody section runtime dispatch', () => {
     syncModeWriterCalls = [];
     syncModeSelectCalls = [];
     syncDefaultWriterCalls = [];
-    okignoreProps = [];
+    psignoreProps = [];
     installDialogProps = [];
     publishDialogProps = [];
     claudeRefreshCalls = 0;
@@ -390,12 +390,12 @@ describe('SettingsDialogBody section runtime dispatch', () => {
   });
 
   test('body dispatches heavy project sections without owning a Dialog frame', async () => {
-    const okignoreBinding = { id: 'psignore-binding' };
+    const psignoreBinding = { id: 'psignore-binding' };
 
-    await renderBody({ activeId: 'psignore', okignoreBinding, okignoreSynced: true });
+    await renderBody({ activeId: 'psignore', psignoreBinding, psignoreSynced: true });
 
     expect(screen.getByTestId('psignore-section').textContent).toContain('true');
-    expect(okignoreProps.at(-1)).toEqual({ binding: okignoreBinding, synced: true });
+    expect(psignoreProps.at(-1)).toEqual({ binding: psignoreBinding, synced: true });
     expect(screen.queryByRole('dialog')).toBeNull();
 
     cleanup();

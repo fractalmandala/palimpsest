@@ -4,7 +4,7 @@ import { SymlinkEscapeError } from './apply-managed-rename.ts';
 import { isWithinDir, toPosix } from './path-utils.ts';
 
 export interface RealpathGuardOptions {
-  allowShareableOkArtifact?: (projectRelPosixPath: string) => boolean;
+  allowShareablePsArtifact?: (projectRelPosixPath: string) => boolean;
 }
 
 export function assertRealpathWithinDir(
@@ -39,8 +39,8 @@ export function assertRealpathWithinDir(
       if (resolvesIntoInternalStateDir(effectiveRel)) {
         const exemptable =
           effectiveRel.split('/')[0] === '.ps' &&
-          opts.allowShareableOkArtifact !== undefined &&
-          opts.allowShareableOkArtifact(effectiveRel);
+          opts.allowShareablePsArtifact !== undefined &&
+          opts.allowShareablePsArtifact(effectiveRel);
         if (!exemptable) {
           throw new SymlinkEscapeError('path resolves into the .git/.ps state tree');
         }

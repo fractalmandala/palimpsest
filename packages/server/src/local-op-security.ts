@@ -189,7 +189,7 @@ export function checkLocalOpSecurity(
     errorResponse(
       res,
       403,
-      'urn:ok:error:loopback-required',
+      'urn:ps:error:loopback-required',
       'Local-op endpoints require a loopback connection.',
       { handler: options.handler },
     );
@@ -199,7 +199,7 @@ export function checkLocalOpSecurity(
     errorResponse(
       res,
       403,
-      'urn:ok:error:invalid-origin',
+      'urn:ps:error:invalid-origin',
       'Origin header is not a permitted loopback origin.',
       { handler: options.handler },
     );

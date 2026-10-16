@@ -24,7 +24,7 @@ function entryPath(e: ListedEntry): string {
   return e.kind === 'folder' ? (e.path ?? '') : (e.docName ?? e.path ?? '');
 }
 
-function hasOkSegment(p: string): boolean {
+function hasPsSegment(p: string): boolean {
   return p.split('/').includes('.ps');
 }
 
@@ -68,7 +68,7 @@ describe('showOk reveal on GET /api/documents', () => {
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
     const paths = body.documents.map(entryPath);
-    expect(paths.some(hasOkSegment)).toBe(false);
+    expect(paths.some(hasPsSegment)).toBe(false);
     expect(paths).toContain(VISIBLE_TOKEN);
   }, 30_000);
 
@@ -112,15 +112,15 @@ describe('showOk is a tree-only reveal; template content docs are searchable and
     expect(res.ok).toBe(true);
     const body = DocumentListSuccessSchema.parse(await res.json());
     const paths = body.documents.map(entryPath);
-    const nonCarveOutOkPaths = paths.filter(
+    const nonCarveOutPsPaths = paths.filter(
       (p) =>
-        hasOkSegment(p) &&
+        hasPsSegment(p) &&
         p !== '.ps' &&
         !p.startsWith('.ps/skills/') &&
         p !== '.ps/templates' &&
         !p.startsWith('.ps/templates/'),
     );
-    expect(nonCarveOutOkPaths).toEqual([]);
+    expect(nonCarveOutPsPaths).toEqual([]);
     expect(paths).toContain(VISIBLE_TOKEN);
   }, 30_000);
 

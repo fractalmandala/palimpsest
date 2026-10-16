@@ -11,7 +11,7 @@ function renderRow(props: Partial<Parameters<typeof SkillConsentRow>[0]> = {}) {
   return render(
     <TooltipProvider>
       <SkillConsentRow
-        name="open-knowledge-discovery"
+        name="palimpsest-discovery"
         description="Helps your agent recognize Palimpsest projects."
         hosts={['claude', 'cursor']}
         emptyHosts="not-added"
@@ -28,7 +28,7 @@ afterEach(() => {
 describe('SkillConsentRow', () => {
   test('shows the skill name and its own frontmatter description', () => {
     renderRow();
-    expect(screen.getByText('open-knowledge-discovery')).toBeTruthy();
+    expect(screen.getByText('palimpsest-discovery')).toBeTruthy();
     expect(screen.getByText('Helps your agent recognize Palimpsest projects.')).toBeTruthy();
   });
 

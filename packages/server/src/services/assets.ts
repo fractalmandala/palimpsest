@@ -407,7 +407,7 @@ export function createAssetService(deps: AssetServiceDeps): AssetService {
     } catch (e) {
       cleanupTempfile();
       const reason: UploadWriteReason =
-        e instanceof UploadWriteError ? e.reason : 'urn:ok:error:storage-error';
+        e instanceof UploadWriteError ? e.reason : 'urn:ps:error:storage-error';
       return { ok: false, kind: 'write-failed', reason, cause: e, filename: finalFilename };
     }
   }

@@ -14,7 +14,7 @@ export interface LinkedWorktreeHandle {
 
 export interface CreateLinkedWorktreeOptions {
   branch?: string;
-  seedOkScaffold?: boolean;
+  seedPsScaffold?: boolean;
   prefix?: string;
 }
 
@@ -46,7 +46,7 @@ export function createLinkedWorktree(opts: CreateLinkedWorktreeOptions = {}): Li
   }
   const worktreeGitdir = resolve(worktreesDir, adminName);
 
-  if (opts.seedOkScaffold) {
+  if (opts.seedPsScaffold) {
     const psDir = resolve(worktreePath, '.ps');
     mkdirSync(psDir, { recursive: true });
     writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');

@@ -5,8 +5,8 @@ import type { DevToolsTrackEntry, PerfMarkDetail } from './types';
 const NAME_RE = /^ok\/[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*$/;
 
 export const BUNDLED_TRACKS: ReadonlySet<string> = new Set([
-  'ok/caret-reveal',
-  'ok/scroll-restore',
+  'ps/caret-reveal',
+  'ps/scroll-restore',
 ]);
 
 export function validatePerfMarkName(name: string): boolean {
@@ -15,7 +15,7 @@ export function validatePerfMarkName(name: string): boolean {
 
 function deriveTrack(name: string): string {
   const parts = name.split('/');
-  if (parts.length < 2) return 'ok';
+  if (parts.length < 2) return 'ps';
   return `${parts[0]}/${parts[1]}`;
 }
 

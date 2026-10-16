@@ -2,7 +2,7 @@ import { stderrDetailSuffix } from './clone-error-classify.ts';
 import {
   LOCAL_OP_AUTH_SUBPROCESS_TIMEOUT_MS,
   type LocalOpCliInvocation,
-  runOkCliSubprocess,
+  runPsCliSubprocess,
 } from './subprocess.ts';
 import type { LocalOpSubprocessLifetime } from './subprocess-lifetime.ts';
 
@@ -24,7 +24,7 @@ export async function runAuthTokenSubprocess(
   const host = opts.host;
   let terminal: RunAuthTokenResult | null = null;
 
-  const proc = runOkCliSubprocess(opts.cli, {
+  const proc = runPsCliSubprocess(opts.cli, {
     lifetime: opts.lifetime,
     trailingArgs: [
       'auth',

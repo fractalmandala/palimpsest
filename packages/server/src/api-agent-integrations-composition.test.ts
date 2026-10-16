@@ -235,7 +235,7 @@ test('admission, method, and schema refusals prevent integration execution', asy
     body: malformedWrite,
   });
   expect(rejectedHost.status).toBe(403);
-  expect(parseProblem(rejectedHost.body).type).toBe('urn:ok:error:host-not-allowed');
+  expect(parseProblem(rejectedHost.body).type).toBe('urn:ps:error:host-not-allowed');
 
   const rejectedMethod = await rawRequest(server.port, APPLY_PATH, {
     method: 'PATCH',
@@ -244,7 +244,7 @@ test('admission, method, and schema refusals prevent integration execution', asy
   });
   expect(rejectedMethod.status).toBe(405);
   expect(rejectedMethod.headers.allow).toBe('POST');
-  expect(parseProblem(rejectedMethod.body).type).toBe('urn:ok:error:method-not-allowed');
+  expect(parseProblem(rejectedMethod.body).type).toBe('urn:ps:error:method-not-allowed');
 
   const rejectedBody = await rawRequest(server.port, APPLY_PATH, {
     method: 'POST',
@@ -256,7 +256,7 @@ test('admission, method, and schema refusals prevent integration execution', asy
   });
   expect(rejectedBody.status).toBe(400);
   expect(parseProblem(rejectedBody.body)).toMatchObject({
-    type: 'urn:ok:error:invalid-request',
+    type: 'urn:ps:error:invalid-request',
     title: 'Request body is invalid.',
   });
   expect(executionCount).toBe(0);

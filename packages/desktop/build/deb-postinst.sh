@@ -45,6 +45,6 @@ fi
 PS_WRAPPER='/opt/${sanitizedProductName}/resources/cli/bin/ps.sh'
 if [ -f "$PS_WRAPPER" ]; then
     chmod 0755 "$PS_WRAPPER" || true
-    ln -sf "$PS_WRAPPER" /usr/bin/ok
+    ln -sf "$PS_WRAPPER" /usr/bin/ps
     ln -sf "$PS_WRAPPER" /usr/bin/palimpsest
 fi

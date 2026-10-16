@@ -2,9 +2,9 @@ import { resolve } from 'node:path';
 import { currentCliCommandName } from '@palimpsest/core';
 import { Command } from 'commander';
 import {
-  getExcludedOkPaths,
-  getOkArtifactPaths,
-  probeTrackedOkPaths,
+  getExcludedPsPaths,
+  getPsArtifactPaths,
+  probeTrackedPsPaths,
   readSharingMode,
   type SharingMode,
 } from '../../sharing/git-exclude.ts';
@@ -31,10 +31,10 @@ export function sharingStatusCommand(): Command {
     .action(async (opts: StatusOptions) => {
       const projectRoot = resolve(opts.project ?? process.cwd());
       const mode = readSharingMode(projectRoot);
-      const excluded = [...getExcludedOkPaths(projectRoot)];
-      const trackedUpstream = probeTrackedOkPaths(
+      const excluded = [...getExcludedPsPaths(projectRoot)];
+      const trackedUpstream = probeTrackedPsPaths(
         projectRoot,
-        getOkArtifactPaths(projectRoot),
+        getPsArtifactPaths(projectRoot),
       ).tracked;
 
       if (opts.json) {

@@ -125,7 +125,7 @@ function makeFakeWindow(captured: CapturedSend[]): SendTarget {
 
 function manualCheckPhases(rig: TestRig): Array<'started' | 'settled'> {
   return rig.captured
-    .filter((entry) => entry.channel === 'ok:update:manual-check')
+    .filter((entry) => entry.channel === 'ps:update:manual-check')
     .map((entry) => (entry.payload as { phase: 'started' | 'settled' }).phase);
 }
 
@@ -355,7 +355,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
   test('linux: relaunch-now is the install-commit point — it arms attemptedInstall', async () => {
     const { rig } = makeRig({ platform: 'linux' });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.state.attemptedInstall).toBe('0.3.2');
     expect(rig.state.attemptedInstallSurfacedCount).toBe(0);
@@ -843,7 +843,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     });
     const headers = rig.updater.requestHeaders;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await expect(handle.checkForUpdatesNow()).resolves.toBeUndefined();
 
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
@@ -892,7 +892,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
         updater.checkForUpdates = vi.fn(() => new Promise<undefined>(() => {}));
       },
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.logger.info).toHaveBeenCalledWith(
       'check already in flight, reusing the pending promise',
       {
@@ -905,7 +905,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
       },
     );
     rig.now = new Date(rig.now.getTime() + UPDATE_CHECK_DEADLINE_MS - 1);
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(manualCheckPhases(rig)).toEqual(['started', 'started']);
     expect(rig.dispatches).toContain('check-now-already-pending');
     expect(showCheckNowResult).not.toHaveBeenCalled();
@@ -942,7 +942,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
       { ms: MANUAL_CHECK_WATCHDOG_MS },
     );
     expect(manualCheckPhases(rig)).toEqual(['started', 'started', 'settled']);
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(showCheckNowResult).toHaveBeenCalledTimes(2);
     expect(showCheckNowResult).toHaveBeenLastCalledWith({
       kind: 'error',
@@ -991,7 +991,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
       });
 
       fireTimerFor(rig.clock, UPDATE_CHECK_INTERVAL_MS);
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.updater.emit('error', error);
       expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(2);
       expect(rig.updater.setFeedURL).toHaveBeenCalledTimes(2);
@@ -1069,7 +1069,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
     });
     await Promise.resolve();
     rig.updater.checkForUpdates.mockImplementation(() => rejectAfterErrorEvent(rig.updater, error));
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await new Promise((resolve) => setTimeout(resolve, 0));
     const log = level === 'warn' ? rig.logger.warn : rig.logger.debug;
     expect(
@@ -1083,7 +1083,7 @@ describe('startAutoUpdater — initial configuration (parent §8.10 LOCKED)', ()
       ],
     ]);
     expect(rig.updater.setFeedURL).toHaveBeenCalledTimes(1);
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(
       log.mock.calls.filter(
@@ -1106,7 +1106,7 @@ describe('staging age — how long the update sat before the install was request
     rig.now = new Date('2026-04-21T12:00:00.000Z');
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     rig.now = new Date('2026-04-21T12:00:02.060Z');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.state.attemptedInstallStagingAgeMs).toBe(2060);
     expect(rig.logger.info).toHaveBeenCalledWith(
@@ -1122,7 +1122,7 @@ describe('staging age — how long the update sat before the install was request
     rig.now = new Date('2026-04-21T12:00:00.000Z');
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     rig.now = new Date('2026-04-21T11:59:57.000Z');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.state.attemptedInstallStagingAgeMs).toBeNull();
   });
@@ -1157,7 +1157,7 @@ describe('staging age — how long the update sat before the install was request
     session.now = new Date('2026-04-21T12:00:00.000Z');
     session.updater.emit('update-downloaded', { version: '0.3.2' });
     session.now = new Date('2026-04-21T12:00:02.060Z');
-    await session.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await session.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(session.state.attemptedInstallStagingAgeMs).toBe(2060);
 
     session.now = new Date('2026-04-21T13:00:00.000Z');
@@ -1224,7 +1224,7 @@ describe('cross-channel veto on update-available', () => {
     expect(rig.state.stuckHintShown).toBe(false);
 
     rig.updater.emit('error', new Error('transient network'));
-    const hint = rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint');
+    const hint = rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint');
     expect(hint).toHaveLength(0);
     expect(rig.state.stuckHintShown).toBe(false);
   });
@@ -1247,7 +1247,7 @@ describe('cross-channel veto on update-available', () => {
   test('menu-driven check: cross-channel offer remaps to not-available + does not download', () => {
     const showCheckNowResult = vi.fn(() => {});
     const { rig } = makeRig({ appVersion: '0.5.0-beta.5', showCheckNowResult });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
     expect(showCheckNowResult).toHaveBeenCalledWith({
       kind: 'not-available',
@@ -1328,7 +1328,7 @@ describe('persist-before-emit ordering (Finding #2)', () => {
     });
 
     updater.emit('update-downloaded', { version: '0.3.2' });
-    expect(captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(0);
+    expect(captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(0);
     expect(dispatches).not.toContain('update-downloaded-toast-a' as DispatchKind);
     expect(state.versionPendingInstall).toBeNull();
     expect(logger.error).toHaveBeenCalled();
@@ -1367,7 +1367,7 @@ describe('persist-before-emit ordering (Finding #2)', () => {
     });
 
     updater.emit('error', new Error('network'));
-    expect(captured.filter((c) => c.channel === 'ok:update:stuck-hint')).toHaveLength(0);
+    expect(captured.filter((c) => c.channel === 'ps:update:stuck-hint')).toHaveLength(0);
     expect(dispatches).not.toContain('stuck-hint-toast-c' as DispatchKind);
     expect(state.stuckHintShown).toBe(false);
   });
@@ -1396,7 +1396,7 @@ describe('update-downloaded → Toast A (AC6)', () => {
   test('first dispatch for a new version fires ok:update:downloaded + records versionPendingInstall', () => {
     const { rig } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    const toastA = rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    const toastA = rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
     expect(toastA).toHaveLength(1);
     expect(toastA[0]?.payload).toEqual({ version: '0.3.2' });
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
@@ -1407,7 +1407,7 @@ describe('update-downloaded → Toast A (AC6)', () => {
     const { rig } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    const toastA = rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    const toastA = rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
     expect(toastA).toHaveLength(1);
     expect(rig.dispatches).toContain('update-downloaded-deduped' as DispatchKind);
   });
@@ -1416,7 +1416,7 @@ describe('update-downloaded → Toast A (AC6)', () => {
     const { rig } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     rig.updater.emit('update-downloaded', { version: '0.3.3' });
-    const toastA = rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    const toastA = rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
     expect(toastA).toHaveLength(2);
     expect(toastA[1]?.payload).toEqual({ version: '0.3.3' });
     expect(rig.state.versionPendingInstall).toBe('0.3.3');
@@ -1425,7 +1425,7 @@ describe('update-downloaded → Toast A (AC6)', () => {
   test('empty-version payload is skipped defensively (no dispatch, no state write)', () => {
     const { rig } = makeRig();
     rig.updater.emit('update-downloaded', {});
-    const toastA = rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    const toastA = rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
     expect(toastA).toHaveLength(0);
     expect(rig.state.versionPendingInstall).toBeNull();
     expect(rig.dispatches).toContain('update-downloaded-empty-version' as DispatchKind);
@@ -1437,7 +1437,7 @@ describe('error routing (AC3, D5)', () => {
     const { rig } = makeRig();
     const err = Object.assign(new Error(`failure ${code}`), { code });
     rig.updater.emit('error', err);
-    expect(rig.captured.some((c) => c.channel.startsWith('ok:update:error'))).toBe(false);
+    expect(rig.captured.some((c) => c.channel.startsWith('ps:update:error'))).toBe(false);
     const isClassified = code.startsWith('ERR_UPDATER_') || code.startsWith('HTTP_ERROR_');
     expect(
       rig.dispatches.includes(
@@ -1550,14 +1550,14 @@ describe('stuck-hint logic (AC17, D12)', () => {
     rig.now = new Date();
 
     rig.updater.emit('error', new Error('network'));
-    const hint = rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint');
+    const hint = rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint');
     expect(hint).toHaveLength(1);
     expect(hint[0]?.payload).toEqual({ downloadUrl: STUCK_HINT_DOWNLOAD_URL });
     expect(rig.state.stuckHintShown).toBe(true);
     expect(rig.dispatches).toContain('stuck-hint-toast-c' as DispatchKind);
 
     rig.updater.emit('error', new Error('network again'));
-    const hint2 = rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint');
+    const hint2 = rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint');
     expect(hint2).toHaveLength(1);
   });
 
@@ -1569,7 +1569,7 @@ describe('stuck-hint logic (AC17, D12)', () => {
     });
     rig.now = new Date();
     rig.updater.emit('error', new Error('network'));
-    const hint = rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint');
+    const hint = rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint');
     expect(hint).toHaveLength(0);
     expect(rig.state.stuckHintShown).toBe(false);
   });
@@ -1594,7 +1594,7 @@ describe('stuck-hint logic (AC17, D12)', () => {
       rig.now.getTime() - 8 * 24 * 60 * 60 * 1000,
     ).toISOString();
     rig.updater.emit('error', new Error('stuck again'));
-    const hint = rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint');
+    const hint = rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint');
     expect(hint).toHaveLength(1);
     expect(rig.state.stuckHintShown).toBe(true);
   });
@@ -1616,7 +1616,7 @@ describe('stuck-hint logic (AC17, D12)', () => {
 describe('first-launch version notice (Toast B — AC7, D9)', () => {
   test('lastSeenVersion differs from current → dispatch whats-new + update state', () => {
     const { rig } = makeRig({ lastSeenVersion: '0.3.0', appVersion: '0.3.1' });
-    const whatsNew = rig.captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const whatsNew = rig.captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(whatsNew).toHaveLength(1);
     expect(whatsNew[0]?.payload).toEqual({
       version: '0.3.1',
@@ -1628,14 +1628,14 @@ describe('first-launch version notice (Toast B — AC7, D9)', () => {
 
   test('lastSeenVersion === current → no dispatch, no state change', () => {
     const { rig } = makeRig({ lastSeenVersion: '0.3.1', appVersion: '0.3.1' });
-    const whatsNew = rig.captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const whatsNew = rig.captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(whatsNew).toHaveLength(0);
     expect(rig.state.lastSeenVersion).toBe('0.3.1');
   });
 
   test('lastSeenVersion is null (fresh install) → no dispatch, state seeds silently', () => {
     const { rig } = makeRig({ lastSeenVersion: null, appVersion: '0.3.1' });
-    const whatsNew = rig.captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const whatsNew = rig.captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(whatsNew).toHaveLength(0);
     expect(rig.dispatches).not.toContain('whats-new-toast-b' as DispatchKind);
     expect(rig.state.lastSeenVersion).toBe('0.3.1');
@@ -1721,7 +1721,7 @@ describe('boot-time failed-install detection', () => {
       attemptedInstallHandoffAt: COMMITTED_LONG_AGO,
       appVersion: '0.16.0-beta.1',
     });
-    const failed = rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    const failed = rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
     expect(failed).toHaveLength(1);
     expect(failed[0]?.payload).toEqual({
       version: '0.16.0-beta.3',
@@ -1768,7 +1768,7 @@ describe('boot-time failed-install detection', () => {
     const first = boot();
     expect(first.dispatches).toContain('install-failed-on-boot' as DispatchKind);
     const second = boot();
-    expect(second.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(
+    expect(second.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(
       1,
     );
     expect(second.dispatches).toContain('install-failed-on-boot' as DispatchKind);
@@ -1781,7 +1781,7 @@ describe('boot-time failed-install detection', () => {
       appVersion: '0.16.0-beta.3',
       attemptedInstallSurfacedCount: 2,
     });
-    const failed = rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    const failed = rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
     expect(failed).toHaveLength(0);
     expect(rig.state.attemptedInstall).toBeNull();
     expect(rig.state.attemptedInstallSurfacedCount).toBe(0);
@@ -1796,7 +1796,7 @@ describe('boot-time failed-install detection', () => {
       appVersion: '0.16.0',
       attemptedInstallSurfacedCount: 2,
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.state.attemptedInstall).toBeNull();
     expect(rig.state.attemptedInstallSurfacedCount).toBe(0);
     expect(rig.dispatches).toContain('attempted-install-reconciled' as DispatchKind);
@@ -1804,7 +1804,7 @@ describe('boot-time failed-install detection', () => {
 
   test('no attemptedInstall → no-op (nothing to reconcile)', () => {
     const { rig } = makeRig({ attemptedInstall: null, appVersion: '0.16.0-beta.1' });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.dispatches).not.toContain('install-failed-on-boot' as DispatchKind);
     expect(rig.dispatches).not.toContain('attempted-install-reconciled' as DispatchKind);
   });
@@ -1824,7 +1824,7 @@ describe('boot-time failed-install detection', () => {
       stagedInstallerPath: '/tmp/staged-cross-channel.deb',
       appVersion: '0.23.0-beta.1',
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.state.attemptedInstall).toBeNull();
     expect(rig.state.versionPendingInstall).toBeNull();
     expect(rig.state.stagedInstallerPath).toBeNull();
@@ -1839,7 +1839,7 @@ describe('boot-time failed-install detection', () => {
       attemptedInstallHandoffAt: COMMITTED_LONG_AGO,
       appVersion: '0.22.0',
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.state.attemptedInstall).toBeNull();
     expect(rig.dispatches).toContain('attempted-install-cross-channel' as DispatchKind);
     expect(rig.dispatches).not.toContain('install-failed-on-boot' as DispatchKind);
@@ -1852,7 +1852,7 @@ describe('boot-time failed-install detection', () => {
       appVersion: '0.16.0-beta.1',
       attemptedInstallSurfacedCount: 1,
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(1);
     expect(rig.state.attemptedInstallSurfacedCount).toBe(2);
     expect(rig.dispatches).toContain('install-failed-on-boot' as DispatchKind);
   });
@@ -1866,7 +1866,7 @@ describe('boot-time failed-install detection', () => {
       appVersion: '0.16.0-beta.1',
       attemptedInstallSurfacedCount: INSTALL_FAILURE_MAX_SURFACES,
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.state.attemptedInstall).toBeNull();
     expect(rig.state.attemptedInstallSurfacedCount).toBe(0);
     expect(rig.state.gaveUpOnVersion).toBe('0.17.0-beta.1');
@@ -1911,12 +1911,12 @@ describe('boot-time failed-install detection', () => {
     };
     for (let i = 0; i < INSTALL_FAILURE_MAX_SURFACES; i++) {
       const b = boot();
-      expect(b.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(1);
+      expect(b.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(1);
       expect(b.dispatches).toContain('install-failed-on-boot' as DispatchKind);
     }
     expect(state.attemptedInstallSurfacedCount).toBe(INSTALL_FAILURE_MAX_SURFACES);
     const giveup = boot();
-    expect(giveup.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(
+    expect(giveup.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(
       0,
     );
     expect(giveup.dispatches).toContain('install-failed-giveup' as DispatchKind);
@@ -2018,7 +2018,7 @@ describe('boot-time failed-install detection', () => {
     });
 
     expect(dispatches).not.toContain('install-never-committed-reoffered' as DispatchKind);
-    expect(captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(0);
+    expect(captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(0);
     expect(state.attemptedInstall).toBe('0.16.0-beta.3');
     expect(warn).toHaveBeenCalledWith(
       'failed to persist install-never-committed-reoffered',
@@ -2094,7 +2094,7 @@ describe('boot-time failed-install detection', () => {
         debug: vi.fn(() => {}),
       },
     });
-    expect(captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(dispatches).not.toContain('install-failed-on-boot' as DispatchKind);
     expect(state.attemptedInstall).toBe('0.16.0-beta.3');
   });
@@ -2191,7 +2191,7 @@ describe('boot-time failed-install detection — install still in flight', () =>
     rig.updater.emit('update-downloaded', { version: overrides.attempted ?? ATTEMPTED });
     rig.now = overrides.committedAt ?? HANDED_OFF_AT;
     if (via === 'relaunch-click')
-      await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+      await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     else if (via === 'plain-quit') handle.recordInstallHandoffOnQuit();
     return rig.state;
   }
@@ -2202,10 +2202,10 @@ describe('boot-time failed-install detection — install still in flight', () =>
   }
 
   const failureCards = (rig: TestRig): CapturedSend[] =>
-    rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
 
   const reofferCards = (rig: TestRig): CapturedSend[] =>
-    rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
 
   function reopenAndQuit(
     state: AppState,
@@ -2365,7 +2365,7 @@ describe('boot-time failed-install detection — install still in flight', () =>
     expect(reoffered.dispatches).toContain('install-never-committed-reoffered' as DispatchKind);
 
     reoffered.now = new Date(STAGED_AT.getTime() + 24 * HOUR + MINUTE);
-    await reoffered.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await reoffered.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(reoffered.state.attemptedInstallHandoffAt).not.toBeNull();
 
     const reclaim = vi.fn();
@@ -2517,7 +2517,7 @@ describe('boot-time failed-install detection — install still in flight', () =>
       },
     });
 
-    expect(captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(dispatches).toContain('install-in-flight-deferred' as DispatchKind);
     expect(dispatches).not.toContain('install-failed-on-boot' as DispatchKind);
     expect(state.attemptedInstallDeferredBoots).toBe(0);
@@ -2823,23 +2823,23 @@ describe('multi-window delivery: relaunch banner and "updated to" notice both re
   test('manual check started and settled phases reach every open window', async () => {
     const { rig } = makeRig({ extraWindowCount: 2 });
     expect(rig.windows).toHaveLength(3);
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-not-available', { version: '0.3.1' });
     await new Promise((resolve) => setTimeout(resolve, 0));
     for (const win of rig.windows) {
       const phases = win
-        .filter((entry) => entry.channel === 'ok:update:manual-check')
+        .filter((entry) => entry.channel === 'ps:update:manual-check')
         .map((entry) => (entry.payload as { phase: 'started' | 'settled' }).phase);
       expect(phases).toEqual(['started', 'settled']);
     }
   });
 
-  test('ok:update:downloaded (relaunch banner) reaches every open window', () => {
+  test('ps:update:downloaded (relaunch banner) reaches every open window', () => {
     const { rig } = makeRig({ extraWindowCount: 2 });
     expect(rig.windows).toHaveLength(3);
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     for (const win of rig.windows) {
-      const toastA = win.filter((c) => c.channel === 'ok:update:downloaded');
+      const toastA = win.filter((c) => c.channel === 'ps:update:downloaded');
       expect(toastA).toHaveLength(1);
       expect(toastA[0]?.payload).toEqual({ version: '0.3.2' });
     }
@@ -2851,10 +2851,10 @@ describe('multi-window delivery: relaunch banner and "updated to" notice both re
     const { rig } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     expect(rig.windows).toHaveLength(1);
-    expect(rig.windows[0]?.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+    expect(rig.windows[0]?.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
   });
 
-  test('ok:update:whats-new ("Updated to Version X") reaches every open window', () => {
+  test('ps:update:whats-new ("Updated to Version X") reaches every open window', () => {
     const { rig } = makeRig({
       lastSeenVersion: '0.3.0',
       appVersion: '0.3.1',
@@ -2862,7 +2862,7 @@ describe('multi-window delivery: relaunch banner and "updated to" notice both re
     });
     expect(rig.windows).toHaveLength(3);
     for (const win of rig.windows) {
-      const whatsNew = win.filter((c) => c.channel === 'ok:update:whats-new');
+      const whatsNew = win.filter((c) => c.channel === 'ps:update:whats-new');
       expect(whatsNew).toHaveLength(1);
       expect(whatsNew[0]?.payload).toMatchObject({ version: '0.3.1' });
     }
@@ -2874,7 +2874,7 @@ describe('multi-window delivery: relaunch banner and "updated to" notice both re
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+      expect(win.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
     }
     expect(rig.dispatches).toContain('update-downloaded-deduped' as DispatchKind);
   });
@@ -2883,9 +2883,9 @@ describe('multi-window delivery: relaunch banner and "updated to" notice both re
 describe('release-notes cross-window dismiss + late-window delivery', () => {
   test('whats-new-dismiss re-broadcasts ok:update:whats-new-dismissed to every window', () => {
     const { rig } = makeRig({ extraWindowCount: 2 });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.1' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.1' });
     for (const win of rig.windows) {
-      const dismissed = win.filter((c) => c.channel === 'ok:update:whats-new-dismissed');
+      const dismissed = win.filter((c) => c.channel === 'ps:update:whats-new-dismissed');
       expect(dismissed).toHaveLength(1);
       expect(dismissed[0]?.payload).toEqual({ version: '0.3.1' });
     }
@@ -2907,13 +2907,13 @@ describe('release-notes cross-window dismiss + late-window delivery', () => {
   test('getActiveWhatsNew returns null after the notice is dismissed', () => {
     const { rig, handle } = makeRig({ lastSeenVersion: '0.3.0', appVersion: '0.3.1' });
     expect(handle.getActiveWhatsNew()).not.toBeNull();
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.1' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.1' });
     expect(handle.getActiveWhatsNew()).toBeNull();
   });
 
   test('a stale dismiss for an older version leaves a newer live notice intact', () => {
     const { rig, handle } = makeRig({ lastSeenVersion: '0.3.0', appVersion: '0.3.1' });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.0' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.0' });
     expect(handle.getActiveWhatsNew()).toMatchObject({ version: '0.3.1' });
   });
 });
@@ -3064,19 +3064,19 @@ describe('periodic check singleton + jitter (AC10, D10)', () => {
 describe('relaunch-now dispatch (AC18)', () => {
   test('registers the single ok:update:dispatch handler on startup', () => {
     const { rig } = makeRig();
-    expect(rig.ipc.handlers.has('ok:update:dispatch')).toBe(true);
+    expect(rig.ipc.handlers.has('ps:update:dispatch')).toBe(true);
   });
 
   test('handler invocation WITH versionPendingInstall calls autoUpdater.quitAndInstall', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.dispatches).toContain('relaunch-now' as DispatchKind);
   });
 
   test('handler invocation WITHOUT versionPendingInstall is ignored (Finding #5 guard)', () => {
     const { rig } = makeRig({ versionPendingInstall: null });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     expect(rig.dispatches).not.toContain('relaunch-now' as DispatchKind);
     expect(rig.logger.warn).toHaveBeenCalled();
@@ -3085,9 +3085,9 @@ describe('relaunch-now dispatch (AC18)', () => {
   test('broadcasts ok:update:relaunching to EVERY open window so all swap in lockstep', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', extraWindowCount: 2 });
     expect(rig.windows).toHaveLength(3);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     for (const win of rig.windows) {
-      const relaunching = win.filter((c) => c.channel === 'ok:update:relaunching');
+      const relaunching = win.filter((c) => c.channel === 'ps:update:relaunching');
       expect(relaunching).toHaveLength(1);
       expect(relaunching[0]?.payload).toEqual({ version: '0.3.2' });
     }
@@ -3100,15 +3100,15 @@ describe('relaunch-now dispatch (AC18)', () => {
       throw new Error('SQRLInstallerErrorDomain Code=-9');
     });
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('SQRLInstallerErrorDomain Code=-9');
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:relaunching')).toHaveLength(1);
-      const reArm = win.filter((c) => c.channel === 'ok:update:downloaded');
+      expect(win.filter((c) => c.channel === 'ps:update:relaunching')).toHaveLength(1);
+      const reArm = win.filter((c) => c.channel === 'ps:update:downloaded');
       expect(reArm).toHaveLength(1);
       expect(reArm[0]?.payload).toEqual({ version: '0.3.2' });
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
@@ -3117,15 +3117,15 @@ describe('relaunch-now dispatch (AC18)', () => {
     }
     expect(rig.dispatches).toContain('relaunch-failed-rearm' as DispatchKind);
     rig.updater.quitAndInstall = vi.fn(() => {});
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
   });
 
   test('does NOT broadcast ok:update:relaunching when nothing is pending (gated)', () => {
     const { rig } = makeRig({ versionPendingInstall: null, extraWindowCount: 2 });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:relaunching')).toHaveLength(0);
+      expect(win.filter((c) => c.channel === 'ps:update:relaunching')).toHaveLength(0);
     }
     expect(rig.dispatches).not.toContain('relaunching-broadcast' as DispatchKind);
   });
@@ -3149,7 +3149,7 @@ describe('relaunch-now dispatch (AC18)', () => {
       isPackaged: true,
       prepareForRelaunch: async () => {
         relaunchingSeenAtTeardown = captured.filter(
-          (c) => c.channel === 'ok:update:relaunching',
+          (c) => c.channel === 'ps:update:relaunching',
         ).length;
       },
       clock: makeFakeClock(),
@@ -3161,14 +3161,14 @@ describe('relaunch-now dispatch (AC18)', () => {
         debug: vi.fn(() => {}),
       },
     });
-    await ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(relaunchingSeenAtTeardown).toBe(1);
   });
 
   test('destroy() removes the ok:update:dispatch handler', () => {
     const { rig, handle } = makeRig();
     handle.destroy();
-    expect(rig.ipc.handlers.has('ok:update:dispatch')).toBe(false);
+    expect(rig.ipc.handlers.has('ps:update:dispatch')).toBe(false);
   });
 
   test('teardown and survivor sweep fire before quitAndInstall in that order', async () => {
@@ -3205,14 +3205,14 @@ describe('relaunch-now dispatch (AC18)', () => {
         debug: vi.fn(() => {}),
       },
     });
-    await ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(calls).toEqual(['prepareForRelaunch', 'sweepUpdateSurvivors', 'quitAndInstall']);
   });
 
   test('prepareForRelaunch does NOT fire when versionPendingInstall is null', () => {
     const prepareForRelaunch = vi.fn(() => {});
     const { rig } = makeRig({ versionPendingInstall: null, prepareForRelaunch });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(prepareForRelaunch).not.toHaveBeenCalled();
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
   });
@@ -3222,7 +3222,7 @@ describe('relaunch-now dispatch (AC18)', () => {
       throw new Error('teardown bug');
     });
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', prepareForRelaunch });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(prepareForRelaunch).toHaveBeenCalledTimes(1);
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.logger.warn).toHaveBeenCalled();
@@ -3233,7 +3233,7 @@ describe('relaunch-now dispatch (AC18)', () => {
       throw new Error('process query failed');
     });
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', sweepUpdateSurvivors });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(sweepUpdateSurvivors).toHaveBeenCalledTimes(1);
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.logger.warn).toHaveBeenCalled();
@@ -3249,7 +3249,7 @@ describe('relaunch-now dispatch (AC18)', () => {
     }));
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', sweepUpdateSurvivors });
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.logger.warn).toHaveBeenCalledWith(
@@ -3265,7 +3265,7 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(rig.clock.lastMs).toBe(UPDATE_CHECK_INTERVAL_MS);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.clock.lastMs).toBe(RELAUNCH_WATCHDOG_MS);
     expect(rig.clock.lastCallback).not.toBeNull();
   });
@@ -3275,13 +3275,13 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(rig.clock.lastMs).toBe(UPDATE_CHECK_INTERVAL_MS);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.state.versionPendingInstall).toBeNull();
     fireTimerFor(rig.clock, RELAUNCH_WATCHDOG_MS);
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      expect(win.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
@@ -3296,11 +3296,11 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(rig.clock.lastMs).toBe(UPDATE_CHECK_INTERVAL_MS);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error('ShipIt swap failed'));
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({ version: '0.3.2', message: 'ShipIt swap failed' });
     }
@@ -3322,10 +3322,10 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     rig.updater.quitAndInstall = vi.fn(() => {
       rig.updater.emit('error', new Error('pkexec: authorization could not be obtained'));
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
@@ -3341,20 +3341,20 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
     await Promise.resolve();
     await Promise.resolve();
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', Object.assign(new Error('HTTP 500'), { code: 'HTTP_ERROR_500' }));
     expect(rig.dispatches).toContain('error-classified' as DispatchKind);
     expect(rig.dispatches.filter((d) => d === 'relaunch-error-event')).toHaveLength(1);
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(1);
   });
 
   test('in-flight error with EMPTY message → fallback detail on the failure notice', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
     await Promise.resolve();
     await Promise.resolve();
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error(''));
-    const failed = rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    const failed = rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
     expect(failed).toHaveLength(1);
     expect(failed[0]?.payload).toEqual({
       version: '0.3.2',
@@ -3367,18 +3367,18 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(rig.clock.lastMs).toBe(UPDATE_CHECK_INTERVAL_MS);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     fireTimerFor(rig.clock, RELAUNCH_WATCHDOG_MS);
     rig.updater.emit('error', new Error('ShipIt swap failed (late)'));
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
         message: 'the update timed out',
       });
-      expect(win.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+      expect(win.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
     }
     expect(rig.dispatches.filter((d) => d === 'relaunch-watchdog-fired')).toHaveLength(1);
     expect(rig.dispatches).not.toContain('relaunch-error-event' as DispatchKind);
@@ -3414,12 +3414,12 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     });
     await Promise.resolve();
     await Promise.resolve();
-    await ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     failWrites = true;
     fireTimerFor(clock, RELAUNCH_WATCHDOG_MS);
     expect(state.versionPendingInstall).toBeNull();
-    expect(captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(0);
-    const failed = captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    expect(captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(0);
+    const failed = captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
     expect(failed).toHaveLength(1);
     expect(failed[0]?.payload).toEqual({
       version: '0.3.2',
@@ -3431,16 +3431,16 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
   test('updater error with NO relaunch in flight → no relaunch-failed broadcast (normal error path)', () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
     rig.updater.emit('error', new Error('routine check failure'));
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
   });
 
   test('watchdog NOT armed when isPackaged=false (dev quitAndInstall no-op is not a failure)', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', isPackaged: false });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.clock.lastCallback).toBeNull();
     rig.updater.emit('error', new Error('dev error'));
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
   });
 
   test('destroy() clears the armed watchdog', async () => {
@@ -3448,7 +3448,7 @@ describe('async relaunch failure — error event + no-quit watchdog', () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(rig.clock.lastMs).toBe(UPDATE_CHECK_INTERVAL_MS);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.clock.lastCallback).not.toBeNull();
     handle.destroy();
     expect(rig.clock.lastCallback).toBeNull();
@@ -3460,7 +3460,7 @@ describe('check-now dispatch', () => {
     const { rig } = makeRig();
     await Promise.resolve();
     rig.updater.checkForUpdates.mockClear();
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
   });
 
@@ -3470,8 +3470,8 @@ describe('check-now dispatch', () => {
     rig.updater.checkForUpdates = vi.fn(() => new Promise(() => {}));
     rig.updater.checkForUpdates.mockClear();
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
 
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
     expect(manualCheckPhases(rig)).toEqual(['started', 'started']);
@@ -3485,7 +3485,7 @@ describe('check-now dispatch', () => {
     const { rig } = makeRig({ versionPendingInstall: null });
     await Promise.resolve();
     rig.updater.checkForUpdates.mockClear();
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
   });
 
@@ -3501,7 +3501,7 @@ describe('check-now dispatch', () => {
     const { rig } = makeRig();
     await Promise.resolve();
     rig.updater.checkForUpdates = vi.fn(() => Promise.reject(new Error('network down')));
-    expect(() => rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' })).not.toThrow();
+    expect(() => rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' })).not.toThrow();
   });
 });
 
@@ -3519,7 +3519,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
           updater.checkForUpdates = vi.fn(() => pending.promise);
         },
       });
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.now = new Date(rig.now.getTime() + UPDATE_CHECK_DEADLINE_MS);
       fireTimerFor(rig.clock, UPDATE_CHECK_DEADLINE_MS);
       expect(showCheckNowResult).not.toHaveBeenCalled();
@@ -3561,7 +3561,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
           updater.checkForUpdates = vi.fn(() => pending.promise);
         },
       });
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.now = new Date(rig.now.getTime() + UPDATE_CHECK_DEADLINE_MS);
       fireTimerFor(rig.clock, UPDATE_CHECK_DEADLINE_MS);
       expect(showCheckNowResult).not.toHaveBeenCalled();
@@ -3615,13 +3615,13 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
       ).toHaveLength(1);
       expect(() => fireTimerFor(rig.clock, UPDATE_CHECK_DEADLINE_MS)).toThrow();
       if (path === 'reuse') {
-        expect(rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint')).toHaveLength(0);
+        expect(rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint')).toHaveLength(0);
         expect(rig.state.stuckHintShown).toBe(false);
         rig.now = new Date(rig.now.getTime() + 2);
-        rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+        rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       }
-      expect(rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint')).toEqual([
-        { channel: 'ok:update:stuck-hint', payload: { downloadUrl: STUCK_HINT_DOWNLOAD_URL } },
+      expect(rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint')).toEqual([
+        { channel: 'ps:update:stuck-hint', payload: { downloadUrl: STUCK_HINT_DOWNLOAD_URL } },
       ]);
       expect(rig.state.stuckHintShown).toBe(true);
       expect(rig.dispatches.filter((kind) => kind === 'stuck-hint-toast-c')).toHaveLength(1);
@@ -3636,7 +3636,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
         rig.clock.setTimeout.mock.calls.filter(([, ms]) => ms === UPDATE_CHECK_INTERVAL_MS),
       ).toHaveLength(3);
       expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
-      expect(rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint')).toHaveLength(1);
+      expect(rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint')).toHaveLength(1);
     },
   );
 
@@ -3665,7 +3665,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
       proxyFallbackTried: false,
     });
     expect(showCheckNowResult).not.toHaveBeenCalled();
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(showCheckNowResult).toHaveBeenCalledTimes(1);
     expect(showCheckNowResult).toHaveBeenCalledWith({
       kind: 'error',
@@ -3715,7 +3715,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
           });
         },
       });
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       expect(showCheckNowResult).not.toHaveBeenCalled();
       rig.now = new Date(rig.now.getTime() + UPDATE_CHECK_DEADLINE_MS);
       if (outcome === 'destroy') {
@@ -3785,7 +3785,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
       rig.updater.checkForUpdates.mockImplementation(() =>
         rejectAfterErrorEvent(rig.updater, error),
       );
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       await new Promise((resolve) => setTimeout(resolve, 0));
       expect(showCheckNowResult).toHaveBeenCalledTimes(1);
       expect(showCheckNowResult).toHaveBeenCalledWith(
@@ -3833,7 +3833,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
         }
         throw new Error('unexpected updater feed');
       });
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       await new Promise((resolve) => setTimeout(resolve, 0));
       if (outcome === 'dispatch-throw') {
         expect(rig.logger.error).toHaveBeenCalledWith('proxy-feed fallback checkForUpdates threw', {
@@ -3880,7 +3880,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
         const reuseLogsBeforeClick = rig.logger.info.mock.calls.filter(
           ([message]) => message === 'check already in flight, reusing the pending promise',
         ).length;
-        rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+        rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
         expect(showCheckNowResult).not.toHaveBeenCalled();
         expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(2);
         expect(rig.dispatches).toContain('check-now-already-pending');
@@ -3944,7 +3944,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
         );
         expect(rig.clock.clearTimeout).not.toHaveBeenCalledWith(deadlineHandle);
         const feedCalls = rig.updater.setFeedURL.mock.calls.length;
-        rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+        rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
         expect(manualCheckPhases(rig)).toEqual([
           'started',
           'started',
@@ -4030,7 +4030,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
         throw new Error('unexpected updater feed');
       });
 
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       await new Promise((resolve) => setTimeout(resolve, 0));
       expect(showCheckNowResult).not.toHaveBeenCalled();
       finishRetry.resolve(undefined);
@@ -4085,7 +4085,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
       rejectAfterErrorEvent(rig.updater, proxyError),
     );
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(showCheckNowResult).toHaveBeenCalledTimes(1);
     expect(showCheckNowResult).toHaveBeenCalledWith({ kind: 'error', message: proxyError.message });
@@ -4107,7 +4107,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
           ? Promise.reject(new Error('network unavailable'))
           : Promise.resolve(null),
       );
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       const [watchdogHandle, watchdog] = liveTimerFor(rig.clock, MANUAL_CHECK_WATCHDOG_MS);
       expect(watchdog.state).toBe('live');
 
@@ -4133,7 +4133,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     const showCheckNowResult = vi.fn(() => {});
     const { rig, handle } = makeRig({ showCheckNowResult, isPackaged: false });
     rig.updater.checkForUpdates = vi.fn(() => new Promise(() => {}));
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     const [watchdogHandle, watchdog] = liveTimerFor(rig.clock, MANUAL_CHECK_WATCHDOG_MS);
     handle.destroy();
     expect(rig.clock.clearTimeout).toHaveBeenCalledWith(watchdogHandle);
@@ -4150,7 +4150,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
         throw dialogError;
       },
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     const [watchdogHandle] = liveTimerFor(rig.clock, MANUAL_CHECK_WATCHDOG_MS);
 
     expect(() => rig.updater.emit('update-not-available', { version: '0.3.1' })).not.toThrow();
@@ -4172,7 +4172,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     });
     rig.updater.checkForUpdates = vi.fn(() => Promise.resolve(null));
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     const [watchdogHandle, watchdog] = liveTimerFor(rig.clock, MANUAL_CHECK_WATCHDOG_MS);
     expect(manualCheckPhases(rig)).toEqual(['started']);
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4183,7 +4183,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     watchdog.cb();
     expect(showCheckNowResult).toHaveBeenCalledTimes(1);
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(2);
     expect(manualCheckPhases(rig)).toEqual(['started', 'settled', 'started']);
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4198,13 +4198,13 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     await Promise.resolve();
     rig.updater.checkForUpdates = vi.fn(() => Promise.resolve(undefined));
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(manualCheckPhases(rig)).toEqual(['started']);
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(manualCheckPhases(rig)).toEqual(['started', 'settled']);
     expect(showCheckNowResult).not.toHaveBeenCalled();
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(2);
     expect(manualCheckPhases(rig)).toEqual(['started', 'settled', 'started']);
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4220,7 +4220,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     showCheckNowResult.mockImplementation(() => {
       phasesAtDialog = manualCheckPhases(rig);
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(manualCheckPhases(rig)).toEqual(['started']);
     rig.updater.emit('update-not-available', { version: '0.4.0-beta.13' });
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4243,7 +4243,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     showCheckNowResult.mockImplementation(() => {
       phasesAtDialog = manualCheckPhases(rig);
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(manualCheckPhases(rig)).toEqual(['started']);
     rig.updater.emit('update-available', { version: '0.4.0-beta.14' });
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4265,7 +4265,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     showCheckNowResult.mockImplementation(() => {
       phasesAtDialog = manualCheckPhases(rig);
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(manualCheckPhases(rig)).toEqual(['started']);
     rig.updater.emit('error', new Error('network timeout'));
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4281,7 +4281,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
   test('ERR_UPDATER_CHANNEL_FILE_NOT_FOUND routes to not-available', () => {
     const showCheckNowResult = vi.fn(() => {});
     const { rig } = makeRig({ appVersion: '0.5.0-beta.21', showCheckNowResult });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     const err = Object.assign(
       new Error(
         'Cannot find latest-mac.yml in the latest release artifacts (https://github.com/fractalmandala/palimpsest/releases/download/v0.5.0-beta.22/latest-mac.yml): HttpError: 404',
@@ -4299,7 +4299,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
   test('other classified updater errors still surface kind=error (channel-file-not-found is the only narrow case)', () => {
     const showCheckNowResult = vi.fn(() => {});
     const { rig } = makeRig({ showCheckNowResult });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     const err = Object.assign(new Error('zip missing'), {
       code: 'ERR_UPDATER_ZIP_FILE_NOT_FOUND',
     });
@@ -4321,7 +4321,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
   test('subsequent events after dispatch do NOT re-fire (single-shot per check-now)', () => {
     const showCheckNowResult = vi.fn(() => {});
     const { rig } = makeRig({ showCheckNowResult });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-not-available', { version: '0.4.0-beta.13' });
     rig.updater.emit('update-not-available', { version: '0.4.0-beta.13' });
     rig.updater.emit('error', new Error('next-cycle network error'));
@@ -4337,7 +4337,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
     showCheckNowResult.mockImplementation(() => {
       phasesAtDialog = manualCheckPhases(rig);
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(manualCheckPhases(rig)).toEqual(['started']);
     await new Promise((r) => setTimeout(r, 0));
     expect(phasesAtDialog).toEqual(['started', 'settled']);
@@ -4356,7 +4356,7 @@ describe('check-now → showCheckNowResult feedback dispatch', () => {
       code: 'ERR_UPDATER_CHANNEL_FILE_NOT_FOUND',
     });
     rig.updater.checkForUpdates = vi.fn(() => Promise.reject(err));
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await new Promise((r) => setTimeout(r, 0));
     expect(showCheckNowResult).toHaveBeenCalledWith({
       kind: 'not-available',
@@ -4400,7 +4400,7 @@ describe('a download that fails after the menu check said "available"', () => {
           ? rejectAfterErrorEvent(rig.updater, assetMissing())
           : Promise.reject(assetMissing()),
       );
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.updater.emit('update-available', { version: '0.5.0' });
       expect(showCheckNowResult).toHaveBeenCalledExactlyOnceWith(offered);
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4422,7 +4422,7 @@ describe('a download that fails after the menu check said "available"', () => {
     rig.updater.downloadUpdate.mockImplementation(() => {
       throw assetMissing();
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(() => rig.updater.emit('update-available', { version: '0.5.0' })).not.toThrow();
     expect(showCheckNowResult).toHaveBeenCalledExactlyOnceWith(downloadFailed);
     expect(manualCheckPhases(rig)).toEqual(['started', 'settled']);
@@ -4446,9 +4446,9 @@ describe('a download that fails after the menu check said "available"', () => {
       },
     });
     await Promise.resolve();
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
     download.reject(assetMissing());
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -4469,7 +4469,7 @@ describe('a download that fails after the menu check said "available"', () => {
     });
     await Promise.resolve();
     rig.updater.emit('update-available', { version: '0.5.0' });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
     expect(rig.updater.downloadUpdate).toHaveBeenCalledTimes(2);
     download.reject(assetMissing());
@@ -4507,13 +4507,13 @@ describe('a download that fails after the menu check said "available"', () => {
     rig.updater.downloadUpdate.mockImplementation(() =>
       rejectAfterErrorEvent(rig.updater, assetMissing()),
     );
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
     await new Promise((resolve) => setTimeout(resolve, 0));
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(rig.captured.filter((entry) => entry.channel === 'ok:update:downloaded')).toEqual([]);
+    expect(rig.captured.filter((entry) => entry.channel === 'ps:update:downloaded')).toEqual([]);
     expect(rig.state.versionPendingInstall).toBeNull();
     expect(rig.state.attemptedInstall).toBeNull();
     expect(showCheckNowResult.mock.calls).toEqual([
@@ -4571,7 +4571,7 @@ describe('a download that fails after the menu check said "available"', () => {
         rig.updater.emit('update-downloaded', { version: '0.5.0' });
         return Promise.resolve([]);
       });
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.updater.emit('update-available', { version: '0.5.0' });
       for (let tick = 0; tick < 4; tick++) await new Promise((resolve) => setTimeout(resolve, 0));
       expect(rig.updater.setFeedURL).toHaveBeenCalledWith(
@@ -4593,7 +4593,7 @@ describe('a download that fails after the menu check said "available"', () => {
         updater.downloadUpdate = vi.fn(() => download.promise);
       },
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.5.0' });
     handle.destroy();
     download.reject(assetMissing());
@@ -4668,7 +4668,7 @@ describe('dev-mode guard (isPackaged=false)', () => {
       },
     });
     expect(rig.updater.checkForUpdates).not.toHaveBeenCalled();
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
     rig.now = new Date(rig.now.getTime() + UPDATE_CHECK_DEADLINE_MS);
     fireTimerFor(rig.clock, UPDATE_CHECK_DEADLINE_MS);
@@ -4720,7 +4720,7 @@ describe('dev-mode guard (isPackaged=false)', () => {
   test('event handlers stay wired in dev-mode so unit tests can drive them', () => {
     const { rig } = makeRig({ isPackaged: false });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    const toastA = rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    const toastA = rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
     expect(toastA).toHaveLength(1);
   });
 
@@ -4731,7 +4731,7 @@ describe('dev-mode guard (isPackaged=false)', () => {
       attemptedInstallHandoffAt: COMMITTED_LONG_AGO,
       appVersion: '0.4.0',
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.dispatches).not.toContain('install-failed-on-boot' as DispatchKind);
   });
 
@@ -4741,7 +4741,7 @@ describe('dev-mode guard (isPackaged=false)', () => {
       lastSeenVersion: '0.3.0',
       appVersion: '0.3.1',
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:whats-new')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:whats-new')).toHaveLength(0);
     expect(rig.dispatches).not.toContain('whats-new-toast-b' as DispatchKind);
     expect(rig.state.lastSeenVersion).toBe('0.3.1');
   });
@@ -4754,7 +4754,7 @@ describe('dev-mode guard (isPackaged=false)', () => {
       attemptedInstallHandoffAt: COMMITTED_LONG_AGO,
       appVersion: '0.4.0',
     });
-    const failed = rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    const failed = rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
     expect(failed).toHaveLength(1);
     expect(rig.dispatches).toContain('install-failed-on-boot' as DispatchKind);
   });
@@ -4766,7 +4766,7 @@ describe('dev-mode guard (isPackaged=false)', () => {
       lastSeenVersion: '0.3.0',
       appVersion: '0.3.1',
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:whats-new')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:whats-new')).toHaveLength(1);
     expect(rig.dispatches).toContain('whats-new-toast-b' as DispatchKind);
   });
 });
@@ -4792,7 +4792,7 @@ describe('destroy() teardown', () => {
         updater.checkForUpdates = vi.fn(() => new Promise(() => {}));
       },
     });
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     handle.destroy();
     expect(manualCheckPhases(rig)).toEqual(['started', 'settled']);
     const timerCount = rig.clock.setTimeout.mock.calls.length;
@@ -4820,7 +4820,7 @@ describe('destroy() teardown', () => {
     const { rig, handle } = makeRig();
     handle.destroy();
     rig.updater.emit('update-downloaded', { version: '0.3.3' });
-    const toastA = rig.captured.filter((c) => c.channel === 'ok:update:downloaded');
+    const toastA = rig.captured.filter((c) => c.channel === 'ps:update:downloaded');
     expect(toastA).toHaveLength(0);
   });
 });
@@ -4851,13 +4851,13 @@ describe('single-window dispatch (Finding #1 guard)', () => {
     });
 
     updater.emit('update-downloaded', { version: '0.3.3' });
-    expect(capturedA.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
-    expect(capturedB.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(0);
+    expect(capturedA.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
+    expect(capturedB.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(0);
 
     primary = windowB;
     updater.emit('update-downloaded', { version: '0.3.4' });
-    expect(capturedA.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
-    expect(capturedB.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+    expect(capturedA.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
+    expect(capturedB.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
   });
 
   test('getPrimaryWindow returning null → broadcast no-ops (no crash)', () => {
@@ -4976,7 +4976,7 @@ describe('Toast B persist-before-emit + whenRendererReady (Major #1)', () => {
         debug: vi.fn(() => {}),
       },
     });
-    const whatsNew = captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const whatsNew = captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(whatsNew).toHaveLength(0);
     expect(state.lastSeenVersion).toBe('0.3.0');
   });
@@ -5006,11 +5006,11 @@ describe('Toast B persist-before-emit + whenRendererReady (Major #1)', () => {
       now: () => new Date(),
     });
     expect(state.lastSeenVersion).toBe('0.3.1');
-    const beforeFire = captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const beforeFire = captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(beforeFire).toHaveLength(0);
     expect(deferredFn).not.toBeNull();
     deferredFn?.();
-    const afterFire = captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const afterFire = captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(afterFire).toHaveLength(1);
   });
 
@@ -5034,7 +5034,7 @@ describe('Toast B persist-before-emit + whenRendererReady (Major #1)', () => {
       clock,
       now: () => new Date(),
     });
-    const whatsNew = captured.filter((c) => c.channel === 'ok:update:whats-new');
+    const whatsNew = captured.filter((c) => c.channel === 'ps:update:whats-new');
     expect(whatsNew).toHaveLength(1);
   });
 });
@@ -5042,8 +5042,8 @@ describe('Toast B persist-before-emit + whenRendererReady (Major #1)', () => {
 describe('relaunch-now idempotency (Major #2)', () => {
   test('second invocation sees the committed install → no second quitAndInstall', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
-    const first = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
-    const second = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    const first = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
+    const second = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     await Promise.all([first, second]);
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.dispatches).toContain('relaunch-double-invoke-blocked' as DispatchKind);
@@ -5077,7 +5077,7 @@ describe('relaunch-now idempotency (Major #2)', () => {
       },
     });
     await expect(
-      Promise.resolve(ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow();
     expect(updater.quitAndInstall).not.toHaveBeenCalled();
     expect(state.versionPendingInstall).toBe('0.3.2');
@@ -5377,7 +5377,7 @@ describe('linux manual-install fallback', () => {
 
   test('no graphical auth → fallback dialog instead of quitAndInstall, staged state preserved', async () => {
     const { rig, fallback } = makeLinuxRig({ hasGraphicalAuth: false, extraWindowCount: 1 });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     expect(rig.state.attemptedInstall).toBeNull();
@@ -5391,14 +5391,14 @@ describe('linux manual-install fallback', () => {
     expect(rig.dispatches).toContain('linux-manual-fallback-no-auth' as DispatchKind);
     expect(rig.dispatches).not.toContain('relaunch-now' as DispatchKind);
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:downloaded').length).toBeGreaterThan(0);
-      expect(win.filter((c) => c.channel === 'ok:update:relaunching')).toHaveLength(0);
+      expect(win.filter((c) => c.channel === 'ps:update:downloaded').length).toBeGreaterThan(0);
+      expect(win.filter((c) => c.channel === 'ps:update:relaunching')).toHaveLength(0);
     }
   });
 
   test('graphical auth present → normal quitAndInstall path, no fallback', async () => {
     const { rig, fallback, hasAuth } = makeLinuxRig({ hasGraphicalAuth: true });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(hasAuth).toHaveBeenCalled();
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(fallback).not.toHaveBeenCalled();
@@ -5409,7 +5409,7 @@ describe('linux manual-install fallback', () => {
       hasGraphicalAuth: false,
       downloadedFile: '/x/Palimpsest.AppImage',
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(fallback).not.toHaveBeenCalled();
   });
@@ -5418,11 +5418,11 @@ describe('linux manual-install fallback', () => {
     const { rig, fallback } = makeLinuxRig({ hasGraphicalAuth: true, extraWindowCount: 1 });
     await Promise.resolve();
     await Promise.resolve();
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error('Command pkexec exited with code 126'));
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
@@ -5435,10 +5435,10 @@ describe('linux manual-install fallback', () => {
 
   test('retry after cancellation: the re-armed gate accepts a second relaunch-now', async () => {
     const { rig } = makeLinuxRig({ hasGraphicalAuth: true });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error('Command pkexec exited with code 126'));
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(2);
   });
 
@@ -5446,11 +5446,11 @@ describe('linux manual-install fallback', () => {
     const { rig, fallback } = makeLinuxRig({ hasGraphicalAuth: true, extraWindowCount: 1 });
     await Promise.resolve();
     await Promise.resolve();
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error('Command pkexec exited with code 127'));
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
@@ -5469,7 +5469,7 @@ describe('linux manual-install fallback', () => {
 
   test('sudo-without-tty failure (no graphical wrapper found mid-install) also offers the fallback', async () => {
     const { rig, fallback } = makeLinuxRig({ hasGraphicalAuth: true });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error('Command sudo exited with code 1'));
     expect(fallback).toHaveBeenCalledTimes(1);
   });
@@ -5479,7 +5479,7 @@ describe('linux manual-install fallback', () => {
       hasGraphicalAuth: false,
       downloadedFile: '/home/u/.cache/ok-updater/pending/ok-0.3.2.x86_64.rpm',
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(fallback).toHaveBeenCalledWith(
       expect.objectContaining({
         packageKind: 'rpm',
@@ -5494,7 +5494,7 @@ describe('linux manual-install fallback', () => {
       emitDownloadEvent: false,
       stateStagedInstallerPath: STAGED_DEB,
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     expect(fallback).toHaveBeenCalledWith({
       version: '0.3.2',
@@ -5511,7 +5511,7 @@ describe('linux manual-install fallback', () => {
       stateStagedInstallerPath: STAGED_DEB,
       stagedInstallerExists: () => false,
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(fallback).not.toHaveBeenCalled();
   });
@@ -5544,7 +5544,7 @@ describe('linux manual-install fallback', () => {
       },
     });
     rig.updater.emit('update-downloaded', { version: '0.3.2', downloadedFile: STAGED_DEB });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     rig.updater.emit('error', new Error('Command pkexec exited with code 127'));
     expect(fallback).not.toHaveBeenCalled();
@@ -5611,7 +5611,7 @@ describe('same-version download guard', () => {
     expect(rig.updater.downloadUpdate).not.toHaveBeenCalled();
     expect(rig.dispatches).toContain('download-skipped-already-staged' as DispatchKind);
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
   });
 
@@ -5692,7 +5692,7 @@ describe('single-flight install handoff', () => {
       return Promise.resolve(undefined);
     });
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.downloadUpdate).not.toHaveBeenCalled();
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
@@ -5724,7 +5724,7 @@ describe('single-flight install handoff', () => {
       stageInSession(rig, '0.3.2');
       showCheckNowResult.mockClear();
 
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.updater.emit('update-available', { version: '0.3.3' });
 
       expect(showCheckNowResult).toHaveBeenCalledWith({
@@ -5759,7 +5759,7 @@ describe('single-flight install handoff', () => {
     stageInSession(rig, '0.3.2');
     showCheckNowResult.mockClear();
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.3' });
 
     expect(showCheckNowResult).toHaveBeenCalledTimes(1);
@@ -5781,7 +5781,7 @@ describe('single-flight install handoff', () => {
     stageInSession(rig, '0.3.2');
     showCheckNowResult.mockClear();
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
 
     expect(rig.updater.downloadUpdate).not.toHaveBeenCalled();
@@ -5806,7 +5806,7 @@ describe('single-flight install handoff', () => {
       stageInSession(rig, '0.3.2');
       showCheckNowResult.mockClear();
 
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
       rig.updater.emit('update-available', { version: '0.3.2' });
 
       expect(rig.updater.downloadUpdate).not.toHaveBeenCalled();
@@ -5830,7 +5830,7 @@ describe('single-flight install handoff', () => {
       });
 
       await expect(
-        Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+        Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
       ).rejects.toThrow('installer refused the handoff');
       expect(rig.state.versionPendingInstall).toBeNull();
       rig.failNextPersist = false;
@@ -5845,7 +5845,7 @@ describe('single-flight install handoff', () => {
   test('on macOS a watchdog fire that cannot restore KEEPS the arm', async () => {
     const { rig } = makeRig({ versionPendingInstall: null });
     stageInSession(rig, '0.3.2');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.failNextPersist = true;
     fireTimerFor(rig.clock, RELAUNCH_WATCHDOG_MS);
     rig.failNextPersist = false;
@@ -5868,7 +5868,7 @@ describe('single-flight install handoff', () => {
     });
 
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('squirrel refused the handoff');
     rig.failNextPersist = false;
     expect(rig.state.versionPendingInstall).toBeNull();
@@ -5883,7 +5883,7 @@ describe('single-flight install handoff', () => {
   test('on macOS an in-flight error that cannot restore KEEPS the arm', async () => {
     const { rig } = makeRig({ versionPendingInstall: null });
     stageInSession(rig, '0.3.2');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.failNextPersist = true;
     rig.updater.emit('error', new Error('install failed'));
     rig.failNextPersist = false;
@@ -5905,7 +5905,7 @@ describe('single-flight install handoff', () => {
     });
 
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('squirrel refused the handoff');
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     rig.updater.downloadUpdate.mockClear();
@@ -5931,7 +5931,7 @@ describe('single-flight install handoff', () => {
 describe('click-gated freshness check', () => {
   test('nothing newer → installs the staged build', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.checkForUpdates).toHaveBeenCalled();
     expect(rig.dispatches).toContain('relaunch-refresh-up-to-date' as DispatchKind);
@@ -5940,10 +5940,10 @@ describe('click-gated freshness check', () => {
 
   test('every window is told the click is fetching before the wait begins', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', extraWindowCount: 2 });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     for (const win of rig.windows) {
-      const fetching = win.filter((c) => c.channel === 'ok:update:fetching-latest');
+      const fetching = win.filter((c) => c.channel === 'ps:update:fetching-latest');
       expect(fetching).toHaveLength(1);
       expect(fetching[0]?.payload).toEqual({ version: '0.3.2' });
     }
@@ -5957,7 +5957,7 @@ describe('click-gated freshness check', () => {
       return Promise.resolve(undefined);
     });
 
-    const pending = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    const pending = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     await Promise.resolve();
     expect(rig.dispatches).toContain('relaunch-refresh-found-newer' as DispatchKind);
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
@@ -5973,7 +5973,7 @@ describe('click-gated freshness check', () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
     rig.updater.emit('update-available', { version: '0.3.3' });
 
-    const pending = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    const pending = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     await Promise.resolve();
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     expect(rig.dispatches).toContain('relaunch-awaited-in-flight-staging' as DispatchKind);
@@ -5988,7 +5988,7 @@ describe('click-gated freshness check', () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
     rig.updater.emit('update-available', { version: '0.3.3' });
 
-    const pending = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    const pending = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     await Promise.resolve();
     rig.updater.emit('error', new Error('download died'));
     await pending;
@@ -6000,7 +6000,7 @@ describe('click-gated freshness check', () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
     rig.updater.emit('update-available', { version: '0.3.3' });
 
-    const pending = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    const pending = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     await Promise.resolve();
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
 
@@ -6008,7 +6008,7 @@ describe('click-gated freshness check', () => {
     await pending;
 
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
-    const relaunching = rig.captured.filter((c) => c.channel === 'ok:update:relaunching');
+    const relaunching = rig.captured.filter((c) => c.channel === 'ps:update:relaunching');
     expect(relaunching).toHaveLength(1);
     expect(relaunching[0]?.payload).toEqual({ version: '0.3.2' });
     expect(rig.state.versionPendingInstall).toBeNull();
@@ -6022,18 +6022,18 @@ describe('click-gated freshness check', () => {
       return Promise.resolve(undefined);
     });
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     for (const win of rig.windows) {
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
         reason: 'no-longer-pending',
         dismissPending: true,
       });
-      expect(win.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(0);
+      expect(win.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(0);
     }
   });
 
@@ -6042,7 +6042,7 @@ describe('click-gated freshness check', () => {
     await Promise.resolve();
     rig.updater.checkForUpdates.mockImplementation(() => new Promise(() => {}));
 
-    const pending = rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    const pending = rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     await Promise.resolve();
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
 
@@ -6060,27 +6060,27 @@ describe('the commit flag releases on every path that re-offers the click', () =
     rig.failNextPersist = true;
 
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('could not save the update state');
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
 
     rig.failNextPersist = false;
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
   });
 
   test('a relaunch failure that restores cleanly does NOT ask to clear the card', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     rig.updater.emit('error', new Error('ShipIt swap failed'));
 
-    const failed = rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed');
+    const failed = rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed');
     expect(failed).toHaveLength(1);
     expect(
       (failed[0]?.payload as { dismissPending?: boolean } | undefined)?.dismissPending,
     ).toBeUndefined();
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
   });
 
   test('a persist failure rejects the click rather than resolving it', async () => {
@@ -6088,7 +6088,7 @@ describe('the commit flag releases on every path that re-offers the click', () =
     rig.failNextPersist = true;
 
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow();
   });
 
@@ -6097,15 +6097,15 @@ describe('the commit flag releases on every path that re-offers the click', () =
     rig.failNextPersist = true;
 
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow();
 
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:fetching-latest')).toHaveLength(1);
-      const rearm = win.filter((c) => c.channel === 'ok:update:downloaded');
+      expect(win.filter((c) => c.channel === 'ps:update:fetching-latest')).toHaveLength(1);
+      const rearm = win.filter((c) => c.channel === 'ps:update:downloaded');
       expect(rearm).toHaveLength(1);
       expect(rearm[0]?.payload).toEqual({ version: '0.3.2' });
-      const failed = win.filter((c) => c.channel === 'ok:update:relaunch-failed');
+      const failed = win.filter((c) => c.channel === 'ps:update:relaunch-failed');
       expect(failed).toHaveLength(1);
       expect(failed[0]?.payload).toEqual({
         version: '0.3.2',
@@ -6129,11 +6129,11 @@ describe('the commit flag releases on every path that re-offers the click', () =
       downloadedFile: '/home/u/.cache/ok-updater/pending/ok_0.3.2_arm64.deb',
     });
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
 
     hasGraphicalAuth.mockReturnValue(true);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
   });
@@ -6145,14 +6145,14 @@ describe('post-update quiet window', () => {
 
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
 
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(0);
     expect(rig.dispatches).toContain('toast-a-deferred-post-update-quiet' as DispatchKind);
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     expect(handle.getPendingUpdate()).toBeNull();
 
     fireTimerFor(rig.clock, POST_UPDATE_QUIET_MS);
 
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
     expect(rig.dispatches).toContain('toast-a-quiet-window-elapsed' as DispatchKind);
     expect(handle.getPendingUpdate()).toEqual({ version: '0.3.2' });
   });
@@ -6197,7 +6197,7 @@ describe('post-update quiet window', () => {
 
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
 
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
     expect(rig.dispatches).not.toContain('toast-a-deferred-post-update-quiet' as DispatchKind);
     expect(handle.getPendingUpdate()).toEqual({ version: '0.3.2' });
   });
@@ -6207,14 +6207,14 @@ describe('post-update quiet window', () => {
 
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
 
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:downloaded')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:downloaded')).toHaveLength(1);
     expect(rig.dispatches).toContain('update-downloaded-toast-a' as DispatchKind);
     expect(handle.getPendingUpdate()).toEqual({ version: '0.3.2' });
   });
 });
 
 function downloadedBroadcasts(sends: CapturedSend[]): unknown[] {
-  return sends.filter((c) => c.channel === 'ok:update:downloaded').map((c) => c.payload);
+  return sends.filter((c) => c.channel === 'ps:update:downloaded').map((c) => c.payload);
 }
 
 async function settleAsyncWork(): Promise<void> {
@@ -6233,7 +6233,7 @@ describe('Update Ready dialog offers Quit and Restart', () => {
     });
     stageInSession(rig, '0.3.2');
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
     await settleAsyncWork();
 
@@ -6253,7 +6253,7 @@ describe('Update Ready dialog offers Quit and Restart', () => {
     expect(rig.state.versionPendingInstall).toBeNull();
     expect(rig.state.attemptedInstall).toBe('0.3.2');
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:relaunching')).toHaveLength(1);
+      expect(win.filter((c) => c.channel === 'ps:update:relaunching')).toHaveLength(1);
     }
     expect(rig.dispatches).toContain('relaunch-now' as DispatchKind);
     expect(rig.logger.error).not.toHaveBeenCalled();
@@ -6264,7 +6264,7 @@ describe('Update Ready dialog offers Quit and Restart', () => {
     const { rig } = makeRig({ versionPendingInstall: null, showCheckNowResult });
     stageInSession(rig, '0.3.2');
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
     await settleAsyncWork();
 
@@ -6274,7 +6274,7 @@ describe('Update Ready dialog offers Quit and Restart', () => {
       choice: 'dismiss',
     });
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunching')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunching')).toHaveLength(0);
     expect(rig.dispatches).not.toContain('check-now-relaunch-chosen' as DispatchKind);
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     expect(rig.logger.error).not.toHaveBeenCalled();
@@ -6285,7 +6285,7 @@ describe('Update Ready dialog offers Quit and Restart', () => {
     const { rig } = makeRig({ versionPendingInstall: null, showCheckNowResult });
     stageInSession(rig, '0.3.2');
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-not-available', { version: '0.3.1' });
     await settleAsyncWork();
 
@@ -6304,7 +6304,7 @@ describe('Update Ready dialog offers Quit and Restart', () => {
     const { rig } = makeRig({ versionPendingInstall: null, showCheckNowResult });
     stageInSession(rig, '0.3.2');
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
     await settleAsyncWork();
 
@@ -6330,13 +6330,13 @@ describe('Update Ready dialog offers Quit and Restart', () => {
     });
     rig.captured.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
     await settleAsyncWork();
 
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     expect(rig.dispatches).toContain('relaunch-failed-rearm' as DispatchKind);
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(1);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(1);
     expect(rig.logger.info).toHaveBeenCalledWith('check-now result dialog answered', {
       kind: 'ready-to-install',
       choice: 'relaunch',
@@ -6355,7 +6355,7 @@ describe('a manual check that finds the staged build re-offers the card', () => 
     stageInSession(rig, '0.3.2');
     for (const win of rig.windows) win.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
 
     for (const win of rig.windows) {
@@ -6369,7 +6369,7 @@ describe('a manual check that finds the staged build re-offers the card', () => 
     stageInSession(rig, '0.3.2');
     rig.captured.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.3' });
 
     expect(downloadedBroadcasts(rig.captured)).toEqual([{ version: '0.3.2' }]);
@@ -6382,9 +6382,9 @@ describe('a manual check that finds the staged build re-offers the card', () => 
     stageInSession(rig, '0.3.2');
     rig.updater.checkForUpdates.mockImplementation(() => new Promise(() => {}));
     const relaunch = Promise.resolve(
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' }),
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' }),
     );
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.captured.length = 0;
 
     rig.updater.emit('update-available', { version: '0.3.2' });
@@ -6421,7 +6421,7 @@ describe('a manual check that finds the staged build re-offers the card', () => 
     stageInSession(rig, '0.3.2');
     rig.captured.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
 
     expect(showCheckNowResult).toHaveBeenCalledWith({
@@ -6443,13 +6443,13 @@ describe('a manual check that finds the staged build re-offers the card', () => 
       throw new Error('squirrel refused the handoff');
     });
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('squirrel refused the handoff');
     rig.failNextPersist = false;
     rig.updater.quitAndInstall = vi.fn();
     rig.captured.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.3' });
     await settleAsyncWork();
 
@@ -6483,7 +6483,7 @@ describe('a manual check that finds the staged build re-offers the card', () => 
       extraWindowCount: 1,
     });
     stageInSession(rig, '0.3.2');
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
     expect(showCheckNowResult).toHaveBeenCalledWith(
       expect.objectContaining({ kind: 'ready-to-install', relaunch: 'available' }),
@@ -6493,7 +6493,7 @@ describe('a manual check that finds the staged build re-offers the card', () => 
       throw new Error('squirrel refused the handoff');
     });
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('squirrel refused the handoff');
     rig.failNextPersist = false;
     expect(rig.state.versionPendingInstall).toBeNull();
@@ -6506,9 +6506,9 @@ describe('a manual check that finds the staged build re-offers the card', () => 
     expect(rig.dispatches).toContain('check-now-relaunch-chosen' as DispatchKind);
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     for (const win of rig.windows) {
-      expect(win.filter((c) => c.channel === 'ok:update:relaunch-failed')).toEqual([
+      expect(win.filter((c) => c.channel === 'ps:update:relaunch-failed')).toEqual([
         {
-          channel: 'ok:update:relaunch-failed',
+          channel: 'ps:update:relaunch-failed',
           payload: {
             version: '0.3.2',
             reason: 'no-longer-pending',
@@ -6526,12 +6526,12 @@ describe('a manual check that finds the staged build re-offers the card', () => 
   test('an in-app Relaunch with no pending install tells the user instead of doing nothing', async () => {
     const { rig } = makeRig({ versionPendingInstall: null });
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toEqual([
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toEqual([
       {
-        channel: 'ok:update:relaunch-failed',
+        channel: 'ps:update:relaunch-failed',
         payload: {
           version: '',
           reason: 'no-longer-pending',
@@ -6545,7 +6545,7 @@ describe('a manual check that finds the staged build re-offers the card', () => 
     const { rig } = makeRig({ versionPendingInstall: null });
     rig.captured.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-available', { version: '0.3.2' });
 
     expect(downloadedBroadcasts(rig.captured)).toEqual([]);
@@ -6596,7 +6596,7 @@ describe('getPendingUpdate decides whether the ready card is on offer', () => {
   test('is null once the relaunch commits', async () => {
     const { rig, handle } = makeRig({ versionPendingInstall: null });
     stageInSession(rig, '0.3.2');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(handle.getPendingUpdate()).toBeNull();
   });
@@ -6607,7 +6607,7 @@ describe('getPendingUpdate decides whether the ready card is on offer', () => {
     stageInSession(rig, '0.3.2');
     rig.updater.checkForUpdates.mockImplementation(() => new Promise(() => {}));
     const relaunch = Promise.resolve(
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' }),
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' }),
     );
 
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
@@ -6626,7 +6626,7 @@ describe('getPendingUpdate decides whether the ready card is on offer', () => {
       throw new Error('squirrel refused the handoff');
     });
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('squirrel refused the handoff');
     expect(handle.getPendingUpdate()).toEqual({ version: '0.3.2' });
   });
@@ -6639,13 +6639,13 @@ describe('getPendingUpdate decides whether the ready card is on offer', () => {
       throw new Error('squirrel refused the handoff');
     });
     await expect(
-      Promise.resolve(rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' })),
+      Promise.resolve(rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' })),
     ).rejects.toThrow('squirrel refused the handoff');
     rig.failNextPersist = false;
     expect(
       rig.captured.some(
         (c) =>
-          c.channel === 'ok:update:relaunch-failed' &&
+          c.channel === 'ps:update:relaunch-failed' &&
           (c.payload as { dismissPending?: boolean }).dismissPending === true,
       ),
     ).toBe(true);
@@ -6661,7 +6661,7 @@ describe('getPendingUpdate decides whether the ready card is on offer', () => {
       return Promise.resolve(undefined);
     });
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
 
     expect(rig.updater.quitAndInstall).not.toHaveBeenCalled();
     expect(handle.getPendingUpdate()).toBeNull();
@@ -6750,7 +6750,7 @@ describe('a reloaded window gets the ready card back on every offer route', () =
     win.reload();
     expect(downloadedBroadcasts(win.sent)).toEqual([{ version: '0.3.2' }]);
 
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     win.reload();
 
     expect(downloadedBroadcasts(win.sent)).toEqual([]);
@@ -6766,7 +6766,7 @@ async function settleLaunchCheck(): Promise<void> {
 }
 
 function downloadedSends(captured: CapturedSend[]): unknown[] {
-  return captured.filter((c) => c.channel === 'ok:update:downloaded').map((c) => c.payload);
+  return captured.filter((c) => c.channel === 'ps:update:downloaded').map((c) => c.payload);
 }
 
 describe('update mode off switch', () => {
@@ -6778,7 +6778,7 @@ describe('update mode off switch', () => {
       expect(rig.clock.setTimeout).not.toHaveBeenCalled();
       expect(rig.updater.autoInstallOnAppQuit).toBe(false);
       expect(rig.dispatches).toContain('skipped-updates-off' as DispatchKind);
-      expect(rig.ipc.handlers.has('ok:update:dispatch')).toBe(true);
+      expect(rig.ipc.handlers.has('ps:update:dispatch')).toBe(true);
     });
   }
 
@@ -6798,7 +6798,7 @@ describe('update mode off switch', () => {
         }),
     );
     const { rig } = makeRig({ reclaimStagedUpdateCache: reclaim });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' });
     settleReclaim();
     await settleLaunchCheck();
     expect(rig.updater.checkForUpdates).not.toHaveBeenCalled();
@@ -6809,7 +6809,7 @@ describe('update mode off switch', () => {
 
   test('a check that succeeds after the switch to off records no check time', async () => {
     const { rig } = makeRig({ updateMode: 'off' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     rig.updater.emit('update-not-available', { version: '0.3.1' });
     expect(rig.state.lastSuccessfulCheckAt).toBeNull();
   });
@@ -6822,7 +6822,7 @@ describe('update mode off switch', () => {
       rig.updater.emit('update-downloaded', { version: '0.3.2' });
       rig.captured.length = 0;
 
-      await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'auto' });
+      await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'auto' });
       expect(downloadedSends(rig.captured)).toEqual([]);
       expect(rig.dispatches).toContain('staged-install-rebind' as DispatchKind);
 
@@ -6839,7 +6839,7 @@ describe('update mode off switch', () => {
     test(`${platform}: a build staged while off is not committed before it is re-staged, so a quit records no handoff`, async () => {
       const { rig, handle } = makeRig({ platform, updateMode: 'off' });
       rig.updater.emit('update-downloaded', { version: '0.3.2' });
-      await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'auto' });
+      await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'auto' });
 
       expect(rig.state.attemptedInstall).toBeNull();
       handle.recordInstallHandoffOnQuit();
@@ -6901,7 +6901,7 @@ describe('update mode off switch', () => {
   test('a build waiting to be re-staged is not offered to a window that loads', async () => {
     const { rig, handle } = makeRig({ platform: 'darwin', updateMode: 'off' });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'auto' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'auto' });
 
     expect(handle.getPendingUpdate()).toBeNull();
     rig.updater.emit('update-not-available', { version: '0.3.1' });
@@ -6915,7 +6915,7 @@ describe('update mode off switch', () => {
   test('an explicit relaunch of a build staged while off records the install attempt', async () => {
     const { rig } = makeRig({ updateMode: 'off' });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.state.attemptedInstall).toBe('0.3.2');
     expect(rig.state.attemptedInstallHandoffAt).not.toBeNull();
@@ -6925,7 +6925,7 @@ describe('update mode off switch', () => {
     const { rig } = makeRig({ extraWindowCount: 2, stuckHintShown: true });
     await settleLaunchCheck();
     expect(liveTimersFor(rig.clock, UPDATE_CHECK_INTERVAL_MS)).toBe(1);
-    const result = await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' });
+    const result = await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' });
     expect(result).toEqual({ kind: 'set-mode', ok: true, mode: 'off' });
     expect(rig.state.updateMode).toBe('off');
     expect(rig.state.stuckHintShown).toBe(false);
@@ -6940,14 +6940,14 @@ describe('update mode off switch', () => {
   test('set-mode auto after off re-arms one timer and checks immediately', async () => {
     const { rig } = makeRig({ updateMode: 'off' });
     await settleLaunchCheck();
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'auto' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'auto' });
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
     expect(liveTimersFor(rig.clock, UPDATE_CHECK_INTERVAL_MS)).toBe(1);
     expect(rig.updater.autoInstallOnAppQuit).toBe(true);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'auto' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'auto' });
     expect(liveTimersFor(rig.clock, UPDATE_CHECK_INTERVAL_MS)).toBe(1);
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' });
     expect(liveTimersFor(rig.clock, UPDATE_CHECK_INTERVAL_MS)).toBe(0);
   });
 
@@ -6966,18 +6966,18 @@ describe('update mode off switch', () => {
   test('set-mode refuses an unrecognized mode and reports a failed write', async () => {
     const { rig } = makeRig();
     await expect(
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'never' }),
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'never' }),
     ).resolves.toEqual({ kind: 'set-mode', ok: false, reason: 'unrecognized-mode' });
     rig.failNextPersist = true;
     await expect(
-      rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' }),
+      rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' }),
     ).resolves.toEqual({ kind: 'set-mode', ok: false, reason: 'persist-failed' });
     expect(rig.state.updateMode).toBeNull();
   });
 
   test('an unknown dispatch kind answers with a named refusal', async () => {
     const { rig } = makeRig();
-    await expect(rig.ipc.invoke('ok:update:dispatch', { kind: 'reboot' })).resolves.toEqual({
+    await expect(rig.ipc.invoke('ps:update:dispatch', { kind: 'reboot' })).resolves.toEqual({
       kind: 'unknown',
       ok: false,
       reason: 'unrecognized-kind',
@@ -6997,7 +6997,7 @@ describe('update mode off switch', () => {
       rig.updater.emit('update-available', { version: '0.3.2' });
       return {};
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await settleLaunchCheck();
     expect(rig.updater.checkForUpdates).toHaveBeenCalledTimes(1);
     expect(rig.updater.downloadUpdate).not.toHaveBeenCalled();
@@ -7021,7 +7021,7 @@ describe('update mode off switch', () => {
       rig.updater.emit('update-available', { version: '0.3.2' });
       return {};
     });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     await settleLaunchCheck();
     expect(rig.updater.downloadUpdate).toHaveBeenCalledTimes(1);
     expect(results).toEqual([
@@ -7040,7 +7040,7 @@ describe('update mode off switch', () => {
       lastSuccessfulCheckAt: '2020-01-01T00:00:00.000Z',
     });
     rig.updater.emit('error', Object.assign(new Error('offline'), { code: 'HTTP_ERROR_500' }));
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:stuck-hint')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:stuck-hint')).toHaveLength(0);
     expect(rig.dispatches).toContain('stuck-hint-skipped-updates-off' as DispatchKind);
   });
 
@@ -7057,9 +7057,9 @@ describe('update mode off switch', () => {
   test('an explicit relaunch still installs a build staged before the switch to off', async () => {
     const { rig } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' });
     const checksBeforeRelaunch = rig.updater.checkForUpdates.mock.calls.length;
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
     expect(rig.updater.checkForUpdates.mock.calls.length).toBe(checksBeforeRelaunch);
   });
@@ -7070,15 +7070,15 @@ describe('update mode off switch', () => {
       attemptedInstall: '0.3.2',
       attemptedInstallHandoffAt: COMMITTED_LONG_AGO,
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.dispatches).toContain('install-failed-notice-skipped-updates-off' as DispatchKind);
   });
 
   test('switching back to auto re-offers a build staged while it was on to every window', async () => {
     const { rig } = makeRig({ extraWindowCount: 1 });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'off' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'set-mode', mode: 'auto' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'off' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'set-mode', mode: 'auto' });
     for (const win of rig.windows) {
       expect(downloadedSends(win)).toEqual([
         { version: '0.3.2' },
@@ -7095,7 +7095,7 @@ describe('ready-to-install card dismissal', () => {
     const { rig, handle } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     expect(handle.getPendingUpdate()).toEqual({ version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
     expect(rig.state.dismissedUpdateVersion).toBe('0.3.2');
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     expect(handle.getPendingUpdate()).toBeNull();
@@ -7104,7 +7104,7 @@ describe('ready-to-install card dismissal', () => {
   test('dismissal in one window retracts the card in every open window', async () => {
     const { rig } = makeRig({ extraWindowCount: 2 });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
     for (const win of rig.windows) {
       expect(downloadedSends(win)).toEqual([{ version: '0.3.2' }, { version: null }]);
     }
@@ -7114,7 +7114,7 @@ describe('ready-to-install card dismissal', () => {
     const { rig } = makeRig({ extraWindowCount: 1 });
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
     rig.updater.emit('update-downloaded', { version: '0.3.3' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
     for (const win of rig.windows) {
       expect(downloadedSends(win)).toEqual([{ version: '0.3.2' }, { version: '0.3.3' }]);
     }
@@ -7122,7 +7122,7 @@ describe('ready-to-install card dismissal', () => {
 
   test('a repeated dismissal of the same version broadcasts nothing further', async () => {
     const { rig } = makeRig({ versionPendingInstall: '0.3.2', dismissedUpdateVersion: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
     expect(downloadedSends(rig.captured)).toHaveLength(0);
   });
 
@@ -7137,7 +7137,7 @@ describe('ready-to-install card dismissal', () => {
   test('a newer staged version clears the dismissal and surfaces normally', async () => {
     const { rig, handle } = makeRig();
     rig.updater.emit('update-downloaded', { version: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
     rig.updater.emit('update-downloaded', { version: '0.3.3' });
     expect(rig.state.dismissedUpdateVersion).toBeNull();
     expect(handle.getPendingUpdate()).toEqual({ version: '0.3.3' });
@@ -7146,10 +7146,10 @@ describe('ready-to-install card dismissal', () => {
   test('a manual check clears the recorded dismissal and brings the card back', async () => {
     const { rig } = makeRig({ versionPendingInstall: null });
     stageInSession(rig, '0.3.2');
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' });
     rig.captured.length = 0;
 
-    rig.ipc.invoke('ok:update:dispatch', { kind: 'check-now' });
+    rig.ipc.invoke('ps:update:dispatch', { kind: 'check-now' });
     expect(rig.state.dismissedUpdateVersion).toBeNull();
     rig.updater.emit('update-available', { version: '0.3.2' });
 
@@ -7173,7 +7173,7 @@ describe('install-failure give-up tombstone', () => {
       attemptedInstall: '0.3.2',
       attemptedInstallHandoffAt: COMMITTED_LONG_AGO,
     });
-    expect(rig.captured.filter((c) => c.channel === 'ok:update:relaunch-failed')).toHaveLength(0);
+    expect(rig.captured.filter((c) => c.channel === 'ps:update:relaunch-failed')).toHaveLength(0);
     expect(rig.state.attemptedInstall).toBeNull();
     expect(rig.state.versionPendingInstall).toBe('0.3.2');
     expect(rig.dispatches).toContain('install-failed-after-giveup' as DispatchKind);
@@ -7195,7 +7195,7 @@ describe('install-failure give-up tombstone', () => {
 
   test('an explicit relaunch still installs the given-up version', async () => {
     const { rig } = makeRig({ gaveUpOnVersion: '0.3.2', versionPendingInstall: '0.3.2' });
-    await rig.ipc.invoke('ok:update:dispatch', { kind: 'relaunch-now' });
+    await rig.ipc.invoke('ps:update:dispatch', { kind: 'relaunch-now' });
     expect(rig.updater.quitAndInstall).toHaveBeenCalledTimes(1);
   });
 });

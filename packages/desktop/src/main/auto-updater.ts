@@ -695,7 +695,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     if (!persistSafely({ ...state, stuckHintShown: true }, 'stuck-hint')) return;
 
     const fireToastC = () => {
-      broadcast('ok:update:stuck-hint', { downloadUrl: STUCK_HINT_DOWNLOAD_URL });
+      broadcast('ps:update:stuck-hint', { downloadUrl: STUCK_HINT_DOWNLOAD_URL });
       logger.warn('stuck-hint dispatched', {
         lastSuccessfulCheckAt: state.lastSuccessfulCheckAt,
         elapsedDays: Math.floor(elapsedMs / (24 * 60 * 60 * 1000)),
@@ -733,7 +733,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     if (menuCheck === null) return;
     clock.clearTimeout(menuCheck.watchdog);
     menuCheck = null;
-    broadcastToAllWindows('ok:update:manual-check', { phase: 'settled' });
+    broadcastToAllWindows('ps:update:manual-check', { phase: 'settled' });
     if (result === null) return;
     if (result.kind === 'ready-to-install') reofferStagedForMenuCheck(result.stagedVersion);
     presentCheckNowResult(result);
@@ -799,7 +799,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
 
   const reofferStagedForMenuCheck = (version: string): void => {
     if (pendingToastA()?.version !== version) return;
-    broadcastToAllWindows('ok:update:downloaded', { version });
+    broadcastToAllWindows('ps:update:downloaded', { version });
     logger.info('check-now found the staged build ready — re-offered Toast A', { version });
     onDispatch?.('check-now-ready-reoffered');
   };
@@ -908,7 +908,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       'relaunch-failed-restore',
     );
     if (restored) {
-      broadcastToAllWindows('ok:update:downloaded', { version });
+      broadcastToAllWindows('ps:update:downloaded', { version });
     } else if (platform !== 'darwin') {
       logger.warn(
         stagedThisSession === null
@@ -925,7 +925,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
         { version, kind, armedVersion: stagedThisSession },
       );
     }
-    broadcastToAllWindows('ok:update:relaunch-failed', {
+    broadcastToAllWindows('ps:update:relaunch-failed', {
       version,
       message,
       ...(restored ? {} : { dismissPending: true }),
@@ -960,7 +960,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
   const runMenuDrivenCheck = (): Promise<unknown> => {
     if (destroyed) return Promise.resolve(undefined);
     clearDismissalOnManualCheck();
-    broadcastToAllWindows('ok:update:manual-check', { phase: 'started' });
+    broadcastToAllWindows('ps:update:manual-check', { phase: 'started' });
     if (menuCheck !== null) {
       logger.info('check-now already pending, re-acknowledged');
       onDispatch?.('check-now-already-pending');
@@ -1207,7 +1207,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       }
       if (rebound) {
         const staged = pendingToastA();
-        if (staged) broadcastToAllWindows('ok:update:downloaded', staged);
+        if (staged) broadcastToAllWindows('ps:update:downloaded', staged);
       }
       logger.info('update-downloaded re-fired for same pending version — deduped', { version });
       onDispatch?.('update-downloaded-deduped');
@@ -1242,7 +1242,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
         onDispatch?.('update-downloaded-quiet');
         return;
       }
-      broadcastToAllWindows('ok:update:downloaded', { version });
+      broadcastToAllWindows('ps:update:downloaded', { version });
       logger.info('update-downloaded dispatched Toast A (all windows)', { version });
       onDispatch?.('update-downloaded-toast-a');
     };
@@ -1402,7 +1402,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       logger.warn('relaunch-now invoked without versionPendingInstall — ignoring', {
         requestedVersion,
       });
-      broadcastToAllWindows('ok:update:relaunch-failed', {
+      broadcastToAllWindows('ps:update:relaunch-failed', {
         version: requestedVersion ?? stagedThisSession ?? '',
         reason: 'no-longer-pending',
         dismissPending: true,
@@ -1410,7 +1410,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       return undefined;
     }
     installRequested = true;
-    broadcastToAllWindows('ok:update:fetching-latest', {
+    broadcastToAllWindows('ps:update:fetching-latest', {
       version: preRefresh.versionPendingInstall,
     });
     await refreshBeforeInstall();
@@ -1418,7 +1418,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     if (!snapshot.versionPendingInstall) {
       logger.warn('relaunch-now lost its staged build during the freshness check — ignoring');
       installRequested = false;
-      broadcastToAllWindows('ok:update:relaunch-failed', {
+      broadcastToAllWindows('ps:update:relaunch-failed', {
         version: preRefresh.versionPendingInstall,
         reason: 'no-longer-pending',
         dismissPending: true,
@@ -1433,7 +1433,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       !linuxInstallSupport.hasGraphicalAuth()
     ) {
       installRequested = false;
-      broadcastToAllWindows('ok:update:downloaded', { version: pending });
+      broadcastToAllWindows('ps:update:downloaded', { version: pending });
       offerManualInstallFallback(pending, 'linux-manual-fallback-no-auth');
       return undefined;
     }
@@ -1458,14 +1458,14 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       )
     ) {
       installRequested = false;
-      broadcastToAllWindows('ok:update:downloaded', { version: pending });
-      broadcastToAllWindows('ok:update:relaunch-failed', {
+      broadcastToAllWindows('ps:update:downloaded', { version: pending });
+      broadcastToAllWindows('ps:update:relaunch-failed', {
         version: pending,
         message: 'could not save the update state',
       });
       throw new Error('could not save the update state');
     }
-    broadcastToAllWindows('ok:update:relaunching', { version: pending });
+    broadcastToAllWindows('ps:update:relaunching', { version: pending });
     onDispatch?.('relaunching-broadcast');
     if (opts.prepareForRelaunch) {
       try {
@@ -1516,7 +1516,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     if (activeWhatsNew && activeWhatsNew.version === version) {
       activeWhatsNew = null;
     }
-    broadcastToAllWindows('ok:update:whats-new-dismissed', { version });
+    broadcastToAllWindows('ps:update:whats-new-dismissed', { version });
     onDispatch?.('whats-new-dismiss-broadcast');
   };
 
@@ -1527,7 +1527,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     if (!persistSafely({ ...state, dismissedUpdateVersion: version }, 'downloaded-dismiss')) return;
     logger.info('recorded dismissal of the ready-to-install card', { version });
     if (state.versionPendingInstall === version) {
-      broadcastToAllWindows('ok:update:downloaded', { version: null });
+      broadcastToAllWindows('ps:update:downloaded', { version: null });
     }
     onDispatch?.('downloaded-dismiss-recorded');
   };
@@ -1570,7 +1570,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
     onDispatch?.('update-mode-changed');
     if (requested === 'off') {
       cancelPeriodicChecks();
-      broadcastToAllWindows('ok:update:downloaded', { version: null });
+      broadcastToAllWindows('ps:update:downloaded', { version: null });
       return { ok: true, mode: requested };
     }
     if (previous === 'off' && updatesEnabled && !destroyed) {
@@ -1586,7 +1586,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       startPeriodicChecks();
       runBackgroundCheck();
       const staged = pendingToastA();
-      if (staged) broadcastToAllWindows('ok:update:downloaded', staged);
+      if (staged) broadcastToAllWindows('ps:update:downloaded', staged);
     }
     return { ok: true, mode: requested };
   };
@@ -1611,7 +1611,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
         return { kind: 'set-mode', ...setUpdateMode(request.mode) };
       default: {
         const unhandled: never = request;
-        logger.warn('ok:update:dispatch received an unrecognized kind', {
+        logger.warn('ps:update:dispatch received an unrecognized kind', {
           kind: (unhandled as { kind?: unknown } | null)?.kind,
         });
         return { kind: 'unknown', ok: false, reason: 'unrecognized-kind' };
@@ -1621,7 +1621,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
 
   const register = createHandler(ipcMain as IpcMain);
   register(
-    'ok:update:dispatch',
+    'ps:update:dispatch',
     (
       _event: IpcMainInvokeEvent,
       request: PsUpdateDispatchRequest,
@@ -1767,7 +1767,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
           });
           const fireReoffer = (): void => {
             if (toastASilencedFor(attempted) !== null) return;
-            broadcastToAllWindows('ok:update:downloaded', { version: attempted });
+            broadcastToAllWindows('ps:update:downloaded', { version: attempted });
           };
           if (whenRendererReady) whenRendererReady(fireReoffer);
           else fireReoffer();
@@ -1821,7 +1821,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
               onDispatch?.('install-failed-notice-skipped-updates-off');
               return;
             }
-            broadcastToAllWindows('ok:update:relaunch-failed', {
+            broadcastToAllWindows('ps:update:relaunch-failed', {
               version: attempted,
               downloadUrl: STUCK_HINT_DOWNLOAD_URL,
             });
@@ -1856,7 +1856,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
       const fireToastB = (): void => {
         const releaseUrl = releaseUrlFor(currentVersion);
         activeWhatsNew = { version: currentVersion, releaseUrl, firedAt: now().getTime() };
-        broadcastToAllWindows('ok:update:whats-new', {
+        broadcastToAllWindows('ps:update:whats-new', {
           version: currentVersion,
           releaseUrl,
         });
@@ -2051,7 +2051,7 @@ export function startAutoUpdater(opts: StartAutoUpdaterOpts): StartAutoUpdaterHa
           });
         }
       };
-      removeHandlerSafely('ok:update:dispatch');
+      removeHandlerSafely('ps:update:dispatch');
       logger.info('destroyed');
     },
   };

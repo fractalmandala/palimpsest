@@ -38,7 +38,7 @@ function createIpcStub(): IpcStub {
       return handler({ sender: { id: senderId } }, ...args);
     },
     async bindSender(id) {
-      const ready = handlers.get('ok:onboarding:renderer-ready');
+      const ready = handlers.get('ps:onboarding:renderer-ready');
       if (!ready) throw new Error('renderer-ready handler not registered');
       const captured: Array<{ channel: string; args: unknown[] }> = [];
       const event = {
@@ -100,8 +100,8 @@ describe('requestUserConsent — proactive show (real WebContents path)', () => 
       { ipcMain, navigator: navigatorWithId, previewContent: fakePreview },
       SAMPLE_PAYLOAD,
     );
-    expect(navigator.sent.find((s) => s.channel === 'ok:onboarding:show')).toBeDefined();
-    await ipcMain.invoke('ok:onboarding:confirm', 7, SAMPLE_CONFIRM);
+    expect(navigator.sent.find((s) => s.channel === 'ps:onboarding:show')).toBeDefined();
+    await ipcMain.invoke('ps:onboarding:confirm', 7, SAMPLE_CONFIRM);
     await expect(promise).resolves.toMatchObject({ outcome: 'confirm' });
   });
 
@@ -112,10 +112,10 @@ describe('requestUserConsent — proactive show (real WebContents path)', () => 
       { ipcMain, navigator: navigator.webContents, previewContent: fakePreview },
       SAMPLE_PAYLOAD,
     );
-    expect(navigator.sent.find((s) => s.channel === 'ok:onboarding:show')).toBeUndefined();
+    expect(navigator.sent.find((s) => s.channel === 'ps:onboarding:show')).toBeUndefined();
     const captured = await ipcMain.bindSender(1);
-    expect(captured.find((c) => c.channel === 'ok:onboarding:show')).toBeDefined();
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    expect(captured.find((c) => c.channel === 'ps:onboarding:show')).toBeDefined();
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 });
@@ -129,8 +129,8 @@ describe('requestUserConsent — mount-ack handshake', () => {
       SAMPLE_PAYLOAD,
     );
     const captured = await ipcMain.bindSender(1);
-    expect(captured.find((c) => c.channel === 'ok:onboarding:show')).toBeDefined();
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    expect(captured.find((c) => c.channel === 'ps:onboarding:show')).toBeDefined();
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await expect(promise).resolves.toEqual({ outcome: 'cancel' });
   });
 
@@ -142,10 +142,10 @@ describe('requestUserConsent — mount-ack handshake', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    expect(ipcMain.handlers.has('ok:onboarding:renderer-ready')).toBe(true);
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    expect(ipcMain.handlers.has('ps:onboarding:renderer-ready')).toBe(true);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
-    expect(ipcMain.handlers.has('ok:onboarding:renderer-ready')).toBe(false);
+    expect(ipcMain.handlers.has('ps:onboarding:renderer-ready')).toBe(false);
   });
 });
 
@@ -158,10 +158,10 @@ describe('requestUserConsent — proactive-show race (renderer-not-bound-yet)', 
       { ipcMain, navigator: navigatorWithId, previewContent: fakePreview },
       SAMPLE_PAYLOAD,
     );
-    expect(navigator.sent.find((s) => s.channel === 'ok:onboarding:show')).toBeDefined();
+    expect(navigator.sent.find((s) => s.channel === 'ps:onboarding:show')).toBeDefined();
     const captured = await ipcMain.bindSender(9);
-    expect(captured.find((c) => c.channel === 'ok:onboarding:show')).toBeDefined();
-    await ipcMain.invoke('ok:onboarding:cancel', 9);
+    expect(captured.find((c) => c.channel === 'ps:onboarding:show')).toBeDefined();
+    await ipcMain.invoke('ps:onboarding:cancel', 9);
     await promise;
   });
 
@@ -173,10 +173,10 @@ describe('requestUserConsent — proactive-show race (renderer-not-bound-yet)', 
       { ipcMain, navigator: navigatorWithId, previewContent: fakePreview },
       SAMPLE_PAYLOAD,
     );
-    expect(navigator.sent.find((s) => s.channel === 'ok:onboarding:show')).toBeDefined();
+    expect(navigator.sent.find((s) => s.channel === 'ps:onboarding:show')).toBeDefined();
     const captured = await ipcMain.bindSender(99);
-    expect(captured.find((c) => c.channel === 'ok:onboarding:show')).toBeUndefined();
-    await ipcMain.invoke('ok:onboarding:cancel', 9);
+    expect(captured.find((c) => c.channel === 'ps:onboarding:show')).toBeUndefined();
+    await ipcMain.invoke('ps:onboarding:cancel', 9);
     await promise;
   });
 });
@@ -190,7 +190,7 @@ describe('requestUserConsent — confirm', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    const result = await ipcMain.invoke('ok:onboarding:confirm', 1, SAMPLE_CONFIRM);
+    const result = await ipcMain.invoke('ps:onboarding:confirm', 1, SAMPLE_CONFIRM);
     expect(result).toEqual({ ok: true });
     const decision = await promise;
     expect(decision).toEqual({ outcome: 'confirm', request: SAMPLE_CONFIRM });
@@ -204,12 +204,12 @@ describe('requestUserConsent — confirm', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    const result = (await ipcMain.invoke('ok:onboarding:confirm', 999, SAMPLE_CONFIRM)) as {
+    const result = (await ipcMain.invoke('ps:onboarding:confirm', 999, SAMPLE_CONFIRM)) as {
       ok: boolean;
       error?: string;
     };
     expect(result.ok).toBe(false);
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 
@@ -225,7 +225,7 @@ describe('requestUserConsent — confirm', () => {
       ...SAMPLE_CONFIRM,
       editorIds: ['claude', 'phantom-editor', 'cursor'],
     };
-    await ipcMain.invoke('ok:onboarding:confirm', 1, bogus);
+    await ipcMain.invoke('ps:onboarding:confirm', 1, bogus);
     const decision = (await promise) as { outcome: 'confirm'; request: OnboardingConfirmRequest };
     expect(decision.outcome).toBe('confirm');
     expect(decision.request.editorIds).toEqual(['claude', 'cursor']);
@@ -239,11 +239,11 @@ describe('requestUserConsent — confirm', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    await ipcMain.invoke('ok:onboarding:confirm', 1, SAMPLE_CONFIRM);
+    await ipcMain.invoke('ps:onboarding:confirm', 1, SAMPLE_CONFIRM);
     await promise;
-    expect(ipcMain.handlers.has('ok:onboarding:confirm')).toBe(false);
-    expect(ipcMain.handlers.has('ok:onboarding:cancel')).toBe(false);
-    expect(ipcMain.handlers.has('ok:onboarding:probe-content')).toBe(false);
+    expect(ipcMain.handlers.has('ps:onboarding:confirm')).toBe(false);
+    expect(ipcMain.handlers.has('ps:onboarding:cancel')).toBe(false);
+    expect(ipcMain.handlers.has('ps:onboarding:probe-content')).toBe(false);
   });
 
   test('confirm with `..`-escape contentDir is rejected — promise stays pending', async () => {
@@ -255,13 +255,13 @@ describe('requestUserConsent — confirm', () => {
     );
     await ipcMain.bindSender(1);
     const evil = { ...SAMPLE_CONFIRM, contentDir: '../../etc' };
-    const result = (await ipcMain.invoke('ok:onboarding:confirm', 1, evil)) as {
+    const result = (await ipcMain.invoke('ps:onboarding:confirm', 1, evil)) as {
       ok: boolean;
       error?: string;
     };
     expect(result.ok).toBe(false);
     expect(result.error).toBe('Content directory must be inside the project');
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 
@@ -274,13 +274,13 @@ describe('requestUserConsent — confirm', () => {
     );
     await ipcMain.bindSender(1);
     const evil = { ...SAMPLE_CONFIRM, connectEditors: 'yes' };
-    const result = (await ipcMain.invoke('ok:onboarding:confirm', 1, evil)) as {
+    const result = (await ipcMain.invoke('ps:onboarding:confirm', 1, evil)) as {
       ok: boolean;
       error?: string;
     };
     expect(result.ok).toBe(false);
     expect(result.error).toBe('invalid connectEditors');
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 
@@ -292,7 +292,7 @@ describe('requestUserConsent — confirm', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    await ipcMain.invoke('ok:onboarding:confirm', 1, {
+    await ipcMain.invoke('ps:onboarding:confirm', 1, {
       ...SAMPLE_CONFIRM,
       editorIds: [],
       connectEditors: false,
@@ -311,12 +311,12 @@ describe('requestUserConsent — confirm', () => {
     );
     await ipcMain.bindSender(1);
     const evil = { ...SAMPLE_CONFIRM, contentDir: '/etc/passwd' };
-    const result = (await ipcMain.invoke('ok:onboarding:confirm', 1, evil)) as {
+    const result = (await ipcMain.invoke('ps:onboarding:confirm', 1, evil)) as {
       ok: boolean;
       error?: string;
     };
     expect(result.ok).toBe(false);
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 });
@@ -330,7 +330,7 @@ describe('requestUserConsent — cancel', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await expect(promise).resolves.toEqual({ outcome: 'cancel' });
   });
 
@@ -342,12 +342,12 @@ describe('requestUserConsent — cancel', () => {
       SAMPLE_PAYLOAD,
     );
     await ipcMain.bindSender(1);
-    const result = (await ipcMain.invoke('ok:onboarding:cancel', 42)) as {
+    const result = (await ipcMain.invoke('ps:onboarding:cancel', 42)) as {
       ok: boolean;
       error?: string;
     };
     expect(result.ok).toBe(false);
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 });
@@ -469,14 +469,14 @@ describe('requestUserConsent — probe-content pins to captured projectDir', () 
     const evilRequest = { projectDir: '/etc', contentDir: '.' } as unknown as {
       contentDir: string;
     };
-    const result = (await ipcMain.invoke('ok:onboarding:probe-content', 1, evilRequest)) as {
+    const result = (await ipcMain.invoke('ps:onboarding:probe-content', 1, evilRequest)) as {
       ok: boolean;
     };
     expect(result.ok).toBe(true);
     expect(capturedProjectDir).toBe(tmp);
     expect(capturedContentDir).toBe(tmp);
     expect(capturedProjectDir).not.toBe('/etc');
-    await ipcMain.invoke('ok:onboarding:cancel', 1);
+    await ipcMain.invoke('ps:onboarding:cancel', 1);
     await promise;
   });
 });

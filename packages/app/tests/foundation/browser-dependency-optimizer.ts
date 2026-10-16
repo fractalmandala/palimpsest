@@ -65,7 +65,7 @@ export function dependencyReloadGuard(): Plugin {
     vitest.state.catchError(reload, 'Unhandled Error');
   };
   return {
-    name: 'ok:browser-dependency-reload-guard',
+    name: 'ps:browser-dependency-reload-guard',
     configureVitest(context) {
       vitest = context.vitest;
     },

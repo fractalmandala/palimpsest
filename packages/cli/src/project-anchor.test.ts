@@ -39,7 +39,7 @@ describe('resolveProjectAnchor — command gating', () => {
     expect(resolveProjectAnchor(name, '/proj/sub/dir', stubHit)).toBe('/proj');
   });
 
-  test('anchors the bare-`ok` dispatch (undefined command name)', () => {
+  test('anchors the bare-`ps` dispatch (undefined command name)', () => {
     expect(resolveProjectAnchor(undefined, '/proj/sub/dir', stubHit)).toBe('/proj');
   });
 
@@ -161,7 +161,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     expect(report).toHaveProperty('server');
   }, 30_000);
 
-  test('`ok preview` from a subdirectory loads the ROOT config, not defaults', () => {
+  test('`ps preview` from a subdirectory loads the ROOT config, not defaults', () => {
     const root = makeFixture();
     makeProjectRoot(root, 'content:\n  dir: docs\n');
     mkdirSync(join(root, 'docs'), { recursive: true });

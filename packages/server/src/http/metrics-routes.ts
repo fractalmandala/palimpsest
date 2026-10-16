@@ -51,7 +51,7 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
           { err: e, requestId: getRequestId(_req) },
           '[metrics-reconciliation] handler failed',
         );
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'metrics-reconciliation',
           cause: e,
         });
@@ -72,7 +72,7 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
           { err: e, requestId: getRequestId(_req) },
           '[metrics-parse-health] handler failed',
         );
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'metrics-parse-health',
           cause: e,
         });
@@ -86,19 +86,19 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
     res: ServerResponse,
   ): Promise<void> {
     if (!isLoopbackAddress(req.socket.remoteAddress)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'metrics-agent-presence',
       });
       return;
     }
     if (!isAllowedWorkspaceHostHeader(req.headers.host)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'metrics-agent-presence',
       });
       return;
     }
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'metrics-agent-presence',
         extraHeaders: { Allow: 'GET' },
       });
@@ -125,7 +125,7 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
         { err: e, requestId: getRequestId(req) },
         '[metrics-agent-presence] handler failed',
       );
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'metrics-agent-presence',
         cause: e,
       });
@@ -137,19 +137,19 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
     res: ServerResponse,
   ): Promise<void> {
     if (!isLoopbackAddress(req.socket.remoteAddress)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'metrics-agent-effects',
       });
       return;
     }
     if (!isAllowedWorkspaceHostHeader(req.headers.host)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'metrics-agent-effects',
       });
       return;
     }
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'metrics-agent-effects',
         extraHeaders: { Allow: 'GET' },
       });
@@ -194,7 +194,7 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
       );
     } catch (e) {
       log.error({ err: e, 'doc.name': failingDocName }, '[metrics-agent-effects] handler failed');
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'metrics-agent-effects',
         cause: e,
       });
@@ -206,19 +206,19 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
     res: ServerResponse,
   ): Promise<void> {
     if (!isLoopbackAddress(req.socket.remoteAddress)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'metrics-watcher-recent',
       });
       return;
     }
     if (!isAllowedWorkspaceHostHeader(req.headers.host)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'metrics-watcher-recent',
       });
       return;
     }
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'metrics-watcher-recent',
         extraHeaders: { Allow: 'GET' },
       });
@@ -245,7 +245,7 @@ export function createMetricsRoutes(deps: MetricsRouteDeps): MetricsRoutes {
         { err: e, requestId: getRequestId(req) },
         '[metrics-watcher-recent] handler failed',
       );
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'metrics-watcher-recent',
         cause: e,
       });

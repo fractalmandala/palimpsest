@@ -5,7 +5,7 @@ export function useBuiltinSkillBlurb(): (idOrName: string) => string | null {
   return (idOrName: string): string | null => {
     switch (idOrName) {
       case 'discovery':
-      case 'open-knowledge-discovery':
+      case 'palimpsest-discovery':
         return t`How to set up new projects with Palimpsest.`;
       case 'write-skill':
       case 'open-knowledge-write-skill':

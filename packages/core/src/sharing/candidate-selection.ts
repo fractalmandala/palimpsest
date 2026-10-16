@@ -13,7 +13,7 @@ export interface CandidateBridgeDeps {
   readonly readHeadBranch: (projectPath: string) => Promise<HeadBranchInfo>;
   readonly readGitDirKind: (projectPath: string) => Promise<ResolvedGitDirKind>;
   readonly realpath: (path: string) => Promise<string>;
-  readonly isOkProjectRoot: (projectPath: string) => Promise<boolean>;
+  readonly isPsProjectRoot: (projectPath: string) => Promise<boolean>;
 }
 
 export interface CandidateSelectionPayload {
@@ -29,7 +29,7 @@ export interface Candidate {
   readonly recent: RecentProjectEntry | null;
   readonly head: HeadBranchInfo;
   readonly gitDirKind: ResolvedGitDirKind;
-  readonly hasOkConfig: boolean;
+  readonly hasPsConfig: boolean;
   readonly locked: boolean;
   readonly recencyIndex: number | null;
   readonly worktreeOrder: number | null;
@@ -118,19 +118,19 @@ export async function selectCandidate(
       `[receive] selection=branch_match worktrees_enumerated=${worktreeEnum.length} recents_matching=${recentMatches.length} chosen_source=${chosen.source}`,
     );
     const multiCandidate = candidates.length > 1;
-    return chosen.hasOkConfig
+    return chosen.hasPsConfig
       ? { kind: 'branch-match-ok', candidate: chosen, multiCandidate }
       : { kind: 'branch-match-non-ok', candidate: chosen, anchorRecent: anchor };
   }
 
-  const mains = candidates.filter((c) => c.gitDirKind === 'directory' && c.hasOkConfig);
+  const mains = candidates.filter((c) => c.gitDirKind === 'directory' && c.hasPsConfig);
   if (mains.length > 0) {
     console.warn(
       `[receive] selection=fallback reason=main-checkout candidates=${candidates.length}`,
     );
     return { kind: 'fallback', anchor: pickByRecency(mains), reason: 'main-checkout' };
   }
-  const linkedOk = candidates.filter((c) => c.gitDirKind === 'linked' && c.hasOkConfig);
+  const linkedOk = candidates.filter((c) => c.gitDirKind === 'linked' && c.hasPsConfig);
   if (linkedOk.length > 0) {
     console.warn(
       `[receive] selection=fallback reason=only-worktrees candidates=${candidates.length}`,
@@ -207,14 +207,14 @@ interface InspectCandidateArgs {
 async function inspectCandidate(args: InspectCandidateArgs): Promise<Candidate> {
   const head = args.prepopulatedHead ?? (await safeReadHead(args.bridge, args.path));
   const gitDirKind = await safeReadGitDirKind(args.bridge, args.path);
-  const hasOkConfig = await safeIsOkProjectRoot(args.bridge, args.path);
+  const hasPsConfig = await safeIsPsProjectRoot(args.bridge, args.path);
   return {
     path: args.path,
     source: args.source,
     recent: args.recent,
     head,
     gitDirKind,
-    hasOkConfig,
+    hasPsConfig,
     locked: args.locked,
     recencyIndex: args.recencyIndex,
     worktreeOrder: args.worktreeOrder,
@@ -263,9 +263,9 @@ async function safeReadGitDirKind(
   }
 }
 
-async function safeIsOkProjectRoot(bridge: CandidateBridgeDeps, path: string): Promise<boolean> {
+async function safeIsPsProjectRoot(bridge: CandidateBridgeDeps, path: string): Promise<boolean> {
   try {
-    return await bridge.isOkProjectRoot(path);
+    return await bridge.isPsProjectRoot(path);
   } catch (err) {
     console.warn('[receive] is_ok_project_root_failed; treating as non-OK', {
       code: (err as { code?: string }).code,

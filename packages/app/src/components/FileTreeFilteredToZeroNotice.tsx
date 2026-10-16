@@ -21,7 +21,7 @@ export function FileTreeFilteredToZeroNotice() {
         sidebar: {
           showHiddenFiles: false,
           showOnlyMarkdownFiles: false,
-          showOkFolders: false,
+          showPsFolders: false,
         },
       },
     });

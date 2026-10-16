@@ -278,7 +278,7 @@ describe.skipIf(process.platform === 'win32')(
 
     test('with an ambient helper configured, git sends `get` to OK helper only', async () => {
       const ambientLog = join(isolatedHome, 'ambient.log');
-      const psLog = join(isolatedHome, 'ok.log');
+      const psLog = join(isolatedHome, 'ps.log');
       const ambientHelper = join(isolatedHome, 'ambient-helper.sh');
       const psCli = join(isolatedHome, 'ps-cli.sh');
 
@@ -293,7 +293,7 @@ describe.skipIf(process.platform === 'win32')(
           '',
         ].join('\n');
       writeFileSync(ambientHelper, stubScript(ambientLog, 'ambient'), { mode: 0o755 });
-      writeFileSync(psCli, stubScript(psLog, 'ok'), { mode: 0o755 });
+      writeFileSync(psCli, stubScript(psLog, 'ps'), { mode: 0o755 });
 
       execSync(`git config credential.helper '!${ambientHelper}'`, { cwd: repoDir });
 
@@ -480,7 +480,7 @@ describe('buildSyncCredentialConfig() — ambient helper neutralization', () => 
       .filter((entry) => entry.startsWith('credential.helper='))
       .map((entry) => entry.slice('credential.helper='.length));
 
-  test("emits an empty credential.helper reset before OK's own helper", () => {
+  test("emits an empty credential.helper reset before Palimpsest's own helper", () => {
     const values = credentialHelperValues(
       buildSyncCredentialConfig(['palimpsest'], { resetAmbient: true }),
     );

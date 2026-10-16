@@ -284,7 +284,7 @@ describe('preview_url tool — no UI running', () => {
     expect(result.structuredContent?.autoOpen).toBe(true);
     expect(result.content[0]?.text).toContain('No Palimpsest server is running');
     expect(result.content[0]?.text).toContain('`ps start`');
-    expect(result.content[0]?.text).not.toContain('`ok ui`');
+    expect(result.content[0]?.text).not.toContain('`ps ui`');
   });
 
   test('no-UI branch is the same regardless of docName', async () => {
@@ -317,7 +317,7 @@ describe('preview_url tool — no UI running', () => {
     expect(result.content[0]?.text).toContain('no preview UI is mounted');
     expect(result.content[0]?.text).toContain('--only server');
     expect(result.content[0]?.text).toContain('Restart it with plain `ps start`');
-    expect(result.content[0]?.text).not.toContain('`ok ui`');
+    expect(result.content[0]?.text).not.toContain('`ps ui`');
     expect(result.content[0]?.text).not.toContain('Retry');
   });
 
@@ -383,7 +383,7 @@ describe('preview_url tool — backend demand-ensure', () => {
     expect(result.structuredContent?.url).toBeNull();
     expect(result.content[0]?.text).toContain('`ps start`');
     expect(result.content[0]?.text).toContain('PS_MCP_AUTOSTART=0');
-    expect(result.content[0]?.text).not.toContain('`ok ui`');
+    expect(result.content[0]?.text).not.toContain('`ps ui`');
   });
 
   test('spawn failure surfaces as a tool error carrying the resolver message', async () => {
@@ -729,7 +729,7 @@ describe('preview_url tool — names the running channel command', () => {
 
     const idle = await captureRegistration(temporaryProject())({ document: 'specs/foo/SPEC' });
     expect(idle.content[0]?.text).toContain(
-      'No Palimpsest server is running for this project. Start it with `ps start` (also starts the preview UI), or open the project in OK Electron.',
+      'No Palimpsest server is running for this project. Start it with `ps start` (also starts the preview UI), or open the project in Palimpsest Electron.',
     );
   });
 });

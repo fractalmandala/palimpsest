@@ -165,12 +165,12 @@ function isGitHubDotComHttpsUrl(cloneUrl: string): boolean {
 }
 
 interface PublishGitDeps {
-  ensureOkScaffold: (projectDir: string) => void;
+  ensurePsScaffold: (projectDir: string) => void;
   gitFactory: (projectDir: string, relayToken?: RelayToken) => SimpleGit;
 }
 
 const DEFAULT_DEPS: PublishGitDeps = {
-  ensureOkScaffold: (projectDir) => {
+  ensurePsScaffold: (projectDir) => {
     initContent(projectDir);
   },
   gitFactory: makeGit,
@@ -206,7 +206,7 @@ export async function runPublishFlow(params: PublishParams): Promise<PublishResu
   }
 
   try {
-    deps.ensureOkScaffold(projectDir);
+    deps.ensurePsScaffold(projectDir);
   } catch {
     return { kind: 'error', code: 'init-failed' };
   }
@@ -346,9 +346,9 @@ async function runSharePublish(opts: PublishOptions, tokenStore: TokenStore): Pr
     );
   } catch {
     process.env.GIT_AUTHOR_NAME ??= 'Palimpsest';
-    process.env.GIT_AUTHOR_EMAIL ??= 'noreply@inkeep.com';
+    process.env.GIT_AUTHOR_EMAIL ??= 'palimpsest@users.noreply.github.com';
     process.env.GIT_COMMITTER_NAME ??= 'Palimpsest';
-    process.env.GIT_COMMITTER_EMAIL ??= 'noreply@inkeep.com';
+    process.env.GIT_COMMITTER_EMAIL ??= 'palimpsest@users.noreply.github.com';
   }
 
   const result = await runPublishFlow({

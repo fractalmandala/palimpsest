@@ -83,7 +83,7 @@ describe('share-contract candidate deployment gate', () => {
     expect(deploymentGate).toContain('workflow_dispatch:');
     expect(deploymentGate).toContain("github.event.client_payload.environment == 'production'");
     expect(deploymentGate).toContain(
-      "github.event.client_payload.project.name == 'open-knowledge-docs'",
+      "github.event.client_payload.project.name == 'palimpsest-docs'",
     );
     expect(deploymentGate).toContain('name: share-contract-v2-runner');
     expect(deploymentGate).not.toContain('name: share-contract-v2\n');

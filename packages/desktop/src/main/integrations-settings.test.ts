@@ -147,11 +147,11 @@ function makeSkills(
     computeStatuses: () => [
       {
         id: 'discovery',
-        name: 'open-knowledge-discovery',
+        name: 'palimpsest-discovery',
         description: 'Recognize Palimpsest projects.',
         installed: installed.has('discovery'),
-        paths: ['~/.agents/skills/open-knowledge-discovery'],
-        sourceDir: '/bundles/open-knowledge-discovery',
+        paths: ['~/.agents/skills/palimpsest-discovery'],
+        sourceDir: '/bundles/palimpsest-discovery',
         resolvedHosts: [{ editor: 'claude', skillsRoot: '.claude/skills', custom: false }],
       },
       {
@@ -192,7 +192,7 @@ function setup(overrides: Partial<RegisterIntegrationsSettingsOpts> = {}) {
     logger: { warn: () => {}, error: () => {}, event: () => {} },
     ...overrides,
   });
-  const dispatch = ipcMain.handlers.get('ok:integrations:dispatch');
+  const dispatch = ipcMain.handlers.get('ps:integrations:dispatch');
   if (!dispatch) throw new Error('dispatch handler not registered');
   const status = () => dispatch(EVENT, { kind: 'status' }) as Promise<IntegrationsStatus>;
   const set = (request: IntegrationsSetRequest) =>
@@ -280,7 +280,7 @@ describe('detectedEditorsFromProbes', () => {
   });
 });
 
-describe('ok:integrations:dispatch — status', () => {
+describe('ps:integrations:dispatch — status', () => {
   test('returns per-editor state, detection, PATH and skill rows', async () => {
     const { status } = setup({
       cli: makeCli({
@@ -316,11 +316,11 @@ describe('ok:integrations:dispatch — status', () => {
     expect(snapshot.skills).toEqual([
       {
         id: 'discovery',
-        name: 'open-knowledge-discovery',
+        name: 'palimpsest-discovery',
         description: 'Recognize Palimpsest projects.',
         installed: true,
-        paths: ['~/.agents/skills/open-knowledge-discovery'],
-        sourceDir: '/bundles/open-knowledge-discovery',
+        paths: ['~/.agents/skills/palimpsest-discovery'],
+        sourceDir: '/bundles/palimpsest-discovery',
         resolvedHosts: [{ editor: 'claude', skillsRoot: '.claude/skills', custom: false }],
       },
       {
@@ -392,7 +392,7 @@ describe('ok:integrations:dispatch — status', () => {
   });
 });
 
-describe('ok:integrations:dispatch — set editor', () => {
+describe('ps:integrations:dispatch — set editor', () => {
   test('enable writes the one editor and returns ok with a fresh snapshot', async () => {
     const cli = makeCli();
     const { set } = setup({ cli });
@@ -511,7 +511,7 @@ describe('ok:integrations:dispatch — set editor', () => {
   });
 });
 
-describe('ok:integrations:dispatch — set path / skill', () => {
+describe('ps:integrations:dispatch — set path / skill', () => {
   test('path toggles route to install/uninstall and the snapshot reflects the new state', async () => {
     const path = makePath(false);
     const { set } = setup({ path });
@@ -537,7 +537,7 @@ describe('ok:integrations:dispatch — set path / skill', () => {
   });
 });
 
-describe('ok:integrations:dispatch — gates and serialization', () => {
+describe('ps:integrations:dispatch — gates and serialization', () => {
   test('available: false refuses mutations but still reports status', async () => {
     const cli = makeCli();
     const { set, status } = setup({ available: false, cli });
@@ -627,9 +627,9 @@ describe('ok:integrations:dispatch — gates and serialization', () => {
 
   test('destroy removes the handler; a second destroy is a no-op', () => {
     const { ipcMain, handle } = setup();
-    expect(ipcMain.handlers.has('ok:integrations:dispatch')).toBe(true);
+    expect(ipcMain.handlers.has('ps:integrations:dispatch')).toBe(true);
     handle.destroy();
-    expect(ipcMain.handlers.has('ok:integrations:dispatch')).toBe(false);
+    expect(ipcMain.handlers.has('ps:integrations:dispatch')).toBe(false);
     handle.destroy();
   });
 });

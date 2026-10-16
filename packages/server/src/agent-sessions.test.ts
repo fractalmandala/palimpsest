@@ -1179,7 +1179,7 @@ describe('applyAgentMarkdownWrite — position: "replace" atomic-overwrite contr
         .getMetrics()
         .flatMap((rm) => rm.scopeMetrics)
         .flatMap((sm) => sm.metrics)
-        .filter((m) => m.descriptor.name === 'ok.frontmatter.edit_surface_total')
+        .filter((m) => m.descriptor.name === 'ps.frontmatter.edit_surface_total')
         .flatMap((m) => m.dataPoints)
         .filter((dp) => dp.attributes.source === 'mcp-write')
         .reduce((total, dp) => total + (dp.value as number), 0);

@@ -69,7 +69,7 @@ async function callApi(contentDir: string, url: string, body: unknown): Promise<
 function expectReservedRejection(result: CapturedResponse): void {
   expect(result.status).toBe(400);
   expect(JSON.parse(result.body)).toMatchObject({
-    type: 'urn:ok:error:reserved-doc-name',
+    type: 'urn:ps:error:reserved-doc-name',
     status: 400,
   });
 }

@@ -68,7 +68,7 @@ describe('ps init refuses the top of a drive', () => {
       expect(process.exitCode).toBe(64);
       const printed = stderrSpy.mock.calls.map((call) => String(call[0])).join('');
       expect(printed).toContain(
-        'Refusing to set up an Palimpsest project at the top of a drive',
+        'Refusing to set up a Palimpsest project at the top of a drive',
       );
       expect(existsSync(join(driveRoot, PS_DIR))).toBe(false);
     } finally {

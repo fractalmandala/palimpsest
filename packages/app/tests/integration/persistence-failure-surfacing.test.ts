@@ -32,7 +32,7 @@ describe('disk-persistence failure surfacing (/api/agent-write-md)', () => {
     expect(res.status).toBeGreaterThanOrEqual(500);
     const body = (await res.json()) as { type?: string; title?: string };
     expect(res.status).toBe(507);
-    expect(body.type).toBe('urn:ok:error:storage-full');
+    expect(body.type).toBe('urn:ps:error:storage-full');
   });
 
   test('still reports success when the store reaches disk', async () => {

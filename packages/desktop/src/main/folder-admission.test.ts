@@ -164,7 +164,7 @@ const stubGitTopLevel =
     return resultByCwd[cwd] ?? null;
   };
 
-const writeOkConfig = (dir: string, contents = '$schema: x\n'): void => {
+const writePsConfig = (dir: string, contents = '$schema: x\n'): void => {
   mkdirSync(resolve(dir, '.ps'), { recursive: true });
   writeFileSync(resolve(dir, '.ps/config.yml'), contents);
 };
@@ -183,7 +183,7 @@ describe('discoverProject — the home directory is never a project', () => {
   });
 
   test('rejects a home that already carries the pre-fix .ps/config.yml', async () => {
-    writeOkConfig(fakeHome);
+    writePsConfig(fakeHome);
 
     const result = await discoverProject(fakeHome, {
       homeDir: fakeHome,
@@ -276,7 +276,7 @@ describe('discoverProject refuses filesystem roots and system folders', () => {
     const drive = resolve(tmpReal, 'drive');
     const pick = resolve(drive, 'work', 'notes');
     mkdirSync(pick, { recursive: true });
-    writeOkConfig(drive);
+    writePsConfig(drive);
     simulatedFilesystemRoots.add(drive);
 
     for (const dirSizeProbe of [null, async () => ({ exceedsCap: true })]) {
@@ -293,7 +293,7 @@ describe('discoverProject refuses filesystem roots and system folders', () => {
   test('an existing project in a system folder never captures a pick below it', async () => {
     const pick = resolve(tmpReal, 'shared', 'notes');
     mkdirSync(pick, { recursive: true });
-    writeOkConfig(tmpReal);
+    writePsConfig(tmpReal);
 
     const result = await discoverProject(pick, {
       homeDir: fakeHome,
@@ -389,7 +389,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
   test('returns managed at picked path when .ps/config.yml is at picked', async () => {
     const project = resolve(fakeHome, 'project');
     mkdirSync(project, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
 
     const result = await discoverProject(project, {
       homeDir: fakeHome,
@@ -409,7 +409,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
     const project = resolve(fakeHome, 'project');
     const sub = resolve(project, 'sub');
     mkdirSync(sub, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
 
     const result = await discoverProject(sub, {
       homeDir: fakeHome,
@@ -445,7 +445,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
       const project = resolve(fakeHome, 'project');
       const sub = resolve(project, ...segments);
       mkdirSync(sub, { recursive: true });
-      writeOkConfig(project);
+      writePsConfig(project);
 
       const result = await discoverProject(sub, {
         homeDir: fakeHome,
@@ -461,7 +461,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
   );
 
   test('walk excludes home itself — a home .ps/ never promotes a child', async () => {
-    writeOkConfig(fakeHome);
+    writePsConfig(fakeHome);
     const sub = resolve(fakeHome, 'sub');
     mkdirSync(sub, { recursive: true });
 
@@ -477,7 +477,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
   });
 
   test('walk excludes home when home is given by a symlinked spelling', async () => {
-    writeOkConfig(fakeHome);
+    writePsConfig(fakeHome);
     const sub = resolve(fakeHome, 'sub');
     mkdirSync(sub, { recursive: true });
     const homeLink = resolve(tmpReal, 'home-link');
@@ -500,7 +500,7 @@ describe('discoverProject — managed kind (ancestor walk)', () => {
     const api = resolve(docs, 'api');
     mkdirSync(api, { recursive: true });
     mkdirSync(resolve(repo, '.git'));
-    writeOkConfig(docs);
+    writePsConfig(docs);
 
     const result = await discoverProject(api, {
       homeDir: fakeHome,
@@ -636,7 +636,7 @@ describe('discoverProject — linked-worktree carveout scoping', () => {
     const gitDir = resolve(fakeHome, 'main/.git/worktrees/wt');
     mkdirSync(worktree, { recursive: true });
     mkdirSync(gitDir, { recursive: true });
-    writeOkConfig(parent);
+    writePsConfig(parent);
     writeFileSync(resolve(worktree, '.git'), `gitdir: ${gitDir}\n`);
 
     const result = await discoverProject(worktree, {
@@ -760,7 +760,7 @@ describe('discoverProject — depth + boundary safety', () => {
     let cursor = chainRoot;
     for (let i = 0; i < 31; i += 1) cursor = resolve(cursor, `lvl${i}`);
     mkdirSync(cursor, { recursive: true });
-    writeOkConfig(chainRoot);
+    writePsConfig(chainRoot);
 
     const result = await discoverProject(cursor, {
       homeDir: fakeHome,
@@ -777,7 +777,7 @@ describe('discoverProject — symlink resolution + canonical paths', () => {
     const project = resolve(fakeHome, 'project');
     const link = resolve(fakeHome, 'project-link');
     mkdirSync(project, { recursive: true });
-    writeOkConfig(project);
+    writePsConfig(project);
     symlinkSync(project, link);
 
     const result = await discoverProject(link, {
@@ -848,7 +848,7 @@ describe('discoverProject — ancestor-promote bounded by boot budget (regressio
     const sub = resolve(ancestor, 'sub');
     const picked = resolve(sub, 'picked');
     mkdirSync(picked, { recursive: true });
-    writeOkConfig(ancestor);
+    writePsConfig(ancestor);
 
     let probedDir: string | undefined;
     const dirSizeProbe: DirSizeProbe = async (dir) => {
@@ -877,7 +877,7 @@ describe('discoverProject — ancestor-promote bounded by boot budget (regressio
     const sub = resolve(ancestor, 'sub');
     const picked = resolve(sub, 'picked');
     mkdirSync(picked, { recursive: true });
-    writeOkConfig(ancestor);
+    writePsConfig(ancestor);
 
     const dirSizeProbe: DirSizeProbe = async () => ({ exceedsCap: false });
 
@@ -899,7 +899,7 @@ describe('discoverProject — ancestor-promote bounded by boot budget (regressio
     const sub = resolve(ancestor, 'sub');
     const picked = resolve(sub, 'picked');
     mkdirSync(picked, { recursive: true });
-    writeOkConfig(ancestor);
+    writePsConfig(ancestor);
 
     const result = await discoverProject(picked, {
       homeDir: fakeHome,
@@ -916,7 +916,7 @@ describe('discoverProject — ancestor-promote bounded by boot budget (regressio
   test('direct-pick (no walk-up) does NOT invoke the probe', async () => {
     const projectRoot = resolve(fakeHome, 'projectRoot');
     mkdirSync(projectRoot, { recursive: true });
-    writeOkConfig(projectRoot);
+    writePsConfig(projectRoot);
 
     let probeCalled = false;
     const dirSizeProbe: DirSizeProbe = async () => {
@@ -987,7 +987,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
   test('linked-worktree root under an ancestor with .ps/ is treated as standalone', async () => {
     const parent = resolve(fakeHome, 'parent');
     mkdirSync(parent, { recursive: true });
-    writeOkConfig(parent);
+    writePsConfig(parent);
     await execFileAsync('git', ['init', '--initial-branch=main', parent]);
     configureTestGitRepository(parent);
     await execFileAsync('git', ['-C', parent, 'config', 'user.email', 'test@example.com']);
@@ -1015,7 +1015,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
   test('main-checkout subfolder under an ancestor with .ps/ still gets promoted (D12 narrowly scoped)', async () => {
     const parent = resolve(fakeHome, 'parent2');
     mkdirSync(parent, { recursive: true });
-    writeOkConfig(parent);
+    writePsConfig(parent);
     const sub = resolve(parent, 'sub');
     mkdirSync(sub, { recursive: true });
 
@@ -1056,7 +1056,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
   test('linked-worktree root with its OWN .ps/config.yml classifies as managed (not fresh)', async () => {
     const parent = resolve(fakeHome, 'parent-init');
     mkdirSync(parent, { recursive: true });
-    writeOkConfig(parent);
+    writePsConfig(parent);
     await execFileAsync('git', ['init', '--initial-branch=main', parent]);
     configureTestGitRepository(parent);
     await execFileAsync('git', ['-C', parent, 'config', 'user.email', 'test@example.com']);
@@ -1068,7 +1068,7 @@ describe('discoverProject — D12 linked-worktree carveout', () => {
     const wt = resolve(parent, 'wt-initialized');
     await execFileAsync('git', ['-C', parent, 'worktree', 'add', '-b', 'init-feat', wt]);
     configureTestGitRepository(wt);
-    writeOkConfig(wt);
+    writePsConfig(wt);
 
     const result = await discoverProject(wt, { homeDir: fakeHome, dirSizeProbe: null });
 

@@ -48,7 +48,7 @@ import {
 } from '../support/detached-interactive-spawn.test-helper.ts';
 import {
   createRecordDir,
-  createScratchHomeWithOkBin,
+  createScratchHomeWithPsBin,
   firstShellOnDisk,
   MINIMAL_PARENT_PATH,
   RC_FILES,
@@ -113,7 +113,7 @@ describe.skipIf(process.platform === 'win32')(
     beforeAll(() => {
       recordDir = createRecordDir();
       childPathRecord = join(recordDir, CHILD_PATH_RECORD);
-      scratchHome = createScratchHomeWithOkBin({
+      scratchHome = createScratchHomeWithPsBin({
         prefix: 'ps-bin-child-path-',
         bins: [SLIDEV_BIN, ...TERMINAL_CLI_BINS, FIXTURE_ONLY_BIN],
         exitCode: SENTINEL_EXIT_CODE,
@@ -169,7 +169,7 @@ describe.skipIf(process.platform === 'win32')(
       ).toBe(0);
     }
 
-    test('the PATH OK Desktop grants its own shells leads with ~/.ps/bin', () => {
+    test('the PATH Palimpsest Desktop grants its own shells leads with ~/.ps/bin', () => {
       expect(psBinGrantedToOwnShells(), WHY_THIS_PAIRS_WITH_PTY_HOST).toBe(
         join(scratchHome, '.ps', 'bin'),
       );
@@ -507,7 +507,7 @@ describe('Slidev launch process-group containment on fish', () => {
 
 describe.skipIf(!existsSync('/bin/bash'))('Slidev bashrc function detect-and-launch parity', () => {
   test('a slidev function defined only in ~/.bashrc is both detected and launchable', async () => {
-    const home = createScratchHomeWithOkBin({ prefix: 'ps-bashrc-fn-', bins: [] });
+    const home = createScratchHomeWithPsBin({ prefix: 'ps-bashrc-fn-', bins: [] });
     const previousHome = process.env.HOME;
     const previousPath = process.env.PATH;
     try {
@@ -561,7 +561,7 @@ describe.skipIf(!existsSync('/bin/bash'))('Slidev bashrc function detect-and-lau
 
 describe.skipIf(process.platform === 'win32')('Slidev shell startup PATH replacement', () => {
   test('reasserts the managed CLI path for detection and launch after shell startup', async () => {
-    const home = createScratchHomeWithOkBin({
+    const home = createScratchHomeWithPsBin({
       prefix: 'ps-bin-login-reset-',
       bins: ['slidev'],
       exitCode: SENTINEL_EXIT_CODE,

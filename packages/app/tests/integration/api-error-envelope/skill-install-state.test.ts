@@ -37,11 +37,11 @@ describe('skill-install-state envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 
-  test('cross-origin request emits urn:ok:error:invalid-origin', async () => {
+  test('cross-origin request emits urn:ps:error:invalid-origin', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/skill/install-state`, {
       headers: { Origin: 'https://attacker.example' },
     });
@@ -52,7 +52,7 @@ describe('skill-install-state envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-origin');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-origin');
     }
   });
 });

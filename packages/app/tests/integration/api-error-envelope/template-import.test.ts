@@ -98,7 +98,7 @@ describe('template import (POST /api/template/import)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-not-found');
     }
   });
 });

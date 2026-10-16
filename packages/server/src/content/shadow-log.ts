@@ -3,7 +3,7 @@ import { pathspecArgs, type ShadowContributor } from '@palimpsest/core';
 import {
   getShadowRepoPath,
   getWipRefPattern,
-  parseOkActor,
+  parsePsActor,
   parseWriterId,
   readContributors,
   type WriterClassification,
@@ -154,7 +154,7 @@ async function checkpointAncestryFallback(
     ) {
       continue;
     }
-    const actor = parseOkActor(rawBody);
+    const actor = parsePsActor(rawBody);
     const writerId = actor?.writer_id ?? '';
     const parsed = parseWriterId(writerId);
     seen.add(sha);

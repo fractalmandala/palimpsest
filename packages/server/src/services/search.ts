@@ -42,7 +42,7 @@ const log = getLogger('search');
 let _searchCorpusUpdateCounter: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
 function searchCorpusUpdateCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
-  _searchCorpusUpdateCounter ||= getMeter().createCounter('ok.search.corpus_update_total', {
+  _searchCorpusUpdateCounter ||= getMeter().createCounter('ps.search.corpus_update_total', {
     description:
       'Count of workspace search corpus builds, by mode (cold | incremental | rebuild) and, for rebuilds, the bounded fallback reason.',
   });
@@ -52,7 +52,7 @@ function searchCorpusUpdateCounter(): ReturnType<ReturnType<typeof getMeter>['cr
 let _searchCorpusTruncatedCounter: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
 function searchCorpusTruncatedCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
-  _searchCorpusTruncatedCounter ||= getMeter().createCounter('ok.search.corpus_truncated_total', {
+  _searchCorpusTruncatedCounter ||= getMeter().createCounter('ps.search.corpus_truncated_total', {
     description:
       'Count of corpus builds whose name-only file tier was truncated at PS_SEARCH_MAX_ENTRIES.',
   });

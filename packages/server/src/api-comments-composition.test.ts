@@ -41,7 +41,7 @@ describe('comments group over the composed listener — served natively', () => 
   test('missing-id read reaches the real handler (its own 400)', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/comment`);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
     expect(res.headers.get('x-request-id')).not.toBeNull();
   });
 
@@ -51,7 +51,7 @@ describe('comments group over the composed listener — served natively', () => 
         headers: { Host: 'evil.example' },
       });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 

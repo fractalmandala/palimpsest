@@ -42,14 +42,14 @@ function configScopeAttr(documentName: string): WriteScope | undefined {
 }
 
 let _okignoreRejectionCounter: Counter | null = null;
-function okignoreRejectionCounter(): Counter {
-  _okignoreRejectionCounter ||= getMeter().createCounter('ok.config.ignore.rejection_total', {
+function psignoreRejectionCounter(): Counter {
+  _okignoreRejectionCounter ||= getMeter().createCounter('ps.config.ignore.rejection_total', {
     description: 'Count of psignore L3 rejections by error code.',
   });
   return _okignoreRejectionCounter;
 }
 
-export function __resetOkignoreTelemetryForTests(): void {
+export function __resetPsignoreTelemetryForTests(): void {
   _okignoreRejectionCounter = null;
 }
 
@@ -296,7 +296,7 @@ async function storeConfigDocInner(
           ctx.lkgCache.set(documentName, fallbackLkg);
         }
         if (documentName === CONFIG_DOC_NAME_OKIGNORE && isKnownConfigError(validation.error)) {
-          okignoreRejectionCounter().add(1, { 'error.code': validation.error.code });
+          psignoreRejectionCounter().add(1, { 'error.code': validation.error.code });
         }
         ctx.onConfigRejected?.(documentName, validation.error);
       },
@@ -457,7 +457,7 @@ export function applyExternalConfigChange(
   );
   if (!validation.ok) {
     if (documentName === CONFIG_DOC_NAME_OKIGNORE && isKnownConfigError(validation.error)) {
-      okignoreRejectionCounter().add(1, { 'error.code': validation.error.code });
+      psignoreRejectionCounter().add(1, { 'error.code': validation.error.code });
     }
     ctx.onConfigRejected?.(documentName, validation.error);
     return 'rejected';

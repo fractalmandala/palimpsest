@@ -1,9 +1,9 @@
-import type { LinterConfig, OkfRuleId } from '@palimpsest/core';
+import type { LinterConfig, PsfRuleId } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { schemaFieldsForDoc } from './frontmatter-schema-fields.ts';
 
 function configWithOkf(
-  psf: { enabled: boolean; rules?: Partial<Record<OkfRuleId, boolean>> },
+  psf: { enabled: boolean; rules?: Partial<Record<PsfRuleId, boolean>> },
   frontmatter: {
     enabled: boolean;
     schemas: { appliesTo?: string | string[]; file: string; schema?: Record<string, unknown> }[];

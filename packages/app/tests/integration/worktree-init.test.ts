@@ -15,7 +15,7 @@ afterEach(() => {
 
 describe('initContent in a linked worktree (FR4 / D7)', () => {
   test('fresh worktree (P3): scaffolds .ps/ on first invocation', () => {
-    handle = createLinkedWorktree({ seedOkScaffold: false });
+    handle = createLinkedWorktree({ seedPsScaffold: false });
     expect(existsSync(resolve(handle.worktreePath, '.ps'))).toBe(false);
 
     const result = initContent(handle.worktreePath);
@@ -27,7 +27,7 @@ describe('initContent in a linked worktree (FR4 / D7)', () => {
   });
 
   test('committed config.yml (P1): writeIfMissing skip leaves bytes unchanged on second init', () => {
-    handle = createLinkedWorktree({ seedOkScaffold: false });
+    handle = createLinkedWorktree({ seedPsScaffold: false });
     const psDir = resolve(handle.worktreePath, '.ps');
     const customConfig = '# user-customized\nlogLevel: debug\n';
     const customGitignore = '# user-customized\nprincipal.json\n';
@@ -45,7 +45,7 @@ describe('initContent in a linked worktree (FR4 / D7)', () => {
   });
 
   test('init then boot: same worktree, end-to-end pipeline succeeds', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: false });
+    handle = createLinkedWorktree({ seedPsScaffold: false });
     initContent(handle.worktreePath);
 
     const booted = await bootServer({
@@ -59,7 +59,7 @@ describe('initContent in a linked worktree (FR4 / D7)', () => {
     });
     try {
       await booted.ready;
-      const expectedShadowHead = resolve(handle.worktreeGitdir, 'ok/HEAD');
+      const expectedShadowHead = resolve(handle.worktreeGitdir, 'ps/HEAD');
       expect(existsSync(expectedShadowHead)).toBe(true);
     } finally {
       await booted.destroy();

@@ -242,7 +242,7 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
     expect(calls).toBe(0);
   });
 
-  test('always injects for Cursor, even when its config carries OK’s entry', async () => {
+  test('always injects for Cursor, even when its config carries Palimpsest's entry', async () => {
     let calls = 0;
     const m = makeManager(() => {
       calls += 1;

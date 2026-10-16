@@ -76,7 +76,7 @@ describe('handleHandoffDispatch — method gate', () => {
   test('rejects non-POST methods with 405 method-not-allowed problem+json + Allow: POST', async () => {
     const { res, captured } = makeRes();
     await handleHandoffDispatch(makeReq('GET'), res, makeDeps());
-    expectProblem(captured, 405, 'urn:ok:error:method-not-allowed');
+    expectProblem(captured, 405, 'urn:ps:error:method-not-allowed');
     expect(captured.headers.Allow).toBe('POST');
   });
 });
@@ -187,7 +187,7 @@ describe('handleHandoffDispatch — app-bundle cross-platform (Windows / Linux)'
       res,
       makeDeps({ platform: 'win32', spawnDetached, isSchemeRegistered: async () => false }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:handoff-target-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:handoff-target-not-installed');
     expect(captured.body).toMatchObject({ target: 'claude-cowork' });
     expect(spawnDetached).not.toHaveBeenCalled();
   });
@@ -200,7 +200,7 @@ describe('handleHandoffDispatch — app-bundle cross-platform (Windows / Linux)'
       res,
       makeDeps({ platform: 'linux', spawnDetached, isSchemeRegistered: async () => false }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:handoff-target-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:handoff-target-not-installed');
     expect(captured.body).toMatchObject({ target: 'codex' });
     expect(spawnDetached).not.toHaveBeenCalled();
   });
@@ -213,7 +213,7 @@ describe('handleHandoffDispatch — app-bundle cross-platform (Windows / Linux)'
       res,
       makeDeps({ platform: 'win32', spawnDetached, isSchemeRegistered: async () => true }),
     );
-    expectProblem(captured, 502, 'urn:ok:error:handoff-spawn-failed');
+    expectProblem(captured, 502, 'urn:ps:error:handoff-spawn-failed');
     expect(captured.body).toMatchObject({ target: 'claude-cowork' });
   });
 });
@@ -284,13 +284,13 @@ describe('handleHandoffDispatch — body validation', () => {
   test('malformed JSON → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleHandoffDispatch(makeReq('POST', 'not-json{{'), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('missing target → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleHandoffDispatch(makeReq('POST', { url: CLAUDE_URL }), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('unknown target → 400 invalid-request', async () => {
@@ -300,13 +300,13 @@ describe('handleHandoffDispatch — body validation', () => {
       res,
       makeDeps(),
     );
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('missing url → 400 invalid-request', async () => {
     const { res, captured } = makeRes();
     await handleHandoffDispatch(makeReq('POST', { target: 'claude-cowork' }), res, makeDeps());
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('empty url → 400 invalid-request', async () => {
@@ -316,7 +316,7 @@ describe('handleHandoffDispatch — body validation', () => {
       res,
       makeDeps(),
     );
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('url scheme mismatch (claude://) on codex target → 400 invalid-request', async () => {
@@ -326,7 +326,7 @@ describe('handleHandoffDispatch — body validation', () => {
       res,
       makeDeps(),
     );
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 
   test('url scheme mismatch (https://) on claude-cowork target → 400 invalid-request', async () => {
@@ -336,7 +336,7 @@ describe('handleHandoffDispatch — body validation', () => {
       res,
       makeDeps(),
     );
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
   });
 });
 
@@ -398,7 +398,7 @@ describe('handleHandoffDispatch — claude-cowork recipe (app-bundle, quitFirst=
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:handoff-target-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:handoff-target-not-installed');
     expect(captured.body).toMatchObject({ target: 'claude-cowork' });
     expect(spawnDetached).toHaveBeenCalledTimes(1);
   });
@@ -416,7 +416,7 @@ describe('handleHandoffDispatch — claude-cowork recipe (app-bundle, quitFirst=
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 504, 'urn:ok:error:handoff-spawn-timeout');
+    expectProblem(captured, 504, 'urn:ps:error:handoff-spawn-timeout');
     expect(captured.body).toMatchObject({ target: 'claude-cowork' });
     expect(spawnDetached).toHaveBeenCalledTimes(2);
   });
@@ -434,7 +434,7 @@ describe('handleHandoffDispatch — claude-cowork recipe (app-bundle, quitFirst=
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 502, 'urn:ok:error:handoff-spawn-failed');
+    expectProblem(captured, 502, 'urn:ps:error:handoff-spawn-failed');
     expect(captured.body).toMatchObject({ target: 'claude-cowork' });
   });
 });
@@ -502,7 +502,7 @@ describe('handleHandoffDispatch — codex recipe (app-bundle, quitFirst=true)', 
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:handoff-target-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:handoff-target-not-installed');
     expect(captured.body).toMatchObject({ target: 'codex' });
   });
 });
@@ -546,7 +546,7 @@ describe('handleHandoffDispatch — cursor recipe (cli-binary)', () => {
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
     expect(spawnDetached).not.toHaveBeenCalled();
   });
 
@@ -558,7 +558,7 @@ describe('handleHandoffDispatch — cursor recipe (cli-binary)', () => {
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 403, 'urn:ok:error:path-escape');
+    expectProblem(captured, 403, 'urn:ps:error:path-escape');
     expect(spawnDetached).not.toHaveBeenCalled();
   });
 
@@ -574,7 +574,7 @@ describe('handleHandoffDispatch — cursor recipe (cli-binary)', () => {
       res,
       makeDeps({ resolveCursorBinary: async () => null, spawnDetached }),
     );
-    expectProblem(captured, 422, 'urn:ok:error:handoff-target-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:handoff-target-not-installed');
     expect(captured.body).toMatchObject({ target: 'cursor' });
     expect(spawnDetached).not.toHaveBeenCalled();
   });
@@ -591,7 +591,7 @@ describe('handleHandoffDispatch — cursor recipe (cli-binary)', () => {
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 504, 'urn:ok:error:handoff-spawn-timeout');
+    expectProblem(captured, 504, 'urn:ps:error:handoff-spawn-timeout');
     expect(captured.body).toMatchObject({ target: 'cursor' });
     expect(spawnDetached).toHaveBeenCalledTimes(1);
   });
@@ -613,7 +613,7 @@ describe('handleHandoffDispatch — cursor recipe (cli-binary)', () => {
       res,
       makeDeps({ spawnDetached }),
     );
-    expectProblem(captured, 502, 'urn:ok:error:handoff-spawn-failed');
+    expectProblem(captured, 502, 'urn:ps:error:handoff-spawn-failed');
     expect(captured.body).toMatchObject({ target: 'cursor' });
   });
 });
@@ -691,7 +691,7 @@ describe('handleHandoffDispatch — readiness observation', () => {
       }),
     );
 
-    expectProblem(captured, 422, 'urn:ok:error:handoff-target-not-installed');
+    expectProblem(captured, 422, 'urn:ps:error:handoff-target-not-installed');
   });
 
   test('never reaches the observation for a body it rejects', async () => {
@@ -707,7 +707,7 @@ describe('handleHandoffDispatch — readiness observation', () => {
       makeDeps({ hostSnapshot }),
     );
 
-    expectProblem(captured, 400, 'urn:ok:error:invalid-request');
+    expectProblem(captured, 400, 'urn:ps:error:invalid-request');
     expect(hostSnapshot).not.toHaveBeenCalled();
   });
 });

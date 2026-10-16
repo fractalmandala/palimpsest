@@ -73,11 +73,11 @@ import {
   type TomlUpsertResult,
 } from '../native/toml-config-engine.ts';
 import {
-  addOkPathsToGitExclude,
+  addPsPathsToGitExclude,
   type ExcludeWriteResult,
-  getOkArtifactPaths,
+  getPsArtifactPaths,
   readSharingMode,
-  removeOkPathsFromGitExclude,
+  removePsPathsFromGitExclude,
   type SharingMode,
   type TrackedRefusal,
 } from '../sharing/git-exclude.ts';
@@ -708,7 +708,7 @@ export type SharingOutcome =
       localOnlyRequested: boolean;
     };
 
-export const LAUNCH_CONFIG_NAME = 'open-knowledge-ui';
+export const LAUNCH_CONFIG_NAME = 'palimpsest-ui';
 
 export function isEditorTargetAvailable(
   target: EditorMcpTarget,
@@ -1474,9 +1474,9 @@ export async function applySharingMode(opts: {
     };
   }
 
-  const paths = getOkArtifactPaths(projectRoot);
+  const paths = getPsArtifactPaths(projectRoot);
   if (desiredMode === 'local-only') {
-    const result = addOkPathsToGitExclude(projectRoot, paths);
+    const result = addPsPathsToGitExclude(projectRoot, paths);
     if (result.kind === 'refused-tracked') {
       const refusal: TrackedRefusal = result;
       return {
@@ -1505,7 +1505,7 @@ export async function applySharingMode(opts: {
       removed: [],
     };
   }
-  const result = removeOkPathsFromGitExclude(projectRoot, paths);
+  const result = removePsPathsFromGitExclude(projectRoot, paths);
   if (result.kind === 'no-exclude') {
     return {
       kind: 'no-exclude',
@@ -2158,7 +2158,7 @@ export function formatSharingOutcome(outcome: SharingOutcome, cwd: string): stri
           warning('Sharing mode: --local-only requested but no git repo found — option ignored'),
         );
         lines.push(
-          `  Run ${info('git init')} (or open this folder via OK Desktop, which can scaffold a repo) and then ${info(`${currentCliCommandName()} config-sharing unshare`)}.`,
+          `  Run ${info('git init')} (or open this folder via Palimpsest Desktop, which can scaffold a repo) and then ${info(`${currentCliCommandName()} config-sharing unshare`)}.`,
         );
       } else if (outcome.reason === 'no-git') {
         return [];

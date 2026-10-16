@@ -5,7 +5,7 @@ import { isLoopbackHostname } from './no-net-connect-loopback';
 
 export { isLoopbackHostname };
 
-const INSTALLED = Symbol.for('ok.test.noNetConnect.installed');
+const INSTALLED = Symbol.for('ps.test.noNetConnect.installed');
 
 interface BlockScope {
   kind: 'test' | 'file';

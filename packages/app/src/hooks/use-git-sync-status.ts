@@ -28,8 +28,8 @@ export interface GitSyncStatus {
   state: GitSyncState;
   lastSyncUtc: string | null;
   lastRunUtc?: string | null;
-  lastPullOkUtc?: string | null;
-  lastPushOkUtc?: string | null;
+  lastPullPsUtc?: string | null;
+  lastPushPsUtc?: string | null;
   lastFetchUtc: string | null;
   lastPullUtc?: string | null;
   lastPullOutcome?: PullOutcome | null;

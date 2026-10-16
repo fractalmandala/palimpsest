@@ -23,7 +23,7 @@ const handleRender: ProfilerOnRenderCallback = (
   commitTime,
 ) => {
   mark(
-    `ok/render/${id}`,
+    `ps/render/${id}`,
     {
       phase,
       actualDuration: Math.round(actualDuration * 1000) / 1000,

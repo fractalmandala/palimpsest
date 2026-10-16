@@ -42,7 +42,7 @@ afterEach(async () => {
 
 describe('GIT_PREFLIGHT_FAIL_SPAN_NAME', () => {
   test('is pinned to the FR8 AC8.1 string', () => {
-    expect(GIT_PREFLIGHT_FAIL_SPAN_NAME).toBe('ok.preflight.git.fail');
+    expect(GIT_PREFLIGHT_FAIL_SPAN_NAME).toBe('ps.preflight.git.fail');
   });
 });
 
@@ -54,17 +54,17 @@ describe('emitPreflightFailureSpan — GitNotAvailableError', () => {
     const spans = exporter.getFinishedSpans();
     expect(spans).toHaveLength(1);
     const [span] = spans;
-    expect(span?.name).toBe('ok.preflight.git.fail');
-    expect(span?.attributes['ok.platform']).toBe('linux');
-    expect(span?.attributes['ok.preflight.git.reason']).toBe('not_available');
-    expect(span?.attributes['ok.preflight.git.detected_version']).toBe('');
+    expect(span?.name).toBe('ps.preflight.git.fail');
+    expect(span?.attributes['ps.platform']).toBe('linux');
+    expect(span?.attributes['ps.preflight.git.reason']).toBe('not_available');
+    expect(span?.attributes['ps.preflight.git.detected_version']).toBe('');
   });
 
   test('preserves the platform tag from the error verbatim', () => {
     const err = new GitNotAvailableError('darwin', makeGuidance());
     emitPreflightFailureSpan(err);
     const [span] = exporter.getFinishedSpans();
-    expect(span?.attributes['ok.platform']).toBe('darwin');
+    expect(span?.attributes['ps.platform']).toBe('darwin');
   });
 });
 
@@ -76,10 +76,10 @@ describe('emitPreflightFailureSpan — GitTooOldError', () => {
     const spans = exporter.getFinishedSpans();
     expect(spans).toHaveLength(1);
     const [span] = spans;
-    expect(span?.name).toBe('ok.preflight.git.fail');
-    expect(span?.attributes['ok.platform']).toBe('linux');
-    expect(span?.attributes['ok.preflight.git.reason']).toBe('too_old');
-    expect(span?.attributes['ok.preflight.git.detected_version']).toBe('2.20.0');
+    expect(span?.name).toBe('ps.preflight.git.fail');
+    expect(span?.attributes['ps.platform']).toBe('linux');
+    expect(span?.attributes['ps.preflight.git.reason']).toBe('too_old');
+    expect(span?.attributes['ps.preflight.git.detected_version']).toBe('2.20.0');
   });
 
   test('Windows variant: ok.platform=win32', () => {
@@ -92,7 +92,7 @@ describe('emitPreflightFailureSpan — GitTooOldError', () => {
     );
     emitPreflightFailureSpan(err);
     const [span] = exporter.getFinishedSpans();
-    expect(span?.attributes['ok.platform']).toBe('win32');
+    expect(span?.attributes['ps.platform']).toBe('win32');
   });
 });
 
@@ -103,9 +103,9 @@ describe('emitPreflightFailureSpan — cardinality discipline (FR8 AC8.5)', () =
     const [span] = exporter.getFinishedSpans();
     const keys = Object.keys(span?.attributes ?? {}).sort();
     expect(keys).toEqual([
-      'ok.platform',
-      'ok.preflight.git.detected_version',
-      'ok.preflight.git.reason',
+      'ps.platform',
+      'ps.preflight.git.detected_version',
+      'ps.preflight.git.reason',
     ]);
   });
 

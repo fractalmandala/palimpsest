@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { removeUserSkill, userSkillPresentAnywhere, writeUserSkill } from './write-user-skill.ts';
 
-const DISCOVERY_DIR = 'open-knowledge-discovery';
+const DISCOVERY_DIR = 'palimpsest-discovery';
 
 describe('writeUserSkill', () => {
   let home: string;

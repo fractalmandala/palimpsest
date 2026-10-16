@@ -253,7 +253,7 @@ function watcherRecentToJsonl(body: string): string | null {
 }
 
 function defaultReadShadowHead(contentDir: string): string | null {
-  const shadowDir = join(contentDir, '.git', 'ok');
+  const shadowDir = join(contentDir, '.git', 'ps');
   if (!existsSync(shadowDir)) return null;
   const result = spawnSync(
     'git',
@@ -268,7 +268,7 @@ export const CHECKPOINT_REF_GIT_FORMAT =
   '%(refname)%09%(creatordate:iso-strict)%09%(contents:subject)';
 
 function defaultReadCheckpointRefs(contentDir: string): string | null {
-  const shadowDir = join(contentDir, '.git', 'ok');
+  const shadowDir = join(contentDir, '.git', 'ps');
   if (!existsSync(shadowDir)) return null;
   const result = spawnSync(
     'git',
@@ -336,7 +336,7 @@ function readRawSinkBlock(absPath: string): RawLocalSinkBlock {
     parsed = parseYaml(readFileSync(absPath, 'utf-8'));
   } catch (err) {
     console.warn(
-      `[ok diagnose bundle] failed to parse ${absPath} for manifest config; ` +
+      `[ps diagnose bundle] failed to parse ${absPath} for manifest config; ` +
         `manifest will report schema defaults. Reason: ${err instanceof Error ? err.message : String(err)}`,
     );
     return {};

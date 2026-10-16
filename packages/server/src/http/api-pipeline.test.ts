@@ -229,7 +229,7 @@ describe('natively-mounted /api routes run the shared admission pipeline', () =>
       expect(res.status).toBe(403);
       expect(res.headers.get('content-type')).toBe('application/problem+json');
       const body = (await res.json()) as { type?: string; title?: string; detail?: string };
-      expect(body.type).toBe('urn:ok:error:invalid-origin');
+      expect(body.type).toBe('urn:ps:error:invalid-origin');
       expect(body.title).toBe('Origin not allowed.');
       expect(body.detail).toBeUndefined();
       expect(res.headers.get('x-request-id')).not.toBeNull();
@@ -281,7 +281,7 @@ describe('natively-mounted /api routes run the shared admission pipeline', () =>
       });
       expect(res.status).toBe(403);
       const body = parseProblem(res.body);
-      expect(body.type).toBe('urn:ok:error:host-not-allowed');
+      expect(body.type).toBe('urn:ps:error:host-not-allowed');
       expect(body.detail ?? body.title).toContain('Proxied request refused');
     } finally {
       await rig.close();
@@ -295,13 +295,13 @@ describe('natively-mounted /api routes run the shared admission pipeline', () =>
         headers: { Host: 'evil.example' },
       });
       expect(refused.status).toBe(403);
-      expect(parseProblem(refused.body).type).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(refused.body).type).toBe('urn:ps:error:host-not-allowed');
 
       const read = await rawRequest(rig.port, '/api/native-ping', {
         headers: { Host: 'evil.example' },
       });
       expect(read.status).toBe(403);
-      expect(parseProblem(read.body).type).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(read.body).type).toBe('urn:ps:error:host-not-allowed');
 
       const allowed = await rawRequest(rig.port, '/api/native-mutating', {
         headers: { Host: 'localhost' },
@@ -319,7 +319,7 @@ describe('natively-mounted /api routes run the shared admission pipeline', () =>
         headers: { Host: 'evil.example' },
       });
       expect(refused.status).toBe(403);
-      expect(parseProblem(refused.body).type).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(refused.body).type).toBe('urn:ps:error:host-not-allowed');
 
       const allowed = await rawRequest(rig.port, '/api/native-ping', {
         headers: { Host: 'localhost' },
@@ -355,7 +355,7 @@ describe('natively-mounted /api routes run the shared admission pipeline', () =>
       expect(res.status).toBe(404);
       expect(res.headers.get('content-type')).toBe('application/problem+json');
       const body = (await res.json()) as { type?: string; title?: string };
-      expect(body.type).toBe('urn:ok:error:not-found');
+      expect(body.type).toBe('urn:ps:error:not-found');
       expect(body.title).toBe('API endpoint not found.');
       expect(rig.legacyCalls).toEqual([]);
     } finally {
@@ -370,7 +370,7 @@ describe('natively-mounted /api routes run the shared admission pipeline', () =>
       expect(res.status).toBe(500);
       expect(res.headers.get('content-type')).toBe('application/problem+json');
       const body = (await res.json()) as { type?: string };
-      expect(body.type).toBe('urn:ok:error:internal-server-error');
+      expect(body.type).toBe('urn:ps:error:internal-server-error');
     } finally {
       await rig.close();
     }
@@ -396,7 +396,7 @@ describe('opaque origins and request body media types', () => {
       const res = await rawRequest(rig.port, '/api/native-ping', { headers: { Origin: 'null' } });
       expect(res.status).toBe(403);
       const problem = parseProblem(res.body);
-      expect(problem.type).toBe('urn:ok:error:invalid-origin');
+      expect(problem.type).toBe('urn:ps:error:invalid-origin');
       expect(problem.detail).toBe(OPAQUE_DETAIL);
       expectNoCorsGrant(res.headers);
       expect(rig.dispatched).toEqual([]);
@@ -467,7 +467,7 @@ describe('opaque origins and request body media types', () => {
               const label = `${origin} ${method} ${path} ${shape.headers['Content-Type'] ?? 'bodyless'}`;
               expect(res.status, label).toBe(403);
               const problem = parseProblem(res.body);
-              expect(problem.type, label).toBe('urn:ok:error:invalid-origin');
+              expect(problem.type, label).toBe('urn:ps:error:invalid-origin');
               expect(problem.detail, label).toBe(OPAQUE_DETAIL);
               expectNoCorsGrant(res.headers);
             }

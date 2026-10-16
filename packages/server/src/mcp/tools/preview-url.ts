@@ -49,7 +49,7 @@ type PreviewAttachWarning =
     };
 
 export function startUiTextHint(): string {
-  return `No UI is running for this project. Start one to see the preview: \`${currentCliCommandName()} start\` (terminal), or open the project in OK Electron.`;
+  return `No UI is running for this project. Start one to see the preview: \`${currentCliCommandName()} start\` (terminal), or open the project in Palimpsest Electron.`;
 }
 function attachPreviewOnceMessage(): string {
   return `No browser is attached to the preview. Open it in your host's surface: \`preview_url\`, then drive your in-app browser (Claude Code Desktop: \`preview_start({url})\` to open the pane, then \`navigate({url})\` to move; Cursor: \`Navigate\`; Codex desktop: \`@Browser\`); on a stdio CLI with no browser, \`${currentCliCommandName()} open <doc>\`.`;

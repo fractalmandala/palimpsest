@@ -1,9 +1,12 @@
 name: Share contract production monitor
 
+# FORK DISABLED schedule: no docs/share origin is deployed for the fork yet, so
+# the production probe has nothing to probe. Re-enable with the docs origin
+# (and restore --origin) once share-splash hosting exists. Manual runs still work.
 on:
-  schedule:
-    - cron: "17,47 * * * *"
   workflow_dispatch:
+  # schedule:
+  #   - cron: "17,47 * * * *"
 
 permissions:
   actions: read

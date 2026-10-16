@@ -282,7 +282,7 @@ describe('applySeed — required plugins', () => {
     await rm(projectDir, { recursive: true, force: true });
   });
 
-  async function seedOkfWith(body: string): Promise<{ after: string; enabled: string[] }> {
+  async function seedPsfWith(body: string): Promise<{ after: string; enabled: string[] }> {
     writeFileSync(join(projectDir, '.ps', 'config.yml'), body, 'utf-8');
     const plan = await planSeed({ projectDir, packId: 'psf' });
     const result = await applySeed(plan, { projectDir, packId: 'psf' });
@@ -294,14 +294,14 @@ describe('applySeed — required plugins', () => {
   }
 
   test('turns the plugin back on even when the user had switched it off', async () => {
-    const { after, enabled } = await seedOkfWith('contentRules:\n  psf:\n    enabled: false\n');
+    const { after, enabled } = await seedPsfWith('contentRules:\n  psf:\n    enabled: false\n');
 
     expect(enabled).toEqual(['psf']);
     expect(after).toMatch(/psf:\s*\n\s*enabled: true/);
   });
 
   test('leaves the rest of the user config standing', async () => {
-    const { after } = await seedOkfWith(
+    const { after } = await seedPsfWith(
       '# my notes\ncontentRules:\n  psf:\n    enabled: false\n  markdownlint:\n    enabled: true\n',
     );
 
@@ -310,7 +310,7 @@ describe('applySeed — required plugins', () => {
   });
 
   test('re-seeding an already-enabled project writes nothing', async () => {
-    const { after, enabled } = await seedOkfWith('contentRules:\n  psf:\n    enabled: true\n');
+    const { after, enabled } = await seedPsfWith('contentRules:\n  psf:\n    enabled: true\n');
 
     expect(enabled).toEqual([]);
     expect(after).toBe('contentRules:\n  psf:\n    enabled: true\n');

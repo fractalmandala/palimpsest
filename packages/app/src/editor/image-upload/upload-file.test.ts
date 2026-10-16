@@ -143,7 +143,7 @@ describe('uploadFile', () => {
       () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:storage-error',
+            type: 'urn:ps:error:storage-error',
             title: 'Failed to write upload.',
             status: 500,
             instance: 'urn:uuid:01234567-89ab-4def-8123-456789abcdef',

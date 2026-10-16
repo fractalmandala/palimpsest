@@ -30,13 +30,13 @@ export function createMcpDispatch(
       ? req.headers['mcp-session-id'][0]
       : req.headers['mcp-session-id'];
     if (!isPeerAdmitted(req.socket.remoteAddress, policy)) {
-      errorResponse(res, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+      errorResponse(res, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
         handler: 'mcp',
       });
       return;
     }
     if (!isHostAdmitted(req.headers.host, policy)) {
-      errorResponse(res, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
         handler: 'mcp',
         detail: HOST_NOT_ADMITTED_REMEDIATION,
       });
@@ -44,7 +44,7 @@ export function createMcpDispatch(
     }
     const admission = admitRequestOrigin(origin, req.method, policy);
     if (!admission.admitted) {
-      errorResponse(res, 403, 'urn:ok:error:invalid-origin', 'Origin not allowed.', {
+      errorResponse(res, 403, 'urn:ps:error:invalid-origin', 'Origin not allowed.', {
         handler: 'mcp',
         detail: admission.detail,
       });
@@ -69,7 +69,7 @@ export function createMcpDispatch(
     mcpHttpHandler.handle(req, res).catch((err) => {
       log.error({ err, sessionId }, 'Unhandled MCP HTTP error');
       if (!res.writableEnded && !res.headersSent) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'mcp',
           cause: err,
         });

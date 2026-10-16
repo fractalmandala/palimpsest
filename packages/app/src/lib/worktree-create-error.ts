@@ -40,7 +40,7 @@ export function worktreeCreateErrorCopy(result: WorktreeCreateErrorInput): Messa
         case 'outside-worktree':
           return msg`The Palimpsest project path on this branch leaves the worktree. The worktree was created but not opened.`;
         case 'unsafe-setup-path':
-          return msg`This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened.`;
+          return msg`This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened.`;
         case 'setup-failed':
           return msg`Palimpsest couldn't finish setting up this project. The worktree was created but not opened.`;
         default: {

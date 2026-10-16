@@ -90,7 +90,7 @@ export function prepareSingleFileOpen(
     if (!isProjectRoot(projectRoot)) {
       throw new SingleFileProjectOverrideError(
         projectRoot,
-        'no .ps/config.yml there, so it is not an Palimpsest project root',
+        'no .ps/config.yml there, so it is not a Palimpsest project root',
       );
     }
     const projectContentDir = resolveProjectContentDir(projectRoot);

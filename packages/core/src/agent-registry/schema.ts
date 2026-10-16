@@ -192,7 +192,7 @@ export const CapabilityRecordSchema = z.object({
   /**
    * STOP: set this on any grant that reads more than one scope. MCP
    * allow-lists match by server NAME, so a scope carrying somebody else's
-   * server under OK's name can shadow a legitimate entry in another scope —
+   * server under Palimpsest's name can shadow a legitimate entry in another scope —
    * an either-scope test alone would grant on the strength of the good entry
    * while the bad one is what actually runs. A foreign entry in ANY scope the
    * grant reads revokes it.

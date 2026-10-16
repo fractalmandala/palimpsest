@@ -3,10 +3,10 @@ const DEFAULT_FETCH_TIMEOUT_MS = 2000;
 const DEFAULT_LIMIT = 100;
 
 const SPAN_NAMES = {
-  coldMount: 'ok.cold-mount',
-  providerPoolOpen: 'ok.provider-pool.open',
-  mountPromise: 'ok.mount-promise',
-  syncPromise: 'ok.sync-promise',
+  coldMount: 'ps.cold-mount',
+  providerPoolOpen: 'ps.provider-pool.open',
+  mountPromise: 'ps.mount-promise',
+  syncPromise: 'ps.sync-promise',
   syncHandshake: 'sync.handshake',
   persistenceLoadDocument: 'persistence.onLoadDocument',
 } as const;

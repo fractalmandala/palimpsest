@@ -99,7 +99,7 @@ describe('frontmatter-telemetry', () => {
 
     await harness.flush();
 
-    const points = readCounterPoints(harness, 'ok.frontmatter.edit_surface_total');
+    const points = readCounterPoints(harness, 'ps.frontmatter.edit_surface_total');
     const bySource = new Map<string, number>();
     for (const p of points) {
       const source = String(p.attributes.source);

@@ -1,7 +1,7 @@
 import type { LanguagePreference } from '@palimpsest/core/i18n/locales';
 import { trace } from '@opentelemetry/api';
 
-const TRACER_NAME = 'open-knowledge-app';
+const TRACER_NAME = 'palimpsest-app';
 
 export function recordLanguagePreferenceChanged({
   from,
@@ -13,8 +13,8 @@ export function recordLanguagePreferenceChanged({
   try {
     trace
       .getTracer(TRACER_NAME)
-      .startSpan('ok.language.preferenceChanged', {
-        attributes: { 'ok.language.from': from, 'ok.language.to': to },
+      .startSpan('ps.language.preferenceChanged', {
+        attributes: { 'ps.language.from': from, 'ps.language.to': to },
       })
       .end();
   } catch (err) {

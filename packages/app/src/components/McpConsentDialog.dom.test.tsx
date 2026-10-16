@@ -30,8 +30,8 @@ vi.doMock('@lingui/react/macro', () => ({
 
 const DISCOVERY_SKILL = {
   id: 'discovery',
-  name: 'open-knowledge-discovery',
-  paths: ['~/.agents/skills/open-knowledge-discovery', '~/.claude/skills/open-knowledge-discovery'],
+  name: 'palimpsest-discovery',
+  paths: ['~/.agents/skills/palimpsest-discovery', '~/.claude/skills/palimpsest-discovery'],
 };
 
 const payload: PsMcpWiringShowPayload = {
@@ -264,7 +264,7 @@ describe('McpConsentDialog AI-tools decision', () => {
     const subtextOf = (el: Element | null | undefined) =>
       [...(el?.querySelectorAll('span') ?? [])]
         .map((n) => n.textContent ?? '')
-        .find((text) => text.startsWith('Adds an Palimpsest MCP entry to'));
+        .find((text) => text.startsWith('Adds a Palimpsest MCP entry to'));
 
     const before = subtextOf(row());
     expect(before).toBeTruthy();
@@ -321,8 +321,8 @@ describe('McpConsentDialog AI-tools decision', () => {
     await userEvent.click(screen.getByTestId('mcp-consent-skill-info'));
     const skillDetails = await screen.findByTestId('mcp-consent-skill-details');
     const skillText = skillDetails.textContent ?? '';
-    expect(skillText).toContain('~/.agents/skills/open-knowledge-discovery');
-    expect(skillText).toContain('~/.claude/skills/open-knowledge-discovery');
+    expect(skillText).toContain('~/.agents/skills/palimpsest-discovery');
+    expect(skillText).toContain('~/.claude/skills/palimpsest-discovery');
   });
 
   test('opening a disclosure does not toggle the row it sits in', async () => {
@@ -651,7 +651,7 @@ describe('McpConsentDialog PATH consent row', () => {
     expect(checkbox.getAttribute('aria-checked')).toBe('true');
     expect(checkbox.hasAttribute('disabled')).toBe(true);
     expect(screen.getByTestId('mcp-consent-path-status').textContent).toBe(
-      'Already set up — ok is available in your terminal',
+      'Already set up — ps is available in your terminal',
     );
 
     await tick('mcp-consent-add');

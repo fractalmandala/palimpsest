@@ -13,7 +13,7 @@ export function rejectDisallowedGitSpec(
   handler: string,
 ): boolean {
   if (spec.kind === 'git' && isDisallowedGitSpec(spec)) {
-    errorResponse(res, 400, 'urn:ok:error:url-not-allowed', 'Git URL protocol is not allowed.', {
+    errorResponse(res, 400, 'urn:ps:error:url-not-allowed', 'Git URL protocol is not allowed.', {
       handler,
       cause: new Error(`url=${spec.url}`),
     });

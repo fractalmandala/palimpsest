@@ -138,7 +138,7 @@ describe('coworkCommand help names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   it.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the description says %s init already wires Claude', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

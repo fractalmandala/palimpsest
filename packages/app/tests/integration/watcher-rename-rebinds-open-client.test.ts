@@ -87,7 +87,7 @@ describe('an external (git-sync/watcher) move rebinds the open tab (PRD-8486)', 
 
     const after = await getHeadings(server.port, OLD_DOC);
     expect(after.status).toBe(404);
-    expect(after.body.type).toBe('urn:ok:error:doc-not-found');
+    expect(after.body.type).toBe('urn:ps:error:doc-not-found');
     expect(after.body.title).toBe('Page not found.');
 
     const newOk = await getHeadings(server.port, NEW_DOC);

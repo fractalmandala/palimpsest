@@ -82,7 +82,7 @@ let listener: Server;
 let mcp: McpServer;
 let client: Client;
 let problem = {
-  type: 'urn:ok:error:invalid-request',
+  type: 'urn:ps:error:invalid-request',
   status: 400,
   title: 'Invalid artifact request.',
   detail: 'BAD_NAME',
@@ -150,7 +150,7 @@ describe.each([false, true])(
   (spoof) => {
     test.each(cases)('$label returns exactly its problem title and detail', async (item) => {
       problem = {
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         status: 400,
         title: spoof ? 'Request body is invalid.' : 'Invalid artifact request.',
         detail: spoof

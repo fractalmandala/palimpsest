@@ -58,7 +58,7 @@ drafts/
 
 ## Where the patterns live
 
-Patterns are stored in a `.psignore` file at your project root, alongside `.gitignore`. If `content.dir` points somewhere other than the project root, Settings manages the `.psignore` at the content directory root instead. The file is checked into version control and shared with anyone who clones the repo. Hand-edit it directly in any editor; Palimpsest picks up changes the same way it picks up Settings edits. To check the resulting scope from the terminal, run `ok preview`; it shows what content Palimpsest will track, no server required.
+Patterns are stored in a `.psignore` file at your project root, alongside `.gitignore`. If `content.dir` points somewhere other than the project root, Settings manages the `.psignore` at the content directory root instead. The file is checked into version control and shared with anyone who clones the repo. Hand-edit it directly in any editor; Palimpsest picks up changes the same way it picks up Settings edits. To check the resulting scope from the terminal, run `ps preview`; it shows what content Palimpsest will track, no server required.
 
 Palimpsest scaffolds a starter `.psignore` with a commented header the first time it sets up a project, so the file is there from day one.
 
@@ -78,7 +78,7 @@ If Palimpsest can't reload your ignore files (rare; usually a filesystem error),
 
 `.gitignore` itself is git's contract; Palimpsest never edits it. If you want a file out of git but visible in Palimpsest, that's where the negation goes.
 
-The negation is an Palimpsest behavior; `git` itself only reads `.gitignore`, so an `!` line in `.psignore` does not change what git tracks.
+The negation is a Palimpsest behavior; `git` itself only reads `.gitignore`, so an `!` line in `.psignore` does not change what git tracks.
 
 ## Temporarily surfacing hidden files
 

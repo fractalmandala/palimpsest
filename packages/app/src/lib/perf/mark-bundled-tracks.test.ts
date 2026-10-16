@@ -27,7 +27,7 @@ afterEach(() => {
 describe('marks routed into diagnostic bundles', () => {
   test('a scroll-restore mark writes a breadcrumb keyed by the mark name', () => {
     const { parsed } = captureBreadcrumbs();
-    mark('ok/scroll-restore/abandoned', {
+    mark('ps/scroll-restore/abandoned', {
       docName: 'notes/tall',
       target: 4200,
       scrollTop: 120,
@@ -37,7 +37,7 @@ describe('marks routed into diagnostic bundles', () => {
     });
     expect(parsed()).toEqual([
       {
-        event: 'ok/scroll-restore/abandoned',
+        event: 'ps/scroll-restore/abandoned',
         docName: 'notes/tall',
         target: 4200,
         scrollTop: 120,
@@ -50,16 +50,16 @@ describe('marks routed into diagnostic bundles', () => {
 
   test('a mark with no props still reaches the log', () => {
     const { parsed } = captureBreadcrumbs();
-    mark('ok/scroll-restore/phase1-success');
-    expect(parsed()).toEqual([{ event: 'ok/scroll-restore/phase1-success' }]);
+    mark('ps/scroll-restore/phase1-success');
+    expect(parsed()).toEqual([{ event: 'ps/scroll-restore/phase1-success' }]);
   });
 
   test('the caret-reveal coords failure carries the document and the surface into the breadcrumb', () => {
     const { parsed } = captureBreadcrumbs();
-    mark('ok/caret-reveal/coords-failed', { docName: 'notes/tall', surface: 'wysiwyg' });
+    mark('ps/caret-reveal/coords-failed', { docName: 'notes/tall', surface: 'wysiwyg' });
     expect(parsed()).toEqual([
       {
-        event: 'ok/caret-reveal/coords-failed',
+        event: 'ps/caret-reveal/coords-failed',
         docName: 'notes/tall',
         surface: 'wysiwyg',
       },
@@ -68,29 +68,29 @@ describe('marks routed into diagnostic bundles', () => {
 
   test('an unlisted track writes no breadcrumb', () => {
     const { spy } = captureBreadcrumbs();
-    mark('ok/nav/hash-change', { docName: 'notes/a' });
-    mark('ok/sync/resolve', { docName: 'notes/a' });
+    mark('ps/nav/hash-change', { docName: 'notes/a' });
+    mark('ps/sync/resolve', { docName: 'notes/a' });
     expect(spy).not.toHaveBeenCalled();
   });
 
   test('every mark still reaches the collector, listed or not', () => {
     captureBreadcrumbs();
-    mark('ok/scroll-restore/cross-mode', { docName: 'notes/a' });
-    mark('ok/nav/hash-change', { docName: 'notes/a' });
+    mark('ps/scroll-restore/cross-mode', { docName: 'notes/a' });
+    mark('ps/nav/hash-change', { docName: 'notes/a' });
     const names = getCollector()
       ?.marks.toArray()
       .map((m) => m.name);
-    expect(names).toContain('ok/scroll-restore/cross-mode');
-    expect(names).toContain('ok/nav/hash-change');
+    expect(names).toContain('ps/scroll-restore/cross-mode');
+    expect(names).toContain('ps/nav/hash-change');
   });
 
   test('the allowlist holds exactly the families that are safe to write per emission', () => {
-    expect([...BUNDLED_TRACKS]).toEqual(['ok/caret-reveal', 'ok/scroll-restore']);
+    expect([...BUNDLED_TRACKS]).toEqual(['ps/caret-reveal', 'ps/scroll-restore']);
   });
 
   test('membership is by whole track, so a lookalike prefix does not opt in', () => {
     const { spy } = captureBreadcrumbs();
-    mark('ok/scroll/restore-ish', { docName: 'notes/a' });
+    mark('ps/scroll/restore-ish', { docName: 'notes/a' });
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -98,13 +98,13 @@ describe('marks routed into diagnostic bundles', () => {
     const { parsed } = captureBreadcrumbs();
     Object.defineProperty(performance, 'measure', { value: undefined, configurable: true });
     try {
-      mark('ok/scroll-restore/phase2-success', { docName: 'notes/a', target: 100 });
+      mark('ps/scroll-restore/phase2-success', { docName: 'notes/a', target: 100 });
     } finally {
       Reflect.deleteProperty(performance, 'measure');
     }
     expect(typeof performance.measure).toBe('function');
     expect(parsed()).toEqual([
-      { event: 'ok/scroll-restore/phase2-success', docName: 'notes/a', target: 100 },
+      { event: 'ps/scroll-restore/phase2-success', docName: 'notes/a', target: 100 },
     ]);
   });
 });

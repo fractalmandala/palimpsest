@@ -35,38 +35,38 @@ describe('local-op-auth-set-identity envelope (RFC 9457, US-012)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('whitespace-only name fails schema with urn:ok:error:invalid-request', async () => {
+  test('whitespace-only name fails schema with urn:ps:error:invalid-request', async () => {
     const res = await postSetIdentity({ name: '   ', email: 'test@example.com' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.detail ?? '').toMatch(/name/i);
     }
   });
 
-  test('whitespace-only email fails schema with urn:ok:error:invalid-request', async () => {
+  test('whitespace-only email fails schema with urn:ps:error:invalid-request', async () => {
     const res = await postSetIdentity({ name: 'Alice', email: '   ' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.detail ?? '').toMatch(/email/i);
     }
   });
 
-  test('missing fields fails schema with urn:ok:error:invalid-request', async () => {
+  test('missing fields fails schema with urn:ps:error:invalid-request', async () => {
     const res = await postSetIdentity({ name: 'Alice' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -77,7 +77,7 @@ describe('local-op-auth-set-identity envelope (RFC 9457, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -91,7 +91,7 @@ describe('local-op-auth-set-identity envelope (RFC 9457, US-012)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

@@ -229,7 +229,7 @@ importers:
       '@inkeep/cxkit-react':
         specifier: ^0.5.117
         version: 0.5.119(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(supports-color@7.2.0)(zod@4.4.3)
-      '@inkeep/open-knowledge-core':
+      '@palimpsest/core':
         specifier: workspace:*
         version: link:../packages/core
       '@radix-ui/react-popover':
@@ -446,10 +446,10 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.0.0
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.5))(zod@4.4.3)
-      '@inkeep/open-knowledge-core':
+      '@palimpsest/core':
         specifier: workspace:*
         version: link:../core
-      '@inkeep/open-knowledge-server':
+      '@palimpsest/server':
         specifier: workspace:*
         version: link:../server
       '@lezer/highlight':
@@ -880,16 +880,16 @@ importers:
         specifier: ^4.3.6
         version: 4.4.3
     devDependencies:
-      '@inkeep/open-knowledge-app':
+      '@palimpsest/app':
         specifier: workspace:*
         version: link:../app
-      '@inkeep/open-knowledge-core':
+      '@palimpsest/core':
         specifier: workspace:*
         version: link:../core
-      '@inkeep/open-knowledge-native-config':
+      '@palimpsest/native-config':
         specifier: workspace:*
         version: link:../native-config
-      '@inkeep/open-knowledge-server':
+      '@palimpsest/server':
         specifier: workspace:*
         version: link:../server
       '@types/node':
@@ -1167,16 +1167,16 @@ importers:
 
   packages/desktop:
     dependencies:
-      '@inkeep/open-knowledge':
+      '@palimpsest/cli':
         specifier: workspace:*
         version: link:../cli
-      '@inkeep/open-knowledge-core':
+      '@palimpsest/core':
         specifier: workspace:*
         version: link:../core
-      '@inkeep/open-knowledge-native-config':
+      '@palimpsest/native-config':
         specifier: workspace:*
         version: link:../native-config
-      '@inkeep/open-knowledge-server':
+      '@palimpsest/server':
         specifier: workspace:*
         version: link:../server
       '@lingui/core':
@@ -1273,7 +1273,7 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.12
         version: 2.0.12(hono@4.12.34)
-      '@inkeep/open-knowledge-core':
+      '@palimpsest/core':
         specifier: workspace:*
         version: link:../core
       '@modelcontextprotocol/sdk':

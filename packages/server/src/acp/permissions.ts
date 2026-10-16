@@ -15,7 +15,7 @@ const NO_CHAT_GRANTS: ReadonlySet<ThreadChatGrant> = new Set();
 
 const GATED_OK_TOOLS: ReadonlySet<string> = new Set(PS_GATED_TOOL_NAMES);
 
-function gatedOkTool(toolCall: ToolCallUpdate): boolean {
+function gatedPsTool(toolCall: ToolCallUpdate): boolean {
   const tool = identifyPalimpsestToolCall(toolCall, 'known')?.tool;
   return tool !== undefined && GATED_OK_TOOLS.has(tool);
 }
@@ -34,12 +34,12 @@ function readAgentsConfig(projectDir: string, homedirOverride?: string, log?: Pi
   }).value.agents;
 }
 
-export function readAutoApproveOkTools(
+export function readAutoApprovePsTools(
   projectDir: string,
   homedirOverride?: string,
   log?: PinoLogger,
 ): boolean {
-  return readAgentsConfig(projectDir, homedirOverride, log)?.autoApproveOkTools !== false;
+  return readAgentsConfig(projectDir, homedirOverride, log)?.autoApprovePsTools !== false;
 }
 
 export function readAgentBrowserTools(
@@ -80,7 +80,7 @@ function allowAlwaysGrantKind(
   toolCall: ToolCallUpdate,
   browser: BrowserCallIdentity,
 ): string | null {
-  if (browser.kind !== 'none' || gatedOkTool(toolCall)) return null;
+  if (browser.kind !== 'none' || gatedPsTool(toolCall)) return null;
   return toolKindOf(toolCall);
 }
 
@@ -111,7 +111,7 @@ export class AcpPermissionStore {
     options: PermissionOption[],
     browser: BrowserCallIdentity,
     grants: ReadonlySet<ThreadChatGrant> = NO_CHAT_GRANTS,
-    autoApproveOkTools = true,
+    autoApprovePsTools = true,
   ): PolicyDecision {
     const allow = pickOption(options, ['allow_once', 'allow_always']);
     if (allow === undefined) return { auto: null };
@@ -120,7 +120,7 @@ export class AcpPermissionStore {
     const psTool = identifyPalimpsestToolCall(toolCall, 'known')?.tool;
     if (psTool !== undefined) {
       if (GATED_OK_TOOLS.has(psTool)) return { auto: null };
-      if (autoApproveOkTools) return auto;
+      if (autoApprovePsTools) return auto;
     }
     const kind = toolKindOf(toolCall);
     if (kind === 'read') return auto;

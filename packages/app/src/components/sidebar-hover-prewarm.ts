@@ -36,7 +36,7 @@ function finishInflight(docName: string): void {
 
 function emitPrewarmSuccess(docName: string, poolEventId: string): void {
   const t = Date.now();
-  mark('ok/sidebar/prewarm-success', { docName, t, poolEventId });
+  mark('ps/sidebar/prewarm-success', { docName, t, poolEventId });
   recordPrewarm(docName, poolEventId, t);
 }
 
@@ -51,7 +51,7 @@ function drainQueue(): void {
       const poolEventId = next.prewarm(next.docName);
       if (poolEventId) emitPrewarmSuccess(next.docName, poolEventId);
     } catch (err) {
-      mark('ok/sidebar/prewarm-failed', {
+      mark('ps/sidebar/prewarm-failed', {
         docName: next.docName,
         message: err instanceof Error ? err.message : String(err),
       });
@@ -79,7 +79,7 @@ export function scheduleHoverPrewarm(docName: string, prewarm: PrewarmFn): void 
       const poolEventId = prewarm(docName);
       if (poolEventId) emitPrewarmSuccess(docName, poolEventId);
     } catch (err) {
-      mark('ok/sidebar/prewarm-failed', {
+      mark('ps/sidebar/prewarm-failed', {
         docName,
         message: err instanceof Error ? err.message : String(err),
       });

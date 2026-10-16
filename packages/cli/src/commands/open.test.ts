@@ -418,7 +418,7 @@ describe('explicit --project validation', () => {
     const code = await runOpen('README', { project: '/tmp/not-a-project' }, deps);
     expect(code).toBe(1);
     expect(opened).toEqual([]);
-    expect(errors.join('\n')).toContain('not an Palimpsest project');
+    expect(errors.join('\n')).toContain('not a Palimpsest project');
   });
 
   test('honors an override that does name a project', async () => {
@@ -444,7 +444,7 @@ describe('explicit --project validation', () => {
     expect(code).toBe(0);
     expect(consulted).toBe(false);
     expect(logs.filter((l) => l.startsWith('Project:'))).toHaveLength(0);
-    expect(logs.join('\n')).toContain('not an Palimpsest project');
+    expect(logs.join('\n')).toContain('not a Palimpsest project');
   });
 });
 
@@ -516,7 +516,7 @@ describe('runOpen hints name the running channel command', () => {
   });
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

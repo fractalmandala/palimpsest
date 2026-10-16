@@ -65,7 +65,7 @@ describe('saved-theme server-to-app list', () => {
     const baseUrl = `http://127.0.0.1:${server.port}`;
     const request = (path: string, init?: RequestInit) => fetch(`${baseUrl}${path}`, init);
     const recoverable = scheme('Recoverable');
-    const dotOkEntriesBefore = readdirSync(join(homeDir, '.ps')).sort();
+    const dotPsEntriesBefore = readdirSync(join(homeDir, '.ps')).sort();
 
     expect(
       await saveSavedTheme({ name: 'recoverable', scheme: recoverable }, { request }),
@@ -78,7 +78,7 @@ describe('saved-theme server-to-app list', () => {
       scheme: recoverable,
     });
     expect(readdirSync(join(homeDir, '.ps', 'themes')).sort()).toEqual(['broken.yaml', 'day.yaml']);
-    expect(readdirSync(join(homeDir, '.ps')).sort()).toEqual(dotOkEntriesBefore);
+    expect(readdirSync(join(homeDir, '.ps')).sort()).toEqual(dotPsEntriesBefore);
     expect(
       (await fetchSavedThemes({ request })).themes.some(
         (theme) => theme.id === 'saved-recoverable',

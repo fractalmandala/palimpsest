@@ -44,7 +44,7 @@ describe('history group over the composed listener — served natively', () => {
   test('the dynamic /api/history/:sha prefix reaches handleHistoryVersion natively', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/history/${A_SHA}?docName=alpha`);
     expect(res.status).toBe(404);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:doc-not-found');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:doc-not-found');
   });
 
   test('an empty sha (`/api/history/`) resolves to the :sha template with no dispatch (404)', async () => {
@@ -65,7 +65,7 @@ describe('history group over the composed listener — served natively', () => {
     symlinkSync('../hist-target', resolve(contentDir, 'hist-aliased', '.ps'), 'dir');
     const res = await fetch(`http://127.0.0.1:${server.port}/api/history?folder=hist-aliased`);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:symlink-refused');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:symlink-refused');
   });
 
   test('the folder arm answers 200 for a folder with a regular FILE named .ps (no templates gate here)', async () => {

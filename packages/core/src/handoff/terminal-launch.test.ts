@@ -116,9 +116,9 @@ describe('Windows launch composition', () => {
     expect(
       buildWindowsCliLaunch('claude', prompt, {
         mcpPreApprove: true,
-        autoApproveOkTools: true,
+        autoApprovePsTools: true,
         mcpServerName: MCP_SERVER_NAME,
-        cliCommandName: 'ok',
+        cliCommandName: 'ps',
       }),
     ).toEqual({
       executable: 'claude',
@@ -131,7 +131,7 @@ describe('Windows launch composition', () => {
     });
     expect(
       buildWindowsCliLaunch('codex', prompt, {
-        autoApproveOkTools: true,
+        autoApprovePsTools: true,
         mcpServerName: MCP_SERVER_NAME,
       }),
     ).toEqual({
@@ -148,8 +148,8 @@ describe('Windows launch composition', () => {
     const prompt = 'review the failing gate';
     for (const opts of [
       { mcpPreApprove: true, mcpServerName: MCP_SERVER_NAME },
-      { autoApproveOkTools: true, mcpServerName: MCP_SERVER_NAME },
-      { mcpPreApprove: true, autoApproveOkTools: true, mcpServerName: MCP_SERVER_NAME },
+      { autoApprovePsTools: true, mcpServerName: MCP_SERVER_NAME },
+      { mcpPreApprove: true, autoApprovePsTools: true, mcpServerName: MCP_SERVER_NAME },
     ]) {
       const withSupport = buildWindowsCliLaunch('claude', prompt, opts);
       expect(withSupport.supportFile).toBeDefined();
@@ -161,7 +161,7 @@ describe('Windows launch composition', () => {
 
   it('leaves a launch that carries no support file untouched', () => {
     const bare = buildWindowsCliLaunch('codex', null, {
-      autoApproveOkTools: true,
+      autoApprovePsTools: true,
       mcpServerName: MCP_SERVER_NAME,
     });
     expect(launchWithoutSupportFile(bare)).toBe(bare);
@@ -887,7 +887,7 @@ describe('buildPosixCliLaunch', () => {
     });
     expect(
       buildPosixCliLaunch('codex', 'hi', {
-        autoApproveOkTools: true,
+        autoApprovePsTools: true,
         mcpServerName: MCP_SERVER_NAME,
       }),
     ).toEqual({
@@ -940,7 +940,7 @@ describe('buildPosixCliLaunch per-CLI shape', () => {
       if (startupInjectionFor(cli, 'darwin') != null) continue;
       const launch = buildPosixCliLaunch(cli, "'; rm -rf / #", {
         mcpPreApprove: true,
-        autoApproveOkTools: true,
+        autoApprovePsTools: true,
         mcpServerName: MCP_SERVER_NAME,
       });
       expect(launch.executable).toBe(TERMINAL_CLIS[cli].bin);
@@ -997,17 +997,17 @@ describe('buildPosixCliLaunch promptless (New chat)', () => {
   it('still applies Claude OK auto-approve on a promptless launch, alone and merged with pre-approval', () => {
     expect(
       buildPosixCliLaunch('claude', null, {
-        autoApproveOkTools: true,
+        autoApprovePsTools: true,
         mcpServerName: MCP_SERVER_NAME,
-        cliCommandName: 'ok',
+        cliCommandName: 'ps',
       }).args,
     ).toEqual(['--settings', CLAUDE_AUTO_APPROVE_JSON]);
     expect(
       buildPosixCliLaunch('claude', null, {
         mcpPreApprove: true,
-        autoApproveOkTools: true,
+        autoApprovePsTools: true,
         mcpServerName: MCP_SERVER_NAME,
-        cliCommandName: 'ok',
+        cliCommandName: 'ps',
       }).args,
     ).toEqual(['--settings', CLAUDE_BOTH_JSON]);
   });
@@ -1196,8 +1196,8 @@ describe('claude MCP pre-approval', () => {
   });
 });
 
-describe('OK auto-approve (autoApproveOkTools)', () => {
-  const AUTO = { autoApproveOkTools: true, mcpServerName: MCP_SERVER_NAME, cliCommandName: 'ok' };
+describe('OK auto-approve (autoApprovePsTools)', () => {
+  const AUTO = { autoApprovePsTools: true, mcpServerName: MCP_SERVER_NAME, cliCommandName: 'ps' };
 
   it('adds the OK allow-list + destructive ask-list to Claude --settings when on', () => {
     expect(buildPosixCliLaunch('claude', 'hi', AUTO).args).toEqual([
@@ -1249,7 +1249,7 @@ describe('OK auto-approve (autoApproveOkTools)', () => {
 
 describe('launch approval names the server the main process checked', () => {
   const BETA = DESKTOP_PRODUCTS.beta.mcpServerName;
-  const ALL_ON = { mcpPreApprove: true, autoApproveOkTools: true } as const;
+  const ALL_ON = { mcpPreApprove: true, autoApprovePsTools: true } as const;
 
   function artifacts(opts: Parameters<typeof buildPosixCliLaunch>[2]): string[] {
     const winClaude = buildWindowsCliLaunch('claude', 'hi', opts);
@@ -1305,7 +1305,7 @@ describe('launch approval names the server the main process checked', () => {
   });
 
   it('keeps the Stable artifacts byte-identical when main supplies the Stable names', () => {
-    const out = artifacts({ ...ALL_ON, mcpServerName: 'palimpsest', cliCommandName: 'ok' });
+    const out = artifacts({ ...ALL_ON, mcpServerName: 'palimpsest', cliCommandName: 'ps' });
     expect(out[0]).toBe(
       `--settings {"enabledMcpjsonServers":["palimpsest"],"permissions":{"allow":["mcp__palimpsest","Bash(ps open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}} hi`,
     );
@@ -1318,7 +1318,7 @@ describe('launch approval names the server the main process checked', () => {
     vi.resetModules();
     try {
       const mod = await import('./terminal-launch.ts');
-      expect(mod.buildPosixCliLaunch('codex', 'hi', { autoApproveOkTools: true })).toEqual({
+      expect(mod.buildPosixCliLaunch('codex', 'hi', { autoApprovePsTools: true })).toEqual({
         executable: 'codex',
         args: ['hi'],
       });

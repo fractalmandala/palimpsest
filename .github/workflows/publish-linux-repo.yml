@@ -169,7 +169,9 @@ jobs:
         if: ${{ !inputs.dry_run }}
         run: |
           set -euo pipefail
-          base="https://__PALIMPSEST_PACKAGES_HOST__"
+          # Fork has no packages domain yet: override via the LINUX_PACKAGES_BASE_URL
+          # repo variable when unparking this channel. The .invalid fallback never resolves.
+          base="${LINUX_PACKAGES_BASE_URL:-https://packages.example.invalid}"
           if [ -d "/tmp/repo/apt/dists/$CHANNEL" ]; then
             curl -fsSL --retry 5 --retry-delay 3 "$base/apt/dists/$CHANNEL/InRelease" -o /tmp/live-inrelease
             gpg --batch --verify /tmp/live-inrelease

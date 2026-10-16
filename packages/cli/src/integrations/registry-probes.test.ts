@@ -61,7 +61,7 @@ function writeProjectMcpJson(entry: unknown): void {
 
 describe('which bundle a skill row reads', () => {
   it('reads the DISCOVERY bundle for a user-scope skill row', async () => {
-    mkdirSync(join(ctx.home ?? '', '.claude', 'skills', 'open-knowledge-discovery'), {
+    mkdirSync(join(ctx.home ?? '', '.claude', 'skills', 'palimpsest-discovery'), {
       recursive: true,
     });
 
@@ -344,7 +344,7 @@ describe('a skill bundle', () => {
 
   it('reads the shared hub the same way', async () => {
     expect(await answerFor('openclaw/skill/user/central-store-copy')).toEqual({ state: 'absent' });
-    mkdirSync(join(root, 'home', '.agents', 'skills', 'open-knowledge-discovery'), {
+    mkdirSync(join(root, 'home', '.agents', 'skills', 'palimpsest-discovery'), {
       recursive: true,
     });
     expect(await answerFor('openclaw/skill/user/central-store-copy')).toEqual({
@@ -439,7 +439,7 @@ describe('the vendor-neutral skills hub as a peer', () => {
 
   it('names OpenClaw when a user skills folder is an alias of ~/.agents/skills, and vice versa', async () => {
     const home = ctx.home ?? '';
-    mkdirSync(join(home, '.agents', 'skills', 'open-knowledge-discovery'), { recursive: true });
+    mkdirSync(join(home, '.agents', 'skills', 'palimpsest-discovery'), { recursive: true });
     mkdirSync(join(home, '.codex'), { recursive: true });
     symlinkSync(join(home, '.agents', 'skills'), join(home, '.codex', 'skills'), 'dir');
 

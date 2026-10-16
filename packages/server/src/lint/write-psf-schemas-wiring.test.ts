@@ -9,14 +9,14 @@ import {
 } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { type BootedServer, bootServer } from '../boot.ts';
-import { resetOkfSchemaWriteState } from './write-psf-schemas.ts';
+import { resetPsfSchemaWriteState } from './write-psf-schemas.ts';
 
 let tmpDir: string;
 let booted: BootedServer | null = null;
 
 beforeEach(async () => {
   tmpDir = await mkdtemp(resolve(tmpdir(), 'ps-psf-wiring-'));
-  resetOkfSchemaWriteState();
+  resetPsfSchemaWriteState();
 });
 
 afterEach(async () => {

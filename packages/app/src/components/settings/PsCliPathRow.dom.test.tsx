@@ -79,16 +79,16 @@ describe('PsCliPathRow', () => {
     expect(screen.getByTestId('ps-cli-path-status').textContent).toContain('~/.zshrc');
   });
 
-  test('names the ok command when main sent the Stable command or none', async () => {
+  test('names the ps command when main sent the Stable command or none', async () => {
     installBridge(
       statusWith({ shellDetected: true, rcFilesToTouch: ['~/.zshrc'], installed: false }),
       undefined,
-      'ok',
+      'ps',
     );
     renderRow();
 
     expect((await screen.findByTestId('ps-cli-path-row')).textContent).toContain(
-      'Add the ok command to your terminal',
+      'Add the ps command to your terminal',
     );
   });
 

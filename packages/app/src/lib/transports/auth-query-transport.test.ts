@@ -36,7 +36,7 @@ describe('httpAuthQueryTransport().status', () => {
   it('reports a non-GitHub origin refusal with the rejected host instead of github.com', async () => {
     stubFetch(() =>
       problem(409, {
-        type: 'urn:ok:error:non-github-origin',
+        type: 'urn:ps:error:non-github-origin',
         title: 'GitHub sign-in is unavailable for this host.',
         detail: 'ghes.acme.test is not a declared GitHub host.',
         host: 'ghes.acme.test',
@@ -53,7 +53,7 @@ describe('httpAuthQueryTransport().status', () => {
   it('reports an origin refusal whose remote names no host', async () => {
     stubFetch(() =>
       problem(409, {
-        type: 'urn:ok:error:non-github-origin',
+        type: 'urn:ps:error:non-github-origin',
         title: 'GitHub sign-in is unavailable for this host.',
         host: null,
       }),
@@ -64,7 +64,7 @@ describe('httpAuthQueryTransport().status', () => {
 
   it('keeps other failures as a plain unauthenticated result', async () => {
     stubFetch(() =>
-      problem(500, { type: 'urn:ok:error:internal-server-error', title: 'Internal server error.' }),
+      problem(500, { type: 'urn:ps:error:internal-server-error', title: 'Internal server error.' }),
     );
     const result = await httpAuthQueryTransport().status();
     expect(result).toEqual({
@@ -207,7 +207,7 @@ describe('httpAuthQueryTransport().signout', () => {
       () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:auth-failed',
+            type: 'urn:ps:error:auth-failed',
             title: 'Auth signout failed.',
             status: 500,
           }),
@@ -227,7 +227,7 @@ describe('httpAuthQueryTransport().signout', () => {
       () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:auth-failed',
+            type: 'urn:ps:error:auth-failed',
             title: 'This dev build has no built CLI.',
             status: 409,
             detail: DEV_FALLBACK_CLI_REFUSAL,

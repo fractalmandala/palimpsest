@@ -75,7 +75,7 @@ describe('/api/create-page — 409 EEXIST (QA-008)', () => {
 
     const second = await createPage(path);
     expect(second.status).toBe(409);
-    expect(second.body.type).toBe('urn:ok:error:doc-already-exists');
+    expect(second.body.type).toBe('urn:ps:error:doc-already-exists');
     expect(second.body.title).toMatch(/already exists/i);
   });
 });
@@ -84,31 +84,31 @@ describe('/api/create-page — path rejection (QA-009)', () => {
   test('rejects ".." traversal', async () => {
     const { status, body } = await createPage('docs/../escape.md');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('rejects leading /', async () => {
     const { status, body } = await createPage('/etc/passwd.md');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('rejects backslashes', async () => {
     const { status, body } = await createPage('docs\\winpath.md');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('rejects null byte', async () => {
     const { status, body } = await createPage('docs/\0nul.md');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('rejects missing .md extension', async () => {
     const { status, body } = await createPage('no-extension');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toMatch(/\.md/i);
   });
 });
@@ -117,14 +117,14 @@ describe('/api/create-page — reserved name (QA-010)', () => {
   test('rejects __system__ with 400', async () => {
     const { status, body } = await createPage('__system__.md');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(body.type).toBe('urn:ps:error:reserved-doc-name');
     expect(body.title).toMatch(/reserved/i);
   });
 
   test('rejects a raw create into .ps/templates so templates keep their validating route (QA-013)', async () => {
     const { status, body } = await createPage('.ps/templates/greeting.md');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(body.type).toBe('urn:ps:error:reserved-doc-name');
     expect(body.title).toMatch(/reserved/i);
     expect(existsSync(join(server.contentDir, '.ps', 'templates', 'greeting.md'))).toBe(false);
   });
@@ -185,7 +185,7 @@ describe('/api/create-page — template seeding', () => {
   test('returns 400 when the template name does not resolve', async () => {
     const { status, body } = await createPageWithTemplate('no-such-tpl.md', 'does-not-exist');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toMatch(/does not resolve/i);
     expect(existsSync(join(server.contentDir, 'no-such-tpl.md'))).toBe(false);
   });
@@ -193,7 +193,7 @@ describe('/api/create-page — template seeding', () => {
   test('returns 400 when the template name has invalid characters', async () => {
     const { status, body } = await createPageWithTemplate('bad-tpl-name.md', 'bad name!');
     expect(status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toMatch(/letters and digits/i);
   });
 });

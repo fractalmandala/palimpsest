@@ -294,7 +294,7 @@ export function AppMenubar({ className }: AppMenubarProps) {
             <MenubarShortcut>Ctrl+Shift+.</MenubarShortcut>
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
-            checked={view?.showOkFolders ?? false}
+            checked={view?.showPsFolders ?? false}
             onSelect={() => dispatch({ kind: 'menu-action', action: 'toggle-show-ps-folders' })}
           >
             {t`Show .ps folders`}

@@ -70,7 +70,7 @@ describe('share publish honours the environment command-scope git config (GIT_CO
       projectDir,
       body: { owner: 'alice', name: 'demo', visibility: 'private' },
       ownerKind: 'user',
-      deps: { ensureOkScaffold: () => {} },
+      deps: { ensurePsScaffold: () => {} },
     });
 
     expect(result).toEqual({

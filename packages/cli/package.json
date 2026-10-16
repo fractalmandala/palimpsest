@@ -27,7 +27,7 @@
   },
   "bin": {
     "palimpsest": "dist/cli.mjs",
-    "ok": "dist/cli.mjs"
+    "ps": "dist/cli.mjs"
   },
   "files": [
     "dist",

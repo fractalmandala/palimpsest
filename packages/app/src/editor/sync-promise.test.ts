@@ -559,7 +559,7 @@ describe('mountId payload (US-006 / FR5 / AC13 — cross-namespace correlation)'
     p.synced = true;
     await syncPromise('mid-sync-doc', p);
     const newMarks = collector.marks.toArray().slice(beforeMarks);
-    const syncMarks = newMarks.filter((m) => m.name.startsWith('ok/sync/'));
+    const syncMarks = newMarks.filter((m) => m.name.startsWith('ps/sync/'));
     expect(syncMarks.length).toBeGreaterThan(0);
     for (const m of syncMarks) {
       expect(m.properties?.mountId).toBe('specific-sync-mount-id');
@@ -576,7 +576,7 @@ describe('mountId payload (US-006 / FR5 / AC13 — cross-namespace correlation)'
     queueMicrotask(() => p.emit('synced', { state: true }));
     await promise;
     const newMarks = collector.marks.toArray().slice(beforeMarks);
-    const syncMarks = newMarks.filter((m) => m.name.startsWith('ok/sync/'));
+    const syncMarks = newMarks.filter((m) => m.name.startsWith('ps/sync/'));
     expect(syncMarks.length).toBeGreaterThan(0);
     for (const m of syncMarks) {
       expect(m.properties?.mountId).toBe('cold-sync-mount-id');
@@ -584,13 +584,13 @@ describe('mountId payload (US-006 / FR5 / AC13 — cross-namespace correlation)'
   });
 });
 
-describe('ok/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)', () => {
+describe('ps/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)', () => {
   beforeEach(() => {
     getCollector()?.reset();
   });
 
   test('histogram bucket name passes validatePerfMarkName', () => {
-    expect(validatePerfMarkName('ok/sync/resolve-elapsed-ms')).toBe(true);
+    expect(validatePerfMarkName('ps/sync/resolve-elapsed-ms')).toBe(true);
   });
 
   test('warm-path resolve increments the histogram with elapsedMs=0', async () => {
@@ -598,7 +598,7 @@ describe('ok/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)'
     const p = track(makeProvider('h-warm'));
     p.synced = true;
     await syncPromise('h-warm', p);
-    const snap = getHistogramSnapshot('ok/sync/resolve-elapsed-ms');
+    const snap = getHistogramSnapshot('ps/sync/resolve-elapsed-ms');
     expect(snap).toBeDefined();
     expect(snap?.count).toBe(1);
   });
@@ -613,7 +613,7 @@ describe('ok/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)'
     const histMarks = collector.marks
       .toArray()
       .filter(
-        (m) => m.name === 'ok/sync/resolve-elapsed-ms' && m.properties?.docName === 'h-warm-pair',
+        (m) => m.name === 'ps/sync/resolve-elapsed-ms' && m.properties?.docName === 'h-warm-pair',
       );
     expect(histMarks.length).toBe(1);
     const props = histMarks[0]?.properties;
@@ -628,7 +628,7 @@ describe('ok/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)'
     const promise = syncPromise('h-cold', p);
     queueMicrotask(() => p.emit('synced', { state: true }));
     await promise;
-    const snap = getHistogramSnapshot('ok/sync/resolve-elapsed-ms');
+    const snap = getHistogramSnapshot('ps/sync/resolve-elapsed-ms');
     expect(snap).toBeDefined();
     expect(snap?.count).toBe(1);
     expect(snap?.max).toBeGreaterThanOrEqual(0);
@@ -646,7 +646,7 @@ describe('ok/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)'
     const histMarks = collector.marks
       .toArray()
       .filter(
-        (m) => m.name === 'ok/sync/resolve-elapsed-ms' && m.properties?.docName === 'h-cold-pair',
+        (m) => m.name === 'ps/sync/resolve-elapsed-ms' && m.properties?.docName === 'h-cold-pair',
       );
     expect(histMarks.length).toBe(1);
     const props = histMarks[0]?.properties;
@@ -665,7 +665,7 @@ describe('ok/sync/resolve-elapsed-ms histogram (cap-graduation sweep substrate)'
     await promise;
     const resolveMarks = collector.marks
       .toArray()
-      .filter((m) => m.name === 'ok/sync/resolve' && m.properties?.docName === 'h-coexist');
+      .filter((m) => m.name === 'ps/sync/resolve' && m.properties?.docName === 'h-coexist');
     expect(resolveMarks.length).toBe(1);
   });
 });
@@ -681,7 +681,7 @@ describe('cold-mount span finalization on reject paths', () => {
 
   test('onClose pre-sync-disconnect path finalizes the cold-mount span', async () => {
     setMountId('reject-close', 'reject-close-mid');
-    emitColdMountChild('reject-close-mid', 'ok.provider-pool.open', {}, Date.now(), Date.now() + 1);
+    emitColdMountChild('reject-close-mid', 'ps.provider-pool.open', {}, Date.now(), Date.now() + 1);
     expect(__coldMountSpanCount()).toBe(1);
 
     const p = track(makeProvider('reject-close'));
@@ -697,7 +697,7 @@ describe('cold-mount span finalization on reject paths', () => {
     setMountId('reject-timeout', 'reject-timeout-mid');
     emitColdMountChild(
       'reject-timeout-mid',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       {},
       Date.now(),
       Date.now() + 1,
@@ -728,7 +728,7 @@ describe('cold-mount span finalization on reject paths', () => {
 
   test('__reapTimedOutEntries visibility-restore path finalizes the cold-mount span', async () => {
     setMountId('reject-reap', 'reject-reap-mid');
-    emitColdMountChild('reject-reap-mid', 'ok.provider-pool.open', {}, Date.now(), Date.now() + 1);
+    emitColdMountChild('reject-reap-mid', 'ps.provider-pool.open', {}, Date.now(), Date.now() + 1);
     expect(__coldMountSpanCount()).toBe(1);
 
     const p = track(makeProvider('reject-reap'));
@@ -744,7 +744,7 @@ describe('cold-mount span finalization on reject paths', () => {
     setMountId('reject-explicit', 'reject-explicit-mid');
     emitColdMountChild(
       'reject-explicit-mid',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       {},
       Date.now(),
       Date.now() + 1,

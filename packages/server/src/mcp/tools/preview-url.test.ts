@@ -232,7 +232,7 @@ describe('buildPreviewAttachWarning — names the running channel command', () =
   test('Stable text is byte-identical', () => {
     vi.stubEnv('PS_CHANNEL', 'stable');
     expect(buildPreviewAttachWarning(null, true).message).toBe(
-      'No UI is running for this project. Start one to see the preview: `ps start` (terminal), or open the project in OK Electron.',
+      'No UI is running for this project. Start one to see the preview: `ps start` (terminal), or open the project in Palimpsest Electron.',
     );
     expect(buildPreviewAttachWarning({ url: '/#/a' }, true).message).toMatch(
       /on a stdio CLI with no browser, `ps open <doc>`\.$/,

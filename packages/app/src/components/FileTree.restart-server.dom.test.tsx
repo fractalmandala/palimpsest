@@ -156,7 +156,7 @@ vi.doMock('./ui/sidebar', () => ({
 }));
 vi.doMock('@/lib/config-provider', () => ({
   useConfigContext: () => ({
-    okignoreBinding: null,
+    psignoreBinding: null,
     projectLocalBinding: null,
     merged: { appearance: { sidebar: {} } },
   }),

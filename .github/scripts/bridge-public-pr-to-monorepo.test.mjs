@@ -35,20 +35,20 @@ describe('buildCommitAttribution', () => {
   test('credits every unique contributor with native coauthor trailers', () => {
     const attribution = buildCommitAttribution({
       commitAuthors: [
-        { name: 'Sarah Inkeep', email: 'sarah@inkeep.com' },
+        { name: 'Sarah Example', email: 'sarah@example.com' },
         {
           name: 'github-actions[bot]',
           email: '41898282+github-actions[bot]@users.noreply.github.com',
         },
-        { name: 'Sarah Inkeep', email: 'sarah@inkeep.com' },
-        { name: 'Robert Inkeep', email: 'robert@inkeep.com' },
+        { name: 'Sarah Example', email: 'sarah@example.com' },
+        { name: 'Robert Example', email: 'robert@example.com' },
       ],
     });
 
     expect(attribution.trailers).toEqual([
-      'Co-authored-by: Sarah Inkeep <sarah@inkeep.com>',
+      'Co-authored-by: Sarah Example <sarah@example.com>',
       'Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>',
-      'Co-authored-by: Robert Inkeep <robert@inkeep.com>',
+      'Co-authored-by: Robert Example <robert@example.com>',
     ]);
   });
 
@@ -58,12 +58,12 @@ describe('buildCommitAttribution', () => {
       commitMessages: [
         {
           sha: '1234567890abcdef',
-          author: { name: 'Sarah Inkeep', email: 'sarah@inkeep.com' },
+          author: { name: 'Sarah Example', email: 'sarah@example.com' },
           message: 'Add search\n\nExplain the indexing path.',
         },
         {
           sha: 'fedcba9876543210',
-          author: { name: 'Robert Inkeep', email: 'robert@inkeep.com' },
+          author: { name: 'Robert Example', email: 'robert@example.com' },
           message: 'Fix empty query\r\n\r\nCo-authored-by: A <a@example.com>',
         },
       ],
@@ -75,14 +75,14 @@ describe('buildCommitAttribution', () => {
         'Commits:',
         '',
         '[1234567](https://github.com/fractalmandala/palimpsest/commit/1234567890abcdef)',
-        'Author: Sarah Inkeep <sarah@inkeep.com>',
+        'Author: Sarah Example <sarah@example.com>',
         '',
         'Add search',
         '',
         'Explain the indexing path.',
         '',
         '[fedcba9](https://github.com/fractalmandala/palimpsest/commit/fedcba9876543210)',
-        'Author: Robert Inkeep <robert@inkeep.com>',
+        'Author: Robert Example <robert@example.com>',
         '',
         'Fix empty query',
         '',
@@ -91,8 +91,8 @@ describe('buildCommitAttribution', () => {
     );
     expect(attribution.trailers).toEqual([
       'Co-authored-by: octocat <1+octocat@users.noreply.github.com>',
-      'Co-authored-by: Sarah Inkeep <sarah@inkeep.com>',
-      'Co-authored-by: Robert Inkeep <robert@inkeep.com>',
+      'Co-authored-by: Sarah Example <sarah@example.com>',
+      'Co-authored-by: Robert Example <robert@example.com>',
       'Co-authored-by: A <a@example.com>',
     ]);
   });

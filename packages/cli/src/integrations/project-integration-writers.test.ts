@@ -153,7 +153,7 @@ describe('projectSkillWriter', () => {
     expect(existsSync(outcome.path ?? '')).toBe(true);
   });
 
-  test('does not write the Copilot skill without an Palimpsest MCP entry', () => {
+  test('does not write the Copilot skill without a Palimpsest MCP entry', () => {
     const outcome = projectSkillWriter.write(EDITOR_TARGETS.copilot, projectDir, {
       home: tmpRoot,
     });

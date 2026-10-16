@@ -129,12 +129,12 @@ describe('Case 2 — tailnet bind + consent + externalUrl', () => {
       body: JSON.stringify({ path: 'never.md' }),
     });
     expect(write.status).toBe(403);
-    expect(parseProblem(write.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(write.body).type).toBe('urn:ps:error:host-not-allowed');
     const origin = await rawRequest(case2.port, '/api/server-info', {
       headers: { Host: 'laptop.tail:55222', Origin: 'https://evil.example' },
     });
     expect(origin.status).toBe(403);
-    expect(parseProblem(origin.body).type).toBe('urn:ok:error:invalid-origin');
+    expect(parseProblem(origin.body).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('local loopback access keeps working alongside the exposure', async () => {
@@ -188,7 +188,7 @@ describe('Case 3 — loopback bind behind a reverse proxy + externalUrl + consen
       headers: proxied({ Origin: 'http://notes.example.com' }),
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:invalid-origin');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('same-box loopback consumers keep working (the lock contract)', async () => {

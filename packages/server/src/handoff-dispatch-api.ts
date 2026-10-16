@@ -119,7 +119,7 @@ export async function handleHandoffDispatch(
   deps: HandleHandoffDispatchDeps,
 ): Promise<void> {
   if (req.method !== 'POST') {
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: HANDLER,
       extraHeaders: { Allow: 'POST' },
     });
@@ -138,20 +138,20 @@ export async function handleHandoffDispatch(
       return;
     }
     if (err instanceof PayloadTooLargeError) {
-      errorResponse(res, 413, 'urn:ok:error:payload-too-large', 'Payload too large.', {
+      errorResponse(res, 413, 'urn:ps:error:payload-too-large', 'Payload too large.', {
         handler: HANDLER,
         cause: err,
       });
       return;
     }
     if (err instanceof RequestBodyTimeoutError) {
-      errorResponse(res, 408, 'urn:ok:error:request-timeout', 'Request body read timed out.', {
+      errorResponse(res, 408, 'urn:ps:error:request-timeout', 'Request body read timed out.', {
         handler: HANDLER,
         cause: err,
       });
       return;
     }
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read request body.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read request body.', {
       handler: HANDLER,
       cause: err,
     });
@@ -162,7 +162,7 @@ export async function handleHandoffDispatch(
   try {
     parsed = JSON.parse(body.toString('utf-8'));
   } catch (err) {
-    errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Malformed JSON body.', {
+    errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Malformed JSON body.', {
       handler: HANDLER,
       cause: err,
     });
@@ -171,7 +171,7 @@ export async function handleHandoffDispatch(
 
   const reqResult = HandoffRequestSchema.safeParse(parsed);
   if (!reqResult.success) {
-    errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid request body.', {
+    errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid request body.', {
       handler: HANDLER,
     });
     return;
@@ -183,7 +183,7 @@ export async function handleHandoffDispatch(
     errorResponse(
       res,
       400,
-      'urn:ok:error:invalid-request',
+      'urn:ps:error:invalid-request',
       `URL scheme must be ${recipe.urlScheme} for target ${target}.`,
       { handler: HANDLER },
     );
@@ -229,7 +229,7 @@ export async function handleHandoffDispatch(
         errorResponse(
           res,
           422,
-          'urn:ok:error:handoff-target-not-installed',
+          'urn:ps:error:handoff-target-not-installed',
           'Required binary or application not found.',
           { handler: HANDLER, extensions: { target } },
         );
@@ -251,14 +251,14 @@ export async function handleHandoffDispatch(
     errorResponse(
       res,
       400,
-      'urn:ok:error:invalid-request',
+      'urn:ps:error:invalid-request',
       'workspacePath is required for cursor handoff.',
       { handler: HANDLER },
     );
     return;
   }
   if (!isPathWithinDir(workspacePath, deps.contentDir, deps.platform)) {
-    errorResponse(res, 403, 'urn:ok:error:path-escape', 'Path escapes the content directory.', {
+    errorResponse(res, 403, 'urn:ps:error:path-escape', 'Path escapes the content directory.', {
       handler: HANDLER,
     });
     return;
@@ -269,7 +269,7 @@ export async function handleHandoffDispatch(
     errorResponse(
       res,
       422,
-      'urn:ok:error:handoff-target-not-installed',
+      'urn:ps:error:handoff-target-not-installed',
       'Cursor CLI not found on this machine.',
       { handler: HANDLER, extensions: { target: 'cursor' } },
     );
@@ -312,7 +312,7 @@ function emitSpawnFailure(
       errorResponse(
         res,
         422,
-        'urn:ok:error:handoff-target-not-installed',
+        'urn:ps:error:handoff-target-not-installed',
         'Required binary or application not found.',
         { handler: HANDLER, extensions: { target } },
       );
@@ -321,13 +321,13 @@ function emitSpawnFailure(
       errorResponse(
         res,
         504,
-        'urn:ok:error:handoff-spawn-timeout',
+        'urn:ps:error:handoff-spawn-timeout',
         'Handoff spawn exceeded the deadline.',
         { handler: HANDLER, extensions: { target } },
       );
       return;
     case 'spawn-error':
-      errorResponse(res, 502, 'urn:ok:error:handoff-spawn-failed', 'Handoff spawn failed.', {
+      errorResponse(res, 502, 'urn:ps:error:handoff-spawn-failed', 'Handoff spawn failed.', {
         handler: HANDLER,
         extensions: { target },
       });

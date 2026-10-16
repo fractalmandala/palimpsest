@@ -10,7 +10,7 @@ import { emitPreflightFailureSpan } from '../git-preflight-telemetry.ts';
 import { expandTilde, isAllowedGitUrl, isSafeLocalPath } from '../local-op-security.ts';
 import { getLogger } from '../logger.ts';
 import { redactedStderrDetail, stderrDetailSuffix } from './clone-error-classify.ts';
-import { type LocalOpCliInvocation, runOkCliSubprocess } from './subprocess.ts';
+import { type LocalOpCliInvocation, runPsCliSubprocess } from './subprocess.ts';
 
 const log = getLogger('clone-flow');
 
@@ -130,7 +130,7 @@ export function runCloneSubprocess(opts: RunCloneOptions): RunCloneController {
 
   const branchArgs =
     typeof opts.branch === 'string' && opts.branch.length > 0 ? ['-b', opts.branch] : [];
-  const proc = runOkCliSubprocess(opts.cli, {
+  const proc = runPsCliSubprocess(opts.cli, {
     trailingArgs: ['clone', '--json', ...branchArgs, opts.url, targetDir],
     extraPathDirs,
     timeoutMs,

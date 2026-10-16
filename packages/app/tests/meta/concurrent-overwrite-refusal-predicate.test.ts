@@ -13,12 +13,12 @@ function problemError(status: number, type?: string): Error {
 describe('isConcurrentOverwriteRefusal', () => {
   it('retries a 409 carrying the concurrent-overwrite-refused problem type', () => {
     expect(
-      isConcurrentOverwriteRefusal(problemError(409, 'urn:ok:error:concurrent-overwrite-refused')),
+      isConcurrentOverwriteRefusal(problemError(409, 'urn:ps:error:concurrent-overwrite-refused')),
     ).toBe(true);
   });
 
   it('refuses to retry a 409 carrying the doc-in-conflict problem type', () => {
-    expect(isConcurrentOverwriteRefusal(problemError(409, 'urn:ok:error:doc-in-conflict'))).toBe(
+    expect(isConcurrentOverwriteRefusal(problemError(409, 'urn:ps:error:doc-in-conflict'))).toBe(
       false,
     );
   });
@@ -29,7 +29,7 @@ describe('isConcurrentOverwriteRefusal', () => {
 
   it('refuses to retry a non-409 carrying the refusal problem type', () => {
     expect(
-      isConcurrentOverwriteRefusal(problemError(500, 'urn:ok:error:concurrent-overwrite-refused')),
+      isConcurrentOverwriteRefusal(problemError(500, 'urn:ps:error:concurrent-overwrite-refused')),
     ).toBe(false);
   });
 
@@ -37,7 +37,7 @@ describe('isConcurrentOverwriteRefusal', () => {
     expect(
       isConcurrentOverwriteRefusal({
         status: 409,
-        type: 'urn:ok:error:concurrent-overwrite-refused',
+        type: 'urn:ps:error:concurrent-overwrite-refused',
       }),
     ).toBe(false);
   });

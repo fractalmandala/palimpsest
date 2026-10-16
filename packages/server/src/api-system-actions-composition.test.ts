@@ -40,7 +40,7 @@ describe('system-actions group over the composed listener — served natively', 
     });
     expect(res.status).toBe(400);
     const body = (await res.json()) as { type?: string; title?: string };
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toContain('path');
     expect(res.headers.get('x-request-id')).not.toBeNull();
   });
@@ -52,7 +52,7 @@ describe('system-actions group over the composed listener — served natively', 
       body: JSON.stringify({}),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('client-logs ingests a batch natively (accepted count, gap marker tolerated)', async () => {
@@ -101,14 +101,14 @@ describe('system-actions group over the composed listener — served natively', 
     });
     expect(res.status).toBe(403);
     expect(res.headers.allow).toBeUndefined();
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('spawn-cursor and handoff are Host-gated by the shared read choke point', async () => {
     for (const path of ['/api/spawn-cursor', '/api/handoff']) {
       const res = await rawRequest(server.port, path, { headers: { Host: 'evil.example' } });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -119,7 +119,7 @@ describe('system-actions group over the composed listener — served natively', 
       body: JSON.stringify({ entries: [] }),
     });
     expect(res.status).toBe(403);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('sibling native groups still answer on the same server (multi-group dispatch)', async () => {

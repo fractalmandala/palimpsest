@@ -27,7 +27,7 @@ npm install -g @palimpsest/cli
 
 ## Set up a project
 
-Run `ps init` in any folder to turn it into an Palimpsest project. It scaffolds a `.ps/` directory and registers the Palimpsest MCP server with the AI editors it detects on your machine (Claude Code, Claude Desktop, Cursor, Codex, OpenCode, OpenClaw, Pi, Antigravity, LM Studio, Hermes). It only ever adds its own entry — your other settings, comments, and formatting are left untouched.
+Run `ps init` in any folder to turn it into a Palimpsest project. It scaffolds a `.ps/` directory and registers the Palimpsest MCP server with the AI editors it detects on your machine (Claude Code, Claude Desktop, Cursor, Codex, OpenCode, OpenClaw, Pi, Antigravity, LM Studio, Hermes). It only ever adds its own entry — your other settings, comments, and formatting are left untouched.
 
 ```bash
 cd my-project
@@ -36,7 +36,7 @@ ps init
 
 `ps init` asks two questions: where to register the MCP server (user-level, project-level, or both) and whether to share the Palimpsest config files with your team (committed alongside your content) or keep them local to this machine.
 
-In a sub-folder of a git repo, `ps init` sets the project up at the git root — one `.ps/` per repo — and the whole repo becomes the content scope. Pass `--content-dir <dir>` to limit content to one folder (`ps init --content-dir .` scopes it to the folder you run in); the choice is saved as `content.dir` in `.ps/config.yml`. For scripts, `--json` prints a structured JSON summary. `ps init` also installs the user-global `open-knowledge-discovery` skill, the same one the desktop's first launch offers, unless you uninstalled it in **Settings → Skills Studio**; `--skills discovery,write-skill` adds the authoring skill, and `--no-skills` installs none on that run. `open-knowledge-write-skill` is otherwise one click away in **Settings → Skills Studio**.
+In a sub-folder of a git repo, `ps init` sets the project up at the git root — one `.ps/` per repo — and the whole repo becomes the content scope. Pass `--content-dir <dir>` to limit content to one folder (`ps init --content-dir .` scopes it to the folder you run in); the choice is saved as `content.dir` in `.ps/config.yml`. For scripts, `--json` prints a structured JSON summary. `ps init` also installs the user-global `palimpsest-discovery` skill, the same one the desktop's first launch offers, unless you uninstalled it in **Settings → Skills Studio**; `--skills discovery,write-skill` adds the authoring skill, and `--no-skills` installs none on that run. `open-knowledge-write-skill` is otherwise one click away in **Settings → Skills Studio**.
 
 `ps init` refuses to set up a project in your home directory or at the top of a drive (`/`, `C:\`, a network share root) and exits with status 64. Make a folder for the project and run it there. The desktop app's **Open folder** refuses the same folders, plus system folders such as `/usr` or `C:\Windows`.
 
@@ -62,7 +62,7 @@ For a complete list of every file Palimpsest creates or changes — during insta
 
 ### Overlapping projects and previews
 
-A second project or single-file preview cannot start over content already owned by another server. A verified refusal names the existing live session; close it before opening the overlapping project or preview. An unverified refusal protects only overlapping content. A failed lease probe names the affected content, lease path and underlying failure; an unsupported ownership protocol instead names the compatibility problem. Check access and retry a temporary read failure; unsupported ownership protocols require compatible runtimes, not deleting another runtime's record. In particular, close a loose-file preview before turning its containing folder into an Palimpsest project. [Single-file sessions](/docs/features/editor#open-a-single-file) otherwise remain independent when they edit different files.
+A second project or single-file preview cannot start over content already owned by another server. A verified refusal names the existing live session; close it before opening the overlapping project or preview. An unverified refusal protects only overlapping content. A failed lease probe names the affected content, lease path and underlying failure; an unsupported ownership protocol instead names the compatibility problem. Check access and retry a temporary read failure; unsupported ownership protocols require compatible runtimes, not deleting another runtime's record. In particular, close a loose-file preview before turning its containing folder into a Palimpsest project. [Single-file sessions](/docs/features/editor#open-a-single-file) otherwise remain independent when they edit different files.
 
 A nested project marked by its own `.ps/config.yml` belongs to its own server. The parent cannot read or write the nested project's documents; explicit API requests return 403. If a nested project is created while the parent is running, restart the parent before opening the child. Removing a nested project's marker does not expand a running parent's scope either: restart the parent to adopt that content.
 
@@ -93,30 +93,30 @@ If you don't have a project initialized, this still works. The file opens direct
 You can pull repositories directly from GitHub and open them with Palimpsest:
 
 ```bash
-ok clone <owner/repo>
+ps clone <owner/repo>
 ```
 
-`ok clone` accepts a full `https://github.com/...` URL or the `owner/repo` shorthand. It clones the repository, initializes Palimpsest if it isn't already, and starts the local server — open the printed Editor URL in your browser.
+`ps clone` accepts a full `https://github.com/...` URL or the `owner/repo` shorthand. It clones the repository, initializes Palimpsest if it isn't already, and starts the local server — open the printed Editor URL in your browser.
 
 Pin a branch with `-b <branch>`:
 
 ```bash
-ok clone <owner/repo> -b <branch>
+ps clone <owner/repo> -b <branch>
 ```
 
-If the branch no longer exists, `ok clone` falls back to the repository's default branch.
+If the branch no longer exists, `ps clone` falls back to the repository's default branch.
 
-Before checking out any files, `ok clone` checks the repository's symlinks. If a link points outside the repository, at its root, or into a `.git` folder or Palimpsest's private state, it removes the clone and names up to five refused links, each with its reason.
+Before checking out any files, `ps clone` checks the repository's symlinks. If a link points outside the repository, at its root, or into a `.git` folder or Palimpsest's private state, it removes the clone and names up to five refused links, each with its reason.
 
 A **public** repo clones without authentication. For a **private** repo, sign in first:
 
 ```bash
-ok auth login
+ps auth login
 ```
 
 If you're already logged in with the `gh` CLI, you can skip this step.
 
-`ok auth` also provides `status` (show who's logged in), `repos` (list repositories you can access), `signout` (remove stored credentials), `pat` (store a GitHub Personal Access Token), and `token` (store an access token for any other git host). Every subcommand takes `--host <hostname>`. For a host that is not GitHub, `status` reports the stored token without verifying it: it exits `0` when a token is stored and `1` when none is, and its `--json` output carries `"unverified": true` with the stored username. GitHub Enterprise hosts must be declared as `git.hosts.<host>.provider: github` in `~/.ps/global.yml` (`~/.ps-beta/global.yml` for `ps-beta`) before commands contact them. See [configuration](/docs/reference/configuration).
+`ps auth` also provides `status` (show who's logged in), `repos` (list repositories you can access), `signout` (remove stored credentials), `pat` (store a GitHub Personal Access Token), and `token` (store an access token for any other git host). Every subcommand takes `--host <hostname>`. For a host that is not GitHub, `status` reports the stored token without verifying it: it exits `0` when a token is stored and `1` when none is, and its `--json` output carries `"unverified": true` with the stored username. GitHub Enterprise hosts must be declared as `git.hosts.<host>.provider: github` in `~/.ps/global.yml` (`~/.ps-beta/global.yml` for `ps-beta`) before commands contact them. See [configuration](/docs/reference/configuration).
 
 Without `--host`, commands select the recognized GitHub origin, or `github.com` when no origin exists. An unrecognized origin requires explicit host selection for `login`, `pat`, `repos` and `signout`, so they cannot contact or clear credentials for a different host by accident. `status` on a non-GitHub host reports the stored token without contacting any API; on a GitHub host, `status` and `repos` contact GitHub APIs. `signout --host <hostname>` only removes local credentials and works for any host, including one whose declaration has been removed.
 
@@ -127,14 +127,14 @@ Sync a project with its remote from the terminal:
 | Command | What it does |
 | --- | --- |
 | `ps sync` | Commit, pull, and push to the remote |
-| `ok pull` | Pull changes from the remote |
-| `ok push` | Push commits to the remote |
+| `ps pull` | Pull changes from the remote |
+| `ps push` | Push commits to the remote |
 
 Each command goes through the running Palimpsest server when one is up. Otherwise it runs git directly. When the remote's URL is `https://` and names `github.com` or a declared GitHub Enterprise host exactly, in lowercase and with no port, and Palimpsest has a GitHub sign-in for it ([which account is used](/docs/features/git/sync#authentication)), that sign-in replaces your git credential helpers for HTTPS requests to that host during the command, though a `~/.netrc` entry for the host or a password in the remote URL is still used first. A submodule or extra push URL that writes the same host with an explicit `:443` or in different letter case gets the same sign-in, and is never sent to your own credential helpers.
 
 Requests to another host, a non-default port or a plain `http://` URL use your own git credentials. A token stored with `ok auth token --host <host> --username <username>` overrides them for an HTTPS host only when the request goes through the running server; run directly, these commands keep your own git credentials. The username is what git sends with the token: `oauth2` for GitLab, your Gitea username, `x-bitbucket-api-token-auth` for a Bitbucket API token or `x-token-auth` for a Bitbucket repository or workspace access token, and any value for Azure DevOps. Pass `--json` for JSONL progress events when scripting. See [Git sync](/docs/features/git/sync) for how syncing works.
 
-Without a running server, `ok pull` and `ps sync` check every symlink the pull would add, retarget or remove before writing anything, and refuse the whole update if one would be unsafe: it points outside the repository, into private `.git` or Palimpsest state, at a file that may hold secrets, or somewhere that cannot be checked. The command exits with an error naming up to five refused links, each with its reason, followed by a count of any others and what to do next. With a server running, the command only triggers the pull, and the refusal appears in the app's sync indicator instead. The full rules, including links both sides changed, links that pass through them, names spelled more than one way, and the Git 2.38 requirement for three-way pulls, are in [Incoming changes with unsafe symlinks](/docs/features/git/sync#incoming-changes-with-unsafe-symlinks).
+Without a running server, `ps pull` and `ps sync` check every symlink the pull would add, retarget or remove before writing anything, and refuse the whole update if one would be unsafe: it points outside the repository, into private `.git` or Palimpsest state, at a file that may hold secrets, or somewhere that cannot be checked. The command exits with an error naming up to five refused links, each with its reason, followed by a count of any others and what to do next. With a server running, the command only triggers the pull, and the refusal appears in the app's sync indicator instead. The full rules, including links both sides changed, links that pass through them, names spelled more than one way, and the Git 2.38 requirement for three-way pulls, are in [Incoming changes with unsafe symlinks](/docs/features/git/sync#incoming-changes-with-unsafe-symlinks).
 
 ## Manage local servers
 
@@ -143,13 +143,13 @@ Each project runs its own local server. These commands let you see and stop them
 | Command | What it does |
 | --- | --- |
 | `ps status` | Show whether a server and UI are running for the current project |
-| `ok ps` | List every running Palimpsest server on your machine |
+| `ps ps` | List every running Palimpsest server on your machine |
 | `ps stop` | Stop the server for the current directory — or pass a port, path, or PID to stop a specific server, or `all` to stop every server. Declines when the server's lock records a different Palimpsest app (Stable, Beta, or a `dev` build run from source) than [the CLI's own](/docs/reference/what-palimpsest-writes#beta-uses-its-own-entry), naming that app, and when something is still connected to the target, naming how many clients are attached. Either way it exits `1`; pass `--force` to stop it anyway. A lock with no recorded app is stopped as before, and a server it cannot reach is stopped without the connected-clients check |
-| `ok clean` | Remove a stale lock file left behind by a crash (never touches live servers) |
+| `ps clean` | Remove a stale lock file left behind by a crash (never touches live servers) |
 
-`ok clean` retains a lock and exits `1` if it cannot read it, it records another machine, or it has no recorded owner and its PID is still running locally. A PID that has exited is not running even while it lingers as a defunct entry in the process table, so `ok clean` prunes the lock naming it. The error names the lock and explains what to check. For an unverified owner, inspect the named local PID and stop it if it is an Palimpsest server; do not delete the lock while that process is running.
+`ps clean` retains a lock and exits `1` if it cannot read it, it records another machine, or it has no recorded owner and its PID is still running locally. A PID that has exited is not running even while it lingers as a defunct entry in the process table, so `ps clean` prunes the lock naming it. The error names the lock and explains what to check. For an unverified owner, inspect the named local PID and stop it if it is a Palimpsest server; do not delete the lock while that process is running.
 
-`ps status`, `ok ps`, and the server-lock health check distinguish an unverified owner from a foreign host. `ps status --json` uses `state: "unverified-owner"` and includes the PID, with server liveness reported as unknown. `ok ps --json` uses the same status, `displayStatus: "unverified"`, and `null` for unrecorded host, port, and start time. The directory is the project root for current `.ps/local` and legacy `.ps` locks; it is `null` when a custom lock location does not establish a project root. Such records are not signal authority for `ps stop`, including with `--force`.
+`ps status`, `ps ps`, and the server-lock health check distinguish an unverified owner from a foreign host. `ps status --json` uses `state: "unverified-owner"` and includes the PID, with server liveness reported as unknown. `ok ps --json` uses the same status, `displayStatus: "unverified"`, and `null` for unrecorded host, port, and start time. The directory is the project root for current `.ps/local` and legacy `.ps` locks; it is `null` when a custom lock location does not establish a project root. Such records are not signal authority for `ps stop`, including with `--force`.
 
 ## Remote Control
 
@@ -163,14 +163,14 @@ Serve this project's web UI and `/mcp` endpoint to your other devices through an
 
 | Command | What it does |
 | --- | --- |
-| `ok seed` | Scaffold a starter pack into the project (`--list-packs` to browse, `--pack <id>` to choose, `--root <dir>` to nest in a subfolder, `--dry-run` to preview) |
-| `ok preview` | Show what content the watcher will track (read-only) — the quick check after a `content.dir` or `.psignore` change |
+| `ps seed` | Scaffold a starter pack into the project (`--list-packs` to browse, `--pack <id>` to choose, `--root <dir>` to nest in a subfolder, `--dry-run` to preview) |
+| `ps preview` | Show what content the watcher will track (read-only) — the quick check after a `content.dir` or `.psignore` change |
 | `ok migrate notion <dir>` | Clean up a Notion export in place, dry-run unless `--apply` (see [migrating from Notion](/docs/migrate/notion)) |
 | `ps config validate` | Validate the merged config (defaults → user → project) |
 | `ps config migrate` | Remove keys the schema no longer reads from your config files (`--dry-run` to preview; `--scope` to narrow — defaults to every layer) |
 | `ok skills installed` | List every skill installed across your agents (read-only, cross-harness) |
 | `ok skills import <source>` | Import a skill as versioned content from skills.sh, a GitHub `owner/repo`, a git URL, or a local path |
-| `ok bug-report` | Package a support bundle — recent app logs, the project's server logs and lock diagnostics, and system info — as an auto-redacted zip under `~/.ps/bug-reports/` (`~/.ps-beta/bug-reports/` for `ps-beta`), revealed in your file manager when it's done (`--no-reveal` to skip). Collects the same `standard` set as the desktop app's **Help → Report a bug…**; `ok diagnose bundle` produces the `full` superset (telemetry spans, live server state) into the project's `.ps/local/diagnostics/` |
+| `ps bug-report` | Package a support bundle — recent app logs, the project's server logs and lock diagnostics, and system info — as an auto-redacted zip under `~/.ps/bug-reports/` (`~/.ps-beta/bug-reports/` for `ps-beta`), revealed in your file manager when it's done (`--no-reveal` to skip). Collects the same `standard` set as the desktop app's **Help → Report a bug…**; `ok diagnose bundle` produces the `full` superset (telemetry spans, live server state) into the project's `.ps/local/diagnostics/` |
 
 ## Global flags
 
@@ -178,24 +178,24 @@ Every command takes `--cwd <path>` to run from another directory, `--log-level <
 
 ## Commands that run for you
 
-The rest of the CLI exists mostly for tooling and automation. Your AI editor spawns `ps mcp` to talk to the knowledge base. `ps start` repairs existing editor connection settings; it leaves installed editor skills alone. Run `ok repair-skills` explicitly to restore missing project skill copies and repair user-global bundles. To update an existing project skill, follow [Refresh agent guidance](./mcp.mdx#refresh-agent-guidance). `ok diagnose` and `ok bug-report` produce support bundles when something goes wrong. Run `ok --help` for an overview of all commands.
+The rest of the CLI exists mostly for tooling and automation. Your AI editor spawns `ps mcp` to talk to the knowledge base. `ps start` repairs existing editor connection settings; it leaves installed editor skills alone. Run `ps repair-skills` explicitly to restore missing project skill copies and repair user-global bundles. To update an existing project skill, follow [Refresh agent guidance](./mcp.mdx#refresh-agent-guidance). `ps diagnose` and `ps bug-report` produce support bundles when something goes wrong. Run `ok --help` for an overview of all commands.
 
 ## Remove Palimpsest
 
 `ok deinit [path]` reverses `ps init` for one project (the current project when `path` is omitted): it removes the project's `.ps/` directory, Palimpsest's editor MCP entries, its own git-exclude lines, and shadow repo, leaving your markdown untouched. Shared editor settings and their symlinks are preserved; ignore rules for shared config files stay while those files still exist.
 
-`ok uninstall` removes the global footprint: running servers, credentials, the PATH shim, Palimpsest's editor MCP entries and bundled skills, app data, and `~/.ps`. It keeps the `~/.ps` entries every product shares: `~/.ps/machine-id`, the user skills store `~/.ps/skills`, `~/.ps/skills-lock.json`, the Global-scope skill bookkeeping in `~/.ps/local/installed-skills.json`, `~/.ps/local/skill-placements.json`, and `~/.ps/local/skill-move-retained.json`, plus the shared ownership registry `~/.ps/local/server-authority.sqlite`, its `-journal` file, and `~/.ps/local/server-authority-leases/`. These coordination files stay even with `--purge-content`. It removes only the running product's footprint: `ps-beta uninstall` removes `~/.ps-beta` and Beta's credentials and leaves Stable's `~/.ps` alone. No product's uninstall removes `~/.ps/machine-id`. With `--purge-content`, either product also removes the shared `~/.ps/skills`, unless an earlier uninstall step failed. See [Stable and Beta home folders](/docs/reference/what-palimpsest-writes#stable-and-beta-home-folders). Your markdown and other skills in your editors' skill directories stay. An interactive run lets you select projects to deinitialize; `--yes` removes only the global footprint unless you also pass `--all-projects`, which covers current, recent, and discovered running projects. The CLI binary stays installed; the command ends by printing how to remove it (`npm uninstall -g @palimpsest/cli` for the install above).
+`ps uninstall` removes the global footprint: running servers, credentials, the PATH shim, Palimpsest's editor MCP entries and bundled skills, app data, and `~/.ps`. It keeps the `~/.ps` entries every product shares: `~/.ps/machine-id`, the user skills store `~/.ps/skills`, `~/.ps/skills-lock.json`, the Global-scope skill bookkeeping in `~/.ps/local/installed-skills.json`, `~/.ps/local/skill-placements.json`, and `~/.ps/local/skill-move-retained.json`, plus the shared ownership registry `~/.ps/local/server-authority.sqlite`, its `-journal` file, and `~/.ps/local/server-authority-leases/`. These coordination files stay even with `--purge-content`. It removes only the running product's footprint: `ps-beta uninstall` removes `~/.ps-beta` and Beta's credentials and leaves Stable's `~/.ps` alone. No product's uninstall removes `~/.ps/machine-id`. With `--purge-content`, either product also removes the shared `~/.ps/skills`, unless an earlier uninstall step failed. See [Stable and Beta home folders](/docs/reference/what-palimpsest-writes#stable-and-beta-home-folders). Your markdown and other skills in your editors' skill directories stay. An interactive run lets you select projects to deinitialize; `--yes` removes only the global footprint unless you also pass `--all-projects`, which covers current, recent, and discovered running projects. The CLI binary stays installed; the command ends by printing how to remove it (`npm uninstall -g @palimpsest/cli` for the install above).
 
-Both `ok deinit` and `ok uninstall` wait for servers to exit before deleting their state. If a server cannot be safely stopped or an integration cannot be cleaned up, the command reports the problem and retains state needed for repair and retry. Applied cleanup exits `1` when anything remains unresolved. With `--yes --json`, inspect `failed[]` for those items and their reasons; `skipped[]` covers intentionally preserved entries. Repair the reported problem and rerun the command.
+Both `ps deinit` and `ps uninstall` wait for servers to exit before deleting their state. If a server cannot be safely stopped or an integration cannot be cleaned up, the command reports the problem and retains state needed for repair and retry. Applied cleanup exits `1` when anything remains unresolved. With `--yes --json`, inspect `failed[]` for those items and their reasons; `skipped[]` covers intentionally preserved entries. Repair the reported problem and rerun the command.
 
 On Windows, confirming that a running server really is the process the lock names uses Palimpsest's bundled native component. Removal refuses rather than signalling a process it has not identified, and the refusal names which of two things went wrong. If the component could not be loaded, reinstalling Palimpsest restores it — the same remedy as for [its TOML writer](#set-up-a-project). If the component loaded but Windows refused the query, reinstalling will not help: that is usually a permissions difference, so rerun from an account that can inspect the server process. Either way you can instead stop the server yourself and confirm it has exited, then rerun. The failure detail itself is recorded in `~/.ps/logs` (`~/.ps-beta/logs` for `ps-beta`), not printed.
 
-`ok deinit` needs the project's `.ps/` directory; once that directory is gone, it reports nothing to remove. Remove any retained Pi trust entry manually using its reported exact key and file, as described in [installation details](./what-palimpsest-writes.mdx#pi-folder-trust).
+`ps deinit` needs the project's `.ps/` directory; once that directory is gone, it reports nothing to remove. Remove any retained Pi trust entry manually using its reported exact key and file, as described in [installation details](./what-palimpsest-writes.mdx#pi-folder-trust).
 
 Malformed filesystem residue does not by itself establish a running server. Cleanup can skip it after process and listener inspection succeeds and finds no associated live candidate. A read failure, incomplete inspection, or associated live server remains a blocker. A process that has exited is not a live server, and its unreadable working directory does not make the inspection incomplete, even while the process lingers as a defunct entry in the process table. Global-only uninstall can retain foreign-owned or ownership-unverified project state after the same local inspection; selecting project deinitialization keeps those ownership checks strict. Dead PID-only locks are recoverable. Human output lists root blockers once; JSON `failed[]` includes both direct failures and blocked dependent operations, with `blocked[]` providing the dependent subset.
 
-Both commands print their plan and ask before acting; `--dry-run` previews without changing anything. Once `ok uninstall` has finished successfully, an interactive run also asks one optional question about why you're leaving — you can skip it, and `--yes`, `--json`, and non-interactive runs never ask. Anything you do answer is [sent to us](/docs/reference/what-palimpsest-writes#what-leaves-your-machine).
+Both commands print their plan and ask before acting; `--dry-run` previews without changing anything. Once `ps uninstall` has finished successfully, an interactive run also asks one optional question about why you're leaving — you can skip it, and `--yes`, `--json`, and non-interactive runs never ask. Anything you do answer is [sent to us](/docs/reference/what-palimpsest-writes#what-leaves-your-machine).
 
 On the macOS desktop app, **App menu → Uninstall Palimpsest…** lets you choose projects to deinitialize, confirm removal, and answer or skip the optional "why are you leaving?" screen. The progress window stays visible while the original app quits and cleanup runs, so shutdown cannot recreate its settings. The same window then reports the result: successful cleanup guides you through dragging the app to the Trash; incomplete cleanup points to a retained log so you can repair the problem and retry.
 
-To remove the desktop app on the other platforms: on **Windows**, uninstall Palimpsest from **Settings → Apps → Installed apps**; on **Linux**, remove the package with your package manager. `ok uninstall` prints the command for the package that is actually installed. Both the deb and the rpm are named `palimpsest` for Stable and `palimpsest-beta` for Beta: `sudo apt remove palimpsest` on Debian/Ubuntu, `sudo dnf remove palimpsest` on Fedora/RHEL, `sudo zypper remove palimpsest` on openSUSE. An install that has not yet updated to the renamed package keeps its earlier name: `Palimpsest` for the Stable rpm and `palimpsest-beta-desktop` for the Beta deb and rpm (the Stable deb was always `palimpsest`). Run `ok uninstall` first if you also want the rest of the footprint cleaned up — it works the same on every platform.
+To remove the desktop app on the other platforms: on **Windows**, uninstall Palimpsest from **Settings → Apps → Installed apps**; on **Linux**, remove the package with your package manager. `ps uninstall` prints the command for the package that is actually installed. Both the deb and the rpm are named `palimpsest` for Stable and `palimpsest-beta` for Beta: `sudo apt remove palimpsest` on Debian/Ubuntu, `sudo dnf remove palimpsest` on Fedora/RHEL, `sudo zypper remove palimpsest` on openSUSE. An install that has not yet updated to the renamed package keeps its earlier name: `Palimpsest` for the Stable rpm and `palimpsest-beta-desktop` for the Beta deb and rpm (the Stable deb was always `palimpsest`). Run `ps uninstall` first if you also want the rest of the footprint cleaned up — it works the same on every platform.

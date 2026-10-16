@@ -206,7 +206,7 @@ vi.doMock('@/components/AuthModal', () => ({ AuthModal: () => null }));
 vi.doMock('@/components/InstallInClaudeDesktopDialog', () => ({
   InstallInClaudeDesktopDialog: () => null,
 }));
-vi.doMock('./OkignoreSection', () => ({ OkignoreSection: () => null }));
+vi.doMock('./PsignoreSection', () => ({ PsignoreSection: () => null }));
 vi.doMock('./ProjectTemplatesSection', () => ({ ProjectTemplatesSection: () => null }));
 
 vi.doMock('@/hooks/use-git-sync-status', () => ({
@@ -232,8 +232,8 @@ async function renderSyncSection({ strict = false }: { strict?: boolean } = {}) 
       <SettingsDialogBody
         activeId="sync"
         userBinding={null as never}
-        okignoreBinding={null as never}
-        okignoreSynced={false}
+        psignoreBinding={null as never}
+        psignoreSynced={false}
       />
     </TooltipProvider>
   );

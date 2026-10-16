@@ -28,7 +28,7 @@ let _queryDuration: Histogram | null = null;
 let _coalesced: Counter | null = null;
 
 function queryDurationHist(): Histogram {
-  _queryDuration ||= getMeter().createHistogram('ok.timeline.query_duration_ms', {
+  _queryDuration ||= getMeter().createHistogram('ps.timeline.query_duration_ms', {
     description:
       'Wall-clock duration of one history query. Bounded labels: width_bucket (ref fan-out), commits_bucket (commits gathered), capped (depth bound hit), error (the walk threw — e.g. the PRD-6972 git timeout). The error label is what separates a timeout storm from a burst of legitimately-empty docs, both of which otherwise record width/commits 0.',
     unit: 'ms',
@@ -37,7 +37,7 @@ function queryDurationHist(): Histogram {
 }
 
 function coalescedCounter(): Counter {
-  _coalesced ||= getMeter().createCounter('ok.timeline.coalesced_total', {
+  _coalesced ||= getMeter().createCounter('ps.timeline.coalesced_total', {
     description:
       'History requests served by an in-flight single-flight walk instead of a fresh git walk. Bounded label: mode ∈ {doc, folder}. A high value is the poll-storm / fan-out signal.',
   });

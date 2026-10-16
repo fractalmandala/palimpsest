@@ -6,39 +6,39 @@ const DEFAULT_YTEXT_KEY = 'source';
 
 const DEFAULT_ACCEPTANCE_DELAY_MS = 800;
 
-export interface OkignoreDocProvider {
+export interface PsignoreDocProvider {
   document: Y.Doc;
   on(event: 'synced', listener: () => void): void;
   off(event: 'synced', listener: () => void): void;
 }
 
-export type OkignoreBindingStatus = 'idle' | 'pending' | 'accepted' | 'rejected';
+export type PsignoreBindingStatus = 'idle' | 'pending' | 'accepted' | 'rejected';
 
-export interface OkignoreBindingPatchSuccess {
+export interface PsignoreBindingPatchSuccess {
   text: string;
 }
 
-export type OkignoreBindingPatchResult = Result<OkignoreBindingPatchSuccess, ConfigValidationError>;
+export type PsignoreBindingPatchResult = Result<PsignoreBindingPatchSuccess, ConfigValidationError>;
 
-export interface OkignoreBindingRejection {
+export interface PsignoreBindingRejection {
   error: ConfigValidationError;
   text: string;
 }
 
-export type OkignoreUnsubscribe = () => void;
+export type PsignoreUnsubscribe = () => void;
 
-export interface OkignoreBinding {
+export interface PsignoreBinding {
   current(): string;
-  patch(newText: string): OkignoreBindingPatchResult;
-  subscribe(listener: (text: string) => void): OkignoreUnsubscribe;
-  subscribeRejection(listener: (rejection: OkignoreBindingRejection) => void): OkignoreUnsubscribe;
-  subscribeStatus(listener: (status: OkignoreBindingStatus) => void): OkignoreUnsubscribe;
-  status(): OkignoreBindingStatus;
+  patch(newText: string): PsignoreBindingPatchResult;
+  subscribe(listener: (text: string) => void): PsignoreUnsubscribe;
+  subscribeRejection(listener: (rejection: PsignoreBindingRejection) => void): PsignoreUnsubscribe;
+  subscribeStatus(listener: (status: PsignoreBindingStatus) => void): PsignoreUnsubscribe;
+  status(): PsignoreBindingStatus;
   notifyRejection(error: ConfigValidationError): void;
   dispose(): void;
 }
 
-export interface BindOkignoreDocOptions {
+export interface BindPsignoreDocOptions {
   ytextKey?: string;
   acceptanceDelayMs?: number;
 }
@@ -47,23 +47,23 @@ function err(error: ConfigValidationError): Err<ConfigValidationError> {
   return { ok: false, error };
 }
 
-function ok(value: OkignoreBindingPatchSuccess): Ok<OkignoreBindingPatchSuccess> {
+function ok(value: PsignoreBindingPatchSuccess): Ok<PsignoreBindingPatchSuccess> {
   return { ok: true, ...value };
 }
 
-export function bindOkignoreDoc(
-  provider: OkignoreDocProvider,
-  options: BindOkignoreDocOptions = {},
-): OkignoreBinding {
+export function bindPsignoreDoc(
+  provider: PsignoreDocProvider,
+  options: BindPsignoreDocOptions = {},
+): PsignoreBinding {
   const { ytextKey = DEFAULT_YTEXT_KEY, acceptanceDelayMs = DEFAULT_ACCEPTANCE_DELAY_MS } = options;
   const ydoc = provider.document;
   const ytext = ydoc.getText(ytextKey);
 
   const textListeners = new Set<(text: string) => void>();
-  const rejectionListeners = new Set<(rejection: OkignoreBindingRejection) => void>();
-  const statusListeners = new Set<(status: OkignoreBindingStatus) => void>();
+  const rejectionListeners = new Set<(rejection: PsignoreBindingRejection) => void>();
+  const statusListeners = new Set<(status: PsignoreBindingStatus) => void>();
   let disposed = false;
-  let currentStatus: OkignoreBindingStatus = 'idle';
+  let currentStatus: PsignoreBindingStatus = 'idle';
   let acceptanceTimer: ReturnType<typeof setTimeout> | null = null;
 
   function clearAcceptanceTimer(): void {
@@ -73,7 +73,7 @@ export function bindOkignoreDoc(
     }
   }
 
-  function setStatus(next: OkignoreBindingStatus): void {
+  function setStatus(next: PsignoreBindingStatus): void {
     if (disposed) return;
     if (currentStatus === next) return;
     currentStatus = next;
@@ -81,7 +81,7 @@ export function bindOkignoreDoc(
       try {
         listener(next);
       } catch (e) {
-        console.warn('[bindOkignoreDoc] status listener threw:', e);
+        console.warn('[bindPsignoreDoc] status listener threw:', e);
       }
     }
   }
@@ -93,18 +93,18 @@ export function bindOkignoreDoc(
       try {
         listener(text);
       } catch (e) {
-        console.warn('[bindOkignoreDoc] text listener threw:', e);
+        console.warn('[bindPsignoreDoc] text listener threw:', e);
       }
     }
   }
 
-  function fireRejectionListeners(rejection: OkignoreBindingRejection): void {
+  function fireRejectionListeners(rejection: PsignoreBindingRejection): void {
     if (disposed) return;
     for (const listener of rejectionListeners) {
       try {
         listener(rejection);
       } catch (e) {
-        console.warn('[bindOkignoreDoc] rejection listener threw:', e);
+        console.warn('[bindPsignoreDoc] rejection listener threw:', e);
       }
     }
   }
@@ -117,11 +117,11 @@ export function bindOkignoreDoc(
       return ytext.toString();
     },
 
-    patch(newText: string): OkignoreBindingPatchResult {
+    patch(newText: string): PsignoreBindingPatchResult {
       if (disposed) {
         return err({
           code: 'WRITE_ERROR',
-          detail: 'OkignoreBinding has been disposed',
+          detail: 'PsignoreBinding has been disposed',
         });
       }
       ydoc.transact(() => {
@@ -138,7 +138,7 @@ export function bindOkignoreDoc(
       return ok({ text: newText });
     },
 
-    subscribe(listener: (text: string) => void): OkignoreUnsubscribe {
+    subscribe(listener: (text: string) => void): PsignoreUnsubscribe {
       textListeners.add(listener);
       return () => {
         textListeners.delete(listener);
@@ -146,22 +146,22 @@ export function bindOkignoreDoc(
     },
 
     subscribeRejection(
-      listener: (rejection: OkignoreBindingRejection) => void,
-    ): OkignoreUnsubscribe {
+      listener: (rejection: PsignoreBindingRejection) => void,
+    ): PsignoreUnsubscribe {
       rejectionListeners.add(listener);
       return () => {
         rejectionListeners.delete(listener);
       };
     },
 
-    subscribeStatus(listener: (status: OkignoreBindingStatus) => void): OkignoreUnsubscribe {
+    subscribeStatus(listener: (status: PsignoreBindingStatus) => void): PsignoreUnsubscribe {
       statusListeners.add(listener);
       return () => {
         statusListeners.delete(listener);
       };
     },
 
-    status(): OkignoreBindingStatus {
+    status(): PsignoreBindingStatus {
       return currentStatus;
     },
 

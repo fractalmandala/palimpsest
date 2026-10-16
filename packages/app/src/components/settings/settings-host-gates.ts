@@ -1,11 +1,11 @@
-export function isOkDesktopHost(): boolean {
+export function isPsDesktopHost(): boolean {
   return typeof window !== 'undefined' && window.psDesktop != null;
 }
 
 export function isTerminalSettingsAvailable(): boolean {
-  return isOkDesktopHost() && window.psDesktop?.config.ptyAvailable === true;
+  return isPsDesktopHost() && window.psDesktop?.config.ptyAvailable === true;
 }
 
 export function isSpellcheckLanguageSelectionAvailable(): boolean {
-  return isOkDesktopHost() && window.psDesktop?.platform !== 'darwin';
+  return isPsDesktopHost() && window.psDesktop?.platform !== 'darwin';
 }

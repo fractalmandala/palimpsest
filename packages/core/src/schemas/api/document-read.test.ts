@@ -21,10 +21,10 @@ import {
 
 describe('ProblemTypeSchema cluster C URN tokens', () => {
   test('document-not-available is valid', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:doc-not-available').success).toBe(true);
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:doc-not-available').success).toBe(true);
   });
   test('backlink-index-not-configured is valid', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:backlink-index-not-configured').success).toBe(
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:backlink-index-not-configured').success).toBe(
       true,
     );
   });

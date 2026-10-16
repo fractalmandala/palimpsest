@@ -39,7 +39,7 @@ afterAll(async () => {
 });
 
 describe('/api/link-graph managed-skill flagging', () => {
-  test("project skills are graph nodes; only OK's own bundle is flagged", async () => {
+  test("project skills are graph nodes; only Palimpsest's own bundle is flagged", async () => {
     const res = await fetch(`http://127.0.0.1:${booted.port}/api/link-graph`);
     expect(res.status).toBe(200);
     const body = (await res.json()) as {

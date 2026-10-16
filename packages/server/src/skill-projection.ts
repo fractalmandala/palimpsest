@@ -70,7 +70,7 @@ export function validateSkillForInstall(
     name.startsWith(RESERVED_SKILL_PREFIX) && RENAMED_PACK_SKILLS[name] === undefined;
   if (!opts?.allowReservedName && usesReservedName) {
     errors.push(
-      `"${name}" uses the reserved \`${RESERVED_SKILL_PREFIX}*\` prefix (reserved for OK's shipped skills) — choose another name.`,
+      `"${name}" uses the reserved \`${RESERVED_SKILL_PREFIX}*\` prefix (reserved for Palimpsest's shipped skills) — choose another name.`,
     );
   }
   if (!existsSync(skillMd)) {

@@ -1984,8 +1984,8 @@ describe('SyncStatusBadge freshness line', () => {
   test('reports the two directions separately when both have run', async () => {
     status = {
       ...baseStatus,
-      lastPullOkUtc: AT_2_MIN,
-      lastPushOkUtc: AT_5_MIN,
+      lastPullPsUtc: AT_2_MIN,
+      lastPushPsUtc: AT_5_MIN,
     } as GitSyncStatus;
 
     await renderBadge();
@@ -1998,7 +1998,7 @@ describe('SyncStatusBadge freshness line', () => {
   });
 
   test('a project that has only pulled shows one half, not "pushed never"', async () => {
-    status = { ...baseStatus, lastPullOkUtc: AT_2_MIN, lastPushOkUtc: null } as GitSyncStatus;
+    status = { ...baseStatus, lastPullPsUtc: AT_2_MIN, lastPushPsUtc: null } as GitSyncStatus;
 
     await renderBadge();
     await openPopover();
@@ -2007,7 +2007,7 @@ describe('SyncStatusBadge freshness line', () => {
   });
 
   test('a project that has only pushed shows the push half', async () => {
-    status = { ...baseStatus, lastPullOkUtc: null, lastPushOkUtc: AT_5_MIN } as GitSyncStatus;
+    status = { ...baseStatus, lastPullPsUtc: null, lastPushPsUtc: AT_5_MIN } as GitSyncStatus;
 
     await renderBadge();
     await openPopover();
@@ -2029,8 +2029,8 @@ describe('SyncStatusBadge freshness line', () => {
       ...baseStatus,
       lastRunUtc: null,
       lastSyncUtc: null,
-      lastPullOkUtc: null,
-      lastPushOkUtc: null,
+      lastPullPsUtc: null,
+      lastPushPsUtc: null,
     } as GitSyncStatus;
 
     await renderBadge();

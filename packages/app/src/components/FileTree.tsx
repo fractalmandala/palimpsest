@@ -1,6 +1,6 @@
 // oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { OkignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
+import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import { isDocumentOverOpenByteLimit } from '@palimpsest/core/constants/document-open';
 import type {
   HandoffOutcome,
@@ -90,7 +90,7 @@ import {
   LINK_DECORATION_ICON_ID,
   MARKDOWN_FILE_ICON_ID,
 } from '@/components/file-tree-icon-sprite';
-import { buildOkignorePatternFromTarget } from '@/components/file-tree-psignore';
+import { buildPsignorePatternFromTarget } from '@/components/file-tree-psignore';
 import {
   applyDeleteToDocuments,
   applyDuplicateToDocuments,
@@ -145,7 +145,7 @@ import {
   classifyEmptyTree,
   type DocumentEntry,
   type FileEntry,
-  hasOkPathSegment,
+  hasPsPathSegment,
   isAssetEntry,
   isDocumentEntry,
   isFolderEntry,
@@ -160,8 +160,8 @@ import { usePageList } from '@/components/PageListContext';
 import { RestartServerButton } from '@/components/RestartServerButton';
 import {
   appendPattern,
-  parseOkignoreDoc,
-  serializeOkignoreDoc,
+  parsePsignoreDoc,
+  serializePsignoreDoc,
 } from '@/components/settings/psignore-doc';
 import { sidebarDragPayloadForTreePath } from '@/components/sidebar-drag-payload';
 import {
@@ -488,7 +488,7 @@ interface FileTreeMenuProps {
     ) => Promise<HandoffOutcome>;
   };
   model: PierreFileTreeModel;
-  okignoreBinding: OkignoreBinding | null;
+  psignoreBinding: PsignoreBinding | null;
   onStartCreating: (kind: 'file' | 'folder', parentDir: string) => void;
   onCreateFromTemplate: (parentDir: string, templateName: string) => void;
   onDuplicate: (target: FileTreeTarget) => void;
@@ -508,7 +508,7 @@ function FileTreeMenu({
   workspace,
   handoff,
   model,
-  okignoreBinding,
+  psignoreBinding,
   onStartCreating,
   onCreateFromTemplate,
   onDuplicate,
@@ -523,9 +523,9 @@ function FileTreeMenu({
   const { t } = useLingui();
   const target = treeItemToTarget(item, documents);
   const isFolder = item.kind === 'directory';
-  const isOkRow = hasOkPathSegment(item.path);
-  const okignoreTarget = target.kind === 'asset' ? null : target;
-  const canHide = okignoreTarget !== null && okignoreBinding !== null;
+  const isPsRow = hasPsPathSegment(item.path);
+  const psignoreTarget = target.kind === 'asset' ? null : target;
+  const canHide = psignoreTarget !== null && psignoreBinding !== null;
   const hideLabel = isFolder ? t`Hide folder` : t`Hide this file`;
   const folderPath = isFolder ? treeDirectoryPathToFolderPath(item.path) : null;
   const folderConfig = useFolderConfig(folderPath);
@@ -602,15 +602,15 @@ function FileTreeMenu({
   const revealAriaLabel = revealLabel && revealHint ? `${revealLabel}, ${revealHint}` : revealLabel;
 
   function hideTarget() {
-    if (!okignoreBinding || !okignoreTarget) return;
+    if (!psignoreBinding || !psignoreTarget) return;
     close();
-    const pattern = buildOkignorePatternFromTarget(okignoreTarget);
-    const current = okignoreBinding.current();
-    const doc = parseOkignoreDoc(current);
+    const pattern = buildPsignorePatternFromTarget(psignoreTarget);
+    const current = psignoreBinding.current();
+    const doc = parsePsignoreDoc(current);
     const updated = appendPattern(doc, pattern);
     if (updated === doc) return;
-    okignoreBinding.patch(serializeOkignoreDoc(updated));
-    const basename = okignoreTarget.path.split('/').pop() || okignoreTarget.path;
+    psignoreBinding.patch(serializePsignoreDoc(updated));
+    const basename = psignoreTarget.path.split('/').pop() || psignoreTarget.path;
     toast.success(isFolder ? t`Hidden folder “${basename}”` : t`Hidden “${basename}”`, {
       description: t`Manage hidden files in Settings → Ignore patterns.`,
       duration: 5000,
@@ -644,7 +644,7 @@ function FileTreeMenu({
           primitives={DROPDOWN_FILE_TARGET_MENU_PRIMITIVES}
           workspaceReady={workspace != null}
           folderCreate={
-            isFolder && !isOkRow && folderPath != null
+            isFolder && !isPsRow && folderPath != null
               ? {
                   onNewFile: () => {
                     closeForInlineSurface();
@@ -742,7 +742,7 @@ function FileTreeMenu({
               : undefined
           }
           onImportTemplate={
-            !isFolder && !isAsset && !isOkRow
+            !isFolder && !isAsset && !isPsRow
               ? (deleteSource) => {
                   close();
                   onImportTemplate(target, deleteSource);
@@ -750,7 +750,7 @@ function FileTreeMenu({
               : undefined
           }
           onDuplicate={
-            !isAsset && !isOkRow
+            !isAsset && !isPsRow
               ? () => {
                   close();
                   onDuplicate(target);
@@ -758,7 +758,7 @@ function FileTreeMenu({
               : undefined
           }
           onRename={
-            !isOkRow
+            !isPsRow
               ? () => {
                   closeForInlineSurface();
                   model.startRenaming(item.path);
@@ -766,12 +766,12 @@ function FileTreeMenu({
               : undefined
           }
           hide={
-            !isOkRow && okignoreTarget
+            !isPsRow && psignoreTarget
               ? { label: hideLabel, disabled: !canHide, onSelect: hideTarget }
               : undefined
           }
           onDelete={
-            !isOkRow
+            !isPsRow
               ? () => {
                   close();
                   onDelete(deleteTargets);
@@ -810,10 +810,10 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
   const { notifySidebarFileSelected, cover: filesCover } = useSidebar();
   const { resolvedTheme } = useTheme();
   const { addPage, pageMeta, pages } = usePageList();
-  const { okignoreBinding, merged } = useConfigContext();
+  const { psignoreBinding, merged } = useConfigContext();
   const showHiddenFiles = merged?.appearance?.sidebar?.showHiddenFiles ?? false;
   const showOnlyMarkdownFiles = merged?.appearance?.sidebar?.showOnlyMarkdownFiles ?? false;
-  const showOkFolders = merged?.appearance?.sidebar?.showOkFolders ?? false;
+  const showPsFolders = merged?.appearance?.sidebar?.showPsFolders ?? false;
   const previewTabsEnabled = merged?.editor?.previewTabs ?? true;
   const previewOpenOptions = {
     disposition: previewOpenDisposition(previewTabsEnabled),
@@ -835,7 +835,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
   } = useFileTreeListing({
     showHiddenFiles,
     showOnlyMarkdownFiles,
-    showOkFolders,
+    showPsFolders,
     messages: {
       fallbackErrorTitle: t`Failed to load documents`,
       schemaMismatchTitle: t`Documents response did not match expected shape.`,
@@ -988,7 +988,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
   const busyPathRef = useRef<string | null>(null);
   const copiedKeyboardTargetRef = useRef<FileTreeTarget | null>(null);
   const observeExpandedFolderPathsRef = useRef<(paths: readonly string[]) => void>(() => {});
-  const showOkFoldersRef = useRef<boolean>(false);
+  const showPsFoldersRef = useRef<boolean>(false);
   const fileTreeHostRef = useRef<HTMLDivElement | null>(null);
   const handleSelectionChangeRef = useRef<(selectedPaths: readonly string[]) => void>(() => {});
   const handleRenameRef = useRef<(event: FileTreeRenameEvent) => void>(() => {});
@@ -1226,7 +1226,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
   const treePathsSignature = treePathSignature(treePaths);
   const treePathsRef = useRef(treePaths);
   const folderTreePaths = collectTreeFolderPathsFromDocuments(documents, {
-    includeOkFolders: showOkFolders,
+    includePsFolders: showPsFolders,
   });
   const folderTreePathsRef = useRef(folderTreePaths);
 
@@ -1249,7 +1249,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
   const expandedPathsForReset = (nextDocuments?: readonly FileEntry[]) => {
     const nextFolderPaths = new Set(
       collectTreeFolderPathsFromDocuments(nextDocuments ?? documentsRef.current, {
-        includeOkFolders: showOkFoldersRef.current,
+        includePsFolders: showPsFoldersRef.current,
       }),
     );
     const expanded = collectExpandedFolderTreePaths();
@@ -2235,7 +2235,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
     activeTargetRef.current = activeTarget;
     assetTreePathsRef.current = assetTreePaths;
     busyPathRef.current = busyPath;
-    showOkFoldersRef.current = showOkFolders;
+    showPsFoldersRef.current = showPsFolders;
     treePathsRef.current = treePaths;
     folderTreePathsRef.current = folderTreePaths;
     activeAncestorTreePathsRef.current = activeAncestorTreePaths;
@@ -2795,7 +2795,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
 
   async function handleDeleteTargets(targets: FileTreeTarget[]) {
     const deleteTargets = targets
-      .filter((target) => !hasOkPathSegment(target.path))
+      .filter((target) => !hasPsPathSegment(target.path))
       .map((target) => canonicalizeAssetTargetForDelete(target, documentsRef.current));
     const firstTarget = deleteTargets[0];
     if (!firstTarget) return;
@@ -2892,7 +2892,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
     return subscribeToFileTreeMenuActionDelete((target) => {
       const fileTreeTarget = fileTreeTargetFromNavigationTarget(target, documentsRef.current);
       if (fileTreeTarget) {
-        if (!hasOkPathSegment(fileTreeTarget.path)) {
+        if (!hasPsPathSegment(fileTreeTarget.path)) {
           setDeleteRequest({ targets: [fileTreeTarget] });
         }
         return;
@@ -3184,7 +3184,7 @@ export function FileTree({ ref }: { ref?: Ref<FileTreeHandle | null> }) {
               workspace={workspace}
               handoff={handoff}
               model={model}
-              okignoreBinding={okignoreBinding}
+              psignoreBinding={psignoreBinding}
               onStartCreating={startCreating}
               onCreateFromTemplate={(parentDir, templateName) =>
                 startCreating('file', parentDir, { template: templateName })

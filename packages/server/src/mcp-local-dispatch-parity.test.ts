@@ -20,7 +20,7 @@ type ToolResult = {
   isError?: boolean;
 };
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -49,7 +49,7 @@ beforeAll(async () => {
     tmpPrefix: 'ps-mcp-parity-',
     clientName: 'parity-suite',
     seed: (contentDir) => {
-      seedOkScaffold(contentDir);
+      seedPsScaffold(contentDir);
       writeFileSync(
         resolve(contentDir, 'alpha.md'),
         '# Alpha\n\nThe alpha reference doc.\n',

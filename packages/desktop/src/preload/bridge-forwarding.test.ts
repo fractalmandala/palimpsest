@@ -161,7 +161,7 @@ describe('preload state query marshalling', () => {
 
     const result = await bridge.state.query();
 
-    expect(invokeMock.mock.calls.map((c) => c[0])).toEqual(['ok:state:query']);
+    expect(invokeMock.mock.calls.map((c) => c[0])).toEqual(['ps:state:query']);
     expect(result).toEqual(snapshot);
   });
 });
@@ -175,7 +175,7 @@ describe('preload editor view-menu state marshalling', () => {
       terminalPlacement: 'right',
     });
 
-    expect(dispatchedPayload('ok:editor:view-menu-state-changed')).toEqual({
+    expect(dispatchedPayload('ps:editor:view-menu-state-changed')).toEqual({
       terminalVisible: true,
       terminalPlacement: 'right',
     });
@@ -192,7 +192,7 @@ describe('preload bugReport.send marshalling', () => {
       includeScreenshot: true,
     });
 
-    expect(dispatchedPayload('ok:bug-report:dispatch')).toMatchObject({
+    expect(dispatchedPayload('ps:bug-report:dispatch')).toMatchObject({
       kind: 'send',
       zipPath: '/tmp/report.zip',
       includeScreenshot: true,
@@ -208,7 +208,7 @@ describe('preload bugReport.send marshalling', () => {
       includeScreenshot: false,
     });
 
-    expect(dispatchedPayload('ok:bug-report:dispatch').includeScreenshot).toBe(false);
+    expect(dispatchedPayload('ps:bug-report:dispatch').includeScreenshot).toBe(false);
   });
 
   it('leaves the consent flag absent when the caller omits it', async () => {
@@ -219,7 +219,7 @@ describe('preload bugReport.send marshalling', () => {
       metadata: { level: 'standard' },
     });
 
-    const payload = dispatchedPayload('ok:bug-report:dispatch');
+    const payload = dispatchedPayload('ps:bug-report:dispatch');
     expect(payload.includeScreenshot).toBeUndefined();
   });
 
@@ -234,7 +234,7 @@ describe('preload bugReport.send marshalling', () => {
 
     await bridge.bugReport.send(request);
 
-    expect(dispatchedPayload('ok:bug-report:dispatch')).toEqual({ ...request, kind: 'send' });
+    expect(dispatchedPayload('ps:bug-report:dispatch')).toEqual({ ...request, kind: 'send' });
   });
 });
 
@@ -252,7 +252,7 @@ describe('preload bugReport.create marshalling', () => {
 
     await bridge.bugReport.create(request);
 
-    expect(dispatchedPayload('ok:bug-report:dispatch')).toEqual({
+    expect(dispatchedPayload('ps:bug-report:dispatch')).toEqual({
       ...request,
       kind: 'create',
     });
@@ -267,7 +267,7 @@ describe('preload bugReport.create marshalling', () => {
       attachments: [{ contentType: 'image/webp', bytes }],
     });
 
-    const payload = dispatchedPayload('ok:bug-report:dispatch') as {
+    const payload = dispatchedPayload('ps:bug-report:dispatch') as {
       attachments: { bytes: unknown }[];
     };
     expect(payload.attachments[0]?.bytes).toBeInstanceOf(Uint8Array);
@@ -285,7 +285,7 @@ describe('preload assetUpload marshalling', () => {
       filename: 'feedback-1.jpg',
     });
 
-    expect(dispatchedPayload('ok:bug-report:dispatch')).toEqual({
+    expect(dispatchedPayload('ps:bug-report:dispatch')).toEqual({
       kind: 'upload-image',
       contentType: 'image/jpeg',
       bytes,
@@ -306,7 +306,7 @@ describe('preload terminal dock-state marshalling', () => {
     });
 
     expect(result).toEqual({ ok: true });
-    expect(dispatchedPayload('ok:terminal:set-dock-state')).toEqual({
+    expect(dispatchedPayload('ps:terminal:set-dock-state')).toEqual({
       surface: 'terminal',
       order: ['pty-a', 'pty-b'],
       activeKey: 'pty-b',
@@ -346,7 +346,7 @@ describe('preload terminal dock-state marshalling', () => {
 describe('preload userConfig subscription', () => {
   function userConfigRequests(): unknown[] {
     return invokeMock.mock.calls
-      .filter((c) => c[0] === 'ok:user-config:dispatch')
+      .filter((c) => c[0] === 'ps:user-config:dispatch')
       .map((c) => c[1] as unknown);
   }
 
@@ -388,11 +388,11 @@ describe('preload update dispatch marshalling', () => {
     await bridge.update.setMode('off');
 
     expect(invokeMock.mock.calls).toEqual([
-      ['ok:update:dispatch', { kind: 'relaunch-now' }],
-      ['ok:update:dispatch', { kind: 'check-now' }],
-      ['ok:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.1' }],
-      ['ok:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' }],
-      ['ok:update:dispatch', { kind: 'set-mode', mode: 'off' }],
+      ['ps:update:dispatch', { kind: 'relaunch-now' }],
+      ['ps:update:dispatch', { kind: 'check-now' }],
+      ['ps:update:dispatch', { kind: 'whats-new-dismiss', version: '0.3.1' }],
+      ['ps:update:dispatch', { kind: 'downloaded-dismiss', version: '0.3.2' }],
+      ['ps:update:dispatch', { kind: 'set-mode', mode: 'off' }],
     ]);
   });
 
@@ -401,7 +401,7 @@ describe('preload update dispatch marshalling', () => {
     invokeMock.mockResolvedValueOnce({ kind: 'check-now' } as never);
 
     await expect(bridge.update.relaunchNow()).rejects.toThrow(
-      'ok:update:dispatch: expected relaunch-now, got check-now',
+      'ps:update:dispatch: expected relaunch-now, got check-now',
     );
   });
 
@@ -414,7 +414,7 @@ describe('preload update dispatch marshalling', () => {
     } as never);
 
     await expect(bridge.update.setMode('off')).rejects.toThrow(
-      'ok:update:dispatch: set-mode refused (persist-failed)',
+      'ps:update:dispatch: set-mode refused (persist-failed)',
     );
   });
 });

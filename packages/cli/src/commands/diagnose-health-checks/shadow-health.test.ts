@@ -17,7 +17,7 @@ function makeProjectWithShadow(): { cwd: string; shadowDir: string } {
   const cwd = mkdtempSync(join(tmpdir(), 'ps-health-sh-'));
   tmpDirs.push(cwd);
   mkdirSync(join(cwd, '.git'), { recursive: true });
-  const shadowDir = join(cwd, '.git', 'ok');
+  const shadowDir = join(cwd, '.git', 'ps');
   mkdirSync(shadowDir, { recursive: true });
   return { cwd, shadowDir };
 }
@@ -145,7 +145,7 @@ describe('shadow-health remediation names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: both uninitialized states name %s start', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

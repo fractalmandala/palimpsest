@@ -166,7 +166,7 @@ const PALETTE_COMMAND_LABELS = {
   agentPanelHide: msg`Hide Agents`,
   agentPanelAskSelection: msg`Ask AI About Selection`,
   showHiddenFiles: msg`Show hidden files`,
-  showOkFolders: msg`Show .ps folders`,
+  showPsFolders: msg`Show .ps folders`,
   showOnlyMarkdownFiles: msg`Show only markdown files`,
   showSkillsSection: msg`Skills section`,
   expandAll: msg`Expand all`,

@@ -216,7 +216,7 @@ jobs:
               echo "::error::no .node found for target $t (artifact bindings-$t)"
               missing=1
             else
-              echo "ok: $t -> $(find "$dir" -name '*.node')"
+              echo "ps: $t -> $(find "$dir" -name '*.node')"
             fi
           done
           total=$(find artifacts -name '*.node' | wc -l | tr -d ' ')

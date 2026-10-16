@@ -40,7 +40,7 @@ beforeAll(() => {
   home = mkdtempSync(join(tmpdir(), 'ps-skills-catalog-'));
 
   const pluginsDir = join(home, '.claude', 'plugins');
-  const cache = join(pluginsDir, 'cache', 'inkeep-team-skills', 'eng');
+  const cache = join(pluginsDir, 'cache', 'example-team-skills', 'eng');
   const activePath = join(cache, '2.0.0');
   const oldPath = join(cache, '1.0.0');
   const orphanPath = join(cache, '9.9.9');
@@ -52,7 +52,7 @@ beforeAll(() => {
       name: 'eng',
       description: 'Eng skills',
       version: '2.0.0',
-      author: { name: 'Inkeep' },
+      author: { name: 'Example' },
     }),
     'utf-8',
   );
@@ -79,7 +79,7 @@ beforeAll(() => {
     JSON.stringify({
       version: 2,
       plugins: {
-        'eng@inkeep-team-skills': [
+        'eng@example-team-skills': [
           {
             scope: 'project',
             projectPath: '/proj',
@@ -144,7 +144,7 @@ describe('enumerateInstalledSkills', () => {
 
     expect(alpha?.provenance).toMatchObject({
       plugin: 'eng',
-      marketplace: 'inkeep-team-skills',
+      marketplace: 'example-team-skills',
       version: '2.0.0',
       gitCommitSha: 'abc123',
       scope: 'project',

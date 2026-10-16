@@ -84,8 +84,8 @@ import {
   CLI_COMMAND_NAME_ARG_NAME,
   LANGUAGE_PREFERENCE_ARG_NAME,
   MCP_SERVER_NAME_ARG_NAME,
-  resolveOkDesktopMode,
-  resolveOkThemePreference,
+  resolvePsDesktopMode,
+  resolvePsThemePreference,
   THEME_PREFERENCE_ARG_NAME,
 } from '../shared/ok-desktop-argv.ts';
 import { isUninstallPreload } from '../shared/uninstall-preload-arg.ts';
@@ -95,9 +95,9 @@ import { createUninstallBridge } from './uninstall.ts';
 const invoke = createInvoker(ipcRenderer);
 
 async function dispatchUpdate(request: PsUpdateDispatchRequest): Promise<PsUpdateDispatchResult> {
-  const result = await invoke('ok:update:dispatch', request);
+  const result = await invoke('ps:update:dispatch', request);
   if (result.kind !== request.kind) {
-    throw new Error(`ok:update:dispatch: expected ${request.kind}, got ${result.kind}`);
+    throw new Error(`ps:update:dispatch: expected ${request.kind}, got ${result.kind}`);
   }
   return result;
 }
@@ -109,8 +109,8 @@ function isDockStateIpcTeardown(error: unknown): boolean {
 
 function createIpcEventStream<E extends { type: string }>(
   startResultPromise: Promise<{ ok: true; streamId: string } | { ok: false; error: string }>,
-  eventChannel: 'ok:local-op:auth:event' | 'ok:local-op:clone:event',
-  cancelChannel: 'ok:local-op:auth:cancel' | 'ok:local-op:clone:cancel',
+  eventChannel: 'ps:local-op:auth:event' | 'ps:local-op:clone:event',
+  cancelChannel: 'ps:local-op:auth:cancel' | 'ps:local-op:clone:cancel',
 ): PsLocalOpStream<E> {
   const buffer: E[] = [];
   const waiters: ((event: E | null) => void)[] = [];
@@ -203,9 +203,9 @@ function createIpcEventStream<E extends { type: string }>(
 
 function createLocalOpAuthStream(): PsLocalOpStream<PsLocalOpAuthEvent> {
   return createIpcEventStream<PsLocalOpAuthEvent>(
-    invoke('ok:local-op:auth:start'),
-    'ok:local-op:auth:event',
-    'ok:local-op:auth:cancel',
+    invoke('ps:local-op:auth:start'),
+    'ps:local-op:auth:event',
+    'ps:local-op:auth:cancel',
   );
 }
 
@@ -215,9 +215,9 @@ function createLocalOpCloneStream(request: {
   branch?: string | null;
 }): PsLocalOpStream<PsLocalOpCloneEvent> {
   return createIpcEventStream<PsLocalOpCloneEvent>(
-    invoke('ok:local-op:clone:start', request),
-    'ok:local-op:clone:event',
-    'ok:local-op:clone:cancel',
+    invoke('ps:local-op:clone:start', request),
+    'ps:local-op:clone:event',
+    'ps:local-op:clone:cancel',
   );
 }
 
@@ -232,12 +232,12 @@ function readConfigFromArgv(): PsDesktopConfig {
   const apiOrigin = parseArg('api-origin') ?? '';
   const projectPath = parseArg('project-path') ?? '';
   const projectName = parseArg('project-name') ?? '';
-  const mode = resolveOkDesktopMode(parseArg('mode'));
+  const mode = resolvePsDesktopMode(parseArg('mode'));
   const singleFile = parseArg('single-file') === '1';
   const languagePreference = parseArg(LANGUAGE_PREFERENCE_ARG_NAME) as
     | LanguagePreference
     | undefined;
-  const themePreference = resolveOkThemePreference(parseArg(THEME_PREFERENCE_ARG_NAME));
+  const themePreference = resolvePsThemePreference(parseArg(THEME_PREFERENCE_ARG_NAME));
   const initialDoc = parseArg('initial-doc') ?? null;
   const freshlyCreated = parseArg('fresh-create') === '1';
   const e2eSmoke = parseArg('e2e-smoke') === '1';
@@ -267,7 +267,7 @@ function readConfigFromArgv(): PsDesktopConfig {
  */
 let screenReaderActive = parseArg('screen-reader-active') === '1';
 // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-ipcRenderer.on('ok:accessibility:changed', (_event, info: { screenReaderActive: boolean }) => {
+ipcRenderer.on('ps:accessibility:changed', (_event, info: { screenReaderActive: boolean }) => {
   screenReaderActive = info.screenReaderActive === true;
 });
 
@@ -332,7 +332,7 @@ function deliverMenuAction(dispatch: PsMenuActionDispatch): void {
 const bufferedMenuActions: PsMenuActionDispatch[] = [];
 
 // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-ipcRenderer.on('ok:menu-action', (_event, dispatch: PsMenuActionDispatch) => {
+ipcRenderer.on('ps:menu-action', (_event, dispatch: PsMenuActionDispatch) => {
   if (menuActionListeners.size > 0) {
     deliverMenuAction(dispatch);
     return;
@@ -360,8 +360,8 @@ const bridge: PsDesktopBridge = {
      */
     const listener = (_event: IpcRendererEvent, next: PsDesktopConfig) => cb(next);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:project:switched', listener);
-    return () => ipcRenderer.removeListener('ok:project:switched', listener);
+    ipcRenderer.on('ps:project:switched', listener);
+    return () => ipcRenderer.removeListener('ps:project:switched', listener);
   },
 
   onMenuAction(cb: (action: PsMenuAction, origin: PsMenuActionOrigin) => void) {
@@ -385,116 +385,116 @@ const bridge: PsDesktopBridge = {
   onUpdateDownloaded(cb: (info: PsUpdateDownloadedInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsUpdateDownloadedInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:downloaded', listener);
-    return () => ipcRenderer.removeListener('ok:update:downloaded', listener);
+    ipcRenderer.on('ps:update:downloaded', listener);
+    return () => ipcRenderer.removeListener('ps:update:downloaded', listener);
   },
 
   onUpdateRelaunching(cb: (info: PsUpdateRelaunchingInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsUpdateRelaunchingInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:relaunching', listener);
-    return () => ipcRenderer.removeListener('ok:update:relaunching', listener);
+    ipcRenderer.on('ps:update:relaunching', listener);
+    return () => ipcRenderer.removeListener('ps:update:relaunching', listener);
   },
 
   onUpdateFetchingLatest(cb: (info: PsUpdateFetchingLatestInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsUpdateFetchingLatestInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:fetching-latest', listener);
-    return () => ipcRenderer.removeListener('ok:update:fetching-latest', listener);
+    ipcRenderer.on('ps:update:fetching-latest', listener);
+    return () => ipcRenderer.removeListener('ps:update:fetching-latest', listener);
   },
 
   onUpdateRelaunchFailed(cb: (info: PsUpdateRelaunchFailedInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsUpdateRelaunchFailedInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:relaunch-failed', listener);
-    return () => ipcRenderer.removeListener('ok:update:relaunch-failed', listener);
+    ipcRenderer.on('ps:update:relaunch-failed', listener);
+    return () => ipcRenderer.removeListener('ps:update:relaunch-failed', listener);
   },
 
   onWhatsNew(cb: (info: PsWhatsNewInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsWhatsNewInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:whats-new', listener);
-    return () => ipcRenderer.removeListener('ok:update:whats-new', listener);
+    ipcRenderer.on('ps:update:whats-new', listener);
+    return () => ipcRenderer.removeListener('ps:update:whats-new', listener);
   },
 
   onWhatsNewDismissed(cb: (info: { version: string }) => void) {
     const listener = (_event: IpcRendererEvent, info: { version: string }) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:whats-new-dismissed', listener);
-    return () => ipcRenderer.removeListener('ok:update:whats-new-dismissed', listener);
+    ipcRenderer.on('ps:update:whats-new-dismissed', listener);
+    return () => ipcRenderer.removeListener('ps:update:whats-new-dismissed', listener);
   },
 
   onUpdateStuckHint(cb: (info: PsUpdateStuckHintInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsUpdateStuckHintInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:stuck-hint', listener);
-    return () => ipcRenderer.removeListener('ok:update:stuck-hint', listener);
+    ipcRenderer.on('ps:update:stuck-hint', listener);
+    return () => ipcRenderer.removeListener('ps:update:stuck-hint', listener);
   },
 
   onUpdateManualCheck(cb: (info: PsUpdateManualCheckInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsUpdateManualCheckInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:update:manual-check', listener);
-    return () => ipcRenderer.removeListener('ok:update:manual-check', listener);
+    ipcRenderer.on('ps:update:manual-check', listener);
+    return () => ipcRenderer.removeListener('ps:update:manual-check', listener);
   },
 
   onDeepLink(cb: (evt: PsDeepLinkPayload) => void) {
     const listener = (_event: IpcRendererEvent, evt: PsDeepLinkPayload) => cb(evt);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:deep-link', listener);
-    return () => ipcRenderer.removeListener('ok:deep-link', listener);
+    ipcRenderer.on('ps:deep-link', listener);
+    return () => ipcRenderer.removeListener('ps:deep-link', listener);
   },
 
   onShareReceived(cb: (payload: PsShareReceivedPayload) => void) {
     const listener = (_event: IpcRendererEvent, payload: PsShareReceivedPayload) => cb(payload);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:share:received', listener);
-    return () => ipcRenderer.removeListener('ok:share:received', listener);
+    ipcRenderer.on('ps:share:received', listener);
+    return () => ipcRenderer.removeListener('ps:share:received', listener);
   },
 
   onServerVersionDrift(cb: (info: PsServerVersionDriftInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsServerVersionDriftInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:server-version-drift', listener);
-    return () => ipcRenderer.removeListener('ok:server-version-drift', listener);
+    ipcRenderer.on('ps:server-version-drift', listener);
+    return () => ipcRenderer.removeListener('ps:server-version-drift', listener);
   },
 
   onServerRestarted(cb: (info: PsServerRestartedInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsServerRestartedInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:server-restarted', listener);
-    return () => ipcRenderer.removeListener('ok:server-restarted', listener);
+    ipcRenderer.on('ps:server-restarted', listener);
+    return () => ipcRenderer.removeListener('ps:server-restarted', listener);
   },
 
   onRecentRemovedMissing(cb: (info: PsRecentRemovedMissingInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsRecentRemovedMissingInfo) => cb(info);
     // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ok:project:recent-removed-missing', listener);
-    return () => ipcRenderer.removeListener('ok:project:recent-removed-missing', listener);
+    ipcRenderer.on('ps:project:recent-removed-missing', listener);
+    return () => ipcRenderer.removeListener('ps:project:recent-removed-missing', listener);
   },
 
-  restartServer: (projectPath: string) => invoke('ok:project:restart-server', projectPath),
+  restartServer: (projectPath: string) => invoke('ps:project:restart-server', projectPath),
 
-  setThemeSource: (source: PsThemeSource) => invoke('ok:theme:set-source', { source }),
+  setThemeSource: (source: PsThemeSource) => invoke('ps:theme:set-source', { source }),
 
   setLanguagePreference: (preference: LanguagePreference) =>
-    invoke('ok:user-config:dispatch', { kind: 'set-language-preference', preference }) as Promise<{
+    invoke('ps:user-config:dispatch', { kind: 'set-language-preference', preference }) as Promise<{
       ok: true;
     }>,
 
   userConfig: {
     read: () =>
-      invoke('ok:user-config:dispatch', { kind: 'read' }) as Promise<PsUserConfigSnapshot>,
+      invoke('ps:user-config:dispatch', { kind: 'read' }) as Promise<PsUserConfigSnapshot>,
     patch: (patch: ConfigPatch) =>
-      invoke('ok:user-config:dispatch', {
+      invoke('ps:user-config:dispatch', {
         kind: 'patch',
         patch,
       }) as Promise<PsUserConfigPatchResult>,
     onChanged(cb: (snapshot: PsUserConfigSnapshot) => void) {
       const listener = (_event: IpcRendererEvent, snapshot: PsUserConfigSnapshot) => cb(snapshot);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:user-config:changed', listener);
-      invoke('ok:user-config:dispatch', { kind: 'subscribe' }).catch((err: unknown) => {
+      ipcRenderer.on('ps:user-config:changed', listener);
+      invoke('ps:user-config:dispatch', { kind: 'subscribe' }).catch((err: unknown) => {
         console.warn(
           JSON.stringify({
             event: 'user-config-subscribe-failed',
@@ -503,8 +503,8 @@ const bridge: PsDesktopBridge = {
         );
       });
       return () => {
-        ipcRenderer.removeListener('ok:user-config:changed', listener);
-        invoke('ok:user-config:dispatch', { kind: 'unsubscribe' }).catch((err: unknown) => {
+        ipcRenderer.removeListener('ps:user-config:changed', listener);
+        invoke('ps:user-config:dispatch', { kind: 'unsubscribe' }).catch((err: unknown) => {
           console.warn(
             JSON.stringify({
               event: 'user-config-unsubscribe-failed',
@@ -517,7 +517,7 @@ const bridge: PsDesktopBridge = {
   },
 
   signalThemeApplied: (opts?: { reducedTransparency?: boolean; chrome?: PsChromeColors }) => {
-    invoke('ok:theme:applied', opts).catch((err: unknown) => {
+    invoke('ps:theme:applied', opts).catch((err: unknown) => {
       console.warn(
         JSON.stringify({
           event: 'signal-theme-applied-failed',
@@ -528,66 +528,66 @@ const bridge: PsDesktopBridge = {
   },
 
   dialog: {
-    openFolder: (opts) => invoke('ok:dialog:open-folder', opts),
+    openFolder: (opts) => invoke('ps:dialog:open-folder', opts),
   },
 
   shell: {
-    openExternal: (url: string) => invoke('ok:shell:open-external', url),
-    detectProtocol: (scheme: string) => invoke('ok:shell:detect-protocol', scheme),
-    spawnCursor: (path: string) => invoke('ok:shell:spawn-cursor', path),
-    recordHandoff: (line) => invoke('ok:shell:record-handoff', line),
-    openAsset: (relPath: string) => invoke('ok:shell:open-asset', relPath),
-    revealAsset: (relPath: string) => invoke('ok:shell:reveal-asset', relPath),
-    revealExternal: (absPath: string) => invoke('ok:shell:reveal-external', absPath),
-    showAssetMenu: (params) => invoke('ok:shell:show-asset-menu', params),
-    showItemInFolder: (path: string) => invoke('ok:shell:show-item-in-folder', path),
-    trashItem: (absPath: string) => invoke('ok:shell:trash-item', absPath),
+    openExternal: (url: string) => invoke('ps:shell:open-external', url),
+    detectProtocol: (scheme: string) => invoke('ps:shell:detect-protocol', scheme),
+    spawnCursor: (path: string) => invoke('ps:shell:spawn-cursor', path),
+    recordHandoff: (line) => invoke('ps:shell:record-handoff', line),
+    openAsset: (relPath: string) => invoke('ps:shell:open-asset', relPath),
+    revealAsset: (relPath: string) => invoke('ps:shell:reveal-asset', relPath),
+    revealExternal: (absPath: string) => invoke('ps:shell:reveal-external', absPath),
+    showAssetMenu: (params) => invoke('ps:shell:show-asset-menu', params),
+    showItemInFolder: (path: string) => invoke('ps:shell:show-item-in-folder', path),
+    trashItem: (absPath: string) => invoke('ps:shell:trash-item', absPath),
   },
 
   clipboard: {
-    writeText: (text: string) => invoke('ok:clipboard:write-text', text),
-    copyImage: (params) => invoke('ok:clipboard:copy-image', params),
+    writeText: (text: string) => invoke('ps:clipboard:write-text', text),
+    copyImage: (params) => invoke('ps:clipboard:copy-image', params),
   },
 
   project: {
-    listRecent: () => invoke('ok:project:list-recent'),
-    removeRecent: (path: string) => invoke('ok:project:remove-recent', path),
-    getSessionState: () => invoke('ok:project:get-session-state'),
-    setSessionState: (state) => invoke('ok:project:set-session-state', state),
-    open: (request) => invoke('ok:project:open', request),
-    openFile: () => invoke('ok:project:open-file-picker'),
-    createNew: (args) => invoke('ok:project:create-new', args),
+    listRecent: () => invoke('ps:project:list-recent'),
+    removeRecent: (path: string) => invoke('ps:project:remove-recent', path),
+    getSessionState: () => invoke('ps:project:get-session-state'),
+    setSessionState: (state) => invoke('ps:project:set-session-state', state),
+    open: (request) => invoke('ps:project:open', request),
+    openFile: () => invoke('ps:project:open-file-picker'),
+    createNew: (args) => invoke('ps:project:create-new', args),
     recordCreateNewBannerShown: (banner) =>
-      invoke('ok:project:record-create-new-banner-shown', banner),
-    checkTargetExists: (request) => invoke('ok:project:check-target-exists', request),
-    readHeadBranch: (projectPath: string) => invoke('ok:project:read-head-branch', projectPath),
-    fetchBranchInfo: (request) => invoke('ok:project:fetch-branch-info', request),
-    runCheckout: (request) => invoke('ok:project:run-checkout', request),
-    fetchTargetStatus: (request) => invoke('ok:project:fetch-target-status', request),
-    awaitBranchSwitched: (request) => invoke('ok:project:await-branch-switched', request),
-    psInit: (request) => invoke('ok:project:ps-init', request),
-    close: () => invoke('ok:project:close'),
+      invoke('ps:project:record-create-new-banner-shown', banner),
+    checkTargetExists: (request) => invoke('ps:project:check-target-exists', request),
+    readHeadBranch: (projectPath: string) => invoke('ps:project:read-head-branch', projectPath),
+    fetchBranchInfo: (request) => invoke('ps:project:fetch-branch-info', request),
+    runCheckout: (request) => invoke('ps:project:run-checkout', request),
+    fetchTargetStatus: (request) => invoke('ps:project:fetch-target-status', request),
+    awaitBranchSwitched: (request) => invoke('ps:project:await-branch-switched', request),
+    psInit: (request) => invoke('ps:project:ps-init', request),
+    close: () => invoke('ps:project:close'),
   },
 
   worktree: {
-    list: () => invoke('ok:worktree:dispatch', { kind: 'list' }) as Promise<WorktreeListResult>,
+    list: () => invoke('ps:worktree:dispatch', { kind: 'list' }) as Promise<WorktreeListResult>,
     inventory: (request) =>
-      invoke('ok:worktree:dispatch', {
+      invoke('ps:worktree:dispatch', {
         kind: 'inventory',
         ...request,
       }) as ReturnType<PsDesktopBridge['worktree']['inventory']>,
     openInventory: (request) =>
-      invoke('ok:worktree:dispatch', {
+      invoke('ps:worktree:dispatch', {
         kind: 'open-inventory',
         ...request,
       }) as ReturnType<PsDesktopBridge['worktree']['openInventory']>,
     create: (request: WorktreeCreateRequest) =>
-      invoke('ok:worktree:dispatch', {
+      invoke('ps:worktree:dispatch', {
         kind: 'create',
         ...request,
       }) as Promise<WorktreeCreateResult>,
     checkout: (request: { branch: string }) =>
-      invoke('ok:worktree:dispatch', {
+      invoke('ps:worktree:dispatch', {
         kind: 'checkout',
         branch: request.branch,
       }) as Promise<WorktreeCreateResult>,
@@ -595,16 +595,16 @@ const bridge: PsDesktopBridge = {
 
   sharing: {
     status: async () => {
-      const result = await invoke('ok:sharing:dispatch', { kind: 'status' });
+      const result = await invoke('ps:sharing:dispatch', { kind: 'status' });
       if (result.kind !== 'status') {
-        throw new Error(`ok:sharing:dispatch: expected status, got ${result.kind}`);
+        throw new Error(`ps:sharing:dispatch: expected status, got ${result.kind}`);
       }
       return result;
     },
     setMode: async (mode: 'shared' | 'local-only') => {
-      const result = await invoke('ok:sharing:dispatch', { kind: 'set-mode', mode });
+      const result = await invoke('ps:sharing:dispatch', { kind: 'set-mode', mode });
       if (result.kind === 'status') {
-        throw new Error('ok:sharing:dispatch: expected set-mode result, got status');
+        throw new Error('ps:sharing:dispatch: expected set-mode result, got status');
       }
       return result;
     },
@@ -614,7 +614,7 @@ const bridge: PsDesktopBridge = {
 
   bugReport: {
     create: (request: Parameters<PsDesktopBridge['bugReport']['create']>[0]) =>
-      invoke('ok:bug-report:dispatch', {
+      invoke('ps:bug-report:dispatch', {
         kind: 'create',
         level: request.level,
         note: request.note,
@@ -625,39 +625,39 @@ const bridge: PsDesktopBridge = {
         crashEventId: request.crashEventId,
       }) as Promise<PsBugReportCreateResult>,
     captureScreenshot: () =>
-      invoke('ok:bug-report:dispatch', {
+      invoke('ps:bug-report:dispatch', {
         kind: 'capture-screenshot',
       }) as Promise<PsBugReportScreenshot | null>,
     crashDumpAvailability: () =>
-      invoke('ok:bug-report:dispatch', {
+      invoke('ps:bug-report:dispatch', {
         kind: 'crash-dump-availability',
       }) as Promise<PsBugReportCrashDumpAvailability>,
     send: (request: Parameters<PsDesktopBridge['bugReport']['send']>[0]) =>
-      invoke('ok:bug-report:dispatch', {
+      invoke('ps:bug-report:dispatch', {
         ...request,
         kind: 'send',
       }) as Promise<PsBugReportSendResult>,
     crashAck: (request: { eventId: string }) =>
-      invoke('ok:bug-report:dispatch', {
+      invoke('ps:bug-report:dispatch', {
         kind: 'crash-ack',
         eventId: request.eventId,
       }) as Promise<PsBugReportCrashAckResult>,
     list: () =>
-      invoke('ok:bug-report:dispatch', { kind: 'list' }) as Promise<PsBugReportListResult>,
+      invoke('ps:bug-report:dispatch', { kind: 'list' }) as Promise<PsBugReportListResult>,
     delete: (id: string) =>
-      invoke('ok:bug-report:dispatch', { kind: 'delete', id }) as Promise<PsBugReportDeleteResult>,
+      invoke('ps:bug-report:dispatch', { kind: 'delete', id }) as Promise<PsBugReportDeleteResult>,
     onCrashDetected(cb: (event: PsBugReportCrashDetectedEvent) => void) {
       const listener = (_event: IpcRendererEvent, event: PsBugReportCrashDetectedEvent) =>
         cb(event);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:bug-report:crash-detected', listener);
-      return () => ipcRenderer.removeListener('ok:bug-report:crash-detected', listener);
+      ipcRenderer.on('ps:bug-report:crash-detected', listener);
+      return () => ipcRenderer.removeListener('ps:bug-report:crash-detected', listener);
     },
   },
 
   assetUpload: {
     uploadImage: (request: PsAssetUploadRequest) =>
-      invoke('ok:bug-report:dispatch', {
+      invoke('ps:bug-report:dispatch', {
         kind: 'upload-image',
         contentType: request.contentType,
         bytes: request.bytes,
@@ -666,47 +666,47 @@ const bridge: PsDesktopBridge = {
   },
 
   fs: {
-    defaultProjectsRoot: () => invoke('ok:fs:default-projects-root'),
-    folderState: (path: string) => invoke('ok:fs:folder-state', path),
-    findEnclosingProjectRoot: (path: string) => invoke('ok:fs:find-enclosing-project-root', path),
-    findEnclosingGitRoot: (path: string) => invoke('ok:fs:find-enclosing-git-root', path),
-    removeGitFolder: (gitRoot: string) => invoke('ok:fs:remove-git-folder', gitRoot),
+    defaultProjectsRoot: () => invoke('ps:fs:default-projects-root'),
+    folderState: (path: string) => invoke('ps:fs:folder-state', path),
+    findEnclosingProjectRoot: (path: string) => invoke('ps:fs:find-enclosing-project-root', path),
+    findEnclosingGitRoot: (path: string) => invoke('ps:fs:find-enclosing-git-root', path),
+    removeGitFolder: (gitRoot: string) => invoke('ps:fs:remove-git-folder', gitRoot),
   },
 
   navigator: {
-    open: () => invoke('ok:navigator:open'),
+    open: () => invoke('ps:navigator:open'),
   },
 
   noteWindow: {
     open: async (docName: string, entryPoint: 'tab-menu' | 'palette') => {
-      const result = await invoke('ok:window:open-note', { kind: 'open', docName, entryPoint });
+      const result = await invoke('ps:window:open-note', { kind: 'open', docName, entryPoint });
       if (result.ok && !('outcome' in result)) {
-        throw new Error('ok:window:open-note returned a non-open result for an open request');
+        throw new Error('ps:window:open-note returned a non-open result for an open request');
       }
       return result as Awaited<ReturnType<PsDesktopBridge['noteWindow']['open']>>;
     },
     dispatchToMain: (action: PsNoteWindowMainAction) =>
-      invoke('ok:window:open-note', {
+      invoke('ps:window:open-note', {
         kind: 'dispatch-to-main',
         action,
       }) as Promise<PsNoteWindowMainActionResult>,
     onMainAction(cb: (action: PsNoteWindowMainAction) => void) {
       const listener = (_event: IpcRendererEvent, action: PsNoteWindowMainAction) => cb(action);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:note-window:main-action', listener);
-      return () => ipcRenderer.removeListener('ok:note-window:main-action', listener);
+      ipcRenderer.on('ps:note-window:main-action', listener);
+      return () => ipcRenderer.removeListener('ps:note-window:main-action', listener);
     },
   },
 
   seed: {
-    plan: (options) => invoke('ok:seed:plan', options),
-    apply: (plan, options) => invoke('ok:seed:apply', plan, options),
-    listPacks: () => invoke('ok:seed:list-packs'),
+    plan: (options) => invoke('ps:seed:plan', options),
+    apply: (plan, options) => invoke('ps:seed:apply', plan, options),
+    listPacks: () => invoke('ps:seed:list-packs'),
   },
 
   skill: {
-    detectClaudeDesktop: () => invoke('ok:skill:detect-claude-desktop'),
-    buildAndOpen: (opts) => invoke('ok:skill:build-and-open', opts),
+    detectClaudeDesktop: () => invoke('ps:skill:detect-claude-desktop'),
+    buildAndOpen: (opts) => invoke('ps:skill:build-and-open', opts),
   },
 
   update: {
@@ -725,60 +725,60 @@ const bridge: PsDesktopBridge = {
     setMode: async (mode) => {
       const result = await dispatchUpdate({ kind: 'set-mode', mode });
       if (result.kind === 'set-mode' && !result.ok) {
-        throw new Error(`ok:update:dispatch: set-mode refused (${result.reason})`);
+        throw new Error(`ps:update:dispatch: set-mode refused (${result.reason})`);
       }
     },
   },
 
   state: {
-    query: () => invoke('ok:state:query'),
-    resetIncompatible: () => invoke('ok:state:reset-incompatible'),
+    query: () => invoke('ps:state:query'),
+    resetIncompatible: () => invoke('ps:state:reset-incompatible'),
   },
 
   mcpWiring: {
     onShow(cb: (payload: PsMcpWiringShowPayload) => void) {
       const listener = (_event: IpcRendererEvent, payload: PsMcpWiringShowPayload) => cb(payload);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:mcp-wiring:show', listener);
-      return () => ipcRenderer.removeListener('ok:mcp-wiring:show', listener);
+      ipcRenderer.on('ps:mcp-wiring:show', listener);
+      return () => ipcRenderer.removeListener('ps:mcp-wiring:show', listener);
     },
     signalReady: () => {
-      invoke('ok:mcp-wiring:renderer-ready').catch(() => {});
+      invoke('ps:mcp-wiring:renderer-ready').catch(() => {});
     },
     confirm: (request) =>
-      invoke('ok:mcp-wiring:confirm', {
+      invoke('ps:mcp-wiring:confirm', {
         editorIds: request.editorIds,
         pathInstall: request.pathInstall,
         skills: request.skills,
       }),
-    skip: () => invoke('ok:mcp-wiring:skip'),
-    reconfigure: () => invoke('ok:mcp-wiring:reconfigure'),
+    skip: () => invoke('ps:mcp-wiring:skip'),
+    reconfigure: () => invoke('ps:mcp-wiring:reconfigure'),
   },
 
   spellcheck: {
-    toggle: () => invoke('ok:spellcheck:toggle'),
+    toggle: () => invoke('ps:spellcheck:toggle'),
     languages: async () =>
       asSpellingLanguagesQueryResult(
-        await invoke('ok:menu:dispatch', { kind: 'spelling-languages-query' }),
+        await invoke('ps:menu:dispatch', { kind: 'spelling-languages-query' }),
       ),
     setLanguages: async (languages: readonly string[]) =>
       asSpellingLanguagesSetResult(
-        await invoke('ok:menu:dispatch', {
+        await invoke('ps:menu:dispatch', {
           kind: 'spelling-languages-set',
           languages: [...languages],
         }),
       ),
     setEnabled: async (enabled: boolean) =>
       asSpellcheckEnabledSetResult(
-        await invoke('ok:menu:dispatch', { kind: 'spellcheck-enabled-set', enabled }),
+        await invoke('ps:menu:dispatch', { kind: 'spellcheck-enabled-set', enabled }),
       ),
   },
 
   integrations: {
     status: () =>
-      invoke('ok:integrations:dispatch', { kind: 'status' }) as Promise<IntegrationsStatus>,
+      invoke('ps:integrations:dispatch', { kind: 'status' }) as Promise<IntegrationsStatus>,
     setComponent: (request) =>
-      invoke('ok:integrations:dispatch', {
+      invoke('ps:integrations:dispatch', {
         kind: 'set',
         component: request.component,
         enabled: request.enabled,
@@ -787,11 +787,11 @@ const bridge: PsDesktopBridge = {
 
   projectIntegrations: {
     status: () =>
-      invoke('ok:project-integrations:dispatch', {
+      invoke('ps:project-integrations:dispatch', {
         kind: 'status',
       }) as Promise<ProjectIntegrationsStatus>,
     setComponent: (request) =>
-      invoke('ok:project-integrations:dispatch', {
+      invoke('ps:project-integrations:dispatch', {
         kind: 'set',
         component: request.component,
         enabled: request.enabled,
@@ -800,7 +800,7 @@ const bridge: PsDesktopBridge = {
 
   agentIntegrations: {
     apply: (request) =>
-      invoke('ok:integrations:dispatch', {
+      invoke('ps:integrations:dispatch', {
         kind: 'apply-batch',
         intents: request.intents,
       }) as Promise<AgentIntegrationsApplyResult>,
@@ -808,27 +808,27 @@ const bridge: PsDesktopBridge = {
 
   remoteAccess: {
     probePort: (port) =>
-      invoke('ok:remote-access:dispatch', { kind: 'probe-port', port }) as Promise<boolean>,
+      invoke('ps:remote-access:dispatch', { kind: 'probe-port', port }) as Promise<boolean>,
   },
 
   onboarding: {
     onShow(cb: (payload: PsOnboardingShowPayload) => void) {
       const listener = (_event: IpcRendererEvent, payload: PsOnboardingShowPayload) => cb(payload);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:onboarding:show', listener);
-      return () => ipcRenderer.removeListener('ok:onboarding:show', listener);
+      ipcRenderer.on('ps:onboarding:show', listener);
+      return () => ipcRenderer.removeListener('ps:onboarding:show', listener);
     },
     signalReady: () => {
-      invoke('ok:onboarding:renderer-ready').catch(() => {});
+      invoke('ps:onboarding:renderer-ready').catch(() => {});
     },
-    confirm: (request) => invoke('ok:onboarding:confirm', request),
-    cancel: () => invoke('ok:onboarding:cancel'),
-    probeContent: (request) => invoke('ok:onboarding:probe-content', request),
+    confirm: (request) => invoke('ps:onboarding:confirm', request),
+    cancel: () => invoke('ps:onboarding:cancel'),
+    probeContent: (request) => invoke('ps:onboarding:probe-content', request),
     onToast(cb: (payload: PsOnboardingToastPayload) => void) {
       const listener = (_event: IpcRendererEvent, payload: PsOnboardingToastPayload) => cb(payload);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:onboarding:toast', listener);
-      return () => ipcRenderer.removeListener('ok:onboarding:toast', listener);
+      ipcRenderer.on('ps:onboarding:toast', listener);
+      return () => ipcRenderer.removeListener('ps:onboarding:toast', listener);
     },
   },
 
@@ -839,34 +839,34 @@ const bridge: PsDesktopBridge = {
     clone: {
       start: (request) => createLocalOpCloneStream(request),
     },
-    authStatus: (request) => invoke('ok:local-op:auth:status', request),
-    authRepos: (request) => invoke('ok:local-op:auth:repos', request),
+    authStatus: (request) => invoke('ps:local-op:auth:status', request),
+    authRepos: (request) => invoke('ps:local-op:auth:repos', request),
   },
 
   share: {
-    validateLocalFolder: (args) => invoke('ok:share:validate-folder', args),
+    validateLocalFolder: (args) => invoke('ps:share:validate-folder', args),
   },
 
   editor: {
     notifyActiveTargetChanged: (target: PsEditorActiveTargetSnapshot) => {
-      invoke('ok:editor:active-target-changed', target).catch(() => {});
+      invoke('ps:editor:active-target-changed', target).catch(() => {});
     },
     notifyViewMenuStateChanged: (state: PsEditorViewMenuStateChange) => {
-      invoke('ok:editor:view-menu-state-changed', state).catch(() => {});
+      invoke('ps:editor:view-menu-state-changed', state).catch(() => {});
     },
     notifyBackgroundThrottle: (signal: { hasPendingWork: boolean; enabled: boolean }) => {
-      invoke('ok:editor:background-throttle', signal).catch(() => {});
+      invoke('ps:editor:background-throttle', signal).catch(() => {});
     },
   },
 
   menu: {
     dispatch: async (request: PsMenuUiDispatchRequest) =>
-      asMenuRendererSnapshot(await invoke('ok:menu:dispatch', request)),
+      asMenuRendererSnapshot(await invoke('ps:menu:dispatch', request)),
   },
 
   startup: {
     reportMarks: (marks: { pageListReadyMs: number; firstContentMs: number }) => {
-      invoke('ok:startup:renderer-marks', marks).catch(() => {});
+      invoke('ps:startup:renderer-marks', marks).catch(() => {});
     },
   },
 
@@ -874,39 +874,39 @@ const bridge: PsDesktopBridge = {
     expandAll(cb: () => void) {
       const listener = (_event: IpcRendererEvent) => cb();
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:sidebar:expand-all', listener);
-      return () => ipcRenderer.removeListener('ok:sidebar:expand-all', listener);
+      ipcRenderer.on('ps:sidebar:expand-all', listener);
+      return () => ipcRenderer.removeListener('ps:sidebar:expand-all', listener);
     },
     collapseAll(cb: () => void) {
       const listener = (_event: IpcRendererEvent) => cb();
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:sidebar:collapse-all', listener);
-      return () => ipcRenderer.removeListener('ok:sidebar:collapse-all', listener);
+      ipcRenderer.on('ps:sidebar:collapse-all', listener);
+      return () => ipcRenderer.removeListener('ps:sidebar:collapse-all', listener);
     },
   },
 
   terminal: {
-    create: (opts) => invoke('ok:pty:create', opts),
+    create: (opts) => invoke('ps:pty:create', opts),
     input: (ptyId, data) => {
-      invoke('ok:pty:input', { ptyId, data }).catch(() => {});
+      invoke('ps:pty:input', { ptyId, data }).catch(() => {});
     },
     resize: (ptyId, cols, rows) => {
-      invoke('ok:pty:resize', { ptyId, cols, rows }).catch(() => {});
+      invoke('ps:pty:resize', { ptyId, cols, rows }).catch(() => {});
     },
-    kill: (ptyId) => invoke('ok:pty:kill', { ptyId }),
+    kill: (ptyId) => invoke('ps:pty:kill', { ptyId }),
     drain: (ptyId, bytes) => {
-      invoke('ok:pty:drain', { ptyId, bytes }).catch(() => {});
+      invoke('ps:pty:drain', { ptyId, bytes }).catch(() => {});
     },
-    list: () => invoke('ok:pty:list'),
-    adopt: (ptyId, opts) => invoke('ok:pty:adopt', { ptyId, ...opts }),
-    start: (ptyId) => invoke('ok:pty:adopt', { ptyId, start: true }),
+    list: () => invoke('ps:pty:list'),
+    adopt: (ptyId, opts) => invoke('ps:pty:adopt', { ptyId, ...opts }),
+    start: (ptyId) => invoke('ps:pty:adopt', { ptyId, start: true }),
     setMeta: (ptyId, meta) => {
-      invoke('ok:pty:set-meta', { ptyId, ...meta }).catch(() => {});
+      invoke('ps:pty:set-meta', { ptyId, ...meta }).catch(() => {});
     },
     setOrder: (orderedPtyIds) => {
-      invoke('ok:pty:set-order', { orderedPtyIds: [...orderedPtyIds] }).catch(() => {});
+      invoke('ps:pty:set-order', { orderedPtyIds: [...orderedPtyIds] }).catch(() => {});
     },
-    getDockState: () => invoke('ok:terminal:dock-state'),
+    getDockState: () => invoke('ps:terminal:dock-state'),
     setDockState: async (state) => {
       const request =
         state.surface === 'terminal'
@@ -925,7 +925,7 @@ const bridge: PsDesktopBridge = {
               activeKey: state.activeKey,
             };
       try {
-        return await invoke('ok:terminal:set-dock-state', request);
+        return await invoke('ps:terminal:set-dock-state', request);
       } catch (error) {
         if (isDockStateIpcTeardown(error)) return { ok: false, reason: 'ipc-unavailable' };
         throw error;
@@ -934,24 +934,24 @@ const bridge: PsDesktopBridge = {
     onData(cb) {
       const listener = (_event: IpcRendererEvent, msg: PsPtyData) => cb(msg);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:pty:data', listener);
-      return () => ipcRenderer.removeListener('ok:pty:data', listener);
+      ipcRenderer.on('ps:pty:data', listener);
+      return () => ipcRenderer.removeListener('ps:pty:data', listener);
     },
     onExit(cb) {
       const listener = (_event: IpcRendererEvent, msg: PsPtyExit) => cb(msg);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:pty:exit', listener);
-      return () => ipcRenderer.removeListener('ok:pty:exit', listener);
+      ipcRenderer.on('ps:pty:exit', listener);
+      return () => ipcRenderer.removeListener('ps:pty:exit', listener);
     },
     onNotice(cb) {
       const listener = (_event: IpcRendererEvent, msg: PsPtyNotice) => cb(msg);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:pty:notice', listener);
-      return () => ipcRenderer.removeListener('ok:pty:notice', listener);
+      ipcRenderer.on('ps:pty:notice', listener);
+      return () => ipcRenderer.removeListener('ps:pty:notice', listener);
     },
-    claudePreflight: () => invoke('ok:terminal:claude-assist', { action: 'preflight' }),
-    cliPreflight: (cli) => invoke('ok:terminal:cli-preflight', { cli }),
-    cliInstalledMap: () => invoke('ok:terminal:cli-installed-map'),
+    claudePreflight: () => invoke('ps:terminal:claude-assist', { action: 'preflight' }),
+    cliPreflight: (cli) => invoke('ps:terminal:cli-preflight', { cli }),
+    cliInstalledMap: () => invoke('ps:terminal:cli-installed-map'),
   },
 
   accessibility: {
@@ -960,8 +960,8 @@ const bridge: PsDesktopBridge = {
       const listener = (_event: IpcRendererEvent, info: { screenReaderActive: boolean }) =>
         cb(info.screenReaderActive === true);
       // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-      ipcRenderer.on('ok:accessibility:changed', listener);
-      return () => ipcRenderer.removeListener('ok:accessibility:changed', listener);
+      ipcRenderer.on('ps:accessibility:changed', listener);
+      return () => ipcRenderer.removeListener('ps:accessibility:changed', listener);
     },
   },
 
@@ -984,7 +984,7 @@ const bridge: PsDesktopBridge = {
 
 if (parseArg('debug-keyring-smoke') === '1') {
   bridge.debug = {
-    keyringSmoke: () => invoke('ok:debug:keyring-smoke'),
+    keyringSmoke: () => invoke('ps:debug:keyring-smoke'),
   };
 }
 

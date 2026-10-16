@@ -4,7 +4,7 @@ A doc can land in conflict through a Git merge, a pull that collides with a loca
 
 ```json
 {
-  "type": "urn:ok:error:doc-in-conflict",
+  "type": "urn:ps:error:doc-in-conflict",
   "title": "Document is in conflict.",
   "status": 409,
   "detail": "The document is in a conflict state. Ask the user to resolve it in the Palimpsest app, then retry.",
@@ -16,7 +16,7 @@ A doc can land in conflict through a Git merge, a pull that collides with a loca
 
 The gate covers `write`, `edit`, `delete`, `move`, `restore_version`, and agent undo (the doc-CRDT write spine; template/folder ops are fs-direct). You cannot route around it by writing content that byte-matches one of the stages. The gate refuses on tracked state, not on body equality.
 
-A write that first detects a stale file during its final disk flush returns `urn:ok:error:stale-external-write` (409). The edit reached collaborative state and the recovery snapshot, but the disk write did not happen. Ask the user to resolve it in the app, then re-read. Do not repeat the operation: a retried append can duplicate content already retained in the current version.
+A write that first detects a stale file during its final disk flush returns `urn:ps:error:stale-external-write` (409). The edit reached collaborative state and the recovery snapshot, but the disk write did not happen. Ask the user to resolve it in the app, then re-read. Do not repeat the operation: a retried append can duplicate content already retained in the current version.
 
 **You cannot resolve a conflict over MCP.** There is no conflict tool, and `exec` is read-only. On either 409, stop writing to that file, tell the user which file is in conflict, and ask them to resolve it in the Palimpsest app. After they confirm, re-read the document. For `doc-in-conflict`, the operation was refused; retry only if it is still needed. For `stale-external-write`, the operation already reached collaborative state; do not repeat it. Compare the resolved document with the intended result and make only any remaining edit.
 
@@ -47,4 +47,4 @@ If applying a resolution fails, ask the user to inspect the remaining conflict i
 
 A conflict can also close without you. Resolving a merge with raw git outside the app prunes the `merge-native` entry on the next disk change or HEAD move, and a `reconcile` conflict whose file comes back clean on disk dissolves on the next watcher pass.
 
-Stale-save recovery data lives in `.ps/local/stale-external-writes.json`, with owner-only permissions. Do not delete that file or restart with empty state when it is corrupt or unreadable; it may hold the only copy of protected edits. Preserve it, restore a known-good backup, and run `ok bug-report` from the project directory for diagnostics. An unresolved conflict does not expire with the displaced-hash window.
+Stale-save recovery data lives in `.ps/local/stale-external-writes.json`, with owner-only permissions. Do not delete that file or restart with empty state when it is corrupt or unreadable; it may hold the only copy of protected edits. Preserve it, restore a known-good backup, and run `ps bug-report` from the project directory for diagnostics. An unresolved conflict does not expire with the displaced-hash window.

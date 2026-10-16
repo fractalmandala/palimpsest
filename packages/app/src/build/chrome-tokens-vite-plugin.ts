@@ -15,7 +15,7 @@ export function chromeTokensVitePlugin(options: ChromeTokensPluginOptions = {}):
   const cssPath = options.globalsCssPath ?? resolve(HERE, '../globals.css');
 
   return {
-    name: 'ok:chrome-tokens',
+    name: 'ps:chrome-tokens',
     enforce: 'pre',
     buildStart() {
       resolveChromeTokensFromCss(cssPath);

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import {
   type HostCliInvocation,
-  mainProcessOkCli,
+  mainProcessPsCli,
   type ResolveLocalOpCliInvocationInput,
   resolveLocalOpCliArgsForUtilityFork,
   resolveLocalOpCliInvocation,
@@ -199,9 +199,9 @@ describe('resolveLocalOpCliArgsForUtilityFork', () => {
   });
 });
 
-describe('mainProcessOkCli', () => {
+describe('mainProcessPsCli', () => {
   test('a dev build pins dev on its workspace CLI, since the spawn drops the inherited channel', () => {
-    const cli = mainProcessOkCli({ cliArgs: ['node', WORKSPACE_CLI] }, { PS_CHANNEL: 'dev' });
+    const cli = mainProcessPsCli({ cliArgs: ['node', WORKSPACE_CLI] }, { PS_CHANNEL: 'dev' });
     expect(cli.runnerInvocation(['auth', 'login'])).toEqual({
       cliArgs: ['node', WORKSPACE_CLI, 'auth', 'login'],
       cliEnv: { PS_CHANNEL: 'dev' },
@@ -209,7 +209,7 @@ describe('mainProcessOkCli', () => {
   });
 
   test('a dev build with no workspace CLI reads through the CLI on PATH with no channel and refuses sign-in', () => {
-    const cli = mainProcessOkCli(undefined, { PS_CHANNEL: 'dev' });
+    const cli = mainProcessPsCli(undefined, { PS_CHANNEL: 'dev' });
     expect(cli.runnerInvocation(['auth', 'status'])).toEqual({
       cliArgs: ['palimpsest', 'auth', 'status'],
       cliEnv: {},
@@ -219,7 +219,7 @@ describe('mainProcessOkCli', () => {
 
   test('keeps the packaged win32 overlay alongside the channel pin', () => {
     expect(
-      mainProcessOkCli(
+      mainProcessPsCli(
         { cliArgs: [WIN_EXE, 'cli.mjs'], cliEnv: { ELECTRON_RUN_AS_NODE: '1' } },
         { PS_CHANNEL: 'beta' },
       ).runnerInvocation([]),

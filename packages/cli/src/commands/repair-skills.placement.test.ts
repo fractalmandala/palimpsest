@@ -5,7 +5,7 @@ import { USER_SKILL_HOSTS } from '@palimpsest/core';
 import { afterEach, describe, expect, test } from 'vitest';
 import { repairSkills } from './repair-skills.ts';
 
-const NAME = 'open-knowledge-discovery';
+const NAME = 'palimpsest-discovery';
 
 const HOSTS: Array<[string, string]> = [
   ['.claude', '.claude/skills'],

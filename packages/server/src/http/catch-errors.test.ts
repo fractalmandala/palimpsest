@@ -64,7 +64,7 @@ describe('catchErrors', () => {
     expect(writeHeadCalls[0]?.status).toBe(500);
     expect(writeHeadCalls[0]?.headers['Content-Type']).toBe('application/problem+json');
     const body = JSON.parse(endCalls[0] ?? '{}') as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Failed to list widgets.');
     expect(body.status).toBe(500);
     expect(String(body.instance)).toMatch(/^urn:uuid:/);

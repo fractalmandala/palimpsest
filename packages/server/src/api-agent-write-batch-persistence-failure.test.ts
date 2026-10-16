@@ -132,7 +132,7 @@ describe('agent-write-batch — store-refused flush failure rendering', () => {
     expect(results).toHaveLength(1);
     expect(results[0]?.status).toBe('error');
     expect(results[0]?.docName).toBe(docName);
-    expect(results[0]?.error?.type).toBe('urn:ok:error:store-refused');
+    expect(results[0]?.error?.type).toBe('urn:ps:error:store-refused');
     expect(results[0]?.error?.detail).toContain('recovery buffer');
     expect(results[0]?.error?.detail).toContain('filesystem fault');
     expect(results[0]?.error?.detail).not.toContain('will be lost');
@@ -156,7 +156,7 @@ describe('agent-write-batch — store-refused flush failure rendering', () => {
       results: Array<{ status: string; error?: { type: string } }>;
     };
     expect(results[0]?.status).toBe('error');
-    expect(results[0]?.error?.type).toBe('urn:ok:error:doc-removed');
+    expect(results[0]?.error?.type).toBe('urn:ps:error:doc-removed');
   });
 
   test('a store discarded by a branch switch reports branch-switched on the batch endpoint', async () => {
@@ -177,7 +177,7 @@ describe('agent-write-batch — store-refused flush failure rendering', () => {
       results: Array<{ status: string; error?: { type: string; detail?: string } }>;
     };
     expect(results[0]?.status).toBe('error');
-    expect(results[0]?.error?.type).toBe('urn:ok:error:branch-switched');
+    expect(results[0]?.error?.type).toBe('urn:ps:error:branch-switched');
     expect(results[0]?.error?.detail).toContain('Re-read');
   });
 });

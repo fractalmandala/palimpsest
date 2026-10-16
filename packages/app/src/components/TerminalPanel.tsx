@@ -170,14 +170,14 @@ function TerminalSession({
   >(null);
 
   const configCtx = use(ConfigContext);
-  const autoApproveOkToolsRef = useRef(configCtx?.userConfig?.agents?.autoApproveOkTools ?? true);
+  const autoApprovePsToolsRef = useRef(configCtx?.userConfig?.agents?.autoApprovePsTools ?? true);
   const shellFamilyRef = useRef<WindowsShellFamily | null>(null);
 
   useEffect(() => {
     onExitRef.current = onExit;
     onTitleChangeRef.current = onTitleChange;
     onPtyIdRef.current = onPtyId;
-    autoApproveOkToolsRef.current = configCtx?.userConfig?.agents?.autoApproveOkTools ?? true;
+    autoApprovePsToolsRef.current = configCtx?.userConfig?.agents?.autoApprovePsTools ?? true;
   });
 
   useEffect(() => {
@@ -660,8 +660,8 @@ function TerminalSession({
               mcpPreApprove: fresh.mcpPreApprovable === true,
               mcpServerName: fresh.mcpServerName,
               ...(bridge.cliCommandName ? { cliCommandName: bridge.cliCommandName } : {}),
-              autoApproveOkTools:
-                autoApproveOkToolsRef.current && fresh.psToolsAutoApprovable === true,
+              autoApprovePsTools:
+                autoApprovePsToolsRef.current && fresh.psToolsAutoApprovable === true,
             });
           }
           if (!cancelled) {
@@ -686,10 +686,10 @@ function TerminalSession({
         if (res.onPath === 'present') {
           if (!cancelled) setConnectionCli(intent.cli);
           return buildLaunch({
-            autoApproveOkTools:
+            autoApprovePsTools:
               intent.cli === 'codex' &&
               res.psServerConfigured === true &&
-              autoApproveOkToolsRef.current,
+              autoApprovePsToolsRef.current,
             mcpServerName: res.mcpServerName,
           });
         }

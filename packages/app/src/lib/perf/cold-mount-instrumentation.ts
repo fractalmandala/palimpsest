@@ -120,7 +120,7 @@ function instrumentationDisabled(): boolean {
 function wrapNodeViewFactory(nodeName: string, factory: NodeViewConstructor): NodeViewConstructor {
   if (instrumentationDisabled()) return factory;
   const dashName = lowerDash(nodeName);
-  const markName = `ok/cold/nodeview-factory-${dashName}`;
+  const markName = `ps/cold/nodeview-factory-${dashName}`;
   return function wrappedFactory(...args: Parameters<NodeViewConstructor>) {
     const start = performance.now();
     try {
@@ -151,7 +151,7 @@ function patchEditorDecorationPlugins(view: EditorView): void {
       continue;
     }
     const dashKey = lowerDash(keyStr.replace(/\$\d*$/, ''));
-    const markName = `ok/cold/decoration-${dashKey}`;
+    const markName = `ps/cold/decoration-${dashKey}`;
     propsBag.decorations = function timedDecorations(this: Plugin, ...args: unknown[]) {
       const start = performance.now();
       try {
@@ -197,7 +197,7 @@ export function wrapExtensionsWithTiming<E extends AnyExtension>(extensions: E[]
         } finally {
           const dur = performance.now() - start;
           mark(
-            `ok/cold/ext-${dashName}-on-before-create`,
+            `ps/cold/ext-${dashName}-on-before-create`,
             { ext: name, hook: 'onBeforeCreate', durationMs: Math.round(dur * 1000) / 1000 },
             { startTime: start, duration: dur },
           );
@@ -210,7 +210,7 @@ export function wrapExtensionsWithTiming<E extends AnyExtension>(extensions: E[]
         } finally {
           const dur = performance.now() - start;
           mark(
-            `ok/cold/ext-${dashName}-on-create`,
+            `ps/cold/ext-${dashName}-on-create`,
             { ext: name, hook: 'onCreate', durationMs: Math.round(dur * 1000) / 1000 },
             { startTime: start, duration: dur },
           );
@@ -223,7 +223,7 @@ export function wrapExtensionsWithTiming<E extends AnyExtension>(extensions: E[]
         } finally {
           const dur = performance.now() - start;
           mark(
-            `ok/cold/ext-${dashName}-on-update`,
+            `ps/cold/ext-${dashName}-on-update`,
             { ext: name, hook: 'onUpdate', durationMs: Math.round(dur * 1000) / 1000 },
             { startTime: start, duration: dur },
           );
@@ -236,7 +236,7 @@ export function wrapExtensionsWithTiming<E extends AnyExtension>(extensions: E[]
         } finally {
           const dur = performance.now() - start;
           mark(
-            `ok/cold/ext-${dashName}-on-destroy`,
+            `ps/cold/ext-${dashName}-on-destroy`,
             { ext: name, hook: 'onDestroy', durationMs: Math.round(dur * 1000) / 1000 },
             { startTime: start, duration: dur },
           );
@@ -253,7 +253,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     Editor.prototype as unknown as Record<string, unknown>,
     'mount',
-    'ok/cold/editor-mount',
+    'ps/cold/editor-mount',
     (self, _r, _s, durationMs) => {
       const ei = self as unknown as EditorInstanceShape;
       if (!instrumentationDisabled()) {
@@ -272,7 +272,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     Editor.prototype as unknown as Record<string, unknown>,
     'createView' as 'mount',
-    'ok/cold/editor-create-view',
+    'ps/cold/editor-create-view',
     (self) => {
       const ei = self as unknown as EditorInstanceShape;
       if (!instrumentationDisabled() && !patchedEditors.has(self) && ei.view) {
@@ -291,7 +291,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     Editor.prototype as unknown as Record<string, unknown>,
     'createNodeViews',
-    'ok/cold/create-node-views',
+    'ps/cold/create-node-views',
     (self, _r, _s, duration) => {
       createNodeViewsCount += 1;
       const ei = self as unknown as { view?: PmViewShape };
@@ -309,7 +309,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     EditorView.prototype as unknown as Record<string, unknown>,
     'updateState',
-    'ok/cold/pm-update-state',
+    'ps/cold/pm-update-state',
     (self, _r, _s, duration) => {
       pmUpdateStateCount += 1;
       return {
@@ -323,7 +323,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     EditorView.prototype as unknown as Record<string, unknown>,
     'setProps',
-    'ok/cold/pm-set-props',
+    'ps/cold/pm-set-props',
     (self, _r, _s, duration) => {
       pmSetPropsCount += 1;
       return {
@@ -337,7 +337,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     ProsemirrorBinding.prototype as unknown as Record<string, unknown>,
     '_forceRerender',
-    'ok/cold/force-rerender',
+    'ps/cold/force-rerender',
     (self, _r, _s, duration) => {
       forceRerenderCount += 1;
       const b = self as unknown as ProsemirrorBindingShape;
@@ -359,7 +359,7 @@ export function installColdMountInstrumentation(): void {
   wrapMethod(
     PureEditorContent.prototype as unknown as Record<string, unknown>,
     'init',
-    'ok/cold/ec-init',
+    'ps/cold/ec-init',
     (self) => {
       const ec = self as unknown as EditorContentShape;
       return { editorPresent: Boolean(ec.props?.editor) };
@@ -373,7 +373,7 @@ export function installColdMountInstrumentation(): void {
           const name = entry.name;
           if (name === 'first-paint' || name === 'first-contentful-paint') {
             mark(
-              name === 'first-paint' ? 'ok/cold/paint-fp' : 'ok/cold/paint-fcp',
+              name === 'first-paint' ? 'ps/cold/paint-fp' : 'ps/cold/paint-fcp',
               { entryType: entry.entryType, startTime: Math.round(entry.startTime * 1000) / 1000 },
               { startTime: entry.startTime, duration: 0 },
             );
@@ -385,7 +385,7 @@ export function installColdMountInstrumentation(): void {
               const start = pendingAppendStartMs;
               const dur = Math.max(0, entry.startTime - start);
               mark(
-                'ok/cold/append-to-paint',
+                'ps/cold/append-to-paint',
                 {
                   paintEntryType: entry.entryType,
                   durationMs: Math.round(dur * 1000) / 1000,

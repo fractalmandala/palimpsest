@@ -22,13 +22,13 @@ function classifyLine(raw: string): Line {
   return { kind: 'pattern', raw, text: trimmed };
 }
 
-export function parseOkignoreDoc(text: string): ParsedDoc {
+export function parsePsignoreDoc(text: string): ParsedDoc {
   const rawLines = text.split('\n');
   const lines: Line[] = rawLines.map(classifyLine);
   return { lines };
 }
 
-export function serializeOkignoreDoc(doc: ParsedDoc): string {
+export function serializePsignoreDoc(doc: ParsedDoc): string {
   return doc.lines.map((line) => line.raw).join('\n');
 }
 

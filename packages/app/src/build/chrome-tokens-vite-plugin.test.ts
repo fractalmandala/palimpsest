@@ -18,7 +18,7 @@ describe('chromeTokensVitePlugin', () => {
   const plugin = chromeTokensVitePlugin({ globalsCssPath: GLOBALS_CSS });
 
   test('plugin name is namespaced', () => {
-    expect(plugin.name).toBe('ok:chrome-tokens');
+    expect(plugin.name).toBe('ps:chrome-tokens');
   });
 
   test('plugin runs as a pre-transform so it beats Vite HTML rewriters', () => {

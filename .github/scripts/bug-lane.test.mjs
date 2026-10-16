@@ -21,8 +21,8 @@ const cs = (id, bump, addingSha, addingSubject = `${id} subject (#100)`) => ({
   addingSubject,
 });
 
-const bugIssues = { issues: [{ identifier: 'PRD-1', labels: ['Bug', 'ok:ui'] }] };
-const plainIssues = { issues: [{ identifier: 'PRD-2', labels: ['ok:ui'] }] };
+const bugIssues = { issues: [{ identifier: 'PRD-1', labels: ['Bug', 'ps:ui'] }] };
+const plainIssues = { issues: [{ identifier: 'PRD-2', labels: ['ps:ui'] }] };
 
 const evaluate = (overrides = {}) =>
   evaluateBugLane({

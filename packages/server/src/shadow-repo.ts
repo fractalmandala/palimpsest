@@ -17,7 +17,7 @@ import {
   formatCheckpointBodyLine,
   formatCheckpointSubject,
   formatImportSubject,
-  formatOkActor,
+  formatPsActor,
   formatParkSubject,
   PS_GENERATOR_WRITER_ID,
   type PsActorEntry,
@@ -692,7 +692,7 @@ async function commitUpstreamImportInner(
     color_seed: UPSTREAM_WRITER.id,
     docs: [],
   };
-  const message = `${subject}\n\n${formatOkActor(actorEntry)}`;
+  const message = `${subject}\n\n${formatPsActor(actorEntry)}`;
   return commitWip(shadow, UPSTREAM_WRITER, contentRoot, message, branch);
 }
 
@@ -723,7 +723,7 @@ export async function safetyCheckpoint(
     color_seed: SAFETY_WRITER.id,
     docs: [],
   };
-  const message = `${subject}\n\n${formatOkActor(actorEntry)}`;
+  const message = `${subject}\n\n${formatPsActor(actorEntry)}`;
   return commitWip(shadow, SAFETY_WRITER, contentRoot, message, branch);
 }
 
@@ -1499,7 +1499,7 @@ async function parkBranchInner(
       color_seed: SERVICE_WRITER.id,
       docs: documents.map((d) => d.docName),
     };
-    const parkMessage = `${formatParkSubject(branch, newBranch ?? branch)}\n\n${formatOkActor(parkActorEntry)}`;
+    const parkMessage = `${formatParkSubject(branch, newBranch ?? branch)}\n\n${formatPsActor(parkActorEntry)}`;
     const args = ['commit-tree', treeSha, '-m', parkMessage];
     if (parentSha) args.push('-p', parentSha);
 
@@ -1660,7 +1660,7 @@ async function saveVersionInner(
       docs: [],
     };
     const checkpointSubject = summary?.trim() ? summary.trim() : 'Checkpoint version';
-    let checkpointMessage = `${formatCheckpointSubject(checkpointSubject)}\n\n${formatOkActor(checkpointActorEntry)}`;
+    let checkpointMessage = `${formatCheckpointSubject(checkpointSubject)}\n\n${formatPsActor(checkpointActorEntry)}`;
     if (options?.checkpointKind) {
       checkpointMessage += `\n${formatCheckpointBodyLine({
         kind: 'auto-consolidation',

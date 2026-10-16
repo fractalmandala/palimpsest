@@ -367,7 +367,7 @@ describe('GET /api/git/branch-info', () => {
     const res = await getBranchInfo(rig.port, 'main', 'a.md');
     expect(res.status).toBe(500);
     const json = (await res.json()) as Record<string, unknown>;
-    expect(json.type).toBe('urn:ok:error:internal-server-error');
+    expect(json.type).toBe('urn:ps:error:internal-server-error');
   });
 
   test('POST is rejected with 405', async () => {

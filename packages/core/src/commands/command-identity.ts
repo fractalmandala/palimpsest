@@ -107,7 +107,7 @@ interface CommandPlacementToggle {
 
 export type CommandCheckField =
   | 'showHiddenFiles'
-  | 'showOkFolders'
+  | 'showPsFolders'
   | 'showOnlyMarkdownFiles'
   | 'showSkillsSection';
 
@@ -550,9 +550,9 @@ export const COMMAND_IDENTITIES: readonly CommandIdentity[] = [
   {
     id: 'toggle-show-ps-folders',
     menuActionId: 'toggle-show-ps-folders',
-    labelKey: 'showOkFolders',
-    keywords: ['ok', 'folders', 'hidden', 'show'],
-    checkField: 'showOkFolders',
+    labelKey: 'showPsFolders',
+    keywords: ['ps', 'folders', 'hidden', 'show'],
+    checkField: 'showPsFolders',
     availability: {},
     palette: { group: 'view', visibility: 'search-only' },
     menu: [{ section: 'view-visibility', order: 1, checkbox: true }],

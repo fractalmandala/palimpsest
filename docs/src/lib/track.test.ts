@@ -18,7 +18,7 @@ afterEach(() => {
 });
 
 function req(headers: Record<string, string> = {}): Request {
-  return new Request('https://palimpsest.ai/download/stable', { headers });
+  return new Request('https://example.com/download/stable', { headers });
 }
 
 describe('buildCapturePayload', () => {
@@ -87,7 +87,7 @@ function reqUrl(url: string, headers: Record<string, string> = {}): Request {
 describe('attribution', () => {
   test('captures utm_content from our own CTA links', () => {
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable?utm_content=landing-hero'),
+      reqUrl('https://example.com/download/stable?utm_content=landing-hero'),
     );
     expect(a.utm_content).toBe('landing-hero');
   });
@@ -95,7 +95,7 @@ describe('attribution', () => {
   test('captures the full standard UTM set from external campaign links', () => {
     const a = attribution(
       reqUrl(
-        'https://palimpsest.ai/download/stable?utm_source=newsletter&utm_medium=email&utm_campaign=Launch%20Week&utm_content=header-button&utm_term=knowledge%20base',
+        'https://example.com/download/stable?utm_source=newsletter&utm_medium=email&utm_campaign=Launch%20Week&utm_content=header-button&utm_term=knowledge%20base',
       ),
     );
     expect(a.utm_source).toBe('newsletter');
@@ -108,7 +108,7 @@ describe('attribution', () => {
   test('sanitizes utm values: control chars stripped, length capped, empty dropped', () => {
     const a = attribution(
       reqUrl(
-        `https://palimpsest.ai/download/stable?utm_content=${'a'.repeat(150)}&utm_source=%00%01ok%7f&utm_medium=%20%20`,
+        `https://example.com/download/stable?utm_content=${'a'.repeat(150)}&utm_source=%00%01ok%7f&utm_medium=%20%20`,
       ),
     );
     expect(a.utm_content).toBe('a'.repeat(100));
@@ -118,7 +118,7 @@ describe('attribution', () => {
 
   test('external referrer: hostname only, no path', () => {
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
+      reqUrl('https://example.com/download/stable', {
         referer: 'https://news.ycombinator.com/item?id=1',
       }),
     );
@@ -128,56 +128,60 @@ describe('attribution', () => {
 
   test('missing or unparseable referer: no referrer properties', () => {
     expect(
-      attribution(reqUrl('https://palimpsest.ai/download/stable')).referrer,
+      attribution(reqUrl('https://example.com/download/stable')).referrer,
     ).toBeUndefined();
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', { referer: 'not a url' }),
+      reqUrl('https://example.com/download/stable', { referer: 'not a url' }),
     );
     expect(a.referrer).toBeUndefined();
     expect(a.referrer_path).toBeUndefined();
   });
 
-  test('own-site referrer: hostname plus page path, never the query string', () => {
+  // FORK: no first-party site host is configured (see isOwnSiteHostname), so
+  // every referrer is treated as external: hostname only, never a path.
+  test('external referrer: hostname only, path suppressed even with a query string', () => {
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
-        referer: 'https://palimpsest.ai/docs/get-started/quickstart?token=secret',
+      reqUrl('https://example.com/download/stable', {
+        referer: 'https://example.org/docs/get-started/quickstart?token=secret',
       }),
     );
-    expect(a.referrer).toBe('palimpsest.ai');
-    expect(a.referrer_path).toBe('/docs/get-started/quickstart');
-  });
-
-  test('own-site subdomain referrer also gets a path', () => {
-    const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
-        referer: 'https://www.palimpsest.ai/',
-      }),
-    );
-    expect(a.referrer_path).toBe('/');
-  });
-
-  test('own-site /d/<encoded> share referrer: hostname only, path suppressed', () => {
-    const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
-        referer: 'https://palimpsest.ai/d/aHR0cHM6Ly9naXRodWIuY29t',
-      }),
-    );
-    expect(a.referrer).toBe('palimpsest.ai');
+    expect(a.referrer).toBe('example.org');
     expect(a.referrer_path).toBeUndefined();
   });
 
-  test('own-site referrer path is capped at 200 chars', () => {
+  test('external subdomain referrer gets no path', () => {
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
-        referer: `https://palimpsest.ai/docs/${'x'.repeat(400)}`,
+      reqUrl('https://example.com/download/stable', {
+        referer: 'https://www.example.org/',
       }),
     );
-    expect(a.referrer_path?.length).toBe(200);
+    expect(a.referrer).toBe('www.example.org');
+    expect(a.referrer_path).toBeUndefined();
+  });
+
+  test('/d/<encoded>-shaped referrer path is suppressed like any external path', () => {
+    const a = attribution(
+      reqUrl('https://example.com/download/stable', {
+        referer: 'https://example.org/d/aHR0cHM6Ly9naXRodWIuY29t',
+      }),
+    );
+    expect(a.referrer).toBe('example.org');
+    expect(a.referrer_path).toBeUndefined();
+  });
+
+  test('long external referrer paths are dropped, not capped', () => {
+    const a = attribution(
+      reqUrl('https://example.com/download/stable', {
+        referer: `https://example.org/docs/${'x'.repeat(400)}`,
+      }),
+    );
+    expect(a.referrer).toBe('example.org');
+    expect(a.referrer_path).toBeUndefined();
   });
 
   test('a lookalike domain is treated as external', () => {
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
+      reqUrl('https://example.com/download/stable', {
         referer: 'https://notpalimpsest.ai/phish',
       }),
     );
@@ -187,21 +191,21 @@ describe('attribution', () => {
 
   test('sec-fetch-site passes through only known values', () => {
     const ok = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', { 'sec-fetch-site': 'cross-site' }),
+      reqUrl('https://example.com/download/stable', { 'sec-fetch-site': 'cross-site' }),
     );
     expect(ok.sec_fetch_site).toBe('cross-site');
     const junk = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', { 'sec-fetch-site': 'evil' }),
+      reqUrl('https://example.com/download/stable', { 'sec-fetch-site': 'evil' }),
     );
     expect(junk.sec_fetch_site).toBeUndefined();
     expect(
-      attribution(reqUrl('https://palimpsest.ai/download/stable')).sec_fetch_site,
+      attribution(reqUrl('https://example.com/download/stable')).sec_fetch_site,
     ).toBeUndefined();
   });
 
   test('includes the user-agent properties', () => {
     const a = attribution(
-      reqUrl('https://palimpsest.ai/download/stable', {
+      reqUrl('https://example.com/download/stable', {
         'user-agent': 'Mozilla/5.0 (Macintosh) Safari/605.1.15',
       }),
     );
@@ -211,7 +215,7 @@ describe('attribution', () => {
 });
 
 describe('userAgentProperties', () => {
-  const UA_URL = 'https://palimpsest.ai/download/stable';
+  const UA_URL = 'https://example.com/download/stable';
   function classify(ua: string): string | undefined {
     return userAgentProperties(reqUrl(UA_URL, { 'user-agent': ua })).ua_class;
   }
@@ -244,7 +248,7 @@ describe('userAgentProperties', () => {
 });
 
 describe('isPrefetchRequest', () => {
-  const ROUTE_URL = 'https://palimpsest.ai/download/stable';
+  const ROUTE_URL = 'https://example.com/download/stable';
   test('true for browser and framework prefetch signals', () => {
     expect(isPrefetchRequest(reqUrl(ROUTE_URL, { 'sec-purpose': 'prefetch' }))).toBe(true);
     expect(isPrefetchRequest(reqUrl(ROUTE_URL, { 'sec-purpose': 'prefetch;prerender' }))).toBe(

@@ -36,8 +36,8 @@ import { userGlobalSkillBundleTargets } from '../integrations/skill-teardown.ts'
 import { assertProjectRemovalSafe } from '../integrations/write-project-skill.ts';
 import {
   getInstalledSkillProjectionPaths,
-  getOkArtifactPaths,
-  removeOkPathsFromGitExclude,
+  getPsArtifactPaths,
+  removePsPathsFromGitExclude,
 } from '../sharing/git-exclude.ts';
 import { configFileDeclineDetail, configFileDeclineReason } from '../utils/config-file-error.ts';
 import { ALL_EDITOR_IDS, EDITOR_TARGETS, type EditorId } from './editors.ts';
@@ -106,14 +106,14 @@ export interface RemovalOutcome {
   failed: RemovalOpResult[];
 }
 
-function sharedOkEntriesKept(purgeContent: boolean): string[] {
+function sharedPsEntriesKept(purgeContent: boolean): string[] {
   return purgeContent
     ? SHARED_OK_ENTRIES.filter((entry) => entry !== SKILLS_STORE_DIRNAME)
     : [...SHARED_OK_ENTRIES];
 }
 
-export function sharedOkEntriesList(purgeContent: boolean): string {
-  return sharedOkEntriesKept(purgeContent)
+export function sharedPsEntriesList(purgeContent: boolean): string {
+  return sharedPsEntriesKept(purgeContent)
     .map((entry) => `~/${PS_DIR}/${entry}`)
     .join(', ');
 }
@@ -159,7 +159,7 @@ export function deinitOps(
     ops.push({
       kind: 'mcp-entry',
       group,
-      label: `Remove OK's MCP entry from ${target.label} (${toPosix(relative(projectRoot, configPath))})`,
+      label: `Remove Palimpsest's MCP entry from ${target.label} (${toPosix(relative(projectRoot, configPath))})`,
       editorId: id,
       scope: 'project',
       cwd: projectRoot,
@@ -171,7 +171,7 @@ export function deinitOps(
   ops.push({
     kind: 'launch-entry',
     group,
-    label: "Remove OK's entry from .claude/launch.json",
+    label: "Remove Palimpsest's entry from .claude/launch.json",
     projectRoot,
   });
 
@@ -183,7 +183,7 @@ export function deinitOps(
   });
 
   const removeRelPaths = new Set<string>([
-    ...getOkArtifactPaths(projectRoot),
+    ...getPsArtifactPaths(projectRoot),
     ...getInstalledSkillProjectionPaths(projectRoot),
     ...PROJECT_SKILL_PROJECTION_PATHS,
   ]);
@@ -280,7 +280,7 @@ export function buildUninstallPlan(input: UninstallPlanInput): RemovalPlan {
     ops.push({
       kind: 'mcp-entry',
       group: 'Editor MCP configs',
-      label: `Remove OK's MCP entry from ${target.label} (${tildify(configPath, home)})`,
+      label: `Remove Palimpsest's MCP entry from ${target.label} (${tildify(configPath, home)})`,
       editorId: id,
       scope: 'user',
       cwd: home,
@@ -315,10 +315,10 @@ export function buildUninstallPlan(input: UninstallPlanInput): RemovalPlan {
       group: 'Global directory',
       requiresSuccessfulCleanup: true,
       label: purgeContent
-        ? `Remove ~/${PS_DIR} (including user-authored skills; keeping ${sharedOkEntriesList(true)}, shared by every channel)`
-        : `Remove ~/${PS_DIR} (keeping ${sharedOkEntriesList(false)}, shared by every channel)`,
+        ? `Remove ~/${PS_DIR} (including user-authored skills; keeping ${sharedPsEntriesList(true)}, shared by every channel)`
+        : `Remove ~/${PS_DIR} (keeping ${sharedPsEntriesList(false)}, shared by every channel)`,
       path: psUserHomeDir(home),
-      preserve: sharedOkEntriesKept(purgeContent),
+      preserve: sharedPsEntriesKept(purgeContent),
     });
   } else {
     ops.push({
@@ -360,7 +360,7 @@ function pathRevertOps(marker: PathInstallMarker | null, home: string): RemovalO
     ops.push({
       kind: 'shell-block',
       group: 'Shell PATH',
-      label: `Strip the OK block from ${tildify(rcFile, home)}`,
+      label: `Strip the Palimpsest block from ${tildify(rcFile, home)}`,
       rcFile,
     });
   }
@@ -368,7 +368,7 @@ function pathRevertOps(marker: PathInstallMarker | null, home: string): RemovalO
     ops.push({
       kind: 'extra-symlink',
       group: 'Shell PATH',
-      label: `Remove the ok symlink at ${tildify(extra.path, home)}`,
+      label: `Remove the ps symlink at ${tildify(extra.path, home)}`,
       path: extra.path,
       target: extra.target,
     });
@@ -652,7 +652,7 @@ async function executeOp(op: RemovalOp, deps: ResolvedDeps): Promise<RemovalOpRe
             return {
               op,
               status: 'skipped',
-              detail: `left the dangling configuration symlink untouched; no target file contains an Palimpsest entry to remove: ${configPath}`,
+              detail: `left the dangling configuration symlink untouched; no target file contains a Palimpsest entry to remove: ${configPath}`,
             };
           }
           return {
@@ -680,7 +680,7 @@ async function executeOp(op: RemovalOp, deps: ResolvedDeps): Promise<RemovalOpRe
             return {
               op,
               status: 'skipped',
-              detail: `left the dangling configuration symlink untouched; no target file contains an Palimpsest entry to remove: ${join(op.projectRoot, '.claude', 'launch.json')}`,
+              detail: `left the dangling configuration symlink untouched; no target file contains a Palimpsest entry to remove: ${join(op.projectRoot, '.claude', 'launch.json')}`,
             };
           }
           return {
@@ -697,7 +697,7 @@ async function executeOp(op: RemovalOp, deps: ResolvedDeps): Promise<RemovalOpRe
       }
     }
     case 'git-exclude': {
-      const result = removeOkPathsFromGitExclude(
+      const result = removePsPathsFromGitExclude(
         op.projectRoot,
         removableGitExcludePaths(op.projectRoot),
       );
@@ -803,7 +803,7 @@ function removableGitExcludePaths(projectRoot: string): readonly string[] {
     const path = EDITOR_TARGETS[id].projectConfigPath?.(projectRoot);
     if (path) sharedPaths.add(path);
   }
-  return getOkArtifactPaths(projectRoot).filter((path) => {
+  return getPsArtifactPaths(projectRoot).filter((path) => {
     const absolute = join(projectRoot, path);
     if (!sharedPaths.has(absolute)) return true;
     try {

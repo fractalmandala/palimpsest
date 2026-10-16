@@ -103,6 +103,8 @@ We still accept pull requests, on these terms:
 - **A pull request without an accepted issue may be closed without review.** If the idea is good, we track it as an issue and build it ourselves.
 - **You are responsible for every line.** AI-assisted code is fine when you understand it, have run it, and can answer questions about it. We close pull requests that read as unreviewed AI output.
 
+> **Fork note:** [CLA.md](./CLA.md) is still the upstream Inkeep agreement (grantee: Inkeep, Inc.) and is under review for the fork — do not sign it for Palimpsest contributions until the fork publishes its own contributor terms. Code contributions currently proceed by maintainer agreement on the issue.
+
 First-time contributors are asked to sign our [Contributor License Agreement](./CLA.md) — a bot comments a one-click signing link on your PR (Inkeep employees are exempt automatically). Please follow the checklist in our [Pull Request Template](./.github/PULL_REQUEST_TEMPLATE.md):
 
 - Keep PRs focused and small enough to review.

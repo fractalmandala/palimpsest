@@ -86,7 +86,7 @@ describe('GET /api/audit across a branch switch', () => {
         const firstRes = await first;
         expect(firstRes.status).toBe(409);
         const problem = (await firstRes.json()) as { type?: string };
-        expect(problem.type).toBe('urn:ok:error:audit-superseded');
+        expect(problem.type).toBe('urn:ps:error:audit-superseded');
       } finally {
         auditBarrier?.dispose();
         rmSync(folder, { recursive: true, force: true });

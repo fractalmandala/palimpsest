@@ -24,7 +24,7 @@ function buildGroup(overrides: Partial<Deps> = {}) {
     contentFilter: undefined,
     signalChannel: undefined,
     conflicts: createTestConflictAuthority(makeTempDir('file-ops-routes-authority-')),
-    commitOkArtifactWrite: () => Promise.resolve(),
+    commitPsArtifactWrite: () => Promise.resolve(),
     fileOpsService: {} as FileOpsService,
     assetService: {} as AssetService,
     extractAgentIdentity: () => {
@@ -116,7 +116,7 @@ describe('rename-path conflict envelope', () => {
     );
     expect(captured.status).toBe(409);
     expect((JSON.parse(captured.body) as { type?: string }).type).toBe(
-      'urn:ok:error:doc-in-conflict',
+      'urn:ps:error:doc-in-conflict',
     );
   });
 });
@@ -136,7 +136,7 @@ describe('create-page path-resolution error classification', () => {
       throw new SymlinkEscapeError('path resolves outside content directory');
     });
     expect(captured.status).toBe(400);
-    expect((JSON.parse(captured.body) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect((JSON.parse(captured.body) as { type?: string }).type).toBe('urn:ps:error:path-escape');
   });
 
   test('a ContentRootUnavailableError surfaces as a 500, not a 400', async () => {
@@ -145,7 +145,7 @@ describe('create-page path-resolution error classification', () => {
     });
     expect(captured.status).toBe(500);
     expect((JSON.parse(captured.body) as { type?: string }).type).toBe(
-      'urn:ok:error:internal-server-error',
+      'urn:ps:error:internal-server-error',
     );
   });
 
@@ -157,7 +157,7 @@ describe('create-page path-resolution error classification', () => {
     });
     expect(captured.status).toBe(500);
     expect((JSON.parse(captured.body) as { type?: string }).type).toBe(
-      'urn:ok:error:internal-server-error',
+      'urn:ps:error:internal-server-error',
     );
   });
 });
@@ -170,7 +170,7 @@ describe('rename-path history commit', () => {
       isValidRelativeContentPath: () => true,
       renameAttributionCounter: () =>
         ({ add: () => {} }) as unknown as ReturnType<Deps['renameAttributionCounter']>,
-      commitOkArtifactWrite: (context) => {
+      commitPsArtifactWrite: (context) => {
         commits.push(context);
         return new Promise<never>(() => {});
       },

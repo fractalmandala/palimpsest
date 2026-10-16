@@ -244,7 +244,7 @@ describe('single-file mode — /api host gate (DNS-rebinding defense)', () => {
           REBIND_HOST,
         );
         expect(res.status).toBe(403);
-        expect((await res.json()).type).toBe('urn:ok:error:host-not-allowed');
+        expect((await res.json()).type).toBe('urn:ps:error:host-not-allowed');
       }
     } finally {
       await server.cleanup();
@@ -276,7 +276,7 @@ describe('single-file mode — /api host gate (DNS-rebinding defense)', () => {
         REBIND_HOST,
       );
       expect(res.status).toBe(403);
-      expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:host-not-allowed');
+      expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:host-not-allowed');
     } finally {
       await server.cleanup();
     }
@@ -300,7 +300,7 @@ describe('single-file mode — content-tree writes refused (G4)', () => {
       });
       expect(res.status).toBe(403);
       const json = (await res.json()) as { type?: string };
-      expect(json.type).toBe('urn:ok:error:single-file-mode');
+      expect(json.type).toBe('urn:ps:error:single-file-mode');
       expect(readdirSync(contentDir).sort()).toEqual(['notes.md']);
     } finally {
       await server.cleanup();
@@ -323,7 +323,7 @@ describe('single-file mode — content-tree writes refused (G4)', () => {
       });
       expect(res.status).toBe(403);
       const json = (await res.json()) as { type?: string };
-      expect(json.type).toBe('urn:ok:error:single-file-mode');
+      expect(json.type).toBe('urn:ps:error:single-file-mode');
       expect(readdirSync(contentDir).sort()).toEqual(['notes.md']);
     } finally {
       await server.cleanup();

@@ -144,7 +144,7 @@ describe('POST /api/create-page', () => {
 
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(String(body.title)).toContain('.mdx');
   });
 
@@ -185,7 +185,7 @@ describe('POST /api/create-page', () => {
 
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(typeof body.title).toBe('string');
   });
 
@@ -195,7 +195,7 @@ describe('POST /api/create-page', () => {
 
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('returns 409 when the file already exists', async () => {
@@ -206,7 +206,7 @@ describe('POST /api/create-page', () => {
 
     expect(result.status).toBe(409);
     const body = JSON.parse(result.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:doc-already-exists');
+    expect(body.type).toBe('urn:ps:error:doc-already-exists');
   });
 
   test('returns 405 for GET requests', async () => {

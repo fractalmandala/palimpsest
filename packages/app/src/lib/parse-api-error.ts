@@ -11,7 +11,7 @@ export function parseApiError(body: unknown, includeDetail = false): string | un
   if (typeof candidate.title === 'string' && candidate.title.length > 0) {
     if (
       includeDetail &&
-      candidate.type === 'urn:ok:error:invalid-request' &&
+      candidate.type === 'urn:ps:error:invalid-request' &&
       candidate.contentControlAdmission === true &&
       typeof candidate.detail === 'string' &&
       candidate.detail.length > 0

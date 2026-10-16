@@ -281,7 +281,7 @@ function isTemplateContentAncestorDir(relativePath: string): boolean {
  * `.ps` write exemption must consult THIS predicate on the resolved path: one predicate for
  * whether a path is in sync scope, never a parallel copy that can drift (precedent #55).
  */
-export function isShareableOkArtifact(relativePath: string): boolean {
+export function isShareablePsArtifact(relativePath: string): boolean {
   const segments = relativePath.split('/');
   const n = segments.length;
   if (segments[0] === PS_DIR) {
@@ -297,7 +297,7 @@ export function isShareableOkArtifact(relativePath: string): boolean {
   return false;
 }
 
-function isShareableOkArtifactAncestorDir(relativePath: string): boolean {
+function isShareablePsArtifactAncestorDir(relativePath: string): boolean {
   if (relativePath === PS_DIR || relativePath === `${PS_DIR}/schemas`) return true;
   return isTemplateContentAncestorDir(relativePath);
 }
@@ -666,7 +666,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
   const contentOutsideProject = contentRelPrefix.startsWith('..');
 
   let ig: Ignore;
-  let okignoreIg: Ignore;
+  let psignoreIg: Ignore;
   let rootIgnorePatterns: string[];
   let watcherIgnoreGlobs: string[];
   let lastPatternCount = 0;
@@ -679,7 +679,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
     bytes: number;
   } {
     const newIg = ignore();
-    const newOkignoreIg = ignore();
+    const newPsignoreIg = ignore();
 
     newIg.add('.git');
 
@@ -696,7 +696,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
         const patterns = parseIgnorePatterns(content);
         newRootPatterns.push(...patterns);
         newIg.add(patterns);
-        if (name === '.psignore') newOkignoreIg.add(patterns);
+        if (name === '.psignore') newPsignoreIg.add(patterns);
       } catch (err) {
         log.warn({ path, err }, `Failed to read ${name} at ${path}`);
       }
@@ -713,7 +713,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
           const patterns = parseIgnorePatterns(content);
           const prefixed = patterns.map((p) => prefixPattern(p, contentRelPrefix));
           newIg.add(prefixed);
-          if (name === '.psignore') newOkignoreIg.add(prefixed);
+          if (name === '.psignore') newPsignoreIg.add(prefixed);
         } catch (err) {
           log.warn({ path, err }, `Failed to read ${name} at ${path}`);
         }
@@ -725,7 +725,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
       contentDir,
       projectDir,
       newIg,
-      newOkignoreIg,
+      newPsignoreIg,
       bytesAcc,
     );
     bytes = bytesAcc.value;
@@ -740,7 +740,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
     const newWatcherGlobs = buildWatcherIgnoreGlobs(newRootPatterns);
 
     ig = newIg;
-    okignoreIg = newOkignoreIg;
+    psignoreIg = newPsignoreIg;
     rootIgnorePatterns = newRootPatterns;
     watcherIgnoreGlobs = newWatcherGlobs;
     lastPatternCount = newRootPatterns.length;
@@ -780,10 +780,10 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
       : `${contentRelPrefix}/${relativePath}`;
   }
 
-  function isOkIgnored(relativePath: string): boolean {
+  function isPsIgnored(relativePath: string): boolean {
     if (contentOutsideProject) return false;
     const projectRelPath = contentRelPrefix ? `${contentRelPrefix}/${relativePath}` : relativePath;
-    return okignoreIg.ignores(projectRelPath);
+    return psignoreIg.ignores(projectRelPath);
   }
 
   const refreshDirCount = (): void => {
@@ -846,7 +846,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
       if (
         !opts?.bypassFilters &&
         opts?.syncScope !== undefined &&
-        isShareableOkArtifact(syncProjectRelPath(relativePath, opts.syncScope)) &&
+        isShareablePsArtifact(syncProjectRelPath(relativePath, opts.syncScope)) &&
         !isIgnored(relativePath, opts.syncScope)
       ) {
         if (singleDocRelPath !== undefined) return relativePath !== singleDocRelPath;
@@ -860,7 +860,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
       if (singleDocRelPath !== undefined) return relativePath !== singleDocRelPath;
 
       if (opts?.bypassFilters) {
-        return opts.respectOkignore === true && isOkIgnored(relativePath);
+        return opts.respectOkignore === true && isPsIgnored(relativePath);
       }
 
       if (isRejectedByConfigurableRules(relativePath)) return true;
@@ -894,7 +894,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
         (isSkillContentAncestorDir(relativePath) ||
           isTemplateContentAncestorDir(relativePath) ||
           (opts?.syncScope !== undefined &&
-            isShareableOkArtifactAncestorDir(syncProjectRelPath(relativePath, opts.syncScope))) ||
+            isShareablePsArtifactAncestorDir(syncProjectRelPath(relativePath, opts.syncScope))) ||
           isInPlaceSkillAncestorDir(relativePath, inPlaceSkillDirs))
       )
         return false;
@@ -905,7 +905,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
       if (opts?.bypassFilters) {
         return (
           opts.respectOkignore === true &&
-          (isOkIgnored(relativePath) || isOkIgnored(`${relativePath}/`))
+          (isPsIgnored(relativePath) || isPsIgnored(`${relativePath}/`))
         );
       }
       for (const segment of relativePath.split('/')) {
@@ -1016,7 +1016,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
         }
 
         const prevIg = ig;
-        const prevOkignoreIg = okignoreIg;
+        const prevPsignoreIg = psignoreIg;
         const prevRootPatterns = rootIgnorePatterns;
         const prevWatcherGlobs = watcherIgnoreGlobs;
         const prevPatternCount = lastPatternCount;
@@ -1035,9 +1035,9 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
 
             const durationMs = Date.now() - startedAt;
             span.setAttributes({
-              'ok.ignore.pattern_count': counts.patternCount,
-              'ok.ignore.nested_file_count': counts.nestedFileCount,
-              'ok.ignore.bytes': counts.bytes,
+              'ps.ignore.pattern_count': counts.patternCount,
+              'ps.ignore.nested_file_count': counts.nestedFileCount,
+              'ps.ignore.bytes': counts.bytes,
             });
             log.info(
               {
@@ -1069,7 +1069,7 @@ export function createContentFilter(opts: ContentFilterOptions): ContentFilter {
             };
           } catch (err) {
             ig = prevIg;
-            okignoreIg = prevOkignoreIg;
+            psignoreIg = prevPsignoreIg;
             rootIgnorePatterns = prevRootPatterns;
             watcherIgnoreGlobs = prevWatcherGlobs;
             lastPatternCount = prevPatternCount;
@@ -1198,7 +1198,7 @@ function loadNestedIgnoreFiles(
   dir: string,
   projectDir: string,
   ig: Ignore,
-  okignoreIg: Ignore,
+  psignoreIg: Ignore,
   bytesAcc: { value: number },
 ): number {
   let entries: import('node:fs').Dirent[];
@@ -1232,14 +1232,14 @@ function loadNestedIgnoreFiles(
         const patterns = parseIgnorePatterns(content);
         const prefixed = patterns.map((p) => prefixPattern(p, relToProject));
         ig.add(prefixed);
-        if (name === '.psignore') okignoreIg.add(prefixed);
+        if (name === '.psignore') psignoreIg.add(prefixed);
         count++;
       } catch (err) {
         log.warn({ path: filePath, err }, `Failed to read nested ${name} at ${filePath}`);
       }
     }
 
-    count += loadNestedIgnoreFiles(dirPath, projectDir, ig, okignoreIg, bytesAcc);
+    count += loadNestedIgnoreFiles(dirPath, projectDir, ig, psignoreIg, bytesAcc);
   }
 
   return count;
@@ -1250,7 +1250,7 @@ async function initContentDirStateAsync(
   relPath: string,
   projectDir: string,
   ig: Ignore,
-  okignoreIg: Ignore,
+  psignoreIg: Ignore,
   contentRelPrefix: string,
   contentOutsideProject: boolean,
   dirCount: Map<string, number>,
@@ -1283,7 +1283,7 @@ async function initContentDirStateAsync(
             const patterns = parseIgnorePatterns(await readFileAsync(filePath, 'utf-8'));
             const prefixed = patterns.map((p) => prefixPattern(p, relToProject));
             ig.add(prefixed);
-            if (name === '.psignore') okignoreIg.add(prefixed);
+            if (name === '.psignore') psignoreIg.add(prefixed);
           } catch (err) {
             log.warn({ path: filePath, err }, `Failed to read nested ${name} at ${filePath}`);
           }
@@ -1295,7 +1295,7 @@ async function initContentDirStateAsync(
         childRel,
         projectDir,
         ig,
-        okignoreIg,
+        psignoreIg,
         contentRelPrefix,
         contentOutsideProject,
         dirCount,
@@ -1328,7 +1328,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
   const contentOutsideProject = contentRelPrefix.startsWith('..');
 
   let ig = ignore();
-  let okignoreIg = ignore();
+  let psignoreIg = ignore();
   let watcherIgnoreGlobs: string[] = [];
   let lastPatternCount = 0;
 
@@ -1361,10 +1361,10 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
       : `${contentRelPrefix}/${relativePath}`;
   }
 
-  function isOkIgnored(relativePath: string): boolean {
+  function isPsIgnored(relativePath: string): boolean {
     if (contentOutsideProject) return false;
     const projectRelPath = contentRelPrefix ? `${contentRelPrefix}/${relativePath}` : relativePath;
-    return okignoreIg.ignores(projectRelPath);
+    return psignoreIg.ignores(projectRelPath);
   }
 
   function isReservedDocName(relativePath: string): boolean {
@@ -1381,7 +1381,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
 
   async function buildAndSwapPatternState(): Promise<void> {
     const newIg = ignore();
-    const newOkignoreIg = ignore();
+    const newPsignoreIg = ignore();
     newIg.add('.git');
     const newRootPatterns: string[] = [];
 
@@ -1392,7 +1392,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
         const patterns = parseIgnorePatterns(await readFileAsync(path, 'utf-8'));
         newRootPatterns.push(...patterns);
         newIg.add(patterns);
-        if (name === '.psignore') newOkignoreIg.add(patterns);
+        if (name === '.psignore') newPsignoreIg.add(patterns);
       } catch (err) {
         log.warn({ path, err }, `Failed to read ${name} at ${path}`);
       }
@@ -1406,7 +1406,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
           const patterns = parseIgnorePatterns(await readFileAsync(path, 'utf-8'));
           const prefixed = patterns.map((p) => prefixPattern(p, contentRelPrefix));
           newIg.add(prefixed);
-          if (name === '.psignore') newOkignoreIg.add(prefixed);
+          if (name === '.psignore') newPsignoreIg.add(prefixed);
         } catch (err) {
           log.warn({ path, err }, `Failed to read ${name} at ${path}`);
         }
@@ -1427,7 +1427,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
         '',
         projectDir,
         newIg,
-        newOkignoreIg,
+        newPsignoreIg,
         contentRelPrefix,
         contentOutsideProject,
         newDirCount,
@@ -1435,7 +1435,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
     }
 
     ig = newIg;
-    okignoreIg = newOkignoreIg;
+    psignoreIg = newPsignoreIg;
     watcherIgnoreGlobs = buildWatcherIgnoreGlobs(newRootPatterns);
     lastPatternCount = newRootPatterns.length;
     dirCount.clear();
@@ -1479,7 +1479,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
       if (
         !opts?.bypassFilters &&
         opts?.syncScope !== undefined &&
-        isShareableOkArtifact(syncProjectRelPath(relativePath, opts.syncScope)) &&
+        isShareablePsArtifact(syncProjectRelPath(relativePath, opts.syncScope)) &&
         !isIgnored(relativePath, opts.syncScope)
       ) {
         if (singleDocRelPath !== undefined) return relativePath !== singleDocRelPath;
@@ -1489,7 +1489,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
       if (isAlwaysSkipFile(relativePath)) return true;
       if (singleDocRelPath !== undefined) return relativePath !== singleDocRelPath;
       if (opts?.bypassFilters) {
-        return opts.respectOkignore === true && isOkIgnored(relativePath);
+        return opts.respectOkignore === true && isPsIgnored(relativePath);
       }
       if (isRejectedByConfigurableRules(relativePath)) return true;
       if (isSupportedDocFile(relativePath)) return false;
@@ -1518,7 +1518,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
         (isSkillContentAncestorDir(relativePath) ||
           isTemplateContentAncestorDir(relativePath) ||
           (opts?.syncScope !== undefined &&
-            isShareableOkArtifactAncestorDir(syncProjectRelPath(relativePath, opts.syncScope))) ||
+            isShareablePsArtifactAncestorDir(syncProjectRelPath(relativePath, opts.syncScope))) ||
           isInPlaceSkillAncestorDir(relativePath, inPlaceSkillDirs))
       )
         return false;
@@ -1529,7 +1529,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
       if (opts?.bypassFilters) {
         return (
           opts.respectOkignore === true &&
-          (isOkIgnored(relativePath) || isOkIgnored(`${relativePath}/`))
+          (isPsIgnored(relativePath) || isPsIgnored(`${relativePath}/`))
         );
       }
       for (const segment of relativePath.split('/')) {
@@ -1639,7 +1639,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
           }
         }
         const prevIg = ig;
-        const prevOkignoreIg = okignoreIg;
+        const prevPsignoreIg = psignoreIg;
         const prevWatcherGlobs = watcherIgnoreGlobs;
         const prevDirCount = new Map(dirCount);
         const startedAt = Date.now();
@@ -1649,9 +1649,9 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
             await buildAndSwapPatternState();
             const durationMs = Date.now() - startedAt;
             span.setAttributes({
-              'ok.ignore.pattern_count': lastPatternCount,
-              'ok.ignore.nested_file_count': 0,
-              'ok.ignore.bytes': 0,
+              'ps.ignore.pattern_count': lastPatternCount,
+              'ps.ignore.nested_file_count': 0,
+              'ps.ignore.bytes': 0,
             });
             log.info({ durationMs }, 'content-filter async rebuild succeeded');
 
@@ -1675,7 +1675,7 @@ export async function createContentFilterAsync(opts: ContentFilterOptions): Prom
             };
           } catch (err) {
             ig = prevIg;
-            okignoreIg = prevOkignoreIg;
+            psignoreIg = prevPsignoreIg;
             watcherIgnoreGlobs = prevWatcherGlobs;
             dirCount.clear();
             for (const [k, v] of prevDirCount) dirCount.set(k, v);

@@ -62,8 +62,8 @@ export interface MenuDeps {
   onCopyRelativePath?(): void;
   showHiddenFilesChecked?: boolean;
   onToggleShowHiddenFiles?(): void;
-  showOkFoldersChecked?: boolean;
-  onToggleShowOkFolders?(): void;
+  showPsFoldersChecked?: boolean;
+  onToggleShowPsFolders?(): void;
   showOnlyMarkdownFilesChecked?: boolean;
   onToggleShowOnlyMarkdownFiles?(): void;
   showSkillsSectionChecked?: boolean;
@@ -314,9 +314,9 @@ const MENU_BINDINGS: Record<string, MenuCommandBinding> = {
     checked: (d) => d.showHiddenFilesChecked ?? false,
   },
   'toggle-show-ps-folders': {
-    click: (d) => () => d.onToggleShowOkFolders?.(),
-    enabled: (d) => d.onToggleShowOkFolders !== undefined,
-    checked: (d) => d.showOkFoldersChecked ?? false,
+    click: (d) => () => d.onToggleShowPsFolders?.(),
+    enabled: (d) => d.onToggleShowPsFolders !== undefined,
+    checked: (d) => d.showPsFoldersChecked ?? false,
   },
   'toggle-show-only-markdown-files': {
     click: (d) => () => d.onToggleShowOnlyMarkdownFiles?.(),

@@ -123,7 +123,7 @@ function evidenceReporter(
 
 export function vitestRunEvidence(): Plugin {
   return {
-    name: 'ok:vitest-run-evidence',
+    name: 'ps:vitest-run-evidence',
     configureVitest({ vitest }) {
       if (process.env[VITEST_RUN_EVIDENCE_OWNER_ENV] !== undefined) return;
       process.env[VITEST_RUN_EVIDENCE_OWNER_ENV] = String(process.pid);

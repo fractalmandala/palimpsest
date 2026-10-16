@@ -425,7 +425,7 @@ describe('runUninstall', () => {
         deps: {
           discoverLockDirs: async () => [],
           detectInstallMethods: () => [
-            { method: 'app', label: 'OK Desktop', instruction: 'Move to Trash' },
+            { method: 'app', label: 'Palimpsest Desktop', instruction: 'Move to Trash' },
           ],
         },
       });
@@ -521,7 +521,7 @@ describe('runUninstall', () => {
     const home = mkdtempSync(join(tmpdir(), 'ps-uninst-cmd-'));
     try {
       write(join(home, '.ps', 'auth.yml'), 'x\n');
-      write(join(home, '.agents', 'skills', 'open-knowledge-discovery', 'SKILL.md'), '# d\n');
+      write(join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md'), '# d\n');
       const result = await runUninstall({
         home,
         platform: 'darwin',
@@ -541,7 +541,7 @@ describe('runUninstall', () => {
       expect(result.exitCode).toBe(0);
       expect(result.message).toContain('Removed');
       expect(existsSync(join(home, '.ps', 'auth.yml'))).toBe(false);
-      expect(existsSync(join(home, '.agents', 'skills', 'open-knowledge-discovery'))).toBe(false);
+      expect(existsSync(join(home, '.agents', 'skills', 'palimpsest-discovery'))).toBe(false);
     } finally {
       rmSync(home, { recursive: true, force: true });
     }

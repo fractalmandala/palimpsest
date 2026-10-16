@@ -12,7 +12,7 @@ const gitHostEntryShape = {
     reload: 'boot',
     defaultScope: 'user',
     description:
-      "Declares that this git host is a GitHub Enterprise Server instance, so Palimpsest treats its remotes the way it treats github.com (Palimpsest credential handling, the push-permission check, share links, and the default host for `ok auth`). 'github' is the only accepted value today. A host that is not declared here and is not github.com is treated as a generic git remote, so Palimpsest leaves the machine's own git credentials alone and does not check push permission. Per-machine (user scope, global.yml in the Palimpsest home folder); a value in a project's `.ps/config.yml` is ignored. The declaration takes effect when Palimpsest next starts.",
+      "Declares that this git host is a GitHub Enterprise Server instance, so Palimpsest treats its remotes the way it treats github.com (Palimpsest credential handling, the push-permission check, share links, and the default host for `ps auth`). 'github' is the only accepted value today. A host that is not declared here and is not github.com is treated as a generic git remote, so Palimpsest leaves the machine's own git credentials alone and does not check push permission. Per-machine (user scope, global.yml in the Palimpsest home folder); a value in a project's `.ps/config.yml` is ignored. The declaration takes effect when Palimpsest next starts.",
   }),
 };
 

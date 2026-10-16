@@ -84,7 +84,7 @@ export function describeLockOwnershipRefusal(
     return (
       `Cannot verify shutdown: the server lock at ${state.lockPath} does not record its owning machine, ` +
       `and its recorded process ${state.pid} is still running on this machine. ` +
-      `Check whether process ${state.pid} is an Palimpsest server. If it is, stop it and retry. ` +
+      `Check whether process ${state.pid} is a Palimpsest server. If it is, stop it and retry. ` +
       'Do not remove the lock file while that process is running.'
     );
   }

@@ -143,7 +143,7 @@ describe('createLintWriteRoutes config handlers', () => {
       expect(response.status).toBe(400);
       expect(response.headers['content-type']).toContain('application/problem+json');
       expect(JSON.parse(response.body)).toMatchObject({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         detail: 'field: schema property name cannot be __proto__',
       });
     } finally {
@@ -205,7 +205,7 @@ describe('createLintWriteRoutes lint-fix refusal responses', () => {
       expect(response.headers['retry-after']).toBe('10');
       expect(JSON.parse(response.body)).toMatchObject({
         status: 503,
-        type: 'urn:ok:error:too-many-agent-sessions',
+        type: 'urn:ps:error:too-many-agent-sessions',
         committed: false,
         retryAfterSeconds: 10,
       });

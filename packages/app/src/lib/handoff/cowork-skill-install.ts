@@ -31,7 +31,7 @@ export interface EnsureCoworkSkillDeps {
   readonly fallbackSkillVersion?: string;
 }
 
-const GUARD_KEY_PREFIX = 'ok:skill:cowork:installed';
+const GUARD_KEY_PREFIX = 'ps:skill:cowork:installed';
 const GUARD_VALUE = '1';
 const DEFAULT_SERVER_TIMEOUT_MS = 250;
 const INSTALL_STATE_PATH = '/api/skill/install-state';

@@ -15,7 +15,7 @@ command -v npx >/dev/null 2>&1 && exec npx -y @palimpsest/cli@latest mcp
 for d in "$HOME/.nvm/versions/node"/*/bin "$HOME/.fnm/node-versions"/*/installation/bin "$HOME/.asdf/installs/nodejs"/*/bin /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/.volta/bin"; do
   [ -f "$d/npx" ] && [ -x "$d/npx" ] && exec "$d/npx" -y @palimpsest/cli@latest mcp
 done
-echo "Palimpsest: install OK Desktop or Node.js 24+, then restart your editor" >&2
+echo "Palimpsest: install Palimpsest Desktop or Node.js 24+, then restart your editor" >&2
 exit 127`;
 
 const WINDOWS_V1_HISTORICAL_CHAIN = `# ps-mcp-win-v1

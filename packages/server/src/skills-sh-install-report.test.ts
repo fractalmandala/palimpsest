@@ -27,20 +27,20 @@ describe('reportSkillInstall', () => {
     const reported = await reportSkillInstall(
       {
         source: 'fractalmandala/palimpsest-skills',
-        skills: ['open-knowledge-discovery'],
+        skills: ['palimpsest-discovery'],
         agents: ['claude', 'codex'],
         global: true,
         version: '9.9.9',
       },
       { home: freshHome(), ...ENABLED, fetchImpl: impl },
     );
-    expect(reported).toEqual(['open-knowledge-discovery']);
+    expect(reported).toEqual(['palimpsest-discovery']);
     expect(calls).toHaveLength(1);
     const url = new URL(calls[0] as string);
     expect(url.origin + url.pathname).toBe('https://add-skill.vercel.sh/t');
     expect(url.searchParams.get('event')).toBe('install');
     expect(url.searchParams.get('source')).toBe('fractalmandala/palimpsest-skills');
-    expect(url.searchParams.get('skills')).toBe('open-knowledge-discovery');
+    expect(url.searchParams.get('skills')).toBe('palimpsest-discovery');
     expect(url.searchParams.get('agents')).toBe('claude,codex');
     expect(url.searchParams.get('global')).toBe('1');
     expect(url.searchParams.get('v')).toBe('9.9.9');
@@ -49,7 +49,7 @@ describe('reportSkillInstall', () => {
   test('reports a given skill only once per machine', async () => {
     const home = freshHome();
     const { calls, impl } = recordingFetch();
-    const report = { source: 'fractalmandala/palimpsest-skills', skills: ['open-knowledge-discovery'] };
+    const report = { source: 'fractalmandala/palimpsest-skills', skills: ['palimpsest-discovery'] };
     await reportSkillInstall(report, { home, ...ENABLED, fetchImpl: impl });
     await reportSkillInstall(report, { home, ...ENABLED, fetchImpl: impl });
     await reportSkillInstall(report, { home, ...ENABLED, fetchImpl: impl });

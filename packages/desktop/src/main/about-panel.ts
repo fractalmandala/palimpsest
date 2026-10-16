@@ -6,7 +6,7 @@ export function buildAboutPanelOptions(version: string): AboutPanelOptionsOption
     applicationName: DESKTOP_VARIANT.productName,
     applicationVersion: version,
     copyright: [
-      'Copyright (C) 2026 Inkeep, Inc.',
+      'Copyright (C) 2026 Inkeep, Inc. and Palimpsest contributors.',
       'License GPL-3.0-or-later. Free software with ABSOLUTELY NO WARRANTY.',
       'Full license: see LICENSE in the app Resources.',
     ].join('\n'),

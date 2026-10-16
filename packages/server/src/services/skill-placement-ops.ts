@@ -5,7 +5,7 @@ import { AGENTS_SKILLS_ROOT, isSkillInstallTarget } from '@palimpsest/core';
 import { parseSkillDir } from '@palimpsest/core/skills-catalog';
 import { tracedCpSync, tracedMkdirSync, tracedRmSync } from '../fs-traced.ts';
 import {
-  isRefusedOkPlacementRoot,
+  isRefusedPsPlacementRoot,
   readSkillPlacements,
   recordSkillPlacement,
   removeSkillPlacement,
@@ -74,12 +74,12 @@ export function createSkillPlacementOpsService(): SkillPlacementOpsService {
       const placementRel = `${dirRel}/${input.name}`;
       const destAbs = resolveSkillPlacementPath(input.placeBase, placementRel);
       const baseAbs = resolve(input.placeBase);
-      const underOkInternals = isRefusedOkPlacementRoot(dirRel);
+      const underPsInternals = isRefusedPsPlacementRoot(dirRel);
       if (
         dirRel === '' ||
         destAbs === null ||
         !destAbs.startsWith(baseAbs + sep) ||
-        underOkInternals
+        underPsInternals
       ) {
         return { ok: false, kind: 'invalid-path' };
       }

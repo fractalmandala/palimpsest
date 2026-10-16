@@ -6,14 +6,14 @@ import { PS_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
 import {
-  addOkPathsToGitExclude,
+  addPsPathsToGitExclude,
   formatTrackedRemediation,
-  getExcludedOkPaths,
+  getExcludedPsPaths,
   getInstalledSkillProjectionPaths,
-  getOkArtifactPaths,
-  probeTrackedOkPaths,
+  getPsArtifactPaths,
+  probeTrackedPsPaths,
   readSharingMode,
-  removeOkPathsFromGitExclude,
+  removePsPathsFromGitExclude,
 } from './git-exclude.ts';
 
 function writeMarker(dir: string, skills: Record<string, string[]>): void {
@@ -58,7 +58,7 @@ function readExclude(projectRoot: string): string {
   return readFileSync(join(projectRoot, '.git', 'info', 'exclude'), 'utf-8');
 }
 
-describe('getOkArtifactPaths', () => {
+describe('getPsArtifactPaths', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('artifact-paths-test');
@@ -69,7 +69,7 @@ describe('getOkArtifactPaths', () => {
   });
 
   it('returns the canonical eight-path artifact set (bundle projection carved out) when no config.yml exists', () => {
-    const paths = getOkArtifactPaths(dir);
+    const paths = getPsArtifactPaths(dir);
     expect(paths).toContain(`${PS_DIR}/`);
     expect(paths).toContain('.psignore');
     expect(paths).toContain('.mcp.json');
@@ -88,15 +88,15 @@ describe('getOkArtifactPaths', () => {
   });
 
   it('preserves a stable order so `ps config-sharing status` and unit-test snapshots are deterministic', () => {
-    const a = getOkArtifactPaths(dir);
-    const b = getOkArtifactPaths(dir);
+    const a = getPsArtifactPaths(dir);
+    const b = getPsArtifactPaths(dir);
     expect([...a]).toEqual([...b]);
   });
 
   it('emits unanchored `.ps/` / `.psignore` regardless of content.dir', () => {
     mkdirSync(join(dir, PS_DIR), { recursive: true });
     writeFileSync(join(dir, PS_DIR, 'config.yml'), 'content:\n  dir: docs\n', 'utf-8');
-    const paths = getOkArtifactPaths(dir);
+    const paths = getPsArtifactPaths(dir);
     expect(paths).toContain('.ps/');
     expect(paths).toContain('.psignore');
     expect(paths).not.toContain('docs/.ps/');
@@ -107,7 +107,7 @@ describe('getOkArtifactPaths', () => {
 
   it('never excludes an AUTHORED skill projection, marker or not', () => {
     writeMarker(dir, { 'trip-log': ['claude', 'cursor', 'copilot'], 'palimpsest': ['claude'] });
-    const paths = getOkArtifactPaths(dir);
+    const paths = getPsArtifactPaths(dir);
     expect(paths).not.toContain('.claude/skills/trip-log/');
     expect(paths).not.toContain('.cursor/skills/trip-log/');
     expect(paths).not.toContain('.github/skills/trip-log/');
@@ -123,7 +123,7 @@ describe('getOkArtifactPaths', () => {
   it('reads the marker fail-soft — a corrupt marker yields no projections', () => {
     mkdirSync(join(dir, PS_DIR, 'local'), { recursive: true });
     writeFileSync(join(dir, PS_DIR, 'local', 'installed-skills.json'), '{ corrupt', 'utf-8');
-    expect(getOkArtifactPaths(dir)).toHaveLength(8);
+    expect(getPsArtifactPaths(dir)).toHaveLength(8);
     expect(getInstalledSkillProjectionPaths(dir)).toEqual([]);
   });
 });
@@ -158,7 +158,7 @@ describe('root + nested .ps coverage for a non-default content.dir', () => {
     writeFileSync(join(dir, 'docs', 'guides', '.ps', 'frontmatter.yml'), '', 'utf-8');
     writeFileSync(join(dir, 'docs', 'guides', '.psignore'), '', 'utf-8');
 
-    const result = addOkPathsToGitExclude(dir, getOkArtifactPaths(dir));
+    const result = addPsPathsToGitExclude(dir, getPsArtifactPaths(dir));
     expect(result.kind).toBe('updated');
 
     expect(isIgnored('.ps/config.yml')).toBe(true);
@@ -168,7 +168,7 @@ describe('root + nested .ps coverage for a non-default content.dir', () => {
   });
 });
 
-describe('addOkPathsToGitExclude', () => {
+describe('addPsPathsToGitExclude', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('add-exclude-test');
@@ -184,7 +184,7 @@ describe('addOkPathsToGitExclude', () => {
 `;
     writeExclude(dir, template);
 
-    const result = addOkPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
+    const result = addPsPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
 
     expect(result).toEqual({
       kind: 'updated',
@@ -200,15 +200,15 @@ describe('addOkPathsToGitExclude', () => {
 
   it('inserts a newline before appending when existing content has no trailing newline', () => {
     writeExclude(dir, '*.tmp');
-    const result = addOkPathsToGitExclude(dir, ['.ps/']);
+    const result = addPsPathsToGitExclude(dir, ['.ps/']);
     expect(result.kind).toBe('updated');
     expect(readExclude(dir)).toBe('*.tmp\n.ok/\n');
   });
 
   it('is idempotent — running twice classifies as alreadyPresent', () => {
     writeExclude(dir, '');
-    addOkPathsToGitExclude(dir, ['.ps/']);
-    const second = addOkPathsToGitExclude(dir, ['.ps/']);
+    addPsPathsToGitExclude(dir, ['.ps/']);
+    const second = addPsPathsToGitExclude(dir, ['.ps/']);
     expect(second).toEqual({
       kind: 'updated',
       appended: [],
@@ -221,7 +221,7 @@ describe('addOkPathsToGitExclude', () => {
   it('recognizes all four idempotence variants — `.ps`, `.ps/`, `/.ps`, `/.ps/`', () => {
     for (const variant of ['.ps', '.ps/', '/.ps', '/.ps/']) {
       writeExclude(dir, `${variant}\n`);
-      const result = addOkPathsToGitExclude(dir, ['.ps/']);
+      const result = addPsPathsToGitExclude(dir, ['.ps/']);
       expect(result).toEqual({
         kind: 'updated',
         appended: [],
@@ -233,7 +233,7 @@ describe('addOkPathsToGitExclude', () => {
 
   it('overlaps cleanly with the clone-precedent `.ps/` line', () => {
     writeExclude(dir, '.ps/\n');
-    const result = addOkPathsToGitExclude(dir, [
+    const result = addPsPathsToGitExclude(dir, [
       '.ps/',
       '.mcp.json',
       '.claude/skills/palimpsest/',
@@ -254,7 +254,7 @@ describe('addOkPathsToGitExclude', () => {
     });
 
     writeExclude(dir, '');
-    const result = addOkPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
+    const result = addPsPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
     expect(result.kind).toBe('refused-tracked');
     if (result.kind !== 'refused-tracked') throw new Error('unreachable');
     expect(result.tracked).toEqual(['.mcp.json']);
@@ -276,7 +276,7 @@ describe('addOkPathsToGitExclude', () => {
     });
 
     writeExclude(dir, '');
-    const result = addOkPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
+    const result = addPsPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('unreachable');
     expect(result.appended.sort()).toEqual(['.mcp.json', '.ps/']);
@@ -286,7 +286,7 @@ describe('addOkPathsToGitExclude', () => {
     const nonGit = uniqueDir('non-git');
     mkdirSync(nonGit, { recursive: true });
     try {
-      const result = addOkPathsToGitExclude(nonGit, ['.ps/']);
+      const result = addPsPathsToGitExclude(nonGit, ['.ps/']);
       expect(result).toEqual({ kind: 'no-exclude', reason: 'no-git' });
     } finally {
       rmSync(nonGit, { recursive: true, force: true });
@@ -298,7 +298,7 @@ describe('addOkPathsToGitExclude', () => {
     initGitRepo(noInfo);
     try {
       rmSync(join(noInfo, '.git', 'info'), { recursive: true, force: true });
-      const result = addOkPathsToGitExclude(noInfo, ['.ps/']);
+      const result = addPsPathsToGitExclude(noInfo, ['.ps/']);
       expect(result).toEqual({ kind: 'no-exclude', reason: 'no-info-dir' });
     } finally {
       rmSync(noInfo, { recursive: true, force: true });
@@ -324,7 +324,7 @@ describe('addOkPathsToGitExclude', () => {
       const dotGitContent = readFileSync(join(linkedWorktree, '.git'), 'utf-8');
       expect(dotGitContent.startsWith('gitdir:')).toBe(true);
 
-      const result = addOkPathsToGitExclude(linkedWorktree, ['.ps/', '.mcp.json']);
+      const result = addPsPathsToGitExclude(linkedWorktree, ['.ps/', '.mcp.json']);
       expect(result.kind).toBe('updated');
 
       const mainExclude = join(mainRepo, '.git', 'info', 'exclude');
@@ -341,7 +341,7 @@ describe('addOkPathsToGitExclude', () => {
   });
 });
 
-describe('removeOkPathsFromGitExclude', () => {
+describe('removePsPathsFromGitExclude', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('remove-exclude-test');
@@ -360,7 +360,7 @@ build/
 .DS_Store
 `;
     writeExclude(dir, original);
-    removeOkPathsFromGitExclude(dir, ['.ps/', '.mcp.json']);
+    removePsPathsFromGitExclude(dir, ['.ps/', '.mcp.json']);
     const expected = `# user header
 *.tmp
 build/
@@ -372,7 +372,7 @@ build/
   it('matches every variant on remove — `.ps`, `.ps/`, `/.ps`, `/.ps/`', () => {
     for (const variant of ['.ps', '.ps/', '/.ps', '/.ps/']) {
       writeExclude(dir, `*.tmp\n${variant}\nbuild/\n`);
-      removeOkPathsFromGitExclude(dir, ['.ps/']);
+      removePsPathsFromGitExclude(dir, ['.ps/']);
       expect(readExclude(dir)).toBe('*.tmp\nbuild/\n');
     }
   });
@@ -380,21 +380,21 @@ build/
   it('is a no-op when no OK paths are present', () => {
     const original = '*.tmp\nbuild/\n';
     writeExclude(dir, original);
-    removeOkPathsFromGitExclude(dir, ['.ps/']);
+    removePsPathsFromGitExclude(dir, ['.ps/']);
     expect(readExclude(dir)).toBe(original);
   });
 
   it('survives a round-trip — `add` then `remove` reproduces the pre-add bytes', () => {
     const original = '# user header\n*.tmp\n';
     writeExclude(dir, original);
-    addOkPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
-    removeOkPathsFromGitExclude(dir, ['.ps/', '.mcp.json']);
+    addPsPathsToGitExclude(dir, ['.ps/', '.mcp.json']);
+    removePsPathsFromGitExclude(dir, ['.ps/', '.mcp.json']);
     expect(readExclude(dir)).toBe(original);
   });
 
   it('is tolerant of an absent exclude file', () => {
     rmSync(join(dir, '.git', 'info', 'exclude'), { force: true });
-    const result = removeOkPathsFromGitExclude(dir, ['.ps/']);
+    const result = removePsPathsFromGitExclude(dir, ['.ps/']);
     expect(result.kind).toBe('updated');
   });
 
@@ -407,7 +407,7 @@ build/
       writeFileSync(join(dir, '.git'), `gitdir: ${gitDir}\n`);
       symlinkSync('commondir', join(gitDir, 'commondir'));
 
-      expect(removeOkPathsFromGitExclude(dir, ['.ps/'])).toEqual({
+      expect(removePsPathsFromGitExclude(dir, ['.ps/'])).toEqual({
         kind: 'no-exclude',
         reason: 'inaccessible',
       });
@@ -416,7 +416,7 @@ build/
 
   it('reports the actually-removed artifact paths in `removed` (not the full candidate list)', () => {
     writeExclude(dir, '# header\n.ok/\n.mcp.json\nbuild/\n');
-    const result = removeOkPathsFromGitExclude(dir, ['.ps/', '.mcp.json', '.cursor/mcp.json']);
+    const result = removePsPathsFromGitExclude(dir, ['.ps/', '.mcp.json', '.cursor/mcp.json']);
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('unreachable');
     expect(result.removed.sort()).toEqual(['.mcp.json', '.ps/']);
@@ -424,7 +424,7 @@ build/
 
   it('reports an empty `removed` when no candidate line was present', () => {
     writeExclude(dir, '*.tmp\nbuild/\n');
-    const result = removeOkPathsFromGitExclude(dir, ['.ps/']);
+    const result = removePsPathsFromGitExclude(dir, ['.ps/']);
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('unreachable');
     expect(result.removed).toEqual([]);
@@ -452,7 +452,7 @@ describe('readSharingMode', () => {
   });
 
   it('returns `local-only` when EVERY OK artifact path is excluded', () => {
-    const paths = getOkArtifactPaths(dir);
+    const paths = getPsArtifactPaths(dir);
     writeExclude(dir, `${paths.join('\n')}\n`);
     expect(readSharingMode(dir)).toBe('local-only');
   });
@@ -478,7 +478,7 @@ describe('readSharingMode', () => {
   });
 });
 
-describe('probeTrackedOkPaths', () => {
+describe('probeTrackedPsPaths', () => {
   let dir: string;
   beforeEach(() => {
     dir = uniqueDir('probe-test');
@@ -500,7 +500,7 @@ describe('probeTrackedOkPaths', () => {
       stdio: ['ignore', 'ignore', 'ignore'],
     });
 
-    const result = probeTrackedOkPaths(dir, [
+    const result = probeTrackedPsPaths(dir, [
       '.mcp.json',
       '.cursor/mcp.json',
       '.claude/skills/palimpsest/',
@@ -510,11 +510,11 @@ describe('probeTrackedOkPaths', () => {
 
   it('returns an empty list when no candidate is tracked', () => {
     writeFileSync(join(dir, '.mcp.json'), '{}', 'utf-8');
-    expect(probeTrackedOkPaths(dir, ['.mcp.json']).tracked).toEqual([]);
+    expect(probeTrackedPsPaths(dir, ['.mcp.json']).tracked).toEqual([]);
   });
 
   it('returns an empty list when the directory has no candidate on disk', () => {
-    expect(probeTrackedOkPaths(dir, ['.mcp.json']).tracked).toEqual([]);
+    expect(probeTrackedPsPaths(dir, ['.mcp.json']).tracked).toEqual([]);
   });
 });
 
@@ -565,24 +565,24 @@ describe('shared -> local-only transition with tracked shareable .ps artifacts',
     rmSync(dir, { recursive: true, force: true });
   });
 
-  function commitOkArtifacts(): void {
+  function commitPsArtifacts(): void {
     execFileSync(
       'git',
       ['add', '.ps/config.yml', '.ps/schemas/lint.json', '.ps/templates/note.md'],
       { cwd: dir },
     );
-    execFileSync('git', ['commit', '-m', 'share ok artifacts'], {
+    execFileSync('git', ['commit', '-m', 'share ps artifacts'], {
       cwd: dir,
       stdio: ['ignore', 'ignore', 'ignore'],
     });
   }
 
   it('refuses via the tracked-paths probe and leaves the project shared (no silent exclude)', () => {
-    commitOkArtifacts();
+    commitPsArtifacts();
     writeExclude(dir, '');
     expect(readSharingMode(dir)).toBe('shared');
 
-    const result = addOkPathsToGitExclude(dir, getOkArtifactPaths(dir));
+    const result = addPsPathsToGitExclude(dir, getPsArtifactPaths(dir));
     expect(result.kind).toBe('refused-tracked');
     if (result.kind !== 'refused-tracked') throw new Error('unreachable');
     expect(result.tracked).toEqual(['.ps/']);
@@ -594,15 +594,15 @@ describe('shared -> local-only transition with tracked shareable .ps artifacts',
 
   it('proceeds when the artifacts exist on disk but are untracked', () => {
     writeExclude(dir, '');
-    const result = addOkPathsToGitExclude(dir, getOkArtifactPaths(dir));
+    const result = addPsPathsToGitExclude(dir, getPsArtifactPaths(dir));
     expect(result.kind).toBe('updated');
     expect(readSharingMode(dir)).toBe('local-only');
   });
 
   it('unblocks after the remediation command untracks the artifacts', () => {
-    commitOkArtifacts();
+    commitPsArtifacts();
     writeExclude(dir, '');
-    const refused = addOkPathsToGitExclude(dir, getOkArtifactPaths(dir));
+    const refused = addPsPathsToGitExclude(dir, getPsArtifactPaths(dir));
     expect(refused.kind).toBe('refused-tracked');
 
     execFileSync('git', ['rm', '--cached', '-r', '.ps'], {
@@ -610,7 +610,7 @@ describe('shared -> local-only transition with tracked shareable .ps artifacts',
       stdio: ['ignore', 'ignore', 'ignore'],
     });
 
-    const retried = addOkPathsToGitExclude(dir, getOkArtifactPaths(dir));
+    const retried = addPsPathsToGitExclude(dir, getPsArtifactPaths(dir));
     expect(retried.kind).toBe('updated');
     expect(readSharingMode(dir)).toBe('local-only');
     expect(existsSync(join(dir, '.ps', 'config.yml'))).toBe(true);
@@ -621,7 +621,7 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
   it('drains stale skill lines on the way IN, so a project that stays local-only self-heals', () => {
     writeMarker(dir, { 'trip-log': ['claude'] });
     writeExclude(dir, ['.ps/', '.psignore', '.claude/skills/trip-log/', '*.tmp', ''].join('\n'));
-    const result = addOkPathsToGitExclude(dir, getOkArtifactPaths(dir));
+    const result = addPsPathsToGitExclude(dir, getPsArtifactPaths(dir));
     expect(result.kind).toBe('updated');
     const content = readExclude(dir);
     expect(content).not.toContain('.claude/skills/trip-log/');
@@ -643,7 +643,7 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
       ].join('\n'),
     );
 
-    const result = removeOkPathsFromGitExclude(dir, getOkArtifactPaths(dir));
+    const result = removePsPathsFromGitExclude(dir, getPsArtifactPaths(dir));
 
     expect(result.kind).toBe('updated');
     const content = readExclude(dir);
@@ -652,25 +652,25 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
     expect(content).toMatch(/^\/\.claude\/skills\/trip-log\/$/m);
   });
 
-  it('getExcludedOkPaths surfaces an orphaned skill line whose marker entry is gone', () => {
+  it('getExcludedPsPaths surfaces an orphaned skill line whose marker entry is gone', () => {
     writeExclude(dir, ['.ps/', '.claude/skills/ghost-skill/', ''].join('\n'));
-    const excluded = getExcludedOkPaths(dir);
+    const excluded = getExcludedPsPaths(dir);
     expect(excluded).toContain('.claude/skills/ghost-skill/');
   });
 
   it('does not claim a hand-placed non-OK path as an OK exclude', () => {
     writeExclude(dir, ['.ps/', 'vendor/skills/thing/', 'notes/', ''].join('\n'));
-    const excluded = getExcludedOkPaths(dir);
+    const excluded = getExcludedPsPaths(dir);
     expect(excluded).not.toContain('vendor/skills/thing/');
     expect(excluded).not.toContain('notes/');
   });
 
   it('leaves a hand-written skill exclude alone (drains only the spelling OK writes)', () => {
     writeMarker(dir, { 'trip-log': ['claude'] });
-    const artifacts = getOkArtifactPaths(dir);
+    const artifacts = getPsArtifactPaths(dir);
     writeExclude(dir, `${artifacts.join('\n')}\n.claude/skills/trip-log\n`);
 
-    const result = addOkPathsToGitExclude(dir, artifacts);
+    const result = addPsPathsToGitExclude(dir, artifacts);
 
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('unreachable');
@@ -680,10 +680,10 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
 
   it('self-heals an already fully local-only project (drain with zero appends)', () => {
     writeMarker(dir, { 'trip-log': ['claude'] });
-    const artifacts = getOkArtifactPaths(dir);
+    const artifacts = getPsArtifactPaths(dir);
     writeExclude(dir, `${artifacts.join('\n')}\n.claude/skills/trip-log/\n`);
 
-    const result = addOkPathsToGitExclude(dir, artifacts);
+    const result = addPsPathsToGitExclude(dir, artifacts);
 
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('unreachable');
@@ -696,17 +696,17 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
   it("reports the drained lines in `removed`, not just the caller's candidates", () => {
     writeMarker(dir, { 'trip-log': ['claude'] });
     writeExclude(dir, ['.ps/', '.claude/skills/trip-log/', ''].join('\n'));
-    const result = removeOkPathsFromGitExclude(dir, getOkArtifactPaths(dir));
+    const result = removePsPathsFromGitExclude(dir, getPsArtifactPaths(dir));
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('expected updated');
     expect(result.removed).toContain('.claude/skills/trip-log/');
     expect(result.removed).toContain('.ps/');
   });
 
-  it('getExcludedOkPaths surfaces legacy skill lines the current set no longer names', () => {
+  it('getExcludedPsPaths surfaces legacy skill lines the current set no longer names', () => {
     writeMarker(dir, { 'trip-log': ['claude'] });
     writeExclude(dir, ['.ps/', '.claude/skills/trip-log/', ''].join('\n'));
-    const excluded = getExcludedOkPaths(dir);
+    const excluded = getExcludedPsPaths(dir);
     expect(excluded).toContain('.ps/');
     expect(excluded).toContain('.claude/skills/trip-log/');
   });
@@ -723,7 +723,7 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
   it('strips skill-projection lines on the switch to shared', () => {
     writeMarker(dir, { 'trip-log': ['claude'] });
     writeExclude(dir, ['.ps/', '.psignore', '.claude/skills/trip-log/', '*.tmp', ''].join('\n'));
-    removeOkPathsFromGitExclude(dir, getOkArtifactPaths(dir));
+    removePsPathsFromGitExclude(dir, getPsArtifactPaths(dir));
     const content = readExclude(dir);
     expect(content).not.toContain('.claude/skills/trip-log/');
     expect(content).not.toContain('.ps/');
@@ -733,7 +733,7 @@ describe('legacy skill-projection drain (lines older builds wrote)', () => {
 
   it('is a no-op when the marker is gone (nothing left to name the old lines)', () => {
     writeExclude(dir, '.ps/\n.claude/skills/trip-log/\n');
-    removeOkPathsFromGitExclude(dir, getOkArtifactPaths(dir));
+    removePsPathsFromGitExclude(dir, getPsArtifactPaths(dir));
     const content = readExclude(dir);
     expect(content).not.toContain('.ps/');
     expect(content).toContain('.claude/skills/trip-log/');
@@ -755,9 +755,9 @@ describe('legacy skills carve-out spelling (recognition only)', () => {
     expect(readSharingMode(dir)).toBe('local-only');
   });
 
-  it('removeOkPaths (share) strips the carve lines so nothing is left excluding .ps/', () => {
+  it('removePsPaths (share) strips the carve lines so nothing is left excluding .ps/', () => {
     writeExclude(dir, '**/.ps/*\n!**/.ps/skills/\n.psignore\n');
-    removeOkPathsFromGitExclude(dir, getOkArtifactPaths(dir));
+    removePsPathsFromGitExclude(dir, getPsArtifactPaths(dir));
     const content = readExclude(dir);
     expect(content).not.toContain('**/.ps/*');
     expect(content).not.toContain('!**/.ps/skills/');

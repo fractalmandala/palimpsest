@@ -1,4 +1,4 @@
-import type { ConfigBinding, OkignoreBinding, WriteScope } from '@palimpsest/core';
+import type { ConfigBinding, PsignoreBinding, WriteScope } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createServedBindingLog } from '@/test-utils/served-binding.test-helper';
@@ -32,8 +32,8 @@ const captures = new Map<
   }
 >();
 
-let okignoreSyncedHandler: (() => void) | null = null;
-let okignoreDisposed = false;
+let psignoreSyncedHandler: (() => void) | null = null;
+let psignoreDisposed = false;
 let providerRecords: ProviderRecord[] = [];
 let mergeLayeredCalls: Array<[unknown, unknown, unknown]> = [];
 let mergedConfig: unknown = {};
@@ -47,8 +47,8 @@ const originalFetch = globalThis.fetch;
 
 function resetCaptures() {
   captures.clear();
-  okignoreSyncedHandler = null;
-  okignoreDisposed = false;
+  psignoreSyncedHandler = null;
+  psignoreDisposed = false;
   providerRecords = [];
   mergeLayeredCalls = [];
   mergedConfig = {};
@@ -90,15 +90,15 @@ function makeFakeConfigBinding(scope: ScopeKey, hasSyncedSeed: boolean): ConfigB
   };
 }
 
-function makeFakeOkignoreBinding(): OkignoreBinding {
+function makeFakePsignoreBinding(): PsignoreBinding {
   return {
     current: () => ({}) as never,
     patch: () => ({ ok: true, value: { applied: [], effective: {} } }) as never,
     subscribe: () => () => {},
     dispose: () => {
-      okignoreDisposed = true;
+      psignoreDisposed = true;
     },
-  } as unknown as OkignoreBinding;
+  } as unknown as PsignoreBinding;
 }
 
 vi.doMock('@/hooks/use-theme-bridge', () => ({
@@ -132,11 +132,11 @@ vi.doMock('@hocuspocus/provider', () => {
     }
 
     on(event: string, handler: () => void) {
-      if (event === 'synced') okignoreSyncedHandler = handler;
+      if (event === 'synced') psignoreSyncedHandler = handler;
     }
     off(event: string, handler: () => void) {
-      if (event === 'synced' && okignoreSyncedHandler === handler) {
-        okignoreSyncedHandler = null;
+      if (event === 'synced' && psignoreSyncedHandler === handler) {
+        psignoreSyncedHandler = null;
       }
     }
     destroy() {
@@ -164,7 +164,7 @@ vi.doMock('@palimpsest/core/config/bind-config-doc', () =>
 
 vi.doMock('@palimpsest/core/config/bind-psignore-doc', () =>
   servedCore.serve('@palimpsest/core/config/bind-psignore-doc', {
-    bindOkignoreDoc: () => makeFakeOkignoreBinding(),
+    bindPsignoreDoc: () => makeFakePsignoreBinding(),
   }),
 );
 
@@ -437,8 +437,8 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     expect(projectLocalEntry?.syncedListener).toBeNull();
     expect(projectLocalEntry?.syncedUnsubscribed).toBe(true);
     expect(projectLocalEntry?.disposed).toBe(true);
-    expect(okignoreSyncedHandler).toBeNull();
-    expect(okignoreDisposed).toBe(true);
+    expect(psignoreSyncedHandler).toBeNull();
+    expect(psignoreDisposed).toBe(true);
     expect(providerRecords.find((record) => record.name === '__local__/project')?.destroyed).toBe(
       true,
     );
@@ -775,11 +775,11 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     expect([...captures.keys()]).toEqual(['user', 'project', 'project-local']);
     expect(lastContext?.merged).toBe(mergedConfig);
     unmount();
-    expect(okignoreDisposed).toBe(true);
+    expect(psignoreDisposed).toBe(true);
 
     for (const [specifier, member] of [
       ['@palimpsest/core/config/bind-config-doc', 'bindConfigDoc'],
-      ['@palimpsest/core/config/bind-psignore-doc', 'bindOkignoreDoc'],
+      ['@palimpsest/core/config/bind-psignore-doc', 'bindPsignoreDoc'],
       ['@palimpsest/core/config/merge-layered', 'mergeLayered'],
       ['@palimpsest/core/constants/cc1', 'CONFIG_DOC_NAME_USER'],
       ['@palimpsest/core/constants/cc1', 'CONFIG_DOC_NAME_PROJECT'],

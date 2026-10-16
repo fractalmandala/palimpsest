@@ -138,13 +138,13 @@ export interface SkillsDocumentRouteDeps {
   getPrincipal: (() => Principal | null) | undefined;
   rejectReservedBuiltinSkill: (name: string, res: ServerResponse, handler: string) => boolean;
   contentDir: string;
-  attributeOkArtifactWrite: (
+  attributePsArtifactWrite: (
     actor: ReturnType<typeof extractActorIdentity>,
     artifactKey: string,
     subject: string,
     previousPaths?: Array<{ from: string; to: string }>,
   ) => void;
-  scheduleOkArtifactFlush: (context: string) => void;
+  schedulePsArtifactFlush: (context: string) => void;
   signalChannel: ((channel: 'files' | 'lint-config' | 'comments') => void) | undefined;
   checkSkillDocConflictGate: (docName: string, handler: string, res: ServerResponse) => boolean;
   extractAgentIdentity: (body: Record<string, unknown>) => {
@@ -183,7 +183,7 @@ export interface SkillsDocumentRouteDeps {
     lifecycleStatus: RemovalLifecycleStatus,
   ) => Promise<Map<string, string>>;
   log: PinoLogger;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   skillInstallBase: (scope: 'project' | 'global') => string | undefined;
   uninstallSkillFromHostDirs: (
     base: string,
@@ -232,8 +232,8 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
     getPrincipal,
     rejectReservedBuiltinSkill,
     contentDir,
-    attributeOkArtifactWrite,
-    scheduleOkArtifactFlush,
+    attributePsArtifactWrite,
+    schedulePsArtifactFlush,
     signalChannel,
     checkSkillDocConflictGate,
     extractAgentIdentity,
@@ -247,7 +247,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
     extractActorIdentityFromQuery,
     captureAndCloseDocuments,
     log,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     skillInstallBase,
     uninstallSkillFromHostDirs,
     renameTrackedPathInGit,
@@ -456,7 +456,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         const host = url.searchParams.get('host') ?? undefined;
         const skillDirAbs = resolveSkillDirForRead(scope, name, host);
         if (skillDirAbs === null) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-get',
             detail:
               host === undefined
@@ -488,7 +488,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           { handler: 'skill-get' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read skill.', {
           handler: 'skill-get',
           cause: e,
         });
@@ -516,7 +516,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-put',
           });
           return;
@@ -530,7 +530,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           frontmatter: { name: body.frontmatter.name, description: body.frontmatter.description },
         });
         if (!composed.ok) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid skill request.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid skill request.', {
             handler: 'skill-put',
             detail: composed.error.code,
             cause: new Error(composed.error.message),
@@ -546,7 +546,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'No agent skill host is available.',
               { handler: 'skill-put', detail: 'NO_USABLE_SKILL_HOME' },
             );
@@ -562,7 +562,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
             },
           });
           if (!wr.ok) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid skill request.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid skill request.', {
               handler: 'skill-put',
               detail: wr.error.code,
               cause: new Error(wr.error.message),
@@ -570,12 +570,12 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
             return;
           }
           if (body.scope === 'project') {
-            attributeOkArtifactWrite(
+            attributePsArtifactWrite(
               actor,
               `${homeRel}/${body.name}/SKILL`,
               `skill-create: ${homeRel}/${body.name}/SKILL.md`,
             );
-            scheduleOkArtifactFlush('skill-put');
+            schedulePsArtifactFlush('skill-put');
           }
           await seedSkillDerivedViews(
             body.scope === 'project'
@@ -638,12 +638,12 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         }
 
         if (body.scope === 'project') {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('skill', '', body.name),
             `${created ? 'skill-create' : 'skill-edit'}: ${relPath}`,
           );
-          scheduleOkArtifactFlush('skill-put');
+          schedulePsArtifactFlush('skill-put');
         }
         await seedSkillDerivedViews(docName, composed.content);
         signalChannel?.('files');
@@ -660,7 +660,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           { handler: 'skill-put' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to write skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to write skill.', {
           handler: 'skill-put',
           cause: e,
         });
@@ -709,7 +709,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
             ? readSkillContentHash(realDir)
             : undefined;
         if (host !== undefined && realDir === null) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-delete',
             detail: `No skill "${name}" (${scope}) in ${host}.`,
           });
@@ -718,7 +718,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
 
         const actor = extractActorIdentityFromQuery(url, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-delete',
           });
           return;
@@ -753,7 +753,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           errorResponse(
             res,
             status,
-            status === 500 ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            status === 500 ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             status === 500 ? 'Failed to delete skill.' : 'Invalid skill request.',
             {
               handler: 'skill-delete',
@@ -765,9 +765,9 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         }
         if (result.existed) {
           if (scope === 'project') {
-            attributeOkArtifactWrite(actor, dirRel, `skill-delete: ${dirRel}`);
+            attributePsArtifactWrite(actor, dirRel, `skill-delete: ${dirRel}`);
             bumpSkillsCatalogGen();
-            void commitOkArtifactWrite('skill-delete');
+            void commitPsArtifactWrite('skill-delete');
           }
           signalChannel?.('files');
         }
@@ -844,7 +844,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           { handler: 'skill-delete' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to delete skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to delete skill.', {
           handler: 'skill-delete',
           cause: e,
         });
@@ -862,7 +862,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-move',
           });
           return;
@@ -896,7 +896,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:doc-already-exists',
+            'urn:ps:error:doc-already-exists',
             `A skill named "${body.toName}" already exists.`,
             {
               handler: 'skill-move',
@@ -956,14 +956,14 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         });
         if (!result.ok) {
           if (result.error.code === 'SKILL_NOT_FOUND') {
-            errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+            errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
               handler: 'skill-move',
               detail: result.error.message,
             });
             return;
           }
           if (result.error.code === 'SKILL_EXISTS') {
-            errorResponse(res, 409, 'urn:ok:error:doc-already-exists', result.error.message, {
+            errorResponse(res, 409, 'urn:ps:error:doc-already-exists', result.error.message, {
               handler: 'skill-move',
               detail: result.error.code,
             });
@@ -973,7 +973,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           errorResponse(
             res,
             status,
-            status === 500 ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            status === 500 ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             status === 500 ? 'Failed to move skill.' : 'Invalid skill move request.',
             {
               handler: 'skill-move',
@@ -1051,7 +1051,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           warnBookkeeping(err, 'import records');
         }
         if (body.scope === 'project') {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('skill', '', body.toName),
             `skill-rename: ${fromKeyPath} -> ${toKeyPath}`,
@@ -1059,7 +1059,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           );
           void (async () => {
             try {
-              await commitOkArtifactWrite('skill-move');
+              await commitPsArtifactWrite('skill-move');
               const baselineRef = await shadowHeadSha(artifactWriterId(actor), toKeyPath);
               if (baselineRef !== undefined) {
                 await updateSkillLockEntry('project', body.toName, { baselineRef });
@@ -1117,7 +1117,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           errorResponse(
             res,
             isServerError ? 500 : 400,
-            isServerError ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            isServerError ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             `Skill renamed to "${body.toName}", but updating its SKILL.md failed — its name frontmatter may not match the new directory.`,
             {
               handler: 'skill-move',
@@ -1140,7 +1140,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           { handler: 'skill-move' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to move skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to move skill.', {
           handler: 'skill-move',
           cause: e,
         });
@@ -1158,7 +1158,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
       try {
         realDir = realpathSync(home);
       } catch {
-        errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill directory not found.', {
+        errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill directory not found.', {
           handler: 'skill-edit-external',
           detail: 'HOME_NOT_FOUND',
         });
@@ -1168,7 +1168,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'Not a skill directory (no SKILL.md).',
           { handler: 'skill-edit-external' },
         );
@@ -1224,7 +1224,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
   function skillMoveScopeOutcomeCounter(): ReturnType<
     ReturnType<typeof getMeter>['createCounter']
   > {
-    _skillMoveScopeOutcomeCounter ||= getMeter().createCounter('ok.skill_move_scope.outcome', {
+    _skillMoveScopeOutcomeCounter ||= getMeter().createCounter('ps.skill_move_scope.outcome', {
       description:
         'Count of cross-scope skill-move handler invocations by terminal outcome, one per invocation. Bounded labels: move_state ∈ SKILL_MOVE_STATE_CODES plus `success`; source_state ∈ SKILL_SOURCE_STATE_CODES plus `none`; retention_ledger ∈ SKILL_RETENTION_LEDGER_CODES plus `none`. Skill names, filesystem paths, droppedLocations, problem detail text, error messages and request IDs are never labels. Transport-level and schema-level rejections happen outside the handler and stay covered by ok.api.error.',
     });
@@ -1413,7 +1413,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to move skill across scopes.',
           {
             handler: 'skill-move-scope',
@@ -1469,7 +1469,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
       };
       try {
         if (actor.kind === 'invalid-summary') {
-          failMove(400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          failMove(400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             moveState: 'nothing-written',
           });
           return;
@@ -1497,7 +1497,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (isInternalBundleSkillName(name)) {
           failMove(
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             `"${name}" is a built-in skill and always lives at its own scope.`,
             { moveState: 'nothing-written', detail: 'BUILTIN_SCOPE_FIXED' },
           );
@@ -1506,7 +1506,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (isInternalBundleSkillName(toName)) {
           failMove(
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             `"${toName}" is a built-in skill name and cannot be used as a destination name.`,
             { moveState: 'nothing-written', detail: 'BUILTIN_SCOPE_FIXED' },
           );
@@ -1515,7 +1515,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (fromScope === toScope) {
           failMove(
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Source and destination scope are the same.',
             { moveState: 'nothing-written' },
           );
@@ -1524,7 +1524,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (toScope === 'project' && !projectDir) {
           failMove(
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Cannot move to project scope — no project root is resolved for this server.',
             { moveState: 'nothing-written', detail: 'NO_PROJECT_ROOT' },
           );
@@ -1545,7 +1545,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (toHomeRel === null) {
           failMove(
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'No agent skill host is available in the destination scope.',
             { moveState: 'nothing-written', detail: 'NO_USABLE_SKILL_HOME' },
           );
@@ -1555,7 +1555,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         const toDir = resolve(toRoot, toName);
         const toDirRel = relative(toBase2, toDir).split(sep).join('/');
         if (realDir === null || !existsSync(fromDir)) {
-          failMove(404, 'urn:ok:error:not-found', 'Skill not found.', {
+          failMove(404, 'urn:ps:error:not-found', 'Skill not found.', {
             moveState: 'nothing-written',
             detail: `Skill "${name}" not found in ${fromScope} scope.`,
           });
@@ -1567,7 +1567,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         ) {
           failMove(
             409,
-            'urn:ok:error:doc-already-exists',
+            'urn:ps:error:doc-already-exists',
             'The source and destination resolve to the same skill directory.',
             { moveState: 'nothing-written', detail: 'SAME_STORAGE' },
           );
@@ -1607,7 +1607,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
                 };
           failMove(
             409,
-            'urn:ok:error:doc-already-exists',
+            'urn:ps:error:doc-already-exists',
             `A ${toScope} skill named "${toName}" already exists.`,
             {
               ...collisionOutcome,
@@ -1681,8 +1681,8 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
             failMove(
               cleanup.ok ? status : 500,
               cleanup.ok && status === 400
-                ? 'urn:ok:error:invalid-request'
-                : 'urn:ok:error:internal-server-error',
+                ? 'urn:ps:error:invalid-request'
+                : 'urn:ps:error:internal-server-error',
               cleanup.ok
                 ? 'Failed to rename the copied skill; destination copy removed.'
                 : 'Failed to rename the copied skill; destination cleanup failed.',
@@ -1726,7 +1726,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           const cleanup = applySkillDelete({ skillsRoot: toRoot, name: toName });
           failMove(
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             cleanup.ok
               ? 'The copied skill is unreadable; destination copy removed.'
               : 'The copied skill is unreadable; destination cleanup failed.',
@@ -1814,7 +1814,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
               : ` This server could not read the destination copy at ${toDirRel} to confirm it is intact (${retainedHash.reason}), so do not rely on it for recovery until you have inspected it yourself. It was not recorded as a retained copy either, so a retry will report an ordinary name collision instead.`;
           failMove(
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Failed to move skill (source removal failed); destination copy retained for recovery.',
             {
               moveState: 'destination-retained',
@@ -1888,7 +1888,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         if (!existsSync(join(toDir, 'SKILL.md'))) {
           failMove(
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'The source was removed, but the destination skill is unreadable.',
             {
               moveState: 'destination-unreadable',
@@ -1899,7 +1899,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         }
 
         if (fromScope === 'project' || toScope === 'project') {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             fromScope === 'project' ? fromDirRel : relative(contentDir, toDir).split(sep).join('/'),
             `skill-move-scope: ${fromScope} -> ${toScope} ${name}${toName !== name ? ` -> ${toName}` : ''}`,
@@ -1908,7 +1908,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           const wantBaseline = Boolean(movedLockEntry) && toScope === 'project';
           const deferredRequestId = getRequestId(_req);
           void (async () => {
-            const flush = await commitOkArtifactWrite('skill-move-scope');
+            const flush = await commitPsArtifactWrite('skill-move-scope');
             if (!wantBaseline) return;
             if (flush !== 'flushed') {
               getLogger('skill-move-scope').warn(
@@ -1980,7 +1980,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
       } catch (e) {
         failMove(
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           wrote
             ? 'Failed to move skill across scopes; the move may be partially applied.'
             : 'Failed to move skill across scopes; nothing was written.',
@@ -2010,7 +2010,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-duplicate',
           });
           return;
@@ -2021,7 +2021,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
 
         const sourceDir = resolveSkillDirForRead(body.scope, body.name);
         if (sourceDir === null || !existsSync(join(sourceDir, 'SKILL.md'))) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-duplicate',
             detail: 'SOURCE_NOT_FOUND',
           });
@@ -2033,7 +2033,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'No agent skill host is available.',
             { handler: 'skill-duplicate', detail: 'NO_USABLE_SKILL_HOME' },
           );
@@ -2045,7 +2045,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:doc-already-exists',
+            'urn:ps:error:doc-already-exists',
             `A ${body.scope} skill named "${body.toName}" already exists.`,
             { handler: 'skill-duplicate' },
           );
@@ -2054,7 +2054,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
 
         const source = parseSkillDir(sourceDir);
         if (!source) {
-          errorResponse(res, 422, 'urn:ok:error:invalid-request', 'Source has no readable skill.', {
+          errorResponse(res, 422, 'urn:ps:error:invalid-request', 'Source has no readable skill.', {
             handler: 'skill-duplicate',
           });
           return;
@@ -2077,8 +2077,8 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
             res,
             cleanup.ok ? status : 500,
             cleanup.ok && status === 400
-              ? 'urn:ok:error:invalid-request'
-              : 'urn:ok:error:internal-server-error',
+              ? 'urn:ps:error:invalid-request'
+              : 'urn:ps:error:internal-server-error',
             cleanup.ok
               ? 'Failed to write duplicated skill; destination copy removed.'
               : 'Failed to write duplicated skill; destination cleanup failed.',
@@ -2109,12 +2109,12 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
 
         if (body.scope === 'project') {
           const targetRel = relative(contentDir, targetDir).split(sep).join('/');
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('skill', '', body.toName),
             `skill-duplicate: ${body.name} -> ${targetRel}`,
           );
-          void commitOkArtifactWrite('skill-duplicate');
+          void commitPsArtifactWrite('skill-duplicate');
         }
         settle();
 
@@ -2130,7 +2130,7 @@ export function createSkillsDocumentRoutes(deps: SkillsDocumentRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to duplicate skill.',
           {
             handler: 'skill-duplicate',

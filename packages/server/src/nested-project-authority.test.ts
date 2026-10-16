@@ -657,7 +657,7 @@ test('single-file previews own only their file and block project takeover until 
         body: JSON.stringify({ ruleId: 'MD013', value: false }),
       });
       expect(configWrite.status).toBe(403);
-      expect((await configWrite.json()).type).toBe('urn:ok:error:single-file-mode');
+      expect((await configWrite.json()).type).toBe('urn:ps:error:single-file-mode');
     }
     const clientLogs = await fetch(`http://127.0.0.1:${preview.port}/api/client-logs`, {
       method: 'POST',

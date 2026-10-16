@@ -72,7 +72,7 @@ describe('T8: Managed-rename with populated target', () => {
 
     expect(res.status).toBe(409);
     const body = (await res.json()) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:doc-already-exists');
+    expect(body.type).toBe('urn:ps:error:doc-already-exists');
     expect(String(body.title)).toContain('already exists');
 
     await wait(500);

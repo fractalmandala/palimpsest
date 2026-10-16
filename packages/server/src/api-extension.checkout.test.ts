@@ -257,7 +257,7 @@ describe('POST /api/git/checkout', () => {
 
     const res = await postCheckout(rig.port, { branch: '-upload-pack=evil' });
     expect(res.status).toBe(400);
-    expect(res.json.type).toBe('urn:ok:error:invalid-request');
+    expect(res.json.type).toBe('urn:ps:error:invalid-request');
     expect(readHead(rig.projectDir)).toBe(headBefore);
     const reflogAfter = run(rig.projectDir, 'git reflog show HEAD');
     expect(reflogAfter).toBe(reflogBefore);
@@ -307,7 +307,7 @@ describe('POST /api/git/checkout', () => {
 
     const res = await postCheckout(rig.port, { branch: 'HEAD:refs/heads/evil' });
     expect(res.status).toBe(400);
-    expect(res.json.type).toBe('urn:ok:error:invalid-request');
+    expect(res.json.type).toBe('urn:ps:error:invalid-request');
     expect(readHead(rig.projectDir)).toBe(headBefore);
     const reflogAfter = run(rig.projectDir, 'git reflog show HEAD');
     expect(reflogAfter).toBe(reflogBefore);
@@ -358,7 +358,7 @@ describe('POST /api/git/checkout', () => {
 
     const res = await postCheckout(rig.port, { branch: 'main' });
     expect(res.status).toBe(500);
-    expect(res.json.type).toBe('urn:ok:error:internal-server-error');
+    expect(res.json.type).toBe('urn:ps:error:internal-server-error');
   });
 
   test('request with principalId is accepted (identity extracted at entry)', async () => {

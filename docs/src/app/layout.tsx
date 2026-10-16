@@ -9,8 +9,6 @@ import {
   SITE_HEADLINE,
   SITE_NAME,
   SITE_URL,
-  TWITTER_HANDLE,
-  X_URL,
 } from '@/lib/site';
 import './global.css';
 import { Provider } from './provider';
@@ -36,13 +34,9 @@ const inter = Inter({
 const orgLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Inkeep',
-  url: 'https://inkeep.com',
-  logo: 'https://inkeep.com/images/logos/logo-with-text-black.svg',
-  description:
-    'Ship Agent-powered assistants and automations that boost customer experience and 10x your teams.',
-  foundingDate: '2023',
-  sameAs: [X_URL, GITHUB_URL],
+  name: 'Palimpsest',
+  url: GITHUB_URL,
+  sameAs: [GITHUB_URL],
 } satisfies WithContext<Organization>;
 
 const siteLd = {
@@ -78,13 +72,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    site: TWITTER_HANDLE,
-    creator: TWITTER_HANDLE,
     title: `${SITE_NAME} — ${SITE_HEADLINE}`,
     description: SITE_META_DESCRIPTION,
-  },
-  verification: {
-    google: 'ZeS2oQLq-M3Hut-WpCMBqfn6XhXPMQmRCx8ntea36RI',
   },
 };
 

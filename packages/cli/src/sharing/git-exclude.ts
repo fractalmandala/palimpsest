@@ -38,7 +38,7 @@ export interface TrackedRefusal {
 
 export type SharingMode = 'shared' | 'local-only' | 'no-git';
 
-export function getOkArtifactPaths(projectRoot: string): readonly string[] {
+export function getPsArtifactPaths(projectRoot: string): readonly string[] {
   const paths: string[] = [`${PS_DIR}/`, PS_IGNORE_FILENAME];
   for (const id of ALL_EDITOR_IDS) {
     const target = EDITOR_TARGETS[id];
@@ -70,11 +70,11 @@ export function getInstalledSkillProjectionPaths(projectRoot: string): readonly 
   }
 }
 
-export function addOkPathsToGitExclude(
+export function addPsPathsToGitExclude(
   projectRoot: string,
   paths: readonly string[],
 ): ExcludeWriteResult | TrackedRefusal {
-  const tracked = probeTrackedOkPaths(projectRoot, paths).tracked;
+  const tracked = probeTrackedPsPaths(projectRoot, paths).tracked;
   if (tracked.length > 0) {
     return {
       kind: 'refused-tracked',
@@ -130,7 +130,7 @@ export function addOkPathsToGitExclude(
   return { kind: 'updated', appended, alreadyPresent, removed: drained };
 }
 
-export function removeOkPathsFromGitExclude(
+export function removePsPathsFromGitExclude(
   projectRoot: string,
   paths: readonly string[],
 ): ExcludeWriteResult {
@@ -203,7 +203,7 @@ export function readSharingMode(projectRoot: string): SharingMode {
     return 'shared';
   }
   const present = collectPresentVariants(content);
-  const artifacts = getOkArtifactPaths(projectRoot);
+  const artifacts = getPsArtifactPaths(projectRoot);
   for (const p of artifacts) {
     if (hasAnyVariant(present, p)) return 'local-only';
   }
@@ -211,7 +211,7 @@ export function readSharingMode(projectRoot: string): SharingMode {
   return 'shared';
 }
 
-export function getExcludedOkPaths(projectRoot: string): readonly string[] {
+export function getExcludedPsPaths(projectRoot: string): readonly string[] {
   const resolved = resolveExcludePath(projectRoot);
   if (resolved.kind !== 'ok') return [];
   if (!existsSync(resolved.path)) return [];
@@ -223,7 +223,7 @@ export function getExcludedOkPaths(projectRoot: string): readonly string[] {
   }
   const present = collectPresentVariants(content);
   const candidates = [
-    ...getOkArtifactPaths(projectRoot),
+    ...getPsArtifactPaths(projectRoot),
     ...getInstalledSkillProjectionPaths(projectRoot),
   ];
   const reported = candidates.filter((p) => hasAnyVariant(present, p));
@@ -248,7 +248,7 @@ export function getExcludedOkPaths(projectRoot: string): readonly string[] {
   return [...reported, ...orphans];
 }
 
-export function probeTrackedOkPaths(
+export function probeTrackedPsPaths(
   projectRoot: string,
   paths: readonly string[],
 ): { tracked: string[] } {

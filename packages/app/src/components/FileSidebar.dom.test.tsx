@@ -637,7 +637,7 @@ describe('FileSidebar runtime behavior', () => {
     expect(treeCalls.startCreating).toHaveBeenCalledWith('folder', '');
   });
 
-  test('toolbar create actions keep a nested non-.ok dotfolder as the create dir', async () => {
+  test('toolbar create actions keep a nested non-.ps dotfolder as the create dir', async () => {
     activeTarget = { kind: 'folder', folderPath: 'notes/.obsidian' };
     await renderSidebar();
     await waitFor(() => expect(treeListeners.size).toBe(1));
@@ -717,7 +717,7 @@ describe('FileSidebar runtime behavior', () => {
     });
     fireEvent.click(within(menu).getByTestId('tree-options-show-ps-folders'));
     expect(projectLocalPatch).toHaveBeenCalledWith({
-      appearance: { sidebar: { showOkFolders: true } },
+      appearance: { sidebar: { showPsFolders: true } },
     });
     fireEvent.click(within(menu).getByTestId('tree-options-show-only-markdown-files'));
     expect(projectLocalPatch).toHaveBeenCalledWith({
@@ -898,7 +898,7 @@ describe('FileSidebar runtime behavior', () => {
     });
     fireEvent.click(psFolders);
     expect(projectLocalPatch).toHaveBeenCalledWith({
-      appearance: { sidebar: { showOkFolders: true } },
+      appearance: { sidebar: { showPsFolders: true } },
     });
     fireEvent.click(onlyMarkdown);
     expect(projectLocalPatch).toHaveBeenCalledWith({
@@ -933,7 +933,7 @@ describe('FileSidebar runtime behavior', () => {
           canCollapseAll: true,
           canExpandAll: true,
           showHiddenFiles: false,
-          showOkFolders: false,
+          showPsFolders: false,
         }),
       ),
     );
@@ -947,7 +947,7 @@ describe('FileSidebar runtime behavior', () => {
           canCollapseAll: true,
           canExpandAll: false,
           showHiddenFiles: false,
-          showOkFolders: false,
+          showPsFolders: false,
         }),
       ),
     );

@@ -1,15 +1,15 @@
 import type { Point } from 'unist';
 import { visit } from 'unist-util-visit';
-import { defineOkfRule } from '../psf-runner.ts';
+import { definePsfRule } from '../psf-runner.ts';
 
 const WIKI_LINK = /\[\[[^[\]\n]+\]\]/g;
 
 function describe(matched: string): string {
-  const base = `Wiki-link ${matched} won't resolve for an external Palimpsest Format consumer — it renders as literal text and its graph edge is lost.`;
+  const base = `Wiki-link ${matched} won't resolve for an external OpenKnowledge Format consumer — it renders as literal text and its graph edge is lost.`;
   return matched.includes('|') ? `${base} The alias "|" also splits a GFM table cell.` : base;
 }
 
-export const noWikiLinks = defineOkfRule('no-wiki-links', (tree, file) => {
+export const noWikiLinks = definePsfRule('no-wiki-links', (tree, file) => {
   const source = typeof file.value === 'string' ? file.value : String(file.value);
   visit(tree, 'text', (node) => {
     const start = node.position?.start;

@@ -35,7 +35,7 @@ describe('orphans envelope (RFC 9457)', () => {
     expect(OrphansSuccessSchema.safeParse(body).success).toBe(true);
   });
 
-  test('invalid orphan mode emits urn:ok:error:invalid-request', async () => {
+  test('invalid orphan mode emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/orphans?mode=sideways`);
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -44,7 +44,7 @@ describe('orphans envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('orphan mode');
       expect(parsed.data.instance).toBeDefined();
     }
@@ -59,7 +59,7 @@ describe('orphans envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

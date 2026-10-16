@@ -426,20 +426,20 @@ describe('initial sync and test isolation', () => {
   });
 
   test('test-reset truncates accumulated .psignore patterns by default', async () => {
-    const okignorePath = join(server.contentDir, '.psignore');
-    writeFileSync(okignorePath, '/leftover-from-earlier-test.md\nstale-pattern/\n', 'utf-8');
+    const psignorePath = join(server.contentDir, '.psignore');
+    writeFileSync(psignorePath, '/leftover-from-earlier-test.md\nstale-pattern/\n', 'utf-8');
 
     await testReset(server.port);
     await wait(300);
 
-    const after = readFileSync(okignorePath, 'utf-8');
+    const after = readFileSync(psignorePath, 'utf-8');
     expect(after).toBe('');
   });
 
   test('test-reset preserves .psignore when reset-psignore=false is passed', async () => {
-    const okignorePath = join(server.contentDir, '.psignore');
+    const psignorePath = join(server.contentDir, '.psignore');
     const seeded = '/keep-me-on-reset.md\n';
-    writeFileSync(okignorePath, seeded, 'utf-8');
+    writeFileSync(psignorePath, seeded, 'utf-8');
 
     const res = await fetch(`http://127.0.0.1:${server.port}/api/test-reset?reset-psignore=false`, {
       method: 'POST',
@@ -447,7 +447,7 @@ describe('initial sync and test isolation', () => {
     expect(res.ok).toBe(true);
     await wait(300);
 
-    expect(readFileSync(okignorePath, 'utf-8')).toBe(seeded);
+    expect(readFileSync(psignorePath, 'utf-8')).toBe(seeded);
   });
 });
 

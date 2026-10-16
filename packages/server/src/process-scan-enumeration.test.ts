@@ -10,7 +10,7 @@ const { spawnSync, spawn, execFileSync } = vi.hoisted(() => ({
 vi.mock('node:child_process', () => ({ spawnSync, spawn, execFileSync }));
 
 import { fakeChildProcess } from './process-scan.test-helper.ts';
-import { findOkProcessPids, scanLockProcesses } from './process-scan.ts';
+import { findPsProcessPids, scanLockProcesses } from './process-scan.ts';
 
 const originalPlatform = process.platform;
 const fixturePid = 24680;
@@ -69,7 +69,7 @@ describe('process enumeration', () => {
       return { status: 0, stdout: fullCommand ? `${row}\n` : `${fixturePid}\n` };
     });
 
-    expect(await findOkProcessPids()).toEqual([fixturePid]);
+    expect(await findPsProcessPids()).toEqual([fixturePid]);
   });
 
   it.each(['missing pgrep', 'PID-only pgrep', 'buffered pgrep overflow'])(
@@ -136,7 +136,7 @@ describe('process enumeration', () => {
       candidates: [],
       unavailable: [expect.stringContaining('Could not enumerate processes')],
     });
-    expect(await findOkProcessPids()).toEqual([]);
+    expect(await findPsProcessPids()).toEqual([]);
   });
 
   it('keeps multiline command text within its owning process', async () => {

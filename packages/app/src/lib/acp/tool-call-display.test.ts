@@ -35,7 +35,7 @@ describe('describeToolCall — Palimpsest MCP tools', () => {
     ).toEqual({ glyph: 'edit', text: 'Palimpsest edited articles/sauvignon-blanc' });
   });
 
-  test("Pi has no MCP namespacing, so OK's extension prefixes the tool instead", () => {
+  test("Pi has no MCP namespacing, so Palimpsest's extension prefixes the tool instead", () => {
     expect(describeToolCall({ title: 'ok_exec', toolKind: 'other', rawInput: {} })).toEqual({
       glyph: 'execute',
       text: 'Palimpsest ran a command',

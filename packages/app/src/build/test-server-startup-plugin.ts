@@ -87,7 +87,7 @@ function boundReceipt(
 
 type StartupHostServer = Pick<ViteDevServer, 'httpServer' | 'middlewares'>;
 
-const RECEIPTS_WRITTEN_BY_THIS_PROCESS = Symbol.for('ok:test-server-startup:receipts-written');
+const RECEIPTS_WRITTEN_BY_THIS_PROCESS = Symbol.for('ps:test-server-startup:receipts-written');
 
 function receiptsWrittenByThisProcess(): Map<string, string> {
   const processScope = globalThis as { [RECEIPTS_WRITTEN_BY_THIS_PROCESS]?: Map<string, string> };
@@ -154,7 +154,7 @@ function installStartupIdentity(
 export function testServerStartupPlugin(request: TestServerStartupRequest): Plugin {
   let loadedInputs: TestServerLoadedInputs | undefined;
   return {
-    name: 'ok:test-server-startup',
+    name: 'ps:test-server-startup',
     apply: 'serve',
     configResolved(config) {
       loadedInputs = digestLoadedInputs(viteRestartInputs(config));

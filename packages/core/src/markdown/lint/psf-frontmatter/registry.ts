@@ -1,10 +1,10 @@
 import { compileAppliesTo } from '../applies-to.ts';
 import { validateFrontmatterSource } from '../frontmatter-validate.ts';
 import {
-  isOkfRuleEnabled,
+  isPsfRuleEnabled,
   PSF_RULE_IDS,
-  type OkfRuleId,
-  type OkfRuleToggles,
+  type PsfRuleId,
+  type PsfRuleToggles,
 } from '../psf-rule-meta.ts';
 import type { FrontmatterSchemaMapping, LintDiagnostic } from '../types.ts';
 import { psfSchemaPathFor } from './paths.ts';
@@ -23,13 +23,13 @@ const RESERVED_INDEX_SCOPE = ['**/index', '!index'];
 
 const ROOT_INDEX_SCOPE = ['index'];
 
-export interface OkfFrontmatterEntry {
-  readonly id: OkfRuleId;
+export interface PsfFrontmatterEntry {
+  readonly id: PsfRuleId;
   readonly appliesTo: readonly string[];
   readonly schema: Record<string, unknown>;
 }
 
-export const PSF_FRONTMATTER_REGISTRY: readonly OkfFrontmatterEntry[] = [
+export const PSF_FRONTMATTER_REGISTRY: readonly PsfFrontmatterEntry[] = [
   {
     id: 'frontmatter-required',
     appliesTo: CONCEPT_SCOPE,
@@ -62,25 +62,25 @@ export const PSF_FRONTMATTER_REGISTRY: readonly OkfFrontmatterEntry[] = [
   },
 ];
 
-export const PSF_FRONTMATTER_ONLY_TOGGLES: Partial<Record<OkfRuleId, boolean>> = Object.fromEntries(
+export const PSF_FRONTMATTER_ONLY_TOGGLES: Partial<Record<PsfRuleId, boolean>> = Object.fromEntries(
   PSF_RULE_IDS.filter((id) => !PSF_FRONTMATTER_REGISTRY.some((entry) => entry.id === id)).map(
     (id) => [id, false] as const,
   ),
 );
 
-export function selectOkfFrontmatterSchemas(
-  rules: OkfRuleToggles,
+export function selectPsfFrontmatterSchemas(
+  rules: PsfRuleToggles,
   docName: string | undefined,
-): OkfFrontmatterEntry[] {
+): PsfFrontmatterEntry[] {
   if (docName === undefined) return [];
   return PSF_FRONTMATTER_REGISTRY.filter(
     (entry) =>
-      isOkfRuleEnabled(rules, entry.id) && compileAppliesTo([...entry.appliesTo]).matches(docName),
+      isPsfRuleEnabled(rules, entry.id) && compileAppliesTo([...entry.appliesTo]).matches(docName),
   );
 }
 
-export function psfAdvertisedSchemaMappings(rules: OkfRuleToggles): FrontmatterSchemaMapping[] {
-  return PSF_FRONTMATTER_REGISTRY.filter((entry) => isOkfRuleEnabled(rules, entry.id)).map(
+export function psfAdvertisedSchemaMappings(rules: PsfRuleToggles): FrontmatterSchemaMapping[] {
+  return PSF_FRONTMATTER_REGISTRY.filter((entry) => isPsfRuleEnabled(rules, entry.id)).map(
     (entry) => ({
       appliesTo: [...entry.appliesTo],
       file: psfSchemaPathFor(entry.id),
@@ -88,12 +88,12 @@ export function psfAdvertisedSchemaMappings(rules: OkfRuleToggles): FrontmatterS
   );
 }
 
-export function runOkfFrontmatterRules(
+export function runPsfFrontmatterRules(
   text: string,
-  rules: OkfRuleToggles,
+  rules: PsfRuleToggles,
   docName: string | undefined,
 ): LintDiagnostic[] {
-  const selected = selectOkfFrontmatterSchemas(rules, docName);
+  const selected = selectPsfFrontmatterSchemas(rules, docName);
   if (selected.length === 0) return [];
   return validateFrontmatterSource(
     text,

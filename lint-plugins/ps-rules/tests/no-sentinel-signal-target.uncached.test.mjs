@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readEnabledRuleIds,
   readRegisteredRuleNames,
   readRuleScope,
@@ -26,7 +26,7 @@ function branchOf(message) {
 }
 
 function fires() {
-  return lintOkRulesFixture(FIXTURE).filter((d) => d.code === CODE);
+  return lintPsRulesFixture(FIXTURE).filter((d) => d.code === CODE);
 }
 
 describe(`${RULE} oxlint rule`, () => {
@@ -89,7 +89,7 @@ describe(`${RULE} oxlint rule`, () => {
 
   test('rule is registered, enabled at error, and carries no scope entry — the registration wrapper rejects a rule that is in neither table, so an empty scope means workspace-wide', async () => {
     expect(await readRegisteredRuleNames(REPO_ROOT)).toContain(RULE);
-    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ok/${RULE}`);
+    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ps/${RULE}`);
     expect(readRuleScope(REPO_ROOT, RULE)).toEqual([]);
   });
 

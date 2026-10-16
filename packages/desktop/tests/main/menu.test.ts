@@ -886,7 +886,7 @@ describe('buildMenuTemplate — View menu visibility toggles + tree-scoped expan
 
 describe('buildMenuTemplate — View → Show .ps folders', () => {
   test('renders as a checkbox, unchecked by default', () => {
-    const template = buildMenuTemplate(makeDeps({ onToggleShowOkFolders: vi.fn(() => {}) }));
+    const template = buildMenuTemplate(makeDeps({ onToggleShowPsFolders: vi.fn(() => {}) }));
     const item = findByLabel(template, 'Show .ps folders');
     expect(item).toBeDefined();
     expect(item?.type).toBe('checkbox');
@@ -894,9 +894,9 @@ describe('buildMenuTemplate — View → Show .ps folders', () => {
     expect(item?.enabled).toBe(true);
   });
 
-  test('reflects showOkFoldersChecked', () => {
+  test('reflects showPsFoldersChecked', () => {
     const template = buildMenuTemplate(
-      makeDeps({ onToggleShowOkFolders: vi.fn(() => {}), showOkFoldersChecked: true }),
+      makeDeps({ onToggleShowPsFolders: vi.fn(() => {}), showPsFoldersChecked: true }),
     );
     expect(findByLabel(template, 'Show .ps folders')?.checked).toBe(true);
   });
@@ -920,12 +920,12 @@ describe('buildMenuTemplate — View → Show .ps folders', () => {
   });
 
   test('binds no keyboard accelerator and click dispatches the toggle dep', () => {
-    const onToggleShowOkFolders = vi.fn(() => {});
-    const template = buildMenuTemplate(makeDeps({ onToggleShowOkFolders }));
+    const onToggleShowPsFolders = vi.fn(() => {});
+    const template = buildMenuTemplate(makeDeps({ onToggleShowPsFolders }));
     const item = findByLabel(template, 'Show .ps folders');
     expect(item?.accelerator).toBeUndefined();
     (item?.click as (() => void) | undefined)?.();
-    expect(onToggleShowOkFolders).toHaveBeenCalledTimes(1);
+    expect(onToggleShowPsFolders).toHaveBeenCalledTimes(1);
   });
 
   test('click is a safe no-op when the dep is omitted', () => {
@@ -1017,7 +1017,7 @@ describe('buildMenuTemplate — View → Show only markdown files / Skills secti
     const template = buildMenuTemplate(
       makeDeps({
         onToggleShowHiddenFiles: vi.fn(() => {}),
-        onToggleShowOkFolders: vi.fn(() => {}),
+        onToggleShowPsFolders: vi.fn(() => {}),
         onToggleShowOnlyMarkdownFiles: vi.fn(() => {}),
         onToggleShowSkillsSection: vi.fn(() => {}),
         onExpandAll: vi.fn(() => {}),

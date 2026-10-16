@@ -461,17 +461,17 @@ describe('git remediation names the running channel CLI', () => {
   const verify = (command: string) =>
     `Run \`${command} diagnose health --check git\` to verify your installation.`;
 
-  test('Stable keeps the ok diagnose line on both errors', () => {
+  test('Stable keeps the ps diagnose line on both errors', () => {
     vi.stubEnv('PS_CHANNEL', 'stable');
     const guidance = buildGuidance('darwin');
     expect(new GitNotAvailableError('darwin', guidance).message.split('\n')).toContain(
-      verify('ok'),
+      verify('ps'),
     );
     expect(
       new GitTooOldError('darwin', '2.10.0', '2.31.0', '/usr/bin/git', guidance).message.split(
         '\n',
       ),
-    ).toContain(verify('ok'));
+    ).toContain(verify('ps'));
   });
 
   test('Beta names ps-beta diagnose on both errors', () => {

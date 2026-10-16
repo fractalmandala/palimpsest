@@ -36,8 +36,8 @@ vi.doMock('@/lib/config-provider', () => ({
   useConfigContext: () => ({
     userBinding: null,
     userSynced: false,
-    okignoreBinding: null,
-    okignoreSynced: false,
+    psignoreBinding: null,
+    psignoreSynced: false,
   }),
 }));
 

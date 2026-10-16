@@ -659,7 +659,7 @@ describe('collectBundle — summary', () => {
       contentDir,
       '.ps/local/logs/server-current.jsonl',
       '{"source":"renderer-console","event":"ps-outline-nav","docName":"notes/a"}\n' +
-        '{"source":"renderer-console","event":"ok/scroll-restore/abandoned","docName":"notes/b"}\n',
+        '{"source":"renderer-console","event":"ps/scroll-restore/abandoned","docName":"notes/b"}\n',
     );
     const collected = await collectBundle({ contentDir, deps: makeDeterministicDeps() });
     expect(collected.summary.docNameCount).toBe(2);

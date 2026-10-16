@@ -67,7 +67,7 @@ describe('OutlinePanel does not present a result it can no longer refresh', () =
       }
       if (respondNotFound) {
         return Response.json(
-          { type: 'urn:ok:error:doc-not-found', title: 'Page not found.', status: 404 },
+          { type: 'urn:ps:error:doc-not-found', title: 'Page not found.', status: 404 },
           { status: 404 },
         );
       }

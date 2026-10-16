@@ -160,7 +160,7 @@ describe('GET /api/suggest-links', () => {
       const missingDocName = await callRoute(contentDir, '/api/suggest-links', fileIndex);
       expect(missingDocName.status).toBe(400);
       const missingBody = JSON.parse(missingDocName.body) as { type: string; title: string };
-      expect(missingBody.type).toBe('urn:ok:error:invalid-request');
+      expect(missingBody.type).toBe('urn:ps:error:invalid-request');
       expect(missingBody.title).toContain('Missing docName');
 
       const invalidDocName = await callRoute(
@@ -170,7 +170,7 @@ describe('GET /api/suggest-links', () => {
       );
       expect(invalidDocName.status).toBe(400);
       const invalidBody = JSON.parse(invalidDocName.body) as { type: string; title: string };
-      expect(invalidBody.type).toBe('urn:ok:error:invalid-request');
+      expect(invalidBody.type).toBe('urn:ps:error:invalid-request');
       expect(invalidBody.title).toContain('Invalid docName');
 
       const reservedDocName = await callRoute(
@@ -180,7 +180,7 @@ describe('GET /api/suggest-links', () => {
       );
       expect(reservedDocName.status).toBe(400);
       const reservedBody = JSON.parse(reservedDocName.body) as { type: string; title: string };
-      expect(reservedBody.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(reservedBody.type).toBe('urn:ps:error:reserved-doc-name');
       expect(reservedBody.title).toContain('__system__');
 
       const missingPage = await callRoute(
@@ -190,7 +190,7 @@ describe('GET /api/suggest-links', () => {
       );
       expect(missingPage.status).toBe(404);
       const missingPageBody = JSON.parse(missingPage.body) as { type: string; title: string };
-      expect(missingPageBody.type).toBe('urn:ok:error:doc-not-found');
+      expect(missingPageBody.type).toBe('urn:ps:error:doc-not-found');
       expect(missingPageBody.title).toContain('Page not found');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });

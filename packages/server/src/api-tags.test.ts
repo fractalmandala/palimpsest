@@ -69,7 +69,7 @@ describe('tag endpoints', () => {
       const result = await callRoute(dir, '/api/tags', new Map());
       expect(result.status).toBe(503);
       const body = JSON.parse(result.body);
-      expect(body.type).toBe('urn:ok:error:tag-index-not-configured');
+      expect(body.type).toBe('urn:ps:error:tag-index-not-configured');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

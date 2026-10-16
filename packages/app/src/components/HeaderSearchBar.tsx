@@ -38,7 +38,7 @@ export function HeaderSearchBar({ onClick, className }: HeaderSearchBarProps) {
           size="icon-sm"
           onClick={onClick}
           aria-label={label}
-          data-telemetry-event="ok.app_header.search.click"
+          data-telemetry-event="ps.app_header.search.click"
           className={cn('shrink-0 text-muted-foreground', className)}
         >
           <Search aria-hidden="true" />

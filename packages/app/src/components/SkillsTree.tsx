@@ -31,7 +31,7 @@ import { AgentBrandIcon } from '@/components/AgentIconCluster';
 import { createFileTreeStyle } from '@/components/file-tree-density';
 import { revealActiveRow } from '@/components/file-tree-reveal';
 import {
-  buildOkFileTreeOptions,
+  buildPsFileTreeOptions,
   createLucideSpriteSymbol,
   PS_FILE_TREE_READONLY_UNSAFE_CSS,
 } from '@/components/file-tree-shared';
@@ -539,7 +539,7 @@ export function SkillsTree({
   const sweptModelRef = useRef<unknown>(null);
 
   const { model } = useFileTree({
-    ...buildOkFileTreeOptions({
+    ...buildPsFileTreeOptions({
       paths,
       initialExpansion: 'closed',
       initialExpandedPaths,

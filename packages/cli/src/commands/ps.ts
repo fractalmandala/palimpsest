@@ -11,7 +11,7 @@ import { Command } from 'commander';
 import pc from 'picocolors';
 import {
   discoverLockDirs,
-  extractOkBinaryPath,
+  extractPsBinaryPath,
   type ProcessUsage,
   processCommand,
   processUsage,
@@ -119,7 +119,7 @@ function buildEntry(
     ui,
     hostname: serverLock.hostname,
     lockPath: serverState.lockPath,
-    binary: command == null ? null : extractOkBinaryPath(command),
+    binary: command == null ? null : extractPsBinaryPath(command),
     command,
     isDesktop: isDesktopCommand(command),
   };

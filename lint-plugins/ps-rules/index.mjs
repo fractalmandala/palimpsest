@@ -30,7 +30,7 @@ import { requireUtf8MultipartParser } from './rules/require-utf8-multipart-parse
 import { requireWindowshideOnSpawn } from './rules/require-windowshide-on-spawn.mjs';
 import { scoped } from './scope.mjs';
 
-export const PLUGIN_NAME = 'ok';
+export const PLUGIN_NAME = 'ps';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 

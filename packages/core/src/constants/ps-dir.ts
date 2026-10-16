@@ -48,7 +48,7 @@ const activeMachineLocalRootDirs: ReadonlySet<string> = new Set(PS_ACTIVE_MACHIN
 export const PS_LEGACY_MACHINE_LOCAL_ROOT_DIRS: readonly PsMachineLocalRootDir[] =
   PS_MACHINE_LOCAL_ROOT_DIRS.filter((name) => !activeMachineLocalRootDirs.has(name));
 
-export function posixOkManagedBinDir(
+export function posixPsManagedBinDir(
   homeDir: string,
   userHomeDirName: string = currentDesktopProduct().userHomeDirName,
 ): string {

@@ -1,4 +1,4 @@
-import type { ConfigBinding, OkignoreBinding } from '@palimpsest/core';
+import type { ConfigBinding, PsignoreBinding } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -42,8 +42,8 @@ if (globalWithDomShims.ResizeObserver === undefined) {
 interface BodyProps {
   activeId: string;
   userBinding: ConfigBinding | null;
-  okignoreBinding: OkignoreBinding | null;
-  okignoreSynced: boolean;
+  psignoreBinding: PsignoreBinding | null;
+  psignoreSynced: boolean;
 }
 const probeProps: BodyProps[] = [];
 type BodyMode = 'probe' | 'suspend' | 'throw';
@@ -56,8 +56,8 @@ const pendingBodyChunk = new Promise<never>(() => {});
 
 let mockUserBinding: ConfigBinding | null = null;
 let mockUserSynced = false;
-let mockOkignoreBinding: OkignoreBinding | null = null;
-let mockOkignoreSynced = false;
+let mockPsignoreBinding: PsignoreBinding | null = null;
+let mockPsignoreSynced = false;
 let mockCollabUrl: string | null = 'ws://test.invalid';
 let mockDesktopPresent = false;
 let mockBodyMode: BodyMode = 'probe';
@@ -101,8 +101,8 @@ vi.doMock('@/lib/config-provider', () => ({
     userSynced: mockUserSynced,
     projectBinding: null,
     projectLocalBinding: null,
-    okignoreBinding: mockOkignoreBinding,
-    okignoreSynced: mockOkignoreSynced,
+    psignoreBinding: mockPsignoreBinding,
+    psignoreSynced: mockPsignoreSynced,
     userConfig: null,
     projectConfig: mockProjectConfig,
     projectLocalConfig: null,
@@ -137,8 +137,8 @@ describe('SettingsDialogShell userBinding gating (Tier-3 mount)', () => {
     resetProbe();
     mockUserBinding = null;
     mockUserSynced = false;
-    mockOkignoreBinding = null;
-    mockOkignoreSynced = false;
+    mockPsignoreBinding = null;
+    mockPsignoreSynced = false;
     mockCollabUrl = 'ws://test.invalid';
     mockDesktopPresent = false;
     mockBodyMode = 'probe';

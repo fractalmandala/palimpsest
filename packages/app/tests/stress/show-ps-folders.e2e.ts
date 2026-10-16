@@ -15,7 +15,7 @@ const folderRow = (page: Page, folderName: string) =>
 const treeScroller = (page: Page) => sidebar(page).locator('[data-file-tree-virtualized-scroll]');
 const textViewer = (page: Page) => page.locator('[data-text-viewer]');
 
-async function toggleShowOkFolders(page: Page): Promise<void> {
+async function toggleShowPsFolders(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Tree view options' }).click();
   await page.getByTestId('tree-options-show-ps-folders').click();
 }
@@ -44,7 +44,7 @@ test('toggle reveals .ps rows, routes clicks to sanctioned surfaces, and keeps r
 
   await expect(folderRow(page, '.ps')).toHaveCount(0);
 
-  await toggleShowOkFolders(page);
+  await toggleShowPsFolders(page);
   await treeScroller(page).evaluate((el) => {
     el.scrollTop = 0;
   });
@@ -94,7 +94,7 @@ test('toggle reveals .ps rows, routes clicks to sanctioned surfaces, and keeps r
     })
     .toBe(`#/.ps/templates/${templateName}`);
 
-  await toggleShowOkFolders(page);
+  await toggleShowPsFolders(page);
   await expect(folderRow(page, '.ps')).toHaveCount(0, { timeout: 15_000 });
 });
 
@@ -156,7 +156,7 @@ test('an activated .ps folder row never becomes a mutation target — create fal
   await page.goto(`/#/${anchorDoc}`);
   await fileRow(page, `${anchorDoc}.md`).waitFor({ state: 'visible', timeout: 15_000 });
 
-  await toggleShowOkFolders(page);
+  await toggleShowPsFolders(page);
   await treeScroller(page).evaluate((el) => {
     el.scrollTop = 0;
   });
@@ -212,7 +212,7 @@ test('an activated .ps folder row never becomes a mutation target — create fal
   await expect(psRow).toBeVisible();
   expect(existsSync(join(psDir, `${probeDocBase}.md`))).toBe(true);
 
-  await toggleShowOkFolders(page);
+  await toggleShowPsFolders(page);
   await expect(folderRow(page, '.ps')).toHaveCount(0, { timeout: 15_000 });
 });
 

@@ -967,7 +967,7 @@ function main() {
   }
 
   for (const warning of plan.warnings) console.error(`::warning::${warning}`);
-  for (const guard of plan.guards) log(`ok: ${guard.message}`);
+  for (const guard of plan.guards) log(`ps: ${guard.message}`);
   log(
     `${dryRun ? 'DRY RUN — nothing was pushed. Plan' : 'Shipped'}: ${plan.tag} (${plan.bump} over ` +
       `${plan.latestStableTag}) from ${plan.syntheticSha} = ${plan.latestStableTag} + ${plan.mode} of ` +

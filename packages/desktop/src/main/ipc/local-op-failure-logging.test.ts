@@ -59,7 +59,7 @@ function makeSender() {
 
 function makeDeps() {
   return {
-    resolveOkCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
+    resolvePsCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
     logFailure: vi.fn(),
     state: createLocalOpState(),
   };
@@ -96,7 +96,7 @@ describe('handleAuthStart — terminal failure reaches the desktop log', () => {
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:auth:start',
+      channel: 'ps:local-op:auth:start',
       reason: 'auth login exited with code -1 — spawn EINVAL',
       handler: 'handleAuthStart',
     });
@@ -135,7 +135,7 @@ describe('handleAuthStart — terminal failure reaches the desktop log', () => {
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:auth:start',
+      channel: 'ps:local-op:auth:start',
       reason: 'auth login exited with code -1 — spawn EINVAL',
       handler: 'handleAuthStart',
     });
@@ -175,7 +175,7 @@ describe('handleCloneStart — terminal failure reaches the desktop log', () => 
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:clone:start',
+      channel: 'ps:local-op:clone:start',
       reason: 'Clone process exited with code -1 — spawn EINVAL',
       handler: 'handleCloneStart',
     });
@@ -215,7 +215,7 @@ describe('handleCloneStart — terminal failure reaches the desktop log', () => 
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:clone:start',
+      channel: 'ps:local-op:clone:start',
       reason: 'Clone process exited with code -1 — spawn EINVAL',
       handler: 'handleCloneStart',
     });
@@ -256,7 +256,7 @@ describe('handleAuthStatus / handleAuthRepos — query failures reach the deskto
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:auth:status',
+      channel: 'ps:local-op:auth:status',
       reason: 'spawn EINVAL',
       handler: 'handleAuthStatus',
     });
@@ -297,7 +297,7 @@ describe('handleAuthStatus / handleAuthRepos — query failures reach the deskto
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:auth:repos',
+      channel: 'ps:local-op:auth:repos',
       reason: 'auth repos exited with code -1',
       handler: 'handleAuthRepos',
     });

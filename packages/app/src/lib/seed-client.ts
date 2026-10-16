@@ -20,13 +20,13 @@ async function translateSeedError(res: Response): Promise<PsSeedError> {
   }
   const message = parsed.data.detail ?? parsed.data.title;
   const t = parsed.data.type;
-  if (t === 'urn:ok:error:seed-prerequisite-missing') {
+  if (t === 'urn:ps:error:seed-prerequisite-missing') {
     return { kind: 'prerequisite-missing', message };
   }
-  if (t === 'urn:ok:error:seed-invalid-root') {
+  if (t === 'urn:ps:error:seed-invalid-root') {
     return { kind: 'invalid-root', message };
   }
-  if (t === 'urn:ok:error:no-project-dir') {
+  if (t === 'urn:ps:error:no-project-dir') {
     return { kind: 'no-project', message };
   }
   return { kind: 'internal', message };

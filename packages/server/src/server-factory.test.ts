@@ -1646,7 +1646,7 @@ describe('createServer() degraded signal', () => {
 
   test('shadow-repo init failure — degraded includes "shadow-repo"', async () => {
     mkdirSync(resolve(testProjectDir, '.git'));
-    writeFileSync(resolve(testProjectDir, '.git', 'ok'), 'I am a file, not a directory');
+    writeFileSync(resolve(testProjectDir, '.git', 'ps'), 'I am a file, not a directory');
 
     const contentDir = mkdtempSync(resolve(testProjectDir, 'content-'));
     const srv = createServer({
@@ -1664,10 +1664,10 @@ describe('createServer() degraded signal', () => {
   });
 
   test('shadow exclude write refusal — degraded includes "shadow-excludes"', async () => {
-    mkdirSync(resolve(testProjectDir, '.git', 'ok', 'info'), { recursive: true });
+    mkdirSync(resolve(testProjectDir, '.git', 'ps', 'info'), { recursive: true });
     symlinkSync(
       resolve(testProjectDir, 'planted-exclude-target'),
-      resolve(testProjectDir, '.git', 'ok', 'info', 'exclude'),
+      resolve(testProjectDir, '.git', 'ps', 'info', 'exclude'),
     );
 
     const contentDir = mkdtempSync(resolve(testProjectDir, 'content-'));
@@ -2241,18 +2241,18 @@ describe('createServer() — psignore + gitignore multi-path watcher (US-005)', 
     expect(srv.contentFilter.isExcluded('drafts/foo.md')).toBe(false);
     expect(srv.contentFilter.isExcluded('keep.md')).toBe(false);
 
-    const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
-    expect(okignoreDoc).toBeDefined();
-    if (!okignoreDoc) {
+    const psignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
+    expect(psignoreDoc).toBeDefined();
+    if (!psignoreDoc) {
       await srv.destroy();
       return;
     }
-    const ytext = okignoreDoc.getText('source');
+    const ytext = psignoreDoc.getText('source');
     expect(ytext.toString()).toBe('');
 
-    const okignorePath = join(testProjectDir, '.psignore');
+    const psignorePath = join(testProjectDir, '.psignore');
     const newContent = 'drafts/\n';
-    writeFileSync(okignorePath, newContent, 'utf-8');
+    writeFileSync(psignorePath, newContent, 'utf-8');
 
     const ytextSynced = await waitFor(() => ytext.toString() === newContent);
     expect(ytextSynced).toBe(true);
@@ -2278,12 +2278,12 @@ describe('createServer() — psignore + gitignore multi-path watcher (US-005)', 
 
     expect(srv.contentFilter.isExcluded('logs/debug.md')).toBe(false);
 
-    const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
-    if (!okignoreDoc) {
+    const psignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
+    if (!psignoreDoc) {
       await srv.destroy();
       return;
     }
-    const ytext = okignoreDoc.getText('source');
+    const ytext = psignoreDoc.getText('source');
     expect(ytext.toString()).toBe('');
 
     const gitignorePath = join(testProjectDir, '.gitignore');
@@ -2311,21 +2311,21 @@ describe('createServer() — psignore + gitignore multi-path watcher (US-005)', 
 
     expect(srv.contentFilter.isExcluded('tmp/cache.md')).toBe(false);
 
-    const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
-    if (!okignoreDoc) {
+    const psignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
+    if (!psignoreDoc) {
       await srv.destroy();
       return;
     }
-    const ytext = okignoreDoc.getText('source');
+    const ytext = psignoreDoc.getText('source');
 
     const newContent = 'tmp/\n';
-    okignoreDoc.transact(() => {
+    psignoreDoc.transact(() => {
       ytext.insert(0, newContent);
     });
 
-    const okignorePath = join(testProjectDir, '.psignore');
+    const psignorePath = join(testProjectDir, '.psignore');
     const fileLanded = await waitFor(
-      () => existsSync(okignorePath) && readFileSync(okignorePath, 'utf-8') === newContent,
+      () => existsSync(psignorePath) && readFileSync(psignorePath, 'utf-8') === newContent,
     );
     expect(fileLanded).toBe(true);
 
@@ -2351,12 +2351,12 @@ describe('createServer() — psignore + gitignore multi-path watcher (US-005)', 
       await srv.ready;
       expect(srv.contentFilter.isExcluded('drafts/foo.md')).toBe(false);
 
-      const okignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
-      expect(okignoreDoc).toBeDefined();
-      if (!okignoreDoc) return;
+      const psignoreDoc = srv.hocuspocus.documents.get('__config__/psignore');
+      expect(psignoreDoc).toBeDefined();
+      if (!psignoreDoc) return;
 
-      const origTransact = okignoreDoc.transact.bind(okignoreDoc);
-      Object.defineProperty(okignoreDoc, 'transact', {
+      const origTransact = psignoreDoc.transact.bind(psignoreDoc);
+      Object.defineProperty(psignoreDoc, 'transact', {
         value: () => {
           throw new Error('test-injected: simulated Y.Doc transact failure');
         },
@@ -2365,8 +2365,8 @@ describe('createServer() — psignore + gitignore multi-path watcher (US-005)', 
       });
 
       try {
-        const okignorePath = join(testProjectDir, '.psignore');
-        writeFileSync(okignorePath, 'drafts/\n', 'utf-8');
+        const psignorePath = join(testProjectDir, '.psignore');
+        writeFileSync(psignorePath, 'drafts/\n', 'utf-8');
 
         const filterUpdated = await waitFor(() => srv.contentFilter.isExcluded('drafts/foo.md'));
         expect(filterUpdated).toBe(true);
@@ -2375,7 +2375,7 @@ describe('createServer() — psignore + gitignore multi-path watcher (US-005)', 
         const errorEntries = logCapture.getCalls('error', 'applyExternalConfigChange failed');
         expect(errorEntries.length).toBeGreaterThanOrEqual(1);
       } finally {
-        Object.defineProperty(okignoreDoc, 'transact', {
+        Object.defineProperty(psignoreDoc, 'transact', {
           value: origTransact,
           writable: true,
           configurable: true,

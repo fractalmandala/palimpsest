@@ -42,7 +42,7 @@ function createMainCandidateBridge(deps: MainShareTargetDeps): CandidateBridgeDe
     readHeadBranch: async (projectPath) => readHeadBranch(projectPath),
     readGitDirKind: async (projectPath) => readGitDirKind(projectPath),
     realpath: (path) => fsRealpath(path),
-    isOkProjectRoot: async (projectPath) => {
+    isPsProjectRoot: async (projectPath) => {
       try {
         return isProjectRoot(projectPath);
       } catch (err) {

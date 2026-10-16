@@ -3110,7 +3110,7 @@ test('failed Activity diff loading keeps the information cover and burst availab
       status: 503,
       contentType: 'application/problem+json',
       body: JSON.stringify({
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         title: 'Activity diff unavailable',
         status: 503,
       }),

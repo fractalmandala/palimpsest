@@ -1,27 +1,14 @@
 import Link from 'next/link';
-import { DiscordIcon } from '@/components/icons/discord';
 import { GitHubIcon } from '@/components/icons/github';
-import { XIcon } from '@/components/icons/x';
-import { InkeepLogo } from '@/components/inkeep-logo';
 import { BRAND_ROUTE } from '@/lib/brand-assets';
-import { CHANGELOG_ROUTE, DISCORD_URL, GITHUB_URL, X_URL } from '@/lib/site';
+import { CHANGELOG_ROUTE, GITHUB_URL } from '@/lib/site';
 import { DotTexture } from './dot-texture';
 
-const socialLinks = [
-  { href: GITHUB_URL, label: 'GitHub', Icon: GitHubIcon },
-  { href: X_URL, label: 'X', Icon: XIcon },
-  { href: DISCORD_URL, label: 'Discord', Icon: DiscordIcon },
-];
+const socialLinks = [{ href: GITHUB_URL, label: 'GitHub', Icon: GitHubIcon }];
 
 const legalLinks = [
   { href: CHANGELOG_ROUTE, label: 'Changelog', external: false },
   { href: BRAND_ROUTE, label: 'Brand', external: false },
-  {
-    href: 'https://inkeep.com/policies/terms-of-service',
-    label: 'Terms of Service',
-    external: true,
-  },
-  { href: 'https://inkeep.com/policies/privacy', label: 'Privacy', external: true },
 ];
 
 export function SiteFooter() {
@@ -44,14 +31,13 @@ export function SiteFooter() {
           ))}
         </div>
         <Link
-          href="https://inkeep.com/"
+          href={GITHUB_URL}
           target="_blank"
           rel="noreferrer"
-          aria-label="Made by Inkeep"
+          aria-label="Palimpsest on GitHub"
           className="order-first flex items-center gap-1.5 justify-self-center rounded-sm text-sm font-medium text-slide-muted/60 outline-none transition-colors min-[24rem]:col-span-2 sm:order-0 sm:col-span-1 hover:text-slide-text focus-visible:ring-2 focus-visible:ring-slide-accent focus-visible:ring-offset-2"
         >
-          <span>Made by</span>
-          <InkeepLogo className="w-20" />
+          <span>Palimpsest</span>
         </Link>
         <div className="flex items-center justify-center gap-6 text-sm text-slide-muted min-[24rem]:justify-end">
           {legalLinks.map(({ href, label, external }) => (

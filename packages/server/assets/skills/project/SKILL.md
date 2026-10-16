@@ -1,16 +1,16 @@
 ---
 name: palimpsest
-description: "Authoritative agent-runtime contract for working inside an Palimpsest project — a markdown-CRDT knowledge base exposed over MCP. Use whenever reading, listing, searching, editing, or linting any `.md` or `.mdx` file in the project, and before any `mcp__palimpsest*` tool call (`exec`, `search`, `write`, `edit`, `lint`, and the rest). Installed by `ps init`, so its presence means this is an Palimpsest project and it governs every markdown file here. Covers the read/write tool surface, grounding and linking rules, folder/template conventions, the live browser preview, and the rule that OK's MCP tools — never native file tools — handle in-scope markdown."
+description: "Authoritative agent-runtime contract for working inside a Palimpsest project — a markdown-CRDT knowledge base exposed over MCP. Use whenever reading, listing, searching, editing, or linting any `.md` or `.mdx` file in the project, and before any `mcp__palimpsest*` tool call (`exec`, `search`, `write`, `edit`, `lint`, and the rest). Installed by `ps init`, so its presence means this is a Palimpsest project and it governs every markdown file here. Covers the read/write tool surface, grounding and linking rules, folder/template conventions, the live browser preview, and the rule that OK's MCP tools — never native file tools — handle in-scope markdown."
 compatibility: "Any agent host with the Palimpsest MCP server configured; `ps init` wires the agents it detects on your machine. Some steps shell out to the `ok` CLI. Hosts that take an uploaded skill bundle instead of reading a project directory (Claude Desktop, Cowork, claude.ai) are covered by `ps cowork`."
 metadata:
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Palimpsest — agent guidance
 
 Palimpsest (OK) is a markdown-CRDT collaboration platform exposed via MCP. This skill is the single source of OK agent guidance. Every rule below is a MUST unless marked otherwise. **Depth lives in `references/*.md` — one level deep; load a reference when its task comes up.**
 
-> Skill version tracks `@palimpsest/server`. `cat ~/.ps/skill-state.yml` shows what's installed. `ok seed` needs `@palimpsest/cli` >= 0.4.0; if it errors `unknown command`, `npm install -g @palimpsest/cli`.
+> Skill version tracks `@palimpsest/server`. `cat ~/.ps/skill-state.yml` shows what's installed. `ps seed` needs `@palimpsest/cli` >= 0.4.0; if it errors `unknown command`, `npm install -g @palimpsest/cli`.
 
 > **CLI name.** Commands here use Stable's `ok` (`palimpsest`) and `~/.ps/`. With Palimpsest Beta, use `ps-beta` (`palimpsest-beta`) and `~/.ps-beta/` instead; `preview_url`'s `psOpenCommand` already names the right one.
 
@@ -147,4 +147,4 @@ OK does more than this skill describes, and it changes between releases. Not cov
 
 ## Scope recap
 
-OK looks for documents under the resolved `content.dir` (runtime: `config({ key: 'content.dir' })`); `.gitignore` and `.psignore` (at root or any folder depth) define exclusions. **Every `.md` / `.mdx` under `content.dir` not excluded is an Palimpsest document** — including under `specs/`, `reports/`, `docs/`. Folder metadata + templates live in nested `<folder>/.ps/`, not in `.ps/config.yml`. **Working in a git worktree?** Pass the worktree's absolute path as `cwd` on your OK tool calls once — it sticks for the session, so reads, writes, and the preview all target that worktree.
+OK looks for documents under the resolved `content.dir` (runtime: `config({ key: 'content.dir' })`); `.gitignore` and `.psignore` (at root or any folder depth) define exclusions. **Every `.md` / `.mdx` under `content.dir` not excluded is a Palimpsest document** — including under `specs/`, `reports/`, `docs/`. Folder metadata + templates live in nested `<folder>/.ps/`, not in `.ps/config.yml`. **Working in a git worktree?** Pass the worktree's absolute path as `cwd` on your OK tool calls once — it sticks for the session, so reads, writes, and the preview all target that worktree.

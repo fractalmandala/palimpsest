@@ -147,15 +147,15 @@ export {
 } from './report-bundle.ts';
 export type { LanguageMetadata } from './report-language.ts';
 export {
-  addOkPathsToGitExclude,
+  addPsPathsToGitExclude,
   type ExcludeWriteResult,
   formatTrackedRemediation,
-  getExcludedOkPaths,
+  getExcludedPsPaths,
   getInstalledSkillProjectionPaths,
-  getOkArtifactPaths,
-  probeTrackedOkPaths,
+  getPsArtifactPaths,
+  probeTrackedPsPaths,
   readSharingMode,
-  removeOkPathsFromGitExclude,
+  removePsPathsFromGitExclude,
   type SharingMode,
   type TrackedRefusal,
 } from './sharing/git-exclude.ts';

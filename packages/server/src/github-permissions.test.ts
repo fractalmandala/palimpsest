@@ -707,7 +707,7 @@ describe('checkPushPermission — telemetry', () => {
     });
     await harness.flush();
 
-    const counter = dataPoints(harness, 'ok.permissions.probe.outcome_total');
+    const counter = dataPoints(harness, 'ps.permissions.probe.outcome_total');
     expect(counter).toHaveLength(1);
     expect(counter[0]?.value).toBe(1);
     expect(counter[0]?.attributes).toEqual({
@@ -716,7 +716,7 @@ describe('checkPushPermission — telemetry', () => {
       error_class: 'none',
     });
 
-    const hist = dataPoints(harness, 'ok.permissions.probe.duration_ms');
+    const hist = dataPoints(harness, 'ps.permissions.probe.duration_ms');
     expect(hist).toHaveLength(1);
     expect((hist[0]?.value as HistogramData | undefined)?.count).toBe(1);
   });
@@ -731,7 +731,7 @@ describe('checkPushPermission — telemetry', () => {
     });
     await harness.flush();
 
-    const counter = dataPoints(harness, 'ok.permissions.probe.outcome_total');
+    const counter = dataPoints(harness, 'ps.permissions.probe.outcome_total');
     expect(counter[0]?.attributes).toEqual({
       outcome: 'denied',
       denied_reason: 'no-collaborator',
@@ -749,7 +749,7 @@ describe('checkPushPermission — telemetry', () => {
     });
     await harness.flush();
 
-    const counter = dataPoints(harness, 'ok.permissions.probe.outcome_total');
+    const counter = dataPoints(harness, 'ps.permissions.probe.outcome_total');
     expect(counter[0]?.attributes).toEqual({
       outcome: 'unknown',
       denied_reason: 'none',
@@ -770,8 +770,8 @@ describe('checkPushPermission — telemetry', () => {
     await harness.flush();
 
     const points = [
-      ...dataPoints(harness, 'ok.permissions.probe.outcome_total'),
-      ...dataPoints(harness, 'ok.permissions.probe.duration_ms'),
+      ...dataPoints(harness, 'ps.permissions.probe.outcome_total'),
+      ...dataPoints(harness, 'ps.permissions.probe.duration_ms'),
     ];
     expect(points.length).toBeGreaterThan(0);
     const allowedCounterKeys = ['denied_reason', 'error_class', 'outcome'];

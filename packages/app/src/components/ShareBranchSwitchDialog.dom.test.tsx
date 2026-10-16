@@ -1311,7 +1311,7 @@ describe('ShareBranchSwitchDialog — worktree leg', () => {
 
     await waitFor(() =>
       expect(toastError).toHaveBeenCalledWith(
-        'This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened.',
+        'This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened.',
       ),
     );
     expect(refreshWorktrees).toHaveBeenCalledTimes(1);

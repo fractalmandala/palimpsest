@@ -1,4 +1,4 @@
-import { hasOkPathSegment } from '@/components/file-tree-utils';
+import { hasPsPathSegment } from '@/components/file-tree-utils';
 
 export const FEEDBACK_NUDGE_STORAGE_KEY = 'ps-feedback-nudge-v1';
 
@@ -36,7 +36,7 @@ export interface FeedbackNudgeStore {
 export function countUserDocuments(pages: ReadonlySet<string>): number {
   let count = 0;
   for (const docName of pages) {
-    if (!hasOkPathSegment(docName)) count++;
+    if (!hasPsPathSegment(docName)) count++;
   }
   return count;
 }

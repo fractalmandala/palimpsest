@@ -17,7 +17,7 @@ import { RENDERER_BABEL_OPTIONS } from './vite.react-babel';
 
 // Inject the app's own version onto import.meta.env.VITE_APP_VERSION for the
 // browser bundle (telemetry resource + client-version wire builder). Covers
-// both `bun run dev` and the production bundle `ok ui` serves.
+// both `bun run dev` and the production bundle `ps ui` serves.
 injectAppVersionEnv();
 
 const vitePort = process.env.VITE_PORT ? Number.parseInt(process.env.VITE_PORT, 10) : undefined;
@@ -39,7 +39,7 @@ const viteCacheDir = process.env.PS_TEST_VITE_CACHE_DIR;
 
 export default defineConfig({
   // Relative asset paths — `./assets/foo.js` in the built index.html.
-  // Works under both HTTP (`ok ui` serves from root) and `file://` (Electron's
+  // Works under both HTTP (`ps ui` serves from root) and `file://` (Electron's
   // `loadFile()` resolves relative to the bundle path). Default `base: '/'`
   // silently broke the packaged renderer: under `file://`, `/assets/foo.js`
   // resolves to the filesystem root and every chunk 404s.
@@ -99,7 +99,7 @@ export default defineConfig({
       // persistence write, which drops in-flight typing and jumps the cursor.
       // Playwright artifacts get the same treatment: a test run writing
       // playwright-report/index.html force-reloads every connected dev window
-      // (including a live OK Desktop renderer), which can land blank.
+      // (including a live Palimpsest Desktop renderer), which can land blank.
       ignored: [
         '**/content/**',
         '**/playwright-report/**',

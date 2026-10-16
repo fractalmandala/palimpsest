@@ -1,9 +1,9 @@
 ---
-name: open-knowledge-discovery
-description: "Read when the user asks what Palimpsest is, wants to install it on a repository, wants to open or preview a single markdown file that is not part of an Palimpsest project, wants to share an Palimpsest project with collaborators, asks whether Palimpsest supports a particular capability, or asks how `ps init` / `ps cowork` / OK Desktop set up a project. Do NOT load to perform Palimpsest reads/writes — the runtime guidance for editing markdown inside an initialized OK project ships as a separate project-local skill installed into each detected agent's skills dir (for example `.claude/skills/palimpsest/`) whenever `ps init` runs."
+name: palimpsest-discovery
+description: "Read when the user asks what Palimpsest is, wants to install it on a repository, wants to open or preview a single markdown file that is not part of a Palimpsest project, wants to share a Palimpsest project with collaborators, asks whether Palimpsest supports a particular capability, or asks how `ps init` / `ps cowork` / Palimpsest Desktop set up a project. Do NOT load to perform Palimpsest reads/writes — the runtime guidance for editing markdown inside an initialized OK project ships as a separate project-local skill installed into each detected agent's skills dir (for example `.claude/skills/palimpsest/`) whenever `ps init` runs."
 compatibility: "Any agent host — no MCP server required. Pure discovery + install guidance."
 metadata:
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Palimpsest — what it is and how to install it
@@ -51,7 +51,7 @@ ps init
 Re-run `ps init` any time to refresh wiring and skills to the installed CLI
 version.
 
-## Share an Palimpsest project with collaborators
+## Share a Palimpsest project with collaborators
 
 An OK project travels with its repository. To share one:
 
@@ -73,9 +73,9 @@ separate Skills list inside the Claude Desktop App. Run `ps cowork` to
 build `palimpsest.skill` and open Claude Desktop so the user can upload it
 (Customize → Skills → + → Create skill → Upload skill).
 
-## OK Desktop
+## Palimpsest Desktop
 
-OK Desktop is the standalone macOS app (`@palimpsest/desktop`). It
+Palimpsest Desktop is the standalone macOS app (`@palimpsest/desktop`). It
 bundles its own CLI, opens a project as an editor + preview window, and keeps
 the project's MCP wiring and skills current on every launch. Download DMGs
 from the releases page.
@@ -102,9 +102,9 @@ you genuinely have one; never pop a browser tab on a host that has none.
   absolute path (it finds, or boots on demand, the session and returns a full
   `url`), then **immediately open that `url` in your in-app browser**. "Open it"
   means navigate your browser — don't just print the URL and stop. This is also
-  the only way to view it in a browser when the OK Desktop app is installed
+  the only way to view it in a browser when the Palimpsest Desktop app is installed
   (`ps open` prefers the Desktop app). Get the URL from `preview_url` only —
-  never hunt for it via `ok ps` / `ps status` / `ps start` or a guessed
+  never hunt for it via `ps ps` / `ps status` / `ps start` or a guessed
   port.
 - **No in-app browser** (a pure-stdio CLI) — run
   `ps open /abs/path/to/file.md`: it opens the Desktop app when installed, else a
@@ -114,7 +114,7 @@ you genuinely have one; never pop a browser tab on a host that has none.
 
 If the OK MCP server isn't wired into this host there is no `preview_url` to
 call — use the `ps open` path above. Don't reconstruct what `preview_url` does
-by hand (spawning `ps mcp` yourself, scraping ports from `ok ps`).
+by hand (spawning `ps mcp` yourself, scraping ports from `ps ps`).
 
 Give an absolute path. `ps open` prints the absolute project root it resolved
 for that path, and names the enclosing project too when the resolved root sits

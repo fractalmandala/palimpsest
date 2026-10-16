@@ -33,7 +33,7 @@ describe('metrics-watcher-recent envelope (RFC 9457)', () => {
     }
   });
 
-  test('DNS-rebinding Host emits 403 urn:ok:error:host-not-allowed BEFORE method check', async () => {
+  test('DNS-rebinding Host emits 403 urn:ps:error:host-not-allowed BEFORE method check', async () => {
     const res = await fetchWithHostHeader(
       `http://127.0.0.1:${server.port}/api/metrics/watcher-recent`,
       'evil.example.com',
@@ -45,7 +45,7 @@ describe('metrics-watcher-recent envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:host-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -59,7 +59,7 @@ describe('metrics-watcher-recent envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

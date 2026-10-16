@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readJsPluginSpecifiers,
 } from '../../../test-support/read-ps-rules-config.test-helper.ts';
 import plugin, { rules } from '../index.mjs';
@@ -48,7 +48,7 @@ describe('ps-rules scope table', () => {
     ]);
   });
 
-  test('the `ok` plugin registers exactly the rules it exports', () => {
+  test('the `ps` plugin registers exactly the rules it exports', () => {
     expect(Object.keys(plugin.rules).sort()).toEqual(registered);
   });
 
@@ -66,7 +66,7 @@ describe('ps-rules scope table', () => {
     expect(isInScope(unscopedName, 'packages/app/src/x.tsx')).toBe(true);
   });
 
-  test('oxlint.config.ts still loads the `ok` plugin these rules are exported from', async () => {
+  test('oxlint.config.ts still loads the `ps` plugin these rules are exported from', async () => {
     expect(await readJsPluginSpecifiers(REPO_ROOT)).toContain('./lint-plugins/ps-rules/index.mjs');
   });
 
@@ -85,7 +85,7 @@ describe('ps-rules scope table', () => {
     const outOfScope = [];
     for (const name of fixtures) {
       const fixture = `${PS_RULES_FIXTURES_DIR}/${name}`;
-      for (const fire of lintOkRulesFixture(fixture)) {
+      for (const fire of lintPsRulesFixture(fixture)) {
         const rule = /^ok\((.+)\)$/.exec(fire.code)?.[1];
         if (rule === undefined) continue;
         checked += 1;
@@ -167,7 +167,7 @@ describe('ps-rules fixture tests', () => {
     ).toEqual([]);
   });
 
-  test('every rule the `ok` plugin registers has its fixture test here', () => {
+  test('every rule the `ps` plugin registers has its fixture test here', () => {
     const stems = new Set(publicTestStems());
     expect(
       registered.filter((rule) => !stems.has(rule)),
@@ -177,10 +177,10 @@ describe('ps-rules fixture tests', () => {
 
   test('the fixture config enables exactly the registered rules, at error', () => {
     const { rules: configured } = JSON.parse(readFileSync(FIXTURE_CONFIG, 'utf8'));
-    const enabled = Object.entries(configured).filter(([id]) => id.startsWith('ok/'));
+    const enabled = Object.entries(configured).filter(([id]) => id.startsWith('ps/'));
     expect(
-      enabled.map(([id]) => id.slice('ok/'.length)).sort(),
-      'a registered rule needs an "ok/<rule>": "error" entry in lint-plugins/ps-rules/__fixtures__/oxlint.fixtures.json',
+      enabled.map(([id]) => id.slice('ps/'.length)).sort(),
+      'a registered rule needs an "ps/<rule>": "error" entry in lint-plugins/ps-rules/__fixtures__/oxlint.fixtures.json',
     ).toEqual(registered);
     expect(enabled.filter(([, severity]) => severity !== 'error')).toEqual([]);
   });

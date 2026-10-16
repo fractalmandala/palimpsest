@@ -62,7 +62,7 @@ describe('respondDocInConflict — slim RFC 9457 envelope', () => {
     expect(endCalls).toHaveLength(1);
     const body = JSON.parse(endCalls[0]) as Record<string, unknown>;
 
-    expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+    expect(body.type).toBe('urn:ps:error:doc-in-conflict');
     expect(body.title).toBe('Document is in conflict.');
     expect(body.status).toBe(409);
     expect(body.detail).toBe(

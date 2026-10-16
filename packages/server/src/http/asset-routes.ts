@@ -19,10 +19,10 @@ export interface AssetRouteDeps {
 export function createAssetRoutes(deps: AssetRouteDeps): ApiRouteGroup {
   const { assetService, log } = deps;
   const ASSET_SERVE_ERRORS = {
-    'missing-path': [400, 'urn:ok:error:invalid-request', 'Missing asset path.'],
-    'unsupported-type': [415, 'urn:ok:error:unsupported-asset-type', 'Unsupported asset type.'],
-    'not-found': [404, 'urn:ok:error:asset-not-found', 'Asset not found.'],
-    'invalid-path': [400, 'urn:ok:error:invalid-request', 'Invalid asset path.'],
+    'missing-path': [400, 'urn:ps:error:invalid-request', 'Missing asset path.'],
+    'unsupported-type': [415, 'urn:ps:error:unsupported-asset-type', 'Unsupported asset type.'],
+    'not-found': [404, 'urn:ps:error:asset-not-found', 'Asset not found.'],
+    'invalid-path': [400, 'urn:ps:error:invalid-request', 'Invalid asset path.'],
   } as const;
 
   const handleAsset = withValidation(
@@ -80,7 +80,7 @@ export function createAssetRoutes(deps: AssetRouteDeps): ApiRouteGroup {
           }
         }
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'asset',
           cause: e,
         });
@@ -109,7 +109,7 @@ export function createAssetRoutes(deps: AssetRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             413,
-            'urn:ok:error:payload-too-large',
+            'urn:ps:error:payload-too-large',
             `File exceeds the ${TEXT_VIEW_MAX_BYTES}-byte text-viewer cap.`,
             { handler: 'asset-text' },
           );
@@ -125,7 +125,7 @@ export function createAssetRoutes(deps: AssetRouteDeps): ApiRouteGroup {
         });
         res.end(text);
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'asset-text',
           cause: e,
         });

@@ -40,16 +40,16 @@ export function walkCurrencyExtension(options: WalkCurrencyExtensionOptions): Ex
       | undefined;
     const binding = syncState?.binding;
     if (!binding) {
-      mark.count('ok/editor/walk-currency-disarmed', { docName, reason: 'no-binding' });
+      mark.count('ps/editor/walk-currency-disarmed', { docName, reason: 'no-binding' });
       disarmWarn(`no ySync binding on "${docName}"`);
       return;
     }
     if (typeof binding._forceRerender !== 'function') {
-      mark.count('ok/editor/walk-currency-disarmed', { docName, reason: 'no-force-rerender' });
+      mark.count('ps/editor/walk-currency-disarmed', { docName, reason: 'no-force-rerender' });
       disarmWarn(`ySync binding on "${docName}" exposes no _forceRerender`);
       return;
     }
-    mark.count('ok/editor/pattern-d-stale-prewarm', { docName });
+    mark.count('ps/editor/pattern-d-stale-prewarm', { docName });
     binding._forceRerender();
   };
 

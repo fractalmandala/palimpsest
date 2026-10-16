@@ -35,7 +35,7 @@ function tmp(): string {
 const OWN_ENTRY = buildManagedServerEntry({ mode: 'published' });
 
 describe('removeOwnMcpEntry — JSON', () => {
-  test('removes only OK’s entry, preserving a sibling server + its comment', () => {
+  test('removes only Palimpsest's entry, preserving a sibling server + its comment', () => {
     const dir = tmp();
     try {
       const configPath = join(dir, 'config.json');
@@ -199,7 +199,7 @@ describe('removeOwnMcpEntry — JSON', () => {
 });
 
 describe('removeOwnMcpEntry — TOML (Codex)', () => {
-  test('removes OK’s entry, preserving a sibling table + its comment', () => {
+  test('removes Palimpsest's entry, preserving a sibling table + its comment', () => {
     const dir = tmp();
     try {
       const configPath = join(dir, 'config.toml');
@@ -403,7 +403,7 @@ describe('removeOwnMcpEntry — Pi managed extension file', () => {
     }
   });
 
-  test('removes OK’s own bridge file (current version)', () => {
+  test('removes Palimpsest's own bridge file (current version)', () => {
     const dir = tmp();
     try {
       const configPath = piConfigPath(dir);
@@ -436,7 +436,7 @@ describe('removeOwnMcpEntry — Pi managed extension file', () => {
     try {
       const configPath = piConfigPath(dir);
       mkdirSync(join(dir, '.pi', 'extensions'), { recursive: true });
-      const raw = "// the user's own extension, not OK's\nexport default function () {}\n";
+      const raw = "// the user's own extension, not Palimpsest's\nexport default function () {}\n";
       writeFileSync(configPath, raw);
       const outcome = removeOwnMcpEntry(EDITOR_TARGETS.pi, dir, undefined, configPath);
       expect(outcome.kind).toBe('left-foreign');

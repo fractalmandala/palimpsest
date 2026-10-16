@@ -394,7 +394,7 @@ describe('onRequest captures into ring buffer + /api/__embed-detect surfaces it'
       await dispatch(ext, req, res);
       expect(captured.status).toBe(403);
       const body = JSON.parse(captured.body) as { type: string };
-      expect(body.type).toBe('urn:ok:error:loopback-required');
+      expect(body.type).toBe('urn:ps:error:loopback-required');
     } finally {
       await cleanup();
     }
@@ -408,7 +408,7 @@ describe('onRequest captures into ring buffer + /api/__embed-detect surfaces it'
       await dispatch(ext, req, res);
       expect(captured.status).toBe(403);
       const body = JSON.parse(captured.body) as { type: string };
-      expect(body.type).toBe('urn:ok:error:host-not-allowed');
+      expect(body.type).toBe('urn:ps:error:host-not-allowed');
     } finally {
       await cleanup();
     }
@@ -423,7 +423,7 @@ describe('onRequest captures into ring buffer + /api/__embed-detect surfaces it'
       await dispatch(ext, req, res);
       expect(captured.status).toBe(405);
       const body = JSON.parse(captured.body) as { type: string };
-      expect(body.type).toBe('urn:ok:error:method-not-allowed');
+      expect(body.type).toBe('urn:ps:error:method-not-allowed');
     } finally {
       await cleanup();
     }

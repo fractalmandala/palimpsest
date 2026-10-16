@@ -41,7 +41,7 @@ export type HttpErrorStatus =
 
 let _apiErrorCounter: Counter | null = null;
 export function apiErrorCounter(): Counter {
-  _apiErrorCounter ||= getMeter().createCounter('ok.api.error.count', {
+  _apiErrorCounter ||= getMeter().createCounter('ps.api.error.count', {
     description: 'API error responses by problem type and handler',
     unit: '1',
   });
@@ -80,7 +80,7 @@ export function errorResponse(
     !(options.cause instanceof PrivateStateSymlinkError)
   ) {
     status = 400;
-    type = 'urn:ok:error:path-escape';
+    type = 'urn:ps:error:path-escape';
     title = 'Path resolves outside the content directory or contains a symlink cycle.';
     options = { ...options, detail: undefined };
   }
@@ -94,12 +94,12 @@ export function errorResponse(
     options.cause instanceof ContentScopeAdmissionError
   ) {
     status = 403;
-    type = 'urn:ok:error:path-escape';
+    type = 'urn:ps:error:path-escape';
     title = 'Path is outside this server’s content scope.';
     options = { ...options, detail: options.cause.message };
   }
   const instance = options.instance ?? `urn:uuid:${randomUUID()}`;
-  setActiveSpanAttributes({ 'ok.error.instance': instance });
+  setActiveSpanAttributes({ 'ps.error.instance': instance });
 
   if (res.headersSent || res.writableEnded || res.destroyed) {
     log().error(
@@ -114,7 +114,7 @@ export function errorResponse(
       'errorResponse called after headers already sent — suppressed',
     );
     apiErrorCounter().add(1, {
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       ...(options.handler ? { handler: options.handler } : {}),
     });
     return;
@@ -142,7 +142,7 @@ export function errorResponse(
     );
     const fallbackStatus = 500 as const;
     apiErrorCounter().add(1, {
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       ...(options.handler ? { handler: options.handler } : {}),
     });
     res.writeHead(fallbackStatus, {
@@ -151,7 +151,7 @@ export function errorResponse(
     });
     res.end(
       JSON.stringify({
-        type: 'urn:ok:error:internal-server-error' satisfies ProblemType,
+        type: 'urn:ps:error:internal-server-error' satisfies ProblemType,
         title: 'Internal server error.',
         status: fallbackStatus,
         instance,
@@ -202,7 +202,7 @@ export function errorResponse(
       'errorResponse wireBody is not JSON-serializable — emitting hardcoded fallback',
     );
     apiErrorCounter().add(1, {
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       ...(options.handler ? { handler: options.handler } : {}),
     });
     res.writeHead(500, {
@@ -211,7 +211,7 @@ export function errorResponse(
     });
     res.end(
       JSON.stringify({
-        type: 'urn:ok:error:internal-server-error' satisfies ProblemType,
+        type: 'urn:ps:error:internal-server-error' satisfies ProblemType,
         title: 'Internal server error.',
         status: 500,
         instance,
@@ -256,13 +256,13 @@ export function streamingProblemEvent(
     );
     const fallbackStatus = 500 as const;
     apiErrorCounter().add(1, {
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       ...(options.handler ? { handler: options.handler } : {}),
     });
     return {
       type: 'error',
       problem: {
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         title: 'Internal server error.',
         status: fallbackStatus,
         instance,
@@ -316,7 +316,7 @@ export function createStreamingErrorWriter(
         'createStreamingErrorWriter called after writableEnded/destroyed — suppressed',
       );
       apiErrorCounter().add(1, {
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         ...(handler ? { handler } : {}),
       });
       return;

@@ -114,7 +114,7 @@ export async function handleInstalledAgents(
   probeAll: () => Promise<Record<InstalledAgentScheme, boolean>>,
 ): Promise<void> {
   if (req.method !== 'GET') {
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: 'installed-agents',
       extraHeaders: { Allow: 'GET' },
     });
@@ -132,7 +132,7 @@ export async function handleInstalledAgents(
     });
   } catch (e) {
     getLogger('handoff').error({ err: e }, '[installed-agents] handler failed');
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
       handler: 'installed-agents',
       cause: e,
     });

@@ -57,13 +57,13 @@ function yamlPathFor(home: string): string {
   return join(home, ...YAML_REL);
 }
 
-const CENTRAL_SKILL_REL = ['.agents', 'skills', 'open-knowledge-discovery'] as const;
+const CENTRAL_SKILL_REL = ['.agents', 'skills', 'palimpsest-discovery'] as const;
 function centralSkillDirFor(home: string): string {
   return join(home, ...CENTRAL_SKILL_REL);
 }
 
 function hostSkillDirFor(home: string, hostDir: string): string {
-  return join(home, hostDir, 'skills', 'open-knowledge-discovery');
+  return join(home, hostDir, 'skills', 'palimpsest-discovery');
 }
 
 function writeCentralSkill(home: string): void {
@@ -249,7 +249,7 @@ describe('installUserSkill — scope discipline', () => {
 
     expect(await installUserSkill({ home })).toBe('installed');
     expect(
-      existsSync(join(home, '.pi', 'agent', 'skills', 'open-knowledge-discovery', 'SKILL.md')),
+      existsSync(join(home, '.pi', 'agent', 'skills', 'palimpsest-discovery', 'SKILL.md')),
     ).toBe(true);
     expect(existsSync(join(home, '.agents'))).toBe(false);
   });
@@ -769,7 +769,7 @@ describe('installUserSkill — home guard', () => {
 
   test('a relative home cannot touch a matching tree in the cwd', async () => {
     const box = freshHome();
-    const decoy = join(box, '.claude', 'skills', 'open-knowledge-discovery');
+    const decoy = join(box, '.claude', 'skills', 'palimpsest-discovery');
     mkdirSync(decoy, { recursive: true });
     writeFileSync(join(decoy, 'SKILL.md'), '# mine\n', 'utf-8');
     const prev = process.cwd();

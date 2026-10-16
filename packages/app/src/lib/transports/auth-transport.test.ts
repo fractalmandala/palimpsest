@@ -41,7 +41,7 @@ describe('httpAuthTransport().pat', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:auth-failed',
+            type: 'urn:ps:error:auth-failed',
             title: 'Authentication failed',
             status: 400,
             detail: 'Token invalid for ghes.acme.test',
@@ -95,7 +95,7 @@ describe('httpAuthTransport().hostToken', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:auth-failed',
+            type: 'urn:ps:error:auth-failed',
             title: 'Authentication failed',
             status: 400,
             detail: 'Host must not include a scheme',
@@ -125,7 +125,7 @@ describe('httpAuthTransport().start / ghLogin (streamAuthEndpoint)', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:auth-failed',
+            type: 'urn:ps:error:auth-failed',
             title: 'The GitHub CLI (gh) is not installed.',
             status: 400,
           }),
@@ -142,7 +142,7 @@ describe('httpAuthTransport().start / ghLogin (streamAuthEndpoint)', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:non-github-origin',
+            type: 'urn:ps:error:non-github-origin',
             title: 'GitHub sign-in is unavailable for this remote.',
             status: 409,
             detail:
@@ -164,7 +164,7 @@ describe('httpAuthTransport().start / ghLogin (streamAuthEndpoint)', () => {
       async () =>
         new Response(
           JSON.stringify({
-            type: 'urn:ok:error:auth-failed',
+            type: 'urn:ps:error:auth-failed',
             title: 'This dev build has no built CLI.',
             status: 409,
             detail: DEV_FALLBACK_CLI_REFUSAL,

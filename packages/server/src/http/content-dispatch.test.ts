@@ -68,7 +68,7 @@ describe('native content fallback ownership and middleware failures', () => {
       const response = await rawRequest(port, '/route');
       expect(response.status).toBe(500);
       expect(response.headers['content-type']).toBe('application/problem+json');
-      expect(response.body).toContain('urn:ok:error:internal-server-error');
+      expect(response.body).toContain('urn:ps:error:internal-server-error');
       expect(legacy).not.toHaveBeenCalled();
     },
   );
@@ -140,7 +140,7 @@ test('ephemeral peer refusal precedes Host admission and content execution', () 
     res,
   );
   expect(captured.status).toBe(403);
-  expect(JSON.parse(captured.body).type).toBe('urn:ok:error:loopback-required');
+  expect(JSON.parse(captured.body).type).toBe('urn:ps:error:loopback-required');
   expect(content).not.toHaveBeenCalled();
   expect(shell).not.toHaveBeenCalled();
 });

@@ -27,9 +27,12 @@ name: Linear PR Relay
 #   rather than through `${{ }}` interpolation into the run body. The receiver
 #   validates the shape again before acting on it.
 
+# FORK DISABLED: this workflow relayed PR numbers to Inkeep's private
+# agents-private repo. Uncomment when the fork has its own receiver.
 on:
-  pull_request_target:
-    types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft, closed]
+  workflow_dispatch:
+  # pull_request_target:
+  #   types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft, closed]
 
 permissions:
   contents: read

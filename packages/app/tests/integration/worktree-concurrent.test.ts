@@ -17,13 +17,13 @@ afterEach(() => {
 
 describe('Two linked worktrees boot in parallel with isolated state (D13)', () => {
   test('parallel bootServer calls produce distinct ports + lockDirs + shadow paths; destroy of one does not affect the other', async () => {
-    const a = createLinkedWorktree({ seedOkScaffold: true, prefix: 'ps-wt-test-A' });
+    const a = createLinkedWorktree({ seedPsScaffold: true, prefix: 'ps-wt-test-A' });
     handles.push(a);
-    const b = createLinkedWorktree({ seedOkScaffold: true, prefix: 'ps-wt-test-B' });
+    const b = createLinkedWorktree({ seedPsScaffold: true, prefix: 'ps-wt-test-B' });
     handles.push(b);
 
-    const expectedShadowA = resolve(a.worktreeGitdir, 'ok/HEAD');
-    const expectedShadowB = resolve(b.worktreeGitdir, 'ok/HEAD');
+    const expectedShadowA = resolve(a.worktreeGitdir, 'ps/HEAD');
+    const expectedShadowB = resolve(b.worktreeGitdir, 'ps/HEAD');
 
     const [bootedA, bootedB] = await Promise.all([
       bootServer({
@@ -72,12 +72,12 @@ describe('Two linked worktrees boot in parallel with isolated state (D13)', () =
 
       const refsA = execFileSync(
         'git',
-        ['--git-dir', resolve(a.worktreeGitdir, 'ok'), 'for-each-ref'],
+        ['--git-dir', resolve(a.worktreeGitdir, 'ps'), 'for-each-ref'],
         { encoding: 'utf-8' },
       );
       const refsB = execFileSync(
         'git',
-        ['--git-dir', resolve(b.worktreeGitdir, 'ok'), 'for-each-ref'],
+        ['--git-dir', resolve(b.worktreeGitdir, 'ps'), 'for-each-ref'],
         { encoding: 'utf-8' },
       );
       expect(typeof refsA).toBe('string');

@@ -391,7 +391,7 @@ import { computeWriteAdvisoryLinks, type WriteAdvisoryTargets } from './write-ad
 let _renameAttributionCounter: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
 function renameAttributionCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
-  _renameAttributionCounter ||= getMeter().createCounter('ok.rename.attribution_kind', {
+  _renameAttributionCounter ||= getMeter().createCounter('ps.rename.attribution_kind', {
     description:
       'Count of rename and rollback handler dispatches by attribution kind (agent | principal | anonymous)',
   });
@@ -401,7 +401,7 @@ function renameAttributionCounter(): ReturnType<ReturnType<typeof getMeter>['cre
 let _agentWriteGateFiredCounter: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
 function agentWriteGateFiredCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
-  _agentWriteGateFiredCounter ||= getMeter().createCounter('ok.agent_write.gate_fired_total', {
+  _agentWriteGateFiredCounter ||= getMeter().createCounter('ps.agent_write.gate_fired_total', {
     description:
       'Count of agent writes that ran the Site A content-divergence gate (denominator for the divergence rate). Bounded label: handler ∈ {agent-write-md, agent-write-batch, agent-patch, rollback}.',
   });
@@ -415,7 +415,7 @@ function agentWriteContentDivergenceCounter(): ReturnType<
   ReturnType<typeof getMeter>['createCounter']
 > {
   _agentWriteContentDivergenceCounter ||= getMeter().createCounter(
-    'ok.agent_write.content_divergence_total',
+    'ps.agent_write.content_divergence_total',
     {
       description:
         'Count of agent writes whose converged Y.Text diverged from the composed intent (numerator for the divergence rate). Bounded labels: handler ∈ {agent-write-md, agent-write-batch, agent-patch, rollback}, divergence_type.',
@@ -983,7 +983,7 @@ function requireNonEmptyDocName(
   errorResponse(
     res,
     400,
-    'urn:ok:error:invalid-request',
+    'urn:ps:error:invalid-request',
     '`docName` must be a non-empty document name.',
     { handler },
   );
@@ -1420,20 +1420,20 @@ function removedDocProblem(failure: StoreFailure) {
   switch (failure.removal?.kind) {
     case 'path-occupied':
       return {
-        type: 'urn:ok:error:doc-removed' as const,
+        type: 'urn:ps:error:doc-removed' as const,
         title:
           'Edit applied in memory; disk write refused because the file now at this path is not loaded into the document.',
         detail: `${failure.message}. Retrying will not help until the server reloads this document from disk, for example after Palimpsest restarts; tell the user instead of retrying.`,
       } satisfies BatchEntryError;
     case 'renamed':
       return {
-        type: 'urn:ok:error:doc-removed' as const,
+        type: 'urn:ps:error:doc-removed' as const,
         title: 'Edit applied in memory; disk write refused because the document was renamed.',
         detail: `${failure.message}. Retrying will not help: re-read the document at ${failure.removal.renamedTo} and re-apply your change there.`,
       } satisfies BatchEntryError;
     case undefined:
       return {
-        type: 'urn:ok:error:doc-removed' as const,
+        type: 'urn:ps:error:doc-removed' as const,
         title:
           'Edit applied in memory; disk write refused because the document is no longer on disk.',
         detail: `${failure.message}. Retrying will not help: re-create the document before writing this content again.`,
@@ -1443,7 +1443,7 @@ function removedDocProblem(failure: StoreFailure) {
 
 function pathFaultProblem(failure: StoreFailure) {
   return {
-    type: 'urn:ok:error:path-escape' as const,
+    type: 'urn:ps:error:path-escape' as const,
     title:
       'Edit applied in memory; disk write refused because the document path could not be resolved.',
     detail: `${failure.message}. Retrying will not help: the path has to be repaired on disk before this content can be written.`,
@@ -1452,7 +1452,7 @@ function pathFaultProblem(failure: StoreFailure) {
 
 function discardedStoreProblem(failure: StoreFailure) {
   return {
-    type: 'urn:ok:error:branch-switched' as const,
+    type: 'urn:ps:error:branch-switched' as const,
     title: 'Edit not saved: the Git branch changed before it reached disk.',
     detail: `${failure.message}. The document now shows the checked-out branch. Re-read it, then repeat the edit if it is still needed.`,
   } satisfies BatchEntryError;
@@ -1460,7 +1460,7 @@ function discardedStoreProblem(failure: StoreFailure) {
 
 function refusedStoreProblem(failure: StoreFailure) {
   return {
-    type: 'urn:ok:error:store-refused' as const,
+    type: 'urn:ps:error:store-refused' as const,
     title:
       'Edit applied in memory; disk write refused because the duplication baseline could not be read.',
     detail: `${failure.message}. The edit is applied in collaborative state and the document file on disk was not updated; a copy of the edited document is preserved in the server's recovery buffer unless that buffer is unavailable or unwritable. Retry the write once the filesystem fault is repaired.`,
@@ -1978,7 +1978,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     errorResponse(
       res,
       409,
-      'urn:ok:error:disk-divergence',
+      'urn:ps:error:disk-divergence',
       'The document changed on disk after your edit was prepared; your edit was NOT applied, to avoid overwriting the newer on-disk content. Re-read the document and retry.',
       { handler },
     );
@@ -1986,7 +1986,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
 
   function staleExternalWriteProblem(docName: string) {
     return {
-      type: 'urn:ok:error:stale-external-write' as const,
+      type: 'urn:ps:error:stale-external-write' as const,
       title: 'Edit retained; disk write blocked by a stale external-write conflict.',
       detail:
         'An older version was restored on disk. Your edit was applied and is retained in memory and in the recovery snapshot, but its Markdown disk write was skipped. Do not repeat this edit: ask the user to resolve the conflict in the Palimpsest app, then re-read the document before making further changes.',
@@ -2170,7 +2170,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       errorResponse(
         res,
         503,
-        'urn:ok:error:derived-index-unavailable',
+        'urn:ps:error:derived-index-unavailable',
         'Derived index is shutting down.',
         {
           handler: options.handler,
@@ -2180,7 +2180,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       );
       return;
     }
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', options.failureTitle, {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', options.failureTitle, {
       handler: options.handler,
       cause: err,
     });
@@ -2295,60 +2295,60 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     if (!(error instanceof Error)) {
       return {
         status: 500,
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         error: 'Failed to rename document.',
       };
     }
     if (error instanceof ManagedRenameSourceNotFoundError) {
-      return { status: 404, type: 'urn:ok:error:doc-not-found', error: withPeriod(error.message) };
+      return { status: 404, type: 'urn:ps:error:doc-not-found', error: withPeriod(error.message) };
     }
     if (error instanceof ManagedRenameDestinationExistsError) {
       return {
         status: 409,
-        type: 'urn:ok:error:doc-already-exists',
+        type: 'urn:ps:error:doc-already-exists',
         error: withPeriod(error.message),
       };
     }
     if (error instanceof ManagedRenameSourceTypeMismatchError) {
       return {
         status: 400,
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         error: withPeriod(error.message),
       };
     }
     if (error instanceof ManagedRenameInvalidRequestError) {
       return {
         status: 400,
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         error: withPeriod(error.message),
       };
     }
     if (error instanceof ManagedRenameReservedPathError) {
       return {
         status: 400,
-        type: 'urn:ok:error:reserved-doc-name',
+        type: 'urn:ps:error:reserved-doc-name',
         error: withPeriod(error.message),
       };
     }
     if (error instanceof ManagedRenameMissingDocumentError) {
-      return { status: 404, type: 'urn:ok:error:doc-not-found', error: withPeriod(error.message) };
+      return { status: 404, type: 'urn:ps:error:doc-not-found', error: withPeriod(error.message) };
     }
     if (error instanceof ManagedRenameSnapshotMissingError) {
-      return { status: 404, type: 'urn:ok:error:doc-not-found', error: withPeriod(error.message) };
+      return { status: 404, type: 'urn:ps:error:doc-not-found', error: withPeriod(error.message) };
     }
     if (isContainmentRejection(error)) {
-      return { status: 400, type: 'urn:ok:error:path-escape', error: withPeriod(error.message) };
+      return { status: 400, type: 'urn:ps:error:path-escape', error: withPeriod(error.message) };
     }
     if (error instanceof BacklinkIndexRequiredError) {
       return {
         status: 503,
-        type: 'urn:ok:error:backlink-index-not-configured',
+        type: 'urn:ps:error:backlink-index-not-configured',
         error: withPeriod(error.message),
       };
     }
     return {
       status: 500,
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       error: 'Failed to rename document.',
     };
   }
@@ -3548,7 +3548,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     return base === '' ? '.' : base;
   }
 
-  function attributeOkArtifactWrite(
+  function attributePsArtifactWrite(
     actor: ReturnType<typeof extractActorIdentity>,
     artifactKey: string,
     subject: string,
@@ -3588,15 +3588,15 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
   }
   type PsArtifactFlush = 'flushed' | 'unavailable' | 'failed';
   let psArtifactFlushChain: Promise<void> = Promise.resolve();
-  function scheduleOkArtifactFlush(context: string): void {
+  function schedulePsArtifactFlush(context: string): void {
     bumpSkillsCatalogGen();
     psArtifactFlushChain = psArtifactFlushChain
       .then(async () => {
-        await commitOkArtifactWrite(context);
+        await commitPsArtifactWrite(context);
       })
       .catch(() => {});
   }
-  async function commitOkArtifactWrite(context: string): Promise<PsArtifactFlush> {
+  async function commitPsArtifactWrite(context: string): Promise<PsArtifactFlush> {
     if (!flushContributors) return 'unavailable';
     try {
       await flushContributors();
@@ -3633,7 +3633,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${docName}' is a reserved document name.`,
             { handler: 'agent-write' },
           );
@@ -3771,7 +3771,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
           return;
         }
         log.error({ err: e, requestId: getRequestId(_req) }, '[agent-write] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-write',
           cause: e,
         });
@@ -3846,7 +3846,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
               status: 'error',
               docName,
               error: {
-                type: 'urn:ok:error:doc-in-conflict',
+                type: 'urn:ps:error:doc-in-conflict',
                 title: 'Document is in conflict.',
                 detail,
                 ...envelope,
@@ -3857,7 +3857,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
             logFrontmatterRefusal(e, 'agent-write-batch');
             return entryError(
               docName,
-              'urn:ok:error:frontmatter-malformed',
+              'urn:ps:error:frontmatter-malformed',
               'Frontmatter YAML is malformed.',
               frontmatterRefusalDetail(e),
             );
@@ -3877,7 +3877,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
           );
           return entryError(
             docName,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Internal server error.',
           );
         };
@@ -3913,7 +3913,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
               if (isSystemDoc(resolvedDocName) || isConfigDoc(resolvedDocName)) {
                 results[i] = entryError(
                   resolvedDocName,
-                  'urn:ok:error:reserved-doc-name',
+                  'urn:ps:error:reserved-doc-name',
                   `'${resolvedDocName}' is a reserved document name.`,
                 );
                 continue;
@@ -4051,7 +4051,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
                 }
               } else if (flushOutcome?.kind === 'divergence') {
                 flushErrors.set(p.docName, {
-                  type: 'urn:ok:error:disk-divergence',
+                  type: 'urn:ps:error:disk-divergence',
                   title:
                     'The document changed on disk after your edit was prepared; your edit was NOT applied. Re-read the document and retry.',
                 });
@@ -4110,7 +4110,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
             r ??
             entryError(
               body.docs[i].docName,
-              'urn:ok:error:internal-server-error',
+              'urn:ps:error:internal-server-error',
               'Internal server error.',
             ),
         );
@@ -4129,7 +4129,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
         );
       } catch (e) {
         log.error({ err: e, requestId: getRequestId(_req) }, '[agent-write-batch] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-write-batch',
           cause: e,
         });
@@ -4200,14 +4200,14 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ok' | 'ps-and-templates',
+    components: 'ps' \| 'ps-and-templates',
   ): { folderRel: string; resolvedContentDir: string } | null {
     const folderRel = raw.replace(/^\.\//, '').replace(/^\/+/, '').replace(/\/+$/, '');
     if (folderRel.split('/').some((seg) => seg === '..') || raw.startsWith('/')) {
       errorResponse(
         res,
         400,
-        'urn:ok:error:invalid-request',
+        'urn:ps:error:invalid-request',
         `Invalid ${label}: must be project-root-relative.`,
         { handler },
       );
@@ -4220,7 +4220,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       candidateAbs !== resolvedContentDir &&
       !candidateAbs.startsWith(`${resolvedContentDir}${sep}`)
     ) {
-      errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escapes content directory.', {
+      errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escapes content directory.', {
         handler,
       });
       return null;
@@ -4254,7 +4254,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       errorResponse(
         res,
         400,
-        'urn:ok:error:symlink-refused',
+        'urn:ps:error:symlink-refused',
         `${folderRel || '.'}/.ps is a symlink — refusing to operate through it. Replace the symlink with a real file or directory and retry.`,
         { handler, detail: folderRel || '.' },
       );
@@ -4265,7 +4265,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       errorResponse(
         res,
         400,
-        'urn:ok:error:symlink-refused',
+        'urn:ps:error:symlink-refused',
         `${folderRel || '.'}/.ps/templates is a symlink — refusing to operate through it. Replace the symlink with a real file or directory and retry.`,
         { handler, detail: folderRel || '.' },
       );
@@ -4278,13 +4278,13 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       }
     } catch (err) {
       if (isContainmentRejection(err)) {
-        errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escapes content directory.', {
+        errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escapes content directory.', {
           handler,
           cause: err,
         });
         return null;
       }
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to validate path.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to validate path.', {
         handler,
         cause: err,
       });
@@ -4328,7 +4328,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       errorResponse(
         res,
         400,
-        'urn:ok:error:invalid-request',
+        'urn:ps:error:invalid-request',
         'Invalid skill name: lowercase letters, digits, and hyphens only (≤64 chars; no slashes, dots, spaces, or uppercase).',
         { handler, ...(extensions ? { extensions } : {}) },
       );
@@ -4347,7 +4347,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
       errorResponse(
         res,
         400,
-        'urn:ok:error:invalid-request',
+        'urn:ps:error:invalid-request',
         'Invalid skill scope (expected "project" or "global").',
         { handler },
       );
@@ -4615,7 +4615,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     errorResponse(
       res,
       400,
-      'urn:ok:error:reserved-doc-name',
+      'urn:ps:error:reserved-doc-name',
       `"${name}" is one of Palimpsest's runtime skills — its content is read-only in-app (updates arrive via reimport). Duplicate it under a new name to make your own version.`,
       { handler },
     );
@@ -4798,7 +4798,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
         verifyPathRel !== undefined &&
         !(await treeHas(sha, verifyPathRel))
       ) {
-        await commitOkArtifactWrite('baseline-verify');
+        await commitPsArtifactWrite('baseline-verify');
         sha = await readMine();
         if (sha !== undefined && !(await treeHas(sha, verifyPathRel))) return undefined;
       }
@@ -4851,8 +4851,8 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     ...(projectDir !== undefined ? { projectDir } : {}),
     resolveSkillDirForRead,
     parseFrontmatterDoc,
-    attributeOkArtifactWrite,
-    commitOkArtifactWrite,
+    attributePsArtifactWrite,
+    commitPsArtifactWrite,
     shadowHeadSha,
     artifactWriterId,
     effectiveInstallMode,
@@ -4866,8 +4866,8 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     legacyStoreRoot: LEGACY_SKILL_STORE_ROOT,
     effectiveSkillRoot,
     parseFrontmatterDoc,
-    attributeOkArtifactWrite,
-    commitOkArtifactWrite,
+    attributePsArtifactWrite,
+    commitPsArtifactWrite,
     shadowHeadSha,
     artifactWriterId,
     skillArtifactKey: (name) => psArtifactKey('skill', '', name),
@@ -4886,7 +4886,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Cannot uninstall — no project root is resolved for this server.',
             { handler: 'skill-uninstall', detail: 'NO_PROJECT_ROOT' },
           );
@@ -4905,7 +4905,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to uninstall skill.',
           {
             handler: 'skill-uninstall',
@@ -5154,7 +5154,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     log,
     shadowRef,
     flushGitCommit,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     getCurrentBranch,
     validateFolderRel,
     safeDocPath,
@@ -5178,9 +5178,9 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     respondStaleExternalWrite,
     respondPersistenceFailure,
     respondDiskDivergence,
-    attributeOkArtifactWrite,
+    attributePsArtifactWrite,
     psArtifactKey,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     signalChannel,
     extractActorIdentityFromQuery,
     captureAndCloseDocuments,
@@ -5217,8 +5217,8 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     getPrincipal,
     rejectReservedBuiltinSkill,
     contentDir,
-    attributeOkArtifactWrite,
-    scheduleOkArtifactFlush,
+    attributePsArtifactWrite,
+    schedulePsArtifactFlush,
     signalChannel,
     checkSkillDocConflictGate,
     extractAgentIdentity,
@@ -5232,7 +5232,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     extractActorIdentityFromQuery,
     captureAndCloseDocuments,
     log,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     skillInstallBase,
     uninstallSkillFromHostDirs,
     renameTrackedPathInGit,
@@ -5358,7 +5358,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     contentFilter,
     signalChannel,
     conflicts,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     fileOpsService,
     assetService,
     extractAgentIdentity,
@@ -5405,8 +5405,8 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     extractAgentIdentity,
     extractActorIdentityFromQuery,
     psArtifactKey,
-    attributeOkArtifactWrite,
-    scheduleOkArtifactFlush,
+    attributePsArtifactWrite,
+    schedulePsArtifactFlush,
     flushDiskAndDetectOutcome,
     respondPersistenceFailure,
     respondDiskDivergence,
@@ -5463,9 +5463,9 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     projectDir,
     skillsHome,
     projectSkillDirRel,
-    attributeOkArtifactWrite,
+    attributePsArtifactWrite,
     psArtifactKey,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     signalChannel,
     bumpSkillsCatalogGen,
     contentFilter,
@@ -5519,7 +5519,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     log,
     flushDocToGit,
     flushGitCommit,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     isSafeDocName,
     shadowRef,
     getPrincipal,

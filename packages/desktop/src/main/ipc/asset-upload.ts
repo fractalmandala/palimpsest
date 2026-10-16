@@ -33,7 +33,7 @@ export async function handleAssetUpload(
   if (!isUploadImageRequest(request)) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'invalid-request',
       handler: 'handleAssetUpload',
     });
@@ -43,7 +43,7 @@ export async function handleAssetUpload(
   if (base === null) {
     logIpcError({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'intake-unconfigured',
       handler: 'handleAssetUpload',
     });

@@ -67,7 +67,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     });
     expect(attempt1.status).toBe(409);
     const body1 = (await attempt1.json()) as { type?: string };
-    expect(body1.type).toBe('urn:ok:error:disk-divergence');
+    expect(body1.type).toBe('urn:ps:error:disk-divergence');
 
     const afterRevert = readTestDoc(contentDir, docName);
     expect(afterRevert).toContain(INJECTED_MARKER);
@@ -106,7 +106,7 @@ describe('PRD-6832 β L3: store-time divergence backstop', () => {
     const undoRes = await agentUndoRaw(port, { docName, connectionId: 'agent-u1', scope: 'last' });
     expect(undoRes.status).toBe(409);
     const body = (await undoRes.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:disk-divergence');
+    expect(body.type).toBe('urn:ps:error:disk-divergence');
 
     const afterRevert = readTestDoc(contentDir, docName);
     expect(afterRevert).toContain(INJECTED_MARKER);

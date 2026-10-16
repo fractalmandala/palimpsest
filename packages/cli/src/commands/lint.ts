@@ -44,7 +44,7 @@ export function lintCommand(getConfig: () => Config): Command {
       const resolution = resolveAuditScope(targetPath, contentDir);
       if (!resolution.ok) {
         const problem: ProblemDetails = {
-          type: 'urn:ok:error:not-found',
+          type: 'urn:ps:error:not-found',
           title:
             path === undefined || resolution.path === contentDir
               ? resolution.title

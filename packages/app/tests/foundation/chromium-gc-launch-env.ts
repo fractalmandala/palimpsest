@@ -54,7 +54,7 @@ function availableTempBytes(): number {
 
 export function chromiumGcLaunchEnvGuard(): Plugin {
   return {
-    name: 'ok:chromium-gc-launch-env',
+    name: 'ps:chromium-gc-launch-env',
     config() {
       const launch = readChromiumGcLaunchEnv(process.env, availableTempBytes());
       if (!launch.ok) throw new Error(describeChromiumGcLaunchRefusal(launch.problems));

@@ -27,10 +27,10 @@ const FAILED_COUNT_CAP = 10;
 
 export function recordCreateNewBannerShown(banner: CreateNewBannerKind): void {
   withSpanSync(
-    'ok.desktop.createNewBannerShown',
+    'ps.desktop.createNewBannerShown',
     {
       attributes: {
-        'ok.desktop.banner': banner,
+        'ps.desktop.banner': banner,
       },
     },
     () => undefined,
@@ -41,10 +41,10 @@ export type FirstRunHandoffOutcome = HandoffOutcome;
 
 export function recordFirstRunShareHandoff(outcome: FirstRunHandoffOutcome): void {
   withSpanSync(
-    'ok.desktop.firstRunShareHandoff',
+    'ps.desktop.firstRunShareHandoff',
     {
       attributes: {
-        'ok.desktop.handoff_outcome': outcome,
+        'ps.desktop.handoff_outcome': outcome,
       },
     },
     () => undefined,
@@ -53,18 +53,18 @@ export function recordFirstRunShareHandoff(outcome: FirstRunHandoffOutcome): voi
 
 export function recordOnboardingFlow(attrs: OnboardingTelemetryAttributes): void {
   withSpanSync(
-    'ok.desktop.onboardingConsent',
+    'ps.desktop.onboardingConsent',
     {
       attributes: {
-        'ok.desktop.flow_kind': attrs.flowKind,
-        'ok.desktop.entry_point': attrs.entryPoint,
-        'ok.desktop.git_init_requested': attrs.gitInitRequested,
-        'ok.desktop.content_dir_changed': attrs.contentDirChanged,
-        'ok.desktop.warnings_count': Math.min(
+        'ps.desktop.flow_kind': attrs.flowKind,
+        'ps.desktop.entry_point': attrs.entryPoint,
+        'ps.desktop.git_init_requested': attrs.gitInitRequested,
+        'ps.desktop.content_dir_changed': attrs.contentDirChanged,
+        'ps.desktop.warnings_count': Math.min(
           Math.max(0, Math.trunc(attrs.warningsCount)),
           WARNINGS_COUNT_CAP,
         ),
-        'ok.desktop.ai_integrations_failed_count': Math.min(
+        'ps.desktop.ai_integrations_failed_count': Math.min(
           Math.max(0, Math.trunc(attrs.failedCount ?? 0)),
           FAILED_COUNT_CAP,
         ),

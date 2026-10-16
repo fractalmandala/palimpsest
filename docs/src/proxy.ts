@@ -2,20 +2,13 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { markdownRewrite } from './lib/accept-negotiation';
 import { markdownHandlerForPage } from './lib/markdown-routes';
 
-const APEX_HOST = 'palimpsest.ai';
-const WWW_HOST = `www.${APEX_HOST}`;
-
+// FORK: the upstream www -> apex canonicalization was removed — Palimpsest has
+// no canonical docs/site domain yet. Every host passes through (subject to the
+// markdown negotiation below). Reintroduce a canonical-host redirect here when
+// the docs site gets its production domain.
 export function proxy(request: NextRequest): NextResponse {
-  const host = (request.headers.get('host') ?? request.nextUrl.host).split(':')[0];
-
   if (request.nextUrl.pathname.startsWith('/.well-known/')) {
     return NextResponse.next();
-  }
-
-  if (host === WWW_HOST) {
-    const url = request.nextUrl.clone();
-    url.hostname = APEX_HOST;
-    return NextResponse.redirect(url, 308);
   }
 
   const handler = markdownHandlerForPage(request.nextUrl.pathname);

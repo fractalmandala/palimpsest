@@ -96,7 +96,7 @@ test.describe('new-item shortcut fast path', () => {
         status: 409,
         contentType: 'application/problem+json',
         body: JSON.stringify({
-          type: 'urn:ok:error:doc-already-exists',
+          type: 'urn:ps:error:doc-already-exists',
           title: 'A file named untitled already exists',
         }),
       });

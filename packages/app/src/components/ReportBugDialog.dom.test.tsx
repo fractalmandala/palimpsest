@@ -621,7 +621,7 @@ describe('ReportBugDialog', () => {
     expect(alert.textContent).toContain("Couldn't create the report");
     expect(alert.textContent).toContain('zip destination not writable');
     expect(alert.textContent).toContain(
-      'You can also create one from a terminal with ok bug-report.',
+      'You can also create one from a terminal with ps bug-report.',
     );
     expect(screen.getByRole('heading', { name: 'Report a bug' })).not.toBeNull();
   });

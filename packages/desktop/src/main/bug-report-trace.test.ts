@@ -65,18 +65,18 @@ describe('bug-report send trace', () => {
   });
 
   test('a send opens its own root span and closes it with the outcome', () => {
-    const t = beginSendTrace({ 'ok.bug_report.include_screenshot': true });
+    const t = beginSendTrace({ 'ps.bug_report.include_screenshot': true });
     t.phase('mint', { 'http.response.status_code': 200 }, 1_000, 1_200);
     t.end('sent');
 
     const root = started[0];
-    expect(root.name).toBe('ok.bug-report.send');
+    expect(root.name).toBe('ps.bug-report.send');
     expect(parentSpanOf(root)).toBeUndefined();
-    expect(root.span.attributes['ok.bug_report.outcome']).toBe('sent');
+    expect(root.span.attributes['ps.bug_report.outcome']).toBe('sent');
     expect(root.span.ended).toBe(true);
 
     const mint = started[1];
-    expect(mint.name).toBe('ok.bug-report.mint');
+    expect(mint.name).toBe('ps.bug-report.mint');
     expect(mint.span.endedAt).toBe(1_200);
   });
 
@@ -88,8 +88,8 @@ describe('bug-report send trace', () => {
     a.end('sent');
     b.end('upload-failed');
 
-    const roots = started.filter((s) => s.name === 'ok.bug-report.send');
-    const phases = started.filter((s) => s.name === 'ok.bug-report.upload');
+    const roots = started.filter((s) => s.name === 'ps.bug-report.send');
+    const phases = started.filter((s) => s.name === 'ps.bug-report.upload');
     expect(roots).toHaveLength(2);
     expect(phases).toHaveLength(2);
 
@@ -120,10 +120,10 @@ describe('bug-report send trace', () => {
     t.end('upload-failed');
     t.phase('complete', {}, 1, 2);
 
-    const roots = started.filter((s) => s.name === 'ok.bug-report.send');
+    const roots = started.filter((s) => s.name === 'ps.bug-report.send');
     expect(roots).toHaveLength(1);
-    expect(roots[0].span.attributes['ok.bug_report.outcome']).toBe('sent');
-    expect(started.filter((s) => s.name === 'ok.bug-report.complete')).toHaveLength(0);
+    expect(roots[0].span.attributes['ps.bug_report.outcome']).toBe('sent');
+    expect(started.filter((s) => s.name === 'ps.bug-report.complete')).toHaveLength(0);
   });
 
   test('telemetry stays off unless explicitly enabled', () => {

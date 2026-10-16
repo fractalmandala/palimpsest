@@ -22,11 +22,11 @@ import { psUserHomeDir } from '@palimpsest/core/server';
 import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
 import { context, propagation } from '@opentelemetry/api';
 import sirv from 'sirv';
-import { readAgentBrowserTools, readAutoApproveOkTools } from './acp/permissions.ts';
+import { readAgentBrowserTools, readAutoApprovePsTools } from './acp/permissions.ts';
 import {
   AcpThreadManager,
   type AcpThreadManagerOptions,
-  buildOkMcpStdioCommand,
+  buildPsMcpStdioCommand,
 } from './acp/thread-manager.ts';
 import { collectServerHostSnapshot } from './agent-registry-probes.ts';
 import { createAssetServeMiddleware } from './asset-serve-middleware.ts';
@@ -54,7 +54,7 @@ import { resolveLocalSinkConfig } from './local-sink-resolver.ts';
 import { getLogger, loggerFactory, type PinoLogger } from './logger.ts';
 import { createMcpHttpHandler } from './mcp-http.ts';
 import { mountMcpAndApi, type ReadinessState } from './mcp-mount.ts';
-import { MissingOkConfigError } from './missing-ok-config-error.ts';
+import { MissingPsConfigError } from './missing-ok-config-error.ts';
 import { createProjectRuntime, type ProjectRuntime } from './project-runtime.ts';
 import {
   createServer,
@@ -221,16 +221,16 @@ export async function bootServer(opts: BootServerOptions): Promise<BootedServer>
   const { kind: worktreeKind, gitdir: worktreeGitdir } = computeWorktreeAttributes(
     opts.projectDir ?? opts.contentDir,
   );
-  const spanAttributes: Record<string, string> = { 'ok.worktree.kind': worktreeKind };
+  const spanAttributes: Record<string, string> = { 'ps.worktree.kind': worktreeKind };
   if (worktreeGitdir !== null) {
-    spanAttributes['ok.worktree.gitdir'] = normalizeFsPath(worktreeGitdir);
+    spanAttributes['ps.worktree.gitdir'] = normalizeFsPath(worktreeGitdir);
   }
 
   const crashCapture = installCrashCapture(sinkProjectDir);
 
   const startupTraceparent = process.env.PS_STARTUP_TRACEPARENT;
   const bootSpan = () =>
-    withSpan('ok.boot', { attributes: spanAttributes }, async () => bootServerInner(opts));
+    withSpan('ps.boot', { attributes: spanAttributes }, async () => bootServerInner(opts));
   const runBoot = (): Promise<BootedServer> => {
     if (startupTraceparent) {
       try {
@@ -239,7 +239,7 @@ export async function bootServer(opts: BootServerOptions): Promise<BootedServer>
         });
         return context.with(parentCtx, bootSpan);
       } catch (err) {
-        getLogger('boot').warn({ err }, 'ok.boot trace-join failed — starting unparented boot');
+        getLogger('boot').warn({ err }, 'ps.boot trace-join failed — starting unparented boot');
       }
     }
     return bootSpan();
@@ -332,7 +332,7 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
   const configPath = resolve(psDir, 'config.yml');
   if (!existsSync(configPath)) {
     const psDirExists = existsSync(psDir);
-    throw new MissingOkConfigError(psDirExists ? 'config' : 'okdir', projectDir);
+    throw new MissingPsConfigError(psDirExists ? 'config' : 'okdir', projectDir);
   }
   const gitignorePath = resolve(psDir, '.gitignore');
   if (!existsSync(gitignorePath)) {
@@ -489,15 +489,15 @@ async function bootServerInner(opts: BootServerOptions): Promise<BootedServer> {
         getLoadedDocText: (docName) =>
           hocuspocus.documents.get(docName)?.getText('source').toString() ?? null,
         getServerUrl: () => internalBaseUrl(),
-        getMcpStdioCommand: () => buildOkMcpStdioCommand(opts.localOpCliArgs, boundPort, { log }),
+        getMcpStdioCommand: () => buildPsMcpStdioCommand(opts.localOpCliArgs, boundPort, { log }),
         probeHarnessManagedMcpEntry: opts.probeHarnessManagedMcpEntry,
         probePiAcpBridge: opts.probePiAcpBridge,
         ensurePiAcpBridge: opts.ensurePiAcpBridge,
         terminalAuthAvailable: opts.terminalAuthAvailable === true,
         hostSnapshot: () =>
           collectServerHostSnapshot({ env: 'local-web', resolve: opts.agentIntegrations?.probe }),
-        autoApproveOkTools: () =>
-          readAutoApproveOkTools(
+        autoApprovePsTools: () =>
+          readAutoApprovePsTools(
             opts.projectDir ?? opts.contentDir,
             opts.configHomedirOverride,
             log,

@@ -204,7 +204,7 @@ describe('handleRollback — rename history mitigation (US-005)', () => {
     const response = await callRollback({ docName, commitSha: fakeSha });
     expect(response.status).toBe(404);
     const body = JSON.parse(response.body);
-    expect(body.type).toBe('urn:ok:error:doc-not-found');
+    expect(body.type).toBe('urn:ps:error:doc-not-found');
     expect(String(body.title)).toContain('does not contain document');
     expect(String(body.title)).toContain(docName);
     expect(String(body.title)).toContain(fakeSha.slice(0, 7));
@@ -228,7 +228,7 @@ describe('handleRollback — rename history mitigation (US-005)', () => {
     const response = await callRollback({ docName, commitSha: newACommit });
     expect(response.status).toBe(404);
     const body = JSON.parse(response.body);
-    expect(body.type).toBe('urn:ok:error:doc-not-found');
+    expect(body.type).toBe('urn:ps:error:doc-not-found');
     expect(String(body.title)).toContain('does not contain document');
   });
 });

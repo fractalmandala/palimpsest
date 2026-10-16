@@ -803,7 +803,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
       .toEqual([]);
   });
 
-  test("with a single remote not named origin and no upstream, ok push presents Palimpsest's token to that remote", async () => {
+  test("with a single remote not named origin and no upstream, ps push presents Palimpsest's token to that remote", async () => {
     const server = await arrange({
       gitHubAccepts: PS_TOKEN,
       psStoreToken: PS_TOKEN,
@@ -834,7 +834,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
     });
   });
 
-  test("with origin and another remote and no upstream, ok push presents Palimpsest's token to origin", async () => {
+  test("with origin and another remote and no upstream, ps push presents Palimpsest's token to origin", async () => {
     const server = await arrange({
       gitHubAccepts: PS_TOKEN,
       psStoreToken: PS_TOKEN,
@@ -1370,7 +1370,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
       );
   });
 
-  test("with a second plain http:// push URL on origin, ok push presents Palimpsest's token to the https push URL and never to the plain-http one", async () => {
+  test("with a second plain http:// push URL on origin, ps push presents Palimpsest's token to the https push URL and never to the plain-http one", async () => {
     const onPath = await startPlainHttpInterceptor();
     interceptor = onPath;
     const server = await arrange({
@@ -1396,7 +1396,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
     expect.soft(outcome.error, 'the error runSync threw').not.toBeNull();
     const message = outcome.error instanceof Error ? outcome.error.message : String(outcome.error);
     expect
-      .soft(message, 'the failure ok push reports for the plain-http push URL')
+      .soft(message, 'the failure ps push reports for the plain-http push URL')
       .not.toContain("Palimpsest's GitHub sign-in");
     expect.soft(message, 'a renewal command in the message').not.toContain('auth login');
     expect
@@ -1430,7 +1430,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
     { spelling: 'in different letter case', writtenHost: 'GitHub.com', source: 'gh' },
     { spelling: 'with an explicit :443', writtenHost: `${GITHUB_HOST}:443`, source: 'gh' },
   ] as const)(
-    "with a second push URL that writes the signed-in host $spelling, ok push answers it from Palimpsest's helper with the $source token and never asks the user's own helpers",
+    "with a second push URL that writes the signed-in host $spelling, ps push answers it from Palimpsest's helper with the $source token and never asks the user's own helpers",
     async ({ writtenHost, source }) => {
       const token = source === 'stored' ? PS_TOKEN : GH_TOKEN;
       const server = await arrange({
@@ -1479,7 +1479,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
     },
   );
 
-  test("with Palimpsest signed in and no ambient credential, ok pull authenticates its fetch with Palimpsest's token", async () => {
+  test("with Palimpsest signed in and no ambient credential, ps pull authenticates its fetch with Palimpsest's token", async () => {
     const server = await arrange({ gitHubAccepts: PS_TOKEN, psStoreToken: PS_TOKEN });
 
     const outcome = await syncWith(signedInSeam(), 'pull');
@@ -1497,7 +1497,7 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
     expectCredentialConfinedToCliHelper(PS_TOKEN, { tracedCommand: 'pull' });
   });
 
-  test("with Palimpsest signed in and no ambient credential, ok push authenticates with Palimpsest's token", async () => {
+  test("with Palimpsest signed in and no ambient credential, ps push authenticates with Palimpsest's token", async () => {
     const server = await arrange({ gitHubAccepts: PS_TOKEN, psStoreToken: PS_TOKEN });
 
     const outcome = await syncWith(signedInSeam(), 'push');

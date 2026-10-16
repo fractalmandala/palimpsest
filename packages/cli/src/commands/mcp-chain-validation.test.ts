@@ -128,7 +128,7 @@ describe.each(CHANNELS)('%s chain POSIX shell grammar (cross-platform)', (channe
         chainOverride: chain,
       });
       expect(status).toBe(127);
-      expect(stderr).toContain('Palimpsest: install OK Desktop or Node.js 24+');
+      expect(stderr).toContain('Palimpsest: install Palimpsest Desktop or Node.js 24+');
     } finally {
       rmSync(tmpHome, { recursive: true, force: true });
     }
@@ -175,7 +175,7 @@ describe.each(CHANNELS)('%s chain POSIX shell grammar (cross-platform)', (channe
         chainOverride: chain,
       });
       expect(status).toBe(127);
-      expect(stderr).toContain('Palimpsest: install OK Desktop or Node.js 24+');
+      expect(stderr).toContain('Palimpsest: install Palimpsest Desktop or Node.js 24+');
       expect(stderr).not.toContain('no matches found');
     } finally {
       rmSync(tmpHome, { recursive: true, force: true });

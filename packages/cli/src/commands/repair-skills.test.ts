@@ -480,7 +480,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 
   it('AC-B1: skips user sweep when recorded version equals bundled version', async () => {
-    for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
       const dir = join(scratch.home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -518,7 +518,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 
   it('D4/G2 cross-actor stomp: a declined bundle is removed and never re-installed by the sweep', async () => {
-    for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
       const dir = join(scratch.home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -793,7 +793,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 
   it('recognizes current bundles installed only in a concrete Pi root', async () => {
-    for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
       const dir = join(scratch.home, '.pi', 'agent', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), '# existing');
@@ -1106,7 +1106,7 @@ describe('repairSkills — JSONL telemetry parity with Desktop', () => {
   });
 
   it('emits NO event on the version-current fast-path', async () => {
-    for (const name of ['open-knowledge-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
       const dir = join(scratch.home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -1600,7 +1600,7 @@ describe('repairSkillsCommand help names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   it.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the description points at %s init', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);
@@ -1779,7 +1779,7 @@ describe('legacy fan-out cleanup — consent gate', () => {
 });
 
 describe('confirmLegacyCleanup — prompt behaviour', () => {
-  const plan = { skillDirs: ['/h/.zencoder/skills/open-knowledge-discovery'], emptyDirs: [] };
+  const plan = { skillDirs: ['/h/.zencoder/skills/palimpsest-discovery'], emptyDirs: [] };
 
   it('--yes approves without prompting', async () => {
     expect(await confirmLegacyCleanup(plan, { yes: true })).toBe(true);
@@ -1792,7 +1792,7 @@ describe('confirmLegacyCleanup — prompt behaviour', () => {
   });
 
   it.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the non-TTY decline names %s repair-skills --yes', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

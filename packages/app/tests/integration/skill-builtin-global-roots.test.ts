@@ -9,7 +9,7 @@ let server: TestServer;
 let tmpHome: string;
 const base = () => `http://127.0.0.1:${server.port}`;
 
-const BUILTIN = 'open-knowledge-discovery';
+const BUILTIN = 'palimpsest-discovery';
 
 function seedBuiltin(rootRel: string): void {
   const dir = join(tmpHome, ...rootRel.split('/'), BUILTIN);

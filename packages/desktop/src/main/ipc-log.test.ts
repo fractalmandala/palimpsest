@@ -32,7 +32,7 @@ describe('logIpcError — cause boundary normalization', () => {
       await expect(
         withIpcErrorLogging(
           {
-            channel: 'ok:window:open-note',
+            channel: 'ps:window:open-note',
             reason: 'unexpected',
             handler: 'openNoteWindow',
           },
@@ -49,7 +49,7 @@ describe('logIpcError — cause boundary normalization', () => {
     const parsed = JSON.parse(captured[0].args[0] as string);
     expect(parsed).toMatchObject({
       event: 'ipc.error',
-      channel: 'ok:window:open-note',
+      channel: 'ps:window:open-note',
       reason: 'unexpected',
       handler: 'openNoteWindow',
     });
@@ -60,7 +60,7 @@ describe('logIpcError — cause boundary normalization', () => {
     const captured = captureWarn(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:spawn-cursor',
+        channel: 'ps:shell:spawn-cursor',
         reason: 'invalid-path',
         handler: 'spawnCursor',
         cause: { capturedSenderId: 1, gotSenderId: 2 },
@@ -76,7 +76,7 @@ describe('logIpcError — cause boundary normalization', () => {
     const captured = captureWarn(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'write-mcp-configs-threw',
         handler: 'mcpWiringConfirm',
         cause: err,
@@ -97,7 +97,7 @@ describe('logIpcError — cause boundary normalization', () => {
       try {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:mcp-wiring:confirm',
+          channel: 'ps:mcp-wiring:confirm',
           reason: 'write-mcp-configs-threw',
           handler: 'mcpWiringConfirm',
           cause: obj,
@@ -110,7 +110,7 @@ describe('logIpcError — cause boundary normalization', () => {
     expect(captured.length).toBeGreaterThanOrEqual(1);
     const parsed = JSON.parse(captured[0].args[0] as string);
     expect(parsed.event).toBe('ipc.error');
-    expect(parsed.channel).toBe('ok:mcp-wiring:confirm');
+    expect(parsed.channel).toBe('ps:mcp-wiring:confirm');
     expect(parsed.reason).toBe('write-mcp-configs-threw');
     expect(parsed.handler).toBe('mcpWiringConfirm');
   });
@@ -125,7 +125,7 @@ describe('logIpcError — cause boundary normalization', () => {
       try {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:mcp-wiring:confirm',
+          channel: 'ps:mcp-wiring:confirm',
           reason: 'write-mcp-configs-threw',
           handler: 'mcpWiringConfirm',
           cause: a,
@@ -148,7 +148,7 @@ describe('logIpcError — cause boundary normalization', () => {
     const captured = captureWarn(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:spawn-cursor',
+        channel: 'ps:shell:spawn-cursor',
         reason: 'spawn-error',
         handler: 'spawnCursor',
       });
@@ -162,7 +162,7 @@ describe('logIpcError — cause boundary normalization', () => {
     const captured = captureWarn(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'write-mcp-configs-threw',
         handler: 'mcpWiringConfirm',
         cause: { value: 42n },
@@ -173,7 +173,7 @@ describe('logIpcError — cause boundary normalization', () => {
     expect(parsed._causeSerializationFailed).toBe(true);
     expect(parsed).not.toHaveProperty('cause');
     expect(parsed.event).toBe('ipc.error');
-    expect(parsed.channel).toBe('ok:mcp-wiring:confirm');
+    expect(parsed.channel).toBe('ps:mcp-wiring:confirm');
     expect(parsed.reason).toBe('write-mcp-configs-threw');
     expect(parsed.handler).toBe('mcpWiringConfirm');
   });
@@ -184,7 +184,7 @@ describe('logIpcError — bounded details', () => {
     const captured = captureWarn(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'network-error',
         handler: 'handleBugReportSend',
         details: { step: 'upload', errCode: 'ENOTFOUND', host: 'intake.example.com' },
@@ -194,7 +194,7 @@ describe('logIpcError — bounded details', () => {
     expect(captured).toHaveLength(1);
     expect(JSON.parse(String(captured[0].args[0]))).toEqual({
       event: 'ipc.error',
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'network-error',
       handler: 'handleBugReportSend',
       details: { step: 'upload', errCode: 'ENOTFOUND', host: 'intake.example.com' },
@@ -247,14 +247,14 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'upload-network-error',
         handler: 'handleBugReportSend',
       });
     });
 
     expect(fields).toMatchObject({
-      channel: 'ok:bug-report:dispatch',
+      channel: 'ps:bug-report:dispatch',
       reason: 'upload-network-error',
       handler: 'handleBugReportSend',
     });
@@ -264,7 +264,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:window:open-note',
+        channel: 'ps:window:open-note',
         reason: 'unexpected',
         handler: 'openNoteWindow',
         cause: new TypeError('fetch failed'),
@@ -283,7 +283,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'mint-network-error',
         handler: 'handleBugReportSend',
         cause: outer,
@@ -304,7 +304,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:open-asset',
+        channel: 'ps:shell:open-asset',
         reason: 'open-failed',
         handler: 'openAssetSafely',
         cause: err,
@@ -321,7 +321,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:bug-report:dispatch',
+        channel: 'ps:bug-report:dispatch',
         reason: 'upload-network-error',
         handler: 'handleBugReportSend',
         cause: Object.assign(new TypeError('fetch failed'), { code: 'GENERIC' }),
@@ -345,7 +345,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:mcp-wiring:confirm',
+        channel: 'ps:mcp-wiring:confirm',
         reason: 'write-mcp-configs-threw',
         handler: 'mcpWiringConfirm',
         cause: a,
@@ -353,7 +353,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     });
 
     expect(fields).toMatchObject({
-      channel: 'ok:mcp-wiring:confirm',
+      channel: 'ps:mcp-wiring:confirm',
       reason: 'write-mcp-configs-threw',
     });
   });
@@ -370,7 +370,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     const fields = pinoFields(() => {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:spawn-cursor',
+        channel: 'ps:shell:spawn-cursor',
         reason: 'spawn-failed',
         handler: 'spawnCursor',
         cause: hostile,
@@ -378,7 +378,7 @@ describe('logIpcError — the pino leg (the surface that ships in diagnostic bun
     });
 
     expect(fields).toMatchObject({
-      channel: 'ok:shell:spawn-cursor',
+      channel: 'ps:shell:spawn-cursor',
       reason: 'spawn-failed',
       handler: 'spawnCursor',
     });

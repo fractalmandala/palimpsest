@@ -50,7 +50,7 @@ function readLossEvents(contentDir: string): LossRingEvent[] {
 }
 
 function shadowDirFor(s: TestServer): string {
-  const dir = join(s.contentDir, '.git', 'ok');
+  const dir = join(s.contentDir, '.git', 'ps');
   if (!existsSync(dir)) {
     throw new Error(`shadow repo not found at ${dir}; the rig needs gitEnabled: true`);
   }
@@ -139,7 +139,7 @@ describe('L3 agent-write divergence realign — content-loss conventions', () =>
       const attempt = await agentWriteMd(port, `${AGENT_LINE}\n`, { docName, position: 'append' });
       expect(attempt.status).toBe(409);
       expect(((await attempt.json()) as { type?: string }).type).toBe(
-        'urn:ok:error:disk-divergence',
+        'urn:ps:error:disk-divergence',
       );
 
       await pollUntil(() => readFileSync(docPath, 'utf-8').includes(INJECTED_MARKER));

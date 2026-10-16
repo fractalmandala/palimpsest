@@ -36,9 +36,9 @@ function seedPlugin(
 
 describe('enumerateAgentPluginsRoot', () => {
   it('surfaces a conformant plugin with plugin provenance and pack identity', () => {
-    seedPlugin('ok', {
+    seedPlugin('ps', {
       $schema: SCHEMA,
-      name: 'ok',
+      name: 'ps',
       version: '1.2.0',
       description: 'Team skills',
       repository: 'https://github.com/fractalmandala/palimpsest',
@@ -50,14 +50,14 @@ describe('enumerateAgentPluginsRoot', () => {
     });
     expect(bundles).toHaveLength(1);
     const bundle = bundles[0];
-    expect(bundle?.packName).toBe('ok');
+    expect(bundle?.packName).toBe('ps');
     expect(bundle?.packVersion).toBe('1.2.0');
     expect(bundle?.packDescription).toBe('Team skills');
     const skill = bundle?.skills[0];
     expect(skill?.name).toBe('probe');
     expect(skill?.provenance).toMatchObject({
       pluginProvider: 'agent-plugins',
-      plugin: 'ok',
+      plugin: 'ps',
       version: '1.2.0',
       repositoryUrl: 'https://github.com/fractalmandala/palimpsest',
       scope: 'project',

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readEnabledRuleIds,
   readRegisteredRuleNames,
   readRuleScope,
@@ -35,7 +35,7 @@ function lint(args) {
 
 describe('shared test-file predicate enforcement', () => {
   test('fires on all 15 positives and none of the adjacent negatives', () => {
-    const fires = lintOkRulesFixture(FIXTURE).filter((fire) => fire.code === `ok(${RULE})`);
+    const fires = lintPsRulesFixture(FIXTURE).filter((fire) => fire.code === `ok(${RULE})`);
     expect(fires.map((fire) => fire.position)).toEqual([
       '6:20',
       '7:21',
@@ -86,7 +86,7 @@ describe('shared test-file predicate enforcement', () => {
 
   test('registration, narrow exemptions, and both prose links remain live', async () => {
     expect(await readRegisteredRuleNames(ROOT)).toContain(RULE);
-    expect(await readEnabledRuleIds(ROOT)).toContain(`ok/${RULE}`);
+    expect(await readEnabledRuleIds(ROOT)).toContain(`ps/${RULE}`);
     expect(readRuleScope(ROOT, RULE)).toEqual([
       '**/*.ts',
       '**/*.tsx',

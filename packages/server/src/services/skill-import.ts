@@ -66,7 +66,7 @@ export type SkillImportOutcome =
   | {
       ok: false;
       status: 400 | 422 | 500;
-      urn: 'urn:ok:error:invalid-request' | 'urn:ok:error:internal-server-error';
+      urn: 'urn:ps:error:invalid-request' | 'urn:ps:error:internal-server-error';
       title: string;
       detail?: string;
       cause?: unknown;
@@ -78,8 +78,8 @@ export interface SkillImportDeps {
   projectDir?: string;
   resolveSkillDirForRead: (scope: 'project' | 'global', name: string) => string | null;
   parseFrontmatterDoc: (raw: string) => { frontmatter: Record<string, unknown>; body: string };
-  attributeOkArtifactWrite: (actor: ActorIdentity, keyPath: string, summary: string) => void;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  attributePsArtifactWrite: (actor: ActorIdentity, keyPath: string, summary: string) => void;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   shadowHeadSha: (writerId?: string, verifyPathRel?: string) => Promise<string | undefined>;
   artifactWriterId: (actor: ActorIdentity) => string | undefined;
   effectiveInstallMode: (
@@ -115,7 +115,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'No project root resolved.',
           detail: 'NO_PROJECT_ROOT',
         };
@@ -125,7 +125,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Skill bundle exceeds import limits.',
           detail: oversize,
         };
@@ -135,7 +135,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
         return {
           ok: false,
           status: 422,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Source has no readable skill.',
         };
       }
@@ -144,7 +144,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Skill bundle exceeds import limits.',
           detail: limitError,
         };
@@ -161,7 +161,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: `Palimpsest only writes skills into an agent folder that already exists (${skillHomeCandidateFolders(scope).join(', ')}) and never creates one for you. Create the folder your agent uses, then import again.`,
           detail: 'NO_USABLE_SKILL_HOME',
         };
@@ -215,7 +215,7 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
         return {
           ok: false,
           status: 400,
-          urn: 'urn:ok:error:invalid-request',
+          urn: 'urn:ps:error:invalid-request',
           title: 'Failed to write imported skill.',
           detail: wr.error.code,
           cause: new Error(wr.error.message),
@@ -237,8 +237,8 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
             ok: false,
             status: rollback.ok ? 400 : 500,
             urn: rollback.ok
-              ? 'urn:ok:error:invalid-request'
-              : 'urn:ok:error:internal-server-error',
+              ? 'urn:ps:error:invalid-request'
+              : 'urn:ps:error:internal-server-error',
             title: 'Failed to write the complete imported skill bundle.',
             detail: `${f.relPath}: ${br.error.code}`,
             cause: new Error(
@@ -251,12 +251,12 @@ export function createSkillImportService(deps: SkillImportDeps): SkillImportServ
       }
 
       if (scope === 'project') {
-        deps.attributeOkArtifactWrite(
+        deps.attributePsArtifactWrite(
           actor,
           `${importHomeRel}/${targetName}/SKILL`,
           `skill-import: ${sourceLabel} -> ${importHomeRel}/${targetName}/SKILL.md`,
         );
-        await deps.commitOkArtifactWrite('skill-import');
+        await deps.commitPsArtifactWrite('skill-import');
       }
 
       const importedLocalHash = localSkillHash(importRoot, targetName);

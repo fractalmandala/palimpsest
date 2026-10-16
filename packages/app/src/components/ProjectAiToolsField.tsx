@@ -101,7 +101,7 @@ export function ProjectAiToolsField({
           >
             {}
             <Trans comment="Subtext under the project AI-tools checkbox">
-              Adds an Palimpsest MCP entry and the project skill to{' '}
+              Adds a Palimpsest MCP entry and the project skill to{' '}
               <span className="font-medium text-foreground">{toolList}</span>, so your agents can
               read and edit your files.
             </Trans>

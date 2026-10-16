@@ -135,7 +135,7 @@ describe('POST /api/agent-patch', () => {
 
       expect(response.status).toBe(409);
       const parsed = JSON.parse(response.body);
-      expect(parsed.type).toBe('urn:ok:error:stale-target');
+      expect(parsed.type).toBe('urn:ps:error:stale-target');
       expect(parsed.status).toBe(409);
       expect(parsed.title).toBeDefined();
       expect(ytext.toString()).toBe(initial);

@@ -4,7 +4,7 @@ description: "Reviews whether a design is SOUND — solving the right problem, d
 compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack software-lifecycle` (`ps-beta` for Beta)."
 metadata:
   pack: "software-lifecycle"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 

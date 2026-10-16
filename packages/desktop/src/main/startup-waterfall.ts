@@ -62,12 +62,12 @@ function delta(a: number | undefined, b: number | undefined): number | undefined
 }
 
 const PHASE_SPANS: ReadonlyArray<{ name: string; from: WaterfallPhase; to: WaterfallPhase }> = [
-  { name: 'ok.startup.bootstrap', from: 'appReady', to: 'bootstrapDone' },
-  { name: 'ok.startup.spawn', from: 'bootstrapDone', to: 'serverSpawned' },
-  { name: 'ok.startup.lock-wait', from: 'serverSpawned', to: 'serverLockReady' },
-  { name: 'ok.startup.window-create', from: 'serverLockReady', to: 'windowCreated' },
-  { name: 'ok.startup.load-url', from: 'windowCreated', to: 'loadUrlResolved' },
-  { name: 'ok.startup.show', from: 'loadUrlResolved', to: 'windowShown' },
+  { name: 'ps.startup.bootstrap', from: 'appReady', to: 'bootstrapDone' },
+  { name: 'ps.startup.spawn', from: 'bootstrapDone', to: 'serverSpawned' },
+  { name: 'ps.startup.lock-wait', from: 'serverSpawned', to: 'serverLockReady' },
+  { name: 'ps.startup.window-create', from: 'serverLockReady', to: 'windowCreated' },
+  { name: 'ps.startup.load-url', from: 'windowCreated', to: 'loadUrlResolved' },
+  { name: 'ps.startup.show', from: 'loadUrlResolved', to: 'windowShown' },
 ];
 
 export class StartupWaterfall {

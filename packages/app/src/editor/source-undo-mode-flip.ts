@@ -45,7 +45,7 @@ export function createSourceUndoFlipTracker(deps: SourceUndoFlipDeps): SourceUnd
       }
       if (sawUntrackedRewrite) {
         undoManager.clear();
-        mark('ok/source-undo/flip-clear', { docName });
+        mark('ps/source-undo/flip-clear', { docName });
       }
       sawUntrackedRewrite = false;
       active = true;

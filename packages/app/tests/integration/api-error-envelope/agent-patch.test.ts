@@ -44,7 +44,7 @@ describe('agent-patch envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('text-not-found emits 404 urn:ok:error:target-not-found', async () => {
+  test('text-not-found emits 404 urn:ps:error:target-not-found', async () => {
     const docName = `agent-patch-notfound-${crypto.randomUUID().slice(0, 8)}`;
     await agentWriteMd(server.port, '# fixed body\n', { docName, position: 'replace' });
 
@@ -56,14 +56,14 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:target-not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:target-not-found');
       expect(parsed.data.status).toBe(404);
       expect(parsed.data.instance).toBeDefined();
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('a path with no document emits 404 urn:ok:error:doc-not-found naming the near match', async () => {
+  test('a path with no document emits 404 urn:ps:error:doc-not-found naming the near match', async () => {
     const bundle = `bundle-${crypto.randomUUID().slice(0, 8)}`;
     await agentWriteMd(server.port, '# Ops\n\nthe text that is here\n', {
       docName: `${bundle}/system/ops`,
@@ -80,14 +80,14 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-not-found');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-not-found');
       expect(parsed.data.title).toContain('No document at "system/ops"');
       expect(parsed.data.title).toContain(`"${bundle}/system/ops"`);
     }
     expect(existsSync(join(server.contentDir, 'system/ops.md'))).toBe(false);
   });
 
-  test('stale-target emits 409 urn:ok:error:stale-target when explicit offset misses', async () => {
+  test('stale-target emits 409 urn:ps:error:stale-target when explicit offset misses', async () => {
     const docName = `agent-patch-stale-${crypto.randomUUID().slice(0, 8)}`;
     await agentWriteMd(server.port, '# Hello world\n', { docName, position: 'replace' });
 
@@ -97,12 +97,12 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:stale-target');
+      expect(parsed.data.type).toBe('urn:ps:error:stale-target');
       expect(parsed.data.status).toBe(409);
     }
   });
 
-  test('missing find field emits urn:ok:error:invalid-request (pre-identity)', async () => {
+  test('missing find field emits urn:ps:error:invalid-request (pre-identity)', async () => {
     const res = await postPatch({ replace: 'x' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -111,7 +111,7 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -122,11 +122,11 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('reserved docname emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved docname emits urn:ps:error:reserved-doc-name', async () => {
     const res = await postPatch({
       docName: '__system__',
       find: 'anything',
@@ -137,7 +137,7 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
   });
 
@@ -150,7 +150,7 @@ describe('agent-patch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

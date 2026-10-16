@@ -30,7 +30,7 @@ const LINE_HEIGHT = 18;
 const RESTING_SCROLL_TOP = 1000;
 const SELECTION_HEAD = 41;
 const PORT_BOTTOM_BELOW_THE_CARD = 2000;
-const COORDS_FAILED_MARK = 'ok/caret-reveal/coords-failed';
+const COORDS_FAILED_MARK = 'ps/caret-reveal/coords-failed';
 const WYSIWYG_COORDS_THROW_MESSAGE = 'no position for the given offset';
 const SOURCE_COORDS_THROW_MESSAGE = `Invalid position ${SELECTION_HEAD} in document of length 0`;
 

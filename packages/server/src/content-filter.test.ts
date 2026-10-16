@@ -488,7 +488,7 @@ describe('ContentFilter', () => {
       assertInPlaceSkillWatcherAdmission(filter);
     });
 
-    function assertShareableOkLeavesUnblocked(filter: ContentFilter) {
+    function assertShareablePsLeavesUnblocked(filter: ContentFilter) {
       const globs = filter.getWatcherIgnoreGlobs();
       for (const blocker of [
         'docs/.ps/templates/',
@@ -520,7 +520,7 @@ describe('ContentFilter', () => {
       configureTestGitRepository(projectDir);
       writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
-      assertShareableOkLeavesUnblocked(filter);
+      assertShareablePsLeavesUnblocked(filter);
     });
     test('watcher globs never block the shareable .ps leaves; .ps/local stays pruned (async)', async () => {
       writeFileSync(
@@ -531,7 +531,7 @@ describe('ContentFilter', () => {
       configureTestGitRepository(projectDir);
       writeFileSync(join(projectDir, '.git', 'info', 'exclude'), '.ps/\n');
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
-      assertShareableOkLeavesUnblocked(filter);
+      assertShareablePsLeavesUnblocked(filter);
     });
   });
 
@@ -1329,7 +1329,7 @@ describe('ContentFilter', () => {
   describe('showOk lifts the .ps floor for the tree-listing walk only', () => {
     const REVEAL = { bypassFilters: true, showOk: true } as const;
 
-    function assertShowOkReveal(filter: ContentFilter) {
+    function assertShowPsReveal(filter: ContentFilter) {
       expect(filter.isDirExcluded('.ps', REVEAL)).toBe(false);
       expect(filter.isDirExcluded('.ps/templates', REVEAL)).toBe(false);
       expect(filter.isDirExcluded('.ps/skills', REVEAL)).toBe(false);
@@ -1390,12 +1390,12 @@ describe('ContentFilter', () => {
 
     test('sync factory (createContentFilter)', () => {
       const filter = createContentFilter({ projectDir, contentDir: projectDir });
-      assertShowOkReveal(filter);
+      assertShowPsReveal(filter);
     });
 
     test('async factory (createContentFilterAsync) mirrors the reveal', async () => {
       const filter = await createContentFilterAsync({ projectDir, contentDir: projectDir });
-      assertShowOkReveal(filter);
+      assertShowPsReveal(filter);
     });
   });
 
@@ -2203,14 +2203,14 @@ describe('ContentFilter', () => {
       if (!span) throw new Error('no span');
 
       const attrs = span.attributes;
-      expect(attrs['ok.ignore.pattern_count']).toBe(3);
-      expect(attrs['ok.ignore.nested_file_count']).toBe(0);
-      expect(typeof attrs['ok.ignore.bytes']).toBe('number');
+      expect(attrs['ps.ignore.pattern_count']).toBe(3);
+      expect(attrs['ps.ignore.nested_file_count']).toBe(0);
+      expect(typeof attrs['ps.ignore.bytes']).toBe('number');
 
       const allowedAttrKeys = new Set([
-        'ok.ignore.pattern_count',
-        'ok.ignore.nested_file_count',
-        'ok.ignore.bytes',
+        'ps.ignore.pattern_count',
+        'ps.ignore.nested_file_count',
+        'ps.ignore.bytes',
       ]);
       for (const key of Object.keys(attrs)) {
         expect(allowedAttrKeys.has(key)).toBe(true);

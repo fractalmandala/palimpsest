@@ -10,10 +10,10 @@ export const DESKTOP_PRODUCTS = {
       rpm: 'palimpsest',
     },
     retiredLinuxPackageNames: {
-      deb: [],
-      rpm: ['Palimpsest'],
+      deb: ['openknowledge'],
+      rpm: ['Palimpsest', 'openknowledge'],
     },
-    cliCommandNames: ['ok', 'palimpsest'],
+    cliCommandNames: ['ps', 'palimpsest'],
     mcpServerName: 'palimpsest',
     mcpChainTag: '',
     npmDistTag: 'latest',
@@ -31,8 +31,8 @@ export const DESKTOP_PRODUCTS = {
       rpm: 'palimpsest-beta',
     },
     retiredLinuxPackageNames: {
-      deb: ['palimpsest-beta-desktop'],
-      rpm: ['palimpsest-beta-desktop'],
+      deb: ['palimpsest-beta-desktop', 'openknowledge-beta'],
+      rpm: ['palimpsest-beta-desktop', 'openknowledge-beta'],
     },
     cliCommandNames: ['ps-beta', 'palimpsest-beta'],
     mcpServerName: 'palimpsest-beta',
@@ -52,8 +52,8 @@ export const DESKTOP_PRODUCTS = {
       rpm: 'palimpsest-dev',
     },
     retiredLinuxPackageNames: {
-      deb: [],
-      rpm: [],
+      deb: ['openknowledge-dev'],
+      rpm: ['openknowledge-dev'],
     },
     cliCommandNames: ['ps-dev', 'palimpsest-dev'],
     mcpServerName: 'palimpsest-dev',
@@ -219,7 +219,7 @@ export interface PsCliRefusal {
   readonly refused: string;
 }
 
-export interface ResolveOkCliCommandInput {
+export interface ResolvePsCliCommandInput {
   readonly host?: HostCliInvocation | undefined;
   readonly env?: Readonly<Record<string, string | undefined>>;
 }
@@ -239,7 +239,7 @@ export class PsCliCommand {
     this.#fallsBackToStable = fallsBackToStable;
   }
 
-  static resolve(input: ResolveOkCliCommandInput = {}): PsCliCommand {
+  static resolve(input: ResolvePsCliCommandInput = {}): PsCliCommand {
     const env = input.env ?? globalThis.process?.env ?? {};
     const [first, ...rest] = input.host?.cliArgs ?? [];
     const channel = resolveDesktopProductName(env);

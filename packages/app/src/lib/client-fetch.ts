@@ -4,7 +4,7 @@ interface ClientFetchConfig {
   apiOrigin?: string;
 }
 
-const FETCH_WRAPPER_MARKER = Symbol.for('ok.client.fetchWrapper');
+const FETCH_WRAPPER_MARKER = Symbol.for('ps.client.fetchWrapper');
 
 export function installClientFetchWrapper(config: ClientFetchConfig = {}): void {
   if (typeof window === 'undefined') return;

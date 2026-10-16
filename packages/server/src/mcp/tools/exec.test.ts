@@ -223,15 +223,15 @@ describe('exec — happy path', () => {
     const project = await bootstrap();
     const specs = resolve(project, 'specs');
     const specsOk = resolve(specs, '.ps');
-    const specsOkTemplates = resolve(specsOk, 'templates');
-    mkdirSync(specsOkTemplates, { recursive: true });
+    const specsPsTemplates = resolve(specsOk, 'templates');
+    mkdirSync(specsPsTemplates, { recursive: true });
     writeFileSync(resolve(specs, 'foo.md'), '# Foo\n');
     writeFileSync(
       resolve(specsOk, 'frontmatter.yml'),
       'title: Specs\ndescription: Specifications\ntags: [spec]\nstatus: draft\n',
     );
     writeFileSync(
-      resolve(specsOkTemplates, 'rfc.md'),
+      resolve(specsPsTemplates, 'rfc.md'),
       '---\ntitle: RFC\ndescription: Request for comments\n---\n# RFC\n\nBody.\n',
     );
 
@@ -753,9 +753,9 @@ describe('exec — per-row route-only previewUrl (FR-2.2)', () => {
   test('FR13: nested .ps/ paths are filtered from enrichedPaths (not surfaced as listings)', async () => {
     const project = await bootstrap();
     const meetings = resolve(project, 'meetings');
-    const meetingsOkTpls = resolve(meetings, '.ps', 'templates');
-    mkdirSync(meetingsOkTpls, { recursive: true });
-    writeFileSync(resolve(meetingsOkTpls, 'prep-notes.md'), '---\ntitle: Prep\n---\nbody\n');
+    const meetingsPsTpls = resolve(meetings, '.ps', 'templates');
+    mkdirSync(meetingsPsTpls, { recursive: true });
+    writeFileSync(resolve(meetingsPsTpls, 'prep-notes.md'), '---\ntitle: Prep\n---\nbody\n');
     writeFileSync(resolve(meetings, '2026-05-01.md'), '---\ntitle: Meeting\n---\nbody\n');
 
     const result = (await buildExecResult(

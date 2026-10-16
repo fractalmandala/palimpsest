@@ -7,7 +7,7 @@ You can clone GitHub repositories and publish local projects to a GitHub remote 
 
 ## Clone an existing GitHub repository
 
-These steps use the desktop app; from a terminal, [`ok clone`](/docs/reference/cli#clone-from-github) does the same.
+These steps use the desktop app; from a terminal, [`ps clone`](/docs/reference/cli#clone-from-github) does the same.
 
 <Steps>
 
@@ -55,6 +55,6 @@ git:
       provider: github
 ```
 
-The declaration applies to every project on your machine. It enables GitHub credential handling, push-permission checks, share links, and the default host for `ok auth`. Without a declaration, Palimpsest treats the host as ordinary git, preserves your system git credentials unless you store a token for an `https:` remote on that host (see [Git sync](/docs/features/git/sync)), and refuses sharing and project GitHub sign-in requests.
+The declaration applies to every project on your machine. It enables GitHub credential handling, push-permission checks, share links, and the default host for `ps auth`. Without a declaration, Palimpsest treats the host as ordinary git, preserves your system git credentials unless you store a token for an `https:` remote on that host (see [Git sync](/docs/features/git/sync)), and refuses sharing and project GitHub sign-in requests.
 
 [Share links](/docs/features/share) work with declared enterprise remotes. A recipient opening a GHES share is asked to confirm the server unless they are already signed in to it.

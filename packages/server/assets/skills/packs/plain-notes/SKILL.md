@@ -4,7 +4,7 @@ description: "How to work in a Plain Notes project (the `plain-notes` starter pa
 compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack plain-notes` (`ps-beta` for Beta)."
 metadata:
   pack: "plain-notes"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Plain Notes pack — how to work here

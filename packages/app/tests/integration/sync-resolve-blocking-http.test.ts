@@ -45,7 +45,7 @@ describe('POST /api/sync/resolve-blocking', () => {
 
       expect(res.status).toBe(409);
       const body = (await res.json()) as ErrorBody;
-      expect(body.type).toBe('urn:ok:error:no-blocking-changes');
+      expect(body.type).toBe('urn:ps:error:no-blocking-changes');
     },
     HARNESS_BOOT_TIMEOUT_MS,
   );

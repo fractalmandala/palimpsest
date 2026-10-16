@@ -93,25 +93,25 @@ function lapseNavigationOwnership(): void {
 function reappliedTarget(): unknown {
   return getCollector()
     ?.marks.toArray()
-    .find((m) => m.name === 'ok/scroll-restore/phase2-success')?.properties?.target;
+    .find((m) => m.name === 'ps/scroll-restore/phase2-success')?.properties?.target;
 }
 
 function yieldedReason(): unknown {
   return getCollector()
     ?.marks.toArray()
-    .find((m) => m.name === 'ok/scroll-restore/yielded')?.properties?.reason;
+    .find((m) => m.name === 'ps/scroll-restore/yielded')?.properties?.reason;
 }
 
 function landedTarget(): unknown {
   return getCollector()
     ?.marks.toArray()
-    .find((m) => m.name === 'ok/scroll-restore/phase1-success')?.properties?.target;
+    .find((m) => m.name === 'ps/scroll-restore/phase1-success')?.properties?.target;
 }
 
 function supersededHolder(): unknown {
   return getCollector()
     ?.marks.toArray()
-    .find((m) => m.name === 'ok/scroll-restore/superseded')?.properties?.holder;
+    .find((m) => m.name === 'ps/scroll-restore/superseded')?.properties?.holder;
 }
 
 function activate(from: number): HTMLDivElement {

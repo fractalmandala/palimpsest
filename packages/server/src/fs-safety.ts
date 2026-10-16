@@ -125,7 +125,7 @@ export type SymlinkLeafCheck =
    the `readFolderFrontmatter` / `collectFromFolder` readers they share with
    directory enrichment — even though the sync plane admits in-root
    shareable-artifact symlinks via `assertRealpathWithinDir`'s
-   `allowShareableOkArtifact`: the folder-config PUT merges and rewrites the
+   `allowShareablePsArtifact`: the folder-config PUT merges and rewrites the
    leaf in place (`renameSync` replaces the link), so realpath containment
    alone would let a committed link materialize foreign content as in-root
    git-trackable bytes. Do not harmonize the `symlink` case back to

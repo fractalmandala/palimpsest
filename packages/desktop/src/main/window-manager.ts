@@ -1526,7 +1526,7 @@ export class WindowManager {
       const kind = opts.pendingDeepLinkTarget.kind;
       const branch = opts.pendingBranch ?? null;
       const multiCandidate = opts.pendingMultiCandidate === true;
-      registerPendingDelivery(window.webContents, 'ok:deep-link', {
+      registerPendingDelivery(window.webContents, 'ps:deep-link', {
         doc,
         kind,
         branch,
@@ -1543,7 +1543,7 @@ export class WindowManager {
 
     if (opts.pendingShareBranchSwitch) {
       const branchSwitch = opts.pendingShareBranchSwitch;
-      registerPendingDelivery(window.webContents, 'ok:share:received', {
+      registerPendingDelivery(window.webContents, 'ps:share:received', {
         kind: 'project-branch-switch' as const,
         share: branchSwitch.share,
         projectPath: branchSwitch.projectPath,
@@ -2329,7 +2329,7 @@ export class WindowManager {
       const kind = pendingDeepLinkTarget.kind;
       const branch = pendingBranch ?? null;
       const multiCandidate = pendingMultiCandidate === true;
-      registerPendingDelivery(window.webContents, 'ok:deep-link', {
+      registerPendingDelivery(window.webContents, 'ps:deep-link', {
         doc,
         kind,
         branch,
@@ -2346,7 +2346,7 @@ export class WindowManager {
 
     if (pendingShareBranchSwitch) {
       const branchSwitch = pendingShareBranchSwitch;
-      registerPendingDelivery(window.webContents, 'ok:share:received', {
+      registerPendingDelivery(window.webContents, 'ps:share:received', {
         kind: 'project-branch-switch' as const,
         share: branchSwitch.share,
         projectPath: branchSwitch.projectPath,
@@ -2372,14 +2372,14 @@ export class WindowManager {
           serverRuntime,
           appRuntime: selfRuntime,
         } as const;
-        registerPendingDelivery(window.webContents, 'ok:server-version-drift', payload);
+        registerPendingDelivery(window.webContents, 'ps:server-version-drift', payload);
       }
     }
 
     if (pendingServerRestartedToast && selfRuntime !== undefined) {
       registerPendingDelivery(
         window.webContents,
-        'ok:server-restarted',
+        'ps:server-restarted',
         { appRuntime: selfRuntime },
         { event: 'did-finish-load' },
       );

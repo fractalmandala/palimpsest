@@ -48,7 +48,7 @@ describe('test-reset envelope (RFC 9457)', () => {
     expect(server.instance.conflicts.findByDocName(docName)).toBeUndefined();
   });
 
-  test('path-traversal docName emits 400 urn:ok:error:invalid-request', async () => {
+  test('path-traversal docName emits 400 urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/test-reset?docName=${encodeURIComponent('../escape')}`,
       { method: 'POST' },
@@ -59,7 +59,7 @@ describe('test-reset envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -71,7 +71,7 @@ describe('test-reset envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

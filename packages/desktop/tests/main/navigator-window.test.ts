@@ -283,13 +283,13 @@ describe('createNavigatorWindow — pendingPayload dom-ready gate (US-004)', () 
 
     expect(
       (win.webContents.send as ReturnType<typeof vi.fn>).mock.calls.find(
-        (c) => c[0] === 'ok:share:received',
+        (c) => c[0] === 'ps:share:received',
       ),
     ).toBeUndefined();
 
     win.fireDomReady();
     const shareCall = (win.webContents.send as ReturnType<typeof vi.fn>).mock.calls.find(
-      (c) => c[0] === 'ok:share:received',
+      (c) => c[0] === 'ps:share:received',
     );
     expect(shareCall).toBeDefined();
     expect(shareCall?.[1]).toEqual({
@@ -316,7 +316,7 @@ describe('createNavigatorWindow — pendingPayload dom-ready gate (US-004)', () 
 
     win.fireDomReady();
     const sendCalls = (win.webContents.send as ReturnType<typeof vi.fn>).mock.calls;
-    expect(sendCalls.find((c) => c[0] === 'ok:share:received')).toBeUndefined();
+    expect(sendCalls.find((c) => c[0] === 'ps:share:received')).toBeUndefined();
   });
 
   test('cold path: launcher-consent payload is also delivered (variant coverage)', () => {
@@ -343,7 +343,7 @@ describe('createNavigatorWindow — pendingPayload dom-ready gate (US-004)', () 
 
     win.fireDomReady();
     const shareCall = (win.webContents.send as ReturnType<typeof vi.fn>).mock.calls.find(
-      (c) => c[0] === 'ok:share:received',
+      (c) => c[0] === 'ps:share:received',
     );
     expect(shareCall?.[1]).toEqual(payload);
   });

@@ -49,7 +49,7 @@ export function chunkWrapperDecorationPlugin(): Plugin {
         if (!firstEmitFired) {
           firstEmitFired = true;
           mark(
-            'ok/render/cv-auto-skip',
+            'ps/render/cv-auto-skip',
             { chunkCount: decos.length },
             { startTime: performance.now(), duration: 0 },
           );

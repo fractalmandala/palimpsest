@@ -245,7 +245,7 @@ describe('createEphemeralWindow', () => {
     });
 
     env.windows[0]?.fireDomReady();
-    expect(env.windows[0]?.sent.some((m) => m.channel === 'ok:deep-link')).toBe(false);
+    expect(env.windows[0]?.sent.some((m) => m.channel === 'ps:deep-link')).toBe(false);
   });
 
   test('two `ok <samefile>` opens dedup to one server + one temp dir (C4); focus creates no temp dir', async () => {

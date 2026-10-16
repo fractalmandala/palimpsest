@@ -63,7 +63,7 @@ function recent(path: string): RecentProjectEntry {
   };
 }
 
-function seedOkProject(projectPath: string): void {
+function seedPsProject(projectPath: string): void {
   mkdirSync(join(projectPath, '.ps'), { recursive: true });
   writeFileSync(join(projectPath, '.ps', 'config.yml'), 'content:\n  dir: .\n');
 }
@@ -83,7 +83,7 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     const wtPath = handle.worktrees.get('feat-foo');
     expect(wtPath).toBeDefined();
     if (!wtPath) return;
-    seedOkProject(wtPath);
+    seedPsProject(wtPath);
 
     const selection = await resolveShareTarget(PAYLOAD, {
       listRecent: () => [recent(handle?.mainRepo ?? '')],
@@ -93,7 +93,7 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     if (selection.kind === 'branch-match-ok') {
       expect(selection.candidate.path).toBe(wtPath);
       expect(selection.candidate.head.currentBranch).toBe('feat-foo');
-      expect(selection.candidate.hasOkConfig).toBe(true);
+      expect(selection.candidate.hasPsConfig).toBe(true);
     }
   });
 
@@ -110,13 +110,13 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     expect(selection.kind).toBe('branch-match-non-ok');
     if (selection.kind === 'branch-match-non-ok') {
       expect(selection.candidate.path).toBe(wtPath);
-      expect(selection.candidate.hasOkConfig).toBe(false);
+      expect(selection.candidate.hasPsConfig).toBe(false);
     }
   });
 
   test('branch-mismatch: only a main checkout on a different branch produces fallback main-checkout', async () => {
     handle = await makeRepoWithWorktrees([]);
-    seedOkProject(handle.mainRepo);
+    seedPsProject(handle.mainRepo);
 
     const selection = await resolveShareTarget(PAYLOAD, {
       listRecent: () => [recent(handle?.mainRepo ?? '')],
@@ -167,8 +167,8 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     const wtPath = handle.worktrees.get('feat-foo');
     expect(wtPath).toBeDefined();
     if (!wtPath) return;
-    seedOkProject(handle.mainRepo);
-    seedOkProject(wtPath);
+    seedPsProject(handle.mainRepo);
+    seedPsProject(wtPath);
 
     const ghostPath = join(handle.root, 'CollaborationUX');
     mkdirSync(join(ghostPath, '.ps', 'local', 'logs'), { recursive: true });
@@ -261,8 +261,8 @@ describe('resolveShareTarget — main-side adapter parity with the shared algori
     const featFoo = handle.worktrees.get('feat-foo');
     expect(featFoo).toBeDefined();
     if (!featFoo) return;
-    seedOkProject(handle.mainRepo);
-    seedOkProject(featFoo);
+    seedPsProject(handle.mainRepo);
+    seedPsProject(featFoo);
 
     const selection = await resolveShareTarget(PAYLOAD, {
       listRecent: () => [recent(handle?.mainRepo ?? '')],

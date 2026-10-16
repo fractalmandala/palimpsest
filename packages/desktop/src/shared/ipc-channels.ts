@@ -9,7 +9,7 @@ import type {
   HandoffScope,
   HostSnapshot,
   LanguagePreference,
-  LocalOpOkInitResponse,
+  LocalOpPsInitResponse,
   PsBugReportCrashAckResult,
   PsBugReportCrashDumpAvailability,
   PsBugReportCreateResult,
@@ -401,33 +401,33 @@ export type UserConfigDispatchRequest =
 export const TYPED_IPC_MIGRATION_CHANNEL_CAP = 95;
 
 export interface RequestChannels {
-  'ok:dialog:open-folder': {
+  'ps:dialog:open-folder': {
     args: [opts?: DialogOpenFolderOpts];
     result: string | null;
   };
-  'ok:shell:open-external': { args: [url: string]; result: undefined };
-  'ok:shell:detect-protocol': {
+  'ps:shell:open-external': { args: [url: string]; result: undefined };
+  'ps:shell:detect-protocol': {
     args: [scheme: string];
     result: { installed: boolean; displayName?: string };
   };
-  'ok:shell:spawn-cursor': { args: [path: string]; result: SpawnOutcome };
-  'ok:shell:show-item-in-folder': { args: [path: string]; result: undefined };
-  'ok:shell:record-handoff': { args: [line: HandoffStatsLine]; result: undefined };
-  'ok:shell:open-asset': {
+  'ps:shell:spawn-cursor': { args: [path: string]; result: SpawnOutcome };
+  'ps:shell:show-item-in-folder': { args: [path: string]; result: undefined };
+  'ps:shell:record-handoff': { args: [line: HandoffStatsLine]; result: undefined };
+  'ps:shell:open-asset': {
     args: [relPath: string];
     result: PsAssetOpenResult;
   };
-  'ok:shell:reveal-asset': {
+  'ps:shell:reveal-asset': {
     args: [relPath: string];
     result: { ok: true } | { ok: false; reason: 'path-escape' | 'not-found' | 'resolve-error' };
   };
-  'ok:shell:reveal-external': {
+  'ps:shell:reveal-external': {
     args: [absPath: string];
     result:
       | { ok: true; outcome: 'revealed' | 'dismissed' }
       | { ok: false; reason: 'not-found' | 'invalid-path' | 'error' };
   };
-  'ok:shell:show-asset-menu': {
+  'ps:shell:show-asset-menu': {
     args: [
       params: {
         readonly relPath: string;
@@ -437,7 +437,7 @@ export interface RequestChannels {
     ];
     result: undefined;
   };
-  'ok:shell:trash-item': {
+  'ps:shell:trash-item': {
     args: [absPath: string];
     result:
       | { ok: true }
@@ -447,19 +447,19 @@ export interface RequestChannels {
           detail?: string;
         };
   };
-  'ok:clipboard:write-text': { args: [text: string]; result: undefined };
-  'ok:clipboard:copy-image': { args: [request: CopyImageRequest]; result: CopyImageResult };
-  'ok:project:get-info': { args: []; result: PsDesktopConfig };
+  'ps:clipboard:write-text': { args: [text: string]; result: undefined };
+  'ps:clipboard:copy-image': { args: [request: CopyImageRequest]; result: CopyImageResult };
+  'ps:project:get-info': { args: []; result: PsDesktopConfig };
 
-  'ok:sharing:dispatch': {
+  'ps:sharing:dispatch': {
     args: [request: { kind: 'status' } | { kind: 'set-mode'; mode: 'shared' | 'local-only' }];
     result: PsSharingResult;
   };
-  'ok:slides:dispatch': {
+  'ps:slides:dispatch': {
     args: [request: { kind: 'status' } | { kind: 'open'; docPath: string }];
     result: PsSlidesStatusResult | PsSlidesOpenResult;
   };
-  'ok:bug-report:dispatch': {
+  'ps:bug-report:dispatch': {
     args: [request: PsBugReportRequest];
     result:
       | PsBugReportCreateResult
@@ -472,41 +472,41 @@ export interface RequestChannels {
       | PsAssetUploadResult
       | null;
   };
-  'ok:project:list-recent': { args: []; result: RecentProject[] };
-  'ok:project:remove-recent': { args: [projectPath: string]; result: undefined };
-  'ok:project:get-session-state': { args: []; result: ProjectSessionState };
-  'ok:project:set-session-state': { args: [state: ProjectSessionState]; result: undefined };
-  'ok:project:open': { args: [request: ProjectOpenRequest]; result: undefined };
-  'ok:project:open-file-picker': { args: []; result: undefined };
-  'ok:project:check-target-exists': {
+  'ps:project:list-recent': { args: []; result: RecentProject[] };
+  'ps:project:remove-recent': { args: [projectPath: string]; result: undefined };
+  'ps:project:get-session-state': { args: []; result: ProjectSessionState };
+  'ps:project:set-session-state': { args: [state: ProjectSessionState]; result: undefined };
+  'ps:project:open': { args: [request: ProjectOpenRequest]; result: undefined };
+  'ps:project:open-file-picker': { args: []; result: undefined };
+  'ps:project:check-target-exists': {
     args: [request: { projectPath: string; kind: 'doc' | 'folder'; path: string }];
     result: CheckTargetExistsResult;
   };
-  'ok:project:read-head-branch': {
+  'ps:project:read-head-branch': {
     args: [projectPath: string];
     result: HeadBranchInfo;
   };
-  'ok:project:fetch-branch-info': {
+  'ps:project:fetch-branch-info': {
     args: [request: { projectPath: string; branch: string; kind: 'doc' | 'folder'; path: string }];
     result: BranchInfoResponse | null;
   };
-  'ok:project:run-checkout': {
+  'ps:project:run-checkout': {
     args: [request: { projectPath: string; branch: string; fastForward?: boolean }];
     result: CheckoutResponse | null;
   };
-  'ok:project:fetch-target-status': {
+  'ps:project:fetch-target-status': {
     args: [request: { projectPath: string; branch: string; path: string; kind: 'doc' | 'folder' }];
     result: ShareTargetStatusResponse | null;
   };
-  'ok:project:await-branch-switched': {
+  'ps:project:await-branch-switched': {
     args: [request: { projectPath: string; branch: string; timeoutMs: number }];
     result: { ok: true } | { ok: false; reason: 'timeout' | 'project-not-open' };
   };
-  'ok:project:ps-init': {
+  'ps:project:ps-init': {
     args: [request: { projectPath: string }];
-    result: LocalOpOkInitResponse;
+    result: LocalOpPsInitResponse;
   };
-  'ok:worktree:dispatch': {
+  'ps:worktree:dispatch': {
     args: [
       request:
         | { kind: 'list' }
@@ -521,13 +521,13 @@ export interface RequestChannels {
       | WorktreeInventoryOpenResult
       | WorktreeCreateResult;
   };
-  'ok:project:close': { args: []; result: undefined };
-  'ok:project:restart-server': { args: [projectPath: string]; result: PsServerRestartOutcome };
-  'ok:share:validate-folder': {
+  'ps:project:close': { args: []; result: undefined };
+  'ps:project:restart-server': { args: [projectPath: string]; result: PsServerRestartOutcome };
+  'ps:share:validate-folder': {
     args: [request: ShareValidateFolderRequest];
     result: ShareValidateFolderResult;
   };
-  'ok:project:create-new': {
+  'ps:project:create-new': {
     args: [
       args: {
         parent: string;
@@ -540,29 +540,29 @@ export interface RequestChannels {
     ];
     result: undefined;
   };
-  'ok:fs:default-projects-root': { args: []; result: string };
-  'ok:fs:folder-state': {
+  'ps:fs:default-projects-root': { args: []; result: string };
+  'ps:fs:folder-state': {
     args: [path: string];
     result: PsFolderState;
   };
-  'ok:fs:find-enclosing-project-root': {
+  'ps:fs:find-enclosing-project-root': {
     args: [path: string];
     result: FindEnclosingProjectRootResult | null;
   };
-  'ok:fs:find-enclosing-git-root': {
+  'ps:fs:find-enclosing-git-root': {
     args: [path: string];
     result: FindEnclosingGitRootResult | null;
   };
-  'ok:fs:remove-git-folder': {
+  'ps:fs:remove-git-folder': {
     args: [gitRoot: string];
     result: undefined;
   };
-  'ok:project:record-create-new-banner-shown': {
+  'ps:project:record-create-new-banner-shown': {
     args: [banner: CreateNewBannerKind];
     result: undefined;
   };
-  'ok:navigator:open': { args: []; result: undefined };
-  'ok:window:open-note': {
+  'ps:navigator:open': { args: []; result: undefined };
+  'ps:window:open-note': {
     args: [
       request:
         | { kind: 'open'; docName: string; entryPoint: 'tab-menu' | 'palette' }
@@ -573,43 +573,43 @@ export interface RequestChannels {
       | { ok: false; reason: 'no-project' | 'invalid-request' }
       | PsNoteWindowMainActionResult;
   };
-  'ok:update:dispatch': {
+  'ps:update:dispatch': {
     args: [request: PsUpdateDispatchRequest];
     result: PsUpdateDispatchResult;
   };
-  'ok:state:query': { args: []; result: Required<PsStateSnapshot> };
-  'ok:state:reset-incompatible': { args: []; result: undefined };
-  'ok:theme:set-source': { args: [params: { source: PsThemeSource }]; result: { ok: true } };
-  'ok:user-config:dispatch': {
+  'ps:state:query': { args: []; result: Required<PsStateSnapshot> };
+  'ps:state:reset-incompatible': { args: []; result: undefined };
+  'ps:theme:set-source': { args: [params: { source: PsThemeSource }]; result: { ok: true } };
+  'ps:user-config:dispatch': {
     args: [request: UserConfigDispatchRequest];
     result: { ok: true } | PsUserConfigSnapshot | PsUserConfigPatchResult;
   };
-  'ok:theme:applied': {
+  'ps:theme:applied': {
     args: [opts?: { reducedTransparency?: boolean; chrome?: PsChromeColors }];
     result: undefined;
   };
-  'ok:startup:renderer-marks': {
+  'ps:startup:renderer-marks': {
     args: [marks: { pageListReadyMs: number; firstContentMs: number }];
     result: undefined;
   };
-  'ok:debug:keyring-smoke': { args: []; result: KeyringSmokeResult };
-  'ok:seed:plan': { args: [options?: SeedPlanOptions]; result: SeedPlanResult };
-  'ok:seed:apply': {
+  'ps:debug:keyring-smoke': { args: []; result: KeyringSmokeResult };
+  'ps:seed:plan': { args: [options?: SeedPlanOptions]; result: SeedPlanResult };
+  'ps:seed:apply': {
     args: [plan: ScaffoldPlan, options?: SeedApplyOptions];
     result: SeedApplyResult;
   };
-  'ok:seed:list-packs': { args: []; result: SeedListPacksResult };
-  'ok:mcp-wiring:confirm': {
+  'ps:seed:list-packs': { args: []; result: SeedListPacksResult };
+  'ps:mcp-wiring:confirm': {
     args: [request: McpWiringConfirmRequest];
     result: McpWiringConfirmResult;
   };
-  'ok:mcp-wiring:skip': { args: []; result: McpWiringSkipResult };
-  'ok:mcp-wiring:renderer-ready': { args: []; result: undefined };
+  'ps:mcp-wiring:skip': { args: []; result: McpWiringSkipResult };
+  'ps:mcp-wiring:renderer-ready': { args: []; result: undefined };
 
-  'ok:mcp-wiring:reconfigure': { args: []; result: boolean };
-  'ok:spellcheck:toggle': { args: []; result: boolean };
+  'ps:mcp-wiring:reconfigure': { args: []; result: boolean };
+  'ps:spellcheck:toggle': { args: []; result: boolean };
 
-  'ok:integrations:dispatch': {
+  'ps:integrations:dispatch': {
     args: [
       request:
         | { kind: 'status' }
@@ -619,74 +619,74 @@ export interface RequestChannels {
     result: IntegrationsStatus | IntegrationsSetResult | AgentIntegrationsApplyResult;
   };
 
-  'ok:project-integrations:dispatch': {
+  'ps:project-integrations:dispatch': {
     args: [request: { kind: 'status' } | ({ kind: 'set' } & ProjectIntegrationsSetRequest)];
     result: ProjectIntegrationsStatus | ProjectIntegrationsSetResult;
   };
 
-  'ok:remote-access:dispatch': {
+  'ps:remote-access:dispatch': {
     args: [request: { kind: 'probe-port'; port: number }];
     result: boolean;
   };
 
-  'ok:onboarding:confirm': {
+  'ps:onboarding:confirm': {
     args: [request: OnboardingConfirmRequest];
     result: OnboardingConfirmResult;
   };
-  'ok:onboarding:cancel': { args: []; result: OnboardingCancelResult };
-  'ok:onboarding:renderer-ready': { args: []; result: undefined };
-  'ok:onboarding:probe-content': {
+  'ps:onboarding:cancel': { args: []; result: OnboardingCancelResult };
+  'ps:onboarding:renderer-ready': { args: []; result: undefined };
+  'ps:onboarding:probe-content': {
     args: [request: OnboardingProbeContentRequest];
     result: OnboardingProbeContentResult;
   };
 
-  'ok:skill:detect-claude-desktop': { args: []; result: boolean };
+  'ps:skill:detect-claude-desktop': { args: []; result: boolean };
 
-  'ok:skill:build-and-open': { args: [opts?: { force?: boolean }]; result: BuildAndOpenResult };
+  'ps:skill:build-and-open': { args: [opts?: { force?: boolean }]; result: BuildAndOpenResult };
 
-  'ok:local-op:auth:start': {
+  'ps:local-op:auth:start': {
     args: [];
     result: { ok: true; streamId: string } | { ok: false; error: string };
   };
-  'ok:local-op:auth:cancel': { args: [streamId: string]; result: undefined };
-  'ok:local-op:clone:start': {
+  'ps:local-op:auth:cancel': { args: [streamId: string]; result: undefined };
+  'ps:local-op:clone:start': {
     args: [request: { url: string; dir: string; branch?: string | null }];
     result: { ok: true; streamId: string } | { ok: false; error: string };
   };
-  'ok:local-op:clone:cancel': { args: [streamId: string]; result: undefined };
+  'ps:local-op:clone:cancel': { args: [streamId: string]; result: undefined };
 
-  'ok:local-op:auth:status': {
+  'ps:local-op:auth:status': {
     args: [request?: { host?: string }];
     result: PsLocalOpAuthStatusResponse;
   };
-  'ok:local-op:auth:repos': {
+  'ps:local-op:auth:repos': {
     args: [request?: { host?: string }];
     result: PsLocalOpAuthReposResponse;
   };
 
-  'ok:editor:active-target-changed': {
+  'ps:editor:active-target-changed': {
     args: [target: EditorActiveTargetSnapshot];
     result: undefined;
   };
-  'ok:editor:view-menu-state-changed': {
+  'ps:editor:view-menu-state-changed': {
     args: [state: EditorViewMenuStateChange];
     result: undefined;
   };
-  'ok:editor:background-throttle': {
+  'ps:editor:background-throttle': {
     args: [signal: { hasPendingWork: boolean; enabled: boolean }];
     result: undefined;
   };
-  'ok:menu:dispatch': {
+  'ps:menu:dispatch': {
     args: [request: MenuDispatchRequest];
     result: MenuDispatchResult;
   };
 
-  'ok:uninstall:dispatch': {
+  'ps:uninstall:dispatch': {
     args: [request: UninstallDispatchRequest];
     result: UninstallDispatchResult;
   };
 
-  'ok:pty:create': {
+  'ps:pty:create': {
     args: [
       opts: {
         cols: number;
@@ -697,55 +697,55 @@ export interface RequestChannels {
     ];
     result: PsPtyCreateResult;
   };
-  'ok:pty:input': {
+  'ps:pty:input': {
     args: [req: { ptyId: string; data: string }];
     result: undefined;
   };
-  'ok:pty:resize': {
+  'ps:pty:resize': {
     args: [req: { ptyId: string; cols: number; rows: number }];
     result: undefined;
   };
-  'ok:pty:kill': {
+  'ps:pty:kill': {
     args: [req: { ptyId: string }];
     result: undefined;
   };
-  'ok:pty:drain': {
+  'ps:pty:drain': {
     args: [req: { ptyId: string; bytes: number }];
     result: undefined;
   };
-  'ok:pty:list': {
+  'ps:pty:list': {
     args: [];
     result: PsPtyListEntry[];
   };
-  'ok:pty:adopt': {
+  'ps:pty:adopt': {
     args: [req: { ptyId: string; start?: boolean }];
     result: PsPtyAdoptResult;
   };
-  'ok:pty:set-meta': {
+  'ps:pty:set-meta': {
     args: [req: { ptyId: string; customLabel?: string | null; ordinal?: number }];
     result: undefined;
   };
-  'ok:pty:set-order': {
+  'ps:pty:set-order': {
     args: [req: { orderedPtyIds: string[] }];
     result: undefined;
   };
-  'ok:terminal:claude-assist': {
+  'ps:terminal:claude-assist': {
     args: [req: { action: 'preflight' }];
     result: ClaudeReadiness;
   };
-  'ok:terminal:cli-preflight': {
+  'ps:terminal:cli-preflight': {
     args: [req: { cli: TerminalCli }];
     result: CliReadiness;
   };
-  'ok:terminal:cli-installed-map': {
+  'ps:terminal:cli-installed-map': {
     args: [];
     result: Partial<Record<TerminalCli, boolean>>;
   };
-  'ok:terminal:dock-state': {
+  'ps:terminal:dock-state': {
     args: [];
     result: PsTerminalDockState;
   };
-  'ok:terminal:set-dock-state': {
+  'ps:terminal:set-dock-state': {
     args: [req: PsTerminalDockStateUpdate];
     result: PsTerminalDockStateWriteResult;
   };

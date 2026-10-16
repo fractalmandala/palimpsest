@@ -218,7 +218,7 @@ describe('POST /api/skill/import', () => {
     const result = (await response.json()) as { detail?: string; title?: string; type?: string };
 
     expect(response.status).toBe(400);
-    expect(result.type).toBe('urn:ok:error:invalid-request');
+    expect(result.type).toBe('urn:ps:error:invalid-request');
     expect(result.title).toContain('destination copy removed');
     expect(result.detail).toMatch(/parse_failed \(frontmatter region unparseable: .+\)/);
     expect(result.detail).toContain('was not touched');

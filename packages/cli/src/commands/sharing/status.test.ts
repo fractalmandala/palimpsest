@@ -23,7 +23,7 @@ afterEach(() => {
 
 describe('config-sharing status toggle hint', () => {
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: names %s config-sharing', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

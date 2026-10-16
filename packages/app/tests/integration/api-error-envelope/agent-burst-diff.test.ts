@@ -14,7 +14,7 @@ afterAll(async () => {
 });
 
 describe('agent-burst-diff envelope (RFC 9457)', () => {
-  test('missing agentId emits 400 urn:ok:error:invalid-request', async () => {
+  test('missing agentId emits 400 urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/agent-burst-diff?docName=foo&keptCount=0`,
     );
@@ -24,12 +24,12 @@ describe('agent-burst-diff envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('agentId');
     }
   });
 
-  test('missing docName emits 400 urn:ok:error:invalid-request', async () => {
+  test('missing docName emits 400 urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/agent-burst-diff?agentId=agent-x&keptCount=0`,
     );
@@ -38,12 +38,12 @@ describe('agent-burst-diff envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('docName');
     }
   });
 
-  test('reserved docname emits 400 urn:ok:error:reserved-doc-name', async () => {
+  test('reserved docname emits 400 urn:ps:error:reserved-doc-name', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/agent-burst-diff?agentId=agent-x&docName=__system__&keptCount=0`,
     );
@@ -52,11 +52,11 @@ describe('agent-burst-diff envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
   });
 
-  test('negative keptCount emits 400 urn:ok:error:invalid-request', async () => {
+  test('negative keptCount emits 400 urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/agent-burst-diff?agentId=agent-x&docName=foo&keptCount=-1`,
     );
@@ -65,12 +65,12 @@ describe('agent-burst-diff envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('non-negative integer');
     }
   });
 
-  test('no active session emits 404 urn:ok:error:no-active-session', async () => {
+  test('no active session emits 404 urn:ps:error:no-active-session', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/agent-burst-diff?agentId=agent-x&docName=does-not-exist-${crypto.randomUUID().slice(0, 8)}&keptCount=0`,
     );
@@ -79,7 +79,7 @@ describe('agent-burst-diff envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:no-active-session');
+      expect(parsed.data.type).toBe('urn:ps:error:no-active-session');
     }
   });
 
@@ -93,7 +93,7 @@ describe('agent-burst-diff envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

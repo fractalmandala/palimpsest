@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readEnabledRuleIds,
   readRegisteredRuleNames,
   readRuleScope,
@@ -15,7 +15,7 @@ const DOCS = `lint-plugins/ps-rules/README.md#${RULE}`;
 
 describe(`${RULE} oxlint rule`, () => {
   test('fires at exactly its 3 showErrorBox member calls, by its own code, and on no negative case', () => {
-    const fires = lintOkRulesFixture(FIXTURE).filter((d) => d.code === CODE);
+    const fires = lintPsRulesFixture(FIXTURE).filter((d) => d.code === CODE);
     expect(fires.map((fire) => fire.position)).toEqual(['12:3', '13:3', '14:3']);
     for (const fire of fires) {
       expect(fire.message).toContain('Blocking error box');
@@ -27,7 +27,7 @@ describe(`${RULE} oxlint rule`, () => {
 
   test('rule is registered, enabled, and scoped via its RULE_SCOPES entry', async () => {
     expect(await readRegisteredRuleNames(REPO_ROOT)).toContain(RULE);
-    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ok/${RULE}`);
+    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ps/${RULE}`);
   });
 
   test('its scope table still carries every include and exclude the rule depends on', () => {

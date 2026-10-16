@@ -293,7 +293,7 @@ describe('buildPackSkills', () => {
   });
 
   // Production guard (read-only): every shipped pack must have a source SKILL.md,
-  // so the build copies it into dist. Without it, `ok seed`'s pack-skill install
+  // so the build copies it into dist. Without it, `ps seed`'s pack-skill install
   // resolves only against the source tree (dev) and silently no-ops in built
   // CLI / desktop artifacts.
   test('repo assets — all eight starter packs are present to build', () => {
@@ -365,7 +365,7 @@ describe('repo assets — production guard', () => {
     // skill would shadow the project-scope one in the host hierarchy.
     const { skillsDir } = defaultPaths();
     const expected: Record<(typeof BUNDLE_IDS)[number], string> = {
-      discovery: 'open-knowledge-discovery',
+      discovery: 'palimpsest-discovery',
       project: 'palimpsest',
       'write-skill': 'open-knowledge-write-skill',
     };
@@ -421,7 +421,7 @@ describe('repo assets — shipped skill names (mirror gate)', () => {
   test('every shipped skill declares the public author + repository metadata', () => {
     for (const { dir } of collectShippedSkills()) {
       const md = readFileSync(join(dir, 'SKILL.md'), 'utf-8');
-      expect(md, `${dir} missing author`).toContain('author: "Inkeep"');
+      expect(md, `${dir} missing author`).toContain('author: "Fractal Mandala"');
       expect(md, `${dir} missing repository`).toContain(
         'repository: "https://github.com/fractalmandala/palimpsest-skills"',
       );

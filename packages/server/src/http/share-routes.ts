@@ -252,7 +252,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
           { handler: SHARE_CONSTRUCT_URL_HANDLER_TAG },
         );
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: SHARE_CONSTRUCT_URL_HANDLER_TAG,
           cause: err,
         });
@@ -290,7 +290,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'projectDir is not configured for this server.',
             { handler: SHARE_TARGET_STATUS_HANDLER_TAG },
           );
@@ -301,7 +301,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
          * sibling share handlers (precedent #55 content-scope predicate symmetry).
          */
         if (!isValidBranchInfoPath(body.path, body.kind)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'path is missing or malformed.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'path is missing or malformed.', {
             handler: SHARE_TARGET_STATUS_HANDLER_TAG,
           });
           return;
@@ -323,7 +323,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
           handler: SHARE_TARGET_STATUS_HANDLER_TAG,
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: SHARE_TARGET_STATUS_HANDLER_TAG,
           cause: err,
         });
@@ -398,7 +398,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'A share owners operation is already in progress.',
           { handler: SHARE_PUBLISH_OWNERS_HANDLER_TAG, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -417,7 +417,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
           handler: SHARE_PUBLISH_OWNERS_HANDLER_TAG,
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: SHARE_PUBLISH_OWNERS_HANDLER_TAG,
           cause: err,
         });
@@ -444,7 +444,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'owner and name query params must be valid GitHub identifiers.',
           { handler: SHARE_PUBLISH_NAME_CHECK_HANDLER_TAG },
         );
@@ -454,7 +454,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'A share name-check operation is already in progress.',
           { handler: SHARE_PUBLISH_NAME_CHECK_HANDLER_TAG, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -481,7 +481,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
           handler: SHARE_PUBLISH_NAME_CHECK_HANDLER_TAG,
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: SHARE_PUBLISH_NAME_CHECK_HANDLER_TAG,
           cause: err,
         });
@@ -516,7 +516,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'owner and name must be valid GitHub identifiers.',
           { handler: SHARE_PUBLISH_HANDLER_TAG },
         );
@@ -526,7 +526,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           429,
-          'urn:ok:error:concurrent-operation',
+          'urn:ps:error:concurrent-operation',
           'A share publish operation is already in progress.',
           { handler: SHARE_PUBLISH_HANDLER_TAG, extraHeaders: { 'Retry-After': '5' } },
         );
@@ -564,7 +564,7 @@ export function createShareRoutes(deps: ShareRouteDeps): ApiRouteGroup {
           handler: SHARE_PUBLISH_HANDLER_TAG,
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: SHARE_PUBLISH_HANDLER_TAG,
           cause: err,
         });

@@ -51,10 +51,10 @@ export function buildPiExtensionSource(options: McpInstallOptions = {}): string 
  * Hand edits are overwritten whenever OK re-syncs this project; remove it
  * with \`${currentCliCommandName()} deinit\` (or delete the file) to disconnect Pi from OK.
  *
- * On session start it spawns Palimpsest's MCP stdio server via OK's
+ * On session start it spawns Palimpsest's MCP stdio server via Palimpsest's
  * resilient launcher (bundle, then npx, then version-manager probes), performs
  * the MCP handshake, and registers each MCP tool as a Pi tool under an
- * \`${toolPrefix}\` prefix (Pi has no MCP namespacing; the prefix keeps OK's \`edit\` /
+ * \`${toolPrefix}\` prefix (Pi has no MCP namespacing; the prefix keeps Palimpsest's \`edit\` /
  * \`write\` from shadowing Pi's built-in tools).
  */
 import { spawn } from "node:child_process";
@@ -156,7 +156,7 @@ class PsMcpClient {
         this.send({
           jsonrpc: "2.0",
           id,
-          error: { code: -32601, message: "Method not supported by the OK Pi bridge" },
+          error: { code: -32601, message: "Method not supported by the Palimpsest Pi bridge" },
         });
       }
       return;
@@ -315,7 +315,7 @@ export default function psBridge(pi: {
     }
   }
 
-  async function registerOkTools(): Promise<number> {
+  async function registerPsTools(): Promise<number> {
     const mcp = await ensureClient();
     const listed = await mcp.request("tools/list", {}, { timeoutMs: INIT_TIMEOUT_MS });
     const tools = Array.isArray(listed.tools) ? (listed.tools as McpToolInfo[]) : [];
@@ -357,7 +357,7 @@ export default function psBridge(pi: {
     const cwd = (ctx as { cwd?: string } | undefined)?.cwd;
     if (typeof cwd === "string" && cwd.length > 0) sessionCwd = cwd;
     try {
-      await registerOkTools();
+      await registerPsTools();
     } catch (err) {
       const ui = (ctx as { ui?: { notify?: (m: string, level: string) => void } } | undefined)?.ui;
       try {

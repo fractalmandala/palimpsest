@@ -317,8 +317,8 @@ describe('test-reset with scope=server returns an isolated server to its booted 
     expect(local.binding.patch({ search: { semantic: { enabled: true } } }).ok).toBe(true);
     await pollUntil(() => existsSync(localConfigPath(server)), 15_000, 100, 'the local config');
     local.close();
-    const okignorePath = join(server.contentDir, '.psignore');
-    writeFileSync(okignorePath, 'kept-by-request/\n', 'utf-8');
+    const psignorePath = join(server.contentDir, '.psignore');
+    writeFileSync(psignorePath, 'kept-by-request/\n', 'utf-8');
     await pollUntil(
       () => server.instance.contentFilter.isExcluded('kept-by-request/note.md'),
       15_000,
@@ -333,18 +333,18 @@ describe('test-reset with scope=server returns an isolated server to its booted 
 
     expect(refused.status).toBe(400);
     expect(await refused.json()).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title:
         'reset-psignore cannot be combined with scope=server: a server-scope reset always restores .psignore.',
     });
-    expect(readFileSync(okignorePath, 'utf-8')).toBe('kept-by-request/\n');
+    expect(readFileSync(psignorePath, 'utf-8')).toBe('kept-by-request/\n');
     expect(server.instance.contentFilter.isExcluded('kept-by-request/note.md')).toBe(true);
     expect(existsSync(localConfigPath(server))).toBe(true);
     expect(await semanticSearchEnabled(server)).toBe(true);
 
     expect((await resetServer(server)).status).toBe(200);
 
-    expect(existsSync(okignorePath)).toBe(false);
+    expect(existsSync(psignorePath)).toBe(false);
     expect(server.instance.contentFilter.isExcluded('kept-by-request/note.md')).toBe(false);
     expect(existsSync(localConfigPath(server))).toBe(false);
   }, 60_000);
@@ -376,8 +376,8 @@ describe('test-reset with scope=server returns an isolated server to its booted 
 
   test('an .psignore the next run writes again with the same bytes applies after the reset', async () => {
     const server = await isolatedServer();
-    const okignorePath = join(server.contentDir, '.psignore');
-    writeFileSync(okignorePath, 'seeded-again/\n', 'utf-8');
+    const psignorePath = join(server.contentDir, '.psignore');
+    writeFileSync(psignorePath, 'seeded-again/\n', 'utf-8');
     await pollUntil(
       () => server.instance.contentFilter.isExcluded('seeded-again/note.md'),
       15_000,
@@ -387,7 +387,7 @@ describe('test-reset with scope=server returns an isolated server to its booted 
 
     expect((await resetServer(server)).status).toBe(200);
     expect(server.instance.contentFilter.isExcluded('seeded-again/note.md')).toBe(false);
-    writeFileSync(okignorePath, 'seeded-again/\n', 'utf-8');
+    writeFileSync(psignorePath, 'seeded-again/\n', 'utf-8');
 
     await pollUntil(
       () => server.instance.contentFilter.isExcluded('seeded-again/note.md'),

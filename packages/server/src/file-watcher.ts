@@ -3002,7 +3002,7 @@ export async function handleRawEvents(
 
 let _fwEventsCounterCache: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null = null;
 function _fileWatcherEventsCounter() {
-  _fwEventsCounterCache ||= getMeter().createCounter('ok.file_watcher.events', {
+  _fwEventsCounterCache ||= getMeter().createCounter('ps.file_watcher.events', {
     description: 'Number of file-watcher events classified by kind',
   });
   return _fwEventsCounterCache;
@@ -3010,7 +3010,7 @@ function _fileWatcherEventsCounter() {
 
 let _fwDropsCounterCache: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null = null;
 function _fileWatcherDropsCounter() {
-  _fwDropsCounterCache ||= getMeter().createCounter('ok.file_watcher.drops', {
+  _fwDropsCounterCache ||= getMeter().createCounter('ps.file_watcher.drops', {
     description: 'File-watcher events dropped before dispatch, by bounded reason',
   });
   return _fwDropsCounterCache;

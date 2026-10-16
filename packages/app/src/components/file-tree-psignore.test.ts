@@ -1,35 +1,35 @@
 import ignore from 'ignore';
 import { describe, expect, test } from 'vitest';
-import { buildOkignorePatternFromTarget } from './file-tree-psignore';
+import { buildPsignorePatternFromTarget } from './file-tree-psignore';
 
-describe('buildOkignorePatternFromTarget — file leaves', () => {
+describe('buildPsignorePatternFromTarget — file leaves', () => {
   test('docName + .md extension produces an anchored pattern with the on-disk path', () => {
     expect(
-      buildOkignorePatternFromTarget({ kind: 'file', path: 'drafts/foo', docExt: '.md' }),
+      buildPsignorePatternFromTarget({ kind: 'file', path: 'drafts/foo', docExt: '.md' }),
     ).toBe('/drafts/foo.md');
   });
 
   test('docName + .mdx extension preserves the .mdx on-disk extension', () => {
     expect(
-      buildOkignorePatternFromTarget({ kind: 'file', path: 'docs/page', docExt: '.mdx' }),
+      buildPsignorePatternFromTarget({ kind: 'file', path: 'docs/page', docExt: '.mdx' }),
     ).toBe('/docs/page.mdx');
   });
 
   test('missing docExt defaults to .md', () => {
-    expect(buildOkignorePatternFromTarget({ kind: 'file', path: 'notes/scratch' })).toBe(
+    expect(buildPsignorePatternFromTarget({ kind: 'file', path: 'notes/scratch' })).toBe(
       '/notes/scratch.md',
     );
   });
 
   test('root-level file produces a pattern at the project root', () => {
-    expect(buildOkignorePatternFromTarget({ kind: 'file', path: 'README', docExt: '.md' })).toBe(
+    expect(buildPsignorePatternFromTarget({ kind: 'file', path: 'README', docExt: '.md' })).toBe(
       '/README.md',
     );
   });
 
   test('deeply nested file path round-trips into the pattern', () => {
     expect(
-      buildOkignorePatternFromTarget({
+      buildPsignorePatternFromTarget({
         kind: 'file',
         path: 'projects/2026/q2/plan',
         docExt: '.md',
@@ -39,7 +39,7 @@ describe('buildOkignorePatternFromTarget — file leaves', () => {
 
   test('filename containing a dash and dots survives unchanged', () => {
     expect(
-      buildOkignorePatternFromTarget({
+      buildPsignorePatternFromTarget({
         kind: 'file',
         path: 'my-folder/file.with.dots',
         docExt: '.md',
@@ -48,18 +48,18 @@ describe('buildOkignorePatternFromTarget — file leaves', () => {
   });
 });
 
-describe('buildOkignorePatternFromTarget — folders', () => {
+describe('buildPsignorePatternFromTarget — folders', () => {
   test('top-level folder produces an anchored folder pattern with trailing slash', () => {
-    expect(buildOkignorePatternFromTarget({ kind: 'folder', path: 'drafts' })).toBe('/drafts/');
+    expect(buildPsignorePatternFromTarget({ kind: 'folder', path: 'drafts' })).toBe('/drafts/');
   });
 
   test('nested folder path includes all intermediate segments', () => {
-    expect(buildOkignorePatternFromTarget({ kind: 'folder', path: 'a/b/c' })).toBe('/a/b/c/');
+    expect(buildPsignorePatternFromTarget({ kind: 'folder', path: 'a/b/c' })).toBe('/a/b/c/');
   });
 
   test('folder kind ignores docExt even if supplied (no extension on directories)', () => {
     expect(
-      buildOkignorePatternFromTarget({
+      buildPsignorePatternFromTarget({
         kind: 'folder',
         path: 'logs',
         docExt: '.md',
@@ -68,25 +68,25 @@ describe('buildOkignorePatternFromTarget — folders', () => {
   });
 });
 
-describe('buildOkignorePatternFromTarget — invariants', () => {
+describe('buildPsignorePatternFromTarget — invariants', () => {
   test('output always begins with a leading slash (anchored to project root)', () => {
     expect(
-      buildOkignorePatternFromTarget({ kind: 'file', path: 'foo', docExt: '.md' }).startsWith('/'),
+      buildPsignorePatternFromTarget({ kind: 'file', path: 'foo', docExt: '.md' }).startsWith('/'),
     ).toBe(true);
-    expect(buildOkignorePatternFromTarget({ kind: 'folder', path: 'foo' }).startsWith('/')).toBe(
+    expect(buildPsignorePatternFromTarget({ kind: 'folder', path: 'foo' }).startsWith('/')).toBe(
       true,
     );
   });
 
   test('folder output always ends with a trailing slash', () => {
-    expect(buildOkignorePatternFromTarget({ kind: 'folder', path: 'foo' }).endsWith('/')).toBe(
+    expect(buildPsignorePatternFromTarget({ kind: 'folder', path: 'foo' }).endsWith('/')).toBe(
       true,
     );
   });
 
   test('file output never has a trailing slash', () => {
     expect(
-      buildOkignorePatternFromTarget({ kind: 'file', path: 'foo', docExt: '.md' }).endsWith('/'),
+      buildPsignorePatternFromTarget({ kind: 'file', path: 'foo', docExt: '.md' }).endsWith('/'),
     ).toBe(false);
   });
 
@@ -96,13 +96,13 @@ describe('buildOkignorePatternFromTarget — invariants', () => {
       path: 'drafts/foo',
       docExt: '.md',
     };
-    expect(buildOkignorePatternFromTarget(target)).toBe(buildOkignorePatternFromTarget(target));
+    expect(buildPsignorePatternFromTarget(target)).toBe(buildPsignorePatternFromTarget(target));
   });
 });
 
-describe('buildOkignorePatternFromTarget — glob-metacharacter escaping', () => {
+describe('buildPsignorePatternFromTarget — glob-metacharacter escaping', () => {
   test('filename with [bracket] segment is escaped so the literal file matches', () => {
-    const pattern = buildOkignorePatternFromTarget({
+    const pattern = buildPsignorePatternFromTarget({
       kind: 'file',
       path: 'notes/[draft]',
       docExt: '.md',
@@ -114,7 +114,7 @@ describe('buildOkignorePatternFromTarget — glob-metacharacter escaping', () =>
   });
 
   test('folder name with [bracket] segment is escaped so the literal folder matches', () => {
-    const pattern = buildOkignorePatternFromTarget({
+    const pattern = buildPsignorePatternFromTarget({
       kind: 'folder',
       path: 'projects/[v2]',
     });
@@ -125,7 +125,7 @@ describe('buildOkignorePatternFromTarget — glob-metacharacter escaping', () =>
   });
 
   test('filename with literal asterisk is escaped to avoid matching unrelated files', () => {
-    const pattern = buildOkignorePatternFromTarget({
+    const pattern = buildPsignorePatternFromTarget({
       kind: 'file',
       path: 'foo*bar',
       docExt: '.md',
@@ -136,7 +136,7 @@ describe('buildOkignorePatternFromTarget — glob-metacharacter escaping', () =>
   });
 
   test('filename with embedded backslash is escaped so the literal char matches', () => {
-    const pattern = buildOkignorePatternFromTarget({
+    const pattern = buildPsignorePatternFromTarget({
       kind: 'file',
       path: 'a\\b',
       docExt: '.md',
@@ -147,7 +147,7 @@ describe('buildOkignorePatternFromTarget — glob-metacharacter escaping', () =>
 
   test('plain filenames pass through unchanged (no spurious escaping)', () => {
     expect(
-      buildOkignorePatternFromTarget({ kind: 'file', path: 'drafts/foo', docExt: '.md' }),
+      buildPsignorePatternFromTarget({ kind: 'file', path: 'drafts/foo', docExt: '.md' }),
     ).toBe('/drafts/foo.md');
   });
 });

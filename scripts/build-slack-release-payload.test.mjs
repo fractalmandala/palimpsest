@@ -144,11 +144,11 @@ describe('buildSlackReleasePayload', () => {
     const payload = buildSlackReleasePayload({
       version: '0.38.4',
       releaseUrl: RELEASE_URL,
-      notes: '### Patch Changes\n\n- fix: tear down the `ok ui` sibling',
+      notes: '### Patch Changes\n\n- fix: tear down the `ps ui` sibling',
     });
     const texts = sectionTexts(payload);
     expect(texts.some((t) => t.includes('*Patch Changes*'))).toBe(true);
-    expect(texts.some((t) => t.includes('• fix: tear down the `ok ui` sibling'))).toBe(true);
+    expect(texts.some((t) => t.includes('• fix: tear down the `ps ui` sibling'))).toBe(true);
   });
 
   test('keeps the header and the trailing downloads link', () => {
@@ -195,9 +195,9 @@ describe('buildSlackReleasePayload', () => {
     const notes = [
       '### Patch Changes',
       '',
-      '- fix: tear down the `ok ui` sibling when `ps start` exits via a signal',
+      '- fix: tear down the `ps ui` sibling when `ps start` exits via a signal',
       '',
-      '  `ps start` spawns a detached `ok ui` process to serve the editor shell.',
+      '  `ps start` spawns a detached `ps ui` process to serve the editor shell.',
       '  See [the runbook](https://example.com/runbook) for the **full** story.',
     ].join('\n');
     const payload = buildSlackReleasePayload({

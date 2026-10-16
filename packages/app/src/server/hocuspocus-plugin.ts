@@ -10,7 +10,7 @@ import { psUserHomeDir } from '@palimpsest/core/server';
 import {
   AcpThreadManager,
   buildIngressPolicy,
-  buildOkMcpStdioCommand,
+  buildPsMcpStdioCommand,
   createAssetServeMiddleware,
   createCollaborationHost,
   createServer,
@@ -143,7 +143,7 @@ export function hocuspocusPlugin(): Plugin {
       if (errors.length > 0) throw new AggregateError(errors, 'Hocuspocus Vite teardown failed');
     },
     async configureServer(server) {
-      await attachOkServer(server, { kind: 'dev-server' }, activeRuntimeTeardowns);
+      await attachPsServer(server, { kind: 'dev-server' }, activeRuntimeTeardowns);
     },
   };
 }
@@ -154,7 +154,7 @@ export function prebuiltHocuspocusPlugin(): Plugin {
     name: 'hocuspocus:prebuilt',
     apply: 'serve',
     async configurePreviewServer(server) {
-      const teardown = await attachOkServer(
+      const teardown = await attachPsServer(
         server,
         { kind: 'prebuilt', bundleDir: resolve(server.config.root, server.config.build.outDir) },
         activeRuntimeTeardowns,
@@ -171,7 +171,7 @@ export function prebuiltHocuspocusPlugin(): Plugin {
   };
 }
 
-async function attachOkServer(
+async function attachPsServer(
   server: PsServerHost,
   assetRouting: AssetRouting,
   activeRuntimeTeardowns: RuntimeTeardowns,
@@ -255,7 +255,7 @@ async function attachOkServer(
         getMcpStdioCommand: () => {
           const addr = server.httpServer?.address();
           const port = typeof addr === 'object' && addr !== null ? addr.port : 5173;
-          return buildOkMcpStdioCommand(localOpCliArgs, port, { log: getLogger('acp-threads') });
+          return buildPsMcpStdioCommand(localOpCliArgs, port, { log: getLogger('acp-threads') });
         },
         agentBrowserTools: () =>
           !isTestIsolated &&

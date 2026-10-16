@@ -125,7 +125,7 @@ describe('Linux package native-version guard helpers', () => {
     ],
     [
       'refuses a planted too-new addon beside a compliant one',
-      { 'ok.node': 'GLIBC_2.28', 'new.node': 'GLIBC_2.38' },
+      { 'ps.node': 'GLIBC_2.28', 'new.node': 'GLIBC_2.38' },
       [{ addon: 'new.node', family: 'GLIBC', required: '2.38', maximum: '2.31' }],
     ],
     [

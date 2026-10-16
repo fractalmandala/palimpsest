@@ -306,11 +306,11 @@ describe('runAudit', () => {
 
     expect(code).toBe(1);
     expect(err.join('\n')).toContain('ps start');
-    expect(err.join('\n')).toContain('ok lint');
+    expect(err.join('\n')).toContain('ps lint');
   });
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('no-server guidance names the %s command', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);
@@ -319,7 +319,7 @@ describe('runAudit', () => {
 
     expect(await runAudit(undefined, {}, minimalConfig, dir, dir, io)).toBe(1);
     expect(err.join('\n')).toContain(
-      `Start it with \`${command} start\` (or open OK Desktop) and re-run. For headless lint-only checks, use \`${command} lint\`.`,
+      `Start it with \`${command} start\` (or open Palimpsest Desktop) and re-run. For headless lint-only checks, use \`${command} lint\`.`,
     );
   });
 
@@ -336,7 +336,7 @@ describe('runAudit', () => {
 
   test('preserves the full ProblemDetails object in JSON mode', async () => {
     const problem = {
-      type: 'urn:ok:error:not-found',
+      type: 'urn:ps:error:not-found',
       title: 'Audit scope "missing" was not found. Use an existing file or directory.',
       status: 404,
       instance: 'urn:uuid:ef975a9a-8229-4e36-82a8-2eae23141320',

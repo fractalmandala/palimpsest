@@ -6,13 +6,10 @@ export function absoluteSiteUrl(path: string): string {
   return new URL(path, SITE_URL).href;
 }
 export const SITE_NAME = 'Palimpsest';
-export const TWITTER_HANDLE = '@Palimpsest';
 
 export const GITHUB_URL = 'https://github.com/fractalmandala/palimpsest';
-export const DISCORD_URL = 'https://discord.gg/VRKk2EaGHN';
 export const CHANGELOG_ROUTE = '/docs/changelog';
 export const CHANGELOG_TIMELINE_LIMIT = 30;
-export const X_URL = `https://x.com/${TWITTER_HANDLE.slice(1)}`;
 export const SITE_DESCRIPTION =
   'Beautiful, AI-native markdown editor for humans and agents. Build knowledge bases, LLM wikis, and agent 2nd brains.';
 

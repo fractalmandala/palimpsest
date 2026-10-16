@@ -104,7 +104,7 @@ describe('POST /api/test-rescan-files', () => {
       expect(resp.status).toBe(503);
       expect(resp.headers['Content-Type']).toBe('application/problem+json');
       const body = JSON.parse(resp.body);
-      expect(body.type).toBe('urn:ok:error:file-rescan-not-configured');
+      expect(body.type).toBe('urn:ps:error:file-rescan-not-configured');
       expect(body.title).toBe('Watcher rescan capability is not configured.');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
@@ -126,7 +126,7 @@ describe('POST /api/test-rescan-files', () => {
       expect(resp.status).toBe(404);
       expect(resp.headers['Content-Type']).toBe('application/problem+json');
       const body = JSON.parse(resp.body);
-      expect(body.type).toBe('urn:ok:error:not-found');
+      expect(body.type).toBe('urn:ps:error:not-found');
       expect(body.title).toBe('API endpoint not found.');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
@@ -151,7 +151,7 @@ describe('POST /api/test-rescan-files', () => {
       expect(resp.headers['Content-Type']).toBe('application/problem+json');
       expect(resp.headers.Allow).toBe('POST');
       const body = JSON.parse(resp.body);
-      expect(body.type).toBe('urn:ok:error:method-not-allowed');
+      expect(body.type).toBe('urn:ps:error:method-not-allowed');
       expect(invocations).toBe(0);
     } finally {
       rmSync(projectDir, { recursive: true, force: true });

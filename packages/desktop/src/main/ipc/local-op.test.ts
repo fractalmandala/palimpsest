@@ -28,7 +28,7 @@ const { createLocalOpState, handleAuthRepos, handleAuthStart, handleAuthStatus, 
 
 function makeDeps() {
   return {
-    resolveOkCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
+    resolvePsCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
     logFailure: vi.fn(),
     state: createLocalOpState(),
   };
@@ -78,7 +78,7 @@ describe('handleAuthStatus — coalescing + concurrency cap', () => {
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:auth:status',
+      channel: 'ps:local-op:auth:status',
       reason: 'too many concurrent auth status queries',
       handler: 'handleAuthStatus',
     });
@@ -138,7 +138,7 @@ describe('handleAuthRepos — coalescing + concurrency cap', () => {
     expect(deps.logFailure).toHaveBeenCalledTimes(1);
     expect(deps.logFailure).toHaveBeenCalledWith({
       event: 'ipc.error',
-      channel: 'ok:local-op:auth:repos',
+      channel: 'ps:local-op:auth:repos',
       reason: 'too many concurrent auth repos queries',
       handler: 'handleAuthRepos',
     });
@@ -156,7 +156,7 @@ describe('handleAuthStart on a dev build without its workspace CLI', () => {
     deviceFlowSpawn.mockClear();
     const deps = {
       ...makeDeps(),
-      resolveOkCli: () => PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
+      resolvePsCli: () => PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
     };
     const sender = { send: vi.fn(), isDestroyed: () => false };
     expect(handleAuthStart(deps, sender)).toEqual({ ok: false, error: DEV_FALLBACK_CLI_REFUSAL });
@@ -168,7 +168,7 @@ describe('handleAuthStart on a dev build without its workspace CLI', () => {
     deviceFlowSpawn.mockClear();
     const deps = {
       ...makeDeps(),
-      resolveOkCli: () =>
+      resolvePsCli: () =>
         PsCliCommand.resolve({
           host: { cliArgs: ['node', '/src/cli.mjs'] },
           env: { PS_CHANNEL: 'dev' },
@@ -185,7 +185,7 @@ describe('handleCloneStart on a dev build without its workspace CLI', () => {
     cloneSpawn.mockClear();
     const deps = {
       ...makeDeps(),
-      resolveOkCli: () => PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
+      resolvePsCli: () => PsCliCommand.resolve({ env: { PS_CHANNEL: 'dev' } }),
     };
     const sender = { send: vi.fn(), isDestroyed: () => false };
     expect(

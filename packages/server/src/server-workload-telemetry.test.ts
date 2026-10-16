@@ -17,12 +17,12 @@ import {
   registerPersistenceQueueDepthProvider,
 } from './server-workload-telemetry.ts';
 
-const DOCS_METRIC = 'ok.server.docs.loaded';
-const QUEUE_METRIC = 'ok.persistence.queue.depth';
-const BACKLOG_METRIC = 'ok.bridge.drain_backlog';
-const CONNECTIONS_METRIC = 'ok.ws.connections.active';
-const SESSIONS_ACTIVE_METRIC = 'ok.sessions.active';
-const SESSIONS_LIMIT_METRIC = 'ok.sessions.limit';
+const DOCS_METRIC = 'ps.server.docs.loaded';
+const QUEUE_METRIC = 'ps.persistence.queue.depth';
+const BACKLOG_METRIC = 'ps.bridge.drain_backlog';
+const CONNECTIONS_METRIC = 'ps.ws.connections.active';
+const SESSIONS_ACTIVE_METRIC = 'ps.sessions.active';
+const SESSIONS_LIMIT_METRIC = 'ps.sessions.limit';
 
 describe('server workload telemetry — no-op meter (OTel disabled)', () => {
   test('install and register/unregister are safe with the default no-op meter', () => {
@@ -91,7 +91,7 @@ describe('server workload telemetry — registered meter', () => {
     return out;
   }
 
-  test('ok.server.docs.loaded sums registered providers and drops unregistered ones', async () => {
+  test('ps.server.docs.loaded sums registered providers and drops unregistered ones', async () => {
     const un1 = registerLoadedDocsProvider(() => 4);
     const un2 = registerLoadedDocsProvider(() => 2);
     let points = await collect(DOCS_METRIC);
@@ -106,7 +106,7 @@ describe('server workload telemetry — registered meter', () => {
     expect(points[0].value).toBe(0);
   });
 
-  test('ok.persistence.queue.depth reports both bounded queue labels', async () => {
+  test('ps.persistence.queue.depth reports both bounded queue labels', async () => {
     registerPersistenceQueueDepthProvider(() => ({ branchDeferred: 3, quiescenceDeferred: 1 }));
     const points = await collect(QUEUE_METRIC);
     const byQueue = new Map(points.map((p) => [p.attributes.queue, p.value]));
@@ -115,7 +115,7 @@ describe('server workload telemetry — registered meter', () => {
     expect(byQueue.get('quiescence_deferred')).toBe(1);
   });
 
-  test('ok.bridge.drain_backlog counts only probes reporting dirty', async () => {
+  test('ps.bridge.drain_backlog counts only probes reporting dirty', async () => {
     let dirtyA = false;
     registerBridgeDirtyProbe(() => dirtyA);
     registerBridgeDirtyProbe(() => true);
@@ -136,7 +136,7 @@ describe('server workload telemetry — registered meter', () => {
     expect(points[0].value).toBe(5);
   });
 
-  test('ok.ws.connections.active reports both bounded kind labels and drops unregistered providers', async () => {
+  test('ps.ws.connections.active reports both bounded kind labels and drops unregistered providers', async () => {
     const un = registerConnectionCountsProvider(() => ({ websocket: 3, direct: 5 }));
     registerConnectionCountsProvider(() => ({ websocket: 1, direct: 0 }));
     let points = await collect(CONNECTIONS_METRIC);
@@ -152,7 +152,7 @@ describe('server workload telemetry — registered meter', () => {
     expect(byKind.get('direct')).toBe(0);
   });
 
-  test('ok.sessions.active and ok.sessions.limit track occupancy against the cap', async () => {
+  test('ps.sessions.active and ok.sessions.limit track occupancy against the cap', async () => {
     let active = 2;
     registerAgentSessionCountsProvider(() => ({ active, limit: 256 }));
     let activePoints = await collect(SESSIONS_ACTIVE_METRIC);

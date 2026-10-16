@@ -7,7 +7,7 @@ afterEach(() => {
 
 describe('channel CLI copy', () => {
   test('names Stable without a desktop bridge', () => {
-    expect(psCliCommandName()).toBe('ok');
+    expect(psCliCommandName()).toBe('ps');
     expect(psUserHomeLabel('secrets.yml')).toBe('~/.ps/secrets.yml');
   });
 
@@ -19,6 +19,6 @@ describe('channel CLI copy', () => {
 
   test('falls back to Stable for a command no channel owns', () => {
     vi.stubGlobal('window', { psDesktop: { cliCommandName: 'rm -rf' } });
-    expect(psCliCommandName()).toBe('ok');
+    expect(psCliCommandName()).toBe('ps');
   });
 });

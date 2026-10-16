@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import {
   FrontmatterPluginSection,
   MarkdownlintPluginSection,
-  OkfPluginSection,
+  PsfPluginSection,
 } from './LintingSection';
 import { LINT_PLUGIN_META, type LintPluginMeta } from './lint-plugin-meta';
 
@@ -11,7 +11,7 @@ type PluginSection = () => ReactNode;
 const SECTIONS: Record<LintPluginMeta['id'], PluginSection> = {
   markdownlint: MarkdownlintPluginSection,
   frontmatter: FrontmatterPluginSection,
-  psf: OkfPluginSection,
+  psf: PsfPluginSection,
 };
 
 export interface LintPluginUi extends LintPluginMeta {

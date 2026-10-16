@@ -203,7 +203,7 @@ test.each(['same-storage', 'plain-collision'])(
     expect(response.status, response.body).toBe(409);
     const problem = JSON.parse(response.body);
     expect(problem).toMatchObject({
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       moveState: 'nothing-written',
       detail:
         refusal === 'same-storage'

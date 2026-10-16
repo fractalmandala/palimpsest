@@ -113,7 +113,7 @@ describe('conflict-content working-tree ours-read errno discrimination', () => {
       const captured = await dispatchConflictContent(projectDir);
       expect(captured.status).toBe(500);
       expect((JSON.parse(captured.body) as { type?: string }).type).toBe(
-        'urn:ok:error:internal-server-error',
+        'urn:ps:error:internal-server-error',
       );
     } finally {
       rmSync(projectDir, { recursive: true, force: true });

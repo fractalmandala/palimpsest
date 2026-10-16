@@ -38,11 +38,11 @@ describe('installed-agents envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 
-  test('cross-origin Origin emits 403 urn:ok:error:invalid-origin', async () => {
+  test('cross-origin Origin emits 403 urn:ps:error:invalid-origin', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/installed-agents`, {
       headers: { Origin: 'https://evil.example.com' },
     });
@@ -52,7 +52,7 @@ describe('installed-agents envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-origin');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-origin');
     }
   });
 });

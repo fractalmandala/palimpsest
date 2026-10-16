@@ -136,13 +136,13 @@ describe('the remediation names the running channel CLI', () => {
   test('Stable keeps its exact ps init lines', () => {
     vi.stubEnv('PS_CHANNEL', 'stable');
     expect(new HomeProjectRootError('/Users/x').message).toBe(
-      `Refusing to set up an Palimpsest project in your home directory (/Users/x).\n` +
+      `Refusing to set up a Palimpsest project in your home directory (/Users/x).\n` +
         `  A project here would run 'git init' in your home directory and write project config\n` +
         `  and skills into your editors' user-global directories (~/.cursor, ~/.codex, ~/.claude).\n` +
         `  Make a folder for this project, then run 'ps init' inside it.`,
     );
     expect(new FilesystemRootProjectError('/').message).toBe(
-      `Refusing to set up an Palimpsest project at the top of a drive (/).\n` +
+      `Refusing to set up a Palimpsest project at the top of a drive (/).\n` +
         `  A project here would scan every file on the drive and run 'git init' at its root.\n` +
         `  Make a folder for this project, then run 'ps init' inside it.`,
     );

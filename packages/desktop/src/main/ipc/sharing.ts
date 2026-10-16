@@ -1,10 +1,10 @@
 import {
-  addOkPathsToGitExclude,
-  getExcludedOkPaths,
-  getOkArtifactPaths,
-  probeTrackedOkPaths,
+  addPsPathsToGitExclude,
+  getExcludedPsPaths,
+  getPsArtifactPaths,
+  probeTrackedPsPaths,
   readSharingMode,
-  removeOkPathsFromGitExclude,
+  removePsPathsFromGitExclude,
   type SharingMode,
 } from '@palimpsest/cli';
 
@@ -26,10 +26,10 @@ export type SharingSetModeResult =
 export function handleSharingStatus(projectPath: string): SharingStatusResult {
   try {
     const mode = readSharingMode(projectPath);
-    const excluded = [...getExcludedOkPaths(projectPath)];
-    const trackedUpstream = probeTrackedOkPaths(
+    const excluded = [...getExcludedPsPaths(projectPath)];
+    const trackedUpstream = probeTrackedPsPaths(
       projectPath,
-      getOkArtifactPaths(projectPath),
+      getPsArtifactPaths(projectPath),
     ).tracked;
     return { kind: 'status', mode, excluded, trackedUpstream };
   } catch {
@@ -46,9 +46,9 @@ export function handleSharingSetMode(
   projectPath: string,
   mode: 'shared' | 'local-only',
 ): SharingSetModeResult {
-  const paths = getOkArtifactPaths(projectPath);
+  const paths = getPsArtifactPaths(projectPath);
   if (mode === 'local-only') {
-    const result = addOkPathsToGitExclude(projectPath, paths);
+    const result = addPsPathsToGitExclude(projectPath, paths);
     if (result.kind === 'refused-tracked') {
       return {
         kind: 'refused-tracked',
@@ -61,7 +61,7 @@ export function handleSharingSetMode(
     }
     return { kind: 'applied', mode: readSharingMode(projectPath) };
   }
-  const result = removeOkPathsFromGitExclude(projectPath, paths);
+  const result = removePsPathsFromGitExclude(projectPath, paths);
   if (result.kind === 'no-exclude') {
     return { kind: 'no-exclude', reason: result.reason };
   }

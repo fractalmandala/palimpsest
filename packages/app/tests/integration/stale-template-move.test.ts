@@ -217,7 +217,7 @@ async function startTemplateMoveScenario(
   if (metadataChange === 'refused') {
     expect(response.status).toBe(400);
     expect(responseBody).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       detail: 'TEMPLATE_TITLE_REQUIRED',
     });
   } else {

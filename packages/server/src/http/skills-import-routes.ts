@@ -90,7 +90,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
       let cleanup: () => void = () => {};
       try {
         if (!projectDir) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project root resolved.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project root resolved.', {
             handler: 'skill-import',
             detail: 'NO_PROJECT_ROOT',
           });
@@ -101,7 +101,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skill-import',
           });
           return;
@@ -127,7 +127,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 'Unrecognized import source.',
                 {
                   handler: 'skill-import',
@@ -143,7 +143,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
             ref = fetched.ref;
             const dirs = discoverSkillDirs(fetched.dir);
             if (dirs.length === 0) {
-              errorResponse(res, 404, 'urn:ok:error:not-found', 'No SKILL.md found in source.', {
+              errorResponse(res, 404, 'urn:ps:error:not-found', 'No SKILL.md found in source.', {
                 handler: 'skill-import',
               });
               return;
@@ -155,7 +155,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
                 dirs.find((d) => readSkillDirMeta(d.dir)?.name === selectedSkill) ??
                 dirs.find((d) => d.name === RENAMED_PACK_SKILLS[selectedSkill]);
               if (!found) {
-                errorResponse(res, 404, 'urn:ok:error:not-found', 'Named skill not in source.', {
+                errorResponse(res, 404, 'urn:ps:error:not-found', 'Named skill not in source.', {
                   handler: 'skill-import',
                   detail: `--skill "${selectedSkill}" not among: ${dirs.map((d) => d.name).join(', ')}.`,
                 });
@@ -166,7 +166,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 'Source has multiple skills; pass `skill` to choose one.',
                 { handler: 'skill-import', detail: dirs.map((d) => d.name).join(', ') },
               );
@@ -178,7 +178,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
             publisher = skillsSh?.publisher ?? publisherFromSource(resolvedSource);
           } catch (e) {
             if (e instanceof SkillFetchError) {
-              errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not fetch source.', {
+              errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not fetch source.', {
                 handler: 'skill-import',
                 cause: e,
               });
@@ -189,7 +189,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         }
 
         if (!acquiredDir) {
-          errorResponse(res, 422, 'urn:ok:error:invalid-request', 'Source has no readable skill.', {
+          errorResponse(res, 422, 'urn:ps:error:invalid-request', 'Source has no readable skill.', {
             handler: 'skill-import',
           });
           return;
@@ -220,7 +220,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
 
         respondSkillImport(res, outcome);
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to import skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to import skill.', {
           handler: 'skill-import',
           cause: e,
         });
@@ -237,7 +237,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
       let cleanup: () => void = () => {};
       try {
         if (!projectDir) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project root resolved.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project root resolved.', {
             handler: 'skills-import-bulk',
             detail: 'NO_PROJECT_ROOT',
           });
@@ -248,7 +248,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'skills-import-bulk',
           });
           return;
@@ -266,7 +266,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           resolvedSourceForReport = resolvedSource;
           const spec = skillsSh?.spec ?? parseSource(resolvedSource);
           if (!spec) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unrecognized import source.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized import source.', {
               handler: 'skills-import-bulk',
               detail:
                 'Expected owner/repo, a git URL, a website source, a local path, or a skills.sh URL.',
@@ -286,7 +286,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           }
         } catch (e) {
           if (e instanceof SkillFetchError) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not fetch source.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not fetch source.', {
               handler: 'skills-import-bulk',
               cause: e,
             });
@@ -295,7 +295,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           throw e;
         }
         if (siteSpec === null && dirs.length === 0) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'No SKILL.md found in source.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'No SKILL.md found in source.', {
             handler: 'skills-import-bulk',
           });
           return;
@@ -416,7 +416,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           { handler: 'skills-import-bulk' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to import skills.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to import skills.', {
           handler: 'skills-import-bulk',
           cause: e,
         });
@@ -577,14 +577,14 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
     };
     try {
       if (!projectDir) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project root resolved.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project root resolved.', {
           handler: 'skill-upload',
           detail: 'NO_PROJECT_ROOT',
         });
         return;
       }
       if ((req.method ?? '').toUpperCase() !== 'POST') {
-        errorResponse(res, 405, 'urn:ok:error:invalid-request', 'Use POST to upload a skill.', {
+        errorResponse(res, 405, 'urn:ps:error:invalid-request', 'Use POST to upload a skill.', {
           handler: 'skill-upload',
         });
         return;
@@ -605,7 +605,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         getPrincipal,
       );
       if (actor.kind === 'invalid-summary') {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
           handler: 'skill-upload',
         });
         return;
@@ -615,14 +615,14 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
       try {
         parts = await readSkillUploadParts(req);
       } catch (e) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not read the upload.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not read the upload.', {
           handler: 'skill-upload',
           cause: e,
         });
         return;
       }
       if (parts.length === 0) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No files uploaded.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No files uploaded.', {
           handler: 'skill-upload',
         });
         return;
@@ -634,7 +634,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         try {
           await unzipBufferToDir(single.data, tmp);
         } catch (e) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not unpack the archive.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not unpack the archive.', {
             handler: 'skill-upload',
             cause: e,
           });
@@ -644,7 +644,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         for (const part of parts) {
           const abs = resolveUploadPath(tmp, part.relPath);
           if (!abs) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unsafe file path in upload.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unsafe file path in upload.', {
               handler: 'skill-upload',
               detail: part.relPath,
             });
@@ -657,7 +657,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
 
       const dirs = discoverSkillDirs(tmp);
       if (dirs.length === 0) {
-        errorResponse(res, 404, 'urn:ok:error:not-found', 'No SKILL.md found in the upload.', {
+        errorResponse(res, 404, 'urn:ps:error:not-found', 'No SKILL.md found in the upload.', {
           handler: 'skill-upload',
         });
         return;
@@ -666,7 +666,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'Upload contains multiple skills; upload one at a time.',
           { handler: 'skill-upload', detail: dirs.map((d) => d.name).join(', ') },
         );
@@ -684,7 +684,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
         }),
       );
     } catch (e) {
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to upload skill.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to upload skill.', {
         handler: 'skill-upload',
         cause: e,
       });

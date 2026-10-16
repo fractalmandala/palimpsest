@@ -21,7 +21,7 @@ afterEach(() => {
 
 describe('skills import without a running server', () => {
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: names %s start as the remedy', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

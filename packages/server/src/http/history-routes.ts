@@ -26,14 +26,14 @@ export interface HistoryRouteDeps {
   log: PinoLogger;
   shadowRef: ShadowRef | undefined;
   flushGitCommit: (() => Promise<void>) | undefined;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   getCurrentBranch: (() => string | null) | undefined;
   validateFolderRel: (
     raw: string,
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ok' | 'ps-and-templates',
+    components: 'ps' \| 'ps-and-templates',
   ) => { folderRel: string; resolvedContentDir: string } | null;
   safeDocPath: (docName: string, contentRoot: string) => { path: string } | { error: string };
   docTreePathCandidates: (docName: string, contentRoot: string) => readonly string[];
@@ -50,7 +50,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
     log,
     shadowRef,
     flushGitCommit,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     getCurrentBranch,
     validateFolderRel,
     safeDocPath,
@@ -67,7 +67,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
         errorResponse(
           res,
           503,
-          'urn:ok:error:shadow-not-configured',
+          'urn:ps:error:shadow-not-configured',
           'Shadow repo not configured.',
           { handler: 'history' },
         );
@@ -77,7 +77,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
       try {
         const flushStart = performance.now();
         await flushGitCommit?.();
-        await commitOkArtifactWrite('history-read');
+        await commitPsArtifactWrite('history-read');
         const flushMs = performance.now() - flushStart;
         if (flushMs > 1000) {
           log.warn({ durationMs: Math.round(flushMs) }, '[history] pre-read commit flush slow');
@@ -94,7 +94,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'A docName or folder query parameter is required.',
           { handler: 'history' },
         );
@@ -102,14 +102,14 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
       }
 
       if (!isValidBranchName(branch)) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid branch name.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid branch name.', {
           handler: 'history',
         });
         return;
       }
 
       if (folderParam !== null && !docName) {
-        const validated = validateFolderRel(folderParam, res, 'folder', 'history', 'ok');
+        const validated = validateFolderRel(folderParam, res, 'folder', 'history', 'ps');
         if (!validated) return;
         const rawFolderLimit = Number(url.searchParams.get('limit') ?? '50');
         const folderLimit = Math.min(200, Number.isFinite(rawFolderLimit) ? rawFolderLimit : 50);
@@ -132,7 +132,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
       const resolvedContentRoot = contentRoot ?? '.';
       const docPathResult = safeDocPath(docName, resolvedContentRoot);
       if ('error' in docPathResult) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', docPathResult.error, {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', docPathResult.error, {
           handler: 'history',
         });
         return;
@@ -178,7 +178,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
 
         successResponse(res, 200, HistorySuccessSchema, { ...result }, { handler: 'history' });
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read history.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read history.', {
           handler: 'history',
           cause: e,
         });
@@ -193,7 +193,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
     sha: string,
   ): Promise<void> {
     if (req.method !== 'GET') {
-      errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+      errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
         handler: 'history-version',
         extraHeaders: { Allow: 'GET' },
       });
@@ -202,7 +202,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
 
     const shadow = shadowRef?.current;
     if (!shadow) {
-      errorResponse(res, 503, 'urn:ok:error:shadow-not-configured', 'Shadow repo not configured.', {
+      errorResponse(res, 503, 'urn:ps:error:shadow-not-configured', 'Shadow repo not configured.', {
         handler: 'history-version',
       });
       return;
@@ -214,7 +214,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
     const resolvedContentRoot = contentRoot ?? '.';
     const pathResult = safeDocPath(docName, resolvedContentRoot);
     if ('error' in pathResult) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', pathResult.error, {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', pathResult.error, {
         handler: 'history-version',
       });
       return;
@@ -223,7 +223,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
     const branch = getCurrentBranch?.() ?? 'main';
 
     if (!/^[0-9a-f]{40}$/i.test(sha)) {
-      errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid commit SHA.', {
+      errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid commit SHA.', {
         handler: 'history-version',
       });
       return;
@@ -231,7 +231,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
 
     try {
       if (pendingRenameLogEntries(getOrLoadRenameLogIndex(shadow.gitDir)).size > 0) {
-        await commitOkArtifactWrite('history-version-read');
+        await commitPsArtifactWrite('history-version-read');
       }
       const renameLogIndex = getOrLoadRenameLogIndex(shadow.gitDir);
       const ancestorCache = createAncestorShaSetCache();
@@ -248,7 +248,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
         errorResponse(
           res,
           404,
-          'urn:ok:error:doc-not-found',
+          'urn:ps:error:doc-not-found',
           'Document did not exist at this version.',
           { handler: 'history-version' },
         );
@@ -268,7 +268,7 @@ export function createHistoryRoutes(deps: HistoryRouteDeps): HistoryRoutes {
         { handler: 'history-version' },
       );
     } catch (e) {
-      errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+      errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
         handler: 'history-version',
         cause: e,
       });

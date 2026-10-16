@@ -23,8 +23,8 @@ afterEach(() => {
 
 describe('bootServer in a linked git worktree (FR2)', () => {
   test('lazy-inits shadow at <repo>/.git/worktrees/<name>/ok/HEAD on first boot', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: true });
-    const expectedShadowHead = resolve(handle.worktreeGitdir, 'ok/HEAD');
+    handle = createLinkedWorktree({ seedPsScaffold: true });
+    const expectedShadowHead = resolve(handle.worktreeGitdir, 'ps/HEAD');
     expect(existsSync(expectedShadowHead)).toBe(false);
 
     const booted = await bootServer({
@@ -47,8 +47,8 @@ describe('bootServer in a linked git worktree (FR2)', () => {
 });
 
 describe('bootServer pre-listen check in a linked worktree (FR3)', () => {
-  test('State A: rejects with MissingOkConfigError when .ps/ is absent', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: false });
+  test('State A: rejects with MissingPsConfigError when .ps/ is absent', async () => {
+    handle = createLinkedWorktree({ seedPsScaffold: false });
 
     let caught: unknown;
     try {
@@ -66,14 +66,14 @@ describe('bootServer pre-listen check in a linked worktree (FR3)', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { name?: string; kind?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('okdir');
-    const shadowDir = resolve(handle.worktreeGitdir, 'ok');
+    const shadowDir = resolve(handle.worktreeGitdir, 'ps');
     expect(existsSync(shadowDir)).toBe(false);
   });
 
-  test('State B: rejects with MissingOkConfigError when .ps/config.yml is missing', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: false });
+  test('State B: rejects with MissingPsConfigError when .ps/config.yml is missing', async () => {
+    handle = createLinkedWorktree({ seedPsScaffold: false });
     mkdirSync(resolve(handle.worktreePath, '.ps'), { recursive: true });
 
     let caught: unknown;
@@ -92,14 +92,14 @@ describe('bootServer pre-listen check in a linked worktree (FR3)', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { name?: string; kind?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('config');
-    const shadowDir = resolve(handle.worktreeGitdir, 'ok');
+    const shadowDir = resolve(handle.worktreeGitdir, 'ps');
     expect(existsSync(shadowDir)).toBe(false);
   });
 
   test('State C: proceeds with one-time stderr warning when only .ps/.gitignore is missing', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: false });
+    handle = createLinkedWorktree({ seedPsScaffold: false });
     const psDir = resolve(handle.worktreePath, '.ps');
     mkdirSync(psDir, { recursive: true });
     writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -154,7 +154,7 @@ describe('bootServer ok.boot span attributes against a real linked worktree', ()
   });
 
   test('linked worktree boot emits ok.boot span with worktree.kind=linked + bounded gitdir', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: true });
+    handle = createLinkedWorktree({ seedPsScaffold: true });
 
     const booted = await bootServer({
       host: '127.0.0.1',
@@ -167,10 +167,10 @@ describe('bootServer ok.boot span attributes against a real linked worktree', ()
     });
     try {
       const spans = exporter?.getFinishedSpans() ?? [];
-      const bootSpan = spans.find((s) => s.name === 'ok.boot');
+      const bootSpan = spans.find((s) => s.name === 'ps.boot');
       expect(bootSpan).toBeDefined();
-      expect(bootSpan?.attributes['ok.worktree.kind']).toBe('linked');
-      const gitdirAttr = bootSpan?.attributes['ok.worktree.gitdir'];
+      expect(bootSpan?.attributes['ps.worktree.kind']).toBe('linked');
+      const gitdirAttr = bootSpan?.attributes['ps.worktree.gitdir'];
       expect(typeof gitdirAttr).toBe('string');
       expect((gitdirAttr as string).split('/').filter(Boolean).length).toBeLessThanOrEqual(3);
     } finally {
@@ -207,7 +207,7 @@ describe('bootServer pre-listen check on main worktree (FR3)', () => {
     await rm(mainTmp, { recursive: true, force: true });
   });
 
-  test('State A: rejects with MissingOkConfigError when .ps/ is absent', async () => {
+  test('State A: rejects with MissingPsConfigError when .ps/ is absent', async () => {
     const contentDir = mkdtempSync(resolve(mainTmp, 'state-a-'));
 
     let caught: unknown;
@@ -226,7 +226,7 @@ describe('bootServer pre-listen check on main worktree (FR3)', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { name?: string; kind?: string; projectDir?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('okdir');
     expect(e.projectDir).toBe(contentDir);
     expect(e.message).toContain('Palimpsest config not found at .ps/config.yml');
@@ -234,7 +234,7 @@ describe('bootServer pre-listen check on main worktree (FR3)', () => {
     expect(existsSync(resolve(contentDir, '.git/ok'))).toBe(false);
   });
 
-  test('State B: rejects with MissingOkConfigError when .ps/ exists but config.yml is missing', async () => {
+  test('State B: rejects with MissingPsConfigError when .ps/ exists but config.yml is missing', async () => {
     const contentDir = mkdtempSync(resolve(mainTmp, 'state-b-'));
     mkdirSync(resolve(contentDir, '.ps'), { recursive: true });
 
@@ -254,7 +254,7 @@ describe('bootServer pre-listen check on main worktree (FR3)', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { name?: string; kind?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('config');
     expect(e.message).toContain('Palimpsest config not found at .ps/config.yml');
     expect(existsSync(resolve(contentDir, '.git/ok'))).toBe(false);

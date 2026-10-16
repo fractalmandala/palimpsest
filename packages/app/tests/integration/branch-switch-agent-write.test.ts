@@ -219,7 +219,7 @@ describe('agent writes during a git branch switch', () => {
 
       expect(response.status).toBe(409);
       expect((response.body as { type?: string } | null)?.type).toBe(
-        'urn:ok:error:branch-switched',
+        'urn:ps:error:branch-switched',
       );
       expect(ackedBeforeSwitch).toBe(false);
       expect(readNotes(contentDir)).not.toContain('Appended before the switch.');

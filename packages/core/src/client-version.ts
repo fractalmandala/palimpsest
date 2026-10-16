@@ -5,7 +5,7 @@ export type ClientSurface = 'desktop' | 'browser' | `embedded:${NonNullable<Embe
 
 export type ClientKind = ClientSurface | 'mcp' | 'desktop-main' | 'cli';
 
-export const CLIENT_SURFACE_ATTRIBUTE = 'ok.client.surface';
+export const CLIENT_SURFACE_ATTRIBUTE = 'ps.client.surface';
 
 export const CLIENT_RUNTIME_VERSION_FALLBACK = '0.0.0-unknown';
 

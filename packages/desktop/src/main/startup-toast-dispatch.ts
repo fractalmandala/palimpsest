@@ -1,7 +1,7 @@
 import type { EventChannels } from '../shared/ipc-events.ts';
 import { sendToRenderer } from '../shared/ipc-send.ts';
 
-export type StartupToastPayload = EventChannels['ok:onboarding:toast']['payload'];
+export type StartupToastPayload = EventChannels['ps:onboarding:toast']['payload'];
 
 interface StartupToastWebContents {
   isLoading(): boolean;
@@ -39,7 +39,7 @@ export function dispatchStartupToastAcrossLoads(
   const deliver = (wc: StartupToastWebContents): void => {
     if (wc.isDestroyed()) return;
     try {
-      sendToRenderer(wc, 'ok:onboarding:toast', payload);
+      sendToRenderer(wc, 'ps:onboarding:toast', payload);
       deliveries += 1;
     } catch (err) {
       deps.warn('[main] startup reclaim toast send failed', { err });

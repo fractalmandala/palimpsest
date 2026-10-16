@@ -253,7 +253,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
         const res = await postJson(baseUrl, path, body);
         expect(res.status, path).toBe(409);
         expect(await res.json(), path).toMatchObject({
-          type: 'urn:ok:error:non-github-origin',
+          type: 'urn:ps:error:non-github-origin',
           host: 'git.example.internal',
           detail: expect.stringContaining('git.example.internal'),
         });
@@ -474,7 +474,7 @@ describe('auth-login stream displacement (a second start orphans the first clien
     expect(terminal).toMatchObject({
       type: 'error',
       problem: {
-        type: 'urn:ok:error:concurrent-operation',
+        type: 'urn:ps:error:concurrent-operation',
         status: 409,
         title: 'Sign-in was replaced by a newer sign-in attempt.',
       },
@@ -575,7 +575,7 @@ describe('POST /api/local-op/auth/token', () => {
 
     expect(res.status).toBe(400);
     expect(await res.json()).toMatchObject({
-      type: 'urn:ok:error:auth-failed',
+      type: 'urn:ps:error:auth-failed',
       title: 'Could not store the token for ghes.test',
     });
   });
@@ -589,7 +589,7 @@ describe('POST /api/local-op/auth/token', () => {
     });
 
     expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ type: 'urn:ok:error:invalid-request' });
+    expect(await res.json()).toMatchObject({ type: 'urn:ps:error:invalid-request' });
   });
 
   test('rejects a GET with 405', async () => {

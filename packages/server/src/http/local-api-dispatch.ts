@@ -151,7 +151,7 @@ export function createLocalApiDispatch(opts: CreateLocalApiDispatchOptions): Loc
           errorResponse(
             res as unknown as ServerResponse,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Internal server error.',
             { handler: pathname, cause: err },
           );

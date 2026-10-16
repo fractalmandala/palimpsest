@@ -380,7 +380,7 @@ describe('GET /api/pages', () => {
 
       expect(result.status).toBe(405);
       const body = JSON.parse(result.body) as Record<string, unknown>;
-      expect(body.type).toBe('urn:ok:error:method-not-allowed');
+      expect(body.type).toBe('urn:ps:error:method-not-allowed');
       expect(body.title).toBe('Method not allowed.');
     } finally {
       rmSync(dir, { recursive: true, force: true });

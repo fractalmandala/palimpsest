@@ -176,7 +176,7 @@ describe('createAssetServeMiddleware', () => {
       const { res, captured } = makeRes();
       middleware(makeReq('/photo.png', 'evil.example'), res, () => {});
       expect(captured.status).toBe(403);
-      expect(JSON.parse(captured.body).type).toBe('urn:ok:error:host-not-allowed');
+      expect(JSON.parse(captured.body).type).toBe('urn:ps:error:host-not-allowed');
       expect(sirvInvoked).toBe(false);
       expect(captured.headers['Content-Disposition']).toBeUndefined();
     });
@@ -186,7 +186,7 @@ describe('createAssetServeMiddleware', () => {
       const { res, captured } = makeRes();
       middleware(makeReq('/notes.md', 'evil.example'), res, () => {});
       expect(captured.status).toBe(403);
-      expect(JSON.parse(captured.body).type).toBe('urn:ok:error:host-not-allowed');
+      expect(JSON.parse(captured.body).type).toBe('urn:ps:error:host-not-allowed');
     });
 
     test('a non-loopback TCP peer on a servable path is refused with loopback-required', () => {
@@ -203,7 +203,7 @@ describe('createAssetServeMiddleware', () => {
       };
       middleware(req, res, () => {});
       expect(captured.status).toBe(403);
-      expect(JSON.parse(captured.body).type).toBe('urn:ok:error:loopback-required');
+      expect(JSON.parse(captured.body).type).toBe('urn:ps:error:loopback-required');
       expect(sirvInvoked).toBe(false);
     });
 

@@ -36,7 +36,7 @@ function emitSettled(opts: AttachOpts, state: BurstState): void {
   const burstStart = state.pendingBurstStart;
   if (burstStart === null || state.charsTyped === 0) return;
   const burstDurationMs = Math.max(0, performance.now() - burstStart);
-  mark('ok/typing/burst-settled', {
+  mark('ps/typing/burst-settled', {
     docName: opts.docName,
     mountId: opts.mountId,
     mode: opts.mode,
@@ -45,7 +45,7 @@ function emitSettled(opts: AttachOpts, state: BurstState): void {
     burstDurationMs,
   });
   mark.histogram(
-    'ok/typing/burst-total-ms',
+    'ps/typing/burst-total-ms',
     { mode: opts.mode, docName: opts.docName },
     burstDurationMs,
   );

@@ -140,7 +140,7 @@ describe('fan-in gate', () => {
 
   test('every descendant completed and resolvable notifies with the coverage set', () => {
     const r = evaluate({
-      ticket: node('PRD-7394', 'started', ['Bug', 'ok:intake']),
+      ticket: node('PRD-7394', 'started', ['Bug', 'ps:intake']),
       descendants: [node('PRD-7398', 'completed'), node('PRD-7403', 'completed', [])],
       resolveVersion: versionsFrom({ 'PRD-7398': 'v0.35.2', 'PRD-7403': 'v0.36.0' }),
     });
@@ -170,7 +170,7 @@ describe('fan-in gate', () => {
 
   test('a ticket with no children is evaluated alone rather than failing', () => {
     const r = evaluate({
-      ticket: node('PRD-7539', 'completed', ['Bug', 'ok:platform']),
+      ticket: node('PRD-7539', 'completed', ['Bug', 'ps:platform']),
       descendants: [],
       resolveVersion: versionsFrom({ 'PRD-7539': 'v0.36.0' }),
     });
@@ -192,7 +192,7 @@ describe('fan-in gate', () => {
 
   test('an open unlabelled descendant withholds, which gating on the Bug label would have missed', () => {
     const r = evaluate({
-      ticket: node('PRD-7394', 'started', ['Bug', 'ok:intake']),
+      ticket: node('PRD-7394', 'started', ['Bug', 'ps:intake']),
       descendants: [
         node('PRD-7398', 'completed'),
         node('PRD-7399', 'completed'),

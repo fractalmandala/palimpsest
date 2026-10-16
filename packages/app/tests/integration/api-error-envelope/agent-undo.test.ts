@@ -48,7 +48,7 @@ describe('agent-undo envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('no active session emits 404 urn:ok:error:no-active-session', async () => {
+  test('no active session emits 404 urn:ps:error:no-active-session', async () => {
     const docName = `agent-undo-no-session-${crypto.randomUUID().slice(0, 8)}`;
     const res = await postUndo({ docName, connectionId: 'agent-nonexistent', scope: 'last' });
     expect(res.status).toBe(404);
@@ -58,25 +58,25 @@ describe('agent-undo envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:no-active-session');
+      expect(parsed.data.type).toBe('urn:ps:error:no-active-session');
       expect(parsed.data.status).toBe(404);
       expect(parsed.data.instance).toBeDefined();
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('missing connectionId emits urn:ok:error:invalid-request (pre-identity)', async () => {
+  test('missing connectionId emits urn:ps:error:invalid-request (pre-identity)', async () => {
     const res = await postUndo({ scope: 'last' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('reserved docname emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved docname emits urn:ps:error:reserved-doc-name', async () => {
     const res = await postUndo({
       docName: '__system__',
       connectionId: 'agent-anyone',
@@ -87,7 +87,7 @@ describe('agent-undo envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
   });
 
@@ -98,7 +98,7 @@ describe('agent-undo envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -111,7 +111,7 @@ describe('agent-undo envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

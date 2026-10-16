@@ -21,8 +21,8 @@ import type {
   TerminalSupportFileNoticeReason,
 } from '../shared/bridge-contract.ts';
 import {
-  composeOkChildEnv,
-  hasNoResolvableOkHome,
+  composePsChildEnv,
+  hasNoResolvablePsHome,
   psChildEnvOptions,
   psManagedBinDirs,
   psPackagedCliBinDir,
@@ -870,10 +870,10 @@ export function buildShellEnv(
     platform: options.platform,
     cliBinDir: options.cliBinDir,
   });
-  if (hasNoResolvableOkHome(childOptions)) {
+  if (hasNoResolvablePsHome(childOptions)) {
     options.logger?.warn({ event: 'pty-host-no-ok-managed-home', platform: childOptions.platform });
   }
-  const out = composeOkChildEnv(parentEnv, childOptions);
+  const out = composePsChildEnv(parentEnv, childOptions);
   out[PS_DESKTOP_TERMINAL_ENV] = '1';
   return { env: out, managedBinDirs: psManagedBinDirs(childOptions) };
 }

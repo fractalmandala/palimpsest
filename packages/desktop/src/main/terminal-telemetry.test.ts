@@ -33,10 +33,10 @@ describe('recordShellExit — span name + crashed attribute', () => {
   test('a clean exit emits ok.desktop.shellExit with shell_crashed=false', () => {
     recordShellExit({ crashed: false });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0]?.name).toBe('ok.desktop.shellExit');
+    expect(capturedCalls[0]?.name).toBe('ps.desktop.shellExit');
     expect(capturedCalls[0]?.options?.attributes).toEqual({
-      'ok.desktop.shell_crashed': false,
-      'ok.platform': process.platform,
+      'ps.desktop.shell_crashed': false,
+      'ps.platform': process.platform,
     });
   });
 
@@ -44,15 +44,15 @@ describe('recordShellExit — span name + crashed attribute', () => {
     recordShellExit({ crashed: true });
     expect(capturedCalls).toHaveLength(1);
     expect(capturedCalls[0]?.options?.attributes).toEqual({
-      'ok.desktop.shell_crashed': true,
-      'ok.platform': process.platform,
+      'ps.desktop.shell_crashed': true,
+      'ps.platform': process.platform,
     });
   });
 
   test('attributes stay bounded — no path / code / signal leaks', () => {
     recordShellExit({ crashed: true });
     const attrs = capturedCalls[0]?.options?.attributes ?? {};
-    expect(Object.keys(attrs)).toEqual(['ok.desktop.shell_crashed', 'ok.platform']);
+    expect(Object.keys(attrs)).toEqual(['ps.desktop.shell_crashed', 'ps.platform']);
   });
 });
 
@@ -64,8 +64,8 @@ describe('recordTerminalSession — count-only marker', () => {
   test('emits ok.desktop.terminalSession with only the bounded platform attribute', () => {
     recordTerminalSession();
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0]?.name).toBe('ok.desktop.terminalSession');
-    expect(capturedCalls[0]?.options?.attributes).toEqual({ 'ok.platform': process.platform });
+    expect(capturedCalls[0]?.name).toBe('ps.desktop.terminalSession');
+    expect(capturedCalls[0]?.options?.attributes).toEqual({ 'ps.platform': process.platform });
   });
 });
 
@@ -77,17 +77,17 @@ describe('recordConcurrentSessions — count-only concurrency signal', () => {
   test('emits ok.desktop.terminalConcurrentSessions carrying the live session count', () => {
     recordConcurrentSessions({ count: 3 });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0]?.name).toBe('ok.desktop.terminalConcurrentSessions');
+    expect(capturedCalls[0]?.name).toBe('ps.desktop.terminalConcurrentSessions');
     expect(capturedCalls[0]?.options?.attributes).toEqual({
-      'ok.desktop.concurrent_sessions': 3,
-      'ok.platform': process.platform,
+      'ps.desktop.concurrent_sessions': 3,
+      'ps.platform': process.platform,
     });
   });
 
   test('attributes stay bounded — no ptyId / path / command content leaks', () => {
     recordConcurrentSessions({ count: 2 });
     const attrs = capturedCalls[0]?.options?.attributes ?? {};
-    expect(Object.keys(attrs)).toEqual(['ok.desktop.concurrent_sessions', 'ok.platform']);
+    expect(Object.keys(attrs)).toEqual(['ps.desktop.concurrent_sessions', 'ps.platform']);
   });
 });
 
@@ -99,7 +99,7 @@ describe('recordTerminalWindowOpened — count-only adoption marker', () => {
   test('emits ok.desktop.terminalWindowOpened with only the bounded platform attribute', () => {
     recordTerminalWindowOpened();
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0]?.name).toBe('ok.desktop.terminalWindowOpened');
-    expect(capturedCalls[0]?.options?.attributes).toEqual({ 'ok.platform': process.platform });
+    expect(capturedCalls[0]?.name).toBe('ps.desktop.terminalWindowOpened');
+    expect(capturedCalls[0]?.options?.attributes).toEqual({ 'ps.platform': process.platform });
   });
 });

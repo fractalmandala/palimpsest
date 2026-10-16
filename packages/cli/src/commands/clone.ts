@@ -31,7 +31,7 @@ import { makeLazyTokenStore, type TokenStore } from '../auth/token-store.ts';
 import { PS_DIR } from '../constants.ts';
 import { parseGitUrl } from '../github/url.ts';
 import { isGitHubRepoPublic } from '../github/visibility.ts';
-import { addOkPathsToGitExclude } from '../sharing/git-exclude.ts';
+import { addPsPathsToGitExclude } from '../sharing/git-exclude.ts';
 
 const STAGE_RANGES: [string, number, number][] = [
   ['count', 0, 10],
@@ -343,7 +343,7 @@ export async function runClone(
   }
 
   try {
-    ensureOkExcludedFromGit(targetDir);
+    ensurePsExcludedFromGit(targetDir);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     if (opts.json) emit(true, { type: 'warning', message: `git-exclude: ${msg}` });
@@ -353,10 +353,10 @@ export async function runClone(
   return targetDir;
 }
 
-export function ensureOkExcludedFromGit(
+export function ensurePsExcludedFromGit(
   projectDir: string,
 ): 'appended' | 'already-present' | 'no-exclude' {
-  const result = addOkPathsToGitExclude(projectDir, [`${PS_DIR}/`]);
+  const result = addPsPathsToGitExclude(projectDir, [`${PS_DIR}/`]);
   if (result.kind === 'no-exclude') return 'no-exclude';
   if (result.kind === 'refused-tracked') return 'already-present';
   if (result.appended.length > 0) return 'appended';

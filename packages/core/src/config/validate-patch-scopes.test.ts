@@ -50,7 +50,7 @@ describe('validatePatchScopes', () => {
             sidebar: {
               showOnlyMarkdownFiles: true,
               showSkillsSection: false,
-              showOkFolders: true,
+              showPsFolders: true,
             },
           },
         },

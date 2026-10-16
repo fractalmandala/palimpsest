@@ -84,7 +84,7 @@ describe('agent writes refused at the session limit say nothing was committed (P
     expect(response.headers['retry-after']).toBe('10');
     expect(JSON.parse(response.body)).toMatchObject({
       status: 503,
-      type: 'urn:ok:error:too-many-agent-sessions',
+      type: 'urn:ps:error:too-many-agent-sessions',
       committed: false,
       retryAfterSeconds: 10,
     });
@@ -106,7 +106,7 @@ describe('agent writes refused at the session limit say nothing was committed (P
           status: 'error',
           docName: 'first',
           error: {
-            type: 'urn:ok:error:too-many-agent-sessions',
+            type: 'urn:ps:error:too-many-agent-sessions',
             committed: false,
             retryAfterSeconds: 10,
           },

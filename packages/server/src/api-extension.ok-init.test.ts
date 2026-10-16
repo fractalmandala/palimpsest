@@ -94,7 +94,7 @@ async function bootRig(
   };
 }
 
-async function postOkInit(
+async function postPsInit(
   port: number,
   body: Record<string, unknown>,
 ): Promise<{ status: number; json: Record<string, unknown>; retryAfter: string | null }> {
@@ -129,7 +129,7 @@ describe('POST /api/local-op/ok-init', () => {
 
     expect(existsSync(join(target, '.ps'))).toBe(false);
 
-    const res = await postOkInit(rig.port, { projectPath: target });
+    const res = await postPsInit(rig.port, { projectPath: target });
     expect(res.status).toBe(200);
     expect(res.json.ok).toBe(true);
     expect(res.json.projectPath).toBe(target);
@@ -147,13 +147,13 @@ describe('POST /api/local-op/ok-init', () => {
     run(target, 'git add -A');
     run(target, 'git commit -q -m initial');
 
-    const first = await postOkInit(rig.port, { projectPath: target });
+    const first = await postPsInit(rig.port, { projectPath: target });
     expect(first.json.ok).toBe(true);
 
     const configPath = join(target, '.ps/config.yml');
     writeFileSync(configPath, 'custom: true\n');
 
-    const second = await postOkInit(rig.port, { projectPath: target });
+    const second = await postPsInit(rig.port, { projectPath: target });
     expect(second.json.ok).toBe(true);
     expect(readFileSync(configPath, 'utf8')).toBe('custom: true\n');
   });
@@ -163,7 +163,7 @@ describe('POST /api/local-op/ok-init', () => {
     const target = join(rig.tmpRoot, 'not-a-repo');
     mkdirSync(target);
 
-    const res = await postOkInit(rig.port, { projectPath: target });
+    const res = await postPsInit(rig.port, { projectPath: target });
     expect(res.status).toBe(200);
     expect(res.json.ok).toBe(false);
     expect(res.json.reason).toBe('not-a-git-worktree');
@@ -174,12 +174,12 @@ describe('POST /api/local-op/ok-init', () => {
     rig = await bootRig();
     const target = join(rig.tmpRoot, 'does-not-exist');
 
-    const res = await postOkInit(rig.port, { projectPath: target });
+    const res = await postPsInit(rig.port, { projectPath: target });
     expect(res.json.ok).toBe(false);
     expect(res.json.reason).toBe('not-a-git-worktree');
   });
 
-  test('projectPath outside home returns 400 (urn:ok:error:dir-outside-home) without scaffolding', async () => {
+  test('projectPath outside home returns 400 (urn:ps:error:dir-outside-home) without scaffolding', async () => {
     rig = await bootRig();
     const outsideRoot = realpathSync(mkdtempSync(join(tmpdir(), 'ps-init-outside-home-')));
     try {
@@ -190,20 +190,20 @@ describe('POST /api/local-op/ok-init', () => {
       run(target, 'git add -A');
       run(target, 'git commit -q -m initial');
 
-      const res = await postOkInit(rig.port, { projectPath: target });
+      const res = await postPsInit(rig.port, { projectPath: target });
       expect(res.status).toBe(400);
-      expect(res.json.type).toBe('urn:ok:error:dir-outside-home');
+      expect(res.json.type).toBe('urn:ps:error:dir-outside-home');
       expect(existsSync(join(target, '.ps'))).toBe(false);
     } finally {
       rmSync(outsideRoot, { recursive: true, force: true });
     }
   });
 
-  test('relative path returns 400 problem+json (urn:ok:error:invalid-request)', async () => {
+  test('relative path returns 400 problem+json (urn:ps:error:invalid-request)', async () => {
     rig = await bootRig();
-    const res = await postOkInit(rig.port, { projectPath: 'relative/path' });
+    const res = await postPsInit(rig.port, { projectPath: 'relative/path' });
     expect(res.status).toBe(400);
-    expect(res.json.type).toBe('urn:ok:error:invalid-request');
+    expect(res.json.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('returns 429 on contention and releases the guard after init failure', async () => {
@@ -232,16 +232,16 @@ describe('POST /api/local-op/ok-init', () => {
     run(target, 'git add -A');
     run(target, 'git commit -q -m initial');
 
-    const contended = await postOkInit(rig.port, { projectPath: target });
+    const contended = await postPsInit(rig.port, { projectPath: target });
     expect(contended.status).toBe(429);
-    expect(contended.json.type).toBe('urn:ok:error:concurrent-operation');
+    expect(contended.json.type).toBe('urn:ps:error:concurrent-operation');
     expect(contended.retryAfter).toBe('2');
     expect(acquired).toEqual([key]);
     expect(released).toEqual([]);
 
     rejectAcquisition = false;
     writeFileSync(join(target, '.ps'), 'blocks scaffold directory\n');
-    const failed = await postOkInit(rig.port, { projectPath: target });
+    const failed = await postPsInit(rig.port, { projectPath: target });
     expect(failed.status).toBe(200);
     expect(failed.json).toMatchObject({ ok: false, reason: 'init-failed' });
     expect(acquired).toEqual([key, key]);
@@ -260,7 +260,7 @@ describe('POST /api/local-op/ok-init', () => {
     const wt = join(rig.tmpRoot, 'wt-feat');
     run(main, `git worktree add -b feat ${wt}`);
 
-    const res = await postOkInit(rig.port, { projectPath: wt });
+    const res = await postPsInit(rig.port, { projectPath: wt });
     expect(res.json.ok).toBe(true);
     expect(existsSync(join(wt, '.ps/config.yml'))).toBe(true);
   });

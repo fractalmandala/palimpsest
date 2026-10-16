@@ -283,7 +283,7 @@ describe('template delete/move/import — content-doc lifecycle', () => {
 
       const put = await putTemplate(rig.port, '../etc', 'evil', '# x\n', { title: 'x' });
       expect(put.status).toBe(400);
-      expect((await put.json()).type).toBe('urn:ok:error:invalid-request');
+      expect((await put.json()).type).toBe('urn:ps:error:invalid-request');
 
       const moveFrom = await moveTemplate(rig.port, {
         fromFolder: '../etc',
@@ -292,7 +292,7 @@ describe('template delete/move/import — content-doc lifecycle', () => {
         toName: 'safe',
       });
       expect(moveFrom.status).toBe(400);
-      expect((await moveFrom.json()).type).toBe('urn:ok:error:invalid-request');
+      expect((await moveFrom.json()).type).toBe('urn:ps:error:invalid-request');
 
       const moveTo = await moveTemplate(rig.port, {
         fromFolder: '',
@@ -301,11 +301,11 @@ describe('template delete/move/import — content-doc lifecycle', () => {
         toName: 'evil',
       });
       expect(moveTo.status).toBe(400);
-      expect((await moveTo.json()).type).toBe('urn:ok:error:invalid-request');
+      expect((await moveTo.json()).type).toBe('urn:ps:error:invalid-request');
 
       const del = await deleteTemplate(rig.port, '../etc', 'evil');
       expect(del.status).toBe(400);
-      expect((await del.json()).type).toBe('urn:ok:error:invalid-request');
+      expect((await del.json()).type).toBe('urn:ps:error:invalid-request');
 
       const escSource = `src-esc-${randomUUID().slice(0, 8)}`;
       await writeSource(rig.port, rig.contentDir, escSource, '# Esc\n\nBody.\n');
@@ -315,7 +315,7 @@ describe('template delete/move/import — content-doc lifecycle', () => {
         name: 'evil',
       });
       expect(imp.status).toBe(400);
-      expect((await imp.json()).type).toBe('urn:ok:error:invalid-request');
+      expect((await imp.json()).type).toBe('urn:ps:error:invalid-request');
     },
     HARNESS_BOOT_TIMEOUT_MS + 30_000,
   );

@@ -24,7 +24,7 @@ onTelemetryShutdown(() => {
 
 export function installServerMemoryGauge(): void {
   if (cachedGauge) return;
-  const gauge = getMeter().createObservableGauge('ok.server.memory.usage_megabytes', {
+  const gauge = getMeter().createObservableGauge('ps.server.memory.usage_megabytes', {
     description:
       'Server process memory by section. Bounded labels: section ∈ {heap_used, heap_total, rss, external, array_buffers}.',
     unit: 'MB',
@@ -42,7 +42,7 @@ export function installServerMemoryGauge(): void {
 
 export function installServerRuntimeGauges(): void {
   if (!cachedEventLoopGauge) {
-    const gauge = getMeter().createObservableGauge('ok.server.event_loop.delay_ms', {
+    const gauge = getMeter().createObservableGauge('ps.server.event_loop.delay_ms', {
       description:
         'Event-loop delay percentiles over the last export window. Bounded labels: stat ∈ {p50, p99}.',
       unit: 'ms',
@@ -61,7 +61,7 @@ export function installServerRuntimeGauges(): void {
   }
 
   if (!cachedCpuGauge) {
-    const gauge = getMeter().createObservableGauge('ok.server.cpu.utilization', {
+    const gauge = getMeter().createObservableGauge('ps.server.cpu.utilization', {
       description:
         'Process CPU time as a fraction of wall time since the previous export. Bounded labels: mode ∈ {user, system}.',
       unit: '1',

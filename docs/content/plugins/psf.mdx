@@ -1,13 +1,13 @@
 ---
 title: OKF
 icon: LuGlobe
-description: Keep a project portable to Google's Palimpsest Format with advisory rules, agent-readable schemas, an optional index generator, and a companion skill.
+description: Keep a project portable to Google's OpenKnowledge Format with advisory rules, agent-readable schemas, an optional index generator, and a companion skill.
 ---
 
-The **OKF** project plugin checks whether a knowledge base stays portable to [Google's Palimpsest Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md) v0.2. Findings are advisory warnings and never block a save or an agent edit.
+The **OKF** project plugin checks whether a knowledge base stays portable to [Google's OpenKnowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md) v0.2. Findings are advisory warnings and never block a save or an agent edit.
 
 <Callout>
-  **Beta.** Off until a project enables it. The [Palimpsest Format starter pack](/docs/workflows/supporting-palimpsest-format) enables it while creating an OKF-ready bundle.
+  **Beta.** Off until a project enables it. The [OpenKnowledge Format starter pack](/docs/workflows/supporting-palimpsest-format) enables it while creating an OKF-ready bundle.
 </Callout>
 
 ## Turn on the plugin
@@ -18,7 +18,7 @@ The plugin's settings page then holds its controls: a recommended agent skill, o
 
 ## Install the agent skill
 
-The plugin recommends **Palimpsest Format guidance** (`psf-knowledge-base`), a project skill that helps agents choose document types, preserve provenance, and avoid inventing unsupported metadata. Click **Install skill** to add it. The [starter pack](/docs/workflows/supporting-palimpsest-format) installs the same skill, so it may already be present. In that case the page shows **Already in project** and leaves the existing copy untouched.
+The plugin recommends **OpenKnowledge Format guidance** (`psf-knowledge-base`), a project skill that helps agents choose document types, preserve provenance, and avoid inventing unsupported metadata. Click **Install skill** to add it. The [starter pack](/docs/workflows/supporting-palimpsest-format) installs the same skill, so it may already be present. In that case the page shows **Already in project** and leaves the existing copy untouched.
 
 The skill is optional. The plugin's checks are the same with or without it.
 
@@ -66,8 +66,8 @@ Log entry headings are the exception, and they are governed by a different rule:
 
 | Rules | Surfaces |
 | --- | --- |
-| Document structure, Frontmatter | Editor (live), Problems panel → **This doc**, `ok lint`, MCP `lint` |
-| Project | Problems panel → **Project**, `ok audit`, MCP `audit` |
+| Document structure, Frontmatter | Editor (live), Problems panel → **This doc**, `ps lint`, MCP `lint` |
+| Project | Problems panel → **Project**, `ps audit`, MCP `audit` |
 
 Project rules need the whole file tree, which is why they run only on project-scope surfaces.
 
@@ -118,7 +118,7 @@ See the [configuration reference](/docs/reference/configuration) for the surroun
 
 ## See also
 
-- [Supporting the Palimpsest Format](/docs/workflows/supporting-palimpsest-format): start a project with the OKF starter pack
+- [Supporting the OpenKnowledge Format](/docs/workflows/supporting-palimpsest-format): start a project with the OKF starter pack
 - [Content rules overview](/docs/advanced/content-rules/overview): where warnings appear and how editor, CLI, and agent surfaces agree
 - [Frontmatter schemas](/docs/advanced/content-rules/frontmatter): validate frontmatter against your own JSON Schema files
 - [Skills Studio](/docs/features/skills): project skill installation and editing

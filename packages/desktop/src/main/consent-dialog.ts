@@ -94,28 +94,28 @@ export function requestUserConsent(
 
     function teardown(): void {
       try {
-        ipcMain.removeHandler('ok:onboarding:confirm');
+        ipcMain.removeHandler('ps:onboarding:confirm');
       } catch (err) {
         logger.warn('removeHandler(confirm) threw', {
           err,
         });
       }
       try {
-        ipcMain.removeHandler('ok:onboarding:cancel');
+        ipcMain.removeHandler('ps:onboarding:cancel');
       } catch (err) {
         logger.warn('removeHandler(cancel) threw', {
           err,
         });
       }
       try {
-        ipcMain.removeHandler('ok:onboarding:probe-content');
+        ipcMain.removeHandler('ps:onboarding:probe-content');
       } catch (err) {
         logger.warn('removeHandler(probe-content) threw', {
           err,
         });
       }
       try {
-        ipcMain.removeHandler('ok:onboarding:renderer-ready');
+        ipcMain.removeHandler('ps:onboarding:renderer-ready');
       } catch (err) {
         logger.warn('removeHandler(renderer-ready) threw', {
           err,
@@ -128,7 +128,7 @@ export function requestUserConsent(
     }
 
     register(
-      'ok:onboarding:confirm',
+      'ps:onboarding:confirm',
       async (
         event: IpcMainInvokeEvent,
         request: OnboardingConfirmRequest,
@@ -140,7 +140,7 @@ export function requestUserConsent(
           });
           logIpcError({
             event: 'ipc.error',
-            channel: 'ok:onboarding:confirm',
+            channel: 'ps:onboarding:confirm',
             reason: 'sender-mismatch',
             handler: 'onboardingConfirm',
             cause: { capturedSenderId, gotSenderId: event.sender.id },
@@ -155,7 +155,7 @@ export function requestUserConsent(
         if (!validated.ok) {
           logIpcError({
             event: 'ipc.error',
-            channel: 'ok:onboarding:confirm',
+            channel: 'ps:onboarding:confirm',
             reason: 'invalid-request',
             handler: 'onboardingConfirm',
             cause: { message: validated.error },
@@ -168,7 +168,7 @@ export function requestUserConsent(
     );
 
     register(
-      'ok:onboarding:cancel',
+      'ps:onboarding:cancel',
       async (event: IpcMainInvokeEvent): Promise<OnboardingCancelResult> => {
         if (!isSameSender(event)) {
           logger.warn('rejecting cancel — sender mismatch', {
@@ -177,7 +177,7 @@ export function requestUserConsent(
           });
           logIpcError({
             event: 'ipc.error',
-            channel: 'ok:onboarding:cancel',
+            channel: 'ps:onboarding:cancel',
             reason: 'sender-mismatch',
             handler: 'onboardingCancel',
             cause: { capturedSenderId, gotSenderId: event.sender.id },
@@ -194,7 +194,7 @@ export function requestUserConsent(
     );
 
     register(
-      'ok:onboarding:probe-content',
+      'ps:onboarding:probe-content',
       async (
         event: IpcMainInvokeEvent,
         request: OnboardingProbeContentRequest,
@@ -202,7 +202,7 @@ export function requestUserConsent(
         if (!isSameSender(event)) {
           logIpcError({
             event: 'ipc.error',
-            channel: 'ok:onboarding:probe-content',
+            channel: 'ps:onboarding:probe-content',
             reason: 'sender-mismatch',
             handler: 'onboardingProbeContent',
             cause: { capturedSenderId, gotSenderId: event.sender.id },
@@ -221,7 +221,7 @@ export function requestUserConsent(
         if (!result.ok) {
           logIpcError({
             event: 'ipc.error',
-            channel: 'ok:onboarding:probe-content',
+            channel: 'ps:onboarding:probe-content',
             reason: result.error,
             handler: 'onboardingProbeContent',
           });
@@ -230,12 +230,12 @@ export function requestUserConsent(
       },
     );
 
-    register('ok:onboarding:renderer-ready', (event: IpcMainInvokeEvent): undefined => {
+    register('ps:onboarding:renderer-ready', (event: IpcMainInvokeEvent): undefined => {
       if (capturedSenderId !== null && event.sender.id !== capturedSenderId) {
         return undefined;
       }
       try {
-        sendToRenderer(event.sender, 'ok:onboarding:show', payload);
+        sendToRenderer(event.sender, 'ps:onboarding:show', payload);
       } catch (err) {
         logger.error('show dispatch failed — handler stays armed for retry', {
           err,
@@ -253,7 +253,7 @@ export function requestUserConsent(
 
     if (typeof navigator.id === 'number') {
       try {
-        sendToRenderer(navigator, 'ok:onboarding:show', payload);
+        sendToRenderer(navigator, 'ps:onboarding:show', payload);
         capturedSenderId = navigator.id;
       } catch (err) {
         logger.error('proactive show dispatch failed — falling back to renderer-ready', {

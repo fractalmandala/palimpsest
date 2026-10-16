@@ -10,7 +10,7 @@ import {
   type DocumentEntry,
   type FileEntry,
   type FolderEntry,
-  hasOkPathSegment,
+  hasPsPathSegment,
   isAssetEntry,
   isDocumentEntry,
   isFolderEntry,
@@ -72,7 +72,7 @@ export function selectedTreePathsToDeleteTargets(
   documents: readonly FileEntry[],
 ): FileTreeTarget[] {
   const uniqueDeletablePaths = [...new Set(selectedTreePaths)].filter(
-    (treePath) => !hasOkPathSegment(treePath),
+    (treePath) => !hasPsPathSegment(treePath),
   );
   const selectedFolderPaths = uniqueDeletablePaths.filter((treePath) => treePath.endsWith('/'));
   return uniqueDeletablePaths
@@ -102,7 +102,7 @@ export function resolveDuplicableKeyboardTarget(
   assetTreePaths: ReadonlySet<string>,
 ): FileTreeTarget | null {
   const selectedPath = focusedOrFirstSelectedTreePath(model);
-  if (!selectedPath || assetTreePaths.has(selectedPath) || hasOkPathSegment(selectedPath)) {
+  if (!selectedPath || assetTreePaths.has(selectedPath) || hasPsPathSegment(selectedPath)) {
     return null;
   }
   return treePathToTarget(selectedPath, documents);

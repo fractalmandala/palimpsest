@@ -23,7 +23,7 @@ function handleMetric(metric: LibMetricLike): void {
     ...(metric.attribution ? { attribution: metric.attribution as Record<string, unknown> } : {}),
   };
   recordVital(normalized);
-  mark(`ok/vitals/${metric.name.toLowerCase()}`, {
+  mark(`ps/vitals/${metric.name.toLowerCase()}`, {
     value: Math.round(metric.value * 1000) / 1000,
     rating: metric.rating,
     delta: metric.delta,

@@ -28,7 +28,7 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.client_payload.environment == 'production' &&
-      github.event.client_payload.project.name == 'open-knowledge-docs')
+      github.event.client_payload.project.name == 'palimpsest-docs')
     runs-on: ubuntu-24.04
     cache-mode: none
     timeout-minutes: 10

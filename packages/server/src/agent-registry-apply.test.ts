@@ -209,7 +209,7 @@ describe('the user-global skill decision record', () => {
       snapshot: async () => snapshotOf(),
     });
 
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBe(true);
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(true);
   });
 
   it('records false when a removal empties the last copy', async () => {
@@ -223,7 +223,7 @@ describe('the user-global skill decision record', () => {
       snapshot: async () => snapshotOf({ [CLAUDE_USER_SKILL]: 'satisfied' }),
     });
 
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBe(false);
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(false);
   });
 
   it('records nothing when the host never answered the disk question', async () => {
@@ -236,7 +236,7 @@ describe('the user-global skill decision record', () => {
       snapshot: async () => snapshotOf({ [CLAUDE_USER_SKILL]: 'satisfied' }),
     });
 
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBe(null);
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(null);
   });
 
   it('records nothing when a removal leaves a copy behind', async () => {
@@ -250,6 +250,6 @@ describe('the user-global skill decision record', () => {
       snapshot: async () => snapshotOf({ [CLAUDE_USER_SKILL]: 'satisfied' }),
     });
 
-    expect(await readBundleDecision(home, 'open-knowledge-discovery')).toBe(null);
+    expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(null);
   });
 });

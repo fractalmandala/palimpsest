@@ -58,7 +58,7 @@ function buildGroup(overrides: Partial<Deps> = {}) {
     log: loggerFactory.getLogger('test'),
     flushDocToGit: notDispatched,
     flushGitCommit: undefined,
-    commitOkArtifactWrite: notDispatched,
+    commitPsArtifactWrite: notDispatched,
     isSafeDocName: notDispatched,
     shadowRef: undefined,
     getPrincipal: undefined,
@@ -132,7 +132,7 @@ describe('agent-write session capacity responses', () => {
         expect(captured.headers['retry-after']).toBe('10');
         expect(JSON.parse(captured.body)).toMatchObject({
           status: 503,
-          type: 'urn:ok:error:too-many-agent-sessions',
+          type: 'urn:ps:error:too-many-agent-sessions',
           committed: false,
           retryAfterSeconds: 10,
         });
@@ -165,7 +165,7 @@ describe('edit routes refuse a document path that has nothing behind it', () => 
       expect(captured.status).toBe(404);
       const problem = JSON.parse(captured.body);
       expect(problem).toMatchObject({
-        type: 'urn:ok:error:doc-not-found',
+        type: 'urn:ps:error:doc-not-found',
         candidates: ['kb/system/ops'],
         committed: false,
       });
@@ -200,7 +200,7 @@ describe('edit routes refuse a document path that has nothing behind it', () => 
       expect(captured.status).toBe(404);
       const problem = JSON.parse(captured.body);
       expect(problem).toMatchObject({
-        type: 'urn:ok:error:doc-not-found',
+        type: 'urn:ps:error:doc-not-found',
         candidates: [],
         committed: false,
       });

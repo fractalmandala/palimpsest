@@ -4,7 +4,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { templateContentDocName } from '@palimpsest/core';
-import { formatOkActor, type PsActorEntry } from '@palimpsest/core/shadow-repo-layout';
+import { formatPsActor, type PsActorEntry } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
@@ -401,7 +401,7 @@ describe('getDocumentHistory', () => {
         color_seed: writer.id,
         docs,
       };
-      const message = `wip: ${subject}\n\n${formatOkActor(actor)}`;
+      const message = `wip: ${subject}\n\n${formatPsActor(actor)}`;
       return commitWipFromTree(shadow, writer, treeSha, message);
     };
 
@@ -458,7 +458,7 @@ describe('getDocumentHistory', () => {
       shadow,
       writer,
       treeSha,
-      `wip: skill-edit: my-skill/SKILL.md\n\n${formatOkActor(actor)}`,
+      `wip: skill-edit: my-skill/SKILL.md\n\n${formatPsActor(actor)}`,
     );
 
     const result = await getDocumentHistory(
@@ -1078,7 +1078,7 @@ describe('getDocumentHistory + getFolderTimeline — templates as content (FR6 /
       color_seed: writer.id,
       docs: [docKey],
     };
-    const message = `${subject}\n\n${formatOkActor(actor)}`;
+    const message = `${subject}\n\n${formatPsActor(actor)}`;
     return commitWip(shadow, writer, 'content/docs', message, 'main', { date });
   }
 

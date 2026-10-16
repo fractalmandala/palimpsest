@@ -19,7 +19,7 @@ export function assertPathAbsentFromLegacyRegistry(source: string, path: string)
   return registry;
 }
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -32,7 +32,7 @@ export async function bootCompositionRig(
   contentDir: string,
   overrides: Partial<BootServerOptions> = {},
 ): Promise<BootedServer> {
-  seedOkScaffold(contentDir);
+  seedPsScaffold(contentDir);
   const ownedHome =
     overrides.configHomedirOverride ?? mkdtempSync(resolve(tmpdir(), 'ps-rig-home-'));
   let booted: BootedServer;

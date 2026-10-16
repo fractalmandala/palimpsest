@@ -140,7 +140,7 @@ describe('the real uncached tier fails a run in which a collected test did not e
       const names = (project.plugins ?? [])
         .flat(Number.POSITIVE_INFINITY)
         .map((plugin) => (plugin as { name?: unknown } | null)?.name);
-      expect(names).toContain('ok:uncached-tier-floor');
+      expect(names).toContain('ps:uncached-tier-floor');
     }
   });
 });

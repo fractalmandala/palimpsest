@@ -80,7 +80,7 @@ export interface FolderTemplateRouteDeps {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ok' | 'ps-and-templates',
+    components: 'ps' \| 'ps-and-templates',
   ) => { folderRel: string; resolvedContentDir: string } | null;
   extractAgentIdentity: (body: Record<string, unknown>) => {
     agentId: string;
@@ -97,13 +97,13 @@ export interface FolderTemplateRouteDeps {
     folder: string,
     name?: string,
   ) => string;
-  attributeOkArtifactWrite: (
+  attributePsArtifactWrite: (
     actor: ReturnType<typeof extractActorIdentity>,
     artifactKey: string,
     subject: string,
     previousPaths?: Array<{ from: string; to: string }>,
   ) => void;
-  scheduleOkArtifactFlush: (context: string) => void;
+  schedulePsArtifactFlush: (context: string) => void;
   flushDiskAndDetectOutcome: (
     docName: string,
   ) => Promise<
@@ -132,10 +132,10 @@ export interface FolderTemplateRouteDeps {
 }
 
 const FOLDER_FRONTMATTER_ERROR_META = {
-  BAD_CONTENT_DIR: { status: 400, urn: 'urn:ok:error:invalid-request' },
-  PATH_ESCAPE: { status: 400, urn: 'urn:ok:error:path-escape' },
-  SYMLINK_REFUSED: { status: 400, urn: 'urn:ok:error:symlink-refused' },
-  WRITE_ERROR: { status: 500, urn: 'urn:ok:error:internal-server-error' },
+  BAD_CONTENT_DIR: { status: 400, urn: 'urn:ps:error:invalid-request' },
+  PATH_ESCAPE: { status: 400, urn: 'urn:ps:error:path-escape' },
+  SYMLINK_REFUSED: { status: 400, urn: 'urn:ps:error:symlink-refused' },
+  WRITE_ERROR: { status: 500, urn: 'urn:ps:error:internal-server-error' },
 } as const satisfies Record<FolderFrontmatterErrorCode, { status: 400 | 500; urn: ProblemType }>;
 
 export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRouteGroup {
@@ -157,8 +157,8 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
     extractAgentIdentity,
     extractActorIdentityFromQuery,
     psArtifactKey,
-    attributeOkArtifactWrite,
-    scheduleOkArtifactFlush,
+    attributePsArtifactWrite,
+    schedulePsArtifactFlush,
     flushDiskAndDetectOutcome,
     respondPersistenceFailure,
     respondDiskDivergence,
@@ -177,7 +177,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
       errorResponse(
         res,
         400,
-        'urn:ok:error:invalid-request',
+        'urn:ps:error:invalid-request',
         `Invalid name: must use ${TEMPLATE_NAME_RULE}, without the \`.md\` extension.`,
         { handler },
       );
@@ -277,11 +277,11 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           res,
           'path',
           'folder-config-get',
-          'ok',
+          'ps',
         );
         if (!validated) return;
-        const folderOkDir = resolve(validated.resolvedContentDir, validated.folderRel, '.ps');
-        const localFmPath = resolve(folderOkDir, 'frontmatter.yml');
+        const folderPsDir = resolve(validated.resolvedContentDir, validated.folderRel, '.ps');
+        const localFmPath = resolve(folderPsDir, 'frontmatter.yml');
         const warnings: string[] = [];
         const warningCodes: FolderConfigWarningCode[] = [];
         const addWarning = (code: FolderConfigWarningCode, text: string): void => {
@@ -384,7 +384,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to read folder config.',
           { handler: 'folder-config-get', cause: e },
         );
@@ -401,7 +401,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             403,
-            'urn:ok:error:single-file-mode',
+            'urn:ps:error:single-file-mode',
             'Folder configuration is not available in single-file mode.',
             { handler: 'folder-config-put' },
           );
@@ -412,12 +412,12 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'folder-config-put',
           });
           return;
         }
-        const validated = validateFolderRel(body.path, res, 'path', 'folder-config-put', 'ok');
+        const validated = validateFolderRel(body.path, res, 'path', 'folder-config-put', 'ps');
         if (!validated) return;
 
         const allApplied: Array<{ path: string; action: 'written' | 'deleted' | 'noop' }> = [];
@@ -439,12 +439,12 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           }
           allApplied.push({ path: result.path, action: result.action });
           if (result.action !== 'noop') {
-            attributeOkArtifactWrite(
+            attributePsArtifactWrite(
               actor,
               psArtifactKey('folder-frontmatter', validated.folderRel),
               `folder-frontmatter-${result.action === 'deleted' ? 'delete' : 'edit'}: ${result.path}`,
             );
-            scheduleOkArtifactFlush('folder-config-put');
+            schedulePsArtifactFlush('folder-config-put');
           }
         }
 
@@ -459,7 +459,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to write folder config.',
           { handler: 'folder-config-put', cause: e },
         );
@@ -509,7 +509,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:symlink-refused',
+            'urn:ps:error:symlink-refused',
             `"${found.folder || '.'}/.ps" or its templates directory is a symlink — refusing to resolve templates through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-get', detail: found.folder || '.' },
           );
@@ -519,14 +519,14 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             500,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             `Cannot inspect "${found.folder || '.'}/.ps" (${found.code ?? 'unknown errno'}) — refusing to resolve templates through it.`,
             { handler: 'template-get', detail: found.code ?? 'unknown-errno' },
           );
           return;
         }
         if (found.kind === 'absent') {
-          errorResponse(res, 404, 'urn:ok:error:template-not-found', 'Template not found.', {
+          errorResponse(res, 404, 'urn:ps:error:template-not-found', 'Template not found.', {
             handler: 'template-get',
             detail: `Template "${name}" not found for folder "${folderRel || '.'}". Walked leaf → root.`,
           });
@@ -544,7 +544,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:symlink-refused',
+            'urn:ps:error:symlink-refused',
             `Template "${name}" at "${foundFolder || '.'}/.ps/templates/${name}.md" is a symlink — refusing to read through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-get', detail: foundFolder || '.' },
           );
@@ -557,7 +557,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:symlink-refused',
+              'urn:ps:error:symlink-refused',
               `Template "${name}" resolves through a symlink outside the content directory — refusing to read through it. Replace the symlink with a real file or directory and retry.`,
               { handler: 'template-get', detail: foundFolder || '.' },
             );
@@ -593,7 +593,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           { handler: 'template-get' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to read template.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to read template.', {
           handler: 'template-get',
           cause: e,
         });
@@ -610,7 +610,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             403,
-            'urn:ok:error:single-file-mode',
+            'urn:ps:error:single-file-mode',
             'Templates are not available in single-file mode.',
             { handler: 'template-put' },
           );
@@ -621,7 +621,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'template-put',
           });
           return;
@@ -653,7 +653,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:symlink-refused',
+            'urn:ps:error:symlink-refused',
             `${validated.folderRel || '.'}/.ps/templates/${name}.md is a symlink — refusing to write through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-put', detail: validated.folderRel || '.' },
           );
@@ -675,7 +675,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           frontmatter: pickFrontmatterFields(body.frontmatter) satisfies TemplateFrontmatter,
         });
         if (!composed.ok) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid template request.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid template request.', {
             handler: 'template-put',
             detail: composed.error.code,
             cause: new Error(composed.error.message),
@@ -718,12 +718,12 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         registerWrittenDocInFileIndex(templateDocName, composed.content);
 
-        attributeOkArtifactWrite(
+        attributePsArtifactWrite(
           actor,
           psArtifactKey('template', validated.folderRel, name),
           `${templateCreated ? 'template-create' : 'template-edit'}: ${templateRelPath}`,
         );
-        scheduleOkArtifactFlush('template-put');
+        schedulePsArtifactFlush('template-put');
         successResponse(
           res,
           200,
@@ -736,7 +736,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           { handler: 'template-put' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to write template.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to write template.', {
           handler: 'template-put',
           cause: e,
         });
@@ -763,7 +763,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         const actor = extractActorIdentityFromQuery(url, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'template-delete',
           });
           return;
@@ -797,7 +797,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
               ? 500
               : 400;
           const urn =
-            status === 500 ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request';
+            status === 500 ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request';
           const title = status === 500 ? 'Failed to delete template.' : 'Invalid template request.';
           errorResponse(res, status, urn, title, {
             handler: 'template-delete',
@@ -807,12 +807,12 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           return;
         }
         if (result.existed) {
-          attributeOkArtifactWrite(
+          attributePsArtifactWrite(
             actor,
             psArtifactKey('template', validated.folderRel, name),
             `template-delete: ${result.path}`,
           );
-          scheduleOkArtifactFlush('template-delete');
+          schedulePsArtifactFlush('template-delete');
           recentlyRemovedDocs?.setDeleted(templateDocNameFor(validated.folderRel, name));
         }
         successResponse(
@@ -826,7 +826,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to delete template.',
           { handler: 'template-delete', cause: e },
         );
@@ -844,7 +844,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'template-move',
           });
           return;
@@ -910,7 +910,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:symlink-refused',
+                'urn:ps:error:symlink-refused',
                 `"${found.folder || '.'}/.ps" or its templates directory is a symlink — refusing to resolve templates through it. Replace the symlink with a real file or directory and retry.`,
                 { handler: 'template-move', detail: found.folder || '.' },
               );
@@ -920,7 +920,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
               errorResponse(
                 res,
                 500,
-                'urn:ok:error:internal-server-error',
+                'urn:ps:error:internal-server-error',
                 `Cannot inspect "${found.folder || '.'}/.ps" (${found.code ?? 'unknown errno'}) — refusing to resolve templates through it.`,
                 { handler: 'template-move', detail: found.code ?? 'unknown-errno' },
               );
@@ -930,20 +930,20 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 `Template "${body.fromName}" is inherited from "${found.folder || '(root)'}", not local to "${fromValidated.folderRel || '(root)'}". Move it from the folder that owns it, or create a local copy here first (then move that).`,
                 { handler: 'template-move', detail: 'TEMPLATE_INHERITED' },
               );
               return;
             }
-            errorResponse(res, 404, 'urn:ok:error:template-not-found', 'Template not found.', {
+            errorResponse(res, 404, 'urn:ps:error:template-not-found', 'Template not found.', {
               handler: 'template-move',
               detail: result.error.message,
             });
             return;
           }
           if (result.error.code === 'TEMPLATE_EXISTS') {
-            errorResponse(res, 409, 'urn:ok:error:doc-already-exists', result.error.message, {
+            errorResponse(res, 409, 'urn:ps:error:doc-already-exists', result.error.message, {
               handler: 'template-move',
               detail: result.error.code,
             });
@@ -954,7 +954,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             status,
-            status === 500 ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            status === 500 ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             status === 500 ? 'Failed to move template.' : 'Invalid template move request.',
             {
               handler: 'template-move',
@@ -971,13 +971,13 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         const movedAbs = resolve(toValidated.resolvedContentDir, result.toPath);
         const movedIsSymlink = checkSymlinkLeaf(movedAbs).kind === 'symlink';
 
-        attributeOkArtifactWrite(
+        attributePsArtifactWrite(
           actor,
           psArtifactKey('template', toValidated.folderRel, body.toName),
           `template-rename: ${result.fromPath} -> ${result.toPath}`,
           [{ from: result.fromPath, to: result.toPath }],
         );
-        scheduleOkArtifactFlush('template-move');
+        schedulePsArtifactFlush('template-move');
         signalChannel?.('files');
 
         if (movedIsSymlink) {
@@ -989,7 +989,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
             errorResponse(
               res,
               400,
-              'urn:ok:error:symlink-refused',
+              'urn:ps:error:symlink-refused',
               `Template moved to "${result.toPath}", but it is a symlink — refusing to read or rewrite through it. Replace it with a regular file and retry the edit.`,
               { handler: 'template-move', detail: toValidated.folderRel || '.' },
             );
@@ -1048,7 +1048,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             isServerError ? 500 : 400,
-            isServerError ? 'urn:ok:error:internal-server-error' : 'urn:ok:error:invalid-request',
+            isServerError ? 'urn:ps:error:internal-server-error' : 'urn:ps:error:invalid-request',
             `Template moved to "${result.toPath}", but updating its content failed.`,
             {
               handler: 'template-move',
@@ -1066,7 +1066,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           { handler: 'template-move' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to move template.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to move template.', {
           handler: 'template-move',
           cause: e,
         });
@@ -1094,7 +1094,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             403,
-            'urn:ok:error:single-file-mode',
+            'urn:ps:error:single-file-mode',
             'Templates are not available in single-file mode.',
             { handler: 'template-import' },
           );
@@ -1106,7 +1106,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'template-import',
           });
           return;
@@ -1114,7 +1114,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         const sourcePath = body.sourcePath;
         if (!isSafeDocName(sourcePath)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid sourcePath.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid sourcePath.', {
             handler: 'template-import',
           });
           return;
@@ -1125,7 +1125,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${sourceDocName}' is a reserved document name.`,
             { handler: 'template-import' },
           );
@@ -1137,7 +1137,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             404,
-            'urn:ok:error:doc-not-found',
+            'urn:ps:error:doc-not-found',
             `Source document not found: ${sourceDocName}.`,
             {
               handler: 'template-import',
@@ -1171,7 +1171,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
               errorResponse(
                 res,
                 500,
-                'urn:ok:error:doc-not-available',
+                'urn:ps:error:doc-not-available',
                 'Source document is not available.',
                 {
                   handler: 'template-import',
@@ -1225,7 +1225,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:symlink-refused',
+            'urn:ps:error:symlink-refused',
             `${validated.folderRel || '.'}/.ps/templates/${name}.md is a symlink — refusing to write through it. Replace the symlink with a real file or directory and retry.`,
             { handler: 'template-import', detail: validated.folderRel || '.' },
           );
@@ -1245,7 +1245,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:doc-already-exists',
+            'urn:ps:error:doc-already-exists',
             `Template "${name}" already exists in "${validated.folderRel || '(root)'}". Choose another name, or edit the existing template instead.`,
             { handler: 'template-import', detail: 'TEMPLATE_EXISTS' },
           );
@@ -1290,7 +1290,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         });
 
         if (!composed.ok) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid template request.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid template request.', {
             handler: 'template-import',
             detail: composed.error.code,
             cause: new Error(composed.error.message),
@@ -1333,7 +1333,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
 
         registerWrittenDocInFileIndex(templateDocName, composed.content);
 
-        attributeOkArtifactWrite(
+        attributePsArtifactWrite(
           actor,
           psArtifactKey('template', validated.folderRel, name),
           `template-import: ${templateRelPath}`,
@@ -1353,7 +1353,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
           });
         }
 
-        scheduleOkArtifactFlush('template-import');
+        schedulePsArtifactFlush('template-import');
         signalChannel?.('files');
 
         successResponse(
@@ -1371,7 +1371,7 @@ export function createFolderTemplateRoutes(deps: FolderTemplateRouteDeps): ApiRo
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to import template.',
           {
             handler: 'template-import',

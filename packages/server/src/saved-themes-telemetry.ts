@@ -9,14 +9,14 @@ let parseFailureCounter: Counter | null = null;
 let usableCountHistogram: Histogram | null = null;
 
 function savedThemeSaveCounter(): Counter {
-  saveCounter ||= getMeter().createCounter('ok.saved_themes.save_total', {
+  saveCounter ||= getMeter().createCounter('ps.saved_themes.save_total', {
     description: 'Successful saved-theme file saves. Attribute-free to keep cardinality bounded.',
   });
   return saveCounter;
 }
 
 function savedThemeDeleteCounter(): Counter {
-  deleteCounter ||= getMeter().createCounter('ok.saved_themes.delete_total', {
+  deleteCounter ||= getMeter().createCounter('ps.saved_themes.delete_total', {
     description:
       'Successful saved-theme file deletions. Attribute-free to keep cardinality bounded.',
   });
@@ -24,28 +24,28 @@ function savedThemeDeleteCounter(): Counter {
 }
 
 function savedThemeParseFailureCounter(): Counter {
-  parseFailureCounter ||= getMeter().createCounter('ok.saved_themes.parse_failure_total', {
+  parseFailureCounter ||= getMeter().createCounter('ps.saved_themes.parse_failure_total', {
     description: 'Saved-theme scheme parse failures. Attribute-free to keep cardinality bounded.',
   });
   return parseFailureCounter;
 }
 
 function savedThemeScanCounter(): Counter {
-  scanCounter ||= getMeter().createCounter('ok.saved_themes.scan_total', {
+  scanCounter ||= getMeter().createCounter('ps.saved_themes.scan_total', {
     description: 'Saved-theme store scans. Attribute-free to keep cardinality bounded.',
   });
   return scanCounter;
 }
 
 function savedThemeParseCounter(): Counter {
-  parseCounter ||= getMeter().createCounter('ok.saved_themes.parse_total', {
+  parseCounter ||= getMeter().createCounter('ps.saved_themes.parse_total', {
     description: 'Saved-theme scheme parse attempts. Attribute-free to keep cardinality bounded.',
   });
   return parseCounter;
 }
 
 function savedThemeUsableCountHistogram(): Histogram {
-  usableCountHistogram ||= getMeter().createHistogram('ok.saved_themes.usable_count', {
+  usableCountHistogram ||= getMeter().createHistogram('ps.saved_themes.usable_count', {
     description:
       'Usable saved themes returned by a completed bounded scan. Attribute-free to keep cardinality bounded.',
   });

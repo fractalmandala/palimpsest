@@ -319,7 +319,7 @@ export const ConfigSchema = z.looseObject({
                 'Show the Skills section in the sidebar. Skill documents remain reachable via links and search while the section is hidden. Per-machine (project-local) — not shared with collaborators.',
             })
             .default(true),
-          showOkFolders: z
+          showPsFolders: z
             .boolean()
             .register(fieldRegistry, {
               scope: 'project-local',
@@ -395,7 +395,7 @@ export const ConfigSchema = z.looseObject({
     .default({ wordWrap: true, previewTabs: true }),
   agents: z
     .looseObject({
-      autoApproveOkTools: z
+      autoApprovePsTools: z
         .boolean()
         .register(fieldRegistry, {
           scope: 'user',
@@ -418,7 +418,7 @@ export const ConfigSchema = z.looseObject({
         })
         .default(false),
     })
-    .default({ autoApproveOkTools: true, browserTools: false }),
+    .default({ autoApprovePsTools: true, browserTools: false }),
   autoSync: z
     .looseObject({
       mode: z
@@ -962,7 +962,7 @@ export const ConfigSchema = z.looseObject({
               reload: 'live',
               defaultScope: 'project',
               description:
-                'Whether the OKF plugin (Palimpsest Format portability + conformance rules) contributes diagnostics. Advisory warnings; never blocks a write.',
+                'Whether the OKF plugin (OpenKnowledge Format portability + conformance rules) contributes diagnostics. Advisory warnings; never blocks a write.',
             })
             .default(false),
           rules: z

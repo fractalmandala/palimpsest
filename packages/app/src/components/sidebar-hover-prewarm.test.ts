@@ -63,7 +63,7 @@ describe('sidebar-hover-prewarm (review Major #7 + V2 FR12 Option G)', () => {
     expect(prewarm).toHaveBeenCalledTimes(1);
     const successMark = getCollector()
       ?.marks.toArray()
-      .find((m) => m.name === 'ok/sidebar/prewarm-success');
+      .find((m) => m.name === 'ps/sidebar/prewarm-success');
     expect(successMark?.properties?.docName).toBe('doc-c');
     expect(successMark?.properties?.poolEventId).toBe('pool-event-x');
     expect(typeof successMark?.properties?.t).toBe('number');
@@ -77,7 +77,7 @@ describe('sidebar-hover-prewarm (review Major #7 + V2 FR12 Option G)', () => {
     expect(prewarm).toHaveBeenCalledTimes(1);
     const successMark = getCollector()
       ?.marks.toArray()
-      .find((m) => m.name === 'ok/sidebar/prewarm-success');
+      .find((m) => m.name === 'ps/sidebar/prewarm-success');
     expect(successMark).toBeUndefined();
     expect(__peekPrewarmRecord('doc-d')).toBeUndefined();
   });
@@ -99,13 +99,13 @@ describe('sidebar-hover-prewarm (review Major #7 + V2 FR12 Option G)', () => {
       expect(prewarm).toHaveBeenCalledTimes(1);
       const failMark = getCollector()
         ?.marks.toArray()
-        .find((m) => m.name === 'ok/sidebar/prewarm-failed');
+        .find((m) => m.name === 'ps/sidebar/prewarm-failed');
       expect(failMark?.properties?.docName).toBe('doc-throw');
       expect(failMark?.properties?.message).toBe(failureMessage);
       const successMark = getCollector()
         ?.marks.toArray()
         .find(
-          (m) => m.name === 'ok/sidebar/prewarm-success' && m.properties?.docName === 'doc-throw',
+          (m) => m.name === 'ps/sidebar/prewarm-success' && m.properties?.docName === 'doc-throw',
         );
       expect(successMark).toBeUndefined();
       expect(__peekPrewarmRecord('doc-throw')).toBeUndefined();

@@ -284,7 +284,7 @@ describe('handleUploadAsset', () => {
     const res = await uploadImage(createPngBuffer(), 'escape.png', 'docs/guide.md');
     const body = (await res.json()) as { type: string; status: number };
     expect(res.status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.status).toBe(400);
     expect(existsSync(join(tmpDir, 'escape', 'escape.png'))).toBe(false);
     expect(existsSync(join(contentDir, 'docs', 'escape.png'))).toBe(false);
@@ -297,7 +297,7 @@ describe('handleUploadAsset', () => {
     const res = await uploadImage(createPngBuffer(), 'config-error.png', 'docs/guide.md');
     const body = (await res.json()) as { type: string; status: number; title: string };
     expect(res.status).toBe(500);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.status).toBe(500);
     expect(body.title).toBe('Server configuration error: invalid attachment folder path.');
     expect(existsSync(join(contentDir, 'docs', 'config-error.png'))).toBe(false);
@@ -308,7 +308,7 @@ describe('handleUploadAsset', () => {
     const res = await uploadImage(createPngBuffer(), 'planted.png', 'docs/guide.md');
     const body = (await res.json()) as { type: string; status: number };
     expect(res.status).toBe(400);
-    expect(body.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(body.type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(join(contentDir, '.ps', 'skills', 'planted.png'))).toBe(false);
   });
 
@@ -337,7 +337,7 @@ describe('handleUploadAsset', () => {
       status: number;
       instance: string;
     };
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.status).toBe(400);
     expect(body.title.length).toBeGreaterThan(0);
     expect(body.instance).toMatch(
@@ -350,7 +350,7 @@ describe('handleUploadAsset', () => {
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type: string; status: number };
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
     expect(body.status).toBe(400);
   });
 
@@ -359,7 +359,7 @@ describe('handleUploadAsset', () => {
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('rejects parentDocName with NUL byte', async () => {
@@ -367,7 +367,7 @@ describe('handleUploadAsset', () => {
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('paste timestamp-stem synthesis for generic filename', async () => {
@@ -413,7 +413,7 @@ describe('handleUploadAsset', () => {
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
   });
 
   test('parent-symlink escape rejected before mkdir creates a directory outside contentDir', async () => {
@@ -424,7 +424,7 @@ describe('handleUploadAsset', () => {
     const res = await uploadImage(createPngBuffer(), 'test.png', 'link/sub/x.md');
     expect(res.status).toBe(400);
     const body = (await res.json()) as { type: string };
-    expect(body.type).toBe('urn:ok:error:path-escape');
+    expect(body.type).toBe('urn:ps:error:path-escape');
 
     expect(existsSync(join(escapeTarget, 'sub'))).toBe(false);
   });

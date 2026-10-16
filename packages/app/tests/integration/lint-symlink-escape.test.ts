@@ -32,7 +32,7 @@ describe('GET /api/lint symlink containment', () => {
     const res = await getLint('lint-escape');
     expect(res.status).toBe(400);
     const text = await res.text();
-    expect((JSON.parse(text) as { type: string }).type).toBe('urn:ok:error:path-escape');
+    expect((JSON.parse(text) as { type: string }).type).toBe('urn:ps:error:path-escape');
     expect(text).not.toContain(SECRET);
   });
 
@@ -68,7 +68,7 @@ describe('POST /api/lint/fix symlink containment', () => {
     });
     expect(res.status).toBe(400);
     const text = await res.text();
-    expect((JSON.parse(text) as { type: string }).type).toBe('urn:ok:error:path-escape');
+    expect((JSON.parse(text) as { type: string }).type).toBe('urn:ps:error:path-escape');
     expect(text).not.toContain(SECRET);
   });
 });

@@ -41,7 +41,7 @@ describe('agent-write-md envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('missing markdown emits urn:ok:error:invalid-request', async () => {
+  test('missing markdown emits urn:ps:error:invalid-request', async () => {
     const res = await postWriteMd({ position: 'replace' });
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -50,7 +50,7 @@ describe('agent-write-md envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
       expect(parsed.data.instance).toBeDefined();
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
@@ -74,11 +74,11 @@ describe('agent-write-md envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('reserved docname emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved docname emits urn:ps:error:reserved-doc-name', async () => {
     const res = await postWriteMd({
       markdown: '# Should reject',
       position: 'replace',
@@ -91,7 +91,7 @@ describe('agent-write-md envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
       expect(parsed.data.status).toBe(400);
     }
   });
@@ -107,7 +107,7 @@ describe('agent-write-md envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

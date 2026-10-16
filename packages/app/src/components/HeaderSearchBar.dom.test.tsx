@@ -35,7 +35,7 @@ describe('HeaderSearchBar runtime behavior', () => {
     expect(button.getAttribute('aria-label')).toBe('Search');
     expect(button.getAttribute('data-slot')).toBe('tooltip-trigger');
     expect(button.getAttribute('data-variant')).toBe('ghost');
-    expect(button.getAttribute('data-telemetry-event')).toBe('ok.app_header.search.click');
+    expect(button.getAttribute('data-telemetry-event')).toBe('ps.app_header.search.click');
     expect(button.classList.contains('extra-class')).toBe(true);
     expect(button.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
     expect(button.textContent).toBe('');

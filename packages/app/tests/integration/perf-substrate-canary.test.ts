@@ -25,20 +25,20 @@ afterEach(() => {
 
 describe('perf-substrate canary', () => {
   test('FR1 / FR3 — pool open emits hit:true and hit:false counters', () => {
-    mark('ok/pool/open', { docName: 'doc-a', hit: false, poolEventId: 'pe-1' });
-    mark.count('ok/pool/open', { hit: false });
-    mark('ok/pool/open', { docName: 'doc-a', hit: true, poolEventId: 'pe-1' });
-    mark.count('ok/pool/open', { hit: true });
-    const counter = getCollector()?.counters['ok/pool/open'];
+    mark('ps/pool/open', { docName: 'doc-a', hit: false, poolEventId: 'pe-1' });
+    mark.count('ps/pool/open', { hit: false });
+    mark('ps/pool/open', { docName: 'doc-a', hit: true, poolEventId: 'pe-1' });
+    mark.count('ps/pool/open', { hit: true });
+    const counter = getCollector()?.counters['ps/pool/open'];
     expect(counter?.byProp.hit?.true).toBe(1);
     expect(counter?.byProp.hit?.false).toBe(1);
   });
 
   test('FR2 — histogram p50/p95/p99/p999 are populated after a sample of 200', () => {
     for (let i = 1; i <= 200; i += 1) {
-      mark.histogram('ok/canary/durations', { mode: 'WYSIWYG' }, i);
+      mark.histogram('ps/canary/durations', { mode: 'WYSIWYG' }, i);
     }
-    const snap = getHistogramSnapshot('ok/canary/durations');
+    const snap = getHistogramSnapshot('ps/canary/durations');
     expect(snap?.count).toBe(200);
     expect(snap?.p50).toBeGreaterThan(0);
     expect(snap?.p95).toBeGreaterThan(0);
@@ -51,13 +51,13 @@ describe('perf-substrate canary', () => {
 
   test('FR8 — collector marks ring evicts oldest beyond MAX_RING_ENTRIES', () => {
     for (let i = 0; i < 16; i += 1) {
-      mark('ok/canary/seq', { ix: i });
+      mark('ps/canary/seq', { ix: i });
     }
     const ring = getCollector()?.marks;
     expect(ring?.length).toBe(8);
     const seen = ring
       ?.toArray()
-      .filter((m: { name: string }) => m.name === 'ok/canary/seq')
+      .filter((m: { name: string }) => m.name === 'ps/canary/seq')
       .map((m: { properties?: { ix?: unknown } }) => m.properties?.ix as number);
     expect(seen?.[seen.length - 1]).toBe(15);
     expect(seen?.[0]).toBeGreaterThanOrEqual(8);

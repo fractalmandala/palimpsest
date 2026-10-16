@@ -48,14 +48,14 @@ export function createSkillsTrackingRoutes(deps: SkillsTrackingRouteDeps): ApiRo
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Only project skills live in the repository; a global skill is outside any .gitignore.',
             { handler: 'skill-track-in-git' },
           );
           return;
         }
         if (!projectDir) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No project directory.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No project directory.', {
             handler: 'skill-track-in-git',
           });
           return;
@@ -98,7 +98,7 @@ export function createSkillsTrackingRoutes(deps: SkillsTrackingRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             `"${line}" is already in ${gitignoreRel}, but ${skillFileRel} is still ignored — another rule excludes it.`,
             { handler: 'skill-track-in-git' },
           );
@@ -117,7 +117,7 @@ export function createSkillsTrackingRoutes(deps: SkillsTrackingRouteDeps): ApiRo
           errorResponse(
             res,
             409,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             `Adding "${line}" did not make ${skillFileRel} trackable — another .gitignore rule excludes a parent directory. ${gitignoreRel} was left unchanged.`,
             { handler: 'skill-track-in-git' },
           );

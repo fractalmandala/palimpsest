@@ -18,8 +18,8 @@ import { shutdownTelemetry } from '../telemetry.ts';
 import { createLoggedServer } from './tool-logging.ts';
 import { wrapToolHandlerForTelemetry } from './tool-telemetry.ts';
 
-const DURATION_METRIC = 'ok.mcp.tool.duration';
-const ERRORS_METRIC = 'ok.mcp.tool.errors';
+const DURATION_METRIC = 'ps.mcp.tool.duration';
+const ERRORS_METRIC = 'ps.mcp.tool.errors';
 
 let spanExporter: InMemorySpanExporter;
 let tracerProvider: BasicTracerProvider;

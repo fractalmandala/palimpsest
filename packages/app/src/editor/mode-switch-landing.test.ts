@@ -724,8 +724,8 @@ describe('startSourceLanding', () => {
       vi.advanceTimersByTime(100);
     }
 
-    expect(markNamed('ok/landing/abandoned')).toBeDefined();
-    expect(markNamed('ok/landing/land')).toBeUndefined();
+    expect(markNamed('ps/landing/abandoned')).toBeDefined();
+    expect(markNamed('ps/landing/land')).toBeUndefined();
     expect(source.state().field(landingFlashField).size).toBe(0);
   });
 

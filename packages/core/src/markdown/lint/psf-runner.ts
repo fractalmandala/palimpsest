@@ -16,9 +16,9 @@ declare module 'vfile' {
   }
 }
 
-type OkfRuleFn = (tree: Root, file: VFile) => void;
+type PsfRuleFn = (tree: Root, file: VFile) => void;
 
-export function defineOkfRule(id: string, rule: OkfRuleFn) {
+export function definePsfRule(id: string, rule: PsfRuleFn) {
   return lintRule(`psf:${id}`, (tree, file) => {
     try {
       rule(tree as Root, file);
@@ -31,14 +31,14 @@ export function defineOkfRule(id: string, rule: OkfRuleFn) {
   });
 }
 
-export function defineScopedOkfRule(id: string, appliesTo: string, rule: OkfRuleFn) {
+export function defineScopedPsfRule(id: string, appliesTo: string, rule: PsfRuleFn) {
   const scope = compileAppliesTo(appliesTo);
-  return defineOkfRule(id, (tree, file) => {
+  return definePsfRule(id, (tree, file) => {
     if (scope.matches(file.data.psfDocName)) rule(tree, file);
   });
 }
 
-export type OkfRule = ReturnType<typeof defineOkfRule>;
+export type PsfRule = ReturnType<typeof definePsfRule>;
 
 const point = (p: Point): LintPosition => ({ line: p.line - 1, character: p.column - 1 });
 
@@ -61,9 +61,9 @@ function toDiagnostic(message: VFileMessage, lines: readonly string[]): LintDiag
   };
 }
 
-export function runOkfRules(
+export function runPsfRules(
   text: string,
-  rules: readonly OkfRule[],
+  rules: readonly PsfRule[],
   docName?: string,
 ): LintDiagnostic[] {
   if (rules.length === 0) return [];

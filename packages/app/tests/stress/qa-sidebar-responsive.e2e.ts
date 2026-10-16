@@ -597,7 +597,7 @@ test.describe('non-embedded UA', () => {
     await page.locator('[data-doc-panel-toggle]').click();
     await expect(page.locator('[data-doc-panel-toggle]')).toHaveAttribute('aria-expanded', 'false');
     await page.evaluate(() => {
-      window.dispatchEvent(new CustomEvent('ok:doc-panel:request-tab', { detail: 'timeline' }));
+      window.dispatchEvent(new CustomEvent('ps:doc-panel:request-tab', { detail: 'timeline' }));
     });
     await page.locator('[data-doc-panel-toggle]').click();
     await expect(page.locator('[data-doc-panel-toggle]')).toHaveAttribute('aria-expanded', 'true');

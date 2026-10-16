@@ -305,12 +305,12 @@ async function drainCollector(page: Page): Promise<{
     const { marks, vitals } = payload;
     const onRender: ProfilerRenderEvent[] = [];
     for (const m of marks) {
-      if (m.name.startsWith('ok/render/')) {
+      if (m.name.startsWith('ps/render/')) {
         const props = (m.properties ?? {}) as Record<string, unknown>;
         const phase =
           props.phase === 'update' || props.phase === 'nested-update' ? props.phase : 'mount';
         onRender.push({
-          id: m.name.slice('ok/render/'.length),
+          id: m.name.slice('ps/render/'.length),
           phase,
           actualDuration:
             typeof props.actualDuration === 'number' ? props.actualDuration : m.duration,

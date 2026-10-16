@@ -386,7 +386,7 @@ test('reports an unreadable Git pointer and completes after it is repaired', asy
     write(join(project, '.git'), 'broken pointer');
     write(join(gitDir, 'HEAD'), 'ref: refs/heads/main\n');
     write(join(gitDir, 'info', 'exclude'), '.ps/\n.mcp.json\nprivate.env\n');
-    write(join(gitDir, 'ok', 'state'), 'derived state');
+    write(join(gitDir, 'ps', 'state'), 'derived state');
     const opts = {
       cwd: project,
       home,
@@ -417,7 +417,7 @@ test('reports an unreadable Git pointer and completes after it is repaired', asy
     expect(retry.status).toBe('done');
     expect(retry.exitCode).toBe(0);
     expect(existsSync(join(project, '.ps'))).toBe(false);
-    expect(existsSync(join(gitDir, 'ok'))).toBe(false);
+    expect(existsSync(join(gitDir, 'ps'))).toBe(false);
     expect(readFileSync(join(gitDir, 'info', 'exclude'), 'utf8')).toBe('.mcp.json\nprivate.env\n');
     expect(readFileSync(join(project, '.git'), 'utf8')).toBe(`gitdir: ${gitDir}\n`);
   } finally {
@@ -450,7 +450,7 @@ test('keeps project state when a later skill removal fails', async () => {
 
 describe('deinit help names the running channel command', () => {
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

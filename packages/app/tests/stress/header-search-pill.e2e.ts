@@ -3,7 +3,7 @@ import { expect, test } from './_helpers';
 
 const DESKTOP_VIEWPORT = { width: 1440, height: 900 } as const;
 
-const SEARCH_TELEMETRY_EVENT = 'ok.app_header.search.click';
+const SEARCH_TELEMETRY_EVENT = 'ps.app_header.search.click';
 const appHeader = (page: Page) => page.locator('header[data-app-header]');
 const pill = (page: Page) =>
   appHeader(page).locator(`[data-telemetry-event="${SEARCH_TELEMETRY_EVENT}"]`);

@@ -5,7 +5,7 @@ type FrontmatterEditSource = 'source-mode' | 'mcp-write' | 'file-watcher';
 
 let _editSurfaceCounter: Counter | null = null;
 function editSurfaceCounter(): Counter {
-  _editSurfaceCounter ||= getMeter().createCounter('ok.frontmatter.edit_surface_total', {
+  _editSurfaceCounter ||= getMeter().createCounter('ps.frontmatter.edit_surface_total', {
     description:
       'Count of frontmatter edits by surface. Bounded label: source ∈ {source-mode, mcp-write, file-watcher}.',
   });

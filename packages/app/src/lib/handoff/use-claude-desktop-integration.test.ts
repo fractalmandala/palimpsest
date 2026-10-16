@@ -347,7 +347,7 @@ describe('defaultReadLocalStorageGuard — production scanner', () => {
 
   test('matching guard key → skillInstalled=true and version extracted from suffix', async () => {
     installMemoryStorage({
-      'ok:skill:cowork:installed:v2.5.0': '1',
+      'ps:skill:cowork:installed:v2.5.0': '1',
       'unrelated:key': 'whatever',
     });
     const { defaultReadLocalStorageGuard } = await import('./use-claude-desktop-integration');
@@ -390,7 +390,7 @@ describe('defaultReadLocalStorageGuard — production scanner', () => {
   test('cross-module prefix contract holds — writer key shape matches reader prefix', async () => {
     const { buildCoworkSkillGuardKey } = await import('./cowork-skill-install');
     const key = buildCoworkSkillGuardKey('1.2.3');
-    expect(key).toBe('ok:skill:cowork:installed:v1.2.3');
+    expect(key).toBe('ps:skill:cowork:installed:v1.2.3');
     installMemoryStorage({ [key]: '1' });
     const { defaultReadLocalStorageGuard } = await import('./use-claude-desktop-integration');
     expect(defaultReadLocalStorageGuard()).toEqual({

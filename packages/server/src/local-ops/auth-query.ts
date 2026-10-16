@@ -2,7 +2,7 @@ import { redactedStderrDetail } from './clone-error-classify.ts';
 import {
   LOCAL_OP_AUTH_SUBPROCESS_TIMEOUT_MS,
   type LocalOpCliInvocation,
-  runOkCliSubprocess,
+  runPsCliSubprocess,
 } from './subprocess.ts';
 
 const SIGNED_OUT_SENTENCE = /^not logged in to /i;
@@ -50,7 +50,7 @@ export async function runAuthStatusSubprocess(
 ): Promise<AuthStatusResponse> {
   const host = opts.host ?? 'github.com';
   const lines: Record<string, unknown>[] = [];
-  const proc = runOkCliSubprocess(opts.cli, {
+  const proc = runPsCliSubprocess(opts.cli, {
     cwd: opts.cwd,
     trailingArgs: ['auth', 'status', '--json', '--host', host],
     timeoutMs: opts.timeoutMs ?? LOCAL_OP_AUTH_SUBPROCESS_TIMEOUT_MS,
@@ -98,7 +98,7 @@ export async function runAuthReposSubprocess(
 ): Promise<AuthReposResponse> {
   const host = opts.host ?? 'github.com';
   const lines: Record<string, unknown>[] = [];
-  const proc = runOkCliSubprocess(opts.cli, {
+  const proc = runPsCliSubprocess(opts.cli, {
     cwd: opts.cwd,
     trailingArgs: ['auth', 'repos', '--json', '--host', host],
     timeoutMs: opts.timeoutMs ?? LOCAL_OP_AUTH_SUBPROCESS_TIMEOUT_MS,

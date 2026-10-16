@@ -81,12 +81,12 @@ describe('resolveDesktopProductName', () => {
 
   it('retires the package names each channel shipped before, and only its own', () => {
     expect(DESKTOP_PRODUCTS.stable.retiredLinuxPackageNames).toEqual({
-      deb: [],
-      rpm: ['Palimpsest'],
+      deb: ['openknowledge'],
+      rpm: ['Palimpsest', 'openknowledge'],
     });
     expect(DESKTOP_PRODUCTS.beta.retiredLinuxPackageNames).toEqual({
-      deb: ['palimpsest-beta-desktop'],
-      rpm: ['palimpsest-beta-desktop'],
+      deb: ['palimpsest-beta-desktop', 'openknowledge-beta'],
+      rpm: ['palimpsest-beta-desktop', 'openknowledge-beta'],
     });
     const current = Object.values(DESKTOP_PRODUCTS).flatMap((p) => [
       p.linuxPackageNames.deb,
@@ -178,9 +178,9 @@ describe('channel CLI command name', () => {
     vi.unstubAllEnvs();
   });
 
-  it('names ok on Stable', () => {
+  it('names ps on Stable', () => {
     vi.stubEnv('PS_CHANNEL', 'stable');
-    expect(currentCliCommandName()).toBe('ok');
+    expect(currentCliCommandName()).toBe('ps');
   });
 
   it('names ps-beta on Beta', () => {
@@ -196,7 +196,7 @@ describe('channel CLI command name', () => {
 
   it('maps a command name back to its product, and anything else to Stable', () => {
     expect(desktopProductForCliCommand('ps-beta')).toBe(DESKTOP_PRODUCTS.beta);
-    expect(desktopProductForCliCommand('ok')).toBe(DESKTOP_PRODUCTS.stable);
+    expect(desktopProductForCliCommand('ps')).toBe(DESKTOP_PRODUCTS.stable);
     expect(desktopProductForCliCommand(null)).toBe(DESKTOP_PRODUCTS.stable);
     expect(desktopProductForCliCommand('palimpsest-beta')).toBe(DESKTOP_PRODUCTS.stable);
   });
@@ -298,8 +298,8 @@ describe('PsCliCommand', () => {
   });
 
   it('pins nothing on Stable and refuses nothing', () => {
-    const cli = PsCliCommand.resolve({ host: { cliArgs: ['ok'] }, env: { PS_CHANNEL: 'stable' } });
-    expect(cli.runnerInvocation(['start'])).toEqual({ cliArgs: ['ok', 'start'], cliEnv: {} });
+    const cli = PsCliCommand.resolve({ host: { cliArgs: ['ps'] }, env: { PS_CHANNEL: 'stable' } });
+    expect(cli.runnerInvocation(['start'])).toEqual({ cliArgs: ['ps', 'start'], cliEnv: {} });
     expect(cli.refusalFor(['auth', 'login'])).toBeUndefined();
   });
 

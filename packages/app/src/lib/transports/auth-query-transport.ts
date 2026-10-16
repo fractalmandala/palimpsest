@@ -12,7 +12,7 @@ const DEFAULT_AUTH_QUERY_HOST = 'github.com';
 const authStatusInFlight = new Map<string, Promise<AuthQueryStatus>>();
 
 const NonGitHubOriginProblemSchema = ProblemDetailsSchema.extend({
-  type: z.literal('urn:ok:error:non-github-origin'),
+  type: z.literal('urn:ps:error:non-github-origin'),
   host: z.string().min(1).nullish().catch(null),
 });
 

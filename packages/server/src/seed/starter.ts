@@ -1278,7 +1278,7 @@ description: "When the agent does scheduled work: daily briefings, end-of-day do
 
 ## Monthly
 
-- Run OK's \`links({ kind: "dead" })\` across the vault. Triage redlinks into new entities (agents create dossiers through OK), typo fixes (OK edits in place), or removal (drop the link; a tracked task captures any future-doc intent).
+- Run Palimpsest's \`links({ kind: "dead" })\` across the vault. Triage redlinks into new entities (agents create dossiers through OK), typo fixes (OK edits in place), or removal (drop the link; a tracked task captures any future-doc intent).
 
 `;
 
@@ -1376,8 +1376,8 @@ export const STARTER_PACKS: Readonly<Record<PackId, StarterPack>> = {
   },
   psf: {
     id: 'psf',
-    name: 'Palimpsest Format',
-    description: "Wiki using Google's Palimpsest Format.",
+    name: 'OpenKnowledge Format',
+    description: "Wiki using Google's OpenKnowledge Format.",
     defaultSubfolder: undefined,
     folders: PSF_FOLDERS,
     templates: PSF_TEMPLATES,

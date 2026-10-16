@@ -24,7 +24,7 @@ export interface ProbeDeps {
 }
 
 const COWORK_TARGET = 'claude-cowork';
-const GUARD_KEY_PREFIX = 'ok:skill:cowork:installed:v';
+const GUARD_KEY_PREFIX = 'ps:skill:cowork:installed:v';
 const SKILL_STATE_FETCH_TIMEOUT_MS = 250;
 const INSTALL_STATE_PATH = '/api/skill/install-state';
 

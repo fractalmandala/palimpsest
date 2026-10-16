@@ -51,7 +51,7 @@ const candidate = (overrides = {}) => ({
   id: 'uuid-7539',
   identifier: 'PRD-7539',
   stateType: 'completed',
-  labels: ['Bug', 'ok:platform'],
+  labels: ['Bug', 'ps:platform'],
   attachmentUrls: [GH_PULL, GH_ISSUE],
   ...overrides,
 });
@@ -889,7 +889,7 @@ describe('locating the changeset a fix shipped with', () => {
     );
   });
 
-  test("another product's changeset is never picked for an Palimpsest reporter", () => {
+  test("another product's changeset is never picked for a Palimpsest reporter", () => {
     const foreign = [
       'public/agents/.changeset/some-agents-fix.md',
       '.changeset/a-stray-root-changeset.md',

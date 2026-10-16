@@ -181,7 +181,7 @@ describe("share publish authenticates its github.com push only through the CLI's
         projectDir,
         body: { owner: 'alice', name: 'demo', visibility: 'private' },
         ownerKind: 'user',
-        deps: { ensureOkScaffold: () => {} },
+        deps: { ensurePsScaffold: () => {} },
       });
     } finally {
       process.argv[1] = cliEntry;

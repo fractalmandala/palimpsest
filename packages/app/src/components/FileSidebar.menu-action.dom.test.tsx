@@ -574,7 +574,7 @@ describe('FileSidebar menu-action runtime routing', () => {
 
     menuActionCallback?.('toggle-show-ps-folders' as MenuAction);
     expect(projectLocalPatch).toHaveBeenCalledWith({
-      appearance: { sidebar: { showOkFolders: true } },
+      appearance: { sidebar: { showPsFolders: true } },
     });
 
     menuActionCallback?.('toggle-show-only-markdown-files' as MenuAction);
@@ -689,7 +689,7 @@ describe('FileSidebar menu-action runtime routing', () => {
   test('visibility toggles read the latest merged config across a flip round-trip', async () => {
     const toggleRoundTrips = [
       { action: 'toggle-show-hidden-files', key: 'showHiddenFiles', defaultValue: false },
-      { action: 'toggle-show-ps-folders', key: 'showOkFolders', defaultValue: false },
+      { action: 'toggle-show-ps-folders', key: 'showPsFolders', defaultValue: false },
       {
         action: 'toggle-show-only-markdown-files',
         key: 'showOnlyMarkdownFiles',

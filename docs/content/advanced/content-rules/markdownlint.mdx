@@ -6,7 +6,7 @@ description: The markdownlint linter for content rules — VS Code-parity defaul
 
 markdownlint is the content-rules linter for markdown style — the standard [markdownlint](https://github.com/DavidAnson/markdownlint) engine, the same one behind `markdownlint-cli2` and the popular editor extensions.
 
-This page covers its defaults, how it reads your project's config, and the built-in rule browser. For the linter-agnostic parts — where problems appear, the Problems panel, `ok lint`, and agent advisories — see the [content rules overview](/docs/advanced/content-rules/overview). For validating frontmatter rather than markdown style, see [Frontmatter schemas](/docs/advanced/content-rules/frontmatter).
+This page covers its defaults, how it reads your project's config, and the built-in rule browser. For the linter-agnostic parts — where problems appear, the Problems panel, `ps lint`, and agent advisories — see the [content rules overview](/docs/advanced/content-rules/overview). For validating frontmatter rather than markdown style, see [Frontmatter schemas](/docs/advanced/content-rules/frontmatter).
 
 ## Default rules
 
@@ -39,7 +39,7 @@ Every edit writes back to your native `.markdownlint.*` file, and a rule you con
 
 ## What a finding looks like
 
-A markdownlint finding carries the rule id as its `code` under source `markdownlint` — rendered as `markdownlint/MD010` in reports — with the upstream engine's message. In `ok lint` text output:
+A markdownlint finding carries the rule id as its `code` under source `markdownlint` — rendered as `markdownlint/MD010` in reports — with the upstream engine's message. In `ps lint` text output:
 
 ```text
 docs/guide.md
@@ -70,7 +70,7 @@ JSON ranges are 0-based and end-exclusive; the text report is 1-based. A rule th
 
 ## See also
 
-- [Content rules overview](/docs/advanced/content-rules/overview): where problems show up, the Problems panel, `ok lint`, and agents
+- [Content rules overview](/docs/advanced/content-rules/overview): where problems show up, the Problems panel, `ps lint`, and agents
 - [Frontmatter schemas](/docs/advanced/content-rules/frontmatter): the sibling linter for frontmatter validation
 - [Configuration reference](/docs/reference/configuration): `config.yml` and what's shared via git
 - [markdownlint rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md): the upstream rule reference

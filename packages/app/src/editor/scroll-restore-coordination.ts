@@ -141,7 +141,7 @@ export type NavigationSeam =
   | 'find-match'
   | 'comment-reveal';
 
-const NAVIGATION_DECLINED_MARK = 'ok/scroll-nav/declined';
+const NAVIGATION_DECLINED_MARK = 'ps/scroll-nav/declined';
 
 const markedDeclines = new Map<string, Set<NavigationSeam>>();
 

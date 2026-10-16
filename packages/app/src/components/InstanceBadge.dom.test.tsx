@@ -8,7 +8,7 @@ vi.doMock('@lingui/react/macro', () => ({
   useLingui: () => ({ t: renderLinguiTemplate }),
 }));
 
-function setOkDesktop(
+function setPsDesktop(
   value: { instanceLabel: string | null; appVersion?: string } | undefined,
 ): void {
   (window as unknown as { psDesktop?: unknown }).psDesktop = value;
@@ -33,23 +33,23 @@ async function renderInstanceBadge(className?: string) {
 describe('InstanceBadge runtime behavior', () => {
   afterEach(() => {
     cleanup();
-    setOkDesktop(undefined);
+    setPsDesktop(undefined);
   });
 
   test('renders nothing without a desktop host (web / CLI distribution)', async () => {
-    setOkDesktop(undefined);
+    setPsDesktop(undefined);
     await renderInstanceBadge();
     expect(screen.queryByTestId('instance-badge')).toBeNull();
   });
 
   test('renders nothing when the host reports no instance label (default install)', async () => {
-    setOkDesktop({ instanceLabel: null });
+    setPsDesktop({ instanceLabel: null });
     await renderInstanceBadge();
     expect(screen.queryByTestId('instance-badge')).toBeNull();
   });
 
   test('renders the branch label for a named parallel instance', async () => {
-    setOkDesktop({ instanceLabel: 'theming-as-plugin' });
+    setPsDesktop({ instanceLabel: 'theming-as-plugin' });
     await renderInstanceBadge('ml-1');
 
     const badge = screen.getByTestId('instance-badge');
@@ -60,7 +60,7 @@ describe('InstanceBadge runtime behavior', () => {
   });
 
   test('is a static label, not something that looks clickable', async () => {
-    setOkDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
+    setPsDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
     await renderInstanceBadge();
 
     const badge = screen.getByTestId('instance-badge');
@@ -71,7 +71,7 @@ describe('InstanceBadge runtime behavior', () => {
   });
 
   test('its tooltip names the build and its version', async () => {
-    setOkDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
+    setPsDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
     await renderInstanceBadge();
 
     await userEvent.hover(screen.getByTestId('instance-badge'));
@@ -81,7 +81,7 @@ describe('InstanceBadge runtime behavior', () => {
   });
 
   test('announces the build and its version to assistive tech', async () => {
-    setOkDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
+    setPsDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
     await renderInstanceBadge();
 
     expectAnnouncedInPlaceOfLabel(
@@ -92,7 +92,7 @@ describe('InstanceBadge runtime behavior', () => {
   });
 
   test('a keyboard user reaches the build and its version without hovering', async () => {
-    setOkDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
+    setPsDesktop({ instanceLabel: 'Cloud', appVersion: '0.81.5' });
     await renderInstanceBadge();
 
     await userEvent.tab();
@@ -101,7 +101,7 @@ describe('InstanceBadge runtime behavior', () => {
   });
 
   test('treats the 0.0.0 placeholder version as unknown', async () => {
-    setOkDesktop({ instanceLabel: 'Cloud', appVersion: '0.0.0' });
+    setPsDesktop({ instanceLabel: 'Cloud', appVersion: '0.0.0' });
     await renderInstanceBadge();
 
     const badge = screen.getByTestId('instance-badge');
@@ -113,7 +113,7 @@ describe('InstanceBadge runtime behavior', () => {
   });
 
   test('its tooltip leaves the version out when the host does not report one', async () => {
-    setOkDesktop({ instanceLabel: 'Cloud' });
+    setPsDesktop({ instanceLabel: 'Cloud' });
     await renderInstanceBadge();
 
     await userEvent.hover(screen.getByTestId('instance-badge'));

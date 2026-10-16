@@ -440,7 +440,7 @@ beforeAll(async () => {
       if (url.pathname === '/rfc9457-not-found') {
         return Response.json(
           {
-            type: 'urn:ok:error:doc-not-found',
+            type: 'urn:ps:error:doc-not-found',
             title: 'Not found.',
             status: 404,
             instance: 'urn:uuid:11111111-1111-1111-1111-111111111111',
@@ -451,7 +451,7 @@ beforeAll(async () => {
       if (url.pathname === '/rfc9457-with-extensions') {
         return Response.json(
           {
-            type: 'urn:ok:error:doc-already-exists',
+            type: 'urn:ps:error:doc-already-exists',
             title: 'Exists.',
             status: 409,
             instance: 'urn:uuid:22222222-2222-2222-2222-222222222222',
@@ -463,7 +463,7 @@ beforeAll(async () => {
       if (url.pathname === '/rfc9457-with-detail') {
         return Response.json(
           {
-            type: 'urn:ok:error:internal-server-error',
+            type: 'urn:ps:error:internal-server-error',
             title: 'Internal server error.',
             status: 500,
             instance: 'urn:uuid:33333333-3333-3333-3333-333333333333',
@@ -639,7 +639,7 @@ describe('ApiTarget local dispatch', () => {
       {
         url: 'http://localhost:1',
         local: jsonDispatch(404, {
-          type: 'urn:ok:error:doc-not-found',
+          type: 'urn:ps:error:doc-not-found',
           title: 'Not found.',
           status: 404,
         }),
@@ -685,7 +685,7 @@ describe('normalizeResponse — RFC 9457 + flat success', () => {
     expect(result.ok).toBe(false);
     expect(result.error).toBe('Not found.');
     expect(result.instance).toBe('urn:uuid:11111111-1111-1111-1111-111111111111');
-    expect(result.type).toBe('urn:ok:error:doc-not-found');
+    expect(result.type).toBe('urn:ps:error:doc-not-found');
     expect(result.status).toBe(404);
     expect(result.detail).toBeUndefined();
   });
@@ -739,7 +739,7 @@ describe('normalizeResponse — RFC 9457 + flat success', () => {
     expect(result.data).toBeNull();
   });
 
-  test('intermediary stray `ok: false` on 2xx: stripped + re-synthesized as ok:true', async () => {
+  test('intermediary stray `ps: false` on 2xx: stripped + re-synthesized as ok:true', async () => {
     const result = await httpGet(baseUrl, '/intermediary-stray-ok-2xx');
     expect(result.ok).toBe(true);
     expect(result.data).toBe('succeeded');

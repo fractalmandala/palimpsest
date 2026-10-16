@@ -126,7 +126,7 @@ describe('GET /api/config (desktop / worktree collab server)', () => {
       const result = await call(buildExtension(dir), 'GET', '/api/config', {});
       expect(result.status).toBe(403);
       const body = JSON.parse(result.body) as { type: string };
-      expect(body.type).toBe('urn:ok:error:host-not-allowed');
+      expect(body.type).toBe('urn:ps:error:host-not-allowed');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

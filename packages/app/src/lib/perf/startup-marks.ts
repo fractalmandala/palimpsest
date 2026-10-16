@@ -29,14 +29,14 @@ function maybeReport(): void {
 export function pageListReady(): void {
   if (pageListReadyAt !== undefined) return;
   pageListReadyAt = Date.now();
-  mark('ok/startup/page-list-ready');
+  mark('ps/startup/page-list-ready');
   maybeReport();
 }
 
 export function firstContent(): void {
   if (activeDocSyncedAt !== undefined) return;
   activeDocSyncedAt = Date.now();
-  mark('ok/startup/first-content');
+  mark('ps/startup/first-content');
   maybeReport();
 }
 

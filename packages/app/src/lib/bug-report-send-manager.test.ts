@@ -474,7 +474,7 @@ describe('bug-report send manager — per-attempt tracing', () => {
 
     const outcomes = exporter
       .getFinishedSpans()
-      .map((sp) => sp.attributes['ok.bug_report.renderer_outcome']);
+      .map((sp) => sp.attributes['ps.bug_report.renderer_outcome']);
 
     expect(outcomes).toEqual(['failed', 'sent']);
   });

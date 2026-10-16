@@ -6,26 +6,26 @@ import {
   computeAncestors,
   defaultInitialDir,
   filterVisibleEntries,
-  hasOkPathSegment,
+  hasPsPathSegment,
   toFileEntries,
 } from './file-tree-utils';
 
-describe('hasOkPathSegment', () => {
+describe('hasPsPathSegment', () => {
   test('matches a .ps segment at root and nested depth', () => {
-    expect(hasOkPathSegment('.ps')).toBe(true);
-    expect(hasOkPathSegment('.ps/config.yml')).toBe(true);
-    expect(hasOkPathSegment('notes/.ps/templates/starter')).toBe(true);
+    expect(hasPsPathSegment('.ps')).toBe(true);
+    expect(hasPsPathSegment('.ps/config.yml')).toBe(true);
+    expect(hasPsPathSegment('notes/.ps/templates/starter')).toBe(true);
   });
 
   test('matches case variants, mirroring the server reserved-path guard', () => {
-    expect(hasOkPathSegment('.OK')).toBe(true);
-    expect(hasOkPathSegment('notes/.Ok/templates')).toBe(true);
+    expect(hasPsPathSegment('.OK')).toBe(true);
+    expect(hasPsPathSegment('notes/.Ok/templates')).toBe(true);
   });
 
   test('does not match lookalike segments or substrings', () => {
-    expect(hasOkPathSegment('notes/.okay/file')).toBe(false);
-    expect(hasOkPathSegment('book/chapter')).toBe(false);
-    expect(hasOkPathSegment('ok/file')).toBe(false);
+    expect(hasPsPathSegment('notes/.okay/file')).toBe(false);
+    expect(hasPsPathSegment('book/chapter')).toBe(false);
+    expect(hasPsPathSegment('ps/file')).toBe(false);
   });
 });
 
@@ -311,38 +311,38 @@ describe('filterVisibleEntries — axis composition', () => {
   const psRootFolder = { kind: 'folder' as const, path: '.ps' };
   const psTemplateDoc = { kind: 'document' as const, docName: '.ps/templates/meeting-notes' };
   const psConfigAsset = { kind: 'asset' as const, path: '.ps/config.yml' };
-  const nestedOkDoc = { kind: 'document' as const, docName: 'docs/.ps/templates/spec' };
-  const dotAncestorOkDoc = { kind: 'document' as const, docName: '.scratch/.ps/wip' };
+  const nestedPsDoc = { kind: 'document' as const, docName: 'docs/.ps/templates/spec' };
+  const dotAncestorPsDoc = { kind: 'document' as const, docName: '.scratch/.ps/wip' };
 
   test('hidden-files on never reveals .ps entries — show-ok alone governs them', () => {
-    for (const entry of [psRootFolder, psTemplateDoc, psConfigAsset, nestedOkDoc]) {
+    for (const entry of [psRootFolder, psTemplateDoc, psConfigAsset, nestedPsDoc]) {
       expect(shows(entry, { showHiddenFiles: true })).toBe(false);
     }
   });
 
   test('show-ok reveals root and per-folder .ps entries without hidden-files', () => {
-    const psOn = { showOkFolders: true };
+    const psOn = { showPsFolders: true };
     expect(shows(psRootFolder, psOn)).toBe(true);
     expect(shows(psTemplateDoc, psOn)).toBe(true);
     expect(shows(psConfigAsset, psOn)).toBe(true);
-    expect(shows(nestedOkDoc, psOn)).toBe(true);
+    expect(shows(nestedPsDoc, psOn)).toBe(true);
     expect(shows(dotDoc, psOn)).toBe(false);
   });
 
   test('only-markdown composes inside a revealed .ps', () => {
-    const psMd = { showOkFolders: true, showOnlyMarkdownFiles: true };
+    const psMd = { showPsFolders: true, showOnlyMarkdownFiles: true };
     expect(shows(psTemplateDoc, psMd)).toBe(true);
     expect(shows(psConfigAsset, psMd)).toBe(false);
     expect(shows(psRootFolder, psMd)).toBe(true);
   });
 
   test('a dot-segment ancestor above the .ps segment still follows hidden-files', () => {
-    expect(shows(dotAncestorOkDoc, { showOkFolders: true })).toBe(false);
-    expect(shows(dotAncestorOkDoc, { showOkFolders: true, showHiddenFiles: true })).toBe(true);
+    expect(shows(dotAncestorPsDoc, { showPsFolders: true })).toBe(false);
+    expect(shows(dotAncestorPsDoc, { showPsFolders: true, showHiddenFiles: true })).toBe(true);
   });
 
   test('.ps entries never appear under default axes', () => {
-    expect(filterVisibleEntries([psRootFolder, psTemplateDoc, nestedOkDoc])).toEqual([]);
+    expect(filterVisibleEntries([psRootFolder, psTemplateDoc, nestedPsDoc])).toEqual([]);
   });
 
   test('empty refs stay rejected with every axis on', () => {
@@ -350,7 +350,7 @@ describe('filterVisibleEntries — axis composition', () => {
       filterVisibleEntries([{ kind: 'document' as const, docName: '' }], {
         showHiddenFiles: true,
         showOnlyMarkdownFiles: true,
-        showOkFolders: true,
+        showPsFolders: true,
       }),
     ).toEqual([]);
   });
@@ -678,7 +678,7 @@ describe('classifyEmptyTree', () => {
   });
 
   test('reveal-only axes never classify filtered-to-zero', () => {
-    for (const visibility of [{ showHiddenFiles: true }, { showOkFolders: true }]) {
+    for (const visibility of [{ showHiddenFiles: true }, { showPsFolders: true }]) {
       expect(
         classifyEmptyTree({ visibility, unfilteredRootEntryCount: 2, knownPageCount: 0 }),
       ).toBe('true-empty');

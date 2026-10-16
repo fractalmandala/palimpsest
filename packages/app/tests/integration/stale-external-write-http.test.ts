@@ -65,7 +65,7 @@ function expectRetainedEdit(race: Awaited<ReturnType<typeof prepareRace>>): void
 
 function expectStaleDetails(error: unknown, file: string): void {
   expect(error).toMatchObject({
-    type: 'urn:ok:error:stale-external-write',
+    type: 'urn:ps:error:stale-external-write',
     title: 'Edit retained; disk write blocked by a stale external-write conflict.',
     detail: expect.stringContaining('recovery snapshot'),
     file,

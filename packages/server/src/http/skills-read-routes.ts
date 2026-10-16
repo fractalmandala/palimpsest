@@ -92,7 +92,7 @@ export function createSkillsReadRoutes(deps: SkillsReadRouteDeps): SkillsReadRou
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to enumerate installed skills.',
           { handler: 'skills-installed', cause: e },
         );
@@ -112,7 +112,7 @@ export function createSkillsReadRoutes(deps: SkillsReadRouteDeps): SkillsReadRou
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Missing docNames or prefix parameter.',
             { handler: 'comment-counts' },
           );
@@ -122,7 +122,7 @@ export function createSkillsReadRoutes(deps: SkillsReadRouteDeps): SkillsReadRou
         if (prefix !== null) {
           const trimmed = prefix.trim();
           if (trimmed !== '' && !isSafeDocName(trimmed)) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid prefix parameter.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid prefix parameter.', {
               handler: 'comment-counts',
             });
             return;
@@ -148,7 +148,7 @@ export function createSkillsReadRoutes(deps: SkillsReadRouteDeps): SkillsReadRou
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to read comment counts.',
           { handler: 'comment-counts', cause: e },
         );

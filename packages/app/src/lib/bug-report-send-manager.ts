@@ -191,7 +191,7 @@ export function createBugReportSendManager(
         : outcome.status === 'already-sending'
           ? 'joined'
           : outcome.status,
-      { 'ok.bug_report.request_seq': record.requestSeq },
+      { 'ps.bug_report.request_seq': record.requestSeq },
     );
     publish(record, { ...base(record), ...outcome });
   }
@@ -214,9 +214,9 @@ export function createBugReportSendManager(
 
   function beginSend(record: OperationRecord): void {
     record.span = beginBugReportSendSpan({
-      'ok.bug_report.zip_bytes': record.input.zipSizeBytes,
-      'ok.bug_report.include_screenshot': record.input.includeScreenshot === true,
-      'ok.bug_report.attempt': record.requestSeq,
+      'ps.bug_report.zip_bytes': record.input.zipSizeBytes,
+      'ps.bug_report.include_screenshot': record.input.includeScreenshot === true,
+      'ps.bug_report.attempt': record.requestSeq,
     });
     publish(record, { ...base(record), status: 'sending', fillPercent: 0 });
     startFill(record);

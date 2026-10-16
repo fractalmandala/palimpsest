@@ -70,17 +70,17 @@ describe('ensureColdMountSpan', () => {
 describe('emitColdMountChild', () => {
   test('lazily creates the cold-mount root on first child emission', () => {
     const start = Date.now();
-    emitColdMountChild('mid-lazy', 'ok.provider-pool.open', {}, start, start + 5);
+    emitColdMountChild('mid-lazy', 'ps.provider-pool.open', {}, start, start + 5);
     expect(__coldMountSpanCount()).toBe(1);
   });
 
   test('emits the child span with the cold-mount root as parent', () => {
     const start = Date.now();
-    emitColdMountChild('mid-tree', 'ok.provider-pool.open', { 'doc.name': 'X' }, start, start + 5);
+    emitColdMountChild('mid-tree', 'ps.provider-pool.open', { 'doc.name': 'X' }, start, start + 5);
     finalizeColdMountSpan('mid-tree', start + 10);
 
-    const childSpans = spansByName('ok.provider-pool.open');
-    const rootSpans = spansByName('ok.cold-mount');
+    const childSpans = spansByName('ps.provider-pool.open');
+    const rootSpans = spansByName('ps.cold-mount');
     expect(childSpans.length).toBe(1);
     expect(rootSpans.length).toBe(1);
 
@@ -94,13 +94,13 @@ describe('emitColdMountChild', () => {
 
   test('all three child spans descend from one cold-mount root', () => {
     const start = Date.now();
-    emitColdMountChild('mid-3', 'ok.provider-pool.open', {}, start, start + 5);
-    emitColdMountChild('mid-3', 'ok.mount-promise', {}, start + 2, start + 20);
-    emitColdMountChild('mid-3', 'ok.sync-promise', {}, start + 2, start + 40);
+    emitColdMountChild('mid-3', 'ps.provider-pool.open', {}, start, start + 5);
+    emitColdMountChild('mid-3', 'ps.mount-promise', {}, start + 2, start + 20);
+    emitColdMountChild('mid-3', 'ps.sync-promise', {}, start + 2, start + 40);
     finalizeColdMountSpan('mid-3', start + 40);
 
-    const root = spansByName('ok.cold-mount')[0];
-    const children = ['ok.provider-pool.open', 'ok.mount-promise', 'ok.sync-promise'].map(
+    const root = spansByName('ps.cold-mount')[0];
+    const children = ['ps.provider-pool.open', 'ps.mount-promise', 'ps.sync-promise'].map(
       (n) => spansByName(n)[0],
     );
     expect(root).toBeDefined();
@@ -116,13 +116,13 @@ describe('emitColdMountChild', () => {
     const start = Date.now();
     emitColdMountChild(
       'mid-attrs',
-      'ok.sync-promise',
+      'ps.sync-promise',
       { 'doc.name': 'Q', elapsed_ms: 42 },
       start,
       start + 42,
     );
     finalizeColdMountSpan('mid-attrs');
-    const span = spansByName('ok.sync-promise')[0];
+    const span = spansByName('ps.sync-promise')[0];
     expect(span?.attributes['doc.name']).toBe('Q');
     expect(span?.attributes.elapsed_ms).toBe(42);
     expect(span?.attributes['mount.id']).toBe('mid-attrs');
@@ -132,13 +132,13 @@ describe('emitColdMountChild', () => {
     const start = Date.now();
     emitColdMountChild(
       'mid-root-attr',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       { 'doc.name': 'README' },
       start,
       start + 5,
     );
     finalizeColdMountSpan('mid-root-attr', start + 10);
-    const root = spansByName('ok.cold-mount')[0];
+    const root = spansByName('ps.cold-mount')[0];
     expect(root?.attributes['mount.id']).toBe('mid-root-attr');
     expect(root?.attributes['doc.name']).toBe('README');
   });
@@ -147,20 +147,20 @@ describe('emitColdMountChild', () => {
     const start = Date.now();
     emitColdMountChild(
       'mid-stable-root',
-      'ok.provider-pool.open',
+      'ps.provider-pool.open',
       { 'doc.name': 'first', elapsed_ms: 1 },
       start,
       start + 5,
     );
     emitColdMountChild(
       'mid-stable-root',
-      'ok.mount-promise',
+      'ps.mount-promise',
       { 'doc.name': 'second', elapsed_ms: 99 },
       start + 6,
       start + 20,
     );
     finalizeColdMountSpan('mid-stable-root', start + 30);
-    const root = spansByName('ok.cold-mount')[0];
+    const root = spansByName('ps.cold-mount')[0];
     expect(root?.attributes['doc.name']).toBe('first');
     expect(root?.attributes.elapsed_ms).toBe(1);
   });
@@ -169,40 +169,40 @@ describe('emitColdMountChild', () => {
 describe('finalizeColdMountSpan', () => {
   test('first call ends the root and removes the registry entry', () => {
     const start = Date.now();
-    emitColdMountChild('mid-fin', 'ok.sync-promise', {}, start, start + 5);
+    emitColdMountChild('mid-fin', 'ps.sync-promise', {}, start, start + 5);
     expect(__coldMountSpanCount()).toBe(1);
     finalizeColdMountSpan('mid-fin');
     expect(__coldMountSpanCount()).toBe(0);
-    expect(spansByName('ok.cold-mount').length).toBe(1);
+    expect(spansByName('ps.cold-mount').length).toBe(1);
   });
 
   test('subsequent calls are no-ops (idempotent finalize)', () => {
     const start = Date.now();
-    emitColdMountChild('mid-idem', 'ok.sync-promise', {}, start, start + 5);
+    emitColdMountChild('mid-idem', 'ps.sync-promise', {}, start, start + 5);
     finalizeColdMountSpan('mid-idem');
     finalizeColdMountSpan('mid-idem');
     finalizeColdMountSpan('mid-idem');
-    expect(spansByName('ok.cold-mount').length).toBe(1);
+    expect(spansByName('ps.cold-mount').length).toBe(1);
   });
 
   test('finalizing an unknown mountId is a no-op (does not throw)', () => {
     expect(() => finalizeColdMountSpan('no-such-mountid')).not.toThrow();
-    expect(spansByName('ok.cold-mount').length).toBe(0);
+    expect(spansByName('ps.cold-mount').length).toBe(0);
   });
 });
 
 describe('late children after finalize', () => {
   test('a child emitted after finalize does NOT lazy-create a second cold-mount root', () => {
     const start = Date.now();
-    emitColdMountChild('mid-late', 'ok.sync-promise', {}, start, start + 10);
+    emitColdMountChild('mid-late', 'ps.sync-promise', {}, start, start + 10);
     finalizeColdMountSpan('mid-late', start + 10);
     expect(__coldMountSpanCount()).toBe(0);
 
-    emitColdMountChild('mid-late', 'ok.mount-promise', {}, start + 5, start + 30);
+    emitColdMountChild('mid-late', 'ps.mount-promise', {}, start + 5, start + 30);
 
-    const roots = spansByName('ok.cold-mount');
+    const roots = spansByName('ps.cold-mount');
     expect(roots.length).toBe(1);
-    const lateChild = spansByName('ok.mount-promise')[0];
+    const lateChild = spansByName('ps.mount-promise')[0];
     expect(lateChild).toBeDefined();
     expect(lateChild?.attributes['mount.id']).toBe('mid-late');
   });
@@ -212,7 +212,7 @@ describe('late children after finalize', () => {
       finalizeColdMountSpan('mid-pristine');
       finalizeColdMountSpan('mid-pristine');
     }).not.toThrow();
-    expect(spansByName('ok.cold-mount').length).toBe(0);
+    expect(spansByName('ps.cold-mount').length).toBe(0);
   });
 });
 
@@ -222,7 +222,7 @@ describe('no-op behavior when OTel SDK is not registered', () => {
     trace.disable();
     expect(() => {
       ensureColdMountSpan('mid-noop', {}, Date.now());
-      emitColdMountChild('mid-noop', 'ok.sync-promise', {}, Date.now(), Date.now() + 1);
+      emitColdMountChild('mid-noop', 'ps.sync-promise', {}, Date.now(), Date.now() + 1);
       finalizeColdMountSpan('mid-noop');
     }).not.toThrow();
     setupExporter();
@@ -239,15 +239,15 @@ describe('finalizedMountIds set boundary — FIFO eviction at the 1024-entry cap
     }
     expect(__coldMountSpanCount()).toBe(0);
 
-    emitColdMountChild('mid-cap-0', 'ok.mount-promise', {}, start + 2000, start + 2010);
+    emitColdMountChild('mid-cap-0', 'ps.mount-promise', {}, start + 2000, start + 2010);
     expect(__coldMountSpanCount()).toBe(0);
 
     finalizeColdMountSpan('mid-cap-overflow', start + 3000);
 
-    emitColdMountChild('mid-cap-0', 'ok.sync-promise', {}, start + 4000, start + 4010);
+    emitColdMountChild('mid-cap-0', 'ps.sync-promise', {}, start + 4000, start + 4010);
     expect(__coldMountSpanCount()).toBe(1);
 
-    emitColdMountChild('mid-cap-overflow', 'ok.mount-promise', {}, start + 5000, start + 5010);
+    emitColdMountChild('mid-cap-overflow', 'ps.mount-promise', {}, start + 5000, start + 5010);
     expect(__coldMountSpanCount()).toBe(1);
 
     finalizeColdMountSpan('mid-cap-0', start + 6000);
@@ -262,13 +262,13 @@ describe('finalizedMountIds set boundary — FIFO eviction at the 1024-entry cap
       finalizeColdMountSpan(`mid-double-${i}`, start + i);
     }
 
-    emitColdMountChild('mid-double-0', 'ok.mount-promise', {}, start + 2000, start + 2010);
+    emitColdMountChild('mid-double-0', 'ps.mount-promise', {}, start + 2000, start + 2010);
     expect(__coldMountSpanCount()).toBe(0);
 
     const lastMountId = `mid-double-${FINALIZED_SET_CAP - 1}`;
     finalizeColdMountSpan(lastMountId, start + 3000);
 
-    emitColdMountChild('mid-double-0', 'ok.sync-promise', {}, start + 4000, start + 4010);
+    emitColdMountChild('mid-double-0', 'ps.sync-promise', {}, start + 4000, start + 4010);
     expect(__coldMountSpanCount()).toBe(0);
   });
 });
@@ -289,7 +289,7 @@ describe('OTel SDK fault isolation — emitColdMountChild and finalizeColdMountS
     trace.setGlobalTracerProvider(faultyProvider);
 
     expect(() => {
-      emitColdMountChild('mid-fault-emit', 'ok.sync-promise', {}, Date.now(), Date.now() + 1);
+      emitColdMountChild('mid-fault-emit', 'ps.sync-promise', {}, Date.now(), Date.now() + 1);
     }).not.toThrow();
 
     trace.disable();

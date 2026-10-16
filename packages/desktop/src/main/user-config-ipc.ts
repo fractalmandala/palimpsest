@@ -172,7 +172,7 @@ export function createUserConfigDispatch(deps: {
     }
     const stop = deps.store.watch((snapshot) => {
       if (sender.isDestroyed?.() === true) return;
-      sendToRenderer(sender, 'ok:user-config:changed', snapshot);
+      sendToRenderer(sender, 'ps:user-config:changed', snapshot);
     });
     subscriptions.set(sender, { stop, count: 1 });
     sender.once('destroyed', () => release(sender));

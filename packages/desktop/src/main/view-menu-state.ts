@@ -41,7 +41,7 @@ export class EditorViewMenuStateRegistry {
 export function createDefaultEditorViewMenuState(): EditorViewMenuStateSnapshot {
   return {
     showHiddenFiles: false,
-    showOkFolders: false,
+    showPsFolders: false,
     showOnlyMarkdownFiles: false,
     showSkillsSection: true,
     canExpandAll: true,
@@ -61,7 +61,7 @@ export function createDefaultEditorViewMenuState(): EditorViewMenuStateSnapshot 
 type ViewMenuStateDeps = Pick<
   MenuDeps,
   | 'showHiddenFilesChecked'
-  | 'showOkFoldersChecked'
+  | 'showPsFoldersChecked'
   | 'showOnlyMarkdownFilesChecked'
   | 'showSkillsSectionChecked'
   | 'canExpandAll'
@@ -75,7 +75,7 @@ type ViewMenuStateDeps = Pick<
   | 'editorVisible'
   | 'hasEditorSelection'
   | 'onToggleShowHiddenFiles'
-  | 'onToggleShowOkFolders'
+  | 'onToggleShowPsFolders'
   | 'onToggleShowOnlyMarkdownFiles'
   | 'onToggleShowSkillsSection'
   | 'onToggleSidebar'
@@ -96,7 +96,7 @@ export function buildViewMenuStateDeps(
 ): ViewMenuStateDeps {
   return {
     showHiddenFilesChecked: state.showHiddenFiles,
-    showOkFoldersChecked: state.showOkFolders,
+    showPsFoldersChecked: state.showPsFolders,
     showOnlyMarkdownFilesChecked: state.showOnlyMarkdownFiles,
     showSkillsSectionChecked: state.showSkillsSection,
     canExpandAll: state.canExpandAll,
@@ -110,7 +110,7 @@ export function buildViewMenuStateDeps(
     editorVisible: state.editorVisible,
     hasEditorSelection: state.hasEditorSelection,
     onToggleShowHiddenFiles: () => sendMenuAction('toggle-show-hidden-files'),
-    onToggleShowOkFolders: () => sendMenuAction('toggle-show-ps-folders'),
+    onToggleShowPsFolders: () => sendMenuAction('toggle-show-ps-folders'),
     onToggleShowOnlyMarkdownFiles: () => sendMenuAction('toggle-show-only-markdown-files'),
     onToggleShowSkillsSection: () => sendMenuAction('toggle-show-skills-section'),
     onToggleSidebar: () => sendMenuAction('toggle-sidebar'),

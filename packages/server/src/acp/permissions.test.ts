@@ -10,7 +10,7 @@ import {
   AcpPermissionStore,
   offeredPermissionOptions,
   readAgentBrowserTools,
-  readAutoApproveOkTools,
+  readAutoApprovePsTools,
 } from './permissions.ts';
 
 const log = getLogger('acp-permissions-test');
@@ -292,17 +292,17 @@ describe('AcpPermissionStore', () => {
     ).toBeNull();
   });
 
-  test('readAutoApproveOkTools reads the user config and defaults to on', () => {
+  test('readAutoApprovePsTools reads the user config and defaults to on', () => {
     const home = tmp();
     const projectDir = tmp();
-    expect(readAutoApproveOkTools(projectDir, home)).toBe(true);
+    expect(readAutoApprovePsTools(projectDir, home)).toBe(true);
     mkdirSync(join(home, '.ps'), { recursive: true });
-    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApproveOkTools: false\n');
-    expect(readAutoApproveOkTools(projectDir, home)).toBe(false);
-    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApproveOkTools: true\n');
-    expect(readAutoApproveOkTools(projectDir, home)).toBe(true);
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApprovePsTools: false\n');
+    expect(readAutoApprovePsTools(projectDir, home)).toBe(false);
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApprovePsTools: true\n');
+    expect(readAutoApprovePsTools(projectDir, home)).toBe(true);
     writeFileSync(join(home, '.ps', 'global.yml'), 'telemetry: {}\n');
-    expect(readAutoApproveOkTools(projectDir, home)).toBe(true);
+    expect(readAutoApprovePsTools(projectDir, home)).toBe(true);
   });
 
   test('a user config that cannot be read is logged once, not on every read', () => {
@@ -311,8 +311,8 @@ describe('AcpPermissionStore', () => {
     writeFileSync(join(home, '.ps', 'global.yml'), 'agents: [unclosed\n');
     const configLog = createTestLogger();
     const warn = vi.spyOn(configLog, 'warn');
-    expect(readAutoApproveOkTools(tmp(), home, configLog)).toBe(true);
-    expect(readAutoApproveOkTools(tmp(), home, configLog)).toBe(true);
+    expect(readAutoApprovePsTools(tmp(), home, configLog)).toBe(true);
+    expect(readAutoApprovePsTools(tmp(), home, configLog)).toBe(true);
     expect(readAgentBrowserTools(tmp(), home, configLog)).toBe(false);
     expect(warn).toHaveBeenCalledTimes(1);
   });

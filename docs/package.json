@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
-    "@inkeep/cxkit-react": "^0.5.117",
     "@palimpsest/core": "workspace:*",
     "@radix-ui/react-popover": "^1.1.17",
     "@types/mdx": "^2.0.13",

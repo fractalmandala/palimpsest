@@ -1804,7 +1804,7 @@ describe('ThreadView tool-call status', () => {
     expect(screen.getByTestId('agent-thread-tool-call').textContent).toContain('Run tests');
   });
 
-  test('an Palimpsest call says what it did, not the name the adapter sent', () => {
+  test('a Palimpsest call says what it did, not the name the adapter sent', () => {
     model = makeModel({
       items: [
         toolCall({

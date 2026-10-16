@@ -112,7 +112,7 @@ export const ROLLBACK_ORIGIN = {
 
 let _hintEmittedCounter: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null = null;
 function hintEmittedCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
-  _hintEmittedCounter ||= getMeter().createCounter('ok.preview_attach.hint_emitted', {
+  _hintEmittedCounter ||= getMeter().createCounter('ps.preview_attach.hint_emitted', {
     description:
       'Count of preview-attach hints emitted on write-tool responses when no editor is attached to __system__. Covers both attach-preview-once (URL exists, no browser) and start-ui (no UI running anywhere) variants — the tool side disambiguates via the warning action; the metric name is retained as-is so existing dashboards keep working.',
   });
@@ -124,7 +124,7 @@ let _agentPatchFmTouchCounter: ReturnType<ReturnType<typeof getMeter>['createCou
 
 function agentPatchFmTouchCounter(): ReturnType<ReturnType<typeof getMeter>['createCounter']> {
   _agentPatchFmTouchCounter ||= getMeter().createCounter(
-    'ok.frontmatter.agent_patch_fm_touch_total',
+    'ps.frontmatter.agent_patch_fm_touch_total',
     {
       description:
         'Count of agent-patch calls refused for touching the frontmatter region. Bounded labels: result ∈ {rejected, pre_deprecation_passthrough}, reason ∈ {intersect, promoted}. `intersect` is a find that MATCHED inside the existing frontmatter; `promoted` is a byte-0 replace that would CREATE frontmatter on a document that had none. They refuse for opposite reasons, so a spike in one says nothing about the other — the append/prepend surface separates the same pair via the `byte-0-promotion` class on `frontmatter-malformed-write-refused`.',
@@ -213,7 +213,7 @@ export interface AgentWriteRouteDeps {
   log: import('../logger.ts').PinoLogger;
   flushDocToGit: (docName: string, label: string) => void;
   flushGitCommit: (() => Promise<void>) | undefined;
-  commitOkArtifactWrite: (context: string) => Promise<unknown>;
+  commitPsArtifactWrite: (context: string) => Promise<unknown>;
   isSafeDocName: (docName: string) => boolean;
   shadowRef: ShadowRef | undefined;
   getPrincipal: (() => Principal | null) | undefined;
@@ -260,7 +260,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
     log,
     flushDocToGit,
     flushGitCommit,
-    commitOkArtifactWrite,
+    commitPsArtifactWrite,
     isSafeDocName,
     shadowRef,
     getPrincipal,
@@ -310,7 +310,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
     errorResponse(
       res,
       404,
-      'urn:ok:error:doc-not-found',
+      'urn:ps:error:doc-not-found',
       `No document at "${docName}" (paths are relative to the content root). ${nextStep}`,
       { handler, extensions: { candidates, committed: false } },
     );
@@ -348,7 +348,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${resolvedDocName}' is a reserved document name.`,
             { handler: 'agent-write-md' },
           );
@@ -552,7 +552,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           return;
         }
         log.error({ err: e, requestId: getRequestId(_req) }, '[agent-write-md] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-write-md',
           cause: e,
         });
@@ -575,7 +575,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${resolvedDocName}' is a reserved document name.`,
             { handler: 'frontmatter-patch' },
           );
@@ -620,7 +620,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
               ts: Date.now(),
             });
             withSpanSync(
-              'ok.frontmatter_patch',
+              'ps.frontmatter_patch',
               {
                 attributes: {
                   'doc.name': resolvedDocName,
@@ -711,7 +711,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-frontmatter-patch',
+              'urn:ps:error:invalid-frontmatter-patch',
               'Frontmatter patch rejected: schema validation failed.',
               { handler: 'frontmatter-patch', extensions: { fieldErrors } },
             );
@@ -794,7 +794,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           return;
         }
         log.error({ err: e, requestId: getRequestId(_req) }, '[frontmatter-patch] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'frontmatter-patch',
           cause: e,
         });
@@ -825,7 +825,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${docName}' is a reserved document name.`,
             { handler: 'agent-patch' },
           );
@@ -1000,7 +1000,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               409,
-              'urn:ok:error:stale-target',
+              'urn:ps:error:stale-target',
               'Target text no longer matches at the requested offset.',
               { handler: 'agent-patch' },
             );
@@ -1010,7 +1010,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               404,
-              'urn:ok:error:target-not-found',
+              'urn:ps:error:target-not-found',
               'Text not found in document.',
               {
                 handler: 'agent-patch',
@@ -1023,7 +1023,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               400,
-              'urn:ok:error:frontmatter-edit-not-supported',
+              'urn:ps:error:frontmatter-edit-not-supported',
               'Frontmatter edits are not supported via a body find/replace. Use edit({ document: { path, frontmatter } }) to change frontmatter, or write({ document: { path, content, position: "replace" } }) to rewrite the whole document including its YAML block.',
               { handler: 'agent-patch' },
             );
@@ -1034,7 +1034,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               400,
-              'urn:ok:error:frontmatter-edit-not-supported',
+              'urn:ps:error:frontmatter-edit-not-supported',
               "This edit would turn the replacement text into the document's frontmatter: the document has no frontmatter, the match starts at byte 0, and `replace` opens a `---` fence pair — so the composed document would re-read that block as its YAML region. Use edit({ document: { path, frontmatter } }) to set frontmatter, or keep the `---` out of the first line (a leading blank line, or `***` / `___` for a thematic break).",
               { handler: 'agent-patch' },
             );
@@ -1126,7 +1126,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           return;
         }
         log.error({ err: e, requestId: getRequestId(_req) }, '[agent-patch] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-patch',
           cause: e,
         });
@@ -1148,7 +1148,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${docName}' is a reserved document name.`,
             { handler: 'agent-undo' },
           );
@@ -1169,7 +1169,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             404,
-            'urn:ok:error:no-active-session',
+            'urn:ps:error:no-active-session',
             'No active session for this connectionId and docName.',
             { handler: 'agent-undo' },
           );
@@ -1249,7 +1249,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           return;
         }
         log.error({ err: e, requestId: getRequestId(_req) }, '[agent-undo] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-undo',
           cause: e,
         });
@@ -1268,7 +1268,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'agentId required (alphanumeric/_/- only).',
             { handler: 'agent-activity' },
           );
@@ -1280,7 +1280,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
         });
       } catch (e) {
         log.error({ err: e, requestId: getRequestId(req) }, '[agent-activity] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-activity',
           cause: e,
         });
@@ -1301,20 +1301,20 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'agentId required (alphanumeric/_/- only).',
             { handler: 'agent-burst-diff' },
           );
           return;
         }
         if (!rawDocName || rawDocName.trim() === '') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Missing docName parameter.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Missing docName parameter.', {
             handler: 'agent-burst-diff',
           });
           return;
         }
         if (!isSafeDocName(rawDocName)) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'agent-burst-diff',
           });
           return;
@@ -1324,14 +1324,14 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${docName}' is a reserved document name.`,
             { handler: 'agent-burst-diff' },
           );
           return;
         }
         if (!keptCountStr || Number.isNaN(Number(keptCountStr))) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'keptCount must be a number.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'keptCount must be a number.', {
             handler: 'agent-burst-diff',
           });
           return;
@@ -1341,7 +1341,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'keptCount must be a non-negative integer.',
             { handler: 'agent-burst-diff' },
           );
@@ -1352,7 +1352,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             404,
-            'urn:ok:error:no-active-session',
+            'urn:ps:error:no-active-session',
             'No active session for this agentId and docName.',
             { handler: 'agent-burst-diff' },
           );
@@ -1363,7 +1363,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             404,
-            'urn:ok:error:not-found',
+            'urn:ps:error:not-found',
             `keptCount ${keptCount} out of range (stack has ${um.undoStack.length} items).`,
             { handler: 'agent-burst-diff' },
           );
@@ -1386,7 +1386,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
         );
       } catch (e) {
         log.error({ err: e, requestId: getRequestId(req) }, '[agent-burst-diff] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'agent-burst-diff',
           cause: e,
         });
@@ -1411,7 +1411,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             503,
-            'urn:ok:error:shadow-not-configured',
+            'urn:ps:error:shadow-not-configured',
             'Shadow repo not configured.',
             { handler: 'save-version' },
           );
@@ -1436,7 +1436,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               e instanceof Error ? e.message : 'Invalid writer id.',
               { handler: 'save-version', cause: e },
             );
@@ -1471,7 +1471,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
         );
       } catch (e) {
         log.error({ err: e, requestId: getRequestId(_req) }, '[save-version] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'save-version',
           cause: e,
         });
@@ -1486,7 +1486,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
       const bodyObj = body as unknown as Record<string, unknown>;
       const actor = extractActorIdentity(bodyObj, getPrincipal);
       if (actor.kind === 'invalid-summary') {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
           handler: 'rollback',
         });
         return;
@@ -1507,7 +1507,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
         errorResponse(
           res,
           503,
-          'urn:ok:error:rollback-not-configured',
+          'urn:ps:error:rollback-not-configured',
           'Shadow repo not configured.',
           { handler: 'rollback' },
         );
@@ -1517,7 +1517,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
       const resolvedContentRoot = contentRoot ?? '.';
       const pathResult = safeDocPath(docName, resolvedContentRoot);
       if ('error' in pathResult) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', pathResult.error, {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', pathResult.error, {
           handler: 'rollback',
         });
         return;
@@ -1525,7 +1525,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
       const sg = shadowGit(shadow);
       const t0 = Date.now();
       try {
-        await commitOkArtifactWrite('rollback-read');
+        await commitPsArtifactWrite('rollback-read');
         const renameLogIndex = getOrLoadRenameLogIndex(shadow.gitDir);
         const ancestorCache = createAncestorShaSetCache();
         const branch = getCurrentBranch?.() ?? 'main';
@@ -1542,7 +1542,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             404,
-            'urn:ok:error:doc-not-found',
+            'urn:ps:error:doc-not-found',
             `Commit ${commitSha.slice(0, 7)} does not contain document ${docName} at any known historical path.`,
             { handler: 'rollback' },
           );
@@ -1559,7 +1559,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           errorResponse(
             res,
             409,
-            'urn:ok:error:doc-not-open',
+            'urn:ps:error:doc-not-open',
             'Document is not currently open — open it in the editor first.',
             { handler: 'rollback' },
           );
@@ -1704,7 +1704,7 @@ export function createAgentWriteRoutes(deps: AgentWriteRouteDeps): ApiRouteGroup
           { handler: 'rollback' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to roll back.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to roll back.', {
           handler: 'rollback',
           cause: e,
         });

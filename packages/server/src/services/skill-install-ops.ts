@@ -22,7 +22,7 @@ import { removeSkillInstall } from '../installed-skills-marker.ts';
 import { getLogger } from '../logger.ts';
 import { unlinkEditorSkillFolder } from '../skill-folder-links.ts';
 import {
-  isRefusedOkPlacementRoot,
+  isRefusedPsPlacementRoot,
   readSkillPlacements,
   recordFolderExpectation,
   recordSkillPlacement,
@@ -344,7 +344,7 @@ export function createSkillInstallOpsService(deps: SkillInstallOpsDeps): SkillIn
           .replace(/\\/g, '/')
           .replace(/^~\//, '')
           .replace(/^\/+|\/+$/g, '');
-        const invalidOk = isRefusedOkPlacementRoot(rel);
+        const invalidOk = isRefusedPsPlacementRoot(rel);
         const destAbs = resolve(base, rel, name);
         if (rel === '' || invalidOk || !destAbs.startsWith(resolve(base) + sep)) {
           return { ok: false, kind: 'invalid-target', target: newSource };
@@ -550,7 +550,7 @@ export function createSkillInstallOpsService(deps: SkillInstallOpsDeps): SkillIn
       if ((input.rootAdds.length > 0 || input.rootRemoves.length > 0) && prefBase) {
         const canonAbs = resolve(skillDir);
         for (const rootRel of input.rootAdds) {
-          const underOk = isRefusedOkPlacementRoot(rootRel);
+          const underOk = isRefusedPsPlacementRoot(rootRel);
           const parentAbs = resolve(prefBase, rootRel);
           const destAbs = resolveSkillPlacementPath(prefBase, `${rootRel}/${name}`);
           if (rootRel === '' || underOk || destAbs === null || destAbs === canonAbs) {

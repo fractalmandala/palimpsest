@@ -24,7 +24,7 @@ export function createHandoffInstallRoutes(deps: HandoffInstallRouteDeps): ApiRo
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'Output path must be within home directory.',
           { handler: 'install-skill' },
         );
@@ -40,7 +40,7 @@ export function createHandoffInstallRoutes(deps: HandoffInstallRouteDeps): ApiRo
           handler: 'install-skill',
         });
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to install skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to install skill.', {
           handler: 'install-skill',
           cause: err,
         });

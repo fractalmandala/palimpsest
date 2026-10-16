@@ -1442,7 +1442,7 @@ describe('outsideProject stamp on /api/skills/installed', () => {
   });
 
   test('flags a project skill that lives in the parent checkout of a linked worktree', async () => {
-    const wt = createLinkedWorktree({ prefix: 'ps-outside-wt', seedOkScaffold: true });
+    const wt = createLinkedWorktree({ prefix: 'ps-outside-wt', seedPsScaffold: true });
     trash.push(wt.repoRoot, wt.worktreePath);
     writeSkill(wt.repoRoot, '.claude/skills/fromparent', '# From the parent checkout');
 

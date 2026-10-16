@@ -101,20 +101,20 @@ describe('StartupWaterfall', () => {
 
     const intervals = w.mainPhaseIntervals();
     const byName = new Map(intervals.map((i) => [i.name, i]));
-    expect(byName.get('ok.startup.bootstrap')).toEqual({
-      name: 'ok.startup.bootstrap',
+    expect(byName.get('ps.startup.bootstrap')).toEqual({
+      name: 'ps.startup.bootstrap',
       startMs: 100,
       endMs: 150,
     });
-    expect(byName.has('ok.startup.spawn')).toBe(false);
-    expect(byName.has('ok.startup.lock-wait')).toBe(false);
-    expect(byName.get('ok.startup.window-create')).toEqual({
-      name: 'ok.startup.window-create',
+    expect(byName.has('ps.startup.spawn')).toBe(false);
+    expect(byName.has('ps.startup.lock-wait')).toBe(false);
+    expect(byName.get('ps.startup.window-create')).toEqual({
+      name: 'ps.startup.window-create',
       startMs: 400,
       endMs: 420,
     });
-    expect(byName.get('ok.startup.show')).toEqual({
-      name: 'ok.startup.show',
+    expect(byName.get('ps.startup.show')).toEqual({
+      name: 'ps.startup.show',
       startMs: 480,
       endMs: 520,
     });

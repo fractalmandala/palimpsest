@@ -245,7 +245,7 @@ describe('SlidesToolbarControls — activation', () => {
       await user.click(action);
 
       expect(openSpy).toHaveBeenCalledTimes(1);
-      expect(spanNames.filter((name) => name === 'ok.slides.opened')).toHaveLength(1);
+      expect(spanNames.filter((name) => name === 'ps.slides.opened')).toHaveLength(1);
       expect(action.getAttribute('aria-busy')).toBe('true');
       expect(toastLoadingSpy).toHaveBeenCalledWith('Opening...', {
         duration: Number.POSITIVE_INFINITY,
@@ -360,7 +360,7 @@ describe('SlidesToolbarControls — activation', () => {
         '/proj/talks/B.md',
       ]);
       expect(toastLoadingSpy).toHaveBeenCalledTimes(3);
-      expect(spanNames.filter((name) => name === 'ok.slides.opened')).toHaveLength(2);
+      expect(spanNames.filter((name) => name === 'ps.slides.opened')).toHaveLength(2);
       expect(action.getAttribute('aria-busy')).toBe('true');
 
       await act(async () => {

@@ -108,7 +108,7 @@ describe('template live conflict gate (FR5)', () => {
       });
       expect(put.status).toBe(409);
       expect(put.headers.get('content-type')).toBe('application/problem+json');
-      expect(((await put.json()) as { type: string }).type).toBe('urn:ok:error:doc-in-conflict');
+      expect(((await put.json()) as { type: string }).type).toBe('urn:ps:error:doc-in-conflict');
 
       const movedName = `${name}moved`;
       const move = await fetch(`http://127.0.0.1:${rig.port}/api/template`, {
@@ -117,14 +117,14 @@ describe('template live conflict gate (FR5)', () => {
         body: JSON.stringify({ fromFolder: '', fromName: name, toFolder: '', toName: movedName }),
       });
       expect(move.status).toBe(409);
-      expect(((await move.json()) as { type: string }).type).toBe('urn:ok:error:doc-in-conflict');
+      expect(((await move.json()) as { type: string }).type).toBe('urn:ps:error:doc-in-conflict');
 
       const del = await fetch(
         `http://127.0.0.1:${rig.port}/api/template?folder=&name=${encodeURIComponent(name)}`,
         { method: 'DELETE' },
       );
       expect(del.status).toBe(409);
-      expect(((await del.json()) as { type: string }).type).toBe('urn:ok:error:doc-in-conflict');
+      expect(((await del.json()) as { type: string }).type).toBe('urn:ps:error:doc-in-conflict');
 
       const imp = await fetch(`http://127.0.0.1:${rig.port}/api/template/import`, {
         method: 'POST',
@@ -132,7 +132,7 @@ describe('template live conflict gate (FR5)', () => {
         body: JSON.stringify({ sourcePath: srcName, name, targetFolder: '' }),
       });
       expect(imp.status).toBe(409);
-      expect(((await imp.json()) as { type: string }).type).toBe('urn:ok:error:doc-in-conflict');
+      expect(((await imp.json()) as { type: string }).type).toBe('urn:ps:error:doc-in-conflict');
 
       expect(readFileSync(tplFile, 'utf-8')).toBe(conflicted);
       expect(existsSync(resolve(contentDir, '.ps', 'templates', `${movedName}.md`))).toBe(false);

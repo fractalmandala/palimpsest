@@ -100,7 +100,7 @@ describe('local-op group over the composed listener — served natively', () => 
         headers: { Host: 'evil.example' },
       });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -111,7 +111,7 @@ describe('local-op group over the composed listener — served natively', () => 
       body: '{}',
     });
     expect(res.status).toBe(404);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:not-found');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:not-found');
   });
 
   test('a POST reaches the real handler (ps-init gates on absolute-path discipline, then git-worktree shape)', async () => {
@@ -122,7 +122,7 @@ describe('local-op group over the composed listener — served natively', () => 
     });
     expect(relative.status).toBe(400);
     expect(((await relative.json()) as { type?: string }).type).toBe(
-      'urn:ok:error:invalid-request',
+      'urn:ps:error:invalid-request',
     );
 
     const nonGit = mkdtempSync(join(homeScratch, 'non-git-'));
@@ -145,7 +145,7 @@ describe('local-op group over the composed listener — served natively', () => 
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.detail ?? body.title).toContain('Proxied request refused');
   });
 

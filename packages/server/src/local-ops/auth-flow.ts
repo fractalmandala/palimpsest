@@ -1,5 +1,5 @@
 import { redactedStderrDetail, stderrDetailSuffix } from './clone-error-classify.ts';
-import { type LocalOpCliInvocation, runOkCliSubprocess } from './subprocess.ts';
+import { type LocalOpCliInvocation, runPsCliSubprocess } from './subprocess.ts';
 import type { LocalOpSubprocessLifetime } from './subprocess-lifetime.ts';
 import type { AuthEvent } from './types.ts';
 
@@ -57,7 +57,7 @@ export function runDeviceFlowSubprocess(opts: RunDeviceFlowOptions): RunDeviceFl
 
   let sawTerminal = false;
 
-  const proc = runOkCliSubprocess(opts.cli, {
+  const proc = runPsCliSubprocess(opts.cli, {
     lifetime: opts.lifetime,
     cwd: opts.cwd,
     trailingArgs: ['auth', 'login', '--json', '--host', host],

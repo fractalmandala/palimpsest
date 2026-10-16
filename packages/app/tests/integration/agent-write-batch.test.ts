@@ -146,9 +146,9 @@ describe('agent-write-batch', () => {
     expect(body.failed).toBe(2);
     expect(body.results[0].status).toBe('written');
     expect(body.results[1].status).toBe('error');
-    expect(body.results[1].error?.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(body.results[1].error?.type).toBe('urn:ps:error:reserved-doc-name');
     expect(body.results[2].status).toBe('error');
-    expect(body.results[2].error?.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(body.results[2].error?.type).toBe('urn:ps:error:reserved-doc-name');
     expect(body.results[3].status).toBe('written');
 
     expect(readFileSync(join(server.contentDir, 'batch-gate/ok-doc.md'), 'utf-8')).toContain(
@@ -190,7 +190,7 @@ describe('agent-write-batch', () => {
     expect(body.written).toBe(1);
     expect(body.failed).toBe(1);
     expect(body.results[0].error).toEqual({
-      type: 'urn:ok:error:concurrent-overwrite-refused',
+      type: 'urn:ps:error:concurrent-overwrite-refused',
       title: 'Concurrent overwrite refused.',
       detail:
         'Another writer changed this document recently. Wait a few seconds and retry. A write with position append or prepend is not refused.',

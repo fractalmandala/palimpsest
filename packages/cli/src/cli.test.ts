@@ -41,8 +41,8 @@ describe('CLI argv parsing', () => {
   }, 30_000);
 });
 
-describe('ok ui tombstone', () => {
-  test('`ok ui` prints the removal pointer and exits non-zero (not the default-command arity error)', () => {
+describe('ps ui tombstone', () => {
+  test('`ps ui` prints the removal pointer and exits non-zero (not the default-command arity error)', () => {
     const result = Bun.spawnSync({
       cmd: [
         'node',
@@ -61,7 +61,7 @@ describe('ok ui tombstone', () => {
 
     const stderr = result.stderr.toString();
     expect(result.exitCode).toBe(1);
-    expect(stderr).toContain('`ok ui` was removed');
+    expect(stderr).toContain('`ps ui` was removed');
     expect(stderr).toContain('ps start');
     expect(stderr).not.toContain('too many arguments');
   }, 30_000);
@@ -92,7 +92,7 @@ describe('CLI names the running channel command', () => {
     expect(result.exitCode).toBe(0);
     expect(stdout).toContain('Usage: palimpsest [options] [file | command]');
     expect(stdout).toContain(
-      '  ok notes.md              Open a single markdown file in the editor',
+      '  ps notes.md              Open a single markdown file in the editor',
     );
     expect(stdout).toContain(
       '  ps open ./start.md       Open a file whose name collides with a subcommand',

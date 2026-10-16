@@ -12,7 +12,7 @@ npm install -g @palimpsest/cli
 
 Requires [Node.js 24+](https://nodejs.org) and Git.
 
-To remove Palimpsest later, run `ok uninstall` (whole machine) or `ok deinit` (one project).
+To remove Palimpsest later, run `ps uninstall` (whole machine) or `ps deinit` (one project).
 
 ## Quick start
 
@@ -22,7 +22,7 @@ ps init          # scaffold .ps/ and connect supported AI tools
 ps start         # serve the editor and open it in your browser
 ```
 
-- `ps init` — turn a folder into an Palimpsest project and register the MCP server with supported AI tools.
+- `ps init` — turn a folder into a Palimpsest project and register the MCP server with supported AI tools.
 - `ps start` — run the local server and web editor, then open it in your browser.
 - `ps open <target>` — open a doc, a folder, or a path to a Markdown file in the editor. It prints the project root it resolved; pass `--project <dir>` anywhere in the command to name one yourself.
 - `ok --help` — list every command.

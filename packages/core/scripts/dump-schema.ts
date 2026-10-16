@@ -9,7 +9,7 @@
  * The snapshot is the audit framework's source-of-truth artifact: the audit
  * framework derives its catalog from this file at
  * audit-generate time, not by importing core at runtime. This decouples the
- * standalone audit project from OK's workspace graph. This positions the same
+ * standalone audit project from Palimpsest's workspace graph. This positions the same
  * JSON as the
  * language-agnostic byte contract for the future TS↔Rust port.
  *
@@ -17,7 +17,7 @@
  *   default          write the snapshot to <core>/schema-snapshot.json
  *   --check          regenerate in memory; exit non-zero if it differs from
  *                    the committed file. Used by check-schema-snapshot-clean.sh
- *                    in OK's `bun run check` chain.
+ *                    in Palimpsest's `bun run check` chain.
  *   --out <path>     override the output path (test / debug only)
  *
  * Determinism:

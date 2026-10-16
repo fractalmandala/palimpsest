@@ -769,7 +769,7 @@ describe('runMcpWiringOnFirstLaunch — dev channel', () => {
         }),
       );
 
-      const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+      const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
       const result = await confirm?.({ sender: { id: 11 } }, { editorIds: ['claude'] });
       expect(result).toMatchObject({ ok: false });
       expect((result as { error: string }).error).toContain(
@@ -786,8 +786,8 @@ describe('runMcpWiringOnFirstLaunch — skills consent leg', () => {
   const TWO_SKILLS = [
     {
       id: 'discovery',
-      name: 'open-knowledge-discovery',
-      paths: ['~/.claude/skills/open-knowledge-discovery'],
+      name: 'palimpsest-discovery',
+      paths: ['~/.claude/skills/palimpsest-discovery'],
     },
     {
       id: 'write-skill',
@@ -815,7 +815,7 @@ describe('runMcpWiringOnFirstLaunch — skills consent leg', () => {
 
     expect(wc.sent[0]?.payload).toMatchObject({ globalSkills: TWO_SKILLS });
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.(
       { sender: { id: 11 } },
       { editorIds: ['claude'], skills: ['discovery'] },
@@ -851,7 +851,7 @@ describe('runMcpWiringOnFirstLaunch — skills consent leg', () => {
       buildWiringOpts({ ipcMain, cli, fs, skills, logger, immediateDispatchTarget: wc }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.({ sender: { id: 11 } }, { editorIds: [] });
     expect(result).toEqual({ ok: true });
     expect(skills.consentCalls).toEqual([]);
@@ -871,7 +871,7 @@ describe('runMcpWiringOnFirstLaunch — skills consent leg', () => {
       buildWiringOpts({ ipcMain, cli, fs, skills, immediateDispatchTarget: wc }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     await confirm?.({ sender: { id: 11 } }, { editorIds: [], skills: [] });
     expect(skills.consentCalls).toEqual([[]]);
   });
@@ -888,7 +888,7 @@ describe('runMcpWiringOnFirstLaunch — skills consent leg', () => {
       buildWiringOpts({ ipcMain, cli, fs, skills, immediateDispatchTarget: wc }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.(
       { sender: { id: 11 } },
       { editorIds: ['claude'], skills: ['discovery'] },
@@ -911,7 +911,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
     expect(handle.armed).toBe(true);
     expect(wc.sent).toEqual([
       {
-        channel: 'ok:mcp-wiring:show',
+        channel: 'ps:mcp-wiring:show',
         payload: {
           origin: 'first-run',
           detectedEditors: [
@@ -933,9 +933,9 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
         },
       },
     ]);
-    expect(ipcMain.handlers.has('ok:mcp-wiring:renderer-ready')).toBe(false);
+    expect(ipcMain.handlers.has('ps:mcp-wiring:renderer-ready')).toBe(false);
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     expect(confirm).toBeDefined();
     const result = await confirm?.({ sender: { id: 11 } }, { editorIds: ['claude'] });
     expect(result).toEqual({ ok: true });
@@ -989,7 +989,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
       }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.({ sender: { id: 11 } }, { editorIds: ['claude', 'cursor'] });
     expect(result).toEqual({ ok: true });
 
@@ -1015,7 +1015,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
     const { cli, writes } = buildFirstLaunchCli();
     runMcpWiringOnFirstLaunch(buildWiringOpts({ ipcMain, cli, immediateDispatchTarget: wc }));
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = (await confirm?.({ sender: { id: 99 } }, { editorIds: ['claude'] })) as {
       ok: boolean;
     };
@@ -1038,7 +1038,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
       }),
     );
 
-    const skip = ipcMain.handlers.get('ok:mcp-wiring:skip');
+    const skip = ipcMain.handlers.get('ps:mcp-wiring:skip');
     expect(skip).toBeDefined();
     const result = await skip?.({ sender: { id: 11 } });
     expect(result).toEqual({ ok: true });
@@ -1055,7 +1055,7 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
     const fs = memoryFs();
     runMcpWiringOnFirstLaunch(buildWiringOpts({ ipcMain, fs, immediateDispatchTarget: wc }));
 
-    const skip = ipcMain.handlers.get('ok:mcp-wiring:skip');
+    const skip = ipcMain.handlers.get('ps:mcp-wiring:skip');
     const result = (await skip?.({ sender: { id: 99 } })) as { ok: boolean };
     expect(result.ok).toBe(false);
     expect(readMcpStatusMarker('/home/u', fs)).toBeNull();
@@ -1074,8 +1074,8 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
       buildWiringOpts({ ipcMain, fs, forceShow: true, immediateDispatchTarget: wc }),
     );
     expect(handle.armed).toBe(true);
-    expect(wc.sent.map((s) => s.channel)).toEqual(['ok:mcp-wiring:show']);
-    expect(ipcMain.handlers.has('ok:mcp-wiring:renderer-ready')).toBe(false);
+    expect(wc.sent.map((s) => s.channel)).toEqual(['ps:mcp-wiring:show']);
+    expect(ipcMain.handlers.has('ps:mcp-wiring:renderer-ready')).toBe(false);
   });
 
   test('failed immediate dispatch leaves the mount-ack fallback armed', async () => {
@@ -1087,15 +1087,15 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
       buildWiringOpts({ ipcMain, cli, fs, immediateDispatchTarget: broken }),
     );
 
-    const ready = ipcMain.handlers.get('ok:mcp-wiring:renderer-ready');
+    const ready = ipcMain.handlers.get('ps:mcp-wiring:renderer-ready');
     expect(ready).toBeDefined();
 
     const wc2 = fakeWebContents(22);
     ready?.({ sender: wc2 });
-    expect(wc2.sent.map((s) => s.channel)).toEqual(['ok:mcp-wiring:show']);
-    expect(ipcMain.handlers.has('ok:mcp-wiring:renderer-ready')).toBe(false);
+    expect(wc2.sent.map((s) => s.channel)).toEqual(['ps:mcp-wiring:show']);
+    expect(ipcMain.handlers.has('ps:mcp-wiring:renderer-ready')).toBe(false);
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.({ sender: { id: 22 } }, { editorIds: ['claude'] });
     expect(result).toEqual({ ok: true });
     expect(writes).toEqual([['claude' as McpWiringEditorId]]);
@@ -1132,10 +1132,10 @@ describe('runMcpWiringOnFirstLaunch — mid-session immediate dispatch', () => {
     const ipcMain = stubIpcMain();
     runMcpWiringOnFirstLaunch(buildWiringOpts({ ipcMain }));
 
-    expect(ipcMain.handlers.has('ok:mcp-wiring:renderer-ready')).toBe(true);
+    expect(ipcMain.handlers.has('ps:mcp-wiring:renderer-ready')).toBe(true);
     const wc = fakeWebContents(5);
-    ipcMain.handlers.get('ok:mcp-wiring:renderer-ready')?.({ sender: wc });
-    expect(wc.sent.map((s) => s.channel)).toEqual(['ok:mcp-wiring:show']);
+    ipcMain.handlers.get('ps:mcp-wiring:renderer-ready')?.({ sender: wc });
+    expect(wc.sent.map((s) => s.channel)).toEqual(['ps:mcp-wiring:show']);
   });
 });
 
@@ -1149,7 +1149,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
       buildWiringOpts({ ipcMain, fs, pathInstall, immediateDispatchTarget: wc }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.(
       { sender: { id: 11 } },
       { editorIds: ['claude'], pathInstall: true },
@@ -1169,7 +1169,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
       buildWiringOpts({ ipcMain, cli, fs, pathInstall, immediateDispatchTarget: wc }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.(
       { sender: { id: 11 } },
       { editorIds: ['claude'], pathInstall: false },
@@ -1191,8 +1191,8 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
     const skills = stubSkills([
       {
         id: 'discovery',
-        name: 'open-knowledge-discovery',
-        paths: ['~/.claude/skills/open-knowledge-discovery'],
+        name: 'palimpsest-discovery',
+        paths: ['~/.claude/skills/palimpsest-discovery'],
       },
     ]);
     runMcpWiringOnFirstLaunch(
@@ -1208,7 +1208,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
     );
     expect(wc.sent[0]?.payload).toMatchObject({ origin: 'reconfigure' });
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.(
       { sender: { id: 11 } },
       { editorIds: [], pathInstall: undefined, skills: undefined },
@@ -1229,7 +1229,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
       buildWiringOpts({ ipcMain, fs, pathInstall, immediateDispatchTarget: wc }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const result = await confirm?.({ sender: { id: 11 } }, { editorIds: ['claude'] });
     expect(result).toEqual({ ok: true });
     expect(pathInstall.consentCalls).toEqual([]);
@@ -1263,7 +1263,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
       }),
     );
 
-    const confirm = ipcMain.handlers.get('ok:mcp-wiring:confirm');
+    const confirm = ipcMain.handlers.get('ps:mcp-wiring:confirm');
     const first = (await confirm?.(
       { sender: { id: 11 } },
       { editorIds: ['claude'], pathInstall: true },
@@ -1334,7 +1334,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
       [],
     );
     expect(events.some((e) => e.event === 'mcp-wiring-skill-descriptors-failed')).toBe(true);
-    expect(ipcMain.handlers.has('ok:mcp-wiring:confirm')).toBe(true);
+    expect(ipcMain.handlers.has('ps:mcp-wiring:confirm')).toBe(true);
   });
 
   test('skip never touches the PATH surface', async () => {
@@ -1346,7 +1346,7 @@ describe('runMcpWiringOnFirstLaunch — PATH consent leg', () => {
       buildWiringOpts({ ipcMain, fs, pathInstall, immediateDispatchTarget: wc }),
     );
 
-    const skip = ipcMain.handlers.get('ok:mcp-wiring:skip');
+    const skip = ipcMain.handlers.get('ps:mcp-wiring:skip');
     const result = await skip?.({ sender: { id: 11 } });
     expect(result).toEqual({ ok: true });
     expect(pathInstall.consentCalls).toEqual([]);

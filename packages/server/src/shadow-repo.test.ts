@@ -11,7 +11,7 @@ import {
   type CheckpointKind,
   formatCheckpointBodyLine,
   parseCheckpoint,
-  parseOkActor,
+  parsePsActor,
 } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -594,7 +594,7 @@ describe('commitUpstreamImport', () => {
 
     const sg = shadowGit(shadow);
     const body = (await sg.raw('log', '-1', '--format=%B', sha)).trim();
-    const actor = parseOkActor(body);
+    const actor = parsePsActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
     expect(actor?.display_name).toBe('Git (upstream)');
@@ -638,7 +638,7 @@ describe('safetyCheckpoint', () => {
 
     const sg = shadowGit(shadow);
     const body = (await sg.raw('log', '-1', '--format=%B', sha)).trim();
-    const actor = parseOkActor(body);
+    const actor = parsePsActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
     expect(actor?.display_name).toBe('Palimpsest (service)');
@@ -703,7 +703,7 @@ describe('parkBranch', () => {
 
     const sg = shadowGit(shadow);
     const body = (await sg.raw('log', '-1', '--format=%B', sha)).trim();
-    const actor = parseOkActor(body);
+    const actor = parsePsActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
     expect(actor?.display_name).toBe('Palimpsest (service)');
@@ -885,7 +885,7 @@ describe('saveVersion', () => {
     const subject = (await sg.raw('log', '-1', '--format=%s', result.checkpointRef)).trim();
     expect(subject).toBe('checkpoint: Checkpoint version');
 
-    const actor = parseOkActor(body);
+    const actor = parsePsActor(body);
     expect(actor).not.toBeNull();
     expect(actor?.v).toBe(1);
     expect(actor?.display_name).toBe('Palimpsest (service)');

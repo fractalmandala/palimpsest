@@ -12,11 +12,11 @@ export const PSF_RULE_IDS = [
   'project-no-mdx',
 ] as const;
 
-export type OkfRuleId = (typeof PSF_RULE_IDS)[number];
+export type PsfRuleId = (typeof PSF_RULE_IDS)[number];
 
-export type OkfRuleToggles = Partial<Record<OkfRuleId, boolean>> | undefined;
+export type PsfRuleToggles = Partial<Record<PsfRuleId, boolean>> | undefined;
 
-export function isOkfRuleEnabled(rules: OkfRuleToggles, id: OkfRuleId): boolean {
+export function isPsfRuleEnabled(rules: PsfRuleToggles, id: PsfRuleId): boolean {
   return rules?.[id] !== false;
 }
 
@@ -37,14 +37,14 @@ export const PSF_RULE_GROUPS = [
     id: 'project',
     ids: ['project-no-mdx'],
   },
-] as const satisfies readonly { id: string; ids: readonly OkfRuleId[] }[];
+] as const satisfies readonly { id: string; ids: readonly PsfRuleId[] }[];
 
-export type OkfRuleGroupId = (typeof PSF_RULE_GROUPS)[number]['id'];
+export type PsfRuleGroupId = (typeof PSF_RULE_GROUPS)[number]['id'];
 
-export function assertNeverOkfRuleId(value: never): never {
-  throw new Error(`Unhandled OkfRuleId variant: ${JSON.stringify(value as unknown)}`);
+export function assertNeverPsfRuleId(value: never): never {
+  throw new Error(`Unhandled PsfRuleId variant: ${JSON.stringify(value as unknown)}`);
 }
 
-export function assertNeverOkfRuleGroupId(value: never): never {
-  throw new Error(`Unhandled OkfRuleGroupId variant: ${JSON.stringify(value as unknown)}`);
+export function assertNeverPsfRuleGroupId(value: never): never {
+  throw new Error(`Unhandled PsfRuleGroupId variant: ${JSON.stringify(value as unknown)}`);
 }

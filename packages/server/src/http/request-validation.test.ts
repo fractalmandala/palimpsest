@@ -71,7 +71,7 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls[0].status).toBe(405);
     expect(writeHeadCalls[0].headers.Allow).toBe('POST');
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:method-not-allowed');
+    expect(body.type).toBe('urn:ps:error:method-not-allowed');
   });
 
   test('method option omitted → accepts any HTTP method', async () => {
@@ -118,7 +118,7 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(500);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Internal server error.');
     expect(body.detail).toBeUndefined();
   });
@@ -144,7 +144,7 @@ describe('withValidation — branch coverage', () => {
         handler: 'test',
         preBodyGate: (_req, gateRes) => {
           gateRes.writeHead(403, { 'Content-Type': 'application/problem+json' });
-          gateRes.end(JSON.stringify({ type: 'urn:ok:error:forbidden', title: 'Forbidden.' }));
+          gateRes.end(JSON.stringify({ type: 'urn:ps:error:forbidden', title: 'Forbidden.' }));
           (gateRes as unknown as { writableEnded: boolean }).writableEnded = true;
           return false;
         },
@@ -156,7 +156,7 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(403);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:forbidden');
+    expect(body.type).toBe('urn:ps:error:forbidden');
   });
 
   test('preBodyGate returning true → proceeds to body read + handler', async () => {
@@ -202,7 +202,7 @@ describe('withValidation — branch coverage', () => {
     expect(bodyConsumed).toBe(false);
   });
 
-  test('PayloadTooLargeError → 413 urn:ok:error:payload-too-large (mocked throw)', async () => {
+  test('PayloadTooLargeError → 413 urn:ps:error:payload-too-large (mocked throw)', async () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const wrapped = withValidation(
       TestSchema,
@@ -215,7 +215,7 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(413);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:payload-too-large');
+    expect(body.type).toBe('urn:ps:error:payload-too-large');
     expect(body.title).toBe('Payload too large.');
   });
 
@@ -235,10 +235,10 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(413);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:payload-too-large');
+    expect(body.type).toBe('urn:ps:error:payload-too-large');
   });
 
-  test('RequestBodyTimeoutError → 408 urn:ok:error:request-timeout', async () => {
+  test('RequestBodyTimeoutError → 408 urn:ps:error:request-timeout', async () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const wrapped = withValidation(
       TestSchema,
@@ -251,11 +251,11 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(408);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:request-timeout');
+    expect(body.type).toBe('urn:ps:error:request-timeout');
     expect(body.title).toBe('Request body read timed out.');
   });
 
-  test('non-typed read error → 500 urn:ok:error:internal-server-error (transport-class)', async () => {
+  test('non-typed read error → 500 urn:ps:error:internal-server-error (transport-class)', async () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const wrapped = withValidation(
       TestSchema,
@@ -268,11 +268,11 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(500);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Failed to read request body.');
   });
 
-  test('non-JSON body → 400 urn:ok:error:invalid-request "not valid JSON"', async () => {
+  test('non-JSON body → 400 urn:ps:error:invalid-request "not valid JSON"', async () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const wrapped = withValidation(
       TestSchema,
@@ -285,11 +285,11 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(400);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toBe('Request body is not valid JSON.');
   });
 
-  test('schema validation failure → 400 urn:ok:error:invalid-request with field-path detail', async () => {
+  test('schema validation failure → 400 urn:ps:error:invalid-request with field-path detail', async () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const wrapped = withValidation(
       TestSchema,
@@ -302,7 +302,7 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(400);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toBe('Request body is invalid.');
     expect(typeof body.detail).toBe('string');
     expect(body.detail).toContain('foo');
@@ -323,7 +323,7 @@ describe('withValidation — branch coverage', () => {
     expect(receivedBody).toEqual({});
   });
 
-  test('empty body + schema requires fields → 400 urn:ok:error:invalid-request', async () => {
+  test('empty body + schema requires fields → 400 urn:ps:error:invalid-request', async () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
     const wrapped = withValidation(
       TestSchema,
@@ -336,7 +336,7 @@ describe('withValidation — branch coverage', () => {
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(400);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.detail).toContain('foo');
   });
 
@@ -383,7 +383,7 @@ describe('validateBody — direct unit tests (multipart handler entry point)', (
     expect(writeHeadCalls[0].headers['Content-Type']).toBe('application/problem+json');
     expect(endCalls.length).toBe(1);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.status).toBe(400);
     expect(typeof body.detail).toBe('string');
     expect(body.detail).toContain('field');
@@ -439,7 +439,7 @@ describe('withValidation: body media type gate', () => {
       expect(writeHeadCalls[0].status).toBe(415);
       expect(writeHeadCalls[0].headers['Content-Type']).toBe('application/problem+json');
       const body = JSON.parse(endCalls[0]);
-      expect(body.type).toBe('urn:ok:error:unsupported-media-type');
+      expect(body.type).toBe('urn:ps:error:unsupported-media-type');
       expect(body.title).toBe('Request body must be JSON.');
       expect(body.status).toBe(415);
       expect(body.detail).toContain('Content-Type: application/json');
@@ -504,7 +504,7 @@ describe('withValidation: body media type gate', () => {
     expect(calls).toEqual([]);
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(400);
-    expect(JSON.parse(endCalls[0]).type).toBe('urn:ok:error:invalid-request');
+    expect(JSON.parse(endCalls[0]).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('the method check outranks the media gate: a wrong method is still 405 with Allow', async () => {
@@ -534,7 +534,7 @@ describe('withValidation: body media type gate', () => {
         handler: 'test',
         preBodyGate: (_req, response) => {
           response.writeHead(403, { 'Content-Type': 'application/problem+json' });
-          response.end(JSON.stringify({ type: 'urn:ok:error:invalid-origin' }));
+          response.end(JSON.stringify({ type: 'urn:ps:error:invalid-origin' }));
           (response as { headersSent?: boolean }).headersSent = true;
           (response as { writableEnded?: boolean }).writableEnded = true;
           return false;
@@ -550,7 +550,7 @@ describe('withValidation: body media type gate', () => {
     );
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(403);
-    expect(JSON.parse(endCalls[0]).type).toBe('urn:ok:error:invalid-origin');
+    expect(JSON.parse(endCalls[0]).type).toBe('urn:ps:error:invalid-origin');
   });
 });
 

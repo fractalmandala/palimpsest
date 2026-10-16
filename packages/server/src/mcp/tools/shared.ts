@@ -164,7 +164,7 @@ export function errorTextWithDetail(
   invalidRequestAdvice?: string,
 ): string {
   const advice =
-    result.type === 'urn:ok:error:invalid-request' &&
+    result.type === 'urn:ps:error:invalid-request' &&
     result.contentControlAdmission === true &&
     invalidRequestAdvice
       ? ` ${invalidRequestAdvice}`

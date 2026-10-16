@@ -15,7 +15,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readEnabledRuleIds,
   readRegisteredRuleNames,
   readRuleScope,
@@ -88,7 +88,7 @@ function lintWithRepoConfig(root, files) {
 
 describe(`${RULE} oxlint rule`, () => {
   test('fires at the module specifier of each of its 19 positive forms, by its own code, and on no negative', () => {
-    const fires = lintOkRulesFixture(FIXTURE).filter((fire) => fire.code === CODE);
+    const fires = lintPsRulesFixture(FIXTURE).filter((fire) => fire.code === CODE);
     expect(fires.map((fire) => fire.position)).toEqual([
       '13:34',
       '14:35',
@@ -126,7 +126,7 @@ describe(`${RULE} oxlint rule`, () => {
 
   test('rule is registered and enabled at error in oxlint.config.ts', async () => {
     expect(await readRegisteredRuleNames(ROOT)).toContain(RULE);
-    expect(await readEnabledRuleIds(ROOT)).toContain(`ok/${RULE}`);
+    expect(await readEnabledRuleIds(ROOT)).toContain(`ps/${RULE}`);
   });
 
   test('its scope is app production source by pattern, minus every canonical test-only suffix', () => {

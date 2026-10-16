@@ -88,9 +88,9 @@ test('ingress rejects every migrated route before method or malformed-body admis
     '/api/asset-text',
   ]) {
     for (const [headers, type] of [
-      [{ Host: 'evil.example' }, 'urn:ok:error:host-not-allowed'],
-      [{ Origin: 'https://evil.example' }, 'urn:ok:error:invalid-origin'],
-      [{ 'X-Forwarded-For': '127.0.0.1' }, 'urn:ok:error:host-not-allowed'],
+      [{ Host: 'evil.example' }, 'urn:ps:error:host-not-allowed'],
+      [{ Origin: 'https://evil.example' }, 'urn:ps:error:invalid-origin'],
+      [{ 'X-Forwarded-For': '127.0.0.1' }, 'urn:ps:error:host-not-allowed'],
     ] as const) {
       const response = await rawRequest(enabled.port, path, {
         method: 'PATCH',
@@ -123,7 +123,7 @@ test('methods, preflight, HEAD and request IDs retain the transport contracts', 
     expect(wrong.headers.allow).toBe(allowed);
     expect(wrong.headers['x-request-id']).toBe('spine-method');
     expect(wrong.headers['access-control-allow-origin']).toBe('http://localhost:5173');
-    expect(parseProblem(wrong.body).type).toBe('urn:ok:error:method-not-allowed');
+    expect(parseProblem(wrong.body).type).toBe('urn:ps:error:method-not-allowed');
     const head = await rawRequest(enabled.port, path, { method: 'HEAD' });
     expect(head.status, path).toBe(405);
     expect(head.body).toBe('');
@@ -140,7 +140,7 @@ test('methods, preflight, HEAD and request IDs retain the transport contracts', 
     expect(disallowedPreflight.status, path).toBe(403);
     expect(disallowedPreflight.headers['x-request-id']).toBe('preflight-origin');
     expect(disallowedPreflight.headers['access-control-allow-origin']).toBeUndefined();
-    expect(parseProblem(disallowedPreflight.body).type).toBe('urn:ok:error:invalid-origin');
+    expect(parseProblem(disallowedPreflight.body).type).toBe('urn:ps:error:invalid-origin');
   }
 });
 
@@ -148,21 +148,21 @@ test('disabled test routes retain unknown-path admission, in ephemeral servers',
   for (const path of TEST_PATHS) {
     const unknown = await rawRequest(disabled.port, path, { method: 'POST', body: '{' });
     expect(unknown.status, unknown.body).toBe(404);
-    expect(parseProblem(unknown.body).type).toBe('urn:ok:error:not-found');
+    expect(parseProblem(unknown.body).type).toBe('urn:ps:error:not-found');
     const rejected = await rawRequest(disabled.port, path, {
       method: 'POST',
       headers: { Origin: 'https://evil.example' },
       body: '{',
     });
     expect(rejected.status).toBe(403);
-    expect(parseProblem(rejected.body).type).toBe('urn:ok:error:invalid-origin');
+    expect(parseProblem(rejected.body).type).toBe('urn:ps:error:invalid-origin');
     const restricted = await rawRequest(ephemeral.port, path, { method: 'POST', body: '{' });
     expect(restricted.status, restricted.body).toBe(404);
   }
   for (const path of WRITES) {
     const response = await rawRequest(ephemeral.port, path, { method: 'POST', body: '{' });
     expect(response.status, `${path}: ${response.body}`).toBe(415);
-    expect(parseProblem(response.body).type, path).toBe('urn:ok:error:unsupported-media-type');
+    expect(parseProblem(response.body).type, path).toBe('urn:ps:error:unsupported-media-type');
   }
   for (const path of READS) {
     const response = await rawRequest(ephemeral.port, path);

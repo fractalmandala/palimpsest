@@ -217,33 +217,33 @@ describe('chunkWrapperDecorationPlugin — addProseMirrorPlugins idempotence', (
 
 describe('chunkWrapperDecorationPlugin — ok/render/cv-auto-skip mark emission', () => {
   test('first non-empty emit fires ok/render/cv-auto-skip mark', () => {
-    performance.clearMeasures('ok/render/cv-auto-skip');
+    performance.clearMeasures('ps/render/cv-auto-skip');
     const doc = schema.node('doc', null, [schema.node('paragraph', null, [schema.text('hello')])]);
     const state = makeState(doc);
     decorationSpecs(state);
-    const entries = performance.getEntriesByName('ok/render/cv-auto-skip');
+    const entries = performance.getEntriesByName('ps/render/cv-auto-skip');
     expect(entries.length).toBe(1);
   });
 
   test('subsequent emits within same session do not re-fire the mark', () => {
-    performance.clearMeasures('ok/render/cv-auto-skip');
+    performance.clearMeasures('ps/render/cv-auto-skip');
     const doc = schema.node('doc', null, [schema.node('paragraph', null, [schema.text('hello')])]);
     const state = makeState(doc);
     decorationSpecs(state);
     decorationSpecs(state);
     decorationSpecs(state);
-    const entries = performance.getEntriesByName('ok/render/cv-auto-skip');
+    const entries = performance.getEntriesByName('ps/render/cv-auto-skip');
     expect(entries.length).toBe(1);
   });
 
   test('__resetFirstEmitForTesting allows re-observation of the mark', () => {
-    performance.clearMeasures('ok/render/cv-auto-skip');
+    performance.clearMeasures('ps/render/cv-auto-skip');
     const doc = schema.node('doc', null, [schema.node('paragraph', null, [schema.text('hello')])]);
     decorationSpecs(makeState(doc));
-    expect(performance.getEntriesByName('ok/render/cv-auto-skip').length).toBe(1);
+    expect(performance.getEntriesByName('ps/render/cv-auto-skip').length).toBe(1);
 
     __resetFirstEmitForTesting();
     decorationSpecs(makeState(doc));
-    expect(performance.getEntriesByName('ok/render/cv-auto-skip').length).toBe(2);
+    expect(performance.getEntriesByName('ps/render/cv-auto-skip').length).toBe(2);
   });
 });

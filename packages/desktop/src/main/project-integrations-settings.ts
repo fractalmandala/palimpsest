@@ -346,7 +346,7 @@ export function registerProjectIntegrationsSettings(
       if (!result.ok) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:project-integrations:dispatch',
+          channel: 'ps:project-integrations:dispatch',
           reason: 'set-component-refused',
           handler: 'projectIntegrationsDispatch',
           cause: { component: request?.component?.kind ?? 'unknown', error: result.error },
@@ -360,7 +360,7 @@ export function registerProjectIntegrationsSettings(
   }
 
   const register = createHandler(ipcMain as IpcMain);
-  register('ok:project-integrations:dispatch', async (event, request) => {
+  register('ps:project-integrations:dispatch', async (event, request) => {
     let projectDir: string | null;
     try {
       projectDir = resolveProjectDir(event);
@@ -380,7 +380,7 @@ export function registerProjectIntegrationsSettings(
       if (destroyed) return;
       destroyed = true;
       try {
-        ipcMain.removeHandler('ok:project-integrations:dispatch');
+        ipcMain.removeHandler('ps:project-integrations:dispatch');
       } catch (err) {
         logger.warn('removeHandler(ok:project-integrations:dispatch) threw', {
           err,

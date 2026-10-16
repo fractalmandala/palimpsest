@@ -544,7 +544,7 @@ describe('stale external write does not roll back an acknowledged agent write', 
       expect(response.status).toBe(400);
       expect(await response.json()).toMatchObject({
         status: 400,
-        type: 'urn:ok:error:path-escape',
+        type: 'urn:ps:error:path-escape',
       });
       expect(readFileSync(outside, 'utf-8')).toBe('outside\n');
       expect(state.getStaleExternalWrite(docName)).toBeDefined();
@@ -625,7 +625,7 @@ describe('stale external write does not roll back an acknowledged agent write', 
       });
       expect(aliasResolution.status).toBe(404);
       expect(await aliasResolution.json()).toMatchObject({
-        type: 'urn:ok:error:no-conflict-tracked',
+        type: 'urn:ps:error:no-conflict-tracked',
       });
       expect(lifecycleOf(server, docName).status).toBe('conflict');
       expect(readTestDoc(contentDir, docName)).toBe(staleBytes);

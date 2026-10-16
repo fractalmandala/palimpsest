@@ -46,7 +46,7 @@ const moveTabToNewPane = vi.fn(() => 'pane-new' as string | null);
 const requestSkillDelete = vi.fn(() => {});
 const requestSkillFileRename = vi.fn(() => {});
 const scheduleClipboardWrite = vi.fn(() => Promise.resolve());
-const okignorePatch = vi.fn(() => {});
+const psignorePatch = vi.fn(() => {});
 
 function primaryShortcutModifier(): Pick<KeyboardEventInit, 'ctrlKey' | 'metaKey'> {
   return isMacOS() ? { metaKey: true } : { ctrlKey: true };
@@ -238,7 +238,7 @@ vi.doMock('@/lib/use-workspace', () => ({
 }));
 
 vi.doMock('@/lib/config-provider', () => ({
-  useConfigContext: () => ({ okignoreBinding: { current: () => '', patch: okignorePatch } }),
+  useConfigContext: () => ({ psignoreBinding: { current: () => '', patch: psignorePatch } }),
 }));
 
 vi.doMock('@/hooks/use-git-sync-status', () => ({
@@ -448,7 +448,7 @@ function resetState() {
     requestSkillDelete,
     requestSkillFileRename,
     scheduleClipboardWrite,
-    okignorePatch,
+    psignorePatch,
   ]) {
     fn.mockClear();
   }
@@ -537,7 +537,7 @@ describe('EditorTabs runtime behavior', () => {
       expect.soft(scheduleClipboardWrite).toHaveBeenCalledWith(docName);
 
       fireEvent.click(screen.getByRole('menuitem', { name: 'Hide this file' }));
-      expect.soft(okignorePatch).toHaveBeenCalledWith(`/${docName}\n`);
+      expect.soft(psignorePatch).toHaveBeenCalledWith(`/${docName}\n`);
     },
   );
 
@@ -562,7 +562,7 @@ describe('EditorTabs runtime behavior', () => {
     expect.soft(screen.getByTestId('file-target-rename-dialog').textContent).toBe('notes.ts.md');
 
     fireEvent.click(screen.getByRole('menuitem', { name: 'Hide this file' }));
-    expect.soft(okignorePatch).toHaveBeenCalledWith('/notes.ts.md\n');
+    expect.soft(psignorePatch).toHaveBeenCalledWith('/notes.ts.md\n');
   });
 
   test('hovering a doc tab discloses its full path, which the label alone does not show', async () => {

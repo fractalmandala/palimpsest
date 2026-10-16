@@ -30,7 +30,7 @@ describe('parseApiError', () => {
   test('RFC 9457 problem+json with non-empty title → returns title', () => {
     expect(
       parseApiError({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         title: 'Output path must be within home directory.',
         status: 400,
         instance: 'urn:uuid:00000000-0000-0000-0000-000000000000',
@@ -41,7 +41,7 @@ describe('parseApiError', () => {
   test('RFC 9457 with extensions → still returns title', () => {
     expect(
       parseApiError({
-        type: 'urn:ok:error:doc-already-exists',
+        type: 'urn:ps:error:doc-already-exists',
         title: 'Exists.',
         status: 409,
         colliding: [{ existing: 'a', incoming: 'b' }],

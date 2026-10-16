@@ -130,7 +130,7 @@ describe('derived-index API readiness gate', () => {
 
       expect(route.captured.status).toBe(500);
       expect(JSON.parse(route.captured.body)).toMatchObject({
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
       });
     } finally {
       vi.restoreAllMocks();

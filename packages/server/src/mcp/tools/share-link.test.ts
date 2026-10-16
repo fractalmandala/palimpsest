@@ -678,7 +678,7 @@ describe('share_link — transport / protocol error paths', () => {
     await writeFile(resolve(tmpDir, 'page.md'), '# page');
     mockRawResponse = new Response(
       JSON.stringify({
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         title: 'Internal server error',
         detail: 'origin lookup failed: ENETUNREACH',
         status: 500,
@@ -697,7 +697,7 @@ describe('share_link — transport / protocol error paths', () => {
     await writeFile(resolve(tmpDir, 'page.md'), '# page');
     mockRawResponse = new Response(
       JSON.stringify({
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         title: 'Internal server error',
         status: 500,
       }),
@@ -716,7 +716,7 @@ describe('share_link — transport / protocol error paths', () => {
     await writeFile(resolve(tmpDir, 'page.md'), '# page');
     mockRawResponse = new Response(
       JSON.stringify({
-        type: 'urn:ok:error:internal-server-error',
+        type: 'urn:ps:error:internal-server-error',
         detail: 'origin lookup failed: ENETUNREACH',
         status: 500,
       }),

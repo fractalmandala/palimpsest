@@ -114,7 +114,7 @@ describe('detected skills', () => {
     expect(r.detectedByPrefix.size).toBe(0);
   });
 
-  it("skips OK's own product skills — managing them with OK is circular", () => {
+  it("skips Palimpsest's own product skills — managing them with OK is circular", () => {
     const r = build({ detected: [detectedSkill('palimpsest')] });
     expect(r.detectedByPrefix.size).toBe(0);
   });
@@ -464,13 +464,13 @@ describe('built-ins are not a population', () => {
   it('buckets under their source beside ordinary imports from it', () => {
     const r = build({
       skills: [
-        imported('open-knowledge-discovery', OKS, { scope: 'global' }),
+        imported('palimpsest-discovery', OKS, { scope: 'global' }),
         imported('open-knowledge-write-skill', OKS, { scope: 'global' }),
       ],
       showSkillGroups: true,
     });
     expect([...r.groupByPrefix.keys()]).toEqual(['GLOBAL/open-knowledge-skills']);
-    expect(r.paths).toContain('GLOBAL/open-knowledge-skills/open-knowledge-discovery/SKILL.md');
+    expect(r.paths).toContain('GLOBAL/open-knowledge-skills/palimpsest-discovery/SKILL.md');
   });
 });
 

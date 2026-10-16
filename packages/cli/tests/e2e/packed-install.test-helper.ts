@@ -554,8 +554,8 @@ export async function installPackedCli(
       throw new Error(`Packed CLI is missing required asset: ${asset}`);
     }
   }
-  const binShim = join(installPrefix, 'node_modules', '.bin', 'ok');
-  if (!existsSync(binShim)) throw new Error('Packed CLI is missing its ok executable');
+  const binShim = join(installPrefix, 'node_modules', '.bin', 'ps');
+  if (!existsSync(binShim)) throw new Error('Packed CLI is missing its ps executable');
   return {
     cliPath: join(installed, 'dist', 'cli.mjs'),
     binShim,

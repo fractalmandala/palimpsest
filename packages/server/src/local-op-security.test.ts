@@ -538,7 +538,7 @@ describe('checkLocalOpSecurity', () => {
     expect(calls[0].status).toBe(403);
     expect(calls[0].contentType).toBe('application/problem+json');
     const body = calls[0].body as { type: string; title: string; status: number };
-    expect(body.type).toBe('urn:ok:error:loopback-required');
+    expect(body.type).toBe('urn:ps:error:loopback-required');
     expect(body.title).toContain('loopback');
     expect(body.status).toBe(403);
   });
@@ -553,7 +553,7 @@ describe('checkLocalOpSecurity', () => {
     expect(calls[0].status).toBe(403);
     expect(calls[0].contentType).toBe('application/problem+json');
     const body = calls[0].body as { type: string; title: string; status: number };
-    expect(body.type).toBe('urn:ok:error:invalid-origin');
+    expect(body.type).toBe('urn:ps:error:invalid-origin');
     expect(body.title).toContain('Origin');
     expect(body.status).toBe(403);
   });

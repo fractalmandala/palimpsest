@@ -967,7 +967,7 @@ msgstr "폴더 이름 <0>{sanitized}</0>이 여기에 이미 파일을 포함하
 msgid "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 msgstr "키가 설정되어 있지만 임베딩 제공업체가 요청을 거부했거나 연결할 수 없어 검색이 키워드 매칭으로 대체되었습니다. 사용자 지정 엔드포인트에서 <0>연결 테스트</0>를 사용해 원인을 확인합니다."
 
-msgid "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgid "A knowledge base that follows Google's OpenKnowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
 msgstr "Google의 Palimpsest Format을 따르는 지식 베이스입니다. 알고 있는 정보를 정리하는 공유 방식입니다. 형식을 이해하는 다른 도구에서도 노트를 잘 활용하려면 이것을 선택하세요."
 
 msgid "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
@@ -1279,14 +1279,14 @@ msgid "Adds a managed block to"
 msgstr "관리 블록을 다음 대상에 추가합니다"
 
 #. Subtext under the project AI-tools checkbox
-msgid "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
 msgstr "<0>{toolList}</0>에 Palimpsest MCP 항목과 프로젝트 스킬을 추가해 에이전트가 파일을 읽고 편집할 수 있게 합니다."
 
 #. Subtext under the AI-tools MCP checkbox
-msgid "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
 msgstr "<0>{connectToolList}</0>에 Palimpsest MCP 항목을 추가해 에이전트가 파일을 읽고 편집할 수 있게 합니다."
 
-msgid "Adds an Palimpsest MCP entry to this project's agent config."
+msgid "Adds a Palimpsest MCP entry to this project's agent config."
 msgstr "이 프로젝트의 에이전트 설정에 Palimpsest MCP 항목을 추가합니다."
 
 #. js-lingui-explicit-id
@@ -1417,7 +1417,7 @@ msgstr "거의 완료되었습니다. 완료된 작업과 남은 작업을 확�
 msgid "Already at {assetContentPath} — reusing."
 msgstr "이미 {assetContentPath}에 있으므로 재사용합니다."
 
-#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked
+#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have a Palimpsest MCP entry, which stay as they are while the box is unticked
 msgid "Already connected to {replacingToolList}"
 msgstr "이미 연결됨: {replacingToolList}"
 
@@ -2121,7 +2121,7 @@ msgstr "문서의 마크다운 문제를 검사하고 고칠 수 있습니다"
 msgid "Checks the whole project for markdown problems and broken links"
 msgstr "프로젝트 전체의 마크다운 문제와 끊어진 링크를 검사합니다"
 
-msgid "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
+msgid "Checks your project against the OpenKnowledge Format. Turn it off any time in Settings."
 msgstr "Palimpsest Format에 맞춰 프로젝트를 검사합니다. 설정에서 언제든지 끌 수 있습니다."
 
 msgid "Choose a skill archive"
@@ -5740,7 +5740,7 @@ msgstr "함께 일하는 사람과 회사, 그들과의 회의를 기록합니�
 msgid "keeps the skills"
 msgstr "스킬을 유지합니다"
 
-msgid "Keeps your knowledge base aligned with the Palimpsest Format."
+msgid "Keeps your knowledge base aligned with the OpenKnowledge Format."
 msgstr "지식 베이스를 Palimpsest Format에 맞게 유지합니다."
 
 msgid "Kept both — \"{0}\" is its own skill now"
@@ -7248,7 +7248,7 @@ msgstr "Palimpsest가 프로젝트 서버에 연결할 수 없어 인덱스 유�
 msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
 msgstr "Palimpsest는 Markdown이 있는 모든 폴더에 index.md라는 탐색 파일을 만들고 유지합니다."
 
-msgid "Palimpsest Format guidance"
+msgid "OpenKnowledge Format guidance"
 msgstr "Palimpsest Format 안내"
 
 msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
@@ -10302,7 +10302,7 @@ msgstr "이 엔드포인트는 사용할 수 없습니다. https:// URL을 입�
 msgid "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
 msgstr "해당 폴더에는 Palimpsest가 작성하지 않은 코드가 이미 있으며, 같은 신뢰로 {0}이(가) 이를 실행할 수 있게 됩니다: {otherExtensions}."
 
-msgid "That folder isn't an Palimpsest project yet. Initialize it and open?"
+msgid "That folder isn't a Palimpsest project yet. Initialize it and open?"
 msgstr "해당 폴더는 아직 Palimpsest 프로젝트가 아닙니다. 초기화하고 여시겠습니까?"
 
 msgid "That host is already in the list."
@@ -10339,7 +10339,7 @@ msgstr "{editor} 버전이 이제 소스입니다"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "{targetNoun} 열기에 실패했습니다. 직접 이동해 보세요."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
 msgstr "이 템플릿으로 만든 모든 문서에 설정되는 <0>type</0>입니다(예: <1>research-note</1>). 새 문서를 Palimpsest Format에 맞게 유지합니다."
 
 msgid "The agent is working"
@@ -10760,7 +10760,7 @@ msgstr "이 브랜치에 이 Palimpsest 프로젝트가 없습니다. 워크트�
 msgid "This branch is checked out in:"
 msgstr "이 브랜치의 체크아웃 위치:"
 
-msgid "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
+msgid "This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened."
 msgstr "이 브랜치가 Palimpsest 설정 경로를 워크트리 밖으로 리디렉션합니다. 워크트리는 생성되었지만 열리지 않았습니다."
 
 #. Toast after first-launch setup ends without connecting AI tools; agentConnectionsLabel is the Settings sidebar pane name

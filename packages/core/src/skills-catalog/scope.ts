@@ -8,7 +8,7 @@ import type { SkillProvenance } from './schema.ts';
 
 const PROJECT_RAW_SCOPES = new Set(['project', 'local']);
 
-export function catalogRawScopeToOkScope(rawScope: string | undefined): SkillScope {
+export function catalogRawScopeToPsScope(rawScope: string | undefined): SkillScope {
   return rawScope !== undefined && PROJECT_RAW_SCOPES.has(rawScope) ? 'project' : 'global';
 }
 
@@ -32,7 +32,7 @@ export function isDetectedSkillInProject(
   provenance: SkillProvenance,
   projectDir: string | undefined,
 ): boolean {
-  if (catalogRawScopeToOkScope(provenance.scope) === 'global') return true;
+  if (catalogRawScopeToPsScope(provenance.scope) === 'global') return true;
   const owner = provenance.projectPath;
   if (owner === undefined || projectDir === undefined) return true;
   return samePath(owner, projectDir);
@@ -44,7 +44,7 @@ export function isSkillOutsideOpenProject(
   contentDir: string | undefined,
 ): boolean {
   if (contentDir === undefined) return false;
-  if (catalogRawScopeToOkScope(provenance.scope) !== 'project') return false;
+  if (catalogRawScopeToPsScope(provenance.scope) !== 'project') return false;
   const h = home.replace(/\/+$/, '');
   const c = contentDir.replace(/\/+$/, '');
   return h !== c && !h.startsWith(`${c}/`);

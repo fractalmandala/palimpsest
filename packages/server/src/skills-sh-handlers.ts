@@ -74,7 +74,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         errorResponse(
           res,
           400,
-          'urn:ok:error:invalid-request',
+          'urn:ps:error:invalid-request',
           'Search query must be at least 2 characters.',
           { handler: 'skills-search' },
         );
@@ -113,7 +113,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
           errorResponse(
             res,
             502,
-            'urn:ok:error:internal-server-error',
+            'urn:ps:error:internal-server-error',
             'Skill discovery is temporarily unavailable.',
             { handler: 'skills-search', detail: `GitHub fallback returned ${gh.status}.` },
           );
@@ -131,7 +131,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         errorResponse(
           res,
           502,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Skill discovery is temporarily unavailable.',
           { handler: 'skills-search', cause: e },
         );
@@ -160,7 +160,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         errorResponse(
           res,
           502,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Popular skills are temporarily unavailable.',
           { handler: 'skills-popular', cause: e },
         );
@@ -175,7 +175,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       const url = new URL(req.url ?? '', 'http://localhost');
       const source = url.searchParams.get('source')?.trim() ?? '';
       if (!/^[\w.-]+\/[\w.-]+$/.test(source) || source.includes('..')) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'source must be owner/repo.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'source must be owner/repo.', {
           handler: 'skills-publisher',
         });
         return;
@@ -193,7 +193,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         errorResponse(
           res,
           502,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Publisher skills are temporarily unavailable.',
           { handler: 'skills-publisher', cause: e },
         );
@@ -209,14 +209,14 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       const source = url.searchParams.get('source')?.trim() ?? '';
       const name = url.searchParams.get('name')?.trim() ?? '';
       if (!source || !name) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'source and name are required.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'source and name are required.', {
           handler: 'skills-detail',
         });
         return;
       }
       const links = skillsShSkillLinks(source, name);
       if (!links) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unrecognized skill source.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized skill source.', {
           handler: 'skills-detail',
         });
         return;
@@ -258,7 +258,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       const source = url.searchParams.get('source')?.trim() ?? '';
       const name = url.searchParams.get('name')?.trim() ?? '';
       if (!source) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'source is required.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'source is required.', {
           handler: 'skills-preview',
         });
         return;
@@ -268,7 +268,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         resolvedSkillsSh = await resolveSkillsShImportSource(source, name || undefined);
       } catch (error) {
         if (error instanceof SkillFetchError) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not resolve source.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not resolve source.', {
             handler: 'skills-preview',
             cause: error,
           });
@@ -278,7 +278,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       }
       const spec = resolvedSkillsSh?.spec ?? parseSource(source);
       if (!spec) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unrecognized preview source.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized preview source.', {
           handler: 'skills-preview',
           detail: 'Expected owner/repo, a git URL, a website source, or a local path.',
         });
@@ -289,7 +289,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         const fetched = await fetchCachedSource(spec);
         const dirs = discoverSkillDirs(fetched.dir);
         if (dirs.length === 0) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'No SKILL.md found in source.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'No SKILL.md found in source.', {
             handler: 'skills-preview',
           });
           return;
@@ -300,7 +300,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
             dirs.find((d) => d.name === name) ??
             dirs.find((d) => readSkillDirMeta(d.dir)?.name === name);
           if (!found) {
-            errorResponse(res, 404, 'urn:ok:error:not-found', 'Named skill not in source.', {
+            errorResponse(res, 404, 'urn:ps:error:not-found', 'Named skill not in source.', {
               handler: 'skills-preview',
               detail: `"${name}" not among: ${dirs.map((d) => d.name).join(', ')}.`,
             });
@@ -310,7 +310,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         }
         const tooLarge = acquiredBundleTooLarge(pick.dir);
         if (tooLarge) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Skill bundle is too large.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Skill bundle is too large.', {
             handler: 'skills-preview',
             detail: tooLarge,
           });
@@ -318,7 +318,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         }
         const parsed = parseSkillDir(pick.dir);
         if (!parsed) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'SKILL.md unreadable in source.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'SKILL.md unreadable in source.', {
             handler: 'skills-preview',
           });
           return;
@@ -341,13 +341,13 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         );
       } catch (e) {
         if (e instanceof SkillFetchError) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not fetch source.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not fetch source.', {
             handler: 'skills-preview',
             cause: e,
           });
           return;
         }
-        errorResponse(res, 502, 'urn:ok:error:internal-server-error', 'Preview is unavailable.', {
+        errorResponse(res, 502, 'urn:ps:error:internal-server-error', 'Preview is unavailable.', {
           handler: 'skills-preview',
           cause: e,
         });
@@ -362,7 +362,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       const url = new URL(req.url ?? '', 'http://localhost');
       const source = url.searchParams.get('source')?.trim() ?? '';
       if (!source) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'source is required.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'source is required.', {
           handler: 'skills-discover',
         });
         return;
@@ -380,7 +380,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
           );
         } catch (error) {
           if (error instanceof SkillFetchError) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not fetch source.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not fetch source.', {
               handler: 'skills-discover',
               cause: error,
             });
@@ -392,7 +392,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       }
       const spec = parseSource(source);
       if (!spec) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unrecognized source.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized source.', {
           handler: 'skills-discover',
           detail: 'Expected owner/repo, a git URL, a website source, or a local path.',
         });
@@ -409,13 +409,13 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         successResponse(res, 200, SkillDiscoverSchema, { skills }, { handler: 'skills-discover' });
       } catch (e) {
         if (e instanceof SkillFetchError) {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Could not fetch source.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Could not fetch source.', {
             handler: 'skills-discover',
             cause: e,
           });
           return;
         }
-        errorResponse(res, 502, 'urn:ok:error:internal-server-error', 'Discovery is unavailable.', {
+        errorResponse(res, 502, 'urn:ps:error:internal-server-error', 'Discovery is unavailable.', {
           handler: 'skills-discover',
           cause: e,
         });
@@ -432,7 +432,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
       const from = url.searchParams.get('from')?.trim() ?? '';
       const scope = url.searchParams.get('scope')?.trim() === 'global' ? 'global' : 'project';
       if (!ref || !SKILL_NAME_REGEX.test(ref) || ref.length > 64) {
-        errorResponse(res, 400, 'urn:ok:error:invalid-request', 'A valid ref is required.', {
+        errorResponse(res, 400, 'urn:ps:error:invalid-request', 'A valid ref is required.', {
           handler: 'skills-resolve-ref',
         });
         return;
@@ -522,7 +522,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Could not resolve the reference.',
           {
             handler: 'skills-resolve-ref',

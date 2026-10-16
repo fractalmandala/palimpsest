@@ -44,7 +44,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     errorSpy.mockClear();
 
     const { res, writeHeadCalls, endCalls } = makeMockRes({ headersSent: true });
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Anything.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Anything.', {
       handler: 'test',
     });
     expect(writeHeadCalls.length).toBe(0);
@@ -58,7 +58,7 @@ describe('errorResponse — defense-in-depth branches', () => {
 
   test('writableEnded: true → writeHead never called (suppressed post-end double-write)', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes({ writableEnded: true });
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Anything.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Anything.', {
       handler: 'test',
     });
     expect(writeHeadCalls.length).toBe(0);
@@ -67,7 +67,7 @@ describe('errorResponse — defense-in-depth branches', () => {
 
   test('destroyed: true → writeHead never called (TCP RST / abrupt client disconnect)', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes({ destroyed: true });
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Anything.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Anything.', {
       handler: 'test',
     });
     expect(writeHeadCalls.length).toBe(0);
@@ -82,7 +82,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     errorSpy.mockClear();
 
     const ctx4xx = makeMockRes();
-    errorResponse(ctx4xx.res, 404, 'urn:ok:error:doc-not-found', 'Not found.', {
+    errorResponse(ctx4xx.res, 404, 'urn:ps:error:doc-not-found', 'Not found.', {
       handler: 'test',
     });
     const warn4xx = warnSpy.mock.calls.find(
@@ -94,7 +94,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     errorSpy.mockClear();
 
     const ctx5xx = makeMockRes();
-    errorResponse(ctx5xx.res, 500, 'urn:ok:error:internal-server-error', 'Bang.', {
+    errorResponse(ctx5xx.res, 500, 'urn:ps:error:internal-server-error', 'Bang.', {
       handler: 'test',
     });
     const error5xx = errorSpy.mock.calls.find(
@@ -107,9 +107,9 @@ describe('errorResponse — defense-in-depth branches', () => {
     expect(warn5xx).toBeUndefined();
   });
 
-  test('empty title (min(1) violation) → emits fallback urn:ok:error:internal-server-error', () => {
+  test('empty title (min(1) violation) → emits fallback urn:ps:error:internal-server-error', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', '', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', '', {
       handler: 'test',
     });
     expect(writeHeadCalls.length).toBe(1);
@@ -117,7 +117,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     expect(writeHeadCalls[0].headers['Content-Type']).toBe('application/problem+json');
     expect(endCalls.length).toBe(1);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Internal server error.');
     expect(body.status).toBe(500);
     expect(typeof body.instance).toBe('string');
@@ -125,17 +125,17 @@ describe('errorResponse — defense-in-depth branches', () => {
 
   test('malformed envelope at 4xx: fallback overrides HTTP status to 500 for type/status coherence', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
-    errorResponse(res, 404, 'urn:ok:error:doc-not-found', '', { handler: 'test' });
+    errorResponse(res, 404, 'urn:ps:error:doc-not-found', '', { handler: 'test' });
     expect(writeHeadCalls.length).toBe(1);
     expect(writeHeadCalls[0].status).toBe(500);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.status).toBe(500);
   });
 
   test('happy path: well-formed call writes single problem+json response', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
-    errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Bad input.', {
+    errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Bad input.', {
       handler: 'test',
       detail: 'Field x is required.',
     });
@@ -144,7 +144,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     expect(writeHeadCalls[0].headers['Content-Type']).toBe('application/problem+json');
     expect(writeHeadCalls[0].headers['X-Content-Type-Options']).toBe('nosniff');
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toBe('Bad input.');
     expect(body.detail).toBe('Field x is required.');
     expect(body.status).toBe(400);
@@ -158,7 +158,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     const fsErr = new Error(
       "EACCES: permission denied, open '/Users/alice/secrets/api-keys.tmp.4432.99124'",
     );
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to write template.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to write template.', {
       handler: 'template-put',
       detail: 'WRITE_ERROR',
       cause: fsErr,
@@ -176,7 +176,7 @@ describe('errorResponse — defense-in-depth branches', () => {
 
   test('extraHeaders cannot override security defaults (Content-Type, X-Content-Type-Options)', () => {
     const { res, writeHeadCalls } = makeMockRes();
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: 'test',
       extraHeaders: {
         Allow: 'GET',
@@ -193,7 +193,7 @@ describe('errorResponse — defense-in-depth branches', () => {
 
   test('case-variant header overrides cannot defeat security defaults', () => {
     const { res, writeHeadCalls } = makeMockRes();
-    errorResponse(res, 405, 'urn:ok:error:method-not-allowed', 'Method not allowed.', {
+    errorResponse(res, 405, 'urn:ps:error:method-not-allowed', 'Method not allowed.', {
       handler: 'test',
       extraHeaders: {
         Allow: 'GET',
@@ -217,7 +217,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     const circular: { self?: unknown } = {};
     circular.self = circular;
     const fixedInstance = 'urn:uuid:11111111-2222-3333-4444-555555555555';
-    errorResponse(res, 409, 'urn:ok:error:doc-already-exists', 'Doc already exists.', {
+    errorResponse(res, 409, 'urn:ps:error:doc-already-exists', 'Doc already exists.', {
       handler: 'test',
       instance: fixedInstance,
       extensions: { circular },
@@ -232,7 +232,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     expect(writeHeadCalls[0].headers).not.toHaveProperty('Retry-After');
     expect(endCalls.length).toBe(1);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Internal server error.');
     expect(body.status).toBe(500);
     expect(body.instance).toBe(fixedInstance);
@@ -256,11 +256,11 @@ describe('errorResponse — defense-in-depth branches', () => {
 
   test('extension members merge with canonical body — caller cannot override type/title/status/instance/detail', () => {
     const { res, endCalls } = makeMockRes();
-    errorResponse(res, 409, 'urn:ok:error:doc-already-exists', 'Doc already exists.', {
+    errorResponse(res, 409, 'urn:ps:error:doc-already-exists', 'Doc already exists.', {
       handler: 'test',
       extensions: {
         colliding: [{ existing: 'a.md', incoming: 'A.md', to: 'A.md' }],
-        type: 'urn:ok:error:hostile-override' as unknown,
+        type: 'urn:ps:error:hostile-override' as unknown,
         title: 'Hostile title.' as unknown,
         status: 200 as unknown,
         instance: 'attacker-controlled' as unknown,
@@ -270,7 +270,7 @@ describe('errorResponse — defense-in-depth branches', () => {
       },
     });
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:doc-already-exists');
+    expect(body.type).toBe('urn:ps:error:doc-already-exists');
     expect(body.title).toBe('Doc already exists.');
     expect(body.status).toBe(409);
     expect(body.detail).toBeUndefined();
@@ -285,7 +285,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     errorSpy.mockClear();
 
     const { res } = makeMockRes();
-    errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to resolve conflict.', {
+    errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to resolve conflict.', {
       handler: 'sync-resolve-conflict',
       detail: 'EISDIR',
       extensions: {
@@ -334,7 +334,7 @@ describe('errorResponse — defense-in-depth branches', () => {
     errorResponse(
       res,
       500,
-      'urn:ok:error:storage-error',
+      'urn:ps:error:storage-error',
       "Failed to read version abc123: fatal: pathspec ':(literal):colon.md' did not match any files",
       {
         handler: 'test',
@@ -351,29 +351,29 @@ describe('errorResponse — defense-in-depth branches', () => {
 
 describe('streamingProblemEvent — defense-in-depth fallback', () => {
   test('empty title (min(1) violation) → returns fallback event', () => {
-    const event = streamingProblemEvent(500, 'urn:ok:error:internal-server-error', '', {
+    const event = streamingProblemEvent(500, 'urn:ps:error:internal-server-error', '', {
       handler: 'test',
     });
     expect(event.type).toBe('error');
-    expect(event.problem.type).toBe('urn:ok:error:internal-server-error');
+    expect(event.problem.type).toBe('urn:ps:error:internal-server-error');
     expect(event.problem.title).toBe('Internal server error.');
     expect(event.problem.status).toBe(500);
     expect(typeof event.problem.instance).toBe('string');
   });
 
   test('malformed envelope at 4xx: fallback overrides problem.status to 500 for type/status coherence', () => {
-    const event = streamingProblemEvent(404, 'urn:ok:error:doc-not-found', '', { handler: 'test' });
-    expect(event.problem.type).toBe('urn:ok:error:internal-server-error');
+    const event = streamingProblemEvent(404, 'urn:ps:error:doc-not-found', '', { handler: 'test' });
+    expect(event.problem.type).toBe('urn:ps:error:internal-server-error');
     expect(event.problem.status).toBe(500);
   });
 
   test('happy path: well-formed call returns the typed event', () => {
-    const event = streamingProblemEvent(503, 'urn:ok:error:sync-not-active', 'Sync engine off.', {
+    const event = streamingProblemEvent(503, 'urn:ps:error:sync-not-active', 'Sync engine off.', {
       handler: 'test',
       detail: 'Sync engine is not active in this environment.',
     });
     expect(event.type).toBe('error');
-    expect(event.problem.type).toBe('urn:ok:error:sync-not-active');
+    expect(event.problem.type).toBe('urn:ps:error:sync-not-active');
     expect(event.problem.title).toBe('Sync engine off.');
     expect(event.problem.detail).toBe('Sync engine is not active in this environment.');
     expect(event.problem.status).toBe(503);
@@ -383,7 +383,7 @@ describe('streamingProblemEvent — defense-in-depth fallback', () => {
   });
 
   test('detail field present when provided', () => {
-    const event = streamingProblemEvent(500, 'urn:ok:error:clone-failed', 'Clone failed.', {
+    const event = streamingProblemEvent(500, 'urn:ps:error:clone-failed', 'Clone failed.', {
       handler: 'test',
       detail: 'fatal: repository not found',
     });
@@ -391,7 +391,7 @@ describe('streamingProblemEvent — defense-in-depth fallback', () => {
   });
 
   test('detail field absent when not provided', () => {
-    const event = streamingProblemEvent(500, 'urn:ok:error:clone-failed', 'Clone failed.', {
+    const event = streamingProblemEvent(500, 'urn:ps:error:clone-failed', 'Clone failed.', {
       handler: 'test',
     });
     expect(event.problem.detail).toBeUndefined();
@@ -403,14 +403,14 @@ describe('createStreamingErrorWriter — writableEnded guard', () => {
   test('writableEnded: true → write never called (suppressed mid-stream double-emit)', () => {
     const { res, writeCalls } = makeMockRes({ writableEnded: true });
     const writer = createStreamingErrorWriter(res, 'test');
-    writer(500, 'urn:ok:error:internal-server-error', 'Whatever.');
+    writer(500, 'urn:ps:error:internal-server-error', 'Whatever.');
     expect(writeCalls.length).toBe(0);
   });
 
   test('destroyed: true → write never called (TCP RST / abrupt client disconnect)', () => {
     const { res, writeCalls } = makeMockRes({ destroyed: true });
     const writer = createStreamingErrorWriter(res, 'test');
-    writer(500, 'urn:ok:error:internal-server-error', 'Whatever.');
+    writer(500, 'urn:ps:error:internal-server-error', 'Whatever.');
     expect(writeCalls.length).toBe(0);
   });
 
@@ -421,7 +421,7 @@ describe('createStreamingErrorWriter — writableEnded guard', () => {
     }) as typeof res.write;
     const writer = createStreamingErrorWriter(res, 'test');
     expect(() =>
-      writer(500, 'urn:ok:error:internal-server-error', 'Real error.', {
+      writer(500, 'urn:ps:error:internal-server-error', 'Real error.', {
         cause: new Error('original-failure'),
       }),
     ).not.toThrow();
@@ -430,19 +430,19 @@ describe('createStreamingErrorWriter — writableEnded guard', () => {
   test('writableEnded: false → emits one NDJSON line with typed event', () => {
     const { res, writeCalls } = makeMockRes();
     const writer = createStreamingErrorWriter(res, 'test');
-    writer(500, 'urn:ok:error:internal-server-error', 'Real error.');
+    writer(500, 'urn:ps:error:internal-server-error', 'Real error.');
     expect(writeCalls.length).toBe(1);
     expect(writeCalls[0].endsWith('\n')).toBe(true);
     const event = JSON.parse(writeCalls[0].trimEnd());
     expect(event.type).toBe('error');
-    expect(event.problem.type).toBe('urn:ok:error:internal-server-error');
+    expect(event.problem.type).toBe('urn:ps:error:internal-server-error');
     expect(event.problem.title).toBe('Real error.');
   });
 
   test('headersSent: true (normal mid-stream state) → write proceeds (asymmetry vs sync)', () => {
     const { res, writeCalls } = makeMockRes({ headersSent: true });
     const writer = createStreamingErrorWriter(res, 'test');
-    writer(500, 'urn:ok:error:internal-server-error', 'Mid-stream error.');
+    writer(500, 'urn:ps:error:internal-server-error', 'Mid-stream error.');
     expect(writeCalls.length).toBe(1);
   });
 });
@@ -463,12 +463,12 @@ describe('errorResponse — trace correlation (ok.error.instance span attribute)
     try {
       const { res, endCalls } = makeMockRes();
       trace.getTracer('test').startActiveSpan('request-span', (span) => {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Boom.');
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Boom.');
         span.end();
       });
       const spans = exporter.getFinishedSpans();
       expect(spans).toHaveLength(1);
-      const stamped = spans[0].attributes['ok.error.instance'];
+      const stamped = spans[0].attributes['ps.error.instance'];
       expect(typeof stamped).toBe('string');
       const body = JSON.parse(endCalls[0]);
       expect(stamped).toBe(body.instance);
@@ -481,7 +481,7 @@ describe('errorResponse — trace correlation (ok.error.instance span attribute)
 
   test('is a no-op without an active span (no throw, response unchanged)', () => {
     const { res, writeHeadCalls, endCalls } = makeMockRes();
-    expect(() => errorResponse(res, 404, 'urn:ok:error:not-found', 'Missing.')).not.toThrow();
+    expect(() => errorResponse(res, 404, 'urn:ps:error:not-found', 'Missing.')).not.toThrow();
     expect(writeHeadCalls.length).toBe(1);
     expect(JSON.parse(endCalls[0]).title).toBe('Missing.');
   });

@@ -51,7 +51,7 @@ describe('agent-integrations apply — a host with no writers injected', () => {
       });
       expect(res.status, label).toBe(415);
       const problem = ProblemDetailsSchema.parse(await res.json());
-      expect(problem.type, label).toBe('urn:ok:error:unsupported-media-type');
+      expect(problem.type, label).toBe('urn:ps:error:unsupported-media-type');
       expect(problem.detail, label).toContain('Content-Type: application/json');
     }
   });
@@ -146,7 +146,7 @@ describe('agent-integrations apply — a host with no writers injected', () => {
       });
       expect(res.status, suffix).toBe(404);
       const problem = ProblemDetailsSchema.parse(await res.json());
-      expect(problem.type).toBe('urn:ok:error:not-found');
+      expect(problem.type).toBe('urn:ps:error:not-found');
     }
   });
 });
@@ -164,7 +164,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     expect(res.headers.get('x-request-id')).toBe('apply-method-contract');
     const body = ProblemDetailsSchema.parse(await res.json());
-    expect(body.type).toBe('urn:ok:error:method-not-allowed');
+    expect(body.type).toBe('urn:ps:error:method-not-allowed');
   });
 
   test('preserves HEAD body suppression and admitted preflight handling', async () => {
@@ -191,7 +191,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
     expect(res.headers.get('content-type')).toContain('application/problem+json');
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     const body = ProblemDetailsSchema.parse(await res.json());
-    expect(body.type).toMatch(/^urn:ok:error:/);
+    expect(body.type).toMatch(/^urn:ps:error:/);
     expect(body.title).toBe('Request body is invalid.');
     expect(body.status).toBe(400);
   });
@@ -206,7 +206,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
     });
     expect(res.status).toBe(400);
     const problem = ProblemDetailsSchema.parse(await res.json());
-    expect(problem.type).toBe('urn:ok:error:invalid-request');
+    expect(problem.type).toBe('urn:ps:error:invalid-request');
     expect(problem.title).toBe(title);
   });
 
@@ -230,7 +230,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
     const res = await apply(body);
     expect(res.status).toBe(400);
     const problem = ProblemDetailsSchema.parse(await res.json());
-    expect(problem.type).toBe('urn:ok:error:invalid-request');
+    expect(problem.type).toBe('urn:ps:error:invalid-request');
     expect(problem.title).toBe('Request body is invalid.');
   });
 
@@ -243,7 +243,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
     expect(res.status).toBe(413);
     const problem = ProblemDetailsSchema.parse(await res.json());
     expect(problem).toMatchObject({
-      type: 'urn:ok:error:payload-too-large',
+      type: 'urn:ps:error:payload-too-large',
       title: 'Payload too large.',
       status: 413,
     });
@@ -254,21 +254,21 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
       'a rebound Host',
       'attacker.example',
       {},
-      'urn:ok:error:host-not-allowed',
+      'urn:ps:error:host-not-allowed',
       'Host header not allowed.',
     ],
     [
       'a cross-origin caller',
       `127.0.0.1`,
       { Origin: 'http://attacker.example' },
-      'urn:ok:error:invalid-origin',
+      'urn:ps:error:invalid-origin',
       'Origin not allowed.',
     ],
     [
       'a forwarding header',
       `127.0.0.1`,
       { 'X-Forwarded-For': '203.0.113.8' },
-      'urn:ok:error:host-not-allowed',
+      'urn:ps:error:host-not-allowed',
       'Proxied request refused: this server has not consented to external exposure. Set PS_EXTERNAL_URL to the public origin and PS_ALLOW_EXTERNAL=1 (or server.externalUrl + server.allowExternal in config), then restart the server.',
     ],
   ])('refuses %s before malformed-body parsing', async (_label, host, headers, type, title) => {
@@ -294,7 +294,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
     });
     expect(res.status).toBe(403);
     const body = ProblemDetailsSchema.parse(await res.json());
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('admits a consented external origin and forwarding metadata before parsing', async () => {
@@ -328,7 +328,7 @@ describe('agent-integrations apply — refusals use the shared envelope', () => 
       expect(res.status).toBe(400);
       const body = ProblemDetailsSchema.parse(await res.json());
       expect(body).toMatchObject({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         title: 'Request body is not valid JSON.',
       });
     } finally {

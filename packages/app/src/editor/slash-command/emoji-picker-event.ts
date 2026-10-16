@@ -1,6 +1,6 @@
 import type { Editor } from '@tiptap/react';
 
-export const EMOJI_PICKER_OPEN_EVENT = 'ok:emoji-picker-open';
+export const EMOJI_PICKER_OPEN_EVENT = 'ps:emoji-picker-open';
 
 export interface EmojiPickerOpenDetail {
   editor: Editor;

@@ -160,7 +160,7 @@ describe('concurrent whole-document replace refusal', () => {
       expect([first.status, second.status].sort()).toEqual([200, 409]);
       const refused = first.status === 409 ? first : second;
       const problem = (await refused.json()) as Record<string, unknown>;
-      expect(problem.type).toBe('urn:ok:error:concurrent-overwrite-refused');
+      expect(problem.type).toBe('urn:ps:error:concurrent-overwrite-refused');
       expect(problem.title).toBe('Concurrent overwrite refused.');
       expect(problem.status).toBe(409);
       expect(problem.file).toBe(`${docName}.md`);
@@ -249,7 +249,7 @@ describe('concurrent whole-document replace refusal', () => {
       });
       expect(response.status).toBe(409);
       expect(((await response.json()) as Record<string, unknown>).type).toBe(
-        'urn:ok:error:concurrent-overwrite-refused',
+        'urn:ps:error:concurrent-overwrite-refused',
       );
       expect(server.instance.hocuspocus.documents.get(docName)?.getText('source').toString()).toBe(
         before,
@@ -423,7 +423,7 @@ describe('concurrent whole-document replace refusal', () => {
       });
       expect(response.status).toBe(409);
       expect(((await response.json()) as Record<string, unknown>).type).toBe(
-        'urn:ok:error:concurrent-overwrite-refused',
+        'urn:ps:error:concurrent-overwrite-refused',
       );
       expect(
         server.instance.hocuspocus.documents.get(docName)?.getText('source').toString(),

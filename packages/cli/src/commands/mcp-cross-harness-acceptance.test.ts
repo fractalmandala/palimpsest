@@ -151,7 +151,7 @@ describe('cross-harness FR1 acceptance matrix', () => {
   }
 
   for (const c of CASES) {
-    it(`${c.id}: only OK's entry changes — everything else is data-identical`, () => {
+    it(`${c.id}: only Palimpsest's entry changes — everything else is data-identical`, () => {
       const configPath = tempFile(c.file);
       writeFileSync(configPath, c.fixture);
 

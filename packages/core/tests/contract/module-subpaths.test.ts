@@ -10,7 +10,7 @@ import * as commentsLeafTextSubpath from '@palimpsest/core/comments/leaf-text';
 import * as commentsPassageMatchSubpath from '@palimpsest/core/comments/passage-match';
 import * as configAutoSyncModeSubpath from '@palimpsest/core/config/auto-sync-mode';
 import * as configBindConfigDocSubpath from '@palimpsest/core/config/bind-config-doc';
-import * as configBindOkignoreDocSubpath from '@palimpsest/core/config/bind-psignore-doc';
+import * as configBindPsignoreDocSubpath from '@palimpsest/core/config/bind-psignore-doc';
 import * as configErrorsSubpath from '@palimpsest/core/config/errors';
 import * as configFieldRegistrySubpath from '@palimpsest/core/config/field-registry';
 import * as configMergeLayeredSubpath from '@palimpsest/core/config/merge-layered';
@@ -153,7 +153,7 @@ const MODULE_SUBPATHS: Record<string, object> = {
   './comments/passage-match': commentsPassageMatchSubpath,
   './config/auto-sync-mode': configAutoSyncModeSubpath,
   './config/bind-config-doc': configBindConfigDocSubpath,
-  './config/bind-psignore-doc': configBindOkignoreDocSubpath,
+  './config/bind-psignore-doc': configBindPsignoreDocSubpath,
   './config/errors': configErrorsSubpath,
   './config/field-registry': configFieldRegistrySubpath,
   './config/merge-layered': configMergeLayeredSubpath,

@@ -125,7 +125,7 @@ async function runCell(
           return new Promise<number | null>((resolve) => {
             const deadline = performance.now() + timeoutMs;
             const checkExisting = (): number | null => {
-              const entries = performance.getEntriesByName('ok/cold/first-toggle');
+              const entries = performance.getEntriesByName('ps/cold/first-toggle');
               for (const e of entries) {
                 if (e.startTime >= minStartTime) return e.startTime;
               }

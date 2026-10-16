@@ -1075,8 +1075,8 @@ function PopoverBody({ status, onSignIn, onSetIdentity }: PopoverBodyProps) {
   const following = mode === 'follow';
   const state = displayState(status);
   const notFoundAsIdentity = hasNotFoundAsIdentityError(status);
-  const pulledAt = status.lastPullOkUtc ?? null;
-  const pushedAt = status.lastPushOkUtc ?? null;
+  const pulledAt = status.lastPullPsUtc ?? null;
+  const pushedAt = status.lastPushPsUtc ?? null;
   const combinedAt = status.lastRunUtc ?? status.lastSyncUtc ?? null;
   const genuineReadOnly =
     status.pushPermission?.checkStatus === 'denied' &&

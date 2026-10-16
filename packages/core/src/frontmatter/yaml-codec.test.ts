@@ -69,12 +69,12 @@ describe('parseFrontmatterYaml', () => {
   });
 
   test('parses nested objects into a populated map with no parseError', () => {
-    const yaml = 'name: skill\nmetadata:\n  version: 1.0.0\n  author: Inkeep\n';
+    const yaml = 'name: skill\nmetadata:\n  version: 1.0.0\n  author: Example\n';
     const { map, parseError } = parseFrontmatterYaml(yaml);
     expect(parseError).toBeUndefined();
     expect(map).toEqual({
       name: 'skill',
-      metadata: { version: '1.0.0', author: 'Inkeep' },
+      metadata: { version: '1.0.0', author: 'Example' },
     });
   });
 
@@ -261,15 +261,15 @@ describe('applyPatchToDocument', () => {
 
   test('nested object patch replaces the subtree, preserving sibling top-level keys', () => {
     const { doc } = parseFrontmatterYaml(
-      'name: skill\nmetadata:\n  version: 1.0.0\n  author: Inkeep\ndescription: hello\n',
+      'name: skill\nmetadata:\n  version: 1.0.0\n  author: Example\ndescription: hello\n',
     );
     const out = applyPatchToDocument(doc, {
-      metadata: { version: '2.0.0', author: 'Inkeep' },
+      metadata: { version: '2.0.0', author: 'Example' },
     });
     const reparsed = parseFrontmatterYaml(out).map;
     expect(reparsed).toEqual({
       name: 'skill',
-      metadata: { version: '2.0.0', author: 'Inkeep' },
+      metadata: { version: '2.0.0', author: 'Example' },
       description: 'hello',
     });
   });
@@ -286,7 +286,7 @@ describe('applyPatchToDocument', () => {
 
   test('non-object value replaces an existing object subtree', () => {
     const { doc } = parseFrontmatterYaml(
-      'name: skill\nmetadata:\n  version: 1.0.0\n  author: Inkeep\n',
+      'name: skill\nmetadata:\n  version: 1.0.0\n  author: Example\n',
     );
     const out = applyPatchToDocument(doc, { metadata: 'inline-value' });
     expect(parseFrontmatterYaml(out).map).toEqual({
@@ -330,28 +330,28 @@ describe('applyPatchToDocument', () => {
   });
 
   test('preserves flow-style nested map when replacing the subtree', () => {
-    const { doc } = parseFrontmatterYaml('metadata: {version: 1.0, author: Inkeep}\n');
+    const { doc } = parseFrontmatterYaml('metadata: {version: 1.0, author: Example}\n');
     const out = applyPatchToDocument(doc, {
-      metadata: { version: '2.0', author: 'Inkeep' },
+      metadata: { version: '2.0', author: 'Example' },
     });
     expect(out).toContain('metadata: {');
   });
 
   test('preserves block-style nested map when replacing the subtree', () => {
-    const { doc } = parseFrontmatterYaml('metadata:\n  version: 1.0\n  author: Inkeep\n');
+    const { doc } = parseFrontmatterYaml('metadata:\n  version: 1.0\n  author: Example\n');
     const out = applyPatchToDocument(doc, {
-      metadata: { version: '2.0', author: 'Inkeep' },
+      metadata: { version: '2.0', author: 'Example' },
     });
     expect(out).toMatch(/metadata:\s*\n\s+version:/);
   });
 
   test('round-trip is idempotent: applying the same nested patch twice is byte-stable', () => {
-    const baseYaml = 'name: skill\nmetadata:\n  version: 1.0.0\n  author: Inkeep\n';
+    const baseYaml = 'name: skill\nmetadata:\n  version: 1.0.0\n  author: Example\n';
     const first = applyPatchToDocument(parseFrontmatterYaml(baseYaml).doc, {
-      metadata: { version: '2.0.0', author: 'Inkeep' },
+      metadata: { version: '2.0.0', author: 'Example' },
     });
     const second = applyPatchToDocument(parseFrontmatterYaml(first).doc, {
-      metadata: { version: '2.0.0', author: 'Inkeep' },
+      metadata: { version: '2.0.0', author: 'Example' },
     });
     expect(second).toBe(first);
   });

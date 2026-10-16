@@ -31,7 +31,7 @@ describe('request body size cap', () => {
     });
     expect(res.status).toBe(413);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:payload-too-large');
+    expect(body.type).toBe('urn:ps:error:payload-too-large');
     expect(body.title).toBe('Payload too large.');
   });
 
@@ -44,7 +44,7 @@ describe('request body size cap', () => {
     });
     expect(res.status).toBe(400);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('a syntactically invalid JSON body is a 400, not a 500', async () => {
@@ -55,7 +55,7 @@ describe('request body size cap', () => {
     });
     expect(res.status).toBe(400);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
   });
 });
 

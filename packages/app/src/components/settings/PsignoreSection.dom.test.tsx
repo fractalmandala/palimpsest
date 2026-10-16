@@ -179,16 +179,16 @@ async function renderSection({
   binding?: ReturnType<typeof createBinding> | null;
   synced?: boolean;
 } = {}) {
-  const { OkignoreSection } = await import('./OkignoreSection');
+  const { PsignoreSection } = await import('./PsignoreSection');
   render(
     <TooltipProvider>
-      <OkignoreSection binding={binding as never} synced={synced} />
+      <PsignoreSection binding={binding as never} synced={synced} />
     </TooltipProvider>,
   );
   return binding;
 }
 
-describe('OkignoreSection runtime behavior', () => {
+describe('PsignoreSection runtime behavior', () => {
   beforeEach(() => {
     cleanup();
     latestDragEnd = null;

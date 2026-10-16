@@ -25,7 +25,7 @@ function safeCaretCoords(
   try {
     return view.coordsAtPos(pos);
   } catch (err) {
-    mark('ok/caret-reveal/coords-failed', {
+    mark('ps/caret-reveal/coords-failed', {
       docName,
       surface,
       message: err instanceof Error ? err.message : String(err),

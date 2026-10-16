@@ -28,7 +28,7 @@ afterEach(() => {
 describe('renderer slides telemetry — span name', () => {
   test('recordSlidesOpened starts ok.slides.opened', () => {
     recordSlidesOpened();
-    expect(spanNames).toEqual(['ok.slides.opened']);
+    expect(spanNames).toEqual(['ps.slides.opened']);
   });
 });
 

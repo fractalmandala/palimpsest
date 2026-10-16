@@ -123,7 +123,7 @@ function setKeyCommand(): Command {
         `✓ Embeddings API key stored for ${baseUrl}\n` +
           `  (kept in ${psUserHomeDisplayPath(PS_USER_HOME_SECRETS_FILE)}, 0600, this machine only — never in the project).\n` +
           `  Enable semantic search with \`${currentCliCommandName()} embeddings enable\`, or in\n` +
-          '  OK Desktop → Settings → This project → Search.\n',
+          '  Palimpsest Desktop → Settings → This project → Search.\n',
       );
     });
 }

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { SymlinkEscapeError } from './apply-managed-rename.ts';
-import { isShareableOkArtifact } from './content-filter.ts';
+import { isShareablePsArtifact } from './content-filter.ts';
 import { assertRealpathWithinDir } from './symlink-guard.ts';
 
 describe('assertRealpathWithinDir', () => {
@@ -76,7 +76,7 @@ describe('assertRealpathWithinDir', () => {
 
 describe('assertRealpathWithinDir — shareable .ps exemption', () => {
   let root: string;
-  const opts = { allowShareableOkArtifact: isShareableOkArtifact };
+  const opts = { allowShareablePsArtifact: isShareablePsArtifact };
 
   beforeEach(() => {
     root = mkdtempSync(join(tmpdir(), 'symlink-guard-ok-'));
@@ -123,7 +123,7 @@ describe('assertRealpathWithinDir — shareable .ps exemption', () => {
     symlinkSync('../.git/hooks/post-checkout', join(root, '.ps', 'config.yml'));
     expect(() =>
       assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, {
-        allowShareableOkArtifact: () => true,
+        allowShareablePsArtifact: () => true,
       }),
     ).toThrow(SymlinkEscapeError);
   });
@@ -146,7 +146,7 @@ describe('assertRealpathWithinDir — shareable .ps exemption', () => {
     symlinkSync(join(tmpdir(), 'outside.yml'), join(root, '.ps', 'config.yml'));
     expect(() =>
       assertRealpathWithinDir(join(root, '.ps', 'config.yml'), root, {
-        allowShareableOkArtifact: () => true,
+        allowShareablePsArtifact: () => true,
       }),
     ).toThrow(SymlinkEscapeError);
   });
@@ -180,7 +180,7 @@ describe('assertRealpathWithinDir — case-folded state-dir refusal', () => {
   it('never case-folds into the shareable EXEMPTION', () => {
     expect(() =>
       assertRealpathWithinDir(join(root, '.OK', 'config.yml'), root, {
-        allowShareableOkArtifact: isShareableOkArtifact,
+        allowShareablePsArtifact: isShareablePsArtifact,
       }),
     ).toThrow(SymlinkEscapeError);
   });

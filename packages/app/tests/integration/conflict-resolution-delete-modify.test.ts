@@ -242,7 +242,7 @@ describe("POST /api/sync/resolve-conflict { strategy: 'content', content: '' }",
       const parsed = ProblemDetailsSchema.safeParse(body);
       expect(parsed.success).toBe(true);
       if (parsed.success) {
-        expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+        expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       }
     }
   });

@@ -18,14 +18,14 @@ export class ContentScopeAdmissionError extends Error {
 }
 
 export class ServerMutationShuttingDownError extends Error {
-  readonly problemType: 'urn:ok:error:auth-failed' | 'urn:ok:error:concurrent-operation';
+  readonly problemType: 'urn:ps:error:auth-failed' | 'urn:ps:error:concurrent-operation';
 
   constructor(authOperation: boolean) {
     super('The server is shutting down.');
     this.name = 'ServerMutationShuttingDownError';
     this.problemType = authOperation
-      ? 'urn:ok:error:auth-failed'
-      : 'urn:ok:error:concurrent-operation';
+      ? 'urn:ps:error:auth-failed'
+      : 'urn:ps:error:concurrent-operation';
   }
 }
 
@@ -54,7 +54,7 @@ export function snapshotServerContentScope(
   singleDocRelPath?: string,
 ): ContentScope {
   return withSpanSync(
-    'ok.boot.content-scope',
+    'ps.boot.content-scope',
     { attributes: { 'content.scope.kind': singleDocRelPath === undefined ? 'tree' : 'file' } },
     (span) => {
       const scope = scanServerContentScope(contentDir, singleDocRelPath);

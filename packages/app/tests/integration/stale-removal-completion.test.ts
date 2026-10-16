@@ -136,7 +136,7 @@ test('a completed conflict deletion preserves an accepted same-name creation', a
     agentId: 'recreation-during-resolution',
   });
   expect(writing.status).toBe(409);
-  expect(await writing.json()).toMatchObject({ type: 'urn:ok:error:doc-in-conflict' });
+  expect(await writing.json()).toMatchObject({ type: 'urn:ps:error:doc-in-conflict' });
   expect(await scenario.snapshot(fresh)).toMatchObject({
     disk: '',
     residentPresent: true,

@@ -38,7 +38,7 @@ afterEach(async () => {
   await rm(tmpDir, { recursive: true, force: true });
 });
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -128,7 +128,7 @@ async function bootPlainProject(seed: (contentDir: string) => void): Promise<{
   const contentDir = tmpDir;
   await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
   configureTestGitRepository(contentDir);
-  seedOkScaffold(contentDir);
+  seedPsScaffold(contentDir);
   seed(contentDir);
   const booted = await bootServer({
     config: TEST_CONFIG,
@@ -174,7 +174,7 @@ describe('conflict ledger boot prune runs independently of the sync engine', () 
 
     await execFileAsync('git', ['init', '--initial-branch=main', tmpDir]);
     configureTestGitRepository(tmpDir);
-    seedOkScaffold(tmpDir);
+    seedPsScaffold(tmpDir);
     mkdirSync(resolve(tmpDir, 'notes'), { recursive: true });
     writeFileSync(resolve(tmpDir, DOC_FILE), 'line1\n', 'utf-8');
     writeFileSync(resolve(tmpDir, trackedFile), 'tracked local\n', 'utf-8');

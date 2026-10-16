@@ -78,7 +78,7 @@ export function respondFrontmatterMalformed(
   handler: string,
 ): void {
   logFrontmatterRefusal(err, handler);
-  errorResponse(res, 400, 'urn:ok:error:frontmatter-malformed', 'Frontmatter YAML is malformed.', {
+  errorResponse(res, 400, 'urn:ps:error:frontmatter-malformed', 'Frontmatter YAML is malformed.', {
     handler,
     detail: frontmatterRefusalDetail(err),
     extensions: {

@@ -12,7 +12,7 @@ export function shouldFlushSweepProgress(done: number, total: number): boolean {
   return done === total || done % sweepProgressInterval(total) === 0;
 }
 
-export const CAPACITY_PROBLEM_TYPE = 'urn:ok:error:too-many-agent-sessions' satisfies ProblemType;
+export const CAPACITY_PROBLEM_TYPE = 'urn:ps:error:too-many-agent-sessions' satisfies ProblemType;
 
 export const CAPACITY_RETRY_BACKOFF_MS: readonly number[] = [250, 500, 1000, 2000, 4000];
 

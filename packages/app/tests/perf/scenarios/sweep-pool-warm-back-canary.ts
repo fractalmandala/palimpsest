@@ -48,7 +48,7 @@ export default defineSweep({
       const maybe = (window as unknown as { mark?: { histogram?: unknown } }).mark;
       const hg = maybe?.histogram;
       if (typeof hg === 'function') {
-        for (let i = 1; i <= 50; i += 1) hg('ok/canary/h', { mode: 'WYSIWYG' }, i);
+        for (let i = 1; i <= 50; i += 1) hg('ps/canary/h', { mode: 'WYSIWYG' }, i);
       }
     });
 
@@ -63,11 +63,11 @@ export default defineSweep({
         }
       ).__ok_perf;
       if (!c) return null;
-      const open = c.counters?.['ok/pool/open'];
+      const open = c.counters?.['ps/pool/open'];
       const hits = open?.byProp?.hit?.true ?? 0;
       const miss = open?.byProp?.hit?.false ?? 0;
       const ringLen = c.marks?.length ?? 0;
-      const histogram = c.histograms?.['ok/canary/h'];
+      const histogram = c.histograms?.['ps/canary/h'];
       const histSnap = histogram?.snapshot?.();
       const histCount = histSnap?.count ?? 0;
       return { hits, miss, ringLen, histCount };

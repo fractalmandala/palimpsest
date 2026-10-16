@@ -250,7 +250,7 @@ describe('GET /api/search', () => {
 
       expect(result.status).toBe(400);
       const body = JSON.parse(result.body) as { type: string };
-      expect(body.type).toBe('urn:ok:error:invalid-request');
+      expect(body.type).toBe('urn:ps:error:invalid-request');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -263,7 +263,7 @@ describe('GET /api/search', () => {
 
       expect(result.status).toBe(413);
       const body = JSON.parse(result.body) as { type: string };
-      expect(body.type).toBe('urn:ok:error:payload-too-large');
+      expect(body.type).toBe('urn:ps:error:payload-too-large');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

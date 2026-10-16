@@ -1,7 +1,7 @@
 import type { Attributes, Span, SpanOptions } from '@opentelemetry/api';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
-const TRACER_NAME = 'open-knowledge-config';
+const TRACER_NAME = 'palimpsest-config';
 
 export type ConfigScopeAttr = 'project' | 'user' | 'project-local';
 export type ConfigValidationLayer = 'L1' | 'L2' | 'L3';

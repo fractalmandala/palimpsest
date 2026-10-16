@@ -28,10 +28,10 @@ test.describe('Skills Studio', () => {
     writeFileSync(join(projectDir, 'note.md'), '# Note\n');
 
     mkdirSync(join(tmpHome, '.claude', 'skills'), { recursive: true });
-    mkdirSync(join(tmpHome, '.claude', 'skills', 'open-knowledge-discovery'), { recursive: true });
+    mkdirSync(join(tmpHome, '.claude', 'skills', 'palimpsest-discovery'), { recursive: true });
     writeFileSync(
-      join(tmpHome, '.claude', 'skills', 'open-knowledge-discovery', 'SKILL.md'),
-      '---\nname: open-knowledge-discovery\ndescription: "seeded"\n---\n',
+      join(tmpHome, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'),
+      '---\nname: palimpsest-discovery\ndescription: "seeded"\n---\n',
     );
 
     const userDataDir = join(tmpHome, 'electron-userdata');
@@ -70,7 +70,7 @@ test.describe('Skills Studio', () => {
     await expect(intro).toContainText('Skills teach your AI tools repeatable tasks');
     await expect(intro).toContainText('open-knowledge-write-skill');
     await expect(intro).toContainText('How to write a new skill and install it.');
-    await expect(intro).not.toContainText('open-knowledge-discovery');
+    await expect(intro).not.toContainText('palimpsest-discovery');
 
     await page.getByTestId('skills-studio-intro-install').click();
     await expect(intro).toBeHidden();

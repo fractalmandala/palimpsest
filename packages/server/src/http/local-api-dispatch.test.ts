@@ -48,7 +48,7 @@ const handlers: Record<string, Handler> = {
     z.looseObject({}),
     catchErrors(
       async (_req, res) => {
-        errorResponse(res, 404, 'urn:ok:error:doc-not-found', 'No such thing.', {
+        errorResponse(res, 404, 'urn:ps:error:doc-not-found', 'No such thing.', {
           handler: 'reject',
           detail: 'It is simply not there.',
         });
@@ -115,7 +115,7 @@ const server = createServer((req, res) => {
       await handler(req, res);
     } catch (err) {
       if (!res.headersSent && !res.writableEnded && !res.destroyed) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: pathname,
           cause: err,
         });
@@ -187,7 +187,7 @@ describe('createLocalApiDispatch', () => {
     });
     expect(result?.status).toBe(500);
     expect(JSON.parse(result?.bodyText ?? '')).toMatchObject({
-      type: 'urn:ok:error:internal-server-error',
+      type: 'urn:ps:error:internal-server-error',
       title: 'Internal server error.',
     });
   });

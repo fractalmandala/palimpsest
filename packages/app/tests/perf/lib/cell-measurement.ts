@@ -133,7 +133,7 @@ export async function drainSubstrateSignals(
       };
     }
 
-    const openCounter = collector.counters?.['ok/pool/open'];
+    const openCounter = collector.counters?.['ps/pool/open'];
     const poolOpenHits = Number(openCounter?.byProp?.hit?.true ?? 0);
     const poolOpenMisses = Number(openCounter?.byProp?.hit?.false ?? 0);
 
@@ -143,15 +143,15 @@ export async function drainSubstrateSignals(
     let renderFrameCount = 0;
     let jankFrameCount = 0;
     for (const m of marks) {
-      if (m.name === 'ok/cache/hit') {
+      if (m.name === 'ps/cache/hit') {
         cacheHitCount += 1;
         continue;
       }
-      if (m.name === 'ok/cache/miss') {
+      if (m.name === 'ps/cache/miss') {
         cacheMissCount += 1;
         continue;
       }
-      if (typeof m.name === 'string' && m.name.startsWith('ok/render/')) {
+      if (typeof m.name === 'string' && m.name.startsWith('ps/render/')) {
         renderFrameCount += 1;
         if (typeof m.duration === 'number' && m.duration > threshold) {
           jankFrameCount += 1;

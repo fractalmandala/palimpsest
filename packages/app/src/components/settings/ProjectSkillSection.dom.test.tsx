@@ -31,7 +31,7 @@ function renderSection() {
 const projectSkill: SkillsListEntry = {
   name: 'palimpsest',
   description:
-    'Authoritative agent-runtime contract for working inside an Palimpsest project — a markdown-CRDT knowledge base exposed over MCP.',
+    'Authoritative agent-runtime contract for working inside a Palimpsest project — a markdown-CRDT knowledge base exposed over MCP.',
   scope: 'project',
   path: '.claude/skills/palimpsest/SKILL.md',
   absolutePath: '/proj/.claude/skills/palimpsest/SKILL.md',
@@ -130,7 +130,7 @@ describe('ProjectSkillSection', () => {
   test('a global built-in never lands in the project block', async () => {
     skillsState = {
       status: 'ready',
-      data: [{ ...projectSkill, name: 'open-knowledge-discovery', scope: 'global' }],
+      data: [{ ...projectSkill, name: 'palimpsest-discovery', scope: 'global' }],
     };
     const { container } = renderSection();
     await waitFor(() => {

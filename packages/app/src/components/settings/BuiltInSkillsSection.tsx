@@ -148,7 +148,7 @@ export function BuiltInSkillsSection() {
                 onActivate={
                   source
                     ? () => {
-                        mark('ok/skill/preview-open', {
+                        mark('ps/skill/preview-open', {
                           surface: 'settings',
                           skill: skill.name,
                         });
@@ -169,7 +169,7 @@ export function BuiltInSkillsSection() {
                       size="sm"
                       data-testid={`builtin-skill-manage-${skill.name}`}
                       onClick={() => {
-                        mark('ok/skill/preview-open', {
+                        mark('ps/skill/preview-open', {
                           surface: 'settings',
                           skill: skill.name,
                         });
@@ -200,7 +200,7 @@ export function BuiltInSkillsSection() {
           onDismiss={dismissIntro}
           onInstall={() => {
             if (!introOffer) return;
-            mark('ok/skill/install', {
+            mark('ps/skill/install', {
               surface: 'skills-studio-intro',
               mode: 'install',
               skill: introOffer.id,

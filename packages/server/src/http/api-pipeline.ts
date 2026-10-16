@@ -231,7 +231,7 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
       const origin = request.headers.origin;
       const admission = admitRequestOrigin(origin, method, policy);
       if (!admission.admitted) {
-        errorResponse(response, 403, 'urn:ok:error:invalid-origin', 'Origin not allowed.', {
+        errorResponse(response, 403, 'urn:ps:error:invalid-origin', 'Origin not allowed.', {
           handler: 'api-origin-gate',
           detail: admission.detail,
         });
@@ -270,7 +270,7 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
         errorResponse(
           response,
           403,
-          'urn:ok:error:single-file-mode',
+          'urn:ps:error:single-file-mode',
           'Single-file previews cannot manage project files.',
           {
             handler: 'api-preview-content-scope',
@@ -280,13 +280,13 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
       }
       const peerAddress = request.socket?.remoteAddress;
       if (peerAddress !== undefined && !isPeerAdmitted(peerAddress, policy)) {
-        errorResponse(response, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+        errorResponse(response, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
           handler: 'api-mutating-gate',
         });
         return true;
       }
       if (!isAllowedWorkspaceHostHeader(request.headers.host)) {
-        errorResponse(response, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+        errorResponse(response, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
           handler: 'api-mutating-gate',
           detail: HOST_NOT_ADMITTED_REMEDIATION,
         });
@@ -298,13 +298,13 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
       const gateHandler = ephemeral ? 'api-ephemeral-gate' : 'api-read-gate';
       const peerAddress = request.socket?.remoteAddress;
       if (peerAddress !== undefined && !isPeerAdmitted(peerAddress, policy)) {
-        errorResponse(response, 403, 'urn:ok:error:loopback-required', 'Loopback required.', {
+        errorResponse(response, 403, 'urn:ps:error:loopback-required', 'Loopback required.', {
           handler: gateHandler,
         });
         return true;
       }
       if (!isAllowedWorkspaceHostHeader(request.headers.host)) {
-        errorResponse(response, 403, 'urn:ok:error:host-not-allowed', 'Host header not allowed.', {
+        errorResponse(response, 403, 'urn:ps:error:host-not-allowed', 'Host header not allowed.', {
           handler: gateHandler,
           detail: HOST_NOT_ADMITTED_REMEDIATION,
         });
@@ -329,7 +329,7 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
             [ATTR_URL_PATH]: url,
             [ATTR_URL_SCHEME]: 'http',
             [ATTR_USER_AGENT_ORIGINAL]: request.headers['user-agent'] ?? '',
-            'ok.request.id': requestId,
+            'ps.request.id': requestId,
             [CLIENT_SURFACE_ATTRIBUTE]: clientSurface,
           },
         },
@@ -343,7 +343,7 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
                 await dispatch(request, response);
               }
             } else {
-              errorResponse(response, 404, 'urn:ok:error:not-found', 'API endpoint not found.', {
+              errorResponse(response, 404, 'urn:ps:error:not-found', 'API endpoint not found.', {
                 handler: 'api-dispatch',
                 detail: `No handler for ${method} ${url}`,
               });
@@ -364,7 +364,7 @@ export function createApiRequestPipeline(opts: ApiPipelineOptions): ApiRequestPi
               errorResponse(
                 response,
                 500,
-                'urn:ok:error:internal-server-error',
+                'urn:ps:error:internal-server-error',
                 'Internal server error.',
                 {
                   handler: routeTemplate,

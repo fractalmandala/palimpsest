@@ -14,7 +14,7 @@ export function readFolderFrontmatter(
   projectDir: string,
   folderRelPath: string,
 ): FolderFrontmatter {
-  const yamlPath = nestedOkPath(projectDir, folderRelPath, 'frontmatter.yml');
+  const yamlPath = nestedPsPath(projectDir, folderRelPath, 'frontmatter.yml');
   /* STOP: the leaf lstat below cannot see a symlinked `.ps` ANCESTOR — the
      kernel dereferences it before reaching the final component — so the
      containing `.ps` dir gets its own identity check, matching
@@ -129,7 +129,7 @@ function readFrontmatterYaml(absYamlPath: string): Record<string, unknown> | nul
   return parsed as Record<string, unknown>;
 }
 
-export function nestedOkPath(projectDir: string, folderRelPath: string, member: string): string {
+export function nestedPsPath(projectDir: string, folderRelPath: string, member: string): string {
   const normalized = folderRelPath.replace(/^\.\//, '').replace(/^\/+/, '').replace(/\/+$/, '');
   return normalized === '' || normalized === '.'
     ? join(projectDir, '.ps', member)

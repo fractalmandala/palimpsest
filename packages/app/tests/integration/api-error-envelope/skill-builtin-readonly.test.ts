@@ -91,7 +91,7 @@ describe('built-in palimpsest skill: read-only surfacing', () => {
   const expectReserved = async (res: Response) => {
     expect(res.status).toBe(400);
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
-    expect(parsed.success && parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(parsed.success && parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
   };
 
   test('PUT /api/skill is refused', async () => {

@@ -4,8 +4,8 @@ import {
   type ConfigBinding,
 } from '@palimpsest/core/config/bind-config-doc';
 import {
-  bindOkignoreDoc,
-  type OkignoreBinding,
+  bindPsignoreDoc,
+  type PsignoreBinding,
 } from '@palimpsest/core/config/bind-psignore-doc';
 import type { WriteScope } from '@palimpsest/core/config/errors';
 import { mergeLayered } from '@palimpsest/core/config/merge-layered';
@@ -87,13 +87,13 @@ function makeBinding(
   return { binding, config: binding.current(), cleanup };
 }
 
-interface OkignoreScoped {
-  binding: OkignoreBinding;
+interface PsignoreScoped {
+  binding: PsignoreBinding;
   provider: HocuspocusProvider;
   cleanup: () => void;
 }
 
-function makeOkignoreBinding(collabUrl: string, serverInstanceId: string | null): OkignoreScoped {
+function makePsignoreBinding(collabUrl: string, serverInstanceId: string | null): PsignoreScoped {
   const ydoc = new Y.Doc();
   const provider = new HocuspocusProvider({
     url: collabUrl,
@@ -105,7 +105,7 @@ function makeOkignoreBinding(collabUrl: string, serverInstanceId: string | null)
     onClose: ({ event }) =>
       logProviderEvent('psignore-provider', CONFIG_DOC_NAME_OKIGNORE, 'close', event),
   });
-  const binding = bindOkignoreDoc(provider);
+  const binding = bindPsignoreDoc(provider);
   const cleanup = () => {
     binding.dispose();
     provider.destroy();
@@ -142,8 +142,8 @@ function ConfigProviderBody({
     config: Config;
     synced: boolean;
   } | null>(null);
-  const [okignoreState, setOkignoreState] = useState<{
-    binding: OkignoreBinding;
+  const [psignoreState, setPsignoreState] = useState<{
+    binding: PsignoreBinding;
     synced: boolean;
   } | null>(null);
 
@@ -162,7 +162,7 @@ function ConfigProviderBody({
       'project-local',
       serverInstanceId,
     );
-    const okignoreScoped = makeOkignoreBinding(collabUrl, serverInstanceId);
+    const psignoreScoped = makePsignoreBinding(collabUrl, serverInstanceId);
     setUserState({
       binding: userScoped.binding,
       config: userScoped.config,
@@ -178,7 +178,7 @@ function ConfigProviderBody({
       config: projectLocalScoped.config,
       synced: projectLocalScoped.binding.hasSynced(),
     });
-    setOkignoreState({ binding: okignoreScoped.binding, synced: false });
+    setPsignoreState({ binding: psignoreScoped.binding, synced: false });
 
     const unsubUser = userScoped.binding.subscribe((next) => {
       setUserState((prev) =>
@@ -216,12 +216,12 @@ function ConfigProviderBody({
           : prev,
       );
     });
-    const handleOkignoreSynced = () => {
-      setOkignoreState((prev) =>
-        prev?.binding === okignoreScoped.binding ? { ...prev, synced: true } : prev,
+    const handlePsignoreSynced = () => {
+      setPsignoreState((prev) =>
+        prev?.binding === psignoreScoped.binding ? { ...prev, synced: true } : prev,
       );
     };
-    okignoreScoped.provider.on('synced', handleOkignoreSynced);
+    psignoreScoped.provider.on('synced', handlePsignoreSynced);
 
     return () => {
       unsubUser();
@@ -230,8 +230,8 @@ function ConfigProviderBody({
       unsubProjectSynced();
       unsubProjectLocal();
       unsubProjectLocalSynced();
-      okignoreScoped.provider.off('synced', handleOkignoreSynced);
-      for (const scoped of [userScoped, projectScoped, projectLocalScoped, okignoreScoped]) {
+      psignoreScoped.provider.off('synced', handlePsignoreSynced);
+      for (const scoped of [userScoped, projectScoped, projectLocalScoped, psignoreScoped]) {
         try {
           scoped.cleanup();
         } catch (e) {
@@ -243,7 +243,7 @@ function ConfigProviderBody({
       setUserState((prev) => (prev?.binding === userScoped.binding ? null : prev));
       setProjectState((prev) => (prev?.binding === projectScoped.binding ? null : prev));
       setProjectLocalState((prev) => (prev?.binding === projectLocalScoped.binding ? null : prev));
-      setOkignoreState((prev) => (prev?.binding === okignoreScoped.binding ? null : prev));
+      setPsignoreState((prev) => (prev?.binding === psignoreScoped.binding ? null : prev));
     };
   }, [collabUrl, serverInstanceId]);
 
@@ -320,8 +320,8 @@ function ConfigProviderBody({
     userSynced: userState?.synced ?? false,
     projectBinding: projectState?.binding ?? null,
     projectLocalBinding: projectLocalState?.binding ?? null,
-    okignoreBinding: okignoreState?.binding ?? null,
-    okignoreSynced: okignoreState?.synced ?? false,
+    psignoreBinding: psignoreState?.binding ?? null,
+    psignoreSynced: psignoreState?.synced ?? false,
     userConfig: userState?.config ?? null,
     projectConfig: projectState?.config ?? null,
     projectSynced: projectState?.synced ?? false,

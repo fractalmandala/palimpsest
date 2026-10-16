@@ -96,15 +96,15 @@ describe('SyncEngine sync stamp persistence', () => {
       await engineA.pullOnce();
 
       const before = engineA.getStatus();
-      expect(before.lastPushOkUtc).toBeTruthy();
-      expect(before.lastPullOkUtc).toBeTruthy();
+      expect(before.lastPushPsUtc).toBeTruthy();
+      expect(before.lastPullPsUtc).toBeTruthy();
 
       engineB = makeEngine();
       await engineB.start();
 
       const after = engineB.getStatus();
-      expect(after.lastPushOkUtc).toBe(before.lastPushOkUtc);
-      expect(after.lastPullOkUtc).toBe(before.lastPullOkUtc);
+      expect(after.lastPushPsUtc).toBe(before.lastPushPsUtc);
+      expect(after.lastPullPsUtc).toBe(before.lastPullPsUtc);
     } finally {
       if (engineB) await engineB.destroy();
       await engineA.destroy();
@@ -122,7 +122,7 @@ describe('SyncEngine sync stamp persistence', () => {
 
       const persisted = JSON.parse(readFileSync(statePath(), 'utf-8')) as Record<string, unknown>;
       expect(persisted.version).toBe(1);
-      expect(persisted.lastPushOkUtc).toBe(engine.getStatus().lastPushOkUtc);
+      expect(persisted.lastPushPsUtc).toBe(engine.getStatus().lastPushPsUtc);
       expect(persisted).toHaveProperty('lastFetchUtc');
       expect(persisted).toHaveProperty('lastPushedSha');
       expect(persisted).toHaveProperty('consecutiveFailures');
@@ -144,7 +144,7 @@ describe('SyncEngine sync stamp persistence', () => {
       await engine.pushOnce();
 
       expect(engine.getStatus().pushError).toBeUndefined();
-      expect(engine.getStatus().lastPushOkUtc).toBeTruthy();
+      expect(engine.getStatus().lastPushPsUtc).toBeTruthy();
       expect((await simpleGit(bare).raw(['log', '-1', '--format=%s', 'main'])).trim()).toContain(
         'doc.md',
       );

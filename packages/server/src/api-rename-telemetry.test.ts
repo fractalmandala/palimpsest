@@ -158,7 +158,7 @@ async function collectAttributionPoints(): Promise<CounterPoint[]> {
   for (const rm of collected) {
     for (const sm of rm.scopeMetrics) {
       for (const metric of sm.metrics) {
-        if (metric.descriptor.name !== 'ok.rename.attribution_kind') continue;
+        if (metric.descriptor.name !== 'ps.rename.attribution_kind') continue;
         for (const dp of metric.dataPoints as Array<DataPoint<number>>) {
           points.push({ value: dp.value, attributes: { ...dp.attributes } });
         }
@@ -168,7 +168,7 @@ async function collectAttributionPoints(): Promise<CounterPoint[]> {
   return points;
 }
 
-describe('ok.rename.attribution_kind counter — rename', () => {
+describe('ps.rename.attribution_kind counter — rename', () => {
   test('file rename without identity records anonymous attribution', async () => {
     writeFileSync(join(tmpDir, 'notes.md'), '# Notes\n', 'utf-8');
 

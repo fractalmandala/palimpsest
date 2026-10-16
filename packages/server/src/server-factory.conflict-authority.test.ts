@@ -30,7 +30,7 @@ const COLLISION_FILE = 'notes/pull-collision.md';
 const CONTROL_MARKER = 'stored while the batch was down';
 const DEFERRED_MARKER = 'drained by the resolve';
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -174,7 +174,7 @@ async function bootWithHeldConflictedDoc(options?: {
   const contentDir = tmpDir;
   await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
   configureTestGitRepository(contentDir);
-  seedOkScaffold(contentDir);
+  seedPsScaffold(contentDir);
   for (const [file, body] of Object.entries(options?.extraFiles ?? {})) {
     const abs = resolve(contentDir, file);
     mkdirSync(dirname(abs), { recursive: true });

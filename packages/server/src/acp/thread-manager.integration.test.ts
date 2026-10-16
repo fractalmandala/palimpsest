@@ -51,7 +51,7 @@ import {
   writeExecutable,
   writeRecordingNpm,
 } from './package-acquisition.test-helper.ts';
-import { AcpPermissionStore, readAutoApproveOkTools } from './permissions.ts';
+import { AcpPermissionStore, readAutoApprovePsTools } from './permissions.ts';
 import * as projectSkillStaging from './project-skill-staging.ts';
 import { PROJECT_SKILL_ENTRY, projectSkillStageDir } from './project-skill-staging.ts';
 import { AcpRegistry, type RegistryAgent, registryPlatformKey } from './registry.ts';
@@ -112,7 +112,7 @@ function makeManager(
     sessionManager?: AgentSessionManager;
     log?: PinoLogger;
     projectSkillSourceDir?: string | null;
-    autoApproveOkTools?: () => boolean;
+    autoApprovePsTools?: () => boolean;
     terminalAuthAvailable?: boolean;
     agentBrowserTools?: AcpThreadManagerOptions['agentBrowserTools'];
     resolveBrowserNpx?: AcpThreadManagerOptions['resolveBrowserNpx'];
@@ -1908,7 +1908,7 @@ describe('handleFsWrite concurrent replace guard', () => {
       'Another writer changed this document recently. Wait a few seconds and retry.',
     );
     expect(error?.data).toEqual({
-      type: 'urn:ok:error:concurrent-overwrite-refused',
+      type: 'urn:ps:error:concurrent-overwrite-refused',
       file: 'notes/shared.md',
       retryable: true,
       retryAfterSeconds: 3,
@@ -2136,7 +2136,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
     );
   }
 
-  function writeOkToolAgentEntry(localDir: string): void {
+  function writePsToolAgentEntry(localDir: string): void {
     writeRequestingAgentEntry(
       localDir,
       'ps-tool-agent',
@@ -2166,13 +2166,13 @@ describe('AcpThreadManager terminals + permission effects', () => {
     );
   }
 
-  test('agents.autoApproveOkTools in the user config decides whether an OK tool call asks', async () => {
+  test('agents.autoApprovePsTools in the user config decides whether an OK tool call asks', async () => {
     const contentDir = tmp();
     const localDir = tmp();
     const home = tmp();
-    writeOkToolAgentEntry(localDir);
+    writePsToolAgentEntry(localDir);
     const manager = makeManager(contentDir, localDir, {
-      autoApproveOkTools: () => readAutoApproveOkTools(contentDir, home),
+      autoApprovePsTools: () => readAutoApprovePsTools(contentDir, home),
     });
     const info = await manager.createThread({ agent: { source: 'custom', id: 'ps-tool-agent' } });
     const events: Collected = [];
@@ -2186,7 +2186,7 @@ describe('AcpThreadManager terminals + permission effects', () => {
     const turnsEnded = () => events.filter((e) => e.event.kind === 'turn_ended').length;
 
     mkdirSync(join(home, '.ps'), { recursive: true });
-    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApproveOkTools: false\n');
+    writeFileSync(join(home, '.ps', 'global.yml'), 'agents:\n  autoApprovePsTools: false\n');
     manager.sendPrompt(info.threadId, 'search');
     await waitUntil(() => requests().length === 1, 20_000, 'a prompt while the setting is off');
     const request = requests()[0]?.event;

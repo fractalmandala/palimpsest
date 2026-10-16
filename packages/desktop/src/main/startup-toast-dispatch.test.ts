@@ -85,7 +85,7 @@ describe('dispatchStartupToastAcrossLoads', () => {
     const h = harness([first.win]);
     const handle = dispatchStartupToastAcrossLoads(PAYLOAD, h.deps);
     expect(first.send).toHaveBeenCalledTimes(1);
-    expect(first.send).toHaveBeenCalledWith('ok:onboarding:toast', PAYLOAD);
+    expect(first.send).toHaveBeenCalledWith('ps:onboarding:toast', PAYLOAD);
     expect(handle.deliveries()).toBe(1);
   });
 

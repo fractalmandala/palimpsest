@@ -5,12 +5,12 @@
 > new package from the GitHub release feed and install it via `pkexec` (see
 > `RELEASES.md` § "Linux updates (no package repository)"). This repo
 > machinery is kept for a possible future repo-based channel; none of its
-> operator setup (GPG key, R2 bucket, `__PALIMPSEST_PACKAGES_HOST__`) was
+> operator setup (GPG key, R2 bucket, packages domain) was
 > provisioned.
 
 Self-hosted apt/dnf repository for the Palimpsest Linux desktop packages,
 served as **static files** from an R2 bucket behind
-`__PALIMPSEST_PACKAGES_HOST__`. There is no server component: `apt` and `dnf` do
+a packages domain (unprovisioned for the fork). There is no server component: `apt` and `dnf` do
 all the work client-side; our job is generating correctly-signed metadata and
 uploading it.
 
@@ -52,7 +52,7 @@ is revisited.
    install one-liner against a new key).
 
 2. **Bucket + domain**: create an R2 bucket (suggested name `ps-packages`),
-   connect the custom domain `__PALIMPSEST_PACKAGES_HOST__` (R2 → bucket →
+   connect the custom domain for the packages host (R2 → bucket →
    Settings → Custom Domains; this also fronts it with Cloudflare's CDN), and
    create an R2 API token scoped to that bucket (Object Read & Write).
 
@@ -88,8 +88,8 @@ never touch each other's prefixes.
 Debian/Ubuntu:
 
 ```bash
-sudo curl -fsSLo /usr/share/keyrings/palimpsest.gpg https://__PALIMPSEST_PACKAGES_HOST__/apt/palimpsest.gpg
-echo "deb [signed-by=/usr/share/keyrings/palimpsest.gpg] https://__PALIMPSEST_PACKAGES_HOST__/apt stable main" | sudo tee /etc/apt/sources.list.d/palimpsest.list
+sudo curl -fsSLo /usr/share/keyrings/palimpsest.gpg https://packages.example.invalid/apt/palimpsest.gpg
+echo "deb [signed-by=/usr/share/keyrings/palimpsest.gpg] https://packages.example.invalid/apt stable main" | sudo tee /etc/apt/sources.list.d/palimpsest.list
 sudo apt update && sudo apt install palimpsest
 ```
 
@@ -99,11 +99,11 @@ Fedora/RHEL:
 sudo tee /etc/yum.repos.d/palimpsest.repo <<'EOF'
 [palimpsest]
 name=Palimpsest
-baseurl=https://__PALIMPSEST_PACKAGES_HOST__/rpm/stable/$basearch/
+baseurl=https://packages.example.invalid/rpm/stable/$basearch/
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey=https://__PALIMPSEST_PACKAGES_HOST__/rpm/key.asc
+gpgkey=https://packages.example.invalid/rpm/key.asc
 EOF
 sudo dnf install palimpsest
 ```
@@ -138,3 +138,8 @@ Beta channel: replace `stable` with `beta` in either snippet.
   stable on promote) instead of manual dispatch.
 - Docs-site install page + `palimpsest.ai/download/linux` pointing at the
   one-liners above.
+
+> **Fork note:** `packages.example.invalid` above is a placeholder (RFC 2606
+> `.invalid` never resolves). To unpark this channel, provision an R2 bucket +
+> packages domain, set the `LINUX_PACKAGES_BASE_URL` repo variable, and replace
+> the placeholder host in the install snippets.

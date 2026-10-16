@@ -80,7 +80,7 @@ export function createNavigatorWindow(deps: NavigatorDeps): BrowserWindowLike {
   });
   if (deps.pendingPayload) {
     const payload = deps.pendingPayload;
-    registerPendingDelivery(window.webContents, 'ok:share:received', payload);
+    registerPendingDelivery(window.webContents, 'ps:share:received', payload);
   }
   const target = deps.rendererDevUrl ?? deps.rendererEntryPath;
   const stopHeartbeat = startBootHeartbeat(

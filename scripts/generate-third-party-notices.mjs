@@ -16,7 +16,7 @@ const SHIPPING_WORKSPACES = [
   'packages/desktop',
 ];
 
-const WORKSPACE_NAME_PREFIX = '@palimpsest/cli';
+const WORKSPACE_NAME_PREFIX = '@palimpsest';
 
 const LICENSE_FILENAMES = [
   'LICENSE',
@@ -743,7 +743,7 @@ function build() {
   }
 
   if (grouped.has('FIRST_PARTY_GPL')) {
-    push('## Inkeep first-party packages (GPL-3.0-or-later)', '');
+    push('## Inkeep packages (GPL-3.0-or-later)', '');
     push(
       'The packages below are authored and published by Inkeep and are licensed under GPL-3.0-or-later, the same license as Palimpsest itself (see the repository LICENSE for the full text). They are listed for completeness; they are not third-party material.',
       '',

@@ -10,13 +10,13 @@ import {
 
 describe('Cluster G URN tokens (US-012)', () => {
   test('auth-failed is a member of ProblemTypeSchema', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:auth-failed').success).toBe(true);
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:auth-failed').success).toBe(true);
   });
   test('no-project-dir is a member of ProblemTypeSchema', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:no-project-dir').success).toBe(true);
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:no-project-dir').success).toBe(true);
   });
   test('server-open-failed is a member of ProblemTypeSchema', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:server-open-failed').success).toBe(true);
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:server-open-failed').success).toBe(true);
   });
 });
 

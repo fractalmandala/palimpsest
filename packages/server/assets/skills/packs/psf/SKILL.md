@@ -1,15 +1,15 @@
 ---
 name: psf-knowledge-base
-description: "Palimpsest Format (OKF) v0.2 guidance. Use when creating, reading, reviewing, or maintaining an OKF bundle; responding to Palimpsest `psf` plugin warnings; or choosing types, provenance, links, indexes, or logs."
+description: "OpenKnowledge Format (OKF) v0.2 guidance. Use when creating, reading, reviewing, or maintaining an OKF bundle; responding to Palimpsest `psf` plugin warnings; or choosing types, provenance, links, indexes, or logs."
 compatibility: "Any agent host with the Palimpsest MCP server configured. The optional `psf` plugin provides continuous conformance feedback."
 # This skill may live inside an OKF bundle, so it carries the required type.
 type: Document
 metadata:
   plugin: "psf"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
-# Palimpsest Format (OKF)
+# OpenKnowledge Format (OKF)
 
 [OKF v0.2](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md) is a portable format for agent-readable knowledge: Markdown files, YAML frontmatter, and standard links. The `/palimpsest` skill governs tool use; this skill covers OKF semantics.
 

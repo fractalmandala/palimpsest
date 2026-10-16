@@ -57,10 +57,10 @@ function buildTempoResponse(
 describe('parseTempoTimings — pure extraction', () => {
   test('extracts all 6 timings when every span is present', () => {
     const response = buildTempoResponse([
-      { name: 'ok.cold-mount', durationMs: 250, mountId: 'mid-a' },
-      { name: 'ok.provider-pool.open', durationMs: 5, mountId: 'mid-a' },
-      { name: 'ok.mount-promise', durationMs: 40, mountId: 'mid-a' },
-      { name: 'ok.sync-promise', durationMs: 240, mountId: 'mid-a' },
+      { name: 'ps.cold-mount', durationMs: 250, mountId: 'mid-a' },
+      { name: 'ps.provider-pool.open', durationMs: 5, mountId: 'mid-a' },
+      { name: 'ps.mount-promise', durationMs: 40, mountId: 'mid-a' },
+      { name: 'ps.sync-promise', durationMs: 240, mountId: 'mid-a' },
       { name: 'sync.handshake', durationMs: 12, mountId: 'mid-a' },
       { name: 'persistence.onLoadDocument', durationMs: 8, mountId: 'mid-a' },
     ]);
@@ -78,16 +78,16 @@ describe('parseTempoTimings — pure extraction', () => {
 
   test("takes every timing from the queried mount's spans when another mount's spans of the same names share the window", () => {
     const response = buildTempoResponse([
-      { name: 'ok.cold-mount', durationMs: 900, mountId: 'mid-other' },
-      { name: 'ok.provider-pool.open', durationMs: 90, mountId: 'mid-other' },
-      { name: 'ok.mount-promise', durationMs: 400, mountId: 'mid-other' },
-      { name: 'ok.sync-promise', durationMs: 800, mountId: 'mid-other' },
+      { name: 'ps.cold-mount', durationMs: 900, mountId: 'mid-other' },
+      { name: 'ps.provider-pool.open', durationMs: 90, mountId: 'mid-other' },
+      { name: 'ps.mount-promise', durationMs: 400, mountId: 'mid-other' },
+      { name: 'ps.sync-promise', durationMs: 800, mountId: 'mid-other' },
       { name: 'sync.handshake', durationMs: 70, mountId: 'mid-other' },
       { name: 'persistence.onLoadDocument', durationMs: 60, mountId: 'mid-other' },
-      { name: 'ok.cold-mount', durationMs: 250, mountId: 'mid-a' },
-      { name: 'ok.provider-pool.open', durationMs: 5, mountId: 'mid-a' },
-      { name: 'ok.mount-promise', durationMs: 40, mountId: 'mid-a' },
-      { name: 'ok.sync-promise', durationMs: 240, mountId: 'mid-a' },
+      { name: 'ps.cold-mount', durationMs: 250, mountId: 'mid-a' },
+      { name: 'ps.provider-pool.open', durationMs: 5, mountId: 'mid-a' },
+      { name: 'ps.mount-promise', durationMs: 40, mountId: 'mid-a' },
+      { name: 'ps.sync-promise', durationMs: 240, mountId: 'mid-a' },
       { name: 'sync.handshake', durationMs: 12, mountId: 'mid-a' },
       { name: 'persistence.onLoadDocument', durationMs: 8, mountId: 'mid-a' },
     ]);
@@ -110,8 +110,8 @@ describe('parseTempoTimings — pure extraction', () => {
 
   test('returns correlation-missing when traces exist but none match the mountId', () => {
     const response = buildTempoResponse([
-      { name: 'ok.cold-mount', durationMs: 250, mountId: 'mid-different' },
-      { name: 'ok.sync-promise', durationMs: 200, mountId: 'mid-different' },
+      { name: 'ps.cold-mount', durationMs: 250, mountId: 'mid-different' },
+      { name: 'ps.sync-promise', durationMs: 200, mountId: 'mid-different' },
     ]);
     const result = parseTempoTimings(response, 'mid-target');
     expect(result.kind).toBe('correlation-missing');
@@ -119,8 +119,8 @@ describe('parseTempoTimings — pure extraction', () => {
 
   test('returns success with null fields for spans that did not arrive', () => {
     const response = buildTempoResponse([
-      { name: 'ok.cold-mount', durationMs: 100, mountId: 'mid-p' },
-      { name: 'ok.sync-promise', durationMs: 90, mountId: 'mid-p' },
+      { name: 'ps.cold-mount', durationMs: 100, mountId: 'mid-p' },
+      { name: 'ps.sync-promise', durationMs: 90, mountId: 'mid-p' },
     ]);
     const result = parseTempoTimings(response, 'mid-p');
     expect(result.kind).toBe('success');
@@ -143,7 +143,7 @@ describe('parseTempoTimings — pure extraction', () => {
             spans: [
               {
                 spanID: 's1',
-                name: 'ok.sync-promise',
+                name: 'ps.sync-promise',
                 durationNanos: '100000000',
                 attributes: [{ key: 'mount.id', value: { stringValue: 'mid-multi' } }],
               },
@@ -183,7 +183,7 @@ describe('parseTempoTimings — pure extraction', () => {
               spans: [
                 {
                   spanID: 'sp',
-                  name: 'ok.cold-mount',
+                  name: 'ps.cold-mount',
                   durationNanos: '300000000',
                   attributes: [{ key: 'mount.id', value: { stringValue: 'mid-shapes' } }],
                 },
@@ -206,8 +206,8 @@ describe('queryTempoByMountId — HTTP boundary', () => {
     installFetchStub(async () =>
       jsonResponse(
         buildTempoResponse([
-          { name: 'ok.cold-mount', durationMs: 250, mountId: 'mid-test' },
-          { name: 'ok.sync-promise', durationMs: 240, mountId: 'mid-test' },
+          { name: 'ps.cold-mount', durationMs: 250, mountId: 'mid-test' },
+          { name: 'ps.sync-promise', durationMs: 240, mountId: 'mid-test' },
         ]),
       ),
     );
@@ -224,7 +224,7 @@ describe('queryTempoByMountId — HTTP boundary', () => {
   test('returns correlation-missing when response has traces but none match the mountId', async () => {
     installFetchStub(async () =>
       jsonResponse(
-        buildTempoResponse([{ name: 'ok.cold-mount', durationMs: 50, mountId: 'mid-other' }]),
+        buildTempoResponse([{ name: 'ps.cold-mount', durationMs: 50, mountId: 'mid-other' }]),
       ),
     );
     const result = await queryTempoByMountId(DEFAULT_OPTS);

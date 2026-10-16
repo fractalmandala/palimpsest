@@ -102,7 +102,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'Cannot install — no project root is resolved for this server. Skills project into editor host dirs at the project root.',
             { handler: 'skill-install', detail: 'NO_PROJECT_ROOT' },
           );
@@ -126,7 +126,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             ? storeSkillDir
             : dirname(bundleSource);
         if (!existsSync(skillDir)) {
-          errorResponse(res, 404, 'urn:ok:error:not-found', 'Skill not found.', {
+          errorResponse(res, 404, 'urn:ps:error:not-found', 'Skill not found.', {
             handler: 'skill-install',
             detail: `Skill "${body.name}" not found in ${body.scope} scope — create it with write({ skill }) first.`,
           });
@@ -158,7 +158,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             `Skill "${body.name}" cannot be installed: ${validity.errors.join(' ')}`,
             { handler: 'skill-install', detail: 'INVALID_SKILL_SOURCE' },
           );
@@ -167,7 +167,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
 
         if (body.fork !== undefined) {
           if (!inPlaceEntry) {
-            errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Skill is not in-place.', {
+            errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Skill is not in-place.', {
               handler: 'skill-install',
               detail: 'FORK_STORE_BACKED',
             });
@@ -182,13 +182,13 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
           if (!forkResolved.ok) {
             switch (forkResolved.kind) {
               case 'unknown-editor':
-                errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Unknown editor.', {
+                errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unknown editor.', {
                   handler: 'skill-install',
                   detail: forkResolved.editor,
                 });
                 return;
               case 'fork-absent':
-                errorResponse(res, 400, 'urn:ok:error:invalid-request', 'No fork at that editor.', {
+                errorResponse(res, 400, 'urn:ps:error:invalid-request', 'No fork at that editor.', {
                   handler: 'skill-install',
                   detail: 'FORK_ABSENT',
                 });
@@ -197,19 +197,19 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   400,
-                  'urn:ok:error:invalid-request',
+                  'urn:ps:error:invalid-request',
                   'That copy matches the source — nothing to resolve.',
                   { handler: 'skill-install', detail: 'NOT_A_FORK' },
                 );
                 return;
               case 'invalid-new-name':
-                errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid new name.', {
+                errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid new name.', {
                   handler: 'skill-install',
                   detail: forkResolved.toName,
                 });
                 return;
               case 'name-taken':
-                errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Name already taken.', {
+                errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Name already taken.', {
                   handler: 'skill-install',
                   detail: forkResolved.toName,
                 });
@@ -253,7 +253,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'This skill still lives in the legacy .ps/skills store — promote a real location first (`source`) before using add/remove.',
               { handler: 'skill-install', detail: 'STORE_BACKED_ADDITIVE' },
             );
@@ -271,7 +271,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 `"${addRemove.sourceId}" is the skill's SOURCE — its folder is the skill itself, so removing it would delete the skill. Move the source first (\`source\`) or use \`delete\`.`,
                 { handler: 'skill-install', detail: 'REMOVE_SOURCE' },
               );
@@ -279,7 +279,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
               errorResponse(
                 res,
                 409,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 `Could not stop ${addRemove.subRoot} following its pool (${addRemove.reason}).`,
                 { handler: 'skill-install', detail: addRemove.reason },
               );
@@ -303,7 +303,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             errorResponse(
               res,
               409,
-              'urn:ok:error:doc-already-exists',
+              'urn:ps:error:doc-already-exists',
               'Cannot move the source there — a different skill occupies the target.',
               {
                 handler: 'skill-install',
@@ -339,7 +339,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'Cannot place — no project root is resolved for this server.',
               { handler: 'skill-install', detail: 'NO_PROJECT_ROOT' },
             );
@@ -357,7 +357,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
               errorResponse(
                 res,
                 400,
-                'urn:ok:error:invalid-request',
+                'urn:ps:error:invalid-request',
                 'Placement path must be a project-relative directory outside .ps/.',
                 { handler: 'skill-install', detail: 'PLACE_PATH_INVALID' },
               );
@@ -365,7 +365,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
               errorResponse(
                 res,
                 409,
-                'urn:ok:error:doc-already-exists',
+                'urn:ps:error:doc-already-exists',
                 'Something already exists at that path — placement never overwrites.',
                 { handler: 'skill-install', detail: 'PLACE_DEST_EXISTS' },
               );
@@ -405,7 +405,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'Cannot remove a placement — no project root is resolved for this server.',
               { handler: 'skill-install', detail: 'NO_PROJECT_ROOT' },
             );
@@ -423,7 +423,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   404,
-                  'urn:ok:error:not-found',
+                  'urn:ps:error:not-found',
                   'No recorded placement at that path.',
                   { handler: 'skill-install', detail: unplaced.path },
                 );
@@ -432,7 +432,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   400,
-                  'urn:ok:error:invalid-request',
+                  'urn:ps:error:invalid-request',
                   'Recorded placement path is no longer safe.',
                   { handler: 'skill-install', detail: 'PLACE_PATH_INVALID' },
                 );
@@ -441,7 +441,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   409,
-                  'urn:ok:error:doc-already-exists',
+                  'urn:ps:error:doc-already-exists',
                   'This copy differs from the current source and was preserved. Inspect both versions before removing it.',
                   { handler: 'skill-install', detail: unplaced.path },
                 );
@@ -450,7 +450,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   400,
-                  'urn:ok:error:invalid-request',
+                  'urn:ps:error:invalid-request',
                   "That is the skill's own folder (the source) — it can't be removed here.",
                   { handler: 'skill-install', detail: unplaced.path },
                 );
@@ -488,7 +488,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             errorResponse(
               res,
               400,
-              'urn:ok:error:invalid-request',
+              'urn:ps:error:invalid-request',
               'This skill still lives in the legacy .ps/skills store — promote a real location first (`source`) before converting one.',
               { handler: 'skill-install', detail: 'STORE_BACKED_CONVERT' },
             );
@@ -511,7 +511,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   400,
-                  'urn:ok:error:invalid-request',
+                  'urn:ps:error:invalid-request',
                   'That location has no skills folder to convert.',
                   { handler: 'skill-install', detail: target },
                 );
@@ -520,7 +520,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   400,
-                  'urn:ok:error:invalid-request',
+                  'urn:ps:error:invalid-request',
                   "That is the skill's own folder (the source) — move the source instead of converting it.",
                   { handler: 'skill-install', detail: target },
                 );
@@ -529,7 +529,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   409,
-                  'urn:ok:error:doc-already-exists',
+                  'urn:ps:error:doc-already-exists',
                   'This copy differs from the current source and was preserved. Inspect both versions before replacing or converting it.',
                   { handler: 'skill-install', detail: target },
                 );
@@ -538,7 +538,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   404,
-                  'urn:ok:error:not-found',
+                  'urn:ps:error:not-found',
                   'The skill is not installed there.',
                   { handler: 'skill-install', detail: target },
                 );
@@ -547,7 +547,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   403,
-                  'urn:ok:error:links-not-permitted',
+                  'urn:ps:error:links-not-permitted',
                   'This system does not allow creating symlinks, so that location was left as a copy. On Windows, creating symlinks needs administrator rights or Developer Mode.',
                   { handler: 'skill-install', detail: target },
                 );
@@ -635,7 +635,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   400,
-                  'urn:ok:error:invalid-request',
+                  'urn:ps:error:invalid-request',
                   'Source target must be an editor id, "agents", or a project-relative skills root.',
                   { handler: 'skill-install', detail: promoted.target },
                 );
@@ -643,7 +643,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
                 errorResponse(
                   res,
                   409,
-                  'urn:ok:error:doc-already-exists',
+                  'urn:ps:error:doc-already-exists',
                   'Cannot move the source there — a different skill occupies the target.',
                   { handler: 'skill-install', detail: promoted.reason },
                 );
@@ -689,7 +689,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
             errorResponse(
               res,
               409,
-              'urn:ok:error:doc-already-exists',
+              'urn:ps:error:doc-already-exists',
               'Cannot move the source there — a different skill occupies the target.',
               { handler: 'skill-install', detail: fanOut.reason },
             );
@@ -773,7 +773,7 @@ export function createSkillsInstallRoutes(deps: SkillsInstallRouteDeps): ApiRout
           { handler: 'skill-install' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to install skill.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to install skill.', {
           handler: 'skill-install',
           cause: e,
         });

@@ -24,7 +24,7 @@ export const WRITE_ADVISORY_GATE_REOPENED_LOG =
 
 let _deferredCounter: Counter | null = null;
 function deferredCounter(): Counter {
-  _deferredCounter ||= getMeter().createCounter('ok.write_advisory.deferred', {
+  _deferredCounter ||= getMeter().createCounter('ps.write_advisory.deferred', {
     description:
       'Post-write advisories that depend on the derived document index and were omitted from a write response: reason=deadline when the index did not answer within the write-advisory deadline, reason=busy when an earlier advisory was still waiting past its deadline so this one was not started. The write itself was durable either way.',
     unit: '{advisory}',

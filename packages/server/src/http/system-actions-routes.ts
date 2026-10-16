@@ -44,7 +44,7 @@ export function createSystemActionsRoutes(deps: SystemActionsRouteDeps): ApiRout
     } catch (e) {
       if (!res.headersSent) {
         log.error({ err: e, requestId: getRequestId(req) }, '[handoff] route wrapper failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'handoff',
           cause: e,
         });
@@ -62,7 +62,7 @@ export function createSystemActionsRoutes(deps: SystemActionsRouteDeps): ApiRout
     } catch (e) {
       if (!res.headersSent) {
         log.error({ err: e, requestId: getRequestId(req) }, '[spawn-cursor] route wrapper failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'spawn-cursor',
           cause: e,
         });
@@ -113,7 +113,7 @@ export function createSystemActionsRoutes(deps: SystemActionsRouteDeps): ApiRout
           { handler: 'client-logs' },
         );
       } catch (err) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'client-logs',
           cause: err,
         });

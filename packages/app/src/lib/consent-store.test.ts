@@ -121,7 +121,7 @@ describe('createConsentStore — install', () => {
 });
 
 describe('createConsentStore — confirm', () => {
-  test('ok:true clears snapshot and resolves', async () => {
+  test('ps:true clears snapshot and resolves', async () => {
     const bridge = makeBridge();
     const store = createConsentStore();
     store.install({ bridge });
@@ -131,7 +131,7 @@ describe('createConsentStore — confirm', () => {
     expect(store.getSnapshot()).toBeNull();
   });
 
-  test('ok:false keeps snapshot for retry', async () => {
+  test('ps:false keeps snapshot for retry', async () => {
     const bridge = makeBridge({ confirmResult: { ok: false, error: 'fail' } });
     const store = createConsentStore();
     store.install({ bridge });
@@ -161,7 +161,7 @@ describe('createConsentStore — confirm', () => {
 });
 
 describe('createConsentStore — cancel', () => {
-  test('ok:true clears snapshot', async () => {
+  test('ps:true clears snapshot', async () => {
     const bridge = makeBridge();
     const store = createConsentStore();
     store.install({ bridge });
@@ -171,7 +171,7 @@ describe('createConsentStore — cancel', () => {
     expect(store.getSnapshot()).toBeNull();
   });
 
-  test('ok:false keeps snapshot', async () => {
+  test('ps:false keeps snapshot', async () => {
     const bridge = makeBridge({ cancelResult: { ok: false, error: 'fs-readonly' } });
     const store = createConsentStore();
     store.install({ bridge });

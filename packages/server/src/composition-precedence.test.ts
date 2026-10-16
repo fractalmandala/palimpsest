@@ -35,7 +35,7 @@ describe('route dispatch and precedence — normal mode (no React shell)', () =>
     expect(res.status).toBe(404);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = parseProblem(await res.text());
-    expect(body.type).toBe('urn:ok:error:not-found');
+    expect(body.type).toBe('urn:ps:error:not-found');
     expect(body.title).toBe('API endpoint not found.');
   });
 
@@ -57,7 +57,7 @@ describe('route dispatch and precedence — normal mode (no React shell)', () =>
     const res = await fetch(`http://127.0.0.1:${normal.port}/definitely/not/here`);
     expect(res.status).toBe(404);
     const body = parseProblem(await res.text());
-    expect(body.type).toBe('urn:ok:error:not-found');
+    expect(body.type).toBe('urn:ps:error:not-found');
     expect(body.detail).toContain('running without the web UI');
   });
 
@@ -76,7 +76,7 @@ describe('route dispatch and precedence — normal mode (no React shell)', () =>
     expect(res.status).toBe(405);
     expect(res.headers.get('allow')).toBe('POST');
     const body = parseProblem(await res.text());
-    expect(body.type).toBe('urn:ok:error:method-not-allowed');
+    expect(body.type).toBe('urn:ps:error:method-not-allowed');
   });
 
   test('a live /collab WebSocket connects through the composed upgrade path', async () => {

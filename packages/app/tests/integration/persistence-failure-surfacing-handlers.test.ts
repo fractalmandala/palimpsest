@@ -33,7 +33,7 @@ describe('disk-persistence failure surfacing — edit_document (/api/agent-patch
 
     expect(res.status).toBe(507);
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:storage-full');
+    expect(body.type).toBe('urn:ps:error:storage-full');
   });
 
   test('still reports success when the store reaches disk', async () => {
@@ -66,7 +66,7 @@ describe('disk-persistence failure surfacing — edit_frontmatter (/api/frontmat
 
     expect(res.status).toBe(507);
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:storage-full');
+    expect(body.type).toBe('urn:ps:error:storage-full');
   });
 
   test('still reports success when the store reaches disk', async () => {
@@ -102,6 +102,6 @@ describe('disk-persistence failure surfacing — version rollback (/api/rollback
 
     expect(res.status).toBe(507);
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:storage-full');
+    expect(body.type).toBe('urn:ps:error:storage-full');
   });
 });

@@ -11,7 +11,7 @@ import {
 } from '@/lib/keyboard-shortcuts';
 import { cn } from '@/lib/utils';
 import { SettingsSectionHeader } from './SettingsSectionHeader';
-import { isOkDesktopHost } from './settings-host-gates';
+import { isPsDesktopHost } from './settings-host-gates';
 
 function ShortcutBindingChips({ binding }: { binding: ShortcutBinding }) {
   return formatShortcutBinding(binding)
@@ -35,7 +35,7 @@ function ShortcutBindingChips({ binding }: { binding: ShortcutBinding }) {
 
 export function HotkeysSection() {
   const { t } = useLingui();
-  const desktopHost = isOkDesktopHost();
+  const desktopHost = isPsDesktopHost();
   const titleId = 'settings-hotkeys-title';
   return (
     <section aria-labelledby={titleId} className="space-y-5" data-testid="settings-hotkeys">

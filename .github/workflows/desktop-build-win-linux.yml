@@ -32,7 +32,7 @@ name: Desktop build (manual, Windows/Linux)
 # this workflow cannot publish by construction).
 #
 # afterPack/afterSign flip + verify the Electron fuses on every platform
-# (D9) — RunAsNode must be enabled or the bundled `ok` CLI wrappers and
+# (D9) — RunAsNode must be enabled or the bundled `ps` CLI wrappers and
 # the detached-server spawn silently break in packaged builds.
 
 on:

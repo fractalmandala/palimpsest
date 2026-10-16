@@ -37,16 +37,16 @@ function positives() {
 
 function negatives() {
   // N1: the bare word, unrelated to the npm spec.
-  spawn('ok', ['skills', 'list']);
+  spawn('ps', ['skills', 'list']);
   // N2-N3: similarly-spelled flags that are not the banned token.
-  spawn('ok', ['--agents', 'claude']);
-  spawn('ok', ['--agent-id', 'abc']);
+  spawn('ps', ['--agents', 'claude']);
+  spawn('ps', ['--agent-id', 'abc']);
   // N4: a comment mentioning `npx skills@~1.5.0 add --agent '*'` — this rule
   // visits string-literal nodes only, never comments, so prose describing the
   // old invocation (as the real module's docstring does) must stay silent.
   // Comments are reachable from a rule, just not through node visitors:
   // `no-comments/plugin.mjs` re-lexes `context.sourceCode.text` to find them.
-  spawn('ok', ['repair-skills']);
+  spawn('ps', ['repair-skills']);
   // N5: interpolation — no single node holds the whole value.
   spawn('npx', [`skills@${range}`, 'add', '.']);
   // N6: concatenation — likewise.

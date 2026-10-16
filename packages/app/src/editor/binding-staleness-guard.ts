@@ -84,7 +84,7 @@ export function bindingStalenessGuardPlugin(options: BindingStalenessGuardOption
     const binding = syncState?.binding;
     if (!binding) return;
     if (typeof binding._prosemirrorChanged !== 'function') {
-      mark.count('ok/editor/binding-guard-disarmed', {
+      mark.count('ps/editor/binding-guard-disarmed', {
         docName,
         reason: 'no-prosemirror-changed',
       });
@@ -118,7 +118,7 @@ export function bindingStalenessGuardPlugin(options: BindingStalenessGuardOption
     const recent = prior.filter((ts) => now - ts < RATE_CAP_WINDOW_MS);
     if (!rateCapAllows(recent, now)) {
       wedgeFiringsByDocName.set(docName, recent);
-      mark.count('ok/editor/binding-wedge-rate-capped', { docName });
+      mark.count('ps/editor/binding-wedge-rate-capped', { docName });
       console.warn(
         `[binding-staleness-guard] wedge on "${docName}" rate-capped (externalSeq=${externalSeq}, appliedSeq=${appliedSeq}) — publication gate stays closed, no further recycle`,
       );
@@ -133,7 +133,7 @@ export function bindingStalenessGuardPlugin(options: BindingStalenessGuardOption
       onWedged({ externalSeq, appliedSeq });
     } catch (err) {
       reported = false;
-      mark.count('ok/editor/binding-wedge-recovery-error', { docName });
+      mark.count('ps/editor/binding-wedge-recovery-error', { docName });
       console.error(`[binding-staleness-guard] wedge recovery threw for "${docName}":`, err);
     }
   };
@@ -155,7 +155,7 @@ export function bindingStalenessGuardPlugin(options: BindingStalenessGuardOption
         if (isCatchUpApply(tr.getMeta(ySyncPluginKey))) {
           appliedSeq = externalSeq;
           if (reported) {
-            mark.count('ok/editor/binding-wedge-recovered', { docName });
+            mark.count('ps/editor/binding-wedge-recovered', { docName });
           }
           reported = false;
         }
@@ -170,7 +170,7 @@ export function bindingStalenessGuardPlugin(options: BindingStalenessGuardOption
     view: (editorView) => {
       const doc = fragment.doc;
       if (doc == null) {
-        mark.count('ok/editor/binding-guard-disarmed', { docName, reason: 'no-ydoc' });
+        mark.count('ps/editor/binding-guard-disarmed', { docName, reason: 'no-ydoc' });
         console.error(
           `[binding-staleness-guard] fragment has no Y.Doc for "${docName}" — staleness guard disarmed`,
         );

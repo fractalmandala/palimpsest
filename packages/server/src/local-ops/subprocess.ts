@@ -251,7 +251,7 @@ export function runSubprocess(opts: SubprocessRunOptions): SubprocessController 
   };
 }
 
-export function runOkCliSubprocess(
+export function runPsCliSubprocess(
   cli: PsCliCommand,
   opts: Omit<SubprocessRunOptions, 'cliArgs' | 'cliEnv'>,
 ): PsCliSubprocessController {

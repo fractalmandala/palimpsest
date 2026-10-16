@@ -10,8 +10,8 @@ let consentState: ConsentState = { enabled: false, synced: true };
 let writerImpl: Writer = null;
 const writerCalls: boolean[] = [];
 
-let userConfig: { agents?: { autoApproveOkTools?: boolean } } | null = {
-  agents: { autoApproveOkTools: true },
+let userConfig: { agents?: { autoApprovePsTools?: boolean } } | null = {
+  agents: { autoApprovePsTools: true },
 };
 let userSynced = true;
 let userBinding: { patch: (p: unknown) => { ok: true } | { ok: false; error: unknown } } | null = {
@@ -60,7 +60,7 @@ describe('TerminalSection (Settings opt-out toggle)', () => {
       return { ok: true };
     };
     writerCalls.length = 0;
-    userConfig = { agents: { autoApproveOkTools: true } };
+    userConfig = { agents: { autoApprovePsTools: true } };
     userSynced = true;
     userBinding = {
       patch: (p) => {
@@ -116,7 +116,7 @@ describe('TerminalSection (auto-approve Palimpsest tools toggle)', () => {
   beforeEach(() => {
     consentState = { enabled: true, synced: true };
     writerImpl = () => ({ ok: true });
-    userConfig = { agents: { autoApproveOkTools: true } };
+    userConfig = { agents: { autoApprovePsTools: true } };
     userSynced = true;
     userBinding = {
       patch: (p) => {
@@ -135,16 +135,16 @@ describe('TerminalSection (auto-approve Palimpsest tools toggle)', () => {
   });
 
   test('an explicit false reads as off', () => {
-    userConfig = { agents: { autoApproveOkTools: false } };
+    userConfig = { agents: { autoApprovePsTools: false } };
     render(<TerminalSection />);
     expect(autoApproveSwitch().getAttribute('aria-checked')).toBe('false');
   });
 
   test('toggling writes the user-scope leaf via the user binding', async () => {
-    userConfig = { agents: { autoApproveOkTools: true } };
+    userConfig = { agents: { autoApprovePsTools: true } };
     render(<TerminalSection />);
     await userEvent.click(autoApproveSwitch());
-    expect(userPatchCalls).toEqual([{ agents: { autoApproveOkTools: false } }]);
+    expect(userPatchCalls).toEqual([{ agents: { autoApprovePsTools: false } }]);
   });
 
   test('is disabled until the user binding is ready', () => {
@@ -175,7 +175,7 @@ describe("TerminalSection (codex-can't-honor note)", () => {
   beforeEach(() => {
     consentState = { enabled: true, synced: true };
     writerImpl = () => ({ ok: true });
-    userConfig = { agents: { autoApproveOkTools: true } };
+    userConfig = { agents: { autoApprovePsTools: true } };
     userSynced = true;
     userBinding = { patch: () => ({ ok: true }) };
   });
@@ -205,7 +205,7 @@ describe("TerminalSection (codex-can't-honor note)", () => {
   });
 
   test('stays silent when the auto-approve toggle is off (nothing to explain)', async () => {
-    userConfig = { agents: { autoApproveOkTools: false } };
+    userConfig = { agents: { autoApprovePsTools: false } };
     stubDesktopBridge({ onPath: 'present', psServerConfigured: false });
     render(<TerminalSection />);
     await waitFor(() => expect(autoApproveSwitch()).not.toBeNull());
@@ -238,7 +238,7 @@ describe('TerminalSection names the running channel CLI', () => {
   beforeEach(() => {
     consentState = { enabled: true, synced: true };
     writerImpl = () => ({ ok: true });
-    userConfig = { agents: { autoApproveOkTools: true } };
+    userConfig = { agents: { autoApprovePsTools: true } };
     userSynced = true;
     userBinding = { patch: () => ({ ok: true }) };
   });

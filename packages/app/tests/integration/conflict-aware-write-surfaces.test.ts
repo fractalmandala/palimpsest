@@ -154,7 +154,7 @@ describe('FR1 + FR2: conflict-gate swap-in / swap-out (server-observable contrac
       expect(inConflictRes.status).toBe(409);
       expect(inConflictRes.headers.get('content-type')).toContain('application/problem+json');
       const body = (await inConflictRes.json()) as Record<string, unknown>;
-      expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+      expect(body.type).toBe('urn:ps:error:doc-in-conflict');
 
       authority.dissolveReconcile(docName);
       expect(authority.has(docName)).toBe(false);
@@ -215,7 +215,7 @@ describe('FR11: the reconciliation conflict path raises an entry and fires the F
       const res = await agentWrite(server.port, docName, '# Replacement\n');
       expect(res.status).toBe(409);
       const body = (await res.json()) as Record<string, unknown>;
-      expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+      expect(body.type).toBe('urn:ps:error:doc-in-conflict');
     } finally {
       while (cleanups.length > 0) await cleanups.pop()?.();
     }
@@ -433,7 +433,7 @@ describe('FR14: boot-time conflict admission from conflicts.json', () => {
       const res = await agentWrite(booted.port, docName, '# Replacement\n');
       expect(res.status).toBe(409);
       const body = (await res.json()) as Record<string, unknown>;
-      expect(body.type).toBe('urn:ok:error:doc-in-conflict');
+      expect(body.type).toBe('urn:ps:error:doc-in-conflict');
     } finally {
       while (cleanups.length > 0) await cleanups.pop()?.();
     }
@@ -703,7 +703,7 @@ describe('a conflicted doc under a content.dir subdirectory reports its ledger f
       };
       const entry = body.results?.[0];
       expect(entry?.status).toBe('error');
-      expect(entry?.error?.type).toBe('urn:ok:error:doc-in-conflict');
+      expect(entry?.error?.type).toBe('urn:ps:error:doc-in-conflict');
       expect(entry?.error?.conflict).toEqual({ kind: 'reconcile', reason: 'disk-markers' });
       expect(entry?.error?.resolutionOptions).toEqual(['mine', 'content', 'delete']);
       expect(entry?.error?.resolutionOptions).not.toContain('theirs');

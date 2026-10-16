@@ -17,7 +17,7 @@ test.use({
   workerServerEnv: { PS_TEST_OKF_GENERATED_INDEX_SETTINGS: 'isolated-content-v1' },
 });
 
-type OkfProjectConfig = {
+type PsfProjectConfig = {
   contentRules?: {
     psf?: {
       enabled?: boolean;
@@ -26,12 +26,12 @@ type OkfProjectConfig = {
   };
 };
 
-function readProjectConfig(configPath: string): OkfProjectConfig {
+function readProjectConfig(configPath: string): PsfProjectConfig {
   if (!existsSync(configPath)) return {};
-  return parse(readFileSync(configPath, 'utf-8')) as OkfProjectConfig;
+  return parse(readFileSync(configPath, 'utf-8')) as PsfProjectConfig;
 }
 
-async function openOkfSettings(page: Page): Promise<void> {
+async function openPsfSettings(page: Page): Promise<void> {
   await openProjectPluginsPanel(page);
   await setPluginEnabled(page, 'psf', true);
   await openSettingsSection(page, 'plugin:psf', 'settings-plugin-psf');
@@ -104,7 +104,7 @@ test('Escape decline restores focus, confirmation creates indexes, and disabling
   const nestedIndexPath = join(workerServer.contentDir, 'guides', 'index.md');
   const attributesPath = join(workerServer.contentDir, '.gitattributes');
 
-  await openOkfSettings(page);
+  await openPsfSettings(page);
   await expect.poll(() => readProjectConfig(configPath).contentRules?.psf?.enabled).toBe(true);
 
   const configBeforeDisclosure = readFileSync(configPath, 'utf-8');

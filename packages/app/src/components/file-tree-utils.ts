@@ -162,10 +162,10 @@ export function defaultInitialDir(activeDocName: string | null): string {
 interface TreeVisibility {
   showHiddenFiles?: boolean;
   showOnlyMarkdownFiles?: boolean;
-  showOkFolders?: boolean;
+  showPsFolders?: boolean;
 }
 
-export function hasOkPathSegment(ref: string): boolean {
+export function hasPsPathSegment(ref: string): boolean {
   return ref.split('/').some((segment) => segment.toLowerCase() === '.ps');
 }
 
@@ -184,7 +184,7 @@ export function filterVisibleEntries<T extends { kind?: unknown; docName?: strin
   const {
     showHiddenFiles = false,
     showOnlyMarkdownFiles = false,
-    showOkFolders = false,
+    showPsFolders = false,
   } = visibility;
   return entries.filter((entry) => {
     const ref = entry.docName ?? entry.path ?? '';
@@ -195,7 +195,7 @@ export function filterVisibleEntries<T extends { kind?: unknown; docName?: strin
     const segments = ref.split('/');
     const psIndex = segments.indexOf('.ps');
     if (psIndex !== -1) {
-      if (!showOkFolders) return false;
+      if (!showPsFolders) return false;
       const ancestorPath = segments.slice(0, psIndex).join('/');
       return showHiddenFiles || ancestorPath === '' || !isHiddenDocName(ancestorPath);
     }
@@ -214,7 +214,7 @@ export function attributeTreeHiddenAxes(
     ref === '' ||
     isManagedArtifactDocName(ref) ||
     isProjectSkillBundlePath(ref) ||
-    hasOkPathSegment(ref)
+    hasPsPathSegment(ref)
   ) {
     return { hiddenFiles: false, onlyMarkdownFiles: false };
   }

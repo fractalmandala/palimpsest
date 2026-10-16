@@ -28,7 +28,7 @@ function sweepExpired(now: number): void {
   for (const [docName, entry] of recentPrewarms) {
     if (now - entry.emittedAt >= ttl) {
       recentPrewarms.delete(docName);
-      mark.count('ok/sidebar/prewarm', { hit: false });
+      mark.count('ps/sidebar/prewarm', { hit: false });
     }
   }
 }
@@ -39,7 +39,7 @@ export function recordPrewarm(
   now: number = Date.now(),
 ): void {
   if (recentPrewarms.has(docName)) {
-    mark.count('ok/sidebar/prewarm', { hit: false });
+    mark.count('ps/sidebar/prewarm', { hit: false });
   }
   recentPrewarms.set(docName, { poolEventId, emittedAt: now });
   scheduleSweep();
@@ -55,8 +55,8 @@ export function consumePrewarmClick(
   if (record.poolEventId !== poolEventId) return false;
   if (now - record.emittedAt >= getTtlMs()) return false;
   recentPrewarms.delete(docName);
-  mark('ok/sidebar/prewarm-clicked', { docName, t: now, poolEventId });
-  mark.count('ok/sidebar/prewarm', { hit: true });
+  mark('ps/sidebar/prewarm-clicked', { docName, t: now, poolEventId });
+  mark.count('ps/sidebar/prewarm', { hit: true });
   return true;
 }
 

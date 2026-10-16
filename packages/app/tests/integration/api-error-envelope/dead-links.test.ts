@@ -35,7 +35,7 @@ describe('dead-links envelope (RFC 9457)', () => {
     expect(DeadLinksSuccessSchema.safeParse(body).success).toBe(true);
   });
 
-  test('unsafe sourceDocName emits urn:ok:error:invalid-request', async () => {
+  test('unsafe sourceDocName emits urn:ps:error:invalid-request', async () => {
     const res = await fetch(
       `http://127.0.0.1:${server.port}/api/dead-links?sourceDocName=${encodeURIComponent(
         '../etc',
@@ -48,7 +48,7 @@ describe('dead-links envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.title).toContain('sourceDocName');
     }
   });
@@ -62,7 +62,7 @@ describe('dead-links envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

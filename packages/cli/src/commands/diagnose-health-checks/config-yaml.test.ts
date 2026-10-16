@@ -68,7 +68,7 @@ describe('config-yaml remediation names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: an uninitialized project names %s init', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

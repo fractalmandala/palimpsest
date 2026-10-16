@@ -146,7 +146,7 @@ function register(
     tildify: (p) => p,
     logger: opts.logger,
   });
-  const dispatch = ipcMain.handlers.get('ok:project-integrations:dispatch');
+  const dispatch = ipcMain.handlers.get('ps:project-integrations:dispatch');
   if (!dispatch) throw new Error('handler not registered');
   return {
     handle,

@@ -55,28 +55,28 @@ export function escapingReads(psRoot = PS_ROOT) {
       const literal = match[1] ?? match[2];
       const absolute = resolve(join(file, '..'), literal);
       const fromPackage = relative(packageDir, absolute);
-      const fromOkRoot = relative(psRoot, absolute);
+      const fromPsRoot = relative(psRoot, absolute);
       const staysInsidePackage = !fromPackage.startsWith('..');
-      const leavesTheSubtree = fromOkRoot.startsWith('..');
+      const leavesTheSubtree = fromPsRoot.startsWith('..');
       const isAncestorOfPackage = !relative(absolute, packageDir).startsWith('..');
       if (staysInsidePackage || leavesTheSubtree || isAncestorOfPackage) continue;
       if (!existsOnDisk(absolute)) continue;
-      if (!byTarget.has(fromOkRoot)) byTarget.set(fromOkRoot, new Set());
-      byTarget.get(fromOkRoot).add(relative(packageDir, file));
+      if (!byTarget.has(fromPsRoot)) byTarget.set(fromPsRoot, new Set());
+      byTarget.get(fromPsRoot).add(relative(packageDir, file));
     }
 
     for (const call of source.matchAll(ROOT_JOIN_CALL)) {
       const segments = [...call[2].matchAll(QUOTED_SEGMENT)].map((m) => m[1] ?? m[2]);
       if (segments.length === 0) continue;
       const absolute = resolve(psRoot, ...segments);
-      const fromOkRoot = relative(psRoot, absolute);
+      const fromPsRoot = relative(psRoot, absolute);
       const fromPackage = relative(packageDir, absolute);
-      if (fromOkRoot.startsWith('..')) continue;
+      if (fromPsRoot.startsWith('..')) continue;
       if (!fromPackage.startsWith('..')) continue;
       if (!relative(absolute, packageDir).startsWith('..')) continue;
       if (!existsOnDisk(absolute)) continue;
-      if (!byTarget.has(fromOkRoot)) byTarget.set(fromOkRoot, new Set());
-      byTarget.get(fromOkRoot).add(relative(packageDir, file));
+      if (!byTarget.has(fromPsRoot)) byTarget.set(fromPsRoot, new Set());
+      byTarget.get(fromPsRoot).add(relative(packageDir, file));
     }
   }
   return byTarget;
@@ -97,9 +97,9 @@ function globToAnchoredRegex(escaped) {
   return new RegExp(`^${pattern}(/|$)`);
 }
 
-export function packageRelativeGlobCovers(entry, targetFromOkRoot, psRoot = PS_ROOT) {
-  const fromOkRoot = relative(psRoot, resolve(join(psRoot, PKG_REL), entry));
-  return globToAnchoredRegex(escapeGlobLiterals(fromOkRoot)).test(targetFromOkRoot);
+export function packageRelativeGlobCovers(entry, targetFromPsRoot, psRoot = PS_ROOT) {
+  const fromPsRoot = relative(psRoot, resolve(join(psRoot, PKG_REL), entry));
+  return globToAnchoredRegex(escapeGlobLiterals(fromPsRoot)).test(targetFromPsRoot);
 }
 
 export function uncoveredReads(psRoot = PS_ROOT) {

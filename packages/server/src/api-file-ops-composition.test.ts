@@ -77,18 +77,18 @@ describe('file-ops group over the composed listener — served natively', () => 
   test('create-page path validation still lands as typed problems', async () => {
     const noExt = await postJson('/api/create-page', { path: 'not-a-doc.txt' });
     expect(noExt.status).toBe(400);
-    expect(((await noExt.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await noExt.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
 
     const escaped = await postJson('/api/create-page', { path: '../outside.md' });
     expect(escaped.status).toBe(400);
-    expect(((await escaped.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await escaped.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
   });
 
   test('create-page rejects non-canonical `.`/empty segments (intentional tightening)', async () => {
     for (const path of ['./notes/x.md', 'notes//x.md']) {
       const res = await postJson('/api/create-page', { path });
       expect(res.status, path).toBe(400);
-      expect(((await res.json()) as { type?: string }).type, path).toBe('urn:ok:error:path-escape');
+      expect(((await res.json()) as { type?: string }).type, path).toBe('urn:ps:error:path-escape');
     }
   });
 
@@ -97,7 +97,7 @@ describe('file-ops group over the composed listener — served natively', () => 
     symlinkSync(outside, resolve(contentDir, 'sneaky'), 'dir');
     const res = await postJson('/api/create-page', { path: 'sneaky/escaped.md' });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
     expect(existsSync(resolve(outside, 'escaped.md'))).toBe(false);
   });
 
@@ -112,7 +112,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       template: 'leak',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
     expect(existsSync(resolve(contentDir, 'leaky', 'from-leak.md'))).toBe(false);
   });
 
@@ -172,7 +172,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       path: 'escape-hatch/skills/phantom.md',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(resolve(contentDir, '.ps', 'skills', 'phantom.md'))).toBe(false);
   });
 
@@ -182,7 +182,7 @@ describe('file-ops group over the composed listener — served natively', () => 
     symlinkSync(resolve(contentDir, '.ps'), resolve(contentDir, 'esc-del'), 'dir');
     const res = await postJson('/api/delete-path', { kind: 'folder', path: 'esc-del/local' });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(resolve(contentDir, '.ps', 'local', 'survivor-marker'))).toBe(true);
   });
 
@@ -194,7 +194,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       toPath: 'esc-ren/skills/evil',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(resolve(contentDir, '.ps', 'skills', 'evil.md'))).toBe(false);
   });
 
@@ -207,7 +207,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       toPath: 'stolen',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(resolve(contentDir, '.ps', 'local'))).toBe(true);
     expect(existsSync(resolve(contentDir, 'stolen'))).toBe(false);
   });
@@ -216,14 +216,14 @@ describe('file-ops group over the composed listener — served natively', () => 
     symlinkSync(resolve(contentDir, '.ps'), resolve(contentDir, 'esc-cf'), 'dir');
     const res = await postJson('/api/create-folder', { path: 'esc-cf/skills' });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
   });
 
   test('duplicate-path refuses a source routed into .ps through a symlink', async () => {
     symlinkSync(resolve(contentDir, '.ps'), resolve(contentDir, 'esc-dup'), 'dir');
     const res = await postJson('/api/duplicate-path', { kind: 'folder', path: 'esc-dup/local' });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
   });
 
   test('upload refuses a parentDocName inside .ps, no symlink needed', async () => {
@@ -235,7 +235,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       ),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(resolve(contentDir, '.ps', 'skills', 'evil.md'))).toBe(false);
   });
 
@@ -249,7 +249,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       ),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
     expect(existsSync(resolve(contentDir, '.ps', 'skills', 'sneaky.md'))).toBe(false);
   });
 
@@ -262,7 +262,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       ),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
     expect(existsSync(resolve(contentDir, 'dotted-esc'))).toBe(false);
   });
 
@@ -282,7 +282,7 @@ describe('file-ops group over the composed listener — served natively', () => 
     symlinkSync(outsideTarget, resolve(contentDir, 'escape-out'), 'dir');
     const res = await postJson('/api/create-folder', { path: 'escape-out/foo' });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
   });
 
   test('duplicate-path refuses an extensionless file path linked into machine-local state', async () => {
@@ -297,7 +297,7 @@ describe('file-ops group over the composed listener — served natively', () => 
 
     const res = await postJson('/api/duplicate-path', { kind: 'file', path: 'dup-linked/leak' });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
     expect(readdirSync(resolve(contentDir, 'dup-linked'))).toEqual(['leak.md']);
   });
 
@@ -309,7 +309,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       path: 'escape-dup-out/foo',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:path-escape');
   });
 
   test('create-folder creates and refuses reserved directories', async () => {
@@ -320,7 +320,7 @@ describe('file-ops group over the composed listener — served natively', () => 
     const reserved = await postJson('/api/create-folder', { path: '.ps/nested' });
     expect(reserved.status).toBe(400);
     expect(((await reserved.json()) as { type?: string }).type).toBe(
-      'urn:ok:error:reserved-doc-name',
+      'urn:ps:error:reserved-doc-name',
     );
   });
 
@@ -348,13 +348,13 @@ describe('file-ops group over the composed listener — served natively', () => 
       toPath: '.ps/alpha',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:reserved-doc-name');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:reserved-doc-name');
   });
 
   test('delete-path 404s a missing target and deletes a real one', async () => {
     const missing = await postJson('/api/delete-path', { kind: 'file', path: 'no-such-doc' });
     expect(missing.status).toBe(404);
-    expect(((await missing.json()) as { type?: string }).type).toBe('urn:ok:error:doc-not-found');
+    expect(((await missing.json()) as { type?: string }).type).toBe('urn:ps:error:doc-not-found');
 
     const seed = await postJson('/api/create-page', { path: 'doomed-native.md' });
     expect(seed.status).toBe(200);
@@ -376,7 +376,7 @@ describe('file-ops group over the composed listener — served natively', () => 
     });
     expect(reserved.status).toBe(400);
     expect(((await reserved.json()) as { type?: string }).type).toBe(
-      'urn:ok:error:reserved-doc-name',
+      'urn:ps:error:reserved-doc-name',
     );
   });
 
@@ -398,7 +398,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       body: uploadForm({ parentDocName: 'alpha' }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:no-file-received');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:no-file-received');
   });
 
   test('a multipart content-type without a boundary is a 400 malformed-upload', async () => {
@@ -408,7 +408,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       body: 'not a multipart body',
     });
     expect(res.status).toBe(400);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:malformed-upload');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:malformed-upload');
   });
 
   test('a client that disconnects mid-multipart does not wedge the server (req.complete guard)', async () => {
@@ -467,7 +467,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       body: JSON.stringify({ path: 'big.md', pad: 'x'.repeat(1_100_000) }),
     });
     expect(res.status).toBe(413);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:payload-too-large');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:payload-too-large');
   });
 
   test('the whole family refuses a rebound Host on its GET arms too (admission unchanged)', async () => {
@@ -476,7 +476,7 @@ describe('file-ops group over the composed listener — served natively', () => 
         headers: { Host: 'evil.example' },
       });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
       expect(res.headers.allow, path).toBeUndefined();
     }
   });
@@ -491,7 +491,7 @@ describe('file-ops group over the composed listener — served natively', () => 
       ),
     });
     expect(res.status).toBe(403);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('any forwarding header trips the proxied-request refusal on a ported route', async () => {
@@ -505,7 +505,7 @@ describe('file-ops group over the composed listener — served natively', () => 
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.detail ?? body.title).toContain('Proxied request refused');
   });
 

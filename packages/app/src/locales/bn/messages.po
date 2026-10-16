@@ -963,7 +963,7 @@ msgstr "<0>{sanitized}</0> নামের একটি ফোল্ডারে
 msgid "A key is set, but the embeddings provider rejected it or was unreachable — search fell back to keyword matching. Use <0>Test connection</0> under Custom endpoint to see what went wrong."
 msgstr "একটি কী নির্ধারিত আছে, কিন্তু এমবেডিং সরবরাহকারী সেটি প্রত্যাখ্যান করেছে বা তার নাগাল পাওয়া যায়নি — অনুসন্ধান কীওয়ার্ড মিলানোয় ফিরে গেছে। কী ভুল হয়েছে দেখতে Custom endpoint-এর নিচে <0>সংযোগ পরীক্ষা করুন</0> ব্যবহার করুন।"
 
-msgid "A knowledge base that follows Google's Palimpsest Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
+msgid "A knowledge base that follows Google's OpenKnowledge Format, a shared way of organizing what you know. Pick this if you want your notes to work well with other tools that understand the format."
 msgstr "এমন একটি জ্ঞানভাণ্ডার যা Google-এর Palimpsest Format মেনে চলে, অর্থাৎ আপনি যা জানেন তা গুছিয়ে রাখার একটি সাধারণ উপায়। আপনার নোট যদি এই ফরম্যাট বোঝে এমন অন্য টুলের সঙ্গেও ভালো কাজ করুক চান, তবে এটি বাছুন।"
 
 msgid "A line with a footnote<0><1>[1]</1></0> and a definition shown below."
@@ -1275,14 +1275,14 @@ msgid "Adds a managed block to"
 msgstr "এতে একটি পরিচালিত ব্লক যোগ করে"
 
 #. Subtext under the project AI-tools checkbox
-msgid "Adds an Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry and the project skill to <0>{toolList}</0>, so your agents can read and edit your files."
 msgstr "<0>{toolList}</0>-এ Palimpsest-এর MCP এন্ট্রি এবং প্রকল্প Skill যোগ করে, যাতে আপনার এজেন্ট আপনার ফাইল পড়তে ও সম্পাদনা করতে পারে।"
 
 #. Subtext under the AI-tools MCP checkbox
-msgid "Adds an Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
+msgid "Adds a Palimpsest MCP entry to <0>{connectToolList}</0>, so your agents can read and edit your files."
 msgstr "<0>{connectToolList}</0>-এ Palimpsest-এর MCP এন্ট্রি যোগ করে, যাতে আপনার এজেন্ট আপনার ফাইল পড়তে ও সম্পাদনা করতে পারে।"
 
-msgid "Adds an Palimpsest MCP entry to this project's agent config."
+msgid "Adds a Palimpsest MCP entry to this project's agent config."
 msgstr "এই প্রকল্পের এজেন্ট কনফিগারেশনে একটি Palimpsest MCP এন্ট্রি যোগ করে।"
 
 #. js-lingui-explicit-id
@@ -1413,7 +1413,7 @@ msgstr "প্রায় শেষ। কী হয়েছে আর কী 
 msgid "Already at {assetContentPath} — reusing."
 msgstr "আগে থেকেই {assetContentPath}-এ — পুনরায় ব্যবহার করা হচ্ছে।"
 
-#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have an Palimpsest MCP entry, which stay as they are while the box is unticked
+#. Status under the unticked AI-tools checkbox; replacingToolList names the tools that already have a Palimpsest MCP entry, which stay as they are while the box is unticked
 msgid "Already connected to {replacingToolList}"
 msgstr "ইতিমধ্যে যুক্ত: {replacingToolList}"
 
@@ -2117,7 +2117,7 @@ msgstr "নথিতে মার্কডাউন সমস্যা খোঁ
 msgid "Checks the whole project for markdown problems and broken links"
 msgstr "পুরো প্রকল্পে মার্কডাউন সমস্যা ও ভাঙা লিংক খোঁজে"
 
-msgid "Checks your project against the Palimpsest Format. Turn it off any time in Settings."
+msgid "Checks your project against the OpenKnowledge Format. Turn it off any time in Settings."
 msgstr "Palimpsest Format এর বিরুদ্ধে আপনার প্রকল্প পরীক্ষা করে। সেটিংস থেকে যেকোনো সময় এটি বন্ধ করুন।"
 
 msgid "Choose a skill archive"
@@ -5736,7 +5736,7 @@ msgstr "আপনি যাদের ও যে কোম্পানিগু�
 msgid "keeps the skills"
 msgstr "স্কিলগুলো রেখে দেয়"
 
-msgid "Keeps your knowledge base aligned with the Palimpsest Format."
+msgid "Keeps your knowledge base aligned with the OpenKnowledge Format."
 msgstr "আপনার জ্ঞানভান্ডারকে Palimpsest Format-এর সঙ্গে সামঞ্জস্যপূর্ণ রাখে।"
 
 msgid "Kept both — \"{0}\" is its own skill now"
@@ -7244,7 +7244,7 @@ msgstr "সূচী রক্ষণাবেক্ষণ পরীক্ষা 
 msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
 msgstr "Palimpsest Markdown ধারণকারী প্রতিটি ফোল্ডারে index.md নামের একটি নেভিগেশন ফাইল তৈরি ও রক্ষণাবেক্ষণ করে।"
 
-msgid "Palimpsest Format guidance"
+msgid "OpenKnowledge Format guidance"
 msgstr "Palimpsest Format নির্দেশিকা"
 
 msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
@@ -10298,7 +10298,7 @@ msgstr "ওই এন্ডপয়েন্টটি ব্যবহার ক
 msgid "That folder already holds code Palimpsest didn't write, which the same trust would let {0} run: {otherExtensions}."
 msgstr "ওই ফোল্ডারে ইতিমধ্যেই এমন কোড আছে যা Palimpsest লেখেনি এবং একই বিশ্বাস {0}-কে সেটি চালাতে দেবে: {otherExtensions}।"
 
-msgid "That folder isn't an Palimpsest project yet. Initialize it and open?"
+msgid "That folder isn't a Palimpsest project yet. Initialize it and open?"
 msgstr "ওই ফোল্ডারটি এখনও একটি Palimpsest প্রকল্প নয়। এটি চালু করে খুলবেন?"
 
 msgid "That host is already in the list."
@@ -10335,7 +10335,7 @@ msgstr "{editor} সংস্করণটি এখন উৎস"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "{targetNoun} খোলা যায়নি — সেখানে হাতে যাওয়ার চেষ্টা করুন।"
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
 msgstr "এই টেমপ্লেট থেকে তৈরি প্রতিটি নথি যে <0>type</0> পায় (যেমন <1>research-note</1>)। নতুন নথিগুলোকে Palimpsest Format-সঙ্গতিপূর্ণ রাখে।"
 
 msgid "The agent is working"
@@ -10756,7 +10756,7 @@ msgstr "এই ব্রাঞ্চে এই Palimpsest প্রজেক্�
 msgid "This branch is checked out in:"
 msgstr "এই ব্রাঞ্চটি এখানে চেক আউট করা আছে:"
 
-msgid "This branch redirects an Palimpsest setup path outside the worktree. The worktree was created but not opened."
+msgid "This branch redirects a Palimpsest setup path outside the worktree. The worktree was created but not opened."
 msgstr "এই ব্রাঞ্চ Palimpsest সেটআপ পাথকে ওয়ার্কট্রির বাইরে পাঠায়। ওয়ার্কট্রি তৈরি হয়েছে, কিন্তু খোলা হয়নি।"
 
 #. Toast after first-launch setup ends without connecting AI tools; agentConnectionsLabel is the Settings sidebar pane name

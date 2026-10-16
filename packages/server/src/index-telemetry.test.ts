@@ -50,7 +50,7 @@ describe('instrumentIndexRebuild', () => {
   test('emits ok.index.rebuild with bounded name/mode attributes', async () => {
     const result = await instrumentIndexRebuild('tag', 'full', async () => 'done');
     expect(result).toBe('done');
-    const span = requireSpan('ok.index.rebuild');
+    const span = requireSpan('ps.index.rebuild');
     expect(span.attributes['index.name']).toBe('tag');
     expect(span.attributes['index.mode']).toBe('full');
   });
@@ -66,7 +66,7 @@ describe('instrumentIndexRebuild', () => {
         'index.deleted': diff.deleted,
       }),
     );
-    const span = requireSpan('ok.index.rebuild');
+    const span = requireSpan('ps.index.rebuild');
     expect(span.attributes['index.name']).toBe('backlink');
     expect(span.attributes['index.mode']).toBe('reconcile');
     expect(span.attributes['index.added']).toBe(3);
@@ -91,7 +91,7 @@ describe('instrumentIndexRebuild', () => {
         .getFinishedSpans()
         .find(
           (entry) =>
-            entry.name === 'ok.index.rebuild' && entry.attributes['index.mode'] === 'reconcile',
+            entry.name === 'ps.index.rebuild' && entry.attributes['index.mode'] === 'reconcile',
         );
       expect(span?.attributes).toMatchObject({
         'index.name': 'backlink',
@@ -109,7 +109,7 @@ describe('instrumentIndexRebuild', () => {
         throw new Error('walk failed');
       }),
     ).rejects.toThrow('walk failed');
-    const span = requireSpan('ok.index.rebuild');
+    const span = requireSpan('ps.index.rebuild');
     expect(span.status.code).not.toBe(0);
   });
 
@@ -131,7 +131,7 @@ describe('instrumentIndexUpdate', () => {
     );
 
     expect(result.changed).toBe(true);
-    const span = requireSpan('ok.index.update');
+    const span = requireSpan('ps.index.update');
     expect(span.attributes).toEqual({
       'index.name': 'local-target',
       'index.mode': 'source',

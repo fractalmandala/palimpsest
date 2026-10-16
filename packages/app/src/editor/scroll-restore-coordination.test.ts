@@ -335,7 +335,7 @@ describe('landing scroll owners and explicit navigation', () => {
 describe('an explicit navigation stands the scroll-restore loop down', () => {
   const OWNERSHIP_LAPSES_WITHIN_MS = 2_000;
 
-  const NAVIGATION_DECLINED_MARK = 'ok/scroll-nav/declined';
+  const NAVIGATION_DECLINED_MARK = 'ps/scroll-nav/declined';
 
   beforeEach(() => {
     vi.useFakeTimers({

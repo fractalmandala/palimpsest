@@ -4,7 +4,7 @@ description: "How to work in a Writing Pipeline project (the `writing-pipeline` 
 compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack writing-pipeline` (`ps-beta` for Beta)."
 metadata:
   pack: "writing-pipeline"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Writing Pipeline pack — how to work here

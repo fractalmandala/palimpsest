@@ -161,7 +161,7 @@ describe('httpSkillInstaller', () => {
         ok: false,
         status: 400,
         body: {
-          type: 'urn:ok:error:invalid-request',
+          type: 'urn:ps:error:invalid-request',
           title: 'Output path must be within home directory.',
           status: 400,
           instance: 'urn:uuid:00000000-0000-0000-0000-000000000000',
@@ -182,7 +182,7 @@ describe('httpSkillInstaller', () => {
         ok: false,
         status: 500,
         body: {
-          type: 'urn:ok:error:internal-server-error',
+          type: 'urn:ps:error:internal-server-error',
           title: 'Failed to install skill.',
           status: 500,
           instance: 'urn:uuid:00000000-0000-0000-0000-000000000001',

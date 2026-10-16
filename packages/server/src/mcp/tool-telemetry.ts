@@ -12,7 +12,7 @@ onTelemetryShutdown(() => {
 });
 
 function durationHistogram(): Histogram {
-  cachedDurationHistogram ??= getMeter().createHistogram('ok.mcp.tool.duration', {
+  cachedDurationHistogram ??= getMeter().createHistogram('ps.mcp.tool.duration', {
     description: 'MCP tool invocation duration. Bounded label: tool (static registry names).',
     unit: 'ms',
   });
@@ -20,7 +20,7 @@ function durationHistogram(): Histogram {
 }
 
 function errorCounter(): Counter {
-  cachedErrorCounter ??= getMeter().createCounter('ok.mcp.tool.errors', {
+  cachedErrorCounter ??= getMeter().createCounter('ps.mcp.tool.errors', {
     description:
       'MCP tool invocation failures. Bounded labels: tool (static registry names), kind ∈ {exception, error_result}.',
     unit: '{errors}',

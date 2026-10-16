@@ -36,7 +36,7 @@ export function readEditorUndoManager(editor: Editor): { restore?: unknown } | n
       | undefined;
     return pluginState?.undoManager ?? null;
   } catch (err) {
-    mark('ok/cache/undo-manager-read-failed', {
+    mark('ps/cache/undo-manager-read-failed', {
       message: err instanceof Error ? err.message : String(err),
     });
     return null;
@@ -153,7 +153,7 @@ export function storeRenameSnapshot(toDocName: string, snapshot: RenameSnapshot)
     if (oldest !== undefined) renameSnapshotStore.delete(oldest);
   }
   renameSnapshotStore.set(toDocName, snapshot);
-  mark('ok/cache/snapshot-stored', {
+  mark('ps/cache/snapshot-stored', {
     toDocName,
     htmlBytes: snapshot.html.length,
     hasScroll: snapshot.scrollTop > 0,
@@ -168,7 +168,7 @@ export function peekRenameSnapshot(docName: string): RenameSnapshot | null {
 export function __consumeRenameSnapshot(docName: string): RenameSnapshot | null {
   const snapshot = renameSnapshotStore.get(docName) ?? null;
   renameSnapshotStore.delete(docName);
-  mark('ok/cache/snapshot-consumed', {
+  mark('ps/cache/snapshot-consumed', {
     docName,
     hit: snapshot !== null,
     hasScroll: snapshot !== null && snapshot.scrollTop > 0,
@@ -182,7 +182,7 @@ export function clearRenameSnapshot(docName: string): void {
   if (!hadEntry) return;
   const snapshot = renameSnapshotStore.get(docName) ?? null;
   renameSnapshotStore.delete(docName);
-  mark('ok/cache/snapshot-consumed', {
+  mark('ps/cache/snapshot-consumed', {
     docName,
     hit: snapshot !== null,
     hasScroll: snapshot !== null && snapshot.scrollTop > 0,
@@ -213,7 +213,7 @@ function readActiveScrollTop(): number {
   try {
     return visibleEditorScrollContainer()?.scrollTop ?? 0;
   } catch (err) {
-    mark('ok/cache/snapshot-scroll-read-failed', {
+    mark('ps/cache/snapshot-scroll-read-failed', {
       message: err instanceof Error ? err.message : String(err),
     });
     return 0;
@@ -231,7 +231,7 @@ function captureSelection(editor: Editor): RenameSelectionJSON | null {
     }
     return null;
   } catch (err) {
-    mark('ok/cache/snapshot-selection-read-failed', {
+    mark('ps/cache/snapshot-selection-read-failed', {
       message: err instanceof Error ? err.message : String(err),
     });
     return null;
@@ -244,13 +244,13 @@ export function captureRenameSnapshots(renamed: readonly RenamedDocMapping[]): v
       const cachedEntry = peekTiptap(renamedDoc.fromDocName);
       if (cachedEntry && !cachedEntry.editor.isDestroyed) {
         if (cachedEntry.ytext.length === 0) {
-          mark('ok/cache/snapshot-skipped-empty', {
+          mark('ps/cache/snapshot-skipped-empty', {
             fromDocName: renamedDoc.fromDocName,
           });
           continue;
         }
         if (!isMarkdownDocFile(renamedDoc.toDocName)) {
-          mark('ok/cache/snapshot-skipped-class-change', {
+          mark('ps/cache/snapshot-skipped-class-change', {
             fromDocName: renamedDoc.fromDocName,
             toDocName: renamedDoc.toDocName,
           });
@@ -262,10 +262,10 @@ export function captureRenameSnapshots(renamed: readonly RenamedDocMapping[]): v
           selection: captureSelection(cachedEntry.editor),
         });
       } else {
-        mark('ok/cache/snapshot-skipped', { fromDocName: renamedDoc.fromDocName });
+        mark('ps/cache/snapshot-skipped', { fromDocName: renamedDoc.fromDocName });
       }
     } catch (err) {
-      mark('ok/cache/snapshot-capture-failed', {
+      mark('ps/cache/snapshot-capture-failed', {
         fromDocName: renamedDoc.fromDocName,
         message: err instanceof Error ? err.message : String(err),
       });
@@ -296,7 +296,7 @@ export function mountTiptapEditor(params: MountTiptapParams): TiptapCacheEntry {
   const gateRefuses = sizeStats ? !shouldCacheEditor(sizeStats) : false;
   if (!CACHE_ENABLED || gateRefuses) {
     const fresh = factory(container);
-    mark('ok/cache/miss', {
+    mark('ps/cache/miss', {
       docName,
       mountId: getMountId(docName),
       viewCount: sizeStats?.viewCount ?? -1,
@@ -318,7 +318,7 @@ export function mountTiptapEditor(params: MountTiptapParams): TiptapCacheEntry {
 
   const reuse = tiptapCache.get(docName);
   if (reuse) {
-    mark('ok/cache/reparent-start', {
+    mark('ps/cache/reparent-start', {
       docName,
       mountId: getMountId(docName),
       kind: 'tiptap',
@@ -334,16 +334,16 @@ export function mountTiptapEditor(params: MountTiptapParams): TiptapCacheEntry {
         reuse.editor.commands.focus();
       } catch {}
     }
-    mark('ok/cache/reparent-end', {
+    mark('ps/cache/reparent-end', {
       docName,
       mountId: getMountId(docName),
       kind: 'tiptap',
       viewCount: sizeStats?.viewCount ?? -1,
       bytes: sizeStats?.bytes ?? -1,
     });
-    mark('ok/cache/hit', { docName, mountId: getMountId(docName), kind: 'tiptap' });
+    mark('ps/cache/hit', { docName, mountId: getMountId(docName), kind: 'tiptap' });
     if (sizeStats) {
-      mark('ok/cold/editor-mount-stats', {
+      mark('ps/cold/editor-mount-stats', {
         docName,
         mountId: getMountId(docName),
         viewCount: sizeStats.viewCount,
@@ -374,7 +374,7 @@ export function mountTiptapEditor(params: MountTiptapParams): TiptapCacheEntry {
   };
   tiptapCache.set(docName, entry);
   touchLru(tiptapLru, docName);
-  mark('ok/cache/miss', {
+  mark('ps/cache/miss', {
     docName,
     mountId: getMountId(docName),
     viewCount: sizeStats?.viewCount ?? -1,
@@ -383,7 +383,7 @@ export function mountTiptapEditor(params: MountTiptapParams): TiptapCacheEntry {
     kind: 'tiptap',
   });
   if (sizeStats) {
-    mark('ok/cold/editor-mount-stats', {
+    mark('ps/cold/editor-mount-stats', {
       docName,
       mountId: getMountId(docName),
       viewCount: sizeStats.viewCount,
@@ -405,7 +405,7 @@ export function parkTiptapEditor(entry: TiptapCacheEntry): void {
     try {
       entry.editor.destroy();
     } catch (err) {
-      mark('ok/cache/park-destroy-failed', {
+      mark('ps/cache/park-destroy-failed', {
         docName: docName ?? '',
         kind: 'tiptap',
         stage: 'editor',
@@ -446,7 +446,7 @@ export function evictTiptapEditor(docName: string): boolean {
   try {
     entry.editor.destroy();
   } catch (err) {
-    mark('ok/cache/evict-failed', {
+    mark('ps/cache/evict-failed', {
       docName,
       kind: 'tiptap',
       stage: 'editor',
@@ -459,7 +459,7 @@ export function evictTiptapEditor(docName: string): boolean {
   try {
     entry.provider.destroy();
   } catch (err) {
-    mark('ok/cache/evict-failed', {
+    mark('ps/cache/evict-failed', {
       docName,
       kind: 'tiptap',
       stage: 'provider',
@@ -469,7 +469,7 @@ export function evictTiptapEditor(docName: string): boolean {
   try {
     entry.ydoc.destroy();
   } catch (err) {
-    mark('ok/cache/evict-failed', {
+    mark('ps/cache/evict-failed', {
       docName,
       kind: 'tiptap',
       stage: 'ydoc',
@@ -480,7 +480,7 @@ export function evictTiptapEditor(docName: string): boolean {
   tiptapCache.delete(docName);
   const lruIdx = tiptapLru.indexOf(docName);
   if (lruIdx !== -1) tiptapLru.splice(lruIdx, 1);
-  mark('ok/cache/evict', { docName, kind: 'tiptap' });
+  mark('ps/cache/evict', { docName, kind: 'tiptap' });
   return true;
 }
 
@@ -490,7 +490,7 @@ export function mountCmEditor(params: MountCmParams): CmCacheEntry {
   const gateRefuses = sizeStats ? !shouldCacheEditor(sizeStats) : false;
   if (!CACHE_ENABLED || gateRefuses) {
     const fresh = factory(container);
-    mark('ok/cache/miss', {
+    mark('ps/cache/miss', {
       docName,
       mountId: getMountId(docName),
       viewCount: sizeStats?.viewCount ?? -1,
@@ -518,7 +518,7 @@ export function mountCmEditor(params: MountCmParams): CmCacheEntry {
 
   const reuse = cmCache.get(docName);
   if (reuse) {
-    mark('ok/cache/reparent-start', {
+    mark('ps/cache/reparent-start', {
       docName,
       mountId: getMountId(docName),
       kind: 'cm',
@@ -534,16 +534,16 @@ export function mountCmEditor(params: MountCmParams): CmCacheEntry {
         reuse.view.focus();
       } catch {}
     }
-    mark('ok/cache/reparent-end', {
+    mark('ps/cache/reparent-end', {
       docName,
       mountId: getMountId(docName),
       kind: 'cm',
       viewCount: sizeStats?.viewCount ?? -1,
       bytes: sizeStats?.bytes ?? -1,
     });
-    mark('ok/cache/hit', { docName, mountId: getMountId(docName), kind: 'cm' });
+    mark('ps/cache/hit', { docName, mountId: getMountId(docName), kind: 'cm' });
     if (sizeStats) {
-      mark('ok/cold/editor-mount-stats', {
+      mark('ps/cold/editor-mount-stats', {
         docName,
         mountId: getMountId(docName),
         viewCount: sizeStats.viewCount,
@@ -579,7 +579,7 @@ export function mountCmEditor(params: MountCmParams): CmCacheEntry {
   };
   cmCache.set(docName, entry);
   touchLru(cmLru, docName);
-  mark('ok/cache/miss', {
+  mark('ps/cache/miss', {
     docName,
     mountId: getMountId(docName),
     viewCount: sizeStats?.viewCount ?? -1,
@@ -588,7 +588,7 @@ export function mountCmEditor(params: MountCmParams): CmCacheEntry {
     kind: 'cm',
   });
   if (sizeStats) {
-    mark('ok/cold/editor-mount-stats', {
+    mark('ps/cold/editor-mount-stats', {
       docName,
       mountId: getMountId(docName),
       viewCount: sizeStats.viewCount,
@@ -605,7 +605,7 @@ export function parkCmEditor(entry: CmCacheEntry): void {
     try {
       entry.view.destroy();
     } catch (err) {
-      mark('ok/cache/park-destroy-failed', {
+      mark('ps/cache/park-destroy-failed', {
         docName: entry.activeMountKey ?? '',
         kind: 'cm',
         stage: 'view',
@@ -644,7 +644,7 @@ function destroyCmUndoManager(
     undoManager.clear();
     undoManager.destroy();
   } catch (err) {
-    mark(`ok/cache/${event}`, {
+    mark(`ps/cache/${event}`, {
       docName,
       kind: 'cm',
       stage: 'undo-manager',
@@ -662,7 +662,7 @@ export function evictCmEditor(docName: string): boolean {
   try {
     entry.view.destroy();
   } catch (err) {
-    mark('ok/cache/evict-failed', {
+    mark('ps/cache/evict-failed', {
       docName,
       kind: 'cm',
       stage: 'view',
@@ -673,7 +673,7 @@ export function evictCmEditor(docName: string): boolean {
   try {
     entry.provider.destroy();
   } catch (err) {
-    mark('ok/cache/evict-failed', {
+    mark('ps/cache/evict-failed', {
       docName,
       kind: 'cm',
       stage: 'provider',
@@ -683,7 +683,7 @@ export function evictCmEditor(docName: string): boolean {
   try {
     entry.ydoc.destroy();
   } catch (err) {
-    mark('ok/cache/evict-failed', {
+    mark('ps/cache/evict-failed', {
       docName,
       kind: 'cm',
       stage: 'ydoc',
@@ -694,7 +694,7 @@ export function evictCmEditor(docName: string): boolean {
   cmCache.delete(docName);
   const lruIdx = cmLru.indexOf(docName);
   if (lruIdx !== -1) cmLru.splice(lruIdx, 1);
-  mark('ok/cache/evict', { docName, kind: 'cm' });
+  mark('ps/cache/evict', { docName, kind: 'cm' });
   return true;
 }
 
@@ -748,7 +748,7 @@ function findEvictable(lru: string[], mountingDocName: string): string | null {
     if (activityMountList.has(docName)) continue;
     return docName;
   }
-  mark('ok/cache/evict-fallback-activity-saturated', {
+  mark('ps/cache/evict-fallback-activity-saturated', {
     mountingDocName,
     lruLength: lru.length,
     activityMountCount: activityMountList.size,
@@ -770,9 +770,9 @@ export function setActivityMountList(docNames: readonly string[]): void {
     if (!provider) continue;
     try {
       provider.disconnect();
-      mark('ok/cache/disconnect', { docName });
+      mark('ps/cache/disconnect', { docName });
     } catch (err) {
-      mark('ok/cache/disconnect-failed', {
+      mark('ps/cache/disconnect-failed', {
         docName,
         message: err instanceof Error ? err.message : String(err),
       });
@@ -784,7 +784,7 @@ export function setActivityMountList(docNames: readonly string[]): void {
     const provider = findProvider(docName);
     if (!provider) continue;
     const emitFailed = (err: unknown): void => {
-      mark('ok/cache/connect-failed', {
+      mark('ps/cache/connect-failed', {
         docName,
         message: err instanceof Error ? err.message : String(err),
       });
@@ -793,11 +793,11 @@ export function setActivityMountList(docNames: readonly string[]): void {
       const result = provider.connect();
       if (result && typeof (result as Promise<unknown>).then === 'function') {
         (result as Promise<unknown>).then(
-          () => mark('ok/cache/connect', { docName }),
+          () => mark('ps/cache/connect', { docName }),
           (err) => emitFailed(err),
         );
       } else {
-        mark('ok/cache/connect', { docName });
+        mark('ps/cache/connect', { docName });
       }
     } catch (err) {
       emitFailed(err);

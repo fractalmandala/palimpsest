@@ -64,7 +64,7 @@ export function respondDocInConflict(
     }),
   );
   const { detail, ...envelope } = docInConflictEnvelope(conflict);
-  errorResponse(res, 409, 'urn:ok:error:doc-in-conflict', 'Document is in conflict.', {
+  errorResponse(res, 409, 'urn:ps:error:doc-in-conflict', 'Document is in conflict.', {
     handler,
     detail,
     extensions: { file: conflict?.file ?? err.file, ...envelope },

@@ -86,7 +86,7 @@ describe('isCapacityRefusal', () => {
   });
 
   test('a 503 with a different problem type is not a capacity refusal', () => {
-    expect(isCapacityRefusal({ status: 503, problemType: 'urn:ok:error:conflict' })).toBe(false);
+    expect(isCapacityRefusal({ status: 503, problemType: 'urn:ps:error:conflict' })).toBe(false);
   });
 
   test('a 503 with no problem type is not a capacity refusal', () => {

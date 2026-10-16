@@ -3,7 +3,7 @@ import { type EntryType, pathspecArgs, type TimelineEntry } from '@palimpsest/co
 import {
   isSurfacedCheckpointKind,
   parseCheckpoint,
-  parseOkActors,
+  parsePsActors,
   readContributors,
 } from '@palimpsest/core/shadow-repo-layout';
 import { extensionlessDocTreePath, getDocExtension } from './doc-extensions.ts';
@@ -137,7 +137,7 @@ function matchesAuthor(entry: TimelineEntry, authors: string[]): boolean {
  * modifications AND topological noise: - Multi-writer fan-out: each writer's WIP ref is its own
  * chain (precedent #25).
  */
-function filterEntriesByOkActorDocs(
+function filterEntriesByPsActorDocs(
   entries: ParsedEntry[],
   chain: Array<{ path: string; renameCommit: string | null }>,
   predecessorAncestors: Array<Set<string> | null>,
@@ -146,7 +146,7 @@ function filterEntriesByOkActorDocs(
   if (chain.length === 0) return entries;
 
   return entries.filter((entry) => {
-    const actors = parseOkActors(entry.rawBody);
+    const actors = parsePsActors(entry.rawBody);
     if (actors.length === 0) return true;
 
     const touchedNames = new Set<string>();
@@ -608,7 +608,7 @@ export async function getDocumentHistory(
           return buildAncestorShaSet(shadow, seeds, branch, ancestorSetCache);
         }),
       );
-      postFiltered = filterEntriesByOkActorDocs(unique, chain, filterAncestors);
+      postFiltered = filterEntriesByPsActorDocs(unique, chain, filterAncestors);
     }
 
     postFiltered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());

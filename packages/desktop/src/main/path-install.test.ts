@@ -58,7 +58,7 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
     const h = home();
     const result = await ensureCliOnPath(baseOpts(h));
     expect(result.status).toBe('installed-silent');
-    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(WRAPPER);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ps'))).toBe(WRAPPER);
     expect(readlinkSync(join(h, '.ps', 'bin', 'palimpsest'))).toBe(WRAPPER);
     expect(readFileSync(join(h, '.ps', 'env.sh'), 'utf8')).toContain(
       'export PATH="$' + '{HOME}/.ps/bin:$' + '{PATH}"',
@@ -211,10 +211,10 @@ describe('ensureCliOnPath', () => {
     await ensureCliOnPath(baseOpts(h));
     const healthy = await ensureCliOnPath(baseOpts(h));
     expect(healthy.status).toBe('healthy-current');
-    unlinkSync(join(h, '.ps', 'bin', 'ok'));
+    unlinkSync(join(h, '.ps', 'bin', 'ps'));
     const repaired = await ensureCliOnPath(baseOpts(h));
     expect(repaired.status).toBe('installed-silent');
-    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(WRAPPER);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ps'))).toBe(WRAPPER);
     expect(existsSync(join(h, '.zshrc'))).toBe(false);
   });
 
@@ -257,7 +257,7 @@ describe('ensureCliOnPath', () => {
       }),
     );
     expect(result.status).toBe('installed');
-    expect(() => lstatSync(join(bin, 'ok'))).toThrow();
+    expect(() => lstatSync(join(bin, 'ps'))).toThrow();
     expect(() => lstatSync(join(bin, 'palimpsest'))).toThrow();
     const zshrc = readFileSync(join(h, '.zshrc'), 'utf8');
     expect(zshrc).toContain('export FOO=1\n\n# >>> palimpsest cli >>>');
@@ -268,7 +268,7 @@ describe('ensureCliOnPath', () => {
     const h = home();
     const bin = join(h, 'bin');
     mkdirSync(bin);
-    symlinkSync(WRAPPER, join(bin, 'ok'));
+    symlinkSync(WRAPPER, join(bin, 'ps'));
     symlinkSync('/elsewhere/ps.sh', join(bin, 'palimpsest'));
     const markerPath = pathInstallMarkerPath(h);
     mkdirSync(dirname(markerPath), { recursive: true });
@@ -290,7 +290,7 @@ describe('ensureCliOnPath', () => {
         rcFiles: [],
         pathDiscovery: null,
         extraSymlinks: [
-          entry(join(bin, 'ok')),
+          entry(join(bin, 'ps')),
           entry(join(bin, 'palimpsest')),
           entry(join(bin, 'gone')),
         ],
@@ -305,7 +305,7 @@ describe('ensureCliOnPath', () => {
     );
     expect(result.status).toBe('installed');
     if (result.status === 'installed') expect(result.summary).toContain('leftover ok symlink');
-    expect(() => lstatSync(join(bin, 'ok'))).toThrow();
+    expect(() => lstatSync(join(bin, 'ps'))).toThrow();
     expect(readlinkSync(join(bin, 'palimpsest'))).toBe('/elsewhere/ps.sh');
     const marker = readMarkerFile(h);
     expect(marker.extraSymlinks).toEqual([]);
@@ -377,7 +377,7 @@ describe('ensureCliOnPath', () => {
       }),
     );
     expect(result.status).toBe('installed');
-    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ps'))).toBe(
       '/opt/Palimpsest/resources/cli/bin/ps.sh',
     );
     expect(readFileSync(join(h, '.bashrc'), 'utf8')).toContain('.ps/env.sh');
@@ -457,7 +457,7 @@ describe('ensureCliOnPath', () => {
       '/Users/someone/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps.sh';
     const result = await ensureCliOnPath(baseOpts(h, { executablePath: newExe }));
     expect(result.status).toBe('installed-silent');
-    expect(readlinkSync(join(h, '.ps', 'bin', 'ok'))).toBe(newWrapper);
+    expect(readlinkSync(join(h, '.ps', 'bin', 'ps'))).toBe(newWrapper);
     expect(readlinkSync(join(h, '.ps', 'bin', 'palimpsest'))).toBe(newWrapper);
   });
 });

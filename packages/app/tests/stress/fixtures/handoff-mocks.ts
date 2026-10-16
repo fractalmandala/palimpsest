@@ -604,7 +604,7 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
     try {
       // biome-ignore lint/suspicious/noExplicitAny: matches production resolution in cowork-skill-install.ts.
       const ver = (window as any).psDesktop?.appVersion ?? 'unknown';
-      window.localStorage.setItem(`ok:skill:cowork:installed:v${ver}`, '1');
+      window.localStorage.setItem(`ps:skill:cowork:installed:v${ver}`, '1');
     } catch {}
   }, initConfig);
 }

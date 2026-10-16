@@ -57,7 +57,7 @@ describe('wrapExtensionsWithTiming', () => {
     expect(typeof onCreate).toBe('function');
     onCreate?.call({ parent: null } as ParentScope);
     const names = getMarkNames();
-    expect(names).toContain('ok/cold/ext-wiki-link-on-create');
+    expect(names).toContain('ps/cold/ext-wiki-link-on-create');
   });
 
   test('emits all four lifecycle marks (onBeforeCreate, onCreate, onUpdate, onDestroy)', () => {
@@ -78,10 +78,10 @@ describe('wrapExtensionsWithTiming', () => {
     cfg.onUpdate?.call({ parent: null });
     cfg.onDestroy?.call({ parent: null });
     const names = getMarkNames();
-    expect(names).toContain('ok/cold/ext-plain-on-before-create');
-    expect(names).toContain('ok/cold/ext-plain-on-create');
-    expect(names).toContain('ok/cold/ext-plain-on-update');
-    expect(names).toContain('ok/cold/ext-plain-on-destroy');
+    expect(names).toContain('ps/cold/ext-plain-on-before-create');
+    expect(names).toContain('ps/cold/ext-plain-on-create');
+    expect(names).toContain('ps/cold/ext-plain-on-update');
+    expect(names).toContain('ps/cold/ext-plain-on-destroy');
   });
 
   test('lowercases + dashes camelCase / PascalCase extension names', () => {
@@ -95,9 +95,9 @@ describe('wrapExtensionsWithTiming', () => {
       onCreate?.call({ parent: null });
     }
     const names = getMarkNames();
-    expect(names).toContain('ok/cold/ext-wiki-link-embed-on-create');
-    expect(names).toContain('ok/cold/ext-jsx-component-on-create');
-    expect(names).toContain('ok/cold/ext-simple-on-create');
+    expect(names).toContain('ps/cold/ext-wiki-link-embed-on-create');
+    expect(names).toContain('ps/cold/ext-jsx-component-on-create');
+    expect(names).toContain('ps/cold/ext-simple-on-create');
   });
 
   test('calls this.parent?.() so user-supplied hooks still fire', () => {
@@ -132,7 +132,7 @@ describe('wrapExtensionsWithTiming', () => {
       }),
     ).toThrow('parent boom');
     const names = getMarkNames();
-    expect(names).toContain('ok/cold/ext-throwing-on-create');
+    expect(names).toContain('ps/cold/ext-throwing-on-create');
   });
 
   test('mark detail carries ext name + hook + durationMs property', () => {
@@ -142,7 +142,7 @@ describe('wrapExtensionsWithTiming', () => {
       .config.onCreate;
     onCreate?.call({ parent: null });
     const entries = performance.getEntriesByName(
-      'ok/cold/ext-wiki-link-on-create',
+      'ps/cold/ext-wiki-link-on-create',
     ) as PerformanceMeasure[];
     expect(entries.length).toBeGreaterThanOrEqual(1);
     const last = entries[entries.length - 1];
@@ -150,7 +150,7 @@ describe('wrapExtensionsWithTiming', () => {
       devtools: { dataType: string; track: string; properties?: Array<[string, string]> };
     };
     expect(detail.devtools.dataType).toBe('track-entry');
-    expect(detail.devtools.track).toBe('ok/cold');
+    expect(detail.devtools.track).toBe('ps/cold');
     const propMap = Object.fromEntries(detail.devtools.properties ?? []);
     expect(propMap.ext).toBe('wikiLink');
     expect(propMap.hook).toBe('onCreate');
@@ -168,7 +168,7 @@ describe('wrapExtensionsWithTiming', () => {
       .config.onCreate;
     expect(() => onCreate?.call({ parent: null })).not.toThrow();
     const names = getMarkNames();
-    expect(names).toContain('ok/cold/ext-no-hook-on-create');
+    expect(names).toContain('ps/cold/ext-no-hook-on-create');
   });
 });
 
@@ -281,7 +281,7 @@ describe('wrapMethod — error propagation contract', () => {
         throw new OriginalError();
       },
     };
-    wrapMethod(target, 'method', 'ok/cold/test-throw-prop');
+    wrapMethod(target, 'method', 'ps/cold/test-throw-prop');
     expect(() => (target.method as () => void)()).toThrow(OriginalError);
   });
 
@@ -292,7 +292,7 @@ describe('wrapMethod — error propagation contract', () => {
         throw new Error('original failure');
       },
     };
-    wrapMethod(target, 'method', 'ok/cold/test-throw-no-props', () => {
+    wrapMethod(target, 'method', 'ps/cold/test-throw-no-props', () => {
       propsBuilderInvocations += 1;
       return { wasCalled: true };
     });
@@ -308,7 +308,7 @@ describe('wrapMethod — error propagation contract', () => {
         return 'original-success-return';
       },
     };
-    wrapMethod(target, 'method', 'ok/cold/test-success-props-throw', () => {
+    wrapMethod(target, 'method', 'ps/cold/test-success-props-throw', () => {
       throw new Error('synthetic propsBuilder failure');
     });
     const ret = (target.method as () => string)();
@@ -316,7 +316,7 @@ describe('wrapMethod — error propagation contract', () => {
 
     const collected = getCollector()
       ?.marks.toArray()
-      .find((m) => m.name === 'ok/cold/test-success-props-throw');
+      .find((m) => m.name === 'ps/cold/test-success-props-throw');
     expect(collected).toBeDefined();
     expect(collected?.properties?.['instrumentation-error']).toBe('synthetic propsBuilder failure');
   });
@@ -328,8 +328,8 @@ describe('wrapMethod — error propagation contract', () => {
         throw new Error('x');
       },
     };
-    wrapMethod(successTarget, 'ok', 'ok/cold/test-mark-success');
-    wrapMethod(throwTarget, 'bad', 'ok/cold/test-mark-throw');
+    wrapMethod(successTarget, 'ok', 'ps/cold/test-mark-success');
+    wrapMethod(throwTarget, 'bad', 'ps/cold/test-mark-throw');
 
     (successTarget.ok as () => number)();
     try {
@@ -338,10 +338,10 @@ describe('wrapMethod — error propagation contract', () => {
 
     const successMark = getCollector()
       ?.marks.toArray()
-      .find((m) => m.name === 'ok/cold/test-mark-success');
+      .find((m) => m.name === 'ps/cold/test-mark-success');
     const throwMark = getCollector()
       ?.marks.toArray()
-      .find((m) => m.name === 'ok/cold/test-mark-throw');
+      .find((m) => m.name === 'ps/cold/test-mark-throw');
     expect(successMark).toBeDefined();
     expect(throwMark).toBeDefined();
     expect(successMark?.properties?.threw).toBe(false);

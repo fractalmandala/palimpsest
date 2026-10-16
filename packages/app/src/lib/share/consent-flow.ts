@@ -31,7 +31,7 @@ export function markInitializing(state: ConsentFlowState): ConsentFlowState {
   return { phase: 'initializing', seed: state.seed };
 }
 
-export function applyOkInitOutcome(
+export function applyPsInitOutcome(
   state: ConsentFlowState,
   outcome:
     | { readonly ok: true; readonly projectPath: string }

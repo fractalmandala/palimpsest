@@ -139,7 +139,7 @@ test('refused and failed config writes leave accepted-write invalidation silent'
     value: true,
   });
   expect(declined.status).toBe(409);
-  expect(declined.body.type).toBe('urn:ok:error:config-not-writable');
+  expect(declined.body.type).toBe('urn:ps:error:config-not-writable');
   expect(markdownSignals).toEqual([]);
 
   const frontmatterSignals: string[] = [];
@@ -150,7 +150,7 @@ test('refused and failed config writes leave accepted-write invalidation silent'
     file: '../escape.schema.json',
   });
   expect(refused.status).toBe(409);
-  expect(refused.body.type).toBe('urn:ok:error:config-not-writable');
+  expect(refused.body.type).toBe('urn:ps:error:config-not-writable');
   expect(frontmatterSignals).toEqual([]);
 
   const markdownFailureSignals: string[] = [];

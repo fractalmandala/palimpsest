@@ -3,7 +3,7 @@ import { getLogger } from './desktop-logger.ts';
 
 const VALID_THEME_SOURCES: ReadonlySet<PsThemeSource> = new Set(['system', 'light', 'dark']);
 
-export function isOkThemeSource(value: unknown): value is PsThemeSource {
+export function isPsThemeSource(value: unknown): value is PsThemeSource {
   return typeof value === 'string' && VALID_THEME_SOURCES.has(value as PsThemeSource);
 }
 

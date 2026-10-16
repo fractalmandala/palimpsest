@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readEnabledRuleIds,
   readRegisteredRuleNames,
 } from '../../../test-support/read-ps-rules-config.test-helper.ts';
@@ -21,7 +21,7 @@ function branchOf(message) {
 }
 
 function fires() {
-  return lintOkRulesFixture(FIXTURE).filter((d) => d.code === CODE);
+  return lintPsRulesFixture(FIXTURE).filter((d) => d.code === CODE);
 }
 
 describe(`${RULE} oxlint rule`, () => {
@@ -42,6 +42,6 @@ describe(`${RULE} oxlint rule`, () => {
 
   test('rule is registered, enabled, and deliberately unscoped', async () => {
     expect(await readRegisteredRuleNames(REPO_ROOT)).toContain(RULE);
-    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ok/${RULE}`);
+    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ps/${RULE}`);
   });
 });

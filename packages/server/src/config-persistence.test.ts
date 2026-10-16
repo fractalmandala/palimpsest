@@ -24,7 +24,7 @@ import {
   CONFIG_VALIDATION_REVERT_ORIGIN,
 } from './config-edit-origin.ts';
 import {
-  __resetOkignoreTelemetryForTests,
+  __resetPsignoreTelemetryForTests,
   applyExternalConfigChange,
   type ConfigPersistenceCtx,
   configDocAbsPath,
@@ -1192,14 +1192,14 @@ describe('psignore — rejection counter telemetry', () => {
     });
     meterProvider = new sdk.MeterProvider({ readers: [metricReader] });
     api.metrics.setGlobalMeterProvider(meterProvider);
-    __resetOkignoreTelemetryForTests();
+    __resetPsignoreTelemetryForTests();
   });
 
   afterEach(async () => {
     const api = await import('@opentelemetry/api');
     await meterProvider.shutdown();
     api.metrics.disable();
-    __resetOkignoreTelemetryForTests();
+    __resetPsignoreTelemetryForTests();
   });
 
   async function readPoints(
@@ -1227,7 +1227,7 @@ describe('psignore — rejection counter telemetry', () => {
 
     await storeConfigDoc(doc, CONFIG_DOC_NAME_OKIGNORE, undefined, fx.ctx);
 
-    const points = await readPoints('ok.config.ignore.rejection_total');
+    const points = await readPoints('ps.config.ignore.rejection_total');
     const total = points.reduce((acc, p) => acc + p.value, 0);
     expect(total).toBe(1);
     for (const p of points) {
@@ -1242,7 +1242,7 @@ describe('psignore — rejection counter telemetry', () => {
 
     applyExternalConfigChange(doc, CONFIG_DOC_NAME_OKIGNORE, '   \n', fx.ctx);
 
-    const points = await readPoints('ok.config.ignore.rejection_total');
+    const points = await readPoints('ps.config.ignore.rejection_total');
     const total = points.reduce((acc, p) => acc + p.value, 0);
     expect(total).toBe(1);
   });
@@ -1254,7 +1254,7 @@ describe('psignore — rejection counter telemetry', () => {
 
     await storeConfigDoc(doc, CONFIG_DOC_NAME_PROJECT, undefined, fx.ctx);
 
-    const points = await readPoints('ok.config.ignore.rejection_total');
+    const points = await readPoints('ps.config.ignore.rejection_total');
     const total = points.reduce((acc, p) => acc + p.value, 0);
     expect(total).toBe(0);
   });

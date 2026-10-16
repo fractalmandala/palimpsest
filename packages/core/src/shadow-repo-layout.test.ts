@@ -11,7 +11,7 @@ import {
   formatCheckpointBodyLine,
   formatCheckpointSubject,
   formatImportSubject,
-  formatOkActor,
+  formatPsActor,
   formatParkSubject,
   formatReconcileSubject,
   formatRenameSubject,
@@ -26,8 +26,8 @@ import {
   type PsActorEntry,
   parseCheckpoint,
   parseContributors,
-  parseOkActor,
-  parseOkActors,
+  parsePsActor,
+  parsePsActors,
   parseWriterId,
   readContributors,
   resolveGitDir,
@@ -347,7 +347,7 @@ describe('resolveShadowDir', () => {
     mkdirSync(project, { recursive: true });
     mkdirSync(adminDir, { recursive: true });
     writeFileSync(resolve(project, '.git'), `gitdir: ${adminDir}\n`);
-    expect(resolveShadowDir(project)).toBe(resolve(adminDir, 'ok'));
+    expect(resolveShadowDir(project)).toBe(resolve(adminDir, 'ps'));
   });
 
   test('throws MalformedGitPointerError when pointer references a missing admin dir', () => {
@@ -972,7 +972,7 @@ describe('formatWipSubject', () => {
   });
 });
 
-describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
+describe('parsePsActor / formatPsActor (US-015, FR-8, D13)', () => {
   const baseEntry: PsActorEntry = {
     v: 1,
     writer_id: 'agent-conn-abc123',
@@ -988,9 +988,9 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
   };
 
   test('round-trips a full PsActorEntry', () => {
-    const line = formatOkActor(baseEntry);
+    const line = formatPsActor(baseEntry);
     const body = `wip: notes.md\n\n${line}`;
-    const parsed = parseOkActor(body);
+    const parsed = parsePsActor(body);
     expect(parsed).not.toBeNull();
     expect(parsed?.v).toBe(1);
     expect(parsed?.agent_session).toBe('conn-abc123');
@@ -1017,8 +1017,8 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
       color_seed: 'openknowledge-service',
       docs: [],
     };
-    const line = formatOkActor(sparse);
-    const parsed = parseOkActor(`wip: auto-save\n\n${line}`);
+    const line = formatPsActor(sparse);
+    const parsed = parsePsActor(`wip: auto-save\n\n${line}`);
     expect(parsed).not.toBeNull();
     expect(parsed?.writer_id).toBe('openknowledge-service');
     expect(parsed?.agent_session).toBeNull();
@@ -1026,41 +1026,41 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
   });
 
   test('returns null for empty body', () => {
-    expect(parseOkActor('')).toBeNull();
+    expect(parsePsActor('')).toBeNull();
   });
 
   test('returns null when ps-actor: line is absent', () => {
-    expect(parseOkActor('wip: auto-save\n\nok-contributors: {...}')).toBeNull();
+    expect(parsePsActor('wip: auto-save\n\nok-contributors: {...}')).toBeNull();
   });
 
   test('returns null for malformed JSON', () => {
-    expect(parseOkActor('ps-actor: {not json')).toBeNull();
+    expect(parsePsActor('ps-actor: {not json')).toBeNull();
   });
 
   test('rejects v:0 (schema version must be 1)', () => {
     const line = 'ps-actor: {"v":0,"display_name":"X","docs":[]}';
-    expect(parseOkActor(line)).toBeNull();
+    expect(parsePsActor(line)).toBeNull();
   });
 
   test('rejects missing display_name', () => {
     const line = 'ps-actor: {"v":1,"docs":[]}';
-    expect(parseOkActor(line)).toBeNull();
+    expect(parsePsActor(line)).toBeNull();
   });
 
   test('rejects missing docs array', () => {
     const line = 'ps-actor: {"v":1,"display_name":"X"}';
-    expect(parseOkActor(line)).toBeNull();
+    expect(parsePsActor(line)).toBeNull();
   });
 
   test('tolerates sibling ps-contributors: and ps-checkpoint-v1: lines (coexistence)', () => {
-    const actorLine = formatOkActor(baseEntry);
+    const actorLine = formatPsActor(baseEntry);
     const body = [
       'wip: notes.md',
       '',
       'ps-contributors: {"v":1,"id":"agent-abc","name":"Claude","docs":["notes.md"]}',
       actorLine,
     ].join('\n');
-    const parsed = parseOkActor(body);
+    const parsed = parsePsActor(body);
     expect(parsed?.display_name).toBe('Claude (abc1)');
     const contributors = parseContributors(body);
     expect(contributors).toHaveLength(1);
@@ -1069,13 +1069,13 @@ describe('parseOkActor / formatOkActor (US-015, FR-8, D13)', () => {
 
   test('color_seed defaults to "unknown" when missing in stored JSON', () => {
     const line = 'ps-actor: {"v":1,"display_name":"X","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.color_seed).toBe('unknown');
   });
 });
 
 describe('PsActorEntry writer_id field + derivation back-compat', () => {
-  test('formatOkActor emits writer_id inline', () => {
+  test('formatPsActor emits writer_id inline', () => {
     const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-abc123',
@@ -1089,52 +1089,52 @@ describe('PsActorEntry writer_id field + derivation back-compat', () => {
       color_seed: 'claude-code',
       docs: ['a.md'],
     };
-    const line = formatOkActor(entry);
+    const line = formatPsActor(entry);
     expect(line).toContain('"writer_id":"agent-abc123"');
   });
 
-  test('parseOkActor derives writer_id from agent_session when missing (pre-consolidation commit back-compat)', () => {
+  test('parsePsActor derives writer_id from agent_session when missing (pre-consolidation commit back-compat)', () => {
     const line =
       'ps-actor: {"v":1,"principal":null,"agent_session":"old-conn","display_name":"Claude","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('agent-old-conn');
   });
 
-  test('parseOkActor derives writer_id from principal when agent_session is null', () => {
+  test('parsePsActor derives writer_id from principal when agent_session is null', () => {
     const line =
       'ps-actor: {"v":1,"principal":"principal-alice-uuid","agent_session":null,"display_name":"Alice","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('principal-alice-uuid');
   });
 
-  test('parseOkActor derives writer_id from display_name for classified writers (file-system)', () => {
+  test('parsePsActor derives writer_id from display_name for classified writers (file-system)', () => {
     const line = 'ps-actor: {"v":1,"display_name":"File System","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('file-system');
   });
 
-  test('parseOkActor derives writer_id from display_name for classified writers (git-upstream)', () => {
+  test('parsePsActor derives writer_id from display_name for classified writers (git-upstream)', () => {
     const line = 'ps-actor: {"v":1,"display_name":"Git (upstream)","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('git-upstream');
   });
 
-  test('parseOkActor falls back to openknowledge-service for unknown classified display_name', () => {
+  test('parsePsActor falls back to openknowledge-service for unknown classified display_name', () => {
     const line = 'ps-actor: {"v":1,"display_name":"Palimpsest (service)","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('openknowledge-service');
   });
 
   test('explicit writer_id in stored JSON wins over any derivation', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"custom-writer","principal":"principal-ignored","display_name":"X","docs":[]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('custom-writer');
   });
 });
 
 describe('PsActorEntry summaries field (consolidated from ps-contributors:)', () => {
-  test('formatOkActor elides summaries when empty/absent (legacy byte-identity)', () => {
+  test('formatPsActor elides summaries when empty/absent (legacy byte-identity)', () => {
     const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
@@ -1148,10 +1148,10 @@ describe('PsActorEntry summaries field (consolidated from ps-contributors:)', ()
       color_seed: 'claude',
       docs: ['a.md'],
     };
-    expect(formatOkActor(entry)).not.toContain('summaries');
+    expect(formatPsActor(entry)).not.toContain('summaries');
   });
 
-  test('formatOkActor elides summaries when explicitly empty array', () => {
+  test('formatPsActor elides summaries when explicitly empty array', () => {
     const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
@@ -1166,10 +1166,10 @@ describe('PsActorEntry summaries field (consolidated from ps-contributors:)', ()
       docs: ['a.md'],
       summaries: [],
     };
-    expect(formatOkActor(entry)).not.toContain('summaries');
+    expect(formatPsActor(entry)).not.toContain('summaries');
   });
 
-  test('formatOkActor includes summaries when populated', () => {
+  test('formatPsActor includes summaries when populated', () => {
     const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
@@ -1184,11 +1184,11 @@ describe('PsActorEntry summaries field (consolidated from ps-contributors:)', ()
       docs: ['a.md'],
       summaries: ['Added auth design', 'Fixed typo'],
     };
-    const line = formatOkActor(entry);
+    const line = formatPsActor(entry);
     expect(line).toContain('"summaries":["Added auth design","Fixed typo"]');
   });
 
-  test('parseOkActor round-trips summaries', () => {
+  test('parsePsActor round-trips summaries', () => {
     const entry: PsActorEntry = {
       v: 1,
       writer_id: 'agent-a',
@@ -1203,23 +1203,23 @@ describe('PsActorEntry summaries field (consolidated from ps-contributors:)', ()
       docs: ['a.md'],
       summaries: ['one', 'two'],
     };
-    const parsed = parseOkActor(formatOkActor(entry));
+    const parsed = parsePsActor(formatPsActor(entry));
     expect(parsed?.summaries).toEqual(['one', 'two']);
   });
 
-  test('parseOkActor drops summaries field when malformed (D27 divergence — keep entry)', () => {
+  test('parsePsActor drops summaries field when malformed (D27 divergence — keep entry)', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"summaries":"not-an-array"}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.writer_id).toBe('agent-a');
     expect(parsed?.summaries).toBeUndefined();
   });
 
-  test('parseOkActor drops summaries field when array has non-string element', () => {
+  test('parsePsActor drops summaries field when array has non-string element', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"summaries":["ok",42,"also-ok"]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.summaries).toBeUndefined();
   });
 });
@@ -1239,38 +1239,38 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
     docs: ['essays/auth.md'],
   };
 
-  test('formatOkActor elides previous_paths when absent (legacy byte-identity)', () => {
-    expect(formatOkActor(baseEntry)).not.toContain('previous_paths');
+  test('formatPsActor elides previous_paths when absent (legacy byte-identity)', () => {
+    expect(formatPsActor(baseEntry)).not.toContain('previous_paths');
   });
 
-  test('formatOkActor elides previous_paths when explicitly empty array', () => {
+  test('formatPsActor elides previous_paths when explicitly empty array', () => {
     const entry: PsActorEntry = { ...baseEntry, previous_paths: [] };
-    expect(formatOkActor(entry)).not.toContain('previous_paths');
+    expect(formatPsActor(entry)).not.toContain('previous_paths');
   });
 
-  test('formatOkActor includes previous_paths when populated', () => {
+  test('formatPsActor includes previous_paths when populated', () => {
     const entry: PsActorEntry = {
       ...baseEntry,
       previous_paths: [{ from: 'articles/auth', to: 'essays/auth' }],
     };
-    const line = formatOkActor(entry);
+    const line = formatPsActor(entry);
     expect(line).toContain('"previous_paths":[{"from":"articles/auth","to":"essays/auth"}]');
   });
 
-  test('formatOkActor includes previous_paths after summaries when both present', () => {
+  test('formatPsActor includes previous_paths after summaries when both present', () => {
     const entry: PsActorEntry = {
       ...baseEntry,
       summaries: ['rename'],
       previous_paths: [{ from: 'articles/auth', to: 'essays/auth' }],
     };
-    const line = formatOkActor(entry);
+    const line = formatPsActor(entry);
     const summariesIdx = line.indexOf('"summaries"');
     const previousPathsIdx = line.indexOf('"previous_paths"');
     expect(summariesIdx).toBeGreaterThan(0);
     expect(previousPathsIdx).toBeGreaterThan(summariesIdx);
   });
 
-  test('parseOkActor round-trips previous_paths chain', () => {
+  test('parsePsActor round-trips previous_paths chain', () => {
     const entry: PsActorEntry = {
       ...baseEntry,
       previous_paths: [
@@ -1278,7 +1278,7 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
         { from: 'docs/auth', to: 'essays/auth' },
       ],
     };
-    const parsed = parseOkActor(formatOkActor(entry));
+    const parsed = parsePsActor(formatPsActor(entry));
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toEqual([
       { from: 'articles/auth', to: 'docs/auth' },
@@ -1289,24 +1289,24 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
   test('legacy ps-actor body (no previous_paths field) parses with previous_paths undefined', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","principal":null,"agent_session":"a","agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Claude","color_seed":"claude","docs":["x.md"]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toBeUndefined();
   });
 
-  test('parseOkActor drops previous_paths field when not an array', () => {
+  test('parsePsActor drops previous_paths field when not an array', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":"not-an-array"}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.writer_id).toBe('agent-a');
     expect(parsed?.previous_paths).toBeUndefined();
   });
 
-  test('parseOkActor drops single malformed previous_paths entry but keeps the rest', () => {
+  test('parsePsActor drops single malformed previous_paths entry but keeps the rest', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":"a","to":"b"},{"from":42,"to":"c"},{"from":"c","to":"d"}]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toEqual([
       { from: 'a', to: 'b' },
@@ -1314,36 +1314,36 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
     ]);
   });
 
-  test('parseOkActor drops previous_paths element missing required fields', () => {
+  test('parsePsActor drops previous_paths element missing required fields', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":"only-from"},{"to":"only-to"},{"from":"a","to":"b"}]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed).not.toBeNull();
     expect(parsed?.previous_paths).toEqual([{ from: 'a', to: 'b' }]);
   });
 
-  test('parseOkActor drops null entry inside previous_paths array', () => {
+  test('parsePsActor drops null entry inside previous_paths array', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[null,{"from":"a","to":"b"}]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.previous_paths).toEqual([{ from: 'a', to: 'b' }]);
   });
 
-  test('formatOkActor elides previous_paths when every element is malformed', () => {
+  test('formatPsActor elides previous_paths when every element is malformed', () => {
     const line =
       'ps-actor: {"v":1,"writer_id":"agent-a","display_name":"Claude","docs":["a.md"],"previous_paths":[{"from":42},{"to":99}]}';
-    const parsed = parseOkActor(line);
+    const parsed = parsePsActor(line);
     expect(parsed?.previous_paths).toBeUndefined();
   });
 
-  test('parseOkActors carries previous_paths on each writer', () => {
+  test('parsePsActors carries previous_paths on each writer', () => {
     const body = [
       'rename: articles/x -> essays/x',
       '',
       'ps-actor: {"v":1,"writer_id":"agent-alice","display_name":"Alice","docs":["essays/x.md"],"previous_paths":[{"from":"articles/x","to":"essays/x"}]}',
       'ps-actor: {"v":1,"writer_id":"agent-bob","display_name":"Bob","docs":["essays/y.md"],"previous_paths":[{"from":"articles/y","to":"essays/y"}]}',
     ].join('\n');
-    const actors = parseOkActors(body);
+    const actors = parsePsActors(body);
     expect(actors).toHaveLength(2);
     expect(actors[0]?.previous_paths).toEqual([{ from: 'articles/x', to: 'essays/x' }]);
     expect(actors[1]?.previous_paths).toEqual([{ from: 'articles/y', to: 'essays/y' }]);
@@ -1356,9 +1356,9 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
       'ps-actor: {"v":1,"writer_id":"agent-a","principal":null,"agent_session":"a","agent_type":null,"client_name":null,"client_version":null,"label":null,"display_name":"Claude","color_seed":"claude","docs":["a.md"],"summaries":["one","two"]}',
     ];
     for (const legacyLine of corpus) {
-      const parsed = parseOkActor(legacyLine);
+      const parsed = parsePsActor(legacyLine);
       expect(parsed).not.toBeNull();
-      const reformatted = formatOkActor(parsed as PsActorEntry);
+      const reformatted = formatPsActor(parsed as PsActorEntry);
       expect(reformatted).toBe(legacyLine);
     }
   });
@@ -1372,17 +1372,17 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
         { from: 'c', to: 'd' },
       ],
     };
-    const line = formatOkActor(entry);
-    const parsed = parseOkActor(line);
+    const line = formatPsActor(entry);
+    const parsed = parsePsActor(line);
     expect(parsed).not.toBeNull();
-    const relined = formatOkActor(parsed as PsActorEntry);
+    const relined = formatPsActor(parsed as PsActorEntry);
     expect(relined).toBe(line);
   });
 });
 
-describe('parseOkActors (plural — multi-writer L2 drain)', () => {
+describe('parsePsActors (plural — multi-writer L2 drain)', () => {
   test('empty body → []', () => {
-    expect(parseOkActors('')).toEqual([]);
+    expect(parsePsActors('')).toEqual([]);
   });
 
   test('returns every ps-actor line, in file order', () => {
@@ -1392,7 +1392,7 @@ describe('parseOkActors (plural — multi-writer L2 drain)', () => {
       'ps-actor: {"v":1,"writer_id":"agent-alice","display_name":"Alice","docs":["a.md"],"summaries":["Alice note"]}',
       'ps-actor: {"v":1,"writer_id":"agent-bob","display_name":"Bob","docs":["b.md"],"summaries":["Bob note"]}',
     ].join('\n');
-    const actors = parseOkActors(body);
+    const actors = parsePsActors(body);
     expect(actors).toHaveLength(2);
     expect(actors[0]?.writer_id).toBe('agent-alice');
     expect(actors[1]?.writer_id).toBe('agent-bob');
@@ -1404,14 +1404,14 @@ describe('parseOkActors (plural — multi-writer L2 drain)', () => {
       'ps-actor: {"v":1,"writer_id":"agent-ok","display_name":"Good","docs":[]}',
       'ps-actor: {"v":0,"display_name":"wrong-version","docs":[]}',
     ].join('\n');
-    const actors = parseOkActors(body);
+    const actors = parsePsActors(body);
     expect(actors).toHaveLength(1);
     expect(actors[0]?.writer_id).toBe('agent-ok');
   });
 
   test('no ps-actor lines → []', () => {
     const body = 'wip: foo\n\nok-contributors: {"id":"x","name":"X","docs":[]}';
-    expect(parseOkActors(body)).toEqual([]);
+    expect(parsePsActors(body)).toEqual([]);
   });
 });
 

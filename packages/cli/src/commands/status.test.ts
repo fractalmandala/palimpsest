@@ -124,11 +124,11 @@ describe('renderStatusText', () => {
     expect(out).toContain('not running');
   });
 
-  test('stale entries suggest ok clean', () => {
+  test('stale entries suggest ps clean', () => {
     const out = renderStatusText(buildStatusReport(dead(999)));
     expect(out).toContain('stale');
     expect(out).toContain('pid=999');
-    expect(out).toContain('ok clean');
+    expect(out).toContain('ps clean');
   });
 });
 
@@ -191,7 +191,7 @@ describe('status hints name the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: stale and corrupt locks suggest %s clean', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

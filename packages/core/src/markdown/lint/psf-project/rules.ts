@@ -1,9 +1,9 @@
 import { SUPPORTED_DOC_EXTENSIONS } from '../../../constants/doc-extensions.ts';
-import { isOkfRuleEnabled, type OkfRuleId, type OkfRuleToggles } from '../psf-rule-meta.ts';
+import { isPsfRuleEnabled, type PsfRuleId, type PsfRuleToggles } from '../psf-rule-meta.ts';
 
-export interface OkfProjectFinding {
+export interface PsfProjectFinding {
   readonly file: string;
-  readonly code: OkfRuleId;
+  readonly code: PsfRuleId;
   readonly message: string;
 }
 
@@ -14,17 +14,17 @@ function splitName(path: string): { stem: string; ext: string } {
   return { stem: base.slice(0, dot), ext: base.slice(dot) };
 }
 
-function noMdx(paths: readonly string[]): OkfProjectFinding[] {
+function noMdx(paths: readonly string[]): PsfProjectFinding[] {
   const mdStems = new Set(
     paths
       .filter((path) => splitName(path).ext.toLowerCase() === '.md')
       .map((path) => path.slice(0, path.lastIndexOf('.'))),
   );
-  const findings: OkfProjectFinding[] = [];
+  const findings: PsfProjectFinding[] = [];
   for (const path of paths) {
     if (splitName(path).ext.toLowerCase() !== '.mdx') continue;
     const stem = path.slice(0, path.lastIndexOf('.'));
-    const lead = `"${path}" won't be picked up by an Palimpsest Format consumer — the format is .md-only, and nothing scanning for .md files will open an .mdx.`;
+    const lead = `"${path}" won't be picked up by an OpenKnowledge Format consumer — the format is .md-only, and nothing scanning for .md files will open an .mdx.`;
     findings.push({
       file: path,
       code: 'project-no-mdx',
@@ -36,24 +36,24 @@ function noMdx(paths: readonly string[]): OkfProjectFinding[] {
   return findings;
 }
 
-export interface OkfProjectRule {
-  readonly id: OkfRuleId;
-  readonly run: (paths: readonly string[]) => OkfProjectFinding[];
+export interface PsfProjectRule {
+  readonly id: PsfRuleId;
+  readonly run: (paths: readonly string[]) => PsfProjectFinding[];
 }
 
-export const PSF_PROJECT_REGISTRY: readonly OkfProjectRule[] = [
+export const PSF_PROJECT_REGISTRY: readonly PsfProjectRule[] = [
   { id: 'project-no-mdx', run: noMdx },
 ];
 
-export function runOkfProjectRules(
+export function runPsfProjectRules(
   paths: readonly string[],
-  rules: OkfRuleToggles,
-): OkfProjectFinding[] {
+  rules: PsfRuleToggles,
+): PsfProjectFinding[] {
   const docs = paths.filter((path) =>
     SUPPORTED_DOC_EXTENSIONS.some((ext) => path.toLowerCase().endsWith(ext)),
   );
   if (docs.length === 0) return [];
-  return PSF_PROJECT_REGISTRY.filter((rule) => isOkfRuleEnabled(rules, rule.id)).flatMap((rule) =>
+  return PSF_PROJECT_REGISTRY.filter((rule) => isPsfRuleEnabled(rules, rule.id)).flatMap((rule) =>
     rule.run(docs),
   );
 }

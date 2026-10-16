@@ -157,7 +157,7 @@ describe('multi-agent presence — Tier 1 regression gate (FR-8)', () => {
     expect(res.status).toBe(403);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.status).toBe(403);
   });
 });

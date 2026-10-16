@@ -9,7 +9,7 @@ export { AcpPermissionStore, readAgentBrowserTools } from './acp/permissions.ts'
 export { AcpRegistry, FEATURED_AGENT_IDS, loadCustomAgents } from './acp/registry.ts';
 export {
   AcpThreadManager,
-  buildOkMcpStdioCommand,
+  buildPsMcpStdioCommand,
   type HarnessManagedMcpEntryHit,
   MAX_ACP_THREADS,
 } from './acp/thread-manager.ts';
@@ -426,9 +426,9 @@ export {
   resetMetrics,
 } from './metrics.ts';
 export {
-  MissingOkConfigError,
-  type MissingOkConfigKind,
-  missingOkConfigMessage,
+  MissingPsConfigError,
+  type MissingPsConfigKind,
+  missingPsConfigMessage,
 } from './missing-ok-config-error.ts';
 export {
   createPersistenceExtension,
@@ -454,7 +454,7 @@ export {
 export {
   createProbeFailureReporter,
   discoverLockDirs,
-  extractOkBinaryPath,
+  extractPsBinaryPath,
   isDefunctProcess,
   isLockProcessRunning,
   type LockProcessScan,

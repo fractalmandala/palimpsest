@@ -203,7 +203,7 @@ describe('bindConfigDoc — patch()', () => {
         sidebar: {
           showOnlyMarkdownFiles: true,
           showSkillsSection: false,
-          showOkFolders: true,
+          showPsFolders: true,
         },
       },
     });
@@ -213,11 +213,11 @@ describe('bindConfigDoc — patch()', () => {
     expect(result.appliedPaths).toEqual([
       'appearance.sidebar.showOnlyMarkdownFiles',
       'appearance.sidebar.showSkillsSection',
-      'appearance.sidebar.showOkFolders',
+      'appearance.sidebar.showPsFolders',
     ]);
     expect(result.effective.appearance?.sidebar?.showOnlyMarkdownFiles).toBe(true);
     expect(result.effective.appearance?.sidebar?.showSkillsSection).toBe(false);
-    expect(result.effective.appearance?.sidebar?.showOkFolders).toBe(true);
+    expect(result.effective.appearance?.sidebar?.showPsFolders).toBe(true);
     binding.dispose();
   });
 

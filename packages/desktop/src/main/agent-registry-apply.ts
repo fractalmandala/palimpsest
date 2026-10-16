@@ -25,7 +25,7 @@ import type { IntegrationsCliSurface } from './integrations-settings.ts';
 import { logIpcError } from './ipc-log.ts';
 import type { ProjectIntegrationsCliSurface } from './project-integrations-settings.ts';
 
-const CHANNEL = 'ok:integrations:dispatch';
+const CHANNEL = 'ps:integrations:dispatch';
 
 export type GlobalWriterSurface = Pick<
   IntegrationsCliSurface,

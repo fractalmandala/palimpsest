@@ -30,7 +30,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-function seedOkScaffold(projectDir: string): void {
+function seedPsScaffold(projectDir: string): void {
   const psDir = resolve(projectDir, PS_DIR);
   mkdirSync(psDir, { recursive: true });
   writeFileSync(resolve(psDir, 'config.yml'), '', 'utf-8');
@@ -50,7 +50,7 @@ afterEach(async () => {
   await rm(tmpDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 });
 
-describe('bootServer — MissingOkConfigError pre-listen check', () => {
+describe('bootServer — MissingPsConfigError pre-listen check', () => {
   test('rejects with kind=okdir when .ps/ directory is absent (State A)', async () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'state-a-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
@@ -72,7 +72,7 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { kind?: string; projectDir?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('okdir');
     expect(e.projectDir).toBe(contentDir);
     expect(e.message).toContain('Palimpsest config not found at .ps/config.yml');
@@ -104,7 +104,7 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { kind?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('config');
     expect(e.message).toContain('Palimpsest config not found at .ps/config.yml');
     expect(existsSync(resolve(contentDir, '.git/ok'))).toBe(false);
@@ -114,7 +114,7 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'projectdir-preflight-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
     const contentDir = resolve(projectDir, 'docs');
     mkdirSync(contentDir, { recursive: true });
     expect(existsSync(resolve(contentDir, '.ps', 'config.yml'))).toBe(false);
@@ -143,7 +143,7 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     configureTestGitRepository(projectDir);
     const contentDir = resolve(projectDir, 'docs');
     mkdirSync(contentDir, { recursive: true });
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
 
     let caught: unknown;
     try {
@@ -162,7 +162,7 @@ describe('bootServer — MissingOkConfigError pre-listen check', () => {
     }
     expect(caught).toBeDefined();
     const e = caught as Error & { kind?: string; projectDir?: string };
-    expect(e.name).toBe('MissingOkConfigError');
+    expect(e.name).toBe('MissingPsConfigError');
     expect(e.kind).toBe('okdir');
     expect(e.projectDir).toBe(projectDir);
   });
@@ -205,7 +205,7 @@ describe('bootServer — runtime state lives at projectDir, not contentDir', () 
     const projectDir = mkdtempSync(resolve(tmpDir, 'fake-repo-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
     const contentDir = resolve(projectDir, 'template-projects');
     mkdirSync(contentDir, { recursive: true });
 
@@ -242,7 +242,7 @@ describe('bootServer — tolerance-telemetry writer wired through the real boot 
     const projectDir = mkdtempSync(resolve(tmpDir, 'tolerance-telemetry-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const booted = await bootServer({
       config: TEST_CONFIG,
@@ -276,7 +276,7 @@ describe('bootServer — idle-shutdown runs full destroy', () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'idle-full-destroy-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const booted = await bootServer({
       host: '127.0.0.1',
@@ -307,7 +307,7 @@ describe('bootServer — reactShellDistDir + server.lock ui advertisement', () =
     const projectDir = mkdtempSync(resolve(tmpDir, 'fake-repo-shell-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const shellDistDir = mkdtempSync(resolve(tmpDir, 'fake-shell-dist-'));
     writeFileSync(resolve(shellDistDir, 'index.html'), '<html>shell</html>', 'utf-8');
@@ -341,7 +341,7 @@ describe('bootServer — reactShellDistDir + server.lock ui advertisement', () =
     const projectDir = mkdtempSync(resolve(tmpDir, 'fake-repo-no-shell-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const booted = await bootServer({
       host: '127.0.0.1',
@@ -370,7 +370,7 @@ describe('bootServer — reactShellDistDir end-to-end HTTP shape', () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'shell-e2e-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const shellDistDir = mkdtempSync(resolve(tmpDir, 'shell-e2e-dist-'));
     writeFileSync(
@@ -475,7 +475,7 @@ describe('bootServer — MCP internal RPC stays loopback under a public external
 
   test('MCP write succeeds when externalUrl is a public, non-loopback origin', async () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'mcp-loopback-'));
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
 
     const config = ConfigSchema.parse({
       server: { externalUrl: UNREACHABLE_EXTERNAL_URL, allowExternal: true },
@@ -587,7 +587,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'span-main-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
 
     const booted = await bootServer({
       host: '127.0.0.1',
@@ -600,11 +600,11 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     });
     try {
       const spans = exporter?.getFinishedSpans() ?? [];
-      const bootSpan = spans.find((s) => s.name === 'ok.boot');
+      const bootSpan = spans.find((s) => s.name === 'ps.boot');
       expect(bootSpan).toBeDefined();
-      expect(bootSpan?.attributes['ok.worktree.kind']).toBe('main');
-      expect(typeof bootSpan?.attributes['ok.worktree.gitdir']).toBe('string');
-      const gitdirAttr = bootSpan?.attributes['ok.worktree.gitdir'] as string;
+      expect(bootSpan?.attributes['ps.worktree.kind']).toBe('main');
+      expect(typeof bootSpan?.attributes['ps.worktree.gitdir']).toBe('string');
+      const gitdirAttr = bootSpan?.attributes['ps.worktree.gitdir'] as string;
       expect(gitdirAttr.split('/').filter(Boolean).length).toBeLessThanOrEqual(3);
     } finally {
       await booted.destroy();
@@ -632,7 +632,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
       `wt-span-${Date.now()}`,
       wtPath,
     ]);
-    seedOkScaffold(wtPath);
+    seedPsScaffold(wtPath);
 
     const booted = await bootServer({
       host: '127.0.0.1',
@@ -645,10 +645,10 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     });
     try {
       const spans = exporter?.getFinishedSpans() ?? [];
-      const bootSpan = spans.find((s) => s.name === 'ok.boot');
+      const bootSpan = spans.find((s) => s.name === 'ps.boot');
       expect(bootSpan).toBeDefined();
-      expect(bootSpan?.attributes['ok.worktree.kind']).toBe('linked');
-      const gitdirAttr = bootSpan?.attributes['ok.worktree.gitdir'] as string;
+      expect(bootSpan?.attributes['ps.worktree.kind']).toBe('linked');
+      const gitdirAttr = bootSpan?.attributes['ps.worktree.gitdir'] as string;
       expect(typeof gitdirAttr).toBe('string');
       expect(gitdirAttr.split('/').filter(Boolean).length).toBeLessThanOrEqual(3);
     } finally {
@@ -656,7 +656,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     }
   });
 
-  test('boot failure (MissingOkConfigError): span still records the worktree kind', async () => {
+  test('boot failure (MissingPsConfigError): span still records the worktree kind', async () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'span-fail-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
@@ -677,9 +677,9 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     }
     expect(caught).toBeDefined();
     const spans = exporter?.getFinishedSpans() ?? [];
-    const bootSpan = spans.find((s) => s.name === 'ok.boot');
+    const bootSpan = spans.find((s) => s.name === 'ps.boot');
     expect(bootSpan).toBeDefined();
-    expect(bootSpan?.attributes['ok.worktree.kind']).toBe('main');
+    expect(bootSpan?.attributes['ps.worktree.kind']).toBe('main');
     expect(bootSpan?.status.code).toBe(2);
   });
 
@@ -687,7 +687,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     const mainDir = mkdtempSync(resolve(tmpDir, 'flip-main-'));
     await execFileAsync('git', ['init', '--initial-branch=main', mainDir]);
     configureTestGitRepository(mainDir);
-    seedOkScaffold(mainDir);
+    seedPsScaffold(mainDir);
     const bootedMain = await bootServer({
       host: '127.0.0.1',
       config: TEST_CONFIG,
@@ -718,7 +718,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
       `wt-flip-${Date.now()}`,
       wtPath,
     ]);
-    seedOkScaffold(wtPath);
+    seedPsScaffold(wtPath);
     const bootedLinked = await bootServer({
       host: '127.0.0.1',
       config: TEST_CONFIG,
@@ -731,12 +731,12 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     await bootedLinked.destroy();
 
     const spans = exporter?.getFinishedSpans() ?? [];
-    const bootSpans = spans.filter((s) => s.name === 'ok.boot');
+    const bootSpans = spans.filter((s) => s.name === 'ps.boot');
     expect(bootSpans.length).toBe(2);
-    expect(bootSpans[0]?.attributes['ok.worktree.kind']).toBe('main');
-    expect(bootSpans[1]?.attributes['ok.worktree.kind']).toBe('linked');
-    expect(bootSpans[0]?.attributes['ok.worktree.gitdir']).not.toBe(
-      bootSpans[1]?.attributes['ok.worktree.gitdir'],
+    expect(bootSpans[0]?.attributes['ps.worktree.kind']).toBe('main');
+    expect(bootSpans[1]?.attributes['ps.worktree.kind']).toBe('linked');
+    expect(bootSpans[0]?.attributes['ps.worktree.gitdir']).not.toBe(
+      bootSpans[1]?.attributes['ps.worktree.gitdir'],
     );
   });
 
@@ -749,7 +749,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'traceparent-valid-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
 
     let booted: Awaited<ReturnType<typeof bootServer>> | null = null;
     try {
@@ -762,7 +762,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
         gitEnabled: false,
         idleShutdownMs: null,
       });
-      const bootSpan = (exporter?.getFinishedSpans() ?? []).find((s) => s.name === 'ok.boot');
+      const bootSpan = (exporter?.getFinishedSpans() ?? []).find((s) => s.name === 'ps.boot');
       expect(bootSpan).toBeDefined();
       expect(bootSpan?.spanContext().traceId).toBe(parentTraceId);
     } finally {
@@ -778,7 +778,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'traceparent-malformed-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
 
     let booted: Awaited<ReturnType<typeof bootServer>> | null = null;
     try {
@@ -792,7 +792,7 @@ describe('bootServer — ok.boot OTel span attributes', () => {
         idleShutdownMs: null,
       });
       expect(booted.port).toBeGreaterThan(0);
-      const bootSpan = (exporter?.getFinishedSpans() ?? []).find((s) => s.name === 'ok.boot');
+      const bootSpan = (exporter?.getFinishedSpans() ?? []).find((s) => s.name === 'ps.boot');
       expect(bootSpan).toBeDefined();
       expect(bootSpan?.spanContext().traceId).toMatch(/^[0-9a-f]{32}$/);
     } finally {
@@ -808,7 +808,7 @@ describe('bootServer — boot timings recorded end-to-end', () => {
     const projectDir = mkdtempSync(resolve(tmpDir, 'boot-timings-e2e-'));
     await execFileAsync('git', ['init', '--initial-branch=main', projectDir]);
     configureTestGitRepository(projectDir);
-    seedOkScaffold(projectDir);
+    seedPsScaffold(projectDir);
     writeFileSync(resolve(projectDir, 'note.md'), '# note\n', 'utf-8');
 
     const booted = await bootServer({
@@ -902,7 +902,7 @@ describe('bootServer — exposure consent interlock', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'interlock-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
     const config = ConfigSchema.parse({ server });
     try {
       const booted = await bootServer({
@@ -970,7 +970,7 @@ describe('bootServer — exposure consent interlock', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'interlock-host-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
     let err: unknown = null;
     try {
       const booted = await bootServer({
@@ -997,7 +997,7 @@ describe('bootServer — multi-address bind', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'multibind-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
     const booted = await bootServer({
       host: '127.0.0.1',
       bind: ['127.0.0.1', '::1'],
@@ -1025,7 +1025,7 @@ describe('bootServer — multi-address bind', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'listenlog-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
     const entries: Array<{ fields: Record<string, unknown>; msg: string }> = [];
     const noop = (): void => {};
     const captureLogger = {
@@ -1074,7 +1074,7 @@ describe('bootServer — multi-address bind', () => {
     const contentDir = mkdtempSync(resolve(tmpDir, 'multibind-dup-'));
     await execFileAsync('git', ['init', '--initial-branch=main', contentDir]);
     configureTestGitRepository(contentDir);
-    seedOkScaffold(contentDir);
+    seedPsScaffold(contentDir);
     const booted = await bootServer({
       host: '127.0.0.1',
       bind: ['127.0.0.1', '127.0.0.1'],

@@ -53,7 +53,7 @@ describe('invalid-MDX resilience', () => {
     const marks = vi.spyOn(performance, 'mark').mockImplementation(() => ({}) as PerformanceMark);
     try {
       computeSourceBlocks(invalid, md);
-      expect(marks).toHaveBeenCalledWith('ok/block-spans/parse-failed');
+      expect(marks).toHaveBeenCalledWith('ps/block-spans/parse-failed');
 
       marks.mockClear();
       computeSourceBlocks('# valid\n\nbody', md);

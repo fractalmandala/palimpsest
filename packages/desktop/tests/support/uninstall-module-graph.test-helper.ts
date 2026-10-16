@@ -79,7 +79,7 @@ const RESOLVED_PROBE_ENTRY = `\0${PROBE_ENTRY}`;
 function probeEntryPlugin(entryImports: readonly string[]): Plugin {
   const code = entryImports.map((specifier) => `import ${JSON.stringify(specifier)};`).join('\n');
   return {
-    name: 'ok:uninstall-graph-probe',
+    name: 'ps:uninstall-graph-probe',
     resolveId(id) {
       return id === PROBE_ENTRY ? RESOLVED_PROBE_ENTRY : null;
     },
@@ -106,7 +106,7 @@ export async function buildUninstallModuleGraph(
   const dynamicFromUninstall = new Set<string>();
 
   const capture: Plugin = {
-    name: 'ok:uninstall-graph-capture',
+    name: 'ps:uninstall-graph-capture',
     buildEnd() {
       for (const id of this.getModuleIds()) {
         const normalized = normalizeModuleId(id);

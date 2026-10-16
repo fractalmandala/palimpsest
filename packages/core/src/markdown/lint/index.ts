@@ -150,30 +150,30 @@ export {
 export { fixMarkdownText, runMarkdownlint } from './markdownlint-runner.ts';
 export {
   PSF_SCHEMA_DIR,
-  type OkfSchemaFile,
+  type PsfSchemaFile,
   psfSchemaPathFor,
-  renderOkfSchemaFiles,
+  renderPsfSchemaFiles,
 } from './psf-frontmatter/materialize.ts';
 export {
   PSF_FRONTMATTER_REGISTRY,
   psfAdvertisedSchemaMappings,
-  runOkfFrontmatterRules,
-  selectOkfFrontmatterSchemas,
+  runPsfFrontmatterRules,
+  selectPsfFrontmatterSchemas,
 } from './psf-frontmatter/registry.ts';
 export {
   PSF_PROJECT_REGISTRY,
-  type OkfProjectFinding,
-  runOkfProjectRules,
+  type PsfProjectFinding,
+  runPsfProjectRules,
 } from './psf-project/rules.ts';
 export {
-  assertNeverOkfRuleGroupId,
-  assertNeverOkfRuleId,
-  isOkfRuleEnabled,
+  assertNeverPsfRuleGroupId,
+  assertNeverPsfRuleId,
+  isPsfRuleEnabled,
   PSF_RULE_GROUPS,
   PSF_RULE_IDS,
-  type OkfRuleGroupId,
-  type OkfRuleId,
-  type OkfRuleToggles,
+  type PsfRuleGroupId,
+  type PsfRuleId,
+  type PsfRuleToggles,
 } from './psf-rule-meta.ts';
 export {
   type LintPluginFailure,
@@ -218,7 +218,7 @@ export type {
   MarkdownlintRuleSeverity,
   MarkdownlintRuleWriteValue,
   MarkdownlintSlice,
-  OkfSlice,
+  PsfSlice,
   ResolvedFrontmatterSchemaEntry,
   RuleCatalogEntry,
   RuleOptionSpec,

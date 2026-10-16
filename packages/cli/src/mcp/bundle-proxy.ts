@@ -23,7 +23,7 @@ const BUNDLE_CLI_RE = /Contents\/Resources\/cli\/dist\/cli\.mjs$/;
 const SUPPRESSION_HINT = 'Suppress with --no-bundle-proxy or PS_BUNDLE_PROXY=0.';
 const DEFAULT_STARTUP_FAILURE_WINDOW_MS = 1_000;
 
-export function findBundledOkPath(
+export function findBundledPsPath(
   platform: NodeJS.Platform,
   home: string,
   fs: { existsSync(p: string): boolean },

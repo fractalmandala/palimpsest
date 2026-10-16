@@ -46,7 +46,7 @@ function readLossEvents(contentDir: string): LossRingEvent[] {
 }
 
 function shadowGitRaw(s: TestServer, args: string[]): string {
-  const dir = join(s.contentDir, '.git', 'ok');
+  const dir = join(s.contentDir, '.git', 'ps');
   if (!existsSync(dir)) {
     throw new Error(`shadow repo not found at ${dir}; the rig needs gitEnabled: true`);
   }

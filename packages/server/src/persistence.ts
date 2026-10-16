@@ -21,7 +21,7 @@ import {
 import { atomicTempPath } from '@palimpsest/core/server';
 import {
   composeCommitSubject,
-  formatOkActor,
+  formatPsActor,
   formatWipSubject,
   type PsActorEntry,
 } from '@palimpsest/core/shadow-repo-layout';
@@ -534,7 +534,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
           color_seed: SERVICE_WRITER.id,
           docs: [],
         };
-        const serviceMessage = `${formatWipSubject([])}\n\n${formatOkActor(serviceActorEntry)}`;
+        const serviceMessage = `${formatWipSubject([])}\n\n${formatPsActor(serviceActorEntry)}`;
         try {
           const sha = await commitWip(shadow, SERVICE_WRITER, contentRoot, serviceMessage, branch);
           consecutiveGitFailures = 0;
@@ -613,7 +613,7 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
         };
         const baseSubject = entry.subjectOverride ?? formatWipSubject(docs);
         const subject = composeCommitSubject(baseSubject, summaries);
-        const writerMessage = `${subject}\n\n${formatOkActor(actorEntry)}`;
+        const writerMessage = `${subject}\n\n${formatPsActor(actorEntry)}`;
         try {
           const sha = await commitWipFromTree(shadow, writer, treeSha, writerMessage, branch);
           anySuccess = true;
@@ -1232,15 +1232,15 @@ export function createPersistenceExtension(options?: PersistenceOptions): Persis
   function ensureHistograms(): void {
     if (loadDurationHist) return;
     const meter = getMeter();
-    loadDurationHist = meter.createHistogram('ok.persistence.load.duration', {
+    loadDurationHist = meter.createHistogram('ps.persistence.load.duration', {
       description: 'Duration of persistence.onLoadDocument in seconds',
       unit: 's',
     });
-    storeDurationHist = meter.createHistogram('ok.persistence.store.duration', {
+    storeDurationHist = meter.createHistogram('ps.persistence.store.duration', {
       description: 'Duration of persistence.onStoreDocument in seconds',
       unit: 's',
     });
-    commitDurationHist = meter.createHistogram('ok.persistence.git_commit.duration', {
+    commitDurationHist = meter.createHistogram('ps.persistence.git_commit.duration', {
       description: 'Duration of commitToWipRef drain in seconds',
       unit: 's',
     });

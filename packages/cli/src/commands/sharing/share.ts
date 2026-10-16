@@ -1,9 +1,9 @@
 import { resolve } from 'node:path';
 import { Command } from 'commander';
 import {
-  getOkArtifactPaths,
+  getPsArtifactPaths,
   readSharingMode,
-  removeOkPathsFromGitExclude,
+  removePsPathsFromGitExclude,
 } from '../../sharing/git-exclude.ts';
 import { accent, info, success, warning } from '../../ui/colors.ts';
 import { writeClearedEntries } from './unshare.ts';
@@ -28,8 +28,8 @@ export function sharingShareCommand(): Command {
     .action(async (opts: ShareOptions) => {
       const projectRoot = resolve(opts.project ?? process.cwd());
       const before = readSharingMode(projectRoot);
-      const paths = getOkArtifactPaths(projectRoot);
-      const result = removeOkPathsFromGitExclude(projectRoot, paths);
+      const paths = getPsArtifactPaths(projectRoot);
+      const result = removePsPathsFromGitExclude(projectRoot, paths);
 
       if (result.kind === 'no-exclude') {
         emitNoExclude(opts.json, projectRoot, result.reason);

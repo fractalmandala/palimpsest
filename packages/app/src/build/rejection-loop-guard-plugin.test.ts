@@ -6,7 +6,7 @@ describe('rejectionLoopGuardPlugin', () => {
   const plugin = rejectionLoopGuardPlugin();
 
   test('plugin name is namespaced', () => {
-    expect(plugin.name).toBe('ok:rejection-loop-guard');
+    expect(plugin.name).toBe('ps:rejection-loop-guard');
   });
 
   test('plugin is dev-only via apply: serve', () => {

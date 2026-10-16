@@ -45,7 +45,7 @@ function serverNotRunningMessage(): string {
   const command = currentCliCommandName();
   return (
     'Palimpsest server is not running — the links validator needs the live backlink index. ' +
-    `Start it with \`${command} start\` (or open OK Desktop) and re-run. For headless lint-only checks, use \`${command} lint\`.`
+    `Start it with \`${command} start\` (or open Palimpsest Desktop) and re-run. For headless lint-only checks, use \`${command} lint\`.`
   );
 }
 

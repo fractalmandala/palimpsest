@@ -2,7 +2,7 @@ import { stderrDetailSuffix } from './clone-error-classify.ts';
 import {
   LOCAL_OP_AUTH_SUBPROCESS_TIMEOUT_MS,
   type LocalOpCliInvocation,
-  runOkCliSubprocess,
+  runPsCliSubprocess,
 } from './subprocess.ts';
 import type { LocalOpSubprocessLifetime } from './subprocess-lifetime.ts';
 
@@ -21,7 +21,7 @@ export async function runPatSubprocess(opts: RunPatOptions): Promise<RunPatResul
   const host = opts.host ?? 'github.com';
   let terminal: RunPatResult | null = null;
 
-  const proc = runOkCliSubprocess(opts.cli, {
+  const proc = runPsCliSubprocess(opts.cli, {
     lifetime: opts.lifetime,
     cwd: opts.cwd,
     trailingArgs: ['auth', 'pat', '--json', '--host', host, '--token-stdin'],

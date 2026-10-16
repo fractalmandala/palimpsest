@@ -131,7 +131,7 @@ describe('a server-scope test reset and the server’s config home', () => {
 
     expect(response.status).toBe(400);
     expect(await response.json()).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'scope=server needs a server started with an isolated config home.',
     });
     expect(savedBytes(server.settingsFiles)).toEqual(before);

@@ -159,8 +159,8 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
     console.warn(
       `[syncPromise] ${docName} rejected on creation (test hook, armed ${armed}): ${error.message}`,
     );
-    mark('ok/sync/create', { docName, mountId: getMountId(docName), warm: false, armed });
-    mark('ok/sync/reject', { docName, mountId: getMountId(docName), reason: `armed-${armed}` });
+    mark('ps/sync/create', { docName, mountId: getMountId(docName), warm: false, armed });
+    mark('ps/sync/reject', { docName, mountId: getMountId(docName), reason: `armed-${armed}` });
     const promise = createRejectedThenable<void>(error);
     cache.set(docName, makeRejectedSentinelEntry(promise, provider));
     return promise;
@@ -169,10 +169,10 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
   if (provider.synced) {
     console.log(`[syncPromise] ${docName} resolved synchronously (warm provider)`);
     const warmMountId = getMountId(docName);
-    mark('ok/sync/create', { docName, mountId: warmMountId, warm: true });
-    mark('ok/sync/resolve', { docName, mountId: warmMountId, elapsedMs: 0, warm: true });
+    mark('ps/sync/create', { docName, mountId: warmMountId, warm: true });
+    mark('ps/sync/resolve', { docName, mountId: warmMountId, elapsedMs: 0, warm: true });
     mark.histogram(
-      'ok/sync/resolve-elapsed-ms',
+      'ps/sync/resolve-elapsed-ms',
       warmMountId !== undefined
         ? { docName, mountId: warmMountId, warm: true }
         : { docName, warm: true },
@@ -199,14 +199,14 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
     const elapsed = Date.now() - entry.createdAt;
     console.log(`[syncPromise] ${docName} resolved in ${elapsed}ms`);
     const coldMountId = getMountId(docName);
-    mark('ok/sync/resolve', {
+    mark('ps/sync/resolve', {
       docName,
       mountId: coldMountId,
       elapsedMs: elapsed,
       warm: false,
     });
     mark.histogram(
-      'ok/sync/resolve-elapsed-ms',
+      'ps/sync/resolve-elapsed-ms',
       coldMountId !== undefined ? { docName, mountId: coldMountId } : { docName },
       elapsed,
     );
@@ -218,7 +218,7 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
       const nowMs = Date.now();
       emitColdMountChild(
         coldMountId,
-        'ok.sync-promise',
+        'ps.sync-promise',
         { 'doc.name': docName, elapsed_ms: elapsed },
         entry.createdAt,
         nowMs,
@@ -238,7 +238,7 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
       `[syncPromise] ${docName} rejected: ${error.message} (close ${closeCode ?? '<none>'} "${closeReason ?? ''}")`,
     );
     const closeMountId = getMountId(docName);
-    mark('ok/sync/reject', {
+    mark('ps/sync/reject', {
       docName,
       mountId: closeMountId,
       reason: 'pre-sync-disconnect',
@@ -259,7 +259,7 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
     const error = new SyncTimeoutError(docName, elapsed);
     console.warn(`[syncPromise] ${docName} rejected: ${error.message}`);
     const timeoutMountId = getMountId(docName);
-    mark('ok/sync/reject', {
+    mark('ps/sync/reject', {
       docName,
       mountId: timeoutMountId,
       reason: 'timeout',
@@ -291,7 +291,7 @@ export function syncPromise(docName: string, provider: HocuspocusProvider): Prom
 
   installVisibilityHandler();
 
-  mark('ok/sync/create', { docName, mountId: getMountId(docName), warm: false });
+  mark('ps/sync/create', { docName, mountId: getMountId(docName), warm: false });
 
   return promise;
 }

@@ -56,7 +56,7 @@ describe('skills.sh proxy group over the composed listener — served natively',
       const res = await fetch(`http://127.0.0.1:${server.port}${path}`);
       expect(res.status, path).toBe(400);
       expect(((await res.json()) as { type?: string }).type, path).toBe(
-        'urn:ok:error:invalid-request',
+        'urn:ps:error:invalid-request',
       );
       expect(res.headers.get('x-request-id'), path).not.toBeNull();
     }
@@ -68,7 +68,7 @@ describe('skills.sh proxy group over the composed listener — served natively',
         headers: { Host: 'evil.example' },
       });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -77,7 +77,7 @@ describe('skills.sh proxy group over the composed listener — served natively',
       headers: { Host: 'evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('both chained groups answer on one server (multi-group dispatch)', async () => {
@@ -92,7 +92,7 @@ describe('skills.sh proxy group over the composed listener — served natively',
       headers: { Origin: 'https://evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('OPTIONS preflight answers 204 on a ported route', async () => {
@@ -110,7 +110,7 @@ describe('skills.sh proxy group over the composed listener — served natively',
     });
     expect(res.status).toBe(403);
     const body = parseProblem(res.body);
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.detail ?? body.title).toContain('Proxied request refused');
   });
 });

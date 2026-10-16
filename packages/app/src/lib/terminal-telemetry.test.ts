@@ -28,12 +28,12 @@ afterEach(() => {
 describe('renderer terminal telemetry — span names', () => {
   test('recordTerminalOpened starts ok.desktop.terminalOpened', () => {
     recordTerminalOpened();
-    expect(spanNames).toEqual(['ok.desktop.terminalOpened']);
+    expect(spanNames).toEqual(['ps.desktop.terminalOpened']);
   });
 
   test('recordShellConsentGranted starts ok.desktop.shellConsentGranted', () => {
     recordShellConsentGranted();
-    expect(spanNames).toEqual(['ok.desktop.shellConsentGranted']);
+    expect(spanNames).toEqual(['ps.desktop.shellConsentGranted']);
   });
 });
 

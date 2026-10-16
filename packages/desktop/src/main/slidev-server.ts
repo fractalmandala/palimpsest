@@ -3,8 +3,8 @@ import { statSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { augmentAgentSpawnPath } from '@palimpsest/core';
 import {
-  composeOkChildEnv,
-  hasNoResolvableOkHome,
+  composePsChildEnv,
+  hasNoResolvablePsHome,
   type PsManagedBinDirsOptions,
   psChildEnvOptionsFromProcess,
   psManagedBinDirs,
@@ -307,10 +307,10 @@ export function composeSlidevSpawnEnv(
   options: PsManagedBinDirsOptions,
   isDirSync: (dir: string) => boolean = isDir,
 ): Record<string, string> {
-  const env = composeOkChildEnv(parentEnv, options);
+  const env = composePsChildEnv(parentEnv, options);
   const homeDir = options.home;
   if (!homeDir) {
-    if (hasNoResolvableOkHome(options)) {
+    if (hasNoResolvablePsHome(options)) {
       getLogger('slidev-server').warn(
         { event: 'slides-no-ok-managed-home', platform: options.platform },
         'Slidev child has no resolvable home directory',

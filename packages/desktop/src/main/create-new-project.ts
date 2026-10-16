@@ -1,9 +1,9 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 import {
-  addOkPathsToGitExclude,
+  addPsPathsToGitExclude,
   detectInstalledEditors,
-  getOkArtifactPaths,
+  getPsArtifactPaths,
   type ProjectAiIntegrationsResult,
   writeProjectAiIntegrations,
 } from '@palimpsest/cli';
@@ -125,8 +125,8 @@ export type CreateNewSharingOutcome =
     };
 
 function applyCreateNewLocalOnly(projectDir: string): CreateNewSharingOutcome {
-  const paths = getOkArtifactPaths(projectDir);
-  const result = addOkPathsToGitExclude(projectDir, paths);
+  const paths = getPsArtifactPaths(projectDir);
+  const result = addPsPathsToGitExclude(projectDir, paths);
   if (result.kind === 'refused-tracked') {
     return {
       kind: 'local-only-refused-tracked',

@@ -487,7 +487,7 @@ export interface AcpThreadManagerOptions {
   unwatchedTurnCancelMs?: number;
   unwatchedTurnKillMs?: number;
   turnStallMs?: number;
-  autoApproveOkTools?: () => boolean;
+  autoApprovePsTools?: () => boolean;
   agentBrowserTools?: () => boolean;
   resolveBrowserNpx?: typeof resolveBrowserNpx;
   ensureBrowserPackage?: typeof ensureNpmPackageInstalled;
@@ -500,7 +500,7 @@ export interface PsMcpStdioCommand {
   env?: Record<string, string>;
 }
 
-export function buildOkMcpStdioCommand(
+export function buildPsMcpStdioCommand(
   localOpCliArgs: readonly string[] | undefined,
   port: number,
   deps?: {
@@ -522,7 +522,7 @@ export function buildOkMcpStdioCommand(
   if (resolved === null) {
     deps?.log?.warn(
       { command },
-      '[acp-threads] OK MCP stdio command did not resolve on PATH — injecting the bare name, which fails for harnesses that spawn MCP children under a minimal PATH',
+      '[acp-threads] Palimpsest MCP stdio command did not resolve on PATH — injecting the bare name, which fails for harnesses that spawn MCP children under a minimal PATH',
     );
     return { command, args, ...channel };
   }
@@ -1517,7 +1517,7 @@ export class AcpThreadManager {
     };
     this.opts.log.warn(
       logContext,
-      "[acp-threads] OK's own managed runtime failed to run — replacing it",
+      "[acp-threads] Palimpsest's own managed runtime failed to run — replacing it",
     );
     const cleared = await quarantineManagedRuntime(
       runtimeKind,
@@ -1749,7 +1749,7 @@ export class AcpThreadManager {
     if (isPiBridgeAgent(record.agentRef)) {
       const outcome = await this.settlePiBridge(record, ticket, consentBudgetMs);
       hostedMarker = outcome === 'unavailable' ? 'none' : 'unknown';
-    } else if ((await this.harnessAlreadyHasOkMcp(record)) !== null) {
+    } else if ((await this.harnessAlreadyHasPsMcp(record)) !== null) {
       hostedMarker = 'unknown';
     } else {
       const serverUrl = this.opts.getServerUrl?.();
@@ -1954,7 +1954,7 @@ export class AcpThreadManager {
     }
   }
 
-  private async harnessAlreadyHasOkMcp(
+  private async harnessAlreadyHasPsMcp(
     record: ThreadRecord,
   ): Promise<HarnessManagedMcpEntryHit | null> {
     const probe = this.opts.probeHarnessManagedMcpEntry;
@@ -1980,7 +1980,7 @@ export class AcpThreadManager {
           scope: hit.scope,
           configPath: hit.configPath,
         },
-        "[acp-threads] skipping OK MCP injection — the agent's harness already loads OK's managed entry",
+        "[acp-threads] skipping OK MCP injection — the agent's harness already loads Palimpsest's managed entry",
       );
     }
     return hit;
@@ -3678,7 +3678,7 @@ export class AcpThreadManager {
       options,
       browser,
       record.chatGrants,
-      this.opts.autoApproveOkTools?.() ?? true,
+      this.opts.autoApprovePsTools?.() ?? true,
     );
     if (decision.auto !== null) {
       const requestId = crypto.randomUUID();

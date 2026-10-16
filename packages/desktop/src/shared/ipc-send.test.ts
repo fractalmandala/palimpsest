@@ -30,7 +30,7 @@ function makeFakeWebContents() {
 describe('registerPendingDelivery', () => {
   test('registers a dom-ready listener and does NOT send until the event fires', () => {
     const fake = makeFakeWebContents();
-    registerPendingDelivery(fake.wc, 'ok:deep-link', {
+    registerPendingDelivery(fake.wc, 'ps:deep-link', {
       doc: 'a.md',
       branch: null,
       multiCandidate: false,
@@ -41,7 +41,7 @@ describe('registerPendingDelivery', () => {
 
     fake.fire('dom-ready');
     expect(fake.sent).toEqual([
-      { channel: 'ok:deep-link', payload: { doc: 'a.md', branch: null, multiCandidate: false } },
+      { channel: 'ps:deep-link', payload: { doc: 'a.md', branch: null, multiCandidate: false } },
     ]);
   });
 
@@ -49,7 +49,7 @@ describe('registerPendingDelivery', () => {
     const fake = makeFakeWebContents();
     registerPendingDelivery(
       fake.wc,
-      'ok:server-restarted',
+      'ps:server-restarted',
       { appRuntime: '1.2.3' },
       { event: 'did-finish-load' },
     );
@@ -60,13 +60,13 @@ describe('registerPendingDelivery', () => {
 
     fake.fire('did-finish-load');
     expect(fake.sent).toEqual([
-      { channel: 'ok:server-restarted', payload: { appRuntime: '1.2.3' } },
+      { channel: 'ps:server-restarted', payload: { appRuntime: '1.2.3' } },
     ]);
   });
 
   test('skips delivery when the window is destroyed before the readiness event fires', () => {
     const fake = makeFakeWebContents();
-    registerPendingDelivery(fake.wc, 'ok:deep-link', {
+    registerPendingDelivery(fake.wc, 'ps:deep-link', {
       doc: 'a.md',
       branch: null,
       multiCandidate: false,

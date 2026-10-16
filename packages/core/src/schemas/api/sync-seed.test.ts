@@ -23,21 +23,21 @@ import {
 } from './index.ts';
 
 describe('Cluster H URN tokens (US-013)', () => {
-  test('parses urn:ok:error:sync-not-active', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:sync-not-active').success).toBe(true);
+  test('parses urn:ps:error:sync-not-active', () => {
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:sync-not-active').success).toBe(true);
   });
-  test('parses urn:ok:error:project-repo-not-configured', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:project-repo-not-configured').success).toBe(
+  test('parses urn:ps:error:project-repo-not-configured', () => {
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:project-repo-not-configured').success).toBe(
       true,
     );
   });
-  test('parses urn:ok:error:seed-prerequisite-missing', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:seed-prerequisite-missing').success).toBe(
+  test('parses urn:ps:error:seed-prerequisite-missing', () => {
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:seed-prerequisite-missing').success).toBe(
       true,
     );
   });
-  test('parses urn:ok:error:seed-invalid-root', () => {
-    expect(ProblemTypeSchema.safeParse('urn:ok:error:seed-invalid-root').success).toBe(true);
+  test('parses urn:ps:error:seed-invalid-root', () => {
+    expect(ProblemTypeSchema.safeParse('urn:ps:error:seed-invalid-root').success).toBe(true);
   });
 });
 

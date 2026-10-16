@@ -106,7 +106,7 @@ async function openAndReport(
   }
   deps.log(successMessage);
   if (!isProject) {
-    deps.log(`Working directory: ${projectDir} (not an Palimpsest project).`);
+    deps.log(`Working directory: ${projectDir} (not a Palimpsest project).`);
     return 0;
   }
   deps.log(`Project: ${projectDir}`);
@@ -129,7 +129,7 @@ export async function runOpen(name: string, options: OpenOptions, deps: OpenDeps
 
   if (explicitProject && !deps.isProjectRoot(projectDir)) {
     deps.error(
-      `Cannot open with --project ${projectDir}: no .ps/config.yml there, so it is not an Palimpsest project.`,
+      `Cannot open with --project ${projectDir}: no .ps/config.yml there, so it is not a Palimpsest project.`,
     );
     return 1;
   }
@@ -245,7 +245,7 @@ export async function runOpen(name: string, options: OpenOptions, deps: OpenDeps
 export function openCommand(): Command {
   return new Command('open')
     .description(
-      'Open a doc, folder, or skill in the OK Desktop app (falls back to the browser UI). ' +
+      'Open a doc, folder, or skill in the Palimpsest Desktop app (falls back to the browser UI). ' +
         'Docs and folders are auto-detected — no flag needed.',
     )
     .argument(

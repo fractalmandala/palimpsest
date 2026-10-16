@@ -215,7 +215,7 @@ describe('mountMcpAndApi /mcp guard', () => {
     expect(res.status).toBe(403);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type?: string; title?: string; status?: number };
-    expect(body.type).toBe('urn:ok:error:invalid-origin');
+    expect(body.type).toBe('urn:ps:error:invalid-origin');
     expect(body.title).toBe('Origin not allowed.');
     expect(body.status).toBe(403);
     expect(calls).toBe(0);
@@ -236,7 +236,7 @@ describe('mountMcpAndApi /mcp guard', () => {
 
     expect(res.status).toBe(403);
     const body = JSON.parse(res.body) as { type?: string; title?: string; status?: number };
-    expect(body.type).toBe('urn:ok:error:host-not-allowed');
+    expect(body.type).toBe('urn:ps:error:host-not-allowed');
     expect(body.title).toBe('Host header not allowed.');
     expect(body.status).toBe(403);
     expect(calls).toBe(0);
@@ -435,7 +435,7 @@ describe('mountMcpAndApi content-asset middleware', () => {
     expect(res.status).toBe(404);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type?: string };
-    expect(body.type).toBe('urn:ok:error:not-found');
+    expect(body.type).toBe('urn:ps:error:not-found');
   });
 
   test('asset-extension miss returns a bare 404 from the middleware, not the catch-all', async () => {
@@ -467,7 +467,7 @@ describe('mountMcpAndApi content-asset middleware', () => {
     expect(res.status).toBe(500);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
     const body = (await res.json()) as { type?: string; status?: number };
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.status).toBe(500);
   });
 
@@ -520,14 +520,14 @@ describe('mountMcpAndApi ephemeral content-asset gate', () => {
     const { port } = await startAssets(true);
     const res = await getWithHost(port, '/secret.png', 'evil.example.com');
     expect(res.status).toBe(403);
-    expect((JSON.parse(res.body) as { type?: string }).type).toBe('urn:ok:error:host-not-allowed');
+    expect((JSON.parse(res.body) as { type?: string }).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('non-ephemeral (project mode): a rebound Host is refused by the content-serve gate', async () => {
     const { port } = await startAssets(false);
     const res = await getWithHost(port, '/secret.png', 'evil.example.com');
     expect(res.status).toBe(403);
-    expect((JSON.parse(res.body) as { type?: string }).type).toBe('urn:ok:error:host-not-allowed');
+    expect((JSON.parse(res.body) as { type?: string }).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   afterEach(() => {

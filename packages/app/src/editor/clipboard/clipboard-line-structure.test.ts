@@ -417,7 +417,7 @@ function mountPasteTarget(): EditorView {
   });
 }
 
-function pasteOkToOk(plain: string, html: string): PmNode {
+function pastePsToPs(plain: string, html: string): PmNode {
   const dest = mountPasteTarget();
   try {
     dest.dispatch(dest.state.tr.setSelection(new AllSelection(dest.state.doc)));
@@ -489,7 +489,7 @@ describe('S7 — OK→OK paste round-trip: signal-less soft break (GREEN non-reg
 
   test('copy→paste keeps the two lines separate (soft break or hardBreak carrier)', () => {
     const { html, plain } = emitFlavors('alpha\nbeta');
-    const pasted = pasteOkToOk(plain, html);
+    const pasted = pastePsToPs(plain, html);
 
     expectPastedSeparateLines(pasted, 'alpha', 'beta');
 

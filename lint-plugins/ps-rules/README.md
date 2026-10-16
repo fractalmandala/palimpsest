@@ -1,6 +1,6 @@
 # The `ok` oxlint rules
 
-Custom lint rules for this workspace. Each rule is a module under `rules/`, composed into the single `ok` plugin by [`index.mjs`](index.mjs) and switched on in [`oxlint.config.ts`](../../oxlint.config.ts) as `ok/<rule-name>`. A rule that only applies to a subset of files carries its globs in [`scope.mjs`](scope.mjs) rather than in config — see [Scope it, if it is not workspace-wide](#3-scope-it-if-it-is-not-workspace-wide) below.
+Custom lint rules for this workspace. Each rule is a module under `rules/`, composed into the single `ok` plugin by [`index.mjs`](index.mjs) and switched on in [`oxlint.config.ts`](../../oxlint.config.ts) as `ps/<rule-name>`. A rule that only applies to a subset of files carries its globs in [`scope.mjs`](scope.mjs) rather than in config — see [Scope it, if it is not workspace-wide](#3-scope-it-if-it-is-not-workspace-wide) below.
 
 Rules surface as lint errors during `pnpm run lint:oxlint` (i.e. `pnpm lint` and `pnpm check`) and as inline editor squiggles via the oxc LSP.
 
@@ -142,7 +142,7 @@ Palimpsest app production source imports core through package subpaths, never th
 
 When that module has no subpath yet, register one in four places. Add its `exports` block in `packages/core/package.json`, with the `@inkeep/source`, `development`, `types` and `default` conditions in that order. Add its entry to the shared map in `packages/core/tsdown.config.ts`, keyed by the flat `dist` file name its `default` target names, so both build passes emit it; core's `build` fails in `verify:exports` when a declared target is missing. Import it and add its row to `MODULE_SUBPATHS` in `packages/core/tests/contract/module-subpaths.test.ts`, whose key test fails when a new `exports` key is missing from that map. Re-export its types from `packages/core/tests/contract/subpath-types/consumer.ts`, which core's `typecheck` compiles against source and its `check:dts` compiles against the emitted declarations.
 
-The rule matches module specifiers, not text. It compares each specifier with any `?query` or `#hash` suffix removed, because a bundler resolves `@palimpsest/core?v=1` to the same barrel, so a suffix cannot slip one past the rule; that includes `?raw` of the bare barrel, whose remedy is a subpath too. It fires at the specifier of a static import of any shape (value, `import type`, mixed, namespace, default, side-effect), a TypeScript `import x = require(...)`, a named, type, star or star-as re-export, a `typeof import(...)` or `import(...).Name` type, a dynamic `import()` whose argument is a string or a template literal with no expressions, and a call to the `require` builtin with such an argument. It does NOT fire on a declared subpath, on a sibling package whose name shares the prefix (`@palimpsest/cli`, `@palimpsest/server`, a longer `@palimpsest/core-*` name), on the barrel name inside an ordinary string, template or comment, on a computed `import()` argument, or on a member call such as `loader.require(...)`. Those last two are deliberate holes: the specifier is not knowable from the syntax. Two more are known limitations: the comparison is case-sensitive, so a case variant such as `@Inkeep/open-knowledge-core` does not fire, and a computed specifier built from a variable or a template with expressions does not either.
+The rule matches module specifiers, not text. It compares each specifier with any `?query` or `#hash` suffix removed, because a bundler resolves `@palimpsest/core?v=1` to the same barrel, so a suffix cannot slip one past the rule; that includes `?raw` of the bare barrel, whose remedy is a subpath too. It fires at the specifier of a static import of any shape (value, `import type`, mixed, namespace, default, side-effect), a TypeScript `import x = require(...)`, a named, type, star or star-as re-export, a `typeof import(...)` or `import(...).Name` type, a dynamic `import()` whose argument is a string or a template literal with no expressions, and a call to the `require` builtin with such an argument. It does NOT fire on a declared subpath, on a sibling package whose name shares the prefix (`@palimpsest/cli`, `@palimpsest/server`, a longer `@palimpsest/core-*` name), on the barrel name inside an ordinary string, template or comment, on a computed `import()` argument, or on a member call such as `loader.require(...)`. Those last two are deliberate holes: the specifier is not knowable from the syntax. Two more are known limitations: the comparison is case-sensitive, so a case variant such as `@Palimpsest/Core` does not fire, and a computed specifier built from a variable or a template with expressions does not either.
 
 Other packages (docs, its generator, md-conformance, server, CLI, desktop) keep the barrel, and so do app tests: a test that imports the barrel loads it into its own graph only, and a test mock has to follow the module production imports, which the barrel no longer is. The scope therefore covers app source by extension pattern, so a file added in a new directory is covered without an edit here, and subtracts every suffix the shared test-only classifier [`isTestOnlySourceFile`](../../test-support/test-only-source-file.mjs) recognizes. The self-test fails if that classifier gains a suffix this scope does not exclude. The dev-server adapter `packages/app/src/server/hocuspocus-plugin.ts` is production source and is in scope.
 
@@ -629,7 +629,7 @@ Rule: [`lint-plugins/ps-rules/rules/no-demoted-dialog-confirm.mjs`](rules/no-dem
 
 Desktop error reporting. No code under `packages/desktop/src` calls `showErrorBox` on Electron's `dialog`, or on anything shaped like it. Errors are shown with `showErrorDialog` from [`packages/desktop/src/main/error-dialog.ts`](../../packages/desktop/src/main/error-dialog.ts), an async `showMessageBox` attached to a parent window.
 
-**Why.** `dialog.showErrorBox` is synchronous and takes no parent window. On Linux it runs `gtk_dialog_run`, which holds the main thread in a nested GTK loop until someone presses its button. With no parent, the window manager can stack the dialog behind the window it is reporting on, and the dialog has no taskbar entry, so nothing on screen shows it is still open. In PRD-9099 that left the Project Navigator on "Opening <folder>…" indefinitely: the `ok:project:open` reply could not leave the main process. SIGTERM was ignored as well, because both Chromium's shutdown task and the app's Node signal handler wait for the main loop. `showMessageBox` with a parent stays above that window, and the main loop keeps running while it is open.
+**Why.** `dialog.showErrorBox` is synchronous and takes no parent window. On Linux it runs `gtk_dialog_run`, which holds the main thread in a nested GTK loop until someone presses its button. With no parent, the window manager can stack the dialog behind the window it is reporting on, and the dialog has no taskbar entry, so nothing on screen shows it is still open. In PRD-9099 that left the Project Navigator on "Opening <folder>…" indefinitely: the `ps:project:open` reply could not leave the main process. SIGTERM was ignored as well, because both Chromium's shutdown task and the app's Node signal handler wait for the main loop. `showMessageBox` with a parent stays above that window, and the main loop keeps running while it is open.
 
 **Scoped** (see the rule's `RULE_SCOPES` entry in [`scope.mjs`](scope.mjs)) to `packages/desktop/src/**/*.ts`, the only package that runs in Electron's main process. `**/*.test.ts` and `**/*.test-helper.ts` are excluded, because tests stub the method by name.
 
@@ -781,7 +781,7 @@ export const ruleName = {
 
 ### 2. Register the rule
 
-Import it in [`index.mjs`](index.mjs), add it to the `declared` map, then switch it on in [`oxlint.config.ts`](../../oxlint.config.ts) as `'ok/<rule-name>': 'error'`, and add the same entry to [`__fixtures__/oxlint.fixtures.json`](__fixtures__/oxlint.fixtures.json), the config the fixture tests lint with.
+Import it in [`index.mjs`](index.mjs), add it to the `declared` map, then switch it on in [`oxlint.config.ts`](../../oxlint.config.ts) as `'ps/<rule-name>': 'error'`, and add the same entry to [`__fixtures__/oxlint.fixtures.json`](__fixtures__/oxlint.fixtures.json), the config the fixture tests lint with.
 
 A small number of rules are registered from a second plugin instead of this one. If the rule you are adding documents a calibrated measurement, an internal file list, or anything else that should not reach a public clone, do not follow this step as written. That path is documented in a maintainers-only checklist that is not part of this clone; if you cannot reach it, open an issue describing what the rule would enforce and leave the registration to a maintainer rather than guessing at the shape.
 
@@ -799,15 +799,15 @@ Drop `<rule-name>.fixture.tsx` in `__fixtures__/`, pairing positive cases (must 
 
 ### 5. Author the fixture-file test
 
-Put it at `lint-plugins/ps-rules/tests/<rule-name>.uncached.test.mjs`, not in a package. The `.uncached.test` suffix runs it in the uncached cross-package tier (`vitest.uncached.config.ts`): every agent round, CI's `lint` job, and every whole-suite `turbo run`, which names `test:uncached` beside `test`. A package's cached test tier would replay a stale pass when only the rule or `oxlint.config.ts` changed, unless that package's Turbo key hashed both. The tests in that directory check that every rule the `ok` plugin registers has one. Write it as plain JavaScript.
+Put it at `lint-plugins/ps-rules/tests/<rule-name>.uncached.test.mjs`, not in a package. The `.uncached.test` suffix runs it in the uncached cross-package tier (`vitest.uncached.config.ts`): every agent round, CI's `lint` job, and every whole-suite `turbo run`, which names `test:uncached` beside `test`. A package's cached test tier would replay a stale pass when only the rule or `oxlint.config.ts` changed, unless that package's Turbo key hashed both. The tests in that directory check that every rule the `ps` plugin registers has one. Write it as plain JavaScript.
 
-The tier's global setup, `test-support/ps-rules-fixture-lint.ts`, runs oxlint once over every fixture with the fixture config and hands the report to the tests; a watch-mode rerun lints again. Every rule test fails when that run could not start, exited other than 1, gave no JSON report, linted a different number of files than the directory's `*.fixture.tsx` files, or reported a diagnostic on no fixture. `lintOkRulesFixture` in `test-support/read-ps-rules-config.test-helper.ts` returns one fixture's diagnostics from the report, each with its rule code, `line:column` position and message, in a fixed order. A diagnostic that names no rule (a rule that threw while linting that fixture, or a fixture oxlint could not parse) fails that fixture's test with oxlint's message, as it does the scope meta-test, which reads every fixture. oxlint also drops every other JS-plugin diagnostic on a file where a rule threw, so a rule whose scope reaches other fixtures fails their tests too. Run outside the tier, it fails and prints the command that runs the test. Assert the exact list of your rule's fire positions, filtered by its own code:
+The tier's global setup, `test-support/ps-rules-fixture-lint.ts`, runs oxlint once over every fixture with the fixture config and hands the report to the tests; a watch-mode rerun lints again. Every rule test fails when that run could not start, exited other than 1, gave no JSON report, linted a different number of files than the directory's `*.fixture.tsx` files, or reported a diagnostic on no fixture. `lintPsRulesFixture` in `test-support/read-ps-rules-config.test-helper.ts` returns one fixture's diagnostics from the report, each with its rule code, `line:column` position and message, in a fixed order. A diagnostic that names no rule (a rule that threw while linting that fixture, or a fixture oxlint could not parse) fails that fixture's test with oxlint's message, as it does the scope meta-test, which reads every fixture. oxlint also drops every other JS-plugin diagnostic on a file where a rule threw, so a rule whose scope reaches other fixtures fails their tests too. Run outside the tier, it fails and prints the command that runs the test. Assert the exact list of your rule's fire positions, filtered by its own code:
 
 ```js
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import {
-  lintOkRulesFixture,
+  lintPsRulesFixture,
   readEnabledRuleIds,
   readRegisteredRuleNames,
 } from '../../../test-support/read-ps-rules-config.test-helper.ts';
@@ -818,7 +818,7 @@ const FIXTURE = `lint-plugins/ps-rules/__fixtures__/${RULE}.fixture.tsx`;
 
 describe(`${RULE} oxlint rule`, () => {
   test('fires at exactly its positive cases, by its own code, and on no negative case', () => {
-    const fires = lintOkRulesFixture(FIXTURE).filter((d) => d.code === `ok(${RULE})`);
+    const fires = lintPsRulesFixture(FIXTURE).filter((d) => d.code === `ok(${RULE})`);
     expect(fires.map((fire) => fire.position)).toEqual(['12:5', '18:5']);
     for (const fire of fires) {
       expect(fire.message).toContain('<fix-noun>');
@@ -829,7 +829,7 @@ describe(`${RULE} oxlint rule`, () => {
 
   test('rule is registered and enabled', async () => {
     expect(await readRegisteredRuleNames(REPO_ROOT)).toContain(RULE);
-    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ok/${RULE}`);
+    expect(await readEnabledRuleIds(REPO_ROOT)).toContain(`ps/${RULE}`);
   });
 });
 ```

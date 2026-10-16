@@ -335,7 +335,7 @@ function outcomeAttributes(result: PushPermission): ProbeOutcomeAttributes {
 
 let _outcomeCounter: Counter | null = null;
 function outcomeCounter(): Counter {
-  _outcomeCounter ||= getMeter().createCounter('ok.permissions.probe.outcome_total', {
+  _outcomeCounter ||= getMeter().createCounter('ps.permissions.probe.outcome_total', {
     description:
       'Push-permission probe outcomes. Bounded labels: outcome ∈ {allowed,denied,unknown}; denied_reason ∈ {no-collaborator,private-no-access,repo-not-found,not-authenticated,none}; error_class ∈ {network,timeout,rate-limit,token-invalid,malformed-response,ssh-unverified,none}.',
   });
@@ -344,7 +344,7 @@ function outcomeCounter(): Counter {
 
 let _durationHist: Histogram | null = null;
 function durationHist(): Histogram {
-  _durationHist ||= getMeter().createHistogram('ok.permissions.probe.duration_ms', {
+  _durationHist ||= getMeter().createHistogram('ps.permissions.probe.duration_ms', {
     description: 'Push-permission probe wall-clock duration.',
     unit: 'ms',
   });

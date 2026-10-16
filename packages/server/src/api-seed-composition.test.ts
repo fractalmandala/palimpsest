@@ -62,7 +62,7 @@ describe('seed group over the composed listener — served natively', () => {
       `http://127.0.0.1:${server.port}/api/seed/plan?packId=not-a-real-pack`,
     );
     expect(viaPlan.status).toBe(400);
-    expect(((await viaPlan.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await viaPlan.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
 
     const viaInstall = await fetch(`http://127.0.0.1:${server.port}/api/seed/install-pack-skill`, {
       method: 'POST',
@@ -71,7 +71,7 @@ describe('seed group over the composed listener — served natively', () => {
     });
     expect(viaInstall.status).toBe(400);
     expect(((await viaInstall.json()) as { type?: string }).type).toBe(
-      'urn:ok:error:invalid-request',
+      'urn:ps:error:invalid-request',
     );
   });
 
@@ -82,7 +82,7 @@ describe('seed group over the composed listener — served natively', () => {
       body: JSON.stringify({ plan: 'not-an-object' }),
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('mutating pair refuses a rebound Host before the verb check (403, no Allow leak)', async () => {
@@ -90,7 +90,7 @@ describe('seed group over the composed listener — served natively', () => {
       const res = await rawRequest(server.port, path, { headers: { Host: 'evil.example' } });
       expect(res.status, path).toBe(403);
       expect(res.headers.allow, path).toBeUndefined();
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -98,7 +98,7 @@ describe('seed group over the composed listener — served natively', () => {
     for (const path of ['/api/seed/plan', '/api/seed/packs']) {
       const res = await rawRequest(server.port, path, { headers: { Host: 'evil.example' } });
       expect(res.status, path).toBe(403);
-      expect(parseProblem(res.body).type, path).toBe('urn:ok:error:host-not-allowed');
+      expect(parseProblem(res.body).type, path).toBe('urn:ps:error:host-not-allowed');
     }
   });
 
@@ -107,7 +107,7 @@ describe('seed group over the composed listener — served natively', () => {
       headers: { Origin: 'https://evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-origin');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-origin');
   });
 
   test('sibling native groups still answer on the same server (multi-group dispatch)', async () => {

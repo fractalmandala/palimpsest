@@ -37,7 +37,7 @@ afterEach(async () => {
 function updateSpans(): ReadonlyArray<{ attributes: Record<string, unknown> }> {
   return exporter
     .getFinishedSpans()
-    .filter((span) => span.name === 'ok.index.update')
+    .filter((span) => span.name === 'ps.index.update')
     .map((span) => ({ attributes: span.attributes as Record<string, unknown> }));
 }
 

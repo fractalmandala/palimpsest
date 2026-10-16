@@ -14,7 +14,7 @@ export async function isGitHubRepoPublic(
     const resp = await fetchFn(url, {
       signal: ac.signal,
       headers: {
-        'User-Agent': 'open-knowledge-cli',
+        'User-Agent': 'palimpsest-cli',
         Accept: 'application/vnd.github+json',
       },
     });

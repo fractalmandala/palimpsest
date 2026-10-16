@@ -176,7 +176,7 @@ describe('surgical TOML MCP write', () => {
 
   it('keeps an LF-dominant file LF despite a stray CRLF (dominant EOL, not presence)', () => {
     const configPath = tempFile('config.toml');
-    const original = 'model = "gpt-5"\r\n# one stray crlf above, rest LF\nname = "ok"\n';
+    const original = 'model = "gpt-5"\r\n# one stray crlf above, rest LF\nname = "ps"\n';
     writeFileSync(configPath, original);
 
     const result = writeCodex(configPath);

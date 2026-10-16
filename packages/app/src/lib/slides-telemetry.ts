@@ -1,6 +1,6 @@
 import { trace } from '@opentelemetry/api';
 
-const TRACER_NAME = 'open-knowledge-app';
+const TRACER_NAME = 'palimpsest-app';
 
 function emitMarker(name: string): void {
   try {
@@ -11,5 +11,5 @@ function emitMarker(name: string): void {
 }
 
 export function recordSlidesOpened(): void {
-  emitMarker('ok.slides.opened');
+  emitMarker('ps.slides.opened');
 }

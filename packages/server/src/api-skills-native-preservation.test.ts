@@ -91,9 +91,9 @@ test('all seventeen paths have exclusive native ownership while uninstall remain
 test('every native family preserves Host, Origin and forwarded-header refusal over the listener', async () => {
   for (const path of PATHS) {
     for (const [headers, type] of [
-      [{ Host: 'evil.example' }, 'urn:ok:error:host-not-allowed'],
-      [{ Origin: 'https://evil.example' }, 'urn:ok:error:invalid-origin'],
-      [{ 'X-Forwarded-For': '127.0.0.1' }, 'urn:ok:error:host-not-allowed'],
+      [{ Host: 'evil.example' }, 'urn:ps:error:host-not-allowed'],
+      [{ Origin: 'https://evil.example' }, 'urn:ps:error:invalid-origin'],
+      [{ 'X-Forwarded-For': '127.0.0.1' }, 'urn:ps:error:host-not-allowed'],
     ] as const) {
       const response = await rawRequest(server.port, path, {
         method: 'PATCH',
@@ -156,9 +156,9 @@ test('non-loopback peers are refused before parsing on all paths, while configur
       expect(parseProblem(captured.body).type).toBe(
         consented
           ? path === '/api/skill-upload'
-            ? 'urn:ok:error:invalid-request'
-            : 'urn:ok:error:method-not-allowed'
-          : 'urn:ok:error:loopback-required',
+            ? 'urn:ps:error:invalid-request'
+            : 'urn:ps:error:method-not-allowed'
+          : 'urn:ps:error:loopback-required',
       );
       expect(req.readableEnded).toBe(false);
       req.destroy();
@@ -182,7 +182,7 @@ test('ephemeral admission still rejects hostile Hosts and retains the existing m
     body: JSON.stringify({ path: '', frontmatter: { category: 'refused' } }),
   });
   expect(restricted.status, restricted.body).toBe(403);
-  expect(parseProblem(restricted.body).type).toBe('urn:ok:error:single-file-mode');
+  expect(parseProblem(restricted.body).type).toBe('urn:ps:error:single-file-mode');
   expect(existsSync(join(root, 'ephemeral/.ps/frontmatter.yml'))).toBe(false);
 });
 
@@ -216,7 +216,7 @@ test.each(['timeout', 'disconnect'] as const)(
     expect(captured.status, captured.body).toBe(kind === 'timeout' ? 408 : 500);
     expect(parseProblem(captured.body)).toMatchObject({
       type:
-        kind === 'timeout' ? 'urn:ok:error:request-timeout' : 'urn:ok:error:internal-server-error',
+        kind === 'timeout' ? 'urn:ps:error:request-timeout' : 'urn:ps:error:internal-server-error',
       title: kind === 'timeout' ? 'Request body read timed out.' : 'Failed to read request body.',
     });
     expect(existsSync(join(root, 'normal/.agents/skills/interrupted/SKILL.md'))).toBe(false);
@@ -292,7 +292,7 @@ test('real live skill and reference conflicts refuse edits and rename without ch
   ] as const) {
     const refused = await post(route, method, body);
     expect(refused.status, `${route}: ${refused.body}`).toBe(409);
-    expect(parseProblem(refused.body).type).toBe('urn:ok:error:doc-in-conflict');
+    expect(parseProblem(refused.body).type).toBe('urn:ps:error:doc-in-conflict');
   }
   expect(readFileSync(join(root, 'normal', path), 'utf8')).toBe(skillBefore);
   expect(readFileSync(join(root, 'normal', `${referenceDocName}.md`), 'utf8')).toBe(

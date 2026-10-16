@@ -93,7 +93,7 @@ describe('POST /api/test-reset scope', () => {
 
     expect(captured.status).toBe(400);
     expect(JSON.parse(captured.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'scope=server needs a server started with an isolated config home.',
     });
     expect(closedSessions).toEqual([]);
@@ -122,7 +122,7 @@ describe('POST /api/test-reset scope', () => {
 
       expect(captured.status).toBe(400);
       expect(JSON.parse(captured.body)).toMatchObject({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         title:
           'reset-psignore cannot be combined with scope=server: a server-scope reset always restores .psignore.',
       });
@@ -140,7 +140,7 @@ describe('POST /api/test-reset scope', () => {
 
     expect(captured.status).toBe(400);
     expect(JSON.parse(captured.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'scope must be one of document, server.',
     });
     expect(readFileSync(join(contentDir, 'test-doc.md'), 'utf-8')).toBe('kept\n');

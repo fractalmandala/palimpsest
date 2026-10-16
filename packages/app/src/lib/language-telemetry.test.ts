@@ -30,8 +30,8 @@ describe('renderer language telemetry', () => {
     recordLanguagePreferenceChanged({ from: 'system', to: 'es' });
     expect(spans).toEqual([
       {
-        name: 'ok.language.preferenceChanged',
-        attributes: { 'ok.language.from': 'system', 'ok.language.to': 'es' },
+        name: 'ps.language.preferenceChanged',
+        attributes: { 'ps.language.from': 'system', 'ps.language.to': 'es' },
       },
     ]);
   });
@@ -39,16 +39,16 @@ describe('renderer language telemetry', () => {
   test('carries the chosen locale, not just the fact of a change', () => {
     recordLanguagePreferenceChanged({ from: 'en', to: 'zh-Hans' });
     expect(spans[0]?.attributes).toEqual({
-      'ok.language.from': 'en',
-      'ok.language.to': 'zh-Hans',
+      'ps.language.from': 'en',
+      'ps.language.to': 'zh-Hans',
     });
   });
 
   test('reports a switch back to system unresolved', () => {
     recordLanguagePreferenceChanged({ from: 'fr', to: 'system' });
     expect(spans[0]?.attributes).toEqual({
-      'ok.language.from': 'fr',
-      'ok.language.to': 'system',
+      'ps.language.from': 'fr',
+      'ps.language.to': 'system',
     });
   });
 });

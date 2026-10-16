@@ -43,7 +43,7 @@ function clip(text: string | null | undefined): string {
     : trimmed;
 }
 
-function lintOkRulesFixtures(): PsRulesFixtureLint {
+function lintPsRulesFixtures(): PsRulesFixtureLint {
   const fixtures = readdirSync(join(PS_ROOT, PS_RULES_FIXTURES)).filter((name) =>
     name.endsWith(FIXTURE_SUFFIX),
   );
@@ -82,8 +82,8 @@ function lintOkRulesFixtures(): PsRulesFixtureLint {
   return { diagnostics: report.diagnostics ?? [] };
 }
 
-export default function provideOkRulesFixtureLint(project: TestProject): void {
-  const provide = () => project.provide('psRulesFixtureLint', lintOkRulesFixtures());
+export default function providePsRulesFixtureLint(project: TestProject): void {
+  const provide = () => project.provide('psRulesFixtureLint', lintPsRulesFixtures());
   provide();
   project.onTestsRerun(provide);
 }

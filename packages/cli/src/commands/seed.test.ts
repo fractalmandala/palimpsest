@@ -28,7 +28,7 @@ afterEach(() => {
   if (existsSync(testDir)) rmSync(testDir, { recursive: true, force: true });
 });
 
-function scaffoldOkDir(dir: string, configYml = 'content:\n  dir: .\n'): void {
+function scaffoldPsDir(dir: string, configYml = 'content:\n  dir: .\n'): void {
   mkdirSync(join(dir, PS_DIR), { recursive: true });
   writeFileSync(join(dir, PS_DIR, CONFIG_FILENAME), configYml, 'utf-8');
 }
@@ -43,7 +43,7 @@ function no(): NodeJS.ReadableStream {
 
 describe('runSeed — happy path', () => {
   test('applies plan with --yes flag', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, yes: true });
 
     expect(result.status).toBe('applied');
@@ -60,14 +60,14 @@ describe('runSeed — happy path', () => {
   });
 
   test('applies plan when user confirms Y via stream', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, confirmStream: yes() });
     expect(result.status).toBe('applied');
     expect(result.exitCode).toBe(0);
   });
 
   test('cancels when user responds n', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, confirmStream: no() });
     expect(result.status).toBe('cancelled');
     expect(result.exitCode).toBe(0);
@@ -79,7 +79,7 @@ describe('runSeed — happy path', () => {
 
 describe('runSeed — --dry-run', () => {
   test('prints plan but does not write', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, dryRun: true });
     expect(result.status).toBe('dry-run');
     expect(result.exitCode).toBe(0);
@@ -90,7 +90,7 @@ describe('runSeed — --dry-run', () => {
   });
 
   test('surfaces the pack rationale (per-folder why) + anti-clone note for inspiration', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, pack: 'worldbuilding', dryRun: true });
     expect(result.status).toBe('dry-run');
     const pack = STARTER_PACKS.worldbuilding;
@@ -114,7 +114,7 @@ describe('runSeed — --dry-run', () => {
   });
 
   test('returns no-op (not dry-run) when the directory is already fully seeded', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     await runSeed({ cwd: testDir, yes: true });
     const result = await runSeed({ cwd: testDir, dryRun: true });
     expect(result.status).toBe('no-op');
@@ -124,7 +124,7 @@ describe('runSeed — --dry-run', () => {
 
 describe('runSeed — no-op', () => {
   test('reports already-seeded on re-run', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     await runSeed({ cwd: testDir, yes: true });
 
     const second = await runSeed({ cwd: testDir, yes: true });
@@ -134,7 +134,7 @@ describe('runSeed — no-op', () => {
   });
 
   test('is NOT a no-op when a pack skill was deleted from a project that has an agent folder', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     mkdirSync(join(testDir, '.claude'), { recursive: true });
     await runSeed({ cwd: testDir, yes: true });
     rmSync(join(testDir, '.claude', 'skills'), { recursive: true, force: true });
@@ -153,7 +153,7 @@ describe('runSeed — no-op', () => {
   });
 
   test('with no agent folder, pack skills are not pending and re-runs stay a no-op', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     await runSeed({ cwd: testDir, yes: true });
 
     const second = await runSeed({ cwd: testDir, yes: true });
@@ -165,7 +165,7 @@ describe('runSeed — no-op', () => {
   });
 
   test('an agent folder symlinked outside the project gets the symlink-specific guidance', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const outside = mkdtempSync(join(tmpdir(), 'ps-seed-outside-'));
     try {
       symlinkSync(outside, join(testDir, '.claude'));
@@ -187,11 +187,11 @@ describe('runSeed — refusal notes name the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: both refusal notes name %s seed', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const noFolder = await runSeed({ cwd: testDir, yes: true });
     expect(noFolder.message).toContain(
       `Create the folder your agent uses, then run \`${command} seed\` again to install them.`,
@@ -200,7 +200,7 @@ describe('runSeed — refusal notes name the running channel CLI', () => {
     const escaped = mkdtempSync(join(tmpdir(), 'ps-seed-escaped-'));
     const outside = mkdtempSync(join(tmpdir(), 'ps-seed-outside-'));
     try {
-      scaffoldOkDir(escaped);
+      scaffoldPsDir(escaped);
       symlinkSync(outside, join(escaped, '.claude'));
       mkdirSync(join(outside, 'skills'), { recursive: true });
       const result = await runSeed({ cwd: escaped, yes: true });
@@ -225,7 +225,7 @@ describe('runSeed — prerequisite', () => {
 
 describe('runSeed — --root', () => {
   test('scaffolds the starter pack inside a new subfolder', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, root: 'brain', yes: true });
     expect(result.status).toBe('applied');
     for (const folder of STARTER_FOLDERS) {
@@ -240,7 +240,7 @@ describe('runSeed — --root', () => {
   });
 
   test('reuses an existing subfolder without error', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     mkdirSync(join(testDir, 'knowledge'), { recursive: true });
     writeFileSync(join(testDir, 'knowledge', '.keep'), '', 'utf-8');
     const result = await runSeed({ cwd: testDir, root: 'knowledge', yes: true });
@@ -252,7 +252,7 @@ describe('runSeed — --root', () => {
   });
 
   test('root "." matches default project-root behavior', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, root: '.', yes: true });
     expect(result.status).toBe('applied');
     for (const folder of STARTER_FOLDERS) {
@@ -261,14 +261,14 @@ describe('runSeed — --root', () => {
   });
 
   test('re-running with the same root is a no-op', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     await runSeed({ cwd: testDir, root: 'brain', yes: true });
     const second = await runSeed({ cwd: testDir, root: 'brain', yes: true });
     expect(second.status).toBe('no-op');
   });
 
   test('two distinct roots coexist', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     await runSeed({ cwd: testDir, root: 'work', yes: true });
     const second = await runSeed({ cwd: testDir, root: 'personal', yes: true });
     expect(second.status).toBe('applied');
@@ -283,7 +283,7 @@ describe('runSeed — --root', () => {
   });
 
   test('rejects absolute root paths with a failed status', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await runSeed({ cwd: testDir, root: '/tmp/escape', yes: true });
     expect(result.status).toBe('failed');
     expect(result.exitCode).toBe(1);
@@ -292,7 +292,7 @@ describe('runSeed — --root', () => {
 
 describe('runSeed — path argument', () => {
   test('operates on explicit path rather than cwd', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const previousCwd = process.cwd();
     const otherDir = mkdtempSync(join(tmpdir(), 'other-'));
     try {

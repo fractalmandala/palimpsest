@@ -34,7 +34,7 @@ describe('EditorViewMenuStateRegistry — focused-window ownership', () => {
 describe('mergeViewMenuState — multi-publisher non-clobbering contract', () => {
   const initial = {
     showHiddenFiles: false,
-    showOkFolders: false,
+    showPsFolders: false,
     showOnlyMarkdownFiles: false,
     showSkillsSection: true,
     canExpandAll: true,
@@ -57,7 +57,7 @@ describe('mergeViewMenuState — multi-publisher non-clobbering contract', () =>
 
     expect(afterEditorArea).toEqual({
       showHiddenFiles: true,
-      showOkFolders: false,
+      showPsFolders: false,
       showOnlyMarkdownFiles: false,
       showSkillsSection: true,
       canExpandAll: false,
@@ -73,7 +73,7 @@ describe('mergeViewMenuState — multi-publisher non-clobbering contract', () =>
 
     const afterVisibilityPush = mergeViewMenuState(afterTerminal, {
       showHiddenFiles: true,
-      showOkFolders: true,
+      showPsFolders: true,
       showOnlyMarkdownFiles: true,
       showSkillsSection: false,
     });
@@ -83,7 +83,7 @@ describe('mergeViewMenuState — multi-publisher non-clobbering contract', () =>
       terminalVisible: true,
       terminalLive: true,
       showHiddenFiles: true,
-      showOkFolders: true,
+      showPsFolders: true,
       showOnlyMarkdownFiles: true,
       showSkillsSection: false,
     });
@@ -160,7 +160,7 @@ describe('createDefaultEditorViewMenuState — pre-first-push menu state', () =>
   test("matches the renderer's resolved config defaults exactly", () => {
     expect(createDefaultEditorViewMenuState()).toEqual({
       showHiddenFiles: false,
-      showOkFolders: false,
+      showPsFolders: false,
       showOnlyMarkdownFiles: false,
       showSkillsSection: true,
       canExpandAll: true,
@@ -181,7 +181,7 @@ describe('createDefaultEditorViewMenuState — pre-first-push menu state', () =>
 describe('buildViewMenuStateDeps — snapshot → menu-deps wiring', () => {
   const snapshot = {
     showHiddenFiles: true,
-    showOkFolders: true,
+    showPsFolders: true,
     showOnlyMarkdownFiles: true,
     showSkillsSection: false,
     canExpandAll: false,
@@ -198,7 +198,7 @@ describe('buildViewMenuStateDeps — snapshot → menu-deps wiring', () => {
   test('maps every snapshot field onto its menu dep', () => {
     const deps = buildViewMenuStateDeps(snapshot, () => {});
     expect(deps.showHiddenFilesChecked).toBe(true);
-    expect(deps.showOkFoldersChecked).toBe(true);
+    expect(deps.showPsFoldersChecked).toBe(true);
     expect(deps.showOnlyMarkdownFilesChecked).toBe(true);
     expect(deps.showSkillsSectionChecked).toBe(false);
     expect(deps.canExpandAll).toBe(false);
@@ -219,7 +219,7 @@ describe('buildViewMenuStateDeps — snapshot → menu-deps wiring', () => {
     });
 
     deps.onToggleShowHiddenFiles?.();
-    deps.onToggleShowOkFolders?.();
+    deps.onToggleShowPsFolders?.();
     deps.onToggleShowOnlyMarkdownFiles?.();
     deps.onToggleShowSkillsSection?.();
     deps.onToggleSidebar?.();

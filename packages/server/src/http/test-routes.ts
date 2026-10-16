@@ -142,7 +142,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             `scope must be one of ${TEST_RESET_SCOPES.join(', ')}.`,
             { handler: 'test-reset' },
           );
@@ -152,7 +152,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'reset-psignore cannot be combined with scope=server: a server-scope reset always restores .psignore.',
             { handler: 'test-reset' },
           );
@@ -162,7 +162,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:invalid-request',
+            'urn:ps:error:invalid-request',
             'scope=server needs a server started with an isolated config home.',
             { handler: 'test-reset' },
           );
@@ -176,7 +176,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           filePath = safeContentPath(docName, contentDir);
         } catch (err) {
           log.error({ err, docName }, '[test-reset] safeContentPath rejected docName');
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Invalid docName.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Invalid docName.', {
             handler: 'test-reset',
             cause: err,
           });
@@ -189,7 +189,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
             errorResponse(
               res,
               500,
-              'urn:ok:error:internal-server-error',
+              'urn:ps:error:internal-server-error',
               'The server-scope reset did not run, because the file watcher could not settle.',
               {
                 handler: 'test-reset',
@@ -209,22 +209,22 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           await resetLoadedState(docName);
           resetSettingsForTest?.();
         }
-        const resetOkignoreParam = url.searchParams.get('reset-psignore');
-        const resetOkignore = resetOkignoreParam !== 'false';
+        const resetPsignoreParam = url.searchParams.get('reset-psignore');
+        const resetOkignore = resetPsignoreParam !== 'false';
         if (resetOkignore) {
           try {
-            const okignorePath = resolve(contentDir, '.psignore');
-            const okignoreDoc = hocuspocus.documents.get(CONFIG_DOC_NAME_OKIGNORE);
-            if (okignoreDoc) {
-              const ytext = okignoreDoc.getText('source');
+            const psignorePath = resolve(contentDir, '.psignore');
+            const psignoreDoc = hocuspocus.documents.get(CONFIG_DOC_NAME_OKIGNORE);
+            if (psignoreDoc) {
+              const ytext = psignoreDoc.getText('source');
               if (ytext.length > 0) {
-                okignoreDoc.transact(() => {
+                psignoreDoc.transact(() => {
                   ytext.delete(0, ytext.length);
                 }, CONFIG_VALIDATION_REVERT_ORIGIN);
               }
             }
-            if (existsSync(okignorePath)) {
-              writeFileSync(okignorePath, '', 'utf-8');
+            if (existsSync(psignorePath)) {
+              writeFileSync(psignorePath, '', 'utf-8');
             }
             if (contentFilter) {
               bumpSkillsCatalogGen();
@@ -243,7 +243,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           { handler: 'test-reset' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'test-reset',
           cause: e,
         });
@@ -260,7 +260,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
         successResponse(res, 200, TestFlushGitSuccessSchema, {}, { handler: 'test-flush-git' });
       } catch (e) {
         log.error({ err: e, requestId: getRequestId(_req) }, '[test-flush-git] flush failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'test-flush-git',
           cause: e,
         });
@@ -277,7 +277,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             503,
-            'urn:ok:error:backlink-index-not-configured',
+            'urn:ps:error:backlink-index-not-configured',
             'Backlink index is not configured.',
             { handler: 'test-rescan-backlinks' },
           );
@@ -292,7 +292,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           { handler: 'test-rescan-backlinks' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'test-rescan-backlinks',
           cause: e,
         });
@@ -309,7 +309,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             503,
-            'urn:ok:error:file-rescan-not-configured',
+            'urn:ps:error:file-rescan-not-configured',
             'Watcher rescan capability is not configured.',
             { handler: 'test-rescan-files' },
           );
@@ -325,7 +325,7 @@ export function createTestRoutes(deps: TestRouteDeps): ApiRouteGroup {
           { handler: 'test-rescan-files' },
         );
       } catch (e) {
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Internal server error.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Internal server error.', {
           handler: 'test-rescan-files',
           cause: e,
         });

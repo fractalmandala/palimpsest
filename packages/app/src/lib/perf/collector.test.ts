@@ -45,14 +45,14 @@ describe('recordMark', () => {
 
   test('appends to collector.marks', () => {
     recordMark({
-      name: 'ok/test/one',
+      name: 'ps/test/one',
       startTime: 0,
       duration: 0,
-      track: 'ok/test',
+      track: 'ps/test',
     });
     const c = getCollector();
     expect(c?.marks.length).toBe(1);
-    expect(c?.marks.toArray()[0]?.name).toBe('ok/test/one');
+    expect(c?.marks.toArray()[0]?.name).toBe('ps/test/one');
   });
 });
 
@@ -79,10 +79,10 @@ describe('collector.reset', () => {
   test('clears marks and vitals without changing identity', () => {
     const c = getCollector();
     recordMark({
-      name: 'ok/test/pre-reset',
+      name: 'ps/test/pre-reset',
       startTime: 0,
       duration: 0,
-      track: 'ok/test',
+      track: 'ps/test',
     });
     recordVital({
       name: 'LCP',
@@ -105,15 +105,15 @@ describe('collector.reset', () => {
       expect(c).toBeDefined();
       for (let i = 0; i < 5; i += 1) {
         recordMark({
-          name: `ok/test/seq-${i}`,
+          name: `ps/test/seq-${i}`,
           startTime: i,
           duration: 0,
-          track: 'ok/test',
+          track: 'ps/test',
         });
       }
       expect(c?.marks.length).toBe(3);
       const names = c?.marks.toArray().map((m) => m.name) ?? [];
-      expect(names).toEqual(['ok/test/seq-2', 'ok/test/seq-3', 'ok/test/seq-4']);
+      expect(names).toEqual(['ps/test/seq-2', 'ps/test/seq-3', 'ps/test/seq-4']);
     } finally {
       delete window.__okPerfOverrides;
       (globalThis as { __ok_perf?: unknown }).__ok_perf = undefined;

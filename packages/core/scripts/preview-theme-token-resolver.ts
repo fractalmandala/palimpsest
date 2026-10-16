@@ -4,7 +4,7 @@
  *
  * The preview iframe is null-origin and style-isolated — it inherits nothing
  * from the host page. To let embedded `html preview` content (charts, stat
- * cards, custom SVG, …) track OK's theme, a fixed subset of design tokens is
+ * cards, custom SVG, …) track Palimpsest's theme, a fixed subset of design tokens is
  * injected into every preview `srcDoc` as CSS custom properties. This resolver
  * is the single source of truth for that subset: it parses both theme blocks,
  * resolves `var()` indirections (e.g. dark `--primary` → `var(--color-sky-blue)`

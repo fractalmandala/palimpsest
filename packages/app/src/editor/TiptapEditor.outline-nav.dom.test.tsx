@@ -17,7 +17,7 @@ import { getCollector } from '@/lib/perf/collector';
 import { sharedExtensions } from './extensions/shared';
 
 const DOC_NAME = 'outline-nav-doc';
-const NAVIGATION_DECLINED_MARK = 'ok/scroll-nav/declined';
+const NAVIGATION_DECLINED_MARK = 'ps/scroll-nav/declined';
 
 let editorEntry: {
   editor: Editor;

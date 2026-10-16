@@ -85,7 +85,7 @@ export function applyFolderFrontmatterPatch(
     if (Object.keys(merged).length === 0) {
       if (existsSync(fmPath)) {
         unlinkSync(fmPath);
-        autoCleanOkDir(psDir);
+        autoCleanPsDir(psDir);
         return { ok: true, path: relPathOf(contentAbs, fmPath), action: 'deleted' };
       }
       return { ok: true, path: relPathOf(contentAbs, fmPath), action: 'noop' };
@@ -116,7 +116,7 @@ function readExistingFrontmatter(absPath: string): FrontmatterRecord {
   return { ...(parsed as FrontmatterRecord) };
 }
 
-function autoCleanOkDir(psAbsDir: string): void {
+function autoCleanPsDir(psAbsDir: string): void {
   if (!existsSync(psAbsDir)) return;
   let entries: string[];
   try {

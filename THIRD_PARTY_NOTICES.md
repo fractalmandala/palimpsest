@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-`@inkeep/open-knowledge` (npm CLI) and `@inkeep/open-knowledge-desktop` (Electron app) bundle source code from the third-party packages listed below. Each package is redistributed under its own license; the relevant copyright notice and license text are reproduced here as required.
+`@palimpsest/cli` (npm CLI) and `@palimpsest/desktop` (Electron app) bundle source code from the third-party packages listed below. Each package is redistributed under its own license; the relevant copyright notice and license text are reproduced here as required.
 
 This file is generated. **Do not edit by hand.** Regenerate with `pnpm run notices` from the repo root, then commit the result.
 
@@ -212,7 +212,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ## LGPL-3.0 — transitive optional binary
 
-`node-liblzma`@2.2.0 is an **optional** transitive dependency of `just-bash`, used by `@inkeep/open-knowledge` for sandboxed shell execution. The package is licensed under LGPL-3.0. For the npm CLI tarball, `node-liblzma` is not bundled — it is resolved from the public npm registry at install time on platforms where the native build succeeds. For the Electron desktop `.app`, whether the binary lands in `Resources/app.asar.unpacked/` depends on the build host's toolchain at packaging time; if present, the binary ships subject to LGPL-3.0 obligations. Upstream source: https://github.com/Manawyrm/node-liblzma. Corresponding source can be obtained from upstream per LGPL §6.
+`node-liblzma`@2.2.0 is an **optional** transitive dependency of `just-bash`, used by `@palimpsest/cli` for sandboxed shell execution. The package is licensed under LGPL-3.0. For the npm CLI tarball, `node-liblzma` is not bundled — it is resolved from the public npm registry at install time on platforms where the native build succeeds. For the Electron desktop `.app`, whether the binary lands in `Resources/app.asar.unpacked/` depends on the build host's toolchain at packaging time; if present, the binary ships subject to LGPL-3.0 obligations. Upstream source: https://github.com/Manawyrm/node-liblzma. Corresponding source can be obtained from upstream per LGPL §6.
 
 The full text of the GNU Lesser General Public License v3.0 follows.
 
@@ -1021,7 +1021,7 @@ Copyright 2025 OpenAI
 
 ## Bundled Rust crates (native-config addon)
 
-The native harness-config addon's `.node` binaries statically link the Rust crates below. Each is redistributed under the license shown; every license here is MIT, Apache-2.0, or ISC, whose full texts are reproduced elsewhere in this document (for dual- or multi-licensed crates OpenKnowledge elects a reproduced license). Compile-time-only crates (proc-macros, build scripts) and test-only dev-dependencies are not listed — their code is not present in the distributed binary. Versions track `packages/native-config/Cargo.lock`.
+The native harness-config addon's `.node` binaries statically link the Rust crates below. Each is redistributed under the license shown; every license here is MIT, Apache-2.0, or ISC, whose full texts are reproduced elsewhere in this document (for dual- or multi-licensed crates Palimpsest elects a reproduced license). Compile-time-only crates (proc-macros, build scripts) and test-only dev-dependencies are not listed — their code is not present in the distributed binary. Versions track `packages/native-config/Cargo.lock`.
 
 - `bitflags@2.13.0` — MIT OR Apache-2.0 — https://github.com/bitflags/bitflags
 - `cfg-if@1.0.4` — MIT OR Apache-2.0 — https://github.com/rust-lang/cfg-if
@@ -6685,9 +6685,9 @@ Copyright (c) 1991 - 1995, Stichting Mathematisch Centrum Amsterdam,
 
 ---
 
-## Inkeep first-party packages (GPL-3.0-or-later)
+## Inkeep packages (GPL-3.0-or-later)
 
-The packages below are authored and published by Inkeep and are licensed under GPL-3.0-or-later, the same license as OpenKnowledge itself (see the repository LICENSE for the full text). They are listed for completeness; they are not third-party material.
+The packages below are authored and published by Inkeep and are licensed under GPL-3.0-or-later, the same license as Palimpsest itself (see the repository LICENSE for the full text). They are listed for completeness; they are not third-party material.
 
 ### `@visimer/core@1.1.2`
 Homepage: https://github.com/inkeep/visimer#readme

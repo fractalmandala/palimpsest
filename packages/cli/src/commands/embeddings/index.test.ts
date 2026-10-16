@@ -32,7 +32,7 @@ function readLocalConfig(dir: string): string {
   }
 }
 
-describe('ok embeddings set-url / clear-url', () => {
+describe('ps embeddings set-url / clear-url', () => {
   let dir: string;
   let stderr: string;
   let restoreWrite: () => void;
@@ -128,7 +128,7 @@ describe('ok embeddings set-url / clear-url', () => {
   });
 });
 
-describe('ok embeddings status transport settings', () => {
+describe('ps embeddings status transport settings', () => {
   let dir: string;
   let stdout: string;
 
@@ -234,7 +234,7 @@ describe('embeddings hints name the running channel CLI', () => {
   });
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: status, enable and set-key name %s embeddings', async (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

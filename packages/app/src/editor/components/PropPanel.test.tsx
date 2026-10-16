@@ -119,7 +119,7 @@ describe('localStorage round-trip', () => {
   test('persist + read round-trip preserves true', () => {
     withFakeStorage((fake) => {
       persistAdvancedOpenState('img', true);
-      expect(fake.store['ok.propPanel.advanced.img']).toBe('true');
+      expect(fake.store['ps.propPanel.advanced.img']).toBe('true');
       expect(readAdvancedOpenState('img')).toBe(true);
     });
   });
@@ -128,7 +128,7 @@ describe('localStorage round-trip', () => {
     withFakeStorage((fake) => {
       persistAdvancedOpenState('img', true);
       persistAdvancedOpenState('img', false);
-      expect(fake.store['ok.propPanel.advanced.img']).toBe('false');
+      expect(fake.store['ps.propPanel.advanced.img']).toBe('false');
       expect(readAdvancedOpenState('img')).toBe(false);
     });
   });

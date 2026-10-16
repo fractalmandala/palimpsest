@@ -221,7 +221,7 @@ const CLAUDE_AUTO_ONLY = [
 
 function renderWithAutoApproveOff(ui: ReactElement) {
   const value = {
-    userConfig: { agents: { autoApproveOkTools: false } },
+    userConfig: { agents: { autoApprovePsTools: false } },
     userBinding: null,
     userSynced: true,
     projectBinding: null,
@@ -230,8 +230,8 @@ function renderWithAutoApproveOff(ui: ReactElement) {
     projectLocalBinding: null,
     projectLocalConfig: null,
     projectLocalSynced: false,
-    okignoreBinding: null,
-    okignoreSynced: false,
+    psignoreBinding: null,
+    psignoreSynced: false,
     merged: null,
   } as unknown as ConfigContextValue;
   return render(<ConfigContext.Provider value={value}>{ui}</ConfigContext.Provider>);
@@ -631,7 +631,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(bakedArgv(terminal.create)).not.toContain('--settings');
   });
 
-  test("does NOT pre-approve when the project MCP entry is not OK's own (mcpPreApprovable false)", async () => {
+  test("does NOT pre-approve when the project MCP entry is not Palimpsest's own (mcpPreApprovable false)", async () => {
     const { bridge, terminal } = makeBridge(WIRED_FOREIGN_PROJECT);
     render(<TerminalPanel bridge={bridge} launch={{ prompt: 'hi', cli: 'claude', nonce: 1 }} />);
 
@@ -690,7 +690,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(launchInputWrites(terminal.input)).toEqual([]);
   });
 
-  test("codex auto-approves OK tools (-c approve) when OK's server is configured in codex", async () => {
+  test("codex auto-approves OK tools (-c approve) when Palimpsest's server is configured in codex", async () => {
     const { bridge, terminal } = makeBridge(WIRED, CODEX_OK_CONFIGURED);
     render(<TerminalPanel bridge={bridge} launch={{ prompt: 'hi', cli: 'codex', nonce: 1 }} />);
 
@@ -779,7 +779,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(bakedArgvText(terminal.create)).not.toContain('permissions');
   });
 
-  test("toggle OFF: codex stays BARE (no -c) even when OK's server is configured", async () => {
+  test("toggle OFF: codex stays BARE (no -c) even when Palimpsest's server is configured", async () => {
     const { bridge, terminal } = makeBridge(WIRED, CODEX_OK_CONFIGURED);
     renderWithAutoApproveOff(
       <TerminalPanel bridge={bridge} launch={{ prompt: 'hi', cli: 'codex', nonce: 1 }} />,

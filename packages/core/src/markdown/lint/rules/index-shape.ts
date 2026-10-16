@@ -1,6 +1,6 @@
 import type { List, ListItem } from 'mdast';
 import { EXIT, visit } from 'unist-util-visit';
-import { defineScopedOkfRule } from '../psf-runner.ts';
+import { defineScopedPsfRule } from '../psf-runner.ts';
 
 const INDEX_SCOPE = '**/index';
 
@@ -13,7 +13,7 @@ function hasLink(item: ListItem): boolean {
   return found;
 }
 
-export const indexShape = defineScopedOkfRule('index-shape', INDEX_SCOPE, (tree, file) => {
+export const indexShape = defineScopedPsfRule('index-shape', INDEX_SCOPE, (tree, file) => {
   let sectionOpen = false;
   for (const node of tree.children) {
     if (node.type === 'heading') {
@@ -22,7 +22,7 @@ export const indexShape = defineScopedOkfRule('index-shape', INDEX_SCOPE, (tree,
     }
     if (node.type === 'list' && !sectionOpen) {
       file.message(
-        'This index list is not under a section heading, so an Palimpsest Format consumer reading the file as navigation has no name to file its entries under — an index is one or more heading-led sections of bulleted links.',
+        'This index list is not under a section heading, so an OpenKnowledge Format consumer reading the file as navigation has no name to file its entries under — an index is one or more heading-led sections of bulleted links.',
         node as List,
       );
     }
@@ -32,7 +32,7 @@ export const indexShape = defineScopedOkfRule('index-shape', INDEX_SCOPE, (tree,
     if (node.children.some((child) => child.type === 'list')) return;
     if (hasLink(node)) return;
     file.message(
-      "This index entry has no link, so an Palimpsest Format consumer reading the file as navigation has nowhere to follow it. Every entry in the format's own reference bundles is a link followed by a short description.",
+      "This index entry has no link, so an OpenKnowledge Format consumer reading the file as navigation has nowhere to follow it. Every entry in the format's own reference bundles is a link followed by a short description.",
       node,
     );
   });

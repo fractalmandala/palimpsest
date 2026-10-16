@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { extractOkBinaryPath } from '../utils/process-scan.ts';
+import { extractPsBinaryPath } from '../utils/process-scan.ts';
 import type { LockState } from './lock-state.ts';
 import { isDesktopCommand, renderTable, runPs, startedCell } from './ps.ts';
 
@@ -559,10 +559,10 @@ describe('renderTable', () => {
   });
 });
 
-describe('extractOkBinaryPath', () => {
+describe('extractPsBinaryPath', () => {
   test('extracts source cli path from node invocation', () => {
     expect(
-      extractOkBinaryPath(
+      extractPsBinaryPath(
         'node /Users/mike/src/agents-private/public/palimpsest/packages/cli/src/cli.ts start',
       ),
     ).toBe('/Users/mike/src/agents-private/public/palimpsest/packages/cli/src/cli.ts');
@@ -570,14 +570,14 @@ describe('extractOkBinaryPath', () => {
 
   test('extracts npx-installed palimpsest bin path', () => {
     expect(
-      extractOkBinaryPath(
+      extractPsBinaryPath(
         '/usr/local/bin/node /Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/palimpsest start',
       ),
     ).toBe('/Users/mike/.npm/_npx/64e3e56af53daa3b/node_modules/.bin/palimpsest');
   });
 
   test('ignores package specifier in npm exec parent command', () => {
-    expect(extractOkBinaryPath('npm exec @palimpsest/cli mcp HOME=/Users/mike')).toBeNull();
+    expect(extractPsBinaryPath('npm exec @palimpsest/cli mcp HOME=/Users/mike')).toBeNull();
   });
 });
 
@@ -585,7 +585,7 @@ describe('renderTable stop hint names the running channel CLI', () => {
   afterEach(() => vi.unstubAllEnvs());
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the footer names %s stop', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);

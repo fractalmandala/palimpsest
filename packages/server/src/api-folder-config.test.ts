@@ -149,7 +149,7 @@ describe('GET/PUT /api/folder-config', () => {
       'GET',
     );
     expect(traversal.status).toBe(400);
-    expect(JSON.parse(traversal.body).type).toBe('urn:ok:error:invalid-request');
+    expect(JSON.parse(traversal.body).type).toBe('urn:ps:error:invalid-request');
 
     const absolute = await dispatch(
       ext,
@@ -203,7 +203,7 @@ describe('GET/PUT /api/folder-config', () => {
     const ext = buildExt();
     const captured = await dispatch(ext, '/api/folder-config?path=aliased', 'GET');
     expect(captured.status).toBe(400);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:symlink-refused');
     expect(captured.body).not.toContain('aliased-secret');
   });
 
@@ -219,7 +219,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(captured.status).toBe(400);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:symlink-refused');
     expect(lstatSync(leaf).isSymbolicLink()).toBe(true);
     expect(readFileSync(secret, 'utf-8')).toBe('token: hush\n');
   });
@@ -236,7 +236,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(captured.status).toBe(400);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:symlink-refused');
     expect(lstatSync(leaf).isSymbolicLink()).toBe(true);
     expect(readFileSync(join(contentDir, '.git', 'config'), 'utf-8')).toBe(
       'password: put-in-root\n',
@@ -335,11 +335,11 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { title: 'Planted' },
     });
     expect(put.status).toBe(400);
-    expect(JSON.parse(put.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(put.body).type).toBe('urn:ps:error:symlink-refused');
 
     const del = await dispatch(ext, `/api/template?folder=aliased3&name=keep`, 'DELETE');
     expect(del.status).toBe(400);
-    expect(JSON.parse(del.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(del.body).type).toBe('urn:ps:error:symlink-refused');
   });
 
   test('GET reports a symlinked ANCESTOR .ps/templates the folder would inherit from', async () => {
@@ -433,7 +433,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { title: 'Meeting' },
     });
     expect(put.status).toBe(400);
-    expect(JSON.parse(put.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(put.body).type).toBe('urn:ps:error:symlink-refused');
     expect(lstatSync(leaf).isSymbolicLink()).toBe(true);
     expect(readFileSync(join(contentDir, '.claude', 'CLAUDE.md'), 'utf-8')).toBe(
       '# victim agent definition\n',
@@ -451,7 +451,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(captured.status).toBe(400);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:symlink-refused');
     expect(readFileSync(join(contentDir, 'secretdir2', 'frontmatter.yml'), 'utf-8')).toBe(
       'existing: keep\n',
     );
@@ -467,7 +467,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(captured.status).toBe(400);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:path-escape');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:path-escape');
     expect(existsSync(join(outside, 'x', '.ps', 'frontmatter.yml'))).toBe(false);
   });
 
@@ -482,7 +482,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(captured.status).toBe(400);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:symlink-refused');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:symlink-refused');
     expect(existsSync(join(outside, 'frontmatter.yml'))).toBe(false);
   });
 
@@ -494,7 +494,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { status: 'draft' },
     });
     expect(captured.status).toBe(500);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:internal-server-error');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:internal-server-error');
   });
 
   test('PUT no longer rejects a folder whose own .ps/templates resolves outside the content root (the write never touches it)', async () => {
@@ -587,7 +587,7 @@ describe('GET/PUT /api/folder-config', () => {
       frontmatter: { a: 1 },
     });
     expect(captured.status).toBe(403);
-    expect(JSON.parse(captured.body).type).toBe('urn:ok:error:single-file-mode');
+    expect(JSON.parse(captured.body).type).toBe('urn:ps:error:single-file-mode');
   });
 
   test('PUT rejects a non-string summary before writing anything', async () => {

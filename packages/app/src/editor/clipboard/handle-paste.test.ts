@@ -561,7 +561,7 @@ describe('WYSIWYG paste dispatcher — lone-URL linkification (real editor)', ()
   test.each([
     ['example.com', 'https://example.com'],
     ['www.example.com', 'https://www.example.com'],
-    ['nick@inkeep.com', 'mailto:nick@inkeep.com'],
+    ['nick@example.com', 'mailto:nick@example.com'],
   ])('paste of %s over a selection links to %s', (payload, expectedHref) => {
     const editor = makeRealEditor('<p>read the docs today</p>');
     try {

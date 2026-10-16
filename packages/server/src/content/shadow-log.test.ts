@@ -3,7 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import { formatOkActor, type PsActorEntry } from '@palimpsest/core/shadow-repo-layout';
+import { formatPsActor, type PsActorEntry } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -31,7 +31,7 @@ function wipBody(subject: string, writerId: string, displayName: string): string
     color_seed: writerId,
     docs: ['content/auth'],
   };
-  return `${subject}\n\n${formatOkActor(actor)}`;
+  return `${subject}\n\n${formatPsActor(actor)}`;
 }
 
 let tmpDir: string;

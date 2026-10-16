@@ -375,7 +375,7 @@ export function buildSkillBundles(paths: SkillBundlePaths = defaultPaths()): Com
  * on the same mechanism, and (critically) gets them INTO
  * `dist/assets/skills/packs/<id>/` so the published CLI + desktop bundles actually
  * ship them. Without this, `resolveBundledSkillDir('packs/<id>')` only resolves
- * against the source tree (dev), and `ok seed`'s pack-skill install silently
+ * against the source tree (dev), and `ps seed`'s pack-skill install silently
  * no-ops in any built artifact.
  *
  * A decomposed pack holds several `SKILL.md` files (root + one per member
@@ -443,7 +443,7 @@ export function buildAgentPluginArtifact(paths: SkillBundlePaths = defaultPaths(
       name: 'palimpsest',
       description:
         'Palimpsest built-in skills: project workflow, discovery, and skill authoring',
-      author: { name: 'Inkeep' },
+      author: { name: 'Fractal Mandala' },
       repository: 'https://github.com/fractalmandala/palimpsest',
       keywords: ['palimpsest', 'knowledge-base'],
     };

@@ -352,7 +352,7 @@ describe('runDiagnoseBundle — consent summary', () => {
                     attributes: [
                       { key: 'doc.name', value: { stringValue: 'q3-layoff-plan' } },
                       { key: 'fs.path', value: { stringValue: `${contentDir}/q3-layoff-plan.md` } },
-                      { key: 'ok.note', value: { stringValue: `token ${SECRET}` } },
+                      { key: 'ps.note', value: { stringValue: `token ${SECRET}` } },
                     ],
                   },
                 ],
@@ -460,7 +460,7 @@ describe('runDiagnoseBundle — redaction', () => {
                   attributes: [
                     { key: 'doc.name', value: { stringValue: 'fixture-doc' } },
                     { key: 'fs.path', value: { stringValue: `${contentDir}/foo.md` } },
-                    { key: 'ok.note', value: { stringValue: `token ${secret}` } },
+                    { key: 'ps.note', value: { stringValue: `token ${secret}` } },
                   ],
                 },
               ],
@@ -552,7 +552,7 @@ describe('runDiagnoseBundle — redaction', () => {
                   attributes: [
                     { key: 'doc.name', value: { stringValue: 'visible' } },
                     { key: 'fs.path', value: { stringValue: `${contentDir}/foo.md` } },
-                    { key: 'ok.note', value: { stringValue: `token ${secret}` } },
+                    { key: 'ps.note', value: { stringValue: `token ${secret}` } },
                   ],
                 },
               ],

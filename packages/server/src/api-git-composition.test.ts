@@ -37,7 +37,7 @@ describe('git group over the composed listener — served natively', () => {
   test('branch-info refuses missing params with its own 400 before any git op', async () => {
     const res = await fetch(`http://127.0.0.1:${server.port}/api/git/branch-info`);
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
     expect(res.headers.get('x-request-id')).not.toBeNull();
   });
 
@@ -53,7 +53,7 @@ describe('git group over the composed listener — served natively', () => {
       body: '{}',
     });
     expect(res.status).toBe(400);
-    expect(((await res.json()) as { type?: string }).type).toBe('urn:ok:error:invalid-request');
+    expect(((await res.json()) as { type?: string }).type).toBe('urn:ps:error:invalid-request');
   });
 
   test('checkout refuses a rebound Host with 403 (loopback/host gate survives the lift)', async () => {
@@ -62,7 +62,7 @@ describe('git group over the composed listener — served natively', () => {
       headers: { Host: 'evil.example' },
     });
     expect(res.status).toBe(403);
-    expect(parseProblem(res.body).type).toBe('urn:ok:error:host-not-allowed');
+    expect(parseProblem(res.body).type).toBe('urn:ps:error:host-not-allowed');
   });
 
   test('chained groups still answer on one server (multi-group dispatch)', async () => {

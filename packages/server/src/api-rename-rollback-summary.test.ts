@@ -221,7 +221,7 @@ describe('handleRenamePath (kind: file) — agentId-guarded attribution', () => 
 
     expect(response.status).toBe(400);
     const summaryErr = JSON.parse(response.body) as Record<string, unknown>;
-    expect(summaryErr.type).toBe('urn:ok:error:invalid-request');
+    expect(summaryErr.type).toBe('urn:ps:error:invalid-request');
     expect(typeof summaryErr.title).toBe('string');
     expect(readFileSync(join(tmpDir, 'src.md'), 'utf-8')).toBe('# Src\n');
     expect(getMetrics().agentWriteCalls).toBe(0);
@@ -278,7 +278,7 @@ describe('handleRenamePath (kind: file) — agentId-guarded attribution', () => 
 
     expect(response.status).toBe(400);
     const summaryErr = JSON.parse(response.body) as Record<string, unknown>;
-    expect(summaryErr.type).toBe('urn:ok:error:invalid-request');
+    expect(summaryErr.type).toBe('urn:ps:error:invalid-request');
     expect(typeof summaryErr.title).toBe('string');
     expect(readFileSync(join(tmpDir, 'src.md'), 'utf-8')).toBe('# Src\n');
     expect(formatContributorsForTest()).toBe('');
@@ -706,7 +706,7 @@ describe('handleRenamePath — content-filter admission (FR11)', () => {
 
     expect(response.status).toBe(400);
     const parsed = JSON.parse(response.body) as Record<string, unknown>;
-    expect(parsed.type).toBe('urn:ok:error:invalid-request');
+    expect(parsed.type).toBe('urn:ps:error:invalid-request');
     expect(String(parsed.title)).toContain('Destination document is excluded');
     expect(readFileSync(join(tmpDir, 'notes.md'), 'utf-8')).toBe('# Notes\n');
   });
@@ -728,7 +728,7 @@ describe('handleRenamePath — content-filter admission (FR11)', () => {
 
     expect(response.status).toBe(400);
     const parsed = JSON.parse(response.body) as Record<string, unknown>;
-    expect(parsed.type).toBe('urn:ok:error:invalid-request');
+    expect(parsed.type).toBe('urn:ps:error:invalid-request');
     expect(String(parsed.title)).toContain('Destination folder is excluded');
     expect(readFileSync(join(folder, 'auth.md'), 'utf-8')).toBe('# Auth\n');
   });

@@ -1,7 +1,7 @@
 import type { TestInfo } from '@playwright/test';
 import type { TestResult } from '@playwright/test/reporter';
 
-export const SETUP_NON_RESULT_ANNOTATION = 'ok:setup-non-result';
+export const SETUP_NON_RESULT_ANNOTATION = 'ps:setup-non-result';
 
 export function declareSetupNonResult(testInfo: TestInfo, reason: string): void {
   testInfo.annotations.push({ type: SETUP_NON_RESULT_ANNOTATION, description: reason });

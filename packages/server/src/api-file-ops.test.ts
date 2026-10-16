@@ -457,7 +457,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(404);
     const parsed = JSON.parse(result.body) as Record<string, unknown>;
-    expect(parsed.type).toBe('urn:ok:error:doc-not-found');
+    expect(parsed.type).toBe('urn:ps:error:doc-not-found');
     expect(parsed.title).toContain('Document not found');
     expect(parsed.title).toContain('nonexistent-doc');
 
@@ -700,7 +700,7 @@ describe('file operation API routes', () => {
     expect(readFileSync(join(dir, 'journal.md'), 'utf-8')).toBe('# Journal\n\nSee [[notes]].\n');
 
     const body = JSON.parse(result.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:doc-already-exists');
+    expect(body.type).toBe('urn:ps:error:doc-already-exists');
     expect(body.title).toContain('Destination already exists');
   });
 
@@ -747,7 +747,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     const reservedBody = JSON.parse(result.body) as Record<string, unknown>;
-    expect(reservedBody.type).toBe('urn:ok:error:reserved-doc-name');
+    expect(reservedBody.type).toBe('urn:ps:error:reserved-doc-name');
     expect(reservedBody.title).toContain('Reserved document names cannot be renamed');
   });
 
@@ -770,7 +770,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     {
       const parsed = JSON.parse(result.body) as Record<string, unknown>;
-      expect(parsed.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.title).toContain('Source path is not a folder');
     }
   });
@@ -794,7 +794,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     {
       const parsed = JSON.parse(result.body) as Record<string, unknown>;
-      expect(parsed.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.title).toContain('Source path is not a file');
     }
   });
@@ -819,7 +819,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     {
       const parsed = JSON.parse(result.body) as Record<string, unknown>;
-      expect(parsed.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.type).toBe('urn:ps:error:reserved-doc-name');
       expect(parsed.title).toContain('.ps and .git are reserved directories');
     }
   });
@@ -843,7 +843,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     {
       const parsed = JSON.parse(result.body) as Record<string, unknown>;
-      expect(parsed.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.type).toBe('urn:ps:error:reserved-doc-name');
       expect(parsed.title).toContain('.ps and .git are reserved directories');
     }
   });
@@ -865,7 +865,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(404);
     const notFoundBody = JSON.parse(result.body) as Record<string, unknown>;
-    expect(notFoundBody.type).toBe('urn:ok:error:doc-not-found');
+    expect(notFoundBody.type).toBe('urn:ps:error:doc-not-found');
     expect(typeof notFoundBody.title).toBe('string');
     expect(String(notFoundBody.title).toLowerCase()).toContain('does not exist');
   });
@@ -914,7 +914,7 @@ describe('file operation API routes', () => {
 
       expect(result.status).toBe(400);
       const symlinkBody = JSON.parse(result.body) as Record<string, unknown>;
-      expect(symlinkBody.type).toBe('urn:ok:error:path-escape');
+      expect(symlinkBody.type).toBe('urn:ps:error:path-escape');
       expect(symlinkBody.title).toBe('symlink-escape: path resolves outside content directory.');
     },
   );
@@ -1436,7 +1436,7 @@ describe('file operation API routes', () => {
     expect(existsSync(join(dir, 'docs/media/diagram.png'))).toBe(true);
     expect(existsSync(join(dir, 'private-assets/hero.png'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Destination asset is excluded by the project content config.',
       status: 400,
     });
@@ -1636,7 +1636,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(404);
     expect(existsSync(join(dir, 'missing.txt'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-not-found',
+      type: 'urn:ps:error:doc-not-found',
       status: 404,
     });
   });
@@ -1681,7 +1681,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(503);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:backlink-index-not-configured',
+      type: 'urn:ps:error:backlink-index-not-configured',
       status: 503,
     });
     expect(readFileSync(join(dir, 'guide.md'), 'utf-8')).toBe('# Guide\n');
@@ -1742,7 +1742,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(404);
     expect(existsSync(join(dir, 'missing.md'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-not-found',
+      type: 'urn:ps:error:doc-not-found',
       title: 'Asset does not exist.',
       status: 404,
     });
@@ -1788,7 +1788,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(503);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:backlink-index-not-configured',
+      type: 'urn:ps:error:backlink-index-not-configured',
       status: 503,
     });
     expect(readFileSync(join(dir, 'guide.txt'), 'utf-8')).toBe('# Guide\n');
@@ -1850,7 +1850,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(404);
     expect(existsSync(join(dir, 'docs/media/hero.png'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-not-found',
+      type: 'urn:ps:error:doc-not-found',
       title: 'Asset does not exist.',
       status: 404,
     });
@@ -1872,7 +1872,7 @@ describe('file operation API routes', () => {
     expect(readFileSync(join(dir, 'docs/media/diagram.png'), 'utf-8')).toBe('fake image bytes');
     expect(readFileSync(join(dir, 'docs/media/hero.png'), 'utf-8')).toBe('existing image bytes');
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       title: 'Destination already exists.',
       status: 409,
     });
@@ -1892,7 +1892,7 @@ describe('file operation API routes', () => {
     expect(existsSync(join(dir, 'docs/media/folder.png'))).toBe(true);
     expect(existsSync(join(dir, 'docs/media/hero.png'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Source path is not an asset file.',
       status: 400,
     });
@@ -1912,7 +1912,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     expect(readFileSync(join(dir, 'docs/media/diagram.png'), 'utf-8')).toBe('fake image bytes');
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Case-only renames are not supported.',
       status: 400,
     });
@@ -1939,7 +1939,7 @@ describe('file operation API routes', () => {
       expect(readFileSync(join(contentDir, 'assets/source.png'), 'utf-8')).toBe('fake image bytes');
       expect(existsSync(join(outside, 'captured.png'))).toBe(false);
       expect(JSON.parse(result.body)).toMatchObject({
-        type: 'urn:ok:error:path-escape',
+        type: 'urn:ps:error:path-escape',
         title: 'symlink-escape: path resolves outside content directory.',
         status: 400,
       });
@@ -1965,7 +1965,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(503);
     const body = JSON.parse(result.body) as { type: string; title: string };
-    expect(body.type).toBe('urn:ok:error:backlink-index-not-configured');
+    expect(body.type).toBe('urn:ps:error:backlink-index-not-configured');
     expect(body.title).toBe('Managed rename requires backlink index support.');
   });
 
@@ -2390,7 +2390,7 @@ describe('file operation API routes', () => {
     expect(existsSync(join(dir, 'assets/trash-me.png'))).toBe(true);
     expect(existsSync(join(dir, 'assets/trash-me.jpg'))).toBe(true);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Asset path without an extension matches multiple files.',
       status: 400,
     });
@@ -2732,7 +2732,7 @@ describe('file operation API routes', () => {
     expect(existsSync(join(dir, 'archive copy'))).toBe(true);
     expect(existsSync(join(dir, 'archive copy/index.md'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       title: 'A folder at the duplicate destination already exists.',
       status: 409,
     });
@@ -2757,7 +2757,7 @@ describe('file operation API routes', () => {
     for (const result of [okResult, configFolderResult, configDocResult]) {
       expect(result.status).toBe(400);
       expect(JSON.parse(result.body)).toMatchObject({
-        type: 'urn:ok:error:reserved-doc-name',
+        type: 'urn:ps:error:reserved-doc-name',
         status: 400,
       });
     }
@@ -2773,7 +2773,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'path must be a relative content path.',
       status: 400,
     });
@@ -2789,7 +2789,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(404);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-not-found',
+      type: 'urn:ps:error:doc-not-found',
       title: 'file does not exist.',
       status: 404,
     });
@@ -2816,7 +2816,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(409);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       title: 'All available duplicate name slots are occupied for this path.',
       status: 409,
     });
@@ -2833,7 +2833,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Target path is not a file.',
       status: 400,
     });
@@ -2852,7 +2852,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     expect(existsSync(join(dir, 'notes copy.md'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Request body is invalid.',
       status: 400,
     });
@@ -2878,7 +2878,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     expect(existsSync(join(dir, 'notes copy.md'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Duplicated document destination is excluded by the project content config.',
       status: 400,
     });
@@ -2905,7 +2905,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     expect(existsSync(join(dir, 'archive copy'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Duplicated folder destination is excluded by the project content config.',
       status: 400,
     });
@@ -2918,7 +2918,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       status: 400,
     });
   });
@@ -2932,7 +2932,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'path must be a relative content path.',
       status: 400,
     });
@@ -2948,7 +2948,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     expect(existsSync(join(dir, '.ps/local/cache'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:reserved-doc-name',
+      type: 'urn:ps:error:reserved-doc-name',
       title: '.ps and .git are reserved directories.',
       status: 400,
     });
@@ -2965,7 +2965,7 @@ describe('file operation API routes', () => {
     expect(result.status).toBe(400);
     expect(existsSync(join(dir, 'notes'))).toBe(false);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       status: 400,
     });
   });
@@ -2987,7 +2987,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:invalid-request',
+      type: 'urn:ps:error:invalid-request',
       title: 'Destination folder is excluded by the workspace content config.',
       status: 400,
     });
@@ -3003,7 +3003,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(409);
     expect(JSON.parse(result.body)).toMatchObject({
-      type: 'urn:ok:error:doc-already-exists',
+      type: 'urn:ps:error:doc-already-exists',
       title: 'Folder already exists.',
       status: 409,
     });
@@ -3083,7 +3083,7 @@ describe('file operation API routes', () => {
 
     expect(result.status).toBe(400);
     const body = JSON.parse(result.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(body.title).toContain('relative content paths');
   });
 
@@ -3105,7 +3105,7 @@ describe('file operation API routes', () => {
       });
 
       expect(result.status).toBe(400);
-      expect((JSON.parse(result.body) as { type?: string }).type).toBe('urn:ok:error:path-escape');
+      expect((JSON.parse(result.body) as { type?: string }).type).toBe('urn:ps:error:path-escape');
       expect(existsSync(victim)).toBe(true);
     },
   );

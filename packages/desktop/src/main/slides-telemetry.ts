@@ -4,7 +4,7 @@ import type { PsSlidesOpenResult } from '../shared/ipc-channels.ts';
 let _deckOpenFailureCounterCache: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
 function deckOpenFailureCounter() {
-  _deckOpenFailureCounterCache ||= getMeter().createCounter('ok.slides.deck_open.failures', {
+  _deckOpenFailureCounterCache ||= getMeter().createCounter('ps.slides.deck_open.failures', {
     description: 'Count of Slidev deck-open failures, labeled by reason',
   });
   return _deckOpenFailureCounterCache;
@@ -13,16 +13,16 @@ function deckOpenFailureCounter() {
 export function recordDeckOpen(result: PsSlidesOpenResult): void {
   if (result.ok) {
     withSpanSync(
-      'ok.slides.deckOpen',
-      { attributes: { 'ok.slides.outcome': 'ok' } },
+      'ps.slides.deckOpen',
+      { attributes: { 'ps.slides.outcome': 'ok' } },
       () => undefined,
     );
     return;
   }
   withSpanSync(
-    'ok.slides.deckOpen',
-    { attributes: { 'ok.slides.outcome': 'failure', 'ok.slides.reason': result.reason } },
+    'ps.slides.deckOpen',
+    { attributes: { 'ps.slides.outcome': 'failure', 'ps.slides.reason': result.reason } },
     () => undefined,
   );
-  deckOpenFailureCounter().add(1, { 'ok.slides.reason': result.reason });
+  deckOpenFailureCounter().add(1, { 'ps.slides.reason': result.reason });
 }

@@ -486,7 +486,7 @@ describe('buildSlidevInvocation — platform matrix', () => {
       );
       expect(
         inv.args.at(-1),
-        'hasNoResolvableOkHome is a state this build reaches, so folding the opt-out into the PATH reassert would drop it for exactly the users whose managed bin dir does not resolve, and every other opt-out assertion drives a non-empty dir list',
+        'hasNoResolvablePsHome is a state this build reaches, so folding the opt-out into the PATH reassert would drop it for exactly the users whose managed bin dir does not resolve, and every other opt-out assertion drives a non-empty dir list',
       ).toBe(`${optOut}slidev '/proj/decks/talk.md' --port 4300`);
     },
   );
@@ -689,7 +689,7 @@ describe('composeSlidevSpawnEnv', () => {
     expect(env.GDK_THEME).toBe('Adwaita');
   });
 
-  it('does not mark the slidev child as the OK Desktop terminal', () => {
+  it('does not mark the slidev child as the Palimpsest Desktop terminal', () => {
     const env = composeSlidevSpawnEnv(
       { PATH: '/usr/bin', HOME: '/home/alice' },
       { platform: 'linux', home: '/home/alice' },

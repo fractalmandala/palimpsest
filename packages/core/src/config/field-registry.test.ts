@@ -144,7 +144,7 @@ describe('ConfigSchema coverage (NR3 — every leaf has fieldRegistry metadata)'
     expect(allowlisted).toEqual([]);
   });
 
-  test('user-strict fields cover agents.{autoApproveOkTools,browserTools} + appearance.{colorTheme*,customTheme.*,language,preview.autoOpen,theme} + editor.{previewTabs,wordWrap} + git.hosts + slides.enabled', () => {
+  test('user-strict fields cover agents.{autoApprovePsTools,browserTools} + appearance.{colorTheme*,customTheme.*,language,preview.autoOpen,theme} + editor.{previewTabs,wordWrap} + git.hosts + slides.enabled', () => {
     const leaves: { path: string[]; schema: unknown }[] = [];
     walkLeaves(ConfigSchema, [], leaves);
     const userStrict = leaves
@@ -152,7 +152,7 @@ describe('ConfigSchema coverage (NR3 — every leaf has fieldRegistry metadata)'
       .map((l) => l.path.join('.'))
       .sort();
     expect(userStrict).toEqual([
-      'agents.autoApproveOkTools',
+      'agents.autoApprovePsTools',
       'agents.browserTools',
       'appearance.colorTheme',
       'appearance.colorThemeDark',
@@ -237,7 +237,7 @@ describe('ConfigSchema coverage (NR3 — every leaf has fieldRegistry metadata)'
     expect(projectLocalStrict).toEqual([
       'appearance.sidebar.pinnedProjectSkills',
       'appearance.sidebar.showHiddenFiles',
-      'appearance.sidebar.showOkFolders',
+      'appearance.sidebar.showPsFolders',
       'appearance.sidebar.showOnlyMarkdownFiles',
       'appearance.sidebar.showSkillGroups',
       'appearance.sidebar.showSkillsSection',

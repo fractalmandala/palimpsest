@@ -392,7 +392,7 @@ describe('applyIntents on the desktop host', () => {
       });
       expect(actionFor(report, CODEX_PROJECT_MCP)?.action).toBe('written');
       expect(warn).toHaveBeenCalledWith('MCP config removal failed', {
-        channel: 'ok:integrations:dispatch',
+        channel: 'ps:integrations:dispatch',
         editor: 'claude',
         scope,
         ...(scope === 'project' ? { path: `${PROJECT}/claude.config` } : {}),

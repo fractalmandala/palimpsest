@@ -71,6 +71,6 @@ export function isRecoverableGitSignal(value: unknown): boolean {
     msg.includes('GIT_TOO_OLD') ||
     msg.includes('Palimpsest needs Git') ||
     msg.includes('Palimpsest requires Git') ||
-    msg.includes('ok diagnose health')
+    msg.includes('ps diagnose health')
   );
 }

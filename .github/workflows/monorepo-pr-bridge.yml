@@ -1,9 +1,12 @@
 name: Monorepo PR Bridge
 
+# FORK DISABLED: this workflow imported PRs into Inkeep's private
+# agents-private monorepo. Uncomment when the fork has its own importer.
 on:
-  status:
-  pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft, edited, closed]
+  workflow_dispatch:
+  # status:
+  # pull_request_target:
+  #   types: [opened, reopened, synchronize, ready_for_review, converted_to_draft, edited, closed]
 
 permissions:
   contents: read

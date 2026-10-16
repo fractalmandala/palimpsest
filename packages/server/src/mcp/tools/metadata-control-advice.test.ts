@@ -44,7 +44,7 @@ beforeAll(async () => {
     res.writeHead(400, { 'Content-Type': 'application/problem+json' });
     res.end(
       JSON.stringify({
-        type: 'urn:ok:error:invalid-request',
+        type: 'urn:ps:error:invalid-request',
         title: 'Request body is invalid.',
         status: 400,
         contentControlAdmission: true,

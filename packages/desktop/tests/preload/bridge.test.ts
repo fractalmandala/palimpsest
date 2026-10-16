@@ -11,9 +11,9 @@ describe('createInvoker (typed IPC factory)', () => {
     // biome-ignore lint/suspicious/noExplicitAny: minimal IpcRenderer-compatible mock
     const fakeIpc = { invoke } as any;
     const typedInvoker = createInvoker(fakeIpc);
-    const result = await typedInvoker('ok:dialog:open-folder');
-    expect(invoke).toHaveBeenCalledWith('ok:dialog:open-folder');
-    expect(result).toEqual({ channel: 'ok:dialog:open-folder', args: [] });
+    const result = await typedInvoker('ps:dialog:open-folder');
+    expect(invoke).toHaveBeenCalledWith('ps:dialog:open-folder');
+    expect(result).toEqual({ channel: 'ps:dialog:open-folder', args: [] });
   });
 
   test('passes positional args through (e.g., shell.openExternal URL)', async () => {
@@ -23,8 +23,8 @@ describe('createInvoker (typed IPC factory)', () => {
     // biome-ignore lint/suspicious/noExplicitAny: minimal IpcRenderer-compatible mock
     const fakeIpc = { invoke } as any;
     const typedInvoker = createInvoker(fakeIpc);
-    await typedInvoker('ok:shell:open-external', 'https://example.com');
-    expect(invoke).toHaveBeenCalledWith('ok:shell:open-external', 'https://example.com');
+    await typedInvoker('ps:shell:open-external', 'https://example.com');
+    expect(invoke).toHaveBeenCalledWith('ps:shell:open-external', 'https://example.com');
   });
 
   test('return type is awaited from invoke', async () => {
@@ -32,7 +32,7 @@ describe('createInvoker (typed IPC factory)', () => {
     // biome-ignore lint/suspicious/noExplicitAny: minimal IpcRenderer-compatible mock
     const fakeIpc = { invoke } as any;
     const typedInvoker = createInvoker(fakeIpc);
-    const result = await typedInvoker('ok:dialog:open-folder');
+    const result = await typedInvoker('ps:dialog:open-folder');
     expect(result).toBe('/Users/test/picked-folder');
   });
 });
@@ -75,11 +75,11 @@ describe('preload channel names are declared in EventChannels', () => {
     expect(undeclared).toEqual([]);
   });
 
-  test('ok:deep-link is wired (M4 URL-scheme preload handshake)', () => {
+  test('ps:deep-link is wired (M4 URL-scheme preload handshake)', () => {
     const preloadSrc = readFileSync(PRELOAD_PATH, 'utf-8');
     const eventsSrc = readFileSync(EVENTS_PATH, 'utf-8');
-    expect(preloadSrc).toContain("ipcRenderer.on('ok:deep-link'");
-    expect(preloadSrc).toContain("ipcRenderer.removeListener('ok:deep-link'");
-    expect(eventsSrc).toContain("'ok:deep-link'");
+    expect(preloadSrc).toContain("ipcRenderer.on('ps:deep-link'");
+    expect(preloadSrc).toContain("ipcRenderer.removeListener('ps:deep-link'");
+    expect(eventsSrc).toContain("'ps:deep-link'");
   });
 });

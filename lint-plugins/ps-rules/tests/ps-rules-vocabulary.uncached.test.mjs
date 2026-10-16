@@ -31,7 +31,7 @@ describe('ps-rules corpus vocabulary', () => {
 
     const legitimate = [
       readmeLine('One plugin holding every rule is deliberate'),
-      'This rule ships as its own `.private.` plugin rather than inside the `ok` plugin.',
+      'This rule ships as its own `.private.` plugin rather than inside the `ps` plugin.',
       "describe('no-comments oxlint plugin', () => {",
       ...pluginDirNames().map((name) => `the ${name} plugin fires on that fixture`),
       'the rehype clipboard cleanup plugins (eight strip-* plugins plus a skipper)',
@@ -41,7 +41,7 @@ describe('ps-rules corpus vocabulary', () => {
 
   test('the stage order is load-bearing, not incidental', () => {
     for (const orderSensitive of [
-      'the `ok` plugin test',
+      'the `ps` plugin test',
       'the ok/no-hand-rolled-spinner oxlint plugin fires on its fixture.',
     ]) {
       expect(judgeDemotion(orderSensitive), orderSensitive).toBe(true);

@@ -126,7 +126,7 @@ describe('reportUploadFailure', () => {
 
   test('a readable file yields the network kind', async () => {
     const report = await reportUploadFailure({
-      file: fileOf(['hello'], 'ok.png'),
+      file: fileOf(['hello'], 'ps.png'),
       sizeAtDrop: 5,
       error: new TypeError('Failed to fetch'),
     });

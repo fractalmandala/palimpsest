@@ -257,7 +257,7 @@ describe('agent-write flush: bounded wait for a deferred store', () => {
 
     expect(response.status).toBe(409);
     expect((JSON.parse(response.body) as { type: string }).type).toBe(
-      'urn:ok:error:branch-switched',
+      'urn:ps:error:branch-switched',
     );
     expect(unsettledEvents(warn)).toEqual([]);
   });

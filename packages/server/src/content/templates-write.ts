@@ -202,11 +202,11 @@ export function applyTemplateDelete(input: DeleteTemplateInput): TemplateDeleteR
     ok: true,
     path: relPathOf(input.projectDir, filePath),
     existed,
-    cleanedEmpty: cleanEmptyOkDirs(templatesDir, psDir),
+    cleanedEmpty: cleanEmptyPsDirs(templatesDir, psDir),
   };
 }
 
-function cleanEmptyOkDirs(
+function cleanEmptyPsDirs(
   templatesDir: string,
   psDir: string,
 ): { templatesDir: boolean; psDir: boolean } {
@@ -308,7 +308,7 @@ export async function applyTemplateMove(input: MoveTemplateInput): Promise<Templ
     };
   }
 
-  const cleanedEmpty = cleanEmptyOkDirs(from.templatesDir, from.psDir);
+  const cleanedEmpty = cleanEmptyPsDirs(from.templatesDir, from.psDir);
 
   return {
     ok: true,

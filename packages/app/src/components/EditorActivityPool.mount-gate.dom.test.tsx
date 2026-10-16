@@ -65,7 +65,7 @@ function makeEntry(docName: string, lastAccessedAt: number): FakePoolEntry {
 function deferMountMark(docName: string): Record<string, unknown> | undefined {
   const marks = getCollector()
     ?.marks.toArray()
-    .filter((m) => m.name === 'ok/activity/defer-mount' && m.properties?.docName === docName);
+    .filter((m) => m.name === 'ps/activity/defer-mount' && m.properties?.docName === docName);
   return marks?.[marks.length - 1]?.properties;
 }
 

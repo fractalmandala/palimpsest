@@ -49,7 +49,7 @@ async function prepareRemovedDoc() {
 
 function expectRemovedDocProblem(problem: unknown): void {
   expect(problem).toMatchObject({
-    type: 'urn:ok:error:doc-removed',
+    type: 'urn:ps:error:doc-removed',
     title: 'Edit applied in memory; disk write refused because the document is no longer on disk.',
     detail: expect.stringContaining('Retrying will not help'),
   });
@@ -134,6 +134,6 @@ describe('a write to a document whose path cannot be resolved', () => {
     expect(raw).not.toContain(contentDir);
     const body: unknown = JSON.parse(raw);
     expect(ProblemDetailsSchema.safeParse(body).success).toBe(true);
-    expect(body).toMatchObject({ type: 'urn:ok:error:path-escape' });
+    expect(body).toMatchObject({ type: 'urn:ps:error:path-escape' });
   });
 });

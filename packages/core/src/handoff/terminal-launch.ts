@@ -296,7 +296,7 @@ function buildClaudeSettingsJson(opts: BuildCliLaunchOptions): string | null {
   if (opts.mcpPreApprove === true) {
     settings.enabledMcpjsonServers = [server];
   }
-  if (opts.autoApproveOkTools === true) {
+  if (opts.autoApprovePsTools === true) {
     settings.permissions = {
       allow: opts.cliCommandName
         ? [`mcp__${server}`, `Bash(${opts.cliCommandName} open:*)`]
@@ -443,7 +443,7 @@ export const TERMINAL_CLI_IDS = [
 
 export interface BuildCliLaunchOptions {
   readonly mcpPreApprove?: boolean;
-  readonly autoApproveOkTools?: boolean;
+  readonly autoApprovePsTools?: boolean;
   readonly mcpServerName?: string;
   readonly cliCommandName?: string;
 }
@@ -459,7 +459,7 @@ export function buildWindowsCliLaunch(
     if (settingsJson !== null) {
       const variant = [
         opts.mcpPreApprove === true ? 'mcp' : null,
-        opts.autoApproveOkTools === true ? 'tools' : null,
+        opts.autoApprovePsTools === true ? 'tools' : null,
       ]
         .filter((part): part is string => part !== null)
         .join('-');
@@ -476,7 +476,7 @@ export function buildWindowsCliLaunch(
     }
   }
   const server = approvedServerName(opts);
-  if (cli === 'codex' && opts.autoApproveOkTools === true && server !== null) {
+  if (cli === 'codex' && opts.autoApprovePsTools === true && server !== null) {
     return {
       executable: info.bin,
       args: ['-c', codexAutoApproveSetting(server, '')],
@@ -499,7 +499,7 @@ export function buildPosixCliLaunch(
   const fixedArgs =
     settingsJson !== null
       ? ['--settings', settingsJson]
-      : cli === 'codex' && opts.autoApproveOkTools === true && server !== null
+      : cli === 'codex' && opts.autoApprovePsTools === true && server !== null
         ? ['-c', codexAutoApproveSetting(server, '"')]
         : [];
   const args = [...(info.subcommand ? [info.subcommand] : []), ...fixedArgs];

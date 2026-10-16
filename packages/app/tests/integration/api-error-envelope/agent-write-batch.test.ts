@@ -51,7 +51,7 @@ describe('agent-write-batch envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('missing docs emits urn:ok:error:invalid-request', async () => {
+  test('missing docs emits urn:ps:error:invalid-request', async () => {
     const res = await postBatch({});
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -60,23 +60,23 @@ describe('agent-write-batch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
       expect(parsed.data.instance).toBeDefined();
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('empty docs array emits urn:ok:error:invalid-request', async () => {
+  test('empty docs array emits urn:ps:error:invalid-request', async () => {
     const res = await postBatch({ docs: [] });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
-    if (parsed.success) expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+    if (parsed.success) expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
   });
 
-  test('over-cap batch rejects wholesale with urn:ok:error:invalid-request', async () => {
+  test('over-cap batch rejects wholesale with urn:ps:error:invalid-request', async () => {
     const docs = Array.from({ length: AGENT_WRITE_BATCH_MAX_DOCS + 1 }, (_, i) => ({
       docName: `batch-cap/doc-${i}`,
       markdown: '# Over cap\n',
@@ -89,7 +89,7 @@ describe('agent-write-batch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       expect(parsed.data.status).toBe(400);
     }
   });
@@ -105,7 +105,7 @@ describe('agent-write-batch envelope (RFC 9457)', () => {
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
-    if (parsed.success) expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+    if (parsed.success) expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
   });
 
   test('reserved docname is a per-entry error inside a 200 body', async () => {
@@ -126,7 +126,7 @@ describe('agent-write-batch envelope (RFC 9457)', () => {
       const failedEntry = parsed.data.results[1];
       expect(failedEntry.status).toBe('error');
       if (failedEntry.status === 'error') {
-        expect(failedEntry.error.type).toBe('urn:ok:error:reserved-doc-name');
+        expect(failedEntry.error.type).toBe('urn:ps:error:reserved-doc-name');
       }
     }
   });
@@ -142,7 +142,7 @@ describe('agent-write-batch envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

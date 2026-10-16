@@ -603,7 +603,7 @@ type DockStateResult = {
   placement?: 'bottom' | 'right';
   rightWidth?: number;
 };
-function makeOkDesktopStub(
+function makePsDesktopStub(
   getDockState: () => Promise<DockStateResult> = async () => ({
     terminalVisible: false,
     agentPanelVisible: false,
@@ -692,7 +692,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop host mounts BOTH panels as siblings of the editor area', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
 
     expect(screen.getByTestId('editor-header')).toBeTruthy();
@@ -705,7 +705,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop host without PTY capability keeps the terminal dock unmounted', async () => {
-    const desk = makeOkDesktopStub(undefined, false);
+    const desk = makePsDesktopStub(undefined, false);
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -717,7 +717,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: the two panels open and close independently', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -740,7 +740,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: each panel pushes its own view-menu field, never the other', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -754,7 +754,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: toggle-terminal flips terminal visibility and pushes the view-menu state', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -780,7 +780,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: move-terminal changes home while terminal toggles preserve it', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -803,7 +803,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: hiding the terminal clears the launch intent so a reopen is blank (regression)', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     const { requestTerminalLaunch } = await import('./handoff/terminal-launch-events');
     await renderEditorPane();
@@ -825,7 +825,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: a command launch and a sign-in CLI launch reach the dock with their command, label and chat', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     const { requestTerminalCommandLaunch, requestTerminalLaunch } = await import(
       './handoff/terminal-launch-events'
@@ -857,7 +857,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: a distinct Open-in-terminal after a hide gets a fresh, monotonic nonce', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     const { requestTerminalLaunch } = await import('./handoff/terminal-launch-events');
     await renderEditorPane();
@@ -875,7 +875,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: new-terminal menu action opens the dock and stays open on repeat (not a toggle)', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -889,7 +889,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: an unrelated menu action does not toggle the terminal', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -898,7 +898,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: the toggle-source menu action runs the view-in-source jump', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
 
     const markdown = '# Title\n\nfirst paragraph\n\ntarget paragraph';
@@ -925,7 +925,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: view in source with the editor hidden shows the editor before it jumps', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     const markdown = '# Title\n\nfirst paragraph\n\ntarget paragraph';
     const ydoc = new Y.Doc();
@@ -949,7 +949,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: pushes the view-in-source capability for the context-menu row', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
 
     await renderEditorPane();
@@ -960,7 +960,7 @@ describe('EditorPane session-panel wiring', () => {
     const ydoc = new Y.Doc();
     ydoc.getText('source').insert(0, '# Title\n\nbody');
     activeProvider = { document: ydoc };
-    const live = makeOkDesktopStub();
+    const live = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = live.stub;
 
     await renderEditorPane();
@@ -968,7 +968,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: each open records terminal-opened; mount (hidden) and close do not', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -1058,7 +1058,7 @@ describe('EditorPane session-panel wiring', () => {
   test('desktop: per-install right layout reaches both editor and stable terminal host', async () => {
     localStorage.setItem('ps-terminal-placement-v1', 'right');
     localStorage.setItem('ps-terminal-right-width-v1', '812');
-    const desk = makeOkDesktopStub(async () => ({
+    const desk = makePsDesktopStub(async () => ({
       terminalVisible: true,
       agentPanelVisible: false,
     }));
@@ -1078,7 +1078,7 @@ describe('EditorPane session-panel wiring', () => {
     localStorage.setItem('ps-terminal-placement-v1', 'right');
     localStorage.setItem('ps-terminal-right-width-v1', '812');
     let resolveDockState: ((state: DockStateResult) => void) | undefined;
-    const desk = makeOkDesktopStub(
+    const desk = makePsDesktopStub(
       () =>
         new Promise<DockStateResult>((resolve) => {
           resolveDockState = resolve;
@@ -1301,7 +1301,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: a rejecting getDockState still settles the gate (placement push lands; visibility stays silent)', async () => {
-    const desk = makeOkDesktopStub(async () => {
+    const desk = makePsDesktopStub(async () => {
       throw new Error('ipc boom');
     });
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
@@ -1320,7 +1320,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: Ctrl+` toggles the dock (the renderer owns the chord the menu does not)', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -1348,7 +1348,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: a Cmd/Ctrl+J keydown is left to the native menu (no double toggle)', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -1407,7 +1407,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⇧⌘J with no selection asks the host for a preferred-AI session', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     const input = captureActiveTerminalInput();
     const preferred = capturePreferredSessionRequests();
@@ -1426,7 +1426,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⇧⌘J with a selection sends the passage to the host as a NEW session', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     seedSelection('some highlighted text');
     const input = captureActiveTerminalInput();
@@ -1449,7 +1449,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⇧⌘J claims the event (preventDefault)', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     const event = new KeyboardEvent('keydown', shiftJKeydownInit());
     act(() => {
@@ -1601,7 +1601,7 @@ describe('EditorPane session-panel wiring', () => {
   test('desktop: a pending shortcut follows a changed preference into an already ready terminal host', async () => {
     setDetectedRegisteredAgentSuggestions([{ source: 'registry', id: 'acme-agent', name: 'Acme' }]);
     saveStickyAgent(IN_APP_THREAD_ID);
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     expect(currentPreferredKind()).toBe('thread');
     const launches: string[] = [];
@@ -1627,7 +1627,7 @@ describe('EditorPane session-panel wiring', () => {
   test('desktop: a pending shortcut follows catalog loss to the current CLI route', async () => {
     setDetectedRegisteredAgentSuggestions([{ source: 'registry', id: 'acme-agent', name: 'Acme' }]);
     saveStickyAgent(IN_APP_THREAD_ID);
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     const view = await renderEditorPane();
     const { EditorPane } = await import('./EditorPane');
     expect(currentPreferredKind()).toBe('thread');
@@ -1658,7 +1658,7 @@ describe('EditorPane session-panel wiring', () => {
   test('desktop: hiding the other pane keeps a pending shortcut, while hiding its current destination cancels it', async () => {
     setDetectedRegisteredAgentSuggestions([{ source: 'registry', id: 'acme-agent', name: 'Acme' }]);
     saveStickyAgent(IN_APP_THREAD_ID);
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     expect(currentPreferredKind()).toBe('thread');
     act(() => window.dispatchEvent(new KeyboardEvent('keydown', shiftJKeydownInit())));
@@ -1766,7 +1766,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⌘J with a selection toggles the terminal and stages nothing', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     seedSelection('run the build');
@@ -1782,7 +1782,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⌘L with a selection stages it for the agents panel and does not toggle', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     seedSelection('run the build');
@@ -1801,7 +1801,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('selection handoff reads the active document and editing surface after rerender', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     const view = await renderEditorPane();
     const { EditorPane } = await import('./EditorPane');
@@ -1858,7 +1858,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⌘L with no selection still toggles the agents panel', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     const input = captureActiveTerminalInput();
@@ -1871,7 +1871,7 @@ describe('EditorPane session-panel wiring', () => {
   });
 
   test('desktop: ⌘J with no selection still toggles and stages nothing', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     const input = captureActiveTerminalInput();
@@ -1909,7 +1909,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('desktop host with a working shell reports both panes', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
 
     expect(paneVisibilityStore.getSnapshot()).toEqual({
@@ -1920,7 +1920,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('desktop host without a working shell reports no terminal', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub(undefined, false).stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub(undefined, false).stub;
     await renderEditorPane();
 
     expect(paneVisibilityStore.getSnapshot().terminal).toBeNull();
@@ -1928,7 +1928,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a note window reports neither pane', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = {
       ...desk.stub,
       config: { ...desk.stub.config, mode: 'note' },
@@ -1944,7 +1944,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('the snapshot follows the other show and hide paths', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     const seen: string[] = [];
@@ -1967,7 +1967,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a pending extent report reads visibility after the parent rerenders', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     const pendingReport = reportPaneExtentChange;
@@ -1982,7 +1982,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('an open pane the layout collapses to zero size reads open but not on screen, at once', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub(async () => ({
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub(async () => ({
       terminalVisible: true,
       agentPanelVisible: true,
     })).stub;
@@ -2007,7 +2007,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a hidden pane reads off even while the layout still gives it size', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
 
     expect(paneVisibilityStore.getSnapshot()).toEqual({
@@ -2018,7 +2018,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a show request for an open pane at zero size brings it back without hiding and reshowing it', async () => {
-    const desk = makeOkDesktopStub(async () => ({
+    const desk = makePsDesktopStub(async () => ({
       terminalVisible: true,
       agentPanelVisible: true,
     }));
@@ -2044,7 +2044,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a hide request for a pane on screen still hides it', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub(async () => ({
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub(async () => ({
       terminalVisible: true,
       agentPanelVisible: true,
     })).stub;
@@ -2073,7 +2073,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('desktop: a header request shows and hides the terminal and publishes the level to the view menu', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     const terminal = () => screen.getByTestId('terminal-dock').getAttribute('data-visible');
@@ -2100,7 +2100,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('desktop: a header show records one terminal open and a header hide records none', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     expect(terminalOpenedCalls).toHaveLength(0);
 
@@ -2112,7 +2112,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('desktop without a working shell ignores a terminal request', async () => {
-    const desk = makeOkDesktopStub(undefined, false);
+    const desk = makePsDesktopStub(undefined, false);
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -2127,7 +2127,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a note window ignores header requests', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = {
       ...desk.stub,
       config: { ...desk.stub.config, mode: 'note' },
@@ -2152,7 +2152,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('with text selected a header request opens chat and stages nothing, while the chat shortcut still stages it', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     seedSelection('run the build');
@@ -2176,7 +2176,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('with the editor hidden, ⌘/Ctrl+L toggles chat and never stages the hidden selection', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     seedSelection('run the build');
@@ -2203,7 +2203,7 @@ describe('EditorPane pane visibility for the header', () => {
       value: (query: string) =>
         query === '(width < 48rem)' ? narrowQuery : originalMatchMedia(query),
     });
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     try {
       await renderEditorPane();
@@ -2227,7 +2227,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('with the editor hidden, ⇧⌘J opens a plain new session and never stages the hidden selection', async () => {
-    (window as { psDesktop?: unknown }).psDesktop = makeOkDesktopStub().stub;
+    (window as { psDesktop?: unknown }).psDesktop = makePsDesktopStub().stub;
     await renderEditorPane();
     seedSelection('run the build');
     act(() => paneVisibilityStore.request('editor', false));
@@ -2245,7 +2245,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('with the editor shown again, ⌘/Ctrl+L stages the selection as before', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
     seedSelection('run the build');
@@ -2299,7 +2299,7 @@ describe('EditorPane pane visibility for the header', () => {
   });
 
   test('a single-file window keeps its Editor return destination and restricts Hide', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = {
       ...desk.stub,
       config: { ...desk.stub.config, singleFile: true },
@@ -2327,7 +2327,7 @@ describe('EditorPane pane visibility for the header', () => {
       value: (query: string) =>
         query === '(width < 48rem)' ? narrowQuery : originalMatchMedia(query),
     });
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = {
       ...desk.stub,
       config: { ...desk.stub.config, singleFile: true },
@@ -2436,7 +2436,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
     screen.getByTestId('editor-area').getAttribute('data-editor-visible');
 
   test('desktop: a saved hidden editor comes back hidden, published only once the restore settles', async () => {
-    const desk = makeOkDesktopStub(async () => ({
+    const desk = makePsDesktopStub(async () => ({
       terminalVisible: false,
       agentPanelVisible: false,
       editorVisible: false,
@@ -2457,7 +2457,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
 
   test('desktop: a saved hidden editor that lands after the settle bound still comes back hidden', async () => {
     let release: (value: DockStateResult) => void = () => {};
-    const desk = makeOkDesktopStub(
+    const desk = makePsDesktopStub(
       () =>
         new Promise<DockStateResult>((resolve) => {
           release = resolve;
@@ -2492,7 +2492,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
 
   async function renderPastTheSettleBound() {
     let release: (value: DockStateResult) => void = () => {};
-    const desk = makeOkDesktopStub(
+    const desk = makePsDesktopStub(
       () =>
         new Promise<DockStateResult>((resolve) => {
           release = resolve;
@@ -2583,7 +2583,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
   });
 
   test('desktop: a record from before the editor field opens with the editor shown', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 
@@ -2596,7 +2596,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
 
   test('desktop: the editor stays shown through the restore wait, and an open during the wait keeps it shown', async () => {
     let release: (value: DockStateResult) => void = () => {};
-    const desk = makeOkDesktopStub(
+    const desk = makePsDesktopStub(
       () =>
         new Promise<DockStateResult>((resolve) => {
           release = resolve;
@@ -2617,7 +2617,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
   });
 
   test('desktop: a deep link that opens a document before the editor pane mounts keeps a saved-hidden editor shown', async () => {
-    const desk = makeOkDesktopStub(async () => ({
+    const desk = makePsDesktopStub(async () => ({
       terminalVisible: false,
       agentPanelVisible: false,
       editorVisible: false,
@@ -2635,7 +2635,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
   });
 
   test('desktop: a reveal in a single-file window leaves nothing behind for a later project window', async () => {
-    const singleFile = makeOkDesktopStub();
+    const singleFile = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = {
       ...singleFile.stub,
       config: { ...singleFile.stub.config, singleFile: true },
@@ -2651,7 +2651,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
     act(() => revealEditor());
     cleanup();
 
-    const project = makeOkDesktopStub(async () => ({
+    const project = makePsDesktopStub(async () => ({
       terminalVisible: false,
       agentPanelVisible: false,
       editorVisible: false,
@@ -2664,7 +2664,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
 
   test('desktop: a document opened during the restore wait keeps a saved-hidden editor shown', async () => {
     let release: (value: DockStateResult) => void = () => {};
-    const desk = makeOkDesktopStub(
+    const desk = makePsDesktopStub(
       () =>
         new Promise<DockStateResult>((resolve) => {
           release = resolve;
@@ -2682,7 +2682,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
   });
 
   test('desktop: every pane saved hidden reopens to nothing shown', async () => {
-    const desk = makeOkDesktopStub(async () => ({
+    const desk = makePsDesktopStub(async () => ({
       terminalVisible: false,
       agentPanelVisible: false,
       editorVisible: false,
@@ -2698,7 +2698,7 @@ describe('EditorPane saves and restores whether the editor is shown', () => {
   });
 
   test('desktop: the View menu toggle hides and shows the editor and publishes the level', async () => {
-    const desk = makeOkDesktopStub();
+    const desk = makePsDesktopStub();
     (window as { psDesktop?: unknown }).psDesktop = desk.stub;
     await renderEditorPane();
 

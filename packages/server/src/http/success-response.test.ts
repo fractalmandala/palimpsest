@@ -124,7 +124,7 @@ describe('successResponse — defense-in-depth branches', () => {
     expect(writeHeadCalls[0].headers['Content-Type']).toBe('application/problem+json');
     expect(endCalls.length).toBe(1);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Internal server error.');
     expect(body.status).toBe(500);
     expect(typeof body.instance).toBe('string');
@@ -205,7 +205,7 @@ describe('successResponse — defense-in-depth branches', () => {
     expect(writeHeadCalls[0].headers['X-Content-Type-Options']).toBe('nosniff');
     expect(endCalls.length).toBe(1);
     const body = JSON.parse(endCalls[0]);
-    expect(body.type).toBe('urn:ok:error:internal-server-error');
+    expect(body.type).toBe('urn:ps:error:internal-server-error');
     expect(body.title).toBe('Internal server error.');
     expect(body.status).toBe(500);
     expect(typeof body.instance).toBe('string');

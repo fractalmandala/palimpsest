@@ -313,7 +313,7 @@ function EditorActivityPoolInner({
       const mountId = adopted && adopted.length > 0 ? adopted : randomUUID();
       setMountId(docName, mountId);
     }
-    mark('ok/activity/mount-list-change', {
+    mark('ps/activity/mount-list-change', {
       active: activeDocName,
       mounted,
       evicted,
@@ -488,7 +488,7 @@ export function ScrollPreservingContainer({
       const target = Math.round(saved.fraction * maxScroll);
       const applicable = maxScroll > 0;
       if (applicable) el.scrollTop = target;
-      mark('ok/scroll-restore/cross-mode', {
+      mark('ps/scroll-restore/cross-mode', {
         docName,
         savedMode: saved.mode,
         mode: modeRef.current,
@@ -536,7 +536,7 @@ export function ScrollPreservingContainer({
         hasRestoreRunway(frame.target, frame.contentBottom, el.scrollHeight)
       ) {
         hasLandedOnce = true;
-        mark('ok/scroll-restore/phase1-success', {
+        mark('ps/scroll-restore/phase1-success', {
           docName,
           target: frame.target,
           elapsedMs: performance.now() - startTs,
@@ -562,7 +562,7 @@ export function ScrollPreservingContainer({
     };
     const yieldToUser = () => {
       if (!hasLandedOnce) {
-        mark('ok/scroll-restore/yielded', {
+        mark('ps/scroll-restore/yielded', {
           docName,
           reason: 'user',
           elapsedMs: performance.now() - startTs,
@@ -579,14 +579,14 @@ export function ScrollPreservingContainer({
       if (done) return;
       const holder = scrollSuppressionHolder(docName);
       if (holder) {
-        mark('ok/scroll-restore/superseded', {
+        mark('ps/scroll-restore/superseded', {
           docName,
           holder,
           elapsedMs: performance.now() - startTs,
           finalScrollTop: el.scrollTop,
         });
         if (!hasLandedOnce) {
-          mark('ok/scroll-restore/yielded', {
+          mark('ps/scroll-restore/yielded', {
             docName,
             reason: holder,
             elapsedMs: performance.now() - startTs,
@@ -598,7 +598,7 @@ export function ScrollPreservingContainer({
       }
       if (isExternalScroll(prevScrollTop, el.scrollTop)) {
         if (!hasLandedOnce) {
-          mark('ok/scroll-restore/yielded', {
+          mark('ps/scroll-restore/yielded', {
             docName,
             reason: 'external',
             elapsedMs: performance.now() - startTs,
@@ -616,7 +616,7 @@ export function ScrollPreservingContainer({
       ) {
         el.scrollTop = frame.target;
         if (hasLandedAt(el.scrollTop, frame.target) && !phase2Marked) {
-          mark('ok/scroll-restore/phase2-success', {
+          mark('ps/scroll-restore/phase2-success', {
             docName,
             target: frame.target,
             elapsedMs: performance.now() - startTs,
@@ -639,7 +639,7 @@ export function ScrollPreservingContainer({
         (!hasLandedAt(el.scrollTop, finalTarget) &&
           hasRestoreRunway(finalTarget, final.contentBottom, el.scrollHeight))
       ) {
-        mark('ok/scroll-restore/abandoned', {
+        mark('ps/scroll-restore/abandoned', {
           docName,
           ...(finalTarget !== null ? { target: finalTarget } : {}),
           anchorMeasurable: finalTarget !== null,
@@ -811,7 +811,7 @@ function ActivityEntry({
     if (priorGateKeyRef.current === gateKey) return;
     priorGateKeyRef.current = gateKey;
     if (gate.isLarge) {
-      mark('ok/activity/defer-mount', {
+      mark('ps/activity/defer-mount', {
         docName: entry.docName,
         ytextLength,
         isSourceMode: effectiveIsSourceMode,
@@ -845,7 +845,7 @@ function ActivityEntry({
     ) {
       return;
     }
-    mark('ok/cold/first-toggle', {
+    mark('ps/cold/first-toggle', {
       docName: entry.docName,
       mountId: getMountId(entry.docName),
       ytextLength,

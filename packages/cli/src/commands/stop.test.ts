@@ -116,7 +116,7 @@ describe('runStop', () => {
     expect(errors.at(0)).toContain('server (pid=100)');
   });
 
-  test('dead/corrupt locks are not killed (ok clean will prune them)', async () => {
+  test('dead/corrupt locks are not killed (ps clean will prune them)', async () => {
     const killed: number[] = [];
     const outcome = await runStop({
       lockDir: '/tmp/x',
@@ -422,7 +422,7 @@ describe('formatNoTargetMessage', () => {
     const msg = formatNoTargetMessage('/proj', 2);
     expect(msg).toContain('Nothing was running for /proj');
     expect(msg).toContain('2 other palimpsest servers are running');
-    expect(msg).toContain('ok ps');
+    expect(msg).toContain('ps ps');
     expect(msg).not.toContain('no other');
   });
 
@@ -431,7 +431,7 @@ describe('formatNoTargetMessage', () => {
   });
 
   test.each([
-    ['stable', 'ok'],
+    ['stable', 'ps'],
     ['beta', 'ps-beta'],
   ])('%s: the pointer names %s ps', (channel, command) => {
     vi.stubEnv('PS_CHANNEL', channel);
@@ -444,11 +444,11 @@ describe('formatNoTargetMessage', () => {
     }
   });
 
-  test('drops the `ok ps` pointer when the caller prints the listing itself', () => {
+  test('drops the `ps ps` pointer when the caller prints the listing itself', () => {
     const msg = formatNoTargetMessage('/proj', 2, { listingFollows: true });
     expect(msg).toContain('Nothing was running for /proj');
     expect(msg).toContain('2 other palimpsest servers are running');
-    expect(msg).not.toContain('ok ps');
+    expect(msg).not.toContain('ps ps');
   });
 });
 

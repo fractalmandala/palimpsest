@@ -16,7 +16,7 @@ import { homedir as osHomedir, hostname as osHostname, release as osRelease } fr
 import { basename, dirname, join } from 'node:path';
 import {
   ALL_EDITOR_IDS,
-  addOkPathsToGitExclude,
+  addPsPathsToGitExclude,
   classifyExistingMcpEntry,
   createCliProbeResolver,
   defaultBugReportZipPath,
@@ -25,7 +25,7 @@ import {
   editorConfigPathDisplay,
   editorEntryLocator,
   findJetsamKillSync,
-  getOkArtifactPaths,
+  getPsArtifactPaths,
   isEntryUpToDate,
   isOwnManagedEntry,
   loadConfig,
@@ -175,7 +175,7 @@ import {
   type ProjectWriterSurface,
 } from './agent-registry-apply.ts';
 import { collectDesktopHostSnapshot, withoutProjectScope } from './agent-registry-probes.ts';
-import { appendOkIgnoreSync } from './append-psignore.ts';
+import { appendPsIgnoreSync } from './append-psignore.ts';
 import { registerAppImageDeepLinks } from './appimage-integration.ts';
 import { openAssetOrReveal, openAssetSafely, revealAssetSafely } from './asset-allowlist.ts';
 import { popAssetMenu, revealMenuLabel } from './asset-menu.ts';
@@ -359,7 +359,7 @@ import {
 import { applyDevShmPosture } from './linux-shm-posture.ts';
 import {
   type HostCliInvocation,
-  mainProcessOkCli,
+  mainProcessPsCli,
   resolveLocalOpCliInvocation,
 } from './local-op-cli-invocation.ts';
 import { createMenuTranslator, resolveMenuCatalogDir } from './main-i18n.ts';
@@ -402,7 +402,7 @@ import {
   setNoteWindowDoc,
   touchNoteWindow,
 } from './note-window-registry.ts';
-import { runOkInit } from './ok-init.ts';
+import { runPsInit } from './ok-init.ts';
 import {
   type OnboardingFlowKind,
   recordCreateNewBannerShown,
@@ -546,7 +546,7 @@ import {
 } from './terminal-window.ts';
 import { getTerminalWindowContext, resolvePtyProjectRoot } from './terminal-window-registry.ts';
 import { applyThemeApplied } from './theme-applied-handler.ts';
-import { applyThemeSource, emitThemeSourceRecord, isOkThemeSource } from './theme-handler.ts';
+import { applyThemeSource, emitThemeSourceRecord, isPsThemeSource } from './theme-handler.ts';
 import { createUninstallScreenRegistry } from './uninstall-ipc.ts';
 import {
   loadUninstallEntry,
@@ -1019,7 +1019,7 @@ function attachSpellcheckMenuToWindow(win: BrowserWindow): void {
     },
     viewInSource: () => {
       if (win.isDestroyed()) return;
-      sendToRenderer(win.webContents, 'ok:menu-action', {
+      sendToRenderer(win.webContents, 'ps:menu-action', {
         action: 'toggle-source',
         origin: { launcherBorne: false },
       });
@@ -1293,7 +1293,7 @@ function resolveLocalOpCli(): HostCliInvocation | undefined {
 }
 
 function resolveMainProcessLocalOpCli(): PsCliCommand {
-  return mainProcessOkCli(resolveLocalOpCli(), process.env);
+  return mainProcessPsCli(resolveLocalOpCli(), process.env);
 }
 
 function runDriverBootSmokeInProduction(): void {
@@ -1654,11 +1654,11 @@ function openNavigator(pendingPayload?: ShareNavigatorPayload) {
     if (pendingPayload) {
       const wc = (navigatorWindow as unknown as { webContents: Electron.WebContents }).webContents;
       if (wc.isLoading()) {
-        registerPendingDelivery(wc, 'ok:share:received', pendingPayload, {
+        registerPendingDelivery(wc, 'ps:share:received', pendingPayload, {
           event: 'did-finish-load',
         });
       } else {
-        sendToRenderer(wc, 'ok:share:received', pendingPayload);
+        sendToRenderer(wc, 'ps:share:received', pendingPayload);
       }
     }
     return;
@@ -2018,7 +2018,7 @@ async function openProject(
     });
     getLogger('project').info({ projectName, contentDirChanged }, 'initialized project content');
     if (request.additionalIgnores.trim().length > 0) {
-      appendOkIgnoreSync(discovery.projectDir, request.additionalIgnores);
+      appendPsIgnoreSync(discovery.projectDir, request.additionalIgnores);
     }
     aiIntegrationsFailedCount = logAiIntegrationOutcomes(
       writeProjectAiIntegrations(discovery.projectDir, [...request.editorIds]),
@@ -2037,8 +2037,8 @@ async function openProject(
       );
     }
     if (request.sharing === 'local-only') {
-      const paths = getOkArtifactPaths(discovery.projectDir);
-      const result = addOkPathsToGitExclude(discovery.projectDir, paths);
+      const paths = getPsArtifactPaths(discovery.projectDir);
+      const result = addPsPathsToGitExclude(discovery.projectDir, paths);
       if (result.kind === 'refused-tracked') {
         const refusal: TrackedRefusal = result;
         toastPayload = {
@@ -2122,7 +2122,7 @@ async function openProject(
   if (toastPayload !== null) {
     const payload = toastPayload;
     ctx.window.webContents.once('did-finish-load', () => {
-      sendToRenderer(ctx.window.webContents, 'ok:onboarding:toast', payload);
+      sendToRenderer(ctx.window.webContents, 'ps:onboarding:toast', payload);
     });
   }
 
@@ -3260,7 +3260,7 @@ function sendMenuAction(
     getAllWindows: () => BrowserWindow.getAllWindows(),
   });
   if (!target) return;
-  sendToRenderer(target.webContents, 'ok:menu-action', { action, origin });
+  sendToRenderer(target.webContents, 'ps:menu-action', { action, origin });
 }
 
 function openTerminalWindow(): void {
@@ -3866,7 +3866,7 @@ function dispatchStartupReclaimToastWhenReady(results: {
   });
 }
 
-function dispatchToastWhenReady(payload: EventChannels['ok:onboarding:toast']['payload']): void {
+function dispatchToastWhenReady(payload: EventChannels['ps:onboarding:toast']['payload']): void {
   dispatchStartupToastAcrossLoads(payload, {
     getAllWindows: () => BrowserWindow.getAllWindows(),
     onWindowCreated: (listener) => {
@@ -3887,16 +3887,16 @@ function registerIpcHandlers() {
   const worktreeInventory = new WorktreeInventoryService();
 
   handle(
-    'ok:mcp-wiring:reconfigure',
+    'ps:mcp-wiring:reconfigure',
     async (): Promise<boolean> => reconfigureMcpWiringNow(pickLoadedRendererForMcpDialog()),
   );
 
-  handle('ok:spellcheck:toggle', async (): Promise<boolean> => {
+  handle('ps:spellcheck:toggle', async (): Promise<boolean> => {
     setSpellCheckEnabledAppWide(!appState.spellCheckEnabled);
     return appState.spellCheckEnabled;
   });
 
-  handle('ok:uninstall:dispatch', (event, request) =>
+  handle('ps:uninstall:dispatch', (event, request) =>
     uninstallScreens.dispatch(event.sender.id, request),
   );
 
@@ -3931,9 +3931,9 @@ function registerIpcHandlers() {
           ...(phaseTrace ? { stdio: ['ignore', 'inherit', 'pipe'] } : {}),
         }),
       ) as unknown as PtyUtilityLike,
-    sendData: (wc, payload) => sendToRenderer(wc, 'ok:pty:data', payload),
-    sendExit: (wc, payload) => sendToRenderer(wc, 'ok:pty:exit', payload),
-    sendNotice: (wc, payload) => sendToRenderer(wc, 'ok:pty:notice', payload),
+    sendData: (wc, payload) => sendToRenderer(wc, 'ps:pty:data', payload),
+    sendExit: (wc, payload) => sendToRenderer(wc, 'ps:pty:exit', payload),
+    sendNotice: (wc, payload) => sendToRenderer(wc, 'ps:pty:notice', payload),
     newPtyId: () => randomUUID(),
     setTimer: (cb, ms) => setTimeout(cb, ms),
     clearTimer: (token) => clearTimeout(token as ReturnType<typeof setTimeout>),
@@ -3948,7 +3948,7 @@ function registerIpcHandlers() {
   });
   terminalReaper = terminalManager;
 
-  handle('ok:pty:create', async (event, opts) => {
+  handle('ps:pty:create', async (event, opts) => {
     const traceContext = phaseTrace
       ? { scope: `request-${++nextTraceRequest}`, webContentsId: event.sender.id }
       : undefined;
@@ -3966,7 +3966,7 @@ function registerIpcHandlers() {
       if (!win || !projectPath) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:pty:create',
+          channel: 'ps:pty:create',
           reason: 'no-project',
           handler: 'createPty',
         });
@@ -3975,7 +3975,7 @@ function registerIpcHandlers() {
       if (!isTerminalConsented(projectPath) && !(await isTerminalConsentedWithGrace(projectPath))) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:pty:create',
+          channel: 'ps:pty:create',
           reason: 'not-consented',
           handler: 'createPty',
         });
@@ -4023,12 +4023,12 @@ function registerIpcHandlers() {
       phaseTrace?.mark('ipc-create', traceFailed ? 'error' : 'end', traceContext);
     }
   });
-  handle('ok:pty:input', async (event, req) => {
+  handle('ps:pty:input', async (event, req) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) terminalManager.input({ windowId: win.id, ptyId: req.ptyId, data: req.data });
     return undefined;
   });
-  handle('ok:pty:resize', async (event, req) => {
+  handle('ps:pty:resize', async (event, req) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) {
       terminalManager.resize({
@@ -4040,21 +4040,21 @@ function registerIpcHandlers() {
     }
     return undefined;
   });
-  handle('ok:pty:kill', async (event, req) => {
+  handle('ps:pty:kill', async (event, req) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) terminalManager.kill({ windowId: win.id, ptyId: req.ptyId });
     return undefined;
   });
-  handle('ok:pty:drain', async (event, req) => {
+  handle('ps:pty:drain', async (event, req) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) terminalManager.drain({ windowId: win.id, ptyId: req.ptyId, bytes: req.bytes });
     return undefined;
   });
-  handle('ok:pty:list', async (event) => {
+  handle('ps:pty:list', async (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     return win ? terminalManager.listSessions(win.id) : [];
   });
-  handle('ok:pty:adopt', async (event, req) => {
+  handle('ps:pty:adopt', async (event, req) => {
     const traceContext = phaseTrace
       ? { scope: `request-${++nextTraceRequest}`, webContentsId: event.sender.id }
       : undefined;
@@ -4066,7 +4066,7 @@ function registerIpcHandlers() {
       if (!win) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:pty:adopt',
+          channel: 'ps:pty:adopt',
           reason: 'unknown-session',
           handler: 'adoptPty',
         });
@@ -4086,7 +4086,7 @@ function registerIpcHandlers() {
       if (!outcome.ok) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:pty:adopt',
+          channel: 'ps:pty:adopt',
           reason: outcome.reason,
           handler: 'adoptPty',
         });
@@ -4099,7 +4099,7 @@ function registerIpcHandlers() {
       phaseTrace?.mark(tracePhase, traceFailed ? 'error' : 'end', traceContext);
     }
   });
-  handle('ok:pty:set-meta', async (event, req) => {
+  handle('ps:pty:set-meta', async (event, req) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win)
       terminalManager.setSessionMeta({
@@ -4110,13 +4110,13 @@ function registerIpcHandlers() {
       });
     return undefined;
   });
-  handle('ok:pty:set-order', async (event, req) => {
+  handle('ps:pty:set-order', async (event, req) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win)
       terminalManager.setSessionOrder({ windowId: win.id, orderedPtyIds: req.orderedPtyIds });
     return undefined;
   });
-  handle('ok:terminal:claude-assist', async (event) => {
+  handle('ps:terminal:claude-assist', async (event) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const projectRoot =
       callerWin && wm
@@ -4125,7 +4125,7 @@ function registerIpcHandlers() {
     return resolveTerminalClaudeReadiness(projectRoot);
   });
 
-  handle('ok:terminal:cli-preflight', async (_event, req): Promise<CliReadiness> => {
+  handle('ps:terminal:cli-preflight', async (_event, req): Promise<CliReadiness> => {
     if (!(req.cli in TERMINAL_CLIS)) {
       getLogger('terminal').warn({ cli: req.cli }, 'cli-preflight: unknown cli discriminant');
       return { onPath: 'unknown' };
@@ -4134,18 +4134,18 @@ function registerIpcHandlers() {
   });
 
   handle(
-    'ok:terminal:cli-installed-map',
+    'ps:terminal:cli-installed-map',
     async (): Promise<Partial<Record<TerminalCli, boolean>>> => {
       return resolveTerminalCliInstalledMap();
     },
   );
 
-  handle('ok:remote-access:dispatch', async (_event, req) => {
+  handle('ps:remote-access:dispatch', async (_event, req) => {
     if (req.kind === 'probe-port') return probeLoopbackPort(req.port);
     throw new Error(`unhandled remote-access dispatch kind: ${(req as { kind: string }).kind}`);
   });
 
-  handle('ok:terminal:dock-state', async (event) => {
+  handle('ps:terminal:dock-state', async (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win)
       return {
@@ -4172,12 +4172,12 @@ function registerIpcHandlers() {
     };
   });
 
-  handle('ok:terminal:set-dock-state', async (event, req) => {
+  handle('ps:terminal:set-dock-state', async (event, req) => {
     const surface = Reflect.get(req, 'surface');
     if (surface !== 'terminal' && surface !== 'agents') {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:terminal:set-dock-state',
+        channel: 'ps:terminal:set-dock-state',
         reason: 'invalid-request',
         handler: 'setTerminalDockState',
       });
@@ -4187,7 +4187,7 @@ function registerIpcHandlers() {
     if (!win) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:terminal:set-dock-state',
+        channel: 'ps:terminal:set-dock-state',
         reason: 'no-window-context',
         handler: 'setTerminalDockState',
       });
@@ -4198,7 +4198,7 @@ function registerIpcHandlers() {
     if (!Array.isArray(order) || (typeof activeKey !== 'string' && activeKey !== null)) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:terminal:set-dock-state',
+        channel: 'ps:terminal:set-dock-state',
         reason: 'invalid-request',
         handler: 'setTerminalDockState',
       });
@@ -4218,11 +4218,11 @@ function registerIpcHandlers() {
     return persistTerminalDockForWindow(win, { terminalSnapshot: normalizedSnapshot });
   });
 
-  handle('ok:dialog:open-folder', async (_event, opts) => {
+  handle('ps:dialog:open-folder', async (_event, opts) => {
     return promptForExistingFolder(dialog, { ...opts, errorParent: dialogParentWindow });
   });
 
-  handle('ok:project:open-file-picker', async () => {
+  handle('ps:project:open-file-picker', async () => {
     const picked = await promptForExistingMarkdownFile(dialog, {
       errorParent: dialogParentWindow,
     });
@@ -4233,12 +4233,12 @@ function registerIpcHandlers() {
   const shellOpenExternal = handleShellOpenExternal({
     openExternal: (url) => shell.openExternal(url),
   });
-  handle('ok:shell:open-external', async (_event, url) => {
+  handle('ps:shell:open-external', async (_event, url) => {
     await shellOpenExternal(url);
     return undefined;
   });
 
-  handle('ok:shell:detect-protocol', async (_event, scheme) => {
+  handle('ps:shell:detect-protocol', async (_event, scheme) => {
     return detectProtocolImpl(
       {
         platform: process.platform,
@@ -4248,7 +4248,7 @@ function registerIpcHandlers() {
     );
   });
 
-  handle('ok:shell:spawn-cursor', async (event, path) => {
+  handle('ps:shell:spawn-cursor', async (event, path) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const callerProjectPath = windowProjectPath(callerWin);
     const outcome = await spawnCursorImpl(
@@ -4278,7 +4278,7 @@ function registerIpcHandlers() {
     if (!outcome.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:spawn-cursor',
+        channel: 'ps:shell:spawn-cursor',
         reason: outcome.reason,
         handler: 'spawnCursor',
       });
@@ -4286,7 +4286,7 @@ function registerIpcHandlers() {
     return outcome;
   });
 
-  handle('ok:shell:record-handoff', async (_event, line) => {
+  handle('ps:shell:record-handoff', async (_event, line) => {
     await recordHandoffImpl(
       {
         homedir: osHomedir,
@@ -4298,13 +4298,13 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:shell:open-asset', async (event, relPath) => {
+  handle('ps:shell:open-asset', async (event, relPath) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const callerProjectPath = windowProjectPath(callerWin);
     if (!callerProjectPath) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:open-asset',
+        channel: 'ps:shell:open-asset',
         reason: 'path-escape',
         handler: 'openAsset',
       });
@@ -4321,7 +4321,7 @@ function registerIpcHandlers() {
     if (!outcome.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:open-asset',
+        channel: 'ps:shell:open-asset',
         reason: outcome.reason,
         handler: 'openAsset',
       });
@@ -4329,13 +4329,13 @@ function registerIpcHandlers() {
     return outcome;
   });
 
-  handle('ok:shell:reveal-asset', async (event, relPath) => {
+  handle('ps:shell:reveal-asset', async (event, relPath) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const callerProjectPath = windowProjectPath(callerWin);
     if (!callerProjectPath) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:reveal-asset',
+        channel: 'ps:shell:reveal-asset',
         reason: 'path-escape',
         handler: 'revealAsset',
       });
@@ -4352,7 +4352,7 @@ function registerIpcHandlers() {
     if (!outcome.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:shell:reveal-asset',
+        channel: 'ps:shell:reveal-asset',
         reason: outcome.reason,
         handler: 'revealAsset',
       });
@@ -4360,7 +4360,7 @@ function registerIpcHandlers() {
     return outcome;
   });
 
-  handle('ok:shell:show-asset-menu', async (event, params) => {
+  handle('ps:shell:show-asset-menu', async (event, params) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     if (!callerWin || !wm) return undefined;
     const projectPath = windowProjectPath(callerWin);
@@ -4398,7 +4398,7 @@ function registerIpcHandlers() {
             if (!outcome.ok) {
               logIpcError({
                 event: 'ipc.error',
-                channel: 'ok:shell:show-asset-menu',
+                channel: 'ps:shell:show-asset-menu',
                 reason: outcome.reason,
                 handler: 'openInDefault',
               });
@@ -4411,7 +4411,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:shell:show-item-in-folder', async (event, path) => {
+  handle('ps:shell:show-item-in-folder', async (event, path) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const callerProjectPath = windowProjectPath(callerWin);
     const result = showItemInFolderImpl(
@@ -4429,7 +4429,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:shell:reveal-external', async (event, absPath) => {
+  handle('ps:shell:reveal-external', async (event, absPath) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const result = await handleRevealExternal(absPath, {
       probe: (p) => {
@@ -4468,16 +4468,16 @@ function registerIpcHandlers() {
     return result;
   });
 
-  handle('ok:shell:trash-item', async (event, absPath) => {
+  handle('ps:shell:trash-item', async (event, absPath) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     const callerProjectPath = windowProjectPath(callerWin);
     const start = performance.now();
     const result = await withSpan(
-      'ok.shell.trash_item',
+      'ps.shell.trash_item',
       {
         attributes: {
-          'ok.shell.path': normalizeFsPath(absPath),
-          'ok.shell.path.role': classifyFsPath(absPath),
+          'ps.shell.path': normalizeFsPath(absPath),
+          'ps.shell.path.role': classifyFsPath(absPath),
         },
       },
       async (span) => {
@@ -4490,19 +4490,19 @@ function registerIpcHandlers() {
           },
           absPath,
         );
-        span.setAttribute('ok.shell.outcome', outcome.ok ? 'ok' : 'failure');
+        span.setAttribute('ps.shell.outcome', outcome.ok ? 'ok' : 'failure');
         if (!outcome.ok) {
-          span.setAttribute('ok.shell.reason', outcome.reason);
+          span.setAttribute('ps.shell.reason', outcome.reason);
         }
         return outcome;
       },
     );
     const elapsedMs = performance.now() - start;
     _trashItemDurationHist().record(elapsedMs, {
-      'ok.shell.outcome': result.ok ? 'ok' : 'failure',
+      'ps.shell.outcome': result.ok ? 'ok' : 'failure',
     });
     if (!result.ok) {
-      _trashItemFailureCounter().add(1, { 'ok.shell.reason': result.reason });
+      _trashItemFailureCounter().add(1, { 'ps.shell.reason': result.reason });
       console.warn('[main] trash-item refused', {
         reason: result.reason,
         detail: result.detail,
@@ -4511,7 +4511,7 @@ function registerIpcHandlers() {
     return result;
   });
 
-  handle('ok:editor:active-target-changed', async (event, target) => {
+  handle('ps:editor:active-target-changed', async (event, target) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) {
       editorActiveTargets.update(win.id, target);
@@ -4521,7 +4521,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:editor:view-menu-state-changed', async (event, state) => {
+  handle('ps:editor:view-menu-state-changed', async (event, state) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     handleViewMenuStateChange(
       {
@@ -4553,17 +4553,17 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:editor:background-throttle', async (event, signal) => {
+  handle('ps:editor:background-throttle', async (event, signal) => {
     applyBackgroundThrottle(event.sender, signal);
     return undefined;
   });
 
-  handle('ok:clipboard:write-text', async (_event, text) => {
+  handle('ps:clipboard:write-text', async (_event, text) => {
     await clipboard.writeText(text);
     return undefined;
   });
 
-  handle('ok:clipboard:copy-image', async (event, { src }) => {
+  handle('ps:clipboard:copy-image', async (event, { src }) => {
     const callerWin = BrowserWindow.fromWebContents(event.sender);
     if (!callerWin || !wm) {
       return { ok: false as const, reason: 'read-error' as const, detail: 'no window context' };
@@ -4601,13 +4601,13 @@ function registerIpcHandlers() {
       refreshApplicationMenu();
     },
   });
-  handle('ok:user-config:dispatch', (event, request) => userConfigDispatch(event.sender, request));
+  handle('ps:user-config:dispatch', (event, request) => userConfigDispatch(event.sender, request));
 
-  handle('ok:theme:set-source', async (event, { source }) => {
+  handle('ps:theme:set-source', async (event, { source }) => {
     return applyThemeSource(
       {
         getThemeSource: () =>
-          isOkThemeSource(nativeTheme.themeSource) ? nativeTheme.themeSource : 'system',
+          isPsThemeSource(nativeTheme.themeSource) ? nativeTheme.themeSource : 'system',
         setThemeSource: (s) => {
           nativeTheme.themeSource = s;
         },
@@ -4618,7 +4618,7 @@ function registerIpcHandlers() {
     );
   });
 
-  handle('ok:theme:applied', async (event, opts) => {
+  handle('ps:theme:applied', async (event, opts) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     applyThemeApplied(
       {
@@ -4637,7 +4637,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:menu:dispatch', async (event, request) => {
+  handle('ps:menu:dispatch', async (event, request) => {
     switch (request.kind) {
       case 'query':
         return {
@@ -4683,7 +4683,7 @@ function registerIpcHandlers() {
     }
   });
 
-  handle('ok:startup:renderer-marks', async (_event, marks) => {
+  handle('ps:startup:renderer-marks', async (_event, marks) => {
     if (!Number.isFinite(marks?.pageListReadyMs) || !Number.isFinite(marks?.firstContentMs)) {
       return undefined;
     }
@@ -4691,7 +4691,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:project:get-info', async (event) => {
+  handle('ps:project:get-info', async (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) throw new Error('webContents has no parent BrowserWindow');
     const ctx = wm?.getContextForBrowserWindow(win as unknown as BrowserWindowLike);
@@ -4710,7 +4710,7 @@ function registerIpcHandlers() {
     };
   });
 
-  handle('ok:sharing:dispatch', async (event, request) => {
+  handle('ps:sharing:dispatch', async (event, request) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) throw new Error('webContents has no parent BrowserWindow');
     const ctx = wm?.getContextForBrowserWindow(win as unknown as BrowserWindowLike);
@@ -4722,7 +4722,7 @@ function registerIpcHandlers() {
     return handleSharingSetMode(ctx.projectPath, mode);
   });
 
-  handle('ok:slides:dispatch', async (event, request) => {
+  handle('ps:slides:dispatch', async (event, request) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     const projectRoot =
       win && wm
@@ -4747,7 +4747,7 @@ function registerIpcHandlers() {
     if (!deckPath.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:slides:dispatch',
+        channel: 'ps:slides:dispatch',
         reason: 'invalid-path',
         handler: 'slidesOpen',
         ...(deckPath.cause === undefined ? {} : { cause: deckPath.cause }),
@@ -4759,7 +4759,7 @@ function registerIpcHandlers() {
     if (!resolution.available) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:slides:dispatch',
+        channel: 'ps:slides:dispatch',
         reason: 'not-available',
         handler: 'slidesOpen',
       });
@@ -4820,7 +4820,7 @@ function registerIpcHandlers() {
     if (shouldLogSlidesOpenError(opened)) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:slides:dispatch',
+        channel: 'ps:slides:dispatch',
         reason: opened.reason,
         handler: 'slidesOpen',
       });
@@ -4828,7 +4828,7 @@ function registerIpcHandlers() {
     return opened;
   });
 
-  handle('ok:bug-report:dispatch', async (event, request) => {
+  handle('ps:bug-report:dispatch', async (event, request) => {
     if (request.kind === 'crash-ack') {
       return handleBugReportCrashAck(
         { ackCrashEvent: (eventId) => crashDetection?.ack(eventId) },
@@ -4961,7 +4961,7 @@ function registerIpcHandlers() {
     );
   });
 
-  handle('ok:project:list-recent', async () => {
+  handle('ps:project:list-recent', async () => {
     return Promise.all(
       annotateMissing(appState).map(async (entry): Promise<RecentProject> => {
         if (entry.missing) return entry;
@@ -4983,9 +4983,9 @@ function registerIpcHandlers() {
     );
   });
 
-  handle('ok:project:remove-recent', async (_event, projectPath) => {
+  handle('ps:project:remove-recent', async (_event, projectPath) => {
     if (typeof projectPath !== 'string' || projectPath.length === 0) {
-      throw new Error('ok:project:remove-recent rejected: invalid projectPath');
+      throw new Error('ps:project:remove-recent rejected: invalid projectPath');
     }
     appState = removeRecentProject(appState, projectPath);
     saveAppState(appState);
@@ -5007,17 +5007,17 @@ function registerIpcHandlers() {
     },
   });
 
-  handle('ok:project:get-session-state', async (event) => projectSessionHandlers.get(event.sender));
+  handle('ps:project:get-session-state', async (event) => projectSessionHandlers.get(event.sender));
 
-  handle('ok:project:set-session-state', async (event, state) => {
+  handle('ps:project:set-session-state', async (event, state) => {
     projectSessionHandlers.set(event.sender, state);
     return undefined;
   });
 
-  handle('ok:project:open', async (event, request) => {
+  handle('ps:project:open', async (event, request) => {
     if (!isEntryPoint(request.entryPoint)) {
       throw new Error(
-        `ok:project:open rejected: invalid entryPoint '${String(request.entryPoint)}'`,
+        `ps:project:open rejected: invalid entryPoint '${String(request.entryPoint)}'`,
       );
     }
     if (
@@ -5026,7 +5026,7 @@ function registerIpcHandlers() {
     ) {
       const pruned = pruneRecentIfMissing(request.path);
       if (pruned.removed) {
-        sendToRenderer(event.sender, 'ok:project:recent-removed-missing', {
+        sendToRenderer(event.sender, 'ps:project:recent-removed-missing', {
           path: request.path,
           projectName: pruned.name,
         });
@@ -5053,7 +5053,7 @@ function registerIpcHandlers() {
         | (BrowserWindowLike & { webContents: BrowserWindowLike['webContents'] })
         | null;
       if (existing) {
-        sendToRenderer(existing.webContents, 'ok:deep-link', {
+        sendToRenderer(existing.webContents, 'ps:deep-link', {
           doc: request.pendingDeepLinkTarget.path,
           kind: request.pendingDeepLinkTarget.kind,
           branch: request.pendingBranch ?? null,
@@ -5074,7 +5074,7 @@ function registerIpcHandlers() {
         | (BrowserWindowLike & { webContents: BrowserWindowLike['webContents'] })
         | null;
       if (existing) {
-        sendToRenderer(existing.webContents, 'ok:share:received', {
+        sendToRenderer(existing.webContents, 'ps:share:received', {
           kind: 'project-branch-switch' as const,
           share: request.pendingShareBranchSwitch.share,
           projectPath: request.pendingShareBranchSwitch.projectPath,
@@ -5096,7 +5096,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:worktree:dispatch', async (event, request) => {
+  handle('ps:worktree:dispatch', async (event, request) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     const ctx =
       win && wm ? wm.getContextForBrowserWindow(win as unknown as BrowserWindowLike) : null;
@@ -5104,7 +5104,7 @@ function registerIpcHandlers() {
     if (!projectPath) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:worktree:dispatch',
+        channel: 'ps:worktree:dispatch',
         reason: 'no-git',
         handler: 'worktreeDispatch',
       });
@@ -5129,7 +5129,7 @@ function registerIpcHandlers() {
       ) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: 'invalid-request',
           handler: 'worktreeDispatch',
           details: { projectPath: request.projectPath },
@@ -5138,7 +5138,7 @@ function registerIpcHandlers() {
       }
       const result = await withIpcErrorLogging(
         {
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: 'inventory-failed',
           handler: 'worktreeDispatch',
           details: { projectPath: request.projectPath },
@@ -5148,7 +5148,7 @@ function registerIpcHandlers() {
       if (!result.ok) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: result.reason,
           handler: 'worktreeDispatch',
           details: { projectPath: request.projectPath },
@@ -5166,7 +5166,7 @@ function registerIpcHandlers() {
       ) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: 'invalid-request',
           handler: 'worktreeDispatch',
           details: { projectPath: request.anchorProjectPath },
@@ -5175,7 +5175,7 @@ function registerIpcHandlers() {
       }
       const target = await withIpcErrorLogging(
         {
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: 'inventory-validation-failed',
           handler: 'worktreeDispatch',
           details: { projectPath: request.anchorProjectPath },
@@ -5185,7 +5185,7 @@ function registerIpcHandlers() {
       if (!target.ok) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: target.reason,
           handler: 'worktreeDispatch',
           details: { projectPath: request.projectPath },
@@ -5205,7 +5205,7 @@ function registerIpcHandlers() {
       if (!opened) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:worktree:dispatch',
+          channel: 'ps:worktree:dispatch',
           reason: 'open-failed',
           handler: 'worktreeDispatch',
           details: { projectPath: target.projectPath },
@@ -5254,7 +5254,7 @@ function registerIpcHandlers() {
     return projectWorktreeCreateResult(result, git.projectSubPath ?? '');
   });
 
-  handle('ok:share:validate-folder', async (_event, request) => {
+  handle('ps:share:validate-folder', async (_event, request) => {
     return validateLocalFolderForShare(request.folderPath, {
       host: request.host,
       owner: request.owner,
@@ -5262,11 +5262,11 @@ function registerIpcHandlers() {
     });
   });
 
-  handle('ok:project:check-target-exists', async (_event, request) => {
+  handle('ps:project:check-target-exists', async (_event, request) => {
     return checkTargetExistsImpl(request.projectPath, request.kind, request.path);
   });
 
-  handle('ok:project:read-head-branch', async (_event, projectPath) => {
+  handle('ps:project:read-head-branch', async (_event, projectPath) => {
     return readHeadBranchImpl(projectPath);
   });
 
@@ -5279,27 +5279,27 @@ function registerIpcHandlers() {
     },
   };
 
-  handle('ok:project:fetch-branch-info', async (_event, request) => {
+  handle('ps:project:fetch-branch-info', async (_event, request) => {
     return proxyFetchBranchInfo(request, branchInfoProxyDeps);
   });
 
-  handle('ok:project:run-checkout', async (_event, request) => {
+  handle('ps:project:run-checkout', async (_event, request) => {
     return proxyRunCheckout(request, branchInfoProxyDeps);
   });
 
-  handle('ok:project:fetch-target-status', async (_event, request) => {
+  handle('ps:project:fetch-target-status', async (_event, request) => {
     return proxyShareTargetStatus(request, branchInfoProxyDeps);
   });
 
-  handle('ok:project:await-branch-switched', async (_event, request) => {
+  handle('ps:project:await-branch-switched', async (_event, request) => {
     return proxyAwaitBranchSwitched(request, branchInfoProxyDeps);
   });
 
-  handle('ok:project:ps-init', async (_event, request) => {
-    return runOkInit(request.projectPath);
+  handle('ps:project:ps-init', async (_event, request) => {
+    return runPsInit(request.projectPath);
   });
 
-  handle('ok:project:close', async (event) => {
+  handle('ps:project:close', async (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win || !wm) return undefined;
     const ctx = wm.getContextForBrowserWindow(win as unknown as BrowserWindowLike);
@@ -5309,11 +5309,11 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:project:restart-server', async (event, projectPath) => {
+  handle('ps:project:restart-server', async (event, projectPath) => {
     if (!wm) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:project:restart-server',
+        channel: 'ps:project:restart-server',
         reason: 'no-window-manager',
         handler: 'restartServer',
       });
@@ -5327,7 +5327,7 @@ function registerIpcHandlers() {
       if (outcome.ok === false) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:project:restart-server',
+          channel: 'ps:project:restart-server',
           reason: outcome.reason,
           handler: 'restartServer',
         });
@@ -5336,7 +5336,7 @@ function registerIpcHandlers() {
     } catch (err) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:project:restart-server',
+        channel: 'ps:project:restart-server',
         reason: 'other',
         handler: 'restartServer',
         cause: err,
@@ -5345,7 +5345,7 @@ function registerIpcHandlers() {
     }
   });
 
-  handle('ok:fs:default-projects-root', async () => {
+  handle('ps:fs:default-projects-root', async () => {
     let documentsDir: string;
     try {
       documentsDir = app.getPath('documents');
@@ -5359,25 +5359,25 @@ function registerIpcHandlers() {
     return resolveDefaultProjectsRoot(appState.lastUsedProjectParent, documentsDir);
   });
 
-  handle('ok:fs:folder-state', async (_event, path) => {
+  handle('ps:fs:folder-state', async (_event, path) => {
     if (typeof path !== 'string' || path.length === 0) {
-      throw new Error('ok:fs:folder-state rejected: path must be a non-empty string');
+      throw new Error('ps:fs:folder-state rejected: path must be a non-empty string');
     }
     return folderState(path);
   });
 
-  handle('ok:fs:find-enclosing-project-root', async (_event, path) => {
+  handle('ps:fs:find-enclosing-project-root', async (_event, path) => {
     if (typeof path !== 'string' || path.length === 0) {
       throw new Error(
-        'ok:fs:find-enclosing-project-root rejected: path must be a non-empty string',
+        'ps:fs:find-enclosing-project-root rejected: path must be a non-empty string',
       );
     }
     return findEnclosingProjectRoot(path);
   });
 
-  handle('ok:fs:find-enclosing-git-root', async (_event, path) => {
+  handle('ps:fs:find-enclosing-git-root', async (_event, path) => {
     if (typeof path !== 'string' || path.length === 0) {
-      throw new Error('ok:fs:find-enclosing-git-root rejected: path must be a non-empty string');
+      throw new Error('ps:fs:find-enclosing-git-root rejected: path must be a non-empty string');
     }
     const result = findEnclosingGitRoot(path);
     if (result !== null) {
@@ -5386,7 +5386,7 @@ function registerIpcHandlers() {
     return result;
   });
 
-  handle('ok:fs:remove-git-folder', async (_event, gitRoot) => {
+  handle('ps:fs:remove-git-folder', async (_event, gitRoot) => {
     if (typeof gitRoot === 'string' && recentGitRoots.has(gitRoot)) {
       try {
         const outcome = await runStop({
@@ -5409,7 +5409,7 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:project:create-new', async (_event, args) => {
+  handle('ps:project:create-new', async (_event, args) => {
     let result: Awaited<ReturnType<typeof runCreateNew>>;
     try {
       result = await runCreateNew({
@@ -5424,7 +5424,7 @@ function registerIpcHandlers() {
       if (err instanceof CreateNewProjectError) {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:project:create-new',
+          channel: 'ps:project:create-new',
           reason: err.reason,
           handler: 'runCreateNew',
           cause: { message: err.message },
@@ -5432,7 +5432,7 @@ function registerIpcHandlers() {
       } else {
         logIpcError({
           event: 'ipc.error',
-          channel: 'ok:project:create-new',
+          channel: 'ps:project:create-new',
           reason: 'unexpected',
           handler: 'runCreateNew',
           cause: err,
@@ -5469,25 +5469,25 @@ function registerIpcHandlers() {
     return undefined;
   });
 
-  handle('ok:project:record-create-new-banner-shown', async (_event, banner) => {
+  handle('ps:project:record-create-new-banner-shown', async (_event, banner) => {
     if (banner !== 'nested' && banner !== 'nonempty' && banner !== 'git-confirm') {
       throw new Error(
-        `ok:project:record-create-new-banner-shown rejected: unknown banner ${JSON.stringify(banner)}`,
+        `ps:project:record-create-new-banner-shown rejected: unknown banner ${JSON.stringify(banner)}`,
       );
     }
     recordCreateNewBannerShown(banner);
     return undefined;
   });
 
-  handle('ok:navigator:open', async () => {
+  handle('ps:navigator:open', async () => {
     openNavigator();
     return undefined;
   });
 
-  handle('ok:window:open-note', async (event, request) => {
+  handle('ps:window:open-note', async (event, request) => {
     return withIpcErrorLogging(
       {
-        channel: 'ok:window:open-note',
+        channel: 'ps:window:open-note',
         reason: 'unexpected',
         handler: 'openNoteWindow',
       },
@@ -5500,7 +5500,7 @@ function registerIpcHandlers() {
             getContext: getNoteWindowContext,
             focusProjectWindow: (projectRoot) => wm?.focusWindowForProject(projectRoot) ?? null,
             send: (target, action) =>
-              sendToRenderer(target.webContents, 'ok:note-window:main-action', action),
+              sendToRenderer(target.webContents, 'ps:note-window:main-action', action),
           });
         }
         const docName = typeof request.docName === 'string' ? request.docName.trim() : '';
@@ -5527,10 +5527,10 @@ function registerIpcHandlers() {
     variant: DESKTOP_VARIANT,
     isUpdaterRunning: () => autoUpdaterHandle != null,
   });
-  handle('ok:state:reset-incompatible', async () => applyResetIncompatible(updateStateDeps()));
-  handle('ok:state:query', async () => applyStateQuery(updateStateDeps()));
+  handle('ps:state:reset-incompatible', async () => applyResetIncompatible(updateStateDeps()));
+  handle('ps:state:query', async () => applyStateQuery(updateStateDeps()));
 
-  handle('ok:debug:keyring-smoke', async (event) => {
+  handle('ps:debug:keyring-smoke', async (event) => {
     return ensureDebugIpc().requestKeyringSmoke(event.sender);
   });
 
@@ -5540,7 +5540,7 @@ function registerIpcHandlers() {
       ? wm.getContextForBrowserWindow(callerWin as unknown as BrowserWindowLike)?.projectPath
       : undefined;
   };
-  handle('ok:seed:plan', async (event, options) => {
+  handle('ps:seed:plan', async (event, options) => {
     const result = await handleSeedPlan(
       { resolveProjectRoot: () => resolveSeedProjectRoot(event) },
       options,
@@ -5548,7 +5548,7 @@ function registerIpcHandlers() {
     if (!result.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:seed:plan',
+        channel: 'ps:seed:plan',
         reason: result.error.kind,
         handler: 'handleSeedPlan',
         cause: { message: result.error.message },
@@ -5556,7 +5556,7 @@ function registerIpcHandlers() {
     }
     return result;
   });
-  handle('ok:seed:apply', async (event, plan, options) => {
+  handle('ps:seed:apply', async (event, plan, options) => {
     const result = await handleSeedApply(
       { resolveProjectRoot: () => resolveSeedProjectRoot(event) },
       plan,
@@ -5565,7 +5565,7 @@ function registerIpcHandlers() {
     if (!result.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:seed:apply',
+        channel: 'ps:seed:apply',
         reason: result.error.kind,
         handler: 'handleSeedApply',
         cause: { message: result.error.message },
@@ -5573,17 +5573,17 @@ function registerIpcHandlers() {
     }
     return result;
   });
-  handle('ok:seed:list-packs', async () => handleSeedListPacks());
+  handle('ps:seed:list-packs', async () => handleSeedListPacks());
 
-  handle('ok:skill:detect-claude-desktop', async () => {
+  handle('ps:skill:detect-claude-desktop', async () => {
     return handleDetectClaudeDesktop();
   });
-  handle('ok:skill:build-and-open', async (_event, opts) => {
+  handle('ps:skill:build-and-open', async (_event, opts) => {
     const result = await handleBuildAndOpen({ app, shell, force: opts?.force });
     if (!result.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:skill:build-and-open',
+        channel: 'ps:skill:build-and-open',
         reason: result.reason,
         handler: 'handleBuildAndOpen',
         cause: result.message !== undefined ? { message: result.message } : undefined,
@@ -5593,46 +5593,46 @@ function registerIpcHandlers() {
   });
 
   const localOpDeps: LocalOpDeps = {
-    resolveOkCli: resolveMainProcessLocalOpCli,
+    resolvePsCli: resolveMainProcessLocalOpCli,
     logFailure: logIpcError,
     state: createLocalOpState(),
   };
-  handle('ok:local-op:auth:start', async (event) => {
+  handle('ps:local-op:auth:start', async (event) => {
     const result = handleAuthStart(localOpDeps, event.sender);
     if (!result.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:local-op:auth:start',
+        channel: 'ps:local-op:auth:start',
         reason: result.error,
         handler: 'handleAuthStart',
       });
     }
     return result;
   });
-  handle('ok:local-op:auth:cancel', async (_event, streamId) => {
+  handle('ps:local-op:auth:cancel', async (_event, streamId) => {
     handleAuthCancel(localOpDeps, streamId);
     return undefined;
   });
-  handle('ok:local-op:clone:start', async (event, request) => {
+  handle('ps:local-op:clone:start', async (event, request) => {
     const result = handleCloneStart(localOpDeps, event.sender, request);
     if (!result.ok) {
       logIpcError({
         event: 'ipc.error',
-        channel: 'ok:local-op:clone:start',
+        channel: 'ps:local-op:clone:start',
         reason: result.error,
         handler: 'handleCloneStart',
       });
     }
     return result;
   });
-  handle('ok:local-op:clone:cancel', async (_event, streamId) => {
+  handle('ps:local-op:clone:cancel', async (_event, streamId) => {
     handleCloneCancel(localOpDeps, streamId);
     return undefined;
   });
-  handle('ok:local-op:auth:status', async (_event, request) => {
+  handle('ps:local-op:auth:status', async (_event, request) => {
     return handleAuthStatus(localOpDeps, request);
   });
-  handle('ok:local-op:auth:repos', async (_event, request) => {
+  handle('ps:local-op:auth:repos', async (_event, request) => {
     return handleAuthRepos(localOpDeps, request);
   });
 
@@ -6194,7 +6194,7 @@ function bootPrimaryInstance(): void {
 
   rendererReadySink = createRendererReadySink(
     ipcMain,
-    ['ok:mcp-wiring:renderer-ready', 'ok:onboarding:renderer-ready'],
+    ['ps:mcp-wiring:renderer-ready', 'ps:onboarding:renderer-ready'],
     {
       debug: (msg, ctx) => getLogger('renderer-ready-sink').debug(ctx ?? {}, msg),
       warn: (msg, ctx) => getLogger('renderer-ready-sink').warn(ctx ?? {}, msg),
@@ -6226,7 +6226,7 @@ function bootPrimaryInstance(): void {
       for (const win of candidates) {
         const contents = win.webContents;
         if (contents.isDestroyed() || contents.isCrashed() || contents.isLoading()) continue;
-        sendToRenderer(contents, 'ok:bug-report:crash-detected', event);
+        sendToRenderer(contents, 'ps:bug-report:crash-detected', event);
         return true;
       }
       return false;
@@ -6388,7 +6388,7 @@ function bootPrimaryInstance(): void {
     logAccessibilityPosture('changed', screenReaderActive);
     for (const win of BrowserWindow.getAllWindows()) {
       if (win.webContents.isDestroyed()) continue;
-      sendToRenderer(win.webContents, 'ok:accessibility:changed', { screenReaderActive });
+      sendToRenderer(win.webContents, 'ps:accessibility:changed', { screenReaderActive });
     }
   });
 
@@ -6440,11 +6440,11 @@ function bootPrimaryInstance(): void {
     },
     sendDeepLink: (win, payload) => {
       const w = win as BrowserWindowLike;
-      sendToRenderer(w.webContents, 'ok:deep-link', payload);
+      sendToRenderer(w.webContents, 'ps:deep-link', payload);
     },
     sendShareDeepLink: (win, payload) => {
       const w = win as BrowserWindowLike;
-      sendToRenderer(w.webContents, 'ok:share:received', payload);
+      sendToRenderer(w.webContents, 'ps:share:received', payload);
     },
     resolveShareTarget: (share) =>
       resolveShareTargetMain(share, {
@@ -7178,7 +7178,7 @@ function bootPrimaryInstance(): void {
 let _trashItemDurationHistCache: ReturnType<ReturnType<typeof getMeter>['createHistogram']> | null =
   null;
 function _trashItemDurationHist() {
-  _trashItemDurationHistCache ||= getMeter().createHistogram('ok.shell.trash_item.duration_ms', {
+  _trashItemDurationHistCache ||= getMeter().createHistogram('ps.shell.trash_item.duration_ms', {
     description: 'Duration of ok:shell:trash-item IPC dispatches in milliseconds',
     unit: 'ms',
   });
@@ -7188,7 +7188,7 @@ function _trashItemDurationHist() {
 let _trashItemFailureCounterCache: ReturnType<ReturnType<typeof getMeter>['createCounter']> | null =
   null;
 function _trashItemFailureCounter() {
-  _trashItemFailureCounterCache ||= getMeter().createCounter('ok.shell.trash_item.failures', {
+  _trashItemFailureCounterCache ||= getMeter().createCounter('ps.shell.trash_item.failures', {
     description: 'Count of ok:shell:trash-item handler failures, labeled by reason',
   });
   return _trashItemFailureCounterCache;

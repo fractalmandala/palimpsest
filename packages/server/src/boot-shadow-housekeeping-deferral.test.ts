@@ -136,7 +136,7 @@ describe('createServer() — boot shadow housekeeping is deferred past ready', (
     expect(gates.maintenance.readyHadSettledAtCall).toBe(true);
     gates.maintenance.release();
 
-    const shadowGitDir = join(projectDir, '.git', 'ok');
+    const shadowGitDir = join(projectDir, '.git', 'ps');
     await vi.waitFor(
       async () => {
         const sg = simpleGit({ timeout: { block: 10_000 } }).env({ GIT_DIR: shadowGitDir });

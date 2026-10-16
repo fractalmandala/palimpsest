@@ -1,13 +1,13 @@
 ---
-title: Supporting the Palimpsest Format
-sidebarTitle: Palimpsest Format
+title: Supporting the OpenKnowledge Format
+sidebarTitle: OpenKnowledge Format
 icon: LuFileCode
 description: "Start with a small OKF v0.2 knowledge base, keep it portable as it grows, and give agents the format guidance they need."
 ---
 
-The **Palimpsest Format (OKF)** is a portable convention for agent-readable knowledge: Markdown files, YAML frontmatter, and standard links. Use this workflow when the knowledge base may move between tools, teams, or organizations and you want that portability built in from the first file.
+The **OpenKnowledge Format (OKF)** is a portable convention for agent-readable knowledge: Markdown files, YAML frontmatter, and standard links. Use this workflow when the knowledge base may move between tools, teams, or organizations and you want that portability built in from the first file.
 
-Palimpsest's **Palimpsest Format** starter pack creates the minimum useful OKF v0.2 bundle. It also enables the [OKF plugin](/docs/plugins/psf), which warns when later edits would be misread by another OKF consumer.
+Palimpsest's **OpenKnowledge Format** starter pack creates the minimum useful OKF v0.2 bundle. It also enables the [OKF plugin](/docs/plugins/psf), which warns when later edits would be misread by another OKF consumer.
 
 <Callout type="info">
   **OKF here means Google's Palimpsest _Format_.** The format keeps its conformance floor deliberately small: every non-reserved document needs parseable YAML frontmatter with a non-empty `type`. Read the [OKF v0.2 specification](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md).
@@ -15,10 +15,10 @@ Palimpsest's **Palimpsest Format** starter pack creates the minimum useful OKF v
 
 ## Start with the OKF pack
 
-Seeding needs an initialized project. Run [`ps init`](../get-started/quickstart.mdx), then pick **Palimpsest Format** in the starter-pack picker, or run:
+Seeding needs an initialized project. Run [`ps init`](../get-started/quickstart.mdx), then pick **OpenKnowledge Format** in the starter-pack picker, or run:
 
 ```bash
-ok seed --pack psf
+ps seed --pack psf
 ```
 
 The pack adds:
@@ -72,4 +72,4 @@ The plugin checks the resulting shape. The skill guides the content decision.
 
 - **[OKF plugin](/docs/plugins/psf).** Enable the plugin, install its recommended skill, tune rules, and opt into generated indexes.
 - **[Content rules overview](/docs/advanced/content-rules/overview).** Where warnings appear in the editor, CLI, and agent tools.
-- **[Palimpsest Format v0.2 specification](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md).** The portable format Palimpsest implements.
+- **[OpenKnowledge Format v0.2 specification](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/main/SPEC.md).** The portable format Palimpsest implements.

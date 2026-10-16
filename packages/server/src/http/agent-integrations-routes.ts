@@ -47,7 +47,7 @@ export function createAgentIntegrationsRoutes(deps: AgentIntegrationsRouteDeps):
         const bodyObj = body as unknown as Record<string, unknown>;
         const actor = extractActorIdentity(bodyObj, getPrincipal);
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'agent-integrations-apply',
           });
           return;

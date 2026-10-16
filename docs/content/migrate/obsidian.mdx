@@ -7,7 +7,7 @@ description: How to open an existing Obsidian vault in Palimpsest, which markdow
 Palimpsest and Obsidian are both editors over a [folder of plain markdown](/docs/reference/core-concepts#the-file-system-is-the-database). This means that you can point Palimpsest at your existing vault and your notes, links, tags, and frontmatter work out of the box.
 
 <Callout type="info">
-  Palimpsest works **directly on your markdown files** — it never moves, renames, or rewrites them just for opening a vault. It keeps its own state in a `.ps/` directory and ignores Obsidian's `.obsidian/` folder, so your Obsidian setup stays exactly where it is. To back out, `ok deinit` removes everything Palimpsest added to the vault and leaves your markdown untouched.
+  Palimpsest works **directly on your markdown files** — it never moves, renames, or rewrites them just for opening a vault. It keeps its own state in a `.ps/` directory and ignores Obsidian's `.obsidian/` folder, so your Obsidian setup stays exactly where it is. To back out, `ps deinit` removes everything Palimpsest added to the vault and leaves your markdown untouched.
 </Callout>
 
 ## Open your vault

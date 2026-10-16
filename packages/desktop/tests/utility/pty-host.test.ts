@@ -3,7 +3,7 @@ import { homedir } from 'node:os';
 import {
   PS_DESKTOP_TERMINAL_ENV,
   PS_HOSTED_AGENT_ENV,
-  posixOkManagedBinDir,
+  posixPsManagedBinDir,
   shellSingleQuote,
 } from '@palimpsest/core';
 import { TERMINAL_SHELL_NOTICE_REASONS } from '@palimpsest/core/desktop-bridge';
@@ -348,14 +348,14 @@ describe('setupPtyHost — create', () => {
     expect(env.PATH).toBe('/Users/alice/.ps/bin:/usr/bin');
   });
 
-  test('marks the shell as the OK Desktop terminal (PS_DESKTOP_TERMINAL=1)', () => {
+  test('marks the shell as the Palimpsest Desktop terminal (PS_DESKTOP_TERMINAL=1)', () => {
     const h = makeHarness({ env: { SHELL: '/bin/zsh', [PS_DESKTOP_TERMINAL_ENV]: '' } });
     h.fire(CREATE());
     const env = h.spawnCalls[0]?.options.env ?? {};
     expect(env[PS_DESKTOP_TERMINAL_ENV]).toBe('1');
   });
 
-  test('prepends ~/.ps/bin to the child PATH so `ok` resolves regardless of rc consent', () => {
+  test('prepends ~/.ps/bin to the child PATH so `ps` resolves regardless of rc consent', () => {
     const h = makeHarness({
       env: { SHELL: '/bin/zsh', PATH: '/usr/bin:/bin', HOME: '/Users/alice' },
     });
@@ -384,7 +384,7 @@ describe('setupPtyHost — create', () => {
     expect(
       env.PATH,
       'index.ts installs the CLI under osHomedir(), not process.env.HOME, so a terminal that skipped the grant here would omit a directory that exists on disk, and would disagree with the probe children that do resolve it',
-    ).toBe(`${posixOkManagedBinDir(homedir())}:/usr/bin`);
+    ).toBe(`${posixPsManagedBinDir(homedir())}:/usr/bin`);
   });
 });
 

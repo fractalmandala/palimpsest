@@ -20,9 +20,9 @@ afterEach(() => {
 
 describe('git worktree remove cleans up the per-worktree shadow (FR6)', () => {
   test('after boot+remove, <repo>/.git/worktrees/<name>/ no longer exists (shadow vanished too)', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: true });
+    handle = createLinkedWorktree({ seedPsScaffold: true });
     const adminDir = handle.worktreeGitdir;
-    const shadowHead = resolve(adminDir, 'ok/HEAD');
+    const shadowHead = resolve(adminDir, 'ps/HEAD');
 
     const booted = await bootServer({
       host: '127.0.0.1',
@@ -86,7 +86,7 @@ describe('MalformedGitPointerError at boot when .git pointer is stale (FR7)', ()
   });
 
   test('healthy .git pointer (real worktree) does NOT throw — STOP_IF guard against an over-broad detector', async () => {
-    handle = createLinkedWorktree({ seedOkScaffold: true });
+    handle = createLinkedWorktree({ seedPsScaffold: true });
 
     const booted = await bootServer({
       host: '127.0.0.1',

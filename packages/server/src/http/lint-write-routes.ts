@@ -147,7 +147,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to write markdownlint config.',
           { handler: 'markdownlint-config', cause: e },
         );
@@ -157,7 +157,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           409,
-          'urn:ok:error:config-not-writable',
+          'urn:ps:error:config-not-writable',
           `The native markdownlint config (${writeResult.file}) is an executable module OK will not rewrite — edit it directly or convert it to JSON/JSONC/YAML.`,
           { handler: 'markdownlint-config' },
         );
@@ -187,7 +187,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'The markdownlint rule was saved, but the effective config could not be re-read.',
           { handler: 'markdownlint-config', cause: e },
         );
@@ -222,7 +222,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'Failed to write the frontmatter schema.',
           { handler: 'frontmatter-schema', cause: e },
         );
@@ -232,7 +232,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           409,
-          'urn:ok:error:config-not-writable',
+          'urn:ps:error:config-not-writable',
           `The frontmatter schema (${writeResult.file}) was not written: ${writeResult.reason}.`,
           { handler: 'frontmatter-schema' },
         );
@@ -265,7 +265,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         errorResponse(
           res,
           500,
-          'urn:ok:error:internal-server-error',
+          'urn:ps:error:internal-server-error',
           'The schema was saved, but the effective config could not be re-read.',
           { handler: 'frontmatter-schema', cause: e },
         );
@@ -287,7 +287,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
           getPrincipal,
         );
         if (actor.kind === 'invalid-summary') {
-          errorResponse(res, 400, 'urn:ok:error:invalid-request', 'Summary must be a string.', {
+          errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Summary must be a string.', {
             handler: 'lint-fix',
           });
           return;
@@ -301,7 +301,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
           errorResponse(
             res,
             400,
-            'urn:ok:error:reserved-doc-name',
+            'urn:ps:error:reserved-doc-name',
             `'${resolvedDocName}' is a reserved document name.`,
             { handler: 'lint-fix' },
           );
@@ -310,7 +310,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
 
         const docRelPath = resolveDocFilePath(contentDir, resolvedDocName);
         if (docRelPath === null) {
-          errorResponse(res, 404, 'urn:ok:error:doc-not-found', 'Document not found.', {
+          errorResponse(res, 404, 'urn:ps:error:doc-not-found', 'Document not found.', {
             handler: 'lint-fix',
           });
           return;
@@ -481,7 +481,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
         });
       } catch (e) {
         if (isContainmentRejection(e)) {
-          errorResponse(res, 400, 'urn:ok:error:path-escape', 'Path escape detected.', {
+          errorResponse(res, 400, 'urn:ps:error:path-escape', 'Path escape detected.', {
             handler: 'lint-fix',
           });
           return;
@@ -504,7 +504,7 @@ export function createLintWriteRoutes(deps: LintWriteRouteDeps): ApiRouteGroup {
           return;
         }
         log.error({ err: e }, '[lint-fix] handler failed');
-        errorResponse(res, 500, 'urn:ok:error:internal-server-error', 'Failed to fix document.', {
+        errorResponse(res, 500, 'urn:ps:error:internal-server-error', 'Failed to fix document.', {
           handler: 'lint-fix',
           cause: e,
         });

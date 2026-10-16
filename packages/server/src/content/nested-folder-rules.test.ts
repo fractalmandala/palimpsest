@@ -3,7 +3,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { nestedOkPath, parentFolderOf, readFolderFrontmatter } from './nested-folder-rules.ts';
+import { nestedPsPath, parentFolderOf, readFolderFrontmatter } from './nested-folder-rules.ts';
 
 describe('readFolderFrontmatter — self-only (no cascade)', () => {
   let projectDir: string;
@@ -108,11 +108,11 @@ describe('readFolderFrontmatter — self-only (no cascade)', () => {
     mkdirSync(join(projectDir, 'mixed', '.ps'), { recursive: true });
     writeFileSync(
       join(projectDir, 'mixed', '.ps', 'frontmatter.yml'),
-      'title: 42\ndescription: ok\ntags: [a, 1, b, true]\n',
+      'title: 42\ndescription: ps\ntags: [a, 1, b, true]\n',
     );
 
     expect(readFolderFrontmatter(projectDir, 'mixed')).toEqual({
-      description: 'ok',
+      description: 'ps',
       tags: ['a', 'b'],
     });
   });
@@ -143,18 +143,18 @@ describe('parentFolderOf', () => {
   });
 });
 
-describe('nestedOkPath', () => {
+describe('nestedPsPath', () => {
   test('joins folder + .ps + member', () => {
-    expect(nestedOkPath('/proj', 'meetings', 'frontmatter.yml')).toBe(
+    expect(nestedPsPath('/proj', 'meetings', 'frontmatter.yml')).toBe(
       '/proj/meetings/.ps/frontmatter.yml',
     );
-    expect(nestedOkPath('/proj', 'meetings/prep-notes', 'templates')).toBe(
+    expect(nestedPsPath('/proj', 'meetings/prep-notes', 'templates')).toBe(
       '/proj/meetings/prep-notes/.ps/templates',
     );
   });
 
   test('treats empty / "." as project root', () => {
-    expect(nestedOkPath('/proj', '', 'frontmatter.yml')).toBe('/proj/.ps/frontmatter.yml');
-    expect(nestedOkPath('/proj', '.', 'frontmatter.yml')).toBe('/proj/.ps/frontmatter.yml');
+    expect(nestedPsPath('/proj', '', 'frontmatter.yml')).toBe('/proj/.ps/frontmatter.yml');
+    expect(nestedPsPath('/proj', '.', 'frontmatter.yml')).toBe('/proj/.ps/frontmatter.yml');
   });
 });

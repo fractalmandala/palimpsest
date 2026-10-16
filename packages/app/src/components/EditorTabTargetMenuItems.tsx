@@ -4,16 +4,16 @@ import {
   FileTargetMenuItems,
   type FileTargetMenuPrimitives,
 } from '@/components/FileTargetMenuItems';
-import { buildOkignorePatternFromTarget } from '@/components/file-tree-psignore';
-import { hasOkPathSegment } from '@/components/file-tree-utils';
+import { buildPsignorePatternFromTarget } from '@/components/file-tree-psignore';
+import { hasPsPathSegment } from '@/components/file-tree-utils';
 import { OpenInAgentEmptySpaceSubmenu } from '@/components/handoff/OpenInAgentEmptySpaceSubmenu';
 import { useHandoffDispatch } from '@/components/handoff/useHandoffDispatch';
 import { useInstalledAgents } from '@/components/handoff/useInstalledAgents';
 import type { ResolvedNavigationTarget } from '@/components/navigation-targets';
 import {
   appendPattern,
-  parseOkignoreDoc,
-  serializeOkignoreDoc,
+  parsePsignoreDoc,
+  serializePsignoreDoc,
 } from '@/components/settings/psignore-doc';
 import { TemplateMenuRows } from '@/components/template-menu-rows';
 import {
@@ -74,10 +74,10 @@ function shareInputForTarget(target: EditorTabFileTarget): ShareTargetInput | nu
   return buildDocShareInput(target.docName);
 }
 
-function okignoreTargetForTarget(
+function psignoreTargetForTarget(
   target: EditorTabFileTarget,
   docExt?: string,
-): Parameters<typeof buildOkignorePatternFromTarget>[0] | null {
+): Parameters<typeof buildPsignorePatternFromTarget>[0] | null {
   if (target.kind === 'doc') return { kind: 'file', path: target.docName, docExt };
   if (target.kind === 'folder') return { kind: 'folder', path: target.folderPath };
   return null;
@@ -96,19 +96,19 @@ export function EditorTabTargetMenuItems({
 }: EditorTabTargetMenuItemsProps) {
   const { t } = useLingui();
   const workspace = useWorkspace();
-  const { okignoreBinding } = useConfigContext();
+  const { psignoreBinding } = useConfigContext();
   const { status: gitSyncStatus } = useGitSyncStatusDetailed();
   const installStates = useInstalledAgents().states;
   const { dispatch } = useHandoffDispatch();
   const relativePath = relativePathForTarget(target, docExt);
-  const isManaged = hasOkPathSegment(relativePath);
+  const isManaged = hasPsPathSegment(relativePath);
   const isAsset = target.kind === 'asset';
   const isFolder = target.kind === 'folder';
   const bridge = typeof window !== 'undefined' ? window.psDesktop : undefined;
   const handoffInput = isAsset ? null : buildSendToAiInputForActiveTarget(target, workspace);
   const shareInput = shareInputForTarget(target);
   const canShare = gitSyncStatus?.hasRemote === true && shareInput !== null;
-  const okignoreTarget = okignoreTargetForTarget(target, docExt);
+  const psignoreTarget = psignoreTargetForTarget(target, docExt);
 
   function copyPath(path: string, successMessage: string, errorMessage: string) {
     void scheduleClipboardWrite(path)
@@ -137,11 +137,11 @@ export function EditorTabTargetMenuItems({
   }
 
   function hideTarget() {
-    if (!okignoreBinding || !okignoreTarget) return;
-    const doc = parseOkignoreDoc(okignoreBinding.current());
-    const updated = appendPattern(doc, buildOkignorePatternFromTarget(okignoreTarget));
+    if (!psignoreBinding || !psignoreTarget) return;
+    const doc = parsePsignoreDoc(psignoreBinding.current());
+    const updated = appendPattern(doc, buildPsignorePatternFromTarget(psignoreTarget));
     if (updated === doc) return;
-    okignoreBinding.patch(serializeOkignoreDoc(updated));
+    psignoreBinding.patch(serializePsignoreDoc(updated));
     const basename = relativePath.split('/').pop() ?? relativePath;
     toast.success(isFolder ? t`Hidden folder “${basename}”` : t`Hidden “${basename}”`, {
       description: t`Manage hidden files in Settings → Ignore patterns.`,
@@ -220,10 +220,10 @@ export function EditorTabTargetMenuItems({
       }
       onRename={!isManaged ? onRename : undefined}
       hide={
-        okignoreTarget && !isManaged
+        psignoreTarget && !isManaged
           ? {
               label: isFolder ? <Trans>Hide folder</Trans> : <Trans>Hide this file</Trans>,
-              disabled: okignoreBinding === null,
+              disabled: psignoreBinding === null,
               onSelect: hideTarget,
             }
           : undefined

@@ -35,7 +35,7 @@ describe('repairLaunchJson (remove sweep)', () => {
   }
 
   const PS_ENTRY = {
-    name: 'open-knowledge-ui',
+    name: 'palimpsest-ui',
     runtimeExecutable: '/bin/sh',
     runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexec ps start'],
     port: 39848,
@@ -46,7 +46,7 @@ describe('repairLaunchJson (remove sweep)', () => {
     runtimeArgs: ['./server.js'],
   };
 
-  it("removes OK's entry, preserving co-located configurations", () => {
+  it("removes Palimpsest's entry, preserving co-located configurations", () => {
     const configPath = writeLaunchJson({ version: '0.0.1', configurations: [FOREIGN, PS_ENTRY] });
 
     const result = repairLaunchJson({ projectDir, logger });
@@ -65,7 +65,7 @@ describe('repairLaunchJson (remove sweep)', () => {
     });
   });
 
-  it("keeps the file when OK's entry was the only configuration", () => {
+  it("keeps the file when Palimpsest's entry was the only configuration", () => {
     const configPath = writeLaunchJson({ version: '0.0.1', configurations: [PS_ENTRY] });
 
     const result = repairLaunchJson({ projectDir, logger });
@@ -86,7 +86,7 @@ describe('repairLaunchJson (remove sweep)', () => {
     expect(logEvents).toHaveLength(0);
   });
 
-  it('reports not-present when launch.json has no open-knowledge-ui entry', () => {
+  it('reports not-present when launch.json has no palimpsest-ui entry', () => {
     const configPath = writeLaunchJson({ version: '0.0.1', configurations: [FOREIGN] });
     const before = readFileSync(configPath, 'utf-8');
 

@@ -1,7 +1,7 @@
 import { Extension } from '@tiptap/core';
 import { Plugin } from '@tiptap/pm/state';
 
-export const TAG_CLICK_EVENT = 'ok:tag-click';
+export const TAG_CLICK_EVENT = 'ps:tag-click';
 
 export interface TagClickEventDetail {
   value: string;

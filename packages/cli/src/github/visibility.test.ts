@@ -42,7 +42,7 @@ describe('isGitHubRepoPublic', () => {
     expect(calls).toHaveLength(1);
     expect(calls[0].url).toBe('https://api.github.com/repos/fractalmandala/palimpsest');
     const headers = calls[0].init?.headers as Record<string, string> | undefined;
-    expect(headers?.['User-Agent']).toBe('open-knowledge-cli');
+    expect(headers?.['User-Agent']).toBe('palimpsest-cli');
   });
 
   test('percent-encodes path segments to defeat URL injection', async () => {

@@ -35,7 +35,7 @@ describe('browser client-version reader', () => {
     expect(typeof fields.clientProtocolVersion).toBe('number');
   });
 
-  test('the OK Desktop window sends kind=desktop', async () => {
+  test('the Palimpsest Desktop window sends kind=desktop', async () => {
     const mod = await loadInSurface({ userAgent: CHROME_UA, psDesktop: {} });
     expect(mod.CLIENT_SURFACE).toBe('desktop');
     expect(mod.browserClientVersionHeaders()['x-ok-client-kind']).toBe('desktop');

@@ -201,7 +201,7 @@ describe('Finding 2 — admission check uses on-disk source extension', () => {
 
     expect(captured.status).toBe(400);
     const body = JSON.parse(captured.body) as Record<string, unknown>;
-    expect(body.type).toBe('urn:ok:error:invalid-request');
+    expect(body.type).toBe('urn:ps:error:invalid-request');
     expect(String(body.title)).toContain('excluded');
   });
 });

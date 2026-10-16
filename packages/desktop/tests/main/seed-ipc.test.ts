@@ -15,14 +15,14 @@ afterEach(() => {
   if (existsSync(testDir)) rmSync(testDir, { recursive: true, force: true });
 });
 
-function scaffoldOkDir(dir: string): void {
+function scaffoldPsDir(dir: string): void {
   mkdirSync(join(dir, PS_DIR), { recursive: true });
   writeFileSync(join(dir, PS_DIR, 'config.yml'), 'content:\n  dir: .\n', 'utf-8');
 }
 
 describe('handleSeedPlan', () => {
   test('returns {ok:true, plan} when a project is bound and .ps/ exists', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await handleSeedPlan({ resolveProjectRoot: () => testDir });
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -48,7 +48,7 @@ describe('handleSeedPlan', () => {
   });
 
   test('surfaces internal errors as {ok:false, internal}', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await handleSeedPlan({
       resolveProjectRoot: () => testDir,
       planSeed: async () => {
@@ -86,7 +86,7 @@ describe('handleSeedPlan', () => {
   });
 
   test('rejects an unknown packId rather than falling back to the default pack', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const options = { packId: 'not-a-real-pack' } as unknown as Parameters<
       typeof handleSeedPlan
     >[1];
@@ -122,7 +122,7 @@ describe('handleSeedPlan', () => {
   });
 
   test('returns {ok:false, invalid-root} when rootDir resolves outside projectDir', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const result = await handleSeedPlan(
       { resolveProjectRoot: () => testDir },
       { rootDir: '/tmp/escape' },
@@ -137,7 +137,7 @@ describe('handleSeedPlan', () => {
 
 describe('handleSeedApply', () => {
   test('returns {ok:true, result} on successful apply', async () => {
-    scaffoldOkDir(testDir);
+    scaffoldPsDir(testDir);
     const planResult = await handleSeedPlan({ resolveProjectRoot: () => testDir });
     expect(planResult.ok).toBe(true);
     if (!planResult.ok) return;

@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathspecArgs } from '@palimpsest/core';
-import { parseOkActors } from '@palimpsest/core/shadow-repo-layout';
+import { parsePsActors } from '@palimpsest/core/shadow-repo-layout';
 import { withHiddenWindowsConsole } from './child-process-windows-hide.ts';
 import {
   tracedAppendFileSync,
@@ -913,7 +913,7 @@ async function gcRenameLogInner(
       const body = parts[2] ?? '';
       if (sha.length !== 40) continue;
       if (!liveShas.has(sha)) continue;
-      const actors = parseOkActors(body);
+      const actors = parsePsActors(body);
 
       let totalPairs = 0;
       for (const actor of actors) {

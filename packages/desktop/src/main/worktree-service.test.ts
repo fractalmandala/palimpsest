@@ -13,7 +13,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import { addOkPathsToGitExclude, getOkArtifactPaths } from '@palimpsest/cli';
+import { addPsPathsToGitExclude, getPsArtifactPaths } from '@palimpsest/cli';
 import { initContent } from '@palimpsest/server';
 import { afterEach, describe, expect, test } from 'vitest';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';
@@ -270,7 +270,7 @@ describe('worktree-service', () => {
 
   test('listWorktreeSelector flags isCurrent when the anchor is a subdirectory of the worktree', async () => {
     handle = await makeRepo(['dev']);
-    const contentDir = join(handle.mainRepo, 'public', 'ok');
+    const contentDir = join(handle.mainRepo, 'public', 'ps');
     mkdirSync(contentDir, { recursive: true });
     const res = await listWorktreeSelector(contentDir, contentDir);
     expect(res.ok).toBe(true);
@@ -290,7 +290,7 @@ describe('worktree-service', () => {
     });
     expect(dev.ok).toBe(true);
     if (!dev.ok) return;
-    const sub = join(dev.path, 'public', 'ok');
+    const sub = join(dev.path, 'public', 'ps');
     mkdirSync(sub, { recursive: true });
     const res = await listWorktreeSelector(sub, sub);
     expect(res.ok).toBe(true);
@@ -900,7 +900,7 @@ async function makeLocalOnlyRepo(): Promise<Handle> {
       },
     }),
   );
-  const excl = addOkPathsToGitExclude(mainRepo, getOkArtifactPaths(mainRepo));
+  const excl = addPsPathsToGitExclude(mainRepo, getPsArtifactPaths(mainRepo));
   if (excl.kind !== 'updated') throw new Error(`expected local-only exclude, got ${excl.kind}`);
   return { root, mainRepo, cleanup: () => rmSync(root, { recursive: true, force: true }) };
 }

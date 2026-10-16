@@ -95,7 +95,7 @@ export function resolveShadowDir(projectRoot: string): string {
 }
 
 function shadowSubdirName(gitDir: string, projectSubPath: string): string {
-  if (projectSubPath === '') return 'ok';
+  if (projectSubPath === '') return 'ps';
   const hashed = `ok-${hashedShadowSlug(projectSubPath)}`;
   if (existsSync(resolve(gitDir, hashed))) return hashed;
   const legacy = `ok-${legacyShadowSlug(projectSubPath)}`;
@@ -356,7 +356,7 @@ export interface PsActorEntry {
 
 const PS_ACTOR_PREFIX = 'ps-actor: ';
 
-export function formatOkActor(entry: PsActorEntry): string {
+export function formatPsActor(entry: PsActorEntry): string {
   const { summaries, previous_paths, ...rest } = entry;
   const payload: Record<string, unknown> = { ...rest };
   if (summaries && summaries.length > 0) payload.summaries = summaries;
@@ -364,7 +364,7 @@ export function formatOkActor(entry: PsActorEntry): string {
   return `${PS_ACTOR_PREFIX}${JSON.stringify(payload)}`;
 }
 
-function parseOkActorObject(obj: Record<string, unknown>): PsActorEntry | null {
+function parsePsActorObject(obj: Record<string, unknown>): PsActorEntry | null {
   if (obj.v !== 1) return null;
   if (!('display_name' in obj) || typeof obj.display_name !== 'string') return null;
   if (!('docs' in obj) || !Array.isArray(obj.docs)) return null;
@@ -428,7 +428,7 @@ function parsePreviousPaths(
   return out;
 }
 
-export function parseOkActor(body: string): PsActorEntry | null {
+export function parsePsActor(body: string): PsActorEntry | null {
   if (!body) return null;
   for (const line of body.split('\n')) {
     const trimmed = line.trim();
@@ -440,12 +440,12 @@ export function parseOkActor(body: string): PsActorEntry | null {
       return null;
     }
     if (parsed === null || typeof parsed !== 'object') return null;
-    return parseOkActorObject(parsed as Record<string, unknown>);
+    return parsePsActorObject(parsed as Record<string, unknown>);
   }
   return null;
 }
 
-export function parseOkActors(body: string): PsActorEntry[] {
+export function parsePsActors(body: string): PsActorEntry[] {
   if (!body) return [];
   const out: PsActorEntry[] = [];
   for (const line of body.split('\n')) {
@@ -458,7 +458,7 @@ export function parseOkActors(body: string): PsActorEntry[] {
       continue;
     }
     if (parsed === null || typeof parsed !== 'object') continue;
-    const entry = parseOkActorObject(parsed as Record<string, unknown>);
+    const entry = parsePsActorObject(parsed as Record<string, unknown>);
     if (entry) out.push(entry);
   }
   return out;
@@ -477,7 +477,7 @@ export function psActorToShadowContributor(a: PsActorEntry): ShadowContributor {
 }
 
 export function readContributors(body: string): ShadowContributor[] {
-  const actors = parseOkActors(body);
+  const actors = parsePsActors(body);
   if (actors.length > 0) return actors.map(psActorToShadowContributor);
   return parseContributors(body);
 }

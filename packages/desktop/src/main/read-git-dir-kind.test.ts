@@ -67,7 +67,7 @@ describe('readGitDirKind', () => {
 
   test('returns "absent" for a shell .git/ that holds only a shadow repo, not a checkout', () => {
     testRoot = realpathSync(mkdtempSync(join(tmpdir(), 'gitdir-kind-')));
-    mkdirSync(join(testRoot, '.git', 'ok'), { recursive: true });
+    mkdirSync(join(testRoot, '.git', 'ps'), { recursive: true });
     expect(readGitDirKind(testRoot)).toBe('absent');
   });
 

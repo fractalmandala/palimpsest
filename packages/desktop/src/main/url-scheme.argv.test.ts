@@ -6,7 +6,7 @@ import { resolveBootRestoreDecision } from './boot-restore-decision.ts';
 import { registerProtocolHandler } from './url-scheme.ts';
 
 const executable = resolve(tmpdir(), 'Palimpsest.exe');
-const documentPath = (name: string) => resolve(tmpdir(), 'open-knowledge-argv', name);
+const documentPath = (name: string) => resolve(tmpdir(), 'palimpsest-argv', name);
 
 function makeHandler(
   argv: readonly string[] = [executable],

@@ -63,7 +63,7 @@ export function computeSourceBlocks(
     }));
     return { blocks, fmLineCount };
   } catch {
-    performance.mark('ok/block-spans/parse-failed');
+    performance.mark('ps/block-spans/parse-failed');
     return { blocks: [], fmLineCount };
   }
 }

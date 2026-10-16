@@ -517,7 +517,7 @@ function printSummary(
 ): void {
   const { summary, manifest } = collected;
   log('');
-  log(pc.bold('ok diagnose bundle — what leaves this machine'));
+  log(pc.bold('ps diagnose bundle — what leaves this machine'));
   log('');
   log(`  Files:               ${summary.fileCount}`);
   log(`  Total size:          ${formatBytes(summary.totalBytes)} uncompressed`);
@@ -574,7 +574,7 @@ export async function runDiagnoseBundle(
 
   let processDir: string | undefined;
   if (opts.pid !== undefined) {
-    log(pc.dim(`Running ok diagnose process ${opts.pid} into a temp dir`));
+    log(pc.dim(`Running ps diagnose process ${opts.pid} into a temp dir`));
     processDir = await runProcess(opts.pid);
   }
 

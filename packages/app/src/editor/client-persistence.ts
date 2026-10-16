@@ -45,7 +45,7 @@ class ClientPersistenceImpl implements ClientPersistenceProvider {
       if (!instrumentationDisabled()) {
         const end = performance.now();
         mark(
-          'ok/pool/idb-whensynced',
+          'ps/pool/idb-whensynced',
           { docName, durationMs: Math.round((end - start) * 1000) / 1000 },
           { startTime: start, duration: end - start },
         );
@@ -66,7 +66,7 @@ class ClientPersistenceImpl implements ClientPersistenceProvider {
       if (!instrumentationDisabled()) {
         const end = performance.now();
         mark(
-          'ok/pool/idb-destroy',
+          'ps/pool/idb-destroy',
           { dbName: this._dbName, durationMs: Math.round((end - start) * 1000) / 1000 },
           { startTime: start, duration: end - start },
         );
@@ -134,7 +134,7 @@ class ClientPersistenceImpl implements ClientPersistenceProvider {
       if (!instrumentationDisabled()) {
         const end = performance.now();
         mark(
-          'ok/pool/idb-cleardata',
+          'ps/pool/idb-cleardata',
           { dbName: this._dbName, durationMs: Math.round((end - start) * 1000) / 1000 },
           { startTime: start, duration: end - start },
         );

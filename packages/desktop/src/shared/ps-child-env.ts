@@ -3,7 +3,7 @@ import {
   envWithoutDevChannel,
   PS_DESKTOP_TERMINAL_ENV,
   PS_HOSTED_AGENT_ENV,
-  posixOkManagedBinDir,
+  posixPsManagedBinDir,
 } from '@palimpsest/core';
 import { windowsPathKey } from './windows-env.ts';
 
@@ -57,10 +57,10 @@ export function psChildEnvOptionsFromProcess(): PsManagedBinDirsOptions {
 
 export function psManagedBinDirs(options: PsManagedBinDirsOptions): readonly string[] {
   if (options.platform === 'win32') return options.cliBinDir ? [options.cliBinDir] : [];
-  return options.home ? [posixOkManagedBinDir(options.home)] : [];
+  return options.home ? [posixPsManagedBinDir(options.home)] : [];
 }
 
-export function hasNoResolvableOkHome(options: PsManagedBinDirsOptions): boolean {
+export function hasNoResolvablePsHome(options: PsManagedBinDirsOptions): boolean {
   return options.platform !== 'win32' && !options.home;
 }
 
@@ -79,7 +79,7 @@ export function psChildPathEntries(
   return (env[windowsPathKey(env)] ?? '').split(psPathDelimiter(options.platform)).filter(Boolean);
 }
 
-export function hasOkManagedBinDirsOnPath(
+export function hasPsManagedBinDirsOnPath(
   env: Record<string, string | undefined>,
   options: PsManagedBinDirsOptions,
 ): boolean {
@@ -91,7 +91,7 @@ export function hasOkManagedBinDirsOnPath(
   );
 }
 
-function prependOkManagedBinDirs(
+function prependPsManagedBinDirs(
   env: Record<string, string>,
   options: PsManagedBinDirsOptions,
 ): Record<string, string> {
@@ -104,7 +104,7 @@ function prependOkManagedBinDirs(
   return { ...env, [windowsPathKey(env)]: joined };
 }
 
-export function composeOkChildEnv(
+export function composePsChildEnv(
   parentEnv: Record<string, string | undefined>,
   options: PsManagedBinDirsOptions,
 ): Record<string, string> {
@@ -114,5 +114,5 @@ export function composeOkChildEnv(
     if (stripped.has(key) || key.startsWith('GDK_PIXBUF_')) continue;
     out[key] = value;
   }
-  return prependOkManagedBinDirs(out, options);
+  return prependPsManagedBinDirs(out, options);
 }

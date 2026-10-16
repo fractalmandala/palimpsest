@@ -82,7 +82,7 @@ test('after a watcher error ends its subscription, a server-scope reset answers 
 
   expect(response.status).toBe(500);
   expect(await response.json()).toMatchObject({
-    type: 'urn:ok:error:internal-server-error',
+    type: 'urn:ps:error:internal-server-error',
     title: 'The server-scope reset did not run, because the file watcher could not settle.',
     detail: `the file watcher failed before it saw its settle fence: ${failure}`,
   });

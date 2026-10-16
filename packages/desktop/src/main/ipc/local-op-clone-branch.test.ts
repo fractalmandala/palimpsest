@@ -50,7 +50,7 @@ function makeSender(captured: CapturedSend[]) {
 
 function makeDeps() {
   return {
-    resolveOkCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
+    resolvePsCli: () => PsCliCommand.resolve({ host: { cliArgs: ['palimpsest'] }, env: {} }),
     logFailure: vi.fn(),
     state: createLocalOpState(),
   };
@@ -114,7 +114,7 @@ describe('handleCloneStart — branch threading (IPC symmetry with HTTP path)', 
 
     cloneSpawns[0]?.onEvent({ type: 'branch-fallback', branch: 'feat/foo' });
 
-    const cloneEvents = sent.filter((s) => s.channel === 'ok:local-op:clone:event');
+    const cloneEvents = sent.filter((s) => s.channel === 'ps:local-op:clone:event');
     expect(cloneEvents).toHaveLength(1);
     expect(cloneEvents[0]?.payload).toEqual({
       streamId: result.streamId,
@@ -140,7 +140,7 @@ describe('handleCloneStart — branch threading (IPC symmetry with HTTP path)', 
     spawn.onEvent({ type: 'branch-fallback', branch: 'feat/foo' });
     spawn.onEvent({ type: 'complete', dir: '/tmp/r' });
 
-    const cloneEvents = sent.filter((s) => s.channel === 'ok:local-op:clone:event');
+    const cloneEvents = sent.filter((s) => s.channel === 'ps:local-op:clone:event');
     expect(cloneEvents).toHaveLength(3);
     expect(cloneEvents.map((e) => (e.payload as { event: { type: string } }).event.type)).toEqual([
       'progress',
@@ -166,7 +166,7 @@ describe('handleCloneStart — branch threading (IPC symmetry with HTTP path)', 
       branch: 'feature/long-branch-name',
     });
 
-    const cloneEvents = sent.filter((s) => s.channel === 'ok:local-op:clone:event');
+    const cloneEvents = sent.filter((s) => s.channel === 'ps:local-op:clone:event');
     expect(cloneEvents[0]?.payload).toEqual({
       streamId: result.streamId,
       event: { type: 'branch-fallback', branch: 'feature/long-branch-name' },

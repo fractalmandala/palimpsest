@@ -871,7 +871,7 @@ export class ProviderPool {
 
     this.visibleDocNames = next;
     this.trimToCapacity();
-    mark('ok/pool/visible-set', {
+    mark('ps/pool/visible-set', {
       visibleCount: this.visibleDocNames.size,
       poolSize: this.entries.size,
     });
@@ -904,7 +904,7 @@ export class ProviderPool {
       pooled.provider.unsyncedChanges === 0 &&
       !hasMaterializedLocalContent(pooled.provider.document)
     ) {
-      mark('ok/pool/recycle-disconnected-on-open', { docName });
+      mark('ps/pool/recycle-disconnected-on-open', { docName });
       this.emitStructuredClientBreadcrumb({
         event: 'ps-pool-recycle-disconnected-on-open',
         docName,
@@ -920,13 +920,13 @@ export class ProviderPool {
       existing.lastAccessedAt = Date.now();
       this.touch(docName);
       this.notify();
-      mark('ok/pool/open', {
+      mark('ps/pool/open', {
         docName,
         hit: true,
         lastAccessedAt: previousAccessedAt,
         poolEventId: existing.poolEventId,
       });
-      mark.count('ok/pool/open', { hit: true });
+      mark.count('ps/pool/open', { hit: true });
       return existing;
     }
 
@@ -969,21 +969,21 @@ export class ProviderPool {
     if (import.meta.env.PROD !== true) {
       if (persistence !== null) {
         mark(
-          'ok/pool/idb-attach',
+          'ps/pool/idb-attach',
           { docName, serverInstanceId: persistenceServerInstanceId ?? '' },
           { startTime: idbAttachStart, duration: 0 },
         );
         persistence.whenSynced.then(() => {
           const now = performance.now();
           mark(
-            'ok/pool/synced-after-idb',
+            'ps/pool/synced-after-idb',
             { docName, durationMs: Math.round((now - idbAttachStart) * 1000) / 1000 },
             { startTime: idbAttachStart, duration: now - idbAttachStart },
           );
         });
       } else {
         mark(
-          'ok/pool/idb-bypass-no-epoch',
+          'ps/pool/idb-bypass-no-epoch',
           {
             docName,
             reason:
@@ -1019,8 +1019,8 @@ export class ProviderPool {
       persistenceAttachOwned: false,
       lineageEpochRecordAtOpen,
     };
-    mark('ok/pool/open', { docName, hit: false, poolEventId });
-    mark.count('ok/pool/open', { hit: false });
+    mark('ps/pool/open', { docName, hit: false, poolEventId });
+    mark.count('ps/pool/open', { hit: false });
 
     const onStatus = ({ status }: { status: string }) => {
       if (entry.kind !== 'active' || this.entries.get(docName) !== entry) return;
@@ -1088,7 +1088,7 @@ export class ProviderPool {
           entry.pendingRecycleTimer = null;
           if (this.entries.get(docName) !== entry) return;
           if (provider.unsyncedChanges > 0) {
-            mark('ok/pool/recycle-skipped-unsynced', { docName });
+            mark('ps/pool/recycle-skipped-unsynced', { docName });
             this.emitStructuredClientBreadcrumb({
               event: 'ps-pool-recycle-skipped-unsynced',
               docName,
@@ -1408,7 +1408,7 @@ export class ProviderPool {
     if (openMountId !== undefined) {
       emitColdMountChild(
         openMountId,
-        'ok.provider-pool.open',
+        'ps.provider-pool.open',
         { 'doc.name': docName },
         openStartMs,
         Date.now(),
@@ -1504,7 +1504,7 @@ export class ProviderPool {
       }
       const unsynced = computeUnsyncedUpdate(poolEntry.provider.document, baseline);
       if (unsynced.byteLength > MAX_BUFFER_BYTES) {
-        mark('ok/pool/buffer-overflow', { docName, bytes: unsynced.byteLength });
+        mark('ps/pool/buffer-overflow', { docName, bytes: unsynced.byteLength });
         continue;
       }
       if (unsynced.byteLength > 0) {
@@ -2038,7 +2038,7 @@ export class ProviderPool {
   private evictLru(): boolean {
     for (const docName of this.lruOrder) {
       if (!this.isProtected(docName)) {
-        mark('ok/pool/evict-lru', { docName });
+        mark('ps/pool/evict-lru', { docName });
         this.close(docName);
         return true;
       }
@@ -2099,7 +2099,7 @@ export class ProviderPool {
     if (entry?.kind !== 'active') return;
 
     const wasActive = this.activeDocName === docName;
-    mark('ok/pool/recycle-disconnected', { docName, wasActive });
+    mark('ps/pool/recycle-disconnected', { docName, wasActive });
     this.emitStructuredClientBreadcrumb({
       event: 'ps-pool-recycle-entry',
       docName,

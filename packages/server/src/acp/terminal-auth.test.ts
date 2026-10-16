@@ -168,7 +168,7 @@ test('malformed method entries and non-string fields are dropped', () => {
       [
         null,
         { id: 7, name: 'x' },
-        { id: 'ok', name: 'Fine', type: 'terminal', args: ['login', 3] },
+        { id: 'ps', name: 'Fine', type: 'terminal', args: ['login', 3] },
       ] as never,
       terminalAuthBaseFor(
         { cmd: 'agent', args: [], env: PROCESS_ENV, kind: 'binary' },
@@ -177,7 +177,7 @@ test('malformed method entries and non-string fields are dropped', () => {
     ),
   ).toEqual([
     {
-      id: 'ok',
+      id: 'ps',
       name: 'Fine',
       kind: 'terminal',
       terminalLaunchAvailable: true,

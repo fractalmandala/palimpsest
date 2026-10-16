@@ -2,28 +2,28 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { isPermissionsPolicyRefusal, scheduleClipboardWrite } from './clipboard-adapter';
 
 interface MockableGlobals {
-  windowOkDesktop: { clipboard: { writeText: (text: string) => Promise<void> } } | undefined;
+  windowPsDesktop: { clipboard: { writeText: (text: string) => Promise<void> } } | undefined;
   navigatorClipboardWriteText: ((text: string) => Promise<void>) | undefined;
 }
 
 function captureGlobals(): MockableGlobals {
   const win = globalThis as unknown as {
-    psDesktop?: MockableGlobals['windowOkDesktop'];
+    psDesktop?: MockableGlobals['windowPsDesktop'];
   };
   const nav = globalThis as unknown as {
     navigator?: { clipboard?: { writeText?: (text: string) => Promise<void> } };
   };
   return {
-    windowOkDesktop: win.psDesktop,
+    windowPsDesktop: win.psDesktop,
     navigatorClipboardWriteText: nav.navigator?.clipboard?.writeText,
   };
 }
 
 function setGlobals(g: MockableGlobals): void {
   const win = globalThis as unknown as {
-    psDesktop?: MockableGlobals['windowOkDesktop'];
+    psDesktop?: MockableGlobals['windowPsDesktop'];
   };
-  if (g.windowOkDesktop) win.psDesktop = g.windowOkDesktop;
+  if (g.windowPsDesktop) win.psDesktop = g.windowPsDesktop;
   else delete win.psDesktop;
 
   const navHolder = globalThis as unknown as {
@@ -52,7 +52,7 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
   test('routes the URL through window.psDesktop.clipboard.writeText', async () => {
     const calls: string[] = [];
     setGlobals({
-      windowOkDesktop: {
+      windowPsDesktop: {
         clipboard: {
           writeText: async (text) => {
             calls.push(text);
@@ -69,7 +69,7 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
   test('does NOT touch navigator.clipboard when psDesktop bridge is available', async () => {
     const navWriteText = vi.fn(async () => undefined);
     setGlobals({
-      windowOkDesktop: {
+      windowPsDesktop: {
         clipboard: { writeText: async () => undefined },
       },
       navigatorClipboardWriteText: navWriteText,
@@ -81,7 +81,7 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
 
   test('propagates the bridge rejection when Electron IPC fails', async () => {
     setGlobals({
-      windowOkDesktop: {
+      windowPsDesktop: {
         clipboard: {
           writeText: async () => {
             throw new Error('ipc-channel-closed');
@@ -101,7 +101,7 @@ describe('scheduleClipboardWrite — navigator.clipboard.writeText fallback', ()
   test('writes the URL via writeText when the Electron bridge is absent', async () => {
     const calls: string[] = [];
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: async (text) => {
         calls.push(text);
       },
@@ -113,7 +113,7 @@ describe('scheduleClipboardWrite — navigator.clipboard.writeText fallback', ()
 
   test('propagates the writeText rejection (e.g. NotAllowedError)', async () => {
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: async () => {
         throw new Error('NotAllowedError: clipboard denied');
       },
@@ -165,7 +165,7 @@ describe('isPermissionsPolicyRefusal', () => {
 describe('scheduleClipboardWrite — no clipboard API available', () => {
   test('throws "clipboard API unavailable" when no platform path is supported', async () => {
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: undefined,
     });
 
@@ -267,7 +267,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
     const { doc, created, execCalls } = makeFakeDocument({ execResult: true });
     docHolder.document = doc;
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: async () => {
         throw policyRefusal();
       },
@@ -286,7 +286,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
     const { doc, execCalls } = makeFakeDocument({ execResult: true });
     docHolder.document = doc;
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: undefined,
     });
 
@@ -298,7 +298,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
     const { doc } = makeFakeDocument({ execResult: false });
     docHolder.document = doc;
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: async () => {
         throw policyRefusal();
       },
@@ -313,7 +313,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
     const { doc, created } = makeFakeDocument({ execThrows: true });
     docHolder.document = doc;
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: async () => {
         throw policyRefusal();
       },
@@ -328,7 +328,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
   test('no document available + writeText rejects → original error propagates', async () => {
     delete docHolder.document;
     setGlobals({
-      windowOkDesktop: undefined,
+      windowPsDesktop: undefined,
       navigatorClipboardWriteText: async () => {
         throw policyRefusal();
       },
@@ -343,7 +343,7 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
     const { doc, execCalls } = makeFakeDocument({ execResult: true });
     docHolder.document = doc;
     setGlobals({
-      windowOkDesktop: { clipboard: { writeText: async () => undefined } },
+      windowPsDesktop: { clipboard: { writeText: async () => undefined } },
       navigatorClipboardWriteText: undefined,
     });
 

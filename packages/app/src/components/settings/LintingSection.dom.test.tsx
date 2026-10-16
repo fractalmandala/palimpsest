@@ -101,8 +101,8 @@ vi.doMock('@/lib/config-provider', () => ({
     userSynced: false,
     projectBinding: mockProjectBinding,
     projectLocalBinding: null,
-    okignoreBinding: null,
-    okignoreSynced: false,
+    psignoreBinding: null,
+    psignoreSynced: false,
     userConfig: mockUserConfig,
     projectConfig: mockProjectConfig,
     projectSynced: mockProjectSynced,
@@ -184,7 +184,7 @@ const {
   ProjectPluginsManageSection,
   UserPluginsManageSection,
   MarkdownlintPluginSection,
-  OkfPluginSection,
+  PsfPluginSection,
 } = await import('./LintingSection');
 
 interface SliceOverrides {
@@ -289,7 +289,7 @@ describe('ProjectPluginsManageSection', () => {
       'Validate document frontmatter',
     );
     expect(describedTextOf('settings-plugin-toggle-psf')).toBe(
-      'Keeps your knowledge base aligned with the Palimpsest Format.',
+      'Keeps your knowledge base aligned with the OpenKnowledge Format.',
     );
   });
 
@@ -311,7 +311,7 @@ describe('ProjectPluginsManageSection', () => {
     expect(toggle.getAttribute('aria-checked')).toBe('false');
     const row = toggle.closest('div');
     expect(row?.textContent).toContain(
-      'Keeps your knowledge base aligned with the Palimpsest Format.',
+      'Keeps your knowledge base aligned with the OpenKnowledge Format.',
     );
   });
 
@@ -505,11 +505,11 @@ describe('MarkdownlintPluginSection', () => {
   });
 });
 
-describe('OkfPluginSection', () => {
+describe('PsfPluginSection', () => {
   function renderPanel() {
     render(
       <TooltipProvider>
-        <OkfPluginSection />
+        <PsfPluginSection />
       </TooltipProvider>,
     );
   }
@@ -559,7 +559,7 @@ describe('OkfPluginSection', () => {
     expect(screen.getByTestId('settings-scope-badge-project')).toBeDefined();
     expect(screen.queryByTestId('settings-scope-badge-user')).toBeNull();
     expect(panel.textContent).toContain(
-      'Keeps your knowledge base aligned with the Palimpsest Format.',
+      'Keeps your knowledge base aligned with the OpenKnowledge Format.',
     );
   });
 
@@ -582,7 +582,7 @@ describe('OkfPluginSection', () => {
 
     const card = screen.getByTestId('settings-psf-recommended-skill');
     expect(screen.getByRole('heading', { name: 'Recommended agent skill' })).toBeDefined();
-    expect(card.textContent).toContain('Palimpsest Format guidance');
+    expect(card.textContent).toContain('OpenKnowledge Format guidance');
     expect(within(card).getByRole('button', { name: 'Install skill' })).toBeDefined();
   });
 

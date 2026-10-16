@@ -16,7 +16,7 @@ const EXPECTED_NULL_KEYS = [
   'userBinding',
   'projectBinding',
   'projectLocalBinding',
-  'okignoreBinding',
+  'psignoreBinding',
   'userConfig',
   'projectConfig',
   'projectLocalConfig',
@@ -34,7 +34,7 @@ function Consumer() {
       ))}
       <span data-testid="field:userSynced">{String(ctx.userSynced)}</span>
       <span data-testid="field:projectLocalSynced">{String(ctx.projectLocalSynced)}</span>
-      <span data-testid="field:okignoreSynced">{String(ctx.okignoreSynced)}</span>
+      <span data-testid="field:psignoreSynced">{String(ctx.psignoreSynced)}</span>
     </div>
   );
 }
@@ -75,7 +75,7 @@ describe('ConfigProvider runtime (Tier-3)', () => {
     }
     expect(screen.getByTestId('field:userSynced').textContent).toBe('false');
     expect(screen.getByTestId('field:projectLocalSynced').textContent).toBe('false');
-    expect(screen.getByTestId('field:okignoreSynced').textContent).toBe('false');
+    expect(screen.getByTestId('field:psignoreSynced').textContent).toBe('false');
   });
 
   describe('useConfigContext outside provider', () => {

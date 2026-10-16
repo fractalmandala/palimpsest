@@ -35,11 +35,11 @@ function installBridge() {
     skills: [
       {
         id: 'discovery',
-        name: 'open-knowledge-discovery',
+        name: 'palimpsest-discovery',
         description: 'trigger text',
         installed: true,
         onboarding: true,
-        paths: ['~/.agents/skills/open-knowledge-discovery'],
+        paths: ['~/.agents/skills/palimpsest-discovery'],
         sourceDir: '/bundles/discovery',
         resolvedHosts: [{ editor: 'claude', skillsRoot: '.claude/skills', custom: false }],
       },

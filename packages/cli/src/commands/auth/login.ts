@@ -57,7 +57,7 @@ async function runLogin(
     const resp = await fetch(`${apiBase}/user`, {
       headers: {
         Authorization: `Bearer ${result.token}`,
-        'User-Agent': 'open-knowledge-cli',
+        'User-Agent': 'palimpsest-cli',
         Accept: 'application/vnd.github+json',
       },
     });

@@ -68,7 +68,7 @@ function emitStalledOnce(entry: MountPromiseEntry, docName: string, now: number)
   if (entry.stalledMarkEmitted) return;
   entry.stalledMarkEmitted = true;
   const elapsed = now - entry.createdAt;
-  mark('ok/mount/stalled', {
+  mark('ps/mount/stalled', {
     docName,
     mountId: entry.mountId,
     elapsedMs: elapsed,
@@ -183,14 +183,14 @@ export function mountTiptapEditorPromise(
     }
     cache.delete(docName);
     if (cache.size === 0) uninstallVisibilityHandler();
-    mark('ok/mount/reject', { docName, mountId: entry.mountId, reason: 'aborted' });
+    mark('ps/mount/reject', { docName, mountId: entry.mountId, reason: 'aborted' });
     rejectFn(new MountAbortError(docName));
     finalizeColdMountSpan(entry.mountId);
   });
 
   cache.set(docName, entry);
   installVisibilityHandler();
-  mark('ok/mount/create', { docName, mountId: entry.mountId });
+  mark('ps/mount/create', { docName, mountId: entry.mountId });
 
   runMountBody({
     docName,
@@ -205,7 +205,7 @@ export function mountTiptapEditorPromise(
       entry.preMountEditor = null;
     }
     if (entry.settled) {
-      mark('ok/mount/post-settle-throw', {
+      mark('ps/mount/post-settle-throw', {
         docName,
         mountId: entry.mountId,
         message: err instanceof Error ? err.message : String(err),
@@ -215,7 +215,7 @@ export function mountTiptapEditorPromise(
     entry.settled = true;
     clearStalledTimer(entry);
     const wrapped = err instanceof Error ? err : new Error(String(err));
-    mark('ok/mount/reject', {
+    mark('ps/mount/reject', {
       docName,
       mountId: entry.mountId,
       reason: 'unhandled-body-throw',
@@ -247,7 +247,7 @@ export function invalidateMountPromise(docName: string): void {
   }
   cache.delete(docName);
   if (cache.size === 0) uninstallVisibilityHandler();
-  mark('ok/mount/invalidate', { docName, mountId: entry.mountId });
+  mark('ps/mount/invalidate', { docName, mountId: entry.mountId });
   finalizeColdMountSpan(entry.mountId);
   entry.controller.abort();
 }
@@ -274,7 +274,7 @@ function destroyPreMountEditor(
   try {
     editor.destroy();
   } catch (err) {
-    mark('ok/mount/destroy-failed', {
+    mark('ps/mount/destroy-failed', {
       docName,
       stage,
       message: err instanceof Error ? err.message : String(err),
@@ -320,7 +320,7 @@ async function runMountBody(params: MountBodyParams): Promise<void> {
     entry.settled = true;
     clearStalledTimer(entry);
     const wrapped = err instanceof Error ? err : new Error(String(err));
-    mark('ok/mount/reject', {
+    mark('ps/mount/reject', {
       docName,
       mountId: entry.mountId,
       reason: 'construct-failed',
@@ -347,7 +347,7 @@ async function runMountBody(params: MountBodyParams): Promise<void> {
     entry.settled = true;
     clearStalledTimer(entry);
     const wrapped = err instanceof Error ? err : new Error(String(err));
-    mark('ok/mount/reject', {
+    mark('ps/mount/reject', {
       docName,
       mountId: entry.mountId,
       reason: 'mount-failed',
@@ -372,7 +372,7 @@ async function runMountBody(params: MountBodyParams): Promise<void> {
     entry.settled = true;
     clearStalledTimer(entry);
     const wrapped = err instanceof Error ? err : new Error(String(err));
-    mark('ok/mount/reject', {
+    mark('ps/mount/reject', {
       docName,
       mountId: entry.mountId,
       reason: 'v2-register-failed',
@@ -388,17 +388,17 @@ async function runMountBody(params: MountBodyParams): Promise<void> {
   entry.resolved = true;
   clearStalledTimer(entry);
   const elapsed = Date.now() - entry.createdAt;
-  mark('ok/mount/resolve', {
+  mark('ps/mount/resolve', {
     docName,
     mountId: entry.mountId,
     elapsedMs: elapsed,
   });
-  mark.histogram('ok/mount/resolve-elapsed-ms', { docName, mountId: entry.mountId }, elapsed);
+  mark.histogram('ps/mount/resolve-elapsed-ms', { docName, mountId: entry.mountId }, elapsed);
   resolveFn(v2MissEntry);
   const nowMs = Date.now();
   emitColdMountChild(
     entry.mountId,
-    'ok.mount-promise',
+    'ps.mount-promise',
     { 'doc.name': docName, elapsed_ms: elapsed },
     entry.createdAt,
     nowMs,

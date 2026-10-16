@@ -66,7 +66,7 @@ afterEach(() => {
   rmSync(tmpDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 });
 
-function ignoreOkDir(): void {
+function ignorePsDir(): void {
   appendFileSync(join(projectDir, '.git', 'info', 'exclude'), '\n.ok/\n', 'utf-8');
 }
 
@@ -88,7 +88,7 @@ async function projectWithBareOrigin() {
   const git = simpleGit(projectDir);
   await git.init(['--initial-branch=main']);
   configureTestGitRepository(projectDir);
-  ignoreOkDir();
+  ignorePsDir();
   await git.raw('config', 'user.name', 'Test');
   await git.raw('config', 'user.email', 'test@test.com');
   writeFileSync(join(projectDir, 'doc.md'), 'v1\n', 'utf-8');

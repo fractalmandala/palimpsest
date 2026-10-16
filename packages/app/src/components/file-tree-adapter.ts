@@ -152,7 +152,7 @@ export function documentsTreePathSignature(documents: readonly FileEntry[]): str
 
 export function collectTreeFolderPathsFromDocuments(
   documents: readonly FileEntry[],
-  options: { includeOkFolders?: boolean } = {},
+  options: { includePsFolders?: boolean } = {},
 ): string[] {
   const folderPaths = new Set<string>();
   for (const entry of documents) {
@@ -162,7 +162,7 @@ export function collectTreeFolderPathsFromDocuments(
         ? entry.path
         : entry.docName;
     const segments = path.split('/').filter(Boolean);
-    if (!options.includeOkFolders && segments.includes('.ps')) continue;
+    if (!options.includePsFolders && segments.includes('.ps')) continue;
     if (isFolderEntry(entry)) {
       const folderPath = folderPathToTreeDirectoryPath(entry.path);
       if (folderPath) folderPaths.add(folderPath);

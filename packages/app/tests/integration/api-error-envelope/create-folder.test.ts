@@ -39,7 +39,7 @@ describe('create-folder envelope (RFC 9457)', () => {
     expect((body as Record<string, unknown>).ok).toBeUndefined();
   });
 
-  test('missing path emits urn:ok:error:invalid-request', async () => {
+  test('missing path emits urn:ps:error:invalid-request', async () => {
     const res = await postCreate({});
     expect(res.status).toBe(400);
     expect(res.headers.get('content-type')).toBe('application/problem+json');
@@ -48,34 +48,34 @@ describe('create-folder envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
       if (parsed.data.instance) expect(parsed.data.instance).toMatch(UUID_RE);
     }
   });
 
-  test('path traversal emits urn:ok:error:invalid-request', async () => {
+  test('path traversal emits urn:ps:error:invalid-request', async () => {
     const res = await postCreate({ path: '../outside' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
-  test('reserved .ps prefix emits urn:ok:error:reserved-doc-name', async () => {
+  test('reserved .ps prefix emits urn:ps:error:reserved-doc-name', async () => {
     const res = await postCreate({ path: '.ps/cache' });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:reserved-doc-name');
+      expect(parsed.data.type).toBe('urn:ps:error:reserved-doc-name');
     }
   });
 
-  test('duplicate folder emits urn:ok:error:doc-already-exists (409)', async () => {
+  test('duplicate folder emits urn:ps:error:doc-already-exists (409)', async () => {
     const path = `dup-folder-${crypto.randomUUID().slice(0, 8)}`;
     const first = await postCreate({ path });
     expect(first.status).toBe(200);
@@ -88,19 +88,19 @@ describe('create-folder envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:doc-already-exists');
+      expect(parsed.data.type).toBe('urn:ps:error:doc-already-exists');
       expect(parsed.data.status).toBe(409);
     }
   });
 
-  test('non-string summary emits urn:ok:error:invalid-request', async () => {
+  test('non-string summary emits urn:ps:error:invalid-request', async () => {
     const res = await postCreate({ path: 'notes', summary: 42 });
     expect(res.status).toBe(400);
     const body = await res.json();
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:invalid-request');
+      expect(parsed.data.type).toBe('urn:ps:error:invalid-request');
     }
   });
 
@@ -112,7 +112,7 @@ describe('create-folder envelope (RFC 9457)', () => {
     const parsed = ProblemDetailsSchema.safeParse(body);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
-      expect(parsed.data.type).toBe('urn:ok:error:method-not-allowed');
+      expect(parsed.data.type).toBe('urn:ps:error:method-not-allowed');
     }
   });
 });

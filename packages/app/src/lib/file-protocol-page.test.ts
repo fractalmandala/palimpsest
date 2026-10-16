@@ -6,7 +6,7 @@ describe('isFileProtocolPage', () => {
     expect(isFileProtocolPage({ protocol: 'file:' })).toBe(true);
   });
 
-  test('false for http: (web, ok ui, dev desktop renderer on localhost)', () => {
+  test('false for http: (web, ps ui, dev desktop renderer on localhost)', () => {
     expect(isFileProtocolPage({ protocol: 'http:' })).toBe(false);
   });
 

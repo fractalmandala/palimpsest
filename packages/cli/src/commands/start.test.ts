@@ -377,7 +377,7 @@ describe('bootStartServer (integration)', () => {
     expect(res.status).toBe(404);
     expect(res.headers['content-type']).toContain('application/problem+json');
     const body = JSON.parse(res.body);
-    expect(body.type).toBe('urn:ok:error:not-found');
+    expect(body.type).toBe('urn:ps:error:not-found');
     expect(body.title).toBe('Not found.');
     expect(body.status).toBe(404);
     expect(body.detail).toContain('This server is running without the web UI');
@@ -406,7 +406,7 @@ describe('bootStartServer (integration)', () => {
     const res = await fetchText(booted.port, '/assets/main-abcdef.js');
     expect(res.status).toBe(404);
     const body = JSON.parse(res.body);
-    expect(body.type).toBe('urn:ok:error:not-found');
+    expect(body.type).toBe('urn:ps:error:not-found');
     expect(body.title).toBe('Not found.');
     expect(body.detail).toContain('This server is running without the web UI');
     expect(body.detail).toContain('/assets/main-abcdef.js');
@@ -450,7 +450,7 @@ describe('bootStartServer (integration)', () => {
     const res = await fetchText(booted.port, '/api/totally-nonexistent-xyz');
     expect(res.status).toBe(404);
     const body = JSON.parse(res.body);
-    expect(body.type).toBe('urn:ok:error:not-found');
+    expect(body.type).toBe('urn:ps:error:not-found');
     expect(body.title).toBe('API endpoint not found.');
     expect(body.status).toBe(404);
     expect(typeof body.instance).toBe('string');
@@ -678,7 +678,7 @@ describe('bootStartServer (integration)', () => {
         {
           configurations: [
             {
-              name: 'open-knowledge-ui',
+              name: 'palimpsest-ui',
               runtimeExecutable: '/bin/sh',
               runtimeArgs: ['-l', '-c', '# ps-ui-v1\nexit 0'],
             },
@@ -1236,7 +1236,7 @@ describe('startCommand — --mode flag wiring', () => {
       expect(exitSpy).toHaveBeenCalledWith(1);
       const output = stderrSpy.mock.calls.flat().join('\n');
       expect(output).toContain(snapshot);
-      expect(output).toContain('ok bug-report');
+      expect(output).toContain('ps bug-report');
       expect(output).not.toContain('    at ');
       expect(readFileSync(snapshot, 'utf-8')).toBe('{protected edits, truncated');
     } finally {
@@ -1928,7 +1928,7 @@ describe('start messages name the running channel command', () => {
     vi.unstubAllEnvs();
   });
 
-  test('Stable keeps ok in the missing-setup error and the reuse notice', () => {
+  test('Stable keeps ps in the missing-setup error and the reuse notice', () => {
     vi.stubEnv('PS_CHANNEL', 'stable');
     expect(new PsDirMissingError('/p').message).toBe(
       "This directory isn't set up yet. Run `ps init` first, then `ps start` again.",

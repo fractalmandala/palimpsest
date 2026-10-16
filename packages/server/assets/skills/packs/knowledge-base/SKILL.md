@@ -5,7 +5,7 @@ compatibility: "Any agent host with the Palimpsest MCP server configured. Instal
 type: Document
 metadata:
   pack: "knowledge-base"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Knowledge Base pack — how to work here

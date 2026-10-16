@@ -138,7 +138,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'general',
     title: msg`New folder`,
     description: msg`Create a folder from the current document or folder context.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [{ mac: '⇧⌘ N', windowsLinux: 'Ctrl Shift N' }],
   },
   {
@@ -188,7 +188,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'general',
     title: msg`Show or hide Terminal`,
     description: msg`Toggle Terminal in its current dock.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [
       {
         mac: '⌘ J',
@@ -250,7 +250,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'general',
     title: msg`New session`,
     description: msg`Open a new session with your preferred AI. With text selected, stage it there instead of running it.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [
       {
         mac: '⇧⌘ J',
@@ -264,7 +264,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'general',
     title: msg`Report a bug`,
     description: msg`Start a bug report with a screenshot of the screen as it looks right now.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     desktopOnly: true,
     bindings: [{ mac: '⇧⌘ D', windowsLinux: 'Ctrl Shift D' }],
   },
@@ -273,7 +273,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'navigation',
     title: msg`Back`,
     description: msg`Traverse Palimpsest navigation history backward.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [{ mac: '⌘ [', windowsLinux: 'Alt ←' }],
   },
   {
@@ -281,7 +281,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'navigation',
     title: msg`Forward`,
     description: msg`Traverse Palimpsest navigation history forward.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [{ mac: '⌘ ]', windowsLinux: 'Alt →' }],
   },
   {
@@ -361,7 +361,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'workspace',
     title: msg`Open folder`,
     description: msg`Open an existing project folder from disk.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [{ mac: '⌘ O', windowsLinux: 'Ctrl O' }],
   },
   {
@@ -369,7 +369,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'workspace',
     title: msg`Open file`,
     description: msg`Open a single markdown file in a temporary session, without project setup.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [{ mac: '⇧⌘ O', windowsLinux: 'Ctrl Shift O' }],
   },
   {
@@ -377,7 +377,7 @@ const KEYBOARD_SHORTCUT_DEFINITIONS = [
     category: 'workspace',
     title: msg`Switch project`,
     description: msg`Open the Project Navigator.`,
-    scope: msg`OK Desktop`,
+    scope: msg`Palimpsest Desktop`,
     bindings: [{ mac: '⇧⌘ P', windowsLinux: 'Ctrl Shift P' }],
   },
   {

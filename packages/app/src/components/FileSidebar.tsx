@@ -27,7 +27,7 @@ import {
 import { toast } from 'sonner';
 import { ConflictsSection } from '@/components/ConflictsSection';
 import { FileTree, type FileTreeHandle } from '@/components/FileTree';
-import { defaultInitialDir, hasOkPathSegment } from '@/components/file-tree-utils';
+import { defaultInitialDir, hasPsPathSegment } from '@/components/file-tree-utils';
 import { subscribeToFilesSectionReveal } from '@/components/files-section-reveal-store';
 import { OpenInAgentEmptySpaceSubmenu } from '@/components/handoff/OpenInAgentEmptySpaceSubmenu';
 import { useTerminalLaunch } from '@/components/handoff/TerminalLaunchContext';
@@ -187,7 +187,7 @@ function FileSidebarInner() {
     activeTarget?.kind === 'folder' || activeTarget?.kind === 'folder-index'
       ? activeTarget.folderPath
       : defaultInitialDir(activeDocName);
-  const baseCreateDir = hasOkPathSegment(activeCreateDir) ? '' : activeCreateDir;
+  const baseCreateDir = hasPsPathSegment(activeCreateDir) ? '' : activeCreateDir;
   const [treeCreationCleared, setTreeCreationCleared] = useState(false);
   const initialCreateDir = treeCreationCleared ? '' : baseCreateDir;
 
@@ -256,7 +256,7 @@ function FileSidebarInner() {
   const settingsLoadingReason = useSettingsLoadingReason();
   const pendingSettingsReason = projectLocalBindingReady ? null : settingsLoadingReason;
   const showHiddenFiles = merged?.appearance?.sidebar?.showHiddenFiles ?? false;
-  const showOkFolders = merged?.appearance?.sidebar?.showOkFolders ?? false;
+  const showPsFolders = merged?.appearance?.sidebar?.showPsFolders ?? false;
   const showOnlyMarkdownFiles = merged?.appearance?.sidebar?.showOnlyMarkdownFiles ?? false;
   const showSkillGroups = merged?.appearance?.sidebar?.showSkillGroups ?? true;
   const [filesOpen, setFilesOpen] = useState(true);
@@ -337,7 +337,7 @@ function FileSidebarInner() {
   };
   const patchSidebarVisibility = (sidebar: {
     showHiddenFiles?: boolean;
-    showOkFolders?: boolean;
+    showPsFolders?: boolean;
     showOnlyMarkdownFiles?: boolean;
     showSkillsSection?: boolean;
     showSkillGroups?: boolean;
@@ -367,7 +367,7 @@ function FileSidebarInner() {
   useEffect(() => {
     const snapshot = {
       showHiddenFiles,
-      showOkFolders,
+      showPsFolders,
       showOnlyMarkdownFiles,
       showSkillsSection,
       canExpandAll: showExpandAll,
@@ -380,7 +380,7 @@ function FileSidebarInner() {
   }, [
     bridge,
     showHiddenFiles,
-    showOkFolders,
+    showPsFolders,
     showOnlyMarkdownFiles,
     showSkillsSection,
     showExpandAll,
@@ -391,8 +391,8 @@ function FileSidebarInner() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: patchSidebarVisibility is behaviorally stable — its binding, readiness, and t inputs are already deps; listing the helper itself would re-create the subscription every render (sibling pattern: CommandPalette's refreshSemanticStatus).
   useEffect(() => {
     return subscribeLocalMenuAction((action) => {
-      const isOkManagedTarget =
-        activeTarget !== null && hasOkPathSegment(resolveActiveTargetRelativePath(activeTarget));
+      const isPsManagedTarget =
+        activeTarget !== null && hasPsPathSegment(resolveActiveTargetRelativePath(activeTarget));
       switch (action) {
         case 'new-doc': {
           if (!workspace || !tree) return;
@@ -413,19 +413,19 @@ function FileSidebarInner() {
           return;
         }
         case 'rename': {
-          if (!activeTarget || isOkManagedTarget) return;
+          if (!activeTarget || isPsManagedTarget) return;
           revealEditorBeforeActing();
           emitFileTreeMenuActionRename(activeTarget);
           return;
         }
         case 'duplicate': {
-          if (!activeTarget || isOkManagedTarget) return;
+          if (!activeTarget || isPsManagedTarget) return;
           revealEditorBeforeActing();
           emitFileTreeMenuActionDuplicate(activeTarget);
           return;
         }
         case 'move-to-trash': {
-          if (!activeTarget || isOkManagedTarget) return;
+          if (!activeTarget || isPsManagedTarget) return;
           revealEditorBeforeActing();
           emitFileTreeMenuActionDelete(activeTarget);
           return;
@@ -515,7 +515,7 @@ function FileSidebarInner() {
         }
         case 'toggle-show-ps-folders': {
           revealEditorBeforeActing();
-          patchSidebarVisibility({ showOkFolders: !showOkFolders });
+          patchSidebarVisibility({ showPsFolders: !showPsFolders });
           return;
         }
         case 'toggle-show-hidden-files': {
@@ -569,7 +569,7 @@ function FileSidebarInner() {
     projectLocalBindingReady,
     settingsLoadingReason,
     showHiddenFiles,
-    showOkFolders,
+    showPsFolders,
     showOnlyMarkdownFiles,
     showSkillsSection,
     handoffInstallStates,
@@ -687,9 +687,9 @@ function FileSidebarInner() {
                                     <Trans>Hidden files</Trans>
                                   </DropdownMenuCheckboxItem>
                                   <DropdownMenuCheckboxItem
-                                    checked={showOkFolders}
+                                    checked={showPsFolders}
                                     onCheckedChange={(checked) =>
-                                      patchSidebarVisibility({ showOkFolders: checked })
+                                      patchSidebarVisibility({ showPsFolders: checked })
                                     }
                                     aria-disabled={pendingSettingsReason ? true : undefined}
                                     onSelect={preventPendingSettingsSelection}
@@ -923,8 +923,8 @@ function FileSidebarInner() {
                 <Trans>Show hidden files</Trans>
               </ContextMenuCheckboxItem>
               <ContextMenuCheckboxItem
-                checked={showOkFolders}
-                onCheckedChange={(checked) => patchSidebarVisibility({ showOkFolders: checked })}
+                checked={showPsFolders}
+                onCheckedChange={(checked) => patchSidebarVisibility({ showPsFolders: checked })}
                 aria-disabled={pendingSettingsReason ? true : undefined}
                 onSelect={preventPendingSettingsSelection}
                 aria-describedby={pendingSettingsReason ? settingsLoadingReasonId : undefined}

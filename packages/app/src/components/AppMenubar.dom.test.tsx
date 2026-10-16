@@ -215,7 +215,7 @@ describe('AppMenubar View terminal toggle', () => {
     activeTarget: { kind: null },
     viewMenuState: {
       showHiddenFiles: false,
-      showOkFolders: false,
+      showPsFolders: false,
       showOnlyMarkdownFiles: false,
       showSkillsSection: true,
       canExpandAll: true,

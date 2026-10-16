@@ -2,7 +2,7 @@ import { dirname, relative, resolve } from 'node:path';
 import {
   deriveValidationRunSources,
   type LinterConfig,
-  runOkfProjectRules,
+  runPsfProjectRules,
 } from '@palimpsest/core';
 import { auditScopeWarning, collectDocFiles, resolveScope } from './audit.ts';
 import type {
@@ -16,13 +16,13 @@ const FILE_RANGE = {
   end: { line: 0, character: 0 },
 } as const;
 
-export interface OkfProjectValidatorDeps {
+export interface PsfProjectValidatorDeps {
   projectDir: string;
   contentDir: string;
   baseConfig: LinterConfig;
 }
 
-export function createOkfProjectValidator(deps: OkfProjectValidatorDeps): ProjectValidator<'psf'> {
+export function createPsfProjectValidator(deps: PsfProjectValidatorDeps): ProjectValidator<'psf'> {
   const sourceFamilies = deriveValidationRunSources(deps.baseConfig, { mode: 'lint' }).filter(
     (source): source is 'psf' => source === 'psf',
   );
@@ -57,7 +57,7 @@ export function createOkfProjectValidator(deps: OkfProjectValidatorDeps): Projec
       });
 
       const byFile = new Map<string, ValidationDiagnosticFor<'psf'>[]>();
-      for (const finding of runOkfProjectRules(docFiles, deps.baseConfig.plugins.psf?.rules)) {
+      for (const finding of runPsfProjectRules(docFiles, deps.baseConfig.plugins.psf?.rules)) {
         if (targetFile !== undefined && finding.file !== targetFile) continue;
         const diagnostics = byFile.get(finding.file) ?? [];
         diagnostics.push({

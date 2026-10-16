@@ -52,7 +52,7 @@ export function resolveLocalOpCliArgsForUtilityFork(invocation: HostCliInvocatio
   return [...invocation.cliArgs];
 }
 
-export function mainProcessOkCli(
+export function mainProcessPsCli(
   invocation: HostCliInvocation | undefined,
   env: Readonly<Record<string, string | undefined>>,
 ): PsCliCommand {

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-export function appendOkIgnoreSync(projectDir: string, patterns: string): void {
+export function appendPsIgnoreSync(projectDir: string, patterns: string): void {
   const path = join(projectDir, '.psignore');
   const trimmed = patterns.trim();
   if (trimmed.length === 0) return;

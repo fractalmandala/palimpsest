@@ -288,7 +288,7 @@ test('filesystem errors and invalid scopes keep their error envelopes without si
   });
   expect(failed.status, failed.body).toBe(500);
   expect(parseProblem(failed.body)).toMatchObject({
-    type: 'urn:ok:error:internal-server-error',
+    type: 'urn:ps:error:internal-server-error',
     title: 'Failed to update .gitignore.',
   });
   expect(failed.headers['x-request-id']).toBe('tracking-cache');

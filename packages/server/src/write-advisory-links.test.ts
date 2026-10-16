@@ -171,7 +171,7 @@ describe('computeWriteAdvisoryLinks', () => {
   test('does not report an image whose target exists', () => {
     const links = computeWriteAdvisoryLinks('![ok](./ok.png)\n', 'notes', new Set<string>(), {
       ...NOTHING_TRACKED,
-      fileExists: fileOracle('ok.png'),
+      fileExists: fileOracle('ps.png'),
     });
     expect(links).toEqual([]);
   });

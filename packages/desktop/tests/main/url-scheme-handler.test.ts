@@ -1261,7 +1261,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
   function makeCandidate(opts: {
     path: string;
     currentBranch?: string | null;
-    hasOkConfig?: boolean;
+    hasPsConfig?: boolean;
   }): Candidate {
     return {
       path: opts.path,
@@ -1269,7 +1269,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
       recent: null,
       head: { currentBranch: opts.currentBranch ?? null, headSha: null, detached: false },
       gitDirKind: 'directory',
-      hasOkConfig: opts.hasOkConfig ?? true,
+      hasPsConfig: opts.hasPsConfig ?? true,
       locked: false,
       recencyIndex: 0,
       worktreeOrder: null,
@@ -1457,7 +1457,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         anchor: makeCandidate({
           path: '/Users/me/playbooks',
           currentBranch: 'feature/x',
-          hasOkConfig: true,
+          hasPsConfig: true,
         }),
         reason: 'main-checkout',
       }),
@@ -1503,7 +1503,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         anchor: makeCandidate({
           path: '/Users/me/playbooks',
           currentBranch: 'feature/x',
-          hasOkConfig: true,
+          hasPsConfig: true,
         }),
         reason: 'main-checkout',
       }),
@@ -1543,7 +1543,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         anchor: makeCandidate({
           path: '/Users/me/playbooks',
           currentBranch: 'feature/x',
-          hasOkConfig: true,
+          hasPsConfig: true,
         }),
         reason: 'main-checkout',
       }),
@@ -1589,7 +1589,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         anchor: makeCandidate({
           path: '/Users/me/playbooks/worktrees/wt-1',
           currentBranch: 'feature/x',
-          hasOkConfig: true,
+          hasPsConfig: true,
         }),
         reason: 'only-worktrees',
       }),
@@ -1633,7 +1633,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         candidate: makeCandidate({
           path: '/Users/me/playbooks/worktrees/wt-1',
           currentBranch: 'main',
-          hasOkConfig: false,
+          hasPsConfig: false,
         }),
         anchorRecent: null,
       }),
@@ -1677,7 +1677,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         candidate: makeCandidate({
           path: '/Users/me/playbooks/worktrees/wt-1',
           currentBranch: 'main',
-          hasOkConfig: false,
+          hasPsConfig: false,
         }),
         anchorRecent: {
           name: 'playbooks',
@@ -1799,7 +1799,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         anchor: makeCandidate({
           path: '/Users/me/wedged-project',
           currentBranch: 'feature/x',
-          hasOkConfig: true,
+          hasPsConfig: true,
         }),
         reason: 'main-checkout',
       }),
@@ -1878,7 +1878,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
         candidate: makeCandidate({
           path: '/some/worktree',
           currentBranch: 'main',
-          hasOkConfig: false,
+          hasPsConfig: false,
         }),
         anchorRecent: null,
       }),

@@ -25,7 +25,7 @@ const { recordOnboardingFlow } = telemetryModule;
 type Attrs = Record<string, unknown>;
 
 const expectAttrs = (call: CapturedSpanCall, expected: Attrs): void => {
-  expect(call.name).toBe('ok.desktop.onboardingConsent');
+  expect(call.name).toBe('ps.desktop.onboardingConsent');
   expect(call.options?.attributes).toEqual(expected);
 };
 
@@ -34,7 +34,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
     capturedCalls.length = 0;
   });
 
-  test('emits a span named `ok.desktop.onboardingConsent` with the canonical attribute set', () => {
+  test('emits a span named `ps.desktop.onboardingConsent` with the canonical attribute set', () => {
     recordOnboardingFlow({
       flowKind: 'create-new-default',
       entryPoint: 'create-new',
@@ -44,12 +44,12 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
     });
     expect(capturedCalls).toHaveLength(1);
     expectAttrs(capturedCalls[0], {
-      'ok.desktop.flow_kind': 'create-new-default',
-      'ok.desktop.entry_point': 'create-new',
-      'ok.desktop.git_init_requested': true,
-      'ok.desktop.content_dir_changed': false,
-      'ok.desktop.warnings_count': 0,
-      'ok.desktop.ai_integrations_failed_count': 0,
+      'ps.desktop.flow_kind': 'create-new-default',
+      'ps.desktop.entry_point': 'create-new',
+      'ps.desktop.git_init_requested': true,
+      'ps.desktop.content_dir_changed': false,
+      'ps.desktop.warnings_count': 0,
+      'ps.desktop.ai_integrations_failed_count': 0,
     });
   });
 
@@ -63,7 +63,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       failedCount: 3,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.ai_integrations_failed_count']).toBe(
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.ai_integrations_failed_count']).toBe(
       3,
     );
   });
@@ -78,7 +78,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       failedCount: 999,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.ai_integrations_failed_count']).toBe(
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.ai_integrations_failed_count']).toBe(
       10,
     );
   });
@@ -93,7 +93,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       failedCount: -2,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.ai_integrations_failed_count']).toBe(
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.ai_integrations_failed_count']).toBe(
       0,
     );
   });
@@ -107,7 +107,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       warningsCount: 0,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.ai_integrations_failed_count']).toBe(
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.ai_integrations_failed_count']).toBe(
       0,
     );
   });
@@ -121,7 +121,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       warningsCount: 100,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.warnings_count']).toBe(8);
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.warnings_count']).toBe(8);
   });
 
   test('warnings_count clamps to 0 on negative inputs', () => {
@@ -133,7 +133,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       warningsCount: -5,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.warnings_count']).toBe(0);
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.warnings_count']).toBe(0);
   });
 
   test('warnings_count truncates fractional inputs before clamping', () => {
@@ -145,7 +145,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
       warningsCount: 3.9,
     });
     expect(capturedCalls).toHaveLength(1);
-    expect(capturedCalls[0].options?.attributes?.['ok.desktop.warnings_count']).toBe(3);
+    expect(capturedCalls[0].options?.attributes?.['ps.desktop.warnings_count']).toBe(3);
   });
 
   const FLOW_KINDS = [
@@ -169,7 +169,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
         warningsCount: 0,
       });
       expect(capturedCalls).toHaveLength(1);
-      expect(capturedCalls[0].options?.attributes?.['ok.desktop.flow_kind']).toBe(kind);
+      expect(capturedCalls[0].options?.attributes?.['ps.desktop.flow_kind']).toBe(kind);
     });
   }
 
@@ -192,7 +192,7 @@ describe('recordOnboardingFlow — span name + attribute shape', () => {
         warningsCount: 0,
       });
       expect(capturedCalls).toHaveLength(1);
-      expect(capturedCalls[0].options?.attributes?.['ok.desktop.entry_point']).toBe(entry);
+      expect(capturedCalls[0].options?.attributes?.['ps.desktop.entry_point']).toBe(entry);
     });
   }
 });

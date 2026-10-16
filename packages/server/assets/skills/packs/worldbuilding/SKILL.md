@@ -4,7 +4,7 @@ description: "How to work in a Worldbuilding project (the `worldbuilding` starte
 compatibility: "Any agent host with the Palimpsest MCP server configured. Installed project-local by `ok seed --pack worldbuilding` (`ps-beta` for Beta)."
 metadata:
   pack: "worldbuilding"
-  author: "Inkeep"
+  author: "Fractal Mandala"
   repository: "https://github.com/fractalmandala/palimpsest-skills"
 ---
 # Worldbuilding pack — how to work here

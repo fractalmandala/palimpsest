@@ -28,7 +28,7 @@ import {
   selectReconcileOurs,
 } from './conflict-resolution.ts';
 import { requireConflictResolutionContent } from './conflict-resolution-input.ts';
-import { isShareableOkArtifact } from './content-filter.ts';
+import { isShareablePsArtifact } from './content-filter.ts';
 import { docNameToRelativePath } from './doc-extensions.ts';
 import { pathToDocName } from './file-watcher.ts';
 import { tracedMkdirSync, tracedRenameSync, tracedWriteFileSync } from './fs-traced.ts';
@@ -578,7 +578,7 @@ export class ConflictAuthority implements ConflictReader {
         const requestedPath = resolve(this.projectDir, file);
         projectAbsPath(this.projectDir, file);
         const canonicalPath = assertRealpathWithinDir(requestedPath, this.contentDir, {
-          allowShareableOkArtifact: isShareableOkArtifact,
+          allowShareablePsArtifact: isShareablePsArtifact,
         });
         const absPath = strategy === 'delete' ? requestedPath : canonicalPath;
         await resolveReconcile(strategy, landing, docName, absPath, this.io);

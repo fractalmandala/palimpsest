@@ -261,7 +261,7 @@ describe('createUserConfigDispatch', () => {
     writeUserConfig(home, 'appearance:\n  theme: light\n');
     await waitFor(() => sender.sent.length > 0);
     expect(sender.sent[0]).toEqual({
-      channel: 'ok:user-config:changed',
+      channel: 'ps:user-config:changed',
       payload: { text: 'appearance:\n  theme: light\n' },
     });
     sender.destroy();

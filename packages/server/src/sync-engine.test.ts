@@ -2051,13 +2051,13 @@ describe('SyncEngine lastRunUtc survives a restart', () => {
       pushIntervalSeconds: 60,
     });
     const internals = engine as unknown as {
-      lastPullOkUtc: string | null;
-      lastPushOkUtc: string | null;
+      lastPullPsUtc: string | null;
+      lastPushPsUtc: string | null;
       saveStateNow(): void;
     };
     try {
-      internals.lastPullOkUtc = '2026-08-24T10:00:00.000Z';
-      internals.lastPushOkUtc = '2026-08-24T09:00:00.000Z';
+      internals.lastPullPsUtc = '2026-08-24T10:00:00.000Z';
+      internals.lastPushPsUtc = '2026-08-24T09:00:00.000Z';
       expect(engine.getStatus().lastRunUtc).toBe('2026-08-24T10:00:00.000Z');
       internals.saveStateNow();
     } finally {
@@ -2074,7 +2074,7 @@ describe('SyncEngine lastRunUtc survives a restart', () => {
     try {
       await restored.start();
       const status = restored.getStatus();
-      expect(status.lastPullOkUtc).toBe('2026-08-24T10:00:00.000Z');
+      expect(status.lastPullPsUtc).toBe('2026-08-24T10:00:00.000Z');
       expect(status.lastRunUtc).toBe('2026-08-24T10:00:00.000Z');
     } finally {
       await restored.destroy();
@@ -4689,8 +4689,8 @@ describe('SyncEngine auth-error recovery', () => {
 
   test('notifyCredentialsChanged rebuilds the credential chain, even when sync is off', async () => {
     const resolved = [
-      ['credential.helper=!ok auth git-credential'],
-      ['credential.helper=', 'credential.helper=!ok auth git-credential'],
+      ['credential.helper=!ps auth git-credential'],
+      ['credential.helper=', 'credential.helper=!ps auth git-credential'],
     ];
     let calls = 0;
     const engine = new SyncEngine({
@@ -4764,7 +4764,7 @@ describe('SyncEngine auth-error recovery', () => {
       contentDir,
       contentFilter: stubContentFilter,
       syncEnabled: false,
-      credentialConfig: ['credential.helper=!ok auth git-credential'],
+      credentialConfig: ['credential.helper=!ps auth git-credential'],
       resolveCredentialConfig: async () => {
         throw new Error('keychain locked');
       },
@@ -4772,7 +4772,7 @@ describe('SyncEngine auth-error recovery', () => {
 
     await engine.notifyCredentialsChanged();
 
-    expect(engine.getCredentialConfig()).toEqual(['credential.helper=!ok auth git-credential']);
+    expect(engine.getCredentialConfig()).toEqual(['credential.helper=!ps auth git-credential']);
   });
 
   test('a push-permission pause left over from a GitHub origin clears once the origin is not GitHub', async () => {
