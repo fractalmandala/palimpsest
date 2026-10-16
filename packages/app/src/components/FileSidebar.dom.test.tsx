@@ -192,10 +192,6 @@ vi.doMock('@/components/ProjectSwitcher', () => ({
   ProjectSwitcher: () => <button type="button">Project switcher</button>,
 }));
 
-vi.doMock('@/components/UpdateNotices', () => ({
-  UpdateNotices: () => <div data-testid="update-notices" />,
-}));
-
 vi.doMock('@/components/OnboardingCard', async () => ({
   ...(await vi.importActual<typeof import('@/components/OnboardingCard')>(
     '@/components/OnboardingCard',
@@ -566,7 +562,6 @@ describe('FileSidebar runtime behavior', () => {
     expect(Array.from(footer.children).map((child) => child.getAttribute('data-testid'))).toEqual([
       'onboarding-card-mount',
     ]);
-    expect(screen.queryByTestId('update-notices')).toBeNull();
     expect(screen.queryByTestId('feedback-card-mount')).toBeNull();
     expect(screen.queryByText('Project switcher')).toBeNull();
   });

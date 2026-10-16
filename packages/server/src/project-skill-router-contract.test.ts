@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
-const skill = readFileSync(join(import.meta.dirname, '../../skills/project/SKILL.md'), 'utf8');
+const skill = readFileSync(join(import.meta.dirname, '../../../skills/project/SKILL.md'), 'utf8');
 
 const safetyAnchors = [
   '## STOP — native tools on in-scope `.md` / `.mdx`',

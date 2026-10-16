@@ -152,4 +152,4 @@ directory was not committed). Advise the user to run `ps init` to install it.
 
 ## Learn more
 
-- Run `ok --help` for the full command list.
+- Run `ps --help` for the full command list.

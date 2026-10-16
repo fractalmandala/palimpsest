@@ -85,7 +85,7 @@ export type SkillSearchResult = z.infer<typeof SkillSearchResultSchema>;
 export const SkillsSearchSuccessSchema = z
   .object({
     results: z.array(SkillSearchResultSchema),
-    backend: z.enum(['skills.sh', 'github-fallback']),
+    backend: z.enum(['skills.sh', 'github-fallback', 'local']),
     degraded: z.boolean(),
   })
   .loose() satisfies StandardSchemaV1;

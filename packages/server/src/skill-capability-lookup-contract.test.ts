@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
-const PROJECT_SKILL_PATH = join(import.meta.dir, '../../skills/project/SKILL.md');
-const DISCOVERY_SKILL_PATH = join(import.meta.dir, '../../skills/discovery/SKILL.md');
+const PROJECT_SKILL_PATH = join(import.meta.dir, '../../../skills/project/SKILL.md');
+const DISCOVERY_SKILL_PATH = join(import.meta.dir, '../../../skills/discovery/SKILL.md');
 
 const DOCS_URL = 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content';
 const SOURCE_URL = 'https://github.com/fractalmandala/palimpsest';

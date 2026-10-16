@@ -54,11 +54,11 @@ function bundledSkillCandidates(
     }
   }
   if (runsFromSource(moduleUrl)) {
-    candidates.push(fileURLToPath(new URL(`../../skills/${which}`, moduleUrl)));
+    candidates.push(fileURLToPath(new URL(`../../../skills/${which}`, moduleUrl)));
     return candidates;
   }
   candidates.push(fileURLToPath(new URL(`../dist/assets/skills/${which}`, moduleUrl)));
-  candidates.push(fileURLToPath(new URL(`../../skills/${which}`, moduleUrl)));
+  candidates.push(fileURLToPath(new URL(`../../../skills/${which}`, moduleUrl)));
   candidates.push(fileURLToPath(new URL(`./assets/skills/${which}`, moduleUrl)));
   return candidates;
 }

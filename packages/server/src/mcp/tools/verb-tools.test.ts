@@ -355,7 +355,7 @@ describe('D13 migration meta-test — no retired tool name survives in the skill
   }
 
   test('skills/** teaches only the verb surface', () => {
-    const skillsDir = fileURLToPath(new URL('../../../../skills', import.meta.url));
+    const skillsDir = fileURLToPath(new URL('../../../../../skills', import.meta.url));
     const offenders: string[] = [];
     for (const file of mdFiles(skillsDir)) {
       const body = readFileSync(file, 'utf-8');

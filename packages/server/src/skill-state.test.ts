@@ -67,7 +67,7 @@ describe('readServerPackageVersion', () => {
 describe('built-in SKILL.md carries no version stamp', () => {
   for (const bundle of ['discovery', 'project', 'write-skill'] as const) {
     test(`${bundle} bundle SKILL.md frontmatter has no version: field`, async () => {
-      const skillMdUrl = new URL(`../../skills/${bundle}/SKILL.md`, import.meta.url);
+      const skillMdUrl = new URL(`../../../skills/${bundle}/SKILL.md`, import.meta.url);
       const skillMd = await readFile(fileURLToPath(skillMdUrl), 'utf-8');
       const frontmatter = skillMd.split(/^---$/m)[1] ?? '';
       expect(frontmatter).not.toMatch(/^\s*version:/m);

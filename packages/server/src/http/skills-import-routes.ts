@@ -16,7 +16,6 @@ import {
   discoverSkillDirs,
   fetchSource,
   parseSkillDir,
-  parseSource,
   readSkillDirMeta,
   readWellKnownIndex,
   resolveSkillsShImportSource,
@@ -24,6 +23,7 @@ import {
   type SourceSpec,
   type WellKnownIndex,
 } from '@palimpsest/core/skills-catalog';
+import { parseForkSource } from '../fork-skills-source.ts';
 import { type Entry, fromBuffer as yauzlFromBuffer, type ZipFile } from 'yauzl';
 import type { ContentFilter } from '../content-filter.ts';
 import { extractActorIdentity } from '../extract-actor-identity.ts';
@@ -122,7 +122,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
             const resolvedSource = skillsSh?.source ?? rawSource;
             resolvedSourceForReport = resolvedSource;
             const selectedSkill = body.skill ?? skillsSh?.skill;
-            const spec = skillsSh?.spec ?? parseSource(resolvedSource);
+            const spec = skillsSh?.spec ?? parseForkSource(resolvedSource);
             if (!spec) {
               errorResponse(
                 res,
@@ -264,7 +264,7 @@ export function createSkillsImportRoutes(deps: SkillsImportRouteDeps): ApiRouteG
           const skillsSh = await resolveSkillsShImportSource(rawSource, body.skills[0]);
           const resolvedSource = skillsSh?.source ?? rawSource;
           resolvedSourceForReport = resolvedSource;
-          const spec = skillsSh?.spec ?? parseSource(resolvedSource);
+          const spec = skillsSh?.spec ?? parseForkSource(resolvedSource);
           if (!spec) {
             errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized import source.', {
               handler: 'skills-import-bulk',

@@ -155,8 +155,8 @@ describe('STARTER_PACKS — all packs structural validation', () => {
       'codebase-wiki',
       'entity-vault',
       'knowledge-base',
-      'psf',
       'plain-notes',
+      'psf',
       'software-lifecycle',
       'worldbuilding',
       'writing-pipeline',
@@ -564,7 +564,7 @@ describe('seeded content keeps illustrative example links out of the link graph'
   });
 
   test('no pack SKILL.md leaks an example placeholder link', () => {
-    const packsDir = join(import.meta.dir, '..', '..', 'assets', 'skills', 'packs');
+    const packsDir = join(import.meta.dir, '..', '..', '..', '..', 'skills', 'packs');
     for (const packId of STARTER_PACK_IDS) {
       const skillPath = join(packsDir, packId, 'SKILL.md');
       expect(existsSync(skillPath), `${packId} pack is missing SKILL.md`).toBe(true);

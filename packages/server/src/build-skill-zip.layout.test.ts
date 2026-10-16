@@ -33,9 +33,9 @@ const at = (...segments: string[]) => join(ROOT, ...segments);
 
 describe('resolveBundledSkillDir running from source', () => {
   test('reads the package source assets even when a build output is present', () => {
-    expect(resolveBundledSkillDir('project')).toBe(join(PACKAGE, 'assets', 'skills', 'project'));
+    expect(resolveBundledSkillDir('project')).toBe(join(PACKAGE, '..', '..', 'skills', 'project'));
     expect(listPackSkillSources('psf')[0]?.sourceDir).toBe(
-      join(PACKAGE, 'assets', 'skills', 'packs', 'psf'),
+      join(PACKAGE, '..', '..', 'skills', 'packs', 'psf'),
     );
   });
 
@@ -46,7 +46,7 @@ describe('resolveBundledSkillDir running from source', () => {
 
   test('a miss names the source assets and prescribes no build', () => {
     expect(() => resolveBundledSkillDir('no-such-bundle')).toThrow(
-      join(PACKAGE, 'assets', 'skills', 'no-such-bundle'),
+      join(PACKAGE, '..', '..', 'skills', 'no-such-bundle'),
     );
     expect(() => resolveBundledSkillDir('no-such-bundle')).not.toThrow(/pnpm run build/);
   });
@@ -54,8 +54,8 @@ describe('resolveBundledSkillDir running from source', () => {
 
 describe('missingBundleMessage', () => {
   test('a miss from a build prescribes the package build', () => {
-    const tried = [at('cli', 'dist', 'assets', 'skills', 'project')];
-    expect(missingBundleMessage('project', moduleAt('cli', 'dist', 'cli.mjs'), tried)).toContain(
+    const tried = [at('packages', 'cli', 'dist', 'assets', 'skills', 'project')];
+    expect(missingBundleMessage('project', moduleAt('packages', 'cli', 'dist', 'cli.mjs'), tried)).toContain(
       'Run `pnpm run build`',
     );
     expect(
@@ -71,15 +71,13 @@ describe('bundledSkillCandidates', () => {
 
   test('a module running from source probes only the package source assets', () => {
     expect(
-      bundledSkillCandidates('project', moduleAt('pkg', 'src', 'build-skill-zip.ts'), {}),
-    ).toEqual([at('pkg', 'assets', 'skills', 'project')]);
+      bundledSkillCandidates('project', moduleAt('pkg', 'server', 'src', 'build-skill-zip.ts'), {}),
+    ).toEqual([at('skills', 'project')]);
   });
 
   test('a query on the module URL leaves it running from source', () => {
-    const url = `${moduleAt('pkg', 'src', 'build-skill-zip.ts')}?t=1`;
-    expect(bundledSkillCandidates('project', url, {})).toEqual([
-      at('pkg', 'assets', 'skills', 'project'),
-    ]);
+    const url = `${moduleAt('pkg', 'server', 'src', 'build-skill-zip.ts')}?t=1`;
+    expect(bundledSkillCandidates('project', url, {})).toEqual([at('skills', 'project')]);
   });
 
   test('the server build installed with the desktop app probes its build output first', () => {
@@ -88,16 +86,16 @@ describe('bundledSkillCandidates', () => {
       bundledSkillCandidates('packs/psf', moduleAt(...server, 'dist', 'index.mjs'), {}),
     ).toEqual([
       at(...server, 'dist', 'assets', 'skills', 'packs', 'psf'),
-      at(...server, 'assets', 'skills', 'packs', 'psf'),
+      at('app', 'node_modules', 'skills', 'packs', 'psf'),
       at(...server, 'dist', 'assets', 'skills', 'packs', 'psf'),
     ]);
   });
 
   test('the CLI bundle probes the assets beside it first', () => {
-    expect(bundledSkillCandidates('discovery', moduleAt('cli', 'dist', 'cli.mjs'), {})).toEqual([
-      at('cli', 'dist', 'assets', 'skills', 'discovery'),
-      at('cli', 'assets', 'skills', 'discovery'),
-      at('cli', 'dist', 'assets', 'skills', 'discovery'),
+    expect(bundledSkillCandidates('discovery', moduleAt('packages', 'cli', 'dist', 'cli.mjs'), {})).toEqual([
+      at('packages', 'cli', 'dist', 'assets', 'skills', 'discovery'),
+      at('skills', 'discovery'),
+      at('packages', 'cli', 'dist', 'assets', 'skills', 'discovery'),
     ]);
   });
 
@@ -106,13 +104,13 @@ describe('bundledSkillCandidates', () => {
     const opts = { checkDesktop: true, platform: 'darwin' as const, home: at('home') };
     const desktop = join(at('home'), 'Applications', APP_SKILLS, 'project');
     expect(
-      bundledSkillCandidates('project', moduleAt('pkg', 'src', 'build-skill-zip.ts'), opts),
-    ).toEqual([desktop, at('pkg', 'assets', 'skills', 'project')]);
-    expect(bundledSkillCandidates('project', moduleAt('cli', 'dist', 'cli.mjs'), opts)).toEqual([
+      bundledSkillCandidates('project', moduleAt('pkg', 'server', 'src', 'build-skill-zip.ts'), opts),
+    ).toEqual([desktop, at('skills', 'project')]);
+    expect(bundledSkillCandidates('project', moduleAt('packages', 'cli', 'dist', 'cli.mjs'), opts)).toEqual([
       desktop,
-      at('cli', 'dist', 'assets', 'skills', 'project'),
-      at('cli', 'assets', 'skills', 'project'),
-      at('cli', 'dist', 'assets', 'skills', 'project'),
+      at('packages', 'cli', 'dist', 'assets', 'skills', 'project'),
+      at('skills', 'project'),
+      at('packages', 'cli', 'dist', 'assets', 'skills', 'project'),
     ]);
   });
 });

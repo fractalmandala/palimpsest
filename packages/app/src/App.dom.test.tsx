@@ -244,10 +244,6 @@ vi.doMock('@/components/FileSidebar', () => ({
   FileSidebar: () => <div data-testid="file-sidebar">Sidebar</div>,
 }));
 
-vi.doMock('@/components/UpdateNotices', () => ({
-  UpdateNotices: () => <div data-testid="update-notices" />,
-}));
-
 vi.doMock('@/components/FeedbackCard', () => ({
   FeedbackCardMount: () => <div data-testid="feedback-card-mount" />,
 }));
@@ -1123,22 +1119,20 @@ describe('App runtime wiring', () => {
     function expectNoCornerStack() {
       expect(screen.getByTestId('editor-pane')).not.toBeNull();
       expect(screen.queryByTestId('corner-card-stack')).toBeNull();
-      expect(screen.queryByRole('region', { name: 'Updates and feedback' })).toBeNull();
-      expect(screen.queryByTestId('update-notices')).toBeNull();
+      expect(screen.queryByRole('region', { name: 'Feedback' })).toBeNull();
       expect(screen.queryByTestId('feedback-card-mount')).toBeNull();
     }
 
-    test('a desktop project window holds the update notice above the feedback card in one stack after the panes', () => {
+    test('a desktop project window holds the feedback card in one stack after the panes', () => {
       renderApp({ bridge: createBridge() });
 
       expect(screen.getAllByTestId('corner-card-stack')).toHaveLength(1);
-      const stack = screen.getByRole('region', { name: 'Updates and feedback' });
+      const stack = screen.getByRole('region', { name: 'Feedback' });
       expect(stack).toBe(screen.getByTestId('corner-card-stack'));
       const column = within(stack).getByTestId('corner-card-stack-column');
       expect(Array.from(column.children).map((child) => child.getAttribute('data-testid'))).toEqual(
-        ['update-notices', 'feedback-card-mount'],
+        ['feedback-card-mount'],
       );
-      expect(screen.getAllByTestId('update-notices')).toHaveLength(1);
       expect(screen.getAllByTestId('feedback-card-mount')).toHaveLength(1);
 
       expect(screen.getByTestId('page-list-provider').contains(stack)).toBe(true);
@@ -1154,7 +1148,7 @@ describe('App runtime wiring', () => {
     test('a web project window has the same stack', () => {
       renderApp();
 
-      const stack = screen.getByRole('region', { name: 'Updates and feedback' });
+      const stack = screen.getByRole('region', { name: 'Feedback' });
       expect(screen.getAllByTestId('corner-card-stack')).toHaveLength(1);
       expect(within(stack).getByTestId('feedback-card-mount')).not.toBeNull();
     });

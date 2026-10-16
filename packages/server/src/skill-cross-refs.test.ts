@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { extractSkillRefs } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 
-const SKILLS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'skills');
+const SKILLS_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'skills');
 const PLATFORM_SKILL = 'palimpsest';
 
 function walkMarkdown(dir: string, out: string[] = []): string[] {

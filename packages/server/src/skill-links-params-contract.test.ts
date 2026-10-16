@@ -6,7 +6,7 @@ const TOOL_INPUT_KEYS = {
   links: new Set(['kind', 'document', 'sourceDocuments', 'mode', 'limit', 'cwd']),
   audit: new Set(['path', 'cwd']),
 };
-const SKILLS_DIR = join(import.meta.dirname, '../../skills');
+const SKILLS_DIR = join(import.meta.dirname, '../../../skills');
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {

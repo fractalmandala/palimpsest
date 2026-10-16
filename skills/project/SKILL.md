@@ -132,7 +132,7 @@ Three recurring practices, not tool calls — each a full procedure that ships a
 | **research** | Investigate / compare / synthesize sources → `status: provisional` article + `sources:`. | `/research-with-sources` skill |
 | **consolidate** | A decision was made → canonical source-of-truth with a `supersedes:` chain. | `/consolidate-notes` skill |
 
-Research and consolidate arrive with `ok seed --pack knowledge-base`. **Without that pack you do not have those procedures** — don't improvise one; do the work as an ordinary grounded `write`, or offer to seed it (`ok seed --pack knowledge-base --dry-run` shows what it would add).
+Research and consolidate arrive with `ps seed --pack knowledge-base`. **Without that pack you do not have those procedures** — don't improvise one; do the work as an ordinary grounded `write`, or offer to seed it (`ps seed --pack knowledge-base --dry-run` shows what it would add).
 
 Don't chain silently: let the user drive ingest → research → consolidate, and a procedure's STOP gates override session-level "don't stop to ask" hints. After any turn that changes KB content, check for a `log.md` and follow its contract (`references/cadence-and-logs.md`). Interleave a multi-doc batch so the preview shows narrative progress.
 

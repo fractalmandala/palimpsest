@@ -19,7 +19,6 @@ import {
   discoverSkillDirs,
   fetchSource,
   parseSkillDir,
-  parseSource,
   resolvePluginUpdateSource,
   resolveSkillsShImportSource,
   retrofitPackLockEntry,
@@ -28,6 +27,7 @@ import {
   type SkillsLock,
   upsertLockEntry,
 } from '@palimpsest/core/skills-catalog';
+import { parseForkSource } from '../fork-skills-source.ts';
 import type { ContentFilter } from '../content-filter.ts';
 import { extractActorIdentity } from '../extract-actor-identity.ts';
 import { scanGlobalInPlaceSkills, scanInPlaceSkills } from '../in-place-skills.ts';
@@ -389,7 +389,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
           const resolvedSource =
             skillsSh?.source ?? resolvePluginUpdateSource(entry.source, entry.pluginProvider);
           const resolvedSkill = skillsSh?.skill ?? entry.skill;
-          const spec = skillsSh?.spec ?? parseSource(resolvedSource);
+          const spec = skillsSh?.spec ?? parseForkSource(resolvedSource);
           if (!spec) {
             errorResponse(
               res,
@@ -535,7 +535,7 @@ export function createSkillsRecoveryRoutes(deps: SkillsRecoveryRouteDeps): ApiRo
                   group.source,
                   lock.skills[group.names[0] as string]?.pluginProvider,
                 );
-              const spec = skillsSh?.spec ?? parseSource(resolvedSource);
+              const spec = skillsSh?.spec ?? parseForkSource(resolvedSource);
               if (!spec || isDisallowedGitSpec(spec)) {
                 for (const name of group.names) {
                   results.push({

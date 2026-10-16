@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { STARTER_PACK_IDS } from './starter.ts';
 
-const SKILL_DIR = join(import.meta.dir, '../../../skills/project');
+const SKILL_DIR = join(import.meta.dir, '../../../../skills/project');
 const PACK_BULLET_RE = /^- `([a-z][a-z0-9-]+)` —/gm;
 
 function readSkillBundle(): string {

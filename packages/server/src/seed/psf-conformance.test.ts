@@ -97,7 +97,7 @@ describe('psf pack — minimal starter contract', () => {
 
   test('the companion skill targets v0.2 and explains the plugin rather than the scaffold', () => {
     const skillSource = readFileSync(
-      join(import.meta.dirname, '..', '..', 'assets', 'skills', 'packs', 'psf', 'SKILL.md'),
+      join(import.meta.dirname, '..', '..', '..', '..', 'skills', 'packs', 'psf', 'SKILL.md'),
       'utf-8',
     );
     const { frontmatter, body } = stripFrontmatter(skillSource);

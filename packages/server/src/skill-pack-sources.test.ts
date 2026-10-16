@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
 import { enumeratePackSkills } from './skill-pack-sources.ts';
 
-const PACKS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'skills', 'packs');
+const PACKS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'skills', 'packs');
 
 describe('enumeratePackSkills', () => {
   test('a flat pack ships exactly one skill, named by its frontmatter', () => {

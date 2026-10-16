@@ -3,6 +3,7 @@ import { join, relative, sep } from 'node:path';
 import type { SkillRefResolution } from '@palimpsest/core';
 import {
   EmptyRequestSchema,
+  isPalimpsestSkillsSource,
   SKILL_NAME_REGEX,
   SkillDetailSchema,
   SkillDiscoverSchema,
@@ -22,13 +23,13 @@ import {
   parseSkillDir,
   parseSkillsShSearch,
   parseSkillsShWebsiteSource,
-  parseSource,
   readSkillDirMeta,
   resolveSkillsShImportSource,
   SKILLS_LOCK_REL,
   SkillFetchError,
   skillsShSkillLinks,
 } from '@palimpsest/core/skills-catalog';
+import { parseForkSource } from './fork-skills-source.ts';
 import { errorResponse } from './http/error-response.ts';
 import { withValidation } from './http/request-validation.ts';
 import { successResponse } from './http/success-response.ts';
@@ -174,6 +175,16 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
     async (req, res) => {
       const url = new URL(req.url ?? '', 'http://localhost');
       const source = url.searchParams.get('source')?.trim() ?? '';
+      if (isPalimpsestSkillsSource(source)) {
+        successResponse(
+          res,
+          200,
+          SkillsSearchSuccessSchema,
+          { results: [], backend: 'local', degraded: false },
+          { handler: 'skills-publisher' },
+        );
+        return;
+      }
       if (!/^[\w.-]+\/[\w.-]+$/.test(source) || source.includes('..')) {
         errorResponse(res, 400, 'urn:ps:error:invalid-request', 'source must be owner/repo.', {
           handler: 'skills-publisher',
@@ -276,7 +287,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         }
         throw error;
       }
-      const spec = resolvedSkillsSh?.spec ?? parseSource(source);
+      const spec = resolvedSkillsSh?.spec ?? parseForkSource(source);
       if (!spec) {
         errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized preview source.', {
           handler: 'skills-preview',
@@ -390,7 +401,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
         }
         return;
       }
-      const spec = parseSource(source);
+      const spec = parseForkSource(source);
       if (!spec) {
         errorResponse(res, 400, 'urn:ps:error:invalid-request', 'Unrecognized source.', {
           handler: 'skills-discover',
@@ -466,7 +477,7 @@ export function createSkillsShHandlers(deps: SkillsShHandlerDeps): SkillsShHandl
 
         if (entry?.source) {
           const resolvedSkillsSh = await resolveSkillsShImportSource(entry.source, ref);
-          const spec = resolvedSkillsSh?.spec ?? parseSource(entry.source);
+          const spec = resolvedSkillsSh?.spec ?? parseForkSource(entry.source);
           const allowed = spec && !(spec.kind === 'git' && !isAllowedGitUrl(spec.url));
           if (spec && allowed) {
             let cleanup: (() => void) | undefined;

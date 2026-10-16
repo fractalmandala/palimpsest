@@ -267,7 +267,7 @@ test('published scope guidance preserves selection, error, empty-scope and trunc
 
 test('skill router and published reference names and counts equal the actual serving surface', () => {
   const skill = readFileSync(
-    new URL('../../../../skills/project/SKILL.md', import.meta.url),
+    new URL('../../../../../skills/project/SKILL.md', import.meta.url),
     'utf8',
   );
   const reference = readFileSync(

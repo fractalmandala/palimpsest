@@ -38,4 +38,4 @@ The `ps` CLI (a Bash surface beside the MCP tools; other verbs `ps start` / `ps 
 
 A pack that ships skills installs them project-local when seeded. Those skills are where the pack's procedures live; a pack may ship one skill or several.
 
-To reference one **without installing it**: `ok seed --list-packs` (the menu) → `ok seed --pack <name> --dry-run` (its folders + the *why* of each folder + templates; writes nothing). Then either adapt the ideas into your own folders (`write({ folder })` + a template) or adopt the pack as-is by re-running without `--dry-run`. Reach for this when a user wants structure and an archetype fits — propose a tailored variant, not a verbatim copy.
+To reference one **without installing it**: `ps seed --list-packs` (the menu) → `ps seed --pack <name> --dry-run` (its folders + the *why* of each folder + templates; writes nothing). Then either adapt the ideas into your own folders (`write({ folder })` + a template) or adopt the pack as-is by re-running without `--dry-run`. Reach for this when a user wants structure and an archetype fits — propose a tailored variant, not a verbatim copy.
